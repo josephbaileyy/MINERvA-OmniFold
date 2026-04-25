@@ -201,3 +201,16 @@ deliberately excluded; the `.gitignore` enforces this.
   arXiv:[1911.09107](https://arxiv.org/abs/1911.09107).
 - MINERvA 101 tutorial:
   <https://github.com/MinervaExpt/MINERvA-101-Cross-Section>.
+
+
+This repository contains original code for applying OmniFold-based
+unfolding to MINERvA cross section measurements.
+
+Parts of the implementation adapt ideas and code from:
+
+- [MINERvA 101 Cross Section Tutorial](https://github.com/MinervaExpt/MINERvA-101-Cross-Section)
+
+- [OmniFold BDT Implementation in RooUnfold](https://github.com/rymilton/unbinned_unfolding)
+
+These projects are licensed under BSD-3-Clause. Their licenses are
+included where required.
