@@ -7,17 +7,19 @@ section `d²σ / (dp_T dp_∥)` from MINERvA medium-energy data using the
 result published in arXiv:2106.16210.
 
 This repository contains my analysis scripts, documentation, and the
-specific edits I made to two upstream code packages (the MINERvA 101
-tutorial framework and the RooUnfold-based `unbinned_unfolding` package).
-Upstream code itself is **not** included — see
-[Setup](#setup) for how to obtain it.
+selected edits I made to upstream code packages used by the analysis (the
+MINERvA 101 tutorial framework and the RooUnfold-based
+`unbinned_unfolding` package). Full upstream working trees and generated
+outputs are **not** part of the public repository; only selected overlay files
+are tracked so the analysis can be rebuilt. See [Setup](#setup) for how to
+obtain the upstream packages.
 
 ---
 
 ## Repository layout
 
 ```
-MINERvA-unfolding/
+MINERvA-OmniFold/
 ├── 2d-unfolding/                          # My analysis code (tracked)
 │   ├── unfold_2d_omnifold_unbinned.py     # main 2D unfolding driver
 │   ├── plot_2d_*.py, compare_to_paper_*.py, diagnose_*.py …
@@ -35,9 +37,17 @@ MINERvA-unfolding/
 │   └── MINERvA-101-Cross-Section/         # only my edits are tracked, see below
 │
 ├── AGENTS.md                              # working notes / context for AI assistants
+├── LICENSE                                # license for my original code/docs
+├── THIRD_PARTY_LICENSES.md                # upstream attribution and license notes
 ├── README.md                              # this file
 └── .gitignore
 ```
+
+The current layout intentionally keeps `MINERvA101/` and
+`unbinned_unfolding/` at their build-time paths. A future cleanup may move
+these vendored workspaces under `external/`, but that should be done only after
+active SLURM runs using the old paths have completed and their provenance has
+been recorded.
 
 ---
 
@@ -53,9 +63,10 @@ unfolding consumes. The tutorial is built on top of MAT (the MINERvA
 analysis toolkit), MAT-MINERvA, GENIEXSecExtract, and UnfoldUtils, all
 shipped as siblings under `MINERvA101/`.
 
-I treat the tutorial as a **vendored dependency**: the entire `MINERvA101/`
-tree is gitignored, and only the files I had to modify are re-added via
-negation patterns in `.gitignore`. My edits in
+I treat the tutorial as a **vendored dependency**: the full upstream
+workspace can live locally under `MINERvA101/`, but the outer repository
+gitignores that tree and re-adds only the files I had to modify via negation
+patterns in `.gitignore`. My edits in
 `MINERvA101/MINERvA-101-Cross-Section/`:
 
 | File | What I changed |
@@ -79,8 +90,7 @@ than copying them to a separate `patches/` directory. The build directory
 > of `MINERvA-101-Cross-Section/` so the outer repo can track the negation
 > patterns as plain files (git refuses to descend into nested repositories).
 > To diff or pull from upstream, work from a fresh clone or from the
-> separate working copy I keep at
-> `/pscratch/sd/j/josephrb/MINERvA101/MINERvA-101-Cross-Section/`.
+> separate pristine working copy outside this repository.
 
 ### unbinned_unfolding (RooUnfold fork)
 
@@ -92,8 +102,8 @@ extensions). The 2D unfolding driver in
 `unbinned_unfolding.python.omnifold` and uses its iterative reweighting
 loop.
 
-Like the tutorial, this is treated as a vendored dependency: the whole tree
-is gitignored, and only my edits are tracked:
+Like the tutorial, this is treated as a vendored dependency: the full local
+tree is gitignored, and only my edits are tracked:
 
 | File | What I changed |
 |------|----------------|
@@ -102,8 +112,7 @@ is gitignored, and only my edits are tracked:
 
 > **Note:** The upstream `.git/` directory was removed from this in-tree copy
 > of `unbinned_unfolding/` for the same reason as above. The intact upstream
-> clone lives at `/pscratch/sd/j/josephrb/MINERvA101/OmniFold/unbinned_unfolding/`
-> for diff/pull purposes.
+> clone used for diff/pull work should live outside this repository.
 
 ---
 
@@ -190,6 +199,19 @@ deliberately excluded; the `.gitignore` enforces this.
 
 ---
 
+## Licensing and attribution
+
+The top-level `LICENSE` applies to my original analysis code and
+documentation. It does not relicense upstream software, selected
+upstream-derived overlay files, published-paper ancillary files, or external
+data products.
+
+See `THIRD_PARTY_LICENSES.md` for the upstream projects, local license status,
+and citation notes. In particular, some upstream-derived overlay files come
+from local checkouts that did not contain a license file, so the repository
+documents their provenance explicitly rather than claiming a blanket license
+for all contents.
+
 ## Reference
 
 - Paper being reproduced: A. Bercellie et al. (MINERvA),
@@ -201,16 +223,5 @@ deliberately excluded; the `.gitignore` enforces this.
   arXiv:[1911.09107](https://arxiv.org/abs/1911.09107).
 - MINERvA 101 tutorial:
   <https://github.com/MinervaExpt/MINERvA-101-Cross-Section>.
-
-
-This repository contains original code for applying OmniFold-based
-unfolding to MINERvA cross section measurements.
-
-Parts of the implementation adapt ideas and code from:
-
-- [MINERvA 101 Cross Section Tutorial](https://github.com/MinervaExpt/MINERvA-101-Cross-Section)
-
-- [OmniFold BDT Implementation in RooUnfold](https://github.com/rymilton/unbinned_unfolding)
-
-These projects are licensed under BSD-3-Clause. Their licenses are
-included where required.
+- RooUnfold-based unbinned unfolding implementation:
+  <https://github.com/rymilton/unbinned_unfolding>.

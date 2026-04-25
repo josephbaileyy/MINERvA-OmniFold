@@ -1,0 +1,4 @@
+# These paths contain selected overlay files derived from upstream projects.
+# Keep GitHub language statistics focused on the original analysis code.
+MINERvA101/** linguist-vendored
+unbinned_unfolding/** linguist-vendored
