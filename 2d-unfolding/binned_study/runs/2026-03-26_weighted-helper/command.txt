@@ -1,0 +1,11 @@
+python3 Documents/binned_study/scripts/unfold_ptmu_omnifold_binned.py \
+  --omnifile Documents/runEventLoopOmniFold.root \
+  --datafile Documents/runEventLoopData.root \
+  --datahist pTmu_data \
+  --iters 5 \
+  --use-weights \
+  --engine helper \
+  --response-weight-mode truth \
+  --hunfold-mode counts \
+  --verbose \
+  --out Documents/binned_study/runs/2026-03-26_weighted-helper/outputs/omnifold_ptmu_unfold.root

@@ -1,0 +1,67 @@
+# ---------- Generated artifacts (anywhere in the tree) ----------
+*.root
+*.png
+*.pdf
+*.out
+*.err
+*.log
+*.o
+*.d
+*.so
+*.a
+*.pyc
+*.npz
+*.h5
+*.pkl
+__pycache__/
+.ipynb_checkpoints/
+build/
+*.egg-info/
+
+# ---------- Editor / OS noise ----------
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# ---------- Tutorial clones (entire subtree) ----------
+# Everything under MINERvA101/ is upstream code from the MINERvA 101 tutorial
+# (https://minerva-software.fnal.gov/minerva101/) and is NOT mine. The whole
+# directory is excluded; only the specific files I edited are re-added below
+# via negation patterns.
+MINERvA101/**
+
+# Re-add the dir entries so the negations below can match
+!MINERvA101/
+!MINERvA101/MINERvA-101-Cross-Section/
+!MINERvA101/MINERvA-101-Cross-Section/event/
+!MINERvA101/MINERvA-101-Cross-Section/util/
+!MINERvA101/MINERvA-101-Cross-Section/cuts/
+
+# Files I modified in MINERvA-101-Cross-Section
+!MINERvA101/MINERvA-101-Cross-Section/runEventLoop.cpp
+!MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp
+!MINERvA101/MINERvA-101-Cross-Section/runEventLoopMod.cpp
+!MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold_OLD.cpp
+!MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold_OLDEST.cpp
+!MINERvA101/MINERvA-101-Cross-Section/CMakeLists.txt
+!MINERvA101/MINERvA-101-Cross-Section/ExtractCrossSection.cpp
+!MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+!MINERvA101/MINERvA-101-Cross-Section/util/Binning.h
+!MINERvA101/MINERvA-101-Cross-Section/cuts/MaxPtMu.h
+
+# ---------- unbinned_unfolding (RooUnfold fork) ----------
+# This is also upstream code. I track only the files I edited.
+unbinned_unfolding/**
+
+!unbinned_unfolding/
+!unbinned_unfolding/python/
+!unbinned_unfolding/python/omnifold.py
+!unbinned_unfolding/python/omnifold_old.py
+
+# ---------- Heavy outputs even if accidentally copied into 2d-unfolding/ ----------
+2d-unfolding/archive_*/
+2d-unfolding/baseline_flux/
+2d-unfolding/component_dump_*/
+2d-unfolding/evloop_work_*/
+2d-unfolding/validate_*/
