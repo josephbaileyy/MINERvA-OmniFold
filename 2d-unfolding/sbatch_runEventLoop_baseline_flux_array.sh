@@ -27,8 +27,8 @@
 #   integrals can be compared and POT-weighted afterward.
 #
 # Outputs:
-#   Documents/baseline_flux/runEventLoopMC_<PL>.root
-#   Documents/baseline_flux/runEventLoopData_<PL>.root
+#   2d-unfolding/baseline_flux/runEventLoopMC_<PL>.root
+#   2d-unfolding/baseline_flux/runEventLoopData_<PL>.root
 #
 # Runtime/memory:
 #   Same code family and dataset scale as the prior OmniFold event-loop array.
@@ -39,19 +39,16 @@ set -eo pipefail
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 PL="${PLAYLISTS[$((SLURM_ARRAY_TASK_ID - 1))]}"
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
 
-OUTDIR="/pscratch/sd/j/josephrb/MINERvA101/Documents/baseline_flux"
+OUTDIR="${REPO}/2d-unfolding/baseline_flux"
 WORKDIR="${OUTDIR}/work_${PL}"
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}"
 
-DATA_MANIFEST="/pscratch/sd/j/josephrb/MINERvA101/Doc_tmp/${PL}_Data.txt"
-MC_MANIFEST="/pscratch/sd/j/josephrb/MINERvA101/Doc_tmp/${PL}_MC.txt"
+DATA_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
+MC_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
 
 export PYTHONUNBUFFERED=1
 

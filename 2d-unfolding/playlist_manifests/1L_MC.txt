@@ -1,0 +1,6 @@
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113000_Playlist.root
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113001_Playlist.root
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113002_Playlist.root
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113003_Playlist.root
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113004_Playlist.root
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113005_Playlist.root

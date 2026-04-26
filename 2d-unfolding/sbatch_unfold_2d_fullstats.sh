@@ -13,11 +13,11 @@
 
 # Full-statistics 2D OmniFold run on combined ME FHC dataset.
 #
-# Input: Documents/runEventLoopOmniFold_MEHFC.root (hadd of 12 playlists,
+# Input: 2d-unfolding/runEventLoopOmniFold_MEHFC.root (hadd of 12 playlists,
 #   2.17 GB, 32.8M truth / 28.3M signal-reco / 5.7M data entries).
 # Iters: 5 (convergence confirmed on playlist 1A: 5-iter within 0.07% of
 #   10-iter total xsec, 2.9% per-bin RMS shape deviation).
-# Output: Documents/2d_crossSection_omnifold_MEHFC_5iter.root
+# Output: 2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root
 #
 # Resource sizing, relative to playlist 1A 5-iter baseline (1h45m,
 # 8 GB on shared QOS):
@@ -34,14 +34,9 @@ set -eo pipefail
 
 export PYTHONUNBUFFERED=1
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
-
-cd /pscratch/sd/j/josephrb/MINERvA101/Documents
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
+cd "${REPO}/2d-unfolding"
 
 OMNIFILE="runEventLoopOmniFold_MEHFC.root"
 MCFILE="baseline_flux/runEventLoopMC_MEHFC.root"
@@ -65,4 +60,4 @@ python unfold_2d_omnifold_unbinned.py \
     --out "${OUT}"
 
 echo "[sbatch] done:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-echo "[sbatch] final: /pscratch/sd/j/josephrb/MINERvA101/Documents/${OUT}"
+echo "[sbatch] final: ${REPO}/2d-unfolding/${OUT}"

@@ -31,9 +31,9 @@ ROOT.gROOT.SetBatch(True)
 from unfold_2d_omnifold_unbinned import PZ_EDGES
 
 DEFAULT_INPUT = (
-    "Documents/component_dump_1A/runEventLoopOmniFold.root"
+    "2d-unfolding/component_dump_1A/runEventLoopOmniFold.root"
 )
-DEFAULT_OUT_PREFIX = "Documents/component_dump_1A/decompose_truth"
+DEFAULT_OUT_PREFIX = "2d-unfolding/component_dump_1A/decompose_truth"
 COMPONENTS = [
     "w_FluxAndCV",
     "w_GENIE",

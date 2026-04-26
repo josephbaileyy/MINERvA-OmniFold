@@ -26,7 +26,8 @@ set -eo pipefail  # not -u: conda's deactivate-root.sh hook references
 
 PLAYLIST="${1:?usage: sbatch $0 <playlist>}"
 
-cd /pscratch/sd/j/josephrb/MINERvA101
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+cd "${REPO}"
 
 module load python
 conda activate root_6_28
@@ -35,6 +36,6 @@ conda activate root_6_28
 echo "[$(date -u '+%F %T UTC')] sbatch job ${SLURM_JOB_ID} on $(hostname) for playlist ${PLAYLIST}"
 echo "[$(date -u '+%F %T UTC')] xrdcp: $(which xrdcp || echo NOT FOUND)"
 
-bash /pscratch/sd/j/josephrb/MINERvA101/Documents/download_playlist.sh "${PLAYLIST}"
+bash "${REPO}/2d-unfolding/download_playlist.sh" "${PLAYLIST}"
 
 echo "[$(date -u '+%F %T UTC')] sbatch job ${SLURM_JOB_ID} finished."

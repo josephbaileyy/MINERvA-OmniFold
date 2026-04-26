@@ -39,9 +39,9 @@ except ImportError as exc:
     ) from exc
 
 
-ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA101/Documents/minerva_paper_anc"
-DEFAULT_OURS = "Documents/2d_crossSection_omnifold_1A_minos_fix_5iter.root"
-DEFAULT_DIAG = "Documents/minos_acceptance_1A_summary.json"
+ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
+DEFAULT_OURS = "2d-unfolding/2d_crossSection_omnifold_1A_minos_fix_5iter.root"
+DEFAULT_DIAG = "2d-unfolding/minos_acceptance_1A_summary.json"
 DEFAULT_OUT_PREFIX = "Documents/minos_acceptance_audit_1A"
 
 N_PT = 14

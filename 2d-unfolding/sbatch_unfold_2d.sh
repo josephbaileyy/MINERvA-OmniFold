@@ -21,14 +21,9 @@ set -eo pipefail
 
 export PYTHONUNBUFFERED=1
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
-
-cd /pscratch/sd/j/josephrb/MINERvA101/Documents
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
+cd "${REPO}/2d-unfolding"
 
 # Pass through extra args: e.g. sbatch sbatch_unfold_2d.sh --iters 5 --out 2d_crossSection_omnifold.root
 # srun omitted — --ntasks=1 doesn't need it, and inherited SRUN_CPUS_PER_TASK

@@ -30,14 +30,9 @@ set -eo pipefail  # not -u: conda's deactivate-root.sh hook references
 
 export PYTHONUNBUFFERED=1
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
-
-cd /pscratch/sd/j/josephrb/MINERvA101/Documents
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
+cd "${REPO}/2d-unfolding"
 
 ITER=${SLURM_ARRAY_TASK_ID}
 OMNIFILE="runEventLoopOmniFold_1A_corrected_interactive.root"

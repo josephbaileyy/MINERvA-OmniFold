@@ -39,8 +39,8 @@ ROOT.gROOT.SetBatch(True)
 
 from unfold_2d_omnifold_unbinned import PT_EDGES, PZ_EDGES
 
-DEFAULT_INPUT = "Documents/runEventLoopOmniFold_1A_minos_fix.root"
-DEFAULT_OUT_PREFIX = "Documents/weights_vs_pz_1A"
+DEFAULT_INPUT = "2d-unfolding/runEventLoopOmniFold_1A_minos_fix.root"
+DEFAULT_OUT_PREFIX = "2d-unfolding/weights_vs_pz_1A"
 
 
 def parse_args():

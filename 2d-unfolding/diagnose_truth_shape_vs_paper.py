@@ -47,7 +47,7 @@ ROOT.gROOT.SetBatch(True)
 
 from unfold_2d_omnifold_unbinned import PT_EDGES, PZ_EDGES
 
-ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA101/Documents/minerva_paper_anc"
+ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
 DEFAULT_OURS = (
     "Documents/2d_crossSection_omnifold_1A_minos_fix_5iter.root"
 )

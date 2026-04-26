@@ -26,16 +26,24 @@ MINERvA-OmniFold/
 │   ├── sbatch_*.sh                        # NERSC SLURM submission scripts
 │   ├── 2D_OMNIFOLD_*.md, PLOT_GUIDE.md    # study status / run log / plotting notes
 │   ├── *.json                             # small summary metadata from analyses
+│   ├── *.png                              # current production plots (tracked)
 │   ├── binned_study/                      # standalone binned-OmniFold cross-check
 │   ├── unbinned_1d_study/                 # 1D pT_µ closure study (precursor)
-│   └── minerva_paper_anc/                 # ancillary files from arXiv:2106.16210
+│   ├── minerva_paper_anc/                 # ancillary files from arXiv:2106.16210
+│   ├── playlist_manifests/                # per-playlist Data/MC file lists
+│   ├── baseline_flux/                     # per-playlist baseline flux ROOTs (gitignored)
+│   └── reference/                         # reference papers (Ruterbories PDF)
 │
 ├── unbinned_unfolding/                    # RooUnfold fork (mostly upstream, gitignored)
+│   ├── build/                             # in-tree cmake build (gitignored)
 │   └── python/omnifold.py                 # only my edits are tracked
 │
 ├── MINERvA101/                            # MINERvA 101 tutorial clones (mostly gitignored)
-│   └── MINERvA-101-Cross-Section/         # only my edits are tracked, see below
+│   ├── MINERvA-101-Cross-Section/         # only my edits are tracked, see below
+│   └── opt/                               # installed binaries (runEventLoopOmniFold etc.)
 │
+├── setup_salloc_env.sh                    # self-locating env setup (sources all the above)
+├── start_alloc.sh                         # interactive salloc helper
 ├── AGENTS.md                              # working notes / context for AI assistants
 ├── LICENSE                                # license for my original code/docs
 ├── THIRD_PARTY_LICENSES.md                # upstream attribution and license notes
@@ -43,11 +51,9 @@ MINERvA-OmniFold/
 └── .gitignore
 ```
 
-The current layout intentionally keeps `MINERvA101/` and
-`unbinned_unfolding/` at their build-time paths. A future cleanup may move
-these vendored workspaces under `external/`, but that should be done only after
-active SLURM runs using the old paths have completed and their provenance has
-been recorded.
+The layout keeps `MINERvA101/` and `unbinned_unfolding/` as siblings of
+`2d-unfolding/`; `setup_salloc_env.sh` is self-locating, so all paths
+resolve relative to wherever the repo is checked out.
 
 ---
 
@@ -163,8 +169,8 @@ deliberately excluded; the `.gitignore` enforces this.
 ### Upstream code (not mine to redistribute)
 
 - `MINERvA101/MAT/`, `MINERvA101/MAT-MINERvA/`, `MINERvA101/GENIEXSecExtract/`,
-  `MINERvA101/UnfoldUtils/`, `MINERvA101/opt/`, `MINERvA101/OmniFold/` — clean
-  upstream clones, no edits from me.
+  `MINERvA101/UnfoldUtils/`, `MINERvA101/opt/` — clean upstream clones / built
+  binaries, no edits from me.
 - `MINERvA101/MINERvA-101-Cross-Section/` *except* the specific files listed
   above.
 - `unbinned_unfolding/` *except* `python/omnifold.py` and `python/omnifold_old.py`.
@@ -174,8 +180,9 @@ deliberately excluded; the `.gitignore` enforces this.
 - `*.root` — event-loop output (per-playlist response matrices, OmniFold
   ntuples) and `hadd`-merged histograms. Individual files range from ~150 MB
   to ~1.8 GB. Total artifact volume is roughly 10 GB.
-- `*.png`, `*.pdf` — plots produced by the `plot_*.py` and `diagnose_*.py`
-  scripts. Reproduce by re-running the corresponding script.
+- `*.pdf` — generated plots. The current production `*.png` files in
+  `2d-unfolding/` are tracked; plots produced ad-hoc by `plot_*.py` /
+  `diagnose_*.py` are gitignored unless explicitly added.
 - `*.out`, `*.err`, `*.log` — SLURM job logs.
 - `build/`, `*.o`, `*.d`, `*.so`, `*.a` — compiler output.
 
@@ -185,11 +192,14 @@ deliberately excluded; the `.gitignore` enforces this.
 
 ### Archived working trees
 
-- `archive_pre_minos_fix/` (3.9 GB), `archive_2026-03-production-cleanup/`
-  (375 MB) — historical snapshots of intermediate ROOT files kept locally
-  for provenance, not relevant to the published analysis.
-- `baseline_flux/`, `component_dump_*/`, `validate_*/`, `evloop_work_*/` —
-  per-playlist scratch directories used during diagnostic runs.
+- Historical snapshots of intermediate ROOT files (3.9 GB
+  `archive_pre_minos_fix/`, 375 MB `archive_2026-03-production-cleanup/`,
+  83 MB `component_dump_1A/`) live outside this repo at
+  `/pscratch/sd/j/josephrb/MINERvA101/Documents/` for provenance only;
+  they are not relevant to the published analysis.
+- `2d-unfolding/baseline_flux/`, `component_dump_*/`, `validate_*/`,
+  `evloop_work_*/` — per-playlist scratch directories used during
+  diagnostic runs (gitignored).
 
 ### Papers / references
 

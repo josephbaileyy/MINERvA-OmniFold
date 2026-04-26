@@ -615,9 +615,9 @@ def main():
     # handling is unreliable for multi-column RDataFrames, which produced a
     # 6.3x inflation of hUnfold2D on the first 2D run. The direct call with
     # explicit numpy arrays gives the correct step2 normalization. See
-    # Documents/2D_OMNIFOLD_STUDY_STATUS.md for the debug narrative.
+    # 2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md for the debug narrative.
     import sys
-    _OF_PY = "/pscratch/sd/j/josephrb/MINERvA101/OmniFold/unbinned_unfolding/python"
+    _OF_PY = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python"
     if _OF_PY not in sys.path:
         sys.path.insert(0, _OF_PY)
     from omnifold import OmniFold_helper_functions as ohf

@@ -27,7 +27,7 @@ from array import array
 
 PLAYLISTS = ["1A", "1B", "1C", "1D", "1E", "1F", "1G",
              "1L", "1M", "1N", "1O", "1P"]
-BASE = "/pscratch/sd/j/josephrb/MINERvA101/Documents/baseline_flux"
+BASE = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux"
 OUT = f"{BASE}/runEventLoopMC_MEHFC.root"
 HIST = "pTmu_reweightedflux_integrated"
 

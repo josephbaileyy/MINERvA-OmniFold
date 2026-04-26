@@ -20,9 +20,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA101/Documents/minerva_paper_anc"
-DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA101/Documents/2d_crossSection_omnifold_MEHFC_5iter.root"
-DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA101/Documents/compare_MEHFC_paper"
+ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
+DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root"
+DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/compare_MEHFC_paper"
 
 # Paper's global index: GlobalID = (Ptbin - 1) * 16 + (P||bin - 1)
 # Ptbin runs 1..14, P||bin runs 1..16  →  N = 14*16 = 224 bins.

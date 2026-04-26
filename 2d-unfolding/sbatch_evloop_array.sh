@@ -36,20 +36,17 @@ PLAYLISTS=(1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 # SLURM_ARRAY_TASK_ID is 1-indexed; bash arrays are 0-indexed
 PL="${PLAYLISTS[$((SLURM_ARRAY_TASK_ID - 1))]}"
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
 
-EVLOOP_BIN="/pscratch/sd/j/josephrb/MINERvA101/opt/bin/runEventLoopOmniFold"
+EVLOOP_BIN="${REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
 
-WORKDIR="/pscratch/sd/j/josephrb/MINERvA101/Documents/evloop_work_${PL}"
+WORKDIR="${REPO}/2d-unfolding/evloop_work_${PL}"
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}"
 
-DATA_MANIFEST="/pscratch/sd/j/josephrb/MINERvA101/Doc_tmp/${PL}_Data.txt"
-MC_MANIFEST="/pscratch/sd/j/josephrb/MINERvA101/Doc_tmp/${PL}_MC.txt"
+DATA_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
+MC_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
 
 echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID} array_task=${SLURM_ARRAY_TASK_ID} playlist=${PL}"
 echo "[sbatch] workdir: ${WORKDIR}"
@@ -59,7 +56,7 @@ echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 
 "${EVLOOP_BIN}" "${DATA_MANIFEST}" "${MC_MANIFEST}"
 
-FINAL="/pscratch/sd/j/josephrb/MINERvA101/Documents/runEventLoopOmniFold_${PL}.root"
+FINAL="${REPO}/2d-unfolding/runEventLoopOmniFold_${PL}.root"
 mv -v runEventLoopOmniFold.root "${FINAL}"
 
 echo "[sbatch] done:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"

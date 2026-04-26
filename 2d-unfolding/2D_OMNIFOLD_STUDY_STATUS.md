@@ -260,7 +260,7 @@ manufacture one.
 - **Step 3 (re-run with extra reco cut) — N/A.** No reco cut to add.
 - **Step 4 (apply published external MINOS geometric acceptance map)
   — RESOLVED: no such map exists.** Pulled the paper PDF
-  (`Documents/reference/Ruterbories_2106.16210v3.pdf`) and read
+  (`2d-unfolding/reference/Ruterbories_2106.16210v3.pdf`) and read
   Sec. III–IV verbatim:
 
   > "Muons that originate in MINERvA are analyzed by the MINOS near
@@ -322,7 +322,7 @@ manufacture one.
   truth shape 1.41× ours at p_||=1.5–2 GeV) without changing cuts or
   introducing an external map.
 - **Option 1 — MnvTune-v1 weight chain audit — DONE, signal found.**
-  `Documents/diagnose_weights_vs_pz.py` reads the combined per-event
+  `2d-unfolding/diagnose_weights_vs_pz.py` reads the combined per-event
   weights `w_truth` (mc_truth_denom) and `w_reco` (mc_signal_reco) from
   `runEventLoopOmniFold_1A_minos_fix.root` and computes
   &lt;weight&gt; per truth-p_|| strip. Result (relative to the
@@ -360,8 +360,8 @@ manufacture one.
      truth tree (or call `PlotUtils::flux_reweighter` from PyROOT to
      reproduce FluxAndCV alone). Either is several hours of work.
 
-  Output: `Documents/weights_vs_pz_1A_summary.json`,
-  `Documents/weights_vs_pz_1A_strips.png`.
+  Output: `2d-unfolding/weights_vs_pz_1A_summary.json`,
+  `2d-unfolding/weights_vs_pz_1A_strips.png`.
 
   **Conclusion of Option 1.** The MnvTune-v1 weight chain produces a
   truth-side p_|| shape that quantitatively explains most of the Step 2
@@ -379,8 +379,10 @@ manufacture one.
   `w_RPA`) into `mc_truth_denom`, gated behind `MNV101_TRUTH_ONLY` to
   skip the slow reco loops. Re-ran 1A with `MNV101_TRUTH_ONLY=1
   MNV101_SKIP_SYST=1` (~3 min). Output:
-  `Documents/component_dump_1A/runEventLoopOmniFold.root`. Analysis:
-  `Documents/decompose_truth_weights.py`. Per-component vs
+  `/pscratch/sd/j/josephrb/MINERvA101/Documents/component_dump_1A/runEventLoopOmniFold.root`
+  (left in OLD scratch; not migrated — see archive note in
+  `2D_OMNIFOLD_REFERENCE.md`). Analysis:
+  `2d-unfolding/decompose_truth_weights.py`. Per-component vs
   high-p_|| plateau:
 
   | p_|| (GeV/c) | combined | FluxAndCV | GENIE | 2p2h | MINOSEff | RPA |
@@ -476,7 +478,8 @@ to the pre-decomposition production. Rebuilt + installed.
 
 **Step 2–4 (full 12-playlist patched event loop → hadd → unfold →
 finalize) — SUBMITTED as a chained pipeline.** Pre-patch 1B–1P + old
-MEHFC moved to `Documents/archive_pre_minos_fix/`. Reusing existing
+MEHFC moved to `/pscratch/sd/j/josephrb/MINERvA101/Documents/archive_pre_minos_fix/`
+(OLD scratch tree, not migrated). Reusing existing
 `runEventLoopOmniFold_1A_minos_fix.root` for 1A. SLURM dependency
 chain (each `afterok` of the previous):
 
@@ -525,7 +528,7 @@ headline numbers.
 
 ## Active code
 
-### C++ event loop (`MINERvA-101-Cross-Section/`)
+### C++ event loop (`MINERvA101/MINERvA-101-Cross-Section/`)
 - `runEventLoopOmniFold.cpp` — per-playlist event loop; writes 4 TTrees
   (`mc_truth_denom`, `mc_signal_reco`, `mc_background`, `data`) with both
   `p_T` and `p_||` branches. Does **not** write `pTmu_fiducial_nucleons`
@@ -533,7 +536,7 @@ headline numbers.
 - `cuts/MaxPtMu.h`, `util/Binning.h` — paper phase-space cut and binning.
 - `event/CVUniverse.h` — defines kinematic getters and (buggy) MINOS-match stub.
 
-### Python (`Documents/`)
+### Python (`2d-unfolding/`)
 - `unfold_2d_omnifold_unbinned.py` — 2D unbinned OmniFold. Masks data to
   phase space, subtracts background, fills `hUnfold2D` with
   `step2_weights * truth_w_in`, **does not** divide by `hEff2D`.
@@ -547,7 +550,7 @@ headline numbers.
 - `combine_flux_MEHFC.py` — builds POT-weighted MEHFC flux from
   per-playlist baseline-flux ROOTs.
 
-### SLURM (`Documents/`)
+### SLURM (`2d-unfolding/`)
 - `sbatch_evloop_array.sh` — per-playlist event-loop array.
 - `sbatch_unfold_2d.sh` / `sbatch_unfold_2d_fullstats.sh` — 2D unfold (1A / MEHFC).
 - `sbatch_iter_scan_2d.sh` — iter-scan array.
@@ -567,5 +570,5 @@ headline numbers.
 - `minerva_paper_anc/` — arXiv ancillary release (TH2D, 4 cov matrices,
   bin_mapping.txt, data CSV, model predictions).
 
-### Manifests (`Doc_tmp/`)
+### Manifests (`2d-unfolding/playlist_manifests/`)
 - `1{A..P}_{MC,Data}.txt` — per-playlist local paths.

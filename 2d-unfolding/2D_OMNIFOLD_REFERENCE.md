@@ -7,12 +7,41 @@ before launching jobs or trusting outputs.
 
 ## Environment setup
 
+From the repo root (`MINERvA-OmniFold/`):
+
 ```bash
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
+source setup_salloc_env.sh
 ```
+
+That script is self-locating: it loads the `root_6_28` conda env, sources
+`unbinned_unfolding/build/setup.sh` (built in-tree), exports
+`MINERVA_PREFIX=$REPO/MINERvA101/opt`, and sources
+`MINERvA101/opt/bin/setup.sh`. No HOME paths involved.
+
+## Archiving conventions
+
+Stale logs and one-off artifacts that we keep for reference but don't want
+in the active tree go to a dated archive directory at the OLD scratch root,
+**outside the new repo**:
+
+```
+/pscratch/sd/j/josephrb/MINERvA101/archive_pre_migration_<YYYY-MM-DD>/
+```
+
+Rules:
+
+- Active outputs (current `.root`, `.png`, recent job logs) live in
+  `2d-unfolding/`.
+- Once superseded, move job logs (`*_<jobid>.{out,err}`), throwaway dirs
+  (`Doc_tmp/`, scratch scripts), and orphaned PDFs into a new dated
+  `archive_pre_migration_*` (or `archive_<purpose>_*`) folder under the OLD
+  scratch root.
+- In-tree archives are gitignored via `2d-unfolding/archive_*/` (see
+  `.gitignore`). Anything still in the OLD scratch tree is outside git
+  entirely.
+- Heavy intermediates (`runEventLoopOmniFold_*.root`, `evloop_work_*/`)
+  are gitignored by the global `*.root` rule and `evloop_work_*/` rule;
+  they may be copied into `2d-unfolding/` as needed without being tracked.
 
 Canonical runtime binary: `opt/bin/runEventLoopOmniFold` (the path exported
 by `opt/bin/setup.sh`). Do **not** call build-tree copies — duplicate
@@ -54,7 +83,7 @@ in the past.
 
 ## 2D Python unfolding contract
 
-`Documents/unfold_2d_omnifold_unbinned.py` is the authoritative 2D unbinned
+`2d-unfolding/unfold_2d_omnifold_unbinned.py` is the authoritative 2D unbinned
 OmniFold extraction path. Required invariants:
 
 1. **Mask measured data to phase space** (0 ≤ p_T ≤ 4.5, 1.5 ≤ p_|| ≤ 60)
@@ -90,7 +119,7 @@ OmniFold extraction path. Required invariants:
 
 ## Paper / ancillary comparison
 
-- No HepData entry. Authoritative target: `Documents/minerva_paper_anc/`.
+- No HepData entry. Authoritative target: `2d-unfolding/minerva_paper_anc/`.
 - Use `bin_mapping.txt`, not the axis labels on the ancillary TH2D.
 - `pzb=1` = first p_|| bin, 1.5 < p_|| < 2.0 GeV/c (the fragile low-p_||
   MINOS range-out regime).

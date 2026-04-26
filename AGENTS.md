@@ -1,4 +1,4 @@
-# MINERvA101 Agent Context
+# MINERvA-OmniFold Agent Context
 
 ## Project Scope
 MINERvA-101 cross-section and OmniFold studies for muon kinematics:
@@ -16,10 +16,10 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 12-playlist MEHFC production complete.
 
 **Authoritative docs (read these before touching the 2D pipeline):**
-- `Documents/2D_OMNIFOLD_STUDY_STATUS.md` — dashboard, current numbers, next actions.
-- `Documents/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas.
-- `Documents/2D_OMNIFOLD_RUN_LOG.md` — append-only chronology.
-- `Documents/PLOT_GUIDE.md` — PNG reading guide.
+- `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — dashboard, current numbers, next actions.
+- `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas.
+- `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — append-only chronology.
+- `2d-unfolding/PLOT_GUIDE.md` — PNG reading guide.
 - Plan: `~/.claude/plans/purrfect-whistling-pelican.md` (historical; phases 1–4 done).
 
 **Headline numbers (corrected MEHFC, 5-iter production):**
@@ -32,9 +32,9 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
   range-out efficiency, NOT match selection.
 
 **Most recent change (2026-04-25):** patched `IsMinosMatchMuon()` stub in
-`event/CVUniverse.h:107`. Fixed a real bug (background dropped 48,750 →
-1,256, matching paper's ~0.2 %; pass_reco −9.6 %), but the low-p_||
-gradient SHAPE is unchanged. See
+`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:107`. Fixed a real
+bug (background dropped 48,750 → 1,256, matching paper's ~0.2 %; pass_reco
+−9.6 %), but the low-p_|| gradient SHAPE is unchanged. See
 `memory/project_minos_match_stub_fix.md`.
 
 ## Open work on the 2D campaign
@@ -47,14 +47,17 @@ gradient SHAPE is unchanged. See
 ## 2D workflow
 
 ### Environment
+From the repo root (`MINERvA-OmniFold/`):
 ```bash
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
+source setup_salloc_env.sh
 ```
-Canonical runtime binary: `opt/bin/runEventLoopOmniFold` (do **not**
-call build-tree copies — they have silently shadowed the installed
+That self-locating script loads the `root_6_28` conda env, sources
+`unbinned_unfolding/build/setup.sh` (built in-tree), exports
+`MINERVA_PREFIX=$REPO/MINERvA101/opt`, and sources
+`MINERvA101/opt/bin/setup.sh`.
+
+Canonical runtime binary: `MINERvA101/opt/bin/runEventLoopOmniFold` (do
+**not** call build-tree copies — they have silently shadowed the installed
 patched binary in the past).
 
 ### Per-playlist event loop, then hadd
@@ -64,10 +67,10 @@ manifest — it silently applies the first playlist's flux to all events
 and corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
 
 ### 2D pipeline (playlist 1A or full MEHFC)
-1. Per-playlist event loops via `Documents/sbatch_evloop_array.sh`
+1. Per-playlist event loops via `2d-unfolding/sbatch_evloop_array.sh`
    (writes `runEventLoopOmniFold_1{A..P}.root`).
-2. `hadd Documents/runEventLoopOmniFold_MEHFC.root <per-playlist>`.
-3. `Documents/sbatch_unfold_2d.sh` (1A) or
+2. `hadd 2d-unfolding/runEventLoopOmniFold_MEHFC.root <per-playlist>`.
+3. `2d-unfolding/sbatch_unfold_2d.sh` (1A) or
    `sbatch_unfold_2d_fullstats.sh` (MEHFC) → runs
    `unfold_2d_omnifold_unbinned.py --use-weights`.
 4. Plotting: `plot_2d_cross_section.py`,
@@ -79,8 +82,9 @@ and corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
 `runEventLoopOmniFold.cpp` does NOT write `pTmu_reweightedflux_integrated`.
 Use `sbatch_runEventLoop_baseline_flux_array.sh` to regenerate per-playlist
 baseline flux, then `combine_flux_MEHFC.py` to build the POT-weighted MEHFC
-flux at `baseline_flux/runEventLoopMC_MEHFC.root`. The 2D Python script
-embeds the flux histogram into its output for self-contained auditing.
+flux at `2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root`. The 2D
+Python script embeds the flux histogram into its output for self-contained
+auditing.
 
 ## 2D Python contract (must hold)
 1. **Mask measured data to phase space** (0 ≤ p_T ≤ 4.5,
@@ -103,7 +107,7 @@ embeds the flux histogram into its output for self-contained auditing.
    validation footing.
 
 ## Paper / ancillary comparison
-- No HepData entry. Authoritative target: `Documents/minerva_paper_anc/`.
+- No HepData entry. Authoritative target: `2d-unfolding/minerva_paper_anc/`.
 - Use `bin_mapping.txt`, **not** the axis labels on the ancillary TH2D
   (those are cosmetic rounding 0.075/0.325/0.475).
 - `pzb=1` is first p_|| bin (1.5 < p_|| < 2.0 GeV/c) — fragile MINOS
@@ -134,7 +138,7 @@ production uses 5 iterations.
 
 ## Patched code
 
-### `event/CVUniverse.h:107` (2026-04-25)
+### `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:107` (2026-04-25)
 ```cpp
 virtual bool IsMinosMatchMuon() const {
   const std::string ok_branch = GetAnaToolName() + "_minos_trk_is_ok";
@@ -156,7 +160,7 @@ before they can be compared to paper numbers.
 ### Active 2D files
 - C++: `runEventLoopOmniFold.cpp`, `cuts/MaxPtMu.h`,
   `util/Binning.h` (paper's 14 p_T × 16 p_|| edges).
-- Python: `Documents/unfold_2d_omnifold_unbinned.py`,
+- Python: `2d-unfolding/unfold_2d_omnifold_unbinned.py`,
   `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
   `plot_closure_2d.py`, `plot_iter_convergence.py`,
   `compare_to_paper_{fullcov,interior}.py`,
@@ -171,7 +175,7 @@ before they can be compared to paper numbers.
   `2d_crossSection_omnifold_MEHFC_5iter.root` (production),
   `2d_crossSection_omnifold_1A_corrected_*iter.root`,
   `2d_crossSection_omnifold_1A_minos_fix_5iter.root`.
-- Manifests: `Doc_tmp/1{A..P}_{MC,Data}.txt`.
+- Manifests: `2d-unfolding/playlist_manifests/1{A..P}_{MC,Data}.txt`.
 
 ### TTree schema (after 2D extension)
 All TTrees carry both p_T and p_|| branches:
@@ -194,31 +198,33 @@ Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c.
 
 ## 1D unbinned baseline (frozen, March 2026)
 Frozen unbinned baseline manifest:
-`Documents/UNBINNED_BASELINE_2026-03-26.md`. Production script
-`Documents/unfold_ptmu_omnifold_unbinned.py`; comparison plotter
-`Documents/plot_gaussian_style_ptmu_unbinned.py`. Treat as a
-validated 1D cross-check.
+`2d-unfolding/unbinned_1d_study/UNBINNED_BASELINE_2026-03-26.md`. Production
+script `2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py`;
+comparison plotter
+`2d-unfolding/unbinned_1d_study/plot_gaussian_style_ptmu_unbinned.py`.
+Treat as a validated 1D cross-check.
 
 ### 1D quick start
 ```bash
-runEventLoopOmniFold Doc_tmp/1A_Data.txt Doc_tmp/1A_MC.txt
-runEventLoop Doc_tmp/1A_Data.txt Doc_tmp/1A_MC.txt
-python3 Documents/unfold_ptmu_omnifold_unbinned.py \
-  --omnifile Documents/runEventLoopOmniFold.root \
-  --datafile Documents/runEventLoopData.root \
+MANIFESTS=2d-unfolding/playlist_manifests
+runEventLoopOmniFold ${MANIFESTS}/1A_Data.txt ${MANIFESTS}/1A_MC.txt
+runEventLoop ${MANIFESTS}/1A_Data.txt ${MANIFESTS}/1A_MC.txt
+python3 2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py \
+  --omnifile 2d-unfolding/runEventLoopOmniFold.root \
+  --datafile 2d-unfolding/runEventLoopData.root \
   --datahist pTmu_data --iters 5 --use-weights --verbose \
-  --out Documents/pTmu_crossSection_omnifold.root
-ExtractCrossSection 5 Documents/runEventLoopData.root Documents/runEventLoopMC.root
-python3 Documents/plot_gaussian_style_ptmu_unbinned.py \
-  --omnifold Documents/pTmu_crossSection_omnifold.root \
-  --ibu Documents/pTmu_crossSection_clean.root \
-  --outpdf Documents/ptmu_gaussian_style_unbinned.pdf \
-  --outpng Documents/ptmu_gaussian_style_unbinned.png
+  --out 2d-unfolding/pTmu_crossSection_omnifold.root
+ExtractCrossSection 5 2d-unfolding/runEventLoopData.root 2d-unfolding/runEventLoopMC.root
+python3 2d-unfolding/unbinned_1d_study/plot_gaussian_style_ptmu_unbinned.py \
+  --omnifold 2d-unfolding/pTmu_crossSection_omnifold.root \
+  --ibu 2d-unfolding/pTmu_crossSection_clean.root \
+  --outpdf 2d-unfolding/ptmu_gaussian_style_unbinned.pdf \
+  --outpng 2d-unfolding/ptmu_gaussian_style_unbinned.png
 ```
 
 ## Binned OmniFold (complete, March 2026)
-Status file: `Documents/BINNED_PTmu_STUDY_STATUS.md`. Workspace
-`Documents/binned_study/`. Three upstream bugs found in
+Status file: `2d-unfolding/binned_study/BINNED_PTmu_STUDY_STATUS.md`.
+Workspace `2d-unfolding/binned_study/`. Three upstream bugs found in
 `rymilton/unbinned_unfolding` 1D binned path
 (`Hresponse()` axis mismatch; truth-axis uniformization; garbled
 `_res` content), all fixed locally; closure unfolded/truth = 1.0001.
@@ -228,17 +234,23 @@ approximation, not algorithmic. Treat the binned path as a
 cross-check, not a final result.
 
 ## Important directories
-- `MINERvA-101-Cross-Section/` — C++ event loops + baseline extraction.
-- `Documents/` — production scripts, ROOT outputs, plots, control docs.
-- `Documents/binned_study/` — binned debug workspace (frozen, complete).
-- `Documents/archive_*/` — archived legacy / known-bad-but-diagnostic
-  outputs preserved before reruns.
-- `Documents/minerva_paper_anc/` — arXiv ancillary release.
-- `OmniFold/unbinned_unfolding/examples/` — reference OmniFold usage.
+- `MINERvA101/MINERvA-101-Cross-Section/` — C++ event loops + baseline extraction.
+- `2d-unfolding/` — production scripts, ROOT outputs, plots, control docs.
+- `2d-unfolding/binned_study/` — binned debug workspace (frozen, complete).
+- `2d-unfolding/minerva_paper_anc/` — arXiv ancillary release.
+- `2d-unfolding/playlist_manifests/` — per-playlist Data/MC file lists for the event loop.
+- `2d-unfolding/baseline_flux/` — per-playlist baseline-flux ROOTs (gitignored).
+- `2d-unfolding/reference/` — reference papers (Ruterbories PDF).
+- `unbinned_unfolding/` — RooUnfold/OmniFold source + in-tree `build/`.
+- `unbinned_unfolding/examples/` — reference OmniFold usage.
+- Legacy archive (outside repo, leave-in-place):
+  `/pscratch/sd/j/josephrb/MINERvA101/Documents/archive_*` and
+  `/pscratch/sd/j/josephrb/MINERvA101/archive_pre_migration_2026-04-26/`.
 
 ## Output hygiene
 - Preserve known-bad but diagnostically useful files under
-  `archive_*/debug/` before a rerun overwrites a canonical path.
+  `archive_*/debug/` (in the OLD scratch tree) before a rerun overwrites
+  a canonical path.
 - Never leave invalidated outputs at canonical production paths once a
   corrected rerun is complete.
 
@@ -256,7 +268,7 @@ cross-check, not a final result.
 - PyROOT unavailable (`ModuleNotFoundError: ROOT`) — env not sourced.
 
 ## Notes for future agents
-- The 2D campaign is **active**. Read the four `Documents/2D_OMNIFOLD_*`
+- The 2D campaign is **active**. Read the four `2d-unfolding/2D_OMNIFOLD_*`
   docs before changing the pipeline.
 - Memory pointers under `~/.claude/projects/.../memory/MEMORY.md` capture
   rolling context (per-playlist event loop, hadd-fiducial-nucleons,
@@ -264,7 +276,6 @@ cross-check, not a final result.
   Verify referenced files still exist before acting on a memory.
 - For physics results, do not use binned OmniFold output without upstream
   package fixes; use the unbinned path.
-- Do binned work inside `Documents/binned_study/`, not at the top level.
-- Legacy: `Documents/unfold_ptmu_omnifold.py`,
-  `Documents/plot_gaussian_style_ptmu.py`, and
-  `Documents/archive_2026-03-production-cleanup/` are diagnostic-only.
+- Do binned work inside `2d-unfolding/binned_study/`, not at the top level.
+- Legacy diagnostic-only files live in the OLD scratch archive (see
+  "Important directories" above), not in this repo.

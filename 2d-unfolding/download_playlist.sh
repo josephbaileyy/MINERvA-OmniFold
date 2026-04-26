@@ -8,7 +8,8 @@
 #   1. Lists MC and Data directories on fndca1.fnal.gov via xrdfs ls.
 #   2. xrdcp's each file to /pscratch/sd/j/josephrb/minerva/minerva_large_files/,
 #      preserving the {MC/StandardMC/PlaylistX, Data/PlaylistX} directory tree.
-#   3. Writes local-path manifests to /pscratch/sd/j/josephrb/MINERvA101/Doc_tmp/
+#   3. Writes local-path manifests to
+#      /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/
 #      named ${PLAYLIST}_MC.txt and ${PLAYLIST}_Data.txt for the event loop.
 #
 # Resumable: if the local file already exists and has non-zero size, skip it.
@@ -23,7 +24,7 @@ FORCE="${2:-}"
 REMOTE_HOST="root://fndca1.fnal.gov:1095"
 REMOTE_BASE="/pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC"
 LOCAL_BASE="/pscratch/sd/j/josephrb/minerva/minerva_large_files"
-MANIFEST_DIR="/pscratch/sd/j/josephrb/MINERvA101/Doc_tmp"
+MANIFEST_DIR="/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests"
 
 MC_REMOTE="${REMOTE_BASE}/MC/StandardMC/Playlist${PLAYLIST}"
 DATA_REMOTE="${REMOTE_BASE}/Data/Playlist${PLAYLIST}"

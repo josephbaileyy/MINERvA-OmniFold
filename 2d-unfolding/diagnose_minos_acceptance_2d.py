@@ -32,13 +32,13 @@ try:
 except ImportError as exc:
     raise RuntimeError(
         "Could not import PT_EDGES/PZ_EDGES from "
-        "Documents/unfold_2d_omnifold_unbinned.py. Run this script from the "
-        "repository root or keep the unfolding script importable."
+        "2d-unfolding/unfold_2d_omnifold_unbinned.py. Run this script from "
+        "the repository root or keep the unfolding script importable."
     ) from exc
 
 
-DEFAULT_INPUT = "Documents/runEventLoopOmniFold_1A_minos_fix.root"
-DEFAULT_PREFIX = "Documents/minos_acceptance_1A"
+DEFAULT_INPUT = "2d-unfolding/runEventLoopOmniFold_1A_minos_fix.root"
+DEFAULT_PREFIX = "2d-unfolding/minos_acceptance_1A"
 PT_LABEL = r"$p_T$ (GeV/c)"
 PZ_LABEL = r"$p_{\parallel}$ (GeV/c)"
 

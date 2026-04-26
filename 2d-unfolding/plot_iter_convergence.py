@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 ITERS = [1, 3, 5, 8, 10]
-PATH = "/pscratch/sd/j/josephrb/MINERvA101/Documents/2d_crossSection_omnifold_1A_corrected_{i}iter.root"
+PATH = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_1A_corrected_{i}iter.root"
 
 
 def load(iter_count):
@@ -65,7 +65,7 @@ axs[2].grid(alpha=0.3, which="both")
 fig.suptitle("2D OmniFold iteration-scan convergence (playlist 1A, corrected pipeline)",
              fontsize=12)
 fig.tight_layout()
-out = "/pscratch/sd/j/josephrb/MINERvA101/Documents/iter_convergence_1A_corrected.png"
+out = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/iter_convergence_1A_corrected.png"
 fig.savefig(out, dpi=130)
 print(f"wrote {out}")
 

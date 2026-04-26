@@ -1,6 +1,5 @@
 # ---------- Generated artifacts (anywhere in the tree) ----------
 *.root
-*.png
 *.pdf
 *.out
 *.err

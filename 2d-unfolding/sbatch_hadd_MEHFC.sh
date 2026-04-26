@@ -21,12 +21,9 @@
 
 set -eo pipefail
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-module load python
-conda activate root_6_28
-source opt/bin/setup.sh
-
-cd /pscratch/sd/j/josephrb/MINERvA101/Documents
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
+cd "${REPO}/2d-unfolding"
 
 INPUTS=(
     runEventLoopOmniFold_1A_minos_fix.root

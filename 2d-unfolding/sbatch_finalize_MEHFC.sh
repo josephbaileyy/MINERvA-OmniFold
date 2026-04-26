@@ -19,13 +19,9 @@ set -eo pipefail
 
 export PYTHONUNBUFFERED=1
 
-cd /pscratch/sd/j/josephrb/MINERvA101
-module load python
-conda activate root_6_28
-source OmniFold/unbinned_unfolding/build/setup.sh
-source opt/bin/setup.sh
-
-cd /pscratch/sd/j/josephrb/MINERvA101/Documents
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/setup_salloc_env.sh"
+cd "${REPO}/2d-unfolding"
 
 OURS=2d_crossSection_omnifold_MEHFC_5iter.root
 
