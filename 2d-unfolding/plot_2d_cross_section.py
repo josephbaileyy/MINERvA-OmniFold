@@ -307,7 +307,7 @@ def main():
         hXSec_pt, hXSecTruth_pt,
         xlabel="p$_T$ (GeV/c)",
         ylabel="d$\\sigma$/dp$_T$ (cm$^2$/GeV/nucleon)",
-        outname=f"{args.prefix}_projection_pt.png",
+        outname=f"{args.prefix}_proj_pt.png",
         title="CC inclusive: d$\\sigma$/dp$_T$ (OmniFold)"
     )
 
@@ -315,7 +315,7 @@ def main():
         hXSec_pz, hXSecTruth_pz,
         xlabel="p$_{||}$ (GeV/c)",
         ylabel="d$\\sigma$/dp$_{||}$ (cm$^2$/GeV/nucleon)",
-        outname=f"{args.prefix}_projection_pz.png",
+        outname=f"{args.prefix}_proj_pz.png",
         title="CC inclusive: d$\\sigma$/dp$_{||}$ (OmniFold)"
     )
 
@@ -339,9 +339,9 @@ def main():
     ax.set_xlabel("p$_{||}$ (GeV/c)")
     ax.set_ylabel("p$_T$ (GeV/c)")
     ax.set_title("Selection efficiency (MC)")
-    fig.savefig(f"{args.prefix}_efficiency.png", dpi=200, bbox_inches="tight")
+    fig.savefig(f"{args.prefix}_eff_heatmap.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
-    print(f"[OK] Saved {args.prefix}_efficiency.png")
+    print(f"[OK] Saved {args.prefix}_eff_heatmap.png")
 
 
 if __name__ == "__main__":

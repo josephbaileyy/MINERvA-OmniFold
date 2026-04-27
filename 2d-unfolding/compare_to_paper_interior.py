@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 
 ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
 DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root"
-DEFAULT_OUT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/compare_MEHFC_paper_interior.png"
+DEFAULT_OUT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEHFC_5iter_pull_interior.png"
 
 N_PT, N_PZ = 14, 16
 N = N_PT * N_PZ

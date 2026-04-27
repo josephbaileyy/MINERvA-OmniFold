@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 
 ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
 DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root"
-DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/compare_MEHFC_paper"
+DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEHFC_5iter"
 
 # Paper's global index: GlobalID = (Ptbin - 1) * 16 + (P||bin - 1)
 # Ptbin runs 1..14, P||bin runs 1..16  →  N = 14*16 = 224 bins.
@@ -99,7 +99,7 @@ def main():
     ap.add_argument("--ours", default=DEFAULT_OURS,
                     help="Path to our 2D cross-section ROOT file (contains hXSec2D)")
     ap.add_argument("--out-prefix", default=DEFAULT_OUT_PREFIX,
-                    help="Prefix for output PNGs (suffix _pull_summary.png is appended)")
+                    help="Prefix for output PNGs (suffix _pull_full.png is appended)")
     args = ap.parse_args()
     global OURS, OUT_PREFIX
     OURS = args.ours
@@ -170,7 +170,7 @@ def main():
 
     fig.suptitle("Full-stats 2D OmniFold vs arXiv:2106.16210 Fig. 13", fontsize=11)
     fig.tight_layout()
-    out = f"{OUT_PREFIX}_pull_summary.png"
+    out = f"{OUT_PREFIX}_pull_full.png"
     fig.savefig(out, dpi=130)
     print(f"\nwrote {out}")
 

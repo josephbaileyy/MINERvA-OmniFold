@@ -35,7 +35,7 @@ fi
 
 python compare_to_paper_fullcov.py --ours "${OURS}"
 python compare_to_paper_interior.py --ours "${OURS}"
-python plot_2d_paper_comparison.py --infile "${OURS}" --prefix 2d_paper_compare_MEHFC_5iter
-python plot_2d_cross_section.py --infile "${OURS}" --prefix 2d_xsec_MEHFC_5iter
+python plot_2d_paper_comparison.py --infile "${OURS}" --prefix MEHFC_5iter_xsec_paper
+python plot_2d_cross_section.py --infile "${OURS}" --prefix MEHFC_5iter_xsec
 
 echo "[sbatch] done:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"

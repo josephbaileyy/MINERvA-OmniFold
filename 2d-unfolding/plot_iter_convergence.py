@@ -65,7 +65,7 @@ axs[2].grid(alpha=0.3, which="both")
 fig.suptitle("2D OmniFold iteration-scan convergence (playlist 1A, corrected pipeline)",
              fontsize=12)
 fig.tight_layout()
-out = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/iter_convergence_1A_corrected.png"
+out = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/1A_iterscan_convergence.png"
 fig.savefig(out, dpi=130)
 print(f"wrote {out}")
 

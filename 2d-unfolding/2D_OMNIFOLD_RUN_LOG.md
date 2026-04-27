@@ -234,3 +234,74 @@ momentum-dependent correction via `MinosMuonEfficiencyCorrection`, but
 this is the muon-track-quality reweight, not the geometric acceptance
 turn-on. Next step: audit how MINOS range-out is handled in our truth
 denominator vs the paper.
+
+## Phase 12 — Full MEHFC patched-MINOS production (2026-04-26)
+
+The chained full-production rerun completed after the `IsMinosMatchMuon()`
+patch: event-loop array 1B–1P, hadd with the existing 1A minos-fix output,
+5-iter full-stats OmniFold, and paper comparison.
+
+Current migrated-tree canonical outputs:
+
+- `2d-unfolding/runEventLoopOmniFold_MEHFC.root`
+- `2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root`
+- `2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root`
+
+Latest unfolded-result checks:
+
+- data POT / MC POT / pot scale: 1.057e21 / 4.978e21 / 0.212405
+- selected data reco entries: 4,091,707
+- `hMeasSub2D`: 4.07664e6
+- `hTruth2D` / `hUnfold2D`: 4.33620e6 / 4.87974e6
+- flux integral: 8.74068e-7 cm^-2/POT
+- total xsec from p_T and p_|| projections: 2.285e-38 cm²/nucleon
+- strict-interior comparison: χ²/ndf = 17.443, median ours/paper = 0.8968
+- all reported bins: χ²/ndf = 20.605
+
+Conclusion: the full patched-MINOS rerun is internally consistent and
+independent of the old working tree for its active inputs, but it did not
+fix the low-p_|| deficit. The remaining disagreement is still attributed
+primarily to the flux-CV / paper-era flux-release mismatch documented in
+the status file.
+
+## Phase 13 — Final presentation plots and diagnostic framing (2026-04-27)
+
+Generated final discussion plots in the migrated `2d-unfolding/` directory:
+
+- `1A_iterscan_convergence.png` — rebuilt from the existing old-tree
+  `2d_crossSection_omnifold_1A_corrected_{1,3,5,8,10}iter.root` files.
+  Corrected pre-MINOS-fix 1A scan; supports the 5-iteration production
+  choice (5 iter within ~0.08% of 10 iter in total xsec, ~2.1%
+  per-bin RMS shape difference).
+- `MEHFC_5iter_fig13.png` — Fig.-13-style full 2D slice overlay: paper
+  data, OmniFold, and local MC truth. OmniFold is often closer to local MC
+  truth than the paper data are, but that is not a proof of better
+  unfolding because the local MC truth is not ground truth.
+- `MEHFC_5iter_eff_fig5.png` — Fig.-5-style `hEff2D` map using a ROOT-like
+  palette and white bins only where the bin is entirely outside
+  θ_μ < 20° (`pT_low / p||_high > tan20`). The paper ancillary release does
+  not provide the Fig. 5 efficiency map, so this remains qualitative.
+- `MEHFC_5iter_truth_vs_paper_strips.png` — paper ancillary Tune-v1 model
+  vs local MC truth shape per p_|| strip. Strip shape ratios paper/local:
+  1.43 in p||=1.5-2.0, 1.29 in 2.0-2.5, falling below one at high p||.
+- `1A_reweighter_decomp_strips.png` — per-reweighter component dump from
+  `/pscratch/sd/j/josephrb/MINERvA101/Documents/component_dump_1A/`.
+  Relative to the high-p|| plateau, `w_FluxAndCV` is 0.672 in the first
+  p|| strip while GENIE, 2p2h, MINOS efficiency, and RPA are flat.
+  Clearest internal evidence that the truth-shape mismatch is carried
+  by `FluxAndCV`.
+
+Current framing for advisor/reporting:
+
+- The C++ selection, POT handling, binning, background subtraction,
+  OmniFold weights, full-covariance comparison, and plotting machinery are
+  in a final audited state.
+- The MINOS-match tutorial stub was a real bug and is fixed, but it did not
+  close the low-p|| gradient.
+- The dominant discrepancy is already present in the truth-side model shape
+  when comparing local MC truth to the paper ancillary Tune-v1 model.
+- Selection efficiency is not ruled out as a subleading residual, especially
+  because the paper does not release Fig. 5 numerically, but the available
+  evidence points first to paper-era flux-CV release/version dependence.
+- Exact quantitative reproduction of arXiv:2106.16210 requires the 2021
+  flux-CV files or an explicit low-p|| flux/model systematic caveat.
