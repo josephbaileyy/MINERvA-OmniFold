@@ -22,20 +22,27 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 - `2d-unfolding/PLOT_GUIDE.md` — PNG reading guide.
 - Plan: `~/.claude/plans/purrfect-whistling-pelican.md` (historical; phases 1–4 done).
 
-**Headline numbers (corrected MEHFC, 5-iter production):**
-- Total xsec (paper bins, projection sum) = 2.442e-38 cm²/nucleon
-  (paper: 2.74e-38; ours runs ~11 % low)
-- Strict-interior χ²/ndf vs paper (185 bins, full cov) = 17.0
-- Median bin ratio (ours/paper, strict interior) = 0.892
-- Residual: smooth low-p_|| gradient (0.65 at p_||=1.5–2 GeV/c → ~1.0
+**Headline numbers (patched-MINOS MEHFC, 5-iter production):**
+- Total xsec (paper bins, projection sum) = 2.285e-38 cm²/nucleon
+  (paper: 2.74e-38; ours runs ~16.6 % low)
+- Strict-interior χ²/ndf vs paper (185 bins, full cov) = 17.443
+- Median bin ratio (ours/paper, strict interior) = 0.8968
+- Residual: smooth low-p_|| gradient (~0.6 at p_||=1.5–2 GeV/c → ~1.0
   above p_||=20 GeV/c). Likely cause: MINOS geometric acceptance /
   range-out efficiency, NOT match selection.
 
-**Most recent change (2026-04-25):** patched `IsMinosMatchMuon()` stub in
+**Most recent physics change (2026-04-25):** patched `IsMinosMatchMuon()` stub in
 `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:107`. Fixed a real
 bug (background dropped 48,750 → 1,256, matching paper's ~0.2 %; pass_reco
 −9.6 %), but the low-p_|| gradient SHAPE is unchanged. See
 `memory/project_minos_match_stub_fix.md`.
+
+**Most recent full run (2026-04-26):** full MEHFC patched-MINOS event loop,
+hadd, 5-iter OmniFold, and paper comparison completed. The run is
+self-contained in the migrated tree at
+`2d-unfolding/runEventLoopOmniFold_MEHFC.root` and
+`2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root`; the residual
+low-p_|| deficit remains.
 
 ## Open work on the 2D campaign
 - Investigate MINOS geometric acceptance / range-out efficiency

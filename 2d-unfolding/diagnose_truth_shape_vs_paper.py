@@ -226,7 +226,7 @@ def main():
     axs[1].grid(True, alpha=0.25)
     axs[1].legend(frameon=False)
     fig.suptitle(
-        "Truth-shape vs paper Tune-v1 (Step 2 denominator diagnostic)")
+        r"Low-$p_{\parallel}$ Shape Check: Paper Tune-v1 Model / Local MC Truth")
     fig.tight_layout()
     fig.savefig(png_path, dpi=160)
     plt.close(fig)

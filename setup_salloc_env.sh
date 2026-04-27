@@ -6,3 +6,6 @@ source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"
 # Pin MINERvA101 sub-setups to the migrated opt tree (default would be old HOME path)
 export MINERVA_PREFIX="${SCRIPT_DIR}/MINERvA101/opt"
 source "${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh"
+
+export CODEX_HOME=$SCRATCH/codex-home
+export TMPDIR=$SCRATCH/tmp
