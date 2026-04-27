@@ -64,3 +64,7 @@ unbinned_unfolding/**
 2d-unfolding/component_dump_*/
 2d-unfolding/evloop_work_*/
 2d-unfolding/validate_*/
+
+# ---------- Local-only ----------
+.codex
+2d-unfolding/reference/
