@@ -27,14 +27,32 @@ N_PT = len(PT_EDGES) - 1
 N_PZ = len(PZ_EDGES) - 1
 N = N_PT * N_PZ
 
-# Display edges for the log10 x-axis transform. PT_EDGES[0] is 0 (the
-# fiducial lower bound of p_T) which can't be log-transformed; replace
-# it with a small positive value just below the next edge so the first
-# bin (0 < p_T < 0.075) gets a finite, visually-reasonable width.
-PT_EDGES_DISPLAY = [0.04] + list(PT_EDGES[1:])
-PZ_EDGES_DISPLAY = list(PZ_EDGES)
-PT_LOG_EDGES = np.log10(PT_EDGES_DISPLAY)
-PZ_LOG_EDGES = np.log10(PZ_EDGES_DISPLAY)
+# Display-axis transform: each bin's display width = sqrt(physical width).
+# This matches the paper Fig. 13 caption — "the x-axis binning reduces the
+# width of the largest p_T and p_|| bins for visual compactness" — small
+# bins keep close to their natural width, large bins get compressed
+# (sqrt(20) / sqrt(0.5) = 6.3x for p_||'s 40-60 vs 1.5-2.0 bin, vs 40x in
+# linear scale or 20x in log10 from a small lower bound). Pure log10 puts
+# the 0.4 tick near the midpoint of the panel; sqrt-of-bin-width puts it
+# at ~22%, matching the paper layout.
+
+
+def cumulative_display_edges(physical_edges):
+    """Cumulative sqrt(bin width) display position for each physical edge.
+
+    The first display edge is 0.0; each subsequent edge advances by the
+    sqrt of the corresponding physical bin width. Returns a numpy array
+    the same length as physical_edges.
+    """
+    edges = np.asarray(physical_edges, dtype=float)
+    widths = edges[1:] - edges[:-1]
+    if np.any(widths <= 0):
+        raise RuntimeError(f"Non-monotonic edges: {physical_edges}")
+    return np.concatenate([[0.0], np.cumsum(np.sqrt(widths))])
+
+
+PT_DISP_EDGES = cumulative_display_edges(PT_EDGES)
+PZ_DISP_EDGES = cumulative_display_edges(PZ_EDGES)
 
 
 def tmatrix_to_numpy(tm):
@@ -131,9 +149,13 @@ def rounded_scale(values, target=3.4):
     return round(raw)
 
 
-def tick_positions(labels):
-    """Return log10(labels) — used as x-axis tick positions in log space."""
-    return np.log10(np.asarray(labels, dtype=float))
+def tick_positions(labels, physical_edges, display_edges):
+    """Map physical tick values to display-axis positions via the
+    bin-width-aware sqrt transform (linear interpolation on the
+    physical_edges -> display_edges piecewise map)."""
+    return np.interp(np.asarray(labels, dtype=float),
+                     np.asarray(physical_edges, dtype=float),
+                     np.asarray(display_edges, dtype=float))
 
 
 def stair_xy(edges, values):
@@ -212,13 +234,13 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
         vals_for_scale = np.r_[paper[ipt, mask], omni[ipt, :], truth[ipt, :]]
         scale = rounded_scale(vals_for_scale)
         title = f"{PT_EDGES[ipt]:.2f} < p_t < {PT_EDGES[ipt + 1]:.2f}"
-        draw_panel(ax, PZ_LOG_EDGES, paper[ipt, :], paper_err[ipt, :],
+        draw_panel(ax, PZ_DISP_EDGES, paper[ipt, :], paper_err[ipt, :],
                    omni[ipt, :], omni_err[ipt, :], truth[ipt, :],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PZ_LOG_EDGES[0], PZ_LOG_EDGES[-1]))
+                         (PZ_DISP_EDGES[0], PZ_DISP_EDGES[-1]))
         tick_labs = [4, 10, 20, 40, 60]
-        ax.set_xticks(tick_positions(tick_labs))
+        ax.set_xticks(tick_positions(tick_labs, PZ_EDGES, PZ_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
         if ipt == 0:
             handles, labels = ax.get_legend_handles_labels()
@@ -240,13 +262,13 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
         vals_for_scale = np.r_[paper[mask, ipz], omni[:, ipz], truth[:, ipz]]
         scale = rounded_scale(vals_for_scale)
         title = f"{PZ_EDGES[ipz]:.2f} < p_|| < {PZ_EDGES[ipz + 1]:.2f}"
-        draw_panel(ax, PT_LOG_EDGES, paper[:, ipz], paper_err[:, ipz],
+        draw_panel(ax, PT_DISP_EDGES, paper[:, ipz], paper_err[:, ipz],
                    omni[:, ipz], omni_err[:, ipz], truth[:, ipz],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PT_LOG_EDGES[0], PT_LOG_EDGES[-1]))
+                         (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]))
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
-        ax.set_xticks(tick_positions(tick_labs))
+        ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
     return axes
 
