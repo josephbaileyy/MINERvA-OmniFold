@@ -237,14 +237,14 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
 
         mask = reported[ipt, :]
         vals_for_scale = np.r_[paper[ipt, mask], omni[ipt, :], truth[ipt, :]]
-        scale = rounded_scale(vals_for_scale, target=1.7)
+        scale = rounded_scale(vals_for_scale, target=3.4)
         title = f"{PT_EDGES[ipt]:.2f} < p_t < {PT_EDGES[ipt + 1]:.2f}"
         draw_panel(ax, PZ_DISP_EDGES, paper[ipt, :], paper_err[ipt, :],
                    omni[ipt, :], omni_err[ipt, :], truth[ipt, :],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
                          (PZ_DISP_EDGES[0], PZ_DISP_EDGES[-1]),
-                         ylim=(0, 2.4), yticks=[0, 1, 2])
+                         ylim=(0, 4.8), yticks=[0, 2, 4])
         tick_labs = [4, 10, 20, 40, 60]
         ax.set_xticks(tick_positions(tick_labs, PZ_EDGES, PZ_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
@@ -266,14 +266,14 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
         axes.append(ax)
         mask = reported[:, ipz]
         vals_for_scale = np.r_[paper[mask, ipz], omni[:, ipz], truth[:, ipz]]
-        scale = rounded_scale(vals_for_scale, target=3.4)
+        scale = rounded_scale(vals_for_scale, target=1.7)
         title = f"{PZ_EDGES[ipz]:.2f} < p_|| < {PZ_EDGES[ipz + 1]:.2f}"
         draw_panel(ax, PT_DISP_EDGES, paper[:, ipz], paper_err[:, ipz],
                    omni[:, ipz], omni_err[:, ipz], truth[:, ipz],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
                          (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]),
-                         ylim=(0, 4.8), yticks=[0, 2, 4])
+                         ylim=(0, 2.4), yticks=[0, 1, 2])
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
         ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
@@ -307,7 +307,11 @@ def main():
     plot_pz_slices(fig, outer[1], paper, paper_err, reported,
                    omni, omni_err, truth)
 
-    fig.text(0.5, 0.505, "Muon Longitudinal Momentum (GeV/c)",
+    # Match the gap between each grid and its x-axis label. Top grid's
+    # bottom edge is at y~0.581 (bottom=0.07, hspace=0.28, two equal
+    # rows); the label sits ~0.035 below to mirror the bottom grid's
+    # label gap.
+    fig.text(0.5, 0.546, "Muon Longitudinal Momentum (GeV/c)",
              ha="center", va="center", fontsize=15)
     fig.text(0.5, 0.035, "Muon Transverse Momentum (GeV/c)",
              ha="center", va="center", fontsize=15)
