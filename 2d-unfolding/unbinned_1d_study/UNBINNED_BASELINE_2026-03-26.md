@@ -1,10 +1,117 @@
 # Unbinned baseline freeze note (2026-03-26)
 
-## Purpose
+## SUPERSEDED — 2026-04-30 → REVALIDATED 2026-05-02
 
-This file freezes the current unbinned `pTmu` workflow so the binned OmniFold study can become the active campaign without losing the ability to return to the unbinned pipeline later.
+**Do not quote results from the frozen 2026-03-26 ROOT files against the
+paper.** The 2D campaign uncovered bugs that were also present in the 1D
+unbinned path, and the frozen outputs additionally predate the
+`IsMinosMatchMuon` patch. The current valid baseline lives in
+`2d-unfolding/unbinned_1d_study/` (post-patch, regenerated 2026-05-02);
+see "Revalidated baseline" below.
 
-The top-level `Documents/` unbinned files should now be treated as the read-only baseline unless a future task explicitly resumes the unbinned campaign.
+Issues that invalidated the frozen 1D outputs:
+
+1. **Pre-MINOS-fix event loop.** Frozen ROOT files were generated before
+   the 2026-04-25 `CVUniverse.h:107` patch; selection used the educational
+   stub (`has_interaction_vertex==1`), so the background fraction is ~10 %
+   instead of the paper's ~0.2 %.
+2. **No measured-side background subtraction inside OmniFold.** Step-1
+   measured input was the raw data array with unit weights; `data − bkg`
+   was only used for a downstream histogram rescale.
+3. **Signal fakes leaked.** `omnifold.py` drops `~pass_truth` events from
+   MCreco before training, but fakes remained in measured. The 2D contract
+   adds fake reco yields into `hBkgReco` so both sides are fake-free — the
+   1D path did not.
+4. **`hUnfold` was filled with raw `step2_weights`** (a truth-side density
+   ratio) instead of `step2_weights * truth_w_in` (event-count units).
+5. **No phase-space mask on the measured array** — only `measured_pass`
+   and a generic `|pT|<1e3` guard.
+
+`unfold_ptmu_omnifold_unbinned.py` was patched on 2026-04-30 to apply all
+five fixes (mask measured to `[pt_lo, pt_hi]`; add fakes into bkg; build
+per-event `measured_weights = max(0, data−bkg)/data`; call
+`ohf.omnifold(...)` directly with those weights; fill `hUnfold` with
+`step2 * truth_w`). The historical `RooUnfoldOmnifold().UnbinnedOmnifold()`
+wrapper call was replaced with the same direct helper used in the 2D path.
+
+## Revalidated baseline (2026-05-02, playlist 1A)
+
+SLURM job 52271486 (`sbatch_unfold_1d_unbinned_1A.sh`) reran the full
+patched-vs-patched pipeline on playlist 1A. OmniFold + binned event loops
++ unfold + IBU all completed; only the comparison-plot step had to be
+rerun by hand because of two unrelated nuisances (now fixed in the
+sbatch + plot defaults):
+
+- `ExtractCrossSection` segfaults inside ROOT's `TFile::Close()` exit
+  handler **after** writing all outputs (the file is recoverable; 4
+  MnvH1D keys present). The sbatch now wraps step 4 with `|| true` and
+  gates on `test -s pTmu_crossSection.root` instead of the binary's
+  exit code.
+- The binary writes `pTmu_crossSection.root`, not the
+  `pTmu_crossSection_clean.root` name carried over from the old
+  freeze-doc convention. Both the sbatch and `plot_gaussian_style_ptmu_unbinned.py`
+  default `--ibu` now use the actual filename.
+
+Current valid 1D unbinned outputs (live in
+`2d-unfolding/unbinned_1d_study/`, **not** in the legacy `Documents/`
+folder):
+
+- `runEventLoopOmniFold.root`, `runEventLoopData.root`, `runEventLoopMC.root`
+  (post-MINOS-fix selections; signal fakes folded into `hBkgReco`)
+- `pTmu_crossSection_omnifold.root` (patched 1D unbinned OmniFold,
+  5 iterations, `--use-weights`)
+- `pTmu_crossSection.root` (D'Agostini IBU on the same patched selection;
+  4 MnvH1D keys recovered after the ROOT exit-handler segfault:
+  `backgroundSubtracted`, `unfolded`, `crossSection`, `simulatedCrossSection`.
+  The plot script reads `crossSection`)
+- `pTmu_*.png` (24 stock MINERvA IBU diagnostic plots from
+  ExtractCrossSection: data, BackgroundSum, backgroundSubtracted,
+  unfolded, efficiency, efficiencyCorrected, crossSection,
+  simulatedCrossSection — each plus `_uncertaintySummary` and
+  `_otherUncertainties` variants)
+- `ptmu_gaussian_style_unbinned.pdf` and `.png` (eff-corrected
+  comparison plot; legend entry "Reco data (bkg sub)" is the
+  background-subtracted reco data, "IBU (MINERvA, eff-corr) stat"
+  is the efficiency-corrected IBU result derived from `crossSection`,
+  "OmniFold (unbinned)" is `hUnfoldTruthSel`)
+
+OmniFold-vs-IBU comparison is now done in **efficiency-corrected truth
+space**. Earlier the comparison plot read IBU's `unfolded` MnvH1D, which
+is **pre-efficiency-correction** (data-yield in truth bins) — but
+OmniFold's `hUnfoldTruthSel` is **post-efficiency-correction** (the
+step-2 weights × truth_w_in inherently absorb the response and bring you
+to truth space). Dividing both by `hTruthSel` then produced an
+OF/IBU ratio that visually looked like "OmniFold = scaled IBU" — that
+"scale" was just `1/efficiency(pT)`, the muon-tracker acceptance curve
+(min ~0.77 in the QE region, ~1.0 at edges).
+
+Fix (2026-05-02): `plot_gaussian_style_ptmu_unbinned.py` now reads IBU's
+`crossSection` MnvH1D (which encodes `efficiencyCorrected / flux /
+nucleons / dpt`) and multiplies bin-by-bin by binwidth so the units
+match the per-bin event-yield convention used by every other histogram
+in the plot. After this fix, OmniFold and IBU lie in the same physical
+space and the ratio panel shows the expected behavior: OmniFold a smooth
+ramp 0.78→1.10, IBU more structured (dip at low pT, peak ~1.17 near
+1 GeV, flat ~0.97 above) — both partial-converged at iter=5, crossing
+near the QE peak. **No bug in the unfolder**; the earlier visual was a
+plot-script units artifact.
+
+Sanity log from the unfold itself: `signal fakes added to bkg = 6`,
+`data-bkg/unfolded ≈ 0.847` (consistent with mean efficiency in the
+fiducial range).
+
+The legacy `Documents/` 2026-03-26 ROOTs are kept as historical
+diagnostic state only — do not regenerate from them and do not compare
+them against the paper.
+
+## Purpose (historical)
+
+This file froze the unbinned `pTmu` workflow so the binned OmniFold study
+could become the active campaign without losing the ability to return to
+the unbinned pipeline later.
+
+The top-level `Documents/` unbinned files were treated as the read-only
+baseline. They are now archived state and must be regenerated before reuse.
 
 ## Frozen file manifest
 
@@ -25,6 +132,17 @@ The top-level `Documents/` unbinned files should now be treated as the read-only
 - `Documents/ptmu_gaussian_style_unbinned.png`
 
 ## Canonical commands to resume later
+
+**Note (2026-05-02):** The commands below operated on the legacy
+`Documents/` paths and are kept for historical reference only. To run
+the **current revalidated pipeline**, use the sbatch script in this
+directory:
+```bash
+sbatch 2d-unfolding/unbinned_1d_study/sbatch_unfold_1d_unbinned_1A.sh
+```
+or the equivalent step-by-step quick-start in the top-level `AGENTS.md`
+section "1D unbinned baseline (revalidated 2026-05-02)". Read those
+before running anything below.
 
 ### Rebuild OmniFold inputs
 ```bash
@@ -48,8 +166,12 @@ ExtractCrossSection 5 Documents/runEventLoopData.root Documents/runEventLoopMC.r
 
 ### Rebuild the unbinned comparison plot
 ```bash
-python3 Documents/plot_gaussian_style_ptmu_unbinned.py   --omnifold Documents/pTmu_crossSection_omnifold.root   --ibu Documents/pTmu_crossSection_clean.root   --outpdf Documents/ptmu_gaussian_style_unbinned.pdf   --outpng Documents/ptmu_gaussian_style_unbinned.png
+python3 Documents/plot_gaussian_style_ptmu_unbinned.py   --omnifold Documents/pTmu_crossSection_omnifold.root   --ibu Documents/pTmu_crossSection.root   --outpdf Documents/ptmu_gaussian_style_unbinned.pdf   --outpng Documents/ptmu_gaussian_style_unbinned.png
 ```
+*(Note: pre-2026-05-02 versions used `pTmu_crossSection_clean.root` and
+read IBU's `unfolded` histogram. The script now defaults to
+`pTmu_crossSection.root` and reads the `crossSection` MnvH1D for
+apples-to-apples efficiency-corrected comparison.)*
 
 ### Resume the closure and iteration study
 ```bash

@@ -2,7 +2,9 @@
 
 ## Project Scope
 MINERvA-101 cross-section and OmniFold studies for muon kinematics:
-- 1D **p_T** unbinned OmniFold (validated, frozen baseline)
+- 1D **p_T** unbinned OmniFold (revalidated 2026-05-02 against playlist 1A;
+  patched to the 2D contract; OmniFold-vs-IBU comparison plot regenerated.
+  Legacy `Documents/` 2026-03-26 ROOTs remain superseded — diagnostic only)
 - 1D binned OmniFold (debug campaign complete — closure verified, found
   equivalent to D'Agostini IBU)
 - 2D **(p_T, p_||)** double-differential — current active campaign,
@@ -203,30 +205,55 @@ pz_edges = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
 ```
 Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c.
 
-## 1D unbinned baseline (frozen, March 2026)
-Frozen unbinned baseline manifest:
-`2d-unfolding/unbinned_1d_study/UNBINNED_BASELINE_2026-03-26.md`. Production
-script `2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py`;
-comparison plotter
-`2d-unfolding/unbinned_1d_study/plot_gaussian_style_ptmu_unbinned.py`.
-Treat as a validated 1D cross-check.
+## 1D unbinned baseline (revalidated 2026-05-02)
+Status doc:
+`2d-unfolding/unbinned_1d_study/UNBINNED_BASELINE_2026-03-26.md`
+(SUPERSEDED → REVALIDATED block at the top). Production script
+`2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py` was
+patched 2026-04-30 to honour the 2D Python contract (mask measured to
+phase space, subtract bkg + fakes via per-event `measured_weights`, fill
+`hUnfold` with `step2 * truth_w`, drop the `RooUnfoldOmnifold` wrapper
+in favour of direct `ohf.omnifold(...)`).
+
+Patched-vs-patched 1A rerun (SLURM job 52271486, 2026-05-02) produced
+the current valid outputs in
+`2d-unfolding/unbinned_1d_study/`:
+`runEventLoop{OmniFold,Data,MC}.root`,
+`pTmu_crossSection_omnifold.root` (5 iter, `--use-weights`),
+`pTmu_crossSection.root` (D'Agostini IBU on the same selection),
+`ptmu_gaussian_style_unbinned.pdf`. OmniFold and IBU agree at the QE
+peak; OmniFold tracks data more flexibly at the spectrum tails.
+
+Two nuisance bugs surfaced and were fixed in
+`sbatch_unfold_1d_unbinned_1A.sh` and the plot script defaults:
+(a) `ExtractCrossSection` segfaults in ROOT's `TFile::Close()` exit
+handler **after** writing all outputs (the file is recoverable; sbatch
+now `|| true`s and gates on `test -s`); (b) the binary writes
+`pTmu_crossSection.root`, not the legacy `_clean.root` name.
+
+The legacy `Documents/` 2026-03-26 ROOTs remain pre-MINOS-fix and are
+diagnostic-only — do not quote against the paper.
 
 ### 1D quick start
 ```bash
-MANIFESTS=2d-unfolding/playlist_manifests
+sbatch 2d-unfolding/unbinned_1d_study/sbatch_unfold_1d_unbinned_1A.sh
+```
+or step-by-step:
+```bash
+cd 2d-unfolding/unbinned_1d_study
+MANIFESTS=../playlist_manifests
 runEventLoopOmniFold ${MANIFESTS}/1A_Data.txt ${MANIFESTS}/1A_MC.txt
 runEventLoop ${MANIFESTS}/1A_Data.txt ${MANIFESTS}/1A_MC.txt
-python3 2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py \
-  --omnifile 2d-unfolding/runEventLoopOmniFold.root \
-  --datafile 2d-unfolding/runEventLoopData.root \
+python3 unfold_ptmu_omnifold_unbinned.py \
+  --omnifile runEventLoopOmniFold.root \
+  --datafile runEventLoopData.root \
   --datahist pTmu_data --iters 5 --use-weights --verbose \
-  --out 2d-unfolding/pTmu_crossSection_omnifold.root
-ExtractCrossSection 5 2d-unfolding/runEventLoopData.root 2d-unfolding/runEventLoopMC.root
-python3 2d-unfolding/unbinned_1d_study/plot_gaussian_style_ptmu_unbinned.py \
-  --omnifold 2d-unfolding/pTmu_crossSection_omnifold.root \
-  --ibu 2d-unfolding/pTmu_crossSection_clean.root \
-  --outpdf 2d-unfolding/ptmu_gaussian_style_unbinned.pdf \
-  --outpng 2d-unfolding/ptmu_gaussian_style_unbinned.png
+  --out pTmu_crossSection_omnifold.root
+ExtractCrossSection 5 runEventLoopData.root runEventLoopMC.root || true
+python3 plot_gaussian_style_ptmu_unbinned.py \
+  --omnifold pTmu_crossSection_omnifold.root \
+  --ibu pTmu_crossSection.root \
+  --outpdf ptmu_gaussian_style_unbinned.pdf
 ```
 
 ## Binned OmniFold (complete, March 2026)

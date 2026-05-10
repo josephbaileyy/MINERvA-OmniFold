@@ -1,5 +1,36 @@
 # pTmu closure and iteration-scan study guide
 
+## STATUS — frozen (2026-05-02)
+
+The production unbinned script (`unfold_ptmu_omnifold_unbinned.py`) was
+patched 2026-04-30 to honor the 2D Python contract (mask measured to
+phase space, fold signal fakes into bkg, build per-event
+`measured_weights = max(0, data−bkg)/data`, call `ohf.omnifold(...)`
+directly with those weights, fill `hUnfold` with `step2 * truth_w`).
+The closure-iteration driver below
+(`Documents/ptmu_closure_iteration_study.py`) was **not** carried
+through that refactor. The legacy `Documents/` ROOTs it reads are also
+pre-MINOS-fix (`CVUniverse.h` 2026-04-25 patch).
+
+**To resume this study you need to either:**
+1. Port the closure driver onto the patched production unfold path
+   (drop the old `RooUnfoldOmnifold` wrapper, switch to direct
+   `ohf.omnifold(...)`, fold fakes into the pseudo-data bkg) and rerun
+   against post-MINOS-fix event-loop ROOTs in
+   `2d-unfolding/unbinned_1d_study/` — **not** the legacy
+   `Documents/` ones; or
+2. Add a `--closure` mode to `unfold_ptmu_omnifold_unbinned.py` (split
+   signal MC by entry parity, swap pseudo-data half through the same
+   patched pipeline) and retire this driver entirely.
+
+There is also no `sbatch_iter_scan_1d.sh` analog of the 2D iteration
+scan; that would need to be written before any cluster-based scan can
+be run.
+
+The methodology description below is still correct in principle — read
+it for the design — but treat the file paths and script behavior as
+historical.
+
 ## What this study is for
 
 This study is the next clean step after establishing that the unbinned OmniFold pipeline runs stably.

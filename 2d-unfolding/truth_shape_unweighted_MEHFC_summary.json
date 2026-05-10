@@ -1,0 +1,173 @@
+{
+  "input": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEHFC.root",
+  "interior_bin_count": 185,
+  "interpretation": "unweighted = w_truth set to 1 on mc_truth_denom (raw GENIE prior, with local truth-side phase-space cuts already applied). weighted = w_truth from the local MnvTune-v1 chain. Both shape-normalized over the 185-bin strict interior, then strip-summed in p_T per p_|| bin. paper/weighted reproduces the existing 1.43x low-p_|| feature; if paper/unweighted is closer to flat than paper/weighted, the local reweighter chain is moving the prior in the wrong direction; if paper/unweighted is also non-flat at low p_||, the disagreement is upstream of the reweighters (base GENIE or truth-side selection).",
+  "model": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt",
+  "n_pt_bins": 14,
+  "n_pz_bins": 16,
+  "plateau_paper_over_unweighted_pz_ge_20": 1.6442420983498802,
+  "plateau_paper_over_weighted_pz_ge_20": 1.1244448287205935,
+  "plateau_weighted_over_unweighted_pz_ge_20": 1.4594243149969959,
+  "pz_strips": [
+    {
+      "paper_fraction": 0.020041402299895636,
+      "paper_over_unweighted": 0.9586702115743995,
+      "paper_over_weighted": 0.9945682911366694,
+      "pz_high": 2.0,
+      "pz_low": 1.5,
+      "unweighted_fraction": 0.02090541883739368,
+      "weighted_fraction": 0.020150855882395742,
+      "weighted_over_unweighted": 0.9639058676189617
+    },
+    {
+      "paper_fraction": 0.053108529060295076,
+      "paper_over_unweighted": 0.9515117409632087,
+      "paper_over_weighted": 0.9974444302737973,
+      "pz_high": 2.5,
+      "pz_low": 2.0,
+      "unweighted_fraction": 0.05581489620562505,
+      "weighted_fraction": 0.053244599346468705,
+      "weighted_over_unweighted": 0.9539496257470903
+    },
+    {
+      "paper_fraction": 0.07394351967631106,
+      "paper_over_unweighted": 0.9456166308577396,
+      "paper_over_weighted": 0.9964044480697537,
+      "pz_high": 3.0,
+      "pz_low": 2.5,
+      "unweighted_fraction": 0.07819608630321907,
+      "weighted_fraction": 0.07421034683210749,
+      "weighted_over_unweighted": 0.9490289135998933
+    },
+    {
+      "paper_fraction": 0.08884658474043175,
+      "paper_over_unweighted": 0.9426194298487571,
+      "paper_over_weighted": 0.9957439210978479,
+      "pz_high": 3.5,
+      "pz_low": 3.0,
+      "unweighted_fraction": 0.09425498979443607,
+      "weighted_fraction": 0.08922633907970515,
+      "weighted_over_unweighted": 0.9466484403032871
+    },
+    {
+      "paper_fraction": 0.10323202162904155,
+      "paper_over_unweighted": 0.9438589529173186,
+      "paper_over_weighted": 0.9955855691162894,
+      "pz_high": 4.0,
+      "pz_low": 3.5,
+      "unweighted_fraction": 0.10937229689877678,
+      "weighted_fraction": 0.10368975287646373,
+      "weighted_over_unweighted": 0.9480440277525468
+    },
+    {
+      "paper_fraction": 0.09750645744699907,
+      "paper_over_unweighted": 0.9478332623204127,
+      "paper_over_weighted": 0.9952955682306893,
+      "pz_high": 4.5,
+      "pz_low": 4.0,
+      "unweighted_fraction": 0.10287300659642525,
+      "weighted_fraction": 0.09796733810473378,
+      "weighted_over_unweighted": 0.9523133555244808
+    },
+    {
+      "paper_fraction": 0.09645983803136397,
+      "paper_over_unweighted": 0.9584669648086772,
+      "paper_over_weighted": 0.9943479975426811,
+      "pz_high": 5.0,
+      "pz_low": 4.5,
+      "unweighted_fraction": 0.10063971067653714,
+      "weighted_fraction": 0.097008128210389,
+      "weighted_over_unweighted": 0.9639150148412062
+    },
+    {
+      "paper_fraction": 0.15898672436116623,
+      "paper_over_unweighted": 0.9784585047328762,
+      "paper_over_weighted": 0.9918555808695758,
+      "pz_high": 6.0,
+      "pz_low": 5.0,
+      "unweighted_fraction": 0.16248693592230604,
+      "weighted_fraction": 0.16029221131344545,
+      "weighted_over_unweighted": 0.986492916514162
+    },
+    {
+      "paper_fraction": 0.1025691085559745,
+      "paper_over_unweighted": 1.008861160870598,
+      "paper_over_weighted": 0.9895761974835194,
+      "pz_high": 7.0,
+      "pz_low": 6.0,
+      "unweighted_fraction": 0.10166821019005466,
+      "weighted_fraction": 0.103649530795917,
+      "weighted_over_unweighted": 1.0194881035296928
+    },
+    {
+      "paper_fraction": 0.05770854111001346,
+      "paper_over_unweighted": 1.0396712438051432,
+      "paper_over_weighted": 0.9908380682616119,
+      "pz_high": 8.0,
+      "pz_low": 7.0,
+      "unweighted_fraction": 0.05550652810094388,
+      "weighted_fraction": 0.05824215172844632,
+      "weighted_over_unweighted": 1.0492847187726722
+    },
+    {
+      "paper_fraction": 0.030000884939239133,
+      "paper_over_unweighted": 1.0761920667687193,
+      "paper_over_weighted": 0.9938201491662413,
+      "pz_high": 9.0,
+      "pz_low": 8.0,
+      "unweighted_fraction": 0.027876887282134666,
+      "weighted_fraction": 0.030187438808126573,
+      "weighted_over_unweighted": 1.0828841291571552
+    },
+    {
+      "paper_fraction": 0.01770836222291055,
+      "paper_over_unweighted": 1.1367686844698288,
+      "paper_over_weighted": 1.0040241234791527,
+      "pz_high": 10.0,
+      "pz_low": 9.0,
+      "unweighted_fraction": 0.015577806166581245,
+      "weighted_fraction": 0.01763738719897226,
+      "weighted_over_unweighted": 1.1322125214787557
+    },
+    {
+      "paper_fraction": 0.043031215499148706,
+      "paper_over_unweighted": 1.2460355195653574,
+      "paper_over_weighted": 1.022566431592622,
+      "pz_high": 15.0,
+      "pz_low": 10.0,
+      "unweighted_fraction": 0.034534501483680716,
+      "weighted_fraction": 0.04208158430560707,
+      "weighted_over_unweighted": 1.2185374769487474
+    },
+    {
+      "paper_fraction": 0.022285140863732025,
+      "paper_over_unweighted": 1.3046324983679523,
+      "paper_over_weighted": 1.0514918499124482,
+      "pz_high": 20.0,
+      "pz_low": 15.0,
+      "unweighted_fraction": 0.0170815466360143,
+      "weighted_fraction": 0.021193831284177414,
+      "weighted_over_unweighted": 1.2407442801164665
+    },
+    {
+      "paper_fraction": 0.030304798218797415,
+      "paper_over_unweighted": 1.4507262615797236,
+      "paper_over_weighted": 1.1020782130794267,
+      "pz_high": 40.0,
+      "pz_low": 20.0,
+      "unweighted_fraction": 0.020889397966641854,
+      "weighted_fraction": 0.027497865268672497,
+      "weighted_over_unweighted": 1.31635508656514
+    },
+    {
+      "paper_fraction": 0.004266871344679661,
+      "paper_over_unweighted": 1.8377579351200368,
+      "paper_over_weighted": 1.1468114443617605,
+      "pz_high": 60.0,
+      "pz_low": 40.0,
+      "unweighted_fraction": 0.0023217809392296063,
+      "weighted_fraction": 0.0037206389643716187,
+      "weighted_over_unweighted": 1.6024935434288514
+    }
+  ]
+}

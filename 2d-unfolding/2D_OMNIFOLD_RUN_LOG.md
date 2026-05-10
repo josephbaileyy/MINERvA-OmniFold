@@ -305,3 +305,529 @@ Current framing for advisor/reporting:
   evidence points first to paper-era flux-CV release/version dependence.
 - Exact quantitative reproduction of arXiv:2106.16210 requires the 2021
   flux-CV files or an explicit low-p|| flux/model systematic caveat.
+
+## Phase 14 — MINERvA-101 tutorial MINOS patch delta (2026-05-02)
+
+Question: after MINERvA-101 patched the tutorial stub to require
+`isMinosMatchTrack == 1`, is our extra
+`MasterAnaDev_minos_trk_is_ok == 1` requirement still a physics-relevant
+difference?
+
+Raw AnaTuple branch checks on playlist 1A show that the extra
+`_minos_trk_is_ok` condition has **zero incremental impact after the 2D
+reco selection**. The branch-level selection reproduced the 2D reco cut
+logic with tracker `z`, tracker apothem, `muon_theta < 20 deg`,
+`phys_n_dead_discr_pair_upstream_prim_track_proj < 1`, and negative
+`MasterAnaDev_minos_trk_qp`.
+
+Full 1A selected counts:
+
+| sample | `isMinosMatchTrack == 1` | plus `_minos_trk_is_ok == 1` | delta |
+|---|---:|---:|---:|
+| Data | 346,768 | 346,768 | 0 |
+| MC selected | 1,725,226 | 1,725,226 | 0 |
+| MC signal (`mc_incoming == 14 && mc_current == 1`) | 1,721,126 | 1,721,126 | 0 |
+| MC background | 4,100 | 4,100 | 0 |
+
+The `ok` branch is not globally redundant: before the full reco cuts, there
+are `isMinosMatchTrack && !_minos_trk_is_ok` events. On representative 1A
+files, however, those events are removed by the tracker-apothem cut before
+they can enter the selected sample:
+
+| sample file | raw `track && !ok` | after tracker-z | after tracker-apothem |
+|---|---:|---:|---:|
+| Data run 6038 | 3,622 | 1,291 | 0 |
+| MC run 110000 | 40,976 | 25,804 | 0 |
+
+Conclusion: for the active 2D selection, the physics-changing tutorial fix
+is the move from the educational `has_interaction_vertex == 1` stub to
+`isMinosMatchTrack == 1`. Our stricter
+`isMinosMatchTrack == 1 && _minos_trk_is_ok == 1` implementation remains
+cleaner and defensible, but relative to the newly patched MINERvA-101
+tutorial it is effectively a no-op for the selected 2D event sample.
+
+## Phase 15 — Flux-CV file ruled out as the residual driver (2026-05-05)
+
+While drafting outreach to the MINERvA collaboration to request the
+paper-era flux-CV files, two questions came up: (a) are the local files
+actually different from the paper-era release, and (b) if so, does the
+difference predict the residual?
+
+Inputs cross-checked. The local files are a CVS checkout of
+`AnalysisFramework/Ana/MATFluxAndReweightFiles` from
+`minervacvs@cdcvs.fnal.gov:/cvs/mnvsoft`, with all per-playlist files
+timestamped 2021-07-07 — i.e., one month after arXiv:2106.16210 was
+posted. The CV histogram (`flux_E_cvweighted`) lives in the gen2thin
+files; the Geant4 baseline (`flux_E_unweighted`) in the g4numiv6 files.
+`FluxAndCVReweighter` returns the ratio at the event's E_ν.
+
+Comparison against arXiv:1906.00111 (PRD 100 092001) ancillary release.
+Ancillary file `MINERvA_Flux_pdg14_500MeVBins.csv` is the paper-era
+nu-e-constrained ME FHC nu-mu CV flux that arXiv:2106.16210 cites in
+its flux section. Wrote `compare_flux_to_paper_2019.py` which:
+
+- Reads per-playlist data POT from
+  `baseline_flux/runEventLoopData_<P>.root`.
+- Maps 1A..1P to 3 unique flux files via the `playlistString()` table
+  (1A..1F→1D, 1G/1L/1M→1M, 1N..1P→1N).
+- POT-weights `flux_E_cvweighted` and `flux_E_unweighted` across the
+  three unique files (1D 53.45 %, 1M 29.23 %, 1N 17.32 %).
+- Compares against the 2019 ancillary CSV at bin centers.
+
+Result. paper / local (POT-weighted MEHFC):
+
+| E_ν (GeV) | paper / local | E_ν (GeV) | paper / local |
+|---|---|---|---|
+| 1.65 | 1.00 | 5.00 | 0.90 |
+| 2.50 | 0.89 | 7.00 | 0.91 |
+| 3.50 | 0.89 | 9.00 | 0.93 |
+
+Roughly flat ~0.90 across the populated range. The 1.55 GeV (1.09)
+and 1.65 GeV (1.00) entries are interpolation noise at the edge of the
+paper's 1.0–1.5 GeV bin, not a real low-E_ν shape feature.
+
+Cross-section algebra. Both the per-event `FluxAndCV` weight and the
+integrated denominator come from the same `flux_E_cvweighted`
+histogram — the per-event weight is `Phi_cv(E_ν)/Phi_g4(E_ν)`, and the
+denominator is built by `FluxReweighter::GetIntegratedFluxReweighted`
+which integrates `Phi_cv` directly (`MAT/PlotUtils/FluxReweighter.cxx`
+lines 1305–1339). A flat scale `Phi_cv → α·Phi_cv` therefore scales
+hUnfold2D, hSignal_truth_total, hSignal_truth_reco, and Phi_integrated
+all by α; α cancels in dsigma = U/(eff·Phi·N). The actual ratio varies
+between 0.87 and 0.93 over the populated range, so the cancellation is
+near-exact with at most a few-% residual from the small E_ν shape
+variation. **Adopting the 2019-release flux files would not move our
+cross section in normalization or shape.**
+
+Implications:
+
+- The "local flux-CV files explain the 1.41× low-p_|| truth shape
+  ratio" framing in the prior status doc was wrong.
+  `decompose_truth_weights.py` correctly attributed the strip-by-strip
+  gradient to the applied `FluxAndCV` weight column, but that does not
+  imply the flux histogram itself is the cause — the gradient survives
+  any flat rescaling of the histogram. The strip-by-strip ratio being
+  identical between the combined truth weight and the FluxAndCV column
+  says the kinematic correlation (low p_||(μ) ↔ low E_ν, where the
+  nu-e constraint pulls the flux down) is being applied as designed;
+  it does not say the flux file is bad.
+- The residual ~16.6 % global xsec deficit and the low-p_|| shape
+  gradient must come from a source upstream of the reweighter chain.
+  The most parsimonious single-cause hypothesis is that the AnaTuple
+  base MC sample was generated with a different GENIE version / 2p2h
+  dial / non-resonant suppression than the sample arXiv:2106.16210
+  ran on. Reweighters cannot recover a different base generation.
+- The user's outreach email reframed accordingly: instead of "give me
+  the paper-era flux files because they explain the residual," the ask
+  becomes "I have ruled out the flux-CV files as the source; can you
+  confirm the AnaTuple generator/tune config used for the paper, and
+  whether the Open Data Product samples were generated with that same
+  config?"
+
+Outputs committed:
+
+- `2d-unfolding/compare_flux_to_paper_2019.py` — comparison script.
+- `2d-unfolding/MINERvA_Flux_pdg14_500MeVBins_arXiv1906_00111.csv` —
+  the 2019 ancillary file, kept locally for reproducibility.
+- `2d-unfolding/compare_flux_to_paper_2019.png` — overlay + ratio
+  panels.
+- `2d-unfolding/compare_flux_to_paper_2019.csv` — per-bin numerics.
+
+## Phase 16 — Truth-shape attribution: efficiency denominator bug found and fixed (2026-05-08)
+
+While preparing the slide-deck rewrite to ask the MINERvA collaboration
+about generator-config provenance (Phase 15's hypothesis), the obvious
+falsifying test had not yet been run: project the local *unweighted*
+truth onto the (p_T, p_||) grid and compare to the paper's MnvTune-v1
+ancillary. If the unweighted shape already disagreed at low p_||, the
+generator-config story would be supported. If the unweighted shape was
+fine and only the weighted shape disagreed, the reweighter chain would
+be implicated. If both agreed, the disagreement we had been chasing
+would be in something else entirely.
+
+`diagnose_truth_shape_unweighted.py` reads `mc_truth_denom` directly
+from `runEventLoopOmniFold_MEHFC.root` (32.85M entries — the canonical
+Truth-tree efficiency denominator), projects it onto the paper grid
+both unweighted and with the local MnvTune-v1 reweighter chain applied,
+and shape-normalizes both inside the 185-bin strict interior for
+comparison against the paper Tune-v1 model.
+
+Result: `paper / weighted` is **0.99 – 1.00 across p_|| = 1.5 – 9 GeV/c**
+and reaches 1.10 – 1.15 only in the highest p_|| tails (20 – 60 GeV/c)
+which carry small fraction. The 1.43× low-p_|| feature seen in the
+prior diagnostic against `hTruth2D` is **gone**. The local truth + local
+MnvTune-v1 reweighter chain reproduces the paper's published MnvTune-v1
+prediction to ~1 %.
+
+Source of the prior false signal. The unfold script's `hTruth2D` is
+filled from `mc_signal_reco` (24.46M entries — only events with a
+reco-tree entry):
+
+- `unfold_2d_omnifold_unbinned.py:475` loads `mc_signal_reco`. It does
+  not load `mc_truth_denom`.
+- Lines 663 – 665 fill `hTruth2D` from `sig` truth-pass events, i.e.
+  the `mc_signal_reco` subset.
+- `compute_efficiency_2d` (line 323) builds `hEffDen` from the same
+  subset.
+
+The 8.4M-event difference (32.85M – 24.46M) is preferentially at low
+p_||: events at high muon angle / low forward momentum produce less
+reconstructable activity in MINERvA, and the AnaTuple production drops
+their reco-tree entries. So the `mc_signal_reco` subset is depleted at
+low p_||, which is what `hTruth2D` was reporting.
+
+Cross-section consequence (the actual bug). The cross-section formula
+`σ = hUnfold2D / (Φ · N · POT · dpT · dp_||)` had `hEff` deleted at the
+top of `extract_cross_section_2d` (line 371), with the docstring
+claiming OmniFold's step-1 miss regression absorbed the efficiency
+correction. That is partially true: step-1 miss regression handles
+events with `pass_reco = False` that are *present in the OmniFold
+input*. The `mc_signal_reco` tree contains both reco-passing
+(`sim_pass = true`) and reco-failing (`sim_pass = false`) truth-pass
+events, so OmniFold's miss regression handles the within-input misses
+correctly. What it cannot handle are truth events absent from the input
+entirely — the 8.4 M events in `mc_truth_denom` that have no reco-tree
+entry at all.
+
+Result: `hUnfold2D` represents inferred truth-level data over the
+`mc_signal_reco` truth-pass subset only. The cross section computed
+without an external rescaling is therefore low by exactly the
+*input-completeness* deficit, preferentially at low p_||. Numerical
+check:
+
+- N(`mc_signal_reco` truth-pass) / N(`mc_truth_denom`)
+  = 24.46M / 32.85M = **0.745**
+- σ_total(ours) / σ_total(paper) = 2.285e-38 / 3.039e-38 = **0.752**
+
+The agreement is at the 1 % level.
+
+The right correction is therefore the OmniFold *input completeness*
+ratio, **not** the standard absolute selection efficiency
+ε = (`sim_pass = true` events) / (all truth events). Dividing by the
+absolute ε would over-correct, because OmniFold has already absorbed
+the within-input selection inefficiency through miss regression
+(verified numerically: dividing by ε ≈ 0.6 gives 1.25× paper, 25 % too
+high; dividing by completeness ≈ 0.745 gives 0.989 × paper, ~1 %
+agreement).
+
+Definitions, all in the unfold output:
+
+- `hEff2D` = `hEffNum` / `hEffDen` = absolute selection efficiency,
+  diagnostic only (used by `plot_efficiency_fig5_style.py` for paper
+  Fig. 5 comparison). `hEffNum` keeps the standard meaning
+  (`sim_pass = true` events), and `hEffDen` is now the canonical
+  `mc_truth_denom` denominator.
+- `hOFCompleteness2D` = `hOFInputTruth2D` / `hOFTruthDenom2D`, where
+  `hOFInputTruth2D` is mc_signal_reco truth-pass events (regardless of
+  `sim_pass`) and `hOFTruthDenom2D` is `mc_truth_denom`. This is the
+  fraction of truth events that OmniFold sees. Cross-section formula
+  divides by it.
+
+Fix implemented in `unfold_2d_omnifold_unbinned.py`:
+
+1. New helper `collect_truth_denom_arrays` reads `mc_truth_denom` and
+   returns truth_pt / truth_pz / w_truth arrays (POT-scaled, binning-
+   range-filtered).
+2. `main()` loads the `mc_truth_denom` tree alongside the existing
+   `mc_signal_reco` / `mc_background` / `data` trees (skipped in
+   `--closure` mode for self-consistent closure behavior).
+3. `compute_efficiency_2d` accepts an optional `truth_denom` argument;
+   when given, fills `hEffDen` from `mc_truth_denom` instead of from
+   the `mc_signal_reco` truth-pass subset. Same numerator semantics
+   (selection-passing events, weighted by `w_reco`) so `hEff2D` is
+   still a paper-Fig.-5-comparable selection efficiency.
+4. New `compute_omnifold_completeness_2d` builds the input-completeness
+   correction `hOFCompleteness2D = hOFInputTruth2D / hOFTruthDenom2D`.
+5. `extract_cross_section_2d` now divides by `hOFCompleteness2D` per
+   bin. Empty-completeness bins safely emit zero.
+6. In `--closure` mode, `hOFCompleteness2D` is set to 1.0 in every bin
+   to preserve the legacy in-sample closure behaviour (synthetic data
+   lives in the same subset as training, so no scale-up is appropriate).
+7. New diagnostic histograms (`hOFCompleteness2D`, `hOFInputTruth2D`,
+   `hOFTruthDenom2D`) added to the output. Existing `hTruth2D`,
+   `hEffNum`, `hEffDen`, `hEff2D` retained with unchanged or
+   well-documented semantics.
+8. Docstring of `extract_cross_section_2d` corrected — the claim that
+   step-1 miss regression handles all efficiency was incomplete.
+
+Verification (`verify_eff_fix_predicted_xsec.py`): apply the post-fix
+formula to the existing pre-fix `hUnfold2D` and rederived ε from
+`mc_truth_denom`. Predicts post-fix σ_total = **3.006e-38 cm²/nucleon
+vs paper 3.039e-38 (ratio 0.989)**. Per-strip post/paper ratios:
+
+| p_|| (GeV/c) | pre/paper | post/paper |
+|---|---|---|
+| 1.5–2.0  | 0.572 | ~1.14 |
+| 2.0–2.5  | 0.635 | ~1.14 |
+| 5.0–6.0  | 0.849 | ~1.05 |
+| 20–40    | 0.984 | ~1.03 |
+
+Low-p_|| residual collapses from 0.57× to ~1.14×, high-p_|| from 0.98×
+to 1.03×. The remaining ~5–14 % residual at low p_|| is consistent
+with the small (≤ 1 %) shape disagreement in `paper / weighted` plus
+unfold-stage detail; it does not have the dramatic gradient we were
+chasing.
+
+What this overturns:
+
+- "Local flux-CV files explain the residual" (Phase 14) — already
+  ruled out in Phase 15, still ruled out.
+- "AnaTuple generator-config mismatch explains the residual"
+  (Phase 15) — ruled out in Phase 16. Local truth shape with
+  MnvTune-v1 applied agrees with the paper to ~1 %.
+- "The per-reweighter `FluxAndCV` column is the carrier of the
+  low-p_|| gradient" (Phase 12 – 13) — the column ratio is still
+  numerically what was measured, but it described the per-reweighter
+  shape on the `mc_signal_reco` subset, not a physical low-p_||
+  pull. With the proper denominator, the reweighter chain is
+  reproducing the paper MnvTune-v1 prediction in shape.
+
+What does **not** change:
+
+- MINOS-match selection patch (Phase 11) — still a real fix that
+  reduced background rate from ~10 % to 0.35 %.
+- Iter-scan convergence (5-iter is fine) — still valid.
+- Flux normalization, nucleon count, POT bookkeeping, paper binning —
+  all still correct.
+
+Re-run pending. The committed `2d_crossSection_omnifold_*.root` outputs
+were produced before this fix and have the ~24.8 % global deficit and
+the low-p_|| shape gradient. Re-running the unfold with the fix should
+collapse both. Plan: re-run on 1A first (cheapest closure check), then
+on full MEHFC if 1A behaves.
+
+Outputs committed:
+
+- `2d-unfolding/diagnose_truth_shape_unweighted.py` — full-stats
+  unweighted-vs-weighted-vs-paper truth-shape diagnostic.
+- `2d-unfolding/truth_shape_unweighted_MEHFC_summary.json` — per-strip
+  numerics (paper / unweighted, paper / weighted, weighted / unweighted).
+- `2d-unfolding/truth_shape_unweighted_MEHFC_strips.png` — overlay +
+  ratio panels.
+- Updated `2d-unfolding/unfold_2d_omnifold_unbinned.py` — denominator
+  fix (`compute_omnifold_completeness_2d` + completeness division in
+  `extract_cross_section_2d`), see the source for the changes
+  summarized above.
+- `2d-unfolding/verify_eff_fix_predicted_xsec.py` — applies the
+  post-fix formula to the stored pre-fix `hUnfold2D` to predict
+  post-fix totals without re-unfolding. Confirmed σ_total/paper =
+  0.989 globally and strip ratios within ~5–14 % across p_||.
+
+### Working-directory cleanup (2026-05-08)
+
+After the post-fix unfold (job 52729573) was launched, the working
+directory was cleaned up while the rerun was in flight.
+
+**Archived to `archive_pre_phase16/`** (preserved for pre/post comparison):
+- `2d_crossSection_omnifold_MEHFC_5iter.root` — pre-fix MEHFC unfold.
+- `2d_crossSection_omnifold_MEHFC_5iter_shape.root` — pre-fix self-
+  normalized shape ROOT.
+- `2d_crossSection_omnifold_1A_minos_fix_{1,3}iter.root` — patched-MINOS
+  1A iter-scan ROOTs.
+- All `MEHFC_5iter_*.png` plots derived from the pre-fix MEHFC ROOT
+  (xsec slices, projections, pull maps, fig13, eff_fig5, eff_heatmap,
+  truth_vs_paper_strips, shape variants). These describe the 0.752 ×
+  paper state and will be regenerated from the post-fix output.
+- `1A_reweighter_decomp_strips.png` — the per-reweighter `FluxAndCV`
+  decomposition strip plot. Numerically still correct but its
+  interpretation (FluxAndCV "carries" the low-p_|| gradient) is
+  superseded — the gradient was an artifact of the wrong denominator,
+  not a physical pull from any reweighter.
+
+**Deleted** (findings preserved in this run log; scripts are
+re-derivable from the run log description if ever needed):
+- Phase-8/10 MINOS-acceptance diagnostic scripts:
+  `audit_minos_acceptance_correction.py`,
+  `diagnose_minos_acceptance_2d.py`,
+  `minos_acceptance_1A_summary.json`,
+  `minos_acceptance_audit_1A_summary.json`. Their finding (a missing
+  MINOS geometric-acceptance correction was *not* the residual driver)
+  is documented in Phase 10 – 11.
+- Phase-12 weights-vs-pz scan: `diagnose_weights_vs_pz.py`,
+  `weights_vs_pz_1A_summary.json`. Finding (combined w_truth has
+  low-p_|| dip carried entirely by FluxAndCV column) was the
+  motivation for Phase 13 and is documented there.
+- Phase-13 per-reweighter decomposition: `decompose_truth_weights.py`,
+  `decompose_truth_weights_1A_summary.json`. Finding
+  (FluxAndCV column matches the strip ratio) is documented in
+  Phase 13. The script is re-derivable from a `MNV101_DUMP_COMPONENTS`
+  build.
+- Phase-13/14 truth-shape diagnostic: `diagnose_truth_shape_vs_paper.py`,
+  `truth_shape_vs_paper_1A_summary.json`,
+  `truth_shape_vs_paper_MEHFC_5iter_summary.json`. This was the
+  diagnostic that produced the 1.43× low-p_|| feature on `hTruth2D`
+  (mc_signal_reco subset). Phase 16 supersedes it with
+  `diagnose_truth_shape_unweighted.py` which runs on the canonical
+  `mc_truth_denom` denominator. The 1.43× number is preserved in
+  this run log along with the explanation of why it was an artifact.
+- `SLIDES_OUTLINE.md`, `SLIDES_NEW_DRAFT.md` — outreach drafts framed
+  around the flux-CV (Phase 14) and generator-config (Phase 15)
+  hypotheses, both now superseded. Outreach is paused pending the
+  post-fix re-run; if a new deck is needed the content can be
+  regenerated from this run log + the status doc.
+- Old SLURM logs: `finalize_MEHFC_52031722.{out,err}`,
+  `unfold2d_full_52031697.{out,err}`.
+- `__pycache__/`.
+
+### Post-fix re-run results (2026-05-09)
+
+Job 52729573 (`unfold2d_postfix`) finished after ~18 h 43 m on shared QOS
+nid004108 and wrote `2d_crossSection_omnifold_MEHFC_5iter_postfix.root`.
+OmniFold-internal sanity numbers from the run:
+
+- step1 / step2 weights count: 24,394,265 (matches `mc_signal_reco`
+  truth-pass).
+- step2 weight stats: sum 2.735e7, mean 1.1212, range [0.7383, 3.5332]
+  (identical to pre-fix — the fix is downstream of OmniFold).
+- `hOFInputTruth2D` integral 4.3362e6, `hOFTruthDenom2D` integral
+  5.7796e6 → global completeness c = 4.3362 / 5.7796 = **0.7503**.
+  Matches the predicted 24.46M / 32.85M = 0.745 to ~1 %.
+- σ_total from p_T projection = σ_total from p_|| projection =
+  **3.055e-38 cm²/nucleon**. Paper total 3.039e-38 → σ/paper =
+  **1.0049**, vs predicted 0.989. Both projections agree to all reported
+  digits, so the closure between p_T- and p_||-projected totals survives
+  the fix.
+
+Plots regenerated from the post-fix output (all 14 production PNGs in
+`PLOT_GUIDE.md`):
+
+- `MEHFC_5iter_xsec_{pt,pz}_slices.png`,
+  `MEHFC_5iter_xsec_proj_{pt,pz}.png`, `MEHFC_5iter_xsec_eff_heatmap.png`
+  (`plot_2d_cross_section.py`).
+- `MEHFC_5iter_xsec_paper_{pt,pz}_slices.png`
+  (`plot_2d_paper_comparison.py`).
+- `MEHFC_5iter_pull_full.png` (`compare_to_paper_fullcov.py`),
+  `MEHFC_5iter_pull_interior.png` (`compare_to_paper_interior.py`).
+- `MEHFC_5iter_fig13.png` (`plot_2d_threeway_fig13.py`),
+  `MEHFC_5iter_eff_fig5.png` (`plot_efficiency_fig5_style.py`).
+- Shape ROOT regenerated as
+  `2d_crossSection_omnifold_MEHFC_5iter_postfix_shape.root`
+  (`normalize_xsec_shape.py`); shape comparison plots
+  `MEHFC_5iter_xsec_paper_{pt,pz}_slices_shape.png`,
+  `MEHFC_5iter_pull_interior_shape.png`
+  (`plot_2d_paper_comparison_shape.py`).
+
+χ²/ndf vs paper, post-fix (TOTAL covariance from the ancillary):
+
+| Metric | Bins | χ²/ndf | χ² / ndf |
+|---|---|---|---|
+| Absolute, all reported     | 205 | **3.289** | 674.20 / 205 |
+| Absolute, strict interior  | 185 | **3.188** | 589.71 / 185 |
+| Shape, all reported        | 204 | **3.269** | 666.85 / 204 |
+| Shape, strict interior     | 184 | **3.160** | 581.45 / 184 |
+
+Pre-fix the same quantities were 17.4 (185 strict interior) and 20.6
+(205 reported). Pull mean / RMS on the 205 reported bins (full cov) is
+**−0.001 / 0.565** — pulls are now centered with sub-σ scatter.
+
+Per-bin ratio collapse on the strict-interior 185-bin set, ours/paper:
+
+- median = **1.0049**, mean = 1.0000
+- 5 % window: **82.7 %** of bins agree to within 5 % of paper (was ~0 %
+  in low-p_|| pre-fix).
+- 10 % window: 94.6 %.
+- 20 % window: 98.4 %.
+
+The strip-by-strip σ/paper gradient that ranged 0.572 (1.5–2 GeV/c) to
+0.984 (20–40 GeV/c) pre-fix is gone. χ² as a function of p_||-min cut on
+the strict interior:
+
+| p_|| ≥ (GeV/c) | N bins | χ² | χ²/ndf | median ratio | %<5% |
+|---|---|---|---|---|---|
+| 1.5 | 185 | 589.71 | 3.188 | 1.0049 | 82.7 % |
+| 2.0 | 179 | 543.26 | 3.035 | 1.0031 | 83.8 % |
+| 2.5 | 171 | 461.21 | 2.697 | 1.0037 | 84.2 % |
+| 3.0 | 162 | 408.87 | 2.524 | 1.0034 | 84.0 % |
+| 3.5 | 152 | 397.07 | 2.612 | 1.0053 | 82.9 % |
+| 4.0 | 141 | 371.43 | 2.634 | 1.0053 | 81.6 % |
+
+Low-p_|| bins no longer dominate the comparison. Residual χ²/ndf ≈ 3 is
+still above unity but is approximately p_||-flat — consistent with
+small ≤ few-% shape mismatches in the high-p_|| tails seen in the
+truth-shape diagnostic, plus possibly the near-singular flux-only
+covariance representation (`flux_only` χ²/ndf comes back at 9.6e7,
+unchanged from pre-fix; this is an ancillary-file representation issue,
+not a numerical issue with the cross section).
+
+What this confirms:
+
+- The Phase 16 diagnosis was correct. Predicted σ/paper = 0.989 vs
+  measured 1.0049 is a 1.6 % discrepancy attributable to the predictor
+  using strip-averaged completeness as a global scalar; the per-bin
+  completeness used by the actual unfold has small (~1 %) finer
+  structure that the predictor smoothed over.
+- The only remaining shape discrepancy with the paper is a sub-2 %
+  effect concentrated in the highest p_|| tails (p_|| > 10 GeV/c),
+  consistent with the `paper / weighted` ≈ 1.05 – 1.15 in those bins
+  reported by `diagnose_truth_shape_unweighted.py`. Not a low-p_||
+  pathology any more.
+
+Outreach to the MINERvA collaboration is no longer needed — there is
+no missing-input hypothesis to ask about. The remaining discrepancy is
+within paper-level shape disagreement that the truth-shape diagnostic
+already characterized.
+
+Phase 16 closed.
+
+### Phase-16 follow-up: IBU 1D-projection cross-check, post-fix (2026-05-10)
+
+Re-ran the advisor-requested 1D IBU on a 1D projection of the same
+2D OmniFold inputs to confirm that the Phase-16 fix is method-blind.
+Found that `build_1d_ibu_inputs.py` had the **same** input-completeness
+bug as the 2D unfold pre-fix: it filled the efficiency denominator (and
+the 2D truth yield used for the per-p_|| harmonic-mean flux) from
+`mc_signal_reco` truth-pass events (24.5M) rather than from
+`mc_truth_denom` (32.85M). A literal repeat of the cross-check would
+therefore have reproduced the pre-fix story for both legs and looked
+"consistent" while both were wrong by the same factor.
+
+Patched `build_1d_ibu_inputs.py` analogously to the 2D fix:
+
+- Pulled the eff_den and 2D truth-yield fills out of `fill_signal`.
+- Added new `fill_truth_denom` that reads `mc_truth_denom` and fills
+  `eff_den["pTmu"]`, `eff_den["pZmu"]`, and `h2d_truth` with `w_truth`.
+- Loaded `mc_truth_denom` alongside the existing
+  `data` / `mc_signal_reco` / `mc_background` trees.
+- Default `--xsec-2d` switched to the postfix file.
+
+Pipeline re-ran interactively (build ~2 min, IBU 5-iter ~seconds, plot
+~seconds):
+
+- `mc_truth_denom` kept = 32,849,236 (matches the 2D unfold).
+- `mc_signal_reco` eff_num = 20,940,810; eff_num integral 1.745e7 /
+  eff_den integral 2.721e7 → global ε ≈ 0.641 (proper absolute
+  selection efficiency on the canonical denominator).
+- IBU 5-iter wrote `pTmu_crossSection.root` and
+  `pZmu_crossSection.root`; libMAT cleanup segfault at exit is the
+  documented benign issue, the unfolded outputs flush before it.
+
+Three-way comparison (IBU on 2D-projection vs OmniFold-2D 1D-projected
+vs paper TH2D 1D-projected), integrals over reported bins:
+
+| Axis | Paper | OmniFold-2D 1D-proj | IBU-on-2D-proj |
+|---|---|---|---|
+| p_T  | 3.039e-38 | 3.054e-38 (1.005) | 3.003e-38 (0.988) |
+| p_|| | 3.039e-38 | 3.055e-38 (1.005) | 2.965e-38 (0.976) |
+
+Both methods reproduce the paper to ≤ 2.5 % and agree with one another
+to ~1.7 %. The Phase-16 input-completeness correction is method-blind;
+the third row of the README's interpretation table ("2D OmniFold doing
+something IBU isn't") is ruled out.
+
+Also confirms that the IBU pipeline is a usable independent
+cross-check going forward, now that its build-script Phase-16 bug is
+fixed.
+
+Plots regenerated:
+- `2d-unfolding/ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pt.png`
+- `2d-unfolding/ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pz.png`
+
+Files modified:
+- `2d-unfolding/ibu_1d_projection/build_1d_ibu_inputs.py` — see fix
+  description above.
+- `2d-unfolding/ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py` —
+  default `--omnifold-2d` switched to postfix file.
+- `2d-unfolding/ibu_1d_projection/sbatch_ibu_1d_projection.sh` — same
+  default switch.
+- `2d-unfolding/ibu_1d_projection/README.md` — Phase-16 update note at
+  top, method section updated to describe the `mc_truth_denom` read.

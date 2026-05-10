@@ -76,10 +76,18 @@ def load_result(result_file, mcfile=None, flux_hist="pTmu_reweightedflux_integra
         raise RuntimeError(f"Could not open {result_file}")
 
     h_xsec = f.Get("hXSec2D")
-    h_truth = f.Get("hTruth2D")
+    # MC truth display: prefer hOFTruthDenom2D (post-Phase-16 canonical
+    # mc_truth_denom yield, 32.85M) over hTruth2D (mc_signal_reco subset,
+    # 24.5M, ~0.745x low). hOFTruthDenom2D is the proper analogue of the
+    # paper's MnvTune-v1 model curve.
+    h_truth = f.Get("hOFTruthDenom2D")
+    if not h_truth:
+        h_truth = f.Get("hTruth2D")
+        print("[WARN] hOFTruthDenom2D not found; falling back to hTruth2D "
+              "(pre-Phase-16 subset truth).")
     h_eff = f.Get("hEff2D")
     if not all([h_xsec, h_truth, h_eff]):
-        raise RuntimeError("Missing hXSec2D, hTruth2D, or hEff2D")
+        raise RuntimeError("Missing hXSec2D, hOFTruthDenom2D/hTruth2D, or hEff2D")
     for h in [h_xsec, h_truth, h_eff]:
         h.SetDirectory(0)
 

@@ -136,7 +136,13 @@ def main():
 
     f = ROOT.TFile.Open(args.infile, "READ")
     hXSec2D = f.Get("hXSec2D")
-    hTruth2D = f.Get("hTruth2D")
+    # MC truth display: prefer hOFTruthDenom2D (post-Phase-16 canonical
+    # mc_truth_denom yield) over hTruth2D (mc_signal_reco subset, ~0.745x low).
+    hTruth2D = f.Get("hOFTruthDenom2D")
+    if not hTruth2D:
+        hTruth2D = f.Get("hTruth2D")
+        print("[WARN] hOFTruthDenom2D not found; falling back to hTruth2D "
+              "(pre-Phase-16 subset truth).")
     hEff2D = f.Get("hEff2D")
     for h in [hXSec2D, hTruth2D, hEff2D]:
         h.SetDirectory(0)

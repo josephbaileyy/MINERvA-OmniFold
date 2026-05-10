@@ -166,10 +166,10 @@ def draw_top(pad, h_data, h_sim, h_truth, h_ibu, h_unb, ytitle, iters, step, unf
     leg.SetBorderSize(0)
     leg.SetFillStyle(0)
     leg.SetTextSize(0.033)
-    leg.AddEntry(h_data, "Data (meas sub)", "lep")
+    leg.AddEntry(h_data, "Reco data (bkg sub)", "lep")
     leg.AddEntry(h_sim, "Sim. (signal reco)", "l")
     leg.AddEntry(h_truth, "Truth (MC truth sel)", "f")
-    leg.AddEntry(h_ibu, "IBU (MINERvA) stat", "lep")
+    leg.AddEntry(h_ibu, "IBU (MINERvA, eff-corr) stat", "lep")
     leg.AddEntry(h_unb, f"{unfold_label} (iters={iters})", "l")
     leg.Draw()
     _KEEP.append(leg)
@@ -193,8 +193,9 @@ def draw_bottom(pad, r_ibu, r_unb, band, xmin, xmax):
 def parse_args():
     ap = argparse.ArgumentParser(description="Gaussian-style comparison plot for unbinned OmniFold pTmu output.")
     ap.add_argument("--omnifold", default="pTmu_crossSection_omnifold.root")
-    ap.add_argument("--ibu", default="pTmu_crossSection_clean.root")
+    ap.add_argument("--ibu", default="pTmu_crossSection.root")
     ap.add_argument("--outpdf", default="ptmu_gaussian_style_unbinned.pdf")
+    ap.add_argument("--outpng", default=None)
     ap.add_argument("--iters", type=int, default=None)
     ap.add_argument("--density", dest="density", action="store_true")
     ap.add_argument("--counts", dest="density", action="store_false")
@@ -220,8 +221,21 @@ def main():
     iters_obj = get_obj(f_o, "iters")
     iters = int(iters_obj.GetVal()) if args.iters is None else int(args.iters)
 
-    hIBU_mnv = get_obj(f_i, "unfolded")
+    # Compare in efficiency-corrected truth space:
+    # IBU's `unfolded` is pre-efficiency-correction (data-yield in truth bins);
+    # OmniFold's `hUnfoldTruthSel` is post-efficiency-correction (step2*truth_w).
+    # IBU's `crossSection` = efficiencyCorrected / flux / nucleons / dpt; its
+    # shape (modulo a constant flux*nucleons factor) is the efficiency-corrected
+    # truth distribution, apples-to-apples with hUnfoldTruthSel. Multiply by
+    # binwidth here so the units match the per-bin event-yield convention used
+    # by the other histograms (otherwise normalize_to_density double-counts the
+    # binwidth division and squashes the shape on variable-width binning).
+    hIBU_mnv = get_obj(f_i, "crossSection")
     hIBU = mnvh1d_to_th1d_stat(hIBU_mnv, "ibu_stat")
+    for ib in range(1, hIBU.GetNbinsX() + 1):
+        w = hIBU.GetBinWidth(ib)
+        hIBU.SetBinContent(ib, hIBU.GetBinContent(ib) * w)
+        hIBU.SetBinError(ib, hIBU.GetBinError(ib) * w)
 
     if args.density:
         d_data = normalize_to_density(hMeasSub, "d_data")
@@ -257,6 +271,9 @@ def main():
     draw_bottom(p2, r_ibu, r_unb, band, xmin, xmax)
     c.SaveAs(args.outpdf)
     print(f"[OK] wrote {args.outpdf}")
+    if args.outpng:
+        c.SaveAs(args.outpng)
+        print(f"[OK] wrote {args.outpng}")
 
 
 if __name__ == "__main__":

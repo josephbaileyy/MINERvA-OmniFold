@@ -239,6 +239,59 @@ def build_measured_training_2d(meas_pt, meas_pz, h_data_2d, h_bkg_2d, verbose=Fa
     return weights, h_train_2d
 
 
+def collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
+                                pot_scale, use_weights=False, verbose=False):
+    """Read mc_truth_denom TTree, return truth-only arrays for hEffDen.
+
+    mc_truth_denom is the canonical efficiency denominator: it loops the
+    Truth tree directly and includes truth-passing events whether or not
+    they have a corresponding entry in the reco tree. mc_signal_reco only
+    has truth-passing events that ALSO appear in the reco tree, so it is
+    a proper subset (~25% smaller for ME FHC). Building hEffDen from
+    mc_truth_denom is required for the standard MINERvA cross-section
+    extraction; using the mc_signal_reco subset under-counts the true
+    denominator and over-estimates efficiency.
+    """
+    pt_arr = array("d", [0.0])
+    pz_arr = array("d", [0.0])
+    wt_arr = array("d", [1.0])
+    t_truth_denom.SetBranchAddress("MC", pt_arr)
+    t_truth_denom.SetBranchAddress("MC_pz", pz_arr)
+    if use_weights:
+        t_truth_denom.SetBranchAddress("w_truth", wt_arr)
+
+    pt_list, pz_list, w_list = [], [], []
+    bad_w, dropped = 0, 0
+
+    n_entries = t_truth_denom.GetEntries()
+    for i in range(n_entries):
+        t_truth_denom.GetEntry(i)
+        pt = float(pt_arr[0])
+        pz = float(pz_arr[0])
+        w = float(wt_arr[0]) if use_weights else 1.0
+        if not (math.isfinite(pt) and math.isfinite(pz) and
+                math.isfinite(w) and 0 <= w < 1e4):
+            bad_w += 1
+            continue
+        if not (pt_lo <= pt <= pt_hi and pz_lo <= pz <= pz_hi):
+            dropped += 1
+            continue
+        w *= pot_scale
+        pt_list.append(pt)
+        pz_list.append(pz)
+        w_list.append(w)
+
+    if verbose:
+        print(f"[INFO] truth_denom: kept={len(pt_list)}, "
+              f"dropped={dropped}, bad_w={bad_w}, total={n_entries}")
+
+    return {
+        "truth_pt": np.asarray(pt_list, dtype=float),
+        "truth_pz": np.asarray(pz_list, dtype=float),
+        "w_truth": np.asarray(w_list, dtype=float),
+    }
+
+
 def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
                               pot_scale, use_weights=False, verbose=False):
     """Read mc_signal_reco TTree, return dict of 2D arrays for OmniFold."""
@@ -320,8 +373,20 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
 # ---------------------------------------------------------------------------
 # Cross-section calculation
 # ---------------------------------------------------------------------------
-def compute_efficiency_2d(sig, pt_edges, pz_edges):
-    """Compute 2D efficiency from signal MC arrays (original MC weights)."""
+def compute_efficiency_2d(sig, pt_edges, pz_edges, truth_denom=None):
+    """Compute the standard selection efficiency (diagnostic; mirrors paper Fig. 5).
+
+    hEffNum = mc_signal_reco events with both truth-pass AND sim_pass=True
+              (weighted by w_reco). This is the canonical "events passing
+              reco selection."
+    hEffDen = full truth denominator. From mc_truth_denom if `truth_denom`
+              given; otherwise from the mc_signal_reco truth-pass subset
+              (closure / fallback).
+    hEff2D  = hEffNum / hEffDen (absolute selection efficiency). Used by
+              `plot_efficiency_fig5_style.py` for diagnostic comparison
+              with the paper. **Not** the right divisor for the OmniFold
+              cross section — see `compute_omnifold_completeness_2d`.
+    """
     hNum = make_th2d("hEffNum", "eff numerator", pt_edges, pz_edges)
     hDen = make_th2d("hEffDen", "eff denominator", pt_edges, pz_edges)
 
@@ -330,45 +395,108 @@ def compute_efficiency_2d(sig, pt_edges, pz_edges):
             sig["pass_reco"], sig["pass_truth"],
             sig["w_truth"], sig["w_reco"]):
         if ptru:
-            hDen.Fill(pt, pz, wt)
+            if truth_denom is None:
+                hDen.Fill(pt, pz, wt)
             if pr:
                 hNum.Fill(pt, pz, wr)
+
+    if truth_denom is not None:
+        for pt, pz, w in zip(truth_denom["truth_pt"],
+                              truth_denom["truth_pz"],
+                              truth_denom["w_truth"]):
+            hDen.Fill(pt, pz, w)
 
     hEff = hNum.Clone("hEff2D")
     hEff.SetTitle("Selection efficiency;p_{T} (GeV/c);p_{||} (GeV/c)")
     hEff.Divide(hDen)
-    # NB: empty-denominator bins stay at 0. The cross-section extraction
-    # treats eff<=0 as undefined and sets the bin xsec to 0. Flooring to
-    # 1e-12 here would blow up any OmniFold weight that leaks into an
-    # empty-truth bin (observed for p_T bin 14, p_|| bin 5: U=0.29 but
-    # zero truth denominator floored the eff to 1e-12, inflating xsec
-    # by 12 orders of magnitude).
     return hEff, hNum, hDen
 
 
-def extract_cross_section_2d(hUnfold, hEff, flux_bins, data_pot,
+def compute_omnifold_completeness_2d(sig, pt_edges, pz_edges, truth_denom):
+    """Compute the OmniFold input completeness ratio used to scale hUnfold2D.
+
+    OmniFold's step-1 miss regression handles `sim_pass=False` events
+    that are present in the input (mc_signal_reco contains both reco-
+    passing and reco-failing truth-passing events). It does **not**
+    handle truth events that are entirely absent from the input — those
+    in mc_truth_denom but not in mc_signal_reco. So OmniFold's hUnfold2D
+    represents the inferred truth-level data over the mc_signal_reco
+    truth-pass subset, not the full truth space.
+
+    The correction:
+        hOFInputTruth = mc_signal_reco truth-pass events (regardless of
+                        sim_pass), weighted by w_truth — i.e. the subset
+                        of truth events that is visible to OmniFold.
+        hTruthDenom   = mc_truth_denom (canonical full truth).
+        hOFCompleteness = hOFInputTruth / hTruthDenom
+                        = fraction of truth events that OmniFold sees.
+
+    Cross section then uses
+        σ = hUnfold2D / (hOFCompleteness · Φ · N · POT · ΔpT · Δp||)
+    which scales each bin from the OmniFold-input subset to the full
+    truth phase space.
+
+    For the global ME FHC numbers this ratio is ~24.5M / 32.85M ≈ 0.745,
+    matching the observed σ_total/σ_paper deficit of 0.752 to within ~1%.
+    """
+    hOFInputTruth = make_th2d(
+        "hOFInputTruth2D",
+        "OmniFold input truth-pass events (numerator of completeness)",
+        pt_edges, pz_edges)
+    hTruthDen = make_th2d(
+        "hOFTruthDenom2D",
+        "Full truth denominator (mc_truth_denom)",
+        pt_edges, pz_edges)
+
+    for pt, pz, ptru, wt in zip(sig["truth_pt"], sig["truth_pz"],
+                                  sig["pass_truth"], sig["w_truth"]):
+        if ptru:
+            hOFInputTruth.Fill(pt, pz, wt)
+
+    for pt, pz, w in zip(truth_denom["truth_pt"], truth_denom["truth_pz"],
+                          truth_denom["w_truth"]):
+        hTruthDen.Fill(pt, pz, w)
+
+    hCompleteness = hOFInputTruth.Clone("hOFCompleteness2D")
+    hCompleteness.SetTitle(
+        "OmniFold input completeness "
+        "(mc_signal_reco truth-pass / mc_truth_denom);"
+        "p_{T} (GeV/c);p_{||} (GeV/c)")
+    hCompleteness.Divide(hTruthDen)
+    return hCompleteness, hOFInputTruth, hTruthDen
+
+
+def extract_cross_section_2d(hUnfold, hCompleteness, flux_bins, data_pot,
                               n_nucleons, pt_edges, pz_edges):
     """Convert unfolded event counts to d^2 sigma / (dp_T dp_||).
 
-    OmniFold returns a truth-side *reweighting ratio* (`weights_push` in the
-    helper), not a standalone truth-yield weight. `hUnfold2D` is therefore
-    built from `step2_weights * truth_w_in` and already carries the acceptance
-    correction through the step-1 miss regression plus the truth-mask-restricted
-    step-2 update. Keep `hEff2D` for diagnostics only; do not divide by it
-    again here.
+    Formula (per bin):
+        dσ = U / (c · Φ · N · POT · ΔpT · Δp||) · 1e4
 
-    Mirrors the normalization stage of ExtractCrossSection.cpp once the
-    efficiency correction has already been applied:
-        Divide(eff-corrected, fluxIntegral)  # per p_T bin, flux in m^-2/POT
-        Scale(1/(nNucleons * POT))
-        Scale(1e4)                           # m^-2 -> cm^-2
-        Scale(1, "width")                    # / bin width
+    where:
+        U   = hUnfold bin content (truth-level event count from OmniFold)
+        c   = hCompleteness bin content
+              = (events present in OmniFold input) / (all truth events)
+              = hOFInputTruth / hOFTruthDenom
+        Φ   = flux integral, m^-2/POT, per p_T bin (broadcast over p_||)
+        N   = fiducial nucleon count
+        POT = data POT
+        1e4 = m^-2 → cm^-2
 
-    `flux_bins` is a numpy array of length nPtBins giving the flux (m^-2/POT)
-    in each p_T bin (neutrino flux is independent of p_||, so the same flux
-    value broadcasts across all p_|| rows within a given p_T column).
+    Why divide by c rather than the absolute selection efficiency
+    ε = hEffNum/hEffDen: OmniFold's step-1 miss regression handles the
+    selection inefficiency for `sim_pass=False` events that are present
+    in the input. It does **not** handle truth events absent from the
+    input. So hUnfold2D is the inferred truth-level data over the
+    "OmniFold input truth subset" (mc_signal_reco truth-pass events),
+    not the full truth space. Dividing by c rescales from that subset
+    to the full truth phase space (mc_truth_denom).
+
+    Empirically, c_global ≈ 0.745 for ME FHC, which matches the
+    observed σ_total / σ_paper deficit of 0.752 (Phase 16 of run log).
+
+    Empty-c or empty-flux bins emit zero rather than blowing up.
     """
-    del hEff  # Retained in the function signature for script compatibility.
     hXSec = hUnfold.Clone("hXSec2D")
     hXSec.SetTitle("d^{2}#sigma/(dp_{T}dp_{||});p_{T} (GeV/c);p_{||} (GeV/c)")
     hXSec.Reset("ICES")
@@ -377,6 +505,11 @@ def extract_cross_section_2d(hUnfold, hEff, flux_bins, data_pot,
     if flux_bins.shape[0] != nx:
         raise RuntimeError(
             f"flux_bins length ({flux_bins.shape[0]}) != hUnfold nBinsX ({nx})")
+    if (hCompleteness.GetNbinsX(), hCompleteness.GetNbinsY()) != (nx, hUnfold.GetNbinsY()):
+        raise RuntimeError(
+            f"hCompleteness shape "
+            f"({hCompleteness.GetNbinsX()}x{hCompleteness.GetNbinsY()}) "
+            f"does not match hUnfold ({nx}x{hUnfold.GetNbinsY()})")
 
     for ix in range(1, nx + 1):
         dpt = hUnfold.GetXaxis().GetBinWidth(ix)
@@ -384,11 +517,15 @@ def extract_cross_section_2d(hUnfold, hEff, flux_bins, data_pot,
         for iy in range(1, hUnfold.GetNbinsY() + 1):
             dpz = hUnfold.GetYaxis().GetBinWidth(iy)
             u = hUnfold.GetBinContent(ix, iy)
-            if flux_i > 0 and n_nucleons > 0 and data_pot > 0:
-                denom = flux_i * n_nucleons * data_pot * dpt * dpz
+            c = hCompleteness.GetBinContent(ix, iy)
+            if (flux_i > 0 and n_nucleons > 0 and data_pot > 0 and c > 0):
+                denom = c * flux_i * n_nucleons * data_pot * dpt * dpz
                 xsec = (u / denom) * 1.0e4  # m^2 -> cm^2
                 u_err = hUnfold.GetBinError(ix, iy)
-                xerr = (u_err / denom) * 1.0e4
+                c_err = hCompleteness.GetBinError(ix, iy)
+                rel_u = u_err / u if u > 0 else 0.0
+                rel_c = c_err / c
+                xerr = abs(xsec) * math.sqrt(rel_u * rel_u + rel_c * rel_c)
             else:
                 xsec = 0.0
                 xerr = 0.0
@@ -475,8 +612,14 @@ def main():
     t_sig = f_in.Get("mc_signal_reco")
     t_bkg = f_in.Get("mc_background")
     t_data = f_in.Get("data")
+    t_truth_denom = f_in.Get("mc_truth_denom")
     if not t_sig or not t_bkg or not t_data:
         raise RuntimeError("Missing required TTrees")
+    if not t_truth_denom and not args.closure:
+        raise RuntimeError(
+            "mc_truth_denom missing — required for the canonical efficiency "
+            "denominator. Re-run runEventLoopOmniFold to produce it, or pass "
+            "--closure for the legacy mc_signal_reco-only behaviour.")
 
     # Verify p_|| branches exist
     for tree, bname in [(t_sig, "sim_pz"), (t_sig, "MC_pz"),
@@ -531,6 +674,20 @@ def main():
         raise RuntimeError("No signal events for OmniFold")
     if meas_pt.size == 0:
         raise RuntimeError("No measured data entries")
+
+    # --- Read canonical truth denominator for efficiency ---
+    # Skipped in --closure mode: the synthetic data lives in the
+    # mc_signal_reco subset, so closure must use the same subset for
+    # hEffDen to be self-consistent (truth_denom=None falls back to the
+    # mc_signal_reco truth-pass subset inside compute_efficiency_2d).
+    truth_denom = None
+    if not args.closure and t_truth_denom is not None:
+        truth_denom = collect_truth_denom_arrays(
+            t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
+            pot_scale, use_weights=args.use_weights, verbose=args.verbose)
+        print(f"[INFO] truth_denom events kept (in binning): "
+              f"{truth_denom['truth_pt'].size}")
+        print(f"[INFO]   sum(w_truth) = {truth_denom['w_truth'].sum():.6g}")
 
     # Signal fakes: MC signal-truth events with reco inside the binning but
     # truth outside the measurement phase space. These are present in measured
@@ -675,11 +832,51 @@ def main():
     print(f"[CHECK] hMeasSub2D integral: {hMeasSub2D.Integral():.6g}")
     print(f"[CHECK] hMeasTrain2D integral: {hMeasTrain2D.Integral():.6g}")
 
-    # --- Compute efficiency and cross section ---
-    hEff2D, hEffNum, hEffDen = compute_efficiency_2d(sig, pt_edges, pz_edges)
+    # --- Compute efficiency and completeness ---
+    # hEff2D = absolute selection efficiency (sim_pass / full truth) — diagnostic only.
+    # hCompleteness = OmniFold input completeness (input truth / full truth) — used
+    # to convert hUnfold2D (over the OmniFold-input subset) to the full truth phase
+    # space at cross-section extraction.
+    hEff2D, hEffNum, hEffDen = compute_efficiency_2d(
+        sig, pt_edges, pz_edges, truth_denom=truth_denom)
+    eff_source = ("mc_truth_denom (canonical Truth-tree denominator)"
+                  if truth_denom is not None
+                  else "mc_signal_reco truth-pass subset (closure / fallback)")
+    print(f"[INFO] hEffDen source: {eff_source}")
+    print(f"[CHECK] hEffNum integral: {hEffNum.Integral():.6g}")
+    print(f"[CHECK] hEffDen integral: {hEffDen.Integral():.6g}")
 
-    hXSec2D = extract_cross_section_2d(hUnfold2D, hEff2D, flux_bins,
-                                         data_pot, n_nucleons, pt_edges, pz_edges)
+    if truth_denom is not None:
+        hCompleteness2D, hOFInputTruth2D, hOFTruthDenom2D = \
+            compute_omnifold_completeness_2d(
+                sig, pt_edges, pz_edges, truth_denom)
+        print(f"[CHECK] hOFInputTruth2D integral: {hOFInputTruth2D.Integral():.6g}")
+        print(f"[CHECK] hOFTruthDenom2D integral: {hOFTruthDenom2D.Integral():.6g}")
+        try:
+            c_global = (hOFInputTruth2D.Integral() / hOFTruthDenom2D.Integral())
+            print(f"[CHECK] global completeness c = {c_global:.4f} "
+                  f"(expected ≈ N(mc_signal_reco truth-pass) / "
+                  f"N(mc_truth_denom))")
+        except ZeroDivisionError:
+            pass
+    else:
+        # Closure / fallback: completeness ≡ 1 (no scale-up), preserving
+        # the legacy in-sample closure behaviour. The synthetic data lives
+        # in the same subset as the training, so no completeness correction
+        # is appropriate.
+        hCompleteness2D = make_th2d("hOFCompleteness2D",
+                                     "Completeness ≡ 1 (closure / fallback)",
+                                     pt_edges, pz_edges)
+        for ix in range(1, hCompleteness2D.GetNbinsX() + 1):
+            for iy in range(1, hCompleteness2D.GetNbinsY() + 1):
+                hCompleteness2D.SetBinContent(ix, iy, 1.0)
+        hOFInputTruth2D = hCompleteness2D.Clone("hOFInputTruth2D")
+        hOFTruthDenom2D = hCompleteness2D.Clone("hOFTruthDenom2D")
+        print("[INFO] Closure/fallback: completeness set to 1.0 in all bins.")
+
+    hXSec2D = extract_cross_section_2d(
+        hUnfold2D, hCompleteness2D, flux_bins,
+        data_pot, n_nucleons, pt_edges, pz_edges)
 
     # 1D projections
     hXSec_pt = project_xsec_1d(hXSec2D, "pt", pt_edges, pz_edges)
@@ -712,8 +909,10 @@ def main():
     # Histograms
     for h in [hDataReco2D, hBkgReco2D, hMeasSub2D, hMeasTrain2D,
               hTruth2D, hUnfold2D, hEff2D, hEffNum, hEffDen,
+              hCompleteness2D, hOFInputTruth2D, hOFTruthDenom2D,
               hXSec2D, hXSec_pt, hXSec_pz, hFlux_pt]:
         h.Write()
+    ROOT.TNamed("hEffDenSource", eff_source).Write()
 
     f_out.Close()
     print(f"[OK] Wrote {args.out}")

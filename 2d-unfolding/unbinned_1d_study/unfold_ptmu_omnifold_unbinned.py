@@ -32,21 +32,6 @@ def integral_with_ufof(h):
     return float(h.Integral(0, h.GetNbinsX() + 1))
 
 
-def assert_no_negative_bins(h, name):
-    for ib in range(1, h.GetNbinsX() + 1):
-        if h.GetBinContent(ib) < 0.0:
-            raise RuntimeError(f"{name}: negative bin {ib} content={h.GetBinContent(ib)}")
-
-
-def floor_nonpositive_bins(h, floor=1e-12):
-    n = 0
-    for ib in range(1, h.GetNbinsX() + 1):
-        if h.GetBinContent(ib) <= 0.0:
-            h.SetBinContent(ib, floor)
-            n += 1
-    return n
-
-
 def get_pot_scales(f_in):
     data_par = f_in.Get("dataPOTUsed")
     mc_par = f_in.Get("mcPOTUsed")
@@ -59,25 +44,7 @@ def get_pot_scales(f_in):
     return data_pot, mc_pot, data_pot / mc_pot, "input file metadata"
 
 
-def np_to_tvector(mask):
-    v = ROOT.TVector(len(mask))
-    for i, x in enumerate(mask):
-        v[i] = 1.0 if bool(x) else 0.0
-    return v
-
-
-def np_to_tvectord(vals):
-    v = ROOT.TVectorD(len(vals))
-    for i, x in enumerate(vals):
-        v[i] = float(x)
-    return v
-
-
-def tvectord_to_np(v):
-    return np.asarray([float(v[i]) for i in range(v.GetNoElements())], dtype=float)
-
-
-def fill_data_reco(t_data, h_data, pt_guard_max=1e3, verbose=False):
+def fill_data_reco(t_data, h_data, pt_lo, pt_hi, pt_guard_max=1e3, verbose=False):
     measured = array("d", [0.0])
     measured_pass = array("B", [0])
     t_data.SetBranchAddress("measured", measured)
@@ -86,6 +53,7 @@ def fill_data_reco(t_data, h_data, pt_guard_max=1e3, verbose=False):
     vals = []
     n_pass_skip = 0
     n_guard_skip = 0
+    n_range_skip = 0
 
     for i in range(t_data.GetEntries()):
         t_data.GetEntry(i)
@@ -96,12 +64,50 @@ def fill_data_reco(t_data, h_data, pt_guard_max=1e3, verbose=False):
         if not math.isfinite(x) or abs(x) > pt_guard_max:
             n_guard_skip += 1
             continue
+        if not (pt_lo <= x <= pt_hi):
+            n_range_skip += 1
+            continue
         vals.append(x)
         h_data.Fill(x)
 
     if verbose:
-        print(f"[INFO] data filled: pass-skipped={n_pass_skip}, guard-skipped={n_guard_skip}")
+        print(f"[INFO] data filled: pass-skipped={n_pass_skip}, "
+              f"guard-skipped={n_guard_skip}, range-skipped={n_range_skip}")
     return np.asarray(vals, dtype=float)
+
+
+def build_measured_training(meas_pt, h_data, h_bkg, verbose=False):
+    """Per-event measured weights = max(0, data-bkg)/data in the reco bin.
+
+    Mirrors the 2D contract: OmniFold's measured-side accepts per-event sample
+    weights but not negative weights. Floor any negative reco-space bins to
+    zero before passing to ohf.omnifold.
+    """
+    h_train = h_data.Clone("hMeasTrain")
+    h_train.SetTitle("Measured (training, floored);p_{T}^{#mu,reco};Events")
+    h_train.Reset("ICES")
+
+    xaxis = h_data.GetXaxis()
+    weights = np.zeros(meas_pt.shape[0], dtype=float)
+    n_zero = 0
+
+    for i, pt in enumerate(meas_pt):
+        ix = xaxis.FindFixBin(float(pt))
+        data_bin = h_data.GetBinContent(ix)
+        if data_bin <= 0.0:
+            n_zero += 1
+            continue
+        target_bin = max(0.0, data_bin - h_bkg.GetBinContent(ix))
+        w = target_bin / data_bin
+        weights[i] = w
+        h_train.Fill(float(pt), w)
+        if w <= 0.0:
+            n_zero += 1
+
+    if verbose:
+        print(f"[INFO] measured training: effective sum={weights.sum():.6g}, "
+              f"zero-weight events={n_zero}/{weights.size}")
+    return weights, h_train
 
 
 def fill_bkg_reco(t_bkg, h_bkg, pot_scale, pt_guard_max=1e3, verbose=False):
@@ -215,7 +221,7 @@ def collect_signal_arrays(t_sig, pt_lo, pt_hi, response_pot_scale, use_weights=F
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Unbinned OmniFold unfolding for MINERvA pTmu using RooUnfoldOmnifold wrapper API.")
+    ap = argparse.ArgumentParser(description="Unbinned OmniFold unfolding for MINERvA pTmu via the omnifold.py helper, mirroring the 2D contract.")
     ap.add_argument("--omnifile", default="runEventLoopOmniFold.root")
     ap.add_argument("--datafile", default="runEventLoopData.root")
     ap.add_argument("--datahist", default="pTmu_data")
@@ -254,7 +260,6 @@ def main():
     hDataReco = make_th1d("hDataReco", "Data reco;p_{T}^{#mu,reco};Events", edges)
     hBkgReco = make_th1d("hBkgReco", "Sim. (bkg reco, POT-scaled);p_{T}^{#mu,reco};Events", edges)
     hMeasSub = make_th1d("hMeasSub", "Measured (data-bkg);p_{T}^{#mu,reco};Events", edges)
-    hMeasTrain = make_th1d("hMeasTrain", "Measured (training);p_{T}^{#mu,reco};Events", edges)
     hSigReco = make_th1d("hSigReco", "Sim. (signal reco);p_{T}^{#mu,reco};Events", edges)
     hTruthSel = make_th1d("hTruthSel", "Truth prior (MC truth);p_{T}^{#mu,true};Events", edges)
     hUnfold = make_th1d("hUnfoldTruthSel", "Unfolded (unbinned OmniFold);p_{T}^{#mu,true};Events", edges)
@@ -265,14 +270,8 @@ def main():
     hWstep1.SetDirectory(0)
     hWstep2.SetDirectory(0)
 
-    measured_entries = fill_data_reco(t_data, hDataReco, verbose=args.verbose)
+    measured_entries = fill_data_reco(t_data, hDataReco, pt_lo, pt_hi, verbose=args.verbose)
     fill_bkg_reco(t_bkg, hBkgReco, pot_scale, verbose=args.verbose)
-    hMeasSub.Add(hDataReco)
-    hMeasSub.Add(hBkgReco, -1.0)
-    assert_no_negative_bins(hMeasSub, "hMeasSub")
-    hMeasTrain.Add(hMeasSub)
-    if args.verbose:
-        print(f"[INFO] floored non-positive bins in training hist: {floor_nonpositive_bins(hMeasTrain)}")
 
     sig = collect_signal_arrays(t_sig, pt_lo, pt_hi, response_pot_scale, use_weights=args.use_weights, verbose=args.verbose)
     if sig["truth"].size == 0:
@@ -280,25 +279,48 @@ def main():
     if measured_entries.size == 0:
         raise RuntimeError("No measured entries available for unbinned OmniFold.")
 
-    df_MCgen = ROOT.RDF.FromNumpy({"MCgen": sig["truth"]})
-    df_MCreco = ROOT.RDF.FromNumpy({"MCreco": sig["reco"]})
-    df_measured = ROOT.RDF.FromNumpy({"measured": measured_entries})
+    # Signal fakes (reco in PS, truth out of PS): omnifold.py drops ~pass_truth
+    # events from MCreco before step-1 training, but they remain in measured.
+    # Treat them as background by adding their POT-scaled reco weights into
+    # hBkgReco so both sides are fake-free. See 2D contract §3.
+    is_fake = sig["pass_reco"] & (~sig["pass_truth"])
+    n_fakes = int(is_fake.sum())
+    if n_fakes:
+        fake_reco = sig["reco"][is_fake]
+        fake_wr = sig["w_reco"][is_fake]
+        fake_sum = 0.0
+        for x, w in zip(fake_reco, fake_wr):
+            hBkgReco.Fill(float(x), float(w))
+            fake_sum += float(w)
+        if args.verbose:
+            print(f"[INFO] signal fakes added to bkg: n={n_fakes}, sum(w_reco)={fake_sum:.6g}")
 
-    unb = ROOT.RooUnfoldOmnifold()
-    unb.SetMCgenDataFrame(df_MCgen)
-    unb.SetMCrecoDataFrame(df_MCreco)
-    unb.SetMeasuredDataFrame(df_measured)
-    unb.SetMCPassReco(np_to_tvector(sig["pass_reco"]))
-    unb.SetMCPassTruth(np_to_tvector(sig["pass_truth"]))
-    unb.SetMeasuredPassReco(np_to_tvector(np.ones(measured_entries.shape[0], dtype=bool)))
-    if args.use_weights:
-        unb.SetMCgenWeights(np_to_tvectord(sig["w_truth"]))
-        unb.SetMCrecoWeights(np_to_tvectord(sig["w_reco"]))
-    unb.SetNumIterations(int(args.iters))
+    hMeasSub.Add(hDataReco)
+    hMeasSub.Add(hBkgReco, -1.0)
 
-    result = unb.UnbinnedOmnifold()
-    step1_weights = tvectord_to_np(ROOT.std.get[0](result))
-    step2_weights = tvectord_to_np(ROOT.std.get[1](result))
+    measured_weights, hMeasTrain = build_measured_training(
+        measured_entries, hDataReco, hBkgReco, verbose=args.verbose)
+
+    # --- Run OmniFold via direct Python helper to pass measured_weights. ---
+    import sys
+    _OF_PY = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python"
+    if _OF_PY not in sys.path:
+        sys.path.insert(0, _OF_PY)
+    from omnifold import OmniFold_helper_functions as ohf
+
+    MCgen = sig["truth"].reshape(-1, 1)
+    MCreco = sig["reco"].reshape(-1, 1)
+    measured = measured_entries.reshape(-1, 1)
+
+    step1_weights, step2_weights = ohf.omnifold(
+        MCgen, MCreco, measured,
+        sig["pass_reco"], sig["pass_truth"],
+        np.ones(measured_entries.shape[0], dtype=bool),
+        int(args.iters),
+        MCgen_weights=sig["w_truth"] if args.use_weights else None,
+        MCreco_weights=sig["w_reco"] if args.use_weights else None,
+        measured_weights=measured_weights,
+    )
 
     truth_in = sig["truth"][sig["pass_truth"]]
     reco_in = sig["reco"][sig["pass_truth"]]
@@ -312,9 +334,12 @@ def main():
 
     for x, w in zip(truth_in, truth_w_in):
         hTruthSel.Fill(float(x), float(w))
-    for x, w in zip(truth_in, step2_weights):
-        hUnfold.Fill(float(x), float(w))
-        hWstep2.Fill(float(w))
+    # hUnfold is a truth-space event yield: step2 returns a truth-side density
+    # ratio, multiply by the original truth weights to get event counts. See
+    # 2D contract §4.
+    for x, ratio, wt in zip(truth_in, step2_weights, truth_w_in):
+        hUnfold.Fill(float(x), float(ratio) * float(wt))
+        hWstep2.Fill(float(ratio))
     for x, p, w in zip(reco_in, pass_reco_in, step1_weights):
         if p:
             hStep1Reco.Fill(float(x), float(w))

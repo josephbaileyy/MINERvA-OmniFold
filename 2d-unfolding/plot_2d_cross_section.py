@@ -179,8 +179,13 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
 def compute_truth_xsec_2d(hTruth2D, hEff2D, flux_bins, data_pot, n_nucleons):
     """Convert MC truth counts to cross section for comparison.
 
-    `hTruth2D` is already a truth-space signal spectrum, so this uses the same
-    post-efficiency normalization as the production `extract_cross_section_2d()`.
+    Caller passes a truth-space yield TH2D. Post-Phase-16 the canonical
+    choice is `hOFTruthDenom2D` (mc_truth_denom, 32.85M events,
+    POT-scaled with w_truth) so this returns d^2 sigma / (dpT dp||) of
+    the local MC-truth model — directly comparable to the paper's
+    MnvTune-v1 prediction. Pre-Phase-16 outputs only have hTruth2D
+    (mc_signal_reco truth-pass subset, 24.5M); against those the result
+    is low by the input-completeness factor c ~ 0.745.
     """
     del hEff2D  # Retained for compatibility with existing callers.
     hXSec = hTruth2D.Clone("hXSecTruth2D")
@@ -245,7 +250,15 @@ def main():
         raise RuntimeError(f"Could not open {args.infile}")
 
     hXSec2D = f.Get("hXSec2D")
-    hTruth2D = f.Get("hTruth2D")
+    # MC truth display: prefer hOFTruthDenom2D (post-Phase-16 canonical
+    # mc_truth_denom yield, 32.85M events) over hTruth2D (mc_signal_reco
+    # truth-pass subset, 24.5M events). hTruth2D sits ~0.745x too low.
+    hTruth2D = f.Get("hOFTruthDenom2D")
+    if not hTruth2D:
+        hTruth2D = f.Get("hTruth2D")
+        print("[WARN] hOFTruthDenom2D not found; falling back to hTruth2D "
+              "(pre-Phase-16 subset truth — MC-truth display will be "
+              "low by the input-completeness factor c~0.745).")
     hEff2D = f.Get("hEff2D")
     hXSec_pt = f.Get("hXSec_pt")
     hXSec_pz = f.Get("hXSec_pz")
