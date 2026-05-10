@@ -1,6 +1,6 @@
 # Unbinned baseline freeze note (2026-03-26)
 
-## SUPERSEDED — 2026-04-30 → REVALIDATED 2026-05-02
+## SUPERSEDED — 2026-04-30 → REVALIDATED 2026-05-02 → PHASE-16 PATCHED 2026-05-10
 
 **Do not quote results from the frozen 2026-03-26 ROOT files against the
 paper.** The 2D campaign uncovered bugs that were also present in the 1D
@@ -89,16 +89,52 @@ Fix (2026-05-02): `plot_gaussian_style_ptmu_unbinned.py` now reads IBU's
 `crossSection` MnvH1D (which encodes `efficiencyCorrected / flux /
 nucleons / dpt`) and multiplies bin-by-bin by binwidth so the units
 match the per-bin event-yield convention used by every other histogram
-in the plot. After this fix, OmniFold and IBU lie in the same physical
-space and the ratio panel shows the expected behavior: OmniFold a smooth
-ramp 0.78→1.10, IBU more structured (dip at low pT, peak ~1.17 near
-1 GeV, flat ~0.97 above) — both partial-converged at iter=5, crossing
-near the QE peak. **No bug in the unfolder**; the earlier visual was a
-plot-script units artifact.
+in the plot.
 
-Sanity log from the unfold itself: `signal fakes added to bkg = 6`,
-`data-bkg/unfolded ≈ 0.847` (consistent with mean efficiency in the
-fiducial range).
+Phase-16 follow-up (2026-05-10): the 1D unbinned OmniFold pipeline had
+the same input-completeness bug found in the 2D unfold
+(`2D_OMNIFOLD_RUN_LOG.md` Phase 16). `unfold_ptmu_omnifold_unbinned.py`
+read `mc_signal_reco` only — never `mc_truth_denom` — so the
+efficiency-corrected unfold lived on the OmniFold-input truth subset
+(2.05M events) rather than the canonical truth phase space (2.68M).
+Effect: OmniFold low by c ≈ 0.77 globally for 1A. IBU was unaffected
+because `ExtractCrossSection` consumes the binned event loop's
+canonical hEffDen.
+
+Patch (2026-05-10):
+- Added `collect_truth_denom_arrays` in `unfold_ptmu_omnifold_unbinned.py`,
+  reading `mc_truth_denom` directly with the same conventions as the
+  2D path's `collect_truth_denom_arrays`.
+- New histograms in the unfold output: `hOFTruthDenom`,
+  `hOFCompleteness = hTruthSel / hOFTruthDenom`, and
+  `hUnfoldTruthSel_completeness_corrected = hUnfoldTruthSel /
+  hOFCompleteness`. The original `hUnfoldTruthSel` is preserved for
+  diff-checking against the historical artifact.
+- `plot_gaussian_style_ptmu_unbinned.py` prefers the corrected
+  histogram, falling back to the bare `hUnfoldTruthSel` with a warning
+  for pre-Phase-16 inputs.
+
+Sanity log from the patched 2026-05-10 unfold (1A, iters=5,
+`--use-weights`):
+- `mc_truth_denom` kept = 2,682,267 (matches the unbinned event loop)
+- `mc_signal_reco` truth-pass kept = 2,048,993
+- `hTruthSel` integral = 3.750e5; `hOFTruthDenom` integral = 4.863e5
+  → global completeness c = **0.7712** (1A nominally similar to MEHFC's
+  0.7503; matches 2.05M / 2.68M = 0.764 raw to ~1 %)
+- `hUnfoldTruthSel` (pre-correction) = 4.223e5
+- `hUnfoldTruthSel_completeness_corrected` = 5.501e5 (ratio post/pre
+  = 1.303 = 1/c, exactly as expected)
+- `signal fakes added to bkg = 6`, `data-bkg/unfolded ≈ 0.847`
+
+In the post-Phase-16 comparison plot (`ptmu_gaussian_style_unbinned.png`),
+both OmniFold and IBU sit on the canonical truth phase space — IBU via
+runEventLoop's hEffDen, OmniFold via the per-bin completeness divide.
+Density-normalized, the two unfolders now overlap exactly in the ratio
+panel, with the same 0.78 → 1.17 → 1.0 ramp vs local MC truth across
+p_T. That shape is the data/MC residual, not a method or pipeline
+artifact, and matches what the 2D campaign sees on the same playlist.
+**No bug in the unfolder**; the residual ratio shape is genuine
+data/MC-truth disagreement.
 
 The legacy `Documents/` 2026-03-26 ROOTs are kept as historical
 diagnostic state only — do not regenerate from them and do not compare

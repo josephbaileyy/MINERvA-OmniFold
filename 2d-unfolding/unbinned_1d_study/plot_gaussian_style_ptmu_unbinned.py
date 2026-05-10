@@ -12,10 +12,12 @@ ROOT.gStyle.SetOptFit(0)
 _KEEP = []
 
 
-def get_obj(f, name):
+def get_obj(f, name, required=True):
     obj = f.Get(name)
     if not obj:
-        raise RuntimeError(f"Missing '{name}' in {f.GetName()}")
+        if required:
+            raise RuntimeError(f"Missing '{name}' in {f.GetName()}")
+        return None
     return obj
 
 
@@ -217,19 +219,32 @@ def main():
     hMeasSub = to_th1d_copy(get_obj(f_o, "hMeasSub"), "data_meassub")
     hSigReco = to_th1d_copy(get_obj(f_o, "hSigReco"), "sim_sigreco")
     hTruthSel = to_th1d_copy(get_obj(f_o, "hTruthSel"), "truth_sel")
-    hUnfold = to_th1d_copy(get_obj(f_o, "hUnfoldTruthSel"), "unbinned_unfold")
+    # Post-Phase-16: prefer the input-completeness-corrected unfold
+    # (hUnfoldTruthSel divided by hOFCompleteness per bin) so this sits
+    # on the canonical truth phase space (mc_truth_denom), apples-to-
+    # apples with IBU's crossSection (whose efficiency denominator is
+    # the canonical mc_truth-tree-loop denominator from runEventLoop).
+    # Falls back to the bare hUnfoldTruthSel for pre-Phase-16 inputs
+    # with a warning that the comparison is offset by ~1/c ~ 1.3x.
+    h_unf_corr = get_obj(f_o, "hUnfoldTruthSel_completeness_corrected",
+                         required=False)
+    if h_unf_corr is not None:
+        hUnfold = to_th1d_copy(h_unf_corr, "unbinned_unfold")
+    else:
+        print("[WARN] hUnfoldTruthSel_completeness_corrected not present; "
+              "using hUnfoldTruthSel (pre-Phase-16 subset truth — "
+              "comparison vs IBU is biased by ~1/c, ~1.3x at 1A).")
+        hUnfold = to_th1d_copy(get_obj(f_o, "hUnfoldTruthSel"),
+                               "unbinned_unfold")
     iters_obj = get_obj(f_o, "iters")
     iters = int(iters_obj.GetVal()) if args.iters is None else int(args.iters)
 
-    # Compare in efficiency-corrected truth space:
-    # IBU's `unfolded` is pre-efficiency-correction (data-yield in truth bins);
-    # OmniFold's `hUnfoldTruthSel` is post-efficiency-correction (step2*truth_w).
-    # IBU's `crossSection` = efficiencyCorrected / flux / nucleons / dpt; its
-    # shape (modulo a constant flux*nucleons factor) is the efficiency-corrected
-    # truth distribution, apples-to-apples with hUnfoldTruthSel. Multiply by
-    # binwidth here so the units match the per-bin event-yield convention used
-    # by the other histograms (otherwise normalize_to_density double-counts the
-    # binwidth division and squashes the shape on variable-width binning).
+    # Both legs now sit on the canonical truth phase space (mc_truth_denom):
+    # OmniFold via the Phase-16 input-completeness correction,
+    # IBU via runEventLoop's hEffDen (the standard truth-tree denominator).
+    # IBU's `crossSection` MnvH1D = efficiencyCorrected / flux / nucleons / dpt;
+    # multiply by binwidth to get back to per-bin event-yield units that
+    # match the OmniFold-side histograms.
     hIBU_mnv = get_obj(f_i, "crossSection")
     hIBU = mnvh1d_to_th1d_stat(hIBU_mnv, "ibu_stat")
     for ib in range(1, hIBU.GetNbinsX() + 1):

@@ -143,6 +143,60 @@ def fill_bkg_reco(t_bkg, h_bkg, pot_scale, pt_guard_max=1e3, verbose=False):
         print(f"[INFO] bkg filled: pass-skipped={n_pass_skip}, guard-skipped={n_guard_skip}, weight-skipped={n_w_skip}")
 
 
+def collect_truth_denom_arrays(t_truth, pt_lo, pt_hi, response_pot_scale,
+                               use_weights=False, verbose=False):
+    """Read mc_truth_denom (the canonical Truth-tree denominator).
+
+    Returns POT-scaled w_truth-weighted truth-pT arrays in the fiducial
+    range, masked to [pt_lo, pt_hi]. Phase-16 fix: this denominator is
+    what the cross section needs, not the mc_signal_reco truth-pass
+    subset (which only contains events that produced a reco-tree
+    entry; the canonical denominator includes events with no reco
+    entry at all).
+    """
+    if not t_truth.GetListOfBranches().FindObject("MC"):
+        raise RuntimeError("mc_truth_denom missing required branch: MC")
+
+    mc_true = array("d", [0.0])
+    t_truth.SetBranchAddress("MC", mc_true)
+
+    wt_arr = array("d", [1.0])
+    has_wt = False
+    if use_weights:
+        if not t_truth.GetListOfBranches().FindObject("w_truth"):
+            raise RuntimeError("mc_truth_denom missing required branch: w_truth")
+        has_wt = True
+        t_truth.SetBranchAddress("w_truth", wt_arr)
+
+    truth_vals = []
+    w_truth = []
+    bad_weight = 0
+    out_of_range = 0
+    n_total = t_truth.GetEntries()
+    for i in range(n_total):
+        t_truth.GetEntry(i)
+        wt = float(wt_arr[0]) if has_wt else 1.0
+        if not (math.isfinite(wt) and 0.0 <= wt < 1e4):
+            bad_weight += 1
+            continue
+        tru = float(mc_true[0])
+        if not (math.isfinite(tru) and pt_lo <= tru <= pt_hi):
+            out_of_range += 1
+            continue
+        truth_vals.append(tru)
+        w_truth.append(wt * response_pot_scale)
+
+    if verbose:
+        print(f"[INFO] truth_denom: kept={len(truth_vals)}, "
+              f"out-of-range={out_of_range}, bad-weight={bad_weight}, "
+              f"total={n_total}")
+
+    return {
+        "truth": np.asarray(truth_vals, dtype=float),
+        "w_truth": np.asarray(w_truth, dtype=float),
+    }
+
+
 def collect_signal_arrays(t_sig, pt_lo, pt_hi, response_pot_scale, use_weights=False, verbose=False):
     for b in ("MC", "sim", "sim_pass"):
         if not t_sig.GetListOfBranches().FindObject(b):
@@ -249,8 +303,10 @@ def main():
     t_sig = f_in.Get("mc_signal_reco")
     t_bkg = f_in.Get("mc_background")
     t_data = f_in.Get("data")
-    if not t_sig or not t_bkg or not t_data:
-        raise RuntimeError("Missing required TTrees: mc_signal_reco, mc_background, data")
+    t_truth_denom = f_in.Get("mc_truth_denom")
+    if not t_sig or not t_bkg or not t_data or not t_truth_denom:
+        raise RuntimeError("Missing required TTrees: mc_signal_reco, "
+                           "mc_background, data, mc_truth_denom")
 
     data_pot, mc_pot, pot_scale, pot_src = get_pot_scales(f_in)
     response_pot_scale = pot_scale
@@ -264,6 +320,19 @@ def main():
     hTruthSel = make_th1d("hTruthSel", "Truth prior (MC truth);p_{T}^{#mu,true};Events", edges)
     hUnfold = make_th1d("hUnfoldTruthSel", "Unfolded (unbinned OmniFold);p_{T}^{#mu,true};Events", edges)
     hUnfoldScaled = make_th1d("hUnfoldTruthSel_rescaled", "Unfolded rescaled;p_{T}^{#mu,true};Events", edges)
+    hOFTruthDenom = make_th1d(
+        "hOFTruthDenom",
+        "Full truth denominator (mc_truth_denom);p_{T}^{#mu,true};Events",
+        edges)
+    hOFCompleteness = make_th1d(
+        "hOFCompleteness",
+        "OmniFold input completeness "
+        "(mc_signal_reco truth-pass / mc_truth_denom);p_{T}^{#mu,true};c",
+        edges)
+    hUnfoldCorr = make_th1d(
+        "hUnfoldTruthSel_completeness_corrected",
+        "Unfolded, divided by input completeness (post-Phase-16);"
+        "p_{T}^{#mu,true};Events", edges)
     hStep1Reco = make_th1d("hStep1RecoReweighted", "Reco MC with step1 weights;p_{T}^{#mu,reco};Events", edges)
     hWstep1 = ROOT.TH1D("hStep1WeightDist", "Step1 weights;w;Events", 120, 0.0, 6.0)
     hWstep2 = ROOT.TH1D("hStep2WeightDist", "Step2 weights;w;Events", 120, 0.0, 6.0)
@@ -276,6 +345,18 @@ def main():
     sig = collect_signal_arrays(t_sig, pt_lo, pt_hi, response_pot_scale, use_weights=args.use_weights, verbose=args.verbose)
     if sig["truth"].size == 0:
         raise RuntimeError("No signal events survived for unbinned OmniFold input.")
+
+    # Phase-16: read mc_truth_denom for the canonical truth denominator,
+    # then fill hOFTruthDenom and (later) hOFCompleteness = hTruthSel /
+    # hOFTruthDenom. The cross section needs hUnfold / completeness to
+    # rescale from the OmniFold-input truth subset to the full truth
+    # phase space. See 2D_OMNIFOLD_RUN_LOG.md Phase 16 + closeout.
+    td = collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi,
+                                    response_pot_scale,
+                                    use_weights=args.use_weights,
+                                    verbose=args.verbose)
+    for x, w in zip(td["truth"], td["w_truth"]):
+        hOFTruthDenom.Fill(float(x), float(w))
     if measured_entries.size == 0:
         raise RuntimeError("No measured entries available for unbinned OmniFold.")
 
@@ -368,9 +449,30 @@ def main():
         if w > 0.0:
             hWlog.Fill(math.log10(w))
 
+    # Phase-16 input-completeness: hOFCompleteness = hTruthSel / hOFTruthDenom
+    # per bin. hUnfoldCorr = hUnfold / hOFCompleteness rescales the unfolded
+    # truth-space yield from the OmniFold-input truth subset
+    # (mc_signal_reco truth-pass) up to the canonical truth phase space
+    # (mc_truth_denom).
+    n_bins = hOFCompleteness.GetNbinsX()
+    for ib in range(1, n_bins + 1):
+        num = hTruthSel.GetBinContent(ib)
+        den = hOFTruthDenom.GetBinContent(ib)
+        c = (num / den) if den > 0.0 else 0.0
+        hOFCompleteness.SetBinContent(ib, c)
+        u = hUnfold.GetBinContent(ib)
+        hUnfoldCorr.SetBinContent(ib, (u / c) if c > 0.0 else 0.0)
+    inp_int = integral_inrange(hTruthSel)
+    den_int = integral_inrange(hOFTruthDenom)
+    c_global = (inp_int / den_int) if den_int > 0.0 else 0.0
     print(f"[CHECK] hMeasSub in-range={target:.6g}")
-    print(f"[CHECK] hTruthSel in-range={integral_inrange(hTruthSel):.6g}")
+    print(f"[CHECK] hTruthSel (= hOFInputTruth) in-range={inp_int:.6g}")
+    print(f"[CHECK] hOFTruthDenom in-range={den_int:.6g}")
+    print(f"[CHECK] global completeness c = {c_global:.4f} "
+          f"(expected ~ 0.75 from MEHFC; 1A nominally similar)")
     print(f"[CHECK] hUnfoldTruthSel in-range={curr:.6g}")
+    print(f"[CHECK] hUnfoldTruthSel_completeness_corrected in-range="
+          f"{integral_inrange(hUnfoldCorr):.6g}")
     print(f"[CHECK] hUnfoldTruthSel(UF/OF)={integral_with_ufof(hUnfold):.6g}")
     if curr > 0.0:
         print(f"[CHECK] ratio data-bkg / unfolded = {target / curr:.6g}")
@@ -392,7 +494,7 @@ def main():
     if ROOT.TParameter("int")("isUnbinnedOmniFold", 1).Write() <= 0:
         failures.append("isUnbinnedOmniFold")
 
-    out_objs = [hDataReco, hBkgReco, hMeasSub, hMeasTrain, hSigReco, hTruthSel, hUnfold, hWbin, hWlog, hStep1Reco, hWstep1, hWstep2]
+    out_objs = [hDataReco, hBkgReco, hMeasSub, hMeasTrain, hSigReco, hTruthSel, hUnfold, hWbin, hWlog, hStep1Reco, hWstep1, hWstep2, hOFTruthDenom, hOFCompleteness, hUnfoldCorr]
     if args.rescale_unfold_to_meas:
         out_objs.append(hUnfoldScaled)
     for obj in out_objs:
