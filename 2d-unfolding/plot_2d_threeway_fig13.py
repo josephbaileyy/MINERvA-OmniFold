@@ -167,9 +167,12 @@ def stair_xy(edges, values):
     return np.asarray(x), np.asarray(y)
 
 
-def setup_paper_axes(ax, row, col, nrows, ncols, xlim, ylim=(0, 4.2)):
+def setup_paper_axes(ax, row, col, nrows, ncols, xlim, ylim=(0, 4.2),
+                     yticks=None):
     ax.set_xlim(*xlim)
     ax.set_ylim(*ylim)
+    if yticks is not None:
+        ax.set_yticks(yticks)
     ax.tick_params(direction="in", top=False, right=False, labelsize=8,
                    length=3, pad=2)
     if row != nrows - 1:
@@ -202,8 +205,8 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
 
     ax.text(0.50, 0.96, title, transform=ax.transAxes,
             ha="center", va="top", fontsize=9)
-    ax.text(0.92, 0.17, f"x {scale:g}", transform=ax.transAxes,
-            ha="right", va="center", fontsize=9)
+    ax.text(0.97, 0.78, f"x {scale:g}", transform=ax.transAxes,
+            ha="right", va="top", fontsize=9)
 
 
 def draw_legend_panel(ax, handles, labels):
@@ -219,26 +222,29 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
     gs = outer.subgridspec(4, 4, wspace=0.0, hspace=0.0)
     handles = labels = None
     axes = []
+    legend_drawn = False
     for ipt in range(16):
         row, col = divmod(ipt, 4)
         ax = fig.add_subplot(gs[row, col])
         axes.append(ax)
         if ipt >= N_PT:
-            if handles is not None:
+            if handles is not None and not legend_drawn:
                 draw_legend_panel(ax, handles, labels)
+                legend_drawn = True
             else:
                 ax.axis("off")
             continue
 
         mask = reported[ipt, :]
         vals_for_scale = np.r_[paper[ipt, mask], omni[ipt, :], truth[ipt, :]]
-        scale = rounded_scale(vals_for_scale)
+        scale = rounded_scale(vals_for_scale, target=1.7)
         title = f"{PT_EDGES[ipt]:.2f} < p_t < {PT_EDGES[ipt + 1]:.2f}"
         draw_panel(ax, PZ_DISP_EDGES, paper[ipt, :], paper_err[ipt, :],
                    omni[ipt, :], omni_err[ipt, :], truth[ipt, :],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PZ_DISP_EDGES[0], PZ_DISP_EDGES[-1]))
+                         (PZ_DISP_EDGES[0], PZ_DISP_EDGES[-1]),
+                         ylim=(0, 2.4), yticks=[0, 1, 2])
         tick_labs = [4, 10, 20, 40, 60]
         ax.set_xticks(tick_positions(tick_labs, PZ_EDGES, PZ_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
@@ -260,13 +266,14 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
         axes.append(ax)
         mask = reported[:, ipz]
         vals_for_scale = np.r_[paper[mask, ipz], omni[:, ipz], truth[:, ipz]]
-        scale = rounded_scale(vals_for_scale)
+        scale = rounded_scale(vals_for_scale, target=3.4)
         title = f"{PZ_EDGES[ipz]:.2f} < p_|| < {PZ_EDGES[ipz + 1]:.2f}"
         draw_panel(ax, PT_DISP_EDGES, paper[:, ipz], paper_err[:, ipz],
                    omni[:, ipz], omni_err[:, ipz], truth[:, ipz],
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]))
+                         (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]),
+                         ylim=(0, 4.8), yticks=[0, 2, 4])
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
         ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
