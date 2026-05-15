@@ -831,3 +831,158 @@ Files modified:
   default switch.
 - `2d-unfolding/ibu_1d_projection/README.md` — Phase-16 update note at
   top, method section updated to describe the `mc_truth_denom` read.
+
+## Phase 17 — Replace c correction with native OmniFold miss entries (in progress, 2026-05-14)
+
+### Motivation
+
+After sending Ben the post-Phase-16 slide deck (`reference/MINERvA with
+OmniFold.pdf`), he correctly pointed out that OmniFold *should* be able
+to handle truth-without-reco events natively via step-2 miss
+regression — and asked whether the c correction is applied per-bin (it
+is; `hCompleteness.GetBinContent(ix, iy)` in
+`extract_cross_section_2d`, even though the slide formula shows a
+single c).
+
+The reason the c correction is needed *in the current pipeline* is not
+an OmniFold limitation but an input-construction one: the
+`LoopAndFillUnbinnedMCSelectedSignalReco` walk in
+`runEventLoopOmniFold.cpp` iterates over the AnaTuple Data/reco tree
+(`options.m_mc`), so the 8.4M fiducial-truth events that have **no
+reco-tree entry at all** never enter `mc_signal_reco` — OmniFold
+cannot reweight events it never sees. The within-input misses
+(`sim_pass = false`, `sim = -9999` entries) are fed correctly; the
+truth-only misses (no AnaTuple reco entry) are not.
+
+The plan is to add the truth-only miss entries to the OmniFold input
+during the event loop. Once those are in, OmniFold's step-2 miss
+regression handles them natively and the per-bin c correction becomes
+redundant (modulo a closure check).
+
+### Design (open)
+
+The implementation question is how to avoid double-counting. If the
+Truth-tree walk simply writes every truth-pass event to
+`mc_signal_reco` as a miss entry, the ~24.46M truth-pass events that
+already have a reco-tree entry get duplicated.
+
+Three options sketched, none yet committed:
+
+- **(A) Event-ID matching.** Build a hash set of
+  `(mc_run, mc_subrun, mc_nthEvtInFile)` from the reco-tree walk
+  (these branches exist on the AnaTuple — confirmed by
+  `MINERvA101/GENIEXSecExtract/src/XSecLooper.cxx:422-424`). During
+  the truth-tree walk, write a miss entry only for truth-pass events
+  whose ID is **not** in the set. This is the cleanest design and
+  keeps `mc_signal_reco` as the single OmniFold input tree.
+- **(B) Separate `mc_truth_only_miss` tree.** Truth walk writes all
+  truth-pass events to a new tree; Python concatenates them with
+  `mc_signal_reco` after deduplicating on event ID. Same matching
+  cost; just splits the work between C++ and Python.
+- **(C) Approximate — no event ID.** Cannot be made exact; would need
+  a sampling step that introduces a bias of order the matching error.
+  Rejected.
+
+Working assumption: **(A)** with `(mc_run, mc_subrun, mc_nthEvtInFile)`
+as the join key. Need to confirm that all three branches are present
+on both the Truth tree and the AnaTuple reco tree of the playlists we
+use, and that the triplet is unique within a playlist.
+
+### Implementation status (2026-05-14, code committed pending validation)
+
+Option (A) — event-ID matching on `(mc_run, mc_subrun, mc_nthEvtInFile)` —
+implemented in `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`:
+
+- New `makeEventKey(run, subrun, nth)` packs the triplet into a `uint64_t`
+  for fast hash-set lookup.
+- `LoopAndFillUnbinnedMCSelectedSignalReco` takes an optional
+  `std::unordered_set<uint64_t>* outRecoIDs`; when non-null, every event
+  written to `mc_signal_reco` gets its event-ID inserted.
+- `LoopAndFillUnbinnedMCTruthDenom` takes optional `(sigOut, recoIDs)`;
+  when both non-null, the loop re-binds `mc_signal_reco`'s branches to
+  local variables and, for each truth-pass event whose ID is **not** in
+  `recoIDs`, appends a miss entry (`sim=-9999`, `sim_pass=false`,
+  `MC=truth_pT`, `MC_pz=truth_pz`, `w_truth=truth_w`,
+  `w_reco=truth_w` as proxy). Returns the count of miss entries appended.
+- `main()` reorders so the reco walk runs **before** the truth walk so
+  the ID set is populated before the truth walk consumes it. Mode is
+  on by default; `MNV101_DISABLE_TRUTH_MISSES=1` falls back to legacy
+  behaviour. `MNV101_TRUTH_ONLY` continues to short-circuit reco loops
+  and (for safety) suppresses the miss-append.
+- Two new `TParameter`s are written to the output ROOT file:
+  `hasTruthOnlyMisses` (int 0/1) and `nTruthOnlyMisses` (long).
+- Build verified clean; binary installed to both
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/runEventLoopOmniFold`
+  and `/pscratch/sd/j/josephrb/MINERvA101/opt/bin/runEventLoopOmniFold`.
+
+Pipeline-side change in `2d-unfolding/unfold_2d_omnifold_unbinned.py`:
+reads the two new TParameters, prints a status line, and emits a `[WARN]`
+if `hasTruthOnlyMisses=1` but `c_global` deviates from 1.0 by >0.5 %
+(would indicate a matching bug). The c-division code path is unchanged;
+when c ≈ 1 it becomes a no-op, so legacy and Phase-17 inputs both work.
+
+#### Source-tree fix (2026-05-14)
+
+The CMake build dir at
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section/build`
+previously had `CMAKE_HOME_DIRECTORY` pointing at the older standalone
+clone at `/pscratch/sd/j/josephrb/MINERvA101/...` (via the
+`/global/homes/j/josephrb/MINERvA101` symlink) and
+`CMAKE_INSTALL_PREFIX` pointing at the standalone's opt dir, so
+edits in the canonical tree had to be mirrored to the standalone
+before rebuilding. Fixed by:
+
+1. `mv build build.standalone-shadow.bak` (kept as rollback).
+2. Fresh `cmake -S /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section
+   -B build -DCMAKE_INSTALL_PREFIX=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt`
+   after `source $MINERVA_PREFIX/bin/setup_MAT_IncPions.sh` (env was
+   already pointing at canonical).
+3. `make -j16 && make install` installed all targets into canonical
+   opt/. Generated `setup_MAT_IncPions.sh` in canonical opt/bin now
+   defaults `PREFIX` to canonical.
+
+Standalone clone at `/pscratch/sd/j/josephrb/MINERvA101/` is now
+orphan (no build references it). Its opt/bin was sync'd with the new
+binary for safety in case any unmonitored script still resolves the
+`/global/homes/j/josephrb/MINERvA101` symlink. Future cleanup: delete
+the standalone clone entirely once we've gone a few weeks without
+anything referencing it.
+
+### Next steps when resuming
+
+1. ~~Confirm event-ID triplet uniqueness~~ — implementation chose Option
+   (A) and the build is clean; left to runtime to surface any matching
+   bugs (the pipeline `[WARN]` will fire if `c_global` ≠ 1).
+2. ~~Implement Option (A)~~ — done (this section).
+3. ~~Update `unfold_2d_omnifold_unbinned.py`~~ — done (flag-aware logging
+   + WARN if c deviates from 1).
+4. Re-run event loop on playlist 1A as a closure check (cheapest), then
+   on full MEHFC if 1A behaves. Use the existing
+   `sbatch_evloop_array.sh` (which already points at the production
+   binary). The new run should print
+   `Captured N unique event IDs from mc_signal_reco.` and
+   `Appended K truth-only miss entries to mc_signal_reco.` in the log.
+5. Re-run unfold (`unfold_2d_omnifold_unbinned.py`); verify
+   `c_global ≈ 1.0` (no WARN), and that σ_total and per-bin agreement
+   match the post-Phase-16 numbers (3.055e-38 cm²/nucleon, χ²/ndf = 3.289).
+   If they match, the c correction and the native-miss approach are
+   equivalent. Future cleanup can then drop the c-correction code path
+   entirely.
+
+### Outreach status
+
+Outreach to Callum / MINERvA collaboration remains unnecessary
+(unchanged from Phase 16 closeout). The Phase-17 work is an internal
+pipeline cleanup, not a new physics question.
+
+### Email exchange with Ben (2026-05-14)
+
+For the record, the agreed plan came out of an email thread:
+
+- JB sent the post-Phase-16 slide deck explaining the c correction.
+- BN: "OmniFold should be able to handle these events — those that
+  have truth but not reco. Are you doing this c correction binned?"
+- JB confirmed the c is per-bin and clarified that the issue is the
+  8.4M events with no reco-tree entry are absent from the OmniFold
+  input entirely, then proposed adding them as miss entries during
+  the event loop — which is the Phase 17 plan above.

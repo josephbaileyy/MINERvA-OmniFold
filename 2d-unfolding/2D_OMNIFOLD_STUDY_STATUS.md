@@ -1,6 +1,6 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-09
+**Last updated**: 2026-05-14 (Phase 17 code complete, validation pending; numbers below are Phase-16 production)
 
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants and gotchas),
 `2D_OMNIFOLD_RUN_LOG.md` (timestamped chronology), `PLOT_GUIDE.md` (PNG index
@@ -80,6 +80,35 @@ tails, consistent with the truth-shape diagnostic.
 
 For the full chronology, see `2D_OMNIFOLD_RUN_LOG.md` (Phase 16 closeout
 subsection has the post-fix numbers and plot inventory).
+
+### Phase 17 (code complete, validation pending, 2026-05-14): replace c with native OmniFold misses
+
+After review with BN, the per-bin c correction is being replaced with
+native OmniFold step-2 miss handling. The c factor was needed only
+because the event-loop's `LoopAndFillUnbinnedMCSelectedSignalReco` walks
+the AnaTuple Data/reco tree, so the 8.4M fiducial-truth events with no
+reco-tree entry never entered `mc_signal_reco`.
+
+**Implemented (Option A in run log):** event-ID matching on
+`(mc_run, mc_subrun, mc_nthEvtInFile)` packed into a `uint64_t` hash key.
+The reco walk now populates the set; the truth-denom walk consults it
+and appends a miss entry to `mc_signal_reco` for each truth-pass event
+not in the set. Output ROOT file carries `hasTruthOnlyMisses` /
+`nTruthOnlyMisses` `TParameter`s; the unfold pipeline reads them, prints
+a Phase-17 status line, and warns if `c_global` deviates from 1.0
+(which would indicate a matching bug). The c-division code path is
+unchanged — when the new miss entries are present `c ≈ 1` so the
+division becomes a no-op, and pre-Phase-17 inputs still work.
+
+Validation pending: re-run event loop on 1A as closure, then full MEHFC,
+then re-run unfold and check `c_global ≈ 1` and σ_total / per-bin
+agreement with the Phase-16 production
+(3.055e-38 cm²/nucleon, χ²/ndf = 3.289). Until that re-run completes,
+the production output is still the Phase-16 file
+(`2d_crossSection_omnifold_MEHFC_5iter_postfix.root`).
+
+See `2D_OMNIFOLD_RUN_LOG.md` Phase 17 for the full implementation notes
+and resume checklist.
 
 ---
 

@@ -632,6 +632,25 @@ def main():
     data_pot, mc_pot, pot_scale = get_pot_scales(f_in)
     print(f"[INFO] POT: data={data_pot:.4g}, mc={mc_pot:.4g}, scale={pot_scale:.6g}")
 
+    # Phase 17 (2026-05): event loop now appends truth-only miss entries
+    # (events with no AnaTuple reco-tree counterpart) to mc_signal_reco so
+    # OmniFold's step-2 miss regression handles the previously
+    # missing-from-input fraction natively. When that mode is on, the
+    # input-completeness (c) correction below should be ≈ 1 per bin and the
+    # division by c becomes a no-op. Older inputs without the flag still
+    # get corrected by c (legacy path).
+    p_has_misses = f_in.Get("hasTruthOnlyMisses")
+    p_n_misses = f_in.Get("nTruthOnlyMisses")
+    has_truth_only_misses = bool(int(p_has_misses.GetVal())) if p_has_misses else False
+    n_truth_only_misses = int(p_n_misses.GetVal()) if p_n_misses else 0
+    if has_truth_only_misses:
+        print(f"[INFO] Phase-17 mode: mc_signal_reco contains "
+              f"{n_truth_only_misses} truth-only miss entries — "
+              f"c correction expected ≈ 1.")
+    else:
+        print("[INFO] Pre-Phase-17 input (no truth-only miss entries); "
+              "c correction will scale up to full truth.")
+
     # Fiducial nucleons: do not trust the merged TParameter<double> because
     # hadd sums it across playlists. Use the known tracker geometry constant.
     nuc_par = f_in.Get("pTmu_fiducial_nucleons")
@@ -857,6 +876,10 @@ def main():
             print(f"[CHECK] global completeness c = {c_global:.4f} "
                   f"(expected ≈ N(mc_signal_reco truth-pass) / "
                   f"N(mc_truth_denom))")
+            if has_truth_only_misses and abs(c_global - 1.0) > 0.005:
+                print(f"[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 "
+                      f"by {abs(c_global - 1.0)*100:.2f}% — check event-ID matching "
+                      f"in runEventLoopOmniFold.cpp Phase-17 path.")
         except ZeroDivisionError:
             pass
     else:
