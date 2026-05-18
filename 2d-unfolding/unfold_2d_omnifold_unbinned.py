@@ -40,6 +40,29 @@ TRACKER_APOTHEM_MM = 850.0
 # sensitive to hadd summing a per-playlist TParameter<double>.
 TRACKER_FIDUCIAL_N_NUCLEONS = 3.2352943296224835e30
 
+# C++ truth phase-space cut from CCInclusiveSignal.h::GetCCInclusive2DPhaseSpace
+# (MuonAngle(20.)). Mirrored here so the Python truth-pass gate matches the
+# event loop's mc_truth_denom selection — without this, the diagonal corner
+# (pT/pz > tan 20°) is admitted by the rectangle alone and inflates
+# c = hOFInputTruth / hOFTruthDenom above 1.
+MAX_MUON_THETA_RAD = math.radians(20.0)
+
+
+def in_truth_phase_space(pt, pz, pt_lo, pt_hi, pz_lo, pz_hi):
+    """C++ CCInclusive2DPhaseSpace mirror restricted to (pT, pz)-derivable cuts.
+
+    Enforces the analysis rectangle plus θ_μ < 20° (computed from truth pT,
+    pz). Truth-vertex fiducial (Tracker Z, Apothem) cuts in the C++ signal
+    definition cannot be replicated here because the truth vertex isn't on
+    the OmniFold trees; they are applied event-loop-side when mc_truth_denom
+    is filled and are essentially redundant for events that reco-passed.
+    """
+    if not (math.isfinite(pt) and math.isfinite(pz)):
+        return False
+    if not (pt_lo <= pt <= pt_hi and pz_lo <= pz <= pz_hi):
+        return False
+    return math.atan2(pt, pz) < MAX_MUON_THETA_RAD
+
 
 # ---------------------------------------------------------------------------
 # Utility helpers (shared with 1D script)
@@ -335,10 +358,11 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
         wt *= pot_scale
         wr *= pot_scale
 
-        # Check if truth is in the 2D phase space
-        tru_ok = (math.isfinite(tru_pt) and math.isfinite(tru_pz) and
-                  pt_lo <= tru_pt <= pt_hi and pz_lo <= tru_pz <= pz_hi)
-        # Check if reco is in the 2D binning range
+        # Truth-pass gate matches C++ GetCCInclusive2DPhaseSpace (rectangle
+        # + θ_μ < 20°) so c = hOFInputTruth / hOFTruthDenom ≡ 1 modulo MC
+        # stats; reco gate stays as the 2D binning rectangle.
+        tru_ok = in_truth_phase_space(tru_pt, tru_pz,
+                                       pt_lo, pt_hi, pz_lo, pz_hi)
         rec_ok = (math.isfinite(rec_pt) and math.isfinite(rec_pz) and
                   pt_lo <= rec_pt <= pt_hi and pz_lo <= rec_pz <= pz_hi)
 
@@ -879,7 +903,9 @@ def main():
             if has_truth_only_misses and abs(c_global - 1.0) > 0.005:
                 print(f"[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 "
                       f"by {abs(c_global - 1.0)*100:.2f}% — check event-ID matching "
-                      f"in runEventLoopOmniFold.cpp Phase-17 path.")
+                      f"in runEventLoopOmniFold.cpp Phase-17 path and that the "
+                      f"Python truth-pass gate (in_truth_phase_space) matches "
+                      f"CCInclusive2DPhaseSpace.")
         except ZeroDivisionError:
             pass
     else:

@@ -12,19 +12,28 @@
 #SBATCH --output=evloop_%a_%A.out
 #SBATCH --error=evloop_%a_%A.err
 
-# Per-playlist event loop for 1B–1P (11 playlists). 1A is produced
-# separately (run from sbatch directly or via interactive shell).
+# Per-playlist full-stats event loop for all ME FHC playlists except 1A
+# (1A already has runEventLoopOmniFold_1A.root from the initial 2D pass).
 #
-# Uses the production binary at MINERvA-OmniFold/MINERvA101/opt/bin/
-# runEventLoopOmniFold with the Phase-18 truth-tree-authoritative reco
-# gate plus Phase-18.2 reco-side dedupe.
+# The C++ binary writes to a hardcoded filename "runEventLoopOmniFold.root"
+# in its CWD. Each array task runs in its own work directory to avoid the
+# 11 tasks stomping on each other's output, then moves the result to a
+# uniquely-named file in Documents/ once complete.
 #
-# Outputs land in runEventLoopOmniFold_${PL}.root, consumed by
-# sbatch_hadd_MEHFC.sh.
+# util::GetPlaylist infers the playlist from the first event's run number
+# and applies playlist-specific flux/calibration globally. Running per
+# playlist (rather than a combined manifest) ensures each dataset gets the
+# correct corrections; the 12 outputs are later hadd-merged for OmniFold.
+#
+# Runtime: 1A on 41 MC files took ~1-2h. Largest playlists (1D, 1M) are
+# 3-4x that. 12h walltime is generous.
+# Memory: event loop is single-pass over TTrees; 1A peaked well under 4 GB.
+# 8 GB gives headroom for larger playlists.
 
 set -eo pipefail
 
 PLAYLISTS=(1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
+# SLURM_ARRAY_TASK_ID is 1-indexed; bash arrays are 0-indexed
 PL="${PLAYLISTS[$((SLURM_ARRAY_TASK_ID - 1))]}"
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
@@ -43,7 +52,6 @@ echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID} array_task=${SLURM_ARRAY_T
 echo "[sbatch] workdir: ${WORKDIR}"
 echo "[sbatch] data manifest: ${DATA_MANIFEST}"
 echo "[sbatch] mc manifest  : ${MC_MANIFEST}"
-echo "[sbatch] evloop bin: ${EVLOOP_BIN} ($(stat -c '%y' ${EVLOOP_BIN}))"
 echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 
 "${EVLOOP_BIN}" "${DATA_MANIFEST}" "${MC_MANIFEST}"

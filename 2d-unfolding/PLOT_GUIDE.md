@@ -50,11 +50,13 @@ Topic glossary:
 
 ## Production plots — full ME FHC, 5-iter
 
-Input (post-Phase-16 fix): `2d_crossSection_omnifold_MEHFC_5iter_postfix.root`.
+Input: `2d_crossSection_omnifold_MEHFC_5iter.root` (Phase-18.2 pipeline).
 
-The plots below are regenerated from the post-fix output. Pre-fix
-versions (which used the no-completeness formula and showed the 0.572×
-low-p_|| deficit) are archived in `archive_pre_phase16/` for comparison.
+The plots below are regenerated from the production output. Earlier
+revisions are archived: pre-Phase-16 (which used the no-completeness
+formula and showed the 0.572× low-p_|| deficit) under
+`archive_pre_phase16/`; Phase-16-postfix and Phase-17/18.0/18.1 era
+artifacts under `archive_pre_phase18/`.
 
 | File | Producer | Purpose |
 |---|---|---|

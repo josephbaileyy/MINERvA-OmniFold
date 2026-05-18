@@ -7,17 +7,21 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
-#SBATCH --time=04:00:00
+#SBATCH --time=06:00:00
 #SBATCH --array=1,3,5,8,10
-#SBATCH --output=unfold_2d_iter%a_%A.out
-#SBATCH --error=unfold_2d_iter%a_%A.err
+#SBATCH --output=iter_scan_1A_%a_%A.out
+#SBATCH --error=iter_scan_1A_%a_%A.err
 
-# 2D OmniFold iteration convergence scan on playlist 1A.
+# 2D OmniFold iteration convergence scan on playlist 1A (Phase-18.2).
+# Re-validates the 5-iter production choice now that the truth-tree-
+# authoritative reco gate and native miss handling changed the OmniFold
+# convergence trajectory vs the pre-Phase-16 scan that originally set 5.
 #
 # Array task IDs ARE the iteration counts (1, 3, 5, 8, 10).
 # Each task is a single-threaded Python process; runtime scales
-# roughly linearly in iterations (~17 min/iter on shared partition).
-# Walltime 4h covers the slowest array element (10 iter ~= 2h50m) with margin.
+# roughly linearly in iterations. Pre-Phase-18 timing was ~17 min/iter;
+# +33% events bumps this to ~22 min/iter, so 10-iter ≈ 3h40m. Walltime
+# 6h gives margin.
 #
 # Partition: shared QOS + cpus-per-task=2 (one physical core w/ SMT pair).
 # This is the NERSC-recommended layout for single-threaded jobs (see
@@ -35,9 +39,9 @@ source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/2d-unfolding"
 
 ITER=${SLURM_ARRAY_TASK_ID}
-OMNIFILE="runEventLoopOmniFold_1A_corrected_interactive.root"
+OMNIFILE="runEventLoopOmniFold_1A.root"
 MCFILE="baseline_flux/runEventLoopMC_1A.root"
-OUT="2d_crossSection_omnifold_1A_corrected_${ITER}iter.root"
+OUT="2d_crossSection_omnifold_1A_${ITER}iter.root"
 
 echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID} array_task=${SLURM_ARRAY_TASK_ID} iter=${ITER} out=${OUT}"
 echo "[sbatch] omnifile: ${OMNIFILE}"

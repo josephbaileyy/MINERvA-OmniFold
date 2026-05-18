@@ -986,3 +986,282 @@ For the record, the agreed plan came out of an email thread:
   8.4M events with no reco-tree entry are absent from the OmniFold
   input entirely, then proposed adding them as miss entries during
   the event loop — which is the Phase 17 plan above.
+
+## Phase 18 — Truth-tree-authoritative reco gate (2026-05-14)
+
+### Motivation
+
+The Phase 17 1A re-run gave `c_global = 1.0170` after the Python
+truth-pass-gate tightening (was 1.018 before). The 1.7% residual was
+inconsistent with the by-construction `c=1` Phase 17 was supposed to
+deliver.
+
+Initial hypothesis: the C++ fill condition
+`if(inPhaseSpace || passesReco)` was admitting reco-pass-truth-PS-fail
+"fakes" to `mc_signal_reco`. A patch tightened the condition to
+`if(inPhaseSpace)` and routed signal-truth-but-PS-fail events to
+`mc_background`. Result: byte-for-byte identical to the Phase-17 ROOT —
+`mc_signal_reco = 2,730,616`, `mc_background = 4,277`, `nTruthOnlyMisses
+= 681,612`. The "fakes" don't exist in this dataset: MINERvA's reco
+selection (`isMCSelected`) enforces vertex / angle / p‖ cuts at least as
+strict as the truth `CCInclusive2DPhaseSpace`, so the set
+`passesReco && !inPhaseSpace` is empty.
+
+### Real cause
+
+Per-AnaTuple-file diagnostic (run 110000) showed every reco-tree entry's
+`(mc_run, mc_subrun, mc_nthEvtInFile)` IS present in the Truth tree of
+the same file. But:
+
+- mc_signal_reco's reco-loop captured **2,049,004 unique IDs**, of which
+  only **2,000,655** appear in mc_truth_denom. **48,349 captured IDs
+  (≈1.8% of mc_signal_reco) have no matching truth-denom entry.**
+- The 48,349 ARE in the truth tree; they fail
+  `michelcuts.isEfficiencyDenom(*truthCV, ...)` but pass
+  `michelcuts.isEfficiencyDenom(*recoCV, ...)` for the same physics
+  event.
+- The cuts depend on `mc_primFSLepton` (`GetThetalepTrue`, `GetPlepTrue`)
+  and `mc_vtx` (`GetTrueVertex`). For events with secondary muons (e.g.
+  CC-numu with a pion-decay daughter muon) the matched track can pick up
+  the daughter and the cuts evaluate differently between reco-tree and
+  truth-tree AnaTuple branches. Magnitude ~1.8% is consistent with the
+  secondary muon rate in CC-numu inclusive at MINERvA-ME energies.
+
+### Fix — option 2 (truth-tree-authoritative gate)
+
+In `runEventLoopOmniFold.cpp`:
+
+- New `TruthDenomEntry` struct (cached per-event `{MC, MC_pz, w_truth,
+  key}`) so miss-append can iterate the cache instead of re-walking the
+  truth tree.
+- `LoopAndFillUnbinnedMCTruthDenom` no longer does inline miss-append; it
+  now optionally populates `outTruthDenomIDs` (set) and
+  `outTruthDenomCache` (vector). Return type changed from `long` to
+  `void`.
+- New `AppendTruthOnlyMisses(sigOut, truthDenomCache, recoIDs)` writes
+  the miss entries from the cache.
+- `LoopAndFillUnbinnedMCSelectedSignalReco` gains a
+  `const std::unordered_set<uint64_t>* truthDenomIDs = nullptr` parameter
+  and gates `out->Fill()` on `inPhaseSpace && truthAgrees`.
+- `main()` orchestration reordered: truth-denom → reco → miss-append →
+  background → data (was: reco → truth-denom → background → data).
+
+The fakes-routing patch from earlier in the day is kept — vacuously
+correct, no cost.
+
+### Validation on 1A (2026-05-14)
+
+Event-loop rerun produced `runEventLoopOmniFold_1A_phase18.root` with
+`mc_signal_reco = mc_truth_denom = 2,682,267` entries by construction.
+5-iter unfold gave:
+
+- `[CHECK] global completeness c = 1.0000` (vs 1.0170 previously)
+- `hOFInputTruth2D integral = hOFTruthDenom2D integral = 486328`
+- σ_total (p_T) = σ_total (p_||) = 3.052 × 10⁻³⁸ cm²/nucleon
+- `hBkgReco2D` integral 1,788 → 9,782 (+8 k weighted; the 48 k "Set E"
+  reco-fakes are now correctly subtracted from data instead of polluting
+  the response)
+- `pass_reco` 1,774,756 → 1,729,050 (cleaner response pool)
+
+σ_total agrees with the Phase-16 production (3.055 × 10⁻³⁸ cm²/n) to
+0.1%, so the c-correction was masking a sub-percent shape bias whose
+integral effect happened to be small.
+
+### Build-system trap (resolved 2026-05-14)
+
+`runEventLoopOmniFold.cpp` previously existed at two paths on disk and
+the first attempted rebuild silently used stale code (wasted a 1A run).
+Fixed by reconfiguring `build_MINERvA101/` with `CMAKE_HOME_DIRECTORY`
+and `CMAKE_INSTALL_PREFIX` rooted in `MINERvA-OmniFold/`. `make install`
+now lands the binary directly in `MINERvA-OmniFold/MINERvA101/opt/bin/`
+where SLURM scripts read it — no more manual `cp`.
+`build_GENIEXSecExtract/` and `build_MAT-MINERvA/` were reconfigured the
+same way. Pre-migration workspace at `/pscratch/sd/j/josephrb/MINERvA101/`
+is now unreferenced and safe to delete.
+
+## Phase 18.1 — Truth-side dedupe (2026-05-15)
+
+### Symptom
+
+First Phase-18 MEHFC chain (52983620 evloop array, 52983621 hadd, 52983622
+unfold) ran successfully for evloop+hadd; the unfold timed out at 6 h
+during iteration 1. Pre-resubmit audit of the merged ROOT revealed
+`mc_signal_reco = 32,849,138` vs `mc_truth_denom = 32,849,236` — a
+**98-entry deficit** of Phase-18's by-construction identity.
+
+### Diagnosis
+
+Per-playlist breakdown of the merged ROOT showed the entire deficit lives
+in 1E (11/12 playlists hit exact equality). Direct key-collision scan of
+1E's source AnaTuples found:
+
+| File | Truth entries | Within-file dup keys |
+|---|---|---|
+| `MasterAnaDev_mc_AnaTuple_run00111353_Playlist.root` | 549,196 | **1,102** |
+| Each of the other 50 1E files | clean | **0** |
+
+Multiplicity histogram: 28,114,936 keys appear once, **1,102 keys appear
+exactly twice, no higher multiplicities, zero cross-file collisions.**
+`(mc_run, mc_subrun, mc_nthEvtInFile)` is globally unique except for
+those 1,102 doubled entries in one file — almost certainly an upstream
+re-tupling/concatenation artifact (output appended instead of
+overwritten). Of the 1,102 raw duplicates, ~98 pairs survive
+`isEfficiencyDenom` *and* have a reco match — exactly the observed
+deficit.
+
+### Implication beyond OmniFold
+
+`mc_truth_denom` is the efficiency denominator. The 1,102 duplicates have
+been silently inflating the 1E efficiency denominator in *every* prior
+analysis using this AnaTuple. Effect: ~3×10⁻⁴ in 1E, ~3×10⁻⁵ in MEHFC —
+below MINERvA systematics but a real bias. **AnaTuple-producer flag
+candidate.**
+
+### Fix
+
+`LoopAndFillUnbinnedMCTruthDenom` in `runEventLoopOmniFold.cpp` now
+maintains a local `seenKeys` set and skips Fill + cache-push + ID-insert
+when the `(mc_run, mc_subrun, mc_nthEvtInFile)` key is already seen. WARN
+log emits the skip count.
+
+### Re-run
+
+Chain submitted 2026-05-15 (53012899_4 evloop 1E, 53012900 hadd, 53012901
+unfold). Unfold scancelled at 9h31m (had reached only iter 2) and
+resubmitted as 53034070 with 24h wallclock. Completed 5 iters; σ_total =
+3.073e-38, χ²/ndf = 3.549 (185 strict interior, full cov). WARN logs
+confirmed 1,102 duplicate truth keys skipped.
+
+## Phase 18.2 — Reco-side mirror dedupe (2026-05-18)
+
+### Symptom
+
+Verification of the Phase-18.1 MEHFC ROOT: `mc_signal_reco = 32,849,110`
+vs `mc_truth_denom = 32,849,103` — a **7-entry surplus** the other way.
+`c_global` printed as 1.0000 (rounded) but the underlying ratio was
+1.00000025 (5 ppm above unity). The 192 of 205 bins ≠ 1.0 confirmed it
+was not a print-format artifact.
+
+### Diagnosis
+
+The Phase-18.1 fix deduped the truth-denom loop but did not mirror the
+fix on the reco loop. The same `run00111353_Playlist.root` double-fill
+that produced 1,102 truth duplicates also produced reco-tree duplicates.
+After `isEfficiencyDenom` + reco match, 7 of those reco duplicates survive
+to `mc_signal_reco.Fill()` twice — hence the +7 surplus.
+
+### Fix
+
+`LoopAndFillUnbinnedMCSelectedSignalReco` in `runEventLoopOmniFold.cpp`
+gets the same `seenRecoKeys` dedupe pattern as the truth-denom loop:
+
+```cpp
+// Phase 18.2: mirror the truth-denom dedupe (Phase 18.1) on the reco side.
+std::unordered_set<uint64_t> seenRecoKeys;
+long nDupRecoSkipped = 0;
+// ... key compute moved outside the truthAgrees gate ...
+if(inPhaseSpace && truthAgrees) {
+  if(!seenRecoKeys.insert(key).second) { ++nDupRecoSkipped; continue; }
+  out->Fill();
+  if(outRecoIDs) outRecoIDs->insert(key);
+}
+// after loop:
+if(nDupRecoSkipped > 0)
+  std::cout << "  WARN: skipped " << nDupRecoSkipped
+            << " duplicate-key reco entries (upstream AnaTuple double-fill).\n";
+```
+
+### Re-run chain
+
+Submitted 2026-05-17 with afterok dependency chain (so the user could
+release the interactive shell):
+
+- `53095454` build_phase18p2 — 23s, Phase-18.2 binary installed to
+  `opt/bin/runEventLoopOmniFold`.
+- `53095457_4` evloop_phase18 (1E only) — 2h07m. WARN logs confirmed
+  exactly `skipped 133 duplicate-key truth entries` and `skipped 7
+  duplicate-key reco entries`.
+- `53095459` hadd_MEHFC_phase18 — 24s. Produced 2.0 GB
+  `runEventLoopOmniFold_MEHFC_phase18.root`.
+
+Post-rebuild verification:
+- `mc_signal_reco = mc_truth_denom = 32,849,103` exactly.
+- `c_global = 1.000000` to sub-ppm precision.
+
+(Note: only 1E needed re-evloop — the truth/reco duplicates are entirely
+in `run00111353_Playlist.root` which is in playlist 1E. Other 11
+playlists' Phase-18.0/18.1 ROOTs are bit-equivalent to a Phase-18.2 re-run
+because their input has no duplicates.)
+
+## 2026-05-18 — Pipeline finalization
+
+### Filename canonicalization
+
+With Phase 18.2 ratified as the production pipeline, the `_phase18` and
+`_phase18p2` filename suffixes were dropped in favor of canonical names.
+The transition:
+
+- All 12 per-playlist ROOTs: `runEventLoopOmniFold_{1A..1P}_phase18.root` →
+  `runEventLoopOmniFold_{1A..1P}.root`.
+- Merged MEHFC: `runEventLoopOmniFold_MEHFC_phase18.root` →
+  `runEventLoopOmniFold_MEHFC.root` (2.0 GB).
+- xsec outputs: `2d_crossSection_omnifold_MEHFC_phase18_5iter.root` →
+  `2d_crossSection_omnifold_MEHFC_5iter.root`. Same for 1A.
+- SLURM scripts: `sbatch_build_phase18.sh`, `_evloop_array_phase18.sh`,
+  `_hadd_MEHFC_phase18.sh`, `_unfold_2d_MEHFC_phase18.sh` → drop suffix,
+  edit internals (job-name, output/err, OMNIFILE, XSEC_OUT, WORKDIR,
+  FINAL).
+
+Pre-Phase-18 collidable files moved to a new `archive_pre_phase18/`:
+
+- Pre-Phase-16 ROOTs (Apr 25 originals of `MEHFC.root`, `1M.root`,
+  `1N.root`).
+- Phase-17 side-experiment ROOTs and the `_phase17_tightgate` sbatch
+  script.
+- Superseded sbatch scripts (`git mv` preserved history): pre-Phase-16
+  `evloop_array.sh`, `hadd_MEHFC.sh`, `unfold_2d.sh`,
+  `unfold_2d_fullstats.sh`, Phase-16 `unfold_2d_fullstats_postfix.sh`.
+- 36 superseded SLURM `.out/.err` files from chains 52729573, 52973620,
+  52983620-_622, 53012899-_901.
+
+Also cleaned:
+
+- 25 empty work directories (13 `evloop_work_*_phase18/`, 12
+  `baseline_flux/work_*/`) — CWDs from past array jobs.
+- 3 interactive-shell `.log` files (`evloop_1A_phase18.log`,
+  `evloop_1A_fakes-routed.log`, `unfold_1A_phase18.log`) moved to archive.
+- 3 stale `.pid` files (interactive run leftovers) deleted.
+- `validate_1A_phase17_work/` (held a single stale log) archived.
+
+Live audit trail of 8 `.out/.err` files left in `2d-unfolding/`:
+`unfold_MEHFC_phase18_53034070.*` (Phase-18 production unfold whose
+numbers are in the current STATUS table) plus the four Phase-18.2 chain
+logs (`build_phase18p2_53095454`, `evloop_phase18_4_53095457`,
+`hadd_MEHFC_phase18_53095459`).
+
+### MEHFC Phase-18.2 unfold
+
+Submitted as job `53116554` (24h wallclock, regular QOS, 128 CPU). Reads
+canonical `runEventLoopOmniFold_MEHFC.root`, writes canonical
+`2d_crossSection_omnifold_MEHFC_5iter.root`. Expected delta vs Phase-18.1
+production (job 53034070) is sub-ppm because the 7 deduped reco entries
+are 0.2 ppm of MEHFC.
+
+### 1A iteration-convergence re-scan
+
+The original 5-iter production choice was justified by a pre-Phase-16 1A
+iter-scan. Phase 18 changed the OmniFold input substantially (+33%
+training events, native miss handling), so a Phase-18.2 1A iter-scan was
+submitted as job `53116867_[1,3,5,8,10]` in parallel (shared QOS, 2 CPU,
+6h walltime each). Will produce `2d_crossSection_omnifold_1A_{1,3,5,8,10}iter.root`.
+Result will replace the iteration-convergence table in STATUS.
+
+### Documentation refresh
+
+`2D_OMNIFOLD_STUDY_STATUS.md` compressed from 712 lines to 264. The
+verbose phase-by-phase narrative was replaced with a single
+"How we got here" summary table pointing at this run log. Headline
+metric table, χ² vs p_||-min table, paper binning, runtime notes, and
+code/data inventory retained (with all paths updated to canonical
+filenames). This entry is the last item in the active-history section of
+the run log; everything older is archival.

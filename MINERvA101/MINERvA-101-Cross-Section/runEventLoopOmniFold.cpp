@@ -90,32 +90,46 @@ inline uint64_t makeEventKey(int run, int subrun, int nth)
          static_cast<uint64_t>(nth);
 }
 
+// Phase 18 (2026-05): truth-denom entries cached so the reco-loop can gate
+// on truthCV.isEfficiencyDenom membership, and miss-append can iterate the
+// cache rather than re-walking the truth tree. See main() and
+// AppendTruthOnlyMisses below.
+struct TruthDenomEntry
+{
+  double MC;
+  double MC_pz;
+  double w_truth;
+  uint64_t key;
+};
+
 //==============================================================================
 // Loop and Fill (write only the unbinned arrays needed for OmniFold)
 //==============================================================================
 
 // Truth efficiency denominator: loop Truth tree in truth-mode and fill MC truth pTmu + weight.
 //
-// When sigOut and recoIDs are both non-null, this loop ALSO appends
-// truth-only miss entries to mc_signal_reco (sigOut): for each truth-pass
-// event whose (mc_run, mc_subrun, mc_nthEvtInFile) is NOT in recoIDs, write
-// a miss entry (sim=-9999, sim_pass=false, MC=truth, w_truth=truth_w,
-// w_reco=truth_w as proxy). These are the 8.4M-on-MEHFC events that have
-// no AnaTuple reco-tree entry — feeding them to OmniFold here lets its
-// step-2 miss regression handle them natively, removing the need for the
-// per-bin completeness (c) correction in the Python pipeline. See Phase 17
-// in 2D_OMNIFOLD_RUN_LOG.md.
+// When outTruthDenomIDs is non-null, this loop also populates it with the
+// (mc_run, mc_subrun, mc_nthEvtInFile) hash key of every event written to
+// `out`. Phase 18: the reco loop consults this set to gate `mc_signal_reco`
+// fills on truth-side `isEfficiencyDenom` agreement (avoids the ~1.8% of
+// reco entries that pass recoCV.isEfficiencyDenom but whose corresponding
+// truth-tree entry fails the same cut — see Phase 18 in
+// 2D_OMNIFOLD_STUDY_STATUS.md).
 //
-// Returns the number of truth-only miss entries appended.
-long LoopAndFillUnbinnedMCTruthDenom(
+// When outTruthDenomCache is non-null, this loop also pushes a
+// TruthDenomEntry for every written event. AppendTruthOnlyMisses() iterates
+// the cache (post reco-loop) to write miss entries to mc_signal_reco for
+// the events not in recoIDs — replaces the inline miss-append that lived
+// here in Phase 17, so the reco loop can run AFTER truth-denom.
+void LoopAndFillUnbinnedMCTruthDenom(
     PlotUtils::ChainWrapper* truth,
     CVUniverse* truthCV,
     PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
     PlotUtils::Model<CVUniverse, MichelEvent>& model,
     const std::vector<PlotUtils::Reweighter<CVUniverse, MichelEvent>*>& componentRWs,
     TTree* out,
-    TTree* sigOut = nullptr,
-    const std::unordered_set<uint64_t>* recoIDs = nullptr)
+    std::unordered_set<uint64_t>* outTruthDenomIDs = nullptr,
+    std::vector<TruthDenomEntry>* outTruthDenomCache = nullptr)
 {
   double MC = 0.0;
   double MC_pz = 0.0;
@@ -142,29 +156,19 @@ long LoopAndFillUnbinnedMCTruthDenom(
     }
   }
 
-  // Truth-only miss append: re-bind sigOut branches to local variables
-  // here so Fill()s after the reco loop returned remain well-defined
-  // (the reco loop's locals went out of scope).
-  const bool appendMisses = (sigOut != nullptr && recoIDs != nullptr);
-  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_w_reco = 1.0;
-  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_w_truth = 1.0;
-  UChar_t miss_sim_pass = 0;
-  if(appendMisses)
-  {
-    sigOut->SetBranchAddress("sim",      &miss_sim);
-    sigOut->SetBranchAddress("sim_pz",   &miss_sim_pz);
-    sigOut->SetBranchAddress("sim_pass", &miss_sim_pass);
-    sigOut->SetBranchAddress("w_reco",   &miss_w_reco);
-    sigOut->SetBranchAddress("MC",       &miss_MC);
-    sigOut->SetBranchAddress("MC_pz",    &miss_MC_pz);
-    sigOut->SetBranchAddress("w_truth",  &miss_w_truth);
-  }
-  long nTruthOnlyMisses = 0;
-
   std::cout << "Starting unbinned MC truth-denom loop (Truth tree)...\n";
-  if(appendMisses)
-    std::cout << "  (also appending truth-only miss entries to mc_signal_reco)\n";
+  if(outTruthDenomIDs)
+    std::cout << "  (collecting truth-denom event IDs for reco-loop gating)\n";
   const int nEntries = truth->GetEntries();
+
+  // Dedupe on (mc_run, mc_subrun, mc_nthEvtInFile). MEHFC playlist 1E file
+  // run00111353 contains 1,102 truth events written twice with identical
+  // IDs (upstream AnaTuple double-fill). Without this dedupe the
+  // efficiency denominator is over-counted and Phase-18's by-construction
+  // mc_signal_reco==mc_truth_denom identity is broken (98-entry deficit
+  // observed pre-fix).
+  std::unordered_set<uint64_t> seenKeys;
+  long nDupSkipped = 0;
 
   for(int i = 0; i < nEntries; ++i)
   {
@@ -182,6 +186,16 @@ long LoopAndFillUnbinnedMCTruthDenom(
     // Use the SAME isEfficiencyDenom logic as the old code (Truth tree context)
     if(!michelcuts.isEfficiencyDenom(*truthCV, w_cv)) continue;
 
+    const uint64_t key = makeEventKey(
+        truthCV->GetInt("mc_run"),
+        truthCV->GetInt("mc_subrun"),
+        truthCV->GetInt("mc_nthEvtInFile"));
+    if(!seenKeys.insert(key).second)
+    {
+      ++nDupSkipped;
+      continue;
+    }
+
     MC = truthCV->GetMuonPTTrue();      // truth p_T (GeV/c)
     MC_pz = truthCV->GetMuonPzTrue();   // truth p_|| (GeV/c)
     w_truth = model.GetWeight(*truthCV, evt);
@@ -193,31 +207,61 @@ long LoopAndFillUnbinnedMCTruthDenom(
 
     out->Fill();
 
-    if(appendMisses)
-    {
-      const uint64_t key = makeEventKey(
-          truthCV->GetInt("mc_run"),
-          truthCV->GetInt("mc_subrun"),
-          truthCV->GetInt("mc_nthEvtInFile"));
-      if(recoIDs->find(key) == recoIDs->end())
-      {
-        miss_MC      = MC;
-        miss_MC_pz   = MC_pz;
-        miss_w_truth = w_truth;
-        miss_sim     = -9999.0;
-        miss_sim_pz  = -9999.0;
-        miss_sim_pass = 0;       // false: this is a miss (no reco)
-        miss_w_reco  = w_truth;  // proxy; w_reco is unused for sim_pass=false in OmniFold
-        sigOut->Fill();
-        ++nTruthOnlyMisses;
-      }
-    }
+    if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
+    if(outTruthDenomCache)
+      outTruthDenomCache->push_back({MC, MC_pz, w_truth, key});
   }
 
   std::cout << "Finished unbinned MC truth-denom loop.\n";
-  if(appendMisses)
-    std::cout << "  Appended " << nTruthOnlyMisses
-              << " truth-only miss entries to mc_signal_reco.\n";
+  if(nDupSkipped > 0)
+    std::cout << "  WARN: skipped " << nDupSkipped
+              << " duplicate-key truth entries (upstream AnaTuple double-fill).\n";
+  if(outTruthDenomIDs)
+    std::cout << "  Captured " << outTruthDenomIDs->size()
+              << " unique event IDs from mc_truth_denom.\n";
+}
+
+// Append a miss entry to mc_signal_reco for every truth_denom event whose
+// (mc_run, mc_subrun, mc_nthEvtInFile) key is NOT in recoIDs. Replaces the
+// Phase-17 inline miss-append in LoopAndFillUnbinnedMCTruthDenom — moved out
+// so the reco loop can run AFTER the truth-denom loop (Phase 18). The cache
+// is built during the truth-denom pass so this function does not re-read the
+// truth tree.
+long AppendTruthOnlyMisses(
+    TTree* sigOut,
+    const std::vector<TruthDenomEntry>& truthDenomCache,
+    const std::unordered_set<uint64_t>& recoIDs)
+{
+  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_w_reco = 1.0;
+  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_w_truth = 1.0;
+  UChar_t miss_sim_pass = 0;
+
+  sigOut->SetBranchAddress("sim",      &miss_sim);
+  sigOut->SetBranchAddress("sim_pz",   &miss_sim_pz);
+  sigOut->SetBranchAddress("sim_pass", &miss_sim_pass);
+  sigOut->SetBranchAddress("w_reco",   &miss_w_reco);
+  sigOut->SetBranchAddress("MC",       &miss_MC);
+  sigOut->SetBranchAddress("MC_pz",    &miss_MC_pz);
+  sigOut->SetBranchAddress("w_truth",  &miss_w_truth);
+
+  long nTruthOnlyMisses = 0;
+  for(const auto& tde : truthDenomCache)
+  {
+    if(recoIDs.find(tde.key) == recoIDs.end())
+    {
+      miss_MC       = tde.MC;
+      miss_MC_pz    = tde.MC_pz;
+      miss_w_truth  = tde.w_truth;
+      miss_sim      = -9999.0;
+      miss_sim_pz   = -9999.0;
+      miss_sim_pass = 0;            // false: this is a miss (no reco)
+      miss_w_reco   = tde.w_truth;  // proxy; w_reco unused for sim_pass=false
+      sigOut->Fill();
+      ++nTruthOnlyMisses;
+    }
+  }
+  std::cout << "  Appended " << nTruthOnlyMisses
+            << " truth-only miss entries to mc_signal_reco.\n";
   return nTruthOnlyMisses;
 }
 
@@ -225,16 +269,27 @@ long LoopAndFillUnbinnedMCTruthDenom(
 //
 // When outRecoIDs is non-null, also populates it with
 // (mc_run, mc_subrun, mc_nthEvtInFile) keys for every event written to out.
-// The truth-denom loop then uses this set to identify truth-pass events
+// AppendTruthOnlyMisses() then uses this set to identify truth-pass events
 // that have no reco-tree counterpart and append them as miss entries — see
 // LoopAndFillUnbinnedMCTruthDenom and Phase 17 in 2D_OMNIFOLD_RUN_LOG.md.
+//
+// Phase 18: when truthDenomIDs is non-null, fills are gated on membership
+// in that set. This makes the truth-tree's `isEfficiencyDenom` evaluation
+// authoritative — reco-tree entries that pass `recoCV.isEfficiencyDenom`
+// but whose corresponding truth-tree entry fails the same cut (~1.8% of
+// events, driven by mc_primFSLepton differing between trees when reco
+// matched a secondary muon) are dropped. With the gate, the captured
+// reco-ID set is a strict subset of truth_denom IDs, c_global lands at
+// 1.000, and the Python c-division becomes a true no-op. See Phase 18 in
+// 2D_OMNIFOLD_STUDY_STATUS.md.
 void LoopAndFillUnbinnedMCSelectedSignalReco(
     PlotUtils::ChainWrapper* reco,
     CVUniverse* recoCV,
     PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
     PlotUtils::Model<CVUniverse, MichelEvent>& model,
     TTree* out,
-    std::unordered_set<uint64_t>* outRecoIDs = nullptr)
+    std::unordered_set<uint64_t>* outRecoIDs = nullptr,
+    const std::unordered_set<uint64_t>* truthDenomIDs = nullptr)
 {
   double sim = 0.0;
   double sim_pz = 0.0;
@@ -254,6 +309,15 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
 
   std::cout << "Starting unbinned MC selected-signal-reco loop (reco tree)...\n";
   const int nEntries = reco->GetEntries();
+
+  // Phase 18.2: mirror the truth-denom dedupe (Phase 18.1) on the reco side.
+  // AnaTuple files such as run00111353_Playlist.root double-fill some events,
+  // so the same (mc_run, mc_subrun, mc_nthEvtInFile) key can appear twice on
+  // the reco tree too. Without this dedupe, mc_signal_reco picks up a small
+  // count surplus over mc_truth_denom (7 events at MEHFC scale = 0.2 ppm),
+  // which prevents `c` from landing at exactly 1 by construction.
+  std::unordered_set<uint64_t> seenRecoKeys;
+  long nDupRecoSkipped = 0;
 
   for(int i = 0; i < nEntries; ++i)
   {
@@ -288,24 +352,51 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     sim      = passesReco ? recoCV->GetMuonPT() : -9999.0;
     sim_pz   = passesReco ? recoCV->GetMuonPz() : -9999.0;
     
-    // --- KEEP event if:
-    //   A) in phase space (pass or miss)  -> lets Python fill Fill or Miss
-    //   B) OR passesReco but out of phase space -> lets Python fill Fake
-    if(inPhaseSpace || passesReco)
+    // --- KEEP event only if BOTH of these hold:
+    //   1. recoCV.isEfficiencyDenom (CCInclusive2DPhaseSpace evaluated on
+    //      the reco-tree's mc_* branches)
+    //   2. Phase 18: the event's (mc_run, mc_subrun, mc_nthEvtInFile) key is
+    //      in truthDenomIDs, i.e. the SAME event also passes the cut when
+    //      evaluated on the truth tree's mc_* branches.
+    //
+    // Without (2), ~1.8% of reco entries pass (1) but their truth-tree row
+    // fails the same cut (likely because mc_primFSLepton differs between
+    // the two trees for events with secondary muons). Those events appear
+    // in mc_signal_reco but not in mc_truth_denom — inflating c_global and
+    // biasing the OmniFold response. The gate makes truth-tree authoritative.
+    //
+    // OmniFold has no fake-row concept, so reco-pass-truth-PS-fail events
+    // (passesReco && !inPhaseSpace) must NOT enter mc_signal_reco either —
+    // condition (1) already enforces that.
+    uint64_t key = 0;
+    bool haveKey = false;
+    if(inPhaseSpace)
     {
-      out->Fill();
-      if(outRecoIDs)
+      key = makeEventKey(
+          recoCV->GetInt("mc_run"),
+          recoCV->GetInt("mc_subrun"),
+          recoCV->GetInt("mc_nthEvtInFile"));
+      haveKey = true;
+    }
+    const bool truthAgrees = (truthDenomIDs == nullptr) ||
+                             (haveKey && truthDenomIDs->find(key) != truthDenomIDs->end());
+    if(inPhaseSpace && truthAgrees)
+    {
+      if(!seenRecoKeys.insert(key).second)
       {
-        outRecoIDs->insert(makeEventKey(
-            recoCV->GetInt("mc_run"),
-            recoCV->GetInt("mc_subrun"),
-            recoCV->GetInt("mc_nthEvtInFile")));
+        ++nDupRecoSkipped;
+        continue;
       }
+      out->Fill();
+      if(outRecoIDs) outRecoIDs->insert(key);
     }
 
   }
 
   std::cout << "Finished unbinned MC selected-signal-reco loop.\n";
+  if(nDupRecoSkipped > 0)
+    std::cout << "  WARN: skipped " << nDupRecoSkipped
+              << " duplicate-key reco entries (upstream AnaTuple double-fill).\n";
   if(outRecoIDs)
     std::cout << "  Captured " << outRecoIDs->size()
               << " unique event IDs from mc_signal_reco.\n";
@@ -344,8 +435,14 @@ void LoopAndFillUnbinnedMCBackground(
 
     if(!michelcuts.isMCSelected(*recoCV, cvEvent, cvWeight).all()) continue;
 
+    // Skip only if the event is CC-inclusive signal AND in the 2D fiducial PS.
+    // Events that are CC-inclusive signal but fail the 2D PS (e.g. truth vertex
+    // outside the tracker fiducial, theta_mu >= 20 deg, or p_|| < 1500 MeV) are
+    // reco-fakes from the analysis-PS perspective and belong in mc_background
+    // so they are subtracted from the data spectrum like any other background.
     const bool isSignal = michelcuts.isSignal(*recoCV, cvWeight);
-    if(isSignal) continue;
+    const bool inPS_bkg = michelcuts.isEfficiencyDenom(*recoCV, cvWeight);
+    if(isSignal && inPS_bkg) continue;
 
     sim_background = recoCV->GetMuonPT();       // reco p_T (GeV/c)
     sim_background_pz = recoCV->GetMuonPz();    // reco p_|| (GeV/c)
@@ -572,15 +669,20 @@ int main(const int argc, const char** argv)
     // the Option 1 decomposition diagnostic.
     const bool truthOnly = (getenv("MNV101_TRUTH_ONLY") != nullptr);
 
-    // Phase 17 (2026-05): the reco walk runs BEFORE the truth-denom walk
-    // so it can populate `recoIDs` with (mc_run, mc_subrun,
-    // mc_nthEvtInFile) of every event it writes to mc_signal_reco. The
-    // truth-denom walk then consults that set to append truth-only miss
-    // entries (events present in Truth but with no AnaTuple reco
-    // counterpart) to mc_signal_reco. With those entries present,
-    // OmniFold's step-2 miss regression handles the previously
-    // missing-from-input fraction natively, and the per-bin completeness
-    // (c) correction in the Python pipeline becomes a no-op.
+    // Phase 18 (2026-05): the truth-denom walk runs FIRST and collects
+    // `truthDenomIDs` (the set of (mc_run, mc_subrun, mc_nthEvtInFile)
+    // packed keys for events that pass truth-tree-side isEfficiencyDenom)
+    // and a cache of truth-denom entries for later miss-append. The reco
+    // walk then runs second, gated on truthDenomIDs membership so the
+    // truth tree's cut evaluation is authoritative — this resolves the
+    // ~1.8% c_global discrepancy caused by recoCV/truthCV disagreeing on
+    // isEfficiencyDenom for the same physics event (most likely
+    // mc_primFSLepton differing between the two trees when reco matches a
+    // secondary muon). AppendTruthOnlyMisses then walks the cache and
+    // writes a miss entry to mc_signal_reco for each truth-denom event not
+    // captured by the reco loop. With both pieces, OmniFold's step-2 miss
+    // regression handles miss events natively, and the per-bin
+    // completeness (c) correction in the Python pipeline becomes a no-op.
     //
     // MNV101_DISABLE_TRUTH_MISSES: set to keep the legacy behaviour
     // (no miss-append; downstream pipeline must apply the c correction).
@@ -588,18 +690,25 @@ int main(const int argc, const char** argv)
     const bool appendTruthMisses = !truthOnly && !disableTruthMisses;
 
     std::unordered_set<uint64_t> recoIDs;
+    std::unordered_set<uint64_t> truthDenomIDs;
+    std::vector<TruthDenomEntry> truthDenomCache;
+
+    LoopAndFillUnbinnedMCTruthDenom(
+        options.m_truth, truthCV, mycuts, model, tuneComponents, mcTruthTree,
+        !truthOnly ? &truthDenomIDs : nullptr,
+        appendTruthMisses ? &truthDenomCache : nullptr);
 
     if(!truthOnly)
     {
       LoopAndFillUnbinnedMCSelectedSignalReco(
           options.m_mc, recoCV, mycuts, model, mcSigTree,
-          appendTruthMisses ? &recoIDs : nullptr);
+          appendTruthMisses ? &recoIDs : nullptr,
+          &truthDenomIDs);
     }
 
-    long nTruthOnlyMisses = LoopAndFillUnbinnedMCTruthDenom(
-        options.m_truth, truthCV, mycuts, model, tuneComponents, mcTruthTree,
-        appendTruthMisses ? mcSigTree : nullptr,
-        appendTruthMisses ? &recoIDs   : nullptr);
+    long nTruthOnlyMisses = 0;
+    if(appendTruthMisses)
+      nTruthOnlyMisses = AppendTruthOnlyMisses(mcSigTree, truthDenomCache, recoIDs);
 
     if(!truthOnly)
     {

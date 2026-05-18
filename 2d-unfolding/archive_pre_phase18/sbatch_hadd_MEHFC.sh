@@ -11,15 +11,13 @@
 #SBATCH --output=hadd_MEHFC_%j.out
 #SBATCH --error=hadd_MEHFC_%j.err
 
-# Combine 12 per-playlist event-loop ROOTs into a single MEHFC file.
-# Designed to run as afterok dependency of sbatch_evloop_array.sh.
+# hadd 12 patched per-playlist event-loop outputs into a fresh MEHFC
+# combined file. Pulls 1A from runEventLoopOmniFold_1A_minos_fix.root
+# (already produced by the IsMinosMatchMuon fix re-run on 2026-04-25)
+# and 1B-1P from the freshly produced array outputs.
 #
-# Note: hadd correctly merges TTrees (concatenates) and TParameter<double>
-# (sums) AND TParameter<int>/<long> (sums). hasTruthOnlyMisses is an int —
-# after hadd it becomes 12 (= sum of 12 playlist values of 1), so the
-# Python diagnostic now treats >=1 as "phase-17+ ROOT" rather than strictly
-# ==1; this was already handled. nTruthOnlyMisses sums to the total miss
-# count across playlists, as desired for the diagnostic.
+# Designed to run as an afterok dependency of the per-playlist event-loop
+# array (sbatch_evloop_array.sh).
 
 set -eo pipefail
 
@@ -28,7 +26,7 @@ source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/2d-unfolding"
 
 INPUTS=(
-    runEventLoopOmniFold_1A.root
+    runEventLoopOmniFold_1A_minos_fix.root
     runEventLoopOmniFold_1B.root
     runEventLoopOmniFold_1C.root
     runEventLoopOmniFold_1D.root
@@ -42,6 +40,7 @@ INPUTS=(
     runEventLoopOmniFold_1P.root
 )
 
+# Verify all 12 inputs exist before clobbering the output
 missing=0
 for f in "${INPUTS[@]}"; do
     if [[ ! -s "$f" ]]; then
