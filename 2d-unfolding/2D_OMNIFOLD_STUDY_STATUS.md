@@ -45,9 +45,10 @@ postfix) and `archive_pre_phase18/` (Phase-16/17 superseded artifacts).
 
 ## Key reference numbers (full ME FHC, 5-iter production)
 
-Current headline values are from Phase-18.1 unfold (job 53034070,
-2026-05-17). Phase-18.2 re-unfold (53116554) in flight; expected shift is
-sub-ppm because the 7 deduped reco entries are 0.2 ppm of MEHFC.
+Current headline values are from Phase-18.2 unfold (job 53116554,
+2026-05-19). The 7-entry reco-side dedupe vs Phase-18.1 produced a ~0.1
+shift in χ²/ndf (3.565 → 3.661 on the 205-bin full cov), within the
+expected sub-ppm event-level shift.
 
 | Quantity | Value |
 |---|---|
@@ -56,19 +57,19 @@ sub-ppm because the 7 deduped reco entries are 0.2 ppm of MEHFC.
 | N fiducial nucleons (tracker geometry) | 3.2353e30 |
 | Selected data events (reco) | 4,091,707 |
 | `hMeasSub2D` integral (data − bkg) | 3.97257e6 |
-| `hTruth2D` / `hUnfold2D` integrals | 5.77954e6 / 6.56407e6 |
+| `hTruth2D` / `hUnfold2D` integrals | 5.77954e6 / 6.56409e6 |
 | `hOFInputTruth2D` / `hOFTruthDenom2D` integrals | 5.77954e6 / 5.77954e6 |
 | Global OmniFold input completeness c | **1.000000** (exact by construction) |
-| Step-2 weight stats | mean 1.1321, range [0.7458, 3.6486] |
+| Step-2 weight stats | mean 1.1321, range [0.7472, 3.6948] |
 | Total xsec (p_T projection = p_\|\| projection) | **3.073e-38 cm²/nucleon** |
-| σ_total(ours) / σ_total(paper) | **1.0112** |
-| Strict-interior χ²/ndf vs paper (185 bins, full cov) | **3.549** |
-| All-reported-bins χ²/ndf (205 bins, full cov) | **3.565** |
-| 205-bin shape χ²/ndf (total cov) | 3.269 *(Phase-18 shape re-norm pending)* |
-| 185-bin strict-interior shape χ²/ndf (total cov) | 3.160 *(Phase-18 shape re-norm pending)* |
-| Pull mean / RMS (205 reported bins, full cov) | 0.087 / 0.596 |
-| Median bin ratio (ours/paper, strict interior) | **1.0084** |
-| Bins within 5 % / 10 % / 20 % of paper (185 strict interior) | 81.1 % / 95.7 % / 98.4 % |
+| σ_total(ours) / σ_total(paper) | **1.0111** |
+| Strict-interior χ²/ndf vs paper (185 bins, full cov) | **3.636** |
+| All-reported-bins χ²/ndf (205 bins, full cov) | **3.661** |
+| 205-bin shape χ²/ndf (total cov) | **3.596** |
+| 185-bin strict-interior shape χ²/ndf (total cov) | **3.567** |
+| Pull mean / RMS (205 reported bins, full cov) | 0.089 / 0.598 |
+| Median bin ratio (ours/paper, strict interior) | **1.0068** |
+| Bins within 5 % / 10 % / 20 % of paper (185 strict interior) | 80.0 % / 94.6 % / 98.4 % |
 
 Paper total (reported): 3.039e-38 cm²/nucleon.
 
@@ -76,12 +77,12 @@ Paper total (reported): 3.039e-38 cm²/nucleon.
 
 | p_\|\| ≥ (GeV/c) | N bins | χ² | χ²/ndf | median ratio | %<5% |
 |---|---|---|---|---|---|
-| 1.5 | 185 | 656.54 | 3.549 | 1.0084 | 81.1 % |
-| 2.0 | 179 | 586.43 | 3.276 | 1.0073 | 83.8 % |
-| 2.5 | 171 | 493.86 | 2.888 | 1.0075 | 84.2 % |
-| 3.0 | 162 | 440.63 | 2.720 | 1.0074 | 84.0 % |
-| 3.5 | 152 | 425.59 | 2.800 | 1.0088 | 82.9 % |
-| 4.0 | 141 | 402.67 | 2.856 | 1.0088 | 81.6 % |
+| 1.5 | 185 | 672.67 | 3.636 | 1.0068 | 80.0 % |
+| 2.0 | 179 | 602.42 | 3.365 | 1.0061 | 82.7 % |
+| 2.5 | 171 | 498.12 | 2.913 | 1.0066 | 83.6 % |
+| 3.0 | 162 | 438.97 | 2.710 | 1.0067 | 83.3 % |
+| 3.5 | 152 | 423.85 | 2.788 | 1.0079 | 82.2 % |
+| 4.0 | 141 | 400.69 | 2.842 | 1.0077 | 80.9 % |
 
 χ²/ndf is approximately p_||-flat post-Phase-16; the residual is dominated
 by sub-2% shape disagreement in the highest p_|| tails (see Residual
@@ -91,21 +92,23 @@ disagreement below).
 
 ## Iteration convergence
 
-Production uses **5 iterations**. The original justification (pre-Phase-16,
-1A iter-scan) showed 0.08% bias on σ_total vs 10-iter:
+Production uses **5 iterations**. Phase-18.2 1A iter-scan (job
+53116867_[1,3,5,8,10], rerun for OOM as 53118557_3) re-validates the
+choice on the post-Phase-18 input:
 
 | iter | hUnfold2D | xsec (cm²/nucleon) | rel RMS vs 10-iter |
 |---|---|---|---|
-| 1 | 448,066 | 2.4775e-38 | 6.95% |
-| 3 | 448,958 | 2.4825e-38 | 3.71% |
-| 5 | 449,273 | 2.4842e-38 | 2.11% |
-| 8 | 449,507 | 2.4855e-38 | 0.78% |
-| 10 | 449,649 | 2.4863e-38 | 0.00% |
+| 1  | 551,609 | 3.0501e-38 | 4.999% |
+| 3  | 552,016 | 3.0523e-38 | 2.534% |
+| 5  | 551,972 | 3.0521e-38 | 1.537% |
+| 8  | 552,069 | 3.0526e-38 | 0.555% |
+| 10 | 552,124 | 3.0529e-38 | 0.000% |
 
-Phase 18 changed the OmniFold input substantially (+33% training events,
-native miss handling), so a Phase-18.2 1A iter-scan is in flight (job
-53116867_[1,3,5,8,10]) to re-validate the 5-iter choice. Results will
-replace this table.
+Total xsec is locked in by iter-3 (5-iter is within 0.026% of 10-iter,
+well under 0.5%). Per-bin shape RMS at 5-iter is 1.54% — small vs the
+paper-comparison disagreement (χ²/ndf ≈ 3.7). An 8-iter MEHFC parallel
+run (job 53159240) is queued behind the 2026-05-20 NERSC maintenance
+window for an explicit production cross-check; expected to land ~2026-05-28.
 
 ---
 

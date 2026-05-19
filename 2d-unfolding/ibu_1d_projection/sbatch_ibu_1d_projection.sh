@@ -35,7 +35,7 @@ cd "${WORKDIR}"
 python3 build_1d_ibu_inputs.py \
   --omnifile ../runEventLoopOmniFold_MEHFC.root \
   --flux ../baseline_flux/runEventLoopMC_MEHFC.root \
-  --xsec-2d ../2d_crossSection_omnifold_MEHFC_5iter_postfix.root \
+  --xsec-2d ../2d_crossSection_omnifold_MEHFC_5iter.root \
   --out-data runEventLoop_proj_data.root \
   --out-mc runEventLoop_proj_mc.root \
   --verbose
@@ -56,7 +56,7 @@ test -s pZmu_crossSection.root || { echo "[FAIL] pZmu_crossSection.root not writ
 python3 plot_ibu_1d_proj_vs_omnifold.py \
   --ibu-pt pTmu_crossSection.root \
   --ibu-pz pZmu_crossSection.root \
-  --omnifold-2d ../2d_crossSection_omnifold_MEHFC_5iter_postfix.root \
+  --omnifold-2d ../2d_crossSection_omnifold_MEHFC_5iter.root \
   --paper-2d ../minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root \
   --out-pt MEHFC_5iter_ibu_1d_proj_pt.png \
   --out-pz MEHFC_5iter_ibu_1d_proj_pz.png

@@ -56,7 +56,7 @@ def parse_args():
     p.add_argument("--flux",
                    default="../baseline_flux/runEventLoopMC_MEHFC.root")
     p.add_argument("--xsec-2d",
-                   default="../2d_crossSection_omnifold_MEHFC_5iter_postfix.root")
+                   default="../2d_crossSection_omnifold_MEHFC_5iter.root")
     p.add_argument("--out-data", default="runEventLoop_proj_data.root")
     p.add_argument("--out-mc", default="runEventLoop_proj_mc.root")
     p.add_argument("--verbose", action="store_true")

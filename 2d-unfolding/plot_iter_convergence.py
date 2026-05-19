@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 ITERS = [1, 3, 5, 8, 10]
-PATH = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_1A_corrected_{i}iter.root"
+PATH = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_1A_{i}iter.root"
 
 
 def load(iter_count):
@@ -62,7 +62,7 @@ axs[2].set_ylabel("Per-bin relative RMS vs 10-iter")
 axs[2].set_title("Shape convergence (vs 10-iter reference)")
 axs[2].grid(alpha=0.3, which="both")
 
-fig.suptitle("2D OmniFold iteration-scan convergence (playlist 1A, corrected pipeline)",
+fig.suptitle("2D OmniFold iteration-scan convergence (playlist 1A, Phase-18.2 pipeline)",
              fontsize=12)
 fig.tight_layout()
 out = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/1A_iterscan_convergence.png"

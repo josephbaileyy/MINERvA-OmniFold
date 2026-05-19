@@ -173,7 +173,7 @@ def main():
     ap.add_argument("--ibu-pt", default="pTmu_crossSection.root")
     ap.add_argument("--ibu-pz", default="pZmu_crossSection.root")
     ap.add_argument("--omnifold-2d",
-                    default="../2d_crossSection_omnifold_MEHFC_5iter_postfix.root")
+                    default="../2d_crossSection_omnifold_MEHFC_5iter.root")
     ap.add_argument("--paper-2d",
                     default="../minerva_paper_anc/"
                             "cov_ptpl_minerva_inclusive_6GeV.root")

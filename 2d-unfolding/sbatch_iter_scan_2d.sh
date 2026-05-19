@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
+#SBATCH --mem=32G
 #SBATCH --time=06:00:00
 #SBATCH --array=1,3,5,8,10
 #SBATCH --output=iter_scan_1A_%a_%A.out
@@ -24,6 +24,9 @@
 # 6h gives margin.
 #
 # Partition: shared QOS + cpus-per-task=2 (one physical core w/ SMT pair).
+# Memory: 32G leaves headroom for ROOT array materialization + OmniFold
+# classifier training. The original 8G request OOM-killed the 3-iter
+# Phase-18.2 task during startup on 2026-05-18.
 # This is the NERSC-recommended layout for single-threaded jobs (see
 # https://docs.nersc.gov/jobs/examples/#single-core-job): nodes are
 # shared between users, so 5 array tasks queue independently and are
