@@ -353,10 +353,12 @@ Pre-Phase-18 versions of these scripts are preserved in
 ### Archives (preserved for provenance)
 - `archive_pre_phase16/` — pre-Phase-16 unfold outputs and derived plots
   (σ_total = 0.752 × paper).
-- `archive_pre_phase18/` — Phase-16/17 era artifacts: pre-Phase-18
-  per-playlist + MEHFC ROOTs, postfix MEHFC unfold (`*_postfix.root`),
-  Phase-17 side-experiment ROOTs (`*phase17*`), superseded SLURM scripts,
-  superseded SLURM logs.
+- `archive_pre_phase18/` — Phase-16/17 era artifacts: pre-Phase-18 MEHFC
+  ROOT (the headline "before" snapshot), superseded SLURM scripts,
+  superseded SLURM logs. Trimmed on 2026-05-19: the four per-playlist
+  and side-experiment ROOTs (`1M`, `1N`, `1A_phase17`, `1A_fakes-routed`,
+  ~840MB total) were removed since their narrative is captured in the
+  run log and they're reconstructible from an older commit if needed.
 
 ### Manifests (`2d-unfolding/playlist_manifests/`)
 - `1{A..P}_{MC,Data}.txt` — per-playlist local paths.
