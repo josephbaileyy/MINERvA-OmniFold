@@ -1,6 +1,10 @@
 import ROOT
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
+from sklearn.ensemble import (
+    HistGradientBoostingClassifier,
+    HistGradientBoostingRegressor,
+)
 import pickle
 import os
 from array import array
@@ -94,6 +98,7 @@ class OmniFold_helper_functions:
             classifier2_params = None,
             regressor_params = None,
             parameter_format = "TMap",
+            estimator = "exact",
         ):
         # Removing events that don't pass generation level cuts
         MCreco_entries = MCreco_entries[MC_pass_truth_mask]
@@ -149,11 +154,35 @@ class OmniFold_helper_functions:
                 regressor_params = convert_to_dict(regressor_params)
         else:
             regressor_params = {}
-        step1_classifier = GradientBoostingClassifier(**classifier1_params)
-        step2_classifier = GradientBoostingClassifier(**classifier2_params)
-        use_regressor =  any(~MC_pass_reco_mask)
-        if use_regressor:
-            step1_regressor = GradientBoostingRegressor(**regressor_params)
+        # estimator="exact": original sklearn GradientBoosting{Classifier,Regressor}
+        #   — exact-split CART, single-threaded, O(events) per split.
+        # estimator="hist":  HistGradientBoosting{Classifier,Regressor}
+        #   — histogram-binned (256 bins/feature), OpenMP-parallel, O(bins)
+        #   per split. Typically 10-30x faster on >1M-row tabular data with
+        #   the same gradient-boosting semantics. Default param mapping
+        #   below preserves parity with the exact path (100 trees, depth 3
+        #   ≈ 8 leaves, learning_rate=0.1). Any caller-supplied param dict
+        #   takes precedence over these defaults.
+        if estimator == "exact":
+            step1_classifier = GradientBoostingClassifier(**classifier1_params)
+            step2_classifier = GradientBoostingClassifier(**classifier2_params)
+            use_regressor =  any(~MC_pass_reco_mask)
+            if use_regressor:
+                step1_regressor = GradientBoostingRegressor(**regressor_params)
+        elif estimator == "hist":
+            hist_defaults = dict(max_iter=100, max_leaf_nodes=8,
+                                 learning_rate=0.1)
+            c1 = {**hist_defaults, **classifier1_params}
+            c2 = {**hist_defaults, **classifier2_params}
+            rg = {**hist_defaults, **regressor_params}
+            step1_classifier = HistGradientBoostingClassifier(**c1)
+            step2_classifier = HistGradientBoostingClassifier(**c2)
+            use_regressor =  any(~MC_pass_reco_mask)
+            if use_regressor:
+                step1_regressor = HistGradientBoostingRegressor(**rg)
+        else:
+            raise ValueError(
+                f"Unknown estimator='{estimator}'. Expected 'exact' or 'hist'.")
         
         for i in range(num_iterations):
             print(f"Starting iteration {i}") 

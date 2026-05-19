@@ -1265,3 +1265,165 @@ metric table, χ² vs p_||-min table, paper binning, runtime notes, and
 code/data inventory retained (with all paths updated to canonical
 filenames). This entry is the last item in the active-history section of
 the run log; everything older is archival.
+
+## 2026-05-19 — Uncertainty work + HistGBT estimator port
+
+### ML-stochasticity seed scan
+
+Advisor (2026-05-19): the existing χ²-vs-paper uses the paper's
+covariance, so any uncertainty that differs between the two methods is
+*excluded* by construction. Next step is to characterize
+method-dependent uncertainties; the most distinct is the stochastic
+nature of the ML training.
+
+Plumbed `--seed N` into `unfold_2d_omnifold_unbinned.py`. When set, the
+three sklearn GBDT estimators (step-1 classifier, step-2 classifier,
+step-1 miss regressor) take `random_state = N, N+1, N+2` respectively,
+threaded through to `ohf.omnifold(...)` via
+`classifier{1,2}_params={"random_state": ...}` and
+`parameter_format="dict"` (so the C++ TMap-string converter is skipped
+on Python dict inputs). With `--seed` unset, behavior is unchanged
+(falls back to sklearn's `np.random` global state — natural cross-process
+variation).
+
+New sbatch `sbatch_unfold_2d_MEHFC_5iter_seedscan.sh`:
+`--array=1-10`, 128 CPU, 24h walltime each, outputs to
+`seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed${N}.root`. Submitted
+as job 53180443; PENDING `Reserved for maintenance` (will dispatch on
+or after 2026-05-27T06:00 UTC).
+
+Analyzer at `seedscan/analyze_seedscan.py`: loads N trial ROOTs, emits
+total-σ mean±std, per-bin std/mean (full 205 and strict-interior 185),
+shape-only spread, 14×16 rel-spread heatmap, and pT/pz band plots.
+
+### 8-iter MEHFC unfold queued
+
+For the iter-convergence cross-check (advisor wanted to see how 5 vs 8
+look). New sbatch `sbatch_unfold_2d_MEHFC_8iter.sh`, 36h walltime, 128
+CPU; output `2d_crossSection_omnifold_MEHFC_8iter.root`. Job 53159240
+PENDING `Reserved for maintenance`, will dispatch on or after
+2026-05-27T06:00 UTC.
+
+### HistGBT estimator port
+
+sklearn `GradientBoostingClassifier` is single-threaded; the 128-CPU
+production allocation has only one core actually working through the
+~19h unfold. Sklearn ships `HistGradientBoostingClassifier` — same
+gradient-boosting algorithm but with 256-quantile histogram-based
+splits and OpenMP parallelism. Drop-in replacement; sklearn 1.8.0
+already installed.
+
+`unbinned_unfolding/python/omnifold.py`:
+
+- Imported `HistGradientBoosting{Classifier,Regressor}`.
+- Added `estimator="exact"` kwarg to `omnifold(...)`. `exact` branch is
+  unchanged. `hist` branch builds
+  `HistGradientBoosting{Classifier,Regressor}` with matched defaults
+  (`max_iter=100`, `max_leaf_nodes=8` ≈ depth 3, `learning_rate=0.1`)
+  and any caller-supplied params overriding those.
+- Raises on unknown values for `estimator`.
+
+`unfold_2d_omnifold_unbinned.py`:
+
+- Added `--estimator {exact,hist}` (default `exact`).
+- Threaded `estimator=args.estimator` into the `ohf.omnifold(...)` call.
+
+### HistGBT 1-iter MEHFC smoke (interactive 53179085)
+
+Ran via `srun --jobid=53179085 --overlap -n 1 --cpus-per-task=32` with
+`OMP_NUM_THREADS=32` and `--seed 1 --iters 1 --estimator hist`.
+Wallclock **355 s** (vs ~3h50m per iter for exact GBT → ~40× per-iter
+speedup; pure-training ratio closer to 80× after subtracting the
+~3 min one-shot I/O). End-of-iter sanity:
+
+- step2 sum=3.718e+07, mean=1.1317 (exact 5-iter: 3.719e+07, 1.1321).
+- hUnfold2D integral=6.55827e+06 (exact 5-iter: 6.56409e+06; 0.09%
+  lower at 1 iter, expected).
+- c = 1.0000 (by-construction, independent of estimator).
+- Total σ from p_T = 3.071e-38 cm²/nucleon (paper 3.039e-38, exact
+  5-iter 3.073e-38; 0.07% below exact's 5-iter answer).
+
+### HistGBT 1A iteration-scan vs exact
+
+Ran `--estimator hist --seed 1` at `--iters {1,3,5,8,10}` on the 1A
+playlist in the interactive, sequential. Total **387 s** for all five
+points (per-iter HistGBT 1A training cost ~7 s on 32 threads). Outputs
+to `histgbt_iter_scan/2d_crossSection_omnifold_1A_{i}iter_histgbt.root`.
+
+Comparison plot `histgbt_iter_scan/1A_iterscan_convergence_hist_vs_exact.png`
+overlays the exact-GBT 1A iter-scan (already in the parent dir) and
+HistGBT companion. Per-bin shape RMS vs each estimator's own 10-iter
+asymptote:
+
+| iter | exact GBT | HistGBT |
+|---|---|---|
+| 1 | 5.00% | 2.43% |
+| 3 | 2.53% | 1.16% |
+| 5 | 1.54% | **0.86%** |
+| 8 | 0.55% | 0.67% |
+| 10 | 0 (ref) | 0 (ref) |
+
+HistGBT converges ~2× tighter through iter 5; 5-iter HistGBT shape
+stability ≈ 7-iter exact GBT. Total-σ asymptotes agree to **0.04%**
+(exact 10-iter = 3.0529e-38, hist 10-iter = 3.0516e-38) — within
+expected ML-noise budget for two distinct GBDT implementations (256-bin
+quantization, different tie-breaking).
+
+### 5-iter MEHFC HistGBT validation (interactive 53179085)
+
+Ran `--iters 5 --use-weights --estimator hist --seed 1` on the full
+MEHFC input via `srun --jobid=53179085`. Wallclock **1053 s
+(17m33s)** vs the exact-GBT 5-iter production at 69,523 s → **66×
+speedup measured** (pure-training ratio ~79× after I/O amortizes).
+
+Output: `histgbt_smoke/2d_crossSection_omnifold_MEHFC_5iter_histgbt.root`.
+
+Sanity vs exact 5-iter production:
+
+| | Exact 5-iter | HistGBT 5-iter |
+|---|---|---|
+| Total σ | 3.073e-38 | 3.073e-38 ✓ (4 sig figs) |
+| σ / paper | 1.0111 | 1.0111 ✓ |
+| hUnfold2D | 6.56409e+06 | 6.5627e+06 (−0.02%) |
+| step2 sum | 3.719e+07 | 3.718e+07 |
+| step2 mean | 1.1321 | 1.1317 |
+| c | 1.0000 | 1.0000 |
+
+The 0.04% 1A 10-iter asymptotic gap does not survive to MEHFC at the
+production iter count. Validation #16 closed.
+
+### Directory cleanup (2026-05-19)
+
+Removed superseded artifacts whose findings are already in this run log
+or STATUS:
+
+- ROOTs: `2d_crossSection_omnifold_MEHFC_5iter_postfix{,_shape}.root`
+  (Phase-16 era, replaced by canonical Phase-18.2 files).
+- SLURM logs in 2d-unfolding/ root: the Phase-18 / Phase-18.2 build /
+  evloop / hadd / unfold / iter-scan / IBU chain `.out/.err` (8 jobs).
+  All corresponding ROOT outputs are preserved; numbers are in STATUS.
+- Phase 15/16 attribution one-offs: `compare_flux_to_paper_2019.py`
+  + `.csv` + `.png`, `diagnose_truth_shape_unweighted.py` +
+  `truth_shape_unweighted_MEHFC_*`, `verify_eff_fix_predicted_xsec.py`,
+  `plot_minos_fix_bkg_fraction.py` +
+  `MEHFC_5iter_minos_fix_bkg_fraction.png`,
+  `MINERvA_Flux_pdg14_500MeVBins_arXiv1906_00111.csv`.
+- `__pycache__/`.
+
+Sources for the deleted .py files remain recoverable via
+`git log --all --follow -- 2d-unfolding/<file>`.
+
+### Next steps
+
+- Cancel queued exact-GBT seedscan 53180443 and resubmit on HistGBT.
+  Per-trial budget should drop from 24 h to ~30 min walltime, 32 CPU
+  (not 128).
+- Where to run the seedscan: parallel inside an interactive
+  (~50 min for all 10 trials with 4-wide × 32-thread srun), or as
+  the post-maintenance sbatch array fallback (~30 min × 10 if all
+  array tasks dispatch in parallel).
+- After 10 trials land, run `seedscan/analyze_seedscan.py` for the
+  ML-noise envelope (advisor's headline ask).
+- Decision on going beyond HistGBT (LightGBM / XGBoost CPU or GPU) is
+  deferred — only worth the port effort if either the per-bin spread
+  comes back atypical or the analysis grows past ~5D.

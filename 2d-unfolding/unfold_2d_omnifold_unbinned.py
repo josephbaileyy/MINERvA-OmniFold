@@ -618,6 +618,19 @@ def main():
                      help="Closure test: use MC reco events (pass_reco) as "
                           "pseudo-data instead of real data. Unfolded result "
                           "should recover the MC truth prior within GBT noise.")
+    ap.add_argument("--seed", type=int, default=None,
+                     help="Master seed for the sklearn GBDT random_state. "
+                          "When set, classifier1 uses --seed, classifier2 "
+                          "uses --seed+1, regressor uses --seed+2 so the "
+                          "three estimators are independently reproducible. "
+                          "Used by the ML-stochasticity seed scan.")
+    ap.add_argument("--estimator", choices=["exact", "hist"], default="exact",
+                     help="GBDT backend. 'exact' = sklearn GradientBoosting "
+                          "(single-threaded exact-split CART, original "
+                          "behavior). 'hist' = HistGradientBoosting "
+                          "(histogram-binned, OpenMP-parallel, typically "
+                          "10-30x faster on >1M rows; matched defaults: "
+                          "100 trees, 8 leaves ~ depth 3, lr=0.1).")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -832,6 +845,22 @@ def main():
     MCreco = np.column_stack([sig["reco_pt"], sig["reco_pz"]])
     measured = np.column_stack([meas_pt, meas_pz])
 
+    # ML-stochasticity seed scan: --seed pins sklearn GBDT random_state on
+    # all three estimators (step1 classifier, step2 classifier, step1 miss
+    # regressor) so each trial is independently reproducible. With None
+    # (default), sklearn falls back to np.random's global state and natural
+    # cross-process variation drives the spread.
+    if args.seed is not None:
+        c1_params = {"random_state": int(args.seed)}
+        c2_params = {"random_state": int(args.seed) + 1}
+        rg_params = {"random_state": int(args.seed) + 2}
+        print(f"[INFO] Pinned GBDT seeds: step1={c1_params['random_state']}, "
+              f"step2={c2_params['random_state']}, "
+              f"regressor={rg_params['random_state']}")
+    else:
+        c1_params = c2_params = rg_params = None
+
+    print(f"[INFO] GBDT estimator: {args.estimator}")
     step1_weights, step2_weights = ohf.omnifold(
         MCgen, MCreco, measured,
         sig["pass_reco"], sig["pass_truth"],
@@ -840,6 +869,11 @@ def main():
         MCgen_weights=sig["w_truth"] if args.use_weights else None,
         MCreco_weights=sig["w_reco"] if args.use_weights else None,
         measured_weights=measured_weights,
+        classifier1_params=c1_params,
+        classifier2_params=c2_params,
+        regressor_params=rg_params,
+        parameter_format="dict",
+        estimator=args.estimator,
     )
     print(f"[INFO] OmniFold complete. step1 weights: {step1_weights.shape[0]}, "
           f"step2 weights: {step2_weights.shape[0]}")

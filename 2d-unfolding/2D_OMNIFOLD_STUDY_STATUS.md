@@ -1,8 +1,9 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-18 (Phase 18.2 reco-side dedupe applied; pipeline
-finalized at canonical filenames. MEHFC re-unfold queued as job 53116554;
-1A Phase-18.2 iter-scan queued as 53116867_[1,3,5,8,10].)
+**Last updated**: 2026-05-19 (Phase-18.2 production unfold and 1A iter-scan
+landed; ML-stochasticity seed scan queued at 53180443_[1-10]; HistGBT
+estimator ported and validated on 1A — 5-iter MEHFC HistGBT measurement
+in flight.)
 
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants and gotchas),
 `2D_OMNIFOLD_RUN_LOG.md` (timestamped chronology of all phases),
@@ -112,6 +113,70 @@ window for an explicit production cross-check; expected to land ~2026-05-28.
 
 ---
 
+## GBDT estimator (HistGBT port, 2026-05-19)
+
+The original code uses sklearn `GradientBoostingClassifier`
+(`unbinned_unfolding/python/omnifold.py`), which is **single-threaded by
+design** — the 128-CPU production allocation has only one core actually
+working. Ported to `HistGradientBoostingClassifier` (256-quantile
+histogram binning, OpenMP-parallel) gated behind a new
+`--estimator {exact,hist}` flag (`exact` is the default for back-compat).
+Matched defaults: 100 trees, `max_leaf_nodes=8` (≈ depth 3), `lr=0.1`.
+
+### Speedup vs exact GBT
+
+| Run | Wall time | Notes |
+|---|---|---|
+| Exact GBT, 5-iter MEHFC (production) | 69,523 s (19h18m) | 128 CPU, single-threaded |
+| HistGBT, 1-iter MEHFC (smoke 2026-05-19) | 355 s | 32 CPU, OMP_NUM_THREADS=32 |
+| **HistGBT, 5-iter MEHFC** | **1,053 s (17m33s)** | **32 CPU; 66× speedup measured** |
+
+1-iter wallclock ratio ≈ **40×**; full 5-iter unfold **66×** measured
+(**~79×** on pure training time after subtracting ~180 s one-shot I/O).
+
+### Iteration convergence comparison (1A, 2026-05-19)
+
+Per-bin relative shape RMS vs each estimator's own 10-iter asymptote:
+
+| iter | exact GBT | HistGBT |
+|---|---|---|
+| 1 | 5.00% | 2.43% |
+| 3 | 2.53% | 1.16% |
+| 5 | 1.54% | 0.86% |
+| 8 | 0.55% | 0.67% |
+| 10 | 0 (ref) | 0 (ref) |
+
+HistGBT plateaus **~2× faster** through iter 5. The two estimators
+converge to total σ that agree to **0.04%** (exact 10-iter =
+3.0529e-38, hist 10-iter = 3.0516e-38) — well within expected ML-noise
+budget. 5 iterations remains the production choice for consistency with
+the existing iter-scan analysis and the queued seed scan, but is more
+than enough for HistGBT (5-iter HistGBT shape stability ≈ 7-iter
+exact GBT).
+
+Comparison plot: `histgbt_iter_scan/1A_iterscan_convergence_hist_vs_exact.png`.
+
+### Validation status
+
+5-iter MEHFC HistGBT (interactive 53179085, 2026-05-19) closed the
+validation:
+
+| | Exact 5-iter | HistGBT 5-iter |
+|---|---|---|
+| Total σ (cm²/nucleon) | 3.073e-38 | 3.073e-38 ✓ (4 sig figs) |
+| σ / paper | 1.0111 | 1.0111 ✓ |
+| hUnfold2D | 6.56409e+06 | 6.5627e+06 (−0.02%) |
+| step2 sum | 3.719e+07 | 3.718e+07 |
+| step2 mean | 1.1321 | 1.1317 |
+| c | 1.0000 | 1.0000 |
+
+Output: `histgbt_smoke/2d_crossSection_omnifold_MEHFC_5iter_histgbt.root`.
+The 1A 10-iter 0.04% asymptotic gap between estimators does not
+survive to MEHFC at the production iter count — the methods land on
+the same physics answer.
+
+---
+
 ## Paper binning (arXiv:2106.16210)
 
 Authoritative: `minerva_paper_anc/bin_mapping.txt`. The TH2D axis labels in
@@ -137,8 +202,11 @@ Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c. Paper reports
 | C++ event loop, one playlist | shared QOS, 1 task | ~2 h (1E was 2h07m on Phase-18.2) |
 | Event loop, all 12 playlists | 11-task array | ~3-4 h (parallel) |
 | hadd MEHFC | shared QOS | < 1 min |
-| 2D OmniFold, 5-iter, 1A stats | shared QOS, 2 CPU | ~1.5 h |
-| 2D OmniFold, 5-iter, full MEHFC | regular QOS, 128 CPU | ~19 h (≈3h50m/iter × 5) |
+| 2D OmniFold, 5-iter, 1A stats, exact GBT | shared QOS, 2 CPU | ~1.5 h |
+| 2D OmniFold, 5-iter, full MEHFC, exact GBT | regular QOS, 128 CPU | ~19 h (≈3h50m/iter × 5) |
+| 2D OmniFold, 1A iter scan {1,3,5,8,10}, HistGBT | interactive, 32 CPU | ~6.5 min total |
+| 2D OmniFold, 1-iter MEHFC, HistGBT | interactive, 32 CPU | ~6 min |
+| 2D OmniFold, 5-iter MEHFC, HistGBT | interactive, 32 CPU | 17m33s measured (66× speedup) |
 
 ---
 
@@ -200,13 +268,22 @@ MEHFC — below MINERvA systematics but flagged for AnaTuple producers.
   phase space, subtracts background, fills `hUnfold2D` with
   `step2_weights * truth_w_in`, divides by `hOFCompleteness2D`. Under
   Phase 18.2 this division is a no-op (c=1) but kept as a regression
-  check.
+  check. Exposes `--seed N` (pins sklearn GBDT random_state across
+  step1/step2/regressor for the ML-stochasticity seed scan) and
+  `--estimator {exact,hist}` (default `exact`; `hist` swaps in
+  HistGradientBoosting via `unbinned_unfolding/python/omnifold.py`).
 - `plot_2d_cross_section.py` — slice grids, projections, efficiency map.
 - `plot_2d_paper_comparison.py` — overlay with paper MINERvA-Tune-v1.
 - `plot_2d_threeway_fig13.py` — Fig.-13-style paper / OmniFold / MC overlay.
 - `plot_efficiency_fig5_style.py` — Fig.-5-style efficiency map.
 - `plot_closure_2d.py` — closure diagnostic.
 - `plot_iter_convergence.py` — iter-scan summary.
+- `seedscan/analyze_seedscan.py` — load N seed-trial ROOTs and emit
+  per-bin mean/std, total-σ spread, shape-only spread, and a 14×16
+  rel-spread heatmap + pT/pz band plots. Outputs to its own cwd.
+- `histgbt_iter_scan/compare_iter_convergence.py` — overlay 1/3/5/8/10-iter
+  exact-GBT and HistGBT 1A unfolds: hUnfold2D, total σ, and per-bin
+  shape RMS vs each estimator's own 10-iter asymptote.
 - `compare_to_paper_fullcov.py` — full-cov χ² on 205 reported bins.
 - `compare_to_paper_interior.py` — strict-interior χ² on 185 bins.
 - `normalize_xsec_shape.py` — produces `*_shape.root` for shape-mode
@@ -215,12 +292,12 @@ MEHFC — below MINERvA systematics but flagged for AnaTuple producers.
 - `plot_2d_paper_comparison_shape.py` — shape-mode paper-comparison plots.
 - `combine_flux_MEHFC.py` — POT-weighted MEHFC flux from per-playlist
   baseline-flux ROOTs.
-- `diagnose_truth_shape_unweighted.py` — Phase 16 truth-shape attribution
-  on `mc_truth_denom` (unweighted vs MnvTune-v1 weighted vs paper).
-- `compare_flux_to_paper_2019.py` — Phase 15 ruleout of paper-era flux files.
-- `verify_eff_fix_predicted_xsec.py` — applies post-fix completeness
-  formula to a stored `hUnfold2D` to predict totals without re-unfolding
-  (used to verify Phase 16 pre-rerun).
+
+Phase 15/16 attribution one-offs (`compare_flux_to_paper_2019.py`,
+`diagnose_truth_shape_unweighted.py`, `verify_eff_fix_predicted_xsec.py`,
+`plot_minos_fix_bkg_fraction.py`) were deleted on 2026-05-19; their
+findings live in `2D_OMNIFOLD_RUN_LOG.md` and source can be recovered
+from git history if needed.
 
 ### SLURM (`2d-unfolding/`)
 - `sbatch_build.sh` — rebuild C++ event-loop binary into
@@ -229,7 +306,18 @@ MEHFC — below MINERvA systematics but flagged for AnaTuple producers.
   separately.
 - `sbatch_hadd_MEHFC.sh` — hadd 12 per-playlist ROOTs into MEHFC.
 - `sbatch_unfold_2d_MEHFC.sh` — 2D OmniFold unfold, 5-iter, full-node 128 CPU.
-- `sbatch_iter_scan_2d.sh` — 1A iter-scan array (1, 3, 5, 8, 10).
+- `sbatch_unfold_2d_MEHFC_8iter.sh` — parallel 8-iter MEHFC run (job
+  53159240, queued behind 2026-05-20 maintenance).
+- `sbatch_unfold_2d_MEHFC_5iter_seedscan.sh` — 10-trial seedscan array
+  (`--array=1-10`, `--seed=$SLURM_ARRAY_TASK_ID`, 128 CPU). Job
+  53180443_[1-10] queued behind maintenance; currently configured for
+  exact GBT.
+- `sbatch_unfold_2d_MEHFC_histgbt_smoke.sh` — 1-iter MEHFC HistGBT
+  smoke test (32 CPU, 1h). Not used as the actual smoke was run via
+  `srun --jobid=` into interactive 53179085.
+- `sbatch_iter_scan_2d.sh` — 1A iter-scan array (1, 3, 5, 8, 10), exact
+  GBT. The HistGBT companion scan was run inline via `srun --jobid=`
+  into the interactive (~6.5 min total).
 - `sbatch_runEventLoop_baseline_flux_array.sh` — regen per-playlist baseline
   flux.
 - `sbatch_finalize_MEHFC.sh` — combined finalize step.
@@ -248,12 +336,19 @@ Pre-Phase-18 versions of these scripts are preserved in
   same path on completion.
 - `2d_crossSection_omnifold_1A_5iter.root` — 1A unfold; the iter-scan
   produces `2d_crossSection_omnifold_1A_{1,3,5,8,10}iter.root` siblings.
+- `histgbt_iter_scan/2d_crossSection_omnifold_1A_{1,3,5,8,10}iter_histgbt.root`
+  — HistGBT companion iter-scan (seed=1, 32 CPU, 32-thread OMP).
+- `histgbt_smoke/2d_crossSection_omnifold_MEHFC_1iter_histgbt_smoke.root`
+  — 1-iter MEHFC smoke for HistGBT validation.
+- `histgbt_smoke/2d_crossSection_omnifold_MEHFC_5iter_histgbt.root` —
+  5-iter MEHFC HistGBT (validation #16, measurement in flight as of
+  2026-05-19 ~20:50 UTC).
+- `seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root` —
+  populated post-maintenance by array 53180443.
 - `baseline_flux/` — per-playlist baseline + `runEventLoopMC_MEHFC.root`
   (POT-weighted MEHFC flux).
 - `minerva_paper_anc/` — arXiv ancillary release (TH2D, 4 cov matrices,
   bin_mapping.txt, data CSV, model predictions).
-- `MINERvA_Flux_pdg14_500MeVBins_arXiv1906_00111.csv` — paper-era 2019
-  ancillary flux release (input to `compare_flux_to_paper_2019.py`).
 
 ### Archives (preserved for provenance)
 - `archive_pre_phase16/` — pre-Phase-16 unfold outputs and derived plots
