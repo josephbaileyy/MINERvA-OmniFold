@@ -1,9 +1,9 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-19 (Phase-18.2 production unfold and 1A iter-scan
-landed; ML-stochasticity seed scan queued at 53180443_[1-10]; HistGBT
-estimator ported and validated on 1A — 5-iter MEHFC HistGBT measurement
-in flight.)
+**Last updated**: 2026-05-20 (Phase-18.2 production unfold and 1A iter-scan
+landed; HistGBT estimator ported and validated; ML-stochasticity seedscan
+**complete (n=10, sbatch 53192001)** — total-σ spread 0.007%, per-bin
+median 0.36%.)
 
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants and gotchas),
 `2D_OMNIFOLD_RUN_LOG.md` (timestamped chronology of all phases),
@@ -177,6 +177,56 @@ the same physics answer.
 
 ---
 
+## ML-stochasticity seedscan (n=10, 2026-05-20)
+
+Advisor's headline ask: how much does the OmniFold result move when only
+the ML training stochasticity changes? Ten 5-iter MEHFC HistGBT trials
+were run with `random_state` pinned via `--seed N` (step1 = N, step2 =
+N+1, regressor = N+2) so each trial is reproducible and the only
+difference between trials is the seed. sbatch array 53192001 on
+dedicated nodes; per-trial wall ~17 min.
+
+| Metric | Value |
+|---|---|
+| Total σ across 10 trials | 3.0728e-38 ± 2.2e-42 cm²/nucleon |
+| **Total-σ relative spread** | **0.007%** |
+| Per-bin rel spread, 185-bin strict interior — median (p50) | **0.36%** |
+| — p16 / p84 | 0.17% / 0.75% |
+| — max single bin | 1.87% |
+| Shape-only (each trial / its own σ_tot), median | 0.36% |
+| 1D pT projection, median rel spread | 0.13% |
+| 1D p∥ projection, median rel spread | 0.15% |
+
+`p84` is the 84th percentile across the 185 interior bins (one-sided
++1σ-equivalent of the per-bin spread distribution). Median / p16 / p84
+are reported because the spread distribution has a long tail driven by
+a handful of low-statistics bins; `mean ± std` would overstate the
+typical bin.
+
+ML noise is **well below the paper's reported uncertainty** on every
+comparison. Paper totals computed from the ancillary release
+(`minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_total.txt` +
+`data_result_ptpl_2D_minerva_inclusive_6GeV.txt`):
+
+| Quantity | ML seedscan (n=10) | Paper (ancillary total cov) | Ratio |
+|---|---|---|---|
+| Total σ relative uncertainty | 0.007% | 4.61% (sqrt(wᵀCw) over 224 bins) | ML ≈ 0.15% of paper |
+| Per-bin median rel uncertainty | 0.36% | 6.86% (total_uncertainty / xsec) | ML ≈ 5% of paper |
+| Per-bin p84 rel uncertainty | 0.75% | 9.16% | ML ≈ 8% of paper |
+
+So ML stochasticity is **not a leading uncertainty** — confidently
+subdominant to the systematics the paper reports (flux, energy scale,
+cross-section model) and to the systematics still to be characterized
+in this method. Going from n=4 → n=10 moved the headline numbers
+marginally (0.008%→0.007% on total σ; 0.36% per-bin median in both),
+indicating the envelope has converged.
+
+Outputs: `seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root`,
+`seedscan/seedscan_spread_2d.png`, `seedscan_band_pt.png`,
+`seedscan_band_pz.png`. Re-run: `python3 seedscan/analyze_seedscan.py`.
+
+---
+
 ## Paper binning (arXiv:2106.16210)
 
 Authoritative: `minerva_paper_anc/bin_mapping.txt`. The TH2D axis labels in
@@ -207,6 +257,16 @@ Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c. Paper reports
 | 2D OmniFold, 1A iter scan {1,3,5,8,10}, HistGBT | interactive, 32 CPU | ~6.5 min total |
 | 2D OmniFold, 1-iter MEHFC, HistGBT | interactive, 32 CPU | ~6 min |
 | 2D OmniFold, 5-iter MEHFC, HistGBT | interactive, 32 CPU | 17m33s measured (66× speedup) |
+
+**Ideal HistGBT trial configuration (2026-05-19).** Validated baseline is
+1 process × 32 threads on a dedicated node (17m33s). Memory-bandwidth
+contention makes parallel trials on a shared node a net loss: 4-wide × 32
+≈ 8× slower per trial, 2-wide × 64 ≈ 4.5× slower per trial. Run the
+seedscan as an sbatch array (one node per task), never as 4×/2× srun on
+an interactive. Per-trial scaling above 32 threads on a dedicated node
+is unmeasured — sklearn HistGBT typically caps at ~16–32 threads/fit, so
+don't assume more cores help without a one-trial benchmark first. See
+RUN_LOG "Ideal HistGBT trial configuration" entry.
 
 ---
 
@@ -344,7 +404,10 @@ Pre-Phase-18 versions of these scripts are preserved in
   5-iter MEHFC HistGBT (validation #16, measurement in flight as of
   2026-05-19 ~20:50 UTC).
 - `seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root` —
-  populated post-maintenance by array 53180443.
+  n=10 HistGBT 5-iter MEHFC trials (sbatch array 53192001, completed
+  2026-05-20). Spread analysis PNGs alongside:
+  `seedscan_spread_2d.png` (14×16 rel-spread heatmap),
+  `seedscan_band_pt.png` / `seedscan_band_pz.png` (1D projection bands).
 - `baseline_flux/` — per-playlist baseline + `runEventLoopMC_MEHFC.root`
   (POT-weighted MEHFC flux).
 - `minerva_paper_anc/` — arXiv ancillary release (TH2D, 4 cov matrices,

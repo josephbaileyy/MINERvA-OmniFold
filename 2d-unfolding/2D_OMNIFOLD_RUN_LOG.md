@@ -1418,12 +1418,78 @@ Sources for the deleted .py files remain recoverable via
 - Cancel queued exact-GBT seedscan 53180443 and resubmit on HistGBT.
   Per-trial budget should drop from 24 h to ~30 min walltime, 32 CPU
   (not 128).
-- Where to run the seedscan: parallel inside an interactive
-  (~50 min for all 10 trials with 4-wide × 32-thread srun), or as
-  the post-maintenance sbatch array fallback (~30 min × 10 if all
-  array tasks dispatch in parallel).
 - After 10 trials land, run `seedscan/analyze_seedscan.py` for the
   ML-noise envelope (advisor's headline ask).
 - Decision on going beyond HistGBT (LightGBM / XGBoost CPU or GPU) is
   deferred — only worth the port effort if either the per-bin spread
   comes back atypical or the analysis grows past ~5D.
+
+### Ideal HistGBT trial configuration (lesson, 2026-05-19)
+
+Two attempts to parallelize trials on a single interactive node both
+hit memory-bandwidth contention:
+
+| Config                | Per-trial slowdown vs 32-thread baseline | Source              |
+|-----------------------|------------------------------------------|---------------------|
+| 4-wide × 32 threads   | ~8× slower                               | earlier attempt     |
+| 2-wide × 64 threads   | ~4.5× slower (~16 min/iter vs 3.5 min)   | this session, killed at iter 2 |
+
+Per-process `ps` confirmed `OMP_NUM_THREADS=64` ran at ~2820% CPU
+(~28 cores effective per process) on the 2-wide × 64 run — half the
+requested threads were spinning on memory access. Histogram-build in
+HistGBT is memory-bandwidth bound, not core-bound, so packing more
+processes onto one node always loses.
+
+**Validated single-trial baseline:** 32 threads, dedicated node (sbatch),
+5-iter MEHFC HistGBT in 17m33s (1053 s). This is what the seedscan
+sbatch array uses (`--cpus-per-task=32`).
+
+**Ideal seedscan path:** sbatch array, one dedicated node per task.
+*Not* parallel inside a shared interactive — serial-only on interactive
+(1 trial at a time, 32+ threads). Whether 64 or 128 threads on a
+dedicated single trial gives any gain over 32 is unmeasured; sklearn
+HistGBT typically caps scaling at ~16–32 threads per fit, so don't
+assume "more cores = faster" without a one-trial benchmark first.
+
+Interactive 53194994 batch 1 (seeds 10 & 9) was killed at iter 2 of 5
+after 33 min when this slowdown was confirmed. No ROOTs lost — sbatch
+array 53192001_[5-10] still queued; same pinned seeds → identical
+outputs when it dispatches. Tasks 53192001_[2-4] cancelled (those seeds
+already on disk from pre-exit interactive batch).
+
+## 2026-05-20 — Seedscan complete (n=10)
+
+sbatch array 53192001 cleared overnight while priority opened up before
+the 2026-05-20T06:00 UTC maintenance window. Per-task elapsed: 17m–18m
+for tasks 1, 5, 6, 7, 8; task 9 took 22m59s (likely background-noise
+neighbor on the dedicated node; identical pinned-seed output still); task
+10 finished 03:18 UTC. All ten seed ROOTs on disk.
+
+`analyze_seedscan.py` on n=10:
+
+| Metric | Value |
+|---|---|
+| Total σ | 3.0728e-38 ± 2.2e-42 cm²/nucleon |
+| **Total-σ rel spread** | **0.007%** |
+| Per-bin median (185-bin interior) | **0.36%** |
+| Per-bin p84 | 0.75% |
+| Per-bin max | 1.87% |
+| 1D pT / p∥ median rel spread | 0.13% / 0.15% |
+
+Going n=4 → n=10 moved the headline numbers within rounding (0.008%
+→ 0.007% total, 0.36% → 0.36% per-bin median), so the envelope is
+converged. Comparison against the paper's reported uncertainty
+(computed from the ancillary release total cov + per-bin
+total_uncertainty column):
+
+| Quantity                       | ML seedscan | Paper (ancillary) | ML / paper |
+|--------------------------------|-------------|-------------------|-----------|
+| Total σ rel uncertainty        | 0.007%      | 4.61%             | ~0.15%    |
+| Per-bin median rel uncertainty | 0.36%       | 6.86%             | ~5%       |
+| Per-bin p84 rel uncertainty    | 0.75%       | 9.16%             | ~8%       |
+
+ML stochasticity is **subdominant** to the paper's reported uncertainty
+on every comparison — not a leading uncertainty in this method.
+
+Plots: `seedscan/seedscan_spread_2d.png` (rel-spread heatmap),
+`seedscan_band_pt.png`, `seedscan_band_pz.png`.
