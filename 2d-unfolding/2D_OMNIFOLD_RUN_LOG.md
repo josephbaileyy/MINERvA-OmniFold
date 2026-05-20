@@ -1465,14 +1465,15 @@ for tasks 1, 5, 6, 7, 8; task 9 took 22m59s (likely background-noise
 neighbor on the dedicated node; identical pinned-seed output still); task
 10 finished 03:18 UTC. All ten seed ROOTs on disk.
 
-`analyze_seedscan.py` on n=10:
+`analyze_seedscan.py` on n=10 (per-bin stats over the **205
+paper-reported bins**; 19 paper-unreported cells dropped):
 
 | Metric | Value |
 |---|---|
 | Total σ | 3.0728e-38 ± 2.2e-42 cm²/nucleon |
 | **Total-σ rel spread** | **0.007%** |
-| Per-bin median (185-bin interior) | **0.36%** |
-| Per-bin p84 | 0.75% |
+| Per-bin median rel spread | **0.36%** |
+| Per-bin p84 | 0.74% |
 | Per-bin max | 1.87% |
 | 1D pT / p∥ median rel spread | 0.13% / 0.15% |
 
@@ -1480,16 +1481,16 @@ Going n=4 → n=10 moved the headline numbers within rounding (0.008%
 → 0.007% total, 0.36% → 0.36% per-bin median), so the envelope is
 converged. Comparison against the paper's reported uncertainty
 (computed from the ancillary release total cov + per-bin
-total_uncertainty column):
+total_uncertainty column, both restricted to the 205 reported bins):
 
 | Quantity                       | ML seedscan | Paper (ancillary) | ML / paper |
 |--------------------------------|-------------|-------------------|-----------|
 | Total σ rel uncertainty        | 0.007%      | 4.61%             | ~0.15%    |
 | Per-bin median rel uncertainty | 0.36%       | 6.86%             | ~5%       |
-| Per-bin p84 rel uncertainty    | 0.75%       | 9.16%             | ~8%       |
+| Per-bin p84 rel uncertainty    | 0.74%       | 9.16%             | ~8%       |
 
 ML stochasticity is **subdominant** to the paper's reported uncertainty
 on every comparison — not a leading uncertainty in this method.
 
-Plots: `seedscan/seedscan_spread_2d.png` (rel-spread heatmap),
-`seedscan_band_pt.png`, `seedscan_band_pz.png`.
+Plots: `seedscan/seedscan_spread_2d.png` (rel-spread heatmap, no
+strict-interior overlay), `seedscan_band_pt.png`, `seedscan_band_pz.png`.

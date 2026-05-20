@@ -5,11 +5,9 @@ Reads N trial ROOT files (2d_crossSection_omnifold_MEHFC_5iter_seed{i}.root),
 each containing hXSec2D (and hXSec_pt / hXSec_pz projections), and computes:
 
   - per-bin mean and std across trials (d^2sigma/dpT/dpz)
-  - per-bin relative spread std/mean
+  - per-bin relative spread std/mean over the 205 paper-reported bins
   - shape-only spread (each trial renormalized to its own total)
   - total cross-section mean +/- std across trials
-  - a diagonal ML-noise covariance (185 strict-interior bins)
-  - chi^2 contribution from ML noise alone vs the paper-cov chi^2
 
 Writes summary numbers to stdout and renders:
   - seedscan_spread_2d.png  (14x16 relative-spread heatmap)
@@ -33,7 +31,6 @@ PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
                      0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
 PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
                      6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0])
-TAN20 = np.tan(np.deg2rad(20.0))
 
 
 def th2_to_array(h):
@@ -56,20 +53,6 @@ def th1_to_array(h):
         a[i - 1] = h.GetBinContent(i)
         e[i - 1] = h.GetBinError(i)
     return a, e
-
-
-def strict_interior_mask(pt_edges, pz_edges):
-    """Bin-by-bin mask matching the analysis (pt_hi / pz_lo <= tan20)."""
-    nx = len(pt_edges) - 1
-    ny = len(pz_edges) - 1
-    mask = np.zeros((nx, ny), dtype=bool)
-    for ix in range(nx):
-        pt_hi = pt_edges[ix + 1]
-        for iy in range(ny):
-            pz_lo = pz_edges[iy]
-            if pz_lo > 0 and (pt_hi / pz_lo) <= TAN20:
-                mask[ix, iy] = True
-    return mask
 
 
 def main():
@@ -118,8 +101,11 @@ def main():
     with np.errstate(divide="ignore", invalid="ignore"):
         rel = np.where(mean > 0, std / mean, np.nan)
 
-    # Strict interior (185 bins of the 205 inside the analysis rectangle).
-    interior = strict_interior_mask(PT_EDGES, PZ_EDGES)
+    # Reporting set: the 205 paper-reported bins are exactly the bins
+    # with mean > 0 in our unfolded output (the 19 paper-unreported bins
+    # also have OmniFold output = 0 because the truth gate suppresses
+    # them at training).
+    reported = mean > 0
 
     pt_w = np.diff(PT_EDGES)
     pz_w = np.diff(PZ_EDGES)
@@ -136,20 +122,13 @@ def main():
     print(f"  max  = {sigma_tot.max():.6e}")
 
     print()
-    print(f"=== Per-bin relative spread (std/mean), strict interior "
-          f"({interior.sum()} bins) ===")
-    rel_int = rel[interior]
-    print(f"  median = {np.nanmedian(rel_int) * 100:.3f}%")
-    print(f"  p16    = {np.nanpercentile(rel_int, 16) * 100:.3f}%")
-    print(f"  p84    = {np.nanpercentile(rel_int, 84) * 100:.3f}%")
-    print(f"  max    = {np.nanmax(rel_int) * 100:.3f}%")
-
-    print()
-    print(f"=== Per-bin relative spread, full 205 bins ===")
-    rel_all = rel[~np.isnan(rel)]
-    print(f"  median = {np.median(rel_all) * 100:.3f}%")
-    print(f"  p84    = {np.percentile(rel_all, 84) * 100:.3f}%")
-    print(f"  max    = {rel_all.max() * 100:.3f}%")
+    print(f"=== Per-bin relative spread (std/mean), "
+          f"{reported.sum()} paper-reported bins ===")
+    rel_rep = rel[reported]
+    print(f"  median = {np.median(rel_rep) * 100:.3f}%")
+    print(f"  p16    = {np.percentile(rel_rep, 16) * 100:.3f}%")
+    print(f"  p84    = {np.percentile(rel_rep, 84) * 100:.3f}%")
+    print(f"  max    = {np.max(rel_rep) * 100:.3f}%")
 
     # Shape-only spread: renormalize each trial to its own sigma_tot.
     X_shape = X / sigma_tot[:, None, None]
@@ -159,11 +138,11 @@ def main():
         shape_rel = np.where(shape_mean > 0, shape_std / shape_mean, np.nan)
     print()
     print(f"=== Shape-only relative spread (after dividing by per-trial "
-          f"sigma_tot), strict interior ===")
-    sh = shape_rel[interior]
-    print(f"  median = {np.nanmedian(sh) * 100:.3f}%")
-    print(f"  p84    = {np.nanpercentile(sh, 84) * 100:.3f}%")
-    print(f"  max    = {np.nanmax(sh) * 100:.3f}%")
+          f"sigma_tot), {reported.sum()} paper-reported bins ===")
+    sh = shape_rel[reported]
+    print(f"  median = {np.median(sh) * 100:.3f}%")
+    print(f"  p84    = {np.percentile(sh, 84) * 100:.3f}%")
+    print(f"  max    = {np.max(sh) * 100:.3f}%")
 
     # 1D projection bands.
     pt_mean = Xpt.mean(axis=0)
@@ -188,21 +167,11 @@ def main():
                        vmin=0, vmax=min(5.0, np.nanmax(Z)))
     cb = fig.colorbar(pc, ax=ax)
     cb.set_label("per-bin rel spread std/mean (%)")
-    # Overlay strict-interior boundary by hatching the excluded cells.
-    excl = ~interior
-    for ix in range(len(PT_EDGES) - 1):
-        for iy in range(len(PZ_EDGES) - 1):
-            if excl[ix, iy]:
-                ax.add_patch(plt.Rectangle(
-                    (PT_EDGES[ix], PZ_EDGES[iy]),
-                    PT_EDGES[ix + 1] - PT_EDGES[ix],
-                    PZ_EDGES[iy + 1] - PZ_EDGES[iy],
-                    facecolor="none", edgecolor="white",
-                    hatch="//", lw=0.4, alpha=0.5))
     ax.set_xlabel(r"$p_T$ (GeV/c)")
     ax.set_ylabel(r"$p_{||}$ (GeV/c)")
     ax.set_title(f"MEHFC 5-iter seed scan ({N} trials): "
-                 f"ML-stochasticity relative spread per bin")
+                 f"ML-stochasticity relative spread per bin "
+                 f"({int(reported.sum())} reported bins)")
     fig.tight_layout()
     fig.savefig(os.path.join(args.outdir, "seedscan_spread_2d.png"), dpi=140)
     plt.close(fig)

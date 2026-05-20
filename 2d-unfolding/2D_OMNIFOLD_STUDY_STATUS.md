@@ -188,16 +188,23 @@ dedicated nodes; per-trial wall ~17 min.
 
 | Metric | Value |
 |---|---|
+All per-bin stats below are over the **205 paper-reported bins**
+(`cross_section > 0` in `data_result_ptpl_2D_minerva_inclusive_6GeV.txt`).
+The 19 paper-unreported cells are dropped; no additional strict-interior
+mask is applied.
+
+| Metric | Value |
+|---|---|
 | Total σ across 10 trials | 3.0728e-38 ± 2.2e-42 cm²/nucleon |
 | **Total-σ relative spread** | **0.007%** |
-| Per-bin rel spread, 185-bin strict interior — median (p50) | **0.36%** |
-| — p16 / p84 | 0.17% / 0.75% |
+| Per-bin rel spread — median (p50) | **0.36%** |
+| — p16 / p84 | 0.18% / 0.74% |
 | — max single bin | 1.87% |
 | Shape-only (each trial / its own σ_tot), median | 0.36% |
 | 1D pT projection, median rel spread | 0.13% |
 | 1D p∥ projection, median rel spread | 0.15% |
 
-`p84` is the 84th percentile across the 185 interior bins (one-sided
+`p84` is the 84th percentile across the 205 reported bins (one-sided
 +1σ-equivalent of the per-bin spread distribution). Median / p16 / p84
 are reported because the spread distribution has a long tail driven by
 a handful of low-statistics bins; `mean ± std` would overstate the
@@ -208,11 +215,11 @@ comparison. Paper totals computed from the ancillary release
 (`minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_total.txt` +
 `data_result_ptpl_2D_minerva_inclusive_6GeV.txt`):
 
-| Quantity | ML seedscan (n=10) | Paper (ancillary total cov) | Ratio |
+| Quantity | ML seedscan (n=10) | Paper (ancillary) | Ratio |
 |---|---|---|---|
-| Total σ relative uncertainty | 0.007% | 4.61% (sqrt(wᵀCw) over 224 bins) | ML ≈ 0.15% of paper |
-| Per-bin median rel uncertainty | 0.36% | 6.86% (total_uncertainty / xsec) | ML ≈ 5% of paper |
-| Per-bin p84 rel uncertainty | 0.75% | 9.16% | ML ≈ 8% of paper |
+| Total σ relative uncertainty | 0.007% | 4.61% (sqrt(wᵀCw), bin-width weights) | ML ≈ 0.15% of paper |
+| Per-bin median rel uncertainty (205 bins) | 0.36% | 6.86% (total_uncertainty / xsec) | ML ≈ 5% of paper |
+| Per-bin p84 rel uncertainty (205 bins) | 0.74% | 9.16% | ML ≈ 8% of paper |
 
 So ML stochasticity is **not a leading uncertainty** — confidently
 subdominant to the systematics the paper reports (flux, energy scale,
