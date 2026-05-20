@@ -64,26 +64,27 @@ expected sub-ppm event-level shift.
 | Step-2 weight stats | mean 1.1321, range [0.7472, 3.6948] |
 | Total xsec (p_T projection = p_\|\| projection) | **3.073e-38 cm²/nucleon** |
 | σ_total(ours) / σ_total(paper) | **1.0111** |
-| Strict-interior χ²/ndf vs paper (185 bins, full cov) | **3.636** |
-| All-reported-bins χ²/ndf (205 bins, full cov) | **3.661** |
-| 205-bin shape χ²/ndf (total cov) | **3.596** |
-| 185-bin strict-interior shape χ²/ndf (total cov) | **3.567** |
+| χ²/ndf vs paper (205 paper-reported bins, full cov) | **3.661** |
+| Shape-only χ²/ndf (205 bins, total cov) | **3.596** |
 | Pull mean / RMS (205 reported bins, full cov) | 0.089 / 0.598 |
-| Median bin ratio (ours/paper, strict interior) | **1.0068** |
-| Bins within 5 % / 10 % / 20 % of paper (185 strict interior) | 80.0 % / 94.6 % / 98.4 % |
+| Median bin ratio (ours/paper, 205 bins) | **1.0064** |
+| Bins within 5 % / 10 % / 20 % of paper (205 bins) | 77.6 % / 94.1 % / 98.5 % |
 
-Paper total (reported): 3.039e-38 cm²/nucleon.
+Paper total (reported): 3.039e-38 cm²/nucleon. All per-bin numbers are
+over the 205 bins the paper reports (`xs > 0` in
+`data_result_ptpl_2D_minerva_inclusive_6GeV.txt`); the 19 paper-unreported
+cells are dropped from both sides.
 
-### χ² vs p_||-min cut (MEHFC, strict interior, full cov)
+### χ² vs p_||-min cut (MEHFC, 205-bin baseline shrunk by p_||, full cov)
 
 | p_\|\| ≥ (GeV/c) | N bins | χ² | χ²/ndf | median ratio | %<5% |
 |---|---|---|---|---|---|
-| 1.5 | 185 | 672.67 | 3.636 | 1.0068 | 80.0 % |
-| 2.0 | 179 | 602.42 | 3.365 | 1.0061 | 82.7 % |
-| 2.5 | 171 | 498.12 | 2.913 | 1.0066 | 83.6 % |
-| 3.0 | 162 | 438.97 | 2.710 | 1.0067 | 83.3 % |
-| 3.5 | 152 | 423.85 | 2.788 | 1.0079 | 82.2 % |
-| 4.0 | 141 | 400.69 | 2.842 | 1.0077 | 80.9 % |
+| 1.5 | 205 | 750.49 | 3.661 | 1.0064 | 77.6 % |
+| 2.0 | 196 | 685.36 | 3.497 | 1.0059 | 80.1 % |
+| 2.5 | 186 | 545.87 | 2.935 | 1.0059 | 81.7 % |
+| 3.0 | 175 | 474.84 | 2.713 | 1.0059 | 81.1 % |
+| 3.5 | 163 | 452.95 | 2.779 | 1.0073 | 80.4 % |
+| 4.0 | 151 | 428.72 | 2.839 | 1.0068 | 79.5 % |
 
 χ²/ndf is approximately p_||-flat post-Phase-16; the residual is dominated
 by sub-2% shape disagreement in the highest p_|| tails (see Residual
@@ -351,11 +352,17 @@ MEHFC — below MINERvA systematics but flagged for AnaTuple producers.
 - `histgbt_iter_scan/compare_iter_convergence.py` — overlay 1/3/5/8/10-iter
   exact-GBT and HistGBT 1A unfolds: hUnfold2D, total σ, and per-bin
   shape RMS vs each estimator's own 10-iter asymptote.
-- `compare_to_paper_fullcov.py` — full-cov χ² on 205 reported bins.
-- `compare_to_paper_interior.py` — strict-interior χ² on 185 bins.
+- `compare_to_paper_fullcov.py` — full-cov χ² on 205 paper-reported
+  bins. This is the canonical paper-comparison; produces the χ²/ndf
+  numbers reported in STATUS.
+- `compare_to_paper_interior.py` — legacy diagnostic: strict-interior
+  χ² on 185 bins (excludes the 20 paper-reported bins that straddle
+  the θ_μ = 20° cone). Useful for sensitivity checks; not the
+  headline number.
 - `normalize_xsec_shape.py` — produces `*_shape.root` for shape-mode
-  comparisons; emits 205-bin and 185-bin shape χ² with paper TotalCovariance
-  propagated through the unit-area Jacobian.
+  comparisons; emits 205-bin (canonical) and 185-bin (diagnostic)
+  shape χ² with paper TotalCovariance propagated through the
+  unit-area Jacobian.
 - `plot_2d_paper_comparison_shape.py` — shape-mode paper-comparison plots.
 - `combine_flux_MEHFC.py` — POT-weighted MEHFC flux from per-playlist
   baseline-flux ROOTs.
