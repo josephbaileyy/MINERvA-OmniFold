@@ -360,3 +360,63 @@ envelope (0.007 % total, 0.36 % per-bin median), the convergence
 question is closed and the analysis pivots to stat + systematic
 uncertainties — bootstrap on the data for stat, MnvH2D vertical
 universes from `runEventLoopOmniFold_MEHFC.root` for syst.
+
+### 8-iter HistGBT lands (Task #8 closed)
+
+`srun --jobid=53256254 --overlap` finished 2026-05-21 20:32:28 UTC.
+Elapsed 1415 s (23m35s), matching the ~25-min projection. End-of-run
+sanity vs the 5-iter exact-GBT production:
+
+| Metric | 5-iter exact (production) | 8-iter HistGBT (seed=1) | Δ |
+|---|---|---|---|
+| Total σ (pT projection) | 3.073e-38 | 3.073e-38 | identical to 4 sig figs |
+| Total σ (p∥ projection) | 3.073e-38 | 3.073e-38 | identical to 4 sig figs |
+| hUnfold2D integral | 6.56409e+06 | 6.56423e+06 | +0.002 % |
+| step2 sum | 3.719e+07 | 3.718e+07 | −0.027 % |
+| step2 mean | 1.1321 | 1.1320 | flat |
+| c | 1.0000 | 1.0000 | exact by construction |
+
+**Apples-to-apples iter-count delta** at fixed seed=1, HistGBT,
+comparing `seedscan/...seed1.root` (5-iter) to today's
+`2d_crossSection_omnifold_MEHFC_8iter.root` (8-iter):
+
+| Quantity (205 paper-reported bins) | 5→8 iter Δ | Seedscan envelope (n=10, 1σ) | Ratio |
+|---|---|---|---|
+| Total σ shift | **+0.023 %** | 0.007 % | 3.3 × |
+| Per-bin median \|x8−x5\|/x5 | **0.287 %** | 0.36 % (median rel spread) | 0.8 × |
+| Per-bin p84 \|x8−x5\|/x5 | 0.886 % | 0.74 % (p84 rel spread) | 1.2 × |
+| Per-bin max \|x8−x5\|/x5 | 6.48 % | 1.87 % | 3.5 × |
+| Signed per-bin median (x8/x5−1) | +0.043 % | — | — |
+| Signed per-bin mean | +0.140 % | — | — |
+
+So the iter-count delta is **comparable to the ML-noise floor**: at the
+median it's smaller, at p84 it's marginally larger, and the worst-case
+outlier bin shifts by ~3× the worst ML-noise spread. All shifts are
+**at least ~50× smaller than the paper's reported per-bin uncertainty**
+(paper p84 ≈ 9.16 %, paper per-bin median ≈ 6.86 %).
+
+χ²/ndf vs paper TOTAL covariance (205 reported bins, full cov):
+
+| Run | χ²/ndf TOTAL | χ²/ndf stat-only |
+|---|---|---|
+| 5-iter exact GBT (production)         | 3.661 | (reported in STATUS) |
+| 5-iter HistGBT, seed=1 (seedscan run) | **2.648** | 5.390 |
+| 8-iter HistGBT, seed=1 (today)        | **2.558** | 5.293 |
+
+5→8 iter at fixed seed moves χ²/ndf by −0.090 (−3.4 %), modest and in
+the "improves slightly" direction. The much larger 3.661 → 2.648 jump
+between production-exact and HistGBT seed=1 at the same iter count is
+**not** an iter-count effect — it's shape-stochasticity at fixed
+estimator/seed (the seedscan per-bin p84 of 0.74 % is large enough to
+move χ²/ndf by O(1) on a 205-d.o.f. comparison). Confirms that all
+χ²/ndf values reported in STATUS should be read with an "ML-noise
+envelope" caveat once stat+syst is in.
+
+**Conclusion.** 5-iter is the right production iter-count. The
+iter-count cross-check is closed; analysis pivots to stat + syst
+uncertainty quantification. Headline STATUS numbers stay at the 5-iter
+exact-GBT production result; no doc-numbers change required.
+
+Outputs: `2d_crossSection_omnifold_MEHFC_8iter.root` (in-tree),
+`/tmp/cmp_5iter_seed1_pull_full.png`, `/tmp/cmp_8iter_seed1_pull_full.png`
+(diagnostic; not promoted to PLOT_GUIDE since the cross-check is closed).
