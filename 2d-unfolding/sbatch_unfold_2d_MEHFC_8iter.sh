@@ -5,22 +5,29 @@
 #SBATCH --constraint=cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=128
-#SBATCH --time=36:00:00
+#SBATCH --cpus-per-task=32
+#SBATCH --time=01:00:00
 #SBATCH --output=unfold_MEHFC_8iter_%j.out
 #SBATCH --error=unfold_MEHFC_8iter_%j.err
 
-# 2D OmniFold 8-iteration MEHFC unfold (Phase-18.2 pipeline).
-# Parallel companion to the 5-iter production run (sbatch_unfold_2d_MEHFC.sh).
-# Motivated by the 1A iter-scan: 5-iter has 1.54% per-bin RMS vs 10-iter
-# asymptote; 8-iter tightens this to 0.55%, isolating residual paper
-# disagreement to physics rather than unfolding under-convergence.
+# 2D OmniFold 8-iteration MEHFC unfold, HistGBT estimator (Phase-18.2).
+# Companion to the 5-iter seedscan trials (HistGBT) so iter-count delta is
+# measured with the same estimator on both sides (no estimator/iter-count
+# confound).
 #
-# Per-iter cost on 128 CPUs ~3h50m; 8 iters ~30h40m; 36h walltime gives
-# ~5h margin.
+# Background: an earlier exact-GBT 8-iter attempt (job 53159240) was on
+# track for ~40 h and was cancelled at iter 3/8 once HistGBT was validated
+# 1:1 against exact (see Task #16 / RUN_LOG 2026-05-19).
+#
+# Per-trial seedscan baseline: 17m33s for 5 iters at 32 CPUs (HistGBT).
+# 8 iters ≈ 28 min; 1 h walltime gives ~2x margin.
+#
+# Seed pinned to 1 to match seedscan seed1 for a clean 5-iter vs 8-iter
+# comparison at fixed ML stochasticity.
 
 set -eo pipefail
 export PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 DOCS="${REPO}/2d-unfolding"
@@ -32,16 +39,19 @@ source "${REPO}/setup_salloc_env.sh"
 cd "${DOCS}"
 
 echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID}"
+echo "[sbatch] OMP_NUM_THREADS=${OMP_NUM_THREADS}"
 echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 echo "[sbatch] omnifile: ${OMNIFILE}"
 echo "[sbatch] flux mc:  ${FLUX_MC}"
 echo "[sbatch] xsec out: ${XSEC_OUT}"
 
 python unfold_2d_omnifold_unbinned.py \
-  --omnifile "${OMNIFILE}" \
-  --mcfile   "${FLUX_MC}" \
-  --iters 8 \
+  --omnifile  "${OMNIFILE}" \
+  --mcfile    "${FLUX_MC}" \
+  --iters     8 \
   --use-weights \
-  --out      "${XSEC_OUT}"
+  --estimator hist \
+  --seed      1 \
+  --out       "${XSEC_OUT}"
 
 echo "[sbatch] done: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
