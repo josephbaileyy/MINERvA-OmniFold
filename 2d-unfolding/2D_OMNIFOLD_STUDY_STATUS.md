@@ -1,16 +1,12 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-21. Phase-18.2 production unfold is in. HistGBT
-estimator validated 1:1 against exact GBT (5-iter MEHFC). ML-stochasticity
-seedscan complete (n=10, sbatch 53192001): total-σ rel spread 0.007%,
-per-bin median 0.36%. HistGBT 8-iter convergence check in flight on
-interactive 53256254 (seed=1; diff against `seedscan/...seed1.root`).
-**Next focus: stat + systematic uncertainty quantification.**
+**Last updated**: 2026-05-27. Phase-18.2 production unfold frozen;
+Stage-2 UQ closed (187-universe full lateral+vertical sweep, N=300
+bootstrap, n=10 seedscan).
 
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants),
-`2D_OMNIFOLD_RUN_LOG.md` (active chronology from 2026-05-18 onward),
-`2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1 history),
-`PLOT_GUIDE.md` (PNG index).
+`2D_OMNIFOLD_RUN_LOG.md` (chronology from 2026-05-18 onward),
+`2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1), `PLOT_GUIDE.md`.
 
 ---
 
@@ -22,54 +18,143 @@ OmniFold in place of D'Agostini IBU.
 
 ---
 
-## Current state — Phase 18.2 pipeline (frozen 2026-05-18)
-
-Defining properties:
-
-- **Truth-tree-authoritative reco gate.** Event loop walks
-  `mc_truth_denom` first to build an event-ID key set, then walks the
-  reco tree filling `mc_signal_reco` only when the key is in that set.
-  Truth-only events appended as native OmniFold miss entries.
-- **By-construction completeness `c = 1.000000`** (exact, sub-ppm).
-  `mc_signal_reco` entries == `mc_truth_denom` entries (32,849,103
-  each at MEHFC). The Phase-16 c-division is now a no-op self-check.
-- **Bilateral dedupe** on `(mc_run, mc_subrun, mc_nthEvtInFile)` packed
-  into `uint64_t`. At MEHFC: 133 truth and 7 reco duplicates skipped,
-  all from `MasterAnaDev_mc_AnaTuple_run00111353_Playlist.root`.
-- **Production output**: `2d_crossSection_omnifold_MEHFC_5iter.root`
-  from 5-iter unfold of `runEventLoopOmniFold_MEHFC.root`, exact GBT.
-
-How we got here (Phases 1–18.1, attribution of the σ/paper=0.752 and
-χ²/ndf≈17 residuals): see `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md`.
-
----
-
-## Headline numbers (Phase-18.2 MEHFC 5-iter production)
+## Headline (MEHFC 5-iter lgbm, 205 paper-reported bins)
 
 | Quantity | Value |
 |---|---|
-| mcPOT / dataPOT / potScale | 4.978e21 / 1.057e21 / 0.2124 |
-| Weighted MEHFC flux integral | 8.7407e-7 /cm²/POT |
-| N fiducial nucleons (tracker geometry) | 3.2353e30 |
-| Selected data events (reco) | 4,091,707 |
-| `hMeasSub2D` integral (data − bkg) | 3.97257e6 |
-| Global OmniFold completeness c | **1.000000** (exact by construction) |
 | Total xsec | **3.073e-38 cm²/nucleon** |
 | σ_total(ours) / σ_total(paper) | **1.0111** |
-| χ²/ndf vs paper (205 paper-reported bins, full cov) | **3.661** |
-| Shape-only χ²/ndf (205 bins, total cov) | **3.596** |
-| Pull mean / RMS (205 bins) | 0.089 / 0.598 |
-| Median bin ratio (ours/paper, 205 bins) | **1.0064** |
+| Median bin ratio (ours/paper) | 1.0064 |
 | Bins within 5 % / 10 % / 20 % of paper | 77.6 % / 94.1 % / 98.5 % |
+| Paper-cov-only χ²/ndf | **3.661** |
+| Combined-cov χ²/ndf (paper + universe + boot N=300 + ML) | **0.943** |
+| Pull mean / RMS (combined cov) | **0.068 / 0.310** |
+| Pull mean / RMS (paper cov only) | 0.089 / 0.598 |
+| Shape-only χ²/ndf (205 bins, paper cov, unit-area Jacobian) | 3.596 |
+| Global OmniFold completeness c | 1.000000 (exact by construction) |
 
-Paper total: 3.039e-38 cm²/nucleon. All per-bin numbers are over the
-**205 bins the paper reports** (`xs > 0` in
-`data_result_ptpl_2D_minerva_inclusive_6GeV.txt`); 19 paper-unreported
-cells dropped from both sides.
+Paper total: 3.039e-38 cm²/nucleon. The 205-bin set is `xs > 0` in
+`data_result_ptpl_2D_minerva_inclusive_6GeV.txt` (19 unreported cells
+dropped from both sides).
 
-### χ² vs p_||-min cut (205-bin baseline shrunk by p_||, full cov)
+### Methodology caveat on the 0.943 headline
 
-| p_\|\| ≥ (GeV/c) | N bins | χ² | χ²/ndf | median ratio | %<5% |
+Combined cov **double-counts** systematics shared with the paper
+(flux / GENIE / RPA / 2P2H / MINOS). The naïve ours-only χ²/ndf is
+**100** — diagnosed as ill-conditioning, NOT disagreement:
+`cond(C_ours) = 5.6×10¹⁴` vs `cond(C_paper) = 1.5×10¹²`, effective
+rank 200/205 because 187 universes underspan the 205-bin space. Three
+honest readings of agreement:
+
+| Reading | Value |
+|---|---|
+| Per-bin pull RMS, no inverse (ours-only σ_i) | **0.438** |
+| Combined-cov χ²/ndf (conservative upper bound) | **0.943** |
+| Truncated-mode χ²/rank, rcond=1e-4 (33 modes) | **0.67** |
+
+Clean ours-only χ² would need either (a) substantially more universes
+to fill the 205-dim space or (b) decorrelated combination stripping
+shared blocks from C_paper before adding C_ours.
+
+---
+
+## Phase 18.2 pipeline (frozen 2026-05-18)
+
+- **Truth-tree-authoritative reco gate.** `mc_signal_reco` filled only
+  when `(mc_run, mc_subrun, mc_nthEvtInFile)` is in `mc_truth_denom`.
+  Truth-only events appended as native OmniFold miss entries.
+- **By-construction completeness c = 1.000000** (32,849,103 entries each
+  at MEHFC). The Phase-16 c-division is a no-op self-check.
+- **Bilateral dedupe** on the packed `uint64_t` event ID. 133 truth + 7
+  reco duplicates skipped (all from one playlist file).
+- **Production output**: `2d_crossSection_omnifold_MEHFC_5iter.root` —
+  5-iter unfold of `runEventLoopOmniFold_MEHFC.root`, exact GBT.
+
+History of the residual chase (σ/paper = 0.752 → 1.011, χ²/ndf 17 →
+3.66): see `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md`.
+
+Iteration convergence (1A iter-scan, archived): 5-iter total σ within
+0.026 % of 10-iter, per-bin shape RMS 1.54 %. HistGBT/exact-GBT agree
+on total σ to 0.04 % at 10 iters; 5-iter MEHFC identical to 4 sig figs.
+
+---
+
+## Stage-2 UQ envelope (final)
+
+Per-bin spreads over 205 paper-reported bins, against the MEHFC CV unfold.
+
+| Component | N | √tr(C) | Per-bin median rel σ |
+|---|---|---|---|
+| ML noise (lgbm seedscan) | 10 | 5.061e-41 | 0.166 % |
+| Statistical (Poisson bootstrap) | 300 | 1.828e-40 | 0.564 % |
+| Systematic (universe sweep) | 187 | **4.335e-39** | **8.826 %** |
+| **Combined (block sum)** | — | 4.339e-39 | ≈8.9 % (univ-dominated) |
+| Paper TotalCov (for reference) | — | 2.676e-39 | 6.86 % |
+
+Block sum assumes independence (different RNGs / different physics
+sources). Cholesky on combined cov **PASS** without jitter.
+
+**Top systematic bands** (median rel σ, 205 bins): Muon_Energy_MINOS
+2.87 %, Muon_Energy_MINERvA 2.32 %, MinosEfficiency 1.93 %, MaRES
+1.59 %, GEANT_Pion 1.32 %, MaCCQE 1.26 %. 44 bands total — 6 lateral
+(BeamAngleX/Y, MuonResolution, GEANT_{Neutron,Pion,Proton},
+Muon_Energy_MINERvA) + 38 vertical. Lateral bands re-run the event
+loop with shifted detector quantities; vertical bands re-weight only.
+
+**Methods.**
+- *Stat*: per-event Poisson(1) on data and MC (independent sub-RNGs;
+  same draw on MC truth/reco). ML seed pinned so noise cancels across
+  replicas.
+- *Syst*: pair bands (n=2) → `0.5·(Δ_+Δ_+ᵀ + Δ_−Δ_−ᵀ)` (MINERvA-101
+  sum-of-squares). Multi-universe (n≥3) → `np.cov(rowvar=False, ddof=1)`.
+  Bands summed independently.
+- *ML*: 10-trial HistGBT seedscan, `random_state` pinned via
+  `--seed N` (step1=N, step2=N+1, regressor=N+2).
+
+**Headline rollup**: `uq/universe_stage2_MEHFC_full/compare_to_paper_combined_cov_full.log`.
+**Component covs**: `uq/universe_stage2_MEHFC_full/uq_universe_covariance_full.root`,
+`uq/bootstrap_MEHFC_300/uq_covariance_boot300.root`,
+`uq/seedscan_lgbm_ml/uq_covariance_ml.root`. Headline pull plot:
+`MEHFC_5iter_pull_full.png`.
+
+---
+
+## Calibration: coverage toys (20 closure+bootstrap-seed MEHFC toys)
+
+| Metric | Measured | Theoretical (Gaussian 1σ) |
+|---|---|---|
+| Mean coverage | 67.90 % | 68.27 % |
+| ⟨\|residual\|/σ⟩ | 0.794 | √(2/π) = 0.798 |
+| Signed residual mean | −0.013 σ | 0 |
+
+78 % of 205 bins meet the 65 % target; 45 edge bins fall below but are
+statistically consistent at N=20 (per-bin coverage resolution ~10 %).
+
+---
+
+## Closure tests (all CLOSED, 1A lgbm 5-iter, threshold = median \|residual\|)
+
+| Test | Result | Threshold |
+|---|---|---|
+| Truth-reweight `gauss_pt` (A=0.2) | 0.046 % | 1.5 % |
+| Truth-reweight `tilt_pz` (α=0.1) | 0.013 % | 1.5 % |
+| Hidden-variable (dpT), A=0.05/0.10/0.30 | 0.57 / 1.14 / 3.43 % | 3.0 % |
+| Hidden-variable leakage coefficient (signed/A) | 0.113 (linear in A) | — |
+| Alt-model MaCCQE:0 vs `hTruthAltExtrapolated` | 0.068 % | 2.0 % |
+| Alt-model Flux:50 vs `hTruthAltExtrapolated` | 0.376 % | 2.0 % |
+
+Hidden-variable axis is `dpT = sim_pT − truth_pT` (resolution variable,
+NOT in the OmniFold feature set); reference is unaltered CV truth.
+Alt-model target is `CV truth × (alt_in_accept / cv_in_accept)` per
+bin — the in-acceptance ratio is what OmniFold can mathematically
+recover (full-alt-truth comparison is not the closure target since
+out-of-acceptance shift is unrecoverable).
+
+---
+
+## p_||-min sensitivity (paper TotalCov only)
+
+| p_\|\| ≥ (GeV/c) | N bins | χ² | χ²/ndf | median ratio | % < 5 % |
 |---|---|---|---|---|---|
 | 1.5 | 205 | 750.49 | 3.661 | 1.0064 | 77.6 % |
 | 2.0 | 196 | 685.36 | 3.497 | 1.0059 | 80.1 % |
@@ -78,76 +163,15 @@ cells dropped from both sides.
 | 3.5 | 163 | 452.95 | 2.779 | 1.0073 | 80.4 % |
 | 4.0 | 151 | 428.72 | 2.839 | 1.0068 | 79.5 % |
 
-Residual is dominated by sub-2% shape disagreement in the highest p_||
-tails. Iteration convergence (1A iter-scan, archived): 5-iter total σ is
-within 0.026 % of 10-iter, per-bin shape RMS 1.54 % — well below paper
-disagreement. HistGBT/exact-GBT agree on total σ to **0.04 %** at 10
-iters; 5-iter MEHFC numbers identical to 4 sig figs.
-
----
-
-## ML-stochasticity envelope (seedscan n=10, 2026-05-20)
-
-Ten 5-iter MEHFC HistGBT trials, `random_state` pinned via `--seed N`
-(step1=N, step2=N+1, regressor=N+2). sbatch array 53192001, dedicated
-nodes, per-trial wall ~17 min.
-
-| Metric (205 paper-reported bins) | ML seedscan | Paper (ancillary) | Ratio |
-|---|---|---|---|
-| Total-σ rel spread | **0.007%** | 4.61% (sqrt(wᵀCw), bin-width weights) | ML ≈ 0.15% of paper |
-| Per-bin median rel spread | **0.36%** | 6.86% (total_uncertainty/xsec) | ML ≈ 5% of paper |
-| Per-bin p84 rel spread | 0.74% | 9.16% | ML ≈ 8% of paper |
-| Per-bin max rel spread | 1.87% | — | — |
-| 1D pT / p∥ projection median | 0.13 % / 0.15 % | — | — |
-
-ML noise is **subdominant on every comparison** — not a leading
-uncertainty. n=4 → n=10 moved headline numbers within rounding, so the
-envelope has converged. Spread distribution is long-tailed (median ≪
-mean+std), so medians/p84 are reported instead of std.
-
-Outputs: `seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root`,
-`seedscan/seedscan_spread_2d.png`, `seedscan_band_pt.png`,
-`seedscan_band_pz.png`. Re-run: `python3 seedscan/analyze_seedscan.py`.
-
----
-
-## Uncertainty quantification — next stage
-
-The seedscan closes ML stochasticity. Two remaining uncertainty axes:
-
-### Statistical (data Poisson fluctuations)
-Bootstrap on the reco data: resample `data` TTree entries with
-replacement, re-unfold each bootstrap sample at fixed seed=1 (HistGBT,
-5-iter), accumulate the per-bin covariance across bootstrap unfolds.
-Expected cost: ~17 min/trial × N_bootstrap; N≈50 should converge the
-diagonal. Same `--seed 1` everywhere makes ML stochasticity cancel out
-across the bootstrap (only the data resampling varies).
-
-### Systematic (detector + flux + GENIE)
-MnvH2D vertical universes live in `runEventLoopOmniFold_MEHFC.root` —
-each systematic universe is an alternative event weight. Per-universe
-pipeline:
-1. Open the input ROOT, read universe weights for each event in the
-   `mc_truth_denom` / `mc_signal_reco` trees.
-2. Re-unfold with weights multiplied by the universe weight column,
-   seed=1, HistGBT 5-iter.
-3. Per-universe Δxsec / xsec_nominal → covariance contribution.
-
-Categories: flux (NA49, pion-yield), GENIE (CCQE Ma, MEC, RES, etc.),
-detector (muon energy scale, MINOS efficiency, recoil). Each is its own
-universe group; sum diagonals in quadrature → total systematic cov.
-
-Final uncertainty: stat ⊕ syst, compared against the paper's quoted
-4.61% total — closes the apples-to-apples comparison the χ²/ndf=3.661
-cannot make (since it uses the paper's covariance, not ours).
+Residual is dominated by sub-2 % shape disagreement in the highest p_||
+tails.
 
 ---
 
 ## Paper binning (arXiv:2106.16210)
 
 Authoritative: `minerva_paper_anc/bin_mapping.txt`. TH2D axis labels in
-the ancillary ROOT are cosmetic rounding — do not copy into
-`util/Binning.h`.
+the ancillary ROOT are cosmetic rounding — do not copy into `util/Binning.h`.
 
 ```python
 pt_edges = [0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
@@ -157,80 +181,110 @@ pz_edges = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
 ```
 
 Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c. Paper
-reports 205/224 bins (19 diagonal cells with pt_hi/pz_lo > tan 20° are
-unreported).
+reports 205/224 bins (19 diagonal cells with pt_hi/pz_lo > tan 20°
+are unreported).
 
 ---
 
 ## Active code (`2d-unfolding/`)
 
-- `unfold_2d_omnifold_unbinned.py` — 2D unbinned OmniFold. Exposes
-  `--seed N` (pins step1/step2/regressor random_state) and
-  `--estimator {exact,hist}` (HistGBT is ~66× faster, validated 1:1
-  against exact at MEHFC).
-- `compare_to_paper_fullcov.py` — **canonical** paper-comparison:
-  full-cov χ² on 205 reported bins. Produces STATUS headline numbers.
-- `compare_to_paper_interior.py` — legacy diagnostic on 185
-  strict-interior bins; keep for sensitivity checks, not headline.
+- `unfold_2d_omnifold_unbinned.py` — 2D unbinned OmniFold. Backends
+  `--estimator {exact,hist,xgb,lgbm}`, `--device {cpu,cuda}`. Flags
+  for seedscan (`--seed`), bootstrap (`--bootstrap-seed`), systematic
+  universes (`--universe BAND:IDX`), and closures (`--closure-reweight`,
+  `--closure-hidden-dpt`, `--closure-alt-universe`). Detailed flag
+  contracts in `2D_OMNIFOLD_REFERENCE.md`.
+- `compare_to_paper_fullcov.py` — canonical paper-comparison on 205
+  reported bins. `--omnifold-cov <ROOT>:<HIST>` (repeatable) block-sums
+  OmniFold covs into paper TotalCov; reports paper-only and combined
+  χ²/ndf side-by-side. SVD pseudo-inverse for rank-deficient cases.
 - `normalize_xsec_shape.py` — shape-mode comparison with paper
-  TotalCovariance propagated through unit-area Jacobian (205 + 185).
-- `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
+  TotalCovariance through unit-area Jacobian.
+- `compare_to_paper_interior.py` — legacy 185-bin diagnostic.
+- `uq/analyze_uq.py` — bootstrap covariance rollup (np.cov ddof=1,
+  Cholesky-with-jitter PD check, projection covs).
+- `uq/analyze_universes.py` — universe covariance rollup. Pair bands
+  → MINERvA-101 sum-of-squares; multi-universe → sample cov. Total =
+  block sum over bands. `--bootstrap-cov` block-sums a bootstrap cov.
+- `seedscan/analyze_seedscan.py` — ML-noise covariance rollup.
+- `uq/closure/closure_truth_reweight.py`, `closure_hidden_var.py`,
+  `closure_alt_model.py` — closure drivers.
+- `uq/verify_universe_omnifile.py` — universe-omnifile sanity check
+  (branch counts, weight shifts, CV regression).
+- `uq/hadd_universes_full.py` — TFileMerger wrapper with
+  `TTree::SetMaxTreeSize(300 GB)` (works around the ROOT 100 GB
+  auto-rollover that corrupted the original hadd at 94 GB).
+- `uq/run_bootstrap_interactive.sh`, `run_universe_array_interactive.sh`,
+  `run_flux_ramp_interactive.sh` — interactive sweep drivers.
+- `combine_flux_MEHFC.py` — POT-weighted MEHFC flux.
+- Plotters: `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
   `plot_2d_paper_comparison_shape.py`, `plot_2d_threeway_fig13.py`,
-  `plot_efficiency_fig5_style.py`, `plot_closure_2d.py` — plotting.
-- `combine_flux_MEHFC.py` — POT-weighted MEHFC flux from per-playlist.
-- `seedscan/analyze_seedscan.py` — N-trial spread heatmap + bands.
+  `plot_efficiency_fig5_style.py`, `plot_closure_2d.py`.
 
-C++ event loop in `MINERvA101/MINERvA-101-Cross-Section/`:
-- `runEventLoopOmniFold.cpp` — Phase-18.2 truth-authoritative gate +
-  bilateral dedupe. Per-reweighter dumps behind `MNV101_DUMP_COMPONENTS`.
-- `cuts/MaxPtMu.h`, `util/Binning.h`, `event/CVUniverse.h`.
+C++ event loop (`MINERvA101/MINERvA-101-Cross-Section/`):
+`runEventLoopOmniFold.cpp` (Phase-18.2 truth gate + bilateral dedupe;
+per-reweighter dumps behind `MNV101_DUMP_COMPONENTS`; universe
+allowlist via `MNV101_DUMP_UNIVERSES`), `cuts/MaxPtMu.h`,
+`util/Binning.h`, `event/CVUniverse.h`.
 
 ---
 
 ## SLURM scripts (`2d-unfolding/`)
 
-- `sbatch_build.sh` — rebuild C++ event-loop binary.
-- `sbatch_evloop_array.sh` — 11-task array, playlists 1B–1P. 1A run separately.
-- `sbatch_hadd_MEHFC.sh` — hadd 12 per-playlist → MEHFC.
-- `sbatch_unfold_2d_MEHFC.sh` — production 5-iter unfold (128 CPU exact).
-- `sbatch_unfold_2d_MEHFC_8iter.sh` — 8-iter HistGBT convergence check (32 CPU, 1 h).
-- `sbatch_unfold_2d_MEHFC_5iter_seedscan.sh` — 10-trial seedscan (HistGBT, 32 CPU).
+- `sbatch_build.sh`, `sbatch_evloop_array.sh` (1B–1P; 1A separately),
+  `sbatch_hadd_MEHFC.sh`, `sbatch_unfold_2d_MEHFC.sh` — CV production.
+- `sbatch_unfold_2d_MEHFC_5iter_seedscan.sh` — 10-trial seedscan.
+- `sbatch_rebuild_1A_universes.sh`, `sbatch_evloop_array_universes.sh`,
+  `sbatch_hadd_MEHFC_universes.sh` — Stage-2 vertical-only universe
+  omnifile (110 weight branches).
+- `sbatch_unfold_2d_MEHFC_5iter_universes_full.sh`,
+  `sbatch_hadd_MEHFC_universes_full_v2.sh` — Stage-2 full
+  lateral+vertical sweep (187 universes).
+- `sbatch_final_rollup_full.sh` — publication-grade rollup driver.
 - `sbatch_runEventLoop_baseline_flux_array.sh` — per-playlist baseline flux.
-- `sbatch_finalize_MEHFC.sh`, `sbatch_validate_1A_corrected.sh`,
-  `sbatch_download_playlist.sh` — finalize / validate / xrdcp helpers.
+
+Interactive-first rule for unfolds (no `srun` inside sbatch). Templates:
+`sbatch_unfold_2d_MEHFC.sh` (128 CPU regular QOS),
+`sbatch_iter_scan_2d.sh` (shared QOS 2 CPU).
 
 ---
 
 ## Data inventory
 
-- `runEventLoopOmniFold_{1A..1P}.root` — per-playlist event-loop outputs.
-- `runEventLoopOmniFold_MEHFC.root` (2.0 GB) — hadd of 12 playlists; **contains MnvH2D vertical universes for syst propagation**.
-- `2d_crossSection_omnifold_MEHFC_5iter.root` — Phase-18.2 production (the χ²/ndf=3.661 result).
-- `2d_crossSection_omnifold_MEHFC_8iter.root` — HistGBT 8-iter convergence check (in flight).
-- `seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root` — n=10 HistGBT trials + spread PNGs.
-- `baseline_flux/` — per-playlist baseline + `runEventLoopMC_MEHFC.root` (POT-weighted MEHFC flux).
-- `minerva_paper_anc/` — arXiv ancillary release (TH2D, 4 cov matrices, bin_mapping.txt, data CSV, model predictions).
+- `runEventLoopOmniFold_{1A..1P}.root` — per-playlist event loops (CV-only).
+- `runEventLoopOmniFold_MEHFC.root` (2.0 GB) — 12-playlist hadd, CV-only.
+- `runEventLoopOmniFold_1A_universes.root` (5.3 GB) — Stage-1 universe-
+  enabled 1A (110 weight branches; bitwise-identical CV columns).
+- `runEventLoopOmniFold_MEHFC_universes.root` (63.7 GB) — Stage-2
+  vertical-universe MEHFC (110 weight branches × 2 trees).
+- `runEventLoopOmniFold_MEHFC_universes_full.root` (119 GB) — Stage-2
+  full lateral+vertical MEHFC (4 trees, 187 universes).
+- `2d_crossSection_omnifold_MEHFC_5iter.root` — Phase-18.2 CV production.
+- `seedscan/...seed{1..10}.root` — ML envelope trials.
+- `uq/bootstrap_MEHFC_300/`, `uq/universe_stage2_MEHFC_full/`,
+  `uq/seedscan_lgbm_ml/` — final component covariance ROOTs + PNGs.
+- `baseline_flux/` — per-playlist + `runEventLoopMC_MEHFC.root` (POT-
+  weighted MEHFC flux).
+- `minerva_paper_anc/` — arXiv ancillary (TH2D, 4 cov matrices,
+  `bin_mapping.txt`, data CSV, model predictions).
 
 Archives: `archive_pre_phase16/` (pre-Phase-16 outputs, σ_tot=0.752×paper);
-`archive_pre_phase18/` (Phase-16/17 superseded ROOTs + scripts; the
-2026-05-21 cleanup added `iter_scan_1A/` and `histgbt_smoke/` here as
-closed deliverables).
+`archive_pre_phase18/` (Phase-16/17 superseded ROOTs + scripts).
 
 ---
 
 ## Runtime budget (HistGBT-era)
 
-| Task | Resource | Wall time |
+| Task | Resource | Wall |
 |---|---|---|
 | C++ event loop, one playlist | shared QOS, 1 task | ~2 h |
-| Event loop, all 12 playlists | 11-task array | ~3–4 h (parallel) |
-| 5-iter MEHFC unfold, **exact GBT** | regular QOS, 128 CPU | ~19 h (legacy production) |
-| 5-iter MEHFC unfold, **HistGBT** | 32 CPU dedicated | **17m33s** (66× speedup) |
-| Seedscan (10 trials, HistGBT) | sbatch array, one node each | ~17 min per task in parallel |
+| Event loop, all 12 playlists | 11-task array | ~3–4 h |
+| 5-iter MEHFC unfold, exact GBT | regular QOS, 128 CPU | ~19 h |
+| 5-iter MEHFC unfold, HistGBT | 32 CPU dedicated | 17m33s |
+| 5-iter MEHFC unfold, lgbm | 128 CPU | 13m24s |
+| Seedscan (10 trials, HistGBT) | sbatch array | ~17 min / task |
 
-**HistGBT trial config.** Validated baseline: 1 process × 32 threads on
-a dedicated node. Parallel trials on a shared node are memory-bandwidth
-bound and lose net throughput (4-wide×32 ≈ 8× slower, 2-wide×64 ≈ 4.5×
-slower). Always one node per trial. Above 32 threads on a dedicated
-node is unmeasured — don't assume more cores help without benchmarking
-first.
+One node per HistGBT/lgbm trial. Parallel trials on a shared node are
+memory-bandwidth bound (4-wide × 32 ≈ 8× slower, 2-wide × 64 ≈ 4.5×
+slower). Above 32 threads on a dedicated node is unmeasured — don't
+assume more cores help without benchmarking.
