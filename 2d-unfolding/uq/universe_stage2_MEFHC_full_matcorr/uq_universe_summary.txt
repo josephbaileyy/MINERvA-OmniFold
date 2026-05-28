@@ -1,0 +1,65 @@
+Universe-covariance summary
+CV: uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+glob: uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_*.root
+n_reported bins: 205
+
+Per-band median relative sigma over reported bins:
+  __Normalization_flat           median=1.400%  max=1.400%
+  full_2p2h                      median=0.298%  max=1.826%
+  full_AGKYxF1pi                 median=0.107%  max=1.355%
+  full_AhtBY                     median=0.139%  max=2.677%
+  full_BeamAngleX                median=0.149%  max=0.875%
+  full_BeamAngleY                median=0.111%  max=0.956%
+  full_BhtBY                     median=0.197%  max=2.288%
+  full_CCQEPauliSupViaKF         median=0.221%  max=4.406%
+  full_CV1uBY                    median=0.248%  max=2.125%
+  full_CV2uBY                    median=0.211%  max=1.313%
+  full_EtaNCEL                   median=0.000%  max=0.000%
+  full_Flux                      median=1.008%  max=12.803%
+  full_FrAbs_N                   median=0.072%  max=0.940%
+  full_FrAbs_pi                  median=0.105%  max=2.001%
+  full_FrCEx_N                   median=0.096%  max=1.629%
+  full_FrCEx_pi                  median=0.089%  max=1.660%
+  full_FrElas_N                  median=0.094%  max=1.337%
+  full_FrElas_pi                 median=0.078%  max=0.789%
+  full_FrInel_N                  median=0.100%  max=1.573%
+  full_FrPiProd_N                median=0.069%  max=1.917%
+  full_FrPiProd_pi               median=0.079%  max=0.853%
+  full_GEANT_Neutron             median=0.126%  max=1.532%
+  full_GEANT_Pion                median=0.260%  max=3.695%
+  full_GEANT_Proton              median=0.089%  max=0.803%
+  full_HighQ2                    median=0.162%  max=1.508%
+  full_LowQ2                     median=0.198%  max=3.924%
+  full_MFP_N                     median=0.148%  max=1.848%
+  full_MFP_pi                    median=0.173%  max=4.838%
+  full_MaCCQE                    median=0.357%  max=5.503%
+  full_MaNCEL                    median=0.000%  max=0.000%
+  full_MaRES                     median=0.548%  max=7.180%
+  full_MinosEfficiency           median=1.472%  max=3.267%
+  full_MuonResolution            median=0.110%  max=0.929%
+  full_Muon_Energy_MINERvA       median=1.285%  max=19.979%
+  full_Muon_Energy_MINOS         median=2.305%  max=9.193%
+  full_MvRES                     median=0.377%  max=5.216%
+  full_NormDISCC                 median=0.081%  max=1.084%
+  full_NormNCRES                 median=0.000%  max=0.000%
+  full_RDecBR1gamma              median=0.070%  max=0.884%
+  full_Rvn1pi                    median=0.101%  max=1.162%
+  full_Rvn2pi                    median=0.212%  max=1.522%
+  full_Rvp1pi                    median=0.101%  max=1.162%
+  full_Rvp2pi                    median=0.200%  max=3.669%
+  full_Theta_Delta2Npi           median=0.157%  max=2.249%
+  full_VecFFCCQEshape            median=0.144%  max=2.000%
+
+Grouped median relative sigma over reported bins:
+  Flux                   median=1.008%  max=12.803%
+  Models                 median=2.034%  max=12.116%
+  Normalization          median=0.081%  max=1.084%
+  Statistical            median=0.563%  max=3.409%
+  Hadronic response      median=0.758%  max=5.429%
+  Muon reconstruction    median=3.366%  max=21.215%
+
+Total universe median rel = 4.783%
+Total universe max    rel = 21.272%
+
+Combined (universe + bootstrap) median rel = 4.822%
+Combined max rel = 21.287%

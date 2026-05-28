@@ -16,7 +16,7 @@ MINERvA-101 cross-section and OmniFold studies for muon kinematics:
 **Goal**: Reproduce arXiv:2106.16210 (Ruterbories et al., Phys. Rev. D 106,
 032001) — MINERvA ME FHC d²σ/(dp_T dp_||) CC inclusive — with 2D unbinned
 OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
-12-playlist MEHFC production complete.
+12-playlist MEFHC production complete.
 
 **Authoritative docs (read these before touching the 2D pipeline):**
 - `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — dashboard, current numbers, next actions.
@@ -24,7 +24,7 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 - `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — append-only chronology of phases 1-18.2.
 - `2d-unfolding/PLOT_GUIDE.md` — PNG reading guide.
 
-**Headline numbers (Phase 18.2 MEHFC, 5-iter production):**
+**Headline numbers (Phase 18.2 MEFHC, 5-iter production):**
 - σ_total = 3.073e-38 cm²/nucleon (paper: 3.039e-38; ours runs 1.12 % high).
 - Strict-interior χ²/ndf vs paper (185 bins, full cov) = 3.549.
 - All-reported-bins χ²/ndf (205 bins) = 3.565.
@@ -41,7 +41,7 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
    (handles 1,102 truth + 7 reco duplicates from one upstream-double-filled
    AnaTuple, `MasterAnaDev_mc_AnaTuple_run00111353_Playlist.root`).
 3. **By-construction completeness.** `mc_signal_reco` entries ==
-   `mc_truth_denom` entries (32,849,103 each at MEHFC). The Phase-16 c
+   `mc_truth_denom` entries (32,849,103 each at MEFHC). The Phase-16 c
    division in `unfold_2d_omnifold_unbinned.py` becomes a no-op self-check.
 
 **Residual disagreement.** The remaining ~3 χ²/ndf is dominated by
@@ -70,7 +70,7 @@ Rebuild via `sbatch_build.sh`.
 
 ### Per-playlist event loop, then hadd
 `runEventLoopOmniFold.cpp` picks ONE global playlist flux/calibration from
-the first event's run number. **Never** feed it a combined MEHFC manifest
+the first event's run number. **Never** feed it a combined MEFHC manifest
 — it silently applies the first playlist's flux to all events and
 corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
 
@@ -78,10 +78,10 @@ corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
 1. Per-playlist event loops via `2d-unfolding/sbatch_evloop_array.sh` (1B–1P
    as 11-task array; 1A run separately or via interactive shell). Outputs:
    `runEventLoopOmniFold_1{A..P}.root`.
-2. `2d-unfolding/sbatch_hadd_MEHFC.sh` → `runEventLoopOmniFold_MEHFC.root`.
-3. `2d-unfolding/sbatch_unfold_2d_MEHFC.sh` → runs
+2. `2d-unfolding/sbatch_hadd_MEFHC.sh` → `runEventLoopOmniFold_MEFHC.root`.
+3. `2d-unfolding/sbatch_unfold_2d_MEFHC.sh` → runs
    `unfold_2d_omnifold_unbinned.py --use-weights --iters 5` →
-   `2d_crossSection_omnifold_MEHFC_5iter.root`.
+   `2d_crossSection_omnifold_MEFHC_5iter.root`.
 4. Plotting (see `PLOT_GUIDE.md` for the full list):
    `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
    `plot_2d_threeway_fig13.py`, `plot_efficiency_fig5_style.py`,
@@ -91,8 +91,8 @@ corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
 ### Flux
 `runEventLoopOmniFold.cpp` does NOT write `pTmu_reweightedflux_integrated`.
 Use `sbatch_runEventLoop_baseline_flux_array.sh` to regenerate per-playlist
-baseline flux, then `combine_flux_MEHFC.py` to build the POT-weighted MEHFC
-flux at `2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root`. The 2D
+baseline flux, then `combine_flux_MEFHC.py` to build the POT-weighted MEFHC
+flux at `2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root`. The 2D
 Python script embeds the flux histogram into its output for self-contained
 auditing.
 
@@ -128,14 +128,30 @@ auditing.
   unreported); strict-interior comparison uses 185 bins.
 
 ## NERSC SLURM gotchas
+- **Use the running interactive allocation when one exists, instead of
+  submitting a new sbatch.** The regular and shared queues at NERSC
+  routinely sit on `Priority` for several minutes to hours. If
+  `squeue -u $USER` shows a live `interactive` job with time remaining,
+  any task that fits inside that node (the build job, a short event-loop
+  smoke, a single short-wall unfold, a Python analysis script) should
+  run there via `srun --jobid=<INTERACTIVE_JOBID> --overlap -n 1
+  --cpus-per-task=<N> bash -lc '...'`. **Cancel the equivalent queued
+  sbatch** if you submitted one before noticing the interactive — running
+  in two places leaks compute and risks output-file races. Reserve fresh
+  sbatch submissions for jobs that don't fit a single interactive
+  allocation (multi-node arrays, multi-hour walls, or work that needs to
+  outlive your shell). The submit-vs-interactive decision is also
+  documented in `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`.
 - Do NOT combine `set -u` with `conda activate root_6_28`. The conda
   `deactivate-root.sh` hook references `CONDA_BACKUP_ROOTSYS` and aborts
   under nounset in a fresh batch shell.
 - Export `PYTHONUNBUFFERED=1` so Python stdout flushes to `.out` live.
 - Do NOT use `srun` inside 2D OmniFold sbatch scripts. Inherited
   `SRUN_CPUS_PER_TASK` from a live interactive allocation breaks nested
-  srun. Bare `python ...` is the safe default.
-- Templates: `sbatch_unfold_2d_MEHFC.sh` (full-node 128 CPU regular QOS),
+  srun. Bare `python ...` is the safe default. (The interactive-shell
+  case is the opposite: `srun --jobid=<INTERACTIVE> --overlap` is the
+  correct primitive for launching work onto the existing allocation.)
+- Templates: `sbatch_unfold_2d_MEFHC.sh` (full-node 128 CPU regular QOS),
   `sbatch_iter_scan_2d.sh` (shared QOS 2 CPU).
 
 ## Runtime notes (2D)
@@ -143,9 +159,9 @@ auditing.
 |---|---|---|
 | C++ event loop, one playlist | shared QOS, 1 task | ~2 h |
 | Event loop, all 12 playlists | 11-task array | ~3-4 h (parallel) |
-| hadd MEHFC | shared QOS | < 1 min |
+| hadd MEFHC | shared QOS | < 1 min |
 | 2D OmniFold, 5-iter, 1A stats | shared QOS, 2 CPU | ~1.5 h |
-| 2D OmniFold, 5-iter, full MEHFC | regular QOS, 128 CPU | ~19 h (≈3h50m/iter × 5) |
+| 2D OmniFold, 5-iter, full MEFHC | regular QOS, 128 CPU | ~19 h (≈3h50m/iter × 5) |
 
 Iter-count: original pre-Phase-16 1A iter-scan showed 5-iter 0.08 % off
 10-iter total xsec, so production uses 5. A Phase-18.2 re-scan is in
@@ -194,19 +210,19 @@ Replaces the educational stub `has_interaction_vertex==1`.
   `plot_2d_paper_comparison_shape.py`, `plot_2d_threeway_fig13.py`,
   `plot_efficiency_fig5_style.py`, `plot_closure_2d.py`,
   `plot_iter_convergence.py`, `normalize_xsec_shape.py`,
-  `compare_to_paper_{fullcov,interior}.py`, `combine_flux_MEHFC.py`,
+  `compare_to_paper_{fullcov,interior}.py`, `combine_flux_MEFHC.py`,
   `diagnose_truth_shape_unweighted.py`, `compare_flux_to_paper_2019.py`,
   `verify_eff_fix_predicted_xsec.py`.
 - **SLURM** (canonical, no phase suffix): `sbatch_build.sh`,
-  `sbatch_evloop_array.sh`, `sbatch_hadd_MEHFC.sh`,
-  `sbatch_unfold_2d_MEHFC.sh`, `sbatch_iter_scan_2d.sh`,
+  `sbatch_evloop_array.sh`, `sbatch_hadd_MEFHC.sh`,
+  `sbatch_unfold_2d_MEFHC.sh`, `sbatch_iter_scan_2d.sh`,
   `sbatch_runEventLoop_baseline_flux_array.sh`,
-  `sbatch_finalize_MEHFC.sh`, `sbatch_validate_1A_corrected.sh`,
+  `sbatch_finalize_MEFHC.sh`, `sbatch_validate_1A_corrected.sh`,
   `sbatch_download_playlist.sh`. Pre-Phase-18 sbatch scripts preserved
   in `2d-unfolding/archive_pre_phase18/` with git history.
-- **Outputs**: `runEventLoopOmniFold_MEHFC.root`,
+- **Outputs**: `runEventLoopOmniFold_MEFHC.root`,
   `runEventLoopOmniFold_1{A..P}.root`,
-  `2d_crossSection_omnifold_MEHFC_5iter.root` (production),
+  `2d_crossSection_omnifold_MEFHC_5iter.root` (production),
   `2d_crossSection_omnifold_1A_5iter.root`.
 - **Manifests**: `2d-unfolding/playlist_manifests/1{A..P}_{MC,Data}.txt`.
 
@@ -254,7 +270,7 @@ same Phase-18 truth-tree-authoritative gate to the 1D pipelines
 (`unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py` and
 `ibu_1d_projection/build_1d_ibu_inputs.py`). Both currently filter
 `tru_ok` on the pT rectangle alone; neither reads `MC_pz`. With the
-Phase-18 MEHFC ROOT pointed in, they inherit a clean c by construction;
+Phase-18 MEFHC ROOT pointed in, they inherit a clean c by construction;
 the explicit gating tightening is still on the to-do list.
 
 ### 1D quick start

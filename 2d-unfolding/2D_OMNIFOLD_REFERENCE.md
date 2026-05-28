@@ -50,6 +50,23 @@ in the past.
 
 ## SLURM script conventions
 
+- **Interactive-first.** Before submitting an sbatch, check
+  `squeue -u $USER` for a live `interactive` allocation with time left.
+  NERSC's regular and shared queues routinely sit on `Priority` for
+  minutes-to-hours; an existing interactive allocation can run the same
+  work immediately. Use
+  `srun --jobid=<INTERACTIVE_JOBID> --overlap -n 1 --cpus-per-task=<N>
+  bash -lc '... ; source $REPO/setup_salloc_env.sh ; <command>'`
+  to launch onto it. Work that fits this pattern includes: the C++
+  build (`cmake --build && cmake --install`, ~5 min, 8-16 CPU), short
+  1A event-loop smokes (~5-15 min, 8-128 CPU), individual unfold runs,
+  Python analysis scripts. The interactive's full 128 CPU is available
+  inside one node even if your `salloc` requested fewer — `srun
+  --cpus-per-task=N` controls the slice. If you already submitted an
+  sbatch and *then* realized the interactive is up, `scancel` the
+  sbatch — leaving both running leaks compute and risks output-file
+  races. Reserve sbatch for genuinely multi-node arrays, multi-hour
+  walls, or work that must outlive the shell.
 - Do **not** combine `set -u` with `conda activate root_6_28`. The conda
   `deactivate-root.sh` hook references `CONDA_BACKUP_ROOTSYS` and aborts
   under nounset in a fresh batch shell.
@@ -57,14 +74,16 @@ in the past.
   during the run.
 - **Do not use `srun`** inside 2D OmniFold sbatch scripts. On Perlmutter,
   inherited `SRUN_CPUS_PER_TASK` from a live interactive allocation breaks
-  nested srun. Bare `python3 ...` is the safe default.
+  nested srun. Bare `python3 ...` is the safe default. (The interactive
+  case is the inverse: `srun --jobid=<INTERACTIVE> --overlap` is the
+  correct primitive when launching new work onto an existing allocation.)
 - See `sbatch_validate_1A_corrected.sh` and `sbatch_unfold_2d.sh` for the
   working template.
 
 ## Event-loop workflow
 
 - `runEventLoopOmniFold.cpp` picks **one** global playlist flux/calibration
-  from the first event's run number. **Never** feed it a combined MEHFC
+  from the first event's run number. **Never** feed it a combined MEFHC
   manifest — the tool silently applies the first playlist's flux to all
   events, corrupting 11/12 of the dataset.
   → Run per-playlist, then `hadd` outputs.
@@ -78,8 +97,8 @@ in the past.
   `pTmu_reweightedflux_integrated` is written;
   `runEventLoopOmniFold.cpp` does **not** write the flux histogram. Use
   `sbatch_runEventLoop_baseline_flux_array.sh` to regenerate per-playlist
-  baseline flux files, then `combine_flux_MEHFC.py` to build the
-  POT-weighted MEHFC flux (`baseline_flux/runEventLoopMC_MEHFC.root`).
+  baseline flux files, then `combine_flux_MEFHC.py` to build the
+  POT-weighted MEFHC flux (`baseline_flux/runEventLoopMC_MEFHC.root`).
 
 ## 2D Python unfolding contract
 
@@ -106,6 +125,97 @@ OmniFold extraction path. Required invariants:
    on, matching the `MCreco_weights` footing.
 7. **Full-stats sbatch must pass `--use-weights`.** The 1A validation runs
    use it; the production path must match.
+
+## Bootstrap-replica workflow (`--bootstrap-seed N`)
+
+Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
+
+1. **Two independent sub-RNGs per replica** —
+   `np.random.default_rng(seed)` for data, `np.random.default_rng(seed +
+   10_000_000)` for MC. Data-stat and MC-stat are independent variance
+   sources; they must not share a draw or the covariance under-counts.
+2. **MC reco and MC truth weights ride a single per-event MC draw.**
+   `sig["w_truth"]` and `sig["w_reco"]` are multiplied by the *same*
+   per-event Poisson factor — they're two views of the same MC event and
+   must stay correlated within the event row. Using independent draws
+   for w_truth and w_reco would smear out the migration matrix.
+3. **`--bootstrap-seed` + `--closure` is coverage-toy mode only.**
+   Closure mode copies `sig["w_reco"]` into `measured_weights` before
+   the bootstrap multiply; adding independent data/MC Poisson draws
+   intentionally breaks the strict closure identity. Use this only for
+   pseudo-experiment coverage calibration, not for deterministic closure
+   tests.
+4. **Pin the GBT random_state too.** Each replica should pass both
+   `--bootstrap-seed N` and `--seed N` so ML stochasticity is removed
+   from the per-replica variance. The bootstrap variance and the
+   seedscan variance are *separable* uncorrelated components only when
+   each replica's GBT seed is pinned.
+5. **CV unfold = omit the flag.** Don't pass `--bootstrap-seed 0` and
+   call it the CV; seed=0 is a valid replica with a non-trivial Poisson
+   draw. The CV is the unflagged run.
+
+Driver: `uq/run_bootstrap_interactive.sh` runs N replicas inside an
+existing interactive allocation, batched WIDTH-wide ×
+(128/WIDTH)-threads. **Use WIDTH=1 on Perlmutter single-node interactive
+allocations.** The 2026-05-19 contention lesson (sklearn HistGBT
+bandwidth-bound at WIDTH≥2) has not been re-benchmarked for lgbm; even
+though lgbm scales fine to 128 threads on a single MEFHC unfold,
+WIDTH>1 packed onto one node is unmeasured. Until benchmarked, run
+sequential at full node width.
+
+Analyzer: `uq/analyze_uq.py` rolls N replica ROOTs into per-bin
+mean/std, 205×205 covariance on paper-reported bins, and 1D pT/pz
+projection covariances. The Cholesky PD check uses a small jitter
+fallback because the covariance is rank-deficient by construction
+whenever N ≤ n_reported (205); a meaningful PD test needs N >
+n_reported or pooling across replica sets. Quote the 205 paper-reported
+bins everywhere, not the full 14×16 grid.
+
+## Universe-covariance workflow (`--universe BAND:IDX`)
+
+Universe covariance is computed from per-universe deltas relative to a
+matched CV unfold. The CV must use the same omnifile, estimator,
+`--seed`, iteration count, `--use-weights` setting, and flux input as the
+universe sweep; only `--universe` is omitted. Mixing an exact-GBT
+production CV with lgbm universe outputs injects backend/seed baseline
+differences into every paired systematic covariance.
+
+For the full lateral+vertical MEFHC sweep:
+
+- Universe sweep:
+  `sbatch_unfold_2d_MEFHC_5iter_universes_full.sh` →
+  `uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_<BAND>_<IDX>.root`.
+- Matched CV:
+  `sbatch_unfold_2d_MEFHC_5iter_universes_full_CV.sh` →
+  `uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`.
+- Rollup:
+  `sbatch_final_rollup_full.sh`, whose driver
+  `uq/final_rollup_full.sh` refuses to run without the matched full-CV
+  ROOT and archives any superseded baseline-mismatched full-rollup
+  artifacts before writing replacements.
+- Plots:
+  `uq_universe_band_pt.png` and `uq_universe_band_pz.png` show grouped
+  categories, not one line per universe band. Categories are Flux,
+  Models, Normalization, Statistical, Hadronic response, and Muon
+  reconstruction. The Statistical line appears when a bootstrap
+  covariance is supplied to `analyze_universes.py`.
+- Paper-Fig.-6/7-style fractional uncertainty projections are made with
+  `uq/plot_uncertainty_fig6_7_style.py`. Unlike the quick grouped sigma
+  diagnostic in `analyze_universes.py`, this script projects the full
+  205x205 covariance exactly, `C_1D = P C_2D P^T`, before dividing by
+  the reported-bin 1D central value. It writes
+  `uq/universe_stage2_MEFHC_full/MEFHC_fig6_7_uncertainty_{pz,pt}.png`
+  and a numeric summary text file. ML covariance is included in the
+  total when available, but is drawn only when it exceeds the configured
+  visibility threshold.
+
+Pair bands use the MINERvA-101 sum-of-squares convention,
+`0.5 * (delta_plus delta_plus^T + delta_minus delta_minus^T)`.
+Multi-universe bands use sample covariance with `ddof=1`. Inverse-cov
+diagnostics for an ours-only covariance are expected to be fragile when
+finite universe ensembles underspan the 205 reported-bin space; quote
+direct per-bin pulls and truncated-mode chi2 alongside any pseudo-inverse
+chi2.
 
 ## Flux and normalization
 

@@ -262,8 +262,58 @@ def build_measured_training_2d(meas_pt, meas_pz, h_data_2d, h_bkg_2d, verbose=Fa
     return weights, h_train_2d
 
 
+def _sanitize_band_for_branch(s):
+    """Mirror of the C++ SanitizeForRootBranchName in
+    runEventLoopOmniFold.cpp: any character not in [A-Za-z0-9_] is
+    replaced with '_'. Python sides of the universe-weight path must
+    sanitize band names with this exact rule so the branch names line up
+    with what the C++ event loop wrote.
+    """
+    return "".join(c if (c.isalnum() or c == "_") else "_" for c in s)
+
+
+def _universe_truth_branch(universe_branch):
+    """Return ('w_truth_<sanitized_band>_<idx>') or None."""
+    if universe_branch is None:
+        return None
+    band, idx = universe_branch
+    return f"w_truth_{_sanitize_band_for_branch(band)}_{int(idx)}"
+
+
+def _universe_reco_branch(universe_branch):
+    """Return ('w_reco_<sanitized_band>_<idx>') or None."""
+    if universe_branch is None:
+        return None
+    band, idx = universe_branch
+    return f"w_reco_{_sanitize_band_for_branch(band)}_{int(idx)}"
+
+
+def _universe_kine_branches(universe_branch, kine_ctx):
+    """Return (pt_branch, pz_branch) names for lateral universe kinematics.
+
+    kine_ctx selects the host-tree naming convention:
+      'truth_tree'      -> ('pT_truth_<band>_<idx>', 'pz_truth_<band>_<idx>')
+      'reco_tree_truth' -> ('MC_<band>_<idx>',        'MC_pz_<band>_<idx>')
+      'reco_tree_reco'  -> ('sim_<band>_<idx>',       'sim_pz_<band>_<idx>')
+    Returns (None, None) for vertical-only universes (caller detects by
+    branch absence in the input ROOT).
+    """
+    if universe_branch is None:
+        return None, None
+    band, idx = universe_branch
+    suffix = f"{_sanitize_band_for_branch(band)}_{int(idx)}"
+    if kine_ctx == "truth_tree":
+        return f"pT_truth_{suffix}", f"pz_truth_{suffix}"
+    if kine_ctx == "reco_tree_truth":
+        return f"MC_{suffix}",       f"MC_pz_{suffix}"
+    if kine_ctx == "reco_tree_reco":
+        return f"sim_{suffix}",      f"sim_pz_{suffix}"
+    raise ValueError(f"unknown kine_ctx={kine_ctx!r}")
+
+
 def collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
-                                pot_scale, use_weights=False, verbose=False):
+                                pot_scale, use_weights=False, verbose=False,
+                                universe_branch=None):
     """Read mc_truth_denom TTree, return truth-only arrays for hEffDen.
 
     mc_truth_denom is the canonical efficiency denominator: it loops the
@@ -274,14 +324,39 @@ def collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
     mc_truth_denom is required for the standard MINERvA cross-section
     extraction; using the mc_signal_reco subset under-counts the true
     denominator and over-estimates efficiency.
+
+    When `universe_branch` is set to a (band, idx) tuple, the truth
+    weight is read from `w_truth_<sanitized_band>_<idx>` instead of the
+    CV `w_truth`. The branch is written by the C++ event loop under
+    `MNV101_DUMP_UNIVERSES=1` (or a comma-separated allowlist). Requires
+    use_weights=True (the CV->universe swap only applies when we are
+    reading any weight at all).
     """
     pt_arr = array("d", [0.0])
     pz_arr = array("d", [0.0])
     wt_arr = array("d", [1.0])
-    t_truth_denom.SetBranchAddress("MC", pt_arr)
-    t_truth_denom.SetBranchAddress("MC_pz", pz_arr)
+    pt_branch_name = "MC"
+    pz_branch_name = "MC_pz"
+    weight_branch = "w_truth"
+    if use_weights and universe_branch is not None:
+        weight_branch = _universe_truth_branch(universe_branch)
+        if not t_truth_denom.GetBranch(weight_branch):
+            raise RuntimeError(
+                f"[FAIL] universe branch '{weight_branch}' missing from "
+                f"mc_truth_denom; rebuild the input ROOT with "
+                f"MNV101_DUMP_UNIVERSES set so the universe weights are "
+                f"written.")
+        # Lateral universes also carry shifted kinematics; swap if present.
+        lat_pt, lat_pz = _universe_kine_branches(universe_branch, "truth_tree")
+        if t_truth_denom.GetBranch(lat_pt) and t_truth_denom.GetBranch(lat_pz):
+            pt_branch_name, pz_branch_name = lat_pt, lat_pz
+            if verbose:
+                print(f"[INFO] truth_denom: lateral universe — using "
+                      f"{lat_pt}/{lat_pz} in place of MC/MC_pz")
+    t_truth_denom.SetBranchAddress(pt_branch_name, pt_arr)
+    t_truth_denom.SetBranchAddress(pz_branch_name, pz_arr)
     if use_weights:
-        t_truth_denom.SetBranchAddress("w_truth", wt_arr)
+        t_truth_denom.SetBranchAddress(weight_branch, wt_arr)
 
     pt_list, pz_list, w_list = [], [], []
     bad_w, dropped = 0, 0
@@ -316,29 +391,96 @@ def collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
 
 
 def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
-                              pot_scale, use_weights=False, verbose=False):
-    """Read mc_signal_reco TTree, return dict of 2D arrays for OmniFold."""
+                              pot_scale, use_weights=False, verbose=False,
+                              universe_branch=None,
+                              alt_universe_branch=None):
+    """Read mc_signal_reco TTree, return dict of 2D arrays for OmniFold.
+
+    When `universe_branch` is set to a (band, idx) tuple, the per-event
+    weights are read from `w_truth_<sanitized_band>_<idx>` and
+    `w_reco_<sanitized_band>_<idx>` instead of the CV `w_truth` /
+    `w_reco`. The branches are written by the C++ event loop under
+    `MNV101_DUMP_UNIVERSES`. Requires use_weights=True.
+
+    When `alt_universe_branch` is set, the CV w_truth/w_reco are still
+    populated (so the response training is unchanged), AND additional
+    arrays `w_truth_alt` / `w_reco_alt` are populated from the universe
+    branches. Used by the alt-model closure to inject alt-model bias
+    into closure pseudo-data and truth reference while keeping the
+    response at CV. Mutually exclusive with `universe_branch`.
+    """
     mc_pt = array("d", [0.0])
     mc_pz = array("d", [0.0])
     sim_pt = array("d", [0.0])
     sim_pz_arr = array("d", [0.0])
     sim_pass = array("B", [0])
-    t_sig.SetBranchAddress("MC", mc_pt)
-    t_sig.SetBranchAddress("MC_pz", mc_pz)
-    t_sig.SetBranchAddress("sim", sim_pt)
-    t_sig.SetBranchAddress("sim_pz", sim_pz_arr)
-    t_sig.SetBranchAddress("sim_pass", sim_pass)
+    mc_pt_branch = "MC"
+    mc_pz_branch = "MC_pz"
+    sim_pt_branch = "sim"
+    sim_pz_branch = "sim_pz"
 
     wt_arr = array("d", [1.0])
     wr_arr = array("d", [1.0])
+    wt_branch = "w_truth"
+    wr_branch = "w_reco"
+    if use_weights and universe_branch is not None:
+        wt_branch = _universe_truth_branch(universe_branch)
+        wr_branch = _universe_reco_branch(universe_branch)
+        for bname in (wt_branch, wr_branch):
+            if not t_sig.GetBranch(bname):
+                raise RuntimeError(
+                    f"[FAIL] universe branch '{bname}' missing from "
+                    f"mc_signal_reco; rebuild the input ROOT with "
+                    f"MNV101_DUMP_UNIVERSES set so the universe weights "
+                    f"are written.")
+        # Lateral universes carry shifted kinematics on the reco tree as
+        # MC_<band>_<idx> (truth-mode) and sim_<band>_<idx> (reco-mode);
+        # swap both pairs if either is present.
+        lat_mc, lat_mc_pz = _universe_kine_branches(universe_branch, "reco_tree_truth")
+        lat_sim, lat_sim_pz = _universe_kine_branches(universe_branch, "reco_tree_reco")
+        if t_sig.GetBranch(lat_mc) and t_sig.GetBranch(lat_mc_pz):
+            mc_pt_branch, mc_pz_branch = lat_mc, lat_mc_pz
+        if t_sig.GetBranch(lat_sim) and t_sig.GetBranch(lat_sim_pz):
+            sim_pt_branch, sim_pz_branch = lat_sim, lat_sim_pz
+        if verbose and (mc_pt_branch != "MC" or sim_pt_branch != "sim"):
+            print(f"[INFO] signal: lateral universe — using "
+                  f"{mc_pt_branch}/{mc_pz_branch} for truth and "
+                  f"{sim_pt_branch}/{sim_pz_branch} for reco kinematics")
+
+    t_sig.SetBranchAddress(mc_pt_branch, mc_pt)
+    t_sig.SetBranchAddress(mc_pz_branch, mc_pz)
+    t_sig.SetBranchAddress(sim_pt_branch, sim_pt)
+    t_sig.SetBranchAddress(sim_pz_branch, sim_pz_arr)
+    t_sig.SetBranchAddress("sim_pass", sim_pass)
+
     if use_weights:
-        t_sig.SetBranchAddress("w_truth", wt_arr)
-        t_sig.SetBranchAddress("w_reco", wr_arr)
+        t_sig.SetBranchAddress(wt_branch, wt_arr)
+        t_sig.SetBranchAddress(wr_branch, wr_arr)
+
+    wt_alt_arr = array("d", [1.0])
+    wr_alt_arr = array("d", [1.0])
+    use_alt = use_weights and alt_universe_branch is not None
+    if use_alt:
+        if universe_branch is not None:
+            raise RuntimeError(
+                "[FAIL] alt_universe_branch and universe_branch are mutually "
+                "exclusive: alt-model closure keeps the response at CV.")
+        wt_alt_branch = _universe_truth_branch(alt_universe_branch)
+        wr_alt_branch = _universe_reco_branch(alt_universe_branch)
+        for bname in (wt_alt_branch, wr_alt_branch):
+            if not t_sig.GetBranch(bname):
+                raise RuntimeError(
+                    f"[FAIL] alt-model universe branch '{bname}' missing "
+                    f"from mc_signal_reco; rebuild input with "
+                    f"MNV101_DUMP_UNIVERSES set.")
+        t_sig.SetBranchAddress(wt_alt_branch, wt_alt_arr)
+        t_sig.SetBranchAddress(wr_alt_branch, wr_alt_arr)
 
     truth_pt_list, truth_pz_list = [], []
     reco_pt_list, reco_pz_list = [], []
     pass_reco_list, pass_truth_list = [], []
     w_truth_list, w_reco_list = [], []
+    w_truth_alt_list, w_reco_alt_list = [], []
     dropped, bad_w = 0, 0
 
     for i in range(t_sig.GetEntries()):
@@ -357,6 +499,16 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
             continue
         wt *= pot_scale
         wr *= pot_scale
+
+        if use_alt:
+            wt_a = float(wt_alt_arr[0])
+            wr_a = float(wr_alt_arr[0])
+            if not (math.isfinite(wt_a) and math.isfinite(wr_a) and
+                    0 <= wt_a < 1e4 and 0 <= wr_a < 1e4):
+                bad_w += 1
+                continue
+            wt_a *= pot_scale
+            wr_a *= pot_scale
 
         # Truth-pass gate matches C++ GetCCInclusive2DPhaseSpace (rectangle
         # + θ_μ < 20°) so c = hOFInputTruth / hOFTruthDenom ≡ 1 modulo MC
@@ -378,11 +530,14 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
         pass_truth_list.append(tru_ok)
         w_truth_list.append(wt)
         w_reco_list.append(wr)
+        if use_alt:
+            w_truth_alt_list.append(wt_a)
+            w_reco_alt_list.append(wr_a)
 
     if verbose:
         print(f"[INFO] signal: kept={len(truth_pt_list)}, dropped={dropped}, bad_w={bad_w}")
 
-    return {
+    out = {
         "truth_pt": np.asarray(truth_pt_list, dtype=float),
         "truth_pz": np.asarray(truth_pz_list, dtype=float),
         "reco_pt": np.asarray(reco_pt_list, dtype=float),
@@ -392,6 +547,10 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
         "w_truth": np.asarray(w_truth_list, dtype=float),
         "w_reco": np.asarray(w_reco_list, dtype=float),
     }
+    if use_alt:
+        out["w_truth_alt"] = np.asarray(w_truth_alt_list, dtype=float)
+        out["w_reco_alt"] = np.asarray(w_reco_alt_list, dtype=float)
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -488,6 +647,29 @@ def compute_omnifold_completeness_2d(sig, pt_edges, pz_edges, truth_denom):
         "p_{T} (GeV/c);p_{||} (GeV/c)")
     hCompleteness.Divide(hTruthDen)
     return hCompleteness, hOFInputTruth, hTruthDen
+
+
+def closure_reweight_factor(shape, pt, pz,
+                             amplitude=0.2, sigma=0.1, pt0=0.4,
+                             alpha=0.1, pz_ref=5.0):
+    """Multiplicative reweight on truth kinematics for the truth-reweight
+    closure (Stage-1 plan deliverable #4). Both the pseudo-data
+    (`measured_weights`) and the reweighted-truth reference (`hTruthRew2D`)
+    use the same function, evaluated on truth kinematics — so a perfect
+    unfold should map pseudo-data shifts back into the matching truth shift.
+
+    Supported shapes:
+      - 'gauss_pt': f = 1 + amplitude * exp(-((pT - pt0) / sigma)^2)
+      - 'tilt_pz' : f = (pz / pz_ref)^alpha
+    """
+    pt_arr = np.asarray(pt, dtype=float)
+    pz_arr = np.asarray(pz, dtype=float)
+    if shape == "gauss_pt":
+        return 1.0 + amplitude * np.exp(-((pt_arr - pt0) / sigma) ** 2)
+    if shape == "tilt_pz":
+        safe = np.clip(pz_arr, 1e-6, None)
+        return (safe / pz_ref) ** alpha
+    raise ValueError(f"Unknown closure_reweight shape: {shape}")
 
 
 def extract_cross_section_2d(hUnfold, hCompleteness, flux_bins, data_pot,
@@ -618,21 +800,223 @@ def main():
                      help="Closure test: use MC reco events (pass_reco) as "
                           "pseudo-data instead of real data. Unfolded result "
                           "should recover the MC truth prior within GBT noise.")
+    ap.add_argument("--closure-reweight",
+                     choices=["gauss_pt", "tilt_pz"], default=None,
+                     help="Truth-reweight closure (Stage-1 plan #4). Applies a "
+                          "known shape to BOTH the closure pseudo-data weights "
+                          "(via truth kinematics of reco-pass events) and the "
+                          "reweighted-truth reference (hTruthRew2D / "
+                          "hTruthRewXSec2D in the output ROOT). A correctly "
+                          "unbiased unfold recovers the reweighted truth, not "
+                          "the CV truth. Requires --closure.")
+    ap.add_argument("--closure-reweight-amplitude", type=float, default=0.2,
+                     help="gauss_pt amplitude A in f = 1 + A * exp(-((pT-pt0)/sigma)^2).")
+    ap.add_argument("--closure-reweight-sigma", type=float, default=0.1,
+                     help="gauss_pt sigma in f = 1 + A * exp(-((pT-pt0)/sigma)^2).")
+    ap.add_argument("--closure-reweight-pt0", type=float, default=0.4,
+                     help="gauss_pt center pt0 (GeV/c) in f = 1 + A * exp(-((pT-pt0)/sigma)^2).")
+    ap.add_argument("--closure-reweight-alpha", type=float, default=0.1,
+                     help="tilt_pz exponent alpha in f = (pz/pz_ref)^alpha.")
+    ap.add_argument("--closure-reweight-pz-ref", type=float, default=5.0,
+                     help="tilt_pz reference pz_ref (GeV/c) in f = (pz/pz_ref)^alpha.")
+    ap.add_argument("--closure-hidden-dpt", action="store_true",
+                     help="Hidden-variable closure (Stage-1 plan #4). Applies a "
+                          "Gaussian bump to the closure pseudo-data weights "
+                          "based on dpT = sim_pT - truth_pT (the reco-vs-truth "
+                          "resolution), which is NOT in the OmniFold feature "
+                          "set. Truth weights are LEFT UNCHANGED, so the "
+                          "reference is the CV truth marginal (hTruthXSec2D). "
+                          "A correctly unbiased unfold recovers the CV truth "
+                          "even though the pseudo-data carries a hidden-axis "
+                          "bias. Requires --closure; mutually exclusive with "
+                          "--closure-reweight.")
+    ap.add_argument("--closure-hidden-dpt-amplitude", type=float, default=0.3,
+                     help="Hidden-dpT bump amplitude A in "
+                          "f = 1 + A * exp(-((dpT - center)/sigma)^2).")
+    ap.add_argument("--closure-hidden-dpt-center", type=float, default=0.1,
+                     help="Hidden-dpT bump center (GeV/c).")
+    ap.add_argument("--closure-hidden-dpt-sigma", type=float, default=0.05,
+                     help="Hidden-dpT bump sigma (GeV/c).")
     ap.add_argument("--seed", type=int, default=None,
                      help="Master seed for the sklearn GBDT random_state. "
                           "When set, classifier1 uses --seed, classifier2 "
                           "uses --seed+1, regressor uses --seed+2 so the "
                           "three estimators are independently reproducible. "
                           "Used by the ML-stochasticity seed scan.")
-    ap.add_argument("--estimator", choices=["exact", "hist"], default="exact",
+    ap.add_argument("--bootstrap-seed", type=int, default=None,
+                     help="Poisson-weight bootstrap replica seed. When set, "
+                          "draw per-event Poisson(1) factors from "
+                          "np.random.default_rng(--bootstrap-seed) and "
+                          "multiply them into measured_weights and (with "
+                          "--use-weights) sig['w_truth'] / sig['w_reco'] "
+                          "before the OmniFold call. CV unfold corresponds "
+                          "to omitting this flag. Data and MC draws are "
+                          "independent (separate sub-RNGs) so data-stat and "
+                          "MC-stat contribute jointly per replica.")
+    ap.add_argument("--universe", type=str, default=None, metavar="BAND:IDX",
+                     help="Systematic-universe unfold. Argument is "
+                          "'BAND:IDX' (e.g. 'MaCCQE:0' or 'Flux:42'). When "
+                          "set, the truth/reco weight arrays are read from "
+                          "w_truth_<sanitized_band>_<IDX> / "
+                          "w_reco_<sanitized_band>_<IDX> instead of the CV "
+                          "w_truth / w_reco. The input ROOT must have been "
+                          "produced with MNV101_DUMP_UNIVERSES set in the "
+                          "C++ event loop so the universe columns exist. "
+                          "Sanitizer matches the C++ "
+                          "SanitizeForRootBranchName rule (any non-alnum/"
+                          "underscore character -> '_'). Requires "
+                          "--use-weights. Incompatible with --closure (the "
+                          "closure premise needs CV weights for "
+                          "self-consistency) and --bootstrap-seed (per "
+                          "Stage-1 UQ design, run one variance axis per "
+                          "unfold so the rollup attributes each ROOT to a "
+                          "single component).")
+    ap.add_argument("--estimator",
+                     choices=["exact", "hist", "xgb", "lgbm"],
+                     default="exact",
                      help="GBDT backend. 'exact' = sklearn GradientBoosting "
                           "(single-threaded exact-split CART, original "
-                          "behavior). 'hist' = HistGradientBoosting "
+                          "behavior). 'hist' = sklearn HistGradientBoosting "
                           "(histogram-binned, OpenMP-parallel, typically "
-                          "10-30x faster on >1M rows; matched defaults: "
-                          "100 trees, 8 leaves ~ depth 3, lr=0.1).")
+                          "10-30x faster on >1M rows). 'xgb' = XGBoost "
+                          "tree_method='hist'; supports GPU via --device. "
+                          "'lgbm' = LightGBM leaf-wise; usually the fastest "
+                          "CPU GBDT at this data shape. All four use matched "
+                          "defaults: 100 trees, ~8 leaves (depth 3), lr=0.1.")
+    ap.add_argument("--closure-alt-universe", type=str, default=None,
+                     metavar="BAND:IDX",
+                     help="Alt-model closure (Stage-1 plan #4). Argument is "
+                          "'BAND:IDX' (e.g. 'MaCCQE:0', 'Rvp1pi:0'). The CV "
+                          "w_truth / w_reco stay loaded so the OmniFold "
+                          "response is unchanged, but the closure pseudo-data "
+                          "weights are replaced by w_reco_<BAND>_<IDX> and a "
+                          "matching truth reference (hTruthAlt2D / "
+                          "hTruthAltXSec2D) is built using w_truth_<BAND>_<IDX>. "
+                          "A correctly unbiased OmniFold should recover the "
+                          "alt-model truth marginal from alt-model pseudo-data "
+                          "even though the response was trained at CV. "
+                          "Requires --closure --use-weights; mutually "
+                          "exclusive with --universe, --closure-reweight, "
+                          "--closure-hidden-dpt.")
+    ap.add_argument("--device", choices=["cpu", "cuda"], default="cpu",
+                     help="Compute device for xgb/lgbm backends. 'cpu' "
+                          "(default) keeps everything on host. 'cuda' moves "
+                          "the per-tree work to GPU (XGBoost: device='cuda'; "
+                          "LightGBM: device='gpu', requires a GPU-enabled "
+                          "build). For d<=2 features the host-device "
+                          "transfer dominates; GPU wins at higher d. Ignored "
+                          "by 'exact' and 'hist'.")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
+
+    # --closure + --bootstrap-seed: Stage-1 coverage-toy mode. The naive
+    # closure invariant (step-1 reweight = 1 per event) is intentionally
+    # broken: independent Poisson draws on the closure pseudo-data and the
+    # MC weights model data-stat + MC-stat fluctuation. Across N toys, the
+    # spread of unfolded values around the CV truth tests whether the
+    # bootstrap covariance correctly covers the true truth (Stage-1 plan
+    # deliverable #5). No guard; the run log records when this combo is
+    # intentional.
+
+    if args.closure_reweight and not args.closure:
+        raise SystemExit(
+            "[FAIL] --closure-reweight requires --closure: the reweight "
+            "modifies the closure pseudo-data, which only exists in closure "
+            "mode.")
+
+    if args.closure_hidden_dpt and not args.closure:
+        raise SystemExit(
+            "[FAIL] --closure-hidden-dpt requires --closure: the hidden-axis "
+            "bias only applies to closure pseudo-data.")
+    if args.closure_hidden_dpt and args.closure_reweight:
+        raise SystemExit(
+            "[FAIL] --closure-hidden-dpt and --closure-reweight are mutually "
+            "exclusive: each defines a different reference (CV truth vs "
+            "reweighted truth). Run them as separate unfolds.")
+
+    alt_universe_branch = None
+    if args.closure_alt_universe is not None:
+        if not args.closure:
+            raise SystemExit(
+                "[FAIL] --closure-alt-universe requires --closure: the "
+                "alt-model bias only applies to closure pseudo-data.")
+        if not args.use_weights:
+            raise SystemExit(
+                "[FAIL] --closure-alt-universe requires --use-weights: the "
+                "alt-model swap is a weight substitution.")
+        if args.closure_reweight or args.closure_hidden_dpt:
+            raise SystemExit(
+                "[FAIL] --closure-alt-universe is mutually exclusive with "
+                "--closure-reweight / --closure-hidden-dpt: each defines a "
+                "different reference. Run them as separate unfolds.")
+        if args.universe is not None:
+            raise SystemExit(
+                "[FAIL] --closure-alt-universe and --universe are mutually "
+                "exclusive: alt-model closure must keep the response at CV.")
+        if ":" not in args.closure_alt_universe:
+            raise SystemExit(
+                f"[FAIL] --closure-alt-universe expects 'BAND:IDX', got "
+                f"{args.closure_alt_universe!r}")
+        alt_band, _, alt_idx = args.closure_alt_universe.partition(":")
+        if not alt_band or not alt_idx:
+            raise SystemExit(
+                f"[FAIL] --closure-alt-universe expects 'BAND:IDX', got "
+                f"{args.closure_alt_universe!r}")
+        try:
+            alt_idx_val = int(alt_idx)
+        except ValueError as exc:
+            raise SystemExit(
+                f"[FAIL] --closure-alt-universe IDX must be int, got "
+                f"{alt_idx!r}") from exc
+        if alt_idx_val < 0:
+            raise SystemExit(
+                f"[FAIL] --closure-alt-universe IDX must be non-negative, "
+                f"got {alt_idx_val}")
+        alt_universe_branch = (alt_band, alt_idx_val)
+        print(f"[INFO] Alt-model closure: band={alt_band!r}, idx={alt_idx_val} "
+              f"-> alt pseudo-data and truth ref will use "
+              f"w_*_{_sanitize_band_for_branch(alt_band)}_{alt_idx_val}; "
+              f"response stays at CV.")
+
+    universe_branch = None
+    if args.universe is not None:
+        if not args.use_weights:
+            raise SystemExit(
+                "[FAIL] --universe requires --use-weights: the CV->universe "
+                "swap is a weight substitution, so there has to be a weight "
+                "being read in the first place.")
+        if args.closure:
+            raise SystemExit(
+                "[FAIL] --universe is not supported with --closure: closure "
+                "uses CV MC reco weights as pseudo-data, so the closure "
+                "premise (unfold recovers MC truth prior) requires CV "
+                "weights everywhere.")
+        if args.bootstrap_seed is not None:
+            raise SystemExit(
+                "[FAIL] --universe and --bootstrap-seed cannot be combined: "
+                "Stage-1 UQ design runs one variance axis per unfold so each "
+                "output ROOT is attributable to exactly one component "
+                "(bootstrap = statistical, universe = systematic).")
+        if ":" not in args.universe:
+            raise SystemExit(
+                f"[FAIL] --universe expects 'BAND:IDX', got {args.universe!r}")
+        band_str, _, idx_str = args.universe.partition(":")
+        if not band_str or not idx_str:
+            raise SystemExit(
+                f"[FAIL] --universe expects 'BAND:IDX', got {args.universe!r}")
+        try:
+            idx_val = int(idx_str)
+        except ValueError as exc:
+            raise SystemExit(
+                f"[FAIL] --universe IDX must be an integer, got "
+                f"{idx_str!r}") from exc
+        if idx_val < 0:
+            raise SystemExit(
+                f"[FAIL] --universe IDX must be non-negative, got {idx_val}")
+        universe_branch = (band_str, idx_val)
+        print(f"[INFO] Universe unfold: band={band_str!r}, idx={idx_val} "
+              f"-> reading w_truth_{_sanitize_band_for_branch(band_str)}_{idx_val} "
+              f"and w_reco_{_sanitize_band_for_branch(band_str)}_{idx_val}")
 
     pt_edges = PT_EDGES
     pz_edges = PZ_EDGES
@@ -725,7 +1109,9 @@ def main():
     # --- Read signal MC arrays ---
     sig = collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
                                     pot_scale, use_weights=args.use_weights,
-                                    verbose=args.verbose)
+                                    verbose=args.verbose,
+                                    universe_branch=universe_branch,
+                                    alt_universe_branch=alt_universe_branch)
     if sig["truth_pt"].size == 0:
         raise RuntimeError("No signal events for OmniFold")
     if meas_pt.size == 0:
@@ -740,7 +1126,8 @@ def main():
     if not args.closure and t_truth_denom is not None:
         truth_denom = collect_truth_denom_arrays(
             t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
-            pot_scale, use_weights=args.use_weights, verbose=args.verbose)
+            pot_scale, use_weights=args.use_weights, verbose=args.verbose,
+            universe_branch=universe_branch)
         print(f"[INFO] truth_denom events kept (in binning): "
               f"{truth_denom['truth_pt'].size}")
         print(f"[INFO]   sum(w_truth) = {truth_denom['w_truth'].sum():.6g}")
@@ -810,6 +1197,48 @@ def main():
             measured_weights = sig["w_reco"][closure_mask].copy()
         else:
             measured_weights = np.ones(meas_pt.shape[0], dtype=float)
+        # Truth-reweight closure: apply f(pT_truth, pz_truth) to pseudo-data on
+        # the truth kinematics of each reco-pass event. The matching
+        # reweighted-truth reference is built below alongside hTruth2D.
+        if args.closure_reweight:
+            rw_data = closure_reweight_factor(
+                args.closure_reweight,
+                sig["truth_pt"][closure_mask],
+                sig["truth_pz"][closure_mask],
+                amplitude=args.closure_reweight_amplitude,
+                sigma=args.closure_reweight_sigma,
+                pt0=args.closure_reweight_pt0,
+                alpha=args.closure_reweight_alpha,
+                pz_ref=args.closure_reweight_pz_ref)
+            measured_weights = measured_weights * rw_data
+            print(f"[INFO] Closure reweight '{args.closure_reweight}': "
+                  f"data factor mean={rw_data.mean():.4f}, "
+                  f"range=({rw_data.min():.4f}, {rw_data.max():.4f})")
+        if args.closure_hidden_dpt:
+            # Hidden-variable closure: bump data weights on dpT = sim_pT -
+            # truth_pT, which OmniFold does NOT see. Truth side is left at CV
+            # so the reference stays the CV truth marginal.
+            dpT = (sig["reco_pt"][closure_mask]
+                   - sig["truth_pt"][closure_mask])
+            amp = args.closure_hidden_dpt_amplitude
+            ctr = args.closure_hidden_dpt_center
+            sg = args.closure_hidden_dpt_sigma
+            rw_hidden = 1.0 + amp * np.exp(-((dpT - ctr) / sg) ** 2)
+            measured_weights = measured_weights * rw_hidden
+            print(f"[INFO] Closure hidden-dpT bump: A={amp}, "
+                  f"center={ctr} GeV/c, sigma={sg} GeV/c, "
+                  f"mean factor={rw_hidden.mean():.4f}, "
+                  f"max={rw_hidden.max():.4f}")
+        if alt_universe_branch is not None:
+            # Alt-model closure: replace closure pseudo-data weights with the
+            # alt-model w_reco values. CV w_reco/w_truth stay in sig so the
+            # response training is unchanged. The matching alt-truth reference
+            # (hTruthAlt2D / hTruthAltXSec2D) is built below.
+            measured_weights = sig["w_reco_alt"][closure_mask].copy()
+            ratio = (sig["w_reco_alt"][closure_mask].sum()
+                     / max(sig["w_reco"][closure_mask].sum(), 1e-30))
+            print(f"[INFO] Alt-model closure: replaced pseudo-data weights "
+                  f"with w_reco_alt; sum(alt)/sum(CV) = {ratio:.4f}")
         hDataReco2D.Reset("ICES")
         hBkgReco2D.Reset("ICES")
         for pt, pz, w in zip(meas_pt, meas_pz, measured_weights):
@@ -821,6 +1250,27 @@ def main():
         print(f"[INFO] Closure pseudo-data entries: {meas_pt.size}, "
               f"sum(w)={float(measured_weights.sum()):.6g}")
         print(f"[INFO] hDataReco2D (closure) integral: {hDataReco2D.Integral():.6g}")
+
+    # --- Poisson(1) bootstrap weights (Stage-1 statistical uncertainty) ---
+    # Draws independent per-event Poisson(1) multipliers on data and MC, so
+    # data-stat and MC-stat contribute jointly per replica (Practical Guide
+    # 2507.09582 §5.1). Reseeded via np.random.default_rng so replicas are
+    # reproducible. CV result is the unweighted unfold (flag omitted).
+    if args.bootstrap_seed is not None:
+        rng_data = np.random.default_rng(args.bootstrap_seed)
+        rng_mc = np.random.default_rng(args.bootstrap_seed + 10_000_000)
+        b_data = rng_data.poisson(1.0, size=measured_weights.shape[0]).astype(float)
+        b_truth = rng_mc.poisson(1.0, size=sig["w_truth"].shape[0]).astype(float)
+        # Reco weights ride the truth draw so that a single MC event is
+        # consistently up/down-weighted at both reco and truth level
+        # (omnifold.py treats sig["w_truth"] and sig["w_reco"] as the same
+        # event row).
+        measured_weights = measured_weights * b_data
+        sig["w_truth"] = sig["w_truth"] * b_truth
+        sig["w_reco"] = sig["w_reco"] * b_truth
+        print(f"[INFO] Poisson bootstrap: seed={args.bootstrap_seed}, "
+              f"data factor sum={b_data.sum():.6g} (n={b_data.size}), "
+              f"mc factor sum={b_truth.sum():.6g} (n={b_truth.size})")
 
     # --- Run 2D OmniFold via direct Python helper call ---
     # NB: we bypass ROOT.RooUnfoldOmnifold().UnbinnedOmnifold() because its
@@ -860,7 +1310,7 @@ def main():
     else:
         c1_params = c2_params = rg_params = None
 
-    print(f"[INFO] GBDT estimator: {args.estimator}")
+    print(f"[INFO] GBDT estimator: {args.estimator} (device={args.device})")
     step1_weights, step2_weights = ohf.omnifold(
         MCgen, MCreco, measured,
         sig["pass_reco"], sig["pass_truth"],
@@ -874,6 +1324,7 @@ def main():
         regressor_params=rg_params,
         parameter_format="dict",
         estimator=args.estimator,
+        device=args.device,
     )
     print(f"[INFO] OmniFold complete. step1 weights: {step1_weights.shape[0]}, "
           f"step2 weights: {step2_weights.shape[0]}")
@@ -897,6 +1348,95 @@ def main():
     hTruth2D = make_th2d("hTruth2D", "MC truth prior", pt_edges, pz_edges)
     for pt, pz, w in zip(truth_pt_in, truth_pz_in, truth_w_in):
         hTruth2D.Fill(float(pt), float(pz), float(w))
+
+    # Truth-reweight closure reference: same reweight applied to truth events
+    # as was applied to the pseudo-data above (on identical kinematics, so a
+    # perfect unfold maps the reco shift back into this reweighted truth).
+    hTruthRew2D = None
+    if args.closure_reweight:
+        rw_truth = closure_reweight_factor(
+            args.closure_reweight, truth_pt_in, truth_pz_in,
+            amplitude=args.closure_reweight_amplitude,
+            sigma=args.closure_reweight_sigma,
+            pt0=args.closure_reweight_pt0,
+            alpha=args.closure_reweight_alpha,
+            pz_ref=args.closure_reweight_pz_ref)
+        hTruthRew2D = make_th2d(
+            "hTruthRew2D",
+            f"Reweighted MC truth (closure ref, {args.closure_reweight})",
+            pt_edges, pz_edges)
+        for pt, pz, w, f in zip(truth_pt_in, truth_pz_in, truth_w_in, rw_truth):
+            hTruthRew2D.Fill(float(pt), float(pz), float(w) * float(f))
+        print(f"[CHECK] hTruthRew2D integral: {hTruthRew2D.Integral():.6g}")
+
+    # Alt-model closure reference: fill truth marginal with alt-model truth
+    # weights (response stays at CV via truth_w_in for hTruth2D / hUnfold2D
+    # normalization, but the closure reference is built explicitly here).
+    hTruthAlt2D = None
+    hTruthInAccept2D = None
+    hTruthAltInAccept2D = None
+    hTruthAltExtrapolated2D = None
+    if alt_universe_branch is not None:
+        truth_w_alt_in = sig["w_truth_alt"][sig["pass_truth"]]
+        hTruthAlt2D = make_th2d(
+            "hTruthAlt2D",
+            f"Alt-model MC truth (full sample, "
+            f"{args.closure_alt_universe})",
+            pt_edges, pz_edges)
+        for pt, pz, w in zip(truth_pt_in, truth_pz_in, truth_w_alt_in):
+            hTruthAlt2D.Fill(float(pt), float(pz), float(w))
+        print(f"[CHECK] hTruthAlt2D integral: {hTruthAlt2D.Integral():.6g}")
+
+        # In-acceptance references: restrict to events that pass_reco. These
+        # are what OmniFold can actually see and propagate to truth. The
+        # ratio (alt-in-accept / CV-in-accept) per bin is the step-2 weight
+        # OmniFold recovers, so the "extrapolated" alt-truth target is
+        # hTruth2D[bin] x (alt-in-accept / CV-in-accept)[bin]. THAT is what
+        # the unfold should reproduce, not the full alt-truth marginal.
+        accept_mask = sig["pass_truth"] & sig["pass_reco"]
+        ta_pt = sig["truth_pt"][accept_mask]
+        ta_pz = sig["truth_pz"][accept_mask]
+        ta_w_cv = sig["w_truth"][accept_mask]
+        ta_w_alt = sig["w_truth_alt"][accept_mask]
+        hTruthInAccept2D = make_th2d(
+            "hTruthInAccept2D",
+            "CV truth restricted to pass_reco (alt-model closure aux)",
+            pt_edges, pz_edges)
+        hTruthAltInAccept2D = make_th2d(
+            "hTruthAltInAccept2D",
+            f"Alt-model truth restricted to pass_reco "
+            f"({args.closure_alt_universe})",
+            pt_edges, pz_edges)
+        for pt, pz, w in zip(ta_pt, ta_pz, ta_w_cv):
+            hTruthInAccept2D.Fill(float(pt), float(pz), float(w))
+        for pt, pz, w in zip(ta_pt, ta_pz, ta_w_alt):
+            hTruthAltInAccept2D.Fill(float(pt), float(pz), float(w))
+        print(f"[CHECK] hTruthInAccept2D    integral: "
+              f"{hTruthInAccept2D.Integral():.6g}")
+        print(f"[CHECK] hTruthAltInAccept2D integral: "
+              f"{hTruthAltInAccept2D.Integral():.6g}")
+
+        # Extrapolated alt-truth target: per-bin scale of CV truth by the
+        # in-acceptance alt/CV ratio. Bins with zero in-acceptance CV are
+        # filled with CV truth (no information from data, OmniFold reverts
+        # to prior). This is what the unfold is mathematically capable of
+        # recovering, so it is the right alt-model closure target.
+        hTruthAltExtrapolated2D = hTruth2D.Clone("hTruthAltExtrapolated2D")
+        hTruthAltExtrapolated2D.SetTitle(
+            f"Alt-model truth target for OmniFold closure "
+            f"(in-accept extrapolation, {args.closure_alt_universe})")
+        for ix in range(1, hTruthAltExtrapolated2D.GetNbinsX() + 1):
+            for iy in range(1, hTruthAltExtrapolated2D.GetNbinsY() + 1):
+                cv_in = hTruthInAccept2D.GetBinContent(ix, iy)
+                alt_in = hTruthAltInAccept2D.GetBinContent(ix, iy)
+                cv_truth = hTruth2D.GetBinContent(ix, iy)
+                if cv_in > 0:
+                    hTruthAltExtrapolated2D.SetBinContent(
+                        ix, iy, cv_truth * alt_in / cv_in)
+                else:
+                    hTruthAltExtrapolated2D.SetBinContent(ix, iy, cv_truth)
+        print(f"[CHECK] hTruthAltExtrapolated2D integral: "
+              f"{hTruthAltExtrapolated2D.Integral():.6g}")
 
     # OmniFold unfolded: step2 returns a truth-side density ratio. Convert it
     # back to event-count units by multiplying by the original truth weights.
@@ -961,6 +1501,47 @@ def main():
         hUnfold2D, hCompleteness2D, flux_bins,
         data_pot, n_nucleons, pt_edges, pz_edges)
 
+    # Closure reference xsec: push hTruthRew2D through the same normalization
+    # machinery so it lives in the same units as hXSec2D.
+    hTruthRewXSec2D = None
+    if hTruthRew2D is not None:
+        hTruthRewXSec2D = extract_cross_section_2d(
+            hTruthRew2D, hCompleteness2D, flux_bins,
+            data_pot, n_nucleons, pt_edges, pz_edges)
+        hTruthRewXSec2D.SetName("hTruthRewXSec2D")
+        hTruthRewXSec2D.SetTitle(
+            f"Closure reference xsec ({args.closure_reweight})")
+
+    # CV truth cross section: closure reference for the hidden-variable
+    # closure (and a convenient sanity-check histogram for any closure run).
+    hTruthXSec2D = None
+    if args.closure:
+        hTruthXSec2D = extract_cross_section_2d(
+            hTruth2D, hCompleteness2D, flux_bins,
+            data_pot, n_nucleons, pt_edges, pz_edges)
+        hTruthXSec2D.SetName("hTruthXSec2D")
+        hTruthXSec2D.SetTitle("CV MC truth cross section (closure reference)")
+
+    # Alt-model truth cross section: closure reference for the alt-model
+    # closure (push hTruthAlt2D through the same normalization machinery).
+    hTruthAltXSec2D = None
+    hTruthAltExtrapolatedXSec2D = None
+    if hTruthAlt2D is not None:
+        hTruthAltXSec2D = extract_cross_section_2d(
+            hTruthAlt2D, hCompleteness2D, flux_bins,
+            data_pot, n_nucleons, pt_edges, pz_edges)
+        hTruthAltXSec2D.SetName("hTruthAltXSec2D")
+        hTruthAltXSec2D.SetTitle(
+            f"Alt-model truth cross section "
+            f"(full sample, {args.closure_alt_universe})")
+        hTruthAltExtrapolatedXSec2D = extract_cross_section_2d(
+            hTruthAltExtrapolated2D, hCompleteness2D, flux_bins,
+            data_pot, n_nucleons, pt_edges, pz_edges)
+        hTruthAltExtrapolatedXSec2D.SetName("hTruthAltExtrapolatedXSec2D")
+        hTruthAltExtrapolatedXSec2D.SetTitle(
+            f"Alt-model truth cross section target for closure "
+            f"(in-accept extrapolation, {args.closure_alt_universe})")
+
     # 1D projections
     hXSec_pt = project_xsec_1d(hXSec2D, "pt", pt_edges, pz_edges)
     hXSec_pz = project_xsec_1d(hXSec2D, "pz", pt_edges, pz_edges)
@@ -990,10 +1571,29 @@ def main():
     ROOT.TNamed("fluxSource", flux_source).Write()
 
     # Histograms
-    for h in [hDataReco2D, hBkgReco2D, hMeasSub2D, hMeasTrain2D,
-              hTruth2D, hUnfold2D, hEff2D, hEffNum, hEffDen,
-              hCompleteness2D, hOFInputTruth2D, hOFTruthDenom2D,
-              hXSec2D, hXSec_pt, hXSec_pz, hFlux_pt]:
+    hist_list = [hDataReco2D, hBkgReco2D, hMeasSub2D, hMeasTrain2D,
+                 hTruth2D, hUnfold2D, hEff2D, hEffNum, hEffDen,
+                 hCompleteness2D, hOFInputTruth2D, hOFTruthDenom2D,
+                 hXSec2D, hXSec_pt, hXSec_pz, hFlux_pt]
+    if hTruthRew2D is not None:
+        hist_list.append(hTruthRew2D)
+    if hTruthRewXSec2D is not None:
+        hist_list.append(hTruthRewXSec2D)
+    if hTruthXSec2D is not None:
+        hist_list.append(hTruthXSec2D)
+    if hTruthAlt2D is not None:
+        hist_list.append(hTruthAlt2D)
+    if hTruthAltXSec2D is not None:
+        hist_list.append(hTruthAltXSec2D)
+    if hTruthInAccept2D is not None:
+        hist_list.append(hTruthInAccept2D)
+    if hTruthAltInAccept2D is not None:
+        hist_list.append(hTruthAltInAccept2D)
+    if hTruthAltExtrapolated2D is not None:
+        hist_list.append(hTruthAltExtrapolated2D)
+    if hTruthAltExtrapolatedXSec2D is not None:
+        hist_list.append(hTruthAltExtrapolatedXSec2D)
+    for h in hist_list:
         h.Write()
     ROOT.TNamed("hEffDenSource", eff_source).Write()
 

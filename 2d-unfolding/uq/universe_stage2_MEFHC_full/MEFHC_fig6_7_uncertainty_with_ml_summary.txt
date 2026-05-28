@@ -1,0 +1,27 @@
+Fig.-6/7-style fractional uncertainty projections
+xsec_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root
+universe_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full/uq_universe_covariance_full.root
+bootstrap_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root
+ml_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root
+n_reported: 205
+
+pz projection:
+  Total                  median=  2.977% max= 14.221%
+  Flux                   median=  0.207% max=  4.093%
+  Models                 median=  0.397% max=  1.261%
+  Normalization          median=  0.050% max=  0.231%
+  Statistical            median=  0.240% max=  0.759%
+  Hadronic response      median=  0.365% max=  1.657%
+  Muon reconstruction    median=  2.671% max= 14.148%
+  ML                     median=  0.044% max=  0.555%
+
+pt projection:
+  Total                  median=  3.623% max=  6.137%
+  Flux                   median=  0.124% max=  2.442%
+  Models                 median=  0.455% max=  0.822%
+  Normalization          median=  0.061% max=  0.179%
+  Statistical            median=  0.250% max=  1.042%
+  Hadronic response      median=  0.322% max=  3.066%
+  Muon reconstruction    median=  3.584% max=  5.067%
+  ML                     median=  0.042% max=  0.115%
+

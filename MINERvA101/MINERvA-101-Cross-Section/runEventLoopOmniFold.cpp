@@ -77,7 +77,11 @@ enum ErrorCodes
 #include <iostream>
 #include <cstdlib> //getenv()
 #include <cstdint>
+#include <sstream>
+#include <string>
 #include <unordered_set>
+#include <set>
+#include <vector>
 
 // Pack (mc_run, mc_subrun, mc_nthEvtInFile) into a unique 64-bit key for
 // fast hash-set lookup of "is this truth event already represented on the
@@ -101,6 +105,137 @@ struct TruthDenomEntry
   double w_truth;
   uint64_t key;
 };
+
+// UQ Stage-1 #7 (2026-05-21): per-systematic-universe weight dump.
+// When MNV101_DUMP_UNIVERSES is set (env var), build one TBranch per
+// (band, idx) for every (band) named in the comma-separated allowlist
+// (or for every standard band when the env var is exactly "1"). One
+// model.GetWeight(*universe, evt) is evaluated per (band, idx) per event,
+// in addition to the CV evaluation. Restores universe state to CV after
+// the per-event universe sweep so subsequent CV-dependent code is intact.
+//
+// Branch name: w_<prefix>_<sanitized-band>_<idx> where prefix is "truth"
+// or "reco" and the sanitizer replaces non-[A-Za-z0-9_] with '_' so the
+// resulting names are ROOT-safe.
+//
+// Lateral (non-vertical-only) universes additionally write shifted muon
+// kinematics so the Python driver can swap (pT, pz) per universe. The
+// kinematic branch names follow the existing CV-side convention of the
+// host tree: pT_truth/pz_truth on the truth-denom tree, MC/MC_pz when the
+// universe is in truth-mode on the reco tree, sim/sim_pz when in
+// reco-mode on the reco tree.
+struct UniverseBranchInfo
+{
+  std::string bandName;
+  size_t idx;
+  CVUniverse* univ;
+  std::string branchName;          // w_<prefix>_<band>_<idx>
+  bool isLateral = false;
+  std::string ptBranchName;        // empty when !isLateral
+  std::string pzBranchName;        // empty when !isLateral
+};
+
+inline std::string SanitizeForRootBranchName(const std::string& s)
+{
+  std::string out = s;
+  for(char& c : out)
+  {
+    if(!(std::isalnum(static_cast<unsigned char>(c)) || c == '_')) c = '_';
+  }
+  return out;
+}
+
+// Parse MNV101_DUMP_UNIVERSES env var. Returns a (dumpAll, allowlist) pair.
+// dumpAll = true when env var is exactly "1"; allowlist holds band names
+// when env var is a comma-separated list. Returns (false, empty) when the
+// env var is not set, meaning "do not dump".
+inline std::pair<bool, std::set<std::string>>
+ParseUniverseAllowlist(const char* envVal)
+{
+  std::pair<bool, std::set<std::string>> result(false, {});
+  if(envVal == nullptr) return result;
+  const std::string s = envVal;
+  if(s == "1")
+  {
+    result.first = true;
+    return result;
+  }
+  std::stringstream ss(s);
+  std::string item;
+  while(std::getline(ss, item, ','))
+  {
+    // trim surrounding whitespace
+    size_t a = item.find_first_not_of(" \t");
+    size_t b = item.find_last_not_of(" \t");
+    if(a == std::string::npos) continue;
+    result.second.insert(item.substr(a, b - a + 1));
+  }
+  return result;
+}
+
+// Kinematic-branch naming context for lateral universes. The host tree
+// uses a different (pT, pz) branch convention depending on the dump
+// site, so the BuildUniverseBranchTable caller picks one.
+enum class UniverseKineContext
+{
+  TruthTree,        // pT_truth_<band>_<idx>, pz_truth_<band>_<idx>
+  RecoTreeTruth,    // MC_<band>_<idx>,        MC_pz_<band>_<idx>
+  RecoTreeReco      // sim_<band>_<idx>,       sim_pz_<band>_<idx>
+};
+
+// Build the per-universe branch table. `bands` is the truth_bands or
+// error_bands map. `prefix` is "truth" or "reco". `kineCtx` selects the
+// kinematic branch naming convention for lateral universes. `dumpAll`
+// and `allowlist` come from ParseUniverseAllowlist(). The "cv" band is
+// always skipped (CV weight already lives in w_truth / w_reco).
+inline std::vector<UniverseBranchInfo>
+BuildUniverseBranchTable(
+    const std::map<std::string, std::vector<CVUniverse*>>& bands,
+    const std::string& prefix,
+    UniverseKineContext kineCtx,
+    bool dumpAll,
+    const std::set<std::string>& allowlist)
+{
+  std::vector<UniverseBranchInfo> out;
+  for(const auto& kv : bands)
+  {
+    const std::string& bandName = kv.first;
+    const auto& universes = kv.second;
+    if(bandName == "cv") continue;
+    if(!dumpAll && allowlist.find(bandName) == allowlist.end()) continue;
+    const std::string sanBand = SanitizeForRootBranchName(bandName);
+    for(size_t idx = 0; idx < universes.size(); ++idx)
+    {
+      UniverseBranchInfo ub;
+      ub.bandName = bandName;
+      ub.idx = idx;
+      ub.univ = universes[idx];
+      ub.branchName = "w_" + prefix + "_" + sanBand + "_" + std::to_string(idx);
+      ub.isLateral = (universes[idx] != nullptr) && !universes[idx]->IsVerticalOnly();
+      if(ub.isLateral)
+      {
+        const std::string suffix = sanBand + "_" + std::to_string(idx);
+        switch(kineCtx)
+        {
+          case UniverseKineContext::TruthTree:
+            ub.ptBranchName = "pT_truth_" + suffix;
+            ub.pzBranchName = "pz_truth_" + suffix;
+            break;
+          case UniverseKineContext::RecoTreeTruth:
+            ub.ptBranchName = "MC_"     + suffix;
+            ub.pzBranchName = "MC_pz_"  + suffix;
+            break;
+          case UniverseKineContext::RecoTreeReco:
+            ub.ptBranchName = "sim_"    + suffix;
+            ub.pzBranchName = "sim_pz_" + suffix;
+            break;
+        }
+      }
+      out.push_back(ub);
+    }
+  }
+  return out;
+}
 
 //==============================================================================
 // Loop and Fill (write only the unbinned arrays needed for OmniFold)
@@ -129,7 +264,8 @@ void LoopAndFillUnbinnedMCTruthDenom(
     const std::vector<PlotUtils::Reweighter<CVUniverse, MichelEvent>*>& componentRWs,
     TTree* out,
     std::unordered_set<uint64_t>* outTruthDenomIDs = nullptr,
-    std::vector<TruthDenomEntry>* outTruthDenomCache = nullptr)
+    std::vector<TruthDenomEntry>* outTruthDenomCache = nullptr,
+    const std::map<std::string, std::vector<CVUniverse*>>* truthBands = nullptr)
 {
   double MC = 0.0;
   double MC_pz = 0.0;
@@ -156,12 +292,47 @@ void LoopAndFillUnbinnedMCTruthDenom(
     }
   }
 
+  // Per-systematic-universe weight dump (UQ Stage-1 #7). Build the branch
+  // table once before the loop; uniWeights storage is sized + reserved
+  // up front so the addresses we hand to TBranch::Branch stay valid.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniBranches;
+  std::vector<double> uniWeights;
+  std::vector<double> uniLatPT;     // parallel to uniBranches; unused (NaN) for vertical entries
+  std::vector<double> uniLatPZ;
+  size_t nLateral = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (truthBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniBranches = BuildUniverseBranchTable(
+        *truthBands, "truth", UniverseKineContext::TruthTree,
+        uniAllow.first, uniAllow.second);
+    uniWeights.assign(uniBranches.size(), 1.0);
+    uniLatPT.assign(uniBranches.size(), 0.0);
+    uniLatPZ.assign(uniBranches.size(), 0.0);
+    for(size_t k = 0; k < uniBranches.size(); ++k)
+    {
+      out->Branch(uniBranches[k].branchName.c_str(), &uniWeights[k]);
+      if(uniBranches[k].isLateral)
+      {
+        out->Branch(uniBranches[k].ptBranchName.c_str(), &uniLatPT[k]);
+        out->Branch(uniBranches[k].pzBranchName.c_str(), &uniLatPZ[k]);
+        ++nLateral;
+      }
+    }
+    std::cout << "  Universe-weight dump enabled: "
+              << uniBranches.size() << " (band,idx) branches written to "
+              << out->GetName() << " ("
+              << nLateral << " lateral with shifted pT/pz).\n";
+  }
+
   std::cout << "Starting unbinned MC truth-denom loop (Truth tree)...\n";
   if(outTruthDenomIDs)
     std::cout << "  (collecting truth-denom event IDs for reco-loop gating)\n";
   const int nEntries = truth->GetEntries();
 
-  // Dedupe on (mc_run, mc_subrun, mc_nthEvtInFile). MEHFC playlist 1E file
+  // Dedupe on (mc_run, mc_subrun, mc_nthEvtInFile). MEFHC playlist 1E file
   // run00111353 contains 1,102 truth events written twice with identical
   // IDs (upstream AnaTuple double-fill). Without this dedupe the
   // efficiency denominator is over-counted and Phase-18's by-construction
@@ -203,6 +374,26 @@ void LoopAndFillUnbinnedMCTruthDenom(
     {
       for(size_t k = 0; k < componentRWs.size(); ++k)
         w_component[k] = componentRWs[k]->GetWeight(*truthCV, evt);
+    }
+    if(dumpUniverses)
+    {
+      for(size_t k = 0; k < uniBranches.size(); ++k)
+      {
+        CVUniverse* u = uniBranches[k].univ;
+        u->SetEntry(i);
+        MichelEvent uEvt;
+        model.SetEntry(*u, uEvt);
+        uniWeights[k] = model.GetWeight(*u, uEvt);
+        if(uniBranches[k].isLateral)
+        {
+          uniLatPT[k] = u->GetMuonPTTrue();
+          uniLatPZ[k] = u->GetMuonPzTrue();
+        }
+      }
+      // Restore CV state so any subsequent code in this iteration
+      // (or the next loop pass) sees the CV-side model context.
+      truthCV->SetEntry(i);
+      model.SetEntry(*truthCV, evt);
     }
 
     out->Fill();
@@ -289,7 +480,8 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     PlotUtils::Model<CVUniverse, MichelEvent>& model,
     TTree* out,
     std::unordered_set<uint64_t>* outRecoIDs = nullptr,
-    const std::unordered_set<uint64_t>* truthDenomIDs = nullptr)
+    const std::unordered_set<uint64_t>* truthDenomIDs = nullptr,
+    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr)
 {
   double sim = 0.0;
   double sim_pz = 0.0;
@@ -307,6 +499,67 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   out->Branch("MC_pz", &MC_pz);
   out->Branch("w_truth", &w_truth);
 
+  // Per-systematic-universe weight dump (UQ Stage-1 #7). Builds two
+  // parallel branch tables — one for truth-mode weights, one for
+  // reco-mode weights — over the same (band, idx) universes from
+  // errorBands. The MNV101_DUMP_UNIVERSES allowlist applies to both;
+  // each event evaluates 2*N_universes extra model.GetWeight() calls.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniTruthBranches;
+  std::vector<UniverseBranchInfo> uniRecoBranches;
+  std::vector<double> uniTruthWeights;
+  std::vector<double> uniRecoWeights;
+  // Lateral kinematic shadow arrays, parallel to the branch tables.
+  // For truth-mode entries we dump universe-shifted truth pT/pz as
+  // MC_<band>_<idx>/MC_pz_<band>_<idx>; for reco-mode entries we dump
+  // universe-shifted reco pT/pz as sim_<band>_<idx>/sim_pz_<band>_<idx>.
+  std::vector<double> uniTruthLatPT, uniTruthLatPZ;
+  std::vector<double> uniRecoLatPT,  uniRecoLatPZ;
+  size_t nLatTruth = 0, nLatReco = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (errorBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniTruthBranches = BuildUniverseBranchTable(
+        *errorBands, "truth", UniverseKineContext::RecoTreeTruth,
+        uniAllow.first, uniAllow.second);
+    uniRecoBranches = BuildUniverseBranchTable(
+        *errorBands, "reco", UniverseKineContext::RecoTreeReco,
+        uniAllow.first, uniAllow.second);
+    uniTruthWeights.assign(uniTruthBranches.size(), 1.0);
+    uniRecoWeights.assign(uniRecoBranches.size(),  1.0);
+    uniTruthLatPT.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatPZ.assign(uniTruthBranches.size(),  0.0);
+    uniRecoLatPT.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatPZ.assign(uniRecoBranches.size(),    0.0);
+    for(size_t k = 0; k < uniTruthBranches.size(); ++k)
+    {
+      out->Branch(uniTruthBranches[k].branchName.c_str(), &uniTruthWeights[k]);
+      if(uniTruthBranches[k].isLateral)
+      {
+        out->Branch(uniTruthBranches[k].ptBranchName.c_str(), &uniTruthLatPT[k]);
+        out->Branch(uniTruthBranches[k].pzBranchName.c_str(), &uniTruthLatPZ[k]);
+        ++nLatTruth;
+      }
+    }
+    for(size_t k = 0; k < uniRecoBranches.size(); ++k)
+    {
+      out->Branch(uniRecoBranches[k].branchName.c_str(), &uniRecoWeights[k]);
+      if(uniRecoBranches[k].isLateral)
+      {
+        out->Branch(uniRecoBranches[k].ptBranchName.c_str(), &uniRecoLatPT[k]);
+        out->Branch(uniRecoBranches[k].pzBranchName.c_str(), &uniRecoLatPZ[k]);
+        ++nLatReco;
+      }
+    }
+    std::cout << "  Universe-weight dump enabled: "
+              << uniTruthBranches.size() << " truth-mode + "
+              << uniRecoBranches.size() << " reco-mode (band,idx) branches "
+              << "written to " << out->GetName() << " ("
+              << nLatTruth << " lateral truth + "
+              << nLatReco  << " lateral reco with shifted pT/pz).\n";
+  }
+
   std::cout << "Starting unbinned MC selected-signal-reco loop (reco tree)...\n";
   const int nEntries = reco->GetEntries();
 
@@ -314,7 +567,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   // AnaTuple files such as run00111353_Playlist.root double-fill some events,
   // so the same (mc_run, mc_subrun, mc_nthEvtInFile) key can appear twice on
   // the reco tree too. Without this dedupe, mc_signal_reco picks up a small
-  // count surplus over mc_truth_denom (7 events at MEHFC scale = 0.2 ppm),
+  // count surplus over mc_truth_denom (7 events at MEFHC scale = 0.2 ppm),
   // which prevents `c` from landing at exactly 1 by construction.
   std::unordered_set<uint64_t> seenRecoKeys;
   long nDupRecoSkipped = 0;
@@ -386,6 +639,45 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
       {
         ++nDupRecoSkipped;
         continue;
+      }
+      if(dumpUniverses)
+      {
+        // Truth-mode universe weights: same context as the CV w_truth_tmp
+        // computation above (CVUniverse::SetTruth(true)).
+        CVUniverse::SetTruth(true);
+        for(size_t k = 0; k < uniTruthBranches.size(); ++k)
+        {
+          CVUniverse* u = uniTruthBranches[k].univ;
+          u->SetEntry(i);
+          MichelEvent uEvt;
+          model.SetEntry(*u, uEvt);
+          uniTruthWeights[k] = model.GetWeight(*u, uEvt);
+          if(uniTruthBranches[k].isLateral)
+          {
+            uniTruthLatPT[k] = u->GetMuonPTTrue();
+            uniTruthLatPZ[k] = u->GetMuonPzTrue();
+          }
+        }
+        // Reco-mode universe weights: CVUniverse::SetTruth(false).
+        CVUniverse::SetTruth(false);
+        for(size_t k = 0; k < uniRecoBranches.size(); ++k)
+        {
+          CVUniverse* u = uniRecoBranches[k].univ;
+          u->SetEntry(i);
+          MichelEvent uEvt;
+          model.SetEntry(*u, uEvt);
+          uniRecoWeights[k] = model.GetWeight(*u, uEvt);
+          if(uniRecoBranches[k].isLateral)
+          {
+            uniRecoLatPT[k] = u->GetMuonPT();
+            uniRecoLatPZ[k] = u->GetMuonPz();
+          }
+        }
+        // Restore CV state for downstream code that may still consult
+        // recoCV in this iteration (the duplicate-key check has already
+        // run, but be defensive against future edits).
+        recoCV->SetEntry(i);
+        model.SetEntry(*recoCV, evt);
       }
       out->Fill();
       if(outRecoIDs) outRecoIDs->insert(key);
@@ -626,6 +918,21 @@ int main(const int argc, const char** argv)
   if(doSystematics) truth_bands = GetStandardSystematics(options.m_truth);
   truth_bands["cv"] = {new CVUniverse(options.m_truth)};
 
+  // Diagnostic: print the GetStandardSystematics inventory once so a fresh
+  // dump-all rebuild documents which bands are present and which are lateral.
+  if(doSystematics)
+  {
+    std::cout << "GetStandardSystematics inventory ("
+              << error_bands.size() << " bands incl. cv):\n";
+    for(const auto& kv : error_bands)
+    {
+      const auto& v = kv.second;
+      const bool vert = v.empty() ? true : v.front()->IsVerticalOnly();
+      std::cout << "  " << kv.first << "  n=" << v.size()
+                << "  IsVerticalOnly=" << (vert ? "true" : "false") << "\n";
+    }
+  }
+
   CVUniverse* data_universe = new CVUniverse(options.m_data);
 
   try
@@ -645,7 +952,7 @@ int main(const int argc, const char** argv)
     mcPOT->Write();
     dataPOT->Write();
     
-    // Do not write pTmu_fiducial_nucleons here. In the documented full-MEHFC
+    // Do not write pTmu_fiducial_nucleons here. In the documented full-MEFHC
     // workflow these per-playlist ROOT files are merged with hadd, which sums
     // TParameter<double> objects and silently multiplies the fiducial nucleon
     // count by the number of playlists. The 2D Python extraction now uses the
@@ -696,14 +1003,16 @@ int main(const int argc, const char** argv)
     LoopAndFillUnbinnedMCTruthDenom(
         options.m_truth, truthCV, mycuts, model, tuneComponents, mcTruthTree,
         !truthOnly ? &truthDenomIDs : nullptr,
-        appendTruthMisses ? &truthDenomCache : nullptr);
+        appendTruthMisses ? &truthDenomCache : nullptr,
+        &truth_bands);
 
     if(!truthOnly)
     {
       LoopAndFillUnbinnedMCSelectedSignalReco(
           options.m_mc, recoCV, mycuts, model, mcSigTree,
           appendTruthMisses ? &recoIDs : nullptr,
-          &truthDenomIDs);
+          &truthDenomIDs,
+          &error_bands);
     }
 
     long nTruthOnlyMisses = 0;

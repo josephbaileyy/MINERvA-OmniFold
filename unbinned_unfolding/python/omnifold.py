@@ -99,6 +99,7 @@ class OmniFold_helper_functions:
             regressor_params = None,
             parameter_format = "TMap",
             estimator = "exact",
+            device = "cpu",
         ):
         # Removing events that don't pass generation level cuts
         MCreco_entries = MCreco_entries[MC_pass_truth_mask]
@@ -180,9 +181,46 @@ class OmniFold_helper_functions:
             use_regressor =  any(~MC_pass_reco_mask)
             if use_regressor:
                 step1_regressor = HistGradientBoostingRegressor(**rg)
+        elif estimator == "xgb":
+            # XGBoost histogram trees (tree_method="hist"). On CPU: typically
+            # 1.5-3x faster than sklearn HistGBT thanks to better thread
+            # scheduling. On GPU: pass device="cuda"; the per-tree work moves
+            # to the device, host-device transfer is the bottleneck for d<=2,
+            # so GPU only wins at higher feature dimensions.
+            from xgboost import XGBClassifier, XGBRegressor
+            xgb_defaults = dict(n_estimators=100, max_depth=3,
+                                learning_rate=0.1, tree_method="hist",
+                                device=device)
+            c1 = {**xgb_defaults, **classifier1_params}
+            c2 = {**xgb_defaults, **classifier2_params}
+            rg = {**xgb_defaults, **regressor_params}
+            step1_classifier = XGBClassifier(**c1)
+            step2_classifier = XGBClassifier(**c2)
+            use_regressor =  any(~MC_pass_reco_mask)
+            if use_regressor:
+                step1_regressor = XGBRegressor(**rg)
+        elif estimator == "lgbm":
+            # LightGBM leaf-wise growth — usually fastest CPU GBDT at this
+            # data shape. GPU build requires lightgbm compiled with OpenCL
+            # or CUDA support; default conda wheels are CPU-only. We pass
+            # device="gpu" only when the caller requests cuda/gpu.
+            from lightgbm import LGBMClassifier, LGBMRegressor
+            lgbm_defaults = dict(n_estimators=100, num_leaves=8,
+                                 learning_rate=0.1, verbose=-1)
+            if device != "cpu":
+                lgbm_defaults["device"] = "gpu"
+            c1 = {**lgbm_defaults, **classifier1_params}
+            c2 = {**lgbm_defaults, **classifier2_params}
+            rg = {**lgbm_defaults, **regressor_params}
+            step1_classifier = LGBMClassifier(**c1)
+            step2_classifier = LGBMClassifier(**c2)
+            use_regressor =  any(~MC_pass_reco_mask)
+            if use_regressor:
+                step1_regressor = LGBMRegressor(**rg)
         else:
             raise ValueError(
-                f"Unknown estimator='{estimator}'. Expected 'exact' or 'hist'.")
+                f"Unknown estimator='{estimator}'. "
+                "Expected one of: 'exact', 'hist', 'xgb', 'lgbm'.")
         
         for i in range(num_iterations):
             print(f"Starting iteration {i}") 
@@ -291,6 +329,8 @@ class OmniFold_helper_functions:
             classifier2_params=None,
             regressor_params=None,
             parameter_format = "TMap",
+            estimator = "exact",
+            device = "cpu",
         ):
         if MCgen_entries.ndim == 1:
             MCgen_entries = np.expand_dims(MCgen_entries, axis = 1)
@@ -319,7 +359,9 @@ class OmniFold_helper_functions:
             classifier1_params,
             classifier2_params,
             regressor_params,
-            parameter_format
+            parameter_format,
+            estimator,
+            device,
         )
 
     def get_step1_predictions(MCgen_data, MCreco_data, path_to_model, pass_reco = None):
