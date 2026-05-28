@@ -67,4 +67,5 @@ unbinned_unfolding/**
 
 # ---------- Local-only ----------
 .codex
+.claude/
 2d-unfolding/reference/
