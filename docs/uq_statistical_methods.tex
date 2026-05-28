@@ -105,7 +105,7 @@ relative spreads over the $205$ reported bins,
 \underbrace{0.564\%}_{\stat}\ \oplus\
 \underbrace{4.783\%}_{\syst}
 \;\longrightarrow\;
-\underbrace{5.376\%}_{\text{combined}},
+\underbrace{4.822\%}_{\text{combined}},
 \qquad
 \text{paper: } 6.86\%,
 \end{equation}
@@ -614,20 +614,26 @@ $\sigma_{i}/X^{\CV}_{i}$ over $205$ reported bins:
 \toprule
 Band & Per-bin median rel.\ $\sigma$ \\
 \midrule
-Muon\_Energy\_MINOS & $2.571\%$ \\
-Muon\_Energy\_MINERvA & $1.733\%$ \\
-MinosEfficiency & $1.502\%$ \\
-MaRES & $0.912\%$ \\
-GEANT\_Pion & $0.615\%$ \\
-MaCCQE & $0.538\%$ \\
+Muon\_Energy\_MINOS & $2.305\%$ \\
+Muon\_Energy\_MINERvA & $1.285\%$ \\
+MinosEfficiency & $1.472\%$ \\
+Flux (PPFX, $N_{u}=100$) & $1.008\%$ \\
+MaRES & $0.548\%$ \\
+MvRES & $0.377\%$ \\
+MaCCQE & $0.357\%$ \\
 \midrule
 Systematic total (44 bands $+$ norm) & $\boxed{4.783\%}$ (median); $\sqrt{\Tr\mathbf{C}}=2.463\times10^{-39}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-Muon energy scale (MINOS$+$MINERvA) and the MINOS-efficiency band now
-dominate; these are exactly the bands the Ruterbories paper flags as
-flux-correlated (\S\ref{sec:rank}).
+Grouped by category the medians are: Muon reconstruction $3.366\%$,
+Models $2.034\%$, Flux $1.008\%$, Hadronic response $0.758\%$,
+Statistical $0.563\%$, Normalization $0.081\%$. Muon energy scale
+(MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
+exactly the bands the Ruterbories paper flags as flux-correlated
+(\S\ref{sec:rank}). \emph{(These are the MAT-conformant matcorr
+medians; the pre-2026-05-28 legacy build gave larger per-band values,
+e.g.\ Muon\_Energy\_MINOS $2.571\%$.)}
 
 \subsection{How MINERvA builds its published covariance}
 \label{sec:minerva}
@@ -750,13 +756,16 @@ ML noise (lgbm seedscan, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
 Statistical (Poisson bootstrap, $N=300$) & $1.828\times10^{-40}$ & $0.564\%$ \\
 Systematic (matcorr sweep $+$ norm) & $2.463\times10^{-39}$ & $4.783\%$ \\
 \midrule
-\textbf{Combined (block sum)} & $2.518\times10^{-39}$ & $\boxed{5.376\%}$ \\
+\textbf{Combined (block sum)} & $2.470\times10^{-39}$ & $\boxed{4.822\%}$ \\
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-The combined OmniFold envelope is $\approx 78\%$ of the paper's per-bin
-median uncertainty, dominated by the systematic block.
+The combined OmniFold envelope is $\approx 70\%$ of the paper's per-bin
+median uncertainty, dominated by the systematic block. (The combined
+$\sqrt{\Tr}$ is the quadrature sum of the three independent component
+traces; the per-bin median $4.822\%$ is taken directly from the
+matcorr rollup summary.)
 
 \section{Comparing to the paper}
 \label{sec:compare}
@@ -819,7 +828,7 @@ removes the paper's stat block to avoid double-counting the bootstrap
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $\sim 2.84\%$ \\
-Per-bin median relative $\sigma$ & $6.86\%$ & $5.376\%$ \\
+Per-bin median relative $\sigma$ & $6.86\%$ & $4.822\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{1.699}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $1.688$ \\
 \bottomrule
@@ -1306,7 +1315,7 @@ $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & STATUS.md & Paper's published \texttt{TotalCovariance} \\
 Pull RMS $= 0.466$ & \S\ref{sec:pull} &
   Per-bin standardised residual on combined $\mathbf{C}$ \\
-Combined median rel.\ $= 5.376\%$ & \S\ref{sec:combine} &
+Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
 Mean coverage $= 68.71\%$ & \S\ref{sec:coverage} &
   Coverage toys, $N_{\text{toy}}=200$ \\

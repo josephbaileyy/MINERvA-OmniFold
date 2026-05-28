@@ -71,13 +71,13 @@ sqrt(trace) matches to 7 digits — report in `uq/matcorr_vs_mnvh1d.txt`.
 | ML noise (lgbm seedscan) | 10 | 5.061e-41 | 0.166 % |
 | Statistical (Poisson bootstrap, seed-varying) | 300 | 1.828e-40 | 0.564 % |
 | Systematic (matcorr universe sweep + 1.4% norm rank-1) | 187+1 | 2.463e-39 | 4.783 % |
-| **Combined (block sum)** | — | 2.518e-39 | 5.376 % |
+| **Combined (block sum)** | — | 2.470e-39 | 4.822 % |
 | Paper TotalCov (for reference) | — | 2.676e-39 | 6.86 % |
 
 Block sum assumes independence (different RNGs / physics sources). Top
-systematic bands (median rel σ): Muon_Energy_MINOS 2.57 %,
-Muon_Energy_MINERvA 1.73 %, MinosEfficiency 1.50 %, MaRES 0.91 %,
-MvRES 0.62 %, MaCCQE 0.54 %. 44 bands (6 lateral: BeamAngleX/Y,
+systematic bands (median rel σ, matcorr rollup): Muon_Energy_MINOS 2.31 %,
+Muon_Energy_MINERvA 1.29 %, MinosEfficiency 1.47 %, Flux 1.01 %,
+MaRES 0.55 %, MvRES 0.38 %, MaCCQE 0.36 %. 44 bands (6 lateral: BeamAngleX/Y,
 MuonResolution, GEANT_{Neutron,Pion,Proton}, Muon_Energy_MINERvA;
 38 vertical). **Bootstrap caveat**: the in-use N=300 cov varied `--seed`
 with `--bootstrap-seed` (tiny ML-stochastic leak, separately measured in
