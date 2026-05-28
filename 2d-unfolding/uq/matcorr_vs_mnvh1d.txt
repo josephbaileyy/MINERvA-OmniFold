@@ -1,0 +1,14 @@
+MnvH1D::GetTotalErrorMatrix vs Python matcorr rollup
+============================================================
+n_reported               : 205
+bands populated          : 44
+sqrt(trace) MAT          : 2.391038e-39
+sqrt(trace) Python       : 2.391038e-39
+Frobenius norm (MAT)     : 4.813982e-78
+Frobenius norm (Python)  : 4.813982e-78
+Frobenius norm (diff)    : 2.671919e-94
+max |diff|               : 1.198509e-94
+max |diff| / max(|cov|)  : 5.493e-17
+worst element            : (96,112)  MAT=5.799205e-79  Py=5.799205e-79
+
+Verdict: PASS (consistent with numerical noise)

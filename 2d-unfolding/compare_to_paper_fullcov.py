@@ -8,10 +8,17 @@ covariance matrices: Total, StatOnly, Flux, MuonEnergyScale — all with
 bin axes p||(16) × pt(14) and global indexing (Ptbin-1)*16 + (P||bin-1).
 
 Reports chi^2/ndf against our OmniFold result (`hXSec2D` in
-`2d_crossSection_omnifold_MEHFC_5iter.root`) for each covariance, plus
+`2d_crossSection_omnifold_MEFHC_5iter.root`) for each covariance, plus
 per-bin pulls. Unreported bins (zero diagonal in StatOnlyCov) are
 dropped from both sides and the covariance inverted via pseudo-inverse
 on the reduced block.
+
+Optionally, pass `--omnifold-cov <ROOT>:<HIST>` (repeatable) to add
+OmniFold-derived covariances (bootstrap from `uq/analyze_uq.py` and/or
+systematic universes from `uq/analyze_universes.py`) to the paper's
+TotalCovariance. The combined chi^2/ndf is reported alongside the
+paper-cov-only number so the apples-to-apples comparison the
+paper-cov-only chi^2 cannot make becomes available.
 """
 import argparse
 import numpy as np
@@ -21,8 +28,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
-DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root"
-DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEHFC_5iter"
+DEFAULT_OURS = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root"
+DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEFHC_5iter"
 
 # Paper's global index: GlobalID = (Ptbin - 1) * 16 + (P||bin - 1)
 # Ptbin runs 1..14, P||bin runs 1..16  →  N = 14*16 = 224 bins.
@@ -90,8 +97,64 @@ def chi2_with_cov(diff, cov, tag, report=True):
     chi2 = float(d @ Cinv @ d)
     ndf = n_keep
     if report:
-        print(f"  {tag:20s}  chi2 = {chi2:12.2f}   ndf = {ndf:3d}   chi2/ndf = {chi2/ndf:7.3f}")
+        print(f"  {tag:30s}  chi2 = {chi2:12.2f}   ndf = {ndf:3d}   chi2/ndf = {chi2/ndf:7.3f}")
     return chi2, ndf, mask
+
+
+def chi2_lognormal(ours_v, paper_v, cov, tag, report=True):
+    """Log-normal chi^2 (Ruterbories Table I, Peelle's Pertinent Puzzle).
+
+    r_i = log(ours_i / paper_i);  V_log[i,j] = V[i,j] / (paper_i * paper_j)
+    chi^2_log = r^T pinv(V_log) r, evaluated on reported bins only.
+    """
+    diag = np.diag(cov)
+    mask = (diag > 0) & (ours_v > 0) & (paper_v > 0)
+    n_keep = int(mask.sum())
+    x = paper_v[mask]
+    r = np.log(ours_v[mask] / x)
+    C = cov[np.ix_(mask, mask)]
+    V_log = C / np.outer(x, x)
+    Vinv = np.linalg.pinv(V_log)
+    chi2 = float(r @ Vinv @ r)
+    if report:
+        print(f"  {tag:30s}  chi2_log = {chi2:12.2f}   ndf = {n_keep:3d}   "
+              f"chi2/ndf = {chi2/n_keep:7.3f}")
+    return chi2, n_keep
+
+
+def load_omnifold_cov(spec, reported_mask):
+    """Load an OmniFold 205x205 covariance from `<ROOT>:<HIST>` and
+    promote it to the 224-bin global grid by zero-padding unreported
+    bins. analyze_uq.py / analyze_universes.py both flatten row-major
+    over (pt, pz), matching the paper's gid = (ptbin-1)*16 + (pzbin-1)
+    convention, so the i-th OmniFold reported bin maps to the i-th True
+    entry of `reported_mask`."""
+    if ":" not in spec:
+        raise SystemExit(f"--omnifold-cov expects ROOT:HIST, got: {spec!r}")
+    path, hname = spec.rsplit(":", 1)
+    f = ROOT.TFile.Open(path)
+    if not f or f.IsZombie():
+        raise SystemExit(f"[FAIL] could not open OmniFold cov ROOT: {path}")
+    h = f.Get(hname)
+    if not h:
+        raise SystemExit(f"[FAIL] hist '{hname}' missing in {path}")
+    n_rep = int(reported_mask.sum())
+    if h.GetNbinsX() != n_rep or h.GetNbinsY() != n_rep:
+        raise SystemExit(
+            f"[FAIL] {path}:{hname} is {h.GetNbinsX()}x{h.GetNbinsY()}, "
+            f"expected {n_rep}x{n_rep} (paper reported bins)")
+    small = np.empty((n_rep, n_rep))
+    for i in range(n_rep):
+        for j in range(n_rep):
+            small[i, j] = h.GetBinContent(i + 1, j + 1)
+    f.Close()
+    cov224 = np.zeros((N, N))
+    idx = np.where(reported_mask)[0]
+    cov224[np.ix_(idx, idx)] = small
+    sqrt_trace = float(np.sqrt(np.trace(small)))
+    print(f"  [omnifold-cov] {path}:{hname}  shape={small.shape}  "
+          f"sqrt(trace)={sqrt_trace:.3e}")
+    return cov224, f"{hname}"
 
 
 def main():
@@ -100,6 +163,23 @@ def main():
                     help="Path to our 2D cross-section ROOT file (contains hXSec2D)")
     ap.add_argument("--out-prefix", default=DEFAULT_OUT_PREFIX,
                     help="Prefix for output PNGs (suffix _pull_full.png is appended)")
+    ap.add_argument("--omnifold-cov", action="append", default=[],
+                    metavar="ROOT:HIST",
+                    help="Add an OmniFold 205x205 covariance (from "
+                         "uq/analyze_uq.py or uq/analyze_universes.py) "
+                         "to the paper's TotalCovariance. Repeatable. "
+                         "Example: --omnifold-cov "
+                         "uq/bootstrap_MEFHC_50/uq_covariance_MEFHC_50.root:hCov2D_reported")
+    ap.add_argument("--log-normal", action="store_true",
+                    help="Also report log-normal chi^2/ndf alongside the "
+                         "standard chi^2 (paper Table I parity). r=log(ours/paper); "
+                         "V_log[i,j]=V[i,j]/(x_i*x_j).")
+    ap.add_argument("--subtract-stat", action="store_true",
+                    help="Use (TotalCov - StatOnlyCov) as the paper baseline "
+                         "for the combined chi^2 so our bootstrap C_boot is "
+                         "not double-counted against the paper's stat block. "
+                         "Stat-only and PAPER (full cov) chi^2 lines are "
+                         "unaffected; only the combined number changes.")
     args = ap.parse_args()
     global OURS, OUT_PREFIX
     OURS = args.ours
@@ -131,10 +211,42 @@ def main():
     chi2_stat, ndf_stat, mask = chi2_with_cov(diff, cov_stat,  "stat only")
     chi2_flux, _, _           = chi2_with_cov(diff, cov_flux,  "flux only")
     chi2_mes,  _, _           = chi2_with_cov(diff, cov_mes,   "muon E scale only")
-    chi2_tot,  _, _           = chi2_with_cov(diff, cov_total, "TOTAL (stat+syst)")
+    chi2_tot,  _, _           = chi2_with_cov(diff, cov_total, "PAPER (stat+syst)")
 
-    # Per-bin pull = (ours - paper) / sqrt(total_diag)
-    sig = np.sqrt(np.diag(cov_total))
+    # Optional: add OmniFold covs (bootstrap and/or systematic universes)
+    # to the paper TotalCov. ndf is unchanged (same 205 reported bins).
+    chi2_combined = None
+    chi2_combined_log = None
+    if args.subtract_stat:
+        cov_combined = cov_total - cov_stat
+        baseline_tag = "paper(syst-only) "
+    else:
+        cov_combined = cov_total.copy()
+        baseline_tag = "paper "
+    omnifold_tags = []
+    if args.omnifold_cov:
+        print(f"\n=== adding OmniFold covariances"
+              f"{' (paper stat subtracted)' if args.subtract_stat else ''} ===")
+        for spec in args.omnifold_cov:
+            cov224, tag = load_omnifold_cov(spec, mask)
+            cov_combined = cov_combined + cov224
+            omnifold_tags.append(tag)
+        chi2_combined, _, _ = chi2_with_cov(
+            diff, cov_combined,
+            "COMBINED (" + baseline_tag + "+ " + " + ".join(omnifold_tags) + ")")
+
+    if args.log_normal:
+        print(f"\n=== log-normal chi^2 (paper Table I parity) ===")
+        chi2_lognormal(ours_v, paper_v, cov_total, "PAPER (stat+syst)")
+        if chi2_combined is not None:
+            chi2_combined_log, _ = chi2_lognormal(
+                ours_v, paper_v, cov_combined,
+                "COMBINED (" + baseline_tag + "+ omnifold)")
+
+    # Per-bin pull = (ours - paper) / sqrt(diag). Use combined cov when
+    # OmniFold covs were added so the pull reflects the same total error
+    # used in the headline chi^2.
+    sig = np.sqrt(np.diag(cov_combined))
     pull = np.zeros_like(diff)
     ok = (sig > 0)
     pull[ok] = diff[ok] / sig[ok]
@@ -163,8 +275,13 @@ def main():
     axs[1].set_ylabel("bins")
     axs[1].set_title(f"Pull distribution ({int(mask.sum())} reported bins)")
     mu, sd = pull[mask].mean(), pull[mask].std()
-    axs[1].text(0.03, 0.95,
-                f"mean={mu:.2f}\nrms ={sd:.2f}\n$\\chi^2$/ndf total = {chi2_tot/ndf_stat:.2f}",
+    headline = (
+        f"mean={mu:.2f}\nrms ={sd:.2f}\n"
+        f"$\\chi^2$/ndf paper = {chi2_tot/ndf_stat:.2f}"
+        + (f"\n$\\chi^2$/ndf comb. = {chi2_combined/ndf_stat:.2f}"
+           if chi2_combined is not None else "")
+    )
+    axs[1].text(0.03, 0.95, headline,
                 transform=axs[1].transAxes, va="top", family="monospace",
                 bbox=dict(facecolor="white", alpha=0.85, edgecolor="gray"))
 
@@ -177,11 +294,17 @@ def main():
     # Also print a condensed table for the run log
     print("\nSummary for run log:")
     print(f"  reported bins: {int(mask.sum())}")
-    print(f"  chi^2/ndf  stat only       : {chi2_stat/ndf_stat:.3f}")
-    print(f"  chi^2/ndf  flux only       : {chi2_flux/ndf_stat:.3f}")
-    print(f"  chi^2/ndf  muon E scale    : {chi2_mes/ndf_stat:.3f}")
-    print(f"  chi^2/ndf  TOTAL (full cov): {chi2_tot/ndf_stat:.3f}")
-    print(f"  pull mean / rms            : {mu:.3f} / {sd:.3f}")
+    print(f"  chi^2/ndf  stat only        : {chi2_stat/ndf_stat:.3f}")
+    print(f"  chi^2/ndf  flux only        : {chi2_flux/ndf_stat:.3f}")
+    print(f"  chi^2/ndf  muon E scale     : {chi2_mes/ndf_stat:.3f}")
+    print(f"  chi^2/ndf  PAPER (full cov) : {chi2_tot/ndf_stat:.3f}")
+    if chi2_combined is not None:
+        print(f"  chi^2/ndf  COMBINED         : {chi2_combined/ndf_stat:.3f}"
+              f"   (added: {', '.join(omnifold_tags)}"
+              f"{', paper stat subtracted' if args.subtract_stat else ''})")
+    if args.log_normal and chi2_combined_log is not None:
+        print(f"  chi^2/ndf  COMBINED (log-N) : {chi2_combined_log/ndf_stat:.3f}")
+    print(f"  pull mean / rms             : {mu:.3f} / {sd:.3f}")
 
 
 if __name__ == "__main__":
