@@ -78,9 +78,9 @@ def mask_outside_theta(eff):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--infile", default="2d_crossSection_omnifold_MEHFC_5iter.root")
+    ap.add_argument("--infile", default="2d_crossSection_omnifold_MEFHC_5iter.root")
     ap.add_argument("--hist", default="hEff2D")
-    ap.add_argument("--out", default="MEHFC_5iter_eff_fig5.png")
+    ap.add_argument("--out", default="MEFHC_5iter_eff_fig5.png")
     ap.add_argument("--no-theta-mask", action="store_true",
                     help="Do not blank bins outside theta_mu < 20 deg")
     args = ap.parse_args()

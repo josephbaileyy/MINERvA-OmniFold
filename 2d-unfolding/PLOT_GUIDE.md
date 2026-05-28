@@ -11,7 +11,7 @@ Reading guide and naming convention for the PNG outputs in
 
 | field | values |
 |---|---|
-| `<dataset>` | `MEHFC` (full 12-playlist), `1A` (single-playlist validation) |
+| `<dataset>` | `MEFHC` (full 12-playlist), `1A` (single-playlist validation) |
 | `<iter>`    | `5iter` (production), `iterscan` (convergence study). Omitted when not applicable. |
 | `<topic>`   | `xsec`, `xsec_paper`, `xsec_paper_*_shape`, `pull_full`, `pull_interior`, `pull_interior_shape`, `eff`, `fig13`, `truth_vs_paper`, `reweighter_decomp`, `iterscan`, `minos_fix_bkg_fraction`, `ibu_1d_proj` |
 | `<axis>`    | `pt_slices`, `pz_slices`, `proj_pt`, `proj_pz`, `heatmap`, `strips` |
@@ -50,7 +50,7 @@ Topic glossary:
 
 ## Production plots — full ME FHC, 5-iter
 
-Input: `2d_crossSection_omnifold_MEHFC_5iter.root` (Phase-18.2 pipeline).
+Input: `2d_crossSection_omnifold_MEFHC_5iter.root` (Phase-18.2 pipeline).
 
 The plots below are regenerated from the production output. Earlier
 revisions are archived: pre-Phase-16 (which used the no-completeness
@@ -60,23 +60,26 @@ artifacts under `archive_pre_phase18/`.
 
 | File | Producer | Purpose |
 |---|---|---|
-| `MEHFC_5iter_xsec_pt_slices.png` | `plot_2d_cross_section.py` | 4×4 grid, one panel per p_T bin (14 filled). x = p_||. OmniFold vs MC truth. |
-| `MEHFC_5iter_xsec_pz_slices.png` | `plot_2d_cross_section.py` | 4×4 grid, one panel per p_|| bin. x = p_T. |
-| `MEHFC_5iter_xsec_proj_pt.png`   | `plot_2d_cross_section.py` | 1D dσ/dp_T with ratio panel. |
-| `MEHFC_5iter_xsec_proj_pz.png`   | `plot_2d_cross_section.py` | 1D dσ/dp_|| with ratio panel. |
-| `MEHFC_5iter_xsec_eff_heatmap.png` | `plot_2d_cross_section.py` | 2D `hEff2D` (absolute selection efficiency), paper-Fig.-5 axes. |
-| `MEHFC_5iter_xsec_paper_pt_slices.png` | `plot_2d_paper_comparison.py` | p_T grid overlaid with paper MnvTune-v1; per-panel stat-only χ²/ndf. |
-| `MEHFC_5iter_xsec_paper_pz_slices.png` | `plot_2d_paper_comparison.py` | Same for p_|| slicing. |
-| `MEHFC_5iter_pull_full.png`      | `compare_to_paper_fullcov.py` | Pull map + histogram, all 205 reported bins. |
-| `MEHFC_5iter_pull_interior.png`  | `compare_to_paper_interior.py` | Pull map + histogram, 185 strict-interior bins (pt/p|| ≤ tan 20°). |
-| `MEHFC_5iter_fig13.png`          | `plot_2d_threeway_fig13.py` | Fig.-13-style overlay: paper / OmniFold / local MC truth. |
-| `MEHFC_5iter_eff_fig5.png`       | `plot_efficiency_fig5_style.py` | Fig.-5-style efficiency map (style-only, paper releases no numerical map). |
-| `MEHFC_5iter_xsec_paper_pt_slices_shape.png` | `plot_2d_paper_comparison_shape.py` | p_T grid, self-normalized shape vs paper; per-panel χ²/ndf from propagated C_shape diagonal. |
-| `MEHFC_5iter_xsec_paper_pz_slices_shape.png` | `plot_2d_paper_comparison_shape.py` | Same for p_|| slicing. |
-| `MEHFC_5iter_pull_interior_shape.png` | `plot_2d_paper_comparison_shape.py` | Pull map + histogram for the 185 strict-interior shape comparison. |
-| `truth_shape_unweighted_MEHFC_strips.png` | `diagnose_truth_shape_unweighted.py` | Phase-16 truth-shape attribution: local unweighted vs local MnvTune-v1 weighted vs paper MnvTune-v1, all on the canonical mc_truth_denom denominator. The "paper / weighted" curve is flat near 1.0 across p_|| = 1.5–9 GeV/c, ruling out the generator-config / reweighter-chain hypothesis. |
-| `ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pt.png` | `ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py` | 3-way overlay of dσ/dp_T: IBU on a 1D projection of the 2D inputs vs our 2D OmniFold projected to 1D vs paper TH2D projected to 1D. IBU and OmniFold overlap (method-blind). |
-| `ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pz.png` | `ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py` | Same for p_||. |
+| `MEFHC_5iter_xsec_pt_slices.png` | `plot_2d_cross_section.py` | 4×4 grid, one panel per p_T bin (14 filled). x = p_||. OmniFold vs MC truth. |
+| `MEFHC_5iter_xsec_pz_slices.png` | `plot_2d_cross_section.py` | 4×4 grid, one panel per p_|| bin. x = p_T. |
+| `MEFHC_5iter_xsec_proj_pt.png`   | `plot_2d_cross_section.py` | 1D dσ/dp_T with ratio panel. |
+| `MEFHC_5iter_xsec_proj_pz.png`   | `plot_2d_cross_section.py` | 1D dσ/dp_|| with ratio panel. |
+| `MEFHC_5iter_xsec_eff_heatmap.png` | `plot_2d_cross_section.py` | 2D `hEff2D` (absolute selection efficiency), paper-Fig.-5 axes. |
+| `MEFHC_5iter_xsec_paper_pt_slices.png` | `plot_2d_paper_comparison.py` | p_T grid overlaid with paper MnvTune-v1; per-panel stat-only χ²/ndf. |
+| `MEFHC_5iter_xsec_paper_pz_slices.png` | `plot_2d_paper_comparison.py` | Same for p_|| slicing. |
+| `MEFHC_5iter_pull_full.png`      | `compare_to_paper_fullcov.py` | Pull map + histogram, all 205 reported bins. |
+| `MEFHC_5iter_pull_interior.png`  | `compare_to_paper_interior.py` | Pull map + histogram, 185 strict-interior bins (pt/p|| ≤ tan 20°). |
+| `MEFHC_5iter_fig13.png`          | `plot_2d_threeway_fig13.py` | Fig.-13-style overlay: paper / OmniFold / local MC truth. |
+| `MEFHC_5iter_eff_fig5.png`       | `plot_efficiency_fig5_style.py` | Fig.-5-style efficiency map (style-only, paper releases no numerical map). |
+| `MEFHC_5iter_xsec_paper_pt_slices_shape.png` | `plot_2d_paper_comparison_shape.py` | p_T grid, self-normalized shape vs paper; per-panel χ²/ndf from propagated C_shape diagonal. |
+| `MEFHC_5iter_xsec_paper_pz_slices_shape.png` | `plot_2d_paper_comparison_shape.py` | Same for p_|| slicing. |
+| `MEFHC_5iter_pull_interior_shape.png` | `plot_2d_paper_comparison_shape.py` | Pull map + histogram for the 185 strict-interior shape comparison. |
+| `truth_shape_unweighted_MEFHC_strips.png` | `diagnose_truth_shape_unweighted.py` | Phase-16 truth-shape attribution: local unweighted vs local MnvTune-v1 weighted vs paper MnvTune-v1, all on the canonical mc_truth_denom denominator. The "paper / weighted" curve is flat near 1.0 across p_|| = 1.5–9 GeV/c, ruling out the generator-config / reweighter-chain hypothesis. |
+| `ibu_1d_projection/MEFHC_5iter_ibu_1d_proj_pt.png` | `ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py` | 3-way overlay of dσ/dp_T: IBU on a 1D projection of the 2D inputs vs our 2D OmniFold projected to 1D vs paper TH2D projected to 1D. IBU and OmniFold overlap (method-blind). |
+| `ibu_1d_projection/MEFHC_5iter_ibu_1d_proj_pz.png` | `ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py` | Same for p_||. |
+| `uq/universe_stage2_MEFHC_full/MEFHC_fig6_7_uncertainty_pz.png` | `uq/plot_uncertainty_fig6_7_style.py` | Paper-Fig.-6-style fractional uncertainty vs muon longitudinal momentum, using exact 2D covariance projection and grouped Flux/Models/Normalization/Statistical/Hadronic response/Muon reconstruction components. |
+| `uq/universe_stage2_MEFHC_full/MEFHC_fig6_7_uncertainty_pt.png` | `uq/plot_uncertainty_fig6_7_style.py` | Paper-Fig.-7-style fractional uncertainty vs muon transverse momentum, from the same grouped covariance budget. |
+| `uq/universe_stage2_MEFHC_full/MEFHC_fig6_7_uncertainty_with_ml_pt.png` | `uq/plot_uncertainty_fig6_7_style.py --include-ml always` | Same p_T view with the small ML component forced into the legend. |
 
 ---
 
@@ -85,7 +88,7 @@ artifacts under `archive_pre_phase18/`.
 | File | Producer | Purpose |
 |---|---|---|
 | `1A_iterscan_convergence.png` | `plot_iter_convergence.py` | Three-panel iter scan summary (hUnfold2D integral, total xsec, per-bin RMS vs 10-iter). Justifies production 5-iter. Independent of Phase 16 — same shape post-fix because the iter-stability argument is about convergence of the OmniFold weights, not the absolute scale. |
-| `MEHFC_5iter_minos_fix_bkg_fraction.png` | `plot_minos_fix_bkg_fraction.py` | 1A pre-/post-`IsMinosMatchMuon()` patch background-fraction heatmap. Documents Phase 11 (10% → 0.35% bkg-fraction reduction) which is C++-event-loop-side and unaffected by Phase 16. |
+| `MEFHC_5iter_minos_fix_bkg_fraction.png` | `plot_minos_fix_bkg_fraction.py` | 1A pre-/post-`IsMinosMatchMuon()` patch background-fraction heatmap. Documents Phase 11 (10% → 0.35% bkg-fraction reduction) which is C++-event-loop-side and unaffected by Phase 16. |
 | `compare_flux_to_paper_2019.png` | `compare_flux_to_paper_2019.py` | Phase 15 paper-era flux comparison (paper / local ratio across 1.5–10 GeV). Documents the flux-CV ruleout. |
 
 ---
@@ -93,7 +96,7 @@ artifacts under `archive_pre_phase18/`.
 ## Notes for adding new plots
 
 - Reuse the convention. If `--prefix` / `--out` arguments are exposed,
-  pass `MEHFC_5iter_<topic>` (or `1A_<topic>`) so the files self-sort
+  pass `MEFHC_5iter_<topic>` (or `1A_<topic>`) so the files self-sort
   alphabetically in `ls`.
 - Avoid the legacy `2d_xsec_…`, `compare_<dataset>_paper_…`,
   `<topic>_<dataset>_…` orderings — they predate this convention and

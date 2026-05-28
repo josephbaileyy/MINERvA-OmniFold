@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run the 10-trial HistGBT MEHFC 5-iter seedscan inside an existing
+# Run the 10-trial HistGBT MEFHC 5-iter seedscan inside an existing
 # interactive allocation, 4-wide × 32-thread for full-node throughput.
 #
 # Usage:
@@ -18,7 +18,7 @@
 #                    25 each (sublinear scaling means per-trial may slow
 #                    slightly).
 #
-# Outputs to seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed{1..10}.root.
+# Outputs to seedscan/2d_crossSection_omnifold_MEFHC_5iter_seed{1..10}.root.
 # Per-trial logs at seedscan/seed${N}_${TIMESTAMP}.log.
 
 set -eo pipefail
@@ -33,8 +33,8 @@ DOCS="${REPO}/2d-unfolding"
 OUTDIR="${DOCS}/seedscan"
 mkdir -p "${OUTDIR}"
 
-OMNIFILE="${DOCS}/runEventLoopOmniFold_MEHFC.root"
-FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEHFC.root"
+OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
+FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
 
 cd "${DOCS}"
 
@@ -49,7 +49,7 @@ BATCH_PIDS=()
 run_trial() {
   local SEED=$1
   local LOG="${OUTDIR}/seed${SEED}_${TS}.log"
-  local OUT="${OUTDIR}/2d_crossSection_omnifold_MEHFC_5iter_seed${SEED}.root"
+  local OUT="${OUTDIR}/2d_crossSection_omnifold_MEFHC_5iter_seed${SEED}.root"
   {
     echo "[trial seed=${SEED}] start: $(date -u '+%H:%M:%S UTC')"
     T0=$(date +%s)
@@ -90,7 +90,7 @@ for ((i = 0; i < ${#SEEDS[@]}; i += WIDTH)); do
   echo "[seedscan] batch done ($(date -u '+%H:%M:%S UTC'))"
   # Quick status: which seed roots are now on disk
   for SEED in "${BATCH[@]}"; do
-    F="${OUTDIR}/2d_crossSection_omnifold_MEHFC_5iter_seed${SEED}.root"
+    F="${OUTDIR}/2d_crossSection_omnifold_MEFHC_5iter_seed${SEED}.root"
     if [[ -s "${F}" ]]; then
       echo "  [ok] seed=${SEED} -> ${F##*/} ($(du -h "${F}" | cut -f1))"
     else

@@ -20,7 +20,7 @@
 # gate plus Phase-18.2 reco-side dedupe.
 #
 # Outputs land in runEventLoopOmniFold_${PL}.root, consumed by
-# sbatch_hadd_MEHFC.sh.
+# sbatch_hadd_MEFHC.sh.
 
 set -eo pipefail
 

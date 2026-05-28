@@ -119,7 +119,7 @@ Sanity log from the patched 2026-05-10 unfold (1A, iters=5,
 - `mc_truth_denom` kept = 2,682,267 (matches the unbinned event loop)
 - `mc_signal_reco` truth-pass kept = 2,048,993
 - `hTruthSel` integral = 3.750e5; `hOFTruthDenom` integral = 4.863e5
-  → global completeness c = **0.7712** (1A nominally similar to MEHFC's
+  → global completeness c = **0.7712** (1A nominally similar to MEFHC's
   0.7503; matches 2.05M / 2.68M = 0.764 raw to ~1 %)
 - `hUnfoldTruthSel` (pre-correction) = 4.223e5
 - `hUnfoldTruthSel_completeness_corrected` = 5.501e5 (ratio post/pre

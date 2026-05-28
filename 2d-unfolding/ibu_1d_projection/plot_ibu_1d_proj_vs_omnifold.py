@@ -173,12 +173,12 @@ def main():
     ap.add_argument("--ibu-pt", default="pTmu_crossSection.root")
     ap.add_argument("--ibu-pz", default="pZmu_crossSection.root")
     ap.add_argument("--omnifold-2d",
-                    default="../2d_crossSection_omnifold_MEHFC_5iter.root")
+                    default="../2d_crossSection_omnifold_MEFHC_5iter.root")
     ap.add_argument("--paper-2d",
                     default="../minerva_paper_anc/"
                             "cov_ptpl_minerva_inclusive_6GeV.root")
-    ap.add_argument("--out-pt", default="MEHFC_5iter_ibu_1d_proj_pt.png")
-    ap.add_argument("--out-pz", default="MEHFC_5iter_ibu_1d_proj_pz.png")
+    ap.add_argument("--out-pt", default="MEFHC_5iter_ibu_1d_proj_pt.png")
+    ap.add_argument("--out-pz", default="MEFHC_5iter_ibu_1d_proj_pz.png")
     args = ap.parse_args()
 
     ROOT.gROOT.SetBatch(True)

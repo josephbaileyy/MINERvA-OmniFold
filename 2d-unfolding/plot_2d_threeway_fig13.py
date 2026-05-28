@@ -282,9 +282,9 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--infile", default="2d_crossSection_omnifold_MEHFC_5iter.root")
+    ap.add_argument("--infile", default="2d_crossSection_omnifold_MEFHC_5iter.root")
     ap.add_argument("--paper", default="minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root")
-    ap.add_argument("--out", default="MEHFC_5iter_fig13.png")
+    ap.add_argument("--out", default="MEFHC_5iter_fig13.png")
     ap.add_argument("--mcfile", default=None)
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     args = ap.parse_args()

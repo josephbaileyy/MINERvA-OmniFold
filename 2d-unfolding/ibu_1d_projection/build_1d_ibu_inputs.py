@@ -2,7 +2,7 @@
 """Build 1D ExtractCrossSection inputs from the 2D OmniFold event-loop trees.
 
 Projects the `data`, `mc_signal_reco`, `mc_background`, and `mc_truth_denom`
-TTrees in `runEventLoopOmniFold_MEHFC.root` onto the paper's 1D p_T and
+TTrees in `runEventLoopOmniFold_MEFHC.root` onto the paper's 1D p_T and
 p_|| edges and writes MnvH1D / MnvH2D histograms that match
 `ExtractCrossSection`'s input contract (`<prefix>_data`,
 `<prefix>_migration`, `<prefix>_efficiency_*`, `<prefix>_background_*`,
@@ -19,7 +19,7 @@ per-p_|| effective flux is also filled from `mc_truth_denom` for the
 same reason.
 
 For p_T, the per-bin flux histogram is copied from
-`baseline_flux/runEventLoopMC_MEHFC.root:pTmu_reweightedflux_integrated`.
+`baseline_flux/runEventLoopMC_MEFHC.root:pTmu_reweightedflux_integrated`.
 For p_||, no per-bin flux file ships, so each bin is filled via a
 truth-yield-weighted harmonic mean of the per-p_T flux (see
 `build_pz_flux`). Reading the truth yield from `mc_truth_denom`
@@ -52,11 +52,11 @@ AXES = {
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--omnifile",
-                   default="../runEventLoopOmniFold_MEHFC.root")
+                   default="../runEventLoopOmniFold_MEFHC.root")
     p.add_argument("--flux",
-                   default="../baseline_flux/runEventLoopMC_MEHFC.root")
+                   default="../baseline_flux/runEventLoopMC_MEFHC.root")
     p.add_argument("--xsec-2d",
-                   default="../2d_crossSection_omnifold_MEHFC_5iter.root")
+                   default="../2d_crossSection_omnifold_MEFHC_5iter.root")
     p.add_argument("--out-data", default="runEventLoop_proj_data.root")
     p.add_argument("--out-mc", default="runEventLoop_proj_mc.root")
     p.add_argument("--verbose", action="store_true")

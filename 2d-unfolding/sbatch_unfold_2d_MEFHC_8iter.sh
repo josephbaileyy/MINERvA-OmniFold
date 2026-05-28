@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=unfold_MEHFC_8
+#SBATCH --job-name=unfold_MEFHC_8
 #SBATCH --account=m3246
 #SBATCH --qos=regular
 #SBATCH --constraint=cpu
@@ -7,10 +7,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
 #SBATCH --time=01:00:00
-#SBATCH --output=unfold_MEHFC_8iter_%j.out
-#SBATCH --error=unfold_MEHFC_8iter_%j.err
+#SBATCH --output=unfold_MEFHC_8iter_%j.out
+#SBATCH --error=unfold_MEFHC_8iter_%j.err
 
-# 2D OmniFold 8-iteration MEHFC unfold, HistGBT estimator (Phase-18.2).
+# 2D OmniFold 8-iteration MEFHC unfold, HistGBT estimator (Phase-18.2).
 # Companion to the 5-iter seedscan trials (HistGBT) so iter-count delta is
 # measured with the same estimator on both sides (no estimator/iter-count
 # confound).
@@ -31,9 +31,9 @@ export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 DOCS="${REPO}/2d-unfolding"
-OMNIFILE="${DOCS}/runEventLoopOmniFold_MEHFC.root"
-FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEHFC.root"
-XSEC_OUT="${DOCS}/2d_crossSection_omnifold_MEHFC_8iter.root"
+OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
+FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
+XSEC_OUT="${DOCS}/2d_crossSection_omnifold_MEFHC_8iter.root"
 
 source "${REPO}/setup_salloc_env.sh"
 cd "${DOCS}"

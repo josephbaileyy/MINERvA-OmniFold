@@ -5,7 +5,7 @@ Phase-18.2 production pipeline was reached: 18 numbered phases covering
 the C++ event-loop extension, four rounds of bug attribution, the
 Phase-15/16 truth-shape attribution chain that closed the σ/paper=0.752
 puzzle, the Phase-17/18 native-miss + truth-authoritative-gate
-re-architecture, and the two dedupe passes that made c=1 exact at MEHFC.
+re-architecture, and the two dedupe passes that made c=1 exact at MEFHC.
 
 For everything from Phase-18.2 production unfold (2026-05-18) onward,
 see `2D_OMNIFOLD_RUN_LOG.md`. For headline numbers and current state
@@ -65,8 +65,8 @@ and a low-p_|| strip pathology.
   path; substituting it blows up total xsec ~13.8×.
 - `runEventLoopOmniFold` does not emit `pTmu_reweightedflux_integrated`;
   use `runEventLoop` (baseline) via `sbatch_runEventLoop_baseline_flux_array.sh`
-  per playlist, then `combine_flux_MEHFC.py` to build the POT-weighted
-  full-MEHFC flux (`baseline_flux/runEventLoopMC_MEHFC.root`).
+  per playlist, then `combine_flux_MEFHC.py` to build the POT-weighted
+  full-MEFHC flux (`baseline_flux/runEventLoopMC_MEFHC.root`).
 - **Playlist-dependent flux variation audited at ~0.2 %** — not a
   dominant systematic.
 - 2D OmniFold outputs now embed `hFlux_pt` + `fluxSource` so later
@@ -75,12 +75,12 @@ and a low-p_|| strip pathology.
   paper Fig. 5.
 - **Per-playlist event-loop array job** submitted and completed for
   1B..1P (1A already in place). Outputs `hadd`-merged into
-  `runEventLoopOmniFold_MEHFC.root` (2.17 GB).
+  `runEventLoopOmniFold_MEFHC.root` (2.17 GB).
 
 ## Phase 6 — Post-production review: four P1 pipeline bugs (2026-04-22)
 
 Review of the production code path uncovered four correctness bugs that
-collectively invalidated the pre-fix MEHFC result:
+collectively invalidated the pre-fix MEFHC result:
 
 1. **Double efficiency divide.** `hXSec2D = hUnfold2D / hEff2D / ...`
    even though OmniFold returns an efficiency-corrected truth spectrum
@@ -144,7 +144,7 @@ Pipeline review while corrected 1A rerun was in flight found four more:
 - **Corrected 1A iter-convergence** (2026-04-24 11:03 UTC): 5-iter within
   0.08 % of 10-iter on total xsec, 2.1 % per-bin shape RMS.
   `iter_convergence_1A_corrected.png` replaces the stale unweighted plot.
-- **Corrected MEHFC fullstats** (2026-04-25 01:10 UTC, sbatch
+- **Corrected MEFHC fullstats** (2026-04-25 01:10 UTC, sbatch
   `51974026` on `nid004097`): ~28 h wall, 5 iters, data POT 1.057e21,
   MC POT 4.978e21. Total xsec from p_T projection = p_|| projection
   = 2.442e-38 cm²/nucleon (internal consistency ✓). Strict-interior
@@ -240,7 +240,7 @@ this is the muon-track-quality reweight, not the geometric acceptance
 turn-on. Next step: audit how MINOS range-out is handled in our truth
 denominator vs the paper.
 
-## Phase 12 — Full MEHFC patched-MINOS production (2026-04-26)
+## Phase 12 — Full MEFHC patched-MINOS production (2026-04-26)
 
 The chained full-production rerun completed after the `IsMinosMatchMuon()`
 patch: event-loop array 1B–1P, hadd with the existing 1A minos-fix output,
@@ -248,9 +248,9 @@ patch: event-loop array 1B–1P, hadd with the existing 1A minos-fix output,
 
 Current migrated-tree canonical outputs:
 
-- `2d-unfolding/runEventLoopOmniFold_MEHFC.root`
-- `2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter.root`
-- `2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root`
+- `2d-unfolding/runEventLoopOmniFold_MEFHC.root`
+- `2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root`
+- `2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root`
 
 Latest unfolded-result checks:
 
@@ -278,15 +278,15 @@ Generated final discussion plots in the migrated `2d-unfolding/` directory:
   Corrected pre-MINOS-fix 1A scan; supports the 5-iteration production
   choice (5 iter within ~0.08% of 10 iter in total xsec, ~2.1%
   per-bin RMS shape difference).
-- `MEHFC_5iter_fig13.png` — Fig.-13-style full 2D slice overlay: paper
+- `MEFHC_5iter_fig13.png` — Fig.-13-style full 2D slice overlay: paper
   data, OmniFold, and local MC truth. OmniFold is often closer to local MC
   truth than the paper data are, but that is not a proof of better
   unfolding because the local MC truth is not ground truth.
-- `MEHFC_5iter_eff_fig5.png` — Fig.-5-style `hEff2D` map using a ROOT-like
+- `MEFHC_5iter_eff_fig5.png` — Fig.-5-style `hEff2D` map using a ROOT-like
   palette and white bins only where the bin is entirely outside
   θ_μ < 20° (`pT_low / p||_high > tan20`). The paper ancillary release does
   not provide the Fig. 5 efficiency map, so this remains qualitative.
-- `MEHFC_5iter_truth_vs_paper_strips.png` — paper ancillary Tune-v1 model
+- `MEFHC_5iter_truth_vs_paper_strips.png` — paper ancillary Tune-v1 model
   vs local MC truth shape per p_|| strip. Strip shape ratios paper/local:
   1.43 in p||=1.5-2.0, 1.29 in 2.0-2.5, falling below one at high p||.
 - `1A_reweighter_decomp_strips.png` — per-reweighter component dump from
@@ -379,7 +379,7 @@ its flux section. Wrote `compare_flux_to_paper_2019.py` which:
   three unique files (1D 53.45 %, 1M 29.23 %, 1N 17.32 %).
 - Compares against the 2019 ancillary CSV at bin centers.
 
-Result. paper / local (POT-weighted MEHFC):
+Result. paper / local (POT-weighted MEFHC):
 
 | E_ν (GeV) | paper / local | E_ν (GeV) | paper / local |
 |---|---|---|---|
@@ -451,7 +451,7 @@ be implicated. If both agreed, the disagreement we had been chasing
 would be in something else entirely.
 
 `diagnose_truth_shape_unweighted.py` reads `mc_truth_denom` directly
-from `runEventLoopOmniFold_MEHFC.root` (32.85M entries — the canonical
+from `runEventLoopOmniFold_MEFHC.root` (32.85M entries — the canonical
 Truth-tree efficiency denominator), projects it onto the paper grid
 both unweighted and with the local MnvTune-v1 reweighter chain applied,
 and shape-normalizes both inside the 185-bin strict interior for
@@ -599,15 +599,15 @@ Re-run pending. The committed `2d_crossSection_omnifold_*.root` outputs
 were produced before this fix and have the ~24.8 % global deficit and
 the low-p_|| shape gradient. Re-running the unfold with the fix should
 collapse both. Plan: re-run on 1A first (cheapest closure check), then
-on full MEHFC if 1A behaves.
+on full MEFHC if 1A behaves.
 
 Outputs committed:
 
 - `2d-unfolding/diagnose_truth_shape_unweighted.py` — full-stats
   unweighted-vs-weighted-vs-paper truth-shape diagnostic.
-- `2d-unfolding/truth_shape_unweighted_MEHFC_summary.json` — per-strip
+- `2d-unfolding/truth_shape_unweighted_MEFHC_summary.json` — per-strip
   numerics (paper / unweighted, paper / weighted, weighted / unweighted).
-- `2d-unfolding/truth_shape_unweighted_MEHFC_strips.png` — overlay +
+- `2d-unfolding/truth_shape_unweighted_MEFHC_strips.png` — overlay +
   ratio panels.
 - Updated `2d-unfolding/unfold_2d_omnifold_unbinned.py` — denominator
   fix (`compute_omnifold_completeness_2d` + completeness division in
@@ -624,12 +624,12 @@ After the post-fix unfold (job 52729573) was launched, the working
 directory was cleaned up while the rerun was in flight.
 
 **Archived to `archive_pre_phase16/`** (preserved for pre/post comparison):
-- `2d_crossSection_omnifold_MEHFC_5iter.root` — pre-fix MEHFC unfold.
-- `2d_crossSection_omnifold_MEHFC_5iter_shape.root` — pre-fix self-
+- `2d_crossSection_omnifold_MEFHC_5iter.root` — pre-fix MEFHC unfold.
+- `2d_crossSection_omnifold_MEFHC_5iter_shape.root` — pre-fix self-
   normalized shape ROOT.
 - `2d_crossSection_omnifold_1A_minos_fix_{1,3}iter.root` — patched-MINOS
   1A iter-scan ROOTs.
-- All `MEHFC_5iter_*.png` plots derived from the pre-fix MEHFC ROOT
+- All `MEFHC_5iter_*.png` plots derived from the pre-fix MEFHC ROOT
   (xsec slices, projections, pull maps, fig13, eff_fig5, eff_heatmap,
   truth_vs_paper_strips, shape variants). These describe the 0.752 ×
   paper state and will be regenerated from the post-fix output.
@@ -659,7 +659,7 @@ re-derivable from the run log description if ever needed):
   build.
 - Phase-13/14 truth-shape diagnostic: `diagnose_truth_shape_vs_paper.py`,
   `truth_shape_vs_paper_1A_summary.json`,
-  `truth_shape_vs_paper_MEHFC_5iter_summary.json`. This was the
+  `truth_shape_vs_paper_MEFHC_5iter_summary.json`. This was the
   diagnostic that produced the 1.43× low-p_|| feature on `hTruth2D`
   (mc_signal_reco subset). Phase 16 supersedes it with
   `diagnose_truth_shape_unweighted.py` which runs on the canonical
@@ -670,14 +670,14 @@ re-derivable from the run log description if ever needed):
   hypotheses, both now superseded. Outreach is paused pending the
   post-fix re-run; if a new deck is needed the content can be
   regenerated from this run log + the status doc.
-- Old SLURM logs: `finalize_MEHFC_52031722.{out,err}`,
+- Old SLURM logs: `finalize_MEFHC_52031722.{out,err}`,
   `unfold2d_full_52031697.{out,err}`.
 - `__pycache__/`.
 
 ### Post-fix re-run results (2026-05-09)
 
 Job 52729573 (`unfold2d_postfix`) finished after ~18 h 43 m on shared QOS
-nid004108 and wrote `2d_crossSection_omnifold_MEHFC_5iter_postfix.root`.
+nid004108 and wrote `2d_crossSection_omnifold_MEFHC_5iter_postfix.root`.
 OmniFold-internal sanity numbers from the run:
 
 - step1 / step2 weights count: 24,394,265 (matches `mc_signal_reco`
@@ -696,20 +696,20 @@ OmniFold-internal sanity numbers from the run:
 Plots regenerated from the post-fix output (all 14 production PNGs in
 `PLOT_GUIDE.md`):
 
-- `MEHFC_5iter_xsec_{pt,pz}_slices.png`,
-  `MEHFC_5iter_xsec_proj_{pt,pz}.png`, `MEHFC_5iter_xsec_eff_heatmap.png`
+- `MEFHC_5iter_xsec_{pt,pz}_slices.png`,
+  `MEFHC_5iter_xsec_proj_{pt,pz}.png`, `MEFHC_5iter_xsec_eff_heatmap.png`
   (`plot_2d_cross_section.py`).
-- `MEHFC_5iter_xsec_paper_{pt,pz}_slices.png`
+- `MEFHC_5iter_xsec_paper_{pt,pz}_slices.png`
   (`plot_2d_paper_comparison.py`).
-- `MEHFC_5iter_pull_full.png` (`compare_to_paper_fullcov.py`),
-  `MEHFC_5iter_pull_interior.png` (`compare_to_paper_interior.py`).
-- `MEHFC_5iter_fig13.png` (`plot_2d_threeway_fig13.py`),
-  `MEHFC_5iter_eff_fig5.png` (`plot_efficiency_fig5_style.py`).
+- `MEFHC_5iter_pull_full.png` (`compare_to_paper_fullcov.py`),
+  `MEFHC_5iter_pull_interior.png` (`compare_to_paper_interior.py`).
+- `MEFHC_5iter_fig13.png` (`plot_2d_threeway_fig13.py`),
+  `MEFHC_5iter_eff_fig5.png` (`plot_efficiency_fig5_style.py`).
 - Shape ROOT regenerated as
-  `2d_crossSection_omnifold_MEHFC_5iter_postfix_shape.root`
+  `2d_crossSection_omnifold_MEFHC_5iter_postfix_shape.root`
   (`normalize_xsec_shape.py`); shape comparison plots
-  `MEHFC_5iter_xsec_paper_{pt,pz}_slices_shape.png`,
-  `MEHFC_5iter_pull_interior_shape.png`
+  `MEFHC_5iter_xsec_paper_{pt,pz}_slices_shape.png`,
+  `MEFHC_5iter_pull_interior_shape.png`
   (`plot_2d_paper_comparison_shape.py`).
 
 χ²/ndf vs paper, post-fix (TOTAL covariance from the ancillary):
@@ -824,8 +824,8 @@ cross-check going forward, now that its build-script Phase-16 bug is
 fixed.
 
 Plots regenerated:
-- `2d-unfolding/ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pt.png`
-- `2d-unfolding/ibu_1d_projection/MEHFC_5iter_ibu_1d_proj_pz.png`
+- `2d-unfolding/ibu_1d_projection/MEFHC_5iter_ibu_1d_proj_pt.png`
+- `2d-unfolding/ibu_1d_projection/MEFHC_5iter_ibu_1d_proj_pz.png`
 
 Files modified:
 - `2d-unfolding/ibu_1d_projection/build_1d_ibu_inputs.py` — see fix
@@ -962,7 +962,7 @@ anything referencing it.
 3. ~~Update `unfold_2d_omnifold_unbinned.py`~~ — done (flag-aware logging
    + WARN if c deviates from 1).
 4. Re-run event loop on playlist 1A as a closure check (cheapest), then
-   on full MEHFC if 1A behaves. Use the existing
+   on full MEFHC if 1A behaves. Use the existing
    `sbatch_evloop_array.sh` (which already points at the production
    binary). The new run should print
    `Captured N unique event IDs from mc_signal_reco.` and
@@ -1088,7 +1088,7 @@ is now unreferenced and safe to delete.
 
 ### Symptom
 
-First Phase-18 MEHFC chain (52983620 evloop array, 52983621 hadd, 52983622
+First Phase-18 MEFHC chain (52983620 evloop array, 52983621 hadd, 52983622
 unfold) ran successfully for evloop+hadd; the unfold timed out at 6 h
 during iteration 1. Pre-resubmit audit of the merged ROOT revealed
 `mc_signal_reco = 32,849,138` vs `mc_truth_denom = 32,849,236` — a
@@ -1118,7 +1118,7 @@ deficit.
 
 `mc_truth_denom` is the efficiency denominator. The 1,102 duplicates have
 been silently inflating the 1E efficiency denominator in *every* prior
-analysis using this AnaTuple. Effect: ~3×10⁻⁴ in 1E, ~3×10⁻⁵ in MEHFC —
+analysis using this AnaTuple. Effect: ~3×10⁻⁴ in 1E, ~3×10⁻⁵ in MEFHC —
 below MINERvA systematics but a real bias. **AnaTuple-producer flag
 candidate.**
 
@@ -1141,7 +1141,7 @@ confirmed 1,102 duplicate truth keys skipped.
 
 ### Symptom
 
-Verification of the Phase-18.1 MEHFC ROOT: `mc_signal_reco = 32,849,110`
+Verification of the Phase-18.1 MEFHC ROOT: `mc_signal_reco = 32,849,110`
 vs `mc_truth_denom = 32,849,103` — a **7-entry surplus** the other way.
 `c_global` printed as 1.0000 (rounded) but the underlying ratio was
 1.00000025 (5 ppm above unity). The 192 of 205 bins ≠ 1.0 confirmed it
@@ -1186,8 +1186,8 @@ release the interactive shell):
 - `53095457_4` evloop_phase18 (1E only) — 2h07m. WARN logs confirmed
   exactly `skipped 133 duplicate-key truth entries` and `skipped 7
   duplicate-key reco entries`.
-- `53095459` hadd_MEHFC_phase18 — 24s. Produced 2.0 GB
-  `runEventLoopOmniFold_MEHFC_phase18.root`.
+- `53095459` hadd_MEFHC_phase18 — 24s. Produced 2.0 GB
+  `runEventLoopOmniFold_MEFHC_phase18.root`.
 
 Post-rebuild verification:
 - `mc_signal_reco = mc_truth_denom = 32,849,103` exactly.

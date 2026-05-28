@@ -1,5 +1,5 @@
 #!/bin/bash
-# Backward seed runner for the HistGBT MEHFC 5-iter ML-stochasticity scan.
+# Backward seed runner for the HistGBT MEFHC 5-iter ML-stochasticity scan.
 #
 # Runs seeds 10,9,8,7 inside an existing interactive allocation while the
 # sbatch array 53192001 is left to dispatch 5,6 (lower IDs are first in
@@ -25,8 +25,8 @@ DOCS="${REPO}/2d-unfolding"
 OUTDIR="${DOCS}/seedscan"
 mkdir -p "${OUTDIR}"
 
-OMNIFILE="${DOCS}/runEventLoopOmniFold_MEHFC.root"
-FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEHFC.root"
+OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
+FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
 
 cd "${DOCS}"
 
@@ -39,7 +39,7 @@ START=$(date +%s)
 run_trial() {
   local SEED=$1
   local LOG="${OUTDIR}/seed${SEED}_${TS}.log"
-  local OUT="${OUTDIR}/2d_crossSection_omnifold_MEHFC_5iter_seed${SEED}.root"
+  local OUT="${OUTDIR}/2d_crossSection_omnifold_MEFHC_5iter_seed${SEED}.root"
   {
     echo "[trial seed=${SEED}] start: $(date -u '+%H:%M:%S UTC')"
     T0=$(date +%s)
@@ -78,7 +78,7 @@ for ((i = 0; i < ${#SEEDS[@]}; i += WIDTH)); do
   done
   echo "[backward] batch done ($(date -u '+%H:%M:%S UTC'))"
   for SEED in "${BATCH[@]}"; do
-    F="${OUTDIR}/2d_crossSection_omnifold_MEHFC_5iter_seed${SEED}.root"
+    F="${OUTDIR}/2d_crossSection_omnifold_MEFHC_5iter_seed${SEED}.root"
     if [[ -s "${F}" ]]; then
       echo "  [ok] seed=${SEED} -> ${F##*/} ($(du -h "${F}" | cut -f1))"
     else

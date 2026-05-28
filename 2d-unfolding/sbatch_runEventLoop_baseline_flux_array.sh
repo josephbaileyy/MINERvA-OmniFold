@@ -21,7 +21,7 @@
 #   runEventLoop path is the one that writes pTmu_reweightedflux_integrated.
 #
 # Why per-playlist:
-#   the normalization audit now shows the full-MEHFC result is currently using
+#   the normalization audit now shows the full-MEFHC result is currently using
 #   a legacy 1A-derived flux histogram. To test playlist dependence, each
 #   playlist needs its own runEventLoopMC_<PL>.root so the per-playlist flux
 #   integrals can be compared and POT-weighted afterward.

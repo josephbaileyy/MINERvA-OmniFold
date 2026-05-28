@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""ML-stochasticity spread analysis for the MEHFC 5-iter seed scan.
+"""ML-stochasticity spread analysis for the MEFHC 5-iter seed scan.
 
-Reads N trial ROOT files (2d_crossSection_omnifold_MEHFC_5iter_seed{i}.root),
+Reads N trial ROOT files (2d_crossSection_omnifold_MEFHC_5iter_seed{i}.root),
 each containing hXSec2D (and hXSec_pt / hXSec_pz projections), and computes:
 
   - per-bin mean and std across trials (d^2sigma/dpT/dpz)
@@ -58,7 +58,7 @@ def th1_to_array(h):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--glob",
-                    default="2d_crossSection_omnifold_MEHFC_5iter_seed*.root",
+                    default="2d_crossSection_omnifold_MEFHC_5iter_seed*.root",
                     help="Glob for the N trial ROOT files.")
     ap.add_argument("--outdir", default=".",
                     help="Directory for png outputs.")
@@ -169,7 +169,7 @@ def main():
     cb.set_label("per-bin rel spread std/mean (%)")
     ax.set_xlabel(r"$p_T$ (GeV/c)")
     ax.set_ylabel(r"$p_{||}$ (GeV/c)")
-    ax.set_title(f"MEHFC 5-iter seed scan ({N} trials): "
+    ax.set_title(f"MEFHC 5-iter seed scan ({N} trials): "
                  f"ML-stochasticity relative spread per bin "
                  f"({int(reported.sum())} reported bins)")
     fig.tight_layout()
@@ -186,7 +186,7 @@ def main():
                 label=f"mean +- std ({N} trials)")
     ax.set_xlabel(r"$p_T$ (GeV/c)")
     ax.set_ylabel(r"d$\sigma$/d$p_T$ (cm$^2$/(GeV/c)/nucleon)")
-    ax.set_title(f"MEHFC 5-iter seed scan: $p_T$ projection")
+    ax.set_title(f"MEFHC 5-iter seed scan: $p_T$ projection")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -203,7 +203,7 @@ def main():
                 label=f"mean +- std ({N} trials)")
     ax.set_xlabel(r"$p_{||}$ (GeV/c)")
     ax.set_ylabel(r"d$\sigma$/d$p_{||}$ (cm$^2$/(GeV/c)/nucleon)")
-    ax.set_title(f"MEHFC 5-iter seed scan: $p_{{||}}$ projection")
+    ax.set_title(f"MEFHC 5-iter seed scan: $p_{{||}}$ projection")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()

@@ -26,7 +26,7 @@ upstream (Φ · N_T · ε / truth-weight side, i.e. the slide-5 flux-CV story).
 This is **not** the same as `unbinned_1d_study/`. That directory runs the
 educational MINERvA-101 1D event loop (`runEventLoop`) on playlist 1A. This
 directory uses the actual 2D production event-loop output
-(`runEventLoopOmniFold_MEHFC.root`, all 12 ME FHC playlists) and projects
+(`runEventLoopOmniFold_MEFHC.root`, all 12 ME FHC playlists) and projects
 it; the selection, MINOS-fix patch, reweighters, POT, and phase space are
 byte-identical to the 2D production.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a data-POT-weighted MEHFC flux histogram from per-playlist files.
+"""Build a data-POT-weighted MEFHC flux histogram from per-playlist files.
 
 `unfold_2d_omnifold_unbinned.py --mcfile X` reads `pTmu_reweightedflux_integrated`
 from X and uses it as the per-POT flux Phi[i] in the cross-section formula
@@ -14,7 +14,7 @@ Phi_p is read from `baseline_flux/runEventLoopMC_<playlist>.root`
 `baseline_flux/runEventLoopData_<playlist>.root` (POTUsed). The hadd of
 per-playlist OmniFold event-loop outputs already sums dataPOTUsed across
 playlists, so Phi_eff computed this way matches the dataPOT stored in
-runEventLoopOmniFold_MEHFC.root.
+runEventLoopOmniFold_MEFHC.root.
 
 Implementation note: the per-playlist flux histogram is a PlotUtils::MnvH1D,
 which segfaults when cloned + outlived its source file under this ROOT
@@ -28,7 +28,7 @@ from array import array
 PLAYLISTS = ["1A", "1B", "1C", "1D", "1E", "1F", "1G",
              "1L", "1M", "1N", "1O", "1P"]
 BASE = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux"
-OUT = f"{BASE}/runEventLoopMC_MEHFC.root"
+OUT = f"{BASE}/runEventLoopMC_MEFHC.root"
 HIST = "pTmu_reweightedflux_integrated"
 
 
@@ -99,14 +99,14 @@ def main():
     one_a_idx = [i for i, pp in enumerate(per_playlist) if pp["playlist"] == "1A"][0]
     one_a = contents_stack[one_a_idx]
     print(f"\n{'bin':>4} {'pT_low':>7} {'pT_high':>8} "
-          f"{'1A':>12} {'MEHFC':>12} {'%diff':>7}")
+          f"{'1A':>12} {'MEFHC':>12} {'%diff':>7}")
     for i in range(n_bins):
         pct = 100.0 * (combined_contents[i] - one_a[i]) / one_a[i] if one_a[i] else 0.0
         print(f"{i+1:>4} {ref_edges[i]:>7.3f} {ref_edges[i+1]:>8.3f} "
               f"{one_a[i]:>12.4e} {combined_contents[i]:>12.4e} {pct:>+6.2f}%")
 
     # Build plain TH1D (not MnvH1D) for the output
-    h_out = ROOT.TH1D(HIST, "POT-weighted MEHFC flux (m^{-2}/POT)",
+    h_out = ROOT.TH1D(HIST, "POT-weighted MEFHC flux (m^{-2}/POT)",
                      n_bins, array("d", ref_edges))
     for i in range(n_bins):
         h_out.SetBinContent(i + 1, float(combined_contents[i]))

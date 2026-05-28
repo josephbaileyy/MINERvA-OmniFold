@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=unfold_MEHFC_seed
+#SBATCH --job-name=unfold_MEFHC_seed
 #SBATCH --account=m3246
 #SBATCH --qos=regular
 #SBATCH --constraint=cpu
@@ -8,10 +8,10 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --time=01:00:00
 #SBATCH --array=1-10
-#SBATCH --output=unfold_MEHFC_seed%a_%A.out
-#SBATCH --error=unfold_MEHFC_seed%a_%A.err
+#SBATCH --output=unfold_MEFHC_seed%a_%A.out
+#SBATCH --error=unfold_MEFHC_seed%a_%A.err
 
-# 2D OmniFold MEHFC 5-iter ML-stochasticity seed scan (Phase-18.2 pipeline,
+# 2D OmniFold MEFHC 5-iter ML-stochasticity seed scan (Phase-18.2 pipeline,
 # HistGBT estimator).
 #
 # Motivated by advisor's 2026-05-19 request: chi^2-vs-paper uses the paper's
@@ -19,7 +19,7 @@
 # excluded. The next step is to characterize uncertainties that ARE method-
 # dependent; the most distinct is the stochastic nature of ML training.
 #
-# Each trial reruns the production 5-iter MEHFC unfold with HistGBT
+# Each trial reruns the production 5-iter MEFHC unfold with HistGBT
 # (--estimator hist) and a different seed, so the random_state on the
 # step1 classifier, step2 classifier, and step1 miss regressor are
 # independent and reproducible. Measured per-trial walltime on the
@@ -27,7 +27,7 @@
 # Array tasks queue independently under regular QOS so all 10 may dispatch
 # in parallel.
 #
-# Output: seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed${SLURM_ARRAY_TASK_ID}.root
+# Output: seedscan/2d_crossSection_omnifold_MEFHC_5iter_seed${SLURM_ARRAY_TASK_ID}.root
 # Spread analysis: 2d-unfolding/seedscan/analyze_seedscan.py.
 
 set -eo pipefail
@@ -36,10 +36,10 @@ export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 DOCS="${REPO}/2d-unfolding"
-OMNIFILE="${DOCS}/runEventLoopOmniFold_MEHFC.root"
-FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEHFC.root"
+OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
+FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
 SEED=${SLURM_ARRAY_TASK_ID}
-XSEC_OUT="${DOCS}/seedscan/2d_crossSection_omnifold_MEHFC_5iter_seed${SEED}.root"
+XSEC_OUT="${DOCS}/seedscan/2d_crossSection_omnifold_MEFHC_5iter_seed${SEED}.root"
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${DOCS}/seedscan"

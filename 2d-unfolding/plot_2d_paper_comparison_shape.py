@@ -2,9 +2,9 @@
 """Slice-grid and pull-map plots for the self-normalized 2D shape comparison.
 
 Reads the output of `normalize_xsec_shape.py` and produces:
-  * MEHFC_5iter_xsec_paper_pt_slices_shape.png  (4x4 p_T slices)
-  * MEHFC_5iter_xsec_paper_pz_slices_shape.png  (4x4 p_|| slices)
-  * MEHFC_5iter_pull_interior_shape.png         (185-bin shape pull map)
+  * MEFHC_5iter_xsec_paper_pt_slices_shape.png  (4x4 p_T slices)
+  * MEFHC_5iter_xsec_paper_pz_slices_shape.png  (4x4 p_|| slices)
+  * MEFHC_5iter_pull_interior_shape.png         (185-bin shape pull map)
 
 Mirrors `plot_2d_paper_comparison.py`'s 4x4 slice layout but plots
 unit-area shape rather than absolute cross section. The total flux scale
@@ -29,8 +29,8 @@ import matplotlib.pyplot as plt
 N_PT, N_PZ = 14, 16
 N = N_PT * N_PZ
 
-DEFAULT_SHAPE_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEHFC_5iter_shape.root"
-DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEHFC_5iter"
+DEFAULT_SHAPE_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter_shape.root"
+DEFAULT_OUT_PREFIX = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEFHC_5iter"
 
 
 def tm_to_np(tm):

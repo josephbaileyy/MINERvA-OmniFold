@@ -126,8 +126,8 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--infile",
-                    default="2d_crossSection_omnifold_MEHFC_5iter.root")
-    ap.add_argument("--prefix", default="MEHFC_5iter_xsec_paper")
+                    default="2d_crossSection_omnifold_MEFHC_5iter.root")
+    ap.add_argument("--prefix", default="MEFHC_5iter_xsec_paper")
     ap.add_argument("--mcfile", default=None,
                     help="Fallback ROOT file for flux histogram when infile lacks hFlux_pt")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated",

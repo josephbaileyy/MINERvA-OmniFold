@@ -469,7 +469,7 @@ def main():
     print(f"[CHECK] hTruthSel (= hOFInputTruth) in-range={inp_int:.6g}")
     print(f"[CHECK] hOFTruthDenom in-range={den_int:.6g}")
     print(f"[CHECK] global completeness c = {c_global:.4f} "
-          f"(expected ~ 0.75 from MEHFC; 1A nominally similar)")
+          f"(expected ~ 0.75 from MEFHC; 1A nominally similar)")
     print(f"[CHECK] hUnfoldTruthSel in-range={curr:.6g}")
     print(f"[CHECK] hUnfoldTruthSel_completeness_corrected in-range="
           f"{integral_inrange(hUnfoldCorr):.6g}")
