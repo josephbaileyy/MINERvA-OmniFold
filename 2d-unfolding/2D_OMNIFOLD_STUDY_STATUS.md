@@ -12,8 +12,9 @@ superseded.
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants + flag
 contracts), `2D_OMNIFOLD_RUN_LOG.md` (current chronology),
 `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1 + the 2026-05-18→28 UQ
-campaign), `PLOT_GUIDE.md`, `advisor_memo_cov_rank.md` (ours-only
-rank-deficiency memo + three open paths).
+campaign), `PLOT_GUIDE.md`, `docs/uq_statistical_methods.tex` (full UQ
+methods writeup: procedures, MINERvA covariance construction, and the
+ours-only rank-deficiency + open questions for collaborators).
 
 ---
 
@@ -55,7 +56,8 @@ diagnostic. (ii) Ours-only inverse-cov χ² is ill-conditioned — matcorr
 `C_universe` is rank 140/205 (65 null directions, band-count-driven), and
 the regularized χ² moves ~2 decades over ridge/shrinkage scans. Quote
 per-bin pulls, not a single ours-only χ². Full regularization scan +
-discussion: RUN_LOG 2026-05-28 sections and `advisor_memo_cov_rank.md`.
+discussion: `docs/uq_statistical_methods.tex` (§Ill-conditioning) and
+RUN_LOG 2026-05-28 sections.
 The matcorr rollup is verified byte-for-byte against MAT `MnvH1D`
 (`GetTotalErrorMatrix`): max element-wise rel diff **5.5e-17** (machine ε),
 sqrt(trace) matches to 7 digits — report in `uq/matcorr_vs_mnvh1d.txt`.

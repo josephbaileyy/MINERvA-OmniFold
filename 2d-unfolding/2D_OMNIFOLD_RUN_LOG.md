@@ -15,9 +15,11 @@ invariants see `2D_OMNIFOLD_REFERENCE.md`.
 
 ## 2026-05-28 — MAT-conformant per-band covariance (matcorr rollup)
 
-Compiled `reference/minerva_systematics_sources.md` from the
-Ruterbories 2021 paper, the MINERvA Open Data portal, and the MAT
-source. Two findings drove a code change and a re-rollup:
+Compiled a survey of MINERvA's systematics methodology (Ruterbories
+2021 paper, MINERvA Open Data portal, MAT source; since consolidated
+into `docs/uq_statistical_methods.tex`, §"How MINERvA builds its
+published covariance"). Two findings drove a code change and a
+re-rollup:
 
 1. The "MINERvA-101 ±1σ pair formula"
    `C^B = ½(Δ₊Δ₊ᵀ + Δ₋Δ₋ᵀ)` with `Δ = X − X_CV` that
@@ -126,11 +128,12 @@ has smaller eigenvalues on the retained modes.
   (full replacement), Stage-2 envelope universe row, Methods → *Syst:*
   bullet, rollup-path paragraph, and `uq/analyze_universes.py`
   description.
-- `advisor_memo_cov_rank.md`: problem block (rank/cond + headline),
-  "what we have tried" 1/2/3 (new matcorr numbers across the three
-  regularization scans), "what we will do regardless" (formula switch
-  marked done, asks A/B/C refocused on Bashyal + FrInel_pi + per-target
-  shape).
+- `advisor_memo_cov_rank.md` (since consolidated into
+  `docs/uq_statistical_methods.tex`, §Ill-conditioning): problem block
+  (rank/cond + headline), "what we have tried" 1/2/3 (new matcorr
+  numbers across the three regularization scans), "what we will do
+  regardless" (formula switch marked done, asks A/B/C refocused on
+  Bashyal + FrInel_pi + per-target shape).
 - `/global/homes/j/josephrb/.claude/plans/melodic-cooking-spark.md`:
   new "Per-band covariance formula" + "Additional bands" sections,
   and an "Execution plan: code update + re-rollup" subsection with
