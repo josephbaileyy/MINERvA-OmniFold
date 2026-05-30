@@ -1,0 +1,46 @@
+\section{Method and analysis pipeline}
+\label{sec:method}
+
+\paragraph{Unbinned OmniFold.}
+OmniFold alternates two reweighting steps per iteration: step~1 reweights the
+reconstructed simulation to the data in observable space (a learned
+data/MC likelihood ratio, pulled back to truth through the detector response),
+and step~2 reweights truth-level simulation to the step-1 result, yielding a
+self-consistent truth-level weight per event. We use gradient-boosted decision
+trees as the classifiers/regressors. The engine is
+\texttt{unbinned\_unfolding/python/omnifold.py}; the MINERvA driver is
+\texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} with backends
+\texttt{\{exact,hist,lgbm\}} (\S\ref{sec:results} compares them). The unfolded
+observables are $(\pT,\pPar)$ of the muon; the phase space is $\theta_{\mu}<20^{\circ}$,
+$\pT<\SI{4.5}{GeV/c}$, $1.5<\pPar<\SI{60}{GeV/c}$.
+
+\paragraph{Production pipeline (Phase~18.2).}
+The C++ event loop
+(\texttt{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}) writes
+the per-event truth and reconstructed trees consumed by the driver. Two
+invariants make the result truth-tree authoritative:
+\begin{itemize}
+  \item \textbf{Truth-tree-authoritative reco gate}: a reconstructed signal event
+        is filled only when its $(\mathrm{run},\mathrm{subrun},\mathrm{event})$
+        key is present in the truth denominator; truth-only events enter as native
+        OmniFold ``miss'' entries.
+  \item \textbf{Completeness} $c = (\text{events in the OmniFold input})/(\text{all
+        truth events})$ is $1.000000$ by construction at ME~FHC
+        (\num{32849103} entries), so the cross-section completeness division is a
+        no-op self-check.
+\end{itemize}
+
+\paragraph{Cross-section extraction.}
+Unfolded truth-level counts are converted to the differential cross section via
+$d^{2}\sigma = U/(c\,\Phi\,N\,\mathrm{POT}\,\Delta\pT\,\Delta\pPar)\times10^{4}$,
+where $\Phi$ is the per-$\pT$ flux integral (broadcast over $\pPar$), $N$ the
+fiducial nucleon count, and POT the data exposure
+(\texttt{extract\_cross\_section\_2d}). The flux normalisation enters as
+$\sigma\propto1/\Phi$; correctly varying $\Phi$ per flux universe was the
+dominant systematic fix (\S\ref{sec:systematics}).
+
+\paragraph{Binning.}
+The reported binning (14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 reported)
+follows \texttt{minerva\_paper\_anc/bin\_mapping.txt}; the 19 unreported diagonal
+cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$.
+\TODO{insert the binning table or cite uq\_statistical\_methods.tex.}

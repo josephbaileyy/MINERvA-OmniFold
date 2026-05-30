@@ -1,0 +1,37 @@
+\section{Introduction and motivation}
+\label{sec:intro}
+
+The MINERvA medium-energy (ME) FHC charged-current (CC) inclusive
+double-differential cross section in muon transverse and longitudinal momentum,
+$d^{2}\sigma/(d\pT\,d\pPar)$, was published in arXiv:2106.16210 (Ruterbories
+\emph{et al.}) using D'Agostini iterative Bayesian unfolding (IBU) on a binned
+response matrix. This note reproduces that measurement with \emph{unbinned}
+OmniFold, an unfolding technique based on iterated reweighting with machine-learned
+likelihood ratios that operates on per-event observables rather than on a fixed
+histogram binning.
+
+\paragraph{Why unbinned OmniFold.}
+\begin{itemize}
+  \item \textbf{No binning at unfold time.} OmniFold learns event weights in the
+        full observable space; the result is histogrammed only at the end, so the
+        binning can be chosen (or refined) after unfolding without re-running.
+  \item \textbf{Natural path to higher dimensions.} Adding observables is adding
+        input features, not multiplying response-matrix bins --- this is the
+        enabling property for the available-energy extension
+        (\S\ref{sec:openquestions}) that has no practical IBU analogue.
+  \item \textbf{Different regularisation.} OmniFold's regulariser is the
+        iteration count and the model capacity of the gradient-boosted decision
+        trees (GBDTs), not the IBU prior-iteration coupling. Comparing the two
+        on the same data quantifies the method-dependence of the result
+        (\S\ref{sec:results}).
+\end{itemize}
+
+\paragraph{Goal and scope.}
+The goal is a faithful, fully uncertainty-quantified reproduction of the
+published 2D cross section as the demonstrator for unbinned OmniFold on MINERvA
+data, followed by the available-energy higher-dimensional extension. This note
+covers the method (\S\ref{sec:method}), the 2D result and its comparison to the
+published data and to GENIE MINERvA Tune v1 (\S\ref{sec:results}), the
+uncertainty budget (\S\ref{sec:systematics}), the validation suite
+(\S\ref{sec:validation}), and the open questions for the collaboration
+(\S\ref{sec:openquestions}).

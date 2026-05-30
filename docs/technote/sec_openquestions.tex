@@ -1,0 +1,38 @@
+\section{Open questions for the collaboration}
+\label{sec:openquestions}
+
+These are the outstanding items where collaboration input would move the
+analysis toward a defensible ours-only covariance and a published higher-D
+result. Full technical context is in \texttt{uq\_statistical\_methods.tex
+\S sec:rank}.
+
+\begin{enumerate}
+  \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy joint block.}
+        The published covariance is full rank where our per-band sum is
+        $140/205$; the gap is bands we do not yet propagate, foremost the
+        fitted $(\Phi_{\mathrm{norm}},\Phi_{\mathrm{shape}},\mathrm{MuonE}_{\mathrm{scale}})$
+        correlation (Bashyal, JINST 16 (2021) P08068) --- the only named
+        cross-band correlation, and two of our largest bands. \emph{The tension
+        anatomy (\S\ref{sec:results-tension}) localises the $\chi^{2}=3.66$ to
+        exactly the region these bands govern.} Is the fitted posterior
+        covariance available from MAT-MINERvA, or must it be re-derived?
+  \item \textbf{FrInel\_pi.} Commented out in
+        \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37--38} (``should not
+        currently be evaluated''). We are consistent with MAT in excluding it;
+        is that still current guidance?
+  \item \textbf{PPFX effective rank.} Our 100 PPFX universes appear to sample a
+        much lower-dimensional nuisance model. Is there a recommended
+        principal-component / fixed-rank flux covariance?
+  \item \textbf{Ours-only $\chi^{2}$ precedent.} Have other MAT-based
+        OmniFold/unbinned analyses hit this rank issue, and what was published?
+\end{enumerate}
+
+\section{Next: available-energy higher dimension}
+\label{sec:nextd}
+The enabling property of unbinned OmniFold is that adding an observable is adding
+an input feature. We are extending the measurement to
+$d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as the third axis
+(reco \texttt{CVUniverse::GetEavail()}), validated by requiring the
+$\Eavail$-marginal to recover this 2D result. This has no practical D'Agostini
+IBU analogue and is the primary physics motivation for the technique.
+\TODO{fill in once the 3D framework + first closure (Workstream C) lands.}

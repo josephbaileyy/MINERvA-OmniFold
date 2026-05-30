@@ -1,0 +1,76 @@
+% MINERvA internal technote (DRAFT skeleton)
+% Unbinned OmniFold measurement of the MINERvA ME FHC CC-inclusive
+% double-differential cross section d^2 sigma / (dpT dp||), reproducing
+% arXiv:2106.16210 (Ruterbories et al., PRD 104, 092007 / PRD 106, 032001).
+%
+% Build where uq_statistical_methods.pdf is built (pdflatex not on the
+% compute node). Figures live in ../../2d-unfolding/ and its reference/.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}}
+
+\newcommand{\pT}{p_{T}}
+\newcommand{\pPar}{p_{\parallel}}
+\newcommand{\Eavail}{E_{\mathrm{avail}}}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+
+\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\
+CC-inclusive double-differential cross section\\
+$d^{2}\sigma/(d\pT\,d\pPar)$\\[4pt]
+\large MINERvA internal technote --- DRAFT}
+\author{J.~R.~Bailey \and \TODO{collaborators}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We measure the MINERvA medium-energy FHC charged-current inclusive
+double-differential cross section in muon transverse and longitudinal
+momentum, $d^{2}\sigma/(d\pT\,d\pPar)$, using \emph{unbinned} OmniFold in
+place of the D'Agostini iterative Bayesian unfolding (IBU) of the published
+analysis (arXiv:2106.16210). On the 205 reported bins our result agrees with
+the published data in normalisation ($\sigma_{\mathrm{tot}}$ ratio
+$1.011$, median bin ratio $1.006$) and reproduces the published spectrum
+(\SI{77.6}{\percent}/\SI{94.1}{\percent} of bins within \SI{5}{\percent}/\SI{10}{\percent}).
+Our standalone uncertainty budget (median relative $\sigma$ \SI{6.87}{\percent})
+matches the published total (\SI{6.86}{\percent}). We characterise the residual
+$\chi^{2}/\mathrm{ndf}=3.66$ (paper covariance) as a correlated \emph{shape}
+difference in the low-$\pT$ peak plus a $\sim1$-unit GBDT-estimator
+regularisation band, and we compare both measurements to the GENIE MINERvA
+Tune v1 prediction, which under-predicts the data by $\sim\SI{9}{\percent}$.
+This note documents the method, the analysis pipeline, the uncertainty
+quantification, the validation suite, and the open questions we are taking to
+the collaboration.
+\end{abstract}
+
+\tableofcontents
+
+\input{sec_intro}
+\input{sec_method}
+\input{sec_results}
+\input{sec_systematics}
+\input{sec_validation}
+\input{sec_openquestions}
+
+\appendix
+\section{Statistical methods}
+\label{app:methods}
+The full uncertainty-quantification methodology --- bootstrap, ML-seedscan,
+universe covariance construction (MAT-conformant
+\texttt{MnvVertErrorBand::CalcCovMx}), the $1/\Phi$ flux normalisation, the
+ill-conditioning/rank analysis, and the tension anatomy --- is the companion
+document \texttt{docs/uq\_statistical\_methods.tex}, which this note treats as
+authoritative and does not duplicate.
+
+\bibliographystyle{plain}
+% \bibliography{technote}  % \TODO{add refs: Ruterbories, Andreopoulos GENIE,
+%   Bashyal JINST 16 P08068, OmniFold (Andreassen et al. PRL 124 182001)}
+
+\end{document}

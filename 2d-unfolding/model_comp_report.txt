@@ -1,0 +1,8 @@
+========================================================================
+THREE-WAY COMPARISON  -  ours / published data / generator model
+========================================================================
+reported bins: 205
+sigma_tot: ours/data = 1.0115
+model MINERvA_Tune_v1: sigma_tot/data = 0.9124
+
+--- chi^2 in paper TotalCov (ndf = 205) ---

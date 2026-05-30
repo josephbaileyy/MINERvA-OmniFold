@@ -1,0 +1,92 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Double-differential cross section}
+\label{sec:results-xsec}
+Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
+1D projections. The total cross section is
+\SI{3.073e-38}{cm^2/nucleon} (published: \SI{3.039e-38}{cm^2/nucleon}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13.png}\\
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt.png}
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz.png}
+  \caption{Unfolded 2D cross section (top, Fig.~13 style) and its $\pT$/$\pPar$
+  projections (bottom).}
+  \label{fig:xsec}
+\end{figure}
+
+\subsection{Comparison to the published measurement}
+\label{sec:results-compare}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}lc@{}}
+    \toprule
+    Quantity (205 reported bins) & Value \\
+    \midrule
+    $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $1.011$ \\
+    Median bin ratio (ours/paper) & $1.006$ \\
+    Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $77.6/94.1/98.5\,\%$ \\
+    $\chi^{2}/\mathrm{ndf}$, paper covariance & $3.661$ \\
+    $\chi^{2}/\mathrm{ndf}$, combined covariance (paper $+$ ours) & $1.481$ \\
+    Pull mean / RMS (paper covariance) & $0.089/0.598$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Agreement with arXiv:2106.16210. Per-bin pulls
+  (Fig.~\ref{fig:pull}) are sub-$1\sigma$.}
+  \label{tab:compare}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full.png}
+  \caption{Per-bin pull $(\mathrm{ours}-\mathrm{paper})/\sigma$ on the
+  $14\times16$ grid and its distribution.}
+  \label{fig:pull}
+\end{figure}
+
+\subsection{Anatomy of the $\chi^{2}=3.66$ tension}
+\label{sec:results-tension}
+The central values agree (pull RMS $0.598$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
+would be $0.37$), yet the full paper-covariance $\chi^{2}/\mathrm{ndf}$ is $3.66$:
+a $10\times$ inflation living entirely in the off-diagonal structure of the
+published covariance. The eigenmode decomposition (Fig.~\ref{fig:tension}) shows
+the tension is carried by moderate-$\lambda$ modes with $5$--$6\sigma$ eigen-pulls
+(the 10 smallest-$\lambda$ modes carry only \SI{3}{\percent}; keeping the 73
+best-measured directions still gives $1.42$), so it is \emph{not} a small-$\lambda$
+inversion artifact. It is \emph{shape}, not normalisation
+($\chi^{2}_{\mathrm{norm}}=0.10$ vs $\chi^{2}_{\mathrm{shape}}=750$), localised to
+the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
+dominate. A $\sim1$-unit methodological band comes from the GBDT estimator
+(exact-GBT $3.66$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
+negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
+\texttt{uq\_statistical\_methods.tex \S sec:tension}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.49\textwidth]{tension_spectrum.png}
+  \includegraphics[width=0.49\textwidth]{tension_chi2_map.png}
+  \caption{Tension anatomy: eigenvalue spectrum with cumulative $\chi^{2}$ (left)
+  and the per-bin $\chi^{2}$-contribution map (right).}
+  \label{fig:tension}
+\end{figure}
+
+\subsection{Comparison to GENIE MINERvA Tune v1}
+\label{sec:results-model}
+Both the published data and our unfolded result are compared to the MINERvA
+Tune v1 prediction shipped with the ancillary (Fig.~\ref{fig:model}). The tune
+under-predicts the total by $\sim\SI{9}{\percent}$
+($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), concentrated in the
+low-$\pT$ peak, and is strongly disfavoured by the data covariance
+($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $26.5$). Our unfolded
+result tracks the data far more closely than the model does.
+(\texttt{compare\_to\_models.py}.)
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\textwidth]{model_comp_projections.png}
+  \caption{Our result (dashed) on top of the published data (black); MINERvA
+  Tune v1 (orange) dips below in the peak.}
+  \label{fig:model}
+\end{figure}

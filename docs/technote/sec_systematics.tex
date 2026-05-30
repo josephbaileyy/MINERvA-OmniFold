@@ -1,0 +1,47 @@
+\section{Uncertainty quantification}
+\label{sec:systematics}
+
+The uncertainty budget combines three independent blocks, summed assuming
+independence (distinct RNGs / physics sources). Full procedures are in
+\texttt{uq\_statistical\_methods.tex} (App.~\ref{app:methods}); the headline is
+that our \emph{standalone} combined budget matches the published total.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
+    \midrule
+    ML noise (lgbm seedscan) & 10 & \num{5.06e-41} & \SI{0.166}{\percent} \\
+    Statistical (Poisson bootstrap) & 300 & \num{1.82e-40} & \SI{0.549}{\percent} \\
+    Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & $187{+}1$ & \num{3.21e-39} & \SI{6.830}{\percent} \\
+    \textbf{Combined (block sum)} & --- & \num{3.22e-39} & \SI{6.865}{\percent} \\
+    Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{6.86}{\percent} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Stage-2 UQ envelope on the 205 reported bins. The standalone combined
+  budget (\SI{6.865}{\percent}) matches the published total (\SI{6.86}{\percent}).}
+  \label{tab:uq}
+\end{table}
+
+\paragraph{Systematic universes.}
+44 bands (6 lateral, 38 vertical), 187 universes, reweighted/re-run via the
+MAT-MINERvA universe machinery; the covariance is built MAT-conformant
+(\texttt{MnvVertErrorBand::CalcCovMx}; verified byte-for-byte against MAT
+\texttt{MnvH1D::GetTotalErrorMatrix}, max rel.\ diff $\sim10^{-17}$). Top bands:
+Flux \SI{4.99}{\percent}, Muon\_Energy\_MINOS \SI{2.31}{\percent},
+Muon\_Energy\_MINERvA \SI{1.29}{\percent}, MinosEfficiency \SI{1.47}{\percent}.
+
+\paragraph{Flux $1/\Phi$ normalisation.}
+The dominant flux term enters as $\sigma\propto1/\Phi$; varying $\Phi$ per flux
+universe (rather than dividing every universe by the CV $\Phi$) raised the Flux
+band from $\sim\SI{1}{\percent}$ to \SI{4.99}{\percent} and brought the standalone
+combined budget to \SI{6.87}{\percent}. The \SI{1.4}{\percent} target-nucleon
+normalisation is a fully-correlated rank-1 band.
+
+\paragraph{$\chi^{2}$ caveat.}
+The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=1.481$ double-counts systematics
+shared with the paper (flux/GENIE/MINOS); the ours-only inverse-covariance
+$\chi^{2}$ is ill-conditioned (rank 140/205, band-count-driven). We therefore
+quote per-bin pulls and the regularisation scan, not a single ours-only
+$\chi^{2}$ (\S\ref{sec:openquestions}).
