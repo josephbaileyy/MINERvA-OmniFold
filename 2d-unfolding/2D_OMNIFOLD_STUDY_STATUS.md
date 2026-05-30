@@ -1,7 +1,9 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-29. Phase-18.2 production unfold frozen; ML
-seedscan closed. Canonical uncertainty = matched-CV 187-universe
+**Last updated**: 2026-05-30. Phase-18.2 production unfold frozen; ML
+seedscan closed. Paper-cov χ²=3.66 tension dissected (see Validation /
+`diagnose_tension.py`): off-diagonal correlated shape in the low-p_T
+peak + a ~1-unit GBDT-estimator regularization band. Canonical uncertainty = matched-CV 187-universe
 **MAT-conformant + flux-fixed** covariance
 (`uq/universe_stage2_MEFHC_full_matcorr_fluxfix/`), built by
 `uq/analyze_universes.py` (mean-centered biased sample cov, no special
@@ -147,8 +149,26 @@ escape hatch, and the full rollup path are documented in
 
 **p_||-min sensitivity** (paper TotalCov only): χ²/ndf 3.66 (205 bins,
 p∥≥1.5) → 3.50 / 2.94 / 2.71 / 2.78 / 2.84 at p∥≥2.0/2.5/3.0/3.5/4.0
-(196/186/175/163/151 bins); median ratio ≈1.006 throughout. Residual is
-dominated by sub-2 % shape disagreement in the highest-p∥ tails.
+(196/186/175/163/151 bins); median ratio ≈1.006 throughout.
+
+**Tension anatomy (paper-cov χ²=3.66)** — `diagnose_tension.py`,
+`docs/uq_statistical_methods.tex §sec:tension`. The central values agree
+(pull RMS 0.598 → diagonal-only χ²/ndf would be **0.37**); the full-cov
+3.66 is a **10× inflation living entirely in the off-diagonal structure**
+of the published TotalCov. Eigenmode decomposition: χ²-carriers are
+**moderate-λ** modes (λ/λmax ~1e-4–1e-5) with 5–6σ eigen-pulls — the 10
+smallest-λ modes carry only 3 %, ~90 modes reach 90 %, and keeping just
+the 73 best-measured directions still gives χ²/ndf 1.42, so it is **not a
+small-λ inversion artifact**. It is **shape, not normalization**
+(χ²_norm 0.10 vs χ²_shape 750.1), localized to the **low-p_T peak ridge**
+(p_T≲0.4 GeV; p_T-bins 2/7/10 carry 16/11/12 %) plus low-p∥ edge cells —
+**not** vertical p_T-columns (rules out a flux 1/Φ(p_T) shape error) and
+**not** the θ_μ<20° acceptance edge. This is where Flux + Muon_Energy
+dominate → motivates the Bashyal joint block (open question #1).
+**Methodological band**: the GBDT estimator moves χ² ~1 unit (exact-GBT
+production **3.66** vs HistGBT 2.70±0.04 vs lgbm 2.65); iteration is
+negligible (lgbm 5→10 iter: 2.645→2.657). So ~1 χ²-unit is OmniFold
+regularization, the rest a real correlated shape difference in the peak.
 
 ---
 
@@ -199,6 +219,11 @@ unreported).
   paper-stat overlap. Paper-only vs combined χ²/ndf side-by-side; SVD
   pseudo-inverse for rank-deficient cases.
 - `normalize_xsec_shape.py` — shape-mode comparison (unit-area Jacobian).
+- `diagnose_tension.py` — paper-cov χ² tension anatomy: eigenmode
+  decomposition (Σ cₖ²/λₖ), diagonal-vs-full crux, rank/rcond robustness
+  scans, normalization-vs-shape split, dominant-mode kinematic maps,
+  per-bin χ² heatmap. Reuses `compare_to_paper_fullcov.py` loaders. Writes
+  `tension_report.txt` + `tension_{spectrum,mode_maps,chi2_map}.png`.
 - `compare_to_paper_interior.py` — legacy 185-bin diagnostic.
 - `uq/analyze_universes.py` — universe covariance rollup (MAT-conformant;
   `--add-norm SIGMA` rank-1 norm band, `--bootstrap-cov` block-sum,

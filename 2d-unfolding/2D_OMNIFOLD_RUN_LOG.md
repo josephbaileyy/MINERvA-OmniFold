@@ -13,6 +13,73 @@ invariants see `2D_OMNIFOLD_REFERENCE.md`.
 
 ---
 
+## 2026-05-29 — Paper-cov χ²=3.66 tension: eigenmode anatomy (diagnostic)
+
+Advisor asked *why* our result is "slightly in tension" with the
+published one despite the central values agreeing
+(σ_tot ratio 1.011, median bin ratio 1.006). Built
+`diagnose_tension.py` (reuses `compare_to_paper_fullcov.py` loaders) to
+dissect the paper-cov χ²/ndf = 3.661 on the 205 reported bins.
+
+**The paradox is the clue.** Per-bin pull RMS vs the paper cov is only
+0.598, so a *diagonal-only* χ²/ndf would be 0.366. The full-cov 3.661 is
+a **10× inflation that lives entirely in the off-diagonal / correlated
+structure** of the published `TotalCov` (cond 1.5e12, rank 204/205).
+
+**Eigenmode decomposition** (C = Σ λₖ uₖ uₖᵀ, cₖ = uₖ·Δ,
+χ² = Σ cₖ²/λₖ; reproduces pinv χ² 750.49 to 3e-9):
+- Dominant contributors are **moderate-λ** modes (λ/λmax ~ 1e-4–1e-5,
+  eigval-rank ~113–141/205) with genuine **5–6σ eigen-pulls** — not the
+  smallest-λ null directions.
+- The 10 smallest-λ modes carry only **3 %** of χ²; ~90 modes reach 90 %.
+- Robustness: keeping only the 73 best-measured directions
+  (rcond 1e-4) still gives χ²/ndf **1.42**; 139 dirs (1e-6) → 2.79.
+  Rank-truncation rises smoothly 0.69(r=50)→2.35(100)→3.30(180)→3.66(205),
+  no late jump. ⇒ **not** a numerical ill-conditioning artifact.
+
+**Shape, not normalization.** Splitting Δ along the measured spectrum
+(scale) vs orthogonal (shape): χ²_norm = 0.10, χ²_shape = 750.1. The
++1.1 % offset is irrelevant; consistent with shape-only χ²/ndf 3.60.
+
+**Kinematic localization** (`tension_mode_maps.png`,
+`tension_chi2_map.png`). Carrier eigenvectors are sign-alternating shape
+oscillations on the **low-p_T cross-section peak ridge** (p_T ≲ 0.4 GeV;
+p_T-bins 2/7/10 carry 16/11/12 % of χ²) plus low-p‖ edge cells (p‖-bins
+0/1/8). **Not** vertical p_T-columns (rules out a flux 1/Φ(p_T) shape
+error) and **not** the θ_μ<20° acceptance edge. This is exactly where the
+Flux and Muon_Energy bands dominate — the region governed by the missing
+Bashyal flux↔Muon_Energy joint block (open question #1, `sec:rank`).
+
+**Methodological component.** Same data/normalization, different GBDT
+backend moves the paper-cov χ² by ~1 unit:
+
+| OmniFold config (5-iter) | paper-cov χ²/ndf | pull RMS |
+|---|---|---|
+| exact-GBT (frozen production) | 3.66 | 0.598 |
+| HistGBT (10-seed mean) | 2.70 ± 0.04 | 0.56 |
+| LightGBM 5-iter | 2.65 | 0.563 |
+| LightGBM 10-iter | 2.66 | 0.565 |
+
+Two effects separate cleanly. **Iteration is negligible**: lgbm 5→10
+moves χ² by +0.01 (2.645→2.657), so OmniFold is converged at 5 iters and
+the tension is *not* an under-iteration artifact. **The estimator carries
+the ~1-unit band**: the frozen exact-GBT production (3.66) is the high
+outlier; both histogram-binned backends agree at 2.65–2.70 (HistGBT
+10-seed range 2.63–2.74, std 0.04 — the ±0.04 ML jitter is ~25× smaller
+than the 0.96 exact→hist gap, so it is genuinely the estimator, not seed
+noise). Exact-gradient trees fit finer shape (less implicit smoothing) and
+deviate more from the paper's IBU-regularized result. ~1 χ²-unit of the
+tension is OmniFold regularization, not data–MC physics.
+
+**Conclusion.** The tension is (i) a genuine broadly-distributed
+*correlated shape* difference in the low-p_T peak (where flux/muon-energy
+dominate), not a normalization offset and not a small-λ artifact; plus
+(ii) a ~1-χ²-unit methodological band from GBDT estimator/iteration
+regularization. Both point to the **Bashyal joint block** as the next
+step. Full writeup: `docs/uq_statistical_methods.tex` §`sec:tension`.
+
+---
+
 ## 2026-05-29 — Flux band under-propagates the 1/Φ normalization (diagnosed + FIXED)
 
 Comparing slide-7 grouped fractional uncertainties against Ruterbories

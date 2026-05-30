@@ -1064,6 +1064,131 @@ Bashyal joint block (and any per-target detector-mass shape) is the
 main outstanding item that would move us toward a defensible ours-only
 $V$.
 
+\section{Anatomy of the paper-covariance tension}
+\label{sec:tension}
+
+\paragraph{The paradox.}
+The central values agree well: $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper}
+= 1.011$, median bin ratio $1.006$, and the \emph{per-bin pull RMS}
+against the paper covariance is only $0.598$ (\S\ref{sec:pull}).
+A diagonal-only $\chi^{2}$ --- ignoring all off-diagonal correlations ---
+is therefore
+\begin{equation}
+\chi^{2}_{\diag}/\mathrm{ndf}
+= \frac{1}{n}\sum_{i}\frac{\Delta_{i}^{2}}{C_{ii}}
+= \mathrm{RMS}(\mathrm{pull})^{2} + \mathrm{mean}(\mathrm{pull})^{2}
+\approx 0.366,
+\end{equation}
+yet the full-covariance $\chi^{2}/\mathrm{ndf}=3.661$. The tension is a
+$10\times$ inflation that lives \emph{entirely} in the off-diagonal /
+small-eigenvalue structure of the published \texttt{TotalCov}
+(\texttt{diagnose\_tension.py}). The rest of this section dissects it.
+
+\paragraph{Eigenmode decomposition.}
+Diagonalise the reported-block paper covariance,
+$\mathbf{C}=\sum_{k}\lambda_{k}\mathbf{u}_{k}\mathbf{u}_{k}\T$
+($\lambda_{1}\!\ge\!\cdots\!\ge\!\lambda_{n}$), and project the residual
+$\boldsymbol{\Delta}$ onto each eigenvector, $c_{k}=\mathbf{u}_{k}\T\boldsymbol{\Delta}$.
+Then
+\begin{equation}
+\chi^{2}=\boldsymbol{\Delta}\T\mathbf{C}^{+}\boldsymbol{\Delta}
+=\sum_{k}\frac{c_{k}^{2}}{\lambda_{k}},
+\qquad
+\text{``eigen-pull''}_{k}\equiv\frac{c_{k}}{\sqrt{\lambda_{k}}},
+\end{equation}
+verified to reproduce the \texttt{pinv} $\chi^{2}=750.49$ to $3\times10^{-9}$.
+The decomposition shows the tension is \textbf{neither a few pathological
+null directions nor the absolute smallest eigenvalues}:
+\begin{itemize}[nosep]
+  \item The top contributing modes sit at $\lambda_{k}/\lambda_{\max}\sim
+        10^{-4}$--$10^{-5}$ --- the lower-middle of the spectrum by
+        magnitude, but still $\sim7$--$8$ decades above the cond-floor
+        ($\lambda/\lambda_{\max}\sim10^{-12}$) --- with genuine eigen-pulls
+        of $5$--$6\sigma$.
+  \item The ten \emph{smallest}-$\lambda$ modes carry only $3\%$ of the
+        $\chi^{2}$; about $90$ modes are needed to reach $90\%$. The
+        $\chi^{2}$ is broadly distributed, not localised to the
+        ill-conditioned tail.
+\end{itemize}
+
+\paragraph{Regularisation robustness.}
+A \texttt{pinv}-rcond scan confirms the tension is not a numerical artifact:
+retaining only the $73$ best-determined directions
+($\lambda_{k}/\lambda_{\max}>10^{-4}$) still gives $\chi^{2}/\mathrm{ndf}=1.42$;
+$139$ directions ($>10^{-6}$) give $2.79$. A rank-truncation scan keeping the
+$r$ largest-$\lambda$ modes rises smoothly $0.69\,(r{=}50)\to2.35\,(100)\to
+3.30\,(180)\to3.66\,(205)$ --- no late jump, i.e.\ the tension does not ride on
+the last few least-determined modes.
+
+\paragraph{It is shape, not normalisation.}
+Splitting $\boldsymbol{\Delta}$ into a component along the measured
+spectrum $\mathbf{x}^{\paper}$ (an overall scale) and the orthogonal
+remainder, the scale piece contributes $\chi^{2}_{\mathrm{norm}}=0.10$ and the
+shape piece $\chi^{2}_{\text{shape}}=750.1$. The $+1.1\%$ normalisation
+offset is statistically irrelevant to the tension; it is a correlated
+\emph{shape} difference. (Consistent with the Jacobian shape-only
+$\chi^{2}/\mathrm{ndf}=3.60$, \S\ref{sec:shape}.)
+
+\paragraph{Where it lives.}
+Mapping the dominant eigenvectors and the per-bin contribution
+$\Delta_{i}(\mathbf{C}^{+}\boldsymbol{\Delta})_{i}$ back onto the
+$14\times16$ grid (\texttt{tension\_mode\_maps.png},
+\texttt{tension\_chi2\_map.png}) localises the tension to the
+\textbf{low-$\pT$ cross-section peak ridge} ($\pT\lesssim0.4$ GeV/c,
+$\pT$-bins 2/7/10 carry $16/11/12\%$) and the low-$\pPar$ near-edge
+cells ($\pPar$-bins 0/1/8). The carrier modes are sign-alternating
+\emph{shape} oscillations across the peak, not vertical $\pT$-columns
+(which a flux $1/\Phi(\pT)$ normalisation error would produce) and not
+the $\theta_{\mu}<20^{\circ}$ acceptance boundary. This is exactly where
+the flux and Muon\_Energy bands --- the two largest, and the only named
+cross-band correlation (Bashyal, \S\ref{sec:rank}) --- dominate the
+covariance: tight bin-to-bin correlation there leaves little freedom to
+absorb a coherent $\sim1$--$2\%$ shape difference, so a small
+OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.
+
+\paragraph{A methodological component (estimator and iteration).}
+Part of the tension is regularisation-dependent --- the same data, same
+normalisation ($\Sigma\sigma$ within $0.1\%$), unfolded with a different
+GBDT backend moves the paper-cov $\chi^{2}$ by $\sim1$ unit while central
+values barely change (iteration count, by contrast, is negligible):
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+OmniFold configuration & paper-cov $\chi^{2}/\mathrm{ndf}$ & pull RMS \\
+\midrule
+exact-GBT, 5 iter (frozen production) & $3.66$ & $0.598$ \\
+HistGBT, 5 iter (10-seed mean) & $2.70\pm0.04$ & $0.56$ \\
+LightGBM, 5 iter & $2.65$ & $0.563$ \\
+LightGBM, 10 iter & $2.66$ & $0.565$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Two things separate cleanly. (i) \textbf{Iteration count is negligible}:
+LightGBM $5\to10$ iters moves the $\chi^{2}$ by $+0.01$ ($2.645\to2.657$),
+so OmniFold is well-converged at $5$ iters and the tension is \emph{not}
+an under-iteration artifact. (ii) \textbf{The GBDT estimator carries a
+$\sim1$-unit band}: the frozen exact-GBT production ($3.66$) is the
+outlier, while both histogram-binned backends agree at $2.65$--$2.70$
+(HistGBT is a $10$-seed mean, range $2.63$--$2.74$; the $\pm0.04$ ML-seed
+jitter is $\sim25\times$ smaller than the $0.96$ exact$\to$hist gap, so
+that gap is genuinely the estimator, not seed noise). The exact-gradient
+trees fit finer shape structure (less implicit smoothing) and so deviate
+more from the paper's IBU-regularised result. This is direct evidence
+that $\sim1$ $\chi^{2}$-unit of the tension is OmniFold's implicit
+regularisation rather than a physical data--MC disagreement
+(\texttt{tension\_iter/}).
+
+\paragraph{Conclusion.}
+The tension is (i) a genuine, broadly-distributed, \emph{correlated shape}
+difference --- not a normalisation offset and not a small-$\lambda$
+inversion artifact --- concentrated in the low-$\pT$ peak where the
+flux/Muon\_Energy bands dominate, plus (ii) a $\sim1$-$\chi^{2}$-unit
+methodological band from the GBDT estimator/iteration regularisation.
+Both point to the same next step: the missing Bashyal
+flux\,$\leftrightarrow$\,Muon\_Energy joint block (\S\ref{sec:rank},
+open question 1) is exactly the covariance structure governing the region
+that carries the tension.
+
 \section{Calibration: coverage toys}
 \label{sec:coverage}
 
