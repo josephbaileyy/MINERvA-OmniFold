@@ -60,9 +60,16 @@ PDF: `../2d-unfolding/reference/Henry_2312.16631_MINERvA_Eavail_lowQ2.pdf`
     (stat-only 12.48), above the frozen 2D values (default-2D 3.66, lgbm-CV
     2.65). Driven by ~4.4% per-bin scatter the 3rd axis injects into the
     (pT,p||) marginal — a genuine effect of reweighting with Eavail info, NOT a
-    normalization/pipeline bug (total σ matches to <1%). Next: the 3D **closure**
-    (truth-reweight / hidden-var) decides whether that scatter is statistical
-    (closure closes) or a real Eavail-migration bias.
+    normalization/pipeline bug (total σ matches to <1%).
+  - **3D closure PASS** (`closure_3d_MEFHC_eavail_bump.root`, full stats, 5 iter
+    lgbm): injected a +30% Gaussian bump in TRUTH Eavail (center 0.3 GeV) into
+    the pseudo-data; OmniFold recovers it (step2 mean weight 1.048 ≈ injected
+    1.0485). Residuals (unfold/truth-ref): **Eavail-marginal median 0.9999,
+    std 0.0006, max|dev| 0.0021**; 3D-bin std 0.032 (MC-stat in sparse corners);
+    Eavail-1D 0.963–1.025. **The marginal closes to 0.06% — ~70× tighter than
+    the 4.4% data-vs-2D scatter — so that data scatter is genuine data↔MC
+    structure the Eavail axis exposes, NOT a method bias.** CV self-closure is
+    exact (degenerate). C3 complete; framework validated end-to-end.
 
 ## C1 spec — C++ event-loop changes (ready to apply when we launch the re-run)
 In `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, following the
