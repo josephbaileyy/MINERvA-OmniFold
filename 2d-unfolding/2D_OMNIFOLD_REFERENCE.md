@@ -276,9 +276,39 @@ does not implement.
 - Never leave invalidated outputs at canonical production paths once a
   corrected rerun is complete.
 
+## 3D OmniFold extension (Workstream C)
+
+The 3D available-energy extension (`d³σ/(dp_T dp_‖ dE_avail)`) lives in the
+sibling `../3d-unfolding/` and **reuses this contract**: its driver
+`unfold_3d_omnifold_unbinned.py` does `import unfold_2d_omnifold_unbinned` and
+calls the 2D helpers, so everything above — POT scaling, `TRACKER_FIDUCIAL_N_NUCLEONS`,
+the `in_truth_phase_space` θ_μ<20° gate, the per-p_T flux convention, the
+`hXSec2D` naming for `compare_to_paper_fullcov.py` — applies unchanged. 3D-only
+invariants:
+
+- **Eavail axis defs** (arXiv:2312.16631 Eq. 4): truth `GetEAvailableTrue()`,
+  reco `NewEavail()` (tracker+ECAL ×1.17), added standalone to `CVUniverse.h`
+  (the MAT calculator headers redefine `GetVertex()`). MeV→GeV in the branches.
+- **Eavail binning catch bin**: the top edge must be large (default 100 GeV) so
+  the Eavail-marginal captures the full recoil tail — `Σ_k xsec·ΔE_k = 2D` only
+  if every truth event lands in a bin. A truncated top edge breaks the anchor.
+- **CV-only**: the 3D driver does NOT carry the universe / alt-model / bootstrap
+  machinery; that is the deferred 3D-UQ campaign.
+- **`compare_to_paper_fullcov.py` from 3d-unfolding/**: always pass
+  `--out-prefix`, or the default clobbers the tracked 2D `MEFHC_5iter_pull_full.png`.
+
+Its own docs (mirroring this triad): `../3d-unfolding/3D_OMNIFOLD_STATUS.md`
+(dashboard), `../3d-unfolding/3D_OMNIFOLD_RUN_LOG.md` (chronology),
+`../3d-unfolding/README.md` (orientation + how-to-run).
+
 ## Documentation split
 
+Per-workstream mirror (see AGENTS.md). **2D** (this directory):
 - `2D_OMNIFOLD_STUDY_STATUS.md` — dashboard, current state, next actions.
 - `2D_OMNIFOLD_RUN_LOG.md` — append-only chronology.
-- `2D_OMNIFOLD_REFERENCE.md` (this file) — stable invariants and gotchas.
+- `2D_OMNIFOLD_REFERENCE.md` (this file) — stable invariants and gotchas
+  (shared with 3D; see § "3D OmniFold extension" above).
 - `PLOT_GUIDE.md` — PNG reading guide.
+
+**3D** (`../3d-unfolding/`): `3D_OMNIFOLD_STATUS.md`, `3D_OMNIFOLD_RUN_LOG.md`,
+`README.md`. No separate 3D REFERENCE — invariants are shared here.

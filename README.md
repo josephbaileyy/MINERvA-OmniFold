@@ -1,10 +1,16 @@
-# MINERvA 2D OmniFold Unfolding
+# MINERvA OmniFold Unfolding (2D + 3D)
 
 Reproduction of the double-differential muon-neutrino CC-inclusive cross
 section `d²σ / (dp_T dp_∥)` from MINERvA medium-energy data using the
 **OmniFold** unbinned iterative-Bayesian unfolding technique
 (arXiv:1911.09107, arXiv:2105.04448), benchmarked against the binned IBU
 result published in arXiv:2106.16210.
+
+The analysis has two workstreams: the **2D** production measurement
+(`2d-unfolding/`, complete) and a **3D** extension that adds available energy as
+a third axis, `d³σ / (dp_T dp_∥ dE_avail)` (`3d-unfolding/`, framework + closure
+validated) — the showcase for unbinned OmniFold's high-dimensional advantage.
+Each workstream keeps its own STATUS + RUN_LOG docs (see `AGENTS.md`).
 
 This repository contains my analysis scripts, documentation, and the
 selected edits I made to upstream code packages used by the analysis (the
@@ -33,6 +39,16 @@ MINERvA-OmniFold/
 │   ├── playlist_manifests/                # per-playlist Data/MC file lists
 │   ├── baseline_flux/                     # per-playlist baseline flux ROOTs (gitignored)
 │   └── reference/                         # reference papers (Ruterbories PDF)
+│
+├── 3d-unfolding/                          # 3D Eavail extension (Workstream C, tracked)
+│   ├── unfold_3d_omnifold_unbinned.py     # 3D unfolding driver (imports the 2D helpers)
+│   ├── xsec_3d.py                         # 3D xsec extraction + Eavail-marginal + projections
+│   ├── sbatch_*_3d.sh                     # 3D event-loop re-run + unfold SLURM scripts
+│   └── 3D_OMNIFOLD_*.md, README.md        # 3D status / run log / orientation
+│
+├── docs/                                  # deliverables (outside the STATUS/LOG triad)
+│   ├── technote/                          # internal MINERvA technote (LaTeX)
+│   └── uq_statistical_methods.tex         # UQ methods writeup
 │
 ├── unbinned_unfolding/                    # RooUnfold fork (mostly upstream, gitignored)
 │   ├── build/                             # in-tree cmake build (gitignored)

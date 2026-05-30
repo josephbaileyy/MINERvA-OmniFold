@@ -18,11 +18,20 @@ MINERvA-101 cross-section and OmniFold studies for muon kinematics:
 OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 12-playlist MEFHC production complete.
 
-**Authoritative docs (read these before touching the 2D pipeline):**
-- `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — dashboard, current numbers, next actions.
-- `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas.
-- `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — append-only chronology of phases 1-18.2.
+**Documentation convention — per-workstream mirror.** Each analysis workstream
+keeps its own STATUS (dashboard) + RUN_LOG (append-only chronology) co-located in
+its directory, prefixed by dimensionality (`2D_OMNIFOLD_*`, `3D_OMNIFOLD_*`).
+Durable invariants live once in the 2D REFERENCE and are shared (the 3D driver
+imports the 2D helpers). Deliverables (`docs/technote/`,
+`docs/uq_statistical_methods.tex`) sit outside this triad.
+
+**Authoritative docs (read these before touching the pipeline):**
+- `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — 2D dashboard, current numbers, next actions.
+- `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas (shared 2D+3D).
+- `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — 2D append-only chronology of phases 1-18.2.
 - `2d-unfolding/PLOT_GUIDE.md` — PNG reading guide.
+- `3d-unfolding/3D_OMNIFOLD_STATUS.md` — 3D Eavail dashboard (Workstream C).
+- `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md` — 3D append-only chronology (C1→C2→C3).
 
 **Headline numbers (Phase 18.2 MEFHC, 5-iter production):**
 - σ_total = 3.073e-38 cm²/nucleon (paper: 3.039e-38; ours runs 1.12 % high).
