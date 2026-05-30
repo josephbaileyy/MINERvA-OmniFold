@@ -17,42 +17,74 @@ without precedent, and is a direct consequence of the unbinned formulation.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.92\textwidth]{minerva_unfolding_landscape.png}
-  \caption{Dimensionality of representative MINERvA differential cross-section
+  \includegraphics[width=0.97\textwidth]{minerva_unfolding_landscape.png}
+  \caption{Dimensionality of the full set of MINERvA differential cross-section
   measurements over time (number of kinematic variables unfolded
   \emph{simultaneously}; a double-differential $d^{2}\sigma/dx\,dy$ counts as
-  two). All prior results use binned D'Agostini IBU and reach at most two
-  variables; this work's unbinned OmniFold adds a third. Sources: the MINERvA
-  data-release page and Table~\ref{tab:landscape}.}
+  two), coloured by channel. All $N=30$ prior measurements use binned D'Agostini
+  IBU and reach at most two variables; this work's unbinned OmniFold adds a
+  third. Source: the MINERvA data-release page; full list in
+  Table~\ref{tab:landscape}. Dimensionality is classified from each analysis's
+  headline differential result; flux, reconstruction, generator-tuning and
+  total-only entries are excluded.}
   \label{fig:landscape}
 \end{figure}
 
-\begin{table}[t]
-  \centering\small
-  \begin{tabular}{@{}llcl@{}}
-    \toprule
-    Year & Measurement (channel; observables) & Dim. & Ref. \\
-    \midrule
-    2015 & CC $1\pi^{+}$; $T_\pi$, $\theta_\pi$ (single-diff.) & 1 & \cite{MINERvA:2015ydy} \\
-    2018 & $\bar\nu_\mu$ QE-like; $\pT,\pPar$ & 2 & \cite{MINERvA:2018hba} \\
-    2018 & $\mu$-p mesonless; transverse kinematic imbalance & 2 & \cite{MINERvA:2018tcb} \\
-    2020 & QE-like; muon \& proton kinematics & 2 & \cite{MINERvA:2020cgh} \\
-    2020 & CC-inclusive $\langle E_\nu\rangle\!\sim\!3.5$ GeV; $\pT,\pPar$ & 2 & \cite{MINERvA:2020jwd} \\
-    2021 & CC-inclusive $\langle E_\nu\rangle\!\sim\!6$ GeV; $\pT,\pPar$ (target) & 2 & \cite{MINERvA:2021owq} \\
-    2023 & CC $1\pi^{+}$; muon \& pion kinematics & 2 & \cite{MINERvA:2023ccpi} \\
-    2023 & $\bar\nu_\mu$ multi-neutron; available energy & 1 & \cite{MINERvA:2023lowEavail} \\
-    2024 & $\nu_e$ low-$Q^{2}$; $\Eavail$, $\pT$ & 2 & \cite{MINERvA:2023avz} \\
-    2025 & QE-like $A$-dependence; transverse kinematic imbalance & 2 & \cite{MINERvA:2025tki} \\
-    \midrule
-    2026 & \textbf{this work}; $\pT,\pPar$ (unbinned) & 2 & --- \\
-    2026 & \textbf{this work}; $\pT,\pPar,\Eavail$ (unbinned) & \textbf{3} & --- \\
-    \bottomrule
-  \end{tabular}
-  \caption{Representative (non-exhaustive) MINERvA differential cross-section
-  measurements and the number of variables unfolded simultaneously. Dimensionality
-  classification follows the headline differential result of each analysis.}
-  \label{tab:landscape}
-\end{table}
+{\small
+\begin{longtable}{@{}clcl@{}}
+  \caption{Full MINERvA differential cross-section survey: the number of
+  kinematic variables unfolded simultaneously (Dim.), classified from each
+  analysis's headline differential result. Channels: CC-inclusive (incl.),
+  CCQE/QE-like incl.\ transverse kinematic imbalance (QE), pion production CC
+  and coherent ($\pi$), deep-inelastic / kaon (DIS), electron-neutrino
+  ($\nu_e$), nuclear-target ratio (ratio).}
+  \label{tab:landscape}\\
+  \toprule
+  Year & Channel; observables & Dim. & Ref. \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Year & Channel; observables & Dim. & Ref. \\
+  \midrule
+  \endhead
+  \midrule \multicolumn{4}{r}{\emph{continued\ldots}}\\ \endfoot
+  \bottomrule
+  \endlastfoot
+  2013 & QE; $\nu_\mu$ CCQE $\pT,\pPar$            & 2 & \cite{MINERvA:2013qe} \\
+  2013 & QE; $\bar\nu_\mu$ CCQE $\pT,\pPar$        & 2 & \cite{MINERvA:2013qebar} \\
+  2014 & ratio; CC on C/Fe/Pb to CH               & 1 & \cite{MINERvA:2014ratio} \\
+  2014 & $\pi$; coherent $\pi^\pm$ (total \& diff.) & 1 & \cite{MINERvA:2014coh} \\
+  2015 & $\pi$; CC $1\pi^+$ ($T_\pi$, $\theta_\pi$) & 1 & \cite{MINERvA:2015ydy} \\
+  2015 & QE; $\mu$+p final states                 & 1 & \cite{MINERvA:2015mup} \\
+  2015 & $\pi$; $\bar\nu_\mu$ single $\pi^0$       & 1 & \cite{MINERvA:2015pi0} \\
+  2016 & $\nu_e$; CCQE-like on CH                  & 2 & \cite{MINERvA:2016nueqe} \\
+  2016 & $\pi$; $\nu_\mu/\bar\nu_\mu$ pion prod.   & 2 & \cite{MINERvA:2016pion} \\
+  2016 & DIS; partonic nuclear effects            & 2 & \cite{MINERvA:2016dis} \\
+  2016 & DIS; CC $K^+$ production                  & 1 & \cite{MINERvA:2016kaon} \\
+  2017 & $\pi$; CC single $\pi^0$                  & 2 & \cite{MINERvA:2017pi0} \\
+  2017 & QE; nuclear-dependence (multi-target)     & 1 & \cite{MINERvA:2017Adep} \\
+  2018 & QE; $\bar\nu_\mu$ QE-like $\pT,\pPar$     & 2 & \cite{MINERvA:2018hba} \\
+  2018 & QE; $\mu$-p mesonless TKI                 & 2 & \cite{MINERvA:2018tcb} \\
+  2018 & $\pi$; coherent $\pi^\pm$ on C            & 2 & \cite{MINERvA:2018coh} \\
+  2019 & QE; quasielastic-like $\nu_\mu$           & 2 & \cite{MINERvA:2019qe} \\
+  2019 & $\pi$; $\bar\nu_\mu$ single $\pi^-$       & 2 & \cite{MINERvA:2019pim} \\
+  2020 & incl.; CC-incl $\langle E_\nu\rangle\!\sim\!3.5$ GeV $\pT,\pPar$ & 2 & \cite{MINERvA:2020jwd} \\
+  2020 & QE; nuclear binding \& TKI               & 2 & \cite{MINERvA:2020cgh} \\
+  2020 & QE; high-statistics QE-like              & 2 & \cite{MINERvA:2020qehs} \\
+  2020 & $\pi$; CC $\pi^0$ nuclear effects        & 1 & \cite{MINERvA:2020pi0} \\
+  2021 & incl.; CC-incl $\langle E_\nu\rangle\!\sim\!6$ GeV $\pT,\pPar$ \textbf{(target)} & 2 & \cite{MINERvA:2021owq} \\
+  2022 & QE; QE-like muon \& proton kinematics    & 2 & \cite{MINERvA:2022qe} \\
+  2022 & incl.; CC-incl low momentum transfer     & 1 & \cite{MINERvA:2022incl} \\
+  2023 & $\pi$; CC $1\pi^+$ (multi-target)        & 2 & \cite{MINERvA:2023ccpi} \\
+  2023 & $\pi$; coherent $\pi^+$ (multi-target)   & 1 & \cite{MINERvA:2023coh} \\
+  2023 & QE; $\bar\nu_\mu$ multi-neutron low-$\Eavail$ & 1 & \cite{MINERvA:2023lowEavail} \\
+  2024 & $\nu_e$; low-$Q^2$ ($\Eavail$, $\pT$)    & 2 & \cite{MINERvA:2023avz} \\
+  2025 & QE; $A$-dependence TKI (multi-target)    & 2 & \cite{MINERvA:2025tki} \\
+  \midrule
+  2026 & \textbf{this work}; unbinned $\pT,\pPar$            & 2 & --- \\
+  2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail$    & \textbf{3} & --- \\
+\end{longtable}
+}
 
 \subsection{Definitions and pipeline}
 \label{sec:3d-method}
@@ -132,3 +164,16 @@ This establishes the 3D framework and its first closure. The full 3D
 \emph{systematic}-uncertainty campaign (universe, bootstrap, and ML covariances,
 as in \S\ref{sec:systematics} for 2D) is the natural follow-up; the present 3D
 result is central-value only.
+
+\paragraph{Model comparison in 3D.}
+The natural way to interpret the 3D result is against neutrino-interaction
+\emph{generators}. Because the published ancillary ships only binned 2D model
+histograms, a quantitative 3D (or arbitrary-projection) comparison requires
+generating truth-level events ourselves: running GENIE~\cite{Andreopoulos:2009rq}
+(across tunes), NuWro~\cite{Golan:2012wx}, NEUT~\cite{Hayato:2009zz} and
+GiBUU~\cite{Buss:2011mx} with the MINERvA ME~FHC flux, applying the same
+fiducial phase space and the truth $\Eavail$ definition, and histogramming the
+predicted $d^{3}\sigma$. No detector simulation is needed --- the unfolded
+result already lives at truth level --- so this is a comparatively cheap,
+high-value next step that directly exploits the unbinned measurement's ability
+to discriminate models in the full $(\pT,\pPar,\Eavail)$ space.
