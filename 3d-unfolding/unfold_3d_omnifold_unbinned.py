@@ -328,7 +328,25 @@ def main():
                          "default = physics bins + catch-all top bin")
     ap.add_argument("--out", default="xsec_3d_MEFHC.root")
     ap.add_argument("--verbose", action="store_true")
+    # --- Closure (C3) ---
+    ap.add_argument("--closure", action="store_true",
+                    help="Closure test: use MC reco (pass_reco & pass_truth) as "
+                         "pseudo-data instead of real data; completeness=1; the "
+                         "3D unfold + Eavail-marginal must recover the (optionally "
+                         "reweighted) MC truth reference within MC-stat noise.")
+    ap.add_argument("--closure-reweight-eavail", action="store_true",
+                    help="Truth-reweight closure on the NEW axis: apply a Gaussian "
+                         "bump in truth Eavail to BOTH the pseudo-data weights and "
+                         "the truth reference. Tests whether 3D OmniFold recovers "
+                         "an injected Eavail shape (requires --closure).")
+    ap.add_argument("--closure-eavail-amplitude", type=float, default=0.3)
+    ap.add_argument("--closure-eavail-center", type=float, default=0.3,
+                    help="GeV; center of the truth-Eavail Gaussian bump")
+    ap.add_argument("--closure-eavail-sigma", type=float, default=0.15,
+                    help="GeV; width of the truth-Eavail Gaussian bump")
     args = ap.parse_args()
+    if args.closure_reweight_eavail and not args.closure:
+        ap.error("--closure-reweight-eavail requires --closure")
 
     pt_edges = PT_EDGES
     pz_edges = PZ_EDGES
@@ -384,13 +402,43 @@ def main():
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("Empty signal or data after selection")
 
-    # --- Measured training target (data - bkg, floored), reco-space binning ---
-    data3d, _ = hist3d(meas_pt, meas_pz, meas_ea,
-                       np.ones(meas_pt.size), pt_edges, pz_edges, ea_edges)
-    bkg3d, _ = hist3d(bkg_pt, bkg_pz, bkg_ea, bkg_w, pt_edges, pz_edges, ea_edges)
-    measured_weights = build_measured_training_3d(
-        meas_pt, meas_pz, meas_ea, data3d, bkg3d,
-        pt_edges, pz_edges, ea_edges, verbose=args.verbose)
+    # --- Closure: substitute MC reco (pass_reco & pass_truth) as pseudo-data ---
+    # Mirrors the 2D driver: pseudo-data weights are w_reco (not a data-bkg
+    # floor), so step-1 learns ~identity and step-2 should recover the CV (or
+    # reweighted) MC truth. closure_rw is f(truth) applied to BOTH the
+    # pseudo-data and the truth reference (built after the unfold).
+    closure_rw_truthpass = None  # f(truth) on the pass_truth subset (for reference)
+    if args.closure:
+        print("[INFO] *** CLOSURE MODE: MC reco as pseudo-data ***")
+        cmask = sig["pass_reco"] & sig["pass_truth"]
+        meas_pt = sig["reco_pt"][cmask].copy()
+        meas_pz = sig["reco_pz"][cmask].copy()
+        meas_ea = sig["reco_ea"][cmask].copy()
+        measured_weights = (sig["w_reco"][cmask].copy() if args.use_weights
+                            else np.ones(meas_pt.size))
+        if args.closure_reweight_eavail:
+            tea_c = sig["truth_ea"][cmask]
+            A, c0, s = (args.closure_eavail_amplitude,
+                        args.closure_eavail_center, args.closure_eavail_sigma)
+            rw_data = 1.0 + A * np.exp(-((tea_c - c0) / s) ** 2)
+            measured_weights = measured_weights * rw_data
+            print(f"[INFO] Eavail reweight closure: A={A}, center={c0} GeV, "
+                  f"sigma={s} GeV; data factor mean={rw_data.mean():.4f}, "
+                  f"max={rw_data.max():.4f}")
+            # The matching factor on the pass_truth subset (for the reference).
+            tea_t = sig["truth_ea"][sig["pass_truth"]]
+            closure_rw_truthpass = 1.0 + A * np.exp(-((tea_t - c0) / s) ** 2)
+        print(f"[INFO] closure pseudo-data: {meas_pt.size} events, "
+              f"sum(w)={measured_weights.sum():.6g}")
+    else:
+        # --- Real data: measured training target (data - bkg, floored) ---
+        data3d, _ = hist3d(meas_pt, meas_pz, meas_ea,
+                           np.ones(meas_pt.size), pt_edges, pz_edges, ea_edges)
+        bkg3d, _ = hist3d(bkg_pt, bkg_pz, bkg_ea, bkg_w,
+                          pt_edges, pz_edges, ea_edges)
+        measured_weights = build_measured_training_3d(
+            meas_pt, meas_pz, meas_ea, data3d, bkg3d,
+            pt_edges, pz_edges, ea_edges, verbose=args.verbose)
 
     # --- OmniFold ---
     _OF_PY = f"{_REPO}/unbinned_unfolding/python"
@@ -445,16 +493,25 @@ def main():
                                   pt_edges, pz_edges, ea_edges)
 
     # Completeness c = (OmniFold-input truth-pass) / (full mc_truth_denom), 3D.
-    of_input3d, _ = hist3d(tpt, tpz, tea, tw, pt_edges, pz_edges, ea_edges)
-    denom3d, _ = hist3d(truth_denom["truth_pt"], truth_denom["truth_pz"],
-                        truth_denom["truth_ea"], truth_denom["w_truth"],
-                        pt_edges, pz_edges, ea_edges)
-    completeness3d = np.zeros_like(of_input3d)
-    nz = denom3d > 0
-    completeness3d[nz] = of_input3d[nz] / denom3d[nz]
-    c_global = of_input3d.sum() / denom3d.sum() if denom3d.sum() > 0 else float("nan")
-    print(f"[CHECK] global completeness c = {c_global:.4f} "
-          f"(expect ~1 in Phase-17 mode)")
+    # In closure the pseudo-data lives in the same subset as the training, so no
+    # scale-up is appropriate: c == 1 (mirrors the 2D driver's closure path).
+    if args.closure:
+        completeness3d = np.ones((len(pt_edges) - 1, len(pz_edges) - 1,
+                                  len(ea_edges) - 1), dtype=float)
+        c_global = 1.0
+        print("[INFO] closure: completeness set to 1.0 in all bins.")
+    else:
+        of_input3d, _ = hist3d(tpt, tpz, tea, tw, pt_edges, pz_edges, ea_edges)
+        denom3d, _ = hist3d(truth_denom["truth_pt"], truth_denom["truth_pz"],
+                            truth_denom["truth_ea"], truth_denom["w_truth"],
+                            pt_edges, pz_edges, ea_edges)
+        completeness3d = np.zeros_like(of_input3d)
+        nz = denom3d > 0
+        completeness3d[nz] = of_input3d[nz] / denom3d[nz]
+        c_global = (of_input3d.sum() / denom3d.sum()
+                    if denom3d.sum() > 0 else float("nan"))
+        print(f"[CHECK] global completeness c = {c_global:.4f} "
+              f"(expect ~1 in Phase-17 mode)")
     print(f"[CHECK] prior3d integral (counts): {prior3d.sum():.6g}")
     print(f"[CHECK] unfold3d integral (counts): {unfold3d.sum():.6g}")
 
@@ -485,6 +542,42 @@ def main():
                   * np.diff(pz_edges)[None, :]).sum()
     print(f"[CHECK] total xsec (Eavail-marginal 2D integral): {marg_total:.4g} "
           f"cm^2/nucleon  (should equal the 3D integral)")
+
+    # --- Closure residuals: 3D unfold vs the (optionally reweighted) truth ---
+    # Reference truth counts = prior (CV) or prior*f(truth) (reweight closure),
+    # pushed through the same extraction (c=1) so it lives in xsec units.
+    ref3d = None
+    if args.closure:
+        ref_w = tw if closure_rw_truthpass is None else tw * closure_rw_truthpass
+        ref3d, ref_err = hist3d(tpt, tpz, tea, ref_w, pt_edges, pz_edges, ea_edges)
+        ref_xsec3d, _ = extract_cross_section_3d(
+            ref3d, completeness3d, flux_arr, data_pot, n_nucleons,
+            pt_edges, pz_edges, ea_edges)
+        ref_marg = project_eavail_marginal(ref_xsec3d, ea_edges)
+        _, ref_x_ea = project_axis(ref_xsec3d, pt_edges, pz_edges, ea_edges, "eavail")
+
+        def _resid(num, den):
+            m = den > 0
+            r = np.full(num.shape, np.nan)
+            r[m] = num[m] / den[m]
+            return r
+
+        r3 = _resid(xsec3d, ref_xsec3d)
+        r2 = _resid(xsec2d_marg, ref_marg)
+        rea = _resid(x_ea, ref_x_ea)
+        print("\n=== CLOSURE RESIDUALS (unfold / truth-reference) ===")
+        print(f"  3D bins      : median={np.nanmedian(r3):.4f} "
+              f"mean={np.nanmean(r3):.4f} std={np.nanstd(r3):.4f} "
+              f"max|dev|={np.nanmax(np.abs(r3-1)):.4f}")
+        print(f"  Eavail-marg  : median={np.nanmedian(r2):.4f} "
+              f"mean={np.nanmean(r2):.4f} std={np.nanstd(r2):.4f} "
+              f"max|dev|={np.nanmax(np.abs(r2-1)):.4f}")
+        print(f"  Eavail 1D    : " + ", ".join(
+            f"{v:.3f}" for v in rea) + "  (should be ~1 per bin)")
+        if args.closure_reweight_eavail:
+            inj = closure_rw_truthpass
+            print(f"  [injected Eavail bump recovered if the 1D ratios track the "
+                  f"f(truth) shape; injected mean factor={inj.mean():.4f}]")
 
     # --- Write output ---
     f_out = ROOT.TFile.Open(args.out, "RECREATE")
@@ -517,6 +610,12 @@ def main():
                   "d#sigma/dp_{||};p_{||} (GeV/c);d#sigma/dp_{||}").Write()
     numpy_to_th1d(ea_e, x_ea, "hXSec_eavail",
                   "d#sigma/dE_{avail};E_{avail} (GeV);d#sigma/dE_{avail}").Write()
+    if ref3d is not None:
+        numpy_to_th2d(ref_marg, None, "hXSec2D_closureRef",
+                      "Closure truth reference, Eavail-marginal;"
+                      "p_{T} (GeV/c);p_{||} (GeV/c)", pt_edges, pz_edges).Write()
+        numpy_to_th1d(ea_e, ref_x_ea, "hXSec_eavail_closureRef",
+                      "Closure truth ref;E_{avail} (GeV);d#sigma/dE_{avail}").Write()
     f_out.Close()
     print(f"[INFO] Wrote {args.out}")
     print("[INFO] Anchor check: run "
