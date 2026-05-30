@@ -2,7 +2,8 @@
 \label{sec:method}
 
 \paragraph{Unbinned OmniFold.}
-OmniFold alternates two reweighting steps per iteration: step~1 reweights the
+OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} alternates two reweighting
+steps per iteration: step~1 reweights the
 reconstructed simulation to the data in observable space (a learned
 data/MC likelihood ratio, pulled back to truth through the detector response),
 and step~2 reweights truth-level simulation to the step-1 result, yielding a
@@ -15,7 +16,8 @@ observables are $(\pT,\pPar)$ of the muon; the phase space is $\theta_{\mu}<20^{
 $\pT<\SI{4.5}{GeV/c}$, $1.5<\pPar<\SI{60}{GeV/c}$.
 
 \paragraph{Production pipeline (Phase~18.2).}
-The C++ event loop
+The C++ event loop on the MINERvA detector~\cite{MINERvA:2013zvz} with the NuMI
+flux of Ref.~\cite{MINERvA:2016iqn}
 (\texttt{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}) writes
 the per-event truth and reconstructed trees consumed by the driver. Two
 invariants make the result truth-tree authoritative:

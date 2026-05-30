@@ -8,10 +8,56 @@ IBU analogue, which makes this the primary physics motivation for the technique.
 We exercise it by extending the measurement to
 $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
 
+The significance is clear from the measurement record: every published MINERvA
+differential cross section has unfolded at most two kinematic variables
+simultaneously (Fig.~\ref{fig:landscape}, Table~\ref{tab:landscape}), the
+double-differential measurements all relying on binned IBU. A simultaneous
+\emph{three}-observable unfold of MINERvA data is, to our knowledge,
+without precedent, and is a direct consequence of the unbinned formulation.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\textwidth]{minerva_unfolding_landscape.png}
+  \caption{Dimensionality of representative MINERvA differential cross-section
+  measurements over time (number of kinematic variables unfolded
+  \emph{simultaneously}; a double-differential $d^{2}\sigma/dx\,dy$ counts as
+  two). All prior results use binned D'Agostini IBU and reach at most two
+  variables; this work's unbinned OmniFold adds a third. Sources: the MINERvA
+  data-release page and Table~\ref{tab:landscape}.}
+  \label{fig:landscape}
+\end{figure}
+
+\begin{table}[t]
+  \centering\small
+  \begin{tabular}{@{}llcl@{}}
+    \toprule
+    Year & Measurement (channel; observables) & Dim. & Ref. \\
+    \midrule
+    2015 & CC $1\pi^{+}$; $T_\pi$, $\theta_\pi$ (single-diff.) & 1 & \cite{MINERvA:2015ydy} \\
+    2018 & $\bar\nu_\mu$ QE-like; $\pT,\pPar$ & 2 & \cite{MINERvA:2018hba} \\
+    2018 & $\mu$-p mesonless; transverse kinematic imbalance & 2 & \cite{MINERvA:2018tcb} \\
+    2020 & QE-like; muon \& proton kinematics & 2 & \cite{MINERvA:2020cgh} \\
+    2020 & CC-inclusive $\langle E_\nu\rangle\!\sim\!3.5$ GeV; $\pT,\pPar$ & 2 & \cite{MINERvA:2020jwd} \\
+    2021 & CC-inclusive $\langle E_\nu\rangle\!\sim\!6$ GeV; $\pT,\pPar$ (target) & 2 & \cite{MINERvA:2021owq} \\
+    2023 & CC $1\pi^{+}$; muon \& pion kinematics & 2 & \cite{MINERvA:2023ccpi} \\
+    2023 & $\bar\nu_\mu$ multi-neutron; available energy & 1 & \cite{MINERvA:2023lowEavail} \\
+    2024 & $\nu_e$ low-$Q^{2}$; $\Eavail$, $\pT$ & 2 & \cite{MINERvA:2023avz} \\
+    2025 & QE-like $A$-dependence; transverse kinematic imbalance & 2 & \cite{MINERvA:2025tki} \\
+    \midrule
+    2026 & \textbf{this work}; $\pT,\pPar$ (unbinned) & 2 & --- \\
+    2026 & \textbf{this work}; $\pT,\pPar,\Eavail$ (unbinned) & \textbf{3} & --- \\
+    \bottomrule
+  \end{tabular}
+  \caption{Representative (non-exhaustive) MINERvA differential cross-section
+  measurements and the number of variables unfolded simultaneously. Dimensionality
+  classification follows the headline differential result of each analysis.}
+  \label{tab:landscape}
+\end{table}
+
 \subsection{Definitions and pipeline}
 \label{sec:3d-method}
 Available energy follows the MINERvA low-recoil convention
-(arXiv:2312.16631, Eq.~4): truth
+(Ref.~\cite{MINERvA:2023avz}, Eq.~4): truth
 $\Eavail=\sum_{p}\mathrm{KE}+\sum_{\pi^{\pm}}\mathrm{KE}+\sum_{\pi^{0},\gamma}E$
 (excluding neutrons and the muon), via \texttt{CVUniverse::GetEAvailableTrue()};
 reco $\Eavail$ is the calorimetric tracker$+$ECAL estimate scaled by $1.17$,

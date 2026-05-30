@@ -3,12 +3,19 @@
 
 The MINERvA medium-energy (ME) FHC charged-current (CC) inclusive
 double-differential cross section in muon transverse and longitudinal momentum,
-$d^{2}\sigma/(d\pT\,d\pPar)$, was published in arXiv:2106.16210 (Ruterbories
-\emph{et al.}) using D'Agostini iterative Bayesian unfolding (IBU) on a binned
-response matrix. This note reproduces that measurement with \emph{unbinned}
-OmniFold, an unfolding technique based on iterated reweighting with machine-learned
-likelihood ratios that operates on per-event observables rather than on a fixed
-histogram binning.
+$d^{2}\sigma/(d\pT\,d\pPar)$, was published by Ruterbories \emph{et al.}
+\cite{MINERvA:2021owq} using D'Agostini iterative Bayesian unfolding
+(IBU)~\cite{DAgostini:1994fjx} on a binned response matrix. This note reproduces
+that measurement with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw,
+Andreassen:2021zzk}, an unfolding technique based on iterated reweighting with
+machine-learned likelihood ratios that operates on per-event observables rather
+than on a fixed histogram binning. First demonstrated experimentally by the H1
+collaboration~\cite{H1:2021wkz,H1:2023fzk}, OmniFold is one of a family of
+machine-learning unfolding methods~\cite{Datta:2018mwd,Bellagente:2019uyp,
+Bellagente:2020piv,Backes:2022vmn,Chan:2023tbf} that lift the binned-response
+limitations of classical IBU, the SVD method~\cite{Hocker:1995kb} and
+TUnfold~\cite{Schmitt:2012kp} (the latter accessed here via
+RooUnfold~\cite{Adye:2011gm}).
 
 \paragraph{Why unbinned OmniFold.}
 \begin{itemize}
