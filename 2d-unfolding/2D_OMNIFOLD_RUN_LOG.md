@@ -13,6 +13,200 @@ invariants see `2D_OMNIFOLD_REFERENCE.md`.
 
 ---
 
+## 2026-05-29 — Flux band under-propagates the 1/Φ normalization (diagnosed + FIXED)
+
+Comparing slide-7 grouped fractional uncertainties against Ruterbories
+Fig 6/7: our **Flux** band sits at ~1 % and varies with kinematics,
+whereas the paper's flux is a near-flat ~4 %. Likewise our
+**Normalization** is flat at 1.4 % vs the paper's ~2 %.
+
+**Root cause (flux) — confirmed in code.** The 2D cross section is
+`dσ = U / (c·Φ·N·POT·ΔpT·Δp∥)` and the flux integral Φ is loaded once
+from the CV flux histogram (`unfold_2d_omnifold_unbinned.py:1090`,
+`--flux-hist pTmu_reweightedflux_integrated`). The `--universe BAND:IDX`
+path only swaps the event-weight columns `w_truth`/`w_reco`; it never
+re-loads or shifts `flux_bins`, so **every flux universe divides by the
+same CV Φ** (line 1500). A flux universe therefore enters our result
+only through the OmniFold MC reweighting (prior/response) and the
+completeness `c` — and OmniFold largely *cancels* that, because it pulls
+the fixed data back to truth regardless of the MC prior. What survives is
+the ~1 % acceptance/shape residual. The dominant flux term — σ ∝ 1/Φ, a
+~4 % nearly-fully-correlated normalization → flat fractional band — is
+**missing**, because Φ in the denominator never moves.
+
+Quantitative confirmation against the paper ancillary cov
+(`cov_ptpl_minerva_inclusive_6GeV.root`, reported bins):
+
+| band (per-bin rel σ) | median | min | max |
+|---|---:|---:|---:|
+| paper `FluxCovariance` | 4.01 % | **3.90 %** | 7.13 % |
+| our matcorr `full_Flux` | 1.01 % | <1 % | 12.8 % |
+
+The paper's 3.90 % *floor* (never drops below it) is exactly the
+correlated flux-integral normalization we omit; our band has no floor.
+
+**Normalization (1.4 % vs 2 %) — mostly definitional, not a bug.** Our
+"Normalization" curve is the hand-added 1.4 % target-nucleon rank-1
+(`--add-norm 0.014`) plus GENIE NormDISCC/NormNCRES. The paper's ~2 %
+group bundles more normalization-class terms (√(2.0²−1.4²) ≈ 1.4 % extra
+in quadrature, e.g. POT / scintillator-mass / per-target-region detector
+mass). We itemize only the Aliaga 1.4 % piece — the same gap as the
+slide-12 "per-target-region detector-mass" / "more bands?" items.
+
+**Is it fixable? Yes, and cheaply (no re-unfolding).** σ ∝ 1/Φ(pT)
+exactly (broadcast over p∥; `extract_cross_section_2d:722`), so the fix
+is a post-hoc rescale once we have the 100 per-universe flux integrals:
+1. **C++ dump** (`runEventLoop.cpp:393,481`): bump `SetNFluxUniverses(2)`
+   → 100 and dump `util::GetFluxIntegral` for each Flux universe — either
+   as an MnvH1D `pTmu_reweightedflux_integrated` carrying the Flux vert
+   error band, or 100 named TH1Ds. The PPFX universes are already live
+   via `FluxAndCVReweighter`; this is a lightweight flux-only loop, not a
+   full re-run.
+2. **Python rescale** (no re-unfold): multiply each of the 100 existing
+   `uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_Flux_*.root` by
+   `Φ_CV(pT)/Φ_u(pT)` per pT bin, then re-roll the Flux band cov in
+   `analyze_universes.py` and refresh the headline. All 100 flux-universe
+   unfolds are already on disk.
+
+This is the largest known understatement in our error budget (flux is the
+paper's joint-largest band) and is now **Task #70**. Non-flux bands are
+unaffected (they don't change Φ). Filed alongside the Bashyal flux↔muon
+cross-band block (#65), with which it shares the flux machinery.
+
+### FIXED same day — pure-Python, no re-unfold (Task #70 done)
+
+The 100 per-universe flux integrals were already on disk: each
+`baseline_flux/runEventLoopMC_<PL>.root` flux MnvH1D carries the
+100-universe `Flux` vert band. Implementation:
+- `uq/build_flux_universe_band.py` — POT-weight-combines the per-universe
+  flux integrals across 12 playlists → `baseline_flux/`
+  `flux_integral_universes_MEFHC.root` (`hFluxCV` 14pT, `hFluxUniv`
+  14pT×100). Re-combined CV matches the existing TH1D to **1.7e-16**.
+- `uq/rescale_flux_universes.py` — multiplies each of the 100
+  `*_uni_full_Flux_<u>.root` by `Φ_CV(pT)/Φ_u(pT)` (exact, σ∝1/Φ), writes
+  `uq/universe_sweep_fluxfix/` (100 corrected Flux + 88 symlinks to
+  non-Flux+CV; originals untouched).
+- Re-rolled `analyze_universes.py --add-norm 0.014` →
+  `uq/universe_stage2_MEFHC_full_matcorr_fluxfix/`.
+
+**Verification before implementing**: re-combined CV exact (1.7e-16);
+per-universe flux spread flat ~4.9% across all pT; rescaled Flux band
+1.01 %→4.99 % with a flat 4.78 % floor (paper 4.01 %/floor 3.90 %); PPFX
+**index alignment** confirmed — flux-integral ratio vs omnifile
+event-weight ratio Pearson 0.96 / Spearman 0.94 (permuted control −0.25).
+
+**Results:**
+
+| quantity | matcorr | matcorr + fluxfix |
+|---|---:|---:|
+| `full_Flux` median rel σ | 1.01 % | **4.99 %** (flat, floor 4.78 %) |
+| systematic √tr / median rel | 2.463e-39 / 4.78 % | **3.214e-39 / 6.83 %** |
+| combined (block-sum) median rel | 4.82 % | **6.87 % ≈ paper 6.86 %** |
+| combined-cov χ²/ndf (paper+ours) | 1.703 | **1.481** |
+| combined-cov log-normal χ²/ndf | 1.692 | **1.468** |
+| pull mean / rms | 0.069 / 0.466 | 0.051 / 0.409 |
+
+Two readings: (i) our **standalone** budget now agrees with the paper's
+total (6.87 % vs 6.86 %) — the headline win; (ii) the **paper+ours χ²/ndf
+drops** 1.703→1.481 because inflating our flux worsens the flux
+double-count against the paper's already-present 4 % flux (that χ² is not
+the beneficiary; read it with the double-count caveat / `--subtract-stat`).
+Universe rank unchanged (140/205); cond 8.7e8→1.7e9. ~5 % vs paper ~4 %
+is a flux-model/PPFX-spread difference (both ν-e-constrained:
+`runEventLoop.cpp:348`, `runEventLoopOmniFold.cpp:860`), flagged for the
+#65 flux cluster, not a propagation bug.
+
+**Driver support added (durable, no more post-hoc rescale).**
+`unfold_2d_omnifold_unbinned.py` now divides flux universes by their own Φ
+natively: new `load_flux_universe_bins()` + `--flux-universe-file`
+(default `baseline_flux/flux_integral_universes_MEFHC.root`). When
+`--universe Flux:IDX` is set, the flux loader replaces the CV `flux_bins`
+with `hFluxUniv[:,IDX]` (guards: idx range, pT-bin match, and hFluxCV must
+equal the `--flux-hist` CV so universe and CV come from the same flux
+production); non-Flux universes and the CV are unchanged. A Flux universe
+run with a missing flux-universe file now **fails loudly** rather than
+silently re-introducing the bug. Unit-tested (loader + both guards); the
+native path is algebraically identical to the post-hoc rescale (same
+unfolded U and c, divide by Φ_u either way).
+
+**Open item 2 — normalization 1.4 % vs ~2 %: NOT a gap (resolved).** The
+paper states it outright (Ruterbories §VII): *"The normalization
+uncertainty of 1.4 % corresponds to the uncertainty in the number of
+target nucleons."* So the paper's normalization **is 1.4 %** — exactly our
+rank-1 `--add-norm 0.014`. The ~2 % read off Fig 6/7 was eyeball
+imprecision (1.4 % vs 2 % on a coarse axis). No POT/detector-mass band to
+add; fabricating one would over-count. Our `Normalization` already
+matches. *Plot-grouping fix (`category_for_band`):* the 1.4 %
+`__Normalization_flat` band was being drawn under **Models**, while the
+tiny GENIE NormDISCC/NormNCRES knobs were under **Normalization** — so the
+blue Normalization line was invisible. Swapped to the paper's grouping
+(`__Normalization_flat`→Normalization; GENIE norm knobs→Models). Pure
+visualization (covariance/χ² unchanged): Normalization line now flat at
+1.400 %, Models drops to 0.29 %.
+
+**Open item 1 — flux ~5 % vs paper ~4 %: characterized; needs MINERvA
+input.** Our per-universe flux integral spread is 5.16 % (integral) /
+4.99 % (event-weighted); the paper's `FluxCovariance` is median 4.01 %
+(floor 3.90 %). Both are ν-e-constrained (`runEventLoop.cpp:348`,
+`runEventLoopOmniFold.cpp:860`), so it is **not** a constraint on/off
+mismatch. The residual ~1 % (~25 % relative) is most likely a PPFX
+version / flux-treatment difference (e.g. the paper's flux uncertainty may
+be rate-weighted over the measured energy range, whereas our Φ is the full
+0–100 GeV integral). Cannot resolve from disk: we only store the
+*integrated* Φ per pT, not the energy-differential flux, so we can't
+re-integrate over a sub-range to test the rate-weighting hypothesis.
+Sharp collaborator question for the #65 flux cluster: *what energy range /
+weighting and PPFX version does the paper's FluxCovariance use, and is the
+4 % the rate-weighted or full-integral spread?* Until answered, our 4.99 %
+is internally correct for our cross-section definition (σ ∝ 1/Φ over
+0–100 GeV) and is mildly conservative vs the paper.
+
+---
+
+## 2026-05-29 — 300-replica pure-Poisson bootstrap complete + headline refresh
+
+Bootstrap array **sbatch 53489662** drained: 300/300 tasks `COMPLETED`,
+all `uq/2d_xsec_MEFHC_5iter_lgbm_boot{1..300}.root` on disk. This is the
+fixed-ML-seed resubmit (each replica pins `--seed 1`, varies only
+`--bootstrap-seed`), so the cov isolates pure Poisson variance — the
+ML-stochastic leak in the previous seed-varying set (sbatch 53327775,
+diagnosed in Task #53) is gone. Closes **Task #54**.
+
+Caught a stale rollup: `uq/bootstrap_MEFHC_300/uq_covariance_boot300.root`
+was dated May 27 10:42, *older than every one of the 300 replicas* (oldest
+replica May 27 13:18) — it had been built from a prior replica set.
+Backed it up to `*.stale_may27` and rebuilt from the complete 300 via
+`uq/analyze_uq.py`.
+
+### What changed (refreshed bootstrap rolled into the headline)
+
+| Quantity | stale (May 27) | refreshed (300, pinned seed) |
+|---|---:|---:|
+| C_boot sqrt(trace) | 1.828e-40 | 1.817e-40 |
+| C_boot per-bin median rel σ | 0.564 % | 0.549 % |
+| C_boot trace | — | 3.299768e-80 |
+| Cholesky | PASS | PASS |
+| Combined-cov χ²/ndf | 1.699 | **1.703** |
+| Combined-cov log-normal χ²/ndf | 1.688 | **1.692** |
+| `--subtract-stat` χ²/ndf (std / log-N) | 23.96 / 24.38 | 24.84 / 25.01 |
+
+Combined block-sum √tr stays 2.470e-39 (universe 2.463e-39 dominates;
+bootstrap is ~1.5 % of the budget). The headline moved only 1.699→1.703,
+confirming the prior ML-seed contamination was numerically negligible —
+the fix is correctness/hygiene, not a material shift. χ²/ndf nudged *up*
+because the refreshed C_boot is slightly smaller (less added to the
+denominator). The larger `--subtract-stat` swing (23.96→24.84) is the
+ill-conditioned stat-subtracted baseline amplifying a small C_boot
+perturbation, consistent with that diagnostic overcorrecting.
+
+Re-ran `compare_to_paper_fullcov.py --log-normal` against the unchanged
+matcorr universe cov + refreshed boot300 + ML seedscan; new headline log
+at `uq/universe_stage2_MEFHC_full_matcorr/compare_to_paper.log`. STATUS
+doc headline table, Stage-2 envelope bootstrap row, χ² caveat, and the
+bootstrap-status note all updated to the refreshed numbers.
+
+---
+
 ## 2026-05-28 — MAT-conformant per-band covariance (matcorr rollup)
 
 Compiled a survey of MINERvA's systematics methodology (Ruterbories

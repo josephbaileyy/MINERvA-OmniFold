@@ -142,6 +142,60 @@ def load_flux_bins(mc_path, hist_name, pt_edges):
     return flux_bins, make_flux_hist("hFlux_pt", pt_edges, flux_bins)
 
 
+def load_flux_universe_bins(path, idx, pt_edges, cv_flux_bins):
+    """Per-PPFX-universe flux integral for a Flux systematic universe.
+
+    The 2D cross section divides by the integrated flux Phi(pT); the flux
+    uncertainty enters mainly through this 1/Phi normalization. A flux
+    universe must therefore divide by *its own* flux integral Phi_u, not the
+    CV one (using CV in every universe is the Task #70 bug). The per-universe
+    integrals live in `path` (built by uq/build_flux_universe_band.py):
+        hFluxCV    TH1D  [n_pt]           CV flux integral
+        hFluxUniv  TH2D  [n_pt x N_univ]  per-universe flux integral
+    Column `idx` is PPFX universe idx, the same throw as w_{truth,reco}_Flux_idx
+    in the omnifile (alignment verified, Pearson 0.96). Returns Phi_u (m^-2/POT)
+    on the pt_edges binning. Guards that hFluxCV matches the loaded CV flux so
+    the universe and CV come from the same flux production.
+    """
+    f = ROOT.TFile.Open(path, "READ")
+    if not f or f.IsZombie():
+        raise RuntimeError(
+            f"[FAIL] --universe Flux:{idx} needs the per-universe flux file "
+            f"{path}, which is missing. Build it with "
+            f"uq/build_flux_universe_band.py. (Dividing a flux universe by the "
+            f"CV flux integral silently re-introduces the Task #70 bug.)")
+    huniv = f.Get("hFluxUniv")
+    hcv = f.Get("hFluxCV")
+    if not huniv or not hcv:
+        f.Close()
+        raise RuntimeError(f"[FAIL] {path} missing hFluxUniv/hFluxCV")
+    n_pt, n_univ = huniv.GetNbinsX(), huniv.GetNbinsY()
+    if n_pt != len(pt_edges) - 1:
+        f.Close()
+        raise RuntimeError(
+            f"[FAIL] flux-universe file has {n_pt} pT bins but pt_edges "
+            f"expects {len(pt_edges) - 1}")
+    if not (0 <= idx < n_univ):
+        f.Close()
+        raise RuntimeError(
+            f"[FAIL] Flux universe idx {idx} out of range [0,{n_univ})")
+    phi_u = np.asarray(
+        [huniv.GetBinContent(i, idx + 1) for i in range(1, n_pt + 1)],
+        dtype=float)
+    phi_cv = np.asarray(
+        [hcv.GetBinContent(i) for i in range(1, n_pt + 1)], dtype=float)
+    f.Close()
+    max_rel = float(np.abs(phi_cv - cv_flux_bins).max()
+                    / max(np.abs(cv_flux_bins).max(), 1e-300))
+    if max_rel > 1e-6:
+        raise RuntimeError(
+            f"[FAIL] flux-universe file CV disagrees with --flux-hist CV "
+            f"(max rel diff {max_rel:.2e}); they are not from the same flux "
+            f"production. Rebuild uq/build_flux_universe_band.py against the "
+            f"same playlists as --mcfile.")
+    return phi_u
+
+
 def count_negative_bins_2d(h):
     nneg = 0
     for ix in range(1, h.GetNbinsX() + 1):
@@ -796,6 +850,13 @@ def main():
                      help="ROOT file containing the flux histogram used for normalization")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated",
                      help="Histogram name inside --mcfile containing per-bin flux")
+    ap.add_argument("--flux-universe-file",
+                     default="baseline_flux/flux_integral_universes_MEFHC.root",
+                     help="ROOT file (hFluxCV, hFluxUniv) with per-PPFX-universe "
+                          "flux integrals (built by uq/build_flux_universe_band.py). "
+                          "Used only when --universe Flux:IDX is set, to divide by "
+                          "that universe's flux integral instead of the CV flux "
+                          "(the Task #70 1/Phi normalization fix).")
     ap.add_argument("--closure", action="store_true",
                      help="Closure test: use MC reco events (pass_reco) as "
                           "pseudo-data instead of real data. Unfolded result "
@@ -1088,11 +1149,25 @@ def main():
     # stored in units of m^-2/POT (per p_T bin); ExtractCrossSection.cpp:127
     # applies a 1e4 factor to convert to cm^-2 at the end of normalization.
     flux_bins, hFlux_pt = load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
+    flux_source = f"{args.mcfile}:{args.flux_hist}"
+    # Flux systematic universes must divide by their *own* integrated flux
+    # Phi_u, not the CV flux (Task #70: the 1/Phi normalization is the
+    # dominant flux uncertainty). For non-Flux universes and the CV, Phi is
+    # unchanged.
+    if universe_branch is not None and universe_branch[0] == "Flux":
+        phi_u = load_flux_universe_bins(
+            args.flux_universe_file, universe_branch[1], pt_edges, flux_bins)
+        ratio = flux_bins / phi_u
+        flux_bins = phi_u
+        hFlux_pt = make_flux_hist("hFlux_pt", pt_edges, flux_bins)
+        flux_source = f"{args.flux_universe_file}:hFluxUniv[idx={universe_branch[1]}]"
+        print(f"[INFO] Flux universe {universe_branch[1]}: dividing by per-universe "
+              f"flux integral (Phi_CV/Phi_u per pT = "
+              f"{np.array2string(ratio, precision=4)})")
     # Keep integrated flux in both native m^-2/POT units and correctly-converted
     # cm^-2/POT units for metadata reporting.
     flux_total_m2 = float(np.sum(flux_bins))
     flux_total_cm2 = flux_total_m2 / 1.0e4
-    flux_source = f"{args.mcfile}:{args.flux_hist}"
     print(f"[INFO] Flux source: {flux_source}")
     print(f"[INFO] Flux bins (m^-2/POT): {flux_bins}")
     print(f"[INFO] Flux sum = {flux_total_m2:.4g} m^-2/POT "

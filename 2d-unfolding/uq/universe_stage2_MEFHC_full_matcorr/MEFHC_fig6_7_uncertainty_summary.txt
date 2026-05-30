@@ -1,0 +1,27 @@
+Fig.-6/7-style fractional uncertainty projections
+xsec_root: 2d_crossSection_omnifold_MEFHC_5iter.root
+universe_root: uq/universe_stage2_MEFHC_full_matcorr/uq_universe_covariance_full_matcorr.root
+bootstrap_root: uq/bootstrap_MEFHC_300/uq_covariance_boot300.root
+ml_root: uq/seedscan_lgbm_ml/uq_covariance_ml.root
+n_reported: 205
+
+pz projection:
+  Total                  median=  3.188% max= 14.200%
+  Flux                   median=  0.206% max=  4.072%
+  Models                 median=  1.429% max=  1.780%
+  Normalization          median=  0.023% max=  0.121%
+  Statistical            median=  0.241% max=  0.632%
+  Hadronic response      median=  0.300% max=  1.642%
+  Muon reconstruction    median=  2.627% max= 14.113%
+  ML                     median=  0.044% max=  0.555%
+
+pt projection:
+  Total                  median=  3.848% max=  6.205%
+  Flux                   median=  0.123% max=  2.429%
+  Models                 median=  1.442% max=  1.465%
+  Normalization          median=  0.022% max=  0.046%
+  Statistical            median=  0.254% max=  1.013%
+  Hadronic response      median=  0.255% max=  3.033%
+  Muon reconstruction    median=  3.551% max=  5.051%
+  ML (not drawn)         median=  0.042% max=  0.115%
+

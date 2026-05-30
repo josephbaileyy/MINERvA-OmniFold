@@ -77,7 +77,11 @@ def category_for_band(band):
 
     if clean == "Flux":
         return "Flux"
-    if clean in {"NormDISCC", "NormNCRES"}:
+    # MINERvA's "Normalization" group is the 1.4% target-nucleon scale (the
+    # rank-1 flat band added at rollup time). GENIE NormDISCC/NormNCRES are
+    # interaction-model normalizations and belong with the other GENIE knobs
+    # (Models), matching the paper's Fig 6/7 grouping.
+    if clean == "__Normalization_flat":
         return "Normalization"
     if (clean.startswith("Fr") or clean.startswith("MFP_") or
             clean.startswith("GEANT_")):
