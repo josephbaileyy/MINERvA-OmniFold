@@ -36,12 +36,23 @@ PDF: `../2d-unfolding/reference/Henry_2312.16631_MINERvA_Eavail_lowQ2.pdf`
   standalone to `CVUniverse.h`. Build + single-file smoke test passed (eavail
   values physical: truth med 0.95 GeV, reco med 0.66 GeV, no NaN, misses −9999).
   12-playlist re-run launched: `sbatch_evloop_array_3d.sh` (SLURM 53601666) →
-  `runEventLoopOmniFold_3D_{1A..1P}.root` (non-destructive; hadd next).
-- [ ] **C2 (driver wiring)** — generalize the 2D driver's data loaders + feature
-  stacking + binning to read/use the Eavail branches, then call `xsec_3d` for
-  extraction/projection.
-- [ ] **C3 (validation)** — 3D closure (truth-reweight, hidden-var) vs the 2D
-  thresholds; **Eavail-marginal must reproduce the frozen 2D χ² vs paper**.
+  `runEventLoopOmniFold_3D_{1A..1P}.root` (non-destructive). **All 12 COMPLETED**
+  (2026-05-30, no log errors); `hadd`-ed → `runEventLoopOmniFold_MEFHC_3D.root`
+  (2.8 GB, full MEFHC stats). Eavail sanity OK on full stats: truth mean
+  1.93 GeV (0→92 GeV DIS tail), matched reco 1.15 GeV, data 1.54 GeV;
+  `sim_eavail` = −9999 for the 12.35M/32.8M truth-signal events failing reco.
+- [x] **C2 (driver wiring)** — `unfold_3d_omnifold_unbinned.py`: eavail-aware 3D
+  TTree readers + 3-column feature stack + `xsec_3d` extraction/projection.
+  Reuses the 2D driver's flux/POT/nucleon/gate helpers via import (CV-only; the
+  universe / alt-model / bootstrap machinery is the deferred 3D-UQ campaign).
+  Smoke test (`smoke/`, 2 iter) passed: `c=1.0000`, and the 3D integral equals
+  the Eavail-marginal 2D integral (2.905e-38) to displayed precision.
+- [~] **C3 (validation)** — full-stats run launched: `sbatch_unfold_3d.sh`
+  (SLURM 53615223, 5 iter lgbm, seed 1) → `xsec_3d_MEFHC_5iter_lgbm.root`, then
+  auto-runs the anchor check `compare_to_paper_fullcov.py --ours <that>` →
+  `anchor_marginal_vs_paper.txt`. **Gate: the Eavail-marginal `hXSec2D` must
+  reproduce the frozen 2D paper-cov χ² (≈3.66) within run-to-run noise.**
+  Closure (truth-reweight / hidden-var) in 3D still TODO.
 
 ## C1 spec — C++ event-loop changes (ready to apply when we launch the re-run)
 In `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, following the
