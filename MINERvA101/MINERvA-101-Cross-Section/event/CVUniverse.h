@@ -155,7 +155,57 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     double q3mec = sqrt(eavail*eavail + q2);
     return q3mec;
   }
-   
+
+  // --- Available energy (3rd OmniFold axis, Workstream C) -----------------
+  // Copied verbatim from MAT: reco NewEavail (LowRecoilPionFunctions.h,
+  // tracker+ECAL x1.17) and truth GetEAvailableTrue (CCQE3DFitFunctions.h /
+  // arXiv:2312.16631 Eq. 4). Added standalone here rather than #including
+  // those headers because LowRecoilPionFunctions.h redefines GetVertex(),
+  // which CVUniverse already provides. Branch availability verified in the
+  // MasterAnaDev tuples (blob_recoil_E_*, muon_fuzz_*, mc_FSPart*); the
+  // spline GetEavail()/recoilE_SplineCorrected branch is absent there.
+  virtual std::vector<double> GetTrackerECALMuFuzz() const {
+    double trk_mufuzz = 0.0;
+    double ecal_mufuzz = 0.0;
+    int nfuzz = GetInt("muon_fuzz_per_plane_r80_planeIDs_sz");
+    if (nfuzz == 0) return {0.0, 0.0};
+    for (int i = 0; i < nfuzz; i++) {
+      int planeID = GetVecElem("muon_fuzz_per_plane_r80_planeIDs", i);
+      if (planeID < 1504968704 || planeID > 1709703168) continue;
+      double fuzze = GetVecElem("muon_fuzz_per_plane_r80_energies", i);
+      if (planeID > 1504968704 and planeID < 1560805376)
+        trk_mufuzz += fuzze;
+      else if (planeID > 1700003840 and planeID < 1709703168)
+        ecal_mufuzz += fuzze;
+    }
+    return {trk_mufuzz, ecal_mufuzz};
+  }
+
+  virtual double NewEavail() const {  // MeV
+    double recoiltracker =
+        GetDouble("blob_recoil_E_tracker") - GetTrackerECALMuFuzz()[0];
+    double recoilEcal =
+        GetDouble("blob_recoil_E_ecal") - GetTrackerECALMuFuzz()[1];
+    const double Eavailable_scale = 1.17;
+    double eavail = recoiltracker + recoilEcal;
+    return eavail * Eavailable_scale;
+  }
+
+  double GetEAvailableTrue() const {  // MeV
+    double recoil = 0;
+    int n_parts = GetInt("mc_nFSPart");
+    double mass_pion = 135;
+    double mass_proton = 938.27;
+    for(int i=0;i<n_parts;i++){
+      int pdg = GetVecElemInt("mc_FSPartPDG",i);
+      if(pdg == 22) recoil+=GetVecElem("mc_FSPartE",i);            // total E
+      if(pdg == 211 || pdg == -211) recoil+=GetVecElem("mc_FSPartE",i)-mass_pion;  // KE
+      if(pdg == 111) recoil+=GetVecElem("mc_FSPartE",i);          // total E
+      if(pdg == 2212) recoil+=GetVecElem("mc_FSPartE",i)-mass_proton;             // KE
+    }
+    return recoil;
+  }
+
   virtual int GetCurrent() const { return GetInt("mc_current"); }
 
   virtual int GetTruthNuPDG() const { return GetInt("mc_incoming"); }

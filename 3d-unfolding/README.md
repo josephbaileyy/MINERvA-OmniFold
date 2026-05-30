@@ -30,7 +30,13 @@ PDF: `../2d-unfolding/reference/Henry_2312.16631_MINERvA_Eavail_lowQ2.pdf`
   1D projections, with numpy self-tests (`python xsec_3d.py`). The marginal
   recovers the 2D cross section to machine precision (3.8e-16). *No real data
   needed yet.*
-- [ ] **C1 (C++ + re-run, deferred by decision)** — see spec below.
+- [x] **C1 (C++ + re-run)** — Eavail branches added to `runEventLoopOmniFold.cpp`
+  (truth `MC_eavail` via `GetEAvailableTrue()`, reco `sim_eavail` /
+  `sim_background_eavail` / `measured_eavail` via `NewEavail()`); accessors added
+  standalone to `CVUniverse.h`. Build + single-file smoke test passed (eavail
+  values physical: truth med 0.95 GeV, reco med 0.66 GeV, no NaN, misses −9999).
+  12-playlist re-run launched: `sbatch_evloop_array_3d.sh` (SLURM 53601666) →
+  `runEventLoopOmniFold_3D_{1A..1P}.root` (non-destructive; hadd next).
 - [ ] **C2 (driver wiring)** — generalize the 2D driver's data loaders + feature
   stacking + binning to read/use the Eavail branches, then call `xsec_3d` for
   extraction/projection.

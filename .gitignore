@@ -69,3 +69,7 @@ unbinned_unfolding/**
 .codex
 .claude/
 2d-unfolding/reference/
+3d-unfolding/smoke/
+3d-unfolding/evloop_work_3d_*/
+evloop3d_*.out
+evloop3d_*.err
