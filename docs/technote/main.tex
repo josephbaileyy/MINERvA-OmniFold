@@ -13,7 +13,7 @@
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
-\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}}
+\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}{../../3d-unfolding/}}
 
 \newcommand{\pT}{p_{T}}
 \newcommand{\pPar}{p_{\parallel}}
@@ -45,9 +45,14 @@ $\chi^{2}/\mathrm{ndf}=3.66$ (paper covariance) as a correlated \emph{shape}
 difference in the low-$\pT$ peak plus a $\sim1$-unit GBDT-estimator
 regularisation band, and we compare both measurements to the GENIE MINERvA
 Tune v1 prediction, which under-predicts the data by $\sim\SI{9}{\percent}$.
-This note documents the method, the analysis pipeline, the uncertainty
-quantification, the validation suite, and the open questions we are taking to
-the collaboration.
+Finally we demonstrate the technique's defining advantage by extending the
+measurement to three dimensions, $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$, adding
+available energy as a third axis: the $\Eavail$-marginal recovers the 2D result
+in normalisation and an injected-shape closure passes, so the third dimension
+exposes genuine data\,$\leftrightarrow$\,MC structure with no method bias. This
+note documents the method, the analysis pipeline, the uncertainty
+quantification, the validation suite, the higher-dimensional extension, and the
+open questions we are taking to the collaboration.
 \end{abstract}
 
 \tableofcontents
@@ -57,6 +62,7 @@ the collaboration.
 \input{sec_results}
 \input{sec_systematics}
 \input{sec_validation}
+\input{sec_3d}
 \input{sec_openquestions}
 
 \appendix

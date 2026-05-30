@@ -25,14 +25,9 @@ result. Full technical context is in \texttt{uq\_statistical\_methods.tex
         principal-component / fixed-rank flux covariance?
   \item \textbf{Ours-only $\chi^{2}$ precedent.} Have other MAT-based
         OmniFold/unbinned analyses hit this rank issue, and what was published?
+  \item \textbf{3D systematic covariance.} The available-energy extension
+        (\S\ref{sec:3d}) is validated central-value-only; propagating the
+        universe/bootstrap/ML covariances to 3D (and the recommended $\Eavail$
+        binning) is the next step. Is there MINERvA precedent for a 3D
+        systematic covariance from low-recoil samples?
 \end{enumerate}
-
-\section{Next: available-energy higher dimension}
-\label{sec:nextd}
-The enabling property of unbinned OmniFold is that adding an observable is adding
-an input feature. We are extending the measurement to
-$d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as the third axis
-(reco \texttt{CVUniverse::GetEavail()}), validated by requiring the
-$\Eavail$-marginal to recover this 2D result. This has no practical D'Agostini
-IBU analogue and is the primary physics motivation for the technique.
-\TODO{fill in once the 3D framework + first closure (Workstream C) lands.}

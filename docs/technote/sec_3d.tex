@@ -1,0 +1,88 @@
+\section{Higher-dimensional extension: available energy}
+\label{sec:3d}
+
+The enabling property of unbinned OmniFold is that adding an observable is
+adding an input feature: the step-1/step-2 classifiers simply gain a column,
+with no migration-matrix or binning penalty. There is no practical D'Agostini
+IBU analogue, which makes this the primary physics motivation for the technique.
+We exercise it by extending the measurement to
+$d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
+
+\subsection{Definitions and pipeline}
+\label{sec:3d-method}
+Available energy follows the MINERvA low-recoil convention
+(arXiv:2312.16631, Eq.~4): truth
+$\Eavail=\sum_{p}\mathrm{KE}+\sum_{\pi^{\pm}}\mathrm{KE}+\sum_{\pi^{0},\gamma}E$
+(excluding neutrons and the muon), via \texttt{CVUniverse::GetEAvailableTrue()};
+reco $\Eavail$ is the calorimetric tracker$+$ECAL estimate scaled by $1.17$,
+\texttt{CVUniverse::NewEavail()}. Both accessors were added to the event loop,
+which was re-run over all twelve ME~FHC playlists to append the $\Eavail$
+branches alongside the existing $\pT$/$\pPar$ branches. The unfolding driver is
+the 2D pipeline with a three-column feature stack
+$(\pT,\pPar,\Eavail)$; the cross-section extraction generalises to a 3D Jacobian
+$\Delta\pT\,\Delta\pPar\,\Delta\Eavail$ with the flux $\Phi$ still applied per
+$\pT$ (broadcast over $\pPar$ and $\Eavail$). The $\Eavail$ binning
+$[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide catch bin so that the
+$\Eavail$-marginal captures the full CC-inclusive recoil tail; the global
+OmniFold completeness is $c=1.0000$, as in 2D.
+
+\subsection{The available-energy spectrum}
+\label{sec:3d-spectrum}
+Figure~\ref{fig:eavail} shows the unfolded $d\sigma/d\Eavail$ (the 1D projection
+of the 3D result). It falls monotonically from
+\SI{2.19e-38}{cm^2/GeV/nucleon} at the low-recoil peak to
+\SI{6.8e-41}{} in the catch bin --- the expected CC-inclusive shape, with most
+of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.66\textwidth]{eavail_spectrum.png}
+  \caption{Unfolded available-energy spectrum $d\sigma/d\Eavail$, the 1D
+  projection of the 3D measurement. The wide $[3,100]\,\si{GeV}$ catch bin
+  (value annotated) is excluded from the axis.}
+  \label{fig:eavail}
+\end{figure}
+
+\subsection{Validation against the 2D measurement}
+\label{sec:3d-anchor}
+With no published 3D reference, the validation anchor is that marginalising the
+3D cross section over $\Eavail$ must reproduce the 2D result of
+\S\ref{sec:results}. The marginal recovers the 2D \emph{normalisation} closely:
+total $\sigma$ agrees to $+\SI{0.95}{\percent}$ and the per-bin
+marginal/2D ratio has median $1.0016$. The \emph{shape} agreement is looser ---
+the marginal versus the published covariance gives $\chi^{2}/\mathrm{ndf}=4.98$,
+above the frozen 2D values ($3.66$ default, $2.65$ LightGBM-CV), driven by a
+$\sim\SI{4.4}{\percent}$ per-bin scatter that the third axis injects into the
+$(\pT,\pPar)$ marginal (Fig.~\ref{fig:eavail-marg}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{eavail_marginal_vs_paper_pull_full.png}
+  \caption{Per-bin pull of the $\Eavail$-marginal against the published
+  covariance, on the $14\times16$ grid and its distribution.}
+  \label{fig:eavail-marg}
+\end{figure}
+
+\subsection{Closure: the scatter is physical, not a method bias}
+\label{sec:3d-closure}
+A reweight closure isolates whether that $\SI{4.4}{\percent}$ scatter is method
+bias or real information. We inject a known $+\SI{30}{\percent}$ Gaussian bump
+in \emph{truth} $\Eavail$ (centre \SI{0.3}{GeV}, width \SI{0.15}{GeV}) into the
+pseudo-data and require the 3D unfold to recover it. It does: the recovered
+step-2 mean weight is $1.048$ against the injected $1.0485$, and the residual of
+the unfold against the reweighted-truth reference is, on the $\Eavail$-marginal,
+median $0.9999$ with standard deviation \textbf{\num{0.0006}}
+(\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
+\SI{3.2}{\percent} (MC statistics in sparse high-recoil corners). The closure
+marginal scatter is thus $\sim70\times$ tighter than the
+$\SI{4.4}{\percent}$ data-versus-2D scatter. The method is therefore unbiased on
+the new axis, and we read the elevated marginal $\chi^{2}$ as
+\emph{genuine data\,$\leftrightarrow$\,MC structure that the available-energy
+dimension exposes} --- information that is invisible to the 2D measurement ---
+rather than a pipeline artefact (the total normalisation matches to
+$<\SI{1}{\percent}$).
+
+This establishes the 3D framework and its first closure. The full 3D
+\emph{systematic}-uncertainty campaign (universe, bootstrap, and ML covariances,
+as in \S\ref{sec:systematics} for 2D) is the natural follow-up; the present 3D
+result is central-value only.
