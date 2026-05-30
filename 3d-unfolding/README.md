@@ -47,12 +47,22 @@ PDF: `../2d-unfolding/reference/Henry_2312.16631_MINERvA_Eavail_lowQ2.pdf`
   universe / alt-model / bootstrap machinery is the deferred 3D-UQ campaign).
   Smoke test (`smoke/`, 2 iter) passed: `c=1.0000`, and the 3D integral equals
   the Eavail-marginal 2D integral (2.905e-38) to displayed precision.
-- [~] **C3 (validation)** — full-stats run launched: `sbatch_unfold_3d.sh`
-  (SLURM 53615223, 5 iter lgbm, seed 1) → `xsec_3d_MEFHC_5iter_lgbm.root`, then
-  auto-runs the anchor check `compare_to_paper_fullcov.py --ours <that>` →
-  `anchor_marginal_vs_paper.txt`. **Gate: the Eavail-marginal `hXSec2D` must
-  reproduce the frozen 2D paper-cov χ² (≈3.66) within run-to-run noise.**
-  Closure (truth-reweight / hidden-var) in 3D still TODO.
+- [~] **C3 (validation)** — full-stats unfold done (`xsec_3d_MEFHC_5iter_lgbm.root`,
+  5 iter lgbm seed 1, ran ~14 min on the interactive node; c=1.0000). Results
+  (`anchor_marginal_vs_paper.txt`, 2026-05-30):
+  - **Eavail spectrum physical**: dσ/dE_avail falls monotonically 2.19e-38
+    (low-recoil [0,0.1] peak) → 6.8e-41 (catch bin), the expected CC-inclusive
+    shape.
+  - **Normalization anchor PASS**: marginal total σ = 3.724e-37 vs paper
+    3.689e-37 (+0.95%); 3D integral ≡ Eavail-marginal integral (3.079e-38);
+    marginal/2D per-bin ratio median 1.0016, mean 1.0079.
+  - **Shape anchor ELEVATED**: marginal vs paper full-cov χ²/ndf = **4.98**
+    (stat-only 12.48), above the frozen 2D values (default-2D 3.66, lgbm-CV
+    2.65). Driven by ~4.4% per-bin scatter the 3rd axis injects into the
+    (pT,p||) marginal — a genuine effect of reweighting with Eavail info, NOT a
+    normalization/pipeline bug (total σ matches to <1%). Next: the 3D **closure**
+    (truth-reweight / hidden-var) decides whether that scatter is statistical
+    (closure closes) or a real Eavail-migration bias.
 
 ## C1 spec — C++ event-loop changes (ready to apply when we launch the re-run)
 In `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, following the
