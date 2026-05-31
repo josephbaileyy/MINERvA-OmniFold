@@ -137,3 +137,27 @@ GENIE CV 2.52 < Tune v1 2.71 < unfolded data 3.08 (×1e-38). All three track the
 peak below GENIE CV (RPA/nuclear effects), and the data sits above all three at
 lowest Eavail. Remaining follow-ups: NEUT/GiBUU (one reader each), full 3D
 systematic UQ.
+
+## 2026-05-31 — FSI dial variation (FrInel_pi): putting a number on open question #2
+
+Scaffolded a truth-level GENIE FSI-dial variation pass (motivated by the
+uq_statistical_methods open question #2: MAT leaves `FrInel_pi` — the pion
+inelastic FSI knob — commented out). FSI reweighting is applied to the *same*
+2M CV gevgen events (no regeneration): `grwght1p -s FrInel_pi -t 3 --min-tweak
+-1 --max-tweak 1` per shard (`run_fsi_reweight.sh` / `run_parallel_fsi.sh` fan
+out over the 8 `work_p*/gntp.*.ghep.root`), then `fsi_variation_xsec3d.py`
+applies the per-event weights (weight-tree `eventnum` == gst `iev`) and rebuilds
+d³σ at each dial. FSI conserves total CC σ, so each dial is normalised by its
+own weighted CC sum → the dial=0 column reproduces CV **exactly** (built-in
+closure; verified weights ≡ 1.000 at 0σ, ~45 % of events reweighted at ±1σ).
+
+**Result (full 2M, 938,600 in-PS): FrInel_pi is a sub-percent effect here.**
+Total σ-in-PS shifts ±0.03 % at ±1σ; the d σ/dE_avail shifts are ≤ 0.74 %
+(largest in the 0.10–0.20 GeV E_avail bin), ~0.1–0.4 % elsewhere. So the data's
+~10–18 % low-E_avail excess **cannot** be absorbed by pion-inelastic FSI within
+its ±1σ band — excluding `FrInel_pi` (as MAT does) is well justified for this
+observable. Files: `genie/genie_fsi_FrInel_pi_xsec3d.root` (+ `_summary.txt`).
+Note: available energy is fairly robust to *inelastic* rescattering (which
+conserves energy); pion **absorption** (`FrAbs_pi`, removes a π → nucleons) is
+the FSI knob most likely to move E_avail and is the natural next dial — the
+scaffold takes any GSyst dial name as an argument.

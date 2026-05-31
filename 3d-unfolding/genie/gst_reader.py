@@ -39,6 +39,7 @@ def read_gst(path, tree_name="gst"):
                float(t.pxf[j]), float(t.pyf[j]), float(t.pzf[j]))
               for j in range(nf)]
         yield {
+            "iev": int(t.iev),       # gst event index == grwght1p `eventnum`
             "cc": bool(t.cc),
             "nu": (float(t.Ev), float(t.pxv), float(t.pyv), float(t.pzv)),
             "lep": (float(t.El), float(t.pxl), float(t.pyl), float(t.pzl)),

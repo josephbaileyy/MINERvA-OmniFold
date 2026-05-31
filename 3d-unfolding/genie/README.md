@@ -42,6 +42,18 @@ No container runtime needed (shifter/podman exist but aren't used). Verified:
   (absolute, splines⊗flux ÷13) or `--norm shape`. Writes `hXSec3D`,
   Eavail-marginal `hXSec2D`, `hXSec_pt/pz/eavail`.
 - `overlay_generators.py` — overlay generator(s) on the unfolded result (3 axes).
+- `run_fsi_reweight.sh GHEP [DIAL NTWK MIN MAX OUT NEV]` — GENIE single-param
+  reweight (`grwght1p`) on a GHEP file for one GSyst dial (default `FrInel_pi`),
+  scanning `NTWK` tweak values in `[MIN,MAX]` σ. Output TTree `<DIAL>` with
+  `eventnum`/`weights[NTWK]`/`twkdials[NTWK]`; `eventnum == gst iev`.
+- `run_parallel_fsi.sh [DIAL NTWK MIN MAX]` — fan `grwght1p` across the 8 CV
+  shards (`work_p1..8/gntp.*.ghep.root`) → `work_p<i>/weights_<DIAL>.root`.
+- `fsi_variation_xsec3d.py` — apply the per-event weights to the CV gst events
+  and rebuild d³σ at each dial value. FSI conserves the total CC σ, so each dial
+  is normalised by its own weighted CC sum (sigma_nuc × w_bin/w_allCC) → the
+  dial=0 column reproduces CV exactly (built-in closure); off-CV columns are the
+  ±Nσ variations. Writes `hXSec3D/2D/_pt/_pz/_eavail_d{k}` (+ `_cv/_lo/_hi`
+  aliases, `twkdials`) and a `_summary.txt` with the per-Eavail-bin shift table.
 
 ## Run
 ```bash
@@ -57,6 +69,13 @@ python genie_to_xsec3d.py --gst work_cv/genie_mefhc_cv.gst.root \
 # overlay on the unfolded 3D result
 python overlay_generators.py --unfolded ../xsec_3d_MEFHC_5iter_lgbm.root \
     --generator GENIE-CV:genie_cv_xsec3d.root --out genie_vs_unfolded
+
+# --- FSI dial variation (FrInel_pi etc.): reweight the SAME CV events ---
+bash run_parallel_fsi.sh FrInel_pi 3 -1 1        # -> work_p*/weights_FrInel_pi.root
+source ../../setup_salloc_env.sh
+python fsi_variation_xsec3d.py --shards 'work_p*' --dial FrInel_pi \
+    --flux flux_mefhc_numu.root --flux-hist flux_numu \
+    --out genie_fsi_FrInel_pi_xsec3d.root      # + _summary.txt (Eavail shifts)
 ```
 (`genie_to_xsec3d.py` needs `$GENIE_SPLINES` set for the splines normalisation —
 source `setup_genie.sh` once to export it, or pass `--graphs`.)

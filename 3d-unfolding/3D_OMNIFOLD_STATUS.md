@@ -77,6 +77,12 @@ matches to <1 %).
   Eavail** the 2D measurement can't resolve (`genie/generators_vs_unfolded.png`;
   technote §6.5). NEUT/GiBUU not pursued (not on CVMFS). Env solved natively
   via UPS `-H` + a compat-lib shim (no container); see `genie/README.md`.
+- **FSI dial variation**: DONE for `FrInel_pi` (`genie/run_fsi_reweight.sh`,
+  `run_parallel_fsi.sh`, `fsi_variation_xsec3d.py`). GENIE `grwght1p` reweights
+  the same 2M CV events at ±1σ (dial=0 reproduces CV exactly). **FrInel_pi is
+  sub-percent here**: total σ-in-PS ±0.03 %, dσ/dE_avail ≤ 0.74 % — far below
+  the ~10–18 % low-E_avail data excess, so it can't explain it (justifies MAT's
+  exclusion; uq open question #2). `FrAbs_pi` is the natural next dial.
 - **Statistical UQ**: IN PROGRESS (commit `5f3f6ec`). `--bootstrap-seed` added
   to the 3D driver (Poisson on data+MC, mirrors 2D); 100-replica array
   (`sbatch_bootstrap_3d.sh`, SLURM 53653415) → `build_bootstrap_band_3d.py`

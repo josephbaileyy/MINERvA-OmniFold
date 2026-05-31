@@ -1,0 +1,15 @@
+# FrInel_pi (and any GSyst dial) effect on the Eavail spectrum
+# dial=FrInel_pi  grid(sigma)=[-1.0, 0.0, 1.0]  CV col=1
+# <sigmaCC>/nucleon=3.9815e-38 cm^2; total CC=1484896, in-PS=938600
+# total sigma in PS per dial (cm^2/nucleon):
+#   -1.00sig 2.517265e-38 (+0.023% vs CV)
+#   +0.00sig 2.516697e-38 (+0.000% vs CV)
+#   +1.00sig 2.515968e-38 (-0.029% vs CV)
+# Eavail_lo Eavail_hi  dsdEa[-1.00sig] dsdEa[+0.00sig] dsdEa[+1.00sig]
+0.000 0.100  2.066205e-38 2.069559e-38 2.072832e-38
+0.100 0.200  1.540103e-38 1.551660e-38 1.563021e-38
+0.200 0.400  1.598206e-38 1.599830e-38 1.601533e-38
+0.400 0.800  1.236570e-38 1.231991e-38 1.227355e-38
+0.800 1.500  7.526187e-39 7.509872e-39 7.492682e-39
+1.500 3.000  3.623807e-39 3.625303e-39 3.626734e-39
+3.000 100.000  2.803723e-41 2.807492e-41 2.810680e-41
