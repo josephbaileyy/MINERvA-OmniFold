@@ -79,3 +79,22 @@ it (step2 mean weight 1.048 ≈ injected 1.0485). Residuals (unfold/truth-ref):
 data-vs-2D scatter — so that scatter (and the χ²=4.98) is real data↔MC structure
 the Eavail axis exposes, NOT a method bias. Workstream C framework validated
 end-to-end. Committed `c73ce30`. Deferred: full 3D systematic-UQ campaign.
+
+## 2026-05-31 — GENIE truth-generation scaffold + first model overlay (genie/)
+
+Built `genie/` to generate truth-level GENIE events and compare to the unfolded
+3D result (no detector sim needed — comparison is at truth level). Scaffold
+committed `87cd16e`; see `genie/README.md`. Env solved without a container:
+GENIE 2.12.10c from CVMFS via UPS `-H` SL7-flavor override + a 4-lib compat shim
+(glibc forward-compat on SLES15). Two bring-up bugs fixed: the MINERvA flux is a
+`PlotUtils::MnvH1D` GENIE reads as integral-zero → convert to plain TH1D
+(`make_flux_for_genie.py`); reduced the 850 MB spline file to the C12+H1 subset
+(`reduce_splines.sh`, 4 MB).
+
+First result (2M base-CV events, 8 parallel gevgen × 250k ~9 min, hadd'd):
+1.48M CC, 938k in phase space; flux-averaged ⟨σCC⟩/nucleon = 3.98e-38 cm²;
+total-in-PS 2.52e-38 vs unfolded 3.08e-38. **GENIE 2.12 CV tracks the data
+shape on (pT, p‖, Eavail) but runs ~10-18 % low in normalisation**
+(`genie_vs_unfolded.png`) — expected base-CV behaviour before the MINERvA
+Tune v1 reweights. Deferred (Stage B): apply Tune v1 reweights to reproduce the
+shipped ancillary curve.

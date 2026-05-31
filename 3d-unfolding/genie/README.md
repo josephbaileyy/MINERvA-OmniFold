@@ -62,9 +62,13 @@ python overlay_generators.py --unfolded ../xsec_3d_MEFHC_5iter_lgbm.root \
 source `setup_genie.sh` once to export it, or pass `--graphs`.)
 
 ## Status / stages
-- **Stage 0 + A (this scaffold)**: base GENIE CV → 3D, overlay. Validation:
-  Eavail-marginal integral ≡ 3D integral; flux-averaged ⟨σCC⟩/nucleon in the
-  expected ME range; shape vs data; base CV vs shipped Tune v1.
+- **Stage 0 + A: DONE** (2026-05-31). 2M base-GENIE-CV events (8 parallel
+  gevgen × 250k, ~9 min on a 256-core node, hadd'd); analyzer → `genie_cv_xsec3d.root`;
+  overlay → `genie_vs_unfolded.png`. Result: 1.48M CC events, 938k in phase
+  space; flux-averaged ⟨σCC⟩/nucleon = 3.98e-38 cm² (physical); total-in-PS
+  2.52e-38 vs unfolded 3.08e-38. **GENIE 2.12 CV tracks the data shape on all
+  three axes (pT, p‖, Eavail) but runs ~10-18 % low in normalisation** — the
+  expected base-CV behaviour before the MINERvA Tune v1 reweights (Stage B).
 - **Stage B (follow-up)**: apply MINERvA Tune v1 reweights to reproduce the
   shipped `model_ptpl…Tune_v1.txt`, then overlay both tunes.
 - Other generators: +1 `read_<gen>` in `gst_reader.py` each.
