@@ -116,5 +116,24 @@ Three-way overlay `genie_tunes_vs_unfolded.png` (base CV + Tune v1 + unfolded):
 on (pT, p‖) the tune barely moves GENIE; on **Eavail** the tune acts at low
 recoil (RPA suppresses the QE peak, Tune v1 below base CV in the lowest bin) yet
 still underpredicts the data there — the model-discrimination the 3D axis
-enables. Workstream C + GENIE comparison complete. Remaining follow-ups:
-NuWro/NEUT/GiBUU (one reader each), full 3D systematic UQ.
+enables.
+
+## 2026-05-31 — Independent generator: NuWro 21.09
+
+Added NuWro (first non-GENIE generator). From CVMFS via the same UPS `-H` SL7
+trick + compat shim (+ libxxhash from conda). Bring-up gotchas, all solved:
+(i) **e20:debug** build — the prof build segfaults inside the flux-driven
+test-event phase on SLES15 forward-compat; (ii) `nuwro_home/{bin,data}` symlink
+dir (NuWro's `<bin>/../data` lookup breaks under the UPS layout); (iii) flux
+hist x-axis in GeV, range-restricted [0.5,50] GeV to avoid an edge crash.
+`nuwro_to_flat.C` reads the event-class tree (in NuWro's ROOT 6.22) → flat obs
+tree; `nuwro_to_xsec3d.py` (conda) normalises by the per-event weight
+(= flux-avg σCC/nucleon). Target C12 (~92 % of CH; documented). 2M events
+(8×250k parallel, ~5 min): ⟨σCC⟩/nucleon 3.72e-38, total-in-PS 2.34e-38.
+
+Four-way overlay `generators_vs_unfolded.png`: totals-in-PS NuWro 2.34 <
+GENIE CV 2.52 < Tune v1 2.71 < unfolded data 3.08 (×1e-38). All three track the
+(pT, p‖) shape; on **Eavail** both NuWro and Tune v1 suppress the low-recoil QE
+peak below GENIE CV (RPA/nuclear effects), and the data sits above all three at
+lowest Eavail. Remaining follow-ups: NEUT/GiBUU (one reader each), full 3D
+systematic UQ.

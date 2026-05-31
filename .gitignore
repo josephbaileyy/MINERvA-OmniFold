@@ -89,3 +89,6 @@ evloop3d_*.err
 3d-unfolding/genie/gevgen3d_*.out
 3d-unfolding/genie/gevgen3d_*.err
 3d-unfolding/genie/*.gst.root
+3d-unfolding/genie/nuwro_home*/
+3d-unfolding/genie/par_nuwro_*.out
+3d-unfolding/genie/parallel_nuwro.out

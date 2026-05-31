@@ -81,5 +81,23 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   (both ~10 % low); on **Eavail** the tune acts at low recoil (RPA suppresses the
   QE peak) yet still underpredicts the data at the lowest Eavail — model
   discrimination the 3D axis enables. (`model_tune_xsec3d.py`.)
-- Other generators: +1 `read_<gen>` in `gst_reader.py` each (gevgen route);
-  NuWro/NEUT/GiBUU.
+- **NuWro 21.09: DONE** (2026-05-31) — first genuinely independent generator
+  (not a GENIE tune). From CVMFS (`nuwro v21_09_1`), same UPS `-H` SL7 trick +
+  compat shim (+ `libxxhash` from conda). Three NuWro-specific gotchas, all
+  solved (see `setup_nuwro.sh`): (i) use the **e20:debug** build — the prof
+  build segfaults inside the flux-driven test-event phase on this platform;
+  (ii) invoke via a local `nuwro_home_dbg/{bin,data}` symlink dir because NuWro
+  derives `data_dir = <bin>/../data` which the UPS layout breaks; (iii) flux
+  histogram x-axis in **GeV**, range-restricted to [0.5,50] GeV
+  (`flux_mefhc_numu_nuwro.root`) to avoid an edge crash. Target C12 (~92 % of CH
+  by nucleons; documented approximation). Files: `setup_nuwro.sh`,
+  `run_nuwro.sh`, `run_parallel_nuwro.sh`, `nuwro_to_flat.C` (event-class →
+  flat obs, run in NuWro's ROOT), `nuwro_to_xsec3d.py` (conda; weight =
+  flux-avg σCC/nucleon). 2M events (8×250k parallel, ~5 min); flux-avg
+  ⟨σCC⟩/nucleon = 3.72e-38; total-in-PS 2.34e-38 (lowest of the models:
+  NuWro 2.34 < GENIE CV 2.52 < Tune v1 2.71 < data 3.08).
+- **Four-way overlay** `generators_vs_unfolded.png` (GENIE CV + Tune v1 + NuWro
+  + unfolded data): all three track the (pT, p‖) shape; on **Eavail** both NuWro
+  and Tune v1 suppress the low-recoil QE peak below GENIE CV (RPA/nuclear
+  effects), and the data sits above all three at lowest Eavail.
+- Remaining generators: NEUT / GiBUU (+1 reader/converter each).
