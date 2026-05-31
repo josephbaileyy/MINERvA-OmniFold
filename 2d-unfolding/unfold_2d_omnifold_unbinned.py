@@ -914,6 +914,16 @@ def main():
                           "to omitting this flag. Data and MC draws are "
                           "independent (separate sub-RNGs) so data-stat and "
                           "MC-stat contribute jointly per replica.")
+    ap.add_argument("--bootstrap-streams", choices=["both", "data", "mc"],
+                     default="both",
+                     help="Which sample(s) the Poisson(1) bootstrap fluctuates "
+                          "(only with --bootstrap-seed). 'both' (default) is the "
+                          "joint data+MC stat covariance; 'data' fluctuates only "
+                          "the measured weights (data-statistical component); "
+                          "'mc' fluctuates only sig['w_truth']/['w_reco'] "
+                          "(MC-statistical component). The data and MC sub-RNGs "
+                          "are independent, so C_both == C_data + C_mc up to "
+                          "sampling noise -- a decomposition AND a closure check.")
     ap.add_argument("--universe", type=str, default=None, metavar="BAND:IDX",
                      help="Systematic-universe unfold. Argument is "
                           "'BAND:IDX' (e.g. 'MaCCQE:0' or 'Flux:42'). When "
@@ -1334,18 +1344,28 @@ def main():
     if args.bootstrap_seed is not None:
         rng_data = np.random.default_rng(args.bootstrap_seed)
         rng_mc = np.random.default_rng(args.bootstrap_seed + 10_000_000)
+        do_data = args.bootstrap_streams in ("both", "data")
+        do_mc = args.bootstrap_streams in ("both", "mc")
+        # Draw both sub-RNGs unconditionally (keeps the data/mc streams seed-
+        # aligned across modes), then apply only the requested stream(s). With
+        # independent streams, Cov(both) = Cov(data-only) + Cov(mc-only).
         b_data = rng_data.poisson(1.0, size=measured_weights.shape[0]).astype(float)
         b_truth = rng_mc.poisson(1.0, size=sig["w_truth"].shape[0]).astype(float)
-        # Reco weights ride the truth draw so that a single MC event is
-        # consistently up/down-weighted at both reco and truth level
-        # (omnifold.py treats sig["w_truth"] and sig["w_reco"] as the same
-        # event row).
-        measured_weights = measured_weights * b_data
-        sig["w_truth"] = sig["w_truth"] * b_truth
-        sig["w_reco"] = sig["w_reco"] * b_truth
+        if do_data:
+            measured_weights = measured_weights * b_data
+        if do_mc:
+            # Reco weights ride the truth draw so that a single MC event is
+            # consistently up/down-weighted at both reco and truth level
+            # (omnifold.py treats sig["w_truth"] and sig["w_reco"] as the same
+            # event row).
+            sig["w_truth"] = sig["w_truth"] * b_truth
+            sig["w_reco"] = sig["w_reco"] * b_truth
         print(f"[INFO] Poisson bootstrap: seed={args.bootstrap_seed}, "
-              f"data factor sum={b_data.sum():.6g} (n={b_data.size}), "
-              f"mc factor sum={b_truth.sum():.6g} (n={b_truth.size})")
+              f"streams={args.bootstrap_streams}, "
+              f"data factor sum={b_data.sum():.6g} (n={b_data.size}, "
+              f"{'APPLIED' if do_data else 'held'}), "
+              f"mc factor sum={b_truth.sum():.6g} (n={b_truth.size}, "
+              f"{'APPLIED' if do_mc else 'held'})")
 
     # --- Run 2D OmniFold via direct Python helper call ---
     # NB: we bypass ROOT.RooUnfoldOmnifold().UnbinnedOmnifold() because its
