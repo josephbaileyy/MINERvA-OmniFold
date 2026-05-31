@@ -323,6 +323,10 @@ def main():
                     help="OmniFold GBDT estimator (lgbm/histgb/gb)")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--bootstrap-seed", type=int, default=None,
+                    help="Poisson(1) bootstrap on data+MC weights for the "
+                         "statistical-uncertainty band (mirrors the 2D driver). "
+                         "CV result is the unweighted unfold (flag omitted).")
     ap.add_argument("--eavail-edges", default=None,
                     help="Comma-separated Eavail bin edges (GeV); "
                          "default = physics bins + catch-all top bin")
@@ -439,6 +443,22 @@ def main():
         measured_weights = build_measured_training_3d(
             meas_pt, meas_pz, meas_ea, data3d, bkg3d,
             pt_edges, pz_edges, ea_edges, verbose=args.verbose)
+
+    # --- Poisson(1) bootstrap (statistical uncertainty) ---
+    # Independent Poisson(1) multipliers on data and MC weights, so data-stat
+    # and MC-stat contribute jointly per replica (mirrors the 2D driver). The
+    # reco weight rides the truth draw so a single MC event is consistently
+    # up/down-weighted at truth and reco level.
+    if args.bootstrap_seed is not None:
+        rng_d = np.random.default_rng(args.bootstrap_seed)
+        rng_m = np.random.default_rng(args.bootstrap_seed + 10_000_000)
+        b_data = rng_d.poisson(1.0, size=measured_weights.shape[0]).astype(float)
+        b_mc = rng_m.poisson(1.0, size=sig["w_truth"].shape[0]).astype(float)
+        measured_weights = measured_weights * b_data
+        sig["w_truth"] = sig["w_truth"] * b_mc
+        sig["w_reco"] = sig["w_reco"] * b_mc
+        print(f"[INFO] Poisson bootstrap seed={args.bootstrap_seed}: "
+              f"data factor sum={b_data.sum():.6g}, mc factor sum={b_mc.sum():.6g}")
 
     # --- OmniFold ---
     _OF_PY = f"{_REPO}/unbinned_unfolding/python"
