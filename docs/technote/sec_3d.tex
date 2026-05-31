@@ -160,20 +160,59 @@ dimension exposes} --- information that is invisible to the 2D measurement ---
 rather than a pipeline artefact (the total normalisation matches to
 $<\SI{1}{\percent}$).
 
-This establishes the 3D framework and its first closure. The full 3D
-\emph{systematic}-uncertainty campaign (universe, bootstrap, and ML covariances,
-as in \S\ref{sec:systematics} for 2D) is the natural follow-up; the present 3D
-result is central-value only.
+This establishes the 3D framework and its first closure.
 
-\paragraph{Model comparison in 3D.}
-The natural way to interpret the 3D result is against neutrino-interaction
-\emph{generators}. Because the published ancillary ships only binned 2D model
-histograms, a quantitative 3D (or arbitrary-projection) comparison requires
-generating truth-level events ourselves: running GENIE~\cite{Andreopoulos:2009rq}
-(across tunes), NuWro~\cite{Golan:2012wx}, NEUT~\cite{Hayato:2009zz} and
-GiBUU~\cite{Buss:2011mx} with the MINERvA ME~FHC flux, applying the same
-fiducial phase space and the truth $\Eavail$ definition, and histogramming the
-predicted $d^{3}\sigma$. No detector simulation is needed --- the unfolded
-result already lives at truth level --- so this is a comparatively cheap,
-high-value next step that directly exploits the unbinned measurement's ability
-to discriminate models in the full $(\pT,\pPar,\Eavail)$ space.
+\subsection{Generator comparison in 3D}
+\label{sec:3d-models}
+Because the published ancillary ships only binned 2D model histograms, a
+quantitative comparison of the 3D result (or of arbitrary projections) requires
+generating truth-level events ourselves. No detector simulation is needed --- the
+unfolded result already lives at truth level --- so a generator prediction is
+obtained by histogramming its truth $d^{3}\sigma$ in the same fiducial phase
+space and the same truth $\Eavail$ definition. We compare three predictions:
+\begin{itemize}
+  \item \textbf{GENIE 2.12.10 central value} --- generated with \texttt{gevgen}
+        on a CH target with the MINERvA ME~FHC flux and the
+        DefaultPlusValenciaMEC configuration~\cite{Andreopoulos:2009rq}.
+  \item \textbf{MINERvA Tune v1} --- the analysis tune (base GENIE $+$ RPA,
+        low-recoil 2p2h, and non-resonant-pion reweights), extracted directly
+        from the event-loop MC truth (the \texttt{w\_truth} weights), which
+        reproduces the shipped ancillary curve to \SI{0.01}{\percent} in
+        normalisation.
+  \item \textbf{NuWro 21.09}~\cite{Golan:2012wx} --- an independent generator
+        (C target), the same flux and phase space.
+\end{itemize}
+NEUT~\cite{Hayato:2009zz} and GiBUU~\cite{Buss:2011mx} are not included (no
+accessible build at the time of writing). Each prediction is normalised by its
+own flux-averaged total CC cross section per nucleon
+($\langle\sigma\rangle\approx\SI{3.7}{}$--$\SI{4.0e-38}{cm^2}$).
+
+Figure~\ref{fig:3dmodels} overlays the three on the unfolded result. The
+flux-averaged totals in the measurement phase space order as
+NuWro ($\SI{2.34e-38}{}$) $<$ GENIE CV ($\SI{2.52e-38}{}$) $<$ Tune v1
+($\SI{2.71e-38}{}$) $<$ data ($\SI{3.08e-38}{cm^2/nucleon}$): all three models
+under-predict the rate, by \SIrange{12}{24}{\percent}. On $(\pT,\pPar)$ the
+three track the data shape closely; the discriminating axis is $\Eavail$, where
+both NuWro and Tune v1 \emph{suppress} the low-recoil quasielastic peak below
+bare GENIE (RPA and nuclear effects) --- yet the data sit \emph{above} all three
+in the lowest-$\Eavail$ bin. This low-available-energy excess is invisible to the
+2D measurement and is a direct statement of the unbinned method's
+high-dimensional reach. (Data points carry only the per-bin OmniFold statistical
+error here; the bootstrap statistical band is in preparation,
+\S\ref{sec:systematics} analogue for 3D.)
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded.png}
+  \caption{1D projections of the unfolded 3D cross section (black) versus three
+  generator predictions: GENIE 2.12 CV (red), MINERvA Tune v1 (blue), and the
+  independent NuWro 21.09 (green). On $\pT$ and $\pPar$ the models track the data
+  shape; on $\Eavail$ they split, and all under-predict the data at low available
+  energy. The wide $\Eavail$ catch bin is omitted from the axis.}
+  \label{fig:3dmodels}
+\end{figure}
+
+The full 3D \emph{systematic}-uncertainty campaign (universe and ML covariances,
+as in \S\ref{sec:systematics} for 2D) remains the larger follow-up; it requires
+re-running the event loop with the systematic universes dumped on the third
+axis.

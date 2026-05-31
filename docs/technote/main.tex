@@ -14,7 +14,7 @@
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
-\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}{../../3d-unfolding/}}
+\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}{../../3d-unfolding/}{../../3d-unfolding/genie/}}
 
 \newcommand{\pT}{p_{T}}
 \newcommand{\pPar}{p_{\parallel}}
@@ -50,7 +50,11 @@ Finally we demonstrate the technique's defining advantage by extending the
 measurement to three dimensions, $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$, adding
 available energy as a third axis: the $\Eavail$-marginal recovers the 2D result
 in normalisation and an injected-shape closure passes, so the third dimension
-exposes genuine data\,$\leftrightarrow$\,MC structure with no method bias. This
+exposes genuine data\,$\leftrightarrow$\,MC structure with no method bias.
+Comparing the 3D result to GENIE, the MINERvA Tune v1, and the independent NuWro
+generator, all three under-predict the data and split along the $\Eavail$ axis,
+with an excess in the data at low available energy that the 2D measurement
+cannot resolve. This
 note documents the method, the analysis pipeline, the uncertainty
 quantification, the validation suite, the higher-dimensional extension, and the
 open questions we are taking to the collaboration.
