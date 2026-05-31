@@ -96,5 +96,25 @@ First result (2M base-CV events, 8 parallel gevgen × 250k ~9 min, hadd'd):
 total-in-PS 2.52e-38 vs unfolded 3.08e-38. **GENIE 2.12 CV tracks the data
 shape on (pT, p‖, Eavail) but runs ~10-18 % low in normalisation**
 (`genie_vs_unfolded.png`) — expected base-CV behaviour before the MINERvA
-Tune v1 reweights. Deferred (Stage B): apply Tune v1 reweights to reproduce the
-shipped ancillary curve.
+Tune v1 reweights.
+
+## 2026-05-31 — GENIE Stage B: MINERvA Tune v1 3D prediction
+
+Done the robust way rather than reimplementing the tune reweights on gevgen
+events: the analysis MC already carries the full Tune v1. `mc_truth_denom`'s
+`w_truth` = flux CV × RPA × low-recoil 2p2h × non-res-π suppression
+(mean 0.83 ≠ 1). `model_tune_xsec3d.py` bins the truth weighted by `w_truth` and
+normalises with the unfold's flux/POT/nucleon machinery (completeness = 1, since
+a model prediction needs no efficiency correction) → `model_tunev1_xsec3d.root`.
+**Validation gate PASSED**: reproduces the shipped ancillary
+`model_ptpl…Tune_v1.txt` to 0.01 % in normalisation (σ_tot/data 0.9125 vs
+shipped 0.9124); χ²(ours vs shipped)/ndf = 1.57 (MC-stat-limited, not a model
+difference); data-vs-tune χ²/ndf 33.0 for both. Totals-in-PS: base CV 2.52e-38,
+Tune v1 2.71e-38, unfolded 3.08e-38 (tune raises GENIE ~7 %, still ~12 % low).
+
+Three-way overlay `genie_tunes_vs_unfolded.png` (base CV + Tune v1 + unfolded):
+on (pT, p‖) the tune barely moves GENIE; on **Eavail** the tune acts at low
+recoil (RPA suppresses the QE peak, Tune v1 below base CV in the lowest bin) yet
+still underpredicts the data there — the model-discrimination the 3D axis
+enables. Workstream C + GENIE comparison complete. Remaining follow-ups:
+NuWro/NEUT/GiBUU (one reader each), full 3D systematic UQ.

@@ -69,6 +69,17 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   2.52e-38 vs unfolded 3.08e-38. **GENIE 2.12 CV tracks the data shape on all
   three axes (pT, p‖, Eavail) but runs ~10-18 % low in normalisation** — the
   expected base-CV behaviour before the MINERvA Tune v1 reweights (Stage B).
-- **Stage B (follow-up)**: apply MINERvA Tune v1 reweights to reproduce the
-  shipped `model_ptpl…Tune_v1.txt`, then overlay both tunes.
-- Other generators: +1 `read_<gen>` in `gst_reader.py` each.
+- **Stage B: DONE** (2026-05-31), via the robust route: instead of
+  reimplementing the MINERvA tune reweights on gevgen events, extract the tuned
+  prediction directly from the analysis MC — `mc_truth_denom`'s `w_truth` already
+  carries the full Tune v1 (RPA + 2p2h + non-res-π; mean 0.83). `model_tune_xsec3d.py`
+  bins it and normalises with the unfold's flux/POT/nucleon machinery (c=1, no
+  efficiency correction) → `model_tunev1_xsec3d.root`. **Validated**: reproduces
+  the shipped `model_ptpl…Tune_v1.txt` to 0.01 % in normalisation (σ/data 0.9125
+  vs 0.9124); χ²(ours vs shipped)/ndf = 1.57 (MC-stat-limited). Three-way overlay
+  `genie_tunes_vs_unfolded.png`: on (pT, p‖) the tune barely moves GENIE
+  (both ~10 % low); on **Eavail** the tune acts at low recoil (RPA suppresses the
+  QE peak) yet still underpredicts the data at the lowest Eavail — model
+  discrimination the 3D axis enables. (`model_tune_xsec3d.py`.)
+- Other generators: +1 `read_<gen>` in `gst_reader.py` each (gevgen route);
+  NuWro/NEUT/GiBUU.
