@@ -82,3 +82,10 @@ evloop3d_*.err
 *.fdb_latexmk
 *.bbl
 *.blg
+
+# GENIE generation artifacts
+3d-unfolding/genie/work_*/
+3d-unfolding/genie/gxspl_CH.xml*
+3d-unfolding/genie/gevgen3d_*.out
+3d-unfolding/genie/gevgen3d_*.err
+3d-unfolding/genie/*.gst.root
