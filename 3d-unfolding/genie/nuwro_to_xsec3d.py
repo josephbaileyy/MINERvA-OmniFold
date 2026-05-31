@@ -27,7 +27,6 @@ from xsec_3d import project_eavail_marginal, project_axis
 
 PT, PZ, EA = (np.asarray(u3d.PT_EDGES, float), np.asarray(u3d.PZ_EDGES, float),
               np.asarray(u3d.EAVAIL_EDGES, float))
-in_ps = u3d.u2d.in_truth_phase_space
 
 
 def main():
@@ -47,24 +46,19 @@ def main():
         f = ROOT.TFile.Open(fn)
         nt = f.Get("nTotal")
         n_total += int(nt.GetVal()) if nt else 0
-        t = f.Get("nuwro_obs")
-        a = t.AsMatrix(columns=["cc", "pt", "pz", "eavail", "weight"]) \
-            if hasattr(t, "AsMatrix") else None
-        if a is None:
-            df = ROOT.RDataFrame("nuwro_obs", fn)
-            d = df.AsNumpy(["cc", "pt", "pz", "eavail", "weight"])
-            cc, p_t, p_z, e_a, ww = (d["cc"], d["pt"], d["pz"], d["eavail"], d["weight"])
-        else:
-            cc, p_t, p_z, e_a, ww = a[:, 0], a[:, 1], a[:, 2], a[:, 3], a[:, 4]
         f.Close()
-        sel = cc.astype(bool)
-        pt.append(p_t[sel]); pz.append(p_z[sel]); ea.append(e_a[sel]); w.append(ww[sel])
+        d = ROOT.RDataFrame("nuwro_obs", fn).AsNumpy(
+            ["cc", "pt", "pz", "eavail", "weight"])
+        sel = d["cc"].astype(bool)
+        pt.append(d["pt"][sel]); pz.append(d["pz"][sel])
+        ea.append(d["eavail"][sel]); w.append(d["weight"][sel])
     pt, pz, ea, w = map(np.concatenate, (pt, pz, ea, w))
     print(f"[nuwro] files={len(files)} N_total(CC gen)={n_total} kept={pt.size}")
 
-    # truth phase space
-    m = np.array([in_ps(a, b, PT[0], PT[-1], PZ[0], PZ[-1])
-                  for a, b in zip(pt, pz)])
+    # truth phase space (vectorised mirror of in_ps: rectangle + theta_mu<20 deg)
+    m = (np.isfinite(pt) & np.isfinite(pz)
+         & (pt >= PT[0]) & (pt <= PT[-1]) & (pz >= PZ[0]) & (pz <= PZ[-1])
+         & (np.arctan2(pt, pz) < u3d.u2d.MAX_MUON_THETA_RAD))
     pt, pz, ea, w = pt[m], pz[m], ea[m], w[m]
     print(f"[nuwro] in phase space={pt.size}")
 
