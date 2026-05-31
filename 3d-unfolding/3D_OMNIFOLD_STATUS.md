@@ -1,12 +1,15 @@
 # 3D OmniFold (Eavail) — Status
 
-**Last updated**: 2026-05-30. Workstream C framework **complete end-to-end**
+**Last updated**: 2026-05-31. Workstream C framework **complete end-to-end**
 (C1 event loop + C2 driver + C3 validation). Full-stats 3D unfold
 `d³σ/(dp_T dp_‖ dE_avail)` produced and validated: the Eavail-marginal recovers
 the published 2D **normalization**, and an injected-shape **closure passes** — so
 the elevated marginal **shape** χ² is genuine data↔MC structure the new axis
-exposes, not a method bias. Deferred (by design): the full 3D systematic-UQ
-campaign — the 3D driver is CV-only.
+exposes, not a method bias. **Generator comparison done** (GENIE CV + MINERvA
+Tune v1 + independent NuWro, all under-predict and split along Eavail — see
+`genie/`). **Statistical UQ in progress**: 100-replica Poisson bootstrap (SLURM
+array 53653415). Deferred: the full 3D *systematic*-UQ campaign (needs the
+universe-dumping event-loop re-run).
 
 Companion docs: `README.md` (orientation, axis-decision table, how-to-run),
 `3D_OMNIFOLD_RUN_LOG.md` (this workstream's chronology). Shared invariants live
@@ -66,6 +69,18 @@ matches to <1 %).
 - **C3 — validation**: DONE (commits `2cb4cde`, `27564a8`, `c73ce30`).
   Eavail-marginal anchor (normalization PASS, shape elevated) +
   reweight closure (PASS). See the headline table.
+- **Generator comparison**: DONE (`genie/`, commits `87cd16e`…`0f4c96d`).
+  Truth-level GENIE 2.12.10 CV (gevgen) + MINERvA Tune v1 (from event-loop
+  `w_truth`) + independent NuWro 21.09, all on the MINERvA flux in the 3D phase
+  space. Totals-in-PS: NuWro 2.34 < GENIE CV 2.52 < Tune v1 2.71 < data 3.08
+  (×1e-38); all under-predict, split along Eavail, **data excess at low
+  Eavail** the 2D measurement can't resolve (`genie/generators_vs_unfolded.png`;
+  technote §6.5). NEUT/GiBUU not pursued (not on CVMFS). Env solved natively
+  via UPS `-H` + a compat-lib shim (no container); see `genie/README.md`.
+- **Statistical UQ**: IN PROGRESS (commit `5f3f6ec`). `--bootstrap-seed` added
+  to the 3D driver (Poisson on data+MC, mirrors 2D); 100-replica array
+  (`sbatch_bootstrap_3d.sh`, SLURM 53653415) → `build_bootstrap_band_3d.py`
+  for the per-bin statistical band + data error bars.
 
 ## Outputs (gitignored ROOT/PNG; numbers captured here + RUN_LOG)
 
@@ -74,10 +89,16 @@ matches to <1 %).
 - `closure_3d_MEFHC_eavail_bump.root` — the closure run (+ `*_closureRef` refs).
 - `anchor_marginal_vs_paper.txt`, `eavail_marginal_vs_paper_pull_full.png`.
 
-## Next (deferred follow-up — not in the staged scope)
+## Next
 
-- Full 3D **systematic UQ**: port the universe / bootstrap / ML-covariance
-  campaign to 3D (the 2D driver's machinery was intentionally not carried over).
+- **Finish the statistical band**: once the bootstrap array lands, run
+  `build_bootstrap_band_3d.py` → per-bin stat covariance + data error bars on the
+  spectrum/overlays (in progress).
+- Full 3D **systematic UQ** (deferred, large): re-run the 12-playlist event loop
+  with `MNV101_DUMP_UNIVERSES` on the 3rd axis, then the ~187-universe re-unfold
+  + 3D covariance — the 3D omnifile currently has no universe weights.
 - Eavail **binning study**: the catch-all [3,100] GeV top bin is required for the
   marginal anchor; a finer low-recoil split may be motivated once UQ exists.
-- A 3D results section for the technote (`docs/technote/`).
+- Other generators (NEUT/GiBUU) — blocked: not on CVMFS (GiBUU would need a
+  from-source build).
+- DONE: 3D results + generator comparison in the technote (`docs/technote/` §6).
