@@ -1007,10 +1007,16 @@ small systematic modes $2.5\times$ less. The naive pseudo-inverse then gives
 $\chi^{2}/\mathrm{ndf}=252$ for $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$,
 dominated by poorly-determined directions, against the paper's $3.66$ with
 its larger stat floor. The lever toward an ours-only $\chi^{2}$ is therefore
-the \emph{statistical} block --- and the open physics question is why our
-statistical covariance is smaller (genuinely higher OmniFold statistical
-efficiency, vs.\ a MC-statistical component the data bootstrap omits) --- not
-the hunt for more systematic bands.
+the \emph{statistical} block --- not the hunt for more systematic bands.
+The gap is \emph{not} a missing MC-statistical term: our bootstrap already
+draws independent Poisson($1$) multipliers on \emph{both} data and MC per
+replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1), so
+data-stat and MC-stat contribute jointly. With that excluded, the smaller
+stat covariance most likely reflects genuinely higher unbinned-OmniFold
+statistical efficiency relative to the published binned D'Agostini unfold
+(whose iterative regularisation amplifies statistical fluctuations), or a
+difference in what the paper's \texttt{StatOnlyCov} encompasses --- the open
+physics question, and a more productive one than counting bands.
 
 \paragraph{Regularization scans (all cutoff-dependent).}
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
@@ -1061,11 +1067,13 @@ number on file as a secondary diagnostic.
         rank is its statistical block, which we match with the bootstrap
         ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual
         is that our bootstrap stat covariance is $2.5\times$ smaller by
-        trace than the paper's stat block (\S\ref{sec:rank}). Is the paper's
-        \texttt{StatOnlyCov} purely data-statistical, or does it fold in an
-        MC-statistical component our data-only Poisson bootstrap omits?
-        Resolving this --- not adding bands --- is what would enable a
-        defensible ours-only $\chi^{2}$.
+        trace than the paper's stat block (\S\ref{sec:rank}). This is not an
+        MC-statistics omission --- our bootstrap already Poisson-fluctuates
+        both data and MC jointly. So either unbinned OmniFold is genuinely
+        more statistically efficient than the binned D'Agostini unfold, or
+        the paper's \texttt{StatOnlyCov} encompasses more than a data$+$MC
+        Poisson covariance. Which is it? Resolving this --- not adding
+        bands --- is what would enable a defensible ours-only $\chi^{2}$.
   \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint
         block} (JINST 16 P08068) --- the only cross-band correlation the
         paper names. We \emph{rederived} it: \texttt{MuonEnergyScale} is
