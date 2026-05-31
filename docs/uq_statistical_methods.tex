@@ -982,11 +982,35 @@ $\mathbf{C}^{\ours}$, and it is rank-deficient:
 The deficiency is set by \textbf{band count, not universe count}:
 under the MAT formula Eq.~\eqref{eq:matcov} each $\pm1\sigma$ pair is
 rank $1$ and the $100$-universe PPFX band is rank $\le 99$, so the
-$44$-band sum cannot fill the $205$-dimensional bin space. Adding the
-bootstrap and ML blocks barely changes the picture. The paper's own
-$V$ is also nominally ill-conditioned ($\mathrm{cond}=1.5\times10^{12}$)
-but full-rank, because it sums more bands than we propagate
-(below).
+$44$-band sum cannot fill the $205$-dimensional bin space. \emph{This is
+not a missing-bands problem.} The paper's own systematic-only covariance
+($\texttt{TotalCov}-\texttt{StatOnlyCov}$) is rank $120$ --- \emph{lower}
+than our $140$ --- so we propagate at least as many independent systematic
+directions as the published analysis (we use the same
+\texttt{GetStandardSystematics}). The paper's $V$ is full-rank
+($\mathrm{rank}=204$, $\mathrm{cond}=1.5\times10^{12}$) purely because it
+\textbf{includes the statistical block} ($\texttt{StatOnlyCov}$, rank
+$205$, near-diagonal), not because it sums richer systematics. Adding our
+$300$-replica bootstrap does the same for us:
+$\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=201$,
+$\mathrm{cond}=3.8\times10^{14}$. (An earlier, lower-replica bootstrap left
+the rank near $140$ --- the origin of the now-superseded ``bootstrap barely
+changes the picture'' note.)
+
+\paragraph{The real obstruction is statistical, not rank.}
+Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
+reach --- but for a \emph{statistical-precision} reason, not a missing-band
+one. Our OmniFold bootstrap stat block is $2.5\times$ smaller by trace than
+the paper's stat block ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.8\times10^{-40}$ vs
+$\sqrt{\Tr}\,\texttt{StatOnlyCov}=4.6\times10^{-40}$), so it regularises the
+small systematic modes $2.5\times$ less. The naive pseudo-inverse then gives
+$\chi^{2}/\mathrm{ndf}=252$ for $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$,
+dominated by poorly-determined directions, against the paper's $3.66$ with
+its larger stat floor. The lever toward an ours-only $\chi^{2}$ is therefore
+the \emph{statistical} block --- and the open physics question is why our
+statistical covariance is smaller (genuinely higher OmniFold statistical
+efficiency, vs.\ a MC-statistical component the data bootstrap omits) --- not
+the hunt for more systematic bands.
 
 \paragraph{Regularization scans (all cutoff-dependent).}
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
@@ -1030,15 +1054,30 @@ number on file as a secondary diagnostic.
 
 \paragraph{Open questions for MINERvA collaborators.}
 \begin{enumerate}[nosep,leftmargin=2em]
-  \item \textbf{Bands beyond \texttt{MnvVertErrorBand}.} The published
-        $V$ is full-rank where our per-band sum is $140/205$. We believe
-        the gap is in bands we do not yet propagate, foremost the
-        \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS
-        joint block} (JINST 16 P08068) --- the only cross-band
-        correlation the paper names, and these are two of our largest
-        bands. Is the fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},
-        \text{MuonE}_{\text{scale}})$ posterior covariance available from
-        MAT-MINERvA, or must we re-derive it from the published fit?
+  \item \textbf{Statistical block, not missing bands.} We previously read
+        the $140/205$ rank as missing systematic bands; direct comparison
+        refutes this --- the paper's systematic-only covariance is rank
+        $120<140$, so our band set is at least as rich. The paper's full
+        rank is its statistical block, which we match with the bootstrap
+        ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual
+        is that our bootstrap stat covariance is $2.5\times$ smaller by
+        trace than the paper's stat block (\S\ref{sec:rank}). Is the paper's
+        \texttt{StatOnlyCov} purely data-statistical, or does it fold in an
+        MC-statistical component our data-only Poisson bootstrap omits?
+        Resolving this --- not adding bands --- is what would enable a
+        defensible ours-only $\chi^{2}$.
+  \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint
+        block} (JINST 16 P08068) --- the only cross-band correlation the
+        paper names. We \emph{rederived} it: \texttt{MuonEnergyScale} is
+        rank-$1$, so the cross term is rank-$2$,
+        $\mathbf{C}_{\times}=\rho(\mathbf{d}_{f}\mathbf{d}_{e}\T+\mathbf{d}_{e}\mathbf{d}_{f}\T)$,
+        with $\rho\approx0.87$--$0.90$ recovered two independent ways from
+        the shipped blocks (Cauchy--Schwarz in \texttt{TotalCov} $=+0.90$;
+        subtraction residual $=+0.87$). It is real and now quantified, but
+        adding it leaves our rank unchanged (its directions already lie in
+        $\mathrm{range}(\mathbf{C}^{\syst})$). For a paper-independent $\rho$,
+        is the fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},
+        \text{MuonE}_{\text{scale}})$ posterior available from MAT-MINERvA?
   \item \textbf{FrInel\_pi.} It is commented out in
         \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37-38} with
         the note that ``this knob should not currently be evaluated.''
