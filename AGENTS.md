@@ -137,6 +137,38 @@ auditing.
   unreported); strict-interior comparison uses 185 bins.
 
 ## NERSC SLURM gotchas
+
+### Running past the 3-hour interactive limit — use `alloc_run.sh`
+The agent runs on the **login node** (start it inside `tmux`/`screen` so it
+survives disconnects), NOT inside an salloc shell. An salloc shell dies at the
+180-min `interactive` limit and would take the agent with it. Instead, dispatch
+every compute command through the wrapper:
+```bash
+./alloc_run.sh '<command>'        # quote the whole command if it has pipes/&&/redirects
+./alloc_run.sh --status           # show the shared allocation
+./alloc_run.sh --end              # release it (scancel)
+```
+- It holds **exactly one** shared allocation (job-name `claude-hold`, guarded by
+  a job-name check + `flock`), detached via `setsid` so it outlives the shell.
+- It **reuses** that allocation across calls and **auto-requests a fresh one**
+  when the previous 3-hour allocation has expired — so total wall-clock is
+  unbounded while each underlying allocation stays ≤ 3 h.
+- The command runs on the compute node via `srun --jobid=<JOB> --overlap`, from
+  the repo root, with `setup_salloc_env.sh` already sourced (env chatter goes to
+  stderr; the command's stdout stays clean).
+- **Never** launch a bare interactive `salloc`/`source start_alloc.sh` for agent
+  work, and never start a second holder — one allocation at a time. Tune with
+  `ALLOC_HOLD_SECONDS` / `ALLOC_CPUS` / `ALLOC_JOB_NAME` if needed.
+- **Leave the allocation running between commands.** Do NOT call `--end` just
+  because a command finished — the next command reuses the live node, and
+  tearing it down only to re-request one wastes queue time and compute on
+  repeated start/stop churn. Only run `./alloc_run.sh --end` when the user
+  explicitly says they're done / closing the session, or asks to free the node.
+  Absent any such signal, keep it up; an idle allocation self-expires at the
+  3-hour limit anyway, and the next dispatch transparently requests a fresh one.
+- This is for interactive-style work that fits one node. Multi-node arrays /
+  multi-hour walls still go through `sbatch` (see below).
+
 - **Use the running interactive allocation when one exists, instead of
   submitting a new sbatch.** The regular and shared queues at NERSC
   routinely sit on `Priority` for several minutes to hours. If
