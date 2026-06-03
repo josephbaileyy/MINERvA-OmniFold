@@ -1,15 +1,18 @@
 # 3D OmniFold (Eavail) — Status
 
-**Last updated**: 2026-05-31. Workstream C framework **complete end-to-end**
+**Last updated**: 2026-06-03. Workstream C framework **complete end-to-end**
 (C1 event loop + C2 driver + C3 validation). Full-stats 3D unfold
 `d³σ/(dp_T dp_‖ dE_avail)` produced and validated: the Eavail-marginal recovers
 the published 2D **normalization**, and an injected-shape **closure passes** — so
 the elevated marginal **shape** χ² is genuine data↔MC structure the new axis
-exposes, not a method bias. **Generator comparison done** (GENIE CV + MINERvA
-Tune v1 + independent NuWro, all under-predict and split along Eavail — see
-`genie/`). **Statistical UQ in progress**: 100-replica Poisson bootstrap (SLURM
-array 53653415). Deferred: the full 3D *systematic*-UQ campaign (needs the
-universe-dumping event-loop re-run).
+exposes, not a method bias. **Generator comparison done** with **four**
+generators (GENIE CV + MINERvA Tune v1 + NuWro 21.09 + GiBUU 2019), all
+under-predict and split along Eavail — see `genie/` and technote §6. **Full
+systematic + statistical UQ DONE** (2026-06-02): the 187-universe sweep was
+re-unfolded into the combined covariance C_syst+C_stat+C_ML at
+`uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` (Flux-dominated, same
+band ordering as 2D); the generator comparison now carries that full-cov
+systematic band.
 
 Companion docs: `README.md` (orientation, axis-decision table, how-to-run),
 `3D_OMNIFOLD_RUN_LOG.md` (this workstream's chronology). Shared invariants live
@@ -25,9 +28,10 @@ definitions: arXiv:2312.16631 Eq. 4 (see memory `eavail-3d-extension`).
 Extend the 2D unbinned OmniFold measurement to **3D** by adding available
 energy as a third axis: `d³σ/(dp_T dp_‖ dE_avail)`. The physics showcase for
 unbinned OmniFold's high-dimensional advantage (adding an observable = adding a
-feature; no practical D'Agostini IBU analogue). **Staged scope**: framework +
-first closure + the Eavail-marginal-recovers-2D anchor; the full 3D systematic
-UQ is a deferred follow-up. Validation anchor (there is no published 3D
+feature; no practical D'Agostini IBU analogue). **Scope (now complete)**:
+framework + first closure + the Eavail-marginal-recovers-2D anchor, the
+4-generator comparison, and the full 3D systematic UQ (combined covariance).
+Validation anchor (there is no published 3D
 reference): the Eavail-marginal must reproduce the frozen 2D result.
 
 ---
@@ -72,21 +76,29 @@ matches to <1 %).
 - **Generator comparison**: DONE (`genie/`, commits `87cd16e`…`0f4c96d`).
   Truth-level GENIE 2.12.10 CV (gevgen) + MINERvA Tune v1 (from event-loop
   `w_truth`) + independent NuWro 21.09, all on the MINERvA flux in the 3D phase
-  space. Totals-in-PS: NuWro 2.34 < GENIE CV 2.52 < Tune v1 2.71 < data 3.08
-  (×1e-38); all under-predict, split along Eavail, **data excess at low
-  Eavail** the 2D measurement can't resolve (`genie/generators_vs_unfolded.png`;
-  technote §6.5). NEUT/GiBUU not pursued (not on CVMFS). Env solved natively
-  via UPS `-H` + a compat-lib shim (no container); see `genie/README.md`.
+  space. Totals-in-PS: GiBUU 2.22 < NuWro 2.34 < GENIE CV 2.52 < Tune v1 2.71 <
+  data 3.08 (×1e-38); all under-predict, split along Eavail, **data excess at
+  low Eavail** the 2D measurement can't resolve (`genie/generators_vs_unfolded.png`;
+  technote §6.5). **GiBUU 2019 added as the 4th generator** via a native
+  containerless Perlmutter build (integrated −21.9 %, most deficient; see
+  `setup_gibuu.sh`, memory `gibuu-native-perlmutter`); NEUT still not pursued
+  (not on CVMFS). GENIE env solved natively via UPS `-H` + a compat-lib shim
+  (no container); see `genie/README.md`.
 - **FSI dial variation**: DONE for `FrInel_pi` (`genie/run_fsi_reweight.sh`,
   `run_parallel_fsi.sh`, `fsi_variation_xsec3d.py`). GENIE `grwght1p` reweights
   the same 2M CV events at ±1σ (dial=0 reproduces CV exactly). **FrInel_pi is
   sub-percent here**: total σ-in-PS ±0.03 %, dσ/dE_avail ≤ 0.74 % — far below
   the ~10–18 % low-E_avail data excess, so it can't explain it (justifies MAT's
   exclusion; uq open question #2). `FrAbs_pi` is the natural next dial.
-- **Statistical UQ**: IN PROGRESS (commit `5f3f6ec`). `--bootstrap-seed` added
-  to the 3D driver (Poisson on data+MC, mirrors 2D); 100-replica array
-  (`sbatch_bootstrap_3d.sh`, SLURM 53653415) → `build_bootstrap_band_3d.py`
-  for the per-bin statistical band + data error bars.
+- **Statistical UQ**: DONE. `--bootstrap-seed` on the 3D driver (Poisson on
+  data+MC, mirrors 2D); the per-replica bootstrap band feeds the C_stat block of
+  the combined covariance below.
+- **Systematic UQ**: DONE (2026-06-02). 187-universe sweep + seedscan, re-unfolded
+  and rolled up into the combined covariance C_syst+C_stat+C_ML at
+  `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` (Flux-dominated, same
+  band ordering as 2D, rank 247/1431). Full-cov χ² computed for all four
+  generators (incl. GiBUU). Plan/record: `3D_SYSTEMATIC_UQ_PLAN.md`, memory
+  `3d-systematic-campaign-gaps`.
 
 ## Outputs (gitignored ROOT/PNG; numbers captured here + RUN_LOG)
 
@@ -97,14 +109,10 @@ matches to <1 %).
 
 ## Next
 
-- **Finish the statistical band**: once the bootstrap array lands, run
-  `build_bootstrap_band_3d.py` → per-bin stat covariance + data error bars on the
-  spectrum/overlays (in progress).
-- Full 3D **systematic UQ** (deferred, large): re-run the 12-playlist event loop
-  with `MNV101_DUMP_UNIVERSES` on the 3rd axis, then the ~187-universe re-unfold
-  + 3D covariance — the 3D omnifile currently has no universe weights.
-- Eavail **binning study**: the catch-all [3,100] GeV top bin is required for the
-  marginal anchor; a finer low-recoil split may be motivated once UQ exists.
-- Other generators (NEUT/GiBUU) — blocked: not on CVMFS (GiBUU would need a
-  from-source build).
-- DONE: 3D results + generator comparison in the technote (`docs/technote/` §6).
+- Eavail **binning study** (the remaining open item): the catch-all [3,100] GeV
+  top bin is required for the marginal anchor; a finer low-recoil split is now
+  motivatable since the systematic UQ exists.
+- DONE: framework, full-stats unfold, 4-generator comparison (incl. GiBUU),
+  statistical + systematic UQ (combined covariance), the 2p2h / FSI-dial
+  decomposition of the low-Eavail excess, and the 3D writeup in the technote
+  (`docs/technote/` §6, incl. §sec:3d-syst).

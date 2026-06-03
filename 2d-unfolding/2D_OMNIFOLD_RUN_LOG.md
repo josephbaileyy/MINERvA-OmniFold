@@ -504,3 +504,19 @@ post-rollup analysis. Files touched:
   χ²/ndf row; two new subsections cover the MnvH1D parity and the
   stat-block double-count finding.
 - `uq/matcorr_vs_mnvh1d.txt` — frozen verification report.
+
+## 2026-06-03 — Disk cleanup: reclaimed ~547 GiB of re-derivable intermediates (repo-wide)
+
+2D portion of a repo-wide trim (860 GB → ~313 GB; full inventory in
+`../3d-unfolding/3D_OMNIFOLD_RUN_LOG.md`). **Deleted** (gitignored and
+re-derivable; the merged `…_MEFHC_universes_full.root` and all distilled
+xsec/covariance products kept):
+- `runEventLoopOmniFold_MEFHC_universes.root` — 64 GiB non-"full", superseded by
+  `…_MEFHC_universes_full.root`.
+- the 12 per-playlist `runEventLoopOmniFold_1{A..P}_universes_full.root` (119 GiB),
+  already merged into the kept MEFHC omnifile.
+- `universe_smoke/*.root`, `__pycache__/`, and stray root-level job logs
+  (`final_rollup_full_*`, `iter_scan_1A_3_*`, `unfold_MEFHC_uni_full_CV_*`).
+
+**Regen** if needed: per-playlist event-loop array → `uq/hadd_universes_full.py`
+(SetMaxTreeSize merger, **not** bare hadd — memory `hadd-100gb-tree-limit`).

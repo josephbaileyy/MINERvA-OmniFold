@@ -161,3 +161,110 @@ Note: available energy is fairly robust to *inelastic* rescattering (which
 conserves energy); pion **absorption** (`FrAbs_pi`, removes a π → nucleons) is
 the FSI knob most likely to move E_avail and is the natural next dial — the
 scaffold takes any GSyst dial name as an argument.
+
+## 2026-06-02 — Full 3D systematic-UQ campaign + generator goodness-of-fit
+
+The deferred systematic campaign (Gaps 1–4 of `3D_SYSTEMATIC_UQ_PLAN.md`),
+completed end-to-end.
+- **Driver**: `unfold_3d_omnifold_unbinned.py` gains `--universe BAND:IDX` and
+  `--flux-universe-file` (lateral detector bands swap pT/pz only, E_avail
+  invariant; the Flux band divides by Φ_u).
+- **Production**: dump-all event loop → 300 GB-tree Python hadd
+  (`sbatch_*_universes_full`, `sbatch_hadd_3d_universes_full.sh`); a 187-universe
+  sweep (`uq_3d/universes_full_list.txt`) + 10-seed ML seedscan as sbatch arrays.
+- **Rollup**: `uq_3d/analyze_universes_3d.py` + `build_bootstrap_cov_3d.py` →
+  combined covariance **C_syst+C_stat+C_ML** at
+  `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` (√tr 5.724e-39,
+  median 10.4 %/bin, **Flux-dominated, same band ordering as 2D**, rank 247/1431).
+- **Generator GoF** (`genie/overlay_generators_band.py`,
+  `genie/compare_3d_fullcov.py`): project the 1431-bin cov onto each 1D axis
+  (J C Jᵀ, machine-precision self-check) → ~6 %/axis band; full-3D
+  **truncated-spectral** ours-only χ² (never raw-pinv a rank-247 cov). All three
+  generators (GENIE CV, Tune v1, NuWro) excluded at p≈0; diagonal χ²/ndf
+  Tune-v1 4.8 ≪ GENIE-CV 34 ≈ NuWro 36 — **Tune-v1 best**.
+- **Stat block resolved** (`2D_VALIDATION_FOR_3D.md` open item): data/MC-split
+  bootstrap (200+200) closes (data 77 % / MC 23 %); C_data/paper StatOnly = 0.356
+  → our data-stat error is genuinely smaller (OmniFold efficiency), not a bug;
+  use our own combined cov for the ours-only χ². (Commit `56126b3`.)
+
+## 2026-06-03 — FrAbs_pi FSI dial: also sub-percent
+
+Ran `FrAbs_pi` (pion absorption — the FSI knob most likely to move E_avail)
+through the existing reweight machinery. **Peak dσ/dE_avail shift 0.82 %** in the
+lowest [0,0.10] GeV bin; total in-PS σ ±0.02 % at ±1σ — the same sub-percent
+scale as `FrInel_pi`. **Both pion-FSI dials are thus ruled out** as the cause of
+the 7–15 % low-E_avail data excess; it points to the initial-state/nuclear model
+(2p2h/MEC, RPA). (`genie/README.md`; commit `dbc57c3`.)
+
+## 2026-06-03 — GiBUU 2019 as the 4th generator (native Perlmutter build)
+
+Added GiBUU 2019 (NOvA CVMFS) to the generator comparison, **running natively on
+Perlmutter (no container)**. `setup_gibuu.sh` documents the 5 cleared blockers
+(ROOT/libgfortran libs, libstdc++ GLIBCXX ordering, writable buuinput mirror
+keeping the `.bz2` sentinels, short symlink for Fortran filename truncation).
+- `sbatch_gibuu_mefhc.sh`: 80-task seeded array → `work_gibuu_arr/task*/FinalEvents.dat`.
+- `gibuu_to_xsec3d.py`: parse FinalEvents.dat → d³σ/(dpT dp‖ dE_avail); muon ID 902,
+  FS hadrons perweight≠0, E_avail matches `GetEAvailableTrue()`. **Normalize by the
+  number of files** (perweight already carries 1/numEnsembles), NOT numEnsembles.
+- `work_gibuu/gibuu_mefhc_numu.job`: physics config (CC νμ, C12, all channels).
+
+**Results (1.9M events, 914k in-PS)**: flux-avg ⟨σ_CC⟩/nucleon 3.61e-38, in-PS
+2.22e-38. Integrated E_avail **−21.9 % vs data (4.1σ, most deficient of the four)**;
+diagonal χ²/ndf 32.4 (≈ GENIE-CV/NuWro; Tune-v1 best 4.8); worst on the full-3D
+truncated-spectral χ² (23.5 % of residual outside the rank-247 subspace).
+`overlay_generators_band.py` / `compare_3d_fullcov.py` rerun with all four
+generators. (Commit `971fdb5`; memory `gibuu-native-perlmutter`.)
+
+## 2026-06-03 — 2p2h is the right shape+size for the low-E_avail excess (mode decomposition)
+
+`genie/mode_decomp_eavail.py`: the base GENIE CV has **no MEC** (mec==0 for all
+1.48M CC events), so 2p2h would be *added*, not reweighted. Decomposed the
+committed CV dσ/dE_avail by interaction mode (exact: per-bin mode count-fraction ×
+CV bin value) and overlaid the unfolded data. **The deficit is the 2p2h
+signature**: bin [0.10,0.20) +3.9σ, [0.20,0.40) +2.3σ, QE-dominated [0,0.10)
+already matches (+0.8), mid bins ±0.4. 57 % of the deficit is at E_avail ≤ 0.4 GeV
+(the QE–Δ dip). Closing the integrated −7.2 % needs a 2p2h ~43 % of the QE rate
+(62 % locally) — standard empirical/Valencia-MEC size, vs the sub-percent FSI
+dials. Bin [1.50,3.00) is a separate +2.2σ high-E_avail DIS-tail excess (not
+2p2h). (`genie/mode_decomp_eavail.{py,png}`; commit `dd7e327`.)
+
+## 2026-06-03 — Confirm 2p2h fills ~half the low-E_avail dip (regenerate GENIE with Valencia MEC)
+
+Regenerated the GENIE CV with empirical 2p2h enabled (`--event-generator-list
+Default+CCMEC` via a new `GEVGEN_LIST` hook in `run_gevgen.sh`;
+`sbatch_gevgen_mec.sh` = 2M events). **Normalization subtlety**
+(`genie_mec_to_xsec3d.py`): the Nieves-Simo-Vacas MEC channel is in the spline but
+ABSENT from the gspl2root tot_cc graph (mec_cc==0), so normalize by the non-MEC CC
+count — anchoring QE+RES+DIS+COH to the known tot_cc and letting MEC add on top by
+1/(1−f_mec), f_mec=2.87 %. **Result** (`compare_mec_eavail.py`): MEC lands in the
+QE–Δ dip — [0,0.10) +0.8→−0.04σ, [0.10,0.20) +3.9→+2.85, [0.20,0.40) +2.3→+1.0.
+MEC fills **46 % of the data–CV gap in the dip** (E_avail ≤ 0.4) and 27 % of the
+integrated deficit (−7.2 % → −5.2 %). Full-3D truncated χ²/ndf 1512 → 1145 (−24 %;
+`compare_3d_fullcov_mec.png`) — real but still ≫ Tune-v1 (131), which layers
+MINERvA's empirical low-recoil 2p2h enhancement + RPA on stock Valencia MEC. The
+high-E_avail [1.5,3.0) excess is untouched (a DIS-tail issue). **Conclusion: the
+low-recoil excess is the 2p2h signature; stock Valencia 2p2h is real but
+under-strength for MINERvA low-recoil**, unlike the sub-percent pion-FSI dials.
+(Commit `790aee8`.)
+
+## 2026-06-03 — Disk cleanup: reclaimed ~547 GiB of re-derivable intermediates
+
+Repo scratch trimmed 860 GB → ~313 GB. **Deleted** (all gitignored and
+re-derivable; the merged MEFHC omnifiles and every distilled `*_xsec3d.root` /
+covariance product were kept):
+- 3D: the aborted-hadd `…_MEFHC_3D_universes_full.partial_20260601_*.root`
+  (94 GiB) + the empty `…_full_1.root` stub; the 12 per-playlist
+  `…_3D_1{A..P}_universes_full.root` (120 GiB); `genie/work_gibuu_arr/` (142 GiB)
+  plus `genie/work_p*/ work_mecseed*/ work_nuwro_*/ work_gibuu/ work_mec_smoke/`
+  scratch and `genie/genie_mefhc_cv.gst.root` (raw GENIE event tree); `smoke/*.root`.
+- 2D (full detail in `../2d-unfolding/2D_OMNIFOLD_RUN_LOG.md`): the 64 GiB
+  non-"full" `…_MEFHC_universes.root`, the 12 per-playlist
+  `…_1{A..P}_universes_full.root` (119 GiB), `universe_smoke/*.root`, stray
+  root-level job logs.
+
+**Regen path** if ever needed: per-playlist omnifiles via the 12-playlist
+event-loop array → merge with `uq/hadd_universes_full.py` (SetMaxTreeSize merger,
+**not** bare hadd — memory `hadd-100gb-tree-limit`); GiBUU via `setup_gibuu.sh`;
+GENIE work dirs via the `gevgen` scripts in `genie/`. The combined covariance
+`uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` and all kept merged
+inputs are unaffected.
