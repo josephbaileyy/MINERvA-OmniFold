@@ -157,4 +157,13 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   bootstrap stat block is genuinely smaller than the paper's (OmniFold
   efficiency, confirmed by the data/MC split), so using our own combined
   covariance for the ours-only χ² is the internally-correct choice.
-- Remaining generators: NEUT / GiBUU (+1 reader/converter each).
+- **FSI dials don't explain the low-Eavail excess (2026-06-03).** Both pion-FSI
+  knobs are sub-percent on dσ/dEavail: `FrInel_pi` ≤0.74% (peak in 0.10–0.20 GeV),
+  `FrAbs_pi` ≤0.82% (peak in the lowest [0,0.10] GeV bin), total in-PS σ shift
+  ±0.02–0.03% at ±1σ. A <1% knob cannot bridge the 7–15% data excess at low
+  recoil, so the excess is **not** pion FSI — it points to the initial-state /
+  nuclear model (2p2h/MEC, RPA), the high-leverage low-recoil physics (2p2h is
+  the 2nd-largest band in the 3D syst budget). Files: `genie_fsi_FrInel_pi_xsec3d.root`,
+  `genie_fsi_FrAbs_pi_xsec3d.root` (+ `_summary.txt`).
+- Remaining generators: NEUT (not openly available) / GiBUU (on NOvA CVMFS,
+  `/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019`; +1 reader/converter).
