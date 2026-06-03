@@ -120,15 +120,40 @@ def hist3d(pt, pz, ea, w, pt_edges, pz_edges, ea_edges):
 # 3D TTree readers (eavail-aware; CV weights)
 # ---------------------------------------------------------------------------
 def collect_truth_denom_3d(t, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                           use_weights=False, verbose=False):
-    """mc_truth_denom -> truth-only (pt, pz, ea, w) for the completeness denom."""
+                           use_weights=False, verbose=False,
+                           universe_branch=None):
+    """mc_truth_denom -> truth-only (pt, pz, ea, w) for the completeness denom.
+
+    When `universe_branch` is a (band, idx) tuple, the truth weight is read from
+    w_truth_<sanitized_band>_<idx> instead of the CV w_truth, and lateral
+    universes additionally swap (pT, pz) to their shifted truth-tree branches.
+    E_avail is NOT swapped: it is invariant under every lateral band (Gap 1
+    finding 2026-05-31 -- the only lateral bands are muon/beam, which do not
+    touch the NewEavail/GetEAvailableTrue inputs), so the CV MC_eavail is
+    correct for every universe. Requires use_weights=True.
+    """
     pt_a = array("d", [0.0]); pz_a = array("d", [0.0]); ea_a = array("d", [0.0])
     wt_a = array("d", [1.0])
-    t.SetBranchAddress("MC", pt_a)
-    t.SetBranchAddress("MC_pz", pz_a)
+    pt_branch, pz_branch, wt_branch = "MC", "MC_pz", "w_truth"
+    if use_weights and universe_branch is not None:
+        wt_branch = u2d._universe_truth_branch(universe_branch)
+        if not t.GetBranch(wt_branch):
+            raise RuntimeError(
+                f"[FAIL] universe branch '{wt_branch}' missing from "
+                f"mc_truth_denom; re-run the 3D event loop with "
+                f"MNV101_DUMP_UNIVERSES set so the universe weights exist.")
+        lat_pt, lat_pz = u2d._universe_kine_branches(universe_branch, "truth_tree")
+        if t.GetBranch(lat_pt) and t.GetBranch(lat_pz):
+            pt_branch, pz_branch = lat_pt, lat_pz
+            if verbose:
+                print(f"[INFO] truth_denom: lateral universe — using "
+                      f"{lat_pt}/{lat_pz} in place of MC/MC_pz "
+                      f"(MC_eavail kept at CV)")
+    t.SetBranchAddress(pt_branch, pt_a)
+    t.SetBranchAddress(pz_branch, pz_a)
     t.SetBranchAddress("MC_eavail", ea_a)
     if use_weights:
-        t.SetBranchAddress("w_truth", wt_a)
+        t.SetBranchAddress(wt_branch, wt_a)
     pt_l, pz_l, ea_l, w_l = [], [], [], []
     bad, drop = 0, 0
     for i in range(t.GetEntries()):
@@ -150,28 +175,55 @@ def collect_truth_denom_3d(t, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
 
 
 def collect_signal_3d(t, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                      use_weights=False, verbose=False):
+                      use_weights=False, verbose=False,
+                      universe_branch=None):
     """mc_signal_reco -> dict of 3D arrays for OmniFold.
 
     Gating mirrors the 2D driver's collect_signal_arrays_2d: truth-pass via the
     (pT, p_||) phase-space gate, reco-pass via sim_pass AND the (pT, p_||)
     rectangle. Eavail is NOT gated (it is the extra observable, not a fiducial
     cut); reco eavail is -9999 wherever the event does not reco-pass.
+
+    When `universe_branch` is a (band, idx) tuple, the truth/reco weights are
+    read from w_truth_<band>_<idx> / w_reco_<band>_<idx>, and lateral universes
+    swap (pT, pz) on both the truth (MC_<band>_<idx>) and reco (sim_<band>_<idx>)
+    trees. E_avail (MC_eavail / sim_eavail) is kept at CV: it is invariant under
+    every lateral band (Gap 1 finding 2026-05-31). Requires use_weights=True.
     """
     mc_pt = array("d", [0.0]); mc_pz = array("d", [0.0]); mc_ea = array("d", [0.0])
     sim_pt = array("d", [0.0]); sim_pz = array("d", [0.0]); sim_ea = array("d", [0.0])
     sim_pass = array("B", [0])
     wt_a = array("d", [1.0]); wr_a = array("d", [1.0])
-    t.SetBranchAddress("MC", mc_pt)
-    t.SetBranchAddress("MC_pz", mc_pz)
+    mc_pt_b, mc_pz_b, sim_pt_b, sim_pz_b = "MC", "MC_pz", "sim", "sim_pz"
+    wt_branch, wr_branch = "w_truth", "w_reco"
+    if use_weights and universe_branch is not None:
+        wt_branch = u2d._universe_truth_branch(universe_branch)
+        wr_branch = u2d._universe_reco_branch(universe_branch)
+        for bname in (wt_branch, wr_branch):
+            if not t.GetBranch(bname):
+                raise RuntimeError(
+                    f"[FAIL] universe branch '{bname}' missing from "
+                    f"mc_signal_reco; re-run the 3D event loop with "
+                    f"MNV101_DUMP_UNIVERSES set so the universe weights exist.")
+        lat_mc, lat_mc_pz = u2d._universe_kine_branches(universe_branch, "reco_tree_truth")
+        lat_sim, lat_sim_pz = u2d._universe_kine_branches(universe_branch, "reco_tree_reco")
+        if t.GetBranch(lat_mc) and t.GetBranch(lat_mc_pz):
+            mc_pt_b, mc_pz_b = lat_mc, lat_mc_pz
+        if t.GetBranch(lat_sim) and t.GetBranch(lat_sim_pz):
+            sim_pt_b, sim_pz_b = lat_sim, lat_sim_pz
+        if verbose and (mc_pt_b != "MC" or sim_pt_b != "sim"):
+            print(f"[INFO] signal: lateral universe — truth {mc_pt_b}/{mc_pz_b}, "
+                  f"reco {sim_pt_b}/{sim_pz_b} (MC_eavail/sim_eavail kept at CV)")
+    t.SetBranchAddress(mc_pt_b, mc_pt)
+    t.SetBranchAddress(mc_pz_b, mc_pz)
     t.SetBranchAddress("MC_eavail", mc_ea)
-    t.SetBranchAddress("sim", sim_pt)
-    t.SetBranchAddress("sim_pz", sim_pz)
+    t.SetBranchAddress(sim_pt_b, sim_pt)
+    t.SetBranchAddress(sim_pz_b, sim_pz)
     t.SetBranchAddress("sim_eavail", sim_ea)
     t.SetBranchAddress("sim_pass", sim_pass)
     if use_weights:
-        t.SetBranchAddress("w_truth", wt_a)
-        t.SetBranchAddress("w_reco", wr_a)
+        t.SetBranchAddress(wt_branch, wt_a)
+        t.SetBranchAddress(wr_branch, wr_a)
 
     tpt, tpz, tea = [], [], []
     rpt, rpz, rea = [], [], []
@@ -327,6 +379,23 @@ def main():
                     help="Poisson(1) bootstrap on data+MC weights for the "
                          "statistical-uncertainty band (mirrors the 2D driver). "
                          "CV result is the unweighted unfold (flag omitted).")
+    ap.add_argument("--universe", type=str, default=None, metavar="BAND:IDX",
+                    help="Systematic-universe unfold (mirrors the 2D driver). "
+                         "Argument is 'BAND:IDX' (e.g. 'MaCCQE:0', 'Flux:42'). "
+                         "Reads w_truth_<band>_<idx>/w_reco_<band>_<idx> instead "
+                         "of the CV weights; lateral bands also swap (pT,pz). "
+                         "E_avail is invariant under every lateral band (Gap 1) "
+                         "so MC_eavail/sim_eavail stay at CV. Needs an omnifile "
+                         "dumped with MNV101_DUMP_UNIVERSES set. Requires "
+                         "--use-weights; incompatible with --closure and "
+                         "--bootstrap-seed (one variance axis per unfold).")
+    ap.add_argument("--flux-universe-file",
+                    default=f"{_2D}/baseline_flux/flux_integral_universes_MEFHC.root",
+                    help="ROOT file (hFluxCV, hFluxUniv) with per-PPFX-universe "
+                         "flux integrals. Used only with --universe Flux:IDX, to "
+                         "divide by that universe's flux integral instead of the "
+                         "CV flux (the Task #70 1/Phi normalization fix). The pT "
+                         "binning is identical in 3D, so the 2D file is reused.")
     ap.add_argument("--eavail-edges", default=None,
                     help="Comma-separated Eavail bin edges (GeV); "
                          "default = physics bins + catch-all top bin")
@@ -351,6 +420,33 @@ def main():
     args = ap.parse_args()
     if args.closure_reweight_eavail and not args.closure:
         ap.error("--closure-reweight-eavail requires --closure")
+
+    universe_branch = None
+    if args.universe is not None:
+        if not args.use_weights:
+            ap.error("--universe requires --use-weights: the CV->universe swap "
+                     "is a weight substitution.")
+        if args.closure:
+            ap.error("--universe is incompatible with --closure: closure uses CV "
+                     "weights as pseudo-data, so the response must stay at CV.")
+        if args.bootstrap_seed is not None:
+            ap.error("--universe and --bootstrap-seed cannot be combined: run one "
+                     "variance axis per unfold (systematic vs statistical) so each "
+                     "output ROOT is attributable to one component.")
+        if ":" not in args.universe:
+            ap.error(f"--universe expects 'BAND:IDX', got {args.universe!r}")
+        band_str, _, idx_str = args.universe.partition(":")
+        if not band_str or not idx_str:
+            ap.error(f"--universe expects 'BAND:IDX', got {args.universe!r}")
+        try:
+            idx_val = int(idx_str)
+        except ValueError:
+            ap.error(f"--universe IDX must be an integer, got {idx_str!r}")
+        if idx_val < 0:
+            ap.error(f"--universe IDX must be non-negative, got {idx_val}")
+        universe_branch = (band_str, idx_val)
+        print(f"[INFO] Universe unfold: band={band_str!r}, idx={idx_val} -> "
+              f"w_truth/w_reco_{u2d._sanitize_band_for_branch(band_str)}_{idx_val}")
 
     pt_edges = PT_EDGES
     pz_edges = PZ_EDGES
@@ -390,6 +486,18 @@ def main():
     print(f"[INFO] Fiducial nucleons (geometry): {n_nucleons:.6e}")
 
     flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
+    # Flux systematic universes must divide by their own integrated flux Phi_u,
+    # not the CV flux (Task #70: the 1/Phi normalization is the dominant flux
+    # uncertainty). Non-Flux universes and CV leave Phi unchanged. pT binning is
+    # identical in 3D, so the 2D per-universe flux file is reused verbatim.
+    if universe_branch is not None and universe_branch[0] == "Flux":
+        phi_u = u2d.load_flux_universe_bins(
+            args.flux_universe_file, universe_branch[1], pt_edges, flux_bins)
+        ratio = flux_bins / phi_u
+        flux_bins = phi_u
+        print(f"[INFO] Flux universe {universe_branch[1]}: dividing by per-universe "
+              f"flux integral (Phi_CV/Phi_u per pT = "
+              f"{np.array2string(ratio, precision=4)})")
     print(f"[INFO] Flux bins (m^-2/POT): {flux_bins}")
     print(f"[INFO] Flux sum = {flux_bins.sum():.4g} m^-2/POT")
 
@@ -399,10 +507,12 @@ def main():
     bkg_pt, bkg_pz, bkg_ea, bkg_w = collect_bkg_3d(
         t_bkg, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
     sig = collect_signal_3d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                            use_weights=args.use_weights, verbose=args.verbose)
+                            use_weights=args.use_weights, verbose=args.verbose,
+                            universe_branch=universe_branch)
     truth_denom = collect_truth_denom_3d(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
                                          pot_scale, use_weights=args.use_weights,
-                                         verbose=args.verbose)
+                                         verbose=args.verbose,
+                                         universe_branch=universe_branch)
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("Empty signal or data after selection")
 

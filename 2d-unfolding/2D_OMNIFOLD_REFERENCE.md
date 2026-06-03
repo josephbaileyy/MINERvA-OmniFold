@@ -93,6 +93,20 @@ in the past.
   Python extraction uses the fixed tracker-geometry constant 3.2353e30.
 - Old pre-fix merged OmniFold ROOT files may carry summed
   `pTmu_fiducial_nucleons` metadata — treat as untrustworthy.
+- **`hadd` 100 GB TTree trap (large dump-all / `_universes_full` merges):**
+  plain `hadd -f` ABORTS when the merged `mc_signal_reco`/`mc_truth_denom`
+  trees exceed ROOT's default 100 GB `TTree::fgMaxTreeSize`. ROOT rolls over
+  to a continuation file (`..._1.root`) mid-merge and the `TFileMerger`
+  fatals: *"Output file ... has been deleted (likely due to a TTree larger
+  than 100Gb)"* → SIGABRT (exit 134), leaving a ~94 GB partial **missing the
+  `data` + `mc_background` trees** (they merge last). Hit on the 2D dump-all
+  (~119 GB) and the 3D dump-all (~120 GB), same 94 GB signature both times.
+  `hadd` has no flag to raise the limit, so use the Python `TFileMerger` that
+  bumps `TTree::SetMaxTreeSize` to 300 GB instead:
+  `uq/hadd_universes_full.py OUT INPUT...` (generic; serves 2D and 3D), wired
+  in `sbatch_hadd_*_universes_full.sh` with `mem=64G`. The merge is fast-method
+  (basket copy, I/O-bound, ~7 min for 120 GB). **Never** bare-`hadd` a
+  `_universes_full` omnifile.
 - `runEventLoop.cpp` (baseline histogram path) is where
   `pTmu_reweightedflux_integrated` is written;
   `runEventLoopOmniFold.cpp` does **not** write the flux histogram. Use

@@ -125,6 +125,14 @@ struct TruthDenomEntry
 // host tree: pT_truth/pz_truth on the truth-denom tree, MC/MC_pz when the
 // universe is in truth-mode on the reco tree, sim/sim_pz when in
 // reco-mode on the reco tree.
+//
+// NOTE (3D E_avail): the lateral bands are all muon/beam systematics
+// (BeamAngleX/Y, MuonResolution, Muon_Energy_MINERvA/MINOS). They override
+// only muon momentum/angle getters, none of which feed NewEavail()
+// (blob_recoil_E_tracker/ecal + muon_fuzz) or GetEAvailableTrue() (truth
+// mc_FSPartE). So E_avail is invariant under every lateral universe and needs
+// no shifted branch. The GEANT hadronic-response bands (which DO move E_avail
+// physically) are vertical/weight-only and are captured by w_reco_GEANT_*.
 struct UniverseBranchInfo
 {
   std::string bandName;

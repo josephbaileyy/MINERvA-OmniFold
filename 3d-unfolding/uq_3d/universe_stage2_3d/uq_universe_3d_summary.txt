@@ -1,0 +1,61 @@
+Universe 3D-covariance summary
+CV: xsec_3d_MEFHC_5iter_lgbm.root
+glob: uq_3d/universe_sweep/3d_xsec_*_uni_full_*.root
+n_reported 3D bins: 1431 of 1568
+total cond=5.782e+06 rank=139/1431
+
+Per-band median / max relative sigma over reported bins:
+  2p2h                           median=0.822%  max=46.861%
+  AGKYxF1pi                      median=0.478%  max=49.806%
+  AhtBY                          median=0.440%  max=6.734%
+  BeamAngleX                     median=0.232%  max=2.611%
+  BeamAngleY                     median=0.289%  max=2.096%
+  BhtBY                          median=0.553%  max=4.486%
+  CCQEPauliSupViaKF              median=0.611%  max=9.597%
+  CV1uBY                         median=0.462%  max=5.017%
+  CV2uBY                         median=0.430%  max=6.248%
+  EtaNCEL                        median=0.000%  max=0.000%
+  Flux                           median=5.363%  max=18.566%
+  FrAbs_N                        median=0.392%  max=4.687%
+  FrAbs_pi                       median=0.624%  max=21.564%
+  FrCEx_N                        median=0.456%  max=8.790%
+  FrCEx_pi                       median=0.304%  max=13.436%
+  FrElas_N                       median=0.603%  max=9.761%
+  FrElas_pi                      median=0.196%  max=9.400%
+  FrInel_N                       median=0.424%  max=12.796%
+  FrPiProd_N                     median=0.261%  max=2.846%
+  FrPiProd_pi                    median=0.184%  max=2.666%
+  GEANT_Neutron                  median=0.277%  max=4.179%
+  GEANT_Pion                     median=0.506%  max=4.301%
+  GEANT_Proton                   median=0.266%  max=2.867%
+  HighQ2                         median=0.545%  max=4.949%
+  LowQ2                          median=0.523%  max=8.002%
+  MFP_N                          median=0.631%  max=8.166%
+  MFP_pi                         median=0.561%  max=42.359%
+  MaCCQE                         median=1.892%  max=16.680%
+  MaNCEL                         median=0.000%  max=0.000%
+  MaRES                          median=1.766%  max=35.753%
+  MinosEfficiency                median=1.525%  max=4.388%
+  MuonResolution                 median=0.245%  max=3.735%
+  Muon_Energy_MINERvA            median=1.513%  max=21.735%
+  Muon_Energy_MINOS              median=2.622%  max=12.997%
+  MvRES                          median=1.015%  max=17.388%
+  NormDISCC                      median=0.000%  max=0.000%
+  NormNCRES                      median=0.000%  max=0.000%
+  RDecBR1gamma                   median=0.291%  max=3.845%
+  Rvn1pi                         median=0.342%  max=6.277%
+  Rvn2pi                         median=0.917%  max=9.113%
+  Rvp1pi                         median=0.342%  max=6.277%
+  Rvp2pi                         median=0.913%  max=7.576%
+  Theta_Delta2Npi                median=0.543%  max=5.842%
+  VecFFCCQEshape                 median=0.458%  max=7.390%
+  __Normalization_flat           median=1.400%  max=1.400%
+
+Grouped median relative sigma:
+  Flux                   median=5.363%  max=18.566%
+  Models                 median=5.846%  max=80.632%
+  Normalization          median=1.400%  max=1.400%
+  Hadronic response      median=2.689%  max=42.432%
+  Muon reconstruction    median=3.898%  max=23.161%
+
+Total universe median rel=10.278%  max=85.142%

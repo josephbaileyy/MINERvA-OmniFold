@@ -42,6 +42,20 @@ No container runtime needed (shifter/podman exist but aren't used). Verified:
   (absolute, splines⊗flux ÷13) or `--norm shape`. Writes `hXSec3D`,
   Eavail-marginal `hXSec2D`, `hXSec_pt/pz/eavail`.
 - `overlay_generators.py` — overlay generator(s) on the unfolded result (3 axes).
+- `overlay_generators_band.py` — same overlay WITH the full uncertainty band and a
+  covariance χ². Reads the completed 3D UQ covariance
+  (`uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root`,
+  `hCov_combined3d_total` = C_syst+C_stat+C_ML), projects it onto each 1D axis via
+  the exact `project_axis` linear operator (J C Jᵀ; a machine-precision self-check
+  asserts J·cv == the stored `hXSec_<axis>`), draws the total band, and reports
+  `chi2_cov/ndf` per axis (+ stat-only lower bound if `--band` given). Writes
+  `generators_vs_unfolded_band.png`.
+- `compare_3d_fullcov.py` — rigorous full-3D goodness-of-fit: data vs each
+  generator on all 1431 reported bins with `hCov_combined3d_total`, via a
+  TRUNCATED-SPECTRAL χ² (keep eigenmodes λ>tol·λmax; never raw-pinv a
+  rank-deficient cov — see the script header). Reports χ²/ndf over a truncation
+  sweep, the diagonal-only χ² (robust reference), the captured ||r||² fraction,
+  and a spectrum + GoF-vs-truncation plot `compare_3d_fullcov.png`.
 - `run_fsi_reweight.sh GHEP [DIAL NTWK MIN MAX OUT NEV]` — GENIE single-param
   reweight (`grwght1p`) on a GHEP file for one GSyst dial (default `FrInel_pi`),
   scanning `NTWK` tweak values in `[MIN,MAX]` σ. Output TTree `<DIAL>` with
@@ -119,4 +133,28 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   + unfolded data): all three track the (pT, p‖) shape; on **Eavail** both NuWro
   and Tune v1 suppress the low-recoil QE peak below GENIE CV (RPA/nuclear
   effects), and the data sits above all three at lowest Eavail.
+- **Systematic band added 2026-06-02** (`generators_vs_unfolded_band.png`, via
+  `overlay_generators_band.py`): the 3D UQ campaign covariance projected onto each
+  axis gives a ~6%/bin total band (≫ the 0.2–0.3% stat band it replaces). With
+  the honest covariance the data–model tension drops by ~2–3 orders of magnitude
+  vs stat-only but stays significant: integrated Eavail rate (catch bin dropped)
+  data 2.42e-38 ± 1.3e-39 vs GENIE-CV −7.2% (1.3σ), Tune-v1 −9.5% (1.8σ), NuWro
+  −15.3% (2.9σ). Per-axis cov χ²/ndf is still ≫1 (shape tension beyond
+  normalization), Tune-v1 the closest on pT/pz, all three comparable on Eavail.
+- **Full-3D goodness-of-fit (2026-06-02, `compare_3d_fullcov.py`):** data vs
+  generator χ² on all 1431 reported bins with the combined covariance (hard rank
+  247; tol=1e-10 keeps exactly the non-null modes). All three generators are
+  **excluded, p≈0**. Tune-v1 is dramatically the best; GENIE-CV and NuWro are
+  comparably poor:
+    - diagonal-only χ²/ndf (robust, no correlations): Tune-v1 **4.8**, GENIE-CV
+      **34**, NuWro **36**.
+    - well-determined-modes χ²/ndf (tol=1e-6, 160 modes): Tune-v1 77, GENIE-CV
+      300, NuWro 345; full rank-247 amplifies via off-diagonal structure
+      (Tune-v1 131, GENIE-CV 1512, NuWro 1287). Residual is 98–99.9% inside the
+      constrained subspace (not a null-space artifact). Consistent with the
+      per-axis projected χ² and the integrated-Eavail offsets (−7 to −15%).
+  This is gated on the stat-block resolution (see `../2d-unfolding/`): our
+  bootstrap stat block is genuinely smaller than the paper's (OmniFold
+  efficiency, confirmed by the data/MC split), so using our own combined
+  covariance for the ours-only χ² is the internally-correct choice.
 - Remaining generators: NEUT / GiBUU (+1 reader/converter each).
