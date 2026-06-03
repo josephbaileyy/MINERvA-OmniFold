@@ -1015,8 +1015,36 @@ data-stat and MC-stat contribute jointly. With that excluded, the smaller
 stat covariance most likely reflects genuinely higher unbinned-OmniFold
 statistical efficiency relative to the published binned D'Agostini unfold
 (whose iterative regularisation amplifies statistical fluctuations), or a
-difference in what the paper's \texttt{StatOnlyCov} encompasses --- the open
-physics question, and a more productive one than counting bands.
+difference in what the paper's \texttt{StatOnlyCov} encompasses ---
+\textbf{the split-bootstrap test below now resolves this}, and either way it is
+a more productive question than counting bands.
+
+\paragraph{Resolution (data/MC split bootstrap).}
+We ran a $200{+}200$-replica \emph{split} bootstrap that Poisson-fluctuates the
+data weights only (\texttt{boot\_data}) or the MC weights only (\texttt{boot\_mc})
+with independent RNGs, so in expectation
+$\mathbf{C}^{\boot}=\mathbf{C}^{\boot}_{\mathrm{data}}+\mathbf{C}^{\boot}_{\mathrm{mc}}$.
+Three findings settle the question. (i) \emph{Closure holds:}
+$\sqrt{\Tr(\mathbf{C}_{\mathrm{data}}+\mathbf{C}_{\mathrm{mc}})}/
+\sqrt{\Tr\mathbf{C}^{\boot}}=1.07$, with the variance split $77\%$ data /
+$23\%$ MC. (ii) The \emph{data stream alone} gives
+$\sqrt{\Tr\mathbf{C}_{\mathrm{data}}}/\sqrt{\Tr}\,\texttt{StatOnly}=0.356$
+($\mathbf{C}^{\boot}/\texttt{StatOnly}=0.392=1/2.55$): the $2.5\times$ deficit is
+present in the data-only stat error, so it is \emph{not} an MC-statistics
+omission --- it reflects genuinely higher unbinned-OmniFold statistical
+efficiency than the binned D'Agostini unfold. (iii) There is \emph{also} a
+structure difference: our stat block is correlated (mean
+$|{\rm off\text{-}diag}\,\rho|=0.108$, leading-eigenvector overlap with
+\texttt{StatOnly} $0.46$) whereas the paper's is near-diagonal ($0.009$); scaling
+our block to the paper trace still leaves $\chi^{2}/\mathrm{ndf}=76.7$, so the gap
+is shape as well as magnitude. \textbf{Consequence:} the correct ours-only
+$\chi^{2}$ uses our \emph{own} $\mathbf{C}^{\ours}$, not the paper's stat floor.
+The truncation-dependence below remains (the inversion is still regularizer-set),
+so we continue to lead with per-bin pulls and the scan; but with the stat block
+understood, the ours-only goodness-of-fit is now reported on $\mathbf{C}^{\ours}$
+via a truncated-spectral $\chi^{2}$ (retain $\lambda>10^{-10}\lambda_{\max}$), the
+same convention carried into the 3D generator comparison (\S\ref{sec:rank} is the
+2D anchor; the 3D campaign applies it on all $1431$ reported bins).
 
 \paragraph{Regularization scans (all cutoff-dependent).}
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
@@ -1060,20 +1088,23 @@ number on file as a secondary diagnostic.
 
 \paragraph{Open questions for MINERvA collaborators.}
 \begin{enumerate}[nosep,leftmargin=2em]
-  \item \textbf{Statistical block, not missing bands.} We previously read
-        the $140/205$ rank as missing systematic bands; direct comparison
-        refutes this --- the paper's systematic-only covariance is rank
-        $120<140$, so our band set is at least as rich. The paper's full
+  \item \textbf{Statistical block, not missing bands --- RESOLVED.} We
+        previously read the $140/205$ rank as missing systematic bands; direct
+        comparison refutes this --- the paper's systematic-only covariance is
+        rank $120<140$, so our band set is at least as rich. The paper's full
         rank is its statistical block, which we match with the bootstrap
-        ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual
-        is that our bootstrap stat covariance is $2.5\times$ smaller by
-        trace than the paper's stat block (\S\ref{sec:rank}). This is not an
-        MC-statistics omission --- our bootstrap already Poisson-fluctuates
-        both data and MC jointly. So either unbinned OmniFold is genuinely
-        more statistically efficient than the binned D'Agostini unfold, or
-        the paper's \texttt{StatOnlyCov} encompasses more than a data$+$MC
-        Poisson covariance. Which is it? Resolving this --- not adding
-        bands --- is what would enable a defensible ours-only $\chi^{2}$.
+        ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual ---
+        our bootstrap stat covariance $2.5\times$ smaller by trace than the
+        paper's stat block --- is now \emph{explained} by the data/MC split
+        bootstrap (\S\ref{sec:rank}, ``Resolution''): the deficit is present in
+        the \emph{data-only} stream ($\mathbf{C}_{\mathrm{data}}/\texttt{StatOnly}
+        =0.356$), so it is not an MC-statistics omission but genuine
+        unbinned-OmniFold statistical efficiency, with an additional
+        correlation-structure difference (ours $\rho_{\rm off}=0.108$ vs the
+        paper's near-diagonal $0.009$). The actionable conclusion: quote the
+        ours-only $\chi^{2}$ on our \emph{own} $\mathbf{C}^{\ours}$ --- do not
+        inflate the stat block to the paper's. \emph{No collaborator input
+        required; retained here as the worked example.}
   \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint
         block} (JINST 16 P08068) --- the only cross-band correlation the
         paper names. We \emph{rederived} it: \texttt{MuonEnergyScale} is
