@@ -196,5 +196,21 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   3D shape differs in directions the covariance barely constrains) on top of the
   large normalization offset. Plots: `generators_vs_unfolded_band.png`,
   `compare_3d_fullcov.png`.
+- **2p2h is the right shape AND size for the low-Eavail excess (2026-06-03,
+  `mode_decomp_eavail.py`).** This base GENIE CV was generated with **no MEC**
+  (`mec==0` for all 1.48M CC events; modes are QE 11%, RES 22%, DIS 66%, COH
+  0.9%), so 2p2h would be *added*, not reweighted. Decomposing the committed CV
+  dσ/dEavail by mode (exact: per-bin mode count-fractions × the CV bin value)
+  and overlaying the unfolded data localises the excess: bin [0.10,0.20) is
+  **+3.9σ**, [0.20,0.40) **+2.3σ**, while the QE-dominated [0,0.10) already
+  matches (+0.8σ) and [0.40,1.50) match to ±0.4σ. **57% of the deficit sits at
+  Eavail ≤ 0.4 GeV — the QE-Δ dip where 2p2h lives.** Closing the integrated
+  −7.2% deficit needs a 2p2h ≈ **43% of the QE rate** (62% locally in the dip) —
+  the standard empirical/Valencia-MEC magnitude, vs the **sub-percent** pion-FSI
+  dials. The one excess 2p2h can't explain is bin [1.50,3.00) (+2.2σ, high-Eavail
+  DIS tail → separate DIS-modeling issue). Plot `mode_decomp_eavail.png` (stacked
+  by mode + data + the 2p2h-shaped gap). **Confirmatory next step:** regenerate
+  GENIE with the empirical MEC model enabled and check it lands on the data
+  (multi-hour gevgen job; not yet run).
 - Remaining generator: NEUT (not openly available; +1 reader/converter if a
   build becomes accessible).
