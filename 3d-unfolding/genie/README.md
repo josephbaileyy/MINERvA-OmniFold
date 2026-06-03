@@ -165,5 +165,36 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   nuclear model (2p2h/MEC, RPA), the high-leverage low-recoil physics (2p2h is
   the 2nd-largest band in the 3D syst budget). Files: `genie_fsi_FrInel_pi_xsec3d.root`,
   `genie_fsi_FrAbs_pi_xsec3d.root` (+ `_summary.txt`).
-- Remaining generators: NEUT (not openly available) / GiBUU (on NOvA CVMFS,
-  `/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019`; +1 reader/converter).
+- **GiBUU 2019 added (2026-06-03).** Runs **natively** on Perlmutter (no
+  container) off the NOvA CVMFS build
+  (`/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019`); five sequential
+  blockers cleared and documented in `setup_gibuu.sh`: (i) ROOT libs from the
+  conda `root_6_28/lib`; (ii) `libgfortran.so.3` from gcc `v6_3_0` lib64; (iii)
+  put the conda lib **before** the gcc lib on `LD_LIBRARY_PATH` so the newer
+  `libstdc++` wins the `GLIBCXX` clash; (iv) a writable `buuinput_local/` mirror
+  (read-only CVMFS can't be opened) that **keeps the `.bz2`** sentinels
+  (`input.f90:446` dir-existence check) alongside the decompressed `.dat`; (v) a
+  short symlink `/pscratch/sd/j/josephrb/gbi` to dodge GiBUU's fixed-length
+  Fortran filename truncation (~93 chars). Jobcard `work_gibuu/gibuu_mefhc_numu.job`
+  (CC νμ on C12, all channels, numEnsembles=4000, num_runs_SameEnergy=1, MINERvA
+  ME flux). Generation: 80-task array (`sbatch_gibuu_mefhc.sh`, shared QOS),
+  unique seed per task → `work_gibuu_arr/task*/FinalEvents.dat` (~1.9M events,
+  914k in-PS combined). `gibuu_to_xsec3d.py` parses FinalEvents.dat (muon = ID
+  902 cols 9–12; FS hadrons = perweight≠0 non-lepton; Eavail = proton KE + π± E−mπ
+  + π0/γ E to match `GetEAvailableTrue()`). **Normalization:** GiBUU bakes
+  1/numEnsembles into `perweight`, so each run's Σperweight is already a full σ
+  estimate; combining M independent runs just averages → divide by **number of
+  files**, not numEnsembles. flux-avg ⟨σCC⟩/nucleon = 3.61e-38; total-in-PS
+  2.22e-38 (lowest model overall). Output `gibuu_cv_xsec3d.root`.
+- **Four-generator results (2026-06-03, band + full-cov rerun with GiBUU):**
+  integrated Eavail rate (catch bin dropped) data 2.42e-38 ± 1.3e-39 vs GENIE-CV
+  −7.2% (1.3σ), Tune-v1 −9.5% (1.8σ), NuWro −15.3% (2.9σ), **GiBUU −21.9%
+  (4.1σ)** — GiBUU is the most normalization-deficient. Full-3D truncated χ²:
+  diagonal χ²/ndf GiBUU **32.4** (comparable to GENIE-CV 34, NuWro 36; Tune-v1
+  best at 4.8), but the truncated-spectral metric is **worst** for GiBUU because
+  23.5% of its residual sits **outside** the rank-247 constrained subspace (its
+  3D shape differs in directions the covariance barely constrains) on top of the
+  large normalization offset. Plots: `generators_vs_unfolded_band.png`,
+  `compare_3d_fullcov.png`.
+- Remaining generator: NEUT (not openly available; +1 reader/converter if a
+  build becomes accessible).

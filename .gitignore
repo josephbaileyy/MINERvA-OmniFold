@@ -92,3 +92,9 @@ evloop3d_*.err
 3d-unfolding/genie/nuwro_home*/
 3d-unfolding/genie/par_nuwro_*.out
 3d-unfolding/genie/parallel_nuwro.out
+# GiBUU generation artifacts
+3d-unfolding/genie/buuinput_local/
+3d-unfolding/genie/gibuu_mefhc_*.out
+3d-unfolding/genie/gibuu_mefhc_*.err
+3d-unfolding/genie/gibuu_jid.txt
+3d-unfolding/genie/gibuu_submit.txt
