@@ -34,6 +34,8 @@ echo "[run_gevgen] N=$N seed=$SEED tag=$OUTTAG  cwd=$PWD  $(date -u '+%F %T UTC'
 # Energy capped at 50 GeV (ME FHC flux negligible above ~40). Laconic messaging
 # keeps the log small.
 MSG="$GENIE/config/Messenger_laconic.xml"
+# Optional GEVGEN_LIST (env) -> --event-generator-list, e.g. Default+CCMEC to
+# enable the Valencia 2p2h/MEC channel (the bare 'Default' list excludes it).
 gevgen \
   -n "$N" \
   -e 0,50 \
@@ -41,6 +43,7 @@ gevgen \
   -t '1000060120[0.9225],1000010010[0.0775]' \
   -f "${GENIE_FLUX},${GENIE_FLUX_HIST}" \
   --cross-sections "$GENIE_SPLINES" \
+  ${GEVGEN_LIST:+--event-generator-list "$GEVGEN_LIST"} \
   --seed "$SEED" \
   -r "$SEED" \
   ${MSG:+--message-thresholds "$MSG"} \

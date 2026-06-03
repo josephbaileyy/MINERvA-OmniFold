@@ -209,8 +209,27 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   the standard empirical/Valencia-MEC magnitude, vs the **sub-percent** pion-FSI
   dials. The one excess 2p2h can't explain is bin [1.50,3.00) (+2.2σ, high-Eavail
   DIS tail → separate DIS-modeling issue). Plot `mode_decomp_eavail.png` (stacked
-  by mode + data + the 2p2h-shaped gap). **Confirmatory next step:** regenerate
-  GENIE with the empirical MEC model enabled and check it lands on the data
-  (multi-hour gevgen job; not yet run).
+  by mode + data + the 2p2h-shaped gap).
+- **CONFIRMED: enabling Valencia 2p2h fills ~half the dip (2026-06-03).**
+  Regenerated the GENIE CV with the empirical 2p2h on
+  (`--event-generator-list Default+CCMEC`, via the new `GEVGEN_LIST` hook in
+  `run_gevgen.sh`; `sbatch_gevgen_mec.sh` = 2M events, 8×250k). The base spline's
+  Nieves-Simo-Vacas MEC channel is present and nonzero, but **absent from the
+  gspl2root `tot_cc` graph** (`mec_cc`==0), so the new `genie_mec_to_xsec3d.py`
+  normalises by the **non-MEC CC count** (anchors QE+RES+DIS+COH to the known
+  `tot_cc`, lets MEC add on top by 1/(1−f_mec); f_mec=2.87%). Result
+  (`genie_mec_cv_xsec3d.root`, `compare_mec_eavail.py`): MEC sits in the QE-Δ
+  dip and moves GENIE toward the data — bin [0,0.10) now lands on data
+  (+0.8σ→−0.04σ), [0.10,0.20) +3.9σ→+2.85σ, [0.20,0.40) +2.3σ→+1.0σ. **MEC fills
+  46% of the data−CV gap in the dip (Eavail≤0.4) and 27% of the integrated
+  deficit** (CV −7.2% → CV+MEC −5.2%). Full-3D truncated χ²/ndf **1512 → 1145
+  (−24%)** (`compare_3d_fullcov_mec.png`) — a real improvement, but still ≫
+  Tune-v1 (131), since Tune-v1 layers MINERvA's empirical low-recoil 2p2h
+  enhancement + RPA on top of stock Valencia MEC. The high-Eavail [1.5,3.0)
+  excess is untouched (no MEC there — a DIS-tail issue). Plot
+  `compare_mec_eavail.png`. (`xsec_graphs.root` for the normalisation is a
+  gspl2root product of `gxspl_CH.xml.gz`; regenerate with
+  `gspl2root -f $GENIE_SPLINES -p 14 -t 1000060120 -o xsec_graphs.root -e 50`
+  then again for `-t 1000010010`.)
 - Remaining generator: NEUT (not openly available; +1 reader/converter if a
   build becomes accessible).

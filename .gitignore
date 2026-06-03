@@ -98,3 +98,6 @@ evloop3d_*.err
 3d-unfolding/genie/gibuu_mefhc_*.err
 3d-unfolding/genie/gibuu_jid.txt
 3d-unfolding/genie/gibuu_submit.txt
+3d-unfolding/genie/gevgen_mec_jid.txt
+3d-unfolding/genie/gevgenMEC_*.out
+3d-unfolding/genie/gevgenMEC_*.err
