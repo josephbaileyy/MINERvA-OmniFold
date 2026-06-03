@@ -18,16 +18,27 @@ result. Full technical context is in \texttt{uq\_statistical\_methods.tex
         covariance available from MAT-MINERvA, or must it be re-derived?
   \item \textbf{FrInel\_pi.} Commented out in
         \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37--38} (``should not
-        currently be evaluated''). We are consistent with MAT in excluding it;
-        is that still current guidance?
+        currently be evaluated''). We are consistent with MAT in excluding it,
+        and an independent \texttt{grwght1p} pass confirms both it
+        ($\le\SI{0.74}{\percent}$ on $d\sigma/d\Eavail$) and \texttt{FrAbs\_pi}
+        ($\le\SI{0.82}{\percent}$) are sub-percent (\S\ref{sec:3d-2p2h}); is the
+        exclusion still current guidance?
   \item \textbf{PPFX effective rank.} Our 100 PPFX universes appear to sample a
         much lower-dimensional nuisance model. Is there a recommended
         principal-component / fixed-rank flux covariance?
   \item \textbf{Ours-only $\chi^{2}$ precedent.} Have other MAT-based
         OmniFold/unbinned analyses hit this rank issue, and what was published?
-  \item \textbf{3D systematic covariance.} The available-energy extension
-        (\S\ref{sec:3d}) is validated central-value-only; propagating the
-        universe/bootstrap/ML covariances to 3D (and the recommended $\Eavail$
-        binning) is the next step. Is there MINERvA precedent for a 3D
-        systematic covariance from low-recoil samples?
+  \item \textbf{3D systematic covariance.} The available-energy extension now
+        carries a full combined covariance (universe$+$bootstrap$+$ML) over all
+        1431 bins (\S\ref{sec:3d-syst}); the open question is no longer how to
+        build it but whether there is MINERvA precedent for \emph{publishing} a
+        3D systematic covariance from low-recoil samples, and whether the
+        rank-247 truncated-spectral $\chi^{2}$ (\S\ref{sec:3d-models}) is the
+        recommended goodness-of-fit for a rank-deficient unbinned covariance.
+  \item \textbf{High-$\Eavail$ DIS-tail excess.} Enabling Valencia 2p2h resolves
+        the low-recoil excess but leaves a separate $+2.2\sigma$ data excess in
+        the $[1.50,3.00)\,\si{GeV}$ bin (\S\ref{sec:3d-2p2h}), where 2p2h does
+        not contribute --- a deep-inelastic-tail modelling question. Is this seen
+        in other MINERvA inclusive low-recoil samples, and what tune addresses
+        it?
 \end{enumerate}

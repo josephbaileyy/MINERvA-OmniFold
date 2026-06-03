@@ -51,10 +51,18 @@ measurement to three dimensions, $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$, adding
 available energy as a third axis: the $\Eavail$-marginal recovers the 2D result
 in normalisation and an injected-shape closure passes, so the third dimension
 exposes genuine data\,$\leftrightarrow$\,MC structure with no method bias.
-Comparing the 3D result to GENIE, the MINERvA Tune v1, and the independent NuWro
-generator, all three under-predict the data and split along the $\Eavail$ axis,
-with an excess in the data at low available energy that the 2D measurement
-cannot resolve. This
+Comparing the 3D result to four generators we produce ourselves at truth level
+---GENIE~2.12, the MINERvA Tune v1, NuWro~21.09, and GiBUU~2019---all
+under-predict the data and split along the $\Eavail$ axis, with an excess in the
+data at low available energy that the 2D measurement cannot resolve. We carry
+the comparison through a full 3D systematic-uncertainty campaign (a combined
+universe$+$bootstrap$+$ML covariance over all 1431 reported bins) and identify
+the low-recoil excess as a missing-2p2h signature: pion final-state-interaction
+dials move $d\sigma/d\Eavail$ by $<\SI{1}{\percent}$ and cannot bridge it,
+whereas enabling the empirical Valencia 2p2h (absent from our base central value)
+lands in the quasielastic--$\Delta$ dip and closes $\sim$half of it---the
+remainder being the empirical low-recoil enhancement that the MINERvA tune adds
+on top. This
 note documents the method, the analysis pipeline, the uncertainty
 quantification, the validation suite, the higher-dimensional extension, and the
 open questions we are taking to the collaboration.

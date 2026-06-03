@@ -169,7 +169,7 @@ quantitative comparison of the 3D result (or of arbitrary projections) requires
 generating truth-level events ourselves. No detector simulation is needed --- the
 unfolded result already lives at truth level --- so a generator prediction is
 obtained by histogramming its truth $d^{3}\sigma$ in the same fiducial phase
-space and the same truth $\Eavail$ definition. We compare three predictions:
+space and the same truth $\Eavail$ definition. We compare four predictions:
 \begin{itemize}
   \item \textbf{GENIE 2.12.10 central value} --- generated with \texttt{gevgen}
         on a CH target with the MINERvA ME~FHC flux and the
@@ -181,38 +181,143 @@ space and the same truth $\Eavail$ definition. We compare three predictions:
         normalisation.
   \item \textbf{NuWro 21.09}~\cite{Golan:2012wx} --- an independent generator
         (C target), the same flux and phase space.
+  \item \textbf{GiBUU 2019}~\cite{Buss:2011mx} --- a transport-theory generator
+        (C target), built and run \emph{natively} on the compute system (no
+        container), same flux and phase space.
 \end{itemize}
-NEUT~\cite{Hayato:2009zz} and GiBUU~\cite{Buss:2011mx} are not included (no
-accessible build at the time of writing). Each prediction is normalised by its
-own flux-averaged total CC cross section per nucleon
-($\langle\sigma\rangle\approx\SI{3.7}{}$--$\SI{4.0e-38}{cm^2}$).
+NEUT~\cite{Hayato:2009zz} is not included (no accessible build at the time of
+writing). Each prediction is normalised by its own flux-averaged total CC cross
+section per nucleon ($\langle\sigma\rangle\approx\SI{3.6}{}$--$\SI{4.0e-38}{cm^2}$).
 
-Figure~\ref{fig:3dmodels} overlays the three on the unfolded result. The
+Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
+combined-covariance systematic band of \S\ref{sec:3d-syst} on the data. The
 flux-averaged totals in the measurement phase space order as
-NuWro ($\SI{2.34e-38}{}$) $<$ GENIE CV ($\SI{2.52e-38}{}$) $<$ Tune v1
-($\SI{2.71e-38}{}$) $<$ data ($\SI{3.08e-38}{cm^2/nucleon}$): all three models
-under-predict the rate, by \SIrange{12}{24}{\percent}. On $(\pT,\pPar)$ the
-three track the data shape closely; the discriminating axis is $\Eavail$, where
-both NuWro and Tune v1 \emph{suppress} the low-recoil quasielastic peak below
-bare GENIE (RPA and nuclear effects) --- yet the data sit \emph{above} all three
-in the lowest-$\Eavail$ bin. This low-available-energy excess is invisible to the
-2D measurement and is a direct statement of the unbinned method's
-high-dimensional reach. (Data points carry only the per-bin OmniFold statistical
-error here; the bootstrap statistical band is in preparation,
-\S\ref{sec:systematics} analogue for 3D.)
+GiBUU ($\SI{2.22e-38}{}$) $<$ NuWro ($\SI{2.34e-38}{}$) $<$ GENIE CV
+($\SI{2.52e-38}{}$) $<$ Tune v1 ($\SI{2.71e-38}{}$) $<$ data
+($\SI{3.08e-38}{cm^2/nucleon}$): all four models under-predict the rate, by
+\SIrange{12}{28}{\percent}. On $(\pT,\pPar)$ the four track the data shape
+closely; the discriminating axis is $\Eavail$, where NuWro, Tune v1 and GiBUU
+\emph{suppress} the low-recoil quasielastic peak below bare GENIE (RPA and
+nuclear effects) --- yet the data sit \emph{above} all four in the
+lowest-$\Eavail$ bins. This low-available-energy excess is invisible to the 2D
+measurement and is a direct statement of the unbinned method's high-dimensional
+reach.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded.png}
-  \caption{1D projections of the unfolded 3D cross section (black) versus three
-  generator predictions: GENIE 2.12 CV (red), MINERvA Tune v1 (blue), and the
-  independent NuWro 21.09 (green). On $\pT$ and $\pPar$ the models track the data
-  shape; on $\Eavail$ they split, and all under-predict the data at low available
-  energy. The wide $\Eavail$ catch bin is omitted from the axis.}
+  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band.png}
+  \caption{1D projections of the unfolded 3D cross section (black, with the
+  combined-covariance systematic band) versus four generator predictions
+  produced at truth level: GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and
+  GiBUU 2019. On $\pT$ and $\pPar$ the models track the data shape; on $\Eavail$
+  they split, and all under-predict the data at low available energy. The wide
+  $\Eavail$ catch bin is omitted from the axis.}
   \label{fig:3dmodels}
 \end{figure}
 
-The full 3D \emph{systematic}-uncertainty campaign (universe and ML covariances,
-as in \S\ref{sec:systematics} for 2D) remains the larger follow-up; it requires
-re-running the event loop with the systematic universes dumped on the third
-axis.
+Quantitatively, against the combined 3D covariance (\S\ref{sec:3d-syst}) the
+integrated $\Eavail$ rate (catch bin dropped) places the models at
+$-\SI{7.2}{\percent}$ (GENIE CV, $1.3\sigma$), $-\SI{9.5}{\percent}$ (Tune v1,
+$1.8\sigma$), $-\SI{15.3}{\percent}$ (NuWro, $2.9\sigma$) and
+$-\SI{21.9}{\percent}$ (GiBUU, $4.1\sigma$) below the data. A full-3D
+goodness-of-fit over all 1431 bins, evaluated with a truncated-spectral
+$\chi^{2}$ on the rank-247 constrained subspace of the combined covariance (a
+raw pseudo-inverse of the rank-deficient matrix is never taken), excludes all
+four at $p\approx0$ but ranks them sharply: diagonal-only $\chi^{2}/\mathrm{ndf}$
+is Tune~v1 \textbf{4.8}, GiBUU 32.4, GENIE~CV 34, NuWro 36; the full
+correlated metric is Tune~v1 131, NuWro 1287, GENIE~CV 1512, with GiBUU worst of
+all because \SI{23.5}{\percent} of its residual lies \emph{outside} the
+constrained subspace (its 3D shape differs in directions the covariance barely
+constrains) on top of the largest normalisation offset.
+
+\subsection{The 3D systematic-uncertainty campaign}
+\label{sec:3d-syst}
+The band on Fig.~\ref{fig:3dmodels} and the $\chi^{2}$ above rest on a full 3D
+analogue of the 2D uncertainty budget of \S\ref{sec:systematics}. We re-ran the
+event loop with the systematic universes dumped on the three-axis
+$(\pT,\pPar,\Eavail)$ grid (a 187-universe sweep), propagated the bootstrap
+statistical and ML-seedscan covariances, and summed them into a single combined
+covariance $C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ over all 1431
+reported bins. The result has $\sqrt{\operatorname{tr}}=\SI{5.72e-39}{}$, a
+median per-bin relative uncertainty of \SI{10.4}{\percent}, and numerical rank
+$247$ (of 1431); it is flux-dominated, with the same systematic band ordering as
+the 2D measurement. This combined covariance is what projects onto each axis for
+the per-bin bands and onto the full space for the goodness-of-fit, and it is the
+internally-correct reference for the ``ours-only'' $\chi^{2}$ given that our
+bootstrap statistical block is genuinely smaller than the paper's (an OmniFold
+efficiency, confirmed by the data/MC split; see \S\ref{sec:openquestions}).
+
+\subsection{The low-available-energy excess is a missing-2p2h signature}
+\label{sec:3d-2p2h}
+The low-$\Eavail$ excess is the most physically interesting feature the third
+axis exposes, and the 3D framework lets us identify its origin directly by
+generating the relevant physics ourselves rather than only reweighting.
+
+\emph{Final-state interactions do not explain it.} A \texttt{grwght1p} reweight
+pass on the 2M central-value GENIE events varying the pion-FSI dials shows both
+are sub-percent on $d\sigma/d\Eavail$: \texttt{FrInel\_pi} shifts the spectrum by
+$\le\SI{0.74}{\percent}$ (peak in $0.10$--$\SI{0.20}{GeV}$) and \texttt{FrAbs\_pi}
+by $\le\SI{0.82}{\percent}$ (peak in the lowest bin), with the integrated rate
+moving only $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$. A
+$<\SI{1}{\percent}$ knob cannot bridge a $7$--$\SI{15}{\percent}$ excess, so the
+excess points to the initial-state/nuclear model, not rescattering.
+
+\emph{The shape and size match 2p2h.} A subtlety drives the diagnosis: our base
+GENIE central value was generated with the default event-generator list, which
+contains \emph{no} meson-exchange-current (2p2h/MEC) events
+($\texttt{mec}=0$ for all $1.48\times10^{6}$ CC events; the modes are QE
+\SI{11}{\percent}, RES \SI{22}{\percent}, DIS \SI{66}{\percent}, COH
+\SI{0.9}{\percent}). Any 2p2h is therefore \emph{added}, not reweighted.
+Decomposing the central-value $d\sigma/d\Eavail$ by interaction mode (per-bin
+mode count-fractions $\times$ the bin value) and overlaying the data localises
+the excess to the quasielastic--$\Delta$ dip: the $[0.10,0.20)$ bin is
+$+3.9\sigma$ and $[0.20,0.40)$ is $+2.3\sigma$, while the QE-dominated
+$[0,0.10)$ already matches ($+0.8\sigma$) and $[0.40,1.50)$ match to
+$\pm0.4\sigma$. \SI{57}{\percent} of the integrated deficit sits at
+$\Eavail\le\SI{0.4}{GeV}$, exactly where 2p2h lives, and closing it requires a
+2p2h component $\approx\SI{43}{\percent}$ of the QE rate
+(\SI{62}{\percent} locally) --- the standard empirical/Valencia-MEC magnitude,
+in contrast to the sub-percent FSI dials (Fig.~\ref{fig:modedecomp}).
+
+\emph{Enabling Valencia 2p2h confirms it.} We regenerated the GENIE central
+value with the empirical 2p2h turned on (\texttt{--event-generator-list
+Default+CCMEC}, 2M events). Because the Nieves--Simo--Vacas MEC channel, though
+present in the splines, is absent from the \texttt{gspl2root} total-CC graph, the
+sample is normalised by the non-MEC CC count (anchoring QE$+$RES$+$DIS$+$COH to
+the known total and letting MEC add on top by $1/(1-f_{\mathrm{MEC}})$, with
+$f_{\mathrm{MEC}}=\SI{2.87}{\percent}$). The added 2p2h lands squarely in the dip
+and moves GENIE toward the data: the $[0,0.10)$ bin goes from $+0.8\sigma$ to
+$-0.04\sigma$ (onto the data), $[0.10,0.20)$ from $+3.9\sigma$ to $+2.85\sigma$,
+and $[0.20,0.40)$ from $+2.3\sigma$ to $+1.0\sigma$ (Fig.~\ref{fig:mec}). It
+fills \SI{46}{\percent} of the data$-$CV gap in the dip and \SI{27}{\percent} of
+the integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{5.2}{\percent}$), and
+improves the full-3D $\chi^{2}/\mathrm{ndf}$ from $1512$ to $1145$
+($-\SI{24}{\percent}$). It remains well short of Tune v1 ($131$), because Tune v1
+layers MINERvA's empirical low-recoil 2p2h \emph{enhancement} and RPA on top of
+the stock Valencia MEC --- i.e.\ stock Valencia 2p2h is real but under-strength
+for MINERvA low recoil, which is precisely the known MINERvA-tune story and is
+consistent with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low as well.
+The one feature 2p2h does not touch is a separate $+2.2\sigma$ excess in the
+high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modelling issue
+(\S\ref{sec:openquestions}).
+
+\begin{figure}[t]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{mode_decomp_eavail.png}
+    \caption{Central-value $d\sigma/d\Eavail$ decomposed by interaction mode and
+    overlaid with the unfolded data. The data excess is localised to the
+    quasielastic--$\Delta$ dip ($\Eavail\le\SI{0.4}{GeV}$), the shape and size of
+    a missing 2p2h component.}
+    \label{fig:modedecomp}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{compare_mec_eavail.png}
+    \caption{Re-generating GENIE with the empirical Valencia 2p2h enabled (red,
+    stacked on the no-2p2h CV) fills part of the low-$\Eavail$ dip --- about half
+    the data$-$CV gap, the remainder being the MINERvA-tune enhancement.}
+    \label{fig:mec}
+  \end{minipage}
+\end{figure}
