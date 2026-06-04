@@ -375,6 +375,10 @@ cross-check, not a final result.
   `3d-unfolding/genie/compare_ascencio_eavail.py`. The technote open questions are
   resolved in `docs/technote/sec_openquestions.tex` (only the high-E_avail DIS-tail
   excess and publication precedent remain).
+- **`docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`** plans the next dimensional step (Phase 1:
+  q3 as a 4th scalar axis, GBDT-native; Phase 2: a vendored NN/point-cloud track) and
+  states the **GBDT→NN crossover criterion** (stay on LightGBM for ≲10 fixed scalar
+  features; switch to NN only for variable-length point clouds). Design/hand-off only.
 - The 2D campaign is **finalized at Phase 18.2**. Read the four
   `2d-unfolding/2D_OMNIFOLD_*` docs before changing the pipeline.
 - Memory pointers under `~/.claude/projects/.../memory/MEMORY.md` capture

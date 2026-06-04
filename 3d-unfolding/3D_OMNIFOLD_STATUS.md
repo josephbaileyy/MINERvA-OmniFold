@@ -120,6 +120,27 @@ matches to <1 %).
 - Eavail **binning study** (the remaining open item): the catch-all [3,100] GeV
   top bin is required for the marginal anchor; a finer low-recoil split is now
   motivatable since the systematic UQ exists.
+- **Pre-publication methodology items** (user-flagged 2026-06-03; full write-up in
+  `../LITERATURE_NOTES.md` §C):
+  1. **Covariance** — cross-check the block-sum `C_syst+C_stat+C_ML` against a
+     single *unified-throw* covariance (perturb syst+stat+ML jointly per throw,
+     re-unfold) to validate the linear-response assumption.
+  2. **Seed scan** — extend the seedscan to also vary the **train/test split**
+     (not just the GBDT `random_state`), turning `C_ML` from a model-init lower
+     bound into the full ML stochasticity and justifying an ensemble-mean CV.
+  3. **Unbinned GoF** — add a binning-independent goodness-of-fit (classifier
+     two-sample / sliced-Wasserstein / MMD with a permutation null) as a
+     cross-check on the binned truncated-spectral χ².
+  4. **More dimensions** — only with a specific physics question per axis; best
+     candidates are **q3** (makes the Ascencio low-q3 comparison bin-identical)
+     and **hadronic angle / proton multiplicity** (separates 2p2h from the
+     high-E_avail DIS tail). Keep the unbinned unfold high-dim; publish binned
+     projections only along motivated axes.
+- **Higher-dimensional + NN design doc** (2026-06-03): `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`
+  plans Phase 1 (q3 as a 4th scalar axis, GBDT-native: needs a `CVUniverse.h` accessor +
+  event-loop re-run, an N-D `xsec_nd.py`, q3-marginal/closure anchors) and Phase 2 (a
+  vendored `ViniciusMikuni/omnifold` NN/PET point-cloud track), with the explicit
+  GBDT→NN crossover criterion. Design/hand-off only — no code yet.
 - DONE: framework, full-stats unfold, 4-generator comparison (incl. GiBUU),
   statistical + systematic UQ (combined covariance), the 2p2h / FSI-dial
   decomposition of the low-Eavail excess, and the 3D writeup in the technote

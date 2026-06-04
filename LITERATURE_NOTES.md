@@ -255,6 +255,63 @@ comparable): pion production 1406.6415 / 2209.07852; QE-like / TKI 1801.01197, 1
 
 ---
 
+## C. Recommended pre-publication methodology studies (open, user-flagged 2026-06-03)
+
+The audit changes already landed are validations/refinements, not fixes. Four
+methodology items remain worth deciding on *before* publication. None blocks the present
+result; each tightens a defensible-but-assumed choice. Listed in rough priority.
+
+1. **Covariance construction — unified-throw cross-check of the block-sum.** We report
+   `C = C_syst + C_stat + C_ML`, summing independently-generated blocks (MAT convention;
+   defensible because the RNG streams and sources are independent). This *assumes the
+   unfolding response is linear in the nuisances* — i.e. that propagating stat and syst
+   *jointly* through the unfolding in each throw would give the same covariance as summing
+   them separately. **Study:** run a single unified-throw covariance (perturb syst
+   universe + Poisson stat + ML seed together in each of ~200–500 throws, re-unfold each,
+   accumulate one covariance) and compare to the block-sum, per-bin and by leading
+   eigenmode. Agreement → block-sum is vindicated and becomes a *measured* fact, not an
+   assumption; disagreement localizes the nonlinearity. This is the single item most
+   likely to draw a referee question (see the comparison table, §A — "Covariance" row).
+
+2. **Seed scan that also varies the train/test split.** The current 10-seed scan varies
+   only the classifier `random_state`, so the ML band (0.14–0.45 %/bin) is a *model-init
+   lower bound* on the true ML stochasticity (see §A ensemble-mean finding,
+   `2d-unfolding/uq/ensemble_mean_cv.py`). **Study:** extend the scan so each seed also
+   redraws the train/test partition (k-fold or fresh random split). This converts
+   `C_ML` from an init-only proxy into the full ML stochasticity and lets the ensemble
+   *mean* be quoted as the central value with a defensible spread (T2K / Practical Guide
+   ensemble convention). Cheap: reuses the existing seedscan harness, no new event loop.
+
+3. **Unbinned goodness-of-fit.** Our GoF is the binned truncated-spectral χ² on the
+   rank-deficient covariance (open questions 4–5). The Practical Guide (2507.09582) flags
+   a *binning-independent* GoF as the right object for unbinned unfolding and an open
+   problem — candidates: a classifier two-sample test (train a discriminator on
+   unfolded-weighted MC vs. data-pushed events, report AUC / its permutation null),
+   sliced-Wasserstein distance, or an energy/MMD statistic with a permutation p-value.
+   **Study:** compute one such metric on the unfolded weighted sample vs. the truth-MC
+   prediction, as a cross-check on the binned χ² tension. This is genuinely novel
+   territory (no MINERvA precedent), so frame it as a method contribution, not a
+   requirement.
+
+4. **More dimensions? — qualified yes, but motivate per-axis; don't go wide for its own
+   sake.** OmniFold's structural advantage is exactly that adding an observable = adding a
+   feature, with *no* IBU/D'Agostini analogue — so a 4th axis is the natural showcase and
+   costs almost nothing in the unbinned step. The cost is downstream: the *reported binned*
+   product and its covariance grow combinatorially (3D is already 1431 bins, rank 247/1431
+   — the covariance is mostly null space), MC stats thin out per bin, and each new axis
+   needs its own truth/reco accessor + closure + binning study. **Recommendation:** add a
+   4th axis only with a *specific physics question* it answers, not for dimensionality's
+   sake. The best-motivated candidates, in order: (a) **q3 / 3-momentum transfer** — would
+   make the Ascencio low-q3 comparison (§A) bin-identical instead of a mapped cross-check,
+   directly sharpening the 2p2h narrative; (b) **hadronic-system angle or proton
+   multiplicity** — separates 2p2h from RES/DIS in the high-E_avail DIS-tail excess (open
+   question 6), which the current axes cannot resolve. A blind 4th axis (e.g. another
+   kinematic projection) adds bins and covariance null space without buying physics —
+   skip it. Practically: keep the *unbinned* unfold high-dimensional, but only *publish*
+   a binned projection along axes with a question attached.
+
+---
+
 _Sources: arXiv:2504.06857, arXiv:2507.09582, arXiv:1911.09107, arXiv:1511.05944
 (PRL 116 071802), https://minerva.fnal.gov/opendata/,
 https://minerva.fnal.gov/data-release-page/,
