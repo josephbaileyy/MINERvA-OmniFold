@@ -67,4 +67,25 @@ Implemented `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md` end-to-end.
   weights (it calibrates the absolute ratio directly). This is exactly the failure the
   "validate NN vs GBDT before trusting it" gate is meant to catch.
 - Re-running with both fixes: 4D unfold+anchors+closure (53925395), NN leg (53925396).
-  Final anchor numbers + NN/GBDT agreement to be appended.
+
+**Phase 1 (q3 4D) — VALIDATED (2026-06-04, job 53925395).**
+`xsec_4d_MEFHC_5iter_lgbm.root`, d⁴σ/(dp_T dp_‖ dE_avail dq3), lgbm 5-iter, q3 edges
+[0,0.2,0.4,0.6,0.8,1.2,2.0,100] GeV:
+- completeness c = 1.0000; total σ (4D integral) = **3.066e-38 cm²/nucleon**.
+- **Jacobian identity exact**: 2D (p_T,p_‖) marginal integral == 4D integral (3.0665e-38).
+- **4D recovers the frozen 3D** (independently run): median rel diff dσ/dp_T 0.38%,
+  dσ/dp_‖ 0.64%, dσ/dE_avail 1.68% (max 4.2%) — within ML/stat noise; adding q3 as a
+  feature does not bias the lower-D projections.
+- **2D-marginal anchors the paper**: 4D/3D = 0.9960 (3D = 3.0789e-38).
+- New **dσ/dq3** spectrum produced, all-positive (not required to be monotonic).
+- **Injected-q3-shape closure PASSES**: per-q3-bin ratios [1.007, 0.989, 1.005, 1.000,
+  1.000, 1.000, 1.000] track the injected mean factor 1.0142 → 4D OmniFold recovers an
+  injected q3 shape. `.err` clean (no THnSparse segfault).
+
+**Phase 2 (NN) — 2nd attempt still collapsed; root cause found.** The class-balance fix
+alone left the NN at ~0 (even slightly negative = float noise). Diagnosed the real
+killer: keras `validation_split` takes the last 20% *without shuffling*, and the step
+data is ordered [class0; class1], so the validation set was single-class and
+early-stopping/`restore_best_weights` picked a degenerate epoch. Fix: permute before
+`fit`. Re-running the NN leg with the shuffle fix (the GBDT leg remains the 3.0785e-38
+reference). NN/GBDT agreement to be appended.

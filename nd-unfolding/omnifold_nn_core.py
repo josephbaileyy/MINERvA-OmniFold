@@ -97,14 +97,23 @@ class KerasMLP:
         if sample_weight is None:
             sample_weight = np.ones(len(y), np.float32)
         sample_weight = np.asarray(sample_weight, np.float32).reshape(-1)
+        # Shuffle before fit: keras validation_split takes the LAST fraction
+        # WITHOUT shuffling, and OmniFold's step data is ordered [class0; class1],
+        # so an unshuffled split makes the validation set single-class -> val_loss
+        # is meaningless and early-stopping/restore_best_weights pick a degenerate
+        # epoch (observed: the unfolded normalization collapsed to ~0). Permuting
+        # first makes the 20% validation split class-representative.
+        rng = np.random.default_rng(0)
+        perm = rng.permutation(len(y))
         self.scaler.fit(X)
-        Xs = self.scaler.transform(X).astype(np.float32)
-        ypack = np.stack([y, sample_weight], axis=1)
+        Xs = self.scaler.transform(X[perm]).astype(np.float32)
+        ypack = np.stack([y[perm], sample_weight[perm]], axis=1)
         self.model = self._compile()
         cb = [keras.callbacks.EarlyStopping(monitor="val_loss", patience=self.patience,
                                             restore_best_weights=True)]
         self.model.fit(Xs, ypack, epochs=self.epochs, batch_size=self.batch_size,
-                       validation_split=0.2, callbacks=cb, verbose=self.verbose)
+                       validation_split=0.2, shuffle=True, callbacks=cb,
+                       verbose=self.verbose)
         return self
 
     def _logit(self, X):
