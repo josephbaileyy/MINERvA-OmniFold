@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=uthrow_dump
 #SBATCH --account=m3246
-#SBATCH --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=8 --mem=64G --time=06:00:00
+#SBATCH --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=8 --mem=110G --time=06:00:00
 #SBATCH --array=0-7
 #SBATCH --output=uthrow_dump_%a_%A.out --error=uthrow_dump_%a_%A.err
 set -eo pipefail

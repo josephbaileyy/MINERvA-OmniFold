@@ -89,12 +89,16 @@ def do_dump(args):
             t.SetBranchAddress(f"w_reco_{san(b)}_{j}", bd_r[(b, j)])
 
     n = t.GetEntries()
-    keep_pt, keep_pz, keep_ea = [], [], []      # CV truth coords (group 0)
-    keep_rpt, keep_rpz, keep_rea = [], [], []
-    keep_pr, keep_ptru, keep_wt, keep_wr = [], [], [], []
-    fl_rt = {k: [] for k in flux_idx}; fl_rr = {k: [] for k in flux_idx}
-    bd_rt = {(b, j): [] for b in my_bands for j in (0, 1)}
-    bd_rr = {(b, j): [] for b in my_bands for j in (0, 1)}
+    # typed arrays (float32 'f' / int8 'b') -- ~8x leaner than python lists, which OOM
+    # at 33M events x ~26 ratio components.
+    _f = lambda: carray("f")
+    keep_pt, keep_pz, keep_ea = _f(), _f(), _f()      # CV truth coords (group 0)
+    keep_rpt, keep_rpz, keep_rea = _f(), _f(), _f()
+    keep_pr, keep_ptru = carray("b"), carray("b")
+    keep_wt, keep_wr = carray("d"), carray("d")
+    fl_rt = {k: _f() for k in flux_idx}; fl_rr = {k: _f() for k in flux_idx}
+    bd_rt = {(b, j): _f() for b in my_bands for j in (0, 1)}
+    bd_rr = {(b, j): _f() for b in my_bands for j in (0, 1)}
     for i in range(n):
         t.GetEntry(i)
         a_pt, a_pz = float(sc["MC"][0]), float(sc["MC_pz"][0])
@@ -148,8 +152,10 @@ def do_dump(args):
         for j in (0, 1):
             td.SetBranchAddress(f"w_truth_{san(b)}_{j}", dbd[(b, j)])
     nd = td.GetEntries()
-    d_pt, d_pz, d_ea, d_w = [], [], [], []
-    dfl_r = {k: [] for k in flux_idx}; dbd_r = {(b, j): [] for b in my_bands for j in (0, 1)}
+    d_pt, d_pz, d_ea = carray("f"), carray("f"), carray("f")
+    d_w = carray("d")
+    dfl_r = {k: carray("f") for k in flux_idx}
+    dbd_r = {(b, j): carray("f") for b in my_bands for j in (0, 1)}
     for i in range(nd):
         td.GetEntry(i)
         pt, pz = float(dc["MC"][0]), float(dc["MC_pz"][0]); w = float(dc["w_truth"][0])
