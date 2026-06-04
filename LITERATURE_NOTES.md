@@ -1,9 +1,13 @@
 # Literature & open-data notes (OmniFold + MINERvA)
 
 Reference notes captured during the 2026-06-03 analysis audit, so future work does
-not have to re-derive them. Two threads: (A) the current OmniFold / unbinned-unfolding
-literature and how this analysis compares; (B) the MINERvA open-data and data-release
-catalogue and which releases are relevant here.
+not have to re-derive them. Two threads: (A) the OmniFold / unbinned-unfolding
+literature (the 2025 method papers + the broader ML-unfolding family and experimental
+landscape) and how this analysis compares; (B) the MINERvA open-data and data-release
+catalogue, including the full low-recoil / 2p2h lineage behind the headline result.
+Scope note: §A's "what the 2025 references recommend" and the audit-finding subsections
+go deep on the two method papers (that was the audit's focus); the landscape and MINERvA
+catalogue subsections were broadened on 2026-06-03 for completeness.
 
 ---
 
@@ -20,6 +24,28 @@ catalogue and which releases are relevant here.
   guidance.
 - Foundational: Andreassen et al. OmniFold **arXiv:1911.09107**; H1 demonstrations
   **arXiv:2108.12376**, **arXiv:2303.13620** (all already in `technote.bib`).
+
+### Broader OmniFold / ML-unfolding landscape
+
+OmniFold (full event as input) vs MultiFold (a chosen observable set) vs UniFold (one
+observable); all iterate the same two-step classifier reweighting. Surrounding method
+family (all in `technote.bib`, none previously summarized here):
+- **Scaffolding simulations with deep learning** — Andreassen et al. **arXiv:2105.04448**
+  (high-dimensional deconvolution; the deep-learning scaffolding behind OmniFold).
+- **Generative / likelihood-free unfolding alternatives**: GAN unfolding
+  **arXiv:1806.00433**; "How to GAN away detector effects" **arXiv:1912.00477**;
+  invertible networks **arXiv:2006.06685**; conditional INN iterative unfolding
+  **arXiv:2212.08674**; **unbinned profiled unfolding** **arXiv:2302.05390** (folds in
+  nuisance-parameter profiling — relevant to the rank-deficient-covariance / GoF problem).
+- **Classical binned context** (what OmniFold replaces): D'Agostini IBU, SVD
+  (hep-ph/9509307), TUnfold (arXiv:1205.6201), RooUnfold (arXiv:1105.1160).
+
+Experimental maturity (per the Practical Guide synthesis): H1 pioneered OmniFold on real
+data (DIS, the two H1 refs above); the original paper demonstrated it on an LHC
+jet-substructure example; **T2K (arXiv:2504.06857) is the first neutrino application**, and
+the Practical Guide collects real-data results across major experiments from ~2021–2025.
+This analysis is, to our knowledge, the **first OmniFold application to MINERvA / to a
+muon-kinematics + available-energy 3D neutrino cross section**.
 
 ### What the 2025 references actually recommend (concrete)
 
@@ -209,7 +235,28 @@ and `sec_3d.tex`). Note q3 and E_avail are related but distinct observables — 
 comparison is semi-quantitative (shape/direction of the low-recoil excess), not a
 bin-identical χ².
 
+### Low-recoil / 2p2h lineage (the physics behind the headline result)
+
+The 3D headline — a low-E_avail excess filled by 2p2h — sits in a well-established MINERvA
+low-recoil program that the original notes omitted:
+
+| Release | arXiv | Why it matters here |
+|---|---|---|
+| **Rodrigues et al. 2016** (PRL 116 071802) | **1511.05944** | **The seminal MINERvA low-recoil paper** — first isolated, in the low-q3 subsample, the event-rate excess between the QE and Δ peaks with enhanced multi-proton final states, i.e. the **2p2h/screening signature** that motivated the MINERvA empirical low-recoil tune. This is the direct ancestor of our low-E_avail finding. **Data release**: arXiv anc `src/1511.05944v3/anc` + https://minerva.fnal.gov/nuke-eff-nu-c-int-at-low-q/. **GAP: not in `technote.bib`** — recommend adding and citing in `sec_3d.tex` §2p2h. |
+| Ascencio et al. 2022 | 2110.13372 | The ME follow-up of 1511.05944 (d²σ/dq3 dE_avail); already the primary external cross-check above. |
+| MINERvA 2023 (Henry, Su et al.) | 2312.16631 | e-ν / e-ν̄ at low momentum transfer — **the source of our available-energy definition** (Eq. 4; memory `ref_minerva_eavail_definition`). Already in bib; not previously in these notes. |
+| MINERvA 2024 (multi-neutron ν̄μ CC) | 2310.17014 | Antineutrino **low-E_avail** measurement — the RHC analogue of our low-recoil excess. In bib. |
+| Bashyal et al. 2021 | 2104.05769 | Low-recoil events used to constrain flux + muon-E scale (the Bashyal joint block, open question #1). |
+
+Other MINERvA differential measurements in `technote.bib` (broader context, less directly
+comparable): pion production 1406.6415 / 2209.07852; QE-like / TKI 1801.01197, 1910.08658,
+2203.08022; A-dependent TKI 2503.15047. The flux/detector references are NuMI flux
+1607.00704 and the MINERvA NIM/detector papers (1305.5199 etc.).
+
 ---
 
-_Sources: arXiv:2504.06857, arXiv:2507.09582, https://minerva.fnal.gov/opendata/,
-https://minerva.fnal.gov/data-release-page/ (fetched 2026-06-03)._
+_Sources: arXiv:2504.06857, arXiv:2507.09582, arXiv:1911.09107, arXiv:1511.05944
+(PRL 116 071802), https://minerva.fnal.gov/opendata/,
+https://minerva.fnal.gov/data-release-page/,
+https://minerva.fnal.gov/nuke-eff-nu-c-int-at-low-q/ (fetched 2026-06-03).
+Cross-checked for completeness against the `technote.bib` citation set._
