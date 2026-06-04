@@ -367,6 +367,14 @@ cross-check, not a final result.
 - PyROOT unavailable (`ModuleNotFoundError: ROOT`) — env not sourced.
 
 ## Notes for future agents
+- **`LITERATURE_NOTES.md`** (repo root) holds the 2026-06-03 audit vs the 2025
+  OmniFold literature (T2K arXiv:2504.06857; Practical Guide arXiv:2507.09582) and
+  the MINERvA data-release catalogue. Verdict: no critical defects. New `uq/`
+  diagnostics — `ensemble_mean_cv.py`, `bottom_line_test.py` (closure +
+  data-prior modes), `classifier_calibration.py` (GBDT vs NN) — and
+  `3d-unfolding/genie/compare_ascencio_eavail.py`. The technote open questions are
+  resolved in `docs/technote/sec_openquestions.tex` (only the high-E_avail DIS-tail
+  excess and publication precedent remain).
 - The 2D campaign is **finalized at Phase 18.2**. Read the four
   `2d-unfolding/2D_OMNIFOLD_*` docs before changing the pipeline.
 - Memory pointers under `~/.claude/projects/.../memory/MEMORY.md` capture

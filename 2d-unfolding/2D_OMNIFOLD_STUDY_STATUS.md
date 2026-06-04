@@ -1,7 +1,16 @@
 # 2D OmniFold Study — Status
 
-**Last updated**: 2026-05-30. Phase-18.2 production unfold frozen; ML
-seedscan closed. Paper-cov χ²=3.66 tension dissected (see Validation /
+**Last updated**: 2026-06-03. Phase-18.2 production unfold frozen; ML
+seedscan closed. **2026-06-03 audit** vs the 2025 OmniFold literature (T2K
+arXiv:2504.06857; Practical Guide arXiv:2507.09582): **no critical defects**;
+added bottom-line, classifier-calibration/NN-cross-check, and ensemble-mean
+diagnostics (`uq/{bottom_line_test,classifier_calibration,ensemble_mean_cv}.py`)
+and **resolved the open questions** (see `../LITERATURE_NOTES.md` and the
+rewritten `docs/technote/sec_openquestions.tex`: flux↔muon-E block rederived
+ρ=0.900 and rank-preserving, rank gap is the stat block, PPFX flux cov is
+effectively rank-1, FSI dials sub-percent; remaining = DIS-tail excess +
+publication precedent).
+Paper-cov χ²=3.66 tension dissected (see Validation /
 `diagnose_tension.py`): off-diagonal correlated shape in the low-p_T
 peak + a ~1-unit GBDT-estimator regularization band. Canonical uncertainty = matched-CV 187-universe
 **MAT-conformant + flux-fixed** covariance

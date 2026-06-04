@@ -268,3 +268,43 @@ event-loop array → merge with `uq/hadd_universes_full.py` (SetMaxTreeSize merg
 GENIE work dirs via the `gevgen` scripts in `genie/`. The combined covariance
 `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` and all kept merged
 inputs are unaffected.
+
+## 2026-06-03 — Literature audit: 3D diagnostics + Ascencio comparison
+
+3D portion of the repo-wide audit against the 2025 OmniFold literature (T2K
+arXiv:2504.06857; Practical Guide arXiv:2507.09582); full log + data-release
+catalogue in `../LITERATURE_NOTES.md`, 2D portion in
+`../2d-unfolding/2D_OMNIFOLD_RUN_LOG.md`. **No unfolds/sbatch** — analysis on
+existing products. Verdict: no critical defects.
+
+- **Ensemble-mean central value** (`../2d-unfolding/uq/ensemble_mean_cv.py`,
+  serves both dims). The **3D CV is lgbm** (stochastic): frozen single-seed vs the
+  10-seed ensemble pull is 0.63σ median (self-consistent), so the 10-seed mean is
+  a valid de-noising — band 0.45 %→0.14 %/bin (÷√10), total shift +0.013 % median
+  (~0 % integrated). Ensemble written to `xsec_3d_MEFHC_5iter_lgbm_ensemble.root`
+  (`hXSec3D_ensemble`); recommend as the headline CV (sub-permille change).
+  Contrast: the 2D production CV is the deterministic `exact` GBT, so ensembling
+  is moot there (driver `--seed` pins only the GBDT `random_state`).
+- **Bottom-line test 3D** (`../2d-unfolding/uq/bottom_line_test.py --dim 3`,
+  `--mode closure`). On the +30 % E_avail bump closure, in the feature bins the
+  unfolded result tracks the injected truth ~10× better than the feature (residual
+  1.84 % vs injected 18.1 %, ratio 0.102, PASS).
+- **Ascencio low-q3 comparison** (`genie/compare_ascencio_eavail.py`). Promotes
+  arXiv:2110.13372 (Ascencio, d²σ/dq3 dE_avail, q3<1.2 GeV — the closest published
+  MINERvA low-recoil inclusive result, shares the E_avail observable) from the
+  related-work table to a discussed corroboration in `docs/technote/sec_3d.tex`:
+  our low-E_avail excess is the same MINERvA low-recoil/2p2h deficit Ascencio
+  measured. Our-side dσ/dE_avail + full-cov band built and tested (reusing
+  `genie/overlay_generators_band.py`; `ascencio_vs_unfolded_eavail.png`); the
+  **numerical overlay is staged** on the 2110.13372 data release (not publicly
+  fetchable in-session — MINERvA member access; provide
+  `eavail_low eavail_high dsigma err` and rerun with `--ascencio`).
+- **Open-question resolutions (3D items)**, propagated into
+  `docs/technote/sec_openquestions.tex` ("Resolution of the open questions"): the
+  3D systematic-covariance GoF is the rank-247 truncated-spectral χ²
+  (`genie/compare_3d_fullcov.py`); the high-E_avail [1.5,3.0) +2.2σ DIS-tail excess
+  is the one genuinely open physics item (FSI dials and 2p2h do not reach it).
+
+Files touched (3D side): `genie/compare_ascencio_eavail.py` (+ `.png`),
+`xsec_3d_MEFHC_5iter_lgbm_ensemble.root`, `3D_OMNIFOLD_STATUS.md`,
+`docs/technote/sec_3d.tex`. Frozen `.root` products untouched.

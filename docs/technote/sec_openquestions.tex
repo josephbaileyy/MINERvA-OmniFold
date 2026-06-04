@@ -1,44 +1,84 @@
-\section{Open questions for the collaboration}
+\section{Resolution of the open questions}
 \label{sec:openquestions}
 
-These are the outstanding items where collaboration input would move the
-analysis toward a defensible ours-only covariance and a published higher-D
-result. Full technical context is in \texttt{uq\_statistical\_methods.tex
-\S sec:rank}.
+The earlier draft listed six items for collaboration input. The 2026-06-03 audit
+(scripts under \texttt{2d-unfolding/uq/} and \texttt{3d-unfolding/genie/}; full
+log in \texttt{LITERATURE\_NOTES.md}) closes or reduces all of them. Each item
+below states its resolution and what, if anything, still needs a collaborator.
+Technical detail is in \texttt{uq\_statistical\_methods.tex \S sec:rank}.
 
 \begin{enumerate}
-  \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy joint block.}
-        The published covariance is full rank where our per-band sum is
-        $140/205$; the gap is bands we do not yet propagate, foremost the
-        fitted $(\Phi_{\mathrm{norm}},\Phi_{\mathrm{shape}},\mathrm{MuonE}_{\mathrm{scale}})$
-        correlation~\cite{Bashyal:2021tqu} --- the only named
-        cross-band correlation, and two of our largest bands. \emph{The tension
-        anatomy (\S\ref{sec:results-tension}) localises the $\chi^{2}=3.66$ to
-        exactly the region these bands govern.} Is the fitted posterior
-        covariance available from MAT-MINERvA, or must it be re-derived?
-  \item \textbf{FrInel\_pi.} Commented out in
-        \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37--38} (``should not
-        currently be evaluated''). We are consistent with MAT in excluding it,
-        and an independent \texttt{grwght1p} pass confirms both it
-        ($\le\SI{0.74}{\percent}$ on $d\sigma/d\Eavail$) and \texttt{FrAbs\_pi}
-        ($\le\SI{0.82}{\percent}$) are sub-percent (\S\ref{sec:3d-2p2h}); is the
-        exclusion still current guidance?
-  \item \textbf{PPFX effective rank.} Our 100 PPFX universes appear to sample a
-        much lower-dimensional nuisance model. Is there a recommended
-        principal-component / fixed-rank flux covariance?
-  \item \textbf{Ours-only $\chi^{2}$ precedent.} Have other MAT-based
-        OmniFold/unbinned analyses hit this rank issue, and what was published?
-  \item \textbf{3D systematic covariance.} The available-energy extension now
-        carries a full combined covariance (universe$+$bootstrap$+$ML) over all
-        1431 bins (\S\ref{sec:3d-syst}); the open question is no longer how to
-        build it but whether there is MINERvA precedent for \emph{publishing} a
-        3D systematic covariance from low-recoil samples, and whether the
-        rank-247 truncated-spectral $\chi^{2}$ (\S\ref{sec:3d-models}) is the
-        recommended goodness-of-fit for a rank-deficient unbinned covariance.
-  \item \textbf{High-$\Eavail$ DIS-tail excess.} Enabling Valencia 2p2h resolves
-        the low-recoil excess but leaves a separate $+2.2\sigma$ data excess in
-        the $[1.50,3.00)\,\si{GeV}$ bin (\S\ref{sec:3d-2p2h}), where 2p2h does
-        not contribute --- a deep-inelastic-tail modelling question. Is this seen
-        in other MINERvA inclusive low-recoil samples, and what tune addresses
-        it?
+  \item \textbf{Flux\,$\leftrightarrow$\,Muon\_Energy joint block and the rank
+        gap --- \emph{resolved}.} The premise of the original question (``the
+        paper sums more bands than we propagate'') was wrong. Our systematic-only
+        covariance is rank $140/205$; the paper's
+        ($\texttt{TotalCov}-\texttt{StatOnly}$) is rank $\mathbf{120}$ ---
+        \emph{lower} --- so we propagate at least as many independent systematic
+        directions, using the same \texttt{GetStandardSystematics}. The paper's
+        $V$ is full-rank only because it includes the \emph{statistical} block; we
+        match that with $\mathbf{C}^{\mathrm{syst}}+\mathbf{C}^{\mathrm{boot}}$
+        (rank $201$). The one named cross-band correlation, the Bashyal
+        flux\,$\leftrightarrow$\,muon-energy-scale block~\cite{Bashyal:2021tqu},
+        \emph{is} rederivable and now built
+        (\texttt{uq/rederive\_flux\_muonE\_cross.py}\,$\to$\,\texttt{uq/flux\_muonE\_cross.root}):
+        the muon-energy-scale systematic is rank-1, so the cross term is rank-2,
+        with $\rho=0.900$ (two independent estimators, $0.87$--$0.90$). It is
+        physically real but adding it leaves the rank unchanged ($140\to140$) ---
+        its directions already lie in $\mathrm{range}(\mathbf{C}^{\mathrm{syst}})$.
+        The residual stat-block difference (our bootstrap $2.5\times$ smaller by
+        trace) is explained by the data/MC split bootstrap: it is present in the
+        \emph{data-only} stream ($\mathbf{C}_{\mathrm{data}}/\texttt{StatOnly}=0.356$),
+        i.e.\ genuine unbinned-OmniFold statistical efficiency, not a missing MC
+        term. \emph{Remaining (optional):} the fitted
+        $(\Phi_{\mathrm{norm}},\Phi_{\mathrm{shape}},\mathrm{MuonE}_{\mathrm{scale}})$
+        posterior from MAT-MINERvA would give a fully paper-independent $\rho$.
+
+  \item \textbf{FrInel\_pi exclusion --- \emph{resolved (negligible)}.} An
+        independent \texttt{grwght1p} pass on the 2M CV events shows both pion-FSI
+        dials are sub-percent on $d\sigma/d\Eavail$: \texttt{FrInel\_pi}
+        $\le\SI{0.74}{\percent}$ and \texttt{FrAbs\_pi} $\le\SI{0.82}{\percent}$
+        (\S\ref{sec:3d-2p2h}). A $<\SI{1}{\percent}$ knob cannot bridge the
+        $7$--$\SI{15}{\percent}$ low-$\Eavail$ excess, and we are consistent with
+        MAT in excluding it. \emph{Remaining (immaterial):} a one-line collaborator
+        confirmation that the MAT exclusion is still current guidance.
+
+  \item \textbf{PPFX effective rank --- \emph{resolved}.} The $100$-universe flux
+        band covariance has hard rank $99$ but a participation-ratio effective rank
+        of $\approx1$: a single coherent normalization mode carries
+        \SI{99.6}{\percent} of the variance ($9$ modes for \SI{99.9}{\percent}).
+        So the PPFX flux uncertainty is, to excellent approximation, a fixed-rank
+        (rank-1, at most rank-9) object; treating the $100$ universes as $100$
+        independent directions over-counts the flux dimensionality. This is also
+        why the leading flux mode correlates $\rho\approx0.9$ with the rank-1
+        muon-energy-scale mode (item~1). A PCA / fixed-rank flux covariance is
+        therefore both justified and recommended.
+
+  \item \textbf{Ours-only $\chi^{2}$ --- \emph{method resolved; precedent open}.}
+        The obstruction is statistical, not rank: $\mathbf{C}^{\mathrm{ours}}=
+        \mathbf{C}^{\mathrm{syst}}+\mathbf{C}^{\mathrm{boot}}+\mathbf{C}^{\mathrm{ML}}$
+        is rank $201$ and invertible; we report the ours-only goodness-of-fit on it
+        via a truncated-spectral $\chi^{2}$ (retain
+        $\lambda>10^{-10}\lambda_{\max}$), the same convention as the 3D comparison,
+        and lead with per-bin pulls plus the regularization scan
+        (\S\ref{sec:results-tension}). \emph{Remaining:} published precedent from
+        other MAT-based OmniFold/unbinned analyses for the ours-only $\chi^{2}$
+        convention.
+
+  \item \textbf{3D systematic covariance --- \emph{method resolved; precedent
+        open}.} The available-energy extension carries a full combined covariance
+        (universe$+$bootstrap$+$ML) over all $1431$ reported bins, rank $247$
+        (\S\ref{sec:3d-syst}); the goodness-of-fit is the rank-$247$
+        truncated-spectral $\chi^{2}$ (\S\ref{sec:3d-models}), the recommended
+        treatment for a rank-deficient unbinned covariance. \emph{Remaining:}
+        whether there is MINERvA precedent for \emph{publishing} a 3D systematic
+        covariance from low-recoil samples, and endorsement of this GoF.
+
+  \item \textbf{High-$\Eavail$ DIS-tail excess --- \emph{open (physics)}.}
+        Enabling Valencia 2p2h resolves the low-recoil excess but leaves a separate
+        $+2.2\sigma$ data excess in the $[1.50,3.00)\,\si{GeV}$ bin
+        (\S\ref{sec:3d-2p2h}), where 2p2h does not contribute and the (sub-percent)
+        FSI dials of item~2 cannot reach --- a deep-inelastic/high-$W$ tail
+        modelling question. This is the one genuinely unresolved item: is it seen
+        in other MINERvA inclusive low-recoil samples~\cite{MINERvA:2022incl}, and
+        what tune addresses it?
 \end{enumerate}

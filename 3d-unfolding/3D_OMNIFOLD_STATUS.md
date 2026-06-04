@@ -1,7 +1,15 @@
 # 3D OmniFold (Eavail) — Status
 
 **Last updated**: 2026-06-03. Workstream C framework **complete end-to-end**
-(C1 event loop + C2 driver + C3 validation). Full-stats 3D unfold
+(C1 event loop + C2 driver + C3 validation). **2026-06-03 literature audit**
+(see `../LITERATURE_NOTES.md`): no critical defects; added the 3D bottom-line
+test (PASS, ratio 0.102) and an **ensemble-mean** 3D CV
+(`xsec_3d_MEFHC_5iter_lgbm_ensemble.root`, lgbm seed band 0.45→0.14 %/bin, shift
+~0); staged the **Ascencio low-q3** corroboration
+(`genie/compare_ascencio_eavail.py`, arXiv:2110.13372) and folded the
+open-question resolutions into `docs/technote/sec_openquestions.tex` (3D GoF =
+rank-247 truncated-spectral χ²; the high-E_avail DIS-tail excess is the one
+remaining physics item). Full-stats 3D unfold
 `d³σ/(dp_T dp_‖ dE_avail)` produced and validated: the Eavail-marginal recovers
 the published 2D **normalization**, and an injected-shape **closure passes** — so
 the elevated marginal **shape** χ² is genuine data↔MC structure the new axis

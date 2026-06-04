@@ -520,3 +520,50 @@ xsec/covariance products kept):
 
 **Regen** if needed: per-playlist event-loop array → `uq/hadd_universes_full.py`
 (SetMaxTreeSize merger, **not** bare hadd — memory `hadd-100gb-tree-limit`).
+
+## 2026-06-03 — Literature audit + diagnostics + open-question resolutions
+
+Audit of the whole analysis against the 2025 OmniFold literature (T2K
+arXiv:2504.06857; Practical Guide arXiv:2507.09582) and the MINERvA open-data /
+data-release pages. **Verdict: no critical defects.** Findings + literature
+catalogue recorded in `../LITERATURE_NOTES.md` (repo root). **No event loops, no
+unfolds, no sbatch** — all post-rollup analysis on existing products.
+
+New diagnostics (all under `uq/`):
+- `ensemble_mean_cv.py` — ensemble-mean central value + ML-noise audit. Found the
+  driver `--seed` pins only the GBDT `random_state`, and the **2D frozen CV is the
+  deterministic `exact` GBT** (sbatch default; run-log "exact-GBT frozen
+  production") → no ML stochasticity to ensemble; the 0.166 % lgbm seed band is a
+  conservative cross-estimator proxy. (The 2D lgbm seedscan sits ~5 seed-σ from
+  the frozen exact CV per-bin while totals agree to 0.01 % — the exact↔lgbm shape
+  difference, not under-dispersion.) The 3D CV is lgbm and *does* benefit from
+  ensembling (see 3D log).
+- `bottom_line_test.py` — adds the Practical-Guide bottom-line test (was only in
+  the 1D side study). `--mode closure`: in the feature-carrying bins the unfolded
+  result tracks the injected truth ~10× better than the feature (2D ratio 0.098,
+  PASS). `--mode data-prior`: informational reco-vs-truth χ² (truth>reco is
+  expected from smearing + stat-only diagonal, not a failure; the full-cov GoF is
+  the χ²-vs-paper).
+- `classifier_calibration.py` — GBDT calibration + NN cross-check on the step-1
+  reco classifier. Both calibrated (Brier ~0.25 at AUC ~0.537); GBDT recovers the
+  true binned (pT,pz) data/MC ratio to 4.7 % median vs a dense MLP's 20.9 %, and
+  the two reweights agree (bin-wise corr 0.92) → reweight robust to classifier
+  family, GBDT choice supported. Plot `uq/classifier_calibration.png`.
+
+Open-question resolutions (propagated into `docs/technote/sec_openquestions.tex`,
+now "Resolution of the open questions", and `docs/uq_statistical_methods.tex`):
+- **Flux↔Muon-E block / rank gap** — the cross block was rederived earlier
+  (`uq/flux_muonE_cross.root`, ρ=0.900) and is rank-preserving; the rank gap is
+  the **stat block**, not missing bands (our C^syst rank 140 > paper syst-only
+  120). Corrected the stale "paper sums more bands" wording in
+  `uq_statistical_methods.tex` (was contradicting its own `sec:rank`).
+- **PPFX effective rank** — computed: the flux band cov has hard rank 99 but
+  **effective rank ≈1** (single normalization mode = 99.6 % of variance; rank-9
+  for 99.9 %). Fixed-rank/PCA flux covariance justified.
+- **FrInel_pi** — sub-percent (≤0.74 %; FrAbs_pi ≤0.82 %), exclusion justified.
+
+Files touched: `uq/ensemble_mean_cv.py`, `uq/bottom_line_test.py`,
+`uq/classifier_calibration.py` (+ `.png`), `../LITERATURE_NOTES.md`,
+`docs/technote/{sec_openquestions,sec_validation,sec_3d}.tex`,
+`docs/technote/technote.bib`, `docs/uq_statistical_methods.tex`,
+`2D_OMNIFOLD_STUDY_STATUS.md`. Frozen `.root` products untouched.

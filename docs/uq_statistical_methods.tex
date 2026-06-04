@@ -584,7 +584,10 @@ RNGs), so
 \end{equation}
 Independence is a modelling assumption with one known exception --- the
 Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block
-(\S\ref{sec:rank}) --- which we do not yet propagate.
+(\S\ref{sec:rank}), which we have since rederived ($\rho=0.900$,
+\texttt{uq/flux\_muonE\_cross.root}); it is real but rank-preserving, so the
+block-sum above is retained as the headline and the cross term is carried as a
+diagnostic.
 
 \paragraph{Legacy formula (forensic only).}
 The pre-2026-05-28 rollup used a CV-centered pair estimator
@@ -700,8 +703,9 @@ Band-independence is assumed; cross-band correlations exist only if
 encoded inside a single combined band (e.g.\ the Bashyal joint fit,
 handled outside this loop). MAT does \emph{no} ridge / shrinkage / SVD
 truncation on the published total cov and no special handling of rank
-deficiency --- the published $V$ is full-rank because it sums more
-bands than we currently propagate (\S\ref{sec:rank}).
+deficiency --- the published $V$ is full-rank because it includes the
+\emph{statistical} block, not because it sums richer systematics (its
+systematic-only rank is $120<140$; see \S\ref{sec:rank}).
 
 \paragraph{Upstream references that set each band's $\pm1\sigma$ amplitude.}
 \begin{center}
@@ -981,7 +985,9 @@ $\mathbf{C}^{\ours}$, and it is rank-deficient:
 \end{equation}
 The deficiency is set by \textbf{band count, not universe count}:
 under the MAT formula Eq.~\eqref{eq:matcov} each $\pm1\sigma$ pair is
-rank $1$ and the $100$-universe PPFX band is rank $\le 99$, so the
+rank $1$ and the $100$-universe PPFX band is rank $\le 99$ (and
+\emph{effectively} rank-$1$: a single normalization mode holds
+\SI{99.6}{\percent} of its variance, item~4 below), so the
 $44$-band sum cannot fill the $205$-dimensional bin space. \emph{This is
 not a missing-bands problem.} The paper's own systematic-only covariance
 ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) is rank $120$ --- \emph{lower}
@@ -1117,15 +1123,24 @@ number on file as a secondary diagnostic.
         $\mathrm{range}(\mathbf{C}^{\syst})$). For a paper-independent $\rho$,
         is the fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},
         \text{MuonE}_{\text{scale}})$ posterior available from MAT-MINERvA?
-  \item \textbf{FrInel\_pi.} It is commented out in
+  \item \textbf{FrInel\_pi --- resolved (negligible).} It is commented out in
         \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37-38} with
         the note that ``this knob should not currently be evaluated.''
-        We are consistent with MAT in excluding it; the question is
-        whether that exclusion is still current guidance.
-  \item \textbf{PPFX effective rank.} Our $100$ PPFX universes appear to
-        sample a much lower-dimensional nuisance model. Is there a
-        recommended principal-component / fixed-rank flux covariance,
-        rather than treating the $100$ universes as independent samples?
+        We are consistent with MAT in excluding it, and an independent
+        \texttt{grwght1p} pass confirms both it ($\le\SI{0.74}{\percent}$ on
+        $d\sigma/d\Eavail$) and \texttt{FrAbs\_pi} ($\le\SI{0.82}{\percent}$) are
+        sub-percent --- a $<\SI{1}{\percent}$ knob cannot affect the budget. The
+        only residual is a one-line confirmation that the exclusion is still
+        current guidance (immaterial to the result).
+  \item \textbf{PPFX effective rank --- resolved.} The $100$-universe flux band
+        covariance has hard rank $99$ but participation-ratio effective rank
+        $\approx1$: a single coherent normalization mode carries
+        \SI{99.6}{\percent} of the variance ($9$ modes for \SI{99.9}{\percent}).
+        The PPFX flux uncertainty is therefore a fixed-rank (rank-1, at most
+        rank-9) object; a PCA / fixed-rank flux covariance is justified, and
+        treating the $100$ universes as independent directions over-counts the
+        flux dimensionality (it is also why the leading flux mode correlates
+        $\rho\approx0.9$ with the rank-1 muon-energy-scale mode, item~2).
   \item \textbf{Publication precedent.} Have other MAT-based OmniFold /
         unbinned analyses hit this rank issue, and what did they publish
         for an ours-only $\chi^{2}$?
@@ -1136,11 +1151,12 @@ The publication-grade headline uses the combined covariance for
 $\chi^{2}/\mathrm{ndf}=1.699$ with the double-count caveat documented;
 the per-band rollup is MAT-conformant and byte-for-byte verified
 (\S\ref{sec:minerva}); the $1.4\%$ normalization is included as a
-rank-1 band; and the shrinkage-regularized ours-only cov is reported
-as a secondary characterization with $\lambda$ disclosed. Adding the
-Bashyal joint block (and any per-target detector-mass shape) is the
-main outstanding item that would move us toward a defensible ours-only
-$V$.
+rank-1 band; and the ours-only cov is reported via the truncated-spectral
+$\chi^{2}$ on $\mathbf{C}^{\mathrm{ours}}$ (rank $201$) with the
+regularization scan disclosed. With the Bashyal joint block now rederived
+($\rho=0.900$, rank-preserving) and the stat-block difference explained by the
+split bootstrap, no missing-band item remains; the only collaborator-facing
+question is publication precedent for the ours-only convention.
 
 \section{Anatomy of the paper-covariance tension}
 \label{sec:tension}
