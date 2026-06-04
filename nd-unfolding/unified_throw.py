@@ -229,7 +229,7 @@ def _interp_2univ(theta, r0, r1):
 
 def do_run(args):
     from omnifold_nn_core import omnifold_loop
-    from xsec_nd import extract_cross_section_nd
+    from xsec_nd import extract_cross_section_nd, total_xsec
     bd = args.bankdir
     cv = np.load(os.path.join(bd, "cv.npz"))
     edges = [cv["edges_0"], cv["edges_1"], cv["edges_2"]]
@@ -283,7 +283,7 @@ def do_run(args):
         comp = np.zeros_like(of_in); nz = denom_nd > 0; comp[nz] = of_in[nz] / denom_nd[nz]
         xsec, _ = extract_cross_section_nd(unfold_nd, comp, flux_thrown, data_pot, n_nucleons, edges)
         np.save(os.path.join(bd, "throws", f"xsec_throw_{t}.npy"), xsec.ravel(order="C").astype(np.float64))
-        print(f"[run] throw {t}: flux_univ={k}  total={float((xsec*0+xsec).sum()):.3e}", flush=True)
+        print(f"[run] throw {t}: flux_univ={k}  total_xsec={total_xsec(xsec, edges):.4e}", flush=True)
 
 
 # --------------------------------------------------------------------------- combine
