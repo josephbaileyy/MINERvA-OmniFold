@@ -216,6 +216,39 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     return sqrt(q2 + q0 * q0);  // MeV
   }
 
+  // ---- Per-hadron point-cloud accessors (Phase 3 / PET track) ----
+  // Truth final-state hadrons: the mc_FSPart* arrays with the primary muon
+  // (pdg == +-13) and neutrinos dropped. Returns parallel vectors so the
+  // event loop can dump variable-length gen point clouds (zero-padded in the
+  // Python DataLoader). Energies/momenta in MeV.
+  virtual void GetTruthFSHadrons(std::vector<double>& E, std::vector<double>& px,
+                                 std::vector<double>& py, std::vector<double>& pz,
+                                 std::vector<int>& pdg) const {
+    E.clear(); px.clear(); py.clear(); pz.clear(); pdg.clear();
+    const int n = GetInt("mc_nFSPart");
+    for(int i = 0; i < n; ++i){
+      const int p = GetVecElemInt("mc_FSPartPDG", i);
+      if(p == 13 || p == -13) continue;          // drop the primary muon
+      if(p == 12 || p == -12 || p == 14 || p == -14 || p == 16 || p == -16) continue; // nu
+      E.push_back(GetVecElem("mc_FSPartE", i));
+      px.push_back(GetVecElem("mc_FSPartPx", i));
+      py.push_back(GetVecElem("mc_FSPartPy", i));
+      pz.push_back(GetVecElem("mc_FSPartPz", i));
+      pdg.push_back(p);
+    }
+  }
+
+  // Reco recoil clusters: the non-muon energy clusters (ExtraEnergyClusters_*),
+  // per-cluster energy (MeV) + (X, Y, Z) position (mm). These form the reco
+  // point cloud paired with the truth FS-hadron cloud above.
+  virtual void GetRecoClusters(std::vector<double>& E, std::vector<double>& x,
+                               std::vector<double>& y, std::vector<double>& z) const {
+    E = GetVecDouble("ExtraEnergyClusters_energy");
+    x = GetVecDouble("ExtraEnergyClusters_X");
+    y = GetVecDouble("ExtraEnergyClusters_Y");
+    z = GetVecDouble("ExtraEnergyClusters_Z");
+  }
+
   double GetEAvailableTrue() const {  // MeV
     double recoil = 0;
     int n_parts = GetInt("mc_nFSPart");

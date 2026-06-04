@@ -173,3 +173,43 @@ uncertainty 10.374% -> 10.370%). Conclusion: adopt the larger, more honest split
 negligible total cost, removes the "init-only ML proxy" caveat. (Ascencio data for #2 stays
 member-gated: confirmed absent from HepData/in-session, the MINERvA data-release page, and
 arXiv ancillary; the overlay is a one-file drop-in.)
+
+### 2026-06-04 (cont.) — A/B/C parallel tracks + #1 result
+
+**#1 unified-throw — COMPLETED (job 53946996), result needs the jitter caveat.**
+The +1sigma superposition test (MaCCQE/2p2h/MaRES) found cross-term/linear of 25-58%
+(largest MaCCQE x MaRES 58%, per-bin median 24-48%) -- NOT the clean "<10% => linear".
+BUT at this magnitude the OmniFold run-to-run jitter floor must be subtracted before
+claiming genuine nonlinearity (the difference-of-differences accumulates ~4x the per-unfold
+jitter; the ML-split study found ~0.5%/bin). A jitter null-mode was added
+(compare_unified_throw.py --null: a 2nd CV unfold at seed+1) and re-run (job 53953284) to
+make the number interpretable. Honest status: the single-seed superposition test is a cheap
+probe that flags possible nonlinearity; the rigorous object remains a many-throw unified
+covariance (where jitter averages down). So #1's answer: block-sum linearity is NOT cleanly
+confirmed -> a full unified-throw covariance is the recommended pre-pub study (as flagged).
+
+**B — refreshed combined cov + generator chi2 with split-ML band (job 53950089).**
+write_combined_splitml.py wrote uq_combined3d_splitml.root (syst+stat+ML_split). The
+4-generator full-cov chi2 ranking is UNCHANGED (Tune-v1 best, GiBUU worst; diagonal chi2/ndf
+identical, e.g. Tune-v1 4.8->4.8). The split-ML band raises the cov rank 247->261 and shifts
+the truncated chi2 slightly but changes NO physics conclusion -- the robustness check passes.
+(compare_3d_fullcov_{oldml,splitml}.png)
+
+**C — NTRIAL ensemble-mean CV (ensemble_cv.py).** The #4 split trials ARE the NTRIAL
+ensemble; ensemble_cv.py turns the 24 trials into the ensemble-mean CV product
+(ensemble_cv_3d.root: hXSec3D_ensembleMean + hSigma3D_ensembleSpread). Ensemble spread
+(ML band) median 0.51%/bin; ensemble-mean vs frozen single-run CV median shift 0.28%.
+This is the rhuang1/OmnifoldT2K + Mikuni n_ensemble convention.
+
+**A — per-hadron point cloud (Phase 3): C++ DONE + validated, full pipeline chained.**
+CVUniverse::GetTruthFSHadrons (mc_FSPart*, muon+nu dropped) + GetRecoClusters
+(ExtraEnergyClusters_*) feed a gated point-cloud dump in runEventLoopOmniFold.cpp
+(MNV101_DUMP_POINTCLOUD=1, off by default): per-event part_gen_{E,px,py,pz,pdg} +
+part_reco_{E,x,y,z} on signal, part_reco_* on data. Rebuilt + smoke-verified (gen <4.4>,
+reco <6.75> per event; example particle E=1179 MeV pdg=2212 proton). Bug found+fixed: the
+miss-append (AppendTruthOnlyMisses) must rebind the vector branches via pointer-to-pointer
+to empty vectors, else Fill() reads the signal loop's freed locals -> segfault.
+dump_pointcloud_inputs.py reads + zero-pads the vectors to num_part=12 (validated on the
+smoke file: gen (N,12,5), reco (N,12,4)); minerva_pet_dataloader.py pointcloud mode reads
+the resulting npz into the vendored PET. Chained (CV-only, cheap): evloop_pc 53953733 ->
+hadd+dump 53953910 -> PET train 53953911.

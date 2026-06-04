@@ -154,6 +154,19 @@ def do_analyze(args):
     rep = x_cv.ravel(order="C") > 0
     base = x_cv.ravel(order="C")[rep]
 
+    # Jitter null: a 2nd CV unfold at seed+1 quantifies the OmniFold run-to-run
+    # floor (LGBM multithread nondeterminism + iteration). Any cross-term smaller
+    # than ~this floor is NOT a clean detection of nonlinearity. ||jitter|| enters
+    # the difference-of-differences cross term ~4x (CV, A, B, AB each carry it).
+    jit_norm = None
+    if args.null:
+        print("[analyze] jitter null: CV unfold at seed+1 ...", flush=True)
+        x_cv2 = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.seed + 1)
+        jit = x_cv2.ravel(order="C")[rep] - base
+        jit_norm = float(np.linalg.norm(jit))
+        print(f"[null] ||CV(seed+1)-CV(seed)|| = {jit_norm:.3e}  "
+              f"(x4 in a difference-of-differences ~ {4*jit_norm:.3e})")
+
     # single-band shifted xsecs
     single = {}
     for k, b in enumerate(bands):
@@ -191,9 +204,21 @@ def do_analyze(args):
         print(f"{a:14s} {b:14s} {nl:11.3e} {nr:11.3e} {100*rel:8.2f}% {100*med:7.2f}%")
         worst = max(worst, rel)
     print(f"\nVERDICT: largest cross-term / linear = {100*worst:.2f}%.")
-    print("  << ~10% => the unfolding combines these systematics linearly; the block-sum")
-    print("  covariance (sum of per-band C_band) is validated for the dominant bands.")
-    print("  A large value would flag cross-band nonlinearity the block sum omits.")
+    if jit_norm is not None:
+        worst_cross = max(nr for *_, nr, _, _ in rows)
+        floor = 4.0 * jit_norm
+        print(f"  jitter floor (4x||CV(seed+1)-CV(seed)||) = {floor:.3e}; "
+              f"largest ||cross|| = {worst_cross:.3e} "
+              f"(cross/floor = {worst_cross/floor:.1f}x)")
+        if worst_cross < 1.5 * floor:
+            print("  -> cross terms are AT the jitter floor: NOT a clean detection; the single-")
+            print("     seed superposition test is inconclusive. Use the full unified throw.")
+        else:
+            print("  -> cross terms exceed the jitter floor: genuine nonlinearity present;")
+            print("     block-sum linearity is not exact -> a full unified-throw cov is warranted.")
+    print("  (block-sum assumes additive response; this single-corner +1sigma test is a cheap")
+    print("  probe -- the rigorous object is a many-throw unified covariance where jitter averages")
+    print("  down. See LITERATURE_NOTES sec C #1.)")
 
 
 def main():
@@ -211,6 +236,8 @@ def main():
     ap.add_argument("--cv", default=f"{_REPO}/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--null", action="store_true",
+                    help="also run a 2nd CV unfold at seed+1 to measure the jitter floor")
     args = ap.parse_args()
     if args.dump:
         do_dump(args)

@@ -45,21 +45,21 @@ for _p in (f"{_REPO}/omnifold_nn", f"{_REPO}/nd-unfolding"):
 # Per-hadron point-cloud feature schema for the Phase-2 PET track. Each is the
 # event-loop branch that must be dumped (variable-length, one row per reconstructed
 # hadronic cluster / truth FS hadron), zero-padded to num_part with a validity mask.
+# These now match the branches the event loop dumps under MNV101_DUMP_POINTCLOUD
+# (runEventLoopOmniFold.cpp / CVUniverse::GetTruthFSHadrons + GetRecoClusters).
 PARTICLE_SCHEMA = {
     "reco": [
-        # name              source branch (to add to runEventLoopOmniFold.cpp)
-        ("part_reco_E",     "blob/cluster energy (MeV)        e.g. *_recoil_cluster_E[]"),
-        ("part_reco_px",    "cluster px (MeV)                 from cluster position+E"),
-        ("part_reco_py",    "cluster py (MeV)"),
-        ("part_reco_pz",    "cluster pz (MeV)"),
-        ("part_reco_z",     "cluster z position (mm)          detector geometry feature"),
+        ("part_reco_E",  "ExtraEnergyClusters_energy[] (cluster energy, MeV)"),
+        ("part_reco_x",  "ExtraEnergyClusters_X[] (cluster x position, mm)"),
+        ("part_reco_y",  "ExtraEnergyClusters_Y[] (cluster y position, mm)"),
+        ("part_reco_z",  "ExtraEnergyClusters_Z[] (cluster z position, mm)"),
     ],
     "gen": [
-        ("part_gen_E",      "mc_FSPartE[]   (truth FS hadron energy, MeV)"),
-        ("part_gen_px",     "mc_FSPartPx[]"),
-        ("part_gen_py",     "mc_FSPartPy[]"),
-        ("part_gen_pz",     "mc_FSPartPz[]"),
-        ("part_gen_pdg",    "mc_FSPartPDG[] (encode/one-hot; drop the muon)"),
+        ("part_gen_E",   "mc_FSPartE[]   (truth FS hadron energy, MeV; muon+nu dropped)"),
+        ("part_gen_px",  "mc_FSPartPx[]"),
+        ("part_gen_py",  "mc_FSPartPy[]"),
+        ("part_gen_pz",  "mc_FSPartPz[]"),
+        ("part_gen_pdg", "mc_FSPartPDG[] (encode/one-hot)"),
     ],
 }
 SCALAR_AXES = ["pt", "pz", "eavail", "q3"]  # the high-level event features (num_evt path)
@@ -80,7 +80,12 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
     pass_reco = d["pass_reco"]; pass_truth = d["pass_truth"]
     w_truth = d["w_truth"].astype(np.float32)
     measured_weights = d["measured_weights"].astype(np.float32)
-    ndim = int(d["nedges"]) if "nedges" in d.files else d["MCgen"].shape[1]
+    if "nedges" in d.files:
+        ndim = int(d["nedges"])
+    elif "MCgen" in d.files:
+        ndim = d["MCgen"].shape[1]
+    else:
+        ndim = None  # pointcloud npz: ndim is (num_part, num_feat), not a scalar dim
 
     if mode == "scalar":
         MCgen, MCreco, measured = _scalar_feats(d, ndim)
@@ -115,27 +120,24 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
 
 
 def _load_pointcloud(inputs_npz, num_part):
-    """Load per-hadron point clouds. Raises an actionable error until the event loop
-    dumps the PARTICLE_SCHEMA branches."""
+    """Load padded point clouds from a dump_pointcloud_inputs.py npz.
+
+    Expects part_gen (N,P,5), part_reco (N,P,4), measured_pc (M,P,4). Until that npz
+    exists (event loop run with MNV101_DUMP_POINTCLOUD=1 + dump_pointcloud_inputs.py),
+    raises an actionable error naming the branches the event loop must dump."""
     d = np.load(inputs_npz, allow_pickle=True)
-    need_reco = [n for n, _ in PARTICLE_SCHEMA["reco"]]
-    need_gen = [n for n, _ in PARTICLE_SCHEMA["gen"]]
-    missing = [n for n in need_reco + need_gen if n not in d.files]
-    if missing:
-        lines = ["[pointcloud] the per-hadron arrays are not in this npz; the event loop",
-                 "  must dump them first. Required branches (add to "
-                 "runEventLoopOmniFold.cpp,",
-                 "  one row per reconstructed cluster / truth FS hadron, then re-dump via",
-                 "  nn_dump_inputs.py with a --pointcloud flag):"]
+    if not {"part_gen", "part_reco", "measured_pc"}.issubset(set(d.files)):
+        lines = ["[pointcloud] this npz has no padded clouds (part_gen/part_reco/measured_pc).",
+                 "  Produce them: run the event loop with MNV101_DUMP_POINTCLOUD=1, then",
+                 "  dump_pointcloud_inputs.py. Per-particle features the loop dumps:"]
         for grp in ("reco", "gen"):
             for nm, src in PARTICLE_SCHEMA[grp]:
-                flag = "MISSING" if nm in missing else "ok"
-                lines.append(f"    [{flag:7s}] {nm:16s} <- {src}")
+                lines.append(f"    {nm:14s} <- {src}")
         raise SystemExit("\n".join(lines))
-    # shape (N, num_part, num_feat); already zero-padded + masked upstream.
-    reco = np.stack([d[n] for n in need_reco], axis=-1).astype(np.float32)
-    gen = np.stack([d[n] for n in need_gen], axis=-1).astype(np.float32)
-    return gen, reco, gen  # measured PC not available in MC npz; pointcloud data npz separate
+    gen = d["part_gen"].astype(np.float32)
+    reco = d["part_reco"].astype(np.float32)
+    measured = d["measured_pc"].astype(np.float32)
+    return gen, reco, measured
 
 
 def main():
