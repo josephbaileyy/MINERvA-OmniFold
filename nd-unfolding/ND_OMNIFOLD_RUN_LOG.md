@@ -88,4 +88,18 @@ killer: keras `validation_split` takes the last 20% *without shuffling*, and the
 data is ordered [class0; class1], so the validation set was single-class and
 early-stopping/`restore_best_weights` picked a degenerate epoch. Fix: permute before
 `fit`. Re-running the NN leg with the shuffle fix (the GBDT leg remains the 3.0785e-38
-reference). NN/GBDT agreement to be appended.
+reference).
+
+**Phase 2 (NN) — VALIDATED (2026-06-04, job 53928526, GPU TF 2.15).** With the
+class-balance + shuffle fixes, the keras-MLP OmniFold (same two-step loop, same 3D
+inputs, swap classifier) reproduces the GBDT cross section **within the ML band**:
+- total σ: NN 3.1024e-38 vs GBDT 3.0785e-38 → **ratio 1.0078** (0.8%).
+- per-bin median rel diff: dσ/dE_avail **0.66%**, dσ/dp_T **1.20%**, dσ/dp_‖ **1.36%**
+  (max deviations 2.8% / 7.9% / 24.7%, confined to sparse tail bins).
+This green-lights the vendored NN engine for the point-cloud phase (the design-doc
+gate: the NN must match GBDT on a known case before being trusted where no GBDT
+baseline exists). Net conclusion stands: GBDT remains the production engine for scalar
+axes (q3 included); the NN is the path for variable-length point clouds, now verified to
+agree on tabular inputs. The two NN failure modes found + fixed (class-balance bias;
+unshuffled single-class `validation_split`) are documented in `omnifold_nn_core.py` for
+whoever drives the PET point-cloud track next.

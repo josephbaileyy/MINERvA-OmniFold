@@ -46,23 +46,32 @@ helpers, exactly as the 3D driver does.
   the validated two-step loop. `omnifold.py` gains an **`estimator="nn"`** branch
   delegating to it (lazy TF import, so the ROOT env still loads).
 
-## Compute in flight (SLURM, 2026-06-03)
+## Results (2026-06-04) — both phases DONE
 
-| Job | ID | What | Depends on |
-|---|---|---|---|
-| q3 event loop (12 playlists) | 53905768 | re-run with q3 branches → `runEventLoopOmniFold_4D_${PL}.root` | — |
-| hadd + 4D unfold + anchors + q3-closure | 53906839 | merge → `xsec_4d_MEFHC_5iter_lgbm.root`, run `check_4d_anchors.py` | afterok:53905768 |
-| NN cross-check leg 1 (dump + GBDT) | 53906721 | 3D inputs → `of_inputs_3d.npz`, GBDT through the shared loop → `res_lgbm_3d.npz` | — |
-| NN cross-check leg 2 (GPU keras MLP) | 53906748 | NN through the same loop → `res_nn_3d.npz` | afterok:53906721 |
+**Phase 1 (q3 4D) — VALIDATED.** `xsec_4d_MEFHC_5iter_lgbm.root`,
+d⁴σ/(dp_T dp_‖ dE_avail dq3): completeness 1.0000, total σ 3.066e-38; Jacobian
+identity exact (2D-marginal == 4D integral); 4D recovers frozen 3D to <2% median
+(pt 0.38%, pz 0.64%, Eavail 1.68%); 2D-marginal anchors the paper (4D/3D=0.9960);
+injected-q3 closure passes (ratios track the 1.0142 bump); new dσ/dq3 produced.
 
-## Next (after the jobs land)
+**Phase 2 (NN) — VALIDATED.** keras-MLP OmniFold reproduces GBDT within the ML band:
+total ratio **1.0078**, projections agree to 0.66%/1.20%/1.36% median. Two NN bugs
+found + fixed en route (class-balance bias; unshuffled single-class `validation_split`)
+— now documented in `omnifold_nn_core.py`. Engine green-lit for the point-cloud phase.
 
-- Read `check_4d_anchors.py` output: q3-marginal recovers 3D; 2D-marginal anchors
-  the paper; new dσ/dq3 falling + physical; injected-q3 closure passes.
-- Compare `res_nn_3d.npz` vs `res_lgbm_3d.npz` (and the frozen 3D): NN must land
-  within the measured ML band → green-lights the NN engine before the point-cloud
-  phase.
-- Ascencio low-q3 bin-identical comparison (q3 binning chosen to match 2110.13372).
+(Full SLURM trail in `ND_OMNIFOLD_RUN_LOG.md`: event loop 53905768, 4D unfold
+53925395, NN 53928526; first runs 53906839/53906748 surfaced the THnSparse + NN bugs.)
+
+## Next (follow-ons, not blocking)
+
+- **Ascencio low-q3 bin-identical comparison** (q3 binning chosen to allow matching
+  2110.13372 — fetch its public release and overlay, the q3 analogue of
+  `../3d-unfolding/genie/compare_ascencio_eavail.py`).
+- **q3 systematic campaign**: the event loop dumps **CV** q3 only; per-universe q3
+  branches are a follow-on, and note q3 is **NOT** lateral-invariant (depends on muon
+  kinematics) so lateral universes must dump shifted q3, not reuse CV (unlike Eavail).
+- **PET point-cloud track**: the validated NN engine is ready; build the per-hadron
+  DataLoader for the vendored `omnifold_nn/` PET model.
 - Systematic campaign for q3: the event loop currently dumps **CV** q3 only; the
   per-universe q3 branches (`sim_q3_<band>_<idx>` …) are a follow-on — and note q3
   is **NOT** lateral-invariant (unlike Eavail), since it depends on muon kinematics,

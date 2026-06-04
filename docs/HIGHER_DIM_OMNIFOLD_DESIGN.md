@@ -5,16 +5,18 @@ the next dimensional step beyond the completed 3D `d³σ/(dp_T dp_‖ dE_avail)`
 and states the criterion for moving from the LightGBM (GBDT) reweighter to a neural-net
 OmniFold.
 
-> **Implementation (2026-06-03).** Both phases are built; tracking in
+> **Implementation (2026-06-03/04) — both phases DONE & validated.** Tracking in
 > `nd-unfolding/ND_OMNIFOLD_STATUS.md` + `ND_OMNIFOLD_RUN_LOG.md`.
-> - Phase 1 (q3, GBDT): `nd-unfolding/xsec_nd.py` (N-D extraction, unit-tested),
->   `nd-unfolding/unfold_nd_omnifold_unbinned.py` (the **axis-list driver**),
->   `CVUniverse::RecoQ3()` + `Getq3True` dumped in `runEventLoopOmniFold.cpp` (built,
->   smoke-tested). 12-playlist q3 event loop running (SLURM 53905768) → hadd + 4D
->   unfold + anchors (53906839).
-> - Phase 2 (NN): `omnifold_nn/` vendored (`ViniciusMikuni/omnifold`),
->   `nd-unfolding/omnifold_nn_core.py` (ROOT-free keras-MLP engine) + `estimator="nn"`
->   in `omnifold.py`; NN-vs-GBDT 3D cross-check on GPU (53906721 → 53906748).
+> - **Phase 1 (q3, GBDT) — validated.** `nd-unfolding/xsec_nd.py` (N-D extraction,
+>   unit-tested), `nd-unfolding/unfold_nd_omnifold_unbinned.py` (the **axis-list
+>   driver**), `CVUniverse::RecoQ3()` + `Getq3True` in `runEventLoopOmniFold.cpp`.
+>   The 4D unfold `d⁴σ/(dp_T dp_‖ dE_avail dq3)` passes every anchor: Jacobian
+>   identity exact, 4D recovers frozen 3D to <2% median, 2D-marginal anchors the
+>   paper (4D/3D=0.9960), injected-q3 closure passes.
+> - **Phase 2 (NN) — validated.** `omnifold_nn/` vendored (`ViniciusMikuni/omnifold`),
+>   `nd-unfolding/omnifold_nn_core.py` (ROOT-free keras-MLP) + `estimator="nn"`. The
+>   NN reproduces the GBDT 3D cross section within the ML band (total ratio 1.0078,
+>   projections ≤1.4% median) → engine green-lit for the PET point-cloud track.
 
 **Scope decided with the user:** phased — Phase 1 adds **q3** as a 4th *scalar* axis
 (GBDT-native); Phase 2 builds a **point-cloud / NN** track as the longer-term
