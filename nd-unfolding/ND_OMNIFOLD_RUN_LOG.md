@@ -164,3 +164,12 @@ Chain (all dependency-gated): evloop array 53945111 (12 playlists, dump-all +q3)
 hadd 53947173 (SetMaxTreeSize merger) → validation universe 53947729 (MuonResolution:0,
 exercises the q3 swap) → full 187-universe sweep 53947731 → 4D covariance 53947732
 (`analyze_universes_nd.py`, block-sum + norm band). Outputs land under `uq_4d/`.
+
+### 2026-06-04 (cont.) — #4 follow-through: ML-split band in the combined budget
+`compare_mlsplit_combined.py` (non-destructive): the train/test-split ML cov is 1.24x the
+seed-only ML cov (sqrt-trace 2.131e-40 -> 2.645e-40), but ML is sub-dominant, so the
+COMBINED 3D budget moves only +0.04% (sqrt-trace 5.7243e-39 -> 5.7265e-39; median rel
+uncertainty 10.374% -> 10.370%). Conclusion: adopt the larger, more honest split-ML band —
+negligible total cost, removes the "init-only ML proxy" caveat. (Ascencio data for #2 stays
+member-gated: confirmed absent from HepData/in-session, the MINERvA data-release page, and
+arXiv ancillary; the overlay is a one-file drop-in.)

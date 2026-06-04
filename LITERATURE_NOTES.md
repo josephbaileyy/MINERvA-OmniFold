@@ -261,6 +261,23 @@ The audit changes already landed are validations/refinements, not fixes. Four
 methodology items remain worth deciding on *before* publication. None blocks the present
 result; each tightens a defensible-but-assumed choice. Listed in rough priority.
 
+> **STATUS (2026-06-04 follow-on campaign — see `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`):**
+> - **#1 (unified-throw)** — actioned as a superposition cross-check
+>   (`nd-unfolding/compare_unified_throw.py`): the cross term Δ_AB−(Δ_A+Δ_B) from
+>   re-unfolded vertical-band shifts directly measures the nonlinearity the block sum
+>   drops. Compute in flight (MaCCQE/2p2h/MaRES on the 120 GB 3D universes omnifile).
+> - **#2 (train/test-split seedscan)** — **DONE**. `omnifold_loop` gained
+>   `train_frac`/`split_seed`; the split ML band is **1.24× the seed-only band**
+>   (`nd-unfolding/uq_cov_mlsplit_3d.root`). Folded into the combined budget it shifts the
+>   total only **+0.04%** (ML is sub-dominant), so the larger, honest band is essentially
+>   free — adopt it. Ensemble-mean CV == frozen CV.
+> - **#3 (unbinned GoF)** — **DONE**. Classifier two-sample test
+>   (`nd-unfolding/unbinned_gof.py`): the CV prior is separable (z=33) but the unfolded
+>   result is indistinguishable from data (AUC 0.501, z=1.4, **p=0.17**) — the unbinned
+>   GoF is sensitive and passes, complementing the binned χ².
+> - **#4 (more dimensions)** — q3 4D done + validated (Phase 1); q3 systematic campaign
+>   in flight (`ND_OMNIFOLD_STATUS.md`).
+
 1. **Covariance construction — unified-throw cross-check of the block-sum.** We report
    `C = C_syst + C_stat + C_ML`, summing independently-generated blocks (MAT convention;
    defensible because the RNG streams and sources are independent). This *assumes the
