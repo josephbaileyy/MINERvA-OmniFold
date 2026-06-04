@@ -102,6 +102,7 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
     else:
         raise ValueError(f"unknown mode {mode!r} (scalar|pointcloud)")
 
+    imc = np.arange(MCgen.shape[0])   # mc subsample indices into the input npz (for binning)
     if max_events is not None:
         rng = np.random.default_rng(seed)
         nmc = min(max_events, MCgen.shape[0])
@@ -116,7 +117,7 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
                       bootstrap=bootstrap)
     mc = DataLoader(reco=MCreco, gen=MCgen, pass_reco=pass_reco, pass_gen=pass_truth,
                     weight=w_truth, normalize=True, bootstrap=bootstrap)
-    return data, mc
+    return data, mc, imc
 
 
 def _load_pointcloud(inputs_npz, num_part):
@@ -152,10 +153,13 @@ def main():
     ap.add_argument("--model", default="mlp", choices=["mlp", "pet"])
     ap.add_argument("--niter", type=int, default=1)
     ap.add_argument("--epochs", type=int, default=2)
+    ap.add_argument("--save-weights", default="",
+                    help="npz to save the gen push weights + mc subsample indices "
+                         "(for pet_vs_gbdt.py binning).")
     args = ap.parse_args()
 
-    data, mc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
-                             max_events=args.max_events)
+    data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
+                                  max_events=args.max_events)
     print(f"[loaders] data reco shape={np.asarray(data.reco).shape} "
           f"(sumw={data.weight.sum():.3e})")
     print(f"[loaders] mc   reco shape={np.asarray(mc.reco).shape} gen shape="
@@ -189,6 +193,11 @@ def main():
     w = of.reweight(mc.gen, of.model2, batch_size=1000)
     print(f"[smoke] OK: unfolded weights n={len(w)} mean={w.mean():.4f} "
           f"std={w.std():.4f} (finite={np.isfinite(w).all()})")
+    if args.save_weights:
+        np.savez_compressed(args.save_weights, w_push=np.asarray(w),
+                            mc_indices=imc, model=args.model,
+                            pass_truth=np.asarray(mc.pass_gen))
+        print(f"[smoke] saved push weights + mc indices -> {args.save_weights}")
 
 
 if __name__ == "__main__":

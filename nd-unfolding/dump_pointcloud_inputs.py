@@ -70,7 +70,11 @@ def main():
 
     # ---- signal (MC): gen + reco clouds, pass flags, weights ----
     import math
-    sc = {b: array("d", [0.0]) for b in ("MC", "MC_pz", "sim", "sim_pz", "w_truth", "w_reco")}
+    # scalar branches: pt/pz/eavail/q3 (truth + reco) so the PET push weights can be
+    # binned into the SAME 4D axes as the GBDT result (PET-vs-GBDT comparison).
+    sc = {b: array("d", [0.0]) for b in
+          ("MC", "MC_pz", "MC_eavail", "MC_q3", "sim", "sim_pz", "sim_eavail", "sim_q3",
+           "w_truth", "w_reco")}
     sp = array("B", [0])
     for b, a in sc.items():
         t.SetBranchAddress(b, a)
@@ -82,6 +86,7 @@ def main():
         t.SetBranchAddress(b, v)
 
     gen_cl, reco_cl, pr, ptru, wt, wr = [], [], [], [], [], []
+    tru_sc, rec_sc = [], []   # per-event (pt,pz,eavail,q3) truth + reco scalars
     n = t.GetEntries()
     for i in range(n):
         t.GetEntry(i)
@@ -98,6 +103,11 @@ def main():
         pr.append(passed and rec_ok); ptru.append(tru_ok)
         wt.append(float(sc["w_truth"][0]) * pot_scale)
         wr.append(float(sc["w_reco"][0]) * pot_scale)
+        tru_sc.append([a_pt, a_pz, float(sc["MC_eavail"][0]), float(sc["MC_q3"][0])])
+        rec_sc.append([b_pt if (passed and rec_ok) else -9999.0,
+                       b_pz if (passed and rec_ok) else -9999.0,
+                       float(sc["sim_eavail"][0]) if (passed and rec_ok) else -9999.0,
+                       float(sc["sim_q3"][0]) if (passed and rec_ok) else -9999.0])
         if i % 200000 == 0:
             print(f"  signal {i}/{n}", flush=True)
 
@@ -127,12 +137,19 @@ def main():
     measured_pc = np.asarray(meas_cl, np.float32)
     print(f"[OK] signal clouds: gen {part_gen.shape} reco {part_reco.shape}; "
           f"data {measured_pc.shape}; num_part={P}")
+    import unfold_nd_omnifold_unbinned as und
+    pt_e, pz_e = u2d.PT_EDGES, u2d.PZ_EDGES
+    ea_e = und.EXTRA_AXES["eavail"]["edges"]; q3_e = und.EXTRA_AXES["q3"]["edges"]
     np.savez_compressed(
         args.out, num_part=P,
         part_gen=part_gen, part_reco=part_reco, measured_pc=measured_pc,
         pass_reco=np.asarray(pr, bool), pass_truth=np.asarray(ptru, bool),
         w_truth=np.asarray(wt), w_reco=np.asarray(wr),
         measured_weights=np.ones(len(meas_cl)),
+        # per-event (pt,pz,eavail,q3) scalars for binning the PET result vs GBDT
+        truth_scalars=np.asarray(tru_sc, np.float32), reco_scalars=np.asarray(rec_sc, np.float32),
+        edges_0=np.asarray(pt_e, float), edges_1=np.asarray(pz_e, float),
+        edges_2=np.asarray(ea_e, float), edges_3=np.asarray(q3_e, float),
         gen_feats=np.array(GEN_FEATS, dtype=object),
         reco_feats=np.array(RECO_FEATS, dtype=object),
         data_pot=data_pot)
