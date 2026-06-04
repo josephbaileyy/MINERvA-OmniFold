@@ -62,17 +62,26 @@ found + fixed en route (class-balance bias; unshuffled single-class `validation_
 (Full SLURM trail in `ND_OMNIFOLD_RUN_LOG.md`: event loop 53905768, 4D unfold
 53925395, NN 53928526; first runs 53906839/53906748 surfaced the THnSparse + NN bugs.)
 
-## Next (follow-ons, not blocking)
+## Follow-on campaign (2026-06-04) — all six "next steps" actioned
 
-- **Ascencio low-q3 bin-identical comparison** (q3 binning chosen to allow matching
-  2110.13372 — fetch its public release and overlay, the q3 analogue of
-  `../3d-unfolding/genie/compare_ascencio_eavail.py`).
-- **q3 systematic campaign**: the event loop dumps **CV** q3 only; per-universe q3
-  branches are a follow-on, and note q3 is **NOT** lateral-invariant (depends on muon
-  kinematics) so lateral universes must dump shifted q3, not reuse CV (unlike Eavail).
-- **PET point-cloud track**: the validated NN engine is ready; build the per-hadron
-  DataLoader for the vendored `omnifold_nn/` PET model.
-- Systematic campaign for q3: the event loop currently dumps **CV** q3 only; the
-  per-universe q3 branches (`sim_q3_<band>_<idx>` …) are a follow-on — and note q3
-  is **NOT** lateral-invariant (unlike Eavail), since it depends on muon kinematics,
-  so lateral muon/beam universes shift it and must be dumped, not reused from CV.
+See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-04 entry) for full detail. Summary:
+
+- **#2 Ascencio low-q3 overlay — DONE (code).** `compare_ascencio_q3.py` produces our
+  d²σ/(dq3 dEavail) + dσ/dq3 on Ascencio's binning; bin-identical χ² verified with a
+  synthetic drop-in. The 2110.13372 data file is Cloudflare/member-gated (not fetchable
+  in-session) — drop it in to finish the overlay (format in the script header).
+- **#5 Unbinned GoF — DONE (job 53945834).** `unbinned_gof.py` C2ST: prior data/MC
+  separable (z=33), unfolded indistinguishable (z=1.4, p=0.17). Sensitive + PASSES.
+- **#4 Train/test-split seedscan — DONE (array 53946279).** `omnifold_loop` train/test
+  split; ensemble-mean CV matches frozen CV; ML-split band 1.24× the pure-seed ML band
+  (the split adds real ML variance). `uq_cov_mlsplit_3d.root`.
+- **#6 PET DataLoader — DONE (job 53946101).** `minerva_pet_dataloader.py`; vendored MLP
+  AND PET unfold our data on GPU. `pointcloud` mode lists the per-hadron branches the
+  event loop must dump (the one remaining piece for the real point cloud).
+- **#1 Unified-throw cross-check — IN FLIGHT (job 53946996).** `compare_unified_throw.py`
+  superposition test (cross term vs block sum) on the 120 GB 3D universes omnifile.
+- **#3 q3 systematic campaign — LAUNCHED (chained).** C++ shifted-q3 for lateral
+  universes (built + verified: reco q3 shifts 100% under BeamAngleX), nd `--universe` +
+  q3 swap (`lateral_invariant` flag), `analyze_universes_nd.py`. Pipeline:
+  evloop 53945111 → hadd 53947173 → validate 53947729 → sweep 53947731 → cov 53947732,
+  outputs under `uq_4d/`.

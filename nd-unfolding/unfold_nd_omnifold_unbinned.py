@@ -62,17 +62,23 @@ ROOT.gROOT.SetBatch(True)
 # Physics-motivated low-recoil bins + a catch-all top bin (so the marginal
 # captures the full tail and the Jacobian identity holds: every event must land
 # in some bin). q3 reco has calorimetric tails, hence the wide catch bin.
+# `lateral_invariant`: whether the axis value is UNCHANGED under the lateral
+# muon/beam universes. E_avail is invariant (the lateral bands touch only muon
+# getters, not the recoil inputs -- Gap 1 finding), so a universe unfold keeps CV
+# E_avail. q3 IS shifted by the lateral bands (it depends on the muon kinematics),
+# so its per-universe shifted branch (sim_q3_<band>_<idx> / MC_q3_<band>_<idx>)
+# must be swapped in for lateral universes. See runEventLoopOmniFold.cpp header.
 EXTRA_AXES = {
     "eavail": dict(
         truth="MC_eavail", reco="sim_eavail", data="measured_eavail",
         bkg="sim_background_eavail",
         edges=[0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0],   # GeV
-        label="E_{avail} (GeV)"),
+        label="E_{avail} (GeV)", lateral_invariant=True),
     "q3": dict(
         truth="MC_q3", reco="sim_q3", data="measured_q3",
         bkg="sim_background_q3",
         edges=[0.0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100.0],   # GeV
-        label="q_{3} (GeV)"),
+        label="q_{3} (GeV)", lateral_invariant=False),
 }
 
 
@@ -135,16 +141,67 @@ def _addr(t, name):
     return a
 
 
+def _axis_universe_branch(axis_name, suffix, ctx):
+    """Per-axis shifted-branch name for a lateral universe, matching the C++
+    schema (runEventLoopOmniFold.cpp BuildUniverseBranchTable q3BranchName):
+      truth_tree      -> '<axis>_truth_<suffix>'  (e.g. q3_truth_MuonResolution_0)
+      reco_tree_truth -> 'MC_<axis>_<suffix>'     (e.g. MC_q3_MuonResolution_0)
+      reco_tree_reco  -> 'sim_<axis>_<suffix>'    (e.g. sim_q3_MuonResolution_0)
+    Only the lateral-variant axes (q3) carry these; eavail is lateral-invariant.
+    """
+    if ctx == "truth_tree":
+        return f"{axis_name}_truth_{suffix}"
+    if ctx == "reco_tree_truth":
+        return f"MC_{axis_name}_{suffix}"
+    if ctx == "reco_tree_reco":
+        return f"sim_{axis_name}_{suffix}"
+    raise ValueError(f"unknown ctx={ctx!r}")
+
+
 def collect_truth_denom_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                           use_weights=False, verbose=False):
-    """mc_truth_denom -> truth-only (pt, pz, *extras, w) for the completeness denom."""
-    pt_a = _addr(t, "MC"); pz_a = _addr(t, "MC_pz")
-    ex_a = [_addr(t, ax["truth"]) for ax in extras]
+                           use_weights=False, verbose=False, extra_wbranches=None,
+                           universe_branch=None):
+    """mc_truth_denom -> truth-only (pt, pz, *extras, w) for the completeness denom.
+
+    extra_wbranches: optional list of truth-side universe weight branch names
+    (e.g. w_truth_<band>_<idx>); read aligned to kept events and returned under
+    out["extra_w"] as a list of arrays (POT-scaled). Used by the superposition /
+    unified-throw cross-check (compare_unified_throw); default None = unchanged.
+
+    universe_branch=(band, idx): systematic-universe unfold. The truth weight is
+    read from w_truth_<band>_<idx>; for LATERAL universes (kinematic branches
+    present) pt/pz swap to pT_truth_/pz_truth_<band>_<idx> and every lateral-variant
+    extra axis (q3) swaps to <axis>_truth_<band>_<idx>. Lateral-invariant axes
+    (eavail) keep their CV branch. Mirrors the 3D driver's --universe path + q3.
+    """
+    pt_name, pz_name = "MC", "MC_pz"
+    ax_truth = [ax["truth"] for ax in extras]
+    wt_name = "w_truth"
+    if universe_branch is not None:
+        wt_name = u2d._universe_truth_branch(universe_branch)
+        if not t.GetBranch(wt_name):
+            raise RuntimeError(f"[FAIL] '{wt_name}' missing from mc_truth_denom "
+                               "(re-run event loop with MNV101_DUMP_UNIVERSES)")
+        lpt, lpz = u2d._universe_kine_branches(universe_branch, "truth_tree")
+        suffix = f"{u2d._sanitize_band_for_branch(universe_branch[0])}_{int(universe_branch[1])}"
+        if t.GetBranch(lpt) and t.GetBranch(lpz):   # lateral
+            pt_name, pz_name = lpt, lpz
+            for k, ax in enumerate(extras):
+                if not ax.get("lateral_invariant", True):
+                    nm = _axis_universe_branch(ax["name"], suffix, "truth_tree")
+                    if t.GetBranch(nm):
+                        ax_truth[k] = nm
+            if verbose:
+                print(f"[INFO] truth_denom lateral universe: pt/pz+{ '/'.join(ax_truth)} swapped")
+    pt_a = _addr(t, pt_name); pz_a = _addr(t, pz_name)
+    ex_a = [_addr(t, nm) for nm in ax_truth]
     wt_a = array("d", [1.0])
     if use_weights:
-        t.SetBranchAddress("w_truth", wt_a)
+        t.SetBranchAddress(wt_name, wt_a)
+    xw_a = [_addr(t, nm) for nm in (extra_wbranches or [])]
     pt_l, pz_l, w_l = [], [], []
     ex_l = [[] for _ in extras]
+    xw_l = [[] for _ in (extra_wbranches or [])]
     drop = bad = 0
     for i in range(t.GetEntries()):
         t.GetEntry(i)
@@ -159,31 +216,80 @@ def collect_truth_denom_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
         pt_l.append(pt); pz_l.append(pz); w_l.append(w * pot_scale)
         for k, v in enumerate(exv):
             ex_l[k].append(v)
+        for k, a in enumerate(xw_a):
+            xw_l[k].append(float(a[0]) * pot_scale)
     if verbose:
         print(f"[INFO] truth_denom: kept={len(pt_l)} dropped={drop} bad={bad}")
     out = {"pt": np.asarray(pt_l), "pz": np.asarray(pz_l), "w": np.asarray(w_l)}
     out["extras"] = [np.asarray(c) for c in ex_l]
+    out["extra_w"] = [np.asarray(c) for c in xw_l]
     return out
 
 
 def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                      use_weights=False, verbose=False):
+                      use_weights=False, verbose=False, extra_wbranches=None,
+                      universe_branch=None):
     """mc_signal_reco -> dict of truth/reco arrays for OmniFold.
 
     Gating mirrors the 2D/3D drivers: truth-pass via the (pt,pz) gate, reco-pass
     via sim_pass AND the (pt,pz) rectangle. Extra axes are NOT gated; reco extra
     values are -9999 wherever the event does not reco-pass.
+
+    extra_wbranches: optional list of (truth_branch, reco_branch) universe-weight
+    name tuples (e.g. (w_truth_<band>_<idx>, w_reco_<band>_<idx>)); read aligned to
+    kept events and returned under out["extra_wt"]/out["extra_wr"] (POT-scaled), for
+    the superposition / unified-throw cross-check. Default None = unchanged. These
+    must be VERTICAL bands (no kinematic swap) so the weights combine multiplicatively.
+
+    universe_branch=(band, idx): systematic-universe unfold. Weights from
+    w_truth_/w_reco_<band>_<idx>; for LATERAL universes the truth pt/pz swap to
+    MC_/MC_pz_<band>_<idx>, the reco pt/pz to sim_/sim_pz_<band>_<idx>, and each
+    lateral-variant extra axis (q3) swaps its truth->MC_<axis>_<band>_<idx> and
+    reco->sim_<axis>_<band>_<idx>. eavail (lateral-invariant) stays CV.
     """
-    mc_pt = _addr(t, "MC"); mc_pz = _addr(t, "MC_pz")
-    sim_pt = _addr(t, "sim"); sim_pz = _addr(t, "sim_pz")
-    mc_ex = [_addr(t, ax["truth"]) for ax in extras]
-    sim_ex = [_addr(t, ax["reco"]) for ax in extras]
+    pt_truth_name, pz_truth_name = "MC", "MC_pz"
+    pt_reco_name, pz_reco_name = "sim", "sim_pz"
+    ax_truth = [ax["truth"] for ax in extras]
+    ax_reco = [ax["reco"] for ax in extras]
+    wt_name, wr_name = "w_truth", "w_reco"
+    if universe_branch is not None:
+        wt_name = u2d._universe_truth_branch(universe_branch)
+        wr_name = u2d._universe_reco_branch(universe_branch)
+        for nm in (wt_name, wr_name):
+            if not t.GetBranch(nm):
+                raise RuntimeError(f"[FAIL] '{nm}' missing from mc_signal_reco "
+                                   "(re-run event loop with MNV101_DUMP_UNIVERSES)")
+        l_mc, l_mc_pz = u2d._universe_kine_branches(universe_branch, "reco_tree_truth")
+        l_sim, l_sim_pz = u2d._universe_kine_branches(universe_branch, "reco_tree_reco")
+        suffix = f"{u2d._sanitize_band_for_branch(universe_branch[0])}_{int(universe_branch[1])}"
+        if t.GetBranch(l_sim) and t.GetBranch(l_mc):   # lateral
+            pt_truth_name, pz_truth_name = l_mc, l_mc_pz
+            pt_reco_name, pz_reco_name = l_sim, l_sim_pz
+            for k, ax in enumerate(extras):
+                if not ax.get("lateral_invariant", True):
+                    nt = _axis_universe_branch(ax["name"], suffix, "reco_tree_truth")
+                    nr = _axis_universe_branch(ax["name"], suffix, "reco_tree_reco")
+                    if t.GetBranch(nt):
+                        ax_truth[k] = nt
+                    if t.GetBranch(nr):
+                        ax_reco[k] = nr
+            if verbose:
+                print(f"[INFO] signal lateral universe: kinematics+q3 swapped "
+                      f"(truth {pt_truth_name}, reco {pt_reco_name}, axes {ax_reco})")
+    mc_pt = _addr(t, pt_truth_name); mc_pz = _addr(t, pz_truth_name)
+    sim_pt = _addr(t, pt_reco_name); sim_pz = _addr(t, pz_reco_name)
+    mc_ex = [_addr(t, nm) for nm in ax_truth]
+    sim_ex = [_addr(t, nm) for nm in ax_reco]
     sim_pass = array("B", [0]); t.SetBranchAddress("sim_pass", sim_pass)
     wt_a = array("d", [1.0]); wr_a = array("d", [1.0])
     if use_weights:
-        t.SetBranchAddress("w_truth", wt_a); t.SetBranchAddress("w_reco", wr_a)
+        t.SetBranchAddress(wt_name, wt_a); t.SetBranchAddress(wr_name, wr_a)
+    xwt_a = [_addr(t, bt) for bt, _ in (extra_wbranches or [])]
+    xwr_a = [_addr(t, br) for _, br in (extra_wbranches or [])]
     tpt, tpz, rpt, rpz, pr, ptr, wtl, wrl = [], [], [], [], [], [], [], []
     tex = [[] for _ in extras]; rex = [[] for _ in extras]
+    xwt_l = [[] for _ in (extra_wbranches or [])]
+    xwr_l = [[] for _ in (extra_wbranches or [])]
     drop = bad = 0
     for i in range(t.GetEntries()):
         t.GetEntry(i)
@@ -209,6 +315,9 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
             tex[k].append(tv if math.isfinite(tv) else -9999.0)
             rv = float(sim_ex[k][0])
             rex[k].append(rv if (passed and rec_ok and math.isfinite(rv)) else -9999.0)
+        for k in range(len(xwt_a)):
+            xwt_l[k].append(float(xwt_a[k][0]) * pot_scale)
+            xwr_l[k].append(float(xwr_a[k][0]) * pot_scale)
         pr.append(passed and rec_ok); ptr.append(tru_ok)
         wtl.append(wt); wrl.append(wr)
     if verbose:
@@ -220,6 +329,8 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
         "reco_extras": [np.asarray(c) for c in rex],
         "pass_reco": np.asarray(pr, bool), "pass_truth": np.asarray(ptr, bool),
         "w_truth": np.asarray(wtl), "w_reco": np.asarray(wrl),
+        "extra_wt": [np.asarray(c) for c in xwt_l],
+        "extra_wr": [np.asarray(c) for c in xwr_l],
     }
 
 
@@ -316,6 +427,14 @@ def main():
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--bootstrap-seed", type=int, default=None)
+    ap.add_argument("--universe", default=None, metavar="BAND:IDX",
+                    help="systematic-universe unfold: read w_truth/w_reco_<band>_<idx> "
+                         "(lateral bands also swap pt/pz + q3; eavail stays CV). "
+                         "Requires --use-weights; incompatible with --closure/--bootstrap-seed.")
+    ap.add_argument("--flux-universe-file",
+                    default=f"{_2D}/baseline_flux/flux_integral_universes_MEFHC.root",
+                    help="ROOT (hFluxCV/hFluxUniv) per-PPFX flux integrals; used only "
+                         "with --universe Flux:IDX to divide by that universe's flux.")
     ap.add_argument("--edges", default=None,
                     help="override edges for one axis: 'axis:e0,e1,...' (repeatable, ';'-sep)")
     ap.add_argument("--out", default="xsec_nd.root")
@@ -338,6 +457,22 @@ def main():
         ap.error("--closure-reweight-axis requires --closure")
     if args.closure_reweight_axis and args.closure_reweight_axis not in axis_names:
         ap.error(f"--closure-reweight-axis {args.closure_reweight_axis!r} not in --axes")
+
+    universe_branch = None
+    if args.universe is not None:
+        if not args.use_weights:
+            ap.error("--universe requires --use-weights (CV->universe weight swap)")
+        if args.closure:
+            ap.error("--universe is incompatible with --closure")
+        if args.bootstrap_seed is not None:
+            ap.error("--universe and --bootstrap-seed cannot be combined (one variance "
+                     "axis per unfold)")
+        if ":" not in args.universe:
+            ap.error(f"--universe expects 'BAND:IDX', got {args.universe!r}")
+        b_str, _, i_str = args.universe.partition(":")
+        universe_branch = (b_str, int(i_str))
+        print(f"[INFO] universe unfold: band={b_str!r} idx={i_str} "
+              f"-> w_truth/w_reco_{u2d._sanitize_band_for_branch(b_str)}_{i_str}")
 
     # axis edge overrides
     if args.edges:
@@ -386,9 +521,32 @@ def main():
     bkg_pt, bkg_pz, bkg_ex, bkg_w = collect_bkg_nd(
         t_bkg, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
     sig = collect_signal_nd(t_sig, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                            use_weights=args.use_weights, verbose=args.verbose)
+                            use_weights=args.use_weights, verbose=args.verbose,
+                            universe_branch=universe_branch)
     td = collect_truth_denom_nd(t_td, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
-                                use_weights=args.use_weights, verbose=args.verbose)
+                                use_weights=args.use_weights, verbose=args.verbose,
+                                universe_branch=universe_branch)
+
+    # Flux universe: divide by that PPFX universe's flux integral (mirrors 3D driver).
+    if universe_branch is not None and universe_branch[0] == "Flux":
+        fu = ROOT.TFile.Open(args.flux_universe_file)
+        if fu and not fu.IsZombie():
+            h_cv, h_un = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
+            if h_cv and h_un:
+                uidx = int(universe_branch[1])
+                scale = np.ones(len(flux_bins))
+                for b in range(len(flux_bins)):
+                    cvf = h_cv.GetBinContent(b + 1)
+                    unf = h_un.GetBinContent(b + 1, uidx + 1)
+                    if cvf > 0 and unf > 0:
+                        scale[b] = unf / cvf
+                flux_bins = np.asarray(flux_bins, float) * scale
+                print(f"[INFO] Flux universe {uidx}: per-pT flux scaled "
+                      f"(mean {scale.mean():.4f})")
+            fu.Close()
+        else:
+            print(f"[WARN] flux universe file {args.flux_universe_file} unavailable; "
+                  "using CV flux (Flux universe will be incomplete)")
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("empty signal or data after selection")
 

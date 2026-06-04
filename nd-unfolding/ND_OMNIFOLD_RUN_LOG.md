@@ -103,3 +103,64 @@ axes (q3 included); the NN is the path for variable-length point clouds, now ver
 agree on tabular inputs. The two NN failure modes found + fixed (class-balance bias;
 unshuffled single-class `validation_split`) are documented in `omnifold_nn_core.py` for
 whoever drives the PET point-cloud track next.
+
+## 2026-06-04 — Follow-on campaign: all six "next steps" (prepub items + q3 systematics + PET)
+
+Driven by the `/goal` to do all six documented follow-ons, parallelizing across sbatch waits.
+
+**#2 Ascencio low-q3 bin-identical overlay — DONE (code + our-side spectra).**
+`compare_ascencio_q3.py`: reshapes the 4D `hXSecND_flat` and projects dσ/dq3 + the
+d²σ/(dq3 dEavail) low-q3 slices via `xsec_nd`. Bin-identical χ² path verified end-to-end
+with a synthetic drop-in (5 matched q3 bins). Our-side PNGs written
+(`ascencio_vs_unfolded_q3_{dq3,eavail_in_q3slices}.png`). The Ascencio data file is the one
+remaining drop-in — HepData is Cloudflare/member-gated (not fetchable in-session, same as the
+E_avail script); format documented in the script header.
+
+**#5 Unbinned goodness-of-fit — DONE (job 53945834).** `unbinned_gof.py`: Classifier
+Two-Sample Test (Lopez-Paz & Oquab) between data reco and OmniFold-reweighted MC reco, with
+the CV prior as the sensitivity baseline. Result on the frozen 3D inputs:
+- PRIOR/CV: acc 0.5226, AUC 0.5353, z=33.4, p≈5e-244 (classifier easily separates data/MC).
+- UNFOLDED: acc 0.5009, AUC 0.5014, z=1.36, **p=0.17** (statistically indistinguishable).
+The unbinned GoF is both sensitive (caught the prior mismatch at z=33) and PASSES after
+unfolding — OmniFold removes the detectable reco-space mismatch. Weights saved to
+`of_weights_3d.npz`.
+
+**#4 Train/test-split seedscan + ensemble-mean CV — DONE (array 53946279, 24 splits +
+combine 53947036).** `omnifold_loop` gained `train_frac`/`split_seed` (fit each classifier
+on a random 80% subset, evaluate on all) — the genuine ML knob, since LightGBM at the
+production settings is otherwise ~deterministic in the estimator seed. `seedscan_split.py`
+(per split) + `combine_seedscan_split.py` (ensemble mean + cov):
+- ensemble-mean total σ = 3.0786e-38 (matches frozen CV 3.0789e-38); run-to-run 0.016%.
+- ML-split cov: sqrt-trace 2.645e-40, median rel 0.51%. **1.24× the pure-seed ML cov** — the
+  train/test split adds ~24% ML uncertainty the old seedscan missed (the prepub point).
+- ensemble-mean vs frozen CV: median shift 0.28%. Wrote `uq_cov_mlsplit_3d.root`.
+
+**#6 PET point-cloud DataLoader — DONE (job 53946101, GPU TF 2.15).**
+`minerva_pet_dataloader.py` adapts our event-loop arrays to the vendored
+`omnifold.DataLoader`. Smoke test on GPU: the vendored **MLP** AND **PET** (Point-Edge
+Transformer) both unfold our MINERvA data end-to-end through `MultiFold` (finite weights,
+mean≈1.0). `pointcloud` mode prints an actionable error listing exactly the per-hadron
+branches the event loop must dump (`part_reco_{E,px,py,pz,z}`, `part_gen_{E,px,py,pz,pdg}`
+from cluster info + `mc_FSPart*`). Point-cloud track is wired; the one remaining piece is
+the event-loop per-hadron dump.
+
+**#1 Unified-throw vs block-sum cross-check — IN FLIGHT (job 53946996).**
+`compare_unified_throw.py` (superposition test): the unified throw equals the block sum in
+the linear regime, so the decisive cheap test is the cross term
+`Delta_AB - (Delta_A + Delta_B)` from re-unfolded vertical-band shifts. `--dump` reads the
+120 GB 3D universes omnifile once (extended `collect_signal_nd`/`collect_truth_denom_nd`
+with `extra_wbranches`); `--analyze` runs CV + single + joint unfolds for MaCCQE/2p2h/MaRES
+and reports the cross-term / linear ratio. Restricted to vertical bands (lateral kinematic
+shifts can't compose from single-band dumps).
+
+**#3 q3 systematic campaign — LAUNCHED (chained pipeline).**
+C++: `runEventLoopOmniFold.cpp` now dumps shifted q3 for lateral universes
+(`q3_truth_/MC_q3_/sim_q3_<band>_<idx>`), mirroring pT/pz at all 3 sites. q3 is NOT
+lateral-invariant (verified: reco q3 shifts for 100% of passing events under BeamAngleX, ±1σ
+pair brackets CV; truth q3 invariant under beam-angle bands, matching truth pT/pz). Rebuilt +
+installed. The nd driver gained a `--universe` path with the q3 swap (`lateral_invariant`
+axis flag; eavail keeps CV, q3 swaps for lateral universes) + Flux-universe flux division.
+Chain (all dependency-gated): evloop array 53945111 (12 playlists, dump-all +q3) →
+hadd 53947173 (SetMaxTreeSize merger) → validation universe 53947729 (MuonResolution:0,
+exercises the q3 swap) → full 187-universe sweep 53947731 → 4D covariance 53947732
+(`analyze_universes_nd.py`, block-sum + norm band). Outputs land under `uq_4d/`.

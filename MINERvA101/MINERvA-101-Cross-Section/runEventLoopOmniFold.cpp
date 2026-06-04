@@ -134,6 +134,14 @@ struct TruthDenomEntry
 // mc_FSPartE). So E_avail is invariant under every lateral universe and needs
 // no shifted branch. The GEANT hadronic-response bands (which DO move E_avail
 // physically) are vertical/weight-only and are captured by w_reco_GEANT_*.
+//
+// NOTE (4D q3): UNLIKE E_avail, q3 IS shifted by the lateral muon bands.
+// RecoQ3() reconstructs q3 from the muon kinematics (Q^2 from Emu/Pmu/theta)
+// + recoil_E, and Getq3True() from mc_Q2 + the true muon, so a muon-energy /
+// beam-angle shift moves q3. Lateral universes therefore ALSO write a shifted
+// q3 (q3_truth_/MC_q3_/sim_q3_<band>_<idx>) alongside pT/pz; the 4D Python
+// driver must swap it per universe (it cannot reuse the CV q3 the way it
+// reuses CV E_avail).
 struct UniverseBranchInfo
 {
   std::string bandName;
@@ -143,6 +151,10 @@ struct UniverseBranchInfo
   bool isLateral = false;
   std::string ptBranchName;        // empty when !isLateral
   std::string pzBranchName;        // empty when !isLateral
+  std::string q3BranchName;        // empty when !isLateral; q3 is NOT
+                                   // lateral-invariant (depends on muon
+                                   // kinematics + recoil), unlike E_avail,
+                                   // so lateral universes dump shifted q3.
 };
 
 inline std::string SanitizeForRootBranchName(const std::string& s)
@@ -230,14 +242,17 @@ BuildUniverseBranchTable(
           case UniverseKineContext::TruthTree:
             ub.ptBranchName = "pT_truth_" + suffix;
             ub.pzBranchName = "pz_truth_" + suffix;
+            ub.q3BranchName = "q3_truth_" + suffix;   // truth q3 (Getq3True)
             break;
           case UniverseKineContext::RecoTreeTruth:
             ub.ptBranchName = "MC_"     + suffix;
             ub.pzBranchName = "MC_pz_"  + suffix;
+            ub.q3BranchName = "MC_q3_"  + suffix;      // truth q3 (Getq3True)
             break;
           case UniverseKineContext::RecoTreeReco:
             ub.ptBranchName = "sim_"    + suffix;
             ub.pzBranchName = "sim_pz_" + suffix;
+            ub.q3BranchName = "sim_q3_" + suffix;      // reco q3 (RecoQ3)
             break;
         }
       }
@@ -314,6 +329,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
   std::vector<double> uniWeights;
   std::vector<double> uniLatPT;     // parallel to uniBranches; unused (NaN) for vertical entries
   std::vector<double> uniLatPZ;
+  std::vector<double> uniLatQ3;     // shifted truth q3 for lateral universes
   size_t nLateral = 0;
   const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
                              (truthBands != nullptr);
@@ -325,6 +341,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
     uniWeights.assign(uniBranches.size(), 1.0);
     uniLatPT.assign(uniBranches.size(), 0.0);
     uniLatPZ.assign(uniBranches.size(), 0.0);
+    uniLatQ3.assign(uniBranches.size(), 0.0);
     for(size_t k = 0; k < uniBranches.size(); ++k)
     {
       out->Branch(uniBranches[k].branchName.c_str(), &uniWeights[k]);
@@ -332,6 +349,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
       {
         out->Branch(uniBranches[k].ptBranchName.c_str(), &uniLatPT[k]);
         out->Branch(uniBranches[k].pzBranchName.c_str(), &uniLatPZ[k]);
+        out->Branch(uniBranches[k].q3BranchName.c_str(), &uniLatQ3[k]);
         ++nLateral;
       }
     }
@@ -404,6 +422,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
         {
           uniLatPT[k] = u->GetMuonPTTrue();
           uniLatPZ[k] = u->GetMuonPzTrue();
+          uniLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
         }
       }
       // Restore CV state so any subsequent code in this iteration
@@ -545,8 +564,8 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   // For truth-mode entries we dump universe-shifted truth pT/pz as
   // MC_<band>_<idx>/MC_pz_<band>_<idx>; for reco-mode entries we dump
   // universe-shifted reco pT/pz as sim_<band>_<idx>/sim_pz_<band>_<idx>.
-  std::vector<double> uniTruthLatPT, uniTruthLatPZ;
-  std::vector<double> uniRecoLatPT,  uniRecoLatPZ;
+  std::vector<double> uniTruthLatPT, uniTruthLatPZ, uniTruthLatQ3;
+  std::vector<double> uniRecoLatPT,  uniRecoLatPZ,  uniRecoLatQ3;
   size_t nLatTruth = 0, nLatReco = 0;
   const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
                              (errorBands != nullptr);
@@ -562,8 +581,10 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     uniRecoWeights.assign(uniRecoBranches.size(),  1.0);
     uniTruthLatPT.assign(uniTruthBranches.size(),  0.0);
     uniTruthLatPZ.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatQ3.assign(uniTruthBranches.size(),  0.0);
     uniRecoLatPT.assign(uniRecoBranches.size(),    0.0);
     uniRecoLatPZ.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatQ3.assign(uniRecoBranches.size(),    0.0);
     for(size_t k = 0; k < uniTruthBranches.size(); ++k)
     {
       out->Branch(uniTruthBranches[k].branchName.c_str(), &uniTruthWeights[k]);
@@ -571,6 +592,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
       {
         out->Branch(uniTruthBranches[k].ptBranchName.c_str(), &uniTruthLatPT[k]);
         out->Branch(uniTruthBranches[k].pzBranchName.c_str(), &uniTruthLatPZ[k]);
+        out->Branch(uniTruthBranches[k].q3BranchName.c_str(), &uniTruthLatQ3[k]);
         ++nLatTruth;
       }
     }
@@ -581,6 +603,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
       {
         out->Branch(uniRecoBranches[k].ptBranchName.c_str(), &uniRecoLatPT[k]);
         out->Branch(uniRecoBranches[k].pzBranchName.c_str(), &uniRecoLatPZ[k]);
+        out->Branch(uniRecoBranches[k].q3BranchName.c_str(), &uniRecoLatQ3[k]);
         ++nLatReco;
       }
     }
@@ -692,6 +715,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
           {
             uniTruthLatPT[k] = u->GetMuonPTTrue();
             uniTruthLatPZ[k] = u->GetMuonPzTrue();
+            uniTruthLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
           }
         }
         // Reco-mode universe weights: CVUniverse::SetTruth(false).
@@ -707,6 +731,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
           {
             uniRecoLatPT[k] = u->GetMuonPT();
             uniRecoLatPZ[k] = u->GetMuonPz();
+            uniRecoLatQ3[k] = u->RecoQ3() / 1000.0;  // MeV -> GeV (reco q3)
           }
         }
         // Restore CV state for downstream code that may still consult

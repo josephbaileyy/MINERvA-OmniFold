@@ -192,7 +192,17 @@ def _class_ratio(y, w):
 # ---------------------------------------------------------------------------
 def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco,
                   num_iterations, kind, MCgen_weights=None, MCreco_weights=None,
-                  measured_weights=None, seed=None, verbose=True):
+                  measured_weights=None, seed=None, verbose=True,
+                  train_frac=1.0, split_seed=None):
+    """Two-step OmniFold loop (estimator-agnostic).
+
+    train_frac < 1.0 enables a train/test split: each classifier is FIT on a random
+    `train_frac` subset of its rows (drawn fresh per step/iteration from `split_seed`)
+    and EVALUATED on all rows. Varying `split_seed` across runs exposes the genuine
+    ML/optimization + data-split variance (prepub item #2) -- for the GBDT this is the
+    dominant ML uncertainty, since LightGBM at these settings is otherwise nearly
+    deterministic in `seed` alone. train_frac=1.0 reproduces the original loop exactly.
+    """
     MCgen = np.atleast_2d(MCgen); MCreco = np.atleast_2d(MCreco)
     measured = np.atleast_2d(measured)
     if MCgen.shape[0] == 1 and MCgen.shape[1] != MCreco.shape[1]:
@@ -213,6 +223,8 @@ def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco
     clf1, clf2, reg = make_estimators(kind, MCgen.shape[1], seed=seed)
     use_reg = bool(np.any(~pass_reco))
     balance = (kind == "nn")   # NN needs class-balanced training (see _balance_weights)
+    do_split = train_frac is not None and train_frac < 1.0
+    _split_rng = np.random.default_rng(split_seed)
 
     def fit_reweight(clf, X, y, w, eval_X):
         ratio = 1.0
@@ -220,7 +232,17 @@ def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco
         if balance:
             ratio = _class_ratio(y, w)
             wfit = _balance_weights(y, w)
-        clf.fit(X, y, sample_weight=wfit)
+        Xf, yf, wf = X, y, wfit
+        if do_split:
+            # random train subset; both classes kept (stratified) so the fit is
+            # never single-class. Evaluation stays on the full eval_X.
+            keep = np.zeros(len(y), bool)
+            for lab in (0.0, 1.0):
+                idx = np.where(y == lab)[0]
+                k = max(1, int(round(train_frac * len(idx))))
+                keep[_split_rng.choice(idx, size=k, replace=False)] = True
+            Xf, yf, wf = X[keep], y[keep], wfit[keep]
+        clf.fit(Xf, yf, sample_weight=wf)
         return ratio * _reweight(eval_X, clf)
 
     for it in range(num_iterations):
