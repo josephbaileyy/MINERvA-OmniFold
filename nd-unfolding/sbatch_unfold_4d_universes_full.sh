@@ -1,13 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=unfold4d_uni
 #SBATCH --account=m3246
-#SBATCH --qos=regular
+#SBATCH --qos=shared
 #SBATCH --constraint=cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=128
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=64G
 #SBATCH --time=03:00:00
-#SBATCH --array=1-200%16
+#SBATCH --array=1-200%32
 #SBATCH --output=unfold4d_uni_%a_%A.out
 #SBATCH --error=unfold4d_uni_%a_%A.err
 
