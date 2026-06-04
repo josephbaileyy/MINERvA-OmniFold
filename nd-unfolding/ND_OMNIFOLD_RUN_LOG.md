@@ -213,3 +213,14 @@ dump_pointcloud_inputs.py reads + zero-pads the vectors to num_part=12 (validate
 smoke file: gen (N,12,5), reco (N,12,4)); minerva_pet_dataloader.py pointcloud mode reads
 the resulting npz into the vendored PET. Chained (CV-only, cheap): evloop_pc 53953733 ->
 hadd+dump 53953910 -> PET train 53953911.
+
+### 2026-06-04 (cont.) — #1 jitter-null RESOLVES the superposition probe
+Jitter null (job 53953284, compare_unified_throw.py --null): ||CV(seed+1)-CV(seed)|| =
+3.76e-40, so the difference-of-differences jitter floor (x4) = 1.50e-39. The largest
+measured cross term ||cross|| = 1.18e-39 is BELOW that floor (cross/floor = 0.8x). So the
+earlier "25-58% cross/linear" is dominated by OmniFold run-to-run jitter, NOT genuine
+cross-band nonlinearity. Corrected conclusion: the single-throw superposition probe shows
+NO clean evidence of nonlinearity (it is jitter-limited) -> consistent with the block-sum
+being valid; the full unified-throw covariance (160 throws, jitter averages down as
+1/sqrt(T)) is the definitive test and is running (dump 53956788 done + bank verified ->
+throws 53956789 -> combine 53956790).
