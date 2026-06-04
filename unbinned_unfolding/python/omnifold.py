@@ -217,10 +217,29 @@ class OmniFold_helper_functions:
             use_regressor =  any(~MC_pass_reco_mask)
             if use_regressor:
                 step1_regressor = LGBMRegressor(**rg)
+        elif estimator == "nn":
+            # Neural-net OmniFold (Phase 2, HIGHER_DIM_OMNIFOLD_DESIGN.md). Keras
+            # MLP from the vendored ViniciusMikuni/omnifold net.py, wrapped behind
+            # a scikit-learn fit/predict_proba in nd-unfolding/omnifold_nn_core.py
+            # (imported lazily so this module still loads without TensorFlow). The
+            # NN standardizes its inputs internally; the GBDT paths must not.
+            import os as _os
+            _nd = _os.path.join(_os.path.dirname(__file__), "..", "..", "nd-unfolding")
+            _nd = _os.path.abspath(_nd)
+            if _nd not in sys.path:
+                sys.path.insert(0, _nd)
+            from omnifold_nn_core import KerasMLP
+            nvars = (MCgen_entries.shape[1] if MCgen_entries.ndim > 1 else 1)
+            step1_classifier = KerasMLP(nvars=nvars, **classifier1_params)
+            step2_classifier = KerasMLP(nvars=nvars, **classifier2_params)
+            use_regressor = any(~MC_pass_reco_mask)
+            if use_regressor:
+                step1_regressor = KerasMLP(nvars=nvars, regression=True,
+                                           **regressor_params)
         else:
             raise ValueError(
                 f"Unknown estimator='{estimator}'. "
-                "Expected one of: 'exact', 'hist', 'xgb', 'lgbm'.")
+                "Expected one of: 'exact', 'hist', 'xgb', 'lgbm', 'nn'.")
         
         for i in range(num_iterations):
             print(f"Starting iteration {i}") 

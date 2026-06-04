@@ -103,6 +103,7 @@ struct TruthDenomEntry
   double MC;
   double MC_pz;
   double MC_eavail;
+  double MC_q3;
   double w_truth;
   uint64_t key;
 };
@@ -279,11 +280,13 @@ void LoopAndFillUnbinnedMCTruthDenom(
   double MC = 0.0;
   double MC_pz = 0.0;
   double MC_eavail = 0.0;
+  double MC_q3 = 0.0;
   double w_truth = 1.0;
 
   out->Branch("MC", &MC);
   out->Branch("MC_pz", &MC_pz);
   out->Branch("MC_eavail", &MC_eavail);   // truth available energy (GeV)
+  out->Branch("MC_q3", &MC_q3);           // truth 3-momentum transfer (GeV)
   out->Branch("w_truth", &w_truth);
 
   // Per-reweighter component dump for MnvTune-v1 audit (Option 1
@@ -381,6 +384,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
     MC = truthCV->GetMuonPTTrue();      // truth p_T (GeV/c)
     MC_pz = truthCV->GetMuonPzTrue();   // truth p_|| (GeV/c)
     MC_eavail = truthCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
+    MC_q3 = truthCV->Getq3True() / 1000.0;              // MeV -> GeV
     w_truth = model.GetWeight(*truthCV, evt);
     if(dumpComponents)
     {
@@ -412,7 +416,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
 
     if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
     if(outTruthDenomCache)
-      outTruthDenomCache->push_back({MC, MC_pz, MC_eavail, w_truth, key});
+      outTruthDenomCache->push_back({MC, MC_pz, MC_eavail, MC_q3, w_truth, key});
   }
 
   std::cout << "Finished unbinned MC truth-denom loop.\n";
@@ -435,18 +439,20 @@ long AppendTruthOnlyMisses(
     const std::vector<TruthDenomEntry>& truthDenomCache,
     const std::unordered_set<uint64_t>& recoIDs)
 {
-  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_sim_eavail = 0.0, miss_w_reco = 1.0;
-  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_MC_eavail = 0.0, miss_w_truth = 1.0;
+  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_sim_eavail = 0.0, miss_sim_q3 = 0.0, miss_w_reco = 1.0;
+  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_MC_eavail = 0.0, miss_MC_q3 = 0.0, miss_w_truth = 1.0;
   UChar_t miss_sim_pass = 0;
 
   sigOut->SetBranchAddress("sim",        &miss_sim);
   sigOut->SetBranchAddress("sim_pz",     &miss_sim_pz);
   sigOut->SetBranchAddress("sim_eavail", &miss_sim_eavail);
+  sigOut->SetBranchAddress("sim_q3",     &miss_sim_q3);
   sigOut->SetBranchAddress("sim_pass",   &miss_sim_pass);
   sigOut->SetBranchAddress("w_reco",     &miss_w_reco);
   sigOut->SetBranchAddress("MC",         &miss_MC);
   sigOut->SetBranchAddress("MC_pz",      &miss_MC_pz);
   sigOut->SetBranchAddress("MC_eavail",  &miss_MC_eavail);
+  sigOut->SetBranchAddress("MC_q3",      &miss_MC_q3);
   sigOut->SetBranchAddress("w_truth",    &miss_w_truth);
 
   long nTruthOnlyMisses = 0;
@@ -457,10 +463,12 @@ long AppendTruthOnlyMisses(
       miss_MC        = tde.MC;
       miss_MC_pz     = tde.MC_pz;
       miss_MC_eavail = tde.MC_eavail;
+      miss_MC_q3     = tde.MC_q3;
       miss_w_truth   = tde.w_truth;
       miss_sim        = -9999.0;
       miss_sim_pz     = -9999.0;
       miss_sim_eavail = -9999.0;
+      miss_sim_q3     = -9999.0;
       miss_sim_pass = 0;            // false: this is a miss (no reco)
       miss_w_reco   = tde.w_truth;  // proxy; w_reco unused for sim_pass=false
       sigOut->Fill();
@@ -502,21 +510,25 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   double sim = 0.0;
   double sim_pz = 0.0;
   double sim_eavail = 0.0;
+  double sim_q3 = 0.0;
   UChar_t sim_pass = true;
   double w_reco = 1.0;
   double MC = 0.0;
   double MC_pz = 0.0;
   double MC_eavail = 0.0;
+  double MC_q3 = 0.0;
   double w_truth = 1.0;
 
   out->Branch("sim", &sim);
   out->Branch("sim_pz", &sim_pz);
   out->Branch("sim_eavail", &sim_eavail);   // reco available energy (GeV)
+  out->Branch("sim_q3", &sim_q3);           // reco 3-momentum transfer (GeV)
   out->Branch("sim_pass", &sim_pass);
   out->Branch("w_reco", &w_reco);
   out->Branch("MC", &MC);
   out->Branch("MC_pz", &MC_pz);
   out->Branch("MC_eavail", &MC_eavail);     // truth available energy (GeV)
+  out->Branch("MC_q3", &MC_q3);             // truth 3-momentum transfer (GeV)
   out->Branch("w_truth", &w_truth);
 
   // Per-systematic-universe weight dump (UQ Stage-1 #7). Builds two
@@ -614,6 +626,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     MC      = recoCV->GetMuonPTTrue();   // truth p_T (GeV/c)
     MC_pz   = recoCV->GetMuonPzTrue();  // truth p_|| (GeV/c)
     MC_eavail = recoCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
+    MC_q3   = recoCV->Getq3True() / 1000.0;            // MeV -> GeV
     w_truth = w_truth_tmp;
 
     // --- reco mode: selection + reco weight + reco value
@@ -626,6 +639,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     sim      = passesReco ? recoCV->GetMuonPT() : -9999.0;
     sim_pz   = passesReco ? recoCV->GetMuonPz() : -9999.0;
     sim_eavail = passesReco ? recoCV->NewEavail() / 1000.0 : -9999.0;  // MeV -> GeV
+    sim_q3   = passesReco ? recoCV->RecoQ3() / 1000.0 : -9999.0;       // MeV -> GeV
     
     // --- KEEP event only if BOTH of these hold:
     //   1. recoCV.isEfficiencyDenom (CCInclusive2DPhaseSpace evaluated on
@@ -729,12 +743,14 @@ void LoopAndFillUnbinnedMCBackground(
   double sim_background = 0.0;
   double sim_background_pz = 0.0;
   double sim_background_eavail = 0.0;
+  double sim_background_q3 = 0.0;
   UChar_t sim_background_pass = true;
   double w_bkg = 1.0;
 
   out->Branch("sim_background", &sim_background);
   out->Branch("sim_background_pz", &sim_background_pz);
   out->Branch("sim_background_eavail", &sim_background_eavail);  // reco Eavail (GeV)
+  out->Branch("sim_background_q3", &sim_background_q3);          // reco q3 (GeV)
   out->Branch("sim_background_pass", &sim_background_pass);
   out->Branch("w_bkg", &w_bkg);
 
@@ -763,6 +779,7 @@ void LoopAndFillUnbinnedMCBackground(
     sim_background = recoCV->GetMuonPT();       // reco p_T (GeV/c)
     sim_background_pz = recoCV->GetMuonPz();    // reco p_|| (GeV/c)
     sim_background_eavail = recoCV->NewEavail() / 1000.0;  // MeV -> GeV
+    sim_background_q3 = recoCV->RecoQ3() / 1000.0;         // MeV -> GeV
     w_bkg = cvWeight;
     out->Fill();
   }
@@ -779,10 +796,12 @@ void LoopAndFillUnbinnedData(
   double measured = 0.0;
   double measured_pz = 0.0;
   double measured_eavail = 0.0;
+  double measured_q3 = 0.0;
   UChar_t measured_pass = true; // Only filled for selected data events
   out->Branch("measured", &measured);
   out->Branch("measured_pz", &measured_pz);
   out->Branch("measured_eavail", &measured_eavail);  // reco available energy (GeV)
+  out->Branch("measured_q3", &measured_q3);          // reco 3-momentum transfer (GeV)
   out->Branch("measured_pass", &measured_pass);
 
   std::cout << "Starting unbinned data reco loop...\n";
@@ -799,6 +818,7 @@ void LoopAndFillUnbinnedData(
     measured = dataCV->GetMuonPT();       // reco p_T (GeV/c)
     measured_pz = dataCV->GetMuonPz();   // reco p_|| (GeV/c)
     measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
+    measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
     out->Fill();
   }
   std::cout << "Finished unbinned data reco loop.\n";

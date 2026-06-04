@@ -191,6 +191,31 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     return eavail * Eavailable_scale;
   }
 
+  // --- Three-momentum transfer q3 (4th OmniFold axis, Workstream D) --------
+  // Reco q3: the low-recoil CALORIMETRIC reconstruction from MAT
+  // PlotUtils/LowRecoilFunctions.h::GetLowRecoilQ3 (the Rodrigues 2016 /
+  // Ascencio 2022 low-recoil lineage, arXiv:1511.05944 / 2110.13372):
+  //   q0  = calorimetric recoil  = <tree>_recoil_E         (the FULL energy
+  //         transfer, NOT the available energy NewEavail above)
+  //   Q^2 = 2 Enu (Emu - p_mu cos theta_mu) - m_mu^2,  Enu = Emu + q0
+  //   q3  = sqrt(Q^2 + q0^2)
+  // Replicated inline (not #include LowRecoilFunctions.h) for the same reason
+  // as NewEavail: that header redefines GetVertex()/GetEAvailable() which
+  // CVUniverse already provides. Branch <tree>_recoil_E is present in the
+  // MasterAnaDev tuples (verified). Truth q3 uses the canonical MAT
+  // Getq3True() (PlotUtils/TruthFunctions.h, included above): no new code.
+  virtual double RecoQ3() const {  // MeV
+    double q0 = GetDouble((MinervaUniverse::GetTreeName() + "_recoil_E").c_str());
+    double E_lep = GetEmu();   // MeV
+    double p_lep = GetPmu();   // MeV
+    double theta = GetThetamu();
+    double mass_sq = E_lep * E_lep - p_lep * p_lep;
+    double Enu = E_lep + q0;
+    double q2 = 2.0 * Enu * (E_lep - p_lep * cos(theta)) - mass_sq;
+    if (q2 < 0.0) q2 = 0.0;
+    return sqrt(q2 + q0 * q0);  // MeV
+  }
+
   double GetEAvailableTrue() const {  // MeV
     double recoil = 0;
     int n_parts = GetInt("mc_nFSPart");
