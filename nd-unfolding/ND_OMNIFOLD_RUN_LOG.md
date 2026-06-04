@@ -224,3 +224,30 @@ NO clean evidence of nonlinearity (it is jitter-limited) -> consistent with the 
 being valid; the full unified-throw covariance (160 throws, jitter averages down as
 1/sqrt(T)) is the definitive test and is running (dump 53956788 done + bank verified ->
 throws 53956789 -> combine 53956790).
+
+### 2026-06-04 (cont.) — sweep I/O optimization + 4D combined budget prep (in-flight state)
+
+**q3 sweep is I/O-bound, not compute-bound.** Single-universe unfold timing: npz path 10 min
+(16 cpu), full ROOT-read path 35-40 min (32 OR 128 cpu) -> the ~25 min single-threaded
+PyROOT GetEntry read dominates; cores past ~16 don't help. So the sweep was switched
+regular/128 -> **shared/32/%32** (same per-job time, faster to schedule, ~4x cheaper).
+
+**Read-once bank (sweep_bank.py).** Durable speedup for re-runs: one GetEntry pass per group
+banks the 175 VERTICAL universes' weights (mmap'd) instead of 187 re-reads; stage-2 unfolds
+read an mmap slice (~10 min, no 120 GB read) and write the sweep's filename + hXSecND_flat
+with skip-if-exists. The 12 LATERAL universes stay on the per-universe path (they gate on
+shifted kinematics -> different kept-set each). Canonical covariance stays single-code-path
+(the shared sweep); the bank is for re-runs (iters/binning) + the 4D unified throw.
+
+**4D combined budget chained.** dump 4D npz (53961411) -> {ML seedscan x24 (53961806),
+stat bootstrap x100 (53961808)} -> combine (53961810) -> combined budget (53961846,
+analyze_universes_nd --bootstrap-cov C_syst+norm+C_stat+C_ML). bootstrap_nd.py +
+combine_cov_nd.py are the lean npz-based 4D stat/ML tools.
+
+**IN-FLIGHT JOB IDS (for resumption):** shared q3 sweep 53960731 -> cov4d 53960732;
+sweep-bank dump 53960918; unified-throw run 53956789 -> combine 53956790; point-cloud
+pc_down 53953910 -> PET 53953911; 4D budget chain 53961411/806/808/810/846.
+
+**#1 RESOLVED:** jitter-null showed the superposition cross-terms (25-58%) are AT the jitter
+floor (0.8x) -> noise, not nonlinearity -> leans block-sum-valid; full 160-throw unified
+covariance (running) is the definitive test.
