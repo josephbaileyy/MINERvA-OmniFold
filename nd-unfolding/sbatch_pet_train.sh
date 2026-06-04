@@ -9,5 +9,5 @@ module load tensorflow/2.15.0
 python3 -c "import tensorflow as tf; print('TF',tf.__version__,'GPU',tf.config.list_physical_devices('GPU'))"
 echo "[pet] real point-cloud MultiFold $(date -u +%T)"
 python3 minerva_pet_dataloader.py --inputs of_inputs_pc.npz --mode pointcloud \
-    --model pet --niter 2 --epochs 8 --smoke
+    --model pet --niter 2 --epochs 8 --max-events 2000000 --smoke
 echo "[pet] done $(date -u +%T)"
