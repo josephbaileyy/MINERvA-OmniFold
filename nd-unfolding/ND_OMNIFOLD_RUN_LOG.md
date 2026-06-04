@@ -44,4 +44,27 @@ Implemented `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md` end-to-end.
   (`res_lgbm_3d.npz`); leg 2 **53906748** (GPU, afterok) runs the keras-MLP leg
   (`res_nn_3d.npz`).
 
-Outcomes (anchors, NN comparison) to be appended when the jobs land.
+**First results + two bug fixes (2026-06-04)**
+- Event loop (53905768) completed all 12 playlists; hadd → `runEventLoopOmniFold_4D_MEFHC.root`
+  (3.4 GB, POT summed correctly).
+- **GBDT npz cross-check leg validated the whole new stack**: `omnifold_loop` (the
+  ROOT-free copy of the two-step loop) on the dumped 3D inputs gives total σ =
+  **3.0785e-38** — exactly the frozen 3D headline. This confirms the axis-list
+  readers (`nn_dump_inputs.py` uses the driver's `collect_*`), `xsec_nd.py`, and the
+  loop, independently of ROOT plotting.
+- **Bug 1 (fixed): THnSparseD segfault.** The 4D unfold wrote `hXSecND_flat` then
+  segfaulted in the 4D `THnSparseD` Python write (C-level, so the driver's
+  `try/except` could not catch it), aborting before the projections/anchors/closure.
+  Dropped the THnSparse path entirely — the flat TH1D (C-order ravel) + the TH2D
+  marginal + 1D projections are the canonical outputs; N-D structure is recovered by
+  reshaping with the known edges. Same crash had hung the login-node 3D-repro run.
+- **Bug 2 (fixed): NN normalization collapse.** The keras-MLP leg ran end-to-end on
+  GPU (TF 2.15, GPU found) and recovered the correct dσ/dpt,dpz,dEavail **shape**,
+  but the absolute normalization collapsed to **2.7e-44** (~1e-6 of GBDT): the MLP
+  sat at the trivial class-balance bias `p=W1/(W0+W1)` and never learned the x-density
+  ratio. Fix: train the NN on class-BALANCED weights (`_balance_weights`) and restore
+  the true normalization via `w=(W1/W0)·p/(1-p)` (`_class_ratio`); GBDT keeps raw
+  weights (it calibrates the absolute ratio directly). This is exactly the failure the
+  "validate NN vs GBDT before trusting it" gate is meant to catch.
+- Re-running with both fixes: 4D unfold+anchors+closure (53925395), NN leg (53925396).
+  Final anchor numbers + NN/GBDT agreement to be appended.

@@ -89,10 +89,14 @@ def histnd(cols, w, edges):
 
 
 def write_thnd(f_out, arr, err, name, title, edges, axis_labels):
-    """Write an N-D array as a THnSparseD (N!=2) or TH2D (N==2) plus a flat TH1D.
+    """Write an N-D array as a flat TH1D (canonical) + a TH2D when N==2.
 
-    The flat TH1D (bin = C-order ravel index) is what the covariance pipeline and
-    chi2 tools consume; the THnSparse/TH2D keeps the binning/labels for plotting.
+    The flat TH1D (bin = C-order ravel index over `arr.shape`) is what the
+    covariance/chi2 tools consume; the full N-D structure is recovered by
+    reshaping with the known per-axis edges. (A THnSparseD was tried but its
+    Python binding segfaults at 4D on this ROOT build, so we keep the robust flat
+    form; the binning lives in the edges, recorded in the docs and the 1D/2D
+    projections written alongside.)
     """
     ndim = arr.ndim
     flat = arr.ravel(order="C")
@@ -113,29 +117,6 @@ def write_thnd(f_out, arr, err, name, title, edges, axis_labels):
                 if err is not None:
                     h.SetBinError(ix + 1, iy + 1, float(err[ix, iy]))
         f_out.cd(); h.Write()
-        return
-    # N-D: THnSparseD (plotting/inspection only -- the flat TH1D above is the
-    # canonical output the covariance/chi2 tools read). Guard the ROOT binding so
-    # a THnSparse hiccup can never lose the unfold result.
-    try:
-        nbins = array("i", [len(e) - 1 for e in edges])
-        xmin = array("d", [float(e[0]) for e in edges])
-        xmax = array("d", [float(e[-1]) for e in edges])
-        hs = ROOT.THnSparseD(name, title, ndim, nbins, xmin, xmax)
-        for a in range(ndim):
-            ax = hs.GetAxis(a)
-            ax.Set(len(edges[a]) - 1, array("d", [float(x) for x in edges[a]]))
-            ax.SetTitle(axis_labels[a])
-        it = np.nditer(arr, flags=["multi_index"])
-        coord = array("i", [0] * ndim)
-        for v in it:
-            for a, idx in enumerate(it.multi_index):
-                coord[a] = idx + 1
-            hs.SetBinContent(hs.GetBin(coord), float(v))
-        f_out.cd(); hs.Write()
-    except Exception as e:  # noqa: BLE001
-        print(f"[WARN] THnSparse write for {name} failed ({e}); "
-              f"flat TH1D {name}_flat already written, continuing.")
 
 
 def numpy_to_th1d(edges, vals, name, title):

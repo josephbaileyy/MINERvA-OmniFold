@@ -57,8 +57,8 @@ class KerasMLP:
     """
 
     def __init__(self, nvars, regression=False, layer_sizes=(64, 128, 64),
-                 activation="gelu", epochs=30, batch_size=10000, lr=1e-3,
-                 patience=5, verbose=0):
+                 activation="gelu", epochs=50, batch_size=10000, lr=1e-3,
+                 patience=8, verbose=0):
         self.nvars = nvars
         self.regression = regression
         self.layer_sizes = list(layer_sizes)
@@ -146,6 +146,37 @@ def _reweight(events, clf):
     return np.nan_to_num(p / (1.0 - p))
 
 
+def _balance_weights(y, w):
+    """Rescale each class's sample weights to an equal total (= N/2).
+
+    OmniFold's w = p/(1-p) assumes the classifier is calibrated in *absolute*
+    terms, i.e. p = W1 f1 / (W1 f1 + W0 f0). An MLP trained on imbalanced class
+    totals collapses to the trivial bias solution p = W1/(W0+W1) (constant in x):
+    the density ratio f1/f0 is never learned and the unfolded normalization
+    collapses (observed: ~1e-6 of the GBDT result). Training on class-BALANCED
+    weights makes the bias minimum p=0.5, so any x-structure reduces the loss and
+    is actually learned; the true normalization W1/W0 is then multiplied back in
+    fit_classifier(). GBDT does not need this (it calibrates the absolute ratio
+    directly), so balancing is applied only on the NN path.
+    """
+    w = np.asarray(w, float).copy()
+    n = len(y)
+    for lab in (0.0, 1.0):
+        m = (y == lab)
+        tot = w[m].sum()
+        if tot > 0:
+            w[m] *= (0.5 * n) / tot
+    return w
+
+
+def _class_ratio(y, w):
+    """W1/W0 from the original (unbalanced) weights -- the normalization to restore."""
+    w = np.asarray(w, float)
+    w0 = w[y == 0.0].sum()
+    w1 = w[y == 1.0].sum()
+    return (w1 / w0) if w0 > 0 else 1.0
+
+
 # ---------------------------------------------------------------------------
 # Two-step OmniFold loop (faithful to unbinned_unfolding/python/omnifold.py,
 # estimator-agnostic; ROOT-free)
@@ -172,6 +203,16 @@ def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco
 
     clf1, clf2, reg = make_estimators(kind, MCgen.shape[1], seed=seed)
     use_reg = bool(np.any(~pass_reco))
+    balance = (kind == "nn")   # NN needs class-balanced training (see _balance_weights)
+
+    def fit_reweight(clf, X, y, w, eval_X):
+        ratio = 1.0
+        wfit = w
+        if balance:
+            ratio = _class_ratio(y, w)
+            wfit = _balance_weights(y, w)
+        clf.fit(X, y, sample_weight=wfit)
+        return ratio * _reweight(eval_X, clf)
 
     for it in range(num_iterations):
         if verbose:
@@ -181,9 +222,8 @@ def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco
         s1w = np.concatenate([w_push[pass_reco] * MCreco_weights[pass_reco],
                               np.ones(len(measured[meas_pass_reco]))
                               * measured_weights[meas_pass_reco]])
-        clf1.fit(s1x, s1y, sample_weight=s1w)
         new_w = np.ones_like(w_pull)
-        new_w[pass_reco] = _reweight(MCreco[pass_reco], clf1)
+        new_w[pass_reco] = fit_reweight(clf1, s1x, s1y, s1w, MCreco[pass_reco])
         if use_reg:
             reg.fit(MCgen[pass_reco], new_w[pass_reco])
             new_w[~pass_reco] = reg.predict(MCgen[~pass_reco])
@@ -192,7 +232,6 @@ def omnifold_loop(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass_reco
         s2x = np.concatenate([MCgen, MCgen])
         s2y = np.concatenate([MC_lab, np.ones(len(MCgen))])
         s2w = np.concatenate([MCgen_weights, w_pull * MCgen_weights])
-        clf2.fit(s2x, s2y, sample_weight=s2w)
-        w_push = _reweight(MCgen, clf2)
+        w_push = fit_reweight(clf2, s2x, s2y, s2w, MCgen)
 
     return w_pull, w_push
