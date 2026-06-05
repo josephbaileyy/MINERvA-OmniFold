@@ -284,3 +284,38 @@ OmniFold jitter floor -> block-sum consistent. A RIGOROUS unified throw requires
 multi-band universes (event loop applying all systematics together per universe) -> a
 documented follow-on, not the ratio-product proxy. unified_throw.py keeps the bank/throw
 machinery but its combine output carries this caveat.
+
+### 2026-06-04 — CONSOLIDATED bugs & fixes (this campaign)
+Single index of every bug/artifact found and how it was resolved (commit in parens):
+
+CODE BUGS (fixed):
+1. Unified-throw bank dump OOM (64G) — python-list ratio accumulators at 33M events x ~26
+   cols. Fix: typed array('f')/('d')/('b') accumulators (~8x leaner) + 110G. (627a920)
+2. Point-cloud miss-append segfault — AppendTruthOnlyMisses Fill() read the signal loop's
+   freed local std::vectors. Fix: rebind the part_* vector branches via pointer-to-pointer
+   to empty vectors (ROOT object branches need vector<T>**, not vector<T>*). (2ff1dd5)
+3. PET step-2 shape crash (expected (12,4) found (12,5)) — gen cloud carried the pdg column.
+   Fix: drop pdg + build m2 with the gen feature count. (617d378)
+4. PET 'Last val loss nan' — raw feature scales (positions ~1000s mm). Fix: x1/1000
+   MULTIPLICATIVE scaling (keeps the energy==0 particle mask, net.py:128). (617d378)
+5. LightGBM degenerate-split error (best_split_info.right_count>0) on extreme throws. Fix
+   (throw path only, canonical estimator untouched): 99.9pct weight cap + try/except skip.
+   (acb0239); same guard added to 4D bootstrap/seedscan (NO cap there -- would bias stat/ML).
+   (c70397e)
+6. Misleading throw log (printed sum of differential bins ~1e-36, not the integral). Fix:
+   log total_xsec. (ae47278)
+7. write_combined_splitml relative-path bug (ran from genie/, needed ../). Fixed inline +
+   re-run (B job 53950089). 
+
+DATA/METHOD BUGS (found; one needs a follow-on):
+8. PET reco cloud built from the WRONG branch -- ExtraEnergyClusters_* is 94.7% empty (MC)
+   / 100% empty (data). Correct: cluster_energy/cluster_pos/cluster_z, isMuontrack==0.
+   FOLLOW-ON (needs event-loop re-run); no PET-vs-GBDT number reported. (35b4130)
+9. Unified-throw ratio-product combine ARTIFACT (25x vs block-sum) -- multiplying single-band
+   reweight ratios compounds low-w_cv tail events; NOT a valid joint throw. NOT reported.
+   Valid #1 = jitter-null superposition (block-sum consistent); rigorous = true multi-band
+   universes (follow-on). (29b7676)
+
+EARLIER SESSION (already documented in prior RUN_LOG / omnifold_nn_core / memory): 4D
+THnSparseD write segfault (-> flat TH1D); NN class-balance bias + unshuffled validation_split
+(-> _balance_weights + permute); xsec_nd ULP exact-equality (-> relative tolerance).
