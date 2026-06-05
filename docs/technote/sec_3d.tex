@@ -83,6 +83,7 @@ without precedent, and is a direct consequence of the unbinned formulation.
   \midrule
   2026 & \textbf{this work}; unbinned $\pT,\pPar$            & 2 & --- \\
   2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail$    & \textbf{3} & --- \\
+  2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail,q_{3}$ & \textbf{4} & --- \\
 \end{longtable}
 }
 
@@ -340,3 +341,81 @@ shape comparison once the \cite{MINERvA:2022incl} data release is loaded.
     \label{fig:mec}
   \end{minipage}
 \end{figure}
+
+\subsection{Fourth axis: three-momentum transfer $q_{3}$}
+\label{sec:4d}
+The same one-feature-per-observable property lets us add a fourth axis at no
+methodological cost. We choose the three-momentum transfer $q_{3}=|\vec{q}\,|$
+because $(\Eavail,q_{3})$ is the plane in which the quasielastic, 2p2h and
+resonance processes separate, and because it makes the comparison to MINERvA's
+dedicated low-recoil measurement (Ascencio \emph{et al.}~\cite{MINERvA:2022incl},
+$d^{2}\sigma/dq_{3}\,d\Eavail$) bin-compatible. Truth $q_{3}$ is the generator
+momentum transfer (\texttt{CVUniverse::Getq3True()}); reco $q_{3}$ is the
+calorimetric estimator built from the muon $Q^{2}$ and the recoil system
+(\texttt{CVUniverse::RecoQ3()}). Both accessors were added and the event loop
+re-run over all twelve playlists, exactly as for $\Eavail$. Unlike $\Eavail$,
+$q_{3}$ is \emph{not} invariant under the lateral systematic shifts, so the
+shifted-$q_{3}$ universes are dumped per universe rather than reused from the
+central value. The driver feature stack becomes $(\pT,\pPar,\Eavail,q_{3})$; the
+$q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ is deliberately
+coarse (seven bins) and ends in a catch bin, for
+$14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
+
+\paragraph{Marginal closure.} Marginalising the 4D result over $q_{3}$ reproduces
+the 3D $\Eavail$ spectrum and its low-recoil excess
+(Fig.~\ref{fig:q3excess}, right): the $\Eavail$-marginal data/GENIE-CV ratio is
+$1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$
+region, and rises again to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail --- the
+same shape established in 3D (\S\ref{sec:3d-2p2h}), now recovered as a by-product
+of the higher-dimensional unfold (integrated data/GENIE-CV $=1.13$). This is the
+4D$\to$3D analogue of the 3D$\to$2D Jacobian anchor of \S\ref{sec:3d-anchor}.
+
+\paragraph{What $q_{3}$ adds.} The new content is the resolved $(\Eavail,q_{3})$
+plane (Fig.~\ref{fig:q3excess}, left). Integrated over $\Eavail$ the
+$q_{3}$-marginal discrepancy is mild ($1.03$--$1.19$, centre panel), but the
+joint map is structured: at fixed $\Eavail$ in the quasielastic--$\Delta$ dip the
+data/GENIE-CV ratio \emph{rises} with $q_{3}$, the central value over-predicting
+the low-$q_{3}$, moderate-$\Eavail$ cells (ratio down to $0.66$) while the data
+excess concentrates at low $\Eavail$ (all $q_{3}$) and toward high $q_{3}$. This
+is precisely the correlation a muon-only or fixed-$q_{3}$ measurement cannot
+expose, and it is the natural input for the bin-compatible Ascencio comparison.
+We show it here at central-value level (the base GENIE event-generator list
+contains no 2p2h, as in \S\ref{sec:3d-2p2h}); per-cell significances await the
+combined 4D covariance below.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.99\textwidth]{q3_excess_projection.png}
+  \caption{Data/GENIE-CV ratio of the 4D unfold projected onto the
+  $(\Eavail,q_{3})$ plane (left; blank cells are kinematically empty), with the
+  $q_{3}$ (centre) and $\Eavail$ (right) marginals. The $\Eavail$ marginal
+  reproduces the 3D low-recoil excess; the joint plane shows the data\,$-$\,MC
+  discrepancy to carry genuine $q_{3}$ structure (the ratio rising with $q_{3}$
+  across the quasielastic--$\Delta$ dip). GENIE central value, no 2p2h in the base
+  event-generator list.}
+  \label{fig:q3excess}
+\end{figure}
+
+\paragraph{Systematic covariance.} A 187-universe systematic sweep on the 4D grid
+(the same band set as 2D/3D, the shifted-$q_{3}$ lateral universes dumped per
+universe) yields a syst-only covariance with
+$\sqrt{\operatorname{tr}}=\SI{2.09e-38}{}$, median per-bin relative uncertainty
+\SI{13.4}{\percent} (84th percentile \SI{22}{\percent}), and numerical rank $142$
+of 4830 reported bins. The rank is set by the number of independent throws, not
+the bin count: it is essentially the 3D syst-only value ($139$), since both
+budgets use the same $\sim\!40$ one-sided bands plus the 100-universe flux
+multisim. Adding the $q_{3}$ axis multiplies the bins ($1431\!\to\!4830$) without
+adding throws, so the covariance is simply more rank-deficient
+($9.7\!\to\!\SI{2.9}{\percent}$ of bins spanned) and the truncated-spectral
+$\chi^{2}$ of \S\ref{sec:3d-models} becomes correspondingly more essential. The
+band \emph{ordering} also shifts: where the 2D/3D budgets are flux-dominated, the
+4D budget is model-dominated --- the 2p2h band is the single largest contributor,
+followed by the $M_{A}^{\mathrm{RES}}$, muon-energy-scale and
+$M_{A}^{\mathrm{CCQE}}$ bands, with flux sub-dominant ($\sim\SI{2.8}{\percent}$
+median). This is the expected consequence of binning in $q_{3}$, the variable
+that most directly discriminates the interaction models, and it identifies where a
+$q_{3}$-resolved measurement is both most informative and most
+systematics-limited. The combined budget
+$C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ (folding in the 4D bootstrap
+and ML-seedscan blocks, which raise the rank into the $\sim\!250$ range as in 3D)
+is in production.

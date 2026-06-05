@@ -1,6 +1,9 @@
 # ---------- Generated artifacts (anywhere in the tree) ----------
 *.root
 *.pdf
+# ...but keep the documentation PDFs (technote + statistical-methods note) versioned
+!docs/**/*.pdf
+!docs/*.pdf
 *.out
 *.err
 *.log
