@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Full unified-throw covariance (prepub item #1, the rigorous version).
 
+CAVEAT (2026-06-04): multiplying single-band reweight ratios across bands is an
+ARTIFACT-prone proxy (compounds low-w_cv tail events -> inflated low-stat bins; gave a
+spurious 25x vs block-sum). NOT a valid block-sum test. The sound cross-check is the
+jitter-null superposition (compare_unified_throw.py --null). A rigorous unified throw needs
+TRUE multi-band universes (event-loop dump), not this ratio product.
+
 The block-sum covariance C = sum_band C_band assumes the bands are uncorrelated AND that
 the unfolding responds linearly to each shift. The +1sigma superposition probe
 (compare_unified_throw.py) was inconclusive (jitter floor). The rigorous object is a UNIFIED

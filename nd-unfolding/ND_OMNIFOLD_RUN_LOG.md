@@ -267,3 +267,20 @@ clusters/event in data), filtering `cluster_isMuontrack==0` for the non-muon had
 clusters. Then rebuild -> re-run the PC event loop -> re-dump (dump_pointcloud_inputs) ->
 re-run PET -> pet_vs_gbdt. The whole PET PIPELINE (engine, masking, scalar storage, dump,
 comparison) is built + validated; only the reco-cluster source branch is wrong.
+
+### 2026-06-04 (cont.) — unified-throw combine: ratio-product construction is ARTIFACT-prone
+Ran the unified-throw combine on 145 throws: unified/block-sum sqrt-trace ratio = 25x, one
+eigenmode ~1000x the block-sum's, median rel 17% vs 8%. This is NOT a block-sum refutation --
+it is an ARTIFACT. Diagnosis: throw TOTALS are sane (median 2.88e-38, +-6.3%, no outliers),
+so the inflation is in a few low-stat BINS, not normalization. Root cause: the throw
+MULTIPLIES single-band reweight ratios (w_band/w_cv) across 13 bands; for events with small
+w_cv and/or several bands in their tails this compounds into large per-event weights that
+land in specific bins (and the 145 throws were produced BEFORE the 99.9pct weight-cap commit
+acb0239). Multiplying single-band ratios is NOT equivalent to re-unfolding a genuinely
+jointly-shifted sample, so its covariance is not trustworthy.
+DECISION: do NOT report the 25x. The methodologically sound #1 cross-check is the jitter-null
+SUPERPOSITION test (additive Delta on re-unfolded deltas), which found cross-terms at the
+OmniFold jitter floor -> block-sum consistent. A RIGOROUS unified throw requires TRUE
+multi-band universes (event loop applying all systematics together per universe) -> a
+documented follow-on, not the ratio-product proxy. unified_throw.py keeps the bank/throw
+machinery but its combine output carries this caveat.
