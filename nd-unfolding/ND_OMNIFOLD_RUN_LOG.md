@@ -319,3 +319,23 @@ DATA/METHOD BUGS (found; one needs a follow-on):
 EARLIER SESSION (already documented in prior RUN_LOG / omnifold_nn_core / memory): 4D
 THnSparseD write segfault (-> flat TH1D); NN class-balance bias + unshuffled validation_split
 (-> _balance_weights + permute); xsec_nd ULP exact-equality (-> relative tolerance).
+
+### 2026-06-04 — interactive sweep orchestration + IN-FLIGHT MANIFEST
+Batch fairshare throttled to ~2 slots after running hundreds of jobs, so the q3 vertical
+bank sweep was moved to an INTERACTIVE node: `run_q3_sweep_interactive.sh` runs INSIDE an
+salloc (`salloc --qos interactive ... bash run_q3_sweep_interactive.sh`) and launches up to
+10 concurrent `srun --overlap` sweep_bank --run steps (skip-if-exists -> resumable across
+salloc windows). MONITOR BY OUTPUT-FILE COUNT, not the salloc stdout (it buffers; a working
+run looked "stuck" and was wrongly cancelled once -- lesson logged). PC event loops can run
+the same way (run_pc_evloop_interactive.sh) but were put back on batch for simplicity.
+
+IN-FLIGHT MANIFEST (jobs that should be in squeue; anything else is unexpected):
+  - q3 vertical sweep: INTERACTIVE salloc (run_q3_sweep_interactive.sh), 175 bank-unfolds
+  - q3 lateral: batch unfold4d_lat (sbatch_unfold_4d_lateral.sh), 12 driver unfolds
+  - PC chain: batch evloop_pc -> pc_down -> PET (sbatch_evloop_array_pointcloud/pc_downstream/pet_train)
+  - 4D stat: batch boot4d (sbatch_bootstrap_4d.sh) x100
+  - 4D ML:   batch ssplit4d (sbatch_seedscan_split_4d.sh) x24
+  - 4D stat+ML combine: batch comb4d_statml (afterok boot+ssplit)
+  - q3 cov4d + 4D budget: run MANUALLY (analyze_universes_nd + combine_4d_budget) once all
+    187 q3 universe files are present (the chained batch versions were cancelled in the
+    interactive switch to keep the queue free of doomed-dependency zombies).
