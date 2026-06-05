@@ -238,15 +238,28 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     }
   }
 
-  // Reco recoil clusters: the non-muon energy clusters (ExtraEnergyClusters_*),
-  // per-cluster energy (MeV) + (X, Y, Z) position (mm). These form the reco
-  // point cloud paired with the truth FS-hadron cloud above.
-  virtual void GetRecoClusters(std::vector<double>& E, std::vector<double>& x,
-                               std::vector<double>& y, std::vector<double>& z) const {
-    E = GetVecDouble("ExtraEnergyClusters_energy");
-    x = GetVecDouble("ExtraEnergyClusters_X");
-    y = GetVecDouble("ExtraEnergyClusters_Y");
-    z = GetVecDouble("ExtraEnergyClusters_Z");
+  // Reco recoil clusters: the NON-MUON detector clusters (cluster_* collection,
+  // isMuontrack==0), per-cluster energy (MeV), transverse position `pos` in the
+  // cluster's view (mm), z position (mm), and view (1=X,2=U,3=V). This is the
+  // hadronic recoil point cloud paired with the truth FS-hadron cloud.
+  //   FIX 2026-06-04: the earlier ExtraEnergyClusters_* collection is ~empty in MC
+  //   and 100% empty in data (an auxiliary collection); cluster_* is the real recoil.
+  // 3 features (E, pos, z) so a uniform mm/MeV scaling works and the energy>0 mask
+  // is clean; the categorical `view` is omitted from this first version.
+  virtual void GetRecoClusters(std::vector<double>& E, std::vector<double>& pos,
+                               std::vector<double>& z) const {
+    E.clear(); pos.clear(); z.clear();
+    const std::vector<double> all_E   = GetVecDouble("cluster_energy");
+    const std::vector<double> all_pos = GetVecDouble("cluster_pos");
+    const std::vector<double> all_z   = GetVecDouble("cluster_z");
+    const std::vector<int>    all_mu  = GetVecInt("cluster_isMuontrack");
+    const size_t n = all_E.size();
+    for(size_t i = 0; i < n; ++i){
+      if(i < all_mu.size() && all_mu[i] != 0) continue;   // drop muon-track clusters
+      E.push_back(all_E[i]);
+      pos.push_back(i < all_pos.size() ? all_pos[i] : 0.0);
+      z.push_back(i < all_z.size() ? all_z[i] : 0.0);
+    }
   }
 
   double GetEAvailableTrue() const {  // MeV

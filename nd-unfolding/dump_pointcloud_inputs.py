@@ -26,7 +26,7 @@ for p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
 import unfold_2d_omnifold_unbinned as u2d  # noqa: E402
 
 GEN_FEATS = ["part_gen_E", "part_gen_px", "part_gen_py", "part_gen_pz", "part_gen_pdg"]
-RECO_FEATS = ["part_reco_E", "part_reco_x", "part_reco_y", "part_reco_z"]
+RECO_FEATS = ["part_reco_E", "part_reco_pos", "part_reco_z"]
 
 
 def _pad_cloud(feat_vecs, num_part, sort_by_first_desc=True):

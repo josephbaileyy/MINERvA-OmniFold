@@ -49,10 +49,9 @@ for _p in (f"{_REPO}/omnifold_nn", f"{_REPO}/nd-unfolding"):
 # (runEventLoopOmniFold.cpp / CVUniverse::GetTruthFSHadrons + GetRecoClusters).
 PARTICLE_SCHEMA = {
     "reco": [
-        ("part_reco_E",  "ExtraEnergyClusters_energy[] (cluster energy, MeV)"),
-        ("part_reco_x",  "ExtraEnergyClusters_X[] (cluster x position, mm)"),
-        ("part_reco_y",  "ExtraEnergyClusters_Y[] (cluster y position, mm)"),
-        ("part_reco_z",  "ExtraEnergyClusters_Z[] (cluster z position, mm)"),
+        ("part_reco_E",   "cluster_energy[] non-muon (isMuontrack==0), MeV"),
+        ("part_reco_pos", "cluster_pos[] transverse position in the view, mm"),
+        ("part_reco_z",   "cluster_z[] z position, mm"),
     ],
     "gen": [
         ("part_gen_E",   "mc_FSPartE[]   (truth FS hadron energy, MeV; muon+nu dropped)"),

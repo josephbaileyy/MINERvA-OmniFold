@@ -480,14 +480,14 @@ long AppendTruthOnlyMisses(
   // read freed memory and segfault. A miss has no reco clusters -> empty cloud.
   std::vector<double> e_gen_E, e_gen_px, e_gen_py, e_gen_pz;
   std::vector<int>    e_gen_pdg;
-  std::vector<double> e_reco_E, e_reco_x, e_reco_y, e_reco_z;
+  std::vector<double> e_reco_E, e_reco_pos, e_reco_z;
   // Object/vector branches must be rebound via pointer-TO-pointer (vector<T>**),
   // unlike scalar branches. These pointers must stay alive until the Fill loop ends.
   std::vector<double>* p_gen_E = &e_gen_E;  std::vector<double>* p_gen_px = &e_gen_px;
   std::vector<double>* p_gen_py = &e_gen_py; std::vector<double>* p_gen_pz = &e_gen_pz;
   std::vector<int>*    p_gen_pdg = &e_gen_pdg;
-  std::vector<double>* p_reco_E = &e_reco_E; std::vector<double>* p_reco_x = &e_reco_x;
-  std::vector<double>* p_reco_y = &e_reco_y; std::vector<double>* p_reco_z = &e_reco_z;
+  std::vector<double>* p_reco_E = &e_reco_E; std::vector<double>* p_reco_pos = &e_reco_pos;
+  std::vector<double>* p_reco_z = &e_reco_z;
   if(getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
      sigOut->GetBranch("part_gen_E") != nullptr)
   {
@@ -496,10 +496,9 @@ long AppendTruthOnlyMisses(
     sigOut->SetBranchAddress("part_gen_py",  &p_gen_py);
     sigOut->SetBranchAddress("part_gen_pz",  &p_gen_pz);
     sigOut->SetBranchAddress("part_gen_pdg", &p_gen_pdg);
-    sigOut->SetBranchAddress("part_reco_E",  &p_reco_E);
-    sigOut->SetBranchAddress("part_reco_x",  &p_reco_x);
-    sigOut->SetBranchAddress("part_reco_y",  &p_reco_y);
-    sigOut->SetBranchAddress("part_reco_z",  &p_reco_z);
+    sigOut->SetBranchAddress("part_reco_E",   &p_reco_E);
+    sigOut->SetBranchAddress("part_reco_pos", &p_reco_pos);
+    sigOut->SetBranchAddress("part_reco_z",   &p_reco_z);
   }
 
   long nTruthOnlyMisses = 0;
@@ -584,17 +583,16 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
   std::vector<double> pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz;
   std::vector<int>    pc_gen_pdg;
-  std::vector<double> pc_reco_E, pc_reco_x, pc_reco_y, pc_reco_z;
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
   if(dumpPC){
     out->Branch("part_gen_E",   &pc_gen_E);
     out->Branch("part_gen_px",  &pc_gen_px);
     out->Branch("part_gen_py",  &pc_gen_py);
     out->Branch("part_gen_pz",  &pc_gen_pz);
     out->Branch("part_gen_pdg", &pc_gen_pdg);
-    out->Branch("part_reco_E",  &pc_reco_E);
-    out->Branch("part_reco_x",  &pc_reco_x);
-    out->Branch("part_reco_y",  &pc_reco_y);
-    out->Branch("part_reco_z",  &pc_reco_z);
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
   }
 
   // Per-systematic-universe weight dump (UQ Stage-1 #7). Builds two
@@ -791,7 +789,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
         CVUniverse::SetTruth(true);
         recoCV->GetTruthFSHadrons(pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz, pc_gen_pdg);
         CVUniverse::SetTruth(false);
-        recoCV->GetRecoClusters(pc_reco_E, pc_reco_x, pc_reco_y, pc_reco_z);
+        recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
       }
       out->Fill();
       if(outRecoIDs) outRecoIDs->insert(key);
@@ -885,12 +883,11 @@ void LoopAndFillUnbinnedData(
   // Phase 3 point-cloud dump (gated): per-event reco-cluster vectors for data
   // (the measured point cloud; no truth on data).
   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
-  std::vector<double> pc_reco_E, pc_reco_x, pc_reco_y, pc_reco_z;
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
   if(dumpPC){
-    out->Branch("part_reco_E", &pc_reco_E);
-    out->Branch("part_reco_x", &pc_reco_x);
-    out->Branch("part_reco_y", &pc_reco_y);
-    out->Branch("part_reco_z", &pc_reco_z);
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
   }
 
   std::cout << "Starting unbinned data reco loop...\n";
@@ -909,7 +906,7 @@ void LoopAndFillUnbinnedData(
     measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
     measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
     if(dumpPC)
-      dataCV->GetRecoClusters(pc_reco_E, pc_reco_x, pc_reco_y, pc_reco_z);
+      dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
     out->Fill();
   }
   std::cout << "Finished unbinned data reco loop.\n";
