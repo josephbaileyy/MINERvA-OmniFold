@@ -135,9 +135,15 @@ def _load_pointcloud(inputs_npz, num_part):
             for nm, src in PARTICLE_SCHEMA[grp]:
                 lines.append(f"    {nm:14s} <- {src}")
         raise SystemExit("\n".join(lines))
-    gen = d["part_gen"].astype(np.float32)
-    reco = d["part_reco"].astype(np.float32)
-    measured = d["measured_pc"].astype(np.float32)
+    # Preprocess for the vendored PET, which masks particles by feature-0 (energy) == 0
+    # (net.py:128). So: (a) DROP the gen pdg column (categorical; also it made gen 5-feat
+    # vs reco 4-feat -> a step-2 shape crash), keeping (E,px,py,pz); (b) scale features
+    # MULTIPLICATIVELY x1/1000 (MeV->GeV, mm->m) to O(1) -- valid energies stay >0 and the
+    # zero-padding stays exactly 0, so the energy-mask is preserved (z-scoring would break
+    # it). Raw ~1000s-scale positions were giving NaN training loss.
+    gen = (d["part_gen"][:, :, :4].astype(np.float32)) / 1000.0   # E,px,py,pz (GeV)
+    reco = (d["part_reco"].astype(np.float32)) / 1000.0           # E(GeV), x,y,z(m)
+    measured = (d["measured_pc"].astype(np.float32)) / 1000.0
     return gen, reco, measured
 
 
@@ -181,10 +187,12 @@ def main():
             data.reco = np.asarray(data.reco).reshape(np.asarray(data.reco).shape[0], -1)
         m1, m2 = MLP(nvars), MLP(nvars)
     else:
-        num_feat = reco_arr.shape[-1]; num_part = reco_arr.shape[1]
-        # local=False so a small (even 1-particle) cloud runs without the K>=3 kNN check
-        m1 = PET(num_feat, num_part=num_part, local=(num_part >= 3))
-        m2 = PET(num_feat, num_part=num_part, local=(num_part >= 3))
+        gen_arr = np.asarray(mc.gen)
+        num_part = reco_arr.shape[1]
+        # model1 reweights at RECO (reco feature count), model2 at GEN (gen feature count);
+        # these can differ (reco clusters E,x,y,z vs gen hadrons E,px,py,pz).
+        m1 = PET(reco_arr.shape[-1], num_part=num_part, local=(num_part >= 3))
+        m2 = PET(gen_arr.shape[-1], num_part=num_part, local=(num_part >= 3))
 
     of = MultiFold(f"minerva_{args.model}", m1, m2, data, mc,
                    niter=args.niter, epochs=args.epochs, batch_size=1024,
