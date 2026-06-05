@@ -306,6 +306,13 @@ CODE BUGS (fixed):
    log total_xsec. (ae47278)
 7. write_combined_splitml relative-path bug (ran from genie/, needed ../). Fixed inline +
    re-run (B job 53950089). 
+10. pc_down (dump_pointcloud_inputs.py) OOM-killed at 48G (MaxRSS 50.3G) after looping all
+    32.8M signal events -- python LIST of 32.8M small (P,nfeat) clouds + the np.asarray copy
+    coexist at the end. Fix (same family as #1): PREALLOCATE contiguous (n,P,nfeat) float32
+    arrays, fill by index k, slice [:k] (signal+data); ~15G peak. Launcher also skips the
+    re-hadd if the 46G merged omnifile exists + skips the dump if of_inputs_pc.npz exists +
+    --mem 48G->96G. Re-launched pc_down 54014343 -> PET 54014344. evloop_pc array (12/12) had
+    COMPLETED fine; only the downstream reducer OOM'd. (uncommitted as of 2026-06-05)
 
 DATA/METHOD BUGS (found; one needs a follow-on):
 8. PET reco cloud built from the WRONG branch -- ExtraEnergyClusters_* is 94.7% empty (MC)

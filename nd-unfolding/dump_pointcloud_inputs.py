@@ -85,9 +85,18 @@ def main():
     for b, v in {**genv, **recv}.items():
         t.SetBranchAddress(b, v)
 
-    gen_cl, reco_cl, pr, ptru, wt, wr = [], [], [], [], [], []
-    tru_sc, rec_sc = [], []   # per-event (pt,pz,eavail,q3) truth + reco scalars
+    # Preallocate to the upper-bound entry count and fill by index (then truncate).
+    # A python list of 32.8M small (P,nfeat) arrays + the np.asarray copy at the end
+    # OOM-killed the 48G job (MaxRSS 50G); contiguous arrays cost ~15G total here.
     n = t.GetEntries()
+    ng, nr = len(GEN_FEATS), len(RECO_FEATS)
+    gen_cl = np.zeros((n, P, ng), np.float32)
+    reco_cl = np.zeros((n, P, nr), np.float32)
+    pr = np.zeros(n, bool); ptru = np.zeros(n, bool)
+    wt = np.zeros(n, np.float64); wr = np.zeros(n, np.float64)
+    tru_sc = np.zeros((n, 4), np.float32)   # per-event (pt,pz,eavail,q3) truth scalars
+    rec_sc = np.zeros((n, 4), np.float32)   # per-event reco scalars
+    k = 0
     for i in range(n):
         t.GetEntry(i)
         a_pt, a_pz = float(sc["MC"][0]), float(sc["MC_pz"][0])
@@ -98,18 +107,23 @@ def main():
                   and pt_lo <= b_pt <= pt_hi and pz_lo <= b_pz <= pz_hi)
         if not (tru_ok or (passed and rec_ok)):
             continue
-        gen_cl.append(_pad_cloud([list(genv[b]) for b in GEN_FEATS], P))
-        reco_cl.append(_pad_cloud([list(recv[b]) for b in RECO_FEATS], P))
-        pr.append(passed and rec_ok); ptru.append(tru_ok)
-        wt.append(float(sc["w_truth"][0]) * pot_scale)
-        wr.append(float(sc["w_reco"][0]) * pot_scale)
-        tru_sc.append([a_pt, a_pz, float(sc["MC_eavail"][0]), float(sc["MC_q3"][0])])
-        rec_sc.append([b_pt if (passed and rec_ok) else -9999.0,
-                       b_pz if (passed and rec_ok) else -9999.0,
-                       float(sc["sim_eavail"][0]) if (passed and rec_ok) else -9999.0,
-                       float(sc["sim_q3"][0]) if (passed and rec_ok) else -9999.0])
+        gen_cl[k] = _pad_cloud([list(genv[b]) for b in GEN_FEATS], P)
+        reco_cl[k] = _pad_cloud([list(recv[b]) for b in RECO_FEATS], P)
+        pr[k] = passed and rec_ok; ptru[k] = tru_ok
+        wt[k] = float(sc["w_truth"][0]) * pot_scale
+        wr[k] = float(sc["w_reco"][0]) * pot_scale
+        tru_sc[k] = (a_pt, a_pz, float(sc["MC_eavail"][0]), float(sc["MC_q3"][0]))
+        rec_sc[k] = (b_pt if (passed and rec_ok) else -9999.0,
+                     b_pz if (passed and rec_ok) else -9999.0,
+                     float(sc["sim_eavail"][0]) if (passed and rec_ok) else -9999.0,
+                     float(sc["sim_q3"][0]) if (passed and rec_ok) else -9999.0)
+        k += 1
         if i % 200000 == 0:
             print(f"  signal {i}/{n}", flush=True)
+    gen_cl = gen_cl[:k]; reco_cl = reco_cl[:k]
+    pr = pr[:k]; ptru = ptru[:k]; wt = wt[:k]; wr = wr[:k]
+    tru_sc = tru_sc[:k]; rec_sc = rec_sc[:k]
+    print(f"  signal kept {k}/{n}", flush=True)
 
     # ---- data: reco cloud only ----
     dm = {b: array("d", [0.0]) for b in ("measured", "measured_pz")}
@@ -120,8 +134,9 @@ def main():
     drecv = {b: ROOT.std.vector("double")() for b in RECO_FEATS}
     for b, v in drecv.items():
         d.SetBranchAddress(b, v)
-    meas_cl = []
     nd = d.GetEntries()
+    meas_buf = np.zeros((nd, P, len(RECO_FEATS)), np.float32)
+    km = 0
     for i in range(nd):
         d.GetEntry(i)
         if dp[0] == 0:
@@ -129,7 +144,9 @@ def main():
         pt, pz = float(dm["measured"][0]), float(dm["measured_pz"][0])
         if not (pt_lo <= pt <= pt_hi and pz_lo <= pz <= pz_hi):
             continue
-        meas_cl.append(_pad_cloud([list(drecv[b]) for b in RECO_FEATS], P))
+        meas_buf[km] = _pad_cloud([list(drecv[b]) for b in RECO_FEATS], P)
+        km += 1
+    meas_cl = meas_buf[:km]
     f.Close()
 
     part_gen = np.asarray(gen_cl, np.float32)
