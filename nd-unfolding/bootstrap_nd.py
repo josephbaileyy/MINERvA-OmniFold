@@ -22,9 +22,12 @@ def main():
     mw=d["measured_weights"]*rng.poisson(1.0,d["measured_weights"].shape[0])
     bmc=rng.poisson(1.0,d["w_truth"].shape[0]).astype(float)
     wt=d["w_truth"]*bmc; wr=d["w_reco"]*bmc
-    wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],d["measured"],d["pass_reco"],d["pass_truth"],
-        np.ones(len(d["measured"]),bool),a.iters,kind="lgbm",MCgen_weights=wt,MCreco_weights=wr,
-        measured_weights=mw,seed=a.seed,verbose=False)
+    try:
+        wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],d["measured"],d["pass_reco"],d["pass_truth"],
+            np.ones(len(d["measured"]),bool),a.iters,kind="lgbm",MCgen_weights=wt,MCreco_weights=wr,
+            measured_weights=mw,seed=a.seed,verbose=False)
+    except Exception as e:   # skip a pathological replica (exit 0) so afterok combine isn't blocked
+        print(f"[boot {a.seed}] SKIPPED ({type(e).__name__}: {e})"); return
     m=d["pass_truth"]; bins=[np.asarray(e,float) for e in edges]
     samp=np.column_stack([d["MCgen"][m,i] for i in range(d["MCgen"].shape[1])])
     unf,_=np.histogramdd(samp,bins=bins,weights=wpush*wt[m]); ofin,_=np.histogramdd(samp,bins=bins,weights=wt[m])
