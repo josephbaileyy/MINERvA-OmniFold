@@ -7,5 +7,6 @@
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p seedscan_split_4d
+[[ -s "seedscan_split_4d/res_split_${SLURM_ARRAY_TASK_ID}.npz" ]] && { echo "skip (exists)"; exit 0; }
 python3 seedscan_split.py --npz of_inputs_4d.npz --split-seed ${SLURM_ARRAY_TASK_ID} \
   --train-frac 0.8 --iters 5 --out seedscan_split_4d/res_split_${SLURM_ARRAY_TASK_ID}.npz
