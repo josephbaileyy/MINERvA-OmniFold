@@ -312,7 +312,13 @@ CODE BUGS (fixed):
     arrays, fill by index k, slice [:k] (signal+data); ~15G peak. Launcher also skips the
     re-hadd if the 46G merged omnifile exists + skips the dump if of_inputs_pc.npz exists +
     --mem 48G->96G. Re-launched pc_down 54014343 -> PET 54014344. evloop_pc array (12/12) had
-    COMPLETED fine; only the downstream reducer OOM'd. (uncommitted as of 2026-06-05)
+    COMPLETED fine; only the downstream reducer OOM'd. (7c81032)
+11. q3 bank sweep universe NormDISCC:0 (banksweep _158) FAILED "sample_weight contains NaN"
+    in the LGBM step-2 fit. Root cause: the bank DUMP left 83727 NaNs in NormDISCC_0_wt.npy
+    (DIS-norm reweight is 0/0 for events with no nominal DIS contribution); healthy universes
+    have 0 NaN. Fix (sweep_bank.py run stage): np.nan_to_num(wt,wr,tdw, nan=0 ...) at load --
+    an undefined reweight contributes 0; no-op on finite universes. Re-ran _158 -> 54021365.
+    This is the 187th q3 universe that gates cov4d. (uncommitted as of 2026-06-05)
 
 DATA/METHOD BUGS (found; one needs a follow-on):
 8. PET reco cloud built from the WRONG branch -- ExtraEnergyClusters_* is 94.7% empty (MC)

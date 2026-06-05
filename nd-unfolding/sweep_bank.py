@@ -195,6 +195,13 @@ def do_run(args):
     wt = np.load(f"{bd}/{tag}_wt.npy", mmap_mode="r").astype(np.float64)
     wr = np.load(f"{bd}/{tag}_wr.npy", mmap_mode="r").astype(np.float64)
     tdw = np.load(f"{bd}/{tag}_tdw.npy", mmap_mode="r").astype(np.float64)
+    # Sanitize non-finite reweights -> 0. Some normalization knobs (e.g. NormDISCC) leave
+    # an undefined (0/0) per-event weight for events with no nominal contribution; the dump
+    # stored those as NaN (NormDISCC_0_wt had 83727), which crashes the LGBM fit with
+    # "sample_weight contains NaN". An undefined reweight contributes nothing to that
+    # universe's spectrum, so 0 is the correct fallback. No-op on healthy universes.
+    for _w in (wt, wr, tdw):
+        np.nan_to_num(_w, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
     w_pull, w_push = omnifold_loop(
         MCgen, MCreco, measured, pass_reco, pass_truth, np.ones(len(measured), bool),
         args.iters, kind="lgbm", MCgen_weights=wt, MCreco_weights=wr,
