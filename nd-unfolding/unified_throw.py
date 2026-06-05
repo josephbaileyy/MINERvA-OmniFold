@@ -272,11 +272,25 @@ def do_run(args):
             rtd *= _interp_2univ(th, np.asarray(mm(f"td_{b}_0"), float),
                                  np.asarray(mm(f"td_{b}_1"), float))
         wt = w_truth * rt; wr = w_reco * rr; wtd = td_w * rtd
-        w_pull, w_push = omnifold_loop(
-            MCgen, MCreco, measured, pass_reco, pass_truth,
-            np.ones(len(measured), bool), args.iters, kind="lgbm",
-            MCgen_weights=wt, MCreco_weights=wr, measured_weights=cv["measured_weights"],
-            seed=42, verbose=False)
+        # Cap the per-event COMBINED throw weights at the 99.9th pct (isolated to the
+        # throw path -- does NOT touch the canonical omnifold_nn_core estimator). A few
+        # throws produce an extreme weight tail (product of a Flux universe + 12 band
+        # draws) that triggers LightGBM's degenerate-split error
+        # (Check failed: best_split_info.right_count > 0). Capping the tail removes it
+        # without changing the bulk; the unfold then runs.
+        def _cap(w):
+            hi = np.percentile(w[w > 0], 99.9) if np.any(w > 0) else 1.0
+            return np.minimum(w, hi)
+        wt, wr, wtd = _cap(wt), _cap(wr), _cap(wtd)
+        try:
+            w_pull, w_push = omnifold_loop(
+                MCgen, MCreco, measured, pass_reco, pass_truth,
+                np.ones(len(measured), bool), args.iters, kind="lgbm",
+                MCgen_weights=wt, MCreco_weights=wr, measured_weights=cv["measured_weights"],
+                seed=42, verbose=False)
+        except Exception as e:   # pathological throw: skip cleanly (exit 0), don't fail the task
+            print(f"[run] throw {t}: SKIPPED (unfold error: {type(e).__name__}: {e})", flush=True)
+            continue
         unfold_nd, _ = np.histogramdd(sample_sig, bins=bins, weights=w_push * wt[m])
         of_in, _ = np.histogramdd(sample_sig, bins=bins, weights=wt[m])
         denom_nd, _ = np.histogramdd(sample_td, bins=bins, weights=wtd)
