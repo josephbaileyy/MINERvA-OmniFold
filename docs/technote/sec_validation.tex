@@ -29,6 +29,17 @@ and a stat-only diagonal omits the unfolding covariance; the proper full-covaria
 goodness-of-fit is the $\chi^2$-vs-paper of \S\ref{sec:results-tension} and the generator
 comparisons.)
 
+\paragraph{Unbinned goodness-of-fit.}
+As a binning-free check that the unfold actually removes the data\,$\leftrightarrow$\,MC
+mismatch, we use a classifier two-sample test (C2ST): a classifier is trained to separate the
+data from the (reweighted) simulation in the full unbinned feature space, and its
+test-set accuracy is compared to the chance value $0.5$. \emph{Before} unfolding the two are
+separable --- accuracy $0.523$, AUC $0.535$, $z=33.4$ ($p\approx5\times10^{-244}$);
+\emph{after} unfolding the classifier is driven to chance --- accuracy $0.501$, AUC $0.501$,
+$z=1.4$, $p=0.17$. Data and unfolded simulation are thus statistically indistinguishable with
+no detectable residual structure: the unbinned analogue of a binned goodness-of-fit, and it
+passes.
+
 \paragraph{Coverage.}
 200 closure$+$bootstrap toys: mean coverage \SI{68.71}{\percent} vs Gaussian
 \SI{68.27}{\percent}; mean $|\mathrm{residual}|/\sigma$ $0.794$ vs
@@ -51,7 +62,27 @@ indistinguishable, so the reweight is a modest correction). Across the
 $(\pT,\pPar)$ bins the true data/MC ratio still spans \(\approx\SI{100}{\percent}\);
 the GBDT recovers it to \SI{4.7}{\percent} median, at least as well as a dense MLP
 (\SI{20.9}{\percent}, untuned), and the two reweights agree with bin-wise correlation
-$0.92$ --- the learned reweight is robust to the classifier family.
+$0.92$ --- the learned reweight is robust to the classifier family. Beyond scalar
+classifiers, the vendored Point-Edge Transformer (PET~\cite{Mikuni:2024qsr}) run on the
+\emph{per-hadron point clouds} --- the variable-length sets of reconstructed energy clusters
+and truth final-state hadrons, which a GBDT structurally cannot ingest --- reproduces the
+scalar-GBDT 4D unfold to \SIrange{2}{4}{\percent} median per bin on all four axes
+($\pT$ \SI{3.9}{}, $\pPar$ \SI{2.3}{}, $\Eavail$ \SI{1.9}{}, $q_{3}$ \SI{2.8}{\percent};
+Fig.~\ref{fig:petgbdt}). The method therefore extends to set-valued inputs without changing
+the result at these scalar features, the prerequisite for a future point-cloud measurement of
+a genuinely hadronic observable.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pet_vs_gbdt.png}
+  \caption{Method cross-check: the point-cloud PET unfold (solid) versus the scalar GBDT
+  unfold (dashed), area-normalised 1D projections on each axis. The two agree to
+  \SIrange{2}{4}{\percent} median per bin, confirming the unbinned technique is robust to the
+  classifier family and scales from tabular features to permutation-invariant point clouds.
+  PET here is a \num{2}M-event, 2-iteration run (a method demonstration, not a separate
+  physics result).}
+  \label{fig:petgbdt}
+\end{figure}
 
 \begin{figure}[h]
   \centering
