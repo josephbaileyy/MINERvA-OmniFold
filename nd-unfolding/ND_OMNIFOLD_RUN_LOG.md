@@ -251,3 +251,19 @@ pc_down 53953910 -> PET 53953911; 4D budget chain 53961411/806/808/810/846.
 **#1 RESOLVED:** jitter-null showed the superposition cross-terms (25-58%) are AT the jitter
 floor (0.8x) -> noise, not nonlinearity -> leans block-sum-valid; full 160-throw unified
 covariance (running) is the definitive test.
+
+### 2026-06-04 (cont.) — PET point-cloud: pipeline validated, reco-cluster branch WRONG (follow-on)
+The Phase-3 PET run exposed (validate-as-it-lands working): (1) shape crash -- gen carried
+pdg (5 feat) vs reco 4; fixed (drop pdg, per-step feat counts). (2) NaN loss -- raw scales;
+fixed (x1/1000, multiplicative to keep the energy==0 mask, net.py:128). (3) DECISIVE: the
+reco cloud is built from the WRONG branch -- ExtraEnergyClusters_* is 94.7% empty in MC and
+100% empty in DATA (an auxiliary collection, not the recoil). So PET step-1 (reco) still
+NaN's (every cloud masked-empty) and the PET result (push mean 0.30) is NOT trustworthy --
+do not report any PET-vs-GBDT number from it. The gen cloud (mc_FSPart, 27% empty, mean 3.17)
+is correct.
+FIX (follow-on, needs event-loop re-run): CVUniverse::GetRecoClusters should read the real
+per-cluster recoil collection -- `cluster_energy`, `cluster_pos`, `cluster_z` (217
+clusters/event in data), filtering `cluster_isMuontrack==0` for the non-muon hadronic
+clusters. Then rebuild -> re-run the PC event loop -> re-dump (dump_pointcloud_inputs) ->
+re-run PET -> pet_vs_gbdt. The whole PET PIPELINE (engine, masking, scalar storage, dump,
+comparison) is built + validated; only the reco-cluster source branch is wrong.
