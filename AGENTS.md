@@ -387,3 +387,39 @@ cross-check, not a final result.
 - For physics results, do not use binned OmniFold output without upstream
   package fixes; use the unbinned path.
 - Do binned work inside `2d-unfolding/binned_study/`, not at the top level.
+
+## Running compute on interactive nodes (salloc) — hard-won lessons (2026-06-04)
+
+When the batch (shared/regular) queue is fairshare-throttled (you get only ~1-2 slots after
+running many jobs), `qos=interactive` is a SEPARATE queue that grabs a fresh node fast. It is
+worth using for **many small concurrent jobs that fit on one node** (e.g. lean npz-based
+bank-unfolds, or the ~12 per-playlist event loops). It is NOT a substitute for a large array
+(can't fit hundreds at once; interactive is time-/alloc-limited, typically <=2 allocs, <=4h).
+
+Pitfalls that cost real time here — DO NOT repeat:
+
+1. **Run the orchestrator INSIDE the salloc.** `salloc --qos interactive ... bash orchestrator.sh`
+   where the script launches up to ~10 concurrent `srun --overlap --exact -n1 -cN ...` steps,
+   then `wait`. Working examples: `nd-unfolding/run_q3_sweep_interactive.sh`,
+   `run_pc_evloop_interactive.sh`. Do NOT salloc-then-external-`srun --jobid=<id> --overlap`
+   from another shell: it races node configuration and fails with
+   "Unable to create step ... Invalid job id specified".
+
+2. **MONITOR BY OUTPUT ARTIFACTS, NOT salloc stdout.** salloc/srun stdout is heavily BUFFERED
+   when backgrounded/non-tty, so a perfectly healthy run shows an EMPTY log for many minutes.
+   A working q3 sweep was once CANCELLED because the log looked "stuck" — it was actually
+   mid-processing (visible only via `pgrep -af srun` and the produced `.root` files). Track
+   progress by counting output files + `squeue -j <allocid>` liveness; give each job its full
+   runtime before judging. Use skip-if-exists so cancel/relaunch is always safe & resumable.
+
+3. **Clean up holders.** `alloc_run.sh --end` scancels the SLURM job but the login-node
+   `salloc ... sleep` CLIENT process can linger and accumulate. After --end, verify with
+   `squeue --me --name=claude-hold` AND `pgrep -u $USER -af 'qos interactive'`; scancel/kill
+   leftovers so the queue stays clean.
+
+4. **Never background salloc with a bare `&`** from a returning shell (SIGHUP risk). Use the
+   harness `run_in_background`, or `nohup`/`setsid`.
+
+5. The `alloc_run.sh` wrapper (one held node, reused across calls, auto-renews past 3h) is the
+   right tool for SERIAL on-demand validation/plotting (login node can't run ROOT/LGBM).
+   For PARALLEL throughput, use the inside-salloc orchestrator pattern above instead.
