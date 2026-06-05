@@ -14,6 +14,11 @@
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
+% biblatex + biber: print eprint (arXiv) and doi as CLICKABLE links in each reference,
+% and render "and others" as "et al." rather than literal "others".
+\usepackage[backend=biber, style=numeric-comp, sorting=none, giveninits=true,
+            maxbibnames=3, minbibnames=1, doi=true, eprint=true, isbn=false, url=false]{biblatex}
+\addbibresource{technote.bib}
 \graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}{../../3d-unfolding/}{../../3d-unfolding/genie/}{../../nd-unfolding/}}
 
 \newcommand{\pT}{p_{T}}
@@ -95,7 +100,6 @@ ill-conditioning/rank analysis, and the tension anatomy --- is the companion
 document \texttt{docs/uq\_statistical\_methods.tex}, which this note treats as
 authoritative and does not duplicate.
 
-\bibliographystyle{unsrt}
-\bibliography{technote}
+\printbibliography
 
 \end{document}

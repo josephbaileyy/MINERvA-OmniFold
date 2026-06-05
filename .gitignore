@@ -12,6 +12,9 @@
 *.so
 *.a
 *.pyc
+*.bcf
+*.run.xml
+*.bbl
 *.npz
 *.h5
 *.pkl
