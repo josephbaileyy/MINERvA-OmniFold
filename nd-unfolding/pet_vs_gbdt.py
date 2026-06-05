@@ -53,7 +53,10 @@ def main():
         e = np.asarray(edges[ai], float)
         c = 0.5 * (e[:-1] + e[1:]); wbin = np.diff(e)
         pet_h, _ = np.histogram(sample[:, ai], bins=e, weights=w)
-        pet_n = pet_h / (pet_h * wbin).sum()                      # area-normalized density
+        pet_d = pet_h / wbin                                      # COUNT -> density dN/dx
+        pet_n = pet_d / (pet_d * wbin).sum()                      # area-normalized density
+        # (GBDT hXSec_* is already a density; PET must be divided by bin width too, else
+        #  the wide catch bins make a count-vs-density mismatch look like a huge discrepancy)
         hg = f.Get(f"hXSec_{nm}")
         gb = np.array([hg.GetBinContent(i + 1) for i in range(hg.GetNbinsX())])
         gb_n = gb / (gb * np.diff(_edges(hg))).sum()
