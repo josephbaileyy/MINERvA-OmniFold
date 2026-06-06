@@ -53,6 +53,12 @@ d⁴σ/(dp_T dp_‖ dE_avail dq3): completeness 1.0000, total σ 3.066e-38; Jaco
 identity exact (2D-marginal == 4D integral); 4D recovers frozen 3D to <2% median
 (pt 0.38%, pz 0.64%, Eavail 1.68%); 2D-marginal anchors the paper (4D/3D=0.9960);
 injected-q3 closure passes (ratios track the 1.0142 bump); new dσ/dq3 produced.
+**4D combined budget LANDED (2026-06-06):**
+`uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root` — syst (187 universes
++ 1.4% norm) √tr 2.093e-38, rank 142, median 13.37%; + stat (100 boot, √tr 1.26e-39)
++ ML (24 split, √tr 1.06e-39) → COMBINED √tr 2.100e-38, rank 264/4830, median 13.47%.
+Stat+ML are negligible vs syst (Models/2p2h- then Hadronic-dominated); adding them moves
+the median 13.37→13.47%, so they do not change any conclusion.
 
 **Phase 2 (NN) — VALIDATED.** keras-MLP OmniFold reproduces GBDT within the ML band:
 total ratio **1.0078**, projections agree to 0.66%/1.20%/1.36% median. Two NN bugs

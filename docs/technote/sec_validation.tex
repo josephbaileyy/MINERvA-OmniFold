@@ -68,10 +68,31 @@ the GBDT recovers it to \SI{4.7}{\percent} median, at least as well as a dense M
 $0.92$ --- the learned reweight is robust to the classifier family. A full scalar
 keras-MLP OmniFold cross-check on the 3D inputs gives total ratio $1.0078$ versus
 the GBDT reference and median projection differences of \SIrange{0.7}{1.4}{\percent},
-consistent with the assigned ML band. A vendored PET point-cloud path is wired, but
-its first reconstructed-cloud run used the wrong cluster branch
-(\texttt{ExtraEnergyClusters\_*}, mostly empty) and is explicitly excluded from the
-physics validation until rerun with the real non-muon recoil-cluster collection.
+consistent with the assigned ML band. As a stronger family cross-check, a vendored
+PET (point-cloud transformer~\cite{Mikuni:2024qsr}) unfold was run on the actual
+per-hadron point clouds --- the non-muon reconstructed clusters
+(\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
+\texttt{cluster\_isMuontrack}) read by \texttt{CVUniverse::GetRecoClusters}, after an
+earlier attempt that used the wrong, mostly-empty \texttt{ExtraEnergyClusters\_*}
+branch was discarded. Area-normalized against the frozen 4D GBDT result, the PET unfold
+reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
+($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
+$q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). This is a shape/method-robustness
+check on a 2M-event subsample, not an independent physics result: it shows the learned
+reweight is stable across both the classifier family (GBDT vs.\ MLP vs.\ transformer)
+and the input representation (engineered scalars vs.\ raw point cloud).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pet_vs_gbdt.png}
+  \caption{Method-robustness check: area-normalized 4D unfolded shapes from the
+    PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
+    projected onto each axis. Median per-bin shape differences are
+    \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
+    catch bin, a subsample-statistics effect. Shape-only comparison (PET on a 2M-event
+    subsample), not an independent physics result.}
+  \label{fig:petgbdt}
+\end{figure}
 
 \begin{figure}[H]
   \centering
