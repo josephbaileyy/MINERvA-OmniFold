@@ -4,6 +4,22 @@
 planned in `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`. Two tracks, both **implemented
 this session**; the q3 measurement is **compute-in-flight** (event loop running).
 
+> **Workstream E (2026-06-06) — PET point cloud → REAL absolute cross section
+> (method milestone).** Elevating the PET point-cloud from a *shape* check to a
+> full-statistics, absolutely-normalized cross section. Code complete + plumbing-validated
+> (absolute path gives PET/GBDT = 2M/32.8M on the subsample, as expected); full-stats GPU
+> chain submitted (jobs 54050740→741 main, 54050742→743 closure). Gates: reweight mean≈1,
+> closure recovered/truth≈1, absolute PET/GBDT total≈1 within the ML band. Full PET
+> systematics deferred — see `../docs/FUTURE_DIRECTIONS.md`. Detail in the run log.
+>
+> **RESULTS — DONE (2026-06-06, jobs COMPLETED).** Gate 1 reweight mean 1.0277 / 0.9884
+> finite (PASS). Gate 3 closure recovered/truth **0.9884**, per-axis ~1.1% (PASS — absolute
+> machinery unbiased). Gate 2 absolute **PET/GBDT total 0.9117**, per-axis 6.5–9.9%; the ~9%
+> gap is training-config (PET on 2M/32.8M, niter=2), not a bug (closure exact to ~1%).
+> Products: `xsec_4d_PET_absolute.root`, `xsec_4d_PET_closure.root`, `pet_vs_gbdt_absolute.png`.
+> The point cloud now yields a real, absolutely-normalized, full-stats cross section.
+> Optional next tuning: more PET iters/epochs/events to close the ~9% GBDT gap.
+
 Companion docs: `ND_OMNIFOLD_RUN_LOG.md` (chronology). Shared invariants
 (POT / nucleons / phase-space gate / flux) live in the 2D triad
 (`../2d-unfolding/2D_OMNIFOLD_REFERENCE.md`) — the N-D driver `import`s the 2D

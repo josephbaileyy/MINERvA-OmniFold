@@ -12,6 +12,8 @@ run is on a subsample (shape comparison, not absolute normalization).
       --gbdt xsec_4d_MEFHC_5iter_lgbm.root --out pet_vs_gbdt.png
 """
 import argparse
+import sys
+
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -20,11 +22,105 @@ import ROOT
 
 ROOT.gROOT.SetBatch(True)
 AXES = ["pt", "pz", "eavail", "q3"]
+_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 
 
 def _edges(h):
     ax = h.GetXaxis()
     return np.array([ax.GetBinLowEdge(i) for i in range(1, ax.GetNbins() + 2)])
+
+
+def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
+    """Absolute (non-area-normalized) PET cross section, reusing the exact GBDT machinery.
+
+    Bins the full-stats PET push weights into the 4D axes and runs them through
+    xsec_nd.extract_cross_section_nd with the same flux / POT / nucleons and the GBDT's
+    own completeness (completeness depends only on MC+binning, not on the reweighting), so
+    the PET result is directly comparable bin-by-bin to the frozen GBDT 4D product.
+    For --closure (pseudo-data = MC reco) completeness=1 and the reference is the MC truth.
+    """
+    for p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import unfold_2d_omnifold_unbinned as u2d  # noqa: E402
+    import unfold_nd_omnifold_unbinned as und  # noqa: E402
+    from xsec_nd import extract_cross_section_nd, project_axis, total_xsec  # noqa: E402
+
+    edges_f = [np.asarray(e, float) for e in edges]
+    shape = tuple(len(e) - 1 for e in edges_f)
+    ts = pc["truth_scalars"][idx]                       # (N,4) truth pt,pz,eavail,q3
+    m = ptru
+    cols = [ts[m, 0], ts[m, 1], ts[m, 2], ts[m, 3]]
+    w_unf = (w_push * wt)[m]
+    unfold_nd, _ = und.histnd(cols, w_unf, edges_f)
+
+    data_pot = float(pc["data_pot"])
+    n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
+    flux, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, edges_f[0])
+    flux = np.asarray(flux, float)
+
+    if args.closure:
+        completeness = np.ones(shape)
+    else:
+        fg = ROOT.TFile.Open(args.gbdt)
+        hc = fg.Get("hCompletenessND_flat")
+        comp_flat = np.array([hc.GetBinContent(i + 1) for i in range(hc.GetNbinsX())])
+        fg.Close()
+        completeness = comp_flat.reshape(shape, order="C")
+
+    xsec, _ = extract_cross_section_nd(unfold_nd, completeness, flux,
+                                       data_pot, n_nucleons, edges_f)
+    tot = total_xsec(xsec, edges_f)
+    tag = "closure" if args.closure else "4D"
+    print(f"[absolute] PET total sigma ({tag}) = {tot:.4g} cm^2/nucleon "
+          f"(n_truthpass={int(m.sum())}, data_pot={data_pot:.4g})")
+
+    if args.closure:
+        ref_nd, _ = und.histnd(cols, wt[m], edges_f)
+        ref_xsec, _ = extract_cross_section_nd(ref_nd, completeness, flux,
+                                               data_pot, n_nucleons, edges_f)
+        ref_tot = total_xsec(ref_xsec, edges_f)
+        print(f"[closure] MC-truth total sigma = {ref_tot:.4g}; "
+              f"recovered/truth = {tot/ref_tot:.4f}")
+        print(f"{'axis':8s} closure recovered/truth median |diff|")
+        for ai, nm in enumerate(AXES):
+            _, yr = project_axis(xsec, edges_f, ai)
+            _, yt = project_axis(ref_xsec, edges_f, ai)
+            d = np.where(yt > 0, np.abs(yr - yt) / yt, 0.0)
+            print(f"{nm:8s} {100*np.median(d[yt > 0]):.2f}%")
+    else:
+        f = ROOT.TFile.Open(args.gbdt)
+        fig, axs = plt.subplots(2, 2, figsize=(11, 8))
+        print(f"{'axis':8s} PET vs GBDT ABSOLUTE: median |diff|")
+        for ai, (nm, axp) in enumerate(zip(AXES, axs.ravel())):
+            e, y = project_axis(xsec, edges_f, ai)
+            c = 0.5 * (e[:-1] + e[1:])
+            hg = f.Get(f"hXSec_{nm}")
+            gb = np.array([hg.GetBinContent(i + 1) for i in range(hg.GetNbinsX())])
+            d = np.where(gb > 0, np.abs(y - gb) / gb, 0.0)
+            print(f"{nm:8s} {100*np.median(d[gb > 0]):.2f}%")
+            axp.step(c, y, where="mid", label="PET (point cloud)", lw=2)
+            axp.step(c, gb, where="mid", label="GBDT (scalars)", lw=2, ls="--")
+            axp.set_xlabel(nm); axp.set_ylabel("dσ/dx (cm²/nucleon)")
+            axp.legend(fontsize=8); axp.set_title(f"{nm}: PET vs GBDT (absolute)")
+        hgpt = f.Get("hXSec_pt"); ept = _edges(hgpt)
+        gbpt = np.array([hgpt.GetBinContent(i + 1) for i in range(hgpt.GetNbinsX())])
+        tot_gbdt = float((gbpt * np.diff(ept)).sum())
+        f.Close()
+        print(f"[absolute] GBDT total sigma = {tot_gbdt:.4g}; PET/GBDT = {tot/tot_gbdt:.4f}")
+        fig.suptitle("PET (point cloud) vs GBDT (scalars): ABSOLUTE 4D cross section")
+        fig.tight_layout(); fig.savefig(args.out, dpi=130)
+        print(f"[OK] wrote {args.out}")
+
+    fo = ROOT.TFile.Open(args.pet_out, "RECREATE"); fo.cd()
+    ROOT.TParameter("double")("dataPOT", data_pot).Write()
+    ROOT.TParameter("double")("totalXSec", tot).Write()
+    und.write_thnd(fo, xsec, None, "hXSecND", "PET d^{4}#sigma", edges_f, AXES)
+    for ai, nm in enumerate(AXES):
+        e, y = project_axis(xsec, edges_f, ai)
+        und.numpy_to_th1d(e, y, f"hXSec_{nm}", f"d#sigma/d{nm}").Write()
+    fo.Close()
+    print(f"[OK] wrote {args.pet_out}")
 
 
 def main():
@@ -33,6 +129,19 @@ def main():
     ap.add_argument("--pc", default="of_inputs_pc.npz")
     ap.add_argument("--gbdt", default="xsec_4d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--out", default="pet_vs_gbdt.png")
+    ap.add_argument("--absolute", action="store_true",
+                    help="produce the ABSOLUTE (non-area-normalized) PET cross section via "
+                         "xsec_nd.extract_cross_section_nd + the GBDT completeness, and "
+                         "compare absolute spectra/total sigma to the GBDT result.")
+    ap.add_argument("--closure", action="store_true",
+                    help="absolute mode on a PET closure run (pseudo-data=MC reco): "
+                         "completeness=1, reference = MC truth (recovered/truth should be ~1).")
+    ap.add_argument("--mcfile",
+                    default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+                    help="MC file holding the integrated flux histogram (absolute mode).")
+    ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
+    ap.add_argument("--pet-out", default="xsec_4d_PET_absolute.root",
+                    help="output ROOT for the absolute PET cross section (absolute mode).")
     args = ap.parse_args()
 
     pet = np.load(args.pet)
@@ -45,6 +154,10 @@ def main():
     # PET unfolded truth weight = push * prior; keep truth-pass events
     m = ptru
     sample = ts[m]; w = (w_push * wt)[m]
+
+    if args.absolute:
+        run_absolute(args, pc, edges, idx, w_push, wt, ptru)
+        return
 
     fig, axs = plt.subplots(2, 2, figsize=(11, 8))
     f = ROOT.TFile.Open(args.gbdt)

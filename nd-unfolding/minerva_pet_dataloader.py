@@ -161,10 +161,29 @@ def main():
     ap.add_argument("--save-weights", default="",
                     help="npz to save the gen push weights + mc subsample indices "
                          "(for pet_vs_gbdt.py binning).")
+    ap.add_argument("--reweight-all", action="store_true",
+                    help="after training (on the --max-events subsample), evaluate the push "
+                         "weights on the FULL gen cloud via batched inference, so the "
+                         "downstream absolute cross section uses full statistics. "
+                         "--save-weights then stores full-stats w_push + mc_indices=arange(N).")
+    ap.add_argument("--closure", action="store_true",
+                    help="self-consistency closure: use MC reco (pass_reco events) as "
+                         "pseudo-data instead of the real data; the recovered truth should "
+                         "reproduce the MC truth (validated downstream with completeness=1).")
     args = ap.parse_args()
 
     data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
                                   max_events=args.max_events)
+
+    if args.closure:
+        # Pseudo-data = MC reco of the reco-passing events, weighted by the (normalized)
+        # prior. A perfect unfold then pushes the truth back onto the MC truth.
+        from omnifold import DataLoader
+        reco_mc = np.asarray(mc.reco); prc = np.asarray(mc.pass_reco)
+        data = DataLoader(reco=reco_mc[prc], weight=np.asarray(mc.weight)[prc],
+                          normalize=True)
+        print(f"[closure] pseudo-data = MC reco (pass_reco) n={int(prc.sum())} "
+              "-> recovered truth should reproduce MC truth")
     print(f"[loaders] data reco shape={np.asarray(data.reco).shape} "
           f"(sumw={data.weight.sum():.3e})")
     print(f"[loaders] mc   reco shape={np.asarray(mc.reco).shape} gen shape="
@@ -200,10 +219,30 @@ def main():
     w = of.reweight(mc.gen, of.model2, batch_size=1000)
     print(f"[smoke] OK: unfolded weights n={len(w)} mean={w.mean():.4f} "
           f"std={w.std():.4f} (finite={np.isfinite(w).all()})")
+    save_pass_gen = np.asarray(mc.pass_gen)
+
+    if args.reweight_all:
+        # Trained on the subsample; now apply the FINAL gen model (model2) to the FULL gen
+        # cloud so the absolute cross section is binned over full statistics. The push weight
+        # is a per-event likelihood ratio (normalization-independent), so evaluating it on the
+        # full set is valid even though training used a subsample.
+        _, full_mc, full_imc = build_loaders(args.inputs, mode=args.mode,
+                                             num_part=args.num_part, max_events=None)
+        full_gen = np.asarray(full_mc.gen)
+        if args.model == "mlp" and full_gen.ndim == 3:
+            full_gen = full_gen.reshape(full_gen.shape[0], -1)
+        print(f"[reweight-all] evaluating push weights on FULL gen n={full_gen.shape[0]}")
+        w = of.reweight(full_gen, of.model2, batch_size=4096)
+        imc = full_imc
+        save_pass_gen = np.asarray(full_mc.pass_gen)
+        print(f"[reweight-all] full-stats w_push n={len(w)} mean={w.mean():.4f} "
+              f"std={w.std():.4f} (finite={np.isfinite(w).all()})")
+        del full_mc, full_gen
+
     if args.save_weights:
         np.savez_compressed(args.save_weights, w_push=np.asarray(w),
                             mc_indices=imc, model=args.model,
-                            pass_truth=np.asarray(mc.pass_gen))
+                            pass_truth=save_pass_gen, closure=bool(args.closure))
         print(f"[smoke] saved push weights + mc indices -> {args.save_weights}")
 
 
