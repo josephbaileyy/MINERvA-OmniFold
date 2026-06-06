@@ -352,3 +352,40 @@ IN-FLIGHT MANIFEST (jobs that should be in squeue; anything else is unexpected):
   - q3 cov4d + 4D budget: run MANUALLY (analyze_universes_nd + combine_4d_budget) once all
     187 q3 universe files are present (the chained batch versions were cancelled in the
     interactive switch to keep the queue free of doomed-dependency zombies).
+
+### 2026-06-06 — PET point-cloud refresh completed with corrected reco-cluster source
+Reason for rerun: `pet_vs_gbdt.png` was stale because the first point-cloud chain used
+`ExtraEnergyClusters_*`, which the 2026-06-04 audit found to be 94.7% empty in MC and
+100% empty in data. Source inspection showed `CVUniverse::GetRecoClusters()` now uses the
+real cluster collection (`cluster_energy`, `cluster_pos`, `cluster_z`) and filters
+`cluster_isMuontrack`, so the stale artifact was replaced by a full point-cloud refresh.
+
+CPU side was run inside the current interactive allocation, not as a new batch array:
+rebuilt/installed `runEventLoopOmniFold`; reran all 12 point-cloud playlist event loops
+with `MNV101_DUMP_POINTCLOUD=1`; `hadd` rebuilt
+`runEventLoopOmniFold_PC_MEFHC.root` (46 GB, timestamp 2026-06-05 19:26 PDT);
+`dump_pointcloud_inputs.py --num-part 12` rebuilt `of_inputs_pc.npz` (5.5 GB,
+timestamp 2026-06-05 19:59 PDT). The dump reported:
+`signal clouds: gen (32849103, 12, 5), reco (32849103, 12, 3); data
+(4091707, 12, 3); num_part=12`. Existing merged/NPZ artifacts were archived with
+`.stale_20260606T005039Z` / `.stale_20260606T022515Z` suffixes as applicable.
+
+GPU PET training and comparison then completed:
+- PET training job 54033990 (`pet_train`, gpu_shared): COMPLETED 0:0, 00:58:24.
+  It ran the real point-cloud `MultiFold` on 2M events, with
+  pass_reco=0.621, pass_gen=1.000, and saved `pet_weights.npz` (14 MB). Final smoke
+  line: unfolded weights n=2000000, mean=1.0004, std=0.1157, finite=True.
+- PET-vs-GBDT comparison job 54033991 (`pet_cmp`, shared): COMPLETED 0:0, 00:00:30.
+  It archived the previous plot as `pet_vs_gbdt.png.stale_20260606T061012Z` and
+  regenerated `pet_vs_gbdt.png` (109 KB, timestamp 2026-06-05 23:10 PDT).
+
+Refreshed PET-vs-GBDT area-normalized shape median |diff| values:
+- pT: 3.86%
+- pz: 2.36%
+- Eavail: 2.63%
+- q3: 2.33%
+
+Interpretation: with the corrected reco-cluster source, the point-cloud PET shape agrees
+with the scalar 4D GBDT result at the few-percent level on the PET subsample. This is a
+valid refreshed method/shape cross-check. It is not an absolute normalization measurement:
+`pet_vs_gbdt.py` intentionally area-normalizes because the PET training uses a subsample.

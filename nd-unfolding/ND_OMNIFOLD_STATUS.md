@@ -1,6 +1,6 @@
 # N-D OmniFold (q3 4th axis + NN track) — Status
 
-**Last updated**: 2026-06-03. Workstream D = the higher-dimensional extension
+**Last updated**: 2026-06-06. Workstream D = the higher-dimensional extension
 planned in `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`. Two tracks, both **implemented
 this session**; the q3 measurement is **compute-in-flight** (event loop running).
 
@@ -75,9 +75,16 @@ See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-04 entry) for full detail. Summary:
 - **#4 Train/test-split seedscan — DONE (array 53946279).** `omnifold_loop` train/test
   split; ensemble-mean CV matches frozen CV; ML-split band 1.24× the pure-seed ML band
   (the split adds real ML variance). `uq_cov_mlsplit_3d.root`.
-- **#6 PET DataLoader — DONE (job 53946101).** `minerva_pet_dataloader.py`; vendored MLP
-  AND PET unfold our data on GPU. `pointcloud` mode lists the per-hadron branches the
-  event loop must dump (the one remaining piece for the real point cloud).
+- **#6 PET point-cloud rerun — DONE; shape-only cross-check available.**
+  The stale `ExtraEnergyClusters_*` point-cloud chain was replaced by a rerun using
+  the corrected reco-cluster source (`cluster_energy`, `cluster_pos`, `cluster_z`,
+  excluding `cluster_isMuontrack`). The refreshed CPU chain rebuilt
+  `runEventLoopOmniFold_PC_MEFHC.root` and `of_inputs_pc.npz`; PET training
+  job 54033990 and comparison job 54033991 both completed successfully. The
+  regenerated `pet_vs_gbdt.png` gives PET-vs-GBDT area-normalized shape median
+  differences of 3.86% (pT), 2.36% (pz), 2.63% (Eavail), and 2.33% (q3).
+  Treat this as a method/shape cross-check, not an absolute cross-section result,
+  because the PET run uses a 2M-event subsample.
 - **#1 Unified-throw cross-check — IN FLIGHT (job 53946996).** `compare_unified_throw.py`
   superposition test (cross term vs block sum) on the 120 GB 3D universes omnifile.
 - **#3 q3 systematic campaign — LAUNCHED (chained).** C++ shifted-q3 for lateral

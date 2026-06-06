@@ -85,9 +85,11 @@ Arc: recap → background (physics + papers) → 3D → 3D physics → 4D → va
 ---
 
 ## Slide 9 — Method validation
-**Figure:** `nd-unfolding/pet_vs_gbdt.png`
+**Figure:** use the C2ST/calibration diagnostics; do not use `nd-unfolding/pet_vs_gbdt.png`
+until the point-cloud reco-cluster source is fixed and rerun.
 - **Unbinned goodness-of-fit (binning-free):** a classifier-two-sample test cannot tell data from the *unfolded* simulation — accuracy 0.50, p = 0.17 (vs accuracy 0.52, p ≈ 10⁻²⁴⁴ *before* unfolding). The unfold genuinely removes the data↔MC mismatch.
-- **Point-cloud cross-check:** a transformer network (PET, from ViniciusMikuni/omnifold) run on the *per-hadron point clouds* reproduces our scalar gradient-boosted-tree result to **2–4% per bin** on all four axes (figure). *This is a method-robustness demonstration — the technique scales from tabular features to point clouds — not a separate physics result.*
+- **Scalar NN cross-check:** a keras-MLP OmniFold run on the same scalar 3D inputs reproduces the GBDT result within the ML band (total ratio 1.008; median projection differences about 0.7--1.4%).
+- **Point-cloud status:** the PET pipeline is wired, but the first real-cloud attempt used the wrong reconstructed-cluster branch (`ExtraEnergyClusters_*`, mostly empty). Treat PET as a follow-up, not a validated-method slide, until the event loop uses the real non-muon recoil clusters and the comparison is rerun.
 - *Takeaway: the result is robust to the goodness-of-fit definition and to the classifier family.*
 
 ---
@@ -97,7 +99,7 @@ Arc: recap → background (physics + papers) → 3D → 3D physics → 4D → va
 - **In flight:** the combined stat+ML uncertainty budget for 4D (~1 day of compute; it sharpens the per-cell significances but won't change the conclusions).
 - **Asks:**
   1. **Can you help me get the Ascencio low-q3 data release** (PRD 106 032001 / arXiv:2110.13372, d²σ/(dq3 dE_avail))? Our 4D result is ready for a **bin-identical comparison to their published measurement** — a method validation (does unbinned OmniFold reproduce their binned 2p2h result?), the direct analogue of the 2D-vs-published win. It's the one thing I'm blocked on.
-  2. **How far should I push the point-cloud track?** Options: keep it as a validated-method appendix, or aim it at a *new* hadronic observable (would need reconstruction-level particle ID work). Your call on scope.
+  2. **How far should I push the point-cloud track after the reco-cluster fix?** Options: keep it as a method appendix, or aim it at a *new* hadronic observable (would need reconstruction-level particle ID work). Your call on scope.
   3. *(optional)* There's a **+2.2σ excess in the high-E_avail (DIS-tail) bin** the 2p2h story doesn't touch — worth investigating now, or park it?
 
 ---
@@ -109,6 +111,6 @@ Arc: recap → background (physics + papers) → 3D → 3D physics → 4D → va
 | 6 | `3d-unfolding/genie/generators_vs_unfolded_band.png`, `3d-unfolding/genie/compare_mec_eavail.png` |
 | 7 | `nd-unfolding/q3_excess_projection.png` |
 | 8 | `3d-unfolding/eavail_marginal_vs_paper_pull_full.png` |
-| 9 | `nd-unfolding/pet_vs_gbdt.png` |
+| 9 | C2ST / classifier-calibration diagnostic; do not use `nd-unfolding/pet_vs_gbdt.png` until PET is rerun with corrected reco clusters |
 
 *Optional 2D-generator figure if you want a normalization-only contrast on slide 6 or background: `2d-unfolding/model_comp_projections.png` (GENIE Tune ~9% low on the muon kinematics).*

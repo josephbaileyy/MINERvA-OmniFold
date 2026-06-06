@@ -43,6 +43,8 @@ import xsec_nd
 
 ROOT.gROOT.SetBatch(True)
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
 # Ascencio q3 < 1.2 GeV: the low-recoil region. Our q3 axis edges include this exactly
 # as a prefix (driver EXTRA_AXES["q3"]: 0,0.2,0.4,0.6,0.8,1.2,2.0,100). The bin-identical
 # region is the q3 bins with high edge <= LOW_Q3_MAX.
@@ -88,7 +90,7 @@ def area_norm(edges, y):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--xsec4d", default="xsec_4d_MEFHC_5iter_lgbm.root",
+    ap.add_argument("--xsec4d", default=os.path.join(HERE, "xsec_4d_MEFHC_5iter_lgbm.root"),
                     help="4D xsec product (hXSecND_flat + projection hists).")
     ap.add_argument("--ascencio-q3", default="",
                     help="text: q3_lo q3_hi dsigma err  (1D dsigma/dq3, arXiv:2110.13372)")

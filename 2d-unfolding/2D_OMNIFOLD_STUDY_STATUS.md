@@ -73,10 +73,11 @@ budget (6.87 % ≈ paper 6.86 %). `compare_to_paper_fullcov.py
 --subtract-stat` removes only the bootstrap/paper-stat overlap (not the
 flux overlap) → overcorrects there; treat it as a secondary diagnostic.
 (ii) Ours-only inverse-cov χ² is ill-conditioned — fluxfix
-`C_universe` is rank 140/205 (65 null directions, band-count-driven), and
-the regularized χ² moves ~2 decades over ridge/shrinkage scans. Quote
-per-bin pulls, not a single ours-only χ². Full regularization scan +
-discussion: `docs/uq_statistical_methods.tex` (§Ill-conditioning) and
+`C_universe` is rank 140/205 (65 null directions, band-count-driven), so
+only the truncated-spectral / regularized convention is meaningful. Quote
+per-bin pulls, the regularization scan, and the truncated result together;
+do not treat an unconstrained pseudo-inverse as a standalone goodness-of-fit.
+Full discussion: `docs/uq_statistical_methods.tex` (§Ill-conditioning) and
 RUN_LOG 2026-05-28 sections.
 The matcorr rollup is verified byte-for-byte against MAT `MnvH1D`
 (`GetTotalErrorMatrix`): max element-wise rel diff **5.5e-17** (machine ε),
@@ -152,6 +153,9 @@ escape hatch, and the full rollup path are documented in
 - **Coverage** (200 closure+bootstrap-seed MEFHC toys): mean 68.71 % vs
   Gaussian 68.27 %; median 68.50 %; ⟨|res|/σ⟩ 0.794 vs √(2/π)=0.798;
   signed mean +0.006 ± 0.082 σ. 97.6 % of 205 bins meet the 65 % target.
+  Audit note: the current checkout retains only the 20-toy stage-1
+  `uq/coverage/coverage_summary.txt` and no toy ROOTs, so restore the 200-toy
+  artifacts before independently regenerating this number from disk.
 - **Completeness** c = 1.000000 exact by construction.
 - **Iteration**: 5-iter total σ within 0.026 % of 10-iter (per-bin shape
   RMS 1.54 %); HistGBT/exact-GBT agree on total σ to 0.04 %.

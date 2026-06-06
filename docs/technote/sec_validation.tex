@@ -41,10 +41,13 @@ no detectable residual structure: the unbinned analogue of a binned goodness-of-
 passes.
 
 \paragraph{Coverage.}
-200 closure$+$bootstrap toys: mean coverage \SI{68.71}{\percent} vs Gaussian
-\SI{68.27}{\percent}; mean $|\mathrm{residual}|/\sigma$ $0.794$ vs
-$\sqrt{2/\pi}=0.798$; \SI{97.6}{\percent} of bins meet the \SI{65}{\percent}
-target. The bootstrap band is well-calibrated.
+The UQ note records a 200-toy closure$+$bootstrap campaign: mean coverage
+\SI{68.71}{\percent} vs Gaussian \SI{68.27}{\percent}; mean
+$|\mathrm{residual}|/\sigma$ $0.794$ vs $\sqrt{2/\pi}=0.798$; and
+\SI{97.6}{\percent} of bins meeting the \SI{65}{\percent} target. The current
+checkout retains only the 20-toy stage-1 summary under \texttt{uq/coverage/};
+restore the 200 toy ROOTs before independently regenerating this number from
+disk.
 
 \paragraph{Stability.}
 5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
@@ -62,27 +65,13 @@ indistinguishable, so the reweight is a modest correction). Across the
 $(\pT,\pPar)$ bins the true data/MC ratio still spans \(\approx\SI{100}{\percent}\);
 the GBDT recovers it to \SI{4.7}{\percent} median, at least as well as a dense MLP
 (\SI{20.9}{\percent}, untuned), and the two reweights agree with bin-wise correlation
-$0.92$ --- the learned reweight is robust to the classifier family. Beyond scalar
-classifiers, the vendored Point-Edge Transformer (PET~\cite{Mikuni:2024qsr}) run on the
-\emph{per-hadron point clouds} --- the variable-length sets of reconstructed energy clusters
-and truth final-state hadrons, which a GBDT structurally cannot ingest --- reproduces the
-scalar-GBDT 4D unfold to \SIrange{2}{4}{\percent} median per bin on all four axes
-($\pT$ \SI{3.9}{}, $\pPar$ \SI{2.3}{}, $\Eavail$ \SI{1.9}{}, $q_{3}$ \SI{2.8}{\percent};
-Fig.~\ref{fig:petgbdt}). The method therefore extends to set-valued inputs without changing
-the result at these scalar features, the prerequisite for a future point-cloud measurement of
-a genuinely hadronic observable.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{pet_vs_gbdt.png}
-  \caption{Method cross-check: the point-cloud PET unfold (solid) versus the scalar GBDT
-  unfold (dashed), area-normalised 1D projections on each axis. The two agree to
-  \SIrange{2}{4}{\percent} median per bin, confirming the unbinned technique is robust to the
-  classifier family and scales from tabular features to permutation-invariant point clouds.
-  PET here is a \num{2}M-event, 2-iteration run (a method demonstration, not a separate
-  physics result).}
-  \label{fig:petgbdt}
-\end{figure}
+$0.92$ --- the learned reweight is robust to the classifier family. A full scalar
+keras-MLP OmniFold cross-check on the 3D inputs gives total ratio $1.0078$ versus
+the GBDT reference and median projection differences of \SIrange{0.7}{1.4}{\percent},
+consistent with the assigned ML band. A vendored PET point-cloud path is wired, but
+its first reconstructed-cloud run used the wrong cluster branch
+(\texttt{ExtraEnergyClusters\_*}, mostly empty) and is explicitly excluded from the
+physics validation until rerun with the real non-muon recoil-cluster collection.
 
 \begin{figure}[H]
   \centering

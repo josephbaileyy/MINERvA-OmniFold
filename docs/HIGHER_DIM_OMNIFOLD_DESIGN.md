@@ -5,7 +5,7 @@ the next dimensional step beyond the completed 3D `d³σ/(dp_T dp_‖ dE_avail)`
 and states the criterion for moving from the LightGBM (GBDT) reweighter to a neural-net
 OmniFold.
 
-> **Implementation (2026-06-03/04) — both phases DONE & validated.** Tracking in
+> **Implementation (2026-06-03/04) — scalar phase done; PET follow-up gated.** Tracking in
 > `nd-unfolding/ND_OMNIFOLD_STATUS.md` + `ND_OMNIFOLD_RUN_LOG.md`.
 > - **Phase 1 (q3, GBDT) — validated.** `nd-unfolding/xsec_nd.py` (N-D extraction,
 >   unit-tested), `nd-unfolding/unfold_nd_omnifold_unbinned.py` (the **axis-list
@@ -13,10 +13,12 @@ OmniFold.
 >   The 4D unfold `d⁴σ/(dp_T dp_‖ dE_avail dq3)` passes every anchor: Jacobian
 >   identity exact, 4D recovers frozen 3D to <2% median, 2D-marginal anchors the
 >   paper (4D/3D=0.9960), injected-q3 closure passes.
-> - **Phase 2 (NN) — validated.** `omnifold_nn/` vendored (`ViniciusMikuni/omnifold`),
+> - **Phase 2 (scalar NN) — validated.** `omnifold_nn/` vendored (`ViniciusMikuni/omnifold`),
 >   `nd-unfolding/omnifold_nn_core.py` (ROOT-free keras-MLP) + `estimator="nn"`. The
 >   NN reproduces the GBDT 3D cross section within the ML band (total ratio 1.0078,
->   projections ≤1.4% median) → engine green-lit for the PET point-cloud track.
+>   projections ≤1.4% median). The PET point-cloud path is wired, but the first
+>   real-cloud run used the wrong reconstructed-cluster branch and is not a validated
+>   physics/method result until rerun with the real non-muon recoil-cluster collection.
 
 **Scope decided with the user:** phased — Phase 1 adds **q3** as a 4th *scalar* axis
 (GBDT-native); Phase 2 builds a **point-cloud / NN** track as the longer-term
