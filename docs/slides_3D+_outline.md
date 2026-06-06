@@ -69,8 +69,8 @@ Arc: recap → background (physics + papers) → 3D → 3D physics → 4D → va
   - **Right panel (E_avail marginal): a closure check.** It reproduces the 3D low-recoil excess (1.21 at lowest E_avail → ~1.0 in the dip → 1.2 in the DIS tail) — confirms the 4D unfold is consistent with 3D.
   - **Left panel (E_avail × q3 map): the new result.** The data–prediction discrepancy is **not flat in q3** — the excess grows toward higher q3, while GENIE over-predicts the low-q3 / moderate-E_avail cells. *This structure is invisible to a muon-only or fixed-q3 measurement — it is the reason to go to 4D.* (Blank cells are kinematically forbidden.)
   - **Center panel (q3 marginal):** integrated over E_avail, q3 alone is mild — you *need* the joint (E_avail, q3) view.
-- **Systematics:** a 187-universe covariance on the 4D grid; **model-dominated** (2p2h and axial-mass uncertainties lead; flux drops to ~3%) — unlike the flux-dominated 2D/3D budgets, because q3 is precisely the model-discriminating variable.
-- *Honest note (keep or drop): this map is at central-value level; the base GENIE has no 2p2h, and per-cell significances await the combined stat+ML budget (in progress).*
+- **Systematics:** a 187-universe covariance on the 4D grid; **model-dominated** (2p2h and axial-mass uncertainties lead; flux drops to ~3%) — unlike the flux-dominated 2D/3D budgets, because q3 is precisely the model-discriminating variable. The **combined stat+ML+syst 4D budget is now complete** (median 13.5%/bin, rank 264/4830); stat and ML are negligible against the model systematics, so the conclusions are unchanged.
+- *Honest note (keep or drop): this map is at central-value level and the base GENIE has no 2p2h, so read it as where the discrepancy lives, not a per-cell significance map.*
 
 ---
 
@@ -85,21 +85,20 @@ Arc: recap → background (physics + papers) → 3D → 3D physics → 4D → va
 ---
 
 ## Slide 9 — Method validation
-**Figure:** use the C2ST/calibration diagnostics; do not use `nd-unfolding/pet_vs_gbdt.png`
-until the point-cloud reco-cluster source is fixed and rerun.
+**Figure:** `nd-unfolding/pet_vs_gbdt.png` (PET vs GBDT 4D shape overlay); optionally the C2ST/calibration diagnostics.
 - **Unbinned goodness-of-fit (binning-free):** a classifier-two-sample test cannot tell data from the *unfolded* simulation — accuracy 0.50, p = 0.17 (vs accuracy 0.52, p ≈ 10⁻²⁴⁴ *before* unfolding). The unfold genuinely removes the data↔MC mismatch.
 - **Scalar NN cross-check:** a keras-MLP OmniFold run on the same scalar 3D inputs reproduces the GBDT result within the ML band (total ratio 1.008; median projection differences about 0.7--1.4%).
-- **Point-cloud status:** the PET pipeline is wired, but the first real-cloud attempt used the wrong reconstructed-cluster branch (`ExtraEnergyClusters_*`, mostly empty). Treat PET as a follow-up, not a validated-method slide, until the event loop uses the real non-muon recoil clusters and the comparison is rerun.
-- *Takeaway: the result is robust to the goodness-of-fit definition and to the classifier family.*
+- **Point-cloud transformer (PET):** unfolding on the **raw per-hadron point cloud** (the real non-muon recoil clusters) reproduces the scalar-GBDT 4D shape to **2.3–3.9%/bin** (figure). *Shape-only, on a 2M-event subsample — a method/representation robustness check, not an independent physics result.* (An earlier attempt used the wrong, mostly-empty `ExtraEnergyClusters_*` branch and was discarded.)
+- *Takeaway: the result is robust to the goodness-of-fit definition, the classifier family (GBDT / MLP / transformer), **and** the input representation (engineered scalars vs. raw point cloud).*
 
 ---
 
 ## Slide 10 — Status & what I need from you
-- **Done:** 2D (reproduces published), 3D (+ 4-generator comparison + 2p2h diagnosis), 4D q3 (covariance + the (E_avail, q3) structure), technote updated.
-- **In flight:** the combined stat+ML uncertainty budget for 4D (~1 day of compute; it sharpens the per-cell significances but won't change the conclusions).
+- **Done:** 2D (reproduces published), 3D (+ 4-generator comparison + 2p2h diagnosis), 4D q3 (full **combined stat+ML+syst budget complete**, median 13.5%/bin, + the (E_avail, q3) structure), PET point-cloud cross-check, technote updated.
+- **In flight:** nothing blocking — the 4D analysis is fully assembled. (The only open compute would be optional full-statistics reruns if we decide to push the point-cloud track.)
 - **Asks:**
   1. **Can you help me get the Ascencio low-q3 data release** (PRD 106 032001 / arXiv:2110.13372, d²σ/(dq3 dE_avail))? Our 4D result is ready for a **bin-identical comparison to their published measurement** — a method validation (does unbinned OmniFold reproduce their binned 2p2h result?), the direct analogue of the 2D-vs-published win. It's the one thing I'm blocked on.
-  2. **How far should I push the point-cloud track after the reco-cluster fix?** Options: keep it as a method appendix, or aim it at a *new* hadronic observable (would need reconstruction-level particle ID work). Your call on scope.
+  2. **How far should I push the point-cloud track?** PET already reproduces the scalar GBDT on the real clusters (slide 9). Options: keep it as a method appendix, or aim it at a *new* hadronic observable (would need reconstruction-level particle ID work). Your call on scope.
   3. *(optional)* There's a **+2.2σ excess in the high-E_avail (DIS-tail) bin** the 2p2h story doesn't touch — worth investigating now, or park it?
 
 ---
@@ -111,6 +110,6 @@ until the point-cloud reco-cluster source is fixed and rerun.
 | 6 | `3d-unfolding/genie/generators_vs_unfolded_band.png`, `3d-unfolding/genie/compare_mec_eavail.png` |
 | 7 | `nd-unfolding/q3_excess_projection.png` |
 | 8 | `3d-unfolding/eavail_marginal_vs_paper_pull_full.png` |
-| 9 | C2ST / classifier-calibration diagnostic; do not use `nd-unfolding/pet_vs_gbdt.png` until PET is rerun with corrected reco clusters |
+| 9 | `nd-unfolding/pet_vs_gbdt.png` (PET vs GBDT 4D shape overlay); optionally C2ST / classifier-calibration diagnostic |
 
 *Optional 2D-generator figure if you want a normalization-only contrast on slide 6 or background: `2d-unfolding/model_comp_projections.png` (GENIE Tune ~9% low on the muon kinematics).*
