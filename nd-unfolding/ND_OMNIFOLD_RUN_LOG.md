@@ -542,3 +542,38 @@ architecture difference rather than a bug in the absolute machinery — the abso
 path itself is validated by the clean closure (recovered/truth ~0.99) from the milestone run.
 Closing the gap toward the ML band would require a PET-specific systematic/ensemble campaign
 (deferred, docs/FUTURE_DIRECTIONS.md), not more iterations of a single training.
+
+---
+
+## 2026-06-07 — (E_avail, W) excess test: open question 6 is DIS-like (high-W)
+
+`excess_eavail_W.py` (job run on interactive node nid004154, ~min) compares the unfolded
+5D data cross section to the **GENIE CV prediction** (the OmniFold prior = POT-scaled
+`mc_truth_denom`, completeness=1, pushed through the SAME `extract_cross_section_nd`) in the
+(E_avail, W) plane. Single I/O pass over the 4.5 GB 5D omnifile (kept 32,846,302 truth events).
+
+**Overall:** data/CV = 1.135 (the known ~13% integrated excess over GENIE CV).
+
+**dσ/dE_avail data/CV rises toward high E_avail** — 1.18, 1.15, 1.09, 1.03, 1.11, 1.17,
+**1.22** across the 7 bands; the two highest-E_avail bands (1.5–3.0, 3.0+) carry 25.3% + 31.8%
+= **57% of the total positive excess**. This is open question 6's +2.2σ high-E_avail excess
+at central value.
+
+**WHERE in W (the new information):** the high-E_avail excess is **predominantly high-W
+(DIS/transition)**. Of the positive excess, high-E_avail (≥0.8 GeV) carries **67.2%**, and
+**83.2% of that sits at W≥1.8 GeV**. The single largest excess cell is the deep-DIS corner
+(E_avail>3, W>3) at **21.9%** of all positive excess; (E_avail 1.5–3, W 1.8–2.2)=10.6% and
+(E_avail 1.5–3 / 3+, W 2.2–3)=8.6%/7.1% follow — all high-E_avail × high-W. So the missing
+strength behaves like a **deep-inelastic-tail modeling deficit**, exactly the hypothesis the
+W axis was added to test.
+
+**Secondary structure:** a low-W (W<1.1) excess of ~24–31% above CV across all E_avail (a
+QE-like component, ~25% of positive excess but spread thin), and a localized **deficit**
+(data<CV, ratio ~0.89–0.96) at W 1.4–1.8 for low/moderate E_avail (the Δ-resonance region) —
+GENIE CV slightly over-predicts there.
+
+**Caveat:** this is vs the GENIE CV only (single generator, no systematic covariance) — it
+localizes the central-value excess, it does NOT re-derive the +2.2σ significance. Extending
+to NuWro/GiBUU in (E_avail, W) (the `3d-unfolding/genie/` machinery run through W) is the
+follow-up to turn this into a generator-band statement. Artifacts:
+`products/5d/excess_eavail_W.{root,png}`.
