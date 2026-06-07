@@ -31,5 +31,5 @@ if [[ -s of_inputs_pc.npz ]]; then
   echo "[pc] of_inputs_pc.npz already present; skip dump"; ls -lh of_inputs_pc.npz; exit 0
 fi
 echo "[pc] dump pointcloud inputs $(date -u +%T)"
-python3 dump_pointcloud_inputs.py --omnifile "${OUT}" --num-part 12 --out of_inputs_pc.npz
+python3 pet/dump_pointcloud_inputs.py --omnifile "${OUT}" --num-part 12 --out of_inputs_pc.npz
 echo "[pc] done $(date -u +%T)"; ls -lh of_inputs_pc.npz

@@ -5,11 +5,11 @@ Does unfolding on the per-hadron POINT CLOUD change the result vs the (pt,pz,eav
 SCALARS? minerva_pet_dataloader.py --save-weights saves the PET gen push weights + the mc
 subsample indices; this bins the PET-reweighted truth events (by their truth_scalars from
 of_inputs_pc.npz) into the 4D axes, area-normalizes the 1D projections, and overlays them on
-the frozen GBDT 4D result (xsec_4d_MEFHC_5iter_lgbm.root). Area-normalized because the PET
+the frozen GBDT 4D result (products/4d/xsec_4d_MEFHC_5iter_lgbm.root). Area-normalized because the PET
 run is on a subsample (shape comparison, not absolute normalization).
 
-  python pet_vs_gbdt.py --pet pet_weights.npz --pc of_inputs_pc.npz \
-      --gbdt xsec_4d_MEFHC_5iter_lgbm.root --out pet_vs_gbdt.png
+  python pet_vs_gbdt.py --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz \
+      --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt.png
 """
 import argparse
 import sys
@@ -127,8 +127,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pet", required=True, help="minerva_pet_dataloader --save-weights npz")
     ap.add_argument("--pc", default="of_inputs_pc.npz")
-    ap.add_argument("--gbdt", default="xsec_4d_MEFHC_5iter_lgbm.root")
-    ap.add_argument("--out", default="pet_vs_gbdt.png")
+    ap.add_argument("--gbdt", default="products/4d/xsec_4d_MEFHC_5iter_lgbm.root")
+    ap.add_argument("--out", default="products/pet/pet_vs_gbdt.png")
     ap.add_argument("--absolute", action="store_true",
                     help="produce the ABSOLUTE (non-area-normalized) PET cross section via "
                          "xsec_nd.extract_cross_section_nd + the GBDT completeness, and "
@@ -140,7 +140,7 @@ def main():
                     default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
                     help="MC file holding the integrated flux histogram (absolute mode).")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
-    ap.add_argument("--pet-out", default="xsec_4d_PET_absolute.root",
+    ap.add_argument("--pet-out", default="products/pet/xsec_4d_PET_absolute.root",
                     help="output ROOT for the absolute PET cross section (absolute mode).")
     args = ap.parse_args()
 

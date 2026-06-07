@@ -34,17 +34,17 @@ echo "[unfold] 5D CV unfold start $(date -u +%H:%M:%S)"
 python3 unfold_nd_omnifold_unbinned.py \
     --omnifile "${MERGED}" --axes eavail,q3,W \
     --iters 5 --use-weights --estimator lgbm \
-    --out xsec_5d_MEFHC_5iter_lgbm.root --verbose
+    --out products/5d/xsec_5d_MEFHC_5iter_lgbm.root --verbose
 
 echo "[anchor] W-marginal -> frozen 4D check $(date -u +%H:%M:%S)"
-python3 check_5d_anchors.py --xsec5d xsec_5d_MEFHC_5iter_lgbm.root \
-    --xsec4d xsec_4d_MEFHC_5iter_lgbm.root || true
+python3 check_5d_anchors.py --xsec5d products/5d/xsec_5d_MEFHC_5iter_lgbm.root \
+    --xsec4d products/4d/xsec_4d_MEFHC_5iter_lgbm.root || true
 
 echo "[closure] injected-W-shape closure $(date -u +%H:%M:%S)"
 python3 unfold_nd_omnifold_unbinned.py \
     --omnifile "${MERGED}" --axes eavail,q3,W \
     --iters 5 --use-weights --estimator lgbm \
     --closure --closure-reweight-axis W \
-    --out closure_5d_Wbump.root --verbose
+    --out products/5d/closure_5d_Wbump.root --verbose
 
 echo "[done] $(date -u +%H:%M:%S)"

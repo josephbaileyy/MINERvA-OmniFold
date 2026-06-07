@@ -9,6 +9,6 @@ set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/nd-unfolding"; mkdir -p uq_4d/universe_stage2_4d
 python3 analyze_universes_nd.py \
-  --cv xsec_4d_MEFHC_5iter_lgbm.root \
+  --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root \
   --glob 'uq_4d/universe_sweep/4d_xsec_*_uni_full_*.root' \
   --add-norm 0.014 --outdir uq_4d/universe_stage2_4d/

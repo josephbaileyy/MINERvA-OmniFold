@@ -20,23 +20,23 @@ source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/nd-unfolding"
 
 PC_INPUTS="${PC_INPUTS:-of_inputs_pc.npz}"
-GBDT_XSEC="${GBDT_XSEC:-xsec_4d_MEFHC_5iter_lgbm.root}"
+GBDT_XSEC="${GBDT_XSEC:-products/4d/xsec_4d_MEFHC_5iter_lgbm.root}"
 [[ -s "${PC_INPUTS}" ]] || { echo "[FAIL] missing ${PC_INPUTS}" >&2; exit 2; }
 [[ -s "${GBDT_XSEC}" ]] || { echo "[FAIL] missing ${GBDT_XSEC}" >&2; exit 2; }
 
 if [[ "${CLOSURE:-0}" == "1" ]]; then
-  PET_WEIGHTS="${PET_WEIGHTS:-pet_weights_closure.npz}"
+  PET_WEIGHTS="${PET_WEIGHTS:-products/pet/pet_weights_closure.npz}"
   [[ -s "${PET_WEIGHTS}" ]] || { echo "[FAIL] missing ${PET_WEIGHTS}" >&2; exit 2; }
   echo "[pet-xsec] CLOSURE check $(date -u '+%F %T UTC')"
-  python3 pet_vs_gbdt.py --pet "${PET_WEIGHTS}" --pc "${PC_INPUTS}" --gbdt "${GBDT_XSEC}" \
-    --absolute --closure --pet-out xsec_4d_PET_closure.root
+  python3 pet/pet_vs_gbdt.py --pet "${PET_WEIGHTS}" --pc "${PC_INPUTS}" --gbdt "${GBDT_XSEC}" \
+    --absolute --closure --pet-out products/pet/xsec_4d_PET_closure.root
 else
-  PET_WEIGHTS="${PET_WEIGHTS:-pet_weights_full.npz}"
-  PET_OUT="${PET_OUT:-xsec_4d_PET_absolute.root}"
-  OUT_PNG="${OUT_PNG:-pet_vs_gbdt_absolute.png}"
+  PET_WEIGHTS="${PET_WEIGHTS:-products/pet/pet_weights_full.npz}"
+  PET_OUT="${PET_OUT:-products/pet/xsec_4d_PET_absolute.root}"
+  OUT_PNG="${OUT_PNG:-products/pet/pet_vs_gbdt_absolute.png}"
   [[ -s "${PET_WEIGHTS}" ]] || { echo "[FAIL] missing ${PET_WEIGHTS}" >&2; exit 2; }
   echo "[pet-xsec] ABSOLUTE PET vs GBDT $(date -u '+%F %T UTC')"
-  python3 pet_vs_gbdt.py --pet "${PET_WEIGHTS}" --pc "${PC_INPUTS}" --gbdt "${GBDT_XSEC}" \
+  python3 pet/pet_vs_gbdt.py --pet "${PET_WEIGHTS}" --pc "${PC_INPUTS}" --gbdt "${GBDT_XSEC}" \
     --absolute --pet-out "${PET_OUT}" --out "${OUT_PNG}"
 fi
 echo "[pet-xsec] done $(date -u '+%F %T UTC')"

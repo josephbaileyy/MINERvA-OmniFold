@@ -25,17 +25,17 @@ echo "[pet] python: $(which python3)"
 python3 -c "import tensorflow as tf; print('TF', tf.__version__, 'GPUs', tf.config.list_physical_devices('GPU'))"
 
 echo "==== build-only (loader shapes) ===="
-python3 minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar
+python3 pet/minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar
 
 echo "==== smoke: vendored MLP MultiFold on our data ===="
-python3 minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar \
+python3 pet/minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar \
     --model mlp --max-events 200000 --niter 1 --epochs 3 --smoke
 
 echo "==== smoke: vendored PET MultiFold on our data (trivial 4-particle cloud) ===="
-python3 minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar --num-part 4 \
+python3 pet/minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode scalar --num-part 4 \
     --model pet --max-events 120000 --niter 1 --epochs 3 --smoke
 
 echo "==== pointcloud-mode actionable error (expected to list missing branches) ===="
-python3 minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode pointcloud || true
+python3 pet/minerva_pet_dataloader.py --inputs of_inputs_3d.npz --mode pointcloud || true
 
 echo "[pet] done $(date -u +%H:%M:%S)"

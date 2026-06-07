@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build an ND covariance (reported bins = CV>0) from a glob of xsec_flat npz replicas.
 Reported mask from the 4D CV product (hXSecND_flat). Writes hCov_<tag>_reported.
-  python combine_cov_nd.py --glob 'seedscan_split_4d/res_*.npz' --cv xsec_4d_MEFHC_5iter_lgbm.root --tag ml4d --out uq_cov_ml_4d.root
+  python combine_cov_nd.py --glob 'seedscan_split_4d/res_*.npz' --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag ml4d --out uq_cov_ml_4d.root
 """
 import argparse, glob, numpy as np, ROOT
 ROOT.gROOT.SetBatch(True)

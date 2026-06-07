@@ -22,14 +22,14 @@ MERGED="runEventLoopOmniFold_4D_MEFHC.root"
 echo "[unfold] 4D CV unfold $(date -u +%H:%M:%S)"
 python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3 \
     --iters 5 --use-weights --estimator lgbm \
-    --out xsec_4d_MEFHC_5iter_lgbm.root --verbose
+    --out products/4d/xsec_4d_MEFHC_5iter_lgbm.root --verbose
 
 echo "[anchor] $(date -u +%H:%M:%S)"
-python3 check_4d_anchors.py --xsec4d xsec_4d_MEFHC_5iter_lgbm.root \
+python3 check_4d_anchors.py --xsec4d products/4d/xsec_4d_MEFHC_5iter_lgbm.root \
     --xsec3d ../3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root
 
 echo "[closure] injected-q3-shape $(date -u +%H:%M:%S)"
 python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3 \
     --iters 5 --use-weights --estimator lgbm \
-    --closure --closure-reweight-axis q3 --out closure_4d_q3bump.root --verbose
+    --closure --closure-reweight-axis q3 --out products/4d/closure_4d_q3bump.root --verbose
 echo "[done] $(date -u +%H:%M:%S)"

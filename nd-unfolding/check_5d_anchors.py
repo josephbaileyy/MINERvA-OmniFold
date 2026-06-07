@@ -7,8 +7,8 @@ Adding W as a feature must not bias the lower-D projections or the total (exactl
 adding q3 gave 4D/3D=0.9960). This compares the 5D output's hXSec_* and total sigma to
 the frozen 4D result, the W-marginal Jacobian anchor.
 
-  python check_5d_anchors.py --xsec5d xsec_5d_MEFHC_5iter_lgbm.root \
-      --xsec4d xsec_4d_MEFHC_5iter_lgbm.root
+  python check_5d_anchors.py --xsec5d products/5d/xsec_5d_MEFHC_5iter_lgbm.root \
+      --xsec4d products/4d/xsec_4d_MEFHC_5iter_lgbm.root
 """
 import argparse
 import numpy as np
@@ -36,8 +36,8 @@ def _total(f):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--xsec5d", default="xsec_5d_MEFHC_5iter_lgbm.root")
-    ap.add_argument("--xsec4d", default="xsec_4d_MEFHC_5iter_lgbm.root")
+    ap.add_argument("--xsec5d", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
+    ap.add_argument("--xsec4d", default="products/4d/xsec_4d_MEFHC_5iter_lgbm.root")
     args = ap.parse_args()
 
     f5 = ROOT.TFile.Open(args.xsec5d)

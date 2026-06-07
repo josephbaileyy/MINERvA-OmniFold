@@ -90,7 +90,7 @@ def area_norm(edges, y):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--xsec4d", default=os.path.join(HERE, "xsec_4d_MEFHC_5iter_lgbm.root"),
+    ap.add_argument("--xsec4d", default=os.path.join(HERE, "products/4d/xsec_4d_MEFHC_5iter_lgbm.root"),
                     help="4D xsec product (hXSecND_flat + projection hists).")
     ap.add_argument("--ascencio-q3", default="",
                     help="text: q3_lo q3_hi dsigma err  (1D dsigma/dq3, arXiv:2110.13372)")

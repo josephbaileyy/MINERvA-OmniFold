@@ -15,9 +15,9 @@ NITER="${NITER:-2}"; EPOCHS="${EPOCHS:-8}"; TRAIN_EVENTS="${TRAIN_EVENTS:-200000
 EXTRA=""
 if [[ "${CLOSURE:-0}" == "1" ]]; then
   EXTRA="--closure"
-  SAVE_WEIGHTS="${SAVE_WEIGHTS:-pet_weights_closure.npz}"
+  SAVE_WEIGHTS="${SAVE_WEIGHTS:-products/pet/pet_weights_closure.npz}"
 fi
-SAVE_WEIGHTS="${SAVE_WEIGHTS:-pet_weights_full.npz}"
+SAVE_WEIGHTS="${SAVE_WEIGHTS:-products/pet/pet_weights_full.npz}"
 
 if [[ "${FORCE_PET_REBUILD:-0}" == "1" && -e "${SAVE_WEIGHTS}" ]]; then
   stamp="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -27,7 +27,7 @@ fi
 module load tensorflow/2.15.0
 python3 -c "import tensorflow as tf; print('TF',tf.__version__,'GPU',tf.config.list_physical_devices('GPU'))"
 echo "[pet] real point-cloud MultiFold (train=${TRAIN_EVENTS}, reweight-all on full stats) ${EXTRA} $(date -u +%T)"
-python3 minerva_pet_dataloader.py --inputs of_inputs_pc.npz --mode pointcloud \
+python3 pet/minerva_pet_dataloader.py --inputs of_inputs_pc.npz --mode pointcloud \
     --model pet --niter "${NITER}" --epochs "${EPOCHS}" --max-events "${TRAIN_EVENTS}" \
     --reweight-all --smoke --save-weights "${SAVE_WEIGHTS}" ${EXTRA}
 echo "[pet] wrote ${SAVE_WEIGHTS}; done $(date -u +%T)"

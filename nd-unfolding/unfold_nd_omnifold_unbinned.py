@@ -27,7 +27,7 @@ Examples
   python unfold_nd_omnifold_unbinned.py \
       --omnifile runEventLoopOmniFold_4D_MEFHC.root \
       --axes eavail,q3 --iters 5 --use-weights --estimator lgbm \
-      --out xsec_4d_MEFHC_5iter_lgbm.root
+      --out products/4d/xsec_4d_MEFHC_5iter_lgbm.root
 
   # reproduce the 3D result (eavail only):
   python unfold_nd_omnifold_unbinned.py --omnifile ... --axes eavail ...

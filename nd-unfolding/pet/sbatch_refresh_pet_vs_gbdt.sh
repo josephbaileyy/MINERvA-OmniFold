@@ -3,8 +3,8 @@
 #   build installed event-loop binary
 #   -> per-playlist point-cloud event loops
 #   -> merge + dump of_inputs_pc.npz
-#   -> GPU PET train, saving pet_weights.npz
-#   -> pet_vs_gbdt.png comparison
+#   -> GPU PET train, saving products/pet/pet_weights.npz
+#   -> products/pet/pet_vs_gbdt.png comparison
 #
 # Run from the repo root or nd-unfolding:
 #   bash nd-unfolding/sbatch_refresh_pet_vs_gbdt.sh

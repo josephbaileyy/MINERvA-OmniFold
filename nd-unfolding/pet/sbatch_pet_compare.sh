@@ -12,7 +12,7 @@
 #SBATCH --error=pet_cmp_%j.err
 
 # Final point-cloud validation product after sbatch_pet_train.sh writes
-# pet_weights.npz. This is intentionally separate from the GPU training job so
+# products/pet/pet_weights.npz. This is intentionally separate from the GPU training job so
 # the PET-vs-GBDT plot can be rerun cheaply.
 set -eo pipefail
 
@@ -20,10 +20,10 @@ REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/nd-unfolding"
 
-PET_WEIGHTS="${PET_WEIGHTS:-pet_weights.npz}"
+PET_WEIGHTS="${PET_WEIGHTS:-products/pet/pet_weights.npz}"
 PC_INPUTS="${PC_INPUTS:-of_inputs_pc.npz}"
-GBDT_XSEC="${GBDT_XSEC:-xsec_4d_MEFHC_5iter_lgbm.root}"
-OUT_PNG="${OUT_PNG:-pet_vs_gbdt.png}"
+GBDT_XSEC="${GBDT_XSEC:-products/4d/xsec_4d_MEFHC_5iter_lgbm.root}"
+OUT_PNG="${OUT_PNG:-products/pet/pet_vs_gbdt.png}"
 
 [[ -s "${PET_WEIGHTS}" ]] || { echo "[FAIL] missing ${PET_WEIGHTS}" >&2; exit 2; }
 [[ -s "${PC_INPUTS}" ]] || { echo "[FAIL] missing ${PC_INPUTS}" >&2; exit 2; }
@@ -35,7 +35,7 @@ if [[ -e "${OUT_PNG}" ]]; then
 fi
 
 echo "[pet-cmp] start $(date -u '+%F %T UTC')"
-python3 pet_vs_gbdt.py \
+python3 pet/pet_vs_gbdt.py \
   --pet "${PET_WEIGHTS}" \
   --pc "${PC_INPUTS}" \
   --gbdt "${GBDT_XSEC}" \
