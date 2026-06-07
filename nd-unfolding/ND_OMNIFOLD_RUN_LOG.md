@@ -494,3 +494,51 @@ Interpretation: with the corrected reco-cluster source, the point-cloud PET shap
 with the scalar 4D GBDT result at the few-percent level on the PET subsample. This is a
 valid refreshed method/shape cross-check. It is not an absolute normalization measurement:
 `pet_vs_gbdt.py` intentionally area-normalizes because the PET training uses a subsample.
+
+---
+
+## 2026-06-07 — Workstream E (PET hi-iter retrain) + Workstream F (W 5D unfold) landed
+
+Both in-flight job chains from 2026-06-06 completed and validated.
+
+### Workstream F: W (hadronic invariant mass) as 5th axis — 5D unfold PASS
+
+5D CV event-loop array `evloop5d` (54062311, 12 playlists) COMPLETED, then
+`hadd_unfold_5d` (54062313) merged -> `runEventLoopOmniFold_5D_MEFHC.root` (4.5 GB) and
+ran the `--axes eavail,q3,W` (5D = pt,pz,eavail,q3,W) unfold (5 iter, lgbm):
+
+- total sigma (5D integral): **3.07e-38 cm^2/nucleon**
+- W-marginal -> frozen 4D anchor: **5D/4D = 1.0011** (PASS, <3% target). Per-shared-axis
+  median |5D-4D|/4D: pt 0.68%, pz 0.31%, eavail 0.91%, q3 1.48% (max 4.22%). Adding W as a
+  feature does not bias the lower-D projections or the total (same discipline as 4D/3D=0.9960).
+- new dsigma/dW: 6 bins, all-finite, nonneg, integral 3.07e-38 (consistent with total).
+- injected-W-shape closure (`closure_5d_Wbump.root`, A=0.3 bump): **median 1.0000, std 0.0062,
+  max|dev| 0.227**; W 1D ratios all 1.000; injected mean factor 1.0000. The 5D machinery
+  recovers an injected W shape without bias.
+
+Artifacts: `xsec_5d_MEFHC_5iter_lgbm.root`, `closure_5d_Wbump.root`. The W axis is now a
+validated 5th dimension; the 187-universe W systematic campaign remains deferred (binary
+already dumps shifted W under MNV101_DUMP_UNIVERSES — no new code needed).
+
+### Workstream E: higher-iteration PET retrain (niter5/epochs10/4M)
+
+`pet_train` (54060166, gpu_shared) COMPLETED 05:53:53 — trained the real point-cloud MultiFold
+on 4M events, then ran the **full-stats reweight-all** push-weight evaluation:
+- unfolded (train) weights n=4,000,000 mean=1.0101 std=0.1631 finite=True
+- full-stats w_push n=**32,849,103** mean=1.0101 std=0.1630 finite=True -> `pet_weights_full_hi.npz` (137 MB)
+
+`pet_xsec` (54060169, CPU) COMPLETED — absolute extraction reusing the frozen GBDT
+`hCompletenessND`:
+- PET total sigma (4D) = **2.751e-38** cm^2/nucleon (n_truthpass=32,849,103, data_pot=1.057e21)
+- GBDT total sigma = 3.066e-38; **PET/GBDT = 0.8970**
+- per-axis median |diff| (ABSOLUTE): pt 7.52%, pz 11.57%, eavail 11.08%, q3 6.83%
+
+Artifacts: `xsec_4d_PET_absolute_hi.root`, `pet_vs_gbdt_absolute_hi.png`.
+
+Interpretation: the higher-iteration/epoch/larger-subsample retrain did **not** close the
+~10% absolute PET/GBDT normalization gap (0.9117 at niter3/2M -> 0.8970 here); it is
+essentially flat. This is consistent with a training-configuration / point-cloud-vs-scalar
+architecture difference rather than a bug in the absolute machinery — the absolute extraction
+path itself is validated by the clean closure (recovered/truth ~0.99) from the milestone run.
+Closing the gap toward the ML band would require a PET-specific systematic/ensemble campaign
+(deferred, docs/FUTURE_DIRECTIONS.md), not more iterations of a single training.

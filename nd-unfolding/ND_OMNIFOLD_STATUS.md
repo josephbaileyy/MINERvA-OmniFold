@@ -114,3 +114,21 @@ See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-04 entry) for full detail. Summary:
   q3 swap (`lateral_invariant` flag), `analyze_universes_nd.py`. Pipeline:
   evloop 53945111 → hadd 53947173 → validate 53947729 → sweep 53947731 → cov 53947732,
   outputs under `uq_4d/`.
+
+## 2026-06-07 — W 5D unfold + PET hi-iter retrain (both validated)
+
+See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-07 entry) for detail.
+
+- **Workstream F — W as 5th axis: 5D unfold DONE + PASS.** 12-playlist 5D event loop
+  (evloop5d 54062311) -> hadd -> `--axes eavail,q3,W` unfold (`xsec_5d_MEFHC_5iter_lgbm.root`).
+  Total sigma 3.07e-38; W-marginal -> frozen 4D anchor **5D/4D=1.0011** (per-axis median
+  0.31-1.48%); dsigma/dW (6 bins) finite/nonneg; injected-W closure median 1.0000 / std 0.0062.
+  W is now a validated 5th dimension. W systematic campaign deferred (binary already dumps
+  shifted W).
+- **Workstream E — PET hi-iter retrain (niter5/epochs10/4M): DONE.** Full-stats reweight-all
+  over 32.85M gen events (mean 1.0101, finite). Absolute **PET/GBDT = 0.8970** (per-axis
+  median 6.8-11.6%); the higher-iteration retrain did NOT close the ~10% absolute gap
+  (flat vs 0.9117 at 2M) -> training-config/architecture difference, not a machinery bug
+  (absolute path validated by clean milestone closure). PET-specific UQ campaign deferred
+  (docs/FUTURE_DIRECTIONS.md). Artifacts: `xsec_4d_PET_absolute_hi.root`,
+  `pet_vs_gbdt_absolute_hi.png`, `pet_weights_full_hi.npz`.
