@@ -39,6 +39,19 @@ amortize with the read-once bank pattern (see memory `nd_unfold_io_bound_bank`) 
 
 ## B. New physics axis — the high-E_avail DIS-tail excess (open question 6)
 
+> **STATUS 2026-06-06 — IMPLEMENTED (W), pending the re-run.** Chosen observable = **W**
+> (hadronic invariant mass; DIS = high W). Truth `GetTrueExperimentersW()` already existed;
+> added `RecoW()` + wired W fully into `runEventLoopOmniFold.cpp` (mirrors q3, incl. lateral
+> shifted-W) + registered axis `W` in the nd driver (`--axes eavail,q3,W`). An investigation
+> of the alternatives found W is the only candidate with a clean RECO estimator (the tuples
+> carry only calorimetric clusters — no per-particle id/momentum), so proton multiplicity +
+> hadronic angle are dumped as TRUTH diagnostics (`MC_nproton/MC_npip/MC_hadangle`) in the
+> SAME re-run for excess investigation, but cannot be OmniFold axes until a reco estimator is
+> built. Built + smoke-tested (see `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`, Workstream F).
+> The only remaining (expensive) step is the 12-playlist event-loop re-run + 5D unfold + cov.
+
+
+
 The one genuinely open *physics* item (`docs/technote/sec_openquestions.tex:76`): enabling
 Valencia 2p2h resolves the low-recoil excess but leaves a separate **+2.2σ data excess in the
 E_avail [1.50, 3.00) GeV bin**, where 2p2h does not contribute and the sub-percent pion-FSI

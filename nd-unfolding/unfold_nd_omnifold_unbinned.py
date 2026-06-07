@@ -79,6 +79,18 @@ EXTRA_AXES = {
         bkg="sim_background_q3",
         edges=[0.0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100.0],   # GeV
         label="q_{3} (GeV)", lateral_invariant=False),
+    # Workstream F (docs/FUTURE_DIRECTIONS.md item B): hadronic invariant mass W as
+    # the 5th axis to localise the open high-E_avail DIS-tail excess (DIS = high W).
+    # Truth GetTrueExperimentersW(), reco RecoW() (both muon+recoil dependent), so W
+    # is NOT lateral-invariant -- lateral universes dump shifted W (W_truth_/MC_W_/
+    # sim_W_<band>_<idx>), exactly like q3. Edges (GeV): QE/elastic peak ~0.94, the
+    # Delta resonance ~1.2, the transition/2nd-resonance region, then the DIS tail
+    # (W>2) where the excess lives, plus a wide catch bin for the calorimetric tail.
+    "W": dict(
+        truth="MC_W", reco="sim_W", data="measured_W",
+        bkg="sim_background_W",
+        edges=[0.0, 1.1, 1.4, 1.8, 2.2, 3.0, 100.0],        # GeV
+        label="W (GeV)", lateral_invariant=False),
 }
 
 

@@ -104,6 +104,10 @@ struct TruthDenomEntry
   double MC_pz;
   double MC_eavail;
   double MC_q3;
+  double MC_W;        // Workstream F: truth hadronic invariant mass (GeV)
+  int    MC_nproton;  // truth diagnostics (DIS-tail-excess investigation)
+  int    MC_npip;
+  double MC_hadangle;
   double w_truth;
   uint64_t key;
 };
@@ -155,6 +159,9 @@ struct UniverseBranchInfo
                                    // lateral-invariant (depends on muon
                                    // kinematics + recoil), unlike E_avail,
                                    // so lateral universes dump shifted q3.
+  std::string wBranchName;         // empty when !isLateral; W (hadronic invariant
+                                   // mass) is muon+recoil dependent like q3, so it
+                                   // is NOT lateral-invariant either -> shifted W.
 };
 
 inline std::string SanitizeForRootBranchName(const std::string& s)
@@ -243,16 +250,19 @@ BuildUniverseBranchTable(
             ub.ptBranchName = "pT_truth_" + suffix;
             ub.pzBranchName = "pz_truth_" + suffix;
             ub.q3BranchName = "q3_truth_" + suffix;   // truth q3 (Getq3True)
+            ub.wBranchName  = "W_truth_"  + suffix;   // truth W (GetTrueExperimentersW)
             break;
           case UniverseKineContext::RecoTreeTruth:
             ub.ptBranchName = "MC_"     + suffix;
             ub.pzBranchName = "MC_pz_"  + suffix;
             ub.q3BranchName = "MC_q3_"  + suffix;      // truth q3 (Getq3True)
+            ub.wBranchName  = "MC_W_"   + suffix;      // truth W (GetTrueExperimentersW)
             break;
           case UniverseKineContext::RecoTreeReco:
             ub.ptBranchName = "sim_"    + suffix;
             ub.pzBranchName = "sim_pz_" + suffix;
             ub.q3BranchName = "sim_q3_" + suffix;      // reco q3 (RecoQ3)
+            ub.wBranchName  = "sim_W_"  + suffix;      // reco W (RecoW)
             break;
         }
       }
@@ -296,12 +306,20 @@ void LoopAndFillUnbinnedMCTruthDenom(
   double MC_pz = 0.0;
   double MC_eavail = 0.0;
   double MC_q3 = 0.0;
+  double MC_W = 0.0;
+  int    MC_nproton = 0;
+  int    MC_npip = 0;
+  double MC_hadangle = 0.0;
   double w_truth = 1.0;
 
   out->Branch("MC", &MC);
   out->Branch("MC_pz", &MC_pz);
   out->Branch("MC_eavail", &MC_eavail);   // truth available energy (GeV)
   out->Branch("MC_q3", &MC_q3);           // truth 3-momentum transfer (GeV)
+  out->Branch("MC_W", &MC_W);             // truth hadronic invariant mass (GeV)
+  out->Branch("MC_nproton", &MC_nproton); // truth proton multiplicity (KE>110 MeV)
+  out->Branch("MC_npip", &MC_npip);       // truth charged-pion multiplicity
+  out->Branch("MC_hadangle", &MC_hadangle); // truth hadronic-system angle (rad)
   out->Branch("w_truth", &w_truth);
 
   // Per-reweighter component dump for MnvTune-v1 audit (Option 1
@@ -330,6 +348,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
   std::vector<double> uniLatPT;     // parallel to uniBranches; unused (NaN) for vertical entries
   std::vector<double> uniLatPZ;
   std::vector<double> uniLatQ3;     // shifted truth q3 for lateral universes
+  std::vector<double> uniLatW;      // shifted truth W for lateral universes
   size_t nLateral = 0;
   const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
                              (truthBands != nullptr);
@@ -342,6 +361,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
     uniLatPT.assign(uniBranches.size(), 0.0);
     uniLatPZ.assign(uniBranches.size(), 0.0);
     uniLatQ3.assign(uniBranches.size(), 0.0);
+    uniLatW.assign(uniBranches.size(), 0.0);
     for(size_t k = 0; k < uniBranches.size(); ++k)
     {
       out->Branch(uniBranches[k].branchName.c_str(), &uniWeights[k]);
@@ -350,6 +370,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
         out->Branch(uniBranches[k].ptBranchName.c_str(), &uniLatPT[k]);
         out->Branch(uniBranches[k].pzBranchName.c_str(), &uniLatPZ[k]);
         out->Branch(uniBranches[k].q3BranchName.c_str(), &uniLatQ3[k]);
+        out->Branch(uniBranches[k].wBranchName.c_str(), &uniLatW[k]);
         ++nLateral;
       }
     }
@@ -403,6 +424,10 @@ void LoopAndFillUnbinnedMCTruthDenom(
     MC_pz = truthCV->GetMuonPzTrue();   // truth p_|| (GeV/c)
     MC_eavail = truthCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
     MC_q3 = truthCV->Getq3True() / 1000.0;              // MeV -> GeV
+    MC_W = truthCV->GetTrueExperimentersW() / 1000.0;   // MeV -> GeV
+    MC_nproton = truthCV->GetNProtonsTrue();
+    MC_npip = truthCV->GetNChargedPionsTrue();
+    MC_hadangle = truthCV->GetHadronAngleTrue();
     w_truth = model.GetWeight(*truthCV, evt);
     if(dumpComponents)
     {
@@ -423,6 +448,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
           uniLatPT[k] = u->GetMuonPTTrue();
           uniLatPZ[k] = u->GetMuonPzTrue();
           uniLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
+          uniLatW[k]  = u->GetTrueExperimentersW() / 1000.0;  // MeV -> GeV (truth W)
         }
       }
       // Restore CV state so any subsequent code in this iteration
@@ -435,7 +461,8 @@ void LoopAndFillUnbinnedMCTruthDenom(
 
     if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
     if(outTruthDenomCache)
-      outTruthDenomCache->push_back({MC, MC_pz, MC_eavail, MC_q3, w_truth, key});
+      outTruthDenomCache->push_back({MC, MC_pz, MC_eavail, MC_q3, MC_W,
+                                     MC_nproton, MC_npip, MC_hadangle, w_truth, key});
   }
 
   std::cout << "Finished unbinned MC truth-denom loop.\n";
@@ -458,20 +485,27 @@ long AppendTruthOnlyMisses(
     const std::vector<TruthDenomEntry>& truthDenomCache,
     const std::unordered_set<uint64_t>& recoIDs)
 {
-  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_sim_eavail = 0.0, miss_sim_q3 = 0.0, miss_w_reco = 1.0;
-  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_MC_eavail = 0.0, miss_MC_q3 = 0.0, miss_w_truth = 1.0;
+  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_sim_eavail = 0.0, miss_sim_q3 = 0.0, miss_sim_W = 0.0, miss_w_reco = 1.0;
+  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_MC_eavail = 0.0, miss_MC_q3 = 0.0, miss_MC_W = 0.0, miss_w_truth = 1.0;
+  int    miss_MC_nproton = 0, miss_MC_npip = 0;
+  double miss_MC_hadangle = 0.0;
   UChar_t miss_sim_pass = 0;
 
   sigOut->SetBranchAddress("sim",        &miss_sim);
   sigOut->SetBranchAddress("sim_pz",     &miss_sim_pz);
   sigOut->SetBranchAddress("sim_eavail", &miss_sim_eavail);
   sigOut->SetBranchAddress("sim_q3",     &miss_sim_q3);
+  sigOut->SetBranchAddress("sim_W",      &miss_sim_W);
   sigOut->SetBranchAddress("sim_pass",   &miss_sim_pass);
   sigOut->SetBranchAddress("w_reco",     &miss_w_reco);
   sigOut->SetBranchAddress("MC",         &miss_MC);
   sigOut->SetBranchAddress("MC_pz",      &miss_MC_pz);
   sigOut->SetBranchAddress("MC_eavail",  &miss_MC_eavail);
   sigOut->SetBranchAddress("MC_q3",      &miss_MC_q3);
+  sigOut->SetBranchAddress("MC_W",       &miss_MC_W);
+  sigOut->SetBranchAddress("MC_nproton", &miss_MC_nproton);
+  sigOut->SetBranchAddress("MC_npip",    &miss_MC_npip);
+  sigOut->SetBranchAddress("MC_hadangle",&miss_MC_hadangle);
   sigOut->SetBranchAddress("w_truth",    &miss_w_truth);
 
   // Phase 3: if the point-cloud branches exist (signal loop dumped them), rebind
@@ -510,11 +544,16 @@ long AppendTruthOnlyMisses(
       miss_MC_pz     = tde.MC_pz;
       miss_MC_eavail = tde.MC_eavail;
       miss_MC_q3     = tde.MC_q3;
+      miss_MC_W      = tde.MC_W;
+      miss_MC_nproton  = tde.MC_nproton;
+      miss_MC_npip     = tde.MC_npip;
+      miss_MC_hadangle = tde.MC_hadangle;
       miss_w_truth   = tde.w_truth;
       miss_sim        = -9999.0;
       miss_sim_pz     = -9999.0;
       miss_sim_eavail = -9999.0;
       miss_sim_q3     = -9999.0;
+      miss_sim_W      = -9999.0;
       miss_sim_pass = 0;            // false: this is a miss (no reco)
       miss_w_reco   = tde.w_truth;  // proxy; w_reco unused for sim_pass=false
       sigOut->Fill();
@@ -557,24 +596,34 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   double sim_pz = 0.0;
   double sim_eavail = 0.0;
   double sim_q3 = 0.0;
+  double sim_W = 0.0;
   UChar_t sim_pass = true;
   double w_reco = 1.0;
   double MC = 0.0;
   double MC_pz = 0.0;
   double MC_eavail = 0.0;
   double MC_q3 = 0.0;
+  double MC_W = 0.0;
+  int    MC_nproton = 0;
+  int    MC_npip = 0;
+  double MC_hadangle = 0.0;
   double w_truth = 1.0;
 
   out->Branch("sim", &sim);
   out->Branch("sim_pz", &sim_pz);
   out->Branch("sim_eavail", &sim_eavail);   // reco available energy (GeV)
   out->Branch("sim_q3", &sim_q3);           // reco 3-momentum transfer (GeV)
+  out->Branch("sim_W", &sim_W);             // reco hadronic invariant mass (GeV)
   out->Branch("sim_pass", &sim_pass);
   out->Branch("w_reco", &w_reco);
   out->Branch("MC", &MC);
   out->Branch("MC_pz", &MC_pz);
   out->Branch("MC_eavail", &MC_eavail);     // truth available energy (GeV)
   out->Branch("MC_q3", &MC_q3);             // truth 3-momentum transfer (GeV)
+  out->Branch("MC_W", &MC_W);               // truth hadronic invariant mass (GeV)
+  out->Branch("MC_nproton", &MC_nproton);   // truth proton multiplicity (KE>110 MeV)
+  out->Branch("MC_npip", &MC_npip);         // truth charged-pion multiplicity
+  out->Branch("MC_hadangle", &MC_hadangle); // truth hadronic-system angle (rad)
   out->Branch("w_truth", &w_truth);
 
   // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
@@ -609,8 +658,8 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   // For truth-mode entries we dump universe-shifted truth pT/pz as
   // MC_<band>_<idx>/MC_pz_<band>_<idx>; for reco-mode entries we dump
   // universe-shifted reco pT/pz as sim_<band>_<idx>/sim_pz_<band>_<idx>.
-  std::vector<double> uniTruthLatPT, uniTruthLatPZ, uniTruthLatQ3;
-  std::vector<double> uniRecoLatPT,  uniRecoLatPZ,  uniRecoLatQ3;
+  std::vector<double> uniTruthLatPT, uniTruthLatPZ, uniTruthLatQ3, uniTruthLatW;
+  std::vector<double> uniRecoLatPT,  uniRecoLatPZ,  uniRecoLatQ3,  uniRecoLatW;
   size_t nLatTruth = 0, nLatReco = 0;
   const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
                              (errorBands != nullptr);
@@ -627,9 +676,11 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     uniTruthLatPT.assign(uniTruthBranches.size(),  0.0);
     uniTruthLatPZ.assign(uniTruthBranches.size(),  0.0);
     uniTruthLatQ3.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatW.assign(uniTruthBranches.size(),   0.0);
     uniRecoLatPT.assign(uniRecoBranches.size(),    0.0);
     uniRecoLatPZ.assign(uniRecoBranches.size(),    0.0);
     uniRecoLatQ3.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatW.assign(uniRecoBranches.size(),     0.0);
     for(size_t k = 0; k < uniTruthBranches.size(); ++k)
     {
       out->Branch(uniTruthBranches[k].branchName.c_str(), &uniTruthWeights[k]);
@@ -638,6 +689,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
         out->Branch(uniTruthBranches[k].ptBranchName.c_str(), &uniTruthLatPT[k]);
         out->Branch(uniTruthBranches[k].pzBranchName.c_str(), &uniTruthLatPZ[k]);
         out->Branch(uniTruthBranches[k].q3BranchName.c_str(), &uniTruthLatQ3[k]);
+        out->Branch(uniTruthBranches[k].wBranchName.c_str(),  &uniTruthLatW[k]);
         ++nLatTruth;
       }
     }
@@ -649,6 +701,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
         out->Branch(uniRecoBranches[k].ptBranchName.c_str(), &uniRecoLatPT[k]);
         out->Branch(uniRecoBranches[k].pzBranchName.c_str(), &uniRecoLatPZ[k]);
         out->Branch(uniRecoBranches[k].q3BranchName.c_str(), &uniRecoLatQ3[k]);
+        out->Branch(uniRecoBranches[k].wBranchName.c_str(),  &uniRecoLatW[k]);
         ++nLatReco;
       }
     }
@@ -695,6 +748,10 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     MC_pz   = recoCV->GetMuonPzTrue();  // truth p_|| (GeV/c)
     MC_eavail = recoCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
     MC_q3   = recoCV->Getq3True() / 1000.0;            // MeV -> GeV
+    MC_W    = recoCV->GetTrueExperimentersW() / 1000.0; // MeV -> GeV
+    MC_nproton = recoCV->GetNProtonsTrue();
+    MC_npip = recoCV->GetNChargedPionsTrue();
+    MC_hadangle = recoCV->GetHadronAngleTrue();
     w_truth = w_truth_tmp;
 
     // --- reco mode: selection + reco weight + reco value
@@ -708,6 +765,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     sim_pz   = passesReco ? recoCV->GetMuonPz() : -9999.0;
     sim_eavail = passesReco ? recoCV->NewEavail() / 1000.0 : -9999.0;  // MeV -> GeV
     sim_q3   = passesReco ? recoCV->RecoQ3() / 1000.0 : -9999.0;       // MeV -> GeV
+    sim_W    = passesReco ? recoCV->RecoW() / 1000.0 : -9999.0;        // MeV -> GeV
     
     // --- KEEP event only if BOTH of these hold:
     //   1. recoCV.isEfficiencyDenom (CCInclusive2DPhaseSpace evaluated on
@@ -761,6 +819,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
             uniTruthLatPT[k] = u->GetMuonPTTrue();
             uniTruthLatPZ[k] = u->GetMuonPzTrue();
             uniTruthLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
+            uniTruthLatW[k]  = u->GetTrueExperimentersW() / 1000.0;  // MeV -> GeV (truth W)
           }
         }
         // Reco-mode universe weights: CVUniverse::SetTruth(false).
@@ -777,6 +836,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
             uniRecoLatPT[k] = u->GetMuonPT();
             uniRecoLatPZ[k] = u->GetMuonPz();
             uniRecoLatQ3[k] = u->RecoQ3() / 1000.0;  // MeV -> GeV (reco q3)
+            uniRecoLatW[k]  = u->RecoW() / 1000.0;  // MeV -> GeV (reco W)
           }
         }
         // Restore CV state for downstream code that may still consult
@@ -820,6 +880,7 @@ void LoopAndFillUnbinnedMCBackground(
   double sim_background_pz = 0.0;
   double sim_background_eavail = 0.0;
   double sim_background_q3 = 0.0;
+  double sim_background_W = 0.0;
   UChar_t sim_background_pass = true;
   double w_bkg = 1.0;
 
@@ -827,6 +888,7 @@ void LoopAndFillUnbinnedMCBackground(
   out->Branch("sim_background_pz", &sim_background_pz);
   out->Branch("sim_background_eavail", &sim_background_eavail);  // reco Eavail (GeV)
   out->Branch("sim_background_q3", &sim_background_q3);          // reco q3 (GeV)
+  out->Branch("sim_background_W", &sim_background_W);            // reco W (GeV)
   out->Branch("sim_background_pass", &sim_background_pass);
   out->Branch("w_bkg", &w_bkg);
 
@@ -856,6 +918,7 @@ void LoopAndFillUnbinnedMCBackground(
     sim_background_pz = recoCV->GetMuonPz();    // reco p_|| (GeV/c)
     sim_background_eavail = recoCV->NewEavail() / 1000.0;  // MeV -> GeV
     sim_background_q3 = recoCV->RecoQ3() / 1000.0;         // MeV -> GeV
+    sim_background_W = recoCV->RecoW() / 1000.0;           // MeV -> GeV
     w_bkg = cvWeight;
     out->Fill();
   }
@@ -873,11 +936,13 @@ void LoopAndFillUnbinnedData(
   double measured_pz = 0.0;
   double measured_eavail = 0.0;
   double measured_q3 = 0.0;
+  double measured_W = 0.0;
   UChar_t measured_pass = true; // Only filled for selected data events
   out->Branch("measured", &measured);
   out->Branch("measured_pz", &measured_pz);
   out->Branch("measured_eavail", &measured_eavail);  // reco available energy (GeV)
   out->Branch("measured_q3", &measured_q3);          // reco 3-momentum transfer (GeV)
+  out->Branch("measured_W", &measured_W);            // reco hadronic invariant mass (GeV)
   out->Branch("measured_pass", &measured_pass);
 
   // Phase 3 point-cloud dump (gated): per-event reco-cluster vectors for data
@@ -905,6 +970,7 @@ void LoopAndFillUnbinnedData(
     measured_pz = dataCV->GetMuonPz();   // reco p_|| (GeV/c)
     measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
     measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
+    measured_W = dataCV->RecoW() / 1000.0;           // MeV -> GeV
     if(dumpPC)
       dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
     out->Fill();

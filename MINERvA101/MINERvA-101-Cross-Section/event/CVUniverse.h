@@ -216,6 +216,70 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     return sqrt(q2 + q0 * q0);  // MeV
   }
 
+  // RecoW(): reconstructed hadronic invariant mass W, the reco partner of
+  // GetTrueExperimentersW() (below). Uses the SAME calorimetric energy transfer
+  // q0 = <tree>_recoil_E and muon-kinematic Q^2 as RecoQ3, then
+  //   W = sqrt(M^2 + 2 M q0 - Q^2),  M = average nucleon mass (reco has no
+  // struck-nucleon id, unlike the truth W which picks M_n/M_p). Motivated as the
+  // 5th OmniFold axis to localise the open high-E_avail DIS-tail excess
+  // (deep-inelastic = high W). Workstream F (../docs/FUTURE_DIRECTIONS.md item B).
+  virtual double RecoW() const {  // MeV
+    double q0 = GetDouble((MinervaUniverse::GetTreeName() + "_recoil_E").c_str());
+    double E_lep = GetEmu();   // MeV
+    double p_lep = GetPmu();   // MeV
+    double theta = GetThetamu();
+    double mass_sq = E_lep * E_lep - p_lep * p_lep;
+    double Enu = E_lep + q0;
+    double q2 = 2.0 * Enu * (E_lep - p_lep * cos(theta)) - mass_sq;
+    if (q2 < 0.0) q2 = 0.0;
+    double M = M_nucleon;
+    double w2 = M * M + 2.0 * M * q0 - q2;
+    if (w2 < 0.0) w2 = 0.0;
+    return sqrt(w2);  // MeV
+  }
+
+  // ---- Truth hadronic diagnostics for the DIS-tail-excess investigation ----
+  // CV truth-only observables dumped alongside W in the same event-loop re-run so
+  // the expensive 12-playlist pass happens ONCE. No clean RECO estimator exists in
+  // these tuples (reco hadronic info is calorimetric clusters only -- no per-particle
+  // id/momentum), so these are diagnostics for *where the truth excess lives*, not
+  // (yet) OmniFold axes. KE thresholds ~ MINERvA tracking thresholds.
+  virtual int GetNProtonsTrue(double ke_thresh_MeV = 110.0) const {
+    int n = 0; const int np = GetInt("mc_nFSPart");
+    const double mp = 938.272;  // MeV
+    for(int i = 0; i < np; ++i){
+      if(GetVecElemInt("mc_FSPartPDG", i) != 2212) continue;
+      if(GetVecElem("mc_FSPartE", i) - mp > ke_thresh_MeV) ++n;
+    }
+    return n;
+  }
+  virtual int GetNChargedPionsTrue(double ke_thresh_MeV = 0.0) const {
+    int n = 0; const int np = GetInt("mc_nFSPart");
+    const double mpi = 139.57;  // MeV
+    for(int i = 0; i < np; ++i){
+      const int p = GetVecElemInt("mc_FSPartPDG", i);
+      if(p != 211 && p != -211) continue;
+      if(GetVecElem("mc_FSPartE", i) - mpi > ke_thresh_MeV) ++n;
+    }
+    return n;
+  }
+  // Polar angle (rad) of the summed final-state hadron 3-momentum wrt the +z beam
+  // axis (muon + neutrinos dropped). -9999 if there is no hadronic momentum.
+  virtual double GetHadronAngleTrue() const {
+    double sx = 0, sy = 0, sz = 0; const int np = GetInt("mc_nFSPart");
+    for(int i = 0; i < np; ++i){
+      const int p = GetVecElemInt("mc_FSPartPDG", i);
+      if(p == 13 || p == -13) continue;
+      if(p == 12 || p == -12 || p == 14 || p == -14 || p == 16 || p == -16) continue;
+      sx += GetVecElem("mc_FSPartPx", i);
+      sy += GetVecElem("mc_FSPartPy", i);
+      sz += GetVecElem("mc_FSPartPz", i);
+    }
+    const double pmag = sqrt(sx*sx + sy*sy + sz*sz);
+    if(pmag <= 0.0) return -9999.0;
+    return acos(sz / pmag);  // rad
+  }
+
   // ---- Per-hadron point-cloud accessors (Phase 3 / PET track) ----
   // Truth final-state hadrons: the mc_FSPart* arrays with the primary muon
   // (pdg == +-13) and neutrinos dropped. Returns parallel vectors so the

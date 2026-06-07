@@ -1,5 +1,48 @@
 # N-D OmniFold — Run Log (append-only)
 
+## 2026-06-06 — Workstream F: W (hadronic invariant mass) 5th axis + truth diagnostics
+
+Direction B of `../docs/FUTURE_DIRECTIONS.md` — add a physically-motivated 5th axis to
+localise the open +2.2σ high-E_avail DIS-tail excess (DIS = high W). Done while the PET
+higher-iteration retrain ran. User ask: investigate the other candidate observables too so
+the expensive 12-playlist re-run happens ONCE.
+
+**Investigation result:** W is the ONLY candidate with a clean reco estimator (truth
+`GetTrueExperimentersW()` already existed; reco from `GetQ2Reco()` + `GetRecoilE()`).
+Proton multiplicity and hadronic angle are clean in TRUTH (`mc_FSPart*`) but reco-limited —
+the tuples carry only calorimetric clusters (energy+position), no per-particle id/momentum.
+So W becomes a real axis; multiplicity/angle are dumped as TRUTH diagnostics (no reco
+estimator yet → can't be OmniFold axes, but ready for the excess investigation).
+
+**Code:**
+- `CVUniverse.h`: `RecoW()` (mirrors `RecoQ3`: q0=recoil_E, Q² from muon kinematics,
+  W=√(M²+2Mq0−Q²)); truth diagnostics `GetNProtonsTrue()` (KE>110 MeV), `GetNChargedPionsTrue()`,
+  `GetHadronAngleTrue()` (polar angle of summed FS-hadron momentum).
+- `runEventLoopOmniFold.cpp`: full W mirror of q3 across all sites (truth-denom, signal reco,
+  miss-append, background, data, + per-universe lateral shifted `W_truth_/MC_W_/sim_W_` since
+  W is muon+recoil dependent like q3). Truth diagnostics `MC_nproton/MC_npip/MC_hadangle` on
+  the truth-denom cache + signal reco + miss. W/diagnostic branches are unconditional and the
+  shifted-W rides the existing `MNV101_DUMP_UNIVERSES` gate → the EXISTING evloop launchers
+  now produce W with NO new script (one re-run gives the full 5D + systematics inputs).
+- `unfold_nd_omnifold_unbinned.py`: registered axis `W` (`lateral_invariant=False`,
+  edges [0,1.1,1.4,1.8,2.2,3.0,100] GeV). `--axes eavail,q3,W` does the 5D unfold.
+
+**Build:** batch job 54061121 COMPLETED clean (no errors).
+**Smoke (interactive salloc 54061557, 1×1A file, `MNV101_DUMP_UNIVERSES=BeamAngleX`) — PASS:**
+- mc_signal_reco: MC_W median 1.672 GeV (0.18–11.3), sim_W median 1.579 (reco-pass; W²<0→0
+  guard as in reco q3); MC_q3 median 1.767 UNCHANGED (no q3/eavail regression); MC_nproton
+  med 1/max 7, MC_npip med 1/max 11, MC_hadangle med 0.422 rad (∈[0,π]).
+- data measured_W median 1.634; mc_background sim_background_W median 2.403.
+- 16,791 truth-only misses appended, no segfault (W is scalar; q3 vector-rebind hazard N/A).
+- shifted-W lateral branches present (MC_W_/sim_W_BeamAngleX_0/1); truth W shifts only 1.8%
+  under BeamAngleX = correct (truth W from true muon kinematics is beam-angle-invariant, like
+  truth q3). `smoke_W.sh` is the durable smoke driver.
+
+**NEXT (gated on user approval — the expensive step):** re-run the 12-playlist event loop
+(`sbatch_evloop_array_4d_universes_full.sh`, now also dumps W + diagnostics) → hadd → 5D
+unfold `--axes eavail,q3,W` + anchors (W-marginal recovers the frozen 4D) → 5D covariance.
+
+
 ## 2026-06-06 — Workstream E: PET point cloud → REAL absolute cross section (method milestone)
 
 `/plan` decision (user): elevate the validated PET point-cloud from a *shape* cross-check
