@@ -1,6 +1,6 @@
 # N-D OmniFold (q3 4th axis + NN track) — Status
 
-**Last updated**: 2026-06-06. Workstream D = the higher-dimensional extension
+**Last updated**: 2026-06-07. Workstream D = the higher-dimensional extension
 planned in `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`. Two tracks, both **implemented
 this session**; the q3 measurement is **compute-in-flight** (event loop running).
 
@@ -125,6 +125,17 @@ See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-07 entry) for detail.
   0.31-1.48%); dsigma/dW (6 bins) finite/nonneg; injected-W closure median 1.0000 / std 0.0062.
   W is now a validated 5th dimension. W systematic campaign deferred (binary already dumps
   shifted W).
+- **Workstream F — (E_avail, W) excess test: open question 6 is DIS-like.** `excess_eavail_W.py`
+  compared the unfolded 5D data cross section to the GENIE CV (the OmniFold prior, POT-scaled
+  `mc_truth_denom`, pushed through the same `extract_cross_section_nd`) in the (E_avail, W) plane.
+  data/CV=1.135 integrated; dsigma/dEavail ratio rises to **1.22** at high E_avail (top 2 bands =
+  57% of positive excess). High-E_avail (>=0.8) carries **67.2%** of the positive excess, of which
+  **83.2% sits at W>=1.8 GeV**; deep-DIS corner (E_avail>3, W>3) alone = **21.9%**. Secondary
+  low-W (<1.1, QE-like) excess + small Delta-region deficit (data<CV, ratio 0.89-0.96 at W 1.4-1.8).
+  Localizes the central-value excess as a deep-inelastic-tail modeling deficit. Caveat: vs GENIE
+  CV only (single generator, no syst band) -- NuWro/GiBUU in (E_avail, W) is the follow-up to make
+  it a generator-band significance. Propagated to `docs/technote/sec_openquestions.tex` item 6 +
+  `docs/FUTURE_DIRECTIONS.md` Sec B. Artifacts: `products/5d/excess_eavail_W.{root,png}`.
 - **Workstream E — PET hi-iter retrain (niter5/epochs10/4M): DONE.** Full-stats reweight-all
   over 32.85M gen events (mean 1.0101, finite). Absolute **PET/GBDT = 0.8970** (per-axis
   median 6.8-11.6%); the higher-iteration retrain did NOT close the ~10% absolute gap

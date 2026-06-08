@@ -39,16 +39,29 @@ amortize with the read-once bank pattern (see memory `nd_unfold_io_bound_bank`) 
 
 ## B. New physics axis — the high-E_avail DIS-tail excess (open question 6)
 
-> **STATUS 2026-06-06 — IMPLEMENTED (W), pending the re-run.** Chosen observable = **W**
-> (hadronic invariant mass; DIS = high W). Truth `GetTrueExperimentersW()` already existed;
-> added `RecoW()` + wired W fully into `runEventLoopOmniFold.cpp` (mirrors q3, incl. lateral
-> shifted-W) + registered axis `W` in the nd driver (`--axes eavail,q3,W`). An investigation
-> of the alternatives found W is the only candidate with a clean RECO estimator (the tuples
-> carry only calorimetric clusters — no per-particle id/momentum), so proton multiplicity +
-> hadronic angle are dumped as TRUTH diagnostics (`MC_nproton/MC_npip/MC_hadangle`) in the
-> SAME re-run for excess investigation, but cannot be OmniFold axes until a reco estimator is
-> built. Built + smoke-tested (see `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`, Workstream F).
-> The only remaining (expensive) step is the 12-playlist event-loop re-run + 5D unfold + cov.
+> **STATUS 2026-06-07 — DONE (W axis built, unfolded, and excess localized).** Chosen
+> observable = **W** (hadronic invariant mass; DIS = high W). Truth `GetTrueExperimentersW()`
+> already existed; added `RecoW()` + wired W fully into `runEventLoopOmniFold.cpp` (mirrors q3,
+> incl. lateral shifted-W) + registered axis `W` in the nd driver (`--axes eavail,q3,W`). An
+> investigation of the alternatives found W is the only candidate with a clean RECO estimator
+> (the tuples carry only calorimetric clusters — no per-particle id/momentum), so proton
+> multiplicity + hadronic angle are dumped as TRUTH diagnostics (`MC_nproton/MC_npip/
+> MC_hadangle`) in the SAME re-run for excess investigation, but cannot be OmniFold axes until
+> a reco estimator is built. The 12-playlist re-run + 5D unfold is **complete and validated**:
+> `xsec_5d_MEFHC_5iter_lgbm.root`, W-marginal recovers the frozen 4D anchor to **5D/4D=1.0011**,
+> injected-W closure 1.0000±0.0062.
+>
+> **Result (open question 6 is DIS-like).** `excess_eavail_W.py` compared the unfolded
+> $(E_{avail},W)$ cross section to the GENIE CV (the OmniFold prior): the +2.2σ high-E_avail
+> excess is **predominantly high-W**. High-E_avail (≥0.8) carries **67.2%** of the positive
+> excess, of which **83.2% sits at W≥1.8 GeV**; the deep-DIS corner (E_avail>3, W>3) alone is
+> **21.9%**. Plus a thin low-W (QE-like) excess and a small Δ-region deficit. See
+> `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` (2026-06-07) and `docs/technote/sec_openquestions.tex`
+> item 6. **Remaining (the one open extension):** this is vs GENIE CV only — re-run the
+> $(E_{avail},W)$ comparison against NuWro/GiBUU (the `3d-unfolding/genie/` machinery through W)
+> with the full covariance to turn the central-value localization into a generator-band
+> significance. A dedicated W systematic campaign is deferred (the binary already dumps the
+> shifted-W lateral universes, so the per-universe bank exists when needed).
 
 
 
