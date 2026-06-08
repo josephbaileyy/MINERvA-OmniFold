@@ -73,8 +73,8 @@ Technical detail is in \texttt{uq\_statistical\_methods.tex \S sec:rank}.
         whether there is MINERvA precedent for \emph{publishing} a 3D systematic
         covariance from low-recoil samples, and endorsement of this GoF.
 
-  \item \textbf{High-$\Eavail$ DIS-tail excess --- \emph{localized in $W$
-        (deep-inelastic); modelling open}.} Enabling Valencia 2p2h resolves the
+  \item \textbf{High-$\Eavail$ DIS-tail excess --- \emph{localized in $W$,
+        generator- and tune-robust; modelling open}.} Enabling Valencia 2p2h resolves the
         low-recoil excess but leaves a separate $+2.2\sigma$ data excess in the
         $[1.50,3.00)\,\si{GeV}$ bin (\S\ref{sec:3d-2p2h}), where 2p2h does not
         contribute and the (sub-percent) FSI dials of item~2 cannot reach. To test
@@ -91,9 +91,17 @@ Technical detail is in \texttt{uq\_statistical\_methods.tex \S sec:rank}.
         a small $\Delta$-region ($W\simeq1.4$--$\SI{1.8}{GeV}$) deficit are also
         present. So the missing strength behaves like a deep-inelastic-tail
         \emph{modelling} deficit, exactly the hypothesis the $W$ axis was added to
-        test. \emph{Remaining:} this localizes the central-value excess against a
-        single generator (GENIE CV, no systematic band); promoting it to a
-        significance needs the $(\Eavail,W)$ comparison against NuWro/GiBUU with the
-        full covariance, plus the cross-check against other MINERvA inclusive
-        low-recoil samples~\cite{MINERvA:2022incl} and the tune that addresses it.
+        test. We confirm this against a \emph{generator band}: independent
+        spline-normalised $(\Eavail,W)$ predictions from GENIE~CV,
+        GENIE\,$+$\,Valencia~2p2h/MEC, and NuWro all underpredict the
+        high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
+        (data/generator $=1.54,\,1.58,\,1.56$). Crucially, enabling Valencia 2p2h
+        does \emph{not} close it --- it slightly \emph{worsens} the corner
+        ($1.54\to1.58$), since 2p2h populates low $W$ --- and the independent NuWro
+        generator misses it by the same margin; at $W\in[2.2,3.0)\,\si{GeV}$ all
+        three sit \SIrange{23}{25}{\percent} below the data. The DIS-tail excess is
+        therefore \emph{generator- and tune-robust}: no current model reproduces it.
+        \emph{Remaining:} a full $(\Eavail,W)$ covariance to attach a significance to
+        the band, and the cross-check against other MINERvA inclusive low-recoil
+        samples~\cite{MINERvA:2022incl}.
 \end{enumerate}

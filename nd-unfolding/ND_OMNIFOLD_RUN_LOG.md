@@ -577,3 +577,55 @@ localizes the central-value excess, it does NOT re-derive the +2.2σ significanc
 to NuWro/GiBUU in (E_avail, W) (the `3d-unfolding/genie/` machinery run through W) is the
 follow-up to turn this into a generator-band statement. Artifacts:
 `products/5d/excess_eavail_W.{root,png}`.
+
+## 2026-06-08 — Three-campaign closeout (PET 4D cov + (E_avail,W) generator band + rigorous unified throw)
+
+Driven under a `/goal` to complete all three recorded follow-ons in parallel. Branch
+`nd-campaign-genband-petsyst-uthrow` (off main after the 2026-06-07 work landed). Two
+correctness saves this session: (i) `bank_uthrow` stores per-event universe/CV **ratios**
+(median 1.0), NOT absolute weights — caught before it inflated both new covariances ~5×;
+(ii) on interactive nodes LightGBM oversubscribes all cores across parallel procs (≈0 progress)
+— sbatch's cgroup limit (16 cores/task) is required, so all the heavy re-unfolds run via sbatch.
+
+### A. PET 4D combined covariance — `pet_systematics.py` → `products/pet/pet_4d_covariance_combined.root`
+Publication-grade completion of the PET milestone (FUTURE_DIRECTIONS Sec 0). Frozen-reweighter
+path: the trained full-stats PET push weights (`pet_weights_full.npz`) are held fixed and
+re-binned per **reweight** universe (no per-universe re-inference — reweight universes share the
+clouds), with the per-event ratios from `bank_uthrow` (verified bit-identical gen ordering to
+`of_inputs_pc.npz`, w_truth diff = 0 over 32.85M events) and the CV completeness anchored to the
+validated GBDT `hCompletenessND` (median rescale 1.215 → CV total σ 2.80e-38, matches milestone).
+**Budget, median per reported bin (4796 bins):** C_syst **18.3%** (block-sum, 12 GENIE knobs +
+100 flux universes, flux-dominated), C_stat **4.2%** (100 Poisson bootstraps), C_ML **3.3%**
+(CV-vs-hi-iter training spread), **C_total 22.4%** — same syst>stat>ML hierarchy as the GBDT 4D
+budget. Lateral (kinematic-shift) universes are the one approximation (frozen reco clouds).
+
+### B. (E_avail,W) generator band — `3d-unfolding/genie/`, `overlay_eavailW_band.py` → `eavailW_band.{png,root}`
+Turns open question 6 from a single-generator localization into a **generator-band statement**.
+Regenerated GENIE-CV (2M, `gevgen`), GENIE+Valencia-MEC (1.5M), and NuWro (2M; native Enu threaded
+through `nuwro_to_flat.C` for an experimenter's-W branch — verified, NuWro W median 1.92 GeV). New
+`gen_to_xsec_eavailW.py` / `nuwro_to_xsec_eavailW.py` bin each onto the data's (E_avail,W) axis
+(spline / per-event normalisation; W replicates `GetTrueExperimentersW`). **Result: the high-W
+DIS excess is generator- AND tune-robust.** All three underpredict the high-E_avail×high-W corner
+by 54–58% (data/gen = 1.54 CV, **1.58 +MEC**, 1.56 NuWro); enabling Valencia 2p2h does NOT close
+it — it slightly **worsens** the corner (2p2h is low-W) — and NuWro misses it by the same margin.
+At W∈[2.2,3.0) all three sit 23–25% below data (data 7.48e-39 vs 5.62–5.76e-39). GiBUU excluded
+(`FinalEvents.dat` lacks per-event Enu). Propagated to technote item 6 + FUTURE_DIRECTIONS Sec B.
+
+### C. Rigorous unified-throw covariance — `unified_throw_cov.py` → `uq_4d/unified_throw_cov.root`
+The methodologically sound replacement for the artifact-prone ratio-product proxy (2026-06-04):
+compose per-**event** weights `w_cv·∏_b ρ_b^{g_b}` (g_b~N(0,1) over the 12 reweight knobs) + one
+sampled flux universe, then **re-unfold** each throw (OmniFold), and build the covariance directly
+— the construction a true multi-band event-loop universe would produce, for the reweight bands.
+75 throws (sbatch array + interactive, incremental-saved) vs a parallel block-sum (12 knobs + 12
+flux units). **Result: sqrt-trace unified/block = 1.40 (per-bin σ median 1.16).** A jitter null
+(2nd CV unfold) shows the OmniFold run-to-run floor is tiny (sqrt 3.07e-40, ~10× below the
+cross-term), so the **jitter-corrected ratio is still 1.40** — the excess is real, not a seed
+artifact. So the iterative unfolding combines the systematic bands with a significant **positive
+nonlinear cross-term** (97.6% of the block-sum trace) that the block-sum drops: **the block-sum
+underestimates the systematic covariance by ~16% per bin (robust median) to ~40% in sqrt-trace.**
+This refines the prior single-throw probe ("cross-terms at the jitter floor → leaned block-sum
+valid"); the full 12-band joint throw reveals the aggregate nonlinearity the pairwise probe could
+not. Caveat: the median (1.16) is the robust statement; the larger sqrt-trace (1.40) is partly
+driven by a few high-variance bins where Gaussian-tail throws compound several knobs. The unified
+throw is the more conservative, correct object. Artifacts: `uq_4d/unified_throw_cov.root`
+(C_unified, C_blocksum, C_cross), throw + block slabs under `uq_4d/uthrow_slabs/`.

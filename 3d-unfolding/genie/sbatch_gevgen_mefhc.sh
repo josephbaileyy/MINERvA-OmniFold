@@ -24,7 +24,10 @@
 
 set -eo pipefail
 N_PER=${N_PER:-200000}
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# SLURM copies the batch script to a spool dir, so BASH_SOURCE points there, not
+# the genie dir. Anchor on the submit dir (where run_gevgen.sh lives).
+HERE="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+[ -f "$HERE/run_gevgen.sh" ] || HERE="/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie"
 SEED=${SLURM_ARRAY_TASK_ID:-1}
 
 echo "[sbatch gevgen3d] task=$SEED N_PER=$N_PER start=$(date -u '+%F %T UTC')"
