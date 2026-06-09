@@ -123,8 +123,13 @@ def _xsec_for_weights(d, edges, wt_sig, wr_sig, wt_td, iters, seed):
     bins = [np.asarray(e, float) for e in edges]
     unfold_nd, _ = np.histogramdd(sample, bins=bins, weights=w_push * wt_sig[m])
     of_in, _ = np.histogramdd(sample, bins=bins, weights=wt_sig[m])
-    # universe-shifted completeness denominator
-    denom_nd, _ = np.histogramdd(np.column_stack([d["td_pt"], d["td_pz"], d["td_ea"]]),
+    # universe-shifted completeness denominator. Stack the truth-denom coords to match
+    # the binning dimensionality: pt, pz, eavail (, q3 for the 4D bank). Backward
+    # compatible -- td_q3 is only present in bank_uthrow_4d.
+    td_cols = [d["td_pt"], d["td_pz"], d["td_ea"]]
+    if len(edges) >= 4 and "td_q3" in d:
+        td_cols.append(d["td_q3"])
+    denom_nd, _ = np.histogramdd(np.column_stack(td_cols[:len(edges)]),
                                  bins=bins, weights=wt_td)
     completeness = np.zeros_like(of_in)
     nz = denom_nd > 0

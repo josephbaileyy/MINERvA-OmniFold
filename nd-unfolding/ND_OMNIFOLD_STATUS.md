@@ -1,8 +1,28 @@
 # N-D OmniFold (q3 4th axis + NN track) — Status
 
-**Last updated**: 2026-06-07. Workstream D = the higher-dimensional extension
+**Last updated**: 2026-06-09. Workstream D = the higher-dimensional extension
 planned in `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`. Two tracks, both **implemented
 this session**; the q3 measurement is **compute-in-flight** (event loop running).
+
+> **Four-extension campaign (2026-06-09) — ALL 4 DONE.** Full trail in
+> `ND_OMNIFOLD_RUN_LOG.md` "Four-extension campaign RESULTS"; docs in `../docs/FUTURE_DIRECTIONS.md`,
+> technote `sec_3d.tex` (unified throw) + `sec_openquestions.tex` (generator significance).
+> **(14) 4D unified throw — DONE & ADOPTED**: jitter-corrected unified/block sqrt-trace **2.01**
+> (block-sum underestimates the vertical systematic ~2×, concentrated in the high-pT/lowest-Eavail
+> corner — top 1% of bins carry 78% of the trace excess); adopted via PSD-safe fractional-inflation
+> transfer onto the sweep's vertical block → `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root`
+> (published 4D cov sqrt-trace ×1.84, median 13.5→14.9%/bin). **(15) PET lateral — DONE**
+> (`pet_lateral_correction.py`; PET 4D total 22.4→23.02%). **(16) GiBUU 4th generator — DONE**
+> (`gibuu_cv_xsec_eavailW.root`, σ=2.22e-38 = most deficient); dσ/dEavail significance on the
+> adopted cov: GENIE-CV 22.4σ / GENIE+MEC 24.9σ / NuWro 21.9σ / GiBUU 21.2σ over 7 Eavail bins,
+> >15σ in the DIS tail; GiBUU spreads its deficit across the whole tail (data/gen 1.59 at
+> Eavail 0.8–1.5). **(13) (E_avail,W) covariance — DONE**: `eavailW_covariance.py` frozen-reweighter
+> block-sum on the merged 5D `_universes_full` (133 GB), median 14.8%/bin, CV validated to 0.1% vs the
+> frozen 5D product (a reco-pass completeness double-count was caught by that gate and fixed). Full
+> 42-bin (E_avail,W) χ²/ndf: GENIE-CV 412.7/42 (16.7σ), +MEC 390.5/42 (16.1σ), NuWro 1148.4/42
+> (31.2σ), GiBUU 1930.2/42 (>37σ). **High-W DIS corner** (E_avail≥0.4 & W≥1.8 GeV, 12 bins): 9.0/9.2/
+> 10.5/**18.2σ** (GiBUU most deficient) — the excess is a genuine high-W DIS-region feature
+> (`products/5d/eavailW_covariance.root`).
 
 > **Workstream E (2026-06-06) — PET point cloud → REAL absolute cross section
 > (method milestone).** Elevating the PET point-cloud from a *shape* check to a

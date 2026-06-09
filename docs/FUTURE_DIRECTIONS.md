@@ -11,6 +11,32 @@ The user's 2026-06-06 decision: pursue the PET → real absolute measurement at 
 milestone** scope first (full-stats absolute measurement validated by closure + GBDT
 cross-check), and **record** the directions below as future work.
 
+> **2026-06-09 — four follow-on extensions: ALL 4 DONE.** See
+> `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` "Four-extension campaign RESULTS" for the full detail.
+> (14) **Rigorous 4D unified throw — DONE & ADOPTED.** 160-throw covariance on the real
+> (pt,pz,eavail,q3) binning: jitter-corrected unified/block sqrt-trace = **2.01** (block-sum
+> underestimates the vertical systematic ~2×), concentrated in the high-pT/lowest-Eavail corner
+> (top 1% of bins = 78% of the trace excess). Adopted via PSD-safe fractional-inflation transfer
+> onto the sweep's vertical block (`adopt_unified_4d.py` → `uq_universe_4d_covariance_combined_uthrow.root`,
+> published cov sqrt-trace ×1.84, median 13.5→14.9%/bin). (15) **PET lateral band — DONE**
+> (`pet_lateral_correction.py`, engine-independent fractional transfer; PET 4D total 22.4→23.02%) —
+> closes the one PET-budget zero. (16) **GiBUU 4th band generator — DONE** (80-run regen +
+> `gibuu_to_xsec_eavailW.py`, σ=2.22e-38 = most deficient); the dσ/dEavail generator significance
+> now spans all 4 generators on the adopted cov: data misses each at >21σ overall / >15σ in the
+> DIS tail. (13/B) **(E_avail,W) covariance + W-resolved significance — DONE.**
+> The 12 5D `_universes_full` omnifiles merged (133 GB); `eavailW_covariance.py` ran the
+> frozen-reweighter block-sum (one CV unfold + 13 knob + 100 flux universes re-binned, no
+> re-inference) + stat + transferred lateral → `products/5d/eavailW_covariance.root`, median
+> 14.8%/bin. CV validated to 0.1% vs the frozen 5D product — the self-validation gate caught a
+> reco-pass completeness double-count (OmniFold step2 already corrects efficiency in truth space; the
+> driver's completeness numerator is the FULL truth-pass set, `unfold_nd_omnifold_unbinned.py:642`),
+> which had inflated the data ~2×; fixed before trusting any number. Full 42-bin (E_avail,W) χ²/ndf:
+> GENIE-CV 412.7/42 (16.7σ), +MEC 390.5/42 (16.1σ), NuWro 1148.4/42 (31.2σ), GiBUU 1930.2/42 (>37σ).
+> High-W DIS corner (E_avail≥0.4 & W≥1.8 GeV, 12 bins): 9.0/9.2/10.5/**18.2σ** (GiBUU most deficient)
+> — the excess is a genuine high-W DIS-region feature.
+> Residual deferrals: full per-lateral PET re-inference; a true multi-band (lateral) event-loop
+> unified throw; W-resolved (not transferred) laterals.
+
 ---
 
 ## 0. ~~Deferred~~ DONE 2026-06-08 — publication-grade PET 4D combined covariance
@@ -79,11 +105,16 @@ amortize with the read-once bank pattern (see memory `nd_unfold_io_bound_bank`) 
 > (`3d-unfolding/genie/eavailW_band.{png,root}`). **All three** generators underpredict the
 > high-E_avail×high-W corner by 54–58% (data/gen = 1.54, 1.58, 1.56); enabling Valencia 2p2h
 > does NOT close it (slightly worsens it — 2p2h is low-W), and NuWro misses it by the same
-> margin. At W∈[2.2,3.0) all three sit 23–25% below the data. GiBUU was excluded (its
-> `FinalEvents.dat` lacks the per-event neutrino energy that experimenter's W needs).
-> **Remaining:** a full `(E_avail,W)` covariance to attach a significance to the band. A
-> dedicated W systematic campaign is deferred (the binary already dumps the shifted-W lateral
-> universes, so the per-universe bank exists when needed).
+> margin. At W∈[2.2,3.0) all three sit 23–25% below the data. **(Update 2026-06-09: GiBUU is now
+> the 4th band generator** — its `FinalEvents.dat` muon-ID 902 + col-15 Enu make experimenter's W
+> computable; σ=2.22e-38, the most deficient.)
+> **Significance — DONE (2026-06-09):** the full `(E_avail,W)` covariance
+> (`eavailW_covariance.py` → `products/5d/eavailW_covariance.root`, median 14.8%/bin, CV validated to
+> 0.1%) attaches χ²/Nσ to the band. Over the full 42-bin plane the four generators miss the data at
+> 16.7/16.1/31.2/>37σ (GENIE-CV/+MEC/NuWro/GiBUU); in the high-W DIS corner (E_avail≥0.4 & W≥1.8 GeV,
+> 12 bins) at 9.0/9.2/10.5/18.2σ — the excess is W-localised in the DIS region. A dedicated W
+> systematic campaign (per-universe shifted-W laterals, not the transferred 4D laterals used here) is
+> deferred (the binary already dumps the shifted-W lateral universes, so the bank exists when needed).
 
 
 

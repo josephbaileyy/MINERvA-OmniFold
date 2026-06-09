@@ -8,6 +8,7 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{microtype}
+\usepackage{siunitx}
 
 \hypersetup{
   colorlinks=true,
@@ -18,6 +19,7 @@
 
 \newcommand{\pT}{p_{T}}
 \newcommand{\pPar}{p_{\parallel}}
+\newcommand{\Eavail}{E_{\mathrm{avail}}}
 \newcommand{\dpT}{\Delta\pT}
 \newcommand{\xsec}{\mathrm{xs}}
 \newcommand{\ours}{\text{ours}}
@@ -582,12 +584,36 @@ RNGs), so
 \sum_{B}\mathbf{C}^{B}\;+\;\mathbf{C}^{\text{norm}}.
 \label{eq:systblocksum}
 \end{equation}
-Independence is a modelling assumption with one known exception --- the
+Independence is a modelling assumption with one known correlated exception --- the
 Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block
 (\S\ref{sec:rank}), which we have since rederived ($\rho=0.900$,
-\texttt{uq/flux\_muonE\_cross.root}); it is real but rank-preserving, so the
-block-sum above is retained as the headline and the cross term is carried as a
-diagnostic.
+\texttt{uq/flux\_muonE\_cross.root}); it is real but rank-preserving, so for the
+2D budget the block sum above is retained as the headline and the cross term is
+carried as a diagnostic.
+
+There is, however, a second and larger correction that Eq.~\eqref{eq:systblocksum}
+omits: the band sum is linear in the per-band covariances, whereas the OmniFold
+reweighter is \emph{nonlinear} in the input perturbations, so jointly perturbing
+all bands and re-unfolding produces a cross term beyond any pairwise correlation.
+We measure this directly with a \emph{unified throw} --- $N$ joint re-unfolds in
+which every reweightable band and the flux multisim are perturbed simultaneously
+per event ($w_{\CV}\prod_B\rho_B^{g_B}$, $g_B\sim\mathcal N(0,1)$) and the cross
+section re-extracted, with the OmniFold run-to-run jitter floor subtracted via a
+zero-shift null set (\texttt{nd-unfolding/unified\_throw\_cov.py}). On the 4D
+$(\pT,\pPar,\Eavail,q_3)$ analysis binning the jitter-corrected unified covariance
+is $\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$: the block sum
+\emph{underestimates} the vertical systematic by a factor of two, concentrated in
+the high-$\pT$/lowest-$\Eavail$ corner where migration is most off-diagonal (top
+\SI{1}{\percent} of bins carry \SI{78}{\percent} of the trace excess; the per-bin
+median ratio is $1.00$). This supersedes the earlier single-throw superposition
+probe, whose cross terms sat at the jitter floor and so falsely leaned
+block-sum-valid. For the 4D budget we therefore \emph{adopt} the unified result,
+transferring its per-bin fractional inflation
+$g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
+onto the sweep's own vertical block,
+$\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
+($\mathbf{G}=\operatorname{diag}g$), which is positive-semidefinite by construction
+(a direct rank-$N$ swap is not) and never falls below the block baseline.
 
 \paragraph{Legacy formula (forensic only).}
 The pre-2026-05-28 rollup used a CV-centered pair estimator

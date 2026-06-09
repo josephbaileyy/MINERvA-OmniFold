@@ -418,4 +418,30 @@ $q_{3}$-resolved measurement is both most informative and most
 systematics-limited. The combined budget
 $C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ (folding in the 4D bootstrap
 and ML-seedscan blocks, which raise the rank into the $\sim\!250$ range as in 3D)
-is in production.
+is complete (median per-bin \SI{13.5}{\percent}).
+
+\paragraph{Unified-throw cross-check and adoption.} The block sum above adds each
+systematic band's covariance independently; it omits the nonlinear cross-band term
+that arises because the OmniFold reweighter is not linear in the input
+perturbations. We quantify that term with a \emph{unified throw}: 160 joint
+re-unfolds in which all 12 reweightable knob bands and the flux multisim are
+perturbed simultaneously per event ($w_{\mathrm{cv}}\prod_b\rho_b^{g_b}$,
+$g_b\sim\mathcal N(0,1)$) and the cross section re-extracted, with the OmniFold
+run-to-run jitter floor subtracted via a zero-shift null set. On the real
+$(\pT,\pPar,\Eavail,q_{3})$ binning the jitter-corrected unified covariance is
+$\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$ --- i.e.\ the
+block sum \emph{underestimates} the vertical systematic by a factor of two. The
+inflation is concentrated rather than diffuse (the per-bin $\sigma$ median ratio
+is $1.00$, but the top \SI{1}{\percent} of bins by variance-excess carry
+\SI{78}{\percent} of the trace increase), and those bins are the high-$\pT$,
+lowest-$\Eavail$ ($<\SI{0.1}{GeV}$) corner where the migration matrix is most
+off-diagonal and bands couple most strongly. Because 160 throws cannot estimate a
+$4830\times4830$ matrix (a direct swap is badly rank-deficient and non-PSD), we
+\emph{adopt} the result by transferring the throw's per-bin fractional inflation
+$g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
+onto the sweep's own vertical block, $C\to(C-C^{\mathrm{vert}})+G\,C^{\mathrm{vert}}G$,
+which is positive-semidefinite by construction and conservative (never below the
+block baseline). The adopted combined 4D covariance carries
+$\sqrt{\operatorname{tr}}=\SI{3.85e-38}{}$ (median per-bin
+\SIrange{13.5}{14.9}{\percent}). This refines the coarse 3D probe
+($1.16$ median / $1.40$ trace) and is the published 4D systematic object.

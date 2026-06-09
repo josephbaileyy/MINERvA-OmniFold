@@ -150,8 +150,11 @@ From `../LITERATURE_NOTES.md` §C (memory `prepub-methodology-items`):
   this natively; the ensemble mean becomes the headline CV with a defensible spread.
 - **(#3) unbinned goodness-of-fit** — the NN track is the natural venue (a classifier
   two-sample test reuses the same discriminator infrastructure).
-- **(#1) unified-throw vs block-sum covariance** — independent of dimensionality/engine;
-  do it before either phase ships, on the existing 3D result.
+- **(#1) unified-throw vs block-sum covariance** — independent of dimensionality/engine.
+  **DONE (2026-06-09):** measured on the real 4D binning — block-sum *underestimates* the
+  vertical systematic ~2× (jitter-corrected unified/block sqrt-trace 2.01), concentrated in
+  the high-pT/lowest-Eavail corner; adopted as the published 4D systematic via PSD-safe
+  fractional-inflation transfer (`adopt_unified_4d.py`). See `FUTURE_DIRECTIONS.md`.
 
 ---
 
@@ -161,8 +164,11 @@ From `../LITERATURE_NOTES.md` §C (memory `prepub-methodology-items`):
   re-run — the real expense. The unfolding step itself is nearly free.
 - Covariance null-space grows fast with bins. Only **publish** binned projections along
   axes with a physics question attached — q3 first, then a hadronic-system angle / proton
-  multiplicity for the high-E_avail DIS-tail excess (open question 6). Keep the *unbinned*
-  unfold high-dimensional but project for publication.
+  multiplicity for the high-E_avail DIS-tail excess (open question 6). The **W (hadronic
+  invariant mass) axis is DONE** (2026-06-07): added as the 5th OmniFold axis, its W-marginal
+  recovers the frozen 4D to 0.11%, and it localizes open question 6 to the high-W DIS corner;
+  the (E_avail,W) generator significance is the current closeout (`eavailW_covariance.py`).
+  Keep the *unbinned* unfold high-dimensional but project for publication.
 - Don't add a blind axis: it inflates bins and covariance null space without buying
   physics.
 

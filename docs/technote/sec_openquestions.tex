@@ -93,15 +93,40 @@ Technical detail is in \texttt{uq\_statistical\_methods.tex \S sec:rank}.
         \emph{modelling} deficit, exactly the hypothesis the $W$ axis was added to
         test. We confirm this against a \emph{generator band}: independent
         spline-normalised $(\Eavail,W)$ predictions from GENIE~CV,
-        GENIE\,$+$\,Valencia~2p2h/MEC, and NuWro all underpredict the
+        GENIE\,$+$\,Valencia~2p2h/MEC, NuWro, and GiBUU all underpredict the
         high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
         (data/generator $=1.54,\,1.58,\,1.56$). Crucially, enabling Valencia 2p2h
         does \emph{not} close it --- it slightly \emph{worsens} the corner
         ($1.54\to1.58$), since 2p2h populates low $W$ --- and the independent NuWro
-        generator misses it by the same margin; at $W\in[2.2,3.0)\,\si{GeV}$ all
-        three sit \SIrange{23}{25}{\percent} below the data. The DIS-tail excess is
-        therefore \emph{generator- and tune-robust}: no current model reproduces it.
-        \emph{Remaining:} a full $(\Eavail,W)$ covariance to attach a significance to
-        the band, and the cross-check against other MINERvA inclusive low-recoil
-        samples~\cite{MINERvA:2022incl}.
+        and GiBUU generators miss it by the same or a larger margin (GiBUU is the
+        most deficient overall, $\sigma=\SI{2.22e-38}{cm^2/nucleon}$); at
+        $W\in[2.2,3.0)\,\si{GeV}$ all four sit \SIrange{23}{25}{\percent} below the
+        data. The DIS-tail excess is therefore \emph{generator- and tune-robust}: no
+        current model reproduces it. Attaching a number, we marginalise the adopted
+        combined 4D covariance (\S\ref{sec:3d-syst}, unified-throw systematic) to the
+        $\Eavail$ axis and evaluate the full-covariance $\chi^{2}$ of the unfolded
+        data against each generator's $d\sigma/d\Eavail$: all four are incompatible
+        with the data at $>21\sigma$ over the seven $\Eavail$ bins and $>15\sigma$ in
+        the DIS tail ($\Eavail\ge\SI{0.8}{GeV}$) alone --- GENIE~CV $22.4\sigma$,
+        GENIE\,$+$\,MEC $24.9\sigma$, NuWro $21.9\sigma$, GiBUU $21.2\sigma$. GiBUU
+        spreads its deficit across the \emph{entire} DIS tail (data/generator
+        $1.59$ at $\Eavail\in[0.8,1.5)$, $1.36$ at $[1.5,3.0)$) rather than piling
+        it in the deep-DIS catch bin like the GENIE variants, an independent and
+        qualitatively distinct confirmation. Resolving the excess in $W$ confirms
+        and sharpens this picture: we build the full $(\Eavail,W)$ covariance
+        (42 bins; \texttt{C\_syst}$+$\texttt{C\_stat}$+$\texttt{C\_lateral}, median
+        \SI{14.8}{\percent} per bin) by a frozen-reweighter block sum on the 5D
+        \texttt{\_universes\_full} sample, validated by reproducing the frozen 5D
+        marginals to \SI{0.1}{\percent}. Over the full $(\Eavail,W)$ plane the four
+        generators are incompatible with the data at GENIE~CV $16.7\sigma$
+        ($\chi^{2}/\mathrm{ndf}=412.7/42$), GENIE\,$+$\,MEC $16.1\sigma$ ($390.5/42$),
+        NuWro $31.2\sigma$ ($1148.4/42$), and GiBUU $>37\sigma$ ($1930.2/42$). The
+        deficit is \emph{localised in the high-$W$ DIS corner}: restricting to the
+        twelve bins with $\Eavail\ge\SI{0.4}{GeV}$ and $W\ge\SI{1.8}{GeV}$, all four
+        miss the data at $9.0$--$18.2\sigma$ --- GENIE~CV $9.0\sigma$ ($116.9/12$),
+        GENIE\,$+$\,MEC $9.2\sigma$ ($121.1/12$), NuWro $10.5\sigma$ ($149.6/12$), and
+        GiBUU $18.2\sigma$ ($381.1/12$, again the most deficient). The excess is thus
+        a genuinely DIS-region ($W\gtrsim\SI{1.8}{GeV}$) feature, not a low-$W$
+        resonance artefact. \emph{Remaining:} the cross-check against other MINERvA
+        inclusive low-recoil samples~\cite{MINERvA:2022incl}.
 \end{enumerate}

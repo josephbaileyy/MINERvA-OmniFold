@@ -629,3 +629,151 @@ not. Caveat: the median (1.16) is the robust statement; the larger sqrt-trace (1
 driven by a few high-variance bins where Gaussian-tail throws compound several knobs. The unified
 throw is the more conservative, correct object. Artifacts: `uq_4d/unified_throw_cov.root`
 (C_unified, C_blocksum, C_cross), throw + block slabs under `uq_4d/uthrow_slabs/`.
+
+## 2026-06-08 (cont.) — Four-extension campaign LAUNCH (rigorous follow-ons to the closeout)
+
+Under a `/goal` to accomplish all four post-closeout extensions. Deep scoping first established
+that the cheap shortcuts are blocked by data-alignment gaps (the PC bank, the 5D/W omnifile, and
+the stored throw slabs use different event orderings / lack the needed columns), so each extension
+needs either an event-loop/generator re-run or a careful bank reconstruction. New code written this
+session: `dump_td_q3.py`, `assemble_bank_4d.py`, `pet_lateral_correction.py`,
+`3d-unfolding/genie/gibuu_to_xsec_eavailW.py`, launchers `sbatch_td_q3.sh`, `sbatch_assemble_4d.sh`,
+`sbatch_uthrow_{cov,block,combine}_4d.sh`, `sbatch_evloop_array_5d_universes_full.sh`,
+`sbatch_pet_lateral.sh`, `sbatch_gibuu_mirror.sh`; `compare_unified_throw._xsec_for_weights`
+generalized to an N-D truth-denom stack (4D-ready, 3D back-compatible).
+
+### Task 14 — rigorous 4D unified throw (the 3D run was a probe). LAUNCHED, self-contained.
+The 3D unified throw measured block-sum underestimation (1.16 median / 1.40 trace) on a coarse
+(pt,pz,eavail) grid. To adopt it for the published 4D covariance it must live on the real
+(pt,pz,eavail,q3) binning. The throw machinery is binning-agnostic (`d["edges"]` from the bank);
+the only missing column was the truth-DENOMINATOR q3 (`bank_uthrow` is 3D). `dump_td_q3.py` recovers
+it in one I/O pass over the 4D `_universes_full` omnifile's `mc_truth_denom` (collect_truth_denom_nd
+is deterministic -> same ordering; the dump ASSERTS td_w bit-identity to the bank before writing).
+`assemble_bank_4d.py` then builds `bank_uthrow_4d/` (q3 from the PC cloud -- verified max|diff|=0 to
+the bank rows; data 4D from `of_inputs_4d`; weight arrays symlinked, binning-independent). Chain:
+`td_q3`(54189950) -> `asm4d`(54190008) -> 4D throw array + block array -> combine ->
+`uq_4d/unified_throw_cov_4d.root` (C_unified_4d/C_blocksum_4d/C_cross_4d, jitter-null corrected).
+
+### Task 15 — PET lateral band, engine-independent. LAUNCHED (`pet_lat` 54190130).
+The PET 4D budget froze the reco clouds, so lateral (detector-response) universes contributed ZERO
+(its one approximation). `pet_lateral_correction.py` transfers the GBDT-measured lateral FRACTIONAL
+covariance (sum of the 6 detector bands from `uq_universe_4d_covariance_combined.root`) onto the PET
+bins via the shared 10976-cell grid: laterals are pure detector response, ~independent of the GBDT-vs-
+PET density-ratio step, so the fractional response transfers. Adds `C_lateral` + refreshes `C_total`
+in `products/pet/pet_4d_covariance_combined.root`. Full per-lateral PET re-inference (re-dump lateral
+reco clouds + GPU re-inference) recorded as the residual deferral.
+
+### Task 13 — generator-band significance via the (E_avail,W) covariance. GATING STEP LAUNCHED.
+The fully-rigorous (E_avail,W) systematic covariance needs universe weights on the W-carrying events;
+the 5D omnifile is CV-only and the W axis postdates the 4D systematic campaign, so the gating step is
+a 5D `_universes_full` event-loop re-run (`ev5duni` 54190271, MNV101_DUMP_UNIVERSES, ~24h; the binary
+already dumps shifted W). Confirmed NOT needing the multi-day 187-universe re-unfold sweep: the
+completion path is the frozen-reweighter block-sum on the (E_avail,W) marginal (same methodology as
+`pet_systematics`) + stat bootstrap + transferred lateral, then chi^2/significance of data vs each
+generator in the high-W DIS corner (turns "data/gen=1.54" into N-sigma). [Tried + rejected cheaper
+paths: PC-bank<->5D-omnifile scalar matching (orderings differ), and per-event W reconstruction from
+the truncated 12-particle PC cloud (biased: W piles up 2.3x at W<1.1 and 1.9x at W>3).]
+
+### Task 16 — GiBUU as the 4th band generator. LAUNCHED (`gibuu_mir` 54190366 -> regen).
+The real blocker was that FinalEvents.dat was deleted in the cleanup (NOT a missing Enu -- col 15 IS
+enu, the muon is ID 902, so experimenter's W is computable with no format change). `gibuu_mirror`
+rebuilds the cleaned-up buuinput short-path mirror (CVMFS, compute node) then submits the 80-run regen;
+`gibuu_to_xsec_eavailW.py` (written) bins it into (E_avail,W). Lowest-value extension (the band is
+already 3-generator robust at 54-58% corner deficit) -- run as low-priority confirmation.
+
+### Task 15 RESULT (DONE 2026-06-09) — PET lateral band folded in.
+`pet_lateral_correction.py` transferred the GBDT lateral (6 detector bands) FRACTIONAL covariance
+onto all 4796 PET reported bins (full 10976-grid overlap, 0 missing). Sanity: the transferred PET
+lateral median frac (4.03%) matches the source GBDT lateral (4.02%) -- the fractional map preserved
+magnitude. Updated PET 4D budget (median frac/bin): syst 18.31% / stat 4.18% / ML 3.32% / **lateral
+4.03%** -> **TOTAL 23.02%** (was 22.4% with lateral=0). Small, as expected (lateral is subdominant),
+but closes the one zero in the PET budget. `products/pet/pet_4d_covariance_combined.root` now carries
+C_lateral + refreshed C_total. Residual deferral: full per-lateral PET reco-cloud re-inference.
+
+### Task 13 INTERIM RESULT (2026-06-09) — dsigma/dEavail generator significance (the E_avail projection).
+`eavail_generator_significance.py` marginalizes the published 4D combined covariance
+(uq_universe_4d_covariance_combined, syst+stat+ML) to the E_avail axis via the project_marginal
+linear map (C_y = M C_4d M^T, 7x7) and does a full-covariance chi^2 of data vs each generator's
+dsigma/dEavail (the band files' hXSec_eavail). **The unfolded data is incompatible with all three
+generators at high significance:** chi^2/ndf(7) = 725/7 (GENIE-CV), 865/7 (GENIE+MEC), 665/7 (NuWro)
+-> nominal 25-29 sigma. Honest reading (diagnostics in-script): C_y is correlation-dominated
+(condition number 8.7e5, smallest eigenvalue carries the shape direction), so the chi^2 lives in the
+shape directions. Per-bin pulls (data-gen)/sqrt(diag) for GENIE-CV: [1.5, 7.7, 5.3, 0.8, 1.6, 4.5,
+18.6] with data/gen ratio [1.07, 1.35, 1.18, 1.03, 1.05, 1.16, **2.41**]; the deep-DIS catch bin
+[3,100] GeV dominates (18.6 sigma, data/gen 2.4x) BUT the result is robust to dropping it (~10 sigma
+from the resolved bins: 7.7 sigma at 0.1-0.2, 5.3 at 0.2-0.4, 4.5 at 1.5-3.0). NuWro similar (broad,
++pulls at low AND high E_avail). So the open-question-6 excess is now a HIGH-SIGNIFICANCE,
+multi-generator, full-covariance statement on the E_avail projection -- a broad excess strongest in
+the DIS tail. Caveat: the [3,100] catch-bin uncertainty drives the headline number; the W-resolved
+corner significance (which W cell) follows from the 5D `_universes_full` campaign (ev5duni, ~24h) ->
+the (E_avail,W) covariance. GiBUU pending its regen. Run via the interactive allocation (alloc_run.sh)
+because the shared sbatch QoS was backlogged -- per the /goal's short-job guidance.
+
+## 2026-06-09 — Four-extension campaign RESULTS (compute landed)
+
+The four-extension jobs launched the prior session all landed. Results below; tasks 14, 15, 16
+DONE, task 13 W-resolved covariance running (`ew_cov` 54221942 afterok the 5D merge 54221741).
+
+### Task 14 RESULT (DONE) — rigorous 4D unified throw + ADOPTED as the published 4D systematic.
+The 160-throw 4D unified-throw covariance landed on the real (pt,pz,eavail,q3) analysis binning
+(`uq_4d/unified_throw_cov_4d.root`; combine log `uq_4d/uthrow4d_comb_*.out`). Jitter floor is
+negligible (sqrt 2.12e-39). **Jitter-corrected unified/block sqrt-trace = 2.01** (raw 2.01), i.e.
+the block-sum UNDERESTIMATES the vertical systematic by ~2x in trace -- STRONGER than the 3D probe
+(1.40). Per-bin sigma median ratio is 1.004, so the inflation is CONCENTRATED, not broad: the
+variance-excess top 1% of bins carry 78% / top 5% carry 100% of the trace excess, and they are all
+the **high-pT (pt bins 4-5), lowest-E_avail (0.0-0.1 GeV) corner** -- exactly where the migration
+matrix is most off-diagonal and bands couple nonlinearly. p90 sigma ratio 1.60, p99 3.02, max 15.5.
+Physically credible (not numerical pathology).
+
+ADOPTION (`adopt_unified_4d.py` -> `uq_4d/.../uq_universe_4d_covariance_combined_uthrow.root`):
+directly swapping the rank-160 C_unified into the 4830-bin combined breaks PSD (2285 neg eigenvalues,
+most-neg = -1.25% of max), because 160 throws << 4830 bins is a noisy full-matrix estimate. So we
+adopt the throw's per-bin MAGNITUDE (which converges fast and carries the cross-term) by transferring
+its fractional inflation g_i = max(sigma_uni,sigma_blockbank)/sigma_blockbank >= 1 onto the SWEEP's
+own vertical block: C_new = (C_comb - C_vert_sweep) + G C_vert_sweep G -- PSD by construction (verified
+min-eig = -2.3e-16 of max = float roundoff). This is the same engine-independent fractional-transfer
+logic as the task-15 PET lateral. Published 4D combined cov sqrt-trace 2.10e-38 -> 3.85e-38 (x1.84),
+median frac/bin 13.5% -> 14.9%. The conservative max() never under-covers vs the block baseline.
+
+### Task 16 RESULT (DONE) — GiBUU as the 4th band generator.
+All 80 GiBUU FinalEvents.dat regenerated (the cleanup had deleted them; col 15 IS Enu, muon ID 902 ->
+W computable, no format change). `gibuu_to_xsec_eavailW.py` binned 913,859 in-PS events -> (E_avail,W)
+2D xsec, total sigma 2.22e-38 cm^2/nucleon (the MOST deficient generator, matches the validated smoke
+test). `gibuu_cv_xsec_eavailW.root` has hXSec_eavailW (TH2D), hXSec_eavail, hXSec_W.
+
+Re-ran `eavail_generator_significance.py` with all 4 generators AND the now-published unified-throw
+4D cov (`..._uthrow.root`, hCov_combined4d_total_uthrow): the larger rigorous cov reduces the headline
+(GENIE-CV 26.3->22.4 sigma) -- more conservative & honest. dsigma/dEavail: all four miss the data at
+>21 sigma overall, >15 sigma in the DIS tail (E_avail>=0.8). GENIE-CV 532/7=22.4s, GENIE+MEC
+652/7=24.9s, NuWro 513/7=21.9s, **GiBUU 481/7=21.2s**. Notably GiBUU spreads its deficit across the
+WHOLE DIS tail (per-bin pulls 12.3/7.9/12.8 at E_avail 0.8-1.5/1.5-3.0/catch; data/gen 1.59 at
+0.8-1.5, 1.36 at 1.5-3.0, 1.91 catch) rather than piling in the catch bin like the GENIE variants --
+a qualitatively different, generator-robust confirmation of the high-E_avail excess.
+
+### Task 13 (W-resolved) — DONE. (E_avail,W) frozen-reweighter covariance.
+The 12 5D `_universes_full` omnifiles (133 GB) were merged (SetMaxTreeSize, 4.6 min on the
+interactive alloc); `eavailW_covariance.py` does ONE CV 5D unfold for the frozen push weights and a
+frozen-reweighter block-sum over 13 knob + 100 flux universes (re-binning, no re-inference -- same
+methodology as pet_systematics), + diagonal stat + transferred 4D laterals, projects to the
+(E_avail,W) marginal, and computes chi^2 / N-sigma of unfolded data vs all 4 generators'
+hXSec_eavailW, including a high-W DIS corner sub-block (E_avail>=0.4 & W>=1.8 GeV).
+
+**BUG CAUGHT BY THE SELF-VALIDATION GATE (then fixed):** the first full-stats run failed validation
+at max|ratio-1|=1.44 -- the CV (E_avail,W) total came out 5.99e-38 vs the frozen 5D product's
+3.07e-38 (~1.95x over-normalization). Diagnosis: `marginal_ew` was proven correct (it reproduces the
+frozen product's own projection to ratio 1.000/bin), isolating the fault to `xsec_ew()` completeness:
+the numerator was built from RECO-PASS truth events only, but the validated N-D driver
+(unfold_nd_omnifold_unbinned.py:642) uses ALL truth-pass events because OmniFold step2 already does
+the efficiency correction in truth space (so completeness ~1, signal/truth_denom phase-space match).
+The reco restriction double-counted the efficiency -> xsec inflated by ~1/c. Fixed `of_in` to bin the
+full truth-pass set. The re-run validates at max|ratio-1|=0.001 (CV total 3.070e-38). Without the
+gate this would have put the data ~2x above every generator and produced fake >40-sigma significances.
+
+**RESULT** (`products/5d/eavailW_covariance.root`: C_syst, C_stat, C_lateral, C_total, hData_ew):
+C_total sqrt-tr 8.65e-39, **median 14.8%/bin** (MaRES/MvRES/MaCCQE-dominated; flux sqrt-tr 3.44e-39).
+Generator chi^2/ndf over the full 42-bin (E_avail,W) plane: GENIE-CV 412.7/42 (16.7s), GENIE+MEC
+390.5/42 (16.1s), NuWro 1148.4/42 (31.2s), GiBUU 1930.2/42 (>37s). **High-W DIS corner** (12 bins,
+E_avail>=0.4 & W>=1.8 GeV): GENIE-CV 116.9/12 (9.0s), GENIE+MEC 121.1/12 (9.2s), NuWro 149.6/12
+(10.5s), **GiBUU 381.1/12 (18.2s = most deficient)**. The excess is a genuine high-W DIS-region
+feature (W>~1.8 GeV), not a low-W resonance artefact -- open question 6 is fully W-resolved. All four
+extensions (13/14/15/16) now complete.
