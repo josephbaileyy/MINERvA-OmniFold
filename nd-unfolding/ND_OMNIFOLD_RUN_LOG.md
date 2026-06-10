@@ -1,5 +1,49 @@
 # N-D OmniFold — Run Log (append-only)
 
+## 2026-06-09/10 — Full-phase-space (FPS) campaign: pilot GO → CV production + anchor gate PASS → UQ stage launched
+
+Decision memo `FPS_PILOT.md`; numbers in `../VALIDATION_LEDGER.md` (2026-06-09
+delta + 2026-06-10 FPS entries); bugs found → `../KNOWN_ISSUES.md` #1.
+
+- **Infrastructure**: `MNV101_FULL_PHASE_SPACE` env switch in
+  `runEventLoopOmniFold.cpp` (drops the four truth muon kinematic cuts, keeps
+  ZRange/Apothem; reco selection unchanged — the truth-authoritative gate
+  reclassifies former kinematic fakes as signal automatically). N-D driver
+  gained additive `--pt-edges/--pz-edges/--full-phase-space` (θ-gate lift) and
+  `--prior-reweight FILE[:HIST]` (truth-level (pT,pz) prior swap). Extended
+  grid = exact paper edges + catch bins (pT +[4.5,30]; p∥ +[0,0.75] and
+  +[60,120]). The per-pT integrated flux is constant (2e-14% spread) so the
+  catch-bin flux remap is exact — no flux regeneration.
+- **1A pilot** (jobs 54232749/54232780/54233015): anchor PASS (0.65% median),
+  33.6% of fiducial CC truth rate outside the published cuts (22.4% p∥<1.5,
+  11.2% θ>20°), eff<2% cells carry 27.7%, prior swap 3.0%/5.1% median
+  (in/out). → GO with two-tier reporting. En route found the driver
+  no-`--use-weights` pot_scale normalization bug (KNOWN_ISSUES #1; exact
+  global correction applied in `fps_pilot_compare.py`).
+- **CV production** (array 54244119, 12 playlists ~1.6 h each →
+  `runEventLoopOmniFold_5D_FPS_{PL}.root`, 6.6 GB total) + **MEFHC battery**
+  (54244120): hadd, acceptance (matches pilot fractions at 41M weighted
+  truth), FPS unfold tune prior (total **4.502e-38**, +46% vs restricted
+  3.073e-38), bare-GENIE prior, control (= frozen 2D production number
+  exactly), plain closure on the extended grid (recovered/truth 1.0000
+  everywhere), anchor + prior-swap compare. **Anchor gate PASS** (0.9994
+  integral, 0.57% median per cell).
+- **3rd prior**: raw NuWro flat events (work_nuwro_p*, no PS cut at
+  generation) → `build_fps_prior_nuwro.py` NuWro/MnvTune (pT,pz) shape ratio
+  (2M events, 0.06% GENIE rate uncovered, clip [0.2,5]);
+  `sbatch_fps_envelope.sh` (54244178) ran the NuWro-prior unfold +
+  `fps_prior_envelope.py`. **Result (2026-06-10)**: totals tune/NuWro/GENIE =
+  4.502/4.475/4.367e-38 (±1.5%); per-cell half-spread median 2.91% published
+  vs 7.88% (p90 62%, max 81%) extension — the tier-2 prior-dependence band,
+  concentrated in the dead cells as expected.
+- **UQ stage launched on the gate**: FPS `_universes_full` array 54254627
+  (12 × 24 h walls, MNV101_DUMP_UNIVERSES + FPS) → SetMaxTreeSize merge
+  54254628 (~190 GB expected). Next after the merge: matched CV + 187-universe
+  sweep on the extended grid, bootstrap, split-seedscan, **unified throw
+  (mandatory in FPS** — the migration-heavy corner that broke the 4D block sum
+  ×2 is inside the measurement), extension-region hidden-variable closure +
+  coverage.
+
 ## 2026-06-06 — Workstream F: W (hadronic invariant mass) 5th axis + truth diagnostics
 
 Direction B of `../docs/FUTURE_DIRECTIONS.md` — add a physically-motivated 5th axis to

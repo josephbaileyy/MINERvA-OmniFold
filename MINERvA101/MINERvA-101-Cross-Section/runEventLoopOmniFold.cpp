@@ -1083,10 +1083,26 @@ int main(const int argc, const char** argv)
 
   phaseSpace.emplace_back(new truth::ZRange<CVUniverse>("Tracker", minZ, maxZ));
   phaseSpace.emplace_back(new truth::Apothem<CVUniverse>(apothem));
-  phaseSpace.emplace_back(new truth::MuonAngle<CVUniverse>(20.));
-  phaseSpace.emplace_back(new truth::PZMuMin<CVUniverse>(1500.));    // p_|| > 1.5 GeV (MeV units)
-  phaseSpace.emplace_back(new MaxPzMu<CVUniverse>(60000.));          // p_|| < 60 GeV (MeV units)
-  phaseSpace.emplace_back(new MaxPtMu<CVUniverse>(4500.));           // p_T < 4.5 GeV (MeV units)
+  // MNV101_FULL_PHASE_SPACE: drop the muon kinematic truth cuts so the signal
+  // definition is "nu_mu CC in the tracker fiducial" with NO muon acceptance
+  // restriction. The reco selection (incl. MINOS match + reco MaxMuonAngle) is
+  // unchanged -- truth events outside the measurable acceptance enter as
+  // OmniFold misses and the truth-authoritative gate reclassifies former
+  // out-of-phase-space "fakes" as signal automatically.
+  const bool fullPhaseSpace = (getenv("MNV101_FULL_PHASE_SPACE") != nullptr);
+  if(fullPhaseSpace)
+  {
+    std::cout << "[FPS] MNV101_FULL_PHASE_SPACE set: truth muon kinematic cuts "
+              << "(theta<20deg, 1.5<p_||<60 GeV, p_T<4.5 GeV) are OFF; "
+              << "fiducial ZRange/Apothem kept.\n";
+  }
+  else
+  {
+    phaseSpace.emplace_back(new truth::MuonAngle<CVUniverse>(20.));
+    phaseSpace.emplace_back(new truth::PZMuMin<CVUniverse>(1500.));    // p_|| > 1.5 GeV (MeV units)
+    phaseSpace.emplace_back(new MaxPzMu<CVUniverse>(60000.));          // p_|| < 60 GeV (MeV units)
+    phaseSpace.emplace_back(new MaxPtMu<CVUniverse>(4500.));           // p_T < 4.5 GeV (MeV units)
+  }
 
   PlotUtils::Cutter<CVUniverse, MichelEvent> mycuts(std::move(preCuts), std::move(sidebands), std::move(signalDefinition), std::move(phaseSpace));
 

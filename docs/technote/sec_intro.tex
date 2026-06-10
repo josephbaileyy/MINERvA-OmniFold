@@ -25,7 +25,7 @@ RooUnfold~\cite{Adye:2011gm}).
   \item \textbf{Natural path to higher dimensions.} Adding observables is adding
         input features, not multiplying response-matrix bins --- this is the
         enabling property for the available-energy extension
-        (\S\ref{sec:openquestions}) that has no practical IBU analogue.
+        (\S\ref{sec:3d}) that has no practical IBU analogue.
   \item \textbf{Different regularisation.} OmniFold's regulariser is the
         iteration count and the model capacity of the gradient-boosted decision
         trees (GBDTs), not the IBU prior-iteration coupling. Comparing the two
@@ -36,9 +36,15 @@ RooUnfold~\cite{Adye:2011gm}).
 \paragraph{Goal and scope.}
 The goal is a faithful, fully uncertainty-quantified reproduction of the
 published 2D cross section as the demonstrator for unbinned OmniFold on MINERvA
-data, followed by the available-energy higher-dimensional extension. This note
-covers the method (\S\ref{sec:method}), the 2D result and its comparison to the
-published data and to GENIE MINERvA Tune v1 (\S\ref{sec:results}), the
-uncertainty budget (\S\ref{sec:systematics}), the validation suite
-(\S\ref{sec:validation}), and the resolution of the open questions raised
-during review (\S\ref{sec:openquestions}).
+data, followed by its higher-dimensional extensions. This note covers the
+experiment and samples (\S\ref{sec:experiment}), the method and pipeline
+(\S\ref{sec:method}), the 2D result and its comparison to the published data
+and to GENIE MINERvA Tune v1 (\S\ref{sec:results}), the uncertainty budget
+(\S\ref{sec:systematics}), the validation suite (\S\ref{sec:validation}), the
+three- and four-observable extensions with available energy and $q_{3}$
+(\S\ref{sec:3d}), the $(\Eavail,W)$ study that localises the remaining
+deep-inelastic-tail excess (\S\ref{sec:eavailw}), the point-cloud transformer
+track (\S\ref{sec:pet}), and a summary with the planned full-phase-space
+extension (\S\ref{sec:summary}). Appendix~\ref{sec:openquestions} records the
+resolution of the questions raised during internal review;
+Appendix~\ref{app:statmethods} is the complete statistical methodology.

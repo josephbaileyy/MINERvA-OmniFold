@@ -46,6 +46,23 @@ Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
   \label{fig:pull}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices.png}
+  \caption{Bin-by-bin comparison to the published measurement: the unfolded
+  cross section (points) overlaid on the published data (histogram) in slices
+  of $\pT$ versus $\pPar$.}
+  \label{fig:ptslices}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices.png}
+  \caption{Same comparison as Fig.~\ref{fig:ptslices}, sliced in $\pPar$
+  versus $\pT$.}
+  \label{fig:pzslices}
+\end{figure}
+
 \subsection{Anatomy of the $\chi^{2}=3.66$ tension}
 \label{sec:results-tension}
 The central values agree (pull RMS $0.598$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
@@ -61,7 +78,9 @@ the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
 dominate. A $\sim1$-unit methodological band comes from the GBDT estimator
 (exact-GBT $3.66$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
 negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
-\texttt{uq\_statistical\_methods.tex \S sec:tension}.
+App.~\ref{sec:tension}. The eigenmode-localisation maps and the additional
+model-comparison ratio maps are shown in
+Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
 
 \begin{figure}[H]
   \centering
@@ -70,6 +89,15 @@ negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
   \caption{Tension anatomy: eigenvalue spectrum with cumulative $\chi^{2}$ (left)
   and the per-bin $\chi^{2}$-contribution map (right).}
   \label{fig:tension}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{tension_mode_maps.png}
+  \caption{Bin-space maps of the leading tension-carrying eigenmodes of the
+  published covariance: the $5$--$6\sigma$ eigen-pulls live on the low-$\pT$
+  cross-section-peak ridge where the flux and muon-energy bands dominate.}
+  \label{fig:tensionmodes}
 \end{figure}
 
 \subsection{Comparison to GENIE MINERvA Tune v1}
@@ -95,4 +123,13 @@ exploit for the 3D extension (\S\ref{sec:3d}).
   \caption{Our result (dashed) on top of the published data (black); MINERvA
   Tune v1 (orange) dips below in the peak.}
   \label{fig:model}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps.png}
+  \caption{Bin-by-bin ratio maps on the $(\pT,\pPar)$ grid: ours/paper (left)
+  and Tune~v1/paper (right). The tune's deficit is concentrated in the
+  low-$\pT$ peak; our result is flat near unity.}
+  \label{fig:modelmaps}
 \end{figure}

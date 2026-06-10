@@ -1,165 +1,48 @@
-# N-D OmniFold (q3 4th axis + NN track) — Status
+# N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-06-09. Workstream D = the higher-dimensional extension
-planned in `../docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`. Two tracks, both **implemented
-this session**; the q3 measurement is **compute-in-flight** (event loop running).
+**Last updated**: 2026-06-09 (doc slimmed to dashboard form per the canonical-home
+convention in `../AGENTS.md`; all narrative detail is in `ND_OMNIFOLD_RUN_LOG.md`,
+all verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
+open items in `../docs/OPEN_ITEMS.md`).
 
-> **Four-extension campaign (2026-06-09) — ALL 4 DONE.** Full trail in
-> `ND_OMNIFOLD_RUN_LOG.md` "Four-extension campaign RESULTS"; docs in `../docs/FUTURE_DIRECTIONS.md`,
-> technote `sec_3d.tex` (unified throw) + `sec_openquestions.tex` (generator significance).
-> **(14) 4D unified throw — DONE & ADOPTED**: jitter-corrected unified/block sqrt-trace **2.01**
-> (block-sum underestimates the vertical systematic ~2×, concentrated in the high-pT/lowest-Eavail
-> corner — top 1% of bins carry 78% of the trace excess); adopted via PSD-safe fractional-inflation
-> transfer onto the sweep's vertical block → `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root`
-> (published 4D cov sqrt-trace ×1.84, median 13.5→14.9%/bin). **(15) PET lateral — DONE**
-> (`pet_lateral_correction.py`; PET 4D total 22.4→23.02%). **(16) GiBUU 4th generator — DONE**
-> (`gibuu_cv_xsec_eavailW.root`, σ=2.22e-38 = most deficient); dσ/dEavail significance on the
-> adopted cov: GENIE-CV 22.4σ / GENIE+MEC 24.9σ / NuWro 21.9σ / GiBUU 21.2σ over 7 Eavail bins,
-> >15σ in the DIS tail; GiBUU spreads its deficit across the whole tail (data/gen 1.59 at
-> Eavail 0.8–1.5). **(13) (E_avail,W) covariance — DONE**: `eavailW_covariance.py` frozen-reweighter
-> block-sum on the merged 5D `_universes_full` (133 GB), median 14.8%/bin, CV validated to 0.1% vs the
-> frozen 5D product (a reco-pass completeness double-count was caught by that gate and fixed). Full
-> 42-bin (E_avail,W) χ²/ndf: GENIE-CV 412.7/42 (16.7σ), +MEC 390.5/42 (16.1σ), NuWro 1148.4/42
-> (31.2σ), GiBUU 1930.2/42 (>37σ). **High-W DIS corner** (E_avail≥0.4 & W≥1.8 GeV, 12 bins): 9.0/9.2/
-> 10.5/**18.2σ** (GiBUU most deficient) — the excess is a genuine high-W DIS-region feature
-> (`products/5d/eavailW_covariance.root`).
+## Frozen results (one line each; numbers ledger-verified)
 
-> **Workstream E (2026-06-06) — PET point cloud → REAL absolute cross section
-> (method milestone).** Elevating the PET point-cloud from a *shape* check to a
-> full-statistics, absolutely-normalized cross section. Code complete + plumbing-validated
-> (absolute path gives PET/GBDT = 2M/32.8M on the subsample, as expected); full-stats GPU
-> chain submitted (jobs 54050740→741 main, 54050742→743 closure). Gates: reweight mean≈1,
-> closure recovered/truth≈1, absolute PET/GBDT total≈1 within the ML band. Full PET
-> systematics deferred — see `../docs/FUTURE_DIRECTIONS.md`. Detail in the run log.
->
-> **RESULTS — DONE (2026-06-06, jobs COMPLETED).** Gate 1 reweight mean 1.0277 / 0.9884
-> finite (PASS). Gate 3 closure recovered/truth **0.9884**, per-axis ~1.1% (PASS — absolute
-> machinery unbiased). Gate 2 absolute **PET/GBDT total 0.9117**, per-axis 6.5–9.9%; the ~9%
-> gap is training-config (PET on 2M/32.8M, niter=2), not a bug (closure exact to ~1%).
-> Products: `xsec_4d_PET_absolute.root`, `xsec_4d_PET_closure.root`, `pet_vs_gbdt_absolute.png`.
-> The point cloud now yields a real, absolutely-normalized, full-stats cross section.
-> Optional next tuning: more PET iters/epochs/events to close the ~9% GBDT gap.
+| Result | Headline | Artifact |
+|---|---|---|
+| 4D xsec d⁴σ/(dpT dp∥ dEavail dq3) | σ=3.066e-38, 4D/3D anchor 0.9960, closure PASS | `products/4d/xsec_4d_MEFHC_5iter_lgbm.root` |
+| 4D combined covariance (ADOPTED unified throw) | block-sum underestimates ×2.01 → adopted; √tr 3.85e-38, median 13.5–14.9%/bin | `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root` |
+| 5D xsec (+W) | 5D/4D anchor 1.0011, injected-W closure PASS | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` |
+| (E_avail,W) covariance + significance | median 14.8%/bin; high-W DIS corner missed 9.0/9.2/10.5/18.2σ (GENIE/+MEC/NuWro/GiBUU) | `products/5d/eavailW_covariance.root` |
+| dσ/dEavail generator significance | all four generators >21σ overall, >15σ in DIS tail | `3d-unfolding/genie/` + adopted 4D cov |
+| PET absolute milestone | closure 0.9884; PET/GBDT 0.9117 (training-config gap); combined budget 23.0% | `products/pet/` |
+| NN cross-check | keras-MLP/GBDT total ratio 1.0078 | `omnifold_nn_core.py` |
+| Unbinned GoF (C2ST) | prior z=33 → unfolded z=1.4, p=0.17 PASS | `unbinned_gof.py` |
+| ML split-seedscan | split band 1.24× pure-seed; combined +0.04% | `uq_cov_mlsplit_3d.root` |
+| Reco-level control + migration plots | data/MC 1.12 uniform; diag purity ~0.6/axis | `products/5d/control_plots.png`, `migration_resolution.png` |
 
-Companion docs: `ND_OMNIFOLD_RUN_LOG.md` (chronology). Shared invariants
-(POT / nucleons / phase-space gate / flux) live in the 2D triad
-(`../2d-unfolding/2D_OMNIFOLD_REFERENCE.md`) — the N-D driver `import`s the 2D
-helpers, exactly as the 3D driver does.
+## In flight — FPS campaign (decision memo `FPS_PILOT.md`: GO, two-tier reporting)
 
----
+- 1A pilot: anchor PASS (0.65% median), 33.6% of rate outside published cuts,
+  prior swap 3.0%/5.1% median (in/out of acceptance).
+- **MEFHC battery DONE (2026-06-10, 54244120): anchor gate PASS** (integral
+  0.9994, 0.57% median/cell; control = frozen 2D exactly). FPS total
+  **σ = 4.502e-38 cm²/nucleon** (+46% vs restricted); closure exact on the
+  extended grid. Numbers in `../VALIDATION_LEDGER.md`.
+- **3-prior envelope DONE (54244178)**: totals spread ±1.5%; per-cell
+  half-spread median 2.9% (published) vs 7.9% / p90 62% (extension) — the
+  tier-2 band. `products/5d/fps_prior_envelope_MEFHC.png`.
+- **UQ stage RUNNING**: `_universes_full` array 54254627 (9/12 done) →
+  SetMaxTreeSize merge 54254628 (~190 GB; unified throw mandatory in FPS).
+  Then: matched CV + 187-universe sweep, bootstrap, split-seedscan, unified
+  throw, extension-region closure/coverage.
 
-## What is implemented (code complete + unit-tested)
+## Next
 
-- **`xsec_nd.py`** — N-D cross-section extraction / projection
-  (`extract_cross_section_nd`, `project_marginal(drop_axes)`, `project_axis(i)`,
-  `total_xsec`). Generalizes `../3d-unfolding/xsec_3d.py` to any axis count via
-  `np.histogramdd` + per-axis `np.diff` broadcasting. **Self-tests pass**, incl. a
-  test that it reproduces the frozen `xsec_3d.py` to <1e-12 and the 4D
-  q3-marginal→3D Jacobian identity to 4e-16. The frozen 3D module is left
-  untouched.
-- **`unfold_nd_omnifold_unbinned.py`** — the **axis-list driver**. The first two
-  axes are always (pt, pz) (fiducial gate + per-pt flux, structural); every further
-  axis is an entry in the `EXTRA_AXES` registry (`eavail`, `q3`) giving its
-  truth/reco/data/bkg branches + edges. `--axes eavail,q3` does the 4D unfold;
-  `--axes eavail` reproduces 3D. Generic multi-axis readers, `np.histogramdd`
-  binning, completeness, extraction (xsec_nd), 1D projections, and the
-  marginal anchors (drop trailing axes → lower-D; the 2D marginal is written as
-  `hXSec2D` for the paper anchor). Closure with an injected bump on any axis
-  (`--closure-reweight-axis q3`). Validation: an `--axes eavail` run reproduces the
-  frozen 3D result (the only difference from the 3D driver is the generalization).
-- **C++ q3 (Workstream D event loop)** — `CVUniverse::RecoQ3()` (calorimetric
-  low-recoil reconstruction, MAT `LowRecoilFunctions::GetLowRecoilQ3` lineage:
-  q0 = `<tree>_recoil_E`, Q² from muon kinematics, q3 = √(Q²+q0²)) and truth
-  `Getq3True()` (canonical MAT, mc_Q2 + true muon). Dumped as
-  `sim_q3 / MC_q3 / measured_q3 / sim_background_q3` alongside the eavail branches
-  in `runEventLoopOmniFold.cpp`. **Built + smoke-tested**: truth q3 clean
-  (0.05–85 GeV, median 1.77); reco q3 median sane with the expected calorimetric
-  tails that land in the catch-all top q3 bin (same pattern as reco Eavail).
-- **NN / point-cloud track (Phase 2)** — `../omnifold_nn/` is the vendored
-  `ViniciusMikuni/omnifold` (PET + MLP, keras/TF, the only linked repo with a point
-  cloud architecture). `omnifold_nn_core.py` is a **ROOT-free** NN engine: a keras
-  MLP (from the vendored `net.py`, weighted sigmoid-BCE) behind a sklearn
-  fit/predict_proba with input standardization, plus an estimator-agnostic copy of
-  the validated two-step loop. `omnifold.py` gains an **`estimator="nn"`** branch
-  delegating to it (lazy TF import, so the ROOT env still loads).
+1. FPS MEFHC anchor gate → launch FPS `_universes_full` UQ stage.
+2. FPS extension-region validation: hidden-variable closure + coverage toys.
+3. Open/deferred items: `../docs/OPEN_ITEMS.md` (Ascencio gated data, NEUT,
+   PET per-lateral, W-resolved laterals, multi-band unified throw).
 
-## Results (2026-06-04) — both phases DONE
-
-**Phase 1 (q3 4D) — VALIDATED.** `xsec_4d_MEFHC_5iter_lgbm.root`,
-d⁴σ/(dp_T dp_‖ dE_avail dq3): completeness 1.0000, total σ 3.066e-38; Jacobian
-identity exact (2D-marginal == 4D integral); 4D recovers frozen 3D to <2% median
-(pt 0.38%, pz 0.64%, Eavail 1.68%); 2D-marginal anchors the paper (4D/3D=0.9960);
-injected-q3 closure passes (ratios track the 1.0142 bump); new dσ/dq3 produced.
-**4D combined budget LANDED (2026-06-06):**
-`uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root` — syst (187 universes
-+ 1.4% norm) √tr 2.093e-38, rank 142, median 13.37%; + stat (100 boot, √tr 1.26e-39)
-+ ML (24 split, √tr 1.06e-39) → COMBINED √tr 2.100e-38, rank 264/4830, median 13.47%.
-Stat+ML are negligible vs syst (Models/2p2h- then Hadronic-dominated); adding them moves
-the median 13.37→13.47%, so they do not change any conclusion.
-
-**Phase 2 (NN) — VALIDATED.** keras-MLP OmniFold reproduces GBDT within the ML band:
-total ratio **1.0078**, projections agree to 0.66%/1.20%/1.36% median. Two NN bugs
-found + fixed en route (class-balance bias; unshuffled single-class `validation_split`)
-— now documented in `omnifold_nn_core.py`. Engine green-lit for the point-cloud phase.
-
-(Full SLURM trail in `ND_OMNIFOLD_RUN_LOG.md`: event loop 53905768, 4D unfold
-53925395, NN 53928526; first runs 53906839/53906748 surfaced the THnSparse + NN bugs.)
-
-## Follow-on campaign (2026-06-04) — all six "next steps" actioned
-
-See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-04 entry) for full detail. Summary:
-
-- **#2 Ascencio low-q3 overlay — DONE (code).** `compare_ascencio_q3.py` produces our
-  d²σ/(dq3 dEavail) + dσ/dq3 on Ascencio's binning; bin-identical χ² verified with a
-  synthetic drop-in. The 2110.13372 data file is Cloudflare/member-gated (not fetchable
-  in-session) — drop it in to finish the overlay (format in the script header).
-- **#5 Unbinned GoF — DONE (job 53945834).** `unbinned_gof.py` C2ST: prior data/MC
-  separable (z=33), unfolded indistinguishable (z=1.4, p=0.17). Sensitive + PASSES.
-- **#4 Train/test-split seedscan — DONE (array 53946279).** `omnifold_loop` train/test
-  split; ensemble-mean CV matches frozen CV; ML-split band 1.24× the pure-seed ML band
-  (the split adds real ML variance). `uq_cov_mlsplit_3d.root`.
-- **#6 PET point-cloud rerun — DONE; shape-only cross-check available.**
-  The stale `ExtraEnergyClusters_*` point-cloud chain was replaced by a rerun using
-  the corrected reco-cluster source (`cluster_energy`, `cluster_pos`, `cluster_z`,
-  excluding `cluster_isMuontrack`). The refreshed CPU chain rebuilt
-  `runEventLoopOmniFold_PC_MEFHC.root` and `of_inputs_pc.npz`; PET training
-  job 54033990 and comparison job 54033991 both completed successfully. The
-  regenerated `pet_vs_gbdt.png` gives PET-vs-GBDT area-normalized shape median
-  differences of 3.86% (pT), 2.36% (pz), 2.63% (Eavail), and 2.33% (q3).
-  Treat this as a method/shape cross-check, not an absolute cross-section result,
-  because the PET run uses a 2M-event subsample.
-- **#1 Unified-throw cross-check — IN FLIGHT (job 53946996).** `compare_unified_throw.py`
-  superposition test (cross term vs block sum) on the 120 GB 3D universes omnifile.
-- **#3 q3 systematic campaign — LAUNCHED (chained).** C++ shifted-q3 for lateral
-  universes (built + verified: reco q3 shifts 100% under BeamAngleX), nd `--universe` +
-  q3 swap (`lateral_invariant` flag), `analyze_universes_nd.py`. Pipeline:
-  evloop 53945111 → hadd 53947173 → validate 53947729 → sweep 53947731 → cov 53947732,
-  outputs under `uq_4d/`.
-
-## 2026-06-07 — W 5D unfold + PET hi-iter retrain (both validated)
-
-See `ND_OMNIFOLD_RUN_LOG.md` (2026-06-07 entry) for detail.
-
-- **Workstream F — W as 5th axis: 5D unfold DONE + PASS.** 12-playlist 5D event loop
-  (evloop5d 54062311) -> hadd -> `--axes eavail,q3,W` unfold (`xsec_5d_MEFHC_5iter_lgbm.root`).
-  Total sigma 3.07e-38; W-marginal -> frozen 4D anchor **5D/4D=1.0011** (per-axis median
-  0.31-1.48%); dsigma/dW (6 bins) finite/nonneg; injected-W closure median 1.0000 / std 0.0062.
-  W is now a validated 5th dimension. W systematic campaign deferred (binary already dumps
-  shifted W).
-- **Workstream F — (E_avail, W) excess test: open question 6 is DIS-like.** `excess_eavail_W.py`
-  compared the unfolded 5D data cross section to the GENIE CV (the OmniFold prior, POT-scaled
-  `mc_truth_denom`, pushed through the same `extract_cross_section_nd`) in the (E_avail, W) plane.
-  data/CV=1.135 integrated; dsigma/dEavail ratio rises to **1.22** at high E_avail (top 2 bands =
-  57% of positive excess). High-E_avail (>=0.8) carries **67.2%** of the positive excess, of which
-  **83.2% sits at W>=1.8 GeV**; deep-DIS corner (E_avail>3, W>3) alone = **21.9%**. Secondary
-  low-W (<1.1, QE-like) excess + small Delta-region deficit (data<CV, ratio 0.89-0.96 at W 1.4-1.8).
-  Localizes the central-value excess as a deep-inelastic-tail modeling deficit. Caveat: vs GENIE
-  CV only (single generator, no syst band) -- NuWro/GiBUU in (E_avail, W) is the follow-up to make
-  it a generator-band significance. Propagated to `docs/technote/sec_openquestions.tex` item 6 +
-  `docs/FUTURE_DIRECTIONS.md` Sec B. Artifacts: `products/5d/excess_eavail_W.{root,png}`.
-- **Workstream E — PET hi-iter retrain (niter5/epochs10/4M): DONE.** Full-stats reweight-all
-  over 32.85M gen events (mean 1.0101, finite). Absolute **PET/GBDT = 0.8970** (per-axis
-  median 6.8-11.6%); the higher-iteration retrain did NOT close the ~10% absolute gap
-  (flat vs 0.9117 at 2M) -> training-config/architecture difference, not a machinery bug
-  (absolute path validated by clean milestone closure). PET-specific UQ campaign deferred
-  (docs/FUTURE_DIRECTIONS.md). Artifacts: `xsec_4d_PET_absolute_hi.root`,
-  `pet_vs_gbdt_absolute_hi.png`, `pet_weights_full_hi.npz`.
+Companion docs: `ND_OMNIFOLD_RUN_LOG.md` (chronology; all campaign narratives
+2026-06-03 → present). Shared invariants: `../2d-unfolding/2D_OMNIFOLD_REFERENCE.md`
+(the N-D driver imports the 2D helpers).

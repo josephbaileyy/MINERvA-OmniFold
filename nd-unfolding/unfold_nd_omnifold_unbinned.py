@@ -449,6 +449,21 @@ def main():
                          "with --universe Flux:IDX to divide by that universe's flux.")
     ap.add_argument("--edges", default=None,
                     help="override edges for one axis: 'axis:e0,e1,...' (repeatable, ';'-sep)")
+    ap.add_argument("--pt-edges", default=None,
+                    help="override the pT edges (comma list, GeV/c). FPS pilot use; "
+                         "default = the frozen paper binning")
+    ap.add_argument("--pz-edges", default=None,
+                    help="override the p|| edges (comma list, GeV/c)")
+    ap.add_argument("--full-phase-space", action="store_true",
+                    help="FPS mode: lift the theta_mu<20deg truth gate (the rectangle "
+                         "is set by --pt/--pz-edges). Use ONLY with an omnifile dumped "
+                         "under MNV101_FULL_PHASE_SPACE, so the python truth gate "
+                         "matches the event loop's mc_truth_denom selection.")
+    ap.add_argument("--prior-reweight", default=None, metavar="FILE[:HIST]",
+                    help="multiply the MC truth/reco weights by a (pT,pz) ratio looked "
+                         "up at TRUTH kinematics (TH2D, default name hPriorRatio): a "
+                         "truth-level prior swap for the FPS prior-dependence envelope. "
+                         "Requires --use-weights.")
     ap.add_argument("--out", default="xsec_nd.root")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--closure", action="store_true",
@@ -496,8 +511,16 @@ def main():
                 if ax["name"] == nm:
                     ax["edges"] = vals
 
-    pt_edges = u2d.PT_EDGES
-    pz_edges = u2d.PZ_EDGES
+    pt_edges = ([float(x) for x in args.pt_edges.split(",")] if args.pt_edges
+                else u2d.PT_EDGES)
+    pz_edges = ([float(x) for x in args.pz_edges.split(",")] if args.pz_edges
+                else u2d.PZ_EDGES)
+    if args.full_phase_space:
+        # lift the theta_mu<20deg truth gate inside u2d.in_truth_phase_space so the
+        # python truth-pass matches the MNV101_FULL_PHASE_SPACE event-loop denominator
+        u2d.MAX_MUON_THETA_RAD = math.pi
+        print("[INFO] FULL PHASE SPACE: theta_mu truth gate lifted "
+              "(rectangle from --pt/--pz-edges)")
     edges = [pt_edges, pz_edges] + [ax["edges"] for ax in extras]
     axis_labels = ["p_{T} (GeV/c)", "p_{||} (GeV/c)"] + [ax["label"] for ax in extras]
     pt_lo, pt_hi = pt_edges[0], pt_edges[-1]
@@ -525,7 +548,21 @@ def main():
     data_pot, mc_pot, pot_scale = u2d.get_pot_scales(f_in)
     print(f"[INFO] POT: data={data_pot:.4g} mc={mc_pot:.4g} scale={pot_scale:.6g}")
     n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
-    flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
+    if args.pt_edges:
+        # Extended pT binning: the flux histogram is on the frozen paper edges, but
+        # the integrated flux is pT-independent (constant per bin); map each new bin
+        # to the flux bin containing its centre, falling back to the last flux bin
+        # beyond the histogram range (exact for a constant flux, which it is).
+        flux_ref, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, u2d.PT_EDGES)
+        ref_e = np.asarray(u2d.PT_EDGES, float)
+        ctrs = 0.5 * (np.asarray(pt_edges[:-1]) + np.asarray(pt_edges[1:]))
+        ref_i = np.clip(np.digitize(ctrs, ref_e) - 1, 0, len(flux_ref) - 1)
+        flux_bins = flux_ref[ref_i]
+        spread = flux_ref.max() / flux_ref.min() - 1.0
+        print(f"[INFO] flux remapped to {len(pt_edges)-1} pT bins "
+              f"(reference flux pT-spread {100*spread:.2g}% -- constant)")
+    else:
+        flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
     print(f"[INFO] flux sum = {flux_bins.sum():.4g} m^-2/POT")
 
     meas_pt, meas_pz, meas_ex = collect_data_nd(
@@ -538,6 +575,39 @@ def main():
     td = collect_truth_denom_nd(t_td, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                                 use_weights=args.use_weights, verbose=args.verbose,
                                 universe_branch=universe_branch)
+
+    # Truth-level prior reweight (FPS 3-prior envelope): multiply the MC truth AND
+    # reco weights by ratio(truth pT, truth pz); the reco weight rides its event's
+    # truth weight, so a truth-level prior change propagates to both sides.
+    if args.prior_reweight:
+        if not args.use_weights:
+            ap.error("--prior-reweight requires --use-weights")
+        pr_fn, _, pr_hn = args.prior_reweight.partition(":")
+        f_pr = ROOT.TFile.Open(pr_fn)
+        h_pr = f_pr.Get(pr_hn or "hPriorRatio")
+        if not h_pr:
+            raise RuntimeError(f"prior-ratio hist '{pr_hn or 'hPriorRatio'}' missing in {pr_fn}")
+        npx, npy = h_pr.GetNbinsX(), h_pr.GetNbinsY()
+        pr_xe = np.array([h_pr.GetXaxis().GetBinLowEdge(i + 1) for i in range(npx)]
+                         + [h_pr.GetXaxis().GetBinUpEdge(npx)])
+        pr_ye = np.array([h_pr.GetYaxis().GetBinLowEdge(i + 1) for i in range(npy)]
+                         + [h_pr.GetYaxis().GetBinUpEdge(npy)])
+        pr_arr = np.array([[h_pr.GetBinContent(i + 1, j + 1) for j in range(npy)]
+                           for i in range(npx)])
+        f_pr.Close()
+
+        def _prior_lookup(a_pt, a_pz):
+            ix = np.clip(np.digitize(a_pt, pr_xe) - 1, 0, npx - 1)
+            iy = np.clip(np.digitize(a_pz, pr_ye) - 1, 0, npy - 1)
+            return pr_arr[ix, iy]
+
+        r_sig = _prior_lookup(sig["truth_pt"], sig["truth_pz"])
+        sig["w_truth"] = sig["w_truth"] * r_sig
+        sig["w_reco"] = sig["w_reco"] * r_sig
+        r_td = _prior_lookup(td["pt"], td["pz"])
+        td["w"] = td["w"] * r_td
+        print(f"[INFO] prior reweight {pr_fn}: signal mean ratio {r_sig.mean():.4f}, "
+              f"truth-denom mean {r_td.mean():.4f}")
 
     # Flux universe: divide by that PPFX universe's flux integral (mirrors 3D driver).
     if universe_branch is not None and universe_branch[0] == "Flux":

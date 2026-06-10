@@ -77,10 +77,25 @@ earlier attempt that used the wrong, mostly-empty \texttt{ExtraEnergyClusters\_*
 branch was discarded. Area-normalized against the frozen 4D GBDT result, the PET unfold
 reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 ($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
-$q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). This is a shape/method-robustness
-check on a 2M-event subsample, not an independent physics result: it shows the learned
-reweight is stable across both the classifier family (GBDT vs.\ MLP vs.\ transformer)
-and the input representation (engineered scalars vs.\ raw point cloud).
+$q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
+shape/method-robustness check: it shows the learned reweight is stable across both
+the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representation
+(engineered scalars vs.\ raw point cloud). Section~\ref{sec:pet} elevates the PET
+track to a full-statistics, absolutely-normalised cross section with its own
+closure gate and systematic budget. Figure~\ref{fig:calibration} shows the
+underlying classifier-calibration diagnostics (reliability curve and binned
+ratio recovery) for the GBDT and MLP step-1 classifiers.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{classifier_calibration.png}
+  \caption{Classifier-calibration diagnostics on the step-1 (data vs.\
+  reconstructed MC) task: reliability curves, weight distributions, and binned
+  data/MC ratio recovery for the production GBDT and an untuned dense MLP. The
+  GBDT is near-diagonal in reliability and recovers the binned ratio to
+  \SI{4.7}{\percent} median.}
+  \label{fig:calibration}
+\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -96,7 +111,11 @@ and the input representation (engineered scalars vs.\ raw point cloud).
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{MEFHC_5iter_eff_fig5.png}
-  \caption{Selection efficiency (Fig.~5 style).}
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_eff_fig5.png}
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_eff_heatmap.png}
+  \caption{Selection efficiency: 1D projections in the published Fig.~5 style
+  (left) and the full $(\pT,\pPar)$ efficiency map (right). Efficiency is
+  diagnostic only --- OmniFold's miss treatment performs the acceptance
+  correction natively (\S\ref{sec:method-algo}).}
   \label{fig:eff}
 \end{figure}

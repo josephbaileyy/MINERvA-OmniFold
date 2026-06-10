@@ -1,50 +1,130 @@
-\section{Method and analysis pipeline}
+\section{The unbinned OmniFold procedure}
 \label{sec:method}
 
-\paragraph{Unbinned OmniFold.}
-OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} alternates two reweighting
-steps per iteration: step~1 reweights the
-reconstructed simulation to the data in observable space (a learned
-data/MC likelihood ratio, pulled back to truth through the detector response),
-and step~2 reweights truth-level simulation to the step-1 result, yielding a
-self-consistent truth-level weight per event. We use gradient-boosted decision
-trees as the classifiers/regressors. The engine is
-\texttt{unbinned\_unfolding/python/omnifold.py}; the MINERvA driver is
-\texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} with backends
-\texttt{\{exact,hist,lgbm\}} (\S\ref{sec:results} compares them). The unfolded
-observables are $(\pT,\pPar)$ of the muon; the phase space is $\theta_{\mu}<20^{\circ}$,
-$\pT<\SI{4.5}{GeV/c}$, $1.5<\pPar<\SI{60}{GeV/c}$.
+\subsection{Algorithm}
+\label{sec:method-algo}
+OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated
+reweighting with machine-learned likelihood ratios, operating on per-event
+observables rather than on a fixed histogram binning. Each iteration has two
+steps:
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Step 1 (detector space).} A classifier is trained to separate
+        the measured data from the reconstructed simulation (the latter
+        weighted by the current push-weights). Its calibrated output $p$
+        yields the likelihood-ratio reweight $w = p/(1-p)$ on every
+        reconstructed simulated event. The weight is \emph{pulled back} to
+        truth level through the event pairing: each simulated event is a
+        (truth, reco) pair, so the reco-space weight attaches directly to the
+        truth record. Truth events with no reconstructed partner (the
+        ``misses'') receive a step-1 weight from a regressor trained on the
+        reconstructed subsample, $w(\mathrm{truth\ features})$ --- the native
+        OmniFold acceptance treatment, with no separate efficiency
+        correction.
+  \item \textbf{Step 2 (truth space).} A second classifier is trained to
+        separate the original truth-level simulation from the same sample
+        carrying the pulled-back step-1 weights, yielding a smooth truth-space
+        reweight that becomes the next iteration's push-weight.
+\end{enumerate}
+After $n$ iterations the push-weights define an efficiency-corrected,
+truth-level reweighted simulation ensemble; histogramming it (in any binning,
+chosen after the fact) gives the unfolded spectrum. The regulariser is the
+iteration count together with the model capacity of the learners.
 
-\paragraph{Production pipeline (Phase~18.2).}
-The C++ event loop on the MINERvA detector~\cite{MINERvA:2013zvz} with the NuMI
-flux of Ref.~\cite{MINERvA:2016iqn}
-(\texttt{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}) writes
-the per-event truth and reconstructed trees consumed by the driver. Two
-invariants make the result truth-tree authoritative:
-\begin{itemize}
-  \item \textbf{Truth-tree-authoritative reco gate}: a reconstructed signal event
-        is filled only when its $(\mathrm{run},\mathrm{subrun},\mathrm{event})$
-        key is present in the truth denominator; truth-only events enter as native
-        OmniFold ``miss'' entries.
-  \item \textbf{Completeness} $c = (\text{events in the OmniFold input})/(\text{all
-        truth events})$ is $1.000000$ by construction at ME~FHC
-        (\num{32849103} entries), so the cross-section completeness division is a
-        no-op self-check.
+\subsection{Estimators and configuration}
+\label{sec:method-config}
+We use gradient-boosted decision trees (GBDTs) rather than the neural networks
+of the original OmniFold papers; \S\ref{sec:validation} validates this choice
+with calibration tests and MLP/transformer cross-checks. The engine
+(\texttt{unbinned\_unfolding/python/omnifold.py}) supports interchangeable
+backends; the production configuration is \textbf{LightGBM} with
+$100$ trees, $8$ leaves, learning rate $0.1$ (identical settings for the
+step-1 classifier, step-2 classifier, and miss regressor). Two alternative
+backends --- \texttt{exact} (sklearn \texttt{GradientBoosting}) and
+\texttt{hist} (sklearn \texttt{HistGradientBoosting}, matched 8-leaf
+configuration) --- are retained for method-dependence studies
+(\S\ref{sec:results-tension}). The production iteration count is
+$n=5$; doubling to $10$ moves the total cross section by
+\SI{0.026}{\percent} (\S\ref{sec:validation}). The central value is a
+single-run unfold with pinned seeds; an ensemble-mean central value (averaging
+independent reweighting trials) agrees with it to \SI{0.28}{\percent}, and ML
+stochasticity is budgeted explicitly via the seedscan band
+(\S\ref{sec:systematics}).
+
+\subsection{MINERvA driver and invariants}
+\label{sec:method-driver}
+The MINERvA driver is \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py};
+the higher-dimensional driver
+(\texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}) generalises it to an
+axis list whose first two entries are always $(\pT,\pPar)$ (carrying the
+fiducial gate and the per-$\pT$ flux) and \texttt{import}s the same 2D
+helpers. The unfolded observables are the muon $(\pT,\pPar)$, extended by
+$\Eavail$, $q_{3}$, $W$ in the higher-dimensional runs; the phase space is
+that of \S\ref{sec:selection}. The pipeline enforces the following contract:
+\begin{itemize}[itemsep=2pt]
+  \item measured data are masked to the reconstructed phase space before
+        step-1 training;
+  \item the reco-space target is the POT-scaled, non-negative
+        $\mathrm{data}-\mathrm{background}$, with signal \emph{fakes}
+        (reconstructed in phase space, truth outside) included in the
+        subtraction so both sides of the step-1 training are fake-free;
+  \item the unfolded yield is filled with
+        $w_{\mathrm{push}}\times w_{\mathrm{truth}}$ (the MnvTune
+        central-value weight rides along), and is \emph{not} divided by an
+        efficiency histogram --- OmniFold's miss treatment already returns an
+        efficiency-corrected truth spectrum;
+  \item closure runs restrict pseudo-data to events passing both reco and
+        truth selections on the same weight footing as production.
 \end{itemize}
 
-\paragraph{Cross-section extraction.}
-Unfolded truth-level counts are converted to the differential cross section via
-$d^{2}\sigma = U/(c\,\Phi\,N\,\mathrm{POT}\,\Delta\pT\,\Delta\pPar)\times10^{4}$,
-where $\Phi$ is the per-$\pT$ flux integral (broadcast over $\pPar$), $N$ the
-fiducial nucleon count, and POT the data exposure
-(\texttt{extract\_cross\_section\_2d}). The flux normalisation enters as
+\subsection{Cross-section extraction}
+\label{sec:method-xsec}
+Unfolded truth-level counts are converted to the differential cross section
+via
+\begin{equation*}
+  \frac{d^{n}\sigma}{d x_{1}\cdots d x_{n}}
+  = \frac{U}{c\,\Phi\,N\,\mathrm{POT}\,\Delta x_{1}\cdots\Delta x_{n}}
+    \times 10^{4},
+\end{equation*}
+where $U$ is the unfolded yield, $c$ the (unit) completeness, $\Phi$ the
+per-$\pT$ flux integral (broadcast over the other axes), $N$ the fiducial
+nucleon count ($3.2353\times10^{30}$), and POT the data exposure
+($1.057\times10^{21}$). The implementation is
+\texttt{extract\_cross\_section\_2d} and its N-dimensional generalisation
+\texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
+extractions to $<10^{-12}$). The flux normalisation enters as
 $\sigma\propto1/\Phi$; correctly varying $\Phi$ per flux universe was the
 dominant systematic fix (\S\ref{sec:systematics}).
 
-\paragraph{Binning.}
-The reported binning (14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 reported)
-follows \texttt{minerva\_paper\_anc/bin\_mapping.txt}; the 19 unreported diagonal
-cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$.
-The full edge table and reported-bin mapping are recorded in
-\texttt{2D\_OMNIFOLD\_REFERENCE.md} and in
-\texttt{uq\_statistical\_methods.tex}.
+\subsection{Binning}
+\label{sec:method-binning}
+The reported 2D binning (14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224
+reported) follows \texttt{minerva\_paper\_anc/bin\_mapping.txt}; the 19
+unreported diagonal cells have
+$\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes use
+$\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$;
+$q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$;
+$W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ --- each ending in a wide catch
+bin so the marginals capture the full CC-inclusive tails (a truncated top edge
+would break the marginalisation anchors of \S\ref{sec:3d-anchor}). Because the
+binning is applied only after unfolding, these choices can be revisited
+without re-running the unfold. The full edge table and reported-bin mapping
+are recorded in \texttt{2D\_OMNIFOLD\_REFERENCE.md} and
+App.~\ref{app:statmethods}.
+
+Although OmniFold uses no response matrix, the detector smearing the unfold
+must undo is conveniently summarised by the truth$\to$reco migration on the
+analysis binning (Fig.~\ref{fig:migration}): the diagonal purity is
+$\sim0.6$ (median) on every axis, i.e.\ bin-to-bin migrations are
+substantial and a bin-by-bin correction would be badly biased --- the
+regime unfolding is for.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{migration_resolution.png}
+  \caption{Truth$\to$reco migration of the simulated signal on the analysis
+  binning (top: column-normalised maps; bottom: diagonal purity per truth
+  bin) for the five observables. Median diagonal purity is
+  $0.58$--$0.61$ per axis. Shown for illustration only --- the unfold itself
+  is unbinned.}
+  \label{fig:migration}
+\end{figure}
