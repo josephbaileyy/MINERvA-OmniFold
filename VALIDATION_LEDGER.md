@@ -84,6 +84,79 @@ artifacts on the login node. All PASS; no rerun required.
   81% — large spread confined to the dead cells (catch rows/columns, lowest
   p∥ strip), the quantitative basis for tier-2 flagging.
   `products/5d/fps_prior_envelope_MEFHC.png`.
+- **PET-bank reassessment (2026-06-12, jobs 54330164/54330166)**: **KNOWN_ISSUES
+  #12 PET residual CLOSED.** `bank_uthrow` regenerated from the merged 5D file
+  with the post-fix dump (miss-row rhos pinned to 1.0); alignment gate PASS
+  (w_truth bit-identical over all 32,849,103 rows). `pet_systematics.py` re-run,
+  everything else unchanged: C_syst median **18.31% → 8.24%** (the old bank's
+  mangled miss-row ratios had inflated it ×2.2); C_stat 4.18% and C_ML 3.32%
+  IDENTICAL to the published file (bank-independent blocks = control); clean
+  C_total **11.66%** vs published 23.02% (rebank file carries no lateral block;
+  adding the transferred 4.03% lateral ⇒ ≈12.3%). Direction: the published
+  budget was conservative (over-covered) — no result invalidated, but the
+  technote PET-budget numbers should be revised to the rebank values.
+  Artifact `products/pet/pet_4d_covariance_combined_rebank.root` (published
+  file untouched).
+- **LE→ME beam-evolution shape comparison (2026-06-11, qualitative)**:
+  `compare_le_evolution.py`, shapes only (fluxes differ — no χ²). Filkins
+  2002.12496 vs our 4D-product marginals: LE/ME shape ratio median 1.196
+  (pT, 13/13 bins) and 1.265 (p∥, 12/12 bins) — the ME shape is harder in
+  p∥, as expected from ⟨Eν⟩ 3.5→6 GeV. Rodrigues 1511.05944 (E_avail,q3)
+  rebinned onto our coarse grid (edges nest exactly; strict coverage mask):
+  per-bin LE/ME shape ratios 0.89/1.14/0.94 (q3 0.4–0.6, LE-covered
+  E_avail<0.4) and 0.73/0.97/1.11/0.90 (q3 0.6–0.8, full 0–0.8) — LE softer
+  at low E_avail in the highest-q3 slice. q3<0.4 has too little complete LE
+  coverage after rebinning to compare. Data: `nd-unfolding/reference_le/`;
+  figure `products/4d/le_evolution_compare.png`.
+- **FPS hidden-variable closure (2026-06-11, job 54326695)**: **PASS.**
+  Gaussian truth bump injected in true E_avail (A=0.3, c=0.3 GeV, s=0.15 GeV;
+  injected mean factor 1.0360) on closure pseudo-data; the 2D FPS unfold
+  (extended grid, blind to E_avail) recovers it per cell
+  (hXSecND/hClosureRefND): published-PS cells (185) median |dev| **0.17%**,
+  p90 0.65%, max 2.93%; extension cells (81 nonzero of 100) median **0.77%**,
+  p90 3.04%, max **4.05%** — both regions well inside the tier-2 3-prior band
+  (medians 2.9%/7.9%). Whole-grid closure median 1.0011, max|dev| 4.05%.
+  Driver hidden-axis mode + `fps_extension_validation.py` region split;
+  artifact `products/5d/closure_2d_FPS_hidden_eavail_MEFHC.root`.
+- **Ascencio bin-identical cross-check (2026-06-10)**: **PASS (consistent)**.
+  Supplemental data found in the public arXiv source tarball of 2110.13372
+  (44 cells + full covariance → `3d-unfolding/genie/
+  ascencio_2110.13372_supplemental.txt`, cov exactly symmetric).
+  `compare_ascencio_fullcov.py`: maximal common grid = 2 super-cells
+  (Eavail<0.4 in q3 [0.4,0.6) and [0.6,1.2)); ours/Ascencio = 1.092 and
+  1.063 (pulls 1.29σ, 0.86σ); full-cov χ²/ndf = **1.68/2, p = 0.432**
+  (diag-only 2.40/2). Our side: frozen 4D product + adopted unified-throw
+  combined covariance, (pT,pz)-marginalised with pz<20 GeV mirroring the
+  Ascencio muon gate. Caveats recorded in the script header (shared MINERvA
+  systematics treated as independent; pμ≈pz at the 20 GeV edge).
+  `products/4d/ascencio_fullcov_compare.png`.
+- **Driver no-weights normalization fix verification (2026-06-10, job
+  54271042)**: **PASS — KNOWN_ISSUES #1 closed.** Driver now always passes
+  the POT-scaled weights to OmniFold (no-`--use-weights` mode previously fed
+  unit weights, letting the classifier absorb the normalization gap while
+  the binning re-applied pot_scale → globally low by pot_scale). Both
+  bare-GENIE FPS unfolds re-run with the fixed driver and the 1/pot_scale
+  corrections REMOVED from `fps_pilot_compare.py`/`fps_prior_envelope.py`:
+  1A anchor 0.9995/0.65% reproduced; MEFHC tune/genie totals 4.502e-38 /
+  4.369e-38 (was 4.367e-38 corrected — ML-jitter level); envelope medians
+  2.90% published / 7.86% extension (was 2.91%/7.88%). The ledger entries
+  above describing the correction are historical records of the pre-fix
+  pipeline; post-fix artifacts need no correction.
+- **PET-native lateral band (2026-06-10, job 54284039)**: cross-check of the
+  GBDT-transferred lateral block in the PET 4D budget, via the event-aligned
+  5D join (`pet_lateral_band.py`; PC↔5D row alignment asserted over all
+  32.85M rows, 4 truth columns + w_truth exact; CV-path consistency 0).
+  18 detector universes, frozen PET push weights, miss rows pinned to CV
+  (KNOWN_ISSUES #12), reco-weight ratio in the completeness numerator.
+  **Native lateral median 1.74%/bin vs transferred 4.03%; total budget
+  22.5% vs published 23.0%.** Band ordering: MinosEfficiency (sqrt-tr
+  2.7e-39) > Muon_Energy_MINOS (3.4e-40) > GEANT_Neutron (5.6e-40 — same
+  order) > GEANT_Proton/Pion > BeamAngle/MuonResolution (≲5e-42). The
+  frozen-push scheme cannot carry per-universe retraining response, so the
+  native band is the optimistic bound and the published transfer the
+  conservative one — **the published 23.0% budget stands**; the true
+  lateral lies in [1.74%, 4.03%].
+  `products/pet/pet_4d_covariance_combined_wlat.root`.
 - **Standing checks rerun**: **PASS**. `xsec_nd.py` self-tests all pass;
   `check_4d_anchors.py` reproduces 0.38%/0.64%/1.68% medians and 4D/3D
   integral ratio 0.9960; `check_5d_anchors.py` 5D/4D total 1.0011, W marginal
@@ -158,8 +231,10 @@ artifacts on the login node. All PASS; no rerun required.
   **PASS**. Prior acc/AUC `0.5196/0.5314` with `z=16.70`; unfolded acc/AUC
   `0.5013/0.5022` with `z=1.10`, `p=0.273`. Exact values differ from the
   technote's full-stat/subsample choice, but the conclusion is unchanged.
-- Coverage: **PARTIALLY REPRODUCIBLE**. The checkout contains only
-  `uq/coverage/coverage_summary.txt`, a stage-1 `n_toys=20` summary, and zero
-  coverage toy ROOTs. The technote's 200-toy numbers are documented in
-  `docs/uq_statistical_methods.tex` but cannot be regenerated from the present
-  artifacts.
+- Coverage: **REPRODUCED 2026-06-11** (was PARTIALLY REPRODUCIBLE: the 200-toy
+  ROOTs were missing from the checkout). Regen arrays 54273493/54273495 rebuilt
+  all 200 toys in `2d-unfolding/uq/coverage/`; `uq/coverage_toys.py` **PASS**
+  and matches `docs/uq_statistical_methods.tex` exactly: mean coverage
+  `68.71%`, median `68.50%`, `<|r|> = 0.794` (target 0.798), signed residual
+  `+0.006 +/- 0.082`, `97.56%` of the 205 reported bins above the 65% target
+  (same 5 bins below). KNOWN_ISSUES #2 RESOLVED.

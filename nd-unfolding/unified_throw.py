@@ -59,8 +59,15 @@ def do_dump(args):
     import unfold_nd_omnifold_unbinned as und
 
     os.makedirs(args.bankdir, exist_ok=True)
-    pt_e, pz_e = u2d.PT_EDGES, u2d.PZ_EDGES
-    ea_e = und.EXTRA_AXES["eavail"]["edges"]
+    axis_names = [a.strip() for a in args.axes.split(",") if a.strip()]
+    extras = [dict(und.EXTRA_AXES[a], name=a) for a in axis_names]
+    pt_e = ([float(x) for x in args.pt_edges.split(",")] if args.pt_edges
+            else u2d.PT_EDGES)
+    pz_e = ([float(x) for x in args.pz_edges.split(",")] if args.pz_edges
+            else u2d.PZ_EDGES)
+    if args.full_phase_space:
+        u2d.MAX_MUON_THETA_RAD = math.pi
+        print("[dump] FULL PHASE SPACE: theta_mu truth gate lifted")
     pt_lo, pt_hi, pz_lo, pz_hi = pt_e[0], pt_e[-1], pz_e[0], pz_e[-1]
 
     # which bands does THIS group dump? round-robin split for balance.
@@ -75,9 +82,23 @@ def do_dump(args):
     data_pot, mc_pot, pot_scale = u2d.get_pot_scales(f)
 
     # ---- signal tree: gate, dump CV (group 0) + this group's band ratios ----
-    sc = {b: carray("d", [0.0]) for b in ("MC", "MC_pz", "sim", "sim_pz", "MC_eavail",
-                                          "sim_eavail", "w_truth", "w_reco")}
+    sig_branches = ["MC", "MC_pz", "sim", "sim_pz", "w_truth", "w_reco"]
+    for ax in extras:
+        sig_branches += [ax["truth"], ax["reco"]]
+    sc = {b: carray("d", [0.0]) for b in sig_branches}
     sp = carray("B", [0])
+    # only read the branches this group needs (the universe branches are most of
+    # the file; full-branch GetEntry made each of 8 group tasks re-read ~all of it)
+    t.SetBranchStatus("*", 0)
+    for b in sig_branches + ["sim_pass"]:
+        t.SetBranchStatus(b, 1)
+    for k in flux_idx:
+        t.SetBranchStatus(f"w_truth_Flux_{k}", 1)
+        t.SetBranchStatus(f"w_reco_Flux_{k}", 1)
+    for b in my_bands:
+        for j in (0, 1):
+            t.SetBranchStatus(f"w_truth_{san(b)}_{j}", 1)
+            t.SetBranchStatus(f"w_reco_{san(b)}_{j}", 1)
     for b, a in sc.items():
         t.SetBranchAddress(b, a)
     t.SetBranchAddress("sim_pass", sp)
@@ -95,11 +116,15 @@ def do_dump(args):
             t.SetBranchAddress(f"w_reco_{san(b)}_{j}", bd_r[(b, j)])
 
     n = t.GetEntries()
+    if args.max_entries:
+        n = min(n, args.max_entries)
     # typed arrays (float32 'f' / int8 'b') -- ~8x leaner than python lists, which OOM
     # at 33M events x ~26 ratio components.
     _f = lambda: carray("f")
-    keep_pt, keep_pz, keep_ea = _f(), _f(), _f()      # CV truth coords (group 0)
-    keep_rpt, keep_rpz, keep_rea = _f(), _f(), _f()
+    keep_pt, keep_pz = _f(), _f()                     # CV truth coords (group 0)
+    keep_rpt, keep_rpz = _f(), _f()
+    keep_ex = [_f() for _ in extras]
+    keep_rex = [_f() for _ in extras]
     keep_pr, keep_ptru = carray("b"), carray("b")
     keep_wt, keep_wr = carray("d"), carray("d")
     fl_rt = {k: _f() for k in flux_idx}; fl_rr = {k: _f() for k in flux_idx}
@@ -119,22 +144,31 @@ def do_dump(args):
         if not (tru_ok or (passed and rec_ok)):
             continue
         wt *= pot_scale; wr *= pot_scale
+        # KNOWN_ISSUES #12: on appended truth-only miss rows (sim_pass==0) the
+        # per-universe branches of pre-2026-06-10 dumps are uninitialized
+        # garbage. Pin the miss-row ratios to 1.0 -- identical to the post-fix
+        # event loop, which writes deterministic CV proxies there; the true
+        # vertical miss variation enters through the (clean) mc_truth_denom
+        # ratios. Signal-loop rows (sim_pass==1) keep their genuine ratios
+        # even if the reco fell outside the grid.
+        ok = passed and rec_ok
         if args.group == 0:
             keep_pt.append(a_pt if math.isfinite(a_pt) else -9999.0)
             keep_pz.append(a_pz if math.isfinite(a_pz) else -9999.0)
-            keep_ea.append(float(sc["MC_eavail"][0]))
-            keep_rpt.append(b_pt if (passed and rec_ok) else -9999.0)
-            keep_rpz.append(b_pz if (passed and rec_ok) else -9999.0)
-            keep_rea.append(float(sc["sim_eavail"][0]) if (passed and rec_ok) else -9999.0)
-            keep_pr.append(passed and rec_ok); keep_ptru.append(tru_ok)
+            keep_rpt.append(b_pt if ok else -9999.0)
+            keep_rpz.append(b_pz if ok else -9999.0)
+            for x, rx, ax in zip(keep_ex, keep_rex, extras):
+                x.append(float(sc[ax["truth"]][0]))
+                rx.append(float(sc[ax["reco"]][0]) if ok else -9999.0)
+            keep_pr.append(ok); keep_ptru.append(tru_ok)
             keep_wt.append(wt); keep_wr.append(wr)
         for k in flux_idx:
-            fl_rt[k].append((float(fl_t[k][0]) * pot_scale) / wt if wt > 0 else 1.0)
-            fl_rr[k].append((float(fl_r[k][0]) * pot_scale) / wr if wr > 0 else 1.0)
+            fl_rt[k].append((float(fl_t[k][0]) * pot_scale) / wt if (passed and wt > 0) else 1.0)
+            fl_rr[k].append((float(fl_r[k][0]) * pot_scale) / wr if (passed and wr > 0) else 1.0)
         for b in my_bands:
             for j in (0, 1):
-                bd_rt[(b, j)].append((float(bd_t[(b, j)][0]) * pot_scale) / wt if wt > 0 else 1.0)
-                bd_rr[(b, j)].append((float(bd_r[(b, j)][0]) * pot_scale) / wr if wr > 0 else 1.0)
+                bd_rt[(b, j)].append((float(bd_t[(b, j)][0]) * pot_scale) / wt if (passed and wt > 0) else 1.0)
+                bd_rr[(b, j)].append((float(bd_r[(b, j)][0]) * pot_scale) / wr if (passed and wr > 0) else 1.0)
         if i % 500000 == 0:
             print(f"  signal {i}/{n} kept={len(fl_rt[flux_idx[0]]) if flux_idx else len(bd_rt[(my_bands[0],0)]) if my_bands else 0}", flush=True)
 
@@ -147,7 +181,16 @@ def do_dump(args):
             sv(f"sig_{b}_t_{j}", bd_rt[(b, j)]); sv(f"sig_{b}_r_{j}", bd_rr[(b, j)])
 
     # ---- truth_denom tree: same for the completeness denominator (truth only) ----
-    dc = {b: carray("d", [0.0]) for b in ("MC", "MC_pz", "MC_eavail", "w_truth")}
+    td_branches = ["MC", "MC_pz", "w_truth"] + [ax["truth"] for ax in extras]
+    dc = {b: carray("d", [0.0]) for b in td_branches}
+    td.SetBranchStatus("*", 0)
+    for b in td_branches:
+        td.SetBranchStatus(b, 1)
+    for k in flux_idx:
+        td.SetBranchStatus(f"w_truth_Flux_{k}", 1)
+    for b in my_bands:
+        for j in (0, 1):
+            td.SetBranchStatus(f"w_truth_{san(b)}_{j}", 1)
     for b, a in dc.items():
         td.SetBranchAddress(b, a)
     dfl = {k: carray("d", [0.0]) for k in flux_idx}
@@ -158,7 +201,10 @@ def do_dump(args):
         for j in (0, 1):
             td.SetBranchAddress(f"w_truth_{san(b)}_{j}", dbd[(b, j)])
     nd = td.GetEntries()
-    d_pt, d_pz, d_ea = carray("f"), carray("f"), carray("f")
+    if args.max_entries:
+        nd = min(nd, args.max_entries)
+    d_pt, d_pz = carray("f"), carray("f")
+    d_ex = [carray("f") for _ in extras]
     d_w = carray("d")
     dfl_r = {k: carray("f") for k in flux_idx}
     dbd_r = {(b, j): carray("f") for b in my_bands for j in (0, 1)}
@@ -171,7 +217,9 @@ def do_dump(args):
             continue
         w *= pot_scale
         if args.group == 0:
-            d_pt.append(pt); d_pz.append(pz); d_ea.append(float(dc["MC_eavail"][0])); d_w.append(w)
+            d_pt.append(pt); d_pz.append(pz); d_w.append(w)
+            for x, ax in zip(d_ex, extras):
+                x.append(float(dc[ax["truth"]][0]))
         for k in flux_idx:
             dfl_r[k].append((float(dfl[k][0]) * pot_scale) / w if w > 0 else 1.0)
         for b in my_bands:
@@ -185,8 +233,7 @@ def do_dump(args):
 
     if args.group == 0:
         # CV inputs + measured + flux + meta (read measured/bkg via the nd readers)
-        extras = [dict(und.EXTRA_AXES["eavail"], name="eavail")]
-        edges = [pt_e, pz_e, ea_e]
+        edges = [pt_e, pz_e] + [ax["edges"] for ax in extras]
         t_data, t_bkg = f.Get("data"), f.Get("mc_background")
         meas_pt, meas_pz, meas_ex = und.collect_data_nd(t_data, extras, pt_lo, pt_hi, pz_lo, pz_hi)
         bkg_pt, bkg_pz, bkg_ex, bkg_w = und.collect_bkg_nd(t_bkg, extras, pot_scale,
@@ -194,32 +241,49 @@ def do_dump(args):
         data_nd, _ = und.histnd([meas_pt, meas_pz] + meas_ex, np.ones(meas_pt.size), edges)
         bkg_nd, _ = und.histnd([bkg_pt, bkg_pz] + bkg_ex, bkg_w, edges)
         meas_w = und.build_measured_training_nd([meas_pt, meas_pz] + meas_ex, data_nd, bkg_nd, edges)
-        flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_e)
+        ref_pt = np.asarray(u2d.PT_EDGES, float)
+        if args.pt_edges:
+            # extended pT binning: bin-centre remap of the (pT-constant) flux,
+            # exactly as the nd driver does
+            flux_ref, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, u2d.PT_EDGES)
+            ctrs = 0.5 * (np.asarray(pt_e[:-1]) + np.asarray(pt_e[1:]))
+            ref_i = np.clip(np.digitize(ctrs, ref_pt) - 1, 0, len(flux_ref) - 1)
+            flux_bins = flux_ref[ref_i]
+        else:
+            flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_e)
+            ref_i = None
+        td_extra_cols = {f"td_{nm}": np.asarray(x)
+                         for nm, x in zip(["ea" if a["name"] == "eavail" else a["name"]
+                                           for a in extras], d_ex)}
         np.savez(os.path.join(args.bankdir, "cv.npz"),
-                 MCgen=np.column_stack([keep_pt, keep_pz, keep_ea]).astype(np.float32),
-                 MCreco=np.column_stack([keep_rpt, keep_rpz, keep_rea]).astype(np.float32),
+                 MCgen=np.column_stack([keep_pt, keep_pz] + keep_ex).astype(np.float32),
+                 MCreco=np.column_stack([keep_rpt, keep_rpz] + keep_rex).astype(np.float32),
                  measured=np.column_stack([meas_pt, meas_pz] + meas_ex).astype(np.float32),
                  measured_weights=meas_w,
                  pass_reco=np.asarray(keep_pr, bool), pass_truth=np.asarray(keep_ptru, bool),
                  w_truth=np.asarray(keep_wt), w_reco=np.asarray(keep_wr),
-                 td_pt=np.asarray(d_pt), td_pz=np.asarray(d_pz), td_ea=np.asarray(d_ea),
+                 td_pt=np.asarray(d_pt), td_pz=np.asarray(d_pz),
                  td_w=np.asarray(d_w),
                  flux=np.asarray(flux_bins, float), data_pot=data_pot,
                  n_nucleons=u2d.TRACKER_FIDUCIAL_N_NUCLEONS,
-                 edges_0=pt_e, edges_1=pz_e, edges_2=np.asarray(ea_e, float))
-        # flux-universe per-pT ratios (for Flux integral re-scaling per throw)
+                 **td_extra_cols,
+                 **{f"edges_{i}": np.asarray(e, float) for i, e in enumerate(edges)})
+        # flux-universe per-pT ratios (for Flux integral re-scaling per throw);
+        # built on the frozen flux-histogram edges, then remapped if extended
         fu = ROOT.TFile.Open(args.flux_universe_file)
         hcv, hun = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
-        nb = len(pt_e) - 1
-        fr = np.ones((N_FLUX, nb))
+        nb_ref = len(ref_pt) - 1
+        fr = np.ones((N_FLUX, nb_ref))
         if hcv and hun:
-            for b in range(nb):
+            for b in range(nb_ref):
                 cvf = hcv.GetBinContent(b + 1)
                 for k in range(N_FLUX):
                     uf = hun.GetBinContent(b + 1, k + 1)
                     if cvf > 0 and uf > 0:
                         fr[k, b] = uf / cvf
         fu.Close()
+        if ref_i is not None:
+            fr = fr[:, np.clip(ref_i, 0, nb_ref - 1)]
         np.save(os.path.join(args.bankdir, "flux_univ_ratio.npy"), fr)
         print(f"[dump g0] wrote cv.npz ({len(keep_wt)} signal, {len(d_w)} denom) + flux_univ_ratio")
     f.Close()
@@ -387,6 +451,16 @@ def main():
     ap.add_argument("--flux-universe-file",
                     default=f"{_REPO}/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root")
     ap.add_argument("--bankdir", default="bank_uthrow")
+    ap.add_argument("--axes", default="eavail",
+                    help="csv of EXTRA_AXES names beyond (pt,pz); '' for 2D (FPS)")
+    ap.add_argument("--pt-edges", default=None,
+                    help="comma-separated pT edge override (FPS extended grid)")
+    ap.add_argument("--pz-edges", default=None,
+                    help="comma-separated p|| edge override (FPS extended grid)")
+    ap.add_argument("--full-phase-space", action="store_true",
+                    help="lift the theta_mu truth gate (mirror the nd driver)")
+    ap.add_argument("--max-entries", type=int, default=0,
+                    help="smoke-test cap on tree entries (0 = all)")
     ap.add_argument("--group", type=int, default=0)
     ap.add_argument("--ngroups", type=int, default=1)
     ap.add_argument("--throw-start", type=int, default=0)

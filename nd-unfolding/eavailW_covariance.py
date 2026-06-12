@@ -71,8 +71,17 @@ def main():
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--nflux", type=int, default=100)
+    ap.add_argument("--lateral-sweep-cv", default=None,
+                    help="matched-CV 5D unfold ROOT from the detector-band sweep "
+                         "(sbatch_unfold_5d_detector.sh task 0); enables the "
+                         "W-resolved lateral block in place of the 4D transfer")
+    ap.add_argument("--lateral-sweep-glob", default=None,
+                    help="glob of per-universe 5D unfold ROOTs "
+                         "(5d_xsec_*_uni_full_<band>_<idx>.root)")
     ap.add_argument("--out", default="products/5d/eavailW_covariance.root")
     args = ap.parse_args()
+    if (args.lateral_sweep_cv is None) != (args.lateral_sweep_glob is None):
+        ap.error("--lateral-sweep-cv and --lateral-sweep-glob must be given together")
 
     # --- binning (pt,pz,eavail,q3,W) ---
     pt_e = np.asarray(u2d.PT_EDGES, float); pz_e = np.asarray(u2d.PZ_EDGES, float)
@@ -260,7 +269,7 @@ def main():
     # ---------- C_lateral: transfer 4D detector bands -> (E_avail,W) ----------
     # marginalize each 4D lateral band cov to E_avail (M C M^T), take its per-eavail variance as a
     # FRACTIONAL detector uncertainty, and spread it over W by the CV (E_avail,W) shape (flat-in-W
-    # fractional -- documented approximation; W-resolved laterals need reco re-inference, deferred).
+    # fractional -- documented approximation; superseded by the W-resolved sweep mode below).
     fc = ROOT.TFile.Open(args.cov4d)
     fp4 = ROOT.TFile.Open("products/4d/xsec_4d_MEFHC_5iter_lgbm.root")
     x4 = _th1(fp4.Get("hXSecND_flat")); fp4.Close()
@@ -283,6 +292,60 @@ def main():
     C_lateral = np.diag((sig_lat.ravel()) ** 2)
     print(f"[lat] transferred eavail frac={np.array2string(100*frac_e,precision=1)}%  "
           f"sqrt-tr={np.sqrt(np.trace(C_lateral)):.3e}")
+
+    # ---------- W-resolved detector block from the 5D per-universe sweep ----------
+    # KNOWN_ISSUES #4 fix: replace the transfer above with REAL re-inference -- each
+    # detector universe (6 muon/beam laterals with shifted pt/pz/q3/W branches + 3
+    # weight-only GEANT bands, 18 universes) was unfolded on the full 5D axes by
+    # sbatch_unfold_5d_detector.sh. Marginalize each to (E_avail,W), difference vs
+    # the MATCHED sweep CV (same seed/config), and band-sum with the
+    # analyze_universes_nd.py convention: C_b = (1/N) Z^T Z on de-meaned deviations.
+    # Off-diagonal (E_avail,W) correlations are now carried; the transfer was
+    # diagonal-only by construction.
+    if args.lateral_sweep_cv:
+        import glob as _glob
+        import re as _re
+        sh5 = (len(pt_e) - 1, len(pz_e) - 1, n_ea, len(q3_e) - 1, n_w)
+
+        def _sweep_ew(path):
+            fs = ROOT.TFile.Open(path)
+            x5 = _th1(fs.Get("hXSecND_flat")); fs.Close()
+            return marginal_ew(x5.reshape(sh5)).ravel()
+
+        y_scv = _sweep_ew(args.lateral_sweep_cv)
+        uni_re = _re.compile(r".*_uni(?:_full)?_(?P<band>[A-Za-z0-9_]+?)_(?P<idx>\d+)\.root$")
+        by_band = {}
+        for p in sorted(_glob.glob(args.lateral_sweep_glob)):
+            mm_ = uni_re.match(os.path.basename(p))
+            if not mm_ or mm_.group("band") == "CV":
+                continue
+            by_band.setdefault(mm_.group("band"), []).append(
+                (int(mm_.group("idx")), _sweep_ew(p) - y_scv))
+        n_uni = sum(len(v) for v in by_band.values())
+        if n_uni < 18:
+            raise SystemExit(f"[FAIL] lateral sweep incomplete: {n_uni}/18 universes "
+                             f"matched {args.lateral_sweep_glob}")
+        C_lat_sweep = np.zeros((n, n))
+        for b_, entries in sorted(by_band.items()):
+            Dm = np.stack([d for _, d in sorted(entries)], axis=0)
+            Zm = Dm - Dm.mean(axis=0, keepdims=True)
+            cb = (Zm.T @ Zm) / Dm.shape[0]
+            C_lat_sweep += cb
+            print(f"[wlat] {b_:22s} N={Dm.shape[0]} sqrt-tr={np.sqrt(max(np.trace(cb),0)):.3e}",
+                  flush=True)
+        # old-vs-new comparison before adopting
+        s_old = np.sqrt(np.clip(np.diag(C_lateral), 0, None))
+        s_new = np.sqrt(np.clip(np.diag(C_lat_sweep), 0, None))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            f_old = np.where(y_cv > 0, s_old / y_cv, 0)
+            f_new = np.where(y_cv > 0, s_new / y_cv, 0)
+        print(f"[wlat] sweep-CV vs frozen-CV marginal: max|ratio-1|="
+              f"{np.nanmax(np.abs(y_scv/np.where(y_cv>0,y_cv,np.nan)-1)):.3f}")
+        print(f"[wlat] OLD (transferred) median frac={100*np.median(f_old[y_cv>0]):.2f}%  "
+              f"NEW (W-resolved) median frac={100*np.median(f_new[y_cv>0]):.2f}%")
+        print(f"[wlat] sqrt-tr old={np.sqrt(np.trace(C_lateral)):.3e} "
+              f"new={np.sqrt(np.trace(C_lat_sweep)):.3e}  -- ADOPTING W-resolved block")
+        C_lateral = C_lat_sweep
 
     C_total = C_syst + C_stat + C_lateral
     sig_tot = np.sqrt(np.clip(np.diag(C_total), 0, None))

@@ -535,11 +535,77 @@ long AppendTruthOnlyMisses(
     sigOut->SetBranchAddress("part_reco_z",   &p_reco_z);
   }
 
+  // KNOWN_ISSUES #12: every OTHER branch on sigOut (the per-universe weight and
+  // shifted-kinematics branches written by the signal loop when
+  // MNV101_DUMP_UNIVERSES is set) also dangles here -- the signal loop's local
+  // buffers went out of scope, so pre-fix dumps wrote uninitialized memory into
+  // all universe branches of every miss entry (12.35M rows, 37.6% of the 5D
+  // MEFHC tree; verified empirically 2026-06-10). Rebind them to deterministic
+  // CV proxies: universe weights := tde.w_truth (the same proxy the CV w_reco
+  // uses for misses), truth-mode shifted kinematics := the CV truth values,
+  // reco-mode shifted kinematics := -9999 (a miss has no reco). This makes a
+  // miss carry NO per-universe variation in the dump -- exact for detector
+  // bands (truth untouched); consumers needing true VERTICAL miss variation
+  // must take it from mc_truth_denom, whose universe branches are filled
+  // correctly by the truth loop.
+  enum class MissCat { WTruth, WReco, KinePT, KinePZ, KineQ3, KineW, SimKine, Other };
+  std::vector<double> uniMissBuf;
+  std::vector<std::pair<size_t, MissCat>> uniMissSlots;  // (buffer slot, category)
+  {
+    const std::set<std::string> explicitNames = {
+        "sim", "sim_pz", "sim_eavail", "sim_q3", "sim_W", "sim_pass", "w_reco",
+        "MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "MC_nproton", "MC_npip",
+        "MC_hadangle", "w_truth", "part_gen_E", "part_gen_px", "part_gen_py",
+        "part_gen_pz", "part_gen_pdg", "part_reco_E", "part_reco_pos", "part_reco_z"};
+    TObjArray* brs = sigOut->GetListOfBranches();
+    std::vector<std::pair<std::string, MissCat>> pending;
+    for(int bi = 0; bi < brs->GetEntriesFast(); ++bi)
+    {
+      const std::string nm = brs->At(bi)->GetName();
+      if(explicitNames.count(nm)) continue;
+      MissCat cat = MissCat::Other;
+      auto startsWith = [&nm](const char* p){ return nm.rfind(p, 0) == 0; };
+      if(startsWith("w_truth_"))      cat = MissCat::WTruth;
+      else if(startsWith("w_reco_"))  cat = MissCat::WReco;
+      else if(startsWith("sim_"))     cat = MissCat::SimKine;
+      else if(startsWith("MC_pz_"))   cat = MissCat::KinePZ;
+      else if(startsWith("MC_q3_"))   cat = MissCat::KineQ3;
+      else if(startsWith("MC_W_"))    cat = MissCat::KineW;
+      else if(startsWith("MC_"))      cat = MissCat::KinePT;  // MC_<band>_<idx>
+      pending.emplace_back(nm, cat);
+    }
+    // Reserve BEFORE binding: reallocation would invalidate bound addresses.
+    uniMissBuf.assign(pending.size(), 0.0);
+    for(size_t k = 0; k < pending.size(); ++k)
+    {
+      sigOut->SetBranchAddress(pending[k].first.c_str(), &uniMissBuf[k]);
+      uniMissSlots.emplace_back(k, pending[k].second);
+      if(pending[k].second == MissCat::SimKine) uniMissBuf[k] = -9999.0;
+    }
+    if(!pending.empty())
+      std::cout << "  Miss-append: rebound " << pending.size()
+                << " universe branches to CV proxies (KNOWN_ISSUES #12 fix).\n";
+  }
+
   long nTruthOnlyMisses = 0;
   for(const auto& tde : truthDenomCache)
   {
     if(recoIDs.find(tde.key) == recoIDs.end())
     {
+      for(const auto& slot : uniMissSlots)
+      {
+        switch(slot.second)
+        {
+          case MissCat::WTruth:  uniMissBuf[slot.first] = tde.w_truth; break;
+          case MissCat::WReco:   uniMissBuf[slot.first] = tde.w_truth; break;
+          case MissCat::KinePT:  uniMissBuf[slot.first] = tde.MC;      break;
+          case MissCat::KinePZ:  uniMissBuf[slot.first] = tde.MC_pz;   break;
+          case MissCat::KineQ3:  uniMissBuf[slot.first] = tde.MC_q3;   break;
+          case MissCat::KineW:   uniMissBuf[slot.first] = tde.MC_W;    break;
+          case MissCat::SimKine: /* stays -9999 */                     break;
+          case MissCat::Other:   /* stays 0 */                         break;
+        }
+      }
       miss_MC        = tde.MC;
       miss_MC_pz     = tde.MC_pz;
       miss_MC_eavail = tde.MC_eavail;

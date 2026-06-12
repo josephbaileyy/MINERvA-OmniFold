@@ -2,8 +2,9 @@
 """FPS 3-prior envelope: per-cell spread across {MnvTune, bare-GENIE, NuWro-shaped}
 priors, summarised inside the published phase space vs the extension cells.
 
-The bare-GENIE result is corrected for the no-weights normalization artifact
-(exact global 1/pot_scale; see fps_pilot_compare.py).
+The bare-GENIE input must come from the 2026-06-10-fixed driver (KNOWN_ISSUES
+#1 RESOLVED: no-weights mode is now absolutely normalized); pre-fix outputs
+would need an extra 1/pot_scale.
 """
 import argparse
 import os
@@ -29,14 +30,8 @@ def main():
     ap.add_argument("--out-png", default="products/5d/fps_prior_envelope_MEFHC.png")
     args = ap.parse_args()
 
-    import ROOT
-    ROOT.gErrorIgnoreLevel = ROOT.kError
-    fo = ROOT.TFile.Open(args.omnifile)
-    pot_scale = fo.Get("dataPOTUsed").GetVal() / fo.Get("mcPOTUsed").GetVal()
-    fo.Close()
-
     A = {"tune": th2_np(args.tune),
-         "genie": th2_np(args.genie) / pot_scale,
+         "genie": th2_np(args.genie),
          "nuwro": th2_np(args.nuwro)}
     pt_ext, pz_ext = np.asarray(PT_EXT), np.asarray(PZ_EXT)
     pt_pap, pz_pap = np.asarray(u2d.PT_EDGES, float), np.asarray(u2d.PZ_EDGES, float)

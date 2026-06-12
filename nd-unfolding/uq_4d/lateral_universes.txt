@@ -1,0 +1,12 @@
+BeamAngleX:0
+BeamAngleX:1
+BeamAngleY:0
+BeamAngleY:1
+MinosEfficiency:0
+MinosEfficiency:1
+MuonResolution:0
+MuonResolution:1
+Muon_Energy_MINERvA:0
+Muon_Energy_MINERvA:1
+Muon_Energy_MINOS:0
+Muon_Energy_MINOS:1

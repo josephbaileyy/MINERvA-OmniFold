@@ -31,12 +31,25 @@ def main():
     ap.add_argument("--mcfile", default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--axes", default="eavail")
+    ap.add_argument("--pt-edges", default=None,
+                    help="comma-separated pT edge override (FPS extended grid)")
+    ap.add_argument("--pz-edges", default=None,
+                    help="comma-separated p|| edge override (FPS extended grid)")
+    ap.add_argument("--full-phase-space", action="store_true",
+                    help="lift the theta_mu truth gate (mirror the nd driver)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
     names = [a.strip() for a in args.axes.split(",") if a.strip()]
     extras = [dict(und.EXTRA_AXES[a], name=a) for a in names]
-    pt_edges, pz_edges = u2d.PT_EDGES, u2d.PZ_EDGES
+    pt_edges = ([float(x) for x in args.pt_edges.split(",")] if args.pt_edges
+                else u2d.PT_EDGES)
+    pz_edges = ([float(x) for x in args.pz_edges.split(",")] if args.pz_edges
+                else u2d.PZ_EDGES)
+    if args.full_phase_space:
+        import math
+        u2d.MAX_MUON_THETA_RAD = math.pi
+        print("[INFO] FULL PHASE SPACE: theta_mu truth gate lifted")
     edges = [pt_edges, pz_edges] + [ax["edges"] for ax in extras]
     pt_lo, pt_hi, pz_lo, pz_hi = pt_edges[0], pt_edges[-1], pz_edges[0], pz_edges[-1]
 
@@ -44,7 +57,17 @@ def main():
     t_sig, t_bkg = f.Get("mc_signal_reco"), f.Get("mc_background")
     t_data, t_td = f.Get("data"), f.Get("mc_truth_denom")
     data_pot, mc_pot, pot_scale = u2d.get_pot_scales(f)
-    flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
+    if args.pt_edges:
+        # extended pT binning: remap the (pT-constant) integrated flux exactly as the
+        # nd driver does (bin-centre lookup into the frozen-edge flux histogram)
+        flux_ref, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, u2d.PT_EDGES)
+        ref_e = np.asarray(u2d.PT_EDGES, float)
+        ctrs = 0.5 * (np.asarray(pt_edges[:-1]) + np.asarray(pt_edges[1:]))
+        ref_i = np.clip(np.digitize(ctrs, ref_e) - 1, 0, len(flux_ref) - 1)
+        flux_bins = flux_ref[ref_i]
+        print(f"[INFO] flux remapped to {len(pt_edges)-1} pT bins")
+    else:
+        flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
 
     meas_pt, meas_pz, meas_ex = und.collect_data_nd(t_data, extras, pt_lo, pt_hi, pz_lo, pz_hi)
     bkg_pt, bkg_pz, bkg_ex, bkg_w = und.collect_bkg_nd(t_bkg, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi)

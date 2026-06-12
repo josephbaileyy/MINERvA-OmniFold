@@ -60,8 +60,8 @@ def main():
     ap.add_argument("--fps-genie", default="products/5d/xsec_2d_FPS_1A_genie.root")
     ap.add_argument("--ctrl", default="products/5d/xsec_2d_CTRL_1A.root")
     ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_FPS_1A.root",
-                    help="used only to read the POT scale for the no-weights "
-                         "normalization correction")
+                    help="unused since the 2026-06-10 driver normalization fix; "
+                         "kept for caller compatibility")
     ap.add_argument("--out-png", default="products/5d/fps_pilot_compare_1A.png")
     args = ap.parse_args()
 
@@ -78,22 +78,12 @@ def main():
     A_g = th2_np(args.fps_genie)
     C = th2_np(args.ctrl)
 
-    # No-weights normalization correction: in no --use-weights mode the driver
-    # hands OmniFold UNSCALED unit MC weights while binning the unfold with the
-    # POT-scaled w_truth, so the result carries a global pot_scale deficit. For a
-    # calibrated classifier a uniform weight scale on one class shifts the learned
-    # likelihood ratio by exactly that constant, so the correction is the exact
-    # global factor 1/pot_scale (read from the omnifile's own POT metadata).
-    import ROOT
-    ROOT.gErrorIgnoreLevel = ROOT.kError
-    fo = ROOT.TFile.Open(args.omnifile)
-    pot_scale = fo.Get("dataPOTUsed").GetVal() / fo.Get("mcPOTUsed").GetVal()
-    fo.Close()
-    A_g = A_g / pot_scale
-    print(f"[prior] bare-GENIE result scaled by 1/pot_scale = {1.0/pot_scale:.4f} "
-          "(no-weights normalization artifact; see comment)")
+    # No 1/pot_scale correction here: the driver fix of 2026-06-10
+    # (KNOWN_ISSUES #1, RESOLVED) passes the POT-scaled weights to OmniFold in
+    # no --use-weights mode, so bare-GENIE outputs are absolutely normalized.
+    # Outputs produced by the pre-fix driver need A_g / pot_scale.
     wid_ext = np.diff(pt_ext)[:, None] * np.diff(pz_ext)[None, :]
-    print(f"[prior] totals after correction: tune={np.sum(A_t*wid_ext):.4g} "
+    print(f"[prior] totals: tune={np.sum(A_t*wid_ext):.4g} "
           f"genie={np.sum(A_g*wid_ext):.4g} "
           f"ratio={np.sum(A_t*wid_ext)/np.sum(A_g*wid_ext):.4f}")
     # shape-only comparison as well (normalization-independent)

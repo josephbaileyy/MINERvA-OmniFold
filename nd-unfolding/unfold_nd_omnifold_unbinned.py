@@ -482,8 +482,16 @@ def main():
     extras = [dict(EXTRA_AXES[a], name=a) for a in axis_names]
     if args.closure_reweight_axis and not args.closure:
         ap.error("--closure-reweight-axis requires --closure")
+    # hidden-variable closure: the bump axis may be any registry axis NOT being
+    # unfolded -- its truth column is loaded for the injection only, so the
+    # unfold stays blind to it (FPS extension-region validation).
+    hidden_ax = None
     if args.closure_reweight_axis and args.closure_reweight_axis not in axis_names:
-        ap.error(f"--closure-reweight-axis {args.closure_reweight_axis!r} not in --axes")
+        if args.closure_reweight_axis not in EXTRA_AXES:
+            ap.error(f"--closure-reweight-axis {args.closure_reweight_axis!r} not in "
+                     f"--axes or the registry {list(EXTRA_AXES)}")
+        hidden_ax = dict(EXTRA_AXES[args.closure_reweight_axis],
+                         name=args.closure_reweight_axis)
 
     universe_branch = None
     if args.universe is not None:
@@ -537,8 +545,9 @@ def main():
     t_data = f_in.Get("data"); t_td = f_in.Get("mc_truth_denom")
     if not (t_sig and t_bkg and t_data and t_td):
         raise RuntimeError("missing required TTrees")
-    # verify the extra-axis branches exist
-    for ax in extras:
+    # verify the extra-axis branches exist (incl. a hidden closure-bump axis)
+    load_extras = extras + ([hidden_ax] if hidden_ax is not None else [])
+    for ax in load_extras:
         for tree, br in [(t_sig, ax["reco"]), (t_sig, ax["truth"]),
                          (t_bkg, ax["bkg"]), (t_data, ax["data"])]:
             if not tree.GetListOfBranches().FindObject(br):
@@ -566,15 +575,26 @@ def main():
     print(f"[INFO] flux sum = {flux_bins.sum():.4g} m^-2/POT")
 
     meas_pt, meas_pz, meas_ex = collect_data_nd(
-        t_data, extras, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
+        t_data, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
     bkg_pt, bkg_pz, bkg_ex, bkg_w = collect_bkg_nd(
-        t_bkg, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
-    sig = collect_signal_nd(t_sig, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
+        t_bkg, load_extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
+    sig = collect_signal_nd(t_sig, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                             use_weights=args.use_weights, verbose=args.verbose,
                             universe_branch=universe_branch)
-    td = collect_truth_denom_nd(t_td, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
+    td = collect_truth_denom_nd(t_td, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                                 use_weights=args.use_weights, verbose=args.verbose,
                                 universe_branch=universe_branch)
+    hid_truth = None
+    if hidden_ax is not None:
+        # pop the hidden bump column off every loader output so the unfold,
+        # binning, and completeness see only the declared axes
+        hid_truth = sig["truth_extras"].pop()
+        sig["reco_extras"].pop()
+        td["extras"].pop()
+        meas_ex.pop()
+        bkg_ex.pop()
+        print(f"[INFO] hidden-variable closure: truth {hidden_ax['name']} loaded "
+              "for the bump only (not an unfolding axis)")
 
     # Truth-level prior reweight (FPS 3-prior envelope): multiply the MC truth AND
     # reco weights by ratio(truth pT, truth pz); the reco weight rides its event's
@@ -639,16 +659,23 @@ def main():
         cmask = sig["pass_reco"] & sig["pass_truth"]
         meas_pt = sig["reco_pt"][cmask].copy(); meas_pz = sig["reco_pz"][cmask].copy()
         meas_ex = [e[cmask].copy() for e in sig["reco_extras"]]
-        measured_weights = (sig["w_reco"][cmask].copy() if args.use_weights
-                            else np.ones(meas_pt.size))
+        # Pseudo-data weights must mirror the MC reco weights handed to OmniFold
+        # (without --use-weights both are the constant pot_scale), or the
+        # learned normalization and the binning weights double-count pot_scale.
+        measured_weights = sig["w_reco"][cmask].copy()
         if args.closure_reweight_axis:
-            ai = axis_names.index(args.closure_reweight_axis)
-            tcol = sig["truth_extras"][ai][cmask]
+            if hidden_ax is not None:
+                tcol = hid_truth[cmask]
+                tcol_t = hid_truth[sig["pass_truth"]]
+            else:
+                ai = axis_names.index(args.closure_reweight_axis)
+                tcol = sig["truth_extras"][ai][cmask]
+                tcol_t = sig["truth_extras"][ai][sig["pass_truth"]]
             A, c0, s = args.closure_amplitude, args.closure_center, args.closure_sigma
             measured_weights = measured_weights * (1.0 + A * np.exp(-((tcol - c0) / s) ** 2))
-            tcol_t = sig["truth_extras"][ai][sig["pass_truth"]]
             closure_rw_truthpass = 1.0 + A * np.exp(-((tcol_t - c0) / s) ** 2)
-            print(f"[INFO] inject bump on {args.closure_reweight_axis}: A={A} c={c0} s={s}")
+            print(f"[INFO] inject bump on {args.closure_reweight_axis}"
+                  f"{' (hidden)' if hidden_ax is not None else ''}: A={A} c={c0} s={s}")
     else:
         data_nd, _ = histnd([meas_pt, meas_pz] + meas_ex, np.ones(meas_pt.size), edges)
         bkg_nd, _ = histnd([bkg_pt, bkg_pz] + bkg_ex, bkg_w, edges)
@@ -688,8 +715,13 @@ def main():
         MCgen, MCreco, measured,
         sig["pass_reco"], sig["pass_truth"], np.ones(meas_pt.size, dtype=bool),
         int(args.iters),
-        MCgen_weights=sig["w_truth"] if args.use_weights else None,
-        MCreco_weights=sig["w_reco"] if args.use_weights else None,
+        # Always pass the collected (POT-scaled) weights: without --use-weights
+        # they are the constant pot_scale, which the classifier needs to see or
+        # it absorbs the data/MC normalization gap into the learned weights and
+        # the pot-scaled binning below applies pot_scale a second time
+        # (KNOWN_ISSUES #1: result globally low by pot_scale).
+        MCgen_weights=sig["w_truth"],
+        MCreco_weights=sig["w_reco"],
         measured_weights=measured_weights,
         classifier1_params=c1, classifier2_params=c2, regressor_params=rg,
         parameter_format="dict", estimator=args.estimator, device=args.device,
@@ -771,13 +803,19 @@ def main():
         ref_nd, _ = histnd(tcols, ref_w, edges)
         ref_xsec, _ = extract_cross_section_nd(ref_nd, completeness, np.asarray(flux_bins, float),
                                                data_pot, n_nucleons, edges)
+        write_thnd(f_out, ref_xsec, None, "hClosureRefND",
+                   "closure reference xsec (bump-reweighted truth)", edges, axis_labels)
         msk = ref_xsec > 0
         r = np.full(xsec.shape, np.nan)
         r[msk] = xsec[msk] / ref_xsec[msk]
         print("\n=== CLOSURE RESIDUALS (unfold/ref) ===")
         print(f"  {ndim}D bins: median={np.nanmedian(r):.4f} std={np.nanstd(r):.4f} "
               f"max|dev|={np.nanmax(np.abs(r-1)):.4f}")
-        if args.closure_reweight_axis:
+        if args.closure_reweight_axis and hidden_ax is not None:
+            print(f"  hidden-axis bump ({hidden_ax['name']}): per-cell recovery map = "
+                  "hXSecND / hClosureRefND (region split via fps_extension_validation.py)")
+            print(f"  injected mean factor={closure_rw_truthpass.mean():.4f}")
+        elif args.closure_reweight_axis:
             ai = axis_names.index(args.closure_reweight_axis)
             _, y_unf = project_axis(xsec, edges, 2 + ai)
             _, y_ref = project_axis(ref_xsec, edges, 2 + ai)

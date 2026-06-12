@@ -7,41 +7,71 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
 
 ## Blocked on external input
 
-1. **Ascencio bin-identical overlay** — machinery complete
-   (`nd-unfolding/compare_ascencio_q3.py --ascencio-2d`); needs the
-   arXiv:2110.13372 data release (HepData/member-gated).
-2. **Collaborator confirmations** (technote App. A): FrInel_pi exclusion still
+1. **Collaborator confirmations** (technote App. A): FrInel_pi exclusion still
    current MAT guidance; precedent for the ours-only truncated-spectral χ²;
    precedent for publishing a 3D+ systematic covariance.
 
 ## Deferred analysis refinements
 
-3. **PET per-lateral re-inference** — replace the frozen-cloud transferred
-   lateral band by re-running PET inference on shifted reconstructed clouds
-   per lateral universe. Design: drive the engine-agnostic UQ harness
-   (`analyze_universes_nd.py`, `bootstrap_nd.py`, NTRIAL ensemble) through the
-   PET engine; amortize with the read-once bank + train-once/reweight-cheap.
-4. **W-resolved laterals / dedicated W systematic campaign** — the binary
-   already dumps shifted-W lateral universes, so the bank exists; replaces the
-   transferred 4D laterals in the (E_avail,W) covariance.
+2. **Ascencio fine-binned comparison** — the maximal-common-grid full-cov
+   cross-check is DONE 2026-06-10 (χ²/ndf = 1.68/2, p = 0.43, consistent;
+   `nd-unfolding/compare_ascencio_fullcov.py`, data from the public arXiv
+   tarball). Optional residual: a 44-cell comparison on their fine edges needs
+   a re-unfold onto those edges plus a systematic sweep on that binning.
+3. **PET per-lateral re-inference** — DONE 2026-06-10 (job 54284039):
+   PET-native lateral band via the event-aligned 5D join, no C++ re-dump,
+   no GPU. Native median 1.74% vs transferred 4.03% (total budget 22.5% vs
+   23.0%) — the published GBDT transfer validated as the conservative side;
+   `KNOWN_ISSUES.md` #3 RESOLVED. Residual (deferred indefinitely): full
+   per-universe PET re-TRAINING would capture the retraining response the
+   frozen-push scheme misses; bounded between 1.74% and 4.03% by these two
+   estimates.
+4. **W-resolved laterals / dedicated W systematic campaign** — LAUNCHED
+   2026-06-10 (user-approved): 18 detector universes (6 muon/beam laterals
+   with shifted pt/pz/q3/W + 3 GEANT weight bands) + matched CV re-inferred
+   on the 5D axes (`sbatch_unfold_5d_detector.sh`, array 54279318, queued
+   behind the FPS sweep), then `eavailW_covariance.py --lateral-sweep-*`
+   rebuilds the (E_avail,W) covariance with the W-resolved block
+   (54279319 → `products/5d/eavailW_covariance_wlat.root`). Close via
+   `KNOWN_ISSUES.md` #4 once the new corner significances are checked
+   against the published ones.
 5. **True multi-band (lateral) event-loop unified throw** — the weight-composed
    unified throw covers reweight bands only; a C++ event-loop multi-band throw
    would additionally capture lateral (kinematic-shift) cross-terms.
 6. **NEUT as fifth generator** — no accessible build at time of writing.
-7. **Coverage 200-toy regeneration** — optional; numbers documented, toy ROOTs
-   not on disk (`KNOWN_ISSUES.md` #2).
-8. **Driver no-weights normalization fix** — `KNOWN_ISSUES.md` #1.
+7. **Coverage 200-toy regeneration** — DONE 2026-06-11 (arrays
+   54273493/54273495): `uq/coverage_toys.py` reproduces every documented
+   number exactly (mean 68.71%, PASS); `KNOWN_ISSUES.md` #2 RESOLVED,
+   ledger flag lifted.
+8. **Driver no-weights normalization fix** — DONE 2026-06-10. Fix applied
+   and verified (job 54271042: battery + envelope reproduce without the
+   1/pot_scale correction); `KNOWN_ISSUES.md` #1 RESOLVED, ledger entry
+   added.
+9. **LE-beam evolution comparisons** — DONE 2026-06-11 (qualitative, shapes
+   only): `nd-unfolding/compare_le_evolution.py` overlays Filkins 2002.12496
+   (CC-incl dσ/dpT, dσ/dp∥; data from the arXiv tarball, now in
+   `nd-unfolding/reference_le/`) and Rodrigues 1511.05944 ((E_avail,q3)
+   Tables III+IV rebinned onto our coarse grid — edges nest exactly; strict
+   LE-coverage masking) against the ME 4D-product marginals →
+   `products/4d/le_evolution_compare.png`; numbers in the ledger. Residual
+   (unchanged): a quantitative LE↔ME translation needs per-event true Eν
+   dumped (one event-loop branch, piggyback on a future re-run) and is
+   prior-dependent.
 
 ## Active campaign — full phase space (FPS)
 
-9. **FPS campaign** (decision memo `nd-unfolding/FPS_PILOT.md`, GO with
-   two-tier reporting): 12-playlist CV chain + MEFHC honesty battery +
-   3-prior envelope in flight (jobs 54244119/54244120/54244178); UQ stage
-   (`sbatch_evloop_array_5d_fps_universes_full.sh`, ~190 GB merged) gated on
-   the MEFHC-scale anchor. In FPS the unified throw is **mandatory** (the
-   migration-heavy corner that broke the 4D block sum ×2 is inside the
-   measurement). New validation needed: hidden-variable closure + coverage in
-   the extension regions.
+10. **FPS UQ stage** (decision memo `nd-unfolding/FPS_PILOT.md`, GO with
+    two-tier reporting; CV chain + MEFHC battery + 3-prior envelope DONE
+    2026-06-10, anchor gate PASS). **Everything staged/in flight
+    2026-06-11** (job IDs in `nd-unfolding/.fps_uq_chain_jobs.txt`,
+    narrative in the RUN_LOG): 187-universe sweep → block-sum cov;
+    bootstrap + split-seedscan → combines → full budget → unified-throw
+    adoption (block-sum vs unified-throw decision, as in 4D); **mandatory**
+    unified throw via the validated 2D FPS bank (#12 miss-row pinning);
+    extension-region validation launched (hidden-variable E_avail closure +
+    200 coverage toys, region split via
+    `nd-unfolding/fps_extension_validation.py`). Remaining: report verdicts
+    when the chain drains.
 
 ## Methodology stance (for the eventual response-to-referees)
 

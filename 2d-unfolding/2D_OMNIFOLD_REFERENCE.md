@@ -283,6 +283,34 @@ caused by MINOS-match selection; it is most likely a MINOS geometric
 acceptance / range-out efficiency that the MINERvA-101 tutorial path
 does not implement.
 
+**Fixability assessment (2026-06-10, KNOWN_ISSUES #5)**: the
+`MINOSEfficiencyReweighter` (intensity-dependent data/MC matching
+efficiency, few-%) IS already applied in our MnvTune stack
+(`runEventLoopOmniFold.cpp:1113`) — far too small to explain the
+gradient. The candidate was the official MasterAnaDev muon-quality
+selection the tutorial path omits. Scoping found dead-time already in
+the preCuts (`NoDeadtime(1)`) and `minos_trk_fit_pass` implied by the
+patched IsMinosMatchMuon (100% of matched events), leaving
+`minos_trk_quality==1` (23.5% of matched MC is quality-2) and the
+curvature-significance cut.
+
+**Diagnostic RESULT (2026-06-10, job 54280253,
+`minos_quality_diagnostic.py` → `products/minos_quality_diagnostic.png`)
+— quality cuts ACQUITTED.** Conditional efficiency of the added cuts
+among base-selected events (1A AnaTuples, 1.66M MC / 158k data):
+eff_data/eff_MC = 1.03–1.05 at p_MINOS 1–2.5 GeV/c vs 1.06–1.14 at
+10–60 (quality and quality+curvature alike). Closing the 0.6→1.0
+gradient needed ~1.67 at low p falling to 1.0 — the observed double
+ratio is far too small and has the wrong shape. Data is uniformly MORE
+efficient than MC for these cuts, so applying them cannot produce a
+low-p_|| data deficit at all. (Side finding: `minos_trk_eqp_qp` is the
+already-fractional q/p error — the /qp variant removes >99% of
+high-momentum events and is the wrong reading.) The gradient therefore
+remains attributed to MINOS acceptance/efficiency modeling upstream of
+selection (or generator rate mismodeling); its net effect inside the
+published phase space is bounded by the 2D paper reproduction (integral
+ratio 1.011), and the FPS p_||<1.5 region carries tier-2 flagging.
+
 ## Output hygiene
 
 - Preserve known-bad but diagnostically useful files under an explicit

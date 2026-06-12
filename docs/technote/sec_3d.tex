@@ -347,22 +347,37 @@ excess concentrates at low $\Eavail$ (all $q_{3}$) and toward high $q_{3}$. This
 is precisely the correlation a muon-only or fixed-$q_{3}$ measurement cannot
 expose, and it is the natural input for the bin-compatible Ascencio comparison.
 We show it here at central-value level (the base GENIE event-generator list
-contains no 2p2h, as in \S\ref{sec:3d-2p2h}); per-cell significances await the
-combined 4D covariance below. The our-side spectra for the bin-identical
-Ascencio overlay --- $d\sigma/dq_{3}$ on the Ref.~\cite{MINERvA:2022incl}
-binning and $\Eavail$ slices in low-$q_{3}$ bands --- are staged
-(Fig.~\ref{fig:ascencio}); the quantitative overlay awaits the gated data
-release.
+contains no 2p2h, as in \S\ref{sec:3d-2p2h}); per-cell significances use the
+combined 4D covariance below.
+
+\paragraph{Bin-identical comparison to the published low-recoil measurement.}
+The Ref.~\cite{MINERvA:2022incl} supplemental data (44-cell
+$d^{2}\sigma/(d\Eavail\,dq_{3})$ with its full covariance, distributed inside
+the public arXiv source package) enables a direct quantitative cross-check.
+Merging both measurements onto their maximal common grid --- edges present in
+\emph{both} binnings, with our $(\pT,\pPar)$ marginalisation restricted to
+$\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio muon gate
+($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$) --- gives two super-cells,
+$\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
+low-recoil region where the 2p2h physics lives. Our result sits
+\SI{9.2}{\percent} and \SI{6.3}{\percent} above Ascencio (pulls $1.3\sigma$
+and $0.9\sigma$ against the summed covariances), with a full-covariance
+$\chi^{2}/\mathrm{ndf}=1.68/2$ ($p=0.43$): \textbf{the two measurements are
+consistent} (Fig.~\ref{fig:ascencio}). Caveats: the two share MINERvA
+flux/detector systematics, treated here as independent; the $p_\mu$-vs-$\pPar$
+gate differs by $\lesssim\SI{6}{\percent}$ kinematic smearing at the
+\SI{20}{GeV} boundary. A finer 44-cell comparison would require re-unfolding
+onto the Ascencio edges (trivial for the unbinned method) \emph{and} a
+systematic sweep on that binning; given the agreement above it is not pursued.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.49\textwidth]{ascencio_vs_unfolded_q3_dq3.png}
-  \includegraphics[width=0.49\textwidth]{ascencio_vs_unfolded_q3_eavail_in_q3slices.png}
-  \caption{Staged inputs for the bin-identical comparison to the published
-  low-recoil measurement~\cite{MINERvA:2022incl}: our unfolded
-  $d\sigma/dq_{3}$ on the Ascencio binning (left) and $\Eavail$ spectra in
-  low-$q_{3}$ slices (right). Our-side spectra only; the numerical overlay is
-  gated on the external data release.}
+  \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare.png}
+  \caption{Bin-identical comparison to Ascencio
+  \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
+  $(\Eavail,q_{3})$ grid, with each side's full covariance (ours: the adopted
+  4D combined covariance marginalised with the Ascencio muon gate). Full-cov
+  $\chi^{2}/\mathrm{ndf}=1.68/2$, $p=0.43$.}
   \label{fig:ascencio}
 \end{figure}
 

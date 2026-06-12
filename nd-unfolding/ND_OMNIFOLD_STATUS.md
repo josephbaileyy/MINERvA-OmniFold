@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-06-09 (doc slimmed to dashboard form per the canonical-home
+**Last updated**: 2026-06-10 (doc slimmed to dashboard form per the canonical-home
 convention in `../AGENTS.md`; all narrative detail is in `ND_OMNIFOLD_RUN_LOG.md`,
 all verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 open items in `../docs/OPEN_ITEMS.md`).
@@ -14,11 +14,12 @@ open items in `../docs/OPEN_ITEMS.md`).
 | 5D xsec (+W) | 5D/4D anchor 1.0011, injected-W closure PASS | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` |
 | (E_avail,W) covariance + significance | median 14.8%/bin; high-W DIS corner missed 9.0/9.2/10.5/18.2σ (GENIE/+MEC/NuWro/GiBUU) | `products/5d/eavailW_covariance.root` |
 | dσ/dEavail generator significance | all four generators >21σ overall, >15σ in DIS tail | `3d-unfolding/genie/` + adopted 4D cov |
-| PET absolute milestone | closure 0.9884; PET/GBDT 0.9117 (training-config gap); combined budget 23.0% | `products/pet/` |
+| PET absolute milestone | closure 0.9884; PET/GBDT 0.9117 (training-config gap); clean budget 11.7% (rebank 2026-06-12; pre-#12 published 23.0% was inflated ×2, conservative) | `products/pet/pet_4d_covariance_combined_rebank.root` |
 | NN cross-check | keras-MLP/GBDT total ratio 1.0078 | `omnifold_nn_core.py` |
 | Unbinned GoF (C2ST) | prior z=33 → unfolded z=1.4, p=0.17 PASS | `unbinned_gof.py` |
 | ML split-seedscan | split band 1.24× pure-seed; combined +0.04% | `uq_cov_mlsplit_3d.root` |
 | Reco-level control + migration plots | data/MC 1.12 uniform; diag purity ~0.6/axis | `products/5d/control_plots.png`, `migration_resolution.png` |
+| Ascencio bin-identical cross-check | full-cov χ²/ndf 1.68/2 (p=0.43) on maximal common grid — consistent | `compare_ascencio_fullcov.py`, `products/4d/ascencio_fullcov_compare.png` |
 
 ## In flight — FPS campaign (decision memo `FPS_PILOT.md`: GO, two-tier reporting)
 
@@ -31,17 +32,43 @@ open items in `../docs/OPEN_ITEMS.md`).
 - **3-prior envelope DONE (54244178)**: totals spread ±1.5%; per-cell
   half-spread median 2.9% (published) vs 7.9% / p90 62% (extension) — the
   tier-2 band. `products/5d/fps_prior_envelope_MEFHC.png`.
-- **UQ stage RUNNING**: `_universes_full` array 54254627 (9/12 done) →
-  SetMaxTreeSize merge 54254628 (~190 GB; unified throw mandatory in FPS).
-  Then: matched CV + 187-universe sweep, bootstrap, split-seedscan, unified
-  throw, extension-region closure/coverage.
+- **UQ stage RUNNING — fully staged end-to-end** (dependency-wired, IDs in
+  `.fps_uq_chain_jobs.txt`): sweep 54261359 (~167/188 done, no failures) →
+  block-sum cov 54314362; inputs dump DONE → bootstrap 54314365 +
+  split-seedscan 54314366; unified-throw bank DONE+validated (374 files,
+  miss pinning verified) → 160 throws 54314369 + block units 54314370 →
+  combine 54314371. **Final assembly staged 2026-06-11**: combines
+  54325576/77 → budget 54325578 → unified-throw adoption 54325579.
+  **Extension validation launched**: hidden-variable closure 54326695
+  (E_avail bump, new driver hidden-axis mode) + 200 coverage toys 54326694;
+  region split via `fps_extension_validation.py` (185 published / 100
+  extension cells).
+- **Driver no-weights normalization fix (KNOWN_ISSUES #1) RESOLVED
+  2026-06-10**: verification 54271042 PASS (battery + envelope reproduce
+  without correction); on-disk bare-GENIE ROOTs are post-fix.
+
+## In flight — other
+
+- **W-resolved lateral campaign (KNOWN_ISSUES #4)**: 18 detector universes +
+  matched CV re-inferred on the 5D axes (54279318, queued behind the FPS
+  sweep) → (E_avail,W) covariance rebuilt with the W-resolved block
+  (54279319 → `products/5d/eavailW_covariance_wlat.root`).
+- **Coverage 200-toy regeneration (KNOWN_ISSUES #2) DONE 2026-06-11**:
+  all 200 toys rebuilt; `uq/coverage_toys.py` PASS, every documented number
+  reproduced exactly (mean 68.71%). #2 RESOLVED, ledger flag lifted.
+- **PET-native lateral band (KNOWN_ISSUES #3) DONE**: native median 1.74%
+  vs transferred 4.03% — published 23.0% budget stands (transfer validated
+  conservative); true lateral bounded in [1.74%, 4.03%].
+- **MINOS quality diagnostic (KNOWN_ISSUES #5) DONE**: quality cuts
+  ACQUITTED (DR ≈ 1.03–1.05 at low p, needed ~1.67); gradient remains an
+  upstream acceptance/modeling effect, bounded by the 2D reproduction.
 
 ## Next
 
-1. FPS MEFHC anchor gate → launch FPS `_universes_full` UQ stage.
-2. FPS extension-region validation: hidden-variable closure + coverage toys.
-3. Open/deferred items: `../docs/OPEN_ITEMS.md` (Ascencio gated data, NEUT,
-   PET per-lateral, W-resolved laterals, multi-band unified throw).
+1. FPS chain drains end-to-end (all staged) → report block-sum vs
+   unified-throw decision + extension closure/coverage verdicts.
+2. W-lat sweep drains → check corner significances old-vs-new, close #4.
+4. Open/deferred items: `../docs/OPEN_ITEMS.md`.
 
 Companion docs: `ND_OMNIFOLD_RUN_LOG.md` (chronology; all campaign narratives
 2026-06-03 → present). Shared invariants: `../2d-unfolding/2D_OMNIFOLD_REFERENCE.md`

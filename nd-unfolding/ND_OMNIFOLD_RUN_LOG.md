@@ -1,5 +1,296 @@
 # N-D OmniFold — Run Log (append-only)
 
+## 2026-06-12 — PET-bank reassessment VERDICT: published budget was inflated ×2 (conservative)
+
+The rebank chain (entry below) landed clean: alignment gate bit-identical,
+then `pet_systematics.py` on the clean bank gives C_syst median **8.24% vs
+the published 18.31%** — the old bank's garbage miss-row ratios (#12,
+`_clip`ed to {1e-2,1,1e2}) had inflated the PET systematic ×2.2. C_stat
+(4.18%) and C_ML (3.32%) are IDENTICAL to the published file, confirming the
+bank is the only difference. Clean total 11.66%/bin vs published 23.02%
+(≈12.3% once the transferred lateral is added) — the PET budget is now
+comparable to the GBDT 4D budget (13.5–14.9%) instead of ~1.7× worse.
+Published artifact untouched; clean numbers live in
+`products/pet/pet_4d_covariance_combined_rebank.root`. KNOWN_ISSUES #12
+fully RESOLVED; ledger entry added; technote PET numbers to be revised in
+the next consolidation pass (together with the W-lat (E_avail,W) update).
+
+## 2026-06-11 (later still) — PET-bank reassessment launched + LE-evolution overlays DONE
+
+Two parallel items started while the FPS chain drains (user-approved):
+
+- **PET-bank reassessment (KNOWN_ISSUES #12 residual)**: `bank_uthrow`
+  regenerated with the post-fix dump — miss-row rhos pinned to 1.0, source =
+  the merged **5D** MEFHC `_universes_full` file (NOT the 3D default;
+  `of_inputs_pc.npz` row order is the 5D signal tree), axes eavail,q3
+  (`sbatch_uthrow_dump_rebank.sh`, 54330164) → `pet_systematics.py` re-run
+  behind it with a bit-identical w_truth alignment gate
+  (`sbatch_pet_rebank.sh`, 54330166 →
+  `products/pet/pet_4d_covariance_combined_rebank.root`, does NOT overwrite
+  the published artifact). Compare C_syst median vs the published 18.31%
+  when it lands. IDs in `.pet_rebank_jobs.txt`.
+- **LE→ME beam-evolution overlays (OPEN_ITEMS 9) DONE**:
+  `compare_le_evolution.py` + `reference_le/` (both arXiv tarballs public,
+  as with Ascencio). Shape-only by construction. Filkins pT/p∥: ME harder in
+  p∥ (LE/ME shape median 1.27), as expected from the flux. Rodrigues
+  (E_avail,q3): edges nest exactly in our coarse grid; strict-coverage
+  rebinning leaves q3≥0.4 comparable — shapes agree at the 10–25% level with
+  LE softer at low E_avail in q3 0.6–0.8. Numbers in the ledger; figure
+  `products/4d/le_evolution_compare.png`.
+
+## 2026-06-11 (later) — FPS final assembly + extension validation staged; bank PASS
+
+The two "still to write" items from the entry below are now written and
+in flight (all IDs appended to `.fps_uq_chain_jobs.txt`):
+
+- **Bank validation PASS**: `bank_uthrow_fps` (54314368) = 374 files / 37 GB;
+  row counts identical to `of_inputs_fps.npz` (49,152,885 signal / 20,573,521
+  pass-reco / 49,150,928 truth — two independent readers agree); miss pinning
+  verified at scale (~99.99% of non-pass-reco rows have rho exactly 1.0, the
+  remainder being genuine off-grid signal-loop rows); all arrays finite;
+  flux_univ_ratio (100, 15). Throws + block units released.
+- **Final combined assembly** (4D-mirror, dependency-wired): bootstrap combine
+  (54325576) + split-seedscan combine (54325577) via `combine_cov_nd.py` →
+  full budget C_syst+norm+C_stat+C_ML (54325578, `sbatch_fps_budget.sh`) →
+  unified-throw adoption (54325579, `sbatch_adopt_fps.sh`, reuses the
+  path-parametrized `adopt_unified_4d.py`; sigma-inflation transfer onto the
+  sweep's vertical block, PSD by construction) →
+  `uq_fps/universe_stage2_fps/uq_universe_fps_covariance_combined[_uthrow].root`.
+- **Hidden-variable closure** (54326695): the N-D driver's
+  `--closure-reweight-axis` now accepts any registry axis NOT being unfolded —
+  its truth column is loaded for the Gaussian bump only and popped off every
+  loader output before the unfold, so OmniFold stays blind to it; the closure
+  block writes `hClosureRefND` (bump-reweighted truth xsec) for per-cell
+  recovery maps. Run: FPS 2D grid, bump in true E_avail (defaults A=0.3,
+  c=0.3, s=0.15), `sbatch_fps_hidden_closure.sh`. **Result: PASS** —
+  published median 0.17% / extension median 0.77% (max 4.05%), well inside
+  the tier-2 prior band; numbers in the ledger.
+- **Coverage toys** (54326694, array 1–200%32): `coverage_toy_nd.py` —
+  npz-based closure+bootstrap toy mirroring the 2D 200-toy recipe (pseudo-data
+  = MC reco of pass_reco&pass_truth events, driver seed offsets, completeness
+  = 1) → `cov_fps/res_toy_*.npz`. 3-toy subsample smoke PASS end-to-end.
+- **Region-split analyzer** `fps_extension_validation.py`: published-PS
+  (185 cells, the battery's conservative tan20 anchor mask) vs extension
+  (100 cells) split for BOTH the closure recovery map and the per-bin toy
+  coverage (target 68.27%, flag <65% as in 2D).
+
+## 2026-06-11 — FPS UQ chain pre-staged end-to-end (8 jobs, dependency-wired)
+
+While the 187-universe FPS sweep (54261359) drains, the entire remaining FPS
+UQ stage was staged so it runs unattended:
+
+- **Block-sum covariance** `sbatch_fps_cov.sh` (54314362, afterany the sweep,
+  guards on matched CV + 187/187 files): `analyze_universes_nd.py` vs the
+  MATCHED CV, +1.4% flat norm → `uq_fps/universe_stage2_fps/`.
+- **Bootstrap (C_stat) + split-seedscan (C_ML)**: `nn_dump_inputs.py` gained
+  the driver's `--pt-edges/--pz-edges/--full-phase-space` (incl. the
+  bin-centre flux remap) → `of_inputs_fps.npz` (54314364), then 100 Poisson
+  replicas (54314365) and 24 split-seeds (54314366), both afterok the dump.
+- **Mandatory unified throw**: `unified_throw.py --dump` generalized to
+  axes/edges/FPS (2D bank now supported; `compare_unified_throw.py` td-cols
+  made 2D-tolerant) and **miss-row ratios pinned to 1.0** — the merged FPS
+  file is pre-#12-fix, so appended-miss universe branches are garbage;
+  pinning is exactly the post-fix event-loop CV-proxy behavior (signal-loop
+  rows keep genuine ratios even when reco migrates off-grid; true vertical
+  miss variation enters via the clean `mc_truth_denom`). Also added
+  `SetBranchStatus` pruning (~10× I/O cut; smoke: 600k rows in 8 s) and a
+  `--max-entries` smoke flag. Chain: bank dump 8 groups (54314368) → 160
+  throws (54314369) + 12-knob/12-flux block units (54314370) → combine with
+  jitter-null (54314371) → `uq_fps/unified_throw_cov_fps.root`.
+
+Job IDs in `.fps_uq_chain_jobs.txt`. Still to write once these land: the
+extension-region hidden-variable closure + coverage validation, and the final
+combined covariance assembly (block-sum vs unified-throw decision, as in 4D).
+
+## 2026-06-10 — KNOWN_ISSUES #3 RESOLVED: PET-native lateral band (54284039)
+
+Second run with the miss-pin + rho_r fixes: alignment exact (32.85M rows),
+CV-path consistency 0, full pass_truth in every universe. Native lateral
+median **1.74%/bin vs 4.03% transferred**; total budget 22.5% vs published
+23.0%. Band ordering MinosEfficiency > Muon_Energy_MINOS ≈ GEANT_Neutron >
+GEANT_Proton/Pion > BeamAngle/MuonResolution — the weight-response bands
+dominate, as expected when the clouds are invariant and the kinematic bands
+act only through acceptance gating. Interpretation adopted: the frozen-push
+native band misses per-universe retraining response → it is the optimistic
+bound, the GBDT transfer the conservative one; **published 23.0% stands**,
+true lateral ∈ [1.74%, 4.03%]. Numbers in the ledger; artifact
+`products/pet/pet_4d_covariance_combined_wlat.root` (per-band blocks
+included). KNOWN_ISSUES #3 closed.
+
+## 2026-06-10 — DISCOVERY: garbage universe branches on miss rows (KNOWN_ISSUES #12)
+
+Found by the first `pet_lateral_band.py` run (54282492: GEANT bands exactly
+zero + a common huge offset in every kinematic universe). Root cause in
+`runEventLoopOmniFold.cpp::AppendTruthOnlyMisses`: it rebinds the CV scalar
+and cloud branches but NOT the per-universe weight/kinematics branches, whose
+signal-loop-local buffers are out of scope → every appended miss row (12.35M
+= 37.6% of the 5D MEFHC `mc_signal_reco`) carries freed-memory garbage in all
+`w_truth_*/w_reco_*/MC_*/sim_*_<band>_<idx>` branches. Verified empirically:
+denormals/±1e±182, only 27% coincidentally equal to CV.
+
+**Why the validated campaigns survive (first-order exact):** the driver's
+xsec ∝ unfold × denom / of_in. denom comes from `mc_truth_denom`, whose
+universe branches ARE clean (filled in the truth loop). The garbage on signal
+-tree miss rows fails the gates / weight-guards, removing those rows from
+unfold AND of_in by the same per-bin factor, which cancels in the ratio. The
+same structure protects `eavailW_covariance.py` (its rho on misses is mangled
+identically in unfold and of_in; denominator clean). Residual is second-order
+(step2_w-vs-bin-average covariation of the dropped rows).
+
+**What is actually affected:** (a) the first pet_lateral_band run — its
+completeness denominator also came from the signal tree → f² suppression
+(fixed: miss rows pinned to CV, exact for 7/9 detector bands, ≲10 MeV
+neglect for the BeamAngle truth rotation; resubmitted 54284039 with the
+reco-weight ratio rho_r added so GEANT/MinosEfficiency carry their real
+w_reco variation). (b) `pet_systematics.py` C_syst/C_flux: the bank's
+miss-row universe/CV ratios were garbage mangled by `_clip` to {1e-2,1,1e2},
+entering counts AND denom from the same tree → the published PET 18.31% syst
+median is possibly distorted. Reassessment needs a bank regen (banks deleted
+in the 06-10 cleanup) — flagged in KNOWN_ISSUES #12, decision deferred.
+
+**C++ FIX (this commit, rebuilt + installed to opt/bin):** miss rows now get
+deterministic CV proxies (universe weights := tde.w_truth, truth-mode shifted
+kinematics := CV truth values, reco-mode := −9999) — a miss carries no
+per-universe variation in the dump; true vertical miss variation lives in
+`mc_truth_denom`. Existing dumps NOT regenerated (first-order protection +
+cost); any future event-loop production picks the fix up automatically.
+
+## 2026-06-10 — KNOWN_ISSUES #3 + #5 launched (PET-native laterals; MINOS quality diagnostic)
+
+**#3 PET per-lateral (job 54280218, `pet_lateral_band.py` + sbatch):** the
+deferred "re-dump clouds + 18 GPU inferences" plan collapsed to a CPU job
+after two findings: (a) `PC_MEFHC.root` is exactly event-aligned with the
+merged 5D `_universes_full` file (identical entry counts, all four trees) and
+the PC npz kept every row, so per-universe shifted branches JOIN by row index
+with no C++ re-dump; (b) the muon laterals leave the recoil clouds invariant
+(Gap 1), so the trained PET push weights are reused frozen — what shifts is
+joined from the 5D file (truth coords MC/MC_pz/MC_q3_<sfx>, reco gate
+sim/sim_pz_<sfx>, universe weights). All 5 kinematic bands carry the full
+suffixed sextet (verified); MinosEfficiency/GEANT are weight-only. The script
+asserts full-row alignment (32.85M rows, 4 truth columns + w_truth) and
+CV-path consistency before computing; band convention = analyze_universes_nd
+(ZᵀZ/N de-meaned, vs PET CV). Output
+`products/pet/pet_4d_covariance_combined_wlat.root` (+ per-band blocks); the
+GBDT-transfer comparison printed by the job doubles as a test of the
+engine-independence assumption used by `pet_lateral_correction.py`.
+Documented approximation: w_push not re-trained per universe (second-order:
+training-set composition at the acceptance edge + weight swap only).
+
+**#5 RESULT (54280253, 3 min): quality cuts ACQUITTED** — DR(eff_data/eff_MC)
+= 1.03–1.05 at p_MINOS 1–2.5 GeV (closing needed ~1.67), flat-to-rising with
+p; data uniformly MORE efficient than MC, so the omitted cuts cannot produce
+a low-p_|| data deficit. eqp_qp confirmed already-fractional (the /qp variant
+guts high-p). KNOWN_ISSUES #5 stays OPEN as an upstream
+acceptance/modeling effect, bounded by the 2D paper reproduction; full
+numbers in `2D_OMNIFOLD_REFERENCE.md` §IsMinosMatchMuon.
+
+**#5 MINOS quality diagnostic (job 54280253,
+`2d-unfolding/minos_quality_diagnostic.py` + sbatch):** no rebuild, no
+unfold. Findings while scoping: NoDeadtime(1) is already in the preCuts and
+fit_pass is implied by the patched IsMinosMatchMuon (100% of matched events)
+— NOT candidates. Live candidates: `minos_trk_quality==1` (23.5% of matched
+1A MC events are quality-2) and the curvature-significance cut (both eqp_qp
+interpretations tested). Method: conditional efficiency of the added cuts
+among base-selected events (match+is_ok+tdead==0+fiducial), data vs MC vs
+p_MINOS over the 1A AnaTuples via xrootd; corrected sum ratio = baseline ×
+DR(eff_data/eff_MC). Closing the 0.6→1.0 gradient requires DR≈1.67 at low p
+falling to ≈1.0 high — DR≈1 everywhere acquits the quality cuts. Verdict +
+PNG land in `2d-unfolding/products/minos_quality_diagnostic.png`; detail home
+`2D_OMNIFOLD_REFERENCE.md` §IsMinosMatchMuon.
+
+## 2026-06-10 — KNOWN_ISSUES #1 verification PASS + W-resolved lateral campaign launched (#4)
+
+**Driver fix verified (job 54271042, 21 min):** both bare-GENIE FPS unfolds
+re-run with the always-pass-weights driver and the 1/pot_scale corrections
+stripped from `fps_pilot_compare.py`/`fps_prior_envelope.py` reproduce the
+ledger: 1A anchor 0.9995 / |Δ| median 0.65%; MEFHC tune/genie totals
+4.502e-38 / 4.369e-38 (pre-fix corrected value 4.367e-38 — ML-jitter);
+envelope medians 2.90% published / 7.86% extension (was 2.91%/7.88%).
+KNOWN_ISSUES #1 → RESOLVED; ledger entry added. Bare-GENIE ROOTs on disk
+(`products/5d/xsec_2d_FPS_{1A,MEFHC}_genie.root`) are now post-fix.
+
+**W-resolved lateral campaign (KNOWN_ISSUES #4, user-approved):** replaces
+the 4D-transferred lateral block in the (E_avail,W) covariance with real
+re-inference. Verified first: the merged 5D `_universes_full` file carries
+all shifted-W lateral branches (`sim_W_<band>_<idx>`, `MC_W_…`,
+`W_truth_…`; 10 = 5 kinematic bands × 2, MinosEfficiency/GEANT are
+weight-only and fall back to CV kinematics — same path the 4D 187-universe
+sweep exercised). Campaign = 18 detector universes (6 muon/beam laterals +
+3 GEANT bands) + matched CV, re-inferred on the full 5D axes:
+- `sbatch_unfold_5d_detector.sh` (NEW): array 0–18%8 shared/32-core, task 0
+  = matched CV (`--axes eavail,q3,W --seed 42`), outputs
+  `uq_5d/universe_sweep/5d_xsec_MEFHC_5iter_lgbm_uni_full_<TAG>.root`.
+  Job 54279318, dependency-queued behind the FPS sweep (54261359) per the
+  I/O-bound lesson.
+- `eavailW_covariance.py` extended with `--lateral-sweep-cv/-glob`: builds
+  C_lateral from the sweep marginals vs the matched sweep CV with the
+  `analyze_universes_nd.py` band convention (C_b = ZᵀZ/N de-meaned),
+  carrying real (E_avail,W) off-diagonals (the transfer was diagonal-only);
+  prints old-vs-new before adopting. Transfer path kept as default.
+- `sbatch_eavailW_cov_wlat.sh` (NEW): chained job 54279319, requires all 18
+  universes + CV on disk, writes `products/5d/eavailW_covariance_wlat.root`
+  (pre-fix product kept for comparison).
+Close-out: compare corner significances new-vs-old, then KNOWN_ISSUES #4 →
+RESOLVED and technote (E_avail,W) numbers updated if they move.
+
+## 2026-06-10 — Disk cleanup: 1.6 TB → 796 GB (~830 GB freed)
+
+Deleted only artifacts redundant with kept-and-verified products (each merged
+file checked: no recovery flag, per-tree entry counts equal the sum of its 12
+inputs, POT counters exact):
+- per-playlist `_universes_full` omnifiles: 5D-FPS (180G), 5D (133G), 4D
+  (126G) — merged MEFHC files KEPT; re-merge would need evloop regeneration.
+- per-playlist PC point-cloud omnifiles (46G) — merged `PC_MEFHC.root` KEPT.
+- 2d-unfolding per-playlist non-full `_universes` (64G, May 22 stage-1) —
+  superseded by the kept merged `_universes_full` (119G, all 187 bands).
+- read-once banks `bank_sweep`/`bank_uthrow`/`bank_uthrow_4d` (95G) — pure
+  caches; rebuild from the kept merged files via `assemble_bank_4d.py` /
+  `sweep_bank.py` (one ~1–2 h job) if 4D/5D sweeps or throws are ever redone.
+- `uq_4d/universe_stage2_4d_int/` (7.7G duplicate) and the standalone
+  `uq_universe_4d_covariance.root` (7.7G) — strict subsets of the kept
+  `_combined.root` (46 per-band + combined); adopted `_combined_uthrow.root`
+  untouched.
+- GiBUU `work_gibuu_arr` auxiliary output (140G): all task files deleted
+  EXCEPT `FinalEvents.dat` (2.0G total, 80 tasks) — the complete per-event
+  record every distiller reads, so any future GiBUU observable re-histograms
+  from disk without re-running GiBUU (the lesson from the 06-03 cleanup,
+  which forced regen job 54190920 for the W axis).
+Pending jobs unaffected (sweep reads the merged FPS universes file; refix
+reads the FPS CV omnifiles).
+
+## 2026-06-10 — Driver no-weights normalization fix (KNOWN_ISSUES #1)
+
+Root cause confirmed in `unfold_nd_omnifold_unbinned.py`: without
+`--use-weights` the collector still sets `w_truth = w_reco = pot_scale` per
+event and the binning uses them, but the OmniFold call passed `None` weights —
+the step-1 classifier then absorbs the data/MC normalization gap (≈pot_scale)
+into the learned weights and the binning applies pot_scale a second time ⇒
+result globally low by exactly pot_scale. Fix: always pass the collected
+POT-scaled weights to `ohf.omnifold` (a no-op in `--use-weights` mode — same
+arrays as before; the in-flight FPS sweep is unaffected) and mirror them on
+the closure pseudo-data side so closure stays self-consistent. The exact
+global 1/pot_scale corrections were REMOVED from `fps_pilot_compare.py` and
+`fps_prior_envelope.py`; pre-fix bare-GENIE ROOTs are stale. Verification
+job 54271042 re-runs both bare-GENIE unfolds (1A + MEFHC) and the battery +
+envelope; PASS = ledger ratios reproduce without any correction.
+
+## 2026-06-10 — Ascencio cross-check UNBLOCKED and DONE (consistent)
+
+The 2110.13372 supplemental data was assumed member-gated; it is in fact
+inside the PUBLIC arXiv source tarball (`arxiv.org/e-print/2110.13372`,
+`supplementalMELowRecoilData.txt`: 44-cell d²σ/(dEavail dq3) + full
+covariance; copied to `3d-unfolding/genie/ascencio_2110.13372_supplemental.txt`).
+New `compare_ascencio_fullcov.py`: merges both measurements onto the maximal
+common (Eavail,q3) grid (per-fine-column tiling; 2 super-cells, Eavail<0.4 ×
+q3 [0.4,0.6)/[0.6,1.2)), with our 4D marginalisation gated at pz<20 GeV to
+mirror their muon cut, and propagates BOTH full covariances (ours = adopted
+unified-throw combined) through the merge maps. Result: ours/Ascencio 1.092 /
+1.063, pulls 1.29σ / 0.86σ, **full-cov χ²/ndf 1.68/2 (p=0.43) — consistent**.
+Caveats: shared MINERvA systematics treated as independent; pμ≈pz at 20 GeV.
+Numbers in the ledger; technote updated (abstract, §7.8 ¶+fig, §8, App. A
+item 6); OPEN_ITEMS #1 closed (optional refinement: 44-cell on their fine
+edges = re-unfold + sweep on that binning).
+
 ## 2026-06-09/10 — Full-phase-space (FPS) campaign: pilot GO → CV production + anchor gate PASS → UQ stage launched
 
 Decision memo `FPS_PILOT.md`; numbers in `../VALIDATION_LEDGER.md` (2026-06-09

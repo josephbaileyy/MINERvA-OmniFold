@@ -107,3 +107,14 @@ evloop3d_*.err
 3d-unfolding/genie/gevgen_mec_jid.txt
 3d-unfolding/genie/gevgenMEC_*.out
 3d-unfolding/genie/gevgenMEC_*.err
+
+# ---------- Unified-throw ratio banks (10s of GB of per-event .npy) ----------
+*.npy
+nd-unfolding/bank_uthrow/
+nd-unfolding/bank_uthrow_fps/
+
+# ---------- LE reference tarballs: keep only the data files we read ----------
+nd-unfolding/reference_le/**
+!nd-unfolding/reference_le/**/
+!nd-unfolding/reference_le/filkins/anc/data_release/*.txt
+!nd-unfolding/reference_le/rodrigues/anc/supplemental.txt
