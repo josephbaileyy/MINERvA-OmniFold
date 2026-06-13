@@ -16,7 +16,7 @@ from the corrected dump. \textbf{Maturity:} this is a validated \emph{method
 milestone} --- a real, absolutely-normalised, full-statistics cross section
 with its own closure gate and a first systematic budget --- but it is not yet
 at the production GBDT result's maturity (its training is
-subsample-limited and its budget wider; see below).
+subsample-limited; see below).
 
 \subsection{From shape check to absolute cross section}
 \label{sec:pet-abs}
@@ -67,13 +67,21 @@ bands, the 100-universe flux multisim, a 100-replica Poisson bootstrap
 (statistical), an alternative-training difference (ML), and the detector
 (lateral) bands transferred from the GBDT 4D covariance by fractional
 projection. The combined budget on the PET reported bins has median
-per-bin fractions of \SI{18.3}{\percent} (systematic), \SI{4.2}{\percent}
+per-bin fractions of \SI{8.2}{\percent} (systematic), \SI{4.2}{\percent}
 (statistical), \SI{3.3}{\percent} (ML), \SI{4.0}{\percent} (lateral,
-transferred), totalling \SI{23.0}{\percent} --- wider than the GBDT 4D
-budget's \SI{13.5}{\percent}, as expected for the subsample-trained network.
-The residual gap to a fully self-contained PET budget is per-lateral
-re-inference on shifted reconstructed clouds, which requires re-running the
-PET network per lateral universe and is deferred.
+transferred), totalling $\approx\SI{12.3}{\percent}$ --- comparable to the
+GBDT 4D budget's \SI{13.5}{\percent}. An earlier version of this budget quoted
+a systematic block of \SI{18.3}{\percent} (total \SI{23.0}{\percent}); that
+figure was an artifact of a reweight bank built before the truth-only
+miss-row dump fix, whose mangled miss-row ratios inflated the systematic
+block by $\times2.2$. Regenerating the bank from the corrected dump --- with
+the per-event alignment verified bit-identical over all \num{32.8}~million
+rows, and the bank-independent statistical and ML blocks reproducing
+identically as a control --- collapses the systematic block to
+\SI{8.2}{\percent}; the over-covered figure invalidated no result, only the
+budget number. The residual gap to a fully self-contained PET budget is
+per-lateral re-inference on shifted reconstructed clouds, which requires
+re-running the PET network per lateral universe and is deferred.
 
 \subsection{What the PET track demonstrates}
 The point-cloud track closes the methodological loop begun by the scalar

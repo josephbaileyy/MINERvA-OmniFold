@@ -1,9 +1,11 @@
 \section{First full-phase-space results}
 \label{sec:fps}
 
-\textbf{Maturity:} central-value measurement with a three-prior dependence
-envelope; the systematic (universe) campaign is in production at the time of
-writing. Decision memo and job trail: \texttt{nd-unfolding/FPS\_PILOT.md}.
+\textbf{Maturity:} complete measurement --- central value, full systematic
+(universe/bootstrap/ML) covariance with the unified-throw adoption, a
+three-prior dependence envelope, and the extension region validated by a
+hidden-variable closure and 200 coverage toys. Decision memo and job trail:
+\texttt{nd-unfolding/FPS\_PILOT.md}.
 
 The published phase space ($\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$,
 $\pT<\SI{4.5}{GeV/c}$) hides a third of the signal: weighting the true
@@ -47,7 +49,15 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
   \item \textbf{Closure.} A self-closure on the extended grid (simulated
         reconstruction as pseudo-data) returns recovered/truth $=1.0000$ in
         every cell including the extension --- no bookkeeping or
-        normalisation bias in the enlarged-denominator configuration.
+        normalisation bias in the enlarged-denominator configuration. A
+        \emph{hidden-variable} closure goes further: injecting a Gaussian
+        truth bump in true $E_{\mathrm{avail}}$ (an axis the
+        $(\pT,\pPar)$ unfold is blind to) and unfolding, the recovered
+        $(\pT,\pPar)$ cross section reproduces the bump-reweighted truth to
+        median \SI{0.17}{\percent} (90th percentile \SI{0.65}{\percent}) in
+        the published cells and median \SI{0.77}{\percent} (max
+        \SI{4.05}{\percent}) in the extension --- both well inside the
+        tier-2 prior band.
   \item \textbf{Three-prior envelope.} Repeating the unfold with three
         priors --- MnvTune~v1, bare GENIE, and a NuWro-shaped prior (built
         by reweighting the truth $(\pT,\pPar)$ shape to two million raw
@@ -57,6 +67,13 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
         region but median \SI{7.9}{\percent} (90th percentile
         \SI{62}{\percent}) in the extension, concentrated in the
         zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
+  \item \textbf{Coverage.} 200 closure$+$bootstrap toys give per-bin
+        coverage (fraction of toys with $|r|\le1$) of mean
+        \SI{68.9}{\percent} against the \SI{68.27}{\percent} target
+        ($\langle|r|\rangle=0.79$, target $0.80$); the published
+        (\SI{68.5}{\percent}) and extension (\SI{70.0}{\percent}, marginally
+        conservative) regions are both correctly calibrated --- the bootstrap
+        band means what it says in the extended grid.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -84,7 +101,7 @@ The full-phase-space CC-inclusive cross section on the tracker fiducial
 volume is
 \begin{equation*}
   \sigma_{\mathrm{FPS}} = \SI{4.502e-38}{cm^2/nucleon}
-  \quad\text{(CV; systematic campaign in production)},
+  \quad\text{(central value)},
 \end{equation*}
 \SI{46}{\percent} above the restricted-phase-space
 $\SI{3.073e-38}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
@@ -94,7 +111,19 @@ of the rate, chiefly the $\theta>20^{\circ}$ wedge and the
 $\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge); \emph{tier~2} (prior-extrapolated)
 covers the dead cells ($\sim\SI{28}{\percent}$ of the rate), published but
 flagged, carrying the three-prior envelope as an explicit additional band.
-The in-production systematic campaign repeats the full universe/bootstrap/ML
-budget on the extended grid, with the unified-throw construction
-(\S\ref{sec:uq-combine}) mandatory: the migration-heavy corner that broke
-the 4D block sum by $\times2$ sits \emph{inside} this measurement.
+
+The systematic campaign is complete. The full universe/bootstrap/ML budget on
+the extended grid gives a block-sum combined covariance of median
+\SI{7.33}{\percent} per bin (Flux-led per bin; the trace is dominated by the
+\texttt{Muon\_Energy} scale, which moves the large low-$\pPar$ extension cross
+section --- an FPS-specific feature). The unified-throw construction
+(\S\ref{sec:uq-combine}) is \emph{mandatory} here because the migration-heavy
+corner that broke the 4D block sum by $\times2$ sits inside this measurement;
+on the validated miss-pinned bank (160 joint throws) it inflates the trace by
+only $\times1.30$ (jitter-corrected $\times1.295$, far below the 4D
+$\times2.01$), with the cross-term \SI{83}{\percent} of the block sum.
+Adopting the 4D-style per-bin $\max(\sigma_{\mathrm{uni}},
+\sigma_{\mathrm{block}})$ inflation onto the vertical block
+(\SI{39.5}{\percent} of bins inflated, maximum factor $5.9$) gives the final
+covariance, median \textbf{\SI{8.19}{\percent}} per bin, positive-definite by
+construction.
