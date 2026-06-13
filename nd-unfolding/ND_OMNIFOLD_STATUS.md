@@ -32,17 +32,15 @@ open items in `../docs/OPEN_ITEMS.md`).
 - **3-prior envelope DONE (54244178)**: totals spread ±1.5%; per-cell
   half-spread median 2.9% (published) vs 7.9% / p90 62% (extension) — the
   tier-2 band. `products/5d/fps_prior_envelope_MEFHC.png`.
-- **UQ stage RUNNING — fully staged end-to-end** (dependency-wired, IDs in
-  `.fps_uq_chain_jobs.txt`): sweep 54261359 (~167/188 done, no failures) →
-  block-sum cov 54314362; inputs dump DONE → bootstrap 54314365 +
-  split-seedscan 54314366; unified-throw bank DONE+validated (374 files,
-  miss pinning verified) → 160 throws 54314369 + block units 54314370 →
-  combine 54314371. **Final assembly staged 2026-06-11**: combines
-  54325576/77 → budget 54325578 → unified-throw adoption 54325579.
-  **Extension validation launched**: hidden-variable closure 54326695
-  (E_avail bump, new driver hidden-axis mode) + 200 coverage toys 54326694;
-  region split via `fps_extension_validation.py` (185 published / 100
-  extension cells).
+- **UQ stage COMPLETE 2026-06-12** (IDs in `.fps_uq_chain_jobs.txt`; numbers
+  ledger-verified): 187-universe sweep (zero failures) → block-sum combined
+  median 7.33%/bin (rank 222/266); unified throw on the validated
+  miss-pinned bank: ratio **1.295 jitter-corrected** (vs ×2.01 in 4D) →
+  **ADOPTED: final FPS covariance median 8.19%/bin**, √tr 9.724e-39, PSD
+  exact → `uq_fps/universe_stage2_fps/uq_universe_fps_covariance_combined_uthrow.root`.
+- **Extension validation**: hidden-variable closure **PASS** (published
+  0.17% / extension 0.77% median, inside the tier-2 prior band); 200
+  coverage toys RUNNING (~30/200) → region-split analysis 54351540.
 - **Driver no-weights normalization fix (KNOWN_ISSUES #1) RESOLVED
   2026-06-10**: verification 54271042 PASS (battery + envelope reproduce
   without correction); on-disk bare-GENIE ROOTs are post-fix.

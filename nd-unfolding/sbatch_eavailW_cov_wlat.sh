@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=120G
+#SBATCH --mem=230G
 #SBATCH --time=06:00:00
 #SBATCH --output=ew_cov_wlat_%j.out
 #SBATCH --error=ew_cov_wlat_%j.err

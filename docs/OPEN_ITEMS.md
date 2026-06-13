@@ -9,15 +9,21 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
 
 1. **Collaborator confirmations** (technote App. A): FrInel_pi exclusion still
    current MAT guidance; precedent for the ours-only truncated-spectral χ²;
-   precedent for publishing a 3D+ systematic covariance.
+   precedent for publishing a 3D+ systematic covariance. **Ready-to-send
+   draft: `docs/COLLABORATOR_QUESTIONS.md` (2026-06-12)** — needs only the
+   user to send it.
 
 ## Deferred analysis refinements
 
 2. **Ascencio fine-binned comparison** — the maximal-common-grid full-cov
    cross-check is DONE 2026-06-10 (χ²/ndf = 1.68/2, p = 0.43, consistent;
    `nd-unfolding/compare_ascencio_fullcov.py`, data from the public arXiv
-   tarball). Optional residual: a 44-cell comparison on their fine edges needs
-   a re-unfold onto those edges plus a systematic sweep on that binning.
+   tarball). Stage 1 DONE 2026-06-12 (job 54351853 +
+   `compare_ascencio_fine.py`): all 44 cells, ours/theirs median 1.077,
+   5/44 cells beyond 2σ of their errors — agreement at the super-grid level;
+   numbers in the ledger. Stage 2 (187-universe sweep on the fine binning,
+   needed before any fine-grid full-cov χ² can be quoted) is a separate
+   compute decision once the FPS arrays drain.
 3. **PET per-lateral re-inference** — DONE 2026-06-10 (job 54284039):
    PET-native lateral band via the event-aligned 5D join, no C++ re-dump,
    no GPU. Native median 1.74% vs transferred 4.03% (total budget 22.5% vs
@@ -38,7 +44,11 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
 5. **True multi-band (lateral) event-loop unified throw** — the weight-composed
    unified throw covers reweight bands only; a C++ event-loop multi-band throw
    would additionally capture lateral (kinematic-shift) cross-terms.
-6. **NEUT as fifth generator** — no accessible build at time of writing.
+6. **NEUT as fifth generator** — still gated (re-checked 2026-06-12: no
+   public source release exists; github `neut-devel/neut` is 404 — NEUT is
+   distributed via T2K's internal git on request to the maintainers, so the
+   path is an access request to Hayato et al., citing the NEUT EPJ ST paper
+   2106.15809).
 7. **Coverage 200-toy regeneration** — DONE 2026-06-11 (arrays
    54273493/54273495): `uq/coverage_toys.py` reproduces every documented
    number exactly (mean 68.71%, PASS); `KNOWN_ISSUES.md` #2 RESOLVED,

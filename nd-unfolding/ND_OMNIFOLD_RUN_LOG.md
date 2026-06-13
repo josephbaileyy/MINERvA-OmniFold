@@ -1,5 +1,29 @@
 # N-D OmniFold — Run Log (append-only)
 
+## 2026-06-12 (later) — FPS UQ stage COMPLETE: covariance adopted (throw ×1.295)
+
+The whole pre-staged chain drained with zero failures end-to-end. Sweep
+187/187 → block-sum C_syst median 7.27%/bin (Flux-led medians 5.01%; trace
+dominated by Muon_Energy_MINERvA — the energy scale moving the large low-p∥
+extension rate, an FPS-specific feature) → + norm/stat/ML → combined 7.33%
+(rank 222/266). Unified throw (160 throws): unified/block √tr ratio 1.301
+raw, **1.295 jitter-corrected** — nonlinearity present but far milder than
+the 4D ×2.01, consistent with 2D having less band-mixing room; cross-term
+83.2% of block. Adoption (4D-style conservative max() transfer): 39.5% of
+bins inflated (max g 5.93, corners), **final FPS covariance median
+8.19%/bin, √tr 9.724e-39, PSD exact** →
+`uq_fps/universe_stage2_fps/uq_universe_fps_covariance_combined_uthrow.root`
+is the publishable FPS covariance. All numbers in the ledger. Remaining for
+the FPS campaign: the 200-toy coverage verdict (54326694 → analysis
+54351540).
+
+Same day, parallel: milestone commit 621886c pushed to github/main;
+collaborator-questions draft `docs/COLLABORATOR_QUESTIONS.md`; Ascencio
+fine-binned stage-1 CV re-unfold launched (54351853, union of their 44-cell
+edges); NEUT re-checked — still no public source (T2K-internal git only);
+W-lat detector sweep drained (19/19) → (E_avail,W) wlat covariance 54279319
+queued.
+
 ## 2026-06-12 — PET-bank reassessment VERDICT: published budget was inflated ×2 (conservative)
 
 The rebank chain (entry below) landed clean: alignment gate bit-identical,

@@ -84,6 +84,45 @@ artifacts on the login node. All PASS; no rerun required.
   81% — large spread confined to the dead cells (catch rows/columns, lowest
   p∥ strip), the quantitative basis for tier-2 flagging.
   `products/5d/fps_prior_envelope_MEFHC.png`.
+- **FPS coverage toys (2026-06-12, array 54326694 + analysis 54351540)**:
+  **PASS — the FPS campaign's last validation gate.** 200 closure+bootstrap
+  toys (`coverage_toy_nd.py`, npz 2D-recipe mirror) over 266 reported bins:
+  mean coverage **68.93%** (target 68.27%), median 69.00%, ⟨|r|⟩ **0.792**
+  (target 0.798), signed r −0.005, 16 bins <65%. Region split: published
+  185 bins mean **68.46%** (14 <65%); extension 81 bins mean **70.01%**
+  (slightly conservative, 2 <65%). The bootstrap band is correctly
+  calibrated in BOTH regions — together with the hidden-variable closure
+  PASS, the extension region is validated for two-tier reporting.
+- **Ascencio fine-grid stage-1 comparison (2026-06-12, jobs 54351853 +
+  `compare_ascencio_fine.py`)**: dedicated re-unfold on the UNION of their
+  44-cell edges (13 E_avail × 7 q3 incl. catch bins; their per-column
+  binnings tile it exactly; 4D integral 3.07e-38 = frozen anchor). All 44
+  cells compared (pz<20 muon gate): ours/theirs median **1.077** (consistent
+  with the super-grid 1.09/1.06), per-cell pulls vs THEIR errors median
+  +0.99 with **5/44 beyond 2σ** (worst −3.2σ), diag-only χ²/ndf 81.9/44.
+  Their-cov-only full χ² (6064/44) is an uninterpretable upper bound: their
+  strong correlations amplify the coherent ~8% offset that OUR covariance
+  absorbs (super-grid full-cov χ²/ndf 1.68/2 stands as the quantitative
+  consistency statement). Stage 2 (sweep on this binning) required before
+  quoting a fine-grid χ². Artifacts:
+  `products/4d/xsec_4d_MEFHC_ascencio_fine.root`,
+  `products/4d/ascencio_fine_compare.png`.
+- **FPS combined covariance + unified-throw adoption (2026-06-12, jobs
+  54314362/54325576-79, throws 54314368-71)**: the full-phase-space UQ stage
+  is COMPLETE. Block-sum: C_syst median 7.27%/bin (rank 144/266, √tr
+  8.027e-39; per-bin medians Flux-led at 5.01%, but the TRACE is dominated by
+  Muon_Energy_MINERvA √tr 7.0e-39 — the energy scale moving the large low-p∥
+  extension cross section, an FPS-specific feature); + norm 1.4% + C_stat
+  0.669% (100 bootstraps) + C_ML 0.357% (24 splits) → combined median
+  7.33%/bin, rank 222/266, √tr 8.040e-39. Unified throw (160 joint throws on
+  the validated miss-pinned bank): √tr ratio unified/block **1.301 raw /
+  1.295 jitter-corrected** (vs ×2.01 in 4D); cross-term 83.2% of block;
+  jitter floor ×10 below signal. **ADOPTED** (4D-style per-bin max()
+  σ-inflation onto the sweep's vertical block): median g=1.000, 39.5% of
+  bins inflated, max g=5.93; final covariance **median 8.19%/bin**, √tr
+  9.724e-39 (×1.209), PSD exact (0 negative eigenvalues). Artifacts:
+  `uq_fps/universe_stage2_fps/uq_universe_fps_covariance_combined[_uthrow].root`,
+  `uq_fps/unified_throw_cov_fps.root`.
 - **PET-bank reassessment (2026-06-12, jobs 54330164/54330166)**: **KNOWN_ISSUES
   #12 PET residual CLOSED.** `bank_uthrow` regenerated from the merged 5D file
   with the post-fix dump (miss-row rhos pinned to 1.0); alignment gate PASS
