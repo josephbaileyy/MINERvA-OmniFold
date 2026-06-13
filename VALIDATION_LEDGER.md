@@ -10,6 +10,24 @@ smallest required rerun is clear.
 All results that landed after the 2026-06-06 pass, recomputed from saved
 artifacts on the login node. All PASS; no rerun required.
 
+- **(E_avail,W) W-resolved lateral covariance (2026-06-13, interactive job
+  54391533)**: **KNOWN_ISSUES #4 CLOSED.** Rebuilt the 42-bin (E_avail,W)
+  covariance with the lateral block computed DIRECTLY from the 18-universe 5D
+  detector sweep (9 bands × ±1σ: Muon_Energy_MINERvA/MINOS, MuonResolution,
+  MinosEfficiency, BeamAngleX/Y, GEANT_Neutron/Pion/Proton) + matched CV,
+  re-inferred on the five-axis grid — replacing the 4D-marginalised transfer.
+  W-resolved lateral median **2.36%/bin** (√tr 9.52e-40) vs transferred
+  **1.80%** (7.99e-40): the proper block is LARGER, so adopted. C_total √tr
+  8.667e-39, median **14.9%/bin**; sweep-CV vs frozen-CV marginal
+  max|ratio−1|=**0.007** (validation gate). Full-cov generator significances
+  (published transferred → W-resolved): full plane GENIE-CV 16.7→**19.3**σ,
+  +MEC 16.1→19.0, NuWro 31.2→35.9, GiBUU >37→>40; high-W DIS corner (12 bins)
+  GENIE 9.0→**8.9**, +MEC 9.2→9.2, NuWro 10.5→**15.6**, GiBUU 18.2→**22.4**σ.
+  The W-resolved covariance DEEPENS the DIS-corner deficit for NuWro/GiBUU and
+  leaves GENIE essentially unchanged — the physics conclusion strengthens.
+  Technote (`sec_eavailw`, `sec_openquestions`, `sec_execsummary`) + table
+  updated and rebuilt (64 pp, clean). Artifact
+  `products/5d/eavailW_covariance_wlat.root` (pre-fix file untouched).
 - **Merged 5D omnifile integrity**: **PASS**.
   `nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root` (133 GB) has
   no ROOT recovery flag and all four trees match the sum over the 12

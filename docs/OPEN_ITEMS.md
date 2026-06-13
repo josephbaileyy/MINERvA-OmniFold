@@ -32,15 +32,17 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
    per-universe PET re-TRAINING would capture the retraining response the
    frozen-push scheme misses; bounded between 1.74% and 4.03% by these two
    estimates.
-4. **W-resolved laterals / dedicated W systematic campaign** — LAUNCHED
-   2026-06-10 (user-approved): 18 detector universes (6 muon/beam laterals
-   with shifted pt/pz/q3/W + 3 GEANT weight bands) + matched CV re-inferred
-   on the 5D axes (`sbatch_unfold_5d_detector.sh`, array 54279318, queued
-   behind the FPS sweep), then `eavailW_covariance.py --lateral-sweep-*`
-   rebuilds the (E_avail,W) covariance with the W-resolved block
-   (54279319 → `products/5d/eavailW_covariance_wlat.root`). Close via
-   `KNOWN_ISSUES.md` #4 once the new corner significances are checked
-   against the published ones.
+4. **W-resolved laterals / dedicated W systematic campaign** — DONE
+   2026-06-13 (interactive job 54391533). The 18 detector universes (6
+   muon/beam laterals with shifted pt/pz/q3/W + 3 GEANT weight bands) +
+   matched CV were re-inferred on the 5D axes and `eavailW_covariance.py
+   --lateral-sweep-*` rebuilt the (E_avail,W) covariance with the W-resolved
+   block. The W-resolved lateral (median 2.36%/bin) is LARGER than the
+   transferred approximation (1.80%) and was adopted; corner significances
+   GENIE 9.0→8.9, +MEC 9.2→9.2, NuWro 10.5→15.6, GiBUU 18.2→22.4σ — the
+   deficit deepens for the worst-fitting generators. `KNOWN_ISSUES.md` #4
+   CLOSED; technote table + exec summary + open-questions updated;
+   `products/5d/eavailW_covariance_wlat.root`.
 5. **True multi-band (lateral) event-loop unified throw** — the weight-composed
    unified throw covers reweight bands only; a C++ event-loop multi-band throw
    would additionally capture lateral (kinematic-shift) cross-terms.

@@ -12,7 +12,7 @@ open items in `../docs/OPEN_ITEMS.md`).
 | 4D xsec d⁴σ/(dpT dp∥ dEavail dq3) | σ=3.066e-38, 4D/3D anchor 0.9960, closure PASS | `products/4d/xsec_4d_MEFHC_5iter_lgbm.root` |
 | 4D combined covariance (ADOPTED unified throw) | block-sum underestimates ×2.01 → adopted; √tr 3.85e-38, median 13.5–14.9%/bin | `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root` |
 | 5D xsec (+W) | 5D/4D anchor 1.0011, injected-W closure PASS | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` |
-| (E_avail,W) covariance + significance | median 14.8%/bin; high-W DIS corner missed 9.0/9.2/10.5/18.2σ (GENIE/+MEC/NuWro/GiBUU) | `products/5d/eavailW_covariance.root` |
+| (E_avail,W) covariance + significance (W-resolved laterals ADOPTED) | median 14.9%/bin; high-W DIS corner missed 8.9/9.2/15.6/22.4σ (GENIE/+MEC/NuWro/GiBUU) — W-resolved block deepens NuWro/GiBUU tension (#4 closed 2026-06-13) | `products/5d/eavailW_covariance_wlat.root` |
 | dσ/dEavail generator significance | all four generators >21σ overall, >15σ in DIS tail | `3d-unfolding/genie/` + adopted 4D cov |
 | PET absolute milestone | closure 0.9884; PET/GBDT 0.9117 (training-config gap); clean budget 11.7% (rebank 2026-06-12; pre-#12 published 23.0% was inflated ×2, conservative) | `products/pet/pet_4d_covariance_combined_rebank.root` |
 | NN cross-check | keras-MLP/GBDT total ratio 1.0078 | `omnifold_nn_core.py` |

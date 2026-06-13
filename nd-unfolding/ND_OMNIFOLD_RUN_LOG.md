@@ -1,5 +1,26 @@
 # N-D OmniFold — Run Log (append-only)
 
+## 2026-06-13 — (E_avail,W) W-resolved lateral covariance adopted (KNOWN_ISSUES #4 closed)
+
+The last open thread closed. The (E_avail,W) covariance was rebuilt with the
+lateral block computed DIRECTLY from the 18-universe 5D detector sweep (9
+bands × ±1σ + matched CV, re-inferred on the five-axis grid) instead of the
+4D-marginalised transfer. Ran on an **interactive node** (job 54391533, full
+512 GB Milan node — the 230 G fits trivially) to skip the shared-QoS backlog;
+detached `salloc → srun` so the compute survived a session interruption and
+finished cleanly (rc=0, ~1.5 h wall incl. the 32.8M-row load).
+
+Result: W-resolved lateral median **2.36%/bin** (√tr 9.52e-40) is LARGER than
+the transferred 1.80% (7.99e-40) → adopted. C_total median **14.9%/bin**;
+sweep-CV vs frozen-CV marginal max|ratio−1| = 0.007 (gate PASS). Corner
+significances published→W-resolved: GENIE 9.0→8.9, +MEC 9.2→9.2, NuWro
+10.5→**15.6**, GiBUU 18.2→**22.4**σ — the proper detector covariance DEEPENS
+the DIS-corner deficit for the worst-fitting generators and barely moves
+GENIE, so the physics conclusion strengthens. Technote `sec_eavailw` table +
+caveat, `sec_openquestions`, `sec_execsummary` all updated and rebuilt (64 pp,
+0 undefined refs, 0 overfull). Artifact
+`products/5d/eavailW_covariance_wlat.root` (pre-fix file untouched).
+
 ## 2026-06-12 (later) — FPS UQ stage COMPLETE: covariance adopted (throw ×1.295)
 
 The whole pre-staged chain drained with zero failures end-to-end. Sweep
