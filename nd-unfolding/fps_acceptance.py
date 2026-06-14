@@ -13,6 +13,13 @@ the tracker fiducial, NO muon kinematic cuts) and reports, on the extended
 
   python fps_acceptance.py --omnifile runEventLoopOmniFold_5D_FPS_1A.root
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import math
 import os
@@ -95,9 +102,9 @@ def main():
     X, Y = np.arange(len(pt_e)), np.arange(len(pz_e))
     im0 = axs[0].pcolormesh(X, Y, np.log10(np.maximum(HT, 1e-1)).T, cmap="viridis")
     axs[0].set_title("truth rate (log10, weighted)")
-    im1 = axs[1].pcolormesh(X, Y, eff.T, cmap="magma", vmin=0, vmax=0.7)
+    im1 = axs[1].pcolormesh(X, Y, eff.T, cmap="viridis", vmin=0, vmax=0.7)
     axs[1].set_title("reco efficiency")
-    im2 = axs[2].pcolormesh(X, Y, dead.astype(float).T, cmap="Reds", vmin=0, vmax=1)
+    im2 = axs[2].pcolormesh(X, Y, dead.astype(float).T, cmap="viridis", vmin=0, vmax=1)
     axs[2].set_title(f"dead region (eff<{args.eff_floor})")
     for A, im in zip(axs, [im0, im1, im2]):
         # mark the published phase-space boundary in bin coordinates
@@ -110,6 +117,7 @@ def main():
         A.set_ylabel("p|| bin (extended)")
         fig.colorbar(im, ax=A, fraction=0.046)
     fig.suptitle("FPS acceptance study (1A): cyan = published phase-space boundary")
+    fig.subplots_adjust(wspace=0.5)  # keep each colorbar clear of the next panel's y-label
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[acc] wrote {args.out_png}")

@@ -5,7 +5,7 @@
 \label{sec:results-xsec}
 Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
 1D projections. The total cross section is
-\SI{3.073e-38}{cm^2/nucleon} (published: \SI{3.039e-38}{cm^2/nucleon}).
+\SI{\sigTwoD}{cm^2/nucleon} (published: \SI{\sigTwoDpaper}{cm^2/nucleon}).
 
 \begin{figure}[H]
   \centering
@@ -25,12 +25,12 @@ Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
     \toprule
     Quantity (205 reported bins) & Value \\
     \midrule
-    $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $1.011$ \\
-    Median bin ratio (ours/paper) & $1.006$ \\
-    Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $77.6/94.1/98.5\,\%$ \\
-    $\chi^{2}/\mathrm{ndf}$, paper covariance & $3.661$ \\
-    $\chi^{2}/\mathrm{ndf}$, combined covariance (paper $+$ ours) & $1.481$ \\
-    Pull mean / RMS (paper covariance) & $0.089/0.598$ \\
+    $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $\ratioTot$ \\
+    Median bin ratio (ours/paper) & $\medianBinRatio$ \\
+    Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $\binsFive/\binsTen/\binsTwenty\,\%$ \\
+    $\chi^{2}/\mathrm{ndf}$, paper covariance & $\chiPaper$ \\
+    $\chi^{2}/\mathrm{ndf}$, combined covariance (paper $+$ ours) & $\chiCombined$ \\
+    Pull mean / RMS (paper covariance) & $\pullMean/\pullRMS$ \\
     \bottomrule
   \end{tabular}
   \caption{Agreement with arXiv:2106.16210. Per-bin pulls
@@ -65,8 +65,8 @@ Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
 
 \subsection{Anatomy of the $\chi^{2}=3.66$ tension}
 \label{sec:results-tension}
-The central values agree (pull RMS $0.598$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
-would be $0.37$), yet the full paper-covariance $\chi^{2}/\mathrm{ndf}$ is $3.66$:
+The central values agree (pull RMS $\pullRMS$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
+would be $0.37$), yet the full paper-covariance $\chi^{2}/\mathrm{ndf}$ is $\chiPaper$:
 a $10\times$ inflation living entirely in the off-diagonal structure of the
 published covariance. The eigenmode decomposition (Fig.~\ref{fig:tension}) shows
 the tension is carried by moderate-$\lambda$ modes with $5$--$6\sigma$ eigen-pulls
@@ -76,11 +76,13 @@ inversion artifact. It is \emph{shape}, not normalisation
 ($\chi^{2}_{\mathrm{norm}}=0.10$ vs $\chi^{2}_{\mathrm{shape}}=750$), localised to
 the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
 dominate. A $\sim1$-unit methodological band comes from the GBDT estimator
-(exact-GBT $3.66$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
+(exact-GBT $\chiPaper$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
 negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
 App.~\ref{sec:tension}. The eigenmode-localisation maps and the additional
 model-comparison ratio maps are shown in
 Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
+% NOTE: the estimator-band value "exact-GBT 3.66" below is the same number as
+% the paper-covariance chi2 (\chiPaper); they coincide by construction.
 
 \begin{figure}[H]
   \centering

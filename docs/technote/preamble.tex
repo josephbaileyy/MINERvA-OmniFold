@@ -1,0 +1,64 @@
+% ====================================================================
+% Shared preamble for all three audience-tiered builds of the MINERvA
+% unbinned-OmniFold analysis note.  Each driver (main_note / main_primer /
+% main_paper) sets its \documentclass, \input{preamble}, flips ONE audience
+% flag, \input{values}, and supplies its own title/abstract/body.
+%
+% Audience flags (declared false here; each driver flips exactly one true
+% AFTER \input{preamble} and BEFORE reading any body file):
+%     \ifNOTE    full expert technical record (collaboration note)
+%     \ifPRIMER  plain-language primer for non-experts
+%     \ifPAPER   selective publication-style distillation
+% ====================================================================
+\newif\ifNOTE
+\newif\ifPRIMER
+\newif\ifPAPER
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}      % proper hyphenation + line breaking
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[htt]{hyphenat}    % allow long \texttt{} paths to break across lines
+\usepackage{microtype}        % character protrusion / font expansion: kills most overfull boxes
+\emergencystretch=3em         % last-resort stretch so justified prose stays in the margin
+\usepackage{float}      % enables [H] to pin figures inline
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+% biblatex + biber: clickable arXiv/doi links, "et al." rendering.
+\usepackage[backend=biber, style=numeric-comp, sorting=none, giveninits=true,
+            maxbibnames=3, minbibnames=1, doi=true, eprint=true, isbn=false, url=false]{biblatex}
+\addbibresource{technote.bib}
+
+% Figures live in the analysis directories; identical search path for every build.
+\graphicspath{{../../2d-unfolding/}{../../2d-unfolding/reference/}%
+{../../2d-unfolding/uq/}{../../2d-unfolding/uq/bootstrap_MEFHC_300/}%
+{../../2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/}%
+{../../2d-unfolding/seedscan_lgbm/}%
+{../../3d-unfolding/}{../../3d-unfolding/genie/}%
+{../../3d-unfolding/uq_3d/}{../../3d-unfolding/uq_3d/universe_stage2_3d/}%
+{../../nd-unfolding/}{../../nd-unfolding/products/pet/}{../../nd-unfolding/products/5d/}%
+{../../nd-unfolding/products/4d/}}
+
+% --- notation macros ---
+\newcommand{\pT}{p_{T}}
+\newcommand{\pPar}{p_{\parallel}}
+\newcommand{\Eavail}{E_{\mathrm{avail}}}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+% macros used by the statistical-methods appendix
+\newcommand{\dpT}{\Delta\pT}
+\newcommand{\xsec}{\mathrm{xs}}
+\newcommand{\ours}{\text{ours}}
+\newcommand{\paper}{\text{paper}}
+\newcommand{\CV}{\text{CV}}
+\newcommand{\boot}{\text{boot}}
+\newcommand{\stat}{\text{stat}}
+\newcommand{\syst}{\text{syst}}
+\newcommand{\ML}{\text{ML}}
+\newcommand{\tot}{\text{tot}}
+\newcommand{\T}{^{\!\top}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\Tr}{\mathrm{Tr}}

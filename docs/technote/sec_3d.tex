@@ -203,7 +203,7 @@ projects onto each axis for
 the per-bin bands and onto the full space for the goodness-of-fit, and it is the
 internally-correct reference for the ``ours-only'' $\chi^{2}$ given that our
 bootstrap statistical block is genuinely smaller than the paper's (an OmniFold
-efficiency, confirmed by the data/MC split; see App.~\ref{app:openq}).
+efficiency, confirmed by the data/MC split; see App.~\ref{sec:rank}).
 
 \begin{figure}[H]
   \centering
@@ -272,8 +272,8 @@ the stock Valencia MEC --- i.e.\ stock Valencia 2p2h is real but under-strength
 for MINERvA low recoil, which is precisely the known MINERvA-tune story and is
 consistent with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low as well.
 The one feature 2p2h does not touch is a separate $+2.2\sigma$ excess in the
-high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modelling issue
-(\S\ref{sec:openquestions}).
+high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modelling issue resolved on the
+$(\Eavail,W)$ plane in \S\ref{sec:eavailw}.
 
 This low-available-energy deficit is the same feature MINERvA's dedicated low-recoil
 inclusive measurement reports: Ascencio \emph{et al.}~\cite{MINERvA:2022incl}, which
@@ -362,7 +362,7 @@ $\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
 low-recoil region where the 2p2h physics lives. Our result sits
 \SI{9.2}{\percent} and \SI{6.3}{\percent} above Ascencio (pulls $1.3\sigma$
 and $0.9\sigma$ against the summed covariances), with a full-covariance
-$\chi^{2}/\mathrm{ndf}=1.68/2$ ($p=0.43$): \textbf{the two measurements are
+$\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$ ($p=\ascP$): \textbf{the two measurements are
 consistent} (Fig.~\ref{fig:ascencio}). Caveats: the two share MINERvA
 flux/detector systematics, treated here as independent; the $p_\mu$-vs-$\pPar$
 gate differs by $\lesssim\SI{6}{\percent}$ kinematic smearing at the
@@ -377,7 +377,7 @@ systematic sweep on that binning; given the agreement above it is not pursued.
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
   $(\Eavail,q_{3})$ grid, with each side's full covariance (ours: the adopted
   4D combined covariance marginalised with the Ascencio muon gate). Full-cov
-  $\chi^{2}/\mathrm{ndf}=1.68/2$, $p=0.43$.}
+  $\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$, $p=\ascP$.}
   \label{fig:ascencio}
 \end{figure}
 

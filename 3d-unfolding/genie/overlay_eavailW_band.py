@@ -22,9 +22,24 @@ import os
 import numpy as np
 import ROOT
 ROOT.gROOT.SetBatch(True)
+ROOT.gStyle.SetOptTitle(0)  # no plot title -- information lives in the LaTeX caption
 
 EAVAIL_EDGES = np.asarray([0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0], float)
 W_EDGES = np.asarray([0.0, 1.1, 1.4, 1.8, 2.2, 3.0, 100.0], float)
+
+
+def gen_color(label):
+    """Per-generator ROOT colour matching the shared technote palette."""
+    h = label.lower()
+    if "nuwro" in h:
+        return ROOT.TColor.GetColor("#2ca02c")   # green
+    if "gibuu" in h:
+        return ROOT.TColor.GetColor("#9467bd")   # purple
+    if "mec" in h or "tune" in h:
+        return ROOT.TColor.GetColor("#4C72B0")   # blue
+    if "genie" in h:
+        return ROOT.TColor.GetColor("#C44E52")   # red
+    return ROOT.kBlack
 
 
 def th2_to_np(h):
@@ -116,7 +131,7 @@ def main():
     for k, l in enumerate(gens):
         ge = (gens[l] * dw).sum(axis=1)
         h = mk_th1(EAVAIL_EDGES, ge, f"hEa_{l}", l, 3.5)
-        h.SetLineColor(colors[k % len(colors)]); h.SetLineWidth(2); h.Draw("HIST SAME")
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
         leg1.AddEntry(h, l, "l"); h.Write(); keep.append(h)
     leg1.Draw()
 
@@ -131,7 +146,7 @@ def main():
     for k, l in enumerate(gens):
         gw = (gens[l] * dea).sum(axis=0)
         h = mk_th1(W_EDGES, gw, f"hW_{l}", l, 3.2)
-        h.SetLineColor(colors[k % len(colors)]); h.SetLineWidth(2); h.Draw("HIST SAME")
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
         leg2.AddEntry(h, l, "l"); h.Write(); keep.append(h)
     leg2.Draw()
     c.SaveAs(args.png)

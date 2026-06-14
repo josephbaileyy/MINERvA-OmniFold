@@ -7,6 +7,13 @@ to match the paper figure as closely as possible: p|| on x, pT on y,
 ROOT-like warm palette, fixed 0..1 color scale, and compact typography.
 """
 
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import math
 

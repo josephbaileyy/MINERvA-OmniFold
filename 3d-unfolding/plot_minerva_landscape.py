@@ -12,6 +12,13 @@ headline differential result. Every prior MINERvA measurement uses binned
 D'Agostini IBU and reaches at most 2 variables; this work's unbinned OmniFold
 reaches 3.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt

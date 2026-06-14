@@ -11,6 +11,13 @@ run is on a subsample (shape comparison, not absolute normalization).
   python pet_vs_gbdt.py --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz \
       --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt.png
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import sys
 

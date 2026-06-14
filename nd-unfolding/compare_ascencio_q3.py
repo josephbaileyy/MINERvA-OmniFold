@@ -30,6 +30,13 @@ Run from nd-unfolding/ after `source ../setup_salloc_env.sh`:
   python compare_ascencio_q3.py --ascencio-q3 ascencio_q3.txt
   python compare_ascencio_q3.py --ascencio-2d ascencio_q3_eavail.txt
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 

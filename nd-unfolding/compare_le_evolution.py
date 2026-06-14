@@ -18,6 +18,13 @@ chi2 is meaningful without a flux translation, which would be prior-dependent):
 
   python compare_le_evolution.py   # writes products/4d/le_evolution_compare.png
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import re
 import sys

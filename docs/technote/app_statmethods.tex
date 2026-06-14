@@ -483,7 +483,7 @@ systematic-only rank is $120<140$; see \S\ref{sec:rank}).
 
 \paragraph{Upstream references that set each band's $\pm1\sigma$ amplitude.}
 \begin{center}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}l@{\quad}p{0.56\textwidth}@{}}
 \toprule
 Input & Reference \\
 \midrule
@@ -744,7 +744,7 @@ $1\%$ scale difference. Shape disagreement at the $\sim 1\%$ level
 (median bin ratio $1.0064$, $94\%$ of bins within $10\%$ of the
 paper) accounts for the remaining shape residual.
 
-\subsection{Ill-conditioning, rank deficiency, and open questions}
+\subsection{Ill-conditioning and rank deficiency}
 \label{sec:rank}
 
 \paragraph{The obstruction.}
@@ -762,7 +762,7 @@ The deficiency is set by \textbf{band count, not universe count}:
 under the MAT formula Eq.~\eqref{eq:matcov} each $\pm1\sigma$ pair is
 rank $1$ and the $100$-universe PPFX band is rank $\le 99$ (and
 \emph{effectively} rank-$1$: a single normalization mode holds
-\SI{99.6}{\percent} of its variance, item~4 below), so the
+\SI{99.6}{\percent} of its variance, \S\ref{sec:uq-universes}), so the
 $44$-band sum cannot fill the $205$-dimensional bin space. \emph{This is
 not a missing-bands problem.} The paper's own systematic-only covariance
 ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) is rank $120$ --- \emph{lower}
@@ -831,6 +831,7 @@ same convention carried into the 3D generator comparison (\S\ref{sec:rank} is th
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
 gives a stable single number:
 \begin{center}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
 \toprule
 Method & Setting & Result \\
@@ -842,7 +843,7 @@ Ridge $\mathbf{C}+\varepsilon\lambda_{\max}\mathbf{I}$ & $\varepsilon=\{10^{-3},
 Diagonal-target shrinkage & $\lambda=0.05$ &
   rank $178\to204$, cond $1.3\times10^{11}$, $\chi^{2}/205 = 3.29$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{center}
 Each method spans roughly two decades of $\chi^{2}/205$ across a
 two-decade scan of its knob, with no defensible single cutoff. The
@@ -867,59 +868,18 @@ the double-counted $1.699$ as the well-defined ``what does OmniFold UQ
 add on top of the published $V$'' statement, with the de-double-counted
 number on file as a secondary diagnostic.
 
-\paragraph{Open questions for MINERvA collaborators.}
-\begin{enumerate}[nosep,leftmargin=2em]
-  \item \textbf{Statistical block, not missing bands --- RESOLVED.} We
-        previously read the $140/205$ rank as missing systematic bands; direct
-        comparison refutes this --- the paper's systematic-only covariance is
-        rank $120<140$, so our band set is at least as rich. The paper's full
-        rank is its statistical block, which we match with the bootstrap
-        ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual ---
-        our bootstrap stat covariance $2.5\times$ smaller by trace than the
-        paper's stat block --- is now \emph{explained} by the data/MC split
-        bootstrap (\S\ref{sec:rank}, ``Resolution''): the deficit is present in
-        the \emph{data-only} stream ($\mathbf{C}_{\mathrm{data}}/\texttt{StatOnly}
-        =0.356$), so it is not an MC-statistics omission but genuine
-        unbinned-OmniFold statistical efficiency, with an additional
-        correlation-structure difference (ours $\rho_{\rm off}=0.108$ vs the
-        paper's near-diagonal $0.009$). The actionable conclusion: quote the
-        ours-only $\chi^{2}$ on our \emph{own} $\mathbf{C}^{\ours}$ --- do not
-        inflate the stat block to the paper's. \emph{No collaborator input
-        required; retained here as the worked example.}
-  \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint
-        block} (JINST 16 P08068) --- the only cross-band correlation the
-        paper names. We \emph{rederived} it: \texttt{MuonEnergyScale} is
-        rank-$1$, so the cross term is rank-$2$,
-        $\mathbf{C}_{\times}=\rho(\mathbf{d}_{f}\mathbf{d}_{e}\T+\mathbf{d}_{e}\mathbf{d}_{f}\T)$,
-        with $\rho\approx0.87$--$0.90$ recovered two independent ways from
-        the shipped blocks (Cauchy--Schwarz in \texttt{TotalCov} $=+0.90$;
-        subtraction residual $=+0.87$). It is real and now quantified, but
-        adding it leaves our rank unchanged (its directions already lie in
-        $\mathrm{range}(\mathbf{C}^{\syst})$). For a paper-independent $\rho$,
-        is the fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},
-        \text{MuonE}_{\text{scale}})$ posterior available from MAT-MINERvA?
-  \item \textbf{FrInel\_pi --- resolved (negligible).} It is commented out in
-        \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37-38} with
-        the note that ``this knob should not currently be evaluated.''
-        We are consistent with MAT in excluding it, and an independent
-        \texttt{grwght1p} pass confirms both it ($\le\SI{0.74}{\percent}$ on
-        $d\sigma/d\Eavail$) and \texttt{FrAbs\_pi} ($\le\SI{0.82}{\percent}$) are
-        sub-percent --- a $<\SI{1}{\percent}$ knob cannot affect the budget. The
-        only residual is a one-line confirmation that the exclusion is still
-        current guidance (immaterial to the result).
-  \item \textbf{PPFX effective rank --- resolved.} The $100$-universe flux band
-        covariance has hard rank $99$ but participation-ratio effective rank
-        $\approx1$: a single coherent normalization mode carries
-        \SI{99.6}{\percent} of the variance ($9$ modes for \SI{99.9}{\percent}).
-        The PPFX flux uncertainty is therefore a fixed-rank (rank-1, at most
-        rank-9) object; a PCA / fixed-rank flux covariance is justified, and
-        treating the $100$ universes as independent directions over-counts the
-        flux dimensionality (it is also why the leading flux mode correlates
-        $\rho\approx0.9$ with the rank-1 muon-energy-scale mode, item~2).
-  \item \textbf{Publication precedent.} Have other MAT-based OmniFold /
-        unbinned analyses hit this rank issue, and what did they publish
-        for an ours-only $\chi^{2}$?
-\end{enumerate}
+\paragraph{Status of the rank/conditioning items.}
+Every band-count concern this analysis raised is closed in the paragraphs above
+and folded into the body: the $140/205$ systematic rank is richer than the
+paper's systematic-only $120$ (not a missing-bands problem); the Bashyal
+flux\,$\leftrightarrow$\,muon-energy joint block is rederived ($\rho=\rhoFluxMuon$,
+rank-preserving, \S\ref{sec:uq-universes}); the PPFX band is effectively rank-1
+(\S\ref{sec:uq-universes}); and the $2.5\times$ smaller bootstrap is explained by
+the data/MC split as genuine unbinned-OmniFold efficiency, not a missing MC term.
+Two paper-independent refinements remain optional: a fitted
+$(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$ posterior
+from MAT-MINERvA for a self-derived $\rho$, and published precedent for the
+truncated-spectral ``ours-only'' $\chi^{2}$ convention.
 
 \paragraph{What we do regardless.}
 The publication-grade headline uses the combined covariance for
@@ -1118,10 +1078,12 @@ $\langle |r| \rangle$, which for a unit normal is
 $\sqrt{2/\pi}\approx 0.798$.
 
 \paragraph{Code pointer.}
+\begin{sloppypar}
 \texttt{uq/coverage\_toys.py} (rollup); driver
 \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; outputs
 \texttt{uq/coverage/2d\_xsec\_MEFHC\_5iter\_lgbm\_coverage\_toy*.root}
 and \texttt{uq/coverage/coverage\_summary.txt}.
+\end{sloppypar}
 
 \paragraph{Worked example (STATUS, coverage).}
 With $N_{\text{toy}}=200$ on the $205$ reported bins:

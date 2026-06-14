@@ -27,6 +27,13 @@ Run from 3d-unfolding/genie/ after `source setup_salloc_env.sh`:
   python compare_ascencio_eavail.py                      # our spectrum only (self-test)
   python compare_ascencio_eavail.py --ascencio ascencio_eavail.txt
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 

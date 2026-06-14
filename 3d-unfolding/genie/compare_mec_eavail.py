@@ -7,6 +7,13 @@ data, and quantify how much of the dip deficit the MEC fills, per bin.
 Run in the analysis env (root_6_28):
   python compare_mec_eavail.py --plot compare_mec_eavail.png
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 import sys

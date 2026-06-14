@@ -13,6 +13,13 @@ Run in the analysis env (root_6_28):
     --generator GENIE-CV:genie_cv_xsec3d.root \
     --out genie_vs_unfolded
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import matplotlib
 matplotlib.use("Agg")

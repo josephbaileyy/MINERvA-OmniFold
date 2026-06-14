@@ -9,6 +9,13 @@ bin-by-bin data/GENIE pull (the "excess"). We recompute prior_nd from the merged
 omnifile (matching the saved hUnfoldND's POT scaling), divide, and marginalize to
 (E_avail, q3), q3, and E_avail. No frozen product is touched; outputs are new files.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import sys
 import numpy as np
 import ROOT
@@ -21,7 +28,7 @@ import unfold_2d_omnifold_unbinned as u2d
 import unfold_nd_omnifold_unbinned as und
 
 OMNI = f"{_REPO}/nd-unfolding/runEventLoopOmniFold_4D_MEFHC.root"
-CV = f"{_REPO}/nd-unfolding/xsec_4d_MEFHC_5iter_lgbm.root"
+CV = f"{_REPO}/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
 
 pt_e = np.asarray(u2d.PT_EDGES, float); pz_e = np.asarray(u2d.PZ_EDGES, float)
 ea_e = np.asarray(und.EXTRA_AXES["eavail"]["edges"], float)

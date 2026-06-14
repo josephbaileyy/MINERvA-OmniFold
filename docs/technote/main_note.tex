@@ -1,0 +1,103 @@
+% ====================================================================
+% COLLABORATION NOTE -- full expert technical record (~25-30 pp).
+% Build:  latexmk -pdf main_note.tex   (texlive/2024, login node)
+% One of three audience builds; see preamble.tex for the shared scaffold
+% and values.tex for the single-source-of-truth numbers.
+% ====================================================================
+\documentclass[11pt]{article}
+\input{preamble}
+\NOTEtrue
+\input{values}
+
+\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\
+CC-inclusive double-differential cross section\\
+$d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
+\large MINERvA analysis note --- DRAFT}
+\author{J.~R.~Bailey}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We apply \emph{unbinned} OmniFold to the MINERvA medium-energy FHC
+charged-current inclusive cross section, replacing the iterative Bayesian
+unfolding of the published analysis (arXiv:2106.16210). In two dimensions,
+$d^{2}\sigma/(d\pT\,d\pPar)$, our result reproduces the published spectrum
+($\sigma_{\mathrm{tot}}$ ratio $\ratioTot$; \SI{\binsTen}{\percent} of bins within
+\SI{10}{\percent}) with a matching uncertainty budget (median relative $\sigma$
+\SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}).
+
+Because adding an observable is just adding a feature---with no migration matrix
+or binning penalty---we then perform the first \emph{simultaneous three- and
+four-observable} unfolds of MINERvA data, adding available energy ($\Eavail$)
+and three-momentum transfer ($q_{3}$). Each higher-dimensional result reproduces
+the lower-dimensional one under marginalisation (a built-in closure), and four
+generators we produce at truth level (GENIE, the MINERvA Tune, NuWro, GiBUU) all
+under-predict the data at low $\Eavail$. This is the well-established MINERvA
+low-recoil/2p2h deficit (Rodrigues 2016; Ascencio 2022): pion final-state
+interactions move $d\sigma/d\Eavail$ by $<\SI{1}{\percent}$, whereas adding the
+empirical Valencia 2p2h fills the quasielastic--$\Delta$ dip. Recovering this
+known feature through an independent method validates the technique; the
+four-dimensional $(\Eavail,q_{3})$ result additionally resolves the deficit's
+momentum-transfer structure, and a bin-identical full-covariance comparison to
+the published Ascencio low-recoil measurement (arXiv:2110.13372) on their
+maximal common grid gives $\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$ ($p=\ascP$) --- the
+two measurements are consistent. A fifth axis, the hadronic
+invariant mass $W$, localises the remaining high-$\Eavail$ excess to the
+deep-inelastic region: with a dedicated 42-bin $(\Eavail,W)$ covariance, all
+four generators miss the data in the high-$W$ corner
+($\Eavail\ge\SI{0.4}{GeV}$, $W\ge\SI{1.8}{GeV}$) at $\disCornerLo$--$\disCornerHi\sigma$.
+
+The 2D, 3D and 4D results carry full covariance budgets
+($\mathrm{universe}+\mathrm{bootstrap}+\mathrm{ML}$); in 4D a 160-throw
+\emph{unified-throw} study shows the block sum underestimates the vertical
+systematic by a factor $\sim2$, and the published 4D covariance adopts the
+unified-throw magnitude. The method passes binned and unbinned goodness-of-fit
+tests plus scalar GBDT/MLP classifier cross-checks. A point-cloud transformer
+(PET) pipeline operating on the raw reconstructed calorimetric clusters now
+produces a full-statistics, absolutely-normalised cross section: its closure is
+unbiased to $\sim\SI{\petClosure}{\percent}$, it agrees with the production GBDT result
+at the \SI{9}{\percent} (training-configuration) level, and it carries its own
+frozen-reweighter systematic budget. Finally, removing the muon kinematic cuts
+from the signal definition yields a first \emph{full-phase-space} CC-inclusive
+cross section on the tracker fiducial volume,
+$\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$ (\SI{\fpsAbove}{\percent} above
+the restricted phase space, which hides a third of the rate): inside the
+published region it reproduces the restricted measurement to
+\SI{\fpsAnchor}{\percent} median per cell, and a three-prior envelope quantifies the
+extrapolation cost (few-percent where the detector has acceptance, explicit
+tens-of-percent flags in the dead regions). This note documents the experiment
+and samples, the method, the analysis pipeline, the uncertainty quantification,
+the validation suite, the higher-dimensional extensions, the full-phase-space
+extension, and the statistical methodology (as appendices).
+\end{abstract}
+
+\input{sec_execsummary}
+\clearpage
+
+\tableofcontents
+
+\input{sec_intro}
+\input{sec_experiment}
+\input{sec_method}
+\input{sec_results}
+\input{sec_systematics}
+\input{sec_validation}
+\input{sec_3d}
+\input{sec_eavailw}
+\input{sec_pet}
+\input{sec_fps}
+\input{sec_summary}
+
+\section*{Acknowledgments}
+\TODO{acknowledgments --- advisor, MINERvA collaborators consulted, NERSC
+(Perlmutter, project m3246), MAT/MINERvA-101 framework authors}
+
+\appendix
+\input{app_statmethods}
+\input{app_landscape}
+
+\printbibliography
+
+\end{document}

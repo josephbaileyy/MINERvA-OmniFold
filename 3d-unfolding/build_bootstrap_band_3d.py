@@ -11,6 +11,13 @@ Run in the analysis env (root_6_28):
   python build_bootstrap_band_3d.py --cv xsec_3d_MEFHC_5iter_lgbm.root \
       --replicas 'uq_3d/xsec_3d_boot*.root' --out-prefix uq_3d/stat_band_3d
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import glob
 import os
