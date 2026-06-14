@@ -70,16 +70,11 @@ projection. The combined budget on the PET reported bins has median
 per-bin fractions of \SI{8.2}{\percent} (systematic), \SI{4.2}{\percent}
 (statistical), \SI{3.3}{\percent} (ML), \SI{4.0}{\percent} (lateral,
 transferred), totalling $\approx\SI{12.3}{\percent}$ --- comparable to the
-GBDT 4D budget's \SI{13.5}{\percent}. An earlier version of this budget quoted
-a systematic block of \SI{18.3}{\percent} (total \SI{23.0}{\percent}); that
-figure was an artifact of a reweight bank built before the truth-only
-miss-row dump fix, whose mangled miss-row ratios inflated the systematic
-block by $\times2.2$. Regenerating the bank from the corrected dump --- with
-the per-event alignment verified bit-identical over all \num{32.8}~million
-rows, and the bank-independent statistical and ML blocks reproducing
-identically as a control --- collapses the systematic block to
-\SI{8.2}{\percent}; the over-covered figure invalidated no result, only the
-budget number. The residual gap to a fully self-contained PET budget is
+GBDT 4D budget's \SI{13.5}{\percent}. The reweight bank underlying the
+systematic block is built from the truth-only miss-row dump, with per-event
+alignment verified bit-identical over all \num{32.8}~million rows and the
+bank-independent statistical and ML blocks reproducing as a control. The
+residual gap to a fully self-contained PET budget is
 per-lateral re-inference on shifted reconstructed clouds, which requires
 re-running the PET network per lateral universe and is deferred.
 

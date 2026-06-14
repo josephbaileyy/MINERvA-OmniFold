@@ -101,8 +101,7 @@ seeds per trial via \texttt{-{}-seed N}:
 \qquad N \in \{1,\dots,10\}.
 \end{equation}
 The canonical seedscan uses the \texttt{lgbm} (LightGBM) backend, so
-it is backend-matched to the production unfold; an earlier HistGBT
-seedscan gave a slightly larger floor and is superseded.
+it is backend-matched to the production unfold.
 
 \paragraph{Math.}
 For each reported bin $i$, build the $n$-vector $X_{i}^{(1)},\dots,
@@ -306,7 +305,7 @@ $\pm1\sigma$ pair ($N_{u}=2$) it collapses to the rank-1
 $\tfrac14(\mathbf{X}_{+}-\mathbf{X}_{-})(\mathbf{X}_{+}-\mathbf{X}_{-})\T$;
 mean-centering kills the symmetric component, so a one-sided or
 asymmetric pair correctly contributes near-zero variance rather than
-the rank-2 contribution the legacy CV-centered formula would give
+the rank-2 contribution a naive CV-centered formula would give
 (Appendix~\ref{app:pair}).
 
 \paragraph{Target-nucleon normalization (rank-1 add-on).}
@@ -351,26 +350,16 @@ is $\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$: the block s
 \emph{underestimates} the vertical systematic by a factor of two, concentrated in
 the high-$\pT$/lowest-$\Eavail$ corner where migration is most off-diagonal (top
 \SI{1}{\percent} of bins carry \SI{78}{\percent} of the trace excess; the per-bin
-median ratio is $1.00$). This supersedes the earlier single-throw superposition
-probe, whose cross terms sat at the jitter floor and so falsely leaned
-block-sum-valid. For the 4D budget we therefore \emph{adopt} the unified result,
+median ratio is $1.00$). A single-throw superposition probe is insufficient to
+detect this --- its cross terms sit at the jitter floor and falsely indicate
+block-sum validity; the joint unified throw is required. For the 4D budget we
+therefore \emph{adopt} the unified result,
 transferring its per-bin fractional inflation
 $g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
 onto the sweep's own vertical block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), which is positive-semidefinite by construction
 (a direct rank-$N$ swap is not) and never falls below the block baseline.
-
-\paragraph{Legacy formula (forensic only).}
-The pre-2026-05-28 rollup used a CV-centered pair estimator
-$\tfrac12(\boldsymbol{\Delta}_{+}\boldsymbol{\Delta}_{+}\T +
-\boldsymbol{\Delta}_{-}\boldsymbol{\Delta}_{-}\T)$ with
-$\boldsymbol{\Delta}=\mathbf{X}-\mathbf{X}^{\CV}$. It agrees with
-Eq.~\eqref{eq:matcov} only for symmetric pairs and over-counts
-asymmetric ones; moving to the MAT formula dropped the total universe
-trace by $1.9\%$. It is reachable via \texttt{-{}-legacy-pair-formula}
-for reproduction of the superseded $\chi^{2}/\mathrm{ndf}=1.473$
-headline only.
 
 \paragraph{Code pointer.}
 Event-loop dump:
@@ -406,9 +395,7 @@ Models $2.034\%$, Flux $1.008\%$, Hadronic response $0.758\%$,
 Statistical $0.563\%$, Normalization $0.081\%$. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
-(\S\ref{sec:rank}). \emph{(These are the MAT-conformant matcorr
-medians; the pre-2026-05-28 legacy build gave larger per-band values,
-e.g.\ Muon\_Energy\_MINOS $2.571\%$.)}
+(\S\ref{sec:rank}).
 
 \subsubsection{How MINERvA builds its published covariance}
 \label{sec:minerva}
@@ -772,9 +759,7 @@ directions as the published analysis (we use the same
 $205$, near-diagonal), not because it sums richer systematics. Adding our
 $300$-replica bootstrap does the same for us:
 $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=201$,
-$\mathrm{cond}=3.8\times10^{14}$. (An earlier, lower-replica bootstrap left
-the rank near $140$ --- the origin of the now-superseded ``bootstrap barely
-changes the picture'' note.)
+$\mathrm{cond}=3.8\times10^{14}$.
 
 \paragraph{The real obstruction is statistical, not rank.}
 Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
@@ -1336,16 +1321,16 @@ the $\sum n_{i}=N$ constraint is dropped. For $N \gtrsim 10^{6}$
 $\mathcal{O}(1/\sqrt{N})$ on the total event count --- far smaller
 than the per-bin Poisson variance.
 
-\subsection{The $\pm 1\sigma$ pair covariance estimator: MAT vs legacy}
+\subsection{The $\pm 1\sigma$ pair covariance: mean-centered (MAT-conformant)}
 \label{app:pair}
 
 For a single universe band with two universes $u=0,1$ at $\pm 1\sigma$,
 write the two value vectors as $\mathbf{X}_{0}$ and $\mathbf{X}_{1}$,
 with universe mean $\langle\mathbf{X}\rangle = \tfrac12(\mathbf{X}_{0}
-+\mathbf{X}_{1})$. The \textbf{MAT-conformant} estimator
++\mathbf{X}_{1})$. The MAT-conformant estimator
 Eq.~\eqref{eq:matcov} at $N_{u}=2$ is
 \begin{equation}
-\mathbf{C}^{B}_{\text{MAT}}
+\mathbf{C}^{B}_{\text{mean}}
 \;=\;
 \tfrac12\sum_{u=0,1}(\mathbf{X}_{u}-\langle\mathbf{X}\rangle)(\mathbf{X}_{u}-\langle\mathbf{X}\rangle)\T
 \;=\;
@@ -1355,13 +1340,12 @@ a rank-1 outer product of the \emph{half-difference}. It is mean-centered,
 so any common offset of the pair away from $X_{\CV}$ contributes
 nothing.
 
-Contrast the \textbf{legacy} CV-centered pair estimator that the
-pre-2026-05-28 rollup used, with $\boldsymbol{\Delta}_{u} =
-\mathbf{X}_{u}-\mathbf{X}_{\CV}$ and decomposition
+A naive alternative centres on the CV rather than the pair mean, with
+$\boldsymbol{\Delta}_{u} = \mathbf{X}_{u}-\mathbf{X}_{\CV}$ and decomposition
 $\boldsymbol{\Delta}_{0}=\mathbf{m}+\mathbf{a}$,
 $\boldsymbol{\Delta}_{1}=\mathbf{m}-\mathbf{a}$:
 \begin{equation}
-\mathbf{C}^{B}_{\text{legacy}}
+\mathbf{C}^{B}_{\text{CV-centered}}
 \;=\;
 \tfrac{1}{2}\big(\boldsymbol{\Delta}_{0}\boldsymbol{\Delta}_{0}\T
                 + \boldsymbol{\Delta}_{1}\boldsymbol{\Delta}_{1}\T\big)
@@ -1370,16 +1354,10 @@ $\boldsymbol{\Delta}_{1}=\mathbf{m}-\mathbf{a}$:
 \end{equation}
 The two agree \emph{only} for a CV-symmetric pair ($\mathbf{m}=0$),
 where both reduce to $\mathbf{a}\mathbf{a}\T$. For an asymmetric or
-one-sided pair the legacy form adds a spurious rank-1
-$\mathbf{m}\mathbf{m}\T$ term (treating the common offset as a second
-variance direction), which MAT correctly collapses to near zero. This
-is why moving to the MAT formula \emph{lowered} the total universe
-trace by $1.9\%$ (the BeamAngle, MuonResolution, and one-sided NC
-bands had asymmetric shifts), and it is the single methodological
-correction behind the $\chi^{2}/\mathrm{ndf}$ shift $1.473\to1.699$.
-The legacy estimator remains available via
-\texttt{-{}-legacy-pair-formula} for forensic reproduction only; the
-earlier claim that the CV-centered convention is ``consistent with the
-published MINERvA error budget'' was incorrect --- MAT is mean-centered
-(\S\ref{sec:minerva}).
+one-sided pair the CV-centered form adds a spurious rank-1
+$\mathbf{m}\mathbf{m}\T$ term --- it treats the common offset as a second
+variance direction, which mean-centering correctly collapses to near
+zero. We mean-center throughout, matching MAT (\S\ref{sec:minerva}); the
+bands where the distinction matters are the asymmetric ones (BeamAngle,
+MuonResolution, and the one-sided NC band).
 
