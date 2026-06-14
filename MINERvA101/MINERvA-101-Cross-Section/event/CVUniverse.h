@@ -105,10 +105,11 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
   }
 
   virtual bool IsMinosMatchMuon() const {
-    // Require a MINOS-matched muon track with a passing MINOS fit.
-    // `has_interaction_vertex==1` was an educational stub (true for
-    // essentially every event in the pre-selected AnaTuple) and biased
-    // the low-p_|| cross section low — see 2D_OMNIFOLD_REFERENCE.md.
+    // Require a MINOS-matched muon track with a passing MINOS fit. The current
+    // MINERvA-101 tutorial does the same isMinosMatchTrack==1 match; we add the
+    // minos_trk_is_ok==1 fit-quality bit. (An early tutorial revision used
+    // has_interaction_vertex==1, true for ~every pre-selected event, which
+    // biased the low-p_|| cross section low — see 2D_OMNIFOLD_REFERENCE.md.)
     const std::string ok_branch = GetAnaToolName() + "_minos_trk_is_ok";
     return GetInt("isMinosMatchTrack") == 1 && GetInt(ok_branch.c_str()) == 1;
   }

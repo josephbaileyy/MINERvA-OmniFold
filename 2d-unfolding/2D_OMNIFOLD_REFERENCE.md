@@ -248,23 +248,28 @@ chi2.
 - `pzb=1` = first p_|| bin, 1.5 < p_|| < 2.0 GeV/c (the fragile low-p_||
   MINOS range-out regime).
 
-## `IsMinosMatchMuon` fix (2026-04-25)
+## `IsMinosMatchMuon` (current state; our edit 2026-04-25)
 
-The upstream MINERvA-101 tutorial ships
+The upstream MINERvA-101 tutorial `main` now does a real MINOS match:
 
 ```cpp
 virtual bool IsMinosMatchMuon() const {
-  return GetInt("has_interaction_vertex") == 1;
+  return GetIsMinosMatchTrack() == 1;
 }
 ```
 
-which is an educational stub: it's true for essentially every event in
-the pre-selected AnaTuple. `CVUniverse.h:107` has been patched to
+Our `CVUniverse.h:107` does the same `isMinosMatchTrack==1` match and adds the
+`minos_trk_is_ok==1` fit-quality bit:
 
 ```cpp
 return GetInt("isMinosMatchTrack") == 1 &&
        GetInt(GetAnaToolName() + "_minos_trk_is_ok") == 1;
 ```
+
+(An early tutorial revision instead used `has_interaction_vertex==1`, an
+educational stub true for essentially every event in the pre-selected
+AnaTuple, which biased the low-p_|| cross section low. Our 2026-04-25 edit
+predates the upstream tutorial's own fix; both now enforce the real match.)
 
 This requires a MINOS-matched muon track with a passing MINOS fit.
 AnaTuple branches verified on `MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root`:

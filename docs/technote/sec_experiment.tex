@@ -50,11 +50,10 @@ same tracker fiducial volume and apothem; a muon track with
 $\theta_\mu<20^{\circ}$ matched to a track in MINOS with a passing MINOS fit;
 no dead-time overlap; and a neutrino (rather than antineutrino) candidate.
 The MINOS-match requirement is implemented as
-\texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1}; this replaces an
-educational stub in the MINERvA-101 tutorial code that accepted essentially
-every event, and brings the background rate from $\sim\SI{10}{\percent}$ to
-\SI{0.35}{\percent}, consistent with the published
-$\sim\SI{0.2}{\percent}$. Backgrounds (reconstructed events whose true
+\texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1} (the current
+MINERvA-101 tutorial enforces the same \texttt{isMinosMatchTrack} match; we
+additionally require a passing MINOS fit). This yields a background rate of
+\SI{0.35}{\percent}, consistent with the published $\sim\SI{0.2}{\percent}$. Backgrounds (reconstructed events whose true
 interaction fails the signal definition) and \emph{fakes} (reconstructed in
 phase space, true muon outside it) are POT-scaled and subtracted from the
 reconstructed-data target before unfolding (\S\ref{sec:method}).

@@ -68,7 +68,7 @@ cov (2D combined χ²/ndf = 1.48). Quote per-bin pulls otherwise.
 Our Poisson-bootstrap stat covariance is 2.55× smaller (and differently
 structured) than the paper's `StatOnly` — this was the dominant control on the
 ours-only χ² (Check #3) and **open question #1** in
-`docs/uq_statistical_methods.tex`. The data/MC-split bootstrap campaign
+`docs/technote/app_statmethods.tex`. The data/MC-split bootstrap campaign
 (`sbatch_unfold_2d_MEFHC_5iter_bootsplit.sh`, arrays 53678615/616; 200 replicas
 each, `uq/run_split_analysis.sh` + `uq/compare_split_bootstrap.py`) **resolved
 it 2026-06-02:**

@@ -17,7 +17,7 @@
 # (--bootstrap-streams). Streams are independent, so Cov(data)+Cov(mc) should
 # reconstruct the joint 'both' covariance (uq/bootstrap_MEFHC_300) -- a
 # decomposition AND a closure check. Motivates the open question in
-# uq_statistical_methods sec:rank (why our stat block is 2.5x smaller than the
+# technote App B sec:rank (why our stat block is 2.5x smaller than the
 # paper's StatOnlyCov: OmniFold efficiency vs the paper's stat definition).
 #
 # ML seed pinned to 1 (matches the 300-set 'both' campaign) so the variance is

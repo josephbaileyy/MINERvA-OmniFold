@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rederive the flux <-> muon-energy-scale joint covariance block -- the one
 off-block-diagonal correlation the Ruterbories paper admits (Bashyal low-recoil
-fit, JINST 16 P08068), and uq_statistical_methods open question #1.
+fit, JINST 16 P08068), and technote App B open question #1.
 
 Two routes:
   A. PAPER rederivation. The data release ships marginal blocks Total, Stat,

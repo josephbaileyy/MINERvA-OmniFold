@@ -2,7 +2,7 @@
 """Split-bootstrap analysis: closure (C_data + C_mc ?= C_both) and the
 data-statistical vs paper-StatOnly comparison (magnitude AND structure).
 
-Resolves uq_statistical_methods open question #1 — why our joint Poisson
+Resolves technote App B open question #1 — why our joint Poisson
 bootstrap stat block is ~2.55x smaller (and differently structured) than the
 paper's StatOnlyCovariance. The data/MC-split campaign fluctuates ONLY the data
 weights (boot_data/) or ONLY the MC weights (boot_mc/); both streams use

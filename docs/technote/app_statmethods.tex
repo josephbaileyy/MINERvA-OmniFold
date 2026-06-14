@@ -7,13 +7,11 @@ measurement --- the seedscan, bootstrap and universe-covariance procedures,
 the MAT-conformant covariance construction, the $1/\Phi$ flux normalisation,
 the comparison conventions ($\chi^{2}$, pulls, shape-only), the
 ill-conditioning/rank analysis, the tension anatomy, the coverage toys, and
-the closure tests. It was developed as (and supersedes) the standalone
-companion document \texttt{docs/uq\_statistical\_methods.tex}; each
-procedure gives the recipe, the math, the implementation pointer, and a
-worked example using a reported number. (The companion's introductory
-statistics primer is omitted here; only the analysis-specific numerical
-conventions are retained. The $\chi^{2}$ convention referenced throughout is
-Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.)
+the closure tests. Each procedure gives the recipe, the math, the
+implementation pointer, and a worked example using a reported number. We
+document only the analysis-specific numerical conventions, not a general
+statistics primer; the $\chi^{2}$ convention referenced throughout is
+Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
 
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
@@ -568,9 +566,9 @@ strict-interior set: cells where $\pT^{\text{high}} / \pPar^{\text{low}}
 $\theta_{\mu}<20^{\circ}$ kinematic cut and have wildly suppressed
 paper efficiencies that we do not replicate; pulls on those cells run
 to $\mathcal{O}(100)\sigma$ and dominate the $\chi^{2}$. The $185$-bin
-interior cut removes them; we report it only for sensitivity.
-\textbf{The canonical metric is the 205-bin set} (commit \texttt{65fb085},
-\textit{Seedscan: use the 205 paper-reported bins everywhere}).
+interior cut removes them, and we quote it only as a sensitivity check that
+the headline tension is not an artefact of those few boundary cells.
+\textbf{The canonical metric is the 205-bin set} used everywhere below.
 
 \subsubsection{Covariance-aware $\chi^{2}/\mathrm{ndf}$}
 \label{sec:chisq}
@@ -1246,8 +1244,8 @@ flux universes.
 \subsection{How the pieces fit together}
 \label{sec:assemble}
 
-We can now read the \texttt{2D\_OMNIFOLD\_STUDY\_STATUS.md} headline
-in one sentence: \emph{across $205$ paper-reported bins, the
+The combined result now reads in one sentence:
+\emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
 1.699$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
 that has been independently checked at the $0.5\%$ level by $200$
@@ -1268,7 +1266,7 @@ $\mathbf{C}^{\syst}$ & \S\ref{sec:universes} &
 $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
-$\mathbf{C}^{\paper}$ & STATUS.md & Paper's published \texttt{TotalCovariance} \\
+$\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
 Pull RMS $= 0.466$ & \S\ref{sec:pull} &
   Per-bin standardised residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &

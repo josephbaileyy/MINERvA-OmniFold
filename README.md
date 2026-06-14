@@ -47,8 +47,8 @@ MINERvA-OmniFold/
 │   └── 3D_OMNIFOLD_*.md, README.md        # 3D status / run log / orientation
 │
 ├── docs/                                  # deliverables (outside the STATUS/LOG triad)
-│   ├── technote/                          # internal MINERvA technote (LaTeX)
-│   └── uq_statistical_methods.tex         # UQ methods writeup
+│   └── technote/                          # internal MINERvA technote (LaTeX);
+│                                          #   App B = the UQ statistical-methods writeup
 │
 ├── unbinned_unfolding/                    # RooUnfold fork (mostly upstream, gitignored)
 │   ├── build/                             # in-tree cmake build (gitignored)

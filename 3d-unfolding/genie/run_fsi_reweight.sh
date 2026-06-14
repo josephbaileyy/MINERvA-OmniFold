@@ -4,7 +4,7 @@
 # GENIE single-parameter reweighting (grwght1p) on a GHEP file for one GSyst
 # dial -- by default the pion inelastic FSI knob FrInel_pi, the FSI parameter
 # that redistributes hadronic energy (hence Eavail) and that MAT-MINERvA leaves
-# commented out (uq_statistical_methods open question #2). FSI reweighting is a
+# commented out (technote App B open question #2). FSI reweighting is a
 # truth-level operation on the *same* CV events -- no regeneration needed.
 #
 # Scans NTWK tweak-dial values evenly in [MIN,MAX] sigma (NTWK forced odd and

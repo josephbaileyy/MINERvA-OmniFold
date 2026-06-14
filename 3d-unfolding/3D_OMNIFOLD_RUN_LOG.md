@@ -141,7 +141,7 @@ systematic UQ.
 ## 2026-05-31 — FSI dial variation (FrInel_pi): putting a number on open question #2
 
 Scaffolded a truth-level GENIE FSI-dial variation pass (motivated by the
-uq_statistical_methods open question #2: MAT leaves `FrInel_pi` — the pion
+technote App B open question #2: MAT leaves `FrInel_pi` — the pion
 inelastic FSI knob — commented out). FSI reweighting is applied to the *same*
 2M CV gevgen events (no regeneration): `grwght1p -s FrInel_pi -t 3 --min-tweak
 -1 --max-tweak 1` per shard (`run_fsi_reweight.sh` / `run_parallel_fsi.sh` fan

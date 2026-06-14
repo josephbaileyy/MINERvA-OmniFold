@@ -101,12 +101,11 @@ def main():
     fig, axs = plt.subplots(1, 3, figsize=(19, 5))
     X, Y = np.arange(len(pt_e)), np.arange(len(pz_e))
     im0 = axs[0].pcolormesh(X, Y, np.log10(np.maximum(HT, 1e-1)).T, cmap="viridis")
-    axs[0].set_title("truth rate (log10, weighted)")
     im1 = axs[1].pcolormesh(X, Y, eff.T, cmap="viridis", vmin=0, vmax=0.7)
-    axs[1].set_title("reco efficiency")
     im2 = axs[2].pcolormesh(X, Y, dead.astype(float).T, cmap="viridis", vmin=0, vmax=1)
-    axs[2].set_title(f"dead region (eff<{args.eff_floor})")
-    for A, im in zip(axs, [im0, im1, im2]):
+    labels = [r"(a) truth rate (log$_{10}$)", "(b) reco efficiency",
+              rf"(c) dead region (eff$<${args.eff_floor})"]
+    for A, im, lab in zip(axs, [im0, im1, im2], labels):
         # mark the published phase-space boundary in bin coordinates
         ipt45 = np.searchsorted(pt_e, 4.5)
         ipz15, ipz60 = np.searchsorted(pz_e, 1.5), np.searchsorted(pz_e, 60.0)
@@ -115,9 +114,9 @@ def main():
         A.axhline(ipz60, color="cyan", lw=1.2)
         A.set_xlabel("pT bin (extended)")
         A.set_ylabel("p|| bin (extended)")
-        fig.colorbar(im, ax=A, fraction=0.046)
-    fig.suptitle("FPS acceptance study (1A): cyan = published phase-space boundary")
-    fig.subplots_adjust(wspace=0.5)  # keep each colorbar clear of the next panel's y-label
+        fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
+        technote_style.panel_label(A, lab)
+    fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[acc] wrote {args.out_png}")

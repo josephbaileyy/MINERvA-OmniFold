@@ -30,6 +30,14 @@ import ROOT  # noqa: E402
 
 ROOT.gROOT.SetBatch(True)
 
+# physical paper edges, so the spread map matches the seedscan map (Fig.~13):
+# real GeV/c axes with unpopulated bins masked white, not bin-index with empties
+# painted as 0%.
+PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
+                     0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
+PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
+                     6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0])
+
 
 def th2_to_np(h):
     nx, ny = h.GetNbinsX(), h.GetNbinsY()
@@ -54,11 +62,16 @@ def main():
         corr = cov / np.outer(d, d)
     corr[~np.isfinite(corr)] = 0.0
 
-    # --- relative-spread map on the pT x pz grid -------------------------
-    fig, ax = plt.subplots(figsize=(5.2, 4.2))
-    im = ax.imshow(rel.T, origin="lower", aspect="auto", cmap=technote_style.SEQ_CMAP)
-    ax.set_xlabel(r"$p_T$ bin"); ax.set_ylabel(r"$p_\parallel$ bin")
-    cb = fig.colorbar(im, ax=ax); cb.set_label("relative spread (%)")
+    # --- relative-spread map on the physical pT x pz grid ----------------
+    # mask unpopulated bins (hRel2D stores them as 0) so they render white,
+    # not as a 0% spread; physical GeV/c axes to match the seedscan map.
+    fig, ax = plt.subplots(figsize=(8, 6))
+    Z = np.where(rel > 0, rel, np.nan)
+    vmax = min(20.0, np.nanmax(Z)) if np.isfinite(np.nanmax(Z)) else 5.0
+    pc = ax.pcolormesh(PT_EDGES, PZ_EDGES, Z.T, cmap=technote_style.SEQ_CMAP,
+                       shading="flat", vmin=0, vmax=vmax)
+    ax.set_xlabel(r"$p_T$ (GeV/c)"); ax.set_ylabel(r"$p_{||}$ (GeV/c)")
+    cb = fig.colorbar(pc, ax=ax); cb.set_label("per-bin rel spread std/mean (%)")
     fig.tight_layout()
     out_spread = os.path.join(args.outdir, "uq_spread_2d.png")
     fig.savefig(out_spread, dpi=130); plt.close(fig)

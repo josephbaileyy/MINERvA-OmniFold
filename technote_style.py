@@ -77,3 +77,17 @@ Axes.set_title = _noop
 Figure.suptitle = _noop
 plt.title = _noop
 plt.suptitle = _noop
+
+
+def panel_label(ax, text, loc="upper left", color="black"):
+    """Short corner tag identifying one panel of a multi-panel figure.
+
+    Titles are suppressed (above), so a figure with several panels has no
+    per-panel identifier; this places a compact ``(a) ...`` tag in a corner,
+    keyed to the LaTeX caption, without reintroducing a title bar.
+    """
+    x, ha = (0.03, "left") if "left" in loc else (0.97, "right")
+    y, va = (0.97, "top") if "upper" in loc else (0.03, "bottom")
+    ax.text(x, y, text, transform=ax.transAxes, ha=ha, va=va,
+            fontsize=11, fontweight="bold", color=color,
+            bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="0.6", alpha=0.85))

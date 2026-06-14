@@ -13,8 +13,8 @@
 CC-inclusive double-differential cross section\\
 $d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
 \large MINERvA analysis note --- DRAFT}
-\author{J.~R.~Bailey}
-\date{\today}
+\author{Joseph Bailey \and Benjamin Nachman}
+\date{\today\\[4pt]\small Code and file references: \repolink}
 
 \begin{document}
 \maketitle
@@ -55,7 +55,7 @@ The 2D, 3D and 4D results carry full covariance budgets
 systematic by a factor $\sim2$, and the published 4D covariance adopts the
 unified-throw magnitude. The method passes binned and unbinned goodness-of-fit
 tests plus scalar GBDT/MLP classifier cross-checks. A point-cloud transformer
-(PET) pipeline operating on the raw reconstructed calorimetric clusters now
+(PET) pipeline operating on the raw reconstructed calorimetric clusters
 produces a full-statistics, absolutely-normalised cross section: its closure is
 unbiased to $\sim\SI{\petClosure}{\percent}$, it agrees with the production GBDT result
 at the \SI{9}{\percent} (training-configuration) level, and it carries its own
@@ -91,8 +91,13 @@ extension, and the statistical methodology (as appendices).
 \input{sec_summary}
 
 \section*{Acknowledgments}
-\TODO{acknowledgments --- advisor, MINERvA collaborators consulted, NERSC
-(Perlmutter, project m3246), MAT/MINERvA-101 framework authors}
+I thank my advisor, Benjamin Nachman, for guidance throughout this work. This
+analysis was carried out on the Perlmutter system at the National Energy
+Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy
+Office of Science User Facility, under project m3246. It builds on the MINERvA
+Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and I thank
+their authors. I am grateful to the MINERvA Collaboration for the public release
+of the medium-energy CC-inclusive data product on which the reproduction rests.
 
 \appendix
 \input{app_statmethods}
