@@ -43,7 +43,7 @@ $\tfrac12(\delta_+\delta_+^{\!\top}+\delta_-\delta_-^{\!\top}$); multi-universe
 bands (the 100-universe PPFX flux multisim) use the sample covariance. The
 construction is MAT-conformant (\texttt{MnvVertErrorBand::CalcCovMx}; verified
 byte-for-byte against MAT \texttt{MnvH1D::GetTotalErrorMatrix}, max rel.\ diff
-$\sim10^{-17}$). Top bands: Flux \SI{4.99}{\percent}, Muon\_Energy\_MINOS
+$\sim10^{-17}$). Top bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
 \SI{2.31}{\percent}, MinosEfficiency \SI{1.47}{\percent},
 Muon\_Energy\_MINERvA \SI{1.29}{\percent}. Figure~\ref{fig:uqbands} shows the
 grouped fractional-uncertainty projections in the published Fig.~6/7 style
@@ -64,14 +64,16 @@ before dividing by the 1D central value).
 \paragraph{Flux $1/\Phi$ normalisation.}
 The dominant flux term enters as $\sigma\propto1/\Phi$; varying $\Phi$ per flux
 universe (rather than dividing every universe by the CV $\Phi$) raised the Flux
-band from $\sim\SI{1}{\percent}$ to \SI{4.99}{\percent} and brought the standalone
-combined budget to \SI{6.87}{\percent}. The \SI{1.4}{\percent} target-nucleon
+band from $\sim\SI{1}{\percent}$ to \SI{\fluxBand}{\percent} and brought the standalone
+combined budget to \SI{\uqMedian}{\percent}. The \SI{1.4}{\percent} target-nucleon
 normalisation is a fully-correlated rank-1 band. The 100-universe flux
 covariance has a participation-ratio effective rank of $\approx1$ (one coherent
 normalisation mode carries \SI{99.6}{\percent} of the variance), and its leading
-mode correlates at $\rho\approx0.9$ with the rank-1 muon-energy-scale band ---
-the rederived Bashyal~\cite{Bashyal:2021tqu} joint block
-(App.~\ref{app:openq}, item~1).
+mode correlates at $\rho=\rhoFluxMuon$ with the rank-1 muon-energy-scale band:
+the rederived Bashyal~\cite{Bashyal:2021tqu} joint block, whose cross term is
+rank-2, with two independent estimators giving $\rho=0.87$--$0.90$. Adding the
+block leaves the systematic rank unchanged --- its directions already lie within
+the span of the universe covariance (App.~\ref{sec:rank}).
 
 \subsection{Statistical uncertainty: Poisson bootstrap}
 \label{sec:uq-boot}
@@ -85,7 +87,8 @@ covariance is the sample covariance over replicas
 (Fig.~\ref{fig:bootstrap}). Our bootstrap block is genuinely smaller than the
 published statistical block ($\approx2.5\times$ by trace) --- an unbinned
 statistical efficiency confirmed by the data-only stream of the data/MC split
-bootstrap, not a missing term (App.~\ref{app:openq}, item~1).
+bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$), not a missing term
+(App.~\ref{sec:rank}).
 
 \begin{figure}[H]
   \centering
@@ -141,4 +144,4 @@ shared with the paper (flux/GENIE/MINOS); the ours-only inverse-covariance
 $\chi^{2}$ is evaluated only with a truncated-spectral convention on the
 well-constrained subspace. We therefore quote per-bin pulls, the regularisation
 scan, and the truncated result together rather than treating an unconstrained
-pseudo-inverse as a standalone goodness-of-fit (App.~\ref{app:openq}).
+pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).

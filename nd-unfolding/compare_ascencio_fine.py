@@ -16,6 +16,13 @@ upper bound. Shared-systematics caveat as in compare_ascencio_fullcov.py.
 
   python compare_ascencio_fine.py   # writes products/4d/ascencio_fine_compare.png
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import sys
 
 import numpy as np

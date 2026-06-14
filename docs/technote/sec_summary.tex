@@ -4,9 +4,9 @@
 \paragraph{Summary.}
 Unbinned OmniFold with gradient-boosted trees reproduces the published
 MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$
-($\sigma_{\mathrm{tot}}$ ratio $1.011$; \SI{94}{\percent} of bins within
-\SI{10}{\percent}; pull RMS $0.60$) with a standalone uncertainty budget that
-matches the published total (\SI{6.87}{\percent} vs \SI{6.86}{\percent}
+($\sigma_{\mathrm{tot}}$ ratio $\ratioTot$; \SI{\binsTen}{\percent} of bins within
+\SI{10}{\percent}; pull RMS $\pullRMSr$) with a standalone uncertainty budget that
+matches the published total (\SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}
 median per bin) and passes a full validation suite: three closure families, a
 bottom-line test, frequentist coverage, binned and unbinned (C2ST)
 goodness-of-fit, and classifier-family cross-checks. On that foundation we
@@ -28,24 +28,24 @@ lower-dimensional predecessor under marginalisation. The physics output:
         right;
   \item the $(\Eavail,W)$ study localises the remaining high-$\Eavail$
         excess to the deep-inelastic region: all four generators miss the
-        high-$W$ corner at $9$--$18\sigma$ on a dedicated covariance
+        high-$W$ corner at $\disCornerLo$--$\disCornerHi\sigma$ on a dedicated covariance
         (\S\ref{sec:eavailw});
   \item the PET point-cloud track yields a full-statistics,
         absolutely-normalised cross section from the raw reconstructed
         clusters, closure-validated and budgeted (\S\ref{sec:pet}).
 \end{itemize}
 
-\paragraph{Outlook: completing the full-phase-space measurement.}
-The full-phase-space extension is no longer prospective: \S\ref{sec:fps}
-reports the validated central value
-($\sigma_{\mathrm{FPS}}=\SI{4.502e-38}{cm^2/nucleon}$, \SI{46}{\percent}
-above the restricted phase space) with its anchor, closure, and three-prior
-envelope. What remains is its uncertainty campaign --- the full
-universe/bootstrap/ML budget on the extended grid with the mandatory
-unified-throw construction (\S\ref{sec:uq-combine}), plus hidden-variable
-closure and coverage toys exercised specifically in the extension regions
---- all in production at the time of writing. Pending items inherited from
-this note: NEUT as a fifth generator, per-lateral PET re-inference, the
-finer 44-cell Ascencio comparison (the maximal-common-grid version is done
-and consistent, \S\ref{sec:4d}), and the remaining collaborator confirmations
-of App.~\ref{app:openq}.
+\paragraph{Outlook.}
+The full-phase-space measurement (\S\ref{sec:fps}) is complete: the validated
+central value $\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$
+(\SI{\fpsAbove}{\percent} above the restricted phase space) carries its anchor,
+closure, three-prior envelope, and a full universe/bootstrap/ML budget with the
+mandatory unified-throw construction (\S\ref{sec:uq-combine}). The remaining
+forward-looking items are refinements rather than gaps: NEUT as a fifth
+generator, per-lateral PET re-inference for a fully self-contained point-cloud
+budget, and the finer 44-cell Ascencio comparison (the maximal-common-grid
+version is already done and consistent, \S\ref{sec:4d}). Two optional
+paper-independent cross-checks remain open --- a flux\,$\leftrightarrow$\,muon
+posterior from MAT-MINERvA for a fully self-derived $\rho$, and published
+precedent for the truncated-spectral ``ours-only'' goodness-of-fit convention
+(App.~\ref{sec:rank}).

@@ -28,7 +28,7 @@ legacy CV-centered pair_sumsq rollup (1.473) are superseded.
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants + flag
 contracts), `2D_OMNIFOLD_RUN_LOG.md` (current chronology),
 `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1 + the 2026-05-18→28 UQ
-campaign), `PLOT_GUIDE.md`, `docs/uq_statistical_methods.tex` (full UQ
+campaign), `PLOT_GUIDE.md`, `docs/technote/app_statmethods.tex` (full UQ
 methods writeup: procedures, MINERvA covariance construction, and the
 ours-only rank-deficiency + open questions for collaborators).
 
@@ -77,7 +77,7 @@ flux overlap) → overcorrects there; treat it as a secondary diagnostic.
 only the truncated-spectral / regularized convention is meaningful. Quote
 per-bin pulls, the regularization scan, and the truncated result together;
 do not treat an unconstrained pseudo-inverse as a standalone goodness-of-fit.
-Full discussion: `docs/uq_statistical_methods.tex` (§Ill-conditioning) and
+Full discussion: `docs/technote/app_statmethods.tex` (§Ill-conditioning) and
 RUN_LOG 2026-05-28 sections.
 The matcorr rollup is verified byte-for-byte against MAT `MnvH1D`
 (`GetTotalErrorMatrix`): max element-wise rel diff **5.5e-17** (machine ε),
@@ -165,7 +165,7 @@ p∥≥1.5) → 3.50 / 2.94 / 2.71 / 2.78 / 2.84 at p∥≥2.0/2.5/3.0/3.5/4.0
 (196/186/175/163/151 bins); median ratio ≈1.006 throughout.
 
 **Tension anatomy (paper-cov χ²=3.66)** — `diagnose_tension.py`,
-`docs/uq_statistical_methods.tex §sec:tension`. The central values agree
+`docs/technote/app_statmethods.tex §sec:tension`. The central values agree
 (pull RMS 0.598 → diagonal-only χ²/ndf would be **0.37**); the full-cov
 3.66 is a **10× inflation living entirely in the off-diagonal structure**
 of the published TotalCov. Eigenmode decomposition: χ²-carriers are

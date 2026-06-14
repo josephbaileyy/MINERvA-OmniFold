@@ -258,7 +258,9 @@ virtual bool IsMinosMatchMuon() const {
   return GetInt("isMinosMatchTrack") == 1 && GetInt(ok_branch.c_str()) == 1;
 }
 ```
-Replaces the educational stub `has_interaction_vertex==1`.
+Current state: matches the upstream MINERvA-101 tutorial's `isMinosMatchTrack==1`
+plus our `minos_trk_is_ok==1` fit-quality bit. (An early tutorial revision used
+the `has_interaction_vertex==1` stub; that is no longer on the tutorial `main`.)
 
 ### Active 2D files
 - **C++**: `runEventLoopOmniFold.cpp`, `cuts/MaxPtMu.h`,

@@ -36,10 +36,10 @@ flux/POT/nucleon constants). Three gates validate the absolute path:
         unbiased;
   \item \textbf{Cross-check vs GBDT}: on data, the PET absolute total is
         $\SI{2.796e-38}{cm^2/nucleon}$ versus the GBDT
-        $\SI{3.066e-38}{}$, ratio $0.912$, with per-axis median differences
+        $\SI{3.066e-38}{}$, ratio $\petRatio$, with per-axis median differences
         of \SIrange{6.5}{9.9}{\percent} (Fig.~\ref{fig:petabs}).
 \end{enumerate}
-Because the closure is exact to $\sim\SI{1}{\percent}$, the $\sim\SI{9}{\percent}$
+Because the closure is exact to $\sim\SI{\petClosure}{\percent}$, the $\sim\SI{9}{\percent}$
 data-side gap is a genuine \emph{training-configuration} difference (PET
 trained on the 2M subsample with 2 iterations versus the full-statistics
 5-iteration GBDT), not a normalisation bug: an under-iterated unfold pushes
@@ -53,8 +53,8 @@ the gap toward the ML band needs more events/iterations and is deferred.
   \caption{Absolutely-normalised 4D cross section from the PET point-cloud
   unfold (full-statistics reweight of the generator sample) versus the
   production scalar GBDT result, projected on each axis. The PET/GBDT total
-  ratio is $0.912$; the closure gate (text) shows the absolute machinery
-  itself is unbiased to $\sim\SI{1}{\percent}$.}
+  ratio is $\petRatio$; the closure gate (text) shows the absolute machinery
+  itself is unbiased to $\sim\SI{\petClosure}{\percent}$.}
   \label{fig:petabs}
 \end{figure}
 
@@ -70,16 +70,11 @@ projection. The combined budget on the PET reported bins has median
 per-bin fractions of \SI{8.2}{\percent} (systematic), \SI{4.2}{\percent}
 (statistical), \SI{3.3}{\percent} (ML), \SI{4.0}{\percent} (lateral,
 transferred), totalling $\approx\SI{12.3}{\percent}$ --- comparable to the
-GBDT 4D budget's \SI{13.5}{\percent}. An earlier version of this budget quoted
-a systematic block of \SI{18.3}{\percent} (total \SI{23.0}{\percent}); that
-figure was an artifact of a reweight bank built before the truth-only
-miss-row dump fix, whose mangled miss-row ratios inflated the systematic
-block by $\times2.2$. Regenerating the bank from the corrected dump --- with
-the per-event alignment verified bit-identical over all \num{32.8}~million
-rows, and the bank-independent statistical and ML blocks reproducing
-identically as a control --- collapses the systematic block to
-\SI{8.2}{\percent}; the over-covered figure invalidated no result, only the
-budget number. The residual gap to a fully self-contained PET budget is
+GBDT 4D budget's \SI{13.5}{\percent}. The reweight bank underlying the
+systematic block is built from the truth-only miss-row dump, with per-event
+alignment verified bit-identical over all \num{32.8}~million rows and the
+bank-independent statistical and ML blocks reproducing as a control. The
+residual gap to a fully self-contained PET budget is
 per-lateral re-inference on shifted reconstructed clouds, which requires
 re-running the PET network per lateral universe and is deferred.
 

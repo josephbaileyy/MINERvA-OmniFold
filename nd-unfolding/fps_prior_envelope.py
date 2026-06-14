@@ -6,6 +6,13 @@ The bare-GENIE input must come from the 2026-06-10-fixed driver (KNOWN_ISSUES
 #1 RESOLVED: no-weights mode is now absolutely normalized); pre-fix outputs
 would need an extra 1/pot_scale.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 import sys
@@ -64,14 +71,14 @@ def main():
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(7.5, 6))
     X, Y = np.arange(len(pt_ext)), np.arange(len(pz_ext))
-    im = ax.pcolormesh(X, Y, (100 * env).T, cmap="magma_r", vmin=0, vmax=30)
+    im = ax.pcolormesh(X, Y, (100 * env).T, cmap="viridis", vmin=0, vmax=30)
     ax.axvline(np.searchsorted(pt_ext, 4.5), color="cyan", lw=1.2)
     ax.axhline(np.searchsorted(pz_ext, 1.5), color="cyan", lw=1.2)
     ax.axhline(np.searchsorted(pz_ext, 60.0), color="cyan", lw=1.2)
     ax.set_xlabel("pT bin (extended)")
     ax.set_ylabel("p|| bin (extended)")
-    ax.set_title("3-prior envelope: half-spread/mean [%]\n(MnvTune / bare GENIE / NuWro-shaped)")
-    fig.colorbar(im, ax=ax, fraction=0.046)
+    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cb.set_label("3-prior half-spread/mean (%)")
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[env] wrote {args.out_png}")

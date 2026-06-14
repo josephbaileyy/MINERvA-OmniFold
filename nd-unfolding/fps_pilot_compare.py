@@ -16,6 +16,13 @@ Checks:
      dependence metric, summarised separately inside the published phase
      space and in the new (extrapolated) cells.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import math
 import os
@@ -130,22 +137,23 @@ def main():
     X, Y = np.arange(len(pt_ext)), np.arange(len(pz_ext))
     sub_full = np.full(A_t.shape, np.nan)
     sub_full[i0:i0 + npt, j0:j0 + npz] = np.where(ok, sub / np.where(C > 0, C, np.nan), np.nan)
-    im0 = axs[0].pcolormesh(X, Y, sub_full.T, cmap="coolwarm", vmin=0.8, vmax=1.2)
-    axs[0].set_title("anchor: FPS(tune)/CTRL (paper sub-block)")
-    im1 = axs[1].pcolormesh(X, Y, R.T, cmap="coolwarm", vmin=0.8, vmax=1.2)
-    axs[1].set_title("prior swap: FPS tune/genie")
+    # panels (a),(b) are RATIOS -> diverging RdBu_r centred at 1.0; panel (c) is an
+    # absolute MAGNITUDE -> sequential viridis (the two-colour-scheme question)
+    im0 = axs[0].pcolormesh(X, Y, sub_full.T, cmap="RdBu_r", vmin=0.8, vmax=1.2)
+    im1 = axs[1].pcolormesh(X, Y, R.T, cmap="RdBu_r", vmin=0.8, vmax=1.2)
     im2 = axs[2].pcolormesh(X, Y, np.log10(np.maximum(A_t, 1e-44)).T, cmap="viridis")
-    axs[2].set_title("FPS(tune) xsec (log10)")
+    labels = ["(a) anchor ratio", "(b) prior-swap ratio", r"(c) abs. xsec (log$_{10}$)"]
     ipt45 = np.searchsorted(pt_ext, 4.5)
     ipz15, ipz60 = np.searchsorted(pz_ext, 1.5), np.searchsorted(pz_ext, 60.0)
-    for A, im in zip(axs, [im0, im1, im2]):
+    for A, im, lab in zip(axs, [im0, im1, im2], labels):
         A.axvline(ipt45, color="k", lw=1.0)
         A.axhline(ipz15, color="k", lw=1.0)
         A.axhline(ipz60, color="k", lw=1.0)
         A.set_xlabel("pT bin (extended)")
         A.set_ylabel("p|| bin (extended)")
-        fig.colorbar(im, ax=A, fraction=0.046)
-    fig.suptitle("FPS pilot (1A): black lines = published phase-space boundary")
+        fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
+        technote_style.panel_label(A, lab)
+    fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[cmp] wrote {args.out_png}")

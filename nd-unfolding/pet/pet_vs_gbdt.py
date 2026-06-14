@@ -11,6 +11,13 @@ run is on a subsample (shape comparison, not absolute normalization).
   python pet_vs_gbdt.py --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz \
       --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt.png
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import sys
 
@@ -33,8 +40,9 @@ def _edges(h):
 def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
     """Absolute (non-area-normalized) PET cross section, reusing the exact GBDT machinery.
 
-    Bins the full-stats PET push weights into the 4D axes and runs them through
-    xsec_nd.extract_cross_section_nd with the same flux / POT / nucleons and the GBDT's
+    Bins the PET push weights into the 4D axes, scales the subsample back to the
+    full generator (the push weights cover only a random subsample), and runs them
+    through xsec_nd.extract_cross_section_nd with the same flux / POT / nucleons and the GBDT's
     own completeness (completeness depends only on MC+binning, not on the reweighting), so
     the PET result is directly comparable bin-by-bin to the frozen GBDT 4D product.
     For --closure (pseudo-data = MC reco) completeness=1 and the reference is the MC truth.
@@ -53,6 +61,16 @@ def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
     cols = [ts[m, 0], ts[m, 1], ts[m, 2], ts[m, 3]]
     w_unf = (w_push * wt)[m]
     unfold_nd, _ = und.histnd(cols, w_unf, edges_f)
+
+    # The PET push weights exist only for a random subsample (mc_indices), but
+    # extract_cross_section_nd divides by the FULL data POT. Scale the binned
+    # truth back to the full generator (inverse sampling fraction, by prior truth
+    # weight) so the absolute normalisation is comparable to the full-stats GBDT
+    # result; without this sigma is low by ~N_full/N_sub.
+    sub_pass_sum = float(wt[ptru].sum())
+    full_pass_sum = float(pc["w_truth"][pc["pass_truth"]].sum())
+    subsample_scale = full_pass_sum / sub_pass_sum
+    unfold_nd *= subsample_scale
 
     data_pot = float(pc["data_pot"])
     n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
@@ -73,10 +91,12 @@ def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
     tot = total_xsec(xsec, edges_f)
     tag = "closure" if args.closure else "4D"
     print(f"[absolute] PET total sigma ({tag}) = {tot:.4g} cm^2/nucleon "
-          f"(n_truthpass={int(m.sum())}, data_pot={data_pot:.4g})")
+          f"(n_truthpass={int(m.sum())}, subsample_scale={subsample_scale:.3f}, "
+          f"data_pot={data_pot:.4g})")
 
     if args.closure:
         ref_nd, _ = und.histnd(cols, wt[m], edges_f)
+        ref_nd *= subsample_scale  # same scale on both sides: recovered/truth invariant
         ref_xsec, _ = extract_cross_section_nd(ref_nd, completeness, flux,
                                                data_pot, n_nucleons, edges_f)
         ref_tot = total_xsec(ref_xsec, edges_f)

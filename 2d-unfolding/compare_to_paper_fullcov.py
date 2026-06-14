@@ -20,6 +20,13 @@ TotalCovariance. The combined chi^2/ndf is reported alongside the
 paper-cov-only number so the apples-to-apples comparison the
 paper-cov-only chi^2 cannot make becomes available.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import numpy as np
 import ROOT

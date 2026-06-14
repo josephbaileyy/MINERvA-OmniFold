@@ -7,6 +7,13 @@ Reads 2d_crossSection_omnifold_5iter_closure.root and produces:
   - closure_2d_projection_pz.png : 1D p_|| projection, unfolded vs truth (ratio panel)
   - closure_2d_ratio_hist.png    : histogram of per-bin ratios
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import numpy as np
 import matplotlib

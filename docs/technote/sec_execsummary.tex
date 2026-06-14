@@ -27,11 +27,11 @@ classifier checks, neural-network and transformer cross-checks).
 \begin{itemize}[itemsep=2pt]
   \item \textbf{Reproduction (the demonstrator).} Our unbinned
         $d^{2}\sigma/(d\pT\,d\pPar)$ matches the published measurement
-        (arXiv:2106.16210): total cross-section ratio $1.011$,
-        \SI{94}{\percent} of bins within \SI{10}{\percent}, per-bin pulls
+        (arXiv:2106.16210): total cross-section ratio $\ratioTot$,
+        \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, per-bin pulls
         sub-$1\sigma$, and a fully independent uncertainty budget whose
-        median per-bin uncertainty (\SI{6.87}{\percent}) matches the
-        published \SI{6.86}{\percent} (\S\ref{sec:results},
+        median per-bin uncertainty (\SI{\uqMedian}{\percent}) matches the
+        published \SI{\uqPaper}{\percent} (\S\ref{sec:results},
         \S\ref{sec:systematics}, Fig.~\ref{fig:xsec}).
   \item \textbf{First 3D/4D/5D MINERvA unfolds.} Adding available energy
         ($\Eavail$), momentum transfer ($q_{3}$), and hadronic mass ($W$)
@@ -50,7 +50,7 @@ classifier checks, neural-network and transformer cross-checks).
         high-$\Eavail$ excess that 2p2h cannot explain is resolved in the
         $(\Eavail,W)$ plane: it concentrates in the deep-inelastic corner
         ($W\ge\SI{1.8}{GeV}$), where all four generators miss the data at
-        $9$--$22\sigma$ on a dedicated covariance --- no current model
+        $\disCornerLo$--$\disCornerHi\sigma$ on a dedicated covariance --- no current model
         reproduces it (\S\ref{sec:eavailw}, Fig.~\ref{fig:eavailWband}).
   \item \textbf{A methodological finding.} A 160-throw ``unified-throw''
         test of the standard add-the-blocks covariance construction shows
@@ -58,27 +58,28 @@ classifier checks, neural-network and transformer cross-checks).
         the strongest-migration corner; the published 4D covariance adopts
         the corrected magnitude (\S\ref{sec:uq-combine}).
   \item \textbf{Toward raw-data unfolding.} A point-cloud transformer
-        unfolding the actual reconstructed calorimeter clusters now yields
+        unfolding the actual reconstructed calorimeter clusters yields
         an absolutely-normalised, full-statistics cross section, unbiased in
-        closure to $\sim\SI{1}{\percent}$ and agreeing with the production
+        closure to $\sim\SI{\petClosure}{\percent}$ and agreeing with the production
         result at the \SI{9}{\percent} (training-limited) level
         (\S\ref{sec:pet}).
   \item \textbf{A first full-phase-space cross section.} Removing the muon
         kinematic cuts (which hide a third of the signal rate) gives
-        $\sigma_{\mathrm{FPS}}=\SI{4.5e-38}{cm^2/nucleon}$, anchored to the
-        restricted measurement at \SI{0.6}{\percent} where they overlap,
+        $\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$, anchored to the
+        restricted measurement at \SI{\fpsAnchor}{\percent} where they overlap,
         with a three-prior envelope declaring the extrapolation cost
-        cell-by-cell (\S\ref{sec:fps}; systematics in production).
+        cell-by-cell (\S\ref{sec:fps}).
 \end{itemize}
 
 \paragraph{How to read this note.}
 Sections~\ref{sec:experiment}--\ref{sec:method} define the samples and the
 method; \S\ref{sec:results} is the 2D reproduction;
 \S\ref{sec:systematics} and App.~\ref{app:statmethods} are the uncertainty
-machinery (the appendix is self-contained and tutorial-grade);
+machinery (the appendix documents the analysis-specific procedures
+--- variance sources, coverage and closure toys, the covariance
+construction --- for reproduction);
 \S\ref{sec:validation} is the validation suite; the physics is in
 \S\ref{sec:3d}--\ref{sec:eavailw}; \S\ref{sec:pet} is the point-cloud
-track; \S\ref{sec:summary} states the planned full-phase-space extension.
-Appendix~\ref{app:openq} records the resolution of all questions raised in
-internal review. Every number quoted here is cross-checked in the
-repository's validation ledger.
+track; \S\ref{sec:fps} is the full-phase-space measurement and
+\S\ref{sec:summary} the outlook. Every number quoted here is cross-checked in
+the repository's validation ledger.

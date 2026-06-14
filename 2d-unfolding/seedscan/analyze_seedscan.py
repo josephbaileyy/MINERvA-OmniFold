@@ -15,6 +15,13 @@ Writes summary numbers to stdout and renders:
   - seedscan_band_pz.png    (1D pz projection: mean band + per-trial lines)
 """
 
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import glob
 import os

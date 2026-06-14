@@ -7,13 +7,11 @@ measurement --- the seedscan, bootstrap and universe-covariance procedures,
 the MAT-conformant covariance construction, the $1/\Phi$ flux normalisation,
 the comparison conventions ($\chi^{2}$, pulls, shape-only), the
 ill-conditioning/rank analysis, the tension anatomy, the coverage toys, and
-the closure tests. It was developed as (and supersedes) the standalone
-companion document \texttt{docs/uq\_statistical\_methods.tex}; each
-procedure gives the recipe, the math, the implementation pointer, and a
-worked example using a reported number. (The companion's introductory
-statistics primer is omitted here; only the analysis-specific numerical
-conventions are retained. The $\chi^{2}$ convention referenced throughout is
-Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.)
+the closure tests. Each procedure gives the recipe, the math, the
+implementation pointer, and a worked example using a reported number. We
+document only the analysis-specific numerical conventions, not a general
+statistics primer; the $\chi^{2}$ convention referenced throughout is
+Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
 
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
@@ -103,8 +101,7 @@ seeds per trial via \texttt{-{}-seed N}:
 \qquad N \in \{1,\dots,10\}.
 \end{equation}
 The canonical seedscan uses the \texttt{lgbm} (LightGBM) backend, so
-it is backend-matched to the production unfold; an earlier HistGBT
-seedscan gave a slightly larger floor and is superseded.
+it is backend-matched to the production unfold.
 
 \paragraph{Math.}
 For each reported bin $i$, build the $n$-vector $X_{i}^{(1)},\dots,
@@ -308,7 +305,7 @@ $\pm1\sigma$ pair ($N_{u}=2$) it collapses to the rank-1
 $\tfrac14(\mathbf{X}_{+}-\mathbf{X}_{-})(\mathbf{X}_{+}-\mathbf{X}_{-})\T$;
 mean-centering kills the symmetric component, so a one-sided or
 asymmetric pair correctly contributes near-zero variance rather than
-the rank-2 contribution the legacy CV-centered formula would give
+the rank-2 contribution a naive CV-centered formula would give
 (Appendix~\ref{app:pair}).
 
 \paragraph{Target-nucleon normalization (rank-1 add-on).}
@@ -353,26 +350,16 @@ is $\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$: the block s
 \emph{underestimates} the vertical systematic by a factor of two, concentrated in
 the high-$\pT$/lowest-$\Eavail$ corner where migration is most off-diagonal (top
 \SI{1}{\percent} of bins carry \SI{78}{\percent} of the trace excess; the per-bin
-median ratio is $1.00$). This supersedes the earlier single-throw superposition
-probe, whose cross terms sat at the jitter floor and so falsely leaned
-block-sum-valid. For the 4D budget we therefore \emph{adopt} the unified result,
+median ratio is $1.00$). A single-throw superposition probe is insufficient to
+detect this --- its cross terms sit at the jitter floor and falsely indicate
+block-sum validity; the joint unified throw is required. For the 4D budget we
+therefore \emph{adopt} the unified result,
 transferring its per-bin fractional inflation
 $g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
 onto the sweep's own vertical block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), which is positive-semidefinite by construction
 (a direct rank-$N$ swap is not) and never falls below the block baseline.
-
-\paragraph{Legacy formula (forensic only).}
-The pre-2026-05-28 rollup used a CV-centered pair estimator
-$\tfrac12(\boldsymbol{\Delta}_{+}\boldsymbol{\Delta}_{+}\T +
-\boldsymbol{\Delta}_{-}\boldsymbol{\Delta}_{-}\T)$ with
-$\boldsymbol{\Delta}=\mathbf{X}-\mathbf{X}^{\CV}$. It agrees with
-Eq.~\eqref{eq:matcov} only for symmetric pairs and over-counts
-asymmetric ones; moving to the MAT formula dropped the total universe
-trace by $1.9\%$. It is reachable via \texttt{-{}-legacy-pair-formula}
-for reproduction of the superseded $\chi^{2}/\mathrm{ndf}=1.473$
-headline only.
 
 \paragraph{Code pointer.}
 Event-loop dump:
@@ -408,9 +395,7 @@ Models $2.034\%$, Flux $1.008\%$, Hadronic response $0.758\%$,
 Statistical $0.563\%$, Normalization $0.081\%$. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
-(\S\ref{sec:rank}). \emph{(These are the MAT-conformant matcorr
-medians; the pre-2026-05-28 legacy build gave larger per-band values,
-e.g.\ Muon\_Energy\_MINOS $2.571\%$.)}
+(\S\ref{sec:rank}).
 
 \subsubsection{How MINERvA builds its published covariance}
 \label{sec:minerva}
@@ -483,7 +468,7 @@ systematic-only rank is $120<140$; see \S\ref{sec:rank}).
 
 \paragraph{Upstream references that set each band's $\pm1\sigma$ amplitude.}
 \begin{center}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}l@{\quad}p{0.56\textwidth}@{}}
 \toprule
 Input & Reference \\
 \midrule
@@ -568,9 +553,9 @@ strict-interior set: cells where $\pT^{\text{high}} / \pPar^{\text{low}}
 $\theta_{\mu}<20^{\circ}$ kinematic cut and have wildly suppressed
 paper efficiencies that we do not replicate; pulls on those cells run
 to $\mathcal{O}(100)\sigma$ and dominate the $\chi^{2}$. The $185$-bin
-interior cut removes them; we report it only for sensitivity.
-\textbf{The canonical metric is the 205-bin set} (commit \texttt{65fb085},
-\textit{Seedscan: use the 205 paper-reported bins everywhere}).
+interior cut removes them, and we quote it only as a sensitivity check that
+the headline tension is not an artefact of those few boundary cells.
+\textbf{The canonical metric is the 205-bin set} used everywhere below.
 
 \subsubsection{Covariance-aware $\chi^{2}/\mathrm{ndf}$}
 \label{sec:chisq}
@@ -744,7 +729,7 @@ $1\%$ scale difference. Shape disagreement at the $\sim 1\%$ level
 (median bin ratio $1.0064$, $94\%$ of bins within $10\%$ of the
 paper) accounts for the remaining shape residual.
 
-\subsection{Ill-conditioning, rank deficiency, and open questions}
+\subsection{Ill-conditioning and rank deficiency}
 \label{sec:rank}
 
 \paragraph{The obstruction.}
@@ -762,7 +747,7 @@ The deficiency is set by \textbf{band count, not universe count}:
 under the MAT formula Eq.~\eqref{eq:matcov} each $\pm1\sigma$ pair is
 rank $1$ and the $100$-universe PPFX band is rank $\le 99$ (and
 \emph{effectively} rank-$1$: a single normalization mode holds
-\SI{99.6}{\percent} of its variance, item~4 below), so the
+\SI{99.6}{\percent} of its variance, \S\ref{sec:uq-universes}), so the
 $44$-band sum cannot fill the $205$-dimensional bin space. \emph{This is
 not a missing-bands problem.} The paper's own systematic-only covariance
 ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) is rank $120$ --- \emph{lower}
@@ -774,9 +759,7 @@ directions as the published analysis (we use the same
 $205$, near-diagonal), not because it sums richer systematics. Adding our
 $300$-replica bootstrap does the same for us:
 $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=201$,
-$\mathrm{cond}=3.8\times10^{14}$. (An earlier, lower-replica bootstrap left
-the rank near $140$ --- the origin of the now-superseded ``bootstrap barely
-changes the picture'' note.)
+$\mathrm{cond}=3.8\times10^{14}$.
 
 \paragraph{The real obstruction is statistical, not rank.}
 Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
@@ -831,6 +814,7 @@ same convention carried into the 3D generator comparison (\S\ref{sec:rank} is th
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
 gives a stable single number:
 \begin{center}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
 \toprule
 Method & Setting & Result \\
@@ -842,7 +826,7 @@ Ridge $\mathbf{C}+\varepsilon\lambda_{\max}\mathbf{I}$ & $\varepsilon=\{10^{-3},
 Diagonal-target shrinkage & $\lambda=0.05$ &
   rank $178\to204$, cond $1.3\times10^{11}$, $\chi^{2}/205 = 3.29$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{center}
 Each method spans roughly two decades of $\chi^{2}/205$ across a
 two-decade scan of its knob, with no defensible single cutoff. The
@@ -867,59 +851,18 @@ the double-counted $1.699$ as the well-defined ``what does OmniFold UQ
 add on top of the published $V$'' statement, with the de-double-counted
 number on file as a secondary diagnostic.
 
-\paragraph{Open questions for MINERvA collaborators.}
-\begin{enumerate}[nosep,leftmargin=2em]
-  \item \textbf{Statistical block, not missing bands --- RESOLVED.} We
-        previously read the $140/205$ rank as missing systematic bands; direct
-        comparison refutes this --- the paper's systematic-only covariance is
-        rank $120<140$, so our band set is at least as rich. The paper's full
-        rank is its statistical block, which we match with the bootstrap
-        ($\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$: rank $201$). The residual ---
-        our bootstrap stat covariance $2.5\times$ smaller by trace than the
-        paper's stat block --- is now \emph{explained} by the data/MC split
-        bootstrap (\S\ref{sec:rank}, ``Resolution''): the deficit is present in
-        the \emph{data-only} stream ($\mathbf{C}_{\mathrm{data}}/\texttt{StatOnly}
-        =0.356$), so it is not an MC-statistics omission but genuine
-        unbinned-OmniFold statistical efficiency, with an additional
-        correlation-structure difference (ours $\rho_{\rm off}=0.108$ vs the
-        paper's near-diagonal $0.009$). The actionable conclusion: quote the
-        ours-only $\chi^{2}$ on our \emph{own} $\mathbf{C}^{\ours}$ --- do not
-        inflate the stat block to the paper's. \emph{No collaborator input
-        required; retained here as the worked example.}
-  \item \textbf{Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint
-        block} (JINST 16 P08068) --- the only cross-band correlation the
-        paper names. We \emph{rederived} it: \texttt{MuonEnergyScale} is
-        rank-$1$, so the cross term is rank-$2$,
-        $\mathbf{C}_{\times}=\rho(\mathbf{d}_{f}\mathbf{d}_{e}\T+\mathbf{d}_{e}\mathbf{d}_{f}\T)$,
-        with $\rho\approx0.87$--$0.90$ recovered two independent ways from
-        the shipped blocks (Cauchy--Schwarz in \texttt{TotalCov} $=+0.90$;
-        subtraction residual $=+0.87$). It is real and now quantified, but
-        adding it leaves our rank unchanged (its directions already lie in
-        $\mathrm{range}(\mathbf{C}^{\syst})$). For a paper-independent $\rho$,
-        is the fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},
-        \text{MuonE}_{\text{scale}})$ posterior available from MAT-MINERvA?
-  \item \textbf{FrInel\_pi --- resolved (negligible).} It is commented out in
-        \texttt{MAT-MINERvA/universes/GenieSystematics.cxx:37-38} with
-        the note that ``this knob should not currently be evaluated.''
-        We are consistent with MAT in excluding it, and an independent
-        \texttt{grwght1p} pass confirms both it ($\le\SI{0.74}{\percent}$ on
-        $d\sigma/d\Eavail$) and \texttt{FrAbs\_pi} ($\le\SI{0.82}{\percent}$) are
-        sub-percent --- a $<\SI{1}{\percent}$ knob cannot affect the budget. The
-        only residual is a one-line confirmation that the exclusion is still
-        current guidance (immaterial to the result).
-  \item \textbf{PPFX effective rank --- resolved.} The $100$-universe flux band
-        covariance has hard rank $99$ but participation-ratio effective rank
-        $\approx1$: a single coherent normalization mode carries
-        \SI{99.6}{\percent} of the variance ($9$ modes for \SI{99.9}{\percent}).
-        The PPFX flux uncertainty is therefore a fixed-rank (rank-1, at most
-        rank-9) object; a PCA / fixed-rank flux covariance is justified, and
-        treating the $100$ universes as independent directions over-counts the
-        flux dimensionality (it is also why the leading flux mode correlates
-        $\rho\approx0.9$ with the rank-1 muon-energy-scale mode, item~2).
-  \item \textbf{Publication precedent.} Have other MAT-based OmniFold /
-        unbinned analyses hit this rank issue, and what did they publish
-        for an ours-only $\chi^{2}$?
-\end{enumerate}
+\paragraph{Status of the rank/conditioning items.}
+Every band-count concern this analysis raised is closed in the paragraphs above
+and folded into the body: the $140/205$ systematic rank is richer than the
+paper's systematic-only $120$ (not a missing-bands problem); the Bashyal
+flux\,$\leftrightarrow$\,muon-energy joint block is rederived ($\rho=\rhoFluxMuon$,
+rank-preserving, \S\ref{sec:uq-universes}); the PPFX band is effectively rank-1
+(\S\ref{sec:uq-universes}); and the $2.5\times$ smaller bootstrap is explained by
+the data/MC split as genuine unbinned-OmniFold efficiency, not a missing MC term.
+Two paper-independent refinements remain optional: a fitted
+$(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$ posterior
+from MAT-MINERvA for a self-derived $\rho$, and published precedent for the
+truncated-spectral ``ours-only'' $\chi^{2}$ convention.
 
 \paragraph{What we do regardless.}
 The publication-grade headline uses the combined covariance for
@@ -1118,10 +1061,12 @@ $\langle |r| \rangle$, which for a unit normal is
 $\sqrt{2/\pi}\approx 0.798$.
 
 \paragraph{Code pointer.}
+\begin{sloppypar}
 \texttt{uq/coverage\_toys.py} (rollup); driver
 \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; outputs
 \texttt{uq/coverage/2d\_xsec\_MEFHC\_5iter\_lgbm\_coverage\_toy*.root}
 and \texttt{uq/coverage/coverage\_summary.txt}.
+\end{sloppypar}
 
 \paragraph{Worked example (STATUS, coverage).}
 With $N_{\text{toy}}=200$ on the $205$ reported bins:
@@ -1284,8 +1229,8 @@ flux universes.
 \subsection{How the pieces fit together}
 \label{sec:assemble}
 
-We can now read the \texttt{2D\_OMNIFOLD\_STUDY\_STATUS.md} headline
-in one sentence: \emph{across $205$ paper-reported bins, the
+The combined result now reads in one sentence:
+\emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
 1.699$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
 that has been independently checked at the $0.5\%$ level by $200$
@@ -1306,7 +1251,7 @@ $\mathbf{C}^{\syst}$ & \S\ref{sec:universes} &
 $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
-$\mathbf{C}^{\paper}$ & STATUS.md & Paper's published \texttt{TotalCovariance} \\
+$\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
 Pull RMS $= 0.466$ & \S\ref{sec:pull} &
   Per-bin standardised residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &
@@ -1376,16 +1321,16 @@ the $\sum n_{i}=N$ constraint is dropped. For $N \gtrsim 10^{6}$
 $\mathcal{O}(1/\sqrt{N})$ on the total event count --- far smaller
 than the per-bin Poisson variance.
 
-\subsection{The $\pm 1\sigma$ pair covariance estimator: MAT vs legacy}
+\subsection{The $\pm 1\sigma$ pair covariance: mean-centered (MAT-conformant)}
 \label{app:pair}
 
 For a single universe band with two universes $u=0,1$ at $\pm 1\sigma$,
 write the two value vectors as $\mathbf{X}_{0}$ and $\mathbf{X}_{1}$,
 with universe mean $\langle\mathbf{X}\rangle = \tfrac12(\mathbf{X}_{0}
-+\mathbf{X}_{1})$. The \textbf{MAT-conformant} estimator
++\mathbf{X}_{1})$. The MAT-conformant estimator
 Eq.~\eqref{eq:matcov} at $N_{u}=2$ is
 \begin{equation}
-\mathbf{C}^{B}_{\text{MAT}}
+\mathbf{C}^{B}_{\text{mean}}
 \;=\;
 \tfrac12\sum_{u=0,1}(\mathbf{X}_{u}-\langle\mathbf{X}\rangle)(\mathbf{X}_{u}-\langle\mathbf{X}\rangle)\T
 \;=\;
@@ -1395,13 +1340,12 @@ a rank-1 outer product of the \emph{half-difference}. It is mean-centered,
 so any common offset of the pair away from $X_{\CV}$ contributes
 nothing.
 
-Contrast the \textbf{legacy} CV-centered pair estimator that the
-pre-2026-05-28 rollup used, with $\boldsymbol{\Delta}_{u} =
-\mathbf{X}_{u}-\mathbf{X}_{\CV}$ and decomposition
+A naive alternative centres on the CV rather than the pair mean, with
+$\boldsymbol{\Delta}_{u} = \mathbf{X}_{u}-\mathbf{X}_{\CV}$ and decomposition
 $\boldsymbol{\Delta}_{0}=\mathbf{m}+\mathbf{a}$,
 $\boldsymbol{\Delta}_{1}=\mathbf{m}-\mathbf{a}$:
 \begin{equation}
-\mathbf{C}^{B}_{\text{legacy}}
+\mathbf{C}^{B}_{\text{CV-centered}}
 \;=\;
 \tfrac{1}{2}\big(\boldsymbol{\Delta}_{0}\boldsymbol{\Delta}_{0}\T
                 + \boldsymbol{\Delta}_{1}\boldsymbol{\Delta}_{1}\T\big)
@@ -1410,16 +1354,10 @@ $\boldsymbol{\Delta}_{1}=\mathbf{m}-\mathbf{a}$:
 \end{equation}
 The two agree \emph{only} for a CV-symmetric pair ($\mathbf{m}=0$),
 where both reduce to $\mathbf{a}\mathbf{a}\T$. For an asymmetric or
-one-sided pair the legacy form adds a spurious rank-1
-$\mathbf{m}\mathbf{m}\T$ term (treating the common offset as a second
-variance direction), which MAT correctly collapses to near zero. This
-is why moving to the MAT formula \emph{lowered} the total universe
-trace by $1.9\%$ (the BeamAngle, MuonResolution, and one-sided NC
-bands had asymmetric shifts), and it is the single methodological
-correction behind the $\chi^{2}/\mathrm{ndf}$ shift $1.473\to1.699$.
-The legacy estimator remains available via
-\texttt{-{}-legacy-pair-formula} for forensic reproduction only; the
-earlier claim that the CV-centered convention is ``consistent with the
-published MINERvA error budget'' was incorrect --- MAT is mean-centered
-(\S\ref{sec:minerva}).
+one-sided pair the CV-centered form adds a spurious rank-1
+$\mathbf{m}\mathbf{m}\T$ term --- it treats the common offset as a second
+variance direction, which mean-centering correctly collapses to near
+zero. We mean-center throughout, matching MAT (\S\ref{sec:minerva}); the
+bands where the distinction matters are the asymmetric ones (BeamAngle,
+MuonResolution, and the one-sided NC band).
 

@@ -23,6 +23,13 @@ see the note at the end for how to run it. Subsampled for speed; runs in ~1-2 mi
 Run from repo root after `source setup_salloc_env.sh`:
   python 2d-unfolding/uq/classifier_calibration.py
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 
 import numpy as np

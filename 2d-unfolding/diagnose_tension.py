@@ -26,6 +26,13 @@ Reuses loaders / chi^2 from compare_to_paper_fullcov.py (single source of truth
 for the paper bin indexing gid = (ptbin-1)*16 + (pzbin-1) and the 205 reported
 bins, diag(StatOnlyCov) > 0).
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 import numpy as np

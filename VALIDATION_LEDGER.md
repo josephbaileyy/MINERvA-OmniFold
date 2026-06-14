@@ -291,7 +291,7 @@ artifacts on the login node. All PASS; no rerun required.
 - Coverage: **REPRODUCED 2026-06-11** (was PARTIALLY REPRODUCIBLE: the 200-toy
   ROOTs were missing from the checkout). Regen arrays 54273493/54273495 rebuilt
   all 200 toys in `2d-unfolding/uq/coverage/`; `uq/coverage_toys.py` **PASS**
-  and matches `docs/uq_statistical_methods.tex` exactly: mean coverage
+  and matches `docs/technote/app_statmethods.tex` exactly: mean coverage
   `68.71%`, median `68.50%`, `<|r|> = 0.794` (target 0.798), signed residual
   `+0.006 +/- 0.082`, `97.56%` of the 205 reported bins above the 65% target
   (same 5 bins below). KNOWN_ISSUES #2 RESOLVED.

@@ -23,6 +23,13 @@ Also writes a ROOT file uq_covariance.root with:
   - hCov2D_reported (TH2D, N_reported x N_reported)
 """
 
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import glob
 import os
@@ -246,7 +253,7 @@ def main():
     # Correlation matrix heatmap
     if N > 1 and n_reported > 0:
         fig, ax = plt.subplots(figsize=(7, 6))
-        pc = ax.imshow(corr, cmap="coolwarm", vmin=-1, vmax=1,
+        pc = ax.imshow(corr, cmap="RdBu_r", vmin=-1, vmax=1,
                        origin="lower", aspect="equal")
         cb = fig.colorbar(pc, ax=ax)
         cb.set_label("correlation")

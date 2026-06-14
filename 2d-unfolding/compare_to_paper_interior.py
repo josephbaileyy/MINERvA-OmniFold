@@ -13,6 +13,13 @@ stat-only / flux / muon-E / total chi^2 on that reduced set.
 Companion to `compare_to_paper_fullcov.py` (which reports the full-mask
 7342/205 result dominated by edge bins).
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import math
 import numpy as np

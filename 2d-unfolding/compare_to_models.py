@@ -14,6 +14,13 @@ The model loader is kept generic (`load_model_csv`): drop in additional
 generator CSVs (GENIE vN / NuWro / GiBUU / NEUT) with the same bin-index format
 and pass repeated `--model NAME:PATH` to extend the comparison.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 import numpy as np
@@ -127,7 +134,7 @@ def main():
         for j, (name, mv) in enumerate(model_vs.items()):
             _, y_m = project(mv[mask], mask, axis)
             ax.step(ctr, y_m, where="mid", color=f"C{j+1}", lw=1.5, label=name)
-        ax.set_xlabel(xlabel); ax.set_ylabel(f"d#sigma/d{axis} (cm^2/(GeV/c)/nucleon)")
+        ax.set_xlabel(xlabel); ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")
         ax.set_title(f"Projection onto {xlabel}"); ax.legend(); ax.grid(alpha=0.3)
     fig.suptitle("2D OmniFold vs data vs MINERvA Tune v1 - 1D projections")
     fig.tight_layout(); fig.savefig(f"{args.out_prefix}_projections.png", dpi=130)

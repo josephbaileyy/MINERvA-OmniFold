@@ -1,8 +1,8 @@
 Fig.-6/7-style fractional uncertainty projections
-xsec_root: 2d_crossSection_omnifold_MEFHC_5iter.root
-universe_root: uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root
-bootstrap_root: uq/bootstrap_MEFHC_300/uq_covariance_boot300.root
-ml_root: uq/seedscan_lgbm_ml/uq_covariance_ml.root
+xsec_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root
+universe_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root
+bootstrap_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root
+ml_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root
 n_reported: 205
 
 pz projection:

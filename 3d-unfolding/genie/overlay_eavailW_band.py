@@ -22,9 +22,24 @@ import os
 import numpy as np
 import ROOT
 ROOT.gROOT.SetBatch(True)
+ROOT.gStyle.SetOptTitle(0)  # no plot title -- information lives in the LaTeX caption
 
 EAVAIL_EDGES = np.asarray([0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0], float)
 W_EDGES = np.asarray([0.0, 1.1, 1.4, 1.8, 2.2, 3.0, 100.0], float)
+
+
+def gen_color(label):
+    """Per-generator ROOT colour matching the shared technote palette."""
+    h = label.lower()
+    if "nuwro" in h:
+        return ROOT.TColor.GetColor("#2ca02c")   # green
+    if "gibuu" in h:
+        return ROOT.TColor.GetColor("#9467bd")   # purple
+    if "mec" in h or "tune" in h:
+        return ROOT.TColor.GetColor("#4C72B0")   # blue
+    if "genie" in h:
+        return ROOT.TColor.GetColor("#C44E52")   # red
+    return ROOT.kBlack
 
 
 def th2_to_np(h):
@@ -108,15 +123,20 @@ def main():
     c.cd(1); ROOT.gPad.SetLogy()
     hd = mk_th1(EAVAIL_EDGES, data_ea, "hData_ea", "d#sigma/dE_{avail};E_{avail} (GeV);d#sigma/dE_{avail}", 3.5)
     ymax = max(data_ea.max(), max((g * dw).sum(axis=1).max() for g in gens.values()) if gens else 0)
-    hd.SetMaximum(ymax * 3); hd.SetMinimum(ymax * 1e-3)
+    hd.SetMaximum(ymax * 8); hd.SetMinimum(ymax * 1e-3)
     hd.SetLineColor(ROOT.kBlack); hd.SetLineWidth(3); hd.SetMarkerStyle(20); hd.SetMarkerSize(1.2); hd.Draw("P")
     hd.Write()
-    leg1 = ROOT.TLegend(0.5, 0.65, 0.88, 0.88); leg1.AddEntry(hd, "data (unfolded)", "lep")
+    # compact 3-column legend in the added top headroom, semi-transparent so it
+    # never hides a histogram line (the reported overlap bug)
+    leg1 = ROOT.TLegend(0.14, 0.77, 0.92, 0.90)
+    leg1.SetNColumns(3); leg1.SetTextSize(0.038)
+    leg1.SetFillColorAlpha(ROOT.kWhite, 0.70); leg1.SetBorderSize(0)
+    leg1.AddEntry(hd, "data (unfolded)", "lep")
     keep = [hd]
     for k, l in enumerate(gens):
         ge = (gens[l] * dw).sum(axis=1)
         h = mk_th1(EAVAIL_EDGES, ge, f"hEa_{l}", l, 3.5)
-        h.SetLineColor(colors[k % len(colors)]); h.SetLineWidth(2); h.Draw("HIST SAME")
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
         leg1.AddEntry(h, l, "l"); h.Write(); keep.append(h)
     leg1.Draw()
 
@@ -124,14 +144,17 @@ def main():
     c.cd(2); ROOT.gPad.SetLogy()
     hdw = mk_th1(W_EDGES, data_w, "hData_W", "d#sigma/dW;W (GeV);d#sigma/dW", 3.2)
     ywmax = max(data_w.max(), max((g * dea).sum(axis=0).max() for g in gens.values()) if gens else 0)
-    hdw.SetMaximum(ywmax * 3); hdw.SetMinimum(ywmax * 1e-3)
+    hdw.SetMaximum(ywmax * 8); hdw.SetMinimum(ywmax * 1e-3)
     hdw.SetLineColor(ROOT.kBlack); hdw.SetLineWidth(3); hdw.SetMarkerStyle(20); hdw.SetMarkerSize(1.2); hdw.Draw("P")
     hdw.Write()
-    leg2 = ROOT.TLegend(0.5, 0.65, 0.88, 0.88); leg2.AddEntry(hdw, "data (unfolded)", "lep")
+    leg2 = ROOT.TLegend(0.14, 0.77, 0.92, 0.90)
+    leg2.SetNColumns(3); leg2.SetTextSize(0.038)
+    leg2.SetFillColorAlpha(ROOT.kWhite, 0.70); leg2.SetBorderSize(0)
+    leg2.AddEntry(hdw, "data (unfolded)", "lep")
     for k, l in enumerate(gens):
         gw = (gens[l] * dea).sum(axis=0)
         h = mk_th1(W_EDGES, gw, f"hW_{l}", l, 3.2)
-        h.SetLineColor(colors[k % len(colors)]); h.SetLineWidth(2); h.Draw("HIST SAME")
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
         leg2.AddEntry(h, l, "l"); h.Write(); keep.append(h)
     leg2.Draw()
     c.SaveAs(args.png)

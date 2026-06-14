@@ -2,7 +2,7 @@
 """Apply GENIE single-parameter reweight (grwght1p) weights to the CV gst events
 and rebuild d^3 sigma/(dpT dp|| dEavail) at each tweak-dial value -- to quantify
 an FSI dial's effect (default FrInel_pi), especially on the Eavail spectrum, the
-FSI-sensitive axis (uq_statistical_methods open question #2).
+FSI-sensitive axis (technote App B open question #2).
 
 Each shard pairs (gst, weights_<DIAL>.root); the weight tree's `eventnum` ==
 gst `iev`, so weights align to events per row. FSI only redistributes the final

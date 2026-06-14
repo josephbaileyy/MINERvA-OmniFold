@@ -4,8 +4,7 @@
 \textbf{Maturity:} complete measurement --- central value, full systematic
 (universe/bootstrap/ML) covariance with the unified-throw adoption, a
 three-prior dependence envelope, and the extension region validated by a
-hidden-variable closure and 200 coverage toys. Decision memo and job trail:
-\texttt{nd-unfolding/FPS\_PILOT.md}.
+hidden-variable closure and 200 coverage toys.
 
 The published phase space ($\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$,
 $\pT<\SI{4.5}{GeV/c}$) hides a third of the signal: weighting the true
@@ -24,10 +23,11 @@ what prior cost}; this section quantifies that.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_acceptance_MEFHC.png}
-  \caption{Full-phase-space acceptance study (all twelve playlists): weighted
-  truth rate (left), reconstruction efficiency (centre), and the dead region
-  with $\epsilon<\SI{2}{\percent}$ (right) on the extended $(\pT,\pPar)$
-  grid. Cyan lines mark the published phase-space boundary. Efficiency is
+  \caption{Full-phase-space acceptance study (all twelve playlists):
+  (a)~weighted truth rate (log$_{10}$), (b)~reconstruction efficiency, and
+  (c)~the dead region with $\epsilon<\SI{2}{\percent}$, on the extended
+  $(\pT,\pPar)$ grid (bin number; the catch bins are too wide for a linear
+  axis). Cyan lines mark the published phase-space boundary. Efficiency is
   $\sim0.65$ and flat through the published region, degrades smoothly across
   the $\theta>20^{\circ}$ wedge, and dies in the $\pPar<\SI{1.5}{GeV/c}$
   strip and the high-$\pT$ corner; the dead region carries
@@ -42,10 +42,10 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
         the full-phase-space unfold reproduces a control unfold (standard
         omnifile, paper grid, identical settings) to $0.9994$ in integral,
         with a median per-cell ratio of $1.0013$ and median deviation
-        \SI{0.57}{\percent} over all 185 reported cells --- opening the
+        \SI{\fpsAnchor}{\percent} over all 185 reported cells --- opening the
         phase space does not damage the measurement where it was already
         made. The control itself reproduces the frozen production total
-        ($\SI{3.073e-38}{cm^2/nucleon}$) exactly.
+        ($\SI{\sigTwoD}{cm^2/nucleon}$) exactly.
   \item \textbf{Closure.} A self-closure on the extended grid (simulated
         reconstruction as pseudo-data) returns recovered/truth $=1.0000$ in
         every cell including the extension --- no bookkeeping or
@@ -79,10 +79,13 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC.png}
-  \caption{Full-phase-space honesty battery (all playlists): anchor ratio in
-  the published sub-block (left; median $1.0013$), the MnvTune/bare-GENIE
-  prior-swap ratio (centre), and the full-phase-space cross section (right,
-  log scale). Black lines mark the published boundary.}
+  \caption{Full-phase-space honesty battery (all playlists):
+  (a)~anchor ratio in the published sub-block (median $1.0013$),
+  (b)~the MnvTune/bare-GENIE prior-swap ratio, and (c)~the full-phase-space
+  cross section (log$_{10}$). Panels (a) and (b) are \emph{ratios} (diverging
+  scale centred at unity); (c) is an \emph{absolute} magnitude (sequential
+  scale) --- hence the two colour schemes. Black lines mark the published
+  boundary; axes are bin number on the extended grid.}
   \label{fig:fpscmp}
 \end{figure}
 
@@ -100,11 +103,11 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
 The full-phase-space CC-inclusive cross section on the tracker fiducial
 volume is
 \begin{equation*}
-  \sigma_{\mathrm{FPS}} = \SI{4.502e-38}{cm^2/nucleon}
+  \sigma_{\mathrm{FPS}} = \SI{\fpsSigma}{cm^2/nucleon}
   \quad\text{(central value)},
 \end{equation*}
-\SI{46}{\percent} above the restricted-phase-space
-$\SI{3.073e-38}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
+\SI{\fpsAbove}{\percent} above the restricted-phase-space
+$\SI{\sigTwoD}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
 \emph{tier~1} (the measurement) covers cells with $\epsilon\gtrsim2\%$ ---
 the published region plus the measurable extension ($\sim\SI{6}{\percent}$
 of the rate, chiefly the $\theta>20^{\circ}$ wedge and the

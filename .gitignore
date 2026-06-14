@@ -1,9 +1,13 @@
 # ---------- Generated artifacts (anywhere in the tree) ----------
 *.root
+# generated plots: regenerate via docs/technote/make_figures.sh
+*.png
 *.pdf
-# ...but keep the documentation PDFs (technote + statistical-methods note) versioned
+# ...but keep standalone documentation PDFs (slide deck + statistical-methods note) versioned
 !docs/**/*.pdf
 !docs/*.pdf
+# the technote is source-only (three latexmk build targets); do not version its PDFs
+docs/technote/*.pdf
 *.out
 *.err
 *.log

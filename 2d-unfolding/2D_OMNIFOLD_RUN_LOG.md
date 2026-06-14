@@ -76,7 +76,7 @@ tension is OmniFold regularization, not data–MC physics.
 dominate), not a normalization offset and not a small-λ artifact; plus
 (ii) a ~1-χ²-unit methodological band from GBDT estimator/iteration
 regularization. Both point to the **Bashyal joint block** as the next
-step. Full writeup: `docs/uq_statistical_methods.tex` §`sec:tension`.
+step. Full writeup: `docs/technote/app_statmethods.tex` §`sec:tension`.
 
 ---
 
@@ -278,7 +278,7 @@ bootstrap-status note all updated to the refreshed numbers.
 
 Compiled a survey of MINERvA's systematics methodology (Ruterbories
 2021 paper, MINERvA Open Data portal, MAT source; since consolidated
-into `docs/uq_statistical_methods.tex`, §"How MINERvA builds its
+into `docs/technote/app_statmethods.tex`, §"How MINERvA builds its
 published covariance"). Two findings drove a code change and a
 re-rollup:
 
@@ -390,7 +390,7 @@ has smaller eigenvalues on the retained modes.
   bullet, rollup-path paragraph, and `uq/analyze_universes.py`
   description.
 - `advisor_memo_cov_rank.md` (since consolidated into
-  `docs/uq_statistical_methods.tex`, §Ill-conditioning): problem block
+  `docs/technote/app_statmethods.tex`, §Ill-conditioning): problem block
   (rank/cond + headline), "what we have tried" 1/2/3 (new matcorr
   numbers across the three regularization scans), "what we will do
   regardless" (formula switch marked done, asks A/B/C refocused on
@@ -551,12 +551,12 @@ New diagnostics (all under `uq/`):
   family, GBDT choice supported. Plot `uq/classifier_calibration.png`.
 
 Open-question resolutions (propagated into `docs/technote/sec_openquestions.tex`,
-now "Resolution of the open questions", and `docs/uq_statistical_methods.tex`):
+now "Resolution of the open questions", and `docs/technote/app_statmethods.tex`):
 - **Flux↔Muon-E block / rank gap** — the cross block was rederived earlier
   (`uq/flux_muonE_cross.root`, ρ=0.900) and is rank-preserving; the rank gap is
   the **stat block**, not missing bands (our C^syst rank 140 > paper syst-only
   120). Corrected the stale "paper sums more bands" wording in
-  `uq_statistical_methods.tex` (was contradicting its own `sec:rank`).
+  `docs/technote/app_statmethods.tex` (was contradicting its own `sec:rank`).
 - **PPFX effective rank** — computed: the flux band cov has hard rank 99 but
   **effective rank ≈1** (single normalization mode = 99.6 % of variance; rank-9
   for 99.9 %). Fixed-rank/PCA flux covariance justified.
@@ -565,5 +565,5 @@ now "Resolution of the open questions", and `docs/uq_statistical_methods.tex`):
 Files touched: `uq/ensemble_mean_cv.py`, `uq/bottom_line_test.py`,
 `uq/classifier_calibration.py` (+ `.png`), `../LITERATURE_NOTES.md`,
 `docs/technote/{sec_openquestions,sec_validation,sec_3d}.tex`,
-`docs/technote/technote.bib`, `docs/uq_statistical_methods.tex`,
+`docs/technote/technote.bib`, `docs/technote/app_statmethods.tex`,
 `2D_OMNIFOLD_STUDY_STATUS.md`. Frozen `.root` products untouched.

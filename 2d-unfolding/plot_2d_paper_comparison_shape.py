@@ -16,6 +16,13 @@ propagated covariance for simplicity; the headline shape chi^2/ndf
 (full off-diagonal cov) is reported by `normalize_xsec_shape.py` and
 should be added to the slide title.
 """
+
+import sys as _sys, pathlib as _pathlib
+for _a in _pathlib.Path(__file__).resolve().parents:
+    if (_a / 'technote_style.py').exists():
+        _sys.path.insert(0, str(_a)); break
+import technote_style  # noqa: E402  (no titles + consistent colours)
+
 import argparse
 import os
 
