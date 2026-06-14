@@ -25,7 +25,7 @@ artifacts on the login node. All PASS; no rerun required.
   GENIE 9.0→**8.9**, +MEC 9.2→9.2, NuWro 10.5→**15.6**, GiBUU 18.2→**22.4**σ.
   The W-resolved covariance DEEPENS the DIS-corner deficit for NuWro/GiBUU and
   leaves GENIE essentially unchanged — the physics conclusion strengthens.
-  Technote (`sec_eavailw`, `sec_openquestions`, `sec_execsummary`) + table
+  Technote (`sec_eavailw`, `sec_execsummary`) + table
   updated and rebuilt (64 pp, clean). Artifact
   `products/5d/eavailW_covariance_wlat.root` (pre-fix file untouched).
 - **Merged 5D omnifile integrity**: **PASS**.

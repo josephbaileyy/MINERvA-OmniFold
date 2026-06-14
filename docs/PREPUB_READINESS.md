@@ -6,5 +6,5 @@ This document is retired to reduce duplicate narration of results.
 - **Verified numbers** live in → `VALIDATION_LEDGER.md` (repo root).
 - **Methodology stance for referees** moved to → `docs/OPEN_ITEMS.md` (bottom).
 - **Completed cross-check narratives** are in the workstream RUN_LOGs and the
-  technote (`docs/technote/main.pdf`).
+  technote (`docs/technote/main_note.pdf`).
 - Full historical text: `git log --follow docs/PREPUB_READINESS.md`.

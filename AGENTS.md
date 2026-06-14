@@ -392,7 +392,7 @@ cross-check, not a final result.
   diagnostics — `ensemble_mean_cv.py`, `bottom_line_test.py` (closure +
   data-prior modes), `classifier_calibration.py` (GBDT vs NN) — and
   `3d-unfolding/genie/compare_ascencio_eavail.py`. The technote open questions are
-  resolved in `docs/technote/sec_openquestions.tex` (only the high-E_avail DIS-tail
+  resolved in `docs/technote/sec_eavailw.tex` (only the high-E_avail DIS-tail
   excess and publication precedent remain).
 - **`docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`** plans the next dimensional step (Phase 1:
   q3 as a 4th scalar axis, GBDT-native; Phase 2: a vendored NN/point-cloud track) and

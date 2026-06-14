@@ -1,9 +1,9 @@
 # Collaborator confirmation requests (ready to send)
 
-The three open items in the analysis note (App. A, `sec_openquestions.tex`)
-that need a MINERvA/MAT collaborator answer rather than further work on our
-side. Drafted 2026-06-12 so they can be sent as-is (e.g. to the MAT
-maintainers / low-recoil conveners); answers slot directly into App. A.
+The three open items in the analysis note that need a MINERvA/MAT collaborator
+answer rather than further work on our side. Drafted 2026-06-12 so they can be
+sent as-is (e.g. to the MAT maintainers / low-recoil conveners); answers slot
+directly into the relevant note sections (`sec_eavailw`, `sec_systematics`).
 
 ---
 
