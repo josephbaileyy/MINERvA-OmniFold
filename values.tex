@@ -1,0 +1,62 @@
+% ====================================================================
+% values.tex --- SINGLE SOURCE OF TRUTH for every headline number that
+% recurs across the build (abstract / executive summary / body section).
+% Edit a result HERE and it updates in all three PDFs.
+% Numbers that appear exactly once (deep in a section, a table,
+% or App. B) are NOT macroised here -- they cannot drift, so they stay inline
+% at their single site.
+%
+% Convention: cross sections carry their full value+exponent so \SI expands
+% cleanly (e.g. \SI{\sigTwoD}{cm^2/nucleon}); ratios/percentages/significances
+% are bare numbers (e.g. \SI{\uqMedian}{\percent}, $\ratioTot$).
+% ====================================================================
+
+% --- 2D reproduction (the demonstrator) ---
+\newcommand{\sigTwoD}{3.073e-38}      % our 2D total cross section, cm^2/nucleon
+\newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total
+\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper
+\newcommand{\medianBinRatio}{1.006}   % median per-bin ratio ours/paper
+\newcommand{\binsFive}{77.6}          % percent of bins within 5%
+\newcommand{\binsTen}{94.1}           % within 10%
+\newcommand{\binsTwenty}{98.5}        % within 20%
+\newcommand{\pullMean}{0.089}
+\newcommand{\pullRMS}{0.598}
+\newcommand{\pullRMSr}{0.60}          % rounded, for prose
+\newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
+\newcommand{\chiCombined}{1.481}      % chi2/ndf vs combined (paper+ours) cov
+
+% --- uncertainty budget ---
+\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%)
+\newcommand{\uqPaper}{6.86}           % published total median per-bin (%)
+\newcommand{\fluxBand}{4.99}          % leading flux band (%)
+\newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
+
+% --- 3D / 4D higher-dimensional ---
+\newcommand{\sigData}{3.07e-38}       % unfolded data total in the >=3D campaigns
+\newcommand{\eavailMargin}{0.11}      % W-marginal recovers frozen 4D to this (%)
+\newcommand{\ascChi}{1.68}            % Ascencio full-cov chi2
+\newcommand{\ascNdf}{2}               % Ascencio ndf
+\newcommand{\ascP}{0.43}              % Ascencio p-value
+
+% --- (Eavail,W) DIS-tail: high-W corner significances (12-bin corner) ---
+\newcommand{\disGENIE}{8.9}
+\newcommand{\disMEC}{9.2}
+\newcommand{\disNuWro}{15.6}
+\newcommand{\disGiBUU}{22.4}
+\newcommand{\disCornerLo}{9}          % rounded corner range, low edge
+\newcommand{\disCornerHi}{22}         % rounded corner range, high edge
+% full (Eavail,W) plane significances (42-bin)
+\newcommand{\fpGENIE}{19.3}
+\newcommand{\fpMEC}{19.0}
+\newcommand{\fpNuWro}{35.9}
+\newcommand{\fpGiBUU}{40}             % GiBUU is >40 sigma
+
+% --- PET point-cloud track ---
+\newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
+\newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
+\newcommand{\petGbdtGap}{9}
+
+% --- full phase space ---
+\newcommand{\fpsSigma}{4.502e-38}     % full-phase-space total, cm^2/nucleon
+\newcommand{\fpsAbove}{46}            % percent above restricted phase space
+\newcommand{\fpsAnchor}{0.57}         % median anchor deviation in published cells (%)

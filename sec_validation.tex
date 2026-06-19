@@ -1,0 +1,119 @@
+\section{Validation}
+\label{sec:validation}
+
+\paragraph{Closure.}
+Three closure families, all passing (1A lgbm 5-iter; thresholds in parentheses):
+\begin{itemize}
+  \item \textbf{Truth-reweight} (multiply truth and reco weights by the same
+        factor): gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
+        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}) --- injected truth recovered.
+  \item \textbf{Hidden-variable} (bias on $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
+        a resolution variable not in the feature set): leakage linear in amplitude,
+        $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent}).
+  \item \textbf{Alt-model} (train on CV, pseudo-data from an alternative universe):
+        MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (thr \SI{2.0}{\percent}).
+\end{itemize}
+
+\paragraph{Bottom-line test.}
+Following the unbinned-unfolding guide~\cite{unbinnedguide}, the unfolded result must
+recover the data's deviation from the prior with a residual far smaller than the feature
+itself (the unfolding cannot manufacture discriminating power). Using the closure runs,
+in the bins carrying the injected feature the unfolded result tracks the injected truth to
+$\approx10\times$ better than the feature size: 2D (gaussian-bump truth reweight) residual
+\SI{1.69}{\percent} vs injected \SI{17.2}{\percent} (ratio $0.098$); 3D (+\SI{30}{\percent}
+$\Eavail$ bump, $\Eavail$ projection) \SI{1.84}{\percent} vs \SI{18.1}{\percent} (ratio
+$0.102$). Both pass.
+(The naive data-vs-prior form---reco vs truth $\chi^2$---instead has truth$>$reco, as
+expected for a high-resolution measurement where detector smearing lowers the reco baseline
+and a stat-only diagonal omits the unfolding covariance; the proper full-covariance
+goodness-of-fit is the $\chi^2$-vs-paper of \S\ref{sec:results-tension} and the generator
+comparisons.)
+
+\paragraph{Unbinned goodness-of-fit.}
+As a binning-free check that the unfold actually removes the data\,$\leftrightarrow$\,MC
+mismatch, we use a classifier two-sample test (C2ST): a classifier is trained to separate the
+data from the (reweighted) simulation in the full unbinned feature space, and its
+test-set accuracy is compared to the chance value $0.5$. \emph{Before} unfolding the two are
+separable --- accuracy $0.523$, AUC $0.535$, $z=33.4$ ($p\approx5\times10^{-244}$);
+\emph{after} unfolding the classifier is driven to chance --- accuracy $0.501$, AUC $0.501$,
+$z=1.4$, $p=0.17$. Data and unfolded simulation are thus statistically indistinguishable with
+no detectable residual structure: the unbinned analogue of a binned goodness-of-fit, and it
+passes.
+
+\paragraph{Coverage.}
+The UQ note records a 200-toy closure$+$bootstrap campaign: mean coverage
+\SI{68.71}{\percent} vs Gaussian \SI{68.27}{\percent}; mean
+$|\mathrm{residual}|/\sigma$ $0.794$ vs $\sqrt{2/\pi}=0.798$; and
+\SI{97.6}{\percent} of bins meeting the \SI{65}{\percent} target. The current
+checkout retains only the 20-toy stage-1 summary under \texttt{uq/coverage/};
+restore the 200 toy ROOTs before independently regenerating this number from
+disk.
+
+\paragraph{Stability.}
+5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
+\SI{1.54}{\percent}); HistGBT and exact-GBT agree on total $\sigma$ to
+\SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
+Fig.~5.
+
+\paragraph{Classifier choice (GBDT vs.\ NN).}
+Published OmniFold analyses use neural-network
+classifiers~\cite{Andreassen:2019cjw,unbinnedguide}; we use gradient-boosted decision
+trees, whose output must still be a calibrated posterior for $w=p/(1-p)$ to be valid.
+On the step-1 reco classifier (data vs.\ MC reco) the reliability curve is near-diagonal
+(Brier \(\approx0.25\) at AUC \(\approx0.537\): data and reco MC are nearly
+indistinguishable, so the reweight is a modest correction). Across the
+$(\pT,\pPar)$ bins the true data/MC ratio still spans \(\approx\SI{100}{\percent}\);
+the GBDT recovers it to \SI{4.7}{\percent} median, at least as well as a dense MLP
+(\SI{20.9}{\percent}, untuned), and the two reweights agree with bin-wise correlation
+$0.92$ --- the learned reweight is robust to the classifier family. A full scalar
+keras-MLP OmniFold cross-check on the 3D inputs gives total ratio $1.0078$ versus
+the GBDT reference and median projection differences of \SIrange{0.7}{1.4}{\percent},
+consistent with the assigned ML band. As a stronger family cross-check, a vendored
+PET (point-cloud transformer~\cite{Mikuni:2024qsr}) unfold was run on the actual
+per-hadron point clouds --- the non-muon reconstructed clusters
+(\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
+\texttt{cluster\_isMuontrack}) read by \texttt{CVUniverse::GetRecoClusters}, after an
+earlier attempt that used the wrong, mostly-empty \texttt{ExtraEnergyClusters\_*}
+branch was discarded. Area-normalized against the frozen 4D GBDT result, the PET unfold
+reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
+($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
+$q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
+shape/method-robustness check: it shows the learned reweight is stable across both
+the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representation
+(engineered scalars vs.\ raw point cloud). Section~\ref{sec:pet} elevates the PET
+track to a full-statistics, absolutely-normalised cross section with its own
+closure gate and systematic budget. Figure~\ref{fig:calibration} shows the
+underlying classifier-calibration diagnostics (reliability curve and binned
+ratio recovery) for the GBDT and MLP step-1 classifiers.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{classifier_calibration.png}
+  \caption{Classifier-calibration diagnostics on the step-1 (data vs.\
+  reconstructed MC) task: reliability curves, weight distributions, and binned
+  data/MC ratio recovery for the production GBDT and an untuned dense MLP. The
+  GBDT is near-diagonal in reliability and recovers the binned ratio to
+  \SI{4.7}{\percent} median.}
+  \label{fig:calibration}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pet_vs_gbdt.png}
+  \caption{Method-robustness check: area-normalized 4D unfolded shapes from the
+    PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
+    projected onto each axis. Median per-bin shape differences are
+    \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
+    catch bin, a subsample-statistics effect. Shape-only comparison (PET on a 2M-event
+    subsample), not an independent physics result.}
+  \label{fig:petgbdt}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap.png}
+  \caption{Selection efficiency over the $(\pT,\pPar)$ truth grid. Efficiency is
+  diagnostic only --- OmniFold's miss treatment performs the acceptance
+  correction natively (\S\ref{sec:method-algo}).}
+  \label{fig:eff}
+\end{figure}

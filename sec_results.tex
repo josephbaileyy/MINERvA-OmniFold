@@ -1,0 +1,137 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Double-differential cross section}
+\label{sec:results-xsec}
+Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
+1D projections. The total cross section is
+\SI{\sigTwoD}{cm^2/nucleon} (published: \SI{\sigTwoDpaper}{cm^2/nucleon}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13.png}\\
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt.png}
+  \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz.png}
+  \caption{Unfolded 2D cross section (top, Fig.~13 style) and its $\pT$/$\pPar$
+  projections (bottom).}
+  \label{fig:xsec}
+\end{figure}
+
+\subsection{Comparison to the published measurement}
+\label{sec:results-compare}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}lc@{}}
+    \toprule
+    Quantity (205 reported bins) & Value \\
+    \midrule
+    $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $\ratioTot$ \\
+    Median bin ratio (ours/paper) & $\medianBinRatio$ \\
+    Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $\binsFive/\binsTen/\binsTwenty\,\%$ \\
+    $\chi^{2}/\mathrm{ndf}$, paper covariance & $\chiPaper$ \\
+    $\chi^{2}/\mathrm{ndf}$, combined covariance (paper $+$ ours) & $\chiCombined$ \\
+    Pull mean / RMS (paper covariance) & $\pullMean/\pullRMS$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Agreement with arXiv:2106.16210. Per-bin pulls
+  (Fig.~\ref{fig:pull}) are sub-$1\sigma$.}
+  \label{tab:compare}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full.png}
+  \caption{Per-bin pull $(\mathrm{ours}-\mathrm{paper})/\sigma$ on the
+  $14\times16$ grid and its distribution.}
+  \label{fig:pull}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices.png}
+  \caption{Bin-by-bin comparison to the published measurement: the unfolded
+  cross section (points) overlaid on the published data (histogram) in slices
+  of $\pT$ versus $\pPar$.}
+  \label{fig:ptslices}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices.png}
+  \caption{Same comparison as Fig.~\ref{fig:ptslices}, sliced in $\pPar$
+  versus $\pT$.}
+  \label{fig:pzslices}
+\end{figure}
+
+\subsection{Anatomy of the $\chi^{2}=3.66$ tension}
+\label{sec:results-tension}
+The central values agree (pull RMS $\pullRMS$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
+would be $0.37$), yet the full paper-covariance $\chi^{2}/\mathrm{ndf}$ is $\chiPaper$:
+a $10\times$ inflation living entirely in the off-diagonal structure of the
+published covariance. The eigenmode decomposition (Fig.~\ref{fig:tension}) shows
+the tension is carried by moderate-$\lambda$ modes with $5$--$6\sigma$ eigen-pulls
+(the 10 smallest-$\lambda$ modes carry only \SI{3}{\percent}; keeping the 73
+best-measured directions still gives $1.42$), so it is \emph{not} a small-$\lambda$
+inversion artifact. It is \emph{shape}, not normalisation
+($\chi^{2}_{\mathrm{norm}}=0.10$ vs $\chi^{2}_{\mathrm{shape}}=750$), localised to
+the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
+dominate. A $\sim1$-unit methodological band comes from the GBDT estimator
+(exact-GBT $\chiPaper$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
+negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
+App.~\ref{sec:tension}. The eigenmode-localisation maps and the additional
+model-comparison ratio maps are shown in
+Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
+% NOTE: the estimator-band value "exact-GBT 3.66" below is the same number as
+% the paper-covariance chi2 (\chiPaper); they coincide by construction.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.49\textwidth]{tension_spectrum.png}
+  \includegraphics[width=0.49\textwidth]{tension_chi2_map.png}
+  \caption{Tension anatomy: eigenvalue spectrum with cumulative $\chi^{2}$ (left)
+  and the per-bin $\chi^{2}$-contribution map (right).}
+  \label{fig:tension}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{tension_mode_maps.png}
+  \caption{Bin-space maps of the leading tension-carrying eigenmodes of the
+  published covariance: the $5$--$6\sigma$ eigen-pulls live on the low-$\pT$
+  cross-section-peak ridge where the flux and muon-energy bands dominate.}
+  \label{fig:tensionmodes}
+\end{figure}
+
+\subsection{Comparison to GENIE MINERvA Tune v1}
+\label{sec:results-model}
+Both the published data and our unfolded result are compared to the GENIE
+2.12.6~\cite{Andreopoulos:2009rq} MINERvA Tune v1 prediction shipped with the
+ancillary (Fig.~\ref{fig:model}). The tune
+under-predicts the total by $\sim\SI{9}{\percent}$
+($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), concentrated in the
+low-$\pT$ peak, and is strongly disfavoured by the data covariance
+($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $26.5$). Our unfolded
+result tracks the data far more closely than the model does.
+(\texttt{compare\_to\_models.py}.) The published analysis~\cite{MINERvA:2021owq}
+additionally compares to NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and
+NEUT~\cite{Hayato:2009zz}; because OmniFold delivers a per-event reweighted
+truth ensemble, any such generator prediction can be compared to our result in
+\emph{any} projection or dimension without re-unfolding --- a capability we
+exploit for the 3D extension (\S\ref{sec:3d}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{model_comp_projections.png}
+  \caption{Our result (dashed) on top of the published data (black); MINERvA
+  Tune v1 (orange) dips below in the peak.}
+  \label{fig:model}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps.png}
+  \caption{Bin-by-bin ratio maps on the $(\pT,\pPar)$ grid: ours/paper (left)
+  and Tune~v1/paper (right). The tune's deficit is concentrated in the
+  low-$\pT$ peak; our result is flat near unity.}
+  \label{fig:modelmaps}
+\end{figure}

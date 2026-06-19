@@ -1,0 +1,132 @@
+\section{First full-phase-space results}
+\label{sec:fps}
+
+\textbf{Maturity:} complete measurement --- central value, full systematic
+(universe/bootstrap/ML) covariance with the unified-throw adoption, a
+three-prior dependence envelope, and the extension region validated by a
+hidden-variable closure and 200 coverage toys.
+
+The published phase space ($\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$,
+$\pT<\SI{4.5}{GeV/c}$) hides a third of the signal: weighting the true
+$\nu_\mu$~CC rate in the tracker fiducial volume, \SI{66.4}{\percent} lies
+inside the cuts, \SI{22.3}{\percent} at $\pPar<\SI{1.5}{GeV/c}$,
+\SI{11.3}{\percent} at $\theta_\mu>20^{\circ}$, and the high-$\pT$/$\pPar$
+tails are negligible (Fig.~\ref{fig:fpsacc}). Because OmniFold's miss
+treatment performs acceptance correction natively, removing the truth-level
+kinematic cuts is a configurational change (an event-loop switch enlarging
+the truth denominator from 32.8M to 49M events; the reconstruction-level
+selection, including the MINOS match, is untouched), and the unfold
+extrapolates into the unmeasured regions through the step-1 miss regressor.
+The honest question is not \emph{whether} it can extrapolate but \emph{at
+what prior cost}; this section quantifies that.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{fps_acceptance_MEFHC.png}
+  \caption{Full-phase-space acceptance study (all twelve playlists):
+  (a)~weighted truth rate (log$_{10}$), (b)~reconstruction efficiency, and
+  (c)~the dead region with $\epsilon<\SI{2}{\percent}$, on the extended
+  $(\pT,\pPar)$ grid (bin number; the catch bins are too wide for a linear
+  axis). Cyan lines mark the published phase-space boundary. Efficiency is
+  $\sim0.65$ and flat through the published region, degrades smoothly across
+  the $\theta>20^{\circ}$ wedge, and dies in the $\pPar<\SI{1.5}{GeV/c}$
+  strip and the high-$\pT$ corner; the dead region carries
+  \SI{27.7}{\percent} of the total truth rate.}
+  \label{fig:fpsacc}
+\end{figure}
+
+\paragraph{Validation battery.}
+Three results establish the extension (Fig.~\ref{fig:fpscmp}):
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Anchor.} Restricted to the published-phase-space sub-block,
+        the full-phase-space unfold reproduces a control unfold (standard
+        omnifile, paper grid, identical settings) to $0.9994$ in integral,
+        with a median per-cell ratio of $1.0013$ and median deviation
+        \SI{\fpsAnchor}{\percent} over all 185 reported cells --- opening the
+        phase space does not damage the measurement where it was already
+        made. The control itself reproduces the frozen production total
+        ($\SI{\sigTwoD}{cm^2/nucleon}$) exactly.
+  \item \textbf{Closure.} A self-closure on the extended grid (simulated
+        reconstruction as pseudo-data) returns recovered/truth $=1.0000$ in
+        every cell including the extension --- no bookkeeping or
+        normalisation bias in the enlarged-denominator configuration. A
+        \emph{hidden-variable} closure goes further: injecting a Gaussian
+        truth bump in true $E_{\mathrm{avail}}$ (an axis the
+        $(\pT,\pPar)$ unfold is blind to) and unfolding, the recovered
+        $(\pT,\pPar)$ cross section reproduces the bump-reweighted truth to
+        median \SI{0.17}{\percent} (90th percentile \SI{0.65}{\percent}) in
+        the published cells and median \SI{0.77}{\percent} (max
+        \SI{4.05}{\percent}) in the extension --- both well inside the
+        tier-2 prior band.
+  \item \textbf{Three-prior envelope.} Repeating the unfold with three
+        priors --- MnvTune~v1, bare GENIE, and a NuWro-shaped prior (built
+        by reweighting the truth $(\pT,\pPar)$ shape to two million raw
+        NuWro events, which carry no phase-space cut) --- spans the total
+        cross section by only $\pm\SI{1.5}{\percent}$. Per cell, the
+        half-spread/mean is median \SI{2.9}{\percent} inside the published
+        region but median \SI{7.9}{\percent} (90th percentile
+        \SI{62}{\percent}) in the extension, concentrated in the
+        zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
+  \item \textbf{Coverage.} 200 closure$+$bootstrap toys give per-bin
+        coverage (fraction of toys with $|r|\le1$) of mean
+        \SI{68.9}{\percent} against the \SI{68.27}{\percent} target
+        ($\langle|r|\rangle=0.79$, target $0.80$); the published
+        (\SI{68.5}{\percent}) and extension (\SI{70.0}{\percent}, marginally
+        conservative) regions are both correctly calibrated --- the bootstrap
+        band means what it says in the extended grid.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC.png}
+  \caption{Full-phase-space honesty battery (all playlists):
+  (a)~anchor ratio in the published sub-block (median $1.0013$),
+  (b)~the MnvTune/bare-GENIE prior-swap ratio, and (c)~the full-phase-space
+  cross section (log$_{10}$). Panels (a) and (b) are \emph{ratios} (diverging
+  scale centred at unity); (c) is an \emph{absolute} magnitude (sequential
+  scale) --- hence the two colour schemes. Black lines mark the published
+  boundary; axes are bin number on the extended grid.}
+  \label{fig:fpscmp}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fps_prior_envelope_MEFHC.png}
+  \caption{Three-prior dependence envelope (half-spread/mean per cell,
+  in percent). Prior dependence is at the few-percent level wherever the
+  detector has acceptance and reaches tens of percent only in the dead
+  cells --- the quantitative basis for the two-tier reporting.}
+  \label{fig:fpsenv}
+\end{figure}
+
+\paragraph{Result and reporting convention.}
+The full-phase-space CC-inclusive cross section on the tracker fiducial
+volume is
+\begin{equation*}
+  \sigma_{\mathrm{FPS}} = \SI{\fpsSigma}{cm^2/nucleon}
+  \quad\text{(central value)},
+\end{equation*}
+\SI{\fpsAbove}{\percent} above the restricted-phase-space
+$\SI{\sigTwoD}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
+\emph{tier~1} (the measurement) covers cells with $\epsilon\gtrsim2\%$ ---
+the published region plus the measurable extension ($\sim\SI{6}{\percent}$
+of the rate, chiefly the $\theta>20^{\circ}$ wedge and the
+$\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge); \emph{tier~2} (prior-extrapolated)
+covers the dead cells ($\sim\SI{28}{\percent}$ of the rate), published but
+flagged, carrying the three-prior envelope as an explicit additional band.
+
+The systematic campaign is complete. The full universe/bootstrap/ML budget on
+the extended grid gives a block-sum combined covariance of median
+\SI{7.33}{\percent} per bin (Flux-led per bin; the trace is dominated by the
+\texttt{Muon\_Energy} scale, which moves the large low-$\pPar$ extension cross
+section --- an FPS-specific feature). The unified-throw construction
+(\S\ref{sec:uq-combine}) is \emph{mandatory} here because the migration-heavy
+corner that broke the 4D block sum by $\times2$ sits inside this measurement;
+on the validated miss-pinned bank (160 joint throws) it inflates the trace by
+only $\times1.30$ (jitter-corrected $\times1.295$, far below the 4D
+$\times2.01$), with the cross-term \SI{83}{\percent} of the block sum.
+Adopting the 4D-style per-bin $\max(\sigma_{\mathrm{uni}},
+\sigma_{\mathrm{block}})$ inflation onto the vertical block
+(\SI{39.5}{\percent} of bins inflated, maximum factor $5.9$) gives the final
+covariance, median \textbf{\SI{8.19}{\percent}} per bin, positive-definite by
+construction.

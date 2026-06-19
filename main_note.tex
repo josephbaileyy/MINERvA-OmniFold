@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{authblk}
+\input{preamble}
+\input{values}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\usepackage{xcolor}
+\newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
+\newcommand{\jrb}[1]{\textcolor{violet}{\textbf{[JRB: #1]}}}
+
+
+%\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\
+%CC-inclusive double-differential cross section\\
+%$d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
+%\large MINERvA analysis note --- DRAFT}
+
+\title{\textbf{Analysis Note:}\\
+Unbinned measurement of the charged-current inclusive cross section in vN in collisions with public MINERvA data}
+
+\author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}}
+\author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}}
+\affil[1]{Department of Physics, Stanford University}
+\affil[2]{Department of Particle Physics and Astrophysics, Stanford University and SLAC National Laboratory}
+
+
+\date{\today\\[4pt]\small Code and file references: \repolink}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\bpn{The abstract is too long - let's put all the detailed content in the executive summary and then keep the abstract shorter and more high level.}
+\jrb{Took out numbers and just introduced each section.}
+
+We apply \emph{unbinned} OmniFold to the MINERvA medium-energy FHC charged-current inclusive data. We first reproduce the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq}, recovering both the spectrum and its uncertainty budget with a fully independent method. We then perform the first simultaneous three-, four-, and five-observable unfolds of MINERvA data, adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$); each reproduces its lower-dimensional predecessor under marginalization. These higher-dimension results recover the established MINERvA low-recoil/2p2h deficit through an independent method and localise a residual high-$\Eavail$ excess to the deep-inelastic region, where no current generator reproduces the data. We further demonstrate a point-cloud transformer that unfolds raw reconstructed calorimeter clusters into an absolutely-normalized cross section, and a first full-phase-space CC-inclusive measurement obtained by removing the muon kinematic cuts. Quantitative results, the full uncertainty budgets, and the validation suite are given in the executive summary and the sections that follow. 
+
+\end{abstract}
+
+\input{sec_execsummary}
+\clearpage
+
+\tableofcontents
+
+\input{sec_intro}
+\input{sec_experiment}
+\input{sec_method}
+\input{sec_results}
+\input{sec_systematics}
+\input{sec_validation}
+\input{sec_3d}
+\input{sec_eavailw}
+\input{sec_pet}
+\input{sec_fps}
+\input{sec_summary}
+
+\section*{Acknowledgments}
+I thank my advisor, Benjamin Nachman, for guidance throughout this work. This
+analysis was carried out on the Perlmutter system at the National Energy
+Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy
+Office of Science User Facility, under project m3246. It builds on the MINERvA
+Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and I thank
+their authors. I am grateful to the MINERvA Collaboration for the public release
+of the medium-energy CC-inclusive data product on which the reproduction rests.
+
+\appendix
+\input{app_statmethods}
+\input{app_landscape}
+
+\printbibliography
+
+\end{document}
