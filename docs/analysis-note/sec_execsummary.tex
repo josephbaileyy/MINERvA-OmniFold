@@ -1,0 +1,38 @@
+\section*{Executive summary}
+\addcontentsline{toc}{section}{Executive summary}
+\label{sec:execsummary}
+
+This note documents the application of \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's medium-energy neutrino data --- first as a faithful reproduction of a published flagship measurement, then as its extension to simultaneous three-, four- and five-observable cross sections and to the first full-phase-space CC-inclusive measurement, neither of which a binned method has produced at MINERvA \bpn{mention the full phase space?}\jrb{Done!}. The executive summary outlines the whole story; everything afterwards is the supporting technical record.
+
+Traditional unfolding corrects detector effects with a migration matrix between histogram bins, so each added observable multiplies the number of bins and the method drowns in dimensions. OmniFold instead trains a classifier to learn, event by event, a weight that morphs the simulation into the data, and pulls that weight back to the true (pre-detector) level through the simulation's truth--reco pairing. No binning is imposed until the very end, so adding an observable is just adding an input column. This analysis uses gradient-boosted decision trees as the learners and
+validates the choice extensively (closure tests, coverage, calibrated-classifier checks, neural-network and transformer cross-checks).
+
+\paragraph{Results overview:}
+\begin{itemize}[itemsep=2pt]
+  \item \textbf{Reproduction.} 
+  Our unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ matches the published measurement~\cite{MINERvA:2021owq}\bpn{just make this a ref instead of spelling it out?}\jrb{Done!}: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, per-bin pulls sub-$1\sigma$, and a fully independent uncertainty budget whose median per-bin uncertainty (\SI{\uqMedian}{\percent}) matches the published \SI{\uqPaper}{\percent} (\S\ref{sec:results}, \S\ref{sec:systematics}, Fig.~\ref{fig:xsec}).
+  
+  \item \textbf{First 3D/4D/5D MINERvA measurements.} 
+  Adding available energy ($\Eavail$), momentum transfer ($q_{3}$), and hadronic mass ($W$) produces the first simultaneous three-, four- and five-observable unfolds of MINERvA data; every result reproduces its lower-dimensional predecessor when marginalized --- a built-in cross-check (\S\ref{sec:3d}).
+  
+  \item \textbf{Known physics recovered independently.} 
+  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}\bpn{add cites}\jrb{Done!}) under-predict the data at low $\Eavail$; pion final-state-interaction dials move the spectrum by $<\SI{1}{\percent}$ while adding Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda}\bpn{cite}\jrb{Done!} fills the quasielastic--$\Delta$ dip --- the established MINERvA low-recoil/2p2h deficit~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}\bpn{cite}\jrb{Done!}, re-found by an independent method (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
+  
+  \item \textbf{A new localization of the remaining excess.} 
+  The high-$\Eavail$ excess that 2p2h cannot explain is resolved in the $(\Eavail, W)$ plane: it concentrates in the deep-inelastic corner ($W\ge\SI{1.8}{GeV}$), where all four generators miss the data at $\disCornerLo$--$\disCornerHi\sigma$ on a dedicated covariance --- no current model reproduces it (\S\ref{sec:eavailw}, Fig.~\ref{fig:eavailWband}).
+  
+  \item \textbf{A methodological finding. \bpn{I don't understand this one - seems like you find it is bad to just assume diagonal covariance? }\jrb{Yes, rewrote this item.}} 
+  The standard way to build a systematic covariance evaluates each source separately and adds the resulting covariance blocks --- which assumes the unfolding responds linearly when many sources are varied at once. A 160-throw ``unified throw'' that instead perturbs all sources simultaneously per event shows this block sum underestimates the 4D systematic by a factor $\sim2$ in the strongest-migration corner; the published 4D covariance therefore adopts the larger unified-throw magnitude (\S\ref{sec:uq-combine}).
+  
+  \item \textbf{Toward raw-data unfolding.} 
+  The other unfolds compress each event into a handful of engineered scalars; here a point-cloud transformer instead takes the event's raw detector-level representation --- the set of reconstructed calorimeter recoil clusters (per-cluster energy and position), together with the muon kinematics --- and unfolds that to the same truth-level 4D cross section. The result is absolutely normalized and full-statistics, unbiased in closure to $\sim\SI{\petClosure}{\percent}$ and agreeing with the production scalar result at the \SI{\petGbdtGap}{\percent} (training-limited) level (\S\ref{sec:pet}).
+  \bpn{I'm confused what are the inputs and outputs - is it all outgoing particles at truth level?} \jrb{Rewrote to be more clear.}
+  
+  \item \textbf{A first full-phase-space cross section.} 
+  Re-running the same 2D $(\pT,\pPar)$ muon double-differential unfold with the muon kinematic cuts removed from the signal definition (they hide a third of the rate) gives a full-phase-space CC-inclusive cross section, $\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$, anchored to the restricted measurement at \SI{\fpsAnchor}{\percent} where they overlap, with a three-prior envelope declaring the extrapolation cost cell-by-cell (\S\ref{sec:fps}).
+  \bpn{Clarify the dimensionality of this - is it raw inputs or 2/3/4/5d?}\jrb{Done!}
+  
+\end{itemize}
+
+This note is organized as follows.  Sections~\ref{sec:experiment}--\ref{sec:method} define the samples and the method; \S\ref{sec:results} is the 2D reproduction; \S\ref{sec:systematics} and App.~\ref{app:statmethods} are the uncertainty machinery (the appendix documents the analysis-specific procedures --- variance sources, coverage and closure toys, the covariance construction --- for reproduction); \S\ref{sec:validation} is the validation suite; the physics is in \S\ref{sec:3d}--\ref{sec:eavailw}; \S\ref{sec:pet} is the point-cloud track; \S\ref{sec:fps} is the full-phase-space measurement and \S\ref{sec:summary} the outlook.
+\bpn{left off here}
