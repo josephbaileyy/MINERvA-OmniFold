@@ -143,6 +143,13 @@ def _load_pointcloud(inputs_npz, num_part):
     gen = (d["part_gen"][:, :, :4].astype(np.float32)) / 1000.0   # E,px,py,pz (GeV)
     reco = (d["part_reco"].astype(np.float32)) / 1000.0           # E(GeV), x,y,z(m)
     measured = (d["measured_pc"].astype(np.float32)) / 1000.0
+    # Sanitize: a single non-finite entry in part_reco was enough to NaN the step-1
+    # reco classifier mid-epoch once the larger (>=8M) training sample sampled it (the
+    # 2M probe never hit it). Map non-finite -> 0, which is also the pad/mask sentinel
+    # (PET masks particles by feature-0==0), so a corrupt particle becomes a masked slot.
+    gen = np.nan_to_num(gen, nan=0.0, posinf=0.0, neginf=0.0)
+    reco = np.nan_to_num(reco, nan=0.0, posinf=0.0, neginf=0.0)
+    measured = np.nan_to_num(measured, nan=0.0, posinf=0.0, neginf=0.0)
     return gen, reco, measured
 
 
