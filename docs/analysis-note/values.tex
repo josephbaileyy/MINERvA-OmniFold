@@ -55,6 +55,13 @@
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
 \newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
 \newcommand{\petGbdtGap}{9}
+% bin-by-bin matched uncertainty comparison (PET vs GBDT 4D, common bins)
+\newcommand{\petMedianFracBin}{11.8}     % PET median per-bin frac unc, native lateral (%)
+\newcommand{\petGbdtMedianFracBin}{13.4} % GBDT median per-bin frac unc (%)
+\newcommand{\petGbdtRatioBin}{0.95}      % median per-bin PET/GBDT frac-unc ratio
+\newcommand{\petBinsTighter}{54}         % percent of common bins where PET < GBDT
+\newcommand{\petCommonBins}{4796}        % common 4D bins (PET is a subset of GBDT)
+\newcommand{\petGbdtExtra}{34}           % extra bins the GBDT reports beyond PET
 
 % --- full phase space ---
 \newcommand{\fpsSigma}{4.502e-38}     % full-phase-space total, cm^2/nucleon

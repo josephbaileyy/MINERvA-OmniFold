@@ -70,7 +70,57 @@ projection. The combined budget on the PET reported bins has median
 per-bin fractions of \SI{8.2}{\percent} (systematic), \SI{4.2}{\percent}
 (statistical), \SI{3.3}{\percent} (ML), \SI{4.0}{\percent} (lateral,
 transferred), totalling $\approx\SI{12.3}{\percent}$ --- comparable to the
-GBDT 4D budget's \SI{13.5}{\percent}. The reweight bank underlying the
+GBDT 4D budget's \SI{13.5}{\percent}.
+
+A bin-by-bin matched comparison turns this budget-total statement into a
+direct answer to whether the point cloud \emph{reduces} the uncertainty or
+merely \emph{agrees with} the scalars. Both engines' reported bins map back
+onto the common $14\times16\times7\times7$
+$(p_T,p_\parallel,E_\text{avail},q_3)$ grid; the \petCommonBins{} PET bins are
+a strict subset of the GBDT's (every PET bin is GBDT-reported, the GBDT
+reporting \petGbdtExtra{} additional bins). On the common bins the median
+per-bin fractional uncertainty is \SI{\petMedianFracBin}{\percent} for PET ---
+here using the \emph{independence-fair} PET-native lateral block
+(\SI{1.7}{\percent}) rather than the GBDT-transferred one --- against
+\SI{\petGbdtMedianFracBin}{\percent} for the GBDT, a median per-bin ratio of
+$\petGbdtRatioBin$ with PET the tighter of the two in
+\SI{\petBinsTighter}{\percent} of bins (Fig.~\ref{fig:petunc}). The point
+cloud therefore \emph{matches} the scalar precision rather than reducing it:
+it tracks the GBDT across the populated kinematics and is wider only in the
+sparse extreme-momentum catch bins, where the subsample-limited PET
+statistics dominate (Fig.~\ref{fig:petuncratio}). The conclusion is robust to
+the lateral treatment --- the more conservative GBDT-transferred lateral lifts
+the PET median only to $\approx\SI{12}{\percent}$ --- but is, like the rest of
+this section, \emph{indicative}: the budget is anchored to the 2M-event
+training and a full-statistics PET is expected to tighten it.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_uncertainty_overlay.png}
+  \caption{Per-bin fractional uncertainty of the PET point-cloud unfold
+  (solid) and the production scalar GBDT (dashed), projected on each of the
+  four axes; shaded bands span the 10--90\% spread of per-bin uncertainties
+  within each axis slice over the \petCommonBins{} common 4D bins. The point
+  cloud tracks the scalar precision across the populated kinematics and
+  widens only in the sparse high-momentum catch bins, where the
+  subsample-limited PET statistics dominate. Headline curves use the
+  PET-native (independence-fair) lateral block; numbers are indicative of the
+  method (2M-event training).}
+  \label{fig:petunc}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{pet_vs_gbdt_uncertainty_ratiomap.png}
+  \caption{Ratio of PET to GBDT per-bin fractional uncertainty across the
+  $(p_T,p_\parallel)$ plane (median over the $E_\text{avail}$ and $q_3$
+  sub-bins); blue ($<1$) marks bins where PET is the tighter of the two. PET
+  is competitive throughout the well-populated low-$p_\parallel$ region and
+  degrades only in the sparse extreme-momentum corners.}
+  \label{fig:petuncratio}
+\end{figure}
+
+The reweight bank underlying the
 systematic block is built from the truth-only miss-row dump, with per-event
 alignment verified bit-identical over all \num{32.8}~million rows and the
 bank-independent statistical and ML blocks reproducing as a control. The

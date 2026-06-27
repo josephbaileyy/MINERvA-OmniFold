@@ -37,10 +37,8 @@ Unbinned measurement of the charged-current inclusive cross section in vN in col
 \maketitle
 
 \begin{abstract}
-\bpn{The abstract is too long - let's put all the detailed content in the executive summary and then keep the abstract shorter and more high level.}
-\jrb{Took out numbers and just introduced each section.}
 
-We apply \emph{unbinned} OmniFold to the MINERvA medium-energy FHC charged-current inclusive data. We first reproduce the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq}, recovering both the spectrum and its uncertainty budget with a fully independent method. We then perform the first simultaneous three-, four-, and five-observable unfolds of MINERvA data, adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$); each reproduces its lower-dimensional predecessor under marginalization. These higher-dimension results recover the established MINERvA low-recoil/2p2h deficit through an independent method and localise a residual high-$\Eavail$ excess to the deep-inelastic region, where no current generator reproduces the data. We further demonstrate a point-cloud transformer that unfolds raw reconstructed calorimeter clusters into an absolutely-normalized cross section, and a first full-phase-space CC-inclusive measurement obtained by removing the muon kinematic cuts. Quantitative results, the full uncertainty budgets, and the validation suite are given in the executive summary and the sections that follow. 
+We perform unbinned, multi-dimensional cross-section measurements of medium-energy charged-current neutrino-nucleus events measured by the MINERvA experiment.  The machine learning-based method OmniFold is used to enable these measurements.  We first reproduce a published double-differential cross section measurement in muon transverse and longitudinal momentum, recovering both the spectrum and its uncertainty budget with a fully independent method. We then perform the first simultaneous three-, four-, and five-observable unfolds of MINERvA data, adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$); each reproduces its lower-dimensional predecessor under marginalization. These higher-dimension results recover, through an independent method, the established MINERvA deficit of low-momentum-transfer multinucleon interactions \bpn{try to avoid acronyms and citations in an abstract - should be self-contained}\jrb{Rephrased low-recoil/2p2h as low-momentum-transfer multinucleon}, and localize a residual high-$\Eavail$ excess to the deep-inelastic region, where no current generator reproduces the data. We further demonstrate a point-cloud transformer that unfolds raw reconstructed calorimeter clusters into an absolutely-normalized cross section, and a first full-phase-space charged-current-inclusive measurement obtained by removing the muon kinematic cuts. Quantitative results, the full uncertainty budgets, and the validation suite are described in detail. 
 
 \end{abstract}
 
@@ -62,13 +60,17 @@ We apply \emph{unbinned} OmniFold to the MINERvA medium-energy FHC charged-curre
 \input{sec_summary}
 
 \section*{Acknowledgments}
-I thank my advisor, Benjamin Nachman, for guidance throughout this work. This
+This
 analysis was carried out on the Perlmutter system at the National Energy
 Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy
 Office of Science User Facility, under project m3246. It builds on the MINERvA
 Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and I thank
 their authors. I am grateful to the MINERvA Collaboration for the public release
 of the medium-energy CC-inclusive data product on which the reproduction rests.
+
+\bpn{disclose LLM use}\jrb{Added, is this an acceptable format or should I be more verbose?}
+
+Large language model assistants (Anthropic's Claude and OpenAI's ChatGPT) were used to support brainstorming and methodological discussion, code development, analysis scripting, and manuscript preparation. All scientific ideas, results, and claims were critically evaluated and verified by the authors, who take full responsibility for the content.
 
 \appendix
 \input{app_statmethods}
