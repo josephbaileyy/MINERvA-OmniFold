@@ -25,7 +25,7 @@ The reference simulation is GENIE 2.12.6~\cite{Andreopoulos:2009rq} with the
 MINERvA Tune v1 applied as per-event weights through the MAT (MINERvA Analysis
 Toolkit) reweighters: the flux-and-CV weight, the GENIE dial weights, the
 low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction. Detector
-response is the full \textsc{Geant4}-based MINERvA simulation underlying the
+response is the full \textsc{Geant4}-based\bpn{cite G4} MINERvA simulation underlying the
 production AnaTuples. The simulated sample comprises $32\,849\,103$ true
 signal events (POT-normalised to data exposure event-by-event), processed
 through the identical reconstruction and selection as the data.
@@ -53,7 +53,7 @@ The MINOS-match requirement is implemented as
 \texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1} (the current
 MINERvA-101 tutorial enforces the same \texttt{isMinosMatchTrack} match; we
 additionally require a passing MINOS fit). This yields a background rate of
-\SI{0.35}{\percent}, consistent with the published $\sim\SI{0.2}{\percent}$. Backgrounds (reconstructed events whose true
+\SI{0.35}{\percent}, consistent with the published $\sim\SI{0.2}{\percent}$ \bpn{without errors, this could be almost 2x off!}. Backgrounds (reconstructed events whose true
 interaction fails the signal definition) and \emph{fakes} (reconstructed in
 phase space, true muon outside it) are POT-scaled and subtracted from the
 reconstructed-data target before unfolding (\S\ref{sec:method}).
@@ -104,10 +104,12 @@ normalisation deficit quantified at truth level in
 describes the \emph{shapes} well, which is what the unfolding relies on; the
 rate offset is what the data pull corrects.
 
+\bpn{Fig. 1 is very important for the reader to understand the data - maybe we should (a) make the plots bigger and eg 2-3 rows, (b) additionally add some corner plot(s) to show correlations?  Would also (c) be good to add a little commentary on the physics of these shapes?}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{control_plots.png}
-  \caption{Reco-level control distributions for the analysis selection: data
+  \caption{\bpn{Can you please make all figures vectorized, e.g. PDF?} Reco-level control distributions for the analysis selection: data
   (points) versus POT-scaled simulated signal (blue) plus background
   (orange), with the data/MC ratio below, for $\pT$, $\pPar$, $\Eavail$,
   $q_{3}$ and $W$ (wide catch bins not drawn). The uniform
@@ -116,3 +118,4 @@ rate offset is what the data pull corrects.
   \S\ref{sec:3d-models}.}
   \label{fig:control}
 \end{figure}
+
