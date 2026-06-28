@@ -110,6 +110,14 @@ struct TruthDenomEntry
   double MC_hadangle;
   double w_truth;
   uint64_t key;
+  // Truth FS-hadron point cloud (the raw, untruncated GetTruthFSHadrons output,
+  // matching the signal-loop part_gen_* fill). Populated only when
+  // MNV101_DUMP_POINTCLOUD is set, so AppendTruthOnlyMisses can give a
+  // truth-only miss row its real generator-level cloud instead of an empty one
+  // (the cloud-coverage fix; see nd-unfolding/pet/CLOUD_COVERAGE_FIX_PLAN.md).
+  // float to halve cache RAM over the per-playlist truth-denom cache.
+  std::vector<float> pg_E, pg_px, pg_py, pg_pz;
+  std::vector<int>   pg_pdg;
 };
 
 // UQ Stage-1 #7 (2026-05-21): per-systematic-universe weight dump.
@@ -329,6 +337,9 @@ void LoopAndFillUnbinnedMCTruthDenom(
   // mode; the product matches w_truth modulo GetWeightRatioToCV()
   // which is 1 in CV.
   const bool dumpComponents = (getenv("MNV101_DUMP_COMPONENTS") != nullptr);
+  // Gate truth-cloud caching: only compute/store the per-event FS-hadron cloud
+  // when the point-cloud dump is active (otherwise it is dead weight).
+  const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
   std::vector<double> w_component(componentRWs.size(), 1.0);
   if(dumpComponents)
   {
@@ -461,8 +472,26 @@ void LoopAndFillUnbinnedMCTruthDenom(
 
     if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
     if(outTruthDenomCache)
-      outTruthDenomCache->push_back({MC, MC_pz, MC_eavail, MC_q3, MC_W,
-                                     MC_nproton, MC_npip, MC_hadangle, w_truth, key});
+    {
+      TruthDenomEntry tde{MC, MC_pz, MC_eavail, MC_q3, MC_W,
+                          MC_nproton, MC_npip, MC_hadangle, w_truth, key};
+      if(dumpPointcloud)
+      {
+        // Same accessor the signal loop uses (line ~916), so a miss-row cloud
+        // is constructed identically to an accepted-row cloud. Narrow to float
+        // for the cache; AppendTruthOnlyMisses widens back to double for the
+        // vector<double> branches.
+        std::vector<double> cE, cpx, cpy, cpz;
+        std::vector<int>    cpdg;
+        truthCV->GetTruthFSHadrons(cE, cpx, cpy, cpz, cpdg);
+        tde.pg_E.assign(cE.begin(), cE.end());
+        tde.pg_px.assign(cpx.begin(), cpx.end());
+        tde.pg_py.assign(cpy.begin(), cpy.end());
+        tde.pg_pz.assign(cpz.begin(), cpz.end());
+        tde.pg_pdg = std::move(cpdg);
+      }
+      outTruthDenomCache->push_back(std::move(tde));
+    }
   }
 
   std::cout << "Finished unbinned MC truth-denom loop.\n";
@@ -509,9 +538,13 @@ long AppendTruthOnlyMisses(
   sigOut->SetBranchAddress("w_truth",    &miss_w_truth);
 
   // Phase 3: if the point-cloud branches exist (signal loop dumped them), rebind
-  // them to local empty vectors for the miss entries. Their addresses currently
+  // them to local vectors for the miss entries. Their addresses currently
   // dangle (the signal loop's locals went out of scope), so a bare Fill() would
-  // read freed memory and segfault. A miss has no reco clusters -> empty cloud.
+  // read freed memory and segfault. The TRUTH cloud (part_gen_*) is filled
+  // per-row from the truth-denom cache below (a truth-only miss is a truth-pass
+  // event whose generator-level hadrons exist); the RECO cloud (part_reco_*)
+  // stays empty -- a miss genuinely has no reco clusters. (Cloud-coverage fix;
+  // see nd-unfolding/pet/CLOUD_COVERAGE_FIX_PLAN.md.)
   std::vector<double> e_gen_E, e_gen_px, e_gen_py, e_gen_pz;
   std::vector<int>    e_gen_pdg;
   std::vector<double> e_reco_E, e_reco_pos, e_reco_z;
@@ -522,8 +555,9 @@ long AppendTruthOnlyMisses(
   std::vector<int>*    p_gen_pdg = &e_gen_pdg;
   std::vector<double>* p_reco_E = &e_reco_E; std::vector<double>* p_reco_pos = &e_reco_pos;
   std::vector<double>* p_reco_z = &e_reco_z;
-  if(getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
-     sigOut->GetBranch("part_gen_E") != nullptr)
+  const bool havePointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
+                               sigOut->GetBranch("part_gen_E") != nullptr);
+  if(havePointcloud)
   {
     sigOut->SetBranchAddress("part_gen_E",   &p_gen_E);
     sigOut->SetBranchAddress("part_gen_px",  &p_gen_px);
@@ -622,6 +656,18 @@ long AppendTruthOnlyMisses(
       miss_sim_W      = -9999.0;
       miss_sim_pass = 0;            // false: this is a miss (no reco)
       miss_w_reco   = tde.w_truth;  // proxy; w_reco unused for sim_pass=false
+      if(havePointcloud)
+      {
+        // Give the miss row its real generator-level cloud (cached in the
+        // truth-denom loop). Mutate the bound vectors in place; p_gen_* still
+        // point at them. Widen the float cache back to the double branches.
+        // part_reco_* deliberately left empty -- a miss has no reco clusters.
+        e_gen_E.assign(tde.pg_E.begin(), tde.pg_E.end());
+        e_gen_px.assign(tde.pg_px.begin(), tde.pg_px.end());
+        e_gen_py.assign(tde.pg_py.begin(), tde.pg_py.end());
+        e_gen_pz.assign(tde.pg_pz.begin(), tde.pg_pz.end());
+        e_gen_pdg = tde.pg_pdg;
+      }
       sigOut->Fill();
       ++nTruthOnlyMisses;
     }

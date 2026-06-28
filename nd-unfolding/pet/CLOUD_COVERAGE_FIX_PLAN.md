@@ -1,5 +1,15 @@
 # Plan: fill the truth cloud on miss rows (full-spectrum cloud projection)
 
+> **STATUS 2026-06-28 — CODE DONE + SMOKE-VALIDATED.** The three edits below are
+> implemented in `runEventLoopOmniFold.cpp` (struct + truth-denom
+> `GetTruthFSHadrons` cache + miss-append fill), built clean (job 55176854), and
+> smoke-tested on playlist 1L (CV-only, `MNV101_DUMP_POINTCLOUD=1`): all
+> **111,642** appended truth-only miss rows now carry a non-empty `part_gen`
+> cloud (**100.00%**, was ~0%), `part_reco` stays empty on them, `MC_eavail`
+> finite/≥0, median 4 hadrons (untruncated, npz truncates to 12 downstream).
+> **Remaining (gated):** the production re-dump + npz rebuild — see "Build +
+> re-dump" below; decide CV-only-PC vs full-universes scope before launching.
+
 **Goal.** Lift truth-cloud projections from the ~72.6 % has-cloud subset to the
 full truth spectrum, by populating `part_gen_*` for the truth-only miss rows
 that `AppendTruthOnlyMisses` currently leaves empty. See the demonstration in
