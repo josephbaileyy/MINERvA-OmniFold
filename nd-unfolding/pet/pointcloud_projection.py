@@ -34,13 +34,16 @@ import unfold_2d_omnifold_unbinned as u2d            # noqa: E402
 from xsec_nd import extract_cross_section_nd, project_marginal  # noqa: E402
 import unfold_nd_omnifold_unbinned as und            # noqa: E402
 
-PC = f"{_REPO}/nd-unfolding/of_inputs_pc.npz"
-WEIGHTS = f"{_REPO}/nd-unfolding/products/pet/pet_weights_full.npz"
-OMNI = f"{_REPO}/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root"
+# Paths are env-overridable so the same script serves the baseline run and the
+# full-cloud re-dump (of_inputs_pc_fullcloud.npz + retrained weights). OMNI must
+# be the omnifile the npz was built from (row-aligned for the MC_W assert).
+PC = os.environ.get("PCPROJ_PC", f"{_REPO}/nd-unfolding/of_inputs_pc.npz")
+WEIGHTS = os.environ.get("PCPROJ_WEIGHTS", f"{_REPO}/nd-unfolding/products/pet/pet_weights_full.npz")
+OMNI = os.environ.get("PCPROJ_OMNI", f"{_REPO}/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root")
 MCFILE = f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
 FLUXH = "pTmu_reweightedflux_integrated"
 GBDT5D = f"{_REPO}/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
-OUTDIR = f"{_REPO}/nd-unfolding/products/pet"
+OUTDIR = os.environ.get("PCPROJ_OUTDIR", f"{_REPO}/nd-unfolding/products/pet")
 
 # GetEAvailableTrue() constants (CVUniverse.h:330-343), MeV
 M_PION_EAVAIL = 135.0
