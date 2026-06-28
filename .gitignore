@@ -122,3 +122,4 @@ nd-unfolding/reference_le/**
 !nd-unfolding/reference_le/**/
 !nd-unfolding/reference_le/filkins/anc/data_release/*.txt
 !nd-unfolding/reference_le/rodrigues/anc/supplemental.txt
+nd-unfolding/of_inputs_pc_npy/

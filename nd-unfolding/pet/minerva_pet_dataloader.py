@@ -33,6 +33,7 @@ Vendored-loader semantics (omnifold_nn/omnifold/dataloader.py):
     steps, so we pass the truth/prior weight (w_truth); reco acceptance lives in pass_reco.
 """
 import argparse
+import os
 import sys
 
 import numpy as np
@@ -71,9 +72,19 @@ def _scalar_feats(d, ndim):
 
 
 def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
-                  bootstrap=False, seed=0):
-    """Return (data_loader, mc_loader) vendored DataLoaders from our OmniFold arrays."""
+                  bootstrap=False, seed=0, rank=0, size=1, memmap_dir=None):
+    """Return (data_loader, mc_loader) vendored DataLoaders from our OmniFold arrays.
+
+    rank/size + memmap_dir: for horovod point-cloud training, load from a .npy dir
+    (npz_to_npy.py output) and materialize only this rank's [rank::size] stride, so each
+    of `size` ranks holds ~1/size of the 32.8M-event cloud (fits a 229 GB node at full
+    stats instead of OOMing). The plain (rank=0, size=1, memmap_dir=None) path is
+    byte-for-byte the original behaviour.
+    """
     from omnifold import DataLoader  # vendored
+
+    if memmap_dir and mode == "pointcloud":
+        return _build_pointcloud_memmap(memmap_dir, max_events, bootstrap, seed, rank, size)
 
     d = np.load(inputs_npz, allow_pickle=True)
     pass_reco = d["pass_reco"]; pass_truth = d["pass_truth"]
@@ -153,12 +164,68 @@ def _load_pointcloud(inputs_npz, num_part):
     return gen, reco, measured
 
 
+def _pc_scale(a):
+    """Same preprocessing _load_pointcloud applies: MeV->GeV / mm->m, then non-finite->0
+    (0 is the PET energy-mask sentinel). Elementwise, so subsample-then-scale is identical
+    to scale-then-subsample."""
+    return np.nan_to_num(a.astype(np.float32) / 1000.0, nan=0.0, posinf=0.0, neginf=0.0)
+
+
+def _build_pointcloud_memmap(npy_dir, max_events, bootstrap, seed, rank, size):
+    """Memory-mapped, rank-strided point-cloud loader (see build_loaders docstring).
+
+    Materializes only this rank's rows: draws the global subsample indices with the SAME
+    rng draw-order as build_loaders, strides them [rank::size], then fancy-indexes the
+    memmaps (reads ~len/size rows from disk, never the full array). Row order within a
+    rank is irrelevant (OmniFold shuffles internally), so indices are sorted for
+    sequential I/O. Returns (data, mc, imc) like build_loaders."""
+    import os
+    from omnifold import DataLoader  # vendored
+    j = lambda k: os.path.join(npy_dir, f"{k}.npy")
+    mm_gen  = np.load(j("part_gen"),  mmap_mode="r")    # (N,12,5) E,px,py,pz,pdg
+    mm_reco = np.load(j("part_reco"), mmap_mode="r")    # (N,12,3) E,x,y,z
+    mm_meas = np.load(j("measured_pc"), mmap_mode="r")  # (M,12,3)
+    pass_reco_all  = np.load(j("pass_reco"),  mmap_mode="r")
+    pass_truth_all = np.load(j("pass_truth"), mmap_mode="r")
+    w_truth_all    = np.load(j("w_truth"),    mmap_mode="r")
+    meas_w_all     = np.load(j("measured_weights"), mmap_mode="r")
+    N, M = mm_gen.shape[0], mm_meas.shape[0]
+
+    # Global subsample indices — identical rng draw-order to the original build_loaders
+    # (default_rng(seed): mc choice first, then data choice) so a size=1 run reproduces it.
+    if max_events is None:
+        all_imc, all_ida = np.arange(N), np.arange(M)
+    else:
+        rng = np.random.default_rng(seed)
+        all_imc = rng.choice(N, min(max_events, N), replace=False)
+        all_ida = rng.choice(M, min(max_events, M), replace=False)
+    imc = np.sort(all_imc[rank::size])   # this rank's clean 1/size partition
+    ida = np.sort(all_ida[rank::size])
+
+    MCgen  = _pc_scale(mm_gen[imc][:, :, :4])   # drop categorical pdg col -> E,px,py,pz
+    MCreco = _pc_scale(mm_reco[imc])            # E,x,y,z
+    measured = _pc_scale(mm_meas[ida])
+    pass_reco  = np.asarray(pass_reco_all[imc])
+    pass_truth = np.asarray(pass_truth_all[imc])
+    w_truth    = np.asarray(w_truth_all[imc]).astype(np.float32)
+    meas_w     = np.asarray(meas_w_all[ida]).astype(np.float32)
+
+    data = DataLoader(reco=measured, weight=meas_w, normalize=True, bootstrap=bootstrap)
+    mc = DataLoader(reco=MCreco, gen=MCgen, pass_reco=pass_reco, pass_gen=pass_truth,
+                    weight=w_truth, normalize=True, bootstrap=bootstrap)
+    return data, mc, imc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--inputs", default="of_inputs_3d.npz")
     ap.add_argument("--mode", default="scalar", choices=["scalar", "pointcloud"])
     ap.add_argument("--num-part", type=int, default=1)
     ap.add_argument("--max-events", type=int, default=None)
+    ap.add_argument("--memmap-dir", default=None,
+                    help="dir of .npy files (npz_to_npy.py output) for memory-mapped, "
+                         "rank-strided point-cloud loading under horovod (srun -n N); each "
+                         "rank materializes only its 1/size stride -> full 32.8M fits one node.")
     ap.add_argument("--smoke", action="store_true",
                     help="instantiate the vendored MLP/PET + run a 1-iter MultiFold on a "
                          "subsample to prove the engine unfolds our data (needs TF/GPU).")
@@ -179,8 +246,16 @@ def main():
                          "reproduce the MC truth (validated downstream with completeness=1).")
     args = ap.parse_args()
 
+    # Horovod data-parallel rank/size from the SLURM launch: `srun -n N` sets SLURM_PROCID
+    # (0..N-1) and SLURM_NTASKS (N), and these equal hvd.rank()/hvd.size() under srun. A plain
+    # `python3` run has SLURM_NTASKS=1 -> rank 0 / size 1 -> original single-process path. Read
+    # from env (not horovod) so we don't import TF before omnifold runs hvd.init().
+    rank = int(os.environ.get("SLURM_PROCID", 0))
+    size = int(os.environ.get("SLURM_NTASKS", 1))
+
     data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
-                                  max_events=args.max_events)
+                                  max_events=args.max_events, rank=rank, size=size,
+                                  memmap_dir=args.memmap_dir)
 
     if args.closure:
         # Pseudo-data = MC reco of the reco-passing events, weighted by the (normalized)
@@ -219,10 +294,24 @@ def main():
         m1 = PET(reco_arr.shape[-1], num_part=num_part, local=(num_part >= 3))
         m2 = PET(gen_arr.shape[-1], num_part=num_part, local=(num_part >= 3))
 
+    # Multi-GPU via horovod. build_loaders already gave this rank its own [rank::size] data
+    # stride, so MultiFold gets size=1 (its internal step-counting + DataLoader slicing must
+    # NOT slice again) but the real rank so only rank 0 writes checkpoints/logs. The horovod
+    # gradient allreduce is wired in omnifold via hvd.DistributedOptimizer (gated on the
+    # horovod import, independent of `size`), so the 4 ranks still train data-parallel.
     of = MultiFold(f"minerva_{args.model}", m1, m2, data, mc,
                    niter=args.niter, epochs=args.epochs, batch_size=1024,
-                   weights_folder="/tmp/minerva_pet_weights", verbose=True)
+                   size=1, rank=rank,
+                   weights_folder="/tmp/minerva_pet_weights", verbose=(rank == 0))
     of.Unfold()
+
+    # Unfold() (incl. horovod gradient allreduce + weight broadcast) runs on all ranks; after
+    # it the trained model2 is identical everywhere. Only rank 0 evaluates the push weights on
+    # the full gen cloud and writes the output, so workers exit here to avoid redundant work
+    # and clobbering the same --save-weights file.
+    if rank != 0:
+        return
+
     w = of.reweight(mc.gen, of.model2, batch_size=1000)
     print(f"[smoke] OK: unfolded weights n={len(w)} mean={w.mean():.4f} "
           f"std={w.std():.4f} (finite={np.isfinite(w).all()})")
@@ -233,8 +322,11 @@ def main():
         # cloud so the absolute cross section is binned over full statistics. The push weight
         # is a per-event likelihood ratio (normalization-independent), so evaluating it on the
         # full set is valid even though training used a subsample.
+        # rank 0 only (workers already returned): load the FULL gen cloud unstrided
+        # (rank=0,size=1) so the saved push weights cover all 32.8M events.
         _, full_mc, full_imc = build_loaders(args.inputs, mode=args.mode,
-                                             num_part=args.num_part, max_events=None)
+                                             num_part=args.num_part, max_events=None,
+                                             rank=0, size=1, memmap_dir=args.memmap_dir)
         full_gen = np.asarray(full_mc.gen)
         if args.model == "mlp" and full_gen.ndim == 3:
             full_gen = full_gen.reshape(full_gen.shape[0], -1)
