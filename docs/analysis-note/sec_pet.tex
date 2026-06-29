@@ -149,8 +149,9 @@ limitations of the stored cloud.
 \paragraph{Truncation is essentially lossless.}
 Because $\Eavail$ recomputed from the cloud uses the \emph{same} formula and
 inputs as the value stored at dump time, the cloud-vs-stored residual isolates
-the cost of keeping only the 12 highest-energy hadrons. Over the
-\num{23.8}~million cloud-carrying truth events the residual has median
+the cost of keeping only the 12 highest-energy hadrons. Over the full
+\num{32.8}~million truth events (every event now carries a cloud, below) the
+residual has median
 \SI{0}{MeV} and mean \SI{\pcEavailMean}{MeV}, with \SI{\pcEavailWithin}{\percent}
 of events within \SI{10}{MeV} (Fig.~\ref{fig:pcvalid}). The entire deficit
 lives in the \SI{\pcSaturated}{\percent} of events that saturate the 12-particle
@@ -160,18 +161,25 @@ mesons --- a small, one-sided, bounded effect. \jrb{So the top-12 truncation
 the cloud worried us about is a non-issue at $\Eavail$ scale; raising
 \texttt{num\_part} is not warranted.}
 
-\paragraph{The real limitation is cloud coverage, not truncation.}
-The cloud is filled in the reco-signal event loop, so the truth-only ``miss''
-events appended for the unfold (\SI{\pcMiss}{\percent} of the truth sample) do
-not all carry a cloud: only \SI{\pcHasCloud}{\percent} of truth events have
-one. Cloud projections are therefore \emph{acceptance-limited}: the
-cloud-recomputed $d\sigma/d\Eavail$ lands exactly on the stored-$\Eavail$
-projection \emph{restricted to the has-cloud subset} (validating the chain to
-$\lesssim\SI{0.3}{\percent}$ per bin), and both sit below the full unfold by
-the miss gap (Fig.~\ref{fig:pcxsec}, centre). Closing this gap is a truth-side
-instance of the same dangling-miss-row dump issue tracked for the systematic
-bank; the fix is to fill \texttt{part\_gen} for the appended miss rows in a
-future dump (\S\ref{sec:pet-projection-next}).
+\paragraph{Coverage: a targeted re-dump closes the acceptance gap.}
+Originally the cloud was filled only in the reco-signal event loop, so the
+truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
+the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
+truth events had one, and cloud projections were correspondingly
+\emph{acceptance-limited}, landing exactly on the stored-$\Eavail$ projection
+\emph{restricted to the has-cloud subset} but sitting $1.5$--$2\times$ below
+the full unfold per bin. This is a truth-side instance of the same
+dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
+source by carrying the truth final-state hadrons through the
+truth-denominator loop and filling \texttt{part\_gen} for the appended miss
+rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
+then re-dumping, rebuilding the inputs, and re-training. Coverage is now
+complete: \SI{\pcHasCloud}{\percent} of truth events carry a cloud (only
+\pcEmptyCloud{} residual empties out of \num{32.8}~million), and the
+cloud-recomputed $d\sigma/d\Eavail$ now reproduces the \emph{full} unfold to
+$\lesssim\SI{\pcCloudFull}{\percent}$ in every $\Eavail$ bin
+(Fig.~\ref{fig:pcxsec}, centre, where the cloud, stored, and full-unfold
+curves coincide). The projection is no longer acceptance-limited.
 
 \paragraph{Projection yields genuinely new observables.}
 $W_{\text{had}}$ is \emph{not} a lossy copy of the leptonic ``experimenter's''
@@ -191,7 +199,7 @@ existing unfold.
   \centering
   \includegraphics[width=0.72\textwidth]{pet_cloud_projection_validation.png}
   \caption{Truncation validation: cloud-recomputed $\Eavail$ minus the value
-  stored at dump time, over the \num{23.8}~million cloud-carrying truth events.
+  stored at dump time, over the full \num{32.8}~million truth events.
   The residual is zero to \SI{\pcEavailWithin}{\percent} within \SI{10}{MeV};
   the small negative tail is confined to the \SI{\pcSaturated}{\percent} of
   events that saturate the 12-hadron cap. Keeping only the 12 highest-energy
@@ -206,12 +214,12 @@ existing unfold.
   invariant mass $W_{\text{had}}$ versus the leptonic stored $W$ --- they
   differ by definition (median \SI{\pcWoffset}{GeV}), with the QE locus at
   \SI{0.94}{GeV} and multi-baryon bands above $y=x$. \emph{Centre:}
-  projected $d\sigma/d\Eavail$ from the push-weighted cloud (has-cloud
-  subset) tracks the stored-$\Eavail$ projection on the same subset to
-  $\lesssim\SI{0.3}{\percent}$ per bin and lies below the full unfold by the
-  truth-only-miss acceptance gap; the full stored projection tracks the GBDT
-  5D reference. \emph{Right:} projected $d\sigma/d W_{\text{had}}$, whose
-  shape differs from the leptonic-$W$ reference as expected.}
+  projected $d\sigma/d\Eavail$ from the push-weighted cloud now reproduces the
+  full unfold to $\lesssim\SI{\pcCloudFull}{\percent}$ per bin after the
+  miss-row coverage fix --- the cloud, stored-$\Eavail$, and full-unfold
+  curves coincide; the GBDT 5D reference is shown for comparison. \emph{Right:}
+  projected $d\sigma/d W_{\text{had}}$, whose shape differs from the
+  leptonic-$W$ reference as expected.}
   \label{fig:pcxsec}
 \end{figure}
 
@@ -221,17 +229,18 @@ Reweighting can only redistribute weight among truth configurations the
 generator already produced; it cannot populate phase space the prior never
 sampled --- the same extrapolation limit flagged for the full-phase-space
 measurement (\S\ref{sec:fps}). Within that limit, every observable above is
-projectable from the \emph{current} dump on the has-cloud subset. Three things
-would need a re-dump rather than a re-projection: filling \texttt{part\_gen}
-for the truth-only miss rows (to lift projections from the has-cloud subset to
-the full unfold); adding the muon back as a tagged constituent for
-muon-dependent hadronic observables (it is deliberately excluded from the
-recoil cloud but retained as a stored scalar); and raising the 12-particle cap
-for the rare very-high-multiplicity tail (unnecessary at $\Eavail$ scale per
-the validation above). \jrb{Bottom line: ``unfold once, project many
-hadronic cross sections'' works today on the reconstructed-and-accepted
-truth cloud; the only thing blocking the \emph{full} truth spectrum is the
-miss-row dump, which we plan to fix next.} Full details and reproduction are in
+now projectable over the \emph{full} truth spectrum from the current dump.
+Two things would still need a further re-dump rather than a re-projection:
+adding the muon back as a tagged constituent for muon-dependent hadronic
+observables (it is deliberately excluded from the recoil cloud but retained as
+a stored scalar); and raising the 12-particle cap for the rare
+very-high-multiplicity tail (unnecessary at $\Eavail$ scale per the validation
+above). \jrb{Bottom line: ``unfold once, project many hadronic cross
+sections'' now works over the full truth spectrum --- the miss-row coverage
+gap that previously confined it to the reconstructed-and-accepted subset has
+been fixed at source and the cloud $d\sigma/d\Eavail$ reproduces the full
+unfold to better than \SI{\pcCloudFull}{\percent} per bin.} Full details and
+reproduction are in
 \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
 
 \subsection{What the PET track demonstrates}
