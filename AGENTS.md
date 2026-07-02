@@ -29,12 +29,22 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 | Current state per workstream | `*_STATUS.md` (kept short; prune on update) |
 | Chronology / archaeology | `*_RUN_LOG.md` (append-only, never trimmed) |
 | Durable invariants & gotchas (full detail) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` (shared by 3D/ND) |
-| Deliverables | `docs/technote/` (note), slides |
+| Deliverables | `docs/analysis-note/` (Overleaf subtree; ALL THREE builds: note/primer/paper), slides |
 
 `docs/PREPUB_READINESS.md` and `docs/FUTURE_DIRECTIONS.md` are RETIRED
 tombstones (content → OPEN_ITEMS/KNOWN_ISSUES/ledger; full text in git
-history). When a result lands: ledger entry (numbers) + RUN_LOG entry
-(narrative) + STATUS one-liner — nothing else.
+history). `docs/technote/` is RETIRED (2026-07-02): the note lives ONLY in
+the `docs/analysis-note/` Overleaf subtree, which carries all three builds
+(`build_all.sh` → main_note / main_primer / main_paper).
+
+**Commit gate (declared 2026-07-02, after the June doc-staleness audit): a
+result does not exist until its commit lands.** The commit that introduces a
+campaign's scripts/launchers must ALSO carry its products summary (JSON/txt)
+and the ledger entry + RUN_LOG entry + STATUS one-liner. An uncommitted
+result is not quotable in the note and must not be relied on by other
+sessions (claude-school runs this repo concurrently — unpushed work is
+invisible to it). When a result lands: ledger entry (numbers) + RUN_LOG
+entry (narrative) + STATUS one-liner — nothing else.
 
 **Per-workstream mirror.** Each analysis workstream keeps its own STATUS +
 RUN_LOG co-located in its directory, prefixed by dimensionality

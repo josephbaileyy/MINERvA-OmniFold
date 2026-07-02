@@ -1,13 +1,15 @@
 # ---------- Generated artifacts (anywhere in the tree) ----------
 *.root
-# generated plots: regenerate via docs/technote/make_figures.sh
+# generated plots: regenerate via docs/analysis-note/make_figures.sh
 *.png
 *.pdf
-# ...but keep standalone documentation PDFs (slide deck + statistical-methods note) versioned
+# ...but keep standalone documentation PDFs (slide deck + statistical-methods note)
+# and the note's vector figure set versioned
 !docs/**/*.pdf
 !docs/*.pdf
-# the technote is source-only (three latexmk build targets); do not version its PDFs
-docs/technote/*.pdf
+# the note is source-only (three latexmk build targets via build_all.sh);
+# do not version its build outputs
+docs/analysis-note/main_*.pdf
 *.out
 *.err
 *.log
@@ -123,3 +125,5 @@ nd-unfolding/reference_le/**
 !nd-unfolding/reference_le/filkins/anc/data_release/*.txt
 !nd-unfolding/reference_le/rodrigues/anc/supplemental.txt
 nd-unfolding/of_inputs_pc_npy/
+# horovod PET training console log (narrative lives in ND_OMNIFOLD_RUN_LOG.md)
+nd-unfolding/log_minerva_pet.txt
