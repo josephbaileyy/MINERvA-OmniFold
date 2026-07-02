@@ -1,0 +1,10 @@
+CV: products/5d/xsec_5d_MEFHC_5iter_lgbm.root
+glob: uq_5d/universe_sweep/5d_xsec_*_uni_full_*.root
+reported bins: 10694/65856
+total syst sqrt-trace=4.3391e-38 median rel=13.298%
+combined sqrt-trace=4.3460e-38 median rel=13.433%
+  Flux                   sum sqrt-trace=3.875e-39
+  Models                 sum sqrt-trace=9.013e-38
+  Normalization          sum sqrt-trace=4.507e-39
+  Hadronic response      sum sqrt-trace=3.885e-38
+  Muon reconstruction    sum sqrt-trace=2.742e-38

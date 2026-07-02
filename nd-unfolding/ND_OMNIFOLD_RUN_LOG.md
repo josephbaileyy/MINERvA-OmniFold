@@ -1157,3 +1157,176 @@ E_avail>=0.4 & W>=1.8 GeV): GENIE-CV 116.9/12 (9.0s), GENIE+MEC 121.1/12 (9.2s),
 (10.5s), **GiBUU 381.1/12 (18.2s = most deficient)**. The excess is a genuine high-W DIS-region
 feature (W>~1.8 GeV), not a low-W resonance artefact -- open question 6 is fully W-resolved. All four
 extensions (13/14/15/16) now complete.
+
+## 2026-06-19 — PET capstone campaign kickoff: raw-data unbinned unfolding beyond the measured phase space
+
+User-directed campaign kickoff. Headline goal: push the PET point-cloud
+OmniFold to a raw-data unbinned unfold beyond the measured (published)
+phase space, in two steps. **Step 1**: full-statistics PET training to
+close the residual PET-vs-GBDT CV gap (PET/GBDT 4D total ratio 0.9117, a
+"~9%" gap per the existing rebank ledger entry). Kicked off with a timing
+probe, job **54727164** (`sbatch_pet_train.sh`, since removed from the repo
+by a later cleanup and superseded by the horovod launchers
+`sbatch_pet_train_hvd.sh` / `sbatch_pet_train_fps_hvd.sh`): single-GPU,
+`train=2000000` real point-cloud MultiFold per `pet_train_54727164.out`;
+COMPLETED 15:56:15-16:10:39 (~14 min). **Step 2**: FPS-on-raw-inputs
+capstone — re-dump with the truth muon phase-space cuts removed and run the
+trained PET on the raw reconstructed clusters; flagged from the outset as
+carrying NN-extrapolation risk beyond the training distribution, so a
+3-prior systematic envelope (as already used in the 2D/5D FPS campaigns) is
+mandatory before any FPS-PET number is quoted.
+
+## 2026-06-28/29 — Truth-cloud coverage fix + full-cloud re-dump (Tier 2 landed)
+
+Three commits landed the fix and its validation:
+- **8cc54e9** (2026-06-28 12:31) `fix: fill truth FS-hadron cloud on
+  truth-only miss rows` — `AppendTruthOnlyMisses` had been leaving
+  `part_gen_*` empty on truth-only miss rows (conflating the correctly-empty
+  reco cloud with the truth cloud, which does exist for a truth-pass event).
+  Fixed in `runEventLoopOmniFold.cpp`: the truth-denom loop now caches the
+  truth FS-hadron cloud via `GetTruthFSHadrons()` (the same accessor the
+  signal loop uses), and `AppendTruthOnlyMisses` fills `part_gen_*` per miss
+  row from that cache (`part_reco_*` stays empty — a miss has no reco
+  clusters). Smoke-validated on playlist 1L: all 111,642 appended miss rows
+  now carry a non-empty truth cloud (was ~0%).
+- **8e79ebf** (2026-06-28 12:52) `pipeline: full-cloud re-dump chain
+  (Tier 2)` — orchestration to realize the fix on production inputs under
+  `*_fullcloud` names (hadd/npz/retrain/reproject), non-destructive to the
+  baseline comparison files.
+- **ddf4a7d** (2026-06-29 06:00) `note: reframe truth-cloud projection as
+  coverage-fixed` — reframed the technote projection subsection from
+  limitation to resolved.
+
+Validation artifact
+`nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json`
+(full-spectrum event census, N=**32,849,103**): pass_truth_and_reco
+20,404,292, truth_only_miss 12,444,811, **has_cloud 32,848,929 / empty_cloud
+174** (99.9995% coverage, was ~72.6% pre-fix per the commit message). E_avail
+truth-cloud projection is now essentially unbiased vs the published unfold:
+frac_within **98.78%**, RMS **0.0822**. W is NOT projectable from the
+(12-hadron-truncated) cloud: frac_within only **19.7%**, RMS **3.24 GeV** —
+the truncation that's fine for E_avail is not fine for W. Saturated
+(exactly-12-hadron-truncated) rows are **2.31%** of the sample
+(757,968/32,848,929) and carry a median E_avail bias of **-0.0355** — the
+dominant residual source, small and confined to the truncated tail.
+
+## 2026-06-29 — 5D GBDT systematic covariance campaign COMPLETE: Models/2p2h overtakes Flux as the dominant band
+
+The 5D (pt,pz,Eavail,q3,W) universe sweep drained and the combined
+covariance landed (`uq_5d/universe_stage2_5d/uq_universe_5d_summary.txt`,
+written 2026-06-29 07:23): **10694/65856 reported bins**; total systematic
+**sqrt-trace 4.3391e-38, median 13.298%/bin**; combined (+stat+ML)
+**sqrt-trace 4.3460e-38, median 13.433%/bin**. Per-band-group sqrt-trace
+sums: Models **9.013e-38**, Hadronic response 3.885e-38, Muon reconstruction
+2.742e-38, Normalization 4.507e-39, **Flux 3.875e-39**. Adding the W axis
+flips the dominant systematic group from Flux (2D/3D/4D) to **GENIE
+Models/2p2h** — Flux is now sub-dominant by more than an order of magnitude
+in trace. New scripts landed for this campaign (untracked pending commit):
+`sweep_bank_5d.py`, `analyze_universes_5d.py`,
+`sbatch_sweep_bank_5d_{dump,run}.sh`, `sbatch_seedscan_split_5d.sh`,
+`sbatch_bootstrap_5d.sh`, `sbatch_combine_5d_budget.sh`.
+
+## 2026-06-29 — FPS cloud-fixed re-dump chain launched (capstone Step 2 prerequisite); disk cleanup
+
+The old FPS point-cloud ROOTs predate the 06-28 truth-cloud fix, so before
+capstone Step 2 (raw-data FPS-PET) can proceed, the full-phase-space
+point-cloud dump has to be regenerated. Chain (all job states confirmed via
+`sacct`):
+- **evloop array 55288326** (12 playlists,
+  `sbatch_evloop_array_pointcloud_fps.sh`, `MNV101_DUMP_POINTCLOUD=1` +
+  `MNV101_FULL_PHASE_SPACE=1` together, CV-only): all 12 tasks **COMPLETED**
+  2026-06-29 20:51 through 2026-06-30 00:10.
+- **hadd 55288356** (`sbatch_hadd_pc_fps.sh`): COMPLETED; merged the 12
+  per-playlist files into `runEventLoopOmniFold_PC_FPS_MEFHC.root`,
+  **72,651,640,496 bytes** (`hadd_pc_fps_55288356.out`).
+- **npz 55288408** (`sbatch_npz_pc_fps.sh`): COMPLETED; wrote
+  `of_inputs_pc_fps.npz` (**6,575,612,207 bytes**) — signal clouds kept
+  **32,917,278/49,906,108** gen rows, reco shape (32,917,278, 12, 3), data
+  4,091,707 measured clusters.
+- **PET FPS full-stats train 55288409** (`sbatch_pet_train_fps_hvd.sh`,
+  horovod): submitted 2026-06-29 20:37, queued until 2026-07-01 23:42
+  before starting; **RUNNING** as of this writing — header of
+  `pet_train_fps_55288409.out` reads `train=40000000 ranks=4` with
+  `niter=5 epochs=8`; the log (`nd-unfolding/log_minerva_pet.txt` mirrors
+  this run) is through iteration 4 of the requested 5 as of 2026-07-02.
+
+Same window, a disk cleanup ran on **2026-06-29** (bracketed by the
+`2d-unfolding/` directory mtime, 19:45:54) that removed the merged non-FPS
+`universes_full` files, sweep banks, per-playlist intermediates, 3D ML npz,
+and old 2D archives — all with saved covariance endpoints kept. Verified via
+`git status`: the four launcher scripts in
+`2d-unfolding/archive_pre_phase18/` (`sbatch_evloop_array.sh`,
+`sbatch_unfold_2d.sh`, `sbatch_unfold_2d_fullstats.sh`,
+`sbatch_unfold_2d_fullstats_postfix.sh`) are deleted-but-unstaged, and the
+whole `archive_pre_phase18/` directory is gone from disk (the historical
+TB totals could not be re-verified from a disk artifact at this remove — only
+the file-level deletions are directly checkable now). The regen path was
+exercised almost immediately: the per-playlist + merged 5D `universes_full`
+files needed by the unified-throw study below were freshly re-dumped
+2026-06-29/30 (`runEventLoopOmniFold_5D_*_universes_full.root`, mtimes
+06-29 22:47 / 06-30 03:18).
+
+## 2026-06-29/30 — PET 5D uncertainty comparison vs GBDT: verdict WORSE (indicative, 2M-train anchor)
+
+Two comparisons, both anchored to the 2M-train PET reweight
+(`pet_weights_full.npz`) and both block-sum covariance (identical scheme for
+PET and GBDT):
+- `products/pet/pet_vs_gbdt_uncertainty_5d_summary.json` (written
+  2026-06-29 19:29): on the **10550** common 5D bins, median per-bin
+  fractional uncertainty **14.8%** (PET headline: clean block-sum
+  C_syst+C_stat+C_ML + PET-native shifted-W lateral) vs **13.3%** (GBDT);
+  median ratio **1.192**; PET tighter in only **38.4%** of bins.
+  Vertical-only (no lateral) PET reads **14.7%** — the conclusion is not
+  lateral-driven. **VERDICT: WORSE** than GBDT — contrast with the 4D
+  verdict, COMPARABLE (11.8% vs 13.4%, ratio 0.950, PET tighter in 53.6% of
+  4796 common bins; `pet_vs_gbdt_uncertainty_summary.json`).
+- `products/pet/pet_5d_covariance_combined_unified_wlat_summary.json`
+  (written 2026-06-30 08:39): PET's own unified-throw study (160 throws,
+  frozen reweighter) on the 10550 reported bins gives **sqrt-tr unified
+  1.5933e-37** vs **sqrt-tr block 2.7897e-38** — **unified/block ratio
+  5.711** (median per-bin sigma ratio 1.216). This is far larger than the
+  GBDT-side inflation found the next day (below) and is **flagged, not
+  adopted**: it is a frozen-reweighter lower bound (omits the retraining-
+  response nonlinearity), and the size of the ratio needs to be understood
+  before any PET 5D unified-throw number is quoted in the note.
+
+## 2026-06-30/07-01 — 5D GBDT unified-throw study: launched, drained, ADOPTED
+
+Analogous to the 4D (×2.01) and FPS (×1.295) unified-throw studies:
+jitter-matched block units (12 GENIE/hadronic knobs + 100 flux universes,
+re-unfolded at the CV seed so OmniFold's own jitter cancels in the ratio)
+vs true joint unified throws. Chain (job states via `sacct`): dump array
+**55286192** (8 tasks, COMPLETED) → block/run arrays **55286273**/**55286275**
+(21 tasks each, all COMPLETED 2026-06-30 07:11 through 2026-07-01 21:18) →
+combine **55286276** (COMPLETED 2026-07-01 23:31-23:54). Scripts:
+`sbatch_uthrow_{dump,run,block,combine}_5d.sh`, `unified_throw_cov_5d.py`,
+`adopt_unified_5d.py`.
+
+Result (`uq_5d/uthrow5d_comb_55286276.out`): 160 throws from 20 slabs,
+10694 reported bins; **sqrt-trace unified 4.1209e-38 vs block 2.6749e-38,
+raw ratio 1.541**; jitter-corrected **unified 4.1164e-38, ratio 1.539**
+(cross-term 117.2% of block; jitter floor 1.932e-39, ~20x below the signal).
+Far milder than the 4D ×2.01, closer to the FPS ×1.295. Notably the
+per-bin picture is NOT uniform inflation: **median per-bin sigma ratio
+unified/block = 0.830** (below 1 for most bins) even though the trace ratio
+is 1.539 — the inflation is concentrated in a minority of bins that dominate
+the trace, unlike a flat systematic-wide effect. **ADOPTED** (same
+conservative per-bin max(sigma_unified, sigma_block) inflation transferred
+onto the sweep's own vertical block, as in 4D/FPS):
+`uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`
+(written 2026-07-02 00:59). The adopted median per-bin fraction (over the
+10550 bins PET also reports) reads **13.69%**, up from the pre-adoption
+block-sum 13.33-13.43%
+(`products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`, GBDT
+side) — a modest few-percent inflation, matching the mild 1.539 trace ratio.
+This closes the 5D unified-throw gate: unlike 4D, the 5D block-sum median is
+not materially inflated by the rigorous check.
+
+A same-day follow-up
+(`products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`, written
+2026-07-02 01:01) reran the PET-vs-GBDT comparison with both sides on their
+unified-throw-adopted covariances: PET (using its own flagged-not-vetted
+5.711x-inflated unified covariance) reads median **16.7%** vs GBDT's
+now-adopted **13.7%**, ratio **1.346**, PET tighter in only 30% of bins —
+still WORSE, and this comparison carries the same caveat as the PET-side
+5.711 ratio above until that number is understood.

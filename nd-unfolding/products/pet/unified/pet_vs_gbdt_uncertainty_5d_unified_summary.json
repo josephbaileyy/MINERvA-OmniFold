@@ -1,0 +1,22 @@
+{
+  "label": "UNIFIED-THROW covariance, 5D (pt,pz,Eavail,q3,W); PET frozen-reweighter (lower bound -- Tier-2 retraining not yet folded in)",
+  "covariance_method": "unified-throw (re-unfolded), both engines",
+  "gbdt_cov": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/gbdt_5d_covariance_adopted.root::hCov_gbdt5d_adopted",
+  "pet_cov": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_5d_covariance_combined_unified_wlat.root::C_total",
+  "gbdt_unified_over_block": 1.5406070593298287,
+  "pet_unified_over_block": 5.7112995441850805,
+  "n_common": 10550,
+  "n_pet_reported": 10550,
+  "n_gbdt_reported": 10694,
+  "n_gbdt_only": 144,
+  "median_frac_pet_headline": 0.16744216357720793,
+  "median_frac_pet_vertical_nolat": 0.1660657051054761,
+  "median_frac_gbdt": 0.11852440583692675,
+  "median_ratio_pet_over_gbdt": 1.56439525471703,
+  "fraction_bins_pet_lt_gbdt": 0.22824644549763032,
+  "verdict": "VERDICT (UNIFIED throw): on the 10550 common 5D bins, median per-bin fractional uncertainty is 16.7% for PET (frozen-reweighter unified C_total, a LOWER BOUND) vs 11.9% for GBDT (re-unfolded adopted unified cov); median ratio 1.564, PET tighter in 23% of bins. The unified throw inflates the systematic over block-sum by 1.54x (GBDT) and 5.71x (PET). ASYMMETRY CAVEAT: the GBDT unified throw re-unfolds each throw (captures the retraining nonlinearity), whereas the PET unified throw uses a FROZEN reweighter, so the PET number OMITS its retraining-response term and can only rise once the Tier-2 study is folded in -- a PET<=GBDT reading here is therefore not yet conclusive.",
+  "figures": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/unified/pet_vs_gbdt_uncertainty_5d_unified_overlay.png",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/unified/pet_vs_gbdt_uncertainty_5d_unified_ratiohist.png"
+  ]
+}

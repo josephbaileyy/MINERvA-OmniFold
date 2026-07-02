@@ -1,0 +1,25 @@
+{
+  "label": "PET vs GBDT, UNIFIED-throw covariance (both engines), 5D; PET anchored to 2M-train reweight - indicative",
+  "headline_pet_cov": "C_total from pet_5d_covariance_combined_wlat.root (clean C_syst+C_stat+C_ML + PET-native shifted-W C_lateral)",
+  "covariance_method": "unified-throw adopted, identical scheme for PET and GBDT",
+  "n_grid": 65856,
+  "n_pet_reported": 10550,
+  "n_gbdt_reported": 10694,
+  "n_common": 10550,
+  "n_pet_only": 0,
+  "n_gbdt_only": 144,
+  "median_frac_pet_headline": 0.16744216357720793,
+  "median_frac_pet_vertical_nolat": 0.1660657051054761,
+  "median_frac_gbdt": 0.1369363572440202,
+  "median_ratio_pet_over_gbdt": 1.3464573511204225,
+  "fraction_bins_pet_lt_gbdt": 0.2982938388625592,
+  "pet_cov": "products/pet/pet_5d_covariance_combined_unified_wlat.root",
+  "gbdt_cov": "uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root::hCov_combined5d_total_uthrow",
+  "verdict_tag": "WORSE",
+  "verdict": "VERDICT: PET is WORSE to GBDT in per-bin uncertainty on the 10550 common 5D bins (every PET bin is a GBDT bin; GBDT reports 144 extra). Median per-bin fractional uncertainty is 16.7% for PET (headline: C_syst+C_stat+C_ML + PET-native shifted-W lateral) vs 13.7% for GBDT; the median per-bin ratio is 1.346 and PET is tighter in 30% of bins. So PET is WORSE than the scalars in per-bin precision. Cross-check (lateral): PET vertical-only (no lateral) reads 16.6%, so the conclusion is not driven by the lateral treatment. Both covariances use the unified-throw adopted, identical scheme for PET and GBDT scheme. Caveat (stats regime): the PET covariance is anchored to the 2M-train reweight (pet_weights_full.npz), which still carries the PET-vs-GBDT CV training gap, so this is INDICATIVE of the method, not a final full-stats uncertainty.",
+  "figures": [
+    "products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_overlay.png",
+    "products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_ratiomap.png",
+    "products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_ratiohist.png"
+  ]
+}

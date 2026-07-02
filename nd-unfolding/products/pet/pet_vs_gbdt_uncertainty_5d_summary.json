@@ -1,0 +1,25 @@
+{
+  "label": "subsample PET (2M-train reweight; CV gap from GBDT) -- indicative only; block-sum covariance, 5D (pt,pz,Eavail,q3,W)",
+  "headline_pet_cov": "C_total from pet_5d_covariance_combined_wlat.root (clean C_syst+C_stat+C_ML + PET-native shifted-W C_lateral)",
+  "covariance_method": "block-sum (per-band), identical scheme for PET and GBDT",
+  "n_grid": 65856,
+  "n_pet_reported": 10550,
+  "n_gbdt_reported": 10694,
+  "n_common": 10550,
+  "n_pet_only": 0,
+  "n_gbdt_only": 144,
+  "median_frac_pet_headline": 0.14805591489401596,
+  "median_frac_pet_vertical_nolat": 0.14655203650533072,
+  "median_frac_gbdt": 0.1333367352543634,
+  "median_ratio_pet_over_gbdt": 1.1920588121232343,
+  "fraction_bins_pet_lt_gbdt": 0.3841706161137441,
+  "pet_cov": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_5d_covariance_combined_wlat.root",
+  "gbdt_cov": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined.root::hCov_combined5d_total",
+  "verdict_tag": "WORSE",
+  "verdict": "VERDICT: PET is WORSE to GBDT in per-bin uncertainty on the 10550 common 5D bins (every PET bin is a GBDT bin; GBDT reports 144 extra). Median per-bin fractional uncertainty is 14.8% for PET (headline: clean block-sum C_syst+C_stat+C_ML + PET-native shifted-W lateral) vs 13.3% for GBDT; the median per-bin ratio is 1.192 and PET is tighter in 38% of bins. So PET is WORSE than the scalars in per-bin precision. Cross-check (lateral): PET vertical-only (no lateral) reads 14.7%, so the conclusion is not driven by the lateral treatment. Both covariances are BLOCK-SUM (per-band), identical scheme. Caveat (stats regime): the PET covariance is anchored to the 2M-train reweight (pet_weights_full.npz), which still carries the PET-vs-GBDT CV training gap, so this is INDICATIVE of the method, not a final full-stats uncertainty.",
+  "figures": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_5d_overlay.png",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_5d_ratiomap.png",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_5d_ratiohist.png"
+  ]
+}

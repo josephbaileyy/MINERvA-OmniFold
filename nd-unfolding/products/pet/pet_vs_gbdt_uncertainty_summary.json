@@ -1,0 +1,29 @@
+{
+  "label": "subsample PET (2M-train reweight; CV ~9% from GBDT) -- indicative only",
+  "headline_pet_cov": "corrected = rebank(C_syst+C_stat+C_ML) + PET-native C_lateral (#12-clean)",
+  "n_grid": 10976,
+  "n_pet_reported": 4796,
+  "n_gbdt_reported": 4830,
+  "n_common": 4796,
+  "n_pet_only": 0,
+  "n_gbdt_only": 34,
+  "median_frac_pet_corrected": 0.11802666820578137,
+  "median_frac_pet_published_wlat": 0.2250991432789855,
+  "median_frac_pet_rebank_nolat": 0.11658597762588313,
+  "median_frac_pet_transferred": 0.23017004423767756,
+  "median_frac_gbdt": 0.1340931661898918,
+  "median_ratio_pet_over_gbdt_corrected": 0.9495781797390958,
+  "fraction_bins_pet_lt_gbdt_corrected": 0.5358632193494579,
+  "pet_cov_rebank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_4d_covariance_combined_rebank.root",
+  "pet_cov_wlat_native_lateral": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_4d_covariance_combined_wlat.root",
+  "pet_cov_transferred": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_4d_covariance_combined.root",
+  "gbdt_cov": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root::hCov_combined4d_total",
+  "known_issues_ref": "KNOWN_ISSUES #12 (RESOLVED 2026-06-12): published 18.31% C_syst was garbage-miss-row inflated; rebank clean = 8.24%.",
+  "verdict_tag": "COMPARABLE",
+  "verdict": "VERDICT: PET is COMPARABLE to GBDT in per-bin uncertainty on the 4796 common 4D bins (every PET bin is a GBDT bin; GBDT reports 34 extra). Median per-bin fractional uncertainty is 11.8% for PET (corrected: #12-clean rebank syst+stat+ML plus the PET-native lateral block) vs 13.4% for GBDT; the median per-bin ratio is 0.950 and PET is tighter in 54% of bins. So PET essentially MATCHES the GBDT precision rather than reducing it -- the point cloud agrees with the scalars on the central value AND lands at comparable uncertainty. Caveat 1 (covariance provenance): the raw published _wlat budget reads 22.5% because its C_syst was inflated by the KNOWN_ISSUES #12 garbage-miss-row bug; we headline the corrected rebank budget per the repo's adopted guidance. The lateral block is PET-NATIVE (independence-fair); the GBDT-transferred-lateral variant gives 23.0%, so the conclusion is not an artifact of the lateral treatment. Caveat 2 (stats regime): the PET covariance is anchored to the 2M-train reweight (pet_weights_full.npz), which still carries the PET-vs-GBDT CV training gap; the full-statistics PET (cal20m, job 55047632) was PENDING at run time, so this is INDICATIVE of the method, not a final full-stats uncertainty.",
+  "figures": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_overlay.png",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_ratiomap.png",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_ratiohist.png"
+  ]
+}

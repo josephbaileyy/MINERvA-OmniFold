@@ -85,6 +85,52 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
     `nd-unfolding/fps_extension_validation.py`). Remaining: report verdicts
     when the chain drains.
 
+## Active campaign — PET capstone (kickoff 2026-06-19)
+
+11. **5D unified-throw adoption decision** — DONE 2026-07-01/02. The 5D
+    GBDT jitter-matched unified-throw study (dump 55286192, block/run
+    55286273/55286275, combine 55286276, all COMPLETED) gave a
+    jitter-corrected trace ratio **1.539** (far milder than 4D's 2.01, near
+    FPS's 1.295), with a non-uniform per-bin picture (median per-bin sigma
+    ratio 0.830, inflation concentrated in a minority of high-variance
+    bins). Adopted (same conservative per-bin max() transfer as 4D/FPS):
+    `nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`,
+    adopted median 13.69%/bin (up from block-sum 13.33-13.43%). Scripts
+    `unified_throw_cov_5d.py` / `adopt_unified_5d.py` (both untracked,
+    pending commit).
+12. **PET FPS capstone remaining steps** — Step 2 of the PET capstone
+    (raw-data FPS unfold beyond the published phase space). Cloud-fixed
+    FPS point-cloud re-dump chain (evloop 55288326, hadd 55288356, npz
+    55288408) is DONE 2026-06-29/30. **Full-stats PET FPS train (job
+    55288409, horovod, train=40,000,000, ranks=4, niter=5, epochs=8) is
+    RUNNING** (started 2026-07-01 after a ~2-day queue wait). Remaining,
+    in order: (a) train drains; (b) mandatory 3-prior envelope — MnvTune
+    and bare-GENIE priors exist from the 2D/5D pilots, the 5D NuWro leg
+    (`build_fps_prior_nuwro_5d.py`) is drafted but has not been run; (c)
+    Tier-2 retraining-response analysis at 8-10M events (the full-stats
+    29 A100-hr/train cost was previously judged too expensive to repeat
+    per-universe, so this is a convergence-curve check, not a full
+    per-universe retrain); (d) per-event-weight covariance so any
+    observable inherits the band.
+13. **Understand the PET 5D unified/block ratio (5.711)** — PET's own
+    unified-throw check (frozen 2M-train reweighter,
+    `pet_5d_covariance_combined_unified_wlat_summary.json`) gives a
+    trace-ratio inflation of **5.711x**, much larger than the GBDT-side 5D
+    ratio (1.539, item 11) or the qualitative 4D picture. Flagged, NOT
+    adopted into any published PET uncertainty. A same-day comparison using
+    this un-vetted ratio anyway
+    (`products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`,
+    PET 16.7% vs GBDT 13.7%, ratio 1.346) should be treated as exploratory
+    until this is understood — is it a frozen-reweighter artifact, a
+    genuinely larger PET nonlinearity, or a bank/binning mismatch?
+14. **Note-update items (pending)** — none of the following are yet
+    reflected in the analysis note: the full-stats PET numbers (once
+    item 12 drains); the 5D GBDT uncertainty statement (now
+    Models/2p2h-dominant rather than Flux-dominant, and the unified-throw-
+    adopted 13.69%/bin rather than the block-sum 13.43%/bin, per item 11);
+    the PET 5D verdict (WORSE vs GBDT, indicative/2M-train-anchored, per
+    item 13's caveat).
+
 ## Methodology stance (for the eventual response-to-referees)
 
 - Covariance is block-summed (C_syst+C_stat+C_ML); the unified-throw study

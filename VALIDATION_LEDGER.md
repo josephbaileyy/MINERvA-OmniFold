@@ -5,6 +5,67 @@ technote-cited active results. Criterion: recompute from existing ROOT/NPZ/text
 outputs where possible; rerun heavy production only when a check fails and the
 smallest required rerun is clear.
 
+## Delta pass 2026-07-02 (backfill of undocumented 2026-06-14 → 2026-07-01 work)
+
+Numbers below are read directly from the saved artifacts (no rerun). This
+pass backfills documentation for the PET capstone campaign, the truth-cloud
+coverage fix, the 5D GBDT systematic covariance, and the PET 5D uncertainty
+comparison — all of which had landed on disk but were never written up.
+
+- **Truth-cloud coverage fix, full-spectrum projection (2026-06-28/29,
+  commits 8cc54e9/8e79ebf/ddf4a7d)**: **PASS**.
+  `nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json`:
+  event census N=**32,849,103** (pass_truth_and_reco 20,404,292,
+  truth_only_miss 12,444,811); **has_cloud 32,848,929 / empty_cloud 174**
+  (99.9995% coverage, up from ~72.6% pre-fix). E_avail truth-cloud
+  projection vs the published unfold: frac_within **0.98784** (98.78%), RMS
+  **0.08222**. W projection: frac_within **0.19694** (19.7%), RMS
+  **3.23862** GeV — the cloud is NOT usable for a W projection (12-hadron
+  truncation is fine for E_avail, not for W). Saturated
+  (exactly-12-hadron) rows: **frac_saturated 0.023074** (2.31%,
+  757,968/32,848,929 events), median E_avail bias in saturated rows
+  **−0.035493**.
+- **5D GBDT systematic covariance campaign (completed 2026-06-29)**:
+  **PASS**. `nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_summary.txt`
+  (written 2026-06-29): reported bins **10694/65856**; total systematic
+  **sqrt-trace 4.3391e-38, median 13.298%/bin**; combined (+stat+ML)
+  **sqrt-trace 4.3460e-38, median 13.433%/bin**. Per-band-group
+  sqrt-trace sums: Models **9.013e-38**, Hadronic response 3.885e-38,
+  Muon reconstruction 2.742e-38, Normalization 4.507e-39, **Flux
+  3.875e-39**. Adding the W axis flips the dominant systematic group from
+  Flux (2D/3D/4D) to GENIE Models/2p2h — Flux is now sub-dominant by more
+  than an order of magnitude in trace. Coda: the 5D unified-throw check
+  subsequently landed and was ADOPTED 2026-07-01/02 (jitter-corrected
+  trace ratio **1.539**, far milder than 4D's 2.01); adopted covariance
+  `uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`,
+  adopted median per-bin fraction **13.69%** over the 10550 bins PET also
+  reports (per `products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`).
+- **PET 5D vs GBDT uncertainty comparison (2026-06-29/30) — INDICATIVE,
+  2M-train anchor**: **PASS (comparison recomputed from saved
+  covariances)**.
+  `nd-unfolding/products/pet/pet_vs_gbdt_uncertainty_5d_summary.json`
+  (block-sum, both engines): on the **10550** common 5D bins (GBDT reports
+  144 extra), median per-bin fractional uncertainty **14.8%** (PET
+  headline: clean block-sum C_syst+C_stat+C_ML + PET-native shifted-W
+  lateral) vs **13.3%** (GBDT); median ratio **1.1921**; PET tighter in
+  only **38.4%** of bins; vertical-only (no lateral) PET reads **14.7%**
+  (not lateral-driven). **VERDICT: WORSE** — contrast the 4D verdict,
+  COMPARABLE (11.8% vs 13.4%, ratio 0.9496, PET tighter in 53.6% of 4796
+  bins; `pet_vs_gbdt_uncertainty_summary.json`). Both PET covariance is
+  anchored to the 2M-train reweight (`pet_weights_full.npz`), which still
+  carries the PET-vs-GBDT CV training gap, so this comparison is
+  indicative of the method, not a final full-stats uncertainty.
+  **FLAGGED, NOT ADOPTED**:
+  `products/pet/pet_5d_covariance_combined_unified_wlat_summary.json`
+  reports PET's own unified-throw study (160 throws, frozen reweighter)
+  gives sqrt-tr unified **1.5933e-37** vs sqrt-tr block **2.7897e-38** —
+  **unified/block ratio 5.711** (median per-bin sigma ratio 1.216), far
+  larger than the GBDT-side 5D ratio (1.539) or the qualitative 4D
+  precedent. This is a frozen-reweighter lower bound (omits the
+  retraining-response nonlinearity) and is explicitly not adopted into any
+  published PET 5D uncertainty pending investigation of why it is so much
+  larger than the GBDT-side check.
+
 ## Delta pass 2026-06-09 (post-06-06 results, for the analysis note)
 
 All results that landed after the 2026-06-06 pass, recomputed from saved

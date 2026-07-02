@@ -1,0 +1,10 @@
+{
+  "n_reported": 10550,
+  "throws": 160,
+  "pet_sqrt_tr_unified": 1.5932868780937e-37,
+  "pet_sqrt_tr_block": 2.789709882606129e-38,
+  "pet_unified_block_ratio": 5.7112995441850805,
+  "pet_unified_block_median_sigma_ratio": 1.2159921599260155,
+  "limitation": "frozen reweighter: PET unified/block omits the retraining-response nonlinearity (lower bound); GBDT factor in uq_5d/unified_throw_cov_5d.root is the re-unfolded one.",
+  "out_root": "products/pet/pet_5d_covariance_combined_unified_wlat.root"
+}
