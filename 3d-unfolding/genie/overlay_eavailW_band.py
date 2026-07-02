@@ -42,6 +42,21 @@ def gen_color(label):
     return ROOT.kBlack
 
 
+def gen_marker(label):
+    """Per-generator ROOT marker style, matching technote_style.GEN_MARKERS
+    shapes (o/s/^/D) so overlaid generators stay distinguishable in grayscale."""
+    h = label.lower()
+    if "nuwro" in h:
+        return 22   # triangle-up (^)
+    if "gibuu" in h:
+        return 33   # diamond (D)
+    if "mec" in h or "tune" in h:
+        return 21   # square (s)
+    if "genie" in h:
+        return 20   # circle (o)
+    return 20
+
+
 def th2_to_np(h):
     nx, ny = h.GetNbinsX(), h.GetNbinsY()
     a = np.zeros((nx, ny))
@@ -136,8 +151,10 @@ def main():
     for k, l in enumerate(gens):
         ge = (gens[l] * dw).sum(axis=1)
         h = mk_th1(EAVAIL_EDGES, ge, f"hEa_{l}", l, 3.5)
-        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
-        leg1.AddEntry(h, l, "l"); h.Write(); keep.append(h)
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2)
+        h.SetMarkerStyle(gen_marker(l)); h.SetMarkerColor(gen_color(l)); h.SetMarkerSize(1.0)
+        h.Draw("HIST P SAME")
+        leg1.AddEntry(h, l, "lp"); h.Write(); keep.append(h)
     leg1.Draw()
 
     # panel 2: dsigma/dW (the decisive one)
@@ -154,10 +171,16 @@ def main():
     for k, l in enumerate(gens):
         gw = (gens[l] * dea).sum(axis=0)
         h = mk_th1(W_EDGES, gw, f"hW_{l}", l, 3.2)
-        h.SetLineColor(gen_color(l)); h.SetLineWidth(2); h.Draw("HIST SAME")
-        leg2.AddEntry(h, l, "l"); h.Write(); keep.append(h)
+        h.SetLineColor(gen_color(l)); h.SetLineWidth(2)
+        h.SetMarkerStyle(gen_marker(l)); h.SetMarkerColor(gen_color(l)); h.SetMarkerSize(1.0)
+        h.Draw("HIST P SAME")
+        leg2.AddEntry(h, l, "lp"); h.Write(); keep.append(h)
     leg2.Draw()
     c.SaveAs(args.png)
+    if args.png.endswith(".png"):
+        # vector twin for the note (matplotlib figures get theirs from the
+        # technote_style savefig wrapper; this script is pure PyROOT)
+        c.SaveAs(args.png[:-4] + ".pdf")
     c.Write()
     fo.Close()
     print(f"\n[band] wrote {args.png} and {args.out}")

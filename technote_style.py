@@ -15,7 +15,14 @@ every figure that feeds ``docs/technote/`` is visually consistent:
 
 3. **A fixed generator palette.** ``GEN_COLORS`` pins one colour per generator
    so GENIE/Tune/NuWro/GiBUU are the same colour in every figure; the default
-   line colour cycle follows the same palette.
+   line colour cycle follows the same palette. ``GEN_MARKERS`` pairs each
+   generator with a fixed marker shape so overlaid series stay distinguishable
+   in grayscale, not just by colour.
+
+4. **Vector twins.** Any ``Figure.savefig``/``pyplot.savefig`` call whose
+   output path ends in ``.png`` also writes a sibling ``.pdf`` (same figure,
+   PDF backend) next to it, so every raster figure has a vector twin for the
+   note without scripts having to save twice.
 
 Scripts reach this module with a depth-agnostic bootstrap::
 
@@ -51,6 +58,26 @@ GEN_COLORS = {
 # palette order used for index-based generator loops (GENIE, Tune/MEC, NuWro, GiBUU)
 GEN_PALETTE = ["#C44E52", "#4C72B0", "#2ca02c", "#9467bd"]
 
+# fixed per-generator markers (same generator = same shape everywhere, so
+# overlaid series stay distinguishable in grayscale, not just by colour)
+GEN_MARKERS = {
+    "GENIE":  "o",
+    "Tune":   "s",  # GENIE + MINERvA Tune v1 / MnvTune-v1
+    "MEC":    "s",  # alias: Tune v1 enables Valencia 2p2h
+    "NuWro":  "^",
+    "GiBUU":  "D",
+    "data":   "o",  # data points keep their existing marker convention
+}
+
+
+def gen_marker(label, default="o"):
+    """Marker for a generator given a free-form label (case/substring tolerant)."""
+    key = str(label).lower()
+    for name, mk in GEN_MARKERS.items():
+        if name.lower() in key:
+            return mk
+    return default
+
 # default line-cycle: the four generator colours first (so a script that colours
 # generators by cycle order stays consistent) then six further distinct hues, so
 # plots with more than four cycled series (e.g. per-category uncertainty bands)
@@ -77,6 +104,37 @@ Axes.set_title = _noop
 Figure.suptitle = _noop
 plt.title = _noop
 plt.suptitle = _noop
+
+# --- vector twins: every .png savefig also writes a sibling .pdf ---------
+def _make_savefig_with_pdf_twin(orig_savefig):
+    if getattr(orig_savefig, "_technote_pdf_twin", False):
+        return orig_savefig
+
+    def savefig(self, fname, *args, **kwargs):
+        result = orig_savefig(self, fname, *args, **kwargs)
+        if isinstance(fname, (str, bytes)) or hasattr(fname, "__fspath__"):
+            fname_str = str(fname)
+            if fname_str.lower().endswith(".png"):
+                pdf_name = fname_str[: -len(".png")] + ".pdf"
+                pdf_kwargs = dict(kwargs)
+                pdf_kwargs.pop("format", None)
+                orig_savefig(self, pdf_name, *args, **pdf_kwargs)
+        return result
+
+    savefig._technote_pdf_twin = True
+    return savefig
+
+
+Figure.savefig = _make_savefig_with_pdf_twin(Figure.savefig)
+if not getattr(plt.savefig, "_technote_pdf_twin", False):
+    _orig_pyplot_savefig = plt.savefig
+
+    def _pyplot_savefig(fname, *args, **kwargs):
+        fig = plt.gcf()
+        return fig.savefig(fname, *args, **kwargs)
+
+    _pyplot_savefig._technote_pdf_twin = True
+    plt.savefig = _pyplot_savefig
 
 
 def panel_label(ax, text, loc="upper left", color="black"):

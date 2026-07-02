@@ -135,13 +135,32 @@ $\sim0.6$ (median) on every axis, i.e.\ bin-to-bin migrations are
 substantial and a bin-by-bin correction would be badly biased --- the
 regime requiring unfolding.
 
+The structure differs qualitatively between the muon and hadron sides.
+The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly
+tridiagonal --- migrations rarely exceed one bin, and the purity dips
+(to ${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$) occur
+where the binning is finest, recovering in the wide edge bins. The
+calorimetric axes are coarser-binned but relatively broader and visibly
+asymmetric: $\Eavail$ feeds preferentially \emph{downward} (energy carried
+by neutrons and other unresponsive particles is not collected), with the
+diagonal purity falling from $0.61$ in the lowest bins to $0.43$ in the
+highest; $q_{3}$, built from $\Eavail$ and the muon, inherits a milder
+version of the same pattern; and $W$, which compounds the $\Eavail$ and
+muon smearing, is the broadest, with two-bin migrations common in the
+resonance region while the lowest-$W$ (quasi-elastic) bin stays the purest
+at $0.71$.
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{migration_resolution.png}
+  \includegraphics[width=0.99\textwidth]{migration_resolution}
   \caption{Truth$\to$reco migration of the simulated signal on the analysis
   binning (top: column-normalised maps; bottom: diagonal purity per truth
   bin) for the five observables. Median diagonal purity is
   $0.58$--$0.61$ per axis. Shown for illustration only --- the unfold itself
-  is unbinned. \bpn{These are very important!  Can we make them bigger and describe their structure in more detail?}}
+  is unbinned. \bpn{These are very important!  Can we make them bigger and describe their structure in more detail?}
+  \jrb{Done: the figure is regenerated with larger panels and fonts (and in
+  vector form), and the structure --- near-tridiagonal muon axes versus
+  broader, feed-down-asymmetric calorimetric axes --- is now described in
+  the text above.}}
   \label{fig:migration}
 \end{figure}

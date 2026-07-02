@@ -108,7 +108,7 @@ def main():
     ax.set_xlim(PZ_EDGES[0], PZ_EDGES[-1])
     ax.set_ylim(PT_EDGES[0], PT_EDGES[-1])
     ax.set_xlabel(r"True p$_{||}$ (GeV/c)", fontsize=13)
-    ax.set_ylabel(r"True p$_t$ (GeV/c)", fontsize=13)
+    ax.set_ylabel(r"True p$_T$ (GeV/c)", fontsize=13)
     ax.tick_params(axis="both", which="major", direction="in",
                    length=6, width=1.0, labelsize=11)
     ax.tick_params(axis="both", which="minor", direction="in",

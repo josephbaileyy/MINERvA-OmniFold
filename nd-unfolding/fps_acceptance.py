@@ -112,8 +112,8 @@ def main():
         A.axvline(ipt45, color="cyan", lw=1.2)
         A.axhline(ipz15, color="cyan", lw=1.2)
         A.axhline(ipz60, color="cyan", lw=1.2)
-        A.set_xlabel("pT bin (extended)")
-        A.set_ylabel("p|| bin (extended)")
+        A.set_xlabel("p_T bin (extended)")
+        A.set_ylabel("p_|| bin (extended)")
         fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label

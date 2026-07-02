@@ -104,12 +104,37 @@ normalisation deficit quantified at truth level in
 describes the \emph{shapes} well, which is what the unfolding relies on; the
 rate offset is what the data pull corrects.
 
+The shapes themselves are set by the beam and the acceptance. The $\pPar$
+spectrum peaks at $4$--$6$~GeV/$c$ --- the image of the
+${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy peak --- and
+the spectrometer-match requirement removes the lowest-$\pPar$ muons; $\pT$
+peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude across
+the measured range. On the hadronic side the sample is dominated by
+low-recoil (quasi-elastic and $2p2h$) events: $\Eavail$ is concentrated
+below ${\sim}\SI{0.5}{GeV}$ with a long inelastic tail collected by the
+wide upper bins, $q_{3}$ tracks the momentum transfer of the same
+population, and reconstructed $W$ rises through the smeared quasi-elastic
+and $\Delta(1232)$ region before the deep-inelastic continuum takes over
+above ${\sim}\SI{2}{GeV}$. The absolute background is at the few-percent
+level under the muon projections and is concentrated at high recoil
+(highest $\Eavail$, $q_{3}$ and $W$ bins). Beyond the $\pT$ trend noted
+above, the ratio panels also show a mild enhancement in the lowest
+$\Eavail$ bins --- the reco-level trace of the low-recoil excess examined
+at truth level in \S\ref{sec:results-model}.
+
 \bpn{Fig. 1 is very important for the reader to understand the data - maybe we should (a) make the plots bigger and eg 2-3 rows, (b) additionally add some corner plot(s) to show correlations?  Would also (c) be good to add a little commentary on the physics of these shapes?}
+\jrb{(a) done --- the figure is regenerated with larger panels and fonts;
+(c) done --- physics commentary added above; (b) a reco-level
+pairwise-correlation corner plot is added as
+Fig.~\ref{fig:control-corner}.}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{control_plots.png}
-  \caption{\bpn{Can you please make all figures vectorized, e.g. PDF?} Reco-level control distributions for the analysis selection: data
+  \includegraphics[width=0.99\textwidth]{control_plots}
+  \caption{\bpn{Can you please make all figures vectorized, e.g. PDF?}
+  \jrb{Done: every figure is now generated with a vector (PDF) twin ---
+  \texttt{make\_figures.sh} writes both formats and the note automatically
+  prefers the PDF.} Reco-level control distributions for the analysis selection: data
   (points) versus POT-scaled simulated signal (blue) plus background
   (orange), with the data/MC ratio below, for $\pT$, $\pPar$, $\Eavail$,
   $q_{3}$ and $W$ (wide catch bins not drawn). The uniform
@@ -117,5 +142,22 @@ rate offset is what the data pull corrects.
   counterpart of the truth-level generator deficits of
   \S\ref{sec:3d-models}.}
   \label{fig:control}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{control_corner}
+  \caption{Reco-level corner plot of the five observables: pairwise
+  POT-scaled MC (signal$+$background) densities (lower triangle,
+  logarithmic colour scale; wide catch bins dropped) with the weighted
+  Pearson correlation of the simulation and the corresponding data value
+  annotated per panel, and the 1D marginals (data points over MC) on the
+  diagonal. The strongest correlations are kinematic by construction:
+  $q_{3}$ with $\Eavail$ ($r\approx0.81$) and $W$ with $\Eavail$
+  ($r\approx0.73$), which share the recoil energy, and $q_{3}$ with $\pT$
+  ($r\approx0.59$), which shares the muon transverse kick; $\Eavail$ and
+  $W$ are nearly uncorrelated with the muon variables. The data reproduce
+  every simulated coefficient to within $0.02$.}
+  \label{fig:control-corner}
 \end{figure}
 

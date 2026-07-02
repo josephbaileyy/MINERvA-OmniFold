@@ -199,7 +199,7 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
     factor = 1.0e39 * scale
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
-    ax.plot(sx, sy, color="red", lw=1.6, label="MC truth")
+    ax.plot(sx, sy, color="red", lw=1.6, label="MnvTune-v1 truth (MC)")
 
     ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
                 xerr=half_widths, fmt="s", ms=2.5, color="black",
@@ -245,7 +245,7 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
         mask = reported[ipt, :]
         vals_for_scale = np.r_[paper[ipt, mask], omni[ipt, :], truth[ipt, :]]
         scale = rounded_scale(vals_for_scale, target=3.4)
-        title = f"{PT_EDGES[ipt]:.2f} < p_t < {PT_EDGES[ipt + 1]:.2f}"
+        title = f"{PT_EDGES[ipt]:.2f} < p_T < {PT_EDGES[ipt + 1]:.2f}"
         draw_panel(ax, PZ_DISP_EDGES, paper[ipt, :], paper_err[ipt, :],
                    omni[ipt, :], omni_err[ipt, :], truth[ipt, :],
                    title, scale)
@@ -323,10 +323,10 @@ def main():
     fig.text(0.5, 0.035, "Muon Transverse Momentum (GeV/c)",
              ha="center", va="center", fontsize=15)
     fig.text(0.027, 0.755,
-             r"$d^2\sigma/dp_t\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
+             r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
              rotation=90, ha="center", va="center", fontsize=14)
     fig.text(0.027, 0.285,
-             r"$d^2\sigma/dp_t\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
+             r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
              rotation=90, ha="center", va="center", fontsize=14)
 
     fig.savefig(args.out, dpi=180)

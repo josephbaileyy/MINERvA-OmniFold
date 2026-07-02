@@ -287,9 +287,13 @@ def main():
                     capsize=2, zorder=5,
                     label="unfolded $\\pm$ stat" if band_stat else "unfolded (this work)")
         for i, (lab, g) in enumerate(gens):
+            col = colors[i % len(colors)]
             ax.stairs(g[key][2][sl],
                       np.append(edges_a[sl.start:sl.stop], edges_a[sl.stop]),
-                      color=colors[i % len(colors)], lw=2, label=lab)
+                      color=col, lw=2)
+            ax.plot(cen[sl], g[key][2][sl],
+                    marker=technote_style.gen_marker(lab), linestyle="None",
+                    ms=5, color=col, label=lab, zorder=6)
         ax.set_xlabel(xlab); ax.set_ylabel(ylab + r" (cm$^2$/.../nucleon)")
         ax.grid(alpha=0.3)
         if key == "eavail":

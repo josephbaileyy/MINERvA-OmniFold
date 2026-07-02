@@ -190,7 +190,8 @@ def main():
         r = d - m
         y = [truncated_chi2(r, evals, evecs, t)[0] / max(truncated_chi2(r, evals, evecs, t)[1], 1)
              for t in fine]
-        axs[1].semilogx(fine, y, color=colors[i % len(colors)], label=lab)
+        axs[1].semilogx(fine, y, color=colors[i % len(colors)], label=lab,
+                        marker=technote_style.gen_marker(lab), markevery=5, ms=5)
     axs[1].axvline(args.tol, color="r", ls="--", lw=1)
     axs[1].set_xlabel("truncation tol"); axs[1].set_ylabel(r"$\chi^2/$ndf")
     axs[1].set_title("Goodness-of-fit vs truncation")

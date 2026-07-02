@@ -107,7 +107,7 @@ def plot_panel_grid(xsec_slices, truth_slices, nrows, ncols, xlabel, ylabel,
         # Truth / MC prediction as step histogram
         edges = [h_truth.GetXaxis().GetBinLowEdge(i) for i in range(1, nbins + 2)]
         ax.stairs(truth_vals, edges, color='red', linewidth=1.0,
-                  label="MC truth", zorder=2)
+                  label="MnvTune-v1 truth (MC)", zorder=2)
 
         ax.set_title(label, fontsize=8, pad=3)
         ax.tick_params(labelsize=7)
@@ -153,7 +153,7 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
     ax_top.errorbar(centers, vals, yerr=errs, xerr=widths,
                      fmt='ko', markersize=4, linewidth=1, capsize=2,
                      label="OmniFold")
-    ax_top.stairs(truth, edges, color='red', linewidth=1.2, label="MC truth")
+    ax_top.stairs(truth, edges, color='red', linewidth=1.2, label="MnvTune-v1 truth (MC)")
     ax_top.set_ylabel(ylabel, fontsize=10)
     ax_top.legend(fontsize=9)
     ax_top.set_title(title, fontsize=11)

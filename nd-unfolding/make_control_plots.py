@@ -89,8 +89,8 @@ def main():
     import matplotlib.pyplot as plt
 
     # ---------------- control plots ----------------
-    fig, axs = plt.subplots(2, 5, figsize=(22, 7), sharex="col",
-                            gridspec_kw=dict(height_ratios=[3, 1], hspace=0.05))
+    fig, axs = plt.subplots(2, 5, figsize=(32, 12), sharex="col",
+                            gridspec_kw=dict(height_ratios=[3, 1], hspace=0.06))
     summary = {}
     for i, ax in enumerate(AXES):
         e = edges_for(ax)
@@ -110,24 +110,26 @@ def main():
               bottom=(bkg * pot_scale)[:nshow], color="tab:blue", alpha=0.55,
               label="MC signal (MnvTune v1)")
         A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow], fmt="ko",
-                   ms=3.5, label="Data")
+                   ms=6, label="Data")
         A.set_yscale("log")
-        A.set_title(LABELS[ax])
+        A.set_title(LABELS[ax], fontsize=17)
+        A.tick_params(axis="both", which="major", labelsize=14)
         if i == 0:
-            A.set_ylabel("events (POT-scaled)")
-            A.legend(fontsize=8)
+            A.set_ylabel("events (POT-scaled)", fontsize=16)
+            A.legend(fontsize=14)
         R = axs[1, i]
         with np.errstate(divide="ignore", invalid="ignore"):
             r = np.where(mc > 0, dat / mc, np.nan)
             re = np.where(mc > 0, derr / mc, np.nan)
-        R.errorbar(ctr[:nshow], r[:nshow], yerr=re[:nshow], fmt="ko", ms=3.5)
+        R.errorbar(ctr[:nshow], r[:nshow], yerr=re[:nshow], fmt="ko", ms=6)
         R.axhline(1.0, color="gray", lw=0.8)
         R.set_ylim(0.75, 1.25)
-        R.set_xlabel(LABELS[ax])
+        R.set_xlabel(LABELS[ax], fontsize=16)
+        R.tick_params(axis="both", which="major", labelsize=14)
         if i == 0:
-            R.set_ylabel("data / MC")
+            R.set_ylabel("data / MC", fontsize=16)
     fig.suptitle("Reco-level control distributions, ME FHC (selection of the analysis; "
-                 "wide catch bins not drawn)", y=0.98)
+                 "wide catch bins not drawn)", y=0.98, fontsize=18)
     out1 = os.path.join(args.outdir, "control_plots.png")
     fig.savefig(out1, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -137,7 +139,7 @@ def main():
     print(f"[ctrl] wrote {out1}")
 
     # ---------------- migration + resolution ----------------
-    fig, axs = plt.subplots(2, 5, figsize=(22, 8))
+    fig, axs = plt.subplots(2, 5, figsize=(32, 14))
     for i, ax in enumerate(AXES):
         e = edges_for(ax)
         n = len(e) - 1
@@ -152,23 +154,26 @@ def main():
                       vmin=0, vmax=1, aspect="auto",
                       extent=(0, nshow, 0, nshow))
         A.plot([0, nshow], [0, nshow], "w--", lw=0.7)
-        A.set_title(LABELS[ax])
-        A.set_xlabel("truth bin")
+        A.set_title(LABELS[ax], fontsize=17)
+        A.set_xlabel("truth bin", fontsize=16)
+        A.tick_params(axis="both", which="major", labelsize=14)
         if i == 0:
-            A.set_ylabel("reco bin")
+            A.set_ylabel("reco bin", fontsize=16)
         diag = np.diag(Mn)[:nshow]
         A.text(0.04, 0.92, f"diag median {np.median(diag):.2f}",
-               color="w", fontsize=8, transform=A.transAxes)
-        fig.colorbar(im, ax=A, fraction=0.046)
+               color="w", fontsize=13, transform=A.transAxes)
+        cb = fig.colorbar(im, ax=A, fraction=0.046)
+        cb.ax.tick_params(labelsize=12)
         axs[1, i].bar(np.arange(nshow) + 0.5, diag, width=0.9, color="tab:blue")
         axs[1, i].set_ylim(0, 1)
-        axs[1, i].set_xlabel(f"{LABELS[ax]} truth bin")
+        axs[1, i].set_xlabel(f"{LABELS[ax]} truth bin", fontsize=16)
+        axs[1, i].tick_params(axis="both", which="major", labelsize=14)
         if i == 0:
-            axs[1, i].set_ylabel("P(reco bin = truth bin)")
+            axs[1, i].set_ylabel("P(reco bin = truth bin)", fontsize=16)
         print(f"[mig] {ax:7s} diagonal P median={np.median(diag):.3f} "
               f"min={diag.min():.3f} max={diag.max():.3f}")
     fig.suptitle("Truth$\\to$reco migration (column-normalised; analysis binning) "
-                 "and diagonal purity per truth bin", y=0.99)
+                 "and diagonal purity per truth bin", y=0.99, fontsize=18)
     out2 = os.path.join(args.outdir, "migration_resolution.png")
     fig.savefig(out2, dpi=140, bbox_inches="tight")
     plt.close(fig)
