@@ -1219,14 +1219,18 @@ def main():
 
     # Signal fakes: MC signal-truth events with reco inside the binning but
     # truth outside the measurement phase space. These are present in measured
-    # data at reco level, and the upstream mc_background TTree does NOT contain
-    # them (runEventLoopOmniFold.cpp:234 drops signal-truth from mc_background).
-    # Meanwhile omnifold.py:98-101 drops ~pass_truth events from the MC arrays
-    # before step-1 training. Without this extra subtraction, measured would
-    # contain fakes while MC reco would not, inducing a reco-level mismatch that
-    # the step-1 classifier absorbs as a spurious reweight. Treat fakes as
-    # background (paper convention) by adding their POT-scaled reco weights
-    # into hBkgReco2D before the data-bkg subtraction.
+    # data at reco level. Vintage note (2026-07-03 audit): since Phase 18
+    # (d1bc881, 2026-05-18) the C++ puts out-of-PS signal directly into the
+    # mc_background tree AND gates mc_signal_reco on truth-in-PS, so on every
+    # post-Phase-18 omnifile is_fake below selects nothing (n_fakes = 0) and
+    # this block is a structural no-op — the tree already carries the fakes
+    # and they are subtracted exactly once. The block is kept for pre-Phase-18
+    # omnifiles, whose mc_background lacked fakes: there, without this extra
+    # subtraction, measured would contain fakes while MC reco would not,
+    # inducing a reco-level mismatch that the step-1 classifier absorbs as a
+    # spurious reweight. Fakes are background by paper convention; their
+    # POT-scaled reco weights go into hBkgReco2D before the data-bkg
+    # subtraction. See nd-unfolding/ND_OMNIFOLD_RUN_LOG.md (2026-07-03).
     is_fake = sig["pass_reco"] & (~sig["pass_truth"])
     n_fakes = int(is_fake.sum())
     if n_fakes:

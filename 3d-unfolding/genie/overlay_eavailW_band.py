@@ -176,6 +176,13 @@ def main():
         h.Draw("HIST P SAME")
         leg2.AddEntry(h, l, "lp"); h.Write(); keep.append(h)
     leg2.Draw()
+    # uniform MINERvA sample/POT tag (matplotlib figures get it from
+    # technote_style.minerva_tag; this is the pure-PyROOT equivalent)
+    c.cd(0)
+    tag = ROOT.TLatex(); tag.SetNDC(True); tag.SetTextSize(0.026)
+    tag.SetTextColor(ROOT.kGray + 2)
+    tag.DrawLatex(0.10, 0.955, "MINERvA ME FHC, 1.06#times10^{21} POT")
+    keep.append(tag)
     c.SaveAs(args.png)
     if args.png.endswith(".png"):
         # vector twin for the note (matplotlib figures get theirs from the

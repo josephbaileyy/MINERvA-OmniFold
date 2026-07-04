@@ -122,6 +122,7 @@ ax[2].set_xticks(range(len(r_ea)))
 ax[2].set_xticklabels([f"{ea_e[i]:.1f}" for i in range(len(ea_e) - 1)], fontsize=7)
 ax[2].set_xlabel("E_avail [GeV] (low edge)"); ax[2].set_ylabel("data/GENIE")
 ax[2].set_title("E_avail marginal (cf. 3D excess)")
+technote_style.minerva_tag(ax[0])
 fig.tight_layout()
 out = f"{_REPO}/nd-unfolding/q3_excess_projection.png"
 fig.savefig(out, dpi=130)

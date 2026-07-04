@@ -199,16 +199,16 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
     factor = 1.0e39 * scale
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
-    ax.plot(sx, sy, color="red", lw=1.6, label="MnvTune-v1 truth (MC)")
+    ax.plot(sx, sy, color="red", lw=1.6, label="GENIE 2.12.6 + MnvTune v1")
 
     ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
                 xerr=half_widths, fmt="s", ms=2.5, color="black",
                 ecolor="black", elinewidth=0.8, capsize=1.5,
-                label="Paper data", zorder=3)
+                label="Published (PRD 104, 092007)", zorder=3)
     ax.errorbar(centers, omni_y * factor, yerr=omni_err * factor,
                 xerr=half_widths, fmt="o", ms=2.2, color="#1f77b4",
                 ecolor="#1f77b4", elinewidth=0.8, capsize=1.3,
-                label="OmniFold", zorder=4)
+                label="This work (OmniFold)", zorder=4)
 
     ax.text(0.50, 0.96, title, transform=ax.transAxes,
             ha="center", va="top", fontsize=9)
@@ -329,6 +329,7 @@ def main():
              r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
              rotation=90, ha="center", va="center", fontsize=14)
 
+    technote_style.minerva_tag(fig)
     fig.savefig(args.out, dpi=180)
     print(f"[OK] wrote {args.out}")
 

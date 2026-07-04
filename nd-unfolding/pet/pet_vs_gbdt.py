@@ -129,6 +129,7 @@ def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
         f.Close()
         print(f"[absolute] GBDT total sigma = {tot_gbdt:.4g}; PET/GBDT = {tot/tot_gbdt:.4f}")
         fig.suptitle("PET (point cloud) vs GBDT (scalars): ABSOLUTE 4D cross section")
+        technote_style.minerva_tag(fig)
         fig.tight_layout(); fig.savefig(args.out, dpi=130)
         print(f"[OK] wrote {args.out}")
 
@@ -202,6 +203,7 @@ def main():
         axp.set_title(f"{nm}: PET vs GBDT (shape)")
     f.Close()
     fig.suptitle("Phase-3: does the point cloud change the unfolded shape vs scalars?")
+    technote_style.minerva_tag(fig)
     fig.tight_layout(); fig.savefig(args.out, dpi=130)
     print(f"[OK] wrote {args.out}")
     print("  small %/bin across axes => the point cloud reproduces the scalar GBDT result")

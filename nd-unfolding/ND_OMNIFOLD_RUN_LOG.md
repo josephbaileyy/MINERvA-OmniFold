@@ -1330,3 +1330,72 @@ unified-throw-adopted covariances: PET (using its own flagged-not-vetted
 now-adopted **13.7%**, ratio **1.346**, PET tighter in only 30% of bins —
 still WORSE, and this comparison carries the same caveat as the PET-side
 5.711 ratio above until that number is understood.
+
+## 2026-07-03 — Background subtraction is frozen at CV across all systematic universes (KNOWN_ISSUES #13)
+
+Audit triggered by an advisor comment on the analysis note's 0.35%-vs-0.2%
+background sentence (`sec_experiment.tex`). Findings (code-verified):
+
+- **Mechanism**: background is never injected as negative-weight events; the
+  OmniFold step-1 measured target is real data down-weighted by a per-reco-bin
+  purity factor `max(0, data - bkg)/data`
+  (`unfold_nd_omnifold_unbinned.py` `build_measured_training_nd`, ~:400-421;
+  2D analog `build_measured_training_2d`).
+- **CV-only genuine background**: `collect_bkg_nd` (~:374-397) and the 2D
+  `fill_bkg_reco_2d` take **no universe argument** — they read the CV `w_bkg`
+  with `pot_scale` only. Signal and truth-denominator collectors DO take
+  `universe_branch`; the background collector does not.
+- **Banked sweeps freeze the whole target**: `sweep_bank.py` (~:150-160)
+  builds `measured_weights` once in group 0 and every per-universe `do_run`
+  (~:191,208) reloads it from `cv.npz`; `sweep_bank_5d.py` identical. So the
+  4D/5D covariances contain **no background-modeling variation**.
+- **Partial exception (2D only)**: the 2D per-universe driver adds signal
+  *fakes* (`pass_reco & ~pass_truth`) from the universe-weighted signal
+  arrays (`unfold_2d_omnifold_unbinned.py` ~:1230-1242), so the fakes term
+  tracks universes in 2D; the ND/banked path does not.
+- **Impact bound**: genuine background is 0.35% of the selected sample
+  (playlist-1A post-MINOS-fix, `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:213`:
+  1,256 POT-scaled bkg / ~3.59e5 data). Even a 100% background error moves
+  the sample normalisation by ~0.35%, far below the ~10%+ total budgets;
+  locally larger where backgrounds concentrate (low p||/pT — the published
+  paper reaches ~10% in its lowest bins).
+- **Cross-check vs published**: Ruterbories (2106.16210, p.5) predicts
+  **8655 (0.2%)** background events under a *narrower* definition (wrong
+  flavour + wrong sign + NC only; ours additionally counts
+  out-of-fiducial-vertex events). Note text reworded accordingly
+  (no more unqualified "consistent with").
+
+Possible closure/fix paths (not yet done): (a) recompute our background under
+the paper's definition to recover ~0.2% (needs a channel split of the
+`mc_background` tree — check available truth branches); (b) wire
+`universe_branch` through `collect_bkg_nd` and re-bank to add a background
+block to the covariance (expected negligible at the 0.35% scale).
+
+### 2026-07-03 follow-up — mc_background definition drift audited: NO double-count; 0.35% is playlist-1A genuine-only
+
+Phase 18 (`d1bc881`, 2026-05-18) changed the C++ background fill from
+`if(isSignal) continue;` to `if(isSignal && inPS_bkg) continue;`, so every
+post-Phase-18 omnifile's `mc_background` INCLUDES out-of-PS signal fakes.
+Audit results (uproot on `runEventLoopOmniFold_MEFHC.root` + run-log grep):
+
+- **No fakes double-count, published 2D unaffected**: post-Phase-18
+  `mc_signal_reco` is truth-in-PS gated (all 32,849,103 rows pass_truth), so
+  the 2D driver's separate fakes-add finds n_fakes = 0 — a structural no-op.
+  Fakes are subtracted exactly once (via the tree). The only nonzero
+  fakes-add ever logged is a pre-Phase-18 1D baseline (n=6, 2026-03-26).
+  The driver's justifying comment was stale → rewritten 2026-07-03
+  (`unfold_2d_omnifold_unbinned.py` fakes block).
+- **Rates by vintage**: post-P18 MEFHC `mc_background` = 125,725 POT-scaled
+  = 3.05% of data (658,227 raw rows); within the 2D grid 119,132 (= the
+  iter_test.log "incl. fakes" integral; TH2D::Integral drops the 5.24%
+  out-of-grid overflow). Decomposition ≈ 0.35% genuine + ~2.7% fakes.
+- **Genuine-only cannot be recomputed**: no pre-Phase-18 omnifile survives
+  (the `*_minos_fix`/`*_phase18` files were deleted/renamed), and the tree
+  carries no truth label to split genuine from fakes. Best genuine estimate
+  remains the archived playlist-1A 0.35% (1,256 events,
+  `2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:213`). The analysis-note sentence now
+  scopes 0.35% to playlist 1A accordingly.
+- **Closure vs Ruterbories 8655 (0.2%)**: blocked on truth channel labels
+  (nu PDG / current / vertex) absent from all dumps — add a channel-label
+  branch to `mc_background` in the C++ and it rides along with the next
+  gated 12-playlist re-run.

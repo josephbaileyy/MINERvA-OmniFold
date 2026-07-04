@@ -130,6 +130,7 @@ def main():
             R.set_ylabel("data / MC", fontsize=16)
     fig.suptitle("Reco-level control distributions, ME FHC (selection of the analysis; "
                  "wide catch bins not drawn)", y=0.98, fontsize=18)
+    technote_style.minerva_tag(axs[0, 0])
     out1 = os.path.join(args.outdir, "control_plots.png")
     fig.savefig(out1, dpi=140, bbox_inches="tight")
     plt.close(fig)

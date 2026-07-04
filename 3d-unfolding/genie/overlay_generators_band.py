@@ -300,6 +300,7 @@ def main():
             ax.legend(fontsize=8)
     fig.suptitle("Unfolded 3D result ($\\pm$ total syst$\\oplus$stat) vs generators "
                  "(Eavail catch bin omitted)")
+    technote_style.minerva_tag(axs[0])
     fig.tight_layout()
     out = f"{args.out}.png"
     fig.savefig(out, dpi=140)

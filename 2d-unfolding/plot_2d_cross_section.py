@@ -102,12 +102,12 @@ def plot_panel_grid(xsec_slices, truth_slices, nrows, ncols, xlabel, ylabel,
 
         ax.errorbar(centers, vals, yerr=errs, xerr=widths,
                      fmt='ko', markersize=2, linewidth=0.8, capsize=1.5,
-                     label="OmniFold", zorder=3)
+                     label="This work (OmniFold)", zorder=3)
 
         # Truth / MC prediction as step histogram
         edges = [h_truth.GetXaxis().GetBinLowEdge(i) for i in range(1, nbins + 2)]
         ax.stairs(truth_vals, edges, color='red', linewidth=1.0,
-                  label="MnvTune-v1 truth (MC)", zorder=2)
+                  label="GENIE 2.12.6 + MnvTune v1", zorder=2)
 
         ax.set_title(label, fontsize=8, pad=3)
         ax.tick_params(labelsize=7)
@@ -126,6 +126,7 @@ def plot_panel_grid(xsec_slices, truth_slices, nrows, ncols, xlabel, ylabel,
         axes[0][0].legend(fontsize=6, loc="upper right")
 
     fig.suptitle(title_prefix, fontsize=10, y=0.99)
+    technote_style.minerva_tag(fig)
     fig.savefig(outname, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"[OK] Saved {outname}")
@@ -152,8 +153,8 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
 
     ax_top.errorbar(centers, vals, yerr=errs, xerr=widths,
                      fmt='ko', markersize=4, linewidth=1, capsize=2,
-                     label="OmniFold")
-    ax_top.stairs(truth, edges, color='red', linewidth=1.2, label="MnvTune-v1 truth (MC)")
+                     label="This work (OmniFold)")
+    ax_top.stairs(truth, edges, color='red', linewidth=1.2, label="GENIE 2.12.6 + MnvTune v1")
     ax_top.set_ylabel(ylabel, fontsize=10)
     ax_top.legend(fontsize=9)
     ax_top.set_title(title, fontsize=11)
@@ -178,6 +179,7 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
     ax_bot.set_ylim(0.7, 1.3)
     ax_bot.set_xlim(edges[0], edges[-1])
 
+    technote_style.minerva_tag(ax_top)
     fig.savefig(outname, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"[OK] Saved {outname}")

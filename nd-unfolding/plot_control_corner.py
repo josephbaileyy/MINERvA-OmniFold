@@ -157,6 +157,7 @@ def main():
             elif j > 0:
                 A.tick_params(labelleft=False)
     fig.subplots_adjust(hspace=0.06, wspace=0.06)
+    technote_style.minerva_tag(axs[0, 0])
 
     base = os.path.join(args.outdir, "control_corner")
     fig.savefig(base + ".png", dpi=140, bbox_inches="tight")

@@ -92,9 +92,9 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
 
         ax.errorbar(centers, vals * scale, yerr=errs * scale,
                     xerr=widths / 2, fmt="ko", markersize=2.5,
-                    linewidth=0.9, capsize=1.5, label="OmniFold", zorder=3)
+                    linewidth=0.9, capsize=1.5, label="This work (OmniFold)", zorder=3)
         ax.stairs(truth * scale, edges, color="C3", linewidth=1.2,
-                  label="MINERvA Tune v1 (MC truth)", zorder=2)
+                  label="GENIE 2.12.6 + MnvTune v1", zorder=2)
 
         ax.set_xlim(edges[0], edges[-1])
         ax.set_ylim(0, 1.4)
@@ -123,6 +123,7 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
                       rf"{total_chi2:.1f}/{total_ndf} = "
                       rf"{total_chi2/total_ndf:.2f}$")
     fig.suptitle(suptitle + total_line, fontsize=11, y=0.995)
+    technote_style.minerva_tag(fig)
     fig.savefig(out, dpi=180, bbox_inches="tight")
     plt.close(fig)
     print(f"wrote {out}  (chi2/ndf = "

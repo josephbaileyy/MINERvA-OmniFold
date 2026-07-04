@@ -154,6 +154,7 @@ def main():
         fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
+    technote_style.minerva_tag(axs[0])
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[cmp] wrote {args.out_png}")

@@ -221,6 +221,7 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
     for spine in ax.spines.values():
         spine.set_linewidth(1.2)
     ax.tick_params(width=1.1)
+    technote_style.minerva_tag(ax)
     fig.tight_layout()
     fig.savefig(out_png, dpi=180)
     plt.close(fig)

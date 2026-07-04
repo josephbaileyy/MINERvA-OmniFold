@@ -327,6 +327,20 @@ result; each tightens a defensible-but-assumed choice. Listed in rough priority.
    skip it. Practically: keep the *unbinned* unfold high-dimensional, but only *publish*
    a binned projection along axes with a question attached.
 
+5. **Is a hyperparameter search worth it? (user-flagged 2026-07-03, advisor-comment
+   session).** Production HPOs are sklearn `GradientBoosting` defaults at matched
+   capacity across backends (100 trees, lr 0.1, depth-3 / `num_leaves=8`), fixed a
+   priori with no search — now stated openly in the analysis note (sec_method
+   "Hyperparameter choice"). **Study:** a small, closure-driven (never data-driven)
+   search — vary capacity (leaves/depth), tree count, and learning rate on the
+   simulation-only closure + calibration + coverage suite, and check whether the
+   optimum moves the data result by more than the seedscan band. If it does not
+   (expected, given the 0.026% iteration-doubling and backend-agreement stability),
+   the defaults are vindicated and the note gains a sentence; if it does, the tuned
+   config needs its own validation pass. Cheap on the 2D/3D chain (CPU LightGBM);
+   keep the search metric strictly simulation-side to preserve the no-tuning-on-result
+   property.
+
 ---
 
 _Sources: arXiv:2504.06857, arXiv:2507.09582, arXiv:1911.09107, arXiv:1511.05944

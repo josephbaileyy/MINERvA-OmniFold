@@ -1,0 +1,33 @@
+\section{Codebase layout and terminology}
+\label{app:codebase}
+
+The analysis is a chain of four components; the italicised names are used
+throughout the note.
+
+\begin{itemize}[itemsep=2pt]
+  \item \emph{Event loop} (C++): \texttt{runEventLoopOmniFold}, built on the
+        MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It
+        reads the production AnaTuples, applies the selection and the
+        systematic-universe machinery, and writes per-event ROOT trees.
+  \item \emph{Omnifiles}: the event-loop outputs --- per-event records for
+        data, truth/reco-paired simulated signal, simulated background, and
+        the truth-level efficiency denominator, with POT bookkeeping; the
+        \texttt{\_universes\_full} variants add per-universe weight and
+        shifted-kinematics branches.
+  \item \emph{Driver} (Python): the per-analysis orchestration ---
+        \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} and its
+        $N$-dimensional generalisation
+        \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver
+        assembles training arrays from the omnifiles, applies the
+        purity-weight background subtraction (\S\ref{sec:method-algo}),
+        invokes the engine, and extracts the cross section.
+  \item \emph{Engine} (Python):
+        \texttt{unbinned\_unfolding/python/omnifold.py} --- the OmniFold
+        iteration itself, agnostic to the learner backend (LightGBM in
+        production; sklearn \texttt{exact}/\texttt{hist} alternates; MLP and
+        point-cloud-transformer cross-checks).
+\end{itemize}
+
+The point-cloud measurements of \S\ref{sec:pet} replace the driver's scalar
+features with the cluster-level inputs of \texttt{nd-unfolding/pet/},
+reusing the same omnifile and cross-section machinery.

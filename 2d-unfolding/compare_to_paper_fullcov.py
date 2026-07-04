@@ -294,6 +294,7 @@ def main():
 
     fig.suptitle("Full-stats 2D OmniFold vs arXiv:2106.16210 Fig. 13", fontsize=11)
     fig.tight_layout()
+    technote_style.minerva_tag(fig)
     out = f"{OUT_PREFIX}_pull_full.png"
     fig.savefig(out, dpi=130)
     print(f"\nwrote {out}")

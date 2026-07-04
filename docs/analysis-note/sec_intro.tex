@@ -13,12 +13,23 @@ $d^{2}\sigma/(d\pT\,d\pPar)$, was published by Ruterbories \emph{et al.}
 that measurement with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw,
 Andreassen:2021zzk}, an unfolding technique based on iterated reweighting with
 machine-learned likelihood ratios that operates on per-event observables rather
-than on a fixed histogram binning. First demonstrated experimentally by the H1
-collaboration~\cite{H1:2021wkz,H1:2023fzk}, OmniFold is one of a family of
-machine-learning unfolding methods~\cite{Datta:2018mwd,Bellagente:2019uyp,
-Bellagente:2020piv,Backes:2022vmn,Chan:2023tbf}\bpn{see recent unfolding papers from our group on how to do an overview cite of unbinned unfolding} that lift the binned-response
-limitations of widely-used, classical unfolding methods~\cite{Adye:2011gm} like IBU, the SVD method~\cite{Hocker:1995kb} and
-TUnfold~\cite{Schmitt:2012kp}. 
+than on a fixed histogram binning. Recent advances in machine learning have enabled unbinned unfolding
+techniques; see Refs.~\cite{Arratia:2021otl,Huetsch:2024quz} for overviews
+and Ref.~\cite{unbinnedguide} for cross-experiment practical
+guidance.\bpn{see recent unfolding papers from our group on how to do an
+overview cite of unbinned unfolding}\jrb{Done, tried an approach based on
+arXiv:2606.06603} These methods fall into two broad families: those that
+iteratively reweight a starting simulation, of which
+OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf} is the
+most widely adopted, and those that generate new samples directly with a
+neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,
+Backes:2022vmn}. OmniFold was first demonstrated on collider data by the H1
+collaboration~\cite{H1:2021wkz,H1:2023fzk} and has since been adopted across
+a number of experiments; the application closest to this work is the
+OmniFold study on simulated T2K near-detector data~\cite{Huang:2024omnifold}.
+These techniques lift the binned-response limitations of widely-used
+classical unfolding methods~\cite{Adye:2011gm} like IBU, the SVD
+method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}. 
 
 
 

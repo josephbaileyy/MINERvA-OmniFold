@@ -128,10 +128,10 @@ def main():
         edges, y_ours = project(ours_v[mask], mask, axis)
         _, y_data = project(data_v[mask], mask, axis)
         ctr = 0.5 * (edges[:-1] + edges[1:])
-        ax.step(ctr, y_data, where="mid", color="k", lw=2, label="data (paper)",
+        ax.step(ctr, y_data, where="mid", color="k", lw=2, label="Published (PRD 104, 092007)",
                 marker=technote_style.gen_marker("data"), markersize=4)
         ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5, ls="--",
-                label="ours (OmniFold)")
+                label="This work (OmniFold)")
         for j, (name, mv) in enumerate(model_vs.items()):
             _, y_m = project(mv[mask], mask, axis)
             ax.step(ctr, y_m, where="mid", color=f"C{j+1}", lw=1.5, label=name,
@@ -139,6 +139,7 @@ def main():
         ax.set_xlabel(xlabel); ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")
         ax.set_title(f"Projection onto {xlabel}"); ax.legend(); ax.grid(alpha=0.3)
     fig.suptitle("2D OmniFold vs data vs MINERvA Tune v1 - 1D projections")
+    technote_style.minerva_tag(fig)
     fig.tight_layout(); fig.savefig(f"{args.out_prefix}_projections.png", dpi=130)
     plt.close(fig)
 

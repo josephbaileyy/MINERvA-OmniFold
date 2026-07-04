@@ -79,6 +79,7 @@ def main():
     ax.set_ylabel("p_|| bin (extended)")
     cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     cb.set_label("3-prior half-spread/mean (%)")
+    technote_style.minerva_tag(ax)
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
     print(f"[env] wrote {args.out_png}")

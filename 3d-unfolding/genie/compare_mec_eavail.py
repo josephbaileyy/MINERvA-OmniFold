@@ -110,6 +110,7 @@ def main():
         ax.set_ylabel(r"$d\sigma/dE_{avail}$ (cm$^2$/nucleon/GeV)")
         ax.set_title("Enabling Valencia 2p2h fills part of the low-$E_{avail}$ dip")
         ax.legend(fontsize=9); ax.set_xlim(EA[0], EA[n])
+        technote_style.minerva_tag(ax)
         fig.tight_layout(); fig.savefig(args.plot, dpi=130)
         print(f"[compare-mec] wrote {args.plot}")
 

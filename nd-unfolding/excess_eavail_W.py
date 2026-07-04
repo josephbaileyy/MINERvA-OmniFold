@@ -196,6 +196,7 @@ def main():
                         vmin=-np.abs(exc).max(), vmax=np.abs(exc).max())
     axx[2].set_title("excess sigma  (data - CV)")
     axx[2].set_xlabel("W bin"); axx[2].set_ylabel("E_avail bin"); fig.colorbar(im2, ax=axx[2])
+    technote_style.minerva_tag(axx[0])
     fig.tight_layout(); fig.savefig(args.png, dpi=110)
     print(f"\n[OK] wrote {args.png}")
 

@@ -137,6 +137,35 @@ if not getattr(plt.savefig, "_technote_pdf_twin", False):
     plt.savefig = _pyplot_savefig
 
 
+def minerva_tag(fig_or_ax, loc="upper left"):
+    """Uniform sample/POT annotation for every data-bearing note figure.
+
+    Places a small ``MINERvA ME FHC, 1.06e21 POT`` tag (rendered with the POT
+    in math mode) in a consistent corner.  Titles are suppressed by this
+    module, so this tag is how a data figure carries its dataset identity
+    without a title bar.  Accepts either a Figure or an Axes; on a Figure it
+    annotates the first axes (falling back to a figure-level text if there are
+    none).  MC-only figures (migration maps, MC-only corner) should NOT call
+    this.
+    """
+    text = r"MINERvA ME FHC, $1.06\times10^{21}$ POT"
+    ax = None
+    if isinstance(fig_or_ax, Axes):
+        ax = fig_or_ax
+    else:  # a Figure
+        axes = getattr(fig_or_ax, "axes", None)
+        if axes:
+            ax = axes[0]
+    x, ha = (0.02, "left") if "left" in loc else (0.98, "right")
+    y, va = (1.01, "bottom") if "upper" in loc else (0.02, "bottom")
+    if ax is not None:
+        ax.text(x, y, text, transform=ax.transAxes, ha=ha, va=va,
+                fontsize=8, color="0.25", zorder=100)
+    else:
+        fig_or_ax.text(x, 0.99, text, ha=ha, va="top",
+                       fontsize=8, color="0.25", zorder=100)
+
+
 def panel_label(ax, text, loc="upper left", color="black"):
     """Short corner tag identifying one panel of a multi-panel figure.
 

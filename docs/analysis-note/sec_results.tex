@@ -1,16 +1,59 @@
 \section{Results}
 \label{sec:results}
 
+Throughout this section, error bars on the unfolded points are the total
+uncertainty --- the combined systematic (universe), statistical (bootstrap),
+and ML (seedscan) budget constructed in \S\ref{sec:systematics}; the
+published points carry the published total covariance.
+
 \subsection{Double-differential cross section}
 \label{sec:results-xsec}
 Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
 1D projections. The total cross section is
 \SI{\sigTwoD}{cm^2/nucleon} (published: \SI{\sigTwoDpaper}{cm^2/nucleon}).
 
-\bpn{Briefly describe trends.}
-\bpn{Briefly reference and describe the table.}
-\bpn{Did we describe the error bars?  Maybe there should be a dedicated section just before results describing uncertainties or if it comes later, maybe forward reference (again) here.}
-\bpn{For figures themselves, I think we should improve these a bit - e.g. fix $p_t$, etc., MC truth should be Genie XYZ, Paper data should be the journal ref.  Maybe there should be `Minerva data' or something like that prominent above the figures? Maybe different markers for paper and OmniFold?  Please update these everywhere.}
+The shapes are those expected for CC-inclusive scattering at
+$\langle E_\nu\rangle\sim\SI{6}{GeV}$. The $\pT$ projection vanishes at
+$\pT=0$ (phase space), rises to a broad maximum at
+$\pT\approx0.55$--$\SI{0.70}{GeV/c}$, and falls by more than two orders of
+magnitude toward the \SI{4.5}{GeV/c} edge. The peak position is set by the
+momentum-transfer scale of few-GeV neutrino scattering: for the forward
+muons selected here $\pT^{2}\simeq Q^{2}\,E_\mu/E_\nu$, and the cross
+section concentrates at $Q^{2}\lesssim\SI{1}{GeV^2}$ --- nucleon
+form-factor suppression in the quasi-elastic and resonance channels,
+structure-function kinematics in the deep-inelastic contribution --- which
+with $E_\mu/E_\nu\sim0.6$ gives the observed $\pT\sim\SI{0.6}{GeV/c}$
+scale. The $\pPar$ projection rises from the \SI{1.5}{GeV/c} threshold to
+a broad maximum at $\pPar\approx3$--$\SI{4.5}{GeV/c}$, the image of the
+NuMI medium-energy flux peak at $E_\nu\approx\SI{6}{GeV}$, and falls
+steadily thereafter (two orders of magnitude by
+$\pPar\approx\SI{20}{GeV/c}$). In the 2D map the $\theta_\mu<20^{\circ}$
+acceptance empties the high-$\pT$, low-$\pPar$ corner (the 19 unreported
+diagonal cells of \S\ref{sec:method-binning}).
+
+\bpn{Briefly describe trends.}\jrb{Trends described above, including the
+momentum-transfer origin of the $\pT$ peak and the flux origin of the
+$\pPar$ peak.}
+\bpn{Briefly reference and describe the table.}\jrb{Descriptive prose added
+at the top of \S\ref{sec:results-compare}.}
+\bpn{Did we describe the error bars?  Maybe there should be a dedicated
+section just before results describing uncertainties or if it comes later,
+maybe forward reference (again) here.}\jrb{Done ---
+\S\ref{sec:systematics} now precedes Results, and the section opening
+states what the error bars contain.}
+\bpn{For figures themselves, I think we should improve these a bit - e.g.
+fix $p_t$, etc., MC truth should be Genie XYZ, Paper data should be the
+journal ref.  Maybe there should be `Minerva data' or something like that
+prominent above the figures? Maybe different markers for paper and OmniFold?
+Please update these everywhere.}\jrb{All done, everywhere: axis casing fixed
+($p_T$/$p_{||}$); CV-truth legends now read ``GENIE 2.12.6 + MnvTune v1'';
+published points now read ``Published (PRD 104, 092007)''; our points read
+``This work (OmniFold)''; paper vs.\ this-work markers differ (squares
+vs.\ circles); and every data-bearing figure carries a uniform
+``MINERvA ME FHC, $1.06\times10^{21}$ POT'' tag (we avoid figure titles by
+style convention). Generator-overlay labels (GENIE variants, NuWro, GiBUU)
+are deliberately unchanged. The four PET-section figures will get the same
+pass when the in-flight full-statistics PET run refreshes them.}
 
 \begin{figure}[H]
   \centering
@@ -18,16 +61,38 @@ Figure~\ref{fig:xsec} shows the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$ and its
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
   \caption{Unfolded 2D cross section (top, Fig.~13 style) and its $\pT$/$\pPar$
-  projections (bottom).}
+  projections (bottom). The $\pT$ peak at ${\sim}\SI{0.6}{GeV/c}$ reflects
+  the $Q^{2}\lesssim\SI{1}{GeV^2}$ momentum-transfer scale and the $\pPar$
+  peak the medium-energy flux maximum (see text).}
   \label{fig:xsec}
 \end{figure}
 
-\bpn{I quickly scanned what comes next - seems like UQ should come before results (e.g. explain what goes into the error bars).  Please also add some text describing all plots and tables, etc.  }
+\bpn{I quickly scanned what comes next - seems like UQ should come before
+results (e.g. explain what goes into the error bars).  Please also add some
+text describing all plots and tables, etc.}\jrb{Done --- the UQ section now
+precedes Results (reordered in the main file), the Results opening states
+what the error bars contain, and descriptive text has been added for the
+figures and the comparison table.}
 
 \bpn{left off here}
 
 \subsection{Comparison to the published measurement}
 \label{sec:results-compare}
+Table~\ref{tab:compare} quantifies the agreement with
+Ref.~\cite{MINERvA:2021owq} over the 205 reported bins. The total cross
+section reproduces the published one to \SI{1.1}{\percent} (ratio
+$\ratioTot$), with a median per-bin ratio of $\medianBinRatio$;
+$\binsFive\%$ of bins agree within \SI{5}{\percent} and $\binsTen\%$ within
+\SI{10}{\percent}. Two $\chi^{2}$ figures are quoted: against the published
+covariance alone ($\chiPaper$ per degree of freedom) and against the
+combined covariance that also credits this measurement's own uncertainty
+($\chiCombined$); the anatomy of the former is examined in
+\S\ref{sec:results-tension}. The per-bin pull distribution computed with
+the published covariance (Fig.~\ref{fig:pull}) is centred (mean
+$\pullMean$) with RMS $\pullRMSr$, well inside the published
+uncertainties, and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} show the
+same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
+
 \begin{table}[h]
   \centering
   \begin{tabular}{@{}lc@{}}

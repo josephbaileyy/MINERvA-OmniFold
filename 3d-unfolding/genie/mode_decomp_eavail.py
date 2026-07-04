@@ -200,6 +200,7 @@ def main():
                      "(no 2p2h in this CV)")
         ax.legend(fontsize=8, ncol=2)
         ax.set_xlim(EA[0], EA[n])
+        technote_style.minerva_tag(ax)
         fig.tight_layout()
         fig.savefig(args.plot, dpi=130)
         print(f"[mode-decomp] wrote {args.plot}")

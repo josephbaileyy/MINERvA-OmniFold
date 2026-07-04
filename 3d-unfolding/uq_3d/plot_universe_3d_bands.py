@@ -96,6 +96,7 @@ def main():
         ax.set_ylabel(r"grouped 1D $\sigma$ (cm$^2$/nucleon, per-axis)")
         ax.legend(fontsize=8, loc="best", ncol=2)
         ax.grid(True, alpha=0.3)
+        technote_style.minerva_tag(ax)
         fig.tight_layout()
         outp = os.path.join(args.outdir, f"uq_universe_3d_band_{tag}.png")
         fig.savefig(outp, dpi=140)
