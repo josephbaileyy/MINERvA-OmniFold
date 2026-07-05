@@ -57,6 +57,12 @@ run q3_excess_projection.png         nd-unfolding  python q3_excess_projection.p
 echo "== PET =="
 run products/pet/pet_vs_gbdt.png          nd-unfolding  python pet/pet_vs_gbdt.py --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt.png
 run products/pet/pet_vs_gbdt_absolute.png nd-unfolding  python pet/pet_vs_gbdt.py --absolute --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt_absolute.png
+# PET vs GBDT per-bin uncertainty comparison -> pet_vs_gbdt_uncertainty_{overlay,ratiomap,ratiohist}.png
+# (method-comparison figures: no MINERvA sample tag, existing PET/GBDT labels kept)
+run products/pet/pet_vs_gbdt_uncertainty_overlay.png nd-unfolding  python pet/pet_vs_gbdt_uncertainty.py
+# PET truth point-cloud reweight-then-project demo -> pet_cloud_projection_{validation,xsec}.png
+# (validation panel is MC-only -> untagged; xsec panels are data-bearing -> minerva_tag)
+run products/pet/pet_cloud_projection_xsec.png       nd-unfolding  python pet/pointcloud_projection.py
 
 echo "== full phase space =="
 run products/5d/fps_pilot_compare_MEFHC.png  nd-unfolding  python fps_pilot_compare.py --fps-tune products/5d/xsec_2d_FPS_MEFHC_tune.root --fps-genie products/5d/xsec_2d_FPS_MEFHC_genie.root --ctrl products/5d/xsec_2d_CTRL_MEFHC.root --omnifile runEventLoopOmniFold_5D_FPS_MEFHC.root --out-png products/5d/fps_pilot_compare_MEFHC.png
@@ -82,14 +88,16 @@ rm -f /tmp/fig_$$.log
 
 echo
 echo "== sync into docs/analysis-note/figures/ =="
+# The note is PDF-only (preamble.tex \DeclareGraphicsExtensions{.pdf}); every
+# plotting script writes a .pdf next to its .png via technote_style's savefig
+# twin, so we sync the vector .pdf by basename.  A figure must already exist in
+# figures/ to be refreshed (this is an update-in-place sync, not an installer).
 FIGDIR="$REPO/docs/analysis-note/figures"
-for fig in "$FIGDIR"/*.png; do
+for fig in "$FIGDIR"/*.pdf; do
   base=$(basename "$fig")
   src=$(find "$REPO/2d-unfolding" "$REPO/3d-unfolding" "$REPO/nd-unfolding" \
         -name "$base" -newer "$fig" 2>/dev/null | head -1)
   if [ -n "$src" ]; then
     cp "$src" "$fig"; echo "  synced $base"
-    # vector twin: copy the .pdf sibling if the plot script produced one
-    [ -e "${src%.png}.pdf" ] && cp "${src%.png}.pdf" "${fig%.png}.pdf" && echo "  synced ${base%.png}.pdf"
   fi
 done

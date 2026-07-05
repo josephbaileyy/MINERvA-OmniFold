@@ -179,7 +179,11 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
     ax_bot.set_ylim(0.7, 1.3)
     ax_bot.set_xlim(edges[0], edges[-1])
 
-    technote_style.minerva_tag(ax_top)
+    # Place the sample tag at the upper right (above the axis, where the legend
+    # sits inside): the upper-left corner is occupied by the y-axis
+    # scientific-notation offset (1e-38 / 1e-39), which the default "upper left"
+    # tag overlapped.
+    technote_style.minerva_tag(ax_top, loc="upper right")
     fig.savefig(outname, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"[OK] Saved {outname}")

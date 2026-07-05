@@ -9,14 +9,11 @@ implementation) unfolds the same ME~FHC data using, on the reconstructed
 side, the actual calorimetric recoil clusters --- per-cluster energy,
 transverse position and $z$ (\texttt{cluster\_energy}, \texttt{cluster\_pos},
 \texttt{cluster\_z}, filtered on \texttt{cluster\_isMuontrack} via
-\texttt{CVUniverse::GetRecoClusters()}) alongside the muon kinematics. An
-earlier attempt that read the wrong, mostly-empty
-\texttt{ExtraEnergyClusters\_*} branches was discarded and the chain rebuilt
-from the corrected dump. \textbf{Maturity:} this is a validated \emph{method
-milestone} --- a real, absolutely-normalised, full-statistics cross section
-with its own closure gate and a first systematic budget --- but it is not yet
-at the production GBDT result's maturity (its training is
-subsample-limited; see below).
+\texttt{CVUniverse::GetRecoClusters()}) alongside the muon kinematics. This
+is a validated \emph{method milestone}: a real, absolutely-normalised,
+full-statistics cross section with its own closure gate and systematic
+budget. Its network training is subsample-limited (see below), so the
+production result of record remains the scalar GBDT measurement.
 
 \subsection{From shape check to absolute cross section}
 \label{sec:pet-abs}
@@ -44,8 +41,9 @@ data-side gap is a genuine \emph{training-configuration} difference (PET
 trained on the 2M subsample with 2 iterations versus the full-statistics
 5-iteration GBDT), not a normalisation bug: an under-iterated unfold pushes
 the result less far from the prior. A higher-epoch retrain moved the total by
-$-1.6\%$ (ratio $0.897$), confirming the training-config sensitivity; closing
-the gap toward the ML band needs more events/iterations and is deferred.
+$-1.6\%$ (ratio $0.897$), confirming the training-config sensitivity; the
+residual gap reflects the reduced PET training statistics and iteration
+count.
 
 \begin{figure}[H]
   \centering
@@ -60,7 +58,7 @@ the gap toward the ML band needs more events/iterations and is deferred.
 
 \subsection{PET systematic budget (frozen reweighter)}
 \label{sec:pet-syst}
-A first full uncertainty budget is attached with the \emph{frozen-reweighter}
+The PET uncertainty budget uses the \emph{frozen-reweighter}
 method: the PET step-2 weights are held fixed while each systematic
 universe's truth reweight ratios re-bin the generator sample --- 13 knob
 bands, the 100-universe flux multisim, a 100-replica Poisson bootstrap
@@ -90,9 +88,9 @@ it tracks the GBDT across the populated kinematics and is wider only in the
 sparse extreme-momentum catch bins, where the subsample-limited PET
 statistics dominate (Fig.~\ref{fig:petuncratio}). The conclusion is robust to
 the lateral treatment --- the more conservative GBDT-transferred lateral lifts
-the PET median only to $\approx\SI{12}{\percent}$ --- but is, like the rest of
-this section, \emph{indicative}: the budget is anchored to the 2M-event
-training and a full-statistics PET is expected to tighten it.
+the PET median only to $\approx\SI{12}{\percent}$. Like the rest of this
+section, the budget is anchored to the 2M-event training configuration,
+which full-statistics training would sharpen.
 
 \begin{figure}[H]
   \centering
@@ -104,8 +102,8 @@ training and a full-statistics PET is expected to tighten it.
   cloud tracks the scalar precision across the populated kinematics and
   widens only in the sparse high-momentum catch bins, where the
   subsample-limited PET statistics dominate. Headline curves use the
-  PET-native (independence-fair) lateral block; numbers are indicative of the
-  method (2M-event training).}
+  PET-native (independence-fair) lateral block and are computed on the
+  2M-event PET training configuration.}
   \label{fig:petunc}
 \end{figure}
 
@@ -123,31 +121,33 @@ training and a full-statistics PET is expected to tighten it.
 The reweight bank underlying the
 systematic block is built from the truth-only miss-row dump, with per-event
 alignment verified bit-identical over all \num{32.8}~million rows and the
-bank-independent statistical and ML blocks reproducing as a control. The
-residual gap to a fully self-contained PET budget is
-per-lateral re-inference on shifted reconstructed clouds, which requires
-re-running the PET network per lateral universe and is deferred.
+bank-independent statistical and ML blocks reproducing as a control. A fully
+self-contained PET budget would additionally require per-lateral
+re-inference on shifted reconstructed clouds --- re-running the PET network
+per lateral universe.
 
 \subsection{Truth-cloud projection: one unfold, many hadronic observables}
 \label{sec:pet-projection}
 \bpn{Can you do point-cloud $\to$ point-cloud --- i.e.\ unfold once to a
 truth-level cloud you can then project any 2--5D cross section from?}
+\jrb{Yes --- this subsection demonstrates it, including the two limitations
+of the stored cloud (truncation and coverage) and their resolution.}
 The truth side of the PET unfold is \emph{already} a point cloud: the
 generator-level final-state hadron set
 (\texttt{part\_gen}, the top-12-by-energy truth hadrons with their PDG codes,
 built by \texttt{CVUniverse::GetTruthFSHadrons}) is carried per event
-alongside the learned step-2 push weight. \emph{Any} truth observable that is
-a function of those 4-vectors can therefore be obtained \emph{after} the
+alongside the learned step-2 push weight. Any truth observable that is
+a function of those 4-vectors can therefore be obtained after the
 unfold by re-binning the push-weighted truth events --- no re-training and no
 re-unfolding. We demonstrate this \emph{reweight-then-project} capability on
 three observables computed post-hoc from the stored cloud: available energy
 $\Eavail$, the hadronic-system invariant mass
 $W_{\text{had}}=\sqrt{(\sum E)^2-|\sum\vec p|^2}$, and the proton/charged-pion
-multiplicities. The exercise also lets us quantify, honestly, the two real
+multiplicities. The exercise also quantifies the two
 limitations of the stored cloud.
 
 \paragraph{Truncation is essentially lossless.}
-Because $\Eavail$ recomputed from the cloud uses the \emph{same} formula and
+Because $\Eavail$ recomputed from the cloud uses the same formula and
 inputs as the value stored at dump time, the cloud-vs-stored residual isolates
 the cost of keeping only the 12 highest-energy hadrons. Over the full
 \num{32.8}~million truth events (every event now carries a cloud, below) the
@@ -157,17 +157,16 @@ of events within \SI{10}{MeV} (Fig.~\ref{fig:pcvalid}). The entire deficit
 lives in the \SI{\pcSaturated}{\percent} of events that saturate the 12-particle
 cap (median deficit \SI{\pcSatDeficit}{MeV} there, exactly zero below it), and
 because the ranking is by energy the dropped constituents are the softest
-mesons --- a small, one-sided, bounded effect. \jrb{So the top-12 truncation
-the cloud worried us about is a non-issue at $\Eavail$ scale; raising
-\texttt{num\_part} is not warranted.}
+mesons --- a small, one-sided, bounded effect. The 12-particle cap therefore
+does not limit $\Eavail$-scale observables and does not need to be raised.
 
-\paragraph{Coverage: a targeted re-dump closes the acceptance gap.}
+\paragraph{Coverage: closing the acceptance gap.}
 Originally the cloud was filled only in the reco-signal event loop, so the
 truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
 the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
 truth events had one, and cloud projections were correspondingly
-\emph{acceptance-limited}, landing exactly on the stored-$\Eavail$ projection
-\emph{restricted to the has-cloud subset} but sitting $1.5$--$2\times$ below
+acceptance-limited, landing exactly on the stored-$\Eavail$ projection
+restricted to the has-cloud subset but sitting $1.5$--$2\times$ below
 the full unfold per bin. This is a truth-side instance of the same
 dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
 source by carrying the truth final-state hadrons through the
@@ -176,13 +175,13 @@ rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
 then re-dumping, rebuilding the inputs, and re-training. Coverage is now
 complete: \SI{\pcHasCloud}{\percent} of truth events carry a cloud (only
 \pcEmptyCloud{} residual empties out of \num{32.8}~million), and the
-cloud-recomputed $d\sigma/d\Eavail$ now reproduces the \emph{full} unfold to
+cloud-recomputed $d\sigma/d\Eavail$ now reproduces the full unfold to
 $\lesssim\SI{\pcCloudFull}{\percent}$ in every $\Eavail$ bin
 (Fig.~\ref{fig:pcxsec}, centre, where the cloud, stored, and full-unfold
 curves coincide). The projection is no longer acceptance-limited.
 
 \paragraph{Projection yields genuinely new observables.}
-$W_{\text{had}}$ is \emph{not} a lossy copy of the leptonic ``experimenter's''
+$W_{\text{had}}$ is not a lossy copy of the leptonic ``experimenter's''
 $W$ stored at dump time --- the latter is reconstructed from muon kinematics
 assuming a single struck nucleon at rest, while $W_{\text{had}}$ is the true
 invariant mass of the hadron system. The two differ by a median
@@ -223,24 +222,20 @@ existing unfold.
   \label{fig:pcxsec}
 \end{figure}
 
-\paragraph{The OmniFold caveat (and what would need a re-dump).}
+\paragraph{The extrapolation limit.}
 \label{sec:pet-projection-next}
 Reweighting can only redistribute weight among truth configurations the
 generator already produced; it cannot populate phase space the prior never
 sampled --- the same extrapolation limit flagged for the full-phase-space
 measurement (\S\ref{sec:fps}). Within that limit, every observable above is
-now projectable over the \emph{full} truth spectrum from the current dump.
-Two things would still need a further re-dump rather than a re-projection:
+projectable over the full truth spectrum from the current dump.
+Two extensions lie beyond re-projection from the stored cloud (they would
+require regenerating the event dump):
 adding the muon back as a tagged constituent for muon-dependent hadronic
 observables (it is deliberately excluded from the recoil cloud but retained as
 a stored scalar); and raising the 12-particle cap for the rare
 very-high-multiplicity tail (unnecessary at $\Eavail$ scale per the validation
-above). \jrb{Bottom line: ``unfold once, project many hadronic cross
-sections'' now works over the full truth spectrum --- the miss-row coverage
-gap that previously confined it to the reconstructed-and-accepted subset has
-been fixed at source and the cloud $d\sigma/d\Eavail$ reproduces the full
-unfold to better than \SI{\pcCloudFull}{\percent} per bin.} Full details and
-reproduction are in
+above). Full details and reproduction are in
 \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
 
 \subsection{What the PET track demonstrates}

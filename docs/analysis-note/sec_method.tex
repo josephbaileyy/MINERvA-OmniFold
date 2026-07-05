@@ -31,10 +31,11 @@ truth-level reweighted simulation ensemble; histogramming it (in any binning,
 chosen after the fact) gives the unfolded spectrum. The regulariser is the
 iteration count together with the model capacity of the learners.
 
-\paragraph{Unbinned background subtraction.}
+\paragraph{Background subtraction (the one binned step).}
 The measured sample entering step 1 is the full set of selected data events
 --- none is discarded and no negative-weight events are injected. Backgrounds
-are instead removed by a per-event \emph{purity} weight: the POT-scaled
+are instead removed by a per-reco-bin \emph{purity} weight, applied event by
+event: the POT-scaled
 background prediction (genuine backgrounds plus out-of-phase-space signal,
 \S\ref{sec:selection}) is binned on the reconstructed analysis grid, and each
 data event in reco bin $b$ is weighted by
@@ -48,8 +49,30 @@ where the prediction exceeds the data). The step-1 classifier still sees the
 full unbinned event kinematics; the analysis binning enters only through this
 multiplicative correction, an ${\sim}\SI{3}{\percent}$ effect overall that is
 largest where the background concentrates (\S\ref{sec:selection}).
+
+This correction is, deliberately, the one place the analysis binning enters
+before the final histogramming. Published unbinned measurements have so far
+avoided the problem rather than solved it: H1 cut backgrounds to a negligible
+level, LHCb corrected per track upstream of the unfold, and ATLAS left its
+$<\SI{0.25}{\percent}$ background in place and assigned it as an uncertainty,
+while identifying negatively-weighted simulated events as the natural
+in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
+Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds
+but records no analysis that has yet used it. The explicit per-reco-bin
+weight used here is a conservative middle ground at our sub-percent
+genuine-background scale; a continuous per-event purity classifier trained
+on the same simulation would remove the residual binning dependence and is a
+natural refinement for the full-phase-space extension, where backgrounds are
+larger.
 \bpn{Maybe say more about how you do the background subtraction
-unbinned?}\jrb{Added the paragraph above.}
+unbinned?}\jrb{Added the two paragraphs above (the second after a literature
+check). Since no published unbinned measurement has actually solved
+nontrivial in-unfold subtraction, a question back: would you suggest we try
+negative-weight MC injection, a per-event purity classifier
+$P(\mathrm{sig}\,|\,x_{\mathrm{reco}})$, or T2K's approach of carrying
+labelled background through the fit with background-enhanced control
+samples? Mostly relevant for the full-phase-space extension, where the
+background is larger.}
 
 OmniFold has moved from method paper to production measurement over the last
 few years. H1 published the first real-data applications --- jet substructure
@@ -68,9 +91,20 @@ al.}~\cite{Huang:2024omnifold}, the first application of OmniFold to a
 neutrino cross section: a mock-data unfolding of muon kinematics on the
 public T2K near-detector simulated dataset, benchmarked against traditional
 binned approaches. Two of its findings shape expectations for neutrino
-applications: detector smearing in a neutrino detector can demand far more
-iterations than collider unfolds (20--45 there, versus our $n=5$,
-\S\ref{sec:method-config}), and an ensemble of reweighting trials with
+applications. First, iteration count: Huang \emph{et al.} select 45
+iterations for the OmniFold-family methods (20 for their binned benchmark)
+by a binned $\chi^{2}$ against the known truth of their mock data --- a
+criterion they note is not feasible on real data. We do not adopt that
+recommendation, for two reasons. Their mock data injects a large
+prior--data \emph{shape} discrepancy (an RPA-modified quasielastic model)
+that many iterations must overcome, whereas our prior already describes the
+data shapes well (\S\ref{sec:controlplots}) and the data pull is dominantly
+a normalisation; and cross-experiment production practice is few iterations
+(typically ${\sim}5$~\cite{unbinnedguide}). Our $n=5$ is instead justified
+empirically: doubling to $n=10$ moves the total cross section by
+\SI{0.026}{\percent} (\S\ref{sec:method-config}), and the unfold reproduces
+an independently published binned measurement of the same data
+(\S\ref{sec:results}). Second, an ensemble of reweighting trials with
 different train/test splits controls the ML stochastic component --- which we
 budget explicitly via the seedscan band (\S\ref{sec:systematics}). The
 present work differs in unfolding \emph{real} MINERvA data to an absolutely
@@ -80,7 +114,8 @@ the method directly against a published binned measurement of the same data
 (\S\ref{sec:results}).
 \bpn{Would be good to add 1-2 paragraphs summarizing existing unbinned
 measurements with OmniFold, especially the T2K study as it is closest to this
-one.}\jrb{Added the two paragraphs above.}
+one.}\jrb{Added the two paragraphs above; the iteration-count discussion is
+based on a close reading of their \S IV--V.}
 
 \subsection{Estimators and configuration}
 \label{sec:method-config}
@@ -197,12 +232,11 @@ via
     \times 10^{4},
 \end{equation*}
 where $U$ is the unfolded yield; $c$ is the per-bin \emph{completeness}, the
-fraction of the truth-level sample visible to the unfolding input. Early
-versions of the pipeline had $c\sim0.75$ (truth events with no reconstructed
-AnaTuple counterpart were absent from the input); the event loop now appends
-those misses explicitly, so every truth event enters the unfolding,
-$c\equiv1$ bin-by-bin, and the factor survives in the formula only as a
-monitored self-check. \bpn{strange phrasing}\jrb{Expanded --- defined the
+fraction of the truth-level sample visible to the unfolding input. Because
+the event loop appends the truth-only misses explicitly, every truth event
+enters the unfolding and $c\equiv1$ bin-by-bin; the factor survives in the
+formula as a monitored self-check (a configuration that dropped the misses
+would surface as $c<1$). \bpn{strange phrasing}\jrb{Expanded --- defined the
 factor and why it is unity by construction.} $\Phi$ is the per-$\pT$ flux
 integral (broadcast over the other axes), $N$ the fiducial nucleon count
 ($3.2353\times10^{30}$), and POT the data exposure ($1.057\times10^{21}$).
@@ -214,8 +248,9 @@ $\mathrm{m}^{2}$.} The implementation is
 \texttt{extract\_cross\_section\_2d} and its N-dimensional generalisation
 \texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
 extractions to $<10^{-12}$). The flux normalisation enters as
-$\sigma\propto1/\Phi$; correctly varying $\Phi$ per flux universe was the
-dominant systematic fix (\S\ref{sec:systematics}).
+$\sigma\propto1/\Phi$, so $\Phi$ is itself varied per flux universe when
+the systematic covariance is built; this variation dominates the Flux band
+(\S\ref{sec:systematics}).
 
 \subsection{Binning}
 \label{sec:method-binning}

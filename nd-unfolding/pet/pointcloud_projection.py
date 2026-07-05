@@ -305,8 +305,10 @@ def main():
     ax[1].set_ylabel("median Eavail deficit (GeV)")
     ax[1].set_title("truncation deficit grows with multiplicity\n(saturates at n_had=12)",
                     fontsize=9)
+    # MC-only truncation-validation figure (Eavail_cloud vs stored, deficit vs
+    # n_had): no sample tag, per the technote_style convention for MC-only plots.
     fig.tight_layout()
-    p1 = f"{OUTDIR}/pointcloud_projection_validation.png"
+    p1 = f"{OUTDIR}/pet_cloud_projection_validation.png"
     fig.savefig(p1, dpi=130); plt.close(fig)
     print(f"\n[fig] {p1}")
 
@@ -347,8 +349,12 @@ def main():
     ax[2].set_title("projected dsigma/dW: cloud $W_{\\rm had}$ (hadronic mass)\n"
                     "differs from leptonic MC_W by definition", fontsize=8)
     ax[2].legend(fontsize=6.5); ax[2].set_yscale("log")
+    # data-bearing panels (projected cross sections): tag the dsigma/dEavail
+    # panel, matching pet_vs_gbdt.py.  (ax[0] is an MC-vs-MC hexbin, so the tag
+    # goes on ax[1], not the whole figure.)
+    ts.minerva_tag(ax[1])
     fig.tight_layout()
-    p2 = f"{OUTDIR}/pointcloud_projection_xsec.png"
+    p2 = f"{OUTDIR}/pet_cloud_projection_xsec.png"
     fig.savefig(p2, dpi=130); plt.close(fig)
     print(f"[fig] {p2}")
 

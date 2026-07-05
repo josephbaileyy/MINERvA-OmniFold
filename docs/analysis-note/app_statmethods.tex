@@ -43,7 +43,7 @@ with $N\le n$, the resulting sample covariance has rank at most
 $N-1$: there are not enough independent ``directions'' to fill the
 full $n\times n$ matrix. This was the regime of the Stage-1 bootstrap
 ($N=50$ replicas, $n=205$ bins): Cholesky failed without jitter, and
-the recorded \texttt{jitter = 1.6e-94} in the run log was a numerical
+the required jitter, $1.6\times10^{-94}$, was a numerical
 artefact of the rank deficiency rather than a real near-singularity.
 The Stage-2 bootstrap ($N=300 > 205$) is full-rank. The
 \emph{systematic} covariance suffers a more stubborn version of this
@@ -123,7 +123,7 @@ $205$ reported bins.
 \texttt{sbatch\_unfold\_2d\_MEFHC\_5iter\_seedscan.sh} (driver);
 covariance output \texttt{uq/seedscan\_lgbm\_ml/uq\_covariance\_ml.root}.
 
-\paragraph{Worked example (STATUS, UQ envelope).}
+\paragraph{Worked example (UQ envelope).}
 With $n=10$ \texttt{lgbm} trials on the $205$-bin set:
 \begin{itemize}[nosep]
   \item Total-$\sigma$ relative spread: $\boxed{0.0055\%}$.
@@ -169,15 +169,13 @@ Stage-1 used $N=50$ replicas (rank-deficient on $205$ bins); Stage-2
 scaled to $N=300 > 205$ for a full-rank statistical covariance.
 
 \paragraph{Caveat (seed-varying replicas).}
-The available $N=300$ covariance was produced with replicas that
+The $N=300$ covariance was produced with replicas that
 varied \emph{both} \texttt{-{}-bootstrap-seed N} and \texttt{-{}-seed N},
 so it carries a small ML-stochastic contribution on top of the pure
-Poisson statistics. The drivers are now patched to pass a fixed
-\texttt{-{}-seed 1} with only \texttt{-{}-bootstrap-seed N} varying;
-a pure-Poisson rerun should replace this block when available. The
+Poisson statistics. The
 leak is numerically small relative to the systematic block (the ML
-floor is $0.166\%$ vs the stat $0.564\%$), but the statistical
-covariance is not yet purely Poisson.
+floor is $0.166\%$ vs the stat $0.564\%$); a purely Poisson block would
+fix \texttt{-{}-seed} while varying only \texttt{-{}-bootstrap-seed}.
 
 \paragraph{Math.}
 Flatten each replica's $14\times16$ histogram into a $205$-vector
@@ -213,7 +211,7 @@ Bootstrap weight draws and seed pinning:
 Covariance rollup: \texttt{uq/analyze\_uq.py}.\\
 Output: \texttt{uq/bootstrap\_MEFHC\_300/uq\_covariance\_boot300.root}.
 
-\paragraph{Worked example (STATUS, $N=50$ vs $N=300$, MEFHC lgbm).}
+\paragraph{Worked example ($N=50$ vs $N=300$, MEFHC lgbm).}
 \begin{center}
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -279,7 +277,7 @@ matched ``CV'' job runs without \texttt{-{}-universe}, with the
 \emph{same} omnifile, backend, seed, iteration count, and flux, so
 that ML noise cancels between CV and universe.
 
-\paragraph{Math (MAT-conformant, the current convention).}
+\paragraph{Math (MAT-conformant convention).}
 For universe $(B,u)$, define the per-bin value
 $\mathbf{X}^{(B,u)}$, a $205$-vector over reported bins. MINERvA's MAT
 framework
@@ -370,7 +368,7 @@ Per-band rollup: \texttt{uq/analyze\_universes.py} (\texttt{-{}-add-norm 0.014})
 Output:
 \texttt{uq/universe\_stage2\_MEFHC\_full\_matcorr/uq\_universe\_covariance\_full\_matcorr.root}.
 
-\paragraph{Worked example (STATUS, full matcorr sweep).}
+\paragraph{Worked example (full matcorr sweep).}
 Top contributing bands, per-bin median relative
 $\sigma_{i}/X^{\CV}_{i}$ over $205$ reported bins:
 \begin{center}
@@ -400,8 +398,8 @@ exactly the bands the Ruterbories paper flags as flux-correlated
 \subsubsection{How MINERvA builds its published covariance}
 \label{sec:minerva}
 
-To compare honestly we had to establish what MINERvA actually does ---
-which is \emph{not} spelled out in the paper but lives in the MAT C++
+MINERvA's covariance construction is not spelled out in the paper; it
+is defined in the MAT C++
 framework. The takeaway: \textbf{MAT samples per-band exactly as we do},
 using the mean-centered $1/N$ sample covariance, and sums bands
 element-wise.
@@ -508,7 +506,7 @@ through exactly this rule. $\mathbf{C}^{\ML}$ is more than an order of
 magnitude below the other two; the headline includes it but it is
 numerically negligible.
 
-\paragraph{Worked example (STATUS, UQ envelope).}
+\paragraph{Worked example (UQ envelope).}
 Component traces and per-bin median relative spreads:
 \begin{center}
 \begin{tabular}{@{}lcc@{}}
@@ -585,7 +583,7 @@ covariance via Eq.~\eqref{eq:blocksum}; \texttt{-{}-subtract-stat}
 removes the paper's stat block to avoid double-counting the bootstrap
 (\S\ref{sec:rank}).
 
-\paragraph{Worked example: comparison to paper (STATUS headline).}
+\paragraph{Worked example: comparison to paper (headline numbers).}
 \begin{center}
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -598,15 +596,16 @@ Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $1.688$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-The $3.661 \to 1.699$ drop ($-54\%$) is the central result of the UQ
-campaign: once the OmniFold-side error budget is honestly included,
+The $3.661 \to 1.699$ drop ($-54\%$) is the central UQ
+result: once the OmniFold-side error budget is included,
 the agreement with the paper improves to $\chi^{2}/\mathrm{ndf}
 \approx 1.7$. (A perfectly correct model with correct uncertainties
 gives exactly $1$; $1.7$ tolerates small residual shape mismatch in
 high-$\pPar$ tails, see \S\ref{sec:shape}.) \textbf{This combined
 $\chi^{2}$ double-counts systematics shared with the paper} (flux,
-GENIE, RPA, 2p2h, MINOS); see \S\ref{sec:rank} for why it is still the
-honest headline and why an ours-only $\chi^{2}$ is not yet quotable.
+GENIE, RPA, 2p2h, MINOS); see \S\ref{sec:rank} for why it remains the
+quoted headline and why we report per-bin pulls rather than a single
+unqualified ours-only $\chi^{2}$.
 The log-normal variant (matching the paper's Table I treatment of the
 correlated flux normalization) gives $1.688$, essentially identical.
 
@@ -649,7 +648,7 @@ For each of the $205$ reported bins,
 Summary diagnostics: pull mean, RMS, the $14\times16$ pull heatmap,
 and a pull histogram (in \texttt{compare\_to\_paper\_fullcov.py}).
 
-\paragraph{Worked example (STATUS headline).}
+\paragraph{Worked example (headline numbers).}
 With the combined covariance (paper TotalCov $+$ matcorr universe $+$
 bootstrap-300 $+$ ML):
 \begin{itemize}[nosep]
@@ -719,7 +718,7 @@ the null space of $\mathbf{C}^{\text{shape}}$. Accordingly:
 \texttt{normalize\_xsec\_shape.py}: \texttt{shape\_jacobian},
 \texttt{shape\_chi2}.
 
-\paragraph{Worked example (STATUS headline).}
+\paragraph{Worked example (headline numbers).}
 Shape $\chi^{2}/\mathrm{ndf}$ on $205$ bins with the paper's
 \texttt{TotalCovariance} (Jacobian-propagated): $\boxed{3.596}$.
 This is essentially the absolute-normalisation $\chi^{2}/\mathrm{ndf}$
@@ -780,11 +779,10 @@ stat covariance most likely reflects genuinely higher unbinned-OmniFold
 statistical efficiency relative to the published binned D'Agostini unfold
 (whose iterative regularisation amplifies statistical fluctuations), or a
 difference in what the paper's \texttt{StatOnlyCov} encompasses ---
-\textbf{the split-bootstrap test below now resolves this}, and either way it is
-a more productive question than counting bands.
+the split-bootstrap test below resolves this.
 
 \paragraph{Resolution (data/MC split bootstrap).}
-We ran a $200{+}200$-replica \emph{split} bootstrap that Poisson-fluctuates the
+A $200{+}200$-replica \emph{split} bootstrap Poisson-fluctuates the
 data weights only (\texttt{boot\_data}) or the MC weights only (\texttt{boot\_mc})
 with independent RNGs, so in expectation
 $\mathbf{C}^{\boot}=\mathbf{C}^{\boot}_{\mathrm{data}}+\mathbf{C}^{\boot}_{\mathrm{mc}}$.
@@ -804,11 +802,11 @@ our block to the paper trace still leaves $\chi^{2}/\mathrm{ndf}=76.7$, so the g
 is shape as well as magnitude. \textbf{Consequence:} the correct ours-only
 $\chi^{2}$ uses our \emph{own} $\mathbf{C}^{\ours}$, not the paper's stat floor.
 The truncation-dependence below remains (the inversion is still regularizer-set),
-so we continue to lead with per-bin pulls and the scan; but with the stat block
-understood, the ours-only goodness-of-fit is now reported on $\mathbf{C}^{\ours}$
+so we lead with per-bin pulls and the scan; the ours-only goodness-of-fit
+is reported on $\mathbf{C}^{\ours}$
 via a truncated-spectral $\chi^{2}$ (retain $\lambda>10^{-10}\lambda_{\max}$), the
 same convention carried into the 3D generator comparison (\S\ref{sec:rank} is the
-2D anchor; the 3D campaign applies it on all $1431$ reported bins).
+2D anchor; the 3D comparison applies it on all $1431$ reported bins).
 
 \paragraph{Regularization scans (all cutoff-dependent).}
 On $\mathbf{C}^{\ours}$ over the $205$ reported bins, no regularizer
@@ -833,8 +831,8 @@ two-decade scan of its knob, with no defensible single cutoff. The
 useful conclusion is diagnostic, not a number: the naive inverse is
 dominated by tiny, poorly-determined modes, and in the retained
 high-variance modes the central-value difference is not large.
-\textbf{Quote direct per-bin pulls (\S\ref{sec:pull}) and this scan,
-not a single unqualified ours-only $\chi^{2}$.}
+We therefore report direct per-bin pulls (\S\ref{sec:pull}) and this scan
+rather than a single unqualified ours-only $\chi^{2}$.
 
 \paragraph{Bootstrap/paper-stat double-count.}
 The combined headline (\S\ref{sec:chisq}) adds $\mathbf{C}^{\boot}$ on
@@ -851,30 +849,28 @@ the double-counted $1.699$ as the well-defined ``what does OmniFold UQ
 add on top of the published $V$'' statement, with the de-double-counted
 number on file as a secondary diagnostic.
 
-\paragraph{Status of the rank/conditioning items.}
-Every band-count concern this analysis raised is closed in the paragraphs above
-and folded into the body: the $140/205$ systematic rank is richer than the
+\paragraph{Rank and conditioning: summary.}
+The $140/205$ systematic rank is richer than the
 paper's systematic-only $120$ (not a missing-bands problem); the Bashyal
-flux\,$\leftrightarrow$\,muon-energy joint block is rederived ($\rho=\rhoFluxMuon$,
-rank-preserving, \S\ref{sec:uq-universes}); the PPFX band is effectively rank-1
+flux\,$\leftrightarrow$\,muon-energy joint block is rederived ($\rho=\rhoFluxMuon$)
+and carried as a diagnostic --- adding it leaves the systematic rank
+unchanged, its directions already lying within the span of the universe
+covariance (\S\ref{sec:uq-universes}); the PPFX band is effectively rank-1
 (\S\ref{sec:uq-universes}); and the $2.5\times$ smaller bootstrap is explained by
 the data/MC split as genuine unbinned-OmniFold efficiency, not a missing MC term.
-Two paper-independent refinements remain optional: a fitted
+Two paper-independent refinements are possible: a fitted
 $(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$ posterior
 from MAT-MINERvA for a self-derived $\rho$, and published precedent for the
 truncated-spectral ``ours-only'' $\chi^{2}$ convention.
 
-\paragraph{What we do regardless.}
+\paragraph{Adopted conventions.}
 The publication-grade headline uses the combined covariance for
 $\chi^{2}/\mathrm{ndf}=1.699$ with the double-count caveat documented;
 the per-band rollup is MAT-conformant and byte-for-byte verified
 (\S\ref{sec:minerva}); the $1.4\%$ normalization is included as a
 rank-1 band; and the ours-only cov is reported via the truncated-spectral
 $\chi^{2}$ on $\mathbf{C}^{\mathrm{ours}}$ (rank $201$) with the
-regularization scan disclosed. With the Bashyal joint block now rederived
-($\rho=0.900$, rank-preserving) and the stat-block difference explained by the
-split bootstrap, no missing-band item remains; the only collaborator-facing
-question is publication precedent for the ours-only convention.
+regularization scan disclosed.
 
 \subsection{Anatomy of the paper-covariance tension}
 \label{sec:tension}
@@ -996,10 +992,10 @@ difference --- not a normalisation offset and not a small-$\lambda$
 inversion artifact --- concentrated in the low-$\pT$ peak where the
 flux/Muon\_Energy bands dominate, plus (ii) a $\sim1$-$\chi^{2}$-unit
 methodological band from the GBDT estimator/iteration regularisation.
-Both point to the same next step: the missing Bashyal
-flux\,$\leftrightarrow$\,Muon\_Energy joint block (\S\ref{sec:rank},
-open question 1) is exactly the covariance structure governing the region
-that carries the tension.
+Both point to the same structure: the Bashyal
+flux\,$\leftrightarrow$\,Muon\_Energy joint block (rederived at
+$\rho=\rhoFluxMuon$, \S\ref{sec:rank}) is exactly the covariance structure
+governing the region that carries the tension.
 
 \subsection{Calibration: coverage toys}
 \label{sec:coverage}
@@ -1068,7 +1064,7 @@ $\sqrt{2/\pi}\approx 0.798$.
 and \texttt{uq/coverage/coverage\_summary.txt}.
 \end{sloppypar}
 
-\paragraph{Worked example (STATUS, coverage).}
+\paragraph{Worked example (coverage).}
 With $N_{\text{toy}}=200$ on the $205$ reported bins:
 \begin{itemize}[nosep]
   \item Mean coverage: $\boxed{68.71\%}$ (target $68.27\%$;
@@ -1081,9 +1077,9 @@ With $N_{\text{toy}}=200$ on the $205$ reported bins:
 The agreement of $\langle c \rangle$ and $\langle |r| \rangle$ with
 their expected values at the half-percent level is the cleanest
 demonstration that the Poisson-bootstrap band is properly calibrated.
-The $200$-toy ensemble (vs the Stage-1 $20$ toys) shrinks the per-bin
+The $200$-toy ensemble reduces the per-bin
 binomial uncertainty to $\sqrt{0.68\cdot0.32/200}\approx 3.3\%$, which
-is why $97.6\%$ of bins now clear the $65\%$ target.
+is why $97.6\%$ of bins clear the $65\%$ target.
 
 \subsection{Closure tests: detecting bias}
 \label{sec:closure}
@@ -1229,7 +1225,7 @@ flux universes.
 \subsection{How the pieces fit together}
 \label{sec:assemble}
 
-The combined result now reads in one sentence:
+The combined result, in one sentence:
 \emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
 1.699$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
@@ -1282,7 +1278,8 @@ Mean coverage $= 68.71\%$ & \S\ref{sec:coverage} &
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.}
         Different physics sources are taken as uncorrelated; the one
         known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E
-        joint block, is not yet propagated (\S\ref{sec:rank}).
+        joint block, is rederived and carried as a diagnostic --- adding
+        it leaves the systematic rank unchanged (\S\ref{sec:rank}).
   \item \textbf{Combined-$\chi^{2}$ double-count.} The headline shares
         systematics with the paper's $V$ and is the ``what OmniFold UQ
         adds on top of $V$'' statement, not an independent ours-only

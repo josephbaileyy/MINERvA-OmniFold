@@ -104,6 +104,7 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
+    from matplotlib.ticker import MaxNLocator
 
     n = len(AXES)
     fig, axs = plt.subplots(n, n, figsize=(3.2 * n, 3.0 * n))
@@ -150,12 +151,21 @@ def main():
                       f"r_data={r_d:+.3f}")
             if i == n - 1:
                 A.set_xlabel(LABELS[ax_x], fontsize=11)
+                # prune the shared-boundary ticks so adjacent panels' end/start
+                # numbers (e.g. p_|| "60" | E_avail "0") don't collide under the
+                # tight wspace of a corner grid
+                A.xaxis.set_major_locator(MaxNLocator(nbins=4, prune="both"))
             else:
                 A.tick_params(labelbottom=False)
             if j == 0 and i > 0:
                 A.set_ylabel(LABELS[ax_y], fontsize=11)
+                A.yaxis.set_major_locator(MaxNLocator(nbins=4, prune="both"))
             elif j > 0:
-                A.tick_params(labelleft=False)
+                # which="both": the diagonal marginals are sub-decade log axes
+                # whose MINOR tick labels (2x10^5, 3x10^5, ...) otherwise survive
+                # the default labelleft=False (which="major") and bleed left into
+                # the neighbouring panel's r-annotation box.
+                A.tick_params(which="both", labelleft=False)
     fig.subplots_adjust(hspace=0.06, wspace=0.06)
     technote_style.minerva_tag(axs[0, 0])
 
