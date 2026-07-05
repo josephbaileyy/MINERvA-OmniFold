@@ -1,3 +1,10 @@
+% Audience flags for the three builds (main_note / main_primer / main_paper).
+% Each driver flips exactly one true after \input{preamble}; no section tests
+% them today, but conditional content can hook on them.
+\newif\ifNOTE
+\newif\ifPRIMER
+\newif\ifPAPER
+
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}      % proper hyphenation + line breaking
 \usepackage{amsmath,amssymb}
@@ -24,6 +31,10 @@
 
 % Figures live in the analysis directories; identical search path for every build.
 \graphicspath{{figures/}}
+% Prefer the vector build of each figure when present (advisor request);
+% extensionless \includegraphics falls back to .png for any figure whose
+% vector twin has not been regenerated yet.
+\DeclareGraphicsExtensions{.pdf,.png}
 
 % --- notation macros ---
 \newcommand{\pT}{p_{T}}

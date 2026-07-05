@@ -1,0 +1,44 @@
+% ====================================================================
+% PAPER DRAFT -- selective, results-first publication-style distillation
+% (~15-20 pp).  Build: latexmk -pdf main_paper.tex
+% Leads with the 2D reproduction and the (Eavail,W) DIS-tail result;
+% method compressed; cross-checks one-line; statistics deferred to the note.
+% Shares preamble.tex / values.tex / figures with the other two builds.
+% ====================================================================
+\documentclass[11pt]{article}
+\input{preamble}
+\PAPERtrue
+\input{values}
+
+\title{First unbinned simultaneous multi-observable measurement of the
+MINERvA medium-energy CC-inclusive cross section}
+\author{Joseph Bailey \and Benjamin Nachman}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We report the first application of unbinned machine-learning unfolding
+(OmniFold) to MINERvA medium-energy $\nu_\mu$ data. The unbinned
+$d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published iterative-Bayesian
+measurement ($\sigma_{\mathrm{tot}}$ ratio $\ratioTot$; median per-bin
+uncertainty \SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}). Because adding
+an observable costs only an input feature, we then measure the first
+simultaneous three-, four- and five-observable MINERvA cross sections, adding
+available energy $\Eavail$, momentum transfer $q_{3}$ and hadronic mass $W$. The
+low-$\Eavail$ region independently recovers the known low-recoil/2p2h deficit
+and agrees with the published low-recoil measurement
+($\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$, $p=\ascP$); the $(\Eavail,W)$ plane
+localises a residual deep-inelastic excess that no current generator reproduces
+($\disCornerLo$--$\disCornerHi\sigma$ in the high-$W$ corner). A point-cloud
+transformer reproduces the result from raw calorimeter clusters, and removing
+the muon kinematic cuts yields a first full-phase-space cross section,
+$\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$.
+\end{abstract}
+
+\input{paper_body}
+
+\printbibliography
+
+\end{document}
