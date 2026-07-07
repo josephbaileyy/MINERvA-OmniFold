@@ -89,48 +89,89 @@ def main():
     import matplotlib.pyplot as plt
 
     # ---------------- control plots ----------------
-    fig, axs = plt.subplots(2, 5, figsize=(32, 12), sharex="col",
-                            gridspec_kw=dict(height_ratios=[3, 1], hspace=0.06))
+    # Layout: 3+2 blocks of (spectrum + ratio), sixth cell = legend + sample tag.
+    # The figure is sized close to its printed width so in-figure font sizes
+    # survive the \includegraphics scaling (the old 32-inch canvas printed at
+    # ~3 pt). Fills are solid step-histograms (no per-bin bar seams).
+    C_SIG = technote_style.GEN_COLORS["Tune"]   # signal = the fixed Tune blue
+    C_BKG = "#DD8452"                           # background = solid warm orange
+    C_EDGE = "#2F4B7C"                          # stack outline (darker signal blue)
+    FS_LAB, FS_TICK, FS_LEG = 16, 14, 16
+
+    fig = plt.figure(figsize=(13.5, 9.0))
+    outer = fig.add_gridspec(2, 3, hspace=0.30, wspace=0.24,
+                             left=0.065, right=0.985, top=0.97, bottom=0.075)
     summary = {}
+    handles = None
     for i, ax in enumerate(AXES):
+        gs = outer[i // 3, i % 3].subgridspec(2, 1, height_ratios=[3, 1],
+                                              hspace=0.05)
+        A = fig.add_subplot(gs[0])
+        R = fig.add_subplot(gs[1], sharex=A)
         e = edges_for(ax)
         # drop the wide catch bin from the visible axis (keep it in the numbers)
         nshow = len(e) - 2 if e[-1] >= 99 else len(e) - 1
         dat, derr = th1_np(h_data[ax].GetValue())
-        sig, _ = th1_np(h_sig[ax].GetValue())
-        bkg, _ = th1_np(h_bkg[ax].GetValue())
+        sig, serr = th1_np(h_sig[ax].GetValue())
+        bkg, berr = th1_np(h_bkg[ax].GetValue())
         mc = (sig + bkg) * pot_scale
         summary[ax] = (dat.sum(), mc.sum())
         ctr = 0.5 * (e[:-1] + e[1:])
-        wid = np.diff(e)
-        A = axs[0, i]
-        A.bar(ctr[:nshow], (bkg * pot_scale)[:nshow], width=wid[:nshow],
-              color="tab:orange", alpha=0.7, label="MC background")
-        A.bar(ctr[:nshow], (sig * pot_scale)[:nshow], width=wid[:nshow],
-              bottom=(bkg * pot_scale)[:nshow], color="tab:blue", alpha=0.55,
-              label="MC signal (MnvTune v1)")
-        A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow], fmt="ko",
-                   ms=6, label="Data")
+
+        # step-outline arrays for the visible bins
+        xs = np.repeat(e[:nshow + 1], 2)[1:-1]
+        y_bkg = np.repeat((bkg * pot_scale)[:nshow], 2)
+        y_tot = np.repeat(mc[:nshow], 2)
+        floor = max(np.min(y_bkg[y_bkg > 0], initial=np.inf) * 0.4, 1.0)
+        h_b = A.fill_between(xs, floor, np.maximum(y_bkg, floor),
+                             color=C_BKG, lw=0, label="MC background")
+        h_s = A.fill_between(xs, np.maximum(y_bkg, floor), y_tot,
+                             color=C_SIG, lw=0, label="MC signal (MnvTune v1)")
+        A.plot(xs, y_bkg, color="white", lw=0.8)      # gap between stack segments
+        A.plot(xs, y_tot, color=C_EDGE, lw=1.0)       # stack outline
+        h_d = A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow],
+                         fmt="o", color="k", ms=4.8, elinewidth=1.1,
+                         zorder=5, label="Data")
+        if handles is None:
+            handles = [h_d, h_s, h_b]
         A.set_yscale("log")
-        A.set_title(LABELS[ax], fontsize=17)
-        A.tick_params(axis="both", which="major", labelsize=14)
-        if i == 0:
-            A.set_ylabel("events (POT-scaled)", fontsize=16)
-            A.legend(fontsize=14)
-        R = axs[1, i]
+        A.set_xlim(e[0], e[nshow])
+        top = np.max([y_tot.max(), dat[:nshow].max()])
+        A.set_ylim(floor, top * 2.2)
+        A.tick_params(axis="both", which="major", labelsize=FS_TICK)
+        plt.setp(A.get_xticklabels(), visible=False)
+        if i % 3 == 0:
+            A.set_ylabel("Events (POT-scaled)", fontsize=FS_LAB)
+
         with np.errstate(divide="ignore", invalid="ignore"):
             r = np.where(mc > 0, dat / mc, np.nan)
             re = np.where(mc > 0, derr / mc, np.nan)
-        R.errorbar(ctr[:nshow], r[:nshow], yerr=re[:nshow], fmt="ko", ms=6)
-        R.axhline(1.0, color="gray", lw=0.8)
-        R.set_ylim(0.75, 1.25)
-        R.set_xlabel(LABELS[ax], fontsize=16)
-        R.tick_params(axis="both", which="major", labelsize=14)
-        if i == 0:
-            R.set_ylabel("data / MC", fontsize=16)
-    fig.suptitle("Reco-level control distributions, ME FHC (selection of the analysis; "
-                 "wide catch bins not drawn)", y=0.98, fontsize=18)
-    technote_style.minerva_tag(axs[0, 0])
+            rel_mc = np.where(mc > 0, pot_scale * np.hypot(serr, berr) / mc, 0.0)
+        R.fill_between(xs, np.repeat(1 - rel_mc[:nshow], 2),
+                       np.repeat(1 + rel_mc[:nshow], 2),
+                       color="0.85", lw=0, label="MC stat.")
+        R.axhline(1.0, color="0.45", lw=0.9)
+        R.errorbar(ctr[:nshow], r[:nshow], yerr=re[:nshow],
+                   fmt="o", color="k", ms=4.8, elinewidth=1.1, zorder=5)
+        R.set_ylim(0.77, 1.30)
+        R.set_yticks([0.8, 1.0, 1.2])
+        R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
+        R.tick_params(axis="both", which="major", labelsize=FS_TICK)
+        if i % 3 == 0:
+            R.set_ylabel("Data / MC", fontsize=FS_LAB)
+
+    # sixth cell: legend + dataset tag (titles are suppressed by house style)
+    ax_leg = fig.add_subplot(outer[1, 2])
+    ax_leg.axis("off")
+    ax_leg.legend(handles=handles, labels=[h.get_label() for h in handles],
+                  loc="center", fontsize=FS_LEG, frameon=False,
+                  borderaxespad=0, handlelength=1.6)
+    ax_leg.text(0.5, 0.13, r"MINERvA ME FHC, $1.06\times10^{21}$ POT",
+                transform=ax_leg.transAxes, ha="center", va="center",
+                fontsize=FS_LAB - 2, color="0.25")
+    ax_leg.text(0.5, 0.02, "wide catch bins not drawn",
+                transform=ax_leg.transAxes, ha="center", va="center",
+                fontsize=FS_LAB - 4, color="0.45")
     out1 = os.path.join(args.outdir, "control_plots.png")
     fig.savefig(out1, dpi=140, bbox_inches="tight")
     plt.close(fig)
