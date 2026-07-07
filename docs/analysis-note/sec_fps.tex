@@ -130,3 +130,77 @@ Adopting the 4D-style per-bin $\max(\sigma_{\mathrm{uni}},
 (\SI{39.5}{\percent} of bins inflated, maximum factor $5.9$) gives the final
 covariance, median \textbf{\SI{8.19}{\percent}} per bin, positive-definite by
 construction.
+
+\subsection{The point-cloud realization: full statistics on the 5D grid}
+\label{sec:fps-pet}
+The result above establishes the full-phase-space extension on the
+two-dimensional $(\pT,\pPar)$ scalar grid. The point-cloud track
+(\S\ref{sec:pet}) repeats the exercise on the full 5D headline grid
+$(\pT,\pPar,\Eavail,q_3,W)$, with two differences from the GBDT case. First,
+because OmniFold's step-2 network is a learned function of the truth phase
+space it was trained on, opening the kinematic cuts requires a genuine PET
+retrain on the enlarged truth sample rather than a reweight of the
+restricted-phase-space network. Second, because retraining separately for
+each prior hypothesis is prohibitively expensive for this network, the
+model-dependence envelope reuses the frozen-reweighter transfer that
+underlies the PET systematic budget (\S\ref{sec:pet-syst}): a cheap GBDT
+re-unfold under three priors --- MnvTune~v1, bare GENIE, and the NuWro-shaped
+prior --- supplies per-bin fractional prior-dependence ratios, applied to the
+frozen PET headline weights rather than driving three additional PET
+trainings.
+
+\paragraph{Extending the grid and the truth phase space.}
+Two lifts are applied in sequence, each validated by re-training PET on the
+enlarged sample: (1)~the $\theta_\mu<20^\circ$ truth gate is lifted
+consistently across the point-cloud dump, the GBDT dump, and the PET retrain,
+enlarging the truth sample from \num{32.9}~million to \num{38.6}~million
+events; (2)~the reporting grid is then extended with catch bins for the
+low-$\pPar$ strip and the high-$\pT$ corner ($\pT$: 15 bins, $\pPar$: 19 bins,
+against the published $14\times16$), giving a final
+$15\times19\times7\times7\times6=\num{83790}$-bin grid on
+\num{49152885}~truth events. Restricting the extended-grid PET cross section
+to the \num{9752}~bins fully interior to the published $\theta_\mu<20^\circ$
+rectangle reproduces the restricted-phase-space PET headline to integral
+ratio $0.99$, median per-bin deviation \SI{1.6}{\percent} (90th percentile
+\SI{4.2}{\percent}) --- consistent with ordinary retrain-to-retrain noise
+between two independently-trained networks (quantified directly below), not a
+distortion from the extended grid or the lifted gate.
+
+\paragraph{Model-dependence envelope and two-tier reporting.}
+Of the \num{11875}~bins the PET headline populates on the extended grid,
+\num{9307} clear a reconstruction-efficiency completeness of $\ge0.5$
+(tier~1, measured) and \num{2568} fall below it (tier~2, extrapolated),
+concentrated in the low-$\pPar$ catch rows and the high-$\pT$ column. The
+three-prior model-dependence envelope (half-spread/mean per bin) has median
+\SI{18.7}{\percent} (90th percentile \SI{61.6}{\percent}) in tier~1 and
+median \SI{16.3}{\percent} (90th percentile \SI{45.4}{\percent}) in tier~2
+--- flat across the completeness range at large, rather than blooming in the
+extrapolated cells the way the coarser 2D pilot's efficiency-binned
+prior-swap did (that comparison used two priors and a different disagreement
+metric on the $14\times16$ grid; the finer 5D binning combined with the
+three-prior GBDT transfer evidently constrains the catch bins comparably well
+to the interior). The combined model-dependence covariance has
+$\sqrt{\mathrm{tr}\,C_{\text{modeldep}}} = \num{8.56e-37}$; because
+$C_{\text{modeldep}}$ is rank~2 by construction (built from two
+prior-difference vectors), it is stored and combined as those two vectors
+rather than as a dense matrix.
+
+\paragraph{Retraining-response floor.}
+The flat 16--19\% envelope raises an obvious question: how much of that is a
+genuine three-prior disagreement, and how much is ordinary PET training
+stochasticity? To isolate the latter, six additional PET replicas were
+trained varying only the random seed and the training-sample size (four
+replicas at 10M events, two at 5M), evaluated through the identical
+extraction chain, and their per-bin spread compared against the
+model-dependence envelope in each tier. At 10M events the tier-2
+retraining-response floor is median \SI{1.14}{\percent} (90th percentile
+\SI{2.17}{\percent}), a factor of $\sim14$ below the \SI{16.3}{\percent}
+tier-2 envelope, and it shrinks further from the 5M-event value
+(\SI{1.37}{\percent}), the expected direction for genuine convergence rather
+than an already-saturated noise floor. Retraining noise is therefore a
+negligible contributor next to the three-prior systematic, justifying the
+frozen-reweighter transfer used for both the model-dependence envelope above
+and the PET systematic budget (\S\ref{sec:pet-syst}): training PET once and
+propagating prior/systematic variation through fractional reweighting, rather
+than retraining per universe, does not discard resolving power that a full
+per-universe retrain would have recovered.

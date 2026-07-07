@@ -12,8 +12,10 @@ transverse position and $z$ (\texttt{cluster\_energy}, \texttt{cluster\_pos},
 \texttt{CVUniverse::GetRecoClusters()}) alongside the muon kinematics. This
 is a validated \emph{method milestone}: a real, absolutely-normalised,
 full-statistics cross section with its own closure gate and systematic
-budget. Its network training is subsample-limited (see below), so the
-production result of record remains the scalar GBDT measurement.
+budget. The network training in this section is subsample-limited (see
+below), so the production result of record remains the scalar GBDT
+measurement; the full-phase-space extension (\S\ref{sec:fps-pet})
+subsequently retrains PET at full statistics on the opened truth sample.
 
 \subsection{From shape check to absolute cross section}
 \label{sec:pet-abs}
