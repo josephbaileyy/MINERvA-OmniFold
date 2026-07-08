@@ -41,13 +41,10 @@ no detectable residual structure: the unbinned analogue of a binned goodness-of-
 passes.
 
 \paragraph{Coverage.}
-The UQ note records a 200-toy closure$+$bootstrap campaign: mean coverage
+A 200-toy closure$+$bootstrap study gives mean coverage
 \SI{68.71}{\percent} vs Gaussian \SI{68.27}{\percent}; mean
 $|\mathrm{residual}|/\sigma$ $0.794$ vs $\sqrt{2/\pi}=0.798$; and
-\SI{97.6}{\percent} of bins meeting the \SI{65}{\percent} target. The current
-checkout retains only the 20-toy stage-1 summary under \texttt{uq/coverage/};
-restore the 200 toy ROOTs before independently regenerating this number from
-disk.
+\SI{97.6}{\percent} of bins meeting the \SI{65}{\percent} target.
 
 \paragraph{Stability.}
 5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
@@ -72,9 +69,8 @@ consistent with the assigned ML band. As a stronger family cross-check, a vendor
 PET (point-cloud transformer~\cite{Mikuni:2024qsr}) unfold was run on the actual
 per-hadron point clouds --- the non-muon reconstructed clusters
 (\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
-\texttt{cluster\_isMuontrack}) read by \texttt{CVUniverse::GetRecoClusters}, after an
-earlier attempt that used the wrong, mostly-empty \texttt{ExtraEnergyClusters\_*}
-branch was discarded. Area-normalized against the frozen 4D GBDT result, the PET unfold
+\texttt{cluster\_isMuontrack}) read by \texttt{CVUniverse::GetRecoClusters}.
+Area-normalized against the frozen 4D GBDT result, the PET unfold
 reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 ($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a

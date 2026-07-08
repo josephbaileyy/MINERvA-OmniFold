@@ -39,9 +39,9 @@ Available energy follows the MINERvA low-recoil convention
 $\Eavail=\sum_{p}\mathrm{KE}+\sum_{\pi^{\pm}}\mathrm{KE}+\sum_{\pi^{0},\gamma}E$
 (excluding neutrons and the muon), via \texttt{CVUniverse::GetEAvailableTrue()};
 reco $\Eavail$ is the calorimetric tracker$+$ECAL estimate scaled by $1.17$,
-\texttt{CVUniverse::NewEavail()}. Both accessors were added to the event loop,
-which was re-run over all twelve ME~FHC playlists to append the $\Eavail$
-branches alongside the existing $\pT$/$\pPar$ branches. The unfolding driver is
+\texttt{CVUniverse::NewEavail()}. The event loop evaluates both accessors
+over all twelve ME~FHC playlists, carrying the $\Eavail$
+branches alongside the $\pT$/$\pPar$ branches. The unfolding driver is
 the 2D pipeline with a three-column feature stack
 $(\pT,\pPar,\Eavail)$; the cross-section extraction generalises to a 3D Jacobian
 $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$ with the flux $\Phi$ still applied per
@@ -106,8 +106,6 @@ dimension exposes} --- information that is invisible to the 2D measurement ---
 rather than a pipeline artefact (the total normalisation matches to
 $<\SI{1}{\percent}$).
 
-This establishes the 3D framework and its first closure.
-
 \subsection{Generator comparison in 3D}
 \label{sec:3d-models}
 Because the published ancillary ships only binned 2D model histograms, a
@@ -131,8 +129,8 @@ space and the same truth $\Eavail$ definition. We compare four predictions:
         (C target), built and run \emph{natively} on the compute system (no
         container), same flux and phase space.
 \end{itemize}
-NEUT~\cite{Hayato:2009zz} is not included (no accessible build at the time of
-writing). Each prediction is normalised by its own flux-averaged total CC cross
+NEUT~\cite{Hayato:2009zz} is not included.
+Each prediction is normalised by its own flux-averaged total CC cross
 section per nucleon ($\langle\sigma\rangle\approx\SI{3.6}{}$--$\SI{4.0e-38}{cm^2}$).
 
 Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
@@ -187,13 +185,14 @@ per-generator eigen-mode residuals are shown in Fig.~\ref{fig:3dfullcov}.
   \label{fig:3dfullcov}
 \end{figure}
 
-\subsection{The 3D systematic-uncertainty campaign}
+\subsection{The 3D systematic-uncertainty budget}
 \label{sec:3d-syst}
 The band on Fig.~\ref{fig:3dmodels} and the $\chi^{2}$ above rest on a full 3D
-analogue of the 2D uncertainty budget of \S\ref{sec:systematics}. We re-ran the
-event loop with the systematic universes dumped on the three-axis
-$(\pT,\pPar,\Eavail)$ grid (a 187-universe sweep), propagated the bootstrap
-statistical and ML-seedscan covariances, and summed them into a single combined
+analogue of the 2D uncertainty budget of \S\ref{sec:systematics}. The
+systematic universes are dumped on the three-axis
+$(\pT,\pPar,\Eavail)$ grid (187 universes), the bootstrap
+statistical and ML-seedscan covariances propagated, and the three summed into a
+single combined
 covariance $C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ over all 1431
 reported bins. The result has $\sqrt{\operatorname{tr}}=\SI{5.72e-39}{}$, a
 median per-bin relative uncertainty of \SI{10.4}{\percent}, and numerical rank
@@ -284,9 +283,8 @@ muon-kinematics extension (integrated over all $q_3$) rather than at fixed $q_3$
 comparison is of the $\Eavail$ \emph{shape} and direction rather than absolute
 normalisation; the consistency confirms that the OmniFold 3D extension recovers the
 established MINERvA low-recoil/2p2h feature as a by-product of the muon-kinematics
-unfolding. The overlay tooling
-(\texttt{3d-unfolding/genie/compare\_ascencio\_eavail.py}) is in place for a quantitative
-shape comparison once the \cite{MINERvA:2022incl} data release is loaded.
+unfolding. A quantitative
+shape comparison awaits the public \cite{MINERvA:2022incl} data release.
 
 \begin{figure}[H]
   \centering
@@ -319,8 +317,8 @@ dedicated low-recoil measurement (Ascencio \emph{et al.}~\cite{MINERvA:2022incl}
 $d^{2}\sigma/dq_{3}\,d\Eavail$) bin-compatible. Truth $q_{3}$ is the generator
 momentum transfer (\texttt{CVUniverse::Getq3True()}); reco $q_{3}$ is the
 calorimetric estimator built from the muon $Q^{2}$ and the recoil system
-(\texttt{CVUniverse::RecoQ3()}). Both accessors were added and the event loop
-re-run over all twelve playlists, exactly as for $\Eavail$. Unlike $\Eavail$,
+(\texttt{CVUniverse::RecoQ3()}). The event loop evaluates both accessors over
+all twelve playlists, exactly as for $\Eavail$. Unlike $\Eavail$,
 $q_{3}$ is \emph{not} invariant under the lateral systematic shifts, so the
 shifted-$q_{3}$ universes are dumped per universe rather than reused from the
 central value. The driver feature stack becomes $(\pT,\pPar,\Eavail,q_{3})$; the
@@ -368,7 +366,8 @@ flux/detector systematics, treated here as independent; the $p_\mu$-vs-$\pPar$
 gate differs by $\lesssim\SI{6}{\percent}$ kinematic smearing at the
 \SI{20}{GeV} boundary. A finer 44-cell comparison would require re-unfolding
 onto the Ascencio edges (trivial for the unbinned method) \emph{and} a
-systematic sweep on that binning; given the agreement above it is not pursued.
+systematic sweep on that binning; given the agreement above it is left to
+future work.
 
 \begin{figure}[H]
   \centering

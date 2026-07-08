@@ -62,6 +62,10 @@
 \newcommand{\petBinsTighter}{54}         % percent of common bins where PET < GBDT
 \newcommand{\petCommonBins}{4796}        % common 4D bins (PET is a subset of GBDT)
 \newcommand{\petGbdtExtra}{34}           % extra bins the GBDT reports beyond PET
+% 5D comparison on unified-throw-adopted covariances (2026-07-02; PET-side 5.711x inflation flagged-not-vetted)
+\newcommand{\petUnifiedMedianFracBin}{16.7}     % PET median per-bin frac unc, 5D unified cov (%)
+\newcommand{\petGbdtUnifiedMedianFracBin}{13.7} % GBDT median per-bin frac unc, 5D unified cov (%)
+\newcommand{\petUnifiedBinsTighter}{30}         % percent of common 5D bins where PET < GBDT
 % truth-cloud projection demonstration (reweight-then-project)
 \newcommand{\pcHasCloud}{99.999}         % percent of pass_truth events carrying a cloud (after miss-row fix)
 \newcommand{\pcHasCloudBefore}{72.6}     % percent carrying a cloud before the fix (reco-loop-only fill)
@@ -78,3 +82,21 @@
 \newcommand{\fpsSigma}{4.502e-38}     % full-phase-space total, cm^2/nucleon
 \newcommand{\fpsAbove}{46}            % percent above restricted phase space
 \newcommand{\fpsAnchor}{0.57}         % median anchor deviation in published cells (%)
+
+% --- unbinned negative-weight background subtraction (App.~negweight) ---
+% NB: 2D totals/ratios below are the FAST hist-estimator method comparison
+% (jobids 55663097/55665504-era runs). Swap to the exact-estimator matched
+% pair (jobids 55667224 purity / 55667225 negweight, runs/*_exact5.root) via
+% `compare_bkg_modes.py exact` when those land, so they sit next to \sigTwoD.
+\newcommand{\nwSigPur}{3.0727e-38}    % 2D total sigma, binned purity (hist), cm^2/nucleon
+\newcommand{\nwSigNeg}{3.0687e-38}    % 2D total sigma, negative-weight (hist), cm^2/nucleon
+\newcommand{\nwRatioTot}{0.9987}      % negweight/purity total ratio
+\newcommand{\nwPctTot}{-0.13}         % negweight-vs-purity total difference (%)
+\newcommand{\nwMedianBin}{1.000}      % median per-bin negweight/purity ratio
+\newcommand{\nwRmsBin}{1.4}           % per-bin RMS deviation from 1 (%)
+\newcommand{\nwWorstBin}{-12.6}       % largest single-bin deviation (%), low-pT/high-bkg edge bin
+% closed-form toy (negweight_toy.py)
+\newcommand{\nwToyNeg}{6.8}           % negweight median rel-err vs (D-B)/S (%)
+\newcommand{\nwToyPur}{6.7}           % purity  median rel-err vs (D-B)/S (%)
+\newcommand{\nwToyBias}{10.9}         % no-subtraction contamination bias (%)
+\newcommand{\nwToySeed}{0.3}          % negweight seed-to-seed spread (%)

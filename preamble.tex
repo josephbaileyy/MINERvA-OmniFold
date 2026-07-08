@@ -31,10 +31,10 @@
 
 % Figures live in the analysis directories; identical search path for every build.
 \graphicspath{{figures/}}
-% Prefer the vector build of each figure when present (advisor request);
-% extensionless \includegraphics falls back to .png for any figure whose
-% vector twin has not been regenerated yet.
-\DeclareGraphicsExtensions{.pdf,.png}
+% Vector-only: every figure now ships a .pdf twin, so we restrict the search to
+% .pdf.  A missing vector then fails the build loudly instead of silently
+% pulling in a stale raster .png.
+\DeclareGraphicsExtensions{.pdf}
 
 % --- notation macros ---
 \newcommand{\pT}{p_{T}}

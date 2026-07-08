@@ -42,8 +42,7 @@ with vertex in the central-tracker fiducial volume, with muon phase space
 \end{equation*}
 The fiducial volume is the tracker region $5980 < z < \SI{8422}{mm}$ within an
 \SI{850}{mm} apothem, containing $3.2353\times10^{30}$ nucleons (the fixed
-tracker-geometry constant; the event loop deliberately does not persist a
-per-file nucleon count because merging playlists would sum it).
+tracker-geometry constant).
 
 Reconstructed events are selected by requiring: a reconstructed vertex in the
 same tracker fiducial volume and apothem; a muon track with
@@ -109,8 +108,9 @@ playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.
 \label{sec:controlplots}
 Figure~\ref{fig:control} compares the selected data to the POT-scaled
 simulation (signal $+$ background) at reconstruction level in all five
-observables. The data exceed the MnvTune-v1 prediction by a uniform
-\SI{12}{\percent} in rate, rising with $\pT$ (from $0.88$ in the lowest bin
+observables. The selected event count exceeds the MnvTune-v1 prediction by
+$\sim\SI{12}{\percent}$ in overall normalisation, with a clear trend in
+$\pT$ (the data/MC ratio rises from $0.88$ in the lowest bin
 to $\sim1.2$ above \SI{1}{GeV/c}) --- the reco-level image of the
 normalisation deficit quantified at truth level in
 \S\ref{sec:results-model} and \S\ref{sec:3d-models}. The simulation
@@ -139,20 +139,24 @@ at truth level in \S\ref{sec:results-model}.
 \jrb{(a) done --- the figure is regenerated with larger panels and fonts;
 (c) done --- physics commentary added above; (b) a reco-level
 pairwise-correlation corner plot is added as
-Fig.~\ref{fig:control-corner}.}
+Fig.~\ref{fig:control-corner}. Revisited on your later request: the figure
+is redesigned as $3{+}2$ panel blocks sized at print width (solid
+step-histogram stacks, MC-statistical band on the ratio, shared legend),
+replacing the earlier five-across strip.}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{control_plots}
   \caption{\bpn{Can you please make all figures vectorized, e.g. PDF?}
-  \jrb{Done: every figure is now generated with a vector (PDF) twin ---
-  \texttt{make\_figures.sh} writes both formats and the note automatically
-  prefers the PDF.} Reco-level control distributions for the analysis selection: data
-  (points) versus POT-scaled simulated signal (blue) plus background
+  \jrb{Done: every figure is generated as a vector PDF and the note now
+  embeds PDFs exclusively (the raster fallback was removed, so a missing
+  vector fails the build).} Reco-level control distributions for the analysis selection: data
+  (points) versus POT-scaled simulated signal (blue) stacked on background
   (orange), with the data/MC ratio below, for $\pT$, $\pPar$, $\Eavail$,
-  $q_{3}$ and $W$ (wide catch bins not drawn). The uniform
-  $\sim\SI{12}{\percent}$ data excess over MnvTune v1 is the reco-level
-  counterpart of the truth-level generator deficits of
+  $q_{3}$ and $W$ (wide catch bins not drawn). The grey band on the ratio
+  is the MC statistical uncertainty, mostly narrower than the points. The
+  $\sim\SI{12}{\percent}$ normalisation excess of the data over MnvTune v1
+  is the reco-level counterpart of the truth-level generator deficits of
   \S\ref{sec:3d-models}.}
   \label{fig:control}
 \end{figure}

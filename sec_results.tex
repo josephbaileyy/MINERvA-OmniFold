@@ -52,8 +52,14 @@ published points now read ``Published (PRD 104, 092007)''; our points read
 vs.\ circles); and every data-bearing figure carries a uniform
 ``MINERvA ME FHC, $1.06\times10^{21}$ POT'' tag (we avoid figure titles by
 style convention). Generator-overlay labels (GENIE variants, NuWro, GiBUU)
-are deliberately unchanged. The four PET-section figures will get the same
-pass when the in-flight full-statistics PET run refreshes them.}
+are deliberately unchanged. The PET-section figures already follow the note's
+plotting style (axis casing, consistent colours, no titles); they are
+method-comparison plots (PET vs.\ GBDT, and truth-cloud projection validation)
+rather than data-vs.-published comparisons, so the published-data markers do
+not apply --- the data-bearing absolute-rate figure carries the standard
+``MINERvA ME FHC'' sample tag, while the uncertainty and projection figures
+keep their PET/GBDT method labels and omit the tag by convention. The
+full-statistics realization is reported separately in \S\ref{sec:fps-pet}.}
 
 \begin{figure}[H]
   \centering
@@ -186,7 +192,7 @@ under-predicts the total by $\sim\SI{9}{\percent}$
 low-$\pT$ peak, and is strongly disfavoured by the data covariance
 ($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $26.5$). Our unfolded
 result tracks the data far more closely than the model does.
-(\texttt{compare\_to\_models.py}.) The published analysis~\cite{MINERvA:2021owq}
+The published analysis~\cite{MINERvA:2021owq}
 additionally compares to NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and
 NEUT~\cite{Hayato:2009zz}; because OmniFold delivers a per-event reweighted
 truth ensemble, any such generator prediction can be compared to our result in
