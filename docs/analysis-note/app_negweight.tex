@@ -1,0 +1,130 @@
+\section{Unbinned background subtraction by negative-weight injection}
+\label{app:negweight}
+
+The background subtraction of \S\ref{sec:method-algo} is the one step in which
+the analysis binning enters before the final histogramming: each data event in
+reconstructed bin $b$ is down-weighted by the purity
+$w_{\mathrm{pur}}(b)=\max(0,\,N_{\mathrm{data}}(b)-N_{\mathrm{bkg}}(b))/
+N_{\mathrm{data}}(b)$. This appendix documents the fully unbinned realization of
+the same correction --- injecting the background simulation onto the measured
+side of the fit with negative weight --- shows that it targets an identical
+estimand, and quantifies its agreement with the binned correction on the 2D
+measurement. It is the continuous version of the purity weight recommended for
+nontrivial backgrounds by Ref.~\cite{unbinnedguide}, and the natural treatment
+for the full-phase-space extension, where the background is larger.
+
+\subsection{Estimator}
+\label{sec:negweight-estimator}
+
+Step 1 of OmniFold trains a classifier that separates the simulated
+reconstruction (class~0, weighted density $S$) from the measured sample
+(class~1, weighted density $\rho_1$), then reweights the simulation by the
+learned density ratio $r(x)=p(x)/(1-p(x))$, whose population optimum is
+$r^{\star}(x)=\rho_1(x)/S(x)$. The background treatment is entirely a choice of
+$\rho_1$:
+\begin{itemize}
+  \item the binned purity weight sets
+    $\rho_1(x)=D(x)\,w_{\mathrm{pur}}(x)=\max(0,\,D(x)-B(x))$, realized by a
+    per-reco-bin scalar applied to each data event, with $D$ the data density
+    and $B$ the POT-scaled background density;
+  \item negative-weight injection appends the background-simulation
+    reconstruction events to the measured side with weight
+    $-w_{\mathrm{bkg}}\,\times\,(\text{POT scale})$, leaving the data events at
+    $+1$, so that $\rho_1(x)=D(x)-B(x)$ \emph{continuously}, with no analysis
+    binning.
+\end{itemize}
+Both give the same background-subtracted estimand
+$r^{\star}(x)=(D(x)-B(x))/S(x)$; they differ only in whether the subtraction is
+performed per reco bin or event by event in the full reconstructed phase space.
+The injected background is restricted to the same reconstructed fiducial window
+as the data, so the two constructions act on identical support.
+
+\paragraph{The floor.} Where the background locally exceeds the data,
+$D-B<0$, the binned method floors the correction at zero through the
+$\max(0,\cdot)$. In the unbinned case the classifier output $p\in(0,1)$ forces
+$r=p/(1-p)\ge 0$, so a negative reweight cannot arise; the floor is therefore
+structural rather than imposed. The fit is not well-posed in such a region,
+however --- the class-1 weighted mass is locally negative --- so the principled
+treatment there is the ``Stay Positive'' refinement of
+Ref.~\cite{Nachman:2025staypositive}, which resamples the signed-weight sample
+into an equivalent positive-weight one before training. At the sub-percent
+genuine-background scale of this measurement the two behave identically; the
+refinement matters only for the larger, more structured backgrounds of the
+full-phase-space extension.
+
+\subsection{Closed-form toy}
+\label{sec:negweight-toy}
+
+The estimator is verified on a one-dimensional problem with a known answer:
+signal simulation drawn from $\mathcal{N}(0,1)$, a data signal from
+$\mathcal{N}(0.3,1.1)$ with equal normalization, and a background
+$\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of the pseudo-data, so
+that the target reweight $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is a smooth
+positive function. A gradient-boosted classifier trained with the signed-weight
+construction recovers this ratio to a median \SI{\nwToyNeg}{\percent} relative
+error --- matching the binned purity construction's \SI{\nwToyPur}{\percent} on
+the identical problem, and reproducing it bin-for-bin --- while omitting the
+subtraction leaves a \SI{\nwToyBias}{\percent} bias from the residual
+background. The result is stable across classifier seeds
+($\pm\SI{\nwToySeed}{\percent}$), and the negative sample weights introduce no
+numerical instability. In a stress configuration with the background moved into
+the sparse signal tail and deliberately over-subtracted, the learned reweight
+floors cleanly at zero over the region where $B>D$, as anticipated above.
+
+\subsection{Comparison on the 2D measurement}
+\label{sec:negweight-2d}
+
+Table~\ref{tab:negweight} compares the two background treatments on the
+ME~FHC data, unfolded with identical settings and a common classifier
+seed so that the difference isolates the background treatment. The two agree to
+\SI{\nwPctTot}{\percent} on the total cross section --- an order of magnitude
+inside the ${\sim}\SI{3}{\percent}$ purity correction itself --- with a median
+per-bin ratio of $\nwMedianBin$ and a \SI{\nwRmsBin}{\percent} RMS scatter
+across the plane (Fig.~\ref{fig:negweight-ratio}).
+The only bin differing by more than a few percent is a single low-$p_T$,
+high-background edge bin ($\SI{\nwWorstBin}{\percent}$), exactly where the
+background concentrates and the subtraction is largest. The unbinned
+subtraction thus reproduces the adopted binned correction wherever the
+correction is well determined, and departs from it only in the regime where the
+binned $\max(0,\cdot)$ floor and the structural floor of
+\S\ref{sec:negweight-estimator} are themselves the operative choice.
+
+\begin{table}[t]
+  \centering
+  \caption{Binned purity versus unbinned negative-weight background
+    subtraction on the 2D ME~FHC measurement (common estimator and seed).
+    The per-bin figures are the negative-weight/purity ratio over the
+    populated cross-section bins.}
+  \label{tab:negweight}
+  \begin{tabular}{lcc}
+    \hline\hline
+    & binned purity & negative-weight \\
+    \hline
+    total $\sigma$ (cm$^2$/nucleon) & $\nwSigPur$ & $\nwSigNeg$ \\
+    total ratio (neg/pur)           & \multicolumn{2}{c}{$\nwRatioTot$ (\SI{\nwPctTot}{\percent})} \\
+    median per-bin ratio            & \multicolumn{2}{c}{$\nwMedianBin$} \\
+    per-bin RMS deviation           & \multicolumn{2}{c}{\SI{\nwRmsBin}{\percent}} \\
+    largest single-bin deviation    & \multicolumn{2}{c}{\SI{\nwWorstBin}{\percent} (low $p_T$, high background)} \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{negweight_ratio_2d}
+  \caption{Per-bin ratio of the negative-weight to the binned-purity
+    cross section on the 2D ME~FHC measurement (common estimator and seed),
+    over the populated bins. The two agree to a median of $\nwMedianBin$ across
+    the plane (near-white); the only departure beyond a few percent is the
+    single low-$p_T$, high-background edge bin, where the background is largest
+    and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator}
+    is the operative choice.}
+  \label{fig:negweight-ratio}
+\end{figure}
+
+The equivalence at the 2D scale, together with the closed-form recovery of the
+estimator, establishes negative-weight injection as a validated unbinned
+replacement for the binned purity correction; adopting it as the default
+subtraction awaits its propagation through the systematic-universe and
+statistical-bootstrap machinery and the ``Stay Positive'' refinement for the
+larger backgrounds of the full-phase-space extension.

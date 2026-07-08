@@ -60,19 +60,25 @@ in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
 Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds
 but records no analysis that has yet used it. The explicit per-reco-bin
 weight used here is a conservative middle ground at our sub-percent
-genuine-background scale; a continuous per-event purity classifier trained
-on the same simulation would remove the residual binning dependence and is a
-natural refinement for the full-phase-space extension, where backgrounds are
-larger.
+genuine-background scale. Its fully unbinned realization --- injecting the
+background simulation onto the measured side with negative weight, which
+targets the identical background-subtracted density $(D-B)/S$ and reproduces
+the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross
+section (App.~\ref{app:negweight}) --- removes the residual binning dependence
+and is the natural treatment for the full-phase-space extension, where
+backgrounds are larger.
 \bpn{Maybe say more about how you do the background subtraction
 unbinned?}\jrb{Added the two paragraphs above (the second after a literature
-check). Since no published unbinned measurement has actually solved
-nontrivial in-unfold subtraction, a question back: would you suggest we try
-negative-weight MC injection, a per-event purity classifier
-$P(\mathrm{sig}\,|\,x_{\mathrm{reco}})$, or T2K's approach of carrying
-labelled background through the fit with background-enhanced control
-samples? Mostly relevant for the full-phase-space extension, where the
-background is larger.}
+check), and worked the negative-weight route you preferred over the per-event
+purity classifier and the T2K control-sample approach. It is the continuous
+version of the purity weight --- same $(D-B)/S$ estimand --- and reproduces the
+binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross section,
+with a median per-bin ratio of $\nwMedianBin$; the derivation, the closed-form
+toy, and the comparison table are in App.~\ref{app:negweight}. I have kept the
+binned weight as the default here: making the unbinned subtraction the default
+still needs it propagated through the systematic-universe and bootstrap
+machinery and the ``Stay Positive'' refinement~\cite{Nachman:2025staypositive}
+for the larger full-phase-space backgrounds.}
 
 OmniFold has moved from method paper to production measurement over the last
 few years. H1 published the first real-data applications --- jet substructure

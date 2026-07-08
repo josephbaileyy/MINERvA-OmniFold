@@ -32,6 +32,7 @@ run MEFHC_5iter_eff_fig5.png         2d-unfolding  python plot_efficiency_fig5_s
 run MEFHC_5iter_xsec_paper_pt_slices.png 2d-unfolding python plot_2d_paper_comparison.py
 run MEFHC_5iter_xsec_proj_pt.png     2d-unfolding  python plot_2d_cross_section.py --infile 2d_crossSection_omnifold_MEFHC_5iter.root --prefix MEFHC_5iter_xsec
 run MEFHC_5iter_pull_full.png        2d-unfolding  python compare_to_paper_fullcov.py
+run ../docs/analysis-note/figures/negweight_ratio_2d.pdf 2d-unfolding python plot_negweight_ratio.py
 run model_comp_projections.png       2d-unfolding  python compare_to_models.py
 run tension_spectrum.png             2d-unfolding  python diagnose_tension.py
 
