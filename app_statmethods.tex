@@ -4,7 +4,7 @@
 
 This appendix is the complete uncertainty-quantification methodology of the
 measurement --- the seedscan, bootstrap and universe-covariance procedures,
-the MAT-conformant covariance construction, the $1/\Phi$ flux normalisation,
+the MAT-conformant covariance construction, the $1/\Phi$ flux normalization,
 the comparison conventions ($\chi^{2}$, pulls, shape-only), the
 ill-conditioning/rank analysis, the tension anatomy, the coverage toys, and
 the closure tests. Each procedure gives the recipe, the math, the
@@ -44,7 +44,7 @@ $N-1$: there are not enough independent ``directions'' to fill the
 full $n\times n$ matrix. This was the regime of the Stage-1 bootstrap
 ($N=50$ replicas, $n=205$ bins): Cholesky failed without jitter, and
 the required jitter, $1.6\times10^{-94}$, was a numerical
-artefact of the rank deficiency rather than a real near-singularity.
+artifact of the rank deficiency rather than a real near-singularity.
 The Stage-2 bootstrap ($N=300 > 205$) is full-rank. The
 \emph{systematic} covariance suffers a more stubborn version of this
 problem that survives at any universe count --- see \S\ref{sec:rank}.
@@ -552,7 +552,7 @@ $\theta_{\mu}<20^{\circ}$ kinematic cut and have wildly suppressed
 paper efficiencies that we do not replicate; pulls on those cells run
 to $\mathcal{O}(100)\sigma$ and dominate the $\chi^{2}$. The $185$-bin
 interior cut removes them, and we quote it only as a sensitivity check that
-the headline tension is not an artefact of those few boundary cells.
+the headline tension is not an artifact of those few boundary cells.
 \textbf{The canonical metric is the 205-bin set} used everywhere below.
 
 \subsubsection{Covariance-aware $\chi^{2}/\mathrm{ndf}$}
@@ -667,8 +667,8 @@ spread before we include our own uncertainties.
 
 \paragraph{What it estimates.}
 Whether the \emph{shape} of the $(\pT,\pPar)$ cross section matches
-the paper, independent of absolute normalisation. Useful because the
-absolute normalisation depends on the flux integral, target nucleon
+the paper, independent of absolute normalization. Useful because the
+absolute normalization depends on the flux integral, target nucleon
 count, and POT (all of which can drift by $\mathcal{O}(\%)$), whereas
 the shape is a pure unfolding diagnostic.
 
@@ -721,7 +721,7 @@ the null space of $\mathbf{C}^{\text{shape}}$. Accordingly:
 \paragraph{Worked example (headline numbers).}
 Shape $\chi^{2}/\mathrm{ndf}$ on $205$ bins with the paper's
 \texttt{TotalCovariance} (Jacobian-propagated): $\boxed{3.596}$.
-This is essentially the absolute-normalisation $\chi^{2}/\mathrm{ndf}$
+This is essentially the absolute-normalization $\chi^{2}/\mathrm{ndf}$
 of $3.661$ \emph{minus} the contribution of overall scale. Total-$\sigma$
 ratio is $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.0111$ ---
 $1\%$ scale difference. Shape disagreement at the $\sim 1\%$ level
@@ -928,11 +928,11 @@ $r$ largest-$\lambda$ modes rises smoothly $0.69\,(r{=}50)\to2.35\,(100)\to
 3.30\,(180)\to3.66\,(205)$ --- no late jump, i.e.\ the tension does not ride on
 the last few least-determined modes.
 
-\paragraph{It is shape, not normalisation.}
+\paragraph{It is shape, not normalization.}
 Splitting $\boldsymbol{\Delta}$ into a component along the measured
 spectrum $\mathbf{x}^{\paper}$ (an overall scale) and the orthogonal
 remainder, the scale piece contributes $\chi^{2}_{\mathrm{norm}}=0.10$ and the
-shape piece $\chi^{2}_{\text{shape}}=750.1$. The $+1.1\%$ normalisation
+shape piece $\chi^{2}_{\text{shape}}=750.1$. The $+1.1\%$ normalization
 offset is statistically irrelevant to the tension; it is a correlated
 \emph{shape} difference. (Consistent with the Jacobian shape-only
 $\chi^{2}/\mathrm{ndf}=3.60$, \S\ref{sec:shape}.)
@@ -946,7 +946,7 @@ $14\times16$ grid (\texttt{tension\_mode\_maps.png},
 $\pT$-bins 2/7/10 carry $16/11/12\%$) and the low-$\pPar$ near-edge
 cells ($\pPar$-bins 0/1/8). The carrier modes are sign-alternating
 \emph{shape} oscillations across the peak, not vertical $\pT$-columns
-(which a flux $1/\Phi(\pT)$ normalisation error would produce) and not
+(which a flux $1/\Phi(\pT)$ normalization error would produce) and not
 the $\theta_{\mu}<20^{\circ}$ acceptance boundary. This is exactly where
 the flux and Muon\_Energy bands --- the two largest, and the only named
 cross-band correlation (Bashyal, \S\ref{sec:rank}) --- dominate the
@@ -956,7 +956,7 @@ OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.
 
 \paragraph{A methodological component (estimator and iteration).}
 Part of the tension is regularisation-dependent --- the same data, same
-normalisation ($\Sigma\sigma$ within $0.1\%$), unfolded with a different
+normalization ($\Sigma\sigma$ within $0.1\%$), unfolded with a different
 GBDT backend moves the paper-cov $\chi^{2}$ by $\sim1$ unit while central
 values barely change (iteration count, by contrast, is negligible):
 \begin{center}
@@ -988,7 +988,7 @@ regularisation rather than a physical data--MC disagreement
 
 \paragraph{Conclusion.}
 The tension is (i) a genuine, broadly-distributed, \emph{correlated shape}
-difference --- not a normalisation offset and not a small-$\lambda$
+difference --- not a normalization offset and not a small-$\lambda$
 inversion artifact --- concentrated in the low-$\pT$ peak where the
 flux/Muon\_Energy bands dominate, plus (ii) a $\sim1$-$\chi^{2}$-unit
 methodological band from the GBDT estimator/iteration regularisation.
