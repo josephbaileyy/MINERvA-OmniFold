@@ -29,6 +29,8 @@ and a stat-only diagonal omits the unfolding covariance; the proper full-covaria
 goodness-of-fit is the $\chi^2$-vs-paper of \S\ref{sec:results-tension} and the generator
 comparisons.)
 
+\bpn{Should we use this closure test to set an uncertainty? }
+
 \paragraph{Unbinned goodness-of-fit.}
 As a binning-free check that the unfold actually removes the data\,$\leftrightarrow$\,MC
 mismatch, we use a classifier two-sample test (C2ST): a classifier is trained to separate the
@@ -52,7 +54,7 @@ $|\mathrm{residual}|/\sigma$ $0.794$ vs $\sqrt{2/\pi}=0.798$; and
 \SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
 Fig.~5.
 
-\paragraph{Classifier choice (GBDT vs.\ NN).}
+\paragraph{Classifier choice (GBDT vs.\ NN).} \bpn{Maybe move to an appendix?  The NN in Fig. 15 looks quite bad!  Seems a little suspicious.  Keep Fig. 17+18 in the main body!}
 Published OmniFold analyses use neural-network
 classifiers~\cite{Andreassen:2019cjw,unbinnedguide}; we use gradient-boosted decision
 trees, whose output must still be a calibrated posterior for $w=p/(1-p)$ to be valid.
@@ -76,7 +78,10 @@ reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
 shape/method-robustness check: it shows the learned reweight is stable across both
 the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representation
-(engineered scalars vs.\ raw point cloud). Section~\ref{sec:pet} elevates the PET
+(engineered scalars vs.\ raw point cloud). The point-cloud inputs themselves are
+shown in Fig.~\ref{fig:petdisplays} (example reco-cluster and truth
+final-state-hadron clouds for individual events) and Fig.~\ref{fig:petcardinality}
+(per-event cardinality of each cloud). Section~\ref{sec:pet} elevates the PET
 track to a full-statistics, absolutely-normalised cross section with its own
 closure gate and systematic budget. Figure~\ref{fig:calibration} shows the
 underlying classifier-calibration diagnostics (reliability curve and binned
@@ -103,6 +108,35 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
     catch bin, a subsample-statistics effect. Shape-only comparison (PET on a 2M-event
     subsample), not an independent physics result.}
   \label{fig:petgbdt}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.80\textwidth]{pet_event_displays}
+  \caption{Example PET point-cloud inputs for four individual events (one per
+  row). \emph{Left}: reconstructed recoil clusters in detector position space
+  (cluster $z$ vs.\ transverse position, mm), colour and marker area scaled by
+  cluster energy. \emph{Right}: truth final-state hadrons in momentum space
+  ($p_z$ vs.\ $p_T$, MeV), coloured by species. The two panels are complementary
+  representations of the same event, not a per-event overlay; the derived
+  $(\pT,\pPar,\Eavail,q_{3})$ annotated on each panel match between reco and
+  truth. These are the raw clouds the PET unfold consumes in place of the
+  engineered scalars. \bpn{Great!  Can we have the same coords (maybe momentum space) for both levels and overlaid?  This will help visualize the distortions as well.}}
+  \label{fig:petdisplays}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{pet_cardinality}
+  \caption{Per-event point-cloud cardinality (number of constituents) for the
+  truth final-state hadrons, the reconstructed clusters in MC, and the
+  reconstructed clusters in data, POT-weighted. The reco-cluster multiplicity
+  greatly exceeds the truth hadron multiplicity --- a single hadron deposits
+  energy in many detector clusters --- while data and MC reco agree closely
+  (means \num{11.1} vs.\ \num{11.2}). Clouds are truncated to the twelve
+  highest-energy constituents per event, so the reco distributions pile up at
+  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it. \bpn{why strange shape for truth?  How did you pick 12?}}
+  \label{fig:petcardinality}
 \end{figure}
 
 \begin{figure}[H]

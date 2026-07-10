@@ -3,7 +3,7 @@
 
 
 
-MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus scattering experiment at Fermilab, situated in the NuMI beamline immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. Over roughly a decade of operation, ending in 2019, MINERvA recorded high-statistics samples in both the low-energy and medium-energy (ME) NuMI beam configurations~\cite{MINERvA:2016iqn} and in neutrino-dominated (forward horn current, FHC) and antineutrino-dominated beam modes. Its physics goal is the precision measurement of neutrino--nucleus interaction cross sections on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation experiments: these cross sections, and the nuclear effects that shape them, are a leading systematic uncertainty for experiments such as NOvA~\cite{NOvA:2021nfi} and DUNE~\cite{DUNE:2020jqi}, and the few-GeV regime mixes quasistatic, resonant, and deep-inelastic processes that no single model describes cleanly. This note uses the public ME FHC CC-inclusive data product; the detector itself is described in \S\ref{sec:experiment}.
+MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus scattering experiment at Fermilab, situated in the NuMI beamline immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. Over roughly a decade of operation, ending in 2019, MINERvA recorded high-statistics samples in both the low-energy and medium-energy (ME) NuMI beam configurations~\cite{MINERvA:2016iqn} and in neutrino-dominated (forward horn current, FHC) and antineutrino-dominated beam modes. Its physics goal is the precision measurement of neutrino--nucleus interaction cross sections on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation experiments: these cross sections, and the nuclear effects that shape them, are a leading systematic uncertainty for experiments such as NOvA~\cite{NOvA:2021nfi} and DUNE~\cite{DUNE:2020jqi} \bpn{Add in competitors T2K and HyperK?}, and the few-GeV regime mixes quasistatic, resonant, and deep-inelastic processes that no single model describes cleanly. This note uses the public ME FHC CC-inclusive data product; the detector itself is described in \S\ref{sec:experiment}.
 
 The MINERvA ME FHC charged-current (CC) inclusive
 double-differential cross section in muon transverse and longitudinal momentum,
@@ -16,9 +16,7 @@ machine-learned likelihood ratios that operates on per-event observables rather
 than on a fixed histogram binning. Recent advances in machine learning have enabled unbinned unfolding
 techniques; see Refs.~\cite{Arratia:2021otl,Huetsch:2024quz} for overviews
 and Ref.~\cite{unbinnedguide} for cross-experiment practical
-guidance.\bpn{see recent unfolding papers from our group on how to do an
-overview cite of unbinned unfolding}\jrb{Done, tried an approach based on
-arXiv:2606.06603} These methods fall into two broad families: those that
+guidance. These methods fall into two broad families: those that
 iteratively reweight a starting simulation, of which
 OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf} is the
 most widely adopted, and those that generate new samples directly with a
@@ -42,7 +40,7 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
         input features, not multiplying response-matrix bins --- this is the
         enabling property for the available-energy extension
         (\S\ref{sec:3d}) that has no practical IBU analogue.
-  \item \textbf{Different regularisation.} OmniFold's regulariser is the  machine learning model capacity in addition to the iteration count in common with IBU. Comparing the two
+  \item \textbf{Different regularisation \bpn{Are you or your LLM British??}.} OmniFold's regulariser is the  machine learning model capacity in addition to the iteration count in common with IBU. Comparing the two
         approaches on the same data quantifies the method-dependence of the result
         (\S\ref{sec:results}).
 \end{itemize}
