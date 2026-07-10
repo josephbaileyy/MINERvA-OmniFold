@@ -43,7 +43,7 @@ flux/POT/nucleon constants). Three gates validate the absolute path:
 Because the closure is exact to $\sim\SI{\petClosure}{\percent}$, the $\sim\SI{\petGbdtGap}{\percent}$
 data-side gap is a genuine \emph{training-configuration} difference (PET
 trained on the 2M subsample with 2 iterations versus the full-statistics
-5-iteration GBDT), not a normalisation bug: an under-iterated unfold pushes
+5-iteration GBDT), not a normalization bug: an under-iterated unfold pushes
 the result less far from the prior. A higher-epoch retrain moved the total by
 $-1.6\%$ (ratio $0.897$), confirming the training-config sensitivity; the
 residual gap reflects the reduced PET training statistics and iteration
@@ -244,7 +244,7 @@ The point-cloud track closes the methodological loop begun by the scalar
 GBDT/MLP cross-checks (\S\ref{sec:validation}): the unfolded physics is
 stable across classifier family (GBDT, MLP, transformer) \emph{and} input
 representation (engineered scalars, raw reconstructed clusters), now
-including the absolute normalisation. It also establishes the
+including the absolute normalization. It also establishes the
 infrastructure --- point-cloud DataLoader, GPU training, full-sample
 reweighting, frozen-reweighter budgets --- for unfolding directly on
 low-level MINERvA data, the natural endpoint of the unbinned program.

@@ -93,7 +93,7 @@ recommendation, for two reasons. Their mock data injects a large
 prior--data \emph{shape} discrepancy (an RPA-modified quasielastic model)
 that many iterations must overcome, whereas our prior already describes the
 data shapes well (\S\ref{sec:controlplots}) and the data pull is dominantly
-a normalisation; and cross-experiment production practice is few iterations
+a normalization; and cross-experiment production practice is few iterations
 (typically ${\sim}5$~\cite{unbinnedguide}). Our $n=5$ is instead justified
 empirically: doubling to $n=10$ moves the total cross section by
 \SI{0.026}{\percent} (\S\ref{sec:method-config}), and the unfold reproduces
@@ -223,7 +223,7 @@ reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), so the result
 carries the conventional units of $\si{cm^2}$ per axis unit per nucleon.  The implementation is
 \texttt{extract\_cross\_section\_2d} and its N-dimensional generalisation
 \texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
-extractions to $<10^{-12}$). The flux normalisation enters as
+extractions to $<10^{-12}$). The flux normalization enters as
 $\sigma\propto1/\Phi$, so $\Phi$ is itself varied per flux universe when
 the systematic covariance is built; this variation dominates the Flux band
 (\S\ref{sec:systematics}).
