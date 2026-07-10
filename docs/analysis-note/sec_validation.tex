@@ -123,13 +123,17 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
   representations of the same event, not a per-event overlay; the derived
   $(\pT,\pPar,\Eavail,q_{3})$ annotated on each panel match between reco and
   truth. These are the raw clouds the PET unfold consumes in place of the
-  engineered scalars. \bpn{Great!  Can we have the same coords (maybe momentum space) for both levels and overlaid?  This will help visualize the distortions as well.}}
+  engineered scalars. \bpn{Great!  Can we have the same coords (maybe momentum space) for both levels and overlaid?  This will help visualize the distortions as well.} \jrb{Good idea, though the two levels genuinely live in different spaces: the reco cloud is calorimeter energy \emph{deposits} carrying $(E,\text{position})$, not momentum-bearing particles, so there is no per-cluster momentum vector to co-plot with the truth hadrons in momentum space --- learning exactly this cross-space map is what the PET response does. The natural common ground is a shared detector observable: we can add an overlaid energy-vs-$z$ (or energy-vs-angle) view where the compact truth hadron system visibly smears into the spread-out cluster shower, which is the distortion you're after. Happy to add that as a companion panel.}}
   \label{fig:petdisplays}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.72\textwidth]{pet_cardinality}
+  % Default shows the truth cloud as PET ingests it (incl. GENIE nuclear-remnant
+  % pseudo-particles), which produces the empty k=1 bin the advisor asked about.
+  % To see that hole corrected, swap to the physical-hadron-only version below:
+  %   \includegraphics[width=0.72\textwidth]{pet_cardinality_real}
+  \includegraphics[width=0.72\textwidth]{pet_cardinality_withremnant}
   \caption{Per-event point-cloud cardinality (number of constituents) for the
   truth final-state hadrons, the reconstructed clusters in MC, and the
   reconstructed clusters in data, POT-weighted. The reco-cluster multiplicity
@@ -137,7 +141,7 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
   energy in many detector clusters --- while data and MC reco agree closely
   (means \num{11.1} vs.\ \num{11.2}). Clouds are truncated to the twelve
   highest-energy constituents per event, so the reco distributions pile up at
-  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it. \bpn{why strange shape for truth?  How did you pick 12?}}
+  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it. \bpn{why strange shape for truth?  How did you pick 12?} \jrb{Two effects. The empty $k{=}1$ bin is a GENIE bookkeeping artefact: single-real-hadron (mostly quasi-elastic) events almost always carry a residual-nucleus pseudo-particle, which promotes them to two constituents and drains $k{=}1$. Dropping those pseudo-codes ($|\mathrm{pdg}|\ge10^{9}$) gives the physical final-state-hadron multiplicity (mean~\num{3.2}); that version is in \texttt{figures/pet\_cardinality\_real} --- swap the \texttt{includegraphics} above to see the hole close. A milder dip at $k{=}1$ survives there and is physical: the cloud holds only \emph{visible} hadrons, so soft single quasi-elastic protons fall below threshold into $k{=}0$ ($\sim$27\%; note neutrons never appear) while FSI knocks single nucleons into pairs (feeding the $k{=}2$ maximum), squeezing the exactly-one bin. The cap of 12 sits above the truth hadron multiplicity --- only \SI{2.3}{\percent} of truth events exceed it, so $\Eavail$ is essentially lossless --- and is a compute/memory trade-off, since PET cost grows with constituent count; it is deliberately tighter for the reco clusters (mean~\num{11.2}), where the top-twelve by energy retain the energetic core.}}
   \label{fig:petcardinality}
 \end{figure}
 
