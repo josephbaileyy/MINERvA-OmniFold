@@ -25,7 +25,7 @@ The reference simulation is GENIE 2.12.6~\cite{Andreopoulos:2009rq} with the
 MINERvA Tune v1 applied as per-event weights through the MAT (MINERvA Analysis
 Toolkit) reweighters: the flux-and-CV weight, the GENIE dial weights, the
 low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction. Detector
-response is the full \textsc{Geant4}-based~\cite{GEANT4:2002zbu}\bpn{cite G4}\jrb{Done.} MINERvA simulation underlying the
+response is the full \textsc{Geant4}-based~\cite{GEANT4:2002zbu} MINERvA simulation underlying the
 production AnaTuples. The simulated sample comprises $32\,849\,103$ true
 signal events (POT-normalised to data exposure event-by-event), processed
 through the identical reconstruction and selection as the data.
@@ -60,12 +60,7 @@ the same sub-percent scale as the 8655 (\SI{0.2}{\percent}) predicted
 background events of Ref.~\cite{MINERvA:2021owq}, whose definition counts
 only the wrong-flavour, wrong-sign, and neutral-current components; exact
 agreement is not expected given the definitional and selection differences,
-and neither prediction carries an uncertainty.\bpn{without errors, this could
-be almost 2x off!}\jrb{Reworded: both numbers are now quantified with their
-(different) definitions and the ``consistent with'' claim is dropped. On the
-2x point: even a factor-two error on this 0.35\% background would shift the
-sample normalisation by only ${\sim}0.35\%$, far below the total uncertainty
-budget.} Backgrounds (reconstructed events whose true
+and neither prediction carries an uncertainty. Backgrounds (reconstructed events whose true
 interaction fails the signal definition) and \emph{fakes} (reconstructed in
 phase space, true muon outside it) are POT-scaled and subtracted from the
 reconstructed-data target before unfolding (\S\ref{sec:method}).
@@ -135,22 +130,12 @@ above, the ratio panels also show a mild enhancement in the lowest
 $\Eavail$ bins --- the reco-level trace of the low-recoil excess examined
 at truth level in \S\ref{sec:results-model}.
 
-\bpn{Fig. 1 is very important for the reader to understand the data - maybe we should (a) make the plots bigger and eg 2-3 rows, (b) additionally add some corner plot(s) to show correlations?  Would also (c) be good to add a little commentary on the physics of these shapes?}
-\jrb{(a) done --- the figure is regenerated with larger panels and fonts;
-(c) done --- physics commentary added above; (b) a reco-level
-pairwise-correlation corner plot is added as
-Fig.~\ref{fig:control-corner}. Revisited on your later request: the figure
-is redesigned as $3{+}2$ panel blocks sized at print width (solid
-step-histogram stacks, MC-statistical band on the ratio, shared legend),
-replacing the earlier five-across strip.}
+
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{control_plots}
-  \caption{\bpn{Can you please make all figures vectorized, e.g. PDF?}
-  \jrb{Done: every figure is generated as a vector PDF and the note now
-  embeds PDFs exclusively (the raster fallback was removed, so a missing
-  vector fails the build).} Reco-level control distributions for the analysis selection: data
+  \caption{Reco-level control distributions for the analysis selection: data
   (points) versus POT-scaled simulated signal (blue) stacked on background
   (orange), with the data/MC ratio below, for $\pT$, $\pPar$, $\Eavail$,
   $q_{3}$ and $W$. On the hadronic axes the wide catch bin is drawn
@@ -158,7 +143,7 @@ replacing the earlier five-across strip.}
   is the MC statistical uncertainty, mostly narrower than the points. The
   $\sim\SI{12}{\percent}$ normalisation excess of the data over MnvTune v1
   is the reco-level counterpart of the truth-level generator deficits of
-  \S\ref{sec:3d-models}.}
+  \S\ref{sec:3d-models}. \bpn{extend range for q3 and W?  Good to see the distribution go back down at edge of phase space.}}
   \label{fig:control}
 \end{figure}
 

@@ -67,18 +67,6 @@ the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross
 section (App.~\ref{app:negweight}) --- removes the residual binning dependence
 and is the natural treatment for the full-phase-space extension, where
 backgrounds are larger.
-\bpn{Maybe say more about how you do the background subtraction
-unbinned?}\jrb{Added the two paragraphs above (the second after a literature
-check), and worked the negative-weight route you preferred over the per-event
-purity classifier and the T2K control-sample approach. It is the continuous
-version of the purity weight --- same $(D-B)/S$ estimand --- and reproduces the
-binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross section,
-with a median per-bin ratio of $\nwMedianBin$; the derivation, the closed-form
-toy, and the comparison table are in App.~\ref{app:negweight}. I have kept the
-binned weight as the default here: making the unbinned subtraction the default
-still needs it propagated through the systematic-universe and bootstrap
-machinery and the ``Stay Positive'' refinement~\cite{Nachman:2025staypositive}
-for the larger full-phase-space backgrounds.}
 
 OmniFold has moved from method paper to production measurement over the last
 few years. H1 published the first real-data applications --- jet substructure
@@ -118,18 +106,12 @@ normalised cross section with a complete uncertainty budget, in using GBDT
 learners suited to a low-dimensional tabular feature set, and in validating
 the method directly against a published binned measurement of the same data
 (\S\ref{sec:results}).
-\bpn{Would be good to add 1-2 paragraphs summarizing existing unbinned
-measurements with OmniFold, especially the T2K study as it is closest to this
-one.}\jrb{Added the two paragraphs above; the iteration-count discussion is
-based on a close reading of their \S IV--V.}
+
 
 \subsection{Estimators and configuration}
 \label{sec:method-config}
 
-\bpn{`driver', `engine', etc. are not defined - maybe there should be a
-brief section somewhere (perhaps in an appendix) with the codebase
-setup?}\jrb{Added App.~\ref{app:codebase} with the component definitions
-(event loop / omnifiles / driver / engine).}
+
 
 We use gradient-boosted decision trees (GBDTs) rather than the neural networks
 of the original OmniFold papers. The choice follows the character of the
@@ -143,10 +125,7 @@ complementing deep models that ingest the full event record --- and our own
 measurements follow the same division of labour: GBDTs for the scalar
 unfolds, a point-cloud transformer when the input is the full cluster record
 (\S\ref{sec:pet}). \S\ref{sec:validation} validates the choice directly with
-calibration tests and MLP/transformer cross-checks \bpn{maybe also cite
-2503.09720 and briefly discuss why this is a reasonable choice (e.g. tabular
-data)}\jrb{Done --- cited and discussed (tabular regime), plus the
-tabular-data reference.}. The engine
+calibration tests and MLP/transformer cross-checks. The engine
 (\texttt{unbinned\_unfolding/python/omnifold.py}; component terminology in
 App.~\ref{app:codebase}) supports interchangeable
 backends; the production configuration is \textbf{LightGBM} with
@@ -176,14 +155,12 @@ classifier-calibration tests (\S\ref{sec:validation}), insensitivity to
 doubling the iteration count (quoted above), backend agreement in the
 method-dependence studies (\S\ref{sec:results-tension}), and an explicit
 seedscan band for residual ML stochasticity (\S\ref{sec:systematics}).
-\bpn{Briefly explain how you chose your HPOs}\jrb{Added the paragraph above
---- defaults at matched capacity, no tuning on data, validated post hoc.}
+
 
 \subsection{MINERvA driver and pipeline conventions}
 \label{sec:method-driver}
 
-\bpn{why `invariants'?}\jrb{Renamed --- ``invariants'' was software jargon
-for properties the pipeline guarantees on every run.}
+
 
 The MINERvA driver is \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py};
 the higher-dimensional driver
@@ -193,12 +170,8 @@ fiducial gate and the per-$\pT$ flux) and \texttt{import}s the same 2D
 helpers. The unfolded observables are the muon $(\pT,\pPar)$, extended by
 $\Eavail$, $q_{3}$, $W$ in the higher-dimensional runs; the phase space is
 that of \S\ref{sec:selection}. The following conventions hold in every
-production, universe-sweep, and closure run \bpn{contract? strange word
-choice}\jrb{Reworded.}:
+production, universe-sweep, and closure run:
 
-\bpn{I found these bullets a bit hard to understand - please consider
-rewording/expanding.}\jrb{Bullets reworded and expanded, one guarantee per
-bullet.}
 
 \begin{itemize}[itemsep=2pt]
   \item \textbf{Reco-space masking.} The measured events entering step-1
@@ -242,15 +215,12 @@ fraction of the truth-level sample visible to the unfolding input. Because
 the event loop appends the truth-only misses explicitly, every truth event
 enters the unfolding and $c\equiv1$ bin-by-bin; the factor survives in the
 formula as a monitored self-check (a configuration that dropped the misses
-would surface as $c<1$). \bpn{strange phrasing}\jrb{Expanded --- defined the
-factor and why it is unity by construction.} $\Phi$ is the per-$\pT$ flux
+would surface as $c<1$). $\Phi$ is the per-$\pT$ flux
 integral (broadcast over the other axes), $N$ the fiducial nucleon count
 ($3.2353\times10^{30}$), and POT the data exposure ($1.057\times10^{21}$).
 The factor $10^{4}$ converts the flux tabulation per square metre to the
 reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), so the result
-carries the conventional units of $\si{cm^2}$ per axis unit per nucleon.
-\bpn{explain the $10^{4}$?}\jrb{Explained --- the flux is tabulated per
-$\mathrm{m}^{2}$.} The implementation is
+carries the conventional units of $\si{cm^2}$ per axis unit per nucleon.  The implementation is
 \texttt{extract\_cross\_section\_2d} and its N-dimensional generalisation
 \texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
 extractions to $<10^{-12}$). The flux normalisation enters as
@@ -286,8 +256,7 @@ by the masking convention of \S\ref{sec:method-driver}, and its
 in-phase-space truth content is recovered by the miss treatment exactly as
 for any other unreconstructed event. Because the unfold is unbinned, there
 is no response-matrix under/overflow to track --- the binning is applied
-once, at reporting, to events that all lie inside the grids. \bpn{what
-about over/underflow?}\jrb{Addressed in the new text above.}
+once, at reporting, to events that all lie inside the grids. 
 
 Although OmniFold uses no response matrix, the detector smearing the unfold
 must undo is conveniently summarised by the truth$\to$reco migration on the
@@ -318,10 +287,6 @@ at $0.71$.
   binning (top: column-normalised maps; bottom: diagonal purity per truth
   bin) for the five observables. Median diagonal purity is
   $0.58$--$0.61$ per axis. Shown for illustration only --- the unfold itself
-  is unbinned. \bpn{These are very important!  Can we make them bigger and describe their structure in more detail?}
-  \jrb{Done: the figure is regenerated with larger panels and fonts (and in
-  vector form), and the structure --- near-tridiagonal muon axes versus
-  broader, feed-down-asymmetric calorimetric axes --- is now described in
-  the text above.}}
+  is unbinned.}
   \label{fig:migration}
 \end{figure}
