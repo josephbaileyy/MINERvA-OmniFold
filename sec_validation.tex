@@ -105,7 +105,9 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
     PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
     projected onto each axis. Median per-bin shape differences are
     \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
-    catch bin, a subsample-statistics effect. Shape-only comparison (PET on a 2M-event
+    catch bin, which collects a large, structured high-$q_{3}$ tail into one wide
+    bin --- a binning artefact of that catch bin rather than a genuine shape
+    disagreement. Shape-only comparison (PET on a 2M-event
     subsample), not an independent physics result.}
   \label{fig:petgbdt}
 \end{figure}
