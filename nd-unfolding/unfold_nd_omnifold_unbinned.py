@@ -159,7 +159,10 @@ def _axis_universe_branch(axis_name, suffix, ctx):
       truth_tree      -> '<axis>_truth_<suffix>'  (e.g. q3_truth_MuonResolution_0)
       reco_tree_truth -> 'MC_<axis>_<suffix>'     (e.g. MC_q3_MuonResolution_0)
       reco_tree_reco  -> 'sim_<axis>_<suffix>'    (e.g. sim_q3_MuonResolution_0)
-    Only the lateral-variant axes (q3) carry these; eavail is lateral-invariant.
+      bkg_tree        -> 'sim_background_<axis>_<suffix>'
+                         (e.g. sim_background_q3_MuonResolution_0; mc_background
+                          reco, KNOWN_ISSUES #13)
+    Only the lateral-variant axes (q3, W) carry these; eavail is lateral-invariant.
     """
     if ctx == "truth_tree":
         return f"{axis_name}_truth_{suffix}"
@@ -167,6 +170,8 @@ def _axis_universe_branch(axis_name, suffix, ctx):
         return f"MC_{axis_name}_{suffix}"
     if ctx == "reco_tree_reco":
         return f"sim_{axis_name}_{suffix}"
+    if ctx == "bkg_tree":
+        return f"sim_background_{axis_name}_{suffix}"
     raise ValueError(f"unknown ctx={ctx!r}")
 
 
@@ -372,12 +377,60 @@ def collect_data_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, guard_max=1e3, verbos
 
 
 def collect_bkg_nd(t, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi,
-                   guard_max=1e3, verbose=False):
-    sb = _addr(t, "sim_background"); sb_pz = _addr(t, "sim_background_pz")
-    ex_a = [_addr(t, ax["bkg"]) for ax in extras]
+                   guard_max=1e3, verbose=False, universe_branch=None,
+                   extra_wbranches=None):
+    """mc_background -> reco (pt, pz, *extras, w) for the OmniFold measured target.
+
+    The genuine background enters OmniFold only through the per-reco-bin purity
+    down-weight max(0,data-bkg)/data (build_measured_training_nd); it is never
+    injected as events. So a per-universe background = the same rebinning with a
+    universe-varied bkg weight/kinematics.
+
+    universe_branch=(band, idx): per-universe genuine background (KNOWN_ISSUES
+    #13). The weight is read from w_bkg_<sanitized-band>_<idx> instead of the CV
+    w_bkg; for LATERAL universes (shifted-kinematic branches present) the reco
+    pt/pz swap to sim_background_/sim_background_pz_<band>_<idx> and each
+    lateral-variant extra axis (q3, W) swaps to sim_background_<axis>_<band>_<idx>.
+    eavail (lateral-invariant) keeps its CV branch; vertical universes shift the
+    weight only. Branches are written by the C++ event loop's BkgTreeReco context
+    under MNV101_DUMP_UNIVERSES. Without this the per-universe measured target
+    reused the CV purity down-weight, freezing the background contribution to the
+    systematic covariances at CV.
+
+    extra_wbranches: optional list of per-universe bkg weight branch names
+    (w_bkg_<band>_<idx>); read aligned to the CV-kept bkg events and returned as
+    a 5th tuple element (list of POT-scaled arrays). Used by the banked VERTICAL
+    sweep (sweep_bank/sweep_bank_5d) to reweight the CV background per universe
+    without a re-read — vertical bands keep CV kinematics, so the kept-set is
+    universe-independent and only the weight column changes. Passing
+    extra_wbranches changes the return arity from 4 to 5.
+    """
+    sb_name, sb_pz_name = "sim_background", "sim_background_pz"
+    ax_bkg = [ax["bkg"] for ax in extras]
+    w_name = "w_bkg"
+    if universe_branch is not None:
+        w_name = u2d._universe_bkg_branch(universe_branch)
+        if not t.GetBranch(w_name):
+            raise RuntimeError(f"[FAIL] '{w_name}' missing from mc_background "
+                               "(re-run event loop with MNV101_DUMP_UNIVERSES)")
+        l_sb, l_sb_pz = u2d._universe_kine_branches(universe_branch, "bkg_tree_reco")
+        suffix = f"{u2d._sanitize_band_for_branch(universe_branch[0])}_{int(universe_branch[1])}"
+        if t.GetBranch(l_sb) and t.GetBranch(l_sb_pz):   # lateral
+            sb_name, sb_pz_name = l_sb, l_sb_pz
+            for k, ax in enumerate(extras):
+                if not ax.get("lateral_invariant", True):
+                    nm = _axis_universe_branch(ax["name"], suffix, "bkg_tree")
+                    if t.GetBranch(nm):
+                        ax_bkg[k] = nm
+            if verbose:
+                print(f"[INFO] bkg lateral universe: pt/pz+{'/'.join(ax_bkg)} swapped")
+    sb = _addr(t, sb_name); sb_pz = _addr(t, sb_pz_name)
+    ex_a = [_addr(t, nm) for nm in ax_bkg]
     sb_pass = array("B", [0]); t.SetBranchAddress("sim_background_pass", sb_pass)
-    w_b = _addr(t, "w_bkg")
+    w_b = _addr(t, w_name)
+    xw_a = [_addr(t, nm) for nm in (extra_wbranches or [])]
     pts, pzs, ws = [], [], []; exs = [[] for _ in extras]; skip = 0
+    xw_l = [[] for _ in (extra_wbranches or [])]
     for i in range(t.GetEntries()):
         t.GetEntry(i)
         if sb_pass[0] == 0:
@@ -392,9 +445,15 @@ def collect_bkg_nd(t, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi,
         pts.append(pt); pzs.append(pz); ws.append(w * pot_scale)
         for k, v in enumerate(exv):
             exs[k].append(v)
+        for k, a in enumerate(xw_a):
+            xw_l[k].append(float(a[0]) * pot_scale)
     if verbose:
-        print(f"[INFO] bkg: kept={len(pts)} skipped={skip}")
-    return np.asarray(pts), np.asarray(pzs), [np.asarray(c) for c in exs], np.asarray(ws)
+        print(f"[INFO] bkg: kept={len(pts)} skipped={skip}"
+              + (f" universe={universe_branch}" if universe_branch is not None else ""))
+    out = (np.asarray(pts), np.asarray(pzs), [np.asarray(c) for c in exs], np.asarray(ws))
+    if extra_wbranches is not None:
+        return (*out, [np.asarray(c) for c in xw_l])
+    return out
 
 
 def build_measured_training_nd(cols, data_nd, bkg_nd, edges, verbose=False):
@@ -435,6 +494,22 @@ def main():
                          + ",".join(EXTRA_AXES) + ")")
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--use-weights", action="store_true")
+    ap.add_argument("--bkg-mode",
+                    choices=["purity", "negweight", "negweight-refined"],
+                    default="purity",
+                    help="Background subtraction on the OmniFold measured side "
+                         "(mirrors the 2D driver; see 2d-unfolding/"
+                         "HANDOFF_bkg_negweight/). 'purity' (default): binned "
+                         "per-reco-bin max(0,(N_data-N_bkg)/N_data) data "
+                         "down-weight. 'negweight': unbinned negative-weight "
+                         "injection -- append the (universe-aware) mc_background "
+                         "reco events at -w_bkg*pot_scale, data at +1, so step-1 "
+                         "targets (D-B)/S continuously. 'negweight-refined': "
+                         "Stay Positive (arXiv:2505.03724) refinement of the "
+                         "signed sample to non-negative weights before step-1. "
+                         "All modes honour --universe (collect_bkg_nd already "
+                         "resolves per-universe background), --closure and "
+                         "--bootstrap-seed.")
     ap.add_argument("--estimator", default="lgbm")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--seed", type=int, default=None)
@@ -577,7 +652,8 @@ def main():
     meas_pt, meas_pz, meas_ex = collect_data_nd(
         t_data, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
     bkg_pt, bkg_pz, bkg_ex, bkg_w = collect_bkg_nd(
-        t_bkg, load_extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
+        t_bkg, load_extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose,
+        universe_branch=universe_branch)   # KNOWN_ISSUES #13: per-universe background
     sig = collect_signal_nd(t_sig, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                             use_weights=args.use_weights, verbose=args.verbose,
                             universe_branch=universe_branch)
@@ -652,6 +728,33 @@ def main():
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("empty signal or data after selection")
 
+    # --- background-subtraction mode: prepare injected bkg (deferred) ---
+    # negweight/refined inject the (universe-aware) mc_background reco events on
+    # the measured side at -w; purity uses the binned per-reco-bin down-weight.
+    # collect_bkg_nd (above) already resolved the per-universe background (weight
+    # + lateral kinematics, KNOWN_ISSUES #13), so the injected background varies
+    # per universe identically to the purity bkg_nd -> both modes target the same
+    # rho1 = D - B_u. Fiducial-filter the injection AND the +1 data side to the
+    # full analysis window on EVERY axis (the ND analogue of the 2D reco-window
+    # parity fix, matching purity's support where out-of-binning events get
+    # weight 0 via build_measured_training_nd's digitize). Injection itself is
+    # deferred to AFTER closure + the data bootstrap (see below) so the Poisson(1)
+    # data-stat bootstrap fluctuates only the data/pseudo-data side.
+    def _fid_mask(cols):
+        m = np.ones(np.asarray(cols[0]).shape[0], dtype=bool)
+        for c, e in zip(cols, edges):
+            c = np.asarray(c, float)
+            m &= (c >= e[0]) & (c < e[-1])
+        return m
+    inj_cols = inj_w = None
+    if args.bkg_mode in ("negweight", "negweight-refined"):
+        bmask = _fid_mask([bkg_pt, bkg_pz] + bkg_ex)
+        inj_cols = [bkg_pt[bmask], bkg_pz[bmask]] + [e[bmask] for e in bkg_ex]
+        inj_w = bkg_w[bmask]
+        print(f"[INFO] bkg-mode={args.bkg_mode}: prepared {int(bmask.sum())} "
+              f"injected background events (of {bkg_pt.size} bkg); data side +1 "
+              f"(injection deferred to after closure/bootstrap).")
+
     # --- pseudo-data (closure) or real-data training target ---
     closure_rw_truthpass = None
     if args.closure:
@@ -676,13 +779,40 @@ def main():
             closure_rw_truthpass = 1.0 + A * np.exp(-((tcol_t - c0) / s) ** 2)
             print(f"[INFO] inject bump on {args.closure_reweight_axis}"
                   f"{' (hidden)' if hidden_ax is not None else ''}: A={A} c={c0} s={s}")
-    else:
+        if args.bkg_mode in ("negweight", "negweight-refined"):
+            # negweight closure: pseudo-data = sim reco (signal) + injected bkg
+            # CONTAMINATION at +inj_w; the mode subtraction (-inj_w / refinement)
+            # is applied after the bootstrap block and removes it, so a correct
+            # unfold recovers the CV truth prior (exercises the full signed-weight
+            # subtraction plumbing end-to-end).
+            meas_pt = np.concatenate([meas_pt, inj_cols[0]])
+            meas_pz = np.concatenate([meas_pz, inj_cols[1]])
+            meas_ex = [np.concatenate([meas_ex[k], inj_cols[2 + k]])
+                       for k in range(len(meas_ex))]
+            measured_weights = np.concatenate([measured_weights, inj_w])
+            print(f"[INFO] negweight closure: added {inj_w.size} background "
+                  f"contamination events at +w (sum={inj_w.sum():.6g}).")
+    elif args.bkg_mode == "purity":
         data_nd, _ = histnd([meas_pt, meas_pz] + meas_ex, np.ones(meas_pt.size), edges)
         bkg_nd, _ = histnd([bkg_pt, bkg_pz] + bkg_ex, bkg_w, edges)
         measured_weights = build_measured_training_nd(
             [meas_pt, meas_pz] + meas_ex, data_nd, bkg_nd, edges, verbose=args.verbose)
+    else:
+        # negweight / negweight-refined real data: data side at +1, restricted to
+        # the analysis window on every axis (matching purity's support).
+        dmask = _fid_mask([meas_pt, meas_pz] + meas_ex)
+        meas_pt = meas_pt[dmask]; meas_pz = meas_pz[dmask]
+        meas_ex = [e[dmask] for e in meas_ex]
+        measured_weights = np.ones(meas_pt.size, dtype=float)
+        print(f"[INFO] bkg-mode={args.bkg_mode}: data side {int(dmask.sum())} "
+              f"events (of {dmask.size}) in the analysis window at +1.")
 
     if args.bootstrap_seed is not None:
+        # Data-statistical Poisson(1) on the data/pseudo-data side ONLY (the
+        # injected background subtraction is appended after this block, so it is
+        # never fluctuated here -- it carries independent MC statistics and a
+        # fixed POT-scaled weight, matching the purity path where bkg_nd is
+        # fixed). MC-statistical Poisson(1) rides the signal MC weights.
         rng_d = np.random.default_rng(args.bootstrap_seed)
         rng_m = np.random.default_rng(args.bootstrap_seed + 10_000_000)
         measured_weights = measured_weights * rng_d.poisson(1.0, measured_weights.shape[0])
@@ -690,6 +820,37 @@ def main():
         sig["w_truth"] = sig["w_truth"] * b_mc
         sig["w_reco"] = sig["w_reco"] * b_mc
         print(f"[INFO] bootstrap seed={args.bootstrap_seed}")
+
+    # --- apply the background subtraction on the measured side (post-bootstrap) ---
+    if args.bkg_mode == "negweight":
+        n_data = meas_pt.size
+        meas_pt = np.concatenate([meas_pt, inj_cols[0]])
+        meas_pz = np.concatenate([meas_pz, inj_cols[1]])
+        meas_ex = [np.concatenate([meas_ex[k], inj_cols[2 + k]])
+                   for k in range(len(meas_ex))]
+        measured_weights = np.concatenate([measured_weights, -inj_w])
+        print(f"[INFO] bkg-mode=negweight: injected {inj_w.size} bkg events at "
+              f"-w; data side {n_data}. Effective measured sum="
+              f"{measured_weights.sum():.6g}.")
+    elif args.bkg_mode == "negweight-refined":
+        n_data = meas_pt.size
+        sgn_cols = ([np.concatenate([meas_pt, inj_cols[0]]),
+                     np.concatenate([meas_pz, inj_cols[1]])]
+                    + [np.concatenate([meas_ex[k], inj_cols[2 + k]])
+                       for k in range(len(meas_ex))])
+        sgn_w = np.concatenate([measured_weights, -inj_w])
+        refine_params = ({"random_state": int(args.seed) + 3}
+                         if args.seed is not None else None)
+        w_ref, _g, frac_clip = u2d.refine_stay_positive(
+            np.column_stack(sgn_cols), sgn_w, estimator=args.estimator,
+            device=args.device, params=refine_params, verbose=True)
+        meas_pt, meas_pz = sgn_cols[0], sgn_cols[1]
+        meas_ex = sgn_cols[2:]
+        measured_weights = w_ref
+        print(f"[INFO] bkg-mode=negweight-refined (Stay Positive): refined "
+              f"{sgn_w.size} signed events ({n_data} data + {inj_w.size} bkg) to "
+              f"non-negative weights; clipped frac={frac_clip:.4f}; effective "
+              f"measured sum={measured_weights.sum():.6g}.")
 
     # --- OmniFold (dimension-agnostic core) ---
     _OF = f"{_REPO}/unbinned_unfolding/python"

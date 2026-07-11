@@ -245,17 +245,64 @@ def fill_data_reco_2d(t_data, h_data_2d, pt_lo, pt_hi, pz_lo, pz_hi,
     return np.asarray(pts, dtype=float), np.asarray(pzs, dtype=float)
 
 
-def fill_bkg_reco_2d(t_bkg, h_bkg_2d, pot_scale, guard_max=1e3, verbose=False):
-    """Fill background TH2D with POT-scaled MC background events."""
+def fill_bkg_reco_2d(t_bkg, h_bkg_2d, pot_scale, pt_lo=None, pt_hi=None,
+                     pz_lo=None, pz_hi=None, guard_max=1e3, verbose=False,
+                     universe_branch=None):
+    """Fill background TH2D with POT-scaled MC background events.
+
+    Also returns the per-event background reco arrays (p_T, p_||, POT-scaled
+    weight) for the unbinned negative-weight-injection background mode
+    (`--bkg-mode negweight`). The histogram fill is unchanged, so the binned
+    purity path (`--bkg-mode purity`, default) is byte-identical.
+
+    The RETURNED arrays are restricted to the same fiducial reco window
+    (pt_lo/pt_hi/pz_lo/pz_hi) that fill_data_reco_2d applies to the data, so the
+    injected background lives on the same reco support as the measured data (and
+    matches h_bkg_2d.Integral(), which excludes the out-of-range overflow). The
+    histogram Fill is still called for every event (out-of-range -> overflow, as
+    before) so the binned purity path is unaffected. Passing any bound as None
+    disables that side of the fiducial cut on the returned arrays.
+
+    When `universe_branch=(band, idx)` is set, the genuine-background subtraction
+    is varied for that systematic universe (KNOWN_ISSUES #13): the weight is read
+    from `w_bkg_<sanitized_band>_<idx>` instead of the CV `w_bkg`, and for LATERAL
+    universes (shifted-kinematic branches present) the reco pt/pz swap to
+    `sim_background_<band>_<idx>` / `sim_background_pz_<band>_<idx>`. Vertical
+    universes shift the weight only. Both the binned purity down-weight (via
+    h_bkg_2d) and the negweight injection (via the returned arrays) then track the
+    per-universe background, so the systematic covariance finally includes
+    background-modeling variation. Branches are written by the C++ event loop's
+    BkgTreeReco context under MNV101_DUMP_UNIVERSES. `universe_branch=None`
+    (CV / non-universe unfold) is byte-identical to the pre-#13 behaviour.
+    Requires the per-universe branches to be present (raises if the weight branch
+    is missing so a universe never silently falls back to CV).
+    """
     sim_bkg = array("d", [0.0])
     sim_bkg_pz = array("d", [0.0])
     sim_bkg_pass = array("B", [0])
     w_bkg = array("d", [1.0])
-    t_bkg.SetBranchAddress("sim_background", sim_bkg)
-    t_bkg.SetBranchAddress("sim_background_pz", sim_bkg_pz)
+    sb_name, sb_pz_name, w_name = "sim_background", "sim_background_pz", "w_bkg"
+    if universe_branch is not None:
+        w_name = _universe_bkg_branch(universe_branch)
+        if not t_bkg.GetBranch(w_name):
+            raise RuntimeError(
+                f"[FAIL] per-universe background branch '{w_name}' missing from "
+                f"mc_background; rebuild the omnifile with MNV101_DUMP_UNIVERSES "
+                f"so the KNOWN_ISSUES #13 background branches exist.")
+        lat_sb, lat_sb_pz = _universe_kine_branches(universe_branch, "bkg_tree_reco")
+        if t_bkg.GetBranch(lat_sb) and t_bkg.GetBranch(lat_sb_pz):  # lateral
+            sb_name, sb_pz_name = lat_sb, lat_sb_pz
+            if verbose:
+                print(f"[INFO] bkg lateral universe: reco kinematics {lat_sb}/"
+                      f"{lat_sb_pz}, weight {w_name}")
+        elif verbose:
+            print(f"[INFO] bkg vertical universe: weight {w_name} (CV kinematics)")
+    t_bkg.SetBranchAddress(sb_name, sim_bkg)
+    t_bkg.SetBranchAddress(sb_pz_name, sim_bkg_pz)
     t_bkg.SetBranchAddress("sim_background_pass", sim_bkg_pass)
-    t_bkg.SetBranchAddress("w_bkg", w_bkg)
+    t_bkg.SetBranchAddress(w_name, w_bkg)
 
+    bkg_pt, bkg_pz, bkg_w = [], [], []
     n_filled, n_skip = 0, 0
     for i in range(t_bkg.GetEntries()):
         t_bkg.GetEntry(i)
@@ -271,9 +318,21 @@ def fill_bkg_reco_2d(t_bkg, h_bkg_2d, pot_scale, guard_max=1e3, verbose=False):
             continue
         h_bkg_2d.Fill(pt, pz, w * pot_scale)
         n_filled += 1
+        # Returned arrays: fiducial reco window only (parity with the data).
+        if pt_lo is not None and pt < pt_lo: continue
+        if pt_hi is not None and pt > pt_hi: continue
+        if pz_lo is not None and pz < pz_lo: continue
+        if pz_hi is not None and pz > pz_hi: continue
+        bkg_pt.append(pt)
+        bkg_pz.append(pz)
+        bkg_w.append(w * pot_scale)
 
     if verbose:
-        print(f"[INFO] bkg: filled={n_filled}, skipped={n_skip}")
+        print(f"[INFO] bkg: filled={n_filled}, skipped={n_skip}, "
+              f"in-fiducial for injection={len(bkg_pt)}")
+    return (np.asarray(bkg_pt, dtype=float),
+            np.asarray(bkg_pz, dtype=float),
+            np.asarray(bkg_w, dtype=float))
 
 
 def build_measured_training_2d(meas_pt, meas_pz, h_data_2d, h_bkg_2d, verbose=False):
@@ -316,6 +375,85 @@ def build_measured_training_2d(meas_pt, meas_pz, h_data_2d, h_bkg_2d, verbose=Fa
     return weights, h_train_2d
 
 
+def _make_bkg_classifier(estimator, params, device):
+    """Construct a single binary classifier matching omnifold's step-1 backend
+    defaults, for the Stay-Positive weight refinement (--bkg-mode
+    negweight-refined). Mirrors the estimator dispatch in
+    omnifold.OmniFold_helper_functions.omnifold so the refinement lives in the
+    same estimator family (and honours --seed via random_state) as the unfold
+    it feeds.
+    """
+    params = dict(params or {})
+    if estimator == "exact":
+        from sklearn.ensemble import GradientBoostingClassifier
+        return GradientBoostingClassifier(**params)
+    if estimator == "hist":
+        from sklearn.ensemble import HistGradientBoostingClassifier
+        d = dict(max_iter=100, max_leaf_nodes=8, learning_rate=0.1)
+        return HistGradientBoostingClassifier(**{**d, **params})
+    if estimator == "xgb":
+        from xgboost import XGBClassifier
+        d = dict(n_estimators=100, max_depth=3, learning_rate=0.1,
+                 tree_method="hist", device=device)
+        return XGBClassifier(**{**d, **params})
+    if estimator == "lgbm":
+        from lightgbm import LGBMClassifier
+        d = dict(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1)
+        if device != "cpu":
+            d["device"] = "gpu"
+        return LGBMClassifier(**{**d, **params})
+    raise ValueError(f"negweight-refined: unsupported estimator {estimator!r} "
+                     "(use exact/hist/xgb/lgbm)")
+
+
+def refine_stay_positive(feat, signed_w, estimator="exact", device="cpu",
+                         params=None, verbose=False):
+    """Stay-Positive (arXiv:2505.03724) refinement of a signed-weight sample.
+
+    Given the measured (class-1) sample on the reco manifold with signed
+    per-event weights `signed_w` -- data at +1, injected background at
+    -w_bkg*pot_scale -- refine to an equivalent NON-NEGATIVE-weight sample that
+    preserves the conditional average weight <w|x> = D(x) - B(x) everywhere, so
+    OmniFold step-1 targets (D-B)/S with a WELL-POSED positive-weight fit
+    instead of relying on the p/(1-p) >= 0 structural floor of the raw signed
+    fit (which is ill-posed where B>D locally).
+
+    Method (paper eqs 4-7, specialised to our two-population sample):
+      Train a binary classifier g(x) separating positive-weight events (label
+      1) from negative-weight events (label 0), each carrying |w| as its sample
+      weight. Its population optimum is g*(x) = D(x)/(D(x)+B(x)), so
+          2 g*(x) - 1 = (D-B)/(D+B),
+      and the refined weight of EVERY event is
+          w~_i = |w_i| * (2 g(x_i) - 1),
+      which sums to D-B at each x (paper eq 6) and is >= 0 wherever D>=B. Where
+      B>D locally the factor 2g-1 < 0; we clip w~ at 0 -- the principled
+      unbinned analogue of the binned max(0,.) floor, now applied to a SMOOTH
+      learned net/absolute ratio rather than to a per-event artifact of the
+      [0,1] probability range.
+
+    Returns (w_refined, g_at_events, frac_clipped).
+    """
+    feat = np.asarray(feat, dtype=float)
+    if feat.ndim == 1:
+        feat = feat.reshape(-1, 1)
+    signed_w = np.asarray(signed_w, dtype=float)
+    labels = (signed_w > 0).astype(int)
+    absw = np.abs(signed_w)
+    clf = _make_bkg_classifier(estimator, params, device)
+    clf.fit(feat, labels, sample_weight=absw)
+    g = np.clip(clf.predict_proba(feat)[:, 1], 1e-6, 1.0 - 1e-6)
+    factor = 2.0 * g - 1.0
+    n_clip = int((factor < 0.0).sum())
+    w_ref = absw * np.clip(factor, 0.0, None)
+    if verbose:
+        print(f"[INFO] Stay-Positive refine: {int(labels.sum())} pos / "
+              f"{int((labels == 0).sum())} neg events; g in "
+              f"[{g.min():.3f},{g.max():.3f}]; clipped(2g-1<0) {n_clip} events; "
+              f"sum(w_refined)={w_ref.sum():.6g} (signed sum "
+              f"{signed_w.sum():.6g}).")
+    return w_ref, g, n_clip / max(len(signed_w), 1)
+
+
 def _sanitize_band_for_branch(s):
     """Mirror of the C++ SanitizeForRootBranchName in
     runEventLoopOmniFold.cpp: any character not in [A-Za-z0-9_] is
@@ -342,6 +480,21 @@ def _universe_reco_branch(universe_branch):
     return f"w_reco_{_sanitize_band_for_branch(band)}_{int(idx)}"
 
 
+def _universe_bkg_branch(universe_branch):
+    """Return ('w_bkg_<sanitized_band>_<idx>') or None.
+
+    Per-universe genuine-background weight on the mc_background tree, written by
+    the C++ event loop's BkgTreeReco context under MNV101_DUMP_UNIVERSES
+    (KNOWN_ISSUES #13 fix). Read by und.collect_bkg_nd in place of the CV w_bkg
+    so the OmniFold measured-target purity down-weight varies per systematic
+    universe instead of freezing at CV.
+    """
+    if universe_branch is None:
+        return None
+    band, idx = universe_branch
+    return f"w_bkg_{_sanitize_band_for_branch(band)}_{int(idx)}"
+
+
 def _universe_kine_branches(universe_branch, kine_ctx):
     """Return (pt_branch, pz_branch) names for lateral universe kinematics.
 
@@ -349,6 +502,10 @@ def _universe_kine_branches(universe_branch, kine_ctx):
       'truth_tree'      -> ('pT_truth_<band>_<idx>', 'pz_truth_<band>_<idx>')
       'reco_tree_truth' -> ('MC_<band>_<idx>',        'MC_pz_<band>_<idx>')
       'reco_tree_reco'  -> ('sim_<band>_<idx>',       'sim_pz_<band>_<idx>')
+      'bkg_tree_reco'   -> ('sim_background_<band>_<idx>',
+                            'sim_background_pz_<band>_<idx>')  # mc_background,
+                            # KNOWN_ISSUES #13: own namespace, never aliases the
+                            # signal reco 'sim_*' shadow branches.
     Returns (None, None) for vertical-only universes (caller detects by
     branch absence in the input ROOT).
     """
@@ -362,6 +519,8 @@ def _universe_kine_branches(universe_branch, kine_ctx):
         return f"MC_{suffix}",       f"MC_pz_{suffix}"
     if kine_ctx == "reco_tree_reco":
         return f"sim_{suffix}",      f"sim_pz_{suffix}"
+    if kine_ctx == "bkg_tree_reco":
+        return f"sim_background_{suffix}", f"sim_background_pz_{suffix}"
     raise ValueError(f"unknown kine_ctx={kine_ctx!r}")
 
 
@@ -844,6 +1003,22 @@ def main():
                      help="Number of OmniFold iterations")
     ap.add_argument("--use-weights", action="store_true",
                      help="Use MC event weights (w_truth, w_reco) in OmniFold training")
+    ap.add_argument("--bkg-mode",
+                     choices=["purity", "negweight", "negweight-refined"],
+                     default="purity",
+                     help="Background subtraction on the OmniFold measured side. "
+                          "'purity' (default, headline): per-reco-bin "
+                          "max(0,(N_data-N_bkg)/N_data) data down-weight (binned). "
+                          "'negweight': unbinned negative-weight injection — "
+                          "append bkg-MC (+ signal-fake) reco events at "
+                          "-w_bkg*pot_scale, data at +1, so step-1 targets "
+                          "(D-B)/S continuously (arXiv:2507.09582). "
+                          "'negweight-refined': Stay Positive (arXiv:2505.03724) "
+                          "refinement of the signed sample to non-negative "
+                          "weights (w~=|w|*(2g-1)) before step-1, well-posed "
+                          "where B>D. All three support --closure, "
+                          "--bootstrap-seed and --universe. See "
+                          "2d-unfolding/HANDOFF_bkg_negweight/.")
     ap.add_argument("--out", default="2d_crossSection_omnifold.root",
                      help="Output ROOT file")
     ap.add_argument("--mcfile", default="runEventLoopMC.root",
@@ -1189,7 +1364,15 @@ def main():
 
     meas_pt, meas_pz = fill_data_reco_2d(
         t_data, hDataReco2D, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
-    fill_bkg_reco_2d(t_bkg, hBkgReco2D, pot_scale, verbose=args.verbose)
+    # KNOWN_ISSUES #13: vary the genuine background per systematic universe
+    # (weight + lateral kinematics). universe_branch=None (CV/non-universe) keeps
+    # the pre-#13 CV behaviour byte-identical. Both the purity down-weight (via
+    # hBkgReco2D) and the negweight injection (via the returned arrays) then track
+    # the per-universe background.
+    bkg_reco_pt, bkg_reco_pz, bkg_reco_w = fill_bkg_reco_2d(
+        t_bkg, hBkgReco2D, pot_scale, pt_lo=pt_lo, pt_hi=pt_hi,
+        pz_lo=pz_lo, pz_hi=pz_hi, verbose=args.verbose,
+        universe_branch=universe_branch)
 
     # --- Read signal MC arrays ---
     sig = collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
@@ -1233,10 +1416,13 @@ def main():
     # subtraction. See nd-unfolding/ND_OMNIFOLD_RUN_LOG.md (2026-07-03).
     is_fake = sig["pass_reco"] & (~sig["pass_truth"])
     n_fakes = int(is_fake.sum())
+    # Kept for the negweight background mode: signal fakes are background by
+    # paper convention and must be injected on the measured side alongside the
+    # mc_background events (empty on post-Phase-18 omnifiles, where n_fakes=0).
+    fake_pt = sig["reco_pt"][is_fake]
+    fake_pz = sig["reco_pz"][is_fake]
+    fake_wr = sig["w_reco"][is_fake]  # already POT-scaled in collect_signal_arrays_2d
     if n_fakes:
-        fake_pt = sig["reco_pt"][is_fake]
-        fake_pz = sig["reco_pz"][is_fake]
-        fake_wr = sig["w_reco"][is_fake]  # already POT-scaled in collect_signal_arrays_2d
         fake_sum = 0.0
         for pt, pz, w in zip(fake_pt, fake_pz, fake_wr):
             hBkgReco2D.Fill(float(pt), float(pz), float(w))
@@ -1260,6 +1446,60 @@ def main():
     print(f"[INFO] hMeasTrain2D integral: {hMeasTrain2D.Integral():.6g}")
     if nneg_meas:
         print(f"[INFO] hMeasSub2D negative bins (floored in training target): {nneg_meas}")
+
+    # --- Background-subtraction mode selection (advisor 2026-07-07) ---
+    # purity            : per-reco-bin max(0,(N_data-N_bkg)/N_data) down-weight of
+    #                     the data (the binned default; measured_weights above).
+    # negweight         : unbinned negative-weight injection — append the
+    #                     background-MC (+ signal-fake) reco events to the
+    #                     MEASURED side with weight -w_bkg*pot_scale, data at +1.
+    #                     The step-1 classifier then targets (D-B)/S continuously
+    #                     (see 2d-unfolding/HANDOFF_bkg_negweight/). The learned
+    #                     reweight p/(1-p) is structurally >=0, the unbinned
+    #                     analogue of the max(0,.) floor.
+    # negweight-refined : Stay Positive (arXiv:2505.03724) — refine the signed
+    #                     measured sample to a positive-weight equivalent
+    #                     (w~=|w|*(2g-1), g the D/(D+B) classifier) before
+    #                     training, so step-1 is well-posed where B>D locally.
+    # The actual injection / refinement is deferred to AFTER the closure and
+    # bootstrap blocks (below), so that (a) the data-statistical Poisson(1)
+    # bootstrap fluctuates only the data / pseudo-data side and never the
+    # injected background-MC, and (b) negweight composes with closure. Here we
+    # only PREPARE the injected-background arrays and set the data-side weights.
+    inj_pt = inj_pz = inj_w = None
+    if args.bkg_mode in ("negweight", "negweight-refined"):
+        # Injected background = genuine bkg (bkg_reco_*, fiducial-filtered by
+        # fill_bkg_reco_2d) + signal fakes (fake_* from collect_signal_arrays_2d,
+        # re-filtered to the reco window). This is byte-for-byte the composition
+        # of hBkgReco2D that the purity down-weight uses, so purity and negweight
+        # target the SAME rho1 = D - B per universe. In a systematic universe
+        # BOTH terms vary identically in the two modes: the genuine background via
+        # the KNOWN_ISSUES #13 wiring in fill_bkg_reco_2d (w_bkg_<band>_<idx> +
+        # lateral sim_background_<band>_<idx>, when those branches exist) and the
+        # fakes via the universe-aware collect_signal_arrays_2d. So the negweight
+        # systematics covariance matches purity's by construction, now INCLUDING
+        # background-modeling variation (no universe silently frozen at CV).
+        fpt = np.asarray(fake_pt, dtype=float)
+        fpz = np.asarray(fake_pz, dtype=float)
+        fw = np.asarray(fake_wr, dtype=float)
+        fmask = ((fpt >= pt_lo) & (fpt <= pt_hi) &
+                 (fpz >= pz_lo) & (fpz <= pz_hi))
+        inj_pt = np.concatenate([bkg_reco_pt, fpt[fmask]])
+        inj_pz = np.concatenate([bkg_reco_pz, fpz[fmask]])
+        inj_w = np.concatenate([bkg_reco_w, fw[fmask]])
+        # Data side carries +1 (the negweight construction); the binned purity
+        # per-reco-bin down-weight is NOT applied. Overrides the purity
+        # measured_weights built above (kept only for the diagnostic hists).
+        # In --closure the data-side weights are set inside the closure block.
+        if not args.closure:
+            measured_weights = np.ones(meas_pt.shape[0], dtype=float)
+        print(f"[INFO] bkg-mode={args.bkg_mode}: prepared {inj_pt.shape[0]} "
+              f"injected background reco events (bkg-MC {bkg_reco_pt.shape[0]} + "
+              f"fakes {int(fmask.sum())}); data side weight +1 "
+              f"(injection deferred to after closure/bootstrap).")
+    else:
+        print("[INFO] bkg-mode=purity: binned per-reco-bin purity down-weight "
+              "(default, headline path).")
 
     # --- Closure mode: replace measured arrays with MC reco pseudo-data ---
     # For a closure test, we substitute the `measured` input to OmniFold with
@@ -1328,6 +1568,21 @@ def main():
                      / max(sig["w_reco"][closure_mask].sum(), 1e-30))
             print(f"[INFO] Alt-model closure: replaced pseudo-data weights "
                   f"with w_reco_alt; sum(alt)/sum(CV) = {ratio:.4f}")
+        if args.bkg_mode in ("negweight", "negweight-refined"):
+            # negweight closure: pseudo-data = sim reco (signal) + injected
+            # background CONTAMINATION at +inj_w. The mode's subtraction
+            # (-inj_w for negweight, or the Stay-Positive refinement) is applied
+            # after the bootstrap block below and removes it, so a correct
+            # unfold recovers the CV truth prior. This exercises the full signed-
+            # weight subtraction plumbing (sign, POT scale, fiducial filter,
+            # concatenation) end-to-end, unlike purity closure which uses the
+            # signal reco directly.
+            meas_pt = np.concatenate([meas_pt, inj_pt])
+            meas_pz = np.concatenate([meas_pz, inj_pz])
+            measured_weights = np.concatenate([measured_weights, inj_w])
+            print(f"[INFO] negweight closure: added {inj_pt.shape[0]} background "
+                  f"contamination events at +w to the pseudo-data "
+                  f"(sum(+w)={inj_w.sum():.6g}); the mode subtraction removes it.")
         hDataReco2D.Reset("ICES")
         hBkgReco2D.Reset("ICES")
         for pt, pz, w in zip(meas_pt, meas_pz, measured_weights):
@@ -1370,6 +1625,48 @@ def main():
               f"{'APPLIED' if do_data else 'held'}), "
               f"mc factor sum={b_truth.sum():.6g} (n={b_truth.size}, "
               f"{'APPLIED' if do_mc else 'held'})")
+
+    # --- Apply the background subtraction on the measured (class-1) side ---
+    # Deferred to HERE (after closure + the data-statistical bootstrap) so:
+    #  (a) the Poisson(1) DATA bootstrap fluctuated only the +1 data (or, in
+    #      closure, the pseudo-data signal + injected contamination) events and
+    #      NEVER the injected background subtraction, which carries independent
+    #      MC statistics and a fixed POT-scaled weight -- exactly matching the
+    #      purity path, where hBkgReco2D is fixed and only the data counts
+    #      fluctuate. The genuine background-MC statistical uncertainty is
+    #      intentionally NOT bootstrapped in either mode (out of scope here;
+    #      would need its own Poisson stream over the mc_background events --
+    #      see 2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md);
+    #  (b) negweight composes with closure (the +bkg contamination was added to
+    #      the pseudo-data above; here we append the matching -bkg subtraction).
+    if args.bkg_mode == "negweight":
+        n_data = meas_pt.shape[0]
+        meas_pt = np.concatenate([meas_pt, inj_pt])
+        meas_pz = np.concatenate([meas_pz, inj_pz])
+        measured_weights = np.concatenate([measured_weights, -inj_w])
+        print(f"[INFO] bkg-mode=negweight: injected {inj_pt.shape[0]} background "
+              f"reco events at -w; data side {n_data} events. Effective measured "
+              f"sum={measured_weights.sum():.6g} (cf hMeasSub2D integral "
+              f"{hMeasSub2D.Integral():.6g}). Step-1 p/(1-p) >= 0 floors the "
+              f"reweight structurally.")
+    elif args.bkg_mode == "negweight-refined":
+        n_data = meas_pt.shape[0]
+        sgn_pt = np.concatenate([meas_pt, inj_pt])
+        sgn_pz = np.concatenate([meas_pz, inj_pz])
+        sgn_w = np.concatenate([measured_weights, -inj_w])
+        refine_params = ({"random_state": int(args.seed) + 3}
+                         if args.seed is not None else None)
+        w_ref, _g_ev, frac_clip = refine_stay_positive(
+            np.column_stack([sgn_pt, sgn_pz]), sgn_w,
+            estimator=args.estimator, device=args.device,
+            params=refine_params, verbose=True)
+        meas_pt, meas_pz, measured_weights = sgn_pt, sgn_pz, w_ref
+        print(f"[INFO] bkg-mode=negweight-refined (Stay Positive, "
+              f"arXiv:2505.03724): refined {sgn_w.shape[0]} signed events "
+              f"({n_data} data + {inj_pt.shape[0]} bkg) to NON-NEGATIVE weights; "
+              f"clipped frac={frac_clip:.4f}; effective measured sum="
+              f"{measured_weights.sum():.6g} (cf hMeasSub2D integral "
+              f"{hMeasSub2D.Integral():.6g}).")
 
     # --- Run 2D OmniFold via direct Python helper call ---
     # NB: we bypass ROOT.RooUnfoldOmnifold().UnbinnedOmnifold() because its
