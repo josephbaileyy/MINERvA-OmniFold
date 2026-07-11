@@ -47,10 +47,19 @@ structural rather than imposed. The fit is not well-posed in such a region,
 however --- the class-1 weighted mass is locally negative --- so the principled
 treatment there is the ``Stay Positive'' refinement of
 Ref.~\cite{Nachman:2025staypositive}, which resamples the signed-weight sample
-into an equivalent positive-weight one before training. At the sub-percent
-genuine-background scale of this measurement the two behave identically; the
-refinement matters only for the larger, more structured backgrounds of the
-full-phase-space extension.
+into an equivalent positive-weight one before training. Whether the plain
+injection and the refinement coincide in practice depends on the classifier.
+With the histogrammed gradient-boosted density estimator used for the
+production result they agree to the median of $\nwMedianBin$ reported below, at
+the sub-percent genuine-background scale of this measurement. With an
+\emph{exact} (tree-boosted) classifier the raw signed weights instead
+destabilize training --- a full low-$p_T$ row of the cross section inflates by
+up to a factor ${\sim}\nwSpRawMax$ where the local background is large --- and
+the Stay-Positive resampling removes the pathology, recovering agreement with
+the binned purity to a median of \nwSpMedian{} ($\nwSpWithin$ bins within
+\SI{5}{\percent}). The refinement is therefore what makes the unbinned
+subtraction robust across estimators, and it matters most for the larger, more
+structured backgrounds of the full-phase-space extension.
 
 \subsection{Closed-form toy}
 \label{sec:negweight-toy}
@@ -122,9 +131,31 @@ binned $\max(0,\cdot)$ floor and the structural floor of
   \label{fig:negweight-ratio}
 \end{figure}
 
-The equivalence at the 2D scale, together with the closed-form recovery of the
-estimator, establishes negative-weight injection as a validated unbinned
-replacement for the binned purity correction; adopting it as the default
-subtraction awaits its propagation through the systematic-universe and
-statistical-bootstrap machinery and the ``Stay Positive'' refinement for the
-larger backgrounds of the full-phase-space extension.
+\subsection{Propagation through systematics and statistics}
+\label{sec:negweight-uq}
+
+A central-value match is necessary but not sufficient: to replace the binned
+correction the unbinned subtraction must also reproduce the \emph{uncertainty}
+budget. The full 2D ME~FHC covariance was therefore rebuilt end to end under
+negative-weight injection --- the systematic ensemble of 187 universes, with the
+genuine background varied consistently within each universe rather than frozen
+at nominal, and a statistical bootstrap --- and compared to the binned-purity
+construction with identical settings. The two agree at the level the $(D-B)/S$
+identity predicts: the systematic covariance matches in overall magnitude to a
+$\sqrt{\mathrm{tr}}$ ratio of $\nwSystRatio$ (negative-weight/purity), and the
+statistical covariance, compared on matched bootstrap seeds, to $\nwStatRatio$.
+The residual few-per-mille differences are bootstrap and classifier-seed
+sampling noise, not a method bias. Negative-weight injection thus reproduces not
+only the central cross section but its full covariance, per bin and in
+aggregate.
+
+The equivalence at the 2D scale --- in the central value, the closed-form
+estimator recovery, and now the full systematic and statistical covariance ---
+together with the Stay-Positive refinement that keeps the estimator robust on
+the larger backgrounds of the full-phase-space extension, establishes
+negative-weight injection as a fully validated unbinned replacement for the
+binned purity correction. The binned purity is retained as the default for the
+reproduction measurement of this note, with negative-weight injection carried as
+the validated unbinned cross-check and as the baseline subtraction for the
+full-phase-space extension (\S\ref{sec:fps}), where its binning-independence and
+continuous floor are essential.
