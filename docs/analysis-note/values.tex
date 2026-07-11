@@ -100,3 +100,11 @@
 \newcommand{\nwToyPur}{6.7}           % purity  median rel-err vs (D-B)/S (%)
 \newcommand{\nwToyBias}{10.9}         % no-subtraction contamination bias (%)
 \newcommand{\nwToySeed}{0.3}          % negweight seed-to-seed spread (%)
+% covariance propagation (Phase D: lgbm, 187-universe #13-active syst; matched 50-seed bootstrap stat)
+% syst: sqrt-trace neg 2.9828e-39 / pur 3.0242e-39; stat: neg 1.7260e-40 / pur(50) 1.7576e-40
+\newcommand{\nwSystRatio}{0.986}      % negweight/purity systematic-covariance sqrt-trace ratio (187 universes)
+\newcommand{\nwStatRatio}{0.982}      % negweight/purity statistical-covariance sqrt-trace ratio (matched 50-seed bootstrap)
+% Stay-Positive refinement on the exact (gradient-boosted) backend (seed1, 5-iter, vs exact purity)
+\newcommand{\nwSpMedian}{0.999}       % refined/purity median per-bin ratio, exact estimator
+\newcommand{\nwSpWithin}{141/148}     % refined/purity bins within 5%, exact estimator
+\newcommand{\nwSpRawMax}{5\times10^{4}} % raw-negweight/purity worst-bin blow-up, exact estimator
