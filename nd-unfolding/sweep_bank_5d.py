@@ -159,15 +159,26 @@ def do_dump(args):
     for (b, i) in mine:
         np.save(f"{args.bankdir}/{b}_{i}_tdw.npy", np.asarray(da_w[(b, i)], np.float32))
 
+    # ---- background: per-universe w_bkg (KNOWN_ISSUES #13) ----
+    # Vertical bands keep CV bkg kinematics -> universe-independent kept-set;
+    # bank CV bkg columns once (g0) + each universe's w_bkg column, do_run rebins
+    # to recompute the measured purity down-weight. Lateral bands run on the
+    # direct driver's re-read path. (Mirrors sweep_bank.py.)
+    extras = [dict(und.EXTRA_AXES["eavail"], name="eavail"),
+              dict(und.EXTRA_AXES["q3"], name="q3"),
+              dict(und.EXTRA_AXES["W"], name="W")]
+    edges = [pt_e, pz_e, ea_e, q3_e, w_e]
+    t_bkg = f.Get("mc_background")
+    bkg_wbranches = [f"w_bkg_{san(b)}_{i}" for (b, i) in mine]
+    bkg_pt, bkg_pz, bkg_ex, bkg_w, bkg_uw = und.collect_bkg_nd(
+        t_bkg, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi,
+        extra_wbranches=bkg_wbranches)
+    for k, (b, i) in enumerate(mine):
+        np.save(f"{args.bankdir}/{b}_{i}_bkgw.npy", bkg_uw[k].astype(np.float32))
+
     if g0:
-        extras = [dict(und.EXTRA_AXES["eavail"], name="eavail"),
-                  dict(und.EXTRA_AXES["q3"], name="q3"),
-                  dict(und.EXTRA_AXES["W"], name="W")]
-        edges = [pt_e, pz_e, ea_e, q3_e, w_e]
-        t_data, t_bkg = f.Get("data"), f.Get("mc_background")
+        t_data = f.Get("data")
         meas_pt, meas_pz, meas_ex = und.collect_data_nd(t_data, extras, pt_lo, pt_hi, pz_lo, pz_hi)
-        bkg_pt, bkg_pz, bkg_ex, bkg_w = und.collect_bkg_nd(t_bkg, extras, pot_scale,
-                                                           pt_lo, pt_hi, pz_lo, pz_hi)
         data_nd, _ = und.histnd([meas_pt, meas_pz] + meas_ex, np.ones(meas_pt.size), edges)
         bkg_nd, _ = und.histnd([bkg_pt, bkg_pz] + bkg_ex, bkg_w, edges)
         meas_w = und.build_measured_training_nd([meas_pt, meas_pz] + meas_ex, data_nd, bkg_nd, edges)
@@ -177,6 +188,7 @@ def do_dump(args):
                  MCreco=np.column_stack([k_rpt, k_rpz, k_rea, k_rq3, k_rw]).astype(np.float32),
                  measured=np.column_stack([meas_pt, meas_pz] + meas_ex).astype(np.float32),
                  measured_weights=meas_w,
+                 bkg_cols=np.column_stack([bkg_pt, bkg_pz] + bkg_ex).astype(np.float32),
                  pass_reco=np.asarray(k_pr, bool), pass_truth=np.asarray(k_ptru, bool),
                  td_pt=np.asarray(d_pt), td_pz=np.asarray(d_pz),
                  td_ea=np.asarray(d_ea), td_q3=np.asarray(d_q3), td_w=np.asarray(d_w),
@@ -184,13 +196,15 @@ def do_dump(args):
                  n_nucleons=u2d.TRACKER_FIDUCIAL_N_NUCLEONS,
                  edges_0=pt_e, edges_1=pz_e, edges_2=np.asarray(ea_e, float),
                  edges_3=np.asarray(q3_e, float), edges_4=np.asarray(w_e, float))
-        print(f"[dump g0] wrote cv.npz ({len(k_pt)} signal, {len(d_pt)} denom)")
+        print(f"[dump g0] wrote cv.npz ({len(k_pt)} signal, {len(d_pt)} denom, "
+              f"{len(bkg_pt)} bkg)")
     f.Close()
     print(f"[dump g{args.group}] done", flush=True)
 
 
 def do_run(args):
     import ROOT
+    import unfold_nd_omnifold_unbinned as und
     from omnifold_nn_core import omnifold_loop
     from xsec_nd import extract_cross_section_nd, total_xsec
     band, _, idx = args.universe.partition(":")
@@ -213,10 +227,24 @@ def do_run(args):
     # undefined 0/0 per-event weights stored as NaN; 0 is the correct fallback).
     for _w in (wt, wr, tdw):
         np.nan_to_num(_w, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
+    # KNOWN_ISSUES #13: rebin CV background with this universe's w_bkg to
+    # recompute the measured purity down-weight; CV fallback for pre-#13 banks.
+    bkgw_path = f"{bd}/{tag}_bkgw.npy"
+    if "bkg_cols" in cv and os.path.exists(bkgw_path):
+        bkgw = np.load(bkgw_path, mmap_mode="r").astype(np.float64).copy()
+        np.nan_to_num(bkgw, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
+        bkg_cols = cv["bkg_cols"].astype(np.float64)
+        meas_cols = [measured[:, a] for a in range(measured.shape[1])]
+        bkg_cols_l = [bkg_cols[:, a] for a in range(bkg_cols.shape[1])]
+        data_nd_m, _ = und.histnd(meas_cols, np.ones(measured.shape[0]), edges)
+        bkg_nd_m, _ = und.histnd(bkg_cols_l, bkgw, edges)
+        measured_weights = und.build_measured_training_nd(meas_cols, data_nd_m, bkg_nd_m, edges)
+    else:
+        measured_weights = cv["measured_weights"]
     w_pull, w_push = omnifold_loop(
         MCgen, MCreco, measured, pass_reco, pass_truth, np.ones(len(measured), bool),
         args.iters, kind="lgbm", MCgen_weights=wt, MCreco_weights=wr,
-        measured_weights=cv["measured_weights"], seed=42, verbose=False)
+        measured_weights=measured_weights, seed=42, verbose=False)
     m = pass_truth
     bins = [np.asarray(e, float) for e in edges]
     sample = np.column_stack([MCgen[m, a] for a in range(MCgen.shape[1])])

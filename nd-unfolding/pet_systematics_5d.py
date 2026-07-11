@@ -106,8 +106,17 @@ class PETxsec5D:
             full[idx] = wp
             wp = full
         self.w_push = wp
-        # flux on the pt axis (axis 0); n_nucleons -- same loaders as the GBDT path
-        self.flux, _ = u2d.load_flux_bins(mcfile, flux_hist, self.edges[0])
+        # flux on the pt axis (axis 0); n_nucleons -- same loaders as the GBDT path.
+        # self.edges[0] may be an FPS-extended pT grid (more/different bins than the
+        # frozen flux histogram) -- remap by bin-centre lookup into the standard-edge
+        # flux (flux is pT-flat to ~2e-14%, so this is exact); identity when edges[0]
+        # already IS the standard grid, same pattern as nn_dump_inputs.py.
+        flux_ref, _ = u2d.load_flux_bins(mcfile, flux_hist, u2d.PT_EDGES)
+        ref_e = np.asarray(u2d.PT_EDGES, float)
+        pt_e0 = np.asarray(self.edges[0], float)
+        ctrs = 0.5 * (pt_e0[:-1] + pt_e0[1:])
+        ref_i = np.clip(np.digitize(ctrs, ref_e) - 1, 0, len(flux_ref) - 1)
+        self.flux = flux_ref[ref_i]
         self.n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
         self.pt = self.pass_truth
         self.ptr = self.pass_truth & self.pass_reco

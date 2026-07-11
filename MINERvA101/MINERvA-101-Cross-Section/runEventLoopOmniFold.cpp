@@ -217,7 +217,11 @@ enum class UniverseKineContext
 {
   TruthTree,        // pT_truth_<band>_<idx>, pz_truth_<band>_<idx>
   RecoTreeTruth,    // MC_<band>_<idx>,        MC_pz_<band>_<idx>
-  RecoTreeReco      // sim_<band>_<idx>,       sim_pz_<band>_<idx>
+  RecoTreeReco,     // sim_<band>_<idx>,       sim_pz_<band>_<idx>
+  BkgTreeReco       // sim_background_<band>_<idx>, sim_background_pz_<band>_<idx>
+                    // (mc_background tree; keeps the bkg reco kinematics in
+                    //  their own namespace so they never alias mc_signal_reco's
+                    //  sim_* shadow branches — KNOWN_ISSUES #13)
 };
 
 // Build the per-universe branch table. `bands` is the truth_bands or
@@ -271,6 +275,12 @@ BuildUniverseBranchTable(
             ub.pzBranchName = "sim_pz_" + suffix;
             ub.q3BranchName = "sim_q3_" + suffix;      // reco q3 (RecoQ3)
             ub.wBranchName  = "sim_W_"  + suffix;      // reco W (RecoW)
+            break;
+          case UniverseKineContext::BkgTreeReco:
+            ub.ptBranchName = "sim_background_"    + suffix;
+            ub.pzBranchName = "sim_background_pz_" + suffix;
+            ub.q3BranchName = "sim_background_q3_" + suffix;  // reco q3 (RecoQ3)
+            ub.wBranchName  = "sim_background_W_"  + suffix;  // reco W (RecoW)
             break;
         }
       }
@@ -986,7 +996,8 @@ void LoopAndFillUnbinnedMCBackground(
     CVUniverse* recoCV,
     PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
     PlotUtils::Model<CVUniverse, MichelEvent>& model,
-    TTree* out)
+    TTree* out,
+    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr)
 {
   double sim_background = 0.0;
   double sim_background_pz = 0.0;
@@ -996,6 +1007,17 @@ void LoopAndFillUnbinnedMCBackground(
   UChar_t sim_background_pass = true;
   double w_bkg = 1.0;
 
+  // Truth channel labels (KNOWN_ISSUES #13 closure, Ruterbories 0.2% cross-check).
+  // Read straight from the reco tree's mc_* branches — present regardless of
+  // SetTruth mode. Enables an offline split of genuine background (wrong
+  // flavour / wrong sign / NC) from out-of-fiducial-vertex signal fakes.
+  int    bkg_nuPDG = 0;
+  int    bkg_current = 0;
+  int    bkg_inttype = 0;
+  double bkg_vtx_x = 0.0;
+  double bkg_vtx_y = 0.0;
+  double bkg_vtx_z = 0.0;
+
   out->Branch("sim_background", &sim_background);
   out->Branch("sim_background_pz", &sim_background_pz);
   out->Branch("sim_background_eavail", &sim_background_eavail);  // reco Eavail (GeV)
@@ -1003,6 +1025,54 @@ void LoopAndFillUnbinnedMCBackground(
   out->Branch("sim_background_W", &sim_background_W);            // reco W (GeV)
   out->Branch("sim_background_pass", &sim_background_pass);
   out->Branch("w_bkg", &w_bkg);
+  out->Branch("bkg_nuPDG",   &bkg_nuPDG);    // truth incoming-nu PDG (mc_incoming)
+  out->Branch("bkg_current", &bkg_current);  // 1=CC, 2=NC (mc_current)
+  out->Branch("bkg_inttype", &bkg_inttype);  // interaction type (mc_intType)
+  out->Branch("bkg_vtx_x",   &bkg_vtx_x);    // truth vertex x (mm)
+  out->Branch("bkg_vtx_y",   &bkg_vtx_y);    // truth vertex y (mm)
+  out->Branch("bkg_vtx_z",   &bkg_vtx_z);    // truth vertex z (mm); fiducial split
+                                             //   offline vs minZ=5980,maxZ=8422,apothem=850
+
+  // Per-systematic-universe background-weight dump (KNOWN_ISSUES #13). Mirrors
+  // the reco-mode block in LoopAndFillUnbinnedMCSelectedSignalReco, but the
+  // background target is a pure reco-space quantity so there is NO truth-mode
+  // table. Weight branch: w_bkg_<band>_<idx>; lateral (detector/muon) bands
+  // additionally dump shifted reco kinematics as sim_background_<...>. Off
+  // unless MNV101_DUMP_UNIVERSES is set AND errorBands is non-null.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniBkgBranches;
+  std::vector<double> uniBkgWeights;
+  std::vector<double> uniBkgLatPT, uniBkgLatPZ, uniBkgLatQ3, uniBkgLatW;
+  size_t nLatBkg = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (errorBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniBkgBranches = BuildUniverseBranchTable(
+        *errorBands, "bkg", UniverseKineContext::BkgTreeReco,
+        uniAllow.first, uniAllow.second);
+    uniBkgWeights.assign(uniBkgBranches.size(), 1.0);
+    uniBkgLatPT.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatPZ.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatQ3.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatW.assign(uniBkgBranches.size(),  0.0);
+    for(size_t k = 0; k < uniBkgBranches.size(); ++k)
+    {
+      out->Branch(uniBkgBranches[k].branchName.c_str(), &uniBkgWeights[k]);
+      if(uniBkgBranches[k].isLateral)
+      {
+        out->Branch(uniBkgBranches[k].ptBranchName.c_str(), &uniBkgLatPT[k]);
+        out->Branch(uniBkgBranches[k].pzBranchName.c_str(), &uniBkgLatPZ[k]);
+        out->Branch(uniBkgBranches[k].q3BranchName.c_str(), &uniBkgLatQ3[k]);
+        out->Branch(uniBkgBranches[k].wBranchName.c_str(),  &uniBkgLatW[k]);
+        ++nLatBkg;
+      }
+    }
+    std::cout << "  Background universe-weight dump enabled: "
+              << uniBkgBranches.size() << " (band,idx) branches written to "
+              << out->GetName() << " (" << nLatBkg
+              << " lateral with shifted reco pT/pz).\n";
+  }
 
   std::cout << "Starting unbinned MC background reco loop...\n";
   const int nEntries = reco->GetEntries();
@@ -1032,6 +1102,40 @@ void LoopAndFillUnbinnedMCBackground(
     sim_background_q3 = recoCV->RecoQ3() / 1000.0;         // MeV -> GeV
     sim_background_W = recoCV->RecoW() / 1000.0;           // MeV -> GeV
     w_bkg = cvWeight;
+
+    // Truth channel labels for the offline genuine-vs-fake split.
+    bkg_nuPDG   = recoCV->GetTruthNuPDG();
+    bkg_current = recoCV->GetCurrent();
+    bkg_inttype = recoCV->GetInteractionType();
+    const ROOT::Math::XYZTVector tvtx = recoCV->GetTrueVertex();
+    bkg_vtx_x = tvtx.X();
+    bkg_vtx_y = tvtx.Y();
+    bkg_vtx_z = tvtx.Z();
+
+    // Per-universe background weights + shifted reco kinematics. Reco-mode
+    // only (the background loop is entirely CVUniverse::SetTruth(false)); one
+    // model.GetWeight(*u) per (band,idx) per CV-selected background event.
+    if(dumpUniverses)
+    {
+      for(size_t k = 0; k < uniBkgBranches.size(); ++k)
+      {
+        CVUniverse* u = uniBkgBranches[k].univ;
+        u->SetEntry(i);
+        MichelEvent uEvt;
+        model.SetEntry(*u, uEvt);
+        uniBkgWeights[k] = model.GetWeight(*u, uEvt);
+        if(uniBkgBranches[k].isLateral)
+        {
+          uniBkgLatPT[k] = u->GetMuonPT();
+          uniBkgLatPZ[k] = u->GetMuonPz();
+          uniBkgLatQ3[k] = u->RecoQ3() / 1000.0;  // MeV -> GeV (reco q3)
+          uniBkgLatW[k]  = u->RecoW() / 1000.0;   // MeV -> GeV (reco W)
+        }
+      }
+      // Restore CV state (defensive against future edits below the fill).
+      recoCV->SetEntry(i);
+      model.SetEntry(*recoCV, cvEvent);
+    }
     out->Fill();
   }
   std::cout << "Finished unbinned MC background reco loop.\n";
@@ -1351,7 +1455,8 @@ int main(const int argc, const char** argv)
 
     if(!truthOnly)
     {
-      LoopAndFillUnbinnedMCBackground(options.m_mc, recoCV, mycuts, model, mcBkgTree);
+      LoopAndFillUnbinnedMCBackground(options.m_mc, recoCV, mycuts, model, mcBkgTree,
+                                      &error_bands);
       LoopAndFillUnbinnedData(options.m_data, data_universe, mycuts, dataTree);
     }
     else

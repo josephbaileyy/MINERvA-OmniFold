@@ -244,6 +244,12 @@ def main():
                     help="self-consistency closure: use MC reco (pass_reco events) as "
                          "pseudo-data instead of the real data; the recovered truth should "
                          "reproduce the MC truth (validated downstream with completeness=1).")
+    ap.add_argument("--seed", type=int, default=0,
+                    help="RNG seed for the --max-events subsample draw (build_loaders' "
+                         "rng.choice); network init/dropout/batch-shuffle are already "
+                         "TF-unseeded (genuinely different every process). Vary this across "
+                         "job-array tasks to get independent seed replicas for a "
+                         "retraining-response convergence check.")
     args = ap.parse_args()
 
     # Horovod data-parallel rank/size from the SLURM launch: `srun -n N` sets SLURM_PROCID
@@ -255,7 +261,7 @@ def main():
 
     data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
                                   max_events=args.max_events, rank=rank, size=size,
-                                  memmap_dir=args.memmap_dir)
+                                  memmap_dir=args.memmap_dir, seed=args.seed)
 
     if args.closure:
         # Pseudo-data = MC reco of the reco-passing events, weighted by the (normalized)

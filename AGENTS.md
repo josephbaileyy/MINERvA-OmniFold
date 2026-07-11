@@ -99,6 +99,15 @@ That self-locating script loads the `root_6_28` conda env, sources
 `MINERVA_PREFIX=$REPO/MINERvA101/opt`, and sources
 `MINERvA101/opt/bin/setup.sh`.
 
+`root_6_28` is activated **by full prefix** (`$HOME/.conda/envs/root_6_28`) via the
+conda-24.10.0 base that created it — *not* `module load python; conda activate root_6_28`,
+which broke on 2026-07-02 when the default `python` module moved to a newer conda base that
+no longer registers the env by name (`EnvironmentNameNotFound`). Override with
+`ROOT628_PREFIX` / `ROOT628_CONDA` if the env or base moves. sbatch/salloc set `HOME` to the
+real home so `$HOME` resolves; for Claude's redirected-HOME **interactive** shell, source the
+scratch `rootenv.sh` (adds a `HOME=` override) instead. Legacy `module load python` path
+remains as a fallback if the prefix is absent.
+
 Canonical runtime binary: `MINERvA101/opt/bin/runEventLoopOmniFold` (do
 **not** call build-tree copies — they have silently shadowed the installed
 patched binary in the past; see `memory/project_build_source_path.md`).

@@ -1399,3 +1399,80 @@ Audit results (uproot on `runEventLoopOmniFold_MEFHC.root` + run-log grep):
   (nu PDG / current / vertex) absent from all dumps — add a channel-label
   branch to `mc_background` in the C++ and it rides along with the next
   gated 12-playlist re-run.
+
+## 2026-07-04 — C++ change for BOTH #13 fixes written + built (STAGED, not launched)
+
+Combined the KNOWN_ISSUES #13 per-universe-background fix and the Ruterbories
+channel-label cross-check into one edit of
+`MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, so a single
+future 12-playlist re-run delivers both. **Staged only** — the change is inert
+until the event loop runs with `MNV101_DUMP_UNIVERSES` set; nothing was
+regenerated, re-banked, or committed. Held off launching to avoid regenerating
+shared MEFHC omnifiles while the personal account's PET FPS steps 3/4 depend on
+the current products (PET train `55445418` still running as of this entry).
+
+- **Channel labels (0.2% cross-check)** — `LoopAndFillUnbinnedMCBackground`
+  now dumps per-event truth labels on `mc_background`: `bkg_nuPDG`
+  (`GetTruthNuPDG` → mc_incoming), `bkg_current` (`GetCurrent`, 1=CC/2=NC),
+  `bkg_inttype` (`GetInteractionType` → mc_intType), and truth vertex
+  `bkg_vtx_{x,y,z}` (`GetTrueVertex`, mm). Genuine-vs-fake split is deferred to
+  OFFLINE analysis (wrong-flavour `nuPDG!=14`, NC `current==2`,
+  out-of-fiducial from the vertex vs the driver's own minZ=5980/maxZ=8422/
+  apothem=850) — the raw vertex is dumped rather than reimplementing the
+  hexagon-apothem cut in the loop, so there is zero risk of divergence from the
+  signal PS definition.
+- **Per-universe background (#13 fix)** — new `UniverseKineContext::BkgTreeReco`
+  + `BuildUniverseBranchTable` case emitting `sim_background_{,pz,q3,W}_<band>
+  _<idx>` (own namespace, never aliases signal `sim_*`). Reco-mode universe
+  branch table attached to `mc_background`: `w_bkg_<band>_<idx>` per (band,idx)
+  + shifted lateral kinematics for non-vertical bands; gated on
+  `MNV101_DUMP_UNIVERSES` + non-null `errorBands`; restores CV entry/MichelEvent
+  state before `out->Fill()`. Caller passes `&error_bands`. Reco-mode only —
+  background is a pure reco-space subtraction, no truth-mode table needed.
+- **Build**: job `55476273` COMPLETED exit 0:0, clean compile, installed
+  `opt/bin/runEventLoopOmniFold` mtime 06:45:09 > source 06:29:25. (First
+  attempt `55476062` failed on env, NOT code: `setup_salloc_env.sh` resolves
+  `root_6_28` against `$HOME`, which is the sandboxed school home in this
+  session — real env is `/global/homes/j/josephrb/.conda/envs/root_6_28`;
+  fixed via the script's own `ROOT628_PREFIX=` override, no file edit.)
+- **Still deferred** (do NOT do before the re-run): the 12-playlist re-run →
+  hadd → re-bank; then run the #13 covariance re-quote and the 0.2% closure.
+
+### 2026-07-04 follow-up — Python consumers + offline channel-split analyzer (STAGED)
+
+Wrote the Python side of both fixes (previously deferred), staged/unlaunched —
+all four edited modules `py_compile` clean under python3 (the login-node bare
+`python` is Python 2 and chokes on the repo's f-strings; always use `python3`).
+
+- **`collect_bkg_nd` (`unfold_nd_omnifold_unbinned.py`)** now takes
+  `universe_branch=(band, idx)`: reads `w_bkg_<sanitized-band>_<idx>` instead of
+  CV `w_bkg`, and for LATERAL bands swaps the reco kinematics to
+  `sim_background_/sim_background_pz_<band>_<idx>` + lateral-variant axes (q3, W)
+  to `sim_background_<axis>_<band>_<idx>` (eavail is lateral-invariant, stays CV).
+  The direct-driver call site (`main`, ~:579) now passes `universe_branch`, so an
+  `--universe` unfold no longer freezes the background at CV. Also added an
+  `extra_wbranches=` path returning per-universe `w_bkg` columns aligned to the
+  CV-kept bkg events (5-tuple return only when requested — the other 6 callers
+  are untouched, still 4-tuple). Branch-name helpers mirror the C++ schema:
+  `u2d._universe_bkg_branch`, `_universe_kine_branches(..., "bkg_tree_reco")`,
+  `_axis_universe_branch(..., "bkg_tree")`.
+- **Banked vertical sweep (`sweep_bank.py`, `sweep_bank_5d.py`)** — `do_dump`
+  now banks each vertical universe's `w_bkg` column (`{tag}_bkgw.npy`) and, in
+  group 0, the CV bkg reco columns (`bkg_cols` in `cv.npz`). `do_run` rebins the
+  CV background with that universe's `w_bkg` and recomputes the measured purity
+  down-weight, replacing the frozen `cv["measured_weights"]`. Weight-only is the
+  correct treatment here — the bank already handles vertical bands weight-only
+  (CV kinematics), and the 12 lateral bands go through the direct-driver re-read
+  path above. Graceful CV fallback when `bkg_cols`/`{tag}_bkgw.npy` is absent, so
+  pre-#13 banks still run bit-identically.
+- **`bkg_channel_split.py` (NEW)** — offline genuine-vs-fake channel split for
+  the Ruterbories 0.2% closure. Reads the `bkg_nuPDG/current/inttype/vtx_{x,y,z}`
+  labels and classifies each selected bkg event into mutually-exclusive
+  {wrong_sign, wrong_flavour, nc, out_of_fiducial, fake}; reports NARROW genuine
+  (wrong_sign+wrong_flavour+nc, compare 8655/0.2%) vs BROAD genuine (+out-of-fid,
+  compare playlist-1A 0.35%), with fakes (numu-CC-in-fiducial = out-of-PS signal)
+  called out as NOT genuine background. The ZRange(5980,8422)+Apothem(850)
+  hexagon test is a bit-for-bit port of `CCInclusiveSignal.h`
+  (`|y| < -|x|/√3 + 2·850/√3` AND `|x| < 850`, strict `<`); unit-tested for the
+  fiducial edges and category partition. Fails loudly on a pre-2026-07-04
+  omnifile (labels absent). Cannot run until the re-run produces the labels.

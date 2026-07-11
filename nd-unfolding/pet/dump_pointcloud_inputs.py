@@ -51,11 +51,25 @@ def main():
     ap.add_argument("--mcfile", default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--num-part", type=int, default=12)
+    ap.add_argument("--full-phase-space", action="store_true",
+                    help="lift the theta_mu truth gate (mirror the nd driver / nn_dump_inputs.py)")
+    ap.add_argument("--pt-edges", default=None,
+                    help="comma-separated pT edge override (FPS extended grid)")
+    ap.add_argument("--pz-edges", default=None,
+                    help="comma-separated p|| edge override (FPS extended grid)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
+    if args.full_phase_space:
+        import math
+        u2d.MAX_MUON_THETA_RAD = math.pi
+        print("[INFO] FULL PHASE SPACE: theta_mu truth gate lifted")
+
     P = args.num_part
-    pt_e, pz_e = u2d.PT_EDGES, u2d.PZ_EDGES
+    pt_e = ([float(x) for x in args.pt_edges.split(",")] if args.pt_edges
+            else u2d.PT_EDGES)
+    pz_e = ([float(x) for x in args.pz_edges.split(",")] if args.pz_edges
+            else u2d.PZ_EDGES)
     pt_lo, pt_hi, pz_lo, pz_hi = pt_e[0], pt_e[-1], pz_e[0], pz_e[-1]
 
     f = ROOT.TFile.Open(args.omnifile)
@@ -66,7 +80,6 @@ def main():
         raise SystemExit("[FAIL] no part_gen_E branch -- re-run the event loop with "
                          "MNV101_DUMP_POINTCLOUD=1")
     data_pot, mc_pot, pot_scale = u2d.get_pot_scales(f)
-    flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_e)
 
     # ---- signal (MC): gen + reco clouds, pass flags, weights ----
     import math
@@ -155,7 +168,6 @@ def main():
     print(f"[OK] signal clouds: gen {part_gen.shape} reco {part_reco.shape}; "
           f"data {measured_pc.shape}; num_part={P}")
     import unfold_nd_omnifold_unbinned as und
-    pt_e, pz_e = u2d.PT_EDGES, u2d.PZ_EDGES
     ea_e = und.EXTRA_AXES["eavail"]["edges"]; q3_e = und.EXTRA_AXES["q3"]["edges"]
     np.savez_compressed(
         args.out, num_part=P,
