@@ -79,9 +79,9 @@ labels as cross-checks only. They never enter the corrected budget.
 |---|---|---|---|
 | 1 | Corrected bkgsub point-cloud input `of_inputs_pc_fullcloud_bkgsub_5d.npz` | data-row alignment exact; target sum exact; MC aligned; old input untouched; provenance JSON; e2e fixture | **COMPLETE ✓** (all gates PASS; e2e fixture PASS) |
 | 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | **COMPLETE ✓** (job 55822534; σ=2.7511e-38) |
-| 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **IN PROGRESS** (floor rerun launched) |
-| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT launched** (RIDs 1-6) |
-| 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | pending P2/P3 |
+| 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **COMPLETE ✓** (floor NEGLIGIBLE: per-bin rel median 9.1e-06, total 4.9e-06) |
+| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT running** (RIDs 1-6; combine via combine_cov_nd once landed) |
+| 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **LAUNCHED** (4 sub × 3 est = 12 trains) |
 | 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | pending P2 + GBDT bank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
 | 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | pending all |
@@ -102,10 +102,29 @@ shared products are missing.
 | 55822061 | pet_bkgsub_intr | 1 | 2026-07-12 | CANCELLED (redundant) | Interactive insurance alloc; cancelled once batch got resources and pulled ahead (no write race — cancelled during ROOT read). Node freed. |
 | 55822296 | pet_bkgsub_smoke | 1 | 2026-07-12 | **COMPLETED** (exit 0) | Interactive. E2E fixture: tiny + real corrected npz both reach `PETxsec5D.xsec()` under ROOT (PASS). Node relinquished. |
 | 55822534 | pet_nom_bkgsub | 2 | 2026-07-12 | **COMPLETED** (1h06m, exit 0) | Corrected NOMINAL. σ=2.7511e-38; 65,856-bin grid (10,550 populated); full coverage; extraction PASS. `pet_nominal_bkgsub_5d_{weights,xsec}.npz` + summary.json. |
-| 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | PENDING | gpu_shared. `PET_NOM_TAG=floor`: identical config (est42/sub0, no bootstrap) → `pet_floor_bkgsub_5d_{weights,xsec}.npz`. Diff vs nominal = GPU-jitter floor. |
-| 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | PENDING | gpu_shared. C_stat pilot on bkgsub input; coherent data+MC Poisson, fixed est42/sub0. → `products/pet/bkgsub/bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. |
+| 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | **COMPLETED** | Floor NEGLIGIBLE (per-bin rel median 9.1e-06). `pet_floor_bkgsub_5d_{weights,xsec}.npz` + `pet_floor_bkgsub_5d_diagnostic.json`. |
+| 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | RUNNING (pilot) | C_stat pilot on bkgsub; coherent data+MC Poisson, fixed est42/sub0. → `bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. Combine via `combine_cov_nd --expected-ids 1-6 --cv <nominal>`. |
+| 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | PENDING/RUNNING | C_ml crossed ensemble: sub{0,1,2,3}×est{42,43,44}=12, no bootstrap. → `cml/pet_s{S}_e{E}_bkgsub_5d_{weights,xsec}.npz`. |
 
 ## DECISION LOG / GATES PASSED
+- 2026-07-12: **PHASE 3 COMPLETE (floor job 55826200).** GPU-nondeterminism
+  floor = corrected nominal vs same-seed repeat (est42/sub0, no bootstrap):
+  total σ rel diff **4.87e-06**; per-bin rel floor median **9.11e-06**, p90
+  2.08e-05, p99 5.18e-05, max 4.87e-04; L2 diff/nominal 7.78e-06. **NEGLIGIBLE**
+  vs the expected O(%) C_stat/C_ml spreads → the floor will not contaminate
+  their interpretation; no floor-subtraction (forbidden) and no
+  hierarchical-decomposition branch needed. Also confirms the fixed seeds pin
+  training (so the C_ml seed-crossed design captures genuine training variation,
+  not GPU noise). Diagnostic: `pet/floor_diagnostic_bkgsub.py` →
+  `products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json`.
+- 2026-07-12: **PHASE 5 C_ml LAUNCHED (12 jobs 55830054-65).** Crossed design,
+  NO Poisson: subsample seed ∈ {0,1,2,3} × estimator seed ∈ {42,43,44}. Reuses
+  `sbatch_pet_nominal_bkgsub.sh` (PET_NOM_OUTDIR=products/pet/bkgsub/cml,
+  PET_NOM_TAG=s{S}_e{E}) → `cml/pet_s{S}_e{E}_bkgsub_5d_{weights,xsec}.npz`.
+  Build C_ml about the JOINT training-ensemble mean (12 members); retain seed
+  metadata to inspect estimator vs subsample response + interaction. NOT the
+  GBDT C_ml, NOT a nominal-vs-alternate rank-1 outer product, NOT a blind sum of
+  seed covariances. Cleared to run parallel to C_stat (Phases 2+3 pass).
 - 2026-07-12: **PHASE 2 COMPLETE (job 55822534, 1h06m, exit 0).** Corrected
   nominal 5D PET trained + extracted. Gate PASS:
   - reweight-all on full 32.8M: w_push mean 1.0128, std 0.0752, finite.

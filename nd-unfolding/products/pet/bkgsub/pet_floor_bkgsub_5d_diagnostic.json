@@ -1,0 +1,21 @@
+{
+  "campaign": "PET bkgsub 5D corrected GPU-nondeterminism floor (Phase 3)",
+  "nominal": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz",
+  "floor": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_floor_bkgsub_5d_xsec.npz",
+  "note": "single same-seed pair: a diagnostic floor, NOT a covariance estimate",
+  "n_bins": 65856,
+  "n_reported_bins": 10550,
+  "total_sigma_nominal": 2.7511273175480004e-38,
+  "total_sigma_floor": 2.7511407242413286e-38,
+  "total_abs_diff": 1.3406693328185016e-43,
+  "total_rel_diff": 4.873163536514919e-06,
+  "per_bin_rel_floor": {
+    "median": 9.107722024316863e-06,
+    "mean": 1.134575682997512e-05,
+    "p90": 2.0836382521143e-05,
+    "p99": 5.1819808587775823e-05,
+    "max": 0.0004869919253332527
+  },
+  "l2_norm_diff_over_nominal": 7.77622646186447e-06,
+  "sqrt_sum_sq_abs_diff": 2.3401089797776306e-42
+}
