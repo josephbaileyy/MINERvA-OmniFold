@@ -80,7 +80,7 @@ labels as cross-checks only. They never enter the corrected budget.
 | 1 | Corrected bkgsub point-cloud input `of_inputs_pc_fullcloud_bkgsub_5d.npz` | data-row alignment exact; target sum exact; MC aligned; old input untouched; provenance JSON; e2e fixture | **COMPLETE ✓** (all gates PASS; e2e fixture PASS) |
 | 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | **COMPLETE ✓** (job 55822534; σ=2.7511e-38) |
 | 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **COMPLETE ✓** (floor NEGLIGIBLE: per-bin rel median 9.1e-06, total 4.9e-06) |
-| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT running** (RIDs 1-6; combine via combine_cov_nd once landed) |
+| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT PASS** (6 repl, 7.25%/bin, 8000× floor); scaling to 20 (RIDs 7-20) |
 | 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **LAUNCHED** (4 sub × 3 est = 12 trains) |
 | 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | pending P2 + GBDT bank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
@@ -107,6 +107,28 @@ shared products are missing.
 | 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | PENDING/RUNNING | C_ml crossed ensemble: sub{0,1,2,3}×est{42,43,44}=12, no bootstrap. → `cml/pet_s{S}_e{E}_bkgsub_5d_{weights,xsec}.npz`. |
 
 ## DECISION LOG / GATES PASSED
+- 2026-07-12: **PHASE 4 PILOT PASS (RIDs 1-6).** C_stat combined via
+  `pet/combine_cstat_bkgsub.py` (strict `load_replica_manifest`, PET-nominal
+  CV>0 mask = 10,550 bins, replica-mean-centered): sqrt-trace 8.23e-39, per-bin
+  rel **median 7.25%**, p90 46.9%, max 346% → **7965× the GPU floor** ⇒ PASS
+  (spread ≫ floor; floor uncontaminating). Large per-bin stat is the honest
+  fine-grid 5D value; the 4D marginal (project over W) will be far tighter.
+  **Scaling decision: C_stat = 20 replicas** (RIDs 1-20; launch 7-20). Balances
+  per-bin estimate stability (~16% precision on each sigma) against leaving GPU
+  headroom for Phases 6-8 before 07-15. NOTE: `combine_cov_nd` was NOT used (it
+  reads a ROOT CV hist + applies the GBDT mask); the PET combiner is npz-based
+  on the corrected-nominal mask, consistent with the C_ml combiner.
+  Products: `pet_cstat_pilot_bkgsub_5d.npz` + summary (pilot; superseded by the
+  20-replica final).
+- 2026-07-12: **PHASE 4 early peek (3/6 pilot replicas, RIDs 1-3).** C_stat
+  per-bin rel median **6.37%** (p90 42.6%), sqrt-trace 8.75e-39 → **~7000× the
+  GPU floor** (9.1e-06). Statistical spread overwhelmingly dominates
+  nondeterminism ⇒ Phase-4 gate direction confirmed (floor does not contaminate
+  C_stat). Large per-bin stat is expected for PET on the fine 10,550-bin grid.
+  Full 6-replica pilot combine + scaling decision pending remaining replicas.
+  DRAIN NOTE: gpu_shared runs ~2 of my jobs concurrently; 18-job wave (pilot +
+  C_ml) drains over several hours — acceptable vs the 07-15 deadline, so kept on
+  robust batch rather than unattended multi-GPU interactive orchestration.
 - 2026-07-12: **PHASE 3 COMPLETE (floor job 55826200).** GPU-nondeterminism
   floor = corrected nominal vs same-seed repeat (est42/sub0, no bootstrap):
   total σ rel diff **4.87e-06**; per-bin rel floor median **9.11e-06**, p90

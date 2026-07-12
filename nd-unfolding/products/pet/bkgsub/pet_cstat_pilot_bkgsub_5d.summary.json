@@ -1,0 +1,21 @@
+{
+  "campaign": "PET bkgsub 5D corrected C_stat (Phase 4)",
+  "n_replicas": 6,
+  "replica_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "expected_ids": "1-6",
+  "n_reported_bins": 10550,
+  "sqrt_trace": 8.231213609931216e-39,
+  "per_bin_rel_median": 0.07254407178850007,
+  "per_bin_rel_p90": 0.4690074666185605,
+  "per_bin_rel_max": 3.4632703779431426,
+  "floor_per_bin_rel_median": 9.107722024316863e-06,
+  "cstat_over_floor_ratio": 7965.117028694267,
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_cstat_pilot_bkgsub_5d.npz"
+}
