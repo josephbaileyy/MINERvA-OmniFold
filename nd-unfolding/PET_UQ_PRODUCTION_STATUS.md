@@ -78,9 +78,9 @@ labels as cross-checks only. They never enter the corrected budget.
 | Phase | Deliverable | Gate | Status |
 |---|---|---|---|
 | 1 | Corrected bkgsub point-cloud input `of_inputs_pc_fullcloud_bkgsub_5d.npz` | data-row alignment exact; target sum exact; MC aligned; old input untouched; provenance JSON; e2e fixture | **COMPLETE ✓** (all gates PASS; e2e fixture PASS) |
-| 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | pending P1 |
-| 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | pending P2 |
-| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | pending P2/P3 |
+| 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | **COMPLETE ✓** (job 55822534; σ=2.7511e-38) |
+| 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **IN PROGRESS** (floor rerun launched) |
+| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT launched** (RIDs 1-6) |
 | 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | pending P2/P3 |
 | 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | pending P2 + GBDT bank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
@@ -101,8 +101,55 @@ shared products are missing.
 | 55821658 | pet_bkgsub_in | 1 | 2026-07-12 | **COMPLETED** (9m05s, exit 0) | shared/cpu. Tests 20/20 + 10/10 PET. All gates PASS; built + self-verified `of_inputs_pc_fullcloud_bkgsub_5d.npz`. |
 | 55822061 | pet_bkgsub_intr | 1 | 2026-07-12 | CANCELLED (redundant) | Interactive insurance alloc; cancelled once batch got resources and pulled ahead (no write race — cancelled during ROOT read). Node freed. |
 | 55822296 | pet_bkgsub_smoke | 1 | 2026-07-12 | **COMPLETED** (exit 0) | Interactive. E2E fixture: tiny + real corrected npz both reach `PETxsec5D.xsec()` under ROOT (PASS). Node relinquished. |
+| 55822534 | pet_nom_bkgsub | 2 | 2026-07-12 | **COMPLETED** (1h06m, exit 0) | Corrected NOMINAL. σ=2.7511e-38; 65,856-bin grid (10,550 populated); full coverage; extraction PASS. `pet_nominal_bkgsub_5d_{weights,xsec}.npz` + summary.json. |
+| 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | PENDING | gpu_shared. `PET_NOM_TAG=floor`: identical config (est42/sub0, no bootstrap) → `pet_floor_bkgsub_5d_{weights,xsec}.npz`. Diff vs nominal = GPU-jitter floor. |
+| 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | PENDING | gpu_shared. C_stat pilot on bkgsub input; coherent data+MC Poisson, fixed est42/sub0. → `products/pet/bkgsub/bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. |
 
 ## DECISION LOG / GATES PASSED
+- 2026-07-12: **PHASE 2 COMPLETE (job 55822534, 1h06m, exit 0).** Corrected
+  nominal 5D PET trained + extracted. Gate PASS:
+  - reweight-all on full 32.8M: w_push mean 1.0128, std 0.0752, finite.
+  - extraction full ordered MC coverage (`problems=[]`), w_push∈[0.837,1.388];
+    W-source aligned; completeness anchored to xsec_5d_MEFHC_5iter_lgbm.root
+    (median rescale 1.258).
+  - 5D xsec (14,16,7,7,6)=65,856 bins, 10,550 populated, finite/nonneg,
+    **total σ = 2.7511e-38 cm²/nucleon** (in the expected PET range).
+  - Artifacts: `products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz` (166 MB,
+    gitignored), `..._xsec.npz` (91 KB, gitignored), `..._xsec.summary.json`
+    (tracked). **This is THE corrected nominal every downstream block references.**
+- 2026-07-12: **PHASE 3 + C_stat PILOT plan (predeclared).**
+  - Phase 3 floor: re-run the EXACT nominal config once (est_seed 42, sub_seed
+    0, no bootstrap) via `sbatch_pet_nominal_bkgsub.sh` with `PET_NOM_TAG=floor`
+    → `pet_floor_bkgsub_5d_{weights,xsec}.npz`. Per-bin/total diff vs nominal =
+    the GPU-jitter floor (diagnostic; recorded before interpreting C_stat/C_ml).
+  - C_stat pilot: reuse the corrected `sbatch_pet_bootstrap_replica.sh`
+    (coherent data+MC Poisson, fixed est_seed 42 & sub_seed 0, varies only the
+    Poisson replica id) with `PET_INPUTS=of_inputs_pc_fullcloud_bkgsub_5d.npz`,
+    `PET_BOOT_OUTDIR=products/pet/bkgsub/bootstrap_replicas`. **Predeclared pilot
+    = RIDs 1-6.** Build C_stat about the replica mean from the strict 5D NPZs;
+    compare spread to the floor before scaling to the full inventory. (The 4D
+    replica artifacts the launcher also writes are cross-checks; the canonical
+    4D is C_4D = M C_5D M^T.)
+- 2026-07-12: **PHASE 2 config recorded + train launched.** Adopted per-train
+  config (identical to the corrected C_stat bootstrap-replica launcher
+  `pet/sbatch_pet_bootstrap_replica.sh`, so the floor / C_stat / C_ml /
+  systematic blocks all reference THIS nominal — no silent config change):
+  - corrected input: `of_inputs_pc_fullcloud_bkgsub_5d.npz` (Phase-1 validated)
+  - W-source (5D splice): `of_inputs_5d.npz`
+  - train events = **2,000,000**; iters (niter) = **2**; epochs = **8**
+  - architecture = **PET** (vendored ViniciusMikuni/omnifold point-cloud)
+  - estimator seed = **42**; subsample/split seed (`--seed`) = **0**
+  - `--reweight-all`: push weights evaluated on the FULL 32.8M gen cloud
+  - TF = tensorflow/2.15.0 module; 1 GPU, ~1 h (cf. unsubtracted replica 1h07m)
+  - outputs: `products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz`,
+    `products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz` (+ summary.json)
+  - Rationale for 2M/niter2/epochs8 (not the 40M FPS train): this is the config
+    the 5D PET-vs-GBDT result and the corrected replicas use; C_stat (~20-100
+    retrains) and C_ml (12 retrains) are only feasible at ~1h/train. The 40M
+    FPS full-stats train (~29 A100-hr) is a separate FPS deliverable.
+  - Extraction: `pet/extract_nominal_bkgsub.py` (PyROOT self-reexec; enforces
+    full ordered MC coverage; PETxsec5D; comp anchored to the GBDT 5D product).
+  - Launcher: `pet/sbatch_pet_nominal_bkgsub.sh`.
 - 2026-07-12: **PHASE 1 COMPLETE.** Corrected input built + verified + fixture PASS.
   - `of_inputs_pc_fullcloud_bkgsub_5d.npz` (6.65 GB) built (job 55821658, 9m05s,
     exit 0). Independent CRC check: all 9 cloud+MC arrays byte-identical to the

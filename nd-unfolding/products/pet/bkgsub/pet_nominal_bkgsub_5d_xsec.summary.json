@@ -1,0 +1,29 @@
+{
+  "campaign": "PET bkgsub 5D corrected NOMINAL (Phase 2)",
+  "pc": "of_inputs_pc_fullcloud_bkgsub_5d.npz",
+  "w_source": "of_inputs_5d.npz",
+  "weights": "products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz",
+  "comp_ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz",
+  "shape": [
+    14,
+    16,
+    7,
+    7,
+    6
+  ],
+  "n_bins": 65856,
+  "n_bins_populated": 10550,
+  "n_pass_truth": 32849103,
+  "n_pass_truth_reco": 20404292,
+  "finite": true,
+  "nonneg": true,
+  "total_sigma_cm2_per_nucleon": 2.7511273175480004e-38,
+  "weight_coverage": {
+    "n_events": 32849103,
+    "w_push_min": 0.8372198343276978,
+    "w_push_max": 1.3884221315383911,
+    "w_push_mean": 1.012782233605771,
+    "problems": []
+  }
+}
