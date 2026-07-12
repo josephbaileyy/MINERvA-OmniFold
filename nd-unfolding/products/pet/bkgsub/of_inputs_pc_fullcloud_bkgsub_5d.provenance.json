@@ -1,0 +1,175 @@
+{
+  "campaign": "PET bkgsub 5D corrected point-cloud input (Phase 1)",
+  "inputs": {
+    "source_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_PC_MEFHC_fullcloud.root",
+    "fullcloud_npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fullcloud.npz",
+    "ref5d_npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"
+  },
+  "output_npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fullcloud_bkgsub_5d.npz",
+  "sidecar_scalars_npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/measured_scalars_fullcloud_dumporder.npz",
+  "n_data_expected": 4091707,
+  "data_alignment_gate": {
+    "n_rows_extracted": 4091707,
+    "n_rows_ref": 4091707,
+    "shape_extracted": [
+      4091707,
+      5
+    ],
+    "shape_ref": [
+      4091707,
+      5
+    ],
+    "exact": true,
+    "n_mismatch_rows": 0,
+    "per_col": {
+      "pt": {
+        "n_mismatch": 0,
+        "max_abs_diff": 0.0
+      },
+      "pz": {
+        "n_mismatch": 0,
+        "max_abs_diff": 0.0
+      },
+      "eavail": {
+        "n_mismatch": 0,
+        "max_abs_diff": 0.0
+      },
+      "q3": {
+        "n_mismatch": 0,
+        "max_abs_diff": 0.0
+      },
+      "W": {
+        "n_mismatch": 0,
+        "max_abs_diff": 0.0
+      }
+    },
+    "first_mismatch_rows": []
+  },
+  "mc_alignment_gate": {
+    "members": {
+      "w_truth": {
+        "present": true,
+        "identical": true,
+        "pc_crc": 210398139,
+        "ref_crc": 210398139
+      },
+      "w_reco": {
+        "present": true,
+        "identical": true,
+        "pc_crc": 4101201010,
+        "ref_crc": 4101201010
+      },
+      "pass_reco": {
+        "present": true,
+        "identical": true,
+        "pc_crc": 2235016292,
+        "ref_crc": 2235016292
+      },
+      "pass_truth": {
+        "present": true,
+        "identical": true,
+        "pc_crc": 846877188,
+        "ref_crc": 846877188
+      }
+    },
+    "all_identical": true
+  },
+  "weight_gate": {
+    "n": 4091707,
+    "finite": true,
+    "in_unit_interval": true,
+    "exact_equal_to_ref": true,
+    "min": 0.0,
+    "max": 1.0,
+    "mean": 0.97087070905292,
+    "sum": 3972518.4763267958,
+    "sum_ref": 3972518.4763267958,
+    "sum_exact": true
+  },
+  "per_bin_purity_report": {
+    "n_populated_bins": 10024,
+    "n_bins_spread_gt_1e-9": 4,
+    "max_within_bin_spread": 0.13715584931794778,
+    "n_weight_zero": 149,
+    "n_weight_one": 8433
+  },
+  "binning_edges": {
+    "edges_0": [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5
+    ],
+    "edges_1": [
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0,
+      15.0,
+      20.0,
+      40.0,
+      60.0
+    ],
+    "edges_2": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.8,
+      1.5,
+      3.0,
+      100.0
+    ],
+    "edges_3": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.2,
+      2.0,
+      100.0
+    ],
+    "edges_4": [
+      0.0,
+      1.1,
+      1.4,
+      1.8,
+      2.2,
+      3.0,
+      100.0
+    ]
+  },
+  "scalar_cols": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+  ],
+  "hashes": {
+    "measured_weights_sha256": "327543fed4dc27bb0ec6d1d2e147d45e1f7db16c3bed26856091e8747bea2c7c",
+    "measured_scalars_sha256": "eb2ab11f03ec022305477641269af268aa182d8406ca68fd1486c0004e57cc16",
+    "ref_measured_sha256": "eb2ab11f03ec022305477641269af268aa182d8406ca68fd1486c0004e57cc16"
+  }
+}
