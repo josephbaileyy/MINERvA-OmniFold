@@ -1,0 +1,27 @@
+{
+  "campaign": "PET bkgsub 5D corrected C_syst VERTICAL (Phase 6 PRELIMINARY)",
+  "status": "PRELIMINARY / support-limited: pre-fix bank_uthrow_5d (KNOWN_ISSUES #13/#16); FINAL needs GBDT background-aware/selection-complete rebank (uq_5d, in flight).",
+  "n_reported_bins": 10550,
+  "invalid_ratio": "neutral",
+  "sqrt_trace": 2.970425070809348e-38,
+  "per_bin_rel_median": 0.07584149479904675,
+  "per_bin_rel_p90": 0.2160936241128035,
+  "per_band_sqrt_trace": {
+    "2p2h": 1.476859769619997e-38,
+    "CCQEPauliSupViaKF": 7.336686809904532e-39,
+    "FrAbs_pi": 1.4568065682386757e-39,
+    "FrElas_N": 5.201896476822792e-39,
+    "HighQ2": 3.164087101729324e-39,
+    "LowQ2": 8.730274663851042e-39,
+    "MaCCQE": 8.887110238567521e-39,
+    "MaRES": 1.578873597749297e-38,
+    "MFP_N": 3.767947706298346e-39,
+    "MvRES": 6.11931330242949e-39,
+    "Rvn2pi": 6.229270586438268e-40,
+    "Rvp2pi": 1.4976077894133445e-39,
+    "flux": 1.0604418846054875e-38
+  },
+  "bank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_uthrow_5d",
+  "weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz",
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_csyst_prelim_bkgsub_5d.npz"
+}

@@ -82,7 +82,7 @@ labels as cross-checks only. They never enter the corrected budget.
 | 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **COMPLETE ✓** (floor NEGLIGIBLE: per-bin rel median 9.1e-06, total 4.9e-06) |
 | 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT PASS** (6 repl, 7.25%/bin, 8000× floor); scaling to 20 (RIDs 7-20) |
 | 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **COMPLETE ✓** (12 trains, 2.35%/bin; est 42%/int 51%/sub 7%) |
-| 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | scoped: PRELIM buildable on existing bank; FINAL blocked on GBDT rebank |
+| 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | **vertical PRELIM launched** (55841466); lateral + unified BLOCKED on GBDT rebank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
 | 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | pending all |
 
@@ -105,7 +105,8 @@ shared products are missing.
 | 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | **COMPLETED** | Floor NEGLIGIBLE (per-bin rel median 9.1e-06). `pet_floor_bkgsub_5d_{weights,xsec}.npz` + `pet_floor_bkgsub_5d_diagnostic.json`. |
 | 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | RUNNING (pilot) | C_stat pilot on bkgsub; coherent data+MC Poisson, fixed est42/sub0. → `bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. Combine via `combine_cov_nd --expected-ids 1-6 --cv <nominal>`. |
 | 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | **COMPLETE** (12/12) | C_ml crossed ensemble. per-bin 2.35%; est 0.42/int 0.51/sub 0.07. `pet_cml_bkgsub_5d.npz` + summary. |
-| 55834767-802 | pet_boot_one (RID 7-20) | 4 | 2026-07-12 | draining (14 jobs) | C_stat scaling to 20 total on bkgsub input. → `bootstrap_replicas/5d/pet_bootstrap_5d_{7..20}.npz`. Final combine via `combine_cstat_bkgsub.py --expected-ids 1-20`. |
+| 55834767-802 | pet_boot_one (RID 7-20) | 4 | 2026-07-12 | draining (6/20) | C_stat scaling to 20 total on bkgsub input. → `bootstrap_replicas/5d/pet_bootstrap_5d_{7..20}.npz`. Final combine via `combine_cstat_bkgsub.py --expected-ids 1-20`. |
+| 55841466 | pet_csyst_prelim | 6 | 2026-07-12 | **COMPLETED** (28m, exit 0) | PRELIMINARY vertical C_syst: 7.58%/bin median (p90 21.6%), sqrt-tr 2.97e-38; model-dominated (2p2h/MaRES/flux). Support-limited (pre-fix bank); FINAL needs GBDT rebank. `pet_csyst_prelim_bkgsub_5d.npz` + summary. |
 
 ## DECISION LOG / GATES PASSED
 - 2026-07-12: **PHASE 5 C_ml COMPLETE (12 jobs 55830054-65).** Crossed ensemble
@@ -117,6 +118,16 @@ shared products are missing.
   would capture only ~7% of it — validates the crossed design and confirms the
   GBDT split-only C_ml must NOT be substituted (AI1). Products:
   `pet_cml_bkgsub_5d.npz` (C_ml + members + seeds) + summary.
+- 2026-07-13: **PHASE 6 preliminary VERTICAL C_syst DONE (job 55841466).**
+  `pet/build_csyst_prelim_bkgsub.py` (reproduces the validated `pet_systematics_5d`
+  C_syst block; ONLY the vertical block — no forbidden nominal-vs-alt C_ml, no
+  bogus C_total) on the corrected nominal + pre-fix `bank_uthrow_5d`, neutral
+  invalid-ratio: CV total 2.7511e-38 (= nominal ✓), 10,550-bin mask (= C_stat/
+  C_ml ✓), sqrt-trace 2.97e-38, **per-bin rel median 7.58%** (p90 21.6%).
+  Dominant bands: MaRES 1.58e-38, 2p2h 1.48e-38, flux 1.06e-38, MaCCQE 8.9e-39
+  → Models/2p2h-dominant (cf. KNOWN_ISSUES #12 clean-rebank 8.24% precedent).
+  **PRELIMINARY / support-limited** (KNOWN_ISSUES #13/#16); NOT for ledger/note.
+  FINAL requires the GBDT background-aware/selection-complete rebank.
 - 2026-07-12: **PHASE 6/7/8 scoping (while C_stat/C_ml GPU drains).**
   - Phase 6 vertical C_syst: reuse the convention-corrected `pet_systematics_5d.py`
     C_syst path (per-band mean-centered `mat_covariance([x_-,x_+])` + 100-flux
