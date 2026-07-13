@@ -80,11 +80,11 @@ labels as cross-checks only. They never enter the corrected budget.
 | 1 | Corrected bkgsub point-cloud input `of_inputs_pc_fullcloud_bkgsub_5d.npz` | data-row alignment exact; target sum exact; MC aligned; old input untouched; provenance JSON; e2e fixture | **COMPLETE ✓** (all gates PASS; e2e fixture PASS) |
 | 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | **COMPLETE ✓** (job 55822534; σ=2.7511e-38) |
 | 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **COMPLETE ✓** (floor NEGLIGIBLE: per-bin rel median 9.1e-06, total 4.9e-06) |
-| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT PASS** (6 repl, 7.25%/bin, 8000× floor); scaling to 20 (RIDs 7-20) |
+| 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **COMPLETE ✓** (20 replicas, 7.85%/bin, 8620× floor) |
 | 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **COMPLETE ✓** (12 trains, 2.35%/bin; est 42%/int 51%/sub 7%) |
 | 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | **vertical PRELIM launched** (55841466); lateral + unified BLOCKED on GBDT rebank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
-| 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | pending all |
+| 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | **PRELIMINARY assembled ✓** (C_syst+C_stat+C_ml; PSD; 4D marginal); FINAL awaits C_lateral + C_syst-final + P7 |
 
 DONE requires all 13 items in the scope's DEFINITION OF DONE. This is a
 multi-session, multi-GPU-hour campaign; blocked-on-GBDT items (lateral,
@@ -105,7 +105,7 @@ shared products are missing.
 | 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | **COMPLETED** | Floor NEGLIGIBLE (per-bin rel median 9.1e-06). `pet_floor_bkgsub_5d_{weights,xsec}.npz` + `pet_floor_bkgsub_5d_diagnostic.json`. |
 | 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | RUNNING (pilot) | C_stat pilot on bkgsub; coherent data+MC Poisson, fixed est42/sub0. → `bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. Combine via `combine_cov_nd --expected-ids 1-6 --cv <nominal>`. |
 | 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | **COMPLETE** (12/12) | C_ml crossed ensemble. per-bin 2.35%; est 0.42/int 0.51/sub 0.07. `pet_cml_bkgsub_5d.npz` + summary. |
-| 55834767-802 | pet_boot_one (RID 7-20) | 4 | 2026-07-12 | draining (6/20) | C_stat scaling to 20 total on bkgsub input. → `bootstrap_replicas/5d/pet_bootstrap_5d_{7..20}.npz`. Final combine via `combine_cstat_bkgsub.py --expected-ids 1-20`. |
+| 55834767-802 | pet_boot_one (RID 7-20) | 4 | 2026-07-12 | **COMPLETE** (20/20) | C_stat = 20 replicas; per-bin 7.85% (p90 50.8%). `pet_cstat_bkgsub_5d.npz`. |
 | 55841466 | pet_csyst_prelim | 6 | 2026-07-12 | **COMPLETED** (28m, exit 0) | PRELIMINARY vertical C_syst: 7.58%/bin median (p90 21.6%), sqrt-tr 2.97e-38; model-dominated (2p2h/MaRES/flux). Support-limited (pre-fix bank); FINAL needs GBDT rebank. `pet_csyst_prelim_bkgsub_5d.npz` + summary. |
 
 ## DECISION LOG / GATES PASSED
@@ -118,6 +118,23 @@ shared products are missing.
   would capture only ~7% of it — validates the crossed design and confirms the
   GBDT split-only C_ml must NOT be substituted (AI1). Products:
   `pet_cml_bkgsub_5d.npz` (C_ml + members + seeds) + summary.
+- 2026-07-13: **PHASE 4 FINAL C_stat (20 replicas RIDs 1-20).** `combine_cstat_bkgsub.py`:
+  sqrt-trace 7.44e-39, per-bin rel **median 7.85%** (p90 50.8%), 8620× floor.
+  Stable vs the 6-replica pilot (7.25%) → converged. `pet_cstat_bkgsub_5d.npz`.
+- 2026-07-13: **PHASE 8 PRELIMINARY C_total + 4D marginal assembled**
+  (`pet/assemble_ctotal_bkgsub.py`; tests 4/4). Components on the common
+  10,550-bin corrected-nominal mask (verified identical mask + central across
+  C_syst/C_stat/C_ml):
+  - **C_total (5D) per-bin rel median 13.90%** (C_syst 7.58% ⊕ C_stat 7.85% ⊕
+    C_ml 2.35%), sqrt-trace 3.166e-38. Symmetric (exact), PSD (min eig ~-1e-91),
+    finite diagonal.
+  - **4D marginal C_4D = M C_5D M^T**: exact density projection integrating W with
+    its bin widths (PET xsec is a density; verified vs brute force). 4790 4D
+    reported bins, cv finite/non-negative, per-bin rel median **10.95%**,
+    symmetric + PSD. Labeled "4D marginal of the corrected 5D PET estimator."
+  - **PRELIMINARY** (C_lateral omitted — GBDT rebank blocked; C_syst is the
+    support-limited prelim). NOT for ledger/note. `pet_ctotal_bkgsub_5d.npz` +
+    summary. FINAL awaits C_lateral + C_syst-final (GBDT rebank) + Phase-7 verdict.
 - 2026-07-13: **PHASE 6 preliminary VERTICAL C_syst DONE (job 55841466).**
   `pet/build_csyst_prelim_bkgsub.py` (reproduces the validated `pet_systematics_5d`
   C_syst block; ONLY the vertical block — no forbidden nominal-vs-alt C_ml, no

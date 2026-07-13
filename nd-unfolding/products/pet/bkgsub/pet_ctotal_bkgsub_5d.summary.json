@@ -1,0 +1,57 @@
+{
+  "campaign": "PET bkgsub 5D corrected C_total assembly (preliminary)",
+  "label": "preliminary",
+  "components_present": [
+    "C_ml",
+    "C_stat",
+    "C_syst"
+  ],
+  "components_missing": [
+    "C_lateral (GBDT rebank blocked)"
+  ],
+  "note": "PRELIMINARY: C_syst is the support-limited pre-fix-bank vertical block and C_lateral is omitted (GBDT rebank in flight). Not final; not for ledger/note.",
+  "n_reported_bins_5d": 10550,
+  "n_reported_bins_4d": 4790,
+  "per_component": {
+    "C_syst": {
+      "sqrt_trace": 2.970425070809348e-38,
+      "per_bin_rel_median": 0.07584149479904675
+    },
+    "C_stat": {
+      "sqrt_trace": 7.438990877925954e-39,
+      "per_bin_rel_median": 0.07850517792372416
+    },
+    "C_ml": {
+      "sqrt_trace": 8.036429560814036e-39,
+      "per_bin_rel_median": 0.023476710285427367
+    },
+    "C_total": {
+      "sqrt_trace": 3.165857380705997e-38,
+      "per_bin_rel_median": 0.13896457289639674
+    }
+  },
+  "psd_5d_total": {
+    "symmetry_max_abs_asym": 0.0,
+    "min_eig": -1.3867465597591526e-91,
+    "max_eig": 4.7879657301890294e-76,
+    "finite_diag": true,
+    "psd_within_tol": true
+  },
+  "psd_4d": {
+    "symmetry_max_abs_asym": 3.835229269763849e-93,
+    "min_eig": -8.123298460545306e-92,
+    "max_eig": 2.839385210378367e-76,
+    "finite_diag": true,
+    "psd_within_tol": true
+  },
+  "total_sigma_5d_check": null,
+  "cv_4d_finite": true,
+  "cv_4d_nonneg": true,
+  "per_bin_rel_median_4d": 0.1094823052582628,
+  "sources": {
+    "C_syst": "products/pet/bkgsub/pet_csyst_prelim_bkgsub_5d.npz",
+    "C_stat": "products/pet/bkgsub/pet_cstat_bkgsub_5d.npz",
+    "C_ml": "products/pet/bkgsub/pet_cml_bkgsub_5d.npz"
+  },
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_ctotal_bkgsub_5d.npz"
+}
