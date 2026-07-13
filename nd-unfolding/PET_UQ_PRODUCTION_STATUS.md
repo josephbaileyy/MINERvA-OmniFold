@@ -284,6 +284,32 @@ shared products are missing.
   `products/pet/bkgsub/`. No auto-commit; commit only per the project gate /
   when directed.
 
+## REPRODUCIBILITY DEPENDENCY (coordinate)
+The corrected **nominal**, **floor**, and **C_stat** replicas were produced by
+`pet/sbatch_pet_bootstrap_replica.sh` → `pet/extract_bootstrap_replica.py`
+(C_stat) — both PRESENT ON DISK but UNCOMMITTED (untracked): they carry the
+personal-account extraction hot-fix (self-reexec into root_6_28; KNOWN_ISSUES
+#17), which my scope says to PRESERVE, not revert. I did NOT commit them (they
+are the concurrent session's authored work). For full reproducibility of C_stat
+they must be committed by the doc/GBDT-owning session (or on user direction).
+The Phase-2 nominal uses my own committed `pet/extract_nominal_bkgsub.py`.
+
+## CAMPAIGN STATE (2026-07-13) — independent PET work COMPLETE
+Delivered + committed (34185c1 → 4059ee8): corrected bkgsub input; nominal 5D
+PET (σ=2.7511e-38); GPU floor (~1e-5, negligible); C_stat (20 replicas,
+7.85%/bin); PET-specific C_ml (2.35%/bin, crossed design, est+interaction
+dominated); preliminary vertical C_syst (7.58%/bin, support-limited);
+preliminary C_total (13.90%/bin 5D, PSD) + 4D marginal (10.95%/bin, 4790 bins,
+PSD). All on one corrected-nominal 10,550-bin mask. Full test suite green
+(14 PET + 20 remediation).
+
+BLOCKED on GBDT-owned background-aware/selection-complete rebank (`uq_5d/`, in
+flight, read-only): C_syst FINAL, the PET-native lateral block, the
+unified/block diagnostic. GPU-gated + methodological: Phase 7 targeted
+per-universe retraining (predeclare set + materiality criterion; laterals also
+need the selection-complete clouds; do NOT infer authorization for a full
+187-universe retrain). FINAL C_total = these + Phase-7 verdict.
+
 ## COMMIT GATE (per project convention)
 A PET result does not exist until ONE scoped commit carries: scripts+launchers,
 product JSON/txt summary, VALIDATION_LEDGER entry, ND_OMNIFOLD_RUN_LOG entry,
