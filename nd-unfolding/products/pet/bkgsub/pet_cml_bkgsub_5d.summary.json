@@ -1,0 +1,49 @@
+{
+  "campaign": "PET bkgsub 5D corrected C_ml (Phase 5)",
+  "n_members": 12,
+  "expected": 12,
+  "sub_seeds": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "est_seeds": [
+    42,
+    43,
+    44,
+    42,
+    43,
+    44,
+    42,
+    43,
+    44,
+    42,
+    43,
+    44
+  ],
+  "n_reported_bins": 10550,
+  "sqrt_trace": 8.036429560814036e-39,
+  "per_bin_rel_median": 0.023476710285427367,
+  "variance_decomposition": {
+    "balanced": true,
+    "grid": [
+      4,
+      3
+    ],
+    "median_frac_subsample": 0.0662200752031616,
+    "median_frac_estimator": 0.42403775690961787,
+    "median_frac_interaction": 0.5048294297745886
+  },
+  "floor_per_bin_rel_median": 9.107722024316863e-06,
+  "cml_over_floor_ratio": 2577.6709283338355,
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_cml_bkgsub_5d.npz"
+}

@@ -81,8 +81,8 @@ labels as cross-checks only. They never enter the corrected budget.
 | 2 | Corrected nominal 5D PET (one unbootstrapped train) | finite full-coverage weights; ordered MC indices; extraction passes; norm/marginal checks | **COMPLETE ✓** (job 55822534; σ=2.7511e-38) |
 | 3 | Corrected GPU nondeterminism floor (1 identical-seed repeat) | floor recorded before interpreting C_stat/C_ML | **COMPLETE ✓** (floor NEGLIGIBLE: per-bin rel median 9.1e-06, total 4.9e-06) |
 | 4 | Corrected C_stat (coherent data+MC Poisson replicas, fixed estimator/split seed) | strict manifest; full MC coverage; center on replica mean; pilot vs floor | **PILOT PASS** (6 repl, 7.25%/bin, 8000× floor); scaling to 20 (RIDs 7-20) |
-| 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **LAUNCHED** (4 sub × 3 est = 12 trains) |
-| 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | pending P2 + GBDT bank |
+| 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **COMPLETE ✓** (12 trains, 2.35%/bin; est 42%/int 51%/sub 7%) |
+| 6 | Rebuilt C_syst (vertical), PET-native lateral, unified/block diagnostic — on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; KNOWN_ISSUES #13/#16 respected | scoped: PRELIM buildable on existing bank; FINAL blocked on GBDT rebank |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | pending P2/P5/P6 |
 | 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | pending all |
 
@@ -104,9 +104,35 @@ shared products are missing.
 | 55822534 | pet_nom_bkgsub | 2 | 2026-07-12 | **COMPLETED** (1h06m, exit 0) | Corrected NOMINAL. σ=2.7511e-38; 65,856-bin grid (10,550 populated); full coverage; extraction PASS. `pet_nominal_bkgsub_5d_{weights,xsec}.npz` + summary.json. |
 | 55826200 | pet_nom_bkgsub (floor) | 3 | 2026-07-12 | **COMPLETED** | Floor NEGLIGIBLE (per-bin rel median 9.1e-06). `pet_floor_bkgsub_5d_{weights,xsec}.npz` + `pet_floor_bkgsub_5d_diagnostic.json`. |
 | 55826201-206 | pet_boot_one (RID 1-6) | 4 | 2026-07-12 | RUNNING (pilot) | C_stat pilot on bkgsub; coherent data+MC Poisson, fixed est42/sub0. → `bootstrap_replicas/5d/pet_bootstrap_5d_{1..6}.npz`. Combine via `combine_cov_nd --expected-ids 1-6 --cv <nominal>`. |
-| 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | PENDING/RUNNING | C_ml crossed ensemble: sub{0,1,2,3}×est{42,43,44}=12, no bootstrap. → `cml/pet_s{S}_e{E}_bkgsub_5d_{weights,xsec}.npz`. |
+| 55830054-065 | pet_nom_bkgsub (cml) | 5 | 2026-07-12 | **COMPLETE** (12/12) | C_ml crossed ensemble. per-bin 2.35%; est 0.42/int 0.51/sub 0.07. `pet_cml_bkgsub_5d.npz` + summary. |
+| 55834767-802 | pet_boot_one (RID 7-20) | 4 | 2026-07-12 | draining (14 jobs) | C_stat scaling to 20 total on bkgsub input. → `bootstrap_replicas/5d/pet_bootstrap_5d_{7..20}.npz`. Final combine via `combine_cstat_bkgsub.py --expected-ids 1-20`. |
 
 ## DECISION LOG / GATES PASSED
+- 2026-07-12: **PHASE 5 C_ml COMPLETE (12 jobs 55830054-65).** Crossed ensemble
+  combined via `pet/combine_cml_bkgsub.py` (ensemble-mean-centered, PET-nominal
+  CV>0 mask = 10,550 bins): sqrt-trace 8.04e-39, per-bin rel **median 2.35%** =
+  2578× the floor ⇒ PASS. **Variance decomposition (median frac): estimator
+  0.424, interaction 0.505, subsample 0.066.** ⇒ PET ML variation is
+  estimator-seed + interaction dominated; a split-only (fixed-estimator) C_ml
+  would capture only ~7% of it — validates the crossed design and confirms the
+  GBDT split-only C_ml must NOT be substituted (AI1). Products:
+  `pet_cml_bkgsub_5d.npz` (C_ml + members + seeds) + summary.
+- 2026-07-12: **PHASE 6/7/8 scoping (while C_stat/C_ml GPU drains).**
+  - Phase 6 vertical C_syst: reuse the convention-corrected `pet_systematics_5d.py`
+    C_syst path (per-band mean-centered `mat_covariance([x_-,x_+])` + 100-flux
+    mean-centered, MAT 1/N, `--invalid-ratio neutral`) on the CORRECTED nominal
+    push weights — but take ONLY its C_syst. Its built-in C_ML is the FORBIDDEN
+    nominal-vs-`weights-alt` rank-1 outer product; C_ml comes from my crossed
+    ensemble (`combine_cml_bkgsub.py`), C_stat from `combine_cstat_bkgsub.py`.
+  - **DEPENDENCY (KNOWN_ISSUES #13/#16):** existing `bank_uthrow_5d` (Jun 30) is
+    PRE-fix, CV-support-limited → PRELIMINARY C_syst only, labeled
+    support-limited. The GBDT session is rebuilding the background-aware /
+    selection-complete products NOW (`uthrow5d_runF/blkF/combF` →
+    `uq_5d/..._sb/`, `uq_5d/unified_throw_cov_5d.root`); Phase-6 FINAL consumes
+    those when they land. `uq_5d/` is GBDT-owned — READ-ONLY.
+  - Phase 7 (targeted per-universe retraining) is GPU-gated behind the corrected
+    nominal + frozen systematic blocks; Phase 8 (assemble C_total,
+    C_4D=M·C_5D·M^T) needs all components on the common nominal mask/order.
 - 2026-07-12: **PHASE 4 PILOT PASS (RIDs 1-6).** C_stat combined via
   `pet/combine_cstat_bkgsub.py` (strict `load_replica_manifest`, PET-nominal
   CV>0 mask = 10,550 bins, replica-mean-centered): sqrt-trace 8.23e-39, per-bin
