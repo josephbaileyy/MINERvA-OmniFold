@@ -115,7 +115,7 @@ deviation
 \bar X_{i} = \frac{1}{n}\sum_{k} X^{(k)}_{i}.
 \end{equation}
 The headline diagnostic is the per-bin \emph{relative} spread
-$\sigma^{\ML}_{i}/\bar X_{i}$, summarised by its median over the
+$\sigma^{\ML}_{i}/\bar X_{i}$, summarized by its median over the
 $205$ reported bins.
 
 \paragraph{Code pointer.}
@@ -244,15 +244,14 @@ bootstrap shakes the \emph{events}, the universes shake the
 different unfolded cross section.
 
 \paragraph{Procedure.}
-The C++ event loop (\texttt{runEventLoopOmniFold.cpp}, env
-\texttt{MNV101\_DUMP\_UNIVERSES}) dumps, for each MC event,
+The C++ event loop (\texttt{runEventLoopOmniFold.cpp}) dumps, for each MC event,
 alternative weight branches $w^{\text{truth}}_{B,u}$ and
 $w^{\text{reco}}_{B,u}$ for every (band $B$, universe index $u$)
-pair. The publication-grade Stage-2 sweep has \textbf{187 universes
-across 44 bands}: $6$ \emph{lateral} bands (BeamAngleX/Y,
-MuonResolution, GEANT\_\{Neutron,Pion,Proton\}, Muon\_Energy\_MINERvA)
-that require re-running the event loop with shifted detector
-quantities, plus $38$ \emph{vertical} bands that only re-weight. The
+pair. The Stage-2 sweep has \textbf{187 universes across 44 bands}. Five bands
+are genuinely kinematic: BeamAngleX/Y, MuonResolution, and
+Muon\_Energy\_MINERvA/MINOS. They require selection-complete
+\texttt{MNV101\_ACTIVE\_UNIVERSE} event loops when migration across the event
+selection matters. MinosEfficiency and GEANT are weight-only. The
 dominant ensemble is the $100$-universe PPFX flux band; almost all
 other bands are $\pm1\sigma$ pairs.
 
@@ -284,7 +283,7 @@ framework
 (\texttt{PlotUtils/MnvVertErrorBand::CalcCovMx}, see \S\ref{sec:minerva})
 builds the per-band covariance as the \emph{mean-centered, biased}
 sample covariance, referenced to the \textbf{universe mean} (not the
-CV) and normalised by $1/N_{u}$:
+CV) and normalized by $1/N_{u}$:
 \begin{equation}
 \boxed{\;
 \mathbf{C}^{B}
@@ -327,7 +326,7 @@ RNGs), so
 \sum_{B}\mathbf{C}^{B}\;+\;\mathbf{C}^{\text{norm}}.
 \label{eq:systblocksum}
 \end{equation}
-Independence is a modelling assumption with one known correlated exception --- the
+Independence is a modeling assumption with one known correlated exception --- the
 Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block
 (\S\ref{sec:rank}), which we have since rederived ($\rho=0.900$,
 \texttt{uq/flux\_muonE\_cross.root}); it is real but rank-preserving, so for the
@@ -341,20 +340,15 @@ all bands and re-unfolding produces a cross term beyond any pairwise correlation
 We measure this directly with a \emph{unified throw} --- $N$ joint re-unfolds in
 which every reweightable band and the flux multisim are perturbed simultaneously
 per event ($w_{\CV}\prod_B\rho_B^{g_B}$, $g_B\sim\mathcal N(0,1)$) and the cross
-section re-extracted, with the OmniFold run-to-run jitter floor subtracted via a
-zero-shift null set (\texttt{nd-unfolding/unified\_throw\_cov.py}). On the 4D
-$(\pT,\pPar,\Eavail,q_3)$ analysis binning the jitter-corrected unified covariance
-is $\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$: the block sum
-\emph{underestimates} the vertical systematic by a factor of two, concentrated in
-the high-$\pT$/lowest-$\Eavail$ corner where migration is most off-diagonal (top
-\SI{1}{\percent} of bins carry \SI{78}{\percent} of the trace excess; the per-bin
-median ratio is $1.00$). A single-throw superposition probe is insufficient to
-detect this --- its cross terms sit at the jitter floor and falsely indicate
-block-sum validity; the joint unified throw is required. For the 4D budget we
-therefore \emph{adopt} the unified result,
-transferring its per-bin fractional inflation
-$g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
-onto the sweep's own vertical block,
+section re-extracted.  The corrected implementation uses asymmetric $\pm1\sigma$
+endpoint interpolation, one fixed estimator seed, and covariance about the throw
+mean; the mean shift from CV is stored separately.  It does not subtract a scalar
+run-to-run jitter floor (\texttt{nd-unfolding/unified\_throw\_cov.py}). The old
+4D/5D/FPS numerical examples and adoptions are quarantined pending corrected
+production. A single-throw superposition probe is insufficient to test the
+nonlinear response; a strict joint ensemble and matched endpoint comparator are
+required. Any later adoption must document the low-rank treatment, mean shift,
+and selection-support bound before transferring information onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), which is positive-semidefinite by construction
 (a direct rank-$N$ swap is not) and never falls below the block baseline.
@@ -777,7 +771,7 @@ replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1), so
 data-stat and MC-stat contribute jointly. With that excluded, the smaller
 stat covariance most likely reflects genuinely higher unbinned-OmniFold
 statistical efficiency relative to the published binned D'Agostini unfold
-(whose iterative regularisation amplifies statistical fluctuations), or a
+(whose iterative regularization amplifies statistical fluctuations), or a
 difference in what the paper's \texttt{StatOnlyCov} encompasses ---
 the split-bootstrap test below resolves this.
 
@@ -919,7 +913,7 @@ null directions nor the absolute smallest eigenvalues}:
         ill-conditioned tail.
 \end{itemize}
 
-\paragraph{Regularisation robustness.}
+\paragraph{Regularization robustness.}
 A \texttt{pinv}-rcond scan confirms the tension is not a numerical artifact:
 retaining only the $73$ best-determined directions
 ($\lambda_{k}/\lambda_{\max}>10^{-4}$) still gives $\chi^{2}/\mathrm{ndf}=1.42$;
@@ -955,7 +949,7 @@ absorb a coherent $\sim1$--$2\%$ shape difference, so a small
 OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.
 
 \paragraph{A methodological component (estimator and iteration).}
-Part of the tension is regularisation-dependent --- the same data, same
+Part of the tension is regularization-dependent --- the same data, same
 normalization ($\Sigma\sigma$ within $0.1\%$), unfolded with a different
 GBDT backend moves the paper-cov $\chi^{2}$ by $\sim1$ unit while central
 values barely change (iteration count, by contrast, is negligible):
@@ -981,9 +975,9 @@ outlier, while both histogram-binned backends agree at $2.65$--$2.70$
 jitter is $\sim25\times$ smaller than the $0.96$ exact$\to$hist gap, so
 that gap is genuinely the estimator, not seed noise). The exact-gradient
 trees fit finer shape structure (less implicit smoothing) and so deviate
-more from the paper's IBU-regularised result. This is direct evidence
+more from the paper's IBU-regularized result. This is direct evidence
 that $\sim1$ $\chi^{2}$-unit of the tension is OmniFold's implicit
-regularisation rather than a physical data--MC disagreement
+regularization rather than a physical data--MC disagreement
 (\texttt{tension\_iter/}).
 
 \paragraph{Conclusion.}
@@ -991,7 +985,7 @@ The tension is (i) a genuine, broadly-distributed, \emph{correlated shape}
 difference --- not a normalization offset and not a small-$\lambda$
 inversion artifact --- concentrated in the low-$\pT$ peak where the
 flux/Muon\_Energy bands dominate, plus (ii) a $\sim1$-$\chi^{2}$-unit
-methodological band from the GBDT estimator/iteration regularisation.
+methodological band from the GBDT estimator/iteration regularization.
 Both point to the same structure: the Bashyal
 flux\,$\leftrightarrow$\,Muon\_Energy joint block (rederived at
 $\rho=\rhoFluxMuon$, \S\ref{sec:rank}) is exactly the covariance structure
@@ -1337,7 +1331,7 @@ a rank-1 outer product of the \emph{half-difference}. It is mean-centered,
 so any common offset of the pair away from $X_{\CV}$ contributes
 nothing.
 
-A naive alternative centres on the CV rather than the pair mean, with
+A naive alternative centers on the CV rather than the pair mean, with
 $\boldsymbol{\Delta}_{u} = \mathbf{X}_{u}-\mathbf{X}_{\CV}$ and decomposition
 $\boldsymbol{\Delta}_{0}=\mathbf{m}+\mathbf{a}$,
 $\boldsymbol{\Delta}_{1}=\mathbf{m}-\mathbf{a}$:
@@ -1357,4 +1351,3 @@ variance direction, which mean-centering correctly collapses to near
 zero. We mean-center throughout, matching MAT (\S\ref{sec:minerva}); the
 bands where the distinction matters are the asymmetric ones (BeamAngle,
 MuonResolution, and the one-sided NC band).
-

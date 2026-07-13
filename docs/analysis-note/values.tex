@@ -34,38 +34,18 @@
 % --- 3D / 4D higher-dimensional ---
 \newcommand{\sigData}{3.07e-38}       % unfolded data total in the >=3D campaigns
 \newcommand{\eavailMargin}{0.11}      % W-marginal recovers frozen 4D to this (%)
-\newcommand{\ascChi}{1.68}            % Ascencio full-cov chi2
-\newcommand{\ascNdf}{2}               % Ascencio ndf
-\newcommand{\ascP}{0.43}              % Ascencio p-value
+% Ascencio covariance metrics removed 2026-07-12: historical 4D covariance
+% quarantined pending corrected production.
 
-% --- (Eavail,W) DIS-tail: high-W corner significances (12-bin corner) ---
-\newcommand{\disGENIE}{8.9}
-\newcommand{\disMEC}{9.2}
-\newcommand{\disNuWro}{15.6}
-\newcommand{\disGiBUU}{22.4}
-\newcommand{\disCornerLo}{9}          % rounded corner range, low edge
-\newcommand{\disCornerHi}{22}         % rounded corner range, high edge
-% full (Eavail,W) plane significances (42-bin)
-\newcommand{\fpGENIE}{19.3}
-\newcommand{\fpMEC}{19.0}
-\newcommand{\fpNuWro}{35.9}
-\newcommand{\fpGiBUU}{40}             % GiBUU is >40 sigma
+% (Eavail,W) significances removed 2026-07-12: historical covariance quarantined.
+% Reintroduce macros only from a committed corrected-covariance ledger entry.
 
 % --- PET point-cloud track ---
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
 \newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
 \newcommand{\petGbdtGap}{9}
-% bin-by-bin matched uncertainty comparison (PET vs GBDT 4D, common bins)
-\newcommand{\petMedianFracBin}{11.8}     % PET median per-bin frac unc, native lateral (%)
-\newcommand{\petGbdtMedianFracBin}{13.4} % GBDT median per-bin frac unc (%)
-\newcommand{\petGbdtRatioBin}{0.95}      % median per-bin PET/GBDT frac-unc ratio
-\newcommand{\petBinsTighter}{54}         % percent of common bins where PET < GBDT
-\newcommand{\petCommonBins}{4796}        % common 4D bins (PET is a subset of GBDT)
-\newcommand{\petGbdtExtra}{34}           % extra bins the GBDT reports beyond PET
-% 5D comparison on unified-throw-adopted covariances (2026-07-02; PET-side 5.711x inflation flagged-not-vetted)
-\newcommand{\petUnifiedMedianFracBin}{16.7}     % PET median per-bin frac unc, 5D unified cov (%)
-\newcommand{\petGbdtUnifiedMedianFracBin}{13.7} % GBDT median per-bin frac unc, 5D unified cov (%)
-\newcommand{\petUnifiedBinsTighter}{30}         % percent of common 5D bins where PET < GBDT
+% PET precision macros removed 2026-07-12: old C_stat was not an estimator
+% bootstrap. Reintroduce only after the retrained replica ensemble is committed.
 % truth-cloud projection demonstration (reweight-then-project)
 \newcommand{\pcHasCloud}{99.999}         % percent of pass_truth events carrying a cloud (after miss-row fix)
 \newcommand{\pcHasCloudBefore}{72.6}     % percent carrying a cloud before the fix (reco-loop-only fill)

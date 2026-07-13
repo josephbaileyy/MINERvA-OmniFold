@@ -2,15 +2,11 @@
 \label{sec:eavailw}
 
 Enabling Valencia 2p2h resolves the low-recoil excess (\S\ref{sec:3d-2p2h})
-but leaves a separate $+2.2\sigma$ data excess in the
-$\Eavail\in[1.50,3.00)\,\si{GeV}$ bin, where 2p2h does not contribute and the
-sub-percent pion-FSI dials cannot reach. Quantified against the adopted
-combined 4D covariance (\S\ref{sec:4d}) marginalised to the $\Eavail$ axis,
-the discrepancy is severe: GENIE~CV, GENIE$+$MEC, NuWro and GiBUU are
-incompatible with the unfolded $d\sigma/d\Eavail$ at $>21\sigma$ over the
-seven $\Eavail$ bins ($22.4\sigma$, $24.9\sigma$, $21.9\sigma$, $21.2\sigma$
-respectively) and at $>15\sigma$ in the DIS tail
-($\Eavail\ge\SI{0.8}{GeV}$) alone. GiBUU spreads its deficit across the entire
+but leaves a separate high-$\Eavail$ data excess where 2p2h does not
+contribute and the sub-percent pion-FSI dials cannot reach. Exact
+covariance-based significances from the previous construction are withdrawn
+while corrected 4D/5D uncertainties are regenerated. At the central-value
+level, GiBUU spreads its deficit across the entire
 tail (data/generator $1.59$ at $\Eavail\in[0.8,1.5)$, $1.36$ at $[1.5,3.0)$)
 rather than piling it in the deep catch bin like the GENIE variants --- an
 independent, qualitatively distinct confirmation. To test the deep-inelastic
@@ -62,7 +58,7 @@ low-$W$ ($<\SI{1.1}{GeV}$, QE-like) excess and a small $\Delta$-region
 
 \subsection{Generator band: the corner is generator- and tune-robust}
 \label{sec:eavailw-band}
-We confirm this against independent spline-normalised $(\Eavail,W)$
+We confirm this against independent spline-normalized $(\Eavail,W)$
 predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 (Fig.~\ref{fig:eavailWband}). All four underpredict the
 high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
@@ -93,53 +89,25 @@ by a \emph{frozen-reweighter} block sum on the merged five-axis
 are held fixed and only the per-event truth reweight ratios change per
 systematic universe (the same methodology as the PET budget,
 \S\ref{sec:pet-syst}; no per-universe re-inference). The covariance carries
-13 knob bands $\pm1\sigma$, the 100-universe flux multisim, a Poisson
-statistical diagonal, and a $W$-resolved detector (lateral) block. The
-laterals are computed directly rather than transferred: the event loop dumps
-shifted-$(\pT,\pPar,q_3,W)$ universes for the six muon/beam laterals
-(\texttt{Muon\_Energy\_MINERvA/MINOS}, \texttt{MuonResolution},
-\texttt{MinosEfficiency}, \texttt{BeamAngleX/Y}) plus three GEANT weight bands
-(\texttt{GEANT\_Neutron/Pion/Proton}), each re-inferred on the five-axis grid,
-so the $(\Eavail,W)$ lateral block is built in place. The $W$-resolved block
-(median \SI{2.36}{\percent} per bin, $\sqrt{\mathrm{tr}}=\num{9.52e-40}$) is
-\emph{larger} than the earlier 4D-marginalised approximation
-(\SI{1.80}{\percent}, $\num{7.99e-40}$) and is the one adopted here. The
-result has a median relative uncertainty of \SI{14.9}{\percent} per bin and is
-validated by reproducing the frozen five-axis product's $\Eavail$ and $W$
-marginals (sweep central value vs.\ frozen central value,
-$\max|\text{ratio}-1|=0.007$).
+13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the projected full
+five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a $W$-resolved
+detector (lateral) block.  The former construction summed per-cell standard
+deviations and squared the result; it is invalid and has been removed.  Until
+the corrected five-axis statistical replicas and corrected systematic products
+land, the saved $(\Eavail,W)$ covariance and all significances derived from it
+are \emph{unquotable}. The
+detector block uses five shifted-kinematic bands
+(\texttt{Muon\_Energy\_MINERvA/MINOS}, \texttt{MuonResolution}, and
+\texttt{BeamAngleX/Y}) plus weight-only \texttt{MinosEfficiency} and GEANT
+bands. A targeted active-universe campaign is bounding migrations omitted by
+the CV-support-limited dump-all sample. No replacement uncertainty or
+significance is asserted until these gates pass.
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{@{}lcccc@{}}
-    \toprule
-    & \multicolumn{2}{c}{full plane (42 bins)} & \multicolumn{2}{c}{high-$W$ DIS corner (12 bins)} \\
-    Generator & $\chi^{2}/\mathrm{ndf}$ & $N\sigma$ & $\chi^{2}/\mathrm{ndf}$ & $N\sigma$ \\
-    \midrule
-    GENIE CV     & $515.1/42$  & $\fpGENIE$ & $114.3/12$ & $\disGENIE$ \\
-    GENIE$+$MEC  & $502.0/42$  & $\fpMEC$   & $121.1/12$ & $\disMEC$ \\
-    NuWro        & $1479.2/42$ & $\fpNuWro$ & $290.3/12$ & $\disNuWro$ \\
-    GiBUU        & $2466.7/42$ & ${>}\fpGiBUU$  & $556.6/12$ & $\disGiBUU$ \\
-    \bottomrule
-  \end{tabular}
-  \caption{Full-covariance incompatibility of each generator with the
-  unfolded $(\Eavail,W)$ cross section, over the full plane and restricted to
-  the high-$W$ DIS corner ($\Eavail\ge\SI{0.4}{GeV}$, $W\ge\SI{1.8}{GeV}$).}
-  \label{tab:eavailW}
-\end{table}
-
-Over the full plane the four generators are incompatible with the data at
-$19$--$40\sigma$; restricted to the twelve-bin high-$W$ DIS corner they miss
-at $\disGENIE$--$\disGiBUU\sigma$ (Table~\ref{tab:eavailW}), with GiBUU again the most
-deficient. Adopting the $W$-resolved lateral block (rather than the
-4D-marginalised approximation) leaves the GENIE significances essentially
-unchanged but sharpens the NuWro and GiBUU corner tensions
-($10.5\to\disNuWro\sigma$, $18.2\to\disGiBUU\sigma$): the proper detector covariance
-does not soften the DIS-corner deficit, it deepens it for the worst-fitting
-generators. The excess is thus a genuinely DIS-region
-($W\gtrsim\SI{1.8}{GeV}$) feature --- a \emph{modelling} deficit that no
-current generator or tune reproduces --- and not a low-$W$ resonance
-artifact. The complementary cross-check against MINERvA's published
+At the central-value level all four generators underpredict the high-$W$,
+high-$\Eavail$ region, and adding 2p2h does not close it. Whether and by how
+much each model is statistically incompatible will be reported only after the
+replacement covariance is committed. The complementary cross-check against MINERvA's published
 low-recoil measurement is presented in the $(\Eavail,q_{3})$ plane
-(\S\ref{sec:4d}): on the maximal common grid the two measurements agree at
-$\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$ ($p=\ascP$).
+(\S\ref{sec:4d}): on the maximal common grid the central values agree, while
+the covariance-based consistency metric is withheld pending corrected
+production.

@@ -4,7 +4,7 @@
 The enabling property of unbinned OmniFold is that adding an observable is
 adding an input feature: the step-1/step-2 classifiers simply gain a column,
 with no migration-matrix or binning penalty. There is no practical D'Agostini
-IBU analogue, which makes this the primary physics motivation for the technique.
+IBU analog, which makes this the primary physics motivation for the technique.
 We exercise it by extending the measurement to
 $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
 
@@ -91,7 +91,7 @@ $(\pT,\pPar)$ marginal (Fig.~\ref{fig:eavail-marg}).
 \label{sec:3d-closure}
 A reweight closure isolates whether that $\SI{4.4}{\percent}$ scatter is method
 bias or real information. We inject a known $+\SI{30}{\percent}$ Gaussian bump
-in \emph{truth} $\Eavail$ (centre \SI{0.3}{GeV}, width \SI{0.15}{GeV}) into the
+in \emph{truth} $\Eavail$ (center \SI{0.3}{GeV}, width \SI{0.15}{GeV}) into the
 pseudo-data and require the 3D unfold to recover it. It does: the recovered
 step-2 mean weight is $1.048$ against the injected $1.0485$, and the residual of
 the unfold against the reweighted-truth reference is, on the $\Eavail$-marginal,
@@ -130,7 +130,7 @@ space and the same truth $\Eavail$ definition. We compare four predictions: \bpn
         container), same flux and phase space.
 \end{itemize}
 NEUT~\cite{Hayato:2009zz} is not included.
-Each prediction is normalised by its own flux-averaged total CC cross
+Each prediction is normalized by its own flux-averaged total CC cross
 section per nucleon ($\langle\sigma\rangle\approx\SI{3.6}{}$--$\SI{4.0e-38}{cm^2}$).
 
 Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
@@ -188,7 +188,7 @@ per-generator eigen-mode residuals are shown in Fig.~\ref{fig:3dfullcov}.
 \subsection{The 3D systematic-uncertainty budget}
 \label{sec:3d-syst}
 The band on Fig.~\ref{fig:3dmodels} and the $\chi^{2}$ above rest on a full 3D
-analogue of the 2D uncertainty budget of \S\ref{sec:systematics}. The
+analog of the 2D uncertainty budget of \S\ref{sec:systematics}. The
 systematic universes are dumped on the three-axis
 $(\pT,\pPar,\Eavail)$ grid (187 universes), the bootstrap
 statistical and ML-seedscan covariances propagated, and the three summed into a
@@ -256,7 +256,7 @@ in contrast to the sub-percent FSI dials (Fig.~\ref{fig:modedecomp}).
 value with the empirical 2p2h turned on (\texttt{--event-generator-list
 Default+CCMEC}, 2M events). Because the Nieves--Simo--Vacas MEC channel, though
 present in the splines, is absent from the \texttt{gspl2root} total-CC graph, the
-sample is normalised by the non-MEC CC count (anchoring QE$+$RES$+$DIS$+$COH to
+sample is normalized by the non-MEC CC count (anchoring QE$+$RES$+$DIS$+$COH to
 the known total and letting MEC add on top by $1/(1-f_{\mathrm{MEC}})$, with
 $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$). The added 2p2h lands squarely in the dip
 and moves GENIE toward the data: the $[0,0.10)$ bin goes from $+0.8\sigma$ to
@@ -271,7 +271,7 @@ the stock Valencia MEC --- i.e.\ stock Valencia 2p2h is real but under-strength
 for MINERvA low recoil, which is precisely the known MINERvA-tune story and is
 consistent with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low as well.
 The one feature 2p2h does not touch is a separate $+2.2\sigma$ excess in the
-high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modelling issue resolved on the
+high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modeling issue resolved on the
 $(\Eavail,W)$ plane in \S\ref{sec:eavailw}.
 
 This low-available-energy deficit is the same feature MINERvA's dedicated low-recoil
@@ -333,11 +333,11 @@ $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$
 region, and rises again to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail --- the
 same shape established in 3D (\S\ref{sec:3d-2p2h}), now recovered as a by-product
 of the higher-dimensional unfold (integrated data/GENIE-CV $=1.13$). This is the
-4D$\to$3D analogue of the 3D$\to$2D Jacobian anchor of \S\ref{sec:3d-anchor}.
+4D$\to$3D analog of the 3D$\to$2D Jacobian anchor of \S\ref{sec:3d-anchor}.
 
 \paragraph{What $q_{3}$ adds.} The new content is the resolved $(\Eavail,q_{3})$
 plane (Fig.~\ref{fig:q3excess}, left). Integrated over $\Eavail$ the
-$q_{3}$-marginal discrepancy is mild ($1.03$--$1.19$, centre panel), but the
+$q_{3}$-marginal discrepancy is mild ($1.03$--$1.19$, center panel), but the
 joint map is structured: at fixed $\Eavail$ in the quasielastic--$\Delta$ dip the
 data/GENIE-CV ratio \emph{rises} with $q_{3}$, the central value over-predicting
 the low-$q_{3}$, moderate-$\Eavail$ cells (ratio down to $0.66$) while the data
@@ -346,7 +346,8 @@ is precisely the correlation a muon-only or fixed-$q_{3}$ measurement cannot
 expose, and it is the natural input for the bin-compatible Ascencio comparison.
 We show it here at central-value level (the base GENIE event-generator list
 contains no 2p2h, as in \S\ref{sec:3d-2p2h}); per-cell significances use the
-combined 4D covariance below.
+combined 4D covariance and are therefore withheld pending its corrected
+production.
 
 \paragraph{Bin-identical comparison to the published low-recoil measurement.}
 The Ref.~\cite{MINERvA:2022incl} supplemental data (44-cell
@@ -357,11 +358,11 @@ Merging both measurements onto their maximal common grid --- edges present in
 $\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio muon gate
 ($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$) --- gives two super-cells,
 $\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
-low-recoil region where the 2p2h physics lives. Our result sits
-\SI{9.2}{\percent} and \SI{6.3}{\percent} above Ascencio (pulls $1.3\sigma$
-and $0.9\sigma$ against the summed covariances), with a full-covariance
-$\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$ ($p=\ascP$): \textbf{the two measurements are
-consistent} (Fig.~\ref{fig:ascencio}). Caveats: the two share MINERvA
+low-recoil region where the 2p2h physics lives. Our central result sits
+\SI{9.2}{\percent} and \SI{6.3}{\percent} above Ascencio.  The former pulls,
+full-covariance $\chi^{2}$, and consistency claim used the now-quarantined 4D
+covariance and are withheld until its corrected projection is available
+(Fig.~\ref{fig:ascencio}). Caveats: the two share MINERvA
 flux/detector systematics, treated here as independent; the $p_\mu$-vs-$\pPar$
 gate differs by $\lesssim\SI{6}{\percent}$ kinematic smearing at the
 \SI{20}{GeV} boundary. A finer 44-cell comparison would require re-unfolding
@@ -374,9 +375,9 @@ future work.
   \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare}
   \caption{Bin-identical comparison to Ascencio
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
-  $(\Eavail,q_{3})$ grid, with each side's full covariance (ours: the adopted
-  4D combined covariance marginalised with the Ascencio muon gate). Full-cov
-  $\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$, $p=\ascP$.}
+  $(\Eavail,q_{3})$ grid.  The central-value comparison remains current; the
+  panel's uncertainty-derived metrics use the quarantined historical 4D
+  covariance and must not be quoted pending the corrected marginalisation.}
   \label{fig:ascencio}
 \end{figure}
 
@@ -385,7 +386,7 @@ future work.
   \includegraphics[width=0.99\textwidth]{q3_excess_projection}
   \caption{Data/GENIE-CV ratio of the 4D unfold projected onto the
   $(\Eavail,q_{3})$ plane (left; blank cells are kinematically empty), with the
-  $q_{3}$ (centre) and $\Eavail$ (right) marginals. The $\Eavail$ marginal
+  $q_{3}$ (center) and $\Eavail$ (right) marginals. The $\Eavail$ marginal
   reproduces the 3D low-recoil excess; the joint plane shows the data\,$-$\,MC
   discrepancy to carry genuine $q_{3}$ structure (the ratio rising with $q_{3}$
   across the quasielastic--$\Delta$ dip). GENIE central value, no 2p2h in the base
@@ -393,52 +394,14 @@ future work.
   \label{fig:q3excess}
 \end{figure}
 
-\paragraph{Systematic covariance.} A 187-universe systematic sweep on the 4D grid
-(the same band set as 2D/3D, the shifted-$q_{3}$ lateral universes dumped per
-universe) yields a syst-only covariance with
-$\sqrt{\operatorname{tr}}=\SI{2.09e-38}{}$, median per-bin relative uncertainty
-\SI{13.4}{\percent} (84th percentile \SI{22}{\percent}), and numerical rank $142$
-of 4830 reported bins. The rank is set by the number of independent throws, not
-the bin count: it is essentially the 3D syst-only value ($139$), since both
-budgets use the same $\sim\!40$ one-sided bands plus the 100-universe flux
-multisim. Adding the $q_{3}$ axis multiplies the bins ($1431\!\to\!4830$) without
-adding throws, so the covariance is simply more rank-deficient
-($9.7\!\to\!\SI{2.9}{\percent}$ of bins spanned) and the truncated-spectral
-$\chi^{2}$ of \S\ref{sec:3d-models} becomes correspondingly more essential. The
-band \emph{ordering} also shifts: where the 2D/3D budgets are flux-dominated, the
-4D budget is model-dominated --- the 2p2h band is the single largest contributor,
-followed by the $M_{A}^{\mathrm{RES}}$, muon-energy-scale and
-$M_{A}^{\mathrm{CCQE}}$ bands, with flux sub-dominant ($\sim\SI{2.8}{\percent}$
-median). This is the expected consequence of binning in $q_{3}$, the variable
-that most directly discriminates the interaction models, and it identifies where a
-$q_{3}$-resolved measurement is both most informative and most
-systematics-limited. The combined budget
-$C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ (folding in the 4D bootstrap
-and ML-seedscan blocks, which raise the rank into the $\sim\!250$ range as in 3D)
-is complete (median per-bin \SI{13.5}{\percent}).
-
-\paragraph{Unified-throw cross-check and adoption.} The block sum above adds each
-systematic band's covariance independently; it omits the nonlinear cross-band term
-that arises because the OmniFold reweighter is not linear in the input
-perturbations. We quantify that term with a \emph{unified throw}: 160 joint
-re-unfolds in which all 12 reweightable knob bands and the flux multisim are
-perturbed simultaneously per event ($w_{\mathrm{cv}}\prod_b\rho_b^{g_b}$,
-$g_b\sim\mathcal N(0,1)$) and the cross section re-extracted, with the OmniFold
-run-to-run jitter floor subtracted via a zero-shift null set. On the real
-$(\pT,\pPar,\Eavail,q_{3})$ binning the jitter-corrected unified covariance is
-$\mathbf{2.0\times}$ the block sum in $\sqrt{\operatorname{tr}}$ --- i.e.\ the
-block sum \emph{underestimates} the vertical systematic by a factor of two. The
-inflation is concentrated rather than diffuse (the per-bin $\sigma$ median ratio
-is $1.00$, but the top \SI{1}{\percent} of bins by variance-excess carry
-\SI{78}{\percent} of the trace increase), and those bins are the high-$\pT$,
-lowest-$\Eavail$ ($<\SI{0.1}{GeV}$) corner where the migration matrix is most
-off-diagonal and bands couple most strongly. Because 160 throws cannot estimate a
-$4830\times4830$ matrix (a direct swap is badly rank-deficient and non-PSD), we
-\emph{adopt} the result by transferring the throw's per-bin fractional inflation
-$g_i=\max(\sigma^{\mathrm{uni}}_i,\sigma^{\mathrm{blk}}_i)/\sigma^{\mathrm{blk}}_i\ge1$
-onto the sweep's own vertical block, $C\to(C-C^{\mathrm{vert}})+G\,C^{\mathrm{vert}}G$,
-which is positive-semidefinite by construction and conservative (never below the
-block baseline). The adopted combined 4D covariance carries
-$\sqrt{\operatorname{tr}}=\SI{3.85e-38}{}$ (median per-bin
-\SIrange{13.5}{14.9}{\percent}). This refines the coarse 3D probe
-($1.16$ median / $1.40$ trace) and is the published 4D systematic object.
+\paragraph{Systematic covariance under remediation.} The 4D central result and
+its lower-dimensional anchors remain valid, but the previous 187-universe
+budget and unified-throw adoption are withdrawn. The replacement uses actual
+minus/plus endpoints, MAT mean-centered $1/N$ blocks, one fixed estimator seed,
+mean-centered joint throws with a separately reported mean shift, and no scalar
+jitter subtraction. Statistical and ML replicas are also being regenerated.
+Because dump-all lateral branches are CV-support-limited, a targeted
+selection-complete active-universe campaign is bounding migration effects; full
+five-band coverage remains the publication gate. No current 4D uncertainty
+magnitude or unified/block ratio is asserted until the replacement artifact is
+committed.

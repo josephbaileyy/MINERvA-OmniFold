@@ -85,40 +85,42 @@ We confirm its origin directly: pion final-state-interaction dials move
 $d\sigma/d\Eavail$ by $<\SI{1}{\percent}$, whereas adding the empirical Valencia
 2p2h fills the quasielastic--$\Delta$ dip. The four-dimensional $(\Eavail,q_{3})$
 result resolves the deficit's momentum-transfer structure, and a bin-identical
-full-covariance comparison to the published low-recoil measurement on the maximal
-common grid~\cite{MINERvA:2022incl} gives $\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$
-($p=\ascP$): the two measurements are consistent (Fig.~\ref{fig:pasc}).
+comparison to the published low-recoil measurement on the maximal common
+grid~\cite{MINERvA:2022incl} agrees at central-value level. The former
+covariance-based consistency metric is withheld pending corrected production
+(Fig.~\ref{fig:pasc}).
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
-  \caption{Unfolded 3D cross section (black, with combined-covariance band)
+  \caption{Unfolded 3D central cross section (black)
   versus four truth-level generators. The generators track the muon-momentum
-  projections but split on $\Eavail$, all underpredicting the low-recoil peak.}
+  projections but split on $\Eavail$, all underpredicting the low-recoil peak.
+  The displayed historical uncertainty band is quarantined pending replacement.}
   \label{fig:pgen}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.75\textwidth]{ascencio_fullcov_compare}
-  \caption{Bin-identical full-covariance comparison to the published low-recoil
+  \caption{Bin-identical central-value comparison to the published low-recoil
   measurement~\cite{MINERvA:2022incl} on the maximal common $(\Eavail,q_{3})$
-  grid: $\chi^{2}/\mathrm{ndf}=\ascChi/\ascNdf$, $p=\ascP$.}
+  grid. The displayed historical covariance metrics are quarantined pending
+  replacement.}
   \label{fig:pasc}
 \end{figure}
 
 \subsection{Hadronic mass: a deep-inelastic excess no generator reproduces}
 Adding $W$ as a fifth axis isolates the discrepancy that survives 2p2h. The
 unfolded-minus-generator excess concentrates at high $\Eavail$ \emph{and} high
-$W$ --- the deep-inelastic region (Fig.~\ref{fig:pdis}). With a dedicated 42-bin
-$(\Eavail,W)$ covariance, all four generators are incompatible with the data over
-the full plane at $19$--$40\sigma$, and in the twelve-bin high-$W$ corner
-($\Eavail\ge\SI{0.4}{GeV}$, $W\ge\SI{1.8}{GeV}$) at
-$\disCornerLo$--$\disCornerHi\sigma$ (Table~\ref{tab:pdis}). Enabling Valencia
+$W$ --- the deep-inelastic region (Fig.~\ref{fig:pdis}). All four generators
+underpredict the central result in the high-$W$ corner. Exact significances are
+withheld while the corrected five-dimensional statistical and systematic
+covariances are regenerated. Enabling Valencia
 2p2h does not close the corner --- it slightly worsens it, because 2p2h populates
 low $W$ --- and the independent NuWro and GiBUU generators miss it by the same or
 a larger margin. The excess is thus a genuinely deep-inelastic ($W\gtrsim\SI{1.8}{GeV}$)
-modelling deficit, robust across generator and tune.
+modeling deficit, robust across generator and tune.
 
 \begin{figure}[H]
   \centering
@@ -129,42 +131,27 @@ modelling deficit, robust across generator and tune.
   \label{fig:pdis}
 \end{figure}
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{@{}lcc@{}}
-    \toprule
-    Generator & full plane ($N\sigma$) & high-$W$ corner ($N\sigma$) \\
-    \midrule
-    GENIE CV     & $\fpGENIE$  & $\disGENIE$ \\
-    GENIE$+$MEC  & $\fpMEC$    & $\disMEC$ \\
-    NuWro        & $\fpNuWro$  & $\disNuWro$ \\
-    GiBUU        & ${>}\fpGiBUU$ & $\disGiBUU$ \\
-    \bottomrule
-  \end{tabular}
-  \caption{Full-covariance incompatibility of each generator with the unfolded
-  $(\Eavail,W)$ cross section, over the 42-bin plane and the 12-bin high-$W$
-  deep-inelastic corner.}
-  \label{tab:pdis}
-\end{table}
-
 \section{Method robustness and the point-cloud track}
 The unfolded result is stable across the classifier family (GBDT, MLP,
 transformer) and the input representation. A point-cloud transformer
 (PET~\cite{Mikuni:2024qsr}) unfolding the \emph{raw} reconstructed calorimeter
 clusters reproduces the scalar-GBDT result and, trained to full statistics,
-yields an absolutely-normalised cross section whose closure is unbiased to
+yields an absolutely-normalized cross section whose closure is unbiased to
 $\sim\SI{\petClosure}{\percent}$ and which agrees with the production result at the
 \SI{9}{\percent} (training-configuration) level (Fig.~\ref{fig:ppet}). This
 establishes the infrastructure for unfolding directly on low-level detector data.
-Separately, a 160-throw unified-throw study shows the standard block-sum
-covariance underestimates the 4D vertical systematic by a factor $\sim2$ in the
-strongest-migration corner; the published 4D covariance adopts the corrected
-magnitude.
+Corrected five-dimensional joint throws now test the standard block-sum
+covariance with asymmetric endpoints, a fixed estimator seed, and
+mean-centered throws. Their numerical adoption awaits the corrected
+statistical/ML budget and support-migration gate; the earlier 4D adoption is
+not quoted. The PET background-subtracted target and retrained statistical/ML
+components pass, but no PET--GBDT precision claim is made before its corrected
+systematic and lateral blocks are complete.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
-  \caption{Absolutely-normalised 4D cross section from the PET point-cloud unfold
+  \caption{Absolutely-normalized 4D cross section from the PET point-cloud unfold
   of the raw clusters versus the production scalar GBDT, per axis. The closure
   gate shows the absolute machinery is unbiased to $\sim\SI{\petClosure}{\percent}$;
   the \SI{9}{\percent} total offset is a training-configuration difference.}
@@ -182,8 +169,8 @@ above the restricted measurement (Fig.~\ref{fig:pfps}). Inside the published
 region it reproduces the restricted result to \SI{\fpsAnchor}{\percent} median per
 cell; a three-prior envelope reports the extrapolation cost cell by cell
 (few-percent where the detector has acceptance, explicit tens-of-percent flags in
-the dead regions), and the measurement carries a full systematic budget with the
-mandatory unified-throw construction. The same extension is realized with the
+the dead regions). Its full covariance is being regenerated under the corrected
+uncertainty contract. The same extension is realized with the
 point-cloud engine at full statistics on the 5D grid, with an extended
 catch-bin grid, two-tier reporting by reconstruction efficiency
 (\num{9307}~measured, \num{2568}~extrapolated bins), a three-prior envelope
@@ -207,8 +194,8 @@ Unbinned OmniFold reproduces a flagship MINERvA cross section and its uncertaint
 budget, and enables measurements binned methods cannot: the first simultaneous
 three-, four- and five-observable MINERvA unfolds. These independently recover the
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
-measurement, and localise a deep-inelastic excess ($\disCornerLo$--$\disCornerHi\sigma$
-in the high-$W$ corner) that no current generator or tune reproduces. A
+measurement, and localise a deep-inelastic excess in a high-$W$ corner that all
+tested generators underpredict; its corrected significance is pending. A
 point-cloud transformer extends the program toward raw-data unfolding, and a
 first full-phase-space cross section recovers the rate that restricted phase
 spaces discard. The complete methodology, validation suite and per-number record

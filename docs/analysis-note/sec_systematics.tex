@@ -31,19 +31,20 @@ on the reported numbers, are in App.~\ref{app:statmethods}. Our
 \subsection{Systematic universes}
 \label{sec:uq-universes}
 The detector and model systematics use the MAT-MINERvA universe machinery: 44
-error bands (6 lateral --- shifted reconstructed kinematics --- and 38
-vertical --- per-event reweights), 187 universes in total, identical to the
-published analysis's \texttt{GetStandardSystematics} set. Each universe is a
-\emph{full re-unfold}: the event loop dumps the universe's weights and (for
-lateral bands) shifted observables, and the entire OmniFold chain runs on
-them with the central value's seeds and configuration, so the systematic
-propagates through the learned reweighting itself rather than through a frozen
-response. Pair ($\pm1\sigma$) bands use the MINERvA sum-of-squares convention
-$\tfrac12(\delta_+\delta_+^{\!\top}+\delta_-\delta_-^{\!\top}$); multi-universe
-bands (the 100-universe PPFX flux multisim) use the sample covariance. The
-construction is MAT-conformant (\texttt{MnvVertErrorBand::CalcCovMx}; verified
-byte-for-byte against MAT \texttt{MnvH1D::GetTotalErrorMatrix}, max rel.\ diff
-$\sim10^{-17}$). Top bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
+error bands and 187 universes in total, identical to the published analysis's
+\texttt{GetStandardSystematics} set. Each universe is re-unfolded with the
+central estimator seed. All per-band covariances use the MAT convention:
+universe-mean centering and biased $1/N$. For a $\pm1\sigma$ pair this is the
+outer product of the half-difference; a common displacement of both endpoints
+from CV is excluded from the variance. No per-band displacement artifact is
+stored; only the joint-throw mean shift described below is stored separately. The 100 PPFX
+universes use the same mean-centered $1/N$ formula.
+
+Dump-all shifted branches are limited to CV event-loop support. For the five
+genuinely kinematic bands (BeamAngleX/Y, MuonResolution, and
+Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
+provide the production migration gate; MinosEfficiency and GEANT are
+weight-only. Top 2D bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
 \SI{2.31}{\percent}, MinosEfficiency \SI{1.47}{\percent},
 Muon\_Energy\_MINERvA \SI{1.29}{\percent}. Figure~\ref{fig:uqbands} shows the
 grouped fractional-uncertainty projections in the published Fig.~6/7 style
@@ -100,7 +101,7 @@ bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$), not a missing term
   \label{fig:bootstrap}
 \end{figure}
 
-\subsection{ML/optimisation uncertainty: seedscan}
+\subsection{ML/optimization uncertainty: seedscan}
 \label{sec:uq-ml}
 ML stochasticity is budgeted by re-unfolding with 10 independent estimator
 seeds at fixed data and fixed universe (Fig.~\ref{fig:seedscan}); the sample
@@ -111,6 +112,13 @@ split, gives a band $1.24\times$ the pure-seed band, moving the combined 3D
 budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}}$ --- the published budgets use
 the split-inclusive band; (ii) the ensemble-mean central value (averaging the
 seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
+For the corrected 4D/5D campaign now in flight, the first ensemble fixes the
+estimator seed at 42 and varies only the train/test split seed. It therefore
+measures split response, not the full estimator stochasticity. A separate
+fixed-split estimator-seed scan is required before adoption: if negligible it
+is documented and omitted; if material, a crossed split--estimator ensemble is
+used rather than blindly adding two correlated covariance estimates. This
+scope must accompany any preliminary replacement result.
 
 \begin{figure}[H]
   \centering
@@ -123,27 +131,41 @@ seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
 
 \subsection{Combination and the unified-throw test}
 \label{sec:uq-combine}
-The published covariance is the block sum
+The nominal covariance decomposition is the block sum
 $C = C_{\mathrm{syst}} + C_{\mathrm{stat}} + C_{\mathrm{ML}}$, which assumes
 the blocks are independent \emph{and} that the unfolding responds linearly to
 simultaneous perturbations (so that per-band covariances add). The second
 assumption is tested directly by the \emph{unified throw}
 (\S\ref{sec:4d}): joint re-unfolds with all reweightable knob bands and the
-flux multisim perturbed simultaneously per event. In 2D/3D the block sum is
-consistent with the throws; on the 4D grid it \emph{underestimates} the
-vertical systematic by a factor $\sim2$, concentrated in the high-$\pT$,
-lowest-$\Eavail$ corner, and the published 4D covariance therefore adopts the
-unified-throw magnitude via a PSD-safe per-bin inflation
-(\S\ref{sec:4d}). This is a direct, quantitative validation (and, where
-broken, correction) of the linearity assumption underlying the standard
-block-sum construction.
+flux multisim perturbed simultaneously per event.  The corrected construction
+uses the actual $-1\sigma$ and $+1\sigma$ event-weight endpoints, interpolates
+asymmetrically between them, holds the unfolding-estimator seed fixed for every
+throw, and forms the joint covariance about the throw mean.  The joint
+displacement of that mean from the CV is stored separately as a per-bin vector
+and its norm; per-band endpoint displacements are not stored. The matched block comparator
+uses the MAT convention: universe-mean centering and the biased $1/N$
+normalisation, with both endpoints re-unfolded.
 
-More generally, this reframes the block sum as an approximation --- valid only where the unfolding responds linearly, i.e.\ in low-migration, lower-dimensional regimes --- rather than as a default construction: as bin migration or dimensionality grows it must be validated against a unified throw, and the unified magnitude adopted wherever the two disagree. We retain the per-source block decomposition for attribution (it identifies the dominant bands), but the reported uncertainty magnitude defers to the unified throw in any regime where the linearity assumption is not independently established.
+The earlier 4D/5D/FPS unified-throw products used a one-sided interpolation,
+CV-centering, and an estimator-jitter prescription that is no longer the
+analysis contract.  Their adopted per-bin inflation products and all dependent
+significances are therefore \emph{unquotable}. Corrected five-dimensional
+joint throws have completed their internal numerical checks, but their
+statistical/ML budget, mean-shift adoption decision, active-universe support
+bound, and commit gate are still incomplete; no replacement number is quoted.
+No scalar jitter subtraction or automatic ``adopted inflation'' is applied to
+the corrected stored covariance.
+
+More generally, this reframes the block sum as an approximation --- valid only
+where the unfolding responds linearly --- rather than as a default
+construction.  We retain the per-source block decomposition for attribution,
+but a replacement/adoption decision is made only after the corrected joint
+throws and matched block endpoints pass their validation gates.
 
 \paragraph{$\chi^{2}$ caveat.}
 The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=1.481$ double-counts systematics
 shared with the paper (flux/GENIE/MINOS); the ours-only inverse-covariance
 $\chi^{2}$ is evaluated only with a truncated-spectral convention on the
-well-constrained subspace. We therefore quote per-bin pulls, the regularisation
+well-constrained subspace. We therefore quote per-bin pulls, the regularization
 scan, and the truncated result together rather than treating an unconstrained
 pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).
