@@ -17,6 +17,7 @@ import glob
 
 import numpy as np
 import ROOT
+from replica_manifest import load_replica_manifest
 
 ROOT.gROOT.SetBatch(True)
 
@@ -29,14 +30,22 @@ def main():
     ap.add_argument("--compare-ml", default="",
                     help="existing ML cov 'path:hist' to compare sqrt-trace against.")
     ap.add_argument("--out", default="uq_cov_mlsplit_3d.root")
+    ap.add_argument("--expected-ids", default="1-24",
+                    help="required inclusive split id range LO-HI")
     args = ap.parse_args()
 
     paths = sorted(glob.glob(args.glob))
     if not paths:
         raise SystemExit(f"[FAIL] no runs matched {args.glob}")
-    flats = [np.load(p)["xsec_flat"] for p in paths]
-    totals = [float(np.load(p)["total_xsec"]) for p in paths]
-    X = np.stack(flats, axis=0)              # (Nrun, nbins_full)
+    lo, hi = (int(v) for v in args.expected_ids.split("-", 1))
+    X, ids = load_replica_manifest(paths, set(range(lo, hi + 1)))
+    totals = []
+    for p in paths:
+        with np.load(p, allow_pickle=False) as z:
+            value = float(z["total_xsec"])
+            if not np.isfinite(value):
+                raise SystemExit(f"[FAIL] {p}: non-finite total_xsec")
+            totals.append(value)
     print(f"[INFO] {len(paths)} split runs, full nbins={X.shape[1]}")
     print(f"[INFO] total xsec across runs: mean={np.mean(totals):.4e} "
           f"std={np.std(totals, ddof=1):.2e} ({100*np.std(totals,ddof=1)/np.mean(totals):.3f}%)")

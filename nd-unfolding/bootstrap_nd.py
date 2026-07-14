@@ -16,18 +16,18 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--npz",required=True); ap.add_argument("--seed",type=int,required=True)
     ap.add_argument("--iters",type=int,default=5); ap.add_argument("--out",required=True)
+    ap.add_argument("--estimator-seed", type=int, default=42,
+                    help="fixed estimator seed; bootstrap seed varies only event weights")
     a=ap.parse_args()
     d=np.load(a.npz,allow_pickle=True); ne=int(d["nedges"]); edges=[d[f"edges_{i}"] for i in range(ne)]
-    rng=np.random.default_rng(a.seed)
-    mw=d["measured_weights"]*rng.poisson(1.0,d["measured_weights"].shape[0])
-    bmc=rng.poisson(1.0,d["w_truth"].shape[0]).astype(float)
+    rng_d=np.random.default_rng(a.seed)
+    rng_m=np.random.default_rng(a.seed + 10_000_000)
+    mw=d["measured_weights"]*rng_d.poisson(1.0,d["measured_weights"].shape[0])
+    bmc=rng_m.poisson(1.0,d["w_truth"].shape[0]).astype(float)
     wt=d["w_truth"]*bmc; wr=d["w_reco"]*bmc
-    try:
-        wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],d["measured"],d["pass_reco"],d["pass_truth"],
-            np.ones(len(d["measured"]),bool),a.iters,kind="lgbm",MCgen_weights=wt,MCreco_weights=wr,
-            measured_weights=mw,seed=a.seed,verbose=False)
-    except Exception as e:   # skip a pathological replica (exit 0) so afterok combine isn't blocked
-        print(f"[boot {a.seed}] SKIPPED ({type(e).__name__}: {e})"); return
+    wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],d["measured"],d["pass_reco"],d["pass_truth"],
+        np.ones(len(d["measured"]),bool),a.iters,kind="lgbm",MCgen_weights=wt,MCreco_weights=wr,
+        measured_weights=mw,seed=a.estimator_seed,verbose=False)
     m=d["pass_truth"]; bins=[np.asarray(e,float) for e in edges]
     samp=np.column_stack([d["MCgen"][m,i] for i in range(d["MCgen"].shape[1])])
     unf,_=np.histogramdd(samp,bins=bins,weights=wpush*wt[m]); ofin,_=np.histogramdd(samp,bins=bins,weights=wt[m])

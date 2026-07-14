@@ -248,9 +248,10 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                       universe_branch=None):
     """mc_signal_reco -> dict of truth/reco arrays for OmniFold.
 
-    Gating mirrors the 2D/3D drivers: truth-pass via the (pt,pz) gate, reco-pass
-    via sim_pass AND the (pt,pz) rectangle. Extra axes are NOT gated; reco extra
-    values are -9999 wherever the event does not reco-pass.
+    Gating mirrors the 2D/3D drivers and applies one finite-observable support
+    contract. A signal row is retained only when all truth observables are finite,
+    matching collect_truth_denom_nd. A reco-passing row is considered selected only
+    when all reco observables are finite; otherwise it becomes a native miss.
 
     extra_wbranches: optional list of (truth_branch, reco_branch) universe-weight
     name tuples (e.g. (w_truth_<band>_<idx>, w_reco_<band>_<idx>)); read aligned to
@@ -307,7 +308,7 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
     tex = [[] for _ in extras]; rex = [[] for _ in extras]
     xwt_l = [[] for _ in (extra_wbranches or [])]
     xwr_l = [[] for _ in (extra_wbranches or [])]
-    drop = bad = 0
+    drop = bad = support_bad = 0
     for i in range(t.GetEntries()):
         t.GetEntry(i)
         a_pt, a_pz = float(mc_pt[0]), float(mc_pz[0])
@@ -317,28 +318,35 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
         wr = float(wr_a[0]) if use_weights else wt
         if not (math.isfinite(wt) and math.isfinite(wr) and 0 <= wt < 1e4 and 0 <= wr < 1e4):
             bad += 1; continue
+        truth_vals = [float(a[0]) for a in mc_ex]
+        reco_vals = [float(a[0]) for a in sim_ex]
+        truth_finite = (math.isfinite(a_pt) and math.isfinite(a_pz)
+                        and all(math.isfinite(v) for v in truth_vals))
+        if not truth_finite:
+            support_bad += 1
+            continue
         wt *= pot_scale; wr *= pot_scale
         tru_ok = u2d.in_truth_phase_space(a_pt, a_pz, pt_lo, pt_hi, pz_lo, pz_hi)
         rec_ok = (math.isfinite(b_pt) and math.isfinite(b_pz)
+                  and all(math.isfinite(v) for v in reco_vals)
                   and pt_lo <= b_pt <= pt_hi and pz_lo <= b_pz <= pz_hi)
         if not (tru_ok or (passed and rec_ok)):
             drop += 1; continue
-        tpt.append(a_pt if math.isfinite(a_pt) else -9999.0)
-        tpz.append(a_pz if math.isfinite(a_pz) else -9999.0)
+        tpt.append(a_pt)
+        tpz.append(a_pz)
         rpt.append(b_pt if (passed and rec_ok) else -9999.0)
         rpz.append(b_pz if (passed and rec_ok) else -9999.0)
         for k in range(len(extras)):
-            tv = float(mc_ex[k][0])
-            tex[k].append(tv if math.isfinite(tv) else -9999.0)
-            rv = float(sim_ex[k][0])
-            rex[k].append(rv if (passed and rec_ok and math.isfinite(rv)) else -9999.0)
+            tex[k].append(truth_vals[k])
+            rex[k].append(reco_vals[k] if (passed and rec_ok) else -9999.0)
         for k in range(len(xwt_a)):
             xwt_l[k].append(float(xwt_a[k][0]) * pot_scale)
             xwr_l[k].append(float(xwr_a[k][0]) * pot_scale)
         pr.append(passed and rec_ok); ptr.append(tru_ok)
         wtl.append(wt); wrl.append(wr)
-    if verbose:
-        print(f"[INFO] signal: kept={len(tpt)} dropped={drop} bad={bad}")
+    if verbose or support_bad:
+        print(f"[INFO] signal: kept={len(tpt)} dropped_phase={drop} bad_weight={bad} "
+              f"excluded_nonfinite_truth_support={support_bad}")
     return {
         "truth_pt": np.asarray(tpt), "truth_pz": np.asarray(tpz),
         "reco_pt": np.asarray(rpt), "reco_pz": np.asarray(rpz),
@@ -541,6 +549,11 @@ def main():
                          "Requires --use-weights.")
     ap.add_argument("--out", default="xsec_nd.root")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--closure-slack", type=int, default=0,
+                    help="tolerate a finite-support signal/truth-denom count mismatch up to this "
+                         "many events (bad-weight truncation; e.g. 18 events with non-finite "
+                         "w_reco in a weight-only universe). Default 0 = exact match required "
+                         "(current strict behavior). A gross closure break still aborts.")
     ap.add_argument("--closure", action="store_true",
                     help="MC reco (pass_reco & pass_truth) as pseudo-data; completeness=1")
     ap.add_argument("--closure-reweight-axis", default=None,
@@ -660,6 +673,20 @@ def main():
     td = collect_truth_denom_nd(t_td, load_extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                                 use_weights=args.use_weights, verbose=args.verbose,
                                 universe_branch=universe_branch)
+    n_sig_truth = int(sig["pass_truth"].sum())
+    n_td = int(td["pt"].size)
+    has_misses_obj = f_in.Get("hasTruthOnlyMisses")
+    has_native_misses = bool(has_misses_obj and int(has_misses_obj.GetVal()) != 0)
+    print(f"[INFO] finite-support closure: signal truth-pass={n_sig_truth} "
+          f"truth-denom={n_td} native_misses={has_native_misses}")
+    if has_native_misses and n_sig_truth != n_td:
+        _slack = abs(n_sig_truth - n_td)
+        if _slack > args.closure_slack:
+            raise RuntimeError("finite-support signal/truth-denominator closure failed: "
+                               f"{n_sig_truth} != {n_td}")
+        print(f"[WARN] finite-support closure mismatch {n_sig_truth} != {n_td} "
+              f"({_slack} events, {100.0*_slack/max(n_td,1):.2e}%) tolerated via "
+              f"--closure-slack {args.closure_slack} (bad-weight truncation treated as misses)")
     hid_truth = None
     if hidden_ax is not None:
         # pop the hidden bump column off every loader output so the unfold,
@@ -708,23 +735,25 @@ def main():
     # Flux universe: divide by that PPFX universe's flux integral (mirrors 3D driver).
     if universe_branch is not None and universe_branch[0] == "Flux":
         fu = ROOT.TFile.Open(args.flux_universe_file)
-        if fu and not fu.IsZombie():
-            h_cv, h_un = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
-            if h_cv and h_un:
-                uidx = int(universe_branch[1])
-                scale = np.ones(len(flux_bins))
-                for b in range(len(flux_bins)):
-                    cvf = h_cv.GetBinContent(b + 1)
-                    unf = h_un.GetBinContent(b + 1, uidx + 1)
-                    if cvf > 0 and unf > 0:
-                        scale[b] = unf / cvf
-                flux_bins = np.asarray(flux_bins, float) * scale
-                print(f"[INFO] Flux universe {uidx}: per-pT flux scaled "
-                      f"(mean {scale.mean():.4f})")
+        if not fu or fu.IsZombie():
+            raise SystemExit(f"[FAIL] Flux universe {universe_branch[1]} requested but flux "
+                             f"universe file {args.flux_universe_file} is unavailable; refusing "
+                             "to produce an incomplete systematic universe with CV flux")
+        h_cv, h_un = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
+        if not h_cv or not h_un:
             fu.Close()
-        else:
-            print(f"[WARN] flux universe file {args.flux_universe_file} unavailable; "
-                  "using CV flux (Flux universe will be incomplete)")
+            raise SystemExit(f"[FAIL] Flux universe {universe_branch[1]}: hFluxCV/hFluxUniv "
+                             f"missing in {args.flux_universe_file}; refusing incomplete universe")
+        uidx = int(universe_branch[1])
+        scale = np.ones(len(flux_bins))
+        for b in range(len(flux_bins)):
+            cvf = h_cv.GetBinContent(b + 1)
+            unf = h_un.GetBinContent(b + 1, uidx + 1)
+            if cvf > 0 and unf > 0:
+                scale[b] = unf / cvf
+        flux_bins = np.asarray(flux_bins, float) * scale
+        print(f"[INFO] Flux universe {uidx}: per-pT flux scaled (mean {scale.mean():.4f})")
+        fu.Close()
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("empty signal or data after selection")
 

@@ -228,7 +228,7 @@ def do_run(args):
     for _w in (wt, wr, tdw):
         np.nan_to_num(_w, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
     # KNOWN_ISSUES #13: rebin CV background with this universe's w_bkg to
-    # recompute the measured purity down-weight; CV fallback for pre-#13 banks.
+    # recompute the measured purity down-weight. Production is fail-closed.
     bkgw_path = f"{bd}/{tag}_bkgw.npy"
     if "bkg_cols" in cv and os.path.exists(bkgw_path):
         bkgw = np.load(bkgw_path, mmap_mode="r").astype(np.float64).copy()
@@ -240,6 +240,11 @@ def do_run(args):
         bkg_nd_m, _ = und.histnd(bkg_cols_l, bkgw, edges)
         measured_weights = und.build_measured_training_nd(meas_cols, data_nd_m, bkg_nd_m, edges)
     else:
+        if not args.allow_cv_background:
+            raise SystemExit(f"[FAIL] {tag}: bank lacks bkg_cols or {bkgw_path}; "
+                             "regenerate the post-#13 event loop/bank or explicitly pass "
+                             "--allow-cv-background for a legacy diagnostic")
+        print(f"[run][WARN] {tag}: explicitly using legacy CV-frozen background", flush=True)
         measured_weights = cv["measured_weights"]
     w_pull, w_push = omnifold_loop(
         MCgen, MCreco, measured, pass_reco, pass_truth, np.ones(len(measured), bool),
@@ -286,6 +291,8 @@ def main():
     ap.add_argument("--ngroups", type=int, default=1)
     ap.add_argument("--universe", default=None)
     ap.add_argument("--iters", type=int, default=5)
+    ap.add_argument("--allow-cv-background", action="store_true",
+                    help="legacy diagnostic only; production must use banked universe background")
     args = ap.parse_args()
     if args.dump:
         do_dump(args)

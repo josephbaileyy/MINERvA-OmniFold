@@ -358,9 +358,8 @@ def do_run(args):
                 np.ones(len(measured), bool), args.iters, kind="lgbm",
                 MCgen_weights=wt, MCreco_weights=wr, measured_weights=cv["measured_weights"],
                 seed=42, verbose=False)
-        except Exception as e:   # pathological throw: skip cleanly (exit 0), don't fail the task
-            print(f"[run] throw {t}: SKIPPED (unfold error: {type(e).__name__}: {e})", flush=True)
-            continue
+        except Exception as e:
+            raise RuntimeError(f"throw {t} unfold failed; refusing a partial ensemble") from e
         unfold_nd, _ = np.histogramdd(sample_sig, bins=bins, weights=w_push * wt[m])
         of_in, _ = np.histogramdd(sample_sig, bins=bins, weights=wt[m])
         denom_nd, _ = np.histogramdd(sample_td, bins=bins, weights=wtd)
@@ -473,9 +472,11 @@ def main():
     if args.dump:
         do_dump(args)
     elif args.run:
-        do_run(args)
+        raise SystemExit("[FAIL] legacy --run is disabled; use unified_throw_cov.py "
+                         "for asymmetric fixed-seed throws with strict manifests")
     elif args.combine:
-        do_combine(args)
+        raise SystemExit("[FAIL] legacy --combine is disabled; use unified_throw_cov.py "
+                         "for mean-centered covariance and strict inventory checks")
     else:
         ap.error("pass --dump, --run, or --combine")
 

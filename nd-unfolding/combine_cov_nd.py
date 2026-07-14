@@ -4,13 +4,18 @@ Reported mask from the 4D CV product (hXSecND_flat). Writes hCov_<tag>_reported.
   python combine_cov_nd.py --glob 'seedscan_split_4d/res_*.npz' --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag ml4d --out uq_cov_ml_4d.root
 """
 import argparse, glob, numpy as np, ROOT
+from replica_manifest import load_replica_manifest
 ROOT.gROOT.SetBatch(True)
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--glob",required=True); ap.add_argument("--cv",required=True)
     ap.add_argument("--tag",required=True); ap.add_argument("--out",required=True)
+    ap.add_argument("--expected-ids", required=True,
+                    help="required inclusive replica id range LO-HI, e.g. 1-100")
     a=ap.parse_args()
-    paths=sorted(glob.glob(a.glob)); X=np.stack([np.load(p)["xsec_flat"] for p in paths],0)
+    lo, hi = (int(v) for v in a.expected_ids.split("-", 1))
+    if hi < lo: ap.error("--expected-ids must be LO-HI with HI>=LO")
+    paths=sorted(glob.glob(a.glob)); X, ids=load_replica_manifest(paths, set(range(lo, hi+1)))
     f=ROOT.TFile.Open(a.cv); h=f.Get("hXSecND_flat"); cv=np.array([h.GetBinContent(i+1) for i in range(h.GetNbinsX())]); f.Close()
     rep=cv>0; Xr=X[:,rep]; cvr=cv[rep]; Z=Xr-Xr.mean(0); C=(Z.T@Z)/(Xr.shape[0]-1)
     diag=np.sqrt(np.maximum(np.diag(C),0)); rel=np.where(cvr>0,diag/cvr,0)

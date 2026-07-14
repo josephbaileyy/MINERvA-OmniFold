@@ -20,6 +20,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--npz",required=True); ap.add_argument("--seed",type=int,required=True)
     ap.add_argument("--iters",type=int,default=5); ap.add_argument("--out",required=True)
+    ap.add_argument("--estimator-seed", type=int, default=42)
     a=ap.parse_args()
     d=np.load(a.npz,allow_pickle=True); ne=int(d["nedges"]); edges=[d[f"edges_{i}"] for i in range(ne)]
     pr=d["pass_reco"].astype(bool); pt=d["pass_truth"].astype(bool)
@@ -29,12 +30,9 @@ def main():
     mw=d["w_reco"][cm]*rng_d.poisson(1.0,int(cm.sum()))
     bmc=rng_m.poisson(1.0,d["w_truth"].shape[0]).astype(float)
     wt=d["w_truth"]*bmc; wr=d["w_reco"]*bmc
-    try:
-        wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],measured,pr,pt,
-            np.ones(measured.shape[0],bool),a.iters,kind="lgbm",MCgen_weights=wt,
-            MCreco_weights=wr,measured_weights=mw,seed=a.seed,verbose=False)
-    except Exception as e:   # skip a pathological toy (exit 0) so combines aren't blocked
-        print(f"[toy {a.seed}] SKIPPED ({type(e).__name__}: {e})"); return
+    wpull,wpush=omnifold_loop(d["MCgen"],d["MCreco"],measured,pr,pt,
+        np.ones(measured.shape[0],bool),a.iters,kind="lgbm",MCgen_weights=wt,
+        MCreco_weights=wr,measured_weights=mw,seed=a.estimator_seed,verbose=False)
     bins=[np.asarray(e,float) for e in edges]
     samp=np.column_stack([d["MCgen"][pt,i] for i in range(d["MCgen"].shape[1])])
     unf,_=np.histogramdd(samp,bins=bins,weights=wpush*wt[pt])

@@ -33,6 +33,8 @@ def main():
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--split-seed", type=int, required=True)
     ap.add_argument("--train-frac", type=float, default=0.8)
+    ap.add_argument("--estimator-seed", type=int, default=42,
+                    help="fixed estimator seed; split-seed varies only the training split")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -44,17 +46,13 @@ def main():
 
     print(f"[split {args.split_seed}] train_frac={args.train_frac} kind={args.kind} "
           f"iters={args.iters}", flush=True)
-    # estimator seed tied to split seed too, so any seed-sensitivity is folded in.
-    try:
-        w_pull, w_push = omnifold_loop(
-            d["MCgen"], d["MCreco"], d["measured"],
-            d["pass_reco"], d["pass_truth"], np.ones(len(d["measured"]), bool),
-            args.iters, kind=args.kind,
-            MCgen_weights=d["w_truth"], MCreco_weights=d["w_reco"],
-            measured_weights=d["measured_weights"], seed=args.split_seed,
-            train_frac=args.train_frac, split_seed=args.split_seed, verbose=False)
-    except Exception as e:   # skip a pathological split (exit 0) so afterok combine isn't blocked
-        print(f"[split {args.split_seed}] SKIPPED ({type(e).__name__}: {e})"); return
+    w_pull, w_push = omnifold_loop(
+        d["MCgen"], d["MCreco"], d["measured"],
+        d["pass_reco"], d["pass_truth"], np.ones(len(d["measured"]), bool),
+        args.iters, kind=args.kind,
+        MCgen_weights=d["w_truth"], MCreco_weights=d["w_reco"],
+        measured_weights=d["measured_weights"], seed=args.estimator_seed,
+        train_frac=args.train_frac, split_seed=args.split_seed, verbose=False)
 
     m = d["pass_truth"]
     sample = np.column_stack([d["MCgen"][m, a] for a in range(d["MCgen"].shape[1])])

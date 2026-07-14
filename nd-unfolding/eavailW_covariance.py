@@ -64,6 +64,9 @@ def main():
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--prod5d", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--cov4d", default="uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root")
+    ap.add_argument("--stat5d", default="uq_cov_stat_5d.root",
+                    help="full 5D bootstrap covariance ROOT (required; projected as M C M^T)")
+    ap.add_argument("--stat5d-hist", default="hCov_stat5d_reported")
     ap.add_argument("--gendir", default="../3d-unfolding/genie")
     ap.add_argument("--gens", default="GENIE-CV:genie_cv_xsec_eavailW.root,"
                     "GENIE+MEC:genie_mec_xsec_eavailW.root,"
@@ -105,11 +108,12 @@ def main():
     flux_t = [f"w_truth_Flux_{u}" for u in range(args.nflux)]
     flux_r = [f"w_reco_Flux_{u}" for u in range(args.nflux)]
     vt = [f"w_truth_{b}_1" for b in VERT_BANDS]
+    vt0 = [f"w_truth_{b}_0" for b in VERT_BANDS]
     vr = [f"w_reco_{b}_1" for b in VERT_BANDS]
 
     # ---------- bulk-read signal (gate replicates collect_signal_nd) ----------
     sb = ["MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "sim", "sim_pz",
-          "sim_eavail", "sim_q3", "sim_W", "sim_pass", "w_truth", "w_reco"] + vt + vr + flux_t + flux_r
+          "sim_eavail", "sim_q3", "sim_W", "sim_pass", "w_truth", "w_reco"] + vt + vt0 + vr + flux_t + flux_r
     S = ROOT.RDataFrame("mc_signal_reco", f).AsNumpy(sb)
     g = lambda k: np.asarray(S[k], float)
     mcpt, mcpz = g("MC"), g("MC_pz")
@@ -117,12 +121,15 @@ def main():
     wt, wr = g("w_truth"), g("w_reco")
     sim_pass = np.asarray(S["sim_pass"]).astype(bool)
     wgood = np.isfinite(wt) & np.isfinite(wr) & (wt >= 0) & (wt < 1e4) & (wr >= 0) & (wr < 1e4)
+    truth_extra_finite = np.isfinite(g("MC_eavail")) & np.isfinite(g("MC_q3")) & np.isfinite(g("MC_W"))
+    reco_extra_finite = np.isfinite(g("sim_eavail")) & np.isfinite(g("sim_q3")) & np.isfinite(g("sim_W"))
+    truth_support = np.isfinite(mcpt) & np.isfinite(mcpz) & truth_extra_finite
     th = np.arctan2(mcpt, mcpz)
-    tru_ok = (mcpt >= pt_lo) & (mcpt <= pt_hi) & (mcpz >= pz_lo) & (mcpz <= pz_hi) & (th < u2d.MAX_MUON_THETA_RAD)
-    rec_ok = np.isfinite(simpt) & np.isfinite(simpz) & (simpt >= pt_lo) & (simpt <= pt_hi) \
-        & (simpz >= pz_lo) & (simpz <= pz_hi)
+    tru_ok = truth_support & (mcpt >= pt_lo) & (mcpt <= pt_hi) & (mcpz >= pz_lo) & (mcpz <= pz_hi) & (th < u2d.MAX_MUON_THETA_RAD)
+    rec_ok = np.isfinite(simpt) & np.isfinite(simpz) & reco_extra_finite \
+        & (simpt >= pt_lo) & (simpt <= pt_hi) & (simpz >= pz_lo) & (simpz <= pz_hi)
     passrec = sim_pass & rec_ok
-    keep = wgood & (tru_ok | passrec)
+    keep = wgood & truth_support & (tru_ok | passrec)
     k = keep
     NEG = -9999.0
     truth_pt = np.where(np.isfinite(mcpt[k]), mcpt[k], NEG)
@@ -143,11 +150,13 @@ def main():
     pass_reco = passrec[k]
     # per-band absolute universe weights (truth side, POT-scaled), aligned to kept signal events
     sig_vt = {b: g(f"w_truth_{b}_1")[k] * pot_scale for b in VERT_BANDS}
+    sig_vt0 = {b: g(f"w_truth_{b}_0")[k] * pot_scale for b in VERT_BANDS}
     sig_ft = [g(c)[k] * pot_scale for c in flux_t]
-    print(f"[ew] signal kept={k.sum()} pass_truth={pass_truth.sum()} pass_reco={pass_reco.sum()}", flush=True)
+    print(f"[ew] signal kept={k.sum()} pass_truth={pass_truth.sum()} pass_reco={pass_reco.sum()} "
+          f"excluded_nonfinite_truth_support={(~truth_support).sum()}", flush=True)
 
     # ---------- bulk-read truth_denom (gate replicates collect_truth_denom_nd) ----------
-    db = ["MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "w_truth"] + vt + flux_t
+    db = ["MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "w_truth"] + vt + vt0 + flux_t
     D = ROOT.RDataFrame("mc_truth_denom", f).AsNumpy(db)
     gd = lambda key: np.asarray(D[key], float)
     dpt_, dpz_ = gd("MC"), gd("MC_pz")
@@ -162,6 +171,7 @@ def main():
     td_cols = [dpt_[dk], dpz_[dk], dea_[dk], dq3_[dk], dw_[dk]]
     td_w = dwt[dk] * pot_scale
     td_vt = {b: gd(f"w_truth_{b}_1")[dk] * pot_scale for b in VERT_BANDS}
+    td_vt0 = {b: gd(f"w_truth_{b}_0")[dk] * pot_scale for b in VERT_BANDS}
     td_ft = [gd(c)[dk] * pot_scale for c in flux_t]
     print(f"[ew] truth_denom kept={dk.sum()}", flush=True)
 
@@ -237,34 +247,63 @@ def main():
     rw = np.abs(my_w / np.where(pw > 0, pw, np.nan) - 1)
     print(f"[ew] VALIDATION vs frozen 5D product: max|ratio-1| eavail={np.nanmax(re):.3f}  W={np.nanmax(rw):.3f}")
     if np.nanmax(re) > 0.05 or np.nanmax(rw) > 0.05:
-        print("[ew][WARN] CV marginals deviate >5% from the frozen product -- gate/unfold mismatch?")
+        raise SystemExit("[FAIL] CV marginals deviate >5% from the frozen product; "
+                         "refusing covariance extraction with a gate/unfold mismatch")
 
-    # ---------- C_syst: frozen-reweighter block-sum ----------
+    # ---------- C_syst: per-band mean-centered covariance (MAT 1/N), matching
+    #            unified_throw_cov / analyze_universes. Each knob band uses BOTH
+    #            +/-1sigma universes (not one-sided vs CV); flux uses all PPFX
+    #            universes, mean-centered. ----------
+    from uq_math import mat_covariance
+
+    def _y_band(sig_u, td_u):
+        rho_s = np.ones(truth_pt.size); rho_d = np.ones(td_w.size)
+        mm = w_truth > 0; rho_s[mm] = sig_u[mm] / w_truth[mm]
+        dd = td_w > 0; rho_d[dd] = td_u[dd] / td_w[dd]
+        return xsec_ew(rho_s, rho_d)[0].ravel()
+
     C_syst = np.zeros((n, n))
     for b in VERT_BANDS:
-        rho_s = np.ones(truth_pt.size); rho_d = np.ones(td_w.size)
-        mm = w_truth > 0; rho_s[mm] = sig_vt[b][mm] / w_truth[mm]
-        dd = td_w > 0; rho_d[dd] = td_vt[b][dd] / td_w[dd]
-        y_b, _ = xsec_ew(rho_s, rho_d)
-        d = y_b.ravel() - y_cv
-        C_syst += np.outer(d, d)
-        print(f"[syst] {b:18s} dsqrt-tr += {np.sqrt(d@d):.3e}", flush=True)
-    # flux universes
+        y_plus = _y_band(sig_vt[b], td_vt[b])      # +1 sigma
+        y_minus = _y_band(sig_vt0[b], td_vt0[b])   # -1 sigma
+        cb = mat_covariance(np.stack([y_minus, y_plus]))
+        C_syst += cb
+        print(f"[syst] {b:18s} sqrt-tr += {np.sqrt(np.trace(cb)):.3e} (mean-centered +/-)", flush=True)
+    # flux universes: mean-centered covariance over all PPFX universes
     fX = np.zeros((args.nflux, n))
     for u in range(args.nflux):
-        rho_s = np.ones(truth_pt.size); rho_d = np.ones(td_w.size)
-        mm = w_truth > 0; rho_s[mm] = sig_ft[u][mm] / w_truth[mm]
-        dd = td_w > 0; rho_d[dd] = td_ft[u][dd] / td_w[dd]
-        y_u, _ = xsec_ew(rho_s, rho_d)
-        fX[u] = y_u.ravel() - y_cv
-    C_flux = (fX.T @ fX) / args.nflux
+        fX[u] = _y_band(sig_ft[u], td_ft[u])
+    C_flux = mat_covariance(fX)
     C_syst += C_flux
-    print(f"[syst] flux({args.nflux}) sqrt-tr={np.sqrt(np.trace(C_flux)):.3e}  "
+    print(f"[syst] flux({args.nflux}) sqrt-tr={np.sqrt(np.trace(C_flux)):.3e} (mean-centered)  "
           f"C_syst sqrt-tr={np.sqrt(np.trace(C_syst)):.3e}", flush=True)
 
-    # ---------- C_stat: diagonal marginalized CV unfold Poisson variance ----------
-    C_stat = np.diag(yerr_cv.ravel() ** 2)
-    print(f"[stat] diag sqrt-tr={np.sqrt(np.trace(C_stat)):.3e}")
+    # ---------- C_stat: exact projection of the full 5D bootstrap covariance ----------
+    # Never sum standard deviations across marginalized cells. The linear map M
+    # integrates pt,pz,q3 with their bin widths and C_EW = M C_5D M^T carries
+    # every variance and correlation term.
+    from uq_math import project_covariance
+    if not os.path.exists(args.stat5d):
+        raise SystemExit(f"[FAIL] required full 5D bootstrap covariance missing: {args.stat5d}")
+    f5cv = ROOT.TFile.Open(args.prod5d)
+    x5flat = _th1(f5cv.Get("hXSecND_flat")); f5cv.Close()
+    shape5 = (len(pt_e)-1, len(pz_e)-1, n_ea, len(q3_e)-1, n_w)
+    report5 = np.where(x5flat > 0)[0]
+    i5p, i5z, i5e, i5q, i5w = np.unravel_index(report5, shape5)
+    Mew = np.zeros((n, report5.size))
+    ewrow = i5e * n_w + i5w
+    Mew[ewrow, np.arange(report5.size)] = dpt[i5p] * dpz[i5z] * dq3[i5q]
+    fs = ROOT.TFile.Open(args.stat5d)
+    hs = fs.Get(args.stat5d_hist)
+    if not hs:
+        raise SystemExit(f"[FAIL] {args.stat5d}:{args.stat5d_hist} missing")
+    C5stat = _th2(hs); fs.Close()
+    if C5stat.shape != (report5.size, report5.size):
+        raise SystemExit(f"[FAIL] 5D stat covariance shape {C5stat.shape} != "
+                         f"reported mask {(report5.size, report5.size)}")
+    C_stat = project_covariance(C5stat, Mew)
+    print(f"[stat] projected full 5D bootstrap M C M^T sqrt-tr="
+          f"{np.sqrt(np.trace(C_stat)):.3e}")
 
     # ---------- C_lateral: transfer 4D detector bands -> (E_avail,W) ----------
     # marginalize each 4D lateral band cov to E_avail (M C M^T), take its per-eavail variance as a
@@ -283,7 +322,8 @@ def main():
     for b in LATERAL_BANDS:
         h = fc.Get(f"hCov_universe4d_{b}")
         if not h:
-            print(f"[lat] (skip missing {b})"); continue
+            raise SystemExit(f"[FAIL] missing required lateral covariance hCov_universe4d_{b} "
+                             f"in {args.cov4d}")
         C_lat_e += Me @ _th2(h) @ Me.T
     fc.Close()
     frac_e = np.sqrt(np.clip(np.diag(C_lat_e), 0, None)) / np.where(y4_e > 0, y4_e, np.nan)
@@ -321,10 +361,18 @@ def main():
                 continue
             by_band.setdefault(mm_.group("band"), []).append(
                 (int(mm_.group("idx")), _sweep_ew(p) - y_scv))
+        expected_bands = set(LATERAL_BANDS)
+        if set(by_band) != expected_bands:
+            raise SystemExit(f"[FAIL] lateral sweep band mismatch: "
+                             f"missing={sorted(expected_bands-set(by_band))} "
+                             f"extra={sorted(set(by_band)-expected_bands)}")
+        bad_endpoints = {band: sorted(idx for idx, _ in entries)
+                         for band, entries in by_band.items()
+                         if sorted(idx for idx, _ in entries) != [0, 1]}
+        if bad_endpoints:
+            raise SystemExit(f"[FAIL] lateral sweep requires exact endpoints [0,1]: "
+                             f"{bad_endpoints}")
         n_uni = sum(len(v) for v in by_band.values())
-        if n_uni < 18:
-            raise SystemExit(f"[FAIL] lateral sweep incomplete: {n_uni}/18 universes "
-                             f"matched {args.lateral_sweep_glob}")
         C_lat_sweep = np.zeros((n, n))
         for b_, entries in sorted(by_band.items()):
             Dm = np.stack([d for _, d in sorted(entries)], axis=0)

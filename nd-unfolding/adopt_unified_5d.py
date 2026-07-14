@@ -78,12 +78,21 @@ def main():
     ap.add_argument("--prod", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--out",
                     default="uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root")
+    ap.add_argument("--cv-centered", action="store_true",
+                    help="F7 CV-centered variant: add per-bin joint mean_shift^2 to the unified "
+                         "variance (default is mean-centered, diag(C_unified) only)")
     args = ap.parse_args()
 
     # --- per-bin inflation factor g from the throw (diagonals only; cheap) ---
     fu = ROOT.TFile.Open(args.uthrow)
-    vu = np.clip(_diag(fu.Get("C_unified")), 0, None)   # unified per-bin variance
+    vu = np.clip(_diag(fu.Get("C_unified")), 0, None)   # unified per-bin variance (mean-centered)
     vb = np.clip(_diag(fu.Get("C_blocksum")), 0, None)  # bank block-sum per-bin variance (comparator)
+    if args.cv_centered:
+        # F7: CV-centered variance = mean-centered variance + shift^2 (do NOT silently drop the shift)
+        hms = fu.Get("hJointMeanShift")
+        ms = np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
+        assert ms.size == vu.size, f"mean_shift dim {ms.size} != unified dim {vu.size}"
+        vu = vu + ms ** 2
     fu.Close()
     s_adopt = np.sqrt(np.maximum(vu, vb))               # conservative: never below block baseline
     sb = np.sqrt(vb)
