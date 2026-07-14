@@ -294,6 +294,10 @@ def main():
     ap.add_argument("--out", default="MEFHC_5iter_fig13.png")
     ap.add_argument("--mcfile", default=None)
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
+    ap.add_argument("--pt-only", action="store_true",
+                    help="landscape single grid of p_T slices only (keeps the "
+                         "3-way Published/OmniFold/GENIE overlay) — for the talk "
+                         "money slide, where the full two-grid figure is too tall")
     args = ap.parse_args()
 
     import matplotlib
@@ -304,6 +308,24 @@ def main():
     omni, omni_err, truth, flux_source = load_result(
         args.infile, args.mcfile, args.flux_hist)
     print(f"[INFO] truth flux source: {flux_source}")
+
+    if args.pt_only:
+        # Landscape single grid (p_T slices) for the money slide: same 3-way
+        # overlay, but a wide aspect that fills the slide panel legibly.
+        fig = plt.figure(figsize=(13.4, 8.4))
+        outer = fig.add_gridspec(1, 1, left=0.072, right=0.985,
+                                 bottom=0.115, top=0.955)
+        plot_pt_slices(fig, outer[0], paper, paper_err, reported,
+                       omni, omni_err, truth)
+        fig.text(0.53, 0.035, "Muon Longitudinal Momentum (GeV/c)",
+                 ha="center", va="center", fontsize=15)
+        fig.text(0.021, 0.535,
+                 r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
+                 rotation=90, ha="center", va="center", fontsize=13)
+        technote_style.minerva_tag(fig)
+        fig.savefig(args.out, dpi=180)
+        print(f"[OK] wrote {args.out} (p_T-only landscape)")
+        return
 
     fig = plt.figure(figsize=(10.4, 13.2))
     outer = fig.add_gridspec(2, 1, height_ratios=[1, 1], hspace=0.28,

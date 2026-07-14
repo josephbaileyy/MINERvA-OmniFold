@@ -10,7 +10,8 @@ excluded. 'dims' = number of kinematic variables unfolded *simultaneously*
 (a double-differential dsigma/dx dy = 2), classified from each analysis's
 headline differential result. Every prior MINERvA measurement uses binned
 D'Agostini IBU and reaches at most 2 variables; this work's unbinned OmniFold
-reaches 3.
+reaches 5 (pT, p||, Eavail, q3, W) — shown as a single marker at the headline
+dimensionality.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -81,34 +82,32 @@ for yr, d, c, ax_id in M:
     ax.scatter([xj], [d], marker="o", s=62, c=chan[c][0],
                edgecolors="k", lw=0.5, zorder=3)
 
-# this work
-ax.scatter([2026], [2], marker="s", s=110, c="#C44E52", edgecolors="k",
-           lw=0.9, zorder=4)
-ax.scatter([2026], [3], marker="*", s=460, c="#C44E52", edgecolors="k",
+# this work: one marker at the headline simultaneous dimensionality (5D:
+# pT, p||, Eavail, q3, W); the 2D/3D/4D stages are internal milestones, not
+# separate measurements, so they do not get their own markers
+ax.scatter([2026], [5], marker="*", s=460, c="#C44E52", edgecolors="k",
            lw=1.0, zorder=5)
-ax.annotate("this work\nunbinned ($p_T$, $p_\\parallel$)", (2026, 2), (2025.7, 1.62),
-            fontsize=8.2, ha="right", va="top", color="#C44E52", weight="bold")
-ax.annotate("this work — unbinned OmniFold\n($p_T$, $p_\\parallel$, $E_{\\rm avail}$)",
-            (2026, 3), (2025.6, 3.02), fontsize=9.0, ha="right", va="center",
+ax.annotate("this work — unbinned OmniFold\n($p_T$, $p_\\parallel$, $E_{\\rm avail}$, $q_3$, $W$)",
+            (2026, 5), (2025.6, 5.02), fontsize=9.0, ha="right", va="center",
             color="#C44E52", weight="bold")
-ax.annotate("[target]\n2106.16210", (2021, 2), (2021, 2.18), fontsize=7.0,
-            ha="center", va="bottom", color="#1f77b4")
+# below the point (empty y=1..2 gap) so it clears the "N=30 measurements" banner
+ax.annotate("[target]\n2106.16210", (2021, 2), (2021, 1.72), fontsize=7.0,
+            ha="center", va="top", color="#1f77b4",
+            arrowprops=dict(arrowstyle="-", color="#1f77b4", lw=0.6, alpha=0.7))
 
 ax.set_xlabel("Publication year")
 ax.set_ylabel("Kinematic variables unfolded simultaneously")
 ax.set_title("MINERvA differential cross-section unfolding: dimensionality over time")
-ax.set_yticks([1, 2, 3])
-ax.set_ylim(0.4, 3.55)
+ax.set_yticks([1, 2, 3, 4, 5])
+ax.set_ylim(0.4, 5.55)
 ax.set_xlim(2012.3, 2026.9)
 ax.grid(axis="y", alpha=0.3)
 
 handles = [Line2D([], [], marker="o", ls="", mfc=col, mec="k", ms=8, label=lab)
            for col, lab in chan.values()]
 handles += [
-    Line2D([], [], marker="s", ls="", mfc="#C44E52", mec="k", ms=8,
-           label="this work, OmniFold (2D)"),
     Line2D([], [], marker="*", ls="", mfc="#C44E52", mec="k", ms=15,
-           label="this work, OmniFold (3D)"),
+           label="this work, OmniFold (5D)"),
 ]
 ax.legend(handles=handles, loc="upper left", fontsize=8.0, framealpha=0.95,
           ncol=2)

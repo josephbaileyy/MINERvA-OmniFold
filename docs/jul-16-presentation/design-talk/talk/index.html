@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unbinned unfolding of MINERvA data — collaboration talk</title>
+<script src="./ds-base.js"></script>
+<style>
+deck-stage:not(:defined) { visibility: hidden; }
+
+deck-stage {
+  --type-display: 116px;
+  --type-title: 64px;
+  --type-subtitle: 40px;
+  --type-body: 34px;
+  --type-small: 28px;
+  --type-kicker: 24px;
+  --pad-x: 120px;
+  --page-foot-note: "J. Bailey — MINERvA collaboration — July 16, 2026";
+  --pad-top: 104px;
+  --pad-bottom: 96px;
+  --baseline: 48px;
+}
+
+.slide {
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(120% 85% at 80% -10%,
+      color-mix(in srgb, var(--color-accent-900) 75%, transparent), transparent 58%),
+    radial-gradient(130% 95% at -12% 112%,
+      color-mix(in srgb, black 30%, transparent), transparent 52%),
+    var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  text-wrap: pretty;
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  print-color-adjust: exact; -webkit-print-color-adjust: exact;
+}
+
+.kicker {
+  position: absolute; top: calc(2 * var(--baseline) - 1cap);
+  left: var(--pad-x); text-box: trim-both cap alphabetic;
+  font-size: var(--type-kicker); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-accent); font-feature-settings: "tnum" 1;
+}
+.kicker::before {
+  content: ""; position: absolute; left: -64px; top: calc(50% - 0.5px);
+  width: 44px; height: 1px; background: var(--color-accent);
+}
+.slide-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-title); line-height: calc(1.5 * var(--baseline)); letter-spacing: -0.015em; margin: 0;
+  margin-left: -0.06em;
+  text-box: trim-both cap alphabetic;
+}
+.pin-bottom { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: var(--pad-bottom); }
+.meta { display: flex; align-items: baseline; gap: 18px; font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.meta span { text-box: trim-both cap alphabetic; }
+
+deck-stage { counter-reset: page; }
+.slide { counter-increment: page; }
+.page-foot {
+  position: absolute; right: var(--pad-x); bottom: 32px;
+  font-size: var(--type-kicker); letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  text-box: trim-both cap alphabetic;
+}
+.page-foot::before { content: counter(page) " · "; font-feature-settings: "tnum" 1; }
+.page-foot::after { content: var(--page-foot-note); }
+deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-head { display: none !important; }
+
+/* — cover — */
+.cover { justify-content: center; }
+.cover .rise { display: flex; flex-direction: column; gap: 36px; position: relative; isolation: isolate; }
+.cover .rise::before {
+  content: ""; position: absolute; left: -200px; top: -160px;
+  width: 920px; height: 620px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--color-accent-800) 60%, transparent), transparent);
+  filter: blur(70px); z-index: -1;
+}
+.display {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-display); line-height: calc(2.5 * var(--baseline)); letter-spacing: -0.02em; margin: 0;
+  margin-left: -0.06em;
+}
+.cover-sub { font-size: var(--type-subtitle); line-height: var(--baseline); max-width: 34ch; margin: 0; }
+
+/* — section dividers — */
+.divider {
+  justify-content: center;
+  background:
+    radial-gradient(75% 105% at 22% 42%,
+      color-mix(in srgb, var(--color-section-glow) 70%, transparent), transparent 64%),
+    var(--color-section);
+}
+.divider .rise { display: flex; flex-direction: column; align-items: flex-start; gap: 40px; }
+.divider .slide-title { position: relative; }
+.divider .slide-title::before {
+  content: ""; position: absolute; left: calc(-64px + 0.06em);
+  top: calc(0.5cap - 0.5px);
+  width: 44px; height: 1px; background: var(--color-accent);
+}
+.ghost-num {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 260px; line-height: 0.9; letter-spacing: -0.02em;
+  color: var(--color-section-ghost);
+  margin-left: -0.055em;
+}
+.divider .note { font-size: var(--type-small); line-height: var(--baseline); max-width: 52ch; margin: 0; color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+
+/* — content slides — */
+.content { padding-top: calc(5 * var(--baseline)); }
+.content > .slide-title { margin-top: -1cap; }
+.content > .bullets { margin-top: calc(3 * var(--baseline) - 1cap); }
+.bullets { display: flex; flex-direction: column; max-width: 1280px; margin: 0; padding: 0; list-style: none; font-size: var(--type-body); }
+.bullets li { position: relative; line-height: var(--baseline); text-box: trim-both cap alphabetic; }
+.bullets li + li { margin-top: calc(2 * var(--baseline) - 1cap); }
+.bullets li::before { content: ""; position: absolute; left: -46px; top: calc(0.5cap - 0.5px); width: 26px; height: 1px; background: var(--color-accent); }
+.bullets .sub { display: block; margin-top: 12px; font-size: var(--type-small); color: var(--color-neutral-300); }
+
+.cols { display: grid; gap: calc(2 * var(--baseline)) 96px; margin-top: calc(4 * var(--baseline) - 1cap); }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols p { font-size: var(--type-small); line-height: var(--baseline); margin: 0; text-box: trim-both cap alphabetic; color: var(--color-neutral-300); }
+.cols h3 { font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-body); margin: 0 0 calc(1 * var(--baseline) - 1cap);
+  text-box: trim-both cap alphabetic; }
+
+/* — figure slides — */
+/* Matplotlib PNGs come with white grounds; each rides a white panel with the
+   system radius and ambient shadow so it reads as a placed plate, not a hole
+   in the dark page. Panel white matches the PNG ground exactly (seamless). */
+.figslide { padding-top: calc(5 * var(--baseline)); }
+.figslide > .slide-title { margin-top: -1cap; }
+.figwrap { flex: 1; min-height: 0; display: flex; gap: 40px; margin-top: var(--baseline); align-items: stretch; }
+.fig-panel {
+  flex: 1; min-width: 0; min-height: 0;
+  background: #ffffff; border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px 24px; position: relative;
+}
+.fig-panel img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+/* dark-native figures (TECHNOTE_DARK regeneration, transparent ground):
+   no plate — the plot sits directly on the slide */
+.fig-panel.dark { background: transparent; box-shadow: none; padding: 0; }
+
+/* — stat rail (money slide) — */
+.stat-rail { display: flex; flex-direction: column; gap: 44px; justify-content: center;
+  flex: 0 0 400px; }
+.stat { position: relative; padding-left: 30px; }
+.stat::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 1px; background: color-mix(in srgb, var(--color-accent) 55%, transparent); }
+.stat b { display: block; font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 78px; line-height: 1.02; letter-spacing: -0.015em; color: var(--color-text);
+  font-feature-settings: "tnum" 1; }
+.stat span { display: block; margin-top: 12px; font-size: 24px; line-height: 1.35;
+  color: var(--color-neutral-300); }
+
+/* — validation card grid — */
+.vgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px;
+  margin-top: calc(3 * var(--baseline) - 1cap); flex: 1; align-content: center; }
+.vcard { background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  border: 1px solid var(--color-neutral-800); border-radius: var(--radius-md);
+  padding: 34px 38px; display: flex; flex-direction: column; gap: 14px; }
+.vcard .vk { font-size: 21px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-accent); }
+.vcard b { font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 54px; line-height: 1; color: var(--color-text); font-feature-settings: "tnum" 1; }
+.vcard span { font-size: 22px; line-height: 1.35; color: var(--color-neutral-300); }
+
+/* — formula card (engine slide) — */
+.engine { display: grid; grid-template-columns: 1fr 1.15fr; gap: 96px;
+  margin-top: calc(3 * var(--baseline) - 1cap); flex: 1; align-items: center; }
+.formula-card { background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  border: 1px solid var(--color-neutral-800); border-radius: var(--radius-md);
+  padding: 44px 48px; }
+.formula-card .fk { font-size: 22px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-accent); margin-bottom: 24px; }
+.formula { font-family: var(--font-heading); font-size: 52px; color: var(--color-text);
+  display: flex; align-items: center; gap: 22px; }
+.formula .frac { display: inline-flex; flex-direction: column; align-items: center;
+  font-size: 40px; line-height: 1.25; }
+.formula .frac b { font-weight: var(--font-heading-weight); border-bottom: 2px solid var(--color-neutral-500);
+  padding: 0 16px 6px; }
+.formula .frac i { font-style: normal; padding: 6px 16px 0; color: var(--color-neutral-300); }
+.engine-lines { list-style: none; margin: 44px 0 0; padding: 0; font-size: var(--type-small);
+  color: var(--color-neutral-300); }
+.engine-lines li { line-height: calc(1.25 * var(--baseline)); }
+.engine-lines b { color: var(--color-text); font-weight: 500; }
+.fig-caption { font-size: 26px; line-height: var(--baseline); margin: calc(1 * var(--baseline) - 1cap) 0 0; max-width: 90ch; text-box: trim-both cap alphabetic; color: color-mix(in srgb, var(--color-text) 65%, transparent); }
+.fig-caption strong { color: var(--color-text); font-weight: 500; }
+
+/* — chips: animation slots and preliminary tags — */
+.chips { position: absolute; right: var(--pad-x); top: calc(2 * var(--baseline) - 1cap - 10px); display: flex; gap: 16px; }
+.chip {
+  font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--color-accent); border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: 999px; padding: 8px 20px 9px; white-space: nowrap;
+  background: color-mix(in srgb, var(--color-accent-900) 40%, transparent);
+}
+.chip.warn {
+  color: var(--color-accent-2-300);
+  border-color: color-mix(in srgb, var(--color-accent-2-500) 55%, transparent);
+  background: color-mix(in srgb, var(--color-accent-2-900) 40%, transparent);
+}
+.prelim-tag {
+  position: absolute; left: 24px; top: 20px; z-index: 1;
+  font-size: 20px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: #7a2e2e; border: 1px solid #c96a6a; border-radius: 6px;
+  padding: 6px 14px; background: #fbecec;
+}
+
+/* — method diagram (slide 5) — */
+.diagram { flex: 1; min-height: 0; display: flex; align-items: center; margin-top: var(--baseline); }
+.diagram svg { width: 100%; height: auto; overflow: visible; }
+.diagram text { font-family: var(--font-body); font-size: 28px; fill: var(--color-text); }
+.diagram .dim { fill: color-mix(in srgb, var(--color-text) 55%, transparent); font-size: 24px; }
+.diagram .acc { fill: var(--color-accent); }
+.diagram .zone { fill: color-mix(in srgb, var(--color-surface) 80%, transparent); stroke: var(--color-neutral-700); rx: 12; }
+.diagram .zlabel { font-size: 24px; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--color-accent); }
+.diagram .arrow { stroke: var(--color-accent); stroke-width: 2.5; fill: none; }
+.diagram .arrow-dim { stroke: var(--color-neutral-500); stroke-width: 2; fill: none; stroke-dasharray: 8 8; }
+
+/* — animation slides (winners A1/A3/A6/A8 mounted by anims.js) — */
+.animwrap { flex: 1; min-height: 0; display: flex; flex-direction: column;
+  align-items: center; margin-top: var(--baseline); gap: 18px; }
+.anim-canvas { max-width: 100%; max-height: 100%; width: auto; height: auto;
+  display: block; flex: 1; min-height: 0; border-radius: var(--radius-md); }
+.anim-bar { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 1540px; }
+.anim-bar button { font-family: var(--font-body); font-size: 20px; line-height: 1;
+  color: var(--color-neutral-300); background: transparent;
+  border: 1px solid var(--color-neutral-700); border-radius: 999px;
+  padding: 8px 18px 9px; cursor: pointer; }
+.anim-bar button:hover { color: var(--color-accent); border-color: var(--color-accent); }
+.anim-bar button.on { color: var(--color-accent-300); border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent-900) 60%, transparent); }
+.anim-bar input[type=range] { flex: 1; min-width: 160px; accent-color: var(--color-accent); }
+.anim-caption { width: 100%; max-width: 1540px; min-height: 76px; margin: 0;
+  font-size: 25px; line-height: 1.4; color: var(--color-neutral-300);
+  border-left: 2px solid var(--color-accent); padding-left: 18px;
+  text-wrap: pretty; }
+
+/* — mini contrast graphics (bins multiply vs columns add) — */
+.mini-viz { margin-top: calc(1 * var(--baseline)); }
+.mini-viz svg { width: 100%; height: auto; overflow: visible; }
+.mini-viz text { font-family: var(--font-body); font-size: 24px; fill: var(--color-neutral-300); }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-deck-active] .rise { animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ═══════════ ACT 1 — THE PROBLEM ═══════════ -->
+
+  <section class="slide cover" data-label="Title" data-speaker-notes="Introduce yourself: Stanford undergrad researcher, outside the collaboration, working from the public ME FHC CC-inclusive data product. One sentence on the throughline.">
+    <div class="kicker"><span>MINERvA collaboration talk</span></div>
+    <div class="rise">
+      <h1 class="display">Unbinned unfolding of MINERvA inclusive scattering data</h1>
+      <p class="cover-sub text-muted">Learn weights on events instead of filling a response matrix — recover the published result, then open new dimensions.</p>
+    </div>
+    <div class="pin-bottom meta"><span>Joseph Bailey</span><span>·</span><span>Stanford undergrad researcher</span><span>·</span><span>July 16, 2026</span></div>
+  </section>
+
+  <section class="slide content" data-label="The contract" data-speaker-notes="Set the contract explicitly. I am an outsider using your public data product. Three promises, in order — the order is the credibility argument.">
+    <div class="kicker"><span>Framing</span></div>
+    <h2 class="slide-title">What I'll show you, in order</h2>
+    <ul class="bullets rise">
+      <li><span>Teach the core OmniFold idea — in the language of the unfolding you already do.
+        <span class="sub">It is a strict generalization of D'Agostini IBU, not a replacement dogma.</span></span></li>
+      <li><span>Show it reproduces your published ME FHC CC-inclusive d²σ/(dp<sub>T</sub> dp<sub>∥</sub>).
+        <span class="sub">Same public data product, independently rebuilt machinery — the trust anchor comes first.</span></span></li>
+      <li><span>Then show what event-level unfolding unlocks: dimensions that were hard to measure together.
+        <span class="sub">E<sub>avail</sub>, q₃, W opened as new axes on the same unfolded events.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="The dimensionality wall" data-speaker-notes="Every measurement starts by freezing an observable and a binning. Each added dimension multiplies response-matrix bins until they starve of statistics — walk the ticker: 64 cells, 4,096 cells, 262,144 cells for the same 600 toy events. Then the reframe: the grid dissolves and the same statistics are comfortably dense as events.">
+    <div class="kicker"><span>The problem</span></div>
+    <h2 class="slide-title">Binned unfolding hits a dimensionality wall</h2>
+    <div class="animwrap rise" data-anim="a1"></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Where MINERvA measurements sit" data-speaker-notes="Not hypothetical: thirty published MINERvA differential cross sections, every one binned D'Agostini IBU, none above two simultaneous dimensions. That plateau is the wall from the last slide.">
+    <div class="kicker"><span>The problem</span></div>
+    <h2 class="slide-title">Thirty measurements, none above two dimensions</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/minerva_unfolding_landscape.png" alt="Published MINERvA measurements arranged by number of simultaneously unfolded kinematic variables and year — all at one or two dimensions; this work at two and three."></figure>
+    </div>
+    <p class="fig-caption"><strong>Every published MINERvA differential cross section uses binned D'Agostini IBU and stops at two simultaneous variables.</strong> The events were never the problem — the bins were.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════ ACT 2 — TEACH OMNIFOLD ═══════════ -->
+
+  <section class="slide content" data-label="The reframe" data-speaker-notes="Anchor to what they know: D'Agostini IBU with a response matrix, exactly as they teach it. Then the one reframe the talk turns on.">
+    <div class="kicker"><span>The method</span></div>
+    <h2 class="slide-title">The response matrix, before it was histogrammed</h2>
+    <div class="cols cols-2 rise">
+      <div>
+        <h3>As it's usually drawn</h3>
+        <p>Truth bins on one side, reco bins on the other, arrows weighted by migration probability. D'Agostini IBU iterates Bayes' theorem on this matrix — the method behind every MINERvA cross section.</p>
+        <div class="mini-viz" aria-hidden="true">
+          <svg viewBox="0 0 640 300">
+            <!-- truth bins -->
+            <g>
+              <rect x="40" y="30" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <rect x="40" y="94" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <rect x="40" y="158" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <text x="95" y="250" text-anchor="middle" fill="var(--color-neutral-400)">truth bins</text>
+            </g>
+            <!-- reco bins -->
+            <g>
+              <rect x="490" y="30" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <rect x="490" y="94" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <rect x="490" y="158" width="110" height="52" rx="8" fill="none" stroke="var(--color-neutral-600)" stroke-width="2"/>
+              <text x="545" y="250" text-anchor="middle" fill="var(--color-neutral-400)">reco bins</text>
+            </g>
+            <!-- migration arrows, opacity = probability -->
+            <g stroke="#5B8ED6" fill="none">
+              <path d="M 150 56 L 490 56" stroke-width="7" opacity="0.9"/>
+              <path d="M 150 56 L 490 118" stroke-width="3.5" opacity="0.45"/>
+              <path d="M 150 120 L 490 120" stroke-width="6" opacity="0.85"/>
+              <path d="M 150 120 L 490 58" stroke-width="2.5" opacity="0.35"/>
+              <path d="M 150 184 L 490 184" stroke-width="7" opacity="0.9"/>
+              <path d="M 150 184 L 490 122" stroke-width="3" opacity="0.4"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h3>What it actually is</h3>
+        <p>Just paired (truth, reco) simulated events, histogrammed. The pairing carries all the physics; the histogram only compresses it. Unfolding = deciding how much each simulated event should count.</p>
+        <div class="mini-viz" aria-hidden="true">
+          <svg viewBox="0 0 640 300">
+            <text x="40" y="46" fill="var(--color-neutral-400)">truth level</text>
+            <text x="40" y="272" fill="var(--color-neutral-400)">reco level</text>
+            <!-- pairing lines -->
+            <g stroke="var(--color-neutral-600)" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.8">
+              <path d="M 130 80 L 156 218"/><path d="M 220 66 L 244 224"/><path d="M 310 88 L 296 210"/>
+              <path d="M 400 70 L 430 222"/><path d="M 490 84 L 508 214"/><path d="M 570 74 L 556 220"/>
+            </g>
+            <!-- truth events -->
+            <g fill="#5B8ED6">
+              <circle cx="130" cy="80" r="13"/><circle cx="220" cy="66" r="9"/><circle cx="310" cy="88" r="15"/>
+              <circle cx="400" cy="70" r="10"/><circle cx="490" cy="84" r="12"/><circle cx="570" cy="74" r="8"/>
+            </g>
+            <!-- reco events -->
+            <g fill="none" stroke="#5B8ED6" stroke-width="3">
+              <circle cx="156" cy="218" r="13"/><circle cx="244" cy="224" r="9"/><circle cx="296" cy="210" r="15"/>
+              <circle cx="430" cy="222" r="10"/><circle cx="508" cy="214" r="12"/><circle cx="556" cy="220" r="8"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="The engine" data-speaker-notes="The single ML ingredient, stated in their language: a classifier trained to separate two samples estimates their density ratio. It is not labeling QE or resonance; it answers one question — in this region of feature space, how much more or less data than simulation? Calibration checks in backup B3.">
+    <div class="kicker"><span>The method</span></div>
+    <h2 class="slide-title">The only ML ingredient: a classifier as a ratio estimator</h2>
+    <div class="engine rise">
+      <div>
+        <div class="formula-card">
+          <div class="fk">Train data vs. simulation at point x, class-normalized</div>
+          <div class="formula"><span>w(x)&nbsp;=</span>
+            <span class="frac"><b>p(data&thinsp;|&thinsp;x)</b><i>1 − p(data&thinsp;|&thinsp;x)</i></span>
+          </div>
+        </div>
+        <ul class="engine-lines">
+          <li>Indistinguishable here → <b>w ≈ 1</b></li>
+          <li>Data-rich region → <b>w &gt; 1</b></li>
+          <li>Simulation-heavy region → <b>w &lt; 1</b></li>
+        </ul>
+      </div>
+      <div class="mini-viz" aria-hidden="true">
+        <svg viewBox="0 0 760 460">
+          <path d="M60 400 H 720 M 60 400 V 40" stroke="var(--color-neutral-600)" stroke-width="2" fill="none"/>
+          <text x="700" y="440" text-anchor="end">observable x</text>
+          <text x="30" y="60" transform="rotate(-90 30 60)" text-anchor="end">density</text>
+          <!-- simulation density -->
+          <path d="M65 385 C130 368 138 190 225 168 C330 140 342 350 435 305 C512 268 528 158 705 345"
+                stroke="#5B8ED6" stroke-width="4" fill="none"/>
+          <!-- data density -->
+          <path d="M65 383 C140 362 155 258 240 232 C318 205 350 278 440 253 C525 230 560 105 705 335"
+                stroke="var(--color-text)" stroke-width="3.5" stroke-dasharray="1 14" stroke-linecap="round" fill="none"/>
+          <g fill="var(--color-text)">
+            <circle cx="150" cy="330" r="6"/><circle cx="240" cy="232" r="6"/><circle cx="330" cy="228" r="6"/>
+            <circle cx="440" cy="253" r="6"/><circle cx="545" cy="140" r="6"/><circle cx="620" cy="170" r="6"/>
+          </g>
+          <!-- weight callouts -->
+          <g stroke="#D96C6C" stroke-width="3" fill="none">
+            <path d="M 228 150 V 100"/><path d="M 560 120 V 70"/>
+          </g>
+          <text x="205" y="84" fill="#D96C6C" font-weight="600">w &lt; 1</text>
+          <text x="540" y="54" fill="#D96C6C" font-weight="600">w &gt; 1</text>
+          <!-- legend (below the axis, clear of the w-callouts) -->
+          <g>
+            <path d="M 70 436 H 110" stroke="#5B8ED6" stroke-width="4"/>
+            <text x="120" y="444">simulation</text>
+            <circle cx="290" cy="436" r="6" fill="var(--color-text)"/>
+            <text x="306" y="444">data</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="The OmniFold iteration" data-speaker-notes="The central animation, on toy data. Step 1: reweight simulation to match data at reco level — the learned per-event weight is the w = p/(1−p) from the previous slide. Step 2: pull those weights back to truth level through the simulation's own pairing. Four iterations; the corrections shrink; the truth ensemble lands on the true spectrum it was never shown. Bin only at the very end. Use the beat buttons to step if you prefer a build.">
+    <div class="kicker"><span>The method</span></div>
+    <h2 class="slide-title">One iteration: reweight, then pull back</h2>
+    <div class="animwrap rise" data-anim="a3"></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Not a black box" data-speaker-notes="The disarm slide. With binned inputs and one iteration structure, OmniFold reduces exactly to D'Agostini IBU. The learner is gradient-boosted decision trees — deliberately simple and robust, not a deep network.">
+    <div class="kicker"><span>The method</span></div>
+    <h2 class="slide-title">Why this is not a black box</h2>
+    <ul class="bullets rise">
+      <li><span>Feed OmniFold binned inputs and it <em>reduces exactly to D'Agostini IBU</em>.
+        <span class="sub">A strict generalization of the method MINERvA already uses — with the histogram removed.</span></span></li>
+      <li><span>The learned weights come from gradient-boosted decision trees.
+        <span class="sub">Deliberately simple and robust; cross-checked against a neural network (backup).</span></span></li>
+      <li><span>Backgrounds, fakes, misses and efficiency are handled the same way you handle them.
+        <span class="sub">Details and validation figures in backup.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="What it buys" data-speaker-notes="The contrast that carries the whole talk. Adding an observable is adding an input column, not multiplying response-matrix bins. Choose bins — and even observables — after unfolding.">
+    <div class="kicker"><span>The method</span></div>
+    <h2 class="slide-title">Adding an observable is adding a column</h2>
+    <div class="cols cols-2 rise">
+      <div>
+        <h3>Binned: bins multiply</h3>
+        <p>Each new dimension multiplies the response matrix: 2 → 4 → 8 → … cells, each needing its own migration statistics. The binning is frozen before the unfold and can never be revisited.</p>
+        <div class="mini-viz" aria-hidden="true">
+          <svg viewBox="0 0 640 260">
+            <g fill="rgba(91,142,214,0.45)" stroke="var(--color-neutral-700)" stroke-width="1.5">
+              <rect x="40" y="70" width="70" height="70"/><rect x="110" y="70" width="70" height="70"/>
+            </g>
+            <text x="115" y="190" text-anchor="middle">2</text>
+            <g fill="rgba(91,142,214,0.35)" stroke="var(--color-neutral-700)" stroke-width="1.5">
+              <rect x="250" y="52" width="52" height="52"/><rect x="302" y="52" width="52" height="52"/>
+              <rect x="250" y="104" width="52" height="52"/><rect x="302" y="104" width="52" height="52"/>
+            </g>
+            <text x="302" y="190" text-anchor="middle">4</text>
+            <g fill="rgba(91,142,214,0.18)" stroke="var(--color-neutral-700)" stroke-width="1.2">
+              <rect x="450" y="42" width="40" height="40"/><rect x="490" y="42" width="40" height="40"/><rect x="530" y="42" width="40" height="40"/>
+              <rect x="450" y="82" width="40" height="40"/><rect x="490" y="82" width="40" height="40"/><rect x="530" y="82" width="40" height="40"/>
+              <rect x="450" y="122" width="40" height="40"/><rect x="490" y="122" width="40" height="40"/><rect x="530" y="122" width="40" height="40"/>
+            </g>
+            <text x="510" y="200" text-anchor="middle">8 … N<tspan baseline-shift="super" font-size="16">d</tspan></text>
+            <text x="200" y="105" fill="var(--color-neutral-500)" font-size="30">→</text>
+            <text x="405" y="105" fill="var(--color-neutral-500)" font-size="30">→</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h3>Unbinned: columns add</h3>
+        <p>Each new observable is one more input column on the same events. The unfolded result is a weighted event sample — choose bins, and even observables, <em>after</em> unfolding.</p>
+        <div class="mini-viz" aria-hidden="true">
+          <svg viewBox="0 0 640 260">
+            <!-- event table: rows = events, columns = observables; last column highlighted -->
+            <g stroke="var(--color-neutral-700)" stroke-width="1.5" fill="none">
+              <rect x="60" y="40" width="420" height="180" rx="8"/>
+              <path d="M 60 85 H 480 M 60 130 H 480 M 60 175 H 480"/>
+              <path d="M 165 40 V 220 M 270 40 V 220 M 375 40 V 220"/>
+            </g>
+            <text x="112" y="30" text-anchor="middle">p_T</text>
+            <text x="217" y="30" text-anchor="middle">p_∥</text>
+            <text x="322" y="30" text-anchor="middle">E_avail</text>
+            <text x="427" y="30" text-anchor="middle">q₃</text>
+            <g>
+              <rect x="490" y="40" width="105" height="180" rx="8" fill="color-mix(in srgb, var(--color-accent-900) 55%, transparent)" stroke="var(--color-accent)" stroke-width="2"/>
+              <text x="542" y="30" text-anchor="middle" fill="var(--color-accent)">+ W</text>
+            </g>
+            <text x="320" y="252" text-anchor="middle" fill="var(--color-neutral-500)">same events — one more column</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════ ACT 3 — TRUST ANCHOR ═══════════ -->
+
+  <section class="slide figslide" data-label="Reproduction" data-speaker-notes="The money slide. Unbinned unfold of the double-differential cross section, binned at the end into the published 14x16 binning, overlaid on the published points. Keep it dry — the agreement is the drama. Numbers on the rail: total sigma ratio 1.011, median bin ratio 1.006, 94.1% of reported bins within 10%.">
+    <div class="kicker"><span>Trust anchor</span></div>
+    <h2 class="slide-title">Same data, same answer as the published analysis</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_5iter_fig13_ptonly.png" alt="Double-differential cross section d2sigma/dpT dp-parallel, p_T slices of d-sigma vs p-parallel: OmniFold result overlaid on the published MINERvA points, with the GENIE+MnvTune prediction, across all p_T slices."></figure>
+      <div class="stat-rail">
+        <div class="stat"><b>1.011</b><span>total σ, OmniFold / published</span></div>
+        <div class="stat"><b>1.006</b><span>median per-bin ratio</span></div>
+        <div class="stat"><b>94.1%</b><span>of reported bins within 10%</span></div>
+      </div>
+    </div>
+    <p class="fig-caption"><strong>Unbinned unfold of d²σ/(dp<sub>T</sub> dp<sub>∥</sub>), binned at the very end into the published binning</strong> — overlaid on the published points (PRD 104, 092007).</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Agreement quantified" data-speaker-notes="Per-bin pulls: mean 0.09, rms 0.60 — sub-1-sigma everywhere, no structure. Then say the full-covariance number yourself before anyone asks: chi2/ndf 3.66 against the paper covariance alone — correlated shape modes along the low-pT peak ridge, not normalization; 1.48 once our covariance is included. Anatomy in backup.">
+    <div class="kicker"><span>Trust anchor</span></div>
+    <h2 class="slide-title">Sub-1σ pulls — and the full-covariance picture</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_5iter_pull_full.png" alt="Per-bin pulls of the OmniFold result against the published measurement: pull map across the pT, p-parallel plane and pull histogram with mean 0.09 and rms 0.60."></figure>
+    </div>
+    <p class="fig-caption"><strong>Per-bin pulls vs the published result: mean 0.09, rms 0.60 — no structure across the plane.</strong> Against the paper's full covariance, χ²/ndf = 3.66: correlated shape modes on the low-p<sub>T</sub> ridge, not normalization; 1.48 with the combined covariance (anatomy in backup).</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Uncertainty budget (2D)" data-speaker-notes="I didn't reuse your machinery; I rebuilt it and got your answer. Flux, detector, and model universes propagated through the unfold from scratch. The 2D budget independently matches the published one — this budget is cleared.">
+    <div class="kicker"><span>Trust anchor</span></div>
+    <h2 class="slide-title">The uncertainty budget, rebuilt from scratch</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_fig6_7_uncertainty_pt.png" alt="Fractional uncertainty vs muon transverse momentum, decomposed into flux, models, normalization, hadronic response, muon reconstruction, statistical and ML components."></figure>
+      <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_fig6_7_uncertainty_pz.png" alt="Fractional uncertainty vs muon longitudinal momentum, same decomposition."></figure>
+    </div>
+    <p class="fig-caption"><strong>Flux, detector and model universes propagated through the unfold independently</strong> — median per-bin uncertainty 6.87% vs the published 6.86%. The ML contribution rides at the bottom.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Validation suite" data-speaker-notes="Try to break it before trusting it — each card is a different failure mode, each has a number. Closure recovers injected changes; coverage has the advertised frequency; doubling iterations barely moves the answer; an independent NN gives the same result; with binned inputs it reduces to IBU; and a fresh classifier can no longer tell the unfolded result from the target.">
+    <div class="kicker"><span>Trust anchor</span></div>
+    <h2 class="slide-title">Try to break it before trusting it</h2>
+    <div class="vgrid rise">
+      <div class="vcard"><span class="vk">Closure</span><b>PASS</b><span>truth reweights, hidden resolution variable, alternate model — all recovered</span></div>
+      <div class="vcard"><span class="vk">Coverage</span><b>68.7%</b><span>200-toy interval coverage vs the 68.27% Gaussian target</span></div>
+      <div class="vcard"><span class="vk">Iterations 5 → 10</span><b>0.026%</b><span>change in total σ when the iteration count doubles</span></div>
+      <div class="vcard"><span class="vk">Classifier family</span><b>1.008</b><span>NN / GBDT total-σ ratio, independent Keras-MLP cross-check</span></div>
+      <div class="vcard"><span class="vk">Binned limit</span><b>= IBU</b><span>with binned inputs the update reduces to D'Agostini</span></div>
+      <div class="vcard"><span class="vk">Bottom line</span><b>AUC 0.501</b><span>a fresh classifier can no longer separate unfolded from target (p = 0.17)</span></div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════ ACT 4 — NEW DIMENSIONS ═══════════ -->
+
+  <section class="slide figslide" data-label="Marginalization (how to read it)" data-speaker-notes="Set up the cross-check on toy data before showing the real one: the higher-dimensional unfold viewed in three axes; integrating out E-avail is just summing the same weighted events; the marginal must click onto the established 2D anchor. Two variants — volume collapse and slice sum — toggle live if useful.">
+    <div class="kicker"><span>New dimensions</span></div>
+    <h2 class="slide-title">Every new dimension carries its own cross-check</h2>
+    <div class="animwrap rise" data-anim="a6"></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Opening new axes" data-speaker-notes="The real check: same events, more columns — E-avail, q3, W, a simultaneous 5D unfold — marginalized back to the published 2D binning and compared to the published points as pulls.">
+    <div class="kicker"><span>New dimensions</span></div>
+    <h2 class="slide-title">The 5D unfold reproduces the 2D anchor</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/eavail_marginal_vs_paper_pull_full.png" alt="The 5D unfold marginalized back to the published 2D binning, compared to the published points as per-bin pulls: mean 0.16, rms 0.83."></figure>
+    </div>
+    <p class="fig-caption"><strong>Same events, more columns — a simultaneous 5D unfold (p<sub>T</sub>, p<sub>∥</sub>, E<sub>avail</sub>, q₃, W).</strong> Marginalized back down, it reproduces the 2D anchor.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Low-recoil physics" data-speaker-notes="The strongest physics-credibility slide — give it room. The unfolded E-avail spectrum vs generators: all underpredict at low recoil; Valencia 2p2h fills the dip between QE and Delta. Their established low-recoil result, recovered by a completely different method.">
+    <div class="kicker"><span>New dimensions</span></div>
+    <h2 class="slide-title">Re-finding MINERvA's own low-recoil physics</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/mode_decomp_eavail.png" alt="Unfolded E-avail spectrum with GENIE-CV interaction-mode decomposition: the data minus GENIE-CV gap is 2p2h-shaped, filling the dip between the QE and Delta peaks."></figure>
+      <figure class="fig-panel dark"><img src="./figures-dark/compare_mec_eavail.png" alt="Unfolded E-avail spectrum against GENIE-CV without 2p2h and with Valencia MEC added: the added 2p2h component closes most of the low-recoil gap."></figure>
+    </div>
+    <p class="fig-caption"><strong>The unfolded E<sub>avail</sub> spectrum re-finds the low-recoil excess: Valencia 2p2h fills the dip between QE and Δ.</strong> Your established result, recovered by a completely different method.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Localizing an excess (how to read it)" data-speaker-notes="Toy shapes, honest framing: in 1D the residual discrepancy is broad and shapeless. Open W — same weighted events, one more column — and it resolves into a compact corner of the (E-avail, W) plane. End frame says it plainly: central-value observation; significance pending corrected uncertainties.">
+    <div class="kicker"><span>New dimensions</span></div>
+    <div class="chips"><span class="chip warn">Shape-level only</span></div>
+    <h2 class="slide-title">A broad 1D discrepancy, resolved by one more axis</h2>
+    <div class="animwrap rise" data-anim="a8"></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Something new" data-speaker-notes="The real plane. Shape-level statement only: the residual excess that 2p2h cannot explain localizes at high E-avail AND high W — the DIS corner; high-E_avail cells carry two-thirds of the positive excess and most of that sits at W above 1.8 GeV. All four generators underpredict there. Say it plainly: significance withheld pending corrected uncertainty production.">
+    <div class="kicker"><span>New dimensions</span></div>
+    <div class="chips"><span class="chip warn">Shape-level only</span></div>
+    <h2 class="slide-title">A residual excess localizes at high E<sub>avail</sub> and high W</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/excess_eavail_W.png" alt="Unfolded spectrum and ratio maps in the E-avail, W plane: the residual data excess concentrates at high E-avail and high W, the DIS corner."></figure>
+    </div>
+    <p class="fig-caption"><strong>All four generators (GENIE MnvTune, bare GENIE, NuWro, GiBUU) underpredict the high-E<sub>avail</sub>, high-W corner.</strong> Significance withheld pending corrected uncertainty production.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════ ACT 5 — OUTLOOK + SUMMARY ═══════════ -->
+
+  <section class="slide figslide" data-label="Where this goes — point cloud" data-speaker-notes="First outlook beat. A point-cloud transformer unfolds straight from reconstructed calorimeter clusters — same events shown as detector-space clusters (left of the display) and truth final-state hadrons in momentum space (right). The direction is toward unfolding raw-ish detector data, skipping the hand-built summary observables. Outlook, not a finished precision result.">
+    <div class="kicker"><span>Outlook · 1 of 2</span></div>
+    <h2 class="slide-title">Toward unfolding raw detector data</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/pet_event_displays.png" alt="Point-cloud event displays: reconstructed calorimeter clusters in detector position space beside truth final-state hadrons in momentum space, same events."></figure>
+    </div>
+    <p class="fig-caption"><strong>A point-cloud transformer unfolds straight from reconstructed calorimeter clusters</strong> — toward raw-ish detector data rather than hand-built summary observables. Outlook, not a finished precision result.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="Where this goes — full phase space" data-speaker-notes="Second outlook beat. Removing the muon-angle and momentum cuts opens the full phase space; the acceptance map shows the truth rate, the reconstruction efficiency, and the dead region the cuts used to hide. This is where an unbinned method pays off — the extrapolated region is prior-dominated and handled honestly (backup B10). Outlook, not a finished precision result.">
+    <div class="kicker"><span>Outlook · 2 of 2</span></div>
+    <h2 class="slide-title">Extending to the full muon phase space</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel dark"><img src="./figures-dark/fps_acceptance_MEFHC.png" alt="Acceptance across the full uncut muon phase space: truth rate, reconstruction efficiency and the dead region."></figure>
+    </div>
+    <p class="fig-caption"><strong>Removing the muon cuts opens the full phase space</strong> — truth rate, reconstruction efficiency, and the previously-cut dead region. Outlook, not a finished precision result (pilot in backup B10).</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Summary" data-speaker-notes="Three bullets, then the ask: guidance on projections the collaboration wants, and on publication-level validation. Invite discussion.">
+    <div class="kicker"><span>Summary</span></div>
+    <h2 class="slide-title">Learn weights on events, not bins</h2>
+    <ul class="bullets rise">
+      <li><span>OmniFold is your unfolding with the histogram removed — it reduces to D'Agostini IBU.</span></li>
+      <li><span>It reproduces your published 2D result, with an independently rebuilt uncertainty budget.</span></li>
+      <li><span>The same events then open E<sub>avail</sub>, q₃ and W — recovering your low-recoil physics and localizing a residual excess in the DIS corner.</span></li>
+    </ul>
+    <div class="pin-bottom meta"><span>The ask: which projections would the collaboration most want, and what validation would you require at publication level?</span></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════ BACKUPS ═══════════ -->
+
+  <section class="slide divider" data-label="Backup">
+    <div class="rise">
+      <div class="ghost-num">B</div>
+      <h2 class="slide-title">Backup</h2>
+      <p class="note">Method details, validation suite, and uncertainty status — one topic per slide.</p>
+    </div>
+  </section>
+
+  <section class="slide content" data-label="B1 · Algorithm" data-speaker-notes="The two-step iteration in its density-ratio form, from the primer.">
+    <div class="kicker"><span>Backup 1 · Algorithm</span></div>
+    <h2 class="slide-title">The OmniFold iteration, precisely</h2>
+    <ul class="bullets rise">
+      <li><span>Step 1 — at reco level, train a classifier to separate data from (current-weight) simulation.
+        <span class="sub">Its output estimates the likelihood ratio data/simulation — the per-event reco weight ω.</span></span></li>
+      <li><span>Step 2 — at truth level, train a second classifier to turn the pulled-back weights into a function of truth variables only.
+        <span class="sub">This gives the truth-level weight ν — a proper reweighting of the generator prior.</span></span></li>
+      <li><span>Iterate: ν seeds the next pass. With binned inputs this is exactly D'Agostini IBU.
+        <span class="sub">Full derivation and notation in the OmniFold primer.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="B1b · MINERvA implementation" data-speaker-notes="The concrete interface to the open data product, for Q&A. Four flat trees per playlist; the truth denominator is authoritative — reconstructed signal is accepted only if its key is in it, truth-only events enter as native misses. Twelve ME playlists run separately, then merged. The xsec: masked phase-space data, non-negative per-bin purity weight, OmniFold push weights, then flux/POT/nucleons/bin-width normalization; completeness is 1 by construction, so no second absolute-efficiency division.">
+    <div class="kicker"><span>Backup 1b · From the open data product to a cross section</span></div>
+    <h2 class="slide-title">Four event trees preserve the analysis logic</h2>
+    <ul class="bullets rise">
+      <li><span><b>data</b> (4.1M selected events) · <b>mc_background</b> · <b>mc_signal_reco</b> (paired reco+truth) · <b>mc_truth_denom</b> (32.8M, authoritative).
+        <span class="sub">Truth-only events enter as native misses; 12 ME playlists run separately, then merge.</span></span></li>
+      <li><span>Step-1 target: phase-space data with a non-negative per-bin purity weight (data − background)/data.
+        <span class="sub">An explicitly unbinned negative-weight subtraction reproduces it (backup B2).</span></span></li>
+      <li><span>d²σ = Σ w<sub>push</sub>·w<sub>truth</sub> / (Φ · N<sub>POT</sub> · N<sub>nucleons</sub> · Δp<sub>T</sub> · Δp<sub>∥</sub>) per bin.
+        <span class="sub">Misses make the truth ensemble acceptance-corrected: completeness = 1, no second efficiency division.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B2 · Backgrounds & efficiency" data-speaker-notes="Backgrounds enter as negative weights in the data sample; fakes, misses and efficiency handled in the same event-weight bookkeeping. Left: negative-weight validation. Right: the efficiency map entering the cross-section extraction.">
+    <div class="kicker"><span>Backup 2 · Backgrounds, fakes, misses, efficiency</span></div>
+    <h2 class="slide-title">The same bookkeeping you already do</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/negweight_ratio_2d.png" alt="Ratio of negative-weight background subtraction to purity across the pT, p-parallel plane — consistent with one everywhere."></figure>
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/MEFHC_5iter_xsec_eff_heatmap.png" alt="Efficiency map across the pT, p-parallel plane entering the cross-section extraction."></figure>
+    </div>
+    <p class="fig-caption"><strong>Left:</strong> background subtraction via negative weights, validated against purity. <strong>Right:</strong> the efficiency map entering the cross-section extraction.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B3 · Classifier cross-check & migration" data-speaker-notes="The result does not hinge on the GBDT specifically: an independent, fully-trained Keras MLP, run through the same pipeline, reproduces the GBDT unfolded cross section — total-sigma ratio 1.0078, agreeing across pt, pz and E-avail. (An earlier subsampled, under-trained NN baseline that collapsed to a constant is retired — that was a training artifact, not a property of neural nets here.) Migration and resolution for the unfolded observables on the right.">
+    <div class="kicker"><span>Backup 3 · Classifier cross-check &amp; migrations</span></div>
+    <h2 class="slide-title">A neural-net cross-check agrees; migrations understood</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="./figures-dark/nn_vs_gbdt_full.png" alt="Unfolded cross section from the GBDT and an independent full Keras MLP, in pt, pz and E-avail, with MLP-over-GBDT ratio panels sitting near one."></figure>
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/migration_resolution.png" alt="Migration matrices and diagonal probabilities for the five unfolded observables."></figure>
+    </div>
+    <p class="fig-caption"><strong>Left:</strong> an independent full Keras MLP reproduces the GBDT unfolded cross section (total-σ ratio 1.0078) — the result does not depend on the classifier family. <strong>Right:</strong> migration and resolution for all five unfolded observables.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="B4 · Regularization" data-speaker-notes="Regularization is iteration count plus classifier capacity — the analogue of choosing the IBU iteration count. Five iterations for the headline results; stability under seed and split variations in the next backup.">
+    <div class="kicker"><span>Backup 4 · Regularization</span></div>
+    <h2 class="slide-title">Iteration count and classifier capacity</h2>
+    <ul class="bullets rise">
+      <li><span>The iteration count plays the same regularizing role as in D'Agostini IBU.
+        <span class="sub">Headline results use five iterations — the "5iter" in every figure name.</span></span></li>
+      <li><span>Classifier capacity (tree depth, count, learning rate) bounds how sharp a reweight can be learned.
+        <span class="sub">Kept deliberately modest; the GBDT is robust where a deep network is not (see B3).</span></span></li>
+      <li><span>Stability is verified directly: seed and train-split scans, next slide.</span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B5 · Seed variability" data-speaker-notes="ML seed and train-split variability: sub-percent per-bin spread in the bulk, controlled everywhere. 2D — cleared.">
+    <div class="kicker"><span>Backup 5 · Seed & split variability (2D — cleared)</span></div>
+    <h2 class="slide-title">Training randomness is a sub-leading effect</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_band_pt.png" alt="Cross section vs pT with the spread over ten training seeds drawn as error bars — the band is barely visible."></figure>
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_spread_2d.png" alt="Per-bin relative spread over training seeds across the pT, p-parallel plane — sub-percent in the bulk."></figure>
+    </div>
+    <p class="fig-caption"><strong>Spread over independent trainings:</strong> sub-percent per bin in the bulk of the phase space, a few percent at the sparse edges.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B6 · 2D covariance" data-speaker-notes="The 2D covariance structure: correlation matrix over the reported bins and the per-bin uncertainty spread. Cleared for use.">
+    <div class="kicker"><span>Backup 6 · 2D covariance (cleared)</span></div>
+    <h2 class="slide-title">2D covariance structure</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/uq_corr_2d.png" alt="Correlation matrix over the reported 2D bins, row-major in pT and pz."></figure>
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/uq_spread_2d.png" alt="Per-bin relative uncertainty spread across the pT, p-parallel plane."></figure>
+    </div>
+    <p class="fig-caption"><strong>Correlation structure over the reported bins (left) and per-bin spread (right)</strong> — the 2D budget behind the uncertainty slide.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="B6b · χ² anatomy" data-speaker-notes="For the inevitable question on the pull slide's chi-squared. Pulls use the published per-bin sigmas: sub-1-sigma everywhere. The full paper covariance couples bins: chi2/ndf 3.66, driven by correlated shape modes along the low-pT peak ridge — not normalization (total sigma ratio 1.011). Including our own covariance gives 1.48. Full anatomy in the note's statistical-methods appendix.">
+    <div class="kicker"><span>Backup 6b · Anatomy of the χ² = 3.66</span></div>
+    <h2 class="slide-title">Per-bin pulls and correlated shape are different questions</h2>
+    <ul class="bullets rise">
+      <li><span>Per-bin pulls against the published σ: mean 0.089, rms 0.60 — every bin individually consistent.</span></li>
+      <li><span>Against the paper's full covariance: χ²/ndf = 3.66.
+        <span class="sub">Driven by correlated shape modes along the low-p<sub>T</sub> peak ridge — not normalization (total σ ratio 1.011).</span></span></li>
+      <li><span>Against the combined (paper + this work) covariance: χ²/ndf = 1.48.
+        <span class="sub">Full mode-by-mode anatomy in the analysis note's statistical-methods appendix.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. Be specific about what is cleared and what is being regenerated, and why the talk withholds significances.">
+    <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
+    <div class="chips"><span class="chip warn">Uncertainty under regeneration — preliminary</span></div>
+    <h2 class="slide-title">What is cleared, what is being regenerated</h2>
+    <ul class="bullets rise">
+      <li><span>Cleared: the full 2D uncertainty budget and covariance.
+        <span class="sub">Independently rebuilt; matches the published budget (uncertainty slide, B6).</span></span></li>
+      <li><span>Being regenerated after a methodology fix: the 3D/4D/5D budgets and every covariance-based significance.
+        <span class="sub">No Nσ is quoted for the high-E<sub>avail</sub>/high-W excess anywhere in this talk.</span></span></li>
+      <li><span>Unaffected: central values, closure tests, marginalization cross-checks, and shape-level statements.
+        <span class="sub">The excess localization is a central-value observation; its significance follows with the corrected production.</span></span></li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B7b · Quarantined band" data-speaker-notes="One quarantined figure, shown only here and tagged: the E-avail, W spectrum with its preliminary band. No numbers quoted from it.">
+    <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
+    <div class="chips"><span class="chip warn">Uncertainty under regeneration — preliminary</span></div>
+    <h2 class="slide-title">The (E<sub>avail</sub>, W) band being regenerated</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel">
+        <span class="prelim-tag">Uncertainty under regeneration — preliminary</span>
+        <img src="./figures-dark/eavailW_band.png" alt="E-avail and W spectra with the quarantined preliminary uncertainty band, generators overlaid.">
+      </figure>
+    </div>
+    <p class="fig-caption"><strong>Shown for shape only</strong> — the band is preliminary and no numbers are quoted from this figure.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B8 · 5D controls" data-speaker-notes="5D control distributions: reco-level data/MC in all five observables and the corner plot with correlations — MC tracks the data's correlation structure.">
+    <div class="kicker"><span>Backup 8 · 5D controls (central values)</span></div>
+    <h2 class="slide-title">Control distributions across all five axes</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/control_plots.png" alt="Reco-level data vs MC in pT, p-parallel, E-avail, q3 and W with data/MC ratio panels."></figure>
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/control_corner.png" alt="Corner plot of the five observables: MC 2D distributions with data points and matching correlation coefficients."></figure>
+    </div>
+    <p class="fig-caption"><strong>Reco-level control: data/MC in each axis (left), and the correlation structure MC vs data (right)</strong> — r<sub>MC</sub> ≈ r<sub>data</sub> in every pair.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B9 · PET details" data-speaker-notes="Point-cloud transformer details: cardinality of the cloud vs truth hadrons, and the central-value comparison to the GBDT — precision comparison withheld (quarantined).">
+    <div class="kicker"><span>Backup 9 · Point-cloud transformer</span></div>
+    <h2 class="slide-title">PET inputs and central-value cross-check</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/pet_cardinality_real.png" alt="Point-cloud cardinality: truth final-state hadrons vs reconstructed clusters in MC and data, truncation cap at 12."></figure>
+      <figure class="fig-panel"><img src="./figures-dark/pet_vs_gbdt_absolute.png" alt="PET point-cloud vs GBDT scalar unfolds, central values, in pT, pz, E-avail and q3."></figure>
+    </div>
+    <p class="fig-caption"><strong>Left:</strong> cloud cardinality, truth vs reco, capped at 12 points. <strong>Right:</strong> PET vs GBDT central values agree; the precision comparison awaits the corrected uncertainty production.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide figslide" data-label="B10 · Full phase space" data-speaker-notes="The FPS pilot, labeled preliminary: prior-swap envelope for the extrapolated region and the pilot comparison against the restricted phase space.">
+    <div class="kicker"><span>Backup 10 · Full phase space (preliminary)</span></div>
+    <div class="chips"><span class="chip warn">Preliminary</span></div>
+    <h2 class="slide-title">Removing the muon cuts: pilot study</h2>
+    <div class="figwrap rise">
+      <figure class="fig-panel">
+        <span class="prelim-tag">Preliminary</span>
+        <img src="../uploads/claude-design-package/figures/fps_prior_envelope_MEFHC.png" alt="Prior-swap envelope for the full-phase-space extrapolation: anchor ratio, prior-swap ratio and absolute cross section over the extended plane.">
+      </figure>
+      <figure class="fig-panel">
+        <span class="prelim-tag">Preliminary</span>
+        <img src="../uploads/claude-design-package/figures/fps_pilot_compare_MEFHC.png" alt="Full-phase-space pilot compared with the restricted-phase-space result.">
+      </figure>
+    </div>
+    <p class="fig-caption"><strong>The extrapolated region is prior-dominated by construction</strong> — the prior-swap envelope (left) bounds it honestly; the pilot tracks the restricted result where they overlap (right).</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+<script src="anims.js"></script>
+<script>
+(() => {
+  const stage = document.querySelector('deck-stage');
+  if (new URLSearchParams(location.search).has('baselines')) stage.setAttribute('data-baselines', '');
+})();
+</script>
+</body>
+</html>

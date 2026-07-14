@@ -137,6 +137,203 @@ if not getattr(plt.savefig, "_technote_pdf_twin", False):
     plt.savefig = _pyplot_savefig
 
 
+# --- optional dark presentation theme (TECHNOTE_DARK=1) -------------------
+# Gated on an env var so the analysis-note builds are untouched: figures come
+# out on the Nocturne deck ground (docs/jul-16-presentation) instead of white.
+# Generator hues keep their identities but move to dark-surface variants
+# validated for lightness/chroma/CVD/contrast against #161826; a savefig-time
+# fixup remaps artists that scripts hardcode as black/white.
+import os as _os
+
+TECHNOTE_DARK = bool(_os.environ.get("TECHNOTE_DARK"))
+if TECHNOTE_DARK:
+    DARK_BG = "#161826"      # deck ground (--color-bg)
+    DARK_PANEL = "#1b1e2e"   # axes panel, one step above the ground
+    DARK_SURFACE = "#232532" # legend/bbox surface (--color-surface)
+    DARK_INK = "#e9e9ed"     # primary text/data ink (--color-text)
+    DARK_MUTED = "#b2b6ca"   # secondary text (neutral-400)
+    DARK_GRID = "#3f424d"    # gridlines (neutral-800)
+    DARK_SPINE = "#595d6c"   # spines/ticks (neutral-700)
+
+    GEN_COLORS.update({
+        "GENIE": "#D96C6C", "Tune": "#5B8ED6", "MEC": "#5B8ED6",
+        "NuWro": "#3FA845", "GiBUU": "#A078D0", "data": DARK_INK,
+    })
+    GEN_PALETTE[:] = ["#D96C6C", "#5B8ED6", "#3FA845", "#A078D0"]
+    LINE_CYCLE[:] = GEN_PALETTE + [
+        "#B08468", "#E58FCB", "#9397AB", "#C9CA4E", "#3FC8D8", "#FF942E",
+    ]
+    mpl.rcParams.update({
+        "figure.facecolor": DARK_BG, "savefig.facecolor": DARK_BG,
+        "axes.facecolor": DARK_PANEL, "axes.edgecolor": DARK_SPINE,
+        "axes.labelcolor": DARK_INK, "text.color": DARK_INK,
+        "xtick.color": DARK_MUTED, "ytick.color": DARK_MUTED,
+        "xtick.labelcolor": DARK_MUTED, "ytick.labelcolor": DARK_MUTED,
+        "grid.color": DARK_GRID,
+        "legend.facecolor": DARK_SURFACE, "legend.edgecolor": DARK_SPINE,
+        "axes.prop_cycle": mpl.cycler(color=LINE_CYCLE),
+        "hatch.color": DARK_MUTED,
+    })
+
+    import colorsys as _colorsys
+    from matplotlib.colors import to_rgba as _to_rgba
+    from matplotlib.colors import LinearSegmentedColormap as _LSC
+
+    # Diverging map for dark grounds: RdBu_r's white midpoint glares on the
+    # deck, so near-zero fades into the panel instead and the extremes stay
+    # bright. Swapped in at savefig time for any image drawn with RdBu_r.
+    DARK_DIV_CMAP = _LSC.from_list(
+        "technote_dark_div",
+        ["#A8CCF8", "#5B8ED6", "#20233A", "#D96C6C", "#F8B8B8"],
+    )
+    _DIV_SWAP_NAMES = {"RdBu_r", "RdBu", "coolwarm", "bwr"}
+
+    def _rgba(color):
+        try:
+            r, g, b, a = _to_rgba(color)
+        except (TypeError, ValueError):
+            return None
+        return (r, g, b, a) if a > 0 else None
+
+    def _relight(r, g, b, a, new_l, sat_scale=1.0):
+        h, l, s = _colorsys.rgb_to_hls(r, g, b)
+        r2, g2, b2 = _colorsys.hls_to_rgb(h, new_l, min(1.0, s * sat_scale))
+        return (r2, g2, b2, a)
+
+    def _dark_swap(color):
+        """Ink rule (text, lines, markers): light-theme ink -> dark-theme ink."""
+        c = _rgba(color)
+        if c is None:
+            return None
+        r, g, b, a = c
+        lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        chroma = max(r, g, b) - min(r, g, b)
+        if lum < 0.20 and chroma < 0.10:                # near-black -> ink
+            return (*_to_rgba(DARK_INK)[:3], a)
+        if 0.20 <= lum <= 0.82 and chroma < 0.04:       # neutral gray ink ("0.25".."0.7")
+            return (*_to_rgba(DARK_MUTED)[:3], a)
+        if lum < 0.40 and chroma >= 0.04:               # colored dark ink -> lighten, keep hue
+            return _relight(r, g, b, a, 0.70)
+        return None
+
+    def _dark_swap_fill(color):
+        """Fill rule (patch/collection faces & edges): darken light grounds/pastels."""
+        c = _rgba(color)
+        if c is None:
+            return None
+        r, g, b, a = c
+        lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        chroma = max(r, g, b) - min(r, g, b)
+        if lum < 0.20 and chroma < 0.10:                # black fills (e.g. data scatter) -> ink
+            return (*_to_rgba(DARK_INK)[:3], a)
+        if lum > 0.92 and chroma < 0.05:                # white ground -> panel
+            return (*_to_rgba(DARK_PANEL)[:3], a)
+        if lum > 0.70:                                  # light pastel band -> dark tint, same hue
+            return _relight(r, g, b, a, 0.20, sat_scale=0.9)
+        return None
+
+    def _dark_fix_artist(art):
+        import numpy as _np
+        from matplotlib.lines import Line2D
+        from matplotlib.text import Text
+        from matplotlib.patches import Patch
+        from matplotlib.collections import Collection
+        if isinstance(art, Text):
+            new = _dark_swap(art.get_color())
+            if new is not None:
+                art.set_color(new)
+            bp = art.get_bbox_patch()
+            if bp is not None:
+                nf = _dark_swap_fill(bp.get_facecolor())
+                if nf is not None:  # light box behind text -> surface, keep alpha
+                    bp.set_facecolor((*_to_rgba(DARK_SURFACE)[:3], _to_rgba(bp.get_facecolor())[3]))
+                ne = _dark_swap(bp.get_edgecolor())
+                if ne is not None:
+                    bp.set_edgecolor(DARK_SPINE)
+        elif isinstance(art, Line2D):
+            for get, set_ in ((art.get_color, art.set_color),
+                              (art.get_markerfacecolor, art.set_markerfacecolor),
+                              (art.get_markeredgecolor, art.set_markeredgecolor)):
+                new = _dark_swap(get())
+                if new is not None:
+                    set_(new)
+        elif isinstance(art, Patch):
+            nf = _dark_swap_fill(art.get_facecolor())
+            if nf is not None:
+                art.set_facecolor(nf)
+            ne = _dark_swap(art.get_edgecolor())
+            if ne is not None:
+                art.set_edgecolor(ne)
+        elif isinstance(art, Collection):
+            if getattr(art, "get_array", None) and art.get_array() is not None:
+                # colormapped collection (pcolormesh etc.): swap the cmap,
+                # never the computed facecolors
+                if art.get_cmap().name in _DIV_SWAP_NAMES:
+                    art.set_cmap(DARK_DIV_CMAP)
+                return
+            try:
+                fcs = art.get_facecolor()
+                if len(fcs):
+                    new = [(_dark_swap_fill(tuple(c)) or tuple(c)) for c in fcs]
+                    art.set_facecolor(new)
+                ecs = art.get_edgecolor()
+                if len(ecs):
+                    new = [(_dark_swap(tuple(c)) or tuple(c)) for c in ecs]
+                    art.set_edgecolor(new)
+            except (TypeError, ValueError):
+                pass
+
+    def _dark_fix_figure(fig):
+        if getattr(fig, "_technote_darkfixed", False):
+            return
+        fig._technote_darkfixed = True
+        fig.patch.set_facecolor(DARK_BG)
+        for ax in fig.axes:
+            ax.patch.set_facecolor(DARK_PANEL)
+            for im in ax.images:
+                if im.get_cmap().name in _DIV_SWAP_NAMES:
+                    im.set_cmap(DARK_DIV_CMAP)
+            for sp in ax.spines.values():
+                new = _dark_swap(sp.get_edgecolor())
+                sp.set_edgecolor(new if new is not None else DARK_SPINE)
+            for art in list(ax.get_children()):
+                if art is ax.patch:  # the panel was just set; the fill rule must not revisit it
+                    continue
+                _dark_fix_artist(art)
+            leg = ax.get_legend()
+            if leg is not None:
+                leg.get_frame().set_facecolor(DARK_SURFACE)
+                leg.get_frame().set_edgecolor(DARK_SPINE)
+                for t in leg.get_texts():
+                    new = _dark_swap(t.get_color())
+                    if new is not None:
+                        t.set_color(new)
+                for lh in getattr(leg, "legend_handles", None) or getattr(leg, "legendHandles", []):
+                    if lh is not None:
+                        _dark_fix_artist(lh)
+        for t in fig.texts:
+            _dark_fix_artist(t)
+
+    def _make_savefig_dark(orig_savefig):
+        if getattr(orig_savefig, "_technote_dark", False):
+            return orig_savefig
+
+        def savefig(self, fname, *args, **kwargs):
+            _dark_fix_figure(self)
+            # transparent figure ground (axes panels stay): the deck paints a
+            # gradient behind the plot, so the raster must not carry a hard
+            # background rectangle
+            kwargs["facecolor"] = "none"
+            kwargs["transparent"] = False
+            return orig_savefig(self, fname, *args, **kwargs)
+
+        savefig._technote_dark = True
+        savefig._technote_pdf_twin = getattr(orig_savefig, "_technote_pdf_twin", False)
+        return savefig
+
+    Figure.savefig = _make_savefig_dark(Figure.savefig)
+
+
 def minerva_tag(fig_or_ax, loc="upper left"):
     """Uniform sample/POT annotation for every data-bearing note figure.
 

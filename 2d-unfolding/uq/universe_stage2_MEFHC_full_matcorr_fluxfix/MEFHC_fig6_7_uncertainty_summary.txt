@@ -7,6 +7,7 @@ n_reported: 205
 
 pz projection:
   Total                  median=  5.901% max= 14.994%
+  Published total        median=  5.474% max= 10.761%
   Flux                   median=  4.912% max=  5.714%
   Models                 median=  0.291% max=  1.101%
   Normalization          median=  1.400% max=  1.414%
@@ -17,11 +18,12 @@ pz projection:
 
 pt projection:
   Total                  median=  6.220% max=  8.037%
+  Published total        median=  5.308% max=  7.682%
   Flux                   median=  4.890% max=  5.657%
   Models                 median=  0.335% max=  0.424%
   Normalization          median=  1.399% max=  1.415%
   Statistical            median=  0.254% max=  1.013%
   Hadronic response      median=  0.255% max=  3.033%
   Muon reconstruction    median=  3.551% max=  5.051%
-  ML (not drawn)         median=  0.042% max=  0.115%
+  ML                     median=  0.042% max=  0.115%
 

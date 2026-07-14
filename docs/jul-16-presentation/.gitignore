@@ -1,0 +1,5 @@
+# The July-16 talk must be self-contained from a bare checkout: re-include the
+# deck figures that the repo-root *.png ignore would otherwise drop.
+!*.png
+# the zip is redundant with the unpacked claude-design-package/
+claude-design-package.zip

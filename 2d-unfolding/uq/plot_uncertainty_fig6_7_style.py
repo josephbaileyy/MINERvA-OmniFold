@@ -59,6 +59,7 @@ STYLE = {
     "Hadronic response": {"color": "#2ca02c", "linestyle": "-", "linewidth": 2.0},
     "Muon reconstruction": {"color": "#f2b21b", "linestyle": "-", "linewidth": 2.0},
     "ML": {"color": "#777777", "linestyle": "--", "linewidth": 1.6},
+    "Published total": {"color": "#444444", "linestyle": "-.", "linewidth": 2.0},
 }
 
 
@@ -143,6 +144,37 @@ def load_universe_groups(path: str, shape: tuple[int, int]) -> OrderedDict[str, 
     return groups
 
 
+def load_paper_total(paper_root: str, reported: np.ndarray):
+    """Published central values on the (pt, pz) grid + TotalCovariance
+    restricted to the reported bins, in the same pt-major C order this
+    script's projection uses (paper global id = ipt*N_PZ + ipz, cf.
+    compare_to_paper_fullcov.flatten_th2d)."""
+    n_pt, n_pz = len(PT_EDGES) - 1, len(PZ_EDGES) - 1
+    rf = open_root(paper_root)
+    h = rf.Get("pt_pl_cross_section")
+    tm = rf.Get("TotalCovariance")
+    if not h or not tm:
+        rf.Close()
+        die(f"pt_pl_cross_section / TotalCovariance missing in {paper_root}")
+    x_is_pt = h.GetNbinsX() == n_pt
+    xsec = np.zeros((n_pt, n_pz), dtype=float)
+    for ix in range(1, h.GetNbinsX() + 1):
+        for iy in range(1, h.GetNbinsY() + 1):
+            ptb, pzb = (ix, iy) if x_is_pt else (iy, ix)
+            xsec[ptb - 1, pzb - 1] = h.GetBinContent(ix, iy)
+    n = tm.GetNrows()
+    if n != n_pt * n_pz:
+        rf.Close()
+        die(f"paper TotalCovariance is {n}x{n}, expected {n_pt * n_pz}")
+    cov = np.zeros((n, n), dtype=float)
+    for i in range(n):
+        for j in range(n):
+            cov[i, j] = tm(i, j)
+    rf.Close()
+    idx = np.flatnonzero(reported.ravel(order="C"))
+    return xsec, cov[np.ix_(idx, idx)]
+
+
 def projection_matrix(axis: str, reported: np.ndarray) -> np.ndarray:
     flat_reported = reported.ravel(order="C")
     n_reported = int(flat_reported.sum())
@@ -191,6 +223,7 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
     fig, ax = plt.subplots(figsize=(7.6, 5.0))
     order = [
         "Total",
+        "Published total",
         "Statistical",
         "Flux",
         "Models",
@@ -243,6 +276,9 @@ def main() -> None:
     parser.add_argument("--no-title", action="store_true")
     parser.add_argument("--ymax", type=float, default=None,
                         help="Fixed y-axis upper bound. Default autosizes with a 0.15 floor.")
+    parser.add_argument("--paper-root", default="",
+                        help="Paper data-release ROOT (cov_ptpl_minerva_inclusive_6GeV.root); "
+                             "when given, overlay the published total as a dash-dot line.")
     parser.add_argument("--include-ml", choices=("auto", "always", "never"), default="auto")
     parser.add_argument("--ml-show-threshold", type=float, default=0.002,
                         help="Draw ML in auto mode if max projected fractional uncertainty exceeds this.")
@@ -283,21 +319,38 @@ def main() -> None:
         "",
     ]
 
+    # optional published-total overlay from the paper data release
+    paper_xsec = paper_cov = None
+    if args.paper_root:
+        paper_xsec, paper_cov = load_paper_total(args.paper_root, reported)
+
+    # decide the ML line ONCE across both projections: drawing it in one
+    # panel but not its twin reads as an inconsistency, not a threshold
+    show_ml = False
+    if ml_cov is not None:
+        if args.include_ml == "always":
+            show_ml = True
+        elif args.include_ml == "auto":
+            for axis in ("pz", "pt"):
+                proj = projection_matrix(axis, reported)
+                central = central_projection(xsec, reported, axis)
+                if float(np.nanmax(fractional_projection(ml_cov, proj, central))) >= args.ml_show_threshold:
+                    show_ml = True
+                    break
+
     for axis, edges, suffix in (("pz", PZ_EDGES, "pz"), ("pt", PT_EDGES, "pt")):
         proj = projection_matrix(axis, reported)
         central = central_projection(xsec, reported, axis)
         curves = OrderedDict()
         curves["Total"] = fractional_projection(total_cov, proj, central)
+        if paper_cov is not None:
+            curves["Published total"] = fractional_projection(
+                paper_cov, proj, central_projection(paper_xsec, reported, axis))
         for cat in CATEGORY_ORDER:
             if np.trace(groups[cat]) > 0:
                 curves[cat] = fractional_projection(groups[cat], proj, central)
-        if ml_cov is not None:
-            ml_curve = fractional_projection(ml_cov, proj, central)
-            show_ml = args.include_ml == "always" or (
-                args.include_ml == "auto" and float(np.nanmax(ml_curve)) >= args.ml_show_threshold
-            )
-            if show_ml:
-                curves["ML"] = ml_curve
+        if ml_cov is not None and show_ml:
+            curves["ML"] = fractional_projection(ml_cov, proj, central)
 
         out_png = f"{args.out_prefix}_{suffix}.png"
         draw_one(axis, edges, curves, out_png, title, args.ymax)

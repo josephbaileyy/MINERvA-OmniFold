@@ -129,7 +129,9 @@ def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
         f.Close()
         print(f"[absolute] GBDT total sigma = {tot_gbdt:.4g}; PET/GBDT = {tot/tot_gbdt:.4f}")
         fig.suptitle("PET (point cloud) vs GBDT (scalars): ABSOLUTE 4D cross section")
-        technote_style.minerva_tag(fig)
+        # tag on the top-right panel so it lands at the figure's top-right corner,
+        # clear of the top-left panel's 1e-38 y-axis offset text (they overlapped)
+        technote_style.minerva_tag(axs[0, 1], loc="upper right")
         fig.tight_layout(); fig.savefig(args.out, dpi=130)
         print(f"[OK] wrote {args.out}")
 
