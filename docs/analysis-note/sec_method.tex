@@ -123,7 +123,7 @@ deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools}
 demonstrates this regime specifically for unbinned unfolding --- boosted
 decision trees are effective with a small number of high-level features,
 complementing deep models that ingest the full event record --- and our own
-measurements follow the same division of labour: GBDTs for the scalar
+measurements follow the same division of labor: GBDTs for the scalar
 unfolds, a point-cloud transformer when the input is the full cluster record
 (\S\ref{sec:pet}). \S\ref{sec:validation} validates the choice directly with
 calibration tests and MLP/transformer cross-checks. The engine
@@ -149,7 +149,7 @@ The learner settings were fixed \emph{a priori} rather than tuned on data:
 \texttt{GradientBoosting} defaults, and the production LightGBM backend is
 configured to the matched capacity ($\texttt{num\_leaves}=8=2^{3}$) so that
 every backend shares the same, deliberately modest, model capacity ---
-capacity being one of OmniFold's regularisers (\S\ref{sec:method-algo}). No
+capacity being one of OmniFold's regularizers (\S\ref{sec:method-algo}). No
 hyperparameter search was performed on data, avoiding any tuning-on-result
 loop. The configuration is instead validated after the fact: closure and
 classifier-calibration tests (\S\ref{sec:validation}), insensitivity to
@@ -199,7 +199,7 @@ production, universe-sweep, and closure run:
         pseudo-data are simulated events passing both the reconstructed and
         truth selections, weighted identically to the production data path,
         so closure exercises the same code path as the measurement rather
-        than an idealised shortcut.
+        than an idealized shortcut.
 \end{itemize}
 
 \subsection{Cross-section extraction}
@@ -222,7 +222,7 @@ integral (broadcast over the other axes), $N$ the fiducial nucleon count
 The factor $10^{4}$ converts the flux tabulation per square meter to the
 reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), so the result
 carries the conventional units of $\si{cm^2}$ per axis unit per nucleon.  The implementation is
-\texttt{extract\_cross\_section\_2d} and its N-dimensional generalisation
+\texttt{extract\_cross\_section\_2d} and its N-dimensional generalization
 \texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
 extractions to $<10^{-12}$). The flux normalization enters as
 $\sigma\propto1/\Phi$, so $\Phi$ is itself varied per flux universe when
@@ -239,7 +239,7 @@ $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$;
 $q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$;
 $W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ --- each ending in a wide catch
 bin so the marginals capture the full CC-inclusive tails (a truncated top edge
-would break the marginalisation anchors of \S\ref{sec:3d-anchor}). Because the
+would break the marginalization anchors of \S\ref{sec:3d-anchor}). Because the
 binning is applied only after unfolding, these choices can be revisited
 without re-running the unfold. The full edge table and reported-bin mapping
 are given in App.~\ref{app:statmethods} (\S\ref{sec:205bins}).

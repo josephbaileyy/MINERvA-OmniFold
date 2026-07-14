@@ -23,7 +23,7 @@ practical issues come up in this analysis.
 \paragraph{Positive-definiteness check (Cholesky).}
 A matrix $\mathbf{C}$ is positive-definite (PD) iff there is a
 lower-triangular $\mathbf{L}$ with $\mathbf{C}=\mathbf{L}\mathbf{L}\T$
-(the Cholesky factorisation). If Cholesky succeeds, $\mathbf{C}$ is
+(the Cholesky factorization). If Cholesky succeeds, $\mathbf{C}$ is
 invertible and Eq.~\eqref{eq:chi2} is well-posed.
 
 \paragraph{Ridge jitter.}
@@ -83,7 +83,7 @@ pointer $\cdot$ Worked example}.
 
 \paragraph{What it estimates.}
 The variance in the unfolded cross section due to random choices
-inside the GBDT (gradient-boosted decision tree) optimiser. OmniFold
+inside the GBDT (gradient-boosted decision tree) optimizer. OmniFold
 is deterministic given the input weights, the network architecture,
 and the random seed; flipping only the seed produces slightly
 different fits to the per-event reweighting functions, and that
@@ -646,7 +646,7 @@ and a pull histogram (in \texttt{compare\_to\_paper\_fullcov.py}).
 With the combined covariance (paper TotalCov $+$ matcorr universe $+$
 bootstrap-300 $+$ ML):
 \begin{itemize}[nosep]
-  \item Pull mean: $\boxed{0.069}$ (centred on zero; no global offset).
+  \item Pull mean: $\boxed{0.069}$ (centered on zero; no global offset).
   \item Pull RMS: $\boxed{0.466}$.
 \end{itemize}
 Pull RMS $< 1$ means the combined error band is \emph{conservative}
@@ -759,7 +759,7 @@ Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
 reach --- but for a \emph{statistical-precision} reason, not a missing-band
 one. Our OmniFold bootstrap stat block is $2.5\times$ smaller by trace than
 the paper's stat block ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.8\times10^{-40}$ vs
-$\sqrt{\Tr}\,\texttt{StatOnlyCov}=4.6\times10^{-40}$), so it regularises the
+$\sqrt{\Tr}\,\texttt{StatOnlyCov}=4.6\times10^{-40}$), so it regularizes the
 small systematic modes $2.5\times$ less. The naive pseudo-inverse then gives
 $\chi^{2}/\mathrm{ndf}=252$ for $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$,
 dominated by poorly-determined directions, against the paper's $3.66$ with
@@ -887,7 +887,7 @@ small-eigenvalue structure of the published \texttt{TotalCov}
 (\texttt{diagnose\_tension.py}). The rest of this section dissects it.
 
 \paragraph{Eigenmode decomposition.}
-Diagonalise the reported-block paper covariance,
+Diagonalize the reported-block paper covariance,
 $\mathbf{C}=\sum_{k}\lambda_{k}\mathbf{u}_{k}\mathbf{u}_{k}\T$
 ($\lambda_{1}\!\ge\!\cdots\!\ge\!\lambda_{n}$), and project the residual
 $\boldsymbol{\Delta}$ onto each eigenvector, $c_{k}=\mathbf{u}_{k}\T\boldsymbol{\Delta}$.
@@ -909,7 +909,7 @@ null directions nor the absolute smallest eigenvalues}:
         of $5$--$6\sigma$.
   \item The ten \emph{smallest}-$\lambda$ modes carry only $3\%$ of the
         $\chi^{2}$; about $90$ modes are needed to reach $90\%$. The
-        $\chi^{2}$ is broadly distributed, not localised to the
+        $\chi^{2}$ is broadly distributed, not localized to the
         ill-conditioned tail.
 \end{itemize}
 
@@ -935,7 +935,7 @@ $\chi^{2}/\mathrm{ndf}=3.60$, \S\ref{sec:shape}.)
 Mapping the dominant eigenvectors and the per-bin contribution
 $\Delta_{i}(\mathbf{C}^{+}\boldsymbol{\Delta})_{i}$ back onto the
 $14\times16$ grid (\texttt{tension\_mode\_maps.png},
-\texttt{tension\_chi2\_map.png}) localises the tension to the
+\texttt{tension\_chi2\_map.png}) localizes the tension to the
 \textbf{low-$\pT$ cross-section peak ridge} ($\pT\lesssim0.4$ GeV/c,
 $\pT$-bins 2/7/10 carry $16/11/12\%$) and the low-$\pPar$ near-edge
 cells ($\pPar$-bins 0/1/8). The carrier modes are sign-alternating
@@ -1027,7 +1027,7 @@ $\bar X^{\text{truth}}_{i}>0$, $i$ indexing the $205$ reported cells):
 r^{(t)}_{i}
 \;&=\;
 \frac{U^{(t)}_{i} - \bar X^{\text{truth}}_{i}}{\sigma_{i}}
-\quad\text{(per-toy, per-bin standardised residual)},
+\quad\text{(per-toy, per-bin standardized residual)},
 \\
 c_{i}
 \;&=\;
@@ -1243,7 +1243,7 @@ $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
 Pull RMS $= 0.466$ & \S\ref{sec:pull} &
-  Per-bin standardised residual on combined $\mathbf{C}$ \\
+  Per-bin standardized residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
 Mean coverage $= 68.71\%$ & \S\ref{sec:coverage} &
@@ -1300,7 +1300,7 @@ success probability, fixed expected count).
 The full multinomial has the constraint $\sum n_{i}=N$, which
 introduces $\mathcal{O}(1/N)$ correlations between the $n_{i}$. In the
 large-$N$ limit those correlations vanish and the $n_{i}$ become
-\emph{independent} Poisson(1) variables. This is the Poissonisation
+\emph{independent} Poisson(1) variables. This is the Poissonization
 of the multinomial: the conditioned $N$-event multinomial is a
 Poisson process \emph{conditioned} on hitting $N$ counts, and the
 unconditional version is independent Poissons.

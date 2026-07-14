@@ -27,7 +27,7 @@ done carelessly it amplifies noise into artifacts.
 \section{The method, in plain language}
 
 The traditional way to unfold builds a big table --- a ``migration matrix'' ---
-that records, for every bin of true momentum, how events leak into neighbouring
+that records, for every bin of true momentum, how events leak into neighboring
 bins of measured momentum, and then tries to invert that leakage. It works, but
 it has a crippling limitation: each new quantity you want to measure multiplies
 the number of bins, and the table quickly becomes too large and too sparse to be
@@ -52,7 +52,7 @@ makes everything in the next section possible.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{migration_resolution}
-  \caption{Why unfolding is needed: the detector mixes neighbouring values of
+  \caption{Why unfolding is needed: the detector mixes neighboring values of
   the true muon momentum together (the off-diagonal spread in these maps). A
   na\"ive bin-by-bin correction would be badly biased; unfolding undoes the
   mixing. OmniFold does it without ever building these bins.}
@@ -120,7 +120,7 @@ Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
 in a specific corner: high available energy \emph{and} high $W$ --- the
 ``deep-inelastic'' region where the neutrino shatters the nucleon. There, all
 four simulations undershoot the central result. The exact significance is
-withheld while the corrected covariance is regenerated. This is the kind of localised discrepancy that
+withheld while the corrected covariance is regenerated. This is the kind of localized discrepancy that
 points theorists toward what their models are missing --- and it was only
 visible because the unbinned method let us slice the data this finely.
 

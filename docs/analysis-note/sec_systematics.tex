@@ -23,8 +23,15 @@ on the reported numbers, are in App.~\ref{app:statmethods}. Our
     Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{6.86}{\percent} \\
     \bottomrule
   \end{tabular}
-  \caption{Stage-2 UQ envelope on the 205 reported bins. The standalone combined
-  budget (\SI{6.865}{\percent}) matches the published total (\SI{6.86}{\percent}). \bpn{stage 2 undefined as is C.}}
+  \caption{Uncertainty budget for the 2D cross section over the 205 reported
+  bins. For each component, $C$ denotes its $205\times205$ covariance matrix;
+  $\sqrt{\mathrm{Tr}\,C}$ is the quadrature sum of its absolute per-bin
+  uncertainties. The standalone combined median relative uncertainty
+  (\SI{6.865}{\percent}) matches the published total
+  (\SI{6.86}{\percent}). \bpn{stage 2 undefined as is C.}
+  \jrb{Agreed. I removed the internal ``Stage-2'' label, renamed the table as
+  the 2D uncertainty budget, and defined $C$ and $\sqrt{\mathrm{Tr}\,C}$ in
+  the caption.}}
   \label{tab:uq}
 \end{table}
 
@@ -144,7 +151,7 @@ throw, and forms the joint covariance about the throw mean.  The joint
 displacement of that mean from the CV is stored separately as a per-bin vector
 and its norm; per-band endpoint displacements are not stored. The matched block comparator
 uses the MAT convention: universe-mean centering and the biased $1/N$
-normalisation, with both endpoints re-unfolded.
+normalization, with both endpoints re-unfolded.
 
 The earlier 4D/5D/FPS unified-throw products used a one-sided interpolation,
 CV-centering, and an estimator-jitter prescription that is no longer the

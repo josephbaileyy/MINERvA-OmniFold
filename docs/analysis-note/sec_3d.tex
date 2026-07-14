@@ -21,7 +21,7 @@ without precedent, and is a direct consequence of the unbinned formulation.
   \caption{Dimensionality of the full set of MINERvA differential cross-section
   measurements over time (number of kinematic variables unfolded
   \emph{simultaneously}; a double-differential $d^{2}\sigma/dx\,dy$ counts as
-  two), coloured by channel. All $N=30$ prior measurements use binned D'Agostini
+  two), colored by channel. All $N=30$ prior measurements use binned D'Agostini
   IBU and reach at most two variables; this work's unbinned OmniFold adds a
   third. Source: the MINERvA data-release page; full list in
   Table~\ref{tab:landscape}. Dimensionality is classified from each analysis's
@@ -43,7 +43,7 @@ reco $\Eavail$ is the calorimetric tracker$+$ECAL estimate scaled by $1.17$,
 over all twelve ME~FHC playlists, carrying the $\Eavail$
 branches alongside the $\pT$/$\pPar$ branches. The unfolding driver is
 the 2D pipeline with a three-column feature stack
-$(\pT,\pPar,\Eavail)$; the cross-section extraction generalises to a 3D Jacobian
+$(\pT,\pPar,\Eavail)$; the cross-section extraction generalizes to a 3D Jacobian
 $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$ with the flux $\Phi$ still applied per
 $\pT$ (broadcast over $\pPar$ and $\Eavail$). The $\Eavail$ binning
 $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide catch bin so that the
@@ -69,7 +69,7 @@ of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 
 \subsection{Validation against the 2D measurement}
 \label{sec:3d-anchor}
-With no published 3D reference, the validation anchor is that marginalising the
+With no published 3D reference, the validation anchor is that marginalizing the
 3D cross section over $\Eavail$ must reproduce the 2D result of
 \S\ref{sec:results}. The marginal recovers the 2D \emph{normalization} closely:
 total $\sigma$ agrees to $+\SI{0.95}{\percent}$ and the per-bin
@@ -114,6 +114,12 @@ generating truth-level events ourselves. No detector simulation is needed --- th
 unfolded result already lives at truth level --- so a generator prediction is
 obtained by histogramming its truth $d^{3}\sigma$ in the same fiducial phase
 space and the same truth $\Eavail$ definition. We compare four predictions: \bpn{Did you run these simulators?}
+\jrb{Yes for the three standalone generators: I generated the GENIE 2.12.10
+and NuWro 21.09 samples on Perlmutter and ran GiBUU 2019 there natively.
+MINERvA Tune v1 was not a separate generator run; I extracted that prediction
+from the existing analysis MC truth using its full tune weight.} These are
+event-level predictions produced within this analysis, rather than digitized
+or externally supplied spectra.
 \begin{itemize}
   \item \textbf{GENIE 2.12.10 central value} --- generated with \texttt{gevgen}
         on a CH target with the MINERvA ME~FHC flux and the
@@ -242,7 +248,7 @@ contains \emph{no} meson-exchange-current (2p2h/MEC) events
 \SI{11}{\percent}, RES \SI{22}{\percent}, DIS \SI{66}{\percent}, COH
 \SI{0.9}{\percent}). Any 2p2h is therefore \emph{added}, not reweighted.
 Decomposing the central-value $d\sigma/d\Eavail$ by interaction mode (per-bin
-mode count-fractions $\times$ the bin value) and overlaying the data localises
+mode count-fractions $\times$ the bin value) and overlaying the data localizes
 the excess to the quasielastic--$\Delta$ dip: the $[0.10,0.20)$ bin is
 $+3.9\sigma$ and $[0.20,0.40)$ is $+2.3\sigma$, while the QE-dominated
 $[0,0.10)$ already matches ($+0.8\sigma$) and $[0.40,1.50)$ match to
@@ -292,7 +298,7 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
     \centering
     \includegraphics[width=\textwidth]{mode_decomp_eavail}
     \caption{Central-value $d\sigma/d\Eavail$ decomposed by interaction mode and
-    overlaid with the unfolded data. The data excess is localised to the
+    overlaid with the unfolded data. The data excess is localized to the
     quasielastic--$\Delta$ dip ($\Eavail\le\SI{0.4}{GeV}$), the shape and size of
     a missing 2p2h component.}
     \label{fig:modedecomp}
@@ -326,7 +332,7 @@ $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ is deliberately
 coarse (seven bins) and ends in a catch bin, for
 $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 
-\paragraph{Marginal closure.} Marginalising the 4D result over $q_{3}$ reproduces
+\paragraph{Marginal closure.} Marginalizing the 4D result over $q_{3}$ reproduces
 the 3D $\Eavail$ spectrum and its low-recoil excess
 (Fig.~\ref{fig:q3excess}, right): the $\Eavail$-marginal data/GENIE-CV ratio is
 $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$
@@ -354,7 +360,7 @@ The Ref.~\cite{MINERvA:2022incl} supplemental data (44-cell
 $d^{2}\sigma/(d\Eavail\,dq_{3})$ with its full covariance, distributed inside
 the public arXiv source package) enables a direct quantitative cross-check.
 Merging both measurements onto their maximal common grid --- edges present in
-\emph{both} binnings, with our $(\pT,\pPar)$ marginalisation restricted to
+\emph{both} binnings, with our $(\pT,\pPar)$ marginalization restricted to
 $\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio muon gate
 ($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$) --- gives two super-cells,
 $\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
@@ -377,7 +383,7 @@ future work.
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
   $(\Eavail,q_{3})$ grid.  The central-value comparison remains current; the
   panel's uncertainty-derived metrics use the quarantined historical 4D
-  covariance and must not be quoted pending the corrected marginalisation.}
+  covariance and must not be quoted pending the corrected marginalization.}
   \label{fig:ascencio}
 \end{figure}
 
