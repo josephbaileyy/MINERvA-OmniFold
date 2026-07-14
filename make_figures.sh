@@ -39,7 +39,7 @@ run tension_spectrum.png             2d-unfolding  python diagnose_tension.py
 echo "== 2D uncertainty =="
 UFLX="$REPO/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix"
 run universe_stage2_MEFHC_full_matcorr_fluxfix/MEFHC_fig6_7_uncertainty_pt.png  2d-unfolding/uq  python plot_uncertainty_fig6_7_style.py --universe-root "$UFLX/uq_universe_covariance_full_matcorr_fluxfix.root" --bootstrap-root "$REPO/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root" --out-prefix "$UFLX/MEFHC_fig6_7_uncertainty"
-run 2d-unfolding/uq/classifier_calibration.png  .  python 2d-unfolding/uq/classifier_calibration.py --omni 2d-unfolding/runEventLoopOmniFold_MEFHC.root --out 2d-unfolding/uq/classifier_calibration.png
+run nn_vs_gbdt_full.png  nd-unfolding  python plot_nn_vs_gbdt_full.py --gbdt res_lgbm_3d.npz --nn res_nn_3d.npz --out nn_vs_gbdt_full.png
 # bootstrap corr/spread: per-replica files were cleaned up; plot from the saved 300-replica product
 run bootstrap_MEFHC_300/uq_corr_2d.png  2d-unfolding/uq  python plot_bootstrap_figs.py --cov bootstrap_MEFHC_300/uq_covariance_boot300.root --outdir bootstrap_MEFHC_300
 run seedscan_lgbm/seedscan_spread_2d.png  2d-unfolding  python seedscan/analyze_seedscan.py --glob "$REPO/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed*.root" --outdir "$REPO/2d-unfolding/seedscan_lgbm"

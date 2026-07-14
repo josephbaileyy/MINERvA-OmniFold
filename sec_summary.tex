@@ -21,26 +21,30 @@ lower-dimensional predecessor under marginalisation. The physics output:
   \item the $(\Eavail,q_{3})$ plane resolves the deficit's momentum-transfer
         structure and shifts the systematic budget from flux- to
         model-dominated (\S\ref{sec:4d});
-  \item the 4D unified-throw study found the block-sum covariance
-        underestimates the vertical systematic by $\sim2\times$, and the
-        published 4D covariance adopts the corrected magnitude
-        (\S\ref{sec:uq-combine}) --- a methodological result in its own
-        right;
+  \item the unified-throw machinery now tests the block sum with asymmetric
+        endpoints, a fixed estimator seed, and mean-centered joint throws;
+        corrected 5D joint throws have passed their internal checks, while the
+        statistical/adoption chain and corrected 4D production remain pending
+        (\S\ref{sec:uq-combine});
   \item the $(\Eavail,W)$ study localises the remaining high-$\Eavail$
-        excess to the deep-inelastic region: all four generators miss the
-        high-$W$ corner at $\disCornerLo$--$\disCornerHi\sigma$ on a dedicated covariance
+        excess to the deep-inelastic region, where all four generators
+        underpredict the central result; corrected significances are pending
         (\S\ref{sec:eavailw});
   \item the PET point-cloud track yields a full-statistics,
-        absolutely-normalised cross section from the raw reconstructed
-        clusters, closure-validated and budgeted (\S\ref{sec:pet}).
+        absolutely-normalized cross section from the raw reconstructed
+        clusters and passes central-value closure; its background-subtracted
+        target and retrained statistical/ML components now pass, while the
+        systematic/lateral budget and PET--GBDT precision comparison remain
+        open (\S\ref{sec:pet}).
 \end{itemize}
 
 \paragraph{Outlook.}
 The full-phase-space measurement (\S\ref{sec:fps}) yields a validated
 central value $\sigma_{\mathrm{FPS}}=\SI{\fpsSigma}{cm^2/nucleon}$
 (\SI{\fpsAbove}{\percent} above the restricted phase space), carrying its anchor,
-closure, three-prior envelope, and a full universe/bootstrap/ML budget with the
-mandatory unified-throw construction (\S\ref{sec:uq-combine}); its point-cloud
+closure and three-prior envelope. Its universe/bootstrap/ML budget and
+unified-throw construction are quarantined pending corrected production
+(\S\ref{sec:uq-combine}); its point-cloud
 realization on the full 5D grid (\S\ref{sec:fps-pet}) carries the two-tier
 prior envelope and a retraining-response floor an order of magnitude below
 it. Natural

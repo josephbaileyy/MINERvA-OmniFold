@@ -39,7 +39,7 @@ test-set accuracy is compared to the chance value $0.5$. \emph{Before} unfolding
 separable --- accuracy $0.523$, AUC $0.535$, $z=33.4$ ($p\approx5\times10^{-244}$);
 \emph{after} unfolding the classifier is driven to chance --- accuracy $0.501$, AUC $0.501$,
 $z=1.4$, $p=0.17$. Data and unfolded simulation are thus statistically indistinguishable with
-no detectable residual structure: the unbinned analogue of a binned goodness-of-fit, and it
+no detectable residual structure: the unbinned analog of a binned goodness-of-fit, and it
 passes.
 
 \paragraph{Coverage.}
@@ -54,20 +54,18 @@ $|\mathrm{residual}|/\sigma$ $0.794$ vs $\sqrt{2/\pi}=0.798$; and
 \SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
 Fig.~5.
 
-\paragraph{Classifier choice (GBDT vs.\ NN).} \bpn{Maybe move to an appendix?  The NN in Fig. 15 looks quite bad!  Seems a little suspicious.  Keep Fig. 17+18 in the main body!}
+\paragraph{Classifier choice (GBDT vs.\ NN).} \bpn{Maybe move to an appendix?  The NN in Fig. 15 looks quite bad!  Seems a little suspicious.  Keep Fig. 17+18 in the main body!} \jrb{Agreed. The old subsampled sklearn MLP had underfit to an almost constant reweight. I replaced it with the validated full five-iteration Keras-MLP comparison, which uses the same weighted inputs and OmniFold loop as the GBDT.}
 Published OmniFold analyses use neural-network
 classifiers~\cite{Andreassen:2019cjw,unbinnedguide}; we use gradient-boosted decision
 trees, whose output must still be a calibrated posterior for $w=p/(1-p)$ to be valid.
 On the step-1 reco classifier (data vs.\ MC reco) the reliability curve is near-diagonal
 (Brier \(\approx0.25\) at AUC \(\approx0.537\): data and reco MC are nearly
-indistinguishable, so the reweight is a modest correction). Across the
-$(\pT,\pPar)$ bins the true data/MC ratio still spans \(\approx\SI{100}{\percent}\);
-the GBDT recovers it to \SI{4.7}{\percent} median, at least as well as a dense MLP
-(\SI{20.9}{\percent}, untuned), and the two reweights agree with bin-wise correlation
-$0.92$ --- the learned reweight is robust to the classifier family. A full scalar
-keras-MLP OmniFold cross-check on the 3D inputs gives total ratio $1.0078$ versus
-the GBDT reference and median projection differences of \SIrange{0.7}{1.4}{\percent},
-consistent with the assigned ML band. As a stronger family cross-check, a vendored
+indistinguishable, so the reweight is a modest correction). A full scalar
+Keras-MLP OmniFold cross-check on the same weighted 3D inputs and five-iteration
+loop gives total ratio $1.0078$ versus the GBDT reference and median projection
+differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}).
+The agreement in the populated bulk establishes that the scalar result is not
+specific to the production classifier family. As a stronger family cross-check, a vendored
 PET (point-cloud transformer~\cite{Mikuni:2024qsr}) unfold was run on the actual
 per-hadron point clouds --- the non-muon reconstructed clusters
 (\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
@@ -82,19 +80,20 @@ the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representat
 shown in Fig.~\ref{fig:petdisplays} (example reco-cluster and truth
 final-state-hadron clouds for individual events) and Fig.~\ref{fig:petcardinality}
 (per-event cardinality of each cloud). Section~\ref{sec:pet} elevates the PET
-track to a full-statistics, absolutely-normalised cross section with its own
-closure gate and systematic budget. Figure~\ref{fig:calibration} shows the
-underlying classifier-calibration diagnostics (reliability curve and binned
-ratio recovery) for the GBDT and MLP step-1 classifiers.
+track to a full-statistics, absolutely-normalized cross section with its own
+closure gate and systematic budget.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{classifier_calibration}
-  \caption{Classifier-calibration diagnostics on the step-1 (data vs.\
-  reconstructed MC) task: reliability curves, weight distributions, and binned
-  data/MC ratio recovery for the production GBDT and an untuned dense MLP. The
-  GBDT is near-diagonal in reliability and recovers the binned ratio to
-  \SI{4.7}{\percent} median.}
+  \includegraphics[width=0.95\textwidth]{nn_vs_gbdt_full}
+  \caption{Full five-iteration scalar OmniFold cross-check using identical
+  weighted 3D inputs and extraction, with only the classifier family changed.
+  Top: absolutely normalized GBDT and Keras-MLP projections. Bottom: their
+  binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median
+  absolute projection differences are \SI{1.20}{\percent} in $\pT$,
+  \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$.
+  The larger excursions are confined to the sparsely populated outermost
+  $\pT$ and $\pPar$ bins.}
   \label{fig:calibration}
 \end{figure}
 
@@ -106,7 +105,7 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
     projected onto each axis. Median per-bin shape differences are
     \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
     catch bin, which collects a large, structured high-$q_{3}$ tail into one wide
-    bin --- a binning artefact of that catch bin rather than a genuine shape
+    bin --- a binning artifact of that catch bin rather than a genuine shape
     disagreement. Shape-only comparison (PET on a 2M-event
     subsample), not an independent physics result.}
   \label{fig:petgbdt}
@@ -117,9 +116,9 @@ ratio recovery) for the GBDT and MLP step-1 classifiers.
   \includegraphics[width=0.80\textwidth]{pet_event_displays}
   \caption{Example PET point-cloud inputs for four individual events (one per
   row). \emph{Left}: reconstructed recoil clusters in detector position space
-  (cluster $z$ vs.\ transverse position, mm), colour and marker area scaled by
+  (cluster $z$ vs.\ transverse position, mm), color and marker area scaled by
   cluster energy. \emph{Right}: truth final-state hadrons in momentum space
-  ($p_z$ vs.\ $p_T$, MeV), coloured by species. The two panels are complementary
+  ($p_z$ vs.\ $p_T$, MeV), colored by species. The two panels are complementary
   representations of the same event, not a per-event overlay; the derived
   $(\pT,\pPar,\Eavail,q_{3})$ annotated on each panel match between reco and
   truth. These are the raw clouds the PET unfold consumes in place of the
