@@ -113,13 +113,10 @@ quantitative comparison of the 3D result (or of arbitrary projections) requires
 generating truth-level events ourselves. No detector simulation is needed --- the
 unfolded result already lives at truth level --- so a generator prediction is
 obtained by histogramming its truth $d^{3}\sigma$ in the same fiducial phase
-space and the same truth $\Eavail$ definition. We compare four predictions: \bpn{Did you run these simulators?}
-\jrb{Yes for the three standalone generators: I generated the GENIE 2.12.10
-and NuWro 21.09 samples on Perlmutter and ran GiBUU 2019 there natively.
-MINERvA Tune v1 was not a separate generator run; I extracted that prediction
-from the existing analysis MC truth using its full tune weight.} These are
-event-level predictions produced within this analysis, rather than digitized
-or externally supplied spectra.
+space and the same truth $\Eavail$ definition. We compare four predictions.
+The GENIE, NuWro, and GiBUU samples were generated and processed in this analysis, while
+the MINERvA Tune~v1 prediction was extracted from the analysis MC truth with
+its full tune weight; none of the spectra were digitized or externally supplied.
 \begin{itemize}
   \item \textbf{GENIE 2.12.10 central value} --- generated with \texttt{gevgen}
         on a CH target with the MINERvA ME~FHC flux and the

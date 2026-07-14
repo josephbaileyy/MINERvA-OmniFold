@@ -87,6 +87,17 @@ final-state-hadron clouds for individual events) and Fig.~\ref{fig:petcardinalit
 track to a full-statistics, absolutely-normalized cross section with its own
 closure gate and systematic budget.
 
+The non-monotonic truth multiplicity in Fig.~\ref{fig:petcardinality} follows
+from the GENIE event record rather than from the transformer. A nominally
+single-hadron event, most often quasielastic, usually also contains a
+residual-nucleus pseudo-particle; this moves the entry from $k=1$ to $k=2$ and
+nearly empties the $k=1$ bin. Removing those pseudo-particles gives a mean
+physical-hadron multiplicity of $3.2$, although a smaller $k=1$ dip remains
+because soft quasielastic protons can fall below threshold and final-state
+interactions can produce multiple hadrons. The twelve-constituent cap is a
+compute/memory choice: PET cost grows with cardinality, while only
+\SI{2.3}{\percent} of truth events exceed the cap.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{nn_vs_gbdt_full}
@@ -144,7 +155,8 @@ closure gate and systematic budget.
   energy in many detector clusters --- while data and MC reco agree closely
   (means \num{11.1} vs.\ \num{11.2}). Clouds are truncated to the twelve
   highest-energy constituents per event, so the reco distributions pile up at
-  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it. \bpn{why strange shape for truth?  How did you pick 12?} \jrb{1) The empty $k{=}1$ bin is a GENIE bookkeeping artifact: single-real-hadron (mostly quasi-elastic) events almost always carry a residual-nucleus pseudo-particle, which promotes them to two constituents and drains $k{=}1$. Dropping those gives the physical final-state-hadron multiplicity (mean~\num{3.2}); that version is in \texttt{figures/pet\_cardinality\_real}. This still has a dip at $k{=}1$ since soft single quasi-elastic protons fall below threshold into $k{=}0$ and FSI means quasi-elastic scattering often results in multiple hadrons. 2) The cap of 12 was chosen because only \SI{2.3}{\percent} of truth events exceed it. Its also a compute/memory trade-off, since PET cost grows with constituent count.}}
+  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it.
+  The depleted $k=1$ truth bin is explained in the text.}
   \label{fig:petcardinality}
 \end{figure}
 

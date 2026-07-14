@@ -3,7 +3,7 @@
 
 
 
-MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus scattering experiment at Fermilab, situated in the NuMI beamline immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. Over roughly a decade of operation, ending in 2019, MINERvA recorded high-statistics samples in both the low-energy and medium-energy (ME) NuMI beam configurations~\cite{MINERvA:2016iqn} and in neutrino-dominated (forward horn current, FHC) and antineutrino-dominated beam modes. Its physics goal is the precision measurement of neutrino--nucleus interaction cross sections on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation experiments: these cross sections, and the nuclear effects that shape them, are a leading systematic uncertainty for experiments such as T2K~\cite{T2K:2023osc}, NOvA~\cite{NOvA:2021nfi}, Hyper-Kamiokande~\cite{HyperK:2018design}, and DUNE~\cite{DUNE:2020jqi} \bpn{Add in competitors T2K and HyperK?} \jrb{Added T2K and Hyper-Kamiokande, with collaboration references.}, and the few-GeV regime mixes quasistatic, resonant, and deep-inelastic processes that no single model describes cleanly. This note uses the public ME FHC CC-inclusive data product; the detector itself is described in \S\ref{sec:experiment}.
+MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus scattering experiment at Fermilab, situated in the NuMI beamline immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. Over roughly a decade of operation, ending in 2019, MINERvA recorded high-statistics samples in both the low-energy and medium-energy (ME) NuMI beam configurations~\cite{MINERvA:2016iqn} and in neutrino-dominated (forward horn current, FHC) and antineutrino-dominated beam modes. Its physics goal is the precision measurement of neutrino--nucleus interaction cross sections on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation experiments: these cross sections, and the nuclear effects that shape them, are a leading systematic uncertainty for experiments such as T2K~\cite{T2K:2023osc}, NOvA~\cite{NOvA:2021nfi}, Hyper-Kamiokande~\cite{HyperK:2018design}, and DUNE~\cite{DUNE:2020jqi}, and the few-GeV regime mixes quasistatic, resonant, and deep-inelastic processes that no single model describes cleanly. This note uses the public ME FHC CC-inclusive data product; the detector itself is described in \S\ref{sec:experiment}.
 
 The MINERvA ME FHC charged-current (CC) inclusive
 double-differential cross section in muon transverse and longitudinal momentum,
@@ -40,7 +40,7 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
         input features, not multiplying response-matrix bins --- this is the
         enabling property for the available-energy extension
         (\S\ref{sec:3d}) that has no practical IBU analog.
-  \item \textbf{Different regularization \bpn{Are you or your LLM British??} \jrb{Apparently. Fixed throughout.}} OmniFold's regularizer is the machine learning model capacity in addition to the iteration count in common with IBU. Comparing the two
+  \item \textbf{Different regularization} OmniFold's regularizer is the machine learning model capacity in addition to the iteration count in common with IBU. Comparing the two
         approaches on the same data quantifies the method-dependence of the result
         (\S\ref{sec:results}).
 \end{itemize}
@@ -56,7 +56,7 @@ and to GENIE MINERvA Tune v1 (\S\ref{sec:results}), the uncertainty budget
 three- and four/five-observable extensions with available energy and $q_{3}$
 (\S\ref{sec:3d}), the $(\Eavail,W)$ study that localizes the remaining
 deep-inelastic-tail excess (\S\ref{sec:eavailw}), the point-cloud transformer
-track (\S\ref{sec:pet}), the full-phase-space measurement
+track (\S\ref{sec:pet}), the extended-phase-space measurement
 (\S\ref{sec:fps}), and a summary and outlook (\S\ref{sec:summary}).
 Appendix~\ref{app:statmethods} is the complete statistical methodology and
 Appendix~\ref{app:landscape} the MINERvA measurement-dimensionality survey.

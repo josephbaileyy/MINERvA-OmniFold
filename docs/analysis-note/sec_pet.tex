@@ -1,6 +1,6 @@
 \bpn{left off here}
 
-\section{Point-cloud track: PET on the raw reconstructed clusters}
+\section{Full phase space: PET on reconstructed and truth point clouds}
 \label{sec:pet}
 
 The full promise of OmniFold is unfolding on the event's \emph{raw}
@@ -17,7 +17,7 @@ full-statistics cross section with its own closure gate. Its uncertainty
 budget is being rebuilt under the corrected statistical and systematic
 contracts described below. The network training in this section is subsample-limited (see
 below), so the production result of record remains the scalar GBDT
-measurement; the full-phase-space extension (\S\ref{sec:fps-pet})
+measurement; the extended-phase-space result (\S\ref{sec:fps-pet})
 subsequently retrains PET at full statistics on the opened truth sample.
 
 \subsection{From shape check to absolute cross section}
@@ -199,7 +199,7 @@ existing unfold.
 \label{sec:pet-projection-next}
 Reweighting can only redistribute weight among truth configurations the
 generator already produced; it cannot populate phase space the prior never
-sampled --- the same extrapolation limit flagged for the full-phase-space
+sampled --- the same extrapolation limit flagged for the extended-phase-space
 measurement (\S\ref{sec:fps}). Within that limit, every observable above is
 projectable over the full truth spectrum from the current dump.
 Two extensions lie beyond re-projection from the stored cloud (they would
