@@ -87,16 +87,26 @@ final-state-hadron clouds for individual events) and Fig.~\ref{fig:petcardinalit
 track to a full-statistics, absolutely-normalized cross section with its own
 closure gate and systematic budget.
 
-The non-monotonic truth multiplicity in Fig.~\ref{fig:petcardinality} follows
-from the GENIE event record rather than from the transformer. A nominally
-single-hadron event, most often quasielastic, usually also contains a
-residual-nucleus pseudo-particle; this moves the entry from $k=1$ to $k=2$ and
-nearly empties the $k=1$ bin. Removing those pseudo-particles gives a mean
-physical-hadron multiplicity of $3.2$, although a smaller $k=1$ dip remains
-because soft quasielastic protons can fall below threshold and final-state
-interactions can produce multiple hadrons. The twelve-constituent cap is a
-compute/memory choice: PET cost grows with cardinality, while only
-\SI{2.3}{\percent} of truth events exceed the cap.
+Figure~\ref{fig:petcardinality} uses the coverage-complete point-cloud input:
+only 174 of the \num{32849103} truth events have an empty cloud. Including the
+GENIE residual-nucleus bookkeeping particles, as the PET input does, gives a
+mean truth cardinality of $4.57$. The depleted $k=1$ bin is a generator-record
+feature: a nominally single-hadron event, most often quasielastic, usually also
+contains a residual-nucleus pseudo-particle and therefore enters at $k=2$.
+Removing those pseudo-particles gives a mean physical-hadron multiplicity of
+$4.43$ and a distribution that rises smoothly to its $k=2$ maximum. The
+twelve-constituent cap is a compute/memory choice: PET cost grows with
+cardinality, while only \SI{2.31}{\percent} of truth events reach the cap and
+the twelfth constituent carries only \SI{0.09}{\percent} of the retained truth
+energy on average.
+
+\jrb{Correction after auditing the figure source: the previous Fig.~18 was
+made from the pre-2026-06-28 point-cloud file, which left the truth cloud empty
+for \SI{72.3}{\percent} of truth-only misses (\SI{27.4}{\percent} of all
+events). That produced a spurious $k=0$ spike and biased the quoted mean to
+$3.3$. I replaced it with the coverage-fixed full-cloud figure and removed the
+incorrect physical interpretation of that spike; only the GENIE-bookkeeping
+$k=1$ depletion remains.}
 
 \begin{figure}[H]
   \centering
@@ -137,14 +147,19 @@ compute/memory choice: PET cost grows with cardinality, while only
   representations of the same event, not a per-event overlay; the derived
   $(\pT,\pPar,\Eavail,q_{3})$ annotated on each panel match between reco and
   truth. These are the raw clouds the PET unfold consumes in place of the
-  engineered scalars. \bpn{Great!  Can we have the same coords (maybe momentum space) for both levels and overlaid?  This will help visualize the distortions as well.} \jrb{I'm not sure how we would do this, since the inputs for each level live in different spaces --- reco is $(E,\text{position})$ and truth is in momentum space. Maybe an energy vs. angle plot?}}
+  engineered hadronic scalars. The muon is separate from the cloud: its
+  momentum is reconstructed from the MINERvA track and magnetized MINOS
+  spectrometer and is available at both reco and truth, providing $\pT$ and
+  $\pPar$. ``Position'' here means the detector location of a hadronic recoil
+  energy deposit. A calorimeter cluster is not a reconstructed particle and
+  therefore has no per-cluster momentum vector. \bpn{Great!  Can we have the same coords (maybe momentum space) for both levels and overlaid?  This will help visualize the distortions as well.} \jrb{For the muon, yes: momentum is available at both levels, but the muon is explicitly removed from these hadronic clouds and supplied separately. The reco recoil consists of calorimeter energy deposits at detector positions, whereas the truth recoil consists of particles with momenta, so a direct same-coordinate overlay is not defined. I clarified this distinction in the caption.}}
   \label{fig:petdisplays}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   % _withremnant shows the truth cloud inputs to PET (including GENIE nuclear-remnant
-  % pseudo-particles), which produces the empty k=1 bin.
+  % pseudo-particles), which produces the depleted k=1 bin.
   % _real is the physical-hadron-only version.
   %   \includegraphics[width=0.72\textwidth]{pet_cardinality_real}
   \includegraphics[width=0.72\textwidth]{pet_cardinality_withremnant}
@@ -153,10 +168,11 @@ compute/memory choice: PET cost grows with cardinality, while only
   reconstructed clusters in data, POT-weighted. The reco-cluster multiplicity
   greatly exceeds the truth hadron multiplicity --- a single hadron deposits
   energy in many detector clusters --- while data and MC reco agree closely
-  (means \num{11.1} vs.\ \num{11.2}). Clouds are truncated to the twelve
+  (means \num{11.09} vs.\ \num{11.15}). Clouds are truncated to the twelve
   highest-energy constituents per event, so the reco distributions pile up at
-  the cap; the truth clouds are sparse (mean \num{3.3}) and rarely reach it.
-  The depleted $k=1$ truth bin is explained in the text.}
+  the cap; the truth clouds are sparser (mean \num{4.57}, including GENIE
+  nuclear-remnant bookkeeping particles) and rarely reach it. The depleted
+  $k=1$ truth bin and the truncation choice are explained in the text.}
   \label{fig:petcardinality}
 \end{figure}
 

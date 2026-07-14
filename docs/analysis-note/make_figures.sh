@@ -56,6 +56,12 @@ run eavailW_band.png                 3d-unfolding/genie  python overlay_eavailW_
 run q3_excess_projection.png         nd-unfolding  python q3_excess_projection.py
 
 echo "== PET =="
+# PET point-cloud INPUT figures (KNOWN_ISSUES #18): one invocation writes
+# pet_event_displays + pet_cardinality_{real,withremnant} + pet_truncation_retention.
+# Reads the coverage-FIXED of_inputs_pc_fullcloud.npz (the pre-06-28 of_inputs_pc.npz
+# left truth clouds empty on miss rows -> spurious cardinality-0 spike). TECHNOTE_DARK=1
+# regenerates the deck versions. The end-of-file sync distributes all four .pdf twins.
+run products/pet/pet_event_displays.png   nd-unfolding  python pet/plot_event_displays.py --npz of_inputs_pc_fullcloud.npz --outdir products/pet
 run products/pet/pet_vs_gbdt.png          nd-unfolding  python pet/pet_vs_gbdt.py --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt.png
 run products/pet/pet_vs_gbdt_absolute.png nd-unfolding  python pet/pet_vs_gbdt.py --absolute --pet products/pet/pet_weights.npz --pc of_inputs_pc.npz --gbdt products/4d/xsec_4d_MEFHC_5iter_lgbm.root --out products/pet/pet_vs_gbdt_absolute.png
 # PET vs GBDT per-bin uncertainty comparison -> pet_vs_gbdt_uncertainty_{overlay,ratiomap,ratiohist}.png
