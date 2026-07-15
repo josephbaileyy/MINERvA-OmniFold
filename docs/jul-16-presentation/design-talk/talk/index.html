@@ -703,14 +703,14 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B5 · Seed variability" data-speaker-notes="ML seed and train-split variability: sub-percent per-bin spread in the bulk, controlled everywhere. 2D — cleared.">
+  <section class="slide figslide" data-label="B5 · Seed variability" data-speaker-notes="ML seed and train-split variability: sub-percent per-bin spread in the bulk, controlled everywhere. 2D — cleared. New July-14 5D cross-check: a fixed-data estimator-seed scan (12 seeds, fixed data and split) gives sqrt-trace 1.31e-39 — 87.5% of the adopted split-varied ML band (1.49e-39). So the ML band is dominated by genuine training stochasticity, not the particular train/test partition, and stays a minor ~3% component of the 5D budget.">
     <div class="kicker"><span>Backup 5 · Seed & split variability (2D — cleared)</span></div>
     <h2 class="slide-title">Training randomness is a sub-leading effect</h2>
     <div class="figwrap rise">
       <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_band_pt.png" alt="Cross section vs pT with the spread over ten training seeds drawn as error bars — the band is barely visible."></figure>
       <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_spread_2d.png" alt="Per-bin relative spread over training seeds across the pT, p-parallel plane — sub-percent in the bulk."></figure>
     </div>
-    <p class="fig-caption"><strong>Spread over independent trainings:</strong> sub-percent per bin in the bulk of the phase space, a few percent at the sparse edges.</p>
+    <p class="fig-caption"><strong>Spread over independent trainings:</strong> sub-percent per bin in the bulk of the phase space, a few percent at the sparse edges. In 5D, a fixed-data estimator-seed scan reproduces 87.5% of the adopted ML band — genuine training stochasticity, not a train/test-split artifact, and ~3% of the total budget.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -738,14 +738,14 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. The corrected 5D campaign closed on July 14: GBDT block-sum median 13.36%/bin, adopted mean-centered covariance sqrt-trace 5.81e-38 (mean shift 1.65e-38 reported separately as bias; CV-centered 6.24e-38 kept as the conservative variant); repeating all 188 universe unfolds with per-universe background moved the block sqrt-trace by only 0.3% — the background-CV concern closed as a null effect. PET corrected C_total: median 15.10%/bin from five blocks including a new targeted retraining-response term. Still withheld: every (E-avail, W)-plane significance (that covariance has not been requoted) — so no Nsigma for the excess anywhere in this talk; the PET statistical ensemble grows from 20 to 100 replicas before publication.">
+  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. The corrected 5D campaign closed on July 14: GBDT block-sum median 13.36%/bin, adopted mean-centered covariance sqrt-trace 5.81e-38 (mean shift 1.65e-38 reported separately as bias; CV-centered 6.24e-38 kept as the conservative variant); repeating all 188 universe unfolds with per-universe background moved the block sqrt-trace by only 0.3% — the background-CV concern closed as a null effect. PET corrected C_total: median 15.10%/bin from five blocks including a new targeted retraining-response term. Final GBDT cross-check (July 14 evening): fixed-data estimator-seed scan sqrt-trace 1.31e-39 = 87.5% of the adopted split-varied ML band — the ML band is genuine training stochasticity, ~3% of the budget; corrected-UQ workstream fully closed. Still withheld: every (E-avail, W)-plane significance (that covariance has not been requoted) — so no Nsigma for the excess anywhere in this talk; the PET statistical ensemble grows from 20 to 100 replicas before publication.">
     <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
     <div class="chips"><span class="chip">Corrected 5D campaign complete</span><span class="chip warn">Significances not yet requoted</span></div>
     <h2 class="slide-title">What is cleared, what is still withheld</h2>
     <ul class="bullets rise">
       <li><span>Cleared: the full 2D uncertainty budget and covariance — independently rebuilt, matches the published budget (B6).</span></li>
       <li><span>Complete: the corrected 5D GBDT campaign (July 14) — block-sum median 13.36%/bin.
-        <span class="sub">Adopted mean-centered covariance √Tr C = 5.81×10<sup>−38</sup>; per-universe background a null effect (&lt;0.3%).</span></span></li>
+        <span class="sub">Adopted mean-centered covariance √Tr C = 5.81×10<sup>−38</sup>; per-universe background a null effect (&lt;0.3%); estimator-seed scan validates the ML band (B5).</span></span></li>
       <li><span>Complete: the corrected PET budget — median 15.10%/bin from five blocks.
         <span class="sub">Including a new targeted retraining-response term; 20 → 100 statistical replicas before publication (B9).</span></span></li>
       <li><span>Still withheld: (E<sub>avail</sub>, W)-plane significances, pending the requote — no Nσ quoted anywhere in this talk.</span></li>

@@ -119,9 +119,15 @@ seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
 For the corrected 5D campaign, the adopted ML ensemble fixes the estimator seed
 at 42 and varies the train/test split seed. It therefore measures split response,
 not the full estimator stochasticity. A dedicated fixed-data estimator-seed scan
-is retained as an auxiliary robustness check rather than added as an independent
-matrix: split and estimator responses are not assumed uncorrelated. This scope
-accompanies the adopted replacement result.
+(twelve estimator seeds at fixed data and fixed split) closes this scope: its
+covariance has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
+\SI{\gbdtAiEstFrac}{\percent} of the adopted split-varied band
+(\SI{\gbdtMlSplitTrace}{cm^2/nucleon}), so the adopted band is dominated by
+genuine estimator stochasticity rather than by the particular train/test
+partition. The scan remains an auxiliary robustness check rather than an
+independent matrix --- split and estimator responses are not assumed
+uncorrelated --- and both bands are minor components, about three percent of
+the combined budget in $\sqrt{\mathrm{Tr}}$.
 
 \begin{figure}[H]
   \centering
@@ -156,7 +162,7 @@ significances are therefore \emph{unquotable}. The corrected 5D campaign is now
 complete. Its background-aware block sum has median per-bin uncertainty
 \SI{\gbdtFiveBlockMedian}{\percent}; including cross-source nonlinear response
 raises the adopted mean-centered covariance to
-$\sqrt{\mathrm{Tr},C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$. The joint mean
+$\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$. The joint mean
 shift, norm $\SI{\gbdtFiveMeanShift}{cm^2/nucleon}$, is reported separately
 rather than folded into that covariance. A CV-centered construction gives the
 larger $\SI{\gbdtFiveCVTrace}{cm^2/nucleon}$ and is retained as a conservative
