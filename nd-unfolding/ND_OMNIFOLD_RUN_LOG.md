@@ -1569,3 +1569,29 @@ the present analysis-note campaign. Its statistical block contains 20 coherent
 replicas. Expanding to 100 replicas is planned before publication but has not
 yet been run. The detector block is a frozen-map shifted-detector response, not
 per-universe PET retraining or shifted-cloud membership regeneration.
+
+## 2026-07-15 — #16 active-universe interface validated (P2, Agent A)
+
+The selection-complete active-universe event-loop mode
+(`MNV101_ACTIVE_UNIVERSE=BAND:IDX`) was validated before launching any P3
+production family. The binary was rebuilt and installed from the current
+`runEventLoopOmniFold.cpp` (md5 `e63c74961d699313ef155065fc790ff1`, 9
+`ACTIVE_UNIVERSE` strings) and exercised on a 4-MC/8-Data 1A smoke subset on a
+`gpu_interactive` node (salloc 55933725), CPU-only via `srun --gres=none`. All
+gates passed: the remediation unit suite (20/20); invalid band/index requests
+fail closed (`nocolon`, `NotARealBand:0`, `BeamAngleX:999` → rc1); the CV smoke
+carries `hasActiveUniverse=0`, band `cv`, and zero migration counters; the
+`BeamAngleX:0` endpoint carries the correct `band/idx/isLateral=1` metadata and a
+nonzero reco migration census (entrants=21, exits=21; truth 0/0, as expected for
+a reco-level beam-angle shift) — the selection migration the CV-support-limited
+dump-all bank cannot see; truth-authoritative completeness signal_reco/truth_denom
+= 1.000000 on both CV and endpoint with native misses rebuilt
+(nTruthOnlyMisses=66989); point-cloud branches are complete on all four trees
+under `MNV101_DUMP_POINTCLOUD=1` (signal `part_gen_*`+`part_reco_*`; background
+and data `part_reco_*`, ~99.7–99.9% populated); and the FPS flag produces
+distinct behaviour (truth_denom 399015 vs standard 263111, ×1.52). Record and
+readback validator in `nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md`
+and `interface_smoke/`. The production launcher
+(`sbatch_evloop_array_5d_active_laterals.sh`) is committed with P3S. The shared
+`ND_OMNIFOLD_STATUS.md` one-liner is deferred: it carries a concurrent session's
+uncommitted edit and was left untouched to avoid folding it into this commit.

@@ -72,16 +72,79 @@ enum ErrorCodes
 
 //ROOT includes
 #include "TParameter.h"
+#include "TNamed.h"
 
 //c++ includes
 #include <iostream>
 #include <cstdlib> //getenv()
 #include <cstdint>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <unordered_set>
 #include <set>
 #include <vector>
+
+struct ActiveUniverseRequest
+{
+  bool enabled = false;
+  std::string band;
+  size_t idx = 0;
+};
+
+struct ActiveUniverseMigrationCounts
+{
+  long truthEntrants = 0;
+  long truthExits = 0;
+  long recoEntrants = 0;
+  long recoExits = 0;
+};
+
+// Parse the selection-complete universe mode.  Unlike MNV101_DUMP_UNIVERSES,
+// this mode does not write CV-selected shadow branches: it promotes one
+// universe to be the ordinary event-loop universe, so truth/reco entrants and
+// exits are handled before either tree is filled.
+inline bool ParseActiveUniverse(const char* envVal,
+                                ActiveUniverseRequest& out,
+                                std::string& error)
+{
+  if(envVal == nullptr || std::string(envVal).empty()) return true;
+
+  const std::string spec(envVal);
+  const size_t colon = spec.find(':');
+  if(colon == std::string::npos || colon == 0 || colon + 1 == spec.size() ||
+     spec.find(':', colon + 1) != std::string::npos)
+  {
+    error = "expected BAND:IDX, got '" + spec + "'";
+    return false;
+  }
+
+  const std::string idxText = spec.substr(colon + 1);
+  if(idxText.find_first_not_of("0123456789") != std::string::npos)
+  {
+    error = "universe index must be a non-negative integer in '" + spec + "'";
+    return false;
+  }
+
+  try
+  {
+    const unsigned long long parsed = std::stoull(idxText);
+    if(parsed > static_cast<unsigned long long>(std::numeric_limits<size_t>::max()))
+    {
+      error = "universe index is out of range in '" + spec + "'";
+      return false;
+    }
+    out.enabled = true;
+    out.band = spec.substr(0, colon);
+    out.idx = static_cast<size_t>(parsed);
+  }
+  catch(const std::exception&)
+  {
+    error = "invalid universe index in '" + spec + "'";
+    return false;
+  }
+  return true;
+}
 
 // Pack (mc_run, mc_subrun, mc_nthEvtInFile) into a unique 64-bit key for
 // fast hash-set lookup of "is this truth event already represented on the
@@ -318,7 +381,9 @@ void LoopAndFillUnbinnedMCTruthDenom(
     TTree* out,
     std::unordered_set<uint64_t>* outTruthDenomIDs = nullptr,
     std::vector<TruthDenomEntry>* outTruthDenomCache = nullptr,
-    const std::map<std::string, std::vector<CVUniverse*>>* truthBands = nullptr)
+    const std::map<std::string, std::vector<CVUniverse*>>* truthBands = nullptr,
+    CVUniverse* comparisonCV = nullptr,
+    ActiveUniverseMigrationCounts* migrationCounts = nullptr)
 {
   double MC = 0.0;
   double MC_pz = 0.0;
@@ -413,6 +478,7 @@ void LoopAndFillUnbinnedMCTruthDenom(
   // mc_signal_reco==mc_truth_denom identity is broken (98-entry deficit
   // observed pre-fix).
   std::unordered_set<uint64_t> seenKeys;
+  std::unordered_set<uint64_t> seenMigrationKeys;
   long nDupSkipped = 0;
 
   for(int i = 0; i < nEntries; ++i)
@@ -428,13 +494,32 @@ void LoopAndFillUnbinnedMCTruthDenom(
 
     const double w_cv = model.GetWeight(*truthCV, evt);
 
-    // Use the SAME isEfficiencyDenom logic as the old code (Truth tree context)
-    if(!michelcuts.isEfficiencyDenom(*truthCV, w_cv)) continue;
-
     const uint64_t key = makeEventKey(
         truthCV->GetInt("mc_run"),
         truthCV->GetInt("mc_subrun"),
         truthCV->GetInt("mc_nthEvtInFile"));
+    // In active-universe mode, census selection migrations against CV on the
+    // same Truth-tree entry. Count each upstream event key once, independent
+    // of whether it passes either selection.
+    const bool activePassesTruth = michelcuts.isEfficiencyDenom(*truthCV, w_cv);
+    if(comparisonCV != nullptr && migrationCounts != nullptr &&
+       seenMigrationKeys.insert(key).second)
+    {
+      comparisonCV->SetEntry(i);
+      MichelEvent cvEvt;
+      model.SetEntry(*comparisonCV, cvEvt);
+      const double comparisonWeight = model.GetWeight(*comparisonCV, cvEvt);
+      const bool cvPassesTruth =
+          michelcuts.isEfficiencyDenom(*comparisonCV, comparisonWeight);
+      if(activePassesTruth && !cvPassesTruth) ++migrationCounts->truthEntrants;
+      if(!activePassesTruth && cvPassesTruth) ++migrationCounts->truthExits;
+      truthCV->SetEntry(i);
+      model.SetEntry(*truthCV, evt);
+    }
+
+    // Use the SAME isEfficiencyDenom logic as the old code (Truth tree context)
+    if(!activePassesTruth) continue;
+
     if(!seenKeys.insert(key).second)
     {
       ++nDupSkipped;
@@ -712,7 +797,9 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     TTree* out,
     std::unordered_set<uint64_t>* outRecoIDs = nullptr,
     const std::unordered_set<uint64_t>* truthDenomIDs = nullptr,
-    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr)
+    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr,
+    CVUniverse* comparisonCV = nullptr,
+    ActiveUniverseMigrationCounts* migrationCounts = nullptr)
 {
   double sim = 0.0;
   double sim_pz = 0.0;
@@ -845,6 +932,7 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   // count surplus over mc_truth_denom (7 events at MEFHC scale = 0.2 ppm),
   // which prevents `c` from landing at exactly 1 by construction.
   std::unordered_set<uint64_t> seenRecoKeys;
+  std::unordered_set<uint64_t> seenMigrationKeys;
   long nDupRecoSkipped = 0;
 
   for(int i = 0; i < nEntries; ++i)
@@ -862,24 +950,44 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     const double w_truth_tmp = model.GetWeight(*recoCV, evt);
     
     const bool isSignalTruth = michelcuts.isSignal(*recoCV, w_truth_tmp);
-    if(!isSignalTruth) continue; // keep only signal for this tree 
-    
     const bool inPhaseSpace = michelcuts.isEfficiencyDenom(*recoCV, w_truth_tmp);
-    
-    MC      = recoCV->GetMuonPTTrue();   // truth p_T (GeV/c)
-    MC_pz   = recoCV->GetMuonPzTrue();  // truth p_|| (GeV/c)
-    MC_eavail = recoCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
-    MC_q3   = recoCV->Getq3True() / 1000.0;            // MeV -> GeV
-    MC_W    = recoCV->GetTrueExperimentersW() / 1000.0; // MeV -> GeV
-    MC_nproton = recoCV->GetNProtonsTrue();
-    MC_npip = recoCV->GetNChargedPionsTrue();
-    MC_hadangle = recoCV->GetHadronAngleTrue();
-    w_truth = w_truth_tmp;
+    if(isSignalTruth)
+    {
+      MC      = recoCV->GetMuonPTTrue();   // truth p_T (GeV/c)
+      MC_pz   = recoCV->GetMuonPzTrue();  // truth p_|| (GeV/c)
+      MC_eavail = recoCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
+      MC_q3   = recoCV->Getq3True() / 1000.0;            // MeV -> GeV
+      MC_W    = recoCV->GetTrueExperimentersW() / 1000.0; // MeV -> GeV
+      MC_nproton = recoCV->GetNProtonsTrue();
+      MC_npip = recoCV->GetNChargedPionsTrue();
+      MC_hadangle = recoCV->GetHadronAngleTrue();
+      w_truth = w_truth_tmp;
+    }
 
     // --- reco mode: selection + reco weight + reco value
     CVUniverse::SetTruth(false);
     const double w_reco_tmp = model.GetWeight(*recoCV, evt);
     const bool passesReco = michelcuts.isMCSelected(*recoCV, evt, w_reco_tmp).all();
+
+    if(comparisonCV != nullptr && migrationCounts != nullptr)
+    {
+      const uint64_t migrationKey = makeEventKey(
+          recoCV->GetInt("mc_run"), recoCV->GetInt("mc_subrun"),
+          recoCV->GetInt("mc_nthEvtInFile"));
+      if(seenMigrationKeys.insert(migrationKey).second)
+      {
+        comparisonCV->SetEntry(i);
+        MichelEvent cvEvt;
+        model.SetEntry(*comparisonCV, cvEvt);
+        const double comparisonWeight = model.GetWeight(*comparisonCV, cvEvt);
+        const bool cvPassesReco =
+            michelcuts.isMCSelected(*comparisonCV, cvEvt, comparisonWeight).all();
+        if(passesReco && !cvPassesReco) ++migrationCounts->recoEntrants;
+        if(!passesReco && cvPassesReco) ++migrationCounts->recoExits;
+        recoCV->SetEntry(i);
+        model.SetEntry(*recoCV, evt);
+      }
+    }
 
     w_reco   = w_reco_tmp;
     sim_pass = passesReco;
@@ -888,6 +996,8 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     sim_eavail = passesReco ? recoCV->NewEavail() / 1000.0 : -9999.0;  // MeV -> GeV
     sim_q3   = passesReco ? recoCV->RecoQ3() / 1000.0 : -9999.0;       // MeV -> GeV
     sim_W    = passesReco ? recoCV->RecoW() / 1000.0 : -9999.0;        // MeV -> GeV
+
+    if(!isSignalTruth) continue; // keep only signal for this tree
     
     // --- KEEP event only if BOTH of these hold:
     //   1. recoCV.isEfficiencyDenom (CCInclusive2DPhaseSpace evaluated on
@@ -1018,6 +1128,14 @@ void LoopAndFillUnbinnedMCBackground(
   double bkg_vtx_y = 0.0;
   double bkg_vtx_z = 0.0;
 
+  // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
+  // reco-cluster vectors for the background reco point cloud (reco-only),
+  // mirrors LoopAndFillUnbinnedData (:1166-1191) so background clouds can be
+  // injected at -w on the OmniFold measured side (negweight background
+  // subtraction for the PET point cloud). GetRecoClusters self-clears.
+  const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+
   out->Branch("sim_background", &sim_background);
   out->Branch("sim_background_pz", &sim_background_pz);
   out->Branch("sim_background_eavail", &sim_background_eavail);  // reco Eavail (GeV)
@@ -1032,6 +1150,11 @@ void LoopAndFillUnbinnedMCBackground(
   out->Branch("bkg_vtx_y",   &bkg_vtx_y);    // truth vertex y (mm)
   out->Branch("bkg_vtx_z",   &bkg_vtx_z);    // truth vertex z (mm); fiducial split
                                              //   offline vs minZ=5980,maxZ=8422,apothem=850
+  if(dumpPC){
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
+  }
 
   // Per-systematic-universe background-weight dump (KNOWN_ISSUES #13). Mirrors
   // the reco-mode block in LoopAndFillUnbinnedMCSelectedSignalReco, but the
@@ -1136,6 +1259,8 @@ void LoopAndFillUnbinnedMCBackground(
       recoCV->SetEntry(i);
       model.SetEntry(*recoCV, cvEvent);
     }
+    if(dumpPC)
+      recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
     out->Fill();
   }
   std::cout << "Finished unbinned MC background reco loop.\n";
@@ -1339,6 +1464,23 @@ int main(const int argc, const char** argv)
   PlotUtils::Model<CVUniverse, MichelEvent> model(std::move(MnvTunev1));
 
   const bool doSystematics = (getenv("MNV101_SKIP_SYST") == nullptr);
+  ActiveUniverseRequest activeUniverse;
+  std::string activeUniverseError;
+  if(!ParseActiveUniverse(getenv("MNV101_ACTIVE_UNIVERSE"),
+                          activeUniverse, activeUniverseError))
+  {
+    std::cerr << "Invalid MNV101_ACTIVE_UNIVERSE: "
+              << activeUniverseError << "\n";
+    return badCmdLine;
+  }
+  if(activeUniverse.enabled && !doSystematics)
+  {
+    std::cerr << "MNV101_ACTIVE_UNIVERSE=" << activeUniverse.band << ":"
+              << activeUniverse.idx
+              << " is incompatible with MNV101_SKIP_SYST: the requested "
+                 "universe maps would not be constructed.\n";
+    return badCmdLine;
+  }
   if(!doSystematics){
     std::cout << "Skipping systematics loops (CV-only output) because MNV101_SKIP_SYST is set.\n";
     PlotUtils::MinervaUniverse::SetNFluxUniverses(2);
@@ -1367,6 +1509,51 @@ int main(const int argc, const char** argv)
     }
   }
 
+  CVUniverse* activeRecoUniverse = error_bands["cv"].front();
+  CVUniverse* activeTruthUniverse = truth_bands["cv"].front();
+  bool activeUniverseIsLateral = false;
+  if(activeUniverse.enabled)
+  {
+    const auto recoBand = error_bands.find(activeUniverse.band);
+    const auto truthBand = truth_bands.find(activeUniverse.band);
+    if(recoBand == error_bands.end() || truthBand == truth_bands.end())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE requested unknown or unmatched band '"
+                << activeUniverse.band << "'. The band must exist in both reco "
+                   "and truth GetStandardSystematics maps.\n";
+      return badCmdLine;
+    }
+    if(activeUniverse.idx >= recoBand->second.size() ||
+       activeUniverse.idx >= truthBand->second.size())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE index " << activeUniverse.idx
+                << " is out of range for band '" << activeUniverse.band
+                << "' (reco n=" << recoBand->second.size()
+                << ", truth n=" << truthBand->second.size() << ").\n";
+      return badCmdLine;
+    }
+    activeRecoUniverse = recoBand->second[activeUniverse.idx];
+    activeTruthUniverse = truthBand->second[activeUniverse.idx];
+    if(activeRecoUniverse == nullptr || activeTruthUniverse == nullptr)
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE resolved to a null universe pointer.\n";
+      return badCmdLine;
+    }
+    if(activeRecoUniverse->IsVerticalOnly() != activeTruthUniverse->IsVerticalOnly())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE reco/truth IsVerticalOnly mismatch for '"
+                << activeUniverse.band << ":" << activeUniverse.idx << "'.\n";
+      return badCmdLine;
+    }
+    activeUniverseIsLateral = !activeRecoUniverse->IsVerticalOnly();
+    std::cout << "[ACTIVE_UNIVERSE] " << activeUniverse.band << ":"
+              << activeUniverse.idx
+              << " promoted to the ordinary truth and reco event-loop universe; "
+              << (activeUniverseIsLateral ? "lateral" : "vertical")
+              << " selection, kinematics, weights, truth-authoritative IDs, "
+                 "backgrounds, and native misses will be rebuilt.\n";
+  }
+
   CVUniverse* data_universe = new CVUniverse(options.m_data);
 
   try
@@ -1385,6 +1572,19 @@ int main(const int argc, const char** argv)
     auto dataPOT = new TParameter<double>("dataPOTUsed", options.m_data_pot);
     mcPOT->Write();
     dataPOT->Write();
+    auto activeBandMetadata = new TNamed(
+        "activeUniverseBand", activeUniverse.enabled ? activeUniverse.band.c_str() : "cv");
+    auto activeIndexMetadata = new TParameter<int>(
+        "activeUniverseIndex", activeUniverse.enabled
+                                   ? static_cast<int>(activeUniverse.idx) : 0, 'f');
+    auto activeEnabledMetadata = new TParameter<int>(
+        "hasActiveUniverse", activeUniverse.enabled ? 1 : 0, 'f');
+    auto activeLateralMetadata = new TParameter<int>(
+        "activeUniverseIsLateral", activeUniverseIsLateral ? 1 : 0, 'f');
+    activeBandMetadata->Write();
+    activeIndexMetadata->Write();
+    activeEnabledMetadata->Write();
+    activeLateralMetadata->Write();
     
     // Do not write pTmu_fiducial_nucleons here. In the documented full-MEFHC
     // workflow these per-playlist ROOT files are merged with hadd, which sums
@@ -1402,8 +1602,11 @@ int main(const int argc, const char** argv)
 
     assert(error_bands["cv"].size() == 1);
     //assert(truth_bands["cv"].size() == 1);
-    auto* recoCV  = error_bands["cv"].front();
-    auto* truthCV = truth_bands["cv"].front();
+    // In active-universe mode these pointers deliberately name the matching
+    // reco- and truth-tree universe objects.  Every ordinary output branch and
+    // every selection decision below is therefore made in that universe.
+    auto* recoCV  = activeRecoUniverse;
+    auto* truthCV = activeTruthUniverse;
 
     // MNV101_TRUTH_ONLY short-circuits the slow reco loops so the
     // truth-denom + per-reweighter dump can be regenerated quickly for
@@ -1433,12 +1636,17 @@ int main(const int argc, const char** argv)
     std::unordered_set<uint64_t> recoIDs;
     std::unordered_set<uint64_t> truthDenomIDs;
     std::vector<TruthDenomEntry> truthDenomCache;
+    ActiveUniverseMigrationCounts activeMigrationCounts;
+    CVUniverse* comparisonRecoCV =
+        activeUniverse.enabled ? error_bands["cv"].front() : nullptr;
+    CVUniverse* comparisonTruthCV =
+        activeUniverse.enabled ? truth_bands["cv"].front() : nullptr;
 
     LoopAndFillUnbinnedMCTruthDenom(
         options.m_truth, truthCV, mycuts, model, tuneComponents, mcTruthTree,
         !truthOnly ? &truthDenomIDs : nullptr,
         appendTruthMisses ? &truthDenomCache : nullptr,
-        &truth_bands);
+        &truth_bands, comparisonTruthCV, &activeMigrationCounts);
 
     if(!truthOnly)
     {
@@ -1446,7 +1654,7 @@ int main(const int argc, const char** argv)
           options.m_mc, recoCV, mycuts, model, mcSigTree,
           appendTruthMisses ? &recoIDs : nullptr,
           &truthDenomIDs,
-          &error_bands);
+          &error_bands, comparisonRecoCV, &activeMigrationCounts);
     }
 
     long nTruthOnlyMisses = 0;
@@ -1478,6 +1686,26 @@ int main(const int argc, const char** argv)
         "nTruthOnlyMisses", nTruthOnlyMisses);
     pHasMisses->Write();
     pNMisses->Write();
+    auto pTruthEntrants = new TParameter<long>(
+        "activeUniverseTruthEntrants", activeMigrationCounts.truthEntrants);
+    auto pTruthExits = new TParameter<long>(
+        "activeUniverseTruthExits", activeMigrationCounts.truthExits);
+    auto pRecoEntrants = new TParameter<long>(
+        "activeUniverseRecoEntrants", activeMigrationCounts.recoEntrants);
+    auto pRecoExits = new TParameter<long>(
+        "activeUniverseRecoExits", activeMigrationCounts.recoExits);
+    pTruthEntrants->Write();
+    pTruthExits->Write();
+    pRecoEntrants->Write();
+    pRecoExits->Write();
+    if(activeUniverse.enabled)
+    {
+      std::cout << "[ACTIVE_UNIVERSE] migration census vs CV: truth entrants="
+                << activeMigrationCounts.truthEntrants << " exits="
+                << activeMigrationCounts.truthExits << "; reco entrants="
+                << activeMigrationCounts.recoEntrants << " exits="
+                << activeMigrationCounts.recoExits << "\n";
+    }
 
     outFile->Write();
     outFile->Close();
