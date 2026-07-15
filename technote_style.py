@@ -302,15 +302,16 @@ if TECHNOTE_DARK:
                 _dark_fix_artist(art)
             leg = ax.get_legend()
             if leg is not None:
-                leg.get_frame().set_facecolor(DARK_SURFACE)
-                leg.get_frame().set_edgecolor(DARK_SPINE)
-                for t in leg.get_texts():
-                    new = _dark_swap(t.get_color())
-                    if new is not None:
-                        t.set_color(new)
-                for lh in getattr(leg, "legend_handles", None) or getattr(leg, "legendHandles", []):
-                    if lh is not None:
-                        _dark_fix_artist(lh)
+                # walk the DRAWN legend artists (the proxies matplotlib builds
+                # at legend creation), not legend_handles — for container
+                # entries (e.g. errorbar) the input handle and the drawn proxy
+                # are different artists and only the proxy is visible
+                frame = leg.get_frame()
+                for a in leg.findobj():
+                    if a is not leg and a is not frame:
+                        _dark_fix_artist(a)
+                frame.set_facecolor(DARK_SURFACE)
+                frame.set_edgecolor(DARK_SPINE)
         for t in fig.texts:
             _dark_fix_artist(t)
 

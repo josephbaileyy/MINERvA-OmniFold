@@ -57,15 +57,18 @@ deck-stage {
 .meta { display: flex; align-items: baseline; gap: 18px; font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
 .meta span { text-box: trim-both cap alphabetic; }
 
-deck-stage { counter-reset: page; }
-.slide { counter-increment: page; }
+/* Slide numbers: an explicit per-slide --slide-n (set by the numbering script
+   at the end of the body) rather than a CSS counter — the thumbnail rail
+   clones every <section>, so counter(page) counted the clones too and the
+   presented footer showed inflated numbers. The inline var survives
+   cloneNode, so each thumbnail also shows its own true number. */
 .page-foot {
   position: absolute; right: var(--pad-x); bottom: 32px;
   font-size: var(--type-kicker); letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--color-text) 55%, transparent);
   text-box: trim-both cap alphabetic;
 }
-.page-foot::before { content: counter(page) " · "; font-feature-settings: "tnum" 1; }
+.page-foot::before { content: var(--slide-n, "") " · "; font-feature-settings: "tnum" 1; }
 .page-foot::after { content: var(--page-foot-note); }
 deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-head { display: none !important; }
 
@@ -574,7 +577,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Localizing an excess (how to read it)" data-speaker-notes="Toy shapes, honest framing: in 1D the residual discrepancy is broad and shapeless. Open W — same weighted events, one more column — and it resolves into a compact corner of the (E-avail, W) plane. End frame says it plainly: central-value observation; significance pending corrected uncertainties.">
+  <section class="slide figslide" data-label="Localizing an excess (how to read it)" data-speaker-notes="Toy shapes, honest framing: in 1D the residual discrepancy is broad and shapeless. Open W — same weighted events, one more column — and it resolves into a compact corner of the (E-avail, W) plane. End frame says it plainly: central-value observation; significance pending the corrected-covariance requote.">
     <div class="kicker"><span>New dimensions</span></div>
     <div class="chips"><span class="chip warn">Shape-level only</span></div>
     <h2 class="slide-title">A broad 1D discrepancy, resolved by one more axis</h2>
@@ -582,26 +585,26 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Something new" data-speaker-notes="The real plane. Shape-level statement only: the residual excess that 2p2h cannot explain localizes at high E-avail AND high W — the DIS corner; high-E_avail cells carry two-thirds of the positive excess and most of that sits at W above 1.8 GeV. All four generators underpredict there. Say it plainly: significance withheld pending corrected uncertainty production.">
+  <section class="slide figslide" data-label="Something new" data-speaker-notes="The real plane. Shape-level statement only: the residual excess that 2p2h cannot explain localizes at high E-avail AND high W — the DIS corner; high-E_avail cells carry two-thirds of the positive excess and most of that sits at W above 1.8 GeV. All four generators underpredict there. Say it plainly: significance withheld — the corrected 5D covariance is adopted, but this plane's significances have not yet been requoted against it (B7).">
     <div class="kicker"><span>New dimensions</span></div>
     <div class="chips"><span class="chip warn">Shape-level only</span></div>
     <h2 class="slide-title">A residual excess localizes at high E<sub>avail</sub> and high W</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/excess_eavail_W.png" alt="Unfolded spectrum and ratio maps in the E-avail, W plane: the residual data excess concentrates at high E-avail and high W, the DIS corner."></figure>
     </div>
-    <p class="fig-caption"><strong>All four generators (GENIE MnvTune, bare GENIE, NuWro, GiBUU) underpredict the high-E<sub>avail</sub>, high-W corner.</strong> Significance withheld pending corrected uncertainty production.</p>
+    <p class="fig-caption"><strong>All four generators (GENIE MnvTune, bare GENIE, NuWro, GiBUU) underpredict the high-E<sub>avail</sub>, high-W corner.</strong> Significance withheld pending the requote against the corrected covariance (B7).</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
   <!-- ═══════════ ACT 5 — OUTLOOK + SUMMARY ═══════════ -->
 
-  <section class="slide figslide" data-label="Where this goes — point cloud" data-speaker-notes="First outlook beat. A point-cloud transformer unfolds straight from reconstructed calorimeter clusters — same events shown as detector-space clusters (left of the display) and truth final-state hadrons in momentum space (right). The direction is toward unfolding raw-ish detector data, skipping the hand-built summary observables. Outlook, not a finished precision result.">
+  <section class="slide figslide" data-label="Where this goes — point cloud" data-speaker-notes="First outlook beat. A point-cloud transformer unfolds straight from reconstructed calorimeter clusters — same events shown as detector-space clusters (left of the display) and truth final-state hadrons in momentum space (right). The direction is toward unfolding raw-ish detector data, skipping the hand-built summary observables. The corrected PET uncertainty campaign is complete (numbers in backup B9); the full-statistics training and phase-space extension are still to come.">
     <div class="kicker"><span>Outlook · 1 of 2</span></div>
     <h2 class="slide-title">Toward unfolding raw detector data</h2>
     <div class="figwrap rise">
-      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/pet_event_displays.png" alt="Point-cloud event displays: reconstructed calorimeter clusters in detector position space beside truth final-state hadrons in momentum space, same events."></figure>
+      <figure class="fig-panel dark"><img src="./figures-dark/pet_event_displays.png" alt="Point-cloud event displays: reconstructed calorimeter clusters in detector position space beside truth final-state hadrons in momentum space, same events."></figure>
     </div>
-    <p class="fig-caption"><strong>A point-cloud transformer unfolds straight from reconstructed calorimeter clusters</strong> — toward raw-ish detector data rather than hand-built summary observables. Outlook, not a finished precision result.</p>
+    <p class="fig-caption"><strong>A point-cloud transformer unfolds straight from reconstructed calorimeter clusters</strong> — toward raw-ish detector data rather than hand-built summary observables. Corrected uncertainty budget in backup B9; the full-statistics training is still to come.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -735,32 +738,32 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. Be specific about what is cleared and what is being regenerated, and why the talk withholds significances.">
+  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. The corrected 5D campaign closed on July 14: GBDT block-sum median 13.36%/bin, adopted mean-centered covariance sqrt-trace 5.81e-38 (mean shift 1.65e-38 reported separately as bias; CV-centered 6.24e-38 kept as the conservative variant); repeating all 188 universe unfolds with per-universe background moved the block sqrt-trace by only 0.3% — the background-CV concern closed as a null effect. PET corrected C_total: median 15.10%/bin from five blocks including a new targeted retraining-response term. Still withheld: every (E-avail, W)-plane significance (that covariance has not been requoted) — so no Nsigma for the excess anywhere in this talk; the PET statistical ensemble grows from 20 to 100 replicas before publication.">
     <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
-    <div class="chips"><span class="chip warn">Uncertainty under regeneration — preliminary</span></div>
-    <h2 class="slide-title">What is cleared, what is being regenerated</h2>
+    <div class="chips"><span class="chip">Corrected 5D campaign complete</span><span class="chip warn">Significances not yet requoted</span></div>
+    <h2 class="slide-title">What is cleared, what is still withheld</h2>
     <ul class="bullets rise">
-      <li><span>Cleared: the full 2D uncertainty budget and covariance.
-        <span class="sub">Independently rebuilt; matches the published budget (uncertainty slide, B6).</span></span></li>
-      <li><span>Being regenerated after a methodology fix: the 3D/4D/5D budgets and every covariance-based significance.
-        <span class="sub">No Nσ is quoted for the high-E<sub>avail</sub>/high-W excess anywhere in this talk.</span></span></li>
-      <li><span>Unaffected: central values, closure tests, marginalization cross-checks, and shape-level statements.
-        <span class="sub">The excess localization is a central-value observation; its significance follows with the corrected production.</span></span></li>
+      <li><span>Cleared: the full 2D uncertainty budget and covariance — independently rebuilt, matches the published budget (B6).</span></li>
+      <li><span>Complete: the corrected 5D GBDT campaign (July 14) — block-sum median 13.36%/bin.
+        <span class="sub">Adopted mean-centered covariance √Tr C = 5.81×10<sup>−38</sup>; per-universe background a null effect (&lt;0.3%).</span></span></li>
+      <li><span>Complete: the corrected PET budget — median 15.10%/bin from five blocks.
+        <span class="sub">Including a new targeted retraining-response term; 20 → 100 statistical replicas before publication (B9).</span></span></li>
+      <li><span>Still withheld: (E<sub>avail</sub>, W)-plane significances, pending the requote — no Nσ quoted anywhere in this talk.</span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B7b · Quarantined band" data-speaker-notes="One quarantined figure, shown only here and tagged: the E-avail, W spectrum with its preliminary band. No numbers quoted from it.">
+  <section class="slide figslide" data-label="B7b · Quarantined band" data-speaker-notes="One quarantined figure, shown only here and tagged: the E-avail, W spectrum with its old preliminary band. The corrected 5D covariance is adopted, but this plane's band and significances have not yet been requoted against it — no numbers quoted from this figure.">
     <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
-    <div class="chips"><span class="chip warn">Uncertainty under regeneration — preliminary</span></div>
-    <h2 class="slide-title">The (E<sub>avail</sub>, W) band being regenerated</h2>
+    <div class="chips"><span class="chip warn">Old band — requote pending</span></div>
+    <h2 class="slide-title">The (E<sub>avail</sub>, W) band awaiting its requote</h2>
     <div class="figwrap rise">
       <figure class="fig-panel">
-        <span class="prelim-tag">Uncertainty under regeneration — preliminary</span>
+        <span class="prelim-tag">Old band — requote pending, preliminary</span>
         <img src="./figures-dark/eavailW_band.png" alt="E-avail and W spectra with the quarantined preliminary uncertainty band, generators overlaid.">
       </figure>
     </div>
-    <p class="fig-caption"><strong>Shown for shape only</strong> — the band is preliminary and no numbers are quoted from this figure.</p>
+    <p class="fig-caption"><strong>Shown for shape only</strong> — this band predates the corrected covariance (adopted July 14) and no numbers are quoted from it; the plane's requote is pending.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -775,14 +778,14 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B9 · PET details" data-speaker-notes="Point-cloud transformer details: cardinality of the cloud vs truth hadrons, and the central-value comparison to the GBDT — precision comparison withheld (quarantined).">
+  <section class="slide figslide" data-label="B9 · PET details" data-speaker-notes="Point-cloud transformer details: cardinality of the cloud vs truth hadrons (coverage-fixed inputs — truth mean 4.43, no spurious zero-cardinality spike), and the central-value comparison to the GBDT. The corrected PET uncertainty campaign is complete: C_total median 15.10%/bin in 5D (12.37% as the 4D marginal), five blocks — vertical systematic, targeted retraining response (new, second-largest by trace), ML ensemble, 20-replica statistical ensemble, frozen-map detector/lateral — all on one corrected nominal and mask, sum PSD. Comparable to the GBDT's 13.36% block-sum median at the current 2M-event training; the statistical inventory grows to 100 replicas before publication.">
     <div class="kicker"><span>Backup 9 · Point-cloud transformer</span></div>
     <h2 class="slide-title">PET inputs and central-value cross-check</h2>
     <div class="figwrap rise">
-      <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/pet_cardinality_real.png" alt="Point-cloud cardinality: truth final-state hadrons vs reconstructed clusters in MC and data, truncation cap at 12."></figure>
-      <figure class="fig-panel"><img src="./figures-dark/pet_vs_gbdt_absolute.png" alt="PET point-cloud vs GBDT scalar unfolds, central values, in pT, pz, E-avail and q3."></figure>
+      <figure class="fig-panel dark"><img src="./figures-dark/pet_cardinality_real.png" alt="Point-cloud cardinality: truth final-state hadrons vs reconstructed clusters in MC and data, truncation cap at 12."></figure>
+      <figure class="fig-panel dark"><img src="./figures-dark/pet_vs_gbdt_absolute.png" alt="PET point-cloud vs GBDT scalar unfolds, central values, in pT, pz, E-avail and q3."></figure>
     </div>
-    <p class="fig-caption"><strong>Left:</strong> cloud cardinality, truth vs reco, capped at 12 points. <strong>Right:</strong> PET vs GBDT central values agree; the precision comparison awaits the corrected uncertainty production.</p>
+    <p class="fig-caption"><strong>Left:</strong> cloud cardinality, truth vs reco, capped at 12 points. <strong>Right:</strong> PET vs GBDT central values agree. Corrected PET budget: median 15.10%/bin (5D, five blocks incl. targeted retraining response) vs the GBDT's 13.36% — comparable precision from raw clusters at the current 2M-event training.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -811,6 +814,11 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
 (() => {
   const stage = document.querySelector('deck-stage');
   if (new URLSearchParams(location.search).has('baselines')) stage.setAttribute('data-baselines', '');
+  // Number the slides for .page-foot (see the CSS comment): the rail clones
+  // every section, so a CSS counter over-counts; an inline custom property is
+  // copied verbatim by cloneNode and stays correct everywhere.
+  stage.querySelectorAll(':scope > section.slide').forEach((s, i) =>
+    s.style.setProperty('--slide-n', `"${i + 1}"`));
 })();
 </script>
 </body>

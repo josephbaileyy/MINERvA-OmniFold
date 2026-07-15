@@ -63,10 +63,11 @@ def main():
 
     # arr is [ipt, ipz]; plot p_|| (pz) on x, p_T on y.
     fig, ax = plt.subplots(figsize=(4.8, 3.8))
-    # per-bin deviations are ~1-2% RMS (worst single bin -12.6%), so a +-15%
-    # window rendered as an all-white map; +-5% shows the structure and lets
-    # the one outlier saturate into the colorbar's extend arrows
-    norm = TwoSlopeNorm(vmin=0.95, vcenter=1.0, vmax=1.05)
+    # per-bin deviations are ~0.5-2% RMS (worst single bin -12.6%), so a +-15%
+    # window rendered as an all-white map; +-2% puts the typical sub-percent
+    # deviations at half-scale (clearly red/blue) and lets the few larger bins
+    # saturate into the colorbar's extend arrows
+    norm = TwoSlopeNorm(vmin=0.98, vcenter=1.0, vmax=1.02)
     mesh = ax.pcolormesh(pzy, ptx, np.ma.masked_invalid(ratio),
                          cmap=technote_style.DIV_CMAP, norm=norm,
                          shading="flat")

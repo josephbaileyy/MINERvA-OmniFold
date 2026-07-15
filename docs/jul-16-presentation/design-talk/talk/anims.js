@@ -735,13 +735,13 @@
         if (t < 4) label(ctx, 'in one dimension the discrepancy is broad and unlocalized', 800, 855, { size: 26, color: C.dim, align: 'center' });
         else if (t < 8) label(ctx, 'open a second axis: W — same weighted events, one more column', 800, 855, { size: 26, color: C.dim, align: 'center' });
         else if (pTag <= 0) label(ctx, 'the broad 1D excess resolves into a compact corner of the plane', 800, 855, { size: 26, color: C.dim, align: 'center' });
-        if (pTag > 0) label(ctx, 'central-value observation — significance pending corrected uncertainties', 800, 855, { size: 27, color: C.ink, align: 'center', weight: 600, alpha: pTag });
+        if (pTag > 0) label(ctx, 'central-value observation — significance pending the corrected-covariance requote', 800, 855, { size: 27, color: C.ink, align: 'center', weight: 600, alpha: pTag });
       },
       caption(t) {
         if (t < 4) return 'One dimension: the unfolded data sit broadly above the generator prediction across the high-E_avail tail — real, but shapeless. Where does it live?';
         if (t < 8) return 'Open a second axis, W. No re-unfold — the same weighted events, viewed in the (E_avail, W) plane.';
         if (t < 12) return 'The broad discrepancy resolves into a compact region: high E_avail AND high W — the DIS corner. All four generators underpredict there.';
-        return 'Labeled honestly: central-value observation; significance pending corrected uncertainties. No Nσ is claimed anywhere.';
+        return 'Labeled honestly: central-value observation; significance pending the corrected-covariance requote. No Nσ is claimed anywhere.';
       },
     };
   }
