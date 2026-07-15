@@ -56,6 +56,7 @@ run eavailW_band.png                 3d-unfolding/genie  python overlay_eavailW_
 run q3_excess_projection.png         nd-unfolding  python q3_excess_projection.py
 
 echo "== PET =="
+run ../docs/analysis-note/figures/pet_event_representation_schematic.png nd-unfolding python pet/plot_pet_representation_schematic.py --outdir ../docs/analysis-note/figures
 # PET point-cloud INPUT figures (KNOWN_ISSUES #18): one invocation writes
 # pet_event_displays + pet_cardinality_{real,withremnant} + pet_truncation_retention.
 # Reads the coverage-FIXED of_inputs_pc_fullcloud.npz (the pre-06-28 of_inputs_pc.npz

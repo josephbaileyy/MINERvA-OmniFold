@@ -9,9 +9,13 @@ documents that track: a point-cloud transformer (PET, the architecture of
 OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream OmniFold
 implementation) unfolds the same ME~FHC data using, on the reconstructed
 side, the actual calorimetric recoil clusters --- per-cluster energy,
-transverse position and $z$ (\texttt{cluster\_energy}, \texttt{cluster\_pos},
-\texttt{cluster\_z}, filtered on \texttt{cluster\_isMuontrack} via
-\texttt{CVUniverse::GetRecoClusters()}) alongside the muon kinematics. This
+one view-projected transverse coordinate and $z$ (\texttt{cluster\_energy},
+\texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
+\texttt{cluster\_isMuontrack} via
+\texttt{CVUniverse::GetRecoClusters()}). Muon-derived event scalars are retained
+for binning the extracted result, but the current PET classifier is trained on
+the recoil clouds alone; a full-event representation with the muon supplied as
+a distinguished feature is a planned input-and-training upgrade. This
 is a validated \emph{method milestone}: a real, absolutely-normalized,
 full-statistics cross section with its own closure gate and a completed corrected
 uncertainty campaign. The network training in this section is subsample-limited (see
