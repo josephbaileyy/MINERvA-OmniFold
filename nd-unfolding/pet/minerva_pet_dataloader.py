@@ -34,6 +34,7 @@ Vendored-loader semantics (omnifold_nn/omnifold/dataloader.py):
 """
 import argparse
 import os
+import random
 import sys
 
 import numpy as np
@@ -72,7 +73,8 @@ def _scalar_feats(d, ndim):
 
 
 def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
-                  bootstrap=False, seed=0, rank=0, size=1, memmap_dir=None):
+                  bootstrap=False, bootstrap_seed=None, seed=0, rank=0, size=1,
+                  memmap_dir=None):
     """Return (data_loader, mc_loader) vendored DataLoaders from our OmniFold arrays.
 
     rank/size + memmap_dir: for horovod point-cloud training, load from a .npy dir
@@ -84,7 +86,8 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
     from omnifold import DataLoader  # vendored
 
     if memmap_dir and mode == "pointcloud":
-        return _build_pointcloud_memmap(memmap_dir, max_events, bootstrap, seed, rank, size)
+        return _build_pointcloud_memmap(memmap_dir, max_events, bootstrap, bootstrap_seed,
+                                        seed, rank, size)
 
     d = np.load(inputs_npz, allow_pickle=True)
     pass_reco = d["pass_reco"]; pass_truth = d["pass_truth"]
@@ -112,6 +115,15 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
     else:
         raise ValueError(f"unknown mode {mode!r} (scalar|pointcloud)")
 
+    if bootstrap_seed is None and bootstrap:
+        bootstrap_seed = seed
+    if bootstrap_seed is not None:
+        from pet_bootstrap import poisson_event_weights
+        measured_weights, w_truth = poisson_event_weights(
+            measured_weights, w_truth, int(bootstrap_seed))
+        print(f"[bootstrap] measured-data and MC Poisson draws seed={bootstrap_seed} "
+              "(independent RNGs; one coherent full-sample MC event draw)")
+
     imc = np.arange(MCgen.shape[0])   # mc subsample indices into the input npz (for binning)
     if max_events is not None:
         rng = np.random.default_rng(seed)
@@ -124,9 +136,9 @@ def build_loaders(inputs_npz, mode="scalar", num_part=1, max_events=None,
         measured, measured_weights = measured[ida], measured_weights[ida]
 
     data = DataLoader(reco=measured, weight=measured_weights, normalize=True,
-                      bootstrap=bootstrap)
+                      bootstrap=False)
     mc = DataLoader(reco=MCreco, gen=MCgen, pass_reco=pass_reco, pass_gen=pass_truth,
-                    weight=w_truth, normalize=True, bootstrap=bootstrap)
+                    weight=w_truth, normalize=True, bootstrap=False)
     return data, mc, imc
 
 
@@ -171,7 +183,8 @@ def _pc_scale(a):
     return np.nan_to_num(a.astype(np.float32) / 1000.0, nan=0.0, posinf=0.0, neginf=0.0)
 
 
-def _build_pointcloud_memmap(npy_dir, max_events, bootstrap, seed, rank, size):
+def _build_pointcloud_memmap(npy_dir, max_events, bootstrap, bootstrap_seed,
+                             seed, rank, size):
     """Memory-mapped, rank-strided point-cloud loader (see build_loaders docstring).
 
     Materializes only this rank's rows: draws the global subsample indices with the SAME
@@ -210,9 +223,21 @@ def _build_pointcloud_memmap(npy_dir, max_events, bootstrap, seed, rank, size):
     w_truth    = np.asarray(w_truth_all[imc]).astype(np.float32)
     meas_w     = np.asarray(meas_w_all[ida]).astype(np.float32)
 
-    data = DataLoader(reco=measured, weight=meas_w, normalize=True, bootstrap=bootstrap)
+    if bootstrap_seed is None and bootstrap:
+        bootstrap_seed = seed
+    if bootstrap_seed is not None:
+        # Draw on the GLOBAL event ids, then select this rank/subsample so the
+        # training and full-sample extraction use one coherent draw per MC event.
+        rd = np.random.default_rng(int(bootstrap_seed))
+        rm = np.random.default_rng(int(bootstrap_seed) + 10_000_000)
+        data_factor = rd.poisson(1.0, M).astype(np.float32)
+        mc_factor = rm.poisson(1.0, N).astype(np.float32)
+        meas_w *= data_factor[ida]
+        w_truth *= mc_factor[imc]
+        print(f"[bootstrap] rank={rank} coherent global data/MC Poisson seed={bootstrap_seed}")
+    data = DataLoader(reco=measured, weight=meas_w, normalize=True, bootstrap=False)
     mc = DataLoader(reco=MCreco, gen=MCgen, pass_reco=pass_reco, pass_gen=pass_truth,
-                    weight=w_truth, normalize=True, bootstrap=bootstrap)
+                    weight=w_truth, normalize=True, bootstrap=False)
     return data, mc, imc
 
 
@@ -250,6 +275,12 @@ def main():
                          "TF-unseeded (genuinely different every process). Vary this across "
                          "job-array tasks to get independent seed replicas for a "
                          "retraining-response convergence check.")
+    ap.add_argument("--bootstrap-seed", type=int, default=None,
+                    help="full PET statistical replica: Poisson-fluctuate measured data "
+                         "and MC with independent RNGs, then retrain from scratch")
+    ap.add_argument("--estimator-seed", type=int, default=42,
+                    help="fixed Python/NumPy/TensorFlow estimator seed; keep constant "
+                         "across statistical replicas so C_stat varies only the bootstrap")
     args = ap.parse_args()
 
     # Horovod data-parallel rank/size from the SLURM launch: `srun -n N` sets SLURM_PROCID
@@ -261,7 +292,8 @@ def main():
 
     data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
                                   max_events=args.max_events, rank=rank, size=size,
-                                  memmap_dir=args.memmap_dir, seed=args.seed)
+                                  memmap_dir=args.memmap_dir, seed=args.seed,
+                                  bootstrap_seed=args.bootstrap_seed)
 
     if args.closure:
         # Pseudo-data = MC reco of the reco-passing events, weighted by the (normalized)
@@ -282,6 +314,15 @@ def main():
     if not args.smoke:
         print("[ok] DataLoaders built. Pass --smoke (TF/GPU env) to run a MultiFold step.")
         return
+
+    # Statistical replicas must not fold estimator jitter into C_stat. Seed all
+    # classifier-side RNGs after data/subsample construction but before model
+    # creation. ML-seed studies can vary this explicitly in their own campaign.
+    random.seed(args.estimator_seed)
+    np.random.seed(args.estimator_seed)
+    import tensorflow as tf
+    tf.keras.utils.set_random_seed(args.estimator_seed)
+    print(f"[estimator] fixed Python/NumPy/TensorFlow seed={args.estimator_seed}")
 
     from omnifold import MultiFold, MLP, PET
     reco_arr = np.asarray(mc.reco)
@@ -345,9 +386,28 @@ def main():
         del full_mc, full_gen
 
     if args.save_weights:
+        extra = {}
+        if args.bootstrap_seed is not None:
+            # Persist the SAME global MC-event Poisson draw used by build_loaders.
+            # Downstream PET xsec extraction multiplies w_truth by this factor, so
+            # the replica remains coherent from classifier training through final
+            # truth binning (the previous frozen-w_push C_stat did neither).
+            if args.memmap_dir:
+                n_global = int(np.load(os.path.join(args.memmap_dir, "w_truth.npy"),
+                                       mmap_mode="r").shape[0])
+            else:
+                with np.load(args.inputs, allow_pickle=True) as zin:
+                    n_global = int(zin["w_truth"].shape[0])
+            from pet_bootstrap import mc_poisson_factor
+            mc_factor_global = mc_poisson_factor(n_global, args.bootstrap_seed)
+            extra["mc_bootstrap_factor"] = mc_factor_global[np.asarray(imc, dtype=np.int64)]
+            extra["bootstrap_seed"] = np.asarray(int(args.bootstrap_seed))
+            extra["bootstrap_contract"] = np.asarray(
+                "measured data fluctuated + PET retrained + coherent MC factor applied in extraction")
         np.savez_compressed(args.save_weights, w_push=np.asarray(w),
                             mc_indices=imc, model=args.model,
-                            pass_truth=save_pass_gen, closure=bool(args.closure))
+                            pass_truth=save_pass_gen, closure=bool(args.closure),
+                            **extra)
         print(f"[smoke] saved push weights + mc indices -> {args.save_weights}")
 
 

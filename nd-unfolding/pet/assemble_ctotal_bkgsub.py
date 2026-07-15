@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 """Phase 8: assemble the corrected PET C_total and project the 4D marginal.
 
-C_total = C_syst + C_stat + C_ml (+ C_lateral when available), all on ONE
-corrected-nominal reported-bin mask/order (10,550 bins). Then build the EXACT
-5D->4D density projection matrix M (integrate over W with its bin widths, since
-the PET xsec is a density d^5sigma/prod dx_a) and form the 4D marginal
+C_total = C_syst + C_stat + C_ml + C_retrain (+ C_lateral when available), all
+on ONE corrected-nominal reported-bin mask/order (10,550 bins). Then build the
+EXACT 5D->4D density projection matrix M (integrate over W with its bin widths,
+since the PET xsec is a density d^5sigma/prod dx_a) and form the 4D marginal
 C_4D = M C_5D M^T, projecting the central value with the same convention.
+
+NO DOUBLE-COUNTING (C_syst + C_retrain): the two blocks measure DISJOINT
+quantities against the SAME frozen-map reference, so their quadrature sum does
+not double-count. C_syst is built from the frozen one-sided shift s_u =
+x_frozen(r_u) - CV (frozen PET map, truth prior r_u). C_retrain (Phase 7) is
+built from Delta_u = x_retrain(r_u) - x_frozen(r_u) -- the response measured
+RELATIVE TO THE FROZEN-MAP estimate, NOT relative to nominal. Because Delta_u
+subtracts x_frozen (the very quantity C_syst varies), C_retrain adds only the
+INCREMENT from re-inferring the map on the shifted prior, orthogonal to the
+frozen shift C_syst already carries. (Receipts: phase7_extract_compare.py
+computes s_u and delta = x_retrain - x_frozen separately; assemble_cretrain.py
+sums outer(delta,delta). Had Delta_u been x_retrain - CV it WOULD double-count
+the frozen shift -- it is not.)
 
 Runs on the login node (pure numpy). Components are the npz products written by
 combine_cstat_bkgsub / combine_cml_bkgsub / build_csyst_prelim_bkgsub, each
@@ -58,7 +71,11 @@ def main():
     ap.add_argument("--csyst", default=f"{D}/pet_csyst_prelim_bkgsub_5d.npz")
     ap.add_argument("--cstat", default=f"{D}/pet_cstat_bkgsub_5d.npz")
     ap.add_argument("--cml", default=f"{D}/pet_cml_bkgsub_5d.npz")
-    ap.add_argument("--clateral", default=None, help="optional; omitted -> preliminary")
+    ap.add_argument("--cretrain", default=f"{D}/pet_cretrain_bkgsub_5d.npz",
+                    help="Phase-7 retraining-response block (Delta rel. to frozen map; "
+                         "no double-count with C_syst -- see module docstring). "
+                         "Pass '' to omit.")
+    ap.add_argument("--clateral", default=None, help="optional; omitted -> lateral-pending")
     ap.add_argument("--w-source", default="of_inputs_5d.npz")
     ap.add_argument("--out", default=f"{D}/pet_ctotal_bkgsub_5d.npz")
     ap.add_argument("--label", default="preliminary",
@@ -67,6 +84,8 @@ def main():
 
     comps = {"C_syst": (a.csyst, "C_syst"), "C_stat": (a.cstat, "C_stat"),
              "C_ml": (a.cml, "C_ml")}
+    if a.cretrain:
+        comps["C_retrain"] = (a.cretrain, "C_retrain")
     if a.clateral:
         comps["C_lateral"] = (a.clateral, "C_lateral")
 
@@ -125,10 +144,23 @@ def main():
         "campaign": f"PET bkgsub 5D corrected C_total assembly ({a.label})",
         "label": a.label,
         "components_present": sorted(Cs.keys()),
-        "components_missing": ([] if a.clateral else ["C_lateral (GBDT rebank blocked)"]),
+        "components_missing": ([] if a.clateral else ["C_lateral (detector; not yet built on corrected target)"]),
+        "cretrain_no_double_count": (
+            "C_retrain uses Delta_u = x_retrain(r_u) - x_FROZEN(r_u) (response relative "
+            "to the frozen-map estimate, not nominal), while C_syst uses s_u = "
+            "x_frozen(r_u) - CV. Delta_u subtracts the frozen shift C_syst carries, so "
+            "C_syst + C_retrain sums DISJOINT quantities (no double-count). Receipts: "
+            "phase7_extract_compare.py (s_u, delta computed separately); "
+            "assemble_cretrain.py (outer(delta,delta))."
+        ) if "C_retrain" in Cs else None,
         "note": ("PRELIMINARY: C_syst is the support-limited pre-fix-bank vertical "
                  "block and C_lateral is omitted (GBDT rebank in flight). Not final; "
-                 "not for ledger/note." if a.label != "final" else "final"),
+                 "not for ledger/note." if a.label == "preliminary"
+                 else ("LATERAL-PENDING: C_syst-final (bank-invariant vertical; #13 "
+                       "background re-quote null <0.3%), C_stat, C_ml, C_retrain all "
+                       "FINAL on the common PET nominal/mask; C_lateral (detector) not "
+                       "yet built on the corrected target -- add via --clateral for THE "
+                       "final." if a.label == "lateral-pending" else "final")),
         "n_reported_bins_5d": nrep, "n_reported_bins_4d": int(len(rep4_idx)),
         "per_component": per,
         "psd_5d_total": diag_total, "psd_4d": diag_4d,

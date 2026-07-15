@@ -24,6 +24,7 @@ Outputs products/pet/pet_5d_covariance_combined.root (+ console summary). Run on
 compute node (32.85M-row 5D re-binning per universe).
 """
 import argparse
+import glob
 import os
 import sys
 
@@ -35,7 +36,8 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
         sys.path.insert(0, _p)
 
 import unfold_2d_omnifold_unbinned as u2d
-from xsec_nd import extract_cross_section_nd
+from xsec_nd import extract_cross_section_nd, total_xsec
+from uq_math import guarded_ratio, mat_covariance, require_truth_ratio_bank
 
 KNOB_BANDS = ["2p2h", "CCQEPauliSupViaKF", "FrAbs_pi", "FrElas_N", "HighQ2",
               "LowQ2", "MaCCQE", "MaRES", "MFP_N", "MvRES", "Rvn2pi", "Rvp2pi"]
@@ -45,13 +47,6 @@ RHO_CLIP = (1e-2, 1e2)
 def _opt(bank, name):
     p = os.path.join(bank, name)
     return np.load(p).astype(np.float64) if os.path.exists(p) else None
-
-
-def _clip(rho):
-    """Bank stores per-event universe/CV RATIOS (verified sig_*_t_1 median=1).
-    Clip positive; guard NaN/inf -> 1."""
-    rho = np.where(np.isfinite(rho) & (rho > 0), rho, 1.0)
-    return np.clip(rho, *RHO_CLIP)
 
 
 class PETxsec5D:
@@ -100,12 +95,21 @@ class PETxsec5D:
 
         w = np.load(weights_npz)
         wp = w["w_push"].astype(np.float64)
+        bf = (w["mc_bootstrap_factor"].astype(np.float64)
+              if "mc_bootstrap_factor" in w.files else np.ones(wp.shape[0], dtype=float))
         if "mc_indices" in w.files:
             idx = w["mc_indices"]
             full = np.zeros(self.truth.shape[0], float)
             full[idx] = wp
             wp = full
+            full_bf = np.ones(self.truth.shape[0], float)
+            full_bf[idx] = bf
+            bf = full_bf
+        if wp.shape[0] != self.truth.shape[0] or bf.shape[0] != self.truth.shape[0]:
+            raise ValueError(f"PET weight/bootstrap rows do not match truth rows: "
+                             f"{wp.shape[0]}/{bf.shape[0]} vs {self.truth.shape[0]}")
         self.w_push = wp
+        self.mc_bootstrap_factor = bf
         # flux on the pt axis (axis 0); n_nucleons -- same loaders as the GBDT path.
         # self.edges[0] may be an FPS-extended pT grid (more/different bins than the
         # frozen flux histogram) -- remap by bin-centre lookup into the standard-edge
@@ -124,6 +128,7 @@ class PETxsec5D:
         # per-bin rescale -> invariant for the fractional covariance, but makes the
         # CV match the milestone).
         self.comp_rescale = np.ones(self.shape)
+        # Fixed nominal detector anchor; replica fluctuations remain in _comp(wt).
         comp_pc_cv = self._comp(self.w_truth)
         if comp_ref_root and os.path.exists(comp_ref_root):
             import ROOT
@@ -148,7 +153,9 @@ class PETxsec5D:
 
     def xsec(self, rho=None):
         """xsec for a per-event truth reweight rho (None = CV); completeness anchored."""
-        wt = self.w_truth if rho is None else self.w_truth * rho
+        wt = self.w_truth * self.mc_bootstrap_factor
+        if rho is not None:
+            wt = wt * rho
         counts, _ = np.histogramdd(self.truth[self.pt], bins=self.edges,
                                    weights=self.w_push[self.pt] * wt[self.pt])
         comp = self._comp(wt) * self.comp_rescale
@@ -171,7 +178,11 @@ def main():
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--comp-ref", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
                     help="GBDT 5D product with hCompletenessND_flat to anchor the CV scale")
-    ap.add_argument("--nboot", type=int, default=100)
+    ap.add_argument("--stat-replicas", required=True,
+                    help="glob of measured-data-fluctuated, fully retrained PET xsec npz replicas")
+    ap.add_argument("--stat-expected-ids", default="1-100")
+    ap.add_argument("--invalid-ratio", choices=("error", "neutral"), default="error",
+                    help="invalid bank-ratio policy; neutral is explicit and logged")
     ap.add_argument("--out-root", default="products/pet/pet_5d_covariance_combined.root")
     args = ap.parse_args()
 
@@ -180,45 +191,41 @@ def main():
     rep = x_cv > 0
     base = x_cv[rep]
     nrep = int(rep.sum())
-    print(f"[pet5d] CV total sigma={ (x_cv).sum():.4e}; reported bins={nrep}")
+    print(f"[pet5d] CV total sigma={total_xsec(x_cv.reshape(pet.shape, order='C'), pet.edges):.4e}; "
+          f"reported bins={nrep}")
 
-    # ---- C_syst: block-sum over knob bands + flux ----
+    # ---- C_syst: per-band mean-centered covariance (MAT 1/N), matching
+    #      unified_throw_cov / analyze_universes. Knob bands use BOTH +/-1sigma
+    #      endpoints (not one-sided vs CV); flux uses all PPFX universes. ----
+    flux_ids = require_truth_ratio_bank(args.bank, KNOB_BANDS, expected_flux=100)
+    ratio = lambda value, label: guarded_ratio(
+        value, label, invalid_policy=args.invalid_ratio, clip=RHO_CLIP)
     C_syst = np.zeros((nrep, nrep))
     for b in KNOB_BANDS:
-        sig = _opt(args.bank, f"sig_{b}_t_1.npy")
-        if sig is None:
-            print(f"[syst] skip {b}"); continue
-        rho = _clip(sig)
-        delta = pet.xsec(rho)[rep] - base
-        C_syst += np.outer(delta, delta)
-        print(f"[syst] {b}: ||delta||={np.linalg.norm(delta):.3e}", flush=True)
-    # flux universes
-    nflux = 0
-    while os.path.exists(os.path.join(args.bank, f"sig_flux_t_{nflux}.npy")):
-        nflux += 1
-    if nflux:
-        fX = []
-        for u in range(nflux):
-            rho = _clip(_opt(args.bank, f"sig_flux_t_{u}.npy"))
-            fX.append(pet.xsec(rho)[rep] - base)
-        fX = np.array(fX)
-        C_flux = (fX.T @ fX) / nflux
-        C_syst += C_flux
-        print(f"[syst] flux ({nflux}): sqrt-tr={np.sqrt(np.trace(C_flux)):.3e}")
+        sig_m = _opt(args.bank, f"sig_{b}_t_0.npy")
+        sig_p = _opt(args.bank, f"sig_{b}_t_1.npy")
+        x_m = pet.xsec(ratio(sig_m, f"{b}:-1"))[rep]
+        x_p = pet.xsec(ratio(sig_p, f"{b}:+1"))[rep]
+        cb = mat_covariance(np.stack([x_m, x_p]))
+        C_syst += cb
+        print(f"[syst] {b}: sqrt-tr={np.sqrt(np.trace(cb)):.3e} (mean-centered +/-)", flush=True)
+    # flux universes: mean-centered covariance over all PPFX universes
+    fX = [pet.xsec(ratio(_opt(args.bank, f"sig_flux_t_{u}.npy"), f"Flux:{u}"))[rep]
+          for u in flux_ids]
+    C_flux = mat_covariance(np.asarray(fX))
+    C_syst += C_flux
+    print(f"[syst] flux ({len(flux_ids)}): sqrt-tr={np.sqrt(np.trace(C_flux)):.3e} "
+          "(mean-centered)")
 
-    # ---- C_stat: Poisson bootstrap of the PET event weights ----
-    C_stat = np.zeros((nrep, nrep))
-    rng = np.random.default_rng(20260608)
-    bX = []
-    npass = pet.pt.sum()
-    for k in range(args.nboot):
-        # Poisson(1) multiplicative resample of pass_truth events -> reweight
-        boot = np.ones(pet.truth.shape[0])
-        boot[pet.pt] = rng.poisson(1.0, size=npass)
-        bX.append(pet.xsec(boot)[rep] - base)
-    bX = np.array(bX)
-    C_stat = (bX.T @ bX) / args.nboot
-    print(f"[stat] {args.nboot} bootstraps: sqrt-tr={np.sqrt(np.trace(C_stat)):.3e}")
+    from replica_manifest import load_replica_manifest
+    lo, hi = (int(v) for v in args.stat_expected_ids.split("-", 1))
+    SX, stat_ids = load_replica_manifest(sorted(glob.glob(args.stat_replicas)),
+                                         set(range(lo, hi + 1)))
+    if SX.shape[1] != x_cv.size:
+        raise SystemExit(f"[FAIL] PET stat replica bins {SX.shape[1]} != CV {x_cv.size}")
+    C_stat = np.cov(SX[:, rep], rowvar=False, ddof=1)
+    print(f"[stat] {SX.shape[0]} measured-data+retrained replicas: "
+          f"sqrt-tr={np.sqrt(np.trace(C_stat)):.3e}")
 
     # ---- C_ML: spread between available PET trainings ----
     C_ML = np.zeros((nrep, nrep))

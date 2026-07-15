@@ -344,11 +344,12 @@ section re-extracted.  The corrected implementation uses asymmetric $\pm1\sigma$
 endpoint interpolation, one fixed estimator seed, and covariance about the throw
 mean; the mean shift from CV is stored separately.  It does not subtract a scalar
 run-to-run jitter floor (\texttt{nd-unfolding/unified\_throw\_cov.py}). The old
-4D/5D/FPS numerical examples and adoptions are quarantined pending corrected
-production. A single-throw superposition probe is insufficient to test the
-nonlinear response; a strict joint ensemble and matched endpoint comparator are
-required. Any later adoption must document the low-rank treatment, mean shift,
-and selection-support bound before transferring information onto a sweep block,
+4D/5D/FPS numerical examples and adoptions are quarantined. The corrected 5D
+replacement has completed the strict joint ensemble and matched-endpoint
+comparator and is adopted in \S\ref{sec:uq-combine}; corrected 4D/FPS products
+remain pending. A single-throw superposition probe is insufficient to test the
+nonlinear response. Any adoption must document the low-rank treatment, mean
+shift, and selection-support bound before transferring information onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), which is positive-semidefinite by construction
 (a direct rank-$N$ swap is not) and never falls below the block baseline.

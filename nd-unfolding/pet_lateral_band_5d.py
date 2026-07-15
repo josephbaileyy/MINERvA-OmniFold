@@ -55,8 +55,13 @@ def main():
     ap.add_argument("--mcfile", default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--comp-ref", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
-    ap.add_argument("--combined", default="products/pet/pet_5d_covariance_combined.root")
+    ap.add_argument("--combined", default="products/pet/pet_5d_covariance_combined.root",
+                    help="pre-lateral vertical cov ROOT to repackage; pass '' to skip "
+                         "(the corrected-target run uses --out-npz instead)")
     ap.add_argument("--out-root", default="products/pet/pet_5d_covariance_combined_wlat.root")
+    ap.add_argument("--out-npz", default=None,
+                    help="if set, dump the PET-native lateral block C_lateral + "
+                         "reported_mask(65856) + cv(65856) as npz for assemble_ctotal_bkgsub")
     args = ap.parse_args()
 
     pet = PETxsec5D(args.pc, args.weights, args.mcfile, args.flux_hist, args.w_source, args.comp_ref)
@@ -64,7 +69,9 @@ def main():
     rep = x_cv > 0
     base = x_cv[rep]
     nrep = int(rep.sum())
-    print(f"[wlat5d] PET CV total={x_cv.sum():.4e} reported bins={nrep}")
+    from xsec_nd import total_xsec
+    print(f"[wlat5d] PET CV total={total_xsec(x_cv.reshape(pet.shape, order='C'), pet.edges):.4e} "
+          f"reported bins={nrep}")
 
     pt_lo, pt_hi = pet.edges[0][0], pet.edges[0][-1]
     pz_lo, pz_hi = pet.edges[1][0], pet.edges[1][-1]
@@ -198,6 +205,24 @@ def main():
         C_lat += cb
         print(f"[wlat5d] {band:22s} sqrt-tr={np.sqrt(max(np.trace(cb), 0)):.3e}")
     f.Close()
+
+    # ---------- dump the PET-native lateral block as npz (assemble_ctotal input) ----------
+    if args.out_npz:
+        med = float(np.median(np.sqrt(np.clip(np.diag(C_lat), 0, None))[base > 0] / base[base > 0]))
+        os.makedirs(os.path.dirname(args.out_npz) or ".", exist_ok=True)
+        np.savez_compressed(args.out_npz, C_lateral=C_lat, reported_mask=rep, cv=x_cv,
+                            n_reported=np.array(nrep),
+                            band_names=np.array(list(band_cov.keys())),
+                            band_sqrt_trace=np.array([float(np.sqrt(max(np.trace(cb), 0)))
+                                                      for cb in band_cov.values()]))
+        print(f"[wlat5d] wrote lateral NPZ -> {args.out_npz}  "
+              f"(C_lateral {nrep}x{nrep}, sqrt-tr={np.sqrt(max(np.trace(C_lat),0)):.4e}, "
+              f"median frac={100*med:.2f}%)", flush=True)
+
+    # ---------- (optional) repackage into a combined ROOT; skipped for corrected run ----------
+    if not args.combined or not os.path.exists(args.combined):
+        print("[wlat5d] combined-ROOT repackage skipped (no --combined); NPZ is the deliverable")
+        return
 
     # ---------- read the 5D vertical blocks + rebuild the combined file ----------
     fc = ROOT.TFile.Open(args.combined, "READ")

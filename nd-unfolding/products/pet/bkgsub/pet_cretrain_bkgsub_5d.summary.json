@@ -1,0 +1,56 @@
+{
+  "campaign": "PET bkgsub Phase 7 C_retrain (retraining-response covariance)",
+  "status": "bank-invariant / FINAL for the retraining-response (see KNOWN_ISSUES receipts)",
+  "consequence_rule": "C_retrain = sum_u outer(Delta_u, Delta_u) over MATERIAL bands (rank-1 each)",
+  "n_reported_bins": 10550,
+  "rank": 6,
+  "contributing_material_bands": [
+    {
+      "tag": "MaRES_1",
+      "material": true,
+      "overall_ratio": 0.9708793818301605,
+      "frac_bins_over": 0.9286255924170617,
+      "norm_delta": 1.3235433907612963e-38
+    },
+    {
+      "tag": "2p2h_1",
+      "material": true,
+      "overall_ratio": 0.6604703563186461,
+      "frac_bins_over": 0.970521327014218,
+      "norm_delta": 5.1103283396771005e-39
+    },
+    {
+      "tag": "MaCCQE_1",
+      "material": true,
+      "overall_ratio": 1.2439853534553111,
+      "frac_bins_over": 0.9497630331753555,
+      "norm_delta": 1.281146607551774e-38
+    },
+    {
+      "tag": "LowQ2_1",
+      "material": true,
+      "overall_ratio": 0.9497317604363987,
+      "frac_bins_over": 0.9981042654028436,
+      "norm_delta": 8.258407927071404e-39
+    },
+    {
+      "tag": "CCQEPauliSupViaKF_1",
+      "material": true,
+      "overall_ratio": 0.8117824166968892,
+      "frac_bins_over": 0.9592417061611375,
+      "norm_delta": 6.168147904022364e-39
+    },
+    {
+      "tag": "flux_55",
+      "material": true,
+      "overall_ratio": 0.09932490801346373,
+      "frac_bins_over": 0.4685308056872038,
+      "norm_delta": 2.7825432684242036e-39
+    }
+  ],
+  "immaterial_documented_omitted": [],
+  "skipped_missing": [],
+  "sqrt_trace": 2.1895564084140517e-38,
+  "min_eig": -2.434445544092736e-91,
+  "per_bin_sigma_median_frac_note": "sigma=sqrt(diag(C_retrain)); combine with C_syst-final downstream"
+}

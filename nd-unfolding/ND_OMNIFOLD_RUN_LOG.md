@@ -1476,3 +1476,96 @@ all four edited modules `py_compile` clean under python3 (the login-node bare
   (`|y| < -|x|/√3 + 2·850/√3` AND `|x| < 850`, strict `<`); unit-tested for the
   fiducial edges and category partition. Fails loudly on a pre-2026-07-04
   omnifile (labels absent). Cannot run until the re-run produces the labels.
+
+## 2026-07-12 — UQ audit remediation and presentation quarantine
+
+An independent code audit invalidated the old adopted 4D/5D/FPS unified-throw
+products and exposed the old PET statistical block as a frozen-weight
+fluctuation rather than an estimator bootstrap. The affected covariance and
+significance numbers remain on disk and in earlier ledger entries for
+provenance, but are unquotable pending corrected production. Central cross
+sections, closure tests, dimensional anchors, and the finalized 2D result are
+not invalidated.
+
+The corrected code now uses actual asymmetric +/- endpoints, one fixed
+estimator seed, universe-mean centering with biased MAT `1/N`, a separately
+stored joint mean shift, exact throw/replica manifests, coherent data+MC PET
+draws with retraining, full covariance projection for `(Eavail,W)`, consistent
+finite support, and fail-closed background/flux/bank validation. The legacy
+one-sided PET unified path was ported to the same contract, and unsafe legacy
+throw run/combine entry points were disabled. The expanded remediation suite
+passes 18/18 tests; Python compilation, shell syntax, and diff checks pass.
+
+`MNV101_ACTIVE_UNIVERSE=BAND:IDX` promotes one universe into the ordinary event
+loop, rebuilding truth/reco selection, truth-authoritative IDs, backgrounds,
+and native misses. Only five detector bands are genuinely kinematic
+(BeamAngleX/Y, MuonResolution, Muon_Energy_MINERvA/MINOS); MinosEfficiency and
+GEANT are weight-only. Before the 2026-07-16 presentation, production is
+prioritizing corrected 5D stat/ML and joint throws plus a targeted full-MEFHC
+three-band migration bound. Until that bound lands, corrected bank-based
+numbers must be labeled preliminary and support-limited. Full five-band active
+coverage remains the publication gate.
+
+## 2026-07-12 — PET extraction environment seam and audit follow-ups
+
+The PET replica extractor was found to require PyROOT after GPU training while
+the replica jobs run under NERSC's TensorFlow 2.15 module, whose Python has no
+`ROOT` module. The launcher now activates the analysis environment and invokes
+the absolute `root_6_28` Python for extraction. The extractor also self-reexecs
+through that environment before any ROOT-dependent import, which rescues the
+already-snapshotted running and queued jobs without cancellation. A direct
+TensorFlow-Python invocation of `extract_bootstrap_replica.py --help` completed
+through the handoff with PyROOT loaded; the two active replicas remained healthy
+in GPU training.
+
+Audit hardening also made the unified-throw bank require exactly 100 PPFX IDs,
+made incremental throw/block slab replacement atomic, and aligned the PET joint
+throw with the GBDT tail contract (individual factors clipped, composed ratio
+validated but not re-clipped). The expanded suite passes 20/20 tests. Scope
+disclosures now state that corrected 4D/5D `C_ML` varies the train/test split at
+fixed estimator seed 42, that only the joint mean shift is stored, and that the
+current PET input's 4,091,707 measured-event weights are all one with no
+reconstructed-background subtraction. The resulting PET bootstrap covariance
+must therefore be labeled as belonging to that unsubtracted target.
+
+## 2026-07-13 — Corrected background-subtracted PET components landed
+
+The ordered PET remediation supersedes the unsubtracted-target state above and
+has reached component gates 1--5 on the canonical 5D background-subtracted
+target. The new point-cloud input has exact event-by-event data alignment to the
+scalar target, byte-identical MC arrays, and preserves the old unit-weight input
+as an unsubtracted control. The corrected nominal and same-seed GPU-floor repeat
+passed full ordered coverage and extraction checks; GPU nondeterminism is
+negligible relative to the retrained statistical and ML spreads. A strict
+20-member coherent data+MC Poisson ensemble now supplies the first corrected PET
+statistical component, and a 12-member crossed subsample/estimator-seed design
+supplies the PET-specific ML component.
+
+These products do not close the PET budget. The available vertical systematic
+block still uses the pre-fix support-limited bank, the PET-native lateral block
+has not been rebuilt on the background-aware/selection-complete inputs, and the
+predeclared targeted per-universe retraining-response gate is outstanding. The
+preliminary no-lateral total and its 4D marginal therefore remain outside the
+analysis-note headline numbers. Twenty replicas are adequate for the current
+component/per-bin diagnostic, but a larger inventory is advisable before
+treating the rank-limited high-dimensional statistical matrix as
+publication-grade.
+
+## 2026-07-14 — Corrected 5D GBDT adoption and present PET campaign complete
+
+The full 188-entry background-aware 5D re-quote changed the systematic
+sqrt-trace by +0.14% and the combined block sum by +0.30%, closing the frozen-CV
+background concern as negligible. The corrected mean-centered unified
+covariance is adopted at sqrt-trace 5.8077e-38, with the 1.654e-38 joint mean
+shift reported separately; the CV-centered 6.2367e-38 matrix is retained as a
+conservative variant. Both are PSD.
+
+The PET campaign then completed the predeclared six-band retraining response
+and the corrected detector block. All six retraining probes were material; the
+rank-six response term is the second-largest component by trace. The five-block
+PSD total on the common 10,550-bin mask has sqrt-trace 3.8777e-38 and median
+relative uncertainty 15.103%; its 4D marginal has median 12.365%. This closes
+the present analysis-note campaign. Its statistical block contains 20 coherent
+replicas. Expanding to 100 replicas is planned before publication but has not
+yet been run. The detector block is a frozen-map shifted-detector response, not
+per-universe PET retraining or shifted-cloud membership regeneration.

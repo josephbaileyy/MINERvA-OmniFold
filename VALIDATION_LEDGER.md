@@ -1,5 +1,75 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-07-12 uncertainty-remediation quarantine
+
+The entries below preserve the exact historical record, but the old 4D/5D/FPS
+unified-throw adoptions, PET statistical/total budgets and precision
+comparisons, `(E_avail,W)` covariance, and every significance derived from
+those objects are **SUPERSEDED AND UNQUOTABLE**. Their construction used one or
+more of: one-sided endpoint interpolation, CV centering, varying estimator
+seeds, scalar jitter subtraction, frozen PET weights, incomplete statistical
+projection, or CV-support-limited lateral selection.
+
+Corrected 5D GBDT and PET replacement budgets have now passed their declared
+campaign gates and are recorded immediately below. The 4D/FPS replacements and
+covariance-dependent generator significances remain quarantined. Central cross
+sections, closure tests, dimensional anchors, and the finalized Phase-18.2 2D
+result were never invalidated by this quarantine.
+
+## 2026-07-14 corrected 5D GBDT covariance — ADOPTED
+
+- The full background-aware re-quote contains 169 vertical universes, 18
+  detector/lateral universes, and one matched CV. Relative to the
+  background-frozen build, `C_syst` changes by **+0.14%** in sqrt-trace and the
+  combined systematic+statistical+ML covariance by **+0.30%**. This closes
+  KNOWN_ISSUES #13 as a numerically negligible refinement, not a central-value
+  change.
+- On 10,694 reported 5D bins, the corrected block sum has systematic
+  sqrt-trace **4.3515e-38** and median relative uncertainty **13.235%**; after
+  adding corrected statistical and split-ML blocks the corresponding values are
+  **4.3578e-38** and **13.359%**.
+- The corrected unified-throw construction uses actual asymmetric endpoints,
+  one fixed estimator seed, throw-mean centering, MAT `1/N`, exact manifests,
+  and no scalar jitter subtraction. The adopted mean-centered covariance is PSD
+  with sqrt-trace **5.8077e-38**. The joint mean shift has norm **1.654e-38** and
+  is reported separately. The CV-centered PSD variant, sqrt-trace
+  **6.2367e-38**, is retained as a conservative alternative rather than the
+  headline.
+- Artifacts:
+  `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware{,_uthrow,_uthrow_cvcentered}.root`
+  and `uq_universe_5d_summary.txt`. The dedicated estimator-only seed scan is an
+  auxiliary robustness check and is not part of this adopted budget.
+
+## 2026-07-14 corrected PET 5D uncertainty campaign — COMPLETE
+
+- All five blocks share the exact corrected background-subtracted PET nominal,
+  10,550-bin reported mask, and CV. The final PSD block sum has sqrt-trace
+  **3.8777e-38** and median relative uncertainty **15.103%**. Its width-weighted
+  4D marginal is PSD on 4,790 bins with median relative uncertainty **12.365%**.
+- Component `(sqrt-trace, median relative uncertainty)` values are:
+  `C_syst` (**2.9704e-38**, **7.584%**), `C_retrain`
+  (**2.1896e-38**, **4.181%**), `C_ML` (**8.0364e-39**, **2.348%**),
+  `C_stat` (**7.4390e-39**, **7.851%**), and `C_lateral`
+  (**4.6902e-39**, **2.111%**).
+- The predeclared six-band targeted retraining test found all six material.
+  `C_retrain` is rank six and the second-largest contribution by trace; the
+  identical-seed null response is only **0.008%** of the CV norm. There is no
+  double count: `C_syst` uses the frozen-map shift `x_frozen-CV`, whereas
+  `C_retrain` uses the additional response `x_retrain-x_frozen`.
+- The detector block propagates shifted detector weights/observables through the
+  corrected nominal point-cloud sample with the PET map frozen. It is therefore
+  a detector-response block for the completed campaign, not a claim of
+  per-universe PET retraining or shifted-cloud membership regeneration.
+- The current statistical block contains 20 coherent replicas. This is complete
+  for the present campaign, but the pre-publication plan is to increase it to
+  100 replicas; that expansion has **not** been run.
+- Artifacts and exact checks:
+  `nd-unfolding/products/pet/bkgsub/pet_ctotal_bkgsub_5d_final.summary.json` and
+  `pet_cretrain_bkgsub_5d.summary.json`; array products use the matching `.npz`
+  names. This is the endpoint of the present PET campaign. The 100-replica
+  expansion and selection-complete per-lateral PET retraining remain future
+  refinements, not completed claims in this result.
+
 Validation pass started 2026-06-06. Scope: whole repository, with priority on
 technote-cited active results. Criterion: recompute from existing ROOT/NPZ/text
 outputs where possible; rerun heavy production only when a check fails and the

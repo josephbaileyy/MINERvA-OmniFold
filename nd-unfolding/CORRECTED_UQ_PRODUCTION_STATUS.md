@@ -531,3 +531,43 @@ adopt mean+cv) -> uq_5d/universe_stage2_5d_bkgaware/... -> NOTIFY PET -> report 
   baseline budget was robust to the background-CV approximation. Adopted covs in
   uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware{,_uthrow,_uthrow_cvcentered}.root.
   Notifying PET. LOOP COMPLETE.
+
+## 2026-07-14 ~15:00 PDT — backup-slide mean-shift bootstrap + AI1 launch
+- MEAN-SHIFT BOOTSTRAP (backup slide): bootstrapped the throw-mean over the 160 throws.
+  sqrt_tr(C_throw)=4.475e-38 (reproduces unified 4.46e-38, reported bins 10694). Observed mean-shift
+  norm 1.654e-38 (37.0% of sqrt_tr); finite-throw noise floor sqrt(tr/N)=3.54e-39 (7.9% of sqrt_tr,
+  bootstrap 2.98e-39). => noise/observed 21% of NORM, 4.6% of VARIANCE; observed = 4.7x noise floor;
+  noise-subtracted shift 1.616e-38 = 97.7% of observed. VERDICT: the 37% shift is ~95% genuine bias,
+  ~5% finite-throw noise -> justifies quoting it as a separate bias term (mean-centered adopted).
+- HEADLINE (confirmed with advisor): mean-centered 5.81e-38 ADOPTED; mean shift reported separately as
+  bias; CV-centered 6.24e-38 conservative variant on backup.
+- AI1 estimator-only scan LAUNCHED: bootstrap_nd.py --fixed-data-seed (additive, default-off) committed+
+  pushed df0826a. sbatch_ai1_estimator_scan.sh (array 1-12%1, --nice=1e6 -> priority 1 vs PET clat 67679;
+  --fixed-data-seed 0, --seed=est) job 55916613 -> boot_nd_5d_ai1/. Queues STRICTLY behind PET C_lateral
+  (pet_clat_bkgsub 55916531, critical-path). When 12 land: combine_cov_nd -> compare sqrt-tr vs mlsplit 1.493e-39.
+
+- 16:33 PDT: AI1 starved 0/12 at priority 1 for ~1.5h (gpu_shared contention). PET C_lateral CONFIRMED
+  done (pet_clat_bkgsub COMPLETED 15:41, 15:33 elapsed; 0 pet_ jobs). Critical-path clear -> gently
+  un-deprioritized AI1: --nice 1e6->5000 (still yields to a returning PET job ~67679), scancel 55916613
+  -> resubmit 55919500. Re-arm 30min -> combine when 12 land.
+
+- 17:48 PDT: AI1 1/12 (replica 1 COMPLETED 8:44), 2-12 pending; %1 + priority-62679 slot contention = ~10h ETA.
+  PET done (0 jobs). Bumped ArrayTaskThrottle %1->%4 (scontrol, still yields to PET via priority) -> ~2-3h.
+
+- 18:31 PDT: AI1 2/12, 0 running/10 pending - starved on gpu_shared SLOTS (not throttle; %4 bump didn't
+  help). PET absent. Raised priority (Nice 5000->200) to compete with the field; still token-yields to a
+  fresh PET job. Backup cross-check, no tight deadline -> ride, escalate to interactive next wake if still starving.
+
+- 19:19 PDT: AI1 STILL 2/12 (0 running) after 2 wakes at competitive priority ~67500 - gpu_shared
+  saturated by other users, PET absent. ESCALATE: scancel gpu_shared 55919500, launch 1-node interactive
+  salloc running ai1_packed_loop.sh (CONC=6, seeds 1-12 skip-if-exists, --fixed-data-seed 0). ~18min.
+
+- 19:24 PDT: interactive escalation - first salloc ran the loop on LOGIN by mistake (salloc w/o srun;
+  also --export invalid for salloc) -> killed cleanly (0 stray python, no corrupt outputs). Relaunched
+  CORRECTLY: salloc -N1 --gpus=4 -t1h srun --ntasks=1 --gres=none bash ai1_packed_loop.sh (job 55922613,
+  bg br8s1gvrk) -> confirmed running on COMPUTE nid001060, CONC=6 seeds 3-12. ~18min -> combine + compare.
+
+- 19:51 PDT: AI1 interactive (job 55922613, nid001060) 2/12 after 28min - NOT stuck: 6 replicas actively
+  computing (~2000% CPU each, ~120 cores used; load 230 from 6x66 LightGBM threads - lgbm ignores OMP,
+  over-spawns). Heavy but progressing (6 concurrent 5D unfolds). Batch-1 near done -> let it finish (killing
+  wastes ~28min). Re-arm 15min; if still 2/12 next wake = pathological -> kill+relaunch CONC=2.

@@ -40,12 +40,21 @@
 % (Eavail,W) significances removed 2026-07-12: historical covariance quarantined.
 % Reintroduce macros only from a committed corrected-covariance ledger entry.
 
+% --- corrected 5D GBDT uncertainty campaign ---
+\newcommand{\gbdtFiveBlockMedian}{13.36}  % syst+stat+ML block sum, median/bin (%)
+\newcommand{\gbdtFiveAdoptTrace}{5.81e-38} % adopted mean-centered sqrt(trace), xsec units
+\newcommand{\gbdtFiveCVTrace}{6.24e-38}    % conservative CV-centered variant
+\newcommand{\gbdtFiveMeanShift}{1.65e-38}  % separately reported joint mean-shift norm
+
 % --- PET point-cloud track ---
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
 \newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
 \newcommand{\petGbdtGap}{9}
-% PET precision macros removed 2026-07-12: old C_stat was not an estimator
-% bootstrap. Reintroduce only after the retrained replica ensemble is committed.
+\newcommand{\petTotalMedian}{15.10}   % corrected 5D C_total median/bin (%)
+\newcommand{\petTotalTrace}{3.878e-38}% corrected 5D sqrt(trace), xsec units
+\newcommand{\petFourMedian}{12.37}    % width-weighted 4D marginal median/bin (%)
+\newcommand{\petRetrainMedian}{4.18}  % targeted retraining-response median/bin (%)
+\newcommand{\petLateralMedian}{2.11}  % PET-native frozen-map detector block (%)
 % truth-cloud projection demonstration (reweight-then-project)
 \newcommand{\pcHasCloud}{99.999}         % percent of pass_truth events carrying a cloud (after miss-row fix)
 \newcommand{\pcHasCloudBefore}{72.6}     % percent carrying a cloud before the fix (reco-loop-only fill)

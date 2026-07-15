@@ -13,9 +13,8 @@ transverse position and $z$ (\texttt{cluster\_energy}, \texttt{cluster\_pos},
 \texttt{cluster\_z}, filtered on \texttt{cluster\_isMuontrack} via
 \texttt{CVUniverse::GetRecoClusters()}) alongside the muon kinematics. This
 is a validated \emph{method milestone}: a real, absolutely-normalized,
-full-statistics cross section with its own closure gate. Its uncertainty
-budget is being rebuilt under the corrected statistical and systematic
-contracts described below. The network training in this section is subsample-limited (see
+full-statistics cross section with its own closure gate and a completed corrected
+uncertainty campaign. The network training in this section is subsample-limited (see
 below), so the production result of record remains the scalar GBDT
 measurement; the extended-phase-space result (\S\ref{sec:fps-pet})
 subsequently retrains PET at full statistics on the opened truth sample.
@@ -63,13 +62,14 @@ count.
 
 \subsection{PET uncertainty remediation}
 \label{sec:pet-syst}
-\textbf{Remediation status.}  The former PET statistical block fluctuated
+\textbf{Completed replacement.} The former PET statistical block fluctuated
 frozen truth weights without fluctuating measured data or retraining PET.  It
 is not a sampling covariance of the estimator.  Correct replicas independently
 Poisson-fluctuate data and MC, retrain PET at a fixed estimator seed, and apply
 the same coherent MC draw in the final truth binning and completeness.  The old
 PET $C_{\rm stat}$, total budgets, and former PET--GBDT precision comparisons
-are historical diagnostics and \emph{unquotable}.
+are historical diagnostics and \emph{unquotable}; the replacement below
+supersedes them.
 
 The corrected campaign now uses the same background-subtracted five-dimensional
 measured target as the scalar GBDT. Event-by-event data alignment is exact, the
@@ -79,10 +79,10 @@ corrected nominal PET extraction, an identical-seed GPU-floor repeat, a
 20-member coherent-Poisson retraining ensemble, and a 12-member crossed
 subsample/estimator-seed ensemble have all passed their ordering, coverage, and
 finite-output gates. The GPU nondeterminism is negligible relative to both
-sampling and training variation. The 20-replica statistical block is sufficient
-for the present component-level check, but the publication ensemble may be
-enlarged to stabilize the high-dimensional covariance rather than only its
-per-bin spread.
+sampling and training variation. The present $C_{\rm stat}$ uses 20 coherent
+replicas. This closes the current analysis-note campaign; increasing the
+inventory to 100 replicas is planned before publication but has not yet been
+performed.
 
 The replacement PET budget uses actual minus/plus endpoints with the
 mean-centered MAT convention, an exact 100-universe flux inventory, and a
@@ -91,16 +91,46 @@ replica retrains PET at a fixed estimator seed and carries the same coherent
 MC draw through final cross-section extraction. Missing endpoints, incomplete
 replica manifests, non-finite ratios, and partial event coverage are fatal.
 
-These completed components do not yet make a final PET budget. The vertical
-systematic block is still support-limited, the PET-native lateral response must
-be rebuilt from the corrected background-aware/selection-complete inputs, and a
-predeclared targeted per-universe retraining study must test whether the frozen
-reweighter misses a material network response. Consequently this note makes no
-claim that PET is more, less, or equally precise than the scalar GBDT. The old
-uncertainty overlays and ratio maps are retained only as superseded diagnostic
-artifacts and are not evidence for a precision conclusion. Full per-universe
-PET retraining is not the default: it is expanded beyond the targeted set only
-if that response is material.
+The completed five-component assembly is
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Component & $\sqrt{\mathrm{Tr}\,C}$ & median $\sigma_i/x_i$ \\
+\midrule
+Vertical systematic & $2.970\times10^{-38}$ & \SI{7.58}{\percent} \\
+Targeted retraining response & $2.190\times10^{-38}$ & \SI{\petRetrainMedian}{\percent} \\
+ML ensemble & $8.036\times10^{-39}$ & \SI{2.35}{\percent} \\
+Statistical ensemble & $7.439\times10^{-39}$ & \SI{7.85}{\percent} \\
+Detector/lateral & $4.690\times10^{-39}$ & \SI{\petLateralMedian}{\percent} \\
+\midrule
+Total & $\petTotalTrace$ & \SI{\petTotalMedian}{\percent} \\
+\bottomrule
+\end{tabular}
+\end{center}
+All matrices share the same corrected nominal and 10,550-bin mask; their sum is
+finite, symmetric, and positive semidefinite. Its width-weighted 4D marginal is
+also positive semidefinite and has median uncertainty
+\SI{\petFourMedian}{\percent} over 4,790 reported bins.
+
+The predeclared retraining study covered the six bands carrying
+\SI{89.4}{\percent} of the preliminary vertical variance. All six showed
+material map response, while an identity-ratio null retrain was only
+\SI{0.008}{\percent} of the CV norm. The resulting rank-six
+$C_{\rm retrain}$ is therefore retained and is the second-largest contribution
+by trace. It does not double count the vertical block: the latter contains
+$x_{\rm frozen}(r_u)-x_{\rm CV}$, whereas the new term contains only the
+additional response $x_{\rm retrain}(r_u)-x_{\rm frozen}(r_u)$.
+
+For detector/lateral variations, the campaign propagates shifted detector
+weights and observables through the corrected nominal cloud sample with the PET
+map frozen. It does not claim shifted-cloud membership regeneration or a fresh
+PET training for every detector universe. That limitation is explicit, but it
+does not leave the present campaign open. The planned 100-replica statistical
+ensemble and selection-complete per-lateral PET retraining are pre-publication
+refinements, not completed parts of this result. The
+corrected PET and GBDT median uncertainties are of comparable scale, but their
+different reported masks and central trainings make a binwise superiority
+claim inappropriate without a dedicated common-support comparison.
 
 \subsection{Truth-cloud projection: one unfold, many hadronic observables}
 \label{sec:pet-projection}
@@ -218,7 +248,7 @@ stable across classifier family (GBDT, MLP, transformer) \emph{and} input
 representation (engineered scalars, raw reconstructed clusters), now
 including the absolute normalization. It also establishes the
 infrastructure --- point-cloud DataLoader, GPU training, full-sample
-reweighting, frozen-reweighter budgets --- for unfolding directly on
+reweighting, coherent estimator bootstraps, and targeted response budgets --- for unfolding directly on
 low-level MINERvA data, the natural endpoint of the unbinned program.
 Finally, because the truth side is itself a point cloud, a single unfold
 yields not one cross section but a reusable truth object from which any

@@ -5,6 +5,41 @@ Everything not yet done, in one place. Consolidates and **supersedes**
 their full text is in git history, their DONE banners in the RUN_LOGs and
 `VALIDATION_LEDGER.md`). Bugs/code debt live in `KNOWN_ISSUES.md` (repo root).
 
+## Active remediation gate (5D GBDT and present PET campaign closed)
+
+**Presentation deadline: 2026-07-16.** Central values, closure tests,
+dimensional anchors, and the finalized 2D reproduction remain current. Old
+4D/FPS unified/adopted covariances, `(E_avail,W)` covariance-dependent
+generator significances, and their historical products remain unquotable. The
+corrected 5D GBDT covariance and the present corrected PET campaign are now
+ledger-verified replacements.
+
+- Regenerate 4D/FPS joint throws with asymmetric $\pm1\sigma$ endpoint
+  interpolation, one fixed estimator seed, throw-mean centering, and a separate
+  mean-shift diagnostic; rebuild the matched MAT $1/N$ block comparator from
+  actual minus/plus re-unfolds. Do not reuse the old jitter-subtracted adopted
+  covariances.
+- **PET before publication:** increase the present coherent statistical
+  ensemble from 20 to 100 replicas. This is planned but has not yet been run.
+  Selection-complete per-lateral PET retraining is a further refinement; the
+  completed current campaign instead documents its frozen-map detector-response
+  construction explicitly.
+- Rerun the five-axis statistical replicas and project the full covariance as
+  $M C_{5D}M^\top$ before rebuilding $(E_{\rm avail},W)$ significances.
+- Quantify lateral support migration with selection-complete
+  `MNV101_ACTIVE_UNIVERSE=BAND:IDX` per playlist. Five bands are genuinely
+  kinematic (`BeamAngleX/Y`, `MuonResolution`, `Muon_Energy_MINERvA/MINOS`);
+  MinosEfficiency and GEANT are weight-only. For the presentation, run a
+  trace-ranked three-band full-MEFHC bound and label bank-derived results
+  support-limited. Full five-band coverage remains the publication gate.
+- The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
+  unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
+  sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
+  background columns are missing.
+- By 2026-07-15, produce a presentation-safe table separating current
+  central/closure results, corrected preliminary uncertainties that pass every
+  gate, and results still withheld.
+
 ## Blocked on external input
 
 1. **Collaborator confirmations** (technote App. A): FrInel_pi exclusion still
@@ -138,5 +173,7 @@ their full text is in git history, their DONE banners in the RUN_LOGs and
   (block-sum underestimates ~2×) — the published 4D systematic adopts the
   unified-throw magnitude.
 - Central value: single-run CV; ensemble-mean CV agrees at 0.28%.
-- ML band includes the train/test split, not just the estimator seed.
+- The corrected 4D/5D ML band isolates train/test-split response at fixed
+  estimator seed 42. Pure estimator-seed sensitivity is not added separately;
+  disclose this deliberate scope with any replacement budget.
 - GoF reported both binned (truncated-spectral χ²) and unbinned (C2ST).

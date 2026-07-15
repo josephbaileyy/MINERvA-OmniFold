@@ -1,0 +1,29 @@
+{
+  "campaign": "PET bkgsub Phase 7 retraining-response (bank-invariant; verified vs bkgaware)",
+  "universe": "CCQEPauliSupViaKF:1",
+  "label": "CCQEPauliSupViaKF:+1",
+  "bank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_uthrow_5d",
+  "invalid_ratio": "neutral",
+  "status": "bank-invariant (verified 2026-07-14): consumes only sig_<band>_t truth ratios, bit-identical bank_uthrow_5d vs bank_uthrow_5d_bkgaware (unified_throw.py --dump is signal-only; KNOWN_ISSUES #13 touches only per-universe background). FINAL for the retraining-response; C_syst-final and lateral still run on the bkgaware bank.",
+  "n_reported_bins": 10550,
+  "total_xsec": {
+    "cv": 2.7511273175480004e-38,
+    "frozen": 2.74231173409468e-38,
+    "retrain": 2.741980060664389e-38
+  },
+  "materiality": {
+    "norm_delta": 6.168147904022364e-39,
+    "norm_s": 7.598277293465306e-39,
+    "overall_ratio": 0.8117824166968892,
+    "frac_bins_over": 0.9592417061611375,
+    "material": true,
+    "thresholds": {
+      "overall": 0.25,
+      "bin": 0.25,
+      "frac": 0.05
+    }
+  },
+  "retrained_weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/p7/pet_p7_CCQEPauliSupViaKF_1_weights.npz",
+  "nominal_weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz",
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/p7/pet_p7_CCQEPauliSupViaKF_1_response.npz"
+}

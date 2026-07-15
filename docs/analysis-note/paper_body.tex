@@ -142,11 +142,13 @@ $\sim\SI{\petClosure}{\percent}$ and which agrees with the production result at 
 establishes the infrastructure for unfolding directly on low-level detector data.
 Corrected five-dimensional joint throws now test the standard block-sum
 covariance with asymmetric endpoints, a fixed estimator seed, and
-mean-centered throws. Their numerical adoption awaits the corrected
-statistical/ML budget and support-migration gate; the earlier 4D adoption is
-not quoted. The PET background-subtracted target and retrained statistical/ML
-components pass, but no PET--GBDT precision claim is made before its corrected
-systematic and lateral blocks are complete.
+mean-centered throws. The corrected 5D covariance is adopted at
+$\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$, with the joint
+mean shift reported separately; the earlier 4D adoption is not quoted. The
+completed corrected PET assembly has median per-bin uncertainty
+\SI{\petTotalMedian}{\percent}, including a material targeted-retraining term.
+Its statistical component presently uses 20 replicas; a 100-replica ensemble
+is planned before publication but has not yet been run.
 
 \begin{figure}[H]
   \centering

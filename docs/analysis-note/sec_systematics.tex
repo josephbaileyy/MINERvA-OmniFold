@@ -116,13 +116,12 @@ split, gives a band $1.24\times$ the pure-seed band, moving the combined 3D
 budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}}$ --- the published budgets use
 the split-inclusive band; (ii) the ensemble-mean central value (averaging the
 seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
-For the corrected 4D/5D campaign now in flight, the first ensemble fixes the
-estimator seed at 42 and varies only the train/test split seed. It therefore
-measures split response, not the full estimator stochasticity. A separate
-fixed-split estimator-seed scan is required before adoption: if negligible it
-is documented and omitted; if material, a crossed split--estimator ensemble is
-used rather than blindly adding two correlated covariance estimates. This
-scope must accompany any preliminary replacement result.
+For the corrected 5D campaign, the adopted ML ensemble fixes the estimator seed
+at 42 and varies the train/test split seed. It therefore measures split response,
+not the full estimator stochasticity. A dedicated fixed-data estimator-seed scan
+is retained as an auxiliary robustness check rather than added as an independent
+matrix: split and estimator responses are not assumed uncorrelated. This scope
+accompanies the adopted replacement result.
 
 \begin{figure}[H]
   \centering
@@ -152,13 +151,20 @@ normalization, with both endpoints re-unfolded.
 
 The earlier 4D/5D/FPS unified-throw products used a one-sided interpolation,
 CV-centering, and an estimator-jitter prescription that is no longer the
-analysis contract.  Their adopted per-bin inflation products and all dependent
-significances are therefore \emph{unquotable}. Corrected five-dimensional
-joint throws have completed their internal numerical checks, but their
-statistical/ML budget, mean-shift adoption decision, active-universe support
-bound, and commit gate are still incomplete; no replacement number is quoted.
-No scalar jitter subtraction or automatic ``adopted inflation'' is applied to
-the corrected stored covariance.
+analysis contract. Their old per-bin inflation products and dependent
+significances are therefore \emph{unquotable}. The corrected 5D campaign is now
+complete. Its background-aware block sum has median per-bin uncertainty
+\SI{\gbdtFiveBlockMedian}{\percent}; including cross-source nonlinear response
+raises the adopted mean-centered covariance to
+$\sqrt{\mathrm{Tr},C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$. The joint mean
+shift, norm $\SI{\gbdtFiveMeanShift}{cm^2/nucleon}$, is reported separately
+rather than folded into that covariance. A CV-centered construction gives the
+larger $\SI{\gbdtFiveCVTrace}{cm^2/nucleon}$ and is retained as a conservative
+variant. Both are positive semidefinite. Repeating all 188 universe unfolds with
+per-universe background subtraction changes the combined block sqrt-trace by
+only \SI{0.30}{\percent}, closing the background-CV concern as numerically
+negligible. Corrected 4D and extended-phase-space products remain separate work;
+the completed 5D result is not transferred to them automatically.
 
 More generally, this reframes the block sum as an approximation --- valid only
 where the unfolding responds linearly --- rather than as a default

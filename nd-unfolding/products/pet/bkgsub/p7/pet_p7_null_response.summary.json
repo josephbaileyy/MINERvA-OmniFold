@@ -1,0 +1,35 @@
+{
+  "campaign": "PET bkgsub Phase 7 retraining-response (bank-invariant; verified vs bkgaware)",
+  "universe": "null",
+  "label": "null",
+  "bank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_uthrow_5d",
+  "invalid_ratio": "neutral",
+  "status": "bank-invariant (verified 2026-07-14): consumes only sig_<band>_t truth ratios, bit-identical bank_uthrow_5d vs bank_uthrow_5d_bkgaware (unified_throw.py --dump is signal-only; KNOWN_ISSUES #13 touches only per-universe background). FINAL for the retraining-response.",
+  "n_reported_bins": 10550,
+  "total_xsec": {
+    "cv": 2.7511273175480004e-38,
+    "frozen": 2.7511273175480004e-38,
+    "retrain": 2.751248999564057e-38
+  },
+  "materiality": {
+    "null_control": true,
+    "norm_delta": 2.3124629464350763e-41,
+    "norm_cv": 3.009311767415467e-37,
+    "noise_floor_over_cv": 7.684358169446577e-05,
+    "frac_bins_over_1pct_cv": 0.0,
+    "material": null
+  },
+  "retrained_weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/p7/pet_p7_null_weights.npz",
+  "nominal_weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_weights.npz",
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/p7/pet_p7_null_response.npz",
+  "bank_invariance": {
+    "verified": "2026-07-14",
+    "claim": "PET retraining-response is bank-invariant: bank_uthrow_5d == bank_uthrow_5d_bkgaware for all consumed inputs",
+    "evidence": [
+      "all 30 truth-ratio files PET consumes (24 knob endpoints sig_<band>_t_{0,1} + 6 flux sig_flux_t_u) bit-identical via numpy array_equal",
+      "0 size mismatches across all 374 files; sig_*_r, flux_univ_ratio, td_*, cv.npz(first 200MB) also identical; file set identical (no new bkg_* columns)",
+      "mechanism: unified_throw.py --dump reads mc_signal_reco per-universe for sig_<band> ratios and data/mc_background ONLY in group 0 for the CV measured target; #13 changed only per-universe background weights, never read here"
+    ],
+    "note": "results are FINAL for the retraining-response, NOT stale/pre-fix; C_syst-final and lateral still run on the bkgaware bank"
+  }
+}
