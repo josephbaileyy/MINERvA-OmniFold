@@ -571,3 +571,45 @@ adopt mean+cv) -> uq_5d/universe_stage2_5d_bkgaware/... -> NOTIFY PET -> report 
   computing (~2000% CPU each, ~120 cores used; load 230 from 6x66 LightGBM threads - lgbm ignores OMP,
   over-spawns). Heavy but progressing (6 concurrent 5D unfolds). Batch-1 near done -> let it finish (killing
   wastes ~28min). Re-arm 15min; if still 2/12 next wake = pathological -> kill+relaunch CONC=2.
+
+- 20:25 PDT: prior AI1 salloc 55922613 hit 1h TIME LIMIT (CONC=6 too slow) with 8/12 (seeds 1-8 valid,
+  no partials); seeds 9-12 killed. Relaunched 4 remaining with 2h salloc (job 55923713, nid001136,
+  ai1_packed_loop.sh skip 1-8) - confirmed on-node, running. ~20min -> combine. NOTE: salloc 55923713
+  parent-shell exited (harmless, job runs independently) -> scancel it after combine to release the node.
+
+- 21:01 PDT: AI1 12/12 COMPLETE (seeds 1-12, no missing/partial/errors; salloc 55923713 released cleanly
+  on loop finish). COMBINE launched (bbp535swt, salloc+srun run_ai1_combine.sh) -> uq_cov_ai1est_5d.root
+  -> read sqrt-tr, compare to ML-split 1.493e-39.
+
+- 21:04 PDT: *** AI1 COMPLETE — corrected-UQ workstream FULLY CLOSED ***
+  AI1 estimator-only (fixed data, 12 varied estimator seeds) sqrt-trace=1.306e-39 (10694 bins, median
+  0.564%/bin) vs ML-split band 1.493e-39 -> estimator-only is 87.5% of the ML-split. VERDICT: the ML-split
+  band is DOMINATED BY genuine estimator/training stochasticity (train/test split adds only the remainder,
+  ~0.72e-39 in quadrature); the ML band is a legitimate, robust uncertainty, not a split artifact. Both are
+  a minor budget component (~3% of the 4.35e-38 total). uq_cov_ai1est_5d.root:hCov_ai1est5d_reported.
+  ALL ITEMS DONE: #13 RESOLVED (188-univ, <0.3% null), #14 committed+adopted (07c18ae), #17 committed
+  (689ec65), AI1 cross-check done. salloc self-released (no node held).
+
+## 2026-07-14 ~21:20 PDT — REMAINING WORK (corrected-UQ workstream)
+DONE this campaign: #13 RESOLVED (188-univ bkgaware re-quote, both legs, <0.3% null; committed 07c18ae),
+#14 corrected-contract code committed + 5D artifacts adopted (mean 5.81e-38 headline / cv 6.24e-38 backup;
+07c18ae), #17 committed (689ec65), AI1 estimator-only cross-check done (1.306e-39 vs ML-split 1.493e-39
+= 87.5%; confirms ML band is genuine estimator stochasticity; uq_cov_ai1est_5d.root), mean-shift bootstrap
+(37% shift is ~95% genuine bias / ~5% finite-throw noise).
+
+STILL TO DO:
+- **#16 targeted full-MEFHC lateral bound — NOT STARTED (biggest remaining item).** Driver exists
+  (sbatch_evloop_array_5d_active_laterals.sh, MNV101_ACTIVE_UNIVERSE promotes each kinematic band to the
+  primary selection -> full support, captures selection migration the dump-all bank misses). Blockers to
+  running: (1) script targets CPU acct m3246 (EXHAUSTED) -> needs GPU retarget (m3246_g) like the #13
+  chain; (2) full campaign = 5 bands x 2 endpoints x 12 playlists = 120 event loops; presentation scope
+  = trace-ranked TOP-3 kinematic bands (~72 evloops) + merge + unfold + covariance + compare-to-support-
+  limited ~= 10-12h GPU multi-stage. Kinematic bands: BeamAngleX/Y, MuonResolution, Muon_Energy_MINERvA/
+  MINOS (MinosEfficiency+GEANT weight-only, NOT support-limited). Bounded impact ~4.4% of PET C_total sqrt-tr.
+  PRESENTATION-SAFE FALLBACK (docs-sanctioned, OPEN_ITEMS): label bank-derived lateral results
+  "support-limited" - the talk does not require the bound. Full 5-band coverage = PUBLICATION gate.
+  NEXT STEP if launching: trace-rank the 5 bands from the detector-sweep per-band covs (cheap), retarget
+  the driver to m3246_g, run top-3, then unfold+covariance+compare. Status tracked in KNOWN_ISSUES #16.
+- OPEN_ITEMS presentation deliverables (likely GPT/PET session): 5-axis stat replicas -> M C5D M^T
+  significance rebuild; presentation-safe 3-tier table by 2026-07-15. Not corrected-UQ-execution owned.
+- #5 (low-p|| MINOS gradient) OPEN but bounded (quality cuts ruled out) - no action for the talk.
