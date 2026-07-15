@@ -88,7 +88,7 @@ labels as cross-checks only. They never enter the corrected budget.
 | 5 | Corrected PET C_ML (crossed subsample-seed × TF-seed, no Poisson) | ensemble-mean-centered; same mask/order; seed metadata; vs floor | **COMPLETE ✓** (12 trains, 2.35%/bin; est 42%/int 51%/sub 7%) |
 | 6 | Rebuilt C_syst (vertical) and PET-native detector/lateral block on corrected nominal | actual ±, MAT 1/N mean-centered, 100-flux inventory; corrected target/alignment | **COMPLETE 2026-07-14.** Vertical median 7.58%; detector/lateral median 2.11%. The latter is a frozen-map shifted-detector response, not per-universe PET retraining or shifted-cloud membership regeneration. |
 | 7 | Targeted per-universe retraining-response verdict | predeclared materiality criterion (trace + per-bin tail) | **COMPLETE 2026-07-14 (bank-invariant, FINAL).** All 6 predeclared bands MATERIAL: MaRES 0.971, MaCCQE 1.244, LowQ2 0.950, CCQEPauliSupViaKF 0.812, 2p2h 0.660 (all overall+frac), flux:55 0.099 (frac-only). Null floor negligible (0.008%). **`C_retrain` assembled: rank-6, PSD (min eig −2.4e-91), √tr 2.190e-38, per-bin σ/CV median 4.18% (p90 6.6%, max 20%)** = 0.74× C_syst-prelim √tr, +24% in quadrature. Integral impact small (Δ_total <0.3%/band) — bin-incoherent redistribution the frozen-map C_syst misses. `products/pet/bkgsub/pet_cretrain_bkgsub_5d.npz`. Scope: retraining-response only; C_syst-final + lateral still run on bkgaware (#13 re-quote pending). |
-| 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | **COMPLETE 2026-07-14 ✅.** All 5 components on the common PET 10550-mask/cv: C_syst 2.97e-38, C_retrain 2.19e-38, C_ml 8.04e-39, C_stat 7.44e-39, C_lateral 4.69e-39. **C_total √tr 3.878e-38, per-bin median 15.10%; PSD ✓ (min eig −2.4e-91, exactly symmetric); block-sum exact.** 4D marginal `C_4D=M C_5D M^T`: 4790 bins, cv4 finite+nonneg, PSD ✓, median 12.37%. No-double-count (Δ rel. frozen map). `products/pet/bkgsub/pet_ctotal_bkgsub_5d_final.npz` (+summary). |
+| 8 | Final assembly `C_total`, `C_4D = M C_5D M^T` | all blocks common central/mask/order; PSD/eigen; manifests | **COMPLETE 2026-07-14 ✅.** All 5 components on the common PET 10550-mask/cv: C_syst 2.97e-38, C_retrain 2.19e-38, C_ml 8.04e-39, C_stat 7.44e-39, C_lateral 4.69e-39. **C_total √tr 3.878e-38, per-bin median 15.10%; PSD ✓ (min eig −2.4e-91, exactly symmetric); block-sum exact.** 4D marginal `C_4D=M C_5D M^T`: 4790 bins, cv4 finite+nonneg, PSD ✓, median 12.37%. No-double-count (Δ rel. frozen map). `products/pet/bkgsub/pet_ctotal_bkgsub_5d_final.npz` (+summary). **#16 CAVEAT (label until bounded):** C_lateral's 5 KINEMATIC bands (√tr ≈1.71e-39, ~4.4% of C_total √tr) are selection-migration support-limited — `pet_lateral_band_5d.py` shifts CV-selected events but does not re-run selection, so migrations aren't captured. Weight-only bands (MinosEfficiency/GEANT, √tr ≈4.37e-39, the bulk) + vertical C_syst (truth-reweight) are NOT affected. Bounding needs the #16 targeted full-MEFHC 3-band `MNV101_ACTIVE_UNIVERSE` migration run (NOT yet done). |
 
 The present campaign is complete through Phase 8. The pre-publication
 100-replica statistical expansion remains a future run and must not be described
@@ -120,7 +120,7 @@ as completed in the note or ledger.
 | 55884576 | pet_p7_fluxrank | 7 | 2026-07-13 | **COMPLETED** (bank-invariant) | ‖s_u‖ ranking over 100 flux universes → **dominant u=55** (‖s‖=2.801e-38; top-5: 55,74,49,71,7). `p7/pet_p7_flux_rank.json`. |
 | 55891571 | pet_p7_flux_55 | 7 | 2026-07-14 | **COMPLETED** (bank-invariant, FINAL) | Dominant-flux retrain (flux:55). **overall=0.099, frac=0.469 → MATERIAL (frac/bin-tail only)** — small L2 response (flux is normalization-like) but broad bin-tail. Completes the predeclared 6-band set. |
 | — | **C_retrain assembled** | 7 | 2026-07-14 | **DONE** | `pet/assemble_cretrain.py` over 6 material bands → `products/pet/bkgsub/pet_cretrain_bkgsub_5d.npz` (+summary): rank-6, PSD, √tr 2.190e-38, σ/CV median 4.18%. FINAL Phase-7 deliverable; adds to C_syst-final downstream. |
-| 55916531 | pet_clat_bkgsub | 8 | 2026-07-14 | **COMPLETED** (~15m run, exit 0) | Corrected PET-native lateral (detector; option 2, bkgsub weights+cloud + bkgaware omnifile). **ALIGNMENT VERIFIED 32.85M rows; CV-path max\|ratio−1\|=0.0.** C_lateral √tr **4.69e-39, median 2.11%/bin** (MinosEfficiency-dominated). mask+cv bit-identical to C_syst. Modest (native≪transferred, per #3). `products/pet/bkgsub/pet_clateral_bkgsub_5d.npz`. |
+| 55916531 | pet_clat_bkgsub | 8 | 2026-07-14 | **COMPLETED** (~15m run, exit 0) | Corrected PET-native lateral (detector; option 2, bkgsub weights+cloud + bkgaware omnifile). **ALIGNMENT VERIFIED 32.85M rows; CV-path max\|ratio−1\|=0.0.** C_lateral √tr **4.69e-39, median 2.11%/bin** (MinosEfficiency-dominated). mask+cv bit-identical to C_syst. Modest (native≪transferred, per #3). `products/pet/bkgsub/pet_clateral_bkgsub_5d.npz`. **#16: the 5 kinematic bands (√tr ≈1.71e-39) are selection-migration support-limited (branch-shift, not re-run selection); weight bands (√tr ≈4.37e-39) clean. Bound pending the full-MEFHC 3-band MNV101_ACTIVE_UNIVERSE run.** |
 | — | **C_total FINAL assembly** | 8 | 2026-07-14 | **DONE ✅** | `assemble_ctotal_bkgsub.py --label final` (5 components). C_total √tr **3.878e-38, median 15.10%**, PSD ✓; 4D marginal median 12.37% (4790 bins), PSD ✓; block-sum exact. `pet_ctotal_bkgsub_5d_final.npz`. |
 | 55885561-566 | pet_p7f_* | 7 | 2026-07-14 | **CANCELLED** (byte-identical dupes) | 6 bkgaware "FINAL" jobs — cancelled once verified the bkgaware bank is bit-identical to pre-fix for all consumed inputs (a re-run would only re-sample the negligible GPU floor). |
 
@@ -221,6 +221,17 @@ as completed in the note or ledger.
   **retraining response is the 2nd-largest term** (frozen-map C_syst understates
   bin-level structure). KNOWN_ISSUES #15 flagged for close-out review (blocking
   gates — final syst/lateral/retraining — now closed).
+  **#16 SUPPORT-LIMIT CAVEAT (corrected labeling 2026-07-14, after initial "final"
+  call):** C_lateral's 5 KINEMATIC detector bands (BeamAngle X/Y, MuonResolution,
+  Muon_Energy MINERvA/MINOS; √tr ≈1.71e-39, ≈4.4% of C_total √tr) do NOT capture
+  selection migrations — `pet_lateral_band_5d.py` shifts CV-selected events but
+  does not re-run selection. Weight-only bands (MinosEfficiency/GEANT, √tr
+  ≈4.37e-39 = the bulk) and the vertical C_syst (truth-reweight) are unaffected.
+  Impact on C_total is bounded/small (kinematic sub-block ≈0.2% of total variance),
+  but per #16 the block is labeled support-limited until the targeted full-MEFHC
+  3-band `MNV101_ACTIVE_UNIVERSE` migration bound lands (NOT yet run — the
+  per-(band,idx) event-loop rerun; CORRECTED_UQ ISSUE-5 "D0 caveat"). This is the
+  one residual caveat on the otherwise-final PET C_total.
 - 2026-07-14: **PHASE 8 FINAL ASSEMBLY IN PROGRESS — gate open, C_lateral being
   built fresh.** GBDT session finished the #13 two-leg re-quote (null effect
   <0.3%; bkgaware products in `uq_5d/universe_stage2_5d_bkgaware/` +
