@@ -280,7 +280,7 @@ that ML noise cancels between CV and universe.
 For universe $(B,u)$, define the per-bin value
 $\mathbf{X}^{(B,u)}$, a $205$-vector over reported bins. MINERvA's MAT
 framework
-(\texttt{PlotUtils/MnvVertErrorBand::CalcCovMx}, see \S\ref{sec:minerva})
+(\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowbreak CalcCovMx}, see \S\ref{sec:minerva})
 builds the per-band covariance as the \emph{mean-centered, biased}
 sample covariance, referenced to the \textbf{universe mean} (not the
 CV) and normalized by $1/N_{u}$:
@@ -585,12 +585,12 @@ Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
 Per-bin median relative $\sigma$ & $6.86\%$ & $4.822\%$ \\
-$\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{1.699}$ (paper$+$ours) \\
-Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $1.688$ \\
+$\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
+Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-The $3.661 \to 1.699$ drop ($-54\%$) is the central UQ
+The $3.661 \to \chiCombined$ drop ($-60\%$) is the central UQ
 result: once the OmniFold-side error budget is included,
 the agreement with the paper improves to $\chi^{2}/\mathrm{ndf}
 \approx 1.7$. (A perfectly correct model with correct uncertainties
@@ -601,7 +601,7 @@ GENIE, RPA, 2p2h, MINOS); see \S\ref{sec:rank} for why it remains the
 quoted headline and why we report per-bin pulls rather than a single
 unqualified ours-only $\chi^{2}$.
 The log-normal variant (matching the paper's Table I treatment of the
-correlated flux normalization) gives $1.688$, essentially identical.
+correlated flux normalization) gives $\chiCombinedLog$, essentially identical.
 
 \paragraph{Edge-bin sensitivity ($\pPar$-min cut).}
 \texttt{compare\_to\_paper\_fullcov.py} ships a side-table that
@@ -834,12 +834,12 @@ top of the paper's \texttt{TotalCov}, which already contains the
 paper's statistical block --- a double count.
 \texttt{-{}-subtract-stat} replaces the paper baseline by
 $\texttt{TotalCov}-\texttt{StatOnlyCov}$ before adding our covariances,
-driving $\chi^{2}/\mathrm{ndf}$ $1.699\to 23.96$. That \emph{over}-corrects:
+driving $\chi^{2}/\mathrm{ndf}$ $\chiCombined\to \chiCombinedSubStat$. That \emph{over}-corrects:
 our $\sqrt{\Tr\mathbf{C}^{\boot}}=1.83\times10^{-40}$ is far smaller
 than the paper's published stat block ($\sim$ the $2.7\times10^{-39}$
 scale of \texttt{TotalCov}), so subtracting the latter without a
 comparable replacement removes too much. The headline therefore keeps
-the double-counted $1.699$ as the well-defined ``what does OmniFold UQ
+the double-counted $\chiCombined$ as the well-defined ``what does OmniFold UQ
 add on top of the published $V$'' statement, with the de-double-counted
 number on file as a secondary diagnostic.
 
@@ -859,7 +859,7 @@ truncated-spectral ``ours-only'' $\chi^{2}$ convention.
 
 \paragraph{Adopted conventions.}
 The publication-grade headline uses the combined covariance for
-$\chi^{2}/\mathrm{ndf}=1.699$ with the double-count caveat documented;
+$\chi^{2}/\mathrm{ndf}=\chiCombined$ with the double-count caveat documented;
 the per-band rollup is MAT-conformant and byte-for-byte verified
 (\S\ref{sec:minerva}); the $1.4\%$ normalization is included as a
 rank-1 band; and the ours-only cov is reported via the truncated-spectral
@@ -1222,7 +1222,7 @@ flux universes.
 The combined result, in one sentence:
 \emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
-1.699$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
+\chiCombined$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
 that has been independently checked at the $0.5\%$ level by $200$
 coverage toys, on top of a $0.166\%$ ML-noise floor that is more than
 an order of magnitude below the systematic envelope.}
@@ -1234,7 +1234,7 @@ an order of magnitude below the systematic envelope.}
 \toprule
 Number & Section & Procedure \\
 \midrule
-$\chi^{2}/\mathrm{ndf} = 1.699$ & \S\ref{sec:chisq} &
+$\chi^{2}/\mathrm{ndf} = \chiCombined$ & \S\ref{sec:chisq} &
   Eq.~\eqref{eq:chi2} with $\mathbf{C}^{\paper}+\mathbf{C}^{\syst}+\mathbf{C}^{\stat}+\mathbf{C}^{\ML}$ \\
 $\mathbf{C}^{\syst}$ & \S\ref{sec:universes} &
   $187$ universes, MAT-conformant Eq.~\eqref{eq:matcov} $+$ norm \\

@@ -14,11 +14,17 @@ Last updated 2026-07-16.
   next build dies with `File ended while scanning use of \@newl@bel`. Fix:
   `latexmk -C <target>.tex` then rebuild. Always run the build in the background
   (it exceeds the 120 s foreground limit).
-- Build state after fixes: main_primer/main_paper build clean; main_note rebuilt
-  after aux clean. No undefined refs / duplicate labels / missing files.
-  Residual cosmetic: 1 overfull \hbox (~23.7pt, main_note lines 280–287) and
-  ~dozens of `\textlangle invalid in math mode` from bib titles (technote.bib
-  344/361/395/428/441 `$\langle E_\nu\rangle$`) + T1/cmtt font-shape substitutions.
+- Build state: all three build clean (no undefined refs / duplicate labels / missing
+  files, converged). Overfull \hbox FIXED 2026-07-16 (app_statmethods
+  `\texttt{...CalcCovMx}` given `\allowbreak` break points → **0 overfull boxes**).
+  The `\textlangle invalid in math mode` warnings from bib titles with
+  `$\langle E_\nu\rangle$` are a PRE-EXISTING, benign biblatex sentence-casing quirk
+  (biblatex maps `\langle`→`\textlangle` while case-changing the title, landing in
+  math mode); non-fatal, **no visible output effect** (bibliography renders fine).
+  Standard fixes tried and did NOT clear it (brace-wrapping the math; hyperref
+  `\pdfstringdefDisableCommands`) → confirmed it is biblatex-internal, not
+  hyperref/bookmark. ACCEPTED as cosmetic; a proper fix needs a biblatex title
+  field-format override (follow-up). Harmless T1/cmtt font substitutions also remain.
 
 ## Manuscript-correctness issues — final status
 | # | Issue | Status | What was done / gate |
@@ -26,7 +32,7 @@ Last updated 2026-07-16.
 | 1 | False "first triple-differential" novelty | **DONE** | Narrowed every claim to "first **unbinned** simultaneous multi-observable unfold"; cite prior binned triple-differential MINERvA `\cite{MINERvA:2022qe}` (arXiv:2203.08022, verified). Edited: sec_execsummary, main_note, sec_summary, main_paper, paper_body (×3), primer_body. |
 | 2 | Distinguish estimators/backends | **DONE (registry) / PARTIAL prose** | `ESTIMATOR_REGISTRY.md` maps all 8 estimators + rules. Backends already named in prose. Minor open: add explicit "headline = exact-GBT" note at sec_3d:78 / sec_results:122 (3 backends listed w/o headline flag). |
 | 3 | Central paired with wrong estimator's covariance | **DONE** | sec_eavailw clarified: frozen-reweighter *technique* (not PET matrix) on GBDT central. Registry rule #1. No hard mismatch found elsewhere. |
-| 4 | Stale appendix values → macros | **GATED (number)** | `\chiCombined`=**1.481** (body/ledger) vs **1.699** printed in app_statmethods (588/593/837/842/862/1225/1237). Different covariance combos (ledger: 1.481 = matcorr_fluxfix+ML; appendix 1.699 = +bootstrap-300; ledger warns that combo double-counts → 1.341). NEEDS RECOMPUTE + reconcile before quoting; do not guess. Also macro-duplicated literals (6.86%, 3.66, 1.011) — convert to macros. |
+| 4 | Stale appendix values → macros | **DONE** | RECOMPUTED on interactive alloc (compare_to_paper_fullcov.py, flux-fix `hCov_combined` [incl. bootstrap] + ML): combined χ²/ndf **1.481**, log-normal **1.468**, subtract-stat **11.560** (over-corrects) — confirms ledger. Appendix's pre-flux-fix **1.699/1.688/23.96** were STALE → replaced with macros `\chiCombined`/`\chiCombinedLog`/`\chiCombinedSubStat` (new in values.tex); "−54%" drop → "−60%". Residual: still-hardcoded 6.86%/3.66/1.011 duplicates + the appendix pull mean/RMS 0.069/0.466 (vs body 0.089/0.598 vs ledger 0.051/0.409) — separate follow-up (below). |
 | 5 | 3D closure overclaim | **DONE** | sec_3d "method is therefore unbiased on the new axis" → "No nonclosure is observed for this tested deformation (single injected +30% Gaussian bump)". |
 | 6 | Valencia/generator ratios recompute | **GATED (number)** | Ratios at sec_3d (142/167-176/254/264/337-346), sec_eavailw:64 (1.54/1.58/1.56) must be recomputed from tracked arrays via a labeled num/denom script. Number-dependent → placeholder/gate. |
 | 7 | Ascencio fingerprint/citation | **NOTED** | Bib `MINERvA:2022incl` = arXiv:2110.13372 (correct Ascencio low-recoil paper) but `collaboration={MINERvA}`, no author field; prose says "Ascencio et al." Add author or `note` field for fingerprint. Low risk. |
@@ -70,4 +76,10 @@ Figure/table provenance (note → source):
 - [x] Manuscript textual fixes: #1,#3,#5,#8,#9,#10,#11,#13 DONE; #2,#7,#12,#14 noted/registry; #4,#6 GATED (number)
 - [x] Build main_note/primer/paper — clean (no undefined refs/dup labels); cosmetic residuals noted
 - [x] Provenance index (above) + gated-claim list
-- [ ] FOLLOW-UP (number-dependent / other agents): #4 χ² reconcile, #6 ratio recompute, appendix efficiency wording, bib math-mode + overfull-box cosmetics, full figure index
+- [x] #4 χ² reconcile (recomputed + macro-sourced) + cosmetics (bib math-mode, overfull box) — DONE 2026-07-16
+- [ ] FOLLOW-UP (number-dependent / other agents): #6 Valencia/generator-ratio recompute;
+      pull mean/RMS inconsistency (appendix 0.069/0.466 vs body \pullMean/\pullRMS 0.089/0.598
+      vs ledger 0.051/0.409 — determine the correct combined-cov pull + macro-source);
+      appendix efficiency wording (app_statmethods:773/791/854); remaining hardcoded
+      6.86%/3.66/1.011 duplicates → macros; full figure-by-figure provenance index;
+      minor #2/#7/#12/#14 prose sharpening
