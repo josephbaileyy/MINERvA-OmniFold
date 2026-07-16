@@ -19,17 +19,27 @@ file points to state and the completion recipe.
   `MNV101_DUMP_POINTCLOUD=1` (incl. new background `part_reco_*`); FPS distinct
   (×1.52). Record: `active_universe_5d/INTERFACE_VALIDATION.md` + `interface_smoke/`.
 
-## In progress
-- **P3S (standard active event loops, 5 bands × 2 endpoints × 12 playlists = 120):**
-  ~39/120 done (see `active_universe_5d/standard/<BAND>_<EP>/`). Running via
-  `run_active_laterals_interactive.sh` on a CPU-interactive salloc at MAX=40.
-  **Throughput is blocked by global /pscratch (Lustre) contention** — all four
-  agents (B PET, C FPS, D 4D, A) do heavy I/O concurrently. Each output is
-  ~6.7 GB (point clouds required for Agent B's P5). Measured: ~0 completions/hr at
-  BOTH MAX=12 and MAX=40; loops progress at only ~20–40 MB/min toward 6.7 GB, so
-  the current in-flight batch needs ~3 h to yield its first completions and full
-  P3S is many hours out. Loops are progressing (state D, I/O-wait), NOT broken.
-  Fully resumable: skip-if-exists on the FINAL path.
+## In progress  (live state 2026-07-16 ~01:00 UTC)
+- **P3S (standard active event loops, 5 bands × 2 endpoints × 12 playlists = 120):
+  43/120 done** (see `active_universe_5d/standard/<BAND>_<EP>/`; remaining are the
+  LARGE playlists — Muon_Energy_MINOS 0/12, MINERvA 3/0, and the big playlists in
+  every band). **Active path: CPU batch `55972349`** (shared QOS, `-c 2 --mem 16G`,
+  5 h wall, `%12`, skip-if-exists, unique `_b<jobid>` workdirs) — PENDING,
+  backfilling.
+- **Two diagnosed constraints:**
+  1. **Global /pscratch (Lustre) contention** — four sessions do heavy I/O
+     concurrently; each output is ~6.7 GB (point clouds for P5). Per-loop rate is
+     ~30 MB/min *regardless of my concurrency* (measured identical at MAX=12 and
+     MAX=40) → ~3.7 h/loop. So an **interactive 4 h wall wall-kills the large
+     playlists** (loop ≈ wall); interactive only ever completed small playlists
+     (43 total over several walls). **Do NOT use interactive for the remainder —
+     use a batch job whose wall (5–6 h) exceeds the loop time.**
+  2. **Fairshare priority starvation** (0.088), NOT balance — balance is fine
+     (~4844 node-hours; `overrun` QOS is *rejected* because balance is too high).
+     The batch's start estimate reads "now" but higher-priority jobs keep taking
+     the slots. It will backfill as B/C/D drain and fairshare recovers. Shrinking
+     the task footprint (done: `-c 2 --mem 16G` bills ~8 cores) improves gap-fit.
+- Loops are progressing (state D, I/O-wait), NOT broken. Fully resumable.
 
 ## Remaining dependencies
 - P3S must reach 120/120 before P4. P4 (this agent) and P5 (Agent B, shifted

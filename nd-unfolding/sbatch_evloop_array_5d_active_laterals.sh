@@ -5,9 +5,9 @@
 #SBATCH --constraint=cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=24G
-#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=16G
+#SBATCH --time=05:00:00
 #SBATCH --array=0-119%12
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 #SBATCH --output=nd-unfolding/logs_active/ev5d_active_%A_%a.out
@@ -56,7 +56,9 @@ if [[ -s "${FINAL}" ]]; then
   echo "[active] SKIP task=${TASK} ${BAND}:${ENDPOINT} ${PL} exists ($(stat -c '%s' "${FINAL}") bytes)"; exit 0
 fi
 
-WORKDIR="${REPO}/nd-unfolding/evloop_work_5d_active_${MODE}_${BAND}_${ENDPOINT}_${PL}"
+# unique workdir per batch task so a concurrent interactive orchestrator (which
+# uses the un-suffixed name) can never collide on rm -rf / cwd for the same unit.
+WORKDIR="${REPO}/nd-unfolding/evloop_work_5d_active_${MODE}_${BAND}_${ENDPOINT}_${PL}_b${SLURM_JOB_ID}"
 rm -rf "${WORKDIR}"; mkdir -p "${WORKDIR}"; cd "${WORKDIR}"
 DATA="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
 MC="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
