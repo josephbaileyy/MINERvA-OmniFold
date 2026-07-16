@@ -3,12 +3,9 @@
 
 Enabling Valencia 2p2h resolves the low-recoil excess (\S\ref{sec:3d-2p2h})
 but leaves a separate high-$\Eavail$ data excess where 2p2h does not
-contribute and the sub-percent pion-FSI dials cannot reach. Exact
-covariance-based significances from the previous construction are withdrawn.
-The corrected 5D covariance is now adopted, but the $(\Eavail,W)$ projection and
-its generator tests have not yet been re-quoted from that final artifact; the
-corrected 4D covariance also remains in production. At the central-value
-level, GiBUU spreads its deficit across the entire
+contribute and the sub-percent pion-FSI dials cannot reach. The comparison is
+made at central-value level because no corrected covariance has been adopted
+for the $(\Eavail,W)$ projection. GiBUU spreads its deficit across the entire
 tail (data/generator $1.59$ at $\Eavail\in[0.8,1.5)$, $1.36$ at $[1.5,3.0)$)
 rather than piling it in the deep catch bin like the GENIE variants --- an
 independent, qualitatively distinct confirmation. To test the deep-inelastic
@@ -93,23 +90,18 @@ systematic universe (the same methodology as the PET budget,
 \S\ref{sec:pet-syst}; no per-universe re-inference). The covariance carries
 13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the projected full
 five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a $W$-resolved
-detector (lateral) block.  The former construction summed per-cell standard
-deviations and squared the result; it is invalid and has been removed.  Until
-the corrected five-axis statistical replicas and corrected systematic products
-land, the saved $(\Eavail,W)$ covariance and all significances derived from it
-are \emph{unquotable}. The
+detector (lateral) block. A valid replacement must project the corrected
+five-axis statistical covariance as $M C_{5D}M^{\top}$ and use the corrected
+systematic endpoint convention. The
 detector block uses five shifted-kinematic bands
 (\texttt{Muon\_Energy\_MINERvA/MINOS}, \texttt{MuonResolution}, and
 \texttt{BeamAngleX/Y}) plus weight-only \texttt{MinosEfficiency} and GEANT
-bands. A targeted active-universe campaign is bounding migrations omitted by
-the CV-support-limited dump-all sample. No replacement uncertainty or
-significance is asserted until these gates pass.
+bands. Selection-complete active-universe event loops are also required to
+bound migrations omitted by the CV-support-limited dump-all sample.
 
-At the central-value level all four generators underpredict the high-$W$,
-high-$\Eavail$ region, and adding 2p2h does not close it. Whether and by how
-much each model is statistically incompatible will be reported only after the
-replacement covariance is committed. The complementary cross-check against MINERvA's published
+All four generators underpredict the high-$W$, high-$\Eavail$ region at
+central-value level, and adding 2p2h does not close it; statistical
+compatibility is not evaluated without the corrected projected covariance. The complementary cross-check against MINERvA's published
 low-recoil measurement is presented in the $(\Eavail,q_{3})$ plane
 (\S\ref{sec:4d}): on the maximal common grid the central values agree, while
-the covariance-based consistency metric is withheld pending corrected
-production.
+no covariance-based consistency metric is reported.

@@ -17,14 +17,14 @@
 \newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
 \newcommand{\jrb}[1]{\textcolor{violet}{\textbf{[JRB: #1]}}}
 
-
 %\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\
 %CC-inclusive double-differential cross section\\
 %$d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
 %\large MINERvA analysis note --- DRAFT}
 
 \title{\textbf{Analysis Note:}\\
-Unbinned measurement of the charged-current inclusive cross section in vN in collisions with public MINERvA data}
+Unbinned measurement of the charged-current inclusive cross section in
+$\nu N$ collisions with public MINERvA data}
 
 \author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}}
 \author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}}
@@ -39,7 +39,20 @@ Unbinned measurement of the charged-current inclusive cross section in vN in col
 
 \begin{abstract}
 
-We perform unbinned, multi-dimensional cross-section measurements of medium-energy charged-current neutrino-nucleus events measured by the MINERvA experiment.  The machine learning-based method OmniFold is used to enable these measurements.  We first reproduce a published double-differential cross section measurement in muon transverse and longitudinal momentum, recovering both the spectrum and its uncertainty budget with a fully independent method. We then perform the first simultaneous three-, four-, and five-observable measurements of MINERvA data, adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$); each reproduces its lower-dimensional predecessor under marginalization. These higher-dimension results recover, through an independent method, the established MINERvA deficit of low-momentum-transfer multinucleon interactions, and localize a residual high-$\Eavail$ excess to the deep-inelastic region, where no current generator reproduces the data. A recoil-only point-cloud transformer provides a low-level-representation cross-check, while a scalar study explores an extended fiducial phase space obtained by removing truth-level muon kinematic cuts. The latter separates an acceptance-supported extension from a prior-dominated extrapolation region and does not claim that the entire enlarged truth domain is uniformly measured. The note records the validated central results, the corrected 5D GBDT uncertainty campaign, the completed recoil-PET cross-check budget, and the validation suite; a genuine full-event PET estimator and corrected extended-fiducial uncertainties remain in progress.
+We measure medium-energy charged-current neutrino--nucleus cross sections in
+multiple dimensions using the unbinned machine-learning method OmniFold. We
+first reproduce the published double-differential cross section in muon
+transverse and longitudinal momentum with an independent unfolding method,
+recovering both the spectrum and the uncertainty budget. We then perform the
+first simultaneous three-, four-, and five-observable measurements of MINERvA
+data by adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$),
+and hadronic invariant mass ($W$); each reproduces its lower-dimensional
+predecessor under marginalization. These measurements recover the established
+MINERvA deficit of low-momentum-transfer multinucleon interactions and localize
+a residual high-$\Eavail$ excess to the deep-inelastic region, where all four
+tested generators underpredict the data. A recoil-only point-cloud transformer
+provides a low-level-representation cross-check, and a scalar study examines
+the effect of removing the truth-level muon kinematic cuts.
 
 \end{abstract}
 

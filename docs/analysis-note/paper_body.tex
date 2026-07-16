@@ -22,7 +22,7 @@ a validation, then exploit the unbinned formulation to measure the first
 simultaneous three-, four- and five-observable MINERvA cross sections, adding
 available energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic mass
 $W$. These expose the known low-recoil/2p2h deficit through an independent route,
-localize a residual deep-inelastic excess that no current generator reproduces,
+localize a residual deep-inelastic excess that all four tested generators underpredict,
 and --- together with a recoil-point-cloud representation cross-check and a
 preliminary extended-fiducial study --- demonstrate the reach and current
 limitations of the method.
@@ -87,8 +87,8 @@ $d\sigma/d\Eavail$ by $<\SI{1}{\percent}$, whereas adding the empirical Valencia
 2p2h fills the quasielastic--$\Delta$ dip. The four-dimensional $(\Eavail,q_{3})$
 result resolves the deficit's momentum-transfer structure, and a bin-identical
 comparison to the published low-recoil measurement on the maximal common
-grid~\cite{MINERvA:2022incl} agrees at central-value level. The former
-covariance-based consistency metric is withheld pending corrected production
+grid~\cite{MINERvA:2022incl} agrees at central-value level. No covariance-based
+consistency metric is reported without a corrected 4D covariance
 (Fig.~\ref{fig:pasc}).
 
 \begin{figure}[H]
@@ -97,7 +97,7 @@ covariance-based consistency metric is withheld pending corrected production
   \caption{Unfolded 3D central cross section (black)
   versus four truth-level generators. The generators track the muon-momentum
   projections but split on $\Eavail$, all underpredicting the low-recoil peak.
-  The displayed historical uncertainty band is quarantined pending replacement.}
+  Only the central values are interpreted.}
   \label{fig:pgen}
 \end{figure}
 
@@ -106,8 +106,8 @@ covariance-based consistency metric is withheld pending corrected production
   \includegraphics[width=0.75\textwidth]{ascencio_fullcov_compare}
   \caption{Bin-identical central-value comparison to the published low-recoil
   measurement~\cite{MINERvA:2022incl} on the maximal common $(\Eavail,q_{3})$
-  grid. The displayed historical covariance metrics are quarantined pending
-  replacement.}
+  grid. The uncertainty-derived annotations do not use a corrected 4D
+  covariance and are not interpreted.}
   \label{fig:pasc}
 \end{figure}
 
@@ -115,9 +115,9 @@ covariance-based consistency metric is withheld pending corrected production
 Adding $W$ as a fifth axis isolates the discrepancy that survives 2p2h. The
 unfolded-minus-generator excess concentrates at high $\Eavail$ \emph{and} high
 $W$ --- the deep-inelastic region (Fig.~\ref{fig:pdis}). All four generators
-underpredict the central result in the high-$W$ corner. Exact significances are
-withheld while the corrected five-dimensional statistical and systematic
-covariances are regenerated. Enabling Valencia
+underpredict the central result in the high-$W$ corner. Statistical
+significances are not reported without a corrected covariance for this
+projection. Enabling Valencia
 2p2h does not close the corner --- it slightly worsens it, because 2p2h populates
 low $W$ --- and the independent NuWro and GiBUU generators miss it by the same or
 a larger margin. The excess is thus a genuinely deep-inelastic ($W\gtrsim\SI{1.8}{GeV}$)
@@ -142,17 +142,15 @@ closure is internally consistent to $\sim\SI{\petClosure}{\percent}$ and which
 agrees with the production result at the \SI{9}{\percent} level
 (Fig.~\ref{fig:ppet}). Because the muon is used only for selection and
 post-hoc binning, this is not a full joint muon--hadron unfold; ordinary
-closure cannot test omitted muon dependence at fixed recoil. The study
-establishes low-level point-cloud infrastructure, not the final full-event estimator.
-Corrected five-dimensional joint throws now test the standard block-sum
+closure cannot test omitted muon dependence at fixed recoil. The study tests
+low-level point-cloud inputs without unfolding the joint muon--recoil event.
+Corrected five-dimensional joint throws test the standard block-sum
 covariance with asymmetric endpoints, a fixed estimator seed, and
 mean-centered throws. The corrected 5D covariance is adopted at
 $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$, with the joint
-mean shift reported separately; the earlier 4D adoption is not quoted. The
-completed recoil-PET assembly has median per-bin uncertainty
+mean shift reported separately. The recoil-PET assembly has median per-bin uncertainty
 \SI{\petTotalMedian}{\percent}, including a material targeted-retraining term.
-It characterizes only this recoil estimator and is not transferred to the
-full-event replacement now being implemented.
+It characterizes only this recoil estimator.
 
 \begin{figure}[H]
   \centering
@@ -179,11 +177,9 @@ cell; a three-prior envelope reports the extrapolation cost cell by cell
 the dead regions). Approximately \SI{6}{\percent} of the rate is in a newly
 acceptance-supported extension, while approximately \SI{28}{\percent} is in
 low- or zero-efficiency cells and is separately labeled prior-dominated. The
-total over both tiers is not uniformly data-constrained, and its full
-covariance is being regenerated under the corrected uncertainty contract. An
-existing PET run on the enlarged population remains recoil-only and is kept as
-a feasibility diagnostic; a full-event nominal and fresh UQ await the new
-muon-inclusive interface and omitted-variable stress closure.
+summed central value includes both tiers, but only the first is interpreted as
+an acceptance-supported measurement. No corrected covariance is reported for
+the extended domain.
 
 \begin{figure}[H]
   \centering
@@ -202,11 +198,8 @@ budget, and enables measurements binned methods cannot: the first simultaneous
 three-, four- and five-observable MINERvA unfolds. These independently recover the
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
-tested generators underpredict; its corrected significance is pending. A
+tested generators underpredict. A
 recoil-only point-cloud transformer establishes low-level-input infrastructure
 without yet unfolding the complete joint muon--hadron event. The scalar
 extended-fiducial study identifies a modest acceptance-supported extension and
-a much larger, separately labeled prior-dominated region. A full-event PET
-estimator and corrected extended-fiducial uncertainty are in progress. The
-complete methodology, validation suite and per-number record are in the
-accompanying analysis note.
+a much larger, separately labeled prior-dominated region.

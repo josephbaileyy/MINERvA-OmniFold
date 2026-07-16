@@ -155,11 +155,7 @@ and its norm; per-band endpoint displacements are not stored. The matched block 
 uses the MAT convention: universe-mean centering and the biased $1/N$
 normalization, with both endpoints re-unfolded.
 
-The earlier 4D/5D/FPS unified-throw products used a one-sided interpolation,
-CV-centering, and an estimator-jitter prescription that is no longer the
-analysis contract. Their old per-bin inflation products and dependent
-significances are therefore \emph{unquotable}. The corrected 5D campaign is now
-complete. Its background-aware block sum has median per-bin uncertainty
+For the 5D result, the background-aware block sum has median per-bin uncertainty
 \SI{\gbdtFiveBlockMedian}{\percent}; including cross-source nonlinear response
 raises the adopted mean-centered covariance to
 $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$. The joint mean
@@ -169,14 +165,14 @@ larger $\SI{\gbdtFiveCVTrace}{cm^2/nucleon}$ and is retained as a conservative
 variant. Both are positive semidefinite. Repeating all 188 universe unfolds with
 per-universe background subtraction changes the combined block sqrt-trace by
 only \SI{0.30}{\percent}, closing the background-CV concern as numerically
-negligible. Corrected 4D and extended-fiducial products remain separate work;
-the completed 5D result is not transferred to them automatically.
+negligible. The 4D and extended-fiducial results do not yet have covariances
+constructed with this procedure; the 5D covariance is not transferred to them.
 
 More generally, this reframes the block sum as an approximation --- valid only
 where the unfolding responds linearly --- rather than as a default
 construction.  We retain the per-source block decomposition for attribution,
-but a replacement/adoption decision is made only after the corrected joint
-throws and matched block endpoints pass their validation gates.
+but use it only after joint throws and matched block endpoints pass the stated
+validation tests.
 
 \paragraph{$\chi^{2}$ caveat.}
 The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=1.481$ double-counts systematics

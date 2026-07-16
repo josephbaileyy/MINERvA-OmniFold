@@ -99,8 +99,8 @@ independent method rediscovers it: we checked that minor nuclear-physics knobs
 cannot account for the gap (they move the result by under one percent), whereas
 adding the missing two-nucleon process fills it in, exactly as expected. And
 where MINERvA has a dedicated published measurement of this region, ours agrees
-with it at central-value level on the maximal common grid; the former
-covariance-based consistency metric is withheld pending corrected production.
+with it at central-value level on the maximal common grid. We do not report a
+covariance-based comparison because the 4D covariance has not been corrected.
 
 \begin{figure}[H]
   \centering
@@ -108,8 +108,8 @@ covariance-based consistency metric is withheld pending corrected production.
   \caption{The unfolded central values (black points) compared to
   four independent simulations. They agree on the muon momentum (left, center)
   but all fall below the data at low available energy (right) --- the known
-  ``low-recoil'' shortfall, here rediscovered by an independent method. The
-  displayed historical uncertainty band is quarantined pending replacement.}
+  ``low-recoil'' shortfall, here rediscovered by an independent method. Only
+  the central values are interpreted.}
   \label{fig:primergen}
 \end{figure}
 
@@ -119,8 +119,8 @@ Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
 \emph{after} the two-nucleon process is included. The leftover discrepancy sits
 in a specific corner: high available energy \emph{and} high $W$ --- the
 ``deep-inelastic'' region where the neutrino shatters the nucleon. There, all
-four simulations undershoot the central result. The exact significance is
-withheld while the corrected covariance is regenerated. This is the kind of localized discrepancy that
+four simulations undershoot the central result. Its statistical significance
+is not reported without a corrected covariance for this projection. This is the kind of localized discrepancy that
 points theorists toward what their models are missing --- and it was only
 visible because the unbinned method let us slice the data this finely.
 
@@ -132,15 +132,15 @@ visible because the unbinned method let us slice the data this finely.
   ``deep-inelastic'' corner; adding the two-nucleon process does not help there.}
 \end{figure}
 
-\subsection*{Two steps toward the future}
+\subsection*{Alternative representations and signal definitions}
 
-Two studies show where the method is heading. First, we ran a
+First, we ran a
 ``point-cloud transformer'' on the non-muon recoil clusters in the detector
 and the final-state hadrons in the simulation. It provides a useful
 low-level-input cross-check, but the muon was not given to either classifier;
-it is therefore a recoil-only proof of principle, not yet an unfold of the
-complete event. A new full-event implementation that supplies the muon and
-tests this omission directly is in progress. Second, the published signal
+it is therefore a recoil-only cross-check, not an unfold of the joint
+muon--recoil event. A full-event version would supply the muon to the
+classifiers and test its added information directly. Second, the published signal
 definition excludes about a third of the true interaction rate because of its
 muon kinematic cuts. We relaxed those truth-level cuts while retaining the
 same tracker interaction volume and reconstructed MINOS-based selection. The
@@ -168,8 +168,6 @@ separately labeled, simulation-dependent extrapolation.
 Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
 \emph{and} does what the traditional method cannot: measure many quantities at
 once. Using that, this analysis independently confirmed a known nuclear-physics
-effect, exposed a new discrepancy that no current simulation explains, and
+effect, exposed a new discrepancy that all four tested simulations underpredict, and
 mapped a possible extension of the signal definition while exposing where the
-detector provides too little information for a model-independent result. The
-full technical record --- every number, uncertainty, cross-check and current
-limitation --- is in the companion analysis note.
+detector provides too little information for a model-independent result.

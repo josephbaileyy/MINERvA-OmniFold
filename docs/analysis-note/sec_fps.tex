@@ -3,9 +3,9 @@
 
 This section reports a preliminary scalar central value, a three-prior dependence
 envelope, and an extension region tested by a hidden-variable closure and
-200 coverage toys.  The former full systematic covariance and unified-throw
-adoption are withdrawn while the corrected uncertainty production is run;
-uncertainty-derived extended-fiducial comparisons are not quoted in the interim.
+200 coverage toys. No corrected covariance is available for the extended
+fiducial domain, so the result is limited to central values and these validation
+tests.
 The signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume:
 truth-muon kinematic cuts are removed, but the reconstructed MINOS-based
 selection is unchanged. This is therefore an extended \emph{fiducial}
@@ -119,41 +119,33 @@ of the rate, chiefly the $\theta>20^{\circ}$ wedge and the
 $\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge); \emph{tier~2} (prior-extrapolated)
 covers the dead cells ($\sim\SI{28}{\percent}$ of the rate), separately
 flagged and carrying the three-prior envelope as an explicit additional band.
-The total over both tiers must not be read as uniformly data-constrained.
-
-The extended-fiducial central value, restricted-region anchor, and three-prior envelope remain
-current. Its former universe/bootstrap/ML budget and unified-throw adoption used
-the superseded one-sided, CV-centered, jitter-subtracted construction and are
-unquotable. Corrected extended-fiducial uncertainty production must use the contract in
-\S\ref{sec:uq-combine} and selection-complete lateral support appropriate to
-the enlarged phase space. No replacement uncertainty magnitude is asserted
-here.
+The summed central value includes both tiers; only tier~1 is interpreted as an
+acceptance-supported measurement. No uncertainty magnitude is assigned beyond
+the three-prior envelope because the extended-domain covariance has not been
+constructed under the contract of \S\ref{sec:uq-combine} with
+selection-complete lateral support.
 
 \subsection{Recoil-PET feasibility study on the extended population}
 \label{sec:fps-pet}
-An existing PET campaign trained at full statistics on an enlarged event
-population and extended reporting grid. Its classifier representation,
-however, remained recoil-only: step~1 saw non-muon reconstructed clusters and
+The PET feasibility study on the enlarged event population and reporting grid
+remained recoil-only: step~1 saw non-muon reconstructed clusters and
 step~2 saw truth hadrons with the muon removed. The muon coordinates used to
 define and bin the extension were not classifier inputs. Those products are
-therefore retained only as feasibility diagnostics for the recoil estimator;
+therefore feasibility diagnostics for the recoil estimator;
 their populated-bin counts, prior-transfer envelope and retraining floor are
 not a final full-event measurement and are not used to argue that
 low-efficiency cells are data-constrained.
 
-The replacement estimator must satisfy two independent gates. It must first
+A full-event estimator must satisfy two independent gates. It must first
 carry a distinguished muon and validated event context through separate
 observable reco/data and truth interfaces, and pass an omitted-variable stress
 closure that shifts muon kinematics at fixed recoil. It must also consume the
 canonical extended-fiducial event loops and $15\times19$ muon grid while
 preserving the enlarged truth denominator, native misses and unchanged
-reconstructed selection. The interface implementation is in progress; no
-full-event nominal or uncertainty is claimed here.
+reconstructed selection.
 
-After those gates, the full-event nominal, ordinary and stress closures,
-acceptance census, anchor, coverage and prior envelope will be repeated before
-a fresh statistical, ML, vertical, retraining-response and
-selection-complete-lateral UQ campaign. No covariance component from the
-recoil-only PET estimator is transferred automatically. The reporting boundary
-will be set by those validations: additional features can use more observed
-information, but cannot create detector information in zero-efficiency cells.
+Its validation would need to repeat the ordinary and stress closures,
+acceptance census, anchor, coverage and prior envelope before constructing
+statistical, ML, vertical, retraining-response and selection-complete-lateral
+uncertainties. Additional features can use more observed information, but
+cannot create detector information in zero-efficiency cells.
