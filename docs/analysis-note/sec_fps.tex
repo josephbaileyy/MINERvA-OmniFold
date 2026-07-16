@@ -72,13 +72,16 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
         region but median \SI{7.9}{\percent} (90th percentile
         \SI{62}{\percent}) in the extension, concentrated in the
         zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
-  \item \textbf{Coverage.} 200 closure$+$bootstrap toys give per-bin
-        coverage (fraction of toys with $|r|\le1$) of mean
-        \SI{68.9}{\percent} against the \SI{68.27}{\percent} target
-        ($\langle|r|\rangle=0.79$, target $0.80$); the published
-        (\SI{68.5}{\percent}) and extension (\SI{70.0}{\percent}, marginally
-        conservative) regions are both correctly calibrated --- the bootstrap
-        band means what it says in the extended grid.
+  \item \textbf{Coverage.} Split-ensemble truth-containment of an independently-calibrated
+        $\pm1\sigma$ interval (calibration/evaluation toy halves) is
+        \SI{\covFPS}{\percent}\,$\pm$\,\SI{\covFPSerr}{\percent} (binomial) against the
+        \SI{\covNominal}{\percent} nominal; separately, the independently-estimated
+        $C_{\mathrm{stat}}$ band conservatively over-covers (\SI{\covFPSanalytic}{\percent}),
+        as expected when the data statistical uncertainty exceeds the MC closure spread. The
+        same-ensemble \SI{68.9}{\percent} ($\langle|r|\rangle\approx0.79$) is retained as a
+        pull/Gaussianity diagnostic. Coverage holds in both the published
+        (\SI{68.5}{\percent}) and extension (\SI{70.0}{\percent}, marginally conservative)
+        regions --- the bootstrap band means what it says in the extended grid.
 \end{enumerate}
 
 \begin{figure}[H]

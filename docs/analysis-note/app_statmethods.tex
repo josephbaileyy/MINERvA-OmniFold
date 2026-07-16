@@ -592,14 +592,18 @@ Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \end{center}
 The $3.661 \to \chiCombined$ drop ($-60\%$) is the central UQ
 result: once the OmniFold-side error budget is included,
-the agreement with the paper improves to $\chi^{2}/\mathrm{ndf}
-\approx 1.7$. (A perfectly correct model with correct uncertainties
-gives exactly $1$; $1.7$ tolerates small residual shape mismatch in
-high-$\pPar$ tails, see \S\ref{sec:shape}.) \textbf{This combined
-$\chi^{2}$ double-counts systematics shared with the paper} (flux,
-GENIE, RPA, 2p2h, MINOS); see \S\ref{sec:rank} for why it remains the
-quoted headline and why we report per-bin pulls rather than a single
-unqualified ours-only $\chi^{2}$.
+the summed-covariance distance to the paper falls to $\chi^{2}/\mathrm{ndf}
+\approx 1.5$. (A perfectly correct model with correct uncertainties
+gives exactly $1$; $\approx1.5$ tolerates small residual shape mismatch in
+high-$\pPar$ tails, see \S\ref{sec:shape}.) \textbf{This is an indicative
+distance, not a calibrated goodness-of-fit:} the published (IBU-era) result
+and this OmniFold result share the same MINERvA data and flux/detector/GENIE
+systematics, and without the (unavailable) OmniFold$\leftrightarrow$paper
+cross-covariance the summed covariance both double-counts those shared
+systematics and omits their correlation. We therefore quote it as a distance
+and ratio-to-paper, not a $p$-value; see \S\ref{sec:rank} for why it remains
+the headline and why we report per-bin pulls rather than a single unqualified
+ours-only $\chi^{2}$.
 The log-normal variant (matching the paper's Table I treatment of the
 correlated flux normalization) gives $\chiCombinedLog$, essentially identical.
 

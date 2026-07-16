@@ -22,6 +22,16 @@
 \newcommand{\pullMean}{0.089}
 \newcommand{\pullRMS}{0.598}
 \newcommand{\pullRMSr}{0.60}          % rounded, for prose
+% Coverage (Agent C WS1 statistical-validation repair, 2026-07-16): truth-containment
+% of an INDEPENDENTLY-calibrated +/-1sigma interval (split-ensemble, non-circular;
+% binomial errors; nominal 68.27%). coverage_valid_nd.py. Supersedes the old
+% same-ensemble "coverage" (which is a standardized-pull/Gaussianity diagnostic).
+\newcommand{\covTwoD}{68.80}\newcommand{\covTwoDerr}{0.32}   % 2D split-ensemble coverage +/- binomial
+\newcommand{\covFPS}{68.67}\newcommand{\covFPSerr}{0.28}     % FPS split-ensemble coverage +/- binomial
+\newcommand{\covNominal}{68.27}                              % Gaussian nominal
+\newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (independent C_stat): conservatively over-covers
+\newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
+\newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
 \newcommand{\chiCombined}{1.481}      % chi2/ndf vs combined (paper+ours) cov
 \newcommand{\chiCombinedLog}{1.468}   % log-normal chi2/ndf, combined (paper+ours)

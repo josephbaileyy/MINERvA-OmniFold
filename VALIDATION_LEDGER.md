@@ -444,3 +444,26 @@ combined (block-sum) covariance and validations.
 - P7 5D→4D marginal (DRY-RUN candidate on the current committed adopted 5D; NOT a
   publication number — final gated): 4830-bin PSD projection, √tr `2.41e-38`, 5 orphan
   4D-reported bins receive no 5D source (flagged). [project_cov_nd.py]
+
+### 2026-07-16 — Statistical-validation repair (Agent C WS1 coverage; integrated into the note by Agent D)
+
+Coverage re-stated as truth-containment of an INDEPENDENTLY-calibrated ±1σ interval
+(split-ensemble: disjoint calibration/evaluation toy halves → non-circular; binomial errors;
+Gaussian nominal 68.27%). Reuse-only on the existing toy stacks (no invalid-design production;
+`coverage_valid_nd.py`, estimator seed 42):
+- 2D (headline): **68.80% ± 0.32%** (200 ROOT closure toys, 205 reported bins).
+  [`2d-unfolding/uq/coverage_valid_2d.json`]
+- FPS: **68.67% ± 0.28%** (200 cov_fps toys, 266 bins). Variant-A independent `C_stat` band
+  conservatively over-covers at **77.6%** (data-stat > MC-closure-stat; honest, not a defect).
+  [`nd-unfolding/uq_fps/corrected/coverage_valid_fps.json`]
+- The OLD same-ensemble "coverage" (2D `68.71%` / FPS `68.9%`, ⟨|r|⟩≈`0.794` vs √(2/π)=`0.798`,
+  `97.6%` bins ≥65%) is a standardized-pull/Gaussianity self-consistency diagnostic, NOT
+  frequentist coverage → RELABELED, retained under that label.
+
+C2ST (WS2): analytic p-values (`z=1.4, p=0.17`; `p≈5e-244`) and "statistically indistinguishable"
+REMOVED from the note; retained as a descriptive held-out-AUC drop (≈0.535→≈0.501); no calibrated
+p-value (valid null = hundreds of cross-fitted OmniFold pipelines, unaffordable; unbinned GoF open).
+WS3: ours-vs-paper χ² (`\chiPaper` 3.66 / `\chiCombined` 1.481) relabeled an INDICATIVE distance
+(shared systematics + no OmniFold↔paper cross-covariance → not a calibrated GoF); Ascencio kept
+shape-level/descriptive; generator significances retained (data-vs-theory, single correct cov).
+Agent C's full WS2/WS3 RUN_LOG/STATUS + the paired-C_delta OF-vs-IBU test land under their commit gate.
