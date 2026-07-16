@@ -28,6 +28,8 @@ throughout the note.
         point-cloud-transformer cross-checks).
 \end{itemize}
 
-The point-cloud measurements of \S\ref{sec:pet} replace the driver's scalar
-features with the cluster-level inputs of \texttt{nd-unfolding/pet/},
-reusing the same omnifile and cross-section machinery.
+The recoil-point-cloud cross-checks of \S\ref{sec:pet} replace the driver's
+scalar classifier features with the non-muon cluster and truth-hadron inputs
+of \texttt{nd-unfolding/pet/}, reusing the same omnifile and cross-section
+machinery. Muon scalars are retained for selection and binning but are not
+classifier inputs in these legacy PET products.

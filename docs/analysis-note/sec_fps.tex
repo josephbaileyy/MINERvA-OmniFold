@@ -1,11 +1,15 @@
-\section{Extended-phase-space results}
+\section{Extended fiducial phase-space study}
 \label{sec:fps}
 
-This section reports the current central value, a three-prior dependence
-envelope, and an extension region validated by a hidden-variable closure and
+This section reports a preliminary scalar central value, a three-prior dependence
+envelope, and an extension region tested by a hidden-variable closure and
 200 coverage toys.  The former full systematic covariance and unified-throw
 adoption are withdrawn while the corrected uncertainty production is run;
-uncertainty-derived extended-phase-space comparisons are not quoted in the interim.
+uncertainty-derived extended-fiducial comparisons are not quoted in the interim.
+The signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume:
+truth-muon kinematic cuts are removed, but the reconstructed MINOS-based
+selection is unchanged. This is therefore an extended \emph{fiducial}
+measurement domain, not unrestricted neutrino phase space.
 
 The published phase space ($\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$,
 $\pT<\SI{4.5}{GeV/c}$) hides a third of the signal: weighting the true
@@ -24,7 +28,7 @@ what prior cost}; this section quantifies that.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_acceptance_MEFHC}
-  \caption{Extended-phase-space acceptance study (all twelve playlists):
+  \caption{Extended-fiducial acceptance study (all twelve playlists):
   (a)~weighted truth rate (log$_{10}$), (b)~reconstruction efficiency, and
   (c)~the dead region with $\epsilon<\SI{2}{\percent}$, on the extended
   $(\pT,\pPar)$ grid (bin number; the catch bins are too wide for a linear
@@ -40,7 +44,7 @@ what prior cost}; this section quantifies that.
 Three results establish the extension (Fig.~\ref{fig:fpscmp}):
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Anchor.} Restricted to the published-phase-space sub-block,
-        the extended-phase-space unfold reproduces a control unfold (standard
+        the extended-fiducial unfold reproduces a control unfold (standard
         omnifile, paper grid, identical settings) to $0.9994$ in integral,
         with a median per-cell ratio of $1.0013$ and median deviation
         \SI{\fpsAnchor}{\percent} over all 185 reported cells --- opening the
@@ -80,9 +84,9 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
-  \caption{Extended-phase-space validation battery (all playlists):
+  \caption{Extended-fiducial validation battery (all playlists):
   (a)~anchor ratio in the published sub-block (median $1.0013$),
-  (b)~the MnvTune/bare-GENIE prior-swap ratio, and (c)~the extended-phase-space
+  (b)~the MnvTune/bare-GENIE prior-swap ratio, and (c)~the extended-fiducial
   cross section (log$_{10}$). Panels (a) and (b) are \emph{ratios} (diverging
   scale centered at unity); (c) is an \emph{absolute} magnitude (sequential
   scale) --- hence the two color schemes. Black lines mark the published
@@ -101,99 +105,55 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
 \end{figure}
 
 \paragraph{Result and reporting convention.}
-The extended-phase-space CC-inclusive cross section on the tracker fiducial
-volume is
+The preliminary extended-fiducial CC-inclusive central value on the tracker
+fiducial volume is
 \begin{equation*}
   \sigma_{\mathrm{ext}} = \SI{\fpsSigma}{cm^2/nucleon}
   \quad\text{(central value)},
 \end{equation*}
 \SI{\fpsAbove}{\percent} above the restricted-phase-space
 $\SI{\sigTwoD}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
-\emph{tier~1} (the measurement) covers cells with $\epsilon\gtrsim2\%$ ---
+\emph{tier~1} (acceptance-supported reporting) covers cells with $\epsilon\gtrsim2\%$ ---
 the published region plus the measurable extension ($\sim\SI{6}{\percent}$
 of the rate, chiefly the $\theta>20^{\circ}$ wedge and the
 $\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge); \emph{tier~2} (prior-extrapolated)
-covers the dead cells ($\sim\SI{28}{\percent}$ of the rate), published but
-flagged, carrying the three-prior envelope as an explicit additional band.
+covers the dead cells ($\sim\SI{28}{\percent}$ of the rate), separately
+flagged and carrying the three-prior envelope as an explicit additional band.
+The total over both tiers must not be read as uniformly data-constrained.
 
-The extended-phase-space central value, restricted-region anchor, and three-prior envelope remain
+The extended-fiducial central value, restricted-region anchor, and three-prior envelope remain
 current. Its former universe/bootstrap/ML budget and unified-throw adoption used
 the superseded one-sided, CV-centered, jitter-subtracted construction and are
-unquotable. Corrected extended-phase-space uncertainty production must use the contract in
+unquotable. Corrected extended-fiducial uncertainty production must use the contract in
 \S\ref{sec:uq-combine} and selection-complete lateral support appropriate to
 the enlarged phase space. No replacement uncertainty magnitude is asserted
 here.
 
-\subsection{The point-cloud realization: full statistics on the 5D grid}
+\subsection{Recoil-PET feasibility study on the extended population}
 \label{sec:fps-pet}
-The result above establishes the extended-phase-space result on the
-two-dimensional $(\pT,\pPar)$ scalar grid. The point-cloud track
-(\S\ref{sec:pet}) repeats the exercise on the full 5D headline grid
-$(\pT,\pPar,\Eavail,q_3,W)$, with two differences from the GBDT case. First,
-because OmniFold's step-2 network is a learned function of the truth phase
-space it was trained on, opening the kinematic cuts requires a genuine PET
-retrain on the enlarged truth sample rather than a reweight of the
-restricted-phase-space network. Second, because retraining separately for
-each prior hypothesis is prohibitively expensive for this network, the
-model-dependence envelope reuses the frozen-reweighter transfer that
-underlies the PET systematic budget (\S\ref{sec:pet-syst}): a cheap GBDT
-re-unfold under three priors --- MnvTune~v1, bare GENIE, and the NuWro-shaped
-prior --- supplies per-bin fractional prior-dependence ratios, applied to the
-frozen PET headline weights rather than driving three additional PET
-trainings.
+An existing PET campaign trained at full statistics on an enlarged event
+population and extended reporting grid. Its classifier representation,
+however, remained recoil-only: step~1 saw non-muon reconstructed clusters and
+step~2 saw truth hadrons with the muon removed. The muon coordinates used to
+define and bin the extension were not classifier inputs. Those products are
+therefore retained only as feasibility diagnostics for the recoil estimator;
+their populated-bin counts, prior-transfer envelope and retraining floor are
+not a final full-event measurement and are not used to argue that
+low-efficiency cells are data-constrained.
 
-\paragraph{Extending the grid and the truth phase space.}
-Two lifts are applied in sequence, each validated by re-training PET on the
-enlarged sample: (1)~the $\theta_\mu<20^\circ$ truth gate is lifted
-consistently across the point-cloud dump, the GBDT dump, and the PET retrain,
-enlarging the truth sample from \num{32.9}~million to \num{38.6}~million
-events; (2)~the reporting grid is then extended with catch bins for the
-low-$\pPar$ strip and the high-$\pT$ corner ($\pT$: 15 bins, $\pPar$: 19 bins,
-against the published $14\times16$), giving a final
-$15\times19\times7\times7\times6=\num{83790}$-bin grid on
-\num{49152885}~truth events. Restricting the extended-grid PET cross section
-to the \num{9752}~bins fully interior to the published $\theta_\mu<20^\circ$
-rectangle reproduces the restricted-phase-space PET headline to integral
-ratio $0.99$, median per-bin deviation \SI{1.6}{\percent} (90th percentile
-\SI{4.2}{\percent}) --- consistent with ordinary retrain-to-retrain noise
-between two independently-trained networks (quantified directly below), not a
-distortion from the extended grid or the lifted gate.
+The replacement estimator must satisfy two independent gates. It must first
+carry a distinguished muon and validated event context through separate
+observable reco/data and truth interfaces, and pass an omitted-variable stress
+closure that shifts muon kinematics at fixed recoil. It must also consume the
+canonical extended-fiducial event loops and $15\times19$ muon grid while
+preserving the enlarged truth denominator, native misses and unchanged
+reconstructed selection. The interface implementation is in progress; no
+full-event nominal or uncertainty is claimed here.
 
-\paragraph{Model-dependence envelope and two-tier reporting.}
-Of the \num{11875}~bins the PET headline populates on the extended grid,
-\num{9307} clear a reconstruction-efficiency completeness of $\ge0.5$
-(tier~1, measured) and \num{2568} fall below it (tier~2, extrapolated),
-concentrated in the low-$\pPar$ catch rows and the high-$\pT$ column. The
-three-prior model-dependence envelope (half-spread/mean per bin) has median
-\SI{18.7}{\percent} (90th percentile \SI{61.6}{\percent}) in tier~1 and
-median \SI{16.3}{\percent} (90th percentile \SI{45.4}{\percent}) in tier~2
---- flat across the completeness range at large, rather than blooming in the
-extrapolated cells the way the coarser 2D pilot's efficiency-binned
-prior-swap did (that comparison used two priors and a different disagreement
-metric on the $14\times16$ grid; the finer 5D binning combined with the
-three-prior GBDT transfer evidently constrains the catch bins comparably well
-to the interior). The combined model-dependence covariance has
-$\sqrt{\mathrm{tr}\,C_{\text{modeldep}}} = \num{8.56e-37}$; because
-$C_{\text{modeldep}}$ is rank~2 by construction (built from two
-prior-difference vectors), it is stored and combined as those two vectors
-rather than as a dense matrix.
-
-\paragraph{Retraining-response floor.}
-The flat 16--19\% envelope raises an obvious question: how much of that is a
-genuine three-prior disagreement, and how much is ordinary PET training
-stochasticity? To isolate the latter, six additional PET replicas were
-trained varying only the random seed and the training-sample size (four
-replicas at 10M events, two at 5M), evaluated through the identical
-extraction chain, and their per-bin spread compared against the
-model-dependence envelope in each tier. At 10M events the tier-2
-retraining-response floor is median \SI{1.14}{\percent} (90th percentile
-\SI{2.17}{\percent}), a factor of $\sim14$ below the \SI{16.3}{\percent}
-tier-2 envelope, and it shrinks further from the 5M-event value
-(\SI{1.37}{\percent}), the expected direction for genuine convergence rather
-than an already-saturated noise floor. Retraining noise is therefore a
-negligible contributor next to the three-prior systematic, justifying the
-frozen-reweighter transfer used for both the model-dependence envelope above
-and the PET systematic budget (\S\ref{sec:pet-syst}): training PET once and
-propagating prior/systematic variation through fractional reweighting, rather
-than retraining per universe, does not discard resolving power that a full
-per-universe retrain would have recovered.
+After those gates, the full-event nominal, ordinary and stress closures,
+acceptance census, anchor, coverage and prior envelope will be repeated before
+a fresh statistical, ML, vertical, retraining-response and
+selection-complete-lateral UQ campaign. No covariance component from the
+recoil-only PET estimator is transferred automatically. The reporting boundary
+will be set by those validations: additional features can use more observed
+information, but cannot create detector information in zero-efficiency cells.

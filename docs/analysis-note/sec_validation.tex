@@ -79,19 +79,19 @@ Area-normalized against the frozen 4D GBDT result, the PET unfold
 reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 ($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
-shape/method-robustness check: it shows the learned reweight is stable across both
-the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representation
-(engineered scalars vs.\ raw point cloud). Figure~\ref{fig:petdisplays}
+recoil-representation sensitivity check: it compares classifier families and
+engineered-scalar versus recoil-cloud inputs, but does not test a complete
+joint muon--hadron representation. Figure~\ref{fig:petdisplays}
 visualizes representative events on a common energy--polar-angle plane and
 shows the reconstructed and truth muon together with the recoil activity. The
 current classifier itself receives a variable-length set of single-view energy
 deposits at reconstruction level and particles with full four-momenta at truth
 level. The muon kinematics exist at both levels and are stored as event scalars
-for downstream binning, but are not yet part of the PET classifier tensor.
+for downstream binning, but are not part of the recoil-PET classifier tensor.
 Figure~\ref{fig:petcardinality} shows the
 per-event cardinality of each cloud. Section~\ref{sec:pet} elevates the PET
-track to a full-statistics, absolutely-normalized cross section with its own
-closure gate and systematic budget.
+track to an absolutely-normalized recoil-estimator cross-check with its own
+ordinary closure and systematic diagnostics.
 
 Figure~\ref{fig:petcardinality} uses the coverage-complete point-cloud input:
 only 174 of the \num{32849103} truth events have an empty cloud. Including the
@@ -131,8 +131,8 @@ $k=1$ depletion remains.}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{pet_vs_gbdt}
-  \caption{Method-robustness check: area-normalized 4D unfolded shapes from the
-    PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
+  \caption{Recoil-representation cross-check: area-normalized 4D unfolded shapes from the
+    recoil-only PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
     projected onto each axis. Median per-bin shape differences are
     \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
     catch bin, which collects a large, structured high-$q_{3}$ tail into one wide

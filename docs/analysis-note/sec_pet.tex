@@ -1,27 +1,28 @@
 \bpn{left off here}
 
-\section{Full phase space: PET on reconstructed and truth point clouds}
+\section{Recoil-point-cloud representation cross-check}
 \label{sec:pet}
 
-The full promise of OmniFold is unfolding on the event's \emph{raw}
-representation rather than on engineered scalar summaries. This section
-documents that track: a point-cloud transformer (PET, the architecture of
+The long-term goal is to unfold a declared full-event representation rather
+than engineered scalar summaries. This section documents an important but
+narrower milestone: a point-cloud transformer (PET, the architecture of
 OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream OmniFold
 implementation) unfolds the same ME~FHC data using, on the reconstructed
 side, the actual calorimetric recoil clusters --- per-cluster energy,
 one view-projected transverse coordinate and $z$ (\texttt{cluster\_energy},
 \texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
 \texttt{cluster\_isMuontrack} via
-\texttt{CVUniverse::GetRecoClusters()}). Muon-derived event scalars are retained
-for binning the extracted result, but the current PET classifier is trained on
-the recoil clouds alone; a full-event representation with the muon supplied as
-a distinguished feature is a planned input-and-training upgrade. This
-is a validated \emph{method milestone}: a real, absolutely-normalized,
-full-statistics cross section with its own closure gate and a completed corrected
-uncertainty campaign. The network training in this section is subsample-limited (see
-below), so the production result of record remains the scalar GBDT
-measurement; the extended-phase-space result (\S\ref{sec:fps-pet})
-subsequently retrains PET at full statistics on the opened truth sample.
+\texttt{CVUniverse::GetRecoClusters()}). At truth level it receives the
+final-state hadron cloud with the muon removed. Muon-derived event scalars are
+retained for selection and binning the extracted result, but they are not
+classifier features at either level. The learned weight is therefore a
+function of the recoil representation, not of the complete joint muon--hadron
+event. This is a validated \emph{recoil-representation cross-check}: it has an
+absolutely normalized central value, ordinary closure and a completed
+uncertainty study for that estimator. It is not the full-event publication
+estimator, and none of its uncertainty components transfers automatically to
+the full-event implementation now in progress. The production result of
+record remains the scalar GBDT measurement.
 
 \subsection{From shape check to absolute cross section}
 \label{sec:pet-abs}
@@ -35,38 +36,39 @@ flux/POT/nucleon constants). Three gates validate the absolute path:
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Full-statistics reweight sanity}: the pushed weights over the
         32.8M generator events are finite with mean $1.028$;
-  \item \textbf{Closure (decisive)}: unfolding MC-reco-as-pseudo-data
+  \item \textbf{Ordinary closure}: unfolding MC-reco-as-pseudo-data
         recovers MC truth to total $0.9884$ with uniform per-axis median
         residuals of $\sim\SI{1.1}{\percent}$ --- the absolute machinery is
-        unbiased;
+        internally consistent. Because pseudo-data and prior come from the
+        same simulation, this test cannot expose omitted muon dependence at
+        fixed recoil;
   \item \textbf{Cross-check vs GBDT}: on data, the PET absolute total is
         $\SI{2.796e-38}{cm^2/nucleon}$ versus the GBDT
         $\SI{3.066e-38}{}$, ratio $\petRatio$, with per-axis median differences
         of \SIrange{6.5}{9.9}{\percent} (Fig.~\ref{fig:petabs}).
 \end{enumerate}
-Because the closure is exact to $\sim\SI{\petClosure}{\percent}$, the $\sim\SI{\petGbdtGap}{\percent}$
-data-side gap is a genuine \emph{training-configuration} difference (PET
-trained on the 2M subsample with 2 iterations versus the full-statistics
-5-iteration GBDT), not a normalization bug: an under-iterated unfold pushes
-the result less far from the prior. A higher-epoch retrain moved the total by
-$-1.6\%$ (ratio $0.897$), confirming the training-config sensitivity; the
-residual gap reflects the reduced PET training statistics and iteration
-count.
+The $\sim\SI{\petGbdtGap}{\percent}$ data-side gap is not a normalization bug,
+but ordinary closure alone cannot assign it uniquely to training
+configuration. The PET run used a 2M-event, two-iteration training rather than
+the full-statistics five-iteration GBDT, and a higher-epoch retrain moved the
+total by $-1.6\%$ (ratio $0.897$), demonstrating training sensitivity. The
+recoil-only feature contract is an additional structural difference: at fixed
+recoil, the conditional muon distribution remains inherited from the prior.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
-  \caption{Absolutely-normalized 4D cross section from the PET point-cloud
-  unfold (full-statistics reweight of the generator sample) versus the
+  \caption{Recoil-only PET representation cross-check: absolutely-normalized
+  4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
   production scalar GBDT result, projected on each axis. The PET/GBDT total
-  ratio is $\petRatio$; the closure gate (text) shows the absolute machinery
-  itself is unbiased to $\sim\SI{\petClosure}{\percent}$.}
+  ratio is $\petRatio$; ordinary closure validates the extraction machinery to
+  $\sim\SI{\petClosure}{\percent}$ but does not test omitted muon dependence.}
   \label{fig:petabs}
 \end{figure}
 
-\subsection{PET uncertainty remediation}
+\subsection{Uncertainty of the recoil-only estimator}
 \label{sec:pet-syst}
-\textbf{Completed replacement.} The former PET statistical block fluctuated
+\textbf{Completed recoil-estimator replacement.} The former PET statistical block fluctuated
 frozen truth weights without fluctuating measured data or retraining PET.  It
 is not a sampling covariance of the estimator.  Correct replicas independently
 Poisson-fluctuate data and MC, retrain PET at a fixed estimator seed, and apply
@@ -86,7 +88,9 @@ finite-output gates. The GPU nondeterminism is negligible relative to both
 sampling and training variation. The present $C_{\rm stat}$ uses 20 coherent
 replicas. This closes the current analysis-note campaign; increasing the
 inventory to 100 replicas is planned before publication but has not yet been
-performed.
+performed. These statements characterize the recoil-only estimator. They do
+not constitute, and will not be transferred into, the fresh UQ campaign for
+the full-event estimator.
 
 The replacement PET budget uses actual minus/plus endpoints with the
 mean-centered MAT convention, an exact 100-universe flux inventory, and a
@@ -129,17 +133,17 @@ For detector/lateral variations, the campaign propagates shifted detector
 weights and observables through the corrected nominal cloud sample with the PET
 map frozen. It does not claim shifted-cloud membership regeneration or a fresh
 PET training for every detector universe. That limitation is explicit, but it
-does not leave the present campaign open. The planned 100-replica statistical
-ensemble and selection-complete per-lateral PET retraining are pre-publication
-refinements, not completed parts of this result. The
-corrected PET and GBDT median uncertainties are of comparable scale, but their
-different reported masks and central trainings make a binwise superiority
-claim inappropriate without a dedicated common-support comparison.
+does not invalidate the completed recoil-representation diagnostic. Expanding
+its 20-replica inventory would refine only that legacy cross-check; it would
+not close the full-event gate. The corrected recoil-PET and GBDT median
+uncertainties are of comparable scale, but their different reported masks,
+central trainings and feature contracts make a binwise superiority claim
+inappropriate.
 
-\subsection{Truth-cloud projection: one unfold, many hadronic observables}
+\subsection{Truth-cloud projection within the recoil cross-check}
 \label{sec:pet-projection}
 
-The truth side of the PET unfold is \emph{already} a point cloud: the
+The truth side of the recoil-only PET unfold is \emph{already} a point cloud: the
 generator-level final-state hadron set
 (\texttt{part\_gen}, the top-12-by-energy truth hadrons with their PDG codes,
 built by \texttt{CVUniverse::GetTruthFSHadrons}) is carried per event
@@ -187,7 +191,7 @@ $\lesssim\SI{\pcCloudFull}{\percent}$ in every $\Eavail$ bin
 (Fig.~\ref{fig:pcxsec}, center, where the cloud, stored, and full-unfold
 curves coincide). The projection is no longer acceptance-limited.
 
-\paragraph{Projection yields genuinely new observables.}
+\paragraph{Exploratory projection yields new hadronic diagnostics.}
 $W_{\text{had}}$ is not a lossy copy of the leptonic ``experimenter's''
 $W$ stored at dump time --- the latter is reconstructed from muon kinematics
 assuming a single struck nucleon at rest, while $W_{\text{had}}$ is the true
@@ -198,13 +202,14 @@ $W_{\text{had}}\approx\SI{0.94}{GeV}$ (single-baryon final states, whose
 hadronic mass is just the nucleon rest mass irrespective of leptonic $W$) and
 diagonal bands stepped above it by $\sim$one nucleon mass per extra final-state
 baryon (multi-nucleon knockout, 2p2h), Fermi-smeared. Projecting the cloud
-thus delivers a new, physically meaningful hadronic observable from the
-existing unfold.
+thus provides a physically interpretable hadron-cloud diagnostic from the
+existing recoil-only unfold; it is not promoted here as a separate full-event
+measurement.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.72\textwidth]{pet_cloud_projection_validation}
-  \caption{Truncation validation: cloud-recomputed $\Eavail$ minus the value
+  \caption{Recoil-cloud truncation validation: cloud-recomputed $\Eavail$ minus the value
   stored at dump time, over the full \num{32.8}~million truth events.
   The residual is zero to \SI{\pcEavailWithin}{\percent} within \SI{10}{MeV};
   the small negative tail is confined to the \SI{\pcSaturated}{\percent} of
@@ -219,7 +224,8 @@ existing unfold.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.98\textwidth]{pet_cloud_projection_xsec}
-  \caption{Reweight-then-project demonstration. \emph{Left:} hadronic-system
+  \caption{Exploratory recoil-only reweight-then-project demonstration.
+  \emph{Left:} hadronic-system
   invariant mass $W_{\text{had}}$ versus the leptonic stored $W$ --- they
   differ by definition (median \SI{\pcWoffset}{GeV}), with the QE locus at
   \SI{0.94}{GeV} and multi-baryon bands above $y=x$. \emph{Center:}
@@ -232,32 +238,42 @@ existing unfold.
   \label{fig:pcxsec}
 \end{figure}
 
-\paragraph{The extrapolation limit.}
+\paragraph{The projection and extrapolation limits.}
 \label{sec:pet-projection-next}
 Reweighting can only redistribute weight among truth configurations the
 generator already produced; it cannot populate phase space the prior never
-sampled --- the same extrapolation limit flagged for the extended-phase-space
-measurement (\S\ref{sec:fps}). Within that limit, every observable above is
-projectable over the full truth spectrum from the current dump.
+sampled --- the same extrapolation limit flagged for the extended-fiducial
+study (\S\ref{sec:fps}). Within that limit, hadron-cloud diagnostics can be
+projected over the stored truth spectrum from the current dump. They do not
+turn the recoil-derived weight into a full-event weight or remove the prior
+conditional for omitted muon information.
 Two extensions lie beyond re-projection from the stored cloud (they would
 require regenerating the event dump):
-adding the muon back as a tagged constituent for muon-dependent hadronic
-observables (it is deliberately excluded from the recoil cloud but retained as
-a stored scalar); and raising the 12-particle cap for the rare
+adding the muon through separately declared reco/data and truth event-feature
+interfaces (it is excluded from the recoil cloud but retained as a stored
+scalar); and raising the 12-particle cap for the rare
 very-high-multiplicity tail (unnecessary at $\Eavail$ scale per the validation
 above). Full details and reproduction are in
 \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
 
-\subsection{What the PET track demonstrates}
-The point-cloud track closes the methodological loop begun by the scalar
-GBDT/MLP cross-checks (\S\ref{sec:validation}): the unfolded physics is
-stable across classifier family (GBDT, MLP, transformer) \emph{and} input
-representation (engineered scalars, raw reconstructed clusters), now
-including the absolute normalization. It also establishes the
-infrastructure --- point-cloud DataLoader, GPU training, full-sample
-reweighting, coherent estimator bootstraps, and targeted response budgets --- for unfolding directly on
-low-level MINERvA data, the natural endpoint of the unbinned program.
-Finally, because the truth side is itself a point cloud, a single unfold
-yields not one cross section but a reusable truth object from which any
-hadronic observable can be projected after the fact
-(\S\ref{sec:pet-projection}).
+\subsection{What the recoil-PET track demonstrates}
+The current track establishes that the point-cloud infrastructure works on
+real MINERvA recoil data: paired reco/truth clouds, GPU training, full-sample
+reweighting, absolute extraction, coherent estimator bootstraps and targeted
+response studies all operate end to end. It also provides a useful comparison
+against the scalar result and supports exploratory post-hoc hadron-cloud
+projections. It does \emph{not} establish simultaneous muon-plus-hadron
+unfolding, because the muon was not a classifier input.
+
+The replacement effort therefore starts from separate observable
+\texttt{event\_reco}/\texttt{event\_data} and truth-level
+\texttt{event\_truth} interfaces, with a distinguished muon, explicit
+masks/types and validated neighborhood geometry. Before any new nominal is
+promoted, an omitted-variable stress closure will change muon kinematics
+within narrow recoil strata: the recoil-only estimator should expose the
+omission, while the full-event estimator must recover the injected change.
+Only after that gate will the full-event nominal, statistical/ML ensembles,
+vertical and selection-complete lateral response, total covariance and
+extended-fiducial projections be regenerated. Additional features may improve
+the acceptance-supported region, but cannot create detector information in
+zero-efficiency cells.

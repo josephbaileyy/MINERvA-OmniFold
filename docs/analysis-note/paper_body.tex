@@ -23,8 +23,9 @@ simultaneous three-, four- and five-observable MINERvA cross sections, adding
 available energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic mass
 $W$. These expose the known low-recoil/2p2h deficit through an independent route,
 localize a residual deep-inelastic excess that no current generator reproduces,
-and --- together with a full-phase-space point-cloud cross-check and
-an extended-phase-space result --- demonstrate the reach of the method.
+and --- together with a recoil-point-cloud representation cross-check and a
+preliminary extended-fiducial study --- demonstrate the reach and current
+limitations of the method.
 
 \section{Data and method}
 The analysis uses the twelve ME FHC playlists ($1.057\times10^{21}$ protons on
@@ -131,59 +132,63 @@ modeling deficit, robust across generator and tune.
   \label{fig:pdis}
 \end{figure}
 
-\section{Method robustness and the point-cloud track}
-The unfolded result is stable across the classifier family (GBDT, MLP,
-transformer) and the input representation. A point-cloud transformer
-(PET~\cite{Mikuni:2024qsr}) unfolding the \emph{raw} reconstructed calorimeter
-clusters reproduces the scalar-GBDT result and, trained to full statistics,
-yields an absolutely-normalized cross section whose closure is unbiased to
-$\sim\SI{\petClosure}{\percent}$ and which agrees with the production result at the
-\SI{9}{\percent} (training-configuration) level (Fig.~\ref{fig:ppet}). This
-establishes the infrastructure for unfolding directly on low-level detector data.
+\section{Method robustness and the recoil-point-cloud track}
+The unfolded result is stable across GBDT and MLP classifier families. A
+point-cloud transformer (PET~\cite{Mikuni:2024qsr}) provides a complementary
+recoil-representation cross-check: step~1 uses non-muon reconstructed
+calorimeter clusters and step~2 uses truth final-state hadrons with the muon
+removed. It yields an absolutely-normalized central value whose ordinary
+closure is internally consistent to $\sim\SI{\petClosure}{\percent}$ and which
+agrees with the production result at the \SI{9}{\percent} level
+(Fig.~\ref{fig:ppet}). Because the muon is used only for selection and
+post-hoc binning, this is not a full joint muon--hadron unfold; ordinary
+closure cannot test omitted muon dependence at fixed recoil. The study
+establishes low-level point-cloud infrastructure, not the final full-event estimator.
 Corrected five-dimensional joint throws now test the standard block-sum
 covariance with asymmetric endpoints, a fixed estimator seed, and
 mean-centered throws. The corrected 5D covariance is adopted at
 $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$, with the joint
 mean shift reported separately; the earlier 4D adoption is not quoted. The
-completed corrected PET assembly has median per-bin uncertainty
+completed recoil-PET assembly has median per-bin uncertainty
 \SI{\petTotalMedian}{\percent}, including a material targeted-retraining term.
-Its statistical component presently uses 20 replicas; a 100-replica ensemble
-is planned before publication but has not yet been run.
+It characterizes only this recoil estimator and is not transferred to the
+full-event replacement now being implemented.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
-  \caption{Absolutely-normalized 4D cross section from the PET point-cloud unfold
-  of the raw clusters versus the production scalar GBDT, per axis. The closure
-  gate shows the absolute machinery is unbiased to $\sim\SI{\petClosure}{\percent}$;
-  the \SI{9}{\percent} total offset is a training-configuration difference.}
+  \caption{Recoil-only representation cross-check: absolutely-normalized 4D
+  cross section from PET versus the production scalar GBDT, per axis. Ordinary
+  closure validates the extraction machinery to $\sim\SI{\petClosure}{\percent}$
+  but does not test omitted muon dependence; the total offset also reflects the
+  different training and feature contracts.}
   \label{fig:ppet}
 \end{figure}
 
-\section{Extended-phase-space cross section}
+\section{Extended-fiducial central-value study}
 The published phase space discards about a third of the signal rate (events with
 the muon below \SI{1.5}{GeV/c} or beyond $20^{\circ}$). Because OmniFold corrects
 for acceptance natively, removing those truth-level cuts is a configuration change,
 and the unfold extrapolates into the unmeasured regions through the miss
-regressor. The resulting extended-phase-space CC-inclusive cross section is
+regressor. The resulting preliminary extended-fiducial CC-inclusive central value is
 $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, \SI{\fpsAbove}{\percent}
 above the restricted measurement (Fig.~\ref{fig:pfps}). Inside the published
 region it reproduces the restricted result to \SI{\fpsAnchor}{\percent} median per
 cell; a three-prior envelope reports the extrapolation cost cell by cell
 (few-percent where the detector has acceptance, explicit tens-of-percent flags in
-the dead regions). Its full covariance is being regenerated under the corrected
-uncertainty contract. The same extension is realized with the
-point-cloud engine at full statistics on the 5D grid, with an extended
-catch-bin grid, two-tier reporting by reconstruction efficiency
-(\num{9307}~measured, \num{2568}~extrapolated bins), a three-prior envelope
-that stays flat (16--19\% median) rather than blooming outside the measured
-region, and a seed-replica retraining floor an order of magnitude below that
-envelope.
+the dead regions). Approximately \SI{6}{\percent} of the rate is in a newly
+acceptance-supported extension, while approximately \SI{28}{\percent} is in
+low- or zero-efficiency cells and is separately labeled prior-dominated. The
+total over both tiers is not uniformly data-constrained, and its full
+covariance is being regenerated under the corrected uncertainty contract. An
+existing PET run on the enlarged population remains recoil-only and is kept as
+a feasibility diagnostic; a full-event nominal and fresh UQ await the new
+muon-inclusive interface and omitted-variable stress closure.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
-  \caption{Extended-phase-space measurement: (a)~anchor ratio in the published
+  \caption{Extended-fiducial scalar study: (a)~anchor ratio in the published
   sub-block (reproduces the restricted result to \SI{\fpsAnchor}{\percent}),
   (b)~prior-swap ratio, and (c)~the full cross section (log$_{10}$). Panels
   (a),(b) are ratios (diverging scale centered at unity); (c) is an absolute
@@ -198,8 +203,10 @@ three-, four- and five-observable MINERvA unfolds. These independently recover t
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
 tested generators underpredict; its corrected significance is pending. A
-point-cloud transformer extends the program to the full phase space
-of variable-length inputs and outputs, and a first extended-phase-space cross
-section recovers the rate that restricted phase
-spaces discard. The complete methodology, validation suite and per-number record
-are in the accompanying analysis note.
+recoil-only point-cloud transformer establishes low-level-input infrastructure
+without yet unfolding the complete joint muon--hadron event. The scalar
+extended-fiducial study identifies a modest acceptance-supported extension and
+a much larger, separately labeled prior-dominated region. A full-event PET
+estimator and corrected extended-fiducial uncertainty are in progress. The
+complete methodology, validation suite and per-number record are in the
+accompanying analysis note.

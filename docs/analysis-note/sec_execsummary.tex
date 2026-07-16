@@ -2,7 +2,7 @@
 \addcontentsline{toc}{section}{Executive summary}
 \label{sec:execsummary}
 
-This note documents the application of \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's medium-energy neutrino data --- first as a faithful reproduction of a published flagship measurement, then as its extension to simultaneous three-, four- and five-observable cross sections, a full-phase-space point-cloud unfold, and an extended-phase-space charged-current (CC)-inclusive measurement with relaxed muon cuts. None has a binned counterpart at MINERvA. Throughout this note, \emph{full phase space} denotes the variable-length point-cloud input/output representation, whereas \emph{extended phase space} denotes the enlarged fiducial region obtained by relaxing kinematic cuts. The executive summary outlines the whole story; everything afterwards is the supporting technical record.
+This note documents the application of \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's medium-energy neutrino data --- first as a faithful reproduction of a published flagship measurement, then as its extension to simultaneous three-, four- and five-observable scalar cross sections, a recoil-point-cloud representation cross-check, and a preliminary extended-fiducial study with relaxed truth-muon cuts. None has a binned counterpart at MINERvA. We reserve \emph{full-event} for an estimator whose classifier inputs contain the declared muon and recoil information together; the existing PET products do not meet that definition. The executive summary outlines the whole story; everything afterwards is the supporting technical record.
 
 Traditional unfolding corrects detector effects with a migration matrix between histogram bins, so each added observable multiplies the number of bins and the method drowns in dimensions. OmniFold instead trains a classifier to learn, event by event, a weight that morphs the simulation into the data, and pulls that weight back to the true (pre-detector) level through the simulation's truth--reco pairing. No binning is imposed until the very end, so adding an observable is just adding an input column. This analysis uses gradient-boosted decision trees for the fixed-dimension measurements and
 validates the choice extensively (closure tests, coverage, calibrated-classifier checks, and neural-network cross-checks).
@@ -10,11 +10,27 @@ validates the choice extensively (closure tests, coverage, calibrated-classifier
 \paragraph{Uncertainty-remediation status.}
 The validated 2D reproduction, higher-dimensional central values, closure
 tests, marginalization anchors, and shape-localization statements remain
-current. The corrected 5D GBDT covariance is now adopted, and the present PET
-campaign has completed its five-component corrected assembly. Corrected 4D/FPS
-covariances and covariance-based generator significances remain withheld. The
-PET statistical component currently uses 20 coherent replicas; expansion to
-100 replicas is planned before publication and has not yet been performed.
+current. The corrected 5D GBDT covariance is now adopted. The present PET
+campaign has completed a five-component uncertainty assembly for the existing
+recoil-only estimator; none of its components transfers automatically to the
+full-event estimator now being implemented. Corrected 4D and extended-fiducial
+covariances and covariance-based generator significances remain withheld.
+
+\paragraph{Status of the results in this draft.}
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.23\textwidth}p{0.69\textwidth}@{}}
+\toprule
+Category & Contents \\
+\midrule
+Validated/current & Final 2D reproduction; scalar 3D/4D/5D central values and marginalization anchors; corrected 5D GBDT covariance; qualitative localization of the high-$\Eavail$, high-$W$ excess. \\
+\addlinespace
+Preliminary or representation cross-check & Scalar extended-fiducial central value, anchor and validation controls while final UQ is pending; all existing recoil-only PET and PET-on-extended-grid products, including their closures and uncertainty diagnostics. \\
+\addlinespace
+Planned/in progress & Full-event PET over the declared extended fiducial phase space, omitted-muon stress closure, fresh nominal and UQ, selection-complete laterals, corrected extended-fiducial covariance, and covariance-dependent significances. \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt]
@@ -33,13 +49,13 @@ PET statistical component currently uses 20 coherent replicas; expansion to
   \item \textbf{A methodological finding.} 
   The standard covariance adds matrices built for one systematic source at a time, which omits cross-source response terms. In MINERvA's \texttt{GetTotalErrorMatrix}, each named source contributes its own covariance, built with all other sources held nominal; the sum retains within-source bin--bin correlations but contains no cross-source terms. The corrected unified-throw test perturbs all reweightable sources simultaneously using actual asymmetric endpoints, one fixed estimator seed, and mean-centered throws; it reports the joint mean shift separately. In 5D the corrected block sum has median uncertainty \SI{\gbdtFiveBlockMedian}{\percent}, while the adopted mean-centered covariance has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$; the CV-centered \SI{\gbdtFiveCVTrace}{cm^2/nucleon} variant is retained as a conservative alternative (\S\ref{sec:uq-combine}).
   
-  \item \textbf{Full phase space with point clouds.}
-  The other unfolds compress each event into engineered scalars; here a point-cloud transformer instead operates on the full variable-length reconstructed-cluster input and truth-particle output representations and produces an absolutely normalized 4D central cross section. The muon kinematics are retained for downstream binning but are not inputs to the present PET classifier; adding them as a distinguished full-event feature is a planned upgrade. Closure validates the central extraction, and the truth cloud supports post-hoc $\Eavail$ projection. The completed corrected 5D PET assembly has median per-bin uncertainty \SI{\petTotalMedian}{\percent}; its targeted retraining response is material and is the second-largest term by trace. The current statistical block uses 20 replicas, with 100 planned before publication (\S\ref{sec:pet}, \S\ref{sec:pet-projection}).
+  \item \textbf{Recoil-point-cloud representation cross-check.}
+  A point-cloud transformer operates on non-muon reconstructed recoil clusters at step~1 and truth final-state hadrons at step~2. Muon kinematics enter selection and downstream binning but not either classifier, so the learned weight is not a weight over the complete joint muon--hadron event. The absolutely normalized central value, ordinary closure and completed corrected 5D uncertainty assembly remain useful diagnostics of this recoil-only estimator; ordinary closure validates the extraction machinery but cannot test omitted muon dependence at fixed recoil. A distinct full-event interface and stress-closure gate are now being implemented, after which the nominal and UQ must be repeated (\S\ref{sec:pet}, \S\ref{sec:pet-projection}).
 
-  \item \textbf{An extended-phase-space cross section.}
-  Re-running the same 2D $(\pT,\pPar)$ muon double-differential unfold with the muon kinematic cuts removed from the signal definition (they hide a third of the rate) gives an extended-phase-space CC-inclusive cross section, $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, anchored to the restricted measurement at \SI{\fpsAnchor}{\percent} where they overlap, with a three-prior envelope declaring the extrapolation cost cell-by-cell (\S\ref{sec:fps}). The same extension is then realized with the point-cloud engine at full statistics on the 5D grid, with two-tier (measured/extrapolated) reporting by reconstruction efficiency and a demonstration that PET retraining noise sits an order of magnitude below the prior envelope (\S\ref{sec:fps-pet}).
+  \item \textbf{A preliminary extended-fiducial study.}
+  Re-running the scalar 2D $(\pT,\pPar)$ unfold with the truth-muon kinematic cuts removed enlarges the signal definition while retaining the tracker fiducial interaction volume and the unchanged MINOS-based reconstructed selection. The preliminary central value, restricted-region anchor and validation controls remain current. About \SI{6}{\percent} of the rate lies in a newly acceptance-supported extension (tier~1), while about \SI{28}{\percent} lies in low- or zero-efficiency cells and is reported separately as prior-dominated extrapolation (tier~2). A more expressive classifier cannot create detector information in those cells, and corrected final UQ is still pending. The existing PET run on this population remains a recoil-only feasibility study, not the full-event result (\S\ref{sec:fps}).
  
   
 \end{itemize}
 
-This note is organized as follows.  Sections~\ref{sec:experiment}--\ref{sec:method} define the samples and the method; \S\ref{sec:systematics} and App.~\ref{app:statmethods} are the uncertainty machinery (the appendix documents the analysis-specific procedures --- variance sources, coverage and closure toys, the covariance construction --- for reproduction); \S\ref{sec:results} is the 2D reproduction against the published measurement; \S\ref{sec:validation} is the validation suite; the physics is in \S\ref{sec:3d}--\ref{sec:eavailw}; \S\ref{sec:pet} is the full-phase-space point-cloud track; \S\ref{sec:fps} is the extended-phase-space measurement and \S\ref{sec:summary} the outlook.
+This note is organized as follows.  Sections~\ref{sec:experiment}--\ref{sec:method} define the samples and the method; \S\ref{sec:systematics} and App.~\ref{app:statmethods} are the uncertainty machinery (the appendix documents the analysis-specific procedures --- variance sources, coverage and closure toys, the covariance construction --- for reproduction); \S\ref{sec:results} is the 2D reproduction against the published measurement; \S\ref{sec:validation} is the validation suite; the physics is in \S\ref{sec:3d}--\ref{sec:eavailw}; \S\ref{sec:pet} is the recoil-point-cloud cross-check; \S\ref{sec:fps} is the extended-fiducial study and \S\ref{sec:summary} the outlook.

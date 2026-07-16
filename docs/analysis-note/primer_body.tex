@@ -134,30 +134,33 @@ visible because the unbinned method let us slice the data this finely.
 
 \subsection*{Two steps toward the future}
 
-Two further results show where the method is heading. First, we ran a more
-ambitious version of OmniFold (a ``point-cloud transformer'') that learns in
-the full phase space of variable-length reconstructed detector signals and
-truth-particle representations rather than compressing either side into
-hand-engineered summaries. It reproduces the standard result --- a
-proof of principle for unfolding straight from low-level data. Second, the published measurement throws
-away about a third of the interactions because the muon flies at too steep an
-angle or too slowly for the standard analysis. Because OmniFold corrects for
-lost events naturally, we were able to relax those cuts and report a first
-\emph{extended-phase-space} cross section that keeps the discarded third
-($\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$,
-\SI{\fpsAbove}{\percent} larger), while being honest, cell by cell, about how
-much of the extrapolation rests on the simulation.
+Two studies show where the method is heading. First, we ran a
+``point-cloud transformer'' on the non-muon recoil clusters in the detector
+and the final-state hadrons in the simulation. It provides a useful
+low-level-input cross-check, but the muon was not given to either classifier;
+it is therefore a recoil-only proof of principle, not yet an unfold of the
+complete event. A new full-event implementation that supplies the muon and
+tests this omission directly is in progress. Second, the published signal
+definition excludes about a third of the true interaction rate because of its
+muon kinematic cuts. We relaxed those truth-level cuts while retaining the
+same tracker interaction volume and reconstructed MINOS-based selection. The
+preliminary central value is
+$\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, but only about
+\SI{6}{\percent} of the rate is a newly detector-supported extension; about
+\SI{28}{\percent} lies in low- or zero-efficiency cells and remains a
+separately labeled, simulation-dependent extrapolation.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
-  \caption{The extended-phase-space measurement, on the muon momentum grid
+  \caption{The extended-fiducial scalar study, on the muon momentum grid
   ($p_T$ versus $p_\parallel$, in bin number). Left: inside the published region
   (between the black lines) the new result matches the original to better than
-  one percent. Center: changing the starting simulation barely moves the answer,
-  a check that the extension is not an artifact of our assumptions. Right: the
-  full cross section itself (color = rate, on a logarithmic scale), now
-  including the roughly one-third of events the published analysis discarded.}
+  one percent. Center: changing the starting simulation has a small effect in
+  accepted cells but a much larger one in low-efficiency cells. Right: the
+  preliminary central value over the enlarged truth domain (color = rate, on a
+  logarithmic scale); detector-supported and prior-dominated regions must be
+  interpreted separately.}
 \end{figure}
 
 \section{The takeaway}
@@ -166,6 +169,7 @@ Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
 \emph{and} does what the traditional method cannot: measure many quantities at
 once. Using that, this analysis independently confirmed a known nuclear-physics
 effect, exposed a new discrepancy that no current simulation explains, and
-produced a cross section that no longer discards a third of the data. The full
-technical record --- every number, uncertainty, and cross-check --- is in the
-companion analysis note.
+mapped a possible extension of the signal definition while exposing where the
+detector provides too little information for a model-independent result. The
+full technical record --- every number, uncertainty, cross-check and current
+limitation --- is in the companion analysis note.

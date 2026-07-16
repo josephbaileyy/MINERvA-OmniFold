@@ -66,7 +66,7 @@ targets the identical background-subtracted density $(D-B)/S$ and reproduces
 the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross
 section, and its systematic and statistical covariances to within
 \SI{2}{\percent} (App.~\ref{app:negweight}) --- removes the residual binning dependence
-and is the natural treatment for the extended-phase-space analysis, where
+and is the natural treatment for the extended-fiducial analysis, where
 backgrounds are larger.
 
 OmniFold has moved from method paper to production measurement over the last
@@ -122,10 +122,11 @@ outperform neural networks~\cite{Grinsztajn:2022tabular} while training
 deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools}
 demonstrates this regime specifically for unbinned unfolding --- boosted
 decision trees are effective with a small number of high-level features,
-complementing deep models that ingest the full event record --- and our own
-measurements follow the same division of labor: GBDTs for the scalar
-unfolds, a point-cloud transformer when the input is the full cluster record
-(\S\ref{sec:pet}). \S\ref{sec:validation} validates the choice directly with
+complementing deep models that ingest low-level event representations --- and
+our own measurements follow the same division of labor: GBDTs for the scalar
+unfolds and a point-cloud transformer as a recoil-cluster representation
+cross-check (\S\ref{sec:pet}). The current PET classifier omits the muon and
+therefore is not a full-event unfold. \S\ref{sec:validation} tests the implementation with
 calibration tests and MLP/transformer cross-checks. The engine
 (\texttt{unbinned\_unfolding/python/omnifold.py}; component terminology in
 App.~\ref{app:codebase}) supports interchangeable
