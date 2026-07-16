@@ -69,6 +69,14 @@ VALIDATION RESULTS:
   0.582, RECOIL-ONLY 0.581 (blind), FULL-EVENT 0.043 (recovers). Decisive: recoil-only cannot
   recover the omitted muon variable; full-event does. (= FE-D + recoil-vs-combined ablation.)
 
+- Small FPS smoke on REAL xps2 tensors (alloc 55974213): PASS. Adapter builds reco cloud
+  (8000,12,3) coord (1,2), truth cloud (8000,12,7) coord (5,6), event features (8000,2);
+  paired MultiFold trains + finite push. **Exposed + FIXED a reco-muon SENTINEL bug**:
+  reco_scalars muon = -9999 for all 28.6M non-pass_reco misses; normalization now over
+  pass_reco/pass_truth only with !pass rows zeroed → reco_norm_mean 0.73/6.09 GeV (physical;
+  was -5732). Recorded in the feature contract as a P5B production-input requirement.
+  Adapter also refactored to subsample RAW rows before cloud processing (memory-safe).
+
 BLOCKERS (documented, not gate-passable now): full muon object/vertex/view/timing branches +
 FPS-CV regeneration with the full-event dump (C++ owner; request filed, not editing while P3S
 runs); P3F FPS active endpoints (Agent C) for selection-complete laterals (P5B). P5A is

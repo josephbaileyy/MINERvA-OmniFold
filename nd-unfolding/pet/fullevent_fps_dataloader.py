@@ -140,43 +140,55 @@ def _event_block(scalars, feature_names, norm):
 
 
 def build_event_features(reco_scalars, truth_scalars, measured_scalars,
-                         feature_names=DEFAULT_EVT_FEATURES):
+                         feature_names=DEFAULT_EVT_FEATURES,
+                         pass_reco=None, pass_truth=None):
     """Return (event_reco, event_truth, event_data, meta).
 
     event_reco/event_data share the SAME observable feature schema (reconstructed muon);
     event_truth uses the SAME feature NAMES but the TRUTH scalars and its OWN normalization
-    (distinct schema/dimension is allowed to differ in production). All continuous. The
-    normalization is computed from the RECO-MC block (a detector-level statistic) for
-    reco/data and from the TRUTH-MC block for truth -- so no truth statistic touches the
-    reco/data normalization (leakage-safe)."""
+    (distinct schema/dimension is allowed to differ in production). All continuous.
+
+    SENTINEL HANDLING (critical): the reconstructed muon is UNDEFINED for events that fail
+    reco (FPS misses carry a -9999 sentinel in reco_scalars). The normalization is therefore
+    computed over pass_reco events ONLY (truth over pass_truth ONLY), and the undefined
+    (!pass_reco) reco rows are set to 0 post-normalization (the block mean). Those rows are
+    masked by pass_reco in the step-1 loss, so zeroing keeps them numerically neutral without
+    injecting the sentinel. This also keeps the reco-side normalization a pure detector
+    statistic (no truth leakage)."""
     reco_scalars = np.asarray(reco_scalars, np.float32)
     truth_scalars = np.asarray(truth_scalars, np.float32)
     cols = [SCALAR_COLS[f] for f in feature_names]
-    rmu = reco_scalars[:, cols].mean(0); rsd = reco_scalars[:, cols].std(0) + 1e-6
-    tmu = truth_scalars[:, cols].mean(0); tsd = truth_scalars[:, cols].std(0) + 1e-6
-    event_reco = _event_block(reco_scalars, feature_names, (rmu, rsd))
-    event_truth = _event_block(truth_scalars, feature_names, (tmu, tsd))
-    event_data = _event_block(measured_scalars, feature_names, (rmu, rsd))  # data uses reco norm
+    rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
+    tmask = np.ones(truth_scalars.shape[0], bool) if pass_truth is None else np.asarray(pass_truth, bool)
+    rsub = reco_scalars[rmask][:, cols]; tsub = truth_scalars[tmask][:, cols]
+    rmu = rsub.mean(0); rsd = rsub.std(0) + 1e-6
+    tmu = tsub.mean(0); tsd = tsub.std(0) + 1e-6
+    event_reco = _event_block(reco_scalars, feature_names, (rmu, rsd)); event_reco[~rmask] = 0.0
+    event_truth = _event_block(truth_scalars, feature_names, (tmu, tsd)); event_truth[~tmask] = 0.0
+    event_data = _event_block(measured_scalars, feature_names, (rmu, rsd))  # data all pass_reco
     meta = {"feature_names": list(feature_names),
             "reco_norm_mean": rmu.tolist(), "reco_norm_std": rsd.tolist(),
             "truth_norm_mean": tmu.tolist(), "truth_norm_std": tsd.tolist(),
-            "n_evt": len(feature_names)}
+            "n_evt": len(feature_names),
+            "normalized_over": "pass_reco (reco/data) / pass_truth (truth); !pass rows zeroed"}
     return event_reco, event_truth, event_data, meta
 
 
-def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names):
-    """Prove event_reco is a function of RECO scalars only (no truth-only information).
+def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
+                            pass_reco=None):
+    """Prove event_reco is a function of RECO scalars (+ pass_reco) ONLY, no truth-only info.
 
-    Rebuild event_reco from reco_scalars alone and require an exact match; also require it
-    NOT equal the block built from truth_scalars (unless reco==truth, which for a real muon
-    it isn't). This is the explicit step-1 no-truth-leakage test the gate requires."""
+    Rebuild event_reco from reco_scalars alone (same pass_reco-masked normalization + !pass
+    zeroing) and require an exact match; also require it NOT equal the block built from
+    truth_scalars. This is the explicit step-1 no-truth-leakage test the gate requires."""
+    reco_scalars = np.asarray(reco_scalars, np.float32)
     cols = [SCALAR_COLS[f] for f in feature_names]
-    rmu = np.asarray(reco_scalars, np.float32)[:, cols].mean(0)
-    rsd = np.asarray(reco_scalars, np.float32)[:, cols].std(0) + 1e-6
-    rebuilt = _event_block(reco_scalars, feature_names, (rmu, rsd))
+    rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
+    rmu = reco_scalars[rmask][:, cols].mean(0); rsd = reco_scalars[rmask][:, cols].std(0) + 1e-6
+    rebuilt = _event_block(reco_scalars, feature_names, (rmu, rsd)); rebuilt[~rmask] = 0.0
     if not np.allclose(rebuilt, event_reco, atol=1e-5):
-        raise AssertionError("event_reco is NOT a pure function of reco_scalars (leak?)")
-    tblock = _event_block(truth_scalars, feature_names, (rmu, rsd))
+        raise AssertionError("event_reco is NOT a pure function of reco_scalars+pass_reco (leak?)")
+    tblock = _event_block(truth_scalars, feature_names, (rmu, rsd)); tblock[~rmask] = 0.0
     if np.allclose(tblock, event_reco, atol=1e-5):
         raise AssertionError("event_reco equals the truth block -- truth leaked into step 1")
     return True
@@ -195,35 +207,41 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     d = np.load(inputs_npz, allow_pickle=True)
     if enforce_fps_edges:
         assert_extended_fps_edges(d["edges_0"], d["edges_1"])
-    reco_cloud, coord_reco = build_reco_cloud(d["part_reco"])
-    gen_cloud, coord_gen = build_truth_cloud(d["part_gen"])
-    meas_cloud, _ = build_reco_cloud(d["measured_pc"])
-    # data-side muon scalars: measured_scalars if present, else fall back to reco_scalars cols
-    meas_scalars = d["measured_scalars"] if "measured_scalars" in d.files else d["reco_scalars"]
-    event_reco, event_truth, event_data, meta = build_event_features(
-        d["reco_scalars"], d["truth_scalars"], meas_scalars, feature_names)
-    assert_no_truth_leakage(event_reco, d["reco_scalars"], d["truth_scalars"], feature_names)
 
-    pass_reco = d["pass_reco"]; pass_truth = d["pass_truth"]
-    w_truth = d["w_truth"].astype(np.float32)
-    measured_weights = d["measured_weights"].astype(np.float32)
+    # Subsample RAW rows BEFORE the (heavy) cloud processing so build_truth_cloud's angular
+    # transform + concat only touch the training subset (a full 49.2M process would spike
+    # tens of GB). This is the TRAINING-subsample builder; the P5B production path adds the
+    # full-sample reweight-all + coherent-draw bootstrap + memmap (as the recoil-only loader
+    # did), documented in the launch plan.
+    N = np.asarray(d["pass_reco"]).shape[0]
+    M = np.asarray(d["measured_weights"]).shape[0]
+    imc = np.arange(N); ida = np.arange(M)
+    if max_events is not None:
+        rng = np.random.default_rng(seed)
+        imc = np.sort(rng.choice(N, min(max_events, N), replace=False))
+        ida = np.sort(rng.choice(M, min(max_events, M), replace=False))
+
+    reco_cloud, coord_reco = build_reco_cloud(np.asarray(d["part_reco"])[imc])
+    gen_cloud, coord_gen = build_truth_cloud(np.asarray(d["part_gen"])[imc])
+    meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"])[ida])
+    reco_scalars = np.asarray(d["reco_scalars"])[imc]
+    truth_scalars = np.asarray(d["truth_scalars"])[imc]
+    meas_scalars_src = d["measured_scalars"] if "measured_scalars" in d.files else d["reco_scalars"]
+    meas_scalars = np.asarray(meas_scalars_src)[ida]
+    pass_reco = np.asarray(d["pass_reco"])[imc]
+    pass_truth = np.asarray(d["pass_truth"])[imc]
+    event_reco, event_truth, event_data, meta = build_event_features(
+        reco_scalars, truth_scalars, meas_scalars, feature_names,
+        pass_reco=pass_reco, pass_truth=pass_truth)
+    assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
+                            pass_reco=pass_reco)
+    w_truth = np.asarray(d["w_truth"]).astype(np.float32)[imc]
+    measured_weights = np.asarray(d["measured_weights"]).astype(np.float32)[ida]
 
     if bootstrap_seed is not None:
         from pet_bootstrap import poisson_event_weights
         measured_weights, w_truth = poisson_event_weights(
             measured_weights, w_truth, int(bootstrap_seed))
-
-    imc = np.arange(gen_cloud.shape[0])
-    if max_events is not None:
-        rng = np.random.default_rng(seed)
-        nmc = min(max_events, gen_cloud.shape[0]); nda = min(max_events, meas_cloud.shape[0])
-        imc = rng.choice(gen_cloud.shape[0], nmc, replace=False)
-        ida = rng.choice(meas_cloud.shape[0], nda, replace=False)
-        gen_cloud, reco_cloud = gen_cloud[imc], reco_cloud[imc]
-        event_reco, event_truth = event_reco[imc], event_truth[imc]
-        pass_reco, pass_truth, w_truth = pass_reco[imc], pass_truth[imc], w_truth[imc]
-        meas_cloud, event_data = meas_cloud[ida], event_data[ida]
-        measured_weights = measured_weights[ida]
 
     data = DataLoader(reco=meas_cloud, weight=measured_weights, normalize=True,
                       reco_evt=event_data)

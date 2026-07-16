@@ -78,6 +78,16 @@ NOT declared "passed" on this reduced set. The full schema above is required bef
 production nominal (P5B), and needs the C++ full-event dump + FPS-CV regeneration (blocked
 on the active-universe C++ owner; branch request filed, not edited while P3S runs).
 
+## Data-semantics note — reco-muon SENTINELS for FPS misses (found in P5A FPS smoke)
+In the FPS scaffolding, `reco_scalars` muon (pT,p‖) = **-9999** for every non-pass_reco event
+(28.6M/49.2M misses have no reconstructed muon; pass_reco muon is clean, mean 0.734). The
+full-event adapter therefore normalizes reco features over pass_reco events ONLY (truth over
+pass_truth ONLY) and zeroes the undefined (!pass_reco) rows post-normalization (they are masked
+by pass_reco in the step-1 loss). The production full-event input build MUST preserve this
+handling; a naive normalization over all rows pollutes the muon scale (was mean -5732 before
+the fix). This is a genuine reco/data-vs-truth alignment subtlety the recoil-only estimator
+never exposed (it fed no scalars).
+
 ## Unavailable counterparts (documented, not sentinel-filled)
 - Truth MINOS/range/match-quality: DO NOT EXIST (detector-only) → absent from event_truth.
 - Muon full 4-vector/charge/vertex/view/timing at reco/data: pending C++ branches.
