@@ -41,6 +41,26 @@ file points to state and the completion recipe.
      the task footprint (done: `-c 2 --mem 16G` bills ~8 cores) improves gap-fit.
 - Loops are progressing (state D, I/O-wait), NOT broken. Fully resumable.
 
+## Freeze exception — standard array re-tune (user-authorized 2026-07-16)
+Narrowly-scoped exception to the launcher freeze, authorized after the 5h wall was
+CONFIRMED wall-killing large-playlist loops under 4-agent Lustre saturation (~2-3
+MB/min/loop; 0 standard completions in 60 min; FPS's ~12h wall kept trickling).
+- **Cancelled:** standard array `55972349` (defective config: 5h wall + %12).
+  Reason: 5h wall < per-loop time under saturation → repeated wall-kills.
+- **New:** standard array `55985231`, via SCHEDULER OVERRIDES only
+  (`sbatch --time=12:00:00 --array=0-119%2` on the UNCHANGED committed launcher).
+  Verified live: `TimeLimit=12:00:00`, `ArrayTaskThrottle=2`.
+- **Binary/physics-args/launcher CONTENT unchanged** (launcher clean vs HEAD;
+  binary md5 `e63c749…`). FPS array `55972324` + Agent C's launcher untouched.
+- **Reused outputs:** exactly the 43 standard endpoints that PASS the full
+  acceptance validator (manifest `active_universe_5d/standard/p3s_standard_manifest.json`);
+  57 dead standard workdirs (partials) quarantined/removed so skip-if-exists
+  matches only complete FINAL outputs (FINAL paths verified: 43 files, 0 zero-byte).
+- **Ramp rule:** start %2; bump to %4 (scontrol ArrayTaskThrottle) ONLY after two
+  large-playlist tasks project runtime <10 h. If %2 still projects >12 h wall,
+  STOP launching further standard tasks and reassess (no repeat wall-kills).
+- **To report:** throughput + ETA after the first large-playlist completion.
+
 ## Remaining dependencies
 - P3S must reach 120/120 before P4. P4 (this agent) and P5 (Agent B, shifted
   clouds) both consume the P3S outputs. Full 5-band coverage is the publication
