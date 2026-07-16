@@ -1,5 +1,33 @@
 # PET Publication Agent B — session state
 
+## HANDOFF (2026-07-16) — read this first
+**Delivered + pushed to github/main:** `9d353e1` (full-event PET interface + extended-FPS
+domain, interface validated) and `7d365be` (FPS smoke on real tensors + reco-muon sentinel
+fix + memory-safe adapter). Both fast-forward, clean; only my files staged (never `git add -A`).
+- **P5A = interface VALIDATED + contract frozen + blockers documented.** NOT publication-ready
+  (reduced muon {pT,p‖} set, explicitly justified in the contract).
+- **Tests/validation (all PASS):** 9/9 pure fns; TF engine smoke (event features change output,
+  coord_idx changes k-NN, paired MultiFold e2e, save/reload); FPS census (aligned 49.15M/4.12M,
+  Tier-1 71.9%/Tier-2 dead 28.1%); omitted-muon stress closure (recoil-only 0.581 blind vs
+  full-event 0.043 recovers); FPS smoke on real xps2 (physical norm after sentinel fix).
+- **Scheduler:** no jobs of mine running (all interactive allocs released). Recoil-only P1
+  jobs long since cancelled/completed. Never touched A/C/D jobs (`ev5d_active`=A P3S,
+  `ev5d_active_fps`=C P3F, `*4dCc`/`*fpsC`=C/D, `claude-hold`=shared).
+- **Reusable inputs:** `of_inputs_pc_fps_xps2.npz` (FPS gate+edges scaffolding; recoil-only
+  tensors → rebuild). Recoil-only products in `products/pet/bkgsub/` = labeled cross-checks
+  (NOT promoted). Key code: `pet/fullevent_fps_dataloader.py`, `pet/fps_census.py`,
+  `pet/stress_closure_muon.py`, `pet/smoke_fullevent_{tf,fps}.py`, `tests/test_fullevent_fps.py`.
+- **BLOCKERS for P5B (production):** (1) full muon object/vertex/view/timing C++ branches +
+  FPS-CV regeneration with `MNV101_FULL_PHASE_SPACE=1` + full-event dump — request in
+  `pet/FULL_EVENT_INTERFACE_REQUEST.md` (C++ owner; NOT edited while P3S runs); (2) Agent C's
+  committed P3F FPS active endpoints (`active_universe_5d/fps/`) for selection-complete laterals.
+- **Recommended production config:** see `pet/FULL_EVENT_FEATURE_CONTRACT.md` (schemas/units/
+  normalization/reduction-justification/cost/quarantine + full P5B launch order). Nominal: 2M
+  subsample, niter2/epochs8, est-seed 42, reweight-all on full 49.2M, extended-FPS grid; then
+  floor/C_stat/C_ml/vertical+retraining/P3F-laterals/C_total/projections. No recoil covariance transfers.
+- **Next when unblocked:** build endpoint full-event inputs from P3F, then P5B per the launch plan.
+
+
 ## ⚠ SCOPE CHANGE 2026-07-16 — recoil-only PAUSED; full-event PET remediation (KNOWN_ISSUES #19)
 User directive: the current PET estimator is **recoil-only** (reco = non-muon recoil
 clusters; truth = hadrons with muon removed; muon/scalar arrays used only for selection +
