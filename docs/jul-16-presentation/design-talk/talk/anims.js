@@ -1,6 +1,7 @@
-// anims.js — the four winning animation candidates from the design project's
+// anims.js — the winning animation candidates from the design project's
 // anims/ review (A1 variant 2, A3, A6 variants 1+2, A8 variant 1), ported from
-// the x-dc candidate pages to plain canvas JS so the deck is self-contained.
+// the x-dc candidate pages to plain canvas JS so the deck is self-contained,
+// plus A5 (binning the pairing recovers the response matrix), built 2026-07-16.
 // Toy palette moved to the dark deck ground (the candidates drew light plates
 // to match the old white matplotlib figures; the figures are dark now).
 // Color semantics preserved: data = ink points · unweighted sim = cool blue ·
@@ -306,17 +307,17 @@
             ctx.fill();
           }
           ctx.restore();
-          label(ctx, 'unbinned: the same 600 events, comfortably dense in any dimension', 800, 830, { size: 26, color: C.dim, align: 'center', alpha: phase(t, 16, 17.5) });
+          label(ctx, 'unbinned: the same 600 events, dense in any dimension', 800, 830, { size: 26, color: C.dim, align: 'center', alpha: phase(t, 16, 17.5) });
         }
         const pTag = phase(t, 18, 19.5);
-        if (pTag > 0) label(ctx, 'The events were never the problem — the bins were.', 800, 70, { size: 34, color: C.ink, align: 'center', weight: 600, alpha: pTag });
+        if (pTag > 0) label(ctx, 'The limit is bin occupancy, not event count.', 800, 70, { size: 34, color: C.ink, align: 'center', weight: 600, alpha: pTag });
       },
       caption(t) {
         if (t < 4.5) return 'A healthy 1D response matrix: 64 truth × reco cells, each well populated by the toy sample.';
         if (t < 9.5) return 'Add one observable and the cell count multiplies — 4,096 cells for the same events. Occupancy collapses.';
         if (t < 13.5) return 'Hint at a third observable: 262,144 cells, almost all empty. Migration statistics starve — this is the wall.';
-        if (t < 18) return 'The grid dissolves — and the identical statistics reappear as a cloud of individual events, comfortably dense.';
-        return 'The events were never the problem — the bins were.';
+        if (t < 18) return 'The grid dissolves — and the identical statistics reappear as a cloud of individual events, densely populated.';
+        return 'The limit is bin occupancy, not event count.';
       },
     };
   }
@@ -468,7 +469,7 @@
           else if (t >= s1b && t < s2b) label(ctx, 'Step 2 — pull weights back to truth through the pairing', 800, 855, { size: 26, color: C.accent, align: 'center', weight: 600 });
         }
         if (t < 4) label(ctx, 'Simulated events are (truth, reco) pairs — data exists at reco level only', 800, 855, { size: 26, color: C.dim, align: 'center' });
-        if (t >= 24) label(ctx, 'Corrections have shrunk away — bin the weighted truth ensemble however you like', 800, 855, { size: 26, color: C.ink, align: 'center', weight: 600 });
+        if (t >= 24) label(ctx, 'Corrections have shrunk away — the weighted truth ensemble is binned only at this final step', 800, 855, { size: 26, color: C.ink, align: 'center', weight: 600 });
 
         // legend
         ctx.save();
@@ -487,7 +488,169 @@
           if (t < s1b) return `Iteration ${k + 1} · Step 1 — reweight simulated events at reco level so the weighted ensemble matches the data. Point size = learned weight (a likelihood ratio).`;
           if (t < s2b) return `Iteration ${k + 1} · Step 2 — each weight travels up its own pairing line to the truth-level partner. No response matrix: the pairing itself does the unfolding.`;
         }
-        return 'After four iterations the corrections have shrunk away, and the weighted truth ensemble matches the true spectrum (dashed) — never shown to the algorithm. Bin it however you like.';
+        return 'After four iterations the corrections have shrunk away, and the weighted truth ensemble matches the true spectrum (dashed) — never shown to the algorithm. Binning happens only at this final step, in any chosen binning.';
+      },
+    };
+  }
+
+  // ═══════════ A5 — binning the pairing recovers the response matrix (slide 5) ═══════════
+  function specA5() {
+    const rng = mulberry32(505);
+    const NB = 4, N = 52;
+    const x0 = 150, x1 = 1450;
+    const tY = 250, rY = 660;
+    const binW = (x1 - x0) / NB;
+    const ev = [];
+    for (let i = 0; i < N; i++) {
+      const tt = clamp(0.5 + 0.26 * gauss(rng), 0.03, 0.97);
+      const rr = clamp(tt + 0.085 * gauss(rng), 0.03, 0.97);
+      const j = rng(), j2 = rng();
+      ev.push({ t: tt, r: rr, j, j2,
+                bt: Math.min(NB - 1, Math.floor(tt * NB)),
+                br: Math.min(NB - 1, Math.floor(rr * NB)) });
+    }
+    const cnt = Array.from({ length: NB }, () => new Array(NB).fill(0));
+    for (const e of ev) cnt[e.bt][e.br]++;
+    const rowN = cnt.map((r) => r.reduce((a, b) => a + b, 0));
+    const colN = new Array(NB).fill(0);
+    for (let i = 0; i < NB; i++) for (let j = 0; j < NB; j++) colN[j] += cnt[i][j];
+    // slot order inside each bin so the align beat spreads events evenly
+    const slotT = new Array(N), slotR = new Array(N);
+    for (let b = 0; b < NB; b++) {
+      const lt = ev.map((e, k) => [e, k]).filter(([e]) => e.bt === b).sort((p, q) => p[0].t - q[0].t);
+      lt.forEach(([, k], i) => { slotT[k] = i - (lt.length - 1) / 2; });
+      const lr = ev.map((e, k) => [e, k]).filter(([e]) => e.br === b).sort((p, q) => p[0].r - q[0].r);
+      lr.forEach(([, k], i) => { slotR[k] = i - (lr.length - 1) / 2; });
+    }
+    const cxOf = (b) => x0 + (b + 0.5) * binW;
+    return {
+      duration: 17,
+      snaps: [0, 4, 8, 12, 17],
+      draw(ctx, t) {
+        drawPanel(ctx, 30, 20, 1540, 860);
+        const p1 = phase(t, 4, 7);      // impose bins, align
+        const p2 = phase(t, 8, 11);     // merge identical routes
+        const p3 = phase(t, 12, 14);    // bin boxes: the standard matrix drawing
+        const pTag = phase(t, 14.2, 15.7);
+
+        label(ctx, 'TRUTH LEVEL', 70, 122, { size: 22, color: C.dim, weight: 600 });
+        label(ctx, 'RECO (DETECTOR) LEVEL', 70, 808, { size: 22, color: C.dim, weight: 600 });
+
+        // bin gridlines at both levels
+        if (p1 > 0) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(147,151,171,0.4)';
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = p1 * (1 - 0.5 * p3);
+          for (let k = 0; k <= NB; k++) {
+            const gx = x0 + k * binW;
+            ctx.beginPath(); ctx.moveTo(gx, tY - 66); ctx.lineTo(gx, tY + 66); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(gx, rY - 66); ctx.lineTo(gx, rY + 66); ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // per-event display positions: free → aligned in bin → bin center
+        const px = (v, b, slot, nInBin) => {
+          const free = x0 + v * (x1 - x0);
+          const spread = Math.min(15, (binW - 70) / Math.max(nInBin, 1));
+          const aligned = cxOf(b) + slot * spread;
+          return lerp(lerp(free, aligned, p1), cxOf(b), p2);
+        };
+        const pT = ev.map((e, k) => px(e.t, e.bt, slotT[k], rowN[e.bt]));
+        const pR = ev.map((e, k) => px(e.r, e.br, slotR[k], colN[e.br]));
+        const yT = ev.map((e) => tY + (e.j - 0.5) * 52 * (1 - p2));
+        const yR = ev.map((e) => rY + (e.j2 - 0.5) * 52 * (1 - p2));
+
+        // individual pairing lines, fading as routes merge
+        if (p2 < 1) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(147,151,171,0.55)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([7, 7]);
+          ctx.globalAlpha = 0.7 * (1 - p2);
+          for (let k = 0; k < N; k++) {
+            ctx.beginPath();
+            ctx.moveTo(pT[k], yT[k] + 10);
+            ctx.lineTo(pR[k], yR[k] - 10);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        // merged edges — width and opacity carry the pair count
+        if (p2 > 0) {
+          ctx.save();
+          ctx.strokeStyle = C.cool;
+          const yTop = tY + lerp(46, 38, p3), yBot = rY - lerp(46, 38, p3);
+          for (let i = 0; i < NB; i++) for (let j = 0; j < NB; j++) {
+            if (!cnt[i][j]) continue;
+            ctx.globalAlpha = p2 * clamp(0.3 + 0.05 * cnt[i][j], 0.3, 0.92);
+            ctx.lineWidth = lerp(1.5, clamp(1.15 * cnt[i][j], 2, 16), p2);
+            ctx.beginPath();
+            ctx.moveTo(cxOf(i), yTop);
+            ctx.lineTo(cxOf(j), yBot);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        // individual events (fade into per-bin nodes)
+        if (p2 < 1) {
+          ctx.save();
+          ctx.globalAlpha = 1 - p2;
+          for (let k = 0; k < N; k++) {
+            ctx.fillStyle = C.cool;
+            ctx.beginPath(); ctx.arc(pT[k], yT[k], 7, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = C.cool; ctx.lineWidth = 2.5;
+            ctx.beginPath(); ctx.arc(pR[k], yR[k], 7, 0, Math.PI * 2); ctx.stroke();
+          }
+          ctx.restore();
+        }
+        // per-bin nodes, handed over to the bin boxes
+        const nodeA = p2 * (1 - p3);
+        if (nodeA > 0) {
+          ctx.save();
+          ctx.globalAlpha = nodeA;
+          for (let b = 0; b < NB; b++) {
+            if (rowN[b]) {
+              ctx.fillStyle = C.cool;
+              ctx.beginPath(); ctx.arc(cxOf(b), tY, 7 + 2.1 * Math.sqrt(rowN[b]), 0, Math.PI * 2); ctx.fill();
+            }
+            if (colN[b]) {
+              ctx.strokeStyle = C.cool; ctx.lineWidth = 3;
+              ctx.beginPath(); ctx.arc(cxOf(b), rY, 7 + 2.1 * Math.sqrt(colN[b]), 0, Math.PI * 2); ctx.stroke();
+            }
+          }
+          ctx.restore();
+        }
+        // bin boxes — the standard migration-matrix drawing, with per-bin counts
+        if (p3 > 0) {
+          ctx.save();
+          ctx.globalAlpha = p3;
+          ctx.strokeStyle = '#565b70';
+          ctx.lineWidth = 2.5;
+          for (let b = 0; b < NB; b++) {
+            roundRectPath(ctx, x0 + b * binW + 16, tY - 34, binW - 32, 68, 10); ctx.stroke();
+            roundRectPath(ctx, x0 + b * binW + 16, rY - 34, binW - 32, 68, 10); ctx.stroke();
+          }
+          ctx.restore();
+          for (let b = 0; b < NB; b++) {
+            label(ctx, `${rowN[b]}`, cxOf(b), tY + 9, { size: 24, color: C.dim, align: 'center', alpha: p3 });
+            label(ctx, `${colN[b]}`, cxOf(b), rY + 9, { size: 24, color: C.dim, align: 'center', alpha: p3 });
+          }
+        }
+
+        if (pTag > 0) label(ctx, 'with binned inputs, the OmniFold update is the IBU update', 800, 74, { size: 32, color: C.ink, align: 'center', weight: 600, alpha: pTag });
+
+        if (t < 4) label(ctx, 'simulated events are (truth, reco) pairs — one dashed line per event', 800, 855, { size: 26, color: C.dim, align: 'center' });
+        else if (t < 8) label(ctx, 'bins imposed at both levels — each event assigned to a (truth bin, reco bin)', 800, 855, { size: 26, color: C.dim, align: 'center' });
+        else if (t < 12) label(ctx, 'events on the same (truth bin → reco bin) route merge — line width = pair count', 800, 855, { size: 26, color: C.dim, align: 'center' });
+        else label(ctx, 'the response matrix: a histogram of the pairing', 800, 855, { size: 26, color: C.dim, align: 'center' });
+      },
+      caption(t) {
+        if (t < 4) return 'Each simulated event is one (truth, reco) pair — truth value above, reconstructed value below. The pairing holds the same information a response matrix is built from.';
+        if (t < 8) return 'Bins are imposed at truth and reco level; each event is assigned to a bin at both. The pairing itself is unchanged — only its resolution is coarsened.';
+        if (t < 12) return 'Events sharing a (truth bin, reco bin) assignment merge into a single edge whose width is the pair count — the pairing, histogrammed.';
+        return 'The result is the migration matrix that D’Agostini IBU iterates on. With binned inputs, the OmniFold update is algebraically the IBU update (backup B1); with unbinned inputs, the pairing is used per event.';
       },
     };
   }
@@ -566,7 +729,7 @@
               ctx.save(); ctx.globalAlpha = 0.25 * fl; ctx.strokeStyle = C.accent; ctx.lineWidth = 6;
               ctx.strokeRect(hx0 - 24, 180, hx1 - hx0 + 48, 420); ctx.restore();
             }
-            label(ctx, '✓ clicks into alignment', hx0, hyb + 52, { size: 24, color: C.accent, weight: 600, alpha: pCmp });
+            label(ctx, '✓ agrees with the 2D anchor', hx0, hyb + 52, { size: 24, color: C.accent, weight: 600, alpha: pCmp });
           }
         } else {
           const slices = 4, sw = 300, sx0 = 120, sy0 = 150, syb = 420;
@@ -591,7 +754,7 @@
           if (pCmp > 0) {
             drawDataPoints(ctx, anchor, mx0, mx1, myb, 4.2, 5);
             label(ctx, 'established 2D anchor (ink points)', mx0 + 380, myb - 400, { size: 22, color: C.data, alpha: pCmp });
-            label(ctx, '✓ clicks into alignment', 1240, 500, { size: 26, color: C.accent, weight: 600, alpha: pCmp });
+            label(ctx, '✓ agrees with the 2D anchor', 1240, 500, { size: 26, color: C.accent, weight: 600, alpha: pCmp });
           }
         }
 
@@ -601,7 +764,7 @@
       caption(t) {
         if (t < 4) return 'Same events, more columns: the higher-dimensional unfold viewed in (p_T, p_∥, E_avail). Each event carries the weight it learned — nothing here is re-unfolded.';
         if (t < 9) return 'Collapse along the new axis: integrating out E_avail is just summing the same weighted events. The unfold does not change — only the view does.';
-        if (t < 12.5) return 'The marginal clicks into alignment with the established 2D anchor (ink points). If it did not, the higher-dimensional unfold would be wrong — a built-in falsifiable check.';
+        if (t < 12.5) return 'The marginal agrees with the established 2D anchor (ink points). A disagreement here would falsify the higher-dimensional unfold — a built-in check.';
         return 'Every new dimension carries its own cross-check — the real check is the next slide’s pull figure; this sets up how to read it.';
       },
     };
@@ -738,7 +901,7 @@
         if (pTag > 0) label(ctx, 'central-value observation — significance pending the corrected-covariance requote', 800, 855, { size: 27, color: C.ink, align: 'center', weight: 600, alpha: pTag });
       },
       caption(t) {
-        if (t < 4) return 'One dimension: the unfolded data sit broadly above the generator prediction across the high-E_avail tail — real, but shapeless. Where does it live?';
+        if (t < 4) return 'One dimension: the unfolded data sit broadly above the generator prediction across the high-E_avail tail — broad, with no localization in one dimension.';
         if (t < 8) return 'Open a second axis, W. No re-unfold — the same weighted events, viewed in the (E_avail, W) plane.';
         if (t < 12) return 'The broad discrepancy resolves into a compact region: high E_avail AND high W — the DIS corner. All four generators underpredict there.';
         return 'Labeled honestly: central-value observation; significance pending the corrected-covariance requote. No Nσ is claimed anywhere.';
@@ -746,7 +909,7 @@
     };
   }
 
-  const SPECS = { a1: specA1, a3: specA3, a6: specA6, a8: specA8 };
+  const SPECS = { a1: specA1, a3: specA3, a5: specA5, a6: specA6, a8: specA8 };
   const boot = () => {
     document.querySelectorAll('[data-anim]').forEach((host) => {
       if (host._animMounted) return;

@@ -90,6 +90,15 @@ ax.scatter([2026], [5], marker="*", s=460, c="#C44E52", edgecolors="k",
 ax.annotate("this work — unbinned OmniFold\n($p_T$, $p_\\parallel$, $E_{\\rm avail}$, $q_3$, $W$)",
             (2026, 5), (2025.6, 5.02), fontsize=9.0, ha="right", va="center",
             color="#C44E52", weight="bold")
+# and beyond 5: point-cloud (PET) inputs replace the fixed scalar list —
+# currently a recoil-only representation cross-check; the muon-inclusive
+# full-event extension is in progress, so the label is directional
+ax.annotate("", xy=(2026, 6.12), xytext=(2026, 5.32),
+            arrowprops=dict(arrowstyle="-|>", color="#C44E52", lw=2.2,
+                            mutation_scale=18))
+ax.annotate("and beyond — point-cloud inputs\n(toward the full final state)",
+            (2026, 6.0), (2025.7, 6.0), fontsize=8.5, ha="right", va="center",
+            color="#C44E52", style="italic")
 # below the point (empty y=1..2 gap) so it clears the "N=30 measurements" banner
 ax.annotate("[target]\n2106.16210", (2021, 2), (2021, 1.72), fontsize=7.0,
             ha="center", va="top", color="#1f77b4",
@@ -99,7 +108,7 @@ ax.set_xlabel("Publication year")
 ax.set_ylabel("Kinematic variables unfolded simultaneously")
 ax.set_title("MINERvA differential cross-section unfolding: dimensionality over time")
 ax.set_yticks([1, 2, 3, 4, 5])
-ax.set_ylim(0.4, 5.55)
+ax.set_ylim(0.4, 6.45)
 ax.set_xlim(2012.3, 2026.9)
 ax.grid(axis="y", alpha=0.3)
 
