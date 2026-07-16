@@ -31,7 +31,8 @@ that records, for every bin of true momentum, how events leak into neighboring
 bins of measured momentum, and then tries to invert that leakage. It works, but
 it has a crippling limitation: each new quantity you want to measure multiplies
 the number of bins, and the table quickly becomes too large and too sparse to be
-useful. In practice this caps the method at one or two quantities at a time.
+useful. In practice this caps the method at two --- exceptionally three ---
+quantities at a time.
 
 This analysis uses a different, machine-learning method called \textbf{OmniFold}.
 Instead of a table of bins, it trains a computer to compare the real data with a

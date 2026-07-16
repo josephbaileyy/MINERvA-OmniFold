@@ -60,8 +60,11 @@ problem comes from bin occupancy, not from the event count itself.
 ## 4 · Thirty measurements — 2:30 → 3:15
 
 This survey contains thirty published MINERvA differential cross sections.
-They use binned D'Agostini iterative Bayesian unfolding — IBU for short —
-and report one or two simultaneous observables.
+They use binned D'Agostini iterative Bayesian unfolding — IBU for short.
+Twenty-nine report one or two simultaneous observables; the one
+triple-differential measurement, the 2022 QE-like result in muon pT,
+p-parallel, and summed proton kinetic energy, shows what a binned 3D
+campaign takes.
 
 This work is the red star: five observables unfolded simultaneously — muon
 pT and p-parallel, E-available, q3, and W. The arrow above it indicates the

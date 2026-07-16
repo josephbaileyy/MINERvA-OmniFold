@@ -9,9 +9,10 @@ reconstruction, generator-tuning, and total-only (non-differential) entries are
 excluded. 'dims' = number of kinematic variables unfolded *simultaneously*
 (a double-differential dsigma/dx dy = 2), classified from each analysis's
 headline differential result. Every prior MINERvA measurement uses binned
-D'Agostini IBU and reaches at most 2 variables; this work's unbinned OmniFold
-reaches 5 (pT, p||, Eavail, q3, W) — shown as a single marker at the headline
-dimensionality.
+D'Agostini IBU; 29 of 30 reach at most 2 variables, and one — the 2022 QE-like
+proton+lepton measurement (2203.08022, d3sigma/dpt dp|| dSigmaT_p) — is
+triple-differential. This work's unbinned OmniFold reaches 5 (pT, p||, Eavail,
+q3, W) — shown as a single marker at the headline dimensionality.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -50,7 +51,7 @@ M = [
     (2020, 2, "qe",    "1912.09890"),
     (2020, 1, "pion",  "2002.05812"),
     (2021, 2, "incl",  "2106.16210"),  # the target
-    (2022, 2, "qe",    "2203.08022"),
+    (2022, 3, "qe",    "2203.08022"),  # triple-differential pT, p||, SumT_p
     (2022, 1, "incl",  "2110.13372"),
     (2023, 2, "pion",  "2209.07852"),
     (2023, 1, "pion",  "2210.01285"),  # coherent
@@ -70,8 +71,8 @@ chan = {
 
 fig, ax = plt.subplots(figsize=(9.4, 5.2))
 ax.axhspan(0.5, 2.5, color="#1f77b4", alpha=0.06, zorder=0)
-ax.text(2012.6, 2.47, "binned D'Agostini IBU: $\\leq 2$ variables unfolded "
-        "simultaneously  ($N=30$ measurements)", fontsize=8.5, va="top",
+ax.text(2012.6, 2.47, "binned D'Agostini IBU: 29 of 30 measurements at "
+        "$\\leq 2$ simultaneously unfolded variables", fontsize=8.5, va="top",
         ha="left", color="#33558b", style="italic")
 
 # jitter x for collisions at the same (year, dim)
@@ -99,10 +100,14 @@ ax.annotate("", xy=(2026, 6.12), xytext=(2026, 5.32),
 ax.annotate("and beyond — point-cloud inputs\n(toward the full final state)",
             (2026, 6.0), (2025.7, 6.0), fontsize=8.5, ha="right", va="center",
             color="#C44E52", style="italic")
-# below the point (empty y=1..2 gap) so it clears the "N=30 measurements" banner
+# below the point (empty y=1..2 gap) so it clears the shading banner
 ax.annotate("[target]\n2106.16210", (2021, 2), (2021, 1.72), fontsize=7.0,
             ha="center", va="top", color="#1f77b4",
             arrowprops=dict(arrowstyle="-", color="#1f77b4", lw=0.6, alpha=0.7))
+# the lone binned triple-differential (QE-like p_t, p_||, Sum T_p; 10-iter IBU)
+ax.annotate("triple-differential\n2203.08022", (2022, 3), (2022, 3.30),
+            fontsize=7.0, ha="center", va="bottom", color="#2ca02c",
+            arrowprops=dict(arrowstyle="-", color="#2ca02c", lw=0.6, alpha=0.7))
 
 ax.set_xlabel("Publication year")
 ax.set_ylabel("Kinematic variables unfolded simultaneously")
