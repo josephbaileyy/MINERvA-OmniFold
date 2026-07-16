@@ -296,33 +296,30 @@ def main():
                     f"median {ea_res['median']:+.4f} GeV, "
                     f"{100*ea_res['frac_within']:.1f}% within 10 MeV", fontsize=9)
     ax[0].set_yscale("log")
-    # Eavail deficit vs n_had.  Draw labeled markers in MeV rather than bars:
-    # the three unsaturated medians are exactly zero, so zero-height bars made
-    # the correct result look like missing data.  Only the capped category can
-    # have discarded hadrons and therefore a non-zero truncation deficit.
-    labs = list(nh_bias.keys())
-    meds_mev = np.array([nh_bias[l]["median"] for l in labs]) * 1000.0
-    xcat = np.arange(len(labs))
-    colors = ["#4C72B0"] * (len(labs) - 1) + ["#C44E52"]
-    ax[1].scatter(xcat, meds_mev, c=colors, s=55, zorder=3)
-    for x, y in zip(xcat, meds_mev):
-        label = "0 MeV" if abs(y) < 0.5 else f"{y:+.0f} MeV"
-        ax[1].annotate(label, (x, y), xytext=(0, 7),
-                       textcoords="offset points", ha="center", va="bottom",
-                       fontsize=8)
-    ax[1].set_xticks(xcat); ax[1].set_xticklabels(labs)
-    ax[1].axhline(0, color="k", lw=0.8)
-    ax[1].set_xlabel(r"$n_{\rm had}$ stored in cloud (12 = cap)")
-    ax[1].set_ylabel(r"median $E_{\rm avail}^{\rm cloud}-E_{\rm avail}^{\rm stored}$ (MeV)")
-    ymin = min(-5.0, float(meds_mev.min()) - 8.0)
-    ax[1].set_ylim(ymin, 8.0)
-    ax[1].text(0.04, 0.08, "Unsaturated clouds retain every hadron;\n"
-               "only capped events can lose energy.", transform=ax[1].transAxes,
-               fontsize=8, ha="left", va="bottom", color="0.25")
-    ax[1].set_title("truncation deficit grows with multiplicity\n(saturates at n_had=12)",
-                    fontsize=9)
-    # MC-only truncation-validation figure (Eavail_cloud vs stored, deficit vs
-    # n_had): no sample tag, per the technote_style convention for MC-only plots.
+    # Stored truth-cloud cardinality.  The terminal bin collects every event
+    # that reaches the 12-particle storage cap; it is the only category where
+    # soft hadrons can have been dropped.  Showing the event inventory makes
+    # that fact clearer than three separate zero-deficit multiplicity groups.
+    multiplicities = np.arange(1, pg.shape[1] + 1)
+    n_by_mult = np.bincount(n_had[mt], minlength=pg.shape[1] + 1)[1:]
+    bar_colors = ["#4C72B0"] * (len(multiplicities) - 1) + ["#C44E52"]
+    ax[1].bar(multiplicities, n_by_mult / 1.0e6, color=bar_colors, width=0.82)
+    ax[1].axvline(pg.shape[1] - 0.5, color="#C44E52", ls="--", lw=1.4)
+    ax[1].set_xticks(multiplicities)
+    ax[1].set_xlabel(r"$n_{\rm had}$ stored in truth cloud (12 includes $\geq 12$)")
+    ax[1].set_ylabel("pass_truth events (millions)")
+    sat_median_mev = 1000.0 * nh_bias["12 (sat)"]["median"]
+    ax[1].text(0.97, 0.93,
+               f"12-particle cap: {100*rep['frac_saturated']:.2f}% of events\n"
+               f"median $\\Delta E_{{\\rm avail}}={sat_median_mev:.0f}$ MeV",
+               transform=ax[1].transAxes, fontsize=8, ha="right", va="top",
+               color="#8B1A1A")
+    ax[1].text(0.04, 0.08,
+               "Only the red terminal bin can be truncated.",
+               transform=ax[1].transAxes, fontsize=8,
+               ha="left", va="bottom", color="0.25")
+    # MC-only truncation-validation figure (Eavail_cloud vs stored, truth-cloud
+    # cardinality and cap): no sample tag, per the technote_style convention.
     fig.tight_layout()
     p1 = f"{OUTDIR}/pet_cloud_projection_validation.png"
     fig.savefig(p1, dpi=130); plt.close(fig)

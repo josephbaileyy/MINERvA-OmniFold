@@ -81,12 +81,14 @@ reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
 shape/method-robustness check: it shows the learned reweight is stable across both
 the classifier family (GBDT vs.\ MLP vs.\ transformer) and the input representation
-(engineered scalars vs.\ raw point cloud). The asymmetric event representation is
-summarized in Fig.~\ref{fig:petdisplays}: the current classifier receives a
-variable-length set of single-view energy deposits at reconstruction level and
-particles with full four-momenta at truth level. The muon kinematics exist at
-both levels and are stored as event scalars for downstream binning, but are not
-yet part of the PET classifier tensor. Figure~\ref{fig:petcardinality} shows the
+(engineered scalars vs.\ raw point cloud). Figure~\ref{fig:petdisplays}
+visualizes representative events on a common energy--polar-angle plane and
+shows the reconstructed and truth muon together with the recoil activity. The
+current classifier itself receives a variable-length set of single-view energy
+deposits at reconstruction level and particles with full four-momenta at truth
+level. The muon kinematics exist at both levels and are stored as event scalars
+for downstream binning, but are not yet part of the PET classifier tensor.
+Figure~\ref{fig:petcardinality} shows the
 per-event cardinality of each cloud. Section~\ref{sec:pet} elevates the PET
 track to a full-statistics, absolutely-normalized cross section with its own
 closure gate and systematic budget.
@@ -142,28 +144,18 @@ $k=1$ depletion remains.}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.98\textwidth]{pet_event_representation_schematic}
-  \caption{Conceptual map from a MINERvA event to the PET representation.  (a) The
-  primary muon is a three-dimensional track whose direction is measured in
-  MINERvA and whose momentum and charge are constrained by MINOS; the hadronic
-  recoil instead produces localized scintillator energy deposits.  (b) Each
-  cluster is formed within one X, U, or V plane and therefore supplies
-  deposited energy, longitudinal position $z$, and one view-projected
-  transverse coordinate.  Only pattern recognition associating compatible
-  activity across multiple planes and views produces a three-dimensional
-  track~\cite{MINERvA:2013zvz}.  An unmatched shower cluster has no unique
-  three-dimensional direction, so even the approximation $|\vec p|\simeq E$
-  cannot turn it into a particle momentum.  (c) The current PET classifier
-  receives only a variable-length recoil set:
-  $[E_{\rm dep},\mathrm{pos}_{\rm view},z]$ clusters at reconstruction level
-  and $[E,p_x,p_y,p_z]$ final-state hadrons at truth level.  The event dump also
-  stores reconstructed and truth muon $(\pT,\pPar)$ scalars, but they are used
-  for downstream binning rather than supplied to the current classifier.  A
-  full-event upgrade would add the muon as a distinguished global feature (or
-  tagged constituent) at both levels; this requires a new input dump and PET
-  retraining, not merely a plotting change.  The underlying reconstruction also
-  records the X/U/V cluster view, while the truth dump records PDG identity;
-  neither categorical label enters the current PET tensor.}
+  \includegraphics[width=0.98\textwidth]{pet_event_displays_energy_angle}
+  \caption{Four representative PET events on a common energy--polar-angle
+  plane. Gray points are reconstructed recoil clusters; colored stars are
+  truth final-state hadrons, and the reconstructed (X) and truth (six-point
+  star) muons nearly overlap. The muon momentum and direction are measured from
+  the MINERvA--MINOS track and stored as event-level $(\pT,\pPar)$ scalars. The
+  cluster angle is illustrative, formed relative to a nominal upstream vertex
+  because the current reco-cloud dump stores $[E_{\rm dep},\mathrm{pos}_{\rm
+  view},z]$ but not the reconstructed vertex. Thus this common projection is a
+  visual comparison, not the PET input tensor: the classifier consumes the raw
+  single-view cluster set at reco level and hadron four-vectors at truth level,
+  with the muon currently omitted from both classifier inputs.}
   \label{fig:petdisplays}
 \end{figure}
 
