@@ -298,10 +298,12 @@ afterwards would resolve specific open items in the note.
 
 ## 23 · Dated analysis-note draft — closing line
 
-Finally: a dated draft of the analysis note goes up right after this talk —
-link by email. It distinguishes finalized 2D and central-value results from
-covariance work that is still gated. Please send feedback directly to Ben and
-me; we aim to wrap up in about a month. Thank you.
+Finally: the last slide links an immutable 16 July snapshot of the analysis
+note; I will also send the [same corrected PDF by
+email](https://raw.githubusercontent.com/josephbaileyy/MINERvA-OmniFold/7e80fff/docs/jul-16-presentation/claude-design-package/analysis-note.pdf).
+It distinguishes finalized 2D and central-value results from covariance work
+that is still gated. Please send feedback directly to Ben and me; we aim to
+wrap up in about a month. Thank you.
 
 ---
 
