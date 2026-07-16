@@ -1595,3 +1595,26 @@ and `interface_smoke/`. The production launcher
 (`sbatch_evloop_array_5d_active_laterals.sh`) is committed with P3S. The shared
 `ND_OMNIFOLD_STATUS.md` one-liner is deferred: it carries a concurrent session's
 uncommitted edit and was left untouched to avoid folding it into this commit.
+
+## 2026-07-15 — #16 P3S standard active event loops IN PROGRESS (Agent A)
+
+Not a completion gate — committing the P3S/P4 infrastructure and current status
+only; no results are claimed and no numbers are quotable yet. The standard
+active-universe production (5 kinematic bands × 2 endpoints × 12 playlists = 120
+per-playlist ROOTs, `MNV101_ACTIVE_UNIVERSE=BAND:IDX` + `MNV101_DUMP_POINTCLOUD=1`,
+no full-phase-space) is partially produced under
+`active_universe_5d/standard/<BAND>_<EP>/`. Throughput is limited by global
+/pscratch (Lustre) contention while four sessions run heavy I/O concurrently:
+each output is ~6.7 GB (point clouds for P5), and the measured completion rate is
+near zero at both MAX=12 and MAX=40 (loops progress at ~20–40 MB/min; they are
+I/O-waiting, not broken). The run is fully resumable (skip-if-exists) and is
+being ground out on CPU-interactive sallocs, relaunched across the 4 h wall.
+Committed infrastructure: batch launcher `sbatch_evloop_array_5d_active_laterals.sh`,
+interactive orchestrator `run_active_laterals_interactive.sh`, endpoint merge
+`merge_active_endpoints.sh`, P4 endpoint-unfold orchestrator
+`run_active_lateral_unfolds_interactive.sh`, P4 covariance validator
+`p4_validate_active_lateral.py`, and receipt generator `p3s_manifest_summary.py`.
+Full recipe, job IDs, and coordination notes in
+`active_universe_5d/AGENT_A_HANDOFF.md`. The P3S completion gate (exact 120-file
+manifest + per-mode summary + ledger + STATUS) will land when the inventory is
+complete; P4 (scalar lateral covariance) follows.
