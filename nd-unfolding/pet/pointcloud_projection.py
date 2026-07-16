@@ -114,8 +114,10 @@ def main():
     n_pi = (is_pic & real & ((E - np.float32(M_PI)) > 0)).sum(axis=1)
     del is_g, is_pic, is_pi0, is_p, real
 
-    # ---- read stored leptonic MC_W from the row-aligned 5D file + assert ----
-    print("[root] reading MC_W, MC from 5D universes file (one column pass) ...", flush=True)
+    # ---- read stored leptonic MC_W and full multiplicity from the row-aligned
+    #      point-cloud ROOT file, then assert NPZ/ROOT row alignment ----
+    print("[root] reading MC_W, MC and full hadron multiplicity "
+          "from the point-cloud ROOT file (one scan) ...", flush=True)
     import ROOT
     f = ROOT.TFile.Open(OMNI, "READ")
     if not f or f.IsZombie():
@@ -124,9 +126,15 @@ def main():
     n_tree = t.GetEntries()
     if n_tree != N:
         raise SystemExit(f"[FAIL] tree entries {n_tree} != npz rows {N}")
-    cols = ROOT.RDataFrame(t).AsNumpy(["MC", "MC_W"])
+    # The NPZ stores only the top 12 hadrons, but the source ROOT branch is a
+    # variable-length vector.  Preserve its pre-truncation cardinality for the
+    # validation plot so the tail beyond the PET storage cap is visible.
+    rdf = ROOT.RDataFrame(t).Define(
+        "_n_had_full", "static_cast<int>(part_gen_E.size())")
+    cols = rdf.AsNumpy(["MC", "MC_W", "_n_had_full"])
     mc_pt = np.asarray(cols["MC"], np.float64)
     mc_W = np.asarray(cols["MC_W"], np.float64)        # GeV, GetTrueExperimentersW/1000
+    n_had_full = np.asarray(cols["_n_had_full"], np.int32)
     f.Close()
     # alignment assertion (pet_lateral_band pattern): truth pt column must match
     bad = int((~((mc_pt.astype(np.float32) == truth_sc[:, 0].astype(np.float32))
@@ -161,6 +169,10 @@ def main():
     # ================= VALIDATION (cloud-carrying events only) =================
     mt = pass_truth & has_cloud
     rep["n_validation_events"] = int(mt.sum())
+    full_mult_counts = np.bincount(n_had_full[mt])
+    rep["truth_multiplicity_pretruncation"] = dict(
+        max=int(np.max(n_had_full[mt])),
+        counts=full_mult_counts.tolist())
 
     def resid_stats(cloud, stored, mask, tol):
         r = cloud[mask] - stored[mask]
@@ -296,28 +308,26 @@ def main():
                     f"median {ea_res['median']:+.4f} GeV, "
                     f"{100*ea_res['frac_within']:.1f}% within 10 MeV", fontsize=9)
     ax[0].set_yscale("log")
-    # Stored truth-cloud cardinality.  The terminal bin collects every event
-    # that reaches the 12-particle storage cap; it is the only category where
-    # soft hadrons can have been dropped.  Showing the event inventory makes
-    # that fact clearer than three separate zero-deficit multiplicity groups.
-    multiplicities = np.arange(1, pg.shape[1] + 1)
-    n_by_mult = np.bincount(n_had[mt], minlength=pg.shape[1] + 1)[1:]
-    bar_colors = ["#4C72B0"] * (len(multiplicities) - 1) + ["#C44E52"]
-    ax[1].bar(multiplicities, n_by_mult / 1.0e6, color=bar_colors, width=0.82)
-    ax[1].axvline(pg.shape[1] - 0.5, color="#C44E52", ls="--", lw=1.4)
-    ax[1].set_xticks(multiplicities)
-    ax[1].set_xlabel(r"$n_{\rm had}$ stored in truth cloud (12 includes $\geq 12$)")
-    ax[1].set_ylabel("pass_truth events (millions)")
-    sat_median_mev = 1000.0 * nh_bias["12 (sat)"]["median"]
-    ax[1].text(0.97, 0.93,
-               f"12-particle cap: {100*rep['frac_saturated']:.2f}% of events\n"
-               f"median $\\Delta E_{{\\rm avail}}={sat_median_mev:.0f}$ MeV",
-               transform=ax[1].transAxes, fontsize=8, ha="right", va="top",
-               color="#8B1A1A")
-    ax[1].text(0.04, 0.08,
-               "Only the red terminal bin can be truncated.",
-               transform=ax[1].transAxes, fontsize=8,
-               ha="left", va="bottom", color="0.25")
+    # Cumulative pre-truncation truth multiplicity from the variable-length
+    # ROOT branch.  A survival curve retains the full 1--54 tail without one
+    # crowded bar and tick per integer; at threshold N it reports the number
+    # of events with n_had >= N.
+    max_mult = int(np.max(n_had_full[mt]))
+    multiplicities = np.arange(1, max_mult + 1)
+    n_by_mult = np.bincount(n_had_full[mt], minlength=max_mult + 1)[1:]
+    n_at_least = np.cumsum(n_by_mult[::-1])[::-1] / 1.0e6
+    ax[1].step(multiplicities, n_at_least, where="post", color="#4C72B0", lw=2.0)
+    ax[1].fill_between(multiplicities, n_at_least,
+                       where=multiplicities > pg.shape[1], step="post",
+                       color="#C44E52", alpha=0.25)
+    ax[1].axvline(pg.shape[1] + 0.5, color="#C44E52", ls="--", lw=1.4,
+                  label="top-12 storage boundary")
+    ax[1].set_xlim(0.5, max_mult + 0.5)
+    ax[1].set_xticks([1, 4, 8, 12, 20, 30, 40, 50])
+    ax[1].set_xlabel(r"pre-truncation multiplicity threshold $N$")
+    ax[1].set_ylabel(r"events with $n_{\rm had}\geq N$ (millions)")
+    ax[1].set_yscale("log")
+    ax[1].legend(frameon=False, fontsize=8, loc="upper right")
     # MC-only truncation-validation figure (Eavail_cloud vs stored, truth-cloud
     # cardinality and cap): no sample tag, per the technote_style convention.
     fig.tight_layout()

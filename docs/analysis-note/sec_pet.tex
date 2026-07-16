@@ -197,11 +197,12 @@ measurement.
   stored at dump time, over the full \num{32.8}~million truth events.
   The residual is zero to \SI{\pcEavailWithin}{\percent} within \SI{10}{MeV};
   the small negative tail is confined to the \SI{\pcSaturated}{\percent} of
-  events that reach the 12-hadron cap. The right panel shows the actual
-  pre-truncation truth-hadron multiplicity from the variable-length ROOT
-  branch; the dashed boundary after 12 separates fully stored events from the
-  red $n_{\rm had}>12$ tail for which only the 12 highest-energy hadrons are
-  retained. The cap-reaching events have a median $\Eavail$ deficit of only
+  events that reach the 12-hadron cap. The right panel shows the cumulative
+  pre-truncation multiplicity from the variable-length ROOT branch: at each
+  threshold $N$, the curve gives the number of events with $n_{\rm had}\geq N$.
+  The dashed boundary after 12 and shaded $N>12$ tail identify events for which
+  only the 12 highest-energy hadrons are retained. The cap-reaching events have
+  a median $\Eavail$ deficit of only
   \SI{\pcSatDeficit}{MeV}. Keeping the 12 highest-energy hadrons is therefore
   essentially lossless for $\Eavail$-scale observables.}
   \label{fig:pcvalid}
