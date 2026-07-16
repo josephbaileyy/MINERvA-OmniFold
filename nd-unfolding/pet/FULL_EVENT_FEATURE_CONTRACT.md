@@ -128,6 +128,9 @@ NO covariance component or weight transfers automatically to the full-event esti
   decisive recoil-vs-combined ablation (FE-E); muon-only arm = completeness, not run.
 - FPS census (xps2 scaffolding): alignment PASS (MC 49.15M/data 4.12M); extended-edge PASS;
   overall eff 0.424; native misses 57.6%; Tier-1 71.9% / Tier-2 dead 28.1% (matches pilot).
+- Ordinary self-consistency closure (GPU): PASS. Pseudo-data=MC reco -> push median 1.059
+  (~1), (pT,p‖) marginal L1(truth, reweighted-gen) = 0.0021 (recovers MC truth to 0.2%). With
+  the stress closure this brackets the estimator: moves when it should, not when it should not.
 - Anchor, prior-envelope, publication coverage: DEFERRED to P5B (need the production full-event
   nominal + full extraction + complete replica manifests; P5A coverage is stress/closure only).
 

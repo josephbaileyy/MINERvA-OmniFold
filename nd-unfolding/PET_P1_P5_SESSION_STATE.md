@@ -104,6 +104,9 @@ VALIDATION RESULTS:
   pass_reco/pass_truth only with !pass rows zeroed → reco_norm_mean 0.73/6.09 GeV (physical;
   was -5732). Recorded in the feature contract as a P5B production-input requirement.
   Adapter also refactored to subsample RAW rows before cloud processing (memory-safe).
+- Ordinary self-consistency closure (`pet/closure_fullevent_fps.py`, GPU): PASS. pseudo-data=MC
+  -> push median 1.059, (pT,p‖) marginal L1(truth,reweighted-gen)=0.0021 (recovers MC truth to
+  0.2%). Brackets the stress closure: estimator moves when it should, not when it shouldn't.
 
 BLOCKERS (documented, not gate-passable now): full muon object/vertex/view/timing branches +
 FPS-CV regeneration with the full-event dump (C++ owner; request filed, not editing while P3S
