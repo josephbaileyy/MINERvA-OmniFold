@@ -53,12 +53,13 @@ Ref.~\cite{MINERvA:2021owq} over the 205 reported bins. The total cross
 section reproduces the published one to \SI{1.1}{\percent} (ratio
 $\ratioTot$), with a median per-bin ratio of $\medianBinRatio$;
 $\binsFive\%$ of bins agree within \SI{5}{\percent} and $\binsTen\%$ within
-\SI{10}{\percent}. Two $\chi^{2}$ figures are quoted: against the published
-covariance alone ($\chiPaper$ per degree of freedom) and against the
+\SI{10}{\percent}. Two indicative covariance distances per reported bin are
+quoted: against the published covariance alone ($\chiPaper$) and against the
 combined covariance that also credits this measurement's own uncertainty
-($\chiCombined$); the anatomy of the former is examined in
-\S\ref{sec:results-tension}. The per-bin pull distribution computed with
-the published covariance (Fig.~\ref{fig:pull}) is centered (mean
+($\chiCombined$); neither is a calibrated goodness-of-fit because the two
+results share data and their cross-covariance is unavailable. The anatomy of
+the former is examined in \S\ref{sec:results-tension}. The per-bin standardized
+difference using the published uncertainty as a scale (Fig.~\ref{fig:pull}) is centered (mean
 $\pullMean$) with RMS $\pullRMSr$, well inside the published
 uncertainties, and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} show the
 same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
@@ -72,21 +73,24 @@ same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
     $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $\ratioTot$ \\
     Median bin ratio (ours/paper) & $\medianBinRatio$ \\
     Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $\binsFive/\binsTen/\binsTwenty\,\%$ \\
-    $\chi^{2}/\mathrm{ndf}$, paper covariance & $\chiPaper$ \\
-    $\chi^{2}/\mathrm{ndf}$, combined covariance (paper $+$ ours) & $\chiCombined$ \\
-    Pull mean / RMS (paper covariance) & $\pullMean/\pullRMS$ \\
+    Indicative covariance distance/bin, paper covariance & $\chiPaper$ \\
+    Indicative covariance distance/bin, paper $+$ ours & $\chiCombined$ \\
+    Published-$\sigma$ standardized-difference mean / RMS & $\pullMean/\pullRMS$ \\
     \bottomrule
   \end{tabular}
-  \caption{Agreement with arXiv:2106.16210. Per-bin pulls
-  (Fig.~\ref{fig:pull}) are sub-$1\sigma$.}
+  \caption{Agreement with arXiv:2106.16210. Per-bin standardized differences
+  using the published uncertainties (Fig.~\ref{fig:pull}) are sub-$1\sigma$;
+  shared-data cross-covariance is not available.}
   \label{tab:compare}
 \end{table}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full}
-  \caption{Per-bin pull $(\mathrm{ours}-\mathrm{paper})/\sigma$ on the
-  $14\times16$ grid and its distribution.}
+  \caption{Per-bin standardized difference
+  $(\mathrm{ours}-\mathrm{paper})/\sigma_{\mathrm{paper}}$ on the
+  $14\times16$ grid and its distribution. It is a descriptive scale, not an
+  independent-result pull.}
   \label{fig:pull}
 \end{figure}
 
@@ -109,11 +113,14 @@ same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
 
 \subsection{Anatomy of the $\chi^{2}=3.66$ tension}
 \label{sec:results-tension}
-The central values agree (pull RMS $\pullRMS$, so a diagonal-only $\chi^{2}/\mathrm{ndf}$
-would be $0.37$), yet the full paper-covariance $\chi^{2}/\mathrm{ndf}$ is $\chiPaper$:
+Using the published uncertainties as a descriptive scale, the central values
+have pull RMS $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be
+$0.37$), while the full paper-covariance distance is $\chiPaper$ per bin:
 a $10\times$ inflation living entirely in the off-diagonal structure of the
 published covariance. The eigenmode decomposition (Fig.~\ref{fig:tension}) shows
-the tension is carried by moderate-$\lambda$ modes with $5$--$6\sigma$ eigen-pulls
+the indicative distance is carried by moderate-$\lambda$ modes whose
+paper-covariance-standardized components have magnitude $5$--$6$
+(descriptive eigen-coordinates, not calibrated significances)
 (the 10 smallest-$\lambda$ modes carry only \SI{3}{\percent}; keeping the 73
 best-measured directions still gives $1.42$), so it is \emph{not} a small-$\lambda$
 inversion artifact. It is \emph{shape}, not normalization
@@ -125,6 +132,9 @@ negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
 App.~\ref{sec:tension}. The eigenmode-localization maps and the additional
 model-comparison ratio maps are shown in
 Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
+Because the two results share data and systematic sources and their
+cross-covariance is unavailable, none of these coordinates is a calibrated
+independent-result goodness-of-fit statistic.
 % NOTE: the estimator-band value "exact-GBT 3.66" below is the same number as
 % the paper-covariance chi2 (\chiPaper); they coincide by construction.
 
@@ -141,7 +151,7 @@ Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
   \centering
   \includegraphics[width=0.9\textwidth]{tension_mode_maps}
   \caption{Bin-space maps of the leading tension-carrying eigenmodes of the
-  published covariance: the $5$--$6\sigma$ eigen-pulls live on the low-$\pT$
+  published covariance: the magnitude-$5$--$6$ standardized components live on the low-$\pT$
   cross-section-peak ridge where the flux and muon-energy bands dominate.}
   \label{fig:tensionmodes}
 \end{figure}

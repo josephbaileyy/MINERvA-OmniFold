@@ -261,21 +261,20 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
 
   <!-- ═══════════ ACT 1 — THE PROBLEM ═══════════ -->
 
-  <section class="slide cover" data-label="Title" data-speaker-notes="Introduce yourself: undergrad researcher at Stanford working with Ben, outside the collaboration, working from the public ME FHC CC-inclusive data product. One sentence on the throughline.">
+  <section class="slide cover" data-label="Title" data-speaker-notes="Introduce yourself and state the data provenance: the analysis uses the public ME FHC CC-inclusive release. Mention the AI-assistance disclosure once, neutrally, then state the scope of the talk.">
     <div class="kicker"><span>MINERvA collaboration talk</span></div>
     <div class="rise">
       <h1 class="display">Multidimensional, unbinned cross section measurement with MINERvA data</h1>
-      <p class="cover-sub text-muted">Deploying the OmniFold machine learning method to MINERvA open data.<br><span style="font-size:0.82em">Note: we have employed AI agents to help with all aspects of this analysis. We have verified and take full responsibility for all content.</span></p>
+      <p class="cover-sub text-muted">Applying the OmniFold machine-learning method to MINERvA open data.<br><span style="font-size:0.72em">Disclosure: AI-assisted tools supported code and documentation; all quoted results were checked through the validation chain shown here.</span></p>
     </div>
     <div class="pin-bottom meta" style="flex-wrap:wrap; row-gap:8px;"><span style="flex-basis:100%"><u>Joseph Bailey</u>&ensp;·&ensp;Benjamin Nachman</span><span>Stanford University</span><span>·</span><span>July 16, 2026</span></div>
   </section>
 
-  <section class="slide content" data-label="The contract" data-speaker-notes="Set the contract explicitly. I am an outsider using your public data product. Three promises, in order — the order is the credibility argument.">
+  <section class="slide content" data-label="Outline" data-speaker-notes="State the three sections without making a credibility appeal: define the method, test it on the published 2D result, then show the higher-dimensional extension.">
     <div class="kicker"><span>Framing</span></div>
-    <h2 class="slide-title">Three parts, in order</h2>
+    <h2 class="slide-title">Plan for the talk</h2>
     <ul class="bullets rise">
-      <li><span>Briefly introduce the OmniFold machine learning–based unfolding method.
-        <span class="sub">Deployed on a diverse set of datasets across experiments: ATLAS, CMS, LHCb, STAR, H1, ALEPH, T2K.</span></span></li>
+      <li><span>Define the OmniFold event-reweighting procedure and its binned limit.</span></li>
       <li><span>Reproduce the existing ME FHC CC-inclusive d²σ/(dp<sub>T</sub> dp<sub>∥</sub>) measurement using the published bins.</span></li>
       <li><span>Extend the dimensionality beyond 2.
         <span class="sub">E<sub>avail</sub>, q<sub>3</sub>, W opened as new axes on the same unfolded events — towards a full-phase-space measurement as well.</span></span></li>
@@ -285,18 +284,18 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
 
   <section class="slide figslide" data-label="The dimensionality wall" data-speaker-notes="Every measurement starts by freezing an observable and a binning. Each added dimension multiplies response-matrix bins until they starve of statistics — walk the ticker: 64 cells, 4,096 cells, 262,144 cells for the same 600 toy events. Then the reframe: the grid dissolves and the same statistics are comfortably dense as events.">
     <div class="kicker"><span>The problem</span></div>
-    <h2 class="slide-title">Binned unfolding hits a dimensionality wall</h2>
+    <h2 class="slide-title">Response-matrix cells multiply with dimension</h2>
     <div class="animwrap rise" data-anim="a1"></div>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Where MINERvA measurements sit" data-speaker-notes="Not hypothetical: thirty published MINERvA differential cross sections, every one binned D'Agostini IBU, at one or two simultaneous dimensions. That plateau is the wall from the last slide — and the arrow shows where this work goes: five simultaneous observables, and point-cloud inputs beyond that.">
+  <section class="slide figslide" data-label="Where MINERvA measurements sit" data-speaker-notes="The survey contains thirty published MINERvA differential cross sections. They use binned D'Agostini iterative Bayesian unfolding, abbreviated IBU, and report one or two simultaneous observables. The red point marks the five-variable result shown later; the arrow marks point-cloud inputs as outlook.">
     <div class="kicker"><span>The problem</span></div>
     <h2 class="slide-title">Thirty measurements, focused on one or two observables</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/minerva_unfolding_landscape.png" alt="Published MINERvA measurements arranged by number of simultaneously unfolded kinematic variables and year — all at one or two dimensions; this work at five, with an arrow beyond to point-cloud inputs."></figure>
     </div>
-    <p class="fig-caption"><strong>Every published MINERvA differential cross section uses binned D'Agostini IBU with one or two simultaneous observables.</strong> The events support more — this work unfolds five at once, and point-cloud inputs go beyond that.</p>
+    <p class="fig-caption"><strong>The 30 published measurements surveyed here use binned D'Agostini iterative Bayesian unfolding (IBU) with one or two simultaneous observables.</strong> This work unfolds five variables simultaneously; point-cloud inputs are an outlook study.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -304,7 +303,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
 
   <section class="slide figslide" data-label="The binned limit" data-speaker-notes="Framing: one way to conceptualize OmniFold is that it reduces to IBU when the inputs are binned. Beats: (1) simulation is paired (truth, reco) events — one dashed line per event; (2) impose bins at both levels — events snap to bins, the pairing is unchanged; (3) merge events on the same (truth bin → reco bin) route — line width = pair count; (4) the standard migration-matrix drawing appears. Statement: a response matrix is a histogram of the pairing, and with binned inputs the OmniFold update is algebraically the IBU update (theorem; backup B1). Unbinned, the pairing is used per event — and unfolding becomes: how much should each simulated event count? That hands off to the classifier slide. If time is tight: press 'final' and state the last two sentences over the end frame.">
     <div class="kicker"><span>The method</span></div>
-    <h2 class="slide-title">Binned, OmniFold reduces exactly to D'Agostini IBU</h2>
+    <h2 class="slide-title">Binned OmniFold gives the D'Agostini update</h2>
     <div class="animwrap rise" data-anim="a5"></div>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
@@ -367,23 +366,23 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="Not a black box" data-speaker-notes="The disarm slide. With binned inputs and one iteration structure, OmniFold reduces exactly to D'Agostini IBU. The learner is gradient-boosted decision trees — deliberately simple and robust, not a deep network.">
+  <section class="slide content" data-label="Implementation checks" data-speaker-notes="State three concrete implementation facts: the binned update is D'Agostini IBU, the nominal learner is a gradient-boosted decision tree with a neural-network cross-check, and standard background/miss/efficiency bookkeeping is retained.">
     <div class="kicker"><span>The method</span></div>
-    <h2 class="slide-title">Why this is not a black box</h2>
+    <h2 class="slide-title">What is controlled in the implementation</h2>
     <ul class="bullets rise">
-      <li><span>Feed OmniFold binned inputs and it <em>reduces exactly to D'Agostini IBU</em>.
-        <span class="sub">A strict generalization of the method MINERvA already uses — with the histogram removed.</span></span></li>
-      <li><span>The learned weights come from gradient-boosted decision trees.
-        <span class="sub">Deliberately simple and robust; cross-checked against a neural network (backup).</span></span></li>
+      <li><span>With binned inputs, the update is <em>exactly D'Agostini IBU</em>.
+        <span class="sub">The unbinned version retains the simulated truth–reco pairing event by event.</span></span></li>
+      <li><span>The nominal weights come from gradient-boosted decision trees.
+        <span class="sub">An independently trained neural network gives a 1.008 total-cross-section ratio (backup B3).</span></span></li>
       <li><span>Backgrounds, fakes, misses and efficiency are handled with the standard bookkeeping.
         <span class="sub">Details and validation figures in backup.</span></span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="What it buys" data-speaker-notes="The contrast that carries the whole talk. Adding an observable is adding an input column, not multiplying response-matrix bins. Choose bins — and even observables — after unfolding.">
+  <section class="slide content" data-label="What it buys" data-speaker-notes="The contrast that carries the whole talk. A recorded observable becomes an input column instead of multiplying response-matrix bins. Reporting bins and projections of trained features can be chosen afterward; a genuinely new feature requires a new trained estimator and validation.">
     <div class="kicker"><span>The method</span></div>
-    <h2 class="slide-title">Adding an observable is adding a column</h2>
+    <h2 class="slide-title">An added observable becomes an input feature</h2>
     <div class="cols cols-2 rise">
       <div>
         <h3>Binned: bins multiply</h3>
@@ -412,7 +411,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
       </div>
       <div>
         <h3>Unbinned: columns add</h3>
-        <p>Each new observable is one more input column on the same events. The unfolded result is a weighted event sample — choose bins, and even observables, <em>after</em> unfolding.</p>
+        <p>Each trained observable is one more input column on the same events. The output is a weighted event sample: choose reporting bins and project recorded features <em>after</em> unfolding.</p>
         <div class="mini-viz" aria-hidden="true">
           <svg viewBox="0 0 640 260">
             <!-- event table: rows = events, columns = observables; last column highlighted -->
@@ -439,9 +438,9 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
 
   <!-- ═══════════ ACT 3 — RESULTS I: REPRODUCTION ═══════════ -->
 
-  <section class="slide figslide" data-label="Reproduction" data-speaker-notes="The money slide. Unbinned unfold of the double-differential cross section, binned at the end into the published 14x16 binning, overlaid on the published points. Keep it dry — the agreement is the drama. Numbers on the rail: total sigma ratio 1.011, median bin ratio 1.006, 94.1% of reported bins within 10%.">
+  <section class="slide figslide" data-label="Reproduction" data-speaker-notes="Show the unbinned double-differential result binned into the published 14x16 binning and overlaid on the published points. Read the three summary numbers without additional evaluative language.">
     <div class="kicker"><span>Results I · Reproducing the existing measurement</span></div>
-    <h2 class="slide-title">Same data, same answer as the published analysis</h2>
+    <h2 class="slide-title">Reproduction in the published binning</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_5iter_fig13_ptonly.png" alt="Double-differential cross section d2sigma/dpT dp-parallel, p_T slices of d-sigma vs p-parallel: OmniFold result overlaid on the published MINERvA points, with the GENIE+MnvTune prediction, across all p_T slices."></figure>
       <div class="stat-rail">
@@ -454,17 +453,17 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Agreement quantified" data-speaker-notes="Per-bin pulls: mean 0.09, rms 0.60 — sub-1-sigma everywhere, no structure. Then say the full-covariance number yourself before anyone asks: chi2/ndf 3.66 against the paper covariance alone — correlated shape modes along the low-pT peak ridge, not normalization; 1.48 once our covariance is included. Anatomy in backup. IF ASKED why the pulls do not vanish given the statistical uncertainty is ~100% correlated (same data events in both results): agree — a unit-Gaussian pull is NOT the expectation here, and that is exactly why the rms is 0.60, well below 1. The common data fluctuations largely cancel in the difference; the residual spread is method difference (regularization scheme, unfolding model, ML stochasticity) plus small independent pieces of the rebuilt machinery, quoted against the published per-bin sigma as a yardstick. So the pulls quantify method agreement, not statistical compatibility of two independent measurements — and sub-unit rms means the methods differ by well under one quoted uncertainty per bin.">
+  <section class="slide figslide" data-label="Agreement quantified" data-speaker-notes="Per-bin standardized differences using the published sigma: mean 0.09, rms 0.60, with no visible structure. State the indicative paper-covariance distance, 3.66 per bin, and identify the correlated low-pT shape modes. The 1.48 value uses the sum of the two covariances while neglecting their unknown cross-covariance, so call it a diagnostic rather than a formal compatibility test. The two results share data and are not statistically independent. Anatomy in backup B6b.">
     <div class="kicker"><span>Results I · Reproducing the existing measurement</span></div>
-    <h2 class="slide-title">Sub-1σ pulls — and the full-covariance picture</h2>
+    <h2 class="slide-title">Sub-1σ standardized differences — and the covariance picture</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/MEFHC_5iter_pull_full.png" alt="Per-bin pulls of the OmniFold result against the published measurement: pull map across the pT, p-parallel plane and pull histogram with mean 0.09 and rms 0.60."></figure>
     </div>
-    <p class="fig-caption"><strong>Per-bin pulls vs the published result: mean 0.09, rms 0.60 — no structure across the plane.</strong> Against the paper's full covariance, χ²/ndf = 3.66: correlated shape modes on the low-p<sub>T</sub> ridge, not normalization; 1.48 with the combined covariance (anatomy in backup).</p>
+    <p class="fig-caption"><strong>Published-σ standardized differences: mean 0.09, rms 0.60, with no visible structure.</strong> The indicative paper-covariance distance is 3.66 per bin, driven by correlated low-p<sub>T</sub> shape modes; using the sum of both covariances gives 1.48 as a second diagnostic (shared-data cross-covariance unavailable; B6b).</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Uncertainty budget (2D)" data-speaker-notes="I didn't reuse your machinery; I rebuilt it and got your answer. Flux, detector, and model universes propagated through the unfold from scratch. The 2D budget independently matches the published one — this budget is cleared.">
+  <section class="slide figslide" data-label="Uncertainty budget (2D)" data-speaker-notes="The uncertainty propagation was implemented from the public release: flux, detector, and model universes are propagated through the unfold. Compare the resulting median per-bin uncertainty and band ordering with the publication.">
     <div class="kicker"><span>Results I · Reproducing the existing measurement</span></div>
     <h2 class="slide-title">The uncertainty budget, rebuilt from scratch</h2>
     <div class="figwrap rise">
@@ -475,25 +474,25 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="Validation suite" data-speaker-notes="Try to break it before trusting it — each card is a different failure mode, each has a number. Closure recovers injected changes; coverage has the advertised frequency; doubling iterations barely moves the answer; an independent NN gives the same result; with binned inputs it reduces to IBU; and a fresh classifier can no longer tell the unfolded result from the target.">
+  <section class="slide content" data-label="Validation suite" data-speaker-notes="Each card targets a different failure mode. The 2D pull entry is a same-ensemble Gaussianity diagnostic, not coverage: the MC bootstrap also fluctuates the stored truth reference, so an independent-truth coverage test remains open. The AUC drop is descriptive because the OmniFold weights were not cross-fitted and no end-to-end null calibration was run.">
     <div class="kicker"><span>Results I · Reproducing the existing measurement</span></div>
-    <h2 class="slide-title">Validation: closure, coverage, and stability</h2>
+    <h2 class="slide-title">Validation: closure and stability diagnostics</h2>
     <div class="vgrid rise">
       <div class="vcard"><span class="vk">Closure</span><b>PASS</b><span>truth reweights, hidden resolution variable, alternate model — all recovered</span></div>
-      <div class="vcard"><span class="vk">Coverage</span><b>68.7%</b><span>200-toy interval coverage vs the 68.27% Gaussian target</span></div>
+      <div class="vcard"><span class="vk">2D pull diagnostic</span><b>0.794</b><span>mean |r| vs 0.798 for a unit normal; Gaussianity only, not coverage</span></div>
       <div class="vcard"><span class="vk">Iterations 5 → 10</span><b>0.026%</b><span>change in total σ when the iteration count doubles</span></div>
       <div class="vcard"><span class="vk">Classifier family</span><b>1.008</b><span>NN / GBDT total-σ ratio, independent Keras-MLP cross-check</span></div>
       <div class="vcard"><span class="vk">Binned limit</span><b>= IBU</b><span>with binned inputs the update reduces to D'Agostini</span></div>
-      <div class="vcard"><span class="vk">Bottom line</span><b>AUC 0.501</b><span>a fresh classifier can no longer separate unfolded from target (p = 0.17)</span></div>
+      <div class="vcard"><span class="vk">Bottom line</span><b>0.535 → 0.501</b><span>descriptive AUC drop; no calibrated p-value or equivalence claim</span></div>
     </div>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
   <!-- ═══════════ ACT 4 — RESULTS II: NEW DIMENSIONS ═══════════ -->
 
-  <section class="slide figslide" data-label="Marginalization (how to read it)" data-speaker-notes="Set up the cross-check on toy data before showing the real one: the higher-dimensional unfold viewed in three axes; integrating out E-avail is just summing the same weighted events; the marginal must click onto the established 2D anchor. Two variants — volume collapse and slice sum — toggle live if useful.">
+  <section class="slide figslide" data-label="Marginalization (how to read it)" data-speaker-notes="Use toy data to define the check before showing the data result: integrating over E-avail sums the same weighted events, and the marginal can be compared with the established 2D result. Two variants — volume collapse and slice sum — are available.">
     <div class="kicker"><span>Results II · New dimensions</span></div>
-    <h2 class="slide-title">Every new dimension carries its own cross-check</h2>
+    <h2 class="slide-title">Marginalization provides a lower-dimensional check</h2>
     <div class="animwrap rise" data-anim="a6"></div>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
@@ -508,14 +507,14 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Low-recoil physics" data-speaker-notes="The strongest physics-credibility slide — give it room. The unfolded E-avail spectrum vs generators: all underpredict at low recoil; Valencia 2p2h fills the dip between QE and Delta. Their established low-recoil result, recovered by a completely different method.">
+  <section class="slide figslide" data-label="Low-recoil physics" data-speaker-notes="Show the E-avail spectrum against the generator components. The observed low-recoil structure and the effect of Valencia 2p2h agree with the established MINERvA result; do not present this as a new physics claim.">
     <div class="kicker"><span>Results II · New dimensions</span></div>
-    <h2 class="slide-title">Re-finding MINERvA's known low-recoil physics</h2>
+    <h2 class="slide-title">The E<sub>avail</sub> marginal recovers known low-recoil structure</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/mode_decomp_eavail.png" alt="Unfolded E-avail spectrum with GENIE-CV interaction-mode decomposition: the data minus GENIE-CV gap is 2p2h-shaped, filling the dip between the QE and Delta peaks."></figure>
       <figure class="fig-panel dark"><img src="./figures-dark/compare_mec_eavail.png" alt="Unfolded E-avail spectrum against GENIE-CV without 2p2h and with Valencia MEC added: the added 2p2h component closes most of the low-recoil gap."></figure>
     </div>
-    <p class="fig-caption"><strong>The unfolded E<sub>avail</sub> spectrum re-finds the low-recoil excess: Valencia 2p2h fills the dip between QE and Δ.</strong> MINERvA's established result, recovered by a completely different method.</p>
+    <p class="fig-caption"><strong>The unfolded E<sub>avail</sub> spectrum shows the established low-recoil excess; Valencia 2p2h fills the dip between QE and Δ.</strong> This is a method cross-check, not a new physics claim.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -527,7 +526,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="Something new" data-speaker-notes="The real plane. Shape-level statement only: the residual excess that 2p2h cannot explain localizes at high E-avail AND high W — the DIS corner; high-E_avail cells carry two-thirds of the positive excess and most of that sits at W above 1.8 GeV. All four generators underpredict there. Say it plainly: significance withheld — the corrected 5D covariance is adopted, but this plane's significances have not yet been requoted against it (B7).">
+  <section class="slide figslide" data-label="Something new" data-speaker-notes="The real plane. Shape-level statement only: the residual excess that 2p2h cannot explain localizes at high E-avail AND high W — the DIS corner; high-E_avail cells carry two-thirds of the positive excess and most of that sits at W above 1.8 GeV. All four generators underpredict there. Say it plainly: significance withheld — the 5D covariance remains a candidate until the selection-complete lateral replacement lands, and this plane has not been requoted against a final covariance (B7).">
     <div class="kicker"><span>Results II · New dimensions</span></div>
     <div class="chips"><span class="chip warn">Shape-level only</span></div>
     <h2 class="slide-title">A residual excess localizes at high E<sub>avail</sub> and high W</h2>
@@ -564,7 +563,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="kicker"><span>Summary</span></div>
     <h2 class="slide-title">Summary: weights on events, not bins</h2>
     <ul class="bullets rise">
-      <li><span>OmniFold is the familiar unfolding with the histogram removed — it reduces to D'Agostini IBU.</span></li>
+      <li><span>With binned inputs, OmniFold gives the D'Agostini IBU update; unbinned inputs retain per-event weights.</span></li>
       <li><span>It reproduces the published 2D result, with an independently rebuilt uncertainty budget.</span></li>
       <li><span>The same events then open E<sub>avail</sub>, q<sub>3</sub> and W — recovering the known low-recoil physics and localizing a residual excess in the DIS corner.</span></li>
     </ul>
@@ -572,28 +571,28 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="Questions for MINERvA" data-speaker-notes="Three technical points where collaboration guidance beats anything we can compute — each is one confirmation, not a work request. (1) MAT dial practice: FrInel_pi exclusion — immaterial for us either way (both pion-FSI dials sub-percent on dsigma/dE-avail), we just want to cite current guidance. (2) GoF convention: our generator chi2 uses only OUR covariance, inverted with a truncated-spectral pseudo-inverse because the covariance is rank-deficient (2D: rank 201 of 205 bins) — is there precedent or a preferred alternative? (3) Would the collaboration endorse publishing the full 3D systematic covariance (1431 bins, rank 247) with that GoF treatment? Answers slot directly into the note; happy to take them offline too.">
+  <section class="slide content" data-label="Questions for MINERvA" data-speaker-notes="Three technical points need collaboration-specific precedent or convention. (1) Is FrInel_pi still excluded from the standard MAT band list? The numerical effect is sub-percent. (2) Is there a preferred goodness-of-fit convention for a rank-deficient measurement covariance? Our current calculation uses the covariance from this analysis and a truncated-spectral pseudo-inverse (2D rank 201 of 205). (3) Is there precedent for publishing a full 3D covariance with all 1431 reported bins and rank 247? Answers map directly to open items in the note.">
     <div class="kicker"><span>Feedback</span></div>
     <h2 class="slide-title">Three technical questions for the collaboration</h2>
     <ul class="bullets rise">
       <li><span>Is excluding the GENIE FrInel_pi dial from the standard band list still current MAT guidance?
-        <span class="sub">Both pion-FSI dials are sub-percent on dσ/dE<sub>avail</sub> for us (≤ 0.8%) — immaterial either way, we want to cite the practice correctly.</span></span></li>
+        <span class="sub">Both pion-FSI dials are sub-percent on dσ/dE<sub>avail</sub> (maxima 0.74% and 0.82%) — immaterial either way; the question is the current convention.</span></span></li>
       <li><span>Is there a preferred convention for generator χ² against a rank-deficient measurement covariance?
-        <span class="sub">We quote an ours-only χ² via a truncated-spectral pseudo-inverse (2D: rank 201 of 205 bins), led by per-bin pulls.</span></span></li>
-      <li><span>Would the collaboration endorse publishing a full 3D+ systematic covariance?
+        <span class="sub">We currently use the covariance from this analysis and a truncated-spectral pseudo-inverse (2D: rank 201 of 205 bins), led by per-bin pulls.</span></span></li>
+      <li><span>Is there MINERvA precedent for publishing a full 3D+ systematic covariance?
         <span class="sub">The E<sub>avail</sub> extension carries all 1431 reported bins (rank 247), with the same goodness-of-fit treatment.</span></span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="Analysis note v1.0" data-speaker-notes="The concrete feedback request. A frozen v1.0 of the analysis note (working comments stripped) goes up as a shared link right after this talk — drop the actual link in before presenting. Ask people to email us both directly; we aim to wrap this up in about a month, pending the ongoing computations and Collaboration feedback.">
+  <section class="slide content" data-label="Analysis note draft" data-speaker-notes="The concrete feedback request. Share a dated analysis-note draft that distinguishes finalized 2D and central-value results from covariance work still gated. The dated PDF link will be distributed after the talk; replace that line with a stable snapshot URL or QR only once one exists.">
     <div class="kicker"><span>Feedback</span></div>
-    <h2 class="slide-title">Analysis note v1.0 — request for feedback</h2>
+    <h2 class="slide-title">Dated analysis-note draft — request for feedback</h2>
     <ul class="bullets rise">
-      <li><span>A frozen v1.0 of the analysis note will be shared after this talk.
-        <span class="sub">Link to follow by email — [Dropbox link placeholder].</span></span></li>
+      <li><span>The draft separates finalized results from covariance work still gated.
+        <span class="sub">Dated PDF link will be distributed after the talk.</span></span></li>
       <li><span>Please send feedback directly to both of us.
-        <span class="sub">jrbailey555@gmail.com&ensp;·&ensp;nachman@stanford.edu</span></span></li>
+        <span class="sub">josephrb@stanford.edu&ensp;·&ensp;nachman@stanford.edu</span></span></li>
       <li><span>We aim to finalize in roughly one month.
         <span class="sub">Pending ongoing computations and Collaboration feedback.</span></span></li>
     </ul>
@@ -667,20 +666,20 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
       <li><span>The iteration count plays the same regularizing role as in D'Agostini IBU.
         <span class="sub">Headline results use five iterations — the "5iter" in every figure name.</span></span></li>
       <li><span>Classifier capacity (tree depth, count, learning rate) bounds how sharp a reweight can be learned.
-        <span class="sub">Kept deliberately modest; the GBDT is robust where a deep network is not (see B3).</span></span></li>
+        <span class="sub">The chosen GBDT capacity is tested against an independently trained neural network (B3).</span></span></li>
       <li><span>Stability is verified directly: seed and train-split scans, next slide.</span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B5 · Seed variability" data-speaker-notes="ML seed and train-split variability: sub-percent per-bin spread in the bulk, controlled everywhere. 2D — cleared. New July-14 5D cross-check: a fixed-data estimator-seed scan (12 seeds, fixed data and split) gives sqrt-trace 1.31e-39 — 87.5% of the adopted split-varied ML band (1.49e-39). So the ML band is dominated by genuine training stochasticity, not the particular train/test partition, and stays a minor ~3% component of the 5D budget.">
+  <section class="slide figslide" data-label="B5 · Seed variability" data-speaker-notes="ML seed and train-split variability: sub-percent per-bin spread in the bulk. The 2D result is cleared. The July-14 5D fixed-data estimator-seed scan gives 87.5% of the candidate split-varied ML band, but the final 5D budget still waits for selection-complete laterals.">
     <div class="kicker"><span>Backup 5 · Seed & split variability (2D — cleared)</span></div>
     <h2 class="slide-title">Training randomness is a sub-leading effect</h2>
     <div class="figwrap rise">
       <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_band_pt.png" alt="Cross section vs pT with the spread over ten training seeds drawn as error bars — the band is barely visible."></figure>
       <figure class="fig-panel"><img src="../uploads/claude-design-package/figures/seedscan_spread_2d.png" alt="Per-bin relative spread over training seeds across the pT, p-parallel plane — sub-percent in the bulk."></figure>
     </div>
-    <p class="fig-caption"><strong>Spread over independent trainings:</strong> sub-percent per bin in the bulk of the phase space, a few percent at the sparse edges. In 5D, a fixed-data estimator-seed scan reproduces 87.5% of the adopted ML band — genuine training stochasticity, not a train/test-split artifact, and ~3% of the total budget.</p>
+    <p class="fig-caption"><strong>Spread over independent trainings:</strong> sub-percent per bin in the bulk of the phase space, a few percent at the sparse edges. In 5D, a fixed-data estimator-seed scan reproduces 87.5% of the candidate ML band; final covariance adoption waits for selection-complete laterals.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -695,35 +694,35 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="B6b · χ² anatomy" data-speaker-notes="For the inevitable question on the pull slide's chi-squared. Pulls use the published per-bin sigmas: sub-1-sigma everywhere. The full paper covariance couples bins: chi2/ndf 3.66, driven by correlated shape modes along the low-pT peak ridge — not normalization (total sigma ratio 1.011). Including our own covariance gives 1.48. Full anatomy in the note's statistical-methods appendix. Related likely question: with ~100% correlated statistics (same data events), a unit-Gaussian pull distribution is not expected — common fluctuations cancel, so the sub-unit rms 0.60 reflects method differences measured against the published sigma, which is the point of the comparison.">
+  <section class="slide content" data-label="B6b · χ² anatomy" data-speaker-notes="Standardized differences use the published per-bin sigmas as a descriptive scale and are sub-1-sigma everywhere. The paper covariance couples bins: the indicative distance is 3.66 per bin, driven by correlated low-pT shape modes rather than normalization. Summing the paper and OmniFold covariances gives 1.48, but the shared-data cross-covariance is unavailable, so neither number is a formal difference test. A unit-Gaussian pull distribution is not expected for two results derived from the same data. Full anatomy is in the note's statistical-methods appendix.">
     <div class="kicker"><span>Backup 6b · Anatomy of the χ² = 3.66</span></div>
-    <h2 class="slide-title">Per-bin pulls and correlated shape are different questions</h2>
+    <h2 class="slide-title">Per-bin differences and correlated shape are different questions</h2>
     <ul class="bullets rise">
-      <li><span>Per-bin pulls against the published σ: mean 0.089, rms 0.60 — every bin individually consistent.</span></li>
-      <li><span>Against the paper's full covariance: χ²/ndf = 3.66.
+      <li><span>Published-σ standardized differences: mean 0.089, rms 0.60 — every bin lies within one published σ.</span></li>
+      <li><span>Indicative distance using the paper's full covariance: 3.66 per bin.
         <span class="sub">Driven by correlated shape modes along the low-p<sub>T</sub> peak ridge — not normalization (total σ ratio 1.011).</span></span></li>
-      <li><span>Against the combined (paper + this work) covariance: χ²/ndf = 1.48.
-        <span class="sub">Full mode-by-mode anatomy in the analysis note's statistical-methods appendix.</span></span></li>
+      <li><span>Using the sum of the paper and OmniFold covariances: 1.48 per bin (diagnostic only).
+        <span class="sub">The results share data and their cross-covariance is unavailable; a formal difference test would require it.</span></span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The honest statement. The corrected 5D campaign closed on July 14: GBDT block-sum median 13.36%/bin, adopted mean-centered covariance sqrt-trace 5.81e-38 (mean shift 1.65e-38 reported separately as bias; CV-centered 6.24e-38 kept as the conservative variant); repeating all 188 universe unfolds with per-universe background moved the block sqrt-trace by only 0.3% — the background-CV concern closed as a null effect. PET corrected C_total: median 15.10%/bin from five blocks including a new targeted retraining-response term. Final GBDT cross-check (July 14 evening): fixed-data estimator-seed scan sqrt-trace 1.31e-39 = 87.5% of the adopted split-varied ML band — the ML band is genuine training stochasticity, ~3% of the budget; corrected-UQ workstream fully closed. Still withheld: every (E-avail, W)-plane significance (that covariance has not been requoted) — so no Nsigma for the excess anywhere in this talk; the PET statistical ensemble grows from 20 to 100 replicas before publication.">
+  <section class="slide content" data-label="B7 · Uncertainty status" data-speaker-notes="The finalized 2D covariance is cleared. Higher-dimensional uncertainty products remain gated: standard/FPS selection-complete lateral event loops are running; final 4D/5D/FPS adoption follows them. The recoil-PET total is quarantined because frozen-map nuisance and retraining increments were added without their covariance cross term and detector membership was support-limited. The full-event PET replacement gets joint varied+retrained shifts and a fresh budget. Every E-avail,W significance remains withheld.">
     <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
-    <div class="chips"><span class="chip">Corrected 5D campaign complete</span><span class="chip warn">Significances not yet requoted</span></div>
+    <div class="chips"><span class="chip">Finalized 2D cleared</span><span class="chip warn">Higher-D covariance gated</span></div>
     <h2 class="slide-title">What is cleared, what is still withheld</h2>
     <ul class="bullets rise">
       <li><span>Cleared: the full 2D uncertainty budget and covariance — independently rebuilt, matches the published budget (B6).</span></li>
-      <li><span>Complete: the corrected 5D GBDT campaign (July 14) — block-sum median 13.36%/bin.
-        <span class="sub">Adopted mean-centered covariance √Tr C = 5.81×10<sup>−38</sup>; per-universe background a null effect (&lt;0.3%); estimator-seed scan validates the ML band (B5).</span></span></li>
-      <li><span>Complete: the corrected PET budget — median 15.10%/bin from five blocks.
-        <span class="sub">Including a new targeted retraining-response term; 20 → 100 statistical replicas before publication (B9).</span></span></li>
+      <li><span>Candidate only: corrected 5D non-lateral/support-limited core.
+        <span class="sub">Final 4D/5D/FPS adoption waits for selection-complete active laterals now in production.</span></span></li>
+      <li><span>Quarantined: the recoil-PET uncertainty total.
+        <span class="sub">The full-event replacement combines each nuisance and retraining response jointly and uses selection-complete detector samples (B9).</span></span></li>
       <li><span>Still withheld: (E<sub>avail</sub>, W)-plane significances, pending the requote — no Nσ quoted anywhere in this talk.</span></li>
     </ul>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B7b · Quarantined band" data-speaker-notes="One quarantined figure, shown only here and tagged: the E-avail, W spectrum with its old preliminary band. The corrected 5D covariance is adopted, but this plane's band and significances have not yet been requoted against it — no numbers quoted from this figure.">
+  <section class="slide figslide" data-label="B7b · Quarantined band" data-speaker-notes="One quarantined figure, shown only here and tagged: the E-avail, W spectrum with its old preliminary band. The final selection-complete 5D covariance and this plane's requote are both pending; quote no uncertainty or significance from this figure.">
     <div class="kicker"><span>Backup 7 · Uncertainty status</span></div>
     <div class="chips"><span class="chip warn">Old band — requote pending</span></div>
     <h2 class="slide-title">The (E<sub>avail</sub>, W) band awaiting its requote</h2>
@@ -733,7 +732,7 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
         <img src="./figures-dark/eavailW_band.png" alt="E-avail and W spectra with the quarantined preliminary uncertainty band, generators overlaid.">
       </figure>
     </div>
-    <p class="fig-caption"><strong>Shown for shape only</strong> — this band predates the corrected covariance (adopted July 14) and no numbers are quoted from it; the plane's requote is pending.</p>
+    <p class="fig-caption"><strong>Shown for shape only</strong> — this band is quarantined; the selection-complete covariance and plane requote are pending, so no uncertainty or significance is quoted.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
@@ -748,14 +747,14 @@ deck-stage[no-page-furniture] .page-foot, deck-stage[no-page-furniture] .page-he
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 
-  <section class="slide figslide" data-label="B9 · PET details" data-speaker-notes="Point-cloud transformer details: cardinality of the cloud vs truth hadrons (coverage-fixed inputs — truth mean 4.43, no spurious zero-cardinality spike), and the central-value comparison to the GBDT. The corrected PET uncertainty campaign is complete: C_total median 15.10%/bin in 5D (12.37% as the 4D marginal), five blocks — vertical systematic, targeted retraining response (new, second-largest by trace), ML ensemble, 20-replica statistical ensemble, frozen-map detector/lateral — all on one corrected nominal and mask, sum PSD. Comparable to the GBDT's 13.36% block-sum median at the current 2M-event training; the statistical inventory grows to 100 replicas before publication.">
+  <section class="slide figslide" data-label="B9 · PET details" data-speaker-notes="Point-cloud transformer details: cardinality of the cloud vs truth hadrons and the recoil-PET central-value comparison to the GBDT. Quote no PET uncertainty: the historical total omitted nuisance–retraining covariance cross terms and used CV-support-limited detector membership. A full-event estimator and fresh joint uncertainty budget are in progress.">
     <div class="kicker"><span>Backup 9 · Point-cloud transformer</span></div>
     <h2 class="slide-title">PET: a recoil-only point-cloud cross-check</h2>
     <div class="figwrap rise">
       <figure class="fig-panel dark"><img src="./figures-dark/pet_cardinality_real.png" alt="Point-cloud cardinality: truth final-state hadrons vs reconstructed clusters in MC and data, truncation cap at 12."></figure>
       <figure class="fig-panel dark"><img src="./figures-dark/pet_vs_gbdt_absolute.png" alt="PET point-cloud vs GBDT scalar unfolds, central values, in pT, pz, E-avail and q3."></figure>
     </div>
-    <p class="fig-caption"><strong>Left:</strong> cloud cardinality, truth vs reco, capped at 12 points. <strong>Right:</strong> PET vs GBDT central values agree. Corrected PET budget: median 15.10%/bin (5D, five blocks incl. targeted retraining response) vs the GBDT's 13.36% — comparable precision from recoil clusters at the current 2M-event training. The muon is absent from both PET classifiers; ordinary closure does not test omitted muon dependence — a muon-inclusive extension and omitted-variable stress closure are in progress.</p>
+    <p class="fig-caption"><strong>Left:</strong> cloud cardinality, truth vs reco, capped at 12 points. <strong>Right:</strong> recoil-PET vs GBDT central values. The muon is absent from both PET classifiers; ordinary closure does not test omitted muon dependence. The historical PET uncertainty is quarantined; a muon-inclusive estimator, omitted-variable stress closure, and fresh joint uncertainty budget are in progress.</p>
     <div class="page-foot" aria-hidden="true"></div>
   </section>
 

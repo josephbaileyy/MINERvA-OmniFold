@@ -19,8 +19,9 @@ resolve; in the cloud project they are real uploads.
   print/PDF, and has pause / beat / restart / final / scrub controls.
 - **Pedagogy from sol-presentation**: classifier-as-ratio-estimator slide
   (w = p/(1−p)); response-matrix-vs-paired-events visuals; bins-multiply vs
-  columns-add mini-graphics; validation-numbers grid (coverage 68.7 %,
-  iterations 0.026 %, NN/GBDT 1.008, C2ST AUC 0.501); money-slide stat rail
+  columns-add mini-graphics; validation-numbers grid (2D same-ensemble mean
+  $|r|=0.794$ vs 0.798, explicitly not coverage; iterations 0.026 %, NN/GBDT 1.008,
+  descriptive C2ST AUC 0.535→0.501 with no calibrated p-value); money-slide stat rail
   (1.011 / 1.006 / 94.1 %); honest χ²/ndf = 3.66 → 1.48 framing (+ backup
   B6b anatomy); MINERvA implementation backup B1b.
 - **Dark figures**: main-act figures regenerated on the deck ground with

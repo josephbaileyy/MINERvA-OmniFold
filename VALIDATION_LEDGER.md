@@ -10,13 +10,16 @@ more of: one-sided endpoint interpolation, CV centering, varying estimator
 seeds, scalar jitter subtraction, frozen PET weights, incomplete statistical
 projection, or CV-support-limited lateral selection.
 
-Corrected 5D GBDT and PET replacement budgets have now passed their declared
-campaign gates and are recorded immediately below. The 4D/FPS replacements and
-covariance-dependent generator significances remain quarantined. Central cross
+Corrected 5D GBDT non-lateral/support-limited candidate products are recorded
+immediately below, but final adoption waits for the selection-complete lateral
+replacement. The recoil-PET budget is quarantined pending a joint
+nuisance--retraining construction and selection-complete detector samples. The
+4D/FPS replacements and covariance-dependent generator significances remain
+quarantined. Central cross
 sections, closure tests, dimensional anchors, and the finalized Phase-18.2 2D
 result were never invalidated by this quarantine.
 
-## 2026-07-14 corrected 5D GBDT covariance — ADOPTED
+## 2026-07-14 corrected 5D GBDT covariance — CANDIDATE; final lateral replacement pending
 
 - The full background-aware re-quote contains 169 vertical universes, 18
   detector/lateral universes, and one matched CV. Relative to the
@@ -28,9 +31,9 @@ result were never invalidated by this quarantine.
   sqrt-trace **4.3515e-38** and median relative uncertainty **13.235%**; after
   adding corrected statistical and split-ML blocks the corresponding values are
   **4.3578e-38** and **13.359%**.
-- The corrected unified-throw construction uses actual asymmetric endpoints,
+- The corrected unified-throw candidate uses actual asymmetric endpoints,
   one fixed estimator seed, throw-mean centering, MAT `1/N`, exact manifests,
-  and no scalar jitter subtraction. The adopted mean-centered covariance is PSD
+  and no scalar jitter subtraction. The candidate mean-centered covariance is PSD
   with sqrt-trace **5.8077e-38**. The joint mean shift has norm **1.654e-38** and
   is reported separately. The CV-centered PSD variant, sqrt-trace
   **6.2367e-38**, is retained as a conservative alternative rather than the
@@ -38,9 +41,9 @@ result were never invalidated by this quarantine.
 - Artifacts:
   `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware{,_uthrow,_uthrow_cvcentered}.root`
   and `uq_universe_5d_summary.txt`. The dedicated estimator-only seed scan is an
-  auxiliary robustness check and is not part of this adopted budget.
+  auxiliary robustness check and is not part of this candidate budget.
 
-## 2026-07-14 corrected PET 5D uncertainty campaign — COMPLETE
+## 2026-07-14 recoil-PET 5D uncertainty campaign — QUARANTINED
 
 - All five blocks share the exact corrected background-subtracted PET nominal,
   10,550-bin reported mask, and CV. The final PSD block sum has sqrt-trace
@@ -52,10 +55,12 @@ result were never invalidated by this quarantine.
   `C_stat` (**7.4390e-39**, **7.851%**), and `C_lateral`
   (**4.6902e-39**, **2.111%**).
 - The predeclared six-band targeted retraining test found all six material.
-  `C_retrain` is rank six and the second-largest contribution by trace; the
-  identical-seed null response is only **0.008%** of the CV norm. There is no
-  double count: `C_syst` uses the frozen-map shift `x_frozen-CV`, whereas
-  `C_retrain` uses the additional response `x_retrain-x_frozen`.
+  `C_retrain` is rank six and the identical-seed null response is only **0.008%**
+  of the CV norm. However, decomposing the full endpoint shift into
+  `x_frozen-CV` and `x_retrain-x_frozen` does not make their covariances
+  independent. Adding the two covariance matrices omits both cross terms. The
+  reported total is therefore a historical diagnostic, not a publication
+  covariance.
 - The detector block propagates shifted detector weights/observables through the
   corrected nominal point-cloud sample with the PET map frozen. It is therefore
   a detector-response block for the completed campaign, not a claim of
@@ -66,9 +71,10 @@ result were never invalidated by this quarantine.
 - Artifacts and exact checks:
   `nd-unfolding/products/pet/bkgsub/pet_ctotal_bkgsub_5d_final.summary.json` and
   `pet_cretrain_bkgsub_5d.summary.json`; array products use the matching `.npz`
-  names. This is the endpoint of the present PET campaign. The 100-replica
-  expansion and selection-complete per-lateral PET retraining remain future
-  refinements, not completed claims in this result.
+  names. These artifacts close the historical recoil-only campaign but are not
+  quotable uncertainties. The full-event replacement requires joint
+  varied+retrained endpoint shifts, a fresh statistical/ML budget, and
+  selection-complete per-lateral samples.
 
 Validation pass started 2026-06-06. Scope: whole repository, with priority on
 technote-cited active results. Criterion: recompute from existing ROOT/NPZ/text
@@ -348,8 +354,10 @@ artifacts on the login node. All PASS; no rerun required.
 - **Standing checks rerun**: **PASS**. `xsec_nd.py` self-tests all pass;
   `check_4d_anchors.py` reproduces 0.38%/0.64%/1.68% medians and 4D/3D
   integral ratio 0.9960; `check_5d_anchors.py` 5D/4D total 1.0011, W marginal
-  PASS; `compare_3d_fullcov.py` reproduces sqrt-trace 5.724e-39, rank 247/1431,
-  Tune-v1 best / GiBUU worst ordering.
+  PASS; `compare_3d_fullcov.py` reproduces the historical candidate's
+  sqrt-trace 5.724e-39, rank 247/1431, and Tune-v1/GiBUU ordering. These
+  covariance-dependent numbers are quarantined pending the final 5D-to-3D
+  projection.
 
 ## Environment And Test Harness
 
@@ -391,19 +399,22 @@ artifacts on the login node. All PASS; no rerun required.
   covariance. Adding `uq_covariance_boot300.root:hCov2D_reported` separately
   double-counts bootstrap and changes the combined chi2/ndf to `1.341`.
 
-## Active 3D And 4D Results
+## Active 3D And 4D Results — central anchors valid; covariance products gated
 
-- `compare_3d_fullcov.py` with GENIE, Tune v1, NuWro, and GiBUU: **PASS**.
-  Recomputed covariance has sqrt-trace `5.724e-39`, hard rank `247/1431`;
-  full-covariance ranking matches the technote: Tune v1 best, GiBUU worst.
+- `compare_3d_fullcov.py` with GENIE, Tune v1, NuWro, and GiBUU reproduces the
+  historical candidate: sqrt-trace `5.724e-39`, hard rank `247/1431`, and the
+  same generator ordering. **DIAGNOSTIC ONLY** — the final quotable 3D
+  covariance and generator comparison require the adopted selection-complete
+  5D-to-3D projection.
 - `check_4d_anchors.py`: **PASS**. 4D total is `3.0665e-38`; 4D/3D
   2D-marginal integral ratio is `0.9960`; median projection differences are
   `0.38%` for pT, `0.64%` for pz, and `1.68%` for Eavail.
 - `compare_ascencio_q3.py`: **PASS for our-side spectra only**. It produces
   `d sigma/dq3` and low-q3 `Eavail` slices; no real Ascencio chi2 is computed
   without the external gated data file.
-- `compare_mlsplit_combined.py`: **PASS**. Train/test-split ML band is `1.24x`
-  the seed-only band, but the combined 3D sqrt-trace moves only `+0.04%`.
+- `compare_mlsplit_combined.py`: **PASS as a historical-component diagnostic**.
+  Train/test-split ML band is `1.24x` the seed-only band, but the historical
+  combined 3D sqrt-trace moves only `+0.04%`; final adoption remains gated.
 
 ## Validation Diagnostics
 
@@ -416,16 +427,18 @@ artifacts on the login node. All PASS; no rerun required.
   median `4.72%` for GBDT and `20.90%` for MLP; GBDT/MLP binned correlation
   `0.9159`.
 - `unbinned_gof.py` using stored 3D weights with `--max-per-class 200000`:
-  **PASS**. Prior acc/AUC `0.5196/0.5314` with `z=16.70`; unfolded acc/AUC
-  `0.5013/0.5022` with `z=1.10`, `p=0.273`. Exact values differ from the
-  technote's full-stat/subsample choice, but the conclusion is unchanged.
-- Coverage: **REPRODUCED 2026-06-11** (was PARTIALLY REPRODUCIBLE: the 200-toy
+  **DESCRIPTIVE DIAGNOSTIC ONLY**. Prior acc/AUC `0.5196/0.5314`; unfolded
+  acc/AUC `0.5013/0.5022`. The historical analytic `z` and `p` values are not
+  calibrated because the OmniFold weights were not cross-fitted and the null
+  does not repeat the full pipeline.
+- Same-ensemble pull diagnostic: **REPRODUCED 2026-06-11** (the 200-toy
   ROOTs were missing from the checkout). Regen arrays 54273493/54273495 rebuilt
-  all 200 toys in `2d-unfolding/uq/coverage/`; `uq/coverage_toys.py` **PASS**
-  and matches `docs/technote/app_statmethods.tex` exactly: mean coverage
+  all 200 toys in `2d-unfolding/uq/coverage/`; `uq/coverage_toys.py` reproduces
+  the historical result exactly: fraction with $|r|\leq1$
   `68.71%`, median `68.50%`, `<|r|> = 0.794` (target 0.798), signed residual
   `+0.006 +/- 0.082`, `97.56%` of the 205 reported bins above the 65% target
-  (same 5 bins below). KNOWN_ISSUES #2 RESOLVED.
+  (same 5 bins below). Because the same toys determine and are scored by their
+  standard deviation, these are Gaussianity/pull checks, not coverage.
 
 ### 2026-07-16 — Corrected 4D UQ (P6-4D), non-lateral core (support-limited lateral)
 
@@ -447,23 +460,32 @@ combined (block-sum) covariance and validations.
 
 ### 2026-07-16 — Statistical-validation repair (Agent C WS1 coverage; integrated into the note by Agent D)
 
-Coverage re-stated as truth-containment of an INDEPENDENTLY-calibrated ±1σ interval
-(split-ensemble: disjoint calibration/evaluation toy halves → non-circular; binomial errors;
-Gaussian nominal 68.27%). Reuse-only on the existing toy stacks (no invalid-design production;
-`coverage_valid_nd.py`, estimator seed 42):
-- 2D (headline): **68.80% ± 0.32%** (200 ROOT closure toys, 205 reported bins).
-  [`2d-unfolding/uq/coverage_valid_2d.json`]
-- FPS: **68.67% ± 0.28%** (200 cov_fps toys, 266 bins). Variant-A independent `C_stat` band
-  conservatively over-covers at **77.6%** (data-stat > MC-closure-stat; honest, not a defect).
+Coverage audit and FPS split-sample truth-containment diagnostic
+(Gaussian nominal 68.27%). Reuse-only on the existing toy stacks
+(`coverage_valid_nd.py`, estimator seed 42):
+- 2D: **NO COVERAGE NUMBER.** The 200 ROOT toys fluctuate stored
+  `hTruthXSec2D` through the MC bootstrap; all 205 reported bins vary, with a
+  maximum relative range of 1.048 across toys. The attempted 68.80% result used
+  their all-toy mean and is withdrawn because that is not an independent fixed
+  truth. A valid independent reference or redesigned ensemble is required.
+  [`2d-unfolding/uq/coverage_valid_2d_audit.json`]
+- FPS: **68.67%** of evaluation bin--toy cells (200 cov_fps toys split 100/100,
+  266 bins). Variant-A independent `C_stat` band contains **77.6%** of closure
+  bin--toy cells and is wider than the closure-toy spread. The estimator seed is
+  fixed, so these diagnose the statistical closure-toy stream rather than the
+  full adopted band.
   [`nd-unfolding/uq_fps/corrected/coverage_valid_fps.json`]
 - The OLD same-ensemble "coverage" (2D `68.71%` / FPS `68.9%`, ⟨|r|⟩≈`0.794` vs √(2/π)=`0.798`,
   `97.6%` bins ≥65%) is a standardized-pull/Gaussianity self-consistency diagnostic, NOT
-  frequentist coverage → RELABELED, retained under that label.
+  frequentist coverage → RELABELED, retained under that label. No aggregate
+  binomial uncertainty is quoted because bins within each toy are correlated
+  and the calibration widths are estimated.
 
 C2ST (WS2): analytic p-values (`z=1.4, p=0.17`; `p≈5e-244`) and "statistically indistinguishable"
 REMOVED from the note; retained as a descriptive held-out-AUC drop (≈0.535→≈0.501); no calibrated
 p-value (valid null = hundreds of cross-fitted OmniFold pipelines, unaffordable; unbinned GoF open).
 WS3: ours-vs-paper χ² (`\chiPaper` 3.66 / `\chiCombined` 1.481) relabeled an INDICATIVE distance
 (shared systematics + no OmniFold↔paper cross-covariance → not a calibrated GoF); Ascencio kept
-shape-level/descriptive; generator significances retained (data-vs-theory, single correct cov).
+shape-level/descriptive; generator significances remain gated until the selection-complete
+higher-dimensional covariance is adopted and the values are recomputed.
 Agent C's full WS2/WS3 RUN_LOG/STATUS + the paired-C_delta OF-vs-IBU test land under their commit gate.

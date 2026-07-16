@@ -72,16 +72,18 @@ Three results establish the extension (Fig.~\ref{fig:fpscmp}):
         region but median \SI{7.9}{\percent} (90th percentile
         \SI{62}{\percent}) in the extension, concentrated in the
         zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
-  \item \textbf{Coverage.} Split-ensemble truth-containment of an independently-calibrated
-        $\pm1\sigma$ interval (calibration/evaluation toy halves) is
-        \SI{\covFPS}{\percent}\,$\pm$\,\SI{\covFPSerr}{\percent} (binomial) against the
-        \SI{\covNominal}{\percent} nominal; separately, the independently-estimated
-        $C_{\mathrm{stat}}$ band conservatively over-covers (\SI{\covFPSanalytic}{\percent}),
-        as expected when the data statistical uncertainty exceeds the MC closure spread. The
+  \item \textbf{Containment diagnostic.} With the estimator seed fixed, one 100/100 calibration--evaluation
+        split, \SI{\covFPS}{\percent} of evaluation bin--toy cells contain the fixed
+        truth using widths learned from the disjoint calibration half, compared with the
+        \SI{\covNominal}{\percent} Gaussian nominal. Correlated bins and estimated
+        calibration widths preclude a global binomial error or calibrated test; this probes the
+        statistical closure-toy stream, not the full adopted band. Separately,
+        the independent $C_{\mathrm{stat}}$ band contains \SI{\covFPSanalytic}{\percent}
+        of closure bin--toy cells and is wider than the closure-toy spread. The
         same-ensemble \SI{68.9}{\percent} ($\langle|r|\rangle\approx0.79$) is retained as a
-        pull/Gaussianity diagnostic. Coverage holds in both the published
-        (\SI{68.5}{\percent}) and extension (\SI{70.0}{\percent}, marginally conservative)
-        regions --- the bootstrap band means what it says in the extended grid.
+        pull/Gaussianity diagnostic. The published and extension regions have
+        descriptive split-sample fractions of \SI{68.5}{\percent} and
+        \SI{70.0}{\percent}, respectively; neither is used as a covariance-certification test.
 \end{enumerate}
 
 \begin{figure}[H]

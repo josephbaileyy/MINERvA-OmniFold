@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>OmniFold with MINERvA open data</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="chrome" aria-hidden="true">
+    <div class="progress"><div id="progress-fill"></div></div>
+    <div class="deck-meta"><span id="section-label">OPENING</span><span id="counter">01 / 14</span></div>
+  </div>
+
+  <main id="deck" aria-live="polite">
+    <!-- 01 -->
+    <section class="slide active title-slide" data-section="Opening" data-duration="30" aria-label="Title slide">
+      <div class="orb orb-a"></div><div class="orb orb-b"></div>
+      <div class="slide-inner title-grid">
+        <div>
+          <p class="eyebrow">MINERvA collaboration · 16 July 2026</p>
+          <h1>OmniFold with<br><span class="accent">MINERvA open data</span></h1>
+          <p class="lede">Learning weights on events instead of corrections between bins</p>
+          <div class="speaker-line">Joseph Bailey <span>·</span> MINERvA ME FHC CC-inclusive</div>
+        </div>
+        <div class="hero-pairing" aria-label="Paired truth and detector events">
+          <div class="plane-label truth-label">TRUTH</div>
+          <div class="plane-label reco-label">DETECTOR</div>
+          <svg viewBox="0 0 620 600" role="img" aria-label="Simulated events paired between truth and detector levels">
+            <g class="pair-lines">
+              <path d="M110 132 C120 250 150 315 175 455"/><path d="M210 105 C190 240 245 320 260 470"/>
+              <path d="M315 145 C340 250 300 350 345 440"/><path d="M430 110 C405 250 445 330 460 468"/>
+              <path d="M505 160 C470 280 535 330 525 430"/>
+            </g>
+            <g class="truth-dots">
+              <circle cx="110" cy="132" r="17"/><circle cx="210" cy="105" r="13"/><circle cx="315" cy="145" r="20"/>
+              <circle cx="430" cy="110" r="15"/><circle cx="505" cy="160" r="12"/>
+            </g>
+            <g class="reco-dots">
+              <circle cx="175" cy="455" r="17"/><circle cx="260" cy="470" r="13"/><circle cx="345" cy="440" r="20"/>
+              <circle cx="460" cy="468" r="15"/><circle cx="525" cy="430" r="12"/>
+            </g>
+            <g class="data-crosses">
+              <path d="M139 410 l16 16 m0-16 l-16 16"/><path d="M305 488 l16 16 m0-16 l-16 16"/>
+              <path d="M400 420 l16 16 m0-16 l-16 16"/><path d="M498 490 l16 16 m0-16 l-16 16"/>
+            </g>
+          </svg>
+          <div class="mini-legend"><span><i class="dot data"></i>data</span><span><i class="dot prior"></i>simulation</span></div>
+        </div>
+      </div>
+      <aside class="notes">
+        Today I want to do three things: explain OmniFold from first principles, show exactly how I use it with the MINERvA open-data product, and then test it against the collaboration's published two-dimensional result. The central idea is simple: learn how much each simulated event should count, rather than first compressing events into a response matrix.
+      </aside>
+    </section>
+
+    <!-- 02 -->
+    <section class="slide" data-section="The problem" data-duration="75" aria-label="What unfolding must correct">
+      <div class="slide-inner">
+        <p class="eyebrow">THE MEASUREMENT PROBLEM</p>
+        <h2>The detector shows a <span class="accent">distorted image</span> of nature</h2>
+        <div class="distortion-flow">
+          <div class="state-card">
+            <span class="state-kicker">what we want</span><strong>truth-level<br>cross section</strong>
+            <svg viewBox="0 0 300 150" class="spectrum"><path class="axis" d="M20 130H285M20 130V15"/><path class="truth-curve" d="M25 125 C55 122 56 42 95 38 C132 34 130 110 170 95 C202 84 204 55 245 76 C265 86 273 107 285 118"/></svg>
+          </div>
+          <div class="distorter" data-build>
+            <div class="lens"></div><strong>detector</strong>
+            <span>smearing</span><span>inefficiency</span><span>background</span>
+          </div>
+          <div class="state-card" data-build>
+            <span class="state-kicker">what we observe</span><strong>selected<br>reconstructed events</strong>
+            <svg viewBox="0 0 300 150" class="spectrum"><path class="axis" d="M20 130H285M20 130V15"/><path class="reco-curve" d="M25 124 C55 116 68 65 105 58 C145 50 159 91 193 86 C225 81 250 92 285 114"/></svg>
+          </div>
+        </div>
+        <div class="takeaway" data-build><span>Unfolding asks:</span> which truth distribution could have produced the data we selected?</div>
+      </div>
+      <aside class="notes">
+        Start from familiar ground. We want a truth-level cross section, but observe selected reconstructed events. Smearing migrates events, inefficiency removes some, and backgrounds add others. Every unfolding method has to answer the inverse question at the bottom. OmniFold changes the representation of this problem, not the physical corrections that are required.
+      </aside>
+    </section>
+
+    <!-- 03 -->
+    <section class="slide" data-section="The problem" data-duration="60" aria-label="The dimensionality wall">
+      <div class="slide-inner">
+        <p class="eyebrow">WHY UNBINNED?</p>
+        <h2>Adding observables multiplies <span class="accent">response cells</span></h2>
+        <div class="dimension-row">
+          <div class="dim-card">
+            <div class="dim-head"><strong>1D</strong><span>healthy cells</span></div>
+            <div class="grid grid-1d"></div><div class="dim-math">N × N</div>
+          </div>
+          <div class="dim-arrow" data-build>→</div>
+          <div class="dim-card" data-build>
+            <div class="dim-head"><strong>2D</strong><span>many more cells</span></div>
+            <div class="grid grid-2d"></div><div class="dim-math">N² × N²</div>
+          </div>
+          <div class="dim-arrow" data-build>→</div>
+          <div class="dim-card sparse" data-build>
+            <div class="dim-head"><strong>N-D</strong><span>mostly sparse</span></div>
+            <div class="grid grid-nd"></div><div class="dim-math">N<sup>d</sup> × N<sup>d</sup></div>
+          </div>
+        </div>
+        <div class="event-reframe" data-build>
+          <div class="cloud-icon"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p><strong>The events were never sparse.</strong><br>The histogramming made them sparse.</p>
+        </div>
+      </div>
+      <aside class="notes">
+        A response matrix works very well in modest dimensions. The structural problem is scaling: each new axis multiplies both truth and reconstructed bins. Yet the underlying simulation is not a matrix. It is a list of events, each with a truth record and a reconstructed record. OmniFold operates on that list before histogramming it.
+      </aside>
+    </section>
+
+    <!-- 04 -->
+    <section class="slide" data-section="OmniFold" data-duration="75" aria-label="Classifiers learn density ratios">
+      <div class="slide-inner split-wide">
+        <div>
+          <p class="eyebrow">THE ENGINE</p>
+          <h2>A classifier is a <span class="accent">ratio estimator</span></h2>
+          <p class="body-copy">Ask a classifier to distinguish data from simulation at a point <em>x</em>.</p>
+          <div class="formula-card" data-build>
+            <span class="formula-label">with class-normalized training</span>
+            <div class="formula">w(x) = <span class="frac"><b>p(data | x)</b><i>1 − p(data | x)</i></span></div>
+          </div>
+          <p class="plain-language" data-build>Hard to tell apart → weight near 1<br>Data-like region → weight above 1<br>MC-heavy region → weight below 1</p>
+        </div>
+        <div class="ratio-scene">
+          <div class="axis-label y">density</div><div class="axis-label x">observable x</div>
+          <svg viewBox="0 0 620 430" role="img" aria-label="Data and simulation densities with learned local weights">
+            <path class="plot-axis" d="M60 370H585M60 370V35"/>
+            <path class="prior-line" d="M65 350 C120 335 125 165 205 145 C300 120 310 315 390 275 C460 240 475 140 575 310"/>
+            <path class="data-line" d="M65 350 C125 330 140 235 215 205 C285 180 315 250 395 228 C470 208 500 85 575 300"/>
+            <g class="sample-dots prior-samples">
+              <circle cx="130" cy="292" r="8"/><circle cx="168" cy="205" r="8"/><circle cx="205" cy="150" r="8"/><circle cx="258" cy="180" r="8"/><circle cx="350" cy="285" r="8"/><circle cx="440" cy="235" r="8"/><circle cx="505" cy="180" r="8"/>
+            </g>
+            <g class="sample-dots data-samples">
+              <path d="M122 308l14 14m0-14l-14 14"/><path d="M187 223l14 14m0-14l-14 14"/><path d="M245 196l14 14m0-14l-14 14"/><path d="M366 243l14 14m0-14l-14 14"/><path d="M474 154l14 14m0-14l-14 14"/><path d="M526 128l14 14m0-14l-14 14"/>
+            </g>
+            <g class="weight-arrows" data-build>
+              <path d="M205 118V73"/><path d="M505 160V100"/><text x="185" y="58">w &lt; 1</text><text x="490" y="85">w &gt; 1</text>
+            </g>
+          </svg>
+          <div class="ratio-legend"><span><i class="line prior"></i>simulation</span><span><i class="line data"></i>data</span></div>
+        </div>
+      </div>
+      <aside class="notes">
+        The ML ingredient is density-ratio estimation. Under class-normalized training, the classifier odds p over one minus p estimate the local data-to-simulation ratio. This is not an interaction classifier and it is not being asked to label QE or resonance. It answers only: in this region of measured feature space, how much more or less data do I see than simulation?
+      </aside>
+    </section>
+
+    <!-- 05 -->
+    <section class="slide" data-section="OmniFold" data-duration="90" aria-label="OmniFold detector-space step">
+      <div class="slide-inner">
+        <p class="eyebrow">ONE OMNIFOLD ITERATION · STEP 1</p>
+        <h2>Match the data at <span class="accent">detector level</span></h2>
+        <div class="algorithm-scene step-one">
+          <div class="scene-plane truth-plane"><span>TRUTH SPACE</span><small>paired simulated truth records</small></div>
+          <div class="scene-plane reco-plane"><span>DETECTOR SPACE</span><small>selected reconstructed records</small></div>
+          <svg viewBox="0 0 1180 520" role="img" aria-label="Detector-level weights pulled to paired truth events">
+            <g class="pair-lines">
+              <path d="M125 120 C145 245 150 300 165 415"/><path d="M275 150 C250 245 290 315 300 430"/><path d="M435 105 C460 235 430 315 470 400"/><path d="M620 145 C600 245 640 300 650 435"/><path d="M790 112 C820 230 780 325 830 405"/>
+            </g>
+            <g class="truth-dots prior-fill"><circle cx="125" cy="120" r="14"/><circle cx="275" cy="150" r="14"/><circle cx="435" cy="105" r="14"/><circle cx="620" cy="145" r="14"/><circle cx="790" cy="112" r="14"/><circle class="miss-dot" cx="960" cy="145" r="14"/></g>
+            <g class="reco-dots prior-fill"><circle cx="165" cy="415" r="14"/><circle cx="300" cy="430" r="14"/><circle cx="470" cy="400" r="14"/><circle cx="650" cy="435" r="14"/><circle cx="830" cy="405" r="14"/></g>
+            <g class="data-crosses"><path d="M135 430l18 18m0-18l-18 18"/><path d="M270 380l18 18m0-18l-18 18"/><path d="M445 440l18 18m0-18l-18 18"/><path d="M600 390l18 18m0-18l-18 18"/><path d="M710 445l18 18m0-18l-18 18"/><path d="M870 380l18 18m0-18l-18 18"/></g>
+            <g class="weight-halos" data-build><circle cx="165" cy="415" r="29"/><circle cx="300" cy="430" r="21"/><circle cx="470" cy="400" r="34"/><circle cx="650" cy="435" r="18"/><circle cx="830" cy="405" r="27"/></g>
+            <g class="travel-dots" data-build><circle cx="165" cy="415" r="7"/><circle cx="300" cy="430" r="7"/><circle cx="470" cy="400" r="7"/><circle cx="650" cy="435" r="7"/><circle cx="830" cy="405" r="7"/></g>
+            <g class="truth-halos" data-build><circle cx="125" cy="120" r="29"/><circle cx="275" cy="150" r="21"/><circle cx="435" cy="105" r="34"/><circle cx="620" cy="145" r="18"/><circle cx="790" cy="112" r="27"/></g>
+          </svg>
+          <div class="algorithm-callout callout-a" data-build><b>Classifier 1</b><span>data vs current reconstructed MC</span></div>
+          <div class="algorithm-callout callout-b" data-build><b>Pull back</b><span>attach each reco weight to its truth partner</span></div>
+          <div class="miss-label" data-build><b>miss</b><span>weight inferred from truth features</span></div>
+        </div>
+      </div>
+      <aside class="notes">
+        Step 1 happens in detector space. I compare the selected data, after the background purity correction, with reconstructed signal simulation carrying the current push weights. The first classifier learns the data-to-MC correction. Because each simulated event is a paired truth and reco record, that correction attaches directly to the truth record. A truth signal event without a reconstructed partner is a miss; native OmniFold predicts its Step-1 weight from truth features using the reconstructed subsample.
+      </aside>
+    </section>
+
+    <!-- 06 -->
+    <section class="slide" data-section="OmniFold" data-duration="90" aria-label="OmniFold truth-space step">
+      <div class="slide-inner">
+        <p class="eyebrow">ONE OMNIFOLD ITERATION · STEP 2</p>
+        <h2>Turn the pullback into a <span class="accent">truth-level function</span></h2>
+        <div class="step-two-layout">
+          <div class="truth-sample-card prior-card">
+            <span class="card-index">A</span><h3>Original truth MC</h3><p>prior event weights</p>
+            <div class="dot-cloud prior-cloud"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="versus" data-build>vs</div>
+          <div class="truth-sample-card pull-card" data-build>
+            <span class="card-index">B</span><h3>Pulled-back truth MC</h3><p>Step-1 event weights</p>
+            <div class="dot-cloud warm-cloud"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="classifier-box" data-build><span>CLASSIFIER 2</span><strong>smooth truth-space ratio</strong></div>
+          <div class="push-card" data-build><span>NEXT ITERATION</span><strong>new push weights</strong><div class="push-wave"></div></div>
+        </div>
+        <div class="iteration-loop" data-build><span>push to detector</span><b>↻</b><span>repeat</span></div>
+        <div class="bottom-message" data-build>Two classifiers per iteration: <b>detector correction</b> + <b>truth regularization</b></div>
+      </div>
+      <aside class="notes">
+        Pullback alone would give weights only to the sampled truth events. Step 2 trains a second classifier between the original truth sample and that pulled-back weighted sample. It learns a smooth truth-space density ratio. Those are the new push weights. Push them forward through the detector simulation and repeat. This second classifier is important: it is the truth-level regularization and the mechanism that lets misses receive a consistent update.
+      </aside>
+    </section>
+
+    <!-- 07 -->
+    <section class="slide" data-section="OmniFold" data-duration="60" aria-label="OmniFold output">
+      <div class="slide-inner">
+        <p class="eyebrow">THE OUTPUT</p>
+        <h2>One weighted truth ensemble, <span class="accent">many views</span></h2>
+        <div class="output-scene">
+          <div class="weighted-cloud">
+            <span>UNFOLDED EVENT ENSEMBLE</span>
+            <div class="cloud-stage"><i style="--x:12%;--y:64%;--s:1.0"></i><i style="--x:20%;--y:35%;--s:1.3"></i><i style="--x:31%;--y:55%;--s:.8"></i><i style="--x:39%;--y:22%;--s:1.6"></i><i style="--x:48%;--y:70%;--s:1.1"></i><i style="--x:57%;--y:42%;--s:.7"></i><i style="--x:66%;--y:25%;--s:1.4"></i><i style="--x:73%;--y:61%;--s:1.8"></i><i style="--x:84%;--y:39%;--s:1.0"></i><i style="--x:90%;--y:73%;--s:.75"></i></div>
+          </div>
+          <div class="view-card view-a" data-build><span>projection</span><div class="bars"><i></i><i></i><i></i><i></i><i></i></div><b>dσ/dp<sub>T</sub></b></div>
+          <div class="view-card view-b" data-build><span>slices</span><div class="heat-grid"></div><b>d²σ/dp<sub>T</sub>dp<sub>∥</sub></b></div>
+          <div class="view-card view-c" data-build><span>new binning</span><div class="bars alt"><i></i><i></i><i></i><i></i></div><b>same weights</b></div>
+        </div>
+        <p class="fine-print" data-build>Rebin or project recorded truth features without retraining. Adding a genuinely new feature requires it in the event representation.</p>
+      </div>
+      <aside class="notes">
+        After the final iteration, the product is not yet a histogram. It is a truth-level simulated event sample with learned push weights. I can choose the paper's binning, make one-dimensional projections, or change the bin edges after the fit. The careful version of “bin at the end” is that I can rebin and project truth features carried by the learned event representation; a genuinely new feature must be included or otherwise represented.
+      </aside>
+    </section>
+
+    <!-- 08 -->
+    <section class="slide" data-section="MINERvA implementation" data-duration="120" aria-label="MINERvA open data inputs">
+      <div class="slide-inner">
+        <p class="eyebrow">FROM MINERVA OPEN DATA TO OMNIFOLD</p>
+        <h2>Four event trees preserve the <span class="accent">analysis logic</span></h2>
+        <div class="tree-pipeline">
+          <div class="tree-card data-tree"><span>DATA</span><h3>data</h3><p>selected reconstructed events</p><b>4,119,797</b></div>
+          <div class="tree-card bkg-tree" data-build><span>MC</span><h3>mc_background</h3><p>wrong-sign, NC and out-of-fiducial background</p></div>
+          <div class="tree-card reco-tree" data-build><span>MC · PAIRED</span><h3>mc_signal_reco</h3><p>reco and truth features together</p></div>
+          <div class="tree-card truth-tree" data-build><span>MC · AUTHORITATIVE</span><h3>mc_truth_denom</h3><p>every true signal event</p><b>32,849,103</b></div>
+          <div class="pipeline-arrow arrow-data">↓</div><div class="pipeline-arrow arrow-bkg">↓</div><div class="pipeline-arrow arrow-reco">↓</div><div class="pipeline-arrow arrow-truth">↓</div>
+          <div class="training-target" data-build><strong>STEP 1 TARGET</strong><span>data − genuine background − signal fakes ↔ reconstructed signal MC</span></div>
+          <div class="pairing-target" data-build><strong>PAIRING + MISSES</strong><span>truth-authoritative keys; truth-only events stay in the sample</span></div>
+        </div>
+        <div class="playlist-strip" data-build><span>ME1A</span><span>1B</span><span>1C</span><span>1D</span><span>1E</span><span>1F</span><span>1G</span><span>1L</span><span>1M</span><span>1N</span><span>1O</span><span>1P</span><b>run separately → merge</b></div>
+      </div>
+      <aside class="notes">
+        This is the concrete interface to the open product. My event loop writes four flat trees per playlist. Data provide reconstructed observations. Background MC supplies the subtraction. Signal reco contains paired reco and truth features. The truth denominator contains every true signal event and is authoritative: reconstructed signal is accepted only if its event key is in that denominator, and truth-only events are appended as native misses. The event loop must run separately for each of the twelve playlists because playlist-specific flux and calibration are selected from the first run; only then are the outputs merged.
+      </aside>
+    </section>
+
+    <!-- 09 -->
+    <section class="slide" data-section="MINERvA implementation" data-duration="90" aria-label="Cross-section extraction">
+      <div class="slide-inner">
+        <p class="eyebrow">FROM EVENT WEIGHTS TO A CROSS SECTION</p>
+        <h2>The learned weight is only the <span class="accent">middle</span> of the measurement</h2>
+        <div class="xsec-recipe">
+          <div class="recipe-step" data-build><span>01</span><b>phase-space data</b><small>0 ≤ p<sub>T</sub> ≤ 4.5<br>1.5 ≤ p<sub>∥</sub> ≤ 60 GeV/c</small></div>
+          <div class="recipe-arrow">→</div>
+          <div class="recipe-step" data-build><span>02</span><b>purity weight</b><small>non-negative<br>(data − background)/data</small></div>
+          <div class="recipe-arrow">→</div>
+          <div class="recipe-step hot" data-build><span>03</span><b>OmniFold</b><small>learn truth-level<br>push weights</small></div>
+          <div class="recipe-arrow">→</div>
+          <div class="recipe-step" data-build><span>04</span><b>truth yield</b><small>Σ w<sub>push</sub> w<sub>truth</sub><br>inside each final bin</small></div>
+        </div>
+        <div class="xsec-equation" data-build>
+          <span class="lhs">d²σ<sub>b</sub></span><span>=</span>
+          <span class="frac big"><b>Σ<sub>i∈b</sub> w<sub>push,i</sub>w<sub>truth,i</sub></b><i>c<sub>b</sub> · Φ · N<sub>POT</sub> · N<sub>nucleons</sub> · Δp<sub>T,b</sub> · Δp<sub>∥,b</sub></i></span>
+        </div>
+        <div class="contract-row" data-build>
+          <div><i class="ok">✓</i><span>flux, POT and target normalization</span></div>
+          <div><i class="ok">✓</i><span>completeness = 1 by construction</span></div>
+          <div><i class="no">×</i><span>no second absolute-efficiency division</span></div>
+        </div>
+      </div>
+      <aside class="notes">
+        The classifier is not the whole measurement. I first mask data to the signal phase space and subtract backgrounds through a non-negative per-bin purity weight. OmniFold returns push weights. The unfolded truth yield is the sum of push weight times the event's central truth weight. I then divide by the flux per POT, the data exposure in POT, the fixed tracker nucleon count, completeness and bin widths. Native misses make the truth ensemble acceptance-corrected; completeness is exactly one, so applying another absolute efficiency correction would double-correct the result.
+      </aside>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-section="Validation" data-duration="90" aria-label="Validation suite">
+      <div class="slide-inner">
+        <p class="eyebrow">TRY TO BREAK IT BEFORE TRUSTING IT</p>
+        <h2>Validation probes different <span class="accent">failure modes</span></h2>
+        <div class="validation-grid">
+          <div class="validation-card" data-build><span class="v-icon">↺</span><h3>Closure</h3><p>truth reweights, hidden resolution variable, alternate model</p><b>PASS</b></div>
+          <div class="validation-card" data-build><span class="v-icon">|r|</span><h3>2D pull diagnostic</h3><p>same-ensemble Gaussianity check</p><b>0.794</b><small>unit-normal reference 0.798; not coverage</small></div>
+          <div class="validation-card" data-build><span class="v-icon">5→10</span><h3>Iterations</h3><p>doubling the iteration count</p><b>0.026%</b><small>change in total σ</small></div>
+          <div class="validation-card" data-build><span class="v-icon">GBDT</span><h3>Classifier family</h3><p>neural-network cross-check</p><b>1.0078</b><small>NN / GBDT total</small></div>
+          <div class="validation-card" data-build><span class="v-icon">IBU</span><h3>Binned limit</h3><p>first update recovers D'Agostini behavior</p><b>CONNECTED</b></div>
+          <div class="validation-card" data-build><span class="v-icon">AUC</span><h3>Bottom line</h3><p>descriptive classifier check</p><b>0.535 → 0.501</b><small>no calibrated p-value</small></div>
+        </div>
+      </div>
+      <aside class="notes">
+        No single validation proves an unfold. Closure tests whether injected changes are recovered. The 2D pull summary is a same-ensemble Gaussianity diagnostic, not coverage: the MC bootstrap also fluctuates the stored truth reference, so an independent-truth coverage test remains open. Iteration and classifier-family tests probe regularization dependence. The binned study connects the first update to D'Agostini IBU. The classifier AUC drop is also descriptive because the weights were not cross-fitted through the full OmniFold chain and no end-to-end null calibration was run.
+      </aside>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide result-slide" data-section="2D reproduction" data-duration="135" aria-label="Published 2D result reproduced">
+      <div class="slide-inner result-layout">
+        <div class="result-copy">
+          <p class="eyebrow">THE TRUST ANCHOR</p>
+          <h2>Same data.<br><span class="accent">Nearly the same answer.</span></h2>
+          <p>Unbinned in training; binned afterward into MINERvA's published 14 × 16 grid.</p>
+          <div class="stat-stack">
+            <div data-build><b>1.011</b><span>total σ ratio<br>OmniFold / paper</span></div>
+            <div data-build><b>1.006</b><span>median bin ratio</span></div>
+            <div data-build><b>94.1%</b><span>of reported bins<br>within 10%</span></div>
+          </div>
+        </div>
+        <figure class="paper-figure" data-build>
+          <img src="assets/xsec-pt-slices.png" alt="OmniFold two-dimensional cross section in transverse-momentum slices compared with the published MINERvA result">
+          <figcaption>ME FHC CC-inclusive · 205 reported bins</figcaption>
+        </figure>
+      </div>
+      <aside class="notes">
+        This is the credibility test. I trained in the continuous two-dimensional muon-kinematic space and only afterward binned the weighted truth events into the paper's exact 14 by 16 grid. The integrated cross section is 1.1 percent high. The median bin differs by six-tenths of a percent, and 94.1 percent of reported bins are within ten percent. This is not input closure: it is a comparison to an independently published D'Agostini result on the same data.
+      </aside>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide" data-section="2D reproduction" data-duration="75" aria-label="Agreement and covariance tension">
+      <div class="slide-inner">
+        <p class="eyebrow">AGREEMENT IS GOOD — BUT NOT FEATURELESS</p>
+        <h2>Per-bin agreement and correlated shape tell <span class="accent">different stories</span></h2>
+        <div class="double-figure">
+          <figure><img src="assets/pull-2d.png" alt="Per-bin standardized differences against the published result"><figcaption><b>Published-σ RMS 0.60</b><span>descriptive per-bin scale; shared data</span></figcaption></figure>
+          <figure data-build><img src="assets/uncertainty-pt.png" alt="Independent two-dimensional uncertainty budget"><figcaption><b>6.87% vs 6.86%</b><span>median uncertainty: this work vs paper</span></figcaption></figure>
+        </div>
+        <div class="tension-note" data-build><b>Indicative paper-covariance distance: 3.66/bin</b><span>correlated low-p<sub>T</sub> shape modes; no shared-data cross-covariance</span></div>
+      </div>
+      <aside class="notes">
+        I do not want to oversell the word “reproduce.” Individual standardized differences have RMS 0.60, and the separately reconstructed uncertainty budget has essentially the same median size as the paper. But the indicative distance using the paper's full covariance is 3.66 per bin. The difference lives in correlated shape modes around the low-pT peak ridge rather than normalization. Because the two results share data and their cross-covariance is unavailable, this is not a calibrated compatibility test.
+      </aside>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide" data-section="What this enables" data-duration="90" aria-label="Higher-dimensional outlook">
+      <div class="slide-inner">
+        <p class="eyebrow">WHY KEEP THE EVENTS?</p>
+        <h2>A reusable measurement object opens <span class="accent">new questions</span></h2>
+        <div class="future-grid">
+          <article class="future-card" data-build>
+            <div class="future-image wide"><img src="assets/marginal-anchor.png" alt="Higher-dimensional result marginalized to the published two-dimensional result"></div>
+            <span>VALIDATION</span><h3>Add E<sub>avail</sub>, q<sub>3</sub>, W</h3><p>Every new dimension must recover its lower-dimensional anchor when marginalized.</p>
+          </article>
+          <article class="future-card" data-build>
+            <div class="future-image wide"><img src="assets/eavail-w.png" alt="Central-value data minus generator difference in available energy and W"></div>
+            <span>CENTRAL-VALUE OBSERVATION</span><h3>Localize discrepancies</h3><p>The positive difference concentrates at high E<sub>avail</sub> and high W. Significance is withheld pending corrected UQ.</p>
+          </article>
+          <article class="future-card" data-build>
+            <div class="future-image tall"><img src="assets/pet-events.png" alt="MINERvA calorimeter clusters represented as event point clouds"></div>
+            <span>OUTLOOK</span><h3>Learn from event clouds</h3><p>Replace a few scalar inputs with reconstructed calorimeter-cluster point clouds.</p>
+          </article>
+        </div>
+      </div>
+      <aside class="notes">
+        Keeping weighted events makes higher-dimensional measurements practical. I have added available energy, q3 and W, with each dimensional extension required to reproduce its predecessor under marginalization. At the level of current central values, the positive data-minus-generator difference concentrates at high available energy and high W; I am deliberately withholding significance while corrected N-dimensional uncertainties are regenerated. The longer-term path is to replace the scalar feature table with calorimeter-cluster point clouds.
+      </aside>
+    </section>
+
+    <!-- 14 -->
+    <section class="slide closing-slide" data-section="Closing" data-duration="45" aria-label="Summary">
+      <div class="slide-inner">
+        <p class="eyebrow">TAKEAWAYS</p>
+        <div class="closing-grid">
+          <div class="closing-main">
+            <h2>Learn weights on events.<br><span class="accent">Bin only when needed.</span></h2>
+            <div class="three-lines">
+              <p data-build><span>01</span><b>OmniFold is iterative density-ratio reweighting through paired simulated events.</b></p>
+              <p data-build><span>02</span><b>The MINERvA open product supports a complete event-level cross-section pipeline.</b></p>
+              <p data-build><span>03</span><b>The 2D result reproduces the published measurement and anchors higher-dimensional work.</b></p>
+            </div>
+          </div>
+          <div class="closing-ask" data-build>
+            <span>DISCUSSION</span>
+            <h3>Which projections—and which validation tests—would be most useful to MINERvA?</h3>
+            <p>joseph.bailey · OmniFold / MINERvA open data</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes">
+        The three points I hope you remember are these. OmniFold learns per-event density-ratio weights with two classifiers per iteration. The MINERvA open product contains enough event-level information to build a complete cross-section measurement around it. And the published two-dimensional result provides a demanding external anchor before opening new dimensions. I would especially value the collaboration's guidance on useful projections and on the validation threshold you would expect for a publication-level result.
+      </aside>
+    </section>
+
+    <!-- BACKUP 01 -->
+    <section class="slide backup" data-section="Backup" aria-label="OmniFold equations backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · ALGORITHM</p><h2>The two density-ratio updates</h2>
+        <div class="equation-stack">
+          <div><span>STEP 1 · DETECTOR</span><p>ω<sub>i</sub><sup>(t)</sup> = ν<sub>i</sub><sup>(t−1)</sup> · <span class="frac"><b>f<sub>1</sub>(x<sub>reco,i</sub>)</b><i>1 − f<sub>1</sub>(x<sub>reco,i</sub>)</i></span></p><small>Learn data / current reconstructed simulation; pull ω through event pairing.</small></div>
+          <div><span>STEP 2 · TRUTH</span><p>ν<sub>i</sub><sup>(t)</sup> = <span class="frac"><b>f<sub>2</sub>(x<sub>truth,i</sub>)</b><i>1 − f<sub>2</sub>(x<sub>truth,i</sub>)</i></span></p><small>Learn pulled truth / prior truth; ν becomes the next push weight.</small></div>
+        </div>
+        <div class="backup-note">Production: gradient-boosted trees · 5 iterations · iteration count + learner capacity are the regularizer.</div>
+      </div>
+      <aside class="notes">Use this if someone asks for the exact update. Define the classifier class convention before discussing the odds. The code includes central simulation weights in the classifier sample weights; the displayed equations emphasize the learned multiplicative ratios.</aside>
+    </section>
+
+    <!-- BACKUP 02 -->
+    <section class="slide backup" data-section="Backup" aria-label="Backgrounds misses and fakes backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · EVENT CATEGORIES</p><h2>Backgrounds, fakes and misses enter in different places</h2>
+        <div class="category-grid">
+          <div><span class="cat reco">RECO ✓</span><span class="cat truth">TRUTH ✓</span><h3>paired signal</h3><p>enters both classifier steps</p></div>
+          <div><span class="cat reco">RECO ✓</span><span class="cat truth no">TRUTH ×</span><h3>fake</h3><p>included in reco-side subtraction</p></div>
+          <div><span class="cat reco no">RECO ×</span><span class="cat truth">TRUTH ✓</span><h3>miss</h3><p>native truth-only OmniFold entry</p></div>
+          <div><span class="cat reco">RECO ✓</span><span class="cat truth no">SIGNAL ×</span><h3>background</h3><p>purity-weighted out of data target</p></div>
+        </div>
+        <figure class="backup-figure"><img src="assets/background-validation.png" alt="Validation of alternative negative-weight background subtraction"><figcaption>Negative-weight unbinned subtraction is retained as a cross-check.</figcaption></figure>
+      </div>
+      <aside class="notes">The central 2D pipeline uses a non-negative purity weight. An explicitly unbinned negative-background implementation reproduces it closely and is the natural extension when backgrounds become larger.</aside>
+    </section>
+
+    <!-- BACKUP 03 -->
+    <section class="slide backup" data-section="Backup" aria-label="Migration backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · DETECTOR RESPONSE</p><h2>What the learners must invert</h2>
+        <figure class="full-figure"><img src="assets/migration-resolution.png" alt="Migration and resolution plots for unfolded features"><figcaption>Reco–truth migrations remain event pairings; the matrix view is a diagnostic rather than the estimator.</figcaption></figure>
+      </div>
+      <aside class="notes">Use this for questions about resolution or whether the problem is actually diagonal. The diagonal purity is about 0.6 per axis, so migration is material even though the control shapes are broadly described.</aside>
+    </section>
+
+    <!-- BACKUP 04 -->
+    <section class="slide backup" data-section="Backup" aria-label="Classifier calibration backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · CLASSIFIER CHECKS</p><h2>Ratio estimation requires calibrated probabilities</h2>
+        <figure class="full-figure short"><img src="assets/classifier-calibration.png" alt="Classifier calibration curves"><figcaption>Reliability curves test the absolute probabilities used in p/(1−p), not just ranking performance.</figcaption></figure>
+        <div class="backup-note">Cross-checks: calibrated GBDT · exact/Hist/LightGBM comparison · independent neural-network implementation.</div>
+      </div>
+      <aside class="notes">A high AUC is not sufficient. The odds become a density ratio only when the classifier probability is calibrated under the training convention. This slide shows the reliability checks.</aside>
+    </section>
+
+    <!-- BACKUP 05 -->
+    <section class="slide backup" data-section="Backup" aria-label="Regularization backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · REGULARIZATION</p><h2>There are two regularization knobs</h2>
+        <div class="regularization-grid">
+          <div><span>ITERATIONS</span><b>5</b><p>More iterations can chase smaller detector-level discrepancies.</p><small>5→10 moves total σ by 0.026%; per-bin shape RMS 1.54%.</small></div>
+          <div><span>LEARNER CAPACITY</span><b>GBDT</b><p>Depth, number of trees and training sample determine ratio smoothness.</p><small>ML variability is measured with independent split/seed ensembles.</small></div>
+        </div>
+        <figure class="backup-figure wide"><img src="assets/seedscan-pt.png" alt="Seed scan variation in the transverse-momentum projection"><figcaption>Production central value remains a single fixed-seed fit; stochastic spread enters the uncertainty budget.</figcaption></figure>
+      </div>
+      <aside class="notes">OmniFold regularization is not only the iteration count. Classifier capacity and finite training also matter. The production uses five iterations because doubling the count barely changes the integral and produces only a modest shape movement.</aside>
+    </section>
+
+    <!-- BACKUP 06 -->
+    <section class="slide backup" data-section="Backup" aria-label="Current status backup">
+      <div class="slide-inner">
+        <p class="eyebrow">BACKUP · RESULT STATUS · 13 JUL 2026</p><h2>What is presentation-safe today?</h2>
+        <div class="status-board">
+          <div class="status-row green"><span>FINAL</span><b>2D central value, covariance and validation suite</b><small>quote normally</small></div>
+          <div class="status-row green"><span>CURRENT</span><b>4D/5D central values, closure and dimensional anchors</b><small>quote normally</small></div>
+          <div class="status-row amber"><span>QUALITATIVE</span><b>high-E<sub>avail</sub>, high-W localization</b><small>no significance</small></div>
+          <div class="status-row amber"><span>OUTLOOK</span><b>PET point-cloud central-value milestone</b><small>no precision comparison</small></div>
+          <div class="status-row gray"><span>WITHHELD</span><b>N-D/PET covariance totals and generator significances</b><small>corrected production and commit gate pending</small></div>
+        </div>
+        <div class="backup-note">Refresh this slide against ND_OMNIFOLD_STATUS.md immediately before the talk.</div>
+      </div>
+      <aside class="notes">This slide is deliberately date-stamped. Do not promote an in-flight artifact merely because a job completed. The repository gate requires the product summary, validation ledger, run log and status update to land in the same commit.</aside>
+    </section>
+  </main>
+
+  <div id="notes-panel" class="notes-panel" aria-live="polite"><div class="notes-head"><b>Speaker notes</b><span id="notes-time"></span></div><div id="notes-content"></div></div>
+  <div class="controls" aria-label="Presentation controls">
+    <button id="prev" title="Previous (←)">←</button><button id="next" title="Next (→ / space)">→</button>
+    <button id="notes-toggle" title="Toggle notes (N)">N</button><button id="fullscreen" title="Fullscreen (F)">⛶</button>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

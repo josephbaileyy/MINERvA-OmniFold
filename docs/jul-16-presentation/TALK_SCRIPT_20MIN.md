@@ -2,27 +2,26 @@
 
 Main deck = slides 1–23 (backup B1–B10 behind the divider). Times are
 cumulative targets; the deck's animated slides (3, 5, 7, 14, 17) have beat
-buttons — the script marks each beat. Total spoken text ≈ 2,700 words
-(~135 wpm → 20:00). If you're running long, the marked CUT lines drop
-~2 minutes without touching the argument.
+buttons — the script marks each beat. The narration is about 1,900 words
+(~14 minutes at 135 wpm), leaving roughly six minutes for animation beats,
+figure reading, and transitions. If you're running long, the marked CUT
+lines drop about two minutes without changing the argument.
 
-Register note (2026-07-16 pass): no "you/your" framing directed at the
-audience, no slogans. State facts; let the numbers carry the emphasis.
+Register note (2026-07-16 pass): use a technical, non-promotional register.
+Define acronyms on first use, avoid appeals to authority or personal
+credibility, and let the comparisons and validation results carry the claim.
 
 ---
 
 ## 1 · Title — 0:00 → 0:45
 
 Thank you — my name is Joseph Bailey. I'm an undergraduate researcher at
-Stanford, working with Ben Nachman. I should say up front that I am not a
-MINERvA collaborator: everything in this talk is built on the public ME FHC
-CC-inclusive data release, and nothing required access beyond what is
-already published.
+Stanford, working with Ben Nachman. This analysis uses the public ME FHC
+CC-inclusive data release; nothing shown required access to internal data.
 
-One note on the subtitle, stated explicitly: we used AI agents to help with
-essentially every part of this analysis — code, systematics bookkeeping,
-documentation. We have verified, and take full responsibility for, all of
-the content.
+One disclosure: AI-assisted tools were used in coding, systematics
+bookkeeping, and documentation. All quoted results were checked through the
+validation chain I will show.
 
 The talk in one sentence: we deploy OmniFold, a machine-learning unfolding
 method, on the MINERvA open data — first to reproduce the published
@@ -31,11 +30,10 @@ can reach.
 
 ## 2 · Three parts, in order — 0:45 → 1:30
 
-Three parts, in this order — the order matters, because each part is the
-justification for the next.
+There are three parts.
 
-First, a brief introduction to OmniFold. It is not exotic — it has been
-deployed at ATLAS, CMS, LHCb, STAR, H1, ALEPH, and T2K.
+First, the OmniFold event-reweighting procedure and its relation to binned
+unfolding.
 
 Second, reproduction: the existing ME FHC CC-inclusive double-differential
 measurement, redone unbinned, quoted in the published bins.
@@ -44,7 +42,7 @@ Third, extension: dimensionality beyond two — E-available, q3, and W as new
 axes on the same unfolded events — and a look toward a full-phase-space
 measurement.
 
-## 3 · The dimensionality wall (animation) — 1:30 → 2:30
+## 3 · Response-matrix scaling (animation) — 1:30 → 2:30
 
 **[Beat 1]** Every binned measurement starts by freezing an observable and a
 binning. Here is a toy: six hundred events, one dimension, sixty-four
@@ -52,19 +50,18 @@ response-matrix cells — each cell well populated.
 
 **[Beat 2]** Add a second dimension and the cells multiply: four thousand.
 Add a third: a quarter of a million cells — for the same six hundred events.
-The response matrix runs out of statistics long before the event sample
-does.
+The occupancy per response-matrix cell falls rapidly even though the event
+sample size is unchanged.
 
-**[Beat 3]** Now remove the grid. The same six hundred events, treated as
-events, are densely populated in three dimensions. The limit is bin
-occupancy, not event count.
+**[Beat 3]** Remove the grid. The same six hundred events can instead be
+represented by their coordinates and paired truth–reco values. The scaling
+problem comes from bin occupancy, not from the event count itself.
 
 ## 4 · Thirty measurements — 2:30 → 3:15
 
-This limit is visible in the publication record. Here is every published
-MINERvA differential cross section — thirty of them. Every one uses binned
-D'Agostini iterative Bayesian unfolding, and every one is focused on one or
-two simultaneous observables. That plateau is the wall from the last slide.
+This survey contains thirty published MINERvA differential cross sections.
+They use binned D'Agostini iterative Bayesian unfolding — IBU for short —
+and report one or two simultaneous observables.
 
 This work is the red star: five observables unfolded simultaneously — muon
 pT and p-parallel, E-available, q3, and W. The arrow above it indicates the
@@ -72,11 +69,10 @@ further step: point-cloud inputs replace the fixed list of scalars —
 currently the reconstructed recoil system, with a full-event extension in
 progress. I will come back to that at the end.
 
-## 5 · Binned, OmniFold reduces to IBU (animation) — 3:15 → 4:15
+## 5 · Binned OmniFold gives the D'Agostini update (animation) — 3:15 → 4:15
 
-The way I find it clearest to conceptualize OmniFold is through its binned
-limit: bin the inputs, and it reduces to D'Agostini IBU. This animation
-shows the correspondence.
+The binned limit gives a direct correspondence with D'Agostini IBU. This
+animation shows it.
 
 **[Beat 1]** Each simulated event is one truth–reco pair — one dashed line
 per event.
@@ -135,31 +131,31 @@ regularizing structure as choosing the IBU iteration count.
 true spectrum it was never shown. Binning happens only now, at the very
 end, into any chosen binning.
 
-## 8 · Why this is not a black box — 7:15 → 8:15
+## 8 · Implementation checks — 7:15 → 8:15
 
-Three points on why this is not a black box.
+Three implementation facts are useful here.
 
-First — this is the previous slide's statement made precise — feed OmniFold
-binned inputs and it reduces exactly to D'Agostini IBU. It is a strict
-generalization of the method MINERvA already uses, with the histogram
-removed.
+First, with binned inputs the OmniFold update is exactly the D'Agostini IBU
+update. With unbinned inputs, the simulated truth–reco pairing is retained
+event by event.
 
-Second, the learner is gradient-boosted decision trees. Deliberately simple,
-robust, cheap to retrain — and cross-checked against an independent neural
-network, which agrees at the one-percent level.
+Second, the nominal learner is a gradient-boosted decision tree. An
+independently trained neural network gives a total-cross-section ratio of
+1.008 relative to the GBDT result.
 
 Third, backgrounds, fakes, misses, and efficiency are handled with the
 standard bookkeeping — the same accounting as in the binned analyses,
 carried as event weights. Details in backup.
 
-## 9 · Adding an observable is adding a column — 8:15 → 9:00
+## 9 · Adding an observable as an input feature — 8:15 → 9:00
 
 The practical consequence. Binned: each new dimension multiplies
 response-matrix cells, and the binning is frozen before the unfold.
-Unbinned: each new observable is one more input column on the same events.
-The unfolded result is a weighted event sample, so bins — and even
-observables — are chosen *after* unfolding. This contrast is what the rest
-of the talk uses.
+Unbinned: each observable included in training is one more input column on the
+same events. The output is a weighted event sample, so reporting bins and
+projections of those recorded features can be chosen afterward. A genuinely
+new feature still requires retraining and validation. This contrast is what the
+rest of the talk uses.
 
 ## 10 · Reproduction — 9:00 → 10:30
 
@@ -170,27 +166,25 @@ sixteen binning, and overlay the published points.
 
 Total cross section ratio, OmniFold over published: one-point-zero-one-one.
 Median per-bin ratio: one-point-zero-zero-six. Ninety-four percent of
-reported bins within ten percent. Same data, same answer, through an
-independent chain.
+reported bins are within ten percent.
 
-## 11 · Pulls and the full-covariance picture — 10:30 → 11:45
+## 11 · Standardized differences and the covariance picture — 10:30 → 11:45
 
-Quantified: per-bin pulls against the published uncertainties — mean 0.09,
-RMS 0.60, no structure across the plane.
+Quantified descriptively using the published per-bin uncertainties as a scale:
+mean standardized difference 0.09, RMS 0.60, no structure across the plane.
 
-Let me also state the full-covariance number before anyone asks. Against the
-paper's full covariance alone, chi-squared per degree of freedom is 3.66 —
-driven by correlated shape modes along the low-pT peak ridge, not
-normalization; including our own covariance brings it to 1.48. The anatomy
-of that number is in backup, and I'm happy to go through it in questions.
+The indicative distance using the paper's full covariance is 3.66 per bin. It
+is driven by correlated shape modes along the low-pT peak ridge,
+not normalization. Using the sum of the paper and OmniFold covariances gives
+1.48, but the cross-covariance is unavailable because the two results share
+data; neither number is a formal compatibility test. The mode-by-mode
+breakdown is in backup B6b.
 
 ## 12 · Uncertainty budget, rebuilt — 11:45 → 12:45
 
-Agreement in the central value is only half the reproduction. We did not
-reuse the collaboration's error propagation — we rebuilt it. Flux, detector,
-and interaction-model universes from the data release, propagated through
-the unfold from scratch, plus an ML term that has no counterpart in a
-binned analysis.
+The uncertainty propagation was implemented independently from the public
+release. Flux, detector, and interaction-model universes are propagated
+through the unfold, plus a separate ML-training term.
 
 The rebuilt 2D budget lands at a median per-bin uncertainty of 6.87 percent
 versus the published 6.86 — with the same band ordering. The ML contribution
@@ -198,44 +192,46 @@ is the line riding along the bottom.
 
 ## 13 · Validation — 12:45 → 13:45
 
-Six stress tests, each with a number. Closure tests recover injected truth
-changes, including a hidden resolution variable and an alternate model. Toy
-coverage comes out at 68.7 percent against the Gaussian 68.27 target.
+Six stress tests, each targeting a different failure mode. Closure tests recover
+injected truth changes, including a hidden resolution variable and an alternate
+model. The existing 2D toys give a mean absolute standardized residual of 0.794,
+close to the unit-normal value 0.798. That is a same-ensemble Gaussianity check,
+not coverage: the MC bootstrap also fluctuates the stored truth reference, so a
+valid independent-truth coverage test is still open.
 Doubling the iteration count moves the total cross section by 0.026 percent.
 An independent neural network reproduces the GBDT result at the one-percent
 level. With binned inputs the update reduces to IBU — verified numerically.
-And a bottom-line test: a freshly trained classifier can no longer separate
-the unfolded result from the target — AUC 0.501.
+And a descriptive bottom-line test moves from AUC 0.535 before unfolding to
+0.501 afterward. It is not cross-fitted through the full OmniFold chain, so I
+do not attach a calibrated p-value or claim statistical equivalence.
 
-*(CUT if long: name only closure, coverage, and the bottom-line test.)*
+*(CUT if long: name only closure, the pull diagnostic, and the descriptive
+classifier test.)*
 
-## 14 · Marginalization (animation) — 13:45 → 14:30
+## 14 · Marginalization check (animation) — 13:45 → 14:30
 
-Results, part two: new dimensions. First, the check that makes new
-dimensions testable.
+Results, part two: new dimensions. First, define the lower-dimensional
+check.
 
 **[Beat]** A higher-dimensional unfold, viewed in three axes. Integrating
-out E-available is just summing the same weighted events — no re-unfold. So
-the marginal of the larger measurement must reproduce the 2D anchor just
-validated. Every added dimension carries this built-in cross-check.
+out E-available is just summing the same weighted events — no re-unfold. The
+resulting marginal can be compared directly with the 2D result just shown.
 
 ## 15 · The 5D unfold reproduces the anchor — 14:30 → 15:15
 
 And it does, on data. Same events, three more columns: a simultaneous
 five-dimensional unfold in pT, p-parallel, E-available, q3, and W.
 Marginalized back to the published 2D binning, it reproduces the anchor —
-pulls again sub-unit, no structure. The added dimensions do not subdivide
-the event sample: they add input columns, not response-matrix cells.
+pulls again sub-unit, no structure. The added dimensions do not require an
+explicit response-tensor subdivision: they enter the trained estimator as input
+columns, with the corresponding support and uncertainty checks.
 
-## 16 · Re-finding the known low-recoil physics — 15:15 → 16:30
+## 16 · Known low-recoil structure in the E-available marginal — 15:15 → 16:30
 
-Now the physics content. The unfolded E-available spectrum, against
-generators. Nothing on this slide is a new claim — deliberately: all
-generators underpredict at low recoil, and adding Valencia 2p2h fills the
-dip between the QE and Delta peaks. This is MINERvA's established low-recoil
-result, recovered from the public data by a different unfolding method.
-Recovering an established result with an independent method is the relevant
-test of the method's credibility.
+The unfolded E-available spectrum shows the established low-recoil
+structure: the generators underpredict in this region, and adding Valencia
+2p2h fills the dip between the QE and Delta peaks. This is not a new physics
+claim. Its role here is as a cross-check of the higher-dimensional result.
 
 ## 17 · Localizing a discrepancy (animation) — 16:30 → 17:15
 
@@ -255,19 +251,21 @@ excess, and most of that sits above W of 1.8 GeV. All four generators we
 compared — GENIE with MnvTune, bare GENIE, NuWro, and GiBUU — underpredict
 there.
 
-What I am *not* quoting is a significance. The corrected five-dimensional
-covariance is in hand, but this plane's significances have not yet been
-requoted against it, so the claim today is a localization, not a sigma.
+What I am *not* quoting is a significance. The current five-dimensional
+covariance is still a candidate until the selection-complete lateral
+replacement lands, and this plane has not been requoted against a final
+covariance. The claim today is a localization, not a sigma.
 
 ## 19 · Outlook: point clouds — 18:15 → 18:50
 
 Two directions, briefly. First: point-cloud inputs. A recoil-only
-point-cloud cross-check is complete — a transformer takes the reconstructed
+point-cloud central-value cross-check is complete — a transformer takes the reconstructed
 recoil clusters directly, with muon kinematics entering only through
-selection and downstream binning, and it agrees with the scalar pipeline at
-comparable precision. A muon-inclusive full-event extension and a dedicated
-omitted-variable validation are in progress. This is the arrow above the
-star on slide four; uncertainty numbers in backup B9.
+selection and downstream binning. Its historical uncertainty total is
+quarantined because nuisance and retraining responses need a joint covariance
+and the detector sample was support-limited. A muon-inclusive full-event
+extension and its fresh uncertainty budget are in progress. This is the arrow
+above the star on slide four; backup B9 shows central values only.
 
 ## 20 · Outlook: full phase space — 18:50 → 19:20
 
@@ -280,12 +278,12 @@ and the final corrected uncertainties are pending.
 
 ## 21 · Summary — 19:20 → 19:45
 
-In summary: OmniFold assigns weights to simulated events rather than
-operating on binned histograms, and it reduces to D'Agostini IBU in the
-binned limit. It reproduces the published 2D result with an independently
-rebuilt uncertainty budget. The same events then open E-available, q3, and
-W — recovering the known low-recoil physics and localizing a residual
-excess in the DIS corner.
+In summary: OmniFold assigns weights to simulated events. With binned
+inputs, its update is the D'Agostini IBU update; with unbinned inputs, the
+truth–reco pairing remains event-level. It reproduces the published 2D
+result with an independently implemented uncertainty budget. Adding
+E-available, q3, and W recovers the known low-recoil structure and localizes
+a residual excess in the DIS corner.
 
 Two questions for the collaboration, on the bottom of the slide: which
 projections would be most useful, and what validation would be required at
@@ -293,17 +291,17 @@ publication level?
 
 ## 22 · Three technical questions — 19:45 → 20:00 *(can bleed into Q&A)*
 
-Three technical questions where collaboration guidance resolves more than
-we can compute on our own — FrInel_pi dial practice, the goodness-of-fit
-convention for a rank-deficient covariance, and whether MINERvA would
-endorse publishing a full 3D covariance. If anyone can speak to these today
-or afterwards, that closes real items in the note.
+Three technical questions remain: FrInel_pi dial practice, the
+goodness-of-fit convention for a rank-deficient covariance, and publication
+precedent for a full 3D covariance. Answers today or
+afterwards would resolve specific open items in the note.
 
-## 23 · Note v1.0 — closing line
+## 23 · Dated analysis-note draft — closing line
 
-Finally: a frozen v1.0 of the analysis note goes up right after this talk —
-link by email. Please send feedback directly to Ben and me; we aim to wrap
-up in about a month. Thank you.
+Finally: a dated draft of the analysis note goes up right after this talk —
+link by email. It distinguishes finalized 2D and central-value results from
+covariance work that is still gated. Please send feedback directly to Ben and
+me; we aim to wrap up in about a month. Thank you.
 
 ---
 

@@ -72,57 +72,35 @@ measured target as the scalar GBDT. Event-by-event data alignment is exact, the
 MC arrays are byte-identical to the full-cloud input. The
 nominal PET extraction, an identical-seed GPU-floor repeat, a
 20-member coherent-Poisson retraining ensemble, and a 12-member crossed
-subsample/estimator-seed ensemble have all passed their ordering, coverage, and
+subsample/estimator-seed ensemble have all passed their ordering, event-alignment, and
 finite-output gates. The GPU nondeterminism is negligible relative to both
 sampling and training variation. The $C_{\rm stat}$ estimate is based on 20
 coherent replicas, so its finite-ensemble precision is more limited than the
 100-replica target. These statements characterize the recoil-only estimator
 and do not supply an uncertainty for a joint muon--recoil estimator.
 
-The PET budget uses actual minus/plus endpoints with the
-mean-centered MAT convention, an exact 100-universe flux inventory, and a
-strict ensemble of independently data- and MC-fluctuated replicas. Every
-replica retrains PET at a fixed estimator seed and carries the same coherent
-MC draw through final cross-section extraction. Missing endpoints, incomplete
-replica manifests, non-finite ratios, and partial event coverage are fatal.
+The historical recoil-PET campaign produced vertical, retraining, ML,
+statistical and detector blocks on a common nominal.  That assembly is now
+quarantined rather than quoted as an uncertainty.  For a nuisance endpoint
+$u$, the physical shift and the induced retraining response form one joint
+shift,
+\begin{equation}
+  \delta_u=x_u^{\rm varied+retrained}-x_{\rm CV}.
+\end{equation}
+Writing this as a frozen-map piece plus a retraining increment is an algebraic
+decomposition, but adding the two separate covariances omits
+$\operatorname{Cov}(\delta_{\rm frozen},\delta_{\rm retrain})$ and its
+transpose.  Positive semidefiniteness of that sum does not restore the missing
+cross term.
 
-The five-component assembly is
-\begin{center}
-\begin{tabular}{@{}lcc@{}}
-\toprule
-Component & $\sqrt{\mathrm{Tr}\,C}$ & median $\sigma_i/x_i$ \\
-\midrule
-Vertical systematic & $2.970\times10^{-38}$ & \SI{7.58}{\percent} \\
-Targeted retraining response & $2.190\times10^{-38}$ & \SI{\petRetrainMedian}{\percent} \\
-ML ensemble & $8.036\times10^{-39}$ & \SI{2.35}{\percent} \\
-Statistical ensemble & $7.439\times10^{-39}$ & \SI{7.85}{\percent} \\
-Detector/lateral & $4.690\times10^{-39}$ & \SI{\petLateralMedian}{\percent} \\
-\midrule
-Total & $\petTotalTrace$ & \SI{\petTotalMedian}{\percent} \\
-\bottomrule
-\end{tabular}
-\end{center}
-All matrices share the same corrected nominal and 10,550-bin mask; their sum is
-finite, symmetric, and positive semidefinite. Its width-weighted 4D marginal is
-also positive semidefinite and has median uncertainty
-\SI{\petFourMedian}{\percent} over 4,790 reported bins.
-
-The predeclared retraining study covered the six bands carrying
-\SI{89.4}{\percent} of the preliminary vertical variance. All six showed
-material map response, while an identity-ratio null retrain was only
-\SI{0.008}{\percent} of the CV norm. The resulting rank-six
-$C_{\rm retrain}$ is therefore retained and is the second-largest contribution
-by trace. It does not double count the vertical block: the latter contains
-$x_{\rm frozen}(r_u)-x_{\rm CV}$, whereas the new term contains only the
-additional response $x_{\rm retrain}(r_u)-x_{\rm frozen}(r_u)$.
-
-For detector/lateral variations, the calculation propagates shifted detector
-weights and observables through the corrected nominal cloud sample with the PET
-map frozen; it does not regenerate shifted-cloud membership or retrain PET for
-every detector universe. The recoil-PET and GBDT median
-uncertainties are of comparable scale, but their different reported masks,
-central trainings and feature contracts make a binwise superiority claim
-inappropriate.
+The historical detector block is additionally CV-support-limited: it propagates
+shifted weights and observables through the nominal cloud membership instead of
+regenerating the selected cloud for every lateral endpoint.  The replacement
+therefore uses end-to-end joint nuisance/retraining shifts and the
+selection-complete FPS lateral samples.  It belongs to the full-event PET
+estimator and receives a fresh statistical and ML ensemble.  Until that product
+lands, this section quotes only the recoil-PET central value and closure; no PET
+precision comparison is made.
 
 \subsection{Truth-cloud projection within the recoil cross-check}
 \label{sec:pet-projection}

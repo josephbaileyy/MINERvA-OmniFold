@@ -117,8 +117,11 @@ User feedback quoted in the last user message of the previous session.
 
 ## Numbers guardrails
 
-values.tex is the source of truth (χ² 3.66 paper / 1.48 combined; 6.87% vs
-6.86%; 1.011/1.006/94.1%; coverage 68.71%; iter 0.026%; NN/GBDT 1.0078; C2ST
-AUC 0.501 p=0.17). N-D covariance significances stay withheld (quarantine).
+values.tex is the source of truth (χ² distances 3.66 paper / 1.48 combined,
+with no shared-data cross-covariance and therefore no calibrated GoF claim;
+6.87% vs 6.86%; 1.011/1.006/94.1%; same-ensemble mean-|r| 0.794 vs 0.798 as a
+Gaussianity diagnostic, not coverage; iter 0.026%; NN/GBDT 1.0078; descriptive
+C2ST AUC 0.535→0.501 with no calibrated p-value or equivalence claim). N-D
+covariance significances stay withheld (quarantine).
 Landscape claim of 5D = central-value dimensionality, fine per presentation
 rule in ND_OMNIFOLD_STATUS.md.

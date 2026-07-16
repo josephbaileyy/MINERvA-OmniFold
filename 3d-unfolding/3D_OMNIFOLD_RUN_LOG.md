@@ -308,3 +308,15 @@ existing products. Verdict: no critical defects.
 Files touched (3D side): `genie/compare_ascencio_eavail.py` (+ `.png`),
 `xsec_3d_MEFHC_5iter_lgbm_ensemble.root`, `3D_OMNIFOLD_STATUS.md`,
 `docs/technote/sec_3d.tex`. Frozen `.root` products untouched.
+
+## 2026-07-16 — Covariance-gate correction after dependency audit
+
+No compute and no central-value change. The corrected dependency map makes the
+final adopted 5D covariance, including the selection-complete lateral
+replacement, the parent of the quotable 3D projection. The historical 3D
+block-sum covariance (sqrt-trace `5.724e-39`, rank `247/1431`) still reproduces
+its own files but is now a **CANDIDATE/diagnostic**, not a publication product.
+All 3D generator chi-square, p-value, and significance claims derived from it
+are quarantined until the final 5D-to-3D projection lands and they are
+recomputed. The 3D central value, marginalization anchor, and injected-shape
+closure remain valid.

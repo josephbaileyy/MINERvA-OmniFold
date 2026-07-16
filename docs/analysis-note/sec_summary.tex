@@ -5,15 +5,17 @@
 Unbinned OmniFold with gradient-boosted trees reproduces the published
 MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$
 ($\sigma_{\mathrm{tot}}$ ratio $\ratioTot$; \SI{\binsTen}{\percent} of bins within
-\SI{10}{\percent}; pull RMS $\pullRMSr$) with a standalone uncertainty budget that
+\SI{10}{\percent}; published-$\sigma$ standardized-difference RMS $\pullRMSr$)
+with a standalone uncertainty budget that
 matches the published total (\SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}
 median per bin) and passes a full validation suite: three closure families, a
-bottom-line test, split-ensemble frequentist coverage, a binned goodness-of-fit
-and an unbinned (C2ST) descriptive diagnostic, and classifier-family cross-checks. On that foundation we
-performed the first \emph{unbinned} simultaneous three-, four- and five-observable
+bottom-line test, iteration and pull diagnostics, a binned goodness-of-fit
+and an unbinned (C2ST) descriptive diagnostic, and classifier-family cross-checks. The existing
+2D toys do not furnish an independent-truth coverage test. On that foundation we
+performed \emph{unbinned} simultaneous three-, four- and five-observable
 unfolds of MINERvA data ($+\Eavail$, $+q_{3}$, $+W$), each validated by recovering its
 lower-dimensional predecessor under marginalization. (Binned MINERvA multi-differential
-measurements, up to triple-differential~\cite{MINERvA:2022qe}, exist; the novelty is the
+measurements, up to triple-differential~\cite{MINERvA:2022qe}, exist; the methodological distinction is the
 unbinned, simultaneously-unfolded formulation.) The physics output:
 \begin{itemize}[itemsep=2pt]
   \item the low-$\Eavail$ excess over all four truth-level generators
@@ -25,9 +27,8 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
         quoted --- no corrected 4D covariance is adopted, \S\ref{sec:3d});
   \item the unified-throw machinery now tests the block sum with asymmetric
         endpoints, a fixed estimator seed, and mean-centered joint throws;
-        the corrected 5D result is adopted at
-        $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$, with
-        its joint mean shift reported separately; no corrected 4D covariance is reported
+        the resulting 5D covariance remains a candidate until the
+        selection-complete lateral replacement lands; no corrected 4D covariance is reported
         (\S\ref{sec:uq-combine});
   \item the $(\Eavail,W)$ study localizes the remaining high-$\Eavail$
         excess to the deep-inelastic region, where all four generators
@@ -36,11 +37,10 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
         (\S\ref{sec:eavailw});
   \item the recoil-only PET point-cloud track provides a low-level-input
         representation cross-check, yielding an absolutely-normalized central
-        value that passes ordinary closure; its completed five-component budget for
-        that recoil estimator has
-        median uncertainty \SI{\petTotalMedian}{\percent}, and the targeted
-        retraining response is its second-largest term by trace
-        (\S\ref{sec:pet}). Because the muon is omitted from both classifiers,
+        value that passes ordinary closure. Its historical five-component budget
+        is quarantined because nuisance and retraining shifts require a joint
+        covariance (or explicit cross term) and the detector sample was
+        CV-support-limited (\S\ref{sec:pet}). Because the muon is omitted from both classifiers,
         these products do not establish a joint muon--hadron unfold and no
         covariance component transfers automatically to the full-event replacement.
 \end{itemize}

@@ -1,6 +1,6 @@
 # 3D OmniFold (Eavail) — Status
 
-**Last updated**: 2026-06-03. Workstream C framework **complete end-to-end**
+**Last updated**: 2026-07-16. Workstream C framework **complete end-to-end**
 (C1 event loop + C2 driver + C3 validation). **2026-06-03 literature audit**
 (see `../LITERATURE_NOTES.md`): no critical defects; added the 3D bottom-line
 test (PASS, ratio 0.102) and an **ensemble-mean** 3D CV
@@ -12,8 +12,9 @@ rank-247 truncated-spectral χ²; the high-E_avail DIS-tail excess is the one
 remaining physics item). Full-stats 3D unfold
 `d³σ/(dp_T dp_‖ dE_avail)` produced and validated: the Eavail-marginal recovers
 the published 2D **normalization**, and an injected-shape **closure passes** — so
-the elevated marginal **shape** χ² is genuine data↔MC structure the new axis
-exposes, not a method bias. **Generator comparison done** with **four**
+the elevated marginal shape distance is consistent with data↔MC structure the
+new axis resolves and is not explained by nonclosure of that tested
+deformation. **Generator comparison done** with **four**
 generators (GENIE CV + MINERvA Tune v1 + NuWro 21.09 + GiBUU 2019), all
 under-predict and split along Eavail — see `genie/` and technote §6. **Full
 systematic + statistical UQ DONE** (2026-06-02): the 187-universe sweep was
@@ -21,6 +22,15 @@ re-unfolded into the combined covariance C_syst+C_stat+C_ML at
 `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` (Flux-dominated, same
 band ordering as 2D); the generator comparison now carries that full-cov
 systematic band.
+
+**2026-07-16 covariance-gate override:** the 3D central value, dimensional
+anchor, and closure controls remain valid. The historical rank-247 block-sum
+covariance and every covariance-dependent generator $\chi^2$/significance are
+now **CANDIDATE/QUARANTINED**, not publication numbers. Under the corrected
+dependency contract, the quotable 3D covariance is projected from the final
+adopted 5D trunk after the selection-complete lateral replacement. Statements
+below that call the old 3D UQ “DONE” are retained as chronology and are
+superseded by this gate.
 
 Companion docs: `README.md` (orientation, axis-decision table, how-to-run),
 `3D_OMNIFOLD_RUN_LOG.md` (this workstream's chronology). Shared invariants live

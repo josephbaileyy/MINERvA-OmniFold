@@ -54,7 +54,7 @@ This correction is, deliberately, the one place the analysis binning enters
 before the final histogramming. Published unbinned measurements have so far
 avoided the problem rather than solved it: H1 cut backgrounds to a negligible
 level, LHCb corrected per track upstream of the unfold, and ATLAS left its
-$<\SI{0.25}{\percent}$ background in place and assigned it as an uncertainty,
+the less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
 while identifying negatively-weighted simulated events as the natural
 in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
 Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds
@@ -103,7 +103,7 @@ an independently published binned measurement of the same data
 different train/test splits controls the ML stochastic component --- which we
 budget explicitly via the seedscan band (\S\ref{sec:systematics}). The
 present work differs in unfolding \emph{real} MINERvA data to an absolutely
-normalized cross section with a complete uncertainty budget, in using GBDT
+normalized cross section with a complete finalized 2D uncertainty budget, in using GBDT
 learners suited to a low-dimensional tabular feature set, and in validating
 the method directly against a published binned measurement of the same data
 (\S\ref{sec:results}).

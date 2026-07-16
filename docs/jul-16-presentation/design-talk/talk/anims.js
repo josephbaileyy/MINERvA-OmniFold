@@ -214,14 +214,21 @@
       else { if (this.t >= this.spec.duration) this.t = 0; this.play(); }
     }
     step(dir) {
+      // Snaps mark beat boundaries (where the next transition begins). Land a
+      // hair BEFORE the boundary so the button shows the completed state of
+      // the current beat with its own caption — landing exactly on the
+      // boundary showed the next beat's caption over the previous beat's
+      // visuals (off-by-one).
       const sn = this.spec.snaps || [0, this.spec.duration];
       this.pause();
+      const eps = 0.01;
+      const land = (s) => (s <= 0 || s >= this.spec.duration) ? Math.min(s, this.spec.duration) : s - eps;
       if (dir > 0) {
-        const nxt = sn.find((s) => s > this.t + 0.01);
-        this.t = nxt != null ? Math.min(nxt, this.spec.duration) : this.spec.duration;
+        const nxt = sn.find((s) => s > this.t + eps + 0.001);
+        this.t = nxt != null ? land(nxt) : this.spec.duration;
       } else {
-        const prev = sn.filter((s) => s < this.t - 0.01);
-        this.t = prev.length ? prev[prev.length - 1] : 0;
+        const prev = sn.filter((s) => s < this.t - eps - 0.001);
+        this.t = prev.length ? land(prev[prev.length - 1]) : 0;
       }
       this.render();
     }
@@ -275,7 +282,7 @@
     }
     return {
       duration: 21,
-      snaps: [0, 4.5, 9.5, 13.5, 21],
+      snaps: [0, 4.5, 9.5, 13.5, 18, 21],
       draw(ctx, t) {
         drawPanel(ctx, 30, 20, 1540, 860);
         const panels = [
@@ -392,7 +399,7 @@
 
     return {
       duration: 28,
-      snaps: [0, 4, 6.4, 9, 11.4, 14, 16.4, 19, 21.4, 24, 28],
+      snaps: [0, 6.4, 9, 11.4, 14, 16.4, 19, 21.4, 24, 28],
       draw(ctx, t) {
         drawPanel(ctx, 30, 20, 1540, 860);
         const x0 = 130, x1 = 1470;
@@ -460,7 +467,7 @@
         const rev = phase(t, 24, 26);
         if (rev > 0) {
           drawStepHist(ctx, datHT, x0, x1, tBase, hScale, C.data, { dash: [10, 8], width: 3, alpha: rev });
-          label(ctx, 'true spectrum (revealed)', x1, tBase - 300, { size: 24, color: C.data, align: 'right', alpha: rev });
+          label(ctx, 'true spectrum (revealed)', x1, tBase - 230, { size: 24, color: C.data, align: 'right', alpha: rev });
         }
 
         for (let k = 0; k < 4; k++) {
@@ -525,7 +532,7 @@
     const cxOf = (b) => x0 + (b + 0.5) * binW;
     return {
       duration: 17,
-      snaps: [0, 4, 8, 12, 17],
+      snaps: [0, 8, 12, 17],
       draw(ctx, t) {
         drawPanel(ctx, 30, 20, 1540, 860);
         const p1 = phase(t, 4, 7);      // impose bins, align
@@ -639,7 +646,7 @@
           }
         }
 
-        if (pTag > 0) label(ctx, 'with binned inputs, the OmniFold update is the IBU update', 800, 74, { size: 32, color: C.ink, align: 'center', weight: 600, alpha: pTag });
+        if (pTag > 0) label(ctx, 'with binned inputs, the OmniFold update is the D\u2019Agostini IBU update', 800, 74, { size: 30, color: C.ink, align: 'center', weight: 600, alpha: pTag });
 
         if (t < 4) label(ctx, 'simulated events are (truth, reco) pairs — one dashed line per event', 800, 855, { size: 26, color: C.dim, align: 'center' });
         else if (t < 8) label(ctx, 'bins imposed at both levels — each event assigned to a (truth bin, reco bin)', 800, 855, { size: 26, color: C.dim, align: 'center' });
@@ -671,7 +678,7 @@
     const anchor = makeHist(ev.map(e => e.x), ev.map(e => e.w), 0, 1, B);
     return {
       duration: 16,
-      snaps: [0, 4, 9, 12.5, 16],
+      snaps: [0, 9, 12.5, 16],
       variants: ['3D volume collapses', 'E_avail slices sum'],
       variant: 0,
       draw(ctx, t, variant) {

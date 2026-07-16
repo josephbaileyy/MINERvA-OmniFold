@@ -909,8 +909,9 @@ null directions nor the absolute smallest eigenvalues}:
   \item The top contributing modes sit at $\lambda_{k}/\lambda_{\max}\sim
         10^{-4}$--$10^{-5}$ --- the lower-middle of the spectrum by
         magnitude, but still $\sim7$--$8$ decades above the cond-floor
-        ($\lambda/\lambda_{\max}\sim10^{-12}$) --- with genuine eigen-pulls
-        of $5$--$6\sigma$.
+        ($\lambda/\lambda_{\max}\sim10^{-12}$) --- with standardized-component
+        magnitudes $5$--$6$. These are descriptive coordinates in the published
+        covariance basis, not calibrated significances for two independent results.
   \item The ten \emph{smallest}-$\lambda$ modes carry only $3\%$ of the
         $\chi^{2}$; about $90$ modes are needed to reach $90\%$. The
         $\chi^{2}$ is broadly distributed, not localized to the
@@ -995,32 +996,36 @@ flux\,$\leftrightarrow$\,Muon\_Energy joint block (rederived at
 $\rho=\rhoFluxMuon$, \S\ref{sec:rank}) is exactly the covariance structure
 governing the region that carries the tension.
 
-\subsection{Calibration: coverage toys}
+\subsection{Pull diagnostics and the open 2D coverage test}
 \label{sec:coverage}
 
 \paragraph{What it estimates.}
-Whether the bootstrap covariance band actually covers the truth at
-the rate it claims. A bootstrap band that is wrong --- too tight or
-too loose --- would give the right shape but the wrong $\chi^{2}$.
-Coverage toys provide an independent calibration check.
+The existing closure-toy ensemble supports a same-ensemble standardized-pull
+calculation that checks whether the toy distribution is approximately
+Gaussian. It does not support a valid 2D coverage claim: the MC bootstrap also
+fluctuates the stored \texttt{hTruthXSec2D}, so the all-toy truth mean is not an
+independent reference. A future disjoint calibration/evaluation test must use
+an independently stored unfluctuated truth (or a redesigned toy ensemble).
 
 \paragraph{Procedure (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}).}
 Generate $N_{\text{toy}}=200$ closure unfolds, each one combining two
 existing modes of \texttt{unfold\_2d\_omnifold\_unbinned.py}:
 \begin{itemize}[nosep]
   \item \texttt{-{}-closure}: pseudo-data are MC reco events
-        (weighted), so the reference truth marginal
-        $\mathbf{X}^{\text{truth}}$ is known exactly and is written
-        to \texttt{hTruthXSec2D} in every output file.
+        (weighted); a truth marginal is written to
+        \texttt{hTruthXSec2D} in every output file.
   \item \texttt{-{}-bootstrap-seed $k$} (seeds chosen to avoid
         collision with the production replicas): per-event Poisson(1)
         draws, same as the production bootstrap.
 \end{itemize}
-Each toy is independent.
+Toy seeds are independent and bins within a toy are correlated. Because the
+MC bootstrap multiplies \texttt{w\_truth}, the stored truth marginal also
+varies from toy to toy and cannot serve as the independent coverage target.
 
 \paragraph{Math.}
 Stack the toys into an $N_{\text{toy}}\times14\times16$ array
-$\mathbf{U}^{(t)}$. For each reported bin (where
+$\mathbf{U}^{(t)}$. Here $\bar X^{\text{truth}}$ is the all-toy mean used only
+to center this same-ensemble diagnostic. For each reported bin (where
 $\bar X^{\text{truth}}_{i}>0$, $i$ indexing the $205$ reported cells):
 \begin{align}
 \sigma_{i}
@@ -1037,9 +1042,9 @@ c_{i}
 \;&=\;
 \frac{1}{N_{\text{toy}}}
 \sum_{t=1}^{N_{\text{toy}}} \mathbf{1}\!\big\{|r^{(t)}_{i}| \le 1\big\}
-\quad\text{(per-bin coverage)}.
+\quad\text{(same-ensemble per-bin fraction)}.
 \end{align}
-The expected value of $c_{i}$ under a well-calibrated Gaussian band
+The reference value of $c_{i}$ for Gaussian standardized residuals
 is the central-$\sigma$ probability of a unit normal:
 \begin{equation}
 c^{\text{expected}}
@@ -1062,22 +1067,23 @@ $\sqrt{2/\pi}\approx 0.798$.
 and \texttt{uq/coverage/coverage\_summary.txt}.
 \end{sloppypar}
 
-\paragraph{Worked example (coverage).}
+\paragraph{Worked example (same-ensemble pull diagnostic).}
 With $N_{\text{toy}}=200$ on the $205$ reported bins:
 \begin{itemize}[nosep]
-  \item Mean coverage: $\boxed{68.71\%}$ (target $68.27\%$;
+  \item Fraction with $|r|\leq1$: $\boxed{68.71\%}$ (Gaussian reference $68.27\%$;
         $\Delta = +0.44\%$); median $68.50\%$.
   \item $\langle |r| \rangle = 0.794$ (target $0.798$; within $0.5\%$).
   \item Signed residual mean: $+0.006 \pm 0.082\,\sigma$ (no bias).
-  \item Fraction of bins above the $65\%$ target: $\boxed{97.6\%}$ ---
+  \item Fraction of bins whose within-bin fraction exceeds $65\%$: $\boxed{97.6\%}$ ---
         only $5$ of $205$ bins fall below.
 \end{itemize}
-The agreement of $\langle c \rangle$ and $\langle |r| \rangle$ with
-their expected values at the half-percent level is the cleanest
-demonstration that the Poisson-bootstrap band is properly calibrated.
-The $200$-toy ensemble reduces the per-bin
-binomial uncertainty to $\sqrt{0.68\cdot0.32/200}\approx 3.3\%$, which
-is why $97.6\%$ of bins clear the $65\%$ target.
+The agreement of these same-ensemble quantities with their Gaussian references
+shows that the standardized toy residuals are approximately normal.  Because
+$\sigma_i$ is estimated from the same toys being scored, this is not a
+frequentist coverage measurement and does not certify the bootstrap band.
+The attempted 100/100 split-sample reinterpretation is also withdrawn because
+it used the all-toy mean of the fluctuated truth histograms; no 2D containment
+number is quoted until an independent unfluctuated reference is supplied.
 
 \subsection{Closure tests: detecting bias}
 \label{sec:closure}
@@ -1226,10 +1232,12 @@ flux universes.
 The combined result, in one sentence:
 \emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
-\chiCombined$ and pull mean/RMS $0.069/0.466$, with a pull-RMS-$<1$ band
-that has been independently checked at the $0.5\%$ level by $200$
-coverage toys, on top of a $0.166\%$ ML-noise floor that is more than
-an order of magnitude below the systematic envelope.}
+\chiCombined$ and pull mean/RMS $0.069/0.466$. Because the paper and OmniFold
+results share data and their cross-covariance is unavailable, this is an
+indicative distance rather than a calibrated goodness-of-fit. The
+same-ensemble toy pulls are approximately Gaussian, and the $0.166\%$
+ML-noise floor is more than an order of magnitude below the systematic
+envelope.}
 
 \subsubsection*{Audit trail of the headline}
 
@@ -1250,8 +1258,8 @@ Pull RMS $= 0.466$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
-Mean coverage $= 68.71\%$ & \S\ref{sec:coverage} &
-  Coverage toys, $N_{\text{toy}}=200$ \\
+Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
+  Pull diagnostic, $N_{\text{toy}}=200$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1270,9 +1278,9 @@ Mean coverage $= 68.71\%$ & \S\ref{sec:coverage} &
         seed too; the seedscan pins the bootstrap. Cross-terms are
         higher-order. (The available $N=300$ bootstrap block carries a
         small residual ML leak, \S\ref{sec:bootstrap}.)
-  \item \textbf{Bootstrap calibration.} \S\ref{sec:coverage}'s mean
-        coverage $= 68.71\%$ certifies $\mathbf{C}^{\stat}$ to half a
-        percent.
+  \item \textbf{Bootstrap diagnostic.} \S\ref{sec:coverage}'s
+        same-ensemble $68.71\%$ fraction is a Gaussianity check, not a
+        half-percent certification of $\mathbf{C}^{\stat}$.
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.}
         Different physics sources are taken as uncorrelated; the one
         known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E

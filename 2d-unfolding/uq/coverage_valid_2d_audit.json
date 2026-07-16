@@ -1,0 +1,14 @@
+{
+  "status": "INVALID_FOR_COVERAGE",
+  "date_utc": "2026-07-16",
+  "source_glob": "2d-unfolding/uq/coverage/2d_xsec_MEFHC_5iter_lgbm_coverage_toy*.root",
+  "n_toys": 200,
+  "n_reported_bins": 205,
+  "stored_truth_hist": "hTruthXSec2D",
+  "n_varying_truth_bins": 205,
+  "max_abs_truth_range": 8.211341481396475e-41,
+  "max_relative_truth_range": 1.0479994701486284,
+  "cause": "The MC Poisson bootstrap multiplies w_truth, so the stored truth histogram fluctuates across toys.",
+  "verdict": "Do not quote the attempted 68.80% split-sample result. The all-toy truth mean is not independent of the scored ensemble. Supply an independent unfluctuated truth ROOT histogram or redesign the toy ensemble before computing 2D containment.",
+  "legacy_result": "The same-ensemble 68.71% and mean-absolute-pull 0.794 values remain Gaussianity diagnostics, not coverage."
+}

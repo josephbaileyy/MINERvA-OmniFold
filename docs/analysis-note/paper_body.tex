@@ -8,21 +8,21 @@
 \section{Introduction}
 Differential cross sections from neutrino experiments are extracted by
 \emph{unfolding} the detector response. The standard tool, iterative Bayesian
-unfolding on a binned migration matrix, scales poorly: each additional observable
-multiplies the bin count, which has limited every published MINERvA differential
-measurement to at most two simultaneously unfolded kinematic variables. Unbinned
+unfolding on a binned migration matrix, scales poorly because each additional
+observable multiplies the bin count. Unbinned
 machine-learning unfolding (OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk})
-removes that limit by learning per-event weights in the full observable space, so
-that adding an observable costs only an input feature.
+avoids constructing an explicit response tensor by learning per-event weights in
+the full observable space. Higher dimension still increases training, support,
+sparsity, and uncertainty-propagation demands.
 
-We report the first application of OmniFold to MINERvA medium-energy (ME) FHC
+We apply OmniFold to MINERvA medium-energy (ME) FHC
 $\nu_\mu$ data. We first reproduce the published double-differential
 CC-inclusive cross section $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq} as
-a validation, then exploit the unbinned formulation for the first
-\emph{unbinned} simultaneous three-, four- and five-observable MINERvA unfolds, adding
+a validation, then extend the unbinned formulation to simultaneous
+three-, four- and five-observable MINERvA unfolds, adding
 available energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic mass
 $W$. Binned MINERvA multi-differential cross sections, up to
-triple-differential~\cite{MINERvA:2022qe}, exist already; the novelty is the unbinned,
+triple-differential~\cite{MINERvA:2022qe}, exist already; the methodological distinction is the unbinned,
 simultaneously-unfolded formulation rather than multi-dimensionality itself. These
 expose the known low-recoil/2p2h deficit through an independent route,
 localize a residual deep-inelastic excess that all four tested generators underpredict,
@@ -48,10 +48,10 @@ propagate it to a smooth truth-level reweight for the next iteration. We use
 gradient-boosted decision trees (LightGBM, 100 trees, 5 iterations) as the
 learners; the higher-dimensional unfolds simply append feature columns
 $(\pT,\pPar,\Eavail,q_{3},W)$. Histogramming the reweighted truth ensemble (in
-any binning, chosen after unfolding) and dividing by flux, exposure and
-target-nucleon count gives the cross section. The full uncertainty budget
-combines systematic (MAT universe), statistical (Poisson bootstrap) and ML
-(seedscan) covariances; the complete statistical methodology, calibration and
+any declared reporting binning) and dividing by flux, exposure and
+target-nucleon count gives the cross section. For the finalized 2D result, the
+uncertainty budget combines systematic (MAT universe), statistical (Poisson
+bootstrap) and ML (seedscan) covariances; the complete statistical methodology and
 validation suite are documented in the companion analysis note.
 
 \section{Two-dimensional reproduction}
@@ -59,11 +59,11 @@ The unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published measurement
 (Fig.~\ref{fig:pxsec}): the total cross section is \SI{\sigTwoD}{cm^2/nucleon}
 (published \SI{\sigTwoDpaper}{cm^2/nucleon}, ratio $\ratioTot$),
 \SI{\binsTen}{\percent} of the 205 reported bins agree within \SI{10}{\percent},
-and the per-bin pulls against the published covariance are sub-$1\sigma$ (RMS
-$\pullRMS$). Our standalone uncertainty budget matches the published total in
+and the published-$\sigma$ per-bin standardized differences are sub-$1\sigma$
+(RMS $\pullRMS$). Our standalone uncertainty budget matches the published total in
 size (median per-bin \SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}),
-flux-dominated as in the publication. The residual full-covariance
-$\chi^{2}/\mathrm{ndf}=\chiPaper$ is shape, not normalization, and traces to the
+flux-dominated as in the publication. The residual indicative paper-covariance
+distance of $\chiPaper$ per bin is shape, not normalization, and traces to the
 off-diagonal structure of the published covariance on the low-$\pT$ peak; it
 carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator.
 
@@ -71,22 +71,23 @@ carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator.
   \centering
   \includegraphics[width=0.6\textwidth]{MEFHC_5iter_fig13}\\
   \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full}
-  \caption{Top: unfolded 2D cross section. Bottom: per-bin pull against the
-  published measurement on the $14\times16$ grid; the distribution is sub-$1\sigma$
-  (RMS $\pullRMS$).}
+  \caption{Top: unfolded 2D cross section. Bottom: per-bin standardized
+  difference using the published uncertainty on the $14\times16$ grid; the
+  distribution is sub-$1\sigma$ (RMS $\pullRMS$). The two results share data,
+  so this is descriptive rather than an independent-result pull.}
   \label{fig:pxsec}
 \end{figure}
 
 \section{Higher-dimensional cross sections}
 
 \subsection{Available energy: the low-recoil deficit}
-Extending to $(\pT,\pPar,\Eavail)$ and then $(\pT,\pPar,\Eavail,q_{3})$ yields the
-first \emph{unbinned} three- and four-observable MINERvA unfolds; each reproduces its
+Extending to $(\pT,\pPar,\Eavail)$ and then $(\pT,\pPar,\Eavail,q_{3})$ yields
+\emph{unbinned} three- and four-observable MINERvA unfolds; each reproduces its
 lower-dimensional predecessor under marginalization. Four truth-level generators
 (GENIE CV, MINERvA Tune v1, NuWro, GiBUU) all underpredict the data at low
 $\Eavail$ (Fig.~\ref{fig:pgen}), the established MINERvA low-recoil/2p2h deficit.
 We confirm its origin directly: pion final-state-interaction dials move
-$d\sigma/d\Eavail$ by $<\SI{1}{\percent}$, whereas adding the empirical Valencia
+$d\sigma/d\Eavail$ by less than \SI{1}{\percent}, whereas adding the empirical Valencia
 2p2h fills the quasielastic--$\Delta$ dip. The four-dimensional $(\Eavail,q_{3})$
 result resolves the deficit's momentum-transfer structure, and a bin-identical
 comparison to the published low-recoil measurement on the maximal common
@@ -147,13 +148,13 @@ agrees with the production result at the \SI{9}{\percent} level
 post-hoc binning, this is not a full joint muon--hadron unfold; ordinary
 closure cannot test omitted muon dependence at fixed recoil. The study tests
 low-level point-cloud inputs without unfolding the joint muon--recoil event.
-Corrected five-dimensional joint throws test the standard block-sum
-covariance with asymmetric endpoints, a fixed estimator seed, and
-mean-centered throws. The corrected 5D covariance is adopted at
-$\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$, with the joint
-mean shift reported separately. The recoil-PET assembly has median per-bin uncertainty
-\SI{\petTotalMedian}{\percent}, including a material targeted-retraining term.
-It characterizes only this recoil estimator.
+Corrected five-dimensional joint throws test the standard block-sum construction
+with asymmetric endpoints, a fixed estimator seed, and mean-centered throws.
+Those uncertainty products remain candidates until the selection-complete
+lateral replacement lands. The historical recoil-PET covariance is also
+quarantined: its fixed-map and retraining responses share nuisance endpoints and
+were added without their cross term. Only central-value PET comparisons are
+used here; the full-event estimator receives a fresh uncertainty budget.
 
 \begin{figure}[H]
   \centering
@@ -197,7 +198,7 @@ the extended domain.
 
 \section{Conclusions}
 Unbinned OmniFold reproduces a flagship MINERvA cross section and its uncertainty
-budget, and enables unfolds binned methods cannot: the first \emph{unbinned} simultaneous
+budget without constructing an explicit response tensor, then extends to simultaneous
 three-, four- and five-observable MINERvA unfolds. These independently recover the
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all

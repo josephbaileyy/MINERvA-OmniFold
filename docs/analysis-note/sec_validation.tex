@@ -51,15 +51,17 @@ cross-fitting, and a valid null would require re-running the full (cross-fitted)
 pipeline per pseudoexperiment (hundreds of unfolds), which is not computationally justified
 here. Calibrated unbinned goodness-of-fit remains an open problem~\cite{unbinnedguide}.
 
-\paragraph{Coverage.}
-Truth-containment of an \emph{independently}-calibrated $\pm1\sigma$ interval --- a
-split-ensemble design that estimates $\sigma$ on a disjoint calibration half of the toys and
-counts containment on the evaluation half, avoiding same-ensemble circularity --- is
-\SI{\covTwoD}{\percent}\,$\pm$\,\SI{\covTwoDerr}{\percent} (binomial) against the Gaussian
-nominal \SI{\covNominal}{\percent}. The earlier same-ensemble figures
-(\SI{\pullFrac}{\percent}, $\langle|r|\rangle=\pullMeanAbs$ vs $\sqrt{2/\pi}=\pullGauss$,
-\SI{97.6}{\percent} of bins above \SI{65}{\percent}) are retained as a standardized-pull /
-Gaussianity self-consistency diagnostic, not as frequentist coverage.
+\paragraph{Toy residuals and coverage status.}
+The existing 200 2D closure toys fluctuate both the unfolded result and the
+stored \texttt{hTruthXSec2D} through the MC bootstrap. The stored truth varies
+in all 205 reported bins, so its all-toy mean is not an independent fixed truth
+for a split-sample coverage claim. We therefore quote no 2D coverage number
+from this ensemble. Its same-ensemble figures
+(\SI{\pullFrac}{\percent}, $\langle|r|\rangle=\pullMeanAbs$ vs
+$\sqrt{2/\pi}=\pullGauss$, and \SI{97.6}{\percent} of bins above
+\SI{65}{\percent}) are retained only as standardized-pull/Gaussianity
+diagnostics. A coverage test requires an independently stored unfluctuated
+truth reference (or a redesigned ensemble) and remains open.
 
 \paragraph{Stability.}
 5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS

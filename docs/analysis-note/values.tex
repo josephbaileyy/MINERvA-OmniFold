@@ -22,12 +22,11 @@
 \newcommand{\pullMean}{0.089}
 \newcommand{\pullRMS}{0.598}
 \newcommand{\pullRMSr}{0.60}          % rounded, for prose
-% Coverage (Agent C WS1 statistical-validation repair, 2026-07-16): truth-containment
-% of an INDEPENDENTLY-calibrated +/-1sigma interval (split-ensemble, non-circular;
-% binomial errors; nominal 68.27%). coverage_valid_nd.py. Supersedes the old
-% same-ensemble "coverage" (which is a standardized-pull/Gaussianity diagnostic).
-\newcommand{\covTwoD}{68.80}\newcommand{\covTwoDerr}{0.32}   % 2D split-ensemble coverage +/- binomial
-\newcommand{\covFPS}{68.67}\newcommand{\covFPSerr}{0.28}     % FPS split-ensemble coverage +/- binomial
+% FPS containment (Agent C WS1 statistical-validation repair, 2026-07-16):
+% split-sample +/-1sigma truth-containment against an independent fixed NPZ truth.
+% The estimator seed is fixed, so this diagnoses the statistical closure-toy
+% stream, not the full adopted band. No aggregate binomial error is quoted.
+\newcommand{\covFPS}{68.67}
 \newcommand{\covNominal}{68.27}                              % Gaussian nominal
 \newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (independent C_stat): conservatively over-covers
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
@@ -54,7 +53,7 @@
 % (Eavail,W) significances removed 2026-07-12: historical covariance quarantined.
 % Reintroduce macros only from a committed corrected-covariance ledger entry.
 
-% --- corrected 5D GBDT uncertainty campaign ---
+% --- corrected 5D GBDT candidate campaign; final active-lateral replacement pending ---
 \newcommand{\gbdtFiveBlockMedian}{13.36}  % syst+stat+ML block sum, median/bin (%)
 \newcommand{\gbdtFiveAdoptTrace}{5.81e-38} % adopted mean-centered sqrt(trace), xsec units
 \newcommand{\gbdtFiveCVTrace}{6.24e-38}    % conservative CV-centered variant
@@ -67,9 +66,9 @@
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
 \newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
 \newcommand{\petGbdtGap}{9}
-\newcommand{\petTotalMedian}{15.10}   % corrected 5D C_total median/bin (%)
-\newcommand{\petTotalTrace}{3.878e-38}% corrected 5D sqrt(trace), xsec units
-\newcommand{\petFourMedian}{12.37}    % width-weighted 4D marginal median/bin (%)
+\newcommand{\petTotalMedian}{15.10}   % historical recoil-PET candidate; QUARANTINED
+\newcommand{\petTotalTrace}{3.878e-38}% historical recoil-PET candidate; QUARANTINED
+\newcommand{\petFourMedian}{12.37}    % historical recoil-PET 4D marginal; QUARANTINED
 \newcommand{\petRetrainMedian}{4.18}  % targeted retraining-response median/bin (%)
 \newcommand{\petLateralMedian}{2.11}  % PET-native frozen-map detector block (%)
 % truth-cloud projection demonstration (reweight-then-project)

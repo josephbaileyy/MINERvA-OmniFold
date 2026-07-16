@@ -13,7 +13,7 @@ unfolding.
 | Structure | Implements `claude-design-package/outline.md` 1:1 (problem → teach → trust anchor → new dimensions → outlook) | Same arc but 6/14 slides on implementation + validation detail | n/a | n/a |
 | Visual identity | Strongest: one design system, kickers/chips, quarantine warnings as UI, animation slots reserved | Serviceable but less consistent; heavy custom CSS per slide | on-theme sketches, superseded by the design project's `anims/` | n/a |
 | Teaching OmniFold | Weakest link: Act 2 is mostly two-column prose + one static box diagram | Best: detector-distortion primer, classifier-as-ratio-estimator (w = p/(1−p)), spatial Step-1/Step-2 scenes incl. misses, "one weighted ensemble, many views" | A2/A3 concepts only | prescribes the beats |
-| Hard numbers | Few on main slides ("sub-1σ") | Money-slide stat stack (1.011 / 1.006 / 94.1 %), validation grid (coverage 68.71 %, 5→10 iter 0.026 %, NN/GBDT 1.0078, C2ST AUC 0.501) | none (toy by design) | n/a |
+| Hard numbers | Few on main slides ("sub-1σ") | Money-slide stat stack (1.011 / 1.006 / 94.1 %), validation grid (2D mean \|r\| 0.794 vs 0.798, explicitly not coverage; 5→10 iter 0.026 %; NN/GBDT 1.0078; descriptive C2ST AUC 0.535→0.501) | none (toy by design) | n/a |
 | Honesty on the 2D tension | Omits χ²/ndf = 3.66 (paper full covariance) | States it plainly and explains it (correlated shape modes, not normalization) | n/a | rec doc: "experts smell overclaiming" |
 | MINERvA-specific implementation | Absent | Four event trees w/ real counts, purity weight, xsec recipe, completeness = 1 | n/a | n/a |
 | Physics payoff (Act 4) | Full act: marginalization anchor, 2p2h slide, (E_avail, W) excess slide | Compressed to one 3-card slide — underweights it | n/a | rec doc wants 5–6 min here |
@@ -32,8 +32,10 @@ animation-candidate pipeline already wired to its slots.
    get density ratios instantly; it demystifies the ML in one line.
 3. Money-slide stat stack: total σ ratio 1.011, median bin ratio 1.006,
    94.1 % of bins within 10 % (all from `values.tex`).
-4. A validation-numbers slide in the main deck (closure, coverage 68.71 %,
-   iteration doubling 0.026 %, NN/GBDT 1.0078, C2ST AUC 0.501).
+4. A validation-numbers slide in the main deck (closure, the 2D same-ensemble
+   mean-|r| Gaussianity check 0.794 vs 0.798 explicitly labeled not coverage,
+   iteration doubling 0.026 %, NN/GBDT 1.0078, and the descriptive C2ST AUC drop
+   0.535→0.501 with no calibrated p-value).
 5. Honest χ² framing on the pull slide: pulls sub-1σ *and* paper-covariance
    χ²/ndf = 3.66 (correlated shape modes; 1.48 with the combined covariance)
    — the audience owns that covariance and will ask.
