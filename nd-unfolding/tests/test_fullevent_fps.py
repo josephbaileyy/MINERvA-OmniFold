@@ -98,6 +98,25 @@ class EventSchemas(unittest.TestCase):
             fe.assert_no_truth_leakage(leaked.astype(np.float32), reco, truth,
                                        fe.DEFAULT_EVT_FEATURES)
 
+    def test_sentinel_pass_masked_normalization(self):
+        # Regression for the FPS reco-muon sentinel bug: reco muon = -9999 where !pass_reco.
+        # Normalization must use pass_reco rows only, and !pass rows must be zeroed post-norm.
+        reco, truth, meas = self._scalars(n=400, seed=3)
+        pr = np.zeros(400, bool); pr[:250] = True          # 250 real, 150 misses
+        reco[~pr, :] = -9999.0                              # sentinel in the miss rows
+        pt = np.ones(400, bool)
+        er, et, ed, meta = fe.build_event_features(reco, truth, meas, pass_reco=pr, pass_truth=pt)
+        cols = [fe.SCALAR_COLS[f] for f in fe.DEFAULT_EVT_FEATURES]
+        # norm mean must be the pass_reco muon mean (physical, ~O(1)), NOT polluted by -9999
+        expected_mu = reco[pr][:, cols].mean(0)
+        np.testing.assert_allclose(meta["reco_norm_mean"], expected_mu, rtol=1e-4)
+        self.assertLess(abs(meta["reco_norm_mean"][0]), 100.0)   # not the -5732 pathology
+        self.assertTrue(np.all(er[~pr] == 0.0))            # undefined reco rows zeroed
+        self.assertTrue(np.all(np.isfinite(er)))
+        # leakage detector must still pass with pass_reco supplied
+        self.assertTrue(fe.assert_no_truth_leakage(er, reco, truth, fe.DEFAULT_EVT_FEATURES,
+                                                   pass_reco=pr))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
