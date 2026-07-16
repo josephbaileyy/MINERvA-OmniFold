@@ -48,7 +48,8 @@ class PET(Model):
                  local = True,
                  K = 3,
                  layer_scale = True,
-                 layer_scale_init = 1e-3
+                 layer_scale_init = 1e-3,
+                 coord_idx = (0, 1)
                  ):
         super(PET, self).__init__()
         '''
@@ -63,20 +64,29 @@ class PET(Model):
         K (int, optional, default=3): Parameter controlling the number of k-nearest neighbors to use.
         layer_scale (bool, optional, default=True): Determines whether layer scaling is applied for stabilizing training.
         layer_scale_init (float, optional, default=1e-3): Initial value for the layer scaling factor to ensure stable gradient behavior.
+        coord_idx (tuple of int, default=(0,1)): which per-token FEATURE COLUMNS are the
+            geometric coordinates used to build the local k-NN neighborhood graph. The
+            vendored default (0,1) assumed an (eta,phi) pair; for MINERvA the caller MUST
+            pass the physical geometry columns explicitly (view-aware detector position at
+            reco, angular/direction at truth) so raw feature-column order does not silently
+            define nearest neighbors (KNOWN_ISSUES #19, neighborhood-metric gate).
         '''
-        
+
         self.num_feat = num_feat
         self.num_evt = num_evt
         self.num_part = num_part
+        self.coord_idx = tuple(int(c) for c in coord_idx)
         inputs_part = layers.Input((self.num_part,self.num_feat))
         if local:
             assert self.num_part >= K, "ERROR: K neighbors exceeding the number of particles"
-            
+            assert max(self.coord_idx) < self.num_feat, \
+                f"coord_idx {self.coord_idx} out of range for num_feat={self.num_feat}"
+
         if self.num_evt>0:
-            inputs_evt = layers.Input((self.num_evt))
+            inputs_evt = layers.Input((self.num_evt,))
         else:
             inputs_evt =  None
-                        
+
         outputs_body = self.PET_body(inputs_part,
                                      num_part,
                                      num_heads,
@@ -84,16 +94,22 @@ class PET(Model):
                                      projection_dim,
                                      local = local, K = K,
                                      layer_scale = layer_scale,
-                                     layer_scale_init = layer_scale_init
+                                     layer_scale_init = layer_scale_init,
+                                     coord_idx = self.coord_idx
                                      )
-                
+
         outputs_head = self.PET_head(outputs_body,inputs_evt,projection_dim)
 
+        # Wire event-level (high-level) features as a SECOND model input when
+        # num_evt>0. The vendored code left both branches at inputs=inputs_part, so
+        # inputs_evt was a dangling Input never fed and the FiLM conditioning in
+        # PET_head received an unconnected tensor -> num_evt was silently a no-op
+        # (KNOWN_ISSUES #19, step-B "num_evt not functional end-to-end"). Fixed here.
         if inputs_evt is None:
             self.model = Model(inputs=inputs_part,
                                outputs=outputs_head)
         else:
-            self.model = Model(inputs=inputs_part,
+            self.model = Model(inputs=[inputs_part, inputs_evt],
                                outputs=outputs_head)
 
         self.loss_tracker = keras.metrics.Mean(name="loss")
@@ -122,13 +138,17 @@ class PET(Model):
             num_local = 2,
             layer_scale = True,
             layer_scale_init = 1e-3,
+            coord_idx = (0, 1),
     ):
-    
+
         encoded = get_encodding(inputs_part,projection_dim)
         inputs_mask = tf.cast(inputs_part[:,:,0,None] != 0, dtype='float32')
         if local:
-            coord_shift = tf.multiply(999., tf.cast(tf.equal(inputs_mask, 0), dtype='float32'))        
-            points = inputs_part[:,:,:2] #assume first 2 coordinates are eta-phi
+            coord_shift = tf.multiply(999., tf.cast(tf.equal(inputs_mask, 0), dtype='float32'))
+            # k-NN neighborhood coordinates are the EXPLICIT geometry columns passed by the
+            # caller (coord_idx), not blindly the first two feature columns. For MINERvA:
+            # view-aware detector position at reco, angular/direction at truth (KNOWN_ISSUES #19).
+            points = tf.gather(inputs_part, list(coord_idx), axis=2)
             local_features = inputs_part
             for _ in range(num_local):
                 local_features = get_neighbors(coord_shift+points,local_features,projection_dim,K)

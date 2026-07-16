@@ -4,7 +4,7 @@ import sys, os
 class DataLoader():
     def __init__(
             self,
-            reco,            
+            reco,
             pass_reco = None,
             gen = None,
             pass_gen = None,
@@ -14,6 +14,8 @@ class DataLoader():
             bootstrap = False,
             rank = 0,
             size = 1,
+            reco_evt = None,
+            gen_evt = None,
     ):
         """
         Initializes the DataLoader with the required datasets and parameters for handling 
@@ -50,14 +52,29 @@ class DataLoader():
         self.nmax = reco.shape[0]
         self.reco = reco
         self.weight = weight
-        self.gen = gen        
+        self.gen = gen
         self.pass_reco = pass_reco
         self.pass_gen = pass_gen
         self.bootstrap=bootstrap
+        # Optional per-event CONTINUOUS high-level features, paired row-for-row with the
+        # reco/gen point clouds (KNOWN_ISSUES #19 full-event representation). reco_evt goes
+        # with `reco` (a step-1 detector-level feature block; for data this is event_data,
+        # for MC this is event_reco -- SAME observable schema), gen_evt with `gen` (event_truth,
+        # its own truth schema/normalization). Left None => byte-for-byte the recoil-only path.
+        self.reco_evt = reco_evt
+        self.gen_evt = gen_evt
 
         self.reco = self.reco[rank::size]
         if self.gen is not None:
             self.gen = self.gen[rank::size]
+        if self.reco_evt is not None:
+            assert self.reco_evt.shape[0] == self.nmax, \
+                "ERROR: reco_evt and reco have different number of entries"
+            self.reco_evt = self.reco_evt[rank::size]
+        if self.gen_evt is not None:
+            assert self.gen is not None and self.gen_evt.shape[0] == gen.shape[0], \
+                "ERROR: gen_evt requires gen and must match its entries"
+            self.gen_evt = self.gen_evt[rank::size]
 
         if self.weight is None:
             if self.rank==0:print("INFO: Creating weights ...")

@@ -175,7 +175,7 @@ class MultiFold():
 
         #Don't update weights where there's no reco events
         new_weights = np.ones_like(self.weights_pull)
-        new_weights[self.mc.pass_reco] = self.reweight(self.mc.reco,self.model1,batch_size=1000)[self.mc.pass_reco]
+        new_weights[self.mc.pass_reco] = self.reweight(self._pack_reco(self.mc.reco),self.model1,batch_size=1000)[self.mc.pass_reco]
         self.weights_pull = self.weights_push *new_weights
 
     def RunStep2(self,i):
@@ -192,7 +192,7 @@ class MultiFold():
             cached = i>self.start #after first training cache the training data
         )
         new_weights = np.ones_like(self.weights_push)
-        new_weights[self.mc.pass_gen]=self.reweight(self.mc.gen,self.model2)[self.mc.pass_gen]
+        new_weights[self.mc.pass_gen]=self.reweight(self._pack_gen(self.mc.gen),self.model2)[self.mc.pass_gen]
         self.weights_push = new_weights
 
 
@@ -306,17 +306,31 @@ class MultiFold():
         if not cached:
             if self.verbose:
                 self.log_string("Creating cached data from step {}".format(stepn))
-                    
+
+            # Full-event path (KNOWN_ISSUES #19): when the DataLoaders carry per-event
+            # feature blocks, the cached tf.data yields a (cloud, evt) TUPLE per element so
+            # the multi-input PET model.fit receives both. Without them it yields the bare
+            # cloud (recoil-only path, byte-identical to the original). Step 1 pairs the
+            # reco cloud with reco_evt (mc) / reco_evt (data); step 2 pairs the gen cloud
+            # (used twice) with gen_evt.
             if stepn ==1:
                 self.idx_1 = np.arange(label.shape[0])
                 np.random.shuffle(self.idx_1)
-                self.tf_data1 = tf.data.Dataset.from_tensor_slices(
-                    np.concatenate([self.mc.reco,self.data.reco],0)[self.idx_1])
+                cloud1 = np.concatenate([self.mc.reco,self.data.reco],0)[self.idx_1]
+                if getattr(self.mc, "reco_evt", None) is not None:
+                    evt1 = np.concatenate([self.mc.reco_evt,self.data.reco_evt],0)[self.idx_1]
+                    self.tf_data1 = tf.data.Dataset.from_tensor_slices((cloud1, evt1))
+                else:
+                    self.tf_data1 = tf.data.Dataset.from_tensor_slices(cloud1)
             elif stepn ==2:
                 self.idx_2 = np.arange(label.shape[0])
                 np.random.shuffle(self.idx_2)
-                self.tf_data2 = tf.data.Dataset.from_tensor_slices(
-                    np.concatenate([self.mc.gen,self.mc.gen],0)[self.idx_2])
+                cloud2 = np.concatenate([self.mc.gen,self.mc.gen],0)[self.idx_2]
+                if getattr(self.mc, "gen_evt", None) is not None:
+                    evt2 = np.concatenate([self.mc.gen_evt,self.mc.gen_evt],0)[self.idx_2]
+                    self.tf_data2 = tf.data.Dataset.from_tensor_slices((cloud2, evt2))
+                else:
+                    self.tf_data2 = tf.data.Dataset.from_tensor_slices(cloud2)
                 
         idx = self.idx_1 if stepn==1 else self.idx_2
         labels = tf.data.Dataset.from_tensor_slices(np.stack((label[idx],weights[idx]),axis=1))
@@ -392,7 +406,7 @@ class MultiFold():
             self.step1_models.append(temp1) #FIXME: need to put this in ensemble loop
             self.step2_models.append(temp2)
 
-        self.weights_push = self.reweight(self.mc.gen,self.model2,batch_size=1000)
+        self.weights_push = self.reweight(self._pack_gen(self.mc.gen),self.model2,batch_size=1000)
 
 
     def PrepareInputs(self):
@@ -400,6 +414,17 @@ class MultiFold():
         self.labels_data = np.ones(len(self.data.pass_reco),dtype=np.float32)
         self.labels_gen = np.ones(len(self.mc.pass_gen),dtype=np.float32)
 
+
+    def _pack_reco(self, cloud):
+        """Pair a reco cloud with the step-1 event features when present (full-event
+        path, KNOWN_ISSUES #19). Returns the bare cloud otherwise (recoil-only path)."""
+        evt = getattr(self.mc, "reco_evt", None)
+        return (cloud, evt) if evt is not None else cloud
+
+    def _pack_gen(self, cloud):
+        """Pair a gen cloud with the step-2 (truth) event features when present."""
+        evt = getattr(self.mc, "gen_evt", None)
+        return (cloud, evt) if evt is not None else cloud
 
     def reweight(self,events,model,batch_size=None):
         if batch_size is None:
@@ -409,7 +434,10 @@ class MultiFold():
             self.log_string("Averaging over ensembles...")
         models = self.step1_models if model == self.model1 else self.step2_models
 
-        avg_weights = np.zeros((len(events)))
+        # `events` may be a bare cloud array OR a paired (cloud, evt_features) tuple for the
+        # full-event model (Keras multi-input predict). Row count comes from the cloud.
+        nrows = len(events[0]) if isinstance(events, (tuple, list)) else len(events)
+        avg_weights = np.zeros((nrows))
         for model in models:
             f = expit(model.predict(events,batch_size=batch_size,verbose=self.verbose))
             weights = f / (1. - f)  # this is the crux of the reweight, approximates likelihood ratio
