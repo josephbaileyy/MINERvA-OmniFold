@@ -46,9 +46,11 @@ data from the (reweighted) simulation in the full unbinned feature space, and it
 test-set accuracy is compared to the chance value $0.5$. \emph{Before} unfolding the two are
 separable --- accuracy $0.523$, AUC $0.535$, $z=33.4$ ($p\approx5\times10^{-244}$);
 \emph{after} unfolding the classifier is driven to chance --- accuracy $0.501$, AUC $0.501$,
-$z=1.4$, $p=0.17$. Data and unfolded simulation are thus statistically indistinguishable with
-no detectable residual structure: the unbinned analog of a binned goodness-of-fit, and it
-passes.
+$z=1.4$, $p=0.17$. The classifier is driven to chance, consistent with data and unfolded
+simulation being statistically indistinguishable in the tested feature space. This C2ST is
+trained and evaluated on the same unfolded sample without cross-fitting, so we report it as a
+descriptive binning-free diagnostic rather than a calibrated hypothesis test; a cross-fitted
+C2ST is deferred to a future revision.
 
 \paragraph{Coverage.}
 A 200-toy closure$+$bootstrap study gives mean coverage

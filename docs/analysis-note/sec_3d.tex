@@ -3,8 +3,12 @@
 
 The enabling property of unbinned OmniFold is that adding an observable is
 adding an input feature: the step-1/step-2 classifiers simply gain a column,
-with no migration-matrix or binning penalty. There is no practical D'Agostini
-IBU analog, which makes this the primary physics motivation for the technique.
+with no explicit migration-matrix or per-bin response tensor. This removes the
+combinatorial binning penalty of matrix unfolding, but it is not free of a
+dimensional cost --- classifier training, acceptance/support coverage, sample
+sparsity, and uncertainty quantification all become more demanding as observables
+are added. There is no practical D'Agostini IBU analog, which is the primary
+methodological motivation for the technique.
 We exercise it by extending the measurement to
 $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
 
@@ -99,8 +103,9 @@ median $0.9999$ with standard deviation \textbf{\num{0.0006}}
 (\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
 \SI{3.2}{\percent} (MC statistics in sparse high-recoil corners). The closure
 marginal scatter is thus $\sim70\times$ tighter than the
-$\SI{4.4}{\percent}$ data-versus-2D scatter. The method is therefore unbiased on
-the new axis, and we read the elevated marginal $\chi^{2}$ as
+$\SI{4.4}{\percent}$ data-versus-2D scatter. No nonclosure is observed for this
+tested deformation (a single injected $+30\%$ Gaussian bump), and we read the
+elevated marginal $\chi^{2}$ as
 \emph{genuine data\,$\leftrightarrow$\,MC structure that the available-energy
 dimension exposes} --- information that is invisible to the 2D measurement ---
 rather than a pipeline artifact (the total normalization matches to

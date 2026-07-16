@@ -90,10 +90,12 @@ correlation), and the GBDT seed pinned per replica so the bootstrap and
 seedscan variances are separable. Each replica is a full re-unfold; the
 covariance is the sample covariance over replicas
 (Fig.~\ref{fig:bootstrap}). Our bootstrap block is genuinely smaller than the
-published statistical block ($\approx2.5\times$ by trace) --- an unbinned
-statistical efficiency confirmed by the data-only stream of the data/MC split
-bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$), not a missing term
-(App.~\ref{sec:rank}).
+published statistical block ($\approx2.5\times$ by trace). We report this as an
+\emph{observed} difference in the statistical covariance rather than a
+demonstrated causal efficiency advantage; it is consistent with an unbinned
+statistical-efficiency gain, and the data-only stream of the data/MC split
+bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$) confirms it is not a
+missing term (App.~\ref{sec:rank}).
 
 \begin{figure}[H]
   \centering

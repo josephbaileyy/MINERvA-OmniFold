@@ -18,10 +18,13 @@ that adding an observable costs only an input feature.
 We report the first application of OmniFold to MINERvA medium-energy (ME) FHC
 $\nu_\mu$ data. We first reproduce the published double-differential
 CC-inclusive cross section $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq} as
-a validation, then exploit the unbinned formulation to measure the first
-simultaneous three-, four- and five-observable MINERvA cross sections, adding
+a validation, then exploit the unbinned formulation for the first
+\emph{unbinned} simultaneous three-, four- and five-observable MINERvA unfolds, adding
 available energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic mass
-$W$. These expose the known low-recoil/2p2h deficit through an independent route,
+$W$. Binned MINERvA multi-differential cross sections, up to
+triple-differential~\cite{MINERvA:2022qe}, exist already; the novelty is the unbinned,
+simultaneously-unfolded formulation rather than multi-dimensionality itself. These
+expose the known low-recoil/2p2h deficit through an independent route,
 localize a residual deep-inelastic excess that all four tested generators underpredict,
 and --- together with a recoil-point-cloud representation cross-check and a
 preliminary extended-fiducial study --- demonstrate the reach and current
@@ -78,7 +81,7 @@ carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator.
 
 \subsection{Available energy: the low-recoil deficit}
 Extending to $(\pT,\pPar,\Eavail)$ and then $(\pT,\pPar,\Eavail,q_{3})$ yields the
-first three- and four-observable MINERvA unfolds; each reproduces its
+first \emph{unbinned} three- and four-observable MINERvA unfolds; each reproduces its
 lower-dimensional predecessor under marginalization. Four truth-level generators
 (GENIE CV, MINERvA Tune v1, NuWro, GiBUU) all underpredict the data at low
 $\Eavail$ (Fig.~\ref{fig:pgen}), the established MINERvA low-recoil/2p2h deficit.
@@ -194,7 +197,7 @@ the extended domain.
 
 \section{Conclusions}
 Unbinned OmniFold reproduces a flagship MINERvA cross section and its uncertainty
-budget, and enables measurements binned methods cannot: the first simultaneous
+budget, and enables unfolds binned methods cannot: the first \emph{unbinned} simultaneous
 three-, four- and five-observable MINERvA unfolds. These independently recover the
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all

@@ -86,8 +86,9 @@ covariance, $C = C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{lateral}}$,
 by a \emph{frozen-reweighter} block sum on the merged five-axis
 \texttt{\_universes\_full} sample: the central-value OmniFold push-weights
 are held fixed and only the per-event truth reweight ratios change per
-systematic universe (the same methodology as the PET budget,
-\S\ref{sec:pet-syst}; no per-universe re-inference). The covariance carries
+systematic universe (the same frozen-reweighter \emph{technique} as the PET
+budget, \S\ref{sec:pet-syst} --- not the PET covariance matrix, which is never
+applied to this GBDT central value; no per-universe re-inference). The covariance carries
 13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the projected full
 five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a $W$-resolved
 detector (lateral) block. A valid replacement must project the corrected
