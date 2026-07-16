@@ -296,13 +296,29 @@ def main():
                     f"median {ea_res['median']:+.4f} GeV, "
                     f"{100*ea_res['frac_within']:.1f}% within 10 MeV", fontsize=9)
     ax[0].set_yscale("log")
-    # Eavail deficit vs n_had
-    labs = list(nh_bias.keys()); meds = [nh_bias[l]["median"] for l in labs]
-    ax[1].bar(range(len(labs)), meds, color="#C44E52")
-    ax[1].set_xticks(range(len(labs))); ax[1].set_xticklabels(labs)
+    # Eavail deficit vs n_had.  Draw labeled markers in MeV rather than bars:
+    # the three unsaturated medians are exactly zero, so zero-height bars made
+    # the correct result look like missing data.  Only the capped category can
+    # have discarded hadrons and therefore a non-zero truncation deficit.
+    labs = list(nh_bias.keys())
+    meds_mev = np.array([nh_bias[l]["median"] for l in labs]) * 1000.0
+    xcat = np.arange(len(labs))
+    colors = ["#4C72B0"] * (len(labs) - 1) + ["#C44E52"]
+    ax[1].scatter(xcat, meds_mev, c=colors, s=55, zorder=3)
+    for x, y in zip(xcat, meds_mev):
+        label = "0 MeV" if abs(y) < 0.5 else f"{y:+.0f} MeV"
+        ax[1].annotate(label, (x, y), xytext=(0, 7),
+                       textcoords="offset points", ha="center", va="bottom",
+                       fontsize=8)
+    ax[1].set_xticks(xcat); ax[1].set_xticklabels(labs)
     ax[1].axhline(0, color="k", lw=0.8)
-    ax[1].set_xlabel(r"$n_{\rm had}$ stored in cloud")
-    ax[1].set_ylabel("median Eavail deficit (GeV)")
+    ax[1].set_xlabel(r"$n_{\rm had}$ stored in cloud (12 = cap)")
+    ax[1].set_ylabel(r"median $E_{\rm avail}^{\rm cloud}-E_{\rm avail}^{\rm stored}$ (MeV)")
+    ymin = min(-5.0, float(meds_mev.min()) - 8.0)
+    ax[1].set_ylim(ymin, 8.0)
+    ax[1].text(0.04, 0.08, "Unsaturated clouds retain every hadron;\n"
+               "only capped events can lose energy.", transform=ax[1].transAxes,
+               fontsize=8, ha="left", va="bottom", color="0.25")
     ax[1].set_title("truncation deficit grows with multiplicity\n(saturates at n_had=12)",
                     fontsize=9)
     # MC-only truncation-validation figure (Eavail_cloud vs stored, deficit vs

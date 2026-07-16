@@ -68,9 +68,17 @@ run products/pet/pet_vs_gbdt_absolute.png nd-unfolding  python pet/pet_vs_gbdt.p
 # PET vs GBDT per-bin uncertainty comparison -> pet_vs_gbdt_uncertainty_{overlay,ratiomap,ratiohist}.png
 # (method-comparison figures: no MINERvA sample tag, existing PET/GBDT labels kept)
 run products/pet/pet_vs_gbdt_uncertainty_overlay.png nd-unfolding  python pet/pet_vs_gbdt_uncertainty.py
-# PET truth point-cloud reweight-then-project demo -> pet_cloud_projection_{validation,xsec}.png
+# PET truth point-cloud reweight-then-project demo ->
+# products/pet/fullcloud/pet_cloud_projection_{validation,xsec}.png.
+# Use the coverage-fixed full-cloud sample and its matched weights/ROOT; the
+# defaults are the pre-fix diagnostic inputs whose miss rows lack truth clouds.
 # (validation panel is MC-only -> untagged; xsec panels are data-bearing -> minerva_tag)
-run products/pet/pet_cloud_projection_xsec.png       nd-unfolding  python pet/pointcloud_projection.py
+run products/pet/fullcloud/pet_cloud_projection_xsec.png nd-unfolding env \
+  PCPROJ_PC="$REPO/nd-unfolding/of_inputs_pc_fullcloud.npz" \
+  PCPROJ_WEIGHTS="$REPO/nd-unfolding/products/pet/pet_weights_fullcloud.npz" \
+  PCPROJ_OMNI="$REPO/nd-unfolding/runEventLoopOmniFold_PC_MEFHC_fullcloud.root" \
+  PCPROJ_OUTDIR="$REPO/nd-unfolding/products/pet/fullcloud" \
+  python pet/pointcloud_projection.py
 
 echo "== full phase space =="
 run products/5d/fps_pilot_compare_MEFHC.png  nd-unfolding  python fps_pilot_compare.py --fps-tune products/5d/xsec_2d_FPS_MEFHC_tune.root --fps-genie products/5d/xsec_2d_FPS_MEFHC_genie.root --ctrl products/5d/xsec_2d_CTRL_MEFHC.root --omnifile runEventLoopOmniFold_5D_FPS_MEFHC.root --out-png products/5d/fps_pilot_compare_MEFHC.png

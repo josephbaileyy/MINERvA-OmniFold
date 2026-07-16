@@ -222,6 +222,7 @@ def main():
             A.legend(fontsize=8)
     fig.suptitle("Bin-identical comparison on the common super-grid "
                  f"(full-cov $\\chi^2$/ndf = {chi2:.1f}/{ns}, p = {p:.2g})")
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     technote_style.minerva_tag(axs[0])
     os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
     fig.savefig(args.out_png, dpi=140, bbox_inches="tight")

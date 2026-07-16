@@ -131,8 +131,9 @@ def run_absolute(args, pc, edges, idx, w_push, wt, ptru):
         fig.suptitle("PET (point cloud) vs GBDT (scalars): ABSOLUTE 4D cross section")
         # tag on the top-right panel so it lands at the figure's top-right corner,
         # clear of the top-left panel's 1e-38 y-axis offset text (they overlapped)
+        fig.tight_layout(rect=(0, 0, 1, 0.95))
         technote_style.minerva_tag(axs[0, 1], loc="upper right")
-        fig.tight_layout(); fig.savefig(args.out, dpi=130)
+        fig.savefig(args.out, dpi=130)
         print(f"[OK] wrote {args.out}")
 
     fo = ROOT.TFile.Open(args.pet_out, "RECREATE"); fo.cd()

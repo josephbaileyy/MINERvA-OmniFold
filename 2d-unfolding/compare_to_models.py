@@ -139,8 +139,9 @@ def main():
         ax.set_xlabel(xlabel); ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")
         ax.set_title(f"Projection onto {xlabel}"); ax.legend(); ax.grid(alpha=0.3)
     fig.suptitle("2D OmniFold vs data vs MINERvA Tune v1 - 1D projections")
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     technote_style.minerva_tag(fig)
-    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_projections.png", dpi=130)
+    fig.savefig(f"{args.out_prefix}_projections.png", dpi=130)
     plt.close(fig)
 
     # ---- per-bin ratio heatmaps (ours/model, data/model) -------------------

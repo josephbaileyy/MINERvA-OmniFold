@@ -329,7 +329,7 @@ def main():
 
     fig = plt.figure(figsize=(10.4, 13.2))
     outer = fig.add_gridspec(2, 1, height_ratios=[1, 1], hspace=0.28,
-                             left=0.11, right=0.98, bottom=0.07, top=0.98)
+                             left=0.11, right=0.98, bottom=0.07, top=0.95)
 
     plot_pt_slices(fig, outer[0], paper, paper_err, reported,
                    omni, omni_err, truth)

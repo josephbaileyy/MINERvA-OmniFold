@@ -54,8 +54,8 @@ def main():
                 xy=(0.97, 0.82), xycoords="axes fraction", ha="right", va="top",
                 fontsize=8)
     ax.legend(loc="upper right", fontsize=9)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     technote_style.minerva_tag(ax)
-    fig.tight_layout()
     fig.savefig(args.out, dpi=130)
     print(f"[eavail-spectrum] wrote {args.out}")
 

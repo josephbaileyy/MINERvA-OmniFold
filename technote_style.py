@@ -354,12 +354,23 @@ def minerva_tag(fig_or_ax, loc="upper left"):
         axes = getattr(fig_or_ax, "axes", None)
         if axes:
             ax = axes[0]
-    x, ha = (0.02, "left") if "left" in loc else (0.98, "right")
-    y, va = (1.01, "bottom") if "upper" in loc else (0.02, "bottom")
+    # Keep the tag in figure space, not just above an Axes.  Matplotlib places
+    # the scientific-notation multiplier (for example ``1e-38``) immediately
+    # above the upper-left Axes corner; the old Axes-space y=1.01 placement put
+    # the two strings on top of each other and could clip the tag at the PDF
+    # boundary.  Aligning the tag to the selected Axes horizontally while
+    # putting it in a reserved figure header keeps both pieces legible.  Plot
+    # generators that use an upper tag should leave the top 5% free (for
+    # example ``tight_layout(rect=(0, 0, 1, 0.95))``).
     if ax is not None:
-        ax.text(x, y, text, transform=ax.transAxes, ha=ha, va=va,
-                fontsize=8, color="0.25", zorder=100)
+        fig = ax.figure
+        bbox = ax.get_position()
+        x, ha = (bbox.x0, "left") if "left" in loc else (bbox.x1, "right")
+        y, va = (0.995, "top") if "upper" in loc else (bbox.y0, "bottom")
+        fig.text(x, y, text, transform=fig.transFigure, ha=ha, va=va,
+                 fontsize=8, color="0.25", zorder=100)
     else:
+        x, ha = (0.01, "left") if "left" in loc else (0.99, "right")
         fig_or_ax.text(x, 0.99, text, ha=ha, va="top",
                        fontsize=8, color="0.25", zorder=100)
 
