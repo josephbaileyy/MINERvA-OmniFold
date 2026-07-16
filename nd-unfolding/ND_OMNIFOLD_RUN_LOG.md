@@ -1618,3 +1618,35 @@ Full recipe, job IDs, and coordination notes in
 `active_universe_5d/AGENT_A_HANDOFF.md`. The P3S completion gate (exact 120-file
 manifest + per-mode summary + ledger + STATUS) will land when the inventory is
 complete; P4 (scalar lateral covariance) follows.
+
+### 2026-07-16 — P6-4D corrected 4D UQ: non-lateral core landed (Publication Agent D)
+
+Rebuilt the corrected independent 4D (pt,pz,Eavail,q3) covariance under the KNOWN_ISSUES
+#14 contract (actual asymmetric ± endpoints, one fixed estimator seed, throw-mean
+centering with a separately stored mean shift, MAT biased 1/N, exact manifests, no jitter
+subtraction). All outputs in `nd-unfolding/uq_4d/corrected/`; the old June `uq_4d/`
+products are preserved, quarantined.
+- **Throw bank reconstructed with NO event loop.** `bank_uthrow_4d` + its 3D source were
+  deleted and no 4D `_universes_full` omnifile exists, so the June `assemble_bank_4d.py`
+  path is dead. `assemble_bank_4d_from5d.py` rebuilds it from the surviving
+  `bank_uthrow_5d`: that bank is event-aligned to `of_inputs_4d` (w_truth/w_reco
+  BYTE-IDENTICAL, pt/pz/Eavail cols + all four edges identical); the 372 per-event
+  universe-ratio arrays are binning-independent → symlinked; q3 + measured target come
+  from of_inputs_4d, truth-denom from the 5D bank. CV-reproduce pilot PASS: reported mask
+  identical (4830), total 3.0679e-38 vs central 3.0664e-38 (rel 4.8e-4), per-bin med 0.65%.
+- **Corrected replicas regenerated** (June `_prehm` set is pre-remediation: corrected
+  `bootstrap_nd.py` fixes the estimator seed at 42 + decorrelates data/MC Poisson): C_stat
+  100 coherent bootstraps + C_ML 24 split-response, exact manifests validated. Ran on a
+  4-node interactive GPU accelerator (this unfold is memory-bandwidth-bound ~4-6/node →
+  scale with nodes) after CPU hours were restored; CPU batch as node-spread complement.
+- **Combined covariance (guaranteed core), validated ALL_OK.** C_syst block-sum on the
+  reused 187-file sweep (#13 background-CV null-effect) √tr 2.0931e-38 (median 13.37%/bin,
+  rank 142) + 1.4% norm + C_stat 1.2117e-39 + C_ML 1.0499e-39 → COMBINED √tr 2.0992e-38,
+  median 13.47%/bin, rank 264/4830; symmetric, finite, PSD (min-eig/max −2.8e-16).
+  The Muon-reco lateral bands in the sweep are SUPPORT-LIMITED (labeled); the final
+  lateral swap + adoption is GATED on Agent A's committed selection-complete standard
+  lateral block and is NOT crossed here.
+- **P7 projection code** `project_cov_nd.py` validated end-to-end (5D→4D marginal dry-run,
+  candidate `uq_4d/corrected/projections_candidate/`, NOT quoted; final numbers gated on
+  the final adopted 5D). **Unified-throw** (160 joint throws + 124 block units, seed 1000)
+  and candidate adopt (mean + `--cv-centered`) were IN FLIGHT at this entry.

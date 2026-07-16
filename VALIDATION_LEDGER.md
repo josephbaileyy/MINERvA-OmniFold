@@ -426,3 +426,21 @@ artifacts on the login node. All PASS; no rerun required.
   `68.71%`, median `68.50%`, `<|r|> = 0.794` (target 0.798), signed residual
   `+0.006 +/- 0.082`, `97.56%` of the 205 reported bins above the 65% target
   (same 5 bins below). KNOWN_ISSUES #2 RESOLVED.
+
+### 2026-07-16 — Corrected 4D UQ (P6-4D), non-lateral core (support-limited lateral)
+
+These supersede the quarantined June `uq_4d/` products for the NON-LATERAL contract. The
+FINAL adopted 4D covariance additionally needs the unified-throw inflation + Agent A's
+selection-complete standard lateral block (both pending); numbers below are the corrected
+combined (block-sum) covariance and validations.
+- 4D throw bank (from-5D reconstruction, `assemble_bank_4d_from5d.py`) CV reproduces the
+  frozen 4D central: reported bins `4830` (mask identical), total `3.0679e-38` vs central
+  `3.0664e-38` (rel `4.8e-4`), per-bin median `0.65%`. PASS. [pilot_cv_check_4d.py]
+- Corrected combined 4D covariance (reported bins 4830; symmetric, finite, PSD min-eig/max
+  `-2.8e-16`): C_syst √tr `2.0931e-38` (median `13.37%`/bin, rank 142); +norm 1.4%; +C_stat
+  √tr `1.2117e-39` (median `0.92%`); +C_ML √tr `1.0499e-39` (median `0.74%`); COMBINED √tr
+  `2.0992e-38` (median `13.47%`/bin, rank 264). [uq_4d/corrected/universe_stage2_4d/
+  uq_universe_4d_covariance_combined.root; summary .../uq_universe_4d_covariance_combined.summary.json]
+- P7 5D→4D marginal (DRY-RUN candidate on the current committed adopted 5D; NOT a
+  publication number — final gated): 4830-bin PSD projection, √tr `2.41e-38`, 5 orphan
+  4D-reported bins receive no 5D source (flagged). [project_cov_nd.py]

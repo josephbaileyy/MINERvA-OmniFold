@@ -50,6 +50,10 @@ def main():
     ap.add_argument("--combined", default="uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root")
     ap.add_argument("--prod", default="products/4d/xsec_4d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--out", default="uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root")
+    ap.add_argument("--cv-centered", action="store_true",
+                    help="F7 CV-centered variant: add per-bin joint mean_shift^2 to the unified "
+                         "variance (default is mean-centered, diag(C_unified) only). Parity with "
+                         "adopt_unified_5d.py --cv-centered.")
     args = ap.parse_args()
 
     # the 13 vertical bands the unified throw covers (12 knobs + Flux)
@@ -59,6 +63,13 @@ def main():
     fu = ROOT.TFile.Open(args.uthrow)
     C_uni = _th2(fu.Get("C_unified"))
     C_block = _th2(fu.Get("C_blocksum"))      # bank vertical block-sum (the throw's own comparator)
+    mean_shift2 = None
+    if args.cv_centered:
+        hms = fu.Get("hJointMeanShift")
+        if not hms:
+            raise SystemExit("[FAIL] --cv-centered needs hJointMeanShift in the unified-throw ROOT")
+        ms = np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
+        mean_shift2 = ms ** 2
     fu.Close()
     fc = ROOT.TFile.Open(args.combined)
     C_comb = _th2(fc.Get("hCov_combined4d_total"))
@@ -80,6 +91,9 @@ def main():
     assert C_uni.shape == C_block.shape == C_comb.shape == C_vert_sweep.shape == (n, n), "dim mismatch"
 
     vu = np.clip(np.diag(C_uni), 0, None)
+    if mean_shift2 is not None:
+        assert mean_shift2.size == vu.size, f"mean_shift dim {mean_shift2.size} != unified dim {vu.size}"
+        vu = vu + mean_shift2                  # F7 CV-centered: variance + shift^2
     vb = np.clip(np.diag(C_block), 0, None)    # bank vertical block (the throw's comparator)
     # conservative per-bin inflation FACTOR measured by the throw (never below block baseline)
     s_adopt = np.sqrt(np.maximum(vu, vb))

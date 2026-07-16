@@ -1,0 +1,49 @@
+{
+  "reported_bins": 4830,
+  "expected_bins": 4830,
+  "combined": {
+    "dim_ok": true,
+    "sqrt_tr": 2.099225750037309e-38,
+    "median_rel_pct": 13.469711607922275,
+    "symm_maxabs": 0.0,
+    "finite": true,
+    "min_eig": -5.4973773124628705e-92,
+    "min_over_max": -2.8071581243677553e-16,
+    "psd_ok": true,
+    "rank_1e-12": 264
+  },
+  "syst": {
+    "dim_ok": true,
+    "sqrt_tr": 2.0930944841742895e-38,
+    "median_rel_pct": 13.374611238097314,
+    "symm_maxabs": 0.0,
+    "finite": true,
+    "min_eig": -5.934591083611759e-92,
+    "min_over_max": -3.032113956131409e-16,
+    "psd_ok": true,
+    "rank_1e-12": 142
+  },
+  "stat": {
+    "dim_ok": true,
+    "sqrt_tr": 1.211671025555588e-39,
+    "median_rel_pct": 0.9197431634775919,
+    "symm_maxabs": 0.0,
+    "finite": true,
+    "min_eig": -1.0116589669871994e-94,
+    "min_over_max": -3.807866395670426e-16,
+    "psd_ok": true,
+    "rank_1e-12": 99
+  },
+  "ml": {
+    "dim_ok": true,
+    "sqrt_tr": 1.049893480175899e-39,
+    "median_rel_pct": 0.7448437727050142,
+    "symm_maxabs": 0.0,
+    "finite": true,
+    "min_eig": -1.4831798956635108e-94,
+    "min_over_max": -5.331498520776933e-16,
+    "psd_ok": true,
+    "rank_1e-12": 23
+  },
+  "ALL_OK": true
+}
