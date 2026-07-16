@@ -27,6 +27,16 @@ fix + memory-safe adapter). Both fast-forward, clean; only my files staged (neve
   floor/C_stat/C_ml/vertical+retraining/P3F-laterals/C_total/projections. No recoil covariance transfers.
 - **Next when unblocked:** build endpoint full-event inputs from P3F, then P5B per the launch plan.
 
+**CORRECTED COVARIANCE CONTRACT (2026-07-16 refined directive) — reconciled:** P5B vertical/flux
+systematics MUST be END-TO-END JOINT universes: delta_u = x_u(varied inputs + RETRAINED estimator)
+- x_CV, band cov from these complete shifts. FORBIDDEN: additive `C_syst_fixed_model + C_retrain`
+(shares the nuisance → double count). Estimator ID `pet-fullevent-fps-v1` + config fingerprint
+now in the feature contract; every covariance component must carry the identical fingerprint.
+CONFLICT FOUND + FIXED: my earlier P5B launch plan listed the additive C_syst+C_retrain structure
+(inherited from the recoil-only campaign) — corrected to the joint end-to-end contract in
+FULL_EVENT_FEATURE_CONTRACT.md. No full-event covariance products exist yet (P5B gated), so this
+was a DOC correction only; recoil-only additive C_retrain stays a quarantined cross-check.
+
 
 ## ⚠ SCOPE CHANGE 2026-07-16 — recoil-only PAUSED; full-event PET remediation (KNOWN_ISSUES #19)
 User directive: the current PET estimator is **recoil-only** (reco = non-muon recoil

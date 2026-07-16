@@ -14,6 +14,30 @@ PET trains UNBINNED on CONTINUOUS features. The extended (pT,p‖) EDGES are use
 domain retention, reporting, covariance construction, and validation — never as classifier
 inputs or training bins. Guarded by `assert_extended_fps_edges` (fail closed on paper grid).
 
+## Estimator ID + configuration fingerprint (single contract for central + ALL covariance)
+**Estimator ID:** `pet-fullevent-fps-v1`. Every P5B component (central, C_stat, C_ml, vertical/
+flux, laterals, total) MUST use this identical contract; recoil-only PET UQ is NEVER attached.
+- **inputs:** FPS CV full-event point-cloud npz built with `MNV101_FULL_PHASE_SPACE=1` + the
+  finalized full-event dump (scaffolding today = `of_inputs_pc_fps_xps2.npz`, recoil-only
+  tensors → must be regenerated for the real central; see blockers).
+- **features:** reco cloud (E,pos,z; KNN coord (pos,z)); truth cloud (E,px,py,pz,pdg,theta,phi;
+  KNN coord (theta,phi)); `event_reco`/`event_data` = continuous reco muon {pT,p‖} (+ full
+  px,py,pz,φ,E,charge,MINOS + reco vertex + residual summaries once branches land); `event_truth`
+  = continuous truth muon {pT,p‖}. Edges are reporting/covariance/validation only, never inputs.
+- **preprocessing:** cloud ÷1000 (MeV→GeV, mm→m), non-finite→0 (pad/mask sentinel); event
+  features z-normalized over pass_reco (reco/data) / pass_truth (truth), !pass rows zeroed.
+- **backend:** vendored `omnifold_nn` PET (multi-input Model, explicit `coord_idx`, FiLM event
+  conditioning) + MultiFold; niter 2, epochs 8, batch 1024, Adam lr 1e-4, train subsample 2M.
+- **seed policy:** estimator seed 42 FIXED for central + vertical/end-to-end universes + C_stat
+  (so C_stat varies only the coherent data+MC Poisson replica id); C_ml varies subsample/split
+  seed × TF estimator seed (predeclared crossed design), no Poisson.
+- **nominal product / phase space:** `products/pet/fullevent_fps/pet_fullevent_fps_nominal_*` (P5B);
+  extended-FPS canonical (pT,p‖) grid (this file's CANONICAL_* edges).
+- **fingerprint recipe (computed at P5B nominal build, stored in the product summary):**
+  `sha256(git_commit(net.py,omnifold.py,dataloader.py,fullevent_fps_dataloader.py) ||
+  feature_list || preprocessing || edges || seed_policy || input_npz_sha)`. Every covariance
+  component summary must carry the SAME fingerprint or it is rejected at assembly.
+
 ## Measurement domain
 - Source only FPS CV event loops from `MNV101_FULL_PHASE_SPACE=1` (drops the 4 truth-muon
   kinematic cuts, keeps tracker fiducial, grows the native-miss set). Pass `--full-phase-space`
@@ -107,7 +131,9 @@ laterals; P3S standard endpoints are regression controls only.
 - C_stat coherent replicas: ~1.2h each; 100 replicas ≈ as the recoil P1 (8-GPU orchestrator
   ≈ 12/4h-alloc → ~3–4 alloc-days wall, or a batch array).
 - PET-specific C_ML crossed ensemble: ~12 trains (~15 GPU-h).
-- Vertical + targeted retraining response: ~6–8 GPU trains.
+- Vertical/flux END-TO-END joint universes (physical variation + retrain together, per
+  correction): ~1 retrain per material endpoint; predeclared dominant set first (~6–8 GPU
+  trains), expand per the §6 materiality gate. NOT an additive frozen-map + retrain sum.
 - Selection-complete FPS laterals: consume Agent C P3F endpoints (CPU dump/extract) + ~10
   endpoint retrains.
 - Total new full-event FPS UQ campaign ≈ recoil campaign + ~15–20% (larger FPS sample).
@@ -153,14 +179,30 @@ Launch order (each on the frozen full-event FPS nominal, same mask/order/edges):
   3. C_stat: coherent data+MC Poisson replicas (fixed est/split seed), replica-mean covariance,
      strict manifest. 8-GPU orchestrator (`orchestrate_gpu_node.sh`, proven) or a batch array.
   4. C_ML: PET-specific crossed (subsample-seed × TF-seed) ensemble, no Poisson.
-  5. VERTICAL C_syst + targeted retraining-response: on the full-event nominal push weights;
-     predeclared materiality; NO recoil-only C_retrain transfer.
-  6. SELECTION-COMPLETE LATERALS: from Agent C's P3F FPS endpoints (dump→endpoint full-event
-     input→retrain→extract→MAT mean-centered C_lateral). NEVER P3S standard endpoints.
-  7. C_total = C_syst+C_retrain+C_stat+C_ML+C_lateral on one mask; PSD/symmetry/finite-diag;
-     exact 5D→4D projection; extended-edge assertion throughout.
+  5. VERTICAL/FLUX SYSTEMATICS — CORRECTED END-TO-END (JOINT) CONTRACT (2026-07-16 directive):
+     for each universe u / asymmetric ±endpoint that can CHANGE THE LEARNED MAPPING, apply the
+     FULL physical input variation AND retrain the PET estimator TOGETHER, then
+         delta_u = x_u(varied inputs + retrained estimator) - x_CV,
+     and build the band covariance DIRECTLY from these complete joint shifts (declared
+     experiment convention; MAT mean-centered with a separate mean-shift diagnostic). This
+     already contains the nuisance/retraining interaction. DO **NOT** form
+     `C_syst_fixed_model + C_retraining` — those terms share the nuisance and would require the
+     cross-covariance (double count); and do NOT add a separate retraining covariance for a
+     nuisance already carried by a joint end-to-end universe. Targeted-endpoint → full-per-
+     universe gate per PET_UQ_REMEDIATION_STATUS.md §6 (retrain the predeclared dominant set
+     first; expand only if material). A nuisance that provably CANNOT change the mapping (pure
+     reweight/normalization) may use the frozen-map response, documented as such with its
+     justification. (The recoil-only campaign's additive C_syst+C_retrain is a QUARANTINED
+     cross-check, never transferred.)
+  6. SELECTION-COMPLETE LATERALS: from Agent C's committed P3F FPS endpoints (dump→endpoint
+     full-event input→JOINT retrain+extract→MAT mean-centered C_lateral). NEVER P3S standard.
+  7. C_total = C_syst(end-to-end joint) + C_stat + C_ml + C_lateral on ONE mask/cv/order with
+     the IDENTICAL estimator fingerprint on every component (reject on mismatch). NO separate
+     additive C_retrain term (retraining lives inside the joint universes). Document each
+     component's nuisance ownership + independence/coupling BEFORE summing; supply mean shifts.
+     PSD/symmetry/finite-diagonal; exact 5D→4D marginal consistency; extended-edge assertion.
   8. PROJECTIONS + COMPARISONS: two-tier reporting (Tier-1 measured vs Tier-2 prior-band);
      PET-vs-scalar only after both are on the SAME extended-FPS domain. Coverage + 3-prior
-     envelope on the extension regions.
+     envelope on the extension regions. Report candidate vs final products separately.
 Est. total ≈ recoil campaign + ~15–20% (49.2M vs 32.8M). CPU for dumps/extraction/census/tests;
 GPU (shared + interactive) for trainings.
