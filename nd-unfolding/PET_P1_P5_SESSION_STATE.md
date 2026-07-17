@@ -1,5 +1,22 @@
 # PET Publication Agent B — session state
 
+## HANDOFF UPDATE (2026-07-17) — P5A independently VERIFIED + campaign defects fixed
+The fe-fps orchestration campaign (docs/orchestration/, commit 79e1bc5) independently VERIFIED
+my P5A with 4-family redundancy (codex code audit / claude-school adversarial / gemini design /
+GPU re-runs job 56003372) and reproduced my numbers exactly (CLAIMS.md CLM-001..008):
+- CLM-001/002/005 VERIFIED-CODE/NUMERIC (engine fix, no-leakage, census); CLM-003/004
+  VERIFIED-NUMERIC (stress/ordinary closure, toy/null scope). My work stands.
+- **CLM-007 BLOCKER (my file) — FIXED (aa3f44c):** build_fullevent_loaders silently fell back
+  to MC reco_scalars when the pc npz lacks measured_scalars (xps2 does) -> data-side train on
+  misaligned MC rows incl. -9999 sentinels. Now fail-closed + explicit data_scalars_npz
+  (of_inputs_5d_fps_xps2.npz:measured, row-count gated) + regression tests. Re-confirmed on GPU.
+- **CLM-008 (my code) — F10 periodic truth-KNN φ + F9 trained-model reload FIXED (4043e3f);
+  F2 (FiLM mask) / F3 (posinf cap) dispositioned to the P5B engine build; F7 (coherent
+  bootstrap) / F8 (rank-consistent imc) to the P5B C_stat/horovod path** — explicit specs in
+  the feature contract. None blocks P5A.
+Rollout (docs/orchestration/ROLLOUT-PLAN.md): Stage-2 item-1 (CLM-007 upstream) DONE by me;
+item-2 (CLM-008 fix-or-waive) DONE; item-3 (G2 C++ full-event dump + G3 P3F endpoints) GATED.
+
 ## HANDOFF (2026-07-16) — read this first
 **Delivered + pushed to github/main:** `9d353e1` (full-event PET interface + extended-FPS
 domain, interface validated) and `7d365be` (FPS smoke on real tensors + reco-muon sentinel

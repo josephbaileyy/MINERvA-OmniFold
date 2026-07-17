@@ -35,8 +35,8 @@ print(f"[fps-smoke] gen  cloud {gen.shape} coord_gen={coord_gen} "
 print(f"[fps-smoke] data cloud {np.asarray(data.reco).shape} data_evt "
       f"{np.asarray(data.reco_evt).shape}")
 print(f"[fps-smoke] meta={meta}")
-assert reco.shape[-1] == 3 and gen.shape[-1] == 7, "unexpected cloud feature dims"
-assert coord_reco == (1, 2) and coord_gen == (5, 6), "unexpected KNN coord indices"
+assert reco.shape[-1] == 3 and gen.shape[-1] == 8, "unexpected cloud feature dims"
+assert coord_reco == (1, 2) and coord_gen == (5, 6, 7), "unexpected KNN coord indices"
 assert np.all(np.isfinite(reco)) and np.all(np.isfinite(gen)), "non-finite cloud"
 assert np.all(np.isfinite(mc.reco_evt)) and np.all(np.isfinite(mc.gen_evt)), "non-finite evt"
 
