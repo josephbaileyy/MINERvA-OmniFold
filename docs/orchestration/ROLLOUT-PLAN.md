@@ -13,11 +13,15 @@ P5A engineering VERIFIED (CLM-001/002/005), closures reproduced with archived ev
 scalars from the 5D xps2 npz; worktree patch `MINERvA-OmniFold-fe`, PATCHES.md). Sieve
 reduction proof committed to the note appendix (89ecc79) and pushed to Overleaf.
 
-## Stage 1 — pilot slice verdict (IN FLIGHT)
+## Stage 1 — pilot slice verdict (DONE 2026-07-17: PASS, CLM-006 promoted)
 
-Jobs fe5p_pilot (purity target) + fe5p_ablat1 (legacy-matched all-ones). Gates in
-OMNIFOLD-DOSSIER.md §P-slice. Products stay in the campaign worktree; nothing promotes to
-the shared tree until gates pass AND the upstream CLM-007 fix is adopted by Agent B's file.
+Jobs fe5p_pilot 56010587 (purity target) + fe5p_ablat1 56010588 (legacy-matched all-ones),
+both COMPLETED (~1h17m each, shared GPU). All predeclared §P-slice gates pass on both arms:
+outputs finite on all 49.15M rows, unit check bit-exact, miss neutrality exact, Tier-1
+per-cell median |FE/recoil-only−1| = 4.25% (purity) / 4.37% (ones) vs the ≤10% tolerance
+(GBDT comparator correctly refused — no committed xps2 GBDT central). Numbers + caveats in
+CLAIMS.md CLM-006. Products stay in the campaign worktree; nothing promotes to the shared
+tree until the upstream CLM-007 fix is adopted by Agent B's file (Stage 2 item 1).
 
 ## Stage 2 — hand-back to the publication runbook (BLOCKING ITEMS, in order)
 
