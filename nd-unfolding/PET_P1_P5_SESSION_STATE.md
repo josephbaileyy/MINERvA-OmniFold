@@ -1,5 +1,19 @@
 # PET Publication Agent B — session state
 
+## HANDOFF UPDATE (2026-07-17b) — P5B lateral-source decision + gate correction
+Orchestrator P5B dependency correction: "P3F merged > 0" is NOT sufficient. AUDITED the P3F
+endpoint schema (fps/MuonResolution_1/*.root): reduced-schema (recoil+truth clouds + scalar
+muon pT,p‖ + Eavail/q3/W + migration counters) but NO muon 4-vec/φ/charge/MINOS/vertex/view/
+timing and NO stable event keys. => fail closed for a FULL-schema publication lateral.
+Decision written: `pet/P5B_LATERAL_SOURCE_DECISION.md` — (a) reduced-schema sidecar reuse of
+existing P3F (economical bridge, ONLY under a fail-closed proof battery adapting the fe_pilot
+CRC method + added stable keys, labeled reduced) vs (b) fresh full-event P3F after the C++
+branches (publication-complete, full muon object). Recommendation: (b) is the publication path;
+(a) is a labeled reduced bridge once P3F merges+commits, fail-closed on any schema/alignment gap.
+CLM-006 pilot promoted to VERIFIED-NUMERIC (both arms PASS, Tier-1 median|FE/recoil−1| 4.25/4.37%
+vs 10% gate). Next authorized safe work: F2/F3/F7/F8 engine fixes. Gate monitor: merged P3F now
+means "wake to AUDIT (reduced-only)", NOT auto-open; full-schema gate = C++ full-event dump commit.
+
 ## HANDOFF UPDATE (2026-07-17) — P5A independently VERIFIED + campaign defects fixed
 The fe-fps orchestration campaign (docs/orchestration/, commit 79e1bc5) independently VERIFIED
 my P5A with 4-family redundancy (codex code audit / claude-school adversarial / gemini design /
