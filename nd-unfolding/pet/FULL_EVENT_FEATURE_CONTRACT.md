@@ -112,6 +112,18 @@ handling; a naive normalization over all rows pollutes the muon scale (was mean 
 the fix). This is a genuine reco/data-vs-truth alignment subtlety the recoil-only estimator
 never exposed (it fed no scalars).
 
+## CLM-007 data-scalar source (fixed 2026-07-17, verified defect from the fe-fps campaign)
+The xps2 scaffolding pc npz has NO `measured_scalars`, so the data-side muon features must come
+from an explicit, row-aligned source — NEVER a silent fallback to MC `reco_scalars` (that
+indexes MC rows by data positions and injects -9999 sentinels into the step-1 data classifier).
+`build_fullevent_loaders` now FAILS CLOSED on a missing `measured_scalars` unless
+`data_scalars_npz` is given; for xps2 use `of_inputs_5d_fps_xps2.npz` (`measured` cols 0,1 =
+data muon pT,p‖; 4,116,128 rows == measured_pc, row-count gate enforced). Regression tests:
+`tests/test_fullevent_fps.py` CLM007DataScalarGuard (fail-closed + row-mismatch). The
+production full-event FPS-CV npz should carry `measured_scalars` directly (dump-time), removing
+the need for the sidecar. NOTE: row-count alignment is enforced; a full event-by-event order
+proof (as `build_bkgsub_pointcloud_input.py` did against the ROOT) is a P5B hardening item.
+
 ## Unavailable counterparts (documented, not sentinel-filled)
 - Truth MINOS/range/match-quality: DO NOT EXIST (detector-only) → absent from event_truth.
 - Muon full 4-vector/charge/vertex/view/timing at reco/data: pending C++ branches.

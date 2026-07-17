@@ -21,10 +21,12 @@ from omnifold import PET, MultiFold
 import fullevent_fps_dataloader as fe
 
 NPZ = f"{_ND}/of_inputs_pc_fps_xps2.npz"
+DATA_SCALARS = f"{_ND}/of_inputs_5d_fps_xps2.npz"   # data muon pT,p‖ (CLM-007: no silent MC fallback)
 tf.keras.utils.set_random_seed(0)
 
 data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
-    NPZ, max_events=8000, seed=0)
+    NPZ, max_events=8000, seed=0, data_scalars_npz=DATA_SCALARS)
+print(f"[fps-smoke] data_scalar_source = {meta.get('data_scalar_source')}")
 reco = np.asarray(mc.reco); gen = np.asarray(mc.gen)
 print(f"[fps-smoke] reco cloud {reco.shape} coord_reco={coord_reco} "
       f"reco_evt {np.asarray(mc.reco_evt).shape}")

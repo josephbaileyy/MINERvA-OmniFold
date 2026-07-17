@@ -3,7 +3,9 @@
 No TensorFlow: exercises the FPS domain guard, cloud builders + explicit KNN
 coordinates, the three event-feature schemas, and the step-1 no-truth-leakage
 invariant. The TF paired-training e2e is a separate GPU/CPU smoke."""
+import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -116,6 +118,41 @@ class EventSchemas(unittest.TestCase):
         # leakage detector must still pass with pass_reco supplied
         self.assertTrue(fe.assert_no_truth_leakage(er, reco, truth, fe.DEFAULT_EVT_FEATURES,
                                                    pass_reco=pr))
+
+
+class CLM007DataScalarGuard(unittest.TestCase):
+    """Regression for CLM-007: build_fullevent_loaders must FAIL CLOSED on a missing data
+    'measured_scalars' rather than silently falling back to MC reco_scalars (sentinel/misalign).
+    These paths raise before the vendored-engine (TF) import, so they run on the login node."""
+
+    def _make_pc_npz(self, path, with_measured_scalars=False, N=24, M=10, P=12):
+        rng = np.random.default_rng(0)
+        arr = dict(
+            part_reco=rng.random((N, P, 3)).astype("f4"),
+            part_gen=rng.random((N, P, 5)).astype("f4"),
+            measured_pc=rng.random((M, P, 3)).astype("f4"),
+            reco_scalars=rng.random((N, 4)).astype("f4"),
+            truth_scalars=rng.random((N, 4)).astype("f4"),
+            pass_reco=(rng.random(N) > 0.3), pass_truth=(rng.random(N) > 0.1),
+            w_truth=np.ones(N, "f4"), measured_weights=np.ones(M, "f4"),
+            edges_0=fe.CANONICAL_PT_EDGES, edges_1=fe.CANONICAL_PPARALLEL_EDGES,
+        )
+        if with_measured_scalars:
+            arr["measured_scalars"] = rng.random((M, 4)).astype("f4")
+        np.savez(path, **arr)
+
+    def test_fail_closed_when_no_data_scalars(self):
+        with tempfile.TemporaryDirectory() as td:
+            pc = os.path.join(td, "pc.npz"); self._make_pc_npz(pc)
+            with self.assertRaises(ValueError):        # CLM-007 guard fires, no silent fallback
+                fe.build_fullevent_loaders(pc, enforce_fps_edges=True)
+
+    def test_row_count_mismatch_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            pc = os.path.join(td, "pc.npz"); self._make_pc_npz(pc, M=10)
+            ds = os.path.join(td, "ds.npz"); np.savez(ds, measured=np.zeros((7, 5), "f4"))
+            with self.assertRaises(ValueError):        # 7 data-scalar rows != 10 measured_pc rows
+                fe.build_fullevent_loaders(pc, data_scalars_npz=ds, enforce_fps_edges=True)
 
 
 if __name__ == "__main__":

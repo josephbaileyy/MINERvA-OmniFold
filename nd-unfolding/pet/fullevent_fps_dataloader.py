@@ -196,14 +196,12 @@ def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_nam
 
 def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=None,
                             feature_names=DEFAULT_EVT_FEATURES, rank=0, size=1,
-                            enforce_fps_edges=True):
+                            enforce_fps_edges=True, data_scalars_npz=None):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
     domain. Returns (data, mc, imc, coord_reco, coord_gen, meta). Mirrors the recoil-only
     build_loaders subsample/bootstrap contract, but sets reco_evt/gen_evt on the loaders and
     keeps the truth PDG + angular geometry. FPS edges are asserted (fail closed) unless
     enforce_fps_edges=False (tests with synthetic edges)."""
-    from omnifold.dataloader import DataLoader   # pure-numpy; avoids importing TF here
-
     d = np.load(inputs_npz, allow_pickle=True)
     if enforce_fps_edges:
         assert_extended_fps_edges(d["edges_0"], d["edges_1"])
@@ -226,13 +224,36 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"])[ida])
     reco_scalars = np.asarray(d["reco_scalars"])[imc]
     truth_scalars = np.asarray(d["truth_scalars"])[imc]
-    meas_scalars_src = d["measured_scalars"] if "measured_scalars" in d.files else d["reco_scalars"]
-    meas_scalars = np.asarray(meas_scalars_src)[ida]
+    # DATA event-feature scalars = the DATA-side reconstructed muon, row-aligned to
+    # measured_pc. CLM-007 fix (verified defect): NEVER silently fall back to MC reco_scalars
+    # when 'measured_scalars' is absent -- that indexes MC rows by data positions and injects
+    # -9999 sentinels from MC misses, corrupting the step-1 data classifier. Fail closed and
+    # require an explicit, row-count-aligned data-scalar npz (e.g. of_inputs_5d_fps_xps2.npz,
+    # whose 'measured' cols 0,1 = data muon pT,p‖).
+    if "measured_scalars" in d.files:
+        meas_scalars_full = np.asarray(d["measured_scalars"]); data_src = "pc-npz:measured_scalars"
+    elif data_scalars_npz is not None:
+        with np.load(data_scalars_npz, allow_pickle=True) as dz:
+            dkey = "measured_scalars" if "measured_scalars" in dz.files else "measured"
+            meas_scalars_full = np.asarray(dz[dkey])
+        data_src = f"{data_scalars_npz}:{dkey}"
+        if meas_scalars_full.shape[0] != M:
+            raise ValueError(
+                f"[CLM-007] data-scalar rows {meas_scalars_full.shape[0]} != measured_pc data "
+                f"rows {M} in {data_scalars_npz} -- not row-aligned; refuse to build.")
+    else:
+        raise ValueError(
+            "[CLM-007 GUARD] pc npz has no 'measured_scalars' and no data_scalars_npz was "
+            "given. Refusing to fall back to MC reco_scalars (would train step-1 data on "
+            "misaligned MC rows incl. -9999 sentinels). Pass data_scalars_npz (e.g. "
+            "of_inputs_5d_fps_xps2.npz; its 'measured' cols 0,1 = data muon pT,p‖).")
+    meas_scalars = meas_scalars_full[ida]
     pass_reco = np.asarray(d["pass_reco"])[imc]
     pass_truth = np.asarray(d["pass_truth"])[imc]
     event_reco, event_truth, event_data, meta = build_event_features(
         reco_scalars, truth_scalars, meas_scalars, feature_names,
         pass_reco=pass_reco, pass_truth=pass_truth)
+    meta["data_scalar_source"] = data_src
     assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
                             pass_reco=pass_reco)
     w_truth = np.asarray(d["w_truth"]).astype(np.float32)[imc]
@@ -243,6 +264,9 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         measured_weights, w_truth = poisson_event_weights(
             measured_weights, w_truth, int(bootstrap_seed))
 
+    # Imported at point of use (pulls in the vendored engine); kept AFTER the CLM-007
+    # fail-closed check so that guard is exercisable without TensorFlow.
+    from omnifold.dataloader import DataLoader
     data = DataLoader(reco=meas_cloud, weight=measured_weights, normalize=True,
                       reco_evt=event_data)
     mc = DataLoader(reco=reco_cloud, gen=gen_cloud, pass_reco=pass_reco, pass_gen=pass_truth,
@@ -254,11 +278,16 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--inputs", required=True, help="FPS point-cloud npz (xps2 scaffolding)")
+    ap.add_argument("--data-scalars", default=None,
+                    help="npz with the DATA muon scalars ('measured' cols 0,1 = pT,p‖), e.g. "
+                         "of_inputs_5d_fps_xps2.npz. Required when the pc npz lacks "
+                         "measured_scalars (CLM-007: no silent MC fallback).")
     ap.add_argument("--max-events", type=int, default=None)
     ap.add_argument("--no-fps-guard", action="store_true")
     a = ap.parse_args()
     data, mc, imc, cr, cg, meta = build_fullevent_loaders(
-        a.inputs, max_events=a.max_events, enforce_fps_edges=not a.no_fps_guard)
+        a.inputs, max_events=a.max_events, enforce_fps_edges=not a.no_fps_guard,
+        data_scalars_npz=a.data_scalars)
     print(f"[fullevent] reco cloud {np.asarray(mc.reco).shape} coord_reco={cr} "
           f"reco_evt {np.asarray(mc.reco_evt).shape}")
     print(f"[fullevent] gen  cloud {np.asarray(mc.gen).shape} coord_gen={cg} "
