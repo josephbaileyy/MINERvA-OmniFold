@@ -23,20 +23,34 @@ per-cell median |FE/recoil-only−1| = 4.25% (purity) / 4.37% (ones) vs the ≤1
 CLAIMS.md CLM-006. Products stay in the campaign worktree; nothing promotes to the shared
 tree until the upstream CLM-007 fix is adopted by Agent B's file (Stage 2 item 1).
 
-## Stage 2 — hand-back to the publication runbook (BLOCKING ITEMS, in order)
+## Stage 2 — hand-back to the publication runbook (updated 2026-07-17)
 
-1. **Upstream the CLM-007 fix** into `nd-unfolding/pet/fullevent_fps_dataloader.py`
-   (Agent B's file): fail-closed missing-`measured_scalars` + explicit data-scalar/weights
-   arguments, with the two regression tests from the campaign worktree. Owner: Agent B (or
-   user decision to let this campaign commit it). Without this, ANY future data-side xps2
-   run silently trains on MC sentinels.
-2. **Fix-or-waive each CLM-008 item before P5B production** (explicit written waiver per
-   item): FiLM pad-shift + unmasked classifier attention (F2 — affects every full-event
-   train); posinf→1 reweight clamp (F3 — affects strong reweights; also gates any negweight
-   arm); bootstrap-draw-after-subsample (F7) + rank-slicing misalignment (F8) — HARD gates
-   for C_stat and horovod; trained-model reload test (F9); truth-KNN phi periodicity (F10).
-3. **G2 (C++ full-event dump) + G3 (P3F endpoints)** per the feature contract; the
-   interface request to Agent A is filed. The pilot deliberately does NOT wait for these.
+1. ~~Upstream the CLM-007 fix~~ **DONE** (Agent B, aa3f44c: fail-closed +
+   row-count gate + regression tests; verified in-tree by this campaign).
+2. **CLM-008**: F9/F10 **FIXED** (4043e3f/220c970, GPU-validated); F2/F3/F7/F8
+   dispositioned with written fix specs in the feature contract — implementation due at
+   the P5B engine build. F7/F8 remain HARD gates for C_stat and horovod.
+3. **G2 (C++ full-event dump) + G3 (P3F endpoints)** — SCHEMA FINDING (2026-07-17
+   coordination pass): the in-flight P3F campaign (55972324) uses the pre-full-event
+   binary; its ROOTs are scalar-FPS schema (no muon four-vector/vertex/view/timing/
+   residual-E branches, no stable event keys). They close scalar FPS P4/P6 but NOT
+   full-event P5B laterals. Decision assigned to Agents B+C: (a) compact full-event
+   sidecar rerun reusing P3F clouds, acceptable ONLY with exact fail-closed row-alignment
+   proofs (fe_pilot CRC-join methodology) + added stable event keys; or (b) full endpoint
+   regeneration after the C++ branches land. "P3F merged > 0" is NOT sufficient to open
+   P5B.
+
+### Coordination takeover log (2026-07-17, user-authorized)
+
+Orchestrator assumed cross-agent coordination: (i) Agent A stood down from FPS P4
+post-processing (Agent C sole owner; A = standard-only) before the FPS array completes;
+(ii) Agent C given commit-gate GO for validated P6-FPS non-lateral + STATVAL results
+(scoped staging only); (iii) Agent B given the P5B schema-gating correction above;
+(iv) Agent D's dead 4D corrected chain repaired by the orchestrator: comb4dCc 55971617
+failed on 15 missing throws — root cause partial uthrow slabs (31, 34–39; 1–3 throws
+instead of 4) from an earlier interrupted multinode run passing `skip (exists)`; partials
+moved to `uthrow_slabs_4d/partial_20260716_interrupted/`, regen array 56025478
+(tasks 31,34-39) → combine 56025481 → adopt 56025483; dead adopt 55971619 cancelled.
 
 ## Stage 3 — P5B production (per the contract's launch order)
 
