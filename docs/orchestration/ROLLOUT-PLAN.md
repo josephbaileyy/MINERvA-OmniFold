@@ -52,6 +52,26 @@ instead of 4) from an earlier interrupted multinode run passing `skip (exists)`;
 moved to `uthrow_slabs_4d/partial_20260716_interrupted/`, regen array 56025478
 (tasks 31,34-39) → combine 56025481 → adopt 56025483; dead adopt 55971619 cancelled.
 
+### P5B launch gates (adopted 2026-07-17 from external gate review; adjudication in
+`MINERvA-OmniFold-fe/orchestration_runs/coordination/P5B_GATE_REVIEW_20260717.md`)
+
+1. No P5B nominal until F2 (masking, loader-supplied mask preferred) and F3 are committed
+   and GPU-validated. F3 must be the logit-space form — `w = exp(clipped_logit)`,
+   fail-closed on non-finite logits, predeclared cap + saturation telemetry +
+   cap-sensitivity check, identical across nominal/replicas/universes/extraction — NOT the
+   provisional posinf-cap patch.
+2. No C_stat until F7 is complete (coherent global Poisson draw over the FULL inventories
+   before subset selection; persisted factors/seeds; same MC draw at extraction).
+3. No Horovod for P5B: nominal/replicas/universes run as independent single-rank GPU jobs
+   (chunked rank-0 reweight-all). F8 becomes moot; if Horovod is ever retained it reverts
+   to a hard gate with the full equivalence-test battery.
+4. No publication laterals from reduced-schema P3F sidecars. Lateral source = (b) fresh
+   full-schema P3F regeneration after the C++ branches land; the reduced {pT,p‖} sidecar
+   is a cross-check only. Reduced and full schemas get DIFFERENT estimator fingerprints
+   (`pet-fullevent-fps-v1` reserved for full schema only).
+5. CLM-007 stays closed, but any separate data-feature join still requires an exact
+   alignment/provenance proof (fe_pilot CRC-join pattern).
+
 ## Stage 3 — P5B production (per the contract's launch order)
 
 Nominal → GPU floor → C_stat (coherent, fixed seeds) → C_ML (crossed) → end-to-end JOINT
