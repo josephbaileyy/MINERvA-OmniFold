@@ -33,11 +33,11 @@ These closure tests validate the estimator but are not used to assign a
 non-closure uncertainty. Such an uncertainty would require a predeclared suite
 of injection shapes and amplitudes rather than calibration to a single
 Gaussian bump.
-% \bpn{Should we use this closure test to set an uncertainty? }
-% \jrb{Yes, this can motivate a non-closure uncertainty. Before assigning one,
-% though, we should extend the test to a predeclared suite of injection shapes
-% and amplitudes, so the resulting uncertainty is not calibrated to this
-% particular Gaussian bump.}
+\bpn{Should we use this closure test to set an uncertainty? }
+\jrb{Yes, this can motivate a non-closure uncertainty. Before assigning one,
+though, we should extend the test to a predeclared suite of injection shapes
+and amplitudes, so the resulting uncertainty is not calibrated to this
+particular Gaussian bump.}
 
 \paragraph{Unbinned diagnostic (C2ST).}
 As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
@@ -70,12 +70,12 @@ truth reference (or a redesigned ensemble) and remains open.
 Fig.~5.
 
 \paragraph{Classifier choice (GBDT vs.\ NN).}
-% \bpn{Maybe move to an appendix?  The NN in Fig. 15 looks quite bad!  Seems a
-% little suspicious.  Keep Fig. 17+18 in the main body!}
-% \jrb{Agreed. The old subsampled sklearn MLP had underfit to an almost constant
-% reweight. I replaced it with the validated full five-iteration Keras-MLP
-% comparison, which uses the same weighted inputs and OmniFold loop as the
-% GBDT.}
+\bpn{Maybe move to an appendix?  The NN in Fig. 15 looks quite bad!  Seems a
+little suspicious.  Keep Fig. 17+18 in the main body!}
+\jrb{Agreed. The old subsampled sklearn MLP had underfit to an almost constant
+reweight. I replaced it with the validated full five-iteration Keras-MLP
+comparison, which uses the same weighted inputs and OmniFold loop as the
+GBDT.}
 Published OmniFold analyses use neural-network
 classifiers~\cite{Andreassen:2019cjw,unbinnedguide}; we use gradient-boosted decision
 trees, whose output must still be a calibrated posterior for $w=p/(1-p)$ to be valid.
@@ -123,13 +123,13 @@ cardinality, while only \SI{2.31}{\percent} of truth events reach the cap and
 the twelfth constituent carries only \SI{0.09}{\percent} of the retained truth
 energy on average.
 
-% \jrb{Correction after auditing the figure source: the previous Fig.~18 was
-% made from the pre-2026-06-28 point-cloud file, which left the truth cloud empty
-% for \SI{72.3}{\percent} of truth-only misses (\SI{27.4}{\percent} of all
-% events). That produced a spurious $k=0$ spike and biased the quoted mean to
-% $3.3$. I replaced it with the coverage-fixed full-cloud figure and removed the
-% incorrect physical interpretation of that spike; only the GENIE-bookkeeping
-% $k=1$ depletion remains.}
+\jrb{Correction after auditing the figure source: the previous Fig.~18 was
+made from the pre-2026-06-28 point-cloud file, which left the truth cloud empty
+for \SI{72.3}{\percent} of truth-only misses (\SI{27.4}{\percent} of all
+events). That produced a spurious $k=0$ spike and biased the quoted mean to
+$3.3$. I replaced it with the coverage-fixed full-cloud figure and removed the
+incorrect physical interpretation of that spike; only the GENIE-bookkeeping
+$k=1$ depletion remains.}
 
 \begin{figure}[H]
   \centering
