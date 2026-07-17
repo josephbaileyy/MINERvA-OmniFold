@@ -4,6 +4,25 @@ Live as of 2026-07-15. Owner: Publication Agent A (integration lead). This is a
 working handoff, not a results claim. Verified numbers belong in the ledger; this
 file points to state and the completion recipe.
 
+## OWNERSHIP CORRECTION (2026-07-17, fe-fps orchestrator, user-authorized)
+- **FPS post-processing is Agent C's, NOT Agent A's.** The P4-FPS chain
+  (audit/merge/unfold/lateral-covariance/adopt under `active_universe_5d/fps/`
+  and `uq_fps/`) is owned and run ONCE by Agent C. Agent A's earlier plan to
+  auto-run the FPS P4 chain at FPS 120/120 is **STRUCK/DISABLED**.
+- **Agent A post-processing scope = STANDARD ONLY:** the P3S -> standard P4
+  chain under `active_universe_5d/standard/` when it reaches 120/120.
+- Agent A still MONITORS both arrays (babysitting is correct) and owns the
+  STANDARD array's health (throttle, scheduler-override resubmit-if-walled per
+  the freeze exception). Agent A does NOT run FPS P4, does NOT touch C's FPS
+  launcher, and does NOT resubmit the FPS array.
+- Do not modify/reinstall the C++ binary while either array is active.
+- Not Agent A's scope: 4D corrected combine repair (orchestrator owns
+  56025478/56025481/56025483; do not resubmit anything in `uq_4d/corrected/`).
+- FUTURE (post-drain, coordinate w/ Agent B): current P3F ROOTs are scalar-FPS
+  schema from the pre-full-event binary; full-event C++ branch work (muon
+  four-vector, vertex, view, timing, residual-energy) precedes any endpoint
+  regeneration decision — not to be actioned unilaterally.
+
 ## Completed + committed
 - **P0 (reconciliation):** committed only Agent A's own interface; left all other
   concurrent-session dirty files untouched (07-13 corrected-UQ/negweight batch,
