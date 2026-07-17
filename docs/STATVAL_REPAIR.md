@@ -263,3 +263,27 @@ independent truth reference.
   piece.
 - Preserved FPS covariance workstream (separate) continues autonomously; its coverage toys
   (`cov_fps/`, `fps_extension_validation.py`) are folded into WS1 as the pull diagnostic.
+
+## WS3 FINAL VERDICT (2026-07-17) — paired C_delta is not the right object; descriptive + limitation
+Attempted the paired OmniFold-vs-IBU C_delta (`2d-unfolding/ibu_omnifold_paired_cdelta.py`, one shared
+2D 14x16 response + Poisson-fluctuated measured through BOTH `RooUnfoldBayes` and `RooUnfoldOmnifold`).
+Two findings kill the FORMAL paired GoF and point to the contract's descriptive+limitation fallback:
+1. **Degeneracy:** binned OmniFold and D'Agostini IBU are the SAME iterative (Bayes/EM) update in the
+   binned limit — a known equivalence (OmniFold generalizes IBU; Andreassen et al. arXiv:1911.09107).
+   So a *binned* delta = x_OF - x_IBU is ~implementation noise, not a method difference (the completed
+   NOMINAL confirms this: total OF 6.4375e6 vs IBU 6.4236e6 = **+0.216%**, i.e. they agree). A C_delta
+   built from it would be a degenerate near-zero object, not a meaningful OF-vs-IBU test.
+2. **No unbinned IBU counterpart:** the regime where OmniFold genuinely differs is UNBINNED, and there
+   is no unbinned IBU to pair against (that is precisely OmniFold's raison d'etre, LITERATURE_NOTES sec A).
+3. **Infeasible anyway:** `RooUnfoldOmnifold` binned runs ~30 min/iteration (its BinnedOmnifold does a
+   full per-iteration fit), so 100 paired replicas x 2 estimators x 5 iters is days — cancelled.
+**Verdict:** do NOT publish a formal OF-vs-IBU (or ours-vs-paper) paired-covariance GoF p-value. RETAIN
+the descriptive binned method-agreement (OF and IBU reproduce each other to 0.216% on the total on
+identical inputs, as expected from the binned equivalence) and the ratio-to-paper, each with an explicit
+limitation statement. Driver + nominal kept as provenance (`ibu_omnifold_paired_cdelta.py`,
+`sbatch_ibu_omnifold_cdelta.sh`).
+Wording for Agent D: replace "IBU and OmniFold agree (method-blind)" with: "On identical binned 2D
+inputs OmniFold and D'Agostini IBU agree to 0.216% on the integrated rate, consistent with their known
+equivalence in the binned limit; a calibrated method-difference GoF is not quoted because binned OmniFold
+reduces to IBU and the unbinned OmniFold result has no IBU counterpart." Keep generator significances
+(data-vs-theory) and remove any ours-vs-paper GoF p-value (retain ratio + limitation).
