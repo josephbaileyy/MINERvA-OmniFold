@@ -100,26 +100,30 @@ def build_reco_cloud(part_reco):
 def build_truth_cloud(part_gen):
     """Truth FS-hadron cloud with PDG retained + explicit angular KNN coordinates appended.
 
-    Input part_gen (N,P,5) = (E,px,py,pz,pdg). Output (N,P,7) =
-      (E/GeV, px/GeV, py/GeV, pz/GeV, pdg, theta, phi)
-    with coord_idx=(5,6) => KNN neighborhood = angular direction (theta,phi), a genuine
-    truth geometry rather than raw momentum columns. Padded tokens (E==0) get theta=phi=0
-    and are pushed away by the model's coord_shift mask, so the energy(col0) pad mask holds.
+    Input part_gen (N,P,5) = (E,px,py,pz,pdg). Output (N,P,8) =
+      (E/GeV, px/GeV, py/GeV, pz/GeV, pdg, theta, cos_phi, sin_phi)
+    with coord_idx=(5,6,7) => KNN neighborhood = angular direction (theta, cos_phi, sin_phi).
+    Azimuth is encoded as (cos_phi, sin_phi) so the neighborhood is PERIODIC-correct: raw phi
+    would place phi=-pi and phi=+pi maximally far apart although they are adjacent (CLM-008 F10).
+    Padded tokens (E==0) get all appended coords 0 and are pushed away by the model's
+    coord_shift mask, so the energy(col0) pad mask still holds.
     """
     part_gen = np.asarray(part_gen, np.float32)
     E   = part_gen[:, :, 0]
     px, py, pz = part_gen[:, :, 1], part_gen[:, :, 2], part_gen[:, :, 3]
     pdg = part_gen[:, :, 4]
     pt = np.hypot(px, py)
-    theta = np.arctan2(pt, pz)               # polar angle wrt beam (rad)
-    phi = np.arctan2(py, px)                 # azimuth (rad)
+    theta = np.arctan2(pt, pz)               # polar angle wrt beam (rad), [0,pi] (not periodic)
+    phi = np.arctan2(py, px)                 # azimuth (rad); encoded periodically below
     valid = E != 0                           # real tokens
     theta = np.where(valid, theta, 0.0).astype(np.float32)
-    phi = np.where(valid, phi, 0.0).astype(np.float32)
+    cphi = np.where(valid, np.cos(phi), 0.0).astype(np.float32)
+    sphi = np.where(valid, np.sin(phi), 0.0).astype(np.float32)
     kin = _scale_clean(np.stack([E, px, py, pz], axis=-1))     # (N,P,4) GeV, pad-preserving
     pdg = np.where(valid, pdg, 0.0).astype(np.float32)         # keep raw PDG (embed in prod)
-    cloud = np.concatenate([kin, pdg[..., None], theta[..., None], phi[..., None]], axis=-1)
-    return cloud.astype(np.float32), (5, 6)
+    cloud = np.concatenate([kin, pdg[..., None], theta[..., None],
+                            cphi[..., None], sphi[..., None]], axis=-1)
+    return cloud.astype(np.float32), (5, 6, 7)
 
 
 # Event-feature spec: which CONTINUOUS scalars form the distinguished-muon/context block.

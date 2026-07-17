@@ -87,16 +87,23 @@ w = of.reweight((mc.gen, mc.gen_evt), of.model2, batch_size=64)
 assert w.shape == (nmc,) and np.all(np.isfinite(w)), "[t3 FAIL] paired push weights bad"
 print(f"[t3] paired MultiFold e2e: PASS (w mean={w.mean():.4f} std={w.std():.4f})")
 
-# ---- t4: save / reload -----------------------------------------------------------------
+# ---- t4: save / reload of the ACTUALLY-TRAINED model (CLM-008 F9) -----------------------
+# MultiFold.Unfold() trains CLONES held in step2_models, not the of.model2 template; saving
+# of.model2 would persist an UNTRAINED net (vacuous reload test). Save the trained clone.
+trained2 = of.step2_models[0]
 p = "/tmp/smoke_fe_w/reload_test.weights.h5"
-of.model2.model.save_weights(p)
+trained2.model.save_weights(p)
 m2b = PET(F, num_evt=EV, num_part=P, num_transformer=1, num_heads=1, projection_dim=16,
           local=True, K=3, coord_idx=(1, 2))
 _ = m2b.model.predict([mc_gen[:8], mc_evt_g[:8]], verbose=0)   # build
 m2b.model.load_weights(p)
-oa = of.model2.model.predict([mc_gen[:16], mc_evt_g[:16]], verbose=0)
+oa = trained2.model.predict([mc_gen[:16], mc_evt_g[:16]], verbose=0)
 ob = m2b.model.predict([mc_gen[:16], mc_evt_g[:16]], verbose=0)
 assert np.allclose(oa, ob, atol=1e-5), "[t4 FAIL] reload prediction differs"
-print("[t4] save/reload identical prediction: PASS")
+# prove it's the TRAINED model, not the untrained template (guards the F9 vacuity)
+of_untrained = of.model2.model.predict([mc_gen[:16], mc_evt_g[:16]], verbose=0)
+assert not np.allclose(oa, of_untrained, atol=1e-4), \
+    "[t4 FAIL] trained clone == untrained template (Unfold didn't train / F9 regression)"
+print("[t4] save/reload of TRAINED model identical + differs from template: PASS")
 
 print("ALL FULL-EVENT TF SMOKE TESTS PASS")

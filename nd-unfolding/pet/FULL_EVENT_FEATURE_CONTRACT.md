@@ -172,6 +172,28 @@ NO covariance component or weight transfers automatically to the full-event esti
 - Anchor, prior-envelope, publication coverage: DEFERRED to P5B (need the production full-event
   nominal + full extraction + complete replica manifests; P5A coverage is stress/closure only).
 
+## CLM-008 engineering-debt disposition (explicit fix-or-waive before P5B production)
+From the fe-fps campaign V1 (codex) code audit. Each item is dispositioned; none blocks P5A.
+- **F10 truth-KNN φ not periodic — FIXED** (2026-07-17): `build_truth_cloud` encodes azimuth as
+  (cos φ, sin φ); KNN coord_idx=(5,6,7)=(θ,cosφ,sinφ). Unit-tested.
+- **F9 reload test saved untrained template — FIXED**: `smoke_fullevent_tf.py` t4 now saves/
+  reloads `of.step2_models[0]` (the trained clone) and asserts it differs from the template.
+- **F2 FiLM shifts padded tokens + classifier attention unmasked — FIX AT P5B ENGINE BUILD**
+  (affects every full-event train; net.py surgery + GPU validation, deferred while P5B is gated).
+  Spec: in `PET_head`, after `encoded = encoded*(1+scale)+shift`, re-apply the token pad mask
+  (`encoded *= part_mask`, pass the mask down from `__init__`); give the class-token
+  `MultiHeadAttention` an `attention_mask` over [class_token, encoded] = concat([1, part_mask]).
+- **F3 `posinf→1` reweight clamp erases strongest reweights — FIX AT P5B ENGINE BUILD**
+  (`omnifold.reweight`; pre-existing, shared). Spec: replace `nan_to_num(...,posinf=1)` with a
+  large finite cap / percentile clip + count log. Gates the negweight arm.
+- **F7 bootstrap draw after subsample incoherent with the global draw — FIX IN P5B C_stat**
+  (HARD gate). The C_stat production path must use the global coherent MC Poisson factor
+  (`mc_poisson_factor`) + persist it (as the recoil-only bootstrap-replica path did), not the
+  training-builder's subsample Poisson.
+- **F8 distributed rank-slicing misaligns imc/data — FIX IN P5B HOROVOD** (HARD gate). The
+  full-event production reweight-all + horovod path must return rank-consistent `imc` (mirror
+  the recoil-only `_build_pointcloud_memmap`). Not exercised by the P5A subsample builder.
+
 ## P5B production launch plan (PRODUCTION DECISION GATE — DO NOT LAUNCH here)
 Prerequisites (ALL required before any P5B launch):
   G1. P5A committed (this interface + tests + contract + census + stress closure).

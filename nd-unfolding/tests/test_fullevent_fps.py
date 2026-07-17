@@ -51,17 +51,19 @@ class CloudBuilders(unittest.TestCase):
 
     def test_truth_cloud_angular_coords_pdg(self):
         part = np.zeros((2, 3, 5), np.float32)
-        # token with px=py=0, pz>0 -> theta=0; token along +x -> phi=0, theta=pi/2
-        part[0, 0] = [2000., 0., 0., 2000., 2212.]      # proton, forward
-        part[0, 1] = [1000., 1000., 0., 0., 211.]       # pi+, transverse +x
+        part[0, 0] = [2000., 0., 0., 2000., 2212.]      # proton, forward (pz)
+        part[0, 1] = [1000., 0., 1000., 0., 211.]       # pi+, transverse +y
         cloud, coord = fe.build_truth_cloud(part)
-        self.assertEqual(coord, (5, 6))                 # KNN uses (theta, phi)
-        self.assertEqual(cloud.shape[-1], 7)            # E,px,py,pz,pdg,theta,phi
+        self.assertEqual(coord, (5, 6, 7))              # KNN = (theta, cos_phi, sin_phi), periodic
+        self.assertEqual(cloud.shape[-1], 8)            # E,px,py,pz,pdg,theta,cos_phi,sin_phi
         self.assertAlmostEqual(float(cloud[0, 0, 5]), 0.0, places=5)          # theta forward
+        self.assertAlmostEqual(float(cloud[0, 0, 6]), 1.0, places=5)          # cos_phi(0)=1
+        self.assertAlmostEqual(float(cloud[0, 0, 7]), 0.0, places=5)          # sin_phi(0)=0
         self.assertAlmostEqual(float(cloud[0, 1, 5]), np.pi / 2, places=5)    # theta transverse
+        self.assertAlmostEqual(float(cloud[0, 1, 6]), 0.0, places=5)          # cos_phi(pi/2)=0
+        self.assertAlmostEqual(float(cloud[0, 1, 7]), 1.0, places=5)          # sin_phi(pi/2)=1
         self.assertAlmostEqual(float(cloud[0, 0, 4]), 2212.0, places=3)       # PDG retained
-        # padded token angular coords are zeroed
-        self.assertTrue(np.all(cloud[0, 2, :] == 0))
+        self.assertTrue(np.all(cloud[0, 2, :] == 0))                          # padded token zeroed
         self.assertTrue(np.all(cloud[1] == 0))
 
 
