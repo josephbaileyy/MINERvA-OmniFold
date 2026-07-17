@@ -32,6 +32,14 @@ except ImportError:
 def expit(x):
     return 1. / (1. + np.exp(-x))
 
+
+# F3 (KNOWN_ISSUES #19, P5B UQ gate): PREDECLARED symmetric logit clip for the likelihood-ratio
+# push weight w = exp(logit). exp(30) ~ 1.07e13 is a ceiling far above any physical push weight;
+# symmetric so strong under-weights (logit << 0) are preserved too. A cap-sensitivity check
+# (25/30/35) belongs to the P5B nominal validation. This is the single shared value used in
+# nominal training, statistical replicas, systematic universes, and extraction.
+REWEIGHT_LOGIT_CAP = 30.0
+
 class MultiFold():
     def __init__(self,
                  name,
@@ -439,10 +447,28 @@ class MultiFold():
         nrows = len(events[0]) if isinstance(events, (tuple, list)) else len(events)
         avg_weights = np.zeros((nrows))
         for model in models:
-            f = expit(model.predict(events,batch_size=batch_size,verbose=self.verbose))
-            weights = f / (1. - f)  # this is the crux of the reweight, approximates likelihood ratio
-            weights = np.nan_to_num(weights[:,0],posinf=1)
-            avg_weights += weights / len(models)
+            # F3 (KNOWN_ISSUES #19, P5B gate) LOGIT-SPACE reweight (publication form). The
+            # classifier head emits RAW LOGITS (Dense(1, activation=None)); the likelihood-
+            # ratio push weight is w = exp(logit) (identically f/(1-f), f=sigmoid(logit)), so
+            # for normal logits this is bit-equivalent to the old probability-space ratio. The
+            # difference is the SATURATION tail: instead of f/(1-f) overflowing to +inf and the
+            # old `posinf=1` clamp ERASING the strongest reweights to neutral, we FAIL CLOSED on
+            # non-finite logits (net divergence) and apply a PREDECLARED symmetric clip to the
+            # logit before exp, with saturated-count + weight-mass telemetry. One shared
+            # implementation => identical in nominal, replicas, universes, and extraction.
+            logit = np.asarray(model.predict(events, batch_size=batch_size,
+                                             verbose=self.verbose))[:, 0]
+            if not np.all(np.isfinite(logit)):
+                raise ValueError(
+                    f"[reweight F3] {int((~np.isfinite(logit)).sum())} non-finite logits "
+                    "(classifier divergence); failing closed per the P5B UQ gate.")
+            n_sat = int((np.abs(logit) >= REWEIGHT_LOGIT_CAP).sum())
+            w = np.exp(np.clip(logit, -REWEIGHT_LOGIT_CAP, REWEIGHT_LOGIT_CAP))
+            if self.verbose:
+                self.log_string(
+                    f"[reweight] F3 logit-space cap={REWEIGHT_LOGIT_CAP}: {n_sat}/{len(logit)} "
+                    f"saturated; weight-mass sum={w.sum():.4e} max={w.max():.4e}")
+            avg_weights += w / len(models)
         return avg_weights
 
 

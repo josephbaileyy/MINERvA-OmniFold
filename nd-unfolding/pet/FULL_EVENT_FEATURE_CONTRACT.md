@@ -15,8 +15,14 @@ domain retention, reporting, covariance construction, and validation — never a
 inputs or training bins. Guarded by `assert_extended_fps_edges` (fail closed on paper grid).
 
 ## Estimator ID + configuration fingerprint (single contract for central + ALL covariance)
-**Estimator ID:** `pet-fullevent-fps-v1`. Every P5B component (central, C_stat, C_ml, vertical/
-flux, laterals, total) MUST use this identical contract; recoil-only PET UQ is NEVER attached.
+**TWO DISTINCT estimator IDs (orchestrator 2026-07-17; never share one ID across schemas):**
+- `pet-fullevent-fps-v1` = the FULL-schema publication estimator (full muon object:
+  px,py,pz,E,φ,charge,MINOS + reco vertex + view/timing + residual summaries). Requires the C++
+  full-event dump + fresh full-schema P3F. This is the publication target.
+- `pet-reduced-fps-cross` = the REDUCED {pT,p‖}-muon estimator that P5A validated (stress
+  closure, smokes, pilot CLM-006). CROSS-CHECK ONLY — never a publication lateral/central source.
+Every P5B component (central, C_stat, C_ml, vertical/flux, laterals, total) MUST carry ONE of
+these fingerprints and never mix the two; recoil-only PET UQ is NEVER attached to either.
 - **inputs:** FPS CV full-event point-cloud npz built with `MNV101_FULL_PHASE_SPACE=1` + the
   finalized full-event dump (scaffolding today = `of_inputs_pc_fps_xps2.npz`, recoil-only
   tensors → must be regenerated for the real central; see blockers).
@@ -178,21 +184,22 @@ From the fe-fps campaign V1 (codex) code audit. Each item is dispositioned; none
   (cos φ, sin φ); KNN coord_idx=(5,6,7)=(θ,cosφ,sinφ). Unit-tested.
 - **F9 reload test saved untrained template — FIXED**: `smoke_fullevent_tf.py` t4 now saves/
   reloads `of.step2_models[0]` (the trained clone) and asserts it differs from the template.
-- **F2 FiLM shifts padded tokens + classifier attention unmasked — FIX AT P5B ENGINE BUILD**
-  (affects every full-event train; net.py surgery + GPU validation, deferred while P5B is gated).
-  Spec: in `PET_head`, after `encoded = encoded*(1+scale)+shift`, re-apply the token pad mask
-  (`encoded *= part_mask`, pass the mask down from `__init__`); give the class-token
-  `MultiHeadAttention` an `attention_mask` over [class_token, encoded] = concat([1, part_mask]).
-- **F3 `posinf→1` reweight clamp erases strongest reweights — FIX AT P5B ENGINE BUILD**
-  (`omnifold.reweight`; pre-existing, shared). Spec: replace `nan_to_num(...,posinf=1)` with a
-  large finite cap / percentile clip + count log. Gates the negweight arm.
-- **F7 bootstrap draw after subsample incoherent with the global draw — FIX IN P5B C_stat**
-  (HARD gate). The C_stat production path must use the global coherent MC Poisson factor
-  (`mc_poisson_factor`) + persist it (as the recoil-only bootstrap-replica path did), not the
-  training-builder's subsample Poisson.
-- **F8 distributed rank-slicing misaligns imc/data — FIX IN P5B HOROVOD** (HARD gate). The
-  full-event production reweight-all + horovod path must return rank-consistent `imc` (mirror
-  the recoil-only `_build_pointcloud_memmap`). Not exercised by the P5A subsample builder.
+- **F2 FiLM shifts padded tokens + classifier attention unmasked — FIXED (2026-07-17):**
+  `net.py` passes the token pad mask to `PET_head`; after FiLM `encoded *= token_mask`; the
+  class-token `MultiHeadAttention` gets an `attention_mask` over [class_token, real tokens].
+  (Correctness fix; applies to any train — the frozen recoil-only products are unaffected.)
+- **F3 `posinf→1` reweight clamp erased strongest reweights — FIXED (2026-07-17), LOGIT-SPACE:**
+  `omnifold.reweight` now uses the raw logit head (Dense(1,activation=None)); w = exp(clip(logit,
+  ±`REWEIGHT_LOGIT_CAP`=30)), FAIL-CLOSED on non-finite logits, with saturated-count + weight-mass
+  telemetry. Bit-equivalent to f/(1-f) for normal logits; only the saturation tail differs
+  (correctly). Cap-sensitivity (25/30/35) is a P5B-nominal check. One shared implementation =>
+  identical in nominal/replicas/universes/extraction. (Supersedes the provisional posinf-cap.)
+- **F7 bootstrap draw after subsample incoherent — HARD C_stat GATE (P5B):** the C_stat path
+  MUST draw the coherent global MC Poisson factor over the FULL inventory BEFORE subsetting,
+  persist the factors/seeds, and apply the SAME draw at extraction (recoil-only bootstrap-replica
+  contract). Not the training-builder's post-subsample Poisson.
+- **F8 distributed rank-slicing misalignment — MOOT (2026-07-17):** P5B adopts NO Horovod
+  (independent single-rank GPU jobs), so the rank-slicing path is not used. Retire the concern.
 
 ## P5B production launch plan (PRODUCTION DECISION GATE — DO NOT LAUNCH here)
 Prerequisites (ALL required before any P5B launch):

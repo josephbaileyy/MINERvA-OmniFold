@@ -98,7 +98,10 @@ class PET(Model):
                                      coord_idx = self.coord_idx
                                      )
 
-        outputs_head = self.PET_head(outputs_body,inputs_evt,projection_dim)
+        # token padding mask (B,P,1); passed to the head so FiLM's +shift does not resurrect
+        # padded tokens and the class-token attention ignores them (KNOWN_ISSUES #19 F2).
+        part_mask = tf.cast(inputs_part[:, :, 0, None] != 0, dtype='float32')
+        outputs_head = self.PET_head(outputs_body,inputs_evt,projection_dim,token_mask=part_mask)
 
         # Wire event-level (high-level) features as a SECOND model input when
         # num_evt>0. The vendored code left both branches at inputs=inputs_part, so
@@ -185,6 +188,7 @@ class PET(Model):
             num_class_layers=2,
             layer_scale = True,
             layer_scale_init = 1e-3,
+            token_mask = None,
     ):
 
 
@@ -193,17 +197,28 @@ class PET(Model):
             conditional = tf.tile(conditional[:,None, :], [1,tf.shape(encoded)[1], 1])
             scale,shift = tf.split(conditional,2,-1)
             encoded = encoded*(1.0 + scale) + shift
+            # F2: FiLM's additive +shift makes PADDED tokens nonzero; re-apply the pad mask so
+            # padded slots stay exactly zero and cannot leak into the class-token attention.
+            if token_mask is not None:
+                encoded = encoded * token_mask
 
-        class_tokens = tf.Variable(tf.zeros(shape=(1, projection_dim)),trainable = True)    
+        class_tokens = tf.Variable(tf.zeros(shape=(1, projection_dim)),trainable = True)
         class_tokens = tf.tile(class_tokens[None, :, :], [tf.shape(encoded)[0], 1, 1])
-        
+
+        # F2: class token attends to [class_token] + REAL constituents only, never padded slots.
+        attn_mask = None
+        if token_mask is not None:
+            key_mask = tf.concat([tf.ones_like(token_mask[:, :1, 0]), token_mask[:, :, 0]], axis=1)
+            attn_mask = tf.cast(key_mask[:, None, :], tf.bool)   # (B, query_len=1, key_len=1+P)
+
         for _ in range(num_class_layers):
             concatenated = tf.concat([class_tokens, encoded],1)
 
-            x1 = layers.GroupNormalization(groups=1)(concatenated)            
+            x1 = layers.GroupNormalization(groups=1)(concatenated)
             updates = layers.MultiHeadAttention(num_heads=num_heads,
                                                 key_dim=projection_dim//num_heads)(
-                                                    query=x1[:,:1], value=x1, key=x1)
+                                                    query=x1[:,:1], value=x1, key=x1,
+                                                    attention_mask=attn_mask)
             updates = layers.GroupNormalization(groups=1)(updates)
             if layer_scale:
                 updates = LayerScale(layer_scale_init, projection_dim)(updates)

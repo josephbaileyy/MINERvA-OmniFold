@@ -59,22 +59,23 @@ Per endpoint, before ANY lateral use:
 5. **Provenance + STABLE KEYS:** compute + store SHA256 of every endpoint ROOT/npz; because the
    ROOTs lack event keys, ADD a derived stable key (e.g., hash of an ordered truth-invariant
    tuple) to the dumped npz for future provenance, per the orchestrator directive.
-6. **Estimator fingerprint:** the reduced-schema laterals carry the SAME `pet-fullevent-fps-v1`
-   (reduced-muon) fingerprint as the nominal; reject on mismatch (never mix schemas).
+6. **Estimator fingerprint:** reduced-schema (a) products carry `pet-reduced-fps-cross`;
+   full-schema (b) products carry `pet-fullevent-fps-v1`. The two IDs NEVER share; reject any
+   component whose fingerprint does not match its own estimator (never mix schemas).
 
 If ANY gate fails or exact alignment cannot be proven ⇒ **regenerate via (b).**
 
-## RECOMMENDATION
-- **Publication-complete path = (b)** (full muon object). Required by the feature contract's full
-  schema; gated on the C++ branches + fresh P3F. This is the ultimate deliverable.
-- **Economical bridge = (a)**, adopted ONLY under the full proof battery above and ONLY as a
-  REDUCED-muon-schema lateral (pT,p‖), consistent with the P5A-validated reduced nominal and
-  explicitly labeled reduced. It delivers a P5B reduced-schema lateral baseline as soon as P3F
-  is merged+committed, without waiting for the C++ branches — while (b) proceeds in parallel.
-- Both share `pet-fullevent-fps-v1`; a full-schema (b) run is a NEW estimator fingerprint
-  (`-v2`/full) and does NOT mix with (a) reduced products.
-- **Do NOT open P5B laterals on "merged>0" alone** — run gate 1 (schema) first; the current
-  P3F is reduced-schema, so any launch must be labeled reduced or deferred to (b).
+## DECISION (orchestrator-adopted 2026-07-17)
+- **(b) ADOPTED for the PUBLICATION laterals** — fresh full-schema P3F regeneration after the
+  C++ full-event dump branches land (full muon object). Estimator ID `pet-fullevent-fps-v1`.
+  This is the only publication lateral source.
+- **(a) reduced sidecar reuse = economical CROSS-CHECK ONLY**, NEVER a publication lateral
+  source. If run, it carries its OWN distinct fingerprint `pet-reduced-fps-cross` (NOT shared
+  with `pet-fullevent-fps-v1`) and is labeled reduced {pT,p‖}; still fail-closed on the full
+  proof battery above.
+- **Do NOT open P5B laterals on "merged>0" alone** — run gate 1 (schema) first; current P3F is
+  reduced-schema, so it can feed ONLY the (a) cross-check, never the (b) publication lateral.
+- Coordinate the C++ branch work with Agent A only after its active arrays drain.
 
 ## Immediate status
 P3F not yet merged/committed; even when merged it is reduced-schema. C++ branches not started
