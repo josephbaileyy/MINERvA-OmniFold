@@ -47,31 +47,34 @@ is therefore structural, while the value at the floor follows from the
 bounded output and ordinary regularization rather than from a minimizer of
 the fit (\S\ref{sec:negweight-binned}). The fit is not well-posed in such a region,
 however --- the class-1 weighted mass is locally negative --- so the principled
-treatment there is the ``Stay Positive'' refinement of
-Ref.~\cite{Nachman:2025staypositive}, which resamples the signed-weight sample
-into an equivalent positive-weight one before training. Whether the plain
-injection and the refinement coincide in practice depends on the classifier.
+treatment there is a positive-target prescription. In this analysis we use the
+``Stay Positive'' refinement of Ref.~\cite{Nachman:2025staypositive}, followed
+by an explicit zero clip of the learned refinement factor, before step-1
+training. Whether the plain injection and this clipped refinement coincide in
+practice depends on the classifier.
 With the histogrammed gradient-boosted density estimator used for the
 production result they agree to the median of $\nwMedianBin$ reported below, at
 the sub-percent genuine-background scale of this measurement. With an
 \emph{exact} (tree-boosted) classifier the raw signed weights instead
 destabilize training --- a full low-$p_T$ row of the cross section inflates by
 up to a factor ${\sim}\nwSpRawMax$ where the local background is large --- and
-the Stay-Positive resampling removes the pathology, recovering agreement with
-the binned purity to a median of \nwSpMedian{} ($\nwSpWithin$ bins within
-\SI{5}{\percent}). The refinement is therefore what makes the unbinned
-subtraction robust across estimators, and it matters most for the larger, more
-structured backgrounds of the extended-fiducial analysis.
+the clipped Stay-Positive refinement removes the pathology, recovering
+agreement with the binned purity to a median of \nwSpMedian{}
+($\nwSpWithin$ bins within \SI{5}{\percent}). This clipped refinement is
+therefore what makes the unbinned subtraction robust across estimators, and it
+matters most for the larger, more structured backgrounds of the
+extended-fiducial analysis.
 
 \subsection{Binned limit: exact reduction to the purity correction}
 \label{sec:negweight-binned}
 
 Restrict the step-1 classifier to the sieve of functions piecewise-constant on
-the reconstructed analysis bins $\{b\}$ --- the same hypothesis class under which
-OmniFold's step~1 reduces to iterative Bayesian
-unfolding~\cite{Andreassen:2019cjw}. Within a bin the classifier output collapses
-to a single value $p$, and the weighted cross-entropy of step~1 separates into
-independent per-bin objectives
+the reconstructed analysis bins $\{b\}$ --- the population-level binned limit
+that gives the OmniFold/Richardson--Lucy correspondence
+of Refs.~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. Within a bin the
+classifier output collapses to a single value $p$, and, using the same support
+and unnormalized class weights in both constructions, the weighted
+cross-entropy of step~1 separates into independent per-bin objectives
 \begin{equation}
   \label{eq:negweight-Lb}
   L_b(p) = -W_1\,\ln p - W_0\,\ln(1-p),
@@ -83,8 +86,9 @@ the background simulation at negative weight, so $W_1=D(b)-B(b)$, writing $D(b)$
 and $B(b)$ for the bin masses of $D$ and $B$ (equivalently $N_{\mathrm{data}}(b)$
 and $N_{\mathrm{bkg}}(b)$ of \S\ref{sec:negweight-estimator}).
 
-For every bin with $D(b)\ge B(b)$ the objective~\eqref{eq:negweight-Lb} is
-strictly convex on $(0,1)$ and minimized at $p=W_1/(W_0+W_1)$, so that
+For every bin with $D(b)>B(b)$ the objective~\eqref{eq:negweight-Lb} is
+strictly convex on $(0,1)$ and has the unique interior minimizer
+$p=W_1/(W_0+W_1)$, so that
 \begin{equation}
   \label{eq:negweight-rb}
   r(b) = \frac{p}{1-p} = \frac{W_1}{W_0} = \frac{D(b)-B(b)}{S(b)}.
@@ -92,32 +96,33 @@ strictly convex on $(0,1)$ and minimized at $p=W_1/(W_0+W_1)$, so that
 This is exactly the reweight produced under the same sieve by the purity
 construction, for which the class-1 weight
 $W_1=D(b)\,w_{\mathrm{pur}}(b)=\max(0,\,D(b)-B(b))$ coincides with $D(b)-B(b)$ on
-this domain. The two background treatments therefore agree bin by bin, as an
-identity of the sieve-restricted population objectives. Composed with the
-step-1~$\to$~IBU reduction, this makes binned negative-weight injection through
-OmniFold identical to the traditional procedure of subtracting the background per
-reco bin and unfolding the residual by IBU; the unbinned estimator of
-\S\ref{sec:negweight-estimator} is its strict generalization, in the same sense
-that OmniFold generalizes IBU.
+this domain. At $D(b)=B(b)$ the infimum lies at the boundary $p\to0^+$ and
+$r(b)\to0$, again giving the purity result when that boundary is admitted.
+Thus, at the population optimum and under the common binned sieve, the two
+background treatments agree bin by bin. Composed with the binned
+OmniFold/Richardson--Lucy correspondence, this is precisely the traditional
+subtract-background-then-unfold update. Finite, regularized classifiers only
+approximate this identity; their residual differences are tested below.
 
-Where $D(b)<B(b)$ the reduction does not extend, and the boundary must be stated
-precisely. With $W_1<0$ the objective $L_b(p)=|W_1|\,\ln p - W_0\,\ln(1-p)$ tends
-to $-\infty$ as $p\to 0^+$: it is unbounded below and has no minimizer. Any
-minimizing sequence drives $p\to 0$ and hence $r(b)\to 0$, so a bounded
-classifier output together with ordinary regularization lands at the purity floor
-$r(b)=0$ operationally --- the bin-by-bin form of the structural non-negativity
-noted in \S\ref{sec:negweight-estimator}. Adopting $\max(0,\cdot)$ as a rule is
-nonetheless a prescription rather than the value of a minimizer: it is the binned
-counterpart of the Stay-Positive refinement~\cite{Nachman:2025staypositive},
-whose \S~III.E documents the same divergence of the reweighting loss where the
-target density turns negative, an unboundedness also noted for signed binary
-cross-entropy in the sWeights context~\cite{GlazierTyson:2024}.
+Where $D(b)<B(b)$ the reduction does not extend. With $W_1<0$ the objective
+$L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$: it is
+unbounded below and has no minimizer. A minimizing sequence has $r(b)\to0$,
+but adopting $\max(0,\cdot)$ is a prescription, not the value of a minimizer;
+the behavior of a finite regularized classifier is estimator-dependent. The
+Stay-Positive refinement remains well behaved in this setting but can retain
+negative refined weights where the target density is genuinely negative. The
+zero clip used here is therefore an additional analysis prescription chosen to
+match the physical purity floor. Ref.~\cite{Nachman:2025staypositive} documents
+the same divergence of the reweighting loss where the target density turns
+negative; signed binary cross-entropy exhibits the analogous pathology in the
+sWeights context~\cite{GlazierTyson:2024}.
 
 The three ingredients --- the binned $D-B$ update, negative-weight classification
 of the measured side, and the binned OmniFold/Richardson--Lucy correspondence ---
-appear together in Ref.~\cite{Andreassen:2021zzk}; the explicit per-bin optimizer
-of \eqref{eq:negweight-rb} and its identification with the purity weight are what
-this appendix adds.
+already appear together in Ref.~\cite{Andreassen:2021zzk}. Equation
+\eqref{eq:negweight-rb} makes their immediate binwise corollary, and its precise
+domain of validity, explicit for this analysis; it is a consistency check rather
+than a separate method claim.
 
 \subsection{Closed-form toy}
 \label{sec:negweight-toy}
