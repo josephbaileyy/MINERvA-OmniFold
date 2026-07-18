@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 14:57 UTC. Registry:
+Last reconciled: 2026-07-18 15:16 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -33,6 +33,16 @@ stale/unknown before A, C, or B, and stops on heartbeat/cap failure rather than
 inventing a percentage. It uses `agentctl.py` and the same saved UUIDs only.
 Independent agy first found and then rechecked the stop-wave return-code repair;
 the patched watcher is armed as PID 904875 and PASSed syntax plus live-PID audit.
+Agy then PASSed all three queued repair prompts (`MIG-AGY13`) and identified
+owner-neutral full-file hashing as the reset-gap compute task (`MIG-AGY14`).
+The prompt wave needs no amendment or duplicate school-provider turn.
+
+Scheduling is now an explicit workstream in `SCHEDULING-STRATEGY.md`.
+`MIG-AGY15` identifies the publication critical path and independent lanes.
+The first-start-wins hash experiment selected interactive job 56090877; its
+pending batch loser was canceled, and the winner is computing with zero LLM
+involvement. Its launcher/result remain uncommitted until the atomic receipt
+exists, as required by the commit gate.
 
 ## Dispatch preflight — providers and compute placement
 
@@ -52,7 +62,6 @@ Before every compute launch, record a placement decision from current evidence:
 3. Submit batch early when the job is a large array, multi-node, multi-hour beyond the holder,
    must outlive the session, or when a dependency-safe queue wait can overlap upstream work.
    Early submission is permitted only with immutable prerequisites or explicit scheduler
-   dependencies and collision-free outputs; it cannot bypass a scientific/preflight gate.
 4. Never use another worker's holder, start a second uncoordinated allocation, or interpret
    empty buffered stdout as a stalled job. Monitor artifacts, processes, and scheduler state.
 
@@ -78,9 +87,9 @@ a failed gate prevents the entire 13:00 provider wave.
 |---|---|---|
 | Claude school (`claude-school` + `claude-school-legacy`) | One shared account, not two. Cache is stale, hence percentage unknown; last fresh observation was 85% used/15% remaining with reset 18:00 UTC. | Frozen until reset. Continuity-bound A/B/C only; a disposable flat-home heartbeat precedes each substantial legacy-role turn while percentage remains unknown. |
 | Claude personal | Percentage cache is stale/unknown. E completed source at 14:32 UTC, then the 14:42 runtime turn hit an explicit monthly spend limit with no reset time. | Provider-constrained: preserve `agent-E-g2-source` and its UUID; do not replace/fork. Resume build/smoke only after a successful same-account availability check or the user raises the monthly limit. |
-| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 98% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
+| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 90% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
 | Codex school | 22% seven-day remaining; five-hour window unknown. | Constrained: use only where same-verifier continuity is scientifically material, after an agy preflight reduces wasted turns. |
-| agy | No percentage API; nine read-only audits/rechecks completed in roughly 0.5–3 minutes each without a cap signal. | Currently availability-verified by successful turns. Default for new orthogonal red-team, documentation reconciliation, implementation gap audits, and cheap preflight; never substitutes for a named continuity-bound owner/verifier. |
+| agy | No percentage API; fifteen read-only audits/rechecks completed in roughly 0.5–3 minutes each without a cap signal. | Currently availability-verified by successful turns. Default for new orthogonal red-team, documentation reconciliation, implementation gap audits, scheduling studies, and cheap preflight; never substitutes for a named continuity-bound owner/verifier. |
 
 ## Publication-grade evidence audit
 

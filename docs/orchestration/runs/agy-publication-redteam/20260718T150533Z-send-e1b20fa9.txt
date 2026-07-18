@@ -1,0 +1,105 @@
+**EARLY-BATCH PASS**
+
+The required full-file hashing for both the standard and FPS P4 repairs is completely owner-neutral, purely read-only, and dependency-safe. It does not overwrite any agent’s execution namespace or violate the no-duplicate-writer rules.
+
+### 1. Exact Inventories
+**Standard Merged ROOTs (10 files):**
+`nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_{band}_{ep}.root`
+
+**FPS Merged ROOTs (10 files):**
+`nd-unfolding/active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_{band}_{ep}_universes_full.root`
+
+### 2. Sizes, Footing, and Overlap
+*   **Sizes**: The 10 standard files are exactly ~53.8 GB each. The 10 FPS files are exactly ~74.8 GB each. Total I/O required is ~1.28 TB.
+*   **Immutability**: Both directories are fully populated, and all event loop / merge writers have terminated. The files are immutable. No `squeue` jobs are running.
+*   **Distinct Inventories**: A and C need **distinct** inventories. Agent A requires the 53.8 GB standard outputs for `p4_evidence.py`, while Agent C requires the 74.8 GB FPS outputs for the `fps_build_control_manifest.py` publication manifest.
+*   **Writers**: No current process is writing to these files. They are completely safe to read.
+
+### 3. Batch Layout & Atomic Publication
+*   **Hardware/QOS**: 1 node, `shared` QOS, 4 CPUs, 8 GB memory. We bound parallelism to `xargs -P 4` to saturate the node-local I/O bandwidth from Lustre (typically peaking around 1.5–2 GB/s per node) without overwhelming metadata servers.
+*   **Wall Time**: At a conservative 400 MB/s, reading 1.28 TB takes ~1 hour. A `03:00:00` wall time safely pads this.
+*   **Collision-Free Output**: Outputs go to the orchestrator-owned `docs/orchestration/state/` directory to strictly avoid writing inside A or C’s `active_universe_5d` namespaces.
+*   **Atomicity**: Hashes are written to `.tmp` files and `mv`'d to their final `.txt` paths only on success.
+
+### 4. Owner-Neutral Launcher Contract
+No existing committed launcher does this task. The orchestrator must add the smallest possible contract script.
+
+Create `docs/orchestration/sbatch_hash_merged_inputs.sh`:
+```bash
+#!/bin/bash
+#SBATCH -A m3246
+#SBATCH -C cpu
+#SBATCH -q shared
+#SBATCH -n 1
+#SBATCH -c 4
+#SBATCH --mem=8G
+#SBATCH -t 03:00:00
+#SBATCH -J hash_merged
+#SBATCH -o docs/orchestration/state/hash_merged-%j.out
+
+set -eo pipefail
+cd /pscratch/sd/j/josephrb/MINERvA-OmniFold
+
+mkdir -p docs/orchestration/state
+std_out="docs/orchestration/state/standard_merged_sha256.txt"
+fps_out="docs/orchestration/state/fps_merged_sha256.txt"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Hashing standard merged ROOTs..."
+find nd-unfolding/active_universe_5d/standard/merged -name "runEventLoopOmniFold_5D_MEFHC_active_*.root" -print0 | \
+  xargs -0 -n1 -P4 sha256sum > "${std_out}.tmp"
+mv "${std_out}.tmp" "${std_out}"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Hashing FPS merged ROOTs..."
+find nd-unfolding/active_universe_5d/fps/merged -name "runEventLoopOmniFold_5D_FPS_active_*_universes_full.root" -print0 | \
+  xargs -0 -n1 -P4 sha256sum > "${fps_out}.tmp"
+mv "${fps_out}.tmp" "${fps_out}"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Done."
+```
+
+### 5. Other Tasks
+No other genuinely owner-neutral / dependency-safe tasks are available. Agent B's static Python repairs and Agent A/C's manifest scripts belong strictly to their roles in the 18:00 wave. Agent E's C++ smoke test remains provider-capped. Only this batch hashing can and should be done now.
+
+### Execution Commands
+```bash
+# 1. Create the script
+cat << 'EOF' > docs/orchestration/sbatch_hash_merged_inputs.sh
+#!/bin/bash
+#SBATCH -A m3246
+#SBATCH -C cpu
+#SBATCH -q shared
+#SBATCH -n 1
+#SBATCH -c 4
+#SBATCH --mem=8G
+#SBATCH -t 03:00:00
+#SBATCH -J hash_merged
+#SBATCH -o docs/orchestration/state/hash_merged-%j.out
+
+set -eo pipefail
+cd /pscratch/sd/j/josephrb/MINERvA-OmniFold
+
+mkdir -p docs/orchestration/state
+std_out="docs/orchestration/state/standard_merged_sha256.txt"
+fps_out="docs/orchestration/state/fps_merged_sha256.txt"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Hashing standard merged ROOTs..."
+find nd-unfolding/active_universe_5d/standard/merged -name "runEventLoopOmniFold_5D_MEFHC_active_*.root" -print0 | \
+  xargs -0 -n1 -P4 sha256sum > "${std_out}.tmp"
+mv "${std_out}.tmp" "${std_out}"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Hashing FPS merged ROOTs..."
+find nd-unfolding/active_universe_5d/fps/merged -name "runEventLoopOmniFold_5D_FPS_active_*_universes_full.root" -print0 | \
+  xargs -0 -n1 -P4 sha256sum > "${fps_out}.tmp"
+mv "${fps_out}.tmp" "${fps_out}"
+
+date -u "+[%Y-%m-%dT%H:%M:%SZ] Done."
+EOF
+
+# 2. Make executable and submit
+chmod +x docs/orchestration/sbatch_hash_merged_inputs.sh
+sbatch docs/orchestration/sbatch_hash_merged_inputs.sh
+
+# 3. Add to the orchestrator git footprint
+git add docs/orchestration/sbatch_hash_merged_inputs.sh
+git commit -m "orchestration: add dependency-safe merged-input hashing batch"
+```

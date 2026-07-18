@@ -208,9 +208,33 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145612Z-send-a59aab5f.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145612Z-send-a59aab5f.txt"
+        },
+        {
+          "action": "send",
+          "number": 13,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.txt"
+        },
+        {
+          "action": "send",
+          "number": 14,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.txt"
+        },
+        {
+          "action": "send",
+          "number": 15,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.txt"
         }
       ],
-      "updated_at": "2026-07-18T14:56:43+00:00"
+      "updated_at": "2026-07-18T15:10:36+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",

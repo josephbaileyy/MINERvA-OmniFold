@@ -1,0 +1,60 @@
+**SCHEDULER-STUDY PASS**
+
+Based on the live Slurm state, historical job telemetry since 2026-07-11, and the current migration DAG, here is the empirical scheduling policy to maximize safe parallelism.
+
+### 1. Dependency DAG & Critical Path
+*   **True Critical Path (Publication Endpoint)**: T6 (Agent E: G2 source) → T7 (Agent C: P3F full-schema endpoints) → T8 (Agent B: PET nominal + UQ) → T9 (Owner TBD: projections) → T10 (Publication closeout). This path is strictly linear and currently hard-blocked at the start by Agent E's provider cap.
+*   **Independent Lane 1**: T2 (Agent A: Standard P4) → T3 (Lateral adoption).
+*   **Independent Lane 2**: T1 (Agent C: FPS P4/P6).
+*   **Independent Lane 3**: T5 (Agent B: F7 code logic).
+*   **Conclusion**: Lanes 1, 2, and 3 can proceed entirely in parallel to each other and to the blocked T6 critical path.
+
+### 2. Task-Class Routing Table
+*   **Login-Safe**: Verifiers, pure Python metadata scripts, code-generation turns, manifest builders, and orchestration/git ops.
+*   **Held Interactive (`alloc_run.sh` / `urgent`)**: Fast-turnaround single-node compute (<3h) where latency matters (e.g., covariance component building, 5D→4D projections, final atomic adoption math).
+*   **Shared/Regular Batch (`shared` / `regular`)**: CPU-heavy arrays and tasks exceeding 3h or tolerant of fairshare queuing (e.g., event loops, 10-endpoint unfolds, large hadd tasks).
+*   **GPU Batch (`urgent_gpu` / `shared_gpu`)**: PET model training and evaluation (e.g., F2/F3 GPU jobs, F7 nominals).
+*   **Array**: Fully independent playlist or endpoint processing (e.g., 12-playlist event loops).
+*   **First-Start-Wins Hedge**: A simultaneous submission of a batch job (for long-tail queue safety) and an interactive allocation request (for latency).
+
+### 3. Exact Conditions for a Double-Write-Free Hedge
+To safely hedge batch vs. interactive without corrupting data, the script MUST implement:
+1.  **Shared Lock**: `flock -n 9 /path/to/lockfile || exit 0` to ensure only one instance executes the block.
+2.  **Collision-Free Staging**: Output to a strictly unique temporary path (`output.tmp.$SLURM_JOB_ID` or `$RANDOM`).
+3.  **Winner Receipt**: An atomic `mv` to the final destination upon successful completion.
+4.  **Loser Cancellation / Skip-if-Exists**: The script must check `if [[ -f final_output.json ]]; then exit 0; fi` before attempting the lock.
+5.  **Ownership**: Initiated by the same owning agent/orchestrator so namespaces remain intact.
+
+### 4. Maximum-Parallelism Schedule (Next 24h & Production)
+*   **Next 24h (Pre-G2 / Provider-Capped)**:
+    *   Execute the 18:00 UTC A → C → B code repair wave sequentially on the login node to avoid Git index locks.
+    *   **Cross-Provider Pipeline**: While Agent C (Claude-school) is generating its code, immediately dispatch the Codex-school verifier to audit Agent A's completed turn. While B generates code, verify C.
+    *   Concurrent with all of this, the I/O-bound hash jobs can run on compute nodes.
+*   **Later Production Phase**:
+    *   Once E resets, interactive compile/smoke (T6).
+    *   Then dispatch T7 as a 12-task batch array.
+    *   While T7 loops run, Agent A and C can finalize their independent covariance and projection steps (T2, T1) using interactive/batch hedges.
+
+### 5. Checkpoint ETAs
+*   **Queue Delay**: Interactive (`urgent`) historically takes 5–30 minutes to allocate. Batch (`shared`) sits in `Priority` for 1–4+ hours.
+*   **Execution Time**:
+    *   Hashing (1.28 TB): ~1–1.5 hours (I/O bound).
+    *   Event Loops (T7): ~3–4 hours (Lustre contention bounds this; DO NOT use interactive walls).
+    *   Covariance (T1/T2): ~1 hour.
+    *   PET nominal (T8): ~0.5–1 hour (GPU).
+*   **Provider Uncertainty**: Agent E (Claude-personal monthly limit) is strictly **Unknown/Unbounded** since Anthropic provides no reset timestamp for spend limits.
+
+### 6. Metrics to Append for Every Dispatch
+To empirically improve routing, every orchestrator receipt must log:
+`provider_account`, `worker_uuid`, `submit_timestamp`, `start_timestamp`, `end_timestamp`, `queue_reason` (e.g., Priority), `qos`, `requested_cpus/mem`, `used_cpus/mem`, `artifact_count_produced`, `failure_class` (OOM/wall/provider/logic), `retry_skip_used` (boolean), and `critical_path_time_delta` (hedge win vs. batch wait).
+
+### 7. Recommendation for Current Job 56090791
+Job 56090791 is queued in `shared` (`Priority`) and could sit for hours. Because the inputs are immutable and the hashes are needed as hard prerequisites for A and C's candidate adoptions, the allocation has an immediate productive workload. However, the current `sbatch_hash_merged_inputs.sh` script lacks a `flock` and uses a static `.tmp` file—if hedged now, it will corrupt the hashes via double-write.
+**Recommendation**: CANCEL 56090791. Rewrite the script to be hedge-safe, then submit both a batch array and an interactive request.
+
+***
+
+### Immediate Next Three Dispatch Decisions
+1.  **Cancel & Rewrite Hash Job**: Run `scancel 56090791`. Update `docs/orchestration/sbatch_hash_merged_inputs.sh` to include `flock -n 9`, `skip-if-exists`, and unique `.tmp.$SLURM_JOB_ID` staging.
+2.  **Dispatch the Hedge**: Submit the updated script to batch (`sbatch`) AND dispatch it to an interactive node via `./alloc_run.sh docs/orchestration/sbatch_hash_merged_inputs.sh`.
+3.  **Execute 18:00 UTC Wave with Pipelined Verifiers**: Allow the `resume_after_school_reset_1800.sh` script to trigger A, C, and B. Manually (or via orchestrator script) launch A's Codex verifier the moment A completes, overlapping it entirely with C's API turnaround time.

@@ -1,0 +1,16 @@
+**WAVE-PREFLIGHT PASS**
+
+All three queued prompts precisely and comprehensively target every remaining verifier and red-team blocker. They strictly enforce the read-only / no-production boundary required by the current dependency state, and they correctly reflect the NERSC compute placement constraints and code ownership lines established in the migration handoff.
+
+### A/C/B Checklist
+
+*   **Agent A (Standard P4, Prompt 04)**: **PASS**
+    *   **Blocker Coverage**: Directly mandates repairs for the `standard-p4-verifier` defects (separated stat/ML keys, transactional unfold atomicity, complete git/file provenance, strict `M C M^T` projection map derivation, and a dedicated adoption consumer).
+    *   **Rules & Placement**: Successfully restricts A from generating a candidate before re-verification. Correctly specifies launching a *fresh* owned interactive allocation since A's prior holder (`56082262`) expired naturally.
+    *   **Safeguards**: Requires a full real-CLI/fake-producer integration harness to prove atomicity and failure propagation safely.
+*   **Agent C (FPS P4/P6, Prompt 03)**: **PASS**
+    *   **Blocker Coverage**: Directly mandates repairs for the `fps-adopt-verifier` defects (full-file SHA256 / Merkle binding over the 74GB merged inputs, explicit publication manifest schema, transactional endpoint paths, and mandatory `hJointMeanShift` / centering policy).
+    *   **Rules & Placement**: Successfully restrains C from producing negweight-refined endpoints until verified. Correctly instructs C to use its *already-running* interactive holder (`56080370`) if still wall-safe, adhering strictly to the anti-duplicate placement rule.
+*   **Agent B (PET P5B/F7, Prompt 03)**: **PASS**
+    *   **Blocker Coverage**: Targets the `agy` interface/dumper defects exactly (mandatory `petSchemaVersion=g2-fullevent-v1` schema rejection, inclusion of `w_bkg` / view / time, atomic NPZ output, and `negweight-refined` launcher guard).
+    *   **Rules & Placement**: Acknowledges that G2 runtime is provider-capped (Agent E) and strictly limits B to login-safe fake/source tests without fabricating upstream ROOTs. Requires the canonical PG0 receipts for the currently blocked F7 evidence.
