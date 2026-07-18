@@ -5,14 +5,14 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 10:58 UTC. Registry:
+Last reconciled: 2026-07-18 11:02 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
 | ID | Handoff item | Durable owner | State | Evidence / next gate |
 |---|---|---|---|---|
 | T0 | Adopt migrated delegates and prove provider continuity | orchestrator | CLOSED | Exact A/B/C UUIDs adopted; one memory-only continuity response each; `RUNS.tsv` `MIG-CONT-{A,B,C}`; commit `42c1fd7`. Old root is a file handoff; Agent D was not adopted because its UUID is unconfirmed. |
-| T1 | FPS P4/P6 final adoption (handoff X5) | `agent-C-fps` / UUID `4580f42d-…`; independent verifier `fps-adopt-verifier` / `019f74bb-…` | PREFLIGHT-BLOCKED | All 10 endpoint unfolds are content-valid, but read-only preflight `MIG-V1` returned BLOCK: exact endpoint/config/mask inventory is not fail-closed; validator can pass incomplete/zero components; order is shape-assumed; final provenance cannot reproduce the adoption. At 13:00 UTC the same C role performs repair only. The same verifier must PASS the patch before cov → validate → swap → adopt may run. |
+| T1 | FPS P4/P6 final adoption (handoff X5) | `agent-C-fps` / UUID `4580f42d-…`; independent verifier `fps-adopt-verifier` / `019f74bb-…` | BACKGROUND-MODE/PREFLIGHT-BLOCKED | The 10/10 content-valid endpoint unfolds are now proven purity controls: both launchers omit `--bkg-mode`, and the ND driver defaults to `purity`. They cannot feed the user's selected `negweight-refined` FPS/PET result. At reset C repairs exact mode-stamped manifests/validators and a separate atomic publication runner; no production. The same verifier must PASS before a 10-endpoint negweight-refined rerun, covariance, and adoption. |
 | T2 | Standard P4 selection-complete lateral candidate (handoff X6) | `agent-A-standard` / UUID `14951826-…`; independent verifier `standard-p4-verifier` / `019f74cb-…` | PREFLIGHT-BLOCKED; COMPUTE ACTIVE | Same A worker's holder 56082262 is still producing the ten seed-42 unfolds. Read-only preflight `MIG-V2` found the endpoint physics/MAT formula sound but the chain not fail-closed for merged migration evidence, atomic completion/config, exact inventory/order, support, component adoption, projection, and commit durability. At reset A performs repair only; the same verifier must PASS before candidate construction. |
 | T3 | Replace the support-limited lateral in the repaired R1 corrected-4D candidate | unassigned in handoff; orchestrator must assign without changing A/C ownership | DEPENDENCY-BLOCKED | Requires T2's validated standard active-lateral block. The handoff explicitly records this follow-on as unassigned; no adoption or promotion before T2 closes. |
 | T4 | Consolidated BEN note for the four recurring operational failures | orchestrator | OPEN | Write after T1/T2 receipts so the note includes the final wall/holder outcomes: interactive-QOS latency; explicit job-ID/node ownership; detached drivers (BEN-024); completeness-validated resume (BEN-023). |

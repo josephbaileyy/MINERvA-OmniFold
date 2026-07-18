@@ -78,7 +78,7 @@ moved to `uthrow_slabs_4d/partial_20260716_interrupted/`, regen array 56025478
    `2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md` under “USER DECISIONS
    locked.” Purity is a matched regression control only.
 
-## Stage 2.5 — publication background-treatment gate (HARD; before P5A/P5B)
+## Stage 2.5 — publication background-treatment gate (HARD; before P6-FPS/P5A/P5B)
 
 The migration handoff incorrectly left negweight as an optional post-baseline arm. That
 ordering is superseded by the already-locked user decision above. Before training the
@@ -95,6 +95,9 @@ The gate closes only with focused alignment/signed-target/refinement/bootstrap t
 small full-event negweight-refined pilot, a matched purity control, and a committed manifest.
 Do not launch the expensive nominal or any UQ ensemble merely to make this decision—the
 decision is already made, and the implementation/provenance proof is the remaining gate.
+The same footing applies to scalar FPS/P6: active-universe endpoints unfolded under the ND
+driver's default `purity` mode are controls only and must not be adopted. Publication
+selection-complete FPS endpoints require an explicit, mode-stamped `negweight-refined` rerun.
 
 ## Stage 3 — P5B production (per the contract's launch order)
 
