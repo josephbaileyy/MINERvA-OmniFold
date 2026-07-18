@@ -125,9 +125,16 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T111615Z-start-c8ae3497.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T111615Z-start-c8ae3497.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T114650Z-send-0762b859.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T114650Z-send-0762b859.jsonl"
         }
       ],
-      "updated_at": "2026-07-18T11:28:17+00:00"
+      "updated_at": "2026-07-18T11:54:20+00:00"
     }
   },
   "version": 1

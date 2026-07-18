@@ -13,14 +13,14 @@ Treat each role as one durable provider conversation. Use
 Start each role once:
 
 ```bash
-python3 orchestration/agentctl.py start --role ROLE --profile PROFILE \
+/usr/bin/python3.11 orchestration/agentctl.py start --role ROLE --profile PROFILE \
   --prompt-file PROMPT_FILE
 ```
 
 Resume that role for every later round:
 
 ```bash
-python3 orchestration/agentctl.py send --role ROLE --prompt-file PROMPT_FILE
+/usr/bin/python3.11 orchestration/agentctl.py send --role ROLE --prompt-file PROMPT_FILE
 ```
 
 Profiles are `codex-personal`, `codex-school`, `claude-personal`,
@@ -44,7 +44,7 @@ When an existing session and its provider-side local state remain on this
 machine, register it before sending another turn:
 
 ```bash
-python3 orchestration/agentctl.py adopt --role ROLE --profile PROFILE \
+/usr/bin/python3.11 orchestration/agentctl.py adopt --role ROLE --profile PROFILE \
   --session-id UUID --cwd WORKING_DIRECTORY
 ```
 
@@ -63,6 +63,20 @@ handoff context instead.
 7. Stop only at the user's stated, verifiable end condition.
 
 ## Plan around measured capacity
+
+Before each dispatch wave, after a cap, and before final synthesis, run:
+
+```bash
+/usr/bin/python3.11 orchestration/usagectl.py snapshot --json
+```
+
+Treat live Codex data as authoritative. Track the personal account's exact
+seven-day reset time and preserve its two Full reset credits as emergency
+reserve. Never consume a reset credit without a new, explicit user
+authorization naming the credit action. Treat stale/missing Claude data and
+agy's unavailable percentage as unknown. Follow
+`docs/orchestration/LIVE-USAGE.md` and record material changes in the campaign
+ledger.
 
 Treat these local measurements as planning baselines, not guaranteed account
 entitlements:

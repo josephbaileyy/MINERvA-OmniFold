@@ -1,6 +1,7 @@
 # Runtime lock files are recreated by agentctl and contain no durable state.
 state/locks/
 state/*.lock
+state/usage/
 
 # Successful turn metadata is kept as JSON; empty/provider stderr logs stay local.
 runs/**/*.stderr.log

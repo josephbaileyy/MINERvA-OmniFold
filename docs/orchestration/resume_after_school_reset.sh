@@ -20,6 +20,15 @@ python=/usr/bin/python3.11
 ctl=orchestration/agentctl.py
 overall_rc=0
 
+date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ running fail-closed usage preflight"
+if "$python" orchestration/usagectl.py snapshot --json; then
+  date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ usage gate passed; preserving reset credits"
+else
+  usage_rc=$?
+  date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ usage gate failed rc=${usage_rc}; no provider dispatch"
+  exit 2
+fi
+
 run_role() {
   local role="$1" prompt="$2" role_rc
   date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ starting ${role}"
