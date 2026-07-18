@@ -1,0 +1,2 @@
+id	start_utc	end_utc	planned_wake_trigger	background_work	codex_personal_before	codex_personal_after	result	critical_path_effect
+QP1	2026-07-18T15:30:20Z	OPEN	first of hash 56090877 terminal+receipt or 18:00 saved-role wave activity	interactive full hashes; A/C/B reset watcher; pipelined verifier watcher	86% seven-day; reset 2026-07-25T14:36:14Z	OPEN	OPEN	Avoid LLM polling while immutable evidence and scheduled dispatches advance independently

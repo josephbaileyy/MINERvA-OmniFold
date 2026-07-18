@@ -83,6 +83,27 @@ unattended downstream stages, and estimated critical-path time saved or lost.
 Provider rounds also record account, persistent role/UUID, start/end, cap
 evidence, artifact/commit result, and whether the turn was writer or verifier.
 
+## Quiet periods and rewakeup
+
+An orchestrator quiet period begins when all currently runnable work is either
+executing unattended, delegated to a preserved worker, or gated on a future
+event, and another poll would not change a decision. Ending the LLM turn is the
+preferred wait mechanism; detached, lock-protected watchers and Slurm continue
+without LLM usage.
+
+Valid wake triggers are: a terminal Slurm state plus artifact receipt, a
+provider-limit/reset event, a saved-role turn completion, a verifier verdict,
+or a scheduled dependency checkpoint. Do not wake merely to make a healthy
+cache or progress display look fresh. Do not enter a quiet period while a
+duplicate-writer race, failed atomic publication, provider error, or other
+decision requiring immediate handling is unresolved.
+
+`QUIET-PERIODS.tsv` is append-only and records start/end, trigger, unattended
+work, provider capacity before/after, decisions avoided, and critical-path
+effect. The productivity measure is not elapsed sleep alone: it is useful
+compute/provider work completed per LLM-active interval, fewer cosmetic polls,
+and whether the rewakeup exposed a decision-ready checkpoint.
+
 ## Empirical placement ledger
 
 | UTC | Task | Routes | Result | Policy update |
