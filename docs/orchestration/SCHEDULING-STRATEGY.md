@@ -10,7 +10,7 @@ LLM polling. The placement score therefore includes **LLM-free progress per
 wall hour**, adjustable parallelism/resource fit, maximum wall time, queue
 overlap, and the downstream gates the result unlocks—not queue latency alone.
 
-Last reconciled: 2026-07-18 15:39 UTC.
+Last reconciled: 2026-07-18 15:48 UTC.
 
 ## Current critical path and parallel lanes
 
@@ -110,6 +110,33 @@ work, provider capacity before/after, decisions avoided, and critical-path
 effect. The productivity measure is not elapsed sleep alone: it is useful
 compute/provider work completed per LLM-active interval, fewer cosmetic polls,
 and whether the rewakeup exposed a decision-ready checkpoint.
+
+Goal-mode continuation may resume immediately after an end-turn even without a
+declared wake trigger. Record that as a false wake rather than pretending a
+break occurred; redirect the forced-active interval only to already-scoped,
+owner-neutral work. Detached watchers remain the reliable mechanism for
+long-duration external progress.
+
+## Historical Slurm telemetry (scheduler-local 2026-07-11 through 2026-07-18)
+
+Reproducible source: `analyze_slurm_history.py`; committed summary:
+`state/slurm-history-20260711-20260718.json`. The 1,460 rows are task-weighted,
+so large arrays contribute one observation per task. Queue time is
+`Start-Eligible`; `Submit-Start` is kept separately because it includes
+dependency/ineligible holds.
+
+| QOS | Tasks | Completed / failed / canceled / timeout | Eligible queue p50 | Eligible queue p90 | Placement implication |
+|---|---:|---:|---:|---:|---|
+| `interactive` | 37 | 3 / 3 / 7 / 23, plus 1 running | 0 s | 0.4 s | Near-zero dispatch latency, but holder wall expiry appears as TIMEOUT; request only with a packed ready workload. |
+| `gpu_interactive` | 43 | 21 / 7 / 9 / 6 | 0 s | 1 s | Best for short GPU gates and debugging, not long unattended ensembles. |
+| `gpu_shared_interactive` | 12 | 11 / 0 / 1 / 0 | 0 s | 0 s | Strong short GPU latency in this sample; retain strict wall/resource fit. |
+| `regular_1` | 354 | 354 / 0 / 0 / 0 | 1,527 s (25.5 min) | 5,432 s (90.5 min) | Reliable for ready CPU arrays/full-node work; queue early once inputs are immutable. |
+| `gpu_shared` | 450 | 390 / 3 / 57 / 0 | 5,087 s (84.8 min) | 22,418 s (6.23 h) | Submit validated PET arrays early and use dependencies; do not wait for an LLM turn to queue them. |
+| `shared` | 559 | 481 / 31 / 46 / 1 | 8,785 s (2.44 h) | 46,685 s (12.97 h) | High variance: queue dependency-safe work early; use interactive only for a genuine critical gate with follow-on work. |
+
+These are historical observations, not guaranteed future wait times. Job-name
+families, dependency holds, runtimes and state counts remain in the JSON for
+task-specific routing and future updates.
 
 ## Empirical placement ledger
 

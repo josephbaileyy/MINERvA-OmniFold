@@ -1,0 +1,1995 @@
+{
+  "generated_utc": "2026-07-18T15:46:27+00:00",
+  "query": {
+    "command": [
+      "sacct",
+      "-S",
+      "2026-07-11T00:00:00",
+      "-E",
+      "2026-07-18T15:44:51",
+      "-X",
+      "-n",
+      "-P",
+      "-o",
+      "JobIDRaw,JobName,Partition,QOS,Submit,Eligible,Start,End,ElapsedRaw,State,ExitCode,ReqCPUS,AllocCPUS,ReqMem,AllocNodes,Reason"
+    ],
+    "end": "2026-07-18T15:44:51",
+    "start": "2026-07-11T00:00:00"
+  },
+  "schema": "slurm-history-summary.v1",
+  "summary": {
+    "by_job_name_task_weighted": {
+      "ai1est5d": {
+        "dependency_hold_seconds": {
+          "max": 1810.0,
+          "mean": 1209.0,
+          "min": 3.0,
+          "n": 6,
+          "p50": 1810.0,
+          "p90": 1810.0
+        },
+        "jobs": 6,
+        "queue_from_eligible_seconds": {
+          "max": 4461.0,
+          "mean": 2868.0,
+          "min": 1275.0,
+          "n": 2,
+          "p50": 2868.0,
+          "p90": 4142.4
+        },
+        "runtime_seconds": {
+          "max": 526,
+          "mean": 525.0,
+          "min": 524,
+          "n": 2,
+          "p50": 525.0,
+          "p90": 525.8000000000001
+        },
+        "states": {
+          "CANCELLED": 4,
+          "COMPLETED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 6271.0,
+          "mean": 3778.5,
+          "min": 1286.0,
+          "n": 2,
+          "p50": 3778.5,
+          "p90": 5772.500000000001
+        }
+      },
+      "ai1int": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 3,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 3,
+        "queue_from_eligible_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 3,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "runtime_seconds": {
+          "max": 3620,
+          "mean": 1777.6666666666667,
+          "min": 62,
+          "n": 3,
+          "p50": 1651,
+          "p90": 3226.2
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 1,
+          "TIMEOUT": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 3,
+          "p50": 0.0,
+          "p90": 0.0
+        }
+      },
+      "blk4dCc": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 32,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 32,
+        "queue_from_eligible_seconds": {
+          "max": 53782.0,
+          "mean": 27371.548387096773,
+          "min": 2450.0,
+          "n": 31,
+          "p50": 27533.0,
+          "p90": 46703.0
+        },
+        "runtime_seconds": {
+          "max": 3209,
+          "mean": 390.64516129032256,
+          "min": 8,
+          "n": 31,
+          "p50": 16,
+          "p90": 2560
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 30
+        },
+        "submit_to_start_seconds": {
+          "max": 53782.0,
+          "mean": 27371.548387096773,
+          "min": 2450.0,
+          "n": 31,
+          "p50": 27533.0,
+          "p90": 46703.0
+        }
+      },
+      "blkfpsC": {
+        "dependency_hold_seconds": {
+          "max": 6.0,
+          "mean": 6.0,
+          "min": 6.0,
+          "n": 17,
+          "p50": 6.0,
+          "p90": 6.0
+        },
+        "jobs": 17,
+        "queue_from_eligible_seconds": {
+          "max": 35192.0,
+          "mean": 21363.4375,
+          "min": 4101.0,
+          "n": 16,
+          "p50": 21222.5,
+          "p90": 32597.0
+        },
+        "runtime_seconds": {
+          "max": 5320,
+          "mean": 2042.875,
+          "min": 10,
+          "n": 16,
+          "p50": 2836.5,
+          "p90": 3812.5
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 14,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 35198.0,
+          "mean": 21369.4375,
+          "min": 4107.0,
+          "n": 16,
+          "p50": 21228.5,
+          "p90": 32603.0
+        }
+      },
+      "boot4d": {
+        "dependency_hold_seconds": {
+          "max": 6.0,
+          "mean": 5.75,
+          "min": 5.0,
+          "n": 4,
+          "p50": 6.0,
+          "p90": 6.0
+        },
+        "jobs": 4,
+        "queue_from_eligible_seconds": {
+          "max": 20524.0,
+          "mean": 15965.0,
+          "min": 11406.0,
+          "n": 2,
+          "p50": 15965.0,
+          "p90": 19612.2
+        },
+        "runtime_seconds": {
+          "max": 23,
+          "mean": 14.0,
+          "min": 5,
+          "n": 2,
+          "p50": 14.0,
+          "p90": 21.2
+        },
+        "states": {
+          "CANCELLED": 2,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 20530.0,
+          "mean": 15971.0,
+          "min": 11412.0,
+          "n": 2,
+          "p50": 15971.0,
+          "p90": 19618.2
+        }
+      },
+      "boot4dC": {
+        "dependency_hold_seconds": {
+          "max": 1.0,
+          "mean": 1.0,
+          "min": 1.0,
+          "n": 16,
+          "p50": 1.0,
+          "p90": 1.0
+        },
+        "jobs": 16,
+        "queue_from_eligible_seconds": {
+          "max": 2389.0,
+          "mean": 1101.8666666666666,
+          "min": 132.0,
+          "n": 15,
+          "p50": 820.0,
+          "p90": 2389.0
+        },
+        "runtime_seconds": {
+          "max": 522,
+          "mean": 502.46666666666664,
+          "min": 496,
+          "n": 15,
+          "p50": 502,
+          "p90": 504.6
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 15
+        },
+        "submit_to_start_seconds": {
+          "max": 2390.0,
+          "mean": 1102.8666666666666,
+          "min": 133.0,
+          "n": 15,
+          "p50": 821.0,
+          "p90": 2390.0
+        }
+      },
+      "boot4dCc": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 6,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 6,
+        "queue_from_eligible_seconds": {
+          "max": 6070.0,
+          "mean": 2489.0,
+          "min": 1229.0,
+          "n": 5,
+          "p50": 1834.0,
+          "p90": 4475.200000000001
+        },
+        "runtime_seconds": {
+          "max": 30,
+          "mean": 22.0,
+          "min": 14,
+          "n": 5,
+          "p50": 25,
+          "p90": 28.0
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 5
+        },
+        "submit_to_start_seconds": {
+          "max": 6070.0,
+          "mean": 2489.0,
+          "min": 1229.0,
+          "n": 5,
+          "p50": 1834.0,
+          "p90": 4475.200000000001
+        }
+      },
+      "boot5d": {
+        "dependency_hold_seconds": {
+          "max": 6.0,
+          "mean": 4.666666666666667,
+          "min": 2.0,
+          "n": 9,
+          "p50": 6.0,
+          "p90": 6.0
+        },
+        "jobs": 9,
+        "queue_from_eligible_seconds": {
+          "max": 23850.0,
+          "mean": 8265.285714285714,
+          "min": 2059.0,
+          "n": 7,
+          "p50": 4518.0,
+          "p90": 18857.4
+        },
+        "runtime_seconds": {
+          "max": 685,
+          "mean": 179.14285714285714,
+          "min": 5,
+          "n": 7,
+          "p50": 11,
+          "p90": 588.4000000000001
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 2,
+          "FAILED": 5
+        },
+        "submit_to_start_seconds": {
+          "max": 23856.0,
+          "mean": 8270.142857142857,
+          "min": 2061.0,
+          "n": 7,
+          "p50": 4524.0,
+          "p90": 18863.4
+        }
+      },
+      "boot5dG": {
+        "dependency_hold_seconds": {
+          "max": 4.0,
+          "mean": 4.0,
+          "min": 4.0,
+          "n": 55,
+          "p50": 4.0,
+          "p90": 4.0
+        },
+        "jobs": 55,
+        "queue_from_eligible_seconds": {
+          "max": 32532.0,
+          "mean": 21041.296296296296,
+          "min": 3929.0,
+          "n": 54,
+          "p50": 22380.0,
+          "p90": 30533.6
+        },
+        "runtime_seconds": {
+          "max": 519,
+          "mean": 95.57407407407408,
+          "min": 10,
+          "n": 54,
+          "p50": 13.0,
+          "p90": 508.1
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 54
+        },
+        "submit_to_start_seconds": {
+          "max": 32536.0,
+          "mean": 21045.296296296296,
+          "min": 3933.0,
+          "n": 54,
+          "p50": 22384.0,
+          "p90": 30537.600000000006
+        }
+      },
+      "bootfpsC": {
+        "dependency_hold_seconds": {
+          "max": 11.0,
+          "mean": 0.8947368421052632,
+          "min": 0.0,
+          "n": 19,
+          "p50": 0.0,
+          "p90": 2.0
+        },
+        "jobs": 19,
+        "queue_from_eligible_seconds": {
+          "max": 27500.0,
+          "mean": 16273.6875,
+          "min": 3250.0,
+          "n": 16,
+          "p50": 16790.0,
+          "p90": 23779.0
+        },
+        "runtime_seconds": {
+          "max": 949,
+          "mean": 529.125,
+          "min": 17,
+          "n": 16,
+          "p50": 646.5,
+          "p90": 931.0
+        },
+        "states": {
+          "CANCELLED": 3,
+          "COMPLETED": 16
+        },
+        "submit_to_start_seconds": {
+          "max": 27500.0,
+          "mean": 16273.9375,
+          "min": 3250.0,
+          "n": 16,
+          "p50": 16791.0,
+          "p90": 23780.0
+        }
+      },
+      "cdeltaC": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 4,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 4,
+        "queue_from_eligible_seconds": {
+          "max": 6077.0,
+          "mean": 5358.0,
+          "min": 4655.0,
+          "n": 3,
+          "p50": 5342.0,
+          "p90": 5930.0
+        },
+        "runtime_seconds": {
+          "max": 8287,
+          "mean": 4828.333333333333,
+          "min": 661,
+          "n": 3,
+          "p50": 5537,
+          "p90": 7737.0
+        },
+        "states": {
+          "CANCELLED": 3,
+          "FAILED": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 6077.0,
+          "mean": 5358.0,
+          "min": 4655.0,
+          "n": 3,
+          "p50": 5342.0,
+          "p90": 5930.0
+        }
+      },
+      "claude-hold": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 29,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 29,
+        "queue_from_eligible_seconds": {
+          "max": 1.0,
+          "mean": 0.10344827586206896,
+          "min": 0.0,
+          "n": 29,
+          "p50": 0.0,
+          "p90": 0.1999999999999993
+        },
+        "runtime_seconds": {
+          "max": 14309,
+          "mean": 9453.034482758621,
+          "min": 106,
+          "n": 29,
+          "p50": 10803,
+          "p90": 10807.2
+        },
+        "states": {
+          "CANCELLED": 3,
+          "COMPLETED": 1,
+          "FAILED": 3,
+          "RUNNING": 1,
+          "TIMEOUT": 21
+        },
+        "submit_to_start_seconds": {
+          "max": 1.0,
+          "mean": 0.10344827586206896,
+          "min": 0.0,
+          "n": 29,
+          "p50": 0.0,
+          "p90": 0.1999999999999993
+        }
+      },
+      "claude-school-excess": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 2,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "runtime_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "states": {
+          "CANCELLED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        }
+      },
+      "claude-school-regen": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 2,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "runtime_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "states": {
+          "CANCELLED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        }
+      },
+      "comb4dCc": {
+        "dependency_hold_seconds": {
+          "max": 67245.0,
+          "mean": 37489.0,
+          "min": 7733.0,
+          "n": 2,
+          "p50": 37489.0,
+          "p90": 61293.8
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": 984.0,
+          "mean": 950.5,
+          "min": 917.0,
+          "n": 2,
+          "p50": 950.5,
+          "p90": 977.3
+        },
+        "runtime_seconds": {
+          "max": 1877,
+          "mean": 1410.5,
+          "min": 944,
+          "n": 2,
+          "p50": 1410.5,
+          "p90": 1783.6999999999998
+        },
+        "states": {
+          "COMPLETED": 1,
+          "FAILED": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 68162.0,
+          "mean": 38439.5,
+          "min": 8717.0,
+          "n": 2,
+          "p50": 38439.5,
+          "p90": 62217.5
+        }
+      },
+      "det5dBKG": {
+        "dependency_hold_seconds": {
+          "max": 5.0,
+          "mean": 3.0344827586206895,
+          "min": 2.0,
+          "n": 29,
+          "p50": 2.0,
+          "p90": 5.0
+        },
+        "jobs": 29,
+        "queue_from_eligible_seconds": {
+          "max": 18646.0,
+          "mean": 9710.107142857143,
+          "min": 695.0,
+          "n": 28,
+          "p50": 9088.5,
+          "p90": 17997.2
+        },
+        "runtime_seconds": {
+          "max": 3268,
+          "mean": 2048.464285714286,
+          "min": 10,
+          "n": 28,
+          "p50": 2642.0,
+          "p90": 2741.5
+        },
+        "states": {
+          "CANCELLED": 3,
+          "COMPLETED": 24,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 18648.0,
+          "mean": 9713.07142857143,
+          "min": 697.0,
+          "n": 28,
+          "p50": 9092.0,
+          "p90": 17999.2
+        }
+      },
+      "ev5d_active": {
+        "dependency_hold_seconds": {
+          "max": 98296.0,
+          "mean": 47968.14184397163,
+          "min": 0.0,
+          "n": 141,
+          "p50": 52041.0,
+          "p90": 87501.0
+        },
+        "jobs": 141,
+        "queue_from_eligible_seconds": {
+          "max": 28800.0,
+          "mean": 3036.788321167883,
+          "min": 0.0,
+          "n": 137,
+          "p50": 114.0,
+          "p90": 12046.0
+        },
+        "runtime_seconds": {
+          "max": 18017,
+          "mean": 4345.693430656935,
+          "min": 8,
+          "n": 137,
+          "p50": 2535,
+          "p90": 10939.800000000001
+        },
+        "states": {
+          "CANCELLED": 8,
+          "COMPLETED": 132,
+          "TIMEOUT": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 98341.0,
+          "mean": 52405.42335766424,
+          "min": 1934.0,
+          "n": 137,
+          "p50": 52471.0,
+          "p90": 87592.0
+        }
+      },
+      "ev5d_active_fps": {
+        "dependency_hold_seconds": {
+          "max": 99613.0,
+          "mean": 47158.737704918036,
+          "min": 2.0,
+          "n": 122,
+          "p50": 75518.5,
+          "p90": 94985.00000000001
+        },
+        "jobs": 122,
+        "queue_from_eligible_seconds": {
+          "max": 72777.0,
+          "mean": 22023.330578512396,
+          "min": 0.0,
+          "n": 121,
+          "p50": 746.0,
+          "p90": 72340.0
+        },
+        "runtime_seconds": {
+          "max": 22780,
+          "mean": 6456.785123966943,
+          "min": 25,
+          "n": 121,
+          "p50": 5846,
+          "p90": 14615
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 121
+        },
+        "submit_to_start_seconds": {
+          "max": 100192.0,
+          "mean": 69571.78512396694,
+          "min": 4122.0,
+          "n": 121,
+          "p50": 75823.0,
+          "p90": 95183.0
+        }
+      },
+      "haddActFpsC": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 10,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 10,
+        "queue_from_eligible_seconds": {
+          "max": 9993.0,
+          "mean": 7541.7,
+          "min": 4272.0,
+          "n": 10,
+          "p50": 7429.5,
+          "p90": 9493.499999999998
+        },
+        "runtime_seconds": {
+          "max": 675,
+          "mean": 599.0,
+          "min": 529,
+          "n": 10,
+          "p50": 610.0,
+          "p90": 646.2
+        },
+        "states": {
+          "COMPLETED": 10
+        },
+        "submit_to_start_seconds": {
+          "max": 9996.0,
+          "mean": 7544.7,
+          "min": 4275.0,
+          "n": 10,
+          "p50": 7432.5,
+          "p90": 9496.5
+        }
+      },
+      "hashP4inputs": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 2,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": 276.0,
+          "mean": 276.0,
+          "min": 276.0,
+          "n": 1,
+          "p50": 276.0,
+          "p90": 276.0
+        },
+        "runtime_seconds": {
+          "max": 7,
+          "mean": 7.0,
+          "min": 7,
+          "n": 1,
+          "p50": 7,
+          "p90": 7
+        },
+        "states": {
+          "CANCELLED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 276.0,
+          "mean": 276.0,
+          "min": 276.0,
+          "n": 1,
+          "p50": 276.0,
+          "p90": 276.0
+        }
+      },
+      "interactive": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 46,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 46,
+        "queue_from_eligible_seconds": {
+          "max": 8.0,
+          "mean": 0.41304347826086957,
+          "min": 0.0,
+          "n": 46,
+          "p50": 0.0,
+          "p90": 0.5
+        },
+        "runtime_seconds": {
+          "max": 14414,
+          "mean": 2099.0652173913045,
+          "min": 4,
+          "n": 46,
+          "p50": 139.0,
+          "p90": 8461.5
+        },
+        "states": {
+          "CANCELLED": 8,
+          "COMPLETED": 28,
+          "FAILED": 7,
+          "TIMEOUT": 3
+        },
+        "submit_to_start_seconds": {
+          "max": 8.0,
+          "mean": 0.41304347826086957,
+          "min": 0.0,
+          "n": 46,
+          "p50": 0.0,
+          "p90": 0.5
+        }
+      },
+      "nw_cov_analysis": {
+        "dependency_hold_seconds": {
+          "max": 249104.0,
+          "mean": 124552.0,
+          "min": 0.0,
+          "n": 2,
+          "p50": 124552.0,
+          "p90": 224193.6
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": 10572.0,
+          "mean": 10572.0,
+          "min": 10572.0,
+          "n": 1,
+          "p50": 10572.0,
+          "p90": 10572.0
+        },
+        "runtime_seconds": {
+          "max": 8,
+          "mean": 8.0,
+          "min": 8,
+          "n": 1,
+          "p50": 8,
+          "p90": 8
+        },
+        "states": {
+          "CANCELLED": 1,
+          "FAILED": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 259676.0,
+          "mean": 259676.0,
+          "min": 259676.0,
+          "n": 1,
+          "p50": 259676.0,
+          "p90": 259676.0
+        }
+      },
+      "p6_4d_rep": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 5,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 5,
+        "queue_from_eligible_seconds": {
+          "max": 81.0,
+          "mean": 16.8,
+          "min": 0.0,
+          "n": 5,
+          "p50": 0.0,
+          "p90": 49.80000000000001
+        },
+        "runtime_seconds": {
+          "max": 14403,
+          "mean": 3785.8,
+          "min": 44,
+          "n": 5,
+          "p50": 1570,
+          "p90": 9719.400000000001
+        },
+        "states": {
+          "CANCELLED": 3,
+          "COMPLETED": 1,
+          "TIMEOUT": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 81.0,
+          "mean": 16.8,
+          "min": 0.0,
+          "n": 5,
+          "p50": 0.0,
+          "p90": 49.80000000000001
+        }
+      },
+      "pet_boot_arr": {
+        "dependency_hold_seconds": {
+          "max": 6.0,
+          "mean": 2.1481481481481484,
+          "min": 2.0,
+          "n": 27,
+          "p50": 2.0,
+          "p90": 2.0
+        },
+        "jobs": 27,
+        "queue_from_eligible_seconds": {
+          "max": 65013.0,
+          "mean": 18606.76923076923,
+          "min": 1371.0,
+          "n": 26,
+          "p50": 12572.0,
+          "p90": 60045.0
+        },
+        "runtime_seconds": {
+          "max": 4260,
+          "mean": 4124.2307692307695,
+          "min": 4028,
+          "n": 26,
+          "p50": 4107.0,
+          "p90": 4218.0
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 26
+        },
+        "submit_to_start_seconds": {
+          "max": 65015.0,
+          "mean": 18608.923076923078,
+          "min": 1373.0,
+          "n": 26,
+          "p50": 12574.0,
+          "p90": 60047.0
+        }
+      },
+      "pet_boot_one": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 62,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 62,
+        "queue_from_eligible_seconds": {
+          "max": 44098.0,
+          "mean": 20090.821428571428,
+          "min": 2990.0,
+          "n": 28,
+          "p50": 18635.0,
+          "p90": 37167.100000000006
+        },
+        "runtime_seconds": {
+          "max": 4098,
+          "mean": 4063.5714285714284,
+          "min": 4031,
+          "n": 28,
+          "p50": 4060.5,
+          "p90": 4087.8
+        },
+        "states": {
+          "CANCELLED": 34,
+          "COMPLETED": 28
+        },
+        "submit_to_start_seconds": {
+          "max": 44098.0,
+          "mean": 20090.821428571428,
+          "min": 2990.0,
+          "n": 28,
+          "p50": 18635.0,
+          "p90": 37167.100000000006
+        }
+      },
+      "pet_nom_bkgsub": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 14,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 14,
+        "queue_from_eligible_seconds": {
+          "max": 22955.0,
+          "mean": 15119.42857142857,
+          "min": 2443.0,
+          "n": 14,
+          "p50": 15987.0,
+          "p90": 21923.0
+        },
+        "runtime_seconds": {
+          "max": 4072,
+          "mean": 4021.0,
+          "min": 3968,
+          "n": 14,
+          "p50": 4020.0,
+          "p90": 4052.0
+        },
+        "states": {
+          "COMPLETED": 14
+        },
+        "submit_to_start_seconds": {
+          "max": 22955.0,
+          "mean": 15119.42857142857,
+          "min": 2443.0,
+          "n": 14,
+          "p50": 15987.0,
+          "p90": 21923.0
+        }
+      },
+      "pet_p7_MaRES_1": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 2,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 2,
+        "queue_from_eligible_seconds": {
+          "max": 7816.0,
+          "mean": 6737.5,
+          "min": 5659.0,
+          "n": 2,
+          "p50": 6737.5,
+          "p90": 7600.3
+        },
+        "runtime_seconds": {
+          "max": 4045,
+          "mean": 2034.5,
+          "min": 24,
+          "n": 2,
+          "p50": 2034.5,
+          "p90": 3642.9
+        },
+        "states": {
+          "COMPLETED": 1,
+          "FAILED": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 7816.0,
+          "mean": 6737.5,
+          "min": 5659.0,
+          "n": 2,
+          "p50": 6737.5,
+          "p90": 7600.3
+        }
+      },
+      "ssp4dCc": {
+        "dependency_hold_seconds": {
+          "max": 5.0,
+          "mean": 5.0,
+          "min": 5.0,
+          "n": 3,
+          "p50": 5.0,
+          "p90": 5.0
+        },
+        "jobs": 3,
+        "queue_from_eligible_seconds": {
+          "max": 6660.0,
+          "mean": 4421.5,
+          "min": 2183.0,
+          "n": 2,
+          "p50": 4421.5,
+          "p90": 6212.3
+        },
+        "runtime_seconds": {
+          "max": 554,
+          "mean": 285.0,
+          "min": 16,
+          "n": 2,
+          "p50": 285.0,
+          "p90": 500.20000000000005
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 6665.0,
+          "mean": 4426.5,
+          "min": 2188.0,
+          "n": 2,
+          "p50": 4426.5,
+          "p90": 6217.3
+        }
+      },
+      "sspfpsC": {
+        "dependency_hold_seconds": {
+          "max": 11.0,
+          "mean": 10.266666666666667,
+          "min": 0.0,
+          "n": 15,
+          "p50": 11.0,
+          "p90": 11.0
+        },
+        "jobs": 15,
+        "queue_from_eligible_seconds": {
+          "max": 28724.0,
+          "mean": 15918.23076923077,
+          "min": 3296.0,
+          "n": 13,
+          "p50": 17245.0,
+          "p90": 23684.4
+        },
+        "runtime_seconds": {
+          "max": 993,
+          "mean": 684.9230769230769,
+          "min": 16,
+          "n": 13,
+          "p50": 780,
+          "p90": 879.8
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 13
+        },
+        "submit_to_start_seconds": {
+          "max": 28735.0,
+          "mean": 15929.23076923077,
+          "min": 3307.0,
+          "n": 13,
+          "p50": 17256.0,
+          "p90": 23695.4
+        }
+      },
+      "ssplit4d": {
+        "dependency_hold_seconds": {
+          "max": 6.0,
+          "mean": 5.25,
+          "min": 3.0,
+          "n": 4,
+          "p50": 6.0,
+          "p90": 6.0
+        },
+        "jobs": 4,
+        "queue_from_eligible_seconds": {
+          "max": 21264.0,
+          "mean": 17380.5,
+          "min": 13497.0,
+          "n": 2,
+          "p50": 17380.5,
+          "p90": 20487.300000000003
+        },
+        "runtime_seconds": {
+          "max": 10,
+          "mean": 9.5,
+          "min": 9,
+          "n": 2,
+          "p50": 9.5,
+          "p90": 9.9
+        },
+        "states": {
+          "CANCELLED": 2,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 21270.0,
+          "mean": 17386.5,
+          "min": 13503.0,
+          "n": 2,
+          "p50": 17386.5,
+          "p90": 20493.3
+        }
+      },
+      "ssplit5d": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 2.7586206896551726,
+          "min": 0.0,
+          "n": 29,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 29,
+        "queue_from_eligible_seconds": {
+          "max": 25122.0,
+          "mean": 13629.111111111111,
+          "min": 3058.0,
+          "n": 27,
+          "p50": 14518.0,
+          "p90": 23173.6
+        },
+        "runtime_seconds": {
+          "max": 680,
+          "mean": 496.6296296296296,
+          "min": 5,
+          "n": 27,
+          "p50": 537,
+          "p90": 632.2
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 24,
+          "FAILED": 3
+        },
+        "submit_to_start_seconds": {
+          "max": 25125.0,
+          "mean": 13632.0,
+          "min": 3061.0,
+          "n": 27,
+          "p50": 14521.0,
+          "p90": 23176.600000000002
+        }
+      },
+      "sweep5dBKGdump": {
+        "dependency_hold_seconds": {
+          "max": 2.0,
+          "mean": 0.11764705882352941,
+          "min": 0.0,
+          "n": 17,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 17,
+        "queue_from_eligible_seconds": {
+          "max": 19132.0,
+          "mean": 9001.5625,
+          "min": 2027.0,
+          "n": 16,
+          "p50": 8157.0,
+          "p90": 17095.5
+        },
+        "runtime_seconds": {
+          "max": 2234,
+          "mean": 2152.0,
+          "min": 2015,
+          "n": 16,
+          "p50": 2158.5,
+          "p90": 2228.5
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 16
+        },
+        "submit_to_start_seconds": {
+          "max": 19132.0,
+          "mean": 9001.5625,
+          "min": 2027.0,
+          "n": 16,
+          "p50": 8157.0,
+          "p90": 17095.5
+        }
+      },
+      "sweep5dBKGrun": {
+        "dependency_hold_seconds": {
+          "max": 21300.0,
+          "mean": 21300.0,
+          "min": 21300.0,
+          "n": 169,
+          "p50": 21300.0,
+          "p90": 21300.0
+        },
+        "jobs": 169,
+        "queue_from_eligible_seconds": {
+          "max": 5747.0,
+          "mean": 3256.7278106508875,
+          "min": 361.0,
+          "n": 169,
+          "p50": 3496.0,
+          "p90": 5321.0
+        },
+        "runtime_seconds": {
+          "max": 593,
+          "mean": 507.84023668639054,
+          "min": 486,
+          "n": 169,
+          "p50": 505,
+          "p90": 519.0
+        },
+        "states": {
+          "COMPLETED": 169
+        },
+        "submit_to_start_seconds": {
+          "max": 27047.0,
+          "mean": 24556.72781065089,
+          "min": 21661.0,
+          "n": 169,
+          "p50": 24796.0,
+          "p90": 26621.0
+        }
+      },
+      "unfold_MEFHC_uni_nw": {
+        "dependency_hold_seconds": {
+          "max": 245941.0,
+          "mean": 241399.1568627451,
+          "min": 238668.0,
+          "n": 153,
+          "p50": 238668.0,
+          "p90": 244398.0
+        },
+        "jobs": 153,
+        "queue_from_eligible_seconds": {
+          "max": 5433.0,
+          "mean": 2595.5620915032678,
+          "min": 122.0,
+          "n": 153,
+          "p50": 2362.0,
+          "p90": 5432.0
+        },
+        "runtime_seconds": {
+          "max": 12,
+          "mean": 6.7973856209150325,
+          "min": 2,
+          "n": 153,
+          "p50": 7,
+          "p90": 11.0
+        },
+        "states": {
+          "COMPLETED": 153
+        },
+        "submit_to_start_seconds": {
+          "max": 246063.0,
+          "mean": 243994.71895424835,
+          "min": 241029.0,
+          "n": 153,
+          "p50": 244100.0,
+          "p90": 245925.0
+        }
+      },
+      "unfold_MEFHC_uni_pn": {
+        "dependency_hold_seconds": {
+          "max": 246473.0,
+          "mean": 244182.98009950249,
+          "min": 238668.0,
+          "n": 201,
+          "p50": 244112.0,
+          "p90": 246338.0
+        },
+        "jobs": 201,
+        "queue_from_eligible_seconds": {
+          "max": 5434.0,
+          "mean": 1464.6019900497513,
+          "min": 123.0,
+          "n": 201,
+          "p50": 270.0,
+          "p90": 5433.0
+        },
+        "runtime_seconds": {
+          "max": 12,
+          "mean": 6.154228855721393,
+          "min": 1,
+          "n": 201,
+          "p50": 6,
+          "p90": 10
+        },
+        "states": {
+          "COMPLETED": 201
+        },
+        "submit_to_start_seconds": {
+          "max": 249081.0,
+          "mean": 245647.58208955225,
+          "min": 241013.0,
+          "n": 201,
+          "p50": 246063.0,
+          "p90": 246466.0
+        }
+      },
+      "uthfpsC": {
+        "dependency_hold_seconds": {
+          "max": 9.0,
+          "mean": 9.0,
+          "min": 9.0,
+          "n": 11,
+          "p50": 9.0,
+          "p90": 9.0
+        },
+        "jobs": 11,
+        "queue_from_eligible_seconds": {
+          "max": 24224.0,
+          "mean": 14415.4,
+          "min": 4101.0,
+          "n": 10,
+          "p50": 14003.5,
+          "p90": 22234.1
+        },
+        "runtime_seconds": {
+          "max": 388,
+          "mean": 215.2,
+          "min": 91,
+          "n": 10,
+          "p50": 199.5,
+          "p90": 327.69999999999993
+        },
+        "states": {
+          "CANCELLED": 1,
+          "FAILED": 10
+        },
+        "submit_to_start_seconds": {
+          "max": 24233.0,
+          "mean": 14424.4,
+          "min": 4110.0,
+          "n": 10,
+          "p50": 14012.5,
+          "p90": 22243.1
+        }
+      },
+      "uthr4dCc": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 2.5961538461538463,
+          "min": 0.0,
+          "n": 52,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 52,
+        "queue_from_eligible_seconds": {
+          "max": 67220.0,
+          "mean": 29207.0,
+          "min": 910.0,
+          "n": 51,
+          "p50": 27046.0,
+          "p90": 58873.0
+        },
+        "runtime_seconds": {
+          "max": 4446,
+          "mean": 1039.8235294117646,
+          "min": 8,
+          "n": 51,
+          "p50": 17,
+          "p90": 3180
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 50
+        },
+        "submit_to_start_seconds": {
+          "max": 67223.0,
+          "mean": 29209.58823529412,
+          "min": 910.0,
+          "n": 51,
+          "p50": 27049.0,
+          "p90": 58876.0
+        }
+      },
+      "uthrow5dBKG": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 14,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 14,
+        "queue_from_eligible_seconds": {
+          "max": 14638.0,
+          "mean": 7806.538461538462,
+          "min": 1714.0,
+          "n": 13,
+          "p50": 8632.0,
+          "p90": 13227.800000000001
+        },
+        "runtime_seconds": {
+          "max": 2011,
+          "mean": 1905.6153846153845,
+          "min": 1152,
+          "n": 13,
+          "p50": 1962,
+          "p90": 1990.6
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 12
+        },
+        "submit_to_start_seconds": {
+          "max": 14641.0,
+          "mean": 7809.538461538462,
+          "min": 1717.0,
+          "n": 13,
+          "p50": 8635.0,
+          "p90": 13230.8
+        }
+      },
+      "uthrow5dBKGb": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 14,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 14,
+        "queue_from_eligible_seconds": {
+          "max": 15231.0,
+          "mean": 8559.538461538461,
+          "min": 2586.0,
+          "n": 13,
+          "p50": 9014.0,
+          "p90": 13821.800000000001
+        },
+        "runtime_seconds": {
+          "max": 977,
+          "mean": 930.0769230769231,
+          "min": 559,
+          "n": 13,
+          "p50": 959,
+          "p90": 976.2
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 12
+        },
+        "submit_to_start_seconds": {
+          "max": 15231.0,
+          "mean": 8559.538461538461,
+          "min": 2586.0,
+          "n": 13,
+          "p50": 9014.0,
+          "p90": 13821.800000000001
+        }
+      },
+      "uthrow5d_blkF": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 32,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 32,
+        "queue_from_eligible_seconds": {
+          "max": 55681.0,
+          "mean": 27665.09375,
+          "min": 3186.0,
+          "n": 32,
+          "p50": 26786.5,
+          "p90": 47586.40000000001
+        },
+        "runtime_seconds": {
+          "max": 4625,
+          "mean": 2495.53125,
+          "min": 580,
+          "n": 32,
+          "p50": 2721.5,
+          "p90": 4053.3
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 31
+        },
+        "submit_to_start_seconds": {
+          "max": 55684.0,
+          "mean": 27668.09375,
+          "min": 3189.0,
+          "n": 32,
+          "p50": 26789.5,
+          "p90": 47589.4
+        }
+      },
+      "uthrow5d_block": {
+        "dependency_hold_seconds": {
+          "max": 5.0,
+          "mean": 4.25,
+          "min": 4.0,
+          "n": 4,
+          "p50": 4.0,
+          "p90": 4.7
+        },
+        "jobs": 4,
+        "queue_from_eligible_seconds": {
+          "max": 18838.0,
+          "mean": 13795.0,
+          "min": 8752.0,
+          "n": 2,
+          "p50": 13795.0,
+          "p90": 17829.4
+        },
+        "runtime_seconds": {
+          "max": 10,
+          "mean": 9.0,
+          "min": 8,
+          "n": 2,
+          "p50": 9.0,
+          "p90": 9.8
+        },
+        "states": {
+          "CANCELLED": 2,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 18842.0,
+          "mean": 13799.0,
+          "min": 8756.0,
+          "n": 2,
+          "p50": 13799.0,
+          "p90": 17833.399999999998
+        }
+      },
+      "uthrow5d_run": {
+        "dependency_hold_seconds": {
+          "max": 4.0,
+          "mean": 3.5,
+          "min": 2.0,
+          "n": 4,
+          "p50": 4.0,
+          "p90": 4.0
+        },
+        "jobs": 4,
+        "queue_from_eligible_seconds": {
+          "max": 17434.0,
+          "mean": 12261.5,
+          "min": 7089.0,
+          "n": 2,
+          "p50": 12261.5,
+          "p90": 16399.5
+        },
+        "runtime_seconds": {
+          "max": 8,
+          "mean": 6.5,
+          "min": 5,
+          "n": 2,
+          "p50": 6.5,
+          "p90": 7.7
+        },
+        "states": {
+          "CANCELLED": 2,
+          "FAILED": 2
+        },
+        "submit_to_start_seconds": {
+          "max": 17438.0,
+          "mean": 12265.5,
+          "min": 7093.0,
+          "n": 2,
+          "p50": 12265.5,
+          "p90": 16403.5
+        }
+      },
+      "uthrow5d_runF": {
+        "dependency_hold_seconds": {
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 32,
+          "p50": 3.0,
+          "p90": 3.0
+        },
+        "jobs": 32,
+        "queue_from_eligible_seconds": {
+          "max": 51625.0,
+          "mean": 25800.548387096773,
+          "min": 1303.0,
+          "n": 31,
+          "p50": 25005.0,
+          "p90": 45465.0
+        },
+        "runtime_seconds": {
+          "max": 4160,
+          "mean": 2550.0,
+          "min": 1933,
+          "n": 31,
+          "p50": 2301,
+          "p90": 3228
+        },
+        "states": {
+          "CANCELLED": 2,
+          "COMPLETED": 30
+        },
+        "submit_to_start_seconds": {
+          "max": 51628.0,
+          "mean": 25803.548387096773,
+          "min": 1306.0,
+          "n": 31,
+          "p50": 25008.0,
+          "p90": 45468.0
+        }
+      }
+    },
+    "by_qos_task_weighted": {
+      "gpu_interactive": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 43,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 43,
+        "queue_from_eligible_seconds": {
+          "max": 81.0,
+          "mean": 2.372093023255814,
+          "min": 0.0,
+          "n": 43,
+          "p50": 0.0,
+          "p90": 1.0
+        },
+        "runtime_seconds": {
+          "max": 14423,
+          "mean": 3214.3255813953488,
+          "min": 4,
+          "n": 43,
+          "p50": 362,
+          "p90": 10744.800000000003
+        },
+        "states": {
+          "CANCELLED": 9,
+          "COMPLETED": 21,
+          "FAILED": 7,
+          "TIMEOUT": 6
+        },
+        "submit_to_start_seconds": {
+          "max": 81.0,
+          "mean": 2.372093023255814,
+          "min": 0.0,
+          "n": 43,
+          "p50": 0.0,
+          "p90": 1.0
+        }
+      },
+      "gpu_shared": {
+        "dependency_hold_seconds": {
+          "max": 21300.0,
+          "mean": 8175.091111111111,
+          "min": 0.0,
+          "n": 450,
+          "p50": 4.0,
+          "p90": 21300.0
+        },
+        "jobs": 450,
+        "queue_from_eligible_seconds": {
+          "max": 65013.0,
+          "mean": 9284.349246231155,
+          "min": 132.0,
+          "n": 398,
+          "p50": 5087.0,
+          "p90": 22417.800000000003
+        },
+        "runtime_seconds": {
+          "max": 4600,
+          "mean": 1379.105527638191,
+          "min": 10,
+          "n": 398,
+          "p50": 511.0,
+          "p90": 4060.2999999999997
+        },
+        "states": {
+          "CANCELLED": 57,
+          "COMPLETED": 390,
+          "FAILED": 3
+        },
+        "submit_to_start_seconds": {
+          "max": 65015.0,
+          "mean": 18513.793969849245,
+          "min": 133.0,
+          "n": 398,
+          "p50": 22249.0,
+          "p90": 26621.0
+        }
+      },
+      "gpu_shared_interactive": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 12,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 12,
+        "queue_from_eligible_seconds": {
+          "max": 1.0,
+          "mean": 0.08333333333333333,
+          "min": 0.0,
+          "n": 12,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "runtime_seconds": {
+          "max": 760,
+          "mean": 189.41666666666666,
+          "min": 13,
+          "n": 12,
+          "p50": 115.0,
+          "p90": 598.1000000000003
+        },
+        "states": {
+          "CANCELLED": 1,
+          "COMPLETED": 11
+        },
+        "submit_to_start_seconds": {
+          "max": 1.0,
+          "mean": 0.08333333333333333,
+          "min": 0.0,
+          "n": 12,
+          "p50": 0.0,
+          "p90": 0.0
+        }
+      },
+      "interactive": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 37,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 37,
+        "queue_from_eligible_seconds": {
+          "max": 1.0,
+          "mean": 0.10810810810810811,
+          "min": 0.0,
+          "n": 37,
+          "p50": 0.0,
+          "p90": 0.3999999999999986
+        },
+        "runtime_seconds": {
+          "max": 14403,
+          "mean": 8755.0,
+          "min": 45,
+          "n": 37,
+          "p50": 10803,
+          "p90": 12211.199999999993
+        },
+        "states": {
+          "CANCELLED": 7,
+          "COMPLETED": 3,
+          "FAILED": 3,
+          "RUNNING": 1,
+          "TIMEOUT": 23
+        },
+        "submit_to_start_seconds": {
+          "max": 1.0,
+          "mean": 0.10810810810810811,
+          "min": 0.0,
+          "n": 37,
+          "p50": 0.0,
+          "p90": 0.3999999999999986
+        }
+      },
+      "regular_1": {
+        "dependency_hold_seconds": {
+          "max": 246473.0,
+          "mean": 242979.80225988702,
+          "min": 238668.0,
+          "n": 354,
+          "p50": 244112.0,
+          "p90": 246338.0
+        },
+        "jobs": 354,
+        "queue_from_eligible_seconds": {
+          "max": 5434.0,
+          "mean": 1953.406779661017,
+          "min": 122.0,
+          "n": 354,
+          "p50": 1527.0,
+          "p90": 5432.0
+        },
+        "runtime_seconds": {
+          "max": 12,
+          "mean": 6.432203389830509,
+          "min": 1,
+          "n": 354,
+          "p50": 7.0,
+          "p90": 10.0
+        },
+        "states": {
+          "COMPLETED": 354
+        },
+        "submit_to_start_seconds": {
+          "max": 249081.0,
+          "mean": 244933.20903954803,
+          "min": 241013.0,
+          "n": 354,
+          "p50": 245659.0,
+          "p90": 246466.0
+        }
+      },
+      "shared": {
+        "dependency_hold_seconds": {
+          "max": 249104.0,
+          "mean": 22991.960644007155,
+          "min": 0.0,
+          "n": 559,
+          "p50": 3.0,
+          "p90": 85819.2
+        },
+        "jobs": 559,
+        "queue_from_eligible_seconds": {
+          "max": 72777.0,
+          "mean": 16577.807251908398,
+          "min": 0.0,
+          "n": 524,
+          "p50": 8785.0,
+          "p90": 46685.0
+        },
+        "runtime_seconds": {
+          "max": 22780,
+          "mean": 3229.1469465648856,
+          "min": 5,
+          "n": 524,
+          "p50": 1493.0,
+          "p90": 9330.5
+        },
+        "states": {
+          "CANCELLED": 46,
+          "COMPLETED": 481,
+          "FAILED": 31,
+          "TIMEOUT": 1
+        },
+        "submit_to_start_seconds": {
+          "max": 259676.0,
+          "mean": 41105.263358778626,
+          "min": 276.0,
+          "n": 524,
+          "p50": 35235.5,
+          "p90": 87016.3
+        }
+      },
+      "shared_overrun": {
+        "dependency_hold_seconds": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 5,
+          "p50": 0.0,
+          "p90": 0.0
+        },
+        "jobs": 5,
+        "queue_from_eligible_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "runtime_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        },
+        "states": {
+          "CANCELLED": 5
+        },
+        "submit_to_start_seconds": {
+          "max": null,
+          "mean": null,
+          "min": null,
+          "n": 0,
+          "p50": null,
+          "p90": null
+        }
+      }
+    },
+    "rows": 1460,
+    "states": {
+      "CANCELLED": 125,
+      "COMPLETED": 1260,
+      "FAILED": 44,
+      "RUNNING": 1,
+      "TIMEOUT": 30
+    }
+  },
+  "time_note": "Durations are timezone-independent. Slurm timestamps render in the NERSC scheduler timezone; queue delay is Start-Eligible, while Submit-Start also includes dependency/ineligible holds. Array tasks are task-weighted."
+}

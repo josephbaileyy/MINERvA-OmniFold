@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 15:39 UTC. Registry:
+Last reconciled: 2026-07-18 15:48 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -49,6 +49,10 @@ Placement postmortem: the original shared job had already started before it was
 canceled to retrofit the hedge. That was a routing error, not a compute/result
 error. The policy now treats any healthy RUNNING route as the winner and favors
 one-shot batch when a held node has no ready follow-on workload.
+Historical `sacct` telemetry is now reproducible (`MIG-SCHED3`): across 1,460
+task-weighted rows, eligible-queue p50/p90 were 0/0.4s interactive,
+1,527/5,432s regular CPU, 5,087/22,418s shared GPU, and 8,785/46,685s shared
+CPU. These observations drive queue-early placement but are not ETA promises.
 
 PG0 ownership was re-audited fail-closed (`MIG-AGY16`–`MIG-AGY18`,
 `MIG-PG0-ADJ`). Two agy PASS recommendations were rejected because they
