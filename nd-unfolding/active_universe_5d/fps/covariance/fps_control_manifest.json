@@ -83,11 +83,11 @@
     },
     "launchers": {
       "sbatch_unfold_active_fps.sh": {
-        "sha256": "8f30feaa7504cb65a2dd47a741450fdac14fca6bf16448431720742b838e64b9",
+        "sha256": "dd5875e82309259fd10b76a892735cf42c649c0e8eeabd4beeda22a238bea467",
         "note": "current post-repair launcher; used only for stable footing tokens"
       },
       "run_active_fps_unfolds_interactive.sh": {
-        "sha256": "1c094a7181c2fcfa2bb3d37eea76673121a35718a539d68ae34c487fb16f019d",
+        "sha256": "63ab0f33e4f28e6c2c376f4815c4a060e87f9aa83003e2ff8a6d3509d6b86ac0",
         "note": "current post-repair launcher; used only for stable footing tokens"
       }
     }

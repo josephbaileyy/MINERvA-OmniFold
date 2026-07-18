@@ -24,48 +24,42 @@ BKG_MODE="${BKG_MODE:-negweight-refined}"
 [[ "${BKG_MODE}" == "negweight-refined" ]] || { echo "[FAIL] publication driver requires BKG_MODE=negweight-refined (got '${BKG_MODE}')"; exit 2; }
 MERGEDIR="${ND}/active_universe_5d/fps/merged"
 OUTDIR="${ND}/active_universe_5d/fps/unfolds_${BKG_MODE//-/_}"; mkdir -p "${OUTDIR}"
+CV="${ND}/uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
+AUDIT="${ND}/active_universe_5d/fps/covariance/audit_merged_fps.json"
+THIS_LAUNCHER="${ND}/run_active_fps_unfolds_interactive.sh"
+ENVSET="export HOME=/global/homes/j/josephrb ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28; source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1; cd '${ND}'"
 echo "[p4fps-unfold] JOBID=${JOBID} CONC=${CONC} CPT=${CPT} bkg=${BKG_MODE} ns=${OUTDIR} start $(date -u '+%F %T UTC')"
 for BAND in "${BANDS[@]}"; do
   for EP in 0 1; do
     MERGED="${MERGEDIR}/runEventLoopOmniFold_5D_FPS_active_${BAND}_${EP}_universes_full.root"
     OUT="${OUTDIR}/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_${BAND}_${EP}.root"
-    # skip-if-COMPLETE: validate the existing output on the compute node (login node has no ROOT).
-    # A wall-truncated .root passes `-s` but fails completeness -> remove & redo (never skip a bad file).
-    if [[ -s "${OUT}" ]]; then
-      if srun --jobid="${JOBID}" --overlap --exact -n1 -c2 bash -lc \
-           "export HOME=/global/homes/j/josephrb ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28; source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1; cd '${ND}' && python3 fps_unfold_complete.py '${OUT}'" >/dev/null 2>&1; then
-        echo "[SKIP] ${BAND}:${EP} (validated complete)"; continue
-      fi
-      echo "[REDO] ${BAND}:${EP} (present but incomplete/truncated -> removing)"; rm -f "${OUT}"
+    CFG="${OUT}.config.json"
+    # skip via the ONE shared validator (compute node has ROOT): skip only when ROOT recomputes
+    # complete AND the receipt's live output hash matches. Else remove BOTH and redo.
+    if srun --jobid="${JOBID}" --overlap --exact -n1 -c2 bash -lc \
+         "${ENVSET} && python3 fps_endpoint_receipt.py check --out '${OUT}' --receipt '${CFG}'" >/dev/null 2>&1; then
+      echo "[SKIP] ${BAND}:${EP} (validated complete + receipt)"; continue
     fi
+    rm -f "${OUT}" "${CFG}"
     if [[ ! -s "${MERGED}" ]]; then echo "[WAIT] ${BAND}:${EP} merged ROOT absent"; continue; fi
     while [ "$(jobs -rp | wc -l)" -ge "${CONC}" ]; do sleep 8; done
     srun --jobid="${JOBID}" --overlap --exact -n1 -c"${CPT}" bash -lc "
-      export HOME=/global/homes/j/josephrb OMP_NUM_THREADS=${CPT} \
-        ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
-      source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1
-      cd '${ND}'
-      TMP='${OUT}.tmp'
+      ${ENVSET}; export OMP_NUM_THREADS=${CPT}
+      TMP='${OUT}.tmp.'\$SLURM_PROCID
       python3 unfold_nd_omnifold_unbinned.py --omnifile '${MERGED}' --mcfile '${FLUX_MC}' --axes '' \
         --full-phase-space --pt-edges '${PT_EXT}' --pz-edges '${PZ_EXT}' \
         --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode '${BKG_MODE}' --out \"\$TMP\" --verbose \
         > '${OUTDIR}/unfold_${BAND}_${EP}.log' 2>&1 \
         && mv -f \"\$TMP\" '${OUT}' \
+        && python3 fps_endpoint_receipt.py write --out '${OUT}' --band '${BAND}' --endpoint '${EP}' \
+             --bkg-mode '${BKG_MODE}' --merged '${MERGED}' --source '${ND}/unfold_nd_omnifold_unbinned.py' \
+             --launcher '${THIS_LAUNCHER}' --central '${CV}' --audit '${AUDIT}' --receipt '${CFG}' \
+             >> '${OUTDIR}/unfold_${BAND}_${EP}.log' 2>&1 \
         && echo '[done] ${BAND}:${EP} '\$(date -u +%T) \
-        || echo '[FAIL] ${BAND}:${EP} rc='\$? ' (see ${OUTDIR}/unfold_${BAND}_${EP}.log)'" &
+        || { rm -f '${OUT}'; echo '[FAIL] ${BAND}:${EP} rc='\$? ' (see ${OUTDIR}/unfold_${BAND}_${EP}.log)'; }" &
     sleep 3
   done
 done
 wait
-# mode-stamped completion/config manifest sidecars (login node; clean JSON, no ROOT). Written only
-# for outputs that landed, so a truncated/absent endpoint has no config and cannot enter the rollup.
-for BAND in "${BANDS[@]}"; do for EP in 0 1; do
-  OUT="${OUTDIR}/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_${BAND}_${EP}.root"
-  [[ -s "${OUT}" ]] || continue
-  cat > "${OUT}.config.json" <<EOF
-{"band":"${BAND}","endpoint":${EP},"bkg_mode":"${BKG_MODE}","estimator":"lgbm","seed":42,
- "iters":5,"use_weights":true,"full_phase_space":true,"launcher":"run_active_fps_unfolds_interactive.sh"}
-EOF
-done; done
 N=$(find "${OUTDIR}" -name 'fps2d_xsec_MEFHC_5iter_lgbm_uni_full_*_?.root' -size +0c 2>/dev/null | wc -l)
 echo "[p4fps-unfold] all steps returned $(date -u '+%F %T UTC'); unfolds present=${N}/10 (bkg=${BKG_MODE})"

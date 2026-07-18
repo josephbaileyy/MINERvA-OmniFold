@@ -16,6 +16,7 @@ pass. `check_*` / compute helpers return values for callers to gate on.
 import hashlib
 import json
 import os
+import re
 
 import numpy as np
 
@@ -60,12 +61,25 @@ PUBLICATION_LABEL = "publication"
 REPORTED_MASK_FINGERPRINT = "23b2a2f4e75f242141c0651052258a930ed38abc4f1740afaa0b349da78bda78"
 N_REPORTED = 266
 
-# every publication endpoint ROOT must bind these full hashes (no deferred/partial/None allowed)
-PUBLICATION_ENDPOINT_HASH_FIELDS = [
-    "unfold_sha256", "input_merged_sha256", "config_sha256",
-    "source_sha256", "launcher_sha256", "central_sha256", "audit_sha256",
+# every publication endpoint binds a canonical (path, full-hash) pair for each artifact class, so a
+# consumer can RECOMPUTE the hash of the referenced file and never trust a plausible string.
+ENDPOINT_ARTIFACTS = [
+    ("unfold_sha256", "unfold_root"),
+    ("input_merged_sha256", "input_merged_root"),
+    ("config_sha256", "config_path"),
+    ("source_sha256", "source_path"),
+    ("launcher_sha256", "launcher_path"),
+    ("central_sha256", "central_path"),
+    ("audit_sha256", "audit_path"),
 ]
+PUBLICATION_ENDPOINT_HASH_FIELDS = [hf for hf, _ in ENDPOINT_ARTIFACTS]
+PUBLICATION_ENDPOINT_PATH_FIELDS = [pf for _, pf in ENDPOINT_ARTIFACTS]
 DEFERRED_MARKERS = ("DEFERRED", "deferred", "partial-headtail", "TODO", "PENDING")
+HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
+
+# schema-versioned transition receipts (one per covariance transition + the manifest receipt)
+RECEIPT_SCHEMA_PREFIX = "fps_receipt."
+TRANSITIONS = ("component_build", "p4_validation", "active_adoption", "unified_adoption")
 
 
 class FpsGateError(Exception):
@@ -104,6 +118,36 @@ def sha256_partial(path, edge_bytes=8 << 20):
             f.seek(max(0, sz - edge_bytes))
             h.update(f.read(edge_bytes))
     return f"partial-headtail{edge_bytes}b:{h.hexdigest()}"
+
+
+def require_hex64(h, tag="hash"):
+    """Require a strict lowercase 64-hex SHA256 string."""
+    if not isinstance(h, str) or not HEX64_RE.match(h):
+        raise FpsGateError(f"{tag}: not a lowercase 64-hex sha256: {str(h)[:80]!r}")
+    return True
+
+
+def require_recompute_hashes(manifest, repo_root="."):
+    """Recompute the sha256 of EVERY referenced artifact path in each endpoint and require it to
+    equal the manifest's stored lowercase-64-hex hash. Never trusts a plausible string: catches a
+    substituted (even same-size) file, a non-hex hash, or a missing path. Login-safe (hashlib only)."""
+    for e in manifest["endpoints"]:
+        tag0 = f"{e.get('band')}_{e.get('endpoint')}"
+        for hf, pf in ENDPOINT_ARTIFACTS:
+            h = e.get(hf)
+            require_hex64(h, f"{tag0}.{hf}")
+            p = e.get(pf)
+            if not p or not isinstance(p, str):
+                raise FpsGateError(f"{tag0}: path field '{pf}' missing")
+            ap = p if os.path.isabs(p) else os.path.join(repo_root, p)
+            if not os.path.exists(ap):
+                raise FpsGateError(f"{tag0}: {pf} path absent: {p}")
+            actual = sha256_file(ap)
+            if actual != h:
+                raise FpsGateError(
+                    f"{tag0}: recomputed {pf} sha256 {actual[:16]} != manifest {hf} {h[:16]} "
+                    "(substituted/altered artifact)")
+    return True
 
 
 def layout_fingerprint(pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
@@ -260,11 +304,11 @@ def require_publication_manifest(manifest):
             f"reported_mask_hash {manifest.get('reported_mask_hash')} != canonical "
             f"{REPORTED_MASK_FINGERPRINT} (mask not bound to the exact 266/285 reporting mask)")
     for e in manifest["endpoints"]:
-        for fld in PUBLICATION_ENDPOINT_HASH_FIELDS:
-            v = e.get(fld)
-            if not v or not isinstance(v, str) or len(v) < 32:
-                raise FpsGateError(
-                    f"endpoint {e.get('band')}_{e.get('endpoint')}: hash field '{fld}' missing/short")
+        tag0 = f"{e.get('band')}_{e.get('endpoint')}"
+        for hf, pf in ENDPOINT_ARTIFACTS:
+            require_hex64(e.get(hf), f"{tag0}.{hf}")     # strict lowercase 64-hex
+            if not e.get(pf) or not isinstance(e.get(pf), str):
+                raise FpsGateError(f"endpoint {tag0}: canonical path '{pf}' missing")
     _reject_deferred(manifest)
     if classify_manifest(manifest) != "publication":
         raise FpsGateError("manifest is not a publication (negweight-refined) manifest")
@@ -272,17 +316,62 @@ def require_publication_manifest(manifest):
 
 
 def require_pass_receipt(receipt, manifest_digest):
-    """A hash-bound PASS receipt is mandatory at every covariance transition. The receipt must declare
-    result=PASS and bind the exact manifest digest it validated (so a PASS for a different manifest
-    cannot be replayed)."""
+    """The MANIFEST PASS receipt (from the publication-manifest builder): schema-versioned, result=PASS,
+    binds the exact manifest digest, timestamped. A bare two-field {result, manifest_sha256} object is
+    rejected (missing schema/validated_utc)."""
     if not isinstance(receipt, dict):
         raise FpsGateError("pass receipt: not a dict")
+    for k in ("schema", "result", "manifest_sha256", "validated_utc"):
+        if k not in receipt:
+            raise FpsGateError(f"pass receipt missing required field '{k}' (two-field object rejected)")
+    if not str(receipt["schema"]).startswith("fps_publication_pass_receipt"):
+        raise FpsGateError(f"pass receipt schema '{receipt['schema']}' unexpected")
+    if receipt["result"] != "PASS":
+        raise FpsGateError(f"pass receipt result != PASS ({receipt['result']})")
+    if receipt["manifest_sha256"] != manifest_digest:
+        raise FpsGateError("pass receipt manifest_sha256 != manifest digest (does not certify this manifest)")
+    _reject_deferred(receipt)
+    return True
+
+
+def make_transition_receipt(transition, manifest_digest, predecessor_sha, candidate_sha,
+                            central_sha, reported_mask_hash, utc, extra=None):
+    """Build a schema-versioned hash-bound receipt for a covariance transition."""
+    if transition not in TRANSITIONS:
+        raise FpsGateError(f"unknown transition {transition}")
+    r = {"schema": f"{RECEIPT_SCHEMA_PREFIX}{transition}.v1", "result": "PASS",
+         "transition": transition, "manifest_sha256": manifest_digest,
+         "predecessor_sha256": predecessor_sha, "candidate_sha256": candidate_sha,
+         "central_sha256": central_sha, "reported_mask_hash": reported_mask_hash,
+         "validated_utc": utc}
+    if extra:
+        r.update(extra)
+    return r
+
+
+def require_transition_receipt(receipt, transition, manifest_digest, predecessor_sha=None):
+    """Require a schema-versioned transition receipt that binds this manifest, the exact predecessor
+    artifact hash, and the canonical mask; PASS; hex candidate hash. Rejects a two-field object, a
+    receipt for a different transition/manifest, or one whose predecessor hash does not match."""
+    if not isinstance(receipt, dict):
+        raise FpsGateError(f"{transition} receipt: not a dict")
+    exp = f"{RECEIPT_SCHEMA_PREFIX}{transition}.v1"
+    if receipt.get("schema") != exp:
+        raise FpsGateError(f"{transition} receipt schema '{receipt.get('schema')}' != {exp}")
     if receipt.get("result") != "PASS":
-        raise FpsGateError(f"pass receipt result != PASS ({receipt.get('result')})")
+        raise FpsGateError(f"{transition} receipt result != PASS")
     if receipt.get("manifest_sha256") != manifest_digest:
+        raise FpsGateError(f"{transition} receipt manifest_sha256 mismatch")
+    for k in ("candidate_sha256", "central_sha256", "reported_mask_hash", "validated_utc"):
+        if not receipt.get(k):
+            raise FpsGateError(f"{transition} receipt missing '{k}'")
+    require_hex64(receipt["candidate_sha256"], f"{transition}.candidate_sha256")
+    if receipt.get("reported_mask_hash") != REPORTED_MASK_FINGERPRINT:
+        raise FpsGateError(f"{transition} receipt reported_mask_hash != canonical")
+    if predecessor_sha is not None and receipt.get("predecessor_sha256") != predecessor_sha:
         raise FpsGateError(
-            f"pass receipt manifest_sha256 {receipt.get('manifest_sha256')} != {manifest_digest} "
-            "(receipt does not certify this manifest)")
+            f"{transition} receipt predecessor_sha256 {receipt.get('predecessor_sha256')} "
+            f"!= actual {predecessor_sha} (chain broken / substituted predecessor)")
     _reject_deferred(receipt)
     return True
 

@@ -301,3 +301,30 @@ mask 23b2a2f4...); (3) `build_active_lateral_fps.py` -> `p4_validate_active_late
 (--require-publication) -> `adopt_active_lateral_fps.py` -> `adopt_unified_fps.py`, each requiring the
 manifest + PASS receipt. NOTE: the earlier "RESUME PROCEDURE" (line ~131) + wave/holder notes below
 predate the purity/negweight reconciliation and are retained only as history -- do not act on them.
+
+## 2026-07-18 REPAIR-3 (mutual executability + hash recomputation + real-CLI negatives)
+Verifier BLOCKed fdf6238. Repair-only (no holder, no production, no covariance/adoption). Changes:
+- CONSUMERS now gate BEFORE importing ROOT (lazy `import ROOT`), so manifest/receipt/hash failures are
+  login-safe and CLI-testable. Each RECOMPUTES every referenced artifact hash (strict lowercase 64-hex;
+  canonical paths bound for unfold/input/config/source/launcher/central/audit) via
+  `fps_provenance.require_recompute_hashes` -- a substituted same-size ROOT / non-hex hash / missing path fails.
+- PUBLICATION manifest builder (`fps_build_publication_manifest.py`) emits (path,hash) pairs per artifact,
+  attributes the launcher ACTUALLY used (from each config), aggregates all 10 worker/inventory failures
+  before ROOT, and self-recomputes. TH2 (pt,pz) edges + hXSecND_flat==TH2 C-order equality checked in the
+  rollup (`build_active_lateral_fps.py`).
+- P4 gating UNCONDITIONAL. Schema-versioned hash-bound receipt chain: component_build -> p4_validation ->
+  active_adoption -> unified_adoption, each binding the exact predecessor artifact sha + this manifest +
+  canonical mask; `require_pass_receipt` rejects a two-field object.
+- Unified adoption (`adopt_unified_fps.py`) requires production CV sha + canonical 266/285 mask from the
+  manifest, exact order/dim across inputs, and `hJointMeanShift` with expected_dim=n + bound hash +
+  mean-centered policy (preserved, not folded). MAT 1/N rollup, pure-sum identity, superseded naming,
+  alias rejection preserved. Purity-control hashes unchanged byte-for-byte.
+- BOTH launchers behind ONE strict validator `fps_endpoint_receipt.py` (schema receipt with live
+  output/input/config/source/launcher/central/audit + canonical mask; skip only when ROOT recomputes
+  complete AND receipt live output hash matches; receipt minted LAST; never for a stale ROOT).
+- Tests: 49/49 ROOT-free unit + 9/9 REAL-CLI integration negatives (`tests/test_fps_cli_integration.py`,
+  subprocess, asserts the intended gate). Reused p4-merged-20260718 receipt (revalidated; no re-hash).
+NEW files: fps_verify_merged_receipt.py, fps_reported_mask.py (+ committed read-only mask artifact),
+fps_endpoint_receipt.py, fps_build_publication_manifest.py, tests/test_fps_cli_integration.py.
+PG0: ND_OMNIFOLD_STATUS.md canonical status still deferred (pre-existing dirty file, no durable writer
+receipt -- not staged/absorbed). Production gated on fps-adopt-verifier PASS of the new commit.

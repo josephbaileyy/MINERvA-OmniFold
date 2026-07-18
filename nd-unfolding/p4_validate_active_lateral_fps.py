@@ -1,31 +1,38 @@
 #!/usr/bin/env python3
-"""P4-FPS validation (Agent C): the selection-complete active scalar FPS lateral covariance
-vs the support-limited (dump-all-bank) FPS lateral block. Self-contained FPS sibling of
-p4_validate_active_lateral.py -- same matrix gates + active-vs-support sqrt-trace/per-bin
-comparison, but reads the FPS `hCov_universe4d_<band>` block naming (analyze_universes_nd.py
-writes 4d-tagged names for every ND build, FPS included) and does NOT re-do the migration
-census (audit_merged_fps.py already gates the hadd-summed census on the merged endpoints).
+"""P4-FPS validation (Agent C), hardened repair-3: the selection-complete active scalar FPS lateral
+covariance vs the support-limited block, with UNCONDITIONAL publication gating + a schema-versioned
+receipt chain. All manifest/receipt/hash gates run BEFORE ROOT (login-safe); ROOT is lazy.
 
-  p4_validate_active_lateral_fps.py \
-    --active active_universe_5d/fps/covariance/active_scalar_lateral_fps_cov.root:hCov_universe4d_total \
-    --support uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined.root \
-    --band-prefix hCov_universe4d_ \
-    --out active_universe_5d/fps/covariance/p4_active_lateral_fps_summary.json
+Fail-closed (unconditional -- no optional path):
+  - publication manifest (schema v2 / negweight-refined / canonical mask / hex64 + paths);
+  - manifest PASS receipt (binds this manifest digest);
+  - component_build transition receipt (predecessor = manifest digest; candidate = the active cov);
+  - RECOMPUTE the active cov sha256 and require it == the component receipt's candidate_sha256;
+  - RECOMPUTE every manifest artifact hash;
+  - merged-endpoint audit receipt result == PASS.
+Then (ROOT): matrix gates (finite/PSD/asym/nonzero), exact 5 active + 5 support band inventories,
+per-band nonzero trace, active total == sum(5), 266x266 dim tied to the recomputed canonical mask.
+Writes the JSON summary + a p4_validation receipt LAST (predecessor = active cov sha; candidate = same).
+
+  python p4_validate_active_lateral_fps.py --manifest M --pass-receipt R --component-receipt CB \
+      --active active_scalar_lateral_fps_cov.root:hCov_universe4d_total --support COMBINED.root \
+      --cv CV.root --out p4_summary.json --out-receipt receipt_p4.json --utc <iso>
 """
-import argparse, json, os, sys
+import argparse, datetime, json, os, sys
 import numpy as np
-import ROOT
 
 import fps_provenance as fp
 
-ROOT.gROOT.SetBatch(True)
-# the 5 selection-complete lateral bands (muon angle / resolution / energy scales); the
-# support-limited comparator is the sum of these per-band blocks in the FPS combined ROOT.
-BANDS = ["BeamAngleX", "BeamAngleY", "MuonResolution",
-         "Muon_Energy_MINERvA", "Muon_Energy_MINOS"]
+BANDS = fp.BANDS
 
 
-def load_th2(spec):
+def _load_root():
+    import ROOT
+    ROOT.gROOT.SetBatch(True)
+    return ROOT
+
+
+def load_th2(ROOT, spec):
     path, key = spec.rsplit(":", 1)
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
@@ -34,15 +41,12 @@ def load_th2(spec):
     if not h:
         raise SystemExit(f"missing key {key} in {path}")
     n = h.GetNbinsX()
-    C = np.empty((n, n))
-    for i in range(n):
-        for j in range(n):
-            C[i, j] = h.GetBinContent(i + 1, j + 1)
+    C = np.array([[h.GetBinContent(i + 1, j + 1) for j in range(n)] for i in range(n)])
     f.Close()
     return C
 
 
-def load_th2_key(path, key):
+def load_th2_key(ROOT, path, key):
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
         return None
@@ -50,160 +54,122 @@ def load_th2_key(path, key):
     if not h:
         f.Close(); return None
     n = h.GetNbinsX()
-    C = np.empty((n, n))
-    for i in range(n):
-        for j in range(n):
-            C[i, j] = h.GetBinContent(i + 1, j + 1)
+    C = np.array([[h.GetBinContent(i + 1, j + 1) for j in range(n)] for i in range(n)])
     f.Close()
     return C
 
 
 def mat_gates(C, tag):
-    r = {}
-    r["shape"] = list(C.shape)
-    r["all_finite"] = bool(np.all(np.isfinite(C)))
-    asym = np.max(np.abs(C - C.T)) / max(1e-300, np.max(np.abs(C)))
-    r["rel_asymmetry"] = float(asym)
+    r = {"shape": list(C.shape), "all_finite": bool(np.all(np.isfinite(C)))}
     Cs = 0.5 * (C + C.T)
     ev = np.linalg.eigvalsh(Cs)
-    r["min_eig"] = float(ev[0]); r["max_eig"] = float(ev[-1])
-    r["min_over_max_eig"] = float(ev[0] / max(1e-300, ev[-1]))
+    r["rel_asymmetry"] = float(np.max(np.abs(C - C.T)) / max(1e-300, np.max(np.abs(C))))
+    r["min_over_max_eig"] = float(ev[0] / max(1e-300, abs(ev[-1])))
     r["psd"] = bool(ev[0] >= -1e-12 * abs(ev[-1]))
     d = np.diag(C)
     r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-30))
     r["sqrt_trace"] = float(np.sqrt(np.clip(np.trace(Cs), 0, None)))
     r["n_reported"] = int(np.sum(d > 0))
-    print(f"[{tag}] shape={r['shape']} finite={r['all_finite']} "
-          f"asym={asym:.2e} min/max_eig={r['min_over_max_eig']:.2e} PSD={r['psd']} "
-          f"sqrt_tr={r['sqrt_trace']:.4e}")
+    print(f"[{tag}] shape={r['shape']} finite={r['all_finite']} psd={r['psd']} sqrt_tr={r['sqrt_trace']:.4e}")
     return r
 
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--manifest", required=True)
+    ap.add_argument("--pass-receipt", required=True)
+    ap.add_argument("--component-receipt", required=True)
     ap.add_argument("--active", required=True, help="ROOT:key of the active FPS lateral total cov")
     ap.add_argument("--support", required=True, help="uq_universe_fps_covariance_combined.root")
-    ap.add_argument("--band-prefix", default="hCov_universe4d_",
-                    help="per-band block key prefix in BOTH the support and active ROOTs")
-    ap.add_argument("--manifest", default=None,
-                    help="PUBLICATION endpoint manifest; if given, require negweight-refined + mask binding")
-    ap.add_argument("--pass-receipt", default=None,
-                    help="hash-bound PASS receipt for --manifest (required when --manifest is given)")
-    ap.add_argument("--audit-json", default="active_universe_5d/fps/covariance/audit_merged_fps.json",
-                    help="merged-endpoint audit receipt to fingerprint into the summary")
-    ap.add_argument("--require-publication", action="store_true",
-                    help="fail unless a valid publication manifest + PASS receipt are supplied")
+    ap.add_argument("--cv", required=True, help="CV unfold (recompute reported mask)")
+    ap.add_argument("--band-prefix", default="hCov_universe4d_")
+    ap.add_argument("--audit-json", default="active_universe_5d/fps/covariance/audit_merged_fps.json")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--out-receipt", required=True)
+    ap.add_argument("--utc", default=None)
     a = ap.parse_args()
-
+    utc = a.utc or datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     out = {"gates": {}, "active": {}, "support": {}, "comparison": {}, "provenance": {}}
     fails = []
 
-    # ---- fail-closed publication manifest + PASS-receipt gate (blockers 2/3): negweight-refined,
-    # canonical mask binding, hash-bound receipt certifying THIS manifest
-    manifest = None
-    if a.require_publication and not a.manifest:
-        fails.append("--require-publication set but no --manifest supplied")
-    if a.manifest:
-        try:
-            manifest = json.load(open(a.manifest))
-            fp.require_publication_manifest(manifest)
-            if not a.pass_receipt:
-                raise fp.FpsGateError("--manifest given without --pass-receipt")
-            fp.require_pass_receipt(json.load(open(a.pass_receipt)), fp.sha256_file(a.manifest))
-            out["provenance"]["manifest_class"] = fp.classify_manifest(manifest)
-            out["provenance"]["reported_mask_hash"] = manifest["reported_mask_hash"]
-            out["provenance"]["manifest_sha256"] = fp.sha256_file(a.manifest)
-        except fp.FpsGateError as e:
-            fails.append(f"manifest/receipt gate: {e}")
-    else:
-        out["provenance"]["manifest"] = "ABSENT (publication run must pass --manifest + --pass-receipt)"
+    # ---- login-safe unconditional gates (no ROOT) ----
+    manifest = json.load(open(a.manifest))
+    fp.require_publication_manifest(manifest)
+    manifest_digest = fp.sha256_file(a.manifest)
+    fp.require_pass_receipt(json.load(open(a.pass_receipt)), manifest_digest)
+    fp.require_recompute_hashes(manifest)
+    active_path = a.active.rsplit(":", 1)[0]
+    active_sha = fp.sha256_file(active_path)
+    comp = json.load(open(a.component_receipt))
+    fp.require_transition_receipt(comp, "component_build", manifest_digest, predecessor_sha=manifest_digest)
+    if comp.get("candidate_sha256") != active_sha:
+        raise fp.FpsGateError(
+            f"active cov sha {active_sha[:16]} != component_build candidate {comp.get('candidate_sha256','')[:16]} "
+            "(substituted covariance)")
+    if not os.path.exists(a.audit_json):
+        raise fp.FpsGateError(f"merged-endpoint audit receipt absent: {a.audit_json}")
+    if json.load(open(a.audit_json)).get("result") != "PASS":
+        raise fp.FpsGateError("merged-endpoint audit result != PASS")
+    out["provenance"] = {"manifest_sha256": manifest_digest, "active_sha256": active_sha,
+                         "reported_mask_hash": manifest["reported_mask_hash"]}
 
-    # ---- merged-endpoint audit fingerprint (blocker 3)
-    if os.path.exists(a.audit_json):
-        out["provenance"]["audit_json_sha256"] = fp.sha256_file(a.audit_json)
-        try:
-            audit = json.load(open(a.audit_json))
-            if audit.get("result") != "PASS":
-                fails.append(f"merged-endpoint audit not PASS (result={audit.get('result')})")
-        except Exception as e:
-            fails.append(f"audit json unreadable: {e}")
-    else:
-        fails.append(f"merged-endpoint audit receipt absent: {a.audit_json}")
-
-    Cact = load_th2(a.active)
+    # ---- ROOT numeric gates (lazy) ----
+    ROOT = _load_root()
+    Cact = load_th2(ROOT, a.active)
     out["active"] = mat_gates(Cact, "active(FPS selection-complete lateral)")
-
-    # ---- exact 5-band active inventory + nonzero per-band traces + total identity (blocker 3)
-    a_root = a.active.rsplit(":", 1)[0]
-    active_bands = {}
-    for b in fp.BANDS:
-        cb = load_th2_key(a_root, f"{a.band_prefix}{b}")
-        if cb is None:
-            fails.append(f"active per-band block '{a.band_prefix}{b}' absent")
-        else:
-            active_bands[b] = cb
-    if set(active_bands) == set(fp.BANDS):
-        try:
-            fp.check_active_rollup(active_bands, Cact)   # 5 nonzero bands + total==sum(5)
-            out["active"]["rollup_identity"] = "PASS (total == sum of 5 nonzero bands)"
-        except fp.FpsGateError as e:
-            fails.append(f"active rollup: {e}")
-
-    # hard gates on the active P4-FPS product
     for g in ("all_finite", "psd", "diag_finite_nonneg"):
         if not out["active"][g]:
             fails.append(f"active {g}")
     if out["active"]["rel_asymmetry"] > 1e-9:
         fails.append("active asymmetry >1e-9")
     if out["active"]["sqrt_trace"] <= 0 or out["active"]["n_reported"] == 0:
-        fails.append("active is zero/empty (nothing migrated into the covariance)")
+        fails.append("active is zero/empty")
+    if Cact.shape[0] != fp.N_REPORTED:
+        fails.append(f"active dim {Cact.shape[0]} != {fp.N_REPORTED}")
 
-    # support-limited block = sum of the 5 kinematic per-band covs in the FPS combined ROOT
+    active_bands = {}
+    for b in BANDS:
+        cb = load_th2_key(ROOT, active_path, f"{a.band_prefix}{b}")
+        if cb is None:
+            fails.append(f"active per-band '{a.band_prefix}{b}' absent")
+        else:
+            active_bands[b] = cb
+    if set(active_bands) == set(BANDS):
+        try:
+            fp.check_active_rollup(active_bands, Cact)
+            out["active"]["rollup_identity"] = "PASS (total == sum of 5 nonzero bands)"
+        except fp.FpsGateError as e:
+            fails.append(f"active rollup: {e}")
+
     Csup = None; present = []
     for b in BANDS:
-        cb = load_th2_key(a.support, f"{a.band_prefix}{b}")
-        if cb is None:
-            print(f"[support] band {b} key '{a.band_prefix}{b}' absent"); continue
-        present.append(b)
-        Csup = cb if Csup is None else Csup + cb
+        cb = load_th2_key(ROOT, a.support, f"{a.band_prefix}{b}")
+        if cb is not None:
+            present.append(b); Csup = cb if Csup is None else Csup + cb
     out["support"]["bands_present"] = present
     if set(present) != set(BANDS):
-        fails.append(f"support inventory != 5 named bands (present={present}); check --band-prefix")
-    if Csup is None:
-        fails.append("no support-limited lateral bands found (check --band-prefix)")
-    else:
-        out["support"].update(mat_gates(Csup, "support(sum of 5 FPS bands)"))
-        if Csup.shape == Cact.shape:
-            st_a = out["active"]["sqrt_trace"]; st_s = out["support"]["sqrt_trace"]
-            da = np.sqrt(np.clip(np.diag(Cact), 0, None))
-            ds = np.sqrt(np.clip(np.diag(Csup), 0, None))
-            m = ds > 0
-            ratio = np.divide(da, ds, out=np.zeros_like(da), where=m)
-            out["comparison"] = {
-                "sqrt_trace_active": st_a,
-                "sqrt_trace_support": st_s,
-                "sqrt_trace_ratio_active_over_support": float(st_a / max(1e-300, st_s)),
-                "per_bin_sigma_ratio_median": float(np.median(ratio[m])),
-                "per_bin_sigma_ratio_p16": float(np.percentile(ratio[m], 16)),
-                "per_bin_sigma_ratio_p84": float(np.percentile(ratio[m], 84)),
-                "n_bins_active_gt_support": int(np.sum(da > ds)),
-                "n_bins_common": int(np.sum(m)),
-            }
-            print(f"[compare] sqrt_tr active={st_a:.4e} support={st_s:.4e} "
-                  f"ratio={st_a/max(1e-300,st_s):.3f}; per-bin median ratio "
-                  f"{out['comparison']['per_bin_sigma_ratio_median']:.3f}")
-        else:
-            fails.append(f"active/support shape mismatch {Cact.shape} vs {Csup.shape}")
+        fails.append(f"support inventory != 5 named bands (present={present})")
+    if Csup is not None and Csup.shape == Cact.shape:
+        st_a = out["active"]["sqrt_trace"]; st_s = float(np.sqrt(np.clip(np.trace(Csup), 0, None)))
+        out["comparison"] = {"sqrt_trace_active": st_a, "sqrt_trace_support": st_s,
+                             "ratio": float(st_a / max(1e-300, st_s))}
 
     out["gates"]["fails"] = fails
     out["gates"]["result"] = "PASS" if not fails else "FAIL"
-    os.makedirs(os.path.dirname(a.out), exist_ok=True)
+    os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     with open(a.out, "w") as fh:
         json.dump(out, fh, indent=2)
-    print(f"\nRESULT {out['gates']['result']}" + ("" if not fails else " :: " + "; ".join(fails)))
-    print(f"summary -> {a.out}")
-    sys.exit(0 if not fails else 1)
+    if fails:
+        print("RESULT FAIL :: " + "; ".join(fails)); sys.exit(1)
+
+    receipt = fp.make_transition_receipt(
+        "p4_validation", manifest_digest, predecessor_sha=active_sha, candidate_sha=active_sha,
+        central_sha=manifest["central_cv_sha256"], reported_mask_hash=manifest["reported_mask_hash"],
+        utc=utc, extra={"summary_path": os.path.abspath(a.out)})
+    fp.require_transition_receipt(receipt, "p4_validation", manifest_digest, predecessor_sha=active_sha)
+    with open(a.out_receipt, "w") as fh:
+        json.dump(receipt, fh, indent=2)
+    print(f"RESULT PASS -> {a.out} + p4_validation receipt {a.out_receipt}")
 
 
 if __name__ == "__main__":

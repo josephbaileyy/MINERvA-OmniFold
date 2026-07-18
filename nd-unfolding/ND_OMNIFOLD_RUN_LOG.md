@@ -1737,6 +1737,18 @@ p4-merged-20260718; mandatory hJointMeanShift; transactional launchers into a se
 no endpoints rerun. Canonical STATUS still deferred (ND_OMNIFOLD_STATUS.md dirty from another owner);
 FPS status receipt in `uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md`. Gated on fps-adopt-verifier PASS.
 
+2026-07-18 (Agent C, FPS repair-3): made the publication-manifest builder + every consumer mutually
+executable and hash-recomputing. Consumers gate (manifest/receipt/recompute-all-hashes) before a lazy
+ROOT import (login-safe); manifest binds canonical PATHS + strict 64-hex for unfold/input/config/source/
+launcher/central/audit; P4 gating unconditional; schema-versioned receipt chain component_build ->
+p4_validation -> active_adoption -> unified_adoption each binding the exact predecessor; two-field PASS
+rejected; unified adoption binds CV sha + canonical 266/285 mask + hJointMeanShift(expected_dim=n)+hash;
+one strict launcher validator (fps_endpoint_receipt.py) attributes the launcher actually used. Reused the
+committed p4-merged-20260718 full-hash receipt (size/mtime + digest revalidated; no 748GB re-hash).
+Tests: 49/49 unit + 9/9 REAL-CLI negatives PASS. No production run. PG0: ND_OMNIFOLD_STATUS.md canonical
+status still deferred (pre-existing dirty file, no durable writer receipt — not staged/absorbed here);
+FPS status in uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md. Gated on fps-adopt-verifier PASS.
+
 - 2026-07-18 (Agent B, PET/F7 repair round on 9d7a4c6, code/static-test only — no GPU/Slurm/C++/
   G2/P3F/nominal/replicas/covariance): F7 coherent estimator-bootstrap over THREE inventories
   (data, signal-MC, background-MC) IMPLEMENTED and durability-hardened; nominal frozen to negweight

@@ -498,3 +498,15 @@ fingerprint (23b2a2f4…, recomputed not trusted) + full merged-input SHA256 (re
 orchestrator receipt p4-merged-20260718, no re-hash) + a PASS receipt bound at every covariance
 transition; mandatory hJointMeanShift; transactional endpoint launchers. 41/41 ROOT-free gate tests
 PASS. Production remains gated on an `fps-adopt-verifier` PASS of this patch; no physics numbers change.
+
+FPS P4/P6 (2026-07-18, repair-3): the chain is now mutually executable + hash-recomputing. Every
+consumer runs its manifest/receipt/hash gates BEFORE importing ROOT (login-safe) and RECOMPUTES every
+referenced artifact hash (strict lowercase 64-hex; canonical paths for unfold/input/config/source/
+launcher/central/audit) — a substituted same-size ROOT, non-hex hash, or missing path fails. P4 gating
+is unconditional; a schema-versioned hash-bound receipt chain (component_build → p4_validation →
+active_adoption → unified_adoption) binds each predecessor artifact; two-field PASS objects are rejected.
+Unified adoption requires the production CV sha + canonical 266/285 mask from the manifest and
+hJointMeanShift(expected_dim=n) with its hash bound. Both endpoint launchers sit behind one strict
+validator (fps_endpoint_receipt.py) that attributes the launcher actually used. Tests: 49/49 ROOT-free
+unit + 9/9 REAL-CLI integration negatives PASS. ND_OMNIFOLD_STATUS.md remains a pre-existing PG0 dirty
+file with no durable writer receipt (not repaired here). Production gated on fps-adopt-verifier PASS.

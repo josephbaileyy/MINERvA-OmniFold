@@ -39,9 +39,13 @@ OMNIFILE="${ND}/active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active
 OUTDIR="${ND}/active_universe_5d/fps/unfolds_${BKG_MODE//-/_}"; mkdir -p "${OUTDIR}" "${ND}/active_universe_5d/fps/logs"
 XSEC_OUT="${OUTDIR}/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_${BAND}_${ENDPOINT}.root"
 CFG_OUT="${XSEC_OUT}.config.json"
-# transactional skip: skip ONLY when the ROOT recomputes COMPLETE *and* its receipt exists (both).
-if [[ -s "${XSEC_OUT}" && -s "${CFG_OUT}" ]] && python3 fps_unfold_complete.py "${XSEC_OUT}" >/dev/null 2>&1; then
-  echo "[unfActFpsC] skip (complete + receipt) ${XSEC_OUT}"; exit 0
+CV="${ND}/uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
+AUDIT="${ND}/active_universe_5d/fps/covariance/audit_merged_fps.json"
+THIS_LAUNCHER="${ND}/sbatch_unfold_active_fps.sh"
+# transactional skip via the ONE shared validator: skip only when ROOT recomputes COMPLETE and its
+# receipt's live output hash still matches (fps_endpoint_receipt.py check).
+if python3 fps_endpoint_receipt.py check --out "${XSEC_OUT}" --receipt "${CFG_OUT}"; then
+  echo "[unfActFpsC] skip (validated complete + receipt) ${XSEC_OUT}"; exit 0
 fi
 # stale/partial/receipt-less output -> remove BOTH so a receipt is never kept for a non-fresh ROOT
 rm -f "${XSEC_OUT}" "${CFG_OUT}" "${XSEC_OUT}".tmp.*
@@ -55,14 +59,11 @@ python3 unfold_nd_omnifold_unbinned.py \
     --iters 5 --use-weights --estimator lgbm --seed 42 \
     --bkg-mode "${BKG_MODE}" \
     --out "${TMP_OUT}"
-# validate the fresh ROOT BEFORE publishing it or its receipt (never receipt a bad/stale output)
-python3 fps_unfold_complete.py "${TMP_OUT}" >/dev/null 2>&1 || { echo "[FAIL] fresh unfold incomplete: ${TMP_OUT}" >&2; rm -f "${TMP_OUT}"; exit 3; }
 mv -f "${TMP_OUT}" "${XSEC_OUT}"                    # atomic ROOT publish
-# mode-stamped receipt written LAST, atomically, only after the ROOT is published + validated
-cat > "${CFG_OUT}.tmp" <<EOF
-{"band":"${BAND}","endpoint":${ENDPOINT},"bkg_mode":"${BKG_MODE}","estimator":"lgbm","seed":42,
- "iters":5,"use_weights":true,"full_phase_space":true,"omnifile":"${OMNIFILE}",
- "completed_utc":"$(date -u '+%F %T UTC')","launcher":"sbatch_unfold_active_fps.sh"}
-EOF
-mv -f "${CFG_OUT}.tmp" "${CFG_OUT}"                 # atomic receipt publish (last)
+# receipt written LAST via the shared validator (validates completeness + binds live hashes +
+# attributes THIS launcher). If validation fails, no receipt is minted -> the ROOT can't be consumed.
+python3 fps_endpoint_receipt.py write --out "${XSEC_OUT}" --band "${BAND}" --endpoint "${ENDPOINT}" \
+    --bkg-mode "${BKG_MODE}" --merged "${OMNIFILE}" --source "${ND}/unfold_nd_omnifold_unbinned.py" \
+    --launcher "${THIS_LAUNCHER}" --central "${CV}" --audit "${AUDIT}" --receipt "${CFG_OUT}" \
+    || { echo "[FAIL] endpoint receipt refused (bad/incomplete ROOT): ${XSEC_OUT}" >&2; rm -f "${XSEC_OUT}"; exit 3; }
 echo "[unfActFpsC] done band=${BAND} endpoint=${ENDPOINT} bkg=${BKG_MODE} $(date -u '+%F %T UTC')"

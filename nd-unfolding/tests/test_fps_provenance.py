@@ -207,8 +207,9 @@ def make_pub_manifest(drop_hash=None, deferred_hash=None, label=None, schema=Non
                  "layout_fingerprint": fp.layout_fingerprint(),
                  "reported_mask_hash": mask or fp.REPORTED_MASK_FINGERPRINT,
                  "central_hash": "cv", "footing": foot}
-            for fld in fp.PUBLICATION_ENDPOINT_HASH_FIELDS:
-                e[fld] = H64
+            for hf, pf in fp.ENDPOINT_ARTIFACTS:
+                e[hf] = H64
+                e[pf] = f"/dummy/{b}_{ep}_{pf}"
             if drop_hash and (b, ep) == (fp.BANDS[0], 0):
                 e.pop(drop_hash, None)
             if deferred_hash and (b, ep) == (fp.BANDS[0], 0):
@@ -248,22 +249,83 @@ def test_pub_wrong_mask_rejected():
     assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(mask="deadbeef" * 8)))
 
 
+def test_recompute_hashes_ok_and_mismatch():
+    import tempfile
+    d = tempfile.mkdtemp()
+    m = make_pub_manifest()
+    for e in m["endpoints"]:
+        for hf, pf in fp.ENDPOINT_ARTIFACTS:
+            p = os.path.join(d, f"{e['band']}_{e['endpoint']}_{pf}")
+            with open(p, "w") as fh:
+                fh.write(f"{e['band']}{e['endpoint']}{pf}")
+            e[pf] = p
+            e[hf] = fp.sha256_file(p)
+    assert fp.require_recompute_hashes(m)                    # all recompute exactly
+    with open(m["endpoints"][0]["unfold_root"], "w") as fh:  # substitute one file
+        fh.write("TAMPERED")
+    assert _raises(lambda: fp.require_recompute_hashes(m))   # recompute mismatch
+
+
+def test_recompute_hashes_missing_path():
+    assert _raises(lambda: fp.require_recompute_hashes(make_pub_manifest()))  # /dummy/ paths absent
+
+
 # --------------------------------------------------------------------------- PASS receipt binding
+def _pr(digest="abc", **kw):
+    r = {"schema": "fps_publication_pass_receipt.v1", "result": "PASS",
+         "manifest_sha256": digest, "validated_utc": "2026-07-18T00:00:00Z"}
+    r.update(kw); return r
+
+
 def test_pass_receipt_ok():
-    assert fp.require_pass_receipt({"result": "PASS", "manifest_sha256": "abc"}, "abc")
+    assert fp.require_pass_receipt(_pr("abc"), "abc")
+
+
+def test_pass_receipt_two_field_rejected():
+    assert _raises(lambda: fp.require_pass_receipt({"result": "PASS", "manifest_sha256": "abc"}, "abc"))
 
 
 def test_pass_receipt_wrong_digest():
-    assert _raises(lambda: fp.require_pass_receipt({"result": "PASS", "manifest_sha256": "abc"}, "xyz"))
+    assert _raises(lambda: fp.require_pass_receipt(_pr("abc"), "xyz"))
 
 
 def test_pass_receipt_not_pass():
-    assert _raises(lambda: fp.require_pass_receipt({"result": "FAIL", "manifest_sha256": "abc"}, "abc"))
+    assert _raises(lambda: fp.require_pass_receipt(_pr("abc", result="FAIL"), "abc"))
 
 
 def test_pass_receipt_deferred_field():
-    assert _raises(lambda: fp.require_pass_receipt(
-        {"result": "PASS", "manifest_sha256": "abc", "note": "DEFERRED"}, "abc"))
+    assert _raises(lambda: fp.require_pass_receipt(_pr("abc", note="DEFERRED"), "abc"))
+
+
+# --------------------------------------------------------------------------- hex64 + transition receipts
+def test_hex64():
+    assert fp.require_hex64("a" * 64)
+    assert _raises(lambda: fp.require_hex64("A" * 64))       # uppercase
+    assert _raises(lambda: fp.require_hex64("a" * 63))       # short
+    assert _raises(lambda: fp.require_hex64("z" * 64))       # non-hex
+
+
+def test_transition_receipt_ok():
+    r = fp.make_transition_receipt("component_build", "mdig", "predsha", "b" * 64, "c" * 64,
+                                   fp.REPORTED_MASK_FINGERPRINT, "2026-07-18T00:00:00Z")
+    assert fp.require_transition_receipt(r, "component_build", "mdig", predecessor_sha="predsha")
+
+
+def test_transition_receipt_wrong_transition():
+    r = fp.make_transition_receipt("component_build", "mdig", "p", "b" * 64, "c" * 64,
+                                   fp.REPORTED_MASK_FINGERPRINT, "u")
+    assert _raises(lambda: fp.require_transition_receipt(r, "p4_validation", "mdig"))
+
+
+def test_transition_receipt_predecessor_mismatch():
+    r = fp.make_transition_receipt("active_adoption", "mdig", "GOODpred", "b" * 64, "c" * 64,
+                                   fp.REPORTED_MASK_FINGERPRINT, "u")
+    assert _raises(lambda: fp.require_transition_receipt(r, "active_adoption", "mdig", predecessor_sha="OTHER"))
+
+
+def test_transition_receipt_wrong_mask():
+    r = fp.make_transition_receipt("p4_validation", "mdig", "p", "b" * 64, "c" * 64, "deadbeef" * 8, "u")
+    assert _raises(lambda: fp.require_transition_receipt(r, "p4_validation", "mdig"))
 
 
 # --------------------------------------------------------------------------- mandatory mean shift
