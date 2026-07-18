@@ -4,6 +4,14 @@ Use `usagectl.py` as the sole machine-readable usage check. It reads both
 Codex accounts live, reads timestamped Claude status-line caches, and reports
 agy as unknown because the installed agy CLI has no usage endpoint.
 
+`claude-school` and `claude-school-legacy` are two homes for the same provider
+account. The JSON `accounts.claude-school` record is the routing authority: it
+selects the freshest valid cache independently for each window and marks both
+profile rows as shared capacity. Never add or otherwise treat the two profile
+percentages as independent entitlements. Equal-timestamp disagreements choose
+the higher used percentage, and rolling changes are recorded from the shared
+account view rather than by adding alias observations.
+
 ## Hard policy
 
 - Preserve **two personal Codex Full reset credits** as emergency reserve.
@@ -100,7 +108,8 @@ Use these routing rules:
 4. Keep both personal Full reset credits untouched unless the user explicitly
    authorizes consuming a specific credit in a later message.
 5. Use Claude percentages only when the cache is fresh; otherwise use a
-   status-only availability probe or mark capacity unknown.
+   status-only availability probe or mark capacity unknown. Route school
+   capacity from `accounts.claude-school`, never by summing its two aliases.
 6. Treat agy as available/unknown/capped from heartbeat and error evidence,
    never as an invented percentage.
 7. Write material usage changes and reset times to the campaign ledger.

@@ -25,6 +25,9 @@ def policy():
         "never_consume_codex_reset_credits_automatically": True,
         "seven_day_low_remaining_percent": 20,
         "required_codex_profiles": ["codex-personal", "codex-school"],
+        "profile_account_groups": {
+            "claude-school": ["claude-school", "claude-school-legacy"]
+        },
     }
 
 
@@ -378,6 +381,86 @@ class HomeAndInstallerTests(unittest.TestCase):
                     self.assertEqual(json.loads(settings_path.read_text()), original)
 
 
+class AccountAliasTests(unittest.TestCase):
+    def profile_value(self, used, observed, reset=NOW + 10_000):
+        return {
+            "provider": "claude",
+            "status": "partial",
+            "windows": {
+                "five_hour": {
+                    "used_percent": float(used),
+                    "remaining_percent": 100.0 - float(used),
+                    "resets_at_epoch": reset,
+                    "resets_at_utc": usagectl.iso_from_epoch(reset),
+                    "observed_at_epoch": observed,
+                }
+            },
+            "warnings": [],
+            "violations": [],
+        }
+
+    def test_school_aliases_use_freshest_observation_and_never_sum(self):
+        values = {
+            "claude-school": self.profile_value(85, NOW + 100),
+            "claude-school-legacy": self.profile_value(81, NOW),
+        }
+        accounts = usagectl.consolidate_account_groups(
+            values, {"claude-school": ["claude-school", "claude-school-legacy"]}
+        )
+        account = accounts["claude-school"]
+        self.assertEqual(account["windows"]["five_hour"]["used_percent"], 85)
+        self.assertEqual(account["windows"]["five_hour"]["remaining_percent"], 15)
+        self.assertEqual(account["window_sources"]["five_hour"], "claude-school")
+        self.assertTrue(values["claude-school"]["capacity_is_shared"])
+        self.assertEqual(values["claude-school-legacy"]["account_id"], "claude-school")
+        self.assertTrue(any("must not be summed" in item for item in account["warnings"]))
+
+    def test_missing_flat_cache_falls_back_to_fresh_legacy_cache(self):
+        missing = {
+            "provider": "claude",
+            "status": "missing",
+            "windows": {},
+            "warnings": [],
+            "violations": [],
+        }
+        values = {
+            "claude-school": missing,
+            "claude-school-legacy": self.profile_value(77, NOW),
+        }
+        account = usagectl.consolidate_account_groups(
+            values, {"claude-school": ["claude-school", "claude-school-legacy"]}
+        )["claude-school"]
+        self.assertEqual(account["windows"]["five_hour"]["remaining_percent"], 23)
+        self.assertEqual(account["window_sources"]["five_hour"], "claude-school-legacy")
+
+    def test_equal_timestamp_disagreement_chooses_highest_usage(self):
+        values = {
+            "claude-school": self.profile_value(91, NOW),
+            "claude-school-legacy": self.profile_value(12, NOW),
+        }
+        account = usagectl.consolidate_account_groups(
+            values, {"claude-school": ["claude-school", "claude-school-legacy"]}
+        )["claude-school"]
+        self.assertEqual(account["windows"]["five_hour"]["used_percent"], 91)
+        self.assertEqual(account["window_sources"]["five_hour"], "claude-school")
+
+    def test_alias_group_rejects_missing_or_non_claude_members(self):
+        good = self.profile_value(10, NOW)
+        for values in (
+            {"claude-school": good},
+            {
+                "claude-school": good,
+                "claude-school-legacy": {**good, "provider": "codex"},
+            },
+        ):
+            with self.subTest(values=values):
+                with self.assertRaises(usagectl.UsageError):
+                    usagectl.consolidate_account_groups(
+                        values,
+                        {"claude-school": ["claude-school", "claude-school-legacy"]},
+                    )
+
+
 class PolicyAndGateTests(unittest.TestCase):
     def write_policy(self, directory):
         path = Path(directory) / "policy.json"
@@ -488,6 +571,39 @@ class PolicyAndGateTests(unittest.TestCase):
                             self.assertEqual(usagectl.main(), expected)
                             parsed = json.loads(output.getvalue())
                             self.assertEqual(parsed["gate_ok"], gate_ok)
+
+    def test_change_tracking_uses_shared_account_and_not_alias_sum(self):
+        old_account = {
+            "status": "partial",
+            "windows": {
+                "five_hour": {
+                    "remaining_percent": 23.0,
+                    "resets_at_utc": "2026-07-18T18:00:00+00:00",
+                }
+            },
+        }
+        new_account = json.loads(json.dumps(old_account))
+        new_account["windows"]["five_hour"]["remaining_percent"] = 15.0
+        previous = {
+            "profiles": {},
+            "accounts": {"claude-school": old_account},
+        }
+        current = {
+            "profiles": {},
+            "accounts": {"claude-school": new_account},
+        }
+        changes = usagectl.snapshot_changes(previous, current)
+        self.assertEqual(
+            changes,
+            [
+                {
+                    "profile": "account:claude-school",
+                    "field": "five_hour.remaining_percent",
+                    "old": 23.0,
+                    "new": 15.0,
+                }
+            ],
+        )
 
 
 class CleanRuntimeTests(unittest.TestCase):

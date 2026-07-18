@@ -701,6 +701,7 @@ def load_policy(path: Path) -> dict:
         "never_consume_codex_reset_credits_automatically",
         "seven_day_low_remaining_percent",
         "required_codex_profiles",
+        "profile_account_groups",
     }
     if set(value) != expected:
         raise UsageError(f"Usage policy keys mismatch: expected {sorted(expected)}")
@@ -725,6 +726,14 @@ def load_policy(path: Path) -> dict:
     required = value["required_codex_profiles"]
     if required != ["codex-personal", "codex-school"]:
         raise UsageError("Policy required_codex_profiles must be codex-personal and codex-school")
+    groups = value["profile_account_groups"]
+    if not isinstance(groups, dict) or set(groups) != {"claude-school"}:
+        raise UsageError("Policy must define the claude-school shared-account group")
+    aliases = groups["claude-school"]
+    if aliases != ["claude-school", "claude-school-legacy"]:
+        raise UsageError(
+            "Policy claude-school account aliases must be claude-school and claude-school-legacy"
+        )
     return value
 
 
@@ -739,19 +748,121 @@ def profile_error(provider: str | None, message: str) -> dict:
     }
 
 
+def consolidate_account_groups(profiles: dict, groups: dict) -> dict:
+    """Merge profile aliases into one non-additive account-capacity view.
+
+    Claude status-line caches are written by profile home, but two homes can
+    authenticate the same provider account.  For each window, the most recent
+    valid observation is authoritative.  Alias percentages are never summed.
+    """
+    accounts: dict[str, dict] = {}
+    for account_id, aliases in groups.items():
+        if not isinstance(aliases, list) or len(aliases) < 2 or len(set(aliases)) != len(aliases):
+            raise UsageError(f"Invalid alias inventory for account group {account_id}")
+        members = []
+        for name in aliases:
+            value = profiles.get(name)
+            if not isinstance(value, dict):
+                raise UsageError(f"Account group {account_id} is missing profile {name}")
+            if value.get("provider") != "claude":
+                raise UsageError(f"Account group {account_id} contains non-Claude profile {name}")
+            value["account_id"] = account_id
+            value["capacity_is_shared"] = True
+            value["account_aliases"] = list(aliases)
+            members.append((name, value))
+
+        merged_windows: dict[str, dict] = {}
+        window_sources: dict[str, str] = {}
+        warnings = [
+            f"Profiles {', '.join(aliases)} share one provider account; capacity must not be summed"
+        ]
+        for window_name in ("five_hour", "seven_day"):
+            candidates = []
+            for name, value in members:
+                window = (value.get("windows") or {}).get(window_name)
+                if not isinstance(window, dict):
+                    continue
+                observed = window.get("observed_at_epoch")
+                if isinstance(observed, bool) or not isinstance(observed, int):
+                    continue
+                candidates.append((observed, name, window))
+            if not candidates:
+                continue
+            candidates.sort(
+                key=lambda item: (item[0], item[2].get("used_percent", -1), item[1])
+            )
+            observed, selected_name, selected = candidates[-1]
+            merged_windows[window_name] = dict(selected)
+            window_sources[window_name] = selected_name
+            same_reset = [
+                (old_observed, old_name, old)
+                for old_observed, old_name, old in candidates[:-1]
+                if old.get("resets_at_epoch") == selected.get("resets_at_epoch")
+            ]
+            if any(
+                old_observed <= observed
+                and old.get("used_percent", -1) > selected.get("used_percent", -1)
+                for old_observed, _old_name, old in same_reset
+            ):
+                warnings.append(
+                    f"{window_name} alias observations are non-monotonic; using freshest profile {selected_name}"
+                )
+
+        if not merged_windows:
+            status = "unknown"
+            warnings.append("No fresh alias cache supplies actionable account capacity")
+        elif len(merged_windows) < 2:
+            status = "partial"
+            warnings.append("Shared Claude account has only a partial fresh usage snapshot")
+        else:
+            status = "ok"
+        accounts[account_id] = {
+            "provider": "claude",
+            "status": status,
+            "source": "freshest per-window Claude alias cache",
+            "profiles": list(aliases),
+            "windows": merged_windows,
+            "window_sources": window_sources,
+            "warnings": warnings,
+            "violations": [],
+        }
+    return accounts
+
+
 def snapshot_changes(previous: object, current: dict) -> list[dict]:
     if not isinstance(previous, dict) or not isinstance(previous.get("profiles"), dict):
         return [{"field": "baseline", "old": None, "new": "created"}]
     changes = []
-    for profile_name in ("codex-personal", "codex-school"):
-        old = (previous.get("profiles") or {}).get(profile_name) or {}
-        new = current["profiles"].get(profile_name) or {}
-        paths = {
-            "plan_type": lambda item: item.get("plan_type"),
-            "seven_day.remaining_percent": lambda item: ((item.get("windows") or {}).get("seven_day") or {}).get("remaining_percent"),
-            "seven_day.resets_at_utc": lambda item: ((item.get("windows") or {}).get("seven_day") or {}).get("resets_at_utc"),
-            "reset_credits.available_count": lambda item: (item.get("reset_credits") or {}).get("available_count"),
-        }
+    profile_targets = ("codex-personal", "codex-school", "claude-personal")
+    targets = [
+        (
+            profile_name,
+            (previous.get("profiles") or {}).get(profile_name) or {},
+            (current.get("profiles") or {}).get(profile_name) or {},
+        )
+        for profile_name in profile_targets
+    ]
+    account_ids = sorted(
+        set((previous.get("accounts") or {})) | set((current.get("accounts") or {}))
+    )
+    targets.extend(
+        (
+            f"account:{account_id}",
+            (previous.get("accounts") or {}).get(account_id) or {},
+            (current.get("accounts") or {}).get(account_id) or {},
+        )
+        for account_id in account_ids
+    )
+    paths = {
+        "status": lambda item: item.get("status"),
+        "plan_type": lambda item: item.get("plan_type"),
+        "five_hour.remaining_percent": lambda item: ((item.get("windows") or {}).get("five_hour") or {}).get("remaining_percent"),
+        "five_hour.resets_at_utc": lambda item: ((item.get("windows") or {}).get("five_hour") or {}).get("resets_at_utc"),
+        "seven_day.remaining_percent": lambda item: ((item.get("windows") or {}).get("seven_day") or {}).get("remaining_percent"),
+        "seven_day.resets_at_utc": lambda item: ((item.get("windows") or {}).get("seven_day") or {}).get("resets_at_utc"),
+        "reset_credits.available_count": lambda item: (item.get("reset_credits") or {}).get("available_count"),
+    }
+    for profile_name, old, new in targets:
         for field, getter in paths.items():
             old_value, new_value = getter(old), getter(new)
             if old_value != new_value:
@@ -784,6 +895,7 @@ def snapshot(args: argparse.Namespace) -> dict:
         "observed_at_utc": utc_now(),
         "policy": policy,
         "profiles": {},
+        "accounts": {},
         "warnings": [],
         "policy_violations": top_violations,
         "changes": [],
@@ -817,6 +929,16 @@ def snapshot(args: argparse.Namespace) -> dict:
             result["policy_violations"].extend(
                 f"{name}: {item}" for item in value.get("violations", [])
             )
+    try:
+        result["accounts"] = consolidate_account_groups(
+            result["profiles"], policy["profile_account_groups"]
+        )
+    except UsageError as exc:
+        result["policy_violations"].append(str(exc))
+    for account_id, value in result["accounts"].items():
+        result["warnings"].extend(
+            f"account {account_id}: {item}" for item in value.get("warnings", [])
+        )
     for name in required_codex:
         value = result["profiles"].get(name)
         if not value or value.get("status") != "ok":
@@ -859,6 +981,41 @@ def print_table(value: dict) -> None:
     print("  ".join(str(item).ljust(widths[index]) for index, item in enumerate(headers)))
     for row in rows:
         print("  ".join(str(item).ljust(widths[index]) for index, item in enumerate(row)))
+    account_rows = []
+    for account_id, item in value.get("accounts", {}).items():
+        windows = item.get("windows") or {}
+        five = windows.get("five_hour") or {}
+        seven = windows.get("seven_day") or {}
+        account_rows.append(
+            [
+                account_id,
+                item.get("status"),
+                cell(five.get("remaining_percent")),
+                cell(seven.get("remaining_percent")),
+                cell(five.get("resets_at_utc")),
+                ",".join(f"{key}:{name}" for key, name in (item.get("window_sources") or {}).items()),
+            ]
+        )
+    if account_rows:
+        print()
+        account_headers = ["SHARED ACCOUNT", "STATUS", "5H REM", "7D REM", "5H RESET UTC", "WINDOW SOURCES"]
+        account_widths = [
+            max(len(str(row[index])) for row in [account_headers, *account_rows])
+            for index in range(len(account_headers))
+        ]
+        print(
+            "  ".join(
+                str(item).ljust(account_widths[index])
+                for index, item in enumerate(account_headers)
+            )
+        )
+        for row in account_rows:
+            print(
+                "  ".join(
+                    str(item).ljust(account_widths[index])
+                    for index, item in enumerate(row)
+                )
+            )
     print(f"GATE_OK {str(value['gate_ok']).lower()}")
     for warning in value.get("warnings", []):
         print(f"WARNING {warning}", file=sys.stderr)
