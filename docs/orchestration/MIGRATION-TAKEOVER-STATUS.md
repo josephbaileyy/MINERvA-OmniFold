@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 15:48 UTC. Registry:
+Last reconciled: 2026-07-18 15:52 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -53,6 +53,11 @@ Historical `sacct` telemetry is now reproducible (`MIG-SCHED3`): across 1,460
 task-weighted rows, eligible-queue p50/p90 were 0/0.4s interactive,
 1,527/5,432s regular CPU, 5,087/22,418s shared GPU, and 8,785/46,685s shared
 CPU. These observations drive queue-early placement but are not ETA promises.
+Provider/account telemetry is also reproducible (`MIG-SCHED4`): agy is the
+fastest cheap preflight/red-team route but had two rejected ownership
+overclaims; Codex accounts remain the deep continuity verifiers; shared Claude
+remains the A/B/C implementation lane; capped Claude-personal E is preserved.
+Successful turns are availability evidence only, never invented capacity.
 
 PG0 ownership was re-audited fail-closed (`MIG-AGY16`–`MIG-AGY18`,
 `MIG-PG0-ADJ`). Two agy PASS recommendations were rejected because they

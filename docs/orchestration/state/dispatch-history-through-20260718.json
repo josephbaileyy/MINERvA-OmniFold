@@ -1,0 +1,160 @@
+{
+  "by_account": {
+    "agy": {
+      "duration_seconds": {
+        "max": 180.0,
+        "n": 19,
+        "p50": 60.0,
+        "p90": 120.0
+      },
+      "exit_counts": {
+        "0": 19
+      },
+      "outcome_counts": {
+        "other_success_or_open": 1,
+        "pass_or_complete": 9,
+        "review_overclaim_rejected": 2,
+        "scientific_or_evidence_block": 7
+      },
+      "role_class_counts": {
+        "implementation": 3,
+        "review": 16
+      },
+      "rounds": 19
+    },
+    "claude-personal": {
+      "duration_seconds": {
+        "max": 1860.0,
+        "n": 2,
+        "p50": 990.0,
+        "p90": 1686.0
+      },
+      "exit_counts": {
+        "0": 1,
+        "1": 1
+      },
+      "outcome_counts": {
+        "pass_or_complete": 1,
+        "provider_block": 1
+      },
+      "role_class_counts": {
+        "implementation": 2
+      },
+      "rounds": 2
+    },
+    "claude-school-shared": {
+      "duration_seconds": {
+        "max": 21000.0,
+        "n": 16,
+        "p50": 660.0,
+        "p90": 2610.0
+      },
+      "exit_counts": {
+        "0": 14,
+        "1": 2,
+        "\u2014": 2
+      },
+      "outcome_counts": {
+        "dispatch_or_task_failure": 2,
+        "other_success_or_open": 1,
+        "pass_or_complete": 15
+      },
+      "role_class_counts": {
+        "implementation": 15,
+        "review": 3
+      },
+      "rounds": 18
+    },
+    "codex-personal": {
+      "duration_seconds": {
+        "max": 900.0,
+        "n": 8,
+        "p50": 570.0,
+        "p90": 900.0
+      },
+      "exit_counts": {
+        "0": 8,
+        "\u2014": 1
+      },
+      "outcome_counts": {
+        "other_success_or_open": 2,
+        "pass_or_complete": 2,
+        "scientific_or_evidence_block": 5
+      },
+      "role_class_counts": {
+        "implementation": 2,
+        "review": 7
+      },
+      "rounds": 9
+    },
+    "codex-school": {
+      "duration_seconds": {
+        "max": 4440.0,
+        "n": 7,
+        "p50": 720.0,
+        "p90": 2964.000000000001
+      },
+      "exit_counts": {
+        "0": 7
+      },
+      "outcome_counts": {
+        "pass_or_complete": 3,
+        "scientific_or_evidence_block": 4
+      },
+      "role_class_counts": {
+        "implementation": 1,
+        "review": 6
+      },
+      "rounds": 7
+    },
+    "orchestrator": {
+      "duration_seconds": {
+        "max": 1860.0,
+        "n": 21,
+        "p50": 120.0,
+        "p90": 660.0
+      },
+      "exit_counts": {
+        "0": 21,
+        "\u2014": 4
+      },
+      "outcome_counts": {
+        "other_success_or_open": 8,
+        "pass_or_complete": 15,
+        "scientific_or_evidence_block": 2
+      },
+      "role_class_counts": {
+        "control": 25
+      },
+      "rounds": 25
+    },
+    "slurm-m3246": {
+      "duration_seconds": {
+        "max": 4560.0,
+        "n": 3,
+        "p50": 4560.0,
+        "p90": 4560.0
+      },
+      "exit_counts": {
+        "0": 4
+      },
+      "outcome_counts": {
+        "pass_or_complete": 4
+      },
+      "role_class_counts": {
+        "compute": 4
+      },
+      "rounds": 4
+    }
+  },
+  "generated_utc": "2026-07-18T15:49:59+00:00",
+  "ledger": "docs/orchestration/RUNS.tsv",
+  "notes": [
+    "claude-school and claude-school-legacy are one shared provider account",
+    "exit=0 measures successful dispatch/response, not scientific PASS",
+    "scientific BLOCK is useful reviewer output, while rejected overclaims are counted separately",
+    "agy and Claude percentages remain unknown when no authoritative numeric API/cache is fresh"
+  ],
+  "rows": 84,
+  "schema": "dispatch-history-summary.v1"
+}

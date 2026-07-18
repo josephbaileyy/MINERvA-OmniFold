@@ -10,7 +10,7 @@ LLM polling. The placement score therefore includes **LLM-free progress per
 wall hour**, adjustable parallelism/resource fit, maximum wall time, queue
 overlap, and the downstream gates the result unlocks—not queue latency alone.
 
-Last reconciled: 2026-07-18 15:48 UTC.
+Last reconciled: 2026-07-18 15:52 UTC.
 
 ## Current critical path and parallel lanes
 
@@ -137,6 +137,27 @@ dependency/ineligible holds.
 These are historical observations, not guaranteed future wait times. Job-name
 families, dependency holds, runtimes and state counts remain in the JSON for
 task-specific routing and future updates.
+
+## Provider/account dispatch telemetry
+
+Reproducible source: `analyze_dispatch_history.py`; committed summary:
+`state/dispatch-history-through-20260718.json`. The 84 ledger rows include
+provider, orchestrator and Slurm records. Exit zero means the dispatch/task
+returned successfully, not that its scientific verdict was PASS. Claude-school
+aliases are grouped as one shared account; no success count is interpreted as
+a remaining-usage percentage.
+
+| Account | Ledger rounds | Dispatch evidence | Median measured duration | Best routing role / caution |
+|---|---:|---|---:|---|
+| agy | 19 | 19 exit-zero; 9 PASS/complete, 7 useful scientific/evidence BLOCKs, 2 rejected overclaims | 60 s | Default cheap orthogonal red-team and prompt/preflight work. Independently verify ownership/authorization conclusions. |
+| Claude school shared | 18 | 14 exit-zero, 2 exit-one provider/turn failures, 2 armed/open records | 660 s | Continuity-bound implementation A/B/C. One shared capacity pool and Git worktree require serialized writers. |
+| Claude personal | 2 | G2 source complete, then explicit provider cap | 990 s | Preserve E's UUID/source ownership; no replacement and no runtime ETA until availability evidence. |
+| Codex personal | 9 | 8 exit-zero; 5 substantive BLOCK verdicts | 570 s | Deep continuity verification and synthesis; preserve limited personal capacity and sole reset reserve. |
+| Codex school | 7 | 7 exit-zero; 4 substantive BLOCK verdicts | 720 s | Same-verifier standard review where continuity matters; current weekly capacity is constrained. |
+
+Duration reflects only ledger rows with parseable start/end times and is not a
+latency guarantee. The JSON preserves exit, outcome and writer/reviewer class
+counts so routing can be recalibrated after the post-reset wave.
 
 ## Empirical placement ledger
 
