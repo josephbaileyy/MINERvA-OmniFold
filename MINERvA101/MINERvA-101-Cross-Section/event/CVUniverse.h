@@ -327,6 +327,37 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     }
   }
 
+  // Full-event (G2) overload: additionally emit the per-cluster detector VIEW
+  // (1=X,2=U,3=V, from cluster_view) and TIMING (from cluster_time) IN LOCKSTEP
+  // with (E,pos,z). Every one of the five output vectors is push_back'd exactly
+  // once per accepted (non-muon-track) cluster, so they are structurally equal
+  // length on every event -- no separate cluster-loop can drift the parallel
+  // views out of alignment. The 3-vector overload above is preserved byte-for-
+  // byte for the recoil-only dump; this overload is called only by the
+  // full-event MNV101_DUMP_POINTCLOUD schema in runEventLoopOmniFold.cpp.
+  // view is Int_t (cluster_view), time is Double_t (cluster_time), matching the
+  // tuple branch element types (verified against nd-unfolding/pet/dump_display_events.py).
+  virtual void GetRecoClusters(std::vector<double>& E, std::vector<double>& pos,
+                               std::vector<double>& z, std::vector<int>& view,
+                               std::vector<double>& time) const {
+    E.clear(); pos.clear(); z.clear(); view.clear(); time.clear();
+    const std::vector<double> all_E    = GetVecDouble("cluster_energy");
+    const std::vector<double> all_pos  = GetVecDouble("cluster_pos");
+    const std::vector<double> all_z    = GetVecDouble("cluster_z");
+    const std::vector<int>    all_view = GetVecInt("cluster_view");
+    const std::vector<double> all_time = GetVecDouble("cluster_time");
+    const std::vector<int>    all_mu   = GetVecInt("cluster_isMuontrack");
+    const size_t n = all_E.size();
+    for(size_t i = 0; i < n; ++i){
+      if(i < all_mu.size() && all_mu[i] != 0) continue;   // drop muon-track clusters
+      E.push_back(all_E[i]);
+      pos.push_back( i < all_pos.size()  ? all_pos[i]  : 0.0);
+      z.push_back(   i < all_z.size()    ? all_z[i]    : 0.0);
+      view.push_back(i < all_view.size() ? all_view[i] : 0);
+      time.push_back(i < all_time.size() ? all_time[i] : 0.0);
+    }
+  }
+
   double GetEAvailableTrue() const {  // MeV
     double recoil = 0;
     int n_parts = GetInt("mc_nFSPart");

@@ -78,6 +78,7 @@ enum ErrorCodes
 #include <iostream>
 #include <cstdlib> //getenv()
 #include <cstdint>
+#include <cmath> //std::sin/std::cos for the truth-muon 4-vector helper
 #include <limits>
 #include <sstream>
 #include <string>
@@ -157,6 +158,29 @@ inline uint64_t makeEventKey(int run, int subrun, int nth)
          static_cast<uint64_t>(nth);
 }
 
+// Full-event (G2) truth-muon 4-vector components (MeV, beam frame), built to
+// MIRROR the reco GetMuon4V() construction but from the TRUTH accessors
+// (GetPlepTrue/GetThetalepTrue/GetPhilepTrue/GetElepTrue, all beam-frame). This
+// is a truth-only quantity: it may only be written into truth-named branches
+// (mu_true_*), NEVER a data/reco feature family, and there is deliberately NO
+// truth MINOS/charge/qp/range counterpart (those are detector-only). Keeping the
+// px,py,pz,E,phi construction in one helper keeps the truth-denom tree, the
+// signal-reco truth side, and the Phase-18 miss-row cache bit-consistent.
+struct TruthMuonKin { double px, py, pz, E, phi; };
+inline TruthMuonKin GetTruthMuonKin(const CVUniverse* u)
+{
+  const double p     = u->GetPlepTrue();      // MeV
+  const double theta = u->GetThetalepTrue();  // rad (beam frame)
+  const double phi   = u->GetPhilepTrue();    // rad (beam frame)
+  TruthMuonKin k;
+  k.px  = p * std::sin(theta) * std::cos(phi);
+  k.py  = p * std::sin(theta) * std::sin(phi);
+  k.pz  = p * std::cos(theta);
+  k.E   = u->GetElepTrue();                    // MeV
+  k.phi = phi;
+  return k;
+}
+
 // Phase 18 (2026-05): truth-denom entries cached so the reco-loop can gate
 // on truthCV.isEfficiencyDenom membership, and miss-append can iterate the
 // cache rather than re-walking the truth tree. See main() and
@@ -173,6 +197,15 @@ struct TruthDenomEntry
   double MC_hadangle;
   double w_truth;
   uint64_t key;
+  // Full-event (G2) schema, cached so a Phase-18 truth-only miss row carries its
+  // real MC event identity + truth-muon 4-vector/phi (MeV/rad) + true vertex
+  // (mm) instead of zeros. The identity ints are always populated; the
+  // muon/vertex doubles only when MNV101_DUMP_POINTCLOUD is set (same gate as the
+  // cloud below). The reco side of a miss stays sentinel/empty (a miss has no
+  // reconstructed muon/vertex/cluster), so no reco counterpart is cached here.
+  int    id_run, id_subrun, id_nth;
+  double mu_true_px, mu_true_py, mu_true_pz, mu_true_E, mu_true_phi;
+  double vtx_true_x, vtx_true_y, vtx_true_z;
   // Truth FS-hadron point cloud (the raw, untruncated GetTruthFSHadrons output,
   // matching the signal-loop part_gen_* fill). Populated only when
   // MNV101_DUMP_POINTCLOUD is set, so AppendTruthOnlyMisses can give a
@@ -415,6 +448,31 @@ void LoopAndFillUnbinnedMCTruthDenom(
   // Gate truth-cloud caching: only compute/store the per-event FS-hadron cloud
   // when the point-cloud dump is active (otherwise it is dead weight).
   const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+
+  // Full-event (G2) truth-side branches: truth muon 4-vector/phi (MeV/rad),
+  // true vertex (mm), and MC event identity (run/subrun/nth). Gated on
+  // MNV101_DUMP_POINTCLOUD so the default (recoil-only / non-pointcloud) schema
+  // is byte-identical. Truth-only quantities: there is NO reco/detector
+  // counterpart on the truth-denom tree.
+  double mu_true_px = 0.0, mu_true_py = 0.0, mu_true_pz = 0.0,
+         mu_true_E = 0.0, mu_true_phi = 0.0;
+  double vtx_true_x = 0.0, vtx_true_y = 0.0, vtx_true_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
+  if(dumpPointcloud)
+  {
+    out->Branch("mu_true_px",  &mu_true_px);   // MeV (beam frame)
+    out->Branch("mu_true_py",  &mu_true_py);   // MeV
+    out->Branch("mu_true_pz",  &mu_true_pz);   // MeV
+    out->Branch("mu_true_E",   &mu_true_E);    // MeV
+    out->Branch("mu_true_phi", &mu_true_phi);  // rad (beam frame)
+    out->Branch("vtx_true_x",  &vtx_true_x);   // mm (true interaction vertex)
+    out->Branch("vtx_true_y",  &vtx_true_y);   // mm
+    out->Branch("vtx_true_z",  &vtx_true_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
+  }
+
   std::vector<double> w_component(componentRWs.size(), 1.0);
   if(dumpComponents)
   {
@@ -494,10 +552,10 @@ void LoopAndFillUnbinnedMCTruthDenom(
 
     const double w_cv = model.GetWeight(*truthCV, evt);
 
-    const uint64_t key = makeEventKey(
-        truthCV->GetInt("mc_run"),
-        truthCV->GetInt("mc_subrun"),
-        truthCV->GetInt("mc_nthEvtInFile"));
+    const int key_run    = truthCV->GetInt("mc_run");
+    const int key_subrun = truthCV->GetInt("mc_subrun");
+    const int key_nth    = truthCV->GetInt("mc_nthEvtInFile");
+    const uint64_t key = makeEventKey(key_run, key_subrun, key_nth);
     // In active-universe mode, census selection migrations against CV on the
     // same Truth-tree entry. Count each upstream event key once, independent
     // of whether it passes either selection.
@@ -563,6 +621,19 @@ void LoopAndFillUnbinnedMCTruthDenom(
       model.SetEntry(*truthCV, evt);
     }
 
+    // Full-event (G2) truth-side fill. Truth mode (SetTruth(true) at loop top);
+    // truth-only quantities only. Identity is captured unconditionally; the
+    // muon/vertex are only meaningful when the branches exist (dumpPointcloud).
+    id_run = key_run; id_subrun = key_subrun; id_nth = key_nth;
+    if(dumpPointcloud)
+    {
+      const TruthMuonKin tk = GetTruthMuonKin(truthCV);
+      mu_true_px = tk.px; mu_true_py = tk.py; mu_true_pz = tk.pz;
+      mu_true_E  = tk.E;  mu_true_phi = tk.phi;
+      const ROOT::Math::XYZTVector tv = truthCV->GetTrueVertex();
+      vtx_true_x = tv.X(); vtx_true_y = tv.Y(); vtx_true_z = tv.Z();
+    }
+
     out->Fill();
 
     if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
@@ -570,8 +641,16 @@ void LoopAndFillUnbinnedMCTruthDenom(
     {
       TruthDenomEntry tde{MC, MC_pz, MC_eavail, MC_q3, MC_W,
                           MC_nproton, MC_npip, MC_hadangle, w_truth, key};
+      // Full-event (G2): cache identity + truth muon/vertex so a truth-only miss
+      // row (AppendTruthOnlyMisses) carries its real truth identity/features.
+      tde.id_run = key_run; tde.id_subrun = key_subrun; tde.id_nth = key_nth;
       if(dumpPointcloud)
       {
+        tde.mu_true_px = mu_true_px; tde.mu_true_py = mu_true_py;
+        tde.mu_true_pz = mu_true_pz; tde.mu_true_E  = mu_true_E;
+        tde.mu_true_phi = mu_true_phi;
+        tde.vtx_true_x = vtx_true_x; tde.vtx_true_y = vtx_true_y;
+        tde.vtx_true_z = vtx_true_z;
         // Same accessor the signal loop uses (line ~916), so a miss-row cloud
         // is constructed identically to an accepted-row cloud. Narrow to float
         // for the cache; AppendTruthOnlyMisses widens back to double for the
@@ -615,6 +694,20 @@ long AppendTruthOnlyMisses(
   double miss_MC_hadangle = 0.0;
   UChar_t miss_sim_pass = 0;
 
+  // Full-event (G2) miss-row buffers. Reco muon/vertex are SENTINELS held
+  // constant across all misses (a native miss has no reconstructed muon/vertex),
+  // exactly mirroring miss_sim = -9999 below. Truth muon/vertex + identity are
+  // overwritten per miss from the truth-denom cache. These are bound only when
+  // the full-event branches exist (havePointcloud) -- see below.
+  double miss_mu_reco_px = -9999.0, miss_mu_reco_py = -9999.0, miss_mu_reco_pz = -9999.0,
+         miss_mu_reco_E = -9999.0, miss_mu_reco_phi = -9999.0, miss_mu_reco_qp = -9999.0;
+  UChar_t miss_mu_reco_minos_ok = 0;
+  double miss_vtx_reco_x = -9999.0, miss_vtx_reco_y = -9999.0, miss_vtx_reco_z = -9999.0;
+  double miss_mu_true_px = 0.0, miss_mu_true_py = 0.0, miss_mu_true_pz = 0.0,
+         miss_mu_true_E = 0.0, miss_mu_true_phi = 0.0;
+  double miss_vtx_true_x = 0.0, miss_vtx_true_y = 0.0, miss_vtx_true_z = 0.0;
+  int    miss_id_run = 0, miss_id_subrun = 0, miss_id_nth = 0;
+
   sigOut->SetBranchAddress("sim",        &miss_sim);
   sigOut->SetBranchAddress("sim_pz",     &miss_sim_pz);
   sigOut->SetBranchAddress("sim_eavail", &miss_sim_eavail);
@@ -643,6 +736,11 @@ long AppendTruthOnlyMisses(
   std::vector<double> e_gen_E, e_gen_px, e_gen_py, e_gen_pz;
   std::vector<int>    e_gen_pdg;
   std::vector<double> e_reco_E, e_reco_pos, e_reco_z;
+  // Full-event (G2): the reco recoil cloud gains parallel view/time vectors.
+  // They stay EMPTY on a native miss (no reco clusters), exactly like the
+  // reco E/pos/z vectors above.
+  std::vector<int>    e_reco_view;
+  std::vector<double> e_reco_time;
   // Object/vector branches must be rebound via pointer-TO-pointer (vector<T>**),
   // unlike scalar branches. These pointers must stay alive until the Fill loop ends.
   std::vector<double>* p_gen_E = &e_gen_E;  std::vector<double>* p_gen_px = &e_gen_px;
@@ -650,6 +748,8 @@ long AppendTruthOnlyMisses(
   std::vector<int>*    p_gen_pdg = &e_gen_pdg;
   std::vector<double>* p_reco_E = &e_reco_E; std::vector<double>* p_reco_pos = &e_reco_pos;
   std::vector<double>* p_reco_z = &e_reco_z;
+  std::vector<int>*    p_reco_view = &e_reco_view;
+  std::vector<double>* p_reco_time = &e_reco_time;
   const bool havePointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
                                sigOut->GetBranch("part_gen_E") != nullptr);
   if(havePointcloud)
@@ -662,6 +762,31 @@ long AppendTruthOnlyMisses(
     sigOut->SetBranchAddress("part_reco_E",   &p_reco_E);
     sigOut->SetBranchAddress("part_reco_pos", &p_reco_pos);
     sigOut->SetBranchAddress("part_reco_z",   &p_reco_z);
+    sigOut->SetBranchAddress("part_reco_view", &p_reco_view);
+    sigOut->SetBranchAddress("part_reco_time", &p_reco_time);
+    // Reco muon/vertex sentinels (constant across misses).
+    sigOut->SetBranchAddress("mu_reco_px",  &miss_mu_reco_px);
+    sigOut->SetBranchAddress("mu_reco_py",  &miss_mu_reco_py);
+    sigOut->SetBranchAddress("mu_reco_pz",  &miss_mu_reco_pz);
+    sigOut->SetBranchAddress("mu_reco_E",   &miss_mu_reco_E);
+    sigOut->SetBranchAddress("mu_reco_phi", &miss_mu_reco_phi);
+    sigOut->SetBranchAddress("mu_reco_qp",  &miss_mu_reco_qp);
+    sigOut->SetBranchAddress("mu_reco_minos_ok", &miss_mu_reco_minos_ok);
+    sigOut->SetBranchAddress("vtx_reco_x",  &miss_vtx_reco_x);
+    sigOut->SetBranchAddress("vtx_reco_y",  &miss_vtx_reco_y);
+    sigOut->SetBranchAddress("vtx_reco_z",  &miss_vtx_reco_z);
+    // Truth muon/vertex + identity (overwritten per miss from the cache).
+    sigOut->SetBranchAddress("mu_true_px",  &miss_mu_true_px);
+    sigOut->SetBranchAddress("mu_true_py",  &miss_mu_true_py);
+    sigOut->SetBranchAddress("mu_true_pz",  &miss_mu_true_pz);
+    sigOut->SetBranchAddress("mu_true_E",   &miss_mu_true_E);
+    sigOut->SetBranchAddress("mu_true_phi", &miss_mu_true_phi);
+    sigOut->SetBranchAddress("vtx_true_x",  &miss_vtx_true_x);
+    sigOut->SetBranchAddress("vtx_true_y",  &miss_vtx_true_y);
+    sigOut->SetBranchAddress("vtx_true_z",  &miss_vtx_true_z);
+    sigOut->SetBranchAddress("mc_run",          &miss_id_run);
+    sigOut->SetBranchAddress("mc_subrun",       &miss_id_subrun);
+    sigOut->SetBranchAddress("mc_nthEvtInFile", &miss_id_nth);
   }
 
   // KNOWN_ISSUES #12: every OTHER branch on sigOut (the per-universe weight and
@@ -685,7 +810,16 @@ long AppendTruthOnlyMisses(
         "sim", "sim_pz", "sim_eavail", "sim_q3", "sim_W", "sim_pass", "w_reco",
         "MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "MC_nproton", "MC_npip",
         "MC_hadangle", "w_truth", "part_gen_E", "part_gen_px", "part_gen_py",
-        "part_gen_pz", "part_gen_pdg", "part_reco_E", "part_reco_pos", "part_reco_z"};
+        "part_gen_pz", "part_gen_pdg", "part_reco_E", "part_reco_pos", "part_reco_z",
+        // Full-event (G2) branches are explicitly bound above -- exclude them
+        // from the generic dangling-universe-branch rebind (KNOWN_ISSUES #12) so
+        // it can never override their sentinel/cache values.
+        "part_reco_view", "part_reco_time",
+        "mu_reco_px", "mu_reco_py", "mu_reco_pz", "mu_reco_E", "mu_reco_phi",
+        "mu_reco_qp", "mu_reco_minos_ok", "vtx_reco_x", "vtx_reco_y", "vtx_reco_z",
+        "mu_true_px", "mu_true_py", "mu_true_pz", "mu_true_E", "mu_true_phi",
+        "vtx_true_x", "vtx_true_y", "vtx_true_z",
+        "mc_run", "mc_subrun", "mc_nthEvtInFile"};
     TObjArray* brs = sigOut->GetListOfBranches();
     std::vector<std::pair<std::string, MissCat>> pending;
     for(int bi = 0; bi < brs->GetEntriesFast(); ++bi)
@@ -756,12 +890,22 @@ long AppendTruthOnlyMisses(
         // Give the miss row its real generator-level cloud (cached in the
         // truth-denom loop). Mutate the bound vectors in place; p_gen_* still
         // point at them. Widen the float cache back to the double branches.
-        // part_reco_* deliberately left empty -- a miss has no reco clusters.
+        // part_reco_*/view/time deliberately left empty -- a miss has no reco
+        // clusters (e_reco_* are never assigned, so they Fill as empty vectors).
         e_gen_E.assign(tde.pg_E.begin(), tde.pg_E.end());
         e_gen_px.assign(tde.pg_px.begin(), tde.pg_px.end());
         e_gen_py.assign(tde.pg_py.begin(), tde.pg_py.end());
         e_gen_pz.assign(tde.pg_pz.begin(), tde.pg_pz.end());
         e_gen_pdg = tde.pg_pdg;
+        // Truth muon/vertex from the cache; reco muon/vertex stay at their
+        // constant -9999 sentinels (a miss has no reconstructed muon/vertex).
+        miss_mu_true_px = tde.mu_true_px; miss_mu_true_py = tde.mu_true_py;
+        miss_mu_true_pz = tde.mu_true_pz; miss_mu_true_E  = tde.mu_true_E;
+        miss_mu_true_phi = tde.mu_true_phi;
+        miss_vtx_true_x = tde.vtx_true_x; miss_vtx_true_y = tde.vtx_true_y;
+        miss_vtx_true_z = tde.vtx_true_z;
+        miss_id_run = tde.id_run; miss_id_subrun = tde.id_subrun;
+        miss_id_nth = tde.id_nth;
       }
       sigOut->Fill();
       ++nTruthOnlyMisses;
@@ -842,6 +986,18 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
   std::vector<double> pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz;
   std::vector<int>    pc_gen_pdg;
   std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2) reco recoil-cloud view/timing (parallel to E/pos/z) and the
+  // distinguished reco+truth muon objects, reco+true vertices, MC identity.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  double mu_true_px = 0.0, mu_true_py = 0.0, mu_true_pz = 0.0,
+         mu_true_E = 0.0, mu_true_phi = 0.0;
+  double vtx_true_x = 0.0, vtx_true_y = 0.0, vtx_true_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
   if(dumpPC){
     out->Branch("part_gen_E",   &pc_gen_E);
     out->Branch("part_gen_px",  &pc_gen_px);
@@ -851,6 +1007,32 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
     out->Branch("part_reco_E",   &pc_reco_E);
     out->Branch("part_reco_pos", &pc_reco_pos);
     out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    // Reco muon object (step-1 detector; data/MC identical definitions). Sentinel
+    // -9999 on !pass_reco rows, exactly like sim/sim_pz above.
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk (q sign; |1/p|)
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    // Truth muon object (step-2 generator; truth-only, NO detector counterpart).
+    out->Branch("mu_true_px",  &mu_true_px);   // MeV (beam frame)
+    out->Branch("mu_true_py",  &mu_true_py);   // MeV
+    out->Branch("mu_true_pz",  &mu_true_pz);   // MeV
+    out->Branch("mu_true_E",   &mu_true_E);    // MeV
+    out->Branch("mu_true_phi", &mu_true_phi);  // rad (beam frame)
+    out->Branch("vtx_true_x",  &vtx_true_x);   // mm (true vertex)
+    out->Branch("vtx_true_y",  &vtx_true_y);   // mm
+    out->Branch("vtx_true_z",  &vtx_true_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
   }
 
   // Per-systematic-universe weight dump (UQ Stage-1 #7). Builds two
@@ -1080,8 +1262,36 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
       if(dumpPC){
         CVUniverse::SetTruth(true);
         recoCV->GetTruthFSHadrons(pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz, pc_gen_pdg);
+        // Truth muon object + true vertex (truth mode). Every filled row is
+        // isSignalTruth, so these are always valid here.
+        const TruthMuonKin tk = GetTruthMuonKin(recoCV);
+        mu_true_px = tk.px; mu_true_py = tk.py; mu_true_pz = tk.pz;
+        mu_true_E  = tk.E;  mu_true_phi = tk.phi;
+        const ROOT::Math::XYZTVector tv = recoCV->GetTrueVertex();
+        vtx_true_x = tv.X(); vtx_true_y = tv.Y(); vtx_true_z = tv.Z();
         CVUniverse::SetTruth(false);
-        recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
+        recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                                pc_reco_view, pc_reco_time);
+        // Reco muon object + reco vertex (reco mode). Sentinel on !pass_reco so a
+        // no-reco-muon row cannot look like a valid reco object nor pollute the
+        // reco normalization (the loader masks reco features on sim_pass).
+        if(passesReco){
+          const auto mp = recoCV->GetMuon4V();  // MeV, beam frame
+          mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+          mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+          mu_reco_phi = recoCV->GetPhimu();
+          mu_reco_qp  = recoCV->GetMuonQP();
+          mu_reco_minos_ok = recoCV->IsMinosMatchMuon() ? 1 : 0;
+          const ROOT::Math::XYZTVector rv = recoCV->GetVertex();
+          vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+        } else {
+          mu_reco_px = mu_reco_py = mu_reco_pz = mu_reco_E = -9999.0;
+          mu_reco_phi = -9999.0; mu_reco_qp = -9999.0; mu_reco_minos_ok = 0;
+          vtx_reco_x = vtx_reco_y = vtx_reco_z = -9999.0;
+        }
+        id_run    = recoCV->GetInt("mc_run");
+        id_subrun = recoCV->GetInt("mc_subrun");
+        id_nth    = recoCV->GetInt("mc_nthEvtInFile");
       }
       out->Fill();
       if(outRecoIDs) outRecoIDs->insert(key);
@@ -1135,6 +1345,17 @@ void LoopAndFillUnbinnedMCBackground(
   // subtraction for the PET point cloud). GetRecoClusters self-clears.
   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
   std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2): background is a reco-schema event injected on the measured
+  // side, so it carries the SAME reco muon object + reco vertex + view/timing as
+  // data. bkg_nuPDG/current/inttype and bkg_vtx_* (TRUTH vertex) above stay as
+  // truth AUDIT metadata only -- never a publication classifier feature.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
 
   out->Branch("sim_background", &sim_background);
   out->Branch("sim_background_pz", &sim_background_pz);
@@ -1154,6 +1375,21 @@ void LoopAndFillUnbinnedMCBackground(
     out->Branch("part_reco_E",   &pc_reco_E);
     out->Branch("part_reco_pos", &pc_reco_pos);
     out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
   }
 
   // Per-systematic-universe background-weight dump (KNOWN_ISSUES #13). Mirrors
@@ -1259,8 +1495,24 @@ void LoopAndFillUnbinnedMCBackground(
       recoCV->SetEntry(i);
       model.SetEntry(*recoCV, cvEvent);
     }
-    if(dumpPC)
-      recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
+    if(dumpPC){
+      recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                              pc_reco_view, pc_reco_time);
+      // Reco muon object + reco vertex (background loop is entirely reco mode;
+      // every row passed the reco selection incl. the MINOS-match precut, so the
+      // muon/qp/MINOS fields are all defined -- no sentinel branch here).
+      const auto mp = recoCV->GetMuon4V();  // MeV, beam frame
+      mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+      mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+      mu_reco_phi = recoCV->GetPhimu();
+      mu_reco_qp  = recoCV->GetMuonQP();
+      mu_reco_minos_ok = recoCV->IsMinosMatchMuon() ? 1 : 0;
+      const ROOT::Math::XYZTVector rv = recoCV->GetVertex();
+      vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+      id_run    = recoCV->GetInt("mc_run");
+      id_subrun = recoCV->GetInt("mc_subrun");
+      id_nth    = recoCV->GetInt("mc_nthEvtInFile");
+    }
     out->Fill();
   }
   std::cout << "Finished unbinned MC background reco loop.\n";
@@ -1290,10 +1542,37 @@ void LoopAndFillUnbinnedData(
   // (the measured point cloud; no truth on data).
   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
   std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2): data carries the SAME reco muon object + reco vertex +
+  // view/timing observable schema as reco-signal/background (identical data/MC
+  // definitions), plus REAL data event identity (ev_run/ev_subrun/ev_gate) --
+  // NOT an mc_* counterpart, which does not exist for data. There is NO truth
+  // side on data: no mu_true_*/vtx_true_*/mc_* branch is emitted here.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  int    ev_run = 0, ev_subrun = 0, ev_gate = 0;
   if(dumpPC){
     out->Branch("part_reco_E",   &pc_reco_E);
     out->Branch("part_reco_pos", &pc_reco_pos);
     out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    out->Branch("ev_run",    &ev_run);         // REAL data event identity
+    out->Branch("ev_subrun", &ev_subrun);
+    out->Branch("ev_gate",   &ev_gate);
   }
 
   std::cout << "Starting unbinned data reco loop...\n";
@@ -1312,8 +1591,24 @@ void LoopAndFillUnbinnedData(
     measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
     measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
     measured_W = dataCV->RecoW() / 1000.0;           // MeV -> GeV
-    if(dumpPC)
-      dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z);
+    if(dumpPC){
+      dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                              pc_reco_view, pc_reco_time);
+      // Reco muon object + reco vertex. Every data row passed isDataSelected
+      // (incl. the MINOS-match precut), so the muon/qp/MINOS fields are defined.
+      const auto mp = dataCV->GetMuon4V();  // MeV, beam frame
+      mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+      mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+      mu_reco_phi = dataCV->GetPhimu();
+      mu_reco_qp  = dataCV->GetMuonQP();
+      mu_reco_minos_ok = dataCV->IsMinosMatchMuon() ? 1 : 0;
+      const ROOT::Math::XYZTVector rv = dataCV->GetVertex();
+      vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+      // Real data event identity (data has no mc_* counterpart).
+      ev_run    = dataCV->GetInt("ev_run");
+      ev_subrun = dataCV->GetInt("ev_subrun");
+      ev_gate   = dataCV->GetInt("ev_gate");
+    }
     out->Fill();
   }
   std::cout << "Finished unbinned data reco loop.\n";
@@ -1585,7 +1880,31 @@ int main(const int argc, const char** argv)
     activeIndexMetadata->Write();
     activeEnabledMetadata->Write();
     activeLateralMetadata->Write();
-    
+
+    // ---- Full-event (G2) schema/provenance metadata ----
+    // Lets Python consumers REJECT old recoil-only pointcloud ROOTs (which set
+    // MNV101_DUMP_POINTCLOUD but carry none of these objects). Written only in
+    // pointcloud mode so the default schema is byte-identical. Uses hadd-safe
+    // types ONLY: TNamed (hadd keeps the first, never concatenates) and
+    // TParameter<int> with the 'f' (first) merge mode (never summed) -- so the
+    // per-playlist merge cannot corrupt them the way default-merge
+    // TParameter<double> corrupted pTmu_fiducial_nucleons (KNOWN_ISSUES #8).
+    const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+    if(dumpPointcloud)
+    {
+      auto petSchema = new TNamed("petSchemaVersion", "g2-fullevent-v1");
+      auto petFamilies = new TNamed(
+          "petFeatureFamilies",
+          "reco_muon_object,reco_vertex,recoil_cloud_E_pos_z,recoil_cloud_view_time,"
+          "truth_muon,truth_vertex,mc_event_id,data_event_id,truth_fs_hadron_cloud");
+      auto petFull = new TParameter<int>("hasFullEventSchema", 1, 'f');
+      auto petFPS = new TParameter<int>("fullPhaseSpace", fullPhaseSpace ? 1 : 0, 'f');
+      petSchema->Write();
+      petFamilies->Write();
+      petFull->Write();
+      petFPS->Write();
+    }
+
     // Do not write pTmu_fiducial_nucleons here. In the documented full-MEFHC
     // workflow these per-playlist ROOT files are merged with hadd, which sums
     // TParameter<double> objects and silently multiplies the fiducial nucleon
