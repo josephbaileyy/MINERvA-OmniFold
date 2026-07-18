@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:17 UTC. Registry:
+Last reconciled: 2026-07-18 11:28 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -67,7 +67,7 @@ is insufficient.
 
 | Gate | Current verdict | Direct evidence required for PASS | Durable owner / pointer |
 |---|---|---|---|
-| PG0 — provenance and worktree reconciliation | **BLOCKED** | Exact ownership/inventory/hashes for every reusable input and active output; no ambiguous writer; runbook/dependency/remediation controls committed. Current contradiction: `docs/PUBLICATION_COMPLETION_RUNBOOK.md`, `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md`, and `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` are untracked, while `KNOWN_ISSUES.md` and `docs/OPEN_ITEMS.md` are dirty. | orchestrator + file owners; runbook P0; `MIG-PUB-AUDIT1` |
+| PG0 — provenance and worktree reconciliation | **PLAN-VERIFIER BLOCKED** | Exact ownership/inventory/hashes for every reusable input and active output; no ambiguous writer; repaired runbook/dependency/remediation controls committed. `MIG-V3` independently found nine publication-material defects in the untracked controls: stale FPS/PET background footing, F7/G2/P3F/estimator ambiguity, additive PET-UQ ambiguity, legacy remediation masquerading as publication, stale 4D frontier, missing final-5D adoption, and canonical-home/durability violations. Same verifier must PASS the repairs. | orchestrator + file owners; runbook P0; `MIG-PUB-AUDIT1`, `MIG-V3` |
 | PG1 — estimator/domain/background definition | **PARTIAL; PRODUCTION BLOCKED** | One frozen `pet-fullevent-fps-v1` contract: extended FPS domain, full schema, explicit `negweight-refined`, literal aligned background injection, Stay-Positive, seed/config/fingerprint policy shared by central and every covariance component. | Agent B; `ROLLOUT-PLAN.md` Stage 2.5; `pet/FULL_EVENT_FEATURE_CONTRACT.md`; `MIG-DEC-NW{,-FPS}` |
 | PG2 — PET engine correctness | **BLOCKED ON F7 + TARGET INTEGRATION** | F2/F3 GPU regression and cap sensitivity; F7 factors drawn over full data/signal/background inventories before subsetting; background draw before per-replica refinement; exact replay/extraction identity; no Horovod path. | Agent B; T5; feature contract CLM-008 |
 | PG3S — standard selection-complete scalar lateral | **PREFLIGHT-BLOCKED; COMPUTE ACTIVE** | Exact 10-endpoint inventory/config/migration/order proofs; atomic completion; five MAT components; complete support comparison; same-verifier PASS; scoped candidate commit. | Agent A + `standard-p4-verifier`; T2 / `MIG-V2` |

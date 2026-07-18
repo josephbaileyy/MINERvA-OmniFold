@@ -78,6 +78,23 @@
       ],
       "updated_at": "2026-07-18T10:33:09+00:00"
     },
+    "publication-plan-verifier": {
+      "created_at": "2026-07-18T11:25:40+00:00",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "profile": "codex-personal",
+      "provider": "codex",
+      "session_id": "019f74eb-6030-79f2-ab20-37e4028b748c",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T111009Z-start-eaca0278.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T111009Z-start-eaca0278.jsonl"
+        }
+      ],
+      "updated_at": "2026-07-18T11:25:40+00:00"
+    },
     "standard-p4-verifier": {
       "created_at": "2026-07-18T10:47:03+00:00",
       "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
@@ -94,6 +111,23 @@
         }
       ],
       "updated_at": "2026-07-18T10:47:03+00:00"
+    },
+    "usage-helper-verifier": {
+      "created_at": "2026-07-18T11:28:17+00:00",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "profile": "codex-school",
+      "provider": "codex",
+      "session_id": "019f74f0-f401-7b23-88b1-47178607c299",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T111615Z-start-c8ae3497.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/usage-helper-verifier/20260718T111615Z-start-c8ae3497.jsonl"
+        }
+      ],
+      "updated_at": "2026-07-18T11:28:17+00:00"
     }
   },
   "version": 1
