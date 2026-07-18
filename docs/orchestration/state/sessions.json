@@ -14,9 +14,16 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.json"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094935Z-send-abc7835e.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094935Z-send-abc7835e.json"
         }
       ],
-      "updated_at": "2026-07-18T09:45:55+00:00"
+      "updated_at": "2026-07-18T09:53:49+00:00"
     },
     "agent-B-p5b": {
       "adopted": true,
