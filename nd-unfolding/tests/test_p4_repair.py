@@ -222,5 +222,92 @@ class IntegrationCLI(unittest.TestCase):
             self.assertFalse(os.path.exists(f"{self.ND}/{out}"))
 
 
+class Round3Gates(unittest.TestCase):
+    def test_candidate_path_guard(self):
+        P.require_candidate_path("nd-unfolding/active_universe_5d/standard/candidate/std5d.root")
+        for bad in ("active_universe_5d/standard/candidate/std_uthrow.root",  # adopted token
+                    "active_universe_5d/standard/candidate/uq_universe_5d_covariance_combined.root",
+                    "uq_4d/corrected/x.root",                                  # protected
+                    "active_universe_5d/standard/merged/x.root"):              # not candidate subdir
+            with self.assertRaises(P4GateError):
+                P.require_candidate_path(bad)
+
+    def test_config_axes_estimator_enforced(self):
+        with self.assertRaises(P4GateError):
+            P.P4Config(axes="eavail,q3").validate()
+        with self.assertRaises(P4GateError):
+            P.P4Config(estimator="nn").validate()
+
+    def test_prove_identity(self):
+        A = np.eye(3); self.assertLessEqual(P.prove_identity(A, A.copy(), 1e-12, "x"), 1e-12)
+        with self.assertRaises(P4GateError):
+            P.prove_identity(A, A * 1.1, 1e-9, "x")
+
+    def test_edges_bin_volume_hash_deterministic_and_sensitive(self):
+        e1 = [np.array([0., 1.]), np.array([0., 1.]), np.array([0., 1.]),
+              np.array([0., 1.]), np.array([0., 1., 3.])]
+        h1 = P.edges_bin_volume_hash(e1); h2 = P.edges_bin_volume_hash([a.copy() for a in e1])
+        self.assertEqual(h1, h2)
+        e2 = e1[:4] + [np.array([0., 1., 2.])]                 # different W edges/widths
+        self.assertNotEqual(P.edges_bin_volume_hash(e2)["bin_volume_hash"], h1["bin_volume_hash"])
+
+    def test_deterministic_projection_M_width_weighted(self):
+        edges = [np.array([0., 1.])] * 4 + [np.array([0., 1., 3.])]   # 2 W bins, widths 1,2
+        mh = np.array([True, True]); ml = np.array([True])
+        M = P.build_projection_M(edges, 4, mh, ml)
+        np.testing.assert_allclose(M, np.array([[1.0, 2.0]]))         # width-weighted marginalization
+        x = np.array([5.0, 7.0]); np.testing.assert_allclose(M @ x, np.array([5.0 * 1 + 7.0 * 2]))
+        with self.assertRaises(P4GateError):                          # wrong high-mask size
+            P.build_projection_M(edges, 4, np.array([True]), ml)
+
+    def test_orchestrator_receipt_validation(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            paths = [f"m/{b}_{e}.root" for b in P.BANDS for e in P.ENDPOINTS]
+            open(os.path.join(td, "COMPLETE"), "w").write("1")
+            open(os.path.join(td, "summary.tsv"), "w").write("x\n")
+            open(os.path.join(td, "validation.tsv"), "w").write("ok\n")
+            open(os.path.join(td, "standard.sha256"), "w").write(
+                "\n".join(f"{'a'*64}  {p}" for p in paths) + "\n")
+            open(os.path.join(td, "standard.inventory.tsv"), "w").write(
+                "\n".join(f"100\t1700000000\t{p}" for p in paths) + "\n")
+            live = {p: (100, 1700000000) for p in paths}
+            rec = P.validate_orchestrator_merged_receipt(td, live)
+            self.assertEqual(rec["n"], 10); self.assertEqual(len(rec["hash_list_digest"]), 64)
+            with self.assertRaises(P4GateError):                      # size/mtime drift
+                P.validate_orchestrator_merged_receipt(td, {p: (101, 1700000000) for p in paths})
+            os.remove(os.path.join(td, "COMPLETE"))
+            with self.assertRaises(P4GateError):                      # missing COMPLETE
+                P.validate_orchestrator_merged_receipt(td, live)
+
+
+class IntegrationCLI2(unittest.TestCase):
+    ND = str(Path(__file__).resolve().parents[1])
+    def _run(self, script, args):
+        import subprocess
+        r = subprocess.run([sys.executable, f"{self.ND}/{script}", *args],
+                           cwd=self.ND, capture_output=True, text=True)
+        return r.returncode
+
+    def test_project_rejects_cli_tolerance_override(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            out = "active_universe_5d/standard/candidate/proj.root"
+            rc = self._run("p4_project_4d.py", ["--c5", os.path.join(td, "c.root:k"),
+                           "--manifest", "/dev/null", "--out", out, "--central-rel", "0.9"])
+            self.assertNotEqual(rc, 0)
+
+    def test_adopt_requires_explicit_flag(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            for n in ("cand.root", "prov.json", "val.json"):
+                open(os.path.join(td, n), "w").write("{}" if n.endswith("json") else "x")
+            rc = self._run("p4_adopt_standard.py", ["--candidate", os.path.join(td, "cand.root"),
+                           "--component-manifest", os.path.join(td, "prov.json"),
+                           "--validation", os.path.join(td, "val.json"),
+                           "--out", os.path.join(td, "adopted.root")])
+            self.assertNotEqual(rc, 0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

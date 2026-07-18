@@ -41,6 +41,16 @@ def getval(f, k):
     o = f.Get(k)
     return (o.GetVal() if hasattr(o, "GetVal") else o.GetTitle()) if o else None
 
+# reuse the orchestrator's committed merged hashes (never re-hash 538 GB here)
+_RECDIR = f"{REPO}/docs/orchestration/state/merged-input-hashes/p4-merged-20260718"
+MERGED_SHA_BY_BASE = {}
+try:
+    for l in open(f"{_RECDIR}/standard.sha256").read().splitlines():
+        if l.strip():
+            h, p = l.split(None, 1); MERGED_SHA_BY_BASE[os.path.basename(p.strip())] = h
+except Exception:
+    pass
+
 blockers = []
 def need(cond, msg):
     if not cond: blockers.append(msg)
@@ -91,7 +101,8 @@ for b in P.BANDS:
         rec = {"exists": os.path.exists(p)}
         if not rec["exists"]:
             blockers.append(f"merged {tag} missing"); maudit[tag] = rec; continue
-        rec["sha256"] = P.sha256_file(p)
+        rec["sha256"] = MERGED_SHA_BY_BASE.get(os.path.basename(p))   # reuse orchestrator hash (no 538GB re-hash)
+        need(rec["sha256"] is not None, f"merged {tag} not in orchestrator hash receipt")
         f = ROOT.TFile.Open(p)
         rec["zombie"] = bool(f.IsZombie()); rec["recovered"] = bool(f.TestBit(ROOT.TFile.kRecovered))
         te = {t: (f.Get(t).GetEntries() if f.Get(t) else -1)
@@ -114,6 +125,60 @@ for b in P.BANDS:
         need(all(cen[k] is not None for k in cen), f"merged {tag} census incomplete")
         if b in NONZERO_MIG: need(selmig > 0, f"merged {tag} expected NONZERO selection migration, got {selmig}")
         maudit[tag] = rec
+
+# ---- config + hash ----
+_cfg = P.P4Config(); _cfg.validate()
+man["config"] = _cfg.as_dict(); man["config_hash"] = _cfg.hash()
+man["config"]["full_phase_space_reported_grid"] = P.GRID_NBINS
+
+# ---- source provenance: git blobs of code + binary digest + per-file source commits ----
+import subprocess
+def _blob(rel):
+    try: return subprocess.check_output(["git", "hash-object", rel], cwd=REPO, text=True).strip()
+    except Exception: return None
+def _srccommit(rel):
+    try: return subprocess.check_output(["git", "log", "-1", "--format=%H", "--", rel], cwd=REPO, text=True).strip()
+    except Exception: return None
+SRC = {"unfold": "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+       "omnifold": "unbinned_unfolding/python/omnifold.py",
+       "xsec": "nd-unfolding/xsec_nd.py",
+       "launcher": "nd-unfolding/sbatch_evloop_array_5d_active_laterals.sh",
+       "evidence_generator": "nd-unfolding/p4_evidence.py",
+       "builder": "nd-unfolding/p4_build_components.py"}
+man["source_blobs"] = {k: _blob(v) for k, v in SRC.items()}
+man["source_commits"] = {k: _srccommit(v) for k, v in SRC.items()}
+_bin = f"{REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
+man["binary_sha256"] = P.sha256_file(_bin); man["binary_mtime"] = os.path.getmtime(_bin)
+man["code_rev"] = os.environ.get("P4_CODE_REV", "")
+
+# ---- ordered 5-axis edges + edge/bin-volume hash ----
+try:
+    from project_cov_nd import AXIS_EDGES
+    edges = [list(map(float, AXIS_EDGES[k])) for k in ("pt", "pz", "eavail", "q3", "W")]
+    man["axis_edges"] = edges
+    man.update({"edge_hash": P.edges_bin_volume_hash([np.array(e) for e in edges])["edge_hash"],
+                "bin_volume_hash": P.edges_bin_volume_hash([np.array(e) for e in edges])["bin_volume_hash"]})
+except Exception as e:
+    blockers.append(f"canonical edges unavailable: {e}")
+
+# ---- endpoint mask equality (acceptance): every endpoint shares the 10694 central mask ----
+mask_ok = all(ep_ev[t].get("mask_matches_central") for t in ep_ev if ep_ev[t].get("exists"))
+need(mask_ok, "an endpoint's reported mask != central 10694 mask")
+man["endpoint_mask_equality"] = bool(mask_ok)
+
+# ---- orchestrator merged-hash receipt binding (reuse; no 538GB re-hash) ----
+RECDIR = f"{REPO}/docs/orchestration/state/merged-input-hashes/p4-merged-20260718"
+try:
+    live = {}
+    for b in P.BANDS:
+        for ep in P.ENDPOINTS:
+            rp = f"nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_{b}_{ep}.root"
+            ap_ = f"{REPO}/{rp}"; st = os.stat(ap_); live[rp] = (st.st_size, int(st.st_mtime))
+    rec = P.validate_orchestrator_merged_receipt(RECDIR, live)
+    man["merged_sha256"] = rec["merged_sha256"]; man["merged_hash_list_digest"] = rec["hash_list_digest"]
+    man["merged_receipt_dir"] = os.path.relpath(RECDIR, REPO)
+except Exception as e:
+    blockers.append(f"orchestrator merged receipt binding failed: {e}")
 
 # ---- cross-check vs observed ----
 man["verifier_crosscheck"] = {

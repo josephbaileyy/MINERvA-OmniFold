@@ -1,7 +1,7 @@
 {
   "grid_nbins": 65856,
   "corder": "C",
-  "code_rev": "9168e7d23678060f3b66954cc59f91ec8e3f7cf5",
+  "code_rev": "721b6003d2ffae8db291f10f1a90d216e20ba1b1",
   "central5d_sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
   "central4d_sha256": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
   "mask5d_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
@@ -21,6 +21,118 @@
     "Muon_Energy_MINOS_1": "a51b767aad57f0c8935c24bf1f0fef2cbdede07e59850e6cb2fd687ae7d11e1b"
   },
   "endpoint_manifest_hash": "af568b4a2bb2f08e66e7a4380cb0c5b9af72a37ddec94a5b3297c2f50d999c54",
+  "config": {
+    "axes": "eavail,q3,W",
+    "iters": 5,
+    "seed": 42,
+    "estimator": "lgbm",
+    "use_weights": true,
+    "universe": null,
+    "full_phase_space_reported_grid": 65856
+  },
+  "config_hash": "5efd31a4250a9084864e091ed6f8bd28ae81b029a747c3c2cd4e1fd5b6358917",
+  "source_blobs": {
+    "unfold": "7b65ebcf0b343d2d09269f4de8b7b251eacef859",
+    "omnifold": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "xsec": "75aacef48ae8f01d635f73ddc3666af3c8c5a4b4",
+    "launcher": "559bc3fb78082c433886d4d860fbee9d777632b9",
+    "evidence_generator": "780708f64591ec978ac2837398c70d27abd4f280",
+    "builder": "01bdce480acbdacc502c64bdf45fc65a955a68ad"
+  },
+  "source_commits": {
+    "unfold": "07c18aee030888613da0bfa6811a9739ad037f46",
+    "omnifold": "21f2a003010c4440ce71d6d57db45689b724d1c6",
+    "xsec": "21f2a003010c4440ce71d6d57db45689b724d1c6",
+    "launcher": "2393ac2bcc2d64a9194792d04d4314a293d0755a",
+    "evidence_generator": "9428ca8df387735749d75dcd9832d8f27433263c",
+    "builder": "9428ca8df387735749d75dcd9832d8f27433263c"
+  },
+  "binary_sha256": "6b60fc51a0838e51e44a25eb48d54661efbddcf8aad47899623589984cccc04d",
+  "binary_mtime": 1784119877.0,
+  "axis_edges": [
+    [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5
+    ],
+    [
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0,
+      15.0,
+      20.0,
+      40.0,
+      60.0
+    ],
+    [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.8,
+      1.5,
+      3.0,
+      100.0
+    ],
+    [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.2,
+      2.0,
+      100.0
+    ],
+    [
+      0.0,
+      1.1,
+      1.4,
+      1.8,
+      2.2,
+      3.0,
+      100.0
+    ]
+  ],
+  "edge_hash": "e05889ac2685647d476b5be3f570148f155f5463f6cbb96b34186004d2fe5235",
+  "bin_volume_hash": "f71145cedc774ac5f2ae727a00b9728756d0341e624c6575401b95e6a620f798",
+  "endpoint_mask_equality": true,
+  "merged_sha256": {
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root": "38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root": "0e0491a624c2d64c6fa3fde271940f0cfa9acb2d08b72cdf1e21e1c15903c3f2",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root": "058746fdb29aa2cc0e3db82e7be42648cd7ce43b8603e96e444111546949ecf6",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root": "3bca6a458336c7b4b2250ccbcdc8ca0ac26d416ac4604114f5dfffe0fece2b0e",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root": "839ab9c51bdc69b13e340d5fdc8fd21968bfcc7a62deeb3db529d5f2fc4a6d5d",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root": "3330800629d536a94d37d91941089620ca90af228c64f43b4ed633a97550644f",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root": "533037d27e0b5e38d778c935b7a44f5e30e0a1afb81870c8b063303859986bfe",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root": "90a1d7b78d6deed51499e11ae735f09438dbf3d85c4a463c18fae441b6668ab2",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root": "f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a",
+    "nd-unfolding/active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root": "f2e67fd6c986f0a7d45eb894c1640c7d8fb48af83dbce37122d6946ae4aedfa0"
+  },
+  "merged_hash_list_digest": "6e6c4752842f3a254053f0c11ad53b836208ec856aa74dbfb50c74bca56c8dd0",
+  "merged_receipt_dir": "docs/orchestration/state/merged-input-hashes/p4-merged-20260718",
   "verifier_crosscheck": {
     "central5d": true,
     "mask5d": true,

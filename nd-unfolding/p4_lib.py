@@ -51,7 +51,81 @@ class P4Config:
         require(self.seed == 42, f"standard P4 requires fixed seed 42 (got {self.seed})")
         require(self.use_weights, "standard P4 requires --use-weights")
         require(self.iters == 5, f"standard P4 production uses 5 iters (got {self.iters})")
+        require(self.axes == "eavail,q3,W", f"standard P4 requires axes=eavail,q3,W (got {self.axes})")
+        require(self.estimator == "lgbm", f"standard P4 requires estimator=lgbm (got {self.estimator})")
         return True
+
+
+# canonical candidate area (pre-adoption). Adopted/protected areas are forbidden outputs.
+CANDIDATE_SUBDIR = "active_universe_5d/standard/candidate"
+_ADOPTED_TOKENS = ("uq_universe_5d_covariance_combined", "_uthrow", "_cvcentered",
+                   "adopted", "uq_4d/corrected", "universe_stage2_5d",
+                   "products/5d/xsec", "products/4d/xsec")
+
+
+def require_candidate_path(path):
+    """Positive allowlist + negative denylist: a candidate MUST live under the
+    candidate subdir and MUST NOT match any adopted/protected token. Prevents both
+    the round-2 self-rejection (candidate name containing '_final') and any write
+    onto an adopted/central path."""
+    require(CANDIDATE_SUBDIR in path, f"candidate must be under {CANDIDATE_SUBDIR} (got {path})")
+    for t in _ADOPTED_TOKENS:
+        require(t not in path, f"refusing candidate onto adopted/protected path (token {t!r})")
+    return True
+
+
+def prove_identity(A, B, rtol, label):
+    """Fail-closed max-relative-difference identity gate (no subtraction hidden)."""
+    A = np.asarray(A, dtype=float); B = np.asarray(B, dtype=float)
+    require(A.shape == B.shape, f"{label}: shape {A.shape} != {B.shape}")
+    denom = max(1e-300, float(np.max(np.abs(A))))
+    err = float(np.max(np.abs(A - B)) / denom)
+    require(err <= rtol, f"{label}: identity broken (rel {err:.2e} > {rtol:.0e})")
+    return err
+
+
+def edges_bin_volume_hash(edges):
+    """Hash the ordered 5-axis edge arrays + the C-order per-bin volume vector."""
+    import numpy as _np
+    parts = []
+    for e in edges:
+        a = _np.asarray(e, dtype=float); require(a.ndim == 1 and a.size >= 2, "bad edge array")
+        parts.append(a.tobytes())
+    edge_hash = hashlib.sha256(b"|".join(parts)).hexdigest()
+    widths = [(_np.asarray(e, float)[1:] - _np.asarray(e, float)[:-1]) for e in edges]
+    vol = widths[0]
+    for w in widths[1:]:
+        vol = _np.multiply.outer(vol, w).ravel()   # C-order product of bin widths
+    vol_hash = hashlib.sha256(vol.astype(float).tobytes() + b"|C").hexdigest()
+    return {"edge_hash": edge_hash, "bin_volume_hash": vol_hash, "n_bins": int(vol.size)}
+
+
+def validate_orchestrator_merged_receipt(recdir, live_stat):
+    """Consume the owner-neutral merged-hash receipt: require COMPLETE + the four
+    files, recompute live size/integer-mtime vs the inventory, and return the
+    committed hash-list digest bound into our manifest. live_stat: dict path->(size,mtime)."""
+    import os as _os
+    for f in ("COMPLETE", "summary.tsv", "validation.tsv", "standard.sha256", "standard.inventory.tsv"):
+        require(_os.path.exists(_os.path.join(recdir, f)), f"orchestrator receipt missing {f}")
+    sha_lines = [l for l in open(_os.path.join(recdir, "standard.sha256")).read().splitlines() if l.strip()]
+    require(len(sha_lines) == N_ENDPOINTS, f"receipt standard.sha256 has {len(sha_lines)} != 10 lines")
+    merged = {}
+    for l in sha_lines:
+        h, p = l.split(None, 1); merged[p.strip()] = h
+    # recompute live size + integer mtime against the committed inventory
+    inv = {}
+    for l in open(_os.path.join(recdir, "standard.inventory.tsv")).read().splitlines():
+        if not l.strip() or l.startswith("#"):
+            continue
+        cols = l.split("\t")
+        if len(cols) >= 3:                       # orchestrator format: size<TAB>mtime<TAB>path
+            inv[cols[2]] = (int(cols[0]), int(float(cols[1])))
+    for p, (sz, mt) in inv.items():
+        require(p in live_stat, f"inventory path not live: {p}")
+        lsz, lmt = live_stat[p]
+        require(lsz == sz and int(lmt) == mt, f"live size/mtime drift for {p}")
+    digest = hashlib.sha256("\n".join(sorted(f"{merged[p]}  {p}" for p in merged)).encode()).hexdigest()
+    return {"merged_sha256": merged, "hash_list_digest": digest, "n": len(merged)}
 
 
 def sha256_file(path, _bufsz=1 << 20):
@@ -191,6 +265,39 @@ def check_support_comparison(active_cov, support_cov):
     sta = float(np.sqrt(max(0.0, np.trace(A)))); sts = float(np.sqrt(max(0.0, np.trace(S))))
     require(sts > 0, "support block has zero trace")
     return {"sqrt_tr_active": sta, "sqrt_tr_support": sts, "ratio": sta / sts}
+
+
+# ---------------------------------------------------------------- deterministic projection map
+def build_projection_M(edges, drop_axis, mask_high, mask_low):
+    """Deterministic 5D->4D map by WIDTH-WEIGHTED marginalization of one axis.
+    edges: ordered per-axis edge arrays (pt,pz,eavail,q3,W). drop_axis: axis index to
+    marginalize (W=4). mask_high/mask_low: reported-bin bool masks over the full high/low
+    grids (C-order). Returns dense M (n_low_reported x n_high_reported) with
+    M[a,b] = width_drop[k] when high bin b decomposes to low bin a + dropped index k.
+    density convention: x_low = M @ x_high, C_low = M C_high M^T."""
+    nb = [np.asarray(e).size - 1 for e in edges]
+    require(len(nb) == 5, "expected 5 axes")
+    total_high = int(np.prod(nb))
+    require(int(np.asarray(mask_high).size) == total_high, "mask_high size != high grid")
+    wdrop = np.asarray(edges[drop_axis], float)[1:] - np.asarray(edges[drop_axis], float)[:-1]
+    nb_low = [n for i, n in enumerate(nb) if i != drop_axis]
+    total_low = int(np.prod(nb_low))
+    require(int(np.asarray(mask_low).size) == total_low, "mask_low size != low grid")
+    strides_h = np.array([int(np.prod(nb[i + 1:])) for i in range(5)])          # C-order strides
+    strides_l = np.array([int(np.prod(nb_low[i + 1:])) for i in range(4)])
+    mh = np.nonzero(np.asarray(mask_high).astype(bool))[0]
+    ml = np.nonzero(np.asarray(mask_low).astype(bool))[0]
+    low_pos = {int(g): r for r, g in enumerate(ml)}                              # low global -> reported row
+    M = np.zeros((ml.size, mh.size), dtype=float)
+    for col, g in enumerate(mh):
+        midx = [(g // strides_h[i]) % nb[i] for i in range(5)]                   # 5D multi-index
+        k = midx[drop_axis]
+        low_multi = [midx[i] for i in range(5) if i != drop_axis]
+        glow = int(np.dot(low_multi, strides_l))
+        row = low_pos.get(glow)
+        require(row is not None, f"high reported bin {g} maps to non-reported low bin {glow}")
+        M[row, col] = wdrop[k]
+    return M
 
 
 # ---------------------------------------------------------------- projection gates

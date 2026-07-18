@@ -1697,3 +1697,31 @@ mc_truth_denom per merged endpoint. Receipts committed under
 Candidate construction remains authorized only after the same standard-p4-verifier
 returns PASS on this patch. Canonical STATUS deferred (concurrent uncommitted edit);
 Agent-A status receipt at `active_universe_5d/standard/P4_STANDARD_STATUS.md`.
+
+## 2026-07-18 — P4 STANDARD repair round 3 (Agent A, standard-only, REPAIR-ONLY)
+Third fail-closed repair after the standard-p4-verifier BLOCKed round-2 (9428ca8).
+NO candidate constructed/promoted/adopted this turn — candidate stages remain
+gated behind a verifier PASS token. Repaired the 8 cited defects as one executable
+canonical chain (`run_p4_standard.sh` STOP_AFTER=evidence default):
+  1. Mutual executability — `p4_lib.py` ROOT-free gate library; ROOT lazy-imported
+     everywhere so guards/tests run on the login node.
+  2. Separate canonical stat/ML ROOTs (not the combined file) + PURE ADDITION only
+     in `p4_build_components.py` (no subtraction anywhere).
+  3. Complete mandatory manifest — `p4_evidence.py` now binds config+hash, source
+     git blobs/commits, C++ binary sha256, edges/bin-volume hash, endpoint
+     mask-equality, and the orchestrator merged-hash receipt.
+  4. Reuse of the owner-neutral orchestrator merged receipt
+     (`docs/orchestration/state/merged-input-hashes/p4-merged-20260718/`, size⇥mtime⇥path
+     inventory) — NO new 538-GB hash pass.
+  5. Later-only adoption CLI `p4_adopt_standard.py` (needs --i-understand-adoption;
+     not run, not wired into the driver).
+  6. Deterministic projection M in-code (`p4_project_4d.py`, CENTRAL_REL fixed,
+     rejects CLI override) + byte-identical central non-mutation.
+  7. Inseparable merged evidence (manifest 10 SHA == merged-audit 10 SHA gate).
+  8. Real-CLI test harness: `tests/test_p4_repair.py` — 28 tests PASS.
+Preflight (holder, read-only): recomputed central5d/mask5d/endpoint/central4d/mask4d
+all MATCH the verifier; merged receipt bound (digest 6e6c4752…, 10 hashes);
+`EVIDENCE-COMPLETE`. Receipts under `active_universe_5d/standard/evidence/`.
+Canonical STATUS still deferred (ND_OMNIFOLD_STATUS.md dirty from another owner —
+PG0); Agent-A receipt at `active_universe_5d/standard/P4_STANDARD_STATUS.md`.
+Verifier must PASS this patch before any candidate-construction turn.
