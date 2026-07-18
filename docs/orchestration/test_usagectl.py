@@ -21,7 +21,7 @@ def policy():
     return {
         "schema_version": 1,
         "claude_cache_max_age_seconds": 1800,
-        "codex_personal_reset_credit_reserve": 2,
+        "codex_personal_reset_credit_reserve": 1,
         "never_consume_codex_reset_credits_automatically": True,
         "seven_day_low_remaining_percent": 20,
         "required_codex_profiles": ["codex-personal", "codex-school"],
@@ -173,6 +173,22 @@ class CodexNormalizationTests(unittest.TestCase):
         )
         self.assertEqual(value["status"], "ok")
         self.assertTrue(any("seven-day" in item for item in value["warnings"]))
+
+    def test_one_authorized_remaining_credit_passes_but_zero_blocks(self):
+        one = codex_raw()
+        one["rateLimitResetCredits"] = {
+            "availableCount": 1,
+            "credits": [credit()],
+        }
+        value = usagectl.normalize_codex("codex-personal", one, policy(), NOW)
+        self.assertEqual(value["status"], "ok")
+        self.assertEqual(value["reset_credits"]["protected_reserve"], 1)
+
+        none = codex_raw()
+        none["rateLimitResetCredits"] = {"availableCount": 0, "credits": []}
+        value = usagectl.normalize_codex("codex-personal", none, policy(), NOW)
+        self.assertEqual(value["status"], "blocked")
+        self.assertTrue(any("below 1" in item for item in value["violations"]))
 
 
 class JsonLineReaderTests(unittest.TestCase):
@@ -513,12 +529,12 @@ class PolicyAndGateTests(unittest.TestCase):
                         with mock.patch.object(usagectl.time, "time", return_value=NOW):
                             return usagectl.snapshot(args)
 
-    def test_policy_schema_is_strict_and_reserve_cannot_be_lowered(self):
+    def test_policy_schema_is_strict_and_remaining_reserve_cannot_be_lowered(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = self.write_policy(tmp)
             self.assertEqual(usagectl.load_policy(path), policy())
             for mutation in (
-                lambda value: value.update(codex_personal_reset_credit_reserve=1),
+                lambda value: value.update(codex_personal_reset_credit_reserve=0),
                 lambda value: value.update(never_consume_codex_reset_credits_automatically=False),
                 lambda value: value.update(extra=True),
             ):

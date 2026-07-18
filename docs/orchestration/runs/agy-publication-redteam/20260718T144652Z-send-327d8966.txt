@@ -1,0 +1,53 @@
+### Downstream Interface Audit for G2 Source (486e53e): BLOCK
+
+The downstream Python interface is currently **BLOCKED** and not ready to consume the G2 full-event ROOT files or correctly execute the publication PET contract.
+
+Here are the exact blockers, minimal repairs, and tests.
+
+#### Blocker 1: Dumper Ignores New Branches & Fails to Reject Old ROOTs
+- **Exact File:** `nd-unfolding/pet/dump_pointcloud_inputs.py` (`main`)
+- **Diagnosis:** The dumper only checks for `part_gen_E`. It does not read `petSchemaVersion`, `hasFullEventSchema`, or `fullPhaseSpace` to strictly reject older recoil-only ROOTs. It is completely blind to the new G2 branches (`mu_reco_px`, `vtx_reco_x`, `part_reco_view`, `ev_run`, `mc_run`, etc.) and instead relies on the old `sim/MC_pz` scalar fallbacks.
+- **Minimal Repair:** Add `f.Get("petSchemaVersion")` and raise an error if the new schema metadata is missing. Add `SetBranchAddress` for all new G2 scalar, view, timing, and identity arrays, and correctly plumb them into the output `npz`.
+- **Test:** Write a synthetic `TTree` in Python without `petSchemaVersion` and ensure the dumper fails closed.
+
+#### Blocker 2: Missing Background Inventory (F7 Violation)
+- **Exact File:** `nd-unfolding/pet/dump_pointcloud_inputs.py` (`main`)
+- **Diagnosis:** The script only iterates over `mc_signal_reco` and `data`. It silently ignores `mc_background`, meaning it fails to dump `w_bkg` and the background recoil clouds. The loader (`fullevent_fps_dataloader.py`) implements the F7 Stay-Positive logic correctly, but will crash (`has_bkg` check fails) because the dumper never provided the required tensors.
+- **Minimal Repair:** Add a third iteration loop over the `mc_background` tree, processing the clouds and extracting `w_bkg` identically to the data/signal branches. Preserve `ev_run` and `mc_run` for exact joins.
+- **Test:** Ensure `has_bkg` evaluates to `True` when parsing the output `.npz`.
+
+#### Blocker 3: Non-Transactional Output
+- **Exact File:** `nd-unfolding/pet/dump_pointcloud_inputs.py` (`main` -> `np.savez_compressed`)
+- **Diagnosis:** The script writes directly to `args.out` without atomic rename. This violates the one-writer launch safety and transactional output rules.
+- **Minimal Repair:** Write to `args.out + ".tmp.npz"`, calculate the inventory-order hash, and use `os.replace` to atomically commit the file.
+- **Test:** Verify a `KeyboardInterrupt` during the `savez_compressed` step leaves no corrupted file at the target path.
+
+#### Blocker 4: Launchers Silently Reusing Quarantined Loader
+- **Exact File:** `nd-unfolding/pet/sbatch_pet_nominal_bkgsub.sh` (and related batch scripts)
+- **Diagnosis:** The launcher explicitly invokes `pet/minerva_pet_dataloader.py` (the quarantined recoil-only loader) rather than the new `fullevent_fps_dataloader.py`. It is also bypassing the explicit `bkg_mode="negweight-refined"` requirement.
+- **Minimal Repair:** Update the `python3` invocation to use `pet/fullevent_fps_dataloader.py` and ensure the F7 arguments (e.g., `bkg_mode="negweight-refined"`) are correctly propagated.
+- **Test:** Run a `--smoke` (non-GPU) test of the launcher to confirm it correctly triggers the `has_bkg` fail-closed mechanism in the new loader.
+
+---
+
+### Ordered Ownership Split
+
+1. **Agent E (C++/Runtime Evidence):** Owns ONLY the C++ source compile, 1A interactive smoke, and 12-playlist event-loop arrays (currently blocked by spend limit; awaiting runtime validation).
+2. **Agent B (PET Python / F7 Interface):** Owns the Python dumper rewrite (`dump_pointcloud_inputs.py`), the loader feature-contract mapping, and wiring the F7/negweight logic into the SLURM launchers.
+3. **Agent C (Later Endpoints):** Owns the full-schema shifted endpoint generation (P3F laterals) which happens strictly after the nominal is secured.
+
+---
+
+### Agent B Follow-Up Scope
+
+**What Agent B CAN do now (before the G2 ROOT exists):**
+Agent B can statically rewrite `dump_pointcloud_inputs.py` to:
+- Bind all new `mu_*`, `vtx_*`, `part_reco_view/time`, `ev_run`, and `mc_run` branches.
+- Implement strict schema/metadata rejection using `TNamed`/`TParameter` lookups.
+- Add the `mc_background` tree loop and extract the background clouds + weights.
+- Implement the atomic `.tmp.npz` `os.replace` transactional safety mechanism.
+- Patch `sbatch_pet_nominal_bkgsub.sh` to use the new `fullevent_fps_dataloader.py` loader.
+
+**What MUST await runtime evidence (Agent E's output):**
+- End-to-end integration tests of the modified `dump_pointcloud_inputs.py` (it needs an actual G2 ROOT to read and construct the NPZ).
+- Training and validation of the F7 coherent bootstrap over the final dataset.

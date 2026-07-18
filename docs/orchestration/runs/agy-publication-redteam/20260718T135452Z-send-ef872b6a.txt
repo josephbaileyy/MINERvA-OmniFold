@@ -1,0 +1,13 @@
+**PASS**
+
+The standard P4 repair commit `9428ca8` has been fully audited and accurately repairs all ranked defects from the prior verifier block without mutating or creating covariance candidates.
+
+Verification of Claims:
+1. **Canonical Driver & Retired Routes:** `run_p4_standard.sh` correctly orders the six stages with a fail-closed pipeline. The two unsafe legacy scripts (`merge_active_endpoints.sh` and `run_active_lateral_unfolds_interactive.sh`) have been successfully guarded to `exit 9` under the standard mode.
+2. **Merge & Manifest Evidence:** `p4_evidence.py` generates the required read-only census. It verifies `hasTruthOnlyMisses`, tree entry balance (`mc_signal_reco == mc_truth_denom`), exact identity matching, and nonzero/zero migration depending on the kinematic band. The known exact hashes for masks and centrals match exactly as claimed.
+3. **Transactional Unfolds:** `run_p4_unfold_std.sh` safely abstracts the unfold grid. It uses `.done` receipts guarded by a `valid_unfold` ROOT inspector and fails if `< 10` endpoints return successfully.
+4. **Explicit Component Build:** `p4_build_components.py` enforces the corrected background-aware support family block (`BKGAWARE_DIR`) and explicitly reconstructs the final block (`stat`, `mlsplit`, `vertical_minus_5lateral`, `active_sum`) via the preserved MAT formula. No arbitrary globs exist.
+5. **Projection & Non-Mutation Gates:** `p4_project_4d.py` accurately projects the matrix via the manifest-checked mask and validates PSD + exact central reproduction. The `sha256` byte-identical freeze prevents any hidden mutations to the central distribution.
+6. **Integration Tests:** When run within the `root_6_28` (Python 3.11) environment, `nd-unfolding/tests/test_p4_repair.py` cleanly outputs 20/20 passes covering all negative gates, including CLI-level rejections of adopted paths.
+
+The code and logic are solid. It is authorized for the `standard-p4-verifier` turn.

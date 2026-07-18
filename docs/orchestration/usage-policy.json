@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "claude_cache_max_age_seconds": 1800,
-  "codex_personal_reset_credit_reserve": 2,
+  "codex_personal_reset_credit_reserve": 1,
   "never_consume_codex_reset_credits_automatically": true,
   "seven_day_low_remaining_percent": 20,
   "required_codex_profiles": [

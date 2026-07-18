@@ -1,0 +1,32 @@
+**BLOCK**
+
+The alias patch successfully implements independent per-window freshness selection and safe fallback, but it fails on equal-timestamp race conditions and breaks state/change tracking.
+
+### Blocking Edge Cases & Repairs
+
+**1. Equal-Timestamp Disagreement Hides Capacity**
+If two alias profiles record observations at the exact same epoch (`observed` is identical), `candidates.sort(key=lambda item: (item[0], item[1]))` breaks the tie by lexicographically sorting the alias `name`. It blindly selects `claude-school-legacy` over `claude-school` regardless of which cache captured higher usage. Furthermore, the non-monotonic warning uses `old_observed < observed`, which means an equal-timestamp lower-usage selection will silently fail to emit a warning, directly hiding capacity.
+
+*Repair in `consolidate_account_groups`:*
+```python
+# Sort by (observed_at_epoch, used_percent, name) to pick the most conservative (highest usage) on a tie
+-            candidates.sort(key=lambda item: (item[0], item[1]))
++            candidates.sort(key=lambda item: (item[0], item[2].get("used_percent", -1), item[1]))
+
+# Check for non-monotonicity on older or equal timestamps
+-                old_observed < observed
++                old_observed <= observed
+```
+
+**2. State/Change Tracking Ignores Claude entirely**
+The `snapshot_changes` function currently hardcodes the Codex profiles and completely skips tracking changes in the Claude profiles or consolidated accounts. This violates Rule 7 ("Write material usage changes and reset times to the campaign ledger").
+
+*Repair in `snapshot_changes`:*
+```python
+-    for profile_name in ("codex-personal", "codex-school"):
++    for profile_name in current.get("profiles", {}):
+```
+*(The existing paths and getters safely return `None` for provider-specific fields like `reset_credits` on Claude, so this single line change robustly extends tracking to all current and future profiles).*
+
+**3. Table Clarity (Minor but related to prompt)**
+While not logically fatal, the table formatter prints the account consolidation as an unaligned footer rather than a top-level row, which makes quick terminal scans difficult. (Fixing the first two is required for a PASS).

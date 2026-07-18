@@ -1,0 +1,26 @@
+**PASS** (for code/control readiness only)
+
+The F7 scaffolding is conceptually sound. It honors the global-draw-before-subset contract, enforces identical training/extraction replay, properly segregates the binned Stay-Positive surrogate, and correctly fails closed without the required background inputs.
+
+Here is the independent verification breakdown:
+
+### 1. Exact Supporting or Contradictory Evidence
+- **Global draws before subset:** Supported. In `fullevent_fps_dataloader.py`, `coherent_bootstrap_factors` generates full-length arrays `data_factor, sig_factor, bkg_factor` using separate independent sub-seeds (`seed`, `seed+1e7` via `mc_poisson_factor`, `seed+2e7`). `build_fullevent_loaders` correctly indexes these global arrays (`[imc]` and `[ida]`) *after* they are drawn, rather than drawing over the subset length.
+- **Fail-closed replay:** Supported. `validate_coherent_bootstrap` regenerates the global factor and asserts it exactly equals the persisted signal/background factors at the persisted indices.
+- **Honest Surrogate Separation:** Supported. The closed-form Stay-Positive (`stay_positive_refine_binned`) is explicitly documented as a surrogate (`"Production uses the trained classifier (u2d.refine_stay_positive); this pure form backs the coherence tests"`). `build_fullevent_loaders` never calls it or `build_negweight_refined_target`; it only persists `bkg_bootstrap_factor` into `meta["bootstrap"]` and defers refinement to the (future) training loop.
+
+### 2. Direct Negative-Case Gaps in the 19 Tests
+- **Gap in `test_mismatch_fails_closed`:** The test suite verifies fail-closed logic for a wrong seed, tampered signal factor, wrong fingerprint, and wrong inventory hash. However, the `base` dictionary entirely omits `bkg_bootstrap_factor` and `bkg_indices`. There is no test proving that `validate_coherent_bootstrap` correctly raises a `ValueError` if the *background factor* is tampered with, or if `n_bkg_full` is omitted when a background factor is persisted.
+
+### 3. Compliance with the Repo Same-Commit Gate
+- **FAIL.** Commit `9d7a4c6` modifies Python scripts and tests, and its message declares an "EVIDENCE-BLOCKED" state. However, it does not include the mandatory synchronized updates to `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` or `nd-unfolding/ND_OMNIFOLD_STATUS.md`. Under the repo's one-home rule, a new pipeline feature and its blocking state must be recorded in the canonical tracking documents in the exact same commit.
+
+### 4. Minimal Repairs Before G2 Production
+Before this infrastructure can be considered complete and ready to consume G2 background-cloud inputs, the following must happen:
+1. Add the missing `bkg_bootstrap_factor` tamper case and `n_bkg_full` omission case to `tests/test_fullevent_fps.py::test_mismatch_fails_closed`.
+2. Amend the commit to include the required `RUN_LOG.md` entry documenting the F7 implementation and its EVIDENCE-BLOCKED status.
+
+### 5. Exact Runtime Evidence Blocked on Future Full-Schema Data
+- In `fullevent_fps_dataloader.py`, `build_fullevent_loaders` asserts `has_bkg = "w_bkg" in d.files`.
+- If `bkg_mode == "negweight-refined"`, the absence of background clouds directly triggers a `ValueError: [F7/negweight-refined] this FPS input has NO background inventory...`.
+- Therefore, no publication-grade nominal or UQ compute can proceed. Execution is hard-blocked pending the completion of the C++ event-loop dump (`runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root`) that actually aligns the background clouds and scalar branches with the signal/data trees.

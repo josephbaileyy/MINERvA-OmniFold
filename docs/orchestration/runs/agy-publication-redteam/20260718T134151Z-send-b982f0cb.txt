@@ -1,0 +1,79 @@
+Here is the read-only canonical-control reconciliation across the project documents.
+
+### 1. Line-by-Line Inventory of Stale or Contradictory Statements
+
+**`docs/OPEN_ITEMS.md`**
+- **Lines 266–310 (`## Active campaign — PET capstone`)**: Describes a "raw-data FPS unfold beyond the published phase space" using recoil point clouds (`of_inputs_pc_fps.npz`) as the active capstone. Endorses partial/frozen retraining ("convergence-curve check, not a full per-universe retrain") and frozen reweighters.
+  - *Contradiction*: Violates lines 48–112 (KNOWN_ISSUES #19), which explicitly quarantine `of_inputs_pc_fps.npz` as non-publication recoil-only cross-checks. Violates `PET_UQ_REMEDIATION_STATUS.md` Gate 8 (which mandates joint retraining, not convergence checks) and the Runbook (which prohibits relabeling reduced P3F products).
+- **Line 275–277**: Mentions that the 5D adoption result is based on `unified_throw_cov_5d.py` and `adopt_unified_5d.py`, which are explicitly marked `(both untracked, pending commit)`.
+  - *Contradiction*: Violates the strict repo commit gate. No result is quotable or adoptable until its generating script is committed.
+
+**`KNOWN_ISSUES.md`**
+- **Issue #13 (Lines 19-20)**: Marked as `RESOLVED 2026-07-14 (188-universe re-quote... null-effect)`.
+  - *Contradiction*: The text block acknowledges a massive gap ("the dump-all rerun + merge landed... but that bank comes from `unified_throw.py --dump`, which is SIGNAL-ONLY"), meaning unified covariances still freeze background at CV. It cannot be `RESOLVED`.
+- **Issue #15 (Line 21)**: Claims the blocking gates are `CLOSED`, states "The corrected FINAL PET C_total is assembled and validated," and declares C_stat enlargement is deferred.
+  - *Contradiction*: Violates the `PET_UQ_REMEDIATION_STATUS.md` DAG, which places full-event PET at Gate 2 and F7 coherent bootstrap at Gate 5. The assembled budget is the quarantined recoil-only control.
+- **Issue #16 (Line 22)**: Endorses a C_lateral built by shifting "CV-selected events without re-running selection" (frozen clouds), and mentions waiting for a "3-band migration bound".
+  - *Contradiction*: `OPEN_ITEMS.md` (Line 41) already retired the 3-band presentation bound in favor of full 5-band coverage. `PUBLICATION_COMPLETION_RUNBOOK.md` requires joint retraining for laterals.
+
+**`nd-unfolding/ND_OMNIFOLD_STATUS.md`**
+- **Line 23**: Lists "Corrected PET 5D budget... present campaign COMPLETE" in the "Current quotable results" table.
+  - *Contradiction*: It is a quarantined historical product.
+- **Lines 44-48**: Recommends "Before publication, expand the statistical inventory to 100 replicas."
+  - *Contradiction*: Violates the strict F7 statistical replication protocol (Runbook P5B / `PET_UQ_REMEDIATION_STATUS.md` Gate 5). Merely adding replicas to the legacy inventory bypasses the mandatory global Poisson draw and per-replica Stay-Positive refinement.
+
+---
+
+### 2. Canonical Destination for Each Fact
+
+- **Verified Results (e.g., PET legacy trace values, closure tests)**: `VALIDATION_LEDGER.md`. (They should be labeled as legacy cross-checks there).
+- **Current State per Workstream (e.g., 5D adoption, PET readiness)**: `ND_OMNIFOLD_STATUS.md`.
+- **Chronology / In-flight Jobs (e.g., Job 55288409 RUNNING)**: `ND_OMNIFOLD_RUN_LOG.md`.
+- **Open / Deferred Items**: `docs/OPEN_ITEMS.md`.
+- **Bugs, Traps, Code Debt (e.g., Resume-skip validates existence)**: `KNOWN_ISSUES.md`.
+
+---
+
+### 3. Minimal Proposed Replacement Hunks
+
+**For `docs/OPEN_ITEMS.md`**:
+Remove lines 265–310 entirely (moving their historical job IDs to the RUN_LOG). Replace with:
+```markdown
+## Active campaign — PET capstone
+The legacy recoil-only PET execution is closed; all such products and their partial-retraining components are quarantined cross-checks. See `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` for the active full-event PET publication DAG.
+```
+
+**For `KNOWN_ISSUES.md`**:
+```markdown
+| 13 | ... | OPEN (Unified throw still background-frozen. 188-universe vertical sweep confirmed <0.3% effect, but unified covariances must be rerun with `negweight-refined` builder.) |
+| 15 | ... | RESOLVED (Legacy recoil-only). The recoil-only PET C_total is a quarantined cross-check. Publication full-event PET must use the F7 coherent bootstrap protocol. |
+| 16 | ... | OPEN (Publication gate: full 5-band active universe). The legacy recoil C_lateral was support-limited. The 3-band presentation bound is retired. Publication PET requires full 5-band selection-complete laterals. |
+```
+
+**For `nd-unfolding/ND_OMNIFOLD_STATUS.md`**:
+Move Line 23 ("Corrected PET 5D budget") to the `Quarantined historical results` table.
+Replace Lines 44-48 with:
+```markdown
+- The legacy recoil-PET campaign is quarantined. Publication full-event PET requires the F7 coherent statistical replication protocol and explicit `negweight-refined` target builder; the old unit-weight replicas cannot be transferred or expanded.
+```
+
+---
+
+### 4. Uncommitted Changes That Must Not Be Lost
+
+- `nd-unfolding/unified_throw_cov_5d.py`
+- `nd-unfolding/adopt_unified_5d.py`
+
+*(Identified in `OPEN_ITEMS.md` lines 275-277. These implement the corrected 5D unified-throw adoption and must be staged and committed to satisfy the repo commit gate prior to their results being quotable).*
+
+---
+
+### 5. PG0 PASS/BLOCK Verdict After Hypothetical Patch
+
+**Verdict: BLOCK.**
+
+**Reasoning:** Even if the documentation is fully reconciled and conceptually sound, PG0 (Controls & Ownership Freeze) includes explicit execution gates:
+1. *Attribute every dirty/untracked campaign path to an owner.* (The untracked `unified_throw_cov_5d.py` and `adopt_unified_5d.py` scripts must actually be committed to the repository).
+2. *Commit the locked negweight/PET decisions.*
+
+The hypothetical patch aligns the *instructions* to PASS the "independent publication-plan verifier", but PG0 cannot technically flip to PASS until a human actually commits these untracked scripts and pushes the repaired control documents. Future compute (e.g., G2 FPS CV generation and scalar FPS negweight-refined throws) remains strictly blocked until this documentation commit lands.

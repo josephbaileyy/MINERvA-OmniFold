@@ -14,7 +14,10 @@ account view rather than by adding alias observations.
 
 ## Hard policy
 
-- Preserve **two personal Codex Full reset credits** as emergency reserve.
+- Preserve the **one remaining personal Codex Full reset credit** (expires
+  2026-08-12) as emergency reserve. The July-31 credit was consumed on
+  2026-07-18 only after the user explicitly authorized that specific credit and
+  live usage reached 0%.
 - Never redeem a reset credit automatically or merely to increase throughput.
 - Record the personal Codex seven-day reset time in the campaign ledger after
   every material change.
@@ -60,10 +63,10 @@ chmod 700 orchestration/usagectl.py
 /usr/bin/python3.11 orchestration/usagectl.py snapshot --json
 ```
 
-The personal Codex row should report `RESET CREDITS 2`. Its JSON must include
+The personal Codex row should report `RESET CREDITS 1`. Its JSON must include
 the seven-day `resets_at_utc` and each reset credit's expiry. Stop and tell the
 user if `gate_ok` is false or if credit evidence is missing, malformed,
-expired, inconsistent, or below two; do not attempt a reset. The Codex
+expired, inconsistent, or below one; do not attempt a reset. The Codex
 app-server sometimes omits an inactive five-hour window. That is reported as
 unknown and is never inferred from the seven-day value.
 
@@ -105,8 +108,8 @@ Use these routing rules:
 2. Reserve enough personal Codex capacity for orchestration and synthesis.
 3. Track the exact seven-day reset epoch/UTC time; re-read it because rolling
    windows can move.
-4. Keep both personal Full reset credits untouched unless the user explicitly
-   authorizes consuming a specific credit in a later message.
+4. Keep the remaining August-12 Full reset credit untouched unless the user
+   explicitly authorizes that specific credit in a later message.
 5. Use Claude percentages only when the cache is fresh; otherwise use a
    status-only availability probe or mark capacity unknown. Route school
    capacity from `accounts.claude-school`, never by summing its two aliases.
@@ -123,10 +126,11 @@ docs/orchestration/usage-policy.json now. Use
 after any provider-limit error, and before final synthesis. Treat live Codex
 rate-limit data as authoritative and stale/missing Claude or agy data as
 unknown. Record the personal Codex seven-day reset time in the campaign ledger
-whenever it changes. The personal Codex account currently has two Full reset
-credits: preserve both as emergency reserve. Never call, script, or suggest a
-reset-credit consumption operation unless I explicitly authorize consuming a
-specific credit in a later message. Continue using persistent worker UUIDs;
+whenever it changes. The personal Codex account currently has one Full reset
+credit expiring 2026-08-12: preserve it as emergency reserve. Never call,
+script, or suggest a reset-credit consumption operation unless I explicitly
+authorize consuming a specific credit in a later message. Continue using
+persistent worker UUIDs;
 usage monitoring must never replace, fork, or concurrently message a worker.
 Report the first usage snapshot and any warnings, then continue the existing
 campaign from MIGRATION-HANDOFF.md plus MIGRATION-DELTA.md.

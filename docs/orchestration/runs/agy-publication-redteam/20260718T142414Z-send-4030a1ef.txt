@@ -1,0 +1,18 @@
+Here is the read-only compute-placement and queue-readiness audit. All roles are evaluated strictly according to the `MIGRATION-TAKEOVER-STATUS` orchestrator map, the `2D_OMNIFOLD_REFERENCE` interactive-first policy, and the `PET_UQ_REMEDIATION_STATUS` DAG. No roles have been reassigned.
+
+### Queue Readiness & Placement Decision Table
+
+| Checkpoint & Owner | Component | Classification | Runtime Range | Earliest Safe Queue Trigger |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Agent A** (Standard P4) | Repair-3 & LLM Verifier | **LOGIN-NODE STATIC** | 2–5 min | **N/A (No Slurm needed).** Handled via `resume_after_school_reset_1800.sh` calling `agentctl.py`. |
+| **2. Agent C** (Scalar FPS) | Manifest/Hash Repair | **LOGIN-NODE STATIC** | 2–5 min | **N/A (No Slurm needed).** LLM API turn via the 18:00 reset watcher. |
+| | Later Endpoint Run | **DO NOT QUEUE YET** | 3–4 hours (Array) | **After `fps-adopt-verifier` returns PASS.** The candidate construction is artifact-binding blocked; an early batch violates the publication commit gate. |
+| **3. Agent E** (G2 C++ Source) | Source Build & 1A Smoke | **REUSE OWNER-HELD INTERACTIVE** | 5–15 min | **Immediate (via `srun --overlap`).** Single-node short work fits the interactive allocation; batching wastes queue time. |
+| | 12-Playlist FPS Array & Merge | **DO NOT QUEUE YET** | 2–3 hours (Array) | **After the 1A interactive smoke PASS.** The C++ source is currently active/mutable. Queuing now races the compiler and risks running a stale binary. |
+| **4. Agent B** (PET UQ) | F7 Background Smoke | **DO NOT QUEUE YET** | ~10 min | **After Agent E's G2 FPS CV merge completes.** The F7 smoke requires the full-event aligned background clouds/weights that do not yet exist. |
+| | PET Nominal, C_stat, UQ | **DO NOT QUEUE YET** | 1.3h per GPU train | **After G2 NPZ is frozen and F7 smoke PASS.** The input tensors are mutable/missing; early GPU submission would crash or run on quarantined scaffolding. |
+
+### Enforced Protections & Dependency Rules
+1. **One-Writer / No-Duplicate-Outputs:** The `interactive-first` policy forbids submitting an `sbatch` equivalent to a job that can fit an already-running interactive allocation. This prevents silent Lustre output-file corruption.
+2. **Commit Gate:** No scientific compute arrays (Agent C endpoints, Agent E 12-playlist, Agent B PET UQ) can be submitted using explicit scheduler dependencies (`--dependency=afterok:...`) right now because the prerequisite steps include **human/verifier code-review gates**, not just SLURM job completions. A batch array is only safe to queue early when its direct prerequisite is purely computational and immutable.
+3. **Owner Continuity:** Roles remain strictly bound to their UUIDs and namespaces. Agent E owns the unassigned C++ (Claude-personal), Agent A handles standard paths, Agent C handles FPS, and Agent B owns the PET Python interface.

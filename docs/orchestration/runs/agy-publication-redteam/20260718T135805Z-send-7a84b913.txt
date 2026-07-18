@@ -1,0 +1,35 @@
+**BLOCK**
+
+The G2 full-schema source is NOT ready for production. The full-event background inventory does not exist because the C++ event-loop writer has not yet been updated with the required feature schema. The untracked background-cloud batch launchers are **scientifically unsafe to run today**: launching them now would waste compute generating multi-gigabyte ROOTs that lack the distinguished muon and vertex features, satisfying neither the `pet-fullevent-fps-v1` contract nor the F7 coherence gate.
+
+Here is the exact read-only audit:
+
+### 2. Ranked File/Line Gaps
+1. `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`
+   - **Gap:** Missing the requested full-event branches under the `MNV101_DUMP_POINTCLOUD` gate.
+   - **Lines 838-846, 1131-1138, 1289-1296:** Only recoil energy/pos/z and truth kinematics are dumped. The `mu_px`, `mu_py`, `mu_pz`, `mu_E`, `mu_phi`, `mu_qp`, `mu_minos_ok`, `vtx_x`, `vtx_y`, `vtx_z`, `part_reco_view`, and `part_reco_time` branches (which already have working `CVUniverse` getters) are entirely missing.
+2. `nd-unfolding/pet/pointcloud_projection.py` (or equivalent NPZ dumper)
+   - **Gap:** The python parser needs to be updated to load `w_bkg` and the background `part_reco` clouds into the unified NPZ, which the `build_fullevent_loaders` module strictly requires for its `negweight-refined` nominal gate.
+
+### 3. Smallest Ordered Implementation Packet & Ownership
+- **Agent A (C++ Owner):** Edit `runEventLoopOmniFold.cpp` to attach the new tree branches under the `MNV101_DUMP_POINTCLOUD` gate for `mc_signal_reco`, `data`, and `mc_background` (as detailed in `FULL_EVENT_INTERFACE_REQUEST.md`). Compile and verify locally.
+- **Agent B (Python/PET Owner):** Update the Python NPZ dumper to capture the new scalar branches, the background clouds, and `w_bkg` into a single F7-compliant tensor dictionary.
+- **Handoff:** Agent A produces the ROOTs; Agent B produces the NPZ and proves F7 alignment.
+
+### 4. Required Evidence Before a 12-Playlist Run
+Before submitting the full batch array, Agent A must provide:
+- **1A-only C++ smoke ROOT:** Verifying that `mu_px` etc. are properly populated (no `-9999` leakage).
+- **1A-only NPZ closure:** Verifying that `tree_entries["mc_signal_reco"] == tree_entries["mc_truth_denom"]` holds (completeness), native misses are safely handled without corrupting the pass-reco normalization, and `w_bkg` correctly aligns with the data/MC rows.
+- **Stable key proof:** Outputting `run`/`subrun`/`nth` keys to ensure the F7 `inventory_order_hash` remains perfectly deterministic across multiple reads.
+
+### 5. Interactive-vs-Batch Placement Plan
+- **C++ Build & 1A Smoke:**
+  - *Where:* Existing owner-held interactive allocation (`srun --overlap`).
+  - *Why:* < 10 minute turnaround. Do not queue a batch job for a compiler check.
+- **12-Playlist PC-FPS BkgCloud Dump:**
+  - *Where:* `sbatch_evloop_array_pointcloud_fps_bkgcloud.sh` (Array 1-12, `shared` QOS).
+  - *Wall estimate:* ~2-3 hours per task.
+  - *Protection:* The script correctly writes to a unique `_bkgcloud_${PL}.root` namespace. This perfectly isolates it from the active standard P3S outputs and the older PC-FPS outputs, safely avoiding duplicate-writer corruption on Lustre.
+- **NPZ Assembly:**
+  - *Where:* Interactive `srun --overlap` with high-memory (>=64GB RAM).
+  - *Why:* In-memory concatenation of 49.2M point clouds will OOM a standard small node but does not need a GPU.

@@ -1,0 +1,22 @@
+**PASS**
+
+The updated alias patch robustly addresses all edge cases and safely consolidates shared capacity.
+
+Here is the read-only verification of the repairs:
+
+1. **Reset-boundary/Tie Behavior:**
+   - `candidates.sort(key=lambda item: (item[0], item[2].get("used_percent", -1), item[1]))` correctly breaks exact-timestamp ties by sorting lower usage first, meaning `candidates[-1]` accurately extracts the most conservative (highest usage) observation.
+   - `old_observed <= observed` closes the gap in the non-monotonic warning. Though the new sort key ensures a tied timestamp won't have *higher* usage in an `old` candidate, this boundary condition is mathematically sealed.
+
+2. **State Compatibility (Legacy Snapshots):**
+   - The dictionary union `set((previous.get("accounts") or {})) | set((current.get("accounts") or {}))` safely handles `None` from legacy cached state files that lack the `accounts` dictionary entirely.
+   - `snapshot_changes` explicitly skips the duplicate alias profiles (`claude-school`, `claude-school-legacy`) and tracks the unified `account:claude-school` representation, avoiding ledger double-reporting.
+
+3. **Unchanged Codex Reserve Gate:**
+   - `normalize_codex`, the required-profiles enforcement loop, and the `result["gate_ok"] = not result["policy_violations"]` cascade are entirely untouched. The fail-closed Codex reserve logic remains perfectly isolated.
+   - Any `UsageError` raised during the Claude account consolidation is properly caught and appended to `policy_violations`, triggering an immediate `GATE_OK false` and blocking orchestration.
+
+4. **JSON/Table Clarity:**
+   - The CLI output now renders `account_rows` in a dedicated aligned table, restoring terminal clarity without compromising the machine-readable JSON structure.
+
+The code and policy semantics are solid and ready to commit.

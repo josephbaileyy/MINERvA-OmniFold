@@ -1,0 +1,48 @@
+**VERDICT: BLOCK**
+The current plan fails publication adequacy. It silently promotes recoil-only cross-checks to the publication nominal, lacks the mandatory background handling for the extension tiers, and schedules UQ compute that violates the joint-retraining and coherent-bootstrap contracts.
+
+### Ranked Defect List
+
+1. **Silently Promoting a Quarantined Control (PET FPS):**
+   - **Evidence:** `docs/OPEN_ITEMS.md` lines 278–291 ("Active campaign — PET capstone") claims the "Full-stats PET FPS train" running on `of_inputs_pc_fps.npz` is the capstone.
+   - **Contradiction:** `docs/OPEN_ITEMS.md` lines 48–112 (KNOWN_ISSUES #19) and `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` explicitly quarantine these exact inputs as "recoil-only" cross-checks and specifically state: *"Artifact guard: `of_inputs_pc_fps.npz`... Neither is an FPS publication input."* The plan is executing a control study rather than building the mandatory G2 full-schema (`event_reco`, `event_data`, `event_truth`) representation.
+2. **Missing `negweight-refined` Implementation for Scalar FPS:**
+   - **Evidence:** `docs/PUBLICATION_COMPLETION_RUNBOOK.md` (lines 18–21, 98–115) and `docs/OPEN_ITEMS.md` mandate that scalar FPS production use explicit `--bkg-mode negweight-refined` to properly handle negative background clouds followed by Stay-Positive.
+   - **Contradiction:** Existing FPS results are still labeled as "purity-footed." A purity target is explicitly designated as a matched control only, yet there is no execution step queued to build the literal signed target.
+3. **PET Statistical Ensembles Violate the F7 Contract:**
+   - **Evidence:** `nd-unfolding/ND_OMNIFOLD_STATUS.md` line 41 mentions expanding the statistical inventory to 100 replicas.
+   - **Contradiction:** The F7 protocol (`nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` lines 125–150; Runbook lines 25–30) strictly forbids reusing a nominal target for statistical replicas. F7 requires coherent global Poisson factors drawn *before* any training subset, applied to the negative background injection, followed by a *fresh* Stay-Positive refinement per replica.
+4. **PET Laterals Bypass Joint Retraining:**
+   - **Evidence:** `KNOWN_ISSUES.md` #3 and #16 show PET laterals were inferred on frozen clouds.
+   - **Contradiction:** Gate 8 of `PET_UQ_REMEDIATION_STATUS.md` and P3F-PET (Runbook lines 137–156, 230–234) require P3F-PET full-schema selection-shifted source inputs that undergo *joint* background refinement, retraining, and extraction.
+5. **Non-Atomic Resume Logic Risks Data Corruption:**
+   - **Evidence:** `KNOWN_ISSUES.md` lines 38–47 (BEN-023) notes that `[[ -s $OUT ]] && skip` is still widely used in launchers, treating interrupted partials as valid.
+   - **Contradiction:** The Runbook (lines 244–250) forbids size-only checks and mandates atomic rename-on-complete or strict content validation.
+
+---
+
+### Explicit Dependency Graph & Checkpoint Table
+
+| Checkpoint | Status | Blockers |
+| :--- | :--- | :--- |
+| **PG0 (Controls & Ownership Freeze)** | **FAIL** | Contradictory PET docs, non-atomic launchers. |
+| **G2 (FPS CV Full-Schema Inputs)** | **PENDING** | PG0, C++ binary drain. Needs `event_truth` & `event_reco` schemas. |
+| **P3F-scalar (Scalar FPS Negweight)** | **PENDING** | PG0. Needs explicit Stay-Positive target. |
+| **P3F-PET (Shifted PET Inputs)** | **PENDING** | G2 CV. |
+| **P5A (PET Nominal & Floor)** | **PENDING** | P3F-PET. Must use `negweight-refined` and full-schema. |
+| **P5B (PET UQ Campaign)** | **PENDING** | P5A. Must use F7 stat protocol and joint lateral retraining. |
+| **P4 (Covariance Adoptions)** | **PENDING** | Validated components. |
+| **P6 (Projections & Analysis)** | **PENDING** | P4, P5B. |
+| **P7 (Docs & Release Freeze)** | **PENDING** | P6. |
+
+---
+
+### Compute-Placement Recommendation
+
+- **Batch / Queue Early: NONE.**
+  Do *not* submit any jobs for the PET FPS capstone, 100-replica stat expansion, or fine-grid sweeps. The scientific contracts for these jobs (full-event representation, `negweight-refined`, F7 replica coherence) are either under review or explicitly violated in the current scripts. Submitting them now burns allocation on quarantined control products.
+- **Live Interactive Allocation:**
+  Use an existing interactive node (via `alloc_run.sh` or `srun`) *only* for fixing the code infrastructure:
+  1. Resolving the C++ event-loop features to satisfy the G2 full-schema contract.
+  2. Implementing atomic `rename-on-complete` in the shell launchers.
+  3. Building the `negweight-refined` literal signed target builder.
