@@ -32,8 +32,8 @@ run_role() {
   fi
 }
 
-run_role agent-C-fps orchestration/followup-agent-C-fps-02.md
 run_role agent-A-standard orchestration/followup-agent-A-standard-02.md
+run_role agent-C-fps orchestration/followup-agent-C-fps-02.md
 run_role agent-B-p5b orchestration/followup-agent-B-p5b-02.md
 
 date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ all reset rounds returned overall_rc=${overall_rc}"

@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:02 UTC. Registry:
+Last reconciled: 2026-07-18 11:03 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -26,8 +26,10 @@ Last reconciled: 2026-07-18 11:02 UTC. Registry:
 
 Reset routing: one flock-protected watcher is armed for 2026-07-18 13:00:30
 UTC via `resume_after_school_reset.sh`. It resumes the existing registry roles
-in critical-path order C repair-only → A → B and records provider artifacts through
-`agentctl.py`; it does not create or substitute a worker.
+in holder-deadline order A repair/reconcile → C repair-only → B F7 and records
+provider artifacts through `agentctl.py`; it does not create or substitute a worker.
+The order changed in `MIG-WAKE2` after the negweight audit made C production ineligible
+while A's holder retained a 13:50 UTC wall.
 
 ## Routing invariants
 
