@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:03 UTC. Registry:
+Last reconciled: 2026-07-18 11:07 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -30,6 +30,33 @@ in holder-deadline order A repair/reconcile → C repair-only → B F7 and recor
 provider artifacts through `agentctl.py`; it does not create or substitute a worker.
 The order changed in `MIG-WAKE2` after the negweight audit made C production ineligible
 while A's holder retained a 13:50 UTC wall.
+
+## Publication-grade evidence audit
+
+This table is an index and verdict layer, not a second home for scientific facts.
+Canonical requirements remain in `KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md`, the P0–P8
+publication runbook, `pet/FULL_EVENT_FEATURE_CONTRACT.md`, and the workstream STATUS/RUN_LOG
+files. A gate is PASS only when its direct evidence and repository-mandated receipt are
+committed and pushed. A successful job, readable ROOT, plausible number, or uncommitted plan
+is insufficient.
+
+| Gate | Current verdict | Direct evidence required for PASS | Durable owner / pointer |
+|---|---|---|---|
+| PG0 — provenance and worktree reconciliation | **BLOCKED** | Exact ownership/inventory/hashes for every reusable input and active output; no ambiguous writer; runbook/dependency/remediation controls committed. Current contradiction: `docs/PUBLICATION_COMPLETION_RUNBOOK.md`, `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md`, and `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` are untracked, while `KNOWN_ISSUES.md` and `docs/OPEN_ITEMS.md` are dirty. | orchestrator + file owners; runbook P0; `MIG-PUB-AUDIT1` |
+| PG1 — estimator/domain/background definition | **PARTIAL; PRODUCTION BLOCKED** | One frozen `pet-fullevent-fps-v1` contract: extended FPS domain, full schema, explicit `negweight-refined`, literal aligned background injection, Stay-Positive, seed/config/fingerprint policy shared by central and every covariance component. | Agent B; `ROLLOUT-PLAN.md` Stage 2.5; `pet/FULL_EVENT_FEATURE_CONTRACT.md`; `MIG-DEC-NW{,-FPS}` |
+| PG2 — PET engine correctness | **BLOCKED ON F7 + TARGET INTEGRATION** | F2/F3 GPU regression and cap sensitivity; F7 factors drawn over full data/signal/background inventories before subsetting; background draw before per-replica refinement; exact replay/extraction identity; no Horovod path. | Agent B; T5; feature contract CLM-008 |
+| PG3S — standard selection-complete scalar lateral | **PREFLIGHT-BLOCKED; COMPUTE ACTIVE** | Exact 10-endpoint inventory/config/migration/order proofs; atomic completion; five MAT components; complete support comparison; same-verifier PASS; scoped candidate commit. | Agent A + `standard-p4-verifier`; T2 / `MIG-V2` |
+| PG3F — scalar FPS selection-complete lateral | **BACKGROUND-MODE/PREFLIGHT-BLOCKED** | Separate 10-endpoint `negweight-refined` inventory with mode-stamped atomic outputs; exact mask/order/config; five nonzero components; same-verifier PASS; purity controls excluded. | Agent C + `fps-adopt-verifier`; T1 / `MIG-V1`, `MIG-DEC-NW-FPS` |
+| PG4 — corrected scalar adoption/projection | **DEPENDENCY-BLOCKED** | Pure-component replacement without subtraction ambiguity; exact component identity; reproducible unified adoption; nonmutation hashes; exact width-weighted `M C M^T`; PSD/symmetry/finite gates. | T3 plus T1/T2 owners; runbook P4/P6 |
+| PG5A — publication full-event FPS CV/nominal | **DEPENDENCY-BLOCKED** | G2 full-schema branches and stable keys; regenerated CV input with background clouds/scalars/weights; exact alignment/native-miss/edge/order proofs; negweight-refined pilot, stress and ordinary closure; nominal/floor manifest and commit. | Agent B interface/estimator; T6 and Stage 2.5; runbook P5A |
+| PG5B-source — full-schema shifted endpoints | **DEPENDENCY-BLOCKED** | Fresh five-band × two-endpoint × twelve-playlist full-schema P3F products after G2; exact event/cloud/background joins, migration census, hashes, and commit. Reduced-schema endpoints remain controls. | Agent C after G2; T7; runbook P3F/P5B |
+| PG5B-UQ — publication PET covariance | **DEPENDENCY-BLOCKED** | Fresh coherent C_stat, crossed C_ML, joint end-to-end vertical/flux response, selection-complete lateral retraining, common fingerprint/mask/order/central, complete manifests, no recoil/P1 component transfer. | Agent B; T8; runbook P5B |
+| PG6 — covariance mathematics and assembly | **NOT YET TESTABLE ON FINAL PRODUCTS** | Exact component inventories and sums; declared mean centering/mean shifts; finite/symmetric/PSD/rank gates; no double count; exact 5D→4D projection; independent reconstruction from final products/manifests. | owning producer + independent verifier; runbook P4–P7 |
+| PG7 — physics comparisons/coverage | **DEPENDENCY-BLOCKED** | Frozen central/covariance provenance; supported/dead-cell tiering; prior envelope and coverage; matched-domain scalar/PET comparisons; generator significances with full covariance. | future P7 owner; T9 |
+| PG8 — publication freeze | **DEPENDENCY-BLOCKED** | Ledger/RUN_LOG/STATUS receipts for every result; clean note/primer/paper builds; figure/value provenance; Overleaf/GitHub synchronization; no unresolved publication blocker. | future document owner; T10; runbook P8 |
+
+Publication-final is prohibited until every PG gate is PASS. Evidence-blocked gates remain
+visible; they are never waived by downstream numerical agreement.
 
 ## Routing invariants
 
