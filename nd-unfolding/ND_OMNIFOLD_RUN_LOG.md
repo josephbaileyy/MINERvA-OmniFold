@@ -1650,3 +1650,27 @@ products are preserved, quarantined.
   candidate `uq_4d/corrected/projections_candidate/`, NOT quoted; final numbers gated on
   the final adopted 5D). **Unified-throw** (160 joint throws + 124 block units, seed 1000)
   and candidate adopt (mean + `--cv-centered`) were IN FLIGHT at this entry.
+
+## 2026-07-18 — P4 standard-lateral chain hardened (REPAIR ONLY, Agent A)
+
+Repair-only turn; independent MIG-V2 preflight = BLOCK, so NO covariance was built,
+promoted, or adopted. Standard P4 chain hardened with fail-closed gates + exact
+inventory hashing (`nd-unfolding/p4_lib.py`): 10-endpoint manifest / config /
+mask-order sha256 hashes; merged-endpoint audit (four non-empty trees, finite
+positive POT, `signal_reco==truth_denom`, native-miss + all census counters,
+declared migration policy); atomic unfold completion markers + config/source
+validation + fail-closed parallel return (`run_p4_unfold_std.sh`); a fail-closed
+active-lateral validator requiring exactly the 5 kinematic bands, positive-finite
+component traces, EXACT component sum, symmetry/PSD, complete support-limited
+comparison, and 5D→4D projection non-mutation (`p4_validate_active_lateral.py`); and
+a pure-component lateral-replacement step guarded against adopted-path overwrite
+(`p4_lateral_replace.py`). The MAT two-endpoint formula is preserved
+(`uq_math.mat_covariance`). Tests `nd-unfolding/tests/test_p4_repair.py`: 16/16 pass
+over the eight verifier-identified failure modes (missing endpoint, truncated
+output, missing census/migration, zero/absent component, order/hash mismatch,
+missing support block, component-sum mismatch, invalid projection). The 10 standard
+endpoint unfolds are content-validated 10/10 (open/non-zombie/not-recovered/finite
+`hXSecND_flat`/common dim 65856/positive) but are NOT consumed this turn. Candidate
+covariance construction is authorized only after the standard-p4-verifier
+(019f74cb-b85d-7ba0-96c5-dfbd09e59159) returns PASS. STATUS one-liner deferred
+(ND_OMNIFOLD_STATUS.md carries a concurrent session's uncommitted edit).
