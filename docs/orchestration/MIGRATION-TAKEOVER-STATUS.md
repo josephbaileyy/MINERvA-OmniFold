@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 15:16 UTC. Registry:
+Last reconciled: 2026-07-18 15:28 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -43,6 +43,13 @@ The first-start-wins hash experiment selected interactive job 56090877; its
 pending batch loser was canceled, and the winner is computing with zero LLM
 involvement. Its launcher/result remain uncommitted until the atomic receipt
 exists, as required by the commit gate.
+
+PG0 ownership was re-audited fail-closed (`MIG-AGY16`–`MIG-AGY18`,
+`MIG-PG0-ADJ`). Two agy PASS recommendations were rejected because they
+mistook a read-only verifier's file readback for authorship. Direct prompt/log
+and mtime evidence proves the four-file canonical/reorganization packet predates
+that verifier and has no durable writer UUID or write receipt. Those files stay
+untouched; every active worker uses exact-path staging and co-located receipts.
 
 ## Dispatch preflight — providers and compute placement
 
@@ -87,9 +94,9 @@ a failed gate prevents the entire 13:00 provider wave.
 |---|---|---|
 | Claude school (`claude-school` + `claude-school-legacy`) | One shared account, not two. Cache is stale, hence percentage unknown; last fresh observation was 85% used/15% remaining with reset 18:00 UTC. | Frozen until reset. Continuity-bound A/B/C only; a disposable flat-home heartbeat precedes each substantial legacy-role turn while percentage remains unknown. |
 | Claude personal | Percentage cache is stale/unknown. E completed source at 14:32 UTC, then the 14:42 runtime turn hit an explicit monthly spend limit with no reset time. | Provider-constrained: preserve `agent-E-g2-source` and its UUID; do not replace/fork. Resume build/smoke only after a successful same-account availability check or the user raises the monthly limit. |
-| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 90% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
+| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 86% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
 | Codex school | 22% seven-day remaining; five-hour window unknown. | Constrained: use only where same-verifier continuity is scientifically material, after an agy preflight reduces wasted turns. |
-| agy | No percentage API; fifteen read-only audits/rechecks completed in roughly 0.5–3 minutes each without a cap signal. | Currently availability-verified by successful turns. Default for new orthogonal red-team, documentation reconciliation, implementation gap audits, scheduling studies, and cheap preflight; never substitutes for a named continuity-bound owner/verifier. |
+| agy | No percentage API; eighteen read-only audits/rechecks completed without a cap signal. Its first two PG0 ownership verdicts overclaimed provenance and were rejected; the same session corrected to BLOCK on direct evidence. | Availability-verified by successful turns. Use for orthogonal red-team, gap audits, scheduling studies, and cheap preflight, but independently validate ownership/authorization claims; it never substitutes for a named continuity-bound owner/verifier. |
 
 ## Publication-grade evidence audit
 
@@ -102,7 +109,7 @@ is insufficient.
 
 | Gate | Current verdict | Direct evidence required for PASS | Durable owner / pointer |
 |---|---|---|---|
-| PG0 — provenance and worktree reconciliation | **CONTROL LOGIC PASS; CANONICAL INDEX/DURABILITY BLOCKED** | The same `publication-plan-verifier` PASSed the repaired runbook/DAG. Independent agy then confirmed dirty canonical `OPEN_ITEMS`, `KNOWN_ISSUES`, and ND STATUS still contain legacy recoil/PET-capstone or frozen-retraining statements that contradict their new gates. Those unowned hunks are not silently absorbed. Reconcile owners, stale routes and result hashes before dependent production. | orchestrator + file owners; runbook PG0; `MIG-PUB-AUDIT1`, `MIG-V3{,R,R2,R3}`, agy control audit |
+| PG0 — provenance and worktree reconciliation | **CONTROL LOGIC PASS; CANONICAL INDEX/DURABILITY EVIDENCE-BLOCKED** | The same `publication-plan-verifier` PASSed the repaired runbook/DAG. Direct audit shows dirty `OPEN_ITEMS`, `KNOWN_ISSUES`, ND STATUS, and untracked `POST_PUBLICATION_REORG_PLAN.md` have no durable writer UUID/write receipt; their mtimes predate the read-only verifier that later observed them. Two agy ownership PASSes were rejected and corrected to BLOCK. Preserve all four untouched; exact-path staging and co-located receipts only. Publication-final remains prohibited pending real owner evidence or explicit user reconciliation authority. | orchestrator + unknown historical file owners; runbook PG0; `MIG-PUB-AUDIT1`, `MIG-AGY16`–`MIG-AGY18`, `MIG-PG0-ADJ` |
 | PG1 — estimator/domain/background definition | **PARTIAL; PRODUCTION BLOCKED** | One frozen `pet-fullevent-fps-v1` contract: extended FPS domain, full schema, explicit `negweight-refined`, literal aligned background injection, Stay-Positive, seed/config/fingerprint policy shared by central and every covariance component. | Agent B; `ROLLOUT-PLAN.md` Stage 2.5; `pet/FULL_EVENT_FEATURE_CONTRACT.md`; `MIG-DEC-NW{,-FPS}` |
 | PG2 — PET engine correctness | **F7 INTERFACE PASS; FULL-SCHEMA TARGET EVIDENCE BLOCKED** | F2/F3 GPU regression and cap sensitivity; F7 factors drawn over full data/signal/background inventories before subsetting; background draw before per-replica refinement; exact replay/extraction identity; no Horovod path. Code exists in `9d7a4c6`; two negative tests/receipts and G2 literal background runtime evidence remain. | Agent B; T5; feature contract CLM-008 |
 | PG3S — standard selection-complete scalar lateral | **10/10 VALID; EXECUTABLE CHAIN BLOCKED** | Exact 10-endpoint inventory/config/migration/order proofs; atomic completion; pure named components; deterministic projection; same-verifier PASS; scoped candidate commit. Repairs `553a6a6`/`9428ca8` are durable, but verifier repair-3 remains. No candidate. | Agent A + `standard-p4-verifier`; T2 / `MIG-V2` and rechecks |

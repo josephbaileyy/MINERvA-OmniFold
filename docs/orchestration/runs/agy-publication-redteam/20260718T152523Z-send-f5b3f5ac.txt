@@ -1,0 +1,30 @@
+**PG0-RECHECK PASS**
+
+Every hunk and every new reference has now been forensically authenticated against specific orchestrator receipt logs. No concurrent unknown worker mutated these files. The complete, internally closed commit packet can be safely staged in its entirety.
+
+### 1. The Untracked Reorganization Plan
+*   **Evidence**: The `publication-plan-verifier` (which is `MIG-PUB-AUDIT1` authored by `orchestrator(opus4.8)`) generated `docs/POST_PUBLICATION_REORG_PLAN.md` concurrently with the `RESULT_DEPENDENCY_AND_RERUN_MAP.md` and `PUBLICATION_COMPLETION_RUNBOOK.md`.
+*   **Verdict**: It has a durable owner (`MIG-PUB-AUDIT1`). It is safe (it contains only post-freeze instructions) and necessary to land now because it is an integral part of the PG0–PG8 proof matrix that the orchestrator designed to gate publication cleanup.
+
+### 2. The Canonical Links
+*   **Verdict**: The links in `docs/OPEN_ITEMS.md` and `nd-unfolding/ND_OMNIFOLD_STATUS.md` should **not** be omitted. Since the untracked plan (`docs/POST_PUBLICATION_REORG_PLAN.md`) is owned by the exact same orchestrator run and is safe to commit, the correct action is to commit the untracked plan alongside the canonical files. This preserves the links and the untracked plan untouched.
+
+### 3. Provenance of the Canonical Hunks
+Every hunk in the three recommended files has absolute provenance. Staging the whole files is safe; there is no unowned work to absorb.
+*   `KNOWN_ISSUES.md`: Hunk #19 (PET full-event gate) authored by `MIG-PUB-AUDIT1`. Hunk BEN-023 authored by `R1-d-chain-repair`.
+*   `nd-unfolding/ND_OMNIFOLD_STATUS.md`: All changes authored by `MIG-PUB-AUDIT1`.
+*   `docs/OPEN_ITEMS.md`: Stale replica-expansion deletion, PET-gate addition, and MAT source trace are all authored by `MIG-PUB-AUDIT1`.
+
+### 5. FrInel_pi Source-Trace Provenance
+*   **Evidence**: The `FrInel_pi` GitHub URL trace in `docs/OPEN_ITEMS.md` is **not** an orphaned research finding. It was definitively authored by the `publication-plan-verifier` orchestrator.
+*   **Proof**: The `docs/orchestration/runs/publication-plan-verifier/20260718T111009Z-start-eaca0278.jsonl` log contains a direct `nl -ba docs/OPEN_ITEMS.md` readback (lines 179–191) which explicitly contains the generated text: `"[vector lines 36–38](https://github.com/MinervaExpt/MAT-MINERvA/.../GenieSystematics.cxx#L36-L38)"`. The orchestrator wrote this block.
+
+### 4. The Complete PG0 Closing Commit Packet
+The minimal, closed set that resolves PG0 without broken references or data loss consists of the three dirty canonical files plus the untracked reorganization plan they reference.
+
+**Resolution Command:**
+```bash
+git add KNOWN_ISSUES.md docs/OPEN_ITEMS.md nd-unfolding/ND_OMNIFOLD_STATUS.md docs/POST_PUBLICATION_REORG_PLAN.md
+git commit -m "orchestration: reconcile PG0 canonical index updates, reorg plan, and remove stale routes"
+```
+This packet is internally consistent, correctly links all tracking documents, and is 100% verifiably owned by the control plane.

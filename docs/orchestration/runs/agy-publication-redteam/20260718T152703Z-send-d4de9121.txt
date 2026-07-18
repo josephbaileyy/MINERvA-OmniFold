@@ -1,0 +1,20 @@
+**PG0-FINAL BLOCK**
+
+The previous PASS verdict was an error in deductive logic. Reading a file in a verifier log proves the file existed at the time of the read; it does not prove authorship. The authoritative evidence dictates a fail-closed response.
+
+### 1. Unresolved Owner Evidence
+The four-file packet (`KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md`, `nd-unfolding/ND_OMNIFOLD_STATUS.md`, and the untracked `docs/POST_PUBLICATION_REORG_PLAN.md`) lacks any verified write-receipt or durable owner UUID:
+
+*   **Timeline Contradiction**: The file modification times (July 15–17) strictly predate the July 18 `publication-plan-verifier` (MIG-PUB-AUDIT1) run.
+*   **Instruction Contradiction**: The verifier was explicitly instructed to work read-only, and its logs contain only read commands. It did not generate these hunks; it only observed them.
+*   **Audit Contradiction**: `MIG-PUB-AUDIT1` explicitly recorded that it encountered an already-dirty canonical index and blocked PG0 durability because of it. It never claimed ownership of the uncommitted state.
+*   **Missing Provenance**: The actual author(s) of the PET full-event measurement gate (Issue #19), the `FrInel_pi` MAT source trace, the presentation-closeout text, and the reorganization plan remain unidentified. No UUID or run log has been presented proving who executed the writes.
+
+### 2. Safe Interim Rule
+Because repository policy strictly treats dirty or untracked work as another owner's property until direct write-evidence proves otherwise, the following rules apply globally:
+
+*   **Leave Untouched**: Do not commit, delete, rewrite, stage, or attempt to reconcile any of these four files.
+*   **Explicit Staging Only**: Agents A, C, and B (and any other worker in the repair wave) must strictly use explicit-path staging (e.g., `git add <exact-file-path>`) for their own owned products. The use of `git add .`, `git commit -a`, or bulk staging is absolutely prohibited to prevent absorbing this unowned work.
+*   **Co-Located Receipts**: Active workers must ignore the global canonical index for now and rely solely on their dimensional, co-located `STATUS`, `RUN_LOG`, and local manifest/fingerprint receipts for provenance.
+
+**PG0-FINAL BLOCK**: The canonical index remains contaminated by unidentified concurrent or historical workers. PG0 durability cannot pass until explicit write-receipts (run UUIDs) for the July 15–17 mutations are discovered, or a separate policy explicitly authorizes wiping the unowned work.
