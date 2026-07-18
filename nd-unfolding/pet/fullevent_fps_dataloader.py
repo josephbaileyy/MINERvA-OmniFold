@@ -31,6 +31,7 @@ NO TensorFlow, so they are unit-testable on the login node. `build_fullevent_loa
 the vendored DataLoader lazily.
 """
 import argparse
+import hashlib
 import os
 import sys
 
@@ -198,9 +199,123 @@ def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_nam
     return True
 
 
+# ============================================================================================
+# F7 — coherent estimator-bootstrap over THREE inventories (data, signal-MC, background-MC)
+# ============================================================================================
+# Locked user decision (2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md, 2026-07-11):
+# FPS/N-D/PET nominal = NEGWEIGHT + Stay-Positive; PET = Option A LITERAL background-cloud
+# injection. Purity is a matched REGRESSION CONTROL, never the publication nominal. The
+# coherent bootstrap therefore fluctuates all THREE inventories, and the negweight-refined
+# measured target is rebuilt PER REPLICA from the fluctuated data + background — never copied
+# from the nominal. Contract (P5B C_stat hard gate):
+#   1. draw ONE global Poisson(1) factor per inventory over the FULL stable inventory BEFORE any
+#      training subset (never a post-subset redraw);
+#   2. the BACKGROUND factor multiplies the NEGATIVE POT-scaled injection weight BEFORE the
+#      Stay-Positive refinement;
+#   3. persist per-category factors, seeds, inventory-order hashes, and the estimator fingerprint;
+#   4. re-consume the SAME signal + background draws in training, target construction, and
+#      extraction; fail closed on inventory/order/fingerprint mismatch.
+# The pure functions below are TensorFlow-free and login-testable. The Stay-Positive refinement
+# here is the closed-form binned realization (arXiv:2505.03724 eq 6) used for the coherence
+# regression tests; production uses the trained refine_stay_positive classifier.
+
+def inventory_order_hash(*arrays):
+    """Stable SHA256 over truth-invariant ordered array bytes = inventory identity/order
+    evidence. The FPS ROOTs carry NO stable event keys, so this hash is how training and
+    extraction prove they consume the SAME inventory in the SAME order."""
+    h = hashlib.sha256()
+    for a in arrays:
+        a = np.ascontiguousarray(np.asarray(a))
+        h.update(str(a.dtype).encode()); h.update(repr(a.shape).encode()); h.update(a.tobytes())
+    return h.hexdigest()
+
+
+def coherent_bootstrap_factors(n_data, n_sig, n_bkg, seed):
+    """Three GLOBAL Poisson(1) factors over the full data / signal-MC / background-MC
+    inventories, drawn BEFORE any subset (F7 step 1). Distinct reproducible streams; the signal
+    stream reuses the canonical pet_bootstrap.mc_poisson_factor (rng(seed+10_000_000)) so the
+    full-event contract is bit-consistent with the recoil-only replica contract.
+    Returns (data_factor, sig_factor, bkg_factor) uint8."""
+    from pet_bootstrap import mc_poisson_factor
+    data_factor = np.random.default_rng(int(seed)).poisson(1.0, int(n_data)).astype(np.uint8)
+    sig_factor = mc_poisson_factor(int(n_sig), int(seed))
+    bkg_factor = np.random.default_rng(int(seed) + 20_000_000).poisson(
+        1.0, int(n_bkg)).astype(np.uint8)
+    return data_factor, sig_factor, bkg_factor
+
+
+def stay_positive_refine_binned(signed_w, cell, n_cells):
+    """Closed-form binned Stay-Positive (arXiv:2505.03724 eq 6): refine a signed measured sample
+    into NON-negative weights. Per cell g = D/(D+B), D=sum(+w), B=sum(|-w|); w~ = |w|*(2g-1)
+    clipped at 0 (=> non-negative; sums to D-B per cell). Production uses the trained classifier
+    (u2d.refine_stay_positive); this pure form backs the coherence tests."""
+    signed_w = np.asarray(signed_w, float); cell = np.asarray(cell)
+    pos = np.clip(signed_w, 0.0, None); neg = np.clip(-signed_w, 0.0, None)
+    D = np.bincount(cell, pos, minlength=n_cells)
+    B = np.bincount(cell, neg, minlength=n_cells)
+    denom = D + B
+    g = np.divide(D, denom, out=np.full(n_cells, 0.5), where=denom > 0)
+    return np.clip(np.abs(signed_w) * (2.0 * g[cell] - 1.0), 0.0, None)
+
+
+def build_negweight_refined_target(data_cell, bkg_cell, w_bkg, pot_scale, n_cells,
+                                   data_factor, bkg_factor):
+    """Build ONE replica's negweight-refined measured target from the coherent draws (F7 step 2).
+    Signed measured sample = data(+data_factor) ++ background(-w_bkg*pot_scale*bkg_factor); the
+    BACKGROUND FACTOR multiplies the negative injection weight BEFORE the Stay-Positive refine.
+    Returns (refined_data_w, refined_bkg_w), both non-negative. Rebuilt per replica (never copied
+    from nominal): a different bkg_factor yields a different refined target by construction."""
+    data_signed = np.asarray(data_factor, float)                              # +1 * data_factor
+    bkg_signed = -(np.asarray(w_bkg, float) * float(pot_scale)) * np.asarray(bkg_factor, float)
+    signed = np.concatenate([data_signed, bkg_signed])
+    cell = np.concatenate([np.asarray(data_cell), np.asarray(bkg_cell)])
+    refined = stay_positive_refine_binned(signed, cell, int(n_cells))
+    return refined[:len(data_signed)], refined[len(data_signed):]
+
+
+def validate_coherent_bootstrap(store, *, bootstrap_seed, n_sig_full, n_bkg_full=None,
+                                estimator_fingerprint=None, inventory_hashes=None):
+    """Extraction-side coherence gate (F7 step 4). Proves the persisted signal (and background)
+    bootstrap factors ARE the same global seed draw restricted to the persisted indices, and that
+    the seed, estimator fingerprint, and inventory-order hashes match. FAIL CLOSED (raise) on any
+    mismatch. `store` is an npz/dict with mc_indices, sig_bootstrap_factor, bootstrap_seed
+    (+ optional bkg_indices, bkg_bootstrap_factor, estimator_fingerprint, inventory_hashes)."""
+    keys = set(store.files) if hasattr(store, "files") else set(store)
+    need = {"mc_indices", "sig_bootstrap_factor", "bootstrap_seed"}
+    if need - keys:
+        raise ValueError(f"[F7] coherent-bootstrap store missing {sorted(need - keys)}")
+    if int(np.asarray(store["bootstrap_seed"]).item()) != int(bootstrap_seed):
+        raise ValueError("[F7] bootstrap seed mismatch (fail closed)")
+    from pet_bootstrap import mc_poisson_factor
+    imc = np.asarray(store["mc_indices"]); sig = np.asarray(store["sig_bootstrap_factor"])
+    if imc.shape != sig.shape:
+        raise ValueError("[F7] mc_indices/sig_bootstrap_factor shape mismatch")
+    if not np.array_equal(sig, mc_poisson_factor(int(n_sig_full), int(bootstrap_seed))[imc]):
+        raise ValueError("[F7] signal factor != canonical global seed draw at mc_indices "
+                         "(post-subset redraw or wrong inventory) — fail closed")
+    if "bkg_bootstrap_factor" in keys:
+        if n_bkg_full is None:
+            raise ValueError("[F7] bkg factor persisted but n_bkg_full not supplied for check")
+        ib = np.asarray(store["bkg_indices"]); bf = np.asarray(store["bkg_bootstrap_factor"])
+        exp = np.random.default_rng(int(bootstrap_seed) + 20_000_000).poisson(
+            1.0, int(n_bkg_full)).astype(np.uint8)[ib]
+        if not np.array_equal(bf, exp):
+            raise ValueError("[F7] background factor != canonical global seed draw at bkg_indices")
+    if estimator_fingerprint is not None:
+        got = str(np.asarray(store["estimator_fingerprint"]).item()) if "estimator_fingerprint" in keys else None
+        if got != estimator_fingerprint:
+            raise ValueError(f"[F7] estimator fingerprint mismatch: {got} != {estimator_fingerprint}")
+    if inventory_hashes is not None:
+        got = str(np.asarray(store["inventory_hashes"]).item()) if "inventory_hashes" in keys else None
+        if got != inventory_hashes:
+            raise ValueError("[F7] inventory-order hash mismatch (different/reordered inventory)")
+    return True
+
+
 def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=None,
                             feature_names=DEFAULT_EVT_FEATURES, rank=0, size=1,
-                            enforce_fps_edges=True, data_scalars_npz=None):
+                            enforce_fps_edges=True, data_scalars_npz=None,
+                            bkg_mode="negweight-refined"):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
     domain. Returns (data, mc, imc, coord_reco, coord_gen, meta). Mirrors the recoil-only
     build_loaders subsample/bootstrap contract, but sets reco_evt/gen_evt on the loaders and
@@ -260,13 +375,47 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     meta["data_scalar_source"] = data_src
     assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
                             pass_reco=pass_reco)
-    w_truth = np.asarray(d["w_truth"]).astype(np.float32)[imc]
-    measured_weights = np.asarray(d["measured_weights"]).astype(np.float32)[ida]
+    w_truth_full = np.asarray(d["w_truth"]).astype(np.float32)            # FULL signal-MC
+    measured_weights_full = np.asarray(d["measured_weights"]).astype(np.float32)  # FULL data
+    has_bkg = "w_bkg" in d.files
+    meta["bkg_mode"] = bkg_mode
+    # NOMINAL = negweight-refined (locked): Option-A literal background-cloud injection +
+    # Stay-Positive. It REQUIRES the aligned background clouds/scalars/weights; fail closed if
+    # the FPS input lacks them (the current xps2 scaffolding does). Purity is a REGRESSION
+    # CONTROL only, never the publication nominal.
+    if bkg_mode == "negweight-refined":
+        if not has_bkg:
+            raise ValueError(
+                "[F7/negweight-refined] this FPS input has NO background inventory "
+                "('w_bkg'/background clouds+scalars absent). The negweight+Stay-Positive nominal "
+                "needs the Option-A background-cloud omnifile (regenerate via "
+                "sbatch_evloop_array_pointcloud_fps_bkgcloud.sh -> ..._bkgcloud.root, re-dump PC "
+                "inputs WITH bkg clouds). Failing closed. bkg_mode='purity' is a labeled "
+                "REGRESSION CONTROL only.")
+    elif bkg_mode == "purity":
+        meta["bkg_control"] = "purity = REGRESSION CONTROL, not the publication nominal"
+    else:
+        raise ValueError(f"[F7] unknown bkg_mode {bkg_mode!r} (negweight-refined|purity)")
 
+    # F7 coherent estimator-bootstrap: draw ONE global Poisson factor per inventory over the FULL
+    # inventories BEFORE subsetting, then INDEX by imc/ida. NEVER a post-subset redraw. The
+    # persisted signal factor + inventory hash + fingerprint are re-consumed at extraction.
+    meta["bootstrap"] = None
     if bootstrap_seed is not None:
-        from pet_bootstrap import poisson_event_weights
-        measured_weights, w_truth = poisson_event_weights(
-            measured_weights, w_truth, int(bootstrap_seed))
+        n_bkg = int(np.asarray(d["w_bkg"]).shape[0]) if has_bkg else 0
+        data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(
+            M, N, n_bkg, int(bootstrap_seed))
+        w_truth = (w_truth_full[imc] * sig_factor[imc]).astype(np.float32)
+        measured_weights = (measured_weights_full[ida] * data_factor[ida]).astype(np.float32)
+        meta["bootstrap"] = {
+            "bootstrap_seed": int(bootstrap_seed), "n_sig_full": int(N), "n_data_full": int(M),
+            "n_bkg_full": int(n_bkg), "mc_indices": imc, "sig_bootstrap_factor": sig_factor[imc],
+            "inventory_hashes": inventory_order_hash(w_truth_full),
+            # background factor over the FULL bkg inventory (Option-A negweight): the injection
+            # weight -w_bkg*pot_scale*bkg_factor is refined per replica once bkg clouds land.
+            "bkg_bootstrap_factor": (bkg_factor if has_bkg else None)}
+    else:
+        w_truth = w_truth_full[imc]; measured_weights = measured_weights_full[ida]
 
     # Imported at point of use (pulls in the vendored engine); kept AFTER the CLM-007
     # fail-closed check so that guard is exercisable without TensorFlow.
@@ -288,10 +437,13 @@ if __name__ == "__main__":
                          "measured_scalars (CLM-007: no silent MC fallback).")
     ap.add_argument("--max-events", type=int, default=None)
     ap.add_argument("--no-fps-guard", action="store_true")
+    ap.add_argument("--bkg-mode", default="purity", choices=["negweight-refined", "purity"],
+                    help="nominal=negweight-refined (needs the Option-A background-cloud omnifile); "
+                         "'purity' is a regression control (the xps2 scaffolding default).")
     a = ap.parse_args()
     data, mc, imc, cr, cg, meta = build_fullevent_loaders(
         a.inputs, max_events=a.max_events, enforce_fps_edges=not a.no_fps_guard,
-        data_scalars_npz=a.data_scalars)
+        data_scalars_npz=a.data_scalars, bkg_mode=a.bkg_mode)
     print(f"[fullevent] reco cloud {np.asarray(mc.reco).shape} coord_reco={cr} "
           f"reco_evt {np.asarray(mc.reco_evt).shape}")
     print(f"[fullevent] gen  cloud {np.asarray(mc.gen).shape} coord_gen={cg} "

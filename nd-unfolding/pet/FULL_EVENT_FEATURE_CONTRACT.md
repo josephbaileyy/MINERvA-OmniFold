@@ -44,6 +44,20 @@ these fingerprints and never mix the two; recoil-only PET UQ is NEVER attached t
   feature_list || preprocessing || edges || seed_policy || input_npz_sha)`. Every covariance
   component summary must carry the SAME fingerprint or it is rejected at assembly.
 
+## Background treatment (NOMINAL = negweight-refined; F7 pre-P5B FREEZE)
+LOCKED user decision (`2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md`, 2026-07-11):
+FPS/N-D/PET nominal background subtraction is **negweight (ρ₁ = D − B) + Stay-Positive**
+(arXiv:2505.03724), and **PET uses Option A LITERAL background-cloud injection** — background
+reco CLOUDS appended to the measured/class-1 side at weight −w_bkg·pot_scale, refined to
+non-negative weights before training. The binned **purity** target max(0,D−B)/D is a **matched
+REGRESSION CONTROL only, never the publication nominal**. `build_fullevent_loaders` defaults to
+`bkg_mode="negweight-refined"` and FAILS CLOSED without the background inventory; `bkg_mode=
+"purity"` is a labeled control (the xps2 scaffolding is purity-only).
+**Pre-P5B FREEZE:** the P5B gate freezes `negweight-refined` as the nominal and REQUIRES aligned
+background clouds + scalars + `w_bkg`, row-aligned to the signal/data event order (same fail-
+closed CRC/order discipline as CLM-007), rebuilt per replica under the F7 coherent 3-inventory
+bootstrap. No purity-only P5B baseline may be launched.
+
 ## Measurement domain
 - Source only FPS CV event loops from `MNV101_FULL_PHASE_SPACE=1` (drops the 4 truth-muon
   kinematic cuts, keeps tracker fiducial, grows the native-miss set). Pass `--full-phase-space`
@@ -194,10 +208,27 @@ From the fe-fps campaign V1 (codex) code audit. Each item is dispositioned; none
   telemetry. Bit-equivalent to f/(1-f) for normal logits; only the saturation tail differs
   (correctly). Cap-sensitivity (25/30/35) is a P5B-nominal check. One shared implementation =>
   identical in nominal/replicas/universes/extraction. (Supersedes the provisional posinf-cap.)
-- **F7 bootstrap draw after subsample incoherent — HARD C_stat GATE (P5B):** the C_stat path
-  MUST draw the coherent global MC Poisson factor over the FULL inventory BEFORE subsetting,
-  persist the factors/seeds, and apply the SAME draw at extraction (recoil-only bootstrap-replica
-  contract). Not the training-builder's post-subsample Poisson.
+- **F7 coherent estimator-bootstrap — IMPLEMENTED (2026-07-17), CLOSURE EVIDENCE-BLOCKED.**
+  Contract now spans THREE inventories (data, signal-MC, background-MC) per the locked negweight
+  nominal (see "Background treatment" below). `fullevent_fps_dataloader.py`:
+  `coherent_bootstrap_factors` (one global Poisson(1) per inventory over the FULL inventory
+  BEFORE any subset; signal reuses the canonical pet_bootstrap rng(seed+1e7); data rng(seed);
+  bkg rng(seed+2e7)); `build_negweight_refined_target` (background factor multiplies the
+  −w_bkg·pot_scale injection weight BEFORE Stay-Positive; refined target rebuilt PER REPLICA,
+  never copied from nominal); `validate_coherent_bootstrap` (extraction re-derives the same
+  signal+bkg draws; FAIL-CLOSED on seed / inventory-order / fingerprint mismatch);
+  `build_fullevent_loaders` draws global-before-subset and INDEXES by imc/ida — the post-subsample
+  redraw is REMOVED — persisting factors/seeds/mc_indices/inventory-order-hash/fingerprint in meta.
+  Tests: `tests/test_fullevent_fps.py::F7CoherentBootstrap` (7) covering deterministic replay,
+  global-before-subset, same-training/extraction-MC, background-factor-before-refinement,
+  no-nominal-refinement-reuse, deliberate-mismatch-fails-closed, and negweight-refined-fails-
+  closed-without-background. 19/19 CPU tests pass.
+  **VERDICT: EVIDENCE-BLOCKED.** Machinery is code-complete + unit-verified, but F7 cannot execute
+  or be declared CLOSED until the Option-A background inventory exists: aligned background reco
+  CLOUDS + scalars + `w_bkg` in the full-event FPS input. Named missing runtime artifact:
+  `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root` (bkgcloud dump chain
+  `sbatch_evloop_array_pointcloud_fps_bkgcloud.sh`, submitted then CANCELLED 2026-07-11 for
+  auditor fixes) + re-dumped PC inputs carrying those background arrays.
 - **F8 distributed rank-slicing misalignment — MOOT (2026-07-17):** P5B adopts NO Horovod
   (independent single-rank GPU jobs), so the rank-slicing path is not used. Retire the concern.
 

@@ -157,5 +157,82 @@ class CLM007DataScalarGuard(unittest.TestCase):
                 fe.build_fullevent_loaders(pc, data_scalars_npz=ds, enforce_fps_edges=True)
 
 
+class F7CoherentBootstrap(unittest.TestCase):
+    """F7 coherent estimator-bootstrap over the 3 inventories (data, signal-MC, background-MC).
+    Pure numpy; proves the P5B C_stat gate properties without TF/GPU."""
+
+    def test_deterministic_replay(self):
+        a = fe.coherent_bootstrap_factors(100, 200, 50, seed=7)
+        b = fe.coherent_bootstrap_factors(100, 200, 50, seed=7)
+        for x, y in zip(a, b):
+            self.assertTrue(np.array_equal(x, y))                 # same seed -> identical draw
+        self.assertFalse(np.array_equal(a[1], fe.coherent_bootstrap_factors(100, 200, 50, seed=8)[1]))
+
+    def test_global_before_subset(self):
+        from pet_bootstrap import mc_poisson_factor
+        N, seed = 500, 3
+        _, sig, _ = fe.coherent_bootstrap_factors(100, N, 50, seed=seed)
+        imc = np.sort(np.random.default_rng(1).choice(N, 120, replace=False))
+        # the subset factor is the RESTRICTION of the ONE global draw, never a post-subset redraw
+        self.assertTrue(np.array_equal(sig[imc], mc_poisson_factor(N, seed)[imc]))
+
+    def test_same_training_and_extraction_mc(self):
+        N, nb, seed = 400, 60, 5
+        _, sig, bkg = fe.coherent_bootstrap_factors(80, N, nb, seed=seed)
+        imc = np.sort(np.random.default_rng(0).choice(N, 100, replace=False))
+        store = {"mc_indices": imc, "sig_bootstrap_factor": sig[imc], "bootstrap_seed": seed,
+                 "bkg_indices": np.arange(nb), "bkg_bootstrap_factor": bkg,
+                 "estimator_fingerprint": "pet-fullevent-fps-v1", "inventory_hashes": "H"}
+        self.assertTrue(fe.validate_coherent_bootstrap(
+            store, bootstrap_seed=seed, n_sig_full=N, n_bkg_full=nb,
+            estimator_fingerprint="pet-fullevent-fps-v1", inventory_hashes="H"))
+
+    def test_background_factor_before_refinement(self):
+        rng = np.random.default_rng(0); nd_, nb_, nc = 300, 120, 8
+        dcell = rng.integers(0, nc, nd_); bcell = rng.integers(0, nc, nb_)
+        wbkg = rng.uniform(0.5, 1.5, nb_)
+        df = np.ones(nd_, np.uint8)
+        d1, b1 = fe.build_negweight_refined_target(dcell, bcell, wbkg, 1.0, nc, df, np.ones(nb_, np.uint8))
+        d2, b2 = fe.build_negweight_refined_target(dcell, bcell, wbkg, 1.0, nc, df,
+                                                   rng.integers(0, 3, nb_).astype(np.uint8))
+        self.assertFalse(np.allclose(d1, d2))                    # bkg factor entered before refine
+        self.assertTrue(np.all(d1 >= 0) and np.all(b1 >= 0))     # Stay-Positive: non-negative
+
+    def test_no_nominal_refinement_reuse(self):
+        rng = np.random.default_rng(1); nd_, nb_, nc = 300, 120, 8
+        dcell = rng.integers(0, nc, nd_); bcell = rng.integers(0, nc, nb_); wbkg = rng.uniform(0.5, 1.5, nb_)
+        dfA, _, bfA = fe.coherent_bootstrap_factors(nd_, 10, nb_, seed=11)
+        dfB, _, bfB = fe.coherent_bootstrap_factors(nd_, 10, nb_, seed=12)
+        dA, _ = fe.build_negweight_refined_target(dcell, bcell, wbkg, 1.0, nc, dfA, bfA)
+        dB, _ = fe.build_negweight_refined_target(dcell, bcell, wbkg, 1.0, nc, dfB, bfB)
+        self.assertFalse(np.allclose(dA, dB))                    # per-replica rebuild, not copied
+
+    def test_mismatch_fails_closed(self):
+        N, seed = 300, 9
+        _, sig, _ = fe.coherent_bootstrap_factors(50, N, 20, seed=seed)
+        base = {"mc_indices": np.arange(N), "sig_bootstrap_factor": sig, "bootstrap_seed": seed,
+                "estimator_fingerprint": "pet-fullevent-fps-v1", "inventory_hashes": "H"}
+        with self.assertRaises(ValueError):                      # wrong seed
+            fe.validate_coherent_bootstrap(base, bootstrap_seed=seed + 1, n_sig_full=N)
+        bad = dict(base); bad["sig_bootstrap_factor"] = sig.copy(); bad["sig_bootstrap_factor"][0] += 1
+        with self.assertRaises(ValueError):                      # tampered factor / redraw
+            fe.validate_coherent_bootstrap(bad, bootstrap_seed=seed, n_sig_full=N)
+        with self.assertRaises(ValueError):                      # wrong fingerprint
+            fe.validate_coherent_bootstrap(base, bootstrap_seed=seed, n_sig_full=N,
+                                           estimator_fingerprint="pet-reduced-fps-cross")
+        with self.assertRaises(ValueError):                      # wrong inventory hash
+            fe.validate_coherent_bootstrap(base, bootstrap_seed=seed, n_sig_full=N,
+                                           inventory_hashes="different")
+
+    def test_negweight_refined_fails_closed_without_background(self):
+        with tempfile.TemporaryDirectory() as td:
+            pc = os.path.join(td, "pc.npz")
+            CLM007DataScalarGuard()._make_pc_npz(pc)             # no w_bkg, no measured_scalars
+            ds = os.path.join(td, "ds.npz"); np.savez(ds, measured=np.zeros((10, 5), "f4"))
+            with self.assertRaises(ValueError):                 # nominal needs bkg inventory
+                fe.build_fullevent_loaders(pc, data_scalars_npz=ds, enforce_fps_edges=True,
+                                           bkg_mode="negweight-refined")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

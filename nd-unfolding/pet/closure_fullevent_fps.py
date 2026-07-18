@@ -29,7 +29,7 @@ MAXEV = 12000
 tf.keras.utils.set_random_seed(0)
 
 data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
-    NPZ, max_events=MAXEV, seed=0, data_scalars_npz=DATA_SCALARS)
+    NPZ, max_events=MAXEV, seed=0, data_scalars_npz=DATA_SCALARS, bkg_mode="purity")  # xps2 = purity regression control
 
 # truth (pT,p‖) for the SAME subsample (for the marginal closure check)
 z = zipfile.ZipFile(NPZ)

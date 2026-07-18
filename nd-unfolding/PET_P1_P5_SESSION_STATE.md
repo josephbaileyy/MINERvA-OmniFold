@@ -1,5 +1,19 @@
 # PET Publication Agent B — session state
 
+## HANDOFF UPDATE (2026-07-17c) — F7 coherent estimator-bootstrap IMPLEMENTED (EVIDENCE-BLOCKED)
+Locked decision applied (bkg_negweight_state.md 2026-07-11): NOMINAL = negweight + Stay-Positive,
+PET = Option A literal background-cloud injection; purity = REGRESSION CONTROL only. F7 now spans
+3 inventories (data, signal-MC, background-MC) in `fullevent_fps_dataloader.py`:
+`coherent_bootstrap_factors` (global Poisson per inventory BEFORE subset), `build_negweight_
+refined_target` (bkg factor × −w_bkg·pot_scale BEFORE Stay-Positive; per-replica rebuild),
+`validate_coherent_bootstrap` (fail-closed seed/inventory/fingerprint), and `build_fullevent_
+loaders` global-before-subset (post-subsample redraw REMOVED) + `bkg_mode` (negweight-refined
+default FAILS CLOSED without bkg inventory; purity=control). Tests 19/19 (7 new F7). Contract +
+this doc updated; nominal frozen to negweight-refined. **VERDICT: EVIDENCE-BLOCKED** — CLOSED
+needs the Option-A background-cloud omnifile `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root`
+(bkgcloud dump chain cancelled 2026-07-11) + re-dumped PC inputs with aligned bkg clouds/scalars/
+w_bkg. No GPU/Slurm/C++/P3F launched.
+
 ## HANDOFF UPDATE (2026-07-17b) — P5B lateral-source decision + gate correction
 Orchestrator P5B dependency correction: "P3F merged > 0" is NOT sufficient. AUDITED the P3F
 endpoint schema (fps/MuonResolution_1/*.root): reduced-schema (recoil+truth clouds + scalar

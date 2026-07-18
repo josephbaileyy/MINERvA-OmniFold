@@ -25,7 +25,7 @@ DATA_SCALARS = f"{_ND}/of_inputs_5d_fps_xps2.npz"   # data muon pT,p‖ (CLM-007
 tf.keras.utils.set_random_seed(0)
 
 data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
-    NPZ, max_events=8000, seed=0, data_scalars_npz=DATA_SCALARS)
+    NPZ, max_events=8000, seed=0, data_scalars_npz=DATA_SCALARS, bkg_mode="purity")  # xps2 = purity regression control
 print(f"[fps-smoke] data_scalar_source = {meta.get('data_scalar_source')}")
 reco = np.asarray(mc.reco); gen = np.asarray(mc.gen)
 print(f"[fps-smoke] reco cloud {reco.shape} coord_reco={coord_reco} "
