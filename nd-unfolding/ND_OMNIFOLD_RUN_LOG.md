@@ -1725,3 +1725,14 @@ all MATCH the verifier; merged receipt bound (digest 6e6c4752…, 10 hashes);
 Canonical STATUS still deferred (ND_OMNIFOLD_STATUS.md dirty from another owner —
 PG0); Agent-A receipt at `active_universe_5d/standard/P4_STANDARD_STATUS.md`.
 Verifier must PASS this patch before any candidate-construction turn.
+
+2026-07-18 (Agent C, FPS 2nd repair round): ten FPS active-endpoint unfolds confirmed PURITY CONTROLS
+(launchers omitted --bkg-mode → purity default) and QUARANTINED in `active_universe_5d/fps/unfolds/`;
+read-only `fps_control_manifest.json` binds them (label=purity-control; publication gate rejects it).
+Negweight-refined preflight hardened (fps_provenance v2 gates, hash-bound publication manifest + PASS
+receipt at component build / P4 validate / active adopt / unified adopt; canonical 266/285 mask
+committed as `fps_reported_mask.json`; full merged-input SHA256 reused from the orchestrator receipt
+p4-merged-20260718; mandatory hJointMeanShift; transactional launchers into a separate
+`unfolds_negweight_refined/` namespace). 41/41 ROOT-free tests PASS. No covariance/adoption produced,
+no endpoints rerun. Canonical STATUS still deferred (ND_OMNIFOLD_STATUS.md dirty from another owner);
+FPS status receipt in `uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md`. Gated on fps-adopt-verifier PASS.

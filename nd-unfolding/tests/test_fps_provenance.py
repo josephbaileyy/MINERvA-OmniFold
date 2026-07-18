@@ -59,7 +59,9 @@ def _raises(fn):
 
 # --------------------------------------------------------------------------- manifest inventory
 def test_manifest_ok():
-    assert fp.require_publication_manifest(make_manifest())
+    m = make_manifest()
+    assert fp.require_manifest_inventory(m)
+    assert fp.require_common_fingerprints(m)
 
 
 def test_manifest_missing_endpoint():
@@ -189,6 +191,109 @@ def test_layout_and_mask_hash_deterministic():
     m = np.array([True, False, True, True])
     assert fp.mask_hash(m) == fp.mask_hash(m)
     assert fp.mask_hash(m) != fp.mask_hash(~m)
+
+
+# --------------------------------------------------------------------------- publication v2 manifest
+H64 = "a" * 64
+
+
+def make_pub_manifest(drop_hash=None, deferred_hash=None, label=None, schema=None,
+                      bkg_mode=None, mask=None):
+    eps = []
+    for b in fp.BANDS:
+        for ep in fp.ENDPOINTS:
+            foot = dict(fp.REQUIRED_FOOTING); foot["bkg_mode"] = bkg_mode or fp.PUBLICATION_BKG_MODE
+            e = {"band": b, "endpoint": ep,
+                 "layout_fingerprint": fp.layout_fingerprint(),
+                 "reported_mask_hash": mask or fp.REPORTED_MASK_FINGERPRINT,
+                 "central_hash": "cv", "footing": foot}
+            for fld in fp.PUBLICATION_ENDPOINT_HASH_FIELDS:
+                e[fld] = H64
+            if drop_hash and (b, ep) == (fp.BANDS[0], 0):
+                e.pop(drop_hash, None)
+            if deferred_hash and (b, ep) == (fp.BANDS[0], 0):
+                e[deferred_hash] = "DEFERRED-requires-ROOT"
+            eps.append(e)
+    return {"schema": schema or fp.PUBLICATION_SCHEMA, "label": label or fp.PUBLICATION_LABEL,
+            "layout_fingerprint": fp.layout_fingerprint(),
+            "reported_mask_hash": mask or fp.REPORTED_MASK_FINGERPRINT,
+            "central_hash": "cv", "endpoints": eps}
+
+
+def test_pub_manifest_ok():
+    assert fp.require_publication_manifest(make_pub_manifest())
+
+
+def test_pub_missing_hash_field():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(drop_hash="config_sha256")))
+
+
+def test_pub_deferred_hash_rejected():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(deferred_hash="input_merged_sha256")))
+
+
+def test_pub_purity_label_rejected():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(label=fp.CONTROL_LABEL)))
+
+
+def test_pub_control_schema_rejected():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(schema=fp.CONTROL_SCHEMA)))
+
+
+def test_pub_purity_bkg_mode_rejected():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(bkg_mode=fp.CONTROL_BKG_MODE)))
+
+
+def test_pub_wrong_mask_rejected():
+    assert _raises(lambda: fp.require_publication_manifest(make_pub_manifest(mask="deadbeef" * 8)))
+
+
+# --------------------------------------------------------------------------- PASS receipt binding
+def test_pass_receipt_ok():
+    assert fp.require_pass_receipt({"result": "PASS", "manifest_sha256": "abc"}, "abc")
+
+
+def test_pass_receipt_wrong_digest():
+    assert _raises(lambda: fp.require_pass_receipt({"result": "PASS", "manifest_sha256": "abc"}, "xyz"))
+
+
+def test_pass_receipt_not_pass():
+    assert _raises(lambda: fp.require_pass_receipt({"result": "FAIL", "manifest_sha256": "abc"}, "abc"))
+
+
+def test_pass_receipt_deferred_field():
+    assert _raises(lambda: fp.require_pass_receipt(
+        {"result": "PASS", "manifest_sha256": "abc", "note": "DEFERRED"}, "abc"))
+
+
+# --------------------------------------------------------------------------- mandatory mean shift
+def test_mean_shift_ok():
+    assert fp.require_mean_shift(np.ones(266))
+
+
+def test_mean_shift_absent():
+    assert _raises(lambda: fp.require_mean_shift(None))
+
+
+def test_mean_shift_nonfinite():
+    v = np.ones(266); v[3] = np.nan
+    assert _raises(lambda: fp.require_mean_shift(v))
+
+
+# --------------------------------------------------------------------------- reported mask
+def test_reported_mask_wrong_count():
+    m = np.zeros(fp.NBINS_EXT, bool); m[:100] = True     # 100 != 266
+    assert _raises(lambda: fp.require_reported_mask(m))
+
+
+def test_reported_mask_wrong_size():
+    m = np.ones(100, bool)
+    assert _raises(lambda: fp.require_reported_mask(m))
+
+
+def test_mask_fingerprint_deterministic():
+    m = np.zeros(fp.NBINS_EXT, bool); m[::2] = True
+    assert fp.mask_fingerprint(m) == fp.mask_fingerprint(m)
 
 
 def _run_all():

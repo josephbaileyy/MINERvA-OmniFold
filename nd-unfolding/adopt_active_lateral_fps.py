@@ -70,9 +70,16 @@ def main():
                     default="active_universe_5d/fps/covariance/active_scalar_lateral_fps_cov.root:hCov_universe4d_total")
     ap.add_argument("--stat", default="uq_fps/corrected/uq_cov_stat_fps.root:hCov_statfps_reported")
     ap.add_argument("--ml", default="uq_fps/corrected/uq_cov_mlsplit_fps.root:hCov_mlsplitfps_reported")
+    ap.add_argument("--manifest", required=True, help="hash-bound PUBLICATION manifest")
+    ap.add_argument("--pass-receipt", required=True, help="hash-bound PASS receipt for --manifest")
     ap.add_argument("--out",
                     default="uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root")
     a = ap.parse_args()
+
+    # blocker 2: hash-bound publication manifest + PASS receipt mandatory at this transition
+    manifest = json.load(open(a.manifest))
+    fp.require_publication_manifest(manifest)
+    fp.require_pass_receipt(json.load(open(a.pass_receipt)), fp.sha256_file(a.manifest))
 
     # blocker 4: reject output aliasing any input (no in-place clobber of a source)
     fp.require_no_path_alias(a.out, a.combined, a.active.rsplit(":", 1)[0],

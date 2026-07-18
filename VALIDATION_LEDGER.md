@@ -489,3 +489,12 @@ WS3: ours-vs-paper χ² (`\chiPaper` 3.66 / `\chiCombined` 1.481) relabeled an I
 shape-level/descriptive; generator significances remain gated until the selection-complete
 higher-dimensional covariance is adopted and the values are recomputed.
 Agent C's full WS2/WS3 RUN_LOG/STATUS + the paired-C_delta OF-vs-IBU test land under their commit gate.
+
+FPS P4/P6 (2026-07-18, 2nd fail-closed repair round): the ten FPS active-endpoint unfolds are PURITY
+CONTROLS (both launchers omitted --bkg-mode → unfold default `purity`), quarantined and NOT publication
+inputs; the selected footing is `negweight-refined`. No covariance was built or adopted. The negweight
+preflight is hardened: a hash-bound v2 publication manifest requiring the canonical 266/285 reported-mask
+fingerprint (23b2a2f4…, recomputed not trusted) + full merged-input SHA256 (reused from the validated
+orchestrator receipt p4-merged-20260718, no re-hash) + a PASS receipt bound at every covariance
+transition; mandatory hJointMeanShift; transactional endpoint launchers. 41/41 ROOT-free gate tests
+PASS. Production remains gated on an `fps-adopt-verifier` PASS of this patch; no physics numbers change.

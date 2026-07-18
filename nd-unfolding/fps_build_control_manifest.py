@@ -23,6 +23,9 @@ import re
 import sys
 
 import fps_provenance as fp
+import fps_verify_merged_receipt as fvm
+
+MASK_ARTIFACT = "active_universe_5d/fps/covariance/fps_reported_mask.json"
 
 ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
 UNFOLD_DIR = "active_universe_5d/fps/unfolds"
@@ -42,11 +45,15 @@ def die_evidence_blocked(msg):
     sys.exit(3)
 
 
-def recover_footing():
-    """Prove the footing tokens from durable launcher + unfold-source artifacts. Returns
-    (footing dict, evidence dict). Fail-closed: any unprovable token -> EVIDENCE-BLOCKED."""
-    ev = {"launchers": {}, "unfold_source": {}}
-    # unfold source: parse the --bkg-mode default
+def recover_footing(log_paths):
+    """Recover the PURITY-CONTROL footing from artifacts tied to the ACTUAL control run -- NOT the
+    current launcher (which was repaired to the negweight-refined publication config after these
+    controls were produced). Evidence: (a) the unfold source default --bkg-mode=purity; (b) all ten
+    control unfold LOGS carry the fps/lgbm/5-iter config AND announce NO negweight bkg-mode (the
+    purity down-weight path); (c) the stable launcher footing tokens (seed 42 / use-weights /
+    estimator / iters / full-phase-space) which are unchanged across the negweight patch.
+    Fail-closed EVIDENCE-BLOCKED on any inconsistency."""
+    ev = {"unfold_source": {}, "logs": {}, "launchers": {}}
     if not os.path.exists(UNFOLD_SRC):
         die_evidence_blocked(f"unfold source {UNFOLD_SRC} absent")
     src = open(UNFOLD_SRC).read()
@@ -56,52 +63,67 @@ def recover_footing():
     src_default_mode = m.group(1)
     ev["unfold_source"] = {"path": UNFOLD_SRC, "sha256": fp.sha256_file(UNFOLD_SRC),
                            "bkg_mode_default": src_default_mode}
+    if src_default_mode != fp.CONTROL_BKG_MODE:
+        die_evidence_blocked(f"unfold default bkg-mode '{src_default_mode}' != '{fp.CONTROL_BKG_MODE}'")
 
-    # launchers: each must invoke the unfold; record whether it passes --bkg-mode; confirm the
-    # fixed footing tokens are present; fail closed if a launcher is ambiguous.
-    modes_seen = set()
-    tokens_required = ["--estimator lgbm", "--seed 42", "--iters 5",
-                       "--use-weights", "--full-phase-space"]
+    # (b) control logs: no negweight announcement + fps/lgbm/5-iter config present
+    for lg in log_paths:
+        if not os.path.exists(lg):
+            die_evidence_blocked(f"control log absent: {lg}")
+        txt = open(lg, errors="replace").read()
+        if re.search(r"bkg-mode\s*=\s*negweight", txt):
+            die_evidence_blocked(f"control log {os.path.basename(lg)} announces negweight (not purity)")
+        for needle in ("estimator=lgbm", "OmniFold 5 iters", "FULL PHASE SPACE"):
+            if needle not in txt:
+                die_evidence_blocked(f"control log {os.path.basename(lg)} missing evidence '{needle}'")
+        ev["logs"][os.path.basename(lg)] = fp.sha256_file(lg)
+
+    # (c) stable launcher footing tokens (unchanged across the negweight patch)
+    stable = ["--seed 42", "--use-weights", "--estimator lgbm", "--iters 5", "--full-phase-space"]
+    proven = set()
     for L in LAUNCHERS:
         if not os.path.exists(L):
-            die_evidence_blocked(f"launcher {L} absent")
-        txt = open(L).read()
-        if "unfold_nd_omnifold_unbinned.py" not in txt:
-            die_evidence_blocked(f"launcher {L} does not invoke the unfold")
-        # collapse line-continuations/whitespace for token matching
-        flat = re.sub(r"\\\s*\n", " ", txt)
-        flat = re.sub(r"\s+", " ", flat)
-        missing = [t for t in tokens_required if t not in flat]
-        if missing:
-            die_evidence_blocked(f"launcher {L}: cannot prove footing tokens {missing}")
-        bkg = re.search(r"--bkg-mode\s+(\S+)", flat)
-        mode = bkg.group(1) if bkg else src_default_mode  # omitted -> unfold default
-        modes_seen.add(mode)
+            continue
+        flat = re.sub(r"\s+", " ", re.sub(r"\\\s*\n", " ", open(L).read()))
         ev["launchers"][L] = {"sha256": fp.sha256_file(L),
-                              "passes_bkg_mode": bool(bkg),
-                              "resolved_bkg_mode": mode}
-    if len(modes_seen) != 1:
-        die_evidence_blocked(f"launchers disagree on bkg_mode: {sorted(modes_seen)}")
-    bkg_mode = modes_seen.pop()
+                              "note": "current post-repair launcher; used only for stable footing tokens"}
+        for tok in stable:
+            if tok in flat:
+                proven.add(tok)
+    missing = [t for t in stable if t not in proven]
+    if missing:
+        die_evidence_blocked(f"cannot prove stable footing tokens {missing} from any launcher")
+
     footing = dict(fp.REQUIRED_FOOTING)
-    footing["bkg_mode"] = bkg_mode
+    footing["bkg_mode"] = fp.CONTROL_BKG_MODE   # purity: source default + no-negweight in all ten logs
     return footing, ev
 
 
 def main():
     os.chdir(ND)
-    footing, evidence = recover_footing()
+    log_paths = [os.path.join(UNFOLD_DIR, LOG_NAME.format(b=b, ep=ep))
+                 for b in fp.BANDS for ep in fp.ENDPOINTS]
+    footing, evidence = recover_footing(log_paths)
     print(f"[evidence] recovered footing bkg_mode={footing['bkg_mode']} "
-          f"(launchers omit --bkg-mode: "
-          f"{all(not v['passes_bkg_mode'] for v in evidence['launchers'].values())})")
+          f"(source default + {len(evidence['logs'])}/10 control logs carry no negweight announcement)")
 
-    # durable central binding (ROOT-free): the CV file hash determines the 285->266 reported mask.
     if not os.path.exists(CV):
         die_evidence_blocked(f"central CV {CV} absent")
     cv_sha = fp.sha256_file(CV)
-    reported_mask_hash = f"DEFERRED-requires-ROOT:cv_sha256={cv_sha}"
+    # reported mask is now COMMITTED + canonical (no deferred field): bind the exact 266/285 fingerprint
+    if not os.path.exists(MASK_ARTIFACT):
+        die_evidence_blocked(f"reported-mask artifact absent: {MASK_ARTIFACT} (run sbatch_fps_mask.sh)")
+    mask_art = json.load(open(MASK_ARTIFACT))
+    if mask_art.get("fingerprint") != fp.REPORTED_MASK_FINGERPRINT:
+        die_evidence_blocked("reported-mask artifact fingerprint != canonical REPORTED_MASK_FINGERPRINT")
+    if mask_art.get("central_cv_sha256") != cv_sha:
+        die_evidence_blocked("reported-mask artifact central_cv_sha256 != current CV sha256")
+    reported_mask_hash = fp.REPORTED_MASK_FINGERPRINT
     central_hash = cv_sha
     lay = fp.layout_fingerprint()
+    # full merged-input SHA256 from the validated orchestrator receipt (no partial head/tail)
+    receipt = fvm.verify()
+    input_hashes = receipt["verified_input_sha256"]         # abs_path -> full sha256
 
     endpoints = []
     for b in fp.BANDS:
@@ -119,11 +141,14 @@ def main():
                 if re.search(r"bkg-mode=negweight", open(lg).read()):
                     die_evidence_blocked(
                         f"log {lg} announces negweight bkg-mode but footing says purity")
+            abs_mp = os.path.abspath(mp)
+            if abs_mp not in input_hashes:
+                die_evidence_blocked(f"merged input {mp} not in validated receipt hash set")
             endpoints.append({
                 "band": b, "endpoint": ep,
                 "unfold_root": up, "unfold_sha256": fp.sha256_file(up),   # full hash (26KB output)
                 "input_merged_root": mp,
-                "input_merged_partial_sha256": fp.sha256_partial(mp),     # bounded (74GB input)
+                "input_merged_sha256": input_hashes[abs_mp],             # FULL, from validated receipt
                 "input_merged_bytes": os.path.getsize(mp),
                 "unfold_log": lg, "unfold_log_sha256": log_sha,
                 "layout_fingerprint": lay,
@@ -131,7 +156,7 @@ def main():
                 "central_hash": central_hash,
                 "footing": dict(footing),
             })
-            print(f"[hash] {b}_{ep} unfold+partial-input done")
+            print(f"[hash] {b}_{ep} unfold + full-input(receipt) bound")
 
     manifest = {
         "schema": "fps_endpoint_manifest.v1",
@@ -146,17 +171,18 @@ def main():
         "reported_mask_hash": reported_mask_hash,
         "central_hash": central_hash,
         "central_cv": CV, "central_cv_sha256": cv_sha,
+        "reported_mask_artifact": MASK_ARTIFACT,
+        "reported_mask_artifact_sha256": fp.sha256_file(MASK_ARTIFACT),
+        "n_reported": mask_art["n_reported"],
         "footing": dict(footing),
         "evidence": evidence,
         "audit_receipt": AUDIT_JSON if os.path.exists(AUDIT_JSON) else None,
         "audit_receipt_sha256": fp.sha256_file(AUDIT_JSON) if os.path.exists(AUDIT_JSON) else None,
-        "residual_evidence_gaps": [
-            "input_merged_*: bounded partial-headtail fingerprint only (full SHA256 of the ten "
-            "~74GB merged inputs = 740GB login-node I/O, deferred to a compute node); full input "
-            "identity corroborated by audit_receipt (trees/POT/census/identity, content-derived).",
-            "reported_mask_hash: DEFERRED (285->266 CV>0 mask requires ROOT); bound here via the "
-            "central_cv_sha256 and (re)computed + checked at publication-rollup time.",
-        ],
+        "merged_input_receipt": receipt["receipt_dir"],
+        "merged_input_receipt_run_id": receipt["run_id"],
+        "merged_input_fps_hash_list_sha256": receipt["fps_hash_list_sha256"],
+        "merged_input_fps_inventory_sha256": receipt["fps_inventory_sha256"],
+        "residual_evidence_gaps": [],
         "endpoints": endpoints,
     }
 
@@ -189,7 +215,7 @@ def main():
           f"{manifest['publication_gate_rejects_this']}")
     for e in endpoints:
         print(f"   {e['band']}_{e['endpoint']}: unfold={e['unfold_sha256'][:12]} "
-              f"input(partial)={e['input_merged_partial_sha256'][-12:]} bkg={e['footing']['bkg_mode']}")
+              f"input={e['input_merged_sha256'][:12]} bkg={e['footing']['bkg_mode']}")
 
 
 if __name__ == "__main__":

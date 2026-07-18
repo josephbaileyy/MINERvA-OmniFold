@@ -58,18 +58,25 @@ def main():
     ap.add_argument("--combined", required=True, help="active-lateral pre-uthrow combined ROOT")
     ap.add_argument("--uthrow", required=True, help="unified_throw_cov_fps.root")
     ap.add_argument("--prod", required=True, help="CV unfold (defines reported mask/central)")
+    ap.add_argument("--manifest", required=True, help="hash-bound PUBLICATION manifest")
+    ap.add_argument("--pass-receipt", required=True, help="hash-bound PASS receipt for --manifest")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
+    # blocker 2: hash-bound publication manifest + PASS receipt mandatory at this transition
+    manifest = json.load(open(a.manifest))
+    fp.require_publication_manifest(manifest)
+    fp.require_pass_receipt(json.load(open(a.pass_receipt)), fp.sha256_file(a.manifest))
     fp.require_no_path_alias(a.out, a.combined, a.uthrow, a.prod)
 
     fu = ROOT.TFile.Open(a.uthrow)
     C_uni = _th2(_get(fu, "C_unified"))
     C_block = _th2(_get(fu, "C_blocksum"))
-    hms = fu.Get("hJointMeanShift")
-    mean_shift = (np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
-                  if hms else None)
+    # blocker 5: hJointMeanShift is MANDATORY (not optional); validate present/finite/dim
+    hms = _get(fu, "hJointMeanShift", required=True)
+    mean_shift = np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
     fu.Close()
+    fp.require_mean_shift(mean_shift)
 
     fc = ROOT.TFile.Open(a.combined)
     C_comb = _th2(_get(fc, "hCov_combined4d_total"))          # C_pre (active-lateral combined)
@@ -125,12 +132,12 @@ def main():
     for i in range(n):
         hg.SetBinContent(i + 1, float(g[i]))
     hg.Write()
-    if mean_shift is not None:                                 # preserve SEPARATELY (not folded in)
-        hjm = ROOT.TH1D("hJointMeanShift", "joint mean shift (preserved; NOT added: mean-centered policy)",
-                        mean_shift.size, 0, mean_shift.size)
-        for i in range(mean_shift.size):
-            hjm.SetBinContent(i + 1, float(mean_shift[i]))
-        hjm.Write()
+    # preserve hJointMeanShift SEPARATELY (mandatory; mean-centered policy -> NOT folded into C_final)
+    hjm = ROOT.TH1D("hJointMeanShift", "joint mean shift (preserved; NOT added: mean-centered policy)",
+                    mean_shift.size, 0, mean_shift.size)
+    for i in range(mean_shift.size):
+        hjm.SetBinContent(i + 1, float(mean_shift[i]))
+    hjm.Write()
     prov = {
         "identity": "C_final = C_pre - C_vertical + (g g^T) o C_vertical",
         "C_pre": "hCov_combined4d_total from --combined (active-lateral)",

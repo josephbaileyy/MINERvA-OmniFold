@@ -48,6 +48,25 @@ REQUIRED_FOOTING = {
 }
 FOOTING_KEYS = list(REQUIRED_FOOTING) + ["bkg_mode"]
 
+# manifest schemas / labels
+CONTROL_SCHEMA = "fps_endpoint_manifest.v1"
+PUBLICATION_SCHEMA = "fps_endpoint_manifest.v2"
+CONTROL_LABEL = "purity-control"
+PUBLICATION_LABEL = "publication"
+
+# canonical 266/285 reported-mask fingerprint (orchestrator/verifier-supplied; recompute + compare,
+# never trust a string). mask_fingerprint() below reproduces this from the CV>0 mask; the exact
+# construction is locked by fps_reported_mask.py against this target.
+REPORTED_MASK_FINGERPRINT = "23b2a2f4e75f242141c0651052258a930ed38abc4f1740afaa0b349da78bda78"
+N_REPORTED = 266
+
+# every publication endpoint ROOT must bind these full hashes (no deferred/partial/None allowed)
+PUBLICATION_ENDPOINT_HASH_FIELDS = [
+    "unfold_sha256", "input_merged_sha256", "config_sha256",
+    "source_sha256", "launcher_sha256", "central_sha256", "audit_sha256",
+]
+DEFERRED_MARKERS = ("DEFERRED", "deferred", "partial-headtail", "TODO", "PENDING")
+
 
 class FpsGateError(Exception):
     """Raised by any fail-closed gate. Message names the exact artifact + failure."""
@@ -106,6 +125,32 @@ def mask_hash(mask_bool):
     if m.ndim != 1:
         raise FpsGateError(f"mask_hash: mask must be 1-D, got {m.shape}")
     return sha256_bytes(m.tobytes()) + f":n{int(m.sum())}/{m.size}"
+
+
+def mask_fingerprint(mask_bool):
+    """CANONICAL reported-mask fingerprint: sha256 of the 285-length boolean mask as uint8 bytes
+    (C-order). Construction locked by fps_reported_mask.py against the verifier target
+    REPORTED_MASK_FINGERPRINT (23b2a2f4...). Builders RECOMPUTE this from CV>0 and compare -- they
+    never trust the manifest string alone."""
+    m = np.asarray(mask_bool, dtype=bool)
+    if m.ndim != 1:
+        raise FpsGateError(f"mask_fingerprint: mask must be 1-D, got {m.shape}")
+    return sha256_bytes(m.astype(np.uint8).tobytes())
+
+
+def require_reported_mask(mask_bool):
+    """Recompute the reported-mask fingerprint from a boolean mask and require it to equal the
+    canonical value; also require exactly N_REPORTED (266) true bins on the 285-bin grid."""
+    m = np.asarray(mask_bool, dtype=bool)
+    if m.size != NBINS_EXT:
+        raise FpsGateError(f"reported mask size {m.size} != {NBINS_EXT}")
+    if int(m.sum()) != N_REPORTED:
+        raise FpsGateError(f"reported mask has {int(m.sum())} bins != {N_REPORTED}")
+    fpv = mask_fingerprint(m)
+    if fpv != REPORTED_MASK_FINGERPRINT:
+        raise FpsGateError(
+            f"recomputed reported-mask fingerprint {fpv} != canonical {REPORTED_MASK_FINGERPRINT}")
+    return fpv
 
 
 def endpoint_key(band, ep):
@@ -180,13 +225,65 @@ def classify_manifest(manifest):
     raise FpsGateError(f"manifest classify: non-uniform/unknown bkg modes {sorted(map(str, modes))}")
 
 
+def _reject_deferred(manifest):
+    """No field anywhere in a publication manifest may be deferred / partial / placeholder."""
+    def walk(x, path):
+        if isinstance(x, str):
+            for mark in DEFERRED_MARKERS:
+                if mark in x:
+                    raise FpsGateError(f"deferred/partial field at {path}: '{x[:60]}'")
+        elif isinstance(x, dict):
+            for k, v in x.items():
+                walk(v, f"{path}.{k}")
+        elif isinstance(x, list):
+            for i, v in enumerate(x):
+                walk(v, f"{path}[{i}]")
+    walk(manifest, "manifest")
+    return True
+
+
 def require_publication_manifest(manifest):
-    """Full gate for a covariance-producing step: inventory + fingerprints + negweight-refined."""
+    """Full fail-closed gate for a covariance-producing step: publication schema + label; exactly ten
+    endpoints; common layout/mask/central fingerprints; negweight-refined footing; the EXACT canonical
+    266/285 reported-mask fingerprint (not deferred); every endpoint binds all full hash fields; and
+    no deferred/partial field anywhere. Builders still RECOMPUTE the mask and compare (never trust the
+    string alone)."""
+    if manifest.get("schema") != PUBLICATION_SCHEMA:
+        raise FpsGateError(f"manifest schema '{manifest.get('schema')}' != {PUBLICATION_SCHEMA}")
+    if manifest.get("label") != PUBLICATION_LABEL:
+        raise FpsGateError(f"manifest label '{manifest.get('label')}' != {PUBLICATION_LABEL}")
     require_manifest_inventory(manifest)
     require_common_fingerprints(manifest)
     require_footing(manifest, required_bkg_mode=PUBLICATION_BKG_MODE)
+    if manifest.get("reported_mask_hash") != REPORTED_MASK_FINGERPRINT:
+        raise FpsGateError(
+            f"reported_mask_hash {manifest.get('reported_mask_hash')} != canonical "
+            f"{REPORTED_MASK_FINGERPRINT} (mask not bound to the exact 266/285 reporting mask)")
+    for e in manifest["endpoints"]:
+        for fld in PUBLICATION_ENDPOINT_HASH_FIELDS:
+            v = e.get(fld)
+            if not v or not isinstance(v, str) or len(v) < 32:
+                raise FpsGateError(
+                    f"endpoint {e.get('band')}_{e.get('endpoint')}: hash field '{fld}' missing/short")
+    _reject_deferred(manifest)
     if classify_manifest(manifest) != "publication":
         raise FpsGateError("manifest is not a publication (negweight-refined) manifest")
+    return True
+
+
+def require_pass_receipt(receipt, manifest_digest):
+    """A hash-bound PASS receipt is mandatory at every covariance transition. The receipt must declare
+    result=PASS and bind the exact manifest digest it validated (so a PASS for a different manifest
+    cannot be replayed)."""
+    if not isinstance(receipt, dict):
+        raise FpsGateError("pass receipt: not a dict")
+    if receipt.get("result") != "PASS":
+        raise FpsGateError(f"pass receipt result != PASS ({receipt.get('result')})")
+    if receipt.get("manifest_sha256") != manifest_digest:
+        raise FpsGateError(
+            f"pass receipt manifest_sha256 {receipt.get('manifest_sha256')} != {manifest_digest} "
+            "(receipt does not certify this manifest)")
+    _reject_deferred(receipt)
     return True
 
 
@@ -296,6 +393,21 @@ def require_unified_inputs(diag_block, diag_unified, tag="unified"):
         raise FpsGateError(
             f"{tag}: {bad.size} bins have diag(C_blocksum)<=0 < diag(C_unified) "
             f"(first bins {bad[:5].tolist()})")
+    return True
+
+
+def require_mean_shift(arr, expected_dim=None, tag="hJointMeanShift"):
+    """hJointMeanShift is MANDATORY for the unified adoption: present, non-empty, finite, and (if
+    given) of the expected dimension. Preserved separately under the mean-centered policy."""
+    if arr is None:
+        raise FpsGateError(f"{tag} absent (mandatory for unified adoption)")
+    a = np.asarray(arr, float)
+    if a.size == 0:
+        raise FpsGateError(f"{tag} empty")
+    if not np.all(np.isfinite(a)):
+        raise FpsGateError(f"{tag} has non-finite entries")
+    if expected_dim is not None and a.size != expected_dim:
+        raise FpsGateError(f"{tag} dim {a.size} != {expected_dim}")
     return True
 
 

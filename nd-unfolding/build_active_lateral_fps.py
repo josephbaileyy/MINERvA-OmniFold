@@ -48,13 +48,15 @@ def load_flat(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", required=True, help="PUBLICATION (negweight-refined) endpoint manifest")
+    ap.add_argument("--pass-receipt", required=True, help="hash-bound PASS receipt for --manifest")
     ap.add_argument("--cv", required=True, help="central CV unfold (defines the 285->266 reported mask)")
     ap.add_argument("--out", default="active_universe_5d/fps/covariance/active_scalar_lateral_fps_cov.root")
     ap.add_argument("--tol", type=float, default=1e-10)
     a = ap.parse_args()
 
     manifest = json.load(open(a.manifest))
-    fp.require_publication_manifest(manifest)          # inventory + fingerprints + negweight-refined
+    fp.require_publication_manifest(manifest)          # schema/label/inventory/fingerprints/negweight/mask
+    fp.require_pass_receipt(json.load(open(a.pass_receipt)), fp.sha256_file(a.manifest))
     fp.require_no_path_alias(a.out, a.cv, *[e["unfold_root"] for e in manifest["endpoints"]])
 
     # central + reported mask (CV>0), bound to the manifest's declared mask hash
@@ -62,10 +64,10 @@ def main():
         raise fp.FpsGateError("CV sha256 != manifest central_cv_sha256")
     cv = load_flat(a.cv)
     rep = cv > 0
-    mh = fp.mask_hash(rep)
+    mh = fp.require_reported_mask(rep)      # RECOMPUTE from CV>0; require == canonical 266/285
     if manifest["reported_mask_hash"] != mh:
         raise fp.FpsGateError(
-            f"reported-mask hash {mh} != manifest {manifest['reported_mask_hash']} "
+            f"manifest reported_mask_hash {manifest['reported_mask_hash']} != recomputed canonical {mh} "
             "(central changed; covariance would be built against the wrong reporting mask)")
     cv_rep = cv[rep]
     n_rep = int(rep.sum())

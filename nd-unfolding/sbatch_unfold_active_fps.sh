@@ -38,22 +38,31 @@ OMNIFILE="${ND}/active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active
 # SEPARATE mode-explicit staging namespace; the existing purity controls in unfolds/ stay untouched.
 OUTDIR="${ND}/active_universe_5d/fps/unfolds_${BKG_MODE//-/_}"; mkdir -p "${OUTDIR}" "${ND}/active_universe_5d/fps/logs"
 XSEC_OUT="${OUTDIR}/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_${BAND}_${ENDPOINT}.root"
-[[ -s "${XSEC_OUT}" ]] && { echo "[unfActFpsC] skip (exists) ${XSEC_OUT}"; exit 0; }
+CFG_OUT="${XSEC_OUT}.config.json"
+# transactional skip: skip ONLY when the ROOT recomputes COMPLETE *and* its receipt exists (both).
+if [[ -s "${XSEC_OUT}" && -s "${CFG_OUT}" ]] && python3 fps_unfold_complete.py "${XSEC_OUT}" >/dev/null 2>&1; then
+  echo "[unfActFpsC] skip (complete + receipt) ${XSEC_OUT}"; exit 0
+fi
+# stale/partial/receipt-less output -> remove BOTH so a receipt is never kept for a non-fresh ROOT
+rm -f "${XSEC_OUT}" "${CFG_OUT}" "${XSEC_OUT}".tmp.*
 [[ -s "${OMNIFILE}" ]] || { echo "[FAIL] merged endpoint omnifile missing: ${OMNIFILE}" >&2; exit 2; }
 echo "[unfActFpsC] task=$T band=${BAND} endpoint=${ENDPOINT} bkg=${BKG_MODE} $(date -u '+%F %T UTC')"
-# atomic write: unfold to .tmp then rename, so a wall-kill never leaves a half-written OUT
-TMP_OUT="${XSEC_OUT}.tmp.$$"
+# atomic write: unfold to a UNIQUE temp then rename; a wall-kill never leaves a half-written OUT
+TMP_OUT="${XSEC_OUT}.tmp.${SLURM_JOB_ID:-$$}.${SLURM_ARRAY_TASK_ID:-0}"
 python3 unfold_nd_omnifold_unbinned.py \
     --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" --axes "" \
     --full-phase-space --pt-edges "${PT_EXT}" --pz-edges "${PZ_EXT}" \
     --iters 5 --use-weights --estimator lgbm --seed 42 \
     --bkg-mode "${BKG_MODE}" \
     --out "${TMP_OUT}"
-mv -f "${TMP_OUT}" "${XSEC_OUT}"
-# mode-stamped completion/config manifest sidecar (config provenance for the publication rollup)
-cat > "${XSEC_OUT}.config.json" <<EOF
+# validate the fresh ROOT BEFORE publishing it or its receipt (never receipt a bad/stale output)
+python3 fps_unfold_complete.py "${TMP_OUT}" >/dev/null 2>&1 || { echo "[FAIL] fresh unfold incomplete: ${TMP_OUT}" >&2; rm -f "${TMP_OUT}"; exit 3; }
+mv -f "${TMP_OUT}" "${XSEC_OUT}"                    # atomic ROOT publish
+# mode-stamped receipt written LAST, atomically, only after the ROOT is published + validated
+cat > "${CFG_OUT}.tmp" <<EOF
 {"band":"${BAND}","endpoint":${ENDPOINT},"bkg_mode":"${BKG_MODE}","estimator":"lgbm","seed":42,
  "iters":5,"use_weights":true,"full_phase_space":true,"omnifile":"${OMNIFILE}",
  "completed_utc":"$(date -u '+%F %T UTC')","launcher":"sbatch_unfold_active_fps.sh"}
 EOF
+mv -f "${CFG_OUT}.tmp" "${CFG_OUT}"                 # atomic receipt publish (last)
 echo "[unfActFpsC] done band=${BAND} endpoint=${ENDPOINT} bkg=${BKG_MODE} $(date -u '+%F %T UTC')"

@@ -87,26 +87,37 @@ def main():
                     help="per-band block key prefix in BOTH the support and active ROOTs")
     ap.add_argument("--manifest", default=None,
                     help="PUBLICATION endpoint manifest; if given, require negweight-refined + mask binding")
+    ap.add_argument("--pass-receipt", default=None,
+                    help="hash-bound PASS receipt for --manifest (required when --manifest is given)")
     ap.add_argument("--audit-json", default="active_universe_5d/fps/covariance/audit_merged_fps.json",
                     help="merged-endpoint audit receipt to fingerprint into the summary")
+    ap.add_argument("--require-publication", action="store_true",
+                    help="fail unless a valid publication manifest + PASS receipt are supplied")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
     out = {"gates": {}, "active": {}, "support": {}, "comparison": {}, "provenance": {}}
     fails = []
 
-    # ---- fail-closed publication manifest gate (blocker 3): negweight-refined + mask/central binding
+    # ---- fail-closed publication manifest + PASS-receipt gate (blockers 2/3): negweight-refined,
+    # canonical mask binding, hash-bound receipt certifying THIS manifest
     manifest = None
+    if a.require_publication and not a.manifest:
+        fails.append("--require-publication set but no --manifest supplied")
     if a.manifest:
         try:
             manifest = json.load(open(a.manifest))
             fp.require_publication_manifest(manifest)
+            if not a.pass_receipt:
+                raise fp.FpsGateError("--manifest given without --pass-receipt")
+            fp.require_pass_receipt(json.load(open(a.pass_receipt)), fp.sha256_file(a.manifest))
             out["provenance"]["manifest_class"] = fp.classify_manifest(manifest)
             out["provenance"]["reported_mask_hash"] = manifest["reported_mask_hash"]
+            out["provenance"]["manifest_sha256"] = fp.sha256_file(a.manifest)
         except fp.FpsGateError as e:
-            fails.append(f"manifest gate: {e}")
+            fails.append(f"manifest/receipt gate: {e}")
     else:
-        out["provenance"]["manifest"] = "ABSENT (publication run must pass --manifest)"
+        out["provenance"]["manifest"] = "ABSENT (publication run must pass --manifest + --pass-receipt)"
 
     # ---- merged-endpoint audit fingerprint (blocker 3)
     if os.path.exists(a.audit_json):

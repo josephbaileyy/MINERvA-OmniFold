@@ -288,9 +288,16 @@ central_cv_sha256). PRODUCTION REMAINS GATED: next C turn (ten negweight-refined
 adoption) only after `fps-adopt-verifier` PASS on this patch. Proposed publication namespace:
 `active_universe_5d/fps/unfolds_negweight_refined/`.
 
-## (pre-reset) RESUME (next ping, after 56076877 walls): (1) grab a FRESH interactive holder (job-name claude-hold;
-  poll by JOBID not name to avoid A's node); (2) `srun ... fps_unfold_complete.py --all` to see which of
-  the 10 are complete; (3) rerun `JOBID=<new> bash run_active_fps_unfolds_interactive.sh` (validates +
-  rm/redoes truncated, skips complete); (4) gate: require 10/10 `--all` PASS BEFORE cov; then
-  LATERAL COV (analyze_universes_nd.py) -> validate -> swap -> adopt, all via srun into the fresh holder.
-  Do NOT start cov/validate/swap/adopt until fps_unfold_complete.py --all == 10/10.
+## RESUME (AUTHORITATIVE, supersedes all earlier purity-chain resume notes below)
+The ten `active_universe_5d/fps/unfolds/` outputs are **PURITY CONTROLS, quarantined** -- they are NOT
+publication inputs and MUST NOT be rolled into covariance/adoption. The negweight-refined preflight is
+repaired and production is GATED on an `fps-adopt-verifier` PASS of the current patch. Do NOT grab a
+holder to run the cov->validate->swap->adopt chain on the purity unfolds. The later, verifier-approved
+C turn is: (1) produce ten `negweight-refined` endpoints via `sbatch_unfold_active_fps.sh`
+(BKG_MODE=negweight-refined) into `active_universe_5d/fps/unfolds_negweight_refined/` (transactional:
+atomic ROOT then receipt, per-endpoint completeness); (2) `fps_build_publication_manifest.py` ->
+hash-bound publication manifest + PASS receipt (aggregates all 10; recomputes the canonical 266/285
+mask 23b2a2f4...); (3) `build_active_lateral_fps.py` -> `p4_validate_active_lateral_fps.py`
+(--require-publication) -> `adopt_active_lateral_fps.py` -> `adopt_unified_fps.py`, each requiring the
+manifest + PASS receipt. NOTE: the earlier "RESUME PROCEDURE" (line ~131) + wave/holder notes below
+predate the purity/negweight reconciliation and are retained only as history -- do not act on them.
