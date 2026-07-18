@@ -1,0 +1,7 @@
+Resume your existing Agent B F7 implementation after the Claude-school reset. Do not subdelegate or start a new implementation from a different conversation.
+
+Your previous action turn reached the provider before HTTP 429 and left a preserved, uncommitted Agent-B-owned partial edit in `nd-unfolding/pet/fullevent_fps_dataloader.py` (the orchestrator observed only an added `import hashlib`). Inspect the current owned diff and your conversation state first; preserve useful work and do not discard unrelated changes.
+
+Complete the F7 contract from the prior prompt: coherent global data and MC Poisson factors over full stable inventories before any training subset; persisted factors/seeds/inventory order/fingerprint; exact same MC factors at extraction; fail closed on inventory/order/fingerprint mismatch; no post-subsample redraw. Add focused deterministic replay, global-before-subset, same-training/extraction-MC, and deliberate mismatch regression tests. Run the relevant CPU tests and lightweight safe smoke only—no P5B nominal/C_stat/GPU/Slurm/C++/P3F launch.
+
+Keep scope to Agent B's PET/full-event code, tests, and canonical feature-contract/status docs. Do not touch A/C namespaces, active jobs, `uq_4d/corrected/`, or `docs/orchestration/RUNS.tsv`. Preserve unrelated dirty work; stage explicit owned files. If fully verified, update F7's canonical status, commit and push. Report files, tests, commit, limitations, and a binary CLOSED versus EVIDENCE-BLOCKED verdict.

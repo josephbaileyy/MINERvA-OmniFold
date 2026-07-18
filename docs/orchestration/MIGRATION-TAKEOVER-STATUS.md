@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 10:13 UTC. Registry:
+Last reconciled: 2026-07-18 10:15 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -23,6 +23,11 @@ Last reconciled: 2026-07-18 10:13 UTC. Registry:
 | T9 | Rebuild final projections/significances | owner to be assigned after upstream closure | DEPENDENCY-BLOCKED | Publication runbook P7; requires corrected scalar adoption (T1/T3) and P5B (T8), with exact `M C M^T`, PSD/order/rank checks and committed summaries. |
 | T10 | Publication document closeout and freeze candidate | note/Overleaf role only after production closes | DEPENDENCY-BLOCKED | Publication runbook P8; requires T9 plus no unresolved publication blocker, clean note/primer/paper builds, provenance audit, and committed document closeout. |
 | T11 | Optional negweight and Gregor representation refinements | not on critical path | EXPLICITLY DEFERRED | `ROLLOUT-PLAN.md` Stages 4–5 label these optional/gated after the Stage-3 baseline. They do not substitute for or block T8. |
+
+Reset routing: one flock-protected watcher is armed for 2026-07-18 13:00:30
+UTC via `resume_after_school_reset.sh`. It resumes the existing registry roles
+in critical-path order C → A → B and records provider artifacts through
+`agentctl.py`; it does not create or substitute a worker.
 
 ## Routing invariants
 

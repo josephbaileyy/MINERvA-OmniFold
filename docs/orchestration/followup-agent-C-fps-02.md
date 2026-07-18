@@ -1,0 +1,9 @@
+Resume your existing sole FPS post-processing ownership after the Claude-school reset and close handoff X5. Do not subdelegate.
+
+Durable pre-reset evidence: all ten FPS endpoint unfolds passed `fps_unfold_complete.py --all` at 2026-07-18 10:12 UTC (clean/non-recovered ROOTs, 285 finite positive bins, `globalCompleteness=1.0000`). Your prior action turn was rejected before execution by HTTP 429, so no covariance/adoption step has run.
+
+Recheck the 10/10 gate and current scheduler state. Holder 56080370 was scheduled to expire around 12:38 UTC; never assume it is live. If it is gone, acquire exactly one fresh FPS-owned interactive holder, identify it by JOBID and node, and do not use or alter Agent A's holder/node/standard namespace. Then execute the predeclared chain once: build the pure five-band active FPS lateral covariance; run `p4_validate_active_lateral_fps.py`; run the PSD-safe pure-sum `adopt_active_lateral_fps.py`; run path-parameterized `adopt_unified_4d.py` to `uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_uthrow_activelat.root`; reopen and independently verify dimension/order, finiteness, symmetry, PSD, component/adoption invariants, and central non-mutation.
+
+On any failure, stop without promotion and report exact evidence. On PASS, satisfy the project commit gate with explicit Agent-C-owned code/summaries plus `VALIDATION_LEDGER.md`, `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`, the shortest appropriate ND/FPS STATUS line, and `FPS_UQ_CORRECTED_STATE.md`; do not edit `docs/orchestration/RUNS.tsv`. Preserve unrelated dirty work, stage explicit owned files, commit and push. Report commit, final artifact, validator summary, and covariance fingerprint (dimension/rank/sqrt-trace/median fractional uncertainty/min-eigenvalue ratio) plus residual caveats.
+
+Do not touch the C++ binary, `uq_4d/corrected/`, recoil PET, or Agent A's files/jobs.
