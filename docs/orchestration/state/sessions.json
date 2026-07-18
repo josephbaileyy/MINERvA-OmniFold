@@ -1,0 +1,59 @@
+{
+  "sessions": {
+    "agent-A-standard": {
+      "adopted": true,
+      "created_at": "2026-07-18T09:44:44+00:00",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "profile": "claude-school-legacy",
+      "provider": "claude",
+      "session_id": "14951826-0680-4e57-ac92-8a9970bc07f7",
+      "turns": [
+        {
+          "action": "send",
+          "number": 1,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.json"
+        }
+      ],
+      "updated_at": "2026-07-18T09:45:55+00:00"
+    },
+    "agent-B-p5b": {
+      "adopted": true,
+      "created_at": "2026-07-18T09:44:45+00:00",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "profile": "claude-school-legacy",
+      "provider": "claude",
+      "session_id": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+      "turns": [
+        {
+          "action": "send",
+          "number": 1,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T094529Z-send-3552118f.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T094529Z-send-3552118f.json"
+        }
+      ],
+      "updated_at": "2026-07-18T09:46:13+00:00"
+    },
+    "agent-C-fps": {
+      "adopted": true,
+      "created_at": "2026-07-18T09:44:45+00:00",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "profile": "claude-school-legacy",
+      "provider": "claude",
+      "session_id": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+      "turns": [
+        {
+          "action": "send",
+          "number": 1,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T094529Z-send-1d12b1be.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T094529Z-send-1d12b1be.json"
+        }
+      ],
+      "updated_at": "2026-07-18T09:46:00+00:00"
+    }
+  },
+  "version": 1
+}

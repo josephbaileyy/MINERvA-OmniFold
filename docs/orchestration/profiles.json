@@ -1,0 +1,54 @@
+{
+  "profiles": {
+    "agy": {
+      "dangerously_skip_permissions": true,
+      "executable": "~/.local/bin/agy",
+      "model": "Gemini 3.1 Pro (High)",
+      "print_timeout": "25m0s",
+      "provider": "agy",
+      "sandbox": false
+    },
+    "claude-personal": {
+      "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
+      "config_env": "HOME",
+      "dangerously_skip_permissions": true,
+      "home": "~/claude-homes/personal",
+      "model": "opus",
+      "provider": "claude"
+    },
+    "claude-school": {
+      "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
+      "config_env": "HOME",
+      "dangerously_skip_permissions": true,
+      "home": "~/claude-homes/school",
+      "model": "opus",
+      "provider": "claude"
+    },
+    "claude-school-legacy": {
+      "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
+      "config_env": "HOME",
+      "dangerously_skip_permissions": true,
+      "home": "~/claude-homes/school/claude-homes/personal",
+      "model": "opus",
+      "provider": "claude"
+    },
+    "codex-personal": {
+      "home": "~/codex-homes/personal",
+      "model": "gpt-5.6-sol",
+      "provider": "codex",
+      "reasoning_effort": "xhigh",
+      "sandbox": "read-only",
+      "web_search": false,
+      "yolo": true
+    },
+    "codex-school": {
+      "home": "~/codex-homes/school",
+      "model": "gpt-5.6-sol",
+      "provider": "codex",
+      "reasoning_effort": "xhigh",
+      "sandbox": "read-only",
+      "web_search": true,
+      "yolo": true
+    }
+  }
+}

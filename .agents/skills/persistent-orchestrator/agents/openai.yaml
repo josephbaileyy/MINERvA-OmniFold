@@ -1,0 +1,4 @@
+interface:
+  display_name: "Persistent Orchestrator"
+  short_description: "Resume cross-account agents across rounds"
+  default_prompt: "Use $persistent-orchestrator to run a multi-round review with persistent Claude, Codex, and agy workers."
