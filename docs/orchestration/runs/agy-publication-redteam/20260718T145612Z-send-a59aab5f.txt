@@ -1,0 +1,7 @@
+**PASS.** The defect has been perfectly addressed.
+
+- **Patch Verified**: Every `run_role` now correctly returns `$role_rc`, and the calling logic at the bottom of `resume_after_school_reset_1800.sh` has been updated to immediately `|| exit $?`. A provider or heartbeat failure will now trigger a post-error snapshot and correctly stop the wave, ensuring Agent C and B cannot be improperly run after a failure upstream.
+- **Syntax Verified**: `bash -n docs/orchestration/resume_after_school_reset_1800.sh` returns clean.
+- **PID Rearming Verified**: The file's modification timestamp is `07:55:30`. The active watcher `PID 904875` was launched at `07:55:40` (ten seconds *after* the file was patched). It is currently running the expected `sleep 11089` child process, confirming the live execution path safely captured your new code from the beginning of the file.
+
+Everything is in order. The 18:00 UTC execution wave is safely and correctly armed.

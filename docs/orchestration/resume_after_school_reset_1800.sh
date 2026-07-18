@@ -87,17 +87,18 @@ run_role() {
     overall_rc=1
     date -u "+[wakeup-1800] %Y-%m-%dT%H:%M:%SZ ${role} returned rc=${role_rc}; preserving role"
     "$python" orchestration/usagectl.py snapshot --json || true
+    return "$role_rc"
   fi
 }
 
 snapshot_and_check pre_A 0 || exit $?
-run_role agent-A-standard orchestration/followup-agent-A-standard-04.md
+run_role agent-A-standard orchestration/followup-agent-A-standard-04.md || exit $?
 
 snapshot_and_check pre_C 45 || exit $?
-run_role agent-C-fps orchestration/followup-agent-C-fps-03.md
+run_role agent-C-fps orchestration/followup-agent-C-fps-03.md || exit $?
 
 snapshot_and_check pre_B 25 || exit $?
-run_role agent-B-p5b orchestration/followup-agent-B-p5b-03.md
+run_role agent-B-p5b orchestration/followup-agent-B-p5b-03.md || exit $?
 
 snapshot_and_check final 0 || overall_rc=1
 date -u "+[wakeup-1800] %Y-%m-%dT%H:%M:%SZ reset repair rounds returned overall_rc=${overall_rc}"

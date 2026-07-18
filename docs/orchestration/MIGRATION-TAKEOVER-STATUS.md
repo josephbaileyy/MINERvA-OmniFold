@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 14:43 UTC. Registry:
+Last reconciled: 2026-07-18 14:57 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -31,6 +31,8 @@ repair. It snapshots before every role, treats the two school homes as one accou
 uses a tiny disposable corrected-flat-home heartbeat whenever the shared cache is
 stale/unknown before A, C, or B, and stops on heartbeat/cap failure rather than
 inventing a percentage. It uses `agentctl.py` and the same saved UUIDs only.
+Independent agy first found and then rechecked the stop-wave return-code repair;
+the patched watcher is armed as PID 904875 and PASSed syntax plus live-PID audit.
 
 ## Dispatch preflight — providers and compute placement
 

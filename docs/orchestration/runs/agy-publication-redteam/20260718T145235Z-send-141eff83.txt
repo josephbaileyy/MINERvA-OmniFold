@@ -1,0 +1,46 @@
+I am returning a **BLOCK** for the reset/usage routing in commit `135a07f`.
+
+### Routing Defect (BLOCK)
+A provider failure during an agent's execution (e.g., if `agentctl.py send --role` fails due to an HTTP 429 rate limit or service outage) will **not** stop the wave.
+
+In `docs/orchestration/resume_after_school_reset_1800.sh`, the `run_role` function sets `overall_rc=1`, takes the required post-error snapshot, but then implicitly returns `0` and allows the script to continue to the next agent in the wave:
+
+```bash
+run_role() {
+  # ...
+  if "$python" "$ctl" send --role "$role" --prompt-file "$prompt"; then
+    # ...
+  else
+    role_rc=$?
+    overall_rc=1
+    date -u "+[wakeup-1800] %Y-%m-%dT%H:%M:%SZ ${role} returned rc=${role_rc}; preserving role"
+    "$python" orchestration/usagectl.py snapshot --json || true
+    # MISSING: exit "$role_rc" -> wave continues to next snapshot_and_check!
+  fi
+}
+```
+This violates the strict requirement that a provider failure must *stop the wave*.
+
+### Exact Minimal Patch
+```diff
+--- docs/orchestration/resume_after_school_reset_1800.sh
++++ docs/orchestration/resume_after_school_reset_1800.sh
+@@ -87,6 +87,7 @@
+     overall_rc=1
+     date -u "+[wakeup-1800] %Y-%m-%dT%H:%M:%SZ ${role} returned rc=${role_rc}; preserving role"
+     "$python" orchestration/usagectl.py snapshot --json || true
++    exit "$role_rc"
+   fi
+ }
+
+```
+
+### Rearming the Live PID
+**The live PID MUST be killed and rearmed.** Bash reads script files incrementally by byte offset. Because `docs/orchestration/resume_after_school_reset_1800.sh` is currently executing and likely sleeping, patching the file in place while the process is running is extremely dangerous and will result in bash executing garbage text or misaligned logic when it wakes up. You must cancel the live `nohup`/background PID, apply the patch, and relaunch it to safely acquire the file lock and resume the delay loop.
+
+### Other Validation Notes (PASS)
+All other requirements were met and verified:
+- **Snapshots & Heartbeats**: The pre-flight `snapshot_and_check` works correctly. It triggers the disposable heartbeat using the valid flat-home (`$school_home`) without inventing a percentage. A heartbeat failure (rc=5) correctly triggers a snapshot and stops the wave via `|| exit $?`.
+- **Aliases**: `usagectl.py`'s `consolidate_account_groups` ensures shared percentages are drawn from the most recent valid observation rather than additive summing. `snapshot_and_check` pulls specifically from `accounts.claude-school`.
+- **Reserves**: `usage-policy.json` correctly enforces `codex_personal_reset_credit_reserve: 1` protecting the remaining August 12th credit.
+- **Paths**: The script properly executes A → C → B via `agentctl.py send --role` strictly without duplicate worker spawns.
