@@ -10,7 +10,7 @@ LLM polling. The placement score therefore includes **LLM-free progress per
 wall hour**, adjustable parallelism/resource fit, maximum wall time, queue
 overlap, and the downstream gates the result unlocks—not queue latency alone.
 
-Last reconciled: 2026-07-18 15:13 UTC.
+Last reconciled: 2026-07-18 15:39 UTC.
 
 ## Current critical path and parallel lanes
 
@@ -109,16 +109,15 @@ and whether the rewakeup exposed a decision-ready checkpoint.
 | UTC | Task | Routes | Result | Policy update |
 |---|---|---|---|---|
 | 2026-07-18 15:07 | Full SHA256 of 10 standard + 10 FPS merged ROOTs (~1.28 TB) | shared batch `56090791` | Began after about 4.6 min in Priority; canceled after ~6 s when hedge design was hardened. Only an incomplete temp receipt; no scientific output. | Shared was not prohibitively slow in this sample, but the original route was not hedge-safe. |
-| 2026-07-18 15:12 | Same hash task, mutual-exclusion experiment | shared batch `56090857` + urgent interactive `56090877` | Interactive started in about 12 s and acquired the lock; pending batch loser canceled. Hashing in progress. | A ready, single-node, I/O-bound job justified interactive; first-start-wins removed queue speculation without double execution. |
+| 2026-07-18 15:12 | Same hash task, mutual-exclusion experiment | shared batch `56090857` + urgent interactive `56090877` | Interactive had zero-second scheduler start latency, acquired the lock, and completed 20/20 hashes over 1,286,623,855,676 bytes in 25m25s (~0.844 GB/s aggregate); pending batch loser canceled. Receipt paths/inventory/digests and clean skip validated. | A ready, single-node, I/O-bound job justified interactive; first-start-wins removed queue speculation without double execution. A/C can reuse committed full hashes rather than consume another 1.28-TB read. |
 
 The hash launcher and completed receipt land together under the repository
-commit gate. Until the receipt exists, this experiment is operational evidence
-only and not a quotable scientific result.
+commit gate. This is provenance evidence, not a new scientific number.
 
 ## Near-term maximum-parallel schedule
 
-1. Interactive `56090877` hashes immutable A/C inputs while no provider waits
-   for a compute shell.
+1. **Complete:** interactive `56090877` hashed immutable A/C inputs; both repair
+   roles consume the committed receipt without another full-content pass.
 2. At 18:00:30 UTC the saved-UUID school watcher runs A -> C -> B writer turns.
 3. As soon as A commits, launch the same standard verifier while C works. As
    soon as C commits, launch the same FPS verifier while B works.

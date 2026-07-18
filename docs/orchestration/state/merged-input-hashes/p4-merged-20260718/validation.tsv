@@ -1,0 +1,14 @@
+schema	merged-input-hash-validation.v1
+validated_utc	2026-07-18T15:38:57Z
+result	PASS
+standard_count	10
+standard_bytes	538449103991
+standard_hash_list_sha256	c153bdd339c9d7fe660736fe7ea97e78bb6df78feb9bdcdc77838cd5a254f395
+standard_inventory_sha256	54a6dc9decbfb0b179e2f6af1fa7214b390df4b03213decdd9af88c36839350c
+fps_count	10
+fps_bytes	748174751685
+fps_hash_list_sha256	2ada0831419874d6085fe7c05aaf4094fcc078041d64e87bb91fc6ec05d7de11
+fps_inventory_sha256	178e31de957a79a98c0f4dd1713dae345e9612efd6bcc1de2297a61ea6be84f2
+total_bytes	1286623855676
+launcher_sha256	2bd0cb11289a5ccc0e14d271e84bc87a42fd831b0ddffb203487b3b7cd72e891
+validation	paths, inventory and hashes are exact 10/10 ordered sets; digests unique; live size and integer mtime still match pre/post-hash inventory; completed launcher clean-skip PASS

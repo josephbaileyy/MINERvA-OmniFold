@@ -46,6 +46,14 @@ owner-correct interactive allocation if available and wall-safe, or one
 collision-free batch hash array if queue-early is superior; never duplicate.
 Do not run endpoint production. Leave allocations to expire.
 
+UPDATE before dispatch: the orchestrator has now completed and validated those
+exact ten FPS full-file hashes at
+`docs/orchestration/state/merged-input-hashes/p4-merged-20260718/`.
+Require `COMPLETE`, `summary.tsv`, `validation.tsv`, `fps.sha256`, and
+`fps.inventory.tsv`; recompute live size/integer-mtime against the inventory
+and bind the committed hash-list digest. Reuse this owner-neutral receipt and
+do **not** launch another 748-GB hash pass unless validation fails.
+
 Preserve unrelated dirty work, stage only Agent-C files, commit/push only after
 tests and read-only evidence PASS, and report exact hashes/tests/job/commit and
 all residual gaps. The same FPS verifier must PASS before any later fresh

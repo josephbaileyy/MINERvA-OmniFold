@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 15:28 UTC. Registry:
+Last reconciled: 2026-07-18 15:39 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -40,9 +40,11 @@ The prompt wave needs no amendment or duplicate school-provider turn.
 Scheduling is now an explicit workstream in `SCHEDULING-STRATEGY.md`.
 `MIG-AGY15` identifies the publication critical path and independent lanes.
 The first-start-wins hash experiment selected interactive job 56090877; its
-pending batch loser was canceled, and the winner is computing with zero LLM
-involvement. Its launcher/result remain uncommitted until the atomic receipt
-exists, as required by the commit gate.
+pending batch loser was canceled. The winner completed 20/20 full SHA256s over
+the exact standard/FPS merged inventories (1,286,623,855,676 bytes) in 25m25s.
+Paths, pre/post size+mtime inventories, unique digests and clean skip validate;
+launcher, atomic receipt, validation, RUNS/STATUS and A/C reuse instructions
+land together under the commit gate.
 
 PG0 ownership was re-audited fail-closed (`MIG-AGY16`–`MIG-AGY18`,
 `MIG-PG0-ADJ`). Two agy PASS recommendations were rejected because they
@@ -94,7 +96,7 @@ a failed gate prevents the entire 13:00 provider wave.
 |---|---|---|
 | Claude school (`claude-school` + `claude-school-legacy`) | One shared account, not two. Cache is stale, hence percentage unknown; last fresh observation was 85% used/15% remaining with reset 18:00 UTC. | Frozen until reset. Continuity-bound A/B/C only; a disposable flat-home heartbeat precedes each substantial legacy-role turn while percentage remains unknown. |
 | Claude personal | Percentage cache is stale/unknown. E completed source at 14:32 UTC, then the 14:42 runtime turn hit an explicit monthly spend limit with no reset time. | Provider-constrained: preserve `agent-E-g2-source` and its UUID; do not replace/fork. Resume build/smoke only after a successful same-account availability check or the user raises the monthly limit. |
-| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 86% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
+| Codex personal | Authorized July-31 credit reset succeeded; latest complete snapshot 84% seven-day remaining, reset 2026-07-25 14:36:14 UTC. | Preserve for orchestration/synthesis and same-verifier continuity. The August-12 credit is the sole remaining emergency reserve and is not authorized for consumption. |
 | Codex school | 22% seven-day remaining; five-hour window unknown. | Constrained: use only where same-verifier continuity is scientifically material, after an agy preflight reduces wasted turns. |
 | agy | No percentage API; eighteen read-only audits/rechecks completed without a cap signal. Its first two PG0 ownership verdicts overclaimed provenance and were rejected; the same session corrected to BLOCK on direct evidence. | Availability-verified by successful turns. Use for orthogonal red-team, gap audits, scheduling studies, and cheap preflight, but independently validate ownership/authorization claims; it never substitutes for a named continuity-bound owner/verifier. |
 

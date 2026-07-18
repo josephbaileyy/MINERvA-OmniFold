@@ -71,6 +71,14 @@ never write the ROOT inputs. A hash launcher/result is committed only together
 with its complete summary/receipt and RUN_LOG/status per the repo commit gate.
 Leave any acquired allocation to expire naturally.
 
+UPDATE before dispatch: the orchestrator has now completed and validated those
+exact ten standard full-file hashes at
+`docs/orchestration/state/merged-input-hashes/p4-merged-20260718/`.
+Require `COMPLETE`, `summary.tsv`, `validation.tsv`, `standard.sha256`, and
+`standard.inventory.tsv`; recompute live size/integer-mtime against the
+inventory and bind the committed hash-list digest. Reuse this owner-neutral
+receipt and do **not** launch another 538-GB hash pass unless validation fails.
+
 Run all focused tests and the repair-only canonical preflight, but stop before
 candidate creation. Preserve unrelated dirty work; stage only Agent-A-owned
 files. If ND_OMNIFOLD_STATUS.md remains dirty from another owner, do not absorb
