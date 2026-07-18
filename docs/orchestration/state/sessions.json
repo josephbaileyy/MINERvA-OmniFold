@@ -91,9 +91,30 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T111009Z-start-eaca0278.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T111009Z-start-eaca0278.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T115948Z-send-34694f06.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T115948Z-send-34694f06.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 3,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T120849Z-send-1536469b.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T120849Z-send-1536469b.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T121049Z-send-302e6d72.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/publication-plan-verifier/20260718T121049Z-send-302e6d72.jsonl"
         }
       ],
-      "updated_at": "2026-07-18T11:25:40+00:00"
+      "updated_at": "2026-07-18T12:11:03+00:00"
     },
     "standard-p4-verifier": {
       "created_at": "2026-07-18T10:47:03+00:00",

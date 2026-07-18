@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:56 UTC. Registry:
+Last reconciled: 2026-07-18 12:11 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -56,14 +56,15 @@ Every launch receipt records interactive-versus-batch rationale, job/holder ID, 
 dependency footing, and output paths. `MIG-DISPATCH1` makes this a campaign gate rather than
 an informal preference.
 
-Usage-helper implementation status: **SAME-VERIFIER PASS; COMMIT PENDING** (`MIG-V4R`).
+Usage-helper implementation status: **SAME-VERIFIER PASS; COMMITTED AND PUSHED**
+(`MIG-V4R`, commit `0d6c4dc`).
 The repaired helper is fail-closed on reserve uncertainty and required-account errors,
 strictly validates provider shapes/numerics/epochs, bounds nonblocking app-server I/O,
 tracks integrity-protected per-window Claude freshness, confines distinct account homes,
 protects existing status-line settings, records rolling changes, pins `/usr/bin/python3.11`,
 and passes the expanded 32-test battery. The live repaired gate validated both personal Full
-reset credits and left them untouched. It is now wired as the first step of the reset watcher;
-the scoped helper/receipt commit remains required before the 13:00 dispatch.
+reset credits and left them untouched. It is wired as the first step of the reset watcher;
+a failed gate prevents the entire 13:00 provider wave.
 
 ## Publication-grade evidence audit
 
@@ -76,7 +77,7 @@ is insufficient.
 
 | Gate | Current verdict | Direct evidence required for PASS | Durable owner / pointer |
 |---|---|---|---|
-| PG0 — provenance and worktree reconciliation | **PLAN-VERIFIER BLOCKED** | Exact ownership/inventory/hashes for every reusable input and active output; no ambiguous writer; repaired runbook/dependency/remediation controls committed. `MIG-V3` independently found nine publication-material defects in the untracked controls: stale FPS/PET background footing, F7/G2/P3F/estimator ambiguity, additive PET-UQ ambiguity, legacy remediation masquerading as publication, stale 4D frontier, missing final-5D adoption, and canonical-home/durability violations. Same verifier must PASS the repairs. | orchestrator + file owners; runbook P0; `MIG-PUB-AUDIT1`, `MIG-V3` |
+| PG0 — provenance and worktree reconciliation | **CONTROL PASS; OWNERSHIP/DURABILITY OPEN** | The same `publication-plan-verifier` returned PASS after three repair rounds (`MIG-V3R3`): all nine plan defects are resolved, including explicit `negweight-refined` FPS, literal PET target/F7, G2→committed full-schema P3F-PET→nominal ordering, joint UQ, legacy quarantine, R1 reuse, explicit adoption packets, and canonical-home rules. Remaining gate: exact ownership/inventory/hashes for every reusable input and active output, no ambiguous writer, and scoped durability commits for the dirty canonical indexes before dependent production. | orchestrator + file owners; runbook PG0; `MIG-PUB-AUDIT1`, `MIG-V3{,R,R2,R3}` |
 | PG1 — estimator/domain/background definition | **PARTIAL; PRODUCTION BLOCKED** | One frozen `pet-fullevent-fps-v1` contract: extended FPS domain, full schema, explicit `negweight-refined`, literal aligned background injection, Stay-Positive, seed/config/fingerprint policy shared by central and every covariance component. | Agent B; `ROLLOUT-PLAN.md` Stage 2.5; `pet/FULL_EVENT_FEATURE_CONTRACT.md`; `MIG-DEC-NW{,-FPS}` |
 | PG2 — PET engine correctness | **BLOCKED ON F7 + TARGET INTEGRATION** | F2/F3 GPU regression and cap sensitivity; F7 factors drawn over full data/signal/background inventories before subsetting; background draw before per-replica refinement; exact replay/extraction identity; no Horovod path. | Agent B; T5; feature contract CLM-008 |
 | PG3S — standard selection-complete scalar lateral | **PREFLIGHT-BLOCKED; COMPUTE ACTIVE** | Exact 10-endpoint inventory/config/migration/order proofs; atomic completion; five MAT components; complete support comparison; same-verifier PASS; scoped candidate commit. | Agent A + `standard-p4-verifier`; T2 / `MIG-V2` |
