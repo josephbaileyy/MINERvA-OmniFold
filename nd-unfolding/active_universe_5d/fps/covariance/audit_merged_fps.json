@@ -1,0 +1,308 @@
+{
+  "merged_dir": "active_universe_5d/fps/merged",
+  "endpoints": [
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_BeamAngleX_0_universes_full.root",
+      "band": "BeamAngleX",
+      "endpoint": 0,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566077,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "BeamAngleX",
+        "idx": 0,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 2731,
+        "activeUniverseRecoExits": 2061
+      },
+      "warnings": [],
+      "migration_abs_total": 4792
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_BeamAngleX_1_universes_full.root",
+      "band": "BeamAngleX",
+      "endpoint": 1,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566020,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "BeamAngleX",
+        "idx": 1,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 1936,
+        "activeUniverseRecoExits": 2764
+      },
+      "warnings": [],
+      "migration_abs_total": 4700
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_BeamAngleY_0_universes_full.root",
+      "band": "BeamAngleY",
+      "endpoint": 0,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566006,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "BeamAngleY",
+        "idx": 0,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 2513,
+        "activeUniverseRecoExits": 2294
+      },
+      "warnings": [],
+      "migration_abs_total": 4807
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_BeamAngleY_1_universes_full.root",
+      "band": "BeamAngleY",
+      "endpoint": 1,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566048,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "BeamAngleY",
+        "idx": 1,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 2241,
+        "activeUniverseRecoExits": 2567
+      },
+      "warnings": [],
+      "migration_abs_total": 4808
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_MuonResolution_0_universes_full.root",
+      "band": "MuonResolution",
+      "endpoint": 0,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "MuonResolution",
+        "idx": 0,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_MuonResolution_1_universes_full.root",
+      "band": "MuonResolution",
+      "endpoint": 1,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "MuonResolution",
+        "idx": 1,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINERvA_0_universes_full.root",
+      "band": "Muon_Energy_MINERvA",
+      "endpoint": 0,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "Muon_Energy_MINERvA",
+        "idx": 0,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINERvA_1_universes_full.root",
+      "band": "Muon_Energy_MINERvA",
+      "endpoint": 1,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "Muon_Energy_MINERvA",
+        "idx": 1,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINOS_0_universes_full.root",
+      "band": "Muon_Energy_MINOS",
+      "endpoint": 0,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "Muon_Energy_MINOS",
+        "idx": 0,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    },
+    {
+      "path": "runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINOS_1_universes_full.root",
+      "band": "Muon_Energy_MINOS",
+      "endpoint": 1,
+      "fails": [],
+      "entries": {
+        "mc_signal_reco": 49906108,
+        "mc_background": 566036,
+        "data": 4119797,
+        "mc_truth_denom": 49906108
+      },
+      "dataPOTUsed": 1.057394261158926e+21,
+      "mcPOTUsed": 4.978198462880827e+21,
+      "identity": {
+        "band": "Muon_Energy_MINOS",
+        "idx": 1,
+        "isLateral": 1,
+        "hasActive": 1
+      },
+      "census": {
+        "activeUniverseTruthEntrants": 0,
+        "activeUniverseTruthExits": 0,
+        "activeUniverseRecoEntrants": 0,
+        "activeUniverseRecoExits": 0
+      },
+      "warnings": [
+        "zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+      ],
+      "migration_abs_total": 0
+    }
+  ],
+  "result": "PASS",
+  "n_endpoints": 10,
+  "fails": [],
+  "warnings": [
+    "MuonResolution_0: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)",
+    "MuonResolution_1: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)",
+    "Muon_Energy_MINERvA_0: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)",
+    "Muon_Energy_MINERvA_1: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)",
+    "Muon_Energy_MINOS_0: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)",
+    "Muon_Energy_MINOS_1: zero selection-migration (expected for an energy/momentum lateral in FPS: the shift drives (pt,pz) bin migration, not selection entrant/exit; the applied shift + nonzero covariance are verified downstream)"
+  ]
+}

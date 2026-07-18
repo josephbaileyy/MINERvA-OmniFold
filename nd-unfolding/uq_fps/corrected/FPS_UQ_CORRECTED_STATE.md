@@ -149,3 +149,148 @@ commands prepend `export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/roo
   No `active_universe_5d/` exists yet; A's C++ interface is coded but uncommitted (249-line WT diff).
 - Commit gate (per campaign): launchers + exact manifests + compact summaries + ledger + ND
   RUN_LOG + ND STATUS together; never `git add -A`; do not overwrite other agents' dirty docs.
+
+## COORDINATION + COMMIT (2026-07-17, fe-fps orchestrator directives)
+- COMMIT LANDED: 14025ba (github/main) — P6-FPS non-lateral corrected UQ + STATVAL, scoped to 32
+  Agent-C files only (heavy ROOTs gitignored+fingerprinted). User-endorsed gate.
+- OWNERSHIP: Agent C is SOLE owner of P3F post-processing (P4-FPS + P6-FPS-final). Agent A stands
+  down from FPS post-processing at 120/120. Run the merge/audit/unfold/lateral/adoption chain ONCE.
+- P3F SCHEMA LABEL: the current P3F endpoint schema is **scalar-FPS / pre-full-event**. It does NOT
+  by itself unblock Agent B's publication P5B full-event laterals: the installed binary predates the
+  requested full-event branches and the trees write no stable event keys. B's options (coordinate):
+  (a) compact full-event feature-sidecar rerun reusing existing P3F clouds — acceptable ONLY with an
+  exact fail-closed row-alignment proof (row count, ordering, scalar/weight CRC vs multiple bitwise
+  arrays, active-universe metadata, migration, bkg/data alignment; ref pattern:
+  MINERvA-OmniFold-fe/nd-unfolding/fe_pilot/ CRC-byte-exact join); (b) full endpoint regen after the
+  C++ feature branches land. Do NOT relabel scalar-FPS clouds as full-event.
+- Do NOT resubmit in uq_4d/corrected/ (comb4dCc partial-slab repair 56025478->81->83 owned elsewhere).
+
+## P4-FPS -> P6-FPS-FINAL CHAIN (run ONCE at P3F=120/120; all launchers ready, Agent-C namespace)
+1. MERGE: `sbatch_hadd_active_fps.sh` (array 0-9) -> active_universe_5d/fps/merged/ (10 endpoint
+   omnifiles, large-tree-safe SetMaxTreeSize; 12 playlists per band/endpoint).
+2. AUDIT: verify each merged endpoint metadata (activeUniverseBand/Index/isLateral), migration census,
+   native misses, POT add-up by playlist (per P2 gates); reject invalid sums.
+3. UNFOLD: `sbatch_unfold_active_fps.sh` (array 0-9) -> fps/unfolds/fps2d_xsec_active_{BAND}_{IDX}.root
+   (FPS 285-bin grid, seed 42, NO --universe).
+4. LATERAL COV: build C_lateral_active = sum_b mat_covariance([x_b_0, x_b_1]) (MAT mean-centered) ->
+   fps/covariance/active_scalar_lateral_fps_cov.root:hCov_..._total. [builder TBD at unfold-time]
+5. VALIDATE: `p4_validate_active_lateral.py` (path-parametrized) active-vs-support-limited + gates.
+6. FINAL ADOPT (P6-FPS close): replace the support-limited lateral block in
+   uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined.root with C_lateral_active,
+   re-run adopt -> the publishable corrected FPS covariance. Old uq_fps/ stays quarantined.
+
+## P4-FPS CHAIN — SCRIPTED & READY (2026-07-17; "builder TBD" now RESOLVED)
+P3F array 55972324 = 120/120 COMPLETE. Merge FIRED: **56041972** (`sbatch_hadd_active_fps_cpu.sh`,
+CPU m3246 — hadd is pure I/O, no GPU; the GPU variant hit the 32-core/GPU shared-queue floor).
+Downstream launchers/scripts all syntax-checked; run IN ORDER, each gated on the prior:
+1. MERGE  -> `sbatch_hadd_active_fps_cpu.sh` (array 0-9) -> active_universe_5d/fps/merged/ 10 omnifiles
+   `runEventLoopOmniFold_5D_FPS_active_<BAND>_<EP>_universes_full.root` (SetMaxTreeSize; 12 playlists).
+2. AUDIT  -> `python3 audit_merged_fps.py --out active_universe_5d/fps/covariance/audit_merged_fps.json`
+   Hard gates per merged endpoint: 4 unfold trees nonzero (mc_signal_reco/mc_background/data/
+   mc_truth_denom), POT dataPOTUsed/mcPOTUsed>0 (TParameter<double> hadd-SUMMED), hasTruthOnlyMisses,
+   identity band/idx/isLateral/hasActive (TParameter 'f'=kFirst so merged idx==EP not 12*EP),
+   migration census (TParameter<long> hadd-SUMMED) nonzero. NO unfold until PASS.
+3. UNFOLD -> `sbatch sbatch_unfold_active_fps.sh` (array 0-9, CPU). Output RENAMED to carry the
+   `_uni_full_<BAND>_<EP>` token: `active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_<BAND>_<EP>.root`
+   so analyze_universes_nd.py's UNI_RE groups the +/- endpoints by band. FPS 285-bin grid, seed 42,
+   NO --universe. Gate: 10/10 unfolds present.
+4. LATERAL COV (reuse canonical builder, N=2 -> MAT mean-centered +/-1sigma outer-product):
+   `python3 analyze_universes_nd.py --cv uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+     --glob 'active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_*_?.root'
+     --outdir active_universe_5d/fps/covariance --out-root active_scalar_lateral_fps_cov.root`
+   -> hCov_universe4d_total (5 active bands) + per-band. (NO --add-norm / --bootstrap-cov: pure lateral.)
+5. VALIDATE (my namespace; avoids editing Agent A's in-progress p4_validate_active_lateral.py):
+   `python3 p4_validate_active_lateral_fps.py
+     --active active_universe_5d/fps/covariance/active_scalar_lateral_fps_cov.root:hCov_universe4d_total
+     --support uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined.root
+     --out active_universe_5d/fps/covariance/p4_active_lateral_fps_summary.json`
+   Hard gates finite/PSD/asym on active + active-vs-support (hCov_universe4d_<band>) sqrt-tr/per-bin.
+6a. SWAP (PSD-safe SUM, not subtraction): `python3 adopt_active_lateral_fps.py`
+   -> uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root
+   (hCov_combined4d_total = SUM non-lateral universe4d bands + stat + ML + active lateral; all per-band
+   blocks incl the 13 verticals copied through for the uthrow adopt; sum-vs-sub cross-check reported).
+6b. FINAL uthrow adopt (reuse adopt_unified_4d.py, path-parametrized):
+   `python3 adopt_unified_4d.py --uthrow uq_fps/corrected/unified_throw_cov_fps.root
+     --combined uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root
+     --prod uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+     --out uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_uthrow_activelat.root`
+   = PUBLISHABLE corrected FPS covariance (VERTICAL inflation + stat + ML + selection-complete lateral),
+   superseding the pre-lateral ..._combined_uthrow.root. PSD-checked by construction.
+Steps 2,4,5,6 are light ROOT ops (run via alloc_run or a tiny CPU batch); steps 1,3 are the arrays.
+New files this session: audit_merged_fps.py, p4_validate_active_lateral_fps.py, adopt_active_lateral_fps.py.
+
+## P4-FPS PROGRESS (2026-07-17)
+- MERGE 56041972: DONE 10/10 (all COMPLETED 0:0). 10 endpoint omnifiles ~74GB each in fps/merged/.
+- AUDIT (audit_merged_fps.py): **PASS 10/10** (active_universe_5d/fps/covariance/audit_merged_fps.json).
+  Hard gates OK on all 10: 4 trees nonzero (sig 49.9M, bkg ~566k, data 4.12M, truthdenom 49.9M),
+  POT hadd-summed data=1.057e21/mc=4.978e21 (identical across endpoints = same 12-playlist exposure),
+  identity band/idx/isLateral=1/hasActive=1, hasTruthOnlyMisses present.
+  6 WARNINGS (expected): MuonResolution/Muon_Energy_MINERvA/Muon_Energy_MINOS x{0,1} have ZERO
+  selection-migration. **DURABLE FINDING (not a bug):** in FPS (muon truth cuts dropped, no reco
+  momentum cut crossed at +/-1sigma) an energy/momentum lateral shift drives (pt,pz) BIN migration,
+  not selection entrant/exit; only the ANGLE bands (BeamAngleX/Y, ~4800 each) cross the angle cut.
+  Cheap decisive check confirmed ALL 5 shifts ARE applied (endpoints differ per-event, same event
+  ordering: MuonRes sim_pz rel 1e-2, MINOS 3e-2 + w_reco, BeamAngleX 1.5e-4, MINERvA 4e-6 -- tiny
+  because MINOS dominates forward-muon p||). So migration-census is a WARN, not a hard gate (matches
+  canonical p4_validate_active_lateral.py); real applied-check = nonzero downstream covariance (step 5).
+- UNFOLD 56057327 (batch array, shared QOS): stuck ~6.5h unscheduled on the depressed shared QOS
+  -> CANCELLED. Migrated to fast INTERACTIVE QOS. NODE SWAP w/ Agent A (both holders named
+  claude-hold -> my RUNNING-poll landed on A's): I run on **56076877** (nid004149, 3h wall
+  ~08:32 UTC 07-18, timeleft ~2h @ 06:31), A takes my **56076881** (nid004178). Do NOT touch 56076881.
+  squeue %S/%e are Pacific, %L absolute. Driver `run_active_fps_unfolds_interactive.sh` (NEW; mirrors
+  sbatch_unfold_active_fps.sh exactly -- Agent A's run_active_lateral_unfolds_interactive.sh FPS=1
+  is MIScONFIGured for FPS: standard _MEFHC_ filename + --axes eavail,q3,W, not FPS scalar-2D) runs
+  the 10 unfolds as `srun --overlap` steps, CONC=5 CPT=24, skip-if-exists, detached (setsid),
+  logs in fps/unfolds/unfold_<BAND>_<EP>.log + driver p4fps_unfold_driver.log. Wave 1 (5) RUNNING.
+  One-node / 2-job interactive cap shared with Agent A's standard chain -- do NOT grab a 2nd node.
+  RESUME if walled with stragglers: re-grab interactive (or regular-QOS) holder, rerun the driver
+  with JOBID=<new id> (skip-if-exists resumes only missing endpoints).
+- TRUNCATION GUARD (NEW fps_unfold_complete.py): a wall-killed unfold leaves a present-but-truncated
+  .root (kRecovered / missing hXSecND_flat) that a naive -s skip would consume. The driver skip now
+  VALIDATES COMPLETENESS via srun (login node has no ROOT): TFile opens & not kRecovered, hXSecND_flat
+  285 bins all-finite sum>0, globalCompleteness finite. Fail -> rm + redo. Self-tested: wave-1 5/5 OK
+  (sum ~5.4e-37 gc=1.0000). NB: the skip-check srun MUST `export ROOT628_PREFIX` before sourcing
+  (school-acct conda trap) or the check errors on every file and wrongly redoes good outputs.
+- WAVE STATUS @ 07:22 UTC: wave-1 5/5 complete+validated; wave-2 (MuonResolution_1, Muon_Energy_MINERvA
+  _{0,1}, Muon_Energy_MINOS_{0,1}) running, 56076877 wall ~08:32 UTC -> last stragglers may truncate.
+- 56076877 WALLED 08:32 as expected; wave-2 5 were cleanly ABSENT (not truncated -- they write only at
+  the end). RESUMED @ 08:39 on FRESH holder **56080370** (nid004149, job-name claude-hold-cfps to avoid
+  A's claude-hold on nid004178; poll by JOBID). fps_unfold_complete.py --all = 5 valid + 5 missing.
+  Driver rerun (detached setsid, JOBID=56080370): validated+SKIPPED the 5 complete, RELAUNCHED the 5
+  missing (all 5 concurrent, LightGBM training). 4h wall ~12:38 UTC -- ample for ~1.5h unfolds + chain.
+  Log: fps/logs/p4fps_unfold_driver2.log. Next: when fps_unfold_complete.py --all==10/10 -> cov chain.
+## 2026-07-18 FAIL-CLOSED REPAIR ROUND (purity controls quarantined; negweight-refined preflight repaired; production still gated on independent re-review)
+BLOCKER (orchestrator reconciliation + Codex `fps-adopt-verifier` BLOCK): both FPS unfold launchers
+omitted `--bkg-mode`, so the ten endpoint unfolds ran with the unfold DEFAULT `--bkg-mode=purity`.
+They are **PURITY CONTROLS, not publication inputs**. Selected footing = `negweight-refined` (literal
+bkg injection + Stay-Positive). No covariance/adoption ran (prior action turn 429'd before execution).
+This turn: NO holder, NO covariance build, NO adoption, NO endpoint reruns -- repair + read-only audit only.
+Delivered (all Agent-C-owned, ROOT-free where run):
+- `fps_provenance.py` (NEW) -- fail-closed gate library (manifest inventory/fingerprints/footing;
+  active-rollup 5-band + total identity; reported-mask binding; pure-sum-vs-subtraction residual;
+  zero-block/nonzero-unified; path alias; final-adoption identity reconstruction; PSD). 24/24 ROOT-free
+  tests pass (`tests/test_fps_provenance.py`, NEW).
+- `fps_build_control_manifest.py` (NEW) -> read-only `active_universe_5d/fps/covariance/fps_control_manifest.json`
+  (0444, label=**purity-control**, 10/10 SHA-bound, footing bkg_mode=purity recovered from launcher/source;
+  publication gate REJECTS it). EVIDENCE-BLOCKED if any footing unprovable.
+- HARDENED (gated producers, NOT run this turn): `build_active_lateral_fps.py` (NEW rollup, requires
+  negweight-refined publication manifest + 5 nonzero bands + total==sum), `p4_validate_active_lateral_fps.py`
+  (+manifest/mask/5+5 inventory/per-band-trace/total-identity/audit-fingerprint), `adopt_active_lateral_fps.py`
+  (+HARD pure-sum==subtraction gate, superseded support blocks renamed `*__SUPERSEDED_support`, full source/code
+  provenance, path-alias), `adopt_unified_fps.py` (NEW hardened uthrow wrapper: dim/order equality, reject
+  zero-block<nonzero-unified, path-alias, C_final identity reconstruction, hJointMeanShift preserved+mean-centered).
+- Launchers patched (`sbatch_unfold_active_fps.sh`, `run_active_fps_unfolds_interactive.sh`): explicit
+  `--bkg-mode negweight-refined` guard, SEPARATE `unfolds_negweight_refined/` namespace, atomic tmp->mv,
+  mode-stamped `.config.json`. Purity controls in `unfolds/` PRESERVED unchanged.
+RESIDUAL EVIDENCE GAPS: (1) full SHA256 of the ten ~74GB merged inputs deferred (bounded head/tail
+fingerprint + audit receipt used); (2) 285->266 reported-mask hash DEFERRED to ROOT rollup time (bound via
+central_cv_sha256). PRODUCTION REMAINS GATED: next C turn (ten negweight-refined endpoints -> covariance ->
+adoption) only after `fps-adopt-verifier` PASS on this patch. Proposed publication namespace:
+`active_universe_5d/fps/unfolds_negweight_refined/`.
+
+## (pre-reset) RESUME (next ping, after 56076877 walls): (1) grab a FRESH interactive holder (job-name claude-hold;
+  poll by JOBID not name to avoid A's node); (2) `srun ... fps_unfold_complete.py --all` to see which of
+  the 10 are complete; (3) rerun `JOBID=<new> bash run_active_fps_unfolds_interactive.sh` (validates +
+  rm/redoes truncated, skips complete); (4) gate: require 10/10 `--all` PASS BEFORE cov; then
+  LATERAL COV (analyze_universes_nd.py) -> validate -> swap -> adopt, all via srun into the fresh holder.
+  Do NOT start cov/validate/swap/adopt until fps_unfold_complete.py --all == 10/10.

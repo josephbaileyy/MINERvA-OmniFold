@@ -1,0 +1,311 @@
+{
+  "schema": "fps_endpoint_manifest.v1",
+  "label": "purity-control",
+  "readonly": true,
+  "purpose": "read-only provenance of the ten EXISTING FPS endpoint unfolds; these ran with the unfold default --bkg-mode=purity and are PURITY CONTROLS, NOT publication inputs. Publication requires bkg_mode=negweight-refined and rejects this file.",
+  "nbins_extended": 285,
+  "npt": 15,
+  "npz": 19,
+  "ravel_order": "C",
+  "pt_edges": [
+    0.0,
+    0.07,
+    0.15,
+    0.25,
+    0.33,
+    0.4,
+    0.47,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5,
+    30.0
+  ],
+  "pz_edges": [
+    0.0,
+    0.75,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    3.5,
+    4.0,
+    4.5,
+    5.0,
+    6.0,
+    7.0,
+    8.0,
+    9.0,
+    10.0,
+    15.0,
+    20.0,
+    40.0,
+    60.0,
+    120.0
+  ],
+  "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+  "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+  "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+  "central_cv": "uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+  "central_cv_sha256": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+  "footing": {
+    "estimator": "lgbm",
+    "seed": 42,
+    "iters": 5,
+    "use_weights": true,
+    "full_phase_space": true,
+    "bkg_mode": "purity"
+  },
+  "evidence": {
+    "launchers": {
+      "sbatch_unfold_active_fps.sh": {
+        "sha256": "3ee105f9b0c8daca8db7629db8576a8358f0ab7c0e0afb63bd856d548fa95f13",
+        "passes_bkg_mode": false,
+        "resolved_bkg_mode": "purity"
+      },
+      "run_active_fps_unfolds_interactive.sh": {
+        "sha256": "d0b370e67ea798f0998d2c130c7bb2cd9469843ad29277a18c4ee2d215695457",
+        "passes_bkg_mode": false,
+        "resolved_bkg_mode": "purity"
+      }
+    },
+    "unfold_source": {
+      "path": "unfold_nd_omnifold_unbinned.py",
+      "sha256": "9431d56a92e7d8704b5dbc37bce47b2b81eb11d2ce3ec84d66c0cca77e8c89bb",
+      "bkg_mode_default": "purity"
+    }
+  },
+  "audit_receipt": "active_universe_5d/fps/covariance/audit_merged_fps.json",
+  "audit_receipt_sha256": "19ca5c60aaaf7092bda9729fb0b0ac1b38ddbca34896204c0bbe753a86e1b915",
+  "residual_evidence_gaps": [
+    "input_merged_*: bounded partial-headtail fingerprint only (full SHA256 of the ten ~74GB merged inputs = 740GB login-node I/O, deferred to a compute node); full input identity corroborated by audit_receipt (trees/POT/census/identity, content-derived).",
+    "reported_mask_hash: DEFERRED (285->266 CV>0 mask requires ROOT); bound here via the central_cv_sha256 and (re)computed + checked at publication-rollup time."
+  ],
+  "endpoints": [
+    {
+      "band": "BeamAngleX",
+      "endpoint": 0,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_0.root",
+      "unfold_sha256": "9253c0cbe2a16ec88e1d9a4c574f0bd21e1f140db76a1de107234a842b318a78",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_BeamAngleX_0_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:1225150d6ee9a4f221352a26b4034061ed9583d9e3eeb10793412b3392417771",
+      "input_merged_bytes": 74818153402,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_BeamAngleX_0.log",
+      "unfold_log_sha256": "9a337d92dd8ecaf2872de73321fa2dd07f198c9f06e0d14c404d2f8ad93d4e45",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "BeamAngleX",
+      "endpoint": 1,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_1.root",
+      "unfold_sha256": "7b0cb3623d84ae52c4701a20b8de013fc76e2db0e56e3db37d53f6fd570d9d96",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_BeamAngleX_1_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:1fc3015b28564eadc8226081fb11d753d6e3e77dabdb918e1eaa86027023fbda",
+      "input_merged_bytes": 74817988049,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_BeamAngleX_1.log",
+      "unfold_log_sha256": "cd54f145dd9792191c2ad3a3ab4dd1382fdbbfcb57adffbc42c9b1ec92753fa4",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "BeamAngleY",
+      "endpoint": 0,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_0.root",
+      "unfold_sha256": "7aff65ad35fc6b8e639aa1037725966873126092b24957e93e82cf18e831ef9c",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_BeamAngleY_0_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:67f7f20d7f0cf1626447b86f471af2caf4c143dede01d3fae2c69c5afadb182e",
+      "input_merged_bytes": 74817977723,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_BeamAngleY_0.log",
+      "unfold_log_sha256": "e7592151fc99aa2dc60b8fea3d19b697056c864c1edd3e00f6977578cae72bb5",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "BeamAngleY",
+      "endpoint": 1,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_1.root",
+      "unfold_sha256": "ae902f2ed62fb347dd32f97e16fb477f39b89ab4ba658ef13ed83aca43e52417",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_BeamAngleY_1_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:a5425a5cffd78ea1fef5d7c62a05c48ed73a0bf2199f68f446570fd278e440ee",
+      "input_merged_bytes": 74818122478,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_BeamAngleY_1.log",
+      "unfold_log_sha256": "e870ace3a0462d8b694b9ba8b3e46a345e21972d2bbf3ba5bccbfa274c4efbe5",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "MuonResolution",
+      "endpoint": 0,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_0.root",
+      "unfold_sha256": "b49a24db287d3181b16d3c2477fd946dda240a1f924168673a82b17ffbead0b2",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_MuonResolution_0_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:4790f3a917aa1b002728692d8d9f944a2c30673ca784dd8d837d902f56f83453",
+      "input_merged_bytes": 74818086014,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_MuonResolution_0.log",
+      "unfold_log_sha256": "be5606aa1d3e34025139dd822434ec75d443a30f50b8c71e2fadc9594a6a9436",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "MuonResolution",
+      "endpoint": 1,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_1.root",
+      "unfold_sha256": "9c3b0a49945e8106b2e9afdc1fe5042087e1a49be4acd6e840fc979d54c226e8",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_MuonResolution_1_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:ad09b8c79de5b73c898b2485aecfdd93fe7aa92187b1bb1f6917319358086652",
+      "input_merged_bytes": 74818095404,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_MuonResolution_1.log",
+      "unfold_log_sha256": "13377275fe6bdd620f3d606914304986f3da833c0c446ac93c9fe37239222f07",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "Muon_Energy_MINERvA",
+      "endpoint": 0,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_0.root",
+      "unfold_sha256": "fd916a402a6232d995a78c19ea21b8dfd21b9dfb0c45944c799f017bb119638b",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINERvA_0_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:f55e77e2d8d3e034fc4d5fd0490a919289e4f9ff01f31a0f5b4a376ddc7327c6",
+      "input_merged_bytes": 74818145248,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_Muon_Energy_MINERvA_0.log",
+      "unfold_log_sha256": "72668d97382cded32cc4a6a8578cdedf900d9edce84704df65cb926bdae84a95",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "Muon_Energy_MINERvA",
+      "endpoint": 1,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_1.root",
+      "unfold_sha256": "20052126b1f2036e27aec524df0fbe4cfd9e4b2ab92c624e17096c901de9c39e",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINERvA_1_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:76cc36fd29d8332274e4e3fdfc7a1c72f062776b7d4d80246106a650b39c79b1",
+      "input_merged_bytes": 74818042505,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_Muon_Energy_MINERvA_1.log",
+      "unfold_log_sha256": "4fb96596dd2dd6aa73f90bd90ce93ca7820e04d42cae6f9f475e17a42a1f9d6c",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "Muon_Energy_MINOS",
+      "endpoint": 0,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_0.root",
+      "unfold_sha256": "464c7f75f6327456bb82d69806a7f6fe47ee3bf395ea5b98c498587ff2821459",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINOS_0_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:660565aa1410a74d1abba6374753293a64b43aa4f30c73f5765ed6f097c25a91",
+      "input_merged_bytes": 74810853844,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_Muon_Energy_MINOS_0.log",
+      "unfold_log_sha256": "3d3608002881aa0bb19a39a63e8d43c962df4d6b0268abb2328fd1bd1d7eda59",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    },
+    {
+      "band": "Muon_Energy_MINOS",
+      "endpoint": 1,
+      "unfold_root": "active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_1.root",
+      "unfold_sha256": "37253d83dcccaffb778a1e827577b38671812ccb50ef40b0eab45803578ca767",
+      "input_merged_root": "active_universe_5d/fps/merged/runEventLoopOmniFold_5D_FPS_active_Muon_Energy_MINOS_1_universes_full.root",
+      "input_merged_partial_sha256": "partial-headtail8388608b:f9786c5bdb82c4c8b698a41054d5a61eb6ff2c9acead209941797c12567c4a12",
+      "input_merged_bytes": 74819287018,
+      "unfold_log": "active_universe_5d/fps/unfolds/unfold_Muon_Energy_MINOS_1.log",
+      "unfold_log_sha256": "27c3a7c5bd04583c1bf8141a8f0bd233cb33ff1cfc89936d650ccb447cecd330",
+      "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+      "reported_mask_hash": "DEFERRED-requires-ROOT:cv_sha256=16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "central_hash": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+      "footing": {
+        "estimator": "lgbm",
+        "seed": 42,
+        "iters": 5,
+        "use_weights": true,
+        "full_phase_space": true,
+        "bkg_mode": "purity"
+      }
+    }
+  ],
+  "publication_gate_rejects_this": true
+}
