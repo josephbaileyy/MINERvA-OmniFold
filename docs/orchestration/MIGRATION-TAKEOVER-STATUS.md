@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:28 UTC. Registry:
+Last reconciled: 2026-07-18 11:29 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -55,6 +55,14 @@ Before every compute launch, record a placement decision from current evidence:
 Every launch receipt records interactive-versus-batch rationale, job/holder ID, owner,
 dependency footing, and output paths. `MIG-DISPATCH1` makes this a campaign gate rather than
 an informal preference.
+
+Usage-helper implementation status: **VERIFIER-BLOCKED** (`MIG-V4`). Its two live Codex
+reads are advisory evidence only; it is uncommitted and is not yet wired into the reset
+watcher. The independent verifier confirmed no reset-credit mutation path, but found the
+reserve/exit gate, numeric validation, subprocess I/O, Claude cache freshness, account-home
+confinement, installer replacement guard, change tracking, Python invocation, and regression
+suite insufficient. The same `usage-helper-verifier` session must PASS the repaired helper
+before it becomes the sole automated pre-dispatch gate.
 
 ## Publication-grade evidence audit
 
