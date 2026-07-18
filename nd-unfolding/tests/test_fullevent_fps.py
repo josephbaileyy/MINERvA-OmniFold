@@ -170,11 +170,19 @@ class F7CoherentBootstrap(unittest.TestCase):
 
     def test_global_before_subset(self):
         from pet_bootstrap import mc_poisson_factor
-        N, seed = 500, 3
-        _, sig, _ = fe.coherent_bootstrap_factors(100, N, 50, seed=seed)
+        N, M, nb, seed = 500, 300, 80, 3
+        data_f, sig_f, bkg_f = fe.coherent_bootstrap_factors(M, N, nb, seed=seed)
         imc = np.sort(np.random.default_rng(1).choice(N, 120, replace=False))
-        # the subset factor is the RESTRICTION of the ONE global draw, never a post-subset redraw
-        self.assertTrue(np.array_equal(sig[imc], mc_poisson_factor(N, seed)[imc]))
+        ida = np.sort(np.random.default_rng(2).choice(M, 90, replace=False))
+        ibk = np.sort(np.random.default_rng(3).choice(nb, 40, replace=False))
+        # each subset factor is the RESTRICTION of the ONE global draw (data/signal/background),
+        # never a post-subset redraw
+        self.assertTrue(np.array_equal(sig_f[imc], mc_poisson_factor(N, seed)[imc]))
+        self.assertTrue(np.array_equal(
+            data_f[ida], np.random.default_rng(seed).poisson(1.0, M).astype(np.uint8)[ida]))
+        self.assertTrue(np.array_equal(
+            bkg_f[ibk],
+            np.random.default_rng(seed + 20_000_000).poisson(1.0, nb).astype(np.uint8)[ibk]))
 
     def test_same_training_and_extraction_mc(self):
         N, nb, seed = 400, 60, 5
@@ -223,6 +231,28 @@ class F7CoherentBootstrap(unittest.TestCase):
         with self.assertRaises(ValueError):                      # wrong inventory hash
             fe.validate_coherent_bootstrap(base, bootstrap_seed=seed, n_sig_full=N,
                                            inventory_hashes="different")
+        # --- background inventory (3rd inventory): tamper + omission fail closed ---
+        N2, nb, s2 = 300, 40, 4
+        _, sig2, bkg2 = fe.coherent_bootstrap_factors(50, N2, nb, seed=s2)
+        bstore = {"mc_indices": np.arange(N2), "sig_bootstrap_factor": sig2, "bootstrap_seed": s2,
+                  "bkg_indices": np.arange(nb), "bkg_bootstrap_factor": bkg2,
+                  "bkg_inventory_hash": "BG"}
+        self.assertTrue(fe.validate_coherent_bootstrap(                     # valid full 3-inv check
+            bstore, bootstrap_seed=s2, n_sig_full=N2, n_bkg_full=nb, bkg_inventory_hash="BG"))
+        bad = dict(bstore); bad["bkg_bootstrap_factor"] = bkg2.copy(); bad["bkg_bootstrap_factor"][0] += 1
+        with self.assertRaises(ValueError):                                # tampered bkg factor
+            fe.validate_coherent_bootstrap(bad, bootstrap_seed=s2, n_sig_full=N2, n_bkg_full=nb)
+        bad = dict(bstore); bad["bkg_indices"] = np.roll(np.arange(nb), 1)
+        with self.assertRaises(ValueError):                                # tampered bkg indices/order
+            fe.validate_coherent_bootstrap(bad, bootstrap_seed=s2, n_sig_full=N2, n_bkg_full=nb)
+        with self.assertRaises(ValueError):                                # n_bkg_full omitted
+            fe.validate_coherent_bootstrap(bstore, bootstrap_seed=s2, n_sig_full=N2)
+        bad = {k: v for k, v in bstore.items() if k != "bkg_indices"}
+        with self.assertRaises(ValueError):                                # bkg order evidence omitted
+            fe.validate_coherent_bootstrap(bad, bootstrap_seed=s2, n_sig_full=N2, n_bkg_full=nb)
+        with self.assertRaises(ValueError):                                # wrong bkg inventory hash
+            fe.validate_coherent_bootstrap(bstore, bootstrap_seed=s2, n_sig_full=N2, n_bkg_full=nb,
+                                           bkg_inventory_hash="WRONG")
 
     def test_negweight_refined_fails_closed_without_background(self):
         with tempfile.TemporaryDirectory() as td:
@@ -232,6 +262,46 @@ class F7CoherentBootstrap(unittest.TestCase):
             with self.assertRaises(ValueError):                 # nominal needs bkg inventory
                 fe.build_fullevent_loaders(pc, data_scalars_npz=ds, enforce_fps_edges=True,
                                            bkg_mode="negweight-refined")
+
+
+class PublicationConfigGate(unittest.TestCase):
+    """No-GPU dry-run: a publication full-event run must require the full fingerprint, G2
+    full-schema, negweight-refined, and a real background inventory; recoil/purity/old aborts."""
+
+    def _valid(self):
+        return {"estimator_fingerprint": "pet-fullevent-fps-v1", "bkg_mode": "negweight-refined",
+                "petSchemaVersion": "g2-fullevent-v1", "hasFullEventSchema": 1, "fullPhaseSpace": 1,
+                "has_background": True,
+                "input": "of_inputs_pc_fps_fullevent_g2.npz"}
+
+    def test_valid_publication_config_passes(self):
+        self.assertTrue(fe.assert_publication_config(self._valid()))
+
+    def test_reduced_fingerprint_aborts(self):
+        c = self._valid(); c["estimator_fingerprint"] = "pet-reduced-fps-cross"
+        with self.assertRaises(ValueError):
+            fe.assert_publication_config(c)
+
+    def test_purity_bkg_mode_aborts(self):
+        c = self._valid(); c["bkg_mode"] = "purity"
+        with self.assertRaises(ValueError):
+            fe.assert_publication_config(c)
+
+    def test_missing_g2_schema_aborts(self):
+        c = self._valid(); c["hasFullEventSchema"] = 0
+        with self.assertRaises(ValueError):
+            fe.assert_publication_config(c)
+
+    def test_no_background_aborts(self):
+        c = self._valid(); c["has_background"] = False
+        with self.assertRaises(ValueError):
+            fe.assert_publication_config(c)
+
+    def test_recoil_or_xps2_input_aborts(self):
+        for bad in ("of_inputs_pc_fullcloud_bkgsub_5d.npz", "of_inputs_pc_fps_xps2.npz"):
+            c = self._valid(); c["input"] = bad
+            with self.assertRaises(ValueError):
+                fe.assert_publication_config(c)
 
 
 if __name__ == "__main__":

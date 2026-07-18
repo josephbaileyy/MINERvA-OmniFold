@@ -1736,3 +1736,22 @@ p4-merged-20260718; mandatory hJointMeanShift; transactional launchers into a se
 `unfolds_negweight_refined/` namespace). 41/41 ROOT-free tests PASS. No covariance/adoption produced,
 no endpoints rerun. Canonical STATUS still deferred (ND_OMNIFOLD_STATUS.md dirty from another owner);
 FPS status receipt in `uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md`. Gated on fps-adopt-verifier PASS.
+
+- 2026-07-18 (Agent B, PET/F7 repair round on 9d7a4c6, code/static-test only — no GPU/Slurm/C++/
+  G2/P3F/nominal/replicas/covariance): F7 coherent estimator-bootstrap over THREE inventories
+  (data, signal-MC, background-MC) IMPLEMENTED and durability-hardened; nominal frozen to negweight
+  + Stay-Positive (Option-A literal background-cloud injection), purity = regression control.
+  Repairs: (1) extended fail-closed validator/tests for background factor+indices+n_bkg_full+order-
+  evidence tamper/omission and data/signal/background global-before-subset replay; (2) NEW pure
+  contract `pet/fullevent_dump_contract.py` (G2 schema gate petSchemaVersion=g2-fullevent-v1/
+  hasFullEventSchema=1/fullPhaseSpace=1, strict complete manifest, 3-inventory alignment + vector-
+  length + per-inventory identity/order hashes, forbidden-purity-fallback, atomic temp+rename) +
+  repaired `pet/dump_pointcloud_inputs.py` to gate on it (old/recoil inputs fail closed; PyROOT G2
+  read RUNTIME-BLOCKED pending Agent E's G2 ROOT; recoil dump only under --legacy-recoil-crosscheck,
+  labeled non-G2); (3) `assert_publication_config` gate + quarantine banner on the recoil launcher
+  `sbatch_pet_nominal_bkgsub.sh` (verified it routes through the recoil loader — not publication).
+  35/35 ROOT-free tests PASS (test_fullevent_fps 25 + test_fullevent_dump_contract 10). VERDICT:
+  EVIDENCE-BLOCKED — CLOSED needs the G2 background-cloud ROOT
+  `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root` + Agent-B-aligned full-schema NPZ with literal
+  background clouds/scalars/w_bkg. Canonical ND STATUS deferred (ND_OMNIFOLD_STATUS.md dirty from
+  another owner — PG0); PET receipt in `nd-unfolding/PET_P1_P5_SESSION_STATE.md`.

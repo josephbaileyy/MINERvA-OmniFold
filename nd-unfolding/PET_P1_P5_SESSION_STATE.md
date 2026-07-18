@@ -1,5 +1,24 @@
 # PET Publication Agent B — session state
 
+## HANDOFF UPDATE (2026-07-18) — F7 durability/interface repair round (code/static only)
+On 9d7a4c6, repair-only (no GPU/Slurm/C++/G2/P3F/nominal/replicas/covariance):
+- Validator hardened: `validate_coherent_bootstrap` now fails closed on background factor/indices
+  tamper, omitted n_bkg_full, omitted bkg order evidence, and bkg inventory-hash mismatch; tests
+  confirm data/signal/background global-before-subset replay + no-nominal-refinement reuse intact.
+- NEW `pet/fullevent_dump_contract.py` (pure, login-safe): G2 schema gate (petSchemaVersion=
+  g2-fullevent-v1, hasFullEventSchema=1, fullPhaseSpace=1), strict complete manifest, 3-inventory
+  alignment + view/time vector-length + per-inventory identity/order hashes, forbidden-purity-
+  fallback, transactional temp+atomic-rename. `pet/dump_pointcloud_inputs.py` gates on it (old/
+  recoil fail closed; PyROOT G2 read RUNTIME-BLOCKED; recoil dump only via --legacy-recoil-
+  crosscheck, marked non-G2). generator labels = audit-only.
+- `assert_publication_config` (no-GPU gate) + quarantine banner on `sbatch_pet_nominal_bkgsub.sh`
+  (verified: it routes through the recoil loader minerva_pet_dataloader.py → cross-check, not
+  publication). No full-event publication launcher exists yet (P5B gated).
+- Tests: 35/35 ROOT-free PASS (test_fullevent_fps 25 + test_fullevent_dump_contract 10).
+- PG0: canonical ND_OMNIFOLD_STATUS.md is dirty (another owner) → NOT touched; receipt in
+  ND_OMNIFOLD_RUN_LOG.md (clean) + this file. VERDICT still EVIDENCE-BLOCKED (needs the G2
+  background-cloud ROOT + Agent-B-aligned full-schema NPZ with literal bkg clouds/scalars/w_bkg).
+
 ## HANDOFF UPDATE (2026-07-17c) — F7 coherent estimator-bootstrap IMPLEMENTED (EVIDENCE-BLOCKED)
 Locked decision applied (bkg_negweight_state.md 2026-07-11): NOMINAL = negweight + Stay-Positive,
 PET = Option A literal background-cloud injection; purity = REGRESSION CONTROL only. F7 now spans

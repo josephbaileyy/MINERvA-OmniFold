@@ -274,7 +274,8 @@ def build_negweight_refined_target(data_cell, bkg_cell, w_bkg, pot_scale, n_cell
 
 
 def validate_coherent_bootstrap(store, *, bootstrap_seed, n_sig_full, n_bkg_full=None,
-                                estimator_fingerprint=None, inventory_hashes=None):
+                                estimator_fingerprint=None, inventory_hashes=None,
+                                bkg_inventory_hash=None):
     """Extraction-side coherence gate (F7 step 4). Proves the persisted signal (and background)
     bootstrap factors ARE the same global seed draw restricted to the persisted indices, and that
     the seed, estimator fingerprint, and inventory-order hashes match. FAIL CLOSED (raise) on any
@@ -296,11 +297,20 @@ def validate_coherent_bootstrap(store, *, bootstrap_seed, n_sig_full, n_bkg_full
     if "bkg_bootstrap_factor" in keys:
         if n_bkg_full is None:
             raise ValueError("[F7] bkg factor persisted but n_bkg_full not supplied for check")
+        if "bkg_indices" not in keys:
+            raise ValueError("[F7] bkg factor persisted but bkg_indices (order evidence) omitted")
         ib = np.asarray(store["bkg_indices"]); bf = np.asarray(store["bkg_bootstrap_factor"])
+        if ib.shape != bf.shape:
+            raise ValueError("[F7] bkg_indices/bkg_bootstrap_factor shape mismatch")
         exp = np.random.default_rng(int(bootstrap_seed) + 20_000_000).poisson(
             1.0, int(n_bkg_full)).astype(np.uint8)[ib]
         if not np.array_equal(bf, exp):
             raise ValueError("[F7] background factor != canonical global seed draw at bkg_indices")
+        if bkg_inventory_hash is not None:
+            got = (str(np.asarray(store["bkg_inventory_hash"]).item())
+                   if "bkg_inventory_hash" in keys else None)
+            if got != bkg_inventory_hash:
+                raise ValueError("[F7] background inventory-order hash mismatch (fail closed)")
     if estimator_fingerprint is not None:
         got = str(np.asarray(store["estimator_fingerprint"]).item()) if "estimator_fingerprint" in keys else None
         if got != estimator_fingerprint:
@@ -309,6 +319,44 @@ def validate_coherent_bootstrap(store, *, bootstrap_seed, n_sig_full, n_bkg_full
         got = str(np.asarray(store["inventory_hashes"]).item()) if "inventory_hashes" in keys else None
         if got != inventory_hashes:
             raise ValueError("[F7] inventory-order hash mismatch (different/reordered inventory)")
+    return True
+
+
+RECOIL_OR_OLD_INPUT_MARKERS = ("of_inputs_pc_fullcloud", "of_inputs_pc_fps.npz",
+                               "of_inputs_pc_fps_xps.npz", "of_inputs_pc_fps_xps2.npz",
+                               "xps2", "recoil")
+
+
+def assert_publication_config(cfg):
+    """Fail closed (no-GPU) unless a full-event PET PUBLICATION run is configured correctly, so a
+    launcher can NEVER select old xps2 / recoil-only / purity inputs for a publication product:
+      * estimator_fingerprint == 'pet-fullevent-fps-v1' (FULL schema; the reduced
+        'pet-reduced-fps-cross' is a cross-check, forbidden here);
+      * bkg_mode == 'negweight-refined' (the locked nominal; purity is a control);
+      * the input carries the G2 full-schema markers (petSchemaVersion=g2-fullevent-v1,
+        hasFullEventSchema=1, fullPhaseSpace=1) AND a background inventory;
+      * the input path is not a known recoil/old/xps2 scaffolding file.
+    `cfg` is a plain dict (launcher/config values); this runs before any compute."""
+    from fullevent_dump_contract import G2_SCHEMA        # lazy: avoid import cycle
+    fp = cfg.get("estimator_fingerprint")
+    if fp != "pet-fullevent-fps-v1":
+        raise ValueError(f"[PUB-GATE] estimator_fingerprint {fp!r} != 'pet-fullevent-fps-v1' "
+                         "(reduced/recoil/unset not allowed for a publication product)")
+    if cfg.get("bkg_mode") != "negweight-refined":
+        raise ValueError(f"[PUB-GATE] bkg_mode {cfg.get('bkg_mode')!r} != 'negweight-refined' "
+                         "(purity is a regression control, never the publication nominal)")
+    for k, v in G2_SCHEMA.items():
+        got = cfg.get(k)
+        ok = got is not None and (str(got) == v if k == "petSchemaVersion" else int(got) == v)
+        if not ok:
+            raise ValueError(f"[PUB-GATE] input lacks G2 full-schema marker {k}={v} (got {got!r})")
+    if not cfg.get("has_background"):
+        raise ValueError("[PUB-GATE] no background inventory declared (negweight-refined needs it)")
+    inp = str(cfg.get("input", ""))
+    for bad in RECOIL_OR_OLD_INPUT_MARKERS:
+        if bad in inp:
+            raise ValueError(f"[PUB-GATE] input {inp!r} matches recoil/old/xps2 marker {bad!r} "
+                             "(forbidden for a full-event publication run)")
     return True
 
 

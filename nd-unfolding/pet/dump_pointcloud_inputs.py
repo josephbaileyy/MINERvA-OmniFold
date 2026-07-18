@@ -13,17 +13,33 @@ highest-energy constituents), and writes of_inputs_pc.npz for minerva_pet_datalo
       --num-part 12 --out of_inputs_pc.npz
 """
 import argparse
+import os
 import sys
 from array import array
 
 import numpy as np
-import ROOT
+# NOTE: `import ROOT` is deferred into main() (PyROOT is unavailable on the login node and the
+# G2 full-event read is RUNTIME-BLOCKED); the pure write/schema contract below imports cleanly.
 
 _REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-for p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
+for p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding", f"{_REPO}/nd-unfolding/pet"):
     if p not in sys.path:
         sys.path.insert(0, p)
-import unfold_2d_omnifold_unbinned as u2d  # noqa: E402
+import fullevent_dump_contract as fdc  # noqa: E402  (login-safe: no ROOT/TF)
+
+
+def _read_g2_markers(f):
+    """Read the G2 full-event schema markers from a ROOT file: TNamed petSchemaVersion,
+    TParameter<int> hasFullEventSchema / fullPhaseSpace. Missing markers -> {} -> fail closed."""
+    meta = {}
+    nm = f.Get("petSchemaVersion")
+    if nm:
+        meta["petSchemaVersion"] = str(nm.GetTitle())
+    for k in ("hasFullEventSchema", "fullPhaseSpace"):
+        p = f.Get(k)
+        if p:
+            meta[k] = int(p.GetVal())
+    return meta
 
 GEN_FEATS = ["part_gen_E", "part_gen_px", "part_gen_py", "part_gen_pz", "part_gen_pdg"]
 RECO_FEATS = ["part_reco_E", "part_reco_pos", "part_reco_z"]
@@ -58,7 +74,14 @@ def main():
     ap.add_argument("--pz-edges", default=None,
                     help="comma-separated p|| edge override (FPS extended grid)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--legacy-recoil-crosscheck", action="store_true",
+                    help="OPT-IN: dump the OLD recoil-only cross-check NPZ (purity placeholder, no "
+                         "background/muon/vertex/view/time, NOT publication). Default path REQUIRES "
+                         "the G2 full-event schema and fails closed on old inputs.")
     args = ap.parse_args()
+
+    import ROOT  # deferred: PyROOT unavailable on the login node
+    import unfold_2d_omnifold_unbinned as u2d
 
     if args.full_phase_space:
         import math
@@ -75,6 +98,22 @@ def main():
     f = ROOT.TFile.Open(args.omnifile)
     if not f or f.IsZombie():
         raise SystemExit(f"[FAIL] cannot open {args.omnifile}")
+
+    # ---- G2 full-event schema gate (publication default) --------------------------------------
+    if not args.legacy_recoil_crosscheck:
+        fdc.assert_g2_schema(_read_g2_markers(f))   # fail closed on old / recoil-only inputs
+        raise NotImplementedError(
+            "[G2 RUNTIME-BLOCKED] the full-event ROOT read (signal+data+background clouds with "
+            "reco muon/vertex/view/time + w_bkg + per-inventory identity/order hashes) is pending "
+            "Agent E's reviewed/built/smoke-validated G2 ROOT. The OUTPUT is governed by "
+            "fullevent_dump_contract.write_fullevent_npz_atomic (schema + strict manifest + "
+            "3-inventory alignment + identity + no-purity-fallback + atomic rename); its keys/order "
+            "must match fullevent_fps_dataloader.build_fullevent_loaders and the F7 three-inventory "
+            "replay. Wire the PyROOT branch reads here once the G2 ROOT exists; do NOT emit a "
+            "partial/purity NPZ. For the quarantined recoil cross-check use --legacy-recoil-crosscheck.")
+    print("[LEGACY] recoil-only CROSS-CHECK dump — NOT publication (purity placeholder; no "
+          "background / muon / vertex / view / time / G2 schema). Quarantined artifact.")
+
     t = f.Get("mc_signal_reco"); d = f.Get("data")
     if not t.GetBranch("part_gen_E"):
         raise SystemExit("[FAIL] no part_gen_E branch -- re-run the event loop with "
@@ -171,6 +210,8 @@ def main():
     ea_e = und.EXTRA_AXES["eavail"]["edges"]; q3_e = und.EXTRA_AXES["q3"]["edges"]
     np.savez_compressed(
         args.out, num_part=P,
+        petSchemaVersion="recoil-only-crosscheck",  # explicitly NOT G2; fails the G2 schema gate
+        hasFullEventSchema=0, fullPhaseSpace=int(bool(args.full_phase_space)),
         part_gen=part_gen, part_reco=part_reco, measured_pc=measured_pc,
         pass_reco=np.asarray(pr, bool), pass_truth=np.asarray(ptru, bool),
         w_truth=np.asarray(wt), w_reco=np.asarray(wr),

@@ -10,6 +10,17 @@
 #SBATCH --time=06:00:00
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 #SBATCH --output=pet/pet_nom_bkgsub_%j.out --error=pet/pet_nom_bkgsub_%j.err
+# ============================================================================
+# QUARANTINED RECOIL-ONLY CROSS-CHECK LAUNCHER — NOT a publication path.
+# Routes through the recoil loader `minerva_pet_dataloader.py` on the recoil
+# bkgsub input (of_inputs_pc_fullcloud_bkgsub_5d.npz = purity target, no muon /
+# background clouds). It CANNOT produce a full-event publication nominal. The
+# full-event PET publication nominal uses `fullevent_fps_dataloader.py`
+# (bkg_mode=negweight-refined, G2 full-schema input) and MUST pass
+# `fullevent_fps_dataloader.assert_publication_config` (estimator fingerprint
+# pet-fullevent-fps-v1 + negweight-refined + G2 markers + background inventory).
+# Do not repurpose this script for publication (KNOWN_ISSUES #19 / F7).
+# ============================================================================
 # PHASE 2: corrected NOMINAL 5D PET estimator on the background-subtracted
 # target. ONE unbootstrapped training at the ADOPTED per-train config (the same
 # config the corrected C_stat replicas and C_ml ensemble reuse, so the floor,
