@@ -69,6 +69,13 @@ owner/launcher and enforce all of:
 5. prompt cancellation of the still-pending loser once the winner is live;
 6. a clean loser exit if the other route owns the lock or already completed.
 
+The decision point must use a fresh scheduler read. If either route is already
+RUNNING, it is the winner: do not cancel it merely to retrofit a hedge or switch
+QOS. A hedge is established before either contender starts, never after. When
+there is no ready follow-on workload for a held node, prefer the one-shot batch
+route unless interactive latency materially changes the publication critical
+path; batch releases its resources automatically when the task ends.
+
 Scientific production additionally requires skip validation against the full
 configuration/source/input fingerprint. A mere existing filename is never a
 completion signal.
@@ -108,8 +115,8 @@ and whether the rewakeup exposed a decision-ready checkpoint.
 
 | UTC | Task | Routes | Result | Policy update |
 |---|---|---|---|---|
-| 2026-07-18 15:07 | Full SHA256 of 10 standard + 10 FPS merged ROOTs (~1.28 TB) | shared batch `56090791` | Began after about 4.6 min in Priority; canceled after ~6 s when hedge design was hardened. Only an incomplete temp receipt; no scientific output. | Shared was not prohibitively slow in this sample, but the original route was not hedge-safe. |
-| 2026-07-18 15:12 | Same hash task, mutual-exclusion experiment | shared batch `56090857` + urgent interactive `56090877` | Interactive had zero-second scheduler start latency, acquired the lock, and completed 20/20 hashes over 1,286,623,855,676 bytes in 25m25s (~0.844 GB/s aggregate); pending batch loser canceled. Receipt paths/inventory/digests and clean skip validated. | A ready, single-node, I/O-bound job justified interactive; first-start-wins removed queue speculation without double execution. A/C can reuse committed full hashes rather than consume another 1.28-TB read. |
+| 2026-07-18 15:07 | Full SHA256 of 10 standard + 10 FPS merged ROOTs (~1.28 TB) | shared batch `56090791` | Started after 4m36s in Priority. It was already RUNNING when canceled after 7s to retrofit a hedge; only an incomplete temp receipt existed. | **Routing error:** a running route is already the first-start winner. Patch future launchers before submission; never cancel healthy running batch merely to add an interactive contender. |
+| 2026-07-18 15:12 | Same hash task after the routing error | replacement shared batch `56090857` + urgent interactive `56090877` | Interactive had zero-second scheduler start latency, acquired the new lock, and completed 20/20 hashes over 1,286,623,855,676 bytes in 25m25s (~0.844 GB/s aggregate); pending replacement batch canceled. Receipt paths/inventory/digests and clean skip validated. | The receipt is valid, but interactive superiority was **not** demonstrated: the original batch had started first and a one-shot batch would have released resources automatically. With no ready follow-on task, batch was the better operational choice. A/C still avoid another 1.28-TB read by reusing the receipt. |
 
 The hash launcher and completed receipt land together under the repository
 commit gate. This is provenance evidence, not a new scientific number.

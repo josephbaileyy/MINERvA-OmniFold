@@ -45,6 +45,10 @@ the exact standard/FPS merged inventories (1,286,623,855,676 bytes) in 25m25s.
 Paths, pre/post size+mtime inventories, unique digests and clean skip validate;
 launcher, atomic receipt, validation, RUNS/STATUS and A/C reuse instructions
 land together under the commit gate.
+Placement postmortem: the original shared job had already started before it was
+canceled to retrofit the hedge. That was a routing error, not a compute/result
+error. The policy now treats any healthy RUNNING route as the winner and favors
+one-shot batch when a held node has no ready follow-on workload.
 
 PG0 ownership was re-audited fail-closed (`MIG-AGY16`–`MIG-AGY18`,
 `MIG-PG0-ADJ`). Two agy PASS recommendations were rejected because they
