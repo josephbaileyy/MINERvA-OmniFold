@@ -1,0 +1,78 @@
+{
+  "snapshot_utc": "2026-07-18T09:07:00Z",
+  "snapshot_local": "2026-07-18 02:07 PDT",
+  "ledger_head_commit": "3b5945b",
+  "git_remote": "github",
+  "repo_cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "campaign_worktree": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-fe",
+  "dispatch_form": "HOME=/global/homes/j/josephrb/claude-homes/school/claude-homes/personal /global/homes/j/josephrb/.local/bin/claude -p --resume <UUID> \"<msg>\" --model opus --dangerously-skip-permissions",
+  "school_session_dir": "/global/homes/j/josephrb/claude-homes/school/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/",
+  "personal_session_dir": "/global/homes/j/josephrb/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/",
+  "workers": [
+    {
+      "id": "orchestrator",
+      "role": "sole orchestrator/verifier; coordinates A/B/C, verifies promotions, owns docs/orchestration ledgers and uq_4d/corrected repair",
+      "profile_account": "personal (josephrb)",
+      "provider": "claude-code",
+      "model": "Opus 4.8 (switched from Fable 5 mid-session)",
+      "session_uuid": "5c5d3896-a71b-4d70-8c0a-6b53b25d33a5",
+      "background_job_id": "b9b89e8e-d0ed-4527-80da-fa63b3453528",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "last_completed_turn": "Wrote MIGRATION-HANDOFF.md + this roster; verified both chains advancing (FPS 5/10, std 0/10 running); fallback wakeup armed ~02:18 PDT",
+      "pending_prompt": "Verify wall transitions; drive C's FPS cov->validate->swap->adopt at 10/10; drive A's standard cov->validate->CANDIDATE at 10/10; write consolidated BEN note; commit",
+      "provider_session_stored_at": "/global/homes/j/josephrb/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/5c5d3896-a71b-4d70-8c0a-6b53b25d33a5.jsonl"
+    },
+    {
+      "id": "agent_A",
+      "role": "standard P3S / standard P4 chain ONLY (merge->audit->unfold seed42->lateral cov->validate->CANDIDATE). Must NOT touch FPS or the C++ binary.",
+      "profile_account": "school (opus 4.8)",
+      "provider": "claude-code",
+      "model": "opus",
+      "session_uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "alloc_holder": "56076881 (nid004178, interactive, wall ~09:33 UTC)",
+      "last_completed_turn": "reply_A6: audit PASS (GATE1 120/120, GATE2 10/10 all-4-trees); launched 10 standard unfolds DETACHED (setsid nohup, seed42, CONC=4) on 56076881; hard-gate 10/10 validated before cov",
+      "pending_prompt": "When 56076881 walls, grab a fresh interactive holder (poll by JOBID, avoid nid004149=C); finish 10 unfolds via completeness-validated skip; then analyze_universes_5d -> p4_validate_active_lateral.py -> CANDIDATE (commit gate, no final adoption)",
+      "provider_session_stored_at": "/global/homes/j/josephrb/claude-homes/school/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/14951826-0680-4e57-ac92-8a9970bc07f7.jsonl"
+    },
+    {
+      "id": "agent_B",
+      "role": "PET P5B full-event engine (F2/F3/F7/F8 fixes, schema gating, lateral-source decision). Idle until a P5B prerequisite lands.",
+      "profile_account": "school (opus 4.8)",
+      "provider": "claude-code",
+      "model": "opus",
+      "session_uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "alloc_holder": "none (idle)",
+      "last_completed_turn": "reply_B6: committed F2 (FiLM/attention masks) + logit-space F3 (25d8360, GPU-val 56041808 PASS); fingerprint split + option-(b) + F8-moot + F7-gate recorded in FULL_EVENT_FEATURE_CONTRACT.md and P5B_LATERAL_SOURCE_DECISION.md",
+      "pending_prompt": "None active. Resume P5B only when G2 (C++ full-event dump) + fresh full-schema P3F land; F7 (coherent global Poisson C_stat draw) still to implement before any C_stat replica",
+      "provider_session_stored_at": "/global/homes/j/josephrb/claude-homes/school/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/46e4af3e-c3f2-4fa5-abc7-f0da72817282.jsonl"
+    },
+    {
+      "id": "agent_C",
+      "role": "FPS P3F / P4-FPS / P6-FPS chain (merge->audit->unfold seed42->N=2 lateral cov->validate->PSD-safe pure-sum swap->final adopt). Sole FPS post-processing owner.",
+      "profile_account": "school (opus 4.8)",
+      "provider": "claude-code",
+      "model": "opus",
+      "session_uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "alloc_holder": "56080370 (claude-hold-cfps, nid004149, interactive, wall ~12:38 UTC)",
+      "last_completed_turn": "reply_C7: grabbed fresh holder 56080370 (poll by JOBID); fps_unfold_complete.py --all = 5 valid + 5 missing; relaunched the 5 missing unfolds DETACHED (setsid, CONC=5); hard-gate 10/10 before cov",
+      "pending_prompt": "When fps_unfold_complete.py --all == 10/10 validated, run cov -> validate (p4_validate_active_lateral_fps.py) -> PSD-safe swap (adopt_active_lateral_fps.py) -> final adopt (adopt_unified_4d.py) -> ..._combined_uthrow_activelat.root, all via srun into 56080370",
+      "provider_session_stored_at": "/global/homes/j/josephrb/claude-homes/school/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/4580f42d-77db-4f59-88c4-1b2854f24d82.jsonl"
+    },
+    {
+      "id": "agent_D",
+      "role": "4D-corrected UQ (comb4dCc chain). Chain COMPLETE via orchestrator takeover (R1: regen 56025478 -> combine 56025481 -> adopt 56025483). No active delegate coordinated by this orchestrator.",
+      "profile_account": "MISSING (never directly coordinated by this orchestrator)",
+      "provider": "claude-code (presumed)",
+      "model": "MISSING",
+      "session_uuid": "MISSING",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "alloc_holder": "none",
+      "last_completed_turn": "MISSING (D's original comb4dCc 55971617 failed; repair executed by orchestrator, not D). Note: school session 748c7f6b-39b8-43ab-b660-7c714c437154 contains heavy comb4dCc/uthr4dCc/Agent-D references but its last completed turn (2026-07-17 05:51) was the analysis-note Overleaf force-push, NOT the 4D chain — so it is NOT confirmed to be Agent D.",
+      "pending_prompt": "None. Follow-on (not D's, owner unassigned): swap A's selection-complete standard lateral into the R1 corrected-4D candidate to finalize.",
+      "provider_session_stored_at": "MISSING (candidate-but-unconfirmed: /global/homes/j/josephrb/claude-homes/school/claude-homes/personal/.claude/projects/-pscratch-sd-j-josephrb-MINERvA-OmniFold/748c7f6b-39b8-43ab-b660-7c714c437154.jsonl)"
+    }
+  ]
+}
