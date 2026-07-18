@@ -1,0 +1,877 @@
+
+[2026-07-18T18:00:59Z] Nonempty reset event detected; resuming Codex thread.
+OpenAI Codex v0.144.5
+--------
+workdir: /pscratch/sd/j/josephrb/MINERvA-OmniFold
+model: gpt-5.6-terra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019f749a-857b-7790-8cec-bc36b22908be
+--------
+user
+A real reset-log event occurred. Read docs/orchestration/state/school-reset-wakeup-1800.log exactly once,
+        validate that it contains a real event, and continue QP4 from the durable campaign state while preserving every
+        worker UUID. Do not consume either personal Codex Full reset credit. Do not enter another empty wait loop. If the
+        event is invalid, record that fact and stop.
+warning: This session was recorded with model `gpt-5.6-sol` but is resuming with `gpt-5.6-terra`. Consider switching back to `gpt-5.6-sol` as it may affect Codex performance.
+codex
+I’m using the persistent-orchestrator procedure because this is a real campaign wakeup. I’ll first read the reset log exactly once, validate the event, then snapshot capacity before any preserved-worker dispatch; no reset credits will be used.
+exec
+/usr/bin/bash -lc "sed -n '1,260p' .agents/skills/persistent-orchestrator/SKILL.md" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+ succeeded in 198ms:
+---
+name: persistent-orchestrator
+description: Maintain named Claude, Codex, and agy workers across multiple debate, review, research, or verification rounds. Use when Codex must orchestrate separate account homes, migrate an orchestration campaign, route follow-ups to the same worker context, preserve role commitments, or avoid replacing persistent delegates with one-shot CLI calls.
+---
+
+# Persistent Orchestrator
+
+Treat each role as one durable provider conversation. Use
+`orchestration/agentctl.py` for every external-account turn.
+
+## Start and resume
+
+Start each role once:
+
+```bash
+/usr/bin/python3.11 orchestration/agentctl.py start --role ROLE --profile PROFILE \
+  --prompt-file PROMPT_FILE
+```
+
+Resume that role for every later round:
+
+```bash
+/usr/bin/python3.11 orchestration/agentctl.py send --role ROLE --prompt-file PROMPT_FILE
+```
+
+Profiles are `codex-personal`, `codex-school`, `claude-personal`,
+`claude-school`, `claude-school-legacy`, and `agy`. Use
+`claude-school-legacy` only to resume the migrated A/B/C UUIDs stored under
+the nested Perlmutter home; use `claude-school` for new flat-home roles. Never
+bypass the dispatcher with raw one-shot commands. Never use provider shortcuts
+such as `--last`, `--continue`, or `-c` when multiple roles may run
+concurrently.
+
+Use the configured frontier models: Claude `opus` (Opus 4.8), Codex
+`gpt-5.6-sol` at `xhigh`, and agy `Gemini 3.1 Pro (High)`. The user authorizes
+full permission bypass for these profiles. Preserve the dispatcher flags;
+Codex uses `--dangerously-bypass-approvals-and-sandbox`, the installed
+equivalent of `--yolo`, while Claude and agy use
+`--dangerously-skip-permissions`.
+
+## Adopt migrated sessions
+
+When an existing session and its provider-side local state remain on this
+machine, register it before sending another turn:
+
+```bash
+/usr/bin/python3.11 orchestration/agentctl.py adopt --role ROLE --profile PROFILE \
+  --session-id UUID --cwd WORKING_DIRECTORY
+```
+
+Do not adopt a bare UUID copied from another machine unless the corresponding
+provider session store was securely migrated too. Start a new role with the
+handoff context instead.
+
+## Run the campaign
+
+1. Read the handoff, ledgers, open questions, and current registry first.
+2. Define stable, unique role names and record their responsibilities.
+3. Start independent first-round workers in parallel when useful.
+4. Save every returned session ID before synthesis.
+5. Route objections and revisions back to the same roles with `send`.
+6. Update the campaign ledger after every round.
+7. Stop only at the user's stated, verifiable end condition.
+
+## Plan around measured capacity
+
+Before each dispatch wave, after a cap, and before final synthesis, run:
+
+```bash
+/usr/bin/python3.11 orchestration/usagectl.py snapshot --json
+```
+
+Treat live Codex data as authoritative. Track the personal account's exact
+seven-day reset time and preserve its two Full reset credits as emergency
+reserve. Never consume a reset credit without a new, explicit user
+authorization naming the credit action. Treat stale/missing Claude data and
+agy's unavailable percentage as unknown. Follow
+`docs/orchestration/LIVE-USAGE.md` and record material changes in the campaign
+ledger.
+
+Treat these local measurements as planning baselines, not guaranteed account
+entitlements:
+
+- Budget about 16–20 Codex xhigh+search calls per five-hour window per account.
+- Budget about 42 Opus grading-size jobs from a 6% start, or roughly 45 per
+  five-hour window; heavy research turns consume more.
+- Treat Gemini as effectively uncapped for ordinary campaigns: 254 heavy
+  High+search calls completed in one day without a cap.
+
+Use a trivial content-free heartbeat to detect a reset. On a cap, record the
+provider's reset time and route independent work to another account; do not
+replace or lose the capped role's saved session. Avoid extreme login-node
+bursts even where provider concurrency permits them.
+
+If a resume fails, inspect the raw run artifacts and report the failure. Never
+silently replace the role with a fresh conversation because that destroys its
+context and argumentative identity.
+
+exec
+/usr/bin/bash -lc "awk '{ printf \"%s\\n\", "'$0 }'"' docs/orchestration/state/school-reset-wakeup-1800.log" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+ succeeded in 183ms:
+[wakeup-1800] 2026-07-18T18:00:30Z usage preflight phase=pre_A
+{
+  "accounts": {
+    "claude-school": {
+      "profiles": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "provider": "claude",
+      "source": "freshest per-window Claude alias cache",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+        "No fresh alias cache supplies actionable account capacity"
+      ],
+      "window_sources": {},
+      "windows": {}
+    }
+  },
+  "changes": [
+    {
+      "field": "seven_day.remaining_percent",
+      "new": 76.0,
+      "old": 84.0,
+      "profile": "codex-personal"
+    }
+  ],
+  "gate_ok": true,
+  "observed_at_utc": "2026-07-18T18:00:30+00:00",
+  "policy": {
+    "claude_cache_max_age_seconds": 1800,
+    "codex_personal_reset_credit_reserve": 1,
+    "never_consume_codex_reset_credits_automatically": true,
+    "profile_account_groups": {
+      "claude-school": [
+        "claude-school",
+        "claude-school-legacy"
+      ]
+    },
+    "required_codex_profiles": [
+      "codex-personal",
+      "codex-school"
+    ],
+    "schema_version": 1,
+    "seven_day_low_remaining_percent": 20
+  },
+  "policy_violations": [],
+  "profiles": {
+    "agy": {
+      "provider": "agy",
+      "source": "no usage API in installed agy CLI",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "agy usage is unknown; use heartbeat/cap evidence"
+      ],
+      "windows": {}
+    },
+    "claude-personal": {
+      "age_seconds": 15775,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:37:38+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude seven_day snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 15459,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:42:54+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school-legacy": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 15739,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:38:14+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "codex-personal": {
+      "observed_at_utc": "2026-07-18T18:00:31+00:00",
+      "plan_type": "plus",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 1,
+        "credits": [
+          {
+            "expires_at_epoch": 1786556540,
+            "expires_at_utc": "2026-08-12T17:42:20+00:00",
+            "status": "available",
+            "title": "Full reset"
+          }
+        ],
+        "protected_reserve": 1,
+        "valid_available_full_reset_count": 1
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 76.0,
+          "resets_at_epoch": 1784990174,
+          "resets_at_utc": "2026-07-25T14:36:14+00:00",
+          "used_percent": 24.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    },
+    "codex-school": {
+      "observed_at_utc": "2026-07-18T18:00:33+00:00",
+      "plan_type": "unknown",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 0,
+        "credits": [],
+        "protected_reserve": 0,
+        "valid_available_full_reset_count": 0
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 22.0,
+          "resets_at_epoch": 1784861461,
+          "resets_at_utc": "2026-07-24T02:51:01+00:00",
+          "used_percent": 78.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "warnings": [
+    "codex-personal: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: five-hour window is absent from the live response; short-window capacity is unknown",
+    "claude-personal: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-personal: Claude seven_day snapshot is stale; that window is unknown",
+    "claude-personal: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school-legacy: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school-legacy: Claude has no fresh actionable window; capacity is unknown",
+    "agy: agy usage is unknown; use heartbeat/cap evidence",
+    "account claude-school: Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+    "account claude-school: No fresh alias cache supplies actionable account capacity"
+  ]
+}
+[wakeup-1800] 2026-07-18T18:00:33Z Claude-school cache unknown; running disposable flat-home heartbeat phase=pre_A
+[wakeup-1800] 2026-07-18T18:00:37Z disposable Claude-school heartbeat succeeded; availability verified, percentage remains unknown
+[wakeup-1800] 2026-07-18T18:00:37Z starting agent-A-standard
+
+codex
+The log contains a valid timestamped wake event: it performed a complete preflight, verified a disposable Claude-school heartbeat, and started the preserved A role. I will not reread that log or duplicate its dispatch. I’m reconciling the worker registry and live process state next, then will route only the next safe, UUID-preserving work.
+exec
+/usr/bin/bash -lc "jq '{updated_at,roles: (.roles // .workers // .)}' docs/orchestration/state/sessions.json 2>/dev/null | sed -n '1,260p'
+ps -eo pid=,ppid=,lstart=,stat=,args= | rg 'agentctl.py send|agent-A-standard|agent-B-p5b|agent-C-fps|resume_after_school_reset_1800|pipeline_post_reset_verifiers' || true
+squeue -u \""'$USER" -o '"'%.18i %.12P %.30j %.8T %.10M %.9l %.6D %R'
+git status --short
+/usr/bin/python3.11 orchestration/agentctl.py --help | sed -n '1,180p'" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+codex
+The event’s own preflight is authoritative for the A dispatch: personal Codex is at 76% seven-day remaining with its one August credit still protected; Claude-school is usable by successful heartbeat but has no numeric percentage. The current sandbox cannot query Slurm directly, so I’m relying on the durable registry and watcher-owned receipts rather than trying to interfere with the running wave.
+exec
+/usr/bin/bash -lc "sed -n '1,260p' docs/orchestration/MIGRATION-HANDOFF.md
+jq '{agent_A: .sessions[\"agent-A-standard\"], agent_B: .sessions[\"agent-B-p5b\"], agent_C: .sessions[\"agent-C-fps\"], verifier_standard: .sessions[\"standard-p4-verifier\"], verifier_fps: .sessions[\"fps-adopt-verifier\"], agy: .sessions[\"agy-publication-redteam\"]}' docs/orchestration/state/sessions.json
+rg -n '"'^QP4'"\\b|wakeup-1800|agent-A-standard|agent-B-p5b|agent-C-fps|P4|PET' docs/orchestration/QUIET-PERIODS.tsv docs/orchestration/MIGRATION-WORKERS.json docs/orchestration/MIGRATION-TAKEOVER-STATUS.md | tail -160" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+ succeeded in 226ms:
+# Orchestrator migration handoff — fe-fps campaign
+
+Snapshot 2026-07-18 02:07 PDT (09:07 UTC). Lossless state for a successor orchestrator.
+Companion machine-readable roster: `MIGRATION-WORKERS.json` (same dir).
+Ledger head at snapshot: git `3b5945b` on `main` (remote `github`).
+
+---
+
+## 1. Objective
+
+Graduate MINERvA OmniFold from a small observable set to the full available phase space,
+AND (as the concurrent publication-completion campaign this orchestrator took over
+coordinating) drive the corrected-UQ covariance endpoints to completion. Two things are in
+flight tonight:
+- **FPS P4 (Agent C):** produce the publishable corrected-FPS covariance with
+  selection-complete active laterals (final adopt).
+- **Standard P4 (Agent A):** produce the selection-complete standard lateral block — the
+  missing input that finalizes the corrected-4D covariance (the R1 candidate).
+
+The headline full-event PET measurement (P5B) is a SEPARATE, later campaign — see §5 Stage 3;
+it is NOT what tonight's chains deliver.
+
+## 2. Stopping condition
+
+Tonight's coordination is DONE when BOTH:
+- Agent C's FPS chain reaches **final adopt** → `uq_fps/corrected/..._combined_uthrow_activelat.root`
+  (PSD-verified, validate-PASS), recorded X5 PASS in RUNS.tsv, committed+pushed.
+- Agent A's standard chain reaches **CANDIDATE** (cov→validate; commit gate, no final adoption),
+  its selection-complete standard lateral available to finalize corrected-4D.
+Then: write the consolidated BEN note (§8) and commit. The broader campaign continues at Stage 3.
+
+## 3. Verified results (as of snapshot)
+
+Committed and independently checked (see CLAIMS.md for evidence rows):
+- **CLM-001..005** VERIFIED (P5A engineering + closures reproduced on GPU, job 56003372).
+- **CLM-006** VERIFIED-NUMERIC — full-event PET pilot, both arms PASS (Tier-1 per-cell median
+  |FE/recoil-only−1| = 4.25% purity / 4.37% ones vs 10% gate; unit-check bit-exact; miss
+  neutrality exact). Estimator `pet-fullevent-fps-pilot0`; not a publication result.
+- **CLM-007** RESOLVED upstream — Agent B fail-closed data-scalar guard (aa3f44c).
+- **CLM-008** CLOSED except F7 — F2/F3 (25d8360, publication logit-space F3, GPU-val 56041808),
+  F9/F10 (4043e3f/220c970); F8 mooted by no-Horovod policy. **F7 is the sole open engine gate**
+  (coherent global Poisson C_stat draw before subsetting) — blocks any P5B C_stat replica.
+- **CLM-009** VERIFIED-NUMERIC — sieve reduction (negweight→purity binned limit), in note App. B.2,
+  pushed to Overleaf (analysis-note remote head c02ec6e; later qualification d8bb0aa).
+- **R1** PASS — Agent D's 4D-corrected chain repaired by THIS orchestrator (comb4dCc 55971617
+  had failed on 15 partial slabs; regen 56025478→combine 56025481→adopt 56025483): 160/160
+  throws, null 4.24e-51, adopt PSD OK, √tr ×1.194 (2.099e-38→2.508e-38), median frac 13.47%→14.08%.
+  Outputs `uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow{,_cvcentered}.root`.
+- **P5B launch gates** adopted (f0f2ad1): no nominal until F2/F3 committed+val (done); no C_stat
+  until F7; no Horovod; no publication laterals from reduced-schema P3F sidecars; distinct
+  estimator fingerprints (`pet-fullevent-fps-v1` full-schema only / `pet-reduced-fps-cross`).
+
+In-flight tonight (NOT yet complete):
+- **X5 (C, FPS P4):** merge 10/10 + audit PASS (gate refined: energy-band zero-migration=WARN in
+  FPS). Unfolds: **5/10 validated** (wave-1); wave-2's 5 relaunched on fresh holder 56080370.
+- **X-std (A, standard P4):** merges 10/10 validated (setsid-detached redo after truncation),
+  audit PASS (GATE1 120/120, GATE2 10/10 all-4-trees). Unfolds: **0/10** (running detached on 56076881).
+
+## 4. Unresolved questions / risks
+
+- **F7** must be implemented before any P5B C_stat replica (coherent global Poisson over full
+  inventories before subset selection; persisted factors/seeds; same MC draw at extraction).
+- **Corrected-4D finalization:** the R1 candidate uses the SUPPORT-LIMITED sweep lateral. Final
+  swap needs Agent A's selection-complete standard lateral (tonight's A output) → a follow-on
+  adopt step, owner not yet assigned.
+- **P3F schema:** current FPS endpoints are scalar-schema (pre-full-event binary). Publication
+  full-event P5B laterals require option-(b) fresh full-schema P3F after the C++ dump (G2) lands
+  (Agent B's P5B_LATERAL_SOURCE_DECISION.md).
+- **Interactive walls:** both chains ride 4h interactive holders; each wall-kill leaves
+  write-at-end unfolds cleanly absent (good) but a wall-kill DURING a hadd leaves full-sized
+  truncated files (bad) — completeness validation (not existence) is mandatory on every skip.
+
+## 5. Current plan (stages; canonical detail in ROLLOUT-PLAN.md)
+
+- **Stage 1 (tonight):** finish C's FPS P4 → final adopt; finish A's standard P4 → CANDIDATE.
+- **Stage 2:** DONE (CLM-007 upstreamed; CLM-008 closed except F7).
+- **Stage 3 (P5B production, later):** gated on G2 (C++ full-event dump) + fresh full-schema P3F
+  (option b) + F7. Launch order + gates in ROLLOUT-PLAN.md and FULL_EVENT_FEATURE_CONTRACT.md.
+- **Stage 4/5:** negweight full-event arm; Gregor four-way pilot (both optional/gated).
+
+## 6. Role assignments
+
+| role | who | state | scope |
+|---|---|---|---|
+| Orchestrator | this session (Opus 4.8; was Fable) | active, handing off | coordinate A/B/C, verify, ledger |
+| Agent A | school session 14951826 | ACTIVE | standard P3S/P4 only (NOT FPS) — holder 56076881 |
+| Agent B | school session 46e4af3e | IDLE (done) | P5B engine; resumes when G2/P3F land |
+| Agent C | school session 4580f42d | ACTIVE | FPS P3F/P4-FPS/P6-FPS — holder 56080370 |
+| Agent D (4D-corrected) | delegate UUID uncertain — see WORKERS.json | chain COMPLETE (R1) | orchestrator-executed; no active delegate |
+| note/Overleaf | school session 748c7f6b | STALE (07-17 05:51) | analysis-note subtree; last act = Overleaf force-push |
+
+Ownership rule (hard): A and C each own ONE interactive node; neither cancels the other's holder;
+A=standard only, C=FPS only. C++ binary frozen while active. `uq_4d/corrected/` = orchestrator.
+
+## 7. Important paths, commands, quota
+
+**Alloc assignment (current):** C-FPS on holder **56080370** (nid004149, wall ~12:38 UTC).
+A-std on holder **56076881** (nid004178, wall ~09:33 UTC ≈ 02:33 PDT, ~26min left → will re-grab).
+2-job interactive cap: one node each.
+
+**Product paths:**
+- FPS unfolds: `nd-unfolding/active_universe_5d/fps/unfolds/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_<BAND>_<EP>.root` (need 10)
+- FPS final adopt target: `nd-unfolding/uq_fps/corrected/...combined_uthrow_activelat.root`
+- Standard unfolds: `nd-unfolding/active_universe_5d/standard/unfolds/*.root` (need 10)
+- Merged endpoints: `active_universe_5d/{fps,standard}/merged/`
+- Ledgers: `docs/orchestration/{CLAIMS.md,RUNS.tsv,ROLLOUT-PLAN.md,FINDINGS.md}`
+- Delegate prompts/replies: `MINERvA-OmniFold-fe/orchestration_runs/coordination/{msg_*,reply_*}`
+
+**Delegate dispatch (verified working; NESTED school home is mandatory):**
+```
+HOME=/global/homes/j/josephrb/claude-homes/school/claude-homes/personal \
+  /global/homes/j/josephrb/.local/bin/claude -p --resume <UUID> "<msg>" \
+  --model opus --dangerously-skip-permissions
+```
+**Monitoring:** `squeue -u josephrb`; validate an output before trusting it (open ROOT, check
+`hXSecND_flat`/`[CHECK] c=1.0000`). Peek at a node: `srun --overlap --jobid=<J> -w <node> bash -lc 'ps -u josephrb -o etimes,args'`.
+
+**Quota state (snapshot):**
+- claude-school (opus): 5h windows from 08:40 PDT → current window **23:40 PDT(07-17)–04:40 PDT(07-18)**;
+  hit its cap once ~07:40 PDT earlier today; ~8 pings fired this window; cap ≈42 jobs/window.
+  A capped ping fails in ~60s with the reset time in stdout.
+- codex / codex-school (gpt-5.6-sol xhigh): headroom; ≈16–20 xhigh jobs/window/account. Not used tonight.
+- agy (gemini 3.1 pro): effectively uncapped.
+- Orchestrator: Opus 4.8, user relaxed usage concern; delegate heavy lifting to codex/agy by directive.
+
+## 8. Next three recommended actions
+
+1. **Verify the wall transitions** (a fallback wakeup is armed ~02:18 PDT): confirm A crossed its
+   09:33 UTC wall onto a fresh holder and resumed its 10 standard unfolds via completeness-validated
+   skip; confirm C's 5 FPS wave-2 unfolds are training on 56080370. Harvest `reply_C7.out`/`reply_A6.out`
+   (already read at snapshot) and any newer replies.
+2. **Close FPS (critical path):** when `fps_unfold_complete.py --all` == 10/10, ensure Agent C runs
+   cov→validate→PSD-safe swap→final adopt on 56080370; independently verify PSD (min-eig ≳ −1e-10
+   rel), symmetry, validate-PASS; record **X5 PASS** in RUNS.tsv with the covariance fingerprint
+   (√trace, median frac/bin, rank, PSD); commit+push.
+3. **Close standard + write the BEN note:** when A's 10 unfolds validate, ensure cov→validate→CANDIDATE;
+   note the follow-on (swap A's selection-complete standard lateral into the R1 corrected-4D candidate —
+   assign an owner). Then write a consolidated FINDINGS.md BEN entry for tonight's four recurring modes
+   (interactive-QOS grabbed in seconds vs 6.5h shared backlog; cross-alloc jobid confusion starving a
+   co-agent — assign explicit jobid-per-chain + verify by node; setsid-detach drivers or they die at
+   session boundaries [extends BEN-024]; wall-kill truncation — validate completeness not existence
+   [extends BEN-023]); commit.
+{
+  "agent_A": {
+    "adopted": true,
+    "created_at": "2026-07-18T09:44:44+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "claude-school-legacy",
+    "provider": "claude",
+    "session_id": "14951826-0680-4e57-ac92-8a9970bc07f7",
+    "turns": [
+      {
+        "action": "send",
+        "number": 1,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094529Z-send-bd88c608.json"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094935Z-send-abc7835e.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T094935Z-send-abc7835e.json"
+      },
+      {
+        "action": "send",
+        "number": 3,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T130033Z-send-53c05a7f.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T130033Z-send-53c05a7f.json"
+      },
+      {
+        "action": "send",
+        "number": 4,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T133053Z-send-c0768eb6.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-A-standard/20260718T133053Z-send-c0768eb6.json"
+      }
+    ],
+    "updated_at": "2026-07-18T13:50:35+00:00"
+  },
+  "agent_B": {
+    "adopted": true,
+    "created_at": "2026-07-18T09:44:45+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "claude-school-legacy",
+    "provider": "claude",
+    "session_id": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "turns": [
+      {
+        "action": "send",
+        "number": 1,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T094529Z-send-3552118f.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T094529Z-send-3552118f.json"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T133143Z-send-ed9e2d14.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260718T133143Z-send-ed9e2d14.json"
+      }
+    ],
+    "updated_at": "2026-07-18T13:42:28+00:00"
+  },
+  "agent_C": {
+    "adopted": true,
+    "created_at": "2026-07-18T09:44:45+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "claude-school-legacy",
+    "provider": "claude",
+    "session_id": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "turns": [
+      {
+        "action": "send",
+        "number": 1,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T094529Z-send-1d12b1be.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T094529Z-send-1d12b1be.json"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T131134Z-send-d470e855.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T131134Z-send-d470e855.json"
+      }
+    ],
+    "updated_at": "2026-07-18T13:31:43+00:00"
+  },
+  "verifier_standard": {
+    "created_at": "2026-07-18T10:47:03+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "codex-school",
+    "provider": "codex",
+    "session_id": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
+    "turns": [
+      {
+        "action": "start",
+        "number": 1,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T103534Z-start-2db634e6.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T103534Z-start-2db634e6.jsonl"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T131354Z-send-32a002cb.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T131354Z-send-32a002cb.jsonl"
+      },
+      {
+        "action": "send",
+        "number": 3,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T135724Z-send-deec1117.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/standard-p4-verifier/20260718T135724Z-send-deec1117.jsonl"
+      }
+    ],
+    "updated_at": "2026-07-18T14:03:33+00:00"
+  },
+  "verifier_fps": {
+    "created_at": "2026-07-18T10:33:09+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "codex-personal",
+    "provider": "codex",
+    "session_id": "019f74bb-a4e7-7ba3-9598-b6b73b7f5831",
+    "turns": [
+      {
+        "action": "start",
+        "number": 1,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T101801Z-start-ac6fe3f8.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T101801Z-start-ac6fe3f8.jsonl"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T133306Z-send-b805c171.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T133306Z-send-b805c171.jsonl"
+      }
+    ],
+    "updated_at": "2026-07-18T13:42:43+00:00"
+  },
+  "agy": {
+    "created_at": "2026-07-18T13:39:03+00:00",
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "profile": "agy",
+    "provider": "agy",
+    "session_id": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "turns": [
+      {
+        "action": "start",
+        "number": 1,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T133801Z-start-6432ed62.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T133801Z-start-6432ed62.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T133801Z-start-6432ed62.txt"
+      },
+      {
+        "action": "send",
+        "number": 2,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134151Z-send-b982f0cb.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134151Z-send-b982f0cb.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134151Z-send-b982f0cb.txt"
+      },
+      {
+        "action": "send",
+        "number": 3,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134345Z-send-7aabba01.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134345Z-send-7aabba01.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134345Z-send-7aabba01.txt"
+      },
+      {
+        "action": "send",
+        "number": 4,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134914Z-send-bd6168bb.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134914Z-send-bd6168bb.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T134914Z-send-bd6168bb.txt"
+      },
+      {
+        "action": "send",
+        "number": 5,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135300Z-send-0bdb9c43.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135300Z-send-0bdb9c43.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135300Z-send-0bdb9c43.txt"
+      },
+      {
+        "action": "send",
+        "number": 6,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135452Z-send-ef872b6a.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135452Z-send-ef872b6a.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135452Z-send-ef872b6a.txt"
+      },
+      {
+        "action": "send",
+        "number": 7,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135805Z-send-7a84b913.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135805Z-send-7a84b913.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T135805Z-send-7a84b913.txt"
+      },
+      {
+        "action": "send",
+        "number": 8,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T142414Z-send-4030a1ef.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T142414Z-send-4030a1ef.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T142414Z-send-4030a1ef.txt"
+      },
+      {
+        "action": "send",
+        "number": 9,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T143800Z-send-9c60d76c.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T143800Z-send-9c60d76c.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T143800Z-send-9c60d76c.txt"
+      },
+      {
+        "action": "send",
+        "number": 10,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T144652Z-send-327d8966.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T144652Z-send-327d8966.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T144652Z-send-327d8966.txt"
+      },
+      {
+        "action": "send",
+        "number": 11,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145235Z-send-141eff83.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145235Z-send-141eff83.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145235Z-send-141eff83.txt"
+      },
+      {
+        "action": "send",
+        "number": 12,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145612Z-send-a59aab5f.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145612Z-send-a59aab5f.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T145612Z-send-a59aab5f.txt"
+      },
+      {
+        "action": "send",
+        "number": 13,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150259Z-send-9dfa9e73.txt"
+      },
+      {
+        "action": "send",
+        "number": 14,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150533Z-send-e1b20fa9.txt"
+      },
+      {
+        "action": "send",
+        "number": 15,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T150939Z-send-0b6e527a.txt"
+      },
+      {
+        "action": "send",
+        "number": 16,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152246Z-send-1563b9b6.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152246Z-send-1563b9b6.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152246Z-send-1563b9b6.txt"
+      },
+      {
+        "action": "send",
+        "number": 17,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152523Z-send-f5b3f5ac.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152523Z-send-f5b3f5ac.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152523Z-send-f5b3f5ac.txt"
+      },
+      {
+        "action": "send",
+        "number": 18,
+        "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152703Z-send-d4de9121.agy.log",
+        "returncode": 0,
+        "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152703Z-send-d4de9121.stderr.log",
+        "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T152703Z-send-d4de9121.txt"
+      }
+    ],
+    "updated_at": "2026-07-18T15:27:18+00:00"
+  }
+}
+docs/orchestration/QUIET-PERIODS.tsv:5:QP4	2026-07-18T15:52:13Z	OPEN	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	ARMED: QP4 remains open; only a nonempty reset-log event is a valid wake; an empty result means no dispatch and no state mutation	End the model turn while the watcher remains active; resume this same thread only from the external event or new user input, preserving every worker UUID
+docs/orchestration/MIGRATION-WORKERS.json:27:      "role": "standard P3S / standard P4 chain ONLY (merge->audit->unfold seed42->lateral cov->validate->CANDIDATE). Must NOT touch FPS or the C++ binary.",
+docs/orchestration/MIGRATION-WORKERS.json:40:      "role": "PET P5B full-event engine (F2/F3/F7/F8 fixes, schema gating, lateral-source decision). Idle until a P5B prerequisite lands.",
+docs/orchestration/MIGRATION-WORKERS.json:53:      "role": "FPS P3F / P4-FPS / P6-FPS chain (merge->audit->unfold seed42->N=2 lateral cov->validate->PSD-safe pure-sum swap->final adopt). Sole FPS post-processing owner.",
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:15:| T1 | FPS P4/P6 final adoption (handoff X5) | `agent-C-fps` / UUID `4580f42d-…`; independent verifier `fps-adopt-verifier` / `019f74bb-…` | PURITY QUARANTINED; REPAIR-2 BLOCKED | C committed `9168e7d`: 24/24 tests, purity-control manifest, explicit future `negweight-refined` namespace, no production. Same verifier BLOCKed artifact binding, mandatory downstream manifests, transactional receipts, full merged hashes/exact mask, required mean shift, and commit-gate receipts. C resumes only after the 18:00 shared-account reset; no endpoint run before another same-verifier PASS. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:16:| T2 | Standard P4 selection-complete lateral candidate (handoff X6) | `agent-A-standard` / UUID `14951826-…`; independent verifier `standard-p4-verifier` / `019f74cb-…` | 10/10 VALID; REPAIR-3 REQUIRED | A committed repair-2 `9428ca8` with exact endpoint/merged evidence and 20/20 tests; no candidate. The same verifier still BLOCKed the executable chain: wrong candidate/input/key contracts, non-transactional unfold, incomplete provenance, residual subtraction, missing adoption consumer/map builder, cosmetic merged binding, and insufficient end-to-end tests. Exact repair-3 is queued for the 18:00 reset. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:19:| T5 | F7 coherent global Poisson bootstrap before any P5B C_stat replica | `agent-B-p5b` / UUID `46e4af3e-…` | CORE CODE PASS; DUMPER/LAUNCHER/RUNTIME BLOCKED | B committed `9d7a4c6`; 19/19 CPU tests verify global-before-subset data/signal/background draws and background-before-refinement. Independent agy requires background-tamper/omission negatives and found the current ROOT→NPZ dumper does not consume G2 features or `mc_background/w_bkg`, reject old schema, bind stable order, or write transactionally; launchers may retain recoil/purity routes. B static repair resumes after reset. Runtime remains fail-closed until E smoke plus aligned full-schema input. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:20:| T6 | G2 full-event C++ dump branches plus regenerated FPS CV point-cloud loops | `agent-E-g2-source` / UUID `44b634fc-…` (Claude-personal) owns C++ source; Agent B retains Python/PET interface | SOURCE PASS; OWNER PROVIDER-CAPPED; RUNTIME/PRODUCTION BLOCKED | E committed/pushed exact four-file source packet `486e53e`; 474 static checks PASS and independent agy source review PASS. The same-UUID interactive build/smoke turn then hit an explicit Claude-personal monthly spend limit before acquiring an allocation; no reset time was supplied and no state changed. Preserve E and resume it when that provider is available/limit is raised. No replacement, 12-playlist batch, MEFHC NPZ, or PET training. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:21:| T7 | Fresh full-schema P3F endpoints for publication PET laterals | `agent-C-fps` after T6, preserving its FPS ownership | DEPENDENCY-BLOCKED | Current P3F endpoints are reduced-schema and may only feed `pet-reduced-fps-cross`; `P5B_LATERAL_SOURCE_DECISION.md` adopts fresh option (b) for `pet-fullevent-fps-v1`. Requires T6, then 5×2×12 regenerated endpoints and proof battery. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:22:| T8 | P5B publication full-event FPS nominal and UQ chain | `agent-B-p5b` | DEPENDENCY-BLOCKED | Requires T5, T6, T7, and the recovered hard background-treatment gate: the user's locked 2026-07-11 choice is literal background-cloud injection plus Stay-Positive (`negweight-refined`), with purity only as a matched control. The current dumper/launcher path is now explicitly BLOCKED until it carries the aligned background inventory and rejects recoil/purity inputs. Freeze and prove that target before nominal; then execute floor, coherent C_stat, PET C_ML, joint vertical/flux response, selection-complete laterals, matched total covariance, and projections/comparisons. No recoil-PET block transfers. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:25:| T11 | Negweight background treatment and optional Gregor representation refinement | negweight: `agent-B-p5b`; Gregor: unassigned | SPLIT: NEGWEIGHT HARD-GATED; GREGOR DEFERRED | `bkg_negweight_state.md` proves the user already chose full PET injection + Stay-Positive on 2026-07-11. The migration plan's optional/post-baseline placement was stale and is corrected by `MIG-DEC-NW`: negweight now blocks T8 nominal. Gregor remains explicitly deferred and cannot substitute for T8. |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:129:| PG2 — PET engine correctness | **F7 INTERFACE PASS; FULL-SCHEMA TARGET EVIDENCE BLOCKED** | F2/F3 GPU regression and cap sensitivity; F7 factors drawn over full data/signal/background inventories before subsetting; background draw before per-replica refinement; exact replay/extraction identity; no Horovod path. Code exists in `9d7a4c6`; two negative tests/receipts and G2 literal background runtime evidence remain. | Agent B; T5; feature contract CLM-008 |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:132:| PG4 — corrected scalar adoption/projection | **DEPENDENCY-BLOCKED** | Pure-component replacement without subtraction ambiguity; exact component identity; reproducible unified adoption; nonmutation hashes; exact width-weighted `M C M^T`; PSD/symmetry/finite gates. | T3 plus T1/T2 owners; runbook P4/P6 |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:135:| PG5B-UQ — publication PET covariance | **DEPENDENCY-BLOCKED** | Fresh coherent C_stat, crossed C_ML, joint end-to-end vertical/flux response, selection-complete lateral retraining, common fingerprint/mask/order/central, complete manifests, no recoil/P1 component transfer. | Agent B; T8; runbook P5B |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:136:| PG6 — covariance mathematics and assembly | **NOT YET TESTABLE ON FINAL PRODUCTS** | Exact component inventories and sums; declared mean centering/mean shifts; finite/symmetric/PSD/rank gates; no double count; exact 5D→4D projection; independent reconstruction from final products/manifests. | owning producer + independent verifier; runbook P4–P7 |
+docs/orchestration/MIGRATION-TAKEOVER-STATUS.md:137:| PG7 — physics comparisons/coverage | **DEPENDENCY-BLOCKED** | Frozen central/covariance provenance; supported/dead-cell tiering; prior envelope and coverage; matched-domain scalar/PET comparisons; generator significances with full covariance. | future P7 owner; T9 |
+
+codex
+The durable handoff confirms the active reset wave is intentionally serialized: A repair-3, then C repair-2, then B’s static PET-interface repair, followed by their existing same-UUID verifiers. I’m recording the valid QP4 wake and leaving those owned dispatches untouched.
+apply patch
+patch: completed
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/QUIET-PERIODS.tsv
+diff --git a/docs/orchestration/QUIET-PERIODS.tsv b/docs/orchestration/QUIET-PERIODS.tsv
+index 3ab6d22c919a5882aa719a4a1b6cc7b197535bdf..ccd0c514573dc9970762b47a9a4bc32121f71daa
+--- a/docs/orchestration/QUIET-PERIODS.tsv
++++ b/docs/orchestration/QUIET-PERIODS.tsv
+@@ -2,4 +2,4 @@
+ QP1	2026-07-18T15:30:20Z	2026-07-18T15:37:48Z	first of hash 56090877 terminal+receipt or 18:00 saved-role wave activity	interactive full hashes; A/C/B reset watcher; pipelined verifier watcher	86% seven-day; reset 2026-07-25T14:36:14Z	84% observed after wake processing; reset unchanged	PASS: hash receipt woke orchestrator; 20/20 full digests over 1,286,623,855,676 bytes completed; no provider dispatched during quiet wait	Last 7m28s of a 25m25s unattended hash run overlapped LLM quiet time and delivered decision-ready A/C provenance
+ QP2	2026-07-18T15:43:41Z	2026-07-18T15:44:51Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; completed hash holder idle until reuse/self-expiry under allocation policy	84% seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: automatic goal continuation resumed the LLM without an external trigger	A one-minute quiet interval showed end-turn alone is not a reliable long sleep in goal mode; forced-active time was redirected to reproducible Slurm-history analysis
+ QP3	2026-07-18T15:48:24Z	2026-07-18T15:48:57Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; idle completed-work holder awaiting self-expiry	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: second immediate automatic goal continuation without an external trigger	Confirmed end-turn cannot create a durable break in goal mode; forced-active interval redirected to reproducible provider/account routing analysis
+-QP4	2026-07-18T15:52:13Z	OPEN	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	ARMED: QP4 remains open; only a nonempty reset-log event is a valid wake; an empty result means no dispatch and no state mutation	End the model turn while the watcher remains active; resume this same thread only from the external event or new user input, preserving every worker UUID
++QP4	2026-07-18T15:52:13Z	2026-07-18T18:00:30Z	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% seven-day; reset 2026-07-25T14:36:14Z	76% seven-day at the valid wake; reset unchanged; one August Full reset credit remains protected	PASS: timestamped reset event carried a complete preflight, gate_ok=true, a successful disposable flat-home Claude-school heartbeat, and watcher-owned start of preserved agent-A-standard	QP4 ended on a real event; the existing serialized A→C→B writer wave and same-UUID verifier pipeline remain the only owners of those dispatches
+
+diff --git a/docs/orchestration/QUIET-PERIODS.tsv b/docs/orchestration/QUIET-PERIODS.tsv
+index 3ab6d22c919a5882aa719a4a1b6cc7b197535bdf..ccd0c514573dc9970762b47a9a4bc32121f71daa
+--- a/docs/orchestration/QUIET-PERIODS.tsv
++++ b/docs/orchestration/QUIET-PERIODS.tsv
+@@ -2,4 +2,4 @@
+ QP1	2026-07-18T15:30:20Z	2026-07-18T15:37:48Z	first of hash 56090877 terminal+receipt or 18:00 saved-role wave activity	interactive full hashes; A/C/B reset watcher; pipelined verifier watcher	86% seven-day; reset 2026-07-25T14:36:14Z	84% observed after wake processing; reset unchanged	PASS: hash receipt woke orchestrator; 20/20 full digests over 1,286,623,855,676 bytes completed; no provider dispatched during quiet wait	Last 7m28s of a 25m25s unattended hash run overlapped LLM quiet time and delivered decision-ready A/C provenance
+ QP2	2026-07-18T15:43:41Z	2026-07-18T15:44:51Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; completed hash holder idle until reuse/self-expiry under allocation policy	84% seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: automatic goal continuation resumed the LLM without an external trigger	A one-minute quiet interval showed end-turn alone is not a reliable long sleep in goal mode; forced-active time was redirected to reproducible Slurm-history analysis
+ QP3	2026-07-18T15:48:24Z	2026-07-18T15:48:57Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; idle completed-work holder awaiting self-expiry	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: second immediate automatic goal continuation without an external trigger	Confirmed end-turn cannot create a durable break in goal mode; forced-active interval redirected to reproducible provider/account routing analysis
+-QP4	2026-07-18T15:52:13Z	OPEN	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	ARMED: QP4 remains open; only a nonempty reset-log event is a valid wake; an empty result means no dispatch and no state mutation	End the model turn while the watcher remains active; resume this same thread only from the external event or new user input, preserving every worker UUID
++QP4	2026-07-18T15:52:13Z	2026-07-18T18:00:30Z	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% seven-day; reset 2026-07-25T14:36:14Z	76% seven-day at the valid wake; reset unchanged; one August Full reset credit remains protected	PASS: timestamped reset event carried a complete preflight, gate_ok=true, a successful disposable flat-home Claude-school heartbeat, and watcher-owned start of preserved agent-A-standard	QP4 ended on a real event; the existing serialized A→C→B writer wave and same-UUID verifier pipeline remain the only owners of those dispatches
+
+exec
+/usr/bin/bash -lc "git diff --check -- docs/orchestration/QUIET-PERIODS.tsv && git add -- docs/orchestration/QUIET-PERIODS.tsv && git commit -m 'Close QP4 on verified reset event' && git status --short -- docs/orchestration/QUIET-PERIODS.tsv" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+diff --git a/docs/orchestration/QUIET-PERIODS.tsv b/docs/orchestration/QUIET-PERIODS.tsv
+index 3ab6d22c919a5882aa719a4a1b6cc7b197535bdf..ccd0c514573dc9970762b47a9a4bc32121f71daa
+--- a/docs/orchestration/QUIET-PERIODS.tsv
++++ b/docs/orchestration/QUIET-PERIODS.tsv
+@@ -2,4 +2,4 @@
+ QP1	2026-07-18T15:30:20Z	2026-07-18T15:37:48Z	first of hash 56090877 terminal+receipt or 18:00 saved-role wave activity	interactive full hashes; A/C/B reset watcher; pipelined verifier watcher	86% seven-day; reset 2026-07-25T14:36:14Z	84% observed after wake processing; reset unchanged	PASS: hash receipt woke orchestrator; 20/20 full digests over 1,286,623,855,676 bytes completed; no provider dispatched during quiet wait	Last 7m28s of a 25m25s unattended hash run overlapped LLM quiet time and delivered decision-ready A/C provenance
+ QP2	2026-07-18T15:43:41Z	2026-07-18T15:44:51Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; completed hash holder idle until reuse/self-expiry under allocation policy	84% seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: automatic goal continuation resumed the LLM without an external trigger	A one-minute quiet interval showed end-turn alone is not a reliable long sleep in goal mode; forced-active time was redirected to reproducible Slurm-history analysis
+ QP3	2026-07-18T15:48:24Z	2026-07-18T15:48:57Z	first saved-role/reset-watcher activity at or after 18:00:30 UTC, watcher/provider failure, or unexpected Slurm event	A/C/B reset writer watcher; pipelined A/C/B reviewer watcher; idle completed-work holder awaiting self-expiry	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	FALSE WAKE: second immediate automatic goal continuation without an external trigger	Confirmed end-turn cannot create a durable break in goal mode; forced-active interval redirected to reproducible provider/account routing analysis
+-QP4	2026-07-18T15:52:13Z	OPEN	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% last measured seven-day; reset 2026-07-25T14:36:14Z	not resampled; no provider dispatch	ARMED: QP4 remains open; only a nonempty reset-log event is a valid wake; an empty result means no dispatch and no state mutation	End the model turn while the watcher remains active; resume this same thread only from the external event or new user input, preserving every worker UUID
++QP4	2026-07-18T15:52:13Z	2026-07-18T18:00:30Z	first nonempty reset-watcher log event via external read-only watcher session 39138	A/C/B reset writer watcher; pipelined reviewer watcher; reset watcher active without in-turn polling	84% seven-day; reset 2026-07-25T14:36:14Z	76% seven-day at the valid wake; reset unchanged; one August Full reset credit remains protected	PASS: timestamped reset event carried a complete preflight, gate_ok=true, a successful disposable flat-home Claude-school heartbeat, and watcher-owned start of preserved agent-A-standard	QP4 ended on a real event; the existing serialized A→C→B writer wave and same-UUID verifier pipeline remain the only owners of those dispatches
+
+ exited 128 in 188ms:
+fatal: Unable to create '/global/homes/j/josephrb/MINERvA-OmniFold/.git/index.lock': Read-only file system
+
+codex
+The wake was valid and the watcher-owned wave is underway. This session’s new filesystem sandbox can edit the worktree but makes the repository index read-only, so the ledger update cannot be committed; I’m reverting only my uncommittable local edit rather than leaving a non-durable shared-worktree change.
+apply patch
+patch: completed
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/QUIET-PERIODS.tsv
+exec
+/usr/bin/bash -lc 'git diff --check -- docs/orchestration/QUIET-PERIODS.tsv && git diff --quiet -- docs/orchestration/QUIET-PERIODS.tsv; rc=$?; if [ "$rc" -eq 0 ]; then printf '"'QP4_LEDGER_CLEAN\\n'; else printf 'QP4_LEDGER_DIFF_PRESENT\\n'; fi
+jq '{a_turns:(.sessions[\"agent-A-standard\"].turns|length), b_turns:(.sessions[\"agent-B-p5b\"].turns|length), c_turns:(.sessions[\"agent-C-fps\"].turns|length), a_updated:.sessions[\"agent-A-standard\"].updated_at}' docs/orchestration/state/sessions.json" in /pscratch/sd/j/josephrb/MINERvA-OmniFold
+ succeeded in 203ms:
+QP4_LEDGER_CLEAN
+{
+  "a_turns": 4,
+  "b_turns": 2,
+  "c_turns": 2,
+  "a_updated": "2026-07-18T13:50:35+00:00"
+}
+
+codex
+QP4 received a valid reset event at `2026-07-18T18:00:30Z`.
+
+- The watcher’s complete preflight passed; Claude-school availability was verified by disposable heartbeat.
+- It started the preserved `agent-A-standard` role; I did not duplicate it.
+- A→C→B and their same-UUID verifier pipeline remain watcher-owned.
+- Personal Codex is 76% seven-day remaining; the August Full reset credit remains untouched.
+- No additional wait loop was entered.
+
+The current sandbox makes `.git/index` read-only, so I could not commit the QP4 ledger closure. I reverted that local edit; no uncommitted QP4 change remains.
+tokens used
+2,790,176
+QP4 received a valid reset event at `2026-07-18T18:00:30Z`.
+
+- The watcher’s complete preflight passed; Claude-school availability was verified by disposable heartbeat.
+- It started the preserved `agent-A-standard` role; I did not duplicate it.
+- A→C→B and their same-UUID verifier pipeline remain watcher-owned.
+- Personal Codex is 76% seven-day remaining; the August Full reset credit remains untouched.
+- No additional wait loop was entered.
+
+The current sandbox makes `.git/index` read-only, so I could not commit the QP4 ledger closure. I reverted that local edit; no uncommitted QP4 change remains.
+[2026-07-18T18:03:03Z] Codex resume exited with status 0.

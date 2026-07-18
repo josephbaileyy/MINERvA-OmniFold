@@ -1,0 +1,17 @@
+**PET-REPAIR PASS**
+
+Agent B’s post-reset repair turn (commit `0c7c26d`) satisfies the static and interface requirements of the full-event FPS PET contract without fabricating downstream runtime evidence or violating repository ownership.
+
+### Exact Evidence Audit
+
+1.  **F7 Tamper and Omission Negatives**: **PASS**. `test_fullevent_fps.py` explicitly tests and fails closed on tampered `bkg_bootstrap_factor`, tampered `bkg_indices`, omitted `n_bkg_full`, omitted order evidence, and wrong `bkg_inventory_hash` (lines 234–249).
+2.  **Global-before-subset Three-Inventory Replay**: **PASS**. `test_global_before_subset` asserts the exact equivalence of the restricted subset array against the restricted `M`, `N`, and `nb` global Poisson draws for data, signal, and background, strictly forbidding a post-subset redraw (lines 173–185).
+3.  **Background-before-refinement & Purity Fallback**: **PASS**. `fullevent_dump_contract.py` introduces `assert_no_purity_fallback` which raises exceptions when background is absent in `negweight-refined` mode.
+4.  **Actual G2 Schema Rejection**: **PASS**. The pure dump contract mandates `petSchemaVersion=g2-fullevent-v1`, `hasFullEventSchema=1`, and `fullPhaseSpace=1`. Recoil and xps2 schemas strictly abort.
+5.  **Distinct Features and Aligned `w_bkg`**: **PASS**. Vector lengths (`reco_view` / time) and row counts for `w_bkg` are asserted by `assert_inventory_alignment` and `test_vector_length_mismatch`.
+6.  **Transactional NPZ & Fingerprinting**: **PASS**. `write_fullevent_npz_atomic` employs a temporary directory and atomic rename (`os.replace`), tested explicitly by `test_interrupted_output_leaves_no_partial` (mocking a disk-full `IOError` and confirming zero partial files remain).
+7.  **Launcher Call-Graph Fail-Closed**: **PASS**. `assert_publication_config` serves as the dry-run gate, requiring the `pet-fullevent-fps-v1` fingerprint. It aborts on `purity`, missing background, and `of_inputs_pc_fps_xps2.npz` or legacy recoil inputs.
+8.  **Commit-Gate Receipts**: **PASS**. B safely preserved the PG0 dirty files (e.g., `ND_OMNIFOLD_STATUS.md`) untouched, reporting the PG0 block. It staged only its 8 owned files, routing the receipt properly to `ND_OMNIFOLD_RUN_LOG.md` and `PET_P1_P5_SESSION_STATE.md`.
+9.  **No GPU / Honest PyROOT Block**: **PASS**. Agent B accurately marked the turn as `EVIDENCE-BLOCKED`. The PyROOT read is declared runtime-blocked because Agent E's G2 ROOT `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root` does not yet exist. Agent B did not fabricate a fake ROOT, did not dispatch GPU tasks, and did not edit Agent E's `runEventLoopOmniFold.cpp` or Agent C's endpoints.
+
+**Verdict Status**: PASS applies to code/static interface readiness only. The pipeline correctly recognizes that PET publication production remains blocked on Agent E’s G2 source build and smoke test.

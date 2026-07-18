@@ -1,0 +1,850 @@
+[wakeup-1800] 2026-07-18T18:00:30Z usage preflight phase=pre_A
+{
+  "accounts": {
+    "claude-school": {
+      "profiles": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "provider": "claude",
+      "source": "freshest per-window Claude alias cache",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+        "No fresh alias cache supplies actionable account capacity"
+      ],
+      "window_sources": {},
+      "windows": {}
+    }
+  },
+  "changes": [
+    {
+      "field": "seven_day.remaining_percent",
+      "new": 76.0,
+      "old": 84.0,
+      "profile": "codex-personal"
+    }
+  ],
+  "gate_ok": true,
+  "observed_at_utc": "2026-07-18T18:00:30+00:00",
+  "policy": {
+    "claude_cache_max_age_seconds": 1800,
+    "codex_personal_reset_credit_reserve": 1,
+    "never_consume_codex_reset_credits_automatically": true,
+    "profile_account_groups": {
+      "claude-school": [
+        "claude-school",
+        "claude-school-legacy"
+      ]
+    },
+    "required_codex_profiles": [
+      "codex-personal",
+      "codex-school"
+    ],
+    "schema_version": 1,
+    "seven_day_low_remaining_percent": 20
+  },
+  "policy_violations": [],
+  "profiles": {
+    "agy": {
+      "provider": "agy",
+      "source": "no usage API in installed agy CLI",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "agy usage is unknown; use heartbeat/cap evidence"
+      ],
+      "windows": {}
+    },
+    "claude-personal": {
+      "age_seconds": 15775,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:37:38+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude seven_day snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 15459,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:42:54+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school-legacy": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 15739,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:38:14+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "codex-personal": {
+      "observed_at_utc": "2026-07-18T18:00:31+00:00",
+      "plan_type": "plus",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 1,
+        "credits": [
+          {
+            "expires_at_epoch": 1786556540,
+            "expires_at_utc": "2026-08-12T17:42:20+00:00",
+            "status": "available",
+            "title": "Full reset"
+          }
+        ],
+        "protected_reserve": 1,
+        "valid_available_full_reset_count": 1
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 76.0,
+          "resets_at_epoch": 1784990174,
+          "resets_at_utc": "2026-07-25T14:36:14+00:00",
+          "used_percent": 24.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    },
+    "codex-school": {
+      "observed_at_utc": "2026-07-18T18:00:33+00:00",
+      "plan_type": "unknown",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 0,
+        "credits": [],
+        "protected_reserve": 0,
+        "valid_available_full_reset_count": 0
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 22.0,
+          "resets_at_epoch": 1784861461,
+          "resets_at_utc": "2026-07-24T02:51:01+00:00",
+          "used_percent": 78.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "warnings": [
+    "codex-personal: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: five-hour window is absent from the live response; short-window capacity is unknown",
+    "claude-personal: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-personal: Claude seven_day snapshot is stale; that window is unknown",
+    "claude-personal: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school-legacy: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school-legacy: Claude has no fresh actionable window; capacity is unknown",
+    "agy: agy usage is unknown; use heartbeat/cap evidence",
+    "account claude-school: Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+    "account claude-school: No fresh alias cache supplies actionable account capacity"
+  ]
+}
+[wakeup-1800] 2026-07-18T18:00:33Z Claude-school cache unknown; running disposable flat-home heartbeat phase=pre_A
+[wakeup-1800] 2026-07-18T18:00:37Z disposable Claude-school heartbeat succeeded; availability verified, percentage remains unknown
+[wakeup-1800] 2026-07-18T18:00:37Z starting agent-A-standard
+The "cov" match was the commit subject line, not a filename — the `--stat` list confirms 11 files (RUN_LOG, STATUS, manifest JSON, 8 code/test files); no `.root`/covariance product. Round-3 repair is complete, committed, and pushed.
+
+## Final report — P4 standard-lateral, REPAIR round 3 (standard-only, no candidate)
+
+**Commit:** `74fa362` "P4 standard lateral cov: repair round 3 (REPAIR-ONLY, no candidate)" — pushed `721b600..74fa362 main -> main` to `github`. 11 files, +744/−238; **code + tests + receipts only, zero ROOT/covariance products.**
+
+**Compute placement:** read-only preflight on shared holder `56094249` (`claude-hold`, nid004155) via `alloc_run.sh`; tests run login-side (ROOT lazy-imported). No new hash pass — reused the owner-neutral orchestrator receipt.
+
+**Tests:** `tests/test_p4_repair.py` — **28/28 PASS** (16 gate + IntegrationCLI + Round-3/IntegrationCLI2). `py_compile` + `bash -n` clean on all drivers.
+
+**Preflight: EVIDENCE-COMPLETE.** Recomputed vs the verifier's independent observations — all **MATCH**:
+- central5d `630306e2…`, mask5d `74374b1a…` (n=10694), endpoint-manifest `af568b4a…`, central4d `1fb82508…`, mask4d `c977c643…` (n=4830).
+- New round-3 bindings in the manifest: config-hash present; 6 source git blobs (`unfold, omnifold, xsec, launcher, evidence_generator, builder`); C++ binary sha256 `6b60fc51…`; edge-hash `e05889ac…` / bin-volume-hash `f71145ce…`; `endpoint_mask_equality: True`; orchestrator merged digest `6e6c4752…` over 10 hashes.
+- Selection migration: BeamAngleX/Y nonzero (4700–4808), MuonResolution/Muon_Energy 0 (bin-migration-only) — as expected.
+- 2 of 3 evidence JSONs regenerated byte-identical to HEAD (deterministic-reproducibility signal); only the manifest changed.
+
+**The 8 cited verifier defects, all repaired:**
+1. Mutual executability — ROOT lazy-imported everywhere; gates/tests run without ROOT.
+2. Separate canonical stat/ML ROOTs + **pure addition, no subtraction** (`p4_build_components.py`).
+3. Complete mandatory manifest (config, source blobs/commits, binary, edges/bin-volume, endpoint mask-equality, orchestrator merged binding).
+4. Reused the `p4-merged-20260718` receipt; **fixed the inventory parser** (real format `size⇥mtime⇥path`) — no 538-GB re-hash.
+5. Later-only adoption CLI `p4_adopt_standard.py` (needs `--i-understand-adoption`; **not run, not wired**).
+6. Deterministic in-code projection M + byte-identical central non-mutation (`p4_project_4d.py`).
+7. Inseparable merged-evidence gate (manifest-10-SHA == audit-10-SHA) + exact-band/PSD/support checks.
+8. Transactional unfold driver (atomic publish, receipt last) + real-CLI test harness.
+
+**Proof no candidate exists:** no `*candidate*`, cov, adopt, or `.root` product under `active_universe_5d/standard/`; the commit contains no ROOT/covariance artifact; component-build → validate → project → adopt remain gated behind the `P4_VERIFIER_PASS` token in `run_p4_standard.sh` (STOP_AFTER=evidence default).
+
+**PG0 ownership block:** `ND_OMNIFOLD_STATUS.md` is dirty from another owner — **not absorbed**. Round-3 state is recorded in the Agent-A receipt `active_universe_5d/standard/P4_STANDARD_STATUS.md` and `ND_OMNIFOLD_RUN_LOG.md`.
+
+**Residual gaps / next gate:** the same standard-p4-verifier (UUID `019f74cb-b85d-7ba0-96c5-dfbd09e59159`) must review `74fa362` and return **PASS** before any candidate-construction turn. FPS P4 remains Agent C's (untouched). No further action from me until the verifier verdict.
+[wakeup-1800] 2026-07-18T18:20:20Z agent-A-standard returned rc=0
+[wakeup-1800] 2026-07-18T18:20:20Z usage preflight phase=pre_C
+{
+  "accounts": {
+    "claude-school": {
+      "profiles": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "provider": "claude",
+      "source": "freshest per-window Claude alias cache",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+        "No fresh alias cache supplies actionable account capacity"
+      ],
+      "window_sources": {},
+      "windows": {}
+    }
+  },
+  "changes": [],
+  "gate_ok": true,
+  "observed_at_utc": "2026-07-18T18:20:20+00:00",
+  "policy": {
+    "claude_cache_max_age_seconds": 1800,
+    "codex_personal_reset_credit_reserve": 1,
+    "never_consume_codex_reset_credits_automatically": true,
+    "profile_account_groups": {
+      "claude-school": [
+        "claude-school",
+        "claude-school-legacy"
+      ]
+    },
+    "required_codex_profiles": [
+      "codex-personal",
+      "codex-school"
+    ],
+    "schema_version": 1,
+    "seven_day_low_remaining_percent": 20
+  },
+  "policy_violations": [],
+  "profiles": {
+    "agy": {
+      "provider": "agy",
+      "source": "no usage API in installed agy CLI",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "agy usage is unknown; use heartbeat/cap evidence"
+      ],
+      "windows": {}
+    },
+    "claude-personal": {
+      "age_seconds": 16964,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:37:38+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude seven_day snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 16648,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:42:54+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school-legacy": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 16928,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:38:14+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "codex-personal": {
+      "observed_at_utc": "2026-07-18T18:20:21+00:00",
+      "plan_type": "plus",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 1,
+        "credits": [
+          {
+            "expires_at_epoch": 1786556540,
+            "expires_at_utc": "2026-08-12T17:42:20+00:00",
+            "status": "available",
+            "title": "Full reset"
+          }
+        ],
+        "protected_reserve": 1,
+        "valid_available_full_reset_count": 1
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 76.0,
+          "resets_at_epoch": 1784990174,
+          "resets_at_utc": "2026-07-25T14:36:14+00:00",
+          "used_percent": 24.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    },
+    "codex-school": {
+      "observed_at_utc": "2026-07-18T18:20:22+00:00",
+      "plan_type": "unknown",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 0,
+        "credits": [],
+        "protected_reserve": 0,
+        "valid_available_full_reset_count": 0
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 22.0,
+          "resets_at_epoch": 1784861461,
+          "resets_at_utc": "2026-07-24T02:51:01+00:00",
+          "used_percent": 78.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "warnings": [
+    "codex-personal: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: five-hour window is absent from the live response; short-window capacity is unknown",
+    "claude-personal: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-personal: Claude seven_day snapshot is stale; that window is unknown",
+    "claude-personal: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school-legacy: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school-legacy: Claude has no fresh actionable window; capacity is unknown",
+    "agy: agy usage is unknown; use heartbeat/cap evidence",
+    "account claude-school: Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+    "account claude-school: No fresh alias cache supplies actionable account capacity"
+  ]
+}
+[wakeup-1800] 2026-07-18T18:20:22Z Claude-school cache unknown; running disposable flat-home heartbeat phase=pre_C
+[wakeup-1800] 2026-07-18T18:20:27Z disposable Claude-school heartbeat succeeded; availability verified, percentage remains unknown
+[wakeup-1800] 2026-07-18T18:20:27Z starting agent-C-fps
+Second fail-closed repair round complete, committed, pushed. Report:
+
+## FPS 2nd repair round — all six verifier blockers repaired
+
+**Placement (turn start):** one `claude-hold` (`56094249`, nid004155) was live but is **not mine** (I used `claude-hold-cfps` previously) → left untouched. My only compute was one tiny **owner-correct batch job** (`56094462`, COMPLETED) for the reported mask; **no 748 GB re-hash** (reused the orchestrator receipt), no holder for production, no endpoint/covariance/adoption runs.
+
+**Evidence reused (read-only):** orchestrator receipt `p4-merged-20260718` verified — `result=PASS`, 10/10 live size+int-mtime match inventory, `fps_hash_list_sha256=2ada0831…`, `fps_inventory_sha256=178e31de…`. Bound the ten **full** merged-input SHA256 from it.
+
+**Blocker fixes (files):**
+1. **`fps_provenance.py`** — v2 publication gate: schema/label, 10-tag inventory, full 7-field hash binding, deferred-field rejection, footing=negweight-refined, and **exact canonical mask `23b2a2f4…`** (recompute-and-compare, `mask_fingerprint` construction locked = `uint8_tobytes`).
+2. PASS-receipt mandatory at all four transitions (`build_active_lateral_fps.py`, `p4_validate_active_lateral_fps.py`, `adopt_active_lateral_fps.py`, `adopt_unified_fps.py`); stale purity-resume replaced in `FPS_UQ_CORRECTED_STATE.md`.
+3. Launchers transactional (unique temp, validate-before-publish, atomic ROOT then receipt last, skip only when both recompute, no receipts for stale outputs); **`fps_build_publication_manifest.py`** aggregates all 10-tag failures nonzero.
+4. **`fps_verify_merged_receipt.py`** (full-file hashes via receipt) + **`fps_reported_mask.py`** → committed read-only **`fps_reported_mask.json`** (266/285, fp==canonical) **before endpoints**.
+5. `hJointMeanShift` mandatory + finite/dim-validated, preserved separately (mean-centered), reproducible `C_final` identity.
+6. ROOT-free integration negatives added — **41/41 tests PASS**; `VALIDATION_LEDGER.md` + `ND_OMNIFOLD_RUN_LOG.md` updated (no physics numbers; `ND_OMNIFOLD_STATUS.md` left alone — dirty from another owner).
+
+**Hashes/tests/job/commit:**
+- mask job `56094462` COMPLETED; mask fp == canonical `23b2a2f4…` (construction `uint8_tobytes`)
+- `fps_control_manifest.json` sha256 `8353747d…` (label=purity-control, full input hashes, **no deferred fields**, publication gate rejects it)
+- `fps_reported_mask.json` sha256 `b994ec83…`
+- tests: **41/41** ROOT-free; receipt PASS; control-manifest build PASS
+- commit **`fdf6238`** → github/main (`74fa362..fdf6238`), 17 Agent-C files only (no ROOTs, no other-agent work preserved)
+
+**Residual gaps:** none deferred in the publication provenance now — full input SHA256 bound (via the validated receipt), reported mask committed + canonical, all hash fields required non-deferred. The only standing item is process, not evidence: **production remains gated on an `fps-adopt-verifier` PASS of this patch** before any negweight-refined endpoint run → covariance → adoption. I did not invoke the verifier or subdelegate.
+[wakeup-1800] 2026-07-18T18:41:03Z agent-C-fps returned rc=0
+[wakeup-1800] 2026-07-18T18:41:03Z usage preflight phase=pre_B
+{
+  "accounts": {
+    "claude-school": {
+      "profiles": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "provider": "claude",
+      "source": "freshest per-window Claude alias cache",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+        "No fresh alias cache supplies actionable account capacity"
+      ],
+      "window_sources": {},
+      "windows": {}
+    }
+  },
+  "changes": [
+    {
+      "field": "seven_day.remaining_percent",
+      "new": 19.0,
+      "old": 22.0,
+      "profile": "codex-school"
+    }
+  ],
+  "gate_ok": true,
+  "observed_at_utc": "2026-07-18T18:41:03+00:00",
+  "policy": {
+    "claude_cache_max_age_seconds": 1800,
+    "codex_personal_reset_credit_reserve": 1,
+    "never_consume_codex_reset_credits_automatically": true,
+    "profile_account_groups": {
+      "claude-school": [
+        "claude-school",
+        "claude-school-legacy"
+      ]
+    },
+    "required_codex_profiles": [
+      "codex-personal",
+      "codex-school"
+    ],
+    "schema_version": 1,
+    "seven_day_low_remaining_percent": 20
+  },
+  "policy_violations": [],
+  "profiles": {
+    "agy": {
+      "provider": "agy",
+      "source": "no usage API in installed agy CLI",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "agy usage is unknown; use heartbeat/cap evidence"
+      ],
+      "windows": {}
+    },
+    "claude-personal": {
+      "age_seconds": 18207,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:37:38+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude seven_day snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 17891,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:42:54+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school-legacy": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 18171,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:38:14+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "codex-personal": {
+      "observed_at_utc": "2026-07-18T18:41:04+00:00",
+      "plan_type": "plus",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 1,
+        "credits": [
+          {
+            "expires_at_epoch": 1786556540,
+            "expires_at_utc": "2026-08-12T17:42:20+00:00",
+            "status": "available",
+            "title": "Full reset"
+          }
+        ],
+        "protected_reserve": 1,
+        "valid_available_full_reset_count": 1
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 76.0,
+          "resets_at_epoch": 1784990174,
+          "resets_at_utc": "2026-07-25T14:36:14+00:00",
+          "used_percent": 24.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    },
+    "codex-school": {
+      "observed_at_utc": "2026-07-18T18:41:05+00:00",
+      "plan_type": "unknown",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 0,
+        "credits": [],
+        "protected_reserve": 0,
+        "valid_available_full_reset_count": 0
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown",
+        "seven-day remaining is 19%, at or below 20%"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 19.0,
+          "resets_at_epoch": 1784861461,
+          "resets_at_utc": "2026-07-24T02:51:01+00:00",
+          "used_percent": 81.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "warnings": [
+    "codex-personal: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: seven-day remaining is 19%, at or below 20%",
+    "claude-personal: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-personal: Claude seven_day snapshot is stale; that window is unknown",
+    "claude-personal: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school-legacy: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school-legacy: Claude has no fresh actionable window; capacity is unknown",
+    "agy: agy usage is unknown; use heartbeat/cap evidence",
+    "account claude-school: Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+    "account claude-school: No fresh alias cache supplies actionable account capacity"
+  ]
+}
+[wakeup-1800] 2026-07-18T18:41:06Z Claude-school cache unknown; running disposable flat-home heartbeat phase=pre_B
+[wakeup-1800] 2026-07-18T18:41:08Z disposable Claude-school heartbeat succeeded; availability verified, percentage remains unknown
+[wakeup-1800] 2026-07-18T18:41:08Z starting agent-B-p5b
+F7 repair round complete — **commit `0c7c26d`** (pushed, isolated to 8 B-owned files). All four items done, code/static only (no GPU/Slurm/C++/G2/P3F/nominal/replicas/covariance).
+
+**1 — Durability tests + validator:** `validate_coherent_bootstrap` now fails closed on background factor tamper, background-indices/order tamper, omitted `n_bkg_full`, omitted background order evidence, and background inventory-hash mismatch. `test_global_before_subset` now asserts exact **data + signal + background** global-before-subset replay; `test_no_nominal_refinement_reuse` intact.
+
+**2 — Receipts (PG0 handled):** appended the F7 EVIDENCE-BLOCKED entry to `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` (clean) + `PET_P1_P5_SESSION_STATE.md`. **PG0 blocker reported:** canonical `ND_OMNIFOLD_STATUS.md` is dirty from another owner — not absorbed, not touched.
+
+**3 — Dumper/interface:** new pure `pet/fullevent_dump_contract.py` — G2 schema gate (`petSchemaVersion=g2-fullevent-v1`, `hasFullEventSchema=1`, `fullPhaseSpace=1`; old/recoil fail closed), strict complete manifest, 3-inventory alignment + view/time vector-length + per-inventory identity/order hashes, forbidden-purity-fallback, transactional temp + atomic rename. `dump_pointcloud_inputs.py` gates on it (default G2; **PyROOT G2 read marked RUNTIME-BLOCKED**; recoil dump only via `--legacy-recoil-crosscheck`, tagged non-G2). Generator labels stay audit-only. Login-safe fake tests cover schema rejection, missing/tampered background, identity/order mismatch, vector-length mismatch, interrupted output (no partial), forbidden purity fallback.
+
+**4 — Launcher audit (verified, not blindly replaced):** confirmed `sbatch_pet_nominal_bkgsub.sh` (+ bootstrap launchers) route through the recoil loader `minerva_pet_dataloader.py` → quarantined cross-check, not publication; no full-event publication launcher exists yet. Added `assert_publication_config` (no-GPU dry-run gate requiring `pet-fullevent-fps-v1` + `negweight-refined` + G2 markers + background; aborts recoil/purity/xps2/reduced) + tests, and a quarantine banner on the recoil launcher.
+
+**Tests:** 35/35 ROOT-free PASS — `test_fullevent_fps` (25) + `test_fullevent_dump_contract` (10). The test-only binned Stay-Positive surrogate is explicitly labelled (production uses the trained `refine_stay_positive`).
+
+**Docs:** `ND_OMNIFOLD_RUN_LOG.md`, `PET_P1_P5_SESSION_STATE.md`, `pet/FULL_EVENT_FEATURE_CONTRACT.md` (prior).
+
+**Verdict: EVIDENCE-BLOCKED.** Named runtime blocker: Agent E's reviewed/built/smoke-validated G2 background-cloud ROOT `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root` + an Agent-B-aligned full-schema NPZ carrying literal background clouds/scalars/`w_bkg`. No such evidence fabricated; PyROOT integration remains runtime-blocked, not passed.
+[wakeup-1800] 2026-07-18T18:55:55Z agent-B-p5b returned rc=0
+[wakeup-1800] 2026-07-18T18:55:55Z usage preflight phase=final
+{
+  "accounts": {
+    "claude-school": {
+      "profiles": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "provider": "claude",
+      "source": "freshest per-window Claude alias cache",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+        "No fresh alias cache supplies actionable account capacity"
+      ],
+      "window_sources": {},
+      "windows": {}
+    }
+  },
+  "changes": [
+    {
+      "field": "seven_day.remaining_percent",
+      "new": 74.0,
+      "old": 76.0,
+      "profile": "codex-personal"
+    }
+  ],
+  "gate_ok": true,
+  "observed_at_utc": "2026-07-18T18:55:55+00:00",
+  "policy": {
+    "claude_cache_max_age_seconds": 1800,
+    "codex_personal_reset_credit_reserve": 1,
+    "never_consume_codex_reset_credits_automatically": true,
+    "profile_account_groups": {
+      "claude-school": [
+        "claude-school",
+        "claude-school-legacy"
+      ]
+    },
+    "required_codex_profiles": [
+      "codex-personal",
+      "codex-school"
+    ],
+    "schema_version": 1,
+    "seven_day_low_remaining_percent": 20
+  },
+  "policy_violations": [],
+  "profiles": {
+    "agy": {
+      "provider": "agy",
+      "source": "no usage API in installed agy CLI",
+      "status": "unknown",
+      "violations": [],
+      "warnings": [
+        "agy usage is unknown; use heartbeat/cap evidence"
+      ],
+      "windows": {}
+    },
+    "claude-personal": {
+      "age_seconds": 19099,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:37:38+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude seven_day snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 18783,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:42:54+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "claude-school-legacy": {
+      "account_aliases": [
+        "claude-school",
+        "claude-school-legacy"
+      ],
+      "account_id": "claude-school",
+      "age_seconds": 19063,
+      "capacity_is_shared": true,
+      "model": "Opus 4.8",
+      "observed_at_utc": "2026-07-18T13:38:14+00:00",
+      "provider": "claude",
+      "source": "Claude status-line cache",
+      "status": "stale",
+      "violations": [],
+      "warnings": [
+        "Claude five_hour snapshot is stale; that window is unknown",
+        "Claude has no fresh actionable window; capacity is unknown"
+      ],
+      "windows": {}
+    },
+    "codex-personal": {
+      "observed_at_utc": "2026-07-18T18:55:56+00:00",
+      "plan_type": "plus",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 1,
+        "credits": [
+          {
+            "expires_at_epoch": 1786556540,
+            "expires_at_utc": "2026-08-12T17:42:20+00:00",
+            "status": "available",
+            "title": "Full reset"
+          }
+        ],
+        "protected_reserve": 1,
+        "valid_available_full_reset_count": 1
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 74.0,
+          "resets_at_epoch": 1784990174,
+          "resets_at_utc": "2026-07-25T14:36:14+00:00",
+          "used_percent": 26.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    },
+    "codex-school": {
+      "observed_at_utc": "2026-07-18T18:55:57+00:00",
+      "plan_type": "unknown",
+      "provider": "codex",
+      "reset_credits": {
+        "automatic_consumption_allowed": false,
+        "available_count": 0,
+        "credits": [],
+        "protected_reserve": 0,
+        "valid_available_full_reset_count": 0
+      },
+      "source": "live codex app-server account/rateLimits/read",
+      "status": "ok",
+      "violations": [],
+      "warnings": [
+        "five-hour window is absent from the live response; short-window capacity is unknown",
+        "seven-day remaining is 19%, at or below 20%"
+      ],
+      "windows": {
+        "seven_day": {
+          "remaining_percent": 19.0,
+          "resets_at_epoch": 1784861461,
+          "resets_at_utc": "2026-07-24T02:51:01+00:00",
+          "used_percent": 81.0,
+          "window_duration_minutes": 10080
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "warnings": [
+    "codex-personal: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: five-hour window is absent from the live response; short-window capacity is unknown",
+    "codex-school: seven-day remaining is 19%, at or below 20%",
+    "claude-personal: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-personal: Claude seven_day snapshot is stale; that window is unknown",
+    "claude-personal: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school: Claude has no fresh actionable window; capacity is unknown",
+    "claude-school-legacy: Claude five_hour snapshot is stale; that window is unknown",
+    "claude-school-legacy: Claude has no fresh actionable window; capacity is unknown",
+    "agy: agy usage is unknown; use heartbeat/cap evidence",
+    "account claude-school: Profiles claude-school, claude-school-legacy share one provider account; capacity must not be summed",
+    "account claude-school: No fresh alias cache supplies actionable account capacity"
+  ]
+}
+[wakeup-1800] 2026-07-18T18:55:57Z Claude-school cache unknown; running disposable flat-home heartbeat phase=final
+[wakeup-1800] 2026-07-18T18:56:00Z disposable Claude-school heartbeat succeeded; availability verified, percentage remains unknown
+[wakeup-1800] 2026-07-18T18:56:00Z reset repair rounds returned overall_rc=0

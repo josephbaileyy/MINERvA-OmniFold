@@ -117,6 +117,14 @@ break occurred; redirect the forced-active interval only to already-scoped,
 owner-neutral work. Detached watchers remain the reliable mechanism for
 long-duration external progress.
 
+An external event may resume this same thread only after its event receipt is
+nonempty and validated. The noninteractive resume command must include both
+`--disable goals` and `--dangerously-bypass-approvals-and-sandbox`; the first
+prevents goal-driven polling and the second permits the awakened reconciliation
+to update and commit its scoped ledger/receipt files. Record one completion
+marker and the command return code, and never invoke a second resume for the
+same event.
+
 ## Historical Slurm telemetry (scheduler-local 2026-07-11 through 2026-07-18)
 
 Reproducible source: `analyze_slurm_history.py`; committed summary:
