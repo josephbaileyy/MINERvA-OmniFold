@@ -13,6 +13,13 @@ ND="${REPO}/nd-unfolding"
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 CONC="${CONC:-6}"; CPT="${CPT:-20}"
 if [[ "${FPS:-0}" == "1" ]]; then MODE=fps; else MODE=standard; fi
+# RETIRED for STANDARD publication (repair 2026-07-18): superseded by the atomic,
+# resumable, fail-closed run_p4_unfold_std.sh, orchestrated by run_p4_standard.sh.
+# FPS path untouched (Agent C).
+if [[ "${MODE}" == "standard" && "${ALLOW_RETIRED:-0}" != "1" ]]; then
+  echo "[RETIRED] run_active_lateral_unfolds_interactive.sh is forbidden for standard publication work."
+  echo "          Use: bash run_p4_standard.sh  (canonical driver)."; exit 9
+fi
 MERGEDIR="${ND}/active_universe_5d/${MODE}/merged"
 OUTDIR="${ND}/active_universe_5d/${MODE}/unfolds"   # packet P4 namespace; UNI_RE-compatible names
 mkdir -p "${OUTDIR}"

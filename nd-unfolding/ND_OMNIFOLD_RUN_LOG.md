@@ -1674,3 +1674,26 @@ endpoint unfolds are content-validated 10/10 (open/non-zombie/not-recovered/fini
 covariance construction is authorized only after the standard-p4-verifier
 (019f74cb-b85d-7ba0-96c5-dfbd09e59159) returns PASS. STATUS one-liner deferred
 (ND_OMNIFOLD_STATUS.md carries a concurrent session's uncommitted edit).
+
+## 2026-07-18 — P4 standard chain connected end-to-end (REPAIR round 2, Agent A)
+
+Second repair round after the standard-p4-verifier BLOCKed 553a6a6 ("not connected
+end-to-end"). Still REPAIR-ONLY (MIG-V2 BLOCK): no covariance built/promoted/adopted;
+no candidate exists. Added the ONE canonical driver `run_p4_standard.sh` that wires the
+hardened, manifest-bound stages in order: merge+audit → `p4_evidence.py` (recompute+bind
+hashes) → atomic/resumable unfold → [HARD GATE: verifier PASS] → `p4_build_components.py`
+(named corrected bkgaware components + 5 active MAT bands, no globs) → fail-closed
+`p4_validate_active_lateral.py` (mandatory `--merged-dir`) → `p4_project_4d.py` (5D→4D
+mask/edge hashes + frozen-central byte-identical non-mutation). Retired/guarded the old
+unsafe standard route (`merge_active_endpoints.sh`, `run_active_lateral_unfolds_interactive.sh`,
+`run_active_laterals_interactive.sh`; bare-glob analyzer superseded). Read-only evidence
+pass EVIDENCE-COMPLETE: recomputed bindings all MATCH the verifier's independent values —
+central5d 630306e2, mask5d 74374b1a (10694), endpoint-manifest af568b4a, central4d
+1fb82508, mask4d c977c643 (4830); selection migration nonzero for BeamAngleX/Y
+(4700–4808) and exactly zero for the three bin-migration-only bands; mc_signal_reco==
+mc_truth_denom per merged endpoint. Receipts committed under
+`active_universe_5d/standard/evidence/`. Tests `tests/test_p4_repair.py` 20/20 (16 gate
++ 4 real-CLI integration, fail-closed). MAT biased-1/N preserved (`uq_math.mat_covariance`).
+Candidate construction remains authorized only after the same standard-p4-verifier
+returns PASS on this patch. Canonical STATUS deferred (concurrent uncommitted edit);
+Agent-A status receipt at `active_universe_5d/standard/P4_STANDARD_STATUS.md`.

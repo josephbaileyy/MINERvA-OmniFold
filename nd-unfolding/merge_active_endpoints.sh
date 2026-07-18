@@ -14,6 +14,13 @@ source "${REPO}/setup_salloc_env.sh" >/dev/null 2>&1
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 if [[ "${FPS:-0}" == "1" ]]; then MODE=fps; else MODE=standard; fi
+# RETIRED for STANDARD publication (repair 2026-07-18): superseded by the canonical
+# manifest-bound, PID-aggregating merge in sbatch_merge_active_array.sh /
+# run_p4_merge_audit_std.sh, orchestrated by run_p4_standard.sh. FPS path untouched.
+if [[ "${MODE}" == "standard" && "${ALLOW_RETIRED:-0}" != "1" ]]; then
+  echo "[RETIRED] merge_active_endpoints.sh is forbidden for standard publication work."
+  echo "          Use: bash run_p4_standard.sh  (canonical driver)."; exit 9
+fi
 MERGEDIR="${ND}/active_universe_5d/${MODE}/merged"
 mkdir -p "${MERGEDIR}"
 

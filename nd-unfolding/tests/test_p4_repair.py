@@ -166,5 +166,61 @@ class Projection(unittest.TestCase):
             P.check_projection_nonmutation(C, Mbad, x, xlow_wrong)
 
 
+class IntegrationCLI(unittest.TestCase):
+    """Invoke the REAL fail-closed CLI entrypoints (pre-ROOT guards) and assert
+    nonzero exit + no product written. Runnable without PyROOT (lazy ROOT import)."""
+    import os as _os
+    ND = str(Path(__file__).resolve().parents[1])
+
+    def _run(self, script, args):
+        import subprocess
+        r = subprocess.run([sys.executable, f"{self.ND}/{script}", *args],
+                           cwd=self.ND, capture_output=True, text=True)
+        return r.returncode, (r.stdout + r.stderr)
+
+    def test_build_components_rejects_adopted_out_path(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            out = os.path.join(td, "uq_universe_5d_covariance_combined_uthrow.root")
+            rc, _ = self._run("p4_build_components.py",
+                              ["--manifest", "/dev/null", "--support-family",
+                               "uq_5d/universe_stage2_5d_bkgaware/x.root",
+                               "--out", out, "--out-manifest", os.path.join(td, "m.json")])
+            self.assertNotEqual(rc, 0)
+            self.assertFalse(os.path.exists(out))
+
+    def test_build_components_rejects_superseded_support_family(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            out = os.path.join(td, "cand.root")
+            rc, _ = self._run("p4_build_components.py",
+                              ["--manifest", "/dev/null", "--support-family",
+                               "uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined.root",
+                               "--out", out, "--out-manifest", os.path.join(td, "m.json")])
+            self.assertNotEqual(rc, 0)
+            self.assertFalse(os.path.exists(out))
+
+    def test_build_components_requires_bkgaware_family(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            out = os.path.join(td, "cand.root")
+            rc, _ = self._run("p4_build_components.py",
+                              ["--manifest", "/dev/null", "--support-family",
+                               "some/other/combined.root",
+                               "--out", out, "--out-manifest", os.path.join(td, "m.json")])
+            self.assertNotEqual(rc, 0)
+            self.assertFalse(os.path.exists(out))
+
+    def test_project_rejects_protected_out_path(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            out = "uq_4d/corrected/proj_candidate.root"
+            rc, _ = self._run("p4_project_4d.py",
+                              ["--c5", os.path.join(td, "c5.root"), "--proj", os.path.join(td, "M.npz"),
+                               "--manifest", "/dev/null", "--out", out])
+            self.assertNotEqual(rc, 0)
+            self.assertFalse(os.path.exists(f"{self.ND}/{out}"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

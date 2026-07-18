@@ -85,43 +85,36 @@ MB/min/loop; 0 standard completions in 60 min; FPS's ~12h wall kept trickling).
   clouds) both consume the P3S outputs. Full 5-band coverage is the publication
   gate (#16); the presentation is closed and does not require it.
 
-## How to finish P3S (relaunch on wall/preempt)
-Interactive walls are 4 h and preemptible; on exit, relaunch (skip-if-exists resumes):
+## CANONICAL standard P4 recipe — ONE driver (repair 2026-07-18)
+Single authoritative, manifest-bound, fail-closed chain. Run inside a compute alloc:
 ```
-MAX=40 salloc -N2 -C cpu -q interactive -A m3246 -t 04:00:00 \
-  bash nd-unfolding/run_active_laterals_interactive.sh
+srun --overlap --jobid=<HOLDER> -w <NODE> -n1 -c128 bash -lc \
+  'export HOME=/global/homes/j/josephrb; source setup_salloc_env.sh >/dev/null 2>&1; \
+   cd nd-unfolding && STOP_AFTER=evidence bash run_p4_standard.sh'
 ```
-(GPU variant: `-C gpu -q interactive --gpus=8`, orchestrator srun already uses
-`--gres=none`.) A non-preemptible CPU **batch** array
-`sbatch_evloop_array_5d_active_laterals.sh` exists but CPU-shared fairshare is
-depleted (`--test-only` start weeks out); do not run it AND the interactive
-orchestrator to the same dir (shared workdir names → writer race).
-Concurrency does not help under contention — the real unblock is B/C/D draining
-their I/O, or writing outputs to node-local tmpfs (untried optimization).
+Ordered stages (each fail-closed; chain aborts on any nonzero stage):
+1. `run_p4_merge_audit_std.sh` — 10 endpoint hadd (large-tree-safe) + per-playlist audit.
+2. `p4_evidence.py` — recompute+bind hashes (endpoint SHA256s, mask/order 10694,
+   central 5D/4D, edges/bin-volume, endpoint-manifest) → `evidence/p4_standard_manifest.json`,
+   `p4_merged_audit.json`, `p4_endpoint_evidence.json`. (`STOP_AFTER=evidence` = repair preflight.)
+3. `run_p4_unfold_std.sh` — atomic (`OUT.tmp`→validate→rename ROOT+`.done` receipt),
+   resumable by exact tag set, `--seed 42`, no `--universe`, fail-closed parallel return.
+--- HARD GATE: standard-p4-verifier PASS on the committed patch → set `P4_VERIFIER_PASS=<token>` ---
+4. `p4_build_components.py` — manifest-bound; C_final5 = named corrected **bkgaware**
+   non-lateral components + 5 active per-band MAT blocks (no globs; traces>0; exact
+   active-total identity). Writes candidate + component provenance manifest.
+5. `p4_validate_active_lateral.py` — exact 5 bands / positive-finite traces / exact
+   component sum / symmetry+PSD / complete support comparison / mandatory `--merged-dir`.
+6. `p4_project_4d.py` — C4=M C5 M^T; 10694→4830 mask/edge hashes; frozen 5D/4D central
+   byte-identical pre/post; PSD; declared central-reproduction. Candidate paths only.
 
-## P4 completion recipe (fire when 120/120 land)
-1. `bash nd-unfolding/merge_active_endpoints.sh` (inside a compute alloc) →
-   `active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_<BAND>_<EP>.root`
-   (hadd_universes_full.py, 12 playlists each, skip-if-exists).
-2. `MAX=8 salloc … bash nd-unfolding/run_active_lateral_unfolds_interactive.sh` →
-   `active_universe_5d/standard/unfolds/5d_xsec_MEFHC_5iter_lgbm_uni_full_<BAND>_<EP>.root`
-   (nominal 5D unfold per merged endpoint, NO `--universe`, `--seed 42` on both
-   endpoints so the MAT ±pair cancels CV).
-3. `cd nd-unfolding && python3 analyze_universes_5d.py --cv products/5d/xsec_5d_MEFHC_5iter_lgbm.root
-   --glob 'active_universe_5d/standard/unfolds/5d_xsec_MEFHC_5iter_lgbm_uni_full_*_?.root'
-   --outdir active_universe_5d/standard/covariance --out-root active_scalar_lateral_5d_cov.root`
-   → `hCov_universe5d_total` = selection-complete scalar lateral block (10694 mask).
-4. `python3 p3s_manifest_summary.py --mode standard` (receipt) and
-   `python3 p4_validate_active_lateral.py --active active_universe_5d/standard/covariance/active_scalar_lateral_5d_cov.root:hCov_universe5d_total
-   --support uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined.root
-   --merged-dir active_universe_5d/standard/merged
-   --out active_universe_5d/standard/covariance/p4_active_lateral_summary.json`
-   (PSD/symmetry/finite-diag + support-limited-vs-active comparison + migration accounting).
-5. Commit gate (P3S then P4): launcher/merge/unfold/cov/validate code + exact
-   120-file manifest + summary + ledger + ND RUN_LOG + ND STATUS together. Do not
-   overwrite the support-limited block; leave old adopted covariances quarantined.
-   Downstream: standard → final 5D adoption (`adopt_unified_5d.py` re-run), 4D
-   projection, P5.
+**RETIRED / FORBIDDEN for standard publication** (guarded to abort with `[RETIRED]`):
+`merge_active_endpoints.sh`, `run_active_lateral_unfolds_interactive.sh`,
+`run_active_laterals_interactive.sh`, and bare `analyze_universes_5d.py --glob …`
+(superseded by the manifest-bound `p4_build_components.py`). Never write onto adopted
+paths; never use the non-bkgaware combined ROOT as the support family. Final adoption
+consumes the component provenance manifest (do not rely on `adopt_unified_5d.py`
+leaving lateral bands untouched).
 
 ## Coordination — do NOT touch (other agents)
 - B: `55963058` (claude-hold / orchestrate_gpu_node, PET), `pet_boot_arr`.

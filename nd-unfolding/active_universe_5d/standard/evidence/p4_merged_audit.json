@@ -1,0 +1,254 @@
+{
+  "merged": {
+    "BeamAngleX_0": {
+      "exists": true,
+      "sha256": "38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658652,
+        "data": 4119797
+      },
+      "band_meta": "BeamAngleX",
+      "idx_meta": 0,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 2731,
+        "RecoExits": 2061
+      },
+      "selection_migration_abs": 4792
+    },
+    "BeamAngleX_1": {
+      "exists": true,
+      "sha256": "0e0491a624c2d64c6fa3fde271940f0cfa9acb2d08b72cdf1e21e1c15903c3f2",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 657905,
+        "data": 4119797
+      },
+      "band_meta": "BeamAngleX",
+      "idx_meta": 1,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 1936,
+        "RecoExits": 2764
+      },
+      "selection_migration_abs": 4700
+    },
+    "BeamAngleY_0": {
+      "exists": true,
+      "sha256": "058746fdb29aa2cc0e3db82e7be42648cd7ce43b8603e96e444111546949ecf6",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658366,
+        "data": 4119797
+      },
+      "band_meta": "BeamAngleY",
+      "idx_meta": 0,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 2513,
+        "RecoExits": 2294
+      },
+      "selection_migration_abs": 4807
+    },
+    "BeamAngleY_1": {
+      "exists": true,
+      "sha256": "3bca6a458336c7b4b2250ccbcdc8ca0ac26d416ac4604114f5dfffe0fece2b0e",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658243,
+        "data": 4119797
+      },
+      "band_meta": "BeamAngleY",
+      "idx_meta": 1,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 2241,
+        "RecoExits": 2567
+      },
+      "selection_migration_abs": 4808
+    },
+    "MuonResolution_0": {
+      "exists": true,
+      "sha256": "839ab9c51bdc69b13e340d5fdc8fd21968bfcc7a62deeb3db529d5f2fc4a6d5d",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "MuonResolution",
+      "idx_meta": 0,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    },
+    "MuonResolution_1": {
+      "exists": true,
+      "sha256": "3330800629d536a94d37d91941089620ca90af228c64f43b4ed633a97550644f",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "MuonResolution",
+      "idx_meta": 1,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    },
+    "Muon_Energy_MINERvA_0": {
+      "exists": true,
+      "sha256": "533037d27e0b5e38d778c935b7a44f5e30e0a1afb81870c8b063303859986bfe",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "Muon_Energy_MINERvA",
+      "idx_meta": 0,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    },
+    "Muon_Energy_MINERvA_1": {
+      "exists": true,
+      "sha256": "90a1d7b78d6deed51499e11ae735f09438dbf3d85c4a463c18fae441b6668ab2",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "Muon_Energy_MINERvA",
+      "idx_meta": 1,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    },
+    "Muon_Energy_MINOS_0": {
+      "exists": true,
+      "sha256": "f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "Muon_Energy_MINOS",
+      "idx_meta": 0,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    },
+    "Muon_Energy_MINOS_1": {
+      "exists": true,
+      "sha256": "f2e67fd6c986f0a7d45eb894c1640c7d8fb48af83dbce37122d6946ae4aedfa0",
+      "zombie": false,
+      "recovered": false,
+      "tree_entries": {
+        "mc_truth_denom": 32849103,
+        "mc_signal_reco": 32849103,
+        "mc_background": 658227,
+        "data": 4119797
+      },
+      "band_meta": "Muon_Energy_MINOS",
+      "idx_meta": 1,
+      "mcPOT": 4.978198462880827e+21,
+      "dataPOT": 1.057394261158926e+21,
+      "hasTruthOnlyMisses": 12,
+      "nTruthOnlyMisses": 8999007,
+      "census": {
+        "TruthEntrants": 0,
+        "TruthExits": 0,
+        "RecoEntrants": 0,
+        "RecoExits": 0
+      },
+      "selection_migration_abs": 0
+    }
+  }
+}

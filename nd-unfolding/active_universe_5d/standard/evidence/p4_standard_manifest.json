@@ -1,0 +1,31 @@
+{
+  "grid_nbins": 65856,
+  "corder": "C",
+  "code_rev": "9168e7d23678060f3b66954cc59f91ec8e3f7cf5",
+  "central5d_sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+  "central4d_sha256": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
+  "mask5d_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+  "mask5d_nreported": 10694,
+  "mask4d_hash": "c977c643d4017a3cc909f85e7f2725b4a96a0060a5b79b56294c231290039d25",
+  "mask4d_nreported": 4830,
+  "endpoint_sha256": {
+    "BeamAngleX_0": "f7a1efe5059fff96ad1fe43fb974954c8d4269aa0b2043c228488deaa98fb1b8",
+    "BeamAngleX_1": "ebb1c94fa080e77ef47708d1e8de7250c2c0121320e368c33b904da0472c2533",
+    "BeamAngleY_0": "546c8836f51e11b720dc26719a5cd8b1c3d2ea38485a51aee6a1eb3faf286895",
+    "BeamAngleY_1": "eb1db91db7f6654e99d2811c552fd8188a8f3c26a7c67087b1b3c7ac3fc3636b",
+    "MuonResolution_0": "c5bdaa6e01be6bc51ce06787e1e7951f2e4e7de5e3923e22b6a0b094faac0873",
+    "MuonResolution_1": "8722bdfe53e84a179671a17e9b0a46951305b03fb65109deecb65a269021efad",
+    "Muon_Energy_MINERvA_0": "114b331cca789c1608bfaedef023e202563397965e4b3c83970ea2ea29fead9b",
+    "Muon_Energy_MINERvA_1": "01257d2aa82d6057d80fd15263079561b8e890612c64c7aedf4d3a20cc20b7ff",
+    "Muon_Energy_MINOS_0": "b8aa9ce5b3840c0192af852f46b1d2d8dc02a5c84d561a07d8190d4317820c43",
+    "Muon_Energy_MINOS_1": "a51b767aad57f0c8935c24bf1f0fef2cbdede07e59850e6cb2fd687ae7d11e1b"
+  },
+  "endpoint_manifest_hash": "af568b4a2bb2f08e66e7a4380cb0c5b9af72a37ddec94a5b3297c2f50d999c54",
+  "verifier_crosscheck": {
+    "central5d": true,
+    "mask5d": true,
+    "endpoint_manifest": true,
+    "central4d": true,
+    "mask4d": true
+  }
+}

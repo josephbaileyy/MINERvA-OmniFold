@@ -54,6 +54,15 @@ class P4Config:
         return True
 
 
+def sha256_file(path, _bufsz=1 << 20):
+    """Durable file digest (login-computable; no ROOT)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(_bufsz), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def canonical_endpoints():
     """The exact 10 (band, endpoint) logical tasks, in fixed order."""
     return [(b, ep) for b in BANDS for ep in ENDPOINTS]

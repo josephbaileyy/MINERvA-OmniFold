@@ -17,11 +17,11 @@ Usage:
 """
 import argparse, json, sys
 import numpy as np
-import ROOT
 import p4_lib as P
 
 
 def _th2(path, key):
+    import ROOT
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
         raise P.P4GateError(f"cannot open {path}")
