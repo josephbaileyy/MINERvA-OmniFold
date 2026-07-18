@@ -18,17 +18,23 @@ fi
 cd "$repo"
 python=/usr/bin/python3.11
 ctl=orchestration/agentctl.py
+overall_rc=0
 
-date -u '+[wakeup] %Y-%m-%dT%H:%M:%SZ starting agent-C-fps'
-"$python" "$ctl" send --role agent-C-fps \
-  --prompt-file orchestration/followup-agent-C-fps-02.md
+run_role() {
+  local role="$1" prompt="$2" role_rc
+  date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ starting ${role}"
+  if "$python" "$ctl" send --role "$role" --prompt-file "$prompt"; then
+    date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ ${role} returned rc=0"
+  else
+    role_rc=$?
+    overall_rc=1
+    date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ ${role} returned rc=${role_rc}; preserving role and continuing independent routes"
+  fi
+}
 
-date -u '+[wakeup] %Y-%m-%dT%H:%M:%SZ starting agent-A-standard'
-"$python" "$ctl" send --role agent-A-standard \
-  --prompt-file orchestration/followup-agent-A-standard-02.md
+run_role agent-C-fps orchestration/followup-agent-C-fps-02.md
+run_role agent-A-standard orchestration/followup-agent-A-standard-02.md
+run_role agent-B-p5b orchestration/followup-agent-B-p5b-02.md
 
-date -u '+[wakeup] %Y-%m-%dT%H:%M:%SZ starting agent-B-p5b'
-"$python" "$ctl" send --role agent-B-p5b \
-  --prompt-file orchestration/followup-agent-B-p5b-02.md
-
-date -u '+[wakeup] %Y-%m-%dT%H:%M:%SZ all reset rounds returned'
+date -u "+[wakeup] %Y-%m-%dT%H:%M:%SZ all reset rounds returned overall_rc=${overall_rc}"
+exit "$overall_rc"
