@@ -71,25 +71,46 @@ moved to `uthrow_slabs_4d/partial_20260716_interrupted/`, regen array 56025478
    (`pet-fullevent-fps-v1` reserved for full schema only).
 5. CLM-007 stays closed, but any separate data-feature join still requires an exact
    alignment/provenance proof (fe_pilot CRC-join pattern).
+6. **No publication P5A nominal or P5B production on a purity-only target.** The
+   pre-migration negweight campaign records the user's locked 2026-07-11 decision:
+   FPS/N-D/PET use `negweight-refined`, and PET uses Option A literal background-cloud
+   injection plus Stay-Positive. See
+   `2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md` under “USER DECISIONS
+   locked.” Purity is a matched regression control only.
+
+## Stage 2.5 — publication background-treatment gate (HARD; before P5A/P5B)
+
+The migration handoff incorrectly left negweight as an optional post-baseline arm. That
+ordering is superseded by the already-locked user decision above. Before training the
+publication nominal, the full-event dump/input must carry aligned background reco clouds,
+muon/event scalars and `w_bkg`; the measured side must be constructed as data at positive
+weight plus background MC at negative POT-scaled weight; and Stay-Positive must produce a
+finite non-negative refined target with exact signed-target normalization/provenance and a
+frozen estimator fingerprint. The coherent F7 bootstrap must cover the full data, signal-MC,
+and background-MC inventories, apply the background draw before refinement, and reuse each
+MC draw wherever that inventory participates. Refinement is rebuilt per replica rather than
+copying nominal refined weights.
+
+The gate closes only with focused alignment/signed-target/refinement/bootstrap tests, a
+small full-event negweight-refined pilot, a matched purity control, and a committed manifest.
+Do not launch the expensive nominal or any UQ ensemble merely to make this decision—the
+decision is already made, and the implementation/provenance proof is the remaining gate.
 
 ## Stage 3 — P5B production (per the contract's launch order)
 
-Nominal → GPU floor → C_stat (coherent, fixed seeds) → C_ML (crossed) → end-to-end JOINT
+Negweight-refined nominal → GPU floor → C_stat (coherent, fixed seeds) → C_ML (crossed) → end-to-end JOINT
 vertical/flux universes (NO additive C_syst+C_retrain) → P3F selection-complete laterals →
 C_total on one estimator fingerprint → projections/two-tier reporting + 3-prior envelope.
 Estimator ID `pet-fullevent-fps-v1` reserved for this stage; the pilot is
 `pet-fullevent-fps-pilot0` and none of its weights/covariances transfer.
 
-## Stage 4 — background-treatment arm (gated separately)
+## Stage 4 — background-treatment arm (superseded ordering tombstone)
 
-Negweight full-event arm once (a) the bkgcloud dump chain lands (user-owned
-`sbatch_evloop_array_pointcloud_fps_bkgcloud.sh` products: background reco clouds + muon
-scalars in the measured stream), (b) the scalar negweight validation + user sign-off flip
-the FPS default (bkg_negweight workstream). Convention-matched comparison vs the step-3a
-negweight GBDT central. Pre-registered prediction (user, 2026-07-16): full-event
-conditioning should help negweight specifically where B≈D by localizing the background in
-muon coordinates. Stability pre-check required: F2 + F3 above (signed class-1 weights).
-Theory anchor: note App. B sieve-reduction subsection (CLM-009, VERIFIED-NUMERIC).
+This arm moved to the hard Stage-2.5 gate because the user had already selected it as the
+publication default. Retain the convention-matched purity comparison and the pre-registered
+prediction that full-event conditioning helps where B≈D, but never build a purity publication
+UQ chain first. Theory anchor: note App. B sieve-reduction subsection (CLM-009,
+VERIFIED-NUMERIC).
 
 ## Stage 5 — representation refinements (optional, after Stage 3 baseline)
 
