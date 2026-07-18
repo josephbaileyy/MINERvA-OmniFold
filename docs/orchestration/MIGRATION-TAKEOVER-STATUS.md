@@ -5,7 +5,7 @@ ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain
 canonical in `RUNS.tsv`.
 
-Last reconciled: 2026-07-18 11:07 UTC. Registry:
+Last reconciled: 2026-07-18 11:17 UTC. Registry:
 `state/sessions.json`. Immutable source snapshot: `MIGRATION-HANDOFF.md` plus
 `MIGRATION-DELTA.md`.
 
@@ -30,6 +30,31 @@ in holder-deadline order A repair/reconcile → C repair-only → B F7 and recor
 provider artifacts through `agentctl.py`; it does not create or substitute a worker.
 The order changed in `MIG-WAKE2` after the negweight audit made C production ineligible
 while A's holder retained a 13:50 UTC wall.
+
+## Dispatch preflight — providers and compute placement
+
+Before every provider dispatch wave, run `usagectl.py snapshot --json`; preserve both
+personal Codex Full reset credits, treat missing/stale Claude and agy percentages as unknown,
+and ledger any changed personal seven-day reset time. Usage monitoring never replaces,
+forks, or concurrently messages a durable worker.
+
+Before every compute launch, record a placement decision from current evidence:
+
+1. Inspect `squeue`, the shared-allocation status, job ownership, remaining wall, resource
+   fit, prerequisites, and output namespace.
+2. Prefer the already-running **owner's** interactive holder for a single-node job that fits
+   its remaining resources/wall. If an equivalent batch job was queued, cancel that exact
+   duplicate before interactive execution so two writers cannot race.
+3. Submit batch early when the job is a large array, multi-node, multi-hour beyond the holder,
+   must outlive the session, or when a dependency-safe queue wait can overlap upstream work.
+   Early submission is permitted only with immutable prerequisites or explicit scheduler
+   dependencies and collision-free outputs; it cannot bypass a scientific/preflight gate.
+4. Never use another worker's holder, start a second uncoordinated allocation, or interpret
+   empty buffered stdout as a stalled job. Monitor artifacts, processes, and scheduler state.
+
+Every launch receipt records interactive-versus-batch rationale, job/holder ID, owner,
+dependency footing, and output paths. `MIG-DISPATCH1` makes this a campaign gate rather than
+an informal preference.
 
 ## Publication-grade evidence audit
 
