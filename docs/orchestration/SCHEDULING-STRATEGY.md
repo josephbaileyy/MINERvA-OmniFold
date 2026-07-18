@@ -177,6 +177,24 @@ counts so routing can be recalibrated after the post-reset wave.
 The hash launcher and completed receipt land together under the repository
 commit gate. This is provenance evidence, not a new scientific number.
 
+## Capacity-aware agy and quiet-period routing
+
+When a continuity-bound Claude writer is capped, agy may inspect its committed
+state and dirty owned paths, run isolated tests, and produce an output-only
+continuation brief. It must not replace the saved writer UUID, mutate that
+writer's files, certify the final scientific gate, or infer capacity from the
+lack of a numeric usage API. Prefer agy for orthogonal red-team reviews, test
+design, interface audits, prompt preflight, scheduler studies, and receipt
+triage; preserve scarce Codex turns for deep same-UUID verification and final
+synthesis.
+
+Once all provider turns have receipts and the remaining critical-path work is
+OS-detached or Slurm-managed, open a quiet-period ledger row and end the model
+turn. A one-shot external watcher may resume this exact thread only on a
+terminal artifact receipt, using the required goal-disable and full-access
+flags plus a lock and invoked marker. Progress-only observations are not wake
+events.
+
 ## Near-term maximum-parallel schedule
 
 1. **Complete:** interactive `56090877` hashed immutable A/C inputs; both repair

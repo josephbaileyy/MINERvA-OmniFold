@@ -1,0 +1,33 @@
+**AGENT-A-STANDARD REPAIR-4 CONTINUATION BRIEF (READ-ONLY AUDIT)**
+
+**Context**: Agent A (`14951826-0680-4e57-ac92-8a9970bc07f7`) hit a session limit during repair-4 at 2026-07-18T21:54:00Z after 8 turns.
+
+### 1. Work repair-4 completed before the cap
+**None.** All A-owned standard paths (`p4_*.py`, `run_p4_*.sh`, `tests/test_p4_repair.py`) are byte-identical to the repair-3 commit `74fa362`. No code was successfully mutated and saved to the working tree.
+
+### 2. Partially implemented or internally inconsistent work
+**None on tracked files.** The tracked working tree is clean for A's domain. An untracked file (`nd-unfolding/active_universe_5d/standard/p3s_standard_manifest.json`) exists, which may be a remnant, but no code is partially implemented.
+
+### 3. Every remaining verifier requirement (from `standard-p4-verifier`)
+1.  **Driver disconnected**: `run_p4_standard.sh` runs evidence before unfold, and it passes retired arguments (e.g., `--proj`, `--merged-dir`) and nonexistent keys (`hCov_std_final5_candidate`) to the validator and projector.
+2.  **Resume semantics**: `run_p4_unfold_std.sh` must ensure atomic ROOT + receipt writes (receipt written strictly last), aggregate every PID failure, and enforce exact tag inventories.
+3.  **Evidence provenance**: `p4_evidence.py` hashes the dirty working tree instead of the committed blobs, and the config hash misses the full phase-space grid. `p4_validate_active_lateral.py` must enforce the 10 `(band, index)` identities, zero-migration for the relevant bands, and the exact receipt digest.
+4.  **Component/Adoption provenance**: `p4_build_components.py` writes the manifest before the candidate (missing the candidate hash) and fails to persist all pure components. `p4_adopt_standard.py` must securely perform resolved-containment promotion, not just print "would promote" and exit.
+5.  **Projection geometry**: `p4_project_4d.py` does not bind edge, bin-volume, or 4D mask/order hashes, and records `M_shape` rather than the exact $M$-content hash.
+6.  **Integration coverage**: `tests/test_p4_repair.py` lacks the real-driver/fake-producer integration matrix. Existing CLI tests trigger argparse false-positives before path-guards are reached.
+
+### 4. Shortest ordered test/repair sequence that can finish safely
+1.  **Integration Matrix**: Implement the required real-driver/fake-producer tests in `test_p4_repair.py` first to expose the actual bash-level wiring gaps.
+2.  **Python Contracts**: Patch the five Python files (`p4_evidence.py`, `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`, `p4_adopt_standard.py`) strictly to bind the exact hashes, zero-migration checks, and atomic promotions.
+3.  **Bash Drivers**: Patch `run_p4_unfold_std.sh` for exact PID tracking and atomic receipt drops. Patch `run_p4_standard.sh` to enforce the chronological sequence (merge → audit → unfold/resume → evidence → components → validation → projection) using the correct CLI arguments.
+4.  **Verification**: Execute the test matrix and ensure all 28+ integration paths pass before generating evidence.
+
+### 5. Changes to discard or amend
+-   **Amend**: The repair-3 evidence logic in `74fa362` grabbed a dirty OmniFold blob (`b3beedf7` instead of the canonical `5966663b`). This must be amended via the `p4_evidence.py` fix to hash explicit commit objects, not the orchestrator's current working tree.
+-   **Discard**: The untracked `p3s_standard_manifest.json` should be ignored.
+
+### 6. Non-conflicting campaign tasks suitable for additional `agy` turns
+While Agent A is capped and Agent E's G2 compute runs detached, the orchestrator can safely dispatch:
+-   **Agent C (FPS)**: The `agent-C-fps` and `fps-adopt-verifier` loops operate on an independent pipeline.
+-   **Agent B (PET UQ)**: PET background/UQ repair loops and status updates.
+-   **Autonomous batch monitoring**: Validating and adopting the 4D unified-throw covariance slabs (from `P6_4D_CORRECTED_STATUS.md`) which run hands-off via Slurm.

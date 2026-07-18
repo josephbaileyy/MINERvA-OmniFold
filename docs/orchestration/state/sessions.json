@@ -106,9 +106,16 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T182027Z-send-4c757e17.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T182027Z-send-4c757e17.json"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T213259Z-send-df9032b5.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-C-fps/20260718T213259Z-send-df9032b5.json"
         }
       ],
-      "updated_at": "2026-07-18T18:41:03+00:00"
+      "updated_at": "2026-07-18T21:52:11+00:00"
     },
     "agent-E-g2-source": {
       "created_at": "2026-07-18T14:32:31+00:00",
@@ -123,9 +130,23 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T140135Z-start-c592a8f8.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T140135Z-start-c592a8f8.json"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T213259Z-send-f12b042e.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T213259Z-send-f12b042e.json"
+        },
+        {
+          "action": "send",
+          "number": 3,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T214824Z-send-bfefe239.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-E-g2-source/20260718T214824Z-send-bfefe239.json"
         }
       ],
-      "updated_at": "2026-07-18T14:32:31+00:00"
+      "updated_at": "2026-07-18T21:53:22+00:00"
     },
     "agy-publication-redteam": {
       "created_at": "2026-07-18T13:39:03+00:00",
@@ -285,9 +306,17 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T185605Z-send-3ee40d62.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T185605Z-send-3ee40d62.txt"
+        },
+        {
+          "action": "send",
+          "number": 20,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T220232Z-send-68844565.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T220232Z-send-68844565.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260718T220232Z-send-68844565.txt"
         }
       ],
-      "updated_at": "2026-07-18T18:56:53+00:00"
+      "updated_at": "2026-07-18T22:03:59+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",
@@ -316,9 +345,16 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T184123Z-send-cab6ad6a.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T184123Z-send-cab6ad6a.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T215400Z-send-a7070cd5.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/fps-adopt-verifier/20260718T215400Z-send-a7070cd5.jsonl"
         }
       ],
-      "updated_at": "2026-07-18T18:50:04+00:00"
+      "updated_at": "2026-07-18T22:02:23+00:00"
     },
     "publication-plan-verifier": {
       "created_at": "2026-07-18T11:25:40+00:00",
