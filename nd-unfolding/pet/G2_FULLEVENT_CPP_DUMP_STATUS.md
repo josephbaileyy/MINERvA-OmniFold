@@ -1,7 +1,7 @@
 # G2 full-event C++ dump — implementation receipt
 
 **Status: BUILD-PASS / SMOKE-PASS (playlist-1A) — G2 GATE COMPLETE; production
-launcher hardened (fail-closed recovery), NOT submitted.** Owner: Agent-E
+array `56106974_[1-12]` submitted 2026-07-19 (initially PENDING).** Owner: Agent-E
 (G2 C++ source/runtime owner), UUID `44b634fc-d211-4e09-9229-95a18d1984cc`,
 route claude-school. Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
 / `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
@@ -52,7 +52,9 @@ launcher/HEAD commit. Verified without event-loop compute: `bash -n`, all embedd
 Python compiled, 24 manifest + binary + validator hashes match current files, a
 temp-dir state matrix (absent/valid/mismatch/ROOT-only/receipt-only/zero-length/
 malformed/manifest-drift/validator-drift) and a no-clobber race test — all PASS.
-Launcher remains NOT submitted.
+Final launcher correction `15f750b` passed the same Gemini verifier; the
+orchestrator submitted array `56106974_[1-12]`. Submission receipt:
+`docs/orchestration/state/g2-production-array-submit-20260719.json`.
 
 ## Turn-2 runtime evidence (2026-07-18)
 **BUILD/INSTALL — PASS.** source commit `486e53e`; build dir
