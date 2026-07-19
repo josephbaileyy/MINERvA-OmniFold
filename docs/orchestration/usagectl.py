@@ -711,10 +711,8 @@ def load_policy(path: Path) -> dict:
     reserve = strict_int(
         value["codex_personal_reset_credit_reserve"],
         "policy.codex_personal_reset_credit_reserve",
-        1,
+        0,
     )
-    if reserve < 1:
-        raise UsageError("Policy must preserve at least one personal reset credit")
     if value["never_consume_codex_reset_credits_automatically"] is not True:
         raise UsageError("Policy must forbid automatic reset-credit consumption")
     strict_number(

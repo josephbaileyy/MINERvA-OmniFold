@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "action": "consume-authorized-codex-personal-full-reset",
+  "authorization": {
+    "source": "user message in persistent thread 019f749a-857b-7790-8cec-bc36b22908be",
+    "condition": "consume the remaining Full reset once weekly capacity is genuinely exhausted or blocks progress",
+    "condition_met": true
+  },
+  "before": {
+    "observed_at_utc": "2026-07-19T05:30:41+00:00",
+    "weekly_used_percent": 100.0,
+    "weekly_remaining_percent": 0.0,
+    "weekly_resets_at_utc": "2026-07-25T14:36:14+00:00",
+    "available_full_reset_count": 1,
+    "authorized_credit_expires_at_utc": "2026-08-12T17:42:20+00:00"
+  },
+  "attempts": [
+    {
+      "result": "FAIL_CLOSED_NO_CONSUMPTION",
+      "reason": "app-server required the missing idempotencyKey"
+    },
+    {
+      "result": "SUCCESS",
+      "app_server_outcome": "reset",
+      "guards": [
+        "weekly usedPercent was exactly 100",
+        "exactly one available Full reset existed",
+        "credit expiry matched 2026-08-12T17:42:20Z",
+        "a unique idempotency key was supplied"
+      ]
+    }
+  ],
+  "after": {
+    "observed_at_utc": "2026-07-19T05:33:07+00:00",
+    "weekly_used_percent": 0.0,
+    "weekly_remaining_percent": 100.0,
+    "weekly_resets_at_utc": "2026-07-26T05:33:07+00:00",
+    "available_full_reset_count": 0
+  },
+  "post_policy_verification": {
+    "observed_at_utc": "2026-07-19T05:35:58+00:00",
+    "weekly_used_percent": 2.0,
+    "weekly_remaining_percent": 98.0,
+    "weekly_resets_at_utc": "2026-07-26T05:33:07+00:00",
+    "available_full_reset_count": 0,
+    "usage_gate_ok": true,
+    "usage_tests": "38/38 PASS"
+  },
+  "recorded_at_utc": "2026-07-19T05:34:12Z"
+}
