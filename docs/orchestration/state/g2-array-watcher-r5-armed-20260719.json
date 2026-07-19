@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "armed_at_utc": "2026-07-19T03:43:49Z",
+  "job_id": "56106974",
+  "expected_task_spec": "1-3,7-11",
+  "acknowledged_excluded_tasks": [4, 5, 6, 12],
+  "excluded_task_disposition": "All four loops completed but failed sampled validation on finite corrupt muons outside the retained domain; their preserved ROOTs passed the committed exhaustive recovery gate and were published without recomputation.",
+  "watcher_run_id": "g2-array-56106974-r5",
+  "tmux_session": "g2-array-wake-r5",
+  "os_pid": 1656442,
+  "os_ppid": 2289811,
+  "os_sid": 1656442,
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "precondition": "Wait externally for g2-array-56106974-r4-resume.done before the first Slurm observation, preventing a concurrent resume of this active turn.",
+  "event_path": "docs/orchestration/state/g2-array-56106974-r5-wakeup.json",
+  "invoked_path": "docs/orchestration/state/g2-array-56106974-r5-resume.invoked",
+  "completed_path": "docs/orchestration/state/g2-array-56106974-r5-resume.done",
+  "resume_flags": ["--disable", "goals", "--dangerously-bypass-approvals-and-sandbox"],
+  "wake_policy": "After r4 completion, observe only the eight originally nonfailed tasks. A real terminal event resumes once; final reconciliation must validate all twelve final pairs including recovered 1D/1E/1F/1P.",
+  "initial_marker_state": "r5 event/invoked/done all absent",
+  "worker_uuid_policy": "All existing worker UUIDs preserved; no replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset is protected and was not consumed."
+}

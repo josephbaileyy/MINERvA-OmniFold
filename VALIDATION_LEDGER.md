@@ -556,3 +556,23 @@ next full-schema builder enforces `0<=pT<=30 GeV` and
 `0<=p_parallel<=120 GeV` before training. All twelve array pairs and that
 downstream exclusion still require their own committed gates. Canonical receipt:
 `docs/orchestration/state/g2-domain-recovery-20260719.json`.
+
+## 2026-07-19 G2 retained-domain recovery — playlists 1F and 1P VERIFIED (conditional)
+
+The same committed, independently verified exhaustive recovery gate was applied
+to two later sampled-validator failures without rerunning their completed event
+loops. All non-superseded structural checks passed, and every excluded row was
+identity/value-bound.
+
+- 1F: PASS, 3,183 out-of-domain rows bound; recovered ROOT 16,299,560,962 B,
+  sha256 `b5e7c28f40325015841e12c0f3e11987389eed61979e103effbf6f70473190fc`.
+- 1P: PASS, 985 out-of-domain rows bound; recovered ROOT 4,631,598,593 B,
+  sha256 `e986dab2bc64fb801eac0532df2a1539b7c409d3ccb46d8e6364feabc779ef4f`.
+- Both no-clobber publications returned rc=0 and independently recomputed final
+  ROOT hashes matched their receipt hashes.
+
+This remains conditional interface/input evidence, not a physics result. The
+next full-schema builder must enforce `0<=pT<=30 GeV` and
+`0<=p_parallel<=120 GeV`; all twelve pairs still require one terminal committed
+Gate-1 reconciliation. Canonical receipt:
+`docs/orchestration/state/g2-domain-recovery-r4-20260719.json`.

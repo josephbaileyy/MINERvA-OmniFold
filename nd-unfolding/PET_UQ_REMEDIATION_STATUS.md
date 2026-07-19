@@ -43,12 +43,13 @@ Before any publication PET compute:
 ## Gate 1 — G2 full-schema FPS CV input
 
 **Current (2026-07-19):** production array `56106974` is still draining. Tasks
-4/1D and 5/1E completed their loops but failed the sampled validator on native
-upstream-corrupt muons far outside the retained FPS domain. Their preserved
-ROOTs passed the independently verified exhaustive supplemental gate and were
-published without recomputation; all twelve pairs still require terminal
-reconciliation before merge/input construction. Evidence:
-`docs/orchestration/state/g2-domain-recovery-20260719.json`.
+4/1D, 5/1E, 6/1F, and 12/1P completed their loops but failed the sampled
+validator on finite corrupt muons far outside the retained FPS domain. Their
+preserved ROOTs passed the independently verified exhaustive supplemental gate
+and were published without recomputation; all twelve pairs still require
+terminal reconciliation before merge/input construction. Evidence:
+`docs/orchestration/state/g2-domain-recovery-20260719.json` and
+`docs/orchestration/state/g2-domain-recovery-r4-20260719.json`.
 
 Regenerate the FPS CV point-cloud event loops and derived inputs with the exact
 `pet-fullevent-fps-v1` schema. The source must include aligned data, signal MC,

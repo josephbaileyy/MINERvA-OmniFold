@@ -1852,3 +1852,22 @@ last with rc=0: 1D `06be7e68...` (14,150,286,041 B), 1E `6ab0ac90...`
 builder must enforce the receipt domain before training. No event loop was
 rerun, no active array task was touched, and no reset credit was consumed.
 Evidence: `docs/orchestration/state/g2-domain-recovery-20260719.json`.
+
+## 2026-07-19 — G2 tasks 6/1F and 12/1P recovered without recomputation
+
+The r4 one-shot event reported only tasks 6 and 12 failed while tasks 9 and 10
+were still running. Both event loops completed and preserved their work ROOTs;
+only post-loop sampled validation failed. Playlist 1F failed
+`bkg_reco_muon_valid` (49/50 total checks), while 1P failed the background and
+data sampled muon checks (48/50 total). Unchanged retries were blocked as
+deterministic and wasteful.
+
+The exact committed exhaustive gate from the independently verified 1D/1E
+recovery passed both preserved artifacts. It bound every out-of-domain row
+(3,183 for 1F; 985 for 1P), found zero fatal or non-superseded structural
+failures, and confirmed every finite corrupt muon row lies outside the retained
+`[0,30] x [0,120]` GeV domain. No-clobber publication and independent final
+SHA-256 checks passed with rc=0: 1F `b5e7c28f...` (16,299,560,962 B), 1P
+`e986dab2...` (4,631,598,593 B). No event loop was rerun. As before, downstream
+training is conditional on explicit retained-domain enforcement. Evidence:
+`docs/orchestration/state/g2-domain-recovery-r4-20260719.json`.

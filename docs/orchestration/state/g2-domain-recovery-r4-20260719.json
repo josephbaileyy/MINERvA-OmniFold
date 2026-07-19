@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-07-19T03:41:56Z",
+  "scope": ["1F", "1P"],
+  "decision": "PASS_CONDITIONAL",
+  "condition": "The downstream full-schema input builder must enforce pT in [0,30] GeV and p_parallel in [0,120] GeV before training; Gate-1 ROOT publication alone does not prove that exclusion.",
+  "gate_provenance": {
+    "implementation_commit": "eee500dfcd9874fced44c3efb3360817c1d18ef0",
+    "independent_verifier_role": "agy-g2-gate-verifier",
+    "independent_verifier_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+    "verdict": "PASS and explicit authorization for the same exact recovery implementation",
+    "validator_sha256": "32634d6832b4c1f6e5f9036a425b7412f004e2de0aa77828106646d7fc6e3739",
+    "recovery_sha256": "a37c589e08b531a0a91b9748a4a9535318411eaf16e86f68190a1ef57c1961d8"
+  },
+  "canonical_hashes_unchanged": {
+    "runEventLoopOmniFold": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+    "base_validator": "3b5c4ae9b954a6db2ac8dadf25abb433cc0024f9ee182e589de654ba44b5f1f8",
+    "production_launcher": "dfcfa5c612e2067b12c879f183533de2678de78c8f6acba816ac2db86e94a715"
+  },
+  "playlists": {
+    "1F": {
+      "domain_status": "PASS",
+      "domain_receipt": "nd-unfolding/g2_fullevent/work/1F/g2_domain_1F.json",
+      "domain_receipt_sha256": "0513e3e635d950d51aa2a8cd62078ff8c2b8e96be6f1069de52b97f83b1b98cd",
+      "out_of_domain_rows_censused_and_bound": 3183,
+      "non_superseded_structural_failures": [],
+      "final_root": "nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1F.root",
+      "final_root_sha256": "b5e7c28f40325015841e12c0f3e11987389eed61979e103effbf6f70473190fc",
+      "final_root_size_bytes": 16299560962,
+      "final_receipt": "nd-unfolding/g2_fullevent/final/G2_receipt_1F.json",
+      "final_receipt_sha256": "55f3f0c091808bb0f97a2566f2c194470cfc2b7d17a77bc61b000f85e31e9242",
+      "publish_rc": 0,
+      "independent_post_publish_sha256_match": true
+    },
+    "1P": {
+      "domain_status": "PASS",
+      "domain_receipt": "nd-unfolding/g2_fullevent/work/1P/g2_domain_1P.json",
+      "domain_receipt_sha256": "4a26e9372e0bfb0696795addac1b70e67be5dc513e89e8c1a0b4fe990c934ebd",
+      "out_of_domain_rows_censused_and_bound": 985,
+      "non_superseded_structural_failures": [],
+      "final_root": "nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1P.root",
+      "final_root_sha256": "e986dab2bc64fb801eac0532df2a1539b7c409d3ccb46d8e6364feabc779ef4f",
+      "final_root_size_bytes": 4631598593,
+      "final_receipt": "nd-unfolding/g2_fullevent/final/G2_receipt_1P.json",
+      "final_receipt_sha256": "2fa351eea5a18972f6ad5577b72331cc2c60d315f26a3dced8fa8bae6f5a4b0a",
+      "publish_rc": 0,
+      "independent_post_publish_sha256_match": true
+    }
+  },
+  "array_gate": "OPEN: recovered 1D/1E/1F/1P pairs are present; remaining original tasks require a terminal event and all twelve pairs require one final gate validation.",
+  "reset_credit": "One personal Codex Full reset remains protected and was not consumed."
+}

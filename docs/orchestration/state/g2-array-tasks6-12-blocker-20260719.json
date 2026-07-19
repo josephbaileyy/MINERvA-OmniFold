@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "event_observed_at_utc": "2026-07-19T03:30:45Z",
+  "array_job_id": "56106974",
+  "failed_tasks": [6, 12],
+  "playlists": ["1F", "1P"],
+  "event_state": {
+    "6": {"state": "FAILED", "exit_code": "1:0"},
+    "12": {"state": "FAILED", "exit_code": "1:0"}
+  },
+  "failures": {
+    "1F": {
+      "stage": "post-loop G2 validation before publication",
+      "failed_checks": ["bkg_reco_muon_valid"],
+      "result": "49/50 checks passed; bkg_reco_muon_valid=19999/20000",
+      "base_receipt": "nd-unfolding/g2_fullevent/work/1F/g2_validation_1F.json",
+      "base_receipt_sha256": "58c20c504b81abe43c82a21bf3c10a33a30c554d7687e4e31432e8c383765238",
+      "preserved_root_size_bytes": 16299560962
+    },
+    "1P": {
+      "stage": "post-loop G2 validation before publication",
+      "failed_checks": ["bkg_reco_muon_valid", "data_reco_muon_valid"],
+      "result": "48/50 checks passed; each sampled muon check=19999/20000",
+      "base_receipt": "nd-unfolding/g2_fullevent/work/1P/g2_validation_1P.json",
+      "base_receipt_sha256": "e8feb53bdc5200505ad79fcfc97fd42facd70926aa8d693cf88c6e3a6130dbff",
+      "preserved_root_size_bytes": 4631598593
+    }
+  },
+  "diagnosis": {
+    "finding": "The committed exhaustive gate found no non-finite, sentinel-selected, in-domain corrupt, or in-domain scalar/muon-mismatch row. Every anomalous finite muon row is outside the declared retained FPS domain and is completely identity/value-censused.",
+    "1F": {
+      "out_of_domain_rows_bound": 3183,
+      "invalid_muon_rows_out_of_domain": {"background": 3, "data": 11, "signal_reco_pass": 35},
+      "first_failed_sample_identity": [111501, 326, 248],
+      "first_failed_sample_pt_ppar_GeV": [5164466.009203411, 19272499.33756048]
+    },
+    "1P": {
+      "out_of_domain_rows_bound": 985,
+      "invalid_muon_rows_out_of_domain": {"background": 2, "data": 6, "signal_reco_pass": 4},
+      "first_failed_sample_identity": [112008, 341, 766],
+      "first_failed_sample_pt_ppar_GeV": [749060.7951430512, 3685212.0922000827]
+    }
+  },
+  "retry_decision": {
+    "unchanged_failed_task_only_retry": "BLOCK",
+    "reason": "The deterministic event loops completed; rerunning would reproduce the sampled-validator failures and waste compute.",
+    "safe_recovery": "PASS: use the already committed and independently verified exhaustive retained-domain validator plus no-clobber recovery on the preserved artifacts; do not recompute."
+  },
+  "worker_uuid_policy": "All UUIDs preserved; no role replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset remained protected and unconsumed."
+}
