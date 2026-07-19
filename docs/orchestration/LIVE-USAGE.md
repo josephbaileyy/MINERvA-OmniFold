@@ -117,6 +117,13 @@ Use these routing rules:
    never as an invented percentage.
 7. Write material usage changes and reset times to the campaign ledger.
 
+A content-free heartbeat proves only that the provider can serve that tiny
+request. It does not prove enough spend headroom for a substantial cached Opus
+continuation: on 2026-07-19 the Claude-personal heartbeat returned
+`HEARTBEAT_OK`, while the immediately following preserved E turn hit the
+monthly spend limit. Treat the substantial turn's explicit cap as
+authoritative and preserve its UUID.
+
 ## Prompt for the live GPT-5.6 orchestrator
 
 ```text

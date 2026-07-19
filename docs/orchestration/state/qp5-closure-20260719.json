@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "qp": "QP5",
+  "start_utc": "2026-07-18T22:09:56Z",
+  "end_utc": "2026-07-19T00:11:21Z",
+  "status": "CLOSED_BLOCKED_AT_PRESERVED_E_PROVIDER_CAP",
+  "quiet_period_llm_turns_before_event": 0,
+  "terminal_event": {
+    "observed_at_utc": "2026-07-18T22:21:16Z",
+    "terminal": "DONE",
+    "loop_rc": 0,
+    "valid": true
+  },
+  "external_resume": {
+    "attempts": 1,
+    "returncode": 127,
+    "model_started": false,
+    "failure": "nonexistent hard-coded Codex executable",
+    "recovery_trigger": "user message"
+  },
+  "watcher_fix_commit": "f575eb0",
+  "stage4_validation": {
+    "holder": 56100487,
+    "smoke_rerun": false,
+    "status": "PASS",
+    "checks_passed": 50,
+    "checks_failed": 0,
+    "receipt_sha256": "776addeb3453445bcb1e6fa45f81ed41ffe7f713a1cb2da0eac729eccf007b25",
+    "artifact_path": "nd-unfolding/pet/g2_smoke/attempt2/runEventLoopOmniFold.root",
+    "artifact_size": 9419026130
+  },
+  "preserved_worker": {
+    "role": "agent-E-g2-source",
+    "uuid": "44b634fc-d211-4e09-9229-95a18d1984cc",
+    "dispatch_returncode": 1,
+    "provider_error": "Claude-personal monthly spend limit",
+    "reset_time": null,
+    "receipt": "docs/orchestration/runs/agent-E-g2-source/20260719T001023Z-send-ecd60109.json"
+  },
+  "g2_gate_committed": false,
+  "atomic_publication_performed": false,
+  "batch_array_submitted": false,
+  "pet_production_advanced": false,
+  "new_holder_started": false,
+  "reset_credit_consumed": false
+}
