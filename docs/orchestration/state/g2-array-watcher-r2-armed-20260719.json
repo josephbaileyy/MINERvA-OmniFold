@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "armed_at_utc": "2026-07-19T01:47:58Z",
+  "job_id": "56106974",
+  "expected_task_spec": "1-12",
+  "watcher_run_id": "g2-array-56106974-r2",
+  "tmux_session": "g2-array-wake-r2",
+  "os_pid": 114332,
+  "os_ppid": 2289811,
+  "os_sid": 114332,
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "repair_commit": "498aff2",
+  "python_path": "/usr/bin/python3.11",
+  "codex_path": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+  "event_path": "docs/orchestration/state/g2-array-56106974-r2-wakeup.json",
+  "invoked_path": "docs/orchestration/state/g2-array-56106974-r2-resume.invoked",
+  "completed_path": "docs/orchestration/state/g2-array-56106974-r2-resume.done",
+  "resume_flags": [
+    "--disable",
+    "goals",
+    "--dangerously-bypass-approvals-and-sandbox"
+  ],
+  "wake_policy": "Exactly one terminal COMPLETE, task ERROR, or ten consecutive observer failures; ACTIVE never resumes Codex.",
+  "initial_marker_state": "event/invoked/done all absent",
+  "worker_uuid_policy": "All existing worker UUIDs preserved; no provider dispatch.",
+  "reset_credit_policy": "The remaining personal Codex Full reset is protected and was not consumed."
+}
