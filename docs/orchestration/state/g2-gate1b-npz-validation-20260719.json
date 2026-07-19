@@ -1,0 +1,57 @@
+{
+  "failures": [],
+  "inventory_evidence": {
+    "background": {
+      "identity_sha256": "d79848885f177259e5934c70ddcfc1bb3dea39272da0e67759a5d1b596ca024b",
+      "raw_weight_sum": 515992.55035584327,
+      "rows": 564591
+    },
+    "data": {
+      "identity_sha256": "fd2b14c6f3dbbd7c8747edfd36fcf24c35f29a629350cac84e07027d398e3fc7",
+      "rows": 4116128
+    },
+    "signal": {
+      "identity_sha256": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1",
+      "pass_reco": 20573521,
+      "pass_truth": 49150928,
+      "rows": 49152885
+    }
+  },
+  "member_count": 42,
+  "merge_receipt": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json",
+    "sha256": "26ea5561f47599987ebacbf594c606309146a5f23c82af8dd0e2ca299b31efa7"
+  },
+  "npz": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "size_bytes": 9897374636
+  },
+  "producer_receipt": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json",
+    "sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e"
+  },
+  "retained_domain_gev": {
+    "pparallel": [
+      0.0,
+      120.0
+    ],
+    "pt": [
+      0.0,
+      30.0
+    ]
+  },
+  "schema_markers": {
+    "fullPhaseSpace": 1,
+    "hasFullEventSchema": 1,
+    "petSchemaVersion": "g2-fullevent-v1"
+  },
+  "schema_version": 1,
+  "source_root": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "sha256": "9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f"
+  },
+  "status": "PASS",
+  "validated_at_utc": "2026-07-19T10:16:07.123697+00:00",
+  "validation_schema": "g2-mefhc-fullschema-npz-independent-v1"
+}

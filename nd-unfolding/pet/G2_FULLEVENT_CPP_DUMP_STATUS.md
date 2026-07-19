@@ -1,12 +1,12 @@
 # G2 full-event C++ dump — implementation receipt
 
-**Status: BUILD-PASS / SMOKE-PASS / 12-PLAYLIST PRODUCTION-PASS / MEFHC-MERGE-PASS;
-Gate-1A complete, Gate-1B full-schema NPZ recovery pending.** Dump job
-`56116598` processed the complete retained inventories, then failed in its
-receipt stage because `/usr/bin/python3.11` lacked NumPy. Transactional cleanup
-left no final or temporary product. The recovery launcher resolves and
-preflights the configured environment Python and is eligible for one retry only
-after that launcher and the failure receipt are committed. Array
+**Status: BUILD-PASS / SMOKE-PASS / 12-PLAYLIST PRODUCTION-PASS /
+MEFHC-MERGE-PASS / FULL-SCHEMA-NPZ-PASS; Gate 1 complete.** Recovery job
+`56120687` completed `0:0` and receipt-last published the P=12 NPZ. Independent
+validation returned PASS with zero failures across the NPZ hash, 42-member
+schema, retained-domain/miss predicates, extended edges, POT, and all three
+inventory identity hashes. The prior job `56116598` failure remains recorded as
+cleanly transactional and superseded by this validated retry. Array
 `56106974` reached terminal state with eight normal `0:0` publications and four
 completed-loop artifacts recovered without recomputation through the committed,
 independently verified exhaustive retained-domain gate. The all-12 validator
@@ -17,8 +17,9 @@ route claude-school. Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
 / `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
 Source packet `486e53e` received an independent agy PASS. The receipt-last merged
 ROOT is `113,496,440,965` bytes with SHA-256 `9a16331f...`; exhaustive validation
-passed with 21,797 out-of-domain rows bound for downstream exclusion. No
-full-schema NPZ, PET training, or scientific endpoint is claimed here.
+passed with 21,797 out-of-domain rows excluded by the downstream builder. The
+NPZ contains 49,152,885 signal, 4,116,128 data, and 564,591 background rows.
+No PET training or scientific endpoint is claimed here.
 
 ## Turn-3 gate closure (2026-07-18)
 **SMOKE — PASS (1A).** Attempt-2 loop terminal (`rc=0`, `DONE`), validator PASS

@@ -1,0 +1,5 @@
+invoked_at_utc=2026-07-19T10:12:37Z
+event_sha256=b5f649dd87c8ce09a45d8c2c31129281267e219a1c162bb95734e985b29be1cf
+event_type=slurm-job-complete
+thread_id=019f749a-857b-7790-8cec-bc36b22908be
+codex_path=/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex

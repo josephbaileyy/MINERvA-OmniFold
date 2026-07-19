@@ -616,3 +616,19 @@ required exactly 12 and rewrote only that field to 1 before validation.
 
 This is merged interface/input evidence, not a PET or physics result. Canonical
 receipt: `nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json`.
+
+## 2026-07-19 G2 Gate 1B — full-schema P=12 NPZ VERIFIED
+
+Recovery job `56120687` completed `0:0` and receipt-last published
+`nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz`: 9,897,374,636 bytes,
+SHA-256 `fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625`.
+The hash-bound inventories contain 49,152,885 signal rows, 4,116,128 data rows,
+and 564,591 background rows; signal masks contain 20,573,521 reco-pass and
+49,150,928 truth-pass rows.
+
+Independent validation reproduced the 42-member headers, exact
+`g2-fullevent-v1` schema, canonical extended-FPS edges, POT scale, retained
+`[0,30] x [0,120]` GeV domain, miss sentinel guards, and all three ordered
+identity hashes with zero failures. Receipt:
+`docs/orchestration/state/g2-gate1b-npz-validation-20260719.json`. This closes
+G2 Gate 1 only; it does not validate a refined target or PET result.

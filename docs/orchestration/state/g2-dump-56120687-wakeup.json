@@ -1,0 +1,11 @@
+{
+  "event": "slurm-job-complete",
+  "exit_code": "0:0",
+  "head_at_event": "b5699ec7022199075c18a29307dbb70afd4b32a7",
+  "job_id": "56120687",
+  "observed_at_utc": "2026-07-19T10:12:37.422514+00:00",
+  "schema_version": 1,
+  "state": "COMPLETED",
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "watcher_run_id": "g2-dump-56120687"
+}

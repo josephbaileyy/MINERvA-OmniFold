@@ -1,0 +1,339 @@
+{
+  "contract": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_dump_contract.py",
+    "sha256": "64f5359cd428c604c057e797819ebd58210e51ab3c896fc59d5e42f1d037f9e4"
+  },
+  "dumper": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/dump_pointcloud_inputs.py",
+    "sha256": "c8fa219f0ca2537bddc8ad824a0d225c3b67cd76cab1cab1bc391f5bdd7cac5d"
+  },
+  "inventory_rows": {
+    "background": 564591,
+    "data": 4116128,
+    "signal": 49152885
+  },
+  "member_headers": {
+    "bkg_current": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": [
+        564591
+      ]
+    },
+    "bkg_identity_hash": {
+      "dtype": "<U64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "bkg_indices": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": [
+        564591
+      ]
+    },
+    "bkg_inttype": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": [
+        564591
+      ]
+    },
+    "bkg_muon": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        7
+      ]
+    },
+    "bkg_nuPDG": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": [
+        564591
+      ]
+    },
+    "bkg_part_reco": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        12,
+        3
+      ]
+    },
+    "bkg_reco_scalars": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        4
+      ]
+    },
+    "bkg_time": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        12
+      ]
+    },
+    "bkg_vertex": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        3
+      ]
+    },
+    "bkg_view": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591,
+        12
+      ]
+    },
+    "data_identity_hash": {
+      "dtype": "<U64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "data_muon": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        7
+      ]
+    },
+    "data_pot": {
+      "dtype": "float64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "data_time": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        12
+      ]
+    },
+    "data_vertex": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        3
+      ]
+    },
+    "data_view": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        12
+      ]
+    },
+    "edges_0": {
+      "dtype": "float64",
+      "fortran_order": false,
+      "shape": [
+        16
+      ]
+    },
+    "edges_1": {
+      "dtype": "float64",
+      "fortran_order": false,
+      "shape": [
+        20
+      ]
+    },
+    "estimator_fingerprint": {
+      "dtype": "<U20",
+      "fortran_order": false,
+      "shape": []
+    },
+    "fullPhaseSpace": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "hasFullEventSchema": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "mc_pot": {
+      "dtype": "float64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "measured_pc": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        12,
+        3
+      ]
+    },
+    "measured_scalars": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        4116128,
+        4
+      ]
+    },
+    "num_part": {
+      "dtype": "int64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "part_gen": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        12,
+        5
+      ]
+    },
+    "part_reco": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        12,
+        3
+      ]
+    },
+    "pass_reco": {
+      "dtype": "bool",
+      "fortran_order": false,
+      "shape": [
+        49152885
+      ]
+    },
+    "pass_truth": {
+      "dtype": "bool",
+      "fortran_order": false,
+      "shape": [
+        49152885
+      ]
+    },
+    "petSchemaVersion": {
+      "dtype": "<U15",
+      "fortran_order": false,
+      "shape": []
+    },
+    "pot_scale": {
+      "dtype": "float64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "reco_muon": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        7
+      ]
+    },
+    "reco_scalars": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        4
+      ]
+    },
+    "reco_time": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        12
+      ]
+    },
+    "reco_vertex": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        3
+      ]
+    },
+    "reco_view": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        12
+      ]
+    },
+    "sig_identity_hash": {
+      "dtype": "<U64",
+      "fortran_order": false,
+      "shape": []
+    },
+    "truth_scalars": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885,
+        4
+      ]
+    },
+    "w_bkg": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        564591
+      ]
+    },
+    "w_reco": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885
+      ]
+    },
+    "w_truth": {
+      "dtype": "float32",
+      "fortran_order": false,
+      "shape": [
+        49152885
+      ]
+    }
+  },
+  "merge_receipt": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json",
+    "sha256": "26ea5561f47599987ebacbf594c606309146a5f23c82af8dd0e2ca299b31efa7"
+  },
+  "missing_required_keys": [],
+  "npz": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "size_bytes": 9897374636
+  },
+  "num_part": 12,
+  "produced_utc": "2026-07-19T10:11:27.217795+00:00",
+  "receipt_schema": "g2-mefhc-fullschema-npz-v1",
+  "runtime_contract": "full in-memory gates passed before atomic NPZ write; receipt revalidated all member headers",
+  "runtime_head": "b5699ec7022199075c18a29307dbb70afd4b32a7",
+  "schema_markers": {
+    "fullPhaseSpace": 1,
+    "hasFullEventSchema": 1,
+    "petSchemaVersion": "g2-fullevent-v1"
+  },
+  "slurm_job_id": "56120687",
+  "source_root": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "sha256": "9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f"
+  },
+  "status": "PASS"
+}

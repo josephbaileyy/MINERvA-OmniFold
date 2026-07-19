@@ -42,20 +42,21 @@ Before any publication PET compute:
 
 ## Gate 1 — G2 full-schema FPS CV input
 
-**Current (2026-07-19): Gate 1A per-playlist production PASS; Gate 1B merged
-ROOT PASS, full-schema NPZ recovery pending.** The first dump job (`56116598`)
-completed the retained-domain inventory pass but failed before publication when
-its receipt stage selected a NumPy-free system Python. The EXIT trap removed
-both temporary products; neither final NPZ nor receipt exists. The recovery
-launcher now resolves and preflights the environment Python before expensive
-work and must be committed before one retry. All twelve hash-bound ROOT/receipt pairs passed one
+**Current (2026-07-19): Gate 1 PASS.** Gate 1A per-playlist production and the
+Gate-1B merged ROOT/full-schema NPZ are complete. Recovery job `56120687`
+published the receipt-last P=12 NPZ; an independent validator recomputed its
+SHA-256, all 42 member headers, three inventory identities, retained-domain
+predicates, miss sentinels, extended edges, POT relationship, and source/code
+bindings with zero failures. All twelve hash-bound ROOT/receipt pairs passed one
 terminal validation, including exhaustive retained-domain receipts for recovered
 1D/1E/1F/1P. Aggregate truth and signal rows are exactly equal at 49,906,108.
 The no-clobber MEFHC merge passed exhaustive validation and binds 21,797 finite
 out-of-domain rows for exclusion; the independently reviewed dumper enforces
-`[0,30] x [0,120]` GeV before inventory construction. Evidence:
+`[0,30] x [0,120]` GeV before inventory construction. Gate-1B inventories are
+49,152,885 signal, 4,116,128 data, and 564,591 background rows. Evidence:
 `nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json` and
-`docs/orchestration/state/g2-dump-56116598-failure.json`.
+`docs/orchestration/state/g2-gate1b-npz-validation-20260719.json`. Next: Gate 2
+literal `negweight-refined` target construction only; PET training remains blocked.
 
 Regenerate the FPS CV point-cloud event loops and derived inputs with the exact
 `pet-fullevent-fps-v1` schema. The source must include aligned data, signal MC,

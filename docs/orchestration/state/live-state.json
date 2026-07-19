@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "Gate 1B / G2 MEFHC merge and full-schema input",
-  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ RECOVERY JOB 56120687 QUEUED",
+  "current_dag_node": "Gate 2 / literal negweight-refined target construction",
+  "state": "GATE 1 PASS / GATE 2 CONSTRUCTION READY",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -18,11 +18,11 @@
   ],
   "jobs": [],
   "blockers": [
-    "Job 56116598 failed cleanly at its NumPy-free receipt interpreter; corrected recovery job 56120687 is queued.",
-    "Gate-1B remains open until recovery job 56120687 produces a batch NPZ that passes manifest, identity, schema, and retained-domain evidence gates.",
-    "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
+    "Gate 2 must build a literal signed data/background inventory and apply Stay-Positive refinement; scalar purity weights are forbidden.",
+    "Gate 2 requires a fail-closed end-to-end fixture and independently binned signed/refined checks before promotion.",
+    "PET training remains forbidden until the committed Gate-2 target gate passes."
   ],
-  "next_authorized_action": "The external one-shot watcher handles recovery job 56120687 terminal state. On success validate and commit Gate 1B, then begin only Gate-2 negweight-refined target construction. No PET training yet.",
+  "next_authorized_action": "Construct and test the literal negweight-refined target from the committed G2 data/background inventories. Do not start PET training.",
   "wake": {
     "tmux_session": "g2-dump-wake-r2",
     "event": "docs/orchestration/state/g2-dump-56120687-wakeup.json",

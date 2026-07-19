@@ -1920,3 +1920,20 @@ NumPy before hashing or dumping, and reuses that interpreter for both receipt
 checks. An unchanged retry is forbidden; one retry is permitted only after the
 fail-closed launcher and `g2-dump-56116598-failure.json` are committed. No PET
 or Gate-2 work was started and every persistent worker UUID was preserved.
+
+## 2026-07-19 — G2 Gate 1B full-schema NPZ PASS
+
+The committed fail-closed recovery launcher ran as singleton job `56120687`
+and completed `0:0` in 1h09m47s on `nid004123`. It published the product first
+and receipt last: `G2_FPS_MEFHC_P12.npz`, 9,897,374,636 bytes, SHA-256
+`fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625`.
+Inventories contain 49,152,885 signal rows (20,573,521 pass reco; 49,150,928
+pass truth), 4,116,128 data rows, and 564,591 background rows.
+
+An independent compute-node validator rehashed the whole NPZ, reproduced all
+42 member headers and the exact full-event schema markers, enforced the
+canonical extended edges and `[0,30] x [0,120]` GeV retained domain, checked
+miss sentinel guarding and POT consistency, and recomputed all three ordered
+inventory hashes. Result: PASS, zero failures. This closes Gate 1. The next
+dependency-ready action is Gate-2 literal `negweight-refined` target
+construction; PET training remains forbidden until its own gate passes.
