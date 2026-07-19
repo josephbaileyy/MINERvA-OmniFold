@@ -1,0 +1,19 @@
+{
+  "codex_path": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+  "event_path": "docs/orchestration/state/g2-dump-56120687-wakeup.json",
+  "initial_markers_absent": true,
+  "job_id": "56120687",
+  "launcher_invocation": "/usr/bin/bash docs/orchestration/watch_g2_dump_resume.sh",
+  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "pane_pid": 160831,
+  "polling_owner": "OS-detached tmux process; zero LLM turns while nonterminal",
+  "resume_flags": [
+    "--disable goals",
+    "--dangerously-bypass-approvals-and-sandbox"
+  ],
+  "run_id": "g2-dump-56120687",
+  "schema_version": 1,
+  "status": "ARMED",
+  "tmux_session": "g2-dump-wake-r2",
+  "watcher_preflight": "PASS"
+}

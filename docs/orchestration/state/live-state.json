@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 1B / G2 MEFHC merge and full-schema input",
-  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ JOB 56116598 FAILED CLEANLY",
+  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ RECOVERY JOB 56120687 QUEUED",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -18,16 +18,16 @@
   ],
   "jobs": [],
   "blockers": [
-    "Job 56116598 completed the inventory pass but its NumPy-free receipt interpreter failed; transactional cleanup left no product.",
-    "Gate-1B remains open until the corrected, committed launcher produces a batch NPZ that passes manifest, identity, schema, and retained-domain evidence gates.",
+    "Job 56116598 failed cleanly at its NumPy-free receipt interpreter; corrected recovery job 56120687 is queued.",
+    "Gate-1B remains open until recovery job 56120687 produces a batch NPZ that passes manifest, identity, schema, and retained-domain evidence gates.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "Commit the fail-closed environment-Python preflight correction and failure receipt, then submit exactly one G2 dump retry and arm a new one-shot external watcher. No Gate-2 or PET training yet.",
+  "next_authorized_action": "The external one-shot watcher handles recovery job 56120687 terminal state. On success validate and commit Gate 1B, then begin only Gate-2 negweight-refined target construction. No PET training yet.",
   "wake": {
-    "tmux_session": "g2-dump-wake",
-    "event": "docs/orchestration/state/g2-dump-56116598-wakeup.json",
-    "invoked": "docs/orchestration/state/g2-dump-56116598-resume.invoked",
-    "completed": "docs/orchestration/state/g2-dump-56116598-resume.done"
+    "tmux_session": "g2-dump-wake-r2",
+    "event": "docs/orchestration/state/g2-dump-56120687-wakeup.json",
+    "invoked": "docs/orchestration/state/g2-dump-56120687-resume.invoked",
+    "completed": "docs/orchestration/state/g2-dump-56120687-resume.done"
   },
   "canonical_science": [
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

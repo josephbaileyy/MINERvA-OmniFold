@@ -1,0 +1,18 @@
+{
+  "cpus_per_task_requested": 16,
+  "initial_scheduler_state": "PENDING/Priority",
+  "job_id": "56120687",
+  "launcher": {
+    "commit": "504a89f385d68cb3d8877cfc26cab2b12d4dc8bd",
+    "path": "nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
+    "sha256": "5e9709df534aeeda4ee02272f76b31459b46c1ec6c2cead9b0f03ced68ea1050"
+  },
+  "memory_requested": "192G",
+  "previous_failure_receipt": "docs/orchestration/state/g2-dump-56116598-failure.json",
+  "qos": "shared",
+  "recovery_scope": "single retry after committed environment-Python/NumPy preflight correction",
+  "schema_version": 1,
+  "status": "SUBMITTED",
+  "submitted_at_utc": "2026-07-19T07:41:35Z",
+  "time_limit": "12:00:00"
+}
