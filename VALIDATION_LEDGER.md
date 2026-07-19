@@ -510,3 +510,26 @@ hJointMeanShift(expected_dim=n) with its hash bound. Both endpoint launchers sit
 validator (fps_endpoint_receipt.py) that attributes the launcher actually used. Tests: 49/49 ROOT-free
 unit + 9/9 REAL-CLI integration negatives PASS. ND_OMNIFOLD_STATUS.md remains a pre-existing PG0 dirty
 file with no durable writer receipt (not repaired here). Production gated on fps-adopt-verifier PASS.
+
+## 2026-07-18 G2 full-event extended-FPS dump — playlist-1A runtime smoke VERIFIED
+
+First runtime validation of the G2 full-event point-cloud dump. Binary
+`runEventLoopOmniFold` sha256 `61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b`,
+built from source `486e53e` (G2 source byte-identical through HEAD `53de3f4`).
+Playlist-1A, canonical manifests (`1A_Data.txt` sha256 `b74d8965…`, `1A_MC.txt`
+sha256 `4100dca4…`), env `MNV101_DUMP_POINTCLOUD=1 MNV101_FULL_PHASE_SPACE=1`.
+Validator PASS **50/50, 0 failed**:
+- `mc_truth_denom == mc_signal_reco = 4,073,230` (Phase-18.2 completeness c-invariant, exact by construction)
+- `mc_background = 44,900`; `data = 360,123`; native truth-only misses = `1,596,619`
+- `mcPOTUsed = 4.0692592418996086e20`; `dataPOTUsed = 8.972756120489268e19`
+- schema `petSchemaVersion=g2-fullevent-v1`, `hasFullEventSchema=1`, `fullPhaseSpace=1`
+- native misses: `sim_pass=0`, reco muon/vertex `-9999` sentinels, empty reco clouds, valid cached truth id/muon
+- distinct data/reco/truth schemas; no forbidden truth-detector/data-truth counterparts; equal E/pos/z/view/time cloud lengths; bkg cloud + `w_bkg` present; `cluster_view/time` + `ev_run/ev_subrun/ev_gate` populated
+
+Published ROOT `nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root`
+(9,419,026,130 B, sha256 `51e46fddd061cae37704c64604f73df8bb3d739cd5420bfd21cb0d2c89db320f`);
+receipt `nd-unfolding/pet/g2_smoke/G2_1A_VALIDATION_RECEIPT.json` (sha256
+`0aae83d84af77b2520dec83439e7a061176debc5e0d81e18019ac43a5a697867`); validation
+receipt v2 sha256 `776addeb3453445bcb1e6fa45f81ed41ffe7f713a1cb2da0eac729eccf007b25`.
+INTERFACE/INFRASTRUCTURE validation only — NOT a cross-section result. 12-playlist
+production launcher staged, NOT submitted.

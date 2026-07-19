@@ -1,11 +1,58 @@
 # G2 full-event C++ dump — implementation receipt
 
-**Status: CODE-COMPLETE, BUILD/SMOKE/EVIDENCE-BLOCKED.** Owner: G2 C++ source
-interface (Claude-personal). Fulfills `FULL_EVENT_INTERFACE_REQUEST.md` /
-`FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1. No
-binary was built, no allocation/Slurm/ROOT/NPZ touched, no output namespace
-written. This turn is source + static tests only; an independent review gates
-the first interactive build/1A smoke.
+**Status: BUILD-PASS / SMOKE-PASS (playlist-1A) — G2 GATE COMPLETE.** Owner: G2
+C++ source interface (Claude-personal). Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
+/ `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
+Source packet `486e53e` received an independent agy PASS; the compile/install +
+1A smoke were authorized owner-held interactive work only (no 12-playlist array,
+MEFHC merge/NPZ, PET training, or scientific endpoint — none performed).
+
+## Turn-3 gate closure (2026-07-18)
+**SMOKE — PASS (1A).** Attempt-2 loop terminal (`rc=0`, `DONE`), validator PASS
+**50/50 checks, 0 failed** (`attempt2/g2_validation_v2.json`, sha256
+`776addeb3453445bcb1e6fa45f81ed41ffe7f713a1cb2da0eac729eccf007b25`). Counts:
+`mc_truth_denom == mc_signal_reco = 4,073,230` (Phase-18.2 c-invariant holds),
+`mc_background = 44,900`, `data = 360,123`, native misses `1,596,619`,
+mcPOT `4.069e20`, dataPOT `8.973e19`. Native misses verified: `sim_pass=0`,
+reco muon/vertex `-9999` sentinels, empty reco clouds, valid cached truth
+identity/muon. `cluster_view/time` and `ev_run/ev_subrun/ev_gate` populated;
+distinct data/reco/truth schemas with no forbidden truth-detector/data-truth
+counterparts. Validator retains the `uchar_value` normalization for the PyROOT
+`UChar_t`→1-char-string binding (validator-only; the ROOT bytes are correct).
+**ATOMIC PUBLICATION.** ROOT renamed (same-fs, hash-verified after move) to the
+isolated final path `nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root`
+(9,419,026,130 B, sha256 `51e46fddd061cae37704c64604f73df8bb3d739cd5420bfd21cb0d2c89db320f`).
+Tracked receipt (written last):
+`nd-unfolding/pet/g2_smoke/G2_1A_VALIDATION_RECEIPT.json` (sha256
+`0aae83d84af77b2520dec83439e7a061176debc5e0d81e18019ac43a5a697867`).
+Binary/source footing: SHA `61d7dfbf7ee3…` built from `486e53e`, whose G2 source
+is byte-identical through to HEAD `53de3f4` (git diff empty; intervening commits
+are orchestrator QP/migration bookkeeping). Attempt-1 (interrupted at
+18.4M/22.19M) preserved isolated in `.../g2_smoke/work/`, never used as evidence.
+A fail-closed 12-playlist launcher `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`
+is added (NOT submitted).
+
+## Turn-2 runtime evidence (2026-07-18)
+**BUILD/INSTALL — PASS.** source commit `486e53e`; build dir
+`MINERvA101/opt/build_MINERvA101` (out-of-tree); `cmake --build . --target
+runEventLoopOmniFold --parallel 16 && cmake --install .` on interactive
+allocation 56100487 (node nid004159); installed canonical
+`MINERvA101/opt/bin/runEventLoopOmniFold` (PATH resolves here, not a build-tree
+copy); SHA-256 `61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b`
+(was `6b60fc51…`), mtime 2026-07-18 14:36:50; BUILD_RC=0, INSTALL_RC=0.
+Log `nd-unfolding/pet/g2_smoke/build_56100487.log`.
+
+**SMOKE — RUNNING (do not quote as PASS).** Full playlist-1A, canonical
+manifests (`2d-unfolding/playlist_manifests/1A_{Data,MC}.txt`), canonical
+installed binary, env `MNV101_DUMP_POINTCLOUD=1 MNV101_FULL_PHASE_SPACE=1`
+(systematics ON; no DUMP_UNIVERSES). Detached srun step on allocation 56100487,
+work dir `nd-unfolding/pet/g2_smoke/work/` (fixed output name contained =
+`.partial`); log `.../work/loop.log`, exit → `loop.rc` + `DONE|FAILED` sentinel.
+Truth-denom loop confirmed progressing (22,191,105 truth entries). On completion
+the validator `nd-unfolding/pet/validate_g2_fullevent_smoke.py` runs on the ROOT
+(all Stage-4 fail-closed checks) → JSON receipt; only then does the working ROOT
+get atomically renamed to the final G2 name and the evidence committed. No
+publication-evidence commit is made while the smoke runs.
 
 ## What changed (G2-owned files only)
 - `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp` — new full-event

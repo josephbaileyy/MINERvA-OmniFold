@@ -1767,3 +1767,25 @@ FPS status in uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md. Gated on fps-adopt-ver
   `runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root` + Agent-B-aligned full-schema NPZ with literal
   background clouds/scalars/w_bkg. Canonical ND STATUS deferred (ND_OMNIFOLD_STATUS.md dirty from
   another owner — PG0); PET receipt in `nd-unfolding/PET_P1_P5_SESSION_STATE.md`.
+
+## 2026-07-18 — G2 full-event 1A smoke PASS + atomic publication (PET_UQ Gate 1)
+
+Owner-held interactive gate (Agent E, G2 C++ source/runtime owner). Built+installed
+the canonical `runEventLoopOmniFold` from source `486e53e` (binary sha256
+`61d7dfbf7ee3…`, `opt/bin/` — not a build-tree copy) on interactive allocation
+56100487. Ran the full playlist-1A event loop with `MNV101_DUMP_POINTCLOUD=1` +
+`MNV101_FULL_PHASE_SPACE=1` (canonical manifests). Attempt 1 died on provider-turn
+exit (Claude background-Bash was not OS-detached; partial frozen at 18.4M/22.19M
+truth entries, preserved isolated in `g2_smoke/work/`, never used as evidence).
+Attempt 2 via a `setsid` OS-detached driver (SID==PID 576350, reparented to init)
+ran to `rc=0` (~28 min, 21:52→22:20 UTC). Validator
+`nd-unfolding/pet/validate_g2_fullevent_smoke.py` (retains the `uchar_value`
+normalization for the PyROOT `UChar_t`→1-char-string binding) PASS **50/50** — see
+VALIDATION_LEDGER 2026-07-18 for the verified counts/POT/hashes. Atomically
+published (same-fs rename, hash-verified) →
+`nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root`; tracked receipt
+`G2_1A_VALIDATION_RECEIPT.json` written last. Added a fail-closed 12-playlist
+launcher `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh` (NOT submitted; the
+orchestrator queues it after inspecting the pushed commit). No MEFHC merge / NPZ /
+PET training / scientific endpoint. Canonical `ND_OMNIFOLD_STATUS.md` left untouched
+(dirty from another owner — PG0).
