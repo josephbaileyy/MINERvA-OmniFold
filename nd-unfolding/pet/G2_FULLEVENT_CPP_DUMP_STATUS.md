@@ -1,7 +1,12 @@
 # G2 full-event C++ dump — implementation receipt
 
 **Status: BUILD-PASS / SMOKE-PASS / 12-PLAYLIST PRODUCTION-PASS / MEFHC-MERGE-PASS;
-Gate-1A complete, Gate-1B full-schema NPZ pending.** Array
+Gate-1A complete, Gate-1B full-schema NPZ recovery pending.** Dump job
+`56116598` processed the complete retained inventories, then failed in its
+receipt stage because `/usr/bin/python3.11` lacked NumPy. Transactional cleanup
+left no final or temporary product. The recovery launcher resolves and
+preflights the configured environment Python and is eligible for one retry only
+after that launcher and the failure receipt are committed. Array
 `56106974` reached terminal state with eight normal `0:0` publications and four
 completed-loop artifacts recovered without recomputation through the committed,
 independently verified exhaustive retained-domain gate. The all-12 validator

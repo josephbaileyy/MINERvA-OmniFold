@@ -1,0 +1,45 @@
+**VERDICT: BLOCK** 
+(Code/Static interface and Gate-1A schema PASS; Runtime memory safety FAIL)
+
+Your implementation perfectly aligns with the publication-default G2 schema and downstream F7 requirements, but it contains a critical memory leak that will trigger an OOM-kill during the 49.9M-row signal dump.
+
+### 1. Memory Safety and OOM Truncation (The BLOCK)
+**Status: FAIL.**
+You correctly preallocate contiguous NumPy arrays for the full `n = t.GetEntries()` to avoid the massive Python-list overhead that killed the legacy 48G job. For the `mc_signal_reco` tree (`n=49.9M`), this preallocates **~28 GB** of arrays. 
+
+However, your truncation step is a view, not a copy:
+```python
+    for key in out:
+        out[key] = out[key][:k]  # Creates a view
+```
+Because this creates a view, the underlying 28 GB of backing arrays are **never freed**. They remain pinned in memory during the return to `_run_g2_dump`, the `finalize_g2_arrays` concatenation (which uses `np.asarray` and passes the view through), and the extremely memory-intensive `np.savez_compressed` serialization step. 
+
+**Required Change:**
+Force a reallocation to drop the references to the max-entry blocks. In `_read_signal_inventory`, `_read_data_inventory`, and `_read_background_inventory`, you must append `.copy()`:
+```python
+    for key in out:
+        out[key] = out[key][:k].copy()
+```
+
+### 2. G2 Branch Types, Row Selection, and Sentinel Handling
+**Status: PASS.**
+*   **Domain & Gate**: `in_fps_domain` perfectly enforces the `pT in [0,30] / p_parallel in [0,120]` exclusion. `select_signal_row` respects this while preserving native misses.
+*   **Truth Leakage**: The step-1 truth leakage guard is completely sound. `reco_scalar_row`, `reco_muon_row`, and `reco_vertex_row` safely default to the `-9999.0` sentinel when `pass_reco=False`.
+*   **Padding**: `pad_reco_cloud_tokens` groups the 5 features, sorts by stable energy-descending, and correctly keeps the view/time variables permutation-aligned.
+
+### 3. Identities, Manifest, and Transactional Write
+**Status: PASS.**
+*   **Identities**: `bkg_indices` establishes the stable order. The `inventory_order_hash` verification securely prevents any silent reordering or truncation.
+*   **Manifest & Write**: `write_fullevent_npz_atomic` runs all required gates (including schema markers and alignment) before performing the safe `mkstemp` → `os.replace` transaction.
+*   **Fail-closed**: Old/recoil files missing the `G2_SCHEMA` parameters are strictly blocked.
+
+### 4. Weights and Downstream F7 Consistency
+**Status: PASS.**
+*   Persisting literal `w_truth`, `w_reco`, and `w_bkg` (NOT POT-scaled) while forwarding `pot_scale` as metadata is precisely the correct boundary. It perfectly satisfies the downstream `negweight-refined` contract, where the dataloader applies the `-w_bkg * pot_scale` logic. 
+*   Omitting `measured_weights` correctly bypasses the purity placeholder constraint, successfully clearing `assert_no_purity_fallback`. 
+*   **No additional loader wiring is required** before publication.
+
+---
+
+**Next Action:**
+Make the `.copy()` fix to the three inventory readers in `dump_pointcloud_inputs.py` to secure the runtime memory profile. Submit the updated code to clear this BLOCK. Do not train PET until Agent E executes the runtime integration.

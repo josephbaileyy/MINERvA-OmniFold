@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 1B / G2 MEFHC merge and full-schema input",
-  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ JOB 56116598 QUEUED",
+  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ JOB 56116598 FAILED CLEANLY",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -18,11 +18,11 @@
   ],
   "jobs": [],
   "blockers": [
-    "The reviewed full-schema dumper has not yet produced its runtime NPZ/receipt.",
-    "Gate-1B remains open until the batch NPZ product passes manifest, identity, schema, and retained-domain evidence gates.",
+    "Job 56116598 completed the inventory pass but its NumPy-free receipt interpreter failed; transactional cleanup left no product.",
+    "Gate-1B remains open until the corrected, committed launcher produces a batch NPZ that passes manifest, identity, schema, and retained-domain evidence gates.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "External one-shot watcher handles job 56116598 terminal state. On success validate and commit the NPZ receipt, then begin only Gate-2 negweight-refined target construction. No PET training yet.",
+  "next_authorized_action": "Commit the fail-closed environment-Python preflight correction and failure receipt, then submit exactly one G2 dump retry and arm a new one-shot external watcher. No Gate-2 or PET training yet.",
   "wake": {
     "tmux_session": "g2-dump-wake",
     "event": "docs/orchestration/state/g2-dump-56116598-wakeup.json",

@@ -1,0 +1,59 @@
+{
+  "classification": "RECOVERABLE_LAUNCHER_ERROR",
+  "event": {
+    "event_sha256": "74ee730548ca546d689da02195c8d7302d7acfefded54ec5241433f4d5539417",
+    "exit_code": "1:0",
+    "observed_at_utc": "2026-07-19T07:34:19.796472+00:00",
+    "state": "FAILED"
+  },
+  "failure": {
+    "exact_error": "ModuleNotFoundError: No module named 'numpy'",
+    "stage": "receipt member-header validation",
+    "trigger": "the launcher invoked /usr/bin/python3.11 after the NPZ dump; that interpreter does not provide numpy"
+  },
+  "job": {
+    "elapsed": "01:14:07",
+    "end_utc": "2026-07-19T00:34:05Z",
+    "exit_code": "1:0",
+    "job_id": "56116598",
+    "node": "nid004131",
+    "state": "FAILED"
+  },
+  "logs": {
+    "stderr": {
+      "path": "nd-unfolding/g2_fullevent/logs/g2fe_dump_56116598.err",
+      "sha256": "5794bd0cb1a35a1ae3c83d84edd9ea7a2b5894a8ba6013f9b82042a2379a762f",
+      "size_bytes": 1282
+    },
+    "stdout": {
+      "path": "nd-unfolding/g2_fullevent/logs/g2fe_dump_56116598.out",
+      "sha256": "3d3f39fb07b3a6d9422adbb1af36e64f4e15952d6f609b36ab86afd49d395fba",
+      "size_bytes": 4841
+    }
+  },
+  "partial_artifact_policy": {
+    "final_npz_absent": true,
+    "final_receipt_absent": true,
+    "temporary_npz_removed_by_exit_trap": true,
+    "temporary_receipt_removed_by_exit_trap": true
+  },
+  "processed_rows_before_failure": {
+    "background": 564591,
+    "data": 4116128,
+    "signal": 49152885
+  },
+  "recovery": {
+    "action": "resolve and preflight the environment python3 after setup_salloc_env.sh, then use that single interpreter for both receipt checks",
+    "corrected_launcher_sha256": "5e9709df534aeeda4ee02272f76b31459b46c1ec6c2cead9b0f03ced68ea1050",
+    "environment_numpy_version": "1.26.4",
+    "environment_python": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+    "g2_dump_tests": {
+      "passed": 67,
+      "status": "PASS"
+    },
+    "unchanged_retry_forbidden": true,
+    "retry_requires_committed_fail_closed_launcher": true
+  },
+  "schema_version": 1,
+  "status": "BLOCKED_PENDING_COMMITTED_RECOVERY_LAUNCHER"
+}

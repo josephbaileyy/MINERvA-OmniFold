@@ -1,0 +1,11 @@
+{
+  "event": "slurm-job-error",
+  "exit_code": "1:0",
+  "head_at_event": "bc839acef03bf59afc5439938e37a1ffeab2484e",
+  "job_id": "56116598",
+  "observed_at_utc": "2026-07-19T07:34:19.796472+00:00",
+  "schema_version": 1,
+  "state": "FAILED",
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "watcher_run_id": "g2-dump-56116598"
+}

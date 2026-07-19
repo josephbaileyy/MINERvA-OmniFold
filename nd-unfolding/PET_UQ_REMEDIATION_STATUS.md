@@ -43,13 +43,19 @@ Before any publication PET compute:
 ## Gate 1 — G2 full-schema FPS CV input
 
 **Current (2026-07-19): Gate 1A per-playlist production PASS; Gate 1B merged
-ROOT PASS, full-schema NPZ queued next.** All twelve hash-bound ROOT/receipt pairs passed one
+ROOT PASS, full-schema NPZ recovery pending.** The first dump job (`56116598`)
+completed the retained-domain inventory pass but failed before publication when
+its receipt stage selected a NumPy-free system Python. The EXIT trap removed
+both temporary products; neither final NPZ nor receipt exists. The recovery
+launcher now resolves and preflights the environment Python before expensive
+work and must be committed before one retry. All twelve hash-bound ROOT/receipt pairs passed one
 terminal validation, including exhaustive retained-domain receipts for recovered
 1D/1E/1F/1P. Aggregate truth and signal rows are exactly equal at 49,906,108.
 The no-clobber MEFHC merge passed exhaustive validation and binds 21,797 finite
 out-of-domain rows for exclusion; the independently reviewed dumper enforces
-`[0,30] x [0,120]` GeV before inventory construction. Next: run and validate the
-full-schema NPZ in long CPU batch. Evidence: `nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json`.
+`[0,30] x [0,120]` GeV before inventory construction. Evidence:
+`nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json` and
+`docs/orchestration/state/g2-dump-56116598-failure.json`.
 
 Regenerate the FPS CV point-cloud event loops and derived inputs with the exact
 `pet-fullevent-fps-v1` schema. The source must include aligned data, signal MC,

@@ -1903,3 +1903,20 @@ that one semantic boolean to 1, and reran the full validation. Result: PASS,
 zero structural failures, and 21,797 retained-domain exclusions bound. Receipt
 publication was last. The next dependency-ready action is the reviewed
 three-inventory P=12 NPZ dump in long CPU batch; no PET training has started.
+
+## 2026-07-19 — G2 full-schema NPZ job 56116598 failed before publication
+
+The one-shot terminal event reported `FAILED 1:0` after 1h14m07s on
+`nid004131`. The dumper completed its retained-domain scans and wrote a
+transactional temporary NPZ containing 49,152,885 signal, 4,116,128 data, and
+564,591 background rows. The subsequent receipt-header validator invoked
+`/usr/bin/python3.11`, which lacks NumPy, and raised `ModuleNotFoundError`.
+The launcher's EXIT trap removed the temporary NPZ and receipt; the final NPZ
+and receipt paths remained absent, so Gate 1B did not advance.
+
+Recovery changes only interpreter selection: after sourcing the analysis
+environment, the launcher resolves executable `python3`, proves it imports
+NumPy before hashing or dumping, and reuses that interpreter for both receipt
+checks. An unchanged retry is forbidden; one retry is permitted only after the
+fail-closed launcher and `g2-dump-56116598-failure.json` are committed. No PET
+or Gate-2 work was started and every persistent worker UUID was preserved.
