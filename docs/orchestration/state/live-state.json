@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "Gate 1 / G2 full-schema FPS CV production array",
-  "state": "BLOCKED / TERMINAL RECONCILIATION PENDING",
+  "current_dag_node": "Gate 1B / G2 MEFHC merge and full-schema input",
+  "state": "GATE 1A PASS / MERGE-INPUT READY",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -24,11 +24,11 @@
     }
   ],
   "blockers": [
-    "Array tasks 4/1D, 5/1E, 6/1F, and 12/1P completed but failed sampled validation on finite corrupt, out-of-domain muons; unchanged retries were forbidden and all four preserved ROOTs were recovered through the independently verified exhaustive gate.",
-    "Gate-1 still requires one terminal reconciliation and validation of all 12 hash-bound per-playlist ROOT/receipt pairs.",
+    "The current publication full-schema dumper is intentionally runtime-blocked and must be implemented against the validated G2 branches and three-inventory contract.",
+    "Recovered 1D/1E/1F/1P rows require the merged/full-schema builder to enforce the retained [0,30] x [0,120] GeV domain before training.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "On the real r5 event, reconcile the eight originally nonfailed tasks once, validate all 12 final ROOT/receipt pairs including recovered 1D/1E/1F/1P, commit Gate-1 evidence, then choose merge/full-schema input placement. Do not rerun tasks 4, 5, 6, or 12.",
+  "next_authorized_action": "Commit the all-12 Gate-1A evidence, then run a hash-bound no-clobber MEFHC merge on the existing interactive holder while the same Agent-B UUID implements the full-schema three-inventory dumper. No PET training yet.",
   "wake": {
     "tmux_session": "g2-array-wake-r5",
     "event": "docs/orchestration/state/g2-array-56106974-r5-wakeup.json",

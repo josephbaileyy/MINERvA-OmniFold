@@ -1,0 +1,50 @@
+{
+  "receipt_schema": "g2-production-playlist-receipt-v1",
+  "playlist": "1G",
+  "status": "PASS",
+  "binary_sha256": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+  "binary_sha256_expected": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+  "built_source_commit": "486e53e677eb64eb9d622ff6e5daecb3e62aab22",
+  "runtime_launcher_head": "57165850405e9379913a96e6a4caaf36dd870e4c",
+  "env": {
+    "MNV101_DUMP_POINTCLOUD": "1",
+    "MNV101_FULL_PHASE_SPACE": "1"
+  },
+  "manifest_data": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/1G_Data.txt",
+    "sha256": "1972d2cba379c0cbacbacad7dc0b50100baef466b31621a7812cc8a2b31b36c6"
+  },
+  "manifest_mc": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/1G_MC.txt",
+    "sha256": "d8e1b3751cdc72e9b515e3d911d1bf0966dc3172e12fb0b6463ed248d2498ffc"
+  },
+  "validator": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/validate_g2_fullevent_smoke.py",
+    "sha256": "3b5c4ae9b954a6db2ac8dadf25abb433cc0024f9ee182e589de654ba44b5f1f8"
+  },
+  "final_root": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1G.root",
+    "sha256": "70d7d0197e8ac141a2d30caea65812a4fa1c8f0c0e47c555ff8da1d98f53bb7a",
+    "size_bytes": 13717303472
+  },
+  "validation": {
+    "n_checks": 50,
+    "n_failed": 0,
+    "counts": {
+      "mc_truth_denom": 5960127,
+      "mc_signal_reco": 5960127,
+      "mc_background": 65529,
+      "data": 538406,
+      "mcPOTUsed": 5.954273654656092e+20,
+      "dataPOTUsed": 1.375694142738046e+20,
+      "nTruthOnlyMisses": 2397127
+    },
+    "validation_json": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/work/1G/g2_validation_1G.json"
+  },
+  "slurm": {
+    "jobid": "56109026",
+    "array_task_id": 7,
+    "node": "nid004130"
+  },
+  "produced_utc": "2026-07-19T03:17:11Z"
+}

@@ -1871,3 +1871,23 @@ SHA-256 checks passed with rc=0: 1F `b5e7c28f...` (16,299,560,962 B), 1P
 `e986dab2...` (4,631,598,593 B). No event loop was rerun. As before, downstream
 training is conditional on explicit retained-domain enforcement. Evidence:
 `docs/orchestration/state/g2-domain-recovery-r4-20260719.json`.
+
+## 2026-07-19 — G2 Gate 1A all-12 per-playlist production PASS
+
+The r5 one-shot event reported COMPLETE/0:0 for the eight originally nonfailed
+tasks. One full-array accounting reconciliation recorded those eight normal
+completions and the four previously reconciled sampled-validator exits. A new
+fail-closed validator then checked the exact twelve-playlist set, canonical
+binary/validator/launcher/manifests and environment, production or recovery
+receipt chains, every recovered census row, all supporting receipts, sizes, and
+recomputed all twelve large ROOT SHA-256 values on the existing holder.
+
+Result: PASS, 12 pairs, zero failures, 113,500,285,444 bytes. Aggregate counts:
+`mc_truth_denom == mc_signal_reco = 49,906,108`, background `566,036`, data
+`4,119,797`, native misses `20,361,799`, mcPOT `4.978198462880827e21`, dataPOT
+`1.057394261158926e21`. The persistent Gemini verifier independently returned
+PASS and authorized the evidence commit. This closes Gate 1A per-playlist
+production only. Gate 1B remains the no-clobber MEFHC merge plus complete aligned
+full-schema NPZ; recovered rows require explicit downstream `[0,30] x [0,120]`
+GeV exclusion before training. No PET production was started. Evidence:
+`docs/orchestration/state/g2-gate1-all12-validation-20260719.json`.

@@ -576,3 +576,25 @@ next full-schema builder must enforce `0<=pT<=30 GeV` and
 `0<=p_parallel<=120 GeV`; all twelve pairs still require one terminal committed
 Gate-1 reconciliation. Canonical receipt:
 `docs/orchestration/state/g2-domain-recovery-r4-20260719.json`.
+
+## 2026-07-19 G2 Gate 1A — all 12 full-schema playlist pairs VERIFIED
+
+Independent terminal validation of the complete per-playlist production set:
+
+- 12/12 canonical playlist ROOT/receipt pairs PASS; zero validation failures.
+- Total ROOT bytes: **113,500,285,444**; every ROOT SHA-256 recomputed and matched.
+- `mc_truth_denom = mc_signal_reco = 49,906,108` exactly.
+- `mc_background = 566,036`; `data = 4,119,797`; native truth-only misses =
+  `20,361,799`.
+- `mcPOTUsed = 4.978198462880827e21`; `dataPOTUsed = 1.057394261158926e21`.
+- Eight normal production receipts passed 50/50 sampled validation. Four
+  recovery receipts (1D/1E/1F/1P) bind exhaustive finite out-of-domain censuses,
+  zero fatal/non-superseded failures, and the exact reviewed recovery chain.
+- The same persistent Gemini verifier returned PASS and authorized commit.
+
+This closes the per-playlist Gate 1A interface/input subgate, not Gate 1B or a
+physics result. The merged ROOT and aligned three-inventory full-schema NPZ are
+still required, and the downstream reader must enforce
+`0<=pT<=30 GeV`, `0<=p_parallel<=120 GeV` before training. Canonical summary:
+`docs/orchestration/state/g2-gate1-all12-validation-20260719.json` (sha256
+`23b652d69460d61f2c347d0ec50c883043df83e0aa3fab3eda56b18b7364911f`).

@@ -1,0 +1,16 @@
+PASS
+
+I have conducted a read-only, publication-grade audit of the final Gate-1 all-12 pairs validator and its generated summary state. The implementation is exceptionally robust and completely fail-closed.
+
+1. **Playlist Omission:** Impossible. The validator iterates over the hardcoded 12 playlists and explicitly verifies `set(records) == set(PLAYLISTS)`. Any missing ROOT, receipt, or skipped iteration causes a strict failure.
+2. **Stale/Mismatched Manifest or Receipt:** Impossible. The validator computes the SHA-256 of the on-disk Data/MC manifest files and rigorously asserts they match the hashes bound in the receipts.
+3. **Supporting Validator/Domain Receipt Binding:** Valid. The domain receipt path and its hash are explicitly verified against the contents of the main recovery receipt. Furthermore, the embedded base structural receipt is also located and hash-verified, forming an unbroken, cryptographically bound chain of evidence.
+4. **Invalid Recovery Census:** Prevented. The validator parses every individual censused row, strictly enforcing `math.isfinite` for both coordinates, and mathematically proves they fall outside the `0<=pT<=30` / `0<=p_parallel<=120` retained domain. It also verifies that the row-array length perfectly matches the bound count totals.
+5. **Aggregate Counts:** Accurate. The script safely iterates over type-checked (`int`/`float`) dictionaries and correctly sums the POT and structural counts, successfully proving the global `mc_truth_denom == mc_signal_reco` invariant over the entire 49.9M event set.
+6. **Conditional Downstream Requirement:** Truthfully preserved. The recovery-state logic embeds the explicit warning that downstream builders must enforce the bounds prior to training.
+7. **Gate-1 Closure:** Correct. The validator returns an exit code of 1 if any check fails, executing its large ROOT hashing securely via concurrent futures after all cheap sanity checks pass.
+
+**Conclusion:**
+There are no defects. The Gate-1 output evidence graph is fully sealed, untampered, and accurately reflects the recovered state of the four out-of-domain playlist artifacts.
+
+**Gate-1 evidence MAY BE COMMITTED.**
