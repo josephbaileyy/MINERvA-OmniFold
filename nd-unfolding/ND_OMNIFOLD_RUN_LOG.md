@@ -1829,3 +1829,26 @@ and no-clobber publication of the preserved work ROOT. Hash-bound canonical
 files remain untouched while other array tasks drain. The same Gemini verifier
 UUID independently returned BLOCK on unchanged retry. Durable evidence:
 `docs/orchestration/state/g2-array-task4-blocker-20260719.json`.
+
+## 2026-07-19 — G2 tasks 4/1D and 5/1E recovered without recomputation
+
+The r3 one-shot wake reported task 5 / playlist 1E `FAILED 1:0` after 50m18s.
+Its event loop completed, but the sampled base validator found one corrupt data
+muon among its first 20,000 rows. Source AnaTuple run 16019 entry 12886 carries
+the identical native values; the row is at `(pT,p_parallel)=(239,965,961,714)`
+GeV, far outside the retained `[0,30] x [0,120]` GeV FPS domain. As for 1D, an
+unchanged rerun was deterministically blocked.
+
+An additive validator exhaustively scanned every live reco/data scalar and muon
+row, failed closed on non-finite/sentinel/in-domain corruption or scalar--muon
+mismatch, composed all non-superseded base structural checks, and bound every
+out-of-domain row. It found 2,643 such rows in 1D and 2,162 in 1E; all
+non-superseded checks passed. The same Gemini verifier UUID first blocked three
+fail-closed defects (census cap, structural parse error, receipt race), then
+returned PASS after repair and explicitly authorized publication. The preserved
+ROOTs were no-clobber hardlinked, independently rehashed, and receipt-published
+last with rc=0: 1D `06be7e68...` (14,150,286,041 B), 1E `6ab0ac90...`
+(11,651,881,243 B). This is conditional Gate-1 evidence: the downstream input
+builder must enforce the receipt domain before training. No event loop was
+rerun, no active array task was touched, and no reset credit was consumed.
+Evidence: `docs/orchestration/state/g2-domain-recovery-20260719.json`.

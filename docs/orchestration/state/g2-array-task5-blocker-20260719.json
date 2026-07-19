@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-07-19T03:08:08Z",
+  "array_job_id": "56106974",
+  "failed_task": 5,
+  "playlist": "1E",
+  "slurm": {
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:50:18",
+    "node": "nid004118"
+  },
+  "failure": {
+    "stage": "post-loop G2 validation before publication",
+    "check": "data_reco_muon_valid",
+    "result": "19999/20000 valid; 1/50 checks failed",
+    "validator_receipt": "nd-unfolding/g2_fullevent/work/1E/g2_validation_1E.json",
+    "validator_receipt_sha256": "c4f441a4b6312967f542405f1825345feeb0d8da36e25dca03aedc6e6843a366"
+  },
+  "preserved_artifact_before_recovery": {
+    "path": "nd-unfolding/g2_fullevent/work/1E/runEventLoopOmniFold.root",
+    "size_bytes": 11651881243,
+    "final_root_present": false,
+    "final_receipt_present": false
+  },
+  "anomalous_row": {
+    "tree": "data",
+    "entry": 18278,
+    "event_identity": [16019, 40, 323],
+    "mu_reco_E_MeV": 991199788.8276439,
+    "mu_reco_px_MeV": 137438994.57722276,
+    "mu_reco_py_MeV": -196707117.60827738,
+    "mu_reco_pz_MeV": 961714018.8350173,
+    "measured_pT_GeV": 239964.9294129343,
+    "measured_pparallel_GeV": 961714.0188350173,
+    "mu_reco_minos_ok": 1,
+    "inside_extended_fps_domain": false
+  },
+  "upstream_confirmation": {
+    "source": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1E/MasterAnaDev_data_AnaTuple_run00016019_Playlist.root",
+    "source_size_bytes": 432007159,
+    "tree": "MasterAnaDev",
+    "entry": 12886,
+    "native_event_identity": [16019, 40, 323],
+    "finding": "Native MasterAnaDev muon and MINOS values contain the same corrupt values; G2 copied them faithfully."
+  },
+  "retry_decision": {
+    "unchanged_failed_task_only_retry": "BLOCK",
+    "mechanical_launcher_safety": "PASS: final pair was absent and the playlist work ROOT was isolated under its lock",
+    "scientific_reason": "The event loop is deterministic and would reproduce the same upstream-corrupt row and sampled-validator failure.",
+    "recovery_route": "Exhaustive fail-closed retained-domain validation of the preserved ROOT, independent same-UUID verification, then hash-bound no-clobber publication without recomputation."
+  },
+  "worker_uuid_policy": "All UUIDs preserved; no role replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset remained protected and unconsumed."
+}

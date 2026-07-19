@@ -216,9 +216,25 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T023558Z-send-ea8b9909.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T023558Z-send-ea8b9909.txt"
+        },
+        {
+          "action": "send",
+          "number": 5,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T030833Z-send-369f3d06.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T030833Z-send-369f3d06.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T030833Z-send-369f3d06.txt"
+        },
+        {
+          "action": "send",
+          "number": 6,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T031659Z-send-49c0adab.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T031659Z-send-49c0adab.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T031659Z-send-49c0adab.txt"
         }
       ],
-      "updated_at": "2026-07-19T02:37:53+00:00"
+      "updated_at": "2026-07-19T03:17:26+00:00"
     },
     "agy-publication-redteam": {
       "created_at": "2026-07-18T13:39:03+00:00",

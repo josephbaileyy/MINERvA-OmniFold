@@ -533,3 +533,26 @@ receipt `nd-unfolding/pet/g2_smoke/G2_1A_VALIDATION_RECEIPT.json` (sha256
 receipt v2 sha256 `776addeb3453445bcb1e6fa45f81ed41ffe7f713a1cb2da0eac729eccf007b25`.
 INTERFACE/INFRASTRUCTURE validation only — NOT a cross-section result. 12-playlist
 production launcher staged, NOT submitted.
+
+## 2026-07-19 G2 retained-domain recovery — playlists 1D and 1E VERIFIED (conditional)
+
+Two full-event production loops completed but the 20,000-row sampled validator
+encountered native upstream-corrupt muons outside the declared extended-FPS
+retained domain. Exact source-AnaTuple comparisons confirmed that the G2 writer
+copied the corrupt values faithfully. An additive exhaustive validator, accepted
+by the persistent independent Gemini verifier after three fail-closed repairs,
+composed the base structural suite and bound every excluded row.
+
+- 1D: PASS, 2,643 out-of-domain rows bound; recovered ROOT 14,150,286,041 B,
+  sha256 `06be7e6875f357af91b7e9d8d875e9b9759118c5c59002f5ac1fd205dc282b56`.
+- 1E: PASS, 2,162 out-of-domain rows bound; recovered ROOT 11,651,881,243 B,
+  sha256 `6ab0ac90d75aa843e99f33d8a817dab27b418273cbef298f641e7344724394dc`.
+- Both publications returned rc=0, used the unchanged canonical binary/base
+  validator/production launcher hashes, and passed independent post-publication
+  SHA-256 checks.
+
+This is interface/input evidence, not a physics result. It is valid only if the
+next full-schema builder enforces `0<=pT<=30 GeV` and
+`0<=p_parallel<=120 GeV` before training. All twelve array pairs and that
+downstream exclusion still require their own committed gates. Canonical receipt:
+`docs/orchestration/state/g2-domain-recovery-20260719.json`.

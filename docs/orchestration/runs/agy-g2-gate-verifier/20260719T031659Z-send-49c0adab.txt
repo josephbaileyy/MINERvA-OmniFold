@@ -1,0 +1,14 @@
+PASS
+
+The three BLOCK items have been perfectly remediated:
+1. **Omit an inventory row:** The out-of-domain census logic in `validate_g2_fullevent_domain.py` now explicitly appends a fatal error if `n_ood > len(idx_ood)`, failing closed rather than silently truncating the census.
+2. **Misstate evidence:** The structural composition block in `validate_g2_fullevent_domain.py` now includes an `elif s.get("error"):` branch. A base validator crash (e.g. failing to write a readable JSON receipt) is now correctly trapped as a fatal error instead of silently passing.
+3. **Race publication:** In `recover_g2_playlist.sh`, both `FINAL_ROOT` and `RECEIPT` are explicitly checked via `path_occupied` immediately before the atomic `ln` sequence, closing the race condition that could have left a one-sided state.
+
+Additionally, the receipt wording updates accurately describe the conditionality of the Gate-1 publication and delegate the ultimate domain masking to the downstream builder, which matches the physics contract.
+
+All changes are sound, targeted, and preserve the existing robust mechanisms (e.g. `bad_mu_cut`, `mismatch_cut`) that guard the in-domain inputs.
+
+I explicitly **AUTHORIZE** the execution of `--publish` for both preserved artifacts (1D and 1E):
+`./recover_g2_playlist.sh 1D --publish`
+`./recover_g2_playlist.sh 1E --publish`

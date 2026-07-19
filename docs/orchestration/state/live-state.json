@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 1 / G2 full-schema FPS CV production array",
-  "state": "BLOCKED / ARRAY PARTIALLY ACTIVE",
+  "state": "BLOCKED / TERMINAL RECONCILIATION PENDING",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -24,16 +24,16 @@
     }
   ],
   "blockers": [
-    "Array task 4 / playlist 1D is blocked after a deterministic upstream-corrupt, out-of-domain muon row failed validation; unchanged retry is forbidden.",
-    "Gate-1 requires an independently verified additive domain validator/recovery plus all 12 hash-bound per-playlist ROOT/receipt pairs.",
+    "Array tasks 4/1D and 5/1E failed sampled validation on deterministic upstream-corrupt, out-of-domain muons; unchanged retries were forbidden and both preserved ROOTs were recovered through the independently verified exhaustive gate.",
+    "Gate-1 still requires one terminal reconciliation and validation of all 12 hash-bound per-playlist ROOT/receipt pairs.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "Do not rerun task 4 unchanged. Add and independently verify a supplemental exhaustive domain validator and no-clobber recovery for its preserved work ROOT while leaving active-task hash-bound files unchanged; monitor the remaining 11 tasks externally, then validate all 12 pairs before merge/input construction.",
+  "next_authorized_action": "On the real r4 event, reconcile the ten originally nonfailed tasks once, validate all 12 final ROOT/receipt pairs including recovered 1D/1E, commit Gate-1 evidence, then choose merge/full-schema input placement. Do not rerun tasks 4 or 5.",
   "wake": {
-    "tmux_session": "g2-array-wake-r3",
-    "event": "docs/orchestration/state/g2-array-56106974-r3-wakeup.json",
-    "invoked": "docs/orchestration/state/g2-array-56106974-r3-resume.invoked",
-    "completed": "docs/orchestration/state/g2-array-56106974-r3-resume.done"
+    "tmux_session": "g2-array-wake-r4",
+    "event": "docs/orchestration/state/g2-array-56106974-r4-wakeup.json",
+    "invoked": "docs/orchestration/state/g2-array-56106974-r4-resume.invoked",
+    "completed": "docs/orchestration/state/g2-array-56106974-r4-resume.done"
   },
   "canonical_science": [
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

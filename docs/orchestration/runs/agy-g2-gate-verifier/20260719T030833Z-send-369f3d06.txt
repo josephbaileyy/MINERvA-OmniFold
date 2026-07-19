@@ -1,0 +1,22 @@
+BLOCK
+
+### 1. Omit an inventory row (Census truncation)
+In `validate_g2_fullevent_domain.py`, the `_draw_indices` function hardcodes `cap=100000`. If an out-of-domain query legitimately matches $> 100,000$ rows (highly probable for high-statistics playlists like 1E), `idx_ood` silently truncates. Because `n_censused` blindly sums `len(v)`, the script will silently omit the surplus rows from the JSON inventory and misstate the total excluded count, yet still return `PASS`.
+**Fix:** Add an explicit bounds check inside the `if n_ood > 0:` block to fail closed if the cap is exceeded:
+`if n_ood > len(idx_ood): fatal.append(f"{ctx}: out-of-domain count exceeds census cap ({n_ood} > {len(idx_ood)})")`
+
+### 2. Misstate evidence (Ignore structural crash)
+In `validate_g2_fullevent_domain.py`, if the base structural validator crashes entirely or writes malformed JSON, `json.load(open(base_receipt))` throws an exception. `_run_base_structural` safely catches this and returns `{"ran": True, "error": "..."}`. However, the caller (`main()`) only checks `not s.get("ran")` and `s.get("non_superseded_failures")`. It completely ignores the `error` key, silently passing the structural composition as if it had succeeded.
+**Fix:** Add a check for the `error` key in `main()`:
+`elif s.get("error"): fatal.append(f"structural base validator error: {s.get('error')}")`
+
+### 3. Race publication (One-sided state)
+In `recover_g2_playlist.sh`, right before the atomic hardlink (line 98), the pre-publish race check asserts ONLY `! path_occupied "$FINAL_ROOT"`. It does not re-assert `"$RECEIPT"`. A concurrent receipt race would cause the script to successfully hardlink the ROOT and delete `WORK_ROOT`, but then crash at line 139 when it attempts to publish the receipt. This violates the no-clobber atomicity contract and leaves a one-sided, unrecoverable state.
+**Fix:** Add `path_occupied "$RECEIPT" && die "race: receipt appeared: $RECEIPT"` alongside the `FINAL_ROOT` check immediately before `SRC_SHA="$(sha_of "$WORK_ROOT")"`.
+
+### Authorization status
+- **Corrupt in-domain data:** None. The combination of `bad_mu_cut`, `nf_cut`, `mismatch_cut`, and `in_domain_bad` correctly identifies and fails closed on any unphysical components or bounds-bypasses that fall inside the retained training domain.
+- **Validate-only then `--publish`:** Authorized. Because the recovery script re-computes the exhaustive validation from scratch upon `--publish` rather than trusting an existing loose receipt, there is no TOCTOU vulnerability in a separated run.
+- **ROOT formulas / bindings:** Verified correct.
+
+**BLOCK** stands until the three exact fixes above are applied.

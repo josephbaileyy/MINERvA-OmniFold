@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "armed_at_utc": "2026-07-19T03:26:44Z",
+  "job_id": "56106974",
+  "expected_task_spec": "1-3,6-12",
+  "acknowledged_excluded_tasks": [4, 5],
+  "excluded_task_disposition": "Both failed sampled validation on upstream-corrupt out-of-domain rows; preserved ROOTs passed the independently verified exhaustive gate and were published without recomputation.",
+  "watcher_run_id": "g2-array-56106974-r4",
+  "tmux_session": "g2-array-wake-r4",
+  "os_pid": 1423361,
+  "os_ppid": 2289811,
+  "os_sid": 1423361,
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "precondition": "Wait externally for g2-array-56106974-r3-resume.done before the first Slurm observation, preventing a concurrent resume of this active turn.",
+  "event_path": "docs/orchestration/state/g2-array-56106974-r4-wakeup.json",
+  "invoked_path": "docs/orchestration/state/g2-array-56106974-r4-resume.invoked",
+  "completed_path": "docs/orchestration/state/g2-array-56106974-r4-resume.done",
+  "resume_flags": ["--disable", "goals", "--dangerously-bypass-approvals-and-sandbox"],
+  "wake_policy": "After r3 completion, observe only the ten originally nonfailed tasks; exactly one COMPLETE, new ERROR, or sustained monitor failure may resume. The resumed reconciliation must still validate all twelve final ROOT/receipt pairs, including recovered 1D and 1E.",
+  "initial_marker_state": "r4 event/invoked/done all absent",
+  "worker_uuid_policy": "All existing worker UUIDs preserved; no replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset is protected and was not consumed."
+}
