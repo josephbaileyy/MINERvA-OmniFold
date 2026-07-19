@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "armed_at_utc": "2026-07-19T01:33:57Z",
+  "job_id": "56106974",
+  "expected_tasks": "1-12",
+  "tmux_session": "g2-array-wake",
+  "watcher_pid": 2289813,
+  "watcher_ppid": 2289811,
+  "watcher_sid": 2289813,
+  "os_detached": true,
+  "watcher": "docs/orchestration/watch_slurm_array_resume.sh",
+  "classifier": "docs/orchestration/slurm_array_status.py",
+  "implementation_commit": "ef8a9ab",
+  "poll_seconds": 60,
+  "max_consecutive_unreliable_observations": 10,
+  "valid_wake_events": [
+    "slurm-array-complete",
+    "slurm-array-error",
+    "slurm-array-monitor-error"
+  ],
+  "event_path": "docs/orchestration/state/g2-array-56106974-wakeup.json",
+  "invoked_path": "docs/orchestration/state/g2-array-56106974-resume.invoked",
+  "completed_path": "docs/orchestration/state/g2-array-56106974-resume.done",
+  "resume_log": "docs/orchestration/state/g2-array-56106974-resume.log",
+  "markers_at_arm": {
+    "event": false,
+    "invoked": false,
+    "completed": false
+  },
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "codex_path": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+  "resume_argv_prefix": [
+    "codex",
+    "exec",
+    "resume",
+    "--disable",
+    "goals",
+    "--dangerously-bypass-approvals-and-sandbox"
+  ],
+  "persistent_goals_disabled": true,
+  "full_access_on_resume": true,
+  "initial_observation": {
+    "overall": "ACTIVE",
+    "counts": {
+      "COMPLETED": 1,
+      "RUNNING": 1,
+      "PENDING": 10
+    },
+    "error_tasks": []
+  },
+  "tests": {
+    "count": 9,
+    "failed": 0,
+    "scope": "Slurm classifier, one-shot watcher/resume flags, bounded dashboard and UUID/reset handling"
+  },
+  "llm_turns_while_active": 0,
+  "reset_credit_consumed": false
+}
