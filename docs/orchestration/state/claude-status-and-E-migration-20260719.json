@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-07-19T00:20:01Z",
+  "status_source": "user-visible Claude status",
+  "usage_semantics": {
+    "interpretation": "percent consumed, not percent remaining",
+    "reason": "the school five-hour value reset to 0%, which denotes a fresh window",
+    "claude_personal": {
+      "five_hour_used_percent": 100,
+      "seven_day_used_percent": 76,
+      "seven_day_reset_in": "about 14 hours 40 minutes; exact timestamp not supplied"
+    },
+    "claude_school": {
+      "five_hour_used_percent": 0,
+      "seven_day_used_percent": null
+    },
+    "usagectl_cache_state": "stale/unknown; polling cannot refresh the interactive status line",
+    "raw_cli_error": "monthly spend limit",
+    "warning": "the CLI error label does not identify the same window as the user-visible five-hour/seven-day status and must not overwrite those observations"
+  },
+  "agent_E_migration_preflight": {
+    "role": "agent-E-g2-source",
+    "uuid": "44b634fc-d211-4e09-9229-95a18d1984cc",
+    "source_profile": "claude-personal",
+    "candidate_profile": "claude-school",
+    "legacy_profile_prohibited": true,
+    "source_session_jsonl_present": true,
+    "source_session_jsonl_bytes": 1847121,
+    "source_session_jsonl_lines": 497,
+    "source_session_jsonl_sha256": "87833e8c455008cffe7e2d8f640ba92ecc0739ba53c765dd1c112121322139a8",
+    "source_session_env_present": true,
+    "target_project_store_present": true,
+    "target_uuid_absent": true,
+    "feasibility": "possible in principle by verified no-clobber session-store copy plus atomic registry profile switch, preserving the UUID",
+    "performed": false,
+    "dispatch_performed": false,
+    "reason_not_performed": "account/profile migration is a material identity and usage-routing change awaiting explicit user authorization"
+  },
+  "reset_credit_consumed": false
+}

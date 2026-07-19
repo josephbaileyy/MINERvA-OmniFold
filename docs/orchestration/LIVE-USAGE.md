@@ -124,6 +124,17 @@ continuation: on 2026-07-19 the Claude-personal heartbeat returned
 monthly spend limit. Treat the substantial turn's explicit cap as
 authoritative and preserve its UUID.
 
+Claude's user-visible percentages are **percent consumed**, whereas campaign
+discussion often says "capacity" to mean percent remaining. A five-hour value
+of 100% is exhausted; a reset to 0% is a fresh window. Record `used` versus
+`remaining` explicitly. Also preserve the raw CLI error separately: the label
+`monthly spend limit` can coexist with user-visible five-hour and seven-day
+windows and does not establish which window caused rejection. On 2026-07-19
+the user reported personal at 100% five-hour used and 76% seven-day used
+(weekly reset in about 14h40), while school had reset to 0% five-hour used.
+The local caches were stale, so these user-visible observations are fresher
+than `usagectl`, but the approximate reset interval is not an exact timestamp.
+
 ## Prompt for the live GPT-5.6 orchestrator
 
 ```text
