@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "BLOCK",
+  "event": {
+    "path": "docs/orchestration/state/gate2-hedge-56139870-r3-wakeup.json",
+    "read_exactly_once": true,
+    "validated_as_real_terminal_event": true,
+    "observed_mtime_utc": "2026-07-19T16:09:13Z"
+  },
+  "batch": {
+    "job_id": "56139870",
+    "state": "CANCELLED by 112498",
+    "start": null,
+    "reason": "Canceled only after the benchmark-safe interactive route was selected and pending cancellation was confirmed."
+  },
+  "interactive": {
+    "holder_job_id": "56140002",
+    "state": "CANCELLED by 112498",
+    "elapsed": "00:02:15",
+    "route_decision_sha256": "239712e98b79b670ae6a86a6d6fcffe96cc040f444e8488d453a1554efe0bd23",
+    "runtime_log_sha256": "f64a3847036a792765cd5796c7a110447ed1578c481f58fe554ea311407ed0b5"
+  },
+  "blocker": {
+    "stage": "full production loader materialization before learned refinement",
+    "exception": "ModuleNotFoundError: No module named 'tensorflow'",
+    "cause": "Importing omnifold.dataloader executed omnifold/__init__.py, which eagerly imported the TensorFlow training implementation even though Gate-2 target construction uses only the NumPy dataloader source.",
+    "unchanged_retry_prohibited": true
+  },
+  "publication": {
+    "weights_absent": true,
+    "receipt_absent": true,
+    "collision_lock_free": true,
+    "pet_training_started": false,
+    "gate2_promoted": false
+  },
+  "changed_repair": {
+    "strategy": "Load the exact omnifold_nn/omnifold/dataloader.py source under the canonical omnifold.dataloader module name without executing the TensorFlow-dependent package initializer.",
+    "continuity_owned_loader_modified": false,
+    "validator_sha256": "a8539d8300f8f21290faee3c99809d775e9ae0dd44c6756217fe1a068f7a51ee",
+    "runner_sha256": "3e43962602a630f49eea590e031cc0c5538d6442cee3d5c209903a821032a159",
+    "focused_tests": "4/4 PASS",
+    "combined_local_tests": "24/24 PASS"
+  },
+  "persistent_workers": {
+    "agent-B-p5b": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agy-g2-gate-verifier": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+    "provider_dispatch_performed": false
+  }
+}

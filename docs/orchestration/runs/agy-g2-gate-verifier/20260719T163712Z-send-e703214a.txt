@@ -1,0 +1,14 @@
+PASS
+
+I have completed the independent, read-only scientific gate review of the Gate-2 target runtime. 
+
+1. **Hash-Bound Chain & Identity:** The independent `validate_gate2_target_receipt.py` correctly reconstructs the exact raw inputs (`measured_scalars`, `bkg_reco_scalars`, `w_bkg`, `pot_scale`), recalculates the exact signed target hash (`04a79a8cb57e238d8273df35c7ed0a3225823cef98932fcbe659ba1227e42f24`), and proves it exactly matches the one bound by the runtime receipt. It also strictly validates the SHA-256 hashes of the target NPZ, weights NPY, and all participating Python modules.
+2. **Exact Learned Backend:** The receipt correctly binds the canonical `u2d.refine_stay_positive` backend, asserts `refinement_is_learned_production: true`, and verifies `target_mode: negweight-refined`.
+3. **Literal Inventory & Alignment:** The validation explicitly recomputes the target as `+1` for all 4,116,128 data rows and `-w_bkg * pot_scale` for all 564,591 background rows. The resulting 4,680,719 rows align precisely with the published `float32` weights array. 
+4. **Normalization & Finiteness:** The published weights are strictly finite, strictly non-negative (minimum is `0.0` across exactly 20 zero-rows), and securely normalized to `1_000_000.37792753` (which is properly accepted within the strict tolerance margin of 1,000,000.0).
+5. **TensorFlow-Bypass:** The method `install_target_only_dataloader` in `gate2_target_runtime.py` rigorously imports only the exact canonical `omnifold.dataloader` via module spec, successfully preventing TensorFlow/PET initialization without altering any mathematical/scientific dataloader behavior.
+6. **Telemetry Interpretation:** The independent 15x19 binned checks verify `negative_signed_cells = 0`. With no negatively signed cells in the reported extended grid, it mathematically follows that `signed_hist` equals `clipped`. The learned estimator perfectly matches this bounded domain geometry (`cosine = 1.0` and `max_relative ~ 3.7e-7`), which is physically honest, internally consistent, and fulfills the contract without inventing artificial inequality thresholds.
+
+Agent-B's owner receipt needs NO correction. It truthfully records the environment, configurations, and telemetry, perfectly mirroring the independent verifier's recomputed metrics.
+
+Gate 2 may be promoted and committed.

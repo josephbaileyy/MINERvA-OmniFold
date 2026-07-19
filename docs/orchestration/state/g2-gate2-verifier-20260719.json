@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "verdict": "GATE2_MAY_BE_PROMOTED_AND_COMMITTED",
+  "role": "agy-g2-gate-verifier",
+  "profile": "agy",
+  "session_id": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+  "turn_number": 8,
+  "returncode": 0,
+  "output": {
+    "path": "docs/orchestration/runs/agy-g2-gate-verifier/20260719T163712Z-send-e703214a.txt",
+    "sha256": "5198129821f318e4b4703b9630ba5b768b247114bd1ab57de332dbd04dbb47b6"
+  },
+  "runtime_receipt_sha256": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
+  "independent_validation_sha256": "2f11ce2f7be4472ebac66514418a046ff03ddb3742222904babaca5fb245f049",
+  "findings": {
+    "hash_bound_chain": "PASS",
+    "exact_learned_backend": "PASS",
+    "literal_data_background_inventory": "PASS",
+    "normalization_finiteness_nonnegativity": "PASS",
+    "tensorflow_initializer_bypass_scientifically_equivalent": "PASS",
+    "binned_telemetry": "PASS",
+    "agent_B_owner_receipt_correction_needed": false
+  },
+  "pet_training_started": false
+}

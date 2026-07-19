@@ -632,3 +632,28 @@ Independent validation reproduced the 42-member headers, exact
 identity hashes with zero failures. Receipt:
 `docs/orchestration/state/g2-gate1b-npz-validation-20260719.json`. This closes
 G2 Gate 1 only; it does not validate a refined target or PET result.
+
+## 2026-07-19 G2 Gate 2 — literal `negweight-refined` target VERIFIED
+
+The exact target-only runtime used the frozen 9,897,374,636-byte Gate-1 NPZ
+(`fa6b3463...`), canonical `u2d.refine_stay_positive`, master seed 42 and
+refinement seed 45. It consumed all 4,116,128 data rows plus 564,591 literal
+POT-scaled negative-background rows and receipt-last published 4,680,719
+normalized `float32` weights (SHA-256 `1ef7e0d2...`).
+
+- Raw data/background/signed sums: 4,116,128.0 / 109,599.399384 / 4,006,528.600616.
+- Learned refined target: finite and nonnegative; 20 floored-zero rows;
+  normalized sum 1,000,000.377928 (float32 accumulation tolerance).
+- Exact configuration hash: `dbe2854785cbff5a710c97acf43d8d91bcc43f906a00ad59c3f187e8ca2d4c16`.
+- Independent 15x19 extended-grid reconstruction: zero negative signed cells;
+  learned-vs-normalized-clipped L1 fraction `3.7793e-7`, cosine 1.0.
+- Independent validation rehashed the full input, weights and participating
+  code and reproduced signed-target identity `04a79a8...` and all telemetry.
+- The preserved agy Gate-2 verifier returned PASS and found no Agent-B receipt
+  correction necessary.
+
+This verifies the measured-side Gate-2 target, not a PET training result. PET
+training did not start. Canonical receipts:
+`nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
+`docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
+and `docs/orchestration/state/g2-gate2-verifier-20260719.json`.

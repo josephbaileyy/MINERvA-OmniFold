@@ -1,0 +1,4 @@
+rc=0
+run_id=gate2-target-r4
+finished_at_utc=2026-07-19T16:27:38Z
+log=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/runtime/gate2-target-r4/runtime.log

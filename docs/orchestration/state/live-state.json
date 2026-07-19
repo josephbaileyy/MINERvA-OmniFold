@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "Gate 2 / literal negweight-refined target construction",
-  "state": "GATE 1 PASS / GATE 2 CONSTRUCTION PASS / RUNTIME PENDING",
+  "current_dag_node": "Gate 2 promotion / Gate 3 not started",
+  "state": "GATE 1 PASS / GATE 2 PASS / GATE 3 NOT STARTED",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -18,17 +18,11 @@
   ],
   "jobs": [],
   "blockers": [
-    "Canonical u2d.refine_stay_positive has not yet executed on the production G2 NPZ in a ROOT-capable compute environment.",
-    "Gate 2 requires a hash-bound runtime target summary and independently binned signed/refined checks before promotion.",
-    "PET training remains forbidden until the committed Gate-2 target gate passes."
+    "Gate 3 requires the committed full-schema P3F-PET source inventory and its own independent validation.",
+    "The current wake explicitly prohibits starting PET training or Gate-3 production."
   ],
-  "next_authorized_action": "Run the canonical learned Stay-Positive target construction on the production G2 NPZ in the existing compute holder and validate its hash-bound telemetry. Do not start PET training.",
-  "wake": {
-    "tmux_session": "g2-dump-wake-r2",
-    "event": "docs/orchestration/state/g2-dump-56120687-wakeup.json",
-    "invoked": "docs/orchestration/state/g2-dump-56120687-resume.invoked",
-    "completed": "docs/orchestration/state/g2-dump-56120687-resume.done"
-  },
+  "next_authorized_action": "After this scoped Gate-2 evidence commit is pushed and a later wake authorizes Gate 3, build the full-schema P3F-PET source inventory. Do not start PET or Gate 3 in this wake.",
+  "wake": {"waker": true},
   "canonical_science": [
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
     "nd-unfolding/pet/G2_FULLEVENT_CPP_DUMP_STATUS.md",

@@ -1,0 +1,181 @@
+{
+  "code": {
+    "canonical_u2d": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+      "sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
+    },
+    "loader": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_fps_dataloader.py",
+      "sha256": "c0521d210d9c8f592613e420f6cd7bd82523b879988739eff420779106d0fdd5"
+    },
+    "numpy_dataloader": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/dataloader.py",
+      "sha256": "6b4850f5c60e6b74c266a25c9dfc25c95375b8f9a2c023a106d0a555c9f7e373"
+    },
+    "validator": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/gate2_target_runtime.py",
+      "sha256": "a8539d8300f8f21290faee3c99809d775e9ae0dd44c6756217fe1a068f7a51ee"
+    }
+  },
+  "completed_at_utc": "2026-07-19T16:27:37.452586+00:00",
+  "configuration": {
+    "bootstrap_seed": null,
+    "dataloader_import_mode": "target-only exact NumPy source; no TensorFlow/PET training",
+    "device": "cpu",
+    "estimator": "exact",
+    "features": [
+      "pt",
+      "pparallel"
+    ],
+    "full_measured_inventory": true,
+    "master_seed": 42,
+    "max_mc_events": 200000,
+    "normalization_factor": 1000000.0,
+    "refinement_random_state": 45,
+    "target_mode": "negweight-refined"
+  },
+  "configuration_sha256": "dbe2854785cbff5a710c97acf43d8d91bcc43f906a00ad59c3f187e8ca2d4c16",
+  "environment": {
+    "max_rss_kib": 11632724,
+    "numpy": "1.26.4",
+    "platform": "Linux-6.4.0-150600.23.103_15.0.25-cray_shasta_c-x86_64-with-glibc2.38",
+    "python": "3.11.14",
+    "sklearn": "1.8.0",
+    "tensorflow": "not imported/not required for target-only Gate-2 validation"
+  },
+  "execution": {
+    "command": "gate2_target_runtime.py validate (canonical exact target-only gate)",
+    "head_at_runtime": "be4cd7894d157f951552c0c6890e0dc309874ff2",
+    "host": "nid004159",
+    "route": "interactive",
+    "run_id": "gate2-target-r4",
+    "slurm_job_id": "56140225"
+  },
+  "independent_binned_checks": {
+    "closed_form_clipped_sum": 4006528.6006158064,
+    "grid_shape": [
+      15,
+      19
+    ],
+    "in_domain_background_rows": 564591,
+    "in_domain_data_rows": 4116128,
+    "interpretation": "signed totals and normalized refined projection are hard gates; learned-vs-binned shape metrics are decision telemetry, not an invented equality threshold",
+    "learned_refined_normalized_sum": 1000000.37792753,
+    "learned_vs_normalized_clipped_cosine": 1.0,
+    "learned_vs_normalized_clipped_l1_fraction": 3.7792752997484056e-07,
+    "learned_vs_normalized_clipped_max_relative": 3.7792752997484056e-07,
+    "negative_signed_cells": 0,
+    "raw_background_pot_scaled_sum": 109599.39938419356,
+    "raw_data_sum": 4116128.0,
+    "raw_signed_sum": 4006528.6006158064
+  },
+  "input_preflight": {
+    "elapsed_seconds": 6.795733964070678,
+    "independent_receipt": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/g2-gate1b-npz-validation-20260719.json",
+      "sha256": "194eff5a8bc79e782e0d96968bfd66b0582357cc1415983f4bc598c886adfe34"
+    },
+    "inventory_rows": {
+      "background": 564591,
+      "data": 4116128,
+      "signal": 49152885
+    },
+    "member_count": 42,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "producer_receipt": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json",
+      "sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e"
+    },
+    "schema_markers": {
+      "fullPhaseSpace": 1,
+      "hasFullEventSchema": 1,
+      "petSchemaVersion": "g2-fullevent-v1"
+    },
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "size_bytes": 9897374636
+  },
+  "pet_training_started": false,
+  "promotion_requirements": [
+    "independent receipt review of hashes, exact configuration, and binned telemetry",
+    "ledger + RUN_LOG + STATUS update committed with launcher and product summary"
+  ],
+  "runtime_target": {
+    "bootstrap_seed": null,
+    "estimator_fingerprint": "pet-fullevent-fps-v1",
+    "frac_clipped_reported": 4.272847825302053e-06,
+    "g_max": 0.9869631161290563,
+    "g_min": 0.11647332007540316,
+    "input_identity_hashes": {
+      "bkg": "d79848885f177259e5934c70ddcfc1bb3dea39272da0e67759a5d1b596ca024b",
+      "data": "fd2b14c6f3dbbd7c8747edfd36fcf24c35f29a629350cac84e07027d398e3fc7",
+      "sig": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1"
+    },
+    "n_bkg_rows": 564591,
+    "n_data_rows": 4116128,
+    "n_floored_zero": 20,
+    "n_measured_rows": 4680719,
+    "n_negative_input_rows": 564591,
+    "pot_scale": 0.21240500334472884,
+    "raw_negative_sum": 109599.39938418806,
+    "raw_positive_sum": 4116128.0,
+    "refined_max": 2.144795310546694,
+    "refined_min": 0.0,
+    "refined_sum": 4006527.6563251303,
+    "refinement": "stay-positive (arXiv:2505.03724)",
+    "refinement_backend": "u2d.refine_stay_positive",
+    "refinement_is_learned_production": true,
+    "signed_target_hash": "04a79a8cb57e238d8273df35c7ed0a3225823cef98932fcbe659ba1227e42f24",
+    "target_mode": "negweight-refined"
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-07-19T16:16:18.870055+00:00",
+  "status": "PASS",
+  "step1_feed": {
+    "bounded_mc_validation_rows": 200000,
+    "cloud_shape": [
+      4680719,
+      12,
+      3
+    ],
+    "coord_gen": [
+      5,
+      6,
+      7
+    ],
+    "coord_reco": [
+      1,
+      2
+    ],
+    "event_feature_shape": [
+      4680719,
+      2
+    ],
+    "max": 0.5353254675865173,
+    "mc_gen_shape": [
+      200000,
+      12,
+      8
+    ],
+    "mc_reco_shape": [
+      200000,
+      12,
+      3
+    ],
+    "min": 0.0,
+    "normalized_sum": 1000000.3779275301,
+    "rows": 4680719,
+    "weights": {
+      "dtype": "float32",
+      "published_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+      "sha256": "1ef7e0d2fa8c36a6f9eabd86a21f0b41617cc7d0bb4cd6bee96d74d5334074b6",
+      "size_bytes": 18723004,
+      "staging_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/.gate2-weights.gate2-target-r4.dNLtTx.npy"
+    },
+    "zero_rows": 20
+  },
+  "timing": {
+    "loader_and_full_refinement_seconds": 670.9812326809624,
+    "total_seconds": 678.7077405899763
+  },
+  "verdict": "GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING"
+}

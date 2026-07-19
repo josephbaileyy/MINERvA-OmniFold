@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "original_event": {
+    "event_id": "evt-gate2-target-r4",
+    "type": "file-sentinel",
+    "observed_at_utc": "2026-07-19T16:30:09Z",
+    "scientific_processing_count": 1,
+    "waker_disposition": "reconciled"
+  },
+  "terminal": {
+    "run_id": "gate2-target-r4",
+    "rc": 0,
+    "finished_at_utc": "2026-07-19T16:27:38Z",
+    "slurm_holder_job_id": "56140225"
+  },
+  "runtime": {
+    "status": "PASS",
+    "receipt_path": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+    "receipt_sha256": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
+    "weights_path": "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+    "weights_sha256": "1ef7e0d2fa8c36a6f9eabd86a21f0b41617cc7d0bb4cd6bee96d74d5334074b6",
+    "collision_lock_free_after_publication": true,
+    "pet_training_started": false
+  },
+  "independent_validation": {
+    "status": "PASS",
+    "receipt_path": "docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json",
+    "receipt_sha256": "2f11ce2f7be4472ebac66514418a046ff03ddb3742222904babaca5fb245f049"
+  },
+  "promotion_verifier": {
+    "status": "PASS",
+    "role": "agy-g2-gate-verifier",
+    "session_id": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+    "agent_B_correction_needed": false
+  },
+  "outcome_reconciliation_event": {
+    "event_id": "evt-gate2-target-r4.recon",
+    "type": "resume-outcome-unknown",
+    "observed_at_utc": "2026-07-19T18:35:11Z",
+    "validated_as_nonrepeat_reconciliation": true,
+    "evidence": "The original turn produced the independent validation at 16:36Z and same-UUID agy PASS at 16:38Z; no action was repeated."
+  },
+  "persistent_workers_preserved": {
+    "agent-B-p5b": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agy-g2-gate-verifier": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2"
+  },
+  "gate2_promoted": true,
+  "gate3_started": false
+}

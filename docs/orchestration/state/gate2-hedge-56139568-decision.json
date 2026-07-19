@@ -1,0 +1,20 @@
+{
+  "batch_cancellation_state": "unconfirmed",
+  "batch_job_id": "56139568",
+  "batch_state_at_decision": "CANCELLED by 112498",
+  "benchmark_rc": 0,
+  "benchmark_receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/G2_GATE2_BENCHMARK.json",
+  "interactive_holder_job_id": "56139578",
+  "interactive_seconds_remaining": 10717.0,
+  "namespace_separation": {
+    "benchmark": "run-id-specific; never final",
+    "final": "shared flock; weights first and receipt last"
+  },
+  "pet_training_started": false,
+  "projected_full_seconds_safe": 3402.7873171252922,
+  "reason": "batch-won-cancellation-race",
+  "recorded_at_utc": "2026-07-19T15:55:51.811188+00:00",
+  "run_id": "gate2-hedge-56139568",
+  "schema_version": 1,
+  "selected_final_route": "batch"
+}

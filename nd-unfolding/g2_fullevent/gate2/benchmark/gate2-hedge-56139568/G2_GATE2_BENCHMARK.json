@@ -1,0 +1,70 @@
+{
+  "configuration": {
+    "class_weight_rescaling": "inverse sampling fraction per inventory",
+    "device": "cpu",
+    "estimator": "exact",
+    "features": [
+      "pt",
+      "pparallel"
+    ],
+    "full_refinement_rows": 4680719,
+    "master_seed": 42,
+    "refinement_random_state": 45,
+    "sample_background_rows": 30155,
+    "sample_data_rows": 219845,
+    "sample_rows": 250000,
+    "sample_seed": 20260719
+  },
+  "configuration_sha256": "0c00ca4c50470f1352c4401a5b93dc745d01c39afd0f49071eb295e6326132b1",
+  "head": "01d324a3b99f5ab5d7366c17f7dc6b35b5f4905f",
+  "host": "nid004177",
+  "input_preflight": {
+    "elapsed_seconds": 8.954992642975412,
+    "independent_receipt": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/g2-gate1b-npz-validation-20260719.json",
+      "sha256": "194eff5a8bc79e782e0d96968bfd66b0582357cc1415983f4bc598c886adfe34"
+    },
+    "inventory_rows": {
+      "background": 564591,
+      "data": 4116128,
+      "signal": 49152885
+    },
+    "member_count": 42,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "producer_receipt": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json",
+      "sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e"
+    },
+    "schema_markers": {
+      "fullPhaseSpace": 1,
+      "hasFullEventSchema": 1,
+      "petSchemaVersion": "g2-fullevent-v1"
+    },
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "size_bytes": 9897374636
+  },
+  "max_rss_kib": 451444,
+  "mode": "benchmark-only-no-final-writer",
+  "observed_at_utc": "2026-07-19T15:54:58.051120+00:00",
+  "sample_telemetry": {
+    "frac_clipped": 0.000268,
+    "g_max": 0.9898878165482698,
+    "g_min": 0.10543800005351744,
+    "raw_negative_abs_sum": 109579.10478542515,
+    "raw_positive_sum": 4116127.9999999995,
+    "refined_max": 39.98566871269747,
+    "refined_min": 0.0,
+    "refined_sum": 4006606.169319565
+  },
+  "schema_version": 1,
+  "status": "PASS",
+  "timing": {
+    "fixed_full_loader_overhead_seconds": 1800.0,
+    "projected_full_seconds_central": 801.393658562646,
+    "projected_full_seconds_safe": 3402.7873171252922,
+    "projection_safety_factor": 2.0,
+    "projection_scale_nlogn": 23.13612876816981,
+    "refiner_import_seconds": 14.799101170967333,
+    "sample_fit_predict_seconds": 34.63819148798939
+  }
+}

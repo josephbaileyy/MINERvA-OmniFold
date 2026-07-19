@@ -1,0 +1,53 @@
+{
+  "artifact_hashes": {
+    "canonical_u2d": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+    "input": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "loader": "c0521d210d9c8f592613e420f6cd7bd82523b879988739eff420779106d0fdd5",
+    "numpy_dataloader": "6b4850f5c60e6b74c266a25c9dfc25c95375b8f9a2c023a106d0a555c9f7e373",
+    "validator": "a8539d8300f8f21290faee3c99809d775e9ae0dd44c6756217fe1a068f7a51ee",
+    "weights": "1ef7e0d2fa8c36a6f9eabd86a21f0b41617cc7d0bb4cd6bee96d74d5334074b6"
+  },
+  "binned_telemetry": {
+    "background_rows_in_grid": 564591,
+    "closed_form_clipped_sum": 4006528.6006158064,
+    "data_rows_in_grid": 4116128,
+    "grid_shape": [15, 19],
+    "learned_refined_normalized_sum": 1000000.37792753,
+    "learned_vs_normalized_clipped_cosine": 1.0,
+    "learned_vs_normalized_clipped_l1_fraction": 3.7792752997484056e-07,
+    "learned_vs_normalized_clipped_max_relative": 3.7792752997484056e-07,
+    "negative_signed_cells": 0,
+    "raw_background_pot_scaled_sum": 109599.39938419356,
+    "raw_data_sum": 4116128.0,
+    "raw_signed_sum": 4006528.6006158064
+  },
+  "configuration_sha256": "dbe2854785cbff5a710c97acf43d8d91bcc43f906a00ad59c3f187e8ca2d4c16",
+  "failures": [],
+  "pet_training_started": false,
+  "runtime_receipt": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+    "sha256": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44"
+  },
+  "runtime_target": {
+    "backend": "u2d.refine_stay_positive",
+    "background_rows": 564591,
+    "data_rows": 4116128,
+    "floored_zero": 20,
+    "learned_production": true,
+    "mode": "negweight-refined"
+  },
+  "schema_version": 1,
+  "signed_target_hash": "04a79a8cb57e238d8273df35c7ed0a3225823cef98932fcbe659ba1227e42f24",
+  "status": "PASS",
+  "validated_at_utc": "2026-07-19T16:36:09.139446+00:00",
+  "validation_schema": "g2-gate2-runtime-independent-v1",
+  "verdict": "GATE2_RUNTIME_INDEPENDENT_PASS",
+  "weights": {
+    "dtype": "float32",
+    "max": 0.5353254675865173,
+    "min": 0.0,
+    "rows": 4680719,
+    "sum": 1000000.3779275301,
+    "zero_rows": 20
+  }
+}

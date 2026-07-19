@@ -82,15 +82,15 @@ RUN_LOG, and STATUS evidence. Present `xps2` recoil tensors remain scaffolding.
 
 ## Gate 2 — literal `negweight-refined` target
 
-**Current (2026-07-19): construction/static fixture PASS; canonical runtime
-pending; Gate 2 remains open.** The loader now constructs positive data plus
-aligned negative POT-scaled background clouds, applies coherent replica factors
-before a per-replica learned Stay-Positive refinement, concatenates the measured
-features, and records identity/sum/floor/fingerprint telemetry. Ninety-five
-login-safe tests pass, including a 28-test end-to-end fixture and independent
-binned checks. The canonical `u2d.refine_stay_positive` still must run on the
-production G2 NPZ in the ROOT-capable compute environment before promotion.
-Evidence: `docs/orchestration/state/g2-gate2-construction-20260719.json`.
+**Current (2026-07-19): Gate 2 PASS; Gate 3 not started.** The exact canonical
+`u2d.refine_stay_positive` ran on the complete production G2 data-plus-literal-
+background inventory. Receipt-last publication, an independent hash/configuration/
+binned-telemetry validator, and the preserved agy promotion verifier all PASS.
+The published target has 4,680,719 finite nonnegative rows, including 20 zeros,
+and is bound to the frozen input and configuration. Evidence:
+`nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
+`docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
+and `docs/orchestration/state/g2-gate2-verifier-20260719.json`.
 
 Build the measured-side training inventory from:
 

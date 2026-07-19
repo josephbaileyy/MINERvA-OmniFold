@@ -1953,3 +1953,20 @@ the real NumPy DataLoader boundary and independently checks the binned signed
 and refined sums. This is construction evidence, not Gate-2 closure: the
 deferred canonical `u2d.refine_stay_positive` has not yet run on the production
 G2 NPZ in a ROOT-capable compute environment. No PET training was started.
+
+## 2026-07-19 — G2 Gate 2 exact target runtime PASS
+
+The queue hedge selected interactive holder `56140225`. After two changed,
+fail-closed repairs (empty staging-file acceptance, then bypassing a
+TensorFlow-dependent package initializer while loading the exact NumPy
+dataloader source), run `gate2-target-r4` completed in 678.7 s and atomically
+published weights first and its receipt last. The exact learned canonical
+backend consumed all 4,116,128 data and 564,591 background rows; the final
+4,680,719-row target is finite, nonnegative, normalized, and hash-bound.
+
+A separate read-only validator rehashed the 9.9-GB input, output and code,
+recomputed the locked configuration and signed-target hashes, and reproduced
+the full 15x19 binned telemetry with zero failures. The same preserved agy
+Gate-2 verifier UUID independently returned PASS; Agent B needed no correction.
+Gate 2 is promoted. No PET training or Gate-3 production was started in this
+wake. Evidence: `docs/orchestration/state/gate2-target-r4-reconciliation-20260719.json`.

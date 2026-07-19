@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "status": "SUPERSEDED_BY_SAFE_RECOVERY",
+  "armed_at_utc": "2026-07-19T15:54:12Z",
+  "dag_gate": "Gate 2 / canonical negweight-refined target runtime",
+  "scientific_owner": {
+    "role": "agent-B-p5b",
+    "profile": "claude-school-legacy",
+    "session_id": "46e4af3e-c3f2-4fa5-abc7-f0da72817282"
+  },
+  "execution_owner": "orchestrator",
+  "independent_verifier": {
+    "role": "agy-g2-gate-verifier",
+    "profile": "agy",
+    "session_id": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2"
+  },
+  "prerequisites": {
+    "gate1_status": "PASS",
+    "input": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "input_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "input_size_bytes": 9897374636,
+    "construction_commit": "01d324a3b99f5ab5d7366c17f7dc6b35b5f4905f",
+    "focused_tests": "95/95 PASS",
+    "active_writers_before_submit": 0,
+    "final_paths_clear_before_submit": true
+  },
+  "batch": {
+    "job_id": "56139568",
+    "initial_state": "PENDING",
+    "initial_reason": "Priority",
+    "qos": "shared",
+    "constraint": "cpu",
+    "resources": "1 node; 16 requested CPUs; 192G; 24h",
+    "submission_command": "sbatch --parsable nd-unfolding/pet/sbatch_gate2_target_validator.sh",
+    "canonical_command": "env GATE2_EXECUTION_ROUTE=batch GATE2_RUN_ID=slurm-${SLURM_JOB_ID} nd-unfolding/pet/run_gate2_target_validator.sh",
+    "stdout": "nd-unfolding/g2_fullevent/gate2/logs/g2gate2_56139568.out",
+    "stderr": "nd-unfolding/g2_fullevent/gate2/logs/g2gate2_56139568.err"
+  },
+  "interactive_hedge": {
+    "allocation_job_id": "56139578",
+    "state_at_arm": "RUNNING",
+    "node": "nid004177",
+    "time_limit": "03:00:00",
+    "request_mechanism": "alloc_run.sh from OS-detached controller",
+    "benchmark_namespace": "nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/",
+    "benchmark_log": "nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/benchmark.log",
+    "benchmark_scope": "full immutable input preflight plus a 250000-row exact-refinement timing sample only",
+    "exact_command_if_selected": "env GATE2_EXECUTION_ROUTE=interactive GATE2_RUN_ID=gate2-hedge-56139568-interactive nd-unfolding/pet/run_gate2_target_validator.sh"
+  },
+  "collision_protection": {
+    "shared_lock": "nd-unfolding/g2_fullevent/gate2/.gate2-final-writer.lock",
+    "benchmark_and_final_namespaces_are_disjoint": true,
+    "final_weights": "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+    "final_receipt": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+    "publication_order": "weights first; receipt last; no-clobber same-filesystem hard links",
+    "cancellation_policy": "only scancel --state=PENDING; confirm CANCELLED before interactive exact; never cancel RUNNING batch",
+    "decision_receipt": "docs/orchestration/state/gate2-hedge-56139568-decision.json"
+  },
+  "frozen_code": {
+    "validator_sha256": "f60fe3339a50291b0c09130b91a9222bfcd7a4b97696e2980a0567e40665c89d",
+    "runner_sha256": "2761f6a9862e544e04d9756317fdb328e07ccb038bff06ad8c77570546527dca",
+    "batch_launcher_sha256": "931c901aa3cdf04a582172a947f4b6856a697f8785d4d3e4acd2be32e0b19fe3",
+    "controller_sha256": "146371cce3741821db1ea2cb257e98fe240bb29042357959baa65fb4f7c1825e",
+    "loader_sha256": "c0521d210d9c8f592613e420f6cd7bd82523b879988739eff420779106d0fdd5",
+    "canonical_u2d_sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
+  },
+  "detached_controller": {
+    "pid": 141964,
+    "ppid": 1,
+    "sid": 141964,
+    "run_id": "gate2-hedge-56139568",
+    "log": "docs/orchestration/state/gate2-hedge-56139568-controller.log",
+    "terminal_event": "docs/orchestration/state/gate2-hedge-56139568-wakeup.json",
+    "resume_log": "docs/orchestration/state/gate2-hedge-56139568-resume.log",
+    "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+    "codex_home": "/global/u2/j/josephrb/codex-homes/personal",
+    "codex_binary": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+    "resume_command": "CODEX_HOME=/global/u2/j/josephrb/codex-homes/personal /global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex exec resume --disable goals --dangerously-bypass-approvals-and-sandbox 019f749a-857b-7790-8cec-bc36b22908be <terminal-event-prompt>",
+    "wake_contract": "exactly one terminal COMPLETE/ERROR/MONITOR_ERROR event; ACTIVE/PENDING creates no model turn"
+  },
+  "placement_rationale": "The shared queue preserves a 24-hour final-writer path while the zero-delay interactive allocation measures whether the exact 4.68M-row refinement safely fits its remaining three-hour wall. The benchmark cannot publish final products. The controller makes and records the route decision without LLM polling.",
+  "usage_at_dispatch": {
+    "observed_at_utc": "2026-07-19T15:53:00Z",
+    "gate_ok": true,
+    "codex_personal_weekly_remaining_percent": 81.0,
+    "codex_personal_reset_at_utc": "2026-07-26T05:33:07+00:00",
+    "codex_personal_full_reset_credits": 0,
+    "codex_school_weekly_remaining_percent": 19.0,
+    "claude_personal_five_hour_remaining_percent": 72.0,
+    "claude_school_shared": "stale/unknown",
+    "agy": "unknown/no percentage API"
+  },
+  "pet_training_started": false,
+  "next_gate_prohibited": true,
+  "reconciliation": {
+    "observed_at_utc": "2026-07-19T15:57:00Z",
+    "benchmark_status": "PASS",
+    "projected_full_seconds_central": 801.393658562646,
+    "projected_full_seconds_safe": 3402.7873171252922,
+    "batch_job_state": "CANCELLED while PENDING; Start=None",
+    "controller_defect": "Slurm state 'CANCELLED by <uid>' was not normalized to CANCELLED, so the first controller marked cancellation unconfirmed and released holder 56139578",
+    "containment": "controller PID 141964 stopped before any wake, resume, final write, or PET action; original benchmark and decision receipts preserved",
+    "recovery": "fresh marker namespace gate2-hedge-56139568-r2 reuses the validated benchmark without another fit"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "batch_job_id": "56139870",
+  "benchmark": {
+    "exists": true,
+    "is_symlink": false,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/G2_GATE2_BENCHMARK.json",
+    "sha256": "520bedf5d699e3b50daccaaa7a3f755af4e877b36f2d7768c5477e534afcfa05",
+    "size_bytes": 2479
+  },
+  "decision": {
+    "exists": true,
+    "is_symlink": false,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/gate2-hedge-56139870-r3-decision.json",
+    "sha256": "239712e98b79b670ae6a86a6d6fcffe96cc040f444e8488d453a1554efe0bd23",
+    "size_bytes": 841
+  },
+  "event": "gate2-interactive-error",
+  "exit_code": "1:0",
+  "final_receipt": {
+    "exists": false,
+    "is_symlink": false,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json"
+  },
+  "final_weights": {
+    "exists": false,
+    "is_symlink": false,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy"
+  },
+  "head_at_event": "be4cd7894d157f951552c0c6890e0dc309874ff2",
+  "interactive_exact_rc": 1,
+  "interactive_holder_job_id": "56140002",
+  "observed_at_utc": "2026-07-19T16:09:13.780024+00:00",
+  "pet_training_started": false,
+  "schema_version": 1,
+  "selected_final_route": "interactive",
+  "terminal_state": "FAILED",
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "watcher_run_id": "gate2-hedge-56139870-r3"
+}

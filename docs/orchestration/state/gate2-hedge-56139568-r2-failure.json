@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "status": "BLOCK_REPAIRED_RETRY_ARMED",
+  "reconciled_at_utc": "2026-07-19T16:03:01Z",
+  "event": {
+    "path": "docs/orchestration/state/gate2-hedge-56139568-r2-wakeup.json",
+    "sha256": "35cafc2aca02b09c7ec0afaf7bedf35a6c11c95fdd193e80ffb79cd32d2cb7fe",
+    "type": "gate2-interactive-error",
+    "interactive_exact_rc": 1,
+    "read_count_by_reconciling_turn": 1
+  },
+  "route_decision": {
+    "path": "docs/orchestration/state/gate2-hedge-56139568-r2-decision.json",
+    "sha256": "43c402c8ad4921f56c1fc7e10353bf729e4879a36b11d7ca1530afe9c81e7b48",
+    "selected_route": "interactive",
+    "batch_pending_cancel_confirmed": true,
+    "batch_job_id": "56139568",
+    "batch_start": null,
+    "batch_terminal_state": "CANCELLED by 112498",
+    "interactive_holder_job_id": "56139786"
+  },
+  "benchmark": {
+    "path": "nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/G2_GATE2_BENCHMARK.json",
+    "sha256": "520bedf5d699e3b50daccaaa7a3f755af4e877b36f2d7768c5477e534afcfa05",
+    "status": "PASS",
+    "input_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "sample_rows": 250000,
+    "sample_fit_predict_seconds": 34.63819148798939,
+    "projected_full_seconds_central": 801.393658562646,
+    "projected_full_seconds_safe": 3402.7873171252922,
+    "interactive_seconds_remaining_at_decision": 10790,
+    "configuration_sha256": "0c00ca4c50470f1352c4401a5b93dc745d01c39afd0f49071eb295e6326132b1"
+  },
+  "failure": {
+    "class": "validator-staging-contract-contradiction",
+    "exact_error": "RuntimeError: refuse occupied validator staging output",
+    "cause": "The runner reserved unique empty staging files with mktemp, but run_validate rejected any existing path before reaching the write helpers, whose intended contract already accepted empty regular staging files.",
+    "phase_reached": "runner prerequisite/hash/environment preflight only; Python full-input materialization and canonical refinement did not start",
+    "unchanged_retry_forbidden": true
+  },
+  "artifact_reconciliation": {
+    "final_receipt_absent": true,
+    "final_weights_absent": true,
+    "shared_final_lock_free": true,
+    "temporary_staging_removed_by_exit_trap": true,
+    "pet_training_started": false,
+    "next_gate_started": false
+  },
+  "repair": {
+    "change": "run_validate now accepts absent or empty regular mktemp staging paths and still rejects symlinks, nonregular paths, and nonempty files",
+    "validator_sha256_before": "f60fe3339a50291b0c09130b91a9222bfcd7a4b97696e2980a0567e40665c89d",
+    "validator_sha256_after": "453719b324e41c1e9fcdf8a6081a7aaefc685120023e41c14f116b50293cf92f",
+    "runner_sha256_after": "ade81850600c4a222c743905208b2388abd1dcafc29a1538af3ae44473d44374",
+    "batch_launcher_sha256_after": "e4e9e65af522639f0a74d630ad08ddac1fc017b4ff3aac526087c583c1793943",
+    "controller_sha256_after": "eb2b6fc6692bf205530888b30c70c90e0d12dd4828e5e3dd86c1c36cdd6d7a44",
+    "tests": "98/98 PASS including three new staging regression tests"
+  },
+  "corrected_retry": {
+    "batch_job_id": "56139870",
+    "initial_state": "PENDING",
+    "initial_reason": "Resources",
+    "same_gate": "Gate 2 exact target runtime only",
+    "same_frozen_input": true,
+    "is_unchanged_retry": false,
+    "deferred_controller_pid": 197952,
+    "deferred_controller_ppid": 1,
+    "deferred_controller_sid": 197952,
+    "deferred_run_id": "gate2-hedge-56139870-r3",
+    "defer_condition": "wait for gate2-hedge-56139568-r2-resume.done before starting another resume-capable controller",
+    "benchmark_reused_without_rerun": true,
+    "terminal_event": "docs/orchestration/state/gate2-hedge-56139870-r3-wakeup.json",
+    "personal_codex_home": "/global/u2/j/josephrb/codex-homes/personal",
+    "resume_thread_id": "019f749a-857b-7790-8cec-bc36b22908be"
+  },
+  "persistent_worker_uuids_preserved": true,
+  "agent_b_uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+  "agy_gate_verifier_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+  "provider_dispatches": 0,
+  "reset_credits_consumed": 0
+}

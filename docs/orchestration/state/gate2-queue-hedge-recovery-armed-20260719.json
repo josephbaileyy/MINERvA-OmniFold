@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "status": "FAILED_MECHANICALLY_BEFORE_REFINEMENT",
+  "failure_receipt": "docs/orchestration/state/gate2-hedge-56139568-r2-failure.json",
+  "armed_at_utc": "2026-07-19T15:58:33Z",
+  "reason": "recover the intended interactive-exact route after a contained Slurm state-normalization defect",
+  "batch": {
+    "job_id": "56139568",
+    "state": "CANCELLED",
+    "start": null,
+    "exit_code": "0:0",
+    "cancellation_command": "scancel --state=PENDING 56139568",
+    "proof_it_never_started": "sacct JobIDRaw=56139568 State='CANCELLED by 112498' Start=None"
+  },
+  "reused_benchmark": {
+    "path": "nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568/G2_GATE2_BENCHMARK.json",
+    "status": "PASS",
+    "sample_rows": 250000,
+    "sample_fit_predict_seconds": 34.63819148798939,
+    "projected_full_seconds_central": 801.393658562646,
+    "projected_full_seconds_safe": 3402.7873171252922,
+    "rerun": false
+  },
+  "interactive_exact": {
+    "allocation_job_id": "56139786",
+    "state_at_arm": "RUNNING",
+    "node": "nid004152",
+    "time_limit": "03:00:00",
+    "controller_pid": 170281,
+    "controller_ppid": 1,
+    "controller_sid": 170281,
+    "controller_run_id": "gate2-hedge-56139568-r2",
+    "command": "env GATE2_EXECUTION_ROUTE=interactive GATE2_RUN_ID=gate2-hedge-56139568-r2-interactive nd-unfolding/pet/run_gate2_target_validator.sh",
+    "log": "nd-unfolding/g2_fullevent/gate2/benchmark/gate2-hedge-56139568-r2/benchmark.log"
+  },
+  "collision_protection": {
+    "benchmark_namespace_is_separate": true,
+    "shared_final_writer_lock": "nd-unfolding/g2_fullevent/gate2/.gate2-final-writer.lock",
+    "final_weights": "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+    "final_receipt": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+    "batch_and_first_holder_are_not_running": true
+  },
+  "controller": {
+    "path": "docs/orchestration/gate2_queue_hedge_controller.sh",
+    "sha256": "a7b02376fdd847204abfa1d0d6984e02f3ba7dcf6f20329c29fe0d15077271b6",
+    "fix": "normalize sacct state at the first whitespace and accept only a reused PASS benchmark plus CANCELLED/Start=None for recovery",
+    "terminal_event": "docs/orchestration/state/gate2-hedge-56139568-r2-wakeup.json",
+    "resume_log": "docs/orchestration/state/gate2-hedge-56139568-r2-resume.log",
+    "codex_home": "/global/u2/j/josephrb/codex-homes/personal",
+    "resume_command": "CODEX_HOME=/global/u2/j/josephrb/codex-homes/personal /global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex exec resume --disable goals --dangerously-bypass-approvals-and-sandbox 019f749a-857b-7790-8cec-bc36b22908be <terminal-event-prompt>",
+    "wake_contract": "one terminal exact-runtime event only; no model polling"
+  },
+  "scientific_owner_uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+  "independent_verifier_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+  "pet_training_started": false,
+  "next_gate_prohibited": true
+}

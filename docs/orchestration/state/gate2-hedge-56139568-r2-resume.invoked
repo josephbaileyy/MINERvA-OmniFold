@@ -1,0 +1,6 @@
+invoked_at_utc=2026-07-19T15:59:18Z
+event_sha256=35cafc2aca02b09c7ec0afaf7bedf35a6c11c95fdd193e80ffb79cd32d2cb7fe
+event_type=gate2-interactive-error
+thread_id=019f749a-857b-7790-8cec-bc36b22908be
+codex_path=/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex
+codex_home=/global/u2/j/josephrb/codex-homes/personal
