@@ -29,10 +29,10 @@
   ],
   "next_authorized_action": "On the one-shot terminal wake, reconcile Slurm once; validate all 12 hash-bound ROOT/receipt pairs; commit Gate-1 production evidence; then launch the dependency-ready MEFHC merge/full-schema input step using live batch-versus-interactive placement.",
   "wake": {
-    "tmux_session": "g2-array-wake",
-    "event": "docs/orchestration/state/g2-array-56106974-wakeup.json",
-    "invoked": "docs/orchestration/state/g2-array-56106974-resume.invoked",
-    "completed": "docs/orchestration/state/g2-array-56106974-resume.done"
+    "tmux_session": "g2-array-wake-r2",
+    "event": "docs/orchestration/state/g2-array-56106974-r2-wakeup.json",
+    "invoked": "docs/orchestration/state/g2-array-56106974-r2-resume.invoked",
+    "completed": "docs/orchestration/state/g2-array-56106974-r2-resume.done"
   },
   "canonical_science": [
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

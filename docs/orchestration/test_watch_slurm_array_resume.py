@@ -25,7 +25,7 @@ class WatcherTests(unittest.TestCase):
             args_file = tmp / "codex.args"
             self.write_executable(
                 status,
-                "#!/bin/sh\nprintf '%s\\n' '{\"schema_version\":1,\"job_id\":\"42\",\"overall\":\"COMPLETE\",\"observer_errors\":[],\"unknown_tasks\":[],\"counts\":{\"COMPLETED\":2},\"tasks\":{}}'\n",
+                "import json\nprint(json.dumps({\"schema_version\":1,\"job_id\":\"42\",\"overall\":\"COMPLETE\",\"observer_errors\":[],\"unknown_tasks\":[],\"counts\":{\"COMPLETED\":2},\"tasks\":{}}))\n",
             )
             self.write_executable(
                 codex,
@@ -55,6 +55,15 @@ class WatcherTests(unittest.TestCase):
             second = subprocess.run([WATCHER], env=env, text=True, capture_output=True)
             self.assertEqual(second.returncode, 126)
             self.assertIn("refuse to reuse occupied marker", second.stderr)
+
+    def test_preflight_rejects_non_absolute_python(self):
+        env = os.environ | {
+            "WAKE_PYTHON_BIN": "python3",
+            "CODEX_BIN": "/bin/true",
+        }
+        result = subprocess.run([WATCHER, "--preflight-only"], env=env, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 126)
+        self.assertIn("Python missing/not absolute/executable", result.stderr)
 
 
 if __name__ == "__main__":

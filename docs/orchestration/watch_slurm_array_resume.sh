@@ -10,6 +10,7 @@ run_id=${WAKE_RUN_ID:-g2-array-${job_id}}
 poll_seconds=${WAKE_POLL_SECONDS:-60}
 max_unreliable=${WAKE_MAX_UNRELIABLE:-10}
 status_bin=${WAKE_STATUS_BIN:-${repo}/docs/orchestration/slurm_array_status.py}
+python_bin=${WAKE_PYTHON_BIN:-/usr/bin/python3.11}
 codex_bin=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
 
 event=${state_dir}/${run_id}-wakeup.json
@@ -27,11 +28,19 @@ preflight() {
   [[ "$thread_id" =~ ^[0-9a-fA-F-]{36}$ ]] || fail "invalid thread id: ${thread_id}"
   [[ "$poll_seconds" =~ ^[1-9][0-9]*$ ]] || fail "invalid poll interval: ${poll_seconds}"
   [[ "$max_unreliable" =~ ^[1-9][0-9]*$ ]] || fail "invalid unreliable limit: ${max_unreliable}"
-  [[ "$status_bin" = /* && -x "$status_bin" ]] || fail "status classifier missing/not executable: ${status_bin}"
+  [[ "$status_bin" = /* && -r "$status_bin" ]] || fail "status classifier missing/not readable: ${status_bin}"
+  [[ "$python_bin" = /* && -x "$python_bin" ]] || fail "Python missing/not absolute/executable: ${python_bin}"
+  "$python_bin" -c 'import pathlib,sys; compile(pathlib.Path(sys.argv[1]).read_text(), sys.argv[1], "exec")' "$status_bin" \
+    || fail "status classifier is not parseable by ${python_bin}: ${status_bin}"
   [[ -n "$codex_bin" && "$codex_bin" = /* && -x "$codex_bin" ]] || fail "codex missing/not absolute/executable: ${codex_bin:-missing}"
   command -v flock >/dev/null || fail "flock not found"
-  command -v python3 >/dev/null || fail "python3 not found"
+  command -v squeue >/dev/null || fail "squeue not found"
+  command -v sacct >/dev/null || fail "sacct not found"
   mkdir -p "$state_dir"
+}
+
+run_status() {
+  "$python_bin" "$status_bin" --job-id "$job_id" --tasks "$task_spec"
 }
 
 preflight
@@ -63,11 +72,11 @@ trap cleanup EXIT
 unreliable=0
 event_type=
 while :; do
-  if ! "$status_bin" --job-id "$job_id" --tasks "$task_spec" >"$snapshot"; then
+  if ! run_status >"$snapshot"; then
     unreliable=$((unreliable + 1))
   else
     read -r overall observer_errors unknown_tasks < <(
-      python3 - "$snapshot" <<'PY'
+      "$python_bin" - "$snapshot" <<'PY'
 import json,sys
 d=json.load(open(sys.argv[1]))
 print(d.get("overall","INVALID"), len(d.get("observer_errors",[])), len(d.get("unknown_tasks",[])))
@@ -94,8 +103,8 @@ done
 
 # If the classifier itself failed on the terminal observation, create a minimal
 # snapshot; otherwise bind the exact classifier JSON into the event.
-if ! python3 -m json.tool "$snapshot" >/dev/null 2>&1; then
-  python3 - "$snapshot" "$job_id" "$task_spec" <<'PY'
+if ! "$python_bin" -m json.tool "$snapshot" >/dev/null 2>&1; then
+  "$python_bin" - "$snapshot" "$job_id" "$task_spec" <<'PY'
 import datetime,json,sys
 path,job,tasks=sys.argv[1:4]
 d={"schema_version":1,"observed_at_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -106,7 +115,7 @@ PY
 fi
 
 event_tmp=$(mktemp "${state_dir}/.${run_id}-wakeup.XXXXXX")
-python3 - "$snapshot" "$event_tmp" "$event_type" "$thread_id" "$run_id" "$repo" <<'PY'
+"$python_bin" - "$snapshot" "$event_tmp" "$event_type" "$thread_id" "$run_id" "$repo" <<'PY'
 import json,subprocess,sys
 source,out,event_type,thread_id,run_id,repo=sys.argv[1:7]
 d=json.load(open(source))

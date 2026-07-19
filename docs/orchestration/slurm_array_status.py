@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3.11
 """Return a machine-readable state for one Slurm array without mutating it."""
 
 from __future__ import annotations

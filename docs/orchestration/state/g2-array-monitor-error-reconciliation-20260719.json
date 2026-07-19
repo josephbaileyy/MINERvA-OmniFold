@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-07-19T01:44:48Z",
+  "job_id": "56106974",
+  "wake_classification": "MONITOR_ERROR",
+  "production_failure_inferred": false,
+  "single_reconciliation": {
+    "completed_tasks": [2],
+    "running_tasks": [1, 3, 4],
+    "pending_tasks": [5, 6, 7, 8, 9, 10, 11, 12],
+    "failed_tasks": [],
+    "pending_reason": "Resources"
+  },
+  "root_cause": {
+    "component": "watch_slurm_array_resume.sh classifier interpreter selection",
+    "evidence": "The detached watcher pane recorded ten SyntaxError failures at 'from __future__ import annotations'. Its /usr/bin/env python3 shebang resolved to Python 3.6.15, while the classifier requires Python 3.7 or newer.",
+    "effect": "The watcher emitted a fail-closed MONITOR_ERROR after ten unreliable observations and resumed the orchestrator once; no G2 task was retried, cancelled, or modified."
+  },
+  "repair": {
+    "python": "/usr/bin/python3.11",
+    "changes": [
+      "Invoke the classifier and every watcher JSON helper through an absolute Python 3.11 path.",
+      "Compile-check the classifier during preflight and require squeue/sacct availability.",
+      "Use a new one-shot run ID and marker namespace; preserve the original event and markers."
+    ],
+    "tests": "10/10 unittest cases PASS plus Python 3.11 py_compile and watcher preflight PASS"
+  },
+  "worker_uuid_policy": "All registered role UUIDs preserved; no provider dispatch or conversation replacement.",
+  "reset_credit_policy": "One personal Codex Full reset expiring 2026-08-12 remains available and protected; none consumed."
+}

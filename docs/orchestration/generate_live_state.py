@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3.11
 """Generate the concise orchestration dashboard from live and machine sources."""
 
 from __future__ import annotations
