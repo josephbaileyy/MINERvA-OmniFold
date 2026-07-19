@@ -83,6 +83,11 @@ declare -A MANIFEST_SHA=(
 
 die() { echo "[g2fe][FAIL] $*" >&2; exit 1; }
 sha_of() { sha256sum "$1" | awk '{print $1}'; }
+# A path is OCCUPIED if it exists OR is a symlink (incl. dangling: -e is false for
+# a dangling symlink, so -e alone would wrongly treat it as absent).
+path_occupied() { [[ -e "$1" || -L "$1" ]]; }
+# device:inode identity, for hardlink postcondition proofs.
+dev_ino() { stat -c '%d:%i' "$1"; }
 
 assert_isolated_namespace() {
   case "${WORK_ROOT}${FINAL_DIR}" in
@@ -96,8 +101,8 @@ assert_isolated_namespace() {
 # Existence-based classification. Prints: RUN | CHECK | DIE <reason>
 classify_publication() {
   local root="$1" receipt="$2" re=0 ce=0
-  [[ -e "$root" ]] && re=1
-  [[ -e "$receipt" ]] && ce=1
+  path_occupied "$root" && re=1
+  path_occupied "$receipt" && ce=1
   if (( re==0 && ce==0 )); then echo "RUN"; return 0; fi
   if (( re==1 && ce==0 )); then echo "DIE ROOT-only: published ROOT without receipt ($root) — manual reconciliation"; return 0; fi
   if (( re==0 && ce==1 )); then echo "DIE receipt-only: receipt without ROOT ($receipt) — manual reconciliation"; return 0; fi
@@ -113,9 +118,10 @@ validate_resume() {
   dsha=$(sha_of "$dman"); msha=$(sha_of "$mman"); vsha=$(sha_of "$VALIDATOR"); bsha=$(sha_of "$BIN")
   python3 - "$receipt" "$root" "$pl" "$EXPECTED_BIN_SHA" "$bsha" "$EXPECTED_VAL_SHA" "$vsha" \
            "$VALIDATOR" "$dman" "$mman" "$dsha" "$msha" \
-           "${MANIFEST_SHA[${pl}_Data.txt]}" "${MANIFEST_SHA[${pl}_MC.txt]}" "$RECEIPT_SCHEMA" <<'PY'
+           "${MANIFEST_SHA[${pl}_Data.txt]}" "${MANIFEST_SHA[${pl}_MC.txt]}" "$RECEIPT_SCHEMA" \
+           "$BUILT_SOURCE_COMMIT" <<'PY'
 import json,sys,hashlib
-(rc,root,pl,expbin,curbin,expval,curval,valp,dman,mman,curd,curm,bndd,bndm,schema)=sys.argv[1:16]
+(rc,root,pl,expbin,curbin,expval,curval,valp,dman,mman,curd,curm,bndd,bndm,schema,builtcommit)=sys.argv[1:17]
 def fail(m): print("[resume-reject]",m,file=sys.stderr); sys.exit(3)
 try: d=json.load(open(rc))
 except Exception as e: fail(f"receipt not valid JSON: {e}")
@@ -126,6 +132,8 @@ v=d.get("validation",{})
 if v.get("n_failed")!=0: fail("n_failed != 0")
 if not isinstance(v.get("n_checks"),int) or v["n_checks"]<50: fail("n_checks < 50")
 if d.get("binary_sha256")!=expbin: fail("receipt binary hash != expected bound")
+if d.get("binary_sha256_expected")!=expbin: fail("receipt binary_sha256_expected != launcher bound")
+if d.get("built_source_commit")!=builtcommit: fail("receipt built_source_commit != launcher bound")
 if curbin!=expbin: fail("current binary drift vs expected")
 fr=d.get("final_root",{})
 if fr.get("path")!=root: fail("final_root.path mismatch")
@@ -166,26 +174,51 @@ assert_input_footing() {
   g=$(sha_of "$mman");      [[ "$g" == "${MANIFEST_SHA[${pl}_MC.txt]}" ]]   || die "mc manifest drift for $pl ($g)"
 }
 
-# No-clobber atomic ROOT publication (hardlink -> verify -> unlink source). Prints published hash.
+# Quarantine a stale WORK partial (work-only path; NEVER a published final/receipt).
+# A failed move is FATAL and never masked, so a fixed-name stale work ROOT cannot
+# fall through into the event loop. Proves the source is gone before returning.
+quarantine_stale_partial() {
+  local wf="$1" workdir="$2" tag="$3"
+  path_occupied "$wf" || return 0
+  local q="${workdir}/partial_${tag}"
+  mkdir -p "$q" || die "cannot create quarantine dir ${q}"
+  mv "$wf" "$q/" || die "failed to quarantine stale work partial ${wf}"
+  ! path_occupied "$wf" || die "stale work partial still present after quarantine: ${wf}"
+  echo "$q"
+}
+
+# No-clobber atomic ROOT publication (hardlink -> prove identity -> unlink source).
+# Postconditions proven: dst is a hardlink of src (same dev:inode) with identical
+# content; source is unlinked and absent. Prints published hash. Any existing dst
+# is left unchanged (ln without -f fails on EEXIST).
 publish_root_noclobber() {
   local src="$1" dst="$2"
-  [[ -e "$dst" ]] && die "refuse ROOT publish: destination already exists (race): $dst"
-  local src_sha; src_sha=$(sha_of "$src")
+  path_occupied "$dst" && die "refuse ROOT publish: destination already exists (race): $dst"
+  local src_sha src_di; src_sha=$(sha_of "$src"); src_di=$(dev_ino "$src")
   ln "$src" "$dst" || die "atomic hardlink ROOT publish failed (destination may have appeared): $dst"
-  [[ -e "$dst" ]] || die "post-publish: ROOT destination absent: $dst"
-  local dst_sha; dst_sha=$(sha_of "$dst")
-  [[ "$dst_sha" == "$src_sha" ]] || die "post-publish ROOT hash mismatch: $dst_sha != $src_sha"
-  rm -f "$src" || die "failed to unlink work ROOT after publish: $src"
+  path_occupied "$dst" || die "post-publish: ROOT destination absent: $dst"
+  local dst_sha dst_di; dst_sha=$(sha_of "$dst"); dst_di=$(dev_ino "$dst")
+  [[ "$dst_di" == "$src_di" ]] || die "post-publish ROOT not a hardlink of source (dev:ino $dst_di != $src_di)"
+  [[ "$dst_sha" == "$src_sha" ]] || die "post-publish ROOT content hash mismatch: $dst_sha != $src_sha"
+  rm "$src" || die "failed to unlink work ROOT after publish: $src"
+  ! path_occupied "$src" || die "post-publish: work ROOT source still present: $src"
   echo "$dst_sha"
 }
 
-# No-clobber atomic receipt publication (hardlink temp -> verify -> unlink temp).
+# No-clobber atomic receipt publication (hardlink temp -> prove identity -> unlink temp).
+# Postconditions proven: dst is a hardlink of temp (same dev:inode) with identical
+# content+SHA; temp is unlinked and absent. Any existing dst is left unchanged.
 publish_receipt_noclobber() {
   local tmp="$1" dst="$2"
-  [[ -e "$dst" ]] && die "refuse receipt publish: destination already exists: $dst"
+  path_occupied "$dst" && die "refuse receipt publish: destination already exists: $dst"
+  local tmp_sha tmp_di; tmp_sha=$(sha_of "$tmp"); tmp_di=$(dev_ino "$tmp")
   ln "$tmp" "$dst" || die "atomic hardlink receipt publish failed: $dst"
-  [[ -e "$dst" ]] || die "post-publish: receipt destination absent: $dst"
-  rm -f "$tmp"
+  path_occupied "$dst" || die "post-publish: receipt destination absent: $dst"
+  local dst_sha dst_di; dst_sha=$(sha_of "$dst"); dst_di=$(dev_ino "$dst")
+  [[ "$dst_di" == "$tmp_di" ]] || die "post-publish receipt not a hardlink of temp (dev:ino $dst_di != $tmp_di)"
+  [[ "$dst_sha" == "$tmp_sha" ]] || die "post-publish receipt content hash mismatch: $dst_sha != $tmp_sha"
+  rm "$tmp" || die "failed to unlink receipt temp after publish: $tmp"
+  ! path_occupied "$tmp" || die "post-publish: receipt temp still present: $tmp"
 }
 
 # ---- selftest hook: define-only (no array body). Sourced with G2FE_SELFTEST=1. ----
@@ -238,12 +271,9 @@ flock -n 200 || die "another writer holds the lock for playlist ${PL} (${WORK}/.
 VERDICT2="$(classify_publication "$FINAL_ROOT" "$RECEIPT")"
 [[ "$VERDICT2" == "RUN" ]] || die "publication state changed after acquiring lock (${VERDICT2}); refusing to run ${PL}"
 
-# 5. Quarantine a stale WORK partial (work-only path; NEVER a published final/receipt).
-if [[ -e "$WORK_ROOT_FILE" ]]; then
-  QDIR="${WORK}/partial_$(date -u '+%Y%m%dT%H%M%SZ')_${SLURM_JOB_ID:-NA}"
-  mkdir -p "$QDIR"; mv -v "$WORK_ROOT_FILE" "$QDIR/" || true
-  echo "[g2fe] quarantined stale work partial -> ${QDIR}"
-fi
+# 5. Quarantine a stale WORK partial (fatal on failure; see quarantine_stale_partial).
+QDIR="$(quarantine_stale_partial "$WORK_ROOT_FILE" "$WORK" "$(date -u '+%Y%m%dT%H%M%SZ')_${SLURM_JOB_ID:-NA}")"
+[[ -n "$QDIR" ]] && echo "[g2fe] quarantined stale work partial -> ${QDIR}"
 
 # 6. Environment + event loop (bare binary; NO nested srun).
 source "${REPO}/setup_salloc_env.sh"
@@ -253,6 +283,11 @@ MNV101_DUMP_POINTCLOUD=1 MNV101_FULL_PHASE_SPACE=1 "$BIN" "$DATA_MANIFEST" "$MC_
 [[ -s "$WORK_ROOT_FILE" ]] || die "event loop produced no/empty ROOT for ${PL}"
 echo "[g2fe] END loop ${PL} $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
+# 6b. Re-assert footing after the (multi-hour) loop, BEFORE validating: a
+#     shared-worktree binary/validator/manifest drift during the run must fail
+#     closed rather than validate under a drifted validator.
+assert_input_footing "$PL" "$DATA_MANIFEST" "$MC_MANIFEST"
+
 # 7. Full G2 validation BEFORE publication.
 python3 "$VALIDATOR" "$WORK_ROOT_FILE" "$VAL_JSON" || die "G2 validation FAILED for ${PL} (see ${VAL_JSON})"
 python3 - "$VAL_JSON" <<'PY' || die "G2 validation not PASS/>=50 for ${PL}"
@@ -261,8 +296,13 @@ d=json.load(open(sys.argv[1]))
 assert d["status"]=="PASS" and d["n_failed"]==0 and d["n_checks"]>=50, d.get("status")
 PY
 
-# 8. No-clobber atomic ROOT publication (reassert absence immediately before).
-[[ -e "$FINAL_ROOT" ]] && die "final ROOT appeared before publish (race): $FINAL_ROOT"
+# 8. No-clobber atomic ROOT publication. Immediately before publishing, reassert
+#    that BOTH final ROOT and receipt are absent (require exactly RUN from the
+#    same existence classifier -- a receipt race would otherwise create an
+#    inconsistent pair), and re-run footing once more (post-validation drift).
+VERDICT3="$(classify_publication "$FINAL_ROOT" "$RECEIPT")"
+[[ "$VERDICT3" == "RUN" ]] || die "publication state changed before publish (${VERDICT3}); refusing to publish ${PL}"
+assert_input_footing "$PL" "$DATA_MANIFEST" "$MC_MANIFEST"
 PUB_SHA="$(publish_root_noclobber "$WORK_ROOT_FILE" "$FINAL_ROOT")"
 ROOT_SIZE="$(stat -c '%s' "$FINAL_ROOT")"
 
