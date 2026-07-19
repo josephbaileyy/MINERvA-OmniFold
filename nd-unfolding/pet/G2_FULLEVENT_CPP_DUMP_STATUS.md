@@ -1,7 +1,9 @@
 # G2 full-event C++ dump — implementation receipt
 
-**Status: BUILD-PASS / SMOKE-PASS (playlist-1A) — G2 GATE COMPLETE.** Owner: G2
-C++ source interface (Claude-personal). Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
+**Status: BUILD-PASS / SMOKE-PASS (playlist-1A) — G2 GATE COMPLETE; production
+launcher hardened (fail-closed recovery), NOT submitted.** Owner: Agent-E
+(G2 C++ source/runtime owner), UUID `44b634fc-d211-4e09-9229-95a18d1984cc`,
+route claude-school. Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
 / `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
 Source packet `486e53e` received an independent agy PASS; the compile/install +
 1A smoke were authorized owner-held interactive work only (no 12-playlist array,
@@ -31,6 +33,26 @@ are orchestrator QP/migration bookkeeping). Attempt-1 (interrupted at
 18.4M/22.19M) preserved isolated in `.../g2_smoke/work/`, never used as evidence.
 A fail-closed 12-playlist launcher `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`
 is added (NOT submitted).
+
+## Turn-4 launcher hardening (2026-07-18) — recovery/publication correction
+Independent verifiers (orchestrator + Gemini `agy-g2-gate-verifier`) blocked array
+submission on the launcher's recovery logic. Corrected in
+`sbatch_g2_fullevent_evloop_array.sh` (launcher-only; the 1A ROOT/receipt/validator
+are unchanged): (1) publication state classified by EXISTENCE not size — neither→run,
+both→full validate, any one-sided/zero-length/malformed/mismatched/stale pair→DIE
+before compute; published final/receipt are never auto-deleted/quarantined/overwritten;
+(2) all 24 canonical manifest SHA-256 + binary SHA + validator SHA bound at commit
+time, drift rejected before compute; (3) resume validates schema/playlist/PASS/exact
+final path+hash/binary actual+expected/manifest paths+current hashes/validator
+path+current hash/both env flags/`n_failed==0`/`n_checks>=50`; (4) ROOT + receipt
+publication are no-clobber atomic (hardlink→verify→unlink source; `os.replace`/`mv -f`
+removed), a race preserves the pre-existing final and fails; (5) built-source commit
+`486e53e677eb64eb9d622ff6e5daecb3e62aab22` recorded separately from the runtime
+launcher/HEAD commit. Verified without event-loop compute: `bash -n`, all embedded
+Python compiled, 24 manifest + binary + validator hashes match current files, a
+temp-dir state matrix (absent/valid/mismatch/ROOT-only/receipt-only/zero-length/
+malformed/manifest-drift/validator-drift) and a no-clobber race test — all PASS.
+Launcher remains NOT submitted.
 
 ## Turn-2 runtime evidence (2026-07-18)
 **BUILD/INSTALL — PASS.** source commit `486e53e`; build dir

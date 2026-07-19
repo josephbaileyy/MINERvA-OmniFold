@@ -1789,3 +1789,20 @@ launcher `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh` (NOT submitted; 
 orchestrator queues it after inspecting the pushed commit). No MEFHC merge / NPZ /
 PET training / scientific endpoint. Canonical `ND_OMNIFOLD_STATUS.md` left untouched
 (dirty from another owner — PG0).
+
+## 2026-07-18 — G2 production launcher hardened (fail-closed recovery correction)
+
+Correction only (no science numbers; the 1A ROOT/receipt/validator are unchanged).
+Independent verifiers (orchestrator + Gemini `agy-g2-gate-verifier`) blocked array
+submission on `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh` recovery logic.
+Rewrote the launcher fail-closed: publication state classified by existence (not
+size) — one-sided/zero-length/malformed/mismatched/stale pairs DIE before compute,
+published final/receipt never auto-overwritten; 24 canonical manifest + binary +
+validator SHA-256 bound at commit time (drift rejected pre-compute); resume validates
+schema/playlist/PASS/exact path+hash/binary/manifest/validator/env/n_failed/n_checks;
+ROOT+receipt publication made no-clobber atomic (hardlink→verify→unlink; removed
+`os.replace`/`mv -f`); built-source commit recorded separately from runtime HEAD.
+Verified without event-loop compute (bash -n, embedded-Python compile, 24+2 hash
+bind, state-matrix + no-clobber race — all PASS). Launcher committed+pushed, NOT
+submitted; orchestrator + the same Gemini UUID recheck the corrective commit. Owner
+label corrected to Agent-E + UUID (route claude-school).
