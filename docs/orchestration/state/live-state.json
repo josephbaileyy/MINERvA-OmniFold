@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "campaign": "Publication PET UQ remediation",
+  "current_dag_node": "Gate 1 / G2 full-schema FPS CV production array",
+  "state": "ACTIVE",
+  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "owners": [
+    {
+      "role": "agent-E-g2-source",
+      "uuid": "44b634fc-d211-4e09-9229-95a18d1984cc",
+      "purpose": "G2 source/runtime and production receipts"
+    },
+    {
+      "role": "agy-g2-gate-verifier",
+      "uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+      "purpose": "Independent G2 launcher/gate verifier"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "56106974",
+      "tasks": "1-12",
+      "receipt": "docs/orchestration/state/g2-production-array-submit-20260719.json"
+    }
+  ],
+  "blockers": [
+    "Gate-1 MEFHC merge and full-schema input construction require all 12 per-playlist ROOT/receipt pairs to validate.",
+    "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
+  ],
+  "next_authorized_action": "On the one-shot terminal wake, reconcile Slurm once; validate all 12 hash-bound ROOT/receipt pairs; commit Gate-1 production evidence; then launch the dependency-ready MEFHC merge/full-schema input step using live batch-versus-interactive placement.",
+  "wake": {
+    "tmux_session": "g2-array-wake",
+    "event": "docs/orchestration/state/g2-array-56106974-wakeup.json",
+    "invoked": "docs/orchestration/state/g2-array-56106974-resume.invoked",
+    "completed": "docs/orchestration/state/g2-array-56106974-resume.done"
+  },
+  "canonical_science": [
+    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
+    "nd-unfolding/pet/G2_FULLEVENT_CPP_DUMP_STATUS.md",
+    "VALIDATION_LEDGER.md"
+  ],
+  "append_only_history": [
+    "docs/orchestration/RUNS.tsv",
+    "docs/orchestration/QUIET-PERIODS.tsv",
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md"
+  ],
+  "archival_index_only": [
+    "docs/orchestration/MIGRATION-HANDOFF.md",
+    "docs/orchestration/MIGRATION-DELTA.md",
+    "docs/orchestration/MIGRATION-TAKEOVER-STATUS.md",
+    "superseded followup prompts"
+  ]
+}

@@ -1,5 +1,8 @@
 # Migration delta — changes since the 2026-07-18T09:07:00Z snapshot
 
+> **ARCHIVAL/INDEX-ONLY (2026-07-19).** This cutover delta is retained as
+> evidence, not reread as live state. Normal turns start from `LIVE-STATE.md`.
+
 Cutover-fence record. Baseline = `MIGRATION-HANDOFF.md` / `MIGRATION-WORKERS.json`
 (snapshot 2026-07-18T09:07:00Z = 02:07 PDT). This delta written 2026-07-18T09:29Z (02:29 PDT).
 Orchestrator-side ping automation is now DISARMED; no more worker turns will be sent from this

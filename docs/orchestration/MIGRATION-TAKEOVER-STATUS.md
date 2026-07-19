@@ -1,5 +1,9 @@
 # Migration takeover status — fe-fps campaign
 
+> **ARCHIVAL/INDEX-ONLY (2026-07-19).** This takeover checklist is frozen
+> historical state. Normal turns start from the generated `LIVE-STATE.md` and
+> use `RUNS.tsv` only as append-only history.
+
 Live orchestration checklist for the Codex takeover. This file records only
 ownership, dependency state, and evidence pointers; verified scientific
 numbers remain canonical in `VALIDATION_LEDGER.md`, and round receipts remain

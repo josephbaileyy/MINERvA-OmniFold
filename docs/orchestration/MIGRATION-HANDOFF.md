@@ -1,5 +1,9 @@
 # Orchestrator migration handoff — fe-fps campaign
 
+> **ARCHIVAL/INDEX-ONLY (2026-07-19).** This immutable cutover snapshot is not
+> live campaign state. Normal turns start from `LIVE-STATE.md`; follow links
+> there to canonical science receipts and append-only history.
+
 Snapshot 2026-07-18 02:07 PDT (09:07 UTC). Lossless state for a successor orchestrator.
 Companion machine-readable roster: `MIGRATION-WORKERS.json` (same dir).
 Ledger head at snapshot: git `3b5945b` on `main` (remote `github`).
