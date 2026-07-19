@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "python": "/usr/bin/python3.11",
+  "state_dir": "state/waker",
+  "codex_bin": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+  "root": {
+    "provider": "codex",
+    "profile": "codex-personal",
+    "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+    "disable_features": ["goals"]
+  },
+  "poll_seconds": 60,
+  "claim_lease_seconds": 900,
+  "invoke_grace_seconds": 7200,
+  "max_retries_default": 2,
+  "prompt_preamble": null
+}

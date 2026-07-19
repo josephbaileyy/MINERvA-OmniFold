@@ -131,15 +131,35 @@ def render(
         errors = ",".join(str(x) for x in job["snapshot"].get("error_tasks", [])) or "none"
         resources = f"{receipt.get('cpus_per_task','?')} CPU, {receipt.get('memory_per_task','?')}, {receipt.get('time_limit','?')}; {receipt.get('qos','?')} batch array"
         lines.append(f"| `{job['job_id']}_[{job['tasks']}]` | **{job['snapshot'].get('overall','UNKNOWN')}**: {counts} | {errors} | {resources} |")
+    lines.extend(["", "## Wake", ""])
+    if "waker_status" in wake_state:
+        waker = wake_state["waker_status"]
+        watches = ", ".join(
+            f"`{w['watch_id']}`({w['kind']}:{w.get('state')})" for w in waker.get("watches", [])
+        ) or "none"
+        events = ", ".join(
+            f"`{e['event_id']}`:{e['state']}" for e in waker.get("events", [])
+        ) or "none"
+        last_tick = waker.get("last_tick") or {}
+        lines.extend(
+            [
+                f"- wakerctl watches: {watches}",
+                f"- wakerctl events: {events}",
+                f"- Last tick: {last_tick.get('at_utc', 'never')} on {last_tick.get('node', 'unknown')} (scrontab is the supervision net; see WAKER.md)",
+                f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                f"- tmux `{config['wake']['tmux_session']}`: **{wake_state['tmux']}**",
+                f"- Event/invoked/done markers: {wake_state['event']} / {wake_state['invoked']} / {wake_state['completed']}",
+                f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
+            ]
+        )
     lines.extend(
         [
-            "",
-            "## Wake",
-            "",
-            f"- tmux `{config['wake']['tmux_session']}`: **{wake_state['tmux']}**",
-            f"- Event/invoked/done markers: {wake_state['event']} / {wake_state['invoked']} / {wake_state['completed']}",
-            f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
-            "- Only terminal COMPLETE, task ERROR, or sustained observer failure may wake the thread; ACTIVE never does.",
+            "- Only real external terminal events may wake the thread; quiet intervals make zero LLM calls.",
             "",
             "## Provider capacity",
             "",
@@ -221,13 +241,18 @@ def main() -> int:
             }
         )
     wake = config["wake"]
-    tmux_rc = subprocess.run(["tmux", "has-session", "-t", wake["tmux_session"]], capture_output=True).returncode
-    wake_state = {
-        "tmux": "ACTIVE" if tmux_rc == 0 else "INACTIVE",
-        "event": "present" if (REPO / wake["event"]).exists() else "absent",
-        "invoked": "present" if (REPO / wake["invoked"]).exists() else "absent",
-        "completed": "present" if (REPO / wake["completed"]).exists() else "absent",
-    }
+    if wake.get("waker"):
+        import wakerctl
+
+        wake_state = {"waker_status": wakerctl.status(wakerctl.Ctx())}
+    else:
+        tmux_rc = subprocess.run(["tmux", "has-session", "-t", wake["tmux_session"]], capture_output=True).returncode
+        wake_state = {
+            "tmux": "ACTIVE" if tmux_rc == 0 else "INACTIVE",
+            "event": "present" if (REPO / wake["event"]).exists() else "absent",
+            "invoked": "present" if (REPO / wake["invoked"]).exists() else "absent",
+            "completed": "present" if (REPO / wake["completed"]).exists() else "absent",
+        }
     git_state = {
         "head": run_text(["git", "rev-parse", "--short", "HEAD"]).strip(),
         "dirty_count": len(run_text(["git", "status", "--short"]).splitlines()),

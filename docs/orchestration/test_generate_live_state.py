@@ -39,6 +39,22 @@ class LiveStateTests(unittest.TestCase):
         self.assertIn("0 available/1 protected", text)
         self.assertIn("BLOCKED/UNKNOWN", text)
 
+    def test_waker_wake_section_renders_from_status(self):
+        config, sessions, usage, jobs = self.fixtures()
+        config["wake"] = {"waker": True}
+        wake_state = {
+            "waker_status": {
+                "watches": [{"watch_id": "w1", "kind": "slurm-job", "state": "armed"}],
+                "events": [{"event_id": "evt-w1", "state": "resumed"}],
+                "last_tick": {"at_utc": "now", "node": "login11"},
+            }
+        }
+        text = render(config, sessions, usage, 3, jobs, {"head": "abc", "dirty_count": 1}, wake_state, "now")
+        self.assertIn("wakerctl watches: `w1`(slurm-job:armed)", text)
+        self.assertIn("`evt-w1`:resumed", text)
+        self.assertIn("Last tick: now on login11", text)
+        self.assertLessEqual(len(text.splitlines()), MAX_LINES)
+
     def test_uuid_mismatch_fails(self):
         config, sessions, usage, jobs = self.fixtures()
         sessions["sessions"]["worker"]["session_id"] = "replacement"

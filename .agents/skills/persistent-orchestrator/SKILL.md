@@ -62,6 +62,27 @@ handoff context instead.
 6. Update the campaign ledger after every round.
 7. Stop only at the user's stated, verifiable end condition.
 
+## Wait through external events, never through the model
+
+Goals stay disabled. While nothing has happened, no Claude, Codex, or agy
+call may run. Continuation after job completion/failure, provider resets,
+queue-latency thresholds, deadlines, and missed heartbeats is delivered by
+`orchestration/wakerctl.py` (design, state machine, and full operating guide:
+`docs/orchestration/WAKER.md`):
+
+```bash
+/usr/bin/python3.11 orchestration/wakerctl.py watch-add --id ID --kind KIND \
+  --param key=value ... --context "campaign context"
+/usr/bin/python3.11 orchestration/wakerctl.py status
+```
+
+Before ending any turn that launches or waits on anything external, arm a
+watch for it. Each real event resumes the saved root thread exactly once with
+the correct CODEX_HOME, model, and permission flags; duplicate events,
+controller restarts, and stale locks are absorbed by the claim ledger. Never
+hand-write per-job watcher scripts or LLM sleep/poll loops; never re-arm the
+retired `watch_g2_*`/`resume_after_school_reset*` scripts.
+
 ## Plan around measured capacity
 
 Before each dispatch wave, after a cap, and before final synthesis, run:

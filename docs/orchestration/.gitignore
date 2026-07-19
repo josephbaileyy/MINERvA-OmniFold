@@ -5,3 +5,7 @@ state/usage/
 
 # Successful turn metadata is kept as JSON; empty/provider stderr logs stay local.
 runs/**/*.stderr.log
+
+# wakerctl runtime spool: events, claims, ledger, logs are runtime evidence,
+# reproducible receipts live in the campaign ledger commits.
+state/waker/
