@@ -1,0 +1,35 @@
+**VERDICT: PASS-WITH-CHANGES**
+
+Adopting a single `<=120`-line control-plane dashboard is safe, highly useful, and perfectly aligns with the repository's rule of "one canonical home per kind of fact" (`AGENTS.md`). The only required change is that **scientific status** (e.g., `P4_STANDARD_STATUS.md`) must remain strictly owned by the delegated active worker rather than absorbed into the orchestrator's control-plane file. The dashboard must *link* to those receipts, not duplicate them.
+
+### 1. Exact Fields and Machine Sources
+The dashboard must be generated exclusively from machine-readable JSON/CLI outputs, containing:
+*   **Active DAG Node & Blockers**: Current active nodes (e.g., T1–T8), UUIDs, and exact blocker status parsed directly from `docs/orchestration/state/sessions.json` and the active verifier JSONL receipts.
+*   **Compute Placement**: Queried live via `squeue --me -o "%i %T %R %L %j"`. Must expose interactive holder allocations (e.g., ID `56100487`), time remaining, running batch arrays (e.g., unified-throw slabs), and any explicit PIDs of detached drivers (e.g., `576350`).
+*   **Provider Capacity**: Read exclusively from `docs/orchestration/usagectl.py snapshot --json`. Must show the unified `claude-school` capacity, the personal `resets_at_utc`, and the exact count of reserved Codex Full reset credits.
+*   **Authorized Next Action**: The verified next step from the active worker's `followup-*.md` prompt.
+
+### 2. Document Routing (Canonical vs. Archival)
+*   **Canonical Live Inputs**: The new generated dashboard, `usagectl.py` JSON, `sessions.json`, and the *active* `followup-*.md` prompts.
+*   **Append-Only History**: `docs/orchestration/RUNS.tsv`, `docs/orchestration/QUIET-PERIODS.tsv`, and the scientific `*_RUN_LOG.md` / `VALIDATION_LEDGER.md`.
+*   **Archival/Index-only**: `MIGRATION-HANDOFF.md`, `MIGRATION-DELTA.md`, `MIGRATION-TAKEOVER-STATUS.md`, and all superseded prompts (e.g., `followup-agent-A-standard-01.md`).
+
+### 3. Fail-Closed Invariants
+A generator/checker must enforce these rules before successfully emitting the dashboard:
+1.  **UUID Preservation**: Workers are only resumed via the exact UUIDs stored in `sessions.json`.
+2.  **No Stale Receipts**: The generator must re-stat receipt paths; missing files or dirty-tree products (e.g., the PG0 blocker on `ND_OMNIFOLD_STATUS.md`) must immediately flag the DAG node as `VERIFIER-BLOCKED`.
+3.  **No Uncommitted Science**: Uncommitted scientific outputs (like Agent E's 9.42-GB ROOT in T6) cannot transition the DAG to `DONE` until the commit gate is verified.
+4.  **No Double-Counted Aliases**: `claude-school` and `claude-school-legacy` must be strictly evaluated as one shared quota bucket.
+5.  **Protected Reset Credits**: The single `2026-08-12` Codex reset credit is an emergency reserve; if `< 1`, generation hard-aborts.
+6.  **No Polling/Wake Loops**: The orchestrator must not rely on autonomous LLM sleep/poll loops, instead relying strictly on Slurm dependency cascades (`afterok`) or the native system `Reactive Wakeup`.
+
+### 4. Smallest Safe Implementation Sequence
+1.  Write a read-only `generate_dashboard.py` script that queries `squeue`, `usagectl.py snapshot --json`, and `sessions.json`.
+2.  Write unit tests mocking `squeue` and `usagectl` outputs to verify the fail-closed invariants (e.g., throwing a `ValueError` if the personal reset credit drops to `0`, or if school alias percentages are wrongly added).
+3.  Execute the generator to emit `docs/orchestration/ORCHESTRATION_DASHBOARD.md`.
+4.  Commit the generator and tests, and explicitly prepend `[ARCHIVAL]` to `MIGRATION-TAKEOVER-STATUS.md` and old prompts so agents stop reading them.
+
+### 5. Proven Contradictions
+*   **Contradiction on Archival Parsing**: The user proposes to "mark historical handoffs as archival," but `MIGRATION-TAKEOVER-STATUS.md` (lines 6-7) already explicitly declares: `Immutable source snapshot: MIGRATION-HANDOFF.md plus MIGRATION-DELTA.md.` The system is redundantly re-reading files that were already explicitly classified as static historical snapshots.
+*   **Contradiction on LLM Sleep Loops**: `QUIET-PERIODS.tsv` (lines 3-4, events QP2 and QP3) explicitly logs: `FALSE WAKE: automatic goal continuation resumed the LLM without an external trigger... Confirmed end-turn cannot create a durable break in goal mode.` Any workflow attempting to use an LLM-driven loop or sleep is contradicted by this hard evidence; reliable pacing requires OS-level detachment or external waking.
+*   **Contradiction on Capacity Aliasing**: `usage-policy.json` (lines 10-14) declares `claude-school` and `claude-school-legacy` as a single `profile_account_group`. Treating them as separate limits in any status logic contradicts the policy document and will result in over-dispatching against constrained shared capacity.

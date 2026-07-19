@@ -1,0 +1,41 @@
+I have completed the independent, read-only verification of the G2 full-event production gate.
+
+### 1. Array Submission Status
+**BLOCK**
+
+### 2. Blocking Defect
+**Defect:** The content-validated resume logic fails to fail-closed on one-sided published states (ROOT-only or receipt-only). Currently, if only one of the artifacts exists (e.g., from a failure after the ROOT rename but before the receipt is written), the check `[[ -s ... && -s ... ]]` evaluates to false. The script then bypasses the resume guard, runs the event loop, and executes `mv -f`, which silently overwrites and destroys the prior published evidence.
+
+- **File:** `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`
+- **Line:** 91
+- **Current:** `if [[ -s "${FINAL_ROOT}" && -s "${RECEIPT}" ]]; then`
+- **Minimal Correction:** `if [[ -e "${FINAL_ROOT}" || -e "${RECEIPT}" ]]; then`
+
+*Why this works:* Changing the condition to `||` and using `-e` forces any existing state (stale, partial, or one-sided) into the evaluation block. If one file is missing, the Python resume script will crash (throwing an exception when trying to open the missing file) or exit non-zero, correctly dropping into the `else` block and `die`-ing to protect the existing evidence.
+
+### 3. Nonblocking Improvements
+- **Manifest Content Drift Guard:** The array currently checks only that `DATA_MANIFEST` and `MC_MANIFEST` exist and are non-empty (lines 71-72). If manifest content drifts, the script will silently use the drifted manifests and simply record their new hashes. Consider hardcoding the expected 24 manifest hashes (or checking `git diff --quiet -- $MANIFEST_DIR`) to statically block execution on manifest drift.
+- **Defense-in-Depth for Atomic Publication:** Change `mv -f` (line 142) to `mv -n` (no-clobber). This adds a filesystem-level safety net that guarantees an atomic publication will never overwrite an existing file, even if the resume guard logic is inadvertently bypassed.
+
+### 4. 1A Receipt Validity
+The `1A` scientific/interface receipt (`G2_1A_VALIDATION_RECEIPT.json`) **remains fully valid and sound**. The bug identified above affects the resume/overwrite protection logic for subsequent tasks or retries. The 1A smoke successfully completed its first pass without encountering a pre-existing state. The receipt correctly binds the canonical binary hash, the exact source commit, validates all 50 checks for the point-cloud/FPS invariants, and proves the schema is correct.
+
+### 5. Control-Flow State Analysis
+As requested, here is the independent inspection of what happens for each control-flow state under the *current* code:
+- **Neither final ROOT nor receipt exists:** Lock acquired, event loop runs, validation passes, ROOT atomically renames, receipt written last.
+- **Both exist and match:** The `[[ -s ... && -s ... ]]` is true, python check passes, and the script exits 0 (resume-skip).
+- **Both exist and mismatch:** The python check fails, and the bash script `die`s, correctly failing closed.
+- **ROOT-only:** The `[[ -s ... && -s ... ]]` is false. Script falls through, runs loop, and `mv -f` silently overwrites and destroys the prior ROOT. *(This is the blocking defect)*.
+- **Receipt-only:** The `[[ -s ... && -s ... ]]` is false. Script falls through, runs loop, and overwrites the receipt via `os.replace`. *(Same defect)*.
+- **Stale work ROOT:** Quarantined into a timestamped `partial_` directory (lines 112-117) before the event loop starts.
+- **Binary drift:** Caught statically by the `GOT_BIN_SHA` != `EXPECTED_BIN_SHA` check (line 78); script `die`s before doing any work.
+- **Manifest content drift:** Silently processed; no static hash guard prevents the loop from running on drifted manifests (the new hashes are just recorded in the receipt).
+- **Validation failure:** The `python3 validate_g2_fullevent_smoke.py` script exits non-zero, causing the bash script to `die`. The rename is skipped, leaving the failed ROOT in the isolated work directory.
+- **Failure after ROOT rename but before receipt publication:** Yields a ROOT-only state, which currently triggers the overwrite defect on resume.
+- **Concurrent duplicate task:** Prevented by `flock -n 200` on a per-playlist lock file (`${WORK}/.g2fe.lock`). The second task `die`s immediately.
+
+### 6. Exact Commands/Tests Used
+1. `git show --check 9262e96d74a1ccb43497ded98f830452151eb440` (to review the pushed commit for syntax/trailing whitespace)
+2. `git diff 9262e96d74a1ccb43497ded98f830452151eb440^! > /tmp/diff.diff` (to output the full commit diff to a scratch file)
+3. `squeue -u "$USER"` (verified empty; ensuring no array tasks were prematurely submitted or currently running)
+4. `view_file` on `/tmp/diff.diff` and all scoped files (`sbatch_g2_fullevent_evloop_array.sh`, `validate_g2_fullevent_smoke.py`, `G2_1A_VALIDATION_RECEIPT.json`, `G2_FULLEVENT_CPP_DUMP_STATUS.md`, `VALIDATION_LEDGER.md`, `ND_OMNIFOLD_RUN_LOG.md`) to statically inspect control flow, validation thresholds, provenance bounds, and historical logs.

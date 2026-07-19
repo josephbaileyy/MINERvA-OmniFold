@@ -1,0 +1,24 @@
+PASS
+
+### 1. Gap Closures Confirmed
+The independent, read-only static analysis and temporary-directory verification of the corrective commit (`15f750bb5efd4a9f36685b30256c0c97bab4e460`) confirms that all four orchestrator findings are definitively closed:
+- **Stale-work quarantine failure:** Fixed. The `quarantine_stale_partial` function drops `|| true`, replacing it with `|| die`, and proves source absence via `! path_occupied "$wf" || die`. A failed move correctly triggers a fatal exit.
+- **Pre-publication race condition:** Fixed. The `classify_publication` logic is re-run identically immediately before the atomic ROOT hardlink (`VERDICT3`). This guarantees both the `FINAL_ROOT` and the `RECEIPT` are absent (a strict `RUN` state), preventing a receipt race from breaking the publication sequence.
+- **Resume provenance binding:** Fixed. Both `EXPECTED_BIN_SHA` and `BUILT_SOURCE_COMMIT` are strictly injected into the Python `validate_resume` scope, and the receipt values are successfully asserted against these immutable bounds (`fail("receipt built_source_commit != launcher bound")`).
+- **No-clobber postconditions proven:** Fixed. Both `publish_root_noclobber` and `publish_receipt_noclobber` explicitly capture pre-publication `dev_ino` (via `stat -c %d:%i`) and `sha256sum`, securely assert identical properties on the unlinked destination, and explicitly check `! path_occupied "$src"` after the `rm` command.
+
+### 2. Supplemental Checks Confirmed
+- **Dangling Symlink Classification:** Verified via a temporary-directory integration test under `G2FE_SELFTEST=1` (running `ln -s nonexistent dangling && path_occupied dangling`). The new `[[ -e "$1" || -L "$1" ]]` logic correctly evaluated to `OCCUPIED`, correctly failing closed on lingering metadata.
+- **Input Footing Re-assertion:** Verified. `assert_input_footing` is properly placed at Step 6b (after the multi-hour loop but before validation) and Step 8 (immediately before publication). This guarantees that any post-startup drift in the shared manifest, binary, or validator will fail closed before committing evidence.
+- **Regressions:** None. Control-flow tracing confirms the exact preservation of the one-sided state protections, 24-manifest static hash binds, `flock -n 200` per-playlist locks, `g2_fullevent` isolated namespace checks, `1A`–`1P` array mapping, and full Python pre-validation. No nested `srun` usage was introduced.
+
+### 3. 1A Receipt Validity
+The prior 1A scientific/interface receipt remains **fully valid and sound**. The 12-playlist production array exclusively operates in the strictly disjoint `/nd-unfolding/g2_fullevent/` namespace and will never interact with, evaluate, or overwrite the existing 1A outputs in `/nd-unfolding/pet/g2_smoke/`.
+
+### 4. Tests Performed
+1. `git diff 09fe1d428149bb7138efb77fd64c527fd4b1d0e4 15f750bb5efd4a9f36685b30256c0c97bab4e460 > /tmp/diff3.diff`
+2. `view_file` on the diff to analyze the exact corrective syntax and function placements.
+3. `bash -n .../sbatch_g2_fullevent_evloop_array.sh` (Static syntax check).
+4. Sourced the launcher in a temporary Bash environment with `G2FE_SELFTEST=1` to unit test the `path_occupied` dangling symlink behavior on a live filesystem (`mktemp -d`).
+
+This `PASS` authorizes the orchestrator to submit the committed launcher.

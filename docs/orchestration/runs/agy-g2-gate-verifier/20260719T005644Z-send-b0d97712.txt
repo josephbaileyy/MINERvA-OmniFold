@@ -1,0 +1,84 @@
+### 1. Array Submission Status
+**BLOCK**
+
+### 2. Prior Defect Recheck (Commit 09fe1d4)
+- **Original ROOT-only/receipt-only overwrite defect:** Confirmed **FIXED**. `classify_publication` successfully detects any partial state by existence and explicitly forces a fail-closed `DIE` without entering the compute or publication phases. Pre-existing artifacts are never overwritten.
+- **Original manifest-resume gap:** Confirmed **FIXED**. `assert_input_footing` now strictly binds the 24 canonical manifest hashes at commit time. Furthermore, `validate_resume` exhaustively proves both that the current manifests match the receipt *and* that the current manifests match the immutable launcher bounds.
+
+### 3. Orchestrator Findings Evaluation (All BLOCKING)
+
+Under the explicit gate to "fail closed for every stale/partial/racy state; never overwrite published evidence; prove no-clobber postconditions; and bind resume to the complete scientific/runtime footing," all four findings are strictly **BLOCKING**.
+
+**Finding 1 (Stale work quarantine escape)**
+- **Verdict:** BLOCKING. The use of `mv -v ... || true` allows execution to silently proceed into the compute phase with a stale, fixed-name work ROOT still present if the move operation fails (e.g., due to permissions). This violates "fail closed for every stale... state."
+- **File/Line:** `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`, lines 358-359.
+- **Minimal Correction:**
+```bash
+-  mkdir -p "$QDIR"; mv -v "$WORK_ROOT_FILE" "$QDIR/" || true
++  mkdir -p "$QDIR"; mv -v "$WORK_ROOT_FILE" "$QDIR/" || die "quarantine move failed"
++  [[ ! -e "$WORK_ROOT_FILE" ]] || die "stale work ROOT still exists after quarantine"
+```
+
+**Finding 2 (Pre-publication race condition)**
+- **Verdict:** BLOCKING. By reasserting only `FINAL_ROOT` absence immediately before ROOT publication, the script ignores a `RECEIPT` that may have concurrently appeared. The script would publish the ROOT, then fail at the receipt step, creating a ROOT-only state. This violates "fail closed for every... racy state."
+- **File/Line:** `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`, line 416.
+- **Minimal Correction:**
+```bash
+-# 8. No-clobber atomic ROOT publication (reassert absence immediately before).
+-[[ -e "$FINAL_ROOT" ]] && die "final ROOT appeared before publish (race): $FINAL_ROOT"
++# 8. No-clobber atomic ROOT publication (reassert absence immediately before).
++[[ -e "$FINAL_ROOT" || -e "$RECEIPT" ]] && die "final ROOT or receipt appeared before publish (race)"
+```
+
+**Finding 3 (Incomplete provenance resume binding)**
+- **Verdict:** BLOCKING. The resume logic checks `binary_sha256` but ignores `binary_sha256_expected` and `built_source_commit`. This fails to bind the resume validation to the complete scientific/runtime footing mandated by the gate.
+- **File/Line:** `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`, lines 194-208.
+- **Minimal Correction:**
+```bash
+   python3 - "$receipt" "$root" "$pl" "$EXPECTED_BIN_SHA" "$bsha" "$EXPECTED_VAL_SHA" "$vsha" \
+            "$VALIDATOR" "$dman" "$mman" "$dsha" "$msha" \
+-           "${MANIFEST_SHA[${pl}_Data.txt]}" "${MANIFEST_SHA[${pl}_MC.txt]}" "$RECEIPT_SCHEMA" <<'PY'
++           "${MANIFEST_SHA[${pl}_Data.txt]}" "${MANIFEST_SHA[${pl}_MC.txt]}" "$RECEIPT_SCHEMA" \
++           "$BUILT_SOURCE_COMMIT" <<'PY'
+ import json,sys,hashlib
+-(rc,root,pl,expbin,curbin,expval,curval,valp,dman,mman,curd,curm,bndd,bndm,schema)=sys.argv[1:16]
++(rc,root,pl,expbin,curbin,expval,curval,valp,dman,mman,curd,curm,bndd,bndm,schema,builtcommit)=sys.argv[1:17]
+...
+ if d.get("binary_sha256")!=expbin: fail("receipt binary hash != expected bound")
++if d.get("binary_sha256_expected")!=expbin: fail("receipt binary_sha256_expected != expected bound")
++if d.get("built_source_commit")!=builtcommit: fail("receipt built_source_commit != launcher bound")
+```
+
+**Finding 4 (Unproven no-clobber postconditions)**
+- **Verdict:** BLOCKING. The script claims a "hardlink->verify->unlink contract" but fails to prove the unlink for either function and fails to prove the verify (inode check) for the receipt. This directly violates "prove no-clobber postconditions."
+- **File/Line:** `nd-unfolding/pet/sbatch_g2_fullevent_evloop_array.sh`, lines 259 and 264-269.
+- **Minimal Correction:**
+```bash
+ publish_root_noclobber() {
+ ...
+   rm -f "$src" || die "failed to unlink work ROOT after publish: $src"
++  [[ ! -e "$src" ]] || die "post-publish: work ROOT still exists after unlink"
+   echo "$dst_sha"
+ }
+
+ publish_receipt_noclobber() {
+   local tmp="$1" dst="$2"
++  local tmp_ino dst_ino
++  tmp_ino="$(stat -c %i "$tmp")"
+   [[ -e "$dst" ]] && die "refuse receipt publish: destination already exists: $dst"
+   ln "$tmp" "$dst" || die "atomic hardlink receipt publish failed: $dst"
+-  [[ -e "$dst" ]] || die "post-publish: receipt destination absent: $dst"
++  dst_ino="$(stat -c %i "$dst")"
++  [[ "$tmp_ino" == "$dst_ino" ]] || die "post-publish: receipt inode mismatch (not a hardlink)"
+   rm -f "$tmp"
++  [[ ! -e "$tmp" ]] || die "post-publish: temp receipt still exists after unlink"
+ }
+```
+
+### 4. 1A Receipt Validity
+The 1A scientific/interface receipt (`G2_1A_VALIDATION_RECEIPT.json`) remains **fully valid and sound**. The array script output targets a strictly disjoint namespace (`g2_fullevent/final/`) from the 1A smoke (`g2_smoke/`). The array logic will never evaluate, resume, or overwrite the 1A artifacts, ensuring the prior gate evidence is fully preserved.
+
+### 5. Exact Tests Used
+1. `git diff 9262e96d74a1ccb43497ded98f830452151eb440 09fe1d428149bb7138efb77fd64c527fd4b1d0e4 > /tmp/diff2.diff` (Extracted exact three-file diff).
+2. `view_file` on `/tmp/diff2.diff` to conduct a targeted static inspection.
+3. Static state-matrix trace over `sbatch_g2_fullevent_evloop_array.sh` logic (analyzed the exact execution outcomes of `mv -v || true`, assessed the temporal window between re-classification and atomic publish, and traced the parameter footprint for `validate_resume` and `publish_*_noclobber`).

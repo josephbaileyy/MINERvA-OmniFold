@@ -20,6 +20,11 @@
   "registry_profile_switched": true,
   "concurrent_dual_home_dispatch": false,
   "authorization_receipt": "docs/orchestration/state/account-migration-authorization-20260719.json",
-  "dispatch_status": "PENDING_POST_MIGRATION_HEARTBEAT",
+  "dispatch_status": "VERIFIED_SUCCESS_SAME_UUID_ON_SCHOOL",
+  "post_migration_heartbeat": "HEARTBEAT_OK",
+  "successful_post_migration_turns": 3,
+  "first_post_migration_result_commit": "9262e96d74a1ccb43497ded98f830452151eb440",
+  "final_launcher_commit": "15f750bb5efd4a9f36685b30256c0c97bab4e460",
+  "same_uuid_resume_verified": true,
   "reset_credit_consumed": false
 }
