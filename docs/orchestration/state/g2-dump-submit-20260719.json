@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "SUBMITTED",
+  "submitted_at_utc": "2026-07-19T05:33:48Z",
+  "job_id": "56116598",
+  "placement": {
+    "qos": "shared",
+    "constraint": "cpu",
+    "nodes": 1,
+    "cpus_per_task_requested": 16,
+    "memory": "192G",
+    "time_limit": "12:00:00",
+    "scheduler_allocated_cpus_due_to_memory": 104
+  },
+  "state_at_receipt": "PENDING",
+  "reason_at_receipt": "Priority",
+  "runtime_head": "6fa1524d8edcedc594111dd7ad0a475724006246",
+  "source_merge_receipt": {
+    "path": "nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json",
+    "sha256": "26ea5561f47599987ebacbf594c606309146a5f23c82af8dd0e2ca299b31efa7"
+  },
+  "launcher": {
+    "path": "nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
+    "sha256": "324a40811669355bdd219d2b5f7988a80cea22e585cbab2e8d98f2bf178fc46e"
+  },
+  "dumper": {
+    "path": "nd-unfolding/pet/dump_pointcloud_inputs.py",
+    "sha256": "c8fa219f0ca2537bddc8ad824a0d225c3b67cd76cab1cab1bc391f5bdd7cac5d"
+  },
+  "contract": {
+    "path": "nd-unfolding/pet/fullevent_dump_contract.py",
+    "sha256": "64f5359cd428c604c057e797819ebd58210e51ab3c896fc59d5e42f1d037f9e4"
+  },
+  "final_npz": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "final_receipt": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json",
+  "publication_rule": "no-clobber NPZ first, receipt last"
+}
