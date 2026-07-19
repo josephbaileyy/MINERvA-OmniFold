@@ -9,13 +9,43 @@ resume_log="$state/g2-smoke-resume.log"
 invoked="$state/g2-smoke-resume.invoked"
 completed="$state/g2-smoke-resume.done"
 thread_id=019f749a-857b-7790-8cec-bc36b22908be
-codex_bin=${CODEX_BIN:-/global/homes/j/josephrb/.local/bin/codex}
+codex_bin=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
+preflight_error=
+if [[ -z "$codex_bin" ]]; then
+  preflight_error=codex-not-found-on-PATH
+elif [[ "$codex_bin" != /* ]]; then
+  preflight_error=codex-path-not-absolute
+elif [[ ! -x "$codex_bin" ]]; then
+  preflight_error=codex-path-not-executable
+fi
+
+if [[ "${1:-}" == --preflight-only ]]; then
+  if [[ -n "$preflight_error" ]]; then
+    printf 'FAIL %s path=%s\n' "$preflight_error" "${codex_bin:-missing}" >&2
+    exit 126
+  fi
+  printf 'PASS codex=%s\n' "$codex_bin"
+  exit 0
+fi
 
 cd "$repo"
 exec 9>"$state/g2-smoke-wake.lock"
 flock -n 9 || exit 0
 
 [[ ! -e "$invoked" && ! -e "$completed" ]] || exit 0
+
+if [[ -n "$preflight_error" ]]; then
+  completed_tmp="$completed.tmp.$$"
+  {
+    printf 'completed_at_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    printf 'resume_rc=126\n'
+    printf 'preflight_error=%s\n' "$preflight_error"
+    printf 'codex_path=%s\n' "${codex_bin:-missing}"
+    printf 'thread_id=%s\n' "$thread_id"
+  } > "$completed_tmp"
+  mv "$completed_tmp" "$completed"
+  exit 126
+fi
 
 while [[ ! -e "$attempt/DONE" && ! -e "$attempt/FAILED" ]]; do
   sleep 30

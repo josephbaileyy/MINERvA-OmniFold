@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "qp": "QP5",
+  "status": "RECOVERED_BY_USER_MESSAGE_PENDING_E_PUBLICATION",
+  "terminal_event": {
+    "observed_at_utc": "2026-07-18T22:21:16Z",
+    "event": "g2-attempt2-terminal",
+    "terminal": "DONE",
+    "loop_rc": 0,
+    "valid": true,
+    "event_sha256": "ddfb87c26dfc3227fdf471087cd5f7d8c6da0f8b2c1656005d0299022a4638be"
+  },
+  "failed_external_resume": {
+    "invocations": 1,
+    "completed_at_utc": "2026-07-18T22:21:16Z",
+    "returncode": 127,
+    "error": "hard-coded Codex executable did not exist",
+    "bad_path": "/global/homes/j/josephrb/.local/bin/codex",
+    "thread_id": "019f749a-857b-7790-8cec-bc36b22908be"
+  },
+  "watcher_repair": {
+    "actual_command_v_codex": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
+    "fixed_script_sha256": "c7483931bdc01cc79fc74199fabd4c8c4d01dfb85495cfa56e05c2927a64b9ca",
+    "absolute_executable_preflight": "PASS",
+    "missing_or_nonexecutable_negative_returncode": 126,
+    "duplicate_resume_attempted": false
+  },
+  "stage4_recovery": {
+    "holder": 56100487,
+    "smoke_rerun": false,
+    "first_validator_status": "FAIL_INTERPRETATION",
+    "first_validator_sha256": "36749bb80e5bfd6d528044f43749e0a8ef04c26641b218d59867212e35b06141",
+    "cause": "PyROOT exposed UChar_t as one-character strings while the validator compared to integer zero",
+    "direct_root_probe": "native miss sim_pass and mu_reco_minos_ok are UChar_t \\u0000; reco sentinels and empty clouds are correct",
+    "repaired_validator_sha256": "3b5c4ae9b954a6db2ac8dadf25abb433cc0024f9ee182e589de654ba44b5f1f8",
+    "validation_receipt_sha256": "776addeb3453445bcb1e6fa45f81ed41ffe7f713a1cb2da0eac729eccf007b25",
+    "validation_status": "PASS",
+    "checks_passed": 50,
+    "checks_failed": 0
+  },
+  "reset_credit_consumed": false
+}
