@@ -1,0 +1,26 @@
+BLOCK
+
+### 1. Is an unchanged failed-task-only retry scientifically justified?
+**No.** The C++ event loop is deterministic. An unchanged retry will read the exact same upstream AnaTuple row, extract the identical 4-vector, and deterministically trigger the exact same validator failure. 
+
+### 2. Is this most likely upstream corrupt input, unit/conversion overflow, or a selection/dump bug?
+It is most likely **upstream corrupt input** (an AnaTuple row corruption). The kinematics are macroscopic ($E \approx 31.3 \times 10^9$ MeV = 31,370 TeV, far exceeding MINERvA's beam), but the components satisfy $E^2 \approx p_x^2 + p_y^2 + p_z^2$. This means the C++ dump faithfully extracted a mathematically valid, self-consistent 4-vector that was already corrupted in the AnaTuple. It is not random uninitialized C++ memory (which would not perfectly satisfy the invariant mass relation) and not a unit conversion error (no standard unit scale factor produces $10^7$ GeV from a $\sim 10$ GeV beam).
+**Evidence still required:** An offline ROOT script must inspect the upstream `1D_MC` AnaTuple directly at row `(111114, 296, 375)` to confirm the native MINOS track energy and verify if the rest of the event features are similarly corrupted.
+
+### 3. Minimal fail-closed publication-grade remedy
+The 2D OmniFold Python contract explicitly masks measured data to phase space ($1.5 \le p_{||} \le 60$ GeV). Because this event has $p_z \approx 3.1 \times 10^7$ GeV, the Python downstream will cleanly and deterministically drop it as out-of-phase-space before training. Therefore, it is scientifically safe for this event to exist in `mc_background`.
+**The minimal remedy:** 
+- Modify the Python validator to remove or widen the arbitrary `abs(mu_reco_px) < 1e8` bound, keeping only `!= -9999.0` to detect genuine sentinels.
+- Remove the `n_scan = 20000` early-exit limit. A publication-grade validator must scan **100% of rows** to guarantee no actual sentinels slipped through deeper in the file.
+
+### 4. Impact on existing evidence
+- **Invalidate already published playlist receipts?** Yes. Modifying the validator changes its SHA-256, which breaks the `EXPECTED_VAL_SHA` resume bound.
+- **Require full validation of existing ROOTs?** Yes. Because the previous validator stopped at 20,000 rows, the entirety of the existing ROOT files must be re-scanned under the new 100%-scan validator.
+- **Require rerunning their event loops?** **No.** The C++ binary is unchanged and the produced ROOT files are scientifically correct. No multi-hour compute is lost.
+
+### 5. Explicit PASS/BLOCK conditions for retrying only task 4
+**BLOCK condition:** Task 4 (1D) cannot be retried in its current state.
+**PASS condition:** The orchestrator may submit the array only after the validator is patched (1e8 limit removed, 100% row scan enabled), the immutable `EXPECTED_VAL_SHA` launcher bound is updated, and the array is run to perform a fast, read-only Python re-validation of all existing ROOTs alongside the resumed processing of 1D.
+
+---
+**Note:** The already published 1A receipt remains separately valid as sound evidence of its own execution under the prior constraints.

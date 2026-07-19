@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "armed_at_utc": "2026-07-19T02:46:58Z",
+  "job_id": "56106974",
+  "expected_task_spec": "1-3,5-12",
+  "acknowledged_excluded_task": 4,
+  "watcher_run_id": "g2-array-56106974-r3",
+  "tmux_session": "g2-array-wake-r3",
+  "os_pid": 879498,
+  "os_ppid": 2289811,
+  "os_sid": 879498,
+  "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "precondition": "Wait externally for g2-array-56106974-r2-resume.done before the first Slurm observation, preventing a concurrent resume of this active turn.",
+  "event_path": "docs/orchestration/state/g2-array-56106974-r3-wakeup.json",
+  "invoked_path": "docs/orchestration/state/g2-array-56106974-r3-resume.invoked",
+  "completed_path": "docs/orchestration/state/g2-array-56106974-r3-resume.done",
+  "resume_flags": [
+    "--disable",
+    "goals",
+    "--dangerously-bypass-approvals-and-sandbox"
+  ],
+  "wake_policy": "After r2 completion, monitor only the 11 nonfailed original tasks; exactly one terminal COMPLETE, new task ERROR, or sustained observer failure may resume. Task 4 remains separately blocked and is not treated as successful.",
+  "initial_marker_state": "r3 event/invoked/done all absent",
+  "worker_uuid_policy": "All existing worker UUIDs preserved; no replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset is protected and was not consumed."
+}

@@ -1,13 +1,24 @@
 # G2 full-event C++ dump — implementation receipt
 
-**Status: BUILD-PASS / SMOKE-PASS (playlist-1A) — G2 GATE COMPLETE; production
-array `56106974_[1-12]` submitted 2026-07-19 (initially PENDING).** Owner: Agent-E
+**Status: BUILD-PASS / SMOKE-PASS (playlist-1A); Gate-1 production BLOCKED on
+playlist 1D recovery while array `56106974` drains.** Task 4 completed its loop
+but failed prepublication validation on one upstream-corrupt, out-of-extended-
+FPS background muon. The 14.15 GB work ROOT is preserved; both final paths are
+absent; unchanged retry is forbidden. Evidence:
+`docs/orchestration/state/g2-array-task4-blocker-20260719.json`. Owner: Agent-E
 (G2 C++ source/runtime owner), UUID `44b634fc-d211-4e09-9229-95a18d1984cc`,
 route claude-school. Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
 / `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
 Source packet `486e53e` received an independent agy PASS; the compile/install +
 1A smoke were authorized owner-held interactive work only (no 12-playlist array,
 MEFHC merge/NPZ, PET training, or scientific endpoint — none performed).
+
+The remaining 11 tasks continue independently. A deferred one-shot watcher
+`g2-array-wake-r3` starts only after the current resume exits and monitors task
+set `1-3,5-12`; excluding acknowledged failed task 4 from that watcher does not
+exclude it from Gate 1. Gate 1 remains blocked until an additive exhaustive
+domain validator and no-clobber 1D recovery are independently verified and all
+12 playlist pairs pass.
 
 ## Turn-3 gate closure (2026-07-18)
 **SMOKE — PASS (1A).** Attempt-2 loop terminal (`rc=0`, `DONE`), validator PASS

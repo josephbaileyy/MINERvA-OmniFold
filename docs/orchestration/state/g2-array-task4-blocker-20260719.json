@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-07-19T02:44:08Z",
+  "array_job_id": "56106974",
+  "failed_task": 4,
+  "playlist": "1D",
+  "slurm": {
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:56:59",
+    "node": "nid004080",
+    "task_job_id_reported_in_log": "56107175"
+  },
+  "failure": {
+    "stage": "post-loop G2 validation before publication",
+    "check": "bkg_reco_muon_valid",
+    "result": "19999/20000 valid; 1/50 checks failed",
+    "validator_receipt": "nd-unfolding/g2_fullevent/work/1D/g2_validation_1D.json",
+    "validator_receipt_sha256": "f92460f4eb9c17f441ecb76d442cbee0224ba5dcf46bfe3d1a10afc948534275"
+  },
+  "preserved_artifact": {
+    "path": "nd-unfolding/g2_fullevent/work/1D/runEventLoopOmniFold.root",
+    "size_bytes": 14150286041,
+    "final_root_present": false,
+    "final_receipt_present": false
+  },
+  "anomalous_row": {
+    "tree": "mc_background",
+    "entry": 16074,
+    "event_identity": [111114, 296, 375],
+    "mu_reco_E_MeV": 31373686868.197517,
+    "mu_reco_px_MeV": -2349993841.390295,
+    "mu_reco_py_MeV": -1800462284.564315,
+    "mu_reco_pz_MeV": 31233701224.974899,
+    "sim_background_pT_GeV": 2960428.2617065501,
+    "sim_background_pparallel_GeV": 31233701.224974896,
+    "w_bkg": 0.3638796386781675,
+    "inside_extended_fps_domain": false
+  },
+  "upstream_confirmation": {
+    "source": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1D/MasterAnaDev_mc_AnaTuple_run00111114_Playlist.root",
+    "source_size_bytes": 21574472338,
+    "tree": "MasterAnaDev",
+    "entry": 109204,
+    "native_event_identity": [111114, 296, 375],
+    "finding": "Native MasterAnaDev muon E/P/Px/Py/Pz and MINOS momentum contain the same multi-billion-MeV values; G2 copied them faithfully."
+  },
+  "retry_decision": {
+    "unchanged_failed_task_only_retry": "BLOCK",
+    "mechanical_launcher_safety": "PASS: final pair absent; stale work partial would be quarantined under the playlist lock",
+    "scientific_reason": "The event loop is deterministic and would reproduce the same upstream-corrupt row and validator failure.",
+    "required_before_retry_or_recovery": [
+      "Add an exhaustive supplemental domain validator without modifying hash-bound files used by active tasks.",
+      "Fail on corrupt rows that could enter the canonical extended FPS domain and bind any known out-of-domain exclusions by identity/value.",
+      "Independently verify a no-clobber recovery path for the preserved 1D work ROOT.",
+      "Exhaustively supplement-validate every playlist ROOT before the Gate-1 merge/input commit."
+    ]
+  },
+  "independent_verifier": {
+    "role": "agy-g2-gate-verifier",
+    "uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+    "verdict": "BLOCK unchanged retry; upstream corruption likely; full supplemental validation required; event loops need not rerun if existing ROOTs pass"
+  },
+  "worker_uuid_policy": "All UUIDs preserved; no role replacement.",
+  "reset_credit_policy": "The remaining personal Codex Full reset remains protected and unconsumed."
+}

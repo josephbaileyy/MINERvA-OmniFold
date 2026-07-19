@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 1 / G2 full-schema FPS CV production array",
-  "state": "ACTIVE",
+  "state": "BLOCKED / ARRAY PARTIALLY ACTIVE",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -24,15 +24,16 @@
     }
   ],
   "blockers": [
-    "Gate-1 MEFHC merge and full-schema input construction require all 12 per-playlist ROOT/receipt pairs to validate.",
+    "Array task 4 / playlist 1D is blocked after a deterministic upstream-corrupt, out-of-domain muon row failed validation; unchanged retry is forbidden.",
+    "Gate-1 requires an independently verified additive domain validator/recovery plus all 12 hash-bound per-playlist ROOT/receipt pairs.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "On the one-shot terminal wake, reconcile Slurm once; validate all 12 hash-bound ROOT/receipt pairs; commit Gate-1 production evidence; then launch the dependency-ready MEFHC merge/full-schema input step using live batch-versus-interactive placement.",
+  "next_authorized_action": "Do not rerun task 4 unchanged. Add and independently verify a supplemental exhaustive domain validator and no-clobber recovery for its preserved work ROOT while leaving active-task hash-bound files unchanged; monitor the remaining 11 tasks externally, then validate all 12 pairs before merge/input construction.",
   "wake": {
-    "tmux_session": "g2-array-wake-r2",
-    "event": "docs/orchestration/state/g2-array-56106974-r2-wakeup.json",
-    "invoked": "docs/orchestration/state/g2-array-56106974-r2-resume.invoked",
-    "completed": "docs/orchestration/state/g2-array-56106974-r2-resume.done"
+    "tmux_session": "g2-array-wake-r3",
+    "event": "docs/orchestration/state/g2-array-56106974-r3-wakeup.json",
+    "invoked": "docs/orchestration/state/g2-array-56106974-r3-resume.invoked",
+    "completed": "docs/orchestration/state/g2-array-56106974-r3-resume.done"
   },
   "canonical_science": [
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

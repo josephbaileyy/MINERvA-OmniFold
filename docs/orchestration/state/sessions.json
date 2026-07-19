@@ -208,9 +208,17 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T011205Z-send-97b14d8b.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T011205Z-send-97b14d8b.txt"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T023558Z-send-ea8b9909.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T023558Z-send-ea8b9909.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T023558Z-send-ea8b9909.txt"
         }
       ],
-      "updated_at": "2026-07-19T01:12:52+00:00"
+      "updated_at": "2026-07-19T02:37:53+00:00"
     },
     "agy-publication-redteam": {
       "created_at": "2026-07-18T13:39:03+00:00",

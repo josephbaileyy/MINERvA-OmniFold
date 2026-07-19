@@ -1806,3 +1806,26 @@ Verified without event-loop compute (bash -n, embedded-Python compile, 24+2 hash
 bind, state-matrix + no-clobber race — all PASS). Launcher committed+pushed, NOT
 submitted; orchestrator + the same Gemini UUID recheck the corrective commit. Owner
 label corrected to Agent-E + UUID (route claude-school).
+
+## 2026-07-19 — G2 production task 4 blocked on upstream-corrupt 1D row
+
+The one-shot r2 watcher emitted a real array ERROR for task 4 / playlist 1D.
+One task-only accounting reconciliation found `FAILED 1:0` after 56m59s. The
+event loop itself completed and preserved a 14,150,286,041-byte work ROOT, but
+the prepublication validator failed 1/50 checks: background entry 16074,
+identity `(111114,296,375)`, carries a 31.37-billion-MeV reconstructed muon.
+Direct inspection of source AnaTuple `run00111114`, entry 109204, confirmed the
+same native muon and MINOS values, so this is upstream corruption rather than a
+G2 dump/conversion defect. Its reconstructed `(pT,p_parallel)` is
+`(2,960,428, 31,233,701)` GeV, far outside the canonical extended FPS domain
+`pT<=30`, `p_parallel<=120` GeV.
+
+No final 1D ROOT or receipt exists. The committed launcher would mechanically
+quarantine the partial safely, but an unchanged retry is deterministically
+blocked because it would reproduce the same row. The exact recovery gate is an
+additive exhaustive domain validator that binds known out-of-domain exclusions
+and fails on any corrupt in-domain row, followed by independent verification
+and no-clobber publication of the preserved work ROOT. Hash-bound canonical
+files remain untouched while other array tasks drain. The same Gemini verifier
+UUID independently returned BLOCK on unchanged retry. Durable evidence:
+`docs/orchestration/state/g2-array-task4-blocker-20260719.json`.
