@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 2 / literal negweight-refined target construction",
-  "state": "GATE 1 PASS / GATE 2 CONSTRUCTION READY",
+  "state": "GATE 1 PASS / GATE 2 CONSTRUCTION PASS / RUNTIME PENDING",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -18,11 +18,11 @@
   ],
   "jobs": [],
   "blockers": [
-    "Gate 2 must build a literal signed data/background inventory and apply Stay-Positive refinement; scalar purity weights are forbidden.",
-    "Gate 2 requires a fail-closed end-to-end fixture and independently binned signed/refined checks before promotion.",
+    "Canonical u2d.refine_stay_positive has not yet executed on the production G2 NPZ in a ROOT-capable compute environment.",
+    "Gate 2 requires a hash-bound runtime target summary and independently binned signed/refined checks before promotion.",
     "PET training remains forbidden until the committed Gate-2 target gate passes."
   ],
-  "next_authorized_action": "Construct and test the literal negweight-refined target from the committed G2 data/background inventories. Do not start PET training.",
+  "next_authorized_action": "Run the canonical learned Stay-Positive target construction on the production G2 NPZ in the existing compute holder and validate its hash-bound telemetry. Do not start PET training.",
   "wake": {
     "tmux_session": "g2-dump-wake-r2",
     "event": "docs/orchestration/state/g2-dump-56120687-wakeup.json",

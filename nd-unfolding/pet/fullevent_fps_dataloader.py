@@ -230,6 +230,22 @@ def inventory_order_hash(*arrays):
     return h.hexdigest()
 
 
+def _verify_stored_identity(d, key, evidence_arrays, label):
+    """Recompute an inventory's identity/order hash from its stable-order evidence and require it to
+    equal the value the G2 dump persisted. Fail closed on a missing or mismatched (reordered/wrong)
+    inventory. Runs where arrays are materialized (compute node / tiny fixtures), never on the login
+    node against the full NPZ. Returns the verified hash string."""
+    files = set(d.files) if hasattr(d, "files") else set(d)
+    if key not in files:
+        raise ValueError(f"[G2-IDENTITY] input missing stored '{key}' (old schema; fail closed)")
+    want = inventory_order_hash(*[np.asarray(a) for a in evidence_arrays])
+    got = str(np.asarray(d[key]).item() if hasattr(d[key], "item") else d[key])
+    if got != want:
+        raise ValueError(f"[G2-IDENTITY] {label} identity mismatch ({key}): stored != recomputed "
+                         "(reordered/tampered/wrong inventory; fail closed)")
+    return got
+
+
 def coherent_bootstrap_factors(n_data, n_sig, n_bkg, seed):
     """Three GLOBAL Poisson(1) factors over the full data / signal-MC / background-MC
     inventories, drawn BEFORE any subset (F7 step 1). Distinct reproducible streams; the signal
@@ -271,6 +287,99 @@ def build_negweight_refined_target(data_cell, bkg_cell, w_bkg, pot_scale, n_cell
     cell = np.concatenate([np.asarray(data_cell), np.asarray(bkg_cell)])
     refined = stay_positive_refine_binned(signed, cell, int(n_cells))
     return refined[:len(data_signed)], refined[len(data_signed):]
+
+
+# --------------------------------------------------------------------------------------------
+# Gate-2 negweight-refined CONSTRUCTION (Option-A literal background injection + Stay-Positive).
+# The binned `stay_positive_refine_binned` above is FIXTURE-ONLY (needs a pre-assigned cell index;
+# it backs the coherence/independent cross-check tests). PRODUCTION refinement is the LEARNED
+# UNBINNED classifier `unfold_2d_omnifold_unbinned.refine_stay_positive` on CONTINUOUS reco
+# features (the locked ND/PET method, arXiv:2505.03724). It is wired here via a DEFERRED import +
+# injectable `refine_fn` because u2d imports ROOT/TF at module load (segfaults on the login node),
+# so the canonical learned call runs at RUNTIME on a compute node; the login-safe tests inject an
+# algorithm-identical sklearn refinement to validate the construction/alignment/telemetry.
+# --------------------------------------------------------------------------------------------
+def learned_stay_positive_refiner():
+    """Deferred handle to the CANONICAL learned Stay-Positive refinement (u2d.refine_stay_positive).
+    Lazy because unfold_2d_omnifold_unbinned imports ROOT/TF at module load; runtime/compute-node
+    only (NOT importable on the login node)."""
+    from unfold_2d_omnifold_unbinned import refine_stay_positive
+    return refine_stay_positive
+
+
+def build_signed_measured_inventory(refine_feat_data, refine_feat_bkg, w_bkg, pot_scale,
+                                    data_factor=None, bkg_factor=None):
+    """Assemble the COMPLETE signed measured inventory on the reco manifold: positive data rows
+    (+1 * data_factor) followed by the ALIGNED literal background rows at -w_bkg*pot_scale*bkg_factor
+    (Option-A negweight injection; the background factor multiplies the negative injection weight
+    BEFORE refinement). Pure/login-safe. Returns (refine_feat, signed_w, n_data, n_bkg, raw_pos_sum,
+    raw_neg_sum). Fails closed on invalid POT, misaligned rows/columns, or non-finite inputs."""
+    fd = np.asarray(refine_feat_data, float)
+    fb = np.asarray(refine_feat_bkg, float)
+    wb = np.asarray(w_bkg, float)
+    if not (np.isfinite(pot_scale) and float(pot_scale) > 0.0):
+        raise ValueError(f"[negweight] invalid pot_scale {pot_scale!r} (require finite > 0)")
+    if fd.ndim != 2 or fb.ndim != 2 or fd.shape[1] != fb.shape[1]:
+        raise ValueError("[negweight] data/background refine-feature columns misaligned "
+                         f"({getattr(fd, 'shape', None)} vs {getattr(fb, 'shape', None)})")
+    if fb.shape[0] != wb.shape[0]:
+        raise ValueError(f"[negweight] background feature rows {fb.shape[0]} != w_bkg {wb.shape[0]} "
+                         "(misaligned background inventory; fail closed)")
+    if not (np.all(np.isfinite(fd)) and np.all(np.isfinite(fb)) and np.all(np.isfinite(wb))):
+        raise ValueError("[negweight] non-finite refine feature / w_bkg (fail closed)")
+    nd_, nb = fd.shape[0], fb.shape[0]
+    df = np.ones(nd_) if data_factor is None else np.asarray(data_factor, float)
+    bf = np.ones(nb) if bkg_factor is None else np.asarray(bkg_factor, float)
+    if df.shape != (nd_,) or bf.shape != (nb,):
+        raise ValueError("[negweight] coherent bootstrap-factor length mismatch (fail closed)")
+    data_signed = df                                                # +1 per data row * data_factor
+    bkg_signed = -(wb * float(pot_scale)) * bf                      # negative injection * bkg_factor
+    feat = np.vstack([fd, fb])
+    signed = np.concatenate([data_signed, bkg_signed])
+    return (feat, signed, int(nd_), int(nb),
+            float(data_signed.sum()), float(np.abs(bkg_signed).sum()))
+
+
+def refine_signed_measured(feat, signed_w, refine_fn, refine_kwargs=None):
+    """Apply the LEARNED Stay-Positive refinement (refine_fn; production = u2d.refine_stay_positive)
+    to the complete signed inventory and validate the output is FINITE, NON-NEGATIVE, and aligned to
+    the concatenated data/background rows. Never substitutes purity/all-ones weights: a refinement
+    that fails these invariants raises (fail closed). Returns (w_refined, telem)."""
+    signed_w = np.asarray(signed_w, float)
+    out = refine_fn(feat, signed_w, **dict(refine_kwargs or {}))
+    tup = isinstance(out, (tuple, list))
+    w_ref = np.asarray(out[0] if tup else out, float)
+    g = np.asarray(out[1], float) if tup and len(out) > 1 and out[1] is not None else None
+    frac_clip = float(out[2]) if tup and len(out) > 2 and out[2] is not None else None
+    if w_ref.shape[0] != signed_w.shape[0]:
+        raise ValueError(f"[negweight] refined weights {w_ref.shape[0]} not aligned to signed "
+                         f"inventory {signed_w.shape[0]} (fail closed)")
+    if not np.all(np.isfinite(w_ref)):
+        raise ValueError("[negweight] refinement produced non-finite weights (fail closed)")
+    if np.any(w_ref < 0.0):
+        raise ValueError("[negweight] refinement produced NEGATIVE weights (Stay-Positive violated)")
+    n_neg_in = int((signed_w < 0).sum())
+    telem = {
+        "refined_sum": float(w_ref.sum()), "refined_min": float(w_ref.min()),
+        "refined_max": float(w_ref.max()), "n_floored_zero": int((w_ref == 0.0).sum()),
+        "frac_clipped_reported": frac_clip, "n_negative_input_rows": n_neg_in,
+        "g_min": (float(g.min()) if g is not None else None),
+        "g_max": (float(g.max()) if g is not None else None)}
+    return w_ref, telem
+
+
+def assert_refined_target_is_replica(target_meta, *, bootstrap_seed):
+    """Fail closed on any attempt to reuse a NOMINAL refined target for a bootstrap replica (or a
+    replica target under the wrong seed). The refined target must be rebuilt PER REPLICA from that
+    replica's coherent draws; a nominal target (bootstrap_seed=None) can never stand in for one."""
+    got = target_meta.get("bootstrap_seed") if hasattr(target_meta, "get") else None
+    if got is None:
+        raise ValueError("[negweight] refined target has bootstrap_seed=None (NOMINAL) — cannot be "
+                         f"reused for replica seed {bootstrap_seed} (fail closed; rebuild per replica)")
+    if int(got) != int(bootstrap_seed):
+        raise ValueError(f"[negweight] refined target seed {got} != requested replica "
+                         f"{bootstrap_seed} (stale/reused target; fail closed)")
+    return True
 
 
 def validate_coherent_bootstrap(store, *, bootstrap_seed, n_sig_full, n_bkg_full=None,
@@ -363,116 +472,202 @@ def assert_publication_config(cfg):
 def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=None,
                             feature_names=DEFAULT_EVT_FEATURES, rank=0, size=1,
                             enforce_fps_edges=True, data_scalars_npz=None,
-                            bkg_mode="negweight-refined"):
+                            bkg_mode="negweight-refined", refine_fn=None, refine_kwargs=None,
+                            verify_identities=True):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
     domain. Returns (data, mc, imc, coord_reco, coord_gen, meta). Mirrors the recoil-only
     build_loaders subsample/bootstrap contract, but sets reco_evt/gen_evt on the loaders and
     keeps the truth PDG + angular geometry. FPS edges are asserted (fail closed) unless
-    enforce_fps_edges=False (tests with synthetic edges)."""
+    enforce_fps_edges=False (tests with synthetic edges).
+
+    NEGWEIGHT-REFINED (locked publication nominal): the measured DataLoader carries the COMPLETE
+    signed measured inventory -- positive data rows ++ the aligned literal background clouds/event
+    features at -w_bkg*pot_scale -- refined by the learned Stay-Positive classifier to finite
+    non-negative weights aligned to the concatenated data/background rows. The data row count is
+    derived from the G2 data inventory `measured_pc` (NOT any legacy/purity `measured_weights`).
+    `refine_fn` (default = the deferred canonical u2d.refine_stay_positive) is injectable so the
+    login-safe tests can pass an algorithm-identical sklearn refinement; the refined-target
+    telemetry lands in meta['target'] for decision review."""
     d = np.load(inputs_npz, allow_pickle=True)
     if enforce_fps_edges:
         assert_extended_fps_edges(d["edges_0"], d["edges_1"])
+    if bkg_mode not in ("negweight-refined", "purity"):
+        raise ValueError(f"[F7] unknown bkg_mode {bkg_mode!r} (negweight-refined|purity)")
+    # Old / recoil-only / purity-scaffolding schema: reject before any construction (fail closed).
+    if str(np.asarray(d["petSchemaVersion"]).item() if "petSchemaVersion" in d.files
+           else "") != "g2-fullevent-v1":
+        raise ValueError("[G2] input is not a g2-fullevent-v1 schema NPZ (old/recoil/scaffolding); "
+                         "the full-event negweight-refined path requires the G2 full schema.")
 
-    # Subsample RAW rows BEFORE the (heavy) cloud processing so build_truth_cloud's angular
-    # transform + concat only touch the training subset (a full 49.2M process would spike
-    # tens of GB). This is the TRAINING-subsample builder; the P5B production path adds the
-    # full-sample reweight-all + coherent-draw bootstrap + memmap (as the recoil-only loader
-    # did), documented in the launch plan.
+    # Data row count is derived from the G2 DATA inventory (measured_pc), NOT a legacy/purity
+    # 'measured_weights' array (which the negweight-refined G2 dump deliberately does not emit --
+    # the refined target is rebuilt per replica). Fail closed if the data cloud is absent.
+    if "measured_pc" not in d.files:
+        raise ValueError("[G2] input has no 'measured_pc' data inventory; cannot derive the data "
+                         "row count for the full-event measured target (fail closed).")
     N = np.asarray(d["pass_reco"]).shape[0]
-    M = np.asarray(d["measured_weights"]).shape[0]
-    imc = np.arange(N); ida = np.arange(M)
+    M = np.asarray(d["measured_pc"]).shape[0]
+
+    # Subsample the MC TRAINING side BEFORE the (heavy) cloud processing so build_truth_cloud's
+    # angular transform only touches the training subset (a full 49.2M process would spike tens of
+    # GB). The MEASURED target (data ++ injected background) is always the COMPLETE inventory -- its
+    # size is set by the measurement, independent of the MC training subsample -- so D vs B relative
+    # POT normalization is never broken by subsampling.
+    imc = np.arange(N)
     if max_events is not None:
-        rng = np.random.default_rng(seed)
-        imc = np.sort(rng.choice(N, min(max_events, N), replace=False))
-        ida = np.sort(rng.choice(M, min(max_events, M), replace=False))
+        imc = np.sort(np.random.default_rng(seed).choice(N, min(max_events, N), replace=False))
 
     reco_cloud, coord_reco = build_reco_cloud(np.asarray(d["part_reco"])[imc])
     gen_cloud, coord_gen = build_truth_cloud(np.asarray(d["part_gen"])[imc])
-    meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"])[ida])
     reco_scalars = np.asarray(d["reco_scalars"])[imc]
     truth_scalars = np.asarray(d["truth_scalars"])[imc]
-    # DATA event-feature scalars = the DATA-side reconstructed muon, row-aligned to
-    # measured_pc. CLM-007 fix (verified defect): NEVER silently fall back to MC reco_scalars
-    # when 'measured_scalars' is absent -- that indexes MC rows by data positions and injects
-    # -9999 sentinels from MC misses, corrupting the step-1 data classifier. Fail closed and
-    # require an explicit, row-count-aligned data-scalar npz (e.g. of_inputs_5d_fps_xps2.npz,
-    # whose 'measured' cols 0,1 = data muon pT,p‖).
+    pass_reco = np.asarray(d["pass_reco"])[imc]
+    pass_truth = np.asarray(d["pass_truth"])[imc]
+    # DATA event-feature scalars = the DATA-side reconstructed muon (G2 measured_scalars, full M).
+    # CLM-007: NEVER silently fall back to MC reco_scalars.
     if "measured_scalars" in d.files:
-        meas_scalars_full = np.asarray(d["measured_scalars"]); data_src = "pc-npz:measured_scalars"
+        meas_scalars = np.asarray(d["measured_scalars"]); data_src = "pc-npz:measured_scalars"
     elif data_scalars_npz is not None:
         with np.load(data_scalars_npz, allow_pickle=True) as dz:
             dkey = "measured_scalars" if "measured_scalars" in dz.files else "measured"
-            meas_scalars_full = np.asarray(dz[dkey])
+            meas_scalars = np.asarray(dz[dkey])
         data_src = f"{data_scalars_npz}:{dkey}"
-        if meas_scalars_full.shape[0] != M:
-            raise ValueError(
-                f"[CLM-007] data-scalar rows {meas_scalars_full.shape[0]} != measured_pc data "
-                f"rows {M} in {data_scalars_npz} -- not row-aligned; refuse to build.")
+        if meas_scalars.shape[0] != M:
+            raise ValueError(f"[CLM-007] data-scalar rows {meas_scalars.shape[0]} != measured_pc "
+                             f"rows {M} in {data_scalars_npz} -- not row-aligned; refuse to build.")
     else:
         raise ValueError(
-            "[CLM-007 GUARD] pc npz has no 'measured_scalars' and no data_scalars_npz was "
-            "given. Refusing to fall back to MC reco_scalars (would train step-1 data on "
-            "misaligned MC rows incl. -9999 sentinels). Pass data_scalars_npz (e.g. "
-            "of_inputs_5d_fps_xps2.npz; its 'measured' cols 0,1 = data muon pT,p‖).")
-    meas_scalars = meas_scalars_full[ida]
-    pass_reco = np.asarray(d["pass_reco"])[imc]
-    pass_truth = np.asarray(d["pass_truth"])[imc]
+            "[CLM-007 GUARD] pc npz has no 'measured_scalars' and no data_scalars_npz was given. "
+            "Refusing to fall back to MC reco_scalars (would inject -9999 MC-miss sentinels into "
+            "the step-1 data classifier).")
     event_reco, event_truth, event_data, meta = build_event_features(
         reco_scalars, truth_scalars, meas_scalars, feature_names,
         pass_reco=pass_reco, pass_truth=pass_truth)
     meta["data_scalar_source"] = data_src
     assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
                             pass_reco=pass_reco)
-    w_truth_full = np.asarray(d["w_truth"]).astype(np.float32)            # FULL signal-MC
-    measured_weights_full = np.asarray(d["measured_weights"]).astype(np.float32)  # FULL data
+    rmu = np.asarray(meta["reco_norm_mean"], np.float32); rsd = np.asarray(meta["reco_norm_std"], np.float32)
+
+    w_truth_full = np.asarray(d["w_truth"]).astype(np.float32)            # FULL signal-MC (raw)
     has_bkg = "w_bkg" in d.files
     meta["bkg_mode"] = bkg_mode
-    # NOMINAL = negweight-refined (locked): Option-A literal background-cloud injection +
-    # Stay-Positive. It REQUIRES the aligned background clouds/scalars/weights; fail closed if
-    # the FPS input lacks them (the current xps2 scaffolding does). Purity is a REGRESSION
-    # CONTROL only, never the publication nominal.
+    meta["estimator_fingerprint"] = (str(np.asarray(d["estimator_fingerprint"]).item())
+                                     if "estimator_fingerprint" in d.files else None)
+    # NEGWEIGHT-REFINED requires the aligned background inventory + a valid POT scale. These cheap
+    # presence checks run BEFORE the (heavier) identity verification so a missing-background nominal
+    # fails fast; the CLM-007 data-scalar guard above still fires first for a data-scalar-absent input.
+    pot_scale = None
     if bkg_mode == "negweight-refined":
         if not has_bkg:
             raise ValueError(
-                "[F7/negweight-refined] this FPS input has NO background inventory "
-                "('w_bkg'/background clouds+scalars absent). The negweight+Stay-Positive nominal "
-                "needs the Option-A background-cloud omnifile (regenerate via "
-                "sbatch_evloop_array_pointcloud_fps_bkgcloud.sh -> ..._bkgcloud.root, re-dump PC "
-                "inputs WITH bkg clouds). Failing closed. bkg_mode='purity' is a labeled "
-                "REGRESSION CONTROL only.")
-    elif bkg_mode == "purity":
-        meta["bkg_control"] = "purity = REGRESSION CONTROL, not the publication nominal"
-    else:
-        raise ValueError(f"[F7] unknown bkg_mode {bkg_mode!r} (negweight-refined|purity)")
+                "[negweight-refined] input has NO background inventory ('w_bkg'/background clouds "
+                "absent). The Option-A negweight + Stay-Positive nominal needs the aligned background "
+                "clouds/scalars/weights. Fail closed. bkg_mode='purity' is a labeled control only.")
+        for k in ("bkg_part_reco", "bkg_reco_scalars", "w_bkg"):
+            if k not in d.files:
+                raise ValueError(f"[negweight-refined] missing required background inventory '{k}' "
+                                 "(misaligned/incomplete background; fail closed).")
+        if "pot_scale" in d.files:
+            pot_scale = float(np.asarray(d["pot_scale"]).item())
+        elif "data_pot" in d.files and "mc_pot" in d.files:
+            pot_scale = float(np.asarray(d["data_pot"]).item()) / float(np.asarray(d["mc_pot"]).item())
+        else:
+            raise ValueError("[negweight-refined] no pot_scale (and no data_pot/mc_pot) in input; "
+                             "cannot POT-scale the background injection (fail closed).")
+        if not (np.isfinite(pot_scale) and pot_scale > 0.0):
+            raise ValueError(f"[negweight-refined] invalid pot_scale {pot_scale!r} (require finite>0)")
 
-    # F7 coherent estimator-bootstrap: draw ONE global Poisson factor per inventory over the FULL
-    # inventories BEFORE subsetting, then INDEX by imc/ida. NEVER a post-subset redraw. The
-    # persisted signal factor + inventory hash + fingerprint are re-consumed at extraction.
-    meta["bootstrap"] = None
+    # Record + (runtime) verify the stored per-inventory identity/order hashes. This runs where the
+    # arrays are materialized (compute node / tiny fixtures), never on the login node against the
+    # full 9.9 GB NPZ. Fail closed on a mismatched/absent stored identity.
+    ident = {}
+    if verify_identities:
+        ident["sig"] = _verify_stored_identity(
+            d, "sig_identity_hash", (w_truth_full, np.asarray(d["pass_truth"])), "signal")
+        ident["data"] = _verify_stored_identity(
+            d, "data_identity_hash", (np.asarray(d["measured_pc"]),), "data")
+        if has_bkg:
+            ident["bkg"] = _verify_stored_identity(
+                d, "bkg_identity_hash", (np.asarray(d["w_bkg"]), np.asarray(d["bkg_indices"])), "bkg")
+    meta["input_identity_hashes"] = ident
+
+    # Signal-MC coherent bootstrap factor (global-before-subset draw, indexed by imc). NEVER a
+    # post-subset redraw. The measured-side factors are applied to the FULL measured inventory below.
+    data_factor = sig_factor = bkg_factor = None
     if bootstrap_seed is not None:
-        n_bkg = int(np.asarray(d["w_bkg"]).shape[0]) if has_bkg else 0
+        n_bkg_full = int(np.asarray(d["w_bkg"]).shape[0]) if has_bkg else 0
         data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(
-            M, N, n_bkg, int(bootstrap_seed))
+            M, N, n_bkg_full, int(bootstrap_seed))
         w_truth = (w_truth_full[imc] * sig_factor[imc]).astype(np.float32)
-        measured_weights = (measured_weights_full[ida] * data_factor[ida]).astype(np.float32)
         meta["bootstrap"] = {
             "bootstrap_seed": int(bootstrap_seed), "n_sig_full": int(N), "n_data_full": int(M),
-            "n_bkg_full": int(n_bkg), "mc_indices": imc, "sig_bootstrap_factor": sig_factor[imc],
+            "n_bkg_full": int(n_bkg_full), "mc_indices": imc, "sig_bootstrap_factor": sig_factor[imc],
             "inventory_hashes": inventory_order_hash(w_truth_full),
-            # background factor over the FULL bkg inventory (Option-A negweight): the injection
-            # weight -w_bkg*pot_scale*bkg_factor is refined per replica once bkg clouds land.
             "bkg_bootstrap_factor": (bkg_factor if has_bkg else None)}
     else:
-        w_truth = w_truth_full[imc]; measured_weights = measured_weights_full[ida]
+        w_truth = w_truth_full[imc]
+        meta["bootstrap"] = None
 
-    # Imported at point of use (pulls in the vendored engine); kept AFTER the CLM-007
-    # fail-closed check so that guard is exercisable without TensorFlow.
-    from omnifold.dataloader import DataLoader
-    data = DataLoader(reco=meas_cloud, weight=measured_weights, normalize=True,
-                      reco_evt=event_data)
+    from omnifold.dataloader import DataLoader                    # vendored engine, imported late
     mc = DataLoader(reco=reco_cloud, gen=gen_cloud, pass_reco=pass_reco, pass_gen=pass_truth,
                     weight=w_truth, normalize=True, reco_evt=event_reco, gen_evt=event_truth,
                     rank=rank, size=size)
+
+    if bkg_mode == "purity":
+        # Labeled REGRESSION CONTROL only (never the publication nominal). Data-only measured
+        # sample at unit weight; the all-ones purity placeholder is acceptable HERE (control), and
+        # is forbidden for the negweight-refined nominal by write/loader guards.
+        meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]))
+        data = DataLoader(reco=meas_cloud, weight=np.ones(M, np.float32), normalize=True,
+                          reco_evt=event_data)
+        meta["bkg_control"] = "purity = REGRESSION CONTROL, not the publication nominal"
+        meta["target"] = {"target_mode": "purity-control", "bootstrap_seed": bootstrap_seed}
+        return data, mc, imc, coord_reco, coord_gen, meta
+
+    # ---------------- negweight-refined (locked publication nominal) ----------------
+    # (background presence + a valid pot_scale were already validated above, before identity check)
+    meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]))           # FULL data cloud
+    bkg_cloud, _ = build_reco_cloud(np.asarray(d["bkg_part_reco"]))          # aligned bkg cloud
+    bkg_reco_scalars = np.asarray(d["bkg_reco_scalars"])
+    w_bkg_full = np.asarray(d["w_bkg"]).astype(np.float32)
+    if not (bkg_cloud.shape[0] == bkg_reco_scalars.shape[0] == w_bkg_full.shape[0]):
+        raise ValueError("[negweight-refined] background cloud/scalars/w_bkg row counts disagree "
+                         "(misaligned background inventory; fail closed).")
+    # background event features under the SAME reconstructed-muon normalization as the data
+    event_bkg = _event_block(bkg_reco_scalars, feature_names, (rmu, rsd))
+    # refinement feature = continuous reco (pT, p_parallel) on the reco manifold (g(x)=D/(D+B))
+    cols = [SCALAR_COLS[f] for f in feature_names]
+    refine_feat_data = np.asarray(meas_scalars, float)[:, cols]
+    refine_feat_bkg = bkg_reco_scalars[:, cols]
+
+    feat, signed, n_data, n_bkg, raw_pos_sum, raw_neg_sum = build_signed_measured_inventory(
+        refine_feat_data, refine_feat_bkg, w_bkg_full, pot_scale,
+        data_factor=(data_factor if data_factor is not None else None),
+        bkg_factor=(bkg_factor if bkg_factor is not None else None))
+    refiner = refine_fn if refine_fn is not None else learned_stay_positive_refiner()
+    refine_backend = (getattr(refine_fn, "__name__", repr(refine_fn)) if refine_fn is not None
+                      else "u2d.refine_stay_positive")
+    w_refined, ref_telem = refine_signed_measured(feat, signed, refiner, refine_kwargs)
+
+    meas_cloud_all = np.concatenate([meas_cloud, bkg_cloud], axis=0)
+    event_meas_all = np.concatenate([event_data, event_bkg], axis=0)
+    if not (meas_cloud_all.shape[0] == event_meas_all.shape[0] == w_refined.shape[0]
+            == n_data + n_bkg):
+        raise ValueError("[negweight-refined] concatenated measured target rows misaligned "
+                         "(cloud/event-feature/weight; fail closed).")
+    data = DataLoader(reco=meas_cloud_all, weight=w_refined.astype(np.float32), normalize=True,
+                      reco_evt=event_meas_all)
+
+    meta["target"] = {
+        "target_mode": "negweight-refined", "bootstrap_seed": bootstrap_seed,
+        "refinement": "stay-positive (arXiv:2505.03724)", "refinement_backend": refine_backend,
+        "refinement_is_learned_production": (refine_fn is None),
+        "estimator_fingerprint": meta["estimator_fingerprint"],
+        "input_identity_hashes": ident, "pot_scale": pot_scale,
+        "raw_positive_sum": raw_pos_sum, "raw_negative_sum": raw_neg_sum,
+        "n_data_rows": n_data, "n_bkg_rows": n_bkg, "n_measured_rows": n_data + n_bkg,
+        "signed_target_hash": inventory_order_hash(signed),
+        **ref_telem}
     return data, mc, imc, coord_reco, coord_gen, meta
 
 

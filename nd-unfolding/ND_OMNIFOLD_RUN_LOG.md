@@ -1937,3 +1937,19 @@ miss sentinel guarding and POT consistency, and recomputed all three ordered
 inventory hashes. Result: PASS, zero failures. This closes Gate 1. The next
 dependency-ready action is Gate-2 literal `negweight-refined` target
 construction; PET training remains forbidden until its own gate passes.
+
+## 2026-07-19 — Gate-2 negweight-refined construction implemented (runtime pending)
+
+The same persistent Agent-B UUID repaired the full-event loader to derive data
+rows from `measured_pc`, construct the complete signed data plus literal
+POT-scaled background-cloud inventory, apply coherent factors before each
+replica's refinement, concatenate aligned measured features, and emit target
+identity/sum/floor/fingerprint telemetry. Missing or tampered schema,
+identities, POT, weights, clouds, alignment, and replica seeds fail closed.
+
+Independent orchestrator execution passed 95 login-safe tests: 28 focused
+Gate-2 tests plus 67 existing full-event/G2 contract tests. The fixture reaches
+the real NumPy DataLoader boundary and independently checks the binned signed
+and refined sums. This is construction evidence, not Gate-2 closure: the
+deferred canonical `u2d.refine_stay_positive` has not yet run on the production
+G2 NPZ in a ROOT-capable compute environment. No PET training was started.

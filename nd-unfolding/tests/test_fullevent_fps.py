@@ -138,6 +138,9 @@ class CLM007DataScalarGuard(unittest.TestCase):
             pass_reco=(rng.random(N) > 0.3), pass_truth=(rng.random(N) > 0.1),
             w_truth=np.ones(N, "f4"), measured_weights=np.ones(M, "f4"),
             edges_0=fe.CANONICAL_PT_EDGES, edges_1=fe.CANONICAL_PPARALLEL_EDGES,
+            # G2 schema marker so build_fullevent_loaders passes the schema gate and reaches the
+            # CLM-007 / needs-background guards these tests actually target (Gate-2 rewire).
+            petSchemaVersion="g2-fullevent-v1",
         )
         if with_measured_scalars:
             arr["measured_scalars"] = rng.random((M, 4)).astype("f4")

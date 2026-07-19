@@ -1,0 +1,40 @@
+{
+  "base_commit": "e071d1c866c66d1b2201dad7bab6e11d91064f0d",
+  "files": {
+    "loader": {
+      "path": "nd-unfolding/pet/fullevent_fps_dataloader.py",
+      "sha256": "c0521d210d9c8f592613e420f6cd7bd82523b879988739eff420779106d0fdd5"
+    },
+    "new_gate2_tests": {
+      "path": "nd-unfolding/tests/test_fullevent_gate2.py",
+      "sha256": "b1c3c29f1ed183f50886783fcec680f66111b7b893bdde50fb2e806e93b7992e"
+    },
+    "updated_interface_tests": {
+      "path": "nd-unfolding/tests/test_fullevent_fps.py",
+      "sha256": "8f8509a91e1cc04719adbc4e8286a256736df490c482fa7088cf8ccf44ac7944"
+    }
+  },
+  "implemented": [
+    "data row count derived from measured_pc rather than legacy measured_weights",
+    "literal positive-data plus negative POT-scaled background-cloud inventory",
+    "coherent data/background factors applied before per-replica refinement",
+    "deferred canonical learned Stay-Positive refinement with aligned non-negative output gates",
+    "identity, schema, POT, finiteness, alignment, and replica-reuse fail-closed checks",
+    "decision-ready target telemetry and an end-to-end numpy-only DataLoader fixture"
+  ],
+  "owner": {
+    "profile": "claude-school-legacy",
+    "role": "agent-B-p5b",
+    "session_id": "46e4af3e-c3f2-4fa5-abc7-f0da72817282"
+  },
+  "remaining_blocker": "canonical u2d.refine_stay_positive has not yet executed on the production G2 NPZ in a ROOT-capable compute environment",
+  "schema_version": 1,
+  "status": "CONSTRUCTION_PASS_RUNTIME_PENDING",
+  "tests": {
+    "gate2": 28,
+    "total_passed": 95,
+    "result": "PASS"
+  },
+  "verdict": "GATE_2_NOT_YET_PASS",
+  "verified_at_utc": "2026-07-19T10:38:32Z"
+}
