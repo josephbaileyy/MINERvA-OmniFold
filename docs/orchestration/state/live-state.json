@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
   "current_dag_node": "Gate 1B / G2 MEFHC merge and full-schema input",
-  "state": "GATE 1A PASS / MERGE-INPUT READY",
+  "state": "GATE 1A PASS / MEFHC MERGE PASS / NPZ READY TO QUEUE",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -16,19 +16,13 @@
       "purpose": "Independent G2 launcher/gate verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56106974",
-      "tasks": "1-12",
-      "receipt": "docs/orchestration/state/g2-production-array-submit-20260719.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
-    "The current publication full-schema dumper is intentionally runtime-blocked and must be implemented against the validated G2 branches and three-inventory contract.",
-    "Recovered 1D/1E/1F/1P rows require the merged/full-schema builder to enforce the retained [0,30] x [0,120] GeV domain before training.",
+    "The reviewed full-schema dumper has not yet produced its runtime NPZ/receipt.",
+    "Gate-1B remains open until the batch NPZ product passes manifest, identity, schema, and retained-domain evidence gates.",
     "Gate 2 negweight-refined target construction and PET training are forbidden until the committed Gate-1 production gate passes."
   ],
-  "next_authorized_action": "Commit the all-12 Gate-1A evidence, then run a hash-bound no-clobber MEFHC merge on the existing interactive holder while the same Agent-B UUID implements the full-schema three-inventory dumper. No PET training yet.",
+  "next_authorized_action": "Commit the receipt-last MEFHC merge evidence, then queue the fail-closed 192G/12h CPU full-schema P=12 NPZ dump. No PET training until its committed receipt passes.",
   "wake": {
     "tmux_session": "g2-array-wake-r5",
     "event": "docs/orchestration/state/g2-array-56106974-r5-wakeup.json",

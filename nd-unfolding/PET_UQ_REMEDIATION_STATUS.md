@@ -43,12 +43,13 @@ Before any publication PET compute:
 ## Gate 1 — G2 full-schema FPS CV input
 
 **Current (2026-07-19): Gate 1A per-playlist production PASS; Gate 1B merged
-full-schema input pending.** All twelve hash-bound ROOT/receipt pairs passed one
+ROOT PASS, full-schema NPZ queued next.** All twelve hash-bound ROOT/receipt pairs passed one
 terminal validation, including exhaustive retained-domain receipts for recovered
 1D/1E/1F/1P. Aggregate truth and signal rows are exactly equal at 49,906,108.
-Next: no-clobber MEFHC merge, then implement/validate the currently runtime-
-blocked full-schema NPZ reader with explicit `[0,30] x [0,120]` GeV exclusion.
-Evidence: `docs/orchestration/state/g2-gate1-all12-validation-20260719.json`.
+The no-clobber MEFHC merge passed exhaustive validation and binds 21,797 finite
+out-of-domain rows for exclusion; the independently reviewed dumper enforces
+`[0,30] x [0,120]` GeV before inventory construction. Next: run and validate the
+full-schema NPZ in long CPU batch. Evidence: `nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json`.
 
 Regenerate the FPS CV point-cloud event loops and derived inputs with the exact
 `pet-fullevent-fps-v1` schema. The source must include aligned data, signal MC,

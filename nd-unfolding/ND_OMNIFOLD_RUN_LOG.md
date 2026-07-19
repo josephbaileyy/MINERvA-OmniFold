@@ -1891,3 +1891,15 @@ production only. Gate 1B remains the no-clobber MEFHC merge plus complete aligne
 full-schema NPZ; recovered rows require explicit downstream `[0,30] x [0,120]`
 GeV exclusion before training. No PET production was started. Evidence:
 `docs/orchestration/state/g2-gate1-all12-validation-20260719.json`.
+
+## 2026-07-19 — G2 Gate 1B MEFHC merge PASS
+
+The existing interactive holder merged the twelve hash-bound Gate-1A ROOTs in
+playlist order. A first fail-closed attempt exposed ROOT's additive treatment of
+the boolean `hasTruthOnlyMisses` (merged value 12, contract value 1) and published
+nothing. The corrected attempt required exactly twelve input flags, normalized
+that one semantic boolean to 1, and reran the full validation. Result: PASS,
+113,496,440,965 bytes, SHA-256 `9a16331f...`, exact aggregate count/POT agreement,
+zero structural failures, and 21,797 retained-domain exclusions bound. Receipt
+publication was last. The next dependency-ready action is the reviewed
+three-inventory P=12 NPZ dump in long CPU batch; no PET training has started.

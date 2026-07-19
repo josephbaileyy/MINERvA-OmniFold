@@ -1,0 +1,267 @@
+{
+  "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "tree_present:mc_truth_denom",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tree_present:mc_signal_reco",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tree_present:mc_background",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tree_present:data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mcPOT_positive",
+      "ok": true,
+      "detail": "4.978198462880827e+21"
+    },
+    {
+      "name": "dataPOT_positive",
+      "ok": true,
+      "detail": "1.057394261158926e+21"
+    },
+    {
+      "name": "tree_nonempty:mc_truth_denom",
+      "ok": true,
+      "detail": "49906108"
+    },
+    {
+      "name": "tree_nonempty:mc_signal_reco",
+      "ok": true,
+      "detail": "49906108"
+    },
+    {
+      "name": "tree_nonempty:mc_background",
+      "ok": true,
+      "detail": "566036"
+    },
+    {
+      "name": "tree_nonempty:data",
+      "ok": true,
+      "detail": "4119797"
+    },
+    {
+      "name": "petSchemaVersion",
+      "ok": true,
+      "detail": "g2-fullevent-v1"
+    },
+    {
+      "name": "hasFullEventSchema",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "fullPhaseSpace",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "truth_has_truth_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "truth_has_mc_id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "truth_no_reco_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "truth_no_reco_cloud",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "sig_has_reco_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "sig_has_truth_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "sig_has_cloud5",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "sig_has_truthcloud",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sig_has_mc_id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "bkg_has_reco_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "bkg_has_cloud5",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "bkg_has_wbkg",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "bkg_no_truth_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "bkg_has_mc_id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "data_has_reco_muon",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "data_has_cloud5",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "data_has_real_id",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "data_no_truth_side",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "data_no_mc_id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "data_no_truthcloud",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no_forbidden_counterpart",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "data_reco_parity",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sig_cloud_lengths_equal",
+      "ok": true,
+      "detail": "0/20000 rows unequal E/pos/z/view/time"
+    },
+    {
+      "name": "bkg_cloud_lengths_equal",
+      "ok": true,
+      "detail": "0/20000 rows unequal"
+    },
+    {
+      "name": "bkg_reco_muon_valid",
+      "ok": true,
+      "detail": "20000/20000 valid reco muon"
+    },
+    {
+      "name": "data_cloud_lengths_equal",
+      "ok": true,
+      "detail": "0/20000 rows unequal"
+    },
+    {
+      "name": "data_reco_muon_valid",
+      "ok": true,
+      "detail": "20000/20000 valid reco muon"
+    },
+    {
+      "name": "data_ev_id_populated",
+      "ok": true,
+      "detail": "5000 rows with nonzero ev_run/ev_gate"
+    },
+    {
+      "name": "cluster_view_populated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cluster_time_populated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hasTruthOnlyMisses_flag",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "nTruthOnlyMisses_positive",
+      "ok": true,
+      "detail": "20361799"
+    },
+    {
+      "name": "miss_sim_pass_zero",
+      "ok": true,
+      "detail": "0/5000"
+    },
+    {
+      "name": "miss_reco_sentinels",
+      "ok": true,
+      "detail": "0/5000"
+    },
+    {
+      "name": "miss_reco_vectors_empty",
+      "ok": true,
+      "detail": "0/5000"
+    },
+    {
+      "name": "miss_truth_identity_valid",
+      "ok": true,
+      "detail": "0/5000"
+    },
+    {
+      "name": "c_global_count_invariant",
+      "ok": true,
+      "detail": "mc_signal_reco=49906108 vs mc_truth_denom=49906108"
+    }
+  ],
+  "counts": {
+    "mc_truth_denom": 49906108,
+    "mc_signal_reco": 49906108,
+    "mc_background": 566036,
+    "data": 4119797,
+    "mcPOTUsed": 4.978198462880827e+21,
+    "dataPOTUsed": 1.057394261158926e+21,
+    "nTruthOnlyMisses": 20361799
+  },
+  "n_failed": 0,
+  "n_checks": 50
+}

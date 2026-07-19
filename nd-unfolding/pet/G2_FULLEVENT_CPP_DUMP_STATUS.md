@@ -1,7 +1,7 @@
 # G2 full-event C++ dump — implementation receipt
 
-**Status: BUILD-PASS / SMOKE-PASS / 12-PLAYLIST PRODUCTION-PASS; Gate-1A
-per-playlist evidence complete, Gate-1B merge/full-schema NPZ pending.** Array
+**Status: BUILD-PASS / SMOKE-PASS / 12-PLAYLIST PRODUCTION-PASS / MEFHC-MERGE-PASS;
+Gate-1A complete, Gate-1B full-schema NPZ pending.** Array
 `56106974` reached terminal state with eight normal `0:0` publications and four
 completed-loop artifacts recovered without recomputation through the committed,
 independently verified exhaustive retained-domain gate. The all-12 validator
@@ -10,10 +10,10 @@ recomputed every ROOT hash and returned PASS with zero failures. Evidence:
 (G2 C++ source/runtime owner), UUID `44b634fc-d211-4e09-9229-95a18d1984cc`,
 route claude-school. Fulfills `FULL_EVENT_INTERFACE_REQUEST.md`
 / `FULL_EVENT_FEATURE_CONTRACT.md` and `PET_UQ_REMEDIATION_STATUS.md` Gate 1.
-Source packet `486e53e` received an independent agy PASS. No MEFHC merge,
-full-schema NPZ, PET training, or scientific endpoint is claimed here. The
-recovered 1D/1E/1F/1P pairs remain conditional on explicit downstream retained-
-domain enforcement; the full-schema dumper must prove that before Gate 1B closes.
+Source packet `486e53e` received an independent agy PASS. The receipt-last merged
+ROOT is `113,496,440,965` bytes with SHA-256 `9a16331f...`; exhaustive validation
+passed with 21,797 out-of-domain rows bound for downstream exclusion. No
+full-schema NPZ, PET training, or scientific endpoint is claimed here.
 
 ## Turn-3 gate closure (2026-07-18)
 **SMOKE — PASS (1A).** Attempt-2 loop terminal (`rc=0`, `DONE`), validator PASS

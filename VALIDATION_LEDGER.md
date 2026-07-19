@@ -598,3 +598,21 @@ still required, and the downstream reader must enforce
 `0<=pT<=30 GeV`, `0<=p_parallel<=120 GeV` before training. Canonical summary:
 `docs/orchestration/state/g2-gate1-all12-validation-20260719.json` (sha256
 `23b652d69460d61f2c347d0ec50c883043df83e0aa3fab3eda56b18b7364911f`).
+
+## 2026-07-19 G2 Gate 1B — MEFHC merge VERIFIED
+
+The twelve Gate-1A ROOTs were merged in canonical playlist order with an explicit
+4-TiB TTree limit. ROOT's additive merge changed the semantic boolean
+`hasTruthOnlyMisses` from twelve input ones to 12; a fail-closed normalization
+required exactly 12 and rewrote only that field to 1 before validation.
+
+- Merged ROOT: 113,496,440,965 bytes; SHA-256
+  `9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f`.
+- Counts exactly match Gate 1A: truth = signal = 49,906,108; background 566,036;
+  data 4,119,797; native misses 20,361,799.
+- Exhaustive retained-domain validation: PASS, zero fatal/non-superseded
+  structural failures; 21,797 finite out-of-domain rows censused and bound.
+- Publication was no-clobber and receipt-last.
+
+This is merged interface/input evidence, not a PET or physics result. Canonical
+receipt: `nd-unfolding/g2_fullevent/merged/G2_MEFHC_MERGE_RECEIPT.json`.

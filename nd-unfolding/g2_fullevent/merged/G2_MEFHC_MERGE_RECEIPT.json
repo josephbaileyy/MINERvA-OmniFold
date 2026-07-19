@@ -1,0 +1,120 @@
+{
+  "aggregate_counts": {
+    "data": 4119797,
+    "dataPOTUsed": 1.057394261158926e+21,
+    "mcPOTUsed": 4.978198462880827e+21,
+    "mc_background": 566036,
+    "mc_signal_reco": 49906108,
+    "mc_truth_denom": 49906108,
+    "nTruthOnlyMisses": 20361799
+  },
+  "conditional_use": "Recovered pairs require the downstream builder to enforce 0<=pT<=30 GeV and 0<=p_parallel<=120 GeV before training.",
+  "domain_validation": {
+    "base_receipt_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/G2_MEFHC_DOMAIN_VALIDATION.json.base.json",
+    "base_receipt_sha256": "5d5f92f9d2b74799ccfcbd1639d2ab9996ad274e3fa9f928a7928dc37aeeccbd",
+    "non_superseded_failures": [],
+    "out_of_domain_censused_and_bound": 21797,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/G2_MEFHC_DOMAIN_VALIDATION.json",
+    "sha256": "d9820f665987e518216f6da6e2cd66148af72002df86673641b860afdaffe3de",
+    "status": "PASS"
+  },
+  "gate1a_summary": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/g2-gate1-all12-validation-20260719.json",
+    "sha256": "23b652d69460d61f2c347d0ec50c883043df83e0aa3fab3eda56b18b7364911f"
+  },
+  "merged_root": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "sha256": "9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "size_bytes": 113496440965
+  },
+  "metadata_normalization": {
+    "field": "hasTruthOnlyMisses",
+    "merge_pre_value": 12,
+    "published_value": 1,
+    "reason": "semantic boolean; TFileMerger adds TParameter values"
+  },
+  "ordered_inputs": [
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1A.root",
+      "playlist": "1A",
+      "sha256": "be922fb79a83dbd1054dd3bfad76ff7545fcecdad88082cf8232a5a31ac565cc",
+      "size_bytes": 9419026130
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1B.root",
+      "playlist": "1B",
+      "sha256": "a4a88415c7b566327375cdcebe883f6980b4634765fca29cdf89f7b94dc40796",
+      "size_bytes": 2483671645
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1C.root",
+      "playlist": "1C",
+      "sha256": "518d90e495e155a559943d1d466dc878d5f9f5b46008f38270b040a539ef5ad9",
+      "size_bytes": 4807464507
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1D.root",
+      "playlist": "1D",
+      "sha256": "06be7e6875f357af91b7e9d8d875e9b9759118c5c59002f5ac1fd205dc282b56",
+      "size_bytes": 14150286041
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1E.root",
+      "playlist": "1E",
+      "sha256": "6ab0ac90d75aa843e99f33d8a817dab27b418273cbef298f641e7344724394dc",
+      "size_bytes": 11651881243
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1F.root",
+      "playlist": "1F",
+      "sha256": "b5e7c28f40325015841e12c0f3e11987389eed61979e103effbf6f70473190fc",
+      "size_bytes": 16299560962
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1G.root",
+      "playlist": "1G",
+      "sha256": "70d7d0197e8ac141a2d30caea65812a4fa1c8f0c0e47c555ff8da1d98f53bb7a",
+      "size_bytes": 13717303472
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1L.root",
+      "playlist": "1L",
+      "sha256": "a94ab3f4609e468adbc402a6629ded3e8d984fdf8d596a05119304860e994115",
+      "size_bytes": 1329986521
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1M.root",
+      "playlist": "1M",
+      "sha256": "819ec52f214f69710bd85dc7502589f6ca7a9ab36681a68219ca3481714f1db4",
+      "size_bytes": 20006471723
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1N.root",
+      "playlist": "1N",
+      "sha256": "2c9ef0d99c430d9d1ea6e0e8700d363a6aeba2b6f3f74b6b10752b664ea3eed6",
+      "size_bytes": 11544193629
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1O.root",
+      "playlist": "1O",
+      "sha256": "d3ebb4ac272ecb2dd5d85b3375a3f57d735805f1c4ed32a8741f2b5fe227e2df",
+      "size_bytes": 3458840978
+    },
+    {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1P.root",
+      "playlist": "1P",
+      "sha256": "e986dab2bc64fb801eac0532df2a1539b7c409d3ccb46d8e6364feabc779ef4f",
+      "size_bytes": 4631598593
+    }
+  ],
+  "premerge_revalidation": {
+    "n_pairs": 12,
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/G2_MEFHC_PREMERGE_REVALIDATION.json",
+    "sha256": "d04dbce7f83d849ef9f4413609a15945a6782cf9f33789a3a49713cbbc699c98",
+    "status": "PASS"
+  },
+  "produced_utc": "2026-07-19T05:23:25.673272+00:00",
+  "receipt_schema": "g2-mefhc-merge-receipt-v1",
+  "runtime_head": "c2861407fdc29eb0766b53a8cfb3d06c5e6f2775",
+  "status": "PASS"
+}
