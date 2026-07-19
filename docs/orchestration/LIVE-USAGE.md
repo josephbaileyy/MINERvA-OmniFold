@@ -24,6 +24,12 @@ account view rather than by adding alias observations.
 - Treat stale or missing Claude data as unknown; never infer a percentage from
   the number of recent jobs.
 - A usage check must not replace or fork any worker session.
+- Standing user authorization recorded 2026-07-19 permits conversation
+  migration between the user's accounts. Preserve the same role/UUID, copy the
+  complete local provider session store with no clobber and verified hashes,
+  atomically switch the registry profile, and never dispatch the same
+  conversation concurrently from two homes. This authorization does not
+  authorize consuming a reset credit.
 
 The helper has no reset-credit consumption code. It only calls Codex
 `account/rateLimits/read`. `usage-policy.json` makes the reserve and warning

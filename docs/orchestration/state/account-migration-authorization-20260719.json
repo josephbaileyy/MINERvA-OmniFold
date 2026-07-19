@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-07-19T00:23:55Z",
+  "authorization": "User grants permission in all cases to migrate conversations between any user-controlled accounts.",
+  "scope": "persistent Claude, Codex, and agy conversation routing in this campaign",
+  "invariants": [
+    "preserve the conversation UUID and role identity",
+    "securely migrate the provider-side local session store before registry adoption or dispatch",
+    "use no-clobber copies and verify content hashes",
+    "record source and destination profiles plus migration evidence",
+    "never use migration to consume a protected reset credit",
+    "never concurrently dispatch the same conversation from two account homes"
+  ],
+  "revoked": false
+}
