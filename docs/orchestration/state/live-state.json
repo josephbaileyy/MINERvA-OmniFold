@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "P3F-PET full-schema shifted-source initialization",
-  "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR PASS / P3F-PET NOT STARTED",
+  "current_dag_node": "Gate 3 P3F-PET fresh full-schema shifted-source production",
+  "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR PASS / GATE 3 SOURCE ARRAY IN PROGRESS",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -21,12 +21,22 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "P3F-PET full-schema source generation has not yet been initialized; this scalar-audit wake explicitly prohibited starting it.",
-    "Publication nominal PET training remains blocked until a complete committed P3F-PET five-band x two-endpoint x twelve-playlist source manifest passes."
+  "jobs": [
+    {
+      "job_id": "56169838",
+      "tasks": "0-119",
+      "purpose": "fresh 5 x 2 x 12 P3F-PET full-schema shifted-source ROOT and per-task receipt production",
+      "state": "initially PENDING; terminal state owned by armed slurm-array watch",
+      "owner": "Slurm m3246 shared array 0-119%16",
+      "output": "nd-unfolding/p3f_pet_fullevent/{work,final,logs}",
+      "receipt": "docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json"
+    }
   ],
-  "next_authorized_action": "On the armed P3F-PET initialization deadline, run a complete usage snapshot, verify active writers and compute placement, then resume the preserved owner UUIDs as needed to preflight and launch collision-isolated full-schema shifted-source generation with a watch for every submitted job. Do not start nominal PET training before the committed Gate-3 manifest PASS.",
+  "blockers": [
+    "Gate 3 is not promoted until all 120 source tasks have terminal accounting, validated final ROOT/receipt pairs, and a complete independently verified aggregate manifest.",
+    "Publication nominal PET training remains blocked until that complete Gate-3 source manifest is committed PASS."
+  ],
+  "next_authorized_action": "On the first real event from p3f-pet-source-56169838 or p3f-pet-source-queue-56169838, reconcile exact per-task Slurm/output ownership once. Do not duplicate a running writer. After terminal success, build and independently validate the complete Gate-3 manifest before promotion. Do not start nominal PET training.",
   "wake": {"waker": true},
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",

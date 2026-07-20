@@ -1,0 +1,92 @@
+{
+  "receipt_schema": "p3f-pet-gate3-source-submit-v1",
+  "verdict": "SUBMITTED_ARMED",
+  "observed_at_utc": "2026-07-20T06:01:57Z",
+  "job_id": "56169838",
+  "cpus_per_task": 4,
+  "memory_per_task": "48G",
+  "time_limit": "12:00:00",
+  "qos": "shared",
+  "code_commit": "784e36084289e8ea9a1483cf4a24d099b10de0b8",
+  "code_commit_pushed": true,
+  "submission": {
+    "command": "sbatch --parsable --export=ALL,HOME=/global/homes/j/josephrb,P3F_LAUNCHER_SHA256=7c9018edf6cb20424a8ea116640b31dbf56c95de53f3087a045535abfd8dde5d nd-unfolding/pet/sbatch_p3f_pet_fullevent_evloop_array.sh",
+    "submit_time_cluster": "2026-07-19T23:01:18",
+    "submit_time_utc": "2026-07-20T06:01:18Z",
+    "account": "m3246",
+    "qos": "shared",
+    "constraint": "cpu",
+    "array": "0-119%16",
+    "requested_cpus_per_task": 4,
+    "requested_memory": "48G",
+    "wall": "12:00:00",
+    "initial_state": "PENDING",
+    "initial_reason": "None",
+    "initial_materialization": "tasks 0 and 1 split from compressed 2-119 parent; all observed pending",
+    "dashboard_observation_utc": "2026-07-20T06:05:09Z",
+    "dashboard_state_counts": {"RUNNING": 2, "PENDING": 118},
+    "dashboard_error_tasks": [],
+    "interactive_duplicate": false
+  },
+  "resource_evidence": {
+    "full_event_precedent_job": "56106974",
+    "observed_full_event_max_rss_range": "18.1-37.1 GiB across recorded attempts/tasks",
+    "memory_rationale": "48G is retained because prior full-event tasks exceeded 30 GiB; lower 16G scalar footing is unsafe for the full schema",
+    "scheduler_observed_cpus_per_materialized_task": 26,
+    "scheduler_cpu_note": "memory-driven shared-node allocation/billing observation; launcher requests four execution CPUs"
+  },
+  "bindings": {
+    "launcher_sha256": "7c9018edf6cb20424a8ea116640b31dbf56c95de53f3087a045535abfd8dde5d",
+    "p3f_validator_sha256": "d782a47868863f2fc9a743f25f91549f0ab70a3ce7ff64f4db946b36a2df38ed",
+    "domain_validator_sha256": "32634d6832b4c1f6e5f9036a425b7412f004e2de0aa77828106646d7fc6e3739",
+    "base_validator_sha256": "3b5c4ae9b954a6db2ac8dadf25abb433cc0024f9ee182e589de654ba44b5f1f8",
+    "binary_sha256": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+    "source_git_blob": "b7e1edbce21545f1f824fe706047bd0f943a60ea",
+    "source_sha256": "57792e42fe3f5a663016f94b91a5631fc50349135c92b35a08eaefcb85812be3",
+    "all_24_manifest_hashes_bound": true,
+    "inventory": "5 bands x 2 endpoints x 12 playlists = 120"
+  },
+  "output_ownership": {
+    "namespace": "nd-unfolding/p3f_pet_fullevent",
+    "work": "nd-unfolding/p3f_pet_fullevent/work/<BAND>_<IDX>_<PLAYLIST>",
+    "final_root": "nd-unfolding/p3f_pet_fullevent/final/runEventLoopOmniFold_P3F_PET_FE_<BAND>_<IDX>_<PLAYLIST>.root",
+    "final_receipt": "nd-unfolding/p3f_pet_fullevent/final/P3F_PET_receipt_<BAND>_<IDX>_<PLAYLIST>.json",
+    "logs": "nd-unfolding/p3f_pet_fullevent/logs/p3fpet_fe_<TASK>_56169838.{out,err}",
+    "preexisting_final_outputs": 0,
+    "per_task_flock": true,
+    "receipt_published_last": true,
+    "no_clobber_hardlink": true
+  },
+  "continuation": {
+    "terminal_watch": "p3f-pet-source-56169838",
+    "terminal_watch_kind": "slurm-array",
+    "terminal_tasks": "0-119",
+    "queue_latency_watch": "p3f-pet-source-queue-56169838",
+    "queue_latency_seconds": 3600,
+    "waker_preflight": "PASS",
+    "goals_disabled_on_resume": true,
+    "polling_required": false
+  },
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44"
+  },
+  "gate_state": {
+    "gate3": "IN_PROGRESS_NOT_PROMOTED",
+    "nominal_pet_training_allowed": false,
+    "next_dependency": "terminal array receipt or one-hour queue-latency event"
+  },
+  "final_capacity_snapshot": {
+    "observed_at_utc": "2026-07-20T06:05:05Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 40,
+    "codex_personal_reset_utc": "2026-07-26T05:33:07Z",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "full_reset_credits_available": 0,
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "numeric unknown",
+    "reset_credit_consumed": false
+  }
+}

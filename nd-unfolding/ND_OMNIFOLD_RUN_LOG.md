@@ -2016,3 +2016,13 @@ regressions and 29 launcher tests pass, including an executable synthetic
 receipt/resume/tamper round trip. This is code authorization only; Gate 3 is
 open and nominal PET training remains prohibited. Evidence:
 `docs/orchestration/state/p3f-pet-gate3-launch-code-gate-20260720.json`.
+
+The code gate was committed and pushed at `784e360`. Fresh source array
+`56169838` was then submitted as `0-119%16` on shared CPU with 4 requested
+CPUs, 48 GiB, and 12 hours per task. The 48-GiB request is evidence-based:
+prior full-event tasks reached roughly 37 GiB MaxRSS, so the older 16-GiB
+scalar footing is unsafe. No interactive duplicate exists. Canonical terminal
+and one-hour queue-latency watches are armed; Slurm and the external waker now
+own progress without model polling. Gate 3 remains open and nominal PET is
+still prohibited. Submission evidence:
+`docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json`.
