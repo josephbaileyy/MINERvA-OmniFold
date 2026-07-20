@@ -13,5 +13,7 @@
   "claim_lease_seconds": 900,
   "invoke_grace_seconds": 7200,
   "max_retries_default": 2,
+  "cron_walltime": "12:00:00",
+  "idle_guard_ticks": 3,
   "prompt_preamble": null
 }

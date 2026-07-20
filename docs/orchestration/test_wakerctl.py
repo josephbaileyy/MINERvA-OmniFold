@@ -505,6 +505,85 @@ class DispatchTests(WakerTestCase):
         self.assertFalse(second)
 
 
+class IdleGuardTests(WakerTestCase):
+    def write_config(self, **overrides):
+        overrides.setdefault("idle_guard_ticks", 3)
+        super().write_config(**overrides)
+
+    def test_idle_guard_fires_once_per_episode_and_resumes(self):
+        ctx = self.ctx()
+        for _ in range(2):
+            self.assertEqual(wakerctl.tick(ctx)["emitted"], [])
+        result = wakerctl.tick(ctx)
+        self.assertEqual(len(result["emitted"]), 1)
+        idle_id = result["emitted"][0]
+        self.assertTrue(idle_id.startswith("evt-idle-"))
+        # The idle event dispatches on the next tick; the guard must not
+        # re-fire while it is pending or after it is done.
+        for _ in range(6):
+            wakerctl.tick(ctx)
+            self.now += 60
+        calls = self.runner.action_calls("codex")
+        self.assertEqual(len(calls), 1)
+        self.assertIn("ended without continuation", calls[0]["argv"][-1])
+        idle_events = [e for e in (self.dir / "state" / "events").glob("evt-idle-*.json")]
+        self.assertEqual(len(idle_events), 1)
+
+    def test_idle_guard_respects_blocked_on_user_and_delete_reenables(self):
+        ctx = self.ctx()
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text(json.dumps({"decision_needed": "authorize Gate 3"}))
+        for _ in range(8):
+            self.assertEqual(wakerctl.tick(ctx)["emitted"], [])
+        self.assertEqual(self.runner.action_calls("codex"), [])
+        # The user answers and deletes the declaration: the guard wakes the
+        # campaign within threshold ticks.
+        os.unlink(blocked)
+        emitted = []
+        for _ in range(4):
+            emitted += wakerctl.tick(ctx)["emitted"]
+            self.now += 1
+        self.assertEqual(len(emitted), 1)
+
+    def test_idle_guard_resets_when_a_watch_is_armed(self):
+        ctx = self.ctx()
+        for _ in range(2):
+            wakerctl.tick(ctx)
+        self.arm_sentinel(ctx, "revive")
+        self.assertEqual(wakerctl.tick(ctx)["emitted"], [])
+        state = wakerctl.read_json(self.dir / "state" / "idle-state.json")
+        self.assertEqual(state, {"idle_ticks": 0, "fired_event": None})
+
+    def test_idle_guard_disabled_by_config(self):
+        self.write_config(idle_guard_ticks=0)
+        ctx = self.ctx()
+        for _ in range(10):
+            self.assertEqual(wakerctl.tick(ctx)["emitted"], [])
+
+
+class SigtermTests(WakerTestCase):
+    def test_sigterm_during_action_records_failure_and_retry(self):
+        ctx = self.ctx()
+
+        def slow_action(argv):
+            threading.Timer(0.2, os.kill, args=(os.getpid(), 15)).start()
+            time.sleep(5)
+            return types.SimpleNamespace(returncode=0, stdout="late")
+
+        self.runner.add(lambda a: "codex" in a[0], slow_action)
+        path = self.arm_sentinel(ctx, "walled")
+        path.write_text("x")
+        wakerctl.scan(ctx)
+        outcomes = wakerctl.dispatch(ctx)
+        self.assertEqual(outcomes, [("evt-walled", "failed")])
+        done = wakerctl.read_json(wakerctl.event_paths(ctx, "evt-walled")["done"])
+        self.assertEqual(done["rc"], 143)
+        self.assertTrue(wakerctl.event_paths(ctx, "evt-walled.r1")["event"].exists())
+        ledger = (self.dir / "state" / "LEDGER.tsv").read_text()
+        self.assertIn("action-terminated", ledger)
+
+
 class StatusAndCronTests(WakerTestCase):
     def test_status_reports_states_cross_node_readably(self):
         ctx = self.ctx()
@@ -523,6 +602,7 @@ class StatusAndCronTests(WakerTestCase):
         self.assertEqual(wakerctl.strip_managed_block(lines), existing)
         block = wakerctl.scrontab_lines(ctx, 5)
         self.assertIn("#SCRON -q cron", block)
+        self.assertIn("#SCRON -t 12:00:00", block)  # wall must outlive a resume turn
         self.assertTrue(any("wakerctl.py tick --quiet" in line for line in block))
 
     def test_install_cron_writes_table_through_scrontab(self):

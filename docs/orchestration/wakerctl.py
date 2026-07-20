@@ -20,11 +20,13 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import socket
 import stat
 import subprocess
 import sys
 import tempfile
+import threading
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -61,10 +63,17 @@ DEFAULT_PREAMBLE = (
     "this standing authorization; do not stop after only recommending it. "
     "Before ending the turn, re-arm continuation coverage with wakerctl (a "
     "watch for every job you submit, deadline you set, or reset you expect) "
-    "and refresh docs/orchestration/LIVE-STATE.md with its generator. Goals "
-    "remain disabled. If the ledger shows this event already reconciled, "
-    "record that and stop."
+    "and refresh docs/orchestration/LIVE-STATE.md with its generator. A turn "
+    "may only end in one of two states: at least one armed watch exists, or "
+    "you have written and committed "
+    "docs/orchestration/state/waker/BLOCKED-ON-USER.json stating exactly "
+    "which user decision is required. Goals remain disabled. If the ledger "
+    "shows this event already reconciled, record that and stop."
 )
+
+
+class ActionTerminated(Exception):
+    """The dispatcher received SIGTERM (e.g. Slurm wall) during an action."""
 
 
 class WakerError(RuntimeError):
@@ -495,6 +504,7 @@ def emit_event(
     *,
     retry_of: str | None = None,
     recon_of: str | None = None,
+    context: str | None = None,
 ) -> bool:
     record = {
         "schema_version": 1,
@@ -510,6 +520,8 @@ def emit_event(
         record["retry_of"] = retry_of
     if recon_of:
         record["recon_of"] = recon_of
+    if context:
+        record["context"] = context
     created = create_exclusive(
         event_paths(ctx, event_id)["event"], json.dumps(record, indent=2, sort_keys=True) + "\n"
     )
@@ -707,11 +719,29 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
     ):
         return "invoked-race"
     ctx.ledger(event_id, "invoked", f"type={event.get('event_type')}")
+    # A Slurm wall or shutdown delivers SIGTERM before SIGKILL. Convert it
+    # into a recorded failure + bounded retry so the event does not strand
+    # invoked-without-outcome until the reconciliation grace expires
+    # (post-deployment incident 2026-07-19 16:30 UTC, see WAKER.md).
+    old_handler = None
+    in_main_thread = threading.current_thread() is threading.main_thread()
+    if in_main_thread:
+
+        def _terminated(signum, frame):
+            raise ActionTerminated(f"signal {signum}")
+
+        old_handler = signal.signal(signal.SIGTERM, _terminated)
     try:
         rc = run_action(ctx, event)
+    except ActionTerminated as exc:
+        ctx.ledger(event_id, "action-terminated", str(exc))
+        rc = 143
     except (WakerError, agentctl.AgentCtlError, OSError) as exc:
         ctx.ledger(event_id, "action-exception", str(exc))
         rc = -1
+    finally:
+        if in_main_thread and old_handler is not None:
+            signal.signal(signal.SIGTERM, old_handler)
     outcome = "resumed" if rc == 0 else "failed"
     agentctl.atomic_write_json(
         paths["done"],
@@ -782,9 +812,85 @@ def maybe_reconcile(ctx: Ctx, event_id: str, grace: int) -> str:
     return "recon-emitted"
 
 
+def blocked_on_user_path(ctx: Ctx) -> Path:
+    return ctx.state_dir / "BLOCKED-ON-USER.json"
+
+
+def campaign_is_idle(ctx: Ctx) -> bool:
+    """No armed watch and every spooled event has a terminal disposition.
+
+    The idle guard's own events are excluded so that firing the guard does
+    not reset its one-nudge-per-episode state.
+    """
+    for watch in load_watches(ctx):
+        if watch.get("state") == "armed":
+            return False
+    if ctx.events_dir.is_dir():
+        for event_file in ctx.events_dir.glob("*.json"):
+            if event_file.stem.startswith("evt-idle-"):
+                continue
+            if not event_paths(ctx, event_file.stem)["done"].exists():
+                return False
+    return True
+
+
+def idle_guard(ctx: Ctx) -> str | None:
+    """Emit one campaign-idle wake per idle episode (2026-07-19 stall fix).
+
+    A campaign that ends a turn with nothing armed would otherwise wait
+    silently forever. The guard resumes the root once so it either arms the
+    next dependency-ready action or declares BLOCKED-ON-USER; the declaration
+    (or any newly armed watch) silences the guard. Deleting the declaration
+    re-enables it, which is the user's lever to wake the campaign after
+    answering.
+    """
+    threshold = int(ctx.config.get("idle_guard_ticks", 3))
+    if threshold <= 0:
+        return None
+    state_path = ctx.state_dir / "idle-state.json"
+    state = {"idle_ticks": 0, "fired_event": None}
+    if state_path.is_file():
+        with contextlib.suppress(OSError, json.JSONDecodeError):
+            state.update(read_json(state_path))
+    if not campaign_is_idle(ctx):
+        agentctl.atomic_write_json(state_path, {"idle_ticks": 0, "fired_event": None})
+        return None
+    if blocked_on_user_path(ctx).exists():
+        # Acknowledged stop: quiet is intentional until the user answers.
+        agentctl.atomic_write_json(state_path, {"idle_ticks": 0, "fired_event": None})
+        return None
+    state["idle_ticks"] = int(state.get("idle_ticks", 0)) + 1
+    fired = None
+    if state["idle_ticks"] >= threshold and not state.get("fired_event"):
+        stamp = dt.datetime.fromtimestamp(ctx.now(), tz=dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        event_id = f"evt-idle-{stamp}"
+        emit_event(
+            ctx,
+            event_id,
+            "idle-guard",
+            "campaign-idle",
+            {"idle_ticks": state["idle_ticks"]},
+            context=(
+                "The campaign has no armed watch, no pending event, and no "
+                "BLOCKED-ON-USER declaration: it ended without continuation. "
+                "Either arm wakerctl watches for the next dependency-ready "
+                "campaign action and proceed with it now, or write and commit "
+                "docs/orchestration/state/waker/BLOCKED-ON-USER.json stating "
+                "exactly which user decision is required, then stop."
+            ),
+        )
+        state["fired_event"] = event_id
+        fired = event_id
+    agentctl.atomic_write_json(state_path, state)
+    return fired
+
+
 def tick(ctx: Ctx) -> dict:
     emitted = scan(ctx)
     outcomes = dispatch(ctx)
+    idle_event = idle_guard(ctx)
+    if idle_event:
+        emitted = emitted + [idle_event]
     return {"emitted": emitted, "dispatch": outcomes}
 
 
@@ -819,6 +925,11 @@ def status(ctx: Ctx) -> dict:
     if tick_file.is_file():
         with contextlib.suppress(OSError, json.JSONDecodeError):
             last_tick = read_json(tick_file)
+    idle_state = None
+    idle_path = ctx.state_dir / "idle-state.json"
+    if idle_path.is_file():
+        with contextlib.suppress(OSError, json.JSONDecodeError):
+            idle_state = read_json(idle_path)
     return {
         "observed_at_utc": ctx.now_iso(),
         "node": socket.gethostname(),
@@ -826,15 +937,22 @@ def status(ctx: Ctx) -> dict:
         "events": events,
         "last_tick": last_tick,
         "resume_mutex_held": ctx.resume_mutex.exists(),
+        "campaign_idle": campaign_is_idle(ctx),
+        "blocked_on_user": blocked_on_user_path(ctx).exists(),
+        "idle_state": idle_state,
     }
 
 
 def scrontab_lines(ctx: Ctx, interval_minutes: int) -> list[str]:
     log = ctx.state_dir / "logs" / "cron-tick.log"
+    # The wall must exceed the longest legitimate root-resume turn: a tick
+    # that dispatches an action stays alive for the whole turn, and Slurm
+    # killing it mid-resume strands the event (2026-07-19 16:40 UTC incident).
+    walltime = ctx.config.get("cron_walltime", "12:00:00")
     return [
         SCRON_BEGIN,
         "#SCRON -q cron",
-        "#SCRON -t 00:10:00",
+        f"#SCRON -t {walltime}",
         f"#SCRON -o {log}",
         "#SCRON --open-mode=append",
         f"*/{interval_minutes} * * * * {ctx.python_bin()} {HERE / 'wakerctl.py'} tick --quiet",
@@ -1049,7 +1167,9 @@ def main() -> int:
             ctx.ledger(f"evt-{args.id}", "watch-disarmed", "")
             print(f"disarmed {args.id}")
         elif args.command == "emit":
-            created = emit_event(ctx, f"evt-{args.id}", args.id, args.type, {"context": args.context})
+            created = emit_event(
+                ctx, f"evt-{args.id}", args.id, args.type, {}, context=args.context
+            )
             print("emitted" if created else "already-exists")
         elif args.command in {"scan", "dispatch", "tick"}:
             result = {"scan": scan, "dispatch": dispatch, "tick": tick}[args.command](ctx)

@@ -76,12 +76,16 @@ queue-latency thresholds, deadlines, and missed heartbeats is delivered by
 /usr/bin/python3.11 orchestration/wakerctl.py status
 ```
 
-Before ending any turn that launches or waits on anything external, arm a
-watch for it. Each real event resumes the saved root thread exactly once with
-the correct CODEX_HOME, model, and permission flags; duplicate events,
-controller restarts, and stale locks are absorbed by the claim ledger. Never
-hand-write per-job watcher scripts or LLM sleep/poll loops; never re-arm the
-retired `watch_g2_*`/`resume_after_school_reset*` scripts.
+A turn may end only in one of two states: at least one armed watch covering
+the next external fact, or a committed
+`orchestration/state/waker/BLOCKED-ON-USER.json` naming the exact user
+decision required. Ending with neither triggers the idle guard, which resumes
+the root once per idle episode. Each real event resumes the saved root thread
+exactly once with the correct CODEX_HOME, model, and permission flags;
+duplicate events, controller restarts, stale locks, and wall-killed resumes
+are absorbed by the claim ledger and bounded retries. Never hand-write
+per-job watcher scripts or LLM sleep/poll loops; never re-arm the retired
+`watch_g2_*`/`resume_after_school_reset*` scripts.
 
 ## Plan around measured capacity
 

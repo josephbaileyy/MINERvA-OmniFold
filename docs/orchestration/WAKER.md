@@ -125,6 +125,36 @@ this). Retry policy: failed resumes retry up to `max_retries` (default 2)
 as derived events; preflight failures block *without* consuming the event and
 are retried by later ticks once the environment is repaired.
 
+## Post-deployment hardening (2026-07-20)
+
+First live cycle exposed two defects, both fixed and regression-tested:
+
+- **F9 — cron wall killed the in-flight resume.** The 16:30 UTC dispatch ran
+  inside a scrontab tick limited to `-t 00:10:00`; Slurm killed it mid-turn,
+  stranding the event invoked-without-outcome until the 2 h reconciliation
+  grace recovered it. Fixes: the managed block now uses `cron_walltime`
+  (default `12:00:00`, must exceed the longest legitimate turn), and the
+  dispatcher converts SIGTERM during an action into a recorded rc=143
+  failure plus bounded retry instead of a silent strand.
+- **F10 — silent campaign idle.** The recovered turn promoted Gate 2 and
+  ended with no armed watch, so nothing could ever wake the campaign
+  (~9 h lost). Fix: the **idle guard**. A turn may end only with ≥1 armed
+  watch or a committed `state/waker/BLOCKED-ON-USER.json` naming the exact
+  user decision required (the resume preamble now states this). If neither
+  holds for `idle_guard_ticks` consecutive ticks, one `campaign-idle` event
+  resumes the root — once per idle episode, so a misbehaving turn cannot
+  cause a token drip. Writing BLOCKED-ON-USER silences the guard; the user
+  **deletes that file after answering** to wake the campaign automatically
+  within a few ticks.
+
+**How to tell waiting from stopped** (`wakerctl.py status`): armed watches or
+undispatched events → working/waiting, leave it alone. `campaign_idle: true`
+with `blocked_on_user: true` → it needs you; read BLOCKED-ON-USER.json,
+answer (ledger/prompt/commit as appropriate), delete the file. `blocked`
+events → environment problem listed in the `.blocked` file. Neither watches
+nor blockers nor idle flags → transient (guard will act within
+`idle_guard_ticks` × 5 min).
+
 ## Migration (live campaign), rollback, and smoke
 
 1. `preflight` + `smoke` must pass (no live UUID, job, or output is touched).
