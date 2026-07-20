@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "job_id": "56162093",
+  "job_name": "p3f_scalar_audit",
+  "submitted_at_utc": "2026-07-19T20:58:28Z",
+  "account": "m3246",
+  "qos": "shared",
+  "constraint": "cpu",
+  "nodes": 1,
+  "ntasks": 1,
+  "cpus_per_task": 4,
+  "memory_per_task": "16G",
+  "time_limit": "02:00:00",
+  "placement": "batch: complete 120-file ROOT structural scan can outlive an interactive turn and consumes no LLM capacity",
+  "writer_scope": "collision-isolated preflight namespace only",
+  "output": "nd-unfolding/active_universe_5d/fps/preflight/P3F_SCALAR_INTERFACE_PREFLIGHT.json",
+  "stdout": "nd-unfolding/active_universe_5d/fps/logs/p3f_scalar_audit_56162093.out",
+  "stderr": "nd-unfolding/active_universe_5d/fps/logs/p3f_scalar_audit_56162093.err",
+  "collision_policy": "fail with rc=125 if the final preflight path already exists; temporary file is atomically renamed",
+  "scientific_scope": "structural preflight only; observation-time git/binary fields are not production provenance and cannot authorize P3F-PET",
+  "watch_id": "p3f-scalar-audit-56162093",
+  "watch_path": "docs/orchestration/state/waker/watches/p3f-scalar-audit-56162093.json"
+}

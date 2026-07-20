@@ -16,6 +16,18 @@ class SlurmArrayStatusTests(unittest.TestCase):
         self.assertEqual(result["overall"], "ACTIVE")
         self.assertEqual(result["counts"], {"RUNNING": 3})
 
+    def test_single_job_uses_synthetic_task_zero(self):
+        queue = "42|PENDING|Priority"
+        result = build_snapshot("42", [0], self.runner(queue, ""))
+        self.assertEqual(result["overall"], "ACTIVE")
+        self.assertEqual(result["counts"], {"PENDING": 1})
+        self.assertEqual(result["tasks"]["0"]["reason"], "Priority")
+
+    def test_single_job_terminal_accounting(self):
+        acct = "42|COMPLETED|0:0"
+        result = build_snapshot("42", [0], self.runner("", acct))
+        self.assertEqual(result["overall"], "COMPLETE")
+
     def test_complete_requires_all_zero(self):
         acct = "\n".join(f"42_{i}|COMPLETED|0:0" for i in range(1, 4))
         result = build_snapshot("42", [1, 2, 3], self.runner("", acct))

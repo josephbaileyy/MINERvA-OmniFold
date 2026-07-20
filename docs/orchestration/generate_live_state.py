@@ -129,8 +129,10 @@ def render(
         receipt = job["receipt"]
         counts = ", ".join(f"{key}={value}" for key, value in job["snapshot"].get("counts", {}).items()) or "unknown"
         errors = ",".join(str(x) for x in job["snapshot"].get("error_tasks", [])) or "none"
-        resources = f"{receipt.get('cpus_per_task','?')} CPU, {receipt.get('memory_per_task','?')}, {receipt.get('time_limit','?')}; {receipt.get('qos','?')} batch array"
-        lines.append(f"| `{job['job_id']}_[{job['tasks']}]` | **{job['snapshot'].get('overall','UNKNOWN')}**: {counts} | {errors} | {resources} |")
+        placement = "batch job" if job.get("single_job") else "batch array"
+        resources = f"{receipt.get('cpus_per_task','?')} CPU, {receipt.get('memory_per_task','?')}, {receipt.get('time_limit','?')}; {receipt.get('qos','?')} {placement}"
+        label = job["job_id"] if job.get("single_job") else f"{job['job_id']}_[{job['tasks']}]"
+        lines.append(f"| `{label}` | **{job['snapshot'].get('overall','UNKNOWN')}**: {counts} | {errors} | {resources} |")
     lines.extend(["", "## Wake", ""])
     if "waker_status" in wake_state:
         waker = wake_state["waker_status"]

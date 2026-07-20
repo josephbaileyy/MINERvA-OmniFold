@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "event_id": "evt-idle-20260720T035008Z",
+  "event_type": "campaign-idle",
+  "event_observed_at_utc": "2026-07-20T03:50:08Z",
+  "consumption": {
+    "read_count_this_turn": 1,
+    "valid": true,
+    "already_reconciled_before_turn": false
+  },
+  "reconciliation": {
+    "current_gate": "Gate 2 PASS; P3F-scalar interface prerequisite in progress; P3F-PET and PET not started",
+    "dependency_ready_action_started": true,
+    "batch_job_id": "56162093",
+    "batch_receipt": "docs/orchestration/state/p3f-scalar-audit-submit-20260720.json",
+    "armed_watch": "p3f-scalar-audit-56162093",
+    "agy_role": "agy-publication-redteam",
+    "agy_uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "agy_verdict": "PASS-REUSE: reuse 120 physics artifacts; repair retrospective provenance before promotion",
+    "continuity_owner_role": "agent-C-fps",
+    "continuity_owner_uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "continuity_owner_action": "historical-provenance validator repair dispatched through agentctl send"
+  },
+  "prohibitions_honored": {
+    "worker_replacement": false,
+    "reset_credit_consumed": false,
+    "physics_array_rerun": false,
+    "p3f_pet_started": false,
+    "pet_training_started": false,
+    "llm_wait_loop": false
+  }
+}

@@ -1,31 +1,40 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "Gate 2 promotion / Gate 3 not started",
-  "state": "GATE 1 PASS / GATE 2 PASS / GATE 3 NOT STARTED",
+  "current_dag_node": "P3F-scalar interface prerequisite validation",
+  "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR IN PROGRESS / P3F-PET NOT STARTED",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
-      "role": "agent-E-g2-source",
-      "uuid": "44b634fc-d211-4e09-9229-95a18d1984cc",
-      "purpose": "G2 source/runtime and production receipts"
+      "role": "agent-C-fps",
+      "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+      "purpose": "FPS continuity owner; historical P3F-scalar provenance repair"
     },
     {
-      "role": "agy-g2-gate-verifier",
-      "uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
-      "purpose": "Independent G2 launcher/gate verifier"
+      "role": "agy-publication-redteam",
+      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+      "purpose": "Owner-neutral reuse/provenance audit and later independent recheck"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "Gate 3 requires the committed full-schema P3F-PET source inventory and its own independent validation.",
-    "The current wake explicitly prohibits starting PET training or Gate-3 production."
+  "jobs": [
+    {
+      "job_id": "56162093",
+      "tasks": "0",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/p3f-scalar-audit-submit-20260720.json"
+    }
   ],
-  "next_authorized_action": "After this scoped Gate-2 evidence commit is pushed and a later wake authorizes Gate 3, build the full-schema P3F-PET source inventory. Do not start PET or Gate 3 in this wake.",
+  "blockers": [
+    "Job 56162093 must reach a terminal structural-preflight receipt through its armed waker.",
+    "Historical production provenance, all 120 SHA-256 hashes, and migration census must pass owner repair plus independent same-UUID verification and commit.",
+    "P3F-PET production and PET training remain blocked until that committed prerequisite PASS."
+  ],
+  "next_authorized_action": "Finish Agent-C's fail-closed historical-provenance repair; on the armed terminal event for job 56162093, reconcile the preflight, resume the same agy UUID for independent verification, and commit the P3F-scalar prerequisite only after PASS.",
   "wake": {"waker": true},
   "canonical_science": [
+    "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
-    "nd-unfolding/pet/G2_FULLEVENT_CPP_DUMP_STATUS.md",
+    "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
   "append_only_history": [

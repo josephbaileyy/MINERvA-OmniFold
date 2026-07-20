@@ -65,6 +65,11 @@ def expand_spec(spec: str) -> list[int]:
 
 
 def task_ids(job_id: str, token: str) -> list[int]:
+    # Represent a non-array job as synthetic task 0.  This keeps the snapshot
+    # schema uniform while allowing the live dashboard to cover ordinary batch
+    # jobs as well as arrays.
+    if token == job_id:
+        return [0]
     prefix = f"{job_id}_"
     if not token.startswith(prefix) or "." in token:
         return []

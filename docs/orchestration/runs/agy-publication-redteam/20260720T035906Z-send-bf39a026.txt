@@ -1,0 +1,34 @@
+**VERDICT: PASS-REUSE**
+
+The 120 physically complete ROOT files in `active_universe_5d/fps/` are scientifically sound and satisfy the *P3F-scalar interface* prerequisite. They were produced by array 55972324 using the Agent-A validated binary (`e63c74961d699313ef155065fc790ff1`) and the prepared launcher which exported `MNV101_FULL_PHASE_SPACE=1`. **No physics reruns are required.**
+
+However, you are blocked from proceeding to P3F-PET until Agent-C repairs the validator to securely bind historical provenance without corrupting it with the live G2 state.
+
+### 1. Conditions for Legitimate P3F-Scalar Reuse
+These artifacts are valid for P3F-PET *if and only if*:
+*   Their recorded manifest binds the exact production-time binary (`e63c74961d699313ef155065fc790ff1`) and the exact launcher hash used at the time, explicitly refusing the observation-time G2 binary.
+*   The manifest permanently binds the 120 artifacts via SHA-256 hashes.
+*   The validator explicitly extracts and verifies the migration census metadata (`activeUniverseTruthEntrants`, etc.).
+
+### 2. Ranked Evidence
+1.  **Runbook Prerequisite:** P3F-PET "Starts only after G2 and a committed P3F-scalar interface inventory." P3F-scalar does *not* require the G2 full-event point-cloud schema (which did not exist yet); it only requires the active-universe interface and scalar point-cloud branches (verified in `INTERFACE_VALIDATION.md`).
+2.  **Historical Integrity:** `INTERFACE_VALIDATION.md` guarantees the interface binary MD5 is `e63c74961d699313ef155065fc790ff1`. Array `55972324` executed the locked launcher `sbatch_evloop_array_5d_active_laterals_fps.sh` (which enforced `MNV101_FULL_PHASE_SPACE=1` and this MD5 check) successfully to completion.
+3.  **Validator Defect:** `p3s_manifest_summary.py` currently reads `md5sum {binpath}` dynamically. Since the binary was subsequently overwritten by G2, running the script naively now will overwrite the true production provenance with a false claim that G2 produced these files.
+
+### 3. Ownership and Rerun
+**Agent-C must own and write the repair.** Agent-C is the continuity owner of P3F-scalar. **Do not rerun the physics array.** The ROOT artifacts on disk are correct; only the retrospective summarization logic is flawed.
+
+### 4. PASS/BLOCK Gates for P3F-PET Start
+P3F-PET is **BLOCKED** until Agent-C commits a repaired `p3s_manifest_summary.py` and the resulting `p3s_fps_manifest.json` summary to HEAD.
+
+***
+
+### Implementation Packet for Agent-C
+Agent-C must apply the following structural changes to `nd-unfolding/p3s_manifest_summary.py` before running it:
+
+1.  **Historical Provenance Overrides:** Add argparse overrides for `--prov-commit`, `--prov-bin-md5`, and `--prov-launcher-blob`. If provided, use them in the `prov` dictionary instead of calling `_sh(...)` on the live environment.
+2.  **File Hashing:** In the per-file loop, compute and record `sha256 = _sh(f"sha256sum {p} | cut -d' ' -f1")` into the `rec` dictionary.
+3.  **Migration Census Verification:** Extract `activeUniverseTruthEntrants`, `activeUniverseTruthExits`, `activeUniverseRecoEntrants`, and `activeUniverseRecoExits` using `get_val()`. Add `checks["census_meta"] = (all 4 are not None)` and add them to the summary aggregation.
+4.  **Execution:** Agent-C must then execute:
+    `python p3s_manifest_summary.py --mode fps --prov-bin-md5 e63c74961d699313ef155065fc790ff1 --prov-commit <commit-of-array-launch>`
+5.  **Commit:** Stage and commit the modified script and the generated `p3s_fps_manifest.json`. Only then is P3F-PET authorized to begin.
