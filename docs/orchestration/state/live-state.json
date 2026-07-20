@@ -1,35 +1,32 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET UQ remediation",
-  "current_dag_node": "P3F-scalar interface prerequisite validation",
-  "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR IN PROGRESS / P3F-PET NOT STARTED",
+  "current_dag_node": "P3F-PET full-schema shifted-source initialization",
+  "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR PASS / P3F-PET NOT STARTED",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
       "role": "agent-C-fps",
       "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
-      "purpose": "FPS continuity owner; historical P3F-scalar provenance repair"
+      "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input"
+    },
+    {
+      "role": "agent-B-p5b",
+      "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+      "purpose": "Publication PET full-event schema and consumer-contract owner"
     },
     {
       "role": "agy-publication-redteam",
       "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
-      "purpose": "Owner-neutral reuse/provenance audit and later independent recheck"
+      "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56163874",
-      "tasks": "0",
-      "single_job": true,
-      "receipt": "docs/orchestration/state/p3f-scalar-fullaudit-submit-20260720.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
-    "Job 56163874 (complete historical hash audit) must reach a terminal receipt through its armed waker; failed structural job 56162093 is reconciled and superseded without retry.",
-    "The complete manifest artifact must independently pass all 120 SHA-256, producer, accounting, census, identity, schema, POT, completeness, miss and point-cloud checks before promotion.",
-    "P3F-PET production and PET training remain blocked until that committed prerequisite PASS."
+    "P3F-PET full-schema source generation has not yet been initialized; this scalar-audit wake explicitly prohibited starting it.",
+    "Publication nominal PET training remains blocked until a complete committed P3F-PET five-band x two-endpoint x twelve-playlist source manifest passes."
   ],
-  "next_authorized_action": "On the armed terminal event for job 56163874, reconcile it without an unchanged retry; if successful, resume the same agy UUID for independent artifact verification and commit/promote the P3F-scalar prerequisite only after PASS.",
+  "next_authorized_action": "On the armed P3F-PET initialization deadline, run a complete usage snapshot, verify active writers and compute placement, then resume the preserved owner UUIDs as needed to preflight and launch collision-isolated full-schema shifted-source generation with a watch for every submitted job. Do not start nominal PET training before the committed Gate-3 manifest PASS.",
   "wake": {"waker": true},
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
