@@ -1970,3 +1970,27 @@ the full 15x19 binned telemetry with zero failures. The same preserved agy
 Gate-2 verifier UUID independently returned PASS; Agent B needed no correction.
 Gate 2 is promoted. No PET training or Gate-3 production was started in this
 wake. Evidence: `docs/orchestration/state/gate2-target-r4-reconciliation-20260719.json`.
+
+## 2026-07-20 — P3F-scalar complete historical interface inventory PASS
+
+The corrected third wrapper attempt, Slurm job `56163874`, completed `0:0` in
+12m46s on `nid004130`. It ran validator commit
+`c06d07e246ac430b98fdacac9808ab59174bc33e` with validator SHA-256
+`678e4b15161ab7370fed5db42dddae2f8a97b8404ef30f87908ad72b974397e7`
+and emitted the complete historical manifest without touching the stale
+canonical path. The two earlier attempts remained prestart cancellations; no
+physics ROOT was regenerated.
+
+Independent reconstruction verified 120/120 SHA-bound files, zero missing,
+extras, or failures, 120 unique producer-log hashes, exact producer split
+`55961845`:1 plus `55972324`:119, per-file `COMPLETED/0:0`, all four migration
+census fields, endpoint identities, four-tree schemas, POT, completeness,
+native misses, and signal/background/data point-cloud contracts. The preserved
+`agy-publication-redteam` UUID returned PASS and required no Agent-C correction.
+
+The exact audited manifest (SHA-256 `8f957bf251728a7de57d4fe2ea8d00c2010c23d151e6c9c0a96d3ec31d4e60a8`)
+was promoted to `active_universe_5d/fps/p3s_fps_manifest.json`; the superseded
+4/120 incomplete manifest was retained in `preflight/archive/`. This commits
+the P3F-scalar interface prerequisite only. P3F-PET source generation and PET
+training were not started in this wake. Evidence:
+`docs/orchestration/state/p3f-scalar-fullaudit-promotion-20260720.json`.

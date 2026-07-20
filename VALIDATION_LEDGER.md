@@ -657,3 +657,27 @@ training did not start. Canonical receipts:
 `nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
 `docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
 and `docs/orchestration/state/g2-gate2-verifier-20260719.json`.
+
+## 2026-07-20 P3F-scalar interface inventory — VERIFIED
+
+Complete historical validation of the selection-shifted scalar FPS inputs passed
+for the exact five-band x two-endpoint x twelve-playlist inventory: 120/120
+files, zero missing/extras/failures, 120 distinct ROOT SHA-256 values, and 120
+unique recomputed producer-log hashes. Producer accounting is exactly job
+`55961845`: 1 file and job `55972324`: 119 files, with every file bound to
+`COMPLETED/0:0`.
+
+The 120 ROOTs total 748,222,225,235 bytes. Repeated-endpoint interface counts
+are `mc_truth_denom == mc_signal_reco = 499,061,080`, background 5,660,367,
+and data 41,197,970. The four-field aggregate migration census is truth
+entrants/exits 0/0 and reco entrants/exits 9,421/9,686. Identity, schema, POT,
+completeness, miss metadata, point-cloud contracts, per-file hashes, and all ten
+endpoint aggregates passed independent reconstruction. The preserved Gemini
+verifier returned PASS.
+
+The promoted canonical manifest has SHA-256
+`8f957bf251728a7de57d4fe2ea8d00c2010c23d151e6c9c0a96d3ec31d4e60a8`.
+This is a P3F-scalar interface prerequisite, not a PET or physics result;
+P3F-PET generation and PET training did not start in this wake. Canonical
+receipt:
+`docs/orchestration/state/p3f-scalar-fullaudit-promotion-20260720.json`.

@@ -31,6 +31,10 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- P3F-scalar interface inventory is committed PASS: the complete 5-band x
+  2-endpoint x 12-playlist (120/120) manifest is SHA- and producer-bound with
+  zero failures. This is prerequisite evidence only; P3F-PET generation and PET
+  training have not started.
 - The corrected 5D GBDT chain is adopted. Its `C_ML` varies the train/test split
   at fixed estimator seed 42; the dedicated estimator-only scan is an auxiliary
   robustness check and is not added as an independent matrix.

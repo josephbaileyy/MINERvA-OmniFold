@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "scope": "P3F-scalar complete historical interface-manifest validation and atomic promotion; no P3F-PET generation or PET training",
+  "external_event": {
+    "path": "docs/orchestration/state/waker/events/evt-p3f-scalar-fullaudit-56163874.json",
+    "read_count_this_wake": 1,
+    "valid": true,
+    "event_type": "slurm-job-complete",
+    "observed_at": "2026-07-20T04:50:07Z",
+    "head_at_event": "29efaa3de5026cb3d47a663a6f3c5a3ce0a15ff9"
+  },
+  "slurm": {
+    "job_id": "56163874",
+    "job_name": "p3f_scalar_fullaudit",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "submit": "2026-07-20T04:32:01Z",
+    "start": "2026-07-20T04:34:23Z",
+    "end": "2026-07-20T04:47:09Z",
+    "elapsed": "00:12:46",
+    "node": "nid004130",
+    "stdout": "nd-unfolding/active_universe_5d/fps/logs/p3f_scalar_fullaudit_56163874.out",
+    "stderr": "nd-unfolding/active_universe_5d/fps/logs/p3f_scalar_fullaudit_56163874.err",
+    "stderr_assessment": "benign duplicate ROOT dictionary warnings only"
+  },
+  "validator": {
+    "commit": "c06d07e246ac430b98fdacac9808ab59174bc33e",
+    "sha256": "678e4b15161ab7370fed5db42dddae2f8a97b8404ef30f87908ad72b974397e7",
+    "commit_is_ancestor_of_promotion_head": true
+  },
+  "audited_artifact": {
+    "path": "nd-unfolding/active_universe_5d/fps/preflight/p3s_fps_manifest_historical.json",
+    "sha256": "8f957bf251728a7de57d4fe2ea8d00c2010c23d151e6c9c0a96d3ec31d4e60a8",
+    "bytes": 203381,
+    "complete": true,
+    "expected_files": 120,
+    "passing_files": 120,
+    "missing": 0,
+    "extras": 0,
+    "failures": 0,
+    "root_sha256_values": 120,
+    "unique_producer_log_sha256": 120,
+    "producer_job_counts": {
+      "55961845": 1,
+      "55972324": 119
+    },
+    "total_root_bytes": 748222225235,
+    "aggregate_entries": {
+      "mc_truth_denom": 499061080,
+      "mc_signal_reco": 499061080,
+      "mc_background": 5660367,
+      "data": 41197970
+    },
+    "aggregate_migration_census": {
+      "TruthEntrants": 0,
+      "TruthExits": 0,
+      "RecoEntrants": 9421,
+      "RecoExits": 9686
+    }
+  },
+  "independent_validation": {
+    "failures": 0,
+    "checks": [
+      "exact 5-band x 2-endpoint x 12-playlist inventory",
+      "120 existing ROOT files with matching byte sizes and syntactically valid SHA-256 values",
+      "per-file COMPLETED/0:0 producer accounting and 120 recomputed producer-log hashes",
+      "four-field migration census",
+      "endpoint identity and universe metadata",
+      "four-tree schema and positive entry counts",
+      "finite POT metadata",
+      "truth/signal completeness equality and native-miss metadata",
+      "signal, background, and data point-cloud contracts",
+      "ten exact endpoint aggregates"
+    ]
+  },
+  "independent_verifier": {
+    "role": "agy-publication-redteam",
+    "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "turn": 27,
+    "verdict": "PASS",
+    "output": "docs/orchestration/runs/agy-publication-redteam/20260720T045216Z-send-51cd0e4d.txt",
+    "output_sha256": "ea453bb57fe6afffba7ce65f86920275d70a0fe2b60ffd01ebbb0fde56064f97",
+    "owner_correction_required": false
+  },
+  "continuity_owner": {
+    "role": "agent-C-fps",
+    "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "resumed_this_wake": false,
+    "reason": "independent validation and verifier PASS found no owner receipt correction"
+  },
+  "promotion": {
+    "canonical_path": "nd-unfolding/active_universe_5d/fps/p3s_fps_manifest.json",
+    "canonical_sha256": "8f957bf251728a7de57d4fe2ea8d00c2010c23d151e6c9c0a96d3ec31d4e60a8",
+    "archived_superseded_path": "nd-unfolding/active_universe_5d/fps/preflight/archive/p3s_fps_manifest_4of120_20260716.json",
+    "archived_superseded_sha256": "abfe81d4524760eaeb872d5dca2e0ab599a56037ba27e37ffa123809c33f92c2",
+    "archive_state": "4/120, complete=false",
+    "method": "recoverable archive then no-clobber reflink copy",
+    "promotion_commit": "SELF"
+  },
+  "gate": {
+    "p3f_scalar_interface_inventory": "PASS",
+    "p3f_pet_started": false,
+    "pet_training_started": false,
+    "next_dependency_ready_action": "P3F-PET full-schema shifted source generation on the frozen G2 schema, in a later continuation"
+  }
+}
