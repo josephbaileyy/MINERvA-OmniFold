@@ -1,0 +1,31 @@
+{
+  "declared_at_utc": "2026-07-20T22:38:00Z",
+  "by": "interim-claude-root(4a8668e1, interim_for codex 019f749a)",
+  "dag_node": "Gate 3 P3F-PET source production (array 56169838)",
+  "one_line": "Gate-3 source array 56169838 is 120/120 terminal and my independent audit PASSES, but promotion needs a SECOND owner-neutral verification and the designated verifier (agy) is auth-blocked. Choose how to obtain independent verification.",
+
+  "what_is_done": [
+    "Event evt-p3f-pet-source-56169838 (slurm-array-complete) read once and validated: 120 COMPLETED, no error/unknown/observer errors.",
+    "sacct 56169838: 120 array elements (tasks 0-119) all COMPLETED 0:0.",
+    "Independent orchestrator audit PASS (docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json, sha256 306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f): ownership bijection (120 receipt jobids == 120 sacct JobIDRaw, no foreign/missing writer), all 120 receipts PASS with zero non-superseded failures, provenance bindings match on-disk code hashes, 120 ROOT/receipt pairs with sizes + locks + DONE markers, complete unique 5x2x12 inventory.",
+    "Supersession on playlists 1D/1E/1F/1P is the frozen validator's own allowed muon-validity supersession (domain:superseded_within_allowed==True everywhere).",
+    "Reconciliation receipt: docs/orchestration/state/p3f-pet-gate3-source-reconciliation-56169838.json.",
+    "Usage snapshot taken (gate PASS); NO reset credit consumed; all worker UUIDs preserved."
+  ],
+
+  "exact_decision_required": "How should the REQUIRED independent (owner-neutral) verification of the Gate-3 source manifest be obtained, so Gate 3 can be promoted? The committed gate requires 'a complete independently verified aggregate manifest'; my own audit is not a second party.",
+
+  "why_blocked": "agy-publication-redteam (the designated owner-neutral verifier, UUID 440f42ef-c271-4f77-a410-a4a999166f44) is ENVIRONMENT-BLOCKED: its Antigravity/Gemini auth token will not load on this node (keyring/dbus /run/user/112498/bus absent, 'not logged into Antigravity', OAuth timed out). Evidence: runs/agy-publication-redteam/20260720T223201Z-send-dea6f2ad.{txt,stderr.log}. Claude workers agent-B-p5b and agent-C-fps are output stakeholders, not owner-neutral. The only other neutral verifier is a Codex role, which costs weekly capacity you just cut over to conserve.",
+
+  "options": {
+    "A_repair_agy": "Re-authenticate agy (log back into Antigravity/Gemini, e.g. on a node with a live keyring/dbus session, or refresh ~/.gemini creds). Then I route the same bounded verification to agy via agentctl.py send. Cost: no LLM/Codex capacity; needs your interactive login. Preferred if agy login is quick.",
+    "B_authorize_codex_verifier": "Authorize a Codex verifier for this one bounded verification and name the account: codex-personal (36% weekly remaining; the account you cut over to conserve; reset 2026-07-26T05:33:07Z) or codex-school (19%, sub-20% warning; reset 2026-07-24T02:51:04Z). No reset credit consumed; weekly capacity would be. State which account.",
+    "C_accept_orchestrator_audit": "Accept the orchestrator's independent audit (PASS) as sufficient for Gate-3 promotion this once, waiving the second-party verification given agy is down. Records a documented deviation from the two-party norm. Nominal PET training still stays behind its own gate."
+  },
+
+  "on_any_option": "After verification is satisfied (or waived per C), I will promote Gate 3, commit the promotion receipt, and STOP short of nominal PET training (which remains prohibited and needs its own launch-code gate + your explicit authorization). I will re-arm watches accordingly.",
+
+  "how_to_answer": "Per WAKER.md 'Answering a BLOCKED-ON-USER stop': delete this file, then emit a user-decision event, e.g.  /usr/bin/python3.11 wakerctl.py emit --id user-decision-$(date -u +%Y%m%d-%H%M) --type user-decision --context 'USER DECISION: option B, use codex-school for the independent verification; proceed and re-arm.'  A plain go-ahead can just delete the file.",
+
+  "invariants": "No nominal PET training started. No gate promoted. No reset credit consumed. All worker UUIDs preserved. Terminal array event handled and reconciled."
+}

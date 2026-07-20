@@ -1,60 +1,60 @@
 {
-    "schema_version": 1,
-    "campaign": "Publication PET UQ remediation",
-    "current_dag_node": "Gate 3 P3F-PET fresh full-schema shifted-source production",
-    "state": "GATE 1 PASS / GATE 2 PASS / P3F-SCALAR PASS / GATE 3 SOURCE ARRAY IN PROGRESS",
-    "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
-    "owners": [
-        {
-            "role": "agent-C-fps",
-            "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
-            "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input"
-        },
-        {
-            "role": "agent-B-p5b",
-            "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
-            "purpose": "Publication PET full-event schema and consumer-contract owner"
-        },
-        {
-            "role": "agy-publication-redteam",
-            "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
-            "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
-        }
-    ],
-    "jobs": [
-        {
-            "job_id": "56169838",
-            "tasks": "0-119",
-            "purpose": "fresh 5 x 2 x 12 P3F-PET full-schema shifted-source ROOT and per-task receipt production",
-            "state": "15 COMPLETED/0:0 and 105 PENDING at queue-latency reconciliation; terminal state owned by armed slurm-array watch",
-            "owner": "Slurm m3246 shared array 0-119%16",
-            "output": "nd-unfolding/p3f_pet_fullevent/{work,final,logs}",
-            "receipt": "docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json"
-        }
-    ],
-    "blockers": [
-        "Gate 3 is not promoted until all 120 source tasks have terminal accounting, validated final ROOT/receipt pairs, and a complete independently verified aggregate manifest.",
-        "Publication nominal PET training remains blocked until that complete Gate-3 source manifest is committed PASS."
-    ],
-    "next_authorized_action": "On the real terminal event from p3f-pet-source-56169838, reconcile exact per-task Slurm/output ownership once. After terminal success, build and independently validate the complete Gate-3 manifest before promotion. Do not create an interactive duplicate or start nominal PET training.",
-    "wake": {
-        "waker": true
+  "append_only_history": [
+    "docs/orchestration/RUNS.tsv",
+    "docs/orchestration/QUIET-PERIODS.tsv",
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md"
+  ],
+  "archival_index_only": [
+    "docs/orchestration/MIGRATION-HANDOFF.md",
+    "docs/orchestration/MIGRATION-DELTA.md",
+    "docs/orchestration/MIGRATION-TAKEOVER-STATUS.md",
+    "superseded followup prompts"
+  ],
+  "blockers": [
+    "Gate 3 not promoted: committed criterion requires a complete INDEPENDENTLY (owner-neutral) verified aggregate manifest; orchestrator audit PASSES but agy verifier is auth/environment-blocked. See state/waker/BLOCKED-ON-USER.json.",
+    "Publication nominal PET training remains blocked until the Gate-3 source manifest is committed PASS AND promoted (and needs its own launch-code gate)."
+  ],
+  "campaign": "Publication PET UQ remediation",
+  "canonical_science": [
+    "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
+    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
+    "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
+    "VALIDATION_LEDGER.md"
+  ],
+  "current_dag_node": "Gate 3 P3F-PET source reconciliation COMPLETE (manifest PASS); promotion BLOCKED on independent verification",
+  "jobs": [
+    {
+      "job_id": "56169838",
+      "output": "nd-unfolding/p3f_pet_fullevent/{work,final,logs}",
+      "owner": "Slurm m3246 shared array 0-119%16",
+      "purpose": "fresh 5 x 2 x 12 P3F-PET full-schema shifted-source ROOT and per-task receipt production",
+      "receipt": "docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json",
+      "state": "15 COMPLETED/0:0 and 105 PENDING at queue-latency reconciliation; terminal state owned by armed slurm-array watch",
+      "tasks": "0-119"
+    }
+  ],
+  "next_authorized_action": "Awaiting user decision (BLOCKED-ON-USER.json): obtain independent verification via (A) repaired agy, (B) an authorized Codex verifier account, or (C) accept orchestrator audit. Then promote Gate 3 and re-arm; do NOT start nominal PET.",
+  "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
+  "owners": [
+    {
+      "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input",
+      "role": "agent-C-fps",
+      "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82"
     },
-    "canonical_science": [
-        "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
-        "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
-        "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
-        "VALIDATION_LEDGER.md"
-    ],
-    "append_only_history": [
-        "docs/orchestration/RUNS.tsv",
-        "docs/orchestration/QUIET-PERIODS.tsv",
-        "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md"
-    ],
-    "archival_index_only": [
-        "docs/orchestration/MIGRATION-HANDOFF.md",
-        "docs/orchestration/MIGRATION-DELTA.md",
-        "docs/orchestration/MIGRATION-TAKEOVER-STATUS.md",
-        "superseded followup prompts"
-    ]
+    {
+      "purpose": "Publication PET full-event schema and consumer-contract owner",
+      "role": "agent-B-p5b",
+      "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282"
+    },
+    {
+      "purpose": "Owner-neutral launcher, inventory, and provenance verifier",
+      "role": "agy-publication-redteam",
+      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44"
+    }
+  ],
+  "schema_version": 1,
+  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 SOURCE 120/120 TERMINAL+RECONCILED, manifest PASS; PROMOTION PENDING owner-neutral independent verification (agy env-blocked)",
+  "wake": {
+    "waker": true
+  }
 }

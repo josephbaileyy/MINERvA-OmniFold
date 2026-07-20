@@ -1,0 +1,84 @@
+{
+  "receipt_schema": "p3f-pet-gate3-source-reconciliation-v1",
+  "verdict": "RECONCILED_MANIFEST_PASS_PROMOTION_PENDING_INDEPENDENT_VERIFICATION",
+  "observed_at_utc": "2026-07-20T22:25:07Z",
+  "handled_at_utc": "2026-07-20T22:37:00Z",
+  "actor": "interim-claude-root(4a8668e1)",
+  "event": {
+    "event_id": "evt-p3f-pet-source-56169838",
+    "event_type": "slurm-array-complete",
+    "watch_id": "p3f-pet-source-56169838",
+    "head_at_event": "7e69926d543e71ea0a94873998c36420915de511",
+    "read_exactly_once": true,
+    "previously_reconciled": false,
+    "ledger_prior_state": "invoked (this turn); no prior done/reconciled",
+    "payload_valid": true,
+    "payload_summary": "expected 120 tasks, COMPLETED=120, error_tasks=[], unknown_tasks=[], observer_errors=[], overall=COMPLETE"
+  },
+  "sacct_reconciliation": {
+    "command": "SLURM_TIME_FORMAT=%s sacct -j 56169838 -P -o JobID,JobIDRaw,State,ExitCode",
+    "array_elements": 120,
+    "tasks_0_119_present": true,
+    "all_completed_exit_0_0": true,
+    "jobidraw_range": ["56169838", "56222734"],
+    "note": "per-element JobIDRaw climbs across the range because array elements were split/started over ~16h on a busy shared cluster; this is expected, not a foreign writer."
+  },
+  "independent_orchestrator_audit": {
+    "tool": "docs/orchestration/state/_audit_gate3_source.py",
+    "manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+    "manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+    "verdict": "PASS",
+    "reconciled_tasks": 120,
+    "checks_performed": [
+      "ownership bijection: set of 120 receipt slurm.jobid == set of 120 sacct JobIDRaw (no foreign writer, none missing); each receipt array_task_id matches its JobIDRaw's sacct task",
+      "sacct: 120 elements tasks 0-119 all COMPLETED 0:0",
+      "every receipt verdict==PASS; validation_report.verdict==PASS n_failed==0; base_validator.non_superseded_failures==[]; frozen-validator checks domain:base_no_nonsuperseded_failures and domain:superseded_within_allowed both True",
+      "provenance bindings match in every receipt (binary 61d7dfbf, launcher 7c9018ed, p3f-validator d782a478, domain 32634d68, base 3b5c4ae9, source 57792e42 / blob b7e1edbc)",
+      "on-disk code hashes recomputed and equal the bindings for validate_p3f_pet_fullevent.py, validate_g2_fullevent_domain.py, validate_g2_fullevent_smoke.py, sbatch_p3f_pet_fullevent_evloop_array.sh",
+      "120 final ROOTs exist with on-disk size == receipt final_root.size_bytes; 120 per-task .p3fpet.lock present; [p3fpet] DONE <TAG> marker in each stdout log; 120/120 receipt/root pairs, zero one-sided",
+      "inventory grid complete and unique: 5 bands x 2 endpoints x 12 playlists == 120"
+    ],
+    "supersession_explained": {
+      "affected_playlists": ["1D", "1E", "1F", "1P"],
+      "affected_tasks": 40,
+      "superseded_base_checks": {"bkg_reco_muon_valid": 30, "data_reco_muon_valid": 20},
+      "rationale": "domain validator (pt_max=30, p_par_max=120) censuses and bounds out-of-domain muon kinematics, legitimately superseding the full-phase-space base muon-validity checks; the frozen validator's own domain:superseded_within_allowed check confirms these are within the allowed supersession set for every affected task. non-superseded failures are zero everywhere.",
+      "note": "orchestrator's first-pass criterion (n_failed==0) was stricter than the authoritative frozen validator; corrected to defer to the validator's encoded pass contract (non-superseded empty + supersession-within-allowed True)."
+    },
+    "integrity_limitation": "final ROOT integrity confirmed by existence + size vs receipt-recorded sha256 (produced in-job at validation time); per-file ~9.4GB x120 (~1.1TB) rehash and physics re-validation not performed in-turn."
+  },
+  "independent_verification_status": {
+    "required_for_promotion": true,
+    "designated_owner_neutral_verifier": "agy-publication-redteam (440f42ef-c271-4f77-a410-a4a999166f44)",
+    "attempted": true,
+    "outcome": "ENVIRONMENT_BLOCKED",
+    "evidence": "agentctl.py send exited 1; agy CLI could not load auth token (keyring/dbus /run/user/112498/bus absent; 'not logged into Antigravity'; OAuth timed out). See runs/agy-publication-redteam/20260720T223201Z-send-dea6f2ad.{txt,stderr.log}",
+    "claude_workers_not_neutral": "agent-B-p5b owns the PET schema/consumer contract and agent-C-fps is a source-production input owner; neither is owner-neutral for this output.",
+    "codex_verifier_available_but_costly": "codex-personal 36% weekly remaining (the account the user just cut over to conserve; reset 2026-07-26T05:33:07Z), codex-school 19% (sub-20% warning; reset 2026-07-24T02:51:01Z); no reset credit would be consumed but weekly capacity would.",
+    "decision_deferred_to_user": "docs/orchestration/state/waker/BLOCKED-ON-USER.json"
+  },
+  "gate_state": {
+    "gate3": "SOURCE_TERMINAL_RECONCILED_MANIFEST_PASS_NOT_PROMOTED",
+    "nominal_pet_training_allowed": false,
+    "reason_not_promoted": "committed Gate-3 criterion requires a complete independently verified aggregate manifest; the owner-neutral verifier is environment-blocked and the alternative (Codex) carries a capacity cost the user is actively conserving."
+  },
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true,
+    "provider_dispatches": "1 attempted (agy, failed on auth); 0 succeeded; 0 credits consumed"
+  },
+  "final_capacity_snapshot": {
+    "observed_at_utc": "2026-07-20T22:33:00Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 36,
+    "codex_personal_reset_utc": "2026-07-26T05:33:07Z",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "full_reset_credits_available": 0,
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "auth-blocked/unknown",
+    "reset_credit_consumed": false
+  }
+}
