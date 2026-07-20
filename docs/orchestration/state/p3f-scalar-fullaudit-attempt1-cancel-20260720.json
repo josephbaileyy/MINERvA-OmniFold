@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "job_id": "56163648",
+  "submitted_at_utc": "2026-07-20T04:28:40Z",
+  "state_at_decision": "PENDING/Priority",
+  "action": "cancelled before start and watch disarmed",
+  "reason": "post-submit SubmitLine readback exposed an over-escaped awk expression in the validator SHA guard",
+  "output_created": false,
+  "scientific_work_started": false,
+  "replacement_job_id": "56163662",
+  "unchanged_retry": false,
+  "correction": "replacement removes awk and extracts the sha256 token with shell parameter expansion"
+}

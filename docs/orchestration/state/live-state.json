@@ -18,18 +18,18 @@
   ],
   "jobs": [
     {
-      "job_id": "56162093",
+      "job_id": "56163874",
       "tasks": "0",
       "single_job": true,
-      "receipt": "docs/orchestration/state/p3f-scalar-audit-submit-20260720.json"
+      "receipt": "docs/orchestration/state/p3f-scalar-fullaudit-submit-20260720.json"
     }
   ],
   "blockers": [
-    "Job 56162093 must reach a terminal structural-preflight receipt through its armed waker.",
-    "Historical production provenance, all 120 SHA-256 hashes, and migration census must pass owner repair plus independent same-UUID verification and commit.",
+    "Job 56163874 (complete historical hash audit) must reach a terminal receipt through its armed waker; failed structural job 56162093 is reconciled and superseded without retry.",
+    "The complete manifest artifact must independently pass all 120 SHA-256, producer, accounting, census, identity, schema, POT, completeness, miss and point-cloud checks before promotion.",
     "P3F-PET production and PET training remain blocked until that committed prerequisite PASS."
   ],
-  "next_authorized_action": "Finish Agent-C's fail-closed historical-provenance repair; on the armed terminal event for job 56162093, reconcile the preflight, resume the same agy UUID for independent verification, and commit the P3F-scalar prerequisite only after PASS.",
+  "next_authorized_action": "On the armed terminal event for job 56163874, reconcile it without an unchanged retry; if successful, resume the same agy UUID for independent artifact verification and commit/promote the P3F-scalar prerequisite only after PASS.",
   "wake": {"waker": true},
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",

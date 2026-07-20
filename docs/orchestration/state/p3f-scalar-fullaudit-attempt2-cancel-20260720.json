@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "job_id": "56163662",
+  "submitted_at_utc": "2026-07-20T04:29:36Z",
+  "state_at_decision": "PENDING/Priority",
+  "action": "cancelled before start and watch disarmed",
+  "reason": "terminal job 56162093 proved the shared relative source setup_salloc_env.sh would fail before validation",
+  "output_created": false,
+  "scientific_work_started": false,
+  "replacement_job_id": "56163874",
+  "unchanged_retry": false,
+  "correction": "replacement sources /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh by absolute path"
+}

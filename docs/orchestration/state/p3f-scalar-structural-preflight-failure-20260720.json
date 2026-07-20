@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "job_id": "56162093",
+  "state": "FAILED",
+  "exit_code": "1:0",
+  "started_at_utc": "2026-07-20T04:09:50Z",
+  "ended_at_utc": "2026-07-20T04:10:06Z",
+  "elapsed": "00:00:16",
+  "node": "nid004082",
+  "exact_blocker": "source: setup_salloc_env.sh: file not found",
+  "cause": "repo-local setup script was sourced without an absolute or ./ path and was not found through PATH",
+  "output_created": false,
+  "retry": "none; the complete historical audit strictly supersedes this structural-only scan",
+  "watch": "disarmed after manual terminal reconciliation in the already-active orchestrator turn"
+}
