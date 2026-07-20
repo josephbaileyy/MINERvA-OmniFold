@@ -700,6 +700,52 @@ class NotifyTests(WakerTestCase):
         self.assertEqual(self.mail_calls(), [])
 
 
+class StatusReportTests(WakerTestCase):
+    def write_config(self, **overrides):
+        overrides.setdefault("notify_command", ["/usr/bin/mail", "-s", "{subject}", "user@example.com"])
+        overrides.setdefault("status_report_interval_seconds", 21600)
+        overrides.setdefault("idle_guard_ticks", 0)
+        super().write_config(**overrides)
+
+    def mail_calls(self):
+        return [c for c in self.runner.calls if c["argv"][0] == "/usr/bin/mail"]
+
+    def test_digest_sent_once_per_interval_bucket(self):
+        ctx = self.ctx()
+        self.arm_sentinel(ctx, "steady")
+        for _ in range(5):
+            wakerctl.tick(ctx)
+            self.now += 300
+        self.assertEqual(len(self.mail_calls()), 1)
+        self.now += 21600
+        wakerctl.tick(ctx)
+        wakerctl.tick(ctx)
+        calls = self.mail_calls()
+        self.assertEqual(len(calls), 2)
+        self.assertIn("6h status", calls[0]["argv"][2])
+        self.assertIn("watch steady: file-sentinel armed", calls[0]["input"])
+        self.assertIn("OPERATOR-GUIDE.md", calls[0]["input"])
+
+    def test_digest_headline_reflects_blocked_state(self):
+        ctx = self.ctx()
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text("{}")
+        wakerctl.tick(ctx)
+        digests = [c for c in self.mail_calls() if "6h status" in c["argv"][2]]
+        self.assertEqual(len(digests), 1)
+        self.assertIn("BLOCKED ON USER", digests[0]["argv"][2])
+
+    def test_digest_disabled_by_interval_zero(self):
+        self.write_config(status_report_interval_seconds=0)
+        ctx = self.ctx()
+        self.arm_sentinel(ctx, "quiet")
+        for _ in range(4):
+            wakerctl.tick(ctx)
+            self.now += 21600
+        self.assertEqual(self.mail_calls(), [])
+
+
 class StatusAndCronTests(WakerTestCase):
     def test_status_reports_states_cross_node_readably(self):
         ctx = self.ctx()

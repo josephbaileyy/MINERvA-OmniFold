@@ -16,5 +16,6 @@
   "cron_walltime": "12:00:00",
   "idle_guard_ticks": 3,
   "notify_command": ["/usr/bin/mail", "-s", "{subject}", "josephrb@nersc.gov"],
+  "status_report_interval_seconds": 21600,
   "prompt_preamble": null
 }

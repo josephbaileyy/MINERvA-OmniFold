@@ -171,7 +171,11 @@ email, exactly once per condition, whenever the campaign needs a human:
 
 Failed sends retry on later ticks; markers under `state/waker/notified/`
 dedupe. Healthy progress, idle-guard self-healing, and ordinary event
-handling never email. To disable, set `notify_command` to `null`; to use a
+handling never email on their own; instead a **status digest** goes out once
+per `status_report_interval_seconds` bucket (default 21600 s → 00/06/12/18
+UTC): headline (blocked/idle/armed), watches, events, tick liveness, Slurm
+jobs, recent commits and rounds — composed purely from filesystem state,
+zero LLM involvement. Set the interval to 0 to disable. To disable, set `notify_command` to `null`; to use a
 different transport (e.g. `ntfy.sh` push via curl), replace the argv — the
 subject substitutes `{subject}` and the body arrives on stdin.
 

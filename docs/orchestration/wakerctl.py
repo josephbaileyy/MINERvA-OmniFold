@@ -1014,6 +1014,62 @@ def idle_guard(ctx: Ctx) -> str | None:
     return fired
 
 
+def compose_status_report(ctx: Ctx) -> tuple[str, str]:
+    """Build the periodic digest purely from filesystem/scheduler state."""
+    report = status(ctx)
+    if report["blocked_on_user"]:
+        headline = "BLOCKED ON USER — your decision is required"
+    elif report["campaign_idle"]:
+        headline = "idle (guard will act or has acted)"
+    else:
+        armed = sum(1 for w in report["watches"] if w.get("state") == "armed")
+        headline = f"{armed} watch(es) armed"
+    lines = [f"MINERvA orchestration status ({report['observed_at_utc']}): {headline}", ""]
+    for watch in report["watches"]:
+        lines.append(f"watch {watch['watch_id']}: {watch['kind']} {watch.get('state')}")
+    for event in report["events"]:
+        lines.append(f"event {event['event_id']}: {event['state']}")
+    last_tick = report.get("last_tick") or {}
+    lines.append(f"last tick: {last_tick.get('at_utc', 'never')} on {last_tick.get('node', '?')}")
+    queue = ctx.runner(["squeue", "-u", os.environ.get("USER", "josephrb"), "-h", "-o", "%i %T %j"])
+    if queue.returncode == 0:
+        jobs = [row for row in queue.stdout.splitlines() if row.strip()]
+        lines.append(f"slurm jobs: {len(jobs)}")
+        lines.extend(f"  {row}" for row in jobs[:10])
+    head = ctx.runner(["git", "-C", str(ctx.repo), "log", "-3", "--format=%h %s"])
+    if head.returncode == 0 and head.stdout.strip():
+        lines.append("recent commits:")
+        lines.extend(f"  {row}" for row in head.stdout.splitlines()[:3])
+    runs_path = ctx.repo / "docs" / "orchestration" / "RUNS.tsv"
+    with contextlib.suppress(OSError):
+        rows = runs_path.read_text().splitlines()
+        lines.append("recent rounds:")
+        for row in rows[-3:]:
+            fields = row.split("\t")
+            if len(fields) > 3:
+                lines.append(f"  {fields[0]} {fields[3]}")
+    lines.append("")
+    lines.append("Reading and acting: docs/orchestration/OPERATOR-GUIDE.md")
+    return f"[MINERvA waker] 6h status: {headline}", "\n".join(lines)
+
+
+def status_report_guard(ctx: Ctx) -> str | None:
+    """Send a digest once per interval bucket; zero LLM involvement.
+
+    The bucketed notify key dedupes across concurrent tickers on different
+    nodes, and pins sends to fixed epoch boundaries (00/06/12/18 UTC for the
+    default 21600 s).
+    """
+    interval = int(ctx.config.get("status_report_interval_seconds", 0) or 0)
+    if interval <= 0 or not ctx.config.get("notify_command"):
+        return None
+    key = f"status-{int(ctx.now() // interval)}"
+    if (ctx.state_dir / "notified" / f"{key}.sent").exists():
+        return None
+    subject, body = compose_status_report(ctx)
+    return key if notify(ctx, key, subject, body) else None
+
+
 def tick(ctx: Ctx) -> dict:
     emitted = scan(ctx)
     outcomes = dispatch(ctx)
@@ -1021,6 +1077,9 @@ def tick(ctx: Ctx) -> dict:
     if idle_event:
         emitted = emitted + [idle_event]
     notified = notify_guard(ctx)
+    report_key = status_report_guard(ctx)
+    if report_key:
+        notified = notified + [report_key]
     result = {"emitted": emitted, "dispatch": outcomes}
     if notified:
         result["notified"] = notified
