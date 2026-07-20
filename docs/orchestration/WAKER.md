@@ -155,6 +155,45 @@ events → environment problem listed in the `.blocked` file. Neither watches
 nor blockers nor idle flags → transient (guard will act within
 `idle_guard_ticks` × 5 min).
 
+## Answering a BLOCKED-ON-USER stop
+
+Read the ask, then deliver your decision one of three ways:
+
+1. **Emit it (recommended).** Serialized by the dispatcher, so it can never
+   collide with an in-flight turn, and your words arrive verbatim in the
+   resume prompt:
+
+   ```bash
+   cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
+   cat state/waker/BLOCKED-ON-USER.json          # read the exact ask
+   rm state/waker/BLOCKED-ON-USER.json
+   /usr/bin/python3.11 wakerctl.py emit --id user-decision-$(date -u +%Y%m%d-%H%M) \
+     --type user-decision \
+     --context "USER DECISION: <your answer, including any authorization you are granting>. Ledger this, delete any stale blocked declaration, proceed accordingly, and re-arm watches."
+   ```
+
+   The next tick (≤5 min) resumes the orchestrator with that context.
+
+2. **Plain go-ahead.** If the ask was a simple yes/no and your answer is
+   "yes, continue", just delete the file; the idle guard re-wakes the
+   campaign with standing authorization within ~15 minutes.
+
+3. **Direct turn.** For a nuanced back-and-forth, send one bounded
+   `codex exec resume` yourself — only when no resume is in flight (no
+   event in `status` without a terminal state), and carry the pinned flags
+   that manual invocations do not inherit:
+
+   ```bash
+   env CODEX_HOME=/global/homes/j/josephrb/codex-homes/personal \
+     codex exec resume --disable goals --dangerously-bypass-approvals-and-sandbox \
+     --model gpt-5.6-sol -c 'model_reasoning_effort="xhigh"' \
+     019f749a-857b-7790-8cec-bc36b22908be \
+     "USER DECISION: <answer>. Delete state/waker/BLOCKED-ON-USER.json, ledger this, proceed, and re-arm watches before ending."
+   ```
+
+Never answer by editing BLOCKED-ON-USER.json in place — the file's absence
+is the wake signal, and text left inside it is read by nobody.
+
 ## Migration (live campaign), rollback, and smoke
 
 1. `preflight` + `smoke` must pass (no live UUID, job, or output is touched).
