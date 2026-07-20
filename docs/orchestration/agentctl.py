@@ -198,6 +198,10 @@ def build_start_command(
     else:
         if provider_log is None:
             raise AgentCtlError("agy requires a provider log path")
+        # agy reads its Antigravity OAuth state from $HOME/.gemini; a caller
+        # running under Claude account isolation (HOME=~/claude-homes/*) would
+        # otherwise send agy to an empty home and hit an auth prompt.
+        env["HOME"] = str(login_home())
         command = [expand_path(profile.get("executable", "~/.local/bin/agy"))]
         if profile.get("model"):
             command.extend(["--model", profile["model"]])
@@ -253,6 +257,8 @@ def build_resume_command(
     else:
         if cwd is None or provider_log is None:
             raise AgentCtlError("agy requires a working directory and provider log path")
+        # Same HOME pin as build_start_command: agy auth lives in $HOME/.gemini.
+        env["HOME"] = str(login_home())
         command = [expand_path(profile.get("executable", "~/.local/bin/agy"))]
         if profile.get("model"):
             command.extend(["--model", profile["model"]])

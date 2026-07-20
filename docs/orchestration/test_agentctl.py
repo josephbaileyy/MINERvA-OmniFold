@@ -76,6 +76,28 @@ class AgentCtlTests(unittest.TestCase):
             else:
                 os.environ["HOME"] = original
 
+    def test_agy_commands_pin_home_to_login_home(self):
+        profile = {"provider": "agy", "model": "Gemini 3.1 Pro (High)"}
+        original = os.environ.get("HOME")
+        try:
+            os.environ["HOME"] = "/tmp/fake-claude-home"
+            start_command, start_env = agentctl.build_start_command(
+                profile, "hi", Path("/tmp/cwd"), "sess", provider_log=Path("/tmp/p.log")
+            )
+            resume_command, resume_env = agentctl.build_resume_command(
+                profile, "hi", "sess", cwd=Path("/tmp/cwd"), provider_log=Path("/tmp/p.log")
+            )
+            login = str(agentctl.login_home())
+            self.assertEqual(start_env["HOME"], login)
+            self.assertEqual(resume_env["HOME"], login)
+            for command in (start_command, resume_command):
+                self.assertTrue(command[0].startswith(login))
+        finally:
+            if original is None:
+                os.environ.pop("HOME", None)
+            else:
+                os.environ["HOME"] = original
+
     def test_account_home_symlink_is_not_dereferenced(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
