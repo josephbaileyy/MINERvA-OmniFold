@@ -5,7 +5,8 @@ Canonical home for the wait/continuation subsystem. Code: `wakerctl.py` (+
 `state/waker/` (gitignored). The skills in
 `.agents/skills/persistent-orchestrator/` and
 `.claude/skills/persistent-orchestrator/` reference this file instead of
-carrying operational detail.
+carrying operational detail. Human interaction: `OPERATOR-GUIDE.md`.
+Shutdown/migration/bootstrap: `PORTING.md`.
 
 ## Why this exists (forensic findings, 2026-07-18/19)
 
@@ -157,10 +158,10 @@ nor blockers nor idle flags → transient (guard will act within
 
 ## Notifications (how the user learns without polling)
 
-`notify_command` in `waker-config.json` (default: `/usr/bin/mail` to the
-user's address; the NERSC relay accepted a verified test on 2026-07-20)
-pushes an email, exactly once per condition, whenever the campaign needs a
-human:
+`notify_command` in `waker-config.json` (current: `/usr/bin/mail` to
+`josephrb@nersc.gov`, which forwards to the user's Stanford inbox —
+delivery verified by the user 2026-07-20; direct gmail bounced) pushes an
+email, exactly once per condition, whenever the campaign needs a human:
 
 - a new `BLOCKED-ON-USER.json` declaration (body includes the ask and the
   answer instructions below);
