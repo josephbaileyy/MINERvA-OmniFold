@@ -25,9 +25,11 @@ class FakeRunner:
     def add(self, predicate, returncode=0, stdout=""):
         self.rules.append((predicate, returncode, stdout))
 
-    def __call__(self, argv, env=None, cwd=None):
+    def __call__(self, argv, env=None, cwd=None, input_text=None):
         with self.lock:
-            self.calls.append({"argv": list(argv), "env": dict(env) if env else None})
+            self.calls.append(
+                {"argv": list(argv), "env": dict(env) if env else None, "input": input_text}
+            )
         for predicate, returncode, stdout in self.rules:
             if predicate(argv):
                 if callable(returncode):
@@ -582,6 +584,95 @@ class SigtermTests(WakerTestCase):
         self.assertTrue(wakerctl.event_paths(ctx, "evt-walled.r1")["event"].exists())
         ledger = (self.dir / "state" / "LEDGER.tsv").read_text()
         self.assertIn("action-terminated", ledger)
+
+
+class NotifyTests(WakerTestCase):
+    def write_config(self, **overrides):
+        overrides.setdefault("notify_command", ["/usr/bin/mail", "-s", "{subject}", "user@example.com"])
+        overrides.setdefault("idle_guard_ticks", 0)
+        super().write_config(**overrides)
+
+    def mail_calls(self):
+        return [c for c in self.runner.calls if c["argv"][0] == "/usr/bin/mail"]
+
+    def test_blocked_on_user_notifies_exactly_once_with_instructions(self):
+        ctx = self.ctx()
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text(json.dumps({"decision_needed": "authorize Gate 3"}))
+        for _ in range(5):
+            wakerctl.tick(ctx)
+        calls = self.mail_calls()
+        self.assertEqual(len(calls), 1)
+        self.assertIn("needs your decision", calls[0]["argv"][2])
+        self.assertIn("authorize Gate 3", calls[0]["input"])
+        self.assertIn("Answering a BLOCKED-ON-USER stop", calls[0]["input"])
+
+    def test_new_blocked_declaration_notifies_again(self):
+        ctx = self.ctx()
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text("{}")
+        os.utime(blocked, (self.now - 100, self.now - 100))
+        wakerctl.tick(ctx)
+        os.unlink(blocked)
+        blocked.write_text(json.dumps({"decision_needed": "second ask"}))
+        os.utime(blocked, (self.now + 100, self.now + 100))
+        wakerctl.tick(ctx)
+        self.assertEqual(len(self.mail_calls()), 2)
+
+    def test_environment_blocked_event_notifies_once(self):
+        self.write_config(codex_bin=str(self.dir / "missing-codex"))
+        ctx = self.ctx()
+        path = self.arm_sentinel(ctx, "envblk")
+        path.write_text("x")
+        for _ in range(4):
+            wakerctl.tick(ctx)
+        calls = self.mail_calls()
+        self.assertEqual(len(calls), 1)
+        self.assertIn("Dispatch blocked", calls[0]["argv"][2])
+        self.assertIn("evt-envblk", calls[0]["input"])
+
+    def test_retries_exhausted_notifies(self):
+        ctx = self.ctx()
+        self.runner.add(lambda a: "codex" in a[0], 1, "always failing")
+        path = self.arm_sentinel(ctx, "exh")
+        path.write_text("x")
+        for _ in range(8):
+            wakerctl.tick(ctx)
+        exhausted = [c for c in self.mail_calls() if "retries exhausted" in c["argv"][2].lower()]
+        self.assertEqual(len(exhausted), 1)
+
+    def test_failed_send_retries_next_tick(self):
+        ctx = self.ctx()
+        state = {"fails": 1}
+
+        def flaky_mail(argv):
+            if state["fails"]:
+                state["fails"] -= 1
+                return types.SimpleNamespace(returncode=1, stdout="relay down")
+            return types.SimpleNamespace(returncode=0, stdout="")
+
+        self.runner.add(lambda a: a[0] == "/usr/bin/mail", flaky_mail)
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text("{}")
+        wakerctl.tick(ctx)
+        wakerctl.tick(ctx)
+        wakerctl.tick(ctx)
+        self.assertEqual(len(self.mail_calls()), 2)  # one failed, one delivered, then quiet
+        ledger = (self.dir / "state" / "LEDGER.tsv").read_text()
+        self.assertIn("notify-failed", ledger)
+        self.assertIn("\tnotified\t", ledger)
+
+    def test_no_notify_command_is_silent(self):
+        self.write_config(notify_command=None)
+        ctx = self.ctx()
+        blocked = wakerctl.blocked_on_user_path(ctx)
+        blocked.parent.mkdir(parents=True, exist_ok=True)
+        blocked.write_text("{}")
+        wakerctl.tick(ctx)
+        self.assertEqual(self.mail_calls(), [])
 
 
 class StatusAndCronTests(WakerTestCase):

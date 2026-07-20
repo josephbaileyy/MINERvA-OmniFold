@@ -154,12 +154,17 @@ class Ctx:
         self.clock = clock or (lambda: dt.datetime.now(dt.timezone.utc).timestamp())
 
     @staticmethod
-    def _run(argv: list[str], env: dict | None = None, cwd: Path | None = None):
+    def _run(
+        argv: list[str],
+        env: dict | None = None,
+        cwd: Path | None = None,
+        input_text: str | None = None,
+    ):
         return subprocess.run(
             argv,
             env=env,
             cwd=cwd,
-            stdin=subprocess.DEVNULL,
+            **({"input": input_text} if input_text is not None else {"stdin": subprocess.DEVNULL}),
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
@@ -770,6 +775,14 @@ def schedule_retry(ctx: Ctx, event: dict, event_id: str) -> None:
     max_retries = int(watch.get("max_retries", max_retries))
     if attempt > max_retries:
         ctx.ledger(base_id, "retries-exhausted", f"attempts={attempt - 1}")
+        notify(
+            ctx,
+            f"retries-exhausted-{base_id}",
+            "[MINERvA waker] Resume retries exhausted",
+            f"Event {base_id} failed {attempt - 1} retries; the campaign will not "
+            f"self-resume for it. Inspect state/waker/logs/{base_id}*.log and the "
+            "ledger, then emit a manual event or send a bounded turn.",
+        )
         return
     retry_id = f"{base_id}.r{attempt}"
     emit_event(
@@ -814,6 +827,67 @@ def maybe_reconcile(ctx: Ctx, event_id: str, grace: int) -> str:
 
 def blocked_on_user_path(ctx: Ctx) -> Path:
     return ctx.state_dir / "BLOCKED-ON-USER.json"
+
+
+def notify(ctx: Ctx, key: str, subject: str, body: str) -> bool:
+    """Send one user notification per key via the configured command.
+
+    The marker is written only after a successful send so transient transport
+    failures retry on later ticks; a rare crash between send and marker can
+    duplicate a notification, which is harmless.
+    """
+    command = ctx.config.get("notify_command")
+    if not command:
+        return False
+    marker = ctx.state_dir / "notified" / f"{key}.sent"
+    if marker.exists():
+        return False
+    argv = [str(part).replace("{subject}", subject) for part in command]
+    result = ctx.runner(argv, env=ctx.base_env(), cwd=ctx.repo, input_text=body)
+    if result.returncode != 0:
+        ctx.ledger(key, "notify-failed", f"rc={result.returncode}")
+        return False
+    create_exclusive(marker, ctx.now_iso() + "\n")
+    ctx.ledger(key, "notified", subject)
+    return True
+
+
+ANSWER_POINTER = (
+    "\n\nHow to answer: docs/orchestration/WAKER.md section 'Answering a "
+    "BLOCKED-ON-USER stop' (read the ask, delete the file, emit your decision "
+    "with wakerctl)."
+)
+
+
+def notify_guard(ctx: Ctx) -> list[str]:
+    """Push needs-your-input conditions to the user, exactly once each."""
+    sent: list[str] = []
+    blocked = blocked_on_user_path(ctx)
+    if blocked.exists():
+        stamp = int(blocked.stat().st_mtime)
+        with contextlib.suppress(OSError):
+            body = blocked.read_text()[:4000] + ANSWER_POINTER
+            if notify(
+                ctx,
+                f"blocked-on-user-{stamp}",
+                "[MINERvA waker] Orchestrator needs your decision",
+                body,
+            ):
+                sent.append(f"blocked-on-user-{stamp}")
+    if ctx.events_dir.is_dir():
+        for marker in ctx.events_dir.glob("*.blocked"):
+            event_id = marker.name[: -len(".blocked")]
+            if event_paths(ctx, event_id)["done"].exists():
+                continue
+            with contextlib.suppress(OSError):
+                if notify(
+                    ctx,
+                    f"env-blocked-{event_id}",
+                    "[MINERvA waker] Dispatch blocked by environment",
+                    f"Event {event_id} cannot dispatch:\n{marker.read_text()[:4000]}",
+                ):
+                    sent.append(f"env-blocked-{event_id}")
+    return sent
 
 
 def campaign_is_idle(ctx: Ctx) -> bool:
@@ -891,7 +965,11 @@ def tick(ctx: Ctx) -> dict:
     idle_event = idle_guard(ctx)
     if idle_event:
         emitted = emitted + [idle_event]
-    return {"emitted": emitted, "dispatch": outcomes}
+    notified = notify_guard(ctx)
+    result = {"emitted": emitted, "dispatch": outcomes}
+    if notified:
+        result["notified"] = notified
+    return result
 
 
 # ---------------------------------------------------------------------------

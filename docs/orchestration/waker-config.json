@@ -15,5 +15,6 @@
   "max_retries_default": 2,
   "cron_walltime": "12:00:00",
   "idle_guard_ticks": 3,
+  "notify_command": ["/usr/bin/mail", "-s", "{subject}", "jrbailey555@gmail.com"],
   "prompt_preamble": null
 }

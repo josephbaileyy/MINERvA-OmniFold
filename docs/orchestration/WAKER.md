@@ -155,6 +155,25 @@ events → environment problem listed in the `.blocked` file. Neither watches
 nor blockers nor idle flags → transient (guard will act within
 `idle_guard_ticks` × 5 min).
 
+## Notifications (how the user learns without polling)
+
+`notify_command` in `waker-config.json` (default: `/usr/bin/mail` to the
+user's address; the NERSC relay accepted a verified test on 2026-07-20)
+pushes an email, exactly once per condition, whenever the campaign needs a
+human:
+
+- a new `BLOCKED-ON-USER.json` declaration (body includes the ask and the
+  answer instructions below);
+- an event blocked by the environment (missing binary/home — the campaign
+  cannot self-resume until someone repairs it);
+- resume retries exhausted for an event.
+
+Failed sends retry on later ticks; markers under `state/waker/notified/`
+dedupe. Healthy progress, idle-guard self-healing, and ordinary event
+handling never email. To disable, set `notify_command` to `null`; to use a
+different transport (e.g. `ntfy.sh` push via curl), replace the argv — the
+subject substitutes `{subject}` and the body arrives on stdin.
+
 ## Answering a BLOCKED-ON-USER stop
 
 Read the ask, then deliver your decision one of three ways:
