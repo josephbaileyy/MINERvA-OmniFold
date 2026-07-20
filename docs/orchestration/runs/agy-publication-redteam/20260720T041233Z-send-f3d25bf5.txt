@@ -1,0 +1,88 @@
+**VERDICT: BLOCK**
+
+Agent C's repair successfully implements the file-level census reads, identity/schema tests, and atomic swap logic. However, it fails on strict historical provenance binding, completeness enforcement, and collision safety.
+
+The code **may not be committed**, and the 0.681-TiB read-only batch **may not be submitted** until the repairs below are applied.
+
+### Exact Defects
+
+1.  **Completeness Bypass (`--hash-files`)**: `inventory_complete()` does not enforce `--hash-files`. An invocation without it exits 0 with `complete=true`, violating the requirement that the complete manifest binds every file by SHA-256.
+2.  **No Extra-File Detection**: The inventory loop checks only the expected 120 paths. It ignores any unexpected/stale `.root` files in `active_universe_5d/fps/`. The tests do not mock extras.
+3.  **Aggregate Log Corroboration**: `corroborate_md5_in_logs` accepts the array if *any* logs contain the MD5. It fails to bind each of the 120 files to its *exact* producer log and log SHA-256. (For example, it would miss that task 0 was produced by `55961845` because it searches only the provided array job).
+4.  **Observation-Time Launcher Misrepresentation**: `launcher_provenance` records `"content_sha256": sha256_file(launcher_abs)` even when `committed_at_submit` is False. This misrepresents today's uncommitted file content as the exact production-time content.
+5.  **Non-Terminal `sacct` Acceptance**: `build_historical_provenance` parses the `sacct` State/ExitCode but does not fail-closed if the state is non-terminal (e.g., `FAILED`, `RUNNING`) or nonzero.
+6.  **Collision-Unsafe Atomic Write**: `atomic_write_json` uses `tmp = path + ".tmp"`. If two concurrent instances run, one will clobber the other's temp file before the `os.replace`.
+
+---
+
+### Smallest Repair Packet for Agent C
+
+Apply these modifications to `nd-unfolding/p3s_manifest_summary.py`:
+
+**1 & 2. Enforce Hashes and Extra-File Checks**
+```python
+def inventory_complete(present, missing, bad, hashed, extras):
+    return present == 120 and not missing and not bad and hashed and not extras
+
+# In main():
+expected_paths = {os.path.abspath(os.path.join(base, f"{b}_{ep}", f"runEventLoopOmniFold_5D_{pl}_active_{b}_{ep}.root"))
+                  for b in BANDS for ep in (0, 1) for pl in PLAYLISTS}
+actual_paths = set(glob.glob(f"{base}/*/*.root"))
+extras = [os.path.relpath(p, a.repo) for p in (actual_paths - expected_paths)]
+
+complete = inventory_complete(present, missing, bad, bool(a.hash_files), extras)
+summary["extras"] = extras
+```
+*(Add `test_inventory_extra` to `test_p3s_historical.py` to ensure `extras` makes `complete=False`.)*
+
+**3 & 5. Exact Log Binding and Terminal Verification**
+Remove `corroborate_md5_in_logs`. Replace it with a file-to-log registry built from *all* logs in `logs_dir`, parsing `wrote {FINAL}`. Verify the terminal state of each identified job.
+```python
+def build_log_registry(logs_dir, expected_md5):
+    registry = {}
+    for p in glob.glob(os.path.join(logs_dir, "*.out")):
+        text = open(p, errors="replace").read()
+        if expected_md5 in text and "MNV101_FULL_PHASE_SPACE=1" in text:
+            for line in text.splitlines():
+                if "wrote " in line:
+                    final_abs = line.split("wrote ")[1].strip()
+                    job_id = os.path.basename(p).split('_')[2].split('.')[0] # e.g. ev_..._55972324_0.out -> 55972324
+                    # Defect 5: Fail-closed on sacct
+                    ss = _sh(f"sacct -j {job_id} --noheader -o State,ExitCode -P 2>/dev/null | head -1")
+                    if not ss or "COMPLETED" not in ss.split("|")[0] or ss.split("|")[1] != "0:0":
+                        raise HistoricalEvidenceError(f"Job {job_id} is not COMPLETED with 0:0")
+                    registry[final_abs] = {"log": os.path.basename(p), "log_sha256": sha256_file(p), "job_id": job_id}
+    return registry
+
+# In the per-file loop (historical mode):
+if a.provenance == "historical":
+    producer = registry.get(os.path.abspath(p))
+    if not producer:
+        checks["historical_log_bound"] = False
+    else:
+        checks["historical_log_bound"] = True
+        rec.update(producer)
+```
+
+**4. Honest Launcher Provenance**
+In `launcher_provenance`:
+```python
+    if committed_at_submit:
+        res["content_sha256"] = sha256_file(launcher_abs)
+        res["git_blob"] = _sh(f"cd {repo} && git hash-object {launcher_rel}")
+    else:
+        res["candidate_observed_sha256"] = sha256_file(launcher_abs)
+        res["production_content_sha256"] = "UNKNOWN"
+```
+
+**6. Unique Temp Files**
+In `atomic_write_json`:
+```python
+import tempfile
+def atomic_write_json(path, obj):
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".json.tmp")
+    with os.fdopen(fd, "w") as fh:
+        json.dump(obj, fh, indent=2)
+    os.replace(tmp, path)
+```

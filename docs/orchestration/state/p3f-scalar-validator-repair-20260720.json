@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "scope": "P3F-scalar historical manifest validator code gate; no scientific manifest result",
+  "continuity_owner": {
+    "role": "agent-C-fps",
+    "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "turn": 6,
+    "output": "docs/orchestration/runs/agent-C-fps/20260720T041444Z-send-c43d8861.json"
+  },
+  "independent_verifier": {
+    "role": "agy-publication-redteam",
+    "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "turn": 26,
+    "verdict": "PASS after three scoped residual fixes",
+    "output": "docs/orchestration/runs/agy-publication-redteam/20260720T042457Z-send-f4734628.txt"
+  },
+  "files": {
+    "nd-unfolding/p3s_manifest_summary.py": "sha256:678e4b15161ab7370fed5db42dddae2f8a97b8404ef30f87908ad72b974397e7",
+    "nd-unfolding/tests/test_p3s_historical.py": "sha256:78a1b89e9b0c6ae335956f424fe60bfb380a510926456e29c440ff4caa0befd1"
+  },
+  "verification": {
+    "focused_tests": "30/30 PASS",
+    "python_compile": "PASS",
+    "diff_check": "PASS",
+    "real_indexed_paths": 120,
+    "real_unique_log_sha256": 120,
+    "producer_job_counts": {"55961845": 1, "55972324": 119},
+    "producer_binding_or_accounting_failures": 0,
+    "unexpected_endpoint_roots": 0
+  },
+  "gate": {
+    "code_commit_authorized": true,
+    "read_only_complete_manifest_batch_authorized": true,
+    "manifest_promotion_authorized": false,
+    "p3f_pet_authorized": false,
+    "pet_training_authorized": false
+  }
+}

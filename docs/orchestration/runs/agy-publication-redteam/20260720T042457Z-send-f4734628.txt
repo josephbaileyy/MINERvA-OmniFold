@@ -1,0 +1,38 @@
+**VERDICT: PASS**
+
+Agent C has successfully implemented the six required blockers, backed by strict regex parsing, exact task mapping, explicit producer allow-lists, and canonical file protection. All evidence layers (log binding, array indexing, and exact inventory) are fail-closed. 
+
+I am authorizing a **scoped code commit** containing the final residual fixes below, followed immediately by the submission of the 0.681-TiB complete-manifest batch.
+
+### Authorized Scoped Commit
+Before submitting the batch, apply this scoped patch to `nd-unfolding/p3s_manifest_summary.py` to satisfy the remaining residual accounting, symlink, and mode-isolation requirements:
+
+```diff
+--- nd-unfolding/p3s_manifest_summary.py
++++ nd-unfolding/p3s_manifest_summary.py
+@@ -285,3 +285,3 @@
+     os.makedirs(d, exist_ok=True)
+-    if os.path.exists(path):
++    if os.path.lexists(path):
+         raise HistoricalEvidenceError(f"refuse to clobber existing final receipt: {path}")
+@@ -329,2 +329,4 @@
+         if historical:
++            if a.mode == "standard":
++                raise HistoricalEvidenceError("historical provenance explicitly unsupported for standard mode")
+             if not a.hash_files:
+@@ -404,3 +406,3 @@
+                         pb = bind_producer(p, band, ep, pl, index, expected_md5)
+-                        require_terminal_completed(pb["producer_job"], pb["producer_task"])
++                        pb.update(require_terminal_completed(pb["producer_job"], pb["producer_task"]))
+                         rec["producer"] = pb
+```
+
+*   **`lexists` protection:** Ensures a broken symlink at the destination will cleanly raise the `HistoricalEvidenceError` refusal rather than crash the script ungracefully with `FileExistsError` during `os.link()`.
+*   **Explicit mode isolation:** Guarantees historical extraction logic won't be invoked accidentally on standard universes.
+*   **Accounting retention:** Fulfills the requirement that the `sacct` state and exit code (`COMPLETED`, `0:0`) are printed into the final per-file receipt, not merely checked and discarded.
+
+### Next Actions
+1.  Commit `p3s_manifest_summary.py` and `tests/test_p3s_historical.py` to `HEAD` (including the scoped patch above).
+2.  Submit the historical full-hash batch:
+    `python p3s_manifest_summary.py --mode fps --provenance historical --hash-files`
+3.  **DO NOT** authorize manifest promotion (overwriting the canonical manifest) or P3F-PET training until the resulting `preflight/p3s_fps_manifest_historical.json` artifact is independently validated to have `complete=true` and exactly 120 hashes/producers securely bound.
