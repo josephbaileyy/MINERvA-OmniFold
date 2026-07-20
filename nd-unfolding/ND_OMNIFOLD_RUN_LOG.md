@@ -2026,3 +2026,15 @@ and one-hour queue-latency watches are armed; Slurm and the external waker now
 own progress without model polling. Gate 3 remains open and nominal PET is
 still prohibited. Submission evidence:
 `docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json`.
+
+At the one-hour queue-latency wake, canonical per-task accounting disproved the
+watch prompt's wholly-pending premise: tasks 0--14 had already completed
+`0:0`, each with a matching PASS ROOT/receipt pair, while tasks 15--119 were
+pending and no task was in an error state. Batch `56169838` therefore remains
+the sole writer; it was not cancelled and no interactive allocation was
+started. The wake exposed a control-plane bug in which completed array elements
+had disappeared from `squeue`; `wakerctl` now requires allocation-level
+`sacct` proof that no element ever started and auto-disarms latency watches
+once start evidence exists. All 93 orchestration tests pass. The terminal array
+watch remains armed, Gate 3 stays open, and nominal PET remains prohibited.
+Evidence: `docs/orchestration/state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json`.

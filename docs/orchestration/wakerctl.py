@@ -364,6 +364,37 @@ def slurm_job_state(ctx: Ctx, job_id: str) -> tuple[str, str] | None:
     return None
 
 
+def slurm_job_has_started(ctx: Ctx, job_id: str) -> tuple[bool | None, str]:
+    """Return whether any allocation record has a real start time.
+
+    Queue-latency watches are allowed to hedge only a wholly prestart job.  Array
+    elements that already completed disappear from squeue, so current queue state
+    alone is insufficient: consult allocation-level accounting (-X) and treat an
+    explicit Start timestamp as durable started evidence.  None means accounting
+    was unavailable or supplied no parseable records.
+    """
+    acct = ctx.runner(
+        ["sacct", "-X", "-n", "-P", "-j", job_id, "--format=JobIDRaw,State,Start"]
+    )
+    if acct.returncode != 0:
+        return None, f"sacct rc={acct.returncode}"
+    saw = False
+    for raw in acct.stdout.splitlines():
+        parts = raw.strip().split("|")
+        if len(parts) < 3 or not parts[0].strip():
+            continue
+        saw = True
+        state = parts[1].strip().split()[0].rstrip("+") if parts[1].strip() else "UNKNOWN"
+        start = parts[2].strip()
+        if start not in {"", "Unknown", "N/A", "None", "NONE"}:
+            return True, f"{parts[0].strip()} state={state} start={start}"
+        if state in {"RUNNING", "COMPLETING"}:
+            return True, f"{parts[0].strip()} state={state}"
+    if not saw:
+        return None, "sacct returned no allocation records"
+    return False, "all accounting records are prestart"
+
+
 def evaluate(ctx: Ctx, watch: dict) -> tuple[str, dict] | None:
     """Return (event_type, payload) when the watch condition holds, else None."""
     kind = watch["kind"]
@@ -421,20 +452,44 @@ def evaluate(ctx: Ctx, watch: dict) -> tuple[str, dict] | None:
         if queue.returncode != 0 or not queue.stdout.strip():
             reliable()
             return None  # not pending anymore; the slurm-job watch owns terminal handling
-        state, _, submitted = queue.stdout.strip().partition("|")
-        submitted = submitted.strip()
-        if state.strip() != "PENDING" or not submitted:
+        rows = []
+        for raw in queue.stdout.splitlines():
+            state, sep, submitted = raw.strip().partition("|")
+            if not sep or not submitted.strip():
+                return unreliable_step()
+            rows.append((state.strip(), submitted.strip()))
+
+        def disarm_started(detail: str) -> None:
             reliable()
+            watch["state"] = "disarmed"
+            watch["disarmed_at_utc"] = ctx.now_iso()
+            watch["disarm_reason"] = f"job-started: {detail}"
+            save_watch(ctx, watch)
+            ctx.ledger(watch["watch_id"], "watch-auto-disarmed", watch["disarm_reason"])
+
+        active = [state for state, _ in rows if state != "PENDING"]
+        if active:
+            disarm_started(f"current squeue states={sorted(set(active))}")
             return None
-        if submitted.isdigit():
-            submit_epoch = float(submitted)
-        else:
-            submit_epoch = parse_utc(submitted)
+        submit_epochs = []
+        try:
+            for _, submitted in rows:
+                submit_epochs.append(float(submitted) if submitted.isdigit() else parse_utc(submitted))
+        except (TypeError, ValueError):
+            return unreliable_step()
+        submit_epoch = min(submit_epochs)
         waited = ctx.now() - submit_epoch
         if waited >= threshold:
+            started, detail = slurm_job_has_started(ctx, job_id)
+            if started is None:
+                return unreliable_step()
+            if started:
+                disarm_started(detail)
+                return None
             return (
                 "queue-latency",
-                {"job_id": job_id, "waited_seconds": int(waited), "threshold_seconds": int(threshold)},
+                {"job_id": job_id, "waited_seconds": int(waited),
+                 "threshold_seconds": int(threshold), "prestart_verified": True},
             )
         return None
 

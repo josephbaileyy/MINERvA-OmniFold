@@ -187,6 +187,7 @@ class ConditionTests(WakerTestCase):
         )
         submit = int(self.now - 100)
         self.runner.add(lambda a: a[0] == "squeue", 0, f"PENDING|{submit}\n")
+        self.runner.add(lambda a: a[0] == "sacct", 0, "99|PENDING|Unknown\n")
         self.assertEqual(wakerctl.scan(ctx), [])
         self.now += 4000
         self.assertEqual(wakerctl.scan(ctx), ["evt-qlat"])
@@ -207,6 +208,30 @@ class ConditionTests(WakerTestCase):
         )
         self.runner.add(lambda a: a[0] == "squeue", 0, f"RUNNING|{int(self.now - 999)}\n")
         self.assertEqual(wakerctl.scan(ctx), [])
+        self.assertEqual(wakerctl.read_json(ctx.watches_dir / "qrun.json")["state"], "disarmed")
+
+    def test_queue_latency_array_with_completed_element_auto_disarms(self):
+        ctx = self.ctx()
+        wakerctl.add_watch(
+            ctx,
+            {
+                "watch_id": "qarray",
+                "kind": "queue-latency",
+                "params": {"job_id": "99", "threshold_seconds": 1},
+                "action": {"type": "root-resume", "context": ""},
+            },
+        )
+        submit = int(self.now - 999)
+        self.runner.add(lambda a: a[0] == "squeue", 0, f"PENDING|{submit}\n")
+        self.runner.add(
+            lambda a: a[0] == "sacct",
+            0,
+            "99|PENDING|Unknown\n1001|COMPLETED|2026-07-20T06:05:01\n",
+        )
+        self.assertEqual(wakerctl.scan(ctx), [])
+        saved = wakerctl.read_json(ctx.watches_dir / "qarray.json")
+        self.assertEqual(saved["state"], "disarmed")
+        self.assertIn("1001 state=COMPLETED", saved["disarm_reason"])
 
     def test_deadline_provider_reset_and_heartbeat(self):
         ctx = self.ctx()

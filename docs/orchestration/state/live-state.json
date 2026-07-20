@@ -26,7 +26,7 @@
       "job_id": "56169838",
       "tasks": "0-119",
       "purpose": "fresh 5 x 2 x 12 P3F-PET full-schema shifted-source ROOT and per-task receipt production",
-      "state": "initially PENDING; terminal state owned by armed slurm-array watch",
+      "state": "15 COMPLETED/0:0 and 105 PENDING at queue-latency reconciliation; terminal state owned by armed slurm-array watch",
       "owner": "Slurm m3246 shared array 0-119%16",
       "output": "nd-unfolding/p3f_pet_fullevent/{work,final,logs}",
       "receipt": "docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json"
@@ -36,7 +36,7 @@
     "Gate 3 is not promoted until all 120 source tasks have terminal accounting, validated final ROOT/receipt pairs, and a complete independently verified aggregate manifest.",
     "Publication nominal PET training remains blocked until that complete Gate-3 source manifest is committed PASS."
   ],
-  "next_authorized_action": "On the first real event from p3f-pet-source-56169838 or p3f-pet-source-queue-56169838, reconcile exact per-task Slurm/output ownership once. Do not duplicate a running writer. After terminal success, build and independently validate the complete Gate-3 manifest before promotion. Do not start nominal PET training.",
+  "next_authorized_action": "On the real terminal event from p3f-pet-source-56169838, reconcile exact per-task Slurm/output ownership once. After terminal success, build and independently validate the complete Gate-3 manifest before promotion. Do not create an interactive duplicate or start nominal PET training.",
   "wake": {"waker": true},
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",

@@ -1,0 +1,108 @@
+{
+  "receipt_schema": "p3f-pet-gate3-queue-latency-reconciliation-v1",
+  "verdict": "RETAIN_BATCH",
+  "observed_at_utc": "2026-07-20T07:48:00Z",
+  "commit": "SELF",
+  "event": {
+    "event_id": "evt-p3f-pet-source-queue-56169838",
+    "watch_id": "p3f-pet-source-queue-56169838",
+    "event_type": "queue-latency",
+    "head_at_event": "05d40e7f0e84c9891ba5d7132282c974501f66c4",
+    "observed_at_utc": "2026-07-20T07:45:14Z",
+    "job_id": "56169838",
+    "threshold_seconds": 3600,
+    "waited_seconds": 6236,
+    "source_node": "login36",
+    "source_pid": 1149504,
+    "schema_version": 1,
+    "read_exactly_once": true,
+    "previously_reconciled": false,
+    "valid": true
+  },
+  "authoritative_array_snapshot": {
+    "observed_at_utc": "2026-07-20T07:46:39Z",
+    "overall": "ACTIVE",
+    "expected_tasks": 120,
+    "counts": {
+      "COMPLETED": 15,
+      "PENDING": 105
+    },
+    "completed_tasks": "0-14",
+    "completed_exit_code": "0:0",
+    "error_tasks": [],
+    "unknown_tasks": [],
+    "running_tasks_at_snapshot": 0,
+    "pending_reasons": {
+      "task_15": "Resources",
+      "task_16": "ReqNodeNotAvail",
+      "tasks_17_119": "None"
+    }
+  },
+  "output_ownership": {
+    "namespace": "nd-unfolding/p3f_pet_fullevent",
+    "final_roots": 15,
+    "final_receipts": 15,
+    "pass_receipts_with_existing_bound_root": 15,
+    "receipt_tasks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "one_sided_final_pairs": 0,
+    "done_log_lines": 15,
+    "task_lock_files": 15,
+    "stdout_files": 15,
+    "stderr_files": 15,
+    "stderr_unique_sha256": "170de9025be2ff197e80486d4d32b1bc54c934410b2a51409edd9cf286dc0e3e",
+    "stderr_note": "all 15 stderr files are byte-identical ROOT dictionary warnings; task 0 ended DONE with validator verdict PASS and n_failed=0",
+    "duplicate_writer_detected": false
+  },
+  "placement_decision": {
+    "event_wholly_pending_premise": false,
+    "reason": "15 array elements had already started and completed successfully before the latency event",
+    "batch_56169838_retained": true,
+    "batch_cancelled": false,
+    "interactive_allocation_requested": false,
+    "interactive_writer_started": false,
+    "sole_final_writer": "Slurm array 56169838",
+    "nominal_pet_training_started": false
+  },
+  "control_plane_repair": {
+    "defect": "queue-latency evaluated only current squeue visibility; completed array elements disappear from squeue, allowing a false wholly-prestart wake",
+    "repair": "parse every current squeue row, require allocation-level sacct evidence that no element ever started, and auto-disarm the latency watch once current or historical start evidence exists",
+    "wakerctl_path": "docs/orchestration/wakerctl.py",
+    "wakerctl_sha256": "d7c6a215f4a93b6b78fd8ee46e37525ae44ffa5fb339d85a29885202909bd99c",
+    "test_path": "docs/orchestration/test_wakerctl.py",
+    "test_sha256": "e42f2ade31ef0aba7e307b3f315e81f7e1327a7f7bddf9f10f7a24a850bc05db",
+    "orchestration_tests": "93/93 PASS"
+  },
+  "continuation": {
+    "terminal_watch": "p3f-pet-source-56169838",
+    "terminal_watch_required_state": "armed",
+    "queue_latency_watch": "p3f-pet-source-queue-56169838",
+    "queue_latency_event_consumed": true,
+    "new_job_submitted": false,
+    "new_deadline_set": false,
+    "polling_required": false,
+    "next_external_fact": "terminal aggregate state for tasks 0-119"
+  },
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true,
+    "provider_dispatches": 0
+  },
+  "gate_state": {
+    "gate3": "IN_PROGRESS_NOT_PROMOTED",
+    "nominal_pet_training_allowed": false
+  },
+  "final_capacity_snapshot": {
+    "observed_at_utc": "2026-07-20T07:51:14Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 37,
+    "codex_personal_reset_utc": "2026-07-26T05:33:07Z",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "full_reset_credits_available": 0,
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "numeric unknown",
+    "reset_credit_consumed": false
+  }
+}

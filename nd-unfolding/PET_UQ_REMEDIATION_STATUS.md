@@ -120,10 +120,12 @@ invalid/missing/misaligned background inputs fail closed.
 **Current (2026-07-20): source production IN PROGRESS in Slurm array
 `56169838` (`0-119%16`).** The fresh 5 x 2 x 12 batch launcher, endpoint
 validator, nested domain/base composition, and receipt/resume tests are
-hash-bound at commit `784e360`. Terminal-array and queue-latency watches are
-armed; no interactive duplicate exists. Gate 3 remains open until the complete
-shifted-source inventory, terminal accounting, and aggregate manifest are
-committed PASS. Nominal PET remains prohibited.
+hash-bound at commit `784e360`. At the queue-latency wake, 15 tasks were
+COMPLETED/0:0 with 15 matching PASS pairs and 105 were pending; batch was
+retained as the sole writer and no interactive duplicate exists. The terminal
+array watch remains armed. Gate 3 remains open until the complete shifted-source
+inventory, terminal accounting, and aggregate manifest are committed PASS.
+Nominal PET remains prohibited.
 
 Before the publication nominal, regenerate and validate the complete
 selection-shifted source inventory under the G2 full schema: five declared

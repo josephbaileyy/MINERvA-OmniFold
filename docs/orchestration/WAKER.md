@@ -252,4 +252,7 @@ is the wake signal, and text left inside it is read by nobody.
 - Queue hedging: arm a `queue-latency` watch at submission time; when it
   fires, decide placement per `SCHEDULING-STRATEGY.md` (a healthy RUNNING
   route always wins; cancel the exact duplicate before starting the
-  alternative so two compute paths never write one output).
+  alternative so two compute paths never write one output). Queue latency is
+  strictly a wholly-prestart condition: the evaluator checks both current
+  `squeue` rows and allocation-level `sacct` start evidence, and auto-disarms
+  without a model wake as soon as any job or array element has started.
