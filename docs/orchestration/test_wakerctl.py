@@ -700,6 +700,50 @@ class NotifyTests(WakerTestCase):
         self.assertEqual(self.mail_calls(), [])
 
 
+class ClaudeRootTests(WakerTestCase):
+    """An interim Claude root (PORTING.md §6d) must resume correctly."""
+
+    def setUp(self):
+        super().setUp()
+        self.claude = self.dir / "claude"
+        self.claude.write_text("#!/bin/bash\nexit 0\n")
+        self.claude.chmod(self.claude.stat().st_mode | stat.S_IXUSR)
+        self.write_config(
+            claude_bin=str(self.claude),
+            root={
+                "provider": "claude",
+                "profile": "claude-school",
+                "thread_id": "11111111-2222-3333-4444-555555555555",
+            },
+        )
+
+    def test_claude_root_resume_argv_and_home(self):
+        ctx = self.ctx()
+        path = self.arm_sentinel(ctx, "croot")
+        path.write_text("x")
+        wakerctl.scan(ctx)
+        outcomes = wakerctl.dispatch(ctx)
+        self.assertEqual(outcomes, [("evt-croot", "resumed")])
+        call = self.runner.action_calls("claude")[0]
+        argv, env = call["argv"], call["env"]
+        self.assertEqual(argv[0], str(self.claude))
+        self.assertIn("--resume", argv)
+        self.assertIn("11111111-2222-3333-4444-555555555555", argv)
+        self.assertIn("--dangerously-skip-permissions", argv)
+        self.assertIn("--model", argv)
+        self.assertTrue(env["HOME"].endswith("claude-homes/school"))
+        self.assertIn("next dependency-ready campaign action", argv[-1])
+
+    def test_preflight_checks_claude_binary_for_claude_root(self):
+        self.write_config(
+            claude_bin=str(self.dir / "missing-claude"),
+            root={"provider": "claude", "profile": "claude-school", "thread_id": "1" * 8},
+        )
+        ctx = self.ctx()
+        problems = wakerctl.preflight(ctx, quiet=True)
+        self.assertTrue(any("claude binary missing" in p for p in problems))
+
+
 class StatusReportTests(WakerTestCase):
     def write_config(self, **overrides):
         overrides.setdefault("notify_command", ["/usr/bin/mail", "-s", "{subject}", "user@example.com"])

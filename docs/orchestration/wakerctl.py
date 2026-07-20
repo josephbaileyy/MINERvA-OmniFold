@@ -200,6 +200,13 @@ class Ctx:
             return configured
         return shutil.which("codex")
 
+    def claude_bin(self) -> str | None:
+        configured = self.config.get("claude_bin")
+        if configured:
+            return configured
+        fallback = agentctl.login_home() / ".local" / "bin" / "claude"
+        return shutil.which("claude") or (str(fallback) if fallback.is_file() else None)
+
     def base_env(self) -> dict:
         env = os.environ.copy()
         env["HOME"] = str(agentctl.login_home())
@@ -623,44 +630,64 @@ def _write_tick_receipt(ctx: Ctx) -> None:
 
 def preflight(ctx: Ctx, quiet: bool = False) -> list[str]:
     problems: list[str] = []
-    codex = ctx.codex_bin()
-    if not codex or not Path(codex).is_file() or not os.access(codex, os.X_OK):
-        problems.append(f"codex binary missing or not executable: {codex!r}")
     python = ctx.python_bin()
     if not Path(python).is_file() or not os.access(python, os.X_OK):
         problems.append(f"python missing or not executable: {python!r}")
+    binary = None
     try:
         root = ctx.root()
         profile = agentctl.get_profile(ctx.profiles(), root.get("profile", "codex-personal"))
+        provider = profile.get("provider")
+        binary = ctx.codex_bin() if provider == "codex" else ctx.claude_bin()
+        if not binary or not Path(binary).is_file() or not os.access(binary, os.X_OK):
+            problems.append(f"root {provider} binary missing or not executable: {binary!r}")
         home = Path(agentctl.expand_path(profile["home"]))
         if not home.is_dir():
-            problems.append(f"root CODEX_HOME missing: {home}")
+            problems.append(f"root provider home missing: {home}")
     except (WakerError, agentctl.AgentCtlError) as exc:
         problems.append(str(exc))
     if not quiet:
         for problem in problems:
             print(f"[preflight] {problem}", file=sys.stderr)
         if not problems:
-            print(f"[preflight] PASS codex={codex} python={python}")
+            print(f"[preflight] PASS root={binary} python={python}")
     return problems
 
 
 def build_root_resume(ctx: Ctx, event: dict) -> tuple[list[str], dict]:
+    """Build the resume command for whichever provider currently holds root.
+
+    The root is normally the canonical Codex thread; during a Codex capacity
+    conservation window it may be an interim Claude session (PORTING.md §6d).
+    Binary paths are always absolute (F2) and the provider home is explicit.
+    """
     root = ctx.root()
     profile = agentctl.get_profile(ctx.profiles(), root.get("profile", "codex-personal"))
-    if profile.get("provider") != "codex":
-        raise WakerError("root resume requires a codex profile")
-    env = ctx.base_env()
-    env["CODEX_HOME"] = agentctl.expand_path(profile["home"])
-    codex = ctx.codex_bin()
-    if not codex:
-        raise WakerError("codex binary unresolved")
-    command = [codex, "exec", "resume"]
-    agentctl.add_codex_options(command, profile)
-    for feature in root.get("disable_features", ["goals"]):
-        command.extend(["--disable", feature])
-    command.extend(["--skip-git-repo-check", root["thread_id"], render_prompt(ctx, event)])
-    return command, env
+    provider = profile.get("provider")
+    prompt = render_prompt(ctx, event)
+    if provider == "codex":
+        env = ctx.base_env()
+        env["CODEX_HOME"] = agentctl.expand_path(profile["home"])
+        codex = ctx.codex_bin()
+        if not codex:
+            raise WakerError("codex binary unresolved")
+        command = [codex, "exec", "resume"]
+        agentctl.add_codex_options(command, profile)
+        for feature in root.get("disable_features", ["goals"]):
+            command.extend(["--disable", feature])
+        command.extend(["--skip-git-repo-check", root["thread_id"], prompt])
+        return command, env
+    if provider == "claude":
+        command, env = agentctl.build_resume_command(profile, prompt, root["thread_id"])
+        claude = ctx.claude_bin()
+        if not claude:
+            raise WakerError("claude binary unresolved")
+        command[0] = claude
+        for key, value in ctx.base_env().items():
+            env.setdefault(key, value)
+        env["PATH"] = ctx.base_env()["PATH"]
+        return command, env
+    raise WakerError(f"root resume unsupported for provider {provider!r}")
 
 
 def render_prompt(ctx: Ctx, event: dict) -> str:
@@ -1228,6 +1255,10 @@ def smoke(config_path: Path) -> int:
         fake_codex.chmod(fake_codex.stat().st_mode | stat.S_IXUSR)
         config = read_json(config_path)
         config["codex_bin"] = str(fake_codex)
+        # The sandbox must never send real notifications or count as idle.
+        config["notify_command"] = None
+        config["status_report_interval_seconds"] = 0
+        config["idle_guard_ticks"] = 0
         config["root"] = {
             "provider": "codex",
             "profile": "codex-personal",

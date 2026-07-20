@@ -131,6 +131,23 @@ outage), give it:
 For pure maintenance/debugging (the usual Claude role), `OPERATOR-GUIDE.md`
 is the entrypoint; no special bootstrap needed.
 
+### 6d. Interim Claude root (Codex capacity conservation) — ACTIVE
+
+Performed 2026-07-20 with user authorization, at codex-personal 36%
+remaining: the root in `waker-config.json` now points at interim Claude
+session `4a8668e1-7fb2-41f9-8cc9-59caea50ea75` (profile `claude-school`,
+started from `start-interim-root.md`, registered in `sessions.json` as
+`interim-root`). wakerctl resumes it via `claude --print --resume` with the
+school home and pinned flags; the canonical Codex thread `019f749a-…` is
+untouched and its remaining capacity is reserve. Handback is automatic: the
+armed `codex-personal-reset-20260726` provider-reset watch wakes the interim
+root at the weekly reset (during the shutdown, so effectively at first tick
+after the 2026-08-03 restore) to run the scripted single-resume handback and
+restore root routing to Codex. Rules for the interim period: never
+`agentctl send` to `interim-root` while it is the active root (same
+in-flight rule as the Codex root); the interim shares the school Claude
+quota with workers A/B/C/E, so heavy verification routes to agy.
+
 ## 7. Verification after any port
 
 `preflight` clean → `smoke` PASS → full suite

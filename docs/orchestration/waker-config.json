@@ -4,9 +4,10 @@
   "state_dir": "state/waker",
   "codex_bin": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
   "root": {
-    "provider": "codex",
-    "profile": "codex-personal",
-    "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+    "provider": "claude",
+    "profile": "claude-school",
+    "thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
+    "interim_for": "019f749a-857b-7790-8cec-bc36b22908be",
     "disable_features": ["goals"]
   },
   "poll_seconds": 60,
