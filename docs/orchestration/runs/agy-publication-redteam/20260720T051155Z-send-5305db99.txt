@@ -1,0 +1,39 @@
+**Gate 3 Pre-Flight Packet**
+
+### 1. Scope and Namespace
+*   **5 Bands:** `BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`, `Muon_Energy_MINOS`
+*   **2 Endpoints:** `0` and `1`
+*   **12 Playlists:** `1A`, `1B`, `1C`, `1D`, `1E`, `1F`, `1G`, `1L`, `1M`, `1N`, `1O`, `1P`
+*   **Recommended Collision-Isolated Namespace:** `nd-unfolding/active_universe_5d/fps/p3f_pet/` (with `npz/`, `receipts/`, and `logs/` subdirectories). This isolates Gate 3 point-clouds strictly away from the scalar-only components and G2 CV components.
+
+### 2. Installed Binary and Contract Support
+**YES.** The current installed binary (`MINERvA101/opt/bin/runEventLoopOmniFold`, md5 `e63c74961d699313ef155065fc790ff1`, validated in G2 and the P3F-scalar Gate) explicitly supports `MNV101_ACTIVE_UNIVERSE=BAND:IDX` alongside `MNV101_DUMP_POINTCLOUD=1` and `MNV101_FULL_PHASE_SPACE=1`.
+*   The `INTERFACE_VALIDATION.md` commit (HEAD `79969d8`) proves that the binary correctly executes selection-complete universe promotion, including background point-clouds.
+*   **No rebuild or C++ ownership gate is required.** The binary is locked, and the G2 Gate 2 literal negweight target is already fully satisfied under this footprint.
+
+### 3. Reuse vs. Regenerate Decisions
+*   **Raw AnaTuple Inputs:** `REUSE`
+*   **G2 Full-Schema FPS CV ROOTs/NPZs:** `REUSE` for CV, but DO NOT reuse for lateral shifted targets.
+*   **P3S Standard, Purity, Reduced-Schema ROOTs:** `CONTROLS ONLY`. Do not consume for publication PET.
+*   **P3F-scalar Interface ROOTs (120 files, Gate 2 committed):** `REUSE` as the direct unrolled-source input. They were generated with `MNV101_DUMP_POINTCLOUD=1` enabled, so they carry the exact unmerged `part_reco_*` arrays needed by the Python dumper without re-running the C++ loops.
+*   **P3F-PET Full-Schema NPZ Inputs:** `REGENERATE` entirely via the Python point-cloud dumper over the 120 P3F-scalar ROOTs.
+
+### 4. Required Launcher and Validator Changes
+The current Python dump architecture (`nd-unfolding/pet/dump_pointcloud_inputs.py`) successfully handles CV missing-misses, event/cloud/background joins, and G2 schema validation, but **lacks active universe support**.
+*   **`dump_pointcloud_inputs.py`:** Must be patched to explicitly read `TNamed activeUniverseBand`, `TParameter<int> activeUniverseIndex`, `hasActiveUniverse`, and the four migration census `TParameter<long> activeUniverse{Truth,Reco}{Entrants,Exits}` from the P3F-scalar ROOTs. These values must be embedded in the NPZ arrays and the JSON receipt.
+*   **`fullevent_dump_contract.py`:** Must be updated to assert these active universe identity and census metadata are present when `hasActiveUniverse=1`.
+*   **Array Launcher (`sbatch_p3f_pet_dump_array.sh`):** A new launcher script mapping 120 SLURM tasks to 120 endpoints/playlists. It must employ per-task atomic publication (write NPZ to temp -> run strict schema check -> `os.link` to final namespace).
+*   **Final Validator (`p3f_pet_manifest_summary.py`):** A new aggregator that validates exactly 120 NPZ receipts, aggregates the census (guaranteeing exact endpoint completeness = 1.0), validates the source ROOT hashes match the committed P3F-scalar manifest, binds to `COMPLETED/0:0` terminal sacct states, and atomically writes the final Gate 3 JSON manifest.
+
+### 5. Scheduler Plan
+*   **Batch Array:** Single 120-task SLURM array (`--array=0-119`).
+*   **Resources:** Unlike the 192G G2-CV merged dump, each task processes a single playlist. Allocate `qos=shared`, `cpus-per-task=2`, `mem=32G`, and `time=02:00:00`.
+*   **Preflight & Final Writer:** The execution of `p3f_pet_manifest_summary.py` to synthesize the canonical Gate 3 manifest MUST run interactively on a fresh interactive holder, serving as the sole final writer to prevent collisions.
+
+### 6. Launch Verdict and Preflight Checklist
+**VERDICT: BLOCK**
+Gate 3 is blocked because the required active universe Python dumper metadata and 120-task orchestration tooling do not yet exist. Nominal PET training remains strictly prohibited.
+
+**Smallest Changed Repair:**
+1.  **Agent B:** Owns the patching of `dump_pointcloud_inputs.py` and `fullevent_dump_contract.py` to correctly extract, embed, and validate the active universe identities and migration census.
+2.  **Agent C:** Owns the creation of `sbatch_p3f_pet_dump_array.sh` and the final `p3f_pet_manifest_summary.py` orchestration tooling, mirroring the rigor of the scalar audit.

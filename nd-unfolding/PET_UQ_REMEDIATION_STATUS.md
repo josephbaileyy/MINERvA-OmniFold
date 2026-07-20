@@ -117,6 +117,13 @@ invalid/missing/misaligned background inputs fail closed.
 
 ## Gate 3 — committed full-schema P3F-PET source inventory
 
+**Current (2026-07-20): source-production code gate PASS; generation not yet
+submitted.** The fresh 5 x 2 x 12 batch launcher, endpoint validator, nested
+domain/base composition, and receipt/resume tests are hash-bound and
+independently reviewed. Gate 3 remains open until the complete shifted-source
+inventory, terminal accounting, and aggregate manifest are committed PASS.
+Nominal PET remains prohibited.
+
 Before the publication nominal, regenerate and validate the complete
 selection-shifted source inventory under the G2 full schema: five declared
 kinematic bands by two endpoints by twelve playlists. Require exact event,

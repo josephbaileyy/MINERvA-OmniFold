@@ -1994,3 +1994,25 @@ was promoted to `active_universe_5d/fps/p3s_fps_manifest.json`; the superseded
 the P3F-scalar interface prerequisite only. P3F-PET source generation and PET
 training were not started in this wake. Evidence:
 `docs/orchestration/state/p3f-scalar-fullaudit-promotion-20260720.json`.
+
+## 2026-07-20 — P3F-PET Gate-3 source-production code gate PASS
+
+The real initialization deadline event was consumed exactly once after a
+10-minute model-quiet interval. Preflight found no active compute writer, no
+interactive allocation, no pre-existing P3F-PET full-event namespace, and an
+exact frozen 5-band x 2-endpoint x 12-playlist inventory. Fresh generation is
+required: the historical scalar endpoints were produced by the older binary
+and remain controls only.
+
+The preserved Agent-B and Agent-C UUIDs produced the full-schema endpoint
+validator and collision-isolated batch launcher. Independent integration
+closed the known 1D/1E/1F/1P out-of-domain composition issue, embedded the
+complete atomic validation packet in each final receipt, and made both initial
+publication and resume fail closed on binary/source/manifest/active-census and
+nested validator evidence. The first same-UUID agy review overclaimed terminal
+accounting and missed null report fields; that verdict was rejected, repaired,
+and the same UUID returned PASS on the corrected bytes. All 146 frozen contract
+regressions and 29 launcher tests pass, including an executable synthetic
+receipt/resume/tamper round trip. This is code authorization only; Gate 3 is
+open and nominal PET training remains prohibited. Evidence:
+`docs/orchestration/state/p3f-pet-gate3-launch-code-gate-20260720.json`.

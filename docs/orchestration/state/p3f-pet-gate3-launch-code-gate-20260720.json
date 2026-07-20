@@ -1,0 +1,107 @@
+{
+  "receipt_schema": "p3f-pet-gate3-launch-code-gate-v1",
+  "verdict": "PASS_CODE_ONLY",
+  "observed_at_utc": "2026-07-20T05:56:21Z",
+  "commit": "SELF",
+  "event": {
+    "event_id": "evt-p3f-pet-init-20260720t0510z",
+    "watch_id": "p3f-pet-init-20260720t0510z",
+    "event_type": "deadline",
+    "deadline_utc": "2026-07-20T05:10:00Z",
+    "observed_utc": "2026-07-20T05:10:14Z",
+    "event_head": "79969d87f114f63fc75c820d5070bc88c7b2542e",
+    "read_exactly_once": true,
+    "previously_reconciled": false
+  },
+  "prerequisite": {
+    "p3f_scalar_commit": "d7f0609",
+    "p3f_scalar_manifest_sha256": "8f957bf251728a7de57d4fe2ea8d00c2010c23d151e6c9c0a96d3ec31d4e60a8",
+    "g2_schema": "g2-fullevent-v1",
+    "gate2": "PASS"
+  },
+  "preflight": {
+    "active_compute_writers": 0,
+    "interactive_allocations": 0,
+    "existing_p3f_pet_fullevent_namespace": false,
+    "inventory": {
+      "bands": ["BeamAngleX", "BeamAngleY", "MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"],
+      "endpoints": [0, 1],
+      "playlists": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"],
+      "tasks": 120,
+      "mapping": "band-major: band*24 + endpoint*12 + playlist"
+    },
+    "all_24_raw_manifest_hashes_match_frozen_g2_launcher": true,
+    "placement": "batch shared array 0-119%16, 4 CPU, 48 GiB, 12 h",
+    "placement_reason": "120 independent multi-hour producers require durable array parallelism; no live interactive allocation existed and the full inventory cannot safely fit an interactive wall"
+  },
+  "runtime_binding": {
+    "installed_binary_sha256": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+    "built_source_commit": "486e53e677eb64eb9d622ff6e5daecb3e62aab22",
+    "active_interface_commit": "2e8c214abc4b3ffc4ef371e8da6b5f107611862f",
+    "source_git_blob": "b7e1edbce21545f1f824fe706047bd0f943a60ea",
+    "source_sha256": "57792e42fe3f5a663016f94b91a5631fc50349135c92b35a08eaefcb85812be3",
+    "runtime_flags": {
+      "MNV101_ACTIVE_UNIVERSE": "BAND:IDX",
+      "MNV101_DUMP_POINTCLOUD": "1",
+      "MNV101_FULL_PHASE_SPACE": "1",
+      "MNV101_DUMP_UNIVERSES": "unset"
+    }
+  },
+  "files": {
+    "validator": {
+      "path": "nd-unfolding/pet/validate_p3f_pet_fullevent.py",
+      "sha256": "d782a47868863f2fc9a743f25f91549f0ab70a3ce7ff64f4db946b36a2df38ed"
+    },
+    "launcher": {
+      "path": "nd-unfolding/pet/sbatch_p3f_pet_fullevent_evloop_array.sh",
+      "sha256": "7c9018edf6cb20424a8ea116640b31dbf56c95de53f3087a045535abfd8dde5d"
+    },
+    "validator_test": {
+      "path": "nd-unfolding/tests/test_p3f_pet_fullevent_validator.py",
+      "sha256": "bbb1771390a4a5868b5fbb8445e9e19eab489d081e1592d7b18cbd2e7e3acc67"
+    },
+    "launcher_test": {
+      "path": "nd-unfolding/tests/test_p3f_pet_fullevent_launcher.py",
+      "sha256": "be387126546cc01fe5cd7cb15afd661aaa7ab36fffea4bcd232c0abb8417fa47"
+    },
+    "domain_validator_sha256": "32634d6832b4c1f6e5f9036a425b7412f004e2de0aa77828106646d7fc6e3739",
+    "base_validator_sha256": "3b5c4ae9b954a6db2ac8dadf25abb433cc0024f9ee182e589de654ba44b5f1f8"
+  },
+  "tests": {
+    "validator_and_frozen_contract_regressions": "146/146 PASS",
+    "launcher_tests": "29/29 PASS",
+    "launcher_bash_syntax": "PASS",
+    "embedded_python_byte_compile": "PASS",
+    "synthetic_receipt_resume_roundtrip": "PASS",
+    "synthetic_tamper_rejection": "PASS"
+  },
+  "persistent_workers": {
+    "agent_B_uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C_uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam_uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true
+  },
+  "verification": {
+    "initial_agy_verdict": "REJECTED_OVERCLAIM",
+    "initial_issue": "claimed nonexistent terminal sacct evidence and missed null nested report fields",
+    "repair": "self-contained atomic P3F report embedding, truthful running-task accounting boundary, prepublication integration checks, deep resume checks, and build ancestry binding",
+    "same_uuid_recheck": "PASS_TO_COMMIT_SUBMIT",
+    "same_uuid_receipt": "docs/orchestration/runs/agy-publication-redteam/20260720T055522Z-send-9aa59f1b.txt"
+  },
+  "capacity_at_last_predispatch_snapshot": {
+    "observed_at_utc": "2026-07-20T05:54:50Z",
+    "codex_personal_seven_day_remaining_percent": 43,
+    "codex_personal_reset_utc": "2026-07-26T05:33:07Z",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:04Z",
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "numeric unknown; successful same-UUID turns prove availability",
+    "full_reset_credits_available": 0,
+    "reset_credit_consumed": false
+  },
+  "authorization": {
+    "fresh_source_array_may_submit_after_this_commit": true,
+    "gate3_promoted": false,
+    "nominal_pet_training_allowed": false
+  }
+}

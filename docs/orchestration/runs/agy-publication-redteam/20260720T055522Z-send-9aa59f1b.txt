@@ -1,0 +1,13 @@
+**VERDICT: PASS TO COMMIT/SUBMIT**
+
+The corrected launcher perfectly incorporates the orchestrator's mandatory requirements. There are no executable, scientific, provenance, or collision defects in these bytes.
+
+### Verified Checks:
+1.  **Build/Source Ancestry:** The launcher uses strict `git` checks (lines 164-172) to assert that the active-interface commit is genuinely an ancestor of the `BUILT_SOURCE_COMMIT` and that the working source tree matches the blob precisely.
+2.  **Integration Check Before Publish:** Lines 393-412 successfully run a zero-failure Python integration assertion over the `VAL_JSON` WORK receipt, blocking any ROOT publication if the exhaustive-domain or superseded-base constraints fail.
+3.  **Complete Atomic Report Embedding:** Line 443 cleanly embeds the entire P3F report natively via `"validation_report":report` without relying on lossy subsets.
+4.  **Actual Domain/Base/Counts Evidence:** The launcher correctly maps `report.get("domain_validator")` and `report.get("base_validator")` onto the receipt's top level without resorting to the faulty `pick()` fallback list.
+5.  **Deep-Resume Validations:** The comprehensive Python verification script for `validate_resume` (lines 263-298) checks the nested components with extreme rigor, demanding equivalence between the top-level copies and the embedded report, alongside hard constraints on `verdict=="PASS"`, `exit==0` (domain), allowed supersession (base), and the completeness of the migration census lists.
+6.  **No Terminal `sacct` Fabrication:** Lines 458-460 correctly preserve SLURM job/task/node identity for the array worker but strictly omit terminal accounting fields from the single-task receipt.
+
+The scripts conform precisely to the frozen G2/Gate-3 mechanics. The orchestrator is authorized to commit and queue the 120-task launch array. Nominal PET remains blocked until the subsequent aggregate P3F manifest is validated.
