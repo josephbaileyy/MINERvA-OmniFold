@@ -11,8 +11,9 @@
     "superseded followup prompts"
   ],
   "blockers": [
-    "Gate-4 nominal PET TRAINING launch is a separate post-restore user decision; 2026-07-22 shutdown precludes a long GPU job now. The launch-code gate is built, frozen, tested (196/196), and agy-verified PASS_CODE_ONLY.",
-    "OBSERVATION: codex-personal weekly window reads 100% remaining / reset ~2026-07-28 (was 36% / 2026-07-26); handback watch codex-personal-reset-20260726 may need retargeting - confirm on next handback-relevant wake. Not acted on (no provider-reset event; reading is a rolling field)."
+    "Perlmutter maintenance 2026-07-22 -> 2026-08-03: campaign holds; nothing running. Handoff bundle rebuilt (orchestration-handoff-20260721T200209Z, sha a1006bae).",
+    "Gate-4 nominal PET TRAINING launch is a separate post-restore user decision (launch-code gate is built/frozen/verified PASS_CODE_ONLY).",
+    "codex-personal weekly reset appears to have moved early (100% remaining, rolling resets_at); handback watch codex-personal-reset-20260726 flagged for post-restore re-evaluation. Not acted on."
   ],
   "campaign": "Publication PET UQ remediation",
   "canonical_science": [
@@ -21,7 +22,7 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
-  "current_dag_node": "Gate 4 launch-code gate PASS_CODE_ONLY (built+agy-verified); training LAUNCH deferred to a separate post-restore decision",
+  "current_dag_node": "Pre-shutdown READY (2026-07-22 maintenance). Gate 4 launch-code gate PASS_CODE_ONLY; training launch deferred post-restore.",
   "jobs": [
     {
       "job_id": "56169838",
@@ -33,7 +34,7 @@
       "tasks": "0-119"
     }
   ],
-  "next_authorized_action": "Hold: Gate-4 code gate complete. Next external facts: pre-shutdown-checklist deadline 2026-07-21T20:00Z (execute PORTING.md section 3) and codex-personal reset/handback watch. Training launch awaits a separate post-restore user decision.",
+  "next_authorized_action": "Hold through maintenance. On restore (2026-08-03) run PORTING.md section 4 (preflight/install-cron/status). Armed: codex-personal-reset-20260726 (handback). Training launch and handback timing are post-restore decisions.",
   "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
   "owners": [
     {
@@ -53,7 +54,7 @@
     }
   ],
   "schema_version": 1,
-  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS / GATE 4 LAUNCH-CODE GATE PASS_CODE_ONLY. Nominal PET training NOT launched (nominal_pet_training_allowed=false).",
+  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS / GATE 4 LAUNCH-CODE GATE PASS_CODE_ONLY. Pre-shutdown checklist PASS; ready for 2026-07-22 -> 2026-08-03 maintenance.",
   "wake": {
     "waker": true
   }

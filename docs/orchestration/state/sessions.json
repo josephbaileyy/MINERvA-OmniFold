@@ -109,9 +109,16 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260720T052431Z-send-961e5efe.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260720T052431Z-send-961e5efe.json"
+        },
+        {
+          "action": "send",
+          "number": 9,
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260721T192223Z-send-cd08b06f.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agent-B-p5b/20260721T192223Z-send-cd08b06f.json"
         }
       ],
-      "updated_at": "2026-07-20T05:31:20+00:00"
+      "updated_at": "2026-07-21T19:30:32+00:00"
     },
     "agent-C-fps": {
       "adopted": true,
@@ -586,9 +593,25 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260720T055522Z-send-9aa59f1b.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260720T055522Z-send-9aa59f1b.txt"
+        },
+        {
+          "action": "send",
+          "number": 31,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260720T235712Z-send-7a2b0bfb.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260720T235712Z-send-7a2b0bfb.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260720T235712Z-send-7a2b0bfb.txt"
+        },
+        {
+          "action": "send",
+          "number": 32,
+          "provider_log": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260721T193131Z-send-fc5cee97.agy.log",
+          "returncode": 0,
+          "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260721T193131Z-send-fc5cee97.stderr.log",
+          "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260721T193131Z-send-fc5cee97.txt"
         }
       ],
-      "updated_at": "2026-07-20T05:56:00+00:00"
+      "updated_at": "2026-07-21T19:33:09+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",

@@ -1,0 +1,69 @@
+{
+  "receipt_schema": "pre-shutdown-checklist-v1",
+  "verdict": "PASS_READY_FOR_SHUTDOWN",
+  "observed_at_utc": "2026-07-21T20:00:15Z",
+  "handled_at_utc": "2026-07-21T20:05:00Z",
+  "actor": "interim-claude-root(4a8668e1, interim_for codex 019f749a)",
+  "event": {
+    "event_id": "evt-pre-shutdown-checklist-20260721",
+    "event_type": "deadline",
+    "watch_id": "pre-shutdown-checklist-20260721",
+    "read_exactly_once": true,
+    "previously_reconciled": false
+  },
+  "maintenance_window": "2026-07-22 through 2026-08-03 (Perlmutter)",
+  "porting_section3_checklist": {
+    "1_in_flight_work_finished": {
+      "status": "PASS",
+      "evidence": "No active compute or worker build in flight. squeue shows only the wakerctl cron tick (job 56160911, login02). The *-resume.invoked-without-.done markers are stale Gate-2-era legacy watcher markers (Jul 19-20, retired per WAKER F6), inert. agent-B turn 9 and agy turn 32 completed rc=0 earlier this session."
+    },
+    "2_all_state_committed_pushed": {
+      "status": "PASS",
+      "evidence": "HEAD ada72b0 == github/main before this round; only docs/orchestration/state/sessions.json was dirty (agy/agent-B turn records) and is committed in this round. Gate-3 promotion, Gate-4 code gate, and all receipts already pushed."
+    },
+    "3_handoff_bundle_rebuilt": {
+      "status": "PASS",
+      "bundle": "/global/homes/j/josephrb/orchestration-handoff-20260721T200209Z.tar.gz",
+      "size_bytes": 674188058,
+      "sha256": "a1006baeb97c21a94b30f80c1f76479e13bcb4c2120db4fc1c22714a9b4b6382",
+      "note": "contains live credentials; kept OUT of git (in ~); scp off-site optional. PORTING.md last-built record updated."
+    },
+    "4_no_jobs_that_cannot_finish_pre_shutdown": {
+      "status": "PASS",
+      "evidence": "Nothing started/submitted. Gate-4 is code-only PASS_CODE_ONLY; nominal PET training NOT launched (deferred to post-restore)."
+    },
+    "5_watches_left_armed": {
+      "status": "PASS",
+      "armed": ["codex-personal-reset-20260726"],
+      "note": "pre-shutdown-checklist-20260721 fired (this event). Dead jobs (none live) auto-reconcile on restore per PORTING section 4."
+    }
+  },
+  "campaign_state_at_shutdown": {
+    "gate1": "PASS", "gate2": "PASS", "p3f_scalar": "PASS",
+    "gate3": "PROMOTED_PASS (source array 56169838, 120/120, manifest independently verified)",
+    "gate4_launch_code_gate": "PASS_CODE_ONLY (built, frozen, 196/196 tests, agy-verified)",
+    "nominal_pet_training": "NOT started (nominal_pet_training_allowed=false); LAUNCH is a separate post-restore user decision"
+  },
+  "codex_personal_reset_anomaly": {
+    "observation": "usagectl reports codex-personal 100% weekly remaining with a ROLLING resets_at that drifts with query time (2026-07-28T18:02 -> 19:22 -> 20:01), indicating the personal weekly window reset (~2026-07-21) rather than the previously recorded fixed 2026-07-26T05:33:07Z.",
+    "action": "NOT acted on. Handback NOT triggered: no provider-reset event fired, the resets_at field is unreliable as a fixed instant, and handback is moot going into the 2026-07-22 shutdown. Handback watch codex-personal-reset-20260726 left armed; re-evaluate handback timing post-restore or when a real provider-reset event fires.",
+    "handback_protocol_intact": true
+  },
+  "post_restore_pointer": "On restore (2026-08-03): PORTING.md section 4 — wakerctl preflight (codex_bin may move after nvm rebuild), install-cron if absent, status, notification test. Then the campaign resumes; Gate-4 training launch remains a separate user decision.",
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true
+  },
+  "capacity_snapshot": {
+    "observed_at_utc": "2026-07-21T20:01:36Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 100,
+    "codex_personal_reset_utc": "rolling ~now+7d (see anomaly)",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "full_reset_credits_available": 0,
+    "reset_credit_consumed": false
+  }
+}

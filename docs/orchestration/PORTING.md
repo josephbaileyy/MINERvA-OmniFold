@@ -27,7 +27,8 @@ provider homes (codex personal/school, claude personal/school/legacy-nested,
 agy `~/.gemini` + binary), repo-untracked orchestration state, scrontab and
 environment snapshots, FILELIST. **It contains live credentials — never
 commit it; `scp` it off-site for extra safety.** Last built:
-`orchestration-handoff-20260720T042807Z.tar.gz`, sha256 `90703d7a…f804`.
+`orchestration-handoff-20260721T200209Z.tar.gz`, sha256 `a1006bae…6382`
+(2026-07-21 pre-shutdown rebuild; prior `…20260720T042807Z`, sha256 `90703d7a…f804`).
 
 ## 3. Pre-shutdown checklist (run by 2026-07-21)
 
