@@ -11,8 +11,8 @@
     "superseded followup prompts"
   ],
   "blockers": [
-    "Gate 4 (nominal PET training) requires its own committed launch-code gate AND explicit user authorization; not started. See state/waker/BLOCKED-ON-USER.json.",
-    "2026-07-22 Perlmutter shutdown: do not start a long GPU training job that cannot finish before it; nominal training realistically defers to post-restore (2026-08-03)."
+    "Gate-4 launch-code-gate build is in progress (agent-B-p5b, detached); on success -> agy independent verification -> PASS_CODE_ONLY receipt. No training launched.",
+    "Gate-4 training LAUNCH remains a separate post-restore user decision; 2026-07-22 shutdown precludes a long GPU job now."
   ],
   "campaign": "Publication PET UQ remediation",
   "canonical_science": [
@@ -21,7 +21,7 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
-  "current_dag_node": "Gate 3 PROMOTED PASS; next node Gate 4 (nominal PET training) \u2014 prohibited pending its own gate + user authorization",
+  "current_dag_node": "Gate 4 launch-code gate BUILD in progress (agent-B-p5b, detached) \u2014 code-only, no training launch",
   "jobs": [
     {
       "job_id": "56169838",
@@ -33,7 +33,7 @@
       "tasks": "0-119"
     }
   ],
-  "next_authorized_action": "Awaiting user decision (BLOCKED-ON-USER): authorize the Gate-4 nominal PET launch-code-gate round and scope (and timing vs the 2026-07-22 shutdown). Meanwhile the codex-personal reset (2026-07-26, handback) and pre-shutdown-checklist (2026-07-21) watches are armed.",
+  "next_authorized_action": "On gate4-build-done sentinel (rc=0): run agy heavy verification of the code gate, assemble the PASS_CODE_ONLY receipt (nominal_pet_training_allowed=false), commit, and re-arm. Fallback deadline 2026-07-21T18:00Z reconciles a hang/failure before the 20:00Z pre-shutdown checklist.",
   "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
   "owners": [
     {
@@ -53,7 +53,7 @@
     }
   ],
   "schema_version": 1,
-  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS (120/120, manifest independently verified by agy). GATE 4 nominal PET NOT started.",
+  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS. GATE 4 launch-code-gate BUILD dispatched to agent-B (option A); training launch NOT authorized.",
   "wake": {
     "waker": true
   }
