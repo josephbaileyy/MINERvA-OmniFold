@@ -11,7 +11,8 @@
     "superseded followup prompts"
   ],
   "blockers": [
-    "Gate-4 launch-code-gate build is in progress (agent-B-p5b, detached); on success -> agy independent verification -> PASS_CODE_ONLY receipt. No training launched.",
+    "Gate-4 build in progress (agent-B-p5b, harness-tracked + sentinel gate4-build-done). Prior detached attempt died without running (F4). On success -> agy verification -> PASS_CODE_ONLY receipt.",
+    "OBSERVATION: codex-personal weekly window reads 100% remaining / reset 2026-07-28T18:02:33Z (was 36% / 2026-07-26). Handback watch codex-personal-reset-20260726 may need retargeting if the personal reset genuinely moved; confirm on next handback-relevant wake.",
     "Gate-4 training LAUNCH remains a separate post-restore user decision; 2026-07-22 shutdown precludes a long GPU job now."
   ],
   "campaign": "Publication PET UQ remediation",
@@ -21,7 +22,7 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
-  "current_dag_node": "Gate 4 launch-code gate BUILD in progress (agent-B-p5b, detached) \u2014 code-only, no training launch",
+  "current_dag_node": "Gate 4 launch-code gate BUILD re-dispatched (agent-B-p5b, harness-tracked) after prior detached attempt was reaped \u2014 code-only, no launch",
   "jobs": [
     {
       "job_id": "56169838",
@@ -33,7 +34,7 @@
       "tasks": "0-119"
     }
   ],
-  "next_authorized_action": "On gate4-build-done sentinel (rc=0): run agy heavy verification of the code gate, assemble the PASS_CODE_ONLY receipt (nominal_pet_training_allowed=false), commit, and re-arm. Fallback deadline 2026-07-21T18:00Z reconciles a hang/failure before the 20:00Z pre-shutdown checklist.",
+  "next_authorized_action": "On gate4-build-done (rc=0): agy heavy verification, assemble PASS_CODE_ONLY receipt (nominal_pet_training_allowed=false), commit, re-arm. Fallback deadline 2026-07-21T19:20Z reconciles before the 20:00Z pre-shutdown checklist.",
   "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
   "owners": [
     {
@@ -53,7 +54,7 @@
     }
   ],
   "schema_version": 1,
-  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS. GATE 4 launch-code-gate BUILD dispatched to agent-B (option A); training launch NOT authorized.",
+  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS. GATE 4 launch-code-gate BUILD in progress (re-dispatched durably); training launch NOT authorized.",
   "wake": {
     "waker": true
   }
