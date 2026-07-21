@@ -1,0 +1,108 @@
+{
+  "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
+  "verdict": "PASS_CODE_ONLY",
+  "observed_at_utc": "2026-07-21T19:35:00Z",
+  "actor": "interim-claude-root(4a8668e1, interim_for codex 019f749a)",
+  "user_decision": {
+    "event_id": "evt-user-decision-20260721-0002",
+    "option": "A",
+    "context": "Build+validate the Gate-4 nominal PET launch-code gate now, WITHOUT launching any training; lean; agy for heavy verification; finish before 2026-07-21T20:00Z. Training-launch authorization is a separate post-restore decision."
+  },
+  "prerequisite": {
+    "gate3": "PROMOTED_PASS",
+    "gate3_source_manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+    "gate3_source_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+    "gate2": "PASS",
+    "frozen_contract": "pet-fullevent-fps-v1"
+  },
+  "build": {
+    "owner_worker": "agent-B-p5b",
+    "owner_uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "turn": 9,
+    "returncode": 0,
+    "dispatch_note": "First two dispatches (raw nohup& and harness-tracked background) were reaped at session teardown without executing (WAKER F4 node-local fragility); the successful build used a SYNCHRONOUS foreground agentctl send so the child stayed alive within the live orchestrator turn.",
+    "capture": "docs/orchestration/runs/agent-B-p5b/gate4-build.capture.txt"
+  },
+  "files": {
+    "driver": {"path": "nd-unfolding/pet/train_fullevent_nominal.py", "sha256": "aa9f66a862e78a4abb3e5b647a5505287398d67178f1a784cbab135d07bae1d4"},
+    "launcher": {"path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh", "sha256": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"},
+    "validator": {"path": "nd-unfolding/pet/validate_pet_nominal_gate4.py", "sha256": "0cb4b41dce3ef4ff984c862130597630068dee0e9f19521f05ae87c34fbc9fa7"},
+    "launcher_test": {"path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py", "sha256": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"},
+    "validator_test": {"path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py", "sha256": "7b669484dbf2a0157854783963201c4358b8b1d2b8dc31e64005ef9f37577d39"}
+  },
+  "publication_config_binding": {
+    "routes_through": "nd-unfolding/pet/fullevent_fps_dataloader.py :: assert_publication_config",
+    "estimator_fingerprint": "pet-fullevent-fps-v1",
+    "bkg_mode": "negweight-refined",
+    "fail_closed_on": ["wrong fingerprint (reduced/recoil/unset rejected)", "purity bkg_mode rejected", "missing G2 full-schema markers", "missing/invalid background inventory", "recoil/xps2 input paths rejected"],
+    "gate2_target": {
+      "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "size_bytes": 9897374636,
+      "markers": {"petSchemaVersion": "g2-fullevent-v1", "hasFullEventSchema": 1, "fullPhaseSpace": 1},
+      "inventory": {"signal": 49152885, "data": 4116128, "background_rows_w_bkg": 564591, "playlists": 12}
+    },
+    "gate3_source_manifest_bound": true,
+    "no_auto_submit": "launcher fails closed without SLURM_JOB_ID: 'must run as an sbatch job (SLURM_JOB_ID unset); this script never auto-submits'",
+    "login_safe_selftest": "PET_FE_NOMINAL_SELFTEST=1 / --config-gate-only runs the config gate only, no GPU"
+  },
+  "validator_checks": [
+    "ordinary closure", "omitted-muon stress closure", "finite/full-coverage weights",
+    "strict MC index/order", "(pT,p_par) marginal + normalization", "cap-sensitivity telemetry",
+    "freeze: estimator fingerprint + central-vector length/order + reported-bin mask/order + extended-FPS edges + seed/config policy"
+  ],
+  "launcher_design": "one unbootstrapped nominal + one matched GPU-floor repeat (same seeds/config, tag=floor), both via fullevent_fps_dataloader.build_fullevent_loaders; isolated output namespace nd-unfolding/pet/fullevent_nominal/",
+  "tests": {
+    "test_pet_fullevent_nominal_launcher": "14/14 PASS",
+    "test_pet_nominal_gate4_validator": "36/36 PASS",
+    "frozen_contract_regressions": "test_p3f_pet_fullevent_validator 51, test_fullevent_gate2 28, test_fullevent_fps 25, test_fullevent_dump_contract 10, test_g2_dump_branch 32 — all PASS",
+    "total": "196/196 PASS",
+    "launcher_bash_syntax": "PASS (bash -n)",
+    "python_byte_compile": "PASS",
+    "synthetic_receipt_resume_and_tamper": "covered by the two new suites, synthetic fixtures only"
+  },
+  "preflight": {
+    "active_compute_writers_to_namespace": 0,
+    "interactive_allocations": 0,
+    "output_namespace_exists": false,
+    "frozen_gate2_gate3_artifacts_modified": false,
+    "data_files_modified": 0
+  },
+  "independent_verification": {
+    "orchestrator_sanity": "5 files exist with matching sha256; git status shows only the 5 new files; no *.root/*.npz/frozen validator modified; byte-compile + bash -n PASS",
+    "agy": {
+      "role": "agy-publication-redteam",
+      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+      "turn": 32,
+      "returncode": 0,
+      "verdict": "PASS",
+      "method": "agy recomputed all 5 sha256, ran git status, read the code to confirm fail-closed assert_publication_config + no-auto-submit guard, confirmed validator check composition + nominal_pet_training_allowed=false, and re-ran both suites itself (50 tests, none skipped, OK)",
+      "transcript": "docs/orchestration/runs/agy-publication-redteam/ (turn 32)"
+    }
+  },
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true
+  },
+  "authorization": {
+    "gate4_launch_code_gate": "PASS_CODE_ONLY",
+    "nominal_pet_training_allowed": false,
+    "training_launch_decision": "SEPARATE post-restore user decision (2026-07-22 shutdown precludes a long GPU job now); this gate authorizes only that the code is frozen, tested, and independently verified — not any submission.",
+    "nothing_launched_or_submitted": true
+  },
+  "capacity_snapshot": {
+    "observed_at_utc": "2026-07-21T19:22:00Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 100,
+    "codex_personal_reset_utc": "2026-07-28T19:22:08Z",
+    "codex_personal_note": "personal weekly window appears to have reset early (was 36% / reset 2026-07-26T05:33:07Z); handback watch codex-personal-reset-20260726 may need retargeting — flagged, not acted on.",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "successful same-UUID turns prove availability",
+    "full_reset_credits_available": 0,
+    "reset_credit_consumed": false
+  }
+}

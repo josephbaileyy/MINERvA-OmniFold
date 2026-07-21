@@ -148,6 +148,23 @@ at Gate 8.
 
 ## Gate 4 — nominal and GPU floor
 
+**Current (2026-07-21): launch-code gate PASS_CODE_ONLY; training NOT launched.**
+The publication full-event PET nominal launcher
+(`nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh` + driver
+`train_fullevent_nominal.py`), the Gate-4 validator
+(`validate_pet_nominal_gate4.py`), and their tests are built, hash-bound, and
+frozen: the launcher/driver route through `fullevent_fps_dataloader`, call
+`assert_publication_config` (fingerprint `pet-fullevent-fps-v1`,
+`bkg_mode=negweight-refined`, G2 full-schema markers + background inventory,
+Gate-2 target `G2_FPS_MEFHC_P12.npz` sha `fa6b3463`, Gate-3 manifest bound),
+fail closed on mismatch, and never auto-submit (require `SLURM_JOB_ID`). Tests:
+196/196 PASS (14 launcher + 36 validator + 146 frozen regressions).
+Independently verified by agy (VERDICT PASS). Receipt:
+`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json`.
+`nominal_pet_training_allowed` stays **false** — the training LAUNCH is a
+separate post-restore user decision (the 2026-07-22 shutdown precludes a long
+GPU job now).
+
 Train and extract one unbootstrapped publication nominal from the Gate-2 target
 using the frozen estimator fingerprint. Freeze its central vector, reported-bin
 mask/order, phase-space edges, seed/config policy, and extraction normalization.
