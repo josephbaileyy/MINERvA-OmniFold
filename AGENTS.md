@@ -59,6 +59,9 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
 - `3d-unfolding/3D_OMNIFOLD_STATUS.md` — 3D Eavail dashboard (Workstream C).
 - `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md` — 3D append-only chronology (C1→C2→C3).
 - `nd-unfolding/ND_OMNIFOLD_STATUS.md` / `ND_OMNIFOLD_RUN_LOG.md` — N-D (4D/5D/FPS) workstream.
+- `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` — ordered PET-only remediation
+  DAG, reuse/rerun matrix, and the gate for targeted versus full per-universe
+  retraining. Read before launching PET UQ work.
 
 **Headline numbers (Phase 18.2 MEFHC, 5-iter production):**
 - σ_total = 3.073e-38 cm²/nucleon (paper: 3.039e-38; ours runs 1.12 % high).

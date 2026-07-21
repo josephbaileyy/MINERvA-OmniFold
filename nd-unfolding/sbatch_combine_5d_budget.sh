@@ -11,9 +11,9 @@ REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_en
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/universe_stage2_5d
 CV="products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 
-python3 combine_cov_nd.py --glob 'boot_nd_5d/res_boot_*.npz' --cv "${CV}" \
+python3 combine_cov_nd.py --glob 'boot_nd_5d/res_boot_*.npz' --expected-ids 1-100 --cv "${CV}" \
   --tag stat5d --out uq_cov_stat_5d.root
-python3 combine_cov_nd.py --glob 'seedscan_split_5d/res_split_*.npz' --cv "${CV}" \
+python3 combine_cov_nd.py --glob 'seedscan_split_5d/res_split_*.npz' --expected-ids 1-24 --cv "${CV}" \
   --tag mlsplit5d --out uq_cov_mlsplit_5d.root
 
 python3 analyze_universes_5d.py \

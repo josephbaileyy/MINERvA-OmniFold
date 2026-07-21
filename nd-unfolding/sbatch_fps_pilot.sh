@@ -38,13 +38,13 @@ python3 fps_acceptance.py --omnifile "$FPS_OMNI"
 echo "===== [2/5] FPS unfold, MnvTune prior ====="
 python3 unfold_nd_omnifold_unbinned.py --omnifile "$FPS_OMNI" --axes "" \
   --full-phase-space --pt-edges "$PT_EXT" --pz-edges "$PZ_EXT" \
-  --use-weights --seed 1 --iters 5 --estimator lgbm \
+  --use-weights --seed 1 --iters 5 --estimator lgbm --bkg-mode negweight-refined \
   --out products/5d/xsec_2d_FPS_1A_tune.root
 
 echo "===== [3/5] FPS unfold, bare-GENIE prior ====="
 python3 unfold_nd_omnifold_unbinned.py --omnifile "$FPS_OMNI" --axes "" \
   --full-phase-space --pt-edges "$PT_EXT" --pz-edges "$PZ_EXT" \
-  --seed 1 --iters 5 --estimator lgbm \
+  --seed 1 --iters 5 --estimator lgbm --bkg-mode negweight-refined \
   --out products/5d/xsec_2d_FPS_1A_genie.root
 
 echo "===== [4/5] control unfold (standard omnifile, paper grid) ====="

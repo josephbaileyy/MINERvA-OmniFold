@@ -25,7 +25,10 @@ mkdir -p uq_4d/uthrow_slabs_4d
 THROWS_PER="${THROWS_PER:-8}"
 OFF=$(( SLURM_ARRAY_TASK_ID * THROWS_PER ))
 echo "[uthrow] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+THROWS_PER-1)) $(date -u '+%F %T UTC')"
+# --invalid-ratio neutral: hold ~5e-5 GENIE negative-weight artifacts (HighQ2/
+# LowQ2 +1sigma, one MFP_N zero) at CV -- prior handling, now logged. See
+# sbatch_uthrow_run_5d.sh for the full note.
 python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
-    --seed 1000 --bank bank_uthrow_4d --iters 5 \
+    --seed 1000 --bank bank_uthrow_4d --iters 5 --invalid-ratio neutral \
     --out "uq_4d/uthrow_slabs_4d/uthrow4d_slab_${SLURM_ARRAY_TASK_ID}.npz"
 echo "[uthrow] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

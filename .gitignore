@@ -127,3 +127,6 @@ nd-unfolding/reference_le/**
 nd-unfolding/of_inputs_pc_npy/
 # horovod PET training console log (narrative lives in ND_OMNIFOLD_RUN_LOG.md)
 nd-unfolding/log_minerva_pet.txt
+# Local agent/session artifacts and retired analysis-note snapshots
+/pet-fps.json
+/docs/analysis-note-old/

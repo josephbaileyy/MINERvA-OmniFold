@@ -5,48 +5,190 @@ Everything not yet done, in one place. Consolidates and **supersedes**
 their full text is in git history, their DONE banners in the RUN_LOGs and
 `VALIDATION_LEDGER.md`). Bugs/code debt live in `KNOWN_ISSUES.md` (repo root).
 
-## Active remediation gate (5D GBDT and present PET campaign closed)
+Execution references (instructions, not run receipts):
+[the dependency/rerun map](RESULT_DEPENDENCY_AND_RERUN_MAP.md) defines
+invalidation frontiers, [the publication runbook](PUBLICATION_COMPLETION_RUNBOOK.md)
+assigns the remaining packets, and
+[the post-publication reorganization plan](POST_PUBLICATION_REORG_PLAN.md) gates
+cleanup behind the publication-results freeze tag.
+
+## Active remediation gate (5D GBDT closed; PET full-event gate reopened)
 
 **Presentation deadline: 2026-07-16.** Central values, closure tests,
 dimensional anchors, and the finalized 2D reproduction remain current. Old
 4D/FPS unified/adopted covariances, `(E_avail,W)` covariance-dependent
 generator significances, and their historical products remain unquotable. The
-corrected 5D GBDT covariance and the present corrected PET campaign are now
-ledger-verified replacements.
+corrected 5D GBDT covariance is the ledger-verified replacement. The completed
+PET campaign is retained as a recoil-only representation cross-check and does
+not close the literal full-event PET gate below.
 
 - Regenerate 4D/FPS joint throws with asymmetric $\pm1\sigma$ endpoint
   interpolation, one fixed estimator seed, throw-mean centering, and a separate
   mean-shift diagnostic; rebuild the matched MAT $1/N$ block comparator from
   actual minus/plus re-unfolds. Do not reuse the old jitter-subtracted adopted
   covariances.
-- **PET before publication:** increase the present coherent statistical
-  ensemble from 20 to 100 replicas. This is planned but has not yet been run.
-  Selection-complete per-lateral PET retraining is a further refinement; the
-  completed current campaign instead documents its frozen-map detector-response
-  construction explicitly.
+- **PET before publication:** do not promote or extend the current recoil-only
+  covariance as though it belonged to a full-event estimator. Preserve its
+  completed products and replicas as cross-checks. A new nominal and UQ campaign
+  begins only after the full-event representation and stress-closure gate below
+  pass.
 - Rerun the five-axis statistical replicas and project the full covariance as
   $M C_{5D}M^\top$ before rebuilding $(E_{\rm avail},W)$ significances.
 - Quantify lateral support migration with selection-complete
   `MNV101_ACTIVE_UNIVERSE=BAND:IDX` per playlist. Five bands are genuinely
   kinematic (`BeamAngleX/Y`, `MuonResolution`, `Muon_Energy_MINERvA/MINOS`);
-  MinosEfficiency and GEANT are weight-only. For the presentation, run a
-  trace-ranked three-band full-MEFHC bound and label bank-derived results
-  support-limited. Full five-band coverage remains the publication gate.
+  MinosEfficiency and GEANT are weight-only. The unrun three-band presentation
+  bound is retired with the completed talk workstream; full five-band coverage
+  remains the publication gate.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
   background columns are missing.
-- By 2026-07-15, produce a presentation-safe table separating current
-  central/closure results, corrected preliminary uncertainties that pass every
-  gate, and results still withheld.
+
+### PET full-event + FPS measurement-domain gate (KNOWN_ISSUES #19)
+
+The present PET step-1/step-2 classifiers see only the reconstructed recoil
+cloud and truth-hadron cloud. Muon/scalar arrays are phase-space and extraction
+metadata, not classifier features. Binning a recoil-derived event weight in
+muon coordinates does not unfold the full joint distribution: at fixed recoil,
+the conditional muon distribution remains the generator prior. Therefore use
+**full-event** for the input representation and **extended phase space** for the
+relaxed acceptance; do not use “full phase space” as a synonym for a recoil
+point cloud. The publication deliverable requires both changes. A full-event
+classifier trained on the standard restricted phase space does not close this
+item.
+
+Mandatory measurement-domain contract:
+
+- source only FPS CV event loops produced with
+  `MNV101_FULL_PHASE_SPACE=1`, which remove the four truth muon kinematic cuts
+  while retaining the tracker fiducial definition and unchanged reconstructed
+  selection;
+- preserve the FPS truth denominator, newly admitted native misses, signal,
+  background, data, and event alignment through every cloud dump, scalar/W
+  source, train, extraction, systematic endpoint, projection, and closure;
+- pass `--full-phase-space` wherever code reconstructs the truth gate. A path
+  that consumes finalized inputs without that option must instead verify
+  embedded FPS provenance and reject incompatible metadata;
+- use the canonical extended FPS `(p_T,p_parallel)` edges, including the low-
+  and high-`p_parallel` and high-`p_T` catch bins. Record and compare the exact
+  arrays and reported-bin ordering; fail closed on the standard paper grid;
+- use P3F products under `active_universe_5d/fps/` for selection-complete
+  laterals. P3S products under `active_universe_5d/standard/` are regression
+  controls only and cannot be relabeled or reused as FPS endpoints;
+- report acceptance-supported and prior-dominated extrapolation regions
+  separately, and repeat the FPS anchor, extension closure, coverage, and
+  prior-swap/envelope controls for the new estimator.
+
+Artifact guard: `of_inputs_pc_fps.npz` applies the standard truth gate, and
+`of_inputs_pc_fps_xps.npz` lifts the angular cut but retains the standard
+`p_T/p_parallel` bounds. Neither is an FPS publication input. The `xps2`
+gate-and-edge convention is the semantic starting point, but its current
+recoil-only tensors are not the final full-event representation.
+
+Define three explicit event-feature schemas rather than manufacturing
+counterparts that do not exist:
+
+- `event_reco` and `event_data` use the same observable schema: a distinguished
+  reconstructed muon with full direction and momentum
+  (`p_x,p_y,p_z` or `p_T,p_parallel,phi`), energy and charge/type, plus MINOS
+  range/curvature and match-quality context only where its identical data/MC
+  definition is validated;
+- `event_truth` uses a distinct truth schema with the truth-muon four-vector and
+  truth event quantities. Never create truth MINOS/range/match counterparts or
+  fill detector-only features with sentinels;
+- the recoil set with energy and unambiguous geometry: view ID plus position and
+  `z`, preferably coordinates relative to the interaction vertex, with timing
+  and cluster/prong/type information when available;
+- truth-particle four-vectors plus a categorical PDG/type encoding (the PDG is
+  already dumped but the current loader discards it);
+- reconstructed vertex quantities may enter `event_reco/event_data`; truth
+  vertices may enter `event_truth`. A step-1 MC or data classifier must never
+  receive the MC truth vertex. Include explicit summaries for information
+  outside the retained cloud, including constituent count,
+  discarded/unclustered energy and detector-region energy totals, or use a
+  validated variable-length scheme that removes the fixed top-12 loss;
+- masks/type embeddings that distinguish muon, recoil constituents, padding,
+  detector views, and any residual-summary token.
+
+Do not feed generator interaction mode, generator-only process labels, or other
+unobservable truth labels into the publication classifier. Incoming-neutrino
+energy and similar truth-only latents require a separate prior-dependence case;
+they are not part of the default full-event claim. Run/playlist may be used only
+as validated detector-period conditioning, never as an unchecked data/MC label
+shortcut.
+
+Implementation gate, in order:
+
+1. Prove the source ROOT has the FPS configuration and reproduce the committed,
+   matched-CV FPS-versus-standard denominator/miss census within its declared
+   tolerance. Verify the extended edges/order, unchanged reco selection, and
+   event alignment before training.
+2. Repair and test independently paired `(point_cloud, event_features)` inputs
+   for `event_reco`, `event_data`, and `event_truth` through PET, DataLoader,
+   both `MultiFold.cache()` steps, reweight-all inference, bootstrap
+   persistence, and extraction. Permit different step-1/step-2 feature counts
+   and normalization contracts. The current `num_evt` branch is not functional
+   end-to-end, and fixing `net.py` alone is insufficient.
+3. Define the neighborhood metric explicitly. The vendored local PET assumes
+   its first two token coordinates are an angular/geometric pair, while the
+   current tensors begin with energy and one position/momentum component. Use
+   validated view-aware detector geometry at reco and direction/angle geometry
+   at truth, rather than letting raw column order define nearest neighbors.
+4. Prove row alignment and reco/data schema parity; document every input, mask,
+   normalization, truncation, and unavailable counterpart. Add an explicit
+   leakage test proving that step 1 contains no truth-only feature.
+5. Add an omitted-variable stress closure that changes muon kinematics at fixed
+   recoil. It must expose the recoil-only estimator and close with the full-event
+   estimator. Also retain ordinary closure, central normalization,
+   lower-dimensional marginal gates, and full-event-versus-recoil comparisons
+   in the FPS extension and dead-cell tiers. Passing this stress closure alone
+   does not satisfy the FPS controls.
+6. Freeze the full-event FPS feature and measurement contracts before
+   production, then rerun the PET nominal, GPU floor, coherent statistical
+   ensemble, PET-specific ML ensemble, vertical/retraining response,
+   P3F-based selection-complete laterals, covariance assembly, projections and
+   comparisons. Recompute the FPS prior envelope: additional features may
+   change extrapolation behavior but cannot create detector information in
+   zero-efficiency cells. No current recoil-PET covariance component is
+   automatically transferable to the new estimator.
+
+### Potential next step after the full-event FPS gate: broaden reconstructed acceptance
+
+Do not enlarge the truth denominator beyond the declared FPS fiducial domain
+merely because a more expressive estimator is available. After P5A/P5B, use
+the response/efficiency map, prior envelope, stress and ordinary closure, and
+coverage results to define the strongest data-supported reporting boundary.
+Promote stable cells to the primary acceptance-supported measurement and keep
+near-zero-efficiency cells in a separately labeled, model-dependent
+extrapolation tier.
+
+If important regions remain unconstrained, study a genuinely broader
+**reconstructed** selection rather than another truth-only expansion. Candidate
+categories include MINERvA-contained or otherwise non-MINOS-matched muons and
+additional angular/low-momentum acceptance. Such a campaign requires its own
+reconstruction categories, charge-sign/background treatment, efficiency and
+migration model, detector systematics, closure/coverage tests, and publication
+decision gate. Retain a tracker interaction fiducial volume so the target
+nucleon normalization and cross-section definition remain reproducible. The
+objective is maximum observed information and supported phase space, not the
+largest nominal truth-space volume.
 
 ## Blocked on external input
 
-1. **Collaborator confirmations** (technote App. A): FrInel_pi exclusion still
-   current MAT guidance; precedent for the ours-only truncated-spectral χ²;
-   precedent for publishing a 3D+ systematic covariance. **Ready-to-send
-   draft: `docs/COLLABORATOR_QUESTIONS.md` (2026-06-12)** — needs only the
-   user to send it.
+1. **Collaborator confirmations** (technote App. A): whether the historical
+   FrInel_pi exclusion is still endorsed; precedent for the ours-only
+   truncated-spectral χ²; collaboration endorsement for publishing the
+   first MINERvA 3D+ unfolded covariance and its rank-deficient GoF treatment
+   (there is no prior MINERvA 3D+ unfolding precedent). The historical code
+   fact is sourced: public MAT-MINERvA
+   `GenieSystematics.cxx` comments out the knob in both standard-registry
+   builders ([vector lines 36–38](https://github.com/MinervaExpt/MAT-MINERvA/blob/c20ad220e95f55b4ef2e9426c56dd2a3800f7533/universes/GenieSystematics.cxx#L36-L38);
+   [map lines 90–92](https://github.com/MinervaExpt/MAT-MINERvA/blob/c20ad220e95f55b4ef2e9426c56dd2a3800f7533/universes/GenieSystematics.cxx#L90-L92)),
+   unchanged since the 2021-07-07 initial public
+   [commit](https://github.com/MinervaExpt/MAT-MINERvA/commit/69e841ef53e336090dee7db25b70b8562bae76dc).
+   **Ready-to-send draft: `docs/COLLABORATOR_QUESTIONS.md` (2026-06-12)** —
+   needs only the user to send it.
 
 ## Deferred analysis refinements
 

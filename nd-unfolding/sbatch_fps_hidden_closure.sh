@@ -24,7 +24,7 @@ python3 unfold_nd_omnifold_unbinned.py \
   --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" --axes "" \
   --full-phase-space --pt-edges "${PT_EXT}" --pz-edges "${PZ_EXT}" \
   --iters 5 --use-weights --estimator lgbm --seed 42 \
-  --closure --closure-reweight-axis eavail \
+  --closure --closure-reweight-axis eavail --bkg-mode negweight-refined \
   --out "${OUT}"
 
 python3 fps_extension_validation.py --closure-root "${OUT}"

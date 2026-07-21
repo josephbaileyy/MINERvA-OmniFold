@@ -6,5 +6,5 @@
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/nd-unfolding"
-python3 combine_cov_nd.py --glob 'seedscan_split_4d/res_split_*.npz' --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag mlsplit4d --out uq_cov_mlsplit_4d.root
-python3 combine_cov_nd.py --glob 'boot_nd_4d/res_boot_*.npz' --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag stat4d --out uq_cov_stat_4d.root
+python3 combine_cov_nd.py --glob 'seedscan_split_4d/res_split_*.npz' --expected-ids 1-24 --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag mlsplit4d --out uq_cov_mlsplit_4d.root
+python3 combine_cov_nd.py --glob 'boot_nd_4d/res_boot_*.npz' --expected-ids 1-100 --cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root --tag stat4d --out uq_cov_stat_4d.root

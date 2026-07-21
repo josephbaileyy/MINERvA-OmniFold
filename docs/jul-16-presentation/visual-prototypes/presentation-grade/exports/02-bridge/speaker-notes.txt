@@ -1,0 +1,19 @@
+BUILD 1
+Speaker move: Follow one simulated interaction from truth to its reconstructed partner.
+Purpose: Begins with the concrete object both methods share: a paired simulated event.
+
+BUILD 2
+Speaker move: The simulation is an ensemble of these pairs, including migration.
+Purpose: Makes detector response visible before introducing bins or machine learning.
+
+BUILD 3
+Speaker move: Histogram those pairs and you obtain the response matrix.
+Purpose: Demystifies the matrix as a compressed representation of the same paired ensemble.
+
+BUILD 4
+Speaker move: D’Agostini assigns a correction to truth bins.
+Purpose: Anchors the weighting interpretation in a method the collaboration already knows.
+
+BUILD 5
+Speaker move: OmniFold keeps the pairs and learns weights at event resolution.
+Purpose: Positions OmniFold as a change in representation and ratio estimation—not an unrelated black box.

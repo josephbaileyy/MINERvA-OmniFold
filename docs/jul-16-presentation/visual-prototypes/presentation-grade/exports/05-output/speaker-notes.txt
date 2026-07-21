@@ -1,0 +1,15 @@
+BUILD 1
+Speaker move: The result is a weighted truth-level event record, not one histogram.
+Purpose: Makes the output object tangible before claiming flexibility.
+
+BUILD 2
+Speaker move: Choose the published two-dimensional binning for the trust check.
+Purpose: Connects the event-level product to a conventional cross-section result.
+
+BUILD 3
+Speaker move: Project the same weighted record onto a different stored truth coordinate.
+Purpose: Shows reuse without implying that arbitrary hidden observables are automatically unbiased.
+
+BUILD 4
+Speaker move: Change bin edges or inspect several projections without rerunning the unfold.
+Purpose: States the practical payoff in a form directly relevant to analysis iteration and publication.

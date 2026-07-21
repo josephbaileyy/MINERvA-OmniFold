@@ -1,0 +1,15 @@
+BUILD 1
+Speaker move: Begin with a simultaneous three-coordinate result.
+Purpose: Frames added dimensions as an obligation to preserve established information.
+
+BUILD 2
+Speaker move: Sum over the new coordinate cell by cell.
+Purpose: Makes marginalization a concrete linear operation rather than a vague projection.
+
+BUILD 3
+Speaker move: Compare the marginal with the established lower-dimensional anchor.
+Purpose: Elevates the agreement requirement to a gate, not an attractive afterthought.
+
+BUILD 4
+Speaker move: End on the cleared MINERvA marginal-anchor result.
+Purpose: Moves from the toy explanation to evidence that the production chain passes the check.

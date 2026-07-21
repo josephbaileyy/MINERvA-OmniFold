@@ -308,24 +308,29 @@ def main():
                     f"median {ea_res['median']:+.4f} GeV, "
                     f"{100*ea_res['frac_within']:.1f}% within 10 MeV", fontsize=9)
     ax[0].set_yscale("log")
-    # Cumulative pre-truncation truth multiplicity from the variable-length
-    # ROOT branch.  A survival curve retains the full 1--54 tail without one
-    # crowded bar and tick per integer; at threshold N it reports the number
-    # of events with n_had >= N.
+    # Ordinary event counts versus pre-truncation truth multiplicity.  Keep the
+    # bins through the top-12 storage cap exact, then group the sparse tail so
+    # it remains legible in the half-width note panel.
     max_mult = int(np.max(n_had_full[mt]))
-    multiplicities = np.arange(1, max_mult + 1)
     n_by_mult = np.bincount(n_had_full[mt], minlength=max_mult + 1)[1:]
-    n_at_least = np.cumsum(n_by_mult[::-1])[::-1] / 1.0e6
-    ax[1].step(multiplicities, n_at_least, where="post", color="#4C72B0", lw=2.0)
-    ax[1].fill_between(multiplicities, n_at_least,
-                       where=multiplicities > pg.shape[1], step="post",
-                       color="#C44E52", alpha=0.25)
-    ax[1].axvline(pg.shape[1] + 0.5, color="#C44E52", ls="--", lw=1.4,
+    exact_counts = n_by_mult[:pg.shape[1]]
+    tail_counts = np.array([
+        n_by_mult[12:14].sum(),   # 13--14
+        n_by_mult[14:17].sum(),   # 15--17
+        n_by_mult[17:24].sum(),   # 18--24
+        n_by_mult[24:].sum(),     # >=25
+    ])
+    category_counts = np.concatenate([exact_counts, tail_counts]) / 1.0e6
+    xpos = np.arange(len(category_counts))
+    colors = ["#4C72B0"] * len(exact_counts) + ["#C44E52"] * len(tail_counts)
+    ax[1].bar(xpos, category_counts, color=colors, width=0.82)
+    ax[1].axvline(len(exact_counts) - 0.5, color="#C44E52", ls="--", lw=1.4,
                   label="top-12 storage boundary")
-    ax[1].set_xlim(0.5, max_mult + 0.5)
-    ax[1].set_xticks([1, 4, 8, 12, 20, 30, 40, 50])
-    ax[1].set_xlabel(r"pre-truncation multiplicity threshold $N$")
-    ax[1].set_ylabel(r"events with $n_{\rm had}\geq N$ (millions)")
+    tick_labels = ["1", "2", "", "4", "", "6", "", "8", "", "10", "", "12",
+                   "13–\n14", "15–\n17", "18–\n24", r"$\geq25$"]
+    ax[1].set_xticks(xpos, tick_labels, fontsize=8)
+    ax[1].set_xlabel(r"pre-truncation truth-hadron multiplicity $n_{\rm had}$")
+    ax[1].set_ylabel("events per labeled bin (millions)")
     ax[1].set_yscale("log")
     ax[1].legend(frameon=False, fontsize=8, loc="upper right")
     # MC-only truncation-validation figure (Eavail_cloud vs stored, truth-cloud

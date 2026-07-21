@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OmniFold teaching sequences — presentation-grade prototypes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div>
+      <strong>OmniFold teaching sequences</strong>
+      <span>presentation-grade prototypes · conceptual toy data</span>
+    </div>
+    <nav id="tabs"></nav>
+  </header>
+
+  <main>
+    <section class="frame">
+      <svg id="slide" viewBox="0 0 1440 810" role="img"></svg>
+    </section>
+    <section class="console">
+      <div class="notes">
+        <span class="kicker" id="kicker"></span>
+        <h1 id="sequenceTitle"></h1>
+        <p><strong>Speaker move:</strong> <span id="speaker"></span></p>
+        <p class="intent"><strong>Why this build exists:</strong> <span id="intent"></span></p>
+      </div>
+      <div class="controls">
+        <button id="prev">←</button>
+        <span id="counter"></span>
+        <button id="next">→</button>
+        <button id="play" class="primary">Play</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Keys: ← → builds · 1–6 sequences · space play/pause</span>
+    <span class="legend"><i class="data"></i>data <i class="sim"></i>simulation <i class="weighted"></i>reweighted <i class="valid"></i>validation</span>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
+

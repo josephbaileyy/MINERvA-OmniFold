@@ -4,6 +4,13 @@
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
+Publication execution is indexed, without duplicating scientific facts, in
+[the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
+[the publication runbook](../docs/PUBLICATION_COMPLETION_RUNBOOK.md).
+Post-freeze cleanup is gated by
+[the reorganization plan](../docs/POST_PUBLICATION_REORG_PLAN.md). These are
+instructions, not evidence that a run has occurred.
+
 ## Current quotable results
 
 | Result | Current statement | Artifact |
@@ -45,10 +52,9 @@ replacement is implied for 4D/FPS or dependent significances. See
   unit-weight replicas remain unsubtracted cross-checks only.
 - `(E_avail,W)` will project the corrected full 5D statistical covariance as
   `M C_5D M^T` and use actual +/- mean-centered systematic endpoints.
-- A targeted full-MEFHC active-universe run will bound selection migration for
-  three trace-ranked kinematic bands before the 2026-07-16 presentation. Bank
-  results remain preliminary and support-limited until that bound lands; full
-  five-band active coverage remains the publication gate.
+- Presentation production is closed; no presentation-specific active-universe
+  run remains. Bank results remain support-limited, and full five-band
+  active-universe coverage remains the publication gate.
 - The background-aware 12-playlist dump and full 188-entry re-quote are complete;
   the combined effect is below 0.3%. The code remains fail-closed against
   missing per-universe background columns.

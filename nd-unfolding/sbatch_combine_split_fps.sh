@@ -12,6 +12,6 @@ cd "${REPO}/nd-unfolding"
 CV="uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
 N=$(ls seedscan_split_fps/res_split_*.npz 2>/dev/null | wc -l)
 [[ -s "${CV}" ]] || { echo "[FAIL] matched CV missing" >&2; exit 2; }
-(( N >= 20 )) || { echo "[FAIL] only ${N}/24 split runs on disk" >&2; exit 2; }
+(( N == 24 )) || { echo "[FAIL] expected exactly 24 split files, found ${N}" >&2; exit 2; }
 python3 combine_cov_nd.py --glob 'seedscan_split_fps/res_split_*.npz' \
-  --cv "${CV}" --tag mlsplitfps --out uq_cov_mlsplit_fps.root
+  --expected-ids 1-24 --cv "${CV}" --tag mlsplitfps --out uq_cov_mlsplit_fps.root

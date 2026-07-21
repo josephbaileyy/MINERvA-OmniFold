@@ -107,7 +107,10 @@ def main():
               f"median={100*s['median']:.2f}%  p90={100*s['p90']:.2f}%  max={100*s['max']:.1f}%")
         return s
 
-    print(f"[env5d] total sigma  tune={x_tune.sum():.4e}  genie={x_gen.sum():.4e}  nuwro={x_nu.sum():.4e}")
+    from xsec_nd import total_xsec
+    integ = lambda x: total_xsec(x.reshape(pet.shape, order="C"), pet.edges)
+    print(f"[env5d] total sigma  tune={integ(x_tune):.4e}  "
+          f"genie={integ(x_gen):.4e}  nuwro={integ(x_nu):.4e}")
     summary = {
         "n_reported_all3pos": int(ok.sum()),
         "comp_split": args.comp_split,

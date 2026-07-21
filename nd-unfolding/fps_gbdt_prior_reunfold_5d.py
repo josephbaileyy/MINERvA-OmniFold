@@ -154,7 +154,10 @@ def main():
         xs[name], c = unfold_prior(rs, rt)
         if name == "tune":
             comp_tune = c
-        print(f"[gbdt5d] unfolded {name}: total sigma = {xs[name].sum():.4e}", flush=True)
+        from xsec_nd import total_xsec
+        print(f"[gbdt5d] unfolded {name}: total sigma = "
+              f"{total_xsec(xs[name].reshape(tuple(len(e)-1 for e in edges), order='C'), edges):.4e}",
+              flush=True)
 
     # ---- reconstruction-efficiency completeness (for the tier split / profile) ----
     # comp_tune (above) is sample-COVERAGE completeness (signal-tree truth vs the
@@ -213,8 +216,11 @@ def main():
               f"p90={100*s['p90']:.2f}%  max={100*s['max']:.1f}%")
         return s
 
-    print(f"[gbdt5d] GBDT totals tune={tune.sum():.4e} genie={xs['genie'].sum():.4e} "
-          f"nuwro={xs['nuwro'].sum():.4e}")
+    from xsec_nd import total_xsec
+    shape = tuple(len(e)-1 for e in edges)
+    integ = lambda x: total_xsec(x.reshape(shape, order="C"), edges)
+    print(f"[gbdt5d] GBDT totals tune={integ(tune):.4e} genie={integ(xs['genie']):.4e} "
+          f"nuwro={integ(xs['nuwro']):.4e}")
     summary = {
         "method": "GBDT 3-prior re-unfold + fractional transfer to PET headline",
         "n_reported": int(rep.sum()), "iters": args.iters, "seed": args.seed,

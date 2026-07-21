@@ -20,8 +20,10 @@ GBDT factor (unified_throw_cov_5d.root) alongside this one and disclose the
 asymmetry.
 
 Computes, on the new bank_uthrow_5d ratios (matched to the GBDT throw):
-  C_block_pet = sum_b outer(x_b - x_cv) + (1/Nflux) sum_u outer(x_u - x_cv)
-  C_uni_pet   = (1/T) sum_t outer(x_t - x_cv)        [x_t = combined throw]
+  C_block_pet = sum_b MAT(x_b-, x_b+) + MAT({x_flux})
+  C_uni_pet   = MAT({x_t})                            [x_t = combined throw]
+Both use universe-mean centering and biased 1/N. The joint mean shift from CV
+is stored separately.
 Headline PET unified covariance = C_uni_pet + C_stat + C_ML + C_lateral
 (stat/ML/lateral copied unchanged from the Phase B pet_5d_covariance_combined_wlat
 file -- they do not depend on the vertical reweight construction). Writes
@@ -42,6 +44,9 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
         sys.path.insert(0, _p)
 
 from pet_systematics_5d import PETxsec5D
+from uq_math import (guarded_ratio, interpolate_asymmetric_ratio,
+                     joint_throw_covariance, mat_covariance,
+                     require_truth_ratio_bank)
 
 KNOB_BANDS = ["2p2h", "CCQEPauliSupViaKF", "FrAbs_pi", "FrElas_N", "HighQ2",
               "LowQ2", "MaCCQE", "MaRES", "MFP_N", "MvRES", "Rvn2pi", "Rvp2pi"]
@@ -51,11 +56,6 @@ RHO_CLIP = (1e-2, 1e2)
 def _opt(bank, name):
     p = os.path.join(bank, name)
     return np.load(p).astype(np.float64) if os.path.exists(p) else None
-
-
-def _clip(rho):
-    rho = np.where(np.isfinite(rho) & (rho > 0), rho, 1.0)
-    return np.clip(rho, *RHO_CLIP)
 
 
 def _th2(h):
@@ -82,6 +82,8 @@ def main():
                     help="Phase B PET combined cov: source of C_stat/C_ML/C_lateral")
     ap.add_argument("--throws", type=int, default=160)
     ap.add_argument("--seed", type=int, default=1000)
+    ap.add_argument("--invalid-ratio", choices=("error", "neutral"), default="error",
+                    help="invalid bank-ratio policy; neutral is explicit and logged")
     ap.add_argument("--out-root", default="products/pet/pet_5d_covariance_combined_unified_wlat.root")
     args = ap.parse_args()
 
@@ -92,43 +94,53 @@ def main():
     nrep = int(rep.sum())
     print(f"[petuni] CV reported bins = {nrep}")
 
-    # bank: truth-side knob ratios (PET uses the truth reweight only) + flux universes
-    bands = [b for b in KNOB_BANDS if os.path.exists(os.path.join(args.bank, f"sig_{b}_t_1.npy"))]
-    log_t = {b: np.log(_clip(_opt(args.bank, f"sig_{b}_t_1.npy"))) for b in bands}
-    nflux = 0
-    while os.path.exists(os.path.join(args.bank, f"sig_flux_t_{nflux}.npy")):
-        nflux += 1
-    print(f"[petuni] bank: {len(bands)} knob bands, {nflux} flux universes")
-    if len(bands) < len(KNOB_BANDS) or nflux == 0:
-        raise SystemExit(f"[FAIL] incomplete bank: {len(bands)}/{len(KNOB_BANDS)} knobs, {nflux} flux")
+    # Bank: PET uses truth-side ratios only. Require both endpoints and exactly
+    # 100 PPFX universes so a partial bank cannot silently shrink C_syst.
+    flux_ids = require_truth_ratio_bank(args.bank, KNOB_BANDS, expected_flux=100)
+    ratio = lambda value, label: guarded_ratio(
+        value, label, invalid_policy=args.invalid_ratio, clip=RHO_CLIP)
+    endpoints = {
+        b: (ratio(_opt(args.bank, f"sig_{b}_t_1.npy"), f"{b}:+1"),
+            ratio(_opt(args.bank, f"sig_{b}_t_0.npy"), f"{b}:-1"))
+        for b in KNOB_BANDS
+    }
+    flux = {u: ratio(_opt(args.bank, f"sig_flux_t_{u}.npy"), f"Flux:{u}")
+            for u in flux_ids}
+    print(f"[petuni] bank: {len(KNOB_BANDS)} complete knob bands, "
+          f"{len(flux_ids)} flux universes")
 
     # ---- matched block-sum (same frozen reweighter) ----
     C_block = np.zeros((nrep, nrep))
-    for b in bands:
-        delta = pet.xsec(_clip(_opt(args.bank, f"sig_{b}_t_1.npy")))[rep] - base
-        C_block += np.outer(delta, delta)
-        print(f"[block] {b}: ||d||={np.linalg.norm(delta):.3e}", flush=True)
-    fX = np.array([pet.xsec(_clip(_opt(args.bank, f"sig_flux_t_{u}.npy")))[rep] - base
-                   for u in range(nflux)])
-    C_block += (fX.T @ fX) / nflux
-    print(f"[block] flux ({nflux}) added")
+    for b in KNOB_BANDS:
+        plus, minus = endpoints[b]
+        pair = np.stack([pet.xsec(minus)[rep], pet.xsec(plus)[rep]])
+        cb = mat_covariance(pair)
+        C_block += cb
+        print(f"[block] {b}: sqrt-tr={np.sqrt(np.trace(cb)):.3e}", flush=True)
+    fX = np.asarray([pet.xsec(flux[u])[rep] for u in flux_ids])
+    C_flux = mat_covariance(fX)
+    C_block += C_flux
+    print(f"[block] flux ({len(flux_ids)}) sqrt-tr={np.sqrt(np.trace(C_flux)):.3e}")
 
     # ---- unified throw (combined per-event reweight per throw) ----
     xs = []
     for j in range(args.throws):
         rng = np.random.default_rng(args.seed + j)
-        lt = np.zeros_like(base, shape=log_t[bands[0]].shape)
-        for b in bands:
-            lt = lt + rng.standard_normal() * log_t[b]
-        rho = np.exp(lt)
-        u = int(rng.integers(nflux))
-        rho = rho * _clip(_opt(args.bank, f"sig_flux_t_{u}.npy"))
-        xs.append(pet.xsec(_clip(rho))[rep])
+        rho = np.ones_like(endpoints[KNOB_BANDS[0]][0])
+        for b in KNOB_BANDS:
+            rho *= interpolate_asymmetric_ratio(rng.standard_normal(), *endpoints[b])
+        u = int(rng.integers(len(flux_ids)))
+        rho *= flux[u]
+        # Match the GBDT throw contract: clip each banked factor, but do not
+        # clip their composed product a second time. Still fail closed if the
+        # composition over/underflows or becomes non-positive.
+        rho = guarded_ratio(rho, f"joint throw {j}",
+                            invalid_policy=args.invalid_ratio, clip=None)
+        xs.append(pet.xsec(rho)[rep])
         if j % 20 == 0:
             print(f"[throw {j}] flux_u={u}", flush=True)
     X = np.array(xs)
-    dX = X - base[None, :]
-    C_uni = (dX.T @ dX) / args.throws
+    C_uni, mean_shift = joint_throw_covariance(X, base)
 
     st_uni = float(np.sqrt(np.trace(C_uni)))
     st_block = float(np.sqrt(np.trace(C_block)))
@@ -170,11 +182,17 @@ def main():
     hcv.Write()
     ROOT.TParameter("int")("n_reported", nrep).Write()
     ROOT.TParameter("double")("pet_unified_block_ratio", st_uni / st_block).Write()
+    ROOT.TParameter("double")("joint_mean_shift_norm", float(np.linalg.norm(mean_shift))).Write()
+    hshift = ROOT.TH1D("hJointMeanShift", "joint throw mean minus CV", nrep, 0, nrep)
+    for i, value in enumerate(mean_shift):
+        hshift.SetBinContent(i + 1, float(value))
+    hshift.Write()
     fo.Close()
     summary = {
         "n_reported": nrep, "throws": args.throws,
         "pet_sqrt_tr_unified": st_uni, "pet_sqrt_tr_block": st_block,
         "pet_unified_block_ratio": st_uni / st_block, "pet_unified_block_median_sigma_ratio": med_ratio,
+        "joint_mean_shift_norm": float(np.linalg.norm(mean_shift)),
         "limitation": "frozen reweighter: PET unified/block omits the retraining-response nonlinearity "
                       "(lower bound); GBDT factor in uq_5d/unified_throw_cov_5d.root is the re-unfolded one.",
         "out_root": args.out_root,

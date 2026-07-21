@@ -21,6 +21,7 @@ cd "${REPO}/nd-unfolding"
 echo "[comb] $(date -u '+%F %T UTC')"
 python3 unified_throw_cov.py \
     --combine "uq_4d/uthrow_slabs/uthrow_*.npz" \
+    --expected-throws 0-159 \
     --block-slabs "uq_4d/uthrow_slabs/blocknode_*.npz" \
     --bank bank_uthrow --iters 5 --seed 1000 --null \
     --out-root uq_4d/unified_throw_cov.root

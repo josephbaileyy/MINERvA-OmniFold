@@ -52,13 +52,13 @@ python3 fps_acceptance.py --omnifile "${MERGED}" \
 echo "===== [3/7] FPS unfold, MnvTune prior ====="
 python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes "" \
   --full-phase-space --pt-edges "$PT_EXT" --pz-edges "$PZ_EXT" \
-  --use-weights --seed 1 --iters 5 --estimator lgbm \
+  --use-weights --seed 1 --iters 5 --estimator lgbm --bkg-mode negweight-refined \
   --out products/5d/xsec_2d_FPS_MEFHC_tune.root
 
 echo "===== [4/7] FPS unfold, bare-GENIE prior ====="
 python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes "" \
   --full-phase-space --pt-edges "$PT_EXT" --pz-edges "$PZ_EXT" \
-  --seed 1 --iters 5 --estimator lgbm \
+  --seed 1 --iters 5 --estimator lgbm --bkg-mode negweight-refined \
   --out products/5d/xsec_2d_FPS_MEFHC_genie.root
 
 echo "===== [5/7] control unfold (standard MEFHC omnifile, paper grid) ====="
@@ -69,7 +69,7 @@ python3 unfold_nd_omnifold_unbinned.py --omnifile "${CTRL_OMNI}" --axes "" \
 echo "===== [6/7] FPS plain closure (extended grid) ====="
 python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes "" \
   --full-phase-space --pt-edges "$PT_EXT" --pz-edges "$PZ_EXT" \
-  --use-weights --seed 1 --iters 5 --estimator lgbm --closure \
+  --use-weights --seed 1 --iters 5 --estimator lgbm --closure --bkg-mode negweight-refined \
   --out products/5d/closure_2d_FPS_MEFHC.root
 
 echo "===== [7/7] honesty battery (anchor + prior swap, MEFHC) ====="

@@ -5,7 +5,7 @@
 #SBATCH --output=uq_fps/uthrowfps_comb_%A.out --error=uq_fps/uthrowfps_comb_%A.err
 
 # Aggregate the FPS unified-throw slabs vs the FPS block-sum units -> C_unified_fps,
-# C_blocksum_fps, C_cross_fps on the extended 2D grid, with the jitter-null correction.
+# C_blocksum_fps, C_cross_fps on the extended 2D grid; the fixed-seed null must be zero.
 # This is the mandatory FPS_PILOT.md object (the migration-heavy corner that broke
 # the 4D block sum x2 is INSIDE the FPS measurement).
 set -eo pipefail
@@ -17,6 +17,7 @@ NBLK=$(ls uq_fps/uthrow_slabs_fps/blockfps_*.npz 2>/dev/null | wc -l)
 echo "[combfps] start slabs=${NSLAB} blocks=${NBLK} $(date -u '+%F %T UTC')"
 python3 unified_throw_cov.py \
     --combine 'uq_fps/uthrow_slabs_fps/uthrowfps_slab_*.npz' \
+    --expected-throws 0-159 \
     --block-slabs 'uq_fps/uthrow_slabs_fps/blockfps_*.npz' \
     --bank bank_uthrow_fps --iters 5 --null \
     --out-root uq_fps/unified_throw_cov_fps.root

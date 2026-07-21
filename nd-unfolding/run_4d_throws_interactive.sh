@@ -28,5 +28,5 @@ wait
 echo "[4dthrow] PHASE 2 done $(date -u +%T); blocks: $(ls $S/block4d_*.npz 2>/dev/null | wc -l)"
 
 echo "[4dthrow] PHASE 3 combine $(date -u +%T)"
-run python3 unified_throw_cov.py --combine "$S/uthrow4d_slab_*.npz"     --block-slabs "$S/block4d_*.npz" --bank bank_uthrow_4d --iters 5 --null     --out-root uq_4d/unified_throw_cov_4d.root > uq_4d/uthrow4d_combine.log 2>&1
+run python3 unified_throw_cov.py --combine "$S/uthrow4d_slab_*.npz" --expected-throws 0-159     --block-slabs "$S/block4d_*.npz" --bank bank_uthrow_4d --iters 5 --null     --out-root uq_4d/unified_throw_cov_4d.root > uq_4d/uthrow4d_combine.log 2>&1
 echo "[4dthrow] ALL DONE $(date -u +%T)"

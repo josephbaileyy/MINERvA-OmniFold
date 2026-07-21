@@ -143,3 +143,46 @@ cascades (afterok) once the dir is full.
   MANUALLY at milestones (no-dep): budget when boot=100; adopt when combined + unified-throw
   both land. Throws/blocks on batch are SLOW (~40min/task, ~3 concurrent) -> may not finish
   in window; core (combined) is the guaranteed deliverable, unified-throw+adopt is enhancement.
+
+## CORE LANDED + COMMITTED (2026-07-16 01:xx)
+Combined 4D corrected covariance VALIDATED (ALL_OK): sqrt-tr 2.0992e-38, median 13.47%/bin,
+PSD (min-eig/max -2.8e-16), rank 264/4830. Committed 1913122 -> github/main (code +
+RUN_LOG + VALIDATION_LEDGER + summaries; heavy ROOTs gitignored). C_stat sqrt-tr 1.2117e-39,
+C_ML 1.0499e-39, C_syst 2.0931e-38.
+REMAINING: (a) unified-throw (uthr/blk multinode 55969168) -> comb -> candidate adopt
+(mean+cv) = ENHANCEMENT; (b) FINAL adopted 4D = swap Agent A's selection-complete standard
+lateral block (GATED). P7 5D->4D marginal code ready (dry-run only; final gated).
+
+## ENHANCEMENT autonomous chain (2026-07-16, hands-off)
+Unified-throw is 284 memory-bandwidth-bound unfolds -> won't finish in one alloc window.
+Autonomous completion wired: batch uthr4dCc=55971614 + blk4dCc=55971615 (resumable, skip-if-exists)
+-> comb4dCc=55971617 (afterok) -> adopt4dCc=55971619 (afterok; combined already present). Multinode
+55969168 accelerates by filling slabs (batch tasks then skip-fast -> arrays complete).
+When adopt lands: validate PSD + append ledger/RUN_LOG + commit (follow-up). FINAL 4D
+adoption still needs Agent A's lateral swap (separate, gated).
+
+## FINAL STATE (2026-07-16 ~01:40 PDT) — handoff
+CORE COMMITTED (1913122): corrected combined 4D covariance (sqrt-tr 2.099e-38, med
+13.47%/bin, PSD, 4830 bins) + C_stat/C_ML/C_syst + bank reconstruction + project_cov_nd
++ launchers + RUN_LOG + LEDGER. Heavy ROOTs gitignored (fingerprinted by summaries).
+ENHANCEMENT (unified-throw + candidate adopt) = AUTONOMOUS via batch chain:
+  uthr4dCc 55971614 (0-39) + blk4dCc 55971615 (0-25) -> comb4dCc 55971617 (afterok) ->
+  adopt4dCc 55971619 (afterok; combined already present). Resumable, skip-if-exists,
+  clean complete slabs (3h wall >> task time). Multinode killed (freed nodes; partial
+  slabs from its wall CLEANED: throws=3/40 blocks=20/26 clean remain). Slow on CPU
+  Resources-throttle -> completes overnight/next-session. WHEN adopt lands: validate PSD
+  + append LEDGER/RUN_LOG + commit follow-up.
+GATED (not crossed): FINAL 4D adoption = swap Agent A's committed selection-complete
+standard lateral block into the combined (current lateral SUPPORT-LIMITED, labeled).
+P7 final projected numbers gated on final adopted 5D (5D->4D marginal code ready; dry-run only).
+TRAP LOGGED: kill-by-pattern self-matched the issuing shell (exit 144) -> always kill by
+explicit PID, never pgrep-pattern the target string in the same command.
+
+## 2026-07-16 ~07:45: ALL SLABS DONE — cascade pending
+Throw slabs 40/40 + blocks 26/26 (multinode p6_4d_thr2 55977576 finished them at its 4h wall).
+Remaining uthr4dCc/blk4dCc array tasks are pure skip-if-exists no-ops draining through the
+Resources-throttled shared queue -> comb4dCc 55971617 -> adopt4dCc 55971619 (afterok, wired).
+Pre-staged validate_adopted_4d.py (unified-throw + both adopted covs: PSD/symm/manifest +
+JSON summary with all VALIDATION_LEDGER numbers). Session watcher wakes on adopt landing;
+then: validate -> append LEDGER/RUN_LOG -> commit follow-up. Do NOT submit duplicate comb
+(concurrent-write race on unified_throw_cov_4d.root).

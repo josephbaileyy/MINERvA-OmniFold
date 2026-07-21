@@ -1,0 +1,19 @@
+BUILD 1
+Speaker move: Start from familiar territory: one truth axis, one reconstructed axis.
+Purpose: Establishes that the argument is about representation, not a rejection of D’Agostini unfolding.
+
+BUILD 2
+Speaker move: Now add a second observable on both the truth and reconstructed sides.
+Purpose: Makes the often-hidden square-of-the-state-space scaling explicit.
+
+BUILD 3
+Speaker move: Add a third coordinate without adding events.
+Purpose: Shows why sparse response matrices arrive much sooner than intuition based only on truth-bin counts.
+
+BUILD 4
+Speaker move: Name the actual tradeoff: physics resolution versus matrix occupancy.
+Purpose: Turns “curse of dimensionality” jargon into the analysis choice collaborators recognize.
+
+BUILD 5
+Speaker move: Change representation: keep one row per simulated event and add columns.
+Purpose: Creates the opening for event-level likelihood ratios without claiming that the statistical problem disappears.

@@ -711,3 +711,136 @@ Pushed: subtree -> Overleaf (analysis-note abec2be..4310e6d); main
 fast-forwarded 6a985ed..40306c6 and pushed to github. Kept binned purity as the
 stated default (per Phase-E "no unilateral default flip"). Worktree/temp branch
 cleaned up; other account's 12 dirty files untouched throughout.
+
+## 2026-07-11 (claude-school) — FPS/ND-scale validation (Step 1 gate) STARTED
+User authorized making negweight+Stay-Positive the default for FPS/N-D/PET and
+regenerating the headline central + covariances under it. Step 1 = validate at
+FPS/ND scale (the gate). The FPS config runs through the ND driver
+(unfold_nd_omnifold_unbinned.py), NOT the 2D driver: `--axes ""`=2D,
+`eavail,q3`=4D, `eavail,q3,W`=5D, all with `--full-phase-space --pt-edges $PT_EXT
+--pz-edges $PZ_EXT` on runEventLoopOmniFold_5D_FPS_MEFHC.root. `--bkg-mode`
+default: ND line 499, 2D line 1008.
+
+### 1L smoke (FPS 1L omnifile, 1 iter, lgbm; purity vs negweight-refined) — PASS
+Runs clean at 2D/4D/5D + a 2D closure; no crashes. Per-bin CV agreement
+(negweight-refined/purity on hXSecND_flat, significant bins):
+  2D: nsig 211, sum-ratio 0.9979, median 1.0004, [0.932,1.039], 99% <5%
+  4D: nsig 2333, sum-ratio 0.9994, median 0.9982, [0.949,1.045], 100% <5%
+  5D: nsig 3686, sum-ratio 0.9967, median 0.9947, [0.901,1.034], 99% <5%
+Stay-Positive floors cleanly at zero where B>D: 2D 0 clipped, 4D 8/6751
+(g in [0.276,0.996]), 5D 11/6751 (g in [0.250,0.997]) -- clip frac rises with
+dimension (finer bins -> more local B>D), weights stay non-negative, no blow-up.
+Closure (2D refined, pseudo-data = sim reco + injected bkg contamination):
+hXSecND/hClosureRef median 0.9999, 100% within 5% -- clean truth recovery with
+the injected background subtracted. => negweight-refined ~= purity even at FPS
+(large background), so per the plan Step 3 collapses to re-anchor+relabel for the
+ND/GBDT path (not a from-scratch recompute).
+
+### MEFHC headline-stats confirmation LAUNCHED
+2D-FPS MEFHC matched pair (purity vs negweight-refined, 5 iter, lgbm, seed 1,
+the documented xsec_2d_FPS_MEFHC config) running in parallel in the shared
+alloc (55795538); logs $CLAUDE_JOB_DIR/tmp/fps_mefhc/. Confirms full-stats
+agreement before the gate is declared closed.
+
+### SCOPE FINDINGS surfaced to user (block Steps 2-4 as originally framed)
+1. **PET-FPS central is un-background-subtracted (undocumented).** The PET
+   point-cloud pipeline does NOT use --bkg-mode and applies NO subtraction on
+   the measured side: dump_pointcloud_inputs.py:177 writes
+   measured_weights=np.ones; MC side is mc_signal_reco (signal-only,
+   runEventLoopOmniFold.cpp:864-865). PETxsec5D.xsec (pet_systematics_5d.py) has
+   no bkg/purity term. A mc_background tree exists but is never read by the PET
+   path. The 0.9884 closure uses signal-only MC-as-pseudo-data -> blind to
+   background. => "negweight default for PET" is NOT a flip; it needs bkg
+   injection ADDED to the point cloud + Stay-Positive + a FULL GPU retrain
+   (~9h) + envelope re-run, AND it would SHIFT the PET central DOWN by the
+   (large FPS) background fraction -- the re-anchor/relabel logic (which assumes
+   negweight~=purity) does not apply to PET.
+2. **ND 4D/5D covariances go through sweep_bank{,_5d}.py, which does NOT consume
+   --bkg-mode** (per the earlier ND note). Regenerating 4D/5D syst covariance
+   under negweight needs negweight wired into the banked sweep + a re-bank on
+   the new-binary omnifiles (gated, overlaps #13). The FPS-2D central + its
+   universe cov CAN be regenerated directly via the ND driver --universe on the
+   on-disk runEventLoopOmniFold_5D_FPS_MEFHC_universes_full.root (193GB).
+Awaiting user decision on PET scope + 4D/5D-cov scope before committing the
+expensive Step-3 regeneration.
+
+## 2026-07-11 (claude-school) — USER DECISIONS locked (scope for Steps 2-4)
+- PET: **Option A / FULL negweight-by-injection**. Blocked by a hard obstacle
+  discovered via rootls on runEventLoopOmniFold_PC_FPS_1L.root: the `mc_background`
+  tree has ONLY scalars (sim_background,_pz,_eavail,_q3,_W,_pass,w_bkg) and NO reco
+  point clouds (part_reco_E/pos/z live only on mc_signal_reco + data). So literal
+  negative-weight injection into the neural PET requires REGENERATING the FPS PC
+  omnifile with background clouds: C++ change to runEventLoopOmniFold.cpp
+  (add part_reco_* to mc_background, gated by MNV101_DUMP_POINTCLOUD) -> rebuild ->
+  re-run the 12-playlist FPS PC event loop (72GB MEFHC) -> re-dump PC inputs ->
+  inject bkg clouds at -w + Stay-Positive -> GPU retrain (~9h) -> re-run PETxsec5D
+  for the new central -> re-anchor the EXISTING envelope ratios (do NOT recompute
+  the 3-prior envelope or the retraining floor). User chose this over the
+  retrain-only unbinned-downweight path (which would subtract the same D-B estimand
+  but not be literal injection) and over deferring PET. MULTI-DAY.
+- GBDT/driver FPS-family centrals (FPS-2D/4D/5D via ND driver on the FPS omnifile,
+  --bkg-mode negweight-refined): rerun the CENTRAL only. Standard-PS 4D/5D and the
+  3-prior envelope internals + retraining floor stay PUBLISHED (out of scope).
+- Covariances: re-anchor+relabel + ONE FPS-2D universe/bootstrap spot-check via the
+  ND driver on runEventLoopOmniFold_5D_FPS_MEFHC_universes_full.root (193GB, on disk).
+- Scope: FPS-family + PET ONLY.
+
+## 2026-07-11 (claude-school) — Steps 2-3 IN FLIGHT (jobs submitted)
+Step 2 (flip FPS entry points to negweight-refined) DONE: added
+`--bkg-mode negweight-refined` to the FPS unfolds in sbatch_fps_mefhc.sh (tune,
+genie, closure), sbatch_fps_pilot.sh (tune, genie), sbatch_fps_hidden_closure.sh.
+Standard-PS control unfolds left as purity. Did NOT flip the global ND argparse
+default (ND driver is shared with standard-PS + the other account's staged #13
+work) -- entry-point-level flip only.
+
+Step 3a (FPS GBDT central regen) SUBMITTED: array 55797584 [0-5], ND driver on
+runEventLoopOmniFold_5D_FPS_MEFHC.root, axes ''/eavail,q3/eavail,q3,W x
+{purity,negweight-refined}, 5 iter lgbm seed 1, --full-phase-space + extended
+grid -> products/5d/negweight_central/. (shared QoS, 16k-deep queue.)
+
+Step 3b (PET Option A) chain SUBMITTED:
+- C++ edit to runEventLoopOmniFold.cpp: added part_reco_E/pos/z to mc_background
+  in LoopAndFillUnbinnedMCBackground (3 additive insertions, gated by
+  MNV101_DUMP_POINTCLOUD, mirrors LoopAndFillUnbinnedData). Compile-verified
+  interactively (cmake --build OK, linked).
+- 55797664 build (sbatch_build.sh) -> opt/bin/runEventLoopOmniFold.
+- 55797704 evloop_pcfb [1-12] (afterok build): sbatch_evloop_array_pointcloud_fps_bkgcloud.sh
+  -> runEventLoopOmniFold_PC_FPS_bkgcloud_${PL}.root (NEW names; existing headline
+  omnifile untouched).
+- 55797706 hadd_pcfb (afterok evloop) -> runEventLoopOmniFold_PC_FPS_MEFHC_bkgcloud.root.
+JIDs in $CLAUDE_JOB_DIR/tmp/pet_regen_jids.txt.
+STILL TO CODE (before retrain, no compute needed): PET dumper to emit bkg clouds
++ reco scalars + w_bkg; dataloader to inject bkg clouds at -w + Stay-Positive
+refined measured_weights; then GPU retrain -> PETxsec5D new central -> re-anchor
+existing envelope ratios (xps2 grid).
+
+## 2026-07-11 (claude-school) — HALTED for auditor fixes; gate CLOSED at MEFHC
+Gate fully closed BEFORE the halt: 2D-FPS MEFHC matched pair (purity vs
+negweight-refined, 5 iter lgbm seed 1) finished rc=0: sum_ratio 0.9975, per-bin
+median 0.9994, 100% within 5%, 89% within 1%. negweight-refined == purity at FPS
+full stats. (Files in $CLAUDE_JOB_DIR/tmp/fps_mefhc/, tmp -- not products.)
+
+Auditor flagged 9 issues; user halting to fix. CANCELLED all 4 of my PENDING
+jobs (zero-waste, none had started): 55797584 fps_nw_central, 55797664 build,
+55797704 evloop_pcfb, 55797706 hadd_pcfb. Alloc holder 55795538 left running.
+Relevance map:
+- Blocks my CENTRAL regen (3a): #6 non-finite extra observables in
+  unfold_nd_omnifold_unbinned.py:228/321/330. (Note: mode-INDEPENDENT, so the
+  gate's negweight-vs-purity COMPARISON is unaffected; only re-run for the
+  absolute central after the fix.)
+- Blocks my PET omnifile regen (3b): #2 lateral universes lives in
+  runEventLoopOmniFold.cpp (L432/864/920) -- the SAME file I edited (additive bkg
+  clouds at L~1020-1140, different region, UNCOMMITTED in the working tree).
+  Coordinate: keep my additive edit, let user apply the #2 fix, ONE rebuild, then
+  re-run the evloop_pcfb chain.
+- Blocks the covariance re-anchor (3c, not started): #1 unified-throw -1sigma
+  synthesis (unified_throw_cov.py), #2 laterals, #3 PET C_stat not a data
+  bootstrap, eavailW linear-std, bootstrap/ML silent-fail combiner, unified-throw
+  jitter double-count. The EXISTING adopted 4D/5D/FPS covariances I planned to
+  relabel are built by exactly this flagged code -> correctly blocked.
+- Not relevant to me: Low NN sys.path (I use lgbm). #7 total_xsec .sum() is a
+  diagnostic-print issue -> use total_xsec() (not .sum()) when I compute the PET
+  re-anchor total.
+SURVIVES the halt (no re-work): Step 1 gate conclusion (comparison is
+mode-independent); Step 2 FPS entry-point --bkg-mode edits (flag-only, no compute).
+Waiting on user's fixes before re-launching 3a/3b/3c.

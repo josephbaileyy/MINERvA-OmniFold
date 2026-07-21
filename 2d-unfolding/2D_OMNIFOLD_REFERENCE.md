@@ -223,13 +223,22 @@ For the full lateral+vertical MEFHC sweep:
   total when available, but is drawn only when it exceeds the configured
   visibility threshold.
 
-Pair bands use the MINERvA-101 sum-of-squares convention,
-`0.5 * (delta_plus delta_plus^T + delta_minus delta_minus^T)`.
-Multi-universe bands use sample covariance with `ddof=1`. Inverse-cov
+All systematic bands use the MAT covariance convention implemented by
+`MnvVertErrorBand::CalcCovMx`: center universes on their universe mean and
+normalize by biased `1/N`. For a +/- pair this is the outer product of the
+half-difference; a common endpoint displacement from CV is reported separately
+rather than counted as variance. Multi-universe bands use the same formula. Inverse-cov
 diagnostics for an ours-only covariance are expected to be fragile when
 finite universe ensembles underspan the 205 reported-bin space; quote
 direct per-bin pulls and truncated-mode chi2 alongside any pseudo-inverse
 chi2.
+
+`--universe BAND:IDX` on a dump-all omnifile remains limited to CV event-loop
+support. When shifted selection can move events into or out of the sample, use
+per-playlist `MNV101_ACTIVE_UNIVERSE=BAND:IDX`, merge the ordinary trees, and
+require migration metadata plus finite-support signal/denominator closure. The
+five kinematic bands are BeamAngleX/Y, MuonResolution, and
+Muon_Energy_MINERvA/MINOS; MinosEfficiency and GEANT are weight-only.
 
 ## Flux and normalization
 

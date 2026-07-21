@@ -12,6 +12,11 @@ set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d
 OFF=$(( SLURM_ARRAY_TASK_ID * 8 ))
+# --invalid-ratio neutral: the bank carries ~1758/32.8M (~5e-5) GENIE
+# negative-weight artifacts in the HighQ2/LowQ2 +1sigma Q2-suppression knobs
+# (spline overshoot) + one MFP_N zero. Hold them at CV (ratio=1) for the
+# affected knob -- the established prior handling (old _clip did this silently),
+# now explicitly logged. Negligible for the covariance.
 python3 unified_throw_cov_5d.py --throws 8 --throw-offset ${OFF} --seed 1000 \
-  --bank bank_uthrow_5d --iters 5 \
+  --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
   --out "uq_5d/uthrow_slabs_5d/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

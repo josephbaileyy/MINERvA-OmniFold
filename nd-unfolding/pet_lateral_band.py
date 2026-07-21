@@ -89,7 +89,9 @@ def main():
     rep = x_cv > 0
     base = x_cv[rep]
     nrep = int(rep.sum())
-    print(f"[wlat] PET CV total={x_cv.sum():.4e} reported bins={nrep}")
+    from xsec_nd import total_xsec
+    print(f"[wlat] PET CV total={total_xsec(x_cv.reshape(pet.shape, order='C'), pet.edges):.4e} "
+          f"reported bins={nrep}")
 
     pt_lo, pt_hi = pet.edges[0][0], pet.edges[0][-1]
     pz_lo, pz_hi = pet.edges[1][0], pet.edges[1][-1]

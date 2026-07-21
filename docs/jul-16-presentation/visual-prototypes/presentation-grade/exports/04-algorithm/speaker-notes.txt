@@ -1,0 +1,23 @@
+BUILD 1
+Speaker move: Inventory the inputs: measured reco events and paired truth/reco simulation, including misses.
+Purpose: Makes clear which information is—and is not—available in data.
+
+BUILD 2
+Speaker move: Push the current truth weights through the simulated pairs to reconstructed space.
+Purpose: Introduces “push” as bookkeeping through a known simulated event identity.
+
+BUILD 3
+Speaker move: Step 1: compare weighted reconstructed simulation with data.
+Purpose: Shows exactly where the data constrain the weights.
+
+BUILD 4
+Speaker move: Pull the learned detector-space correction back through each pair.
+Purpose: Shows the crucial reco-to-truth information path and the native miss treatment.
+
+BUILD 5
+Speaker move: Step 2: learn a smooth truth-space reweight that becomes the next push.
+Purpose: Corrects the common oversimplification that OmniFold merely copies weights once.
+
+BUILD 6
+Speaker move: Iterate until changes are small; retain the weighted truth ensemble.
+Purpose: Ends on the actual product and identifies iteration/model capacity as regularization.

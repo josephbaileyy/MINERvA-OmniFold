@@ -1,0 +1,15 @@
+BUILD 1
+Speaker move: Show data and simulation occupying the same reconstructed feature space.
+Purpose: Prevents the classifier from being introduced as an abstract ML object.
+
+BUILD 2
+Speaker move: Ask only where data are more or less dense than simulation.
+Purpose: Reframes classification as a local density-comparison task.
+
+BUILD 3
+Speaker move: Convert the classifier probability into a likelihood-ratio weight.
+Purpose: Provides the one equation worth retaining and explains what the output means physically.
+
+BUILD 4
+Speaker move: Apply the weights: simulation density morphs toward data density.
+Purpose: Closes the loop visually before the audience sees the two-level OmniFold algorithm.

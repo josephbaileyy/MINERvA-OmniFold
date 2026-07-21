@@ -2,10 +2,10 @@
 
 Main deck = slides 1–23 (backup B1–B10 behind the divider). Times are
 cumulative targets; the deck's animated slides (3, 5, 7, 14, 17) have beat
-buttons — the script marks each beat. The narration is about 1,900 words
-(~14 minutes at 135 wpm), leaving roughly six minutes for animation beats,
-figure reading, and transitions. If you're running long, the marked CUT
-lines drop about two minutes without changing the argument.
+buttons — the script marks each beat. This expanded pass targets about 20
+minutes at the current rehearsal pace, including animation beats, figure
+reading, and transitions. If you're running long, the marked CUT lines drop
+about two minutes without changing the argument.
 
 Register note (2026-07-16 pass): use a technical, non-promotional register.
 Define acronyms on first use, avoid appeals to authority or personal
@@ -31,6 +31,11 @@ can reach.
 ## 2 · Three parts, in order — 0:45 → 1:30
 
 There are three parts.
+
+For context, ME FHC is MINERvA's medium-energy, forward-horn-current
+muon-neutrino sample. CC-inclusive requires the outgoing muon but no particular
+hadronic final state. The signal covers muons below 20 degrees, with transverse
+momentum below 4.5 GeV and longitudinal momentum from 1.5 to 60 GeV.
 
 First, the OmniFold event-reweighting procedure and its relation to binned
 unfolding.
@@ -167,6 +172,12 @@ cross section in muon pT and p-parallel — Ruterbories et al., PRD 104. We
 unfold unbinned, then bin at the very end into the published fourteen-by-
 sixteen binning, and overlay the published points.
 
+Each panel fixes one pT interval; within it, the horizontal axis is p-parallel
+and the vertical axis is the double-differential cross section. The OmniFold
+result is overlaid on the published points and tuned GENIE. The paper reports
+205 of 224 geometric bins, excluding the diagonal high-angle corner. The
+largest fractional differences are in the sparse high-p-parallel tails.
+
 Total cross section ratio, OmniFold over published: one-point-zero-one-one.
 Median per-bin ratio: one-point-zero-zero-six. Ninety-four percent of
 reported bins are within ten percent.
@@ -175,6 +186,12 @@ reported bins are within ten percent.
 
 Quantified descriptively using the published per-bin uncertainties as a scale:
 mean standardized difference 0.09, RMS 0.60, no structure across the plane.
+
+The map shows the bin-by-bin differences and the histogram summarizes them.
+That view ignores correlations. The full covariance rotates the same difference
+into eigenmodes, where several small shifts along the low-pT ridge can add
+coherently. Hence sub-unit bin differences can coexist with a larger covariance
+distance.
 
 The indicative distance using the paper's full covariance is 3.66 per bin. It
 is driven by correlated shape modes along the low-pT peak ridge,
@@ -189,29 +206,57 @@ The uncertainty propagation was implemented independently from the public
 release. Flux, detector, and interaction-model universes are propagated
 through the unfold, plus a separate ML-training term.
 
+The left panel projects fractional uncertainty versus pT and the right versus
+p-parallel. Flux is the leading median component at about 5.0 percent, followed
+by detector and interaction-model terms. The comparison tests their ordering
+and scale, not only the final quadrature sum.
+
 The rebuilt 2D budget lands at a median per-bin uncertainty of 6.87 percent
 versus the published 6.86 — with the same band ordering. The ML contribution
 is the line riding along the bottom.
 
-## 13 · Validation — 12:45 → 13:45
+## 13 · Validation — 12:45 → 14:15
 
-Six stress tests, each targeting a different failure mode. Closure tests recover
-injected truth changes, including a hidden resolution variable and an alternate
-model. The existing 2D toys give a mean absolute standardized residual of 0.794,
-close to the unit-normal value 0.798. That is a same-ensemble Gaussianity check,
-not coverage: the MC bootstrap also fluctuates the stored truth reference, so a
-valid independent-truth coverage test is still open.
-Doubling the iteration count moves the total cross section by 0.026 percent.
-An independent neural network reproduces the GBDT result at the one-percent
-level. With binned inputs the update reduces to IBU — verified numerically.
-And a descriptive bottom-line test moves from AUC 0.535 before unfolding to
-0.501 afterward. It is not cross-fitted through the full OmniFold chain, so I
-do not attach a calibrated p-value or claim statistical equivalence.
+These six cards are not six versions of the same test; each targets a different
+failure mode.
+
+First, closure: simulated pseudo-data have a known truth answer. Ordinary
+truth-shape reweights and alternative MaCCQE and flux universes are recovered;
+the hidden-resolution test instead distorts
+delta-pT — reco pT minus truth pT, which is absent from the feature set — and
+quantifies how much of that unseen response bias leaks into the visible result.
+The amplitude scan is linear: about 11 percent of the injected resolution
+distortion reaches the visible marginal.
+
+Second, the 2D pull diagnostic asks whether standardized residuals across the
+toy ensemble have the expected Gaussian scale. The mean absolute residual is
+0.794 versus 0.798 for a unit normal. It is a same-ensemble Gaussianity check,
+not coverage, because the bootstrap also fluctuates the stored truth reference.
+
+Third, iteration stability: doubling from five to ten iterations changes the
+total cross section by only 0.026 percent, so the headline normalization is not
+being selected by the stopping point.
+
+Fourth, classifier family: an independently trained neural network gives
+1.008 times the GBDT total, testing whether the answer is specific to one
+learning algorithm.
+
+Fifth, the binned limit verifies the conceptual bridge: when the inputs are
+binned, the update reduces to D'Agostini IBU algebraically and numerically.
+The separate same-input OmniFold–IBU projection check agrees at roughly the
+one-to-two-percent level.
+
+Finally, the classifier two-sample test, or C2ST, is a residual-separability
+check: a new classifier tries to distinguish data from reweighted simulation.
+Its area under the ROC curve, or AUC, moves from 0.535 before unfolding to
+0.501 afterward, near the chance value of 0.5. That is descriptive: the full
+OmniFold chain was not cross-fitted and null-calibrated, so I attach no p-value
+and make no claim of statistical equivalence.
 
 *(CUT if long: name only closure, the pull diagnostic, and the descriptive
 classifier test.)*
 
-## 14 · Marginalization check (animation) — 13:45 → 14:30
+## 14 · Marginalization check (animation) — 14:15 → 15:00
 
 Results, part two: new dimensions. First, define the lower-dimensional
 check.
@@ -220,23 +265,30 @@ check.
 out E-available is just summing the same weighted events — no re-unfold. The
 resulting marginal can be compared directly with the 2D result just shown.
 
-## 15 · The 5D unfold reproduces the anchor — 14:30 → 15:15
+## 15 · The 5D unfold reproduces the anchor — 15:00 → 15:45
 
 And it does, on data. Same events, three more columns: a simultaneous
-five-dimensional unfold in pT, p-parallel, E-available, q3, and W.
+five-dimensional unfold in pT, p-parallel, E-available, q3 — the three-momentum
+transfer — and W, the hadronic invariant mass.
 Marginalized back to the published 2D binning, it reproduces the anchor —
-pulls again sub-unit, no structure. The added dimensions do not require an
-explicit response-tensor subdivision: they enter the trained estimator as input
-columns, with the corresponding support and uncertainty checks.
+pull mean 0.16 and RMS 0.83, again with no obvious structure. This is an
+important consistency check: adding columns has not broken the validated
+measurement. The new dimensions enter as estimator inputs, without explicitly
+subdividing a response tensor.
 
-## 16 · Known low-recoil structure in the E-available marginal — 15:15 → 16:30
+## 16 · Known low-recoil structure in the E-available marginal — 15:45 → 16:45
 
 The unfolded E-available spectrum shows the established low-recoil
 structure: the generators underpredict in this region, and adding Valencia
 2p2h fills the dip between the QE and Delta peaks. This is not a new physics
 claim. Its role here is as a cross-check of the higher-dimensional result.
 
-## 17 · Localizing a discrepancy (animation) — 16:30 → 17:15
+E-available is the visible hadronic-recoil proxy. The left plot decomposes
+GENIE by interaction mode, identifying the gap between the QE- and
+Delta-dominated regions. The right shows directly that the Valencia
+two-particle–two-hole component fills most of that gap.
+
+## 17 · Localizing a discrepancy (animation) — 16:45 → 17:30
 
 There is a residual the 2p2h tune does not explain, and this is where the
 added dimensions become useful. **[Beat]** In one dimension, the residual is
@@ -245,7 +297,7 @@ more column — and it resolves into a compact corner of the E-available–W
 plane. These are toy shapes to show the logic; the next slide is the real
 plane.
 
-## 18 · The excess localizes — 17:15 → 18:15
+## 18 · The excess localizes — 17:30 → 18:20
 
 Here it is in data — and let me be precise about the claim. At shape level,
 the residual excess concentrates at high E-available *and* high W — the DIS
@@ -254,12 +306,15 @@ excess, and most of that sits above W of 1.8 GeV. All four generators we
 compared — GENIE with MnvTune, bare GENIE, NuWro, and GiBUU — underpredict
 there.
 
+In the ratio maps, values above one mean more unfolded data than generator.
+The enhancement is localized in both axes, not a uniform normalization shift.
+
 What I am *not* quoting is a significance. The current five-dimensional
 covariance is still a candidate until the selection-complete lateral
 replacement lands, and this plane has not been requoted against a final
 covariance. The claim today is a localization, not a sigma.
 
-## 19 · Outlook: point clouds — 18:15 → 18:50
+## 19 · Outlook: point clouds — 18:20 → 18:50
 
 Two directions, briefly. First: point-cloud inputs. A recoil-only
 point-cloud central-value cross-check is complete — a transformer takes the reconstructed
@@ -279,29 +334,28 @@ B10. This result is preliminary: roughly six percent of the rate is opened
 but acceptance-supported, roughly twenty-eight percent is prior-dominated,
 and the final corrected uncertainties are pending.
 
-## 21 · Summary — 19:20 → 19:45
+Compare where truth events exist with where reconstruction efficiency is
+nonzero. New cells with real efficiency can be data-constrained; truth cells
+effectively invisible at reco are labeled prior-dominated rather than measured.
+
+## 21 · Summary — 19:20 → 19:40
 
 In summary: OmniFold assigns weights to simulated events. With binned
 inputs, its update is the D'Agostini IBU update; with unbinned inputs, the
-truth–reco pairing remains event-level. It reproduces the published 2D
-result with an independently implemented uncertainty budget. Adding
-E-available, q3, and W recovers the known low-recoil structure and localizes
-a residual excess in the DIS corner.
+truth–reco pairing remains event-level. It reproduces the published 2D central
+values and uncertainty scale, while reporting the correlated shape distance
+separately. Adding E-available, q3, and W recovers the known low-recoil
+structure and localizes a residual excess in the DIS corner.
 
-Two questions for the collaboration, on the bottom of the slide: which
-projections would be most useful, and what validation would be required at
-publication level?
+## 22 · Two technical questions — 19:40 → 19:55 *(can bleed into Q&A)*
 
-## 22 · Three technical questions — 19:45 → 20:00 *(can bleed into Q&A)*
-
-Three technical questions remain: FrInel_pi dial practice, the
-goodness-of-fit convention for a rank-deficient covariance, and publication
-precedent for a full 3D covariance. Answers today or
+Two technical questions remain: FrInel_pi dial practice and the
+goodness-of-fit convention for a rank-deficient covariance. Answers today or
 afterwards would resolve specific open items in the note.
 
 ## 23 · Dated analysis-note draft — closing line
 
-Finally: the last slide links an immutable 16 July snapshot of the analysis
+Finally: the last slide links a dated 16 July snapshot of the analysis
 note; I will also send the [same corrected PDF by
 email](https://raw.githubusercontent.com/josephbaileyy/MINERvA-OmniFold/7e80fff/docs/jul-16-presentation/claude-design-package/analysis-note.pdf).
 It distinguishes finalized 2D and central-value results from covariance work
@@ -316,8 +370,8 @@ wrap up in about a month. Thank you.
 |---|---|
 | 4 (landscape) | 3:15 |
 | 9 (columns) | 9:00 |
-| 13 (validation) | 13:45 |
-| 18 (excess) | 18:15 |
+| 13 (validation) | 14:15 |
+| 18 (excess) | 18:20 |
 | 23 (close) | 20:00 |
 
 Running >45 s behind at slide 9 → take both CUT lines (5 and 13).
