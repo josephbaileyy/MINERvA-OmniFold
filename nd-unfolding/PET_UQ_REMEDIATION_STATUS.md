@@ -117,15 +117,21 @@ invalid/missing/misaligned background inputs fail closed.
 
 ## Gate 3 — committed full-schema P3F-PET source inventory
 
-**Current (2026-07-20): source production IN PROGRESS in Slurm array
-`56169838` (`0-119%16`).** The fresh 5 x 2 x 12 batch launcher, endpoint
-validator, nested domain/base composition, and receipt/resume tests are
-hash-bound at commit `784e360`. At the queue-latency wake, 15 tasks were
-COMPLETED/0:0 with 15 matching PASS pairs and 105 were pending; batch was
-retained as the sole writer and no interactive duplicate exists. The terminal
-array watch remains armed. Gate 3 remains open until the complete shifted-source
-inventory, terminal accounting, and aggregate manifest are committed PASS.
-Nominal PET remains prohibited.
+**Current (2026-07-20): Gate 3 PROMOTED PASS.** Slurm array `56169838`
+(`0-119%16`) reached terminal state with all 120 elements COMPLETED/0:0.
+Independent reconciliation confirmed the ownership bijection (120 receipt
+JobIDRaw == 120 sacct JobIDRaw, no foreign/missing writer), all 120 PASS
+ROOT/receipt pairs (superseded muon-validity checks confined to the frozen
+validator's allowed set on playlists 1D/1E/1F/1P), on-disk validator/launcher
+hashes matching the bindings, and complete per-task locks/logs/DONE markers.
+The complete aggregate manifest
+(`docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json`,
+sha256 `306e5459`) is committed PASS and independently verified by the
+owner-neutral agy verifier (rc=0, VERDICT PASS, concurring with the
+orchestrator audit). Promotion receipt:
+`docs/orchestration/state/p3f-pet-gate3-promotion-56169838.json`.
+Nominal PET (Gate 4) remains prohibited pending its own launch-code gate and
+explicit user authorization.
 
 Before the publication nominal, regenerate and validate the complete
 selection-shifted source inventory under the G2 full schema: five declared

@@ -1,0 +1,69 @@
+{
+  "receipt_schema": "p3f-pet-gate3-promotion-v1",
+  "verdict": "GATE3_PROMOTED_PASS",
+  "promoted_at_utc": "2026-07-20T23:58:00Z",
+  "actor": "interim-claude-root(4a8668e1, interim_for codex 019f749a)",
+  "user_decision": {
+    "event_id": "evt-user-decision-20260721-0001",
+    "event_type": "user-decision",
+    "option": "A",
+    "context": "agy was never signed out; agentctl launched it under the interim root's isolated HOME. Fixed in commit 28bc7c3 (pin agy launches to login HOME) and proven by an authenticated probe under the school HOME. Re-route the same bounded verification to agy, then proceed per the gate and re-arm.",
+    "read_exactly_once": true,
+    "previously_reconciled": false
+  },
+  "gate3_criteria": {
+    "all_120_terminal_accounting": true,
+    "validated_final_root_receipt_pairs": true,
+    "complete_aggregate_manifest_committed_pass": true,
+    "independently_verified_owner_neutral": true
+  },
+  "evidence": {
+    "manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+    "manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+    "reconciliation_receipt": "docs/orchestration/state/p3f-pet-gate3-source-reconciliation-56169838.json",
+    "reconciliation_commit": "c5675d6",
+    "orchestrator_audit": "docs/orchestration/state/_audit_gate3_source.py (PASS, 120/120)",
+    "independent_verifier": {
+      "role": "agy-publication-redteam",
+      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+      "turn": 31,
+      "returncode": 0,
+      "verdict": "PASS",
+      "transcript": "docs/orchestration/runs/agy-publication-redteam/20260720T235712Z-send-7a2b0bfb.txt",
+      "method": "agy independently ran sacct, reloaded all 120 receipts, recomputed on-disk validator/launcher hashes, and asserted ROOT sizes/locks/DONE markers itself",
+      "items": {
+        "1_sacct_120_completed_0_0": "PASS",
+        "2_ownership_bijection": "PASS (120 receipt jobids == 120 sacct JobIDRaw; array_task_id maps)",
+        "3_all_receipts_pass_supersession_within_allowed": "PASS (superseded only bkg/data_reco_muon_valid on 1D/1E/1F/1P)",
+        "4_provenance_hashes_match_on_disk": "PASS (binary/launcher/p3f/domain/base/source)",
+        "5_outputs_sizes_locks_done_markers": "PASS (120 pairs, single writer per task, no one-sided)"
+      },
+      "concurs_with_orchestrator_audit": true,
+      "note": "Evidence-backed independent verification; contrasts with the prior REJECTED turn that invented sacct evidence. This is a distinct owner-neutral second party from the orchestrator's own audit."
+    }
+  },
+  "gate_state": {
+    "gate3": "PROMOTED_PASS",
+    "next_node": "Gate 4 (nominal training and GPU floor) — nominal PET training",
+    "nominal_pet_training_allowed": false,
+    "reason_still_blocked": "Gate 4 nominal PET training requires its own committed launch-code gate AND explicit user authorization; additionally the 2026-07-22 Perlmutter shutdown precludes starting a long GPU training job that cannot finish before it. Deferred to user via BLOCKED-ON-USER.json."
+  },
+  "persistent_worker_uuids": {
+    "agent_B": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+    "agent_C": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+    "agy_publication_redteam": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "all_preserved": true,
+    "provider_dispatches": "1 succeeded (agy verification, rc=0); 0 credits consumed (agy is Gemini)"
+  },
+  "final_capacity_snapshot": {
+    "observed_at_utc": "2026-07-20T23:56:00Z",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 36,
+    "codex_personal_reset_utc": "2026-07-26T05:33:07Z",
+    "codex_school_seven_day_remaining_percent": 19,
+    "codex_school_reset_utc": "2026-07-24T02:51:01Z",
+    "claude_personal_seven_day_remaining_percent": 81,
+    "full_reset_credits_available": 0,
+    "reset_credit_consumed": false
+  }
+}
