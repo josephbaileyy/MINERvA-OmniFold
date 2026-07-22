@@ -283,12 +283,20 @@ def main():
                          "across statistical replicas so C_stat varies only the bootstrap")
     args = ap.parse_args()
 
-    # Horovod data-parallel rank/size from the SLURM launch: `srun -n N` sets SLURM_PROCID
-    # (0..N-1) and SLURM_NTASKS (N), and these equal hvd.rank()/hvd.size() under srun. A plain
-    # `python3` run has SLURM_NTASKS=1 -> rank 0 / size 1 -> original single-process path. Read
-    # from env (not horovod) so we don't import TF before omnifold runs hvd.init().
-    rank = int(os.environ.get("SLURM_PROCID", 0))
-    size = int(os.environ.get("SLURM_NTASKS", 1))
+    # Horovod data-parallel rank/size, read from env (not horovod) so we don't import TF
+    # before omnifold runs hvd.init(). Two launchers must both work and both equal
+    # hvd.rank()/hvd.size():
+    #   * bare `srun -n N` (Perlmutter): sets SLURM_PROCID(0..N-1)/SLURM_NTASKS(N).
+    #   * an MPI launcher `horovodrun/mpirun -np N` (e.g. inside an Apptainer container
+    #     whose horovod has MPI but no Gloo -- Delta NGC path): sets OMPI_COMM_WORLD_*,
+    #     while an outer `srun -n1` would otherwise pin SLURM_PROCID=0 for all ranks.
+    # Prefer the MPI vars when an MPI launcher is in charge; else SLURM; else single-process.
+    if "OMPI_COMM_WORLD_SIZE" in os.environ:
+        rank = int(os.environ["OMPI_COMM_WORLD_RANK"])
+        size = int(os.environ["OMPI_COMM_WORLD_SIZE"])
+    else:
+        rank = int(os.environ.get("SLURM_PROCID", 0))
+        size = int(os.environ.get("SLURM_NTASKS", 1))
 
     data, mc, imc = build_loaders(args.inputs, mode=args.mode, num_part=args.num_part,
                                   max_events=args.max_events, rank=rank, size=size,
