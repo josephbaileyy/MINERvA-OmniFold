@@ -34,33 +34,62 @@ The clone brings the launcher, `pet/`, and the vendored `omnifold_nn/` PET
 package. It does **not** bring data (not in git) — that's Step 3.
 
 ## Step 2 — Environment: squirrel + horovod (the one platform-specific step)
-```bash
-source /projects/bhvk/setup.sh                  # activates the squirrel conda env (tensorflow)
-python -c "import tensorflow as tf; print('TF', tf.__version__)"
-python -c "import horovod.tensorflow as hvd; print('HVD', hvd.__version__)"   # target: 0.28.x
-```
-- **If horovod imports:** you're done — go to Step 2b.
-- **If horovod is missing** (likely, and the main porting risk): don't pip-install
-  into the shared squirrel env. Make a private venv layered on it, or use a
-  container. Venv route:
-  ```bash
-  python -m venv --system-site-packages $HOME/petenv && source $HOME/petenv/bin/activate
-  module load cudnn/cuda12 cudatoolkit           # CUDA/NCCL for the build
-  HOROVOD_WITH_TENSORFLOW=1 HOROVOD_GPU_OPERATIONS=NCCL \
-    pip install --no-cache-dir horovod==0.28.1
-  python -c "import horovod.tensorflow as hvd; print(hvd.__version__)"
-  ```
-  If the source build fights the toolchain, fall back to the NGC TensorFlow
-  container (ships horovod) via apptainer — see Delta docs "containers". If you
-  use a venv/container, `source` it in the launcher in place of / after
-  `setup.sh`.
+Do this **before** transferring data — if horovod won't build, the plan changes.
 
-**Step 2b — put `omnifold` on the path** (sidesteps the hardcoded `_REPO =
-/pscratch/...` in `pet/minerva_pet_dataloader.py:42`):
+**2.1 Activate squirrel and inventory it.**
 ```bash
-pip install -e $HOME/MINERvA-OmniFold/omnifold_nn
+source /projects/bhvk/setup.sh
+python -c "import sys, tensorflow as tf, numpy as np; \
+  print('python', sys.version.split()[0]); print('TF', tf.__version__); print('numpy', np.__version__)"
+```
+Expect Python 3.12, TF ≥ 2.15. Note the numpy version — do **not** later force a
+different numpy; TF's pin wins (matching Perlmutter's tensorflow/2.15.0 module).
+
+**2.2 Does horovod already exist, built for TF?**
+```bash
+python -c "import horovod.tensorflow as hvd; print('HVD', hvd.__version__)" && horovodrun --check-build
+```
+- The import prints a version **and** `--check-build` shows `TensorFlow: X`,
+  `NCCL: X` → horovod is usable; skip to 2.4.
+- Either command fails → build it (2.3). This is the main porting risk.
+
+**2.3 Build horovod in a venv layered on squirrel** (don't touch the shared env):
+```bash
+module load cudnn/cuda12 cudatoolkit                 # CUDA/NCCL for the build
+python -m venv --system-site-packages $HOME/petenv    # inherits squirrel's TF/torch/root
+source $HOME/petenv/bin/activate
+HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITHOUT_PYTORCH=1 HOROVOD_WITHOUT_MXNET=1 \
+  HOROVOD_GPU_OPERATIONS=NCCL \
+  pip install --no-cache-dir --no-binary=horovod "horovod==0.28.1"
+horovodrun --check-build      # must show TensorFlow: X and NCCL: X
+```
+If the source build fights the toolchain, use the NGC TensorFlow container
+(ships horovod) via apptainer (Delta docs → "containers"); then run the training
+inside the container. **Whichever env ends up holding horovod (squirrel, the
+venv, or the container) is the one the launcher must activate** — if it's the
+venv, add `source $HOME/petenv/bin/activate` after the `setup.sh` line in
+`sbatch_pet_train_fps_delta.sh`.
+
+**2.4 Put `omnifold` on the path** — `--no-deps` so it registers the package
+without touching squirrel's TF/numpy (sidesteps the hardcoded `_REPO =
+/pscratch/...` at `pet/minerva_pet_dataloader.py:42`):
+```bash
+pip install -e $HOME/MINERvA-OmniFold/omnifold_nn --no-deps
 python -c "from omnifold import MultiFold, PET, MLP, DataLoader; print('omnifold ok')"
 ```
+
+**2.5 4-rank GPU smoke test** (proves horovod sees all 4 A100s and each rank
+pins its own — the omnifold code does `set_visible_devices(gpus[hvd.local_rank()])`,
+which is why the launcher uses `--gpu-bind=none`):
+```bash
+srun --account=bhvk-delta-gpu --partition=gpuA100x4-interactive --nodes=1 \
+     --ntasks-per-node=4 --gpus-per-node=4 --gpu-bind=none --time=00:10:00 \
+     python -c "import horovod.tensorflow as hvd, tensorflow as tf; hvd.init(); \
+       print('rank', hvd.rank(), 'local', hvd.local_rank(), \
+             'GPUs visible', len(tf.config.list_physical_devices('GPU')))"
+```
+Expect 4 lines, ranks 0–3, each reporting **4** GPUs visible (not 1). If a rank
+sees only 1 GPU, per-task GPU binding is on — keep `--gpu-bind=none`.
 
 ## Step 3 — Transfer the training input (Globus, CFS → Delta)
 Source is CFS (stays up through the shutdown), so this works even during the

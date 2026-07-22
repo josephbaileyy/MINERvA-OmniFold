@@ -5,6 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gpus-per-node=4
+#SBATCH --gpu-bind=none
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=200g
 #SBATCH --time=12:00:00
@@ -22,8 +23,9 @@
 #   3. python -c "import horovod.tensorflow as hvd; print(hvd.__version__)"
 #      -> if this fails, install horovod into the env (see runbook step 2);
 #         this is the one genuinely platform-specific dependency.
-#   4. pip install -e "$HOME/MINERvA-OmniFold/omnifold_nn"   # puts `omnifold`
-#      on the path regardless of the hardcoded _REPO in the dataloader
+#   4. pip install -e "$HOME/MINERvA-OmniFold/omnifold_nn" --no-deps  # puts
+#      `omnifold` on the path without perturbing squirrel's TF/numpy (horovod is
+#      only an extra; the hardcoded _REPO in the dataloader is thus sidestepped)
 #   5. Globus the npz to $DATA (below); build the memmap once (step below).
 #
 # VERIFY ON FIRST LOGIN (values below are Delta defaults, confirm for your alloc):
