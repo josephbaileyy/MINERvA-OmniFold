@@ -45,9 +45,12 @@ apptainer exec --nv $HOME/tf215.sif horovodrun --check-build                    
 ```
 The image lacks two omnifold deps (`matplotlib`, `PyYAML`). Install them to a host
 dir with the **container's own pip** (so the wheels match the container's Python
-3.10), then put that dir on `PYTHONPATH` alongside the vendored `omnifold`:
+3.10), then put that dir on `PYTHONPATH` alongside the vendored `omnifold`.
+**Pin `numpy<2`:** the image is numpy 1.x (TF 2.14 is built against it), but the
+latest matplotlib drags in numpy 2.x, which would shadow and break the container's
+TF once `petpkgs` is on `PYTHONPATH`.
 ```bash
-apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs matplotlib PyYAML
+apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs "matplotlib<3.9" "numpy<2" PyYAML
 REPO=$HOME/MINERvA-OmniFold
 apptainer exec --nv --bind $REPO --env PYTHONPATH=$REPO/omnifold_nn:$HOME/petpkgs $HOME/tf215.sif \
   python -c "from omnifold import MultiFold, PET, MLP, DataLoader; print('omnifold ok')"        # expect: omnifold ok

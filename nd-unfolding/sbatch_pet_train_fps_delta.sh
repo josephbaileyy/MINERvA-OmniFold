@@ -32,7 +32,9 @@
 #   2. apptainer pull $HOME/tf215.sif docker://nvcr.io/nvidia/tensorflow:24.01-tf2-py3
 #   3. omnifold deps missing from the image -> install to a host dir with the
 #      container's OWN pip (py-version match), added to PYTHONPATH below:
-#        apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs matplotlib PyYAML
+#        apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs "matplotlib<3.9" "numpy<2" PyYAML
+#      (pin numpy<2: the image is numpy 1.x for TF 2.14; latest matplotlib would
+#      drag numpy 2.x into petpkgs and shadow/break the container's TF)
 #   4. Globus the npz to $DATA; build the memmap once (in-container, see runbook).
 # ============================================================================
 set -eo pipefail
