@@ -30,11 +30,9 @@
 # ONE-TIME SETUP (see PET_TRAINING_ON_DELTA.md; do before sbatch):
 #   1. git clone the repo to $HOME/MINERvA-OmniFold
 #   2. apptainer pull $HOME/tf215.sif docker://nvcr.io/nvidia/tensorflow:24.01-tf2-py3
-#   3. omnifold deps missing from the image -> install to a host dir with the
-#      container's OWN pip (py-version match), added to PYTHONPATH below:
-#        apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs "matplotlib<3.9" "numpy<2" PyYAML
-#      (pin numpy<2: the image is numpy 1.x for TF 2.14; latest matplotlib would
-#      drag numpy 2.x into petpkgs and shadow/break the container's TF)
+#   3. omnifold imports with only the container's built-in packages (numpy, yaml,
+#      tensorflow); its matplotlib import is guarded (utils.py) since the training
+#      path never plots. No petpkgs / matplotlib install needed.
 #   4. Globus the npz to $DATA; build the memmap once (in-container, see runbook).
 # ============================================================================
 set -eo pipefail
@@ -43,7 +41,6 @@ set -eo pipefail
 REPO="${REPO:-$HOME/MINERvA-OmniFold}"
 DATA="${DATA:-/work/nvme/bhvk/$USER/pet_inputs}"       # staged npz (not backed up)
 SIF="${SIF:-$HOME/tf215.sif}"
-PKGS="${PKGS:-$HOME/petpkgs}"                           # matplotlib/PyYAML installed here
 cd "${REPO}/nd-unfolding"
 
 # ---- training recipe (matches the Perlmutter headline) ----
@@ -61,13 +58,13 @@ mkdir -p products/pet
 [ -e "${INPUTS}" ] || ln -sf "${DATA}/${INPUTS}" "${INPUTS}"
 [ -s "${INPUTS}" ] || { echo "[pet-fps] MISSING ${INPUTS} (Globus it to ${DATA})"; exit 1; }
 [ -d "${MEMMAP_DIR}" ] || { echo "[pet-fps] MISSING memmap ${MEMMAP_DIR}; build it once (in-container):"; \
-    echo "  apptainer exec --nv --bind $REPO,$DATA --env PYTHONPATH=$REPO/omnifold_nn:$PKGS $SIF \\"; \
+    echo "  apptainer exec --nv --bind $REPO,$DATA --env PYTHONPATH=$REPO/omnifold_nn $SIF \\"; \
     echo "    python3 pet/npz_to_npy.py --inputs ${INPUTS} --out ${MEMMAP_DIR}"; exit 1; }
 
 echo "[pet-fps] $(date -u +%FT%TZ) np=${NP} niter=${NITER} epochs=${EPOCHS} train=${TRAIN_EVENTS} seed=${SEED} inputs=${INPUTS}"
 srun --gpu-bind=none apptainer exec --nv \
     --bind "${REPO}","${DATA}" \
-    --env PYTHONPATH="${REPO}/omnifold_nn:${PKGS}" \
+    --env PYTHONPATH="${REPO}/omnifold_nn" \
     "${SIF}" \
     horovodrun -np "${NP}" python3 pet/minerva_pet_dataloader.py --inputs "${INPUTS}" \
         --mode pointcloud --model pet --niter "${NITER}" --epochs "${EPOCHS}" \

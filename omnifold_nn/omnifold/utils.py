@@ -1,9 +1,17 @@
 import json, yaml
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Rectangle
-import matplotlib.ticker as mtick
+# matplotlib is only used by the plotting helpers below; the MultiFold/DataLoader/
+# PET training path never plots. Guard the import so `import omnifold` works in a
+# minimal (e.g. NGC-container) env that has no matplotlib -- the plot functions
+# raise clearly if actually called.
+try:
+    import matplotlib.pyplot as plt
+    from matplotlib import gridspec
+    from matplotlib.collections import PatchCollection
+    from matplotlib.patches import Rectangle
+    import matplotlib.ticker as mtick
+except ImportError as _mpl_exc:  # pragma: no cover - only in matplotlib-less envs
+    plt = gridspec = PatchCollection = Rectangle = mtick = None
+    _MPL_IMPORT_ERROR = _mpl_exc
 import numpy as np
 
 

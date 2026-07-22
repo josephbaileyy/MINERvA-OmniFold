@@ -43,17 +43,16 @@ apptainer exec --nv $HOME/tf215.sif python -c \
   "import horovod, tensorflow as tf; print('TF', tf.__version__, 'HVD', horovod.__version__)"   # TF 2.14.0 HVD 0.28.1
 apptainer exec --nv $HOME/tf215.sif horovodrun --check-build                                    # TensorFlow[X], MPI[X], NCCL[X]
 ```
-The image lacks two omnifold deps (`matplotlib`, `PyYAML`). Install them to a host
-dir with the **container's own pip** (so the wheels match the container's Python
-3.10), then put that dir on `PYTHONPATH` alongside the vendored `omnifold`.
-**Pin `numpy<2`:** the image is numpy 1.x (TF 2.14 is built against it), but the
-latest matplotlib drags in numpy 2.x, which would shadow and break the container's
-TF once `petpkgs` is on `PYTHONPATH`.
+`omnifold` imports using only the container's built-in packages (numpy, yaml,
+tensorflow). Its matplotlib import is guarded in `omnifold/utils.py` (the training
+path never plots), so **no matplotlib/`petpkgs` install is needed** — trying to
+`pip install --target` matplotlib into a container-layered dir drags in a numpy
+that shadows and breaks the container's TF, so we avoid it entirely. Just verify:
 ```bash
-apptainer exec --nv $HOME/tf215.sif pip install --target=$HOME/petpkgs "matplotlib<3.9" "numpy<2" PyYAML
 REPO=$HOME/MINERvA-OmniFold
-apptainer exec --nv --bind $REPO --env PYTHONPATH=$REPO/omnifold_nn:$HOME/petpkgs $HOME/tf215.sif \
-  python -c "from omnifold import MultiFold, PET, MLP, DataLoader; print('omnifold ok')"        # expect: omnifold ok
+apptainer exec --nv --bind $REPO --env PYTHONPATH=$REPO/omnifold_nn $HOME/tf215.sif \
+  python -c "import numpy, tensorflow as tf; from omnifold import MultiFold, PET, MLP, DataLoader; \
+    print('numpy', numpy.__version__, 'TF', tf.__version__, 'omnifold ok')"   # numpy 1.x, TF 2.14.0, omnifold ok
 ```
 (The `CUDA_ERROR_NO_DEVICE` warning on a login node is fine — no GPU there.)
 
@@ -75,7 +74,7 @@ REPO=$HOME/MINERvA-OmniFold; DATA=/work/nvme/bhvk/$USER/pet_inputs
 ln -sf $DATA/of_inputs_pc_fps_xps2.npz of_inputs_pc_fps_xps2.npz
 srun --account=bhvk-delta-cpu --partition=cpu --nodes=1 --ntasks=1 --cpus-per-task=16 \
      --mem=64g --time=00:30:00 \
-  apptainer exec --bind $REPO,$DATA --env PYTHONPATH=$REPO/omnifold_nn:$HOME/petpkgs $HOME/tf215.sif \
+  apptainer exec --bind $REPO,$DATA --env PYTHONPATH=$REPO/omnifold_nn $HOME/tf215.sif \
     python3 pet/npz_to_npy.py --inputs of_inputs_pc_fps_xps2.npz --out of_inputs_pc_fps_xps2_npy
 ls -sh of_inputs_pc_fps_xps2_npy/     # 8 .npy files (~19 GB)
 ```
@@ -94,7 +93,7 @@ cd $HOME/MINERvA-OmniFold/nd-unfolding
 srun --account=bhvk-delta-gpu --partition=gpuA100x4-interactive --nodes=1 --ntasks=1 \
      --gpus-per-node=1 --cpus-per-task=16 --mem=64g --time=00:30:00 \
   apptainer exec --nv --bind $HOME/MINERvA-OmniFold,/work/nvme/bhvk \
-     --env PYTHONPATH=$HOME/MINERvA-OmniFold/omnifold_nn:$HOME/petpkgs $HOME/tf215.sif \
+     --env PYTHONPATH=$HOME/MINERvA-OmniFold/omnifold_nn $HOME/tf215.sif \
      python3 pet/minerva_pet_dataloader.py --inputs of_inputs_pc_fps_xps2.npz --mode pointcloud \
        --model pet --niter 1 --epochs 1 --max-events 1000000 --reweight-all --smoke \
        --save-weights products/pet/pet_smoke_delta.npz --memmap-dir of_inputs_pc_fps_xps2_npy
