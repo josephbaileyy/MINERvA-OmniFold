@@ -26,9 +26,16 @@ METRIC_NAMES = (
     "max_projection_relative_l1",
     "global_ess",
     "tail_ess",
+    "predicted_ratio_q99",
+    "predicted_ratio_max",
+    "predicted_truth_weight_q99",
+    "predicted_truth_weight_max",
     "cap_saturated_count",
+    "cap10_vs_cap30_max_relative_ess_shift",
+    "direction_gate_pass",
     "runtime_seconds",
     "peak_gpu_memory_bytes",
+    "mean_step_throughput_rows_per_second",
     "final_step1_validation_bce",
     "final_step1_test_bce",
     "final_step2_validation_bce",
@@ -81,6 +88,18 @@ def _extract_run(summary_path: Path) -> dict[str, Any]:
         for iteration in iterations
         for step in (iteration["step1_fit"], iteration["step2_fit"])
     )
+    throughput = [
+        float(step["throughput_rows_per_second"])
+        for iteration in iterations
+        for step in (iteration["step1_fit"], iteration["step2_fit"])
+    ]
+    cap_ess_shifts = []
+    for iteration in iterations:
+        for step_name in ("step1_inference", "step2_inference"):
+            sensitivity = iteration[step_name]["cap_sensitivity"]
+            ess10 = float(sensitivity["cap_10"]["reweighted_ess"])
+            ess30 = float(sensitivity["cap_30"]["reweighted_ess"])
+            cap_ess_shifts.append(abs(ess10 - ess30) / max(abs(ess30), 1e-12))
     final = iterations[-1]
     projection_l1 = max(
         value["relative_l1"]
@@ -111,11 +130,22 @@ def _extract_run(summary_path: Path) -> dict[str, Any]:
         "max_projection_relative_l1": float(projection_l1),
         "global_ess": float(metrics["ess"]["global_predicted"]),
         "tail_ess": float(metrics["ess"]["declared_tail_predicted"]),
+        "predicted_ratio_q99": float(metrics["predicted_ratio"]["quantiles"]["q99"]),
+        "predicted_ratio_max": float(metrics["predicted_ratio"]["quantiles"]["q100"]),
+        "predicted_truth_weight_q99": float(
+            metrics["predicted_truth_weight"]["quantiles"]["q99"]
+        ),
+        "predicted_truth_weight_max": float(
+            metrics["predicted_truth_weight"]["quantiles"]["q100"]
+        ),
         "cap_saturated_count": int(
             metrics["cap_saturation"]["total_saturated_count"]
         ),
+        "cap10_vs_cap30_max_relative_ess_shift": float(max(cap_ess_shifts)),
+        "direction_gate_pass": int(bool(metrics["direction_gate"]["pass"])),
         "runtime_seconds": float(result["runtime_seconds"]),
         "peak_gpu_memory_bytes": peak_memory,
+        "mean_step_throughput_rows_per_second": float(mean(throughput)),
         "final_step1_validation_bce": float(
             final["step1_evaluation"]["validation"]["balanced_weighted_bce"]
         ),
@@ -207,12 +237,16 @@ def _comparison(
         summaries[child]["metrics"]["cap_saturated_count"]["mean"]
         <= summaries[parent]["metrics"]["cap_saturated_count"]["mean"]
     )
+    absolute_direction_gate_pass_all = all(
+        bool(keyed[(child, seed)]["direction_gate_pass"]) for seed in seeds
+    )
     beneficial = (
         closure_improvement > 5.0
         and ess_degradation <= 10.0
         and tail_ess_degradation <= 10.0
         and all(value > 0 for value in per_seed_improvement)
         and cap_not_worse
+        and absolute_direction_gate_pass_all
     )
     if beneficial:
         decision = "beneficial-on-synthetic-pilot"
@@ -222,6 +256,8 @@ def _comparison(
         or tail_ess_degradation > 10.0
     ):
         decision = "harmful-or-unstable-on-synthetic-pilot"
+    elif not absolute_direction_gate_pass_all:
+        decision = "insufficiently-validated-absolute-closure-gate-failed"
     elif (
         abs(closure_improvement) <= 5.0
         and abs(ess_degradation) <= 10.0
@@ -239,6 +275,7 @@ def _comparison(
             value > 0 for value in per_seed_improvement
         ),
         "cap_saturation_not_worse": cap_not_worse,
+        "absolute_direction_gate_pass_all_seeds": absolute_direction_gate_pass_all,
         "decision": decision,
         "publication_promotion_permitted": False,
     }

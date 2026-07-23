@@ -102,6 +102,10 @@ def _run_arm(tf, PET, MultiFold, DataLoader, fixture, full_event, args, work_roo
     name = "B_full_event" if full_event else "A_recoil_only"
     arm_work = Path(work_root) / name
     arm_work.mkdir()
+    try:
+        tf.config.experimental.reset_memory_stats("GPU:0")
+    except (RuntimeError, ValueError):
+        pass
     started = time.perf_counter()
     unfolding = PreregisteredMultiFold(
         name,
@@ -122,6 +126,13 @@ def _run_arm(tf, PET, MultiFold, DataLoader, fixture, full_event, args, work_roo
     np.random.seed(args.split_seed)
     unfolding.Unfold()
     push = np.asarray(unfolding.weights_push, dtype=np.float64)
+    runtime_seconds = time.perf_counter() - started
+    try:
+        peak_gpu_memory = int(
+            tf.config.experimental.get_memory_info("GPU:0")["peak"]
+        )
+    except (KeyError, RuntimeError, ValueError):
+        peak_gpu_memory = None
     metrics = conditional_closure_metrics(
         dataset,
         push,
@@ -135,7 +146,9 @@ def _run_arm(tf, PET, MultiFold, DataLoader, fixture, full_event, args, work_roo
             if full_event
             else "current recoil-only PET cloud"
         ),
-        "runtime_seconds": time.perf_counter() - started,
+        "runtime_seconds": runtime_seconds,
+        "signal_rows_per_wall_second": signal.truth.n_rows / runtime_seconds,
+        "peak_gpu_memory_bytes": peak_gpu_memory,
         "push_quantiles": np.quantile(push, [0, 0.01, 0.5, 0.99, 1]).tolist(),
         "conditional_closure": metrics,
     }
@@ -146,6 +159,8 @@ def parse_args():
     parser.add_argument("--out", required=True)
     parser.add_argument("--contract-only", action="store_true")
     parser.add_argument("--events", type=int, default=2048)
+    parser.add_argument("--background-events", type=int, default=40)
+    parser.add_argument("--max-tokens", type=int, default=7)
     parser.add_argument("--fixture-seed", type=int, default=424242)
     parser.add_argument("--estimator-seed", type=int, default=101)
     parser.add_argument("--split-seed", type=int, default=424242)
@@ -161,7 +176,23 @@ def main() -> int:
     args = parse_args()
     output = Path(args.out).expanduser().resolve()
     fixture = make_known_ratio_closure_dataset(
-        n_signal=args.events, seed=args.fixture_seed
+        n_signal=args.events,
+        n_background=args.background_events,
+        max_tokens=args.max_tokens,
+        seed=args.fixture_seed,
+    )
+    matched_budget = (
+        args.events == 100000
+        and args.background_events == 10000
+        and args.max_tokens == 12
+        and args.fixture_seed == 424242
+        and args.estimator_seed in (101, 202, 303)
+        and args.split_seed == 424242
+        and args.iterations == 2
+        and args.epochs == 8
+        and args.batch_size == 512
+        and args.learning_rate == 1e-4
+        and args.weight_decay == 1e-2
     )
     result = {
         "status": "contract_only" if args.contract_only else "running",
@@ -181,9 +212,19 @@ def main() -> int:
             "iterations": args.iterations,
             "epochs_per_step": args.epochs,
             "batch_size": args.batch_size,
+            "signal_events": args.events,
+            "background_events": args.background_events,
+            "max_tokens": args.max_tokens,
             "optimizer": "AdamW",
             "learning_rate": args.learning_rate,
             "weight_decay": args.weight_decay,
+            "classification": (
+                "matched_budget_tf_a_vs_b"
+                if matched_budget
+                else "smoke_or_custom_downgrade"
+            ),
+            "tf_a_vs_b_comparison_claim_permitted": matched_budget,
+            "same_rows_between_tf_arms": True,
             "tf_single_mc_weight": "w_truth for both steps (existing baseline limitation)",
             "executes_full_omnifold_loop": True,
             "publication_claim": False,

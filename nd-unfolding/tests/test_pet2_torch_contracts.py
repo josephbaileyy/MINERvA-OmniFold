@@ -871,8 +871,14 @@ class ContractOnlyCLI(unittest.TestCase):
 
     def test_pilot_decision_requires_global_and_tail_ess(self):
         keyed = {
-            ("base", 101): {"log_ratio_rmse": 1.0},
-            ("child", 101): {"log_ratio_rmse": 0.9},
+            ("base", 101): {
+                "log_ratio_rmse": 1.0,
+                "direction_gate_pass": 1,
+            },
+            ("child", 101): {
+                "log_ratio_rmse": 0.9,
+                "direction_gate_pass": 1,
+            },
         }
         summaries = {
             "base": {
