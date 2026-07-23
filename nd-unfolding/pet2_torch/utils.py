@@ -251,9 +251,16 @@ def seed_everything(seed: int, deterministic: bool = True) -> dict[str, Any]:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(seed)
         if deterministic:
-            torch.use_deterministic_algorithms(True, warn_only=True)
+            torch.use_deterministic_algorithms(True, warn_only=False)
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
+            if hasattr(torch.backends, "cuda"):
+                if hasattr(torch.backends.cuda, "enable_flash_sdp"):
+                    torch.backends.cuda.enable_flash_sdp(False)
+                if hasattr(torch.backends.cuda, "enable_mem_efficient_sdp"):
+                    torch.backends.cuda.enable_mem_efficient_sdp(False)
+                if hasattr(torch.backends.cuda, "enable_math_sdp"):
+                    torch.backends.cuda.enable_math_sdp(True)
         if hasattr(torch.backends, "cuda") and hasattr(torch.backends.cuda, "matmul"):
             torch.backends.cuda.matmul.allow_tf32 = False
         settings.update(
@@ -262,6 +269,24 @@ def seed_everything(seed: int, deterministic: bool = True) -> dict[str, Any]:
                 "deterministic_algorithms": bool(deterministic),
                 "cudnn_benchmark": bool(torch.backends.cudnn.benchmark),
                 "cudnn_deterministic": bool(torch.backends.cudnn.deterministic),
+                "flash_sdp_enabled": (
+                    bool(torch.backends.cuda.flash_sdp_enabled())
+                    if hasattr(torch.backends, "cuda")
+                    and hasattr(torch.backends.cuda, "flash_sdp_enabled")
+                    else None
+                ),
+                "memory_efficient_sdp_enabled": (
+                    bool(torch.backends.cuda.mem_efficient_sdp_enabled())
+                    if hasattr(torch.backends, "cuda")
+                    and hasattr(torch.backends.cuda, "mem_efficient_sdp_enabled")
+                    else None
+                ),
+                "math_sdp_enabled": (
+                    bool(torch.backends.cuda.math_sdp_enabled())
+                    if hasattr(torch.backends, "cuda")
+                    and hasattr(torch.backends.cuda, "math_sdp_enabled")
+                    else None
+                ),
                 "tf32": False,
             }
         )

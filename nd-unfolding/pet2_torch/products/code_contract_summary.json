@@ -13,9 +13,9 @@
   },
   "local_verification": {
     "python": "3.14.6",
-    "focused_tests_total": 64,
+    "focused_tests_total": 65,
     "passed": 55,
-    "expected_optional_dependency_skips": 9,
+    "expected_optional_dependency_skips": 10,
     "failures": 0,
     "errors": 0,
     "commands_passed": [
@@ -48,7 +48,8 @@
     "trusted_public_pb_weights_only": "pass-on-contract-runtime-census-pending",
     "fixed_logit_tf_torch_ratio_equivalence": "pass",
     "validation_test_weighted_bce_receipts": "implemented-runtime-pending",
-    "cap_sensitivity_telemetry": "implemented-runtime-pending"
+    "cap_sensitivity_telemetry": "implemented-runtime-pending",
+    "deterministic_attention_backend": "implemented-runtime-rerun-pending"
   },
   "gate2_histogram_correction": {
     "bug": "independent histogram divided already-GeV measured/background scalar columns by 1000",

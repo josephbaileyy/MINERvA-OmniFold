@@ -253,3 +253,16 @@ Append-only orchestration and experimental ledger for branch
 - All were pending on `Priority` at submission. The unrelated active job
   `20416508` and checkout `/u/jbailey2/MINERvA-OmniFold` were not modified or
   cancelled.
+
+## 2026-07-23 — First GPU smoke invalidated for reproducibility
+
+- Pre-fix committed smoke job `20426827` completed successfully in 24 s, but
+  PyTorch warned that memory-efficient attention selected a nondeterministic
+  backward algorithm while the seed policy used `warn_only=True`.
+- The smoke's numerical output is retained as diagnostic only and is excluded
+  from comparisons. The backend now requires deterministic algorithms,
+  disables flash and memory-efficient SDP, enables math SDP, and records those
+  settings. A new optional-GPU regression checks the policy.
+- Local focused verification after the fix is 65 tests: 55 pass and 10
+  expected Mac dependency skips. No matched pilot was submitted from the
+  nondeterministic source.

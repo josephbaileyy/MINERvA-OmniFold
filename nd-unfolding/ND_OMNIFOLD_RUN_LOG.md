@@ -2056,7 +2056,10 @@ repaired periodic truth-phi coordinates, POT threading, production-NPZ eager
 loading, missing analytic closure evidence, and a pre-existing Gate-2
 independent-histogram unit bug. Root review then added validation/test weighted
 BCE and cap-sensitivity receipts without changing training or update
-equations. Local focused verification is 55 pass plus 9 expected optional
-dependency skips out of 64 tests; no training result is claimed. Delta jobs
+equations. The first GPU smoke exposed nondeterministic memory-efficient
+attention; the pilot is diagnostic-only and the backend now forces the
+deterministic math-attention path. Local focused verification is 55 pass plus
+10 expected optional dependency skips out of 65 tests; no training result is
+claimed. Delta jobs
 for optional runtime tests, public/xps2 diagnostics, and a one-arm smoke were
 submitted under isolated names and remain result-pending at this entry.

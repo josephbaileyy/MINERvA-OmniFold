@@ -702,7 +702,7 @@ receipt has not been rerun. `KNOWN_ISSUES.md` #20 indexes the correction.
 ## 2026-07-23 Gregor PET2 experimental backend — LOCAL CODE CONTRACT VERIFIED
 
 An opt-in, independently implemented PyTorch PET2-family backend and fail-closed
-adapters pass the local code-contract gate: 64 focused tests, 55 passes, 9
+adapters pass the local code-contract gate: 65 focused tests, 55 passes, 10
 expected PyTorch/safetensors skips, zero failures/errors. The verified
 login-safe coverage includes inventory symmetry, truth-leakage rejection,
 explicit masks and pad category, native misses, fake rejection, distinct

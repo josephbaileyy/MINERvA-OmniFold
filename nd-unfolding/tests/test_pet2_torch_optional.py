@@ -69,6 +69,14 @@ class ModelBehavior(unittest.TestCase):
             k_neighbors=2,
         )
 
+    def test_seed_policy_disables_nondeterministic_attention(self):
+        settings = seed_everything(101, deterministic=True)
+        self.assertTrue(settings["deterministic_algorithms"])
+        if torch.cuda.is_available():
+            self.assertFalse(settings["flash_sdp_enabled"])
+            self.assertFalse(settings["memory_efficient_sdp_enabled"])
+            self.assertTrue(settings["math_sdp_enabled"])
+
     def _tensor(self, batch):
         return {
             "continuous": torch.as_tensor(batch.continuous),
