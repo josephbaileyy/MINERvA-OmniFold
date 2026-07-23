@@ -681,3 +681,38 @@ This is a P3F-scalar interface prerequisite, not a PET or physics result;
 P3F-PET generation and PET training did not start in this wake. Canonical
 receipt:
 `docs/orchestration/state/p3f-scalar-fullaudit-promotion-20260720.json`.
+
+## 2026-07-23 Gate-2 independent-histogram correction — CODE VERIFIED
+
+The Gate-2 runtime target and its immutable weights remain verified, but one
+historical supporting claim is quarantined. The independent validator divided
+the already-GeV first two columns of `measured_scalars` and
+`bkg_reco_scalars` by 1000 before its 15x19 histogram. Consequently the
+previously quoted learned-vs-clipped histogram L1 fraction `3.7793e-7` and
+cosine 1.0 do **not** constitute an independent shape/domain check. Target
+construction, target hashes, row ordering, raw/refined sums, nonnegativity,
+and the actual Step-1 weights did not use this conversion and are unchanged.
+
+The conversion is removed. Three NumPy regressions verify that an out-of-domain
+GeV row remains out of domain, a multi-bin fixture remains multi-bin, and the
+independent coordinates exactly equal the loader/refiner GeV coordinates.
+The production G2 is unavailable, so the historical independent runtime
+receipt has not been rerun. `KNOWN_ISSUES.md` #20 indexes the correction.
+
+## 2026-07-23 Gregor PET2 experimental backend — LOCAL CODE CONTRACT VERIFIED
+
+An opt-in, independently implemented PyTorch PET2-family backend and fail-closed
+adapters pass the local code-contract gate: 64 focused tests, 55 passes, 9
+expected PyTorch/safetensors skips, zero failures/errors. The verified
+login-safe coverage includes inventory symmetry, truth-leakage rejection,
+explicit masks and pad category, native misses, fake rejection, distinct
+reco/truth weights, Stay-Positive provenance, deterministic splits, arm
+isolation, periodic truth phi, receipt-bound POT, compressed-G2 refusal,
+bounded xps2 access, fixed-logit TF/PyTorch ratio equivalence, and Gate-2
+units. Compilation, launcher syntax, environment-lock JSON, and
+`git diff --check` also pass.
+
+This is code-contract evidence only. It is not a trained-model, closure,
+public-dataset, recoil-pilot, G2, or physics result. The machine-readable
+summary is `nd-unfolding/pet2_torch/products/code_contract_summary.json`;
+Delta runtime tests and experiments are recorded separately when complete.

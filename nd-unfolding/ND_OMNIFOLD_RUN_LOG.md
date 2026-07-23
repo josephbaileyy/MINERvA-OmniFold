@@ -2038,3 +2038,25 @@ had disappeared from `squeue`; `wakerctl` now requires allocation-level
 once start evidence exists. All 93 orchestration tests pass. The terminal array
 watch remains armed, Gate 3 stays open, and nominal PET remains prohibited.
 Evidence: `docs/orchestration/state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json`.
+
+## 2026-07-23 — Gregor PET2 campaign: implementation and local code-contract gate
+
+A collision-isolated campaign branch/worktree implemented an opt-in,
+independent PyTorch PET2-family estimator after a persistent four-role design
+round (source archaeology, implementation, OmniFold-contract red team, and
+evidence preregistration). The legacy TensorFlow/Keras estimator remains the
+default. The new package carries explicit three-inventory contracts,
+Stay-Positive and signed-background provenance, native misses, separate
+`w_reco`/`w_truth`, receipt-bound POT scale, stable splits, arm manifests,
+safe artifacts, analytic conditional closure, and fail-closed G2/checkpoint
+seams.
+
+The post-implementation contract audit found and the same implementation role
+repaired periodic truth-phi coordinates, POT threading, production-NPZ eager
+loading, missing analytic closure evidence, and a pre-existing Gate-2
+independent-histogram unit bug. Root review then added validation/test weighted
+BCE and cap-sensitivity receipts without changing training or update
+equations. Local focused verification is 55 pass plus 9 expected optional
+dependency skips out of 64 tests; no training result is claimed. Delta jobs
+for optional runtime tests, public/xps2 diagnostics, and a one-arm smoke were
+submitted under isolated names and remain result-pending at this entry.

@@ -1,0 +1,100 @@
+# Evidence Ablation Auditor: ROUND 1 Pre-Registration
+
+This document pre-registers the comparison campaign for MINERvA OmniFold Point Edge Transformer (PET) estimators, evaluating architectural upgrades and foundation-model initialization against the current baselines.
+
+The evaluation strictly separates pilot/scaffolding evidence from publication inference. This protocol dictates how evidence is gathered, scored, and guarded against bias, ensuring that the final selection of the publication estimator is methodologically sound.
+
+## 1. Estimator Definitions
+
+The campaign will compare six estimators on identical tasks:
+
+*   **A. Existing recoil-only PET:** The baseline TF/Keras implementation (`pet-reduced-fps-cross` context), blind to explicit muon kinematics.
+*   **B. Existing TF/Keras full-event PET:** The current `pet-fullevent-fps-v1` candidate architecture, featuring continuous muon event scalars + recoil tokens + FiLM conditioning.
+*   **C. PyTorch PET2 (Random Init, B-Matched):** PyTorch implementation of the PET2 backbone (OmniLearned architecture), initialized randomly. Representation and capacity are matched as closely as possible to B.
+*   **D. PyTorch PET2 (Typed Tokens):** Model C enhanced with typed reconstructed-object tokens (e.g., distinct tokens for photons, prongs, blobs, including dE/dx and timing) and aggregate-overflow tokens instead of silent truncation.
+*   **E. PyTorch PET2 (Richer Global Block):** Model D enhanced with a richer global-feature block (15 event-level scalars from Gregor's schema, appropriately adapted for data/MC parity).
+*   **F. PyTorch PET2 (Foundation Init):** Model E initialized with Gregor's generic-pretrained and MINERvA-fine-tuned weights. **Execution Condition:** Allowed ONLY if provenance (exact paper commit/hash), licensing, tensor dimensions, and OmniFold preprocessing compatibility (exact data/MC parity, truth-leakage absence, and native-miss alignment) are formally verified.
+
+## 2. Experimental Controls and Compute Matching
+
+To guarantee variations isolate architectural/initialization differences and not training-budget artifacts, the following controls are mandatory:
+
+*   **Populations & Splits:** All models evaluate on identical event samples. The train/validation/extraction indices must be fixed and shared across all arms.
+*   **Seeds:**
+    *   *Split Seed:* Fixed globally for the comparison.
+    *   *Estimator Seeds:* Train on a fixed set of $N=3$ predeclared seeds.
+    *   *Evaluation Seeds:* The extraction/selection decision MUST evaluate on a statistically independent test set (or seed) not used during early stopping or hyperparameter tuning.
+*   **Compute Budget & Hyperparameters:**
+    *   Train on fixed subsets (e.g., 2M event subsamples).
+    *   Align Adam optimizer (lr 1e-4), batch size (1024), and iterations (niter 2, epochs 8) across frameworks.
+    *   *Framework Matching (TF vs PyTorch):* Where exact layer-for-layer parity is impossible, match total trainable parameters and FLOPs. Normalize gradient clipping and weight initialization scales.
+*   **Early Stopping:** Do NOT early stop based on OmniFold extraction metrics (e.g., closure $\chi^2$). Early stopping is permitted only on step-1/step-2 binary cross-entropy validation loss, evaluated at fixed epoch boundaries.
+
+## 3. Evidence Partitioning
+
+Evidence must be explicitly tagged into one of the following compartments. Commingling invalidates the evaluation.
+
+1.  **Code-Contract:** Pure-function unit tests proving framework equivalence, tensor alignment, truth-leakage prevention, and correct extended-FPS edge enforcement.
+2.  **Synthetic/Fixture:** Density-ratio recovery on known synthetic priors (e.g., Gaussian toy domains).
+3.  **Public-Gregor-Dataset:** Evaluation on the open-data MasterAnaDev (1A/1B) tuples for classification/regression (diagnostic only, not unfolding).
+4.  **Recoil-Input Pilot:** OmniFold evaluation using the scaffolding `xps2` inputs (recoil-only tensors paired with data-scalar guards) as a surrogate for full-event behavior.
+5.  **Unavailable Publication-G2 Evidence:** The final full-schema FPS CV point-cloud loops. *This campaign cannot touch this data. All conclusions here are preliminary recommendations pending G2 completion.*
+
+## 4. Quantitative Criteria & Claim Strength
+
+An estimator must be scored against baseline B (or A, if B fails).
+
+| Metric Category | Pass Criterion (Absolute) | Indifference Bound (vs Baseline) | Strong Claim Threshold |
+| :--- | :--- | :--- | :--- |
+| **Ordinary & Injected Closure** | Median bin ratio in [0.98, 1.02]. $\chi^2$/ndf $< 1.5$ (stat-only). | $\Delta(\text{median ratio}) < 0.005$ | Recovers $>95\%$ of injected physical distortion (e.g., omitted muon stress, W-tilt). |
+| **Synthetic Density-Ratio** | Calibrated likelihood ratio curve (slope $\approx 1$ vs truth). | $\Delta(\text{AUC}) < 0.01$ | N/A (Diagnostic only) |
+| **Weight Tails & Cap Sensitivity** | Finite weights only. Saturated logit fraction $< 10^{-4}$. | $\Delta(\text{saturated fraction}) < 10^{-5}$ | Weight variance reduction $> 10\%$ vs baseline. |
+| **Effective Sample Size (ESS)** | Global ESS $> 10\%$ of unweighted count. | $\Delta(\text{ESS}) / \text{ESS}_{\text{base}} < 0.05$ | Tail ESS (e.g., High-W) improved by $> 20\%$. |
+| **Seed/Retrain Spread** | C_ML sqrt-trace $< 10\%$ of central cross-section trace. | $\Delta(\text{spread}) < 5\%$ | Spread indistinguishable from GPU floor. |
+| **2D/3D/5D Projections** | Exact lower-dimensional marginal consistency. | KS-test p-value $> 0.1$ vs baseline | Shape resolution significantly improved in high-W / low-q3 dead zones. |
+| **Robustness** | No crash on overflow tokens. Permutation invariant. | Loss diff $< 10^{-3}$ on padded vs unpadded | Degrades gracefully ($<5\%$ impact) when removing top-1 token. |
+| **Operational Complexity** | Fits in 1 A100 GPU (80GB). Throughput $> 5000$ evts/sec. | Training time within $\pm 20\%$ | $> 2\times$ faster training to convergence. |
+
+*(Note: Training AUC is purely diagnostic and cannot be used to declare a winner).*
+
+## 5. Methodological Safeguards
+
+*   **Multiple Comparisons Guard:** If evaluating $K$ estimators, significance thresholds for differences in closure or ESS must apply a Bonferroni-style penalty (e.g., $\alpha = 0.05/K$).
+*   **Small-Pilot Overclaiming:** Performance on the 1A/1B open-dataset or `xps2` scaffolding cannot be extrapolated to claim publication-level precision.
+*   **Budget Alignment:** If PyTorch models execute faster, they are *not* allowed more epochs. They must be compared at identical iteration/epoch budgets to disentangle algorithmic efficiency from computational efficiency.
+*   **Selection Bias:** The extraction covariance/spread of the winning model must be calculated using a fresh set of random seeds (not the ones used to select it).
+
+## 6. Minimum Evidence Table & Downgrade Rules
+
+Before any model (C-F) can replace B as the publication recommendation, the following table must be fully populated:
+
+1.  **Code Parity:** Pass/Fail (Must pass)
+2.  **Stress Closure (Omitted Muon/W-Tilt):** Median L1 recovery fraction
+3.  **High-W / Low-q3 Slice:** ESS and closure bias
+4.  **Weight Tail Mass:** Fraction of weights > 5x mean
+5.  **Compute Cost:** GPU-hours per 2M events
+
+**Downgrade Rules:**
+*   If a richer representation (D, E) fails to improve stress closure by $>5\%$ over B, it is downgraded to *indifferent* and rejected for complexity.
+*   If Foundation Init (F) violates data/MC parity (e.g., truth-leakage via preprocessing), it is *fatally downgraded* and disqualified.
+*   If an estimator exhibits superior closure but degrades ESS by $>10\%$, it is downgraded pending regularization tuning.
+
+## 7. Preregistration Checklist (For Final Auditor)
+
+- [ ] All code branches (TF and PyTorch) share identical train/val/extract index generation.
+- [ ] PyTorch/TF trainable parameter counts and learning rates are documented and matched.
+- [ ] Evaluation seeds are strictly disjoint from selection/hyperparameter seeds.
+- [ ] No estimator was early-stopped based on unfolding closure metrics.
+- [ ] "Stay-Positive" background refinement is identically applied before all trainings.
+- [ ] Gregor's preprocessing was audited for MINERvA OmniFold data-contract compliance (truth separation, native misses, playlist alignment).
+- [ ] Overflow tokens (summed) are used instead of silent top-N truncation.
+- [ ] The high-W / high-Eavail corner was evaluated as an explicit stratum.
+
+## 8. Unsupported Conclusions (Pending Publication G2 Input)
+
+Regardless of the outcome of this ablation campaign, the following conclusions **cannot** be drawn until the full-schema G2 point-cloud loops are completed and injected:
+
+1.  **Final Systematic Budgets:** We cannot claim a final $C_{\text{syst}}$ or $C_{\text{total}}$, as the scaffolding data lacks the genuine full-schema background clouds and lateral shifts.
+2.  **Publication-Grade Closure:** Scaffolding `xps2` closure does not guarantee closure on the final G2 dataset.
+3.  **Foundation-Model Sufficiency:** We cannot claim that Gregor's fine-tuned model (F) operates correctly on MINERvA's extended-FPS with native misses and full playlists until it processes the literal G2 inventory.
+4.  **Final Cross-Section Extraction:** No result from this pilot can be moved to `VALIDATION_LEDGER.md` as a physical cross-section measurement.

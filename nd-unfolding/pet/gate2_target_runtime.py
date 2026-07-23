@@ -342,6 +342,28 @@ def _hist2(values, edges_pt, edges_ppar, weights=None):
     return np.histogram2d(values[:, 0], values[:, 1], bins=(edges_pt, edges_ppar), weights=weights)[0]
 
 
+def independent_gev_coordinates(measured_scalars, background_scalars):
+    """Return loader/refiner ``(pT, pparallel)`` coordinates unchanged.
+
+    The frozen G2 scalar contract stores these columns in GeV.  Keeping this
+    helper NumPy-only makes the independent histogram unit convention
+    regression-testable without loading G2 or TensorFlow.
+    """
+    output = []
+    for label, value in (
+        ("measured_scalars", measured_scalars),
+        ("bkg_reco_scalars", background_scalars),
+    ):
+        array = np.asarray(value, dtype=np.float64)
+        if array.ndim != 2 or array.shape[1] < 2:
+            die(f"{label} must have shape (N,>=2)")
+        coords = np.array(array[:, :2], dtype=np.float64, copy=True)
+        if not np.all(np.isfinite(coords)):
+            die(f"{label} contains non-finite GeV coordinates")
+        output.append(coords)
+    return tuple(output)
+
+
 def run_validate(args) -> int:
     inputs = Path(args.inputs).resolve()
     output = Path(args.output).resolve()
@@ -418,8 +440,9 @@ def run_validate(args) -> int:
     # Independent binned checks use raw input scalars and the normalized weights
     # actually carried by the step-1 DataLoader; they do not call the refiner.
     with np.load(inputs, allow_pickle=True) as source:
-        measured = np.asarray(source["measured_scalars"], dtype=np.float64)[:, :2] / 1000.0
-        background = np.asarray(source["bkg_reco_scalars"], dtype=np.float64)[:, :2] / 1000.0
+        measured, background = independent_gev_coordinates(
+            source["measured_scalars"], source["bkg_reco_scalars"]
+        )
         w_bkg = np.asarray(source["w_bkg"], dtype=np.float64)
     edges_pt = np.asarray(fed.CANONICAL_PT_EDGES, dtype=np.float64)
     edges_ppar = np.asarray(fed.CANONICAL_PPARALLEL_EDGES, dtype=np.float64)

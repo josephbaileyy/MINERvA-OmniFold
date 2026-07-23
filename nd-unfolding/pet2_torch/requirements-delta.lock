@@ -1,0 +1,6 @@
+# Load `pytorch-conda/2.8` first. Do not install or replace its torch/numpy.
+# Install this one pure-Python artifact dependency into an isolated
+# --system-site-packages venv, never root_6_28 or the TensorFlow environment.
+# SPDX-License-Identifier for safetensors: Apache-2.0
+# Module-provided PyTorch and NumPy are BSD-3-Clause.
+safetensors==0.5.3

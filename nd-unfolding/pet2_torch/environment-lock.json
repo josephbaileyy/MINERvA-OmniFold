@@ -1,0 +1,27 @@
+{
+  "schema": "pet2-experimental-environment-v1",
+  "isolation": {
+    "root_environment_modified": false,
+    "tensorflow_environment_modified": false,
+    "delta_base": "module load pytorch-conda/2.8",
+    "extra_packages": "install only in an isolated venv with --system-site-packages"
+  },
+  "login_safe_tested_2026_07_23": {
+    "python": "3.14.6",
+    "numpy": "2.4.4",
+    "torch": null,
+    "safetensors": null,
+    "outcome": "NumPy contract suite passed; optional PyTorch tests skipped"
+  },
+  "delta_pilot_lock": {
+    "torch": "2.8.* (provided by pytorch-conda/2.8; exact build captured in receipt)",
+    "safetensors": "0.5.3",
+    "numpy": "module-provided exact version captured in receipt",
+    "status": "not yet executed by implementation lead"
+  },
+  "dependency_spdx": {
+    "numpy": "BSD-3-Clause",
+    "torch": "BSD-3-Clause",
+    "safetensors": "Apache-2.0"
+  }
+}

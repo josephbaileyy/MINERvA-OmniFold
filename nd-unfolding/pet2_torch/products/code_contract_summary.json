@@ -1,0 +1,66 @@
+{
+  "campaign": "gregor-pet2-omnifold",
+  "date": "2026-07-23",
+  "evidence_class": "code-contract",
+  "status": "local-code-contract-pass-delta-runtime-pending",
+  "source_base_commit": "f7b7a77544f436afea212250254143083d846754",
+  "implementation": {
+    "backend": "independent-pytorch-pet2-family-experimental",
+    "legacy_default_changed": false,
+    "publication_g2_loaded": false,
+    "training_executed": false,
+    "g2_validation_claim": false
+  },
+  "local_verification": {
+    "python": "3.14.6",
+    "focused_tests_total": 64,
+    "passed": 55,
+    "expected_optional_dependency_skips": 9,
+    "failures": 0,
+    "errors": 0,
+    "commands_passed": [
+      "python -m unittest test_pet2_torch_contracts.py test_pet2_torch_optional.py test_gate2_target_runtime.py",
+      "python -m py_compile pet2_torch/*.py gate2_target_runtime.py focused tests",
+      "bash -n sbatch_pet2_fixture_delta.sh",
+      "python -m json.tool environment-lock.json",
+      "git diff --check"
+    ]
+  },
+  "delegate_broader_suite": {
+    "status": "reported-pass-with-preexisting-environment-exclusions",
+    "passed": 282,
+    "expected_skips": 10,
+    "full_discovery_environment_failures": 8,
+    "failure_scope": "seven pre-existing hard-coded /pscratch dependencies and one missing scikit-learn dependency"
+  },
+  "contract_gates": {
+    "explicit_boolean_masks": "pass",
+    "category_zero_pad_only": "pass",
+    "truth_leakage_rejection": "pass",
+    "data_mc_background_schema_symmetry": "pass",
+    "native_miss_and_full_order": "pass-in-login-safe-contract-tests-runtime-test-pending",
+    "separate_reco_truth_weights": "pass",
+    "stay_positive_target_and_signed_provenance": "pass",
+    "pot_scale_binding": "pass",
+    "periodic_truth_phi": "pass",
+    "large_compressed_g2_fail_closed": "pass",
+    "bounded_xps2_memmap": "pass-on-fixture-real-census-pending",
+    "trusted_public_pb_weights_only": "pass-on-contract-runtime-census-pending",
+    "fixed_logit_tf_torch_ratio_equivalence": "pass",
+    "validation_test_weighted_bce_receipts": "implemented-runtime-pending",
+    "cap_sensitivity_telemetry": "implemented-runtime-pending"
+  },
+  "gate2_histogram_correction": {
+    "bug": "independent histogram divided already-GeV measured/background scalar columns by 1000",
+    "fix": "removed conversion and added three NumPy regressions",
+    "affected_scope": "independent binned/domain telemetry only",
+    "unaffected_scope": "canonical Stay-Positive target construction, target hashes, target sums, and training weights",
+    "historical_runtime_receipt_rerun": false
+  },
+  "unavailable_evidence": [
+    "publication G2 full-event NPZ",
+    "licensed and hash-bound Gregor checkpoint",
+    "real typed reconstructed-object dump",
+    "publication closure and covariance"
+  ]
+}

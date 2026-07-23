@@ -13,6 +13,10 @@ MODULE_PATH = Path(__file__).parents[1] / "pet" / "gate2_target_runtime.py"
 SPEC = importlib.util.spec_from_file_location("gate2_target_runtime", MODULE_PATH)
 g2 = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(g2)
+FED_PATH = Path(__file__).parents[1] / "pet" / "fullevent_fps_dataloader.py"
+FED_SPEC = importlib.util.spec_from_file_location("gate2_test_fed", FED_PATH)
+fed = importlib.util.module_from_spec(FED_SPEC)
+FED_SPEC.loader.exec_module(fed)
 
 
 class StagingContract(unittest.TestCase):
@@ -37,10 +41,61 @@ class StagingContract(unittest.TestCase):
                 g2.require_available_staging(path)
 
 
+class IndependentHistogramUnits(unittest.TestCase):
+    def test_out_of_domain_gev_row_stays_out_of_domain(self):
+        measured = np.array([[31.0, 121.0, 0.0, 0.0]])
+        background = np.array([[0.5, 2.0, 0.0, 0.0]])
+        measured_xy, background_xy = g2.independent_gev_coordinates(
+            measured, background
+        )
+        self.assertEqual(
+            g2._hist2(measured_xy, np.array([0.0, 4.5]), np.array([1.5, 60.0])).sum(),
+            0,
+        )
+        np.testing.assert_array_equal(background_xy, background[:, :2])
+
+    def test_multi_bin_fixture_does_not_collapse_into_one_bin(self):
+        measured = np.array(
+            [[0.1, 2.0, 9.0], [0.8, 4.0, 8.0], [1.8, 8.0, 7.0]]
+        )
+        background = np.array([[0.2, 2.5, 6.0]])
+        measured_xy, _ = g2.independent_gev_coordinates(measured, background)
+        hist = g2._hist2(
+            measured_xy,
+            np.array([0.0, 0.5, 1.0, 2.0]),
+            np.array([1.5, 3.0, 6.0, 10.0]),
+        )
+        self.assertEqual(int(np.count_nonzero(hist)), 3)
+        self.assertEqual(int(hist.sum()), 3)
+
+    def test_independent_coordinates_equal_loader_refiner_gev_columns(self):
+        measured = np.array([[0.2, 2.0, 1000.0], [1.4, 7.0, 2000.0]])
+        background = np.array([[0.4, 3.5, 3000.0]])
+        measured_xy, background_xy = g2.independent_gev_coordinates(
+            measured, background
+        )
+        np.testing.assert_array_equal(measured_xy, measured[:, :2])
+        np.testing.assert_array_equal(background_xy, background[:, :2])
+        loader_features = fed.build_signed_measured_inventory(
+            measured[:, :2],
+            background[:, :2],
+            np.ones(background.shape[0]),
+            0.25,
+        )[0]
+        np.testing.assert_array_equal(
+            measured_xy, loader_features[: measured.shape[0]]
+        )
+        np.testing.assert_array_equal(
+            background_xy, loader_features[measured.shape[0] :]
+        )
+
+
 class TargetOnlyDataLoader(unittest.TestCase):
     def test_exact_numpy_source_loads_without_tensorflow_package_init(self):
         saved_parent = sys.modules.pop("omnifold", None)
         saved_child = sys.modules.pop("omnifold.dataloader", None)
+        saved_repo = g2.REPO
+        g2.REPO = Path(__file__).parents[2]
         tensorflow_before = {k for k in sys.modules if k == "tensorflow" or k.startswith("tensorflow.")}
         try:
             module = g2.install_target_only_dataloader()
@@ -50,6 +105,7 @@ class TargetOnlyDataLoader(unittest.TestCase):
             tensorflow_after = {k for k in sys.modules if k == "tensorflow" or k.startswith("tensorflow.")}
             self.assertEqual(tensorflow_after, tensorflow_before)
         finally:
+            g2.REPO = saved_repo
             sys.modules.pop("omnifold.dataloader", None)
             sys.modules.pop("omnifold", None)
             if saved_parent is not None:
