@@ -840,6 +840,11 @@ class ContractOnlyCLI(unittest.TestCase):
             self.assertEqual(result["status"], "contract_only")
             self.assertFalse(result["recipe"]["layer_equivalence_claim"])
             self.assertFalse(result["g2_validation_claim"])
+            self.assertIn("fingerprint", result["dataset_manifest"])
+            self.assertIn(
+                "nd-unfolding/pet2_torch/tf_ab_conditional_stress.py",
+                result["source_receipt"]["files"],
+            )
 
     def test_delta_launcher_is_one_gpu_bounded_and_selftests(self):
         launcher = os.path.join(ND, "pet2_torch", "sbatch_pet2_fixture_delta.sh")

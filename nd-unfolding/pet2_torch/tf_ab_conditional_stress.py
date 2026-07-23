@@ -27,7 +27,7 @@ for location in (PACKAGE_PARENT, REPO / "omnifold_nn"):
 from pet2_torch.artifacts import write_json
 from pet2_torch.evaluation import conditional_closure_metrics
 from pet2_torch.fixtures import make_known_ratio_closure_dataset
-from pet2_torch.utils import environment_receipt
+from pet2_torch.utils import environment_receipt, file_sha256, git_state
 
 
 def _muon_globals(batch):
@@ -202,6 +202,7 @@ def main() -> int:
             "B": "existing TensorFlow/Keras PET full-event muon-global footing",
         },
         "fixture": fixture.specification,
+        "dataset_manifest": fixture.dataset.manifest(),
         "recipe": {
             "estimator_seed": args.estimator_seed,
             "split_seed": args.split_seed,
@@ -235,6 +236,18 @@ def main() -> int:
             ),
         },
         "environment": environment_receipt(),
+        "source_receipt": {
+            "git": git_state(REPO),
+            "files": {
+                str(path.relative_to(REPO)): file_sha256(path)
+                for path in (
+                    Path(__file__).resolve(),
+                    REPO / "omnifold_nn/omnifold/omnifold.py",
+                    REPO / "omnifold_nn/omnifold/net.py",
+                    REPO / "omnifold_nn/omnifold/dataloader.py",
+                )
+            },
+        },
         "g2_validation_claim": False,
     }
     if not args.contract_only:
