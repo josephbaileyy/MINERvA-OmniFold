@@ -716,3 +716,18 @@ This is code-contract evidence only. It is not a trained-model, closure,
 public-dataset, recoil-pilot, G2, or physics result. The machine-readable
 summary is `nd-unfolding/pet2_torch/products/code_contract_summary.json`;
 Delta runtime tests and experiments are recorded separately when complete.
+
+## 2026-07-23 Gregor PET2 deterministic A100 smoke — RUNTIME GATE PASS
+
+Two isolated Delta jobs (`20426848`, `20426860`) ran the same bounded C-arm
+smoke from commit `7c8d6c0` on different A100 nodes. Push/pull weights, both
+model safetensors, preprocessing, arm/config manifests, MC indices, extraction
+arrays, and all numerical summary metrics were bitwise identical; only wall
+time and dynamic environment fields differed. Deterministic algorithms were
+required, flash and memory-efficient SDP were disabled, and math SDP was
+enabled.
+
+This verifies bounded GPU execution and reproducibility only. The
+one-iteration/one-epoch 512-signal-event smoke is not an architecture,
+closure-quality, or physics comparison. Canonical receipt:
+`nd-unfolding/pet2_torch/products/deterministic_gpu_smoke_reproducibility.json`.

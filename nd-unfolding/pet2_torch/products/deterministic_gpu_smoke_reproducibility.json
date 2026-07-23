@@ -1,0 +1,58 @@
+{
+  "campaign": "gregor-pet2-omnifold",
+  "date": "2026-07-23",
+  "status": "pass",
+  "evidence_class": "code-contract-gpu-smoke",
+  "comparison_claim_permitted": false,
+  "source_commit": "7c8d6c038c2f1bd4d8bff72710d43521fda94f9b",
+  "delta_jobs": [
+    20426848,
+    20426860
+  ],
+  "recipe": {
+    "arm": "C",
+    "fixture_seed": 424242,
+    "estimator_seed": 101,
+    "signal_events": 512,
+    "background_events": 40,
+    "iterations": 1,
+    "epochs_per_step": 1,
+    "batch_size": 128
+  },
+  "determinism_policy": {
+    "torch_deterministic_algorithms": true,
+    "flash_sdp": false,
+    "memory_efficient_sdp": false,
+    "math_sdp": true,
+    "tf32": false
+  },
+  "bitwise_equal": {
+    "weights_push.npy": true,
+    "weights_pull.npy": true,
+    "step1_model.safetensors": true,
+    "step2_model.safetensors": true,
+    "reco_preprocessing.json": true,
+    "truth_preprocessing.json": true,
+    "arm_manifest.json": true,
+    "config.json": true,
+    "mc_indices.npy": true,
+    "all_extraction_compat_arrays": true,
+    "all_summary_metrics_except_runtime": true
+  },
+  "sha256": {
+    "weights_push.npy": "d3cb580a8eec048218132800e70f0c6d1b4d1e2c9adfb84f5be64872c9d3da79",
+    "weights_pull.npy": "1453aa15e07dcff375c59b16db5505da6d80d2784aa8bb74cf3e83ad1a7225a8",
+    "step1_model.safetensors": "1e904c3a248d4500b9d9bb1b108c6c4409ed1e6f00459d4db8e9b58acb9581f4",
+    "step2_model.safetensors": "795b9e9ed0b78a476d64356f31921602a998cfc56ab0562dd1cbc64c270085d1",
+    "reco_preprocessing.json": "f3b0f0c4e508b966ba5a62dd56c57e23cba6437131375229aa6986f722873711",
+    "truth_preprocessing.json": "8417978b2a1558a6f995f36e73095271218a56a0299d28dc5cd00a84fc187077",
+    "arm_manifest.json": "986d78f8ab3b7fb30e1fa1ebdbb508fc429b3b9f5cb70b74755bf43fa677b261",
+    "config.json": "4a1b87815bca0d86f778d7679e340bb2554782ae6d664510c611d1e10da69f2b",
+    "mc_indices.npy": "b3da016722d9659ca1406b512c68a7f4562fa13695e524997a96d22d4d33b6a4"
+  },
+  "runtime_seconds": [
+    4.186119484715164,
+    4.093313653022051
+  ],
+  "interpretation": "The independent PET2 backend is bitwise reproducible for this bounded A100 smoke. The smoke is too small and undertrained for architecture or closure claims."
+}

@@ -23,6 +23,7 @@ OUT_BASE="${PET2_OUT_BASE:-}"
 ARM="${PET2_ARM:-}"
 ESTIMATOR_SEED="${PET2_ESTIMATOR_SEED:-}"
 MODE="${PET2_MODE:-matched-pilot}"
+ABLATION_TAG="${PET2_ABLATION_TAG:-}"
 [[ -n "${REPO}" ]] || die "set PET2_REPO to this reviewed campaign checkout"
 [[ -d "${REPO}/nd-unfolding/pet2_torch" ]] || die "PET2_REPO lacks pet2_torch: ${REPO}"
 [[ -n "${OUT_BASE}" ]] || die "set PET2_OUT_BASE to a new isolated Delta scratch/work path"
@@ -36,6 +37,15 @@ if [[ "${MODE}" == "matched-pilot" ]]; then
   [[ "${ESTIMATOR_SEED}" == "101" || "${ESTIMATOR_SEED}" == "202" || \
      "${ESTIMATOR_SEED}" == "303" ]] \
     || die "matched pilot seed must be 101, 202, or 303"
+fi
+if [[ -n "${ABLATION_TAG}" && ! "${ABLATION_TAG}" =~ ^[A-Za-z0-9_]+$ ]]; then
+  die "PET2_ABLATION_TAG may contain only letters, numbers, and underscores"
+fi
+if [[ "${PET2_MUON_TOKEN:-0}" != "0" && "${PET2_MUON_TOKEN:-0}" != "1" ]]; then
+  die "PET2_MUON_TOKEN must be 0 or 1"
+fi
+if [[ "${PET2_USE_OVERFLOW:-0}" != "0" && "${PET2_USE_OVERFLOW:-0}" != "1" ]]; then
+  die "PET2_USE_OVERFLOW must be 0 or 1"
 fi
 
 repo_real=$(realpath "${REPO}")
@@ -59,6 +69,8 @@ if [[ "${PET2_DELTA_SELFTEST:-0}" == "1" ]]; then
   echo "[pet2-delta-selftest] out_base=${out_real}"
   echo "[pet2-delta-selftest] module=pytorch-conda/2.8 gpu=1 cpus=8"
   echo "[pet2-delta-selftest] mode=${MODE} arm=${ARM} seed=${ESTIMATOR_SEED}"
+  echo "[pet2-delta-selftest] ablation_tag=${ABLATION_TAG:-none}"
+  echo "[pet2-delta-selftest] muon_token=${PET2_MUON_TOKEN:-0} overflow=${PET2_USE_OVERFLOW:-0}"
   echo "[pet2-delta-selftest] no submit, no module load, no training"
   exit 0
 fi
@@ -74,6 +86,9 @@ export PYTHONHASHSEED="${ESTIMATOR_SEED}"
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
 arm_slug="${ARM//-/_}"
+if [[ -n "${ABLATION_TAG}" ]]; then
+  arm_slug="${arm_slug}_${ABLATION_TAG}"
+fi
 RUN_OUT="${out_real}/pet2x_${MODE}_${arm_slug}_seed${ESTIMATOR_SEED}_job${SLURM_JOB_ID}"
 [[ ! -e "${RUN_OUT}" ]] || die "refusing to overwrite ${RUN_OUT}"
 mkdir -p "${out_real}"
@@ -123,6 +138,13 @@ else
     --learning-rate "${PET2_LEARNING_RATE:-1e-4}"
     --weight-decay "${PET2_WEIGHT_DECAY:-1e-2}"
   )
+fi
+
+if [[ "${PET2_MUON_TOKEN:-0}" == "1" ]]; then
+  cli_args+=(--muon-token)
+fi
+if [[ "${PET2_USE_OVERFLOW:-0}" == "1" ]]; then
+  cli_args+=(--use-overflow)
 fi
 
 srun --ntasks=1 --cpus-per-task="${SLURM_CPUS_PER_TASK:-8}" \

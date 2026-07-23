@@ -50,43 +50,96 @@ def adapt_loaded_public_mapping(mapping: Mapping[str, Any]) -> dict[str, Any]:
     missing = sorted(REQUIRED_MAPPING_KEYS - set(mapping))
     if missing:
         raise ValueError(f"public mapping lacks required diagnostic keys: {missing}")
-    arrays = {
-        key: np.asarray(
-            mapping[key].detach().cpu().numpy()
-            if hasattr(mapping[key], "detach")
-            else mapping[key]
-        )
-        for key in REQUIRED_MAPPING_KEYS
-    }
-    rows = [arrays[key].shape[0] for key in sorted(REQUIRED_MAPPING_KEYS)]
-    if len(set(rows)) != 1:
-        raise ValueError("public Gregor arrays have different row counts")
-    data = arrays["data"]
-    truth = arrays["truth_labels"]
-    globals_ = arrays["global_features"]
-    if data.ndim != 3 or data.shape[2] < 5:
-        raise ValueError("public Gregor data must have shape (N,P,F>=5)")
+
+    def as_dense_numpy(value: Any, label: str) -> np.ndarray:
+        if bool(getattr(value, "is_nested", False)):
+            raise ValueError(f"public Gregor {label} unexpectedly uses nested storage")
+        if hasattr(value, "detach"):
+            value = value.detach().cpu().numpy()
+        return np.asarray(value)
+
+    truth = as_dense_numpy(mapping["truth_labels"], "truth_labels")
+    globals_ = as_dense_numpy(mapping["global_features"], "global_features")
     if truth.ndim < 2 or globals_.ndim != 2:
         raise ValueError("public truth/global diagnostic arrays have malformed rank")
-    if not all(np.all(np.isfinite(value)) for value in arrays.values()):
+    if not np.all(np.isfinite(truth)) or not np.all(np.isfinite(globals_)):
         raise ValueError("public Gregor diagnostic arrays contain NaN or infinity")
-    all_zero = np.all(data == 0, axis=2)
-    raw_type = data[:, :, 4].astype(np.int64)
+
+    data_value = mapping["data"]
+    if bool(getattr(data_value, "is_nested", False)):
+        if not hasattr(data_value, "values") or not hasattr(data_value, "offsets"):
+            raise ValueError("public Gregor nested data lacks values/offsets accessors")
+        data = as_dense_numpy(data_value.values(), "data.values")
+        offsets = as_dense_numpy(data_value.offsets(), "data.offsets").astype(
+            np.int64, copy=False
+        )
+        if data.ndim != 2 or data.shape[1] < 5:
+            raise ValueError("public Gregor jagged values must have shape (tokens,F>=5)")
+        if offsets.ndim != 1 or offsets.size < 1 or offsets[0] != 0:
+            raise ValueError("public Gregor jagged offsets are malformed")
+        if np.any(np.diff(offsets) < 0) or offsets[-1] != data.shape[0]:
+            raise ValueError("public Gregor jagged offsets do not delimit stored tokens")
+        row_count = int(offsets.size - 1)
+        token_counts = np.diff(offsets)
+        data_schema: Any = {
+            "layout": "nested_jagged",
+            "values": list(data.shape),
+            "offsets": list(offsets.shape),
+            "event_token_counts": {
+                "min": int(token_counts.min()) if token_counts.size else 0,
+                "max": int(token_counts.max()) if token_counts.size else 0,
+                "mean": float(token_counts.mean()) if token_counts.size else 0.0,
+                "p50": float(np.quantile(token_counts, 0.50))
+                if token_counts.size
+                else 0.0,
+                "p95": float(np.quantile(token_counts, 0.95))
+                if token_counts.size
+                else 0.0,
+                "p99": float(np.quantile(token_counts, 0.99))
+                if token_counts.size
+                else 0.0,
+            },
+        }
+        all_zero_slots = 0
+        storage_note = (
+            "nested jagged storage has no materialized padding slots; PET2 must "
+            "construct an explicit mask when batching"
+        )
+    else:
+        data = as_dense_numpy(data_value, "data")
+        if data.ndim != 3 or data.shape[2] < 5:
+            raise ValueError("public Gregor data must have shape (N,P,F>=5)")
+        row_count = int(data.shape[0])
+        data_schema = list(data.shape)
+        all_zero_slots = int(np.all(data == 0, axis=2).sum())
+        data = data.reshape(-1, data.shape[2])
+        storage_note = (
+            "dense diagnostic storage includes all-zero padding slots; this census "
+            "does not infer the PET2 explicit mask from their values"
+        )
+
+    rows = [row_count, int(truth.shape[0]), int(globals_.shape[0])]
+    if len(set(rows)) != 1:
+        raise ValueError("public Gregor arrays have different row counts")
+    if not np.all(np.isfinite(data)):
+        raise ValueError("public Gregor diagnostic arrays contain NaN or infinity")
+    raw_type = data[:, 4].astype(np.int64)
     raw_types, raw_counts = np.unique(raw_type, return_counts=True)
     # This is a census of the public preparation's historical feature-2
     # nonzero convention, not the explicit-mask convention used by PET2.
-    feature2_nonzero = data[:, :, 2] != 0
+    feature2_nonzero = data[:, 2] != 0
     return {
         "status": "diagnostic_mc_only",
         "revision": PUBLIC_REVISION,
-        "row_count": rows[0],
+        "row_count": row_count,
         "schema": {
-            "data": list(data.shape),
+            "data": data_schema,
             "truth_labels": list(truth.shape),
             "global_features": list(globals_.shape),
         },
         "padding_type_census": {
-            "all_feature_zero_slots": int(all_zero.sum()),
+            "stored_token_count": int(data.shape[0]),
+            "all_feature_zero_slots": all_zero_slots,
             "feature2_nonzero_candidate_slots": int(feature2_nonzero.sum()),
             "raw_type_counts": {
                 str(int(key)): int(value)
@@ -99,6 +152,7 @@ def adapt_loaded_public_mapping(mapping: Mapping[str, Any]) -> dict[str, Any]:
                 "raw census only: public preparation has no PET2 explicit token "
                 "mask and category 0 may collide with a physical source category"
             ),
+            "storage_note": storage_note,
         },
         "publication_omnifold_eligible": False,
         "reason": "prepared MC rows lack the complete OmniFold inventory contract",
@@ -124,6 +178,12 @@ def inspect_trusted_public_pb(
         import torch
     except ImportError as exc:
         raise RuntimeError(f"PyTorch is unavailable for trusted .pb inspection: {exc}") from exc
+    # Gregor's prepared rows contain nested jagged tensors. PyTorch 2.8's
+    # weights-only loader requires these built-in modules to be registered
+    # before it can reconstruct the safe tensor containers. This does not
+    # enable arbitrary pickle globals and does not relax weights_only=True.
+    import torch.nested  # noqa: F401
+    import torch._dynamo  # noqa: F401
     try:
         mapping = torch.load(
             artifact,

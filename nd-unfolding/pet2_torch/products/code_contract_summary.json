@@ -2,13 +2,13 @@
   "campaign": "gregor-pet2-omnifold",
   "date": "2026-07-23",
   "evidence_class": "code-contract",
-  "status": "local-code-contract-pass-delta-runtime-pending",
+  "status": "local-code-contract-pass-deterministic-delta-smoke-pass",
   "source_base_commit": "f7b7a77544f436afea212250254143083d846754",
   "implementation": {
     "backend": "independent-pytorch-pet2-family-experimental",
     "legacy_default_changed": false,
     "publication_g2_loaded": false,
-    "training_executed": false,
+    "training_executed": "bounded-diagnostic-smoke-only",
     "g2_validation_claim": false
   },
   "local_verification": {
@@ -38,7 +38,7 @@
     "category_zero_pad_only": "pass",
     "truth_leakage_rejection": "pass",
     "data_mc_background_schema_symmetry": "pass",
-    "native_miss_and_full_order": "pass-in-login-safe-contract-tests-runtime-test-pending",
+    "native_miss_and_full_order": "pass-in-login-safe-contract-tests-and-delta-smoke",
     "separate_reco_truth_weights": "pass",
     "stay_positive_target_and_signed_provenance": "pass",
     "pot_scale_binding": "pass",
@@ -47,9 +47,20 @@
     "bounded_xps2_memmap": "pass-on-fixture-real-census-pending",
     "trusted_public_pb_weights_only": "pass-on-contract-runtime-census-pending",
     "fixed_logit_tf_torch_ratio_equivalence": "pass",
-    "validation_test_weighted_bce_receipts": "implemented-runtime-pending",
-    "cap_sensitivity_telemetry": "implemented-runtime-pending",
-    "deterministic_attention_backend": "implemented-runtime-rerun-pending"
+    "validation_test_weighted_bce_receipts": "pass-in-delta-smoke",
+    "cap_sensitivity_telemetry": "pass-in-delta-smoke",
+    "deterministic_attention_backend": "pass-bitwise-two-job-delta-smoke"
+  },
+  "delta_smoke": {
+    "status": "pass",
+    "jobs": [
+      20426848,
+      20426860
+    ],
+    "source_commit": "7c8d6c038c2f1bd4d8bff72710d43521fda94f9b",
+    "bitwise_reproducible_core_artifacts": true,
+    "comparison_claim_permitted": false,
+    "receipt": "products/deterministic_gpu_smoke_reproducibility.json"
   },
   "gate2_histogram_correction": {
     "bug": "independent histogram divided already-GeV measured/background scalar columns by 1000",

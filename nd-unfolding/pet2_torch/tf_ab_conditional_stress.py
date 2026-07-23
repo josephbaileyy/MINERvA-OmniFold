@@ -188,6 +188,10 @@ def main() -> int:
             "executes_full_omnifold_loop": True,
             "publication_claim": False,
             "layer_equivalence_claim": False,
+            "horovod_policy": (
+                "disabled in this single-GPU runner before importing the "
+                "vendored baseline; distributed baseline code is unchanged"
+            ),
         },
         "environment": environment_receipt(),
         "g2_validation_claim": False,
@@ -195,6 +199,15 @@ def main() -> int:
     if not args.contract_only:
         try:
             import tensorflow as tf
+            # The archived single-GPU TensorFlow container also happens to
+            # contain Horovod.  The vendored MultiFold module auto-initializes
+            # Horovod merely when importable, which makes a direct one-task
+            # Slurm run abort in MPI_Init before training.  This runner is
+            # explicitly single-GPU, so make the optional package unavailable
+            # without modifying the baseline implementation.
+            sys.modules["horovod"] = None
+            sys.modules["horovod.tensorflow"] = None
+            sys.modules["horovod.tensorflow.keras"] = None
             from omnifold import MultiFold, PET
             from omnifold.dataloader import DataLoader
         except ImportError as exc:

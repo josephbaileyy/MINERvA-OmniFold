@@ -2063,3 +2063,12 @@ deterministic math-attention path. Local focused verification is 55 pass plus
 claimed. Delta jobs
 for optional runtime tests, public/xps2 diagnostics, and a one-arm smoke were
 submitted under isolated names and remain result-pending at this entry.
+
+## 2026-07-23 — Gregor PET2 deterministic runtime gate
+
+Two clean-commit A100 smokes (`20426848`, `20426860`) reproduced every core
+training artifact and numerical metric bitwise after forcing PyTorch math
+attention. This closes the bounded GPU reproducibility gate but carries no
+architecture claim. Public jagged-data and TensorFlow single-GPU harness
+failures were fail-closed and repaired for rerun; matched pilots remain in
+progress.

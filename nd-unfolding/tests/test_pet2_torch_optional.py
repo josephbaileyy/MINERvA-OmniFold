@@ -313,9 +313,17 @@ class OneIterationEngine(unittest.TestCase):
     def test_trusted_public_pb_weights_only_census(self):
         with tempfile.TemporaryDirectory() as td:
             path = os.path.join(td, "public.pb")
+            data = torch.nested.nested_tensor(
+                [
+                    torch.zeros((2, 10)),
+                    torch.ones((4, 10)),
+                    torch.full((1, 10), 2.0),
+                ],
+                layout=torch.jagged,
+            )
             torch.save(
                 {
-                    "data": torch.zeros((3, 4, 10)),
+                    "data": data,
                     "truth_labels": torch.zeros((3, 15)),
                     "global_features": torch.zeros((3, 16)),
                 },
@@ -327,6 +335,16 @@ class OneIterationEngine(unittest.TestCase):
                 expected_sha256=file_sha256(path),
             )
         self.assertEqual(result["row_count"], 3)
+        self.assertEqual(result["schema"]["data"]["layout"], "nested_jagged")
+        self.assertEqual(
+            result["schema"]["data"]["event_token_counts"]["max"], 4
+        )
+        self.assertEqual(
+            result["padding_type_census"]["stored_token_count"], 7
+        )
+        self.assertEqual(
+            result["padding_type_census"]["all_feature_zero_slots"], 0
+        )
         self.assertFalse(result["unfolding_use_permitted"])
 
 

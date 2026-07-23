@@ -266,3 +266,23 @@ Append-only orchestration and experimental ledger for branch
 - Local focused verification after the fix is 65 tests: 55 pass and 10
   expected Mac dependency skips. No matched pilot was submitted from the
   nondeterministic source.
+
+## 2026-07-23 — Deterministic GPU smoke and external-format hardening
+
+- Delta jobs `20426848` and `20426860`, both from commit `7c8d6c0`, repeated
+  the same C-arm one-iteration/one-epoch A100 smoke on different nodes.
+  Push/pull arrays, both safetensors models, preprocessing, manifests,
+  indices, extraction arrays, and every summary metric except wall time are
+  bitwise identical. This is a runtime/reproducibility gate, not an
+  architecture comparison.
+- The public Gregor `.pb` diagnostic initially failed safe loading because
+  PyTorch 2.8 requires its built-in nested and dynamo registrations for the
+  weights-only jagged tensor payload. The adapter still forbids unsafe pickle;
+  it now consumes jagged `values()` and `offsets()` without densifying or
+  interpreting stored values as a padding mask.
+- The first TensorFlow A/B smoke (`20426852`) failed before training because
+  the legacy container's importable Horovod auto-initialized MPI in a
+  one-task Slurm job. The isolated single-GPU runner now hides only the
+  optional Horovod module before importing the unchanged vendored baseline.
+- The one-arm launcher now exposes tagged, receipt-visible synthetic
+  muon-token and overflow ablations without changing the default arm.
