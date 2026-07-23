@@ -191,6 +191,33 @@ def build_arm_manifest(
     )
 
 
+def frozen_truth_arm_manifest() -> ArmManifest:
+    """Return the common Step-2 contract for every reco-side ablation.
+
+    View, reconstructed object type, MINOS, detector vertex, reconstructed
+    Eavail/q3, muon-token, and overflow comparisons are Step-1 questions.
+    Activating the same manifest on truth would manufacture detector
+    counterparts and confound every comparison with a second Step-2 change.
+    """
+    return ArmManifest(
+        arm="truth-frozen",
+        comparison_parent="none",
+        initialization="random",
+        use_real_types=False,
+        use_detector_view=False,
+        muon_representation="global",
+        use_overflow_aggregate=False,
+        active_globals=BASELINE_GLOBALS,
+        disabled_features={
+            "object_type": "truth tokens held generic for reco-side ablations",
+            "detector_view": "no detector-view truth counterpart",
+            "detector_globals": "no MINOS/vertex/reco-summary truth counterparts",
+            "muon_token": "truth representation held on baseline muon globals",
+            "overflow_aggregate": "truth representation held fixed",
+        },
+    )
+
+
 def materialize_feature_view(batch: TokenBatch, manifest: ArmManifest) -> TokenBatch:
     """Apply only the feature changes declared by an arm manifest."""
     batch = batch.validated()

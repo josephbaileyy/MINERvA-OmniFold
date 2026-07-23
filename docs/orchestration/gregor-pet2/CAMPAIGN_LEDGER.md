@@ -300,3 +300,19 @@ Append-only orchestration and experimental ledger for branch
 - Result artifacts and verified numbers were staged locally before being used
   in the assessment. Full three-seed xps2 and synthetic comparisons remain
   separate jobs.
+
+## 2026-07-23 — Pre-result ablation confound found; comparison jobs invalidated
+
+- Root receipt review found that `run_one_iteration` applied the reco arm
+  manifest to the truth batch too. D-view/D-typed and every E/token/overflow
+  arm therefore changed Step 2 as well as Step 1; E arms could manufacture
+  detector-only truth globals. No comparison result had been committed.
+- Jobs `20426960`–`20426964` completed on the invalid footing and are
+  quarantined. Jobs `20426965`–`20426980` were cancelled while pending with
+  zero elapsed compute. C jobs `20426957`–`20426959` are semantically
+  unaffected but cannot enter the aggregate because the common-source rule
+  requires the full matrix to be rerun from one fixed commit.
+- The engine now derives an identical, fingerprinted `truth-frozen` manifest
+  for every arm. Login-safe regressions compare every truth tensor exactly and
+  an optional runtime test checks the persisted receipt. `KNOWN_ISSUES.md`
+  #21 indexes the trap.

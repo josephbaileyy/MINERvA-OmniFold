@@ -35,6 +35,12 @@ shapes; disabled features are zero-masked. Overflow is a separate declared
 switch. Muon-token mode is synthetic-only because G2 has no audited physical
 KNN coordinate convention.
 
+The reco arm is applied only to Step 1. Step 2 always uses the same
+`truth-frozen` manifest: generic tokens, no detector view, no overflow/muon
+token, and only the separately normalized truth-muon pT/p-parallel globals.
+This prevents a reco view/type/rich-global ablation from silently changing the
+truth density-ratio problem or manufacturing MINOS/vertex counterparts.
+
 The default C/D/E capacity is the independently implemented PET2-small concept
 profile established by the source audit: hidden dimension 128, eight attention
 heads, eight transformer blocks, and four readout tokens. It is a conceptual

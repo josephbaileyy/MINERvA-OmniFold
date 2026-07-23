@@ -309,6 +309,13 @@ class OneIterationEngine(unittest.TestCase):
         self.assertIn("validation", result.receipt["step2_evaluation"])
         self.assertEqual(len(metrics["cap_saturation"]["records"]), 4)
         self.assertIn("mu_pt_x_eavail_x_q3", metrics["projection_residuals"])
+        self.assertEqual(
+            result.receipt["truth_arm_manifest"]["arm"], "truth-frozen"
+        )
+        self.assertFalse(
+            result.receipt["truth_arm_manifest"]["use_detector_view"]
+        )
+        self.assertFalse(result.receipt["truth_arm_manifest"]["use_real_types"])
 
     def test_trusted_public_pb_weights_only_census(self):
         with tempfile.TemporaryDirectory() as td:

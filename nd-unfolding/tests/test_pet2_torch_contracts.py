@@ -27,6 +27,7 @@ from pet2_torch.features import (
     TYPE_OVERFLOW,
     build_arm_manifest,
     exact_arm_diff,
+    frozen_truth_arm_manifest,
     materialize_feature_view,
 )
 from pet2_torch.fixtures import (
@@ -75,6 +76,26 @@ class ThreeInventoryContract(unittest.TestCase):
             self.assertFalse(any(word in name.lower() for word in forbidden))
         self.assertNotIn("source_kind", reco.global_names)
         self.assertNotIn("source_kind", self.dataset.measured.data.global_names)
+
+    def test_reco_ablation_features_do_not_change_truth_contract(self):
+        truth_manifest = frozen_truth_arm_manifest()
+        self.assertEqual(truth_manifest.active_globals, ("mu_pt", "mu_pparallel"))
+        baseline = materialize_feature_view(self.dataset.signal.truth, truth_manifest)
+        fingerprints = set()
+        for arm in ("C", "D-view", "D-typed", "E-muon", "E-rich"):
+            reco_manifest = build_arm_manifest(arm, self.capabilities)
+            self.assertNotEqual(reco_manifest.payload()["fingerprint"], "")
+            repeated = materialize_feature_view(
+                self.dataset.signal.truth, frozen_truth_arm_manifest()
+            )
+            fingerprints.add(frozen_truth_arm_manifest().payload()["fingerprint"])
+            np.testing.assert_array_equal(repeated.continuous, baseline.continuous)
+            np.testing.assert_array_equal(repeated.coords, baseline.coords)
+            np.testing.assert_array_equal(repeated.token_mask, baseline.token_mask)
+            np.testing.assert_array_equal(repeated.type_id, baseline.type_id)
+            np.testing.assert_array_equal(repeated.view_id, baseline.view_id)
+            np.testing.assert_array_equal(repeated.globals, baseline.globals)
+        self.assertEqual(len(fingerprints), 1)
 
     def test_literal_background_order_and_signed_provenance(self):
         measured = self.dataset.measured

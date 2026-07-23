@@ -17,7 +17,11 @@ from .density_ratio import (
     fit_density_ratio,
     infer_ratio,
 )
-from .features import ArmManifest, materialize_feature_view
+from .features import (
+    ArmManifest,
+    frozen_truth_arm_manifest,
+    materialize_feature_view,
+)
 from .model import ModelConfig, build_model
 from .preprocessing import fit_preprocessor
 from .utils import (
@@ -131,7 +135,8 @@ def run_one_iteration(
     signal = dataset.signal
     measured = dataset.measured
     reco = materialize_feature_view(signal.reco, arm)
-    truth = materialize_feature_view(signal.truth, arm)
+    truth_arm = frozen_truth_arm_manifest()
+    truth = materialize_feature_view(signal.truth, truth_arm)
     target = materialize_feature_view(measured.literal_target(), arm)
     test_fraction = 1.0 - config.train_fraction - config.validation_fraction
     fractions = (config.train_fraction, config.validation_fraction, test_fraction)
@@ -262,6 +267,7 @@ def run_one_iteration(
         "status": "experimental_fixture_or_pilot_only",
         "dataset_manifest": dataset.manifest(),
         "arm_manifest": arm.payload(),
+        "truth_arm_manifest": truth_arm.payload(),
         "config": config.payload(),
         "model_step1": step1_config.payload(),
         "model_step2": step2_config.payload(),
@@ -327,7 +333,8 @@ def run_one_iteration(
     receipt["recipe_fingerprint"] = fingerprint(
         {
             "dataset": receipt["dataset_manifest"]["fingerprint"],
-            "arm": receipt["arm_manifest"]["fingerprint"],
+            "reco_arm": receipt["arm_manifest"]["fingerprint"],
+            "truth_arm": receipt["truth_arm_manifest"]["fingerprint"],
             "config": receipt["config"]["fingerprint"],
             "step1_model": receipt["model_step1"]["fingerprint"],
             "step2_model": receipt["model_step2"]["fingerprint"],

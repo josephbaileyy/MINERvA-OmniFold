@@ -12,7 +12,11 @@ from .checkpoints import current_arm_f_outcome
 from .density_ratio import HAS_TORCH, RatioTrainingConfig, TORCH_IMPORT_ERROR
 from .engine import OneIterationConfig, run_iterations
 from .evaluation import conditional_closure_metrics
-from .features import build_arm_manifest, exact_arm_diff
+from .features import (
+    build_arm_manifest,
+    exact_arm_diff,
+    frozen_truth_arm_manifest,
+)
 from .fixtures import (
     make_known_ratio_closure_dataset,
     make_synthetic_dataset,
@@ -166,6 +170,7 @@ def _execute(args, output: Path) -> int:
         "dataset_manifest": dataset.manifest(),
         "closure_fixture": None if closure is None else closure.specification,
         "arms": {arm.arm: arm.payload() for arm in arms},
+        "truth_arm": frozen_truth_arm_manifest().payload(),
         "arm_f": current_arm_f_outcome(),
         "ratio_convention_fixture": {
             key: value

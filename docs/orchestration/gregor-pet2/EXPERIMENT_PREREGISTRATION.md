@@ -36,6 +36,12 @@ Current G2 lacks reco photon/blob/prong types; `view` is not relabeled as an
 object type. C and D use the same parameter tensors; inactive categorical
 inputs are masked rather than deleting capacity.
 
+All D/E/muon-token/overflow changes are reco-side Step-1 ablations. Step 2 is
+held on one fingerprinted truth contract for every arm: generic truth tokens,
+no detector view, no detector-only global, no overflow or muon token, and only
+truth muon pT/p-parallel globals. Reconstructed features are never
+manufactured on truth to make tensor schemas look symmetric.
+
 ## Fixed pilot controls
 
 - Synthetic master seed: `424242`.

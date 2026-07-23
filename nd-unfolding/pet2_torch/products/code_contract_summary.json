@@ -13,8 +13,8 @@
   },
   "local_verification": {
     "python": "3.14.6",
-    "focused_tests_total": 66,
-    "passed": 56,
+    "focused_tests_total": 67,
+    "passed": 57,
     "expected_optional_dependency_skips": 10,
     "failures": 0,
     "errors": 0,
@@ -59,7 +59,8 @@
     "fixed_logit_tf_torch_ratio_equivalence": "pass",
     "validation_test_weighted_bce_receipts": "pass-in-delta-smoke",
     "cap_sensitivity_telemetry": "pass-in-delta-smoke",
-    "deterministic_attention_backend": "pass-bitwise-two-job-delta-smoke"
+    "deterministic_attention_backend": "pass-bitwise-two-job-delta-smoke",
+    "reco_ablation_truth_isolation": "pass-common-fingerprinted-truth-manifest"
   },
   "delta_smoke": {
     "status": "pass",

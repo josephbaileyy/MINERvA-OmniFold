@@ -2084,3 +2084,12 @@ without loading the 49.15M-row inventory. Both are diagnostics only; neither
 supplies typed/full-event/G2 closure evidence. Three fixed-sample xps2
 retraining pilots and the matched synthetic architecture matrix were launched
 separately.
+
+## 2026-07-23 — Gregor PET2 comparison matrix invalidated before result freeze
+
+Receipt review showed that the experimental arm manifest changed both reco
+Step 1 and truth Step 2. The completed D-view/D-typed pilots were quarantined
+and all pending comparison jobs were cancelled before compute. Step 2 is now
+frozen to one truth contract and the full matrix, including the unchanged C
+control for common-source provenance, must be rerun. No invalid comparison was
+entered in the validation ledger or assessment results.

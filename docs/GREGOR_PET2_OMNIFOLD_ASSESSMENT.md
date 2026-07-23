@@ -107,6 +107,12 @@ payload prevents a matched full-statistics B comparison in this campaign.
   unlicensed as weights, unpinned by checksum, and dimensionally unverified;
   no random or partial-load fallback is permitted.
 
+The D/E/muon-token/overflow manifests affect Step 1 only. Every arm shares a
+fingerprinted `truth-frozen` Step-2 representation with generic truth tokens
+and separately normalized truth-muon pT/p-parallel globals. The first pilot
+launcher incorrectly reused the reco arm for truth; `KNOWN_ISSUES.md` #21
+records its pre-result discovery, fix, and full comparison rerun.
+
 ## 5. Gregor PET2 architecture and representation
 
 Gregor's `PET2` implementation lives under
