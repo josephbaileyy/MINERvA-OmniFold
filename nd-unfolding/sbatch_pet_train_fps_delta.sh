@@ -61,10 +61,17 @@ mkdir -p products/pet
     echo "  apptainer exec --nv --bind $REPO,$DATA --env PYTHONPATH=$REPO/omnifold_nn $SIF \\"; \
     echo "    python3 pet/npz_to_npy.py --inputs ${INPUTS} --out ${MEMMAP_DIR}"; exit 1; }
 
+# WHY OMPI_MCA_plm=isolated + ras=^slurm (Delta-only; do NOT port to Perlmutter):
+# the container's OpenMPI is not built with SLURM PMI, so it must neither bootstrap
+# through SLURM (plm=isolated) nor size its allocation from SLURM (ras=^slurm) --
+# with --ntasks-per-node=1 the latter yields "not enough slots" for -np 4. With both
+# set, mpirun treats the node as standalone and forks NP local ranks; verified
+# 2026-07-22 on gpua059, 4 ranks each pinning a distinct A100 (pci 07/46/85/c7).
 echo "[pet-fps] $(date -u +%FT%TZ) np=${NP} niter=${NITER} epochs=${EPOCHS} train=${TRAIN_EVENTS} seed=${SEED} inputs=${INPUTS}"
 srun --gpu-bind=none apptainer exec --nv \
     --bind "${REPO}","${DATA}" \
     --env PYTHONPATH="${REPO}/omnifold_nn" \
+    --env OMPI_MCA_plm=isolated --env OMPI_MCA_ras=^slurm \
     "${SIF}" \
     horovodrun -np "${NP}" python3 pet/minerva_pet_dataloader.py --inputs "${INPUTS}" \
         --mode pointcloud --model pet --niter "${NITER}" --epochs "${EPOCHS}" \
