@@ -48,6 +48,7 @@ from pet2_torch.public_gregor import (
 from pet2_torch.ratio_conventions import fixed_ratio_convention_fixture
 from pet2_torch.utils import file_sha256, stable_partition, stable_split
 from pet2_torch.xps2_adapter import inspect_xps2_packet, open_xps2_memmap
+from pet2_torch.xps2_pilot import build_xps2_recoil_dataset
 
 
 class ThreeInventoryContract(unittest.TestCase):
@@ -699,6 +700,10 @@ class XPS2BoundedMemmap(unittest.TestCase):
                 "pass_reco": np.arange(n) % 2 == 0,
                 "pass_truth": np.ones(n, bool),
                 "w_truth": np.linspace(0.5, 2.0, n),
+                "measured_pc": np.linspace(
+                    0.1, 4.0, 61 * 3 * 3, dtype=np.float32
+                ).reshape(61, 3, 3),
+                "measured_weights": np.linspace(0.8, 1.2, 61),
             }
             for name, value in arrays.items():
                 np.save(root / f"{name}.npy", value, allow_pickle=False)
@@ -718,6 +723,17 @@ class XPS2BoundedMemmap(unittest.TestCase):
             census = inspect_xps2_packet(root, max_rows=23, seed=424242)
             self.assertEqual(census["packet_arrays"]["part_gen"]["shape"][0], 23)
             self.assertFalse(census["publication_omnifold_eligible"])
+            dataset = build_xps2_recoil_dataset(
+                root, max_mc_rows=23, max_data_rows=13, seed=424242
+            )
+            self.assertEqual(dataset.signal.reco.n_rows, 23)
+            self.assertEqual(dataset.measured.data.n_rows, 13)
+            self.assertEqual(dataset.measured.background.n_rows, 0)
+            np.testing.assert_array_equal(
+                dataset.signal.w_reco, dataset.signal.w_truth
+            )
+            self.assertFalse(dataset.schema["full_event_evidence"])
+            self.assertFalse(dataset.schema["typed_object_evidence"])
 
     def test_row_limit_and_missing_array_fail_closed(self):
         with tempfile.TemporaryDirectory() as td:

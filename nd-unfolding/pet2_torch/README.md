@@ -82,15 +82,22 @@ ratio equivalence between TF posterior odds and balanced PyTorch logits plus
 the class-mass offset; it makes no layer/training equivalence claim.
 
 The optional `tf_ab_conditional_stress.py` runner is self-locating and can run
-later in the existing TensorFlow container. It compares recoil-summary A with
-the same rows plus reconstructed muon globals B on the analytic fixture and
-writes JSON. It is an experimental feature stress test, not publication or
-full-OmniFold evidence.
+in the existing TensorFlow container. It executes the vendored `PET` and
+`MultiFold` loop for recoil-cloud A and the same cloud plus reconstructed-muon
+globals B on the analytic fixture. It is an experimental synthetic closure
+test, not publication evidence or TF/PyTorch layer equivalence.
 
 `xps2_adapter.py` opens user-staged `.npy` arrays read-only with memmap and
 materializes at most a declared bounded packet. Its receipt says `w_reco` is
 unavailable and that using `w_truth` on reco would be a downgraded proxy; it
 cannot support a full-event/G2 claim.
+
+`xps2_pilot.py` can execute that explicitly downgraded, bounded recoil-only
+engine pilot. It uses `w_truth` as the unavailable reco-weight proxy, the
+precomputed xps2 measured target, no literal background inventory, no event
+globals/types/views, and a boolean mask derived from the historical producer's
+zero padding. Its runtime/tail evidence cannot be used as typed-token,
+full-event, G2, or publication evidence.
 
 `public_gregor.py` can inspect an explicitly trusted, caller-checksummed `.pb`
 using `torch.load(weights_only=True)` and emit row/schema/type/padding census
@@ -101,6 +108,9 @@ Both diagnostics have JSON CLIs:
 ```bash
 PYTHONPATH=nd-unfolding python3 -m pet2_torch.xps2_adapter \
   --directory /staged/xps2_npy --max-rows 100000 --out /tmp/xps2_census.json
+PYTHONPATH=nd-unfolding python3 -m pet2_torch.xps2_pilot \
+  --directory /staged/xps2_npy --max-mc-rows 100000 \
+  --max-data-rows 50000 --out /isolated/xps2_pilot
 PYTHONPATH=nd-unfolding python3 -m pet2_torch.public_gregor \
   --path /staged/public.pb --expected-sha256 SHA256 --trusted \
   --out /tmp/public_pb_census.json
