@@ -136,17 +136,28 @@ def validate_account_home(profile_name: str, profile: dict) -> tuple[Path, Path]
     return logical, physical
 
 
-def validate_profile_homes(profiles: dict, names: list[str]) -> dict[str, Path]:
+def validate_profile_homes(
+    profiles: dict,
+    names: list[str],
+    account_groups: dict[str, list[str]] | None = None,
+) -> dict[str, Path]:
     result: dict[str, Path] = {}
     seen: dict[Path, str] = {}
+    shared_pairs = {
+        frozenset((left, right))
+        for aliases in (account_groups or {}).values()
+        for index, left in enumerate(aliases)
+        for right in aliases[index + 1 :]
+    }
     for name in names:
         profile = agentctl.get_profile(profiles, name)
         if profile["provider"] not in {"codex", "claude"}:
             continue
         logical, physical = validate_account_home(name, profile)
-        if physical in seen:
+        prior = seen.get(physical)
+        if prior is not None and frozenset((prior, name)) not in shared_pairs:
             raise UsageError(f"Profiles {seen[physical]} and {name} share one real account home")
-        seen[physical] = name
+        seen.setdefault(physical, name)
         result[name] = logical
     return result
 
@@ -662,7 +673,10 @@ def install_claude_statusline(
 ) -> Path:
     if profile.get("provider") != "claude":
         raise UsageError(f"{profile_name} is not a Claude profile")
-    settings_path = account_home / ".claude" / "settings.json"
+    if profile.get("config_env", "HOME") == "CLAUDE_CONFIG_DIR":
+        settings_path = account_home / "settings.json"
+    else:
+        settings_path = account_home / ".claude" / "settings.json"
     script = Path(__file__).resolve()
     command = " ".join(
         [
@@ -882,7 +896,9 @@ def snapshot(args: argparse.Namespace) -> dict:
         if required not in selected:
             top_violations.append(f"Required profile omitted: {required}")
     try:
-        homes = validate_profile_homes(profiles, selected)
+        homes = validate_profile_homes(
+            profiles, selected, policy["profile_account_groups"]
+        )
         home_error = None
     except (UsageError, agentctl.AgentCtlError) as exc:
         homes = {}

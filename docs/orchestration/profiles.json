@@ -10,30 +10,30 @@
     },
     "claude-personal": {
       "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
-      "config_env": "HOME",
+      "config_env": "CLAUDE_CONFIG_DIR",
       "dangerously_skip_permissions": true,
-      "home": "~/claude-homes/personal",
+      "home": "~/.claude-personal",
       "model": "opus",
       "provider": "claude"
     },
     "claude-school": {
       "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
-      "config_env": "HOME",
+      "config_env": "CLAUDE_CONFIG_DIR",
       "dangerously_skip_permissions": true,
-      "home": "~/claude-homes/school",
+      "home": "~/.claude-school",
       "model": "opus",
       "provider": "claude"
     },
     "claude-school-legacy": {
       "allowed_tools": ["Read", "Glob", "Grep", "WebSearch", "WebFetch"],
-      "config_env": "HOME",
+      "config_env": "CLAUDE_CONFIG_DIR",
       "dangerously_skip_permissions": true,
-      "home": "~/claude-homes/school/claude-homes/personal",
+      "home": "~/.claude-school",
       "model": "opus",
       "provider": "claude"
     },
     "codex-personal": {
-      "home": "~/codex-homes/personal",
+      "home": "~/.codex-personal",
       "model": "gpt-5.6-sol",
       "provider": "codex",
       "reasoning_effort": "xhigh",
@@ -42,7 +42,7 @@
       "yolo": true
     },
     "codex-school": {
-      "home": "~/codex-homes/school",
+      "home": "~/.codex-school",
       "model": "gpt-5.6-sol",
       "provider": "codex",
       "reasoning_effort": "xhigh",

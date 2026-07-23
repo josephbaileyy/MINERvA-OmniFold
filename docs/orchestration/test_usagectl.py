@@ -378,6 +378,26 @@ class HomeAndInstallerTests(unittest.TestCase):
                         profiles, ["codex-personal", "codex-school"]
                     )
 
+    def test_declared_account_aliases_may_share_real_home(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "same").mkdir()
+            profiles = {
+                "claude-school": self.profile("~/same", "claude"),
+                "claude-school-legacy": self.profile("~/same", "claude"),
+            }
+            groups = {
+                "claude-school": ["claude-school", "claude-school-legacy"]
+            }
+            with mock.patch.object(
+                usagectl, "trusted_login_home", return_value=(root, root.resolve())
+            ):
+                homes = usagectl.validate_profile_homes(
+                    profiles, list(profiles), groups
+                )
+            self.assertEqual(homes["claude-school"], root / "same")
+            self.assertEqual(homes["claude-school-legacy"], root / "same")
+
     def test_installer_refuses_every_falsey_existing_statusline(self):
         with tempfile.TemporaryDirectory() as tmp:
             account = Path(tmp) / "account"
@@ -390,7 +410,7 @@ class HomeAndInstallerTests(unittest.TestCase):
                     with self.assertRaises(usagectl.UsageError):
                         usagectl.install_claude_statusline(
                             "claude-personal",
-                            {"provider": "claude"},
+                            {"provider": "claude", "config_env": "HOME"},
                             account,
                             Path(tmp) / "cache",
                             False,

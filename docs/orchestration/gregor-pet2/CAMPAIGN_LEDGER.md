@@ -360,3 +360,25 @@ Append-only orchestration and experimental ledger for branch
 - `squeue -u jbailey2` after the result freeze contains only unrelated job
   `20416508`. The campaign has no active or pending job and has not modified
   that unrelated job or checkout.
+
+## 2026-07-23 — Provider-home migration reconciled before final audit
+
+- The mandatory pre-audit usage snapshot initially failed closed because
+  `profiles.json` still named retired `~/codex-homes/*` and
+  `~/claude-homes/*` paths. The exact durable session stores were found,
+  without copying or replacing any conversation, under the current
+  `~/.codex-{personal,school}` and
+  `~/.claude-{personal,school}` homes.
+- Profiles now address those exact stores. Claude uses
+  `CLAUDE_CONFIG_DIR`, and usage validation permits only aliases declared in
+  the non-additive school-account group to share one real migrated home.
+  Unrelated duplicate account homes still fail closed.
+- Orchestration tests passed 39 functional cases; the sole Mac failure is the
+  pre-existing NERSC-runtime assertion that `/usr/bin/python3.11` exists.
+  Compilation and diff checks passed.
+- The repeated complete snapshot at `2026-07-23T15:42:41Z` returned
+  `gate_ok=true`. Codex personal has 45% seven-day remaining and resets
+  `2026-07-30T04:09:42Z`; Codex school is at 0% and resets
+  `2026-07-24T02:51:01Z`; no reset credits exist. Claude and agy percentages
+  remain unknown. The final auditors use the preserved Claude-school and agy
+  sessions, not the exhausted Codex-school implementation role.
