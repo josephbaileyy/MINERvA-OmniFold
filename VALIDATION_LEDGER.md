@@ -731,3 +731,26 @@ This verifies bounded GPU execution and reproducibility only. The
 one-iteration/one-epoch 512-signal-event smoke is not an architecture,
 closure-quality, or physics comparison. Canonical receipt:
 `nd-unfolding/pet2_torch/products/deterministic_gpu_smoke_reproducibility.json`.
+
+## 2026-07-23 Gregor public-data census and xps2 recoil smoke — DIAGNOSTIC PASS
+
+Delta job `20426952` passed all 65 focused PyTorch/safetensors/Gate-2 tests
+with no skip. Job `20426953` safely loaded the checksum-pinned public Gregor
+1A `.pb` using `torch.load(weights_only=True)`: 760,041 jagged events,
+8,495,266 stored tokens, median 9 and maximum 32 tokens/event. Raw type 0
+appears 534,562 times and every occurrence has nonzero feature 2, directly
+confirming that it is a physical stored category rather than materialized
+padding in this jagged file. The file remains MC-only and OmniFold-ineligible.
+
+Job `20426954` read the 49,152,885-row xps2 inventory through bounded memmaps
+and trained a one-iteration/one-epoch 20,000-MC/10,000-data recoil-only smoke
+in 8.699 s with 726,150,144 peak GPU bytes. Push ESS was
+19,529.95/20,000; q99/max weights were 4.817/4.889. Pull ESS was
+11,827.96/20,000; q99/max were 7.373/12.124. No ratio saturated and cap-10
+versus cap-30 changed neither inference ESS. This is downgraded engine/tail
+evidence: `w_truth` proxies unavailable `w_reco`, the target is precomputed,
+literal background rows and full-event features are absent, and the mask
+comes from historical zero padding.
+
+Canonical summary:
+`nd-unfolding/pet2_torch/products/external_diagnostics_summary.json`.

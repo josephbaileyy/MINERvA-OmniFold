@@ -1,0 +1,82 @@
+{
+  "campaign": "gregor-pet2-omnifold",
+  "date": "2026-07-23",
+  "status": "complete",
+  "source_commit": "491dcdf2f5bc9e2f82bb828ecb1646819fe1b7c3",
+  "delta_contract": {
+    "job": 20426952,
+    "status": "pass",
+    "focused_tests_passed": 65,
+    "focused_tests_skipped": 0,
+    "warnings": 7,
+    "elapsed_seconds": 17
+  },
+  "public_gregor": {
+    "job": 20426953,
+    "status": "diagnostic_mc_only",
+    "dataset": "gregorkrzmanc/minerva-ml",
+    "revision": "32e2f5040ff2678a2ef7ca1bc0b450b324f4fd83",
+    "artifact_sha256": "6b73d5296c99fb1d34c3e884a82ea15f52b1080a9eddaa54605843c5fcec327c",
+    "events": 760041,
+    "stored_tokens": 8495266,
+    "token_count_per_event": {
+      "min": 1,
+      "median": 9,
+      "p95": 24,
+      "p99": 26,
+      "max": 32
+    },
+    "raw_type_counts": {
+      "0": 534562,
+      "1": 272480,
+      "2": 6308915,
+      "3": 536245,
+      "4": 377260,
+      "5": 289051,
+      "6": 176747,
+      "7": 6
+    },
+    "raw_type_zero_with_nonzero_feature2": 534562,
+    "deserialization": "torch.load(weights_only=True)",
+    "publication_omnifold_eligible": false,
+    "reason": "MC-only prepared rows lack data, physics weights, pass/miss flags, stable event identities, and literal backgrounds"
+  },
+  "xps2_smoke": {
+    "job": 20426954,
+    "status": "complete_bounded_xps2_recoil_pilot",
+    "evidence_class": "recoil-input-pilot",
+    "inventory_rows": 49152885,
+    "selected_mc_rows": 20000,
+    "selected_data_rows": 10000,
+    "iterations": 1,
+    "epochs_per_step": 1,
+    "runtime_seconds": 8.699012373574078,
+    "peak_gpu_memory_bytes": 726150144,
+    "push_ess": 19529.949478907296,
+    "push_ess_fraction": 0.9764974739453648,
+    "push_q99": 4.817245377662043,
+    "push_max": 4.8893874270131485,
+    "pull_ess": 11827.960883853106,
+    "pull_ess_fraction": 0.5913980441926553,
+    "pull_q99": 7.373450182105053,
+    "pull_max": 12.124050519419173,
+    "cap_saturated_count": 0,
+    "cap10_vs_cap30_ess_shift": 0,
+    "full_event_evidence": false,
+    "typed_object_evidence": false,
+    "g2_validation_claim": false,
+    "publication_promotion_permitted": false,
+    "contract_downgrades": [
+      "w_truth proxy for unavailable w_reco",
+      "precomputed target without literal background rows",
+      "historical zero-padding-derived mask",
+      "no globals, views, or object types"
+    ]
+  },
+  "artifacts": {
+    "public_census": "public_gregor/1A_test_0_census.json",
+    "xps2_summary": "xps2/job20426954/summary.json",
+    "xps2_receipt": "xps2/job20426954/receipt.json"
+  },
+  "interpretation": "These diagnostics validate safe external-format handling and bounded engine execution only. They do not compare full-event representations or establish publication-level closure."
+}

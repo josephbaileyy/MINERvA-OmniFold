@@ -286,3 +286,17 @@ Append-only orchestration and experimental ledger for branch
   optional Horovod module before importing the unchanged vendored baseline.
 - The one-arm launcher now exposes tagged, receipt-visible synthetic
   muon-token and overflow ablations without changing the default arm.
+
+## 2026-07-23 — Clean-commit external diagnostic gate COMPLETE
+
+- Delta job `20426952`: 65/65 focused tests pass under PyTorch 2.8.0+cu128.
+- Delta job `20426953`: checksum-bound public Gregor 1A nested-jagged census
+  completed with weights-only loading; it remains explicitly MC-only and
+  unfolding-ineligible.
+- Delta job `20426954`: bounded 20k/10k xps2 recoil smoke completed through
+  read-only memmaps with ESS/tail/cap/runtime receipts. Its missing `w_reco`,
+  literal background, explicit source mask, globals and types remain recorded
+  evidence downgrades.
+- Result artifacts and verified numbers were staged locally before being used
+  in the assessment. Full three-seed xps2 and synthetic comparisons remain
+  separate jobs.

@@ -6,8 +6,9 @@ and work remaining in `../docs/OPEN_ITEMS.md`.
 
 Gregor PET2 assessment (2026-07-23): isolated PyTorch backend passes the local
 code-contract gate and a bitwise two-job Delta A100 smoke; matched
-runtime/ablation evidence is in progress and no architecture or representation
-change is yet authorized.
+runtime/ablation evidence is in progress. The public-data census and bounded
+xps2 recoil smoke passed as diagnostics only; no architecture or
+representation change is yet authorized.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

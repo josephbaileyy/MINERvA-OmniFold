@@ -33,6 +33,16 @@
     "full_discovery_environment_failures": 8,
     "failure_scope": "seven pre-existing hard-coded /pscratch dependencies and one missing scikit-learn dependency"
   },
+  "delta_focused_suite": {
+    "job": 20426952,
+    "source_commit": "491dcdf2f5bc9e2f82bb828ecb1646819fe1b7c3",
+    "torch": "2.8.0+cu128",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "passed": 65,
+    "skipped": 0,
+    "failures": 0,
+    "warnings": 7
+  },
   "contract_gates": {
     "explicit_boolean_masks": "pass",
     "category_zero_pad_only": "pass",

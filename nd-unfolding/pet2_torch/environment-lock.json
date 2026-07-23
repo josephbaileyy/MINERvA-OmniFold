@@ -14,10 +14,13 @@
     "outcome": "NumPy contract suite passed; optional PyTorch tests skipped"
   },
   "delta_pilot_lock": {
-    "torch": "2.8.* (provided by pytorch-conda/2.8; exact build captured in receipt)",
+    "torch": "2.8.0+cu128",
     "safetensors": "0.5.3",
-    "numpy": "module-provided exact version captured in receipt",
-    "status": "not yet executed by implementation lead"
+    "numpy": "2.2.6",
+    "python": "3.11.13",
+    "module": "pytorch-conda/2.8",
+    "delta_gpu": "NVIDIA A100-SXM4-40GB",
+    "status": "executed; 65/65 focused tests passed in Delta job 20426952"
   },
   "dependency_spdx": {
     "numpy": "BSD-3-Clause",

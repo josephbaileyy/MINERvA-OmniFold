@@ -2072,3 +2072,15 @@ attention. This closes the bounded GPU reproducibility gate but carries no
 architecture claim. Public jagged-data and TensorFlow single-GPU harness
 failures were fail-closed and repaired for rerun; matched pilots remain in
 progress.
+
+## 2026-07-23 — Gregor public/xps2 external diagnostics
+
+Clean commit `491dcdf` passed the complete 65-test Delta suite. A
+checksum-pinned public Gregor 1A tensor file was safely censused through its
+nested jagged values/offsets and remained fail-closed for unfolding. A
+bounded real xps2 recoil-input smoke then exercised memmap selection,
+one-iteration training, full-order extraction, ESS/tail and cap telemetry
+without loading the 49.15M-row inventory. Both are diagnostics only; neither
+supplies typed/full-event/G2 closure evidence. Three fixed-sample xps2
+retraining pilots and the matched synthetic architecture matrix were launched
+separately.
