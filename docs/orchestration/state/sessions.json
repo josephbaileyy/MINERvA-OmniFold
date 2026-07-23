@@ -635,9 +635,17 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T154410Z-send-3fd1b723.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T154410Z-send-3fd1b723.txt"
+        },
+        {
+          "action": "send",
+          "number": 3,
+          "provider_log": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T155514Z-send-cd4638b0.agy.log",
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T155514Z-send-cd4638b0.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T155514Z-send-cd4638b0.txt"
         }
       ],
-      "updated_at": "2026-07-23T15:45:18+00:00"
+      "updated_at": "2026-07-23T15:55:53+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",
@@ -752,9 +760,16 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T154410Z-send-c1a422a8.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T154410Z-send-c1a422a8.json"
+        },
+        {
+          "action": "send",
+          "number": 5,
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T155514Z-send-313c6283.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T155514Z-send-313c6283.json"
         }
       ],
-      "updated_at": "2026-07-23T15:50:34+00:00"
+      "updated_at": "2026-07-23T15:56:43+00:00"
     },
     "pet2_implementation_lead": {
       "created_at": "2026-07-23T13:06:34+00:00",

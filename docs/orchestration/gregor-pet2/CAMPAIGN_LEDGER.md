@@ -409,3 +409,20 @@ Append-only orchestration and experimental ledger for branch
 - Raw and canonical audit responses are preserved under
   `docs/orchestration/gregor-pet2/`. No estimator source or product JSON
   changed during the revision.
+
+## 2026-07-23 — Same-session final reassessments PASS
+
+- `omnifold_contract_auditor` reran its six-item checklist on revision
+  `e530536` and returned **PASS**. It verified the descriptive/preregistered
+  distinction, analytic fixed-logit scoping, documentation-only diff,
+  explicit 100k power limitation, intact no-promotion decision, and all
+  fail-closed G2/typed/checkpoint deferrals.
+- `evidence_ablation_auditor` reran its five-item checklist on the same
+  revision and returned **PASS**, explicitly declaring the evidence/writeup
+  ready for final handoff.
+- The preserved unresolved dissent is that a 100,000-event-per-inventory pilot
+  cannot resolve percent-level representation effects or establish an
+  intrinsic architecture ranking. It does not alter the recommendation to
+  avoid promotion; it requires higher-statistics literal-G2 validation.
+- No estimator source, test, product JSON, receipt, or numerical ledger value
+  changed after result-bearing commit `d2bead0`.

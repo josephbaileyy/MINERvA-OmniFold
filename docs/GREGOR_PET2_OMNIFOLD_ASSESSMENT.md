@@ -414,6 +414,11 @@ are unresolved at 100k events and require higher-statistics G2 evaluation.
 This dissent remains explicit even though it does not change the no-promotion
 recommendation.
 
+Both same-session final reassessments returned **PASS** on revision
+`e530536`. No additional correction was requested. The 100k pilot-power
+objection remains the sole unresolved dissent and is carried into the G2 next
+steps.
+
 ## 13. Final include / exclude / defer decisions
 
 | Candidate | Decision | Reason |
