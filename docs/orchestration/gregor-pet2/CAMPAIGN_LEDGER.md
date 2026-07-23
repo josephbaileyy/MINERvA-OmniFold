@@ -426,3 +426,8 @@ Append-only orchestration and experimental ledger for branch
   avoid promotion; it requires higher-statistics literal-G2 validation.
 - No estimator source, test, product JSON, receipt, or numerical ledger value
   changed after result-bearing commit `d2bead0`.
+- Final pre-synthesis snapshot at `2026-07-23T15:58:10Z` returned
+  `gate_ok=true`: Codex personal 39% seven-day remaining (reset
+  `2026-07-30T04:09:42Z`), Codex school 0% (reset
+  `2026-07-24T02:51:01Z`), no reset credits; Claude percentages missing and
+  agy percentage unavailable. No further provider dispatch is required.
