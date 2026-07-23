@@ -18,14 +18,23 @@ aggregates, or Gregor initialization from this campaign.
 
 This is a conservative evidence decision, not a finding that the current
 architecture is intrinsically superior. Every matched synthetic arm failed
-the preregistered absolute density-ratio closure gate. All representation
-effects were smaller than one percent in mean closure residual, far below the
-five-percent benefit threshold, and most did not repeat direction across
-seeds. Detector view was the only base-arm addition that moved closure in the
-same favorable direction for all three seeds; the effect remained too small
-and the absolute gate still failed. The current-engine TensorFlow full-event
-arm likewise showed only a sub-threshold, seed-inconsistent change from its
+the implementation's descriptive absolute density-ratio diagnostic. That
+threshold was not in the frozen preregistration and is not used as an
+independent promotion rule here. The preregistered decision instead follows
+from all representation effects being smaller than one percent in mean
+closure residual, far below the five-percent benefit threshold, with most not
+repeating direction across seeds. Detector view was the only base-arm addition
+that moved closure in the same favorable direction for all three seeds; its
+effect remained too small. The current-engine TensorFlow full-event arm
+likewise showed only a sub-threshold, seed-inconsistent change from its
 recoil-only parent.
+
+The synthetic matrix used 100,000 training events per inventory, a practical
+pilot rather than production statistics. It cannot resolve whether
+percent-level differences would persist or become significant at the
+historical multi-million-event scale. “No benefit established” therefore
+means unresolvable at this pilot scale, not that a feature is intrinsically
+neutral or harmful.
 
 The real typed-object vocabulary does not exist symmetrically for data,
 selected signal, and background in the available MINERvA input. Gregor's
@@ -100,6 +109,7 @@ history and deviations are in
 - Implementation commit chain:
   `342343a`, `0b9217d`, `7c8d6c0`, `491dcdf`, `c7dd325`, `30e11b0`,
   `039f0a4`, `125a799`, and truth-frozen comparison source `23512b8`.
+- Result-bearing commit: `d2bead0`.
 - The canonical result products and their source commits are enumerated in
   `nd-unfolding/pet2_torch/products/final_campaign_summary.json`.
 
@@ -273,9 +283,9 @@ and decision rather than duplicating the numerical authority.
 | Code-contract | Local 67-test suite, complete A100 67-test suite, malformed-input gates | PASS; ten local skips are only absent optional PyTorch/safetensors dependencies | Experimental backend satisfies the tested contract |
 | Reproducibility | Two A100 smoke jobs on different nodes | Core weights, models, preprocessing, indices, and arrays bitwise identical | Bounded deterministic execution |
 | Public Gregor data | Immutable 1A jagged census | Safe `weights_only=True` load; physical PID 0 confirmed; MC-only contract remains incomplete | Schema/provenance facts only |
-| TensorFlow synthetic A/B | Current-engine recoil versus full-event, three seeds | Absolute closure gate FAIL; sub-threshold and seed-inconsistent relative effect | No A/B superiority claim |
-| PyTorch synthetic C/D/E | Common sample, truth-frozen Step 2, matched seeds and budgets | Every arm absolute closure gate FAIL; every mean relative effect below one percent | No representation winner |
-| Muon-token/overflow synthetic | Tagged C-parent variants | Muon token moved mean closure unfavorably; overflow was practically neutral; both absolute gates FAIL | No promotion |
+| TensorFlow synthetic A/B | Current-engine recoil versus full-event, three seeds | Descriptive absolute diagnostic FAIL; preregistered relative effect sub-threshold and seed-inconsistent | No A/B superiority claim |
+| PyTorch synthetic C/D/E | Common 100k-event sample, truth-frozen Step 2, matched seeds and budgets | Every descriptive absolute diagnostic FAIL; every preregistered mean relative effect below one percent | No representation winner; percent-level effects unresolved |
+| Muon-token/overflow synthetic | Tagged C-parent variants | Muon token moved mean closure unfavorably; overflow was practically neutral at 100k events | No promotion |
 | Recoil-input XPS2 | Three-seed bounded retraining over a fixed memmap selection | Finite weights, no cap saturation, stable throughput; no literal background, `w_reco`, full-event fields, or closure target | Engine/tail diagnostic only |
 | Publication G2 | Required full-event data/signal/background/miss input | Unavailable to the campaign | No publication-estimator conclusion |
 
@@ -287,14 +297,20 @@ parameter count, target, and fingerprinted truth-frozen Step-2 representation.
 All cap-10 versus cap-30 checks were unchanged and no ratio saturated. Global
 and declared-tail ESS changes remained far inside the ten-percent tolerance,
 and the synthetic projection-residual subgate passed. The composite direction
-gate nevertheless failed for every arm because direct log-density-ratio
-recovery remained outside its absolute threshold.
+diagnostic nevertheless failed for every arm because direct log-density-ratio
+recovery remained outside its implementation threshold. That threshold is a
+descriptive product diagnostic, not a frozen preregistration rule. No
+promotion follows independently from the preregistered relative improvement,
+ESS, tails, and all-seed criteria: no arm improved closure by more than five
+percent.
 
 Against C, detector view and typed tokens produced only sub-percent mean
 changes. Detector view repeated the favorable direction across seeds; typed
 tokens did not. Adding muon globals, the audited rich block, or charge did not
 produce a reproducible benefit. These results make the available additions
-neutral at pilot resolution but insufficiently validated, not beneficial.
+unresolved at pilot resolution and insufficiently validated, not beneficial.
+The 100k-event noise floor prevents treating the sub-percent ordering as an
+intrinsic architecture ranking.
 
 The distinguished-muon-token form was also seed-inconsistent and moved the
 mean residual in the wrong direction. Its extra GPU memory was modest, but
@@ -308,8 +324,8 @@ needed to construct it is absent.
 The TensorFlow A/B harness executed the repository's current vendored PET and
 MultiFold loop. Its B full-event arm did not establish a benefit over A
 recoil-only: the mean change was sub-threshold, one seed moved adversely, and
-the absolute gate failed. The TensorFlow harness also retains the historical
-single-MC-weight limitation and lacks cap telemetry.
+the descriptive absolute diagnostic failed. The TensorFlow harness also
+retains the historical single-MC-weight limitation and lacks cap telemetry.
 
 No direct B-versus-C architecture result is reported. The two frameworks do
 not share identical splits or every optimizer/weight convention, and the
@@ -374,14 +390,29 @@ for correction.
 
 The implementation revision added periodic truth coordinates, receipt-bound
 POT scale, production-size compressed-input refusal, vectorized splits,
-known-ratio closure, fixed-logit cross-engine tests, separate D/E arms, safe
-public-data loading, cap telemetry, deterministic attention, and finally a
-single truth-frozen Step-2 representation. The corrected 67-test A100 suite
-passes.
+known-ratio closure, an analytic fixed-logit ratio-convention equivalence test,
+separate D/E arms, safe public-data loading, cap telemetry, deterministic
+attention, and finally a single truth-frozen Step-2 representation. The
+analytic test is not an end-to-end TensorFlow-versus-PyTorch run on identical
+tensors. The corrected 67-test A100 suite passes.
 
-Final evidence and writeup reassessments are recorded below after the same
-durable auditors inspect the committed products. Their unresolved objections
-are preserved rather than averaged away.
+The final contract auditor accepted the code and every product within its
+explicit code-contract, synthetic, public-schema, or recoil-input label. It
+found no blocker, major issue, implementation defect, or aggregation defect.
+It required the absolute RMSE diagnostic to be identified as descriptive
+rather than preregistered and the fixed-logit test to be scoped as analytic
+rather than a full cross-engine comparison. Both corrections are applied here
+and in the validation ledger.
+
+The final evidence auditor returned a conditional pass and dissented from any
+interpretation of the 100k-event pilot as an intrinsic architecture verdict.
+It described the pilot as underpowered relative to a 2M target. The frozen
+preregistration does not specify 2M events, so that claimed preregistration
+deviation is not sustained; 2M is a historical PET baseline elsewhere in the
+repository. The substantive dissent is accepted: percent-level differences
+are unresolved at 100k events and require higher-statistics G2 evaluation.
+This dissent remains explicit even though it does not change the no-promotion
+recommendation.
 
 ## 13. Final include / exclude / defer decisions
 
@@ -390,14 +421,14 @@ are preserved rather than averaged away.
 | Current TensorFlow/Keras full-event estimator | **retain as current default** | No alternative passed the acceptance gate; this is continuity, not evidence of architectural superiority |
 | Independent PyTorch PET2-family backend | **include as opt-in experimental code** | Contract, deterministic runtime, artifact, and bounded-input gates pass; physics superiority is unproved |
 | Existing generic recoil tokens | **retain** | Only real-input pilot available; stable bounded execution, but not a closure comparison |
-| Detector-view category | **neutral / defer promotion** | Small consistent synthetic movement, below threshold; G2 runtime and all-playlist systematic evidence absent |
+| Detector-view category | **unresolved / defer promotion** | Small consistent synthetic movement below pilot resolution; G2 runtime and all-playlist systematic evidence absent |
 | Typed photon/blob/prong tokens | **defer** | Small inconsistent synthetic movement; no symmetric reconstructed D/S/B inventory; public rows are MC-only |
 | Truth-derived type, interaction, or target labels in Step 1 | **exclude** | Direct leakage and generator shortcut |
 | Muon globals | **retain only in the current audited full-event contract** | New synthetic evidence did not establish incremental benefit; missingness and detector-response risks remain |
 | Distinguished muon token | **do not adopt** | Mean synthetic closure worsened; seed direction inconsistent; real coordinates and missingness unaudited |
 | Rich globals without charge | **defer** | Sub-percent, seed-inconsistent synthetic effect; Eavail/q3 circularity and detector systematics require G2 |
 | Muon charge/q-p addition | **defer** | Incremental synthetic effect was slightly adverse; unit, sentinel, and wrong-sign-tail audits incomplete |
-| Overflow aggregate | **neutral / defer** | Negligible synthetic movement; real pre-truncation inventory unavailable |
+| Overflow aggregate | **unresolved / defer** | Negligible 100k-pilot movement; real pre-truncation inventory unavailable |
 | Timing, dE/dx, PID, Michel, pion-prong, per-type sums | **defer reco-derived versions; exclude truth-derived versions** | Units, symmetric reconstruction semantics, and systematic response not established |
 | Generic or MINERvA-fine-tuned Gregor initialization | **defer** | Weight artifact inaccessible, license/checksum absent, preprocessing and tensor compatibility unverified |
 
@@ -413,7 +444,9 @@ are preserved rather than averaged away.
 5. Regenerate the source dump if typed objects, dE/dx, time, PID, Michel,
    pion-prong, or overflow fields are promoted. Require identical
    signal/data/background semantics and systematic behavior.
-6. Run matched A/B/C/D-view/E-muon/E-rich seeds on identical rows and budgets.
+6. Run matched A/B/C/D-view/E-muon/E-rich seeds on identical rows and budgets,
+   including an end-to-end TensorFlow/PyTorch ratio-convention check on
+   identical tensors; use substantially higher statistics than the 100k pilot.
 7. Run ordinary and injected closure, cap scans, ESS/tail diagnostics,
    retraining spread, and 2D/3D/5D projections.
 8. Only then reconsider D-typed or a licensed, hash-pinned, exactly compatible

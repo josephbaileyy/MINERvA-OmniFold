@@ -1,0 +1,60 @@
+I have mechanically verified all six points against source and receipts. All Round-3 blockers are fixed in committed code (periodic φ `g2_adapter.py:250`; POT `resolve_pot_scale`; vectorized split `utils.py:110`; eager-load mini-packet bound `g2_adapter.py:69,125`; Gate-2 `/1000` removed; closure + inverted-direction tests `test_pet2_torch_contracts.py:400,429,444` + `optional.py:171,265`). Here is the final ruling.
+
+---
+
+# ROUND 4 (final) — `omnifold_contract_auditor` post-experiment audit
+Branch `codex/gregor-pet2-omnifold` @ HEAD `90e4ed0`; result-bearing `d2bead0`. Verified `git diff d2bead0..HEAD` touches only `CAMPAIGN_LEDGER.md` + audit prompts + unrelated `orchestration/*` — **estimator code and all products are frozen at `d2bead0`** (provider-home reconciliation changed nothing result-bearing). CLEAR.
+
+## Mechanical verification of the six required checks
+
+**1. D/E/muon-token/overflow are Step-1-only on a shared, exact truth arm — CONFIRMED.**
+`engine.py:138` builds Step-2 from `frozen_truth_arm_manifest()` (never the per-arm `arm`); the frozen truth arm (`features.py:194-216`) forces generic types, no view, muon-global, no overflow/token, `active_globals=BASELINE_GLOBALS`. Receipt cross-check (seed 101, all 8 variants C/D-view/D-typed/E-muon/E-rich/E-rich-no-charge/C-muon_token/C-overflow): **step2-model, truth-preprocessing, truth-arm, and `signal_truth.row_hash` are each single-valued (identical truth tensors)**, while `step1_arm` differs 8 ways and `model_step1` config is single-valued (parameter parity). CLEAR.
+
+**2. Direction / masses / weights / misses / target / Stay-Positive / full-order / cap / determinism — CONFIRMED.**
+Step-1 `class1=measured`, `offset=log(mass1/mass0)`, `pull=push·r₁` (measured/MC); Step-2 `push=r₂` (pulled/prior) with POT cancelling; `w_reco` at Step 1 (`engine.py:178,204`), `w_truth` at Step 2 (`:224-258`); `resolve_pot_scale` fail-closed with dataset-bound/explicit match (`:81-102`); native-miss invariance asserted (`:221`); literal `[data,bkg]` target, refined nonnegative, signed provenance retained (data≥0/bkg≤0) with raw-mass recovery in the adapter; full-order guard `row_index==arange(N)` (`:264-265`); `cap_saturated_count`/`cap10_vs_cap30` present and 0 across all runs; deterministic seeding + two-node bitwise smoke PASS. CLEAR.
+
+**3. Aggregate enforces common footing; no pre-fix result entered — CONFIRMED.**
+Every run in `synthetic_matched/aggregate.json` carries identical `dataset_fingerprint=465c30ca`, `parameter_footing_fingerprint=8b88219b`, `control_footing_fingerprint=658c9340`, `split_seed=424242`, seeds `101/202/303`, `source_commit=23512b8`, `source_dirty=false`, `variant="base"`. `c_control_truth_freeze_reproducibility.json` shows fixed-C (23512b8) reproduces pre-fix-C (491dcdf) push/pull/step1/step2 **bitwise** (only recipe/provenance changed), so C was unaffected by the #21 truth-bug while pre-fix D/E are quarantined (KNOWN_ISSUES #21). CLEAR.
+
+**4. TF and XPS2 downgrades complete — CONFIRMED.**
+`tf_ab_matched`: `evidence_class=synthetic-fixture`, `B_vs_A` gate FAIL, `b_to_c_architecture_claim_permitted=false`, `framework_caveats` (w_truth both steps, non-identical splits, no cap telemetry). `xps2_practical`: `evidence_class=recoil-input-pilot`, `architecture_comparison_permitted=false`, `closure_available=false`, downgrades (w_truth proxy, precomputed target/no literal bkg, historical zero-padding mask, no full-event fields). `publication_promotion_permitted=false` and `g2_validation_claim=false` everywhere. No B-vs-C / typed-object / closure / publication claim is asserted. CLEAR.
+
+**5. Feature decisions respect the contract — CONFIRMED.**
+Assessment §6 table marks all D/S/B/M availability as **"schema" (not runtime; G2 absent)**; periodic truth `(θ,cosφ,sinφ)` and muon φ→(cos,sin); `-9999` never normalized, miss rows zero+masked; pad-0 reserved; truth PDG Step-2-only and made generic; interaction/current/pion-truth/bookkeeping **exclude permanently**; timing/charge/dE-dx/Michel/pion-prong/per-type-sums **defer**; typed photon/blob/prong **defer** (absent D/S/B). Matches my Round-1/2 rulings. CLEAR.
+
+**6. Recommendation is compartment-bounded — CONFIRMED.**
+"Retain TF default" is explicitly framed as continuity, **not** intrinsic superiority; PyTorch opt-in experimental; everything else defer/exclude; no promotion, no publication claim, no winner. Rests only on compartments 1–4 with 5 (G2) unavailable. CLEAR. Ledger numbers reproduce the aggregates/receipts exactly (spot-checked C/D-view/D-typed/E-muon/E-rich/muon-token/overflow RMSE, relative %, TF A/B, XPS2 — all match).
+
+## Findings by category
+
+| # | Sev | Category | Evidence | Statement |
+|---|---|---|---|---|
+| 1 | **MINOR** | Documentation | assessment L21,26,277,289-291; `VALIDATION_LEDGER.md`:783-785; absent from `EXPERIMENT_PREREGISTRATION.md` (only L97 lists RMSE as a *metric*, L116 a *relative* 5% band) | The "**preregistered** absolute density-ratio closure / composite direction gate (log-ratio RMSE < 0.25)" is **not in the frozen preregistration**. It is invoked as preregistered in the assessment and ledger. Because the C baseline also fails it, it is non-discriminating and the no-promotion decision already follows from the genuinely-preregistered relative >5% gate (every arm <1%). Conclusion unaffected; the "preregistered" label must be corrected. |
+| 2 | **MINOR** | Documentation | assessment §12 ("fixed-logit cross-engine tests"), tf_ab is same-engine A/B | "Cross-engine" verification is the **analytic fixed-logit unit test** only; a true TF-vs-PyTorch density-ratio equivalence on identical tensors is **not** established (correctly forbidden as a B-vs-C claim). Wording should scope "cross-engine" to the unit test and keep the TF↔PyTorch equivalence as a G2/future item. |
+| 3 | CLEAR | Implementation | `engine.py`, `features.py`, `g2_adapter.py`, `utils.py`, receipts | All Round-3 blockers (periodic φ, POT wiring, eager-load, missing closure/inverted-direction tests, Gate-2 `/1000`) resolved in committed code; login-safe + Delta suites pass; fail-closed seams intact. |
+| 4 | CLEAR (G2-deferral) | Unavailable-G2 | KNOWN_ISSUES #19,#20; assessment §6/§14 | Full-event publication remains blocked on the literal G2 (#19 OPEN). Gate-2 independent **runtime** receipt not rerun (G2 absent) — historical telemetry correctly quarantined (#20). |
+
+No BLOCKER or MAJOR findings survive at HEAD. No product/aggregation defect found: footing fingerprints, quarantine of pre-fix D/E, and source-commit binding are all consistent.
+
+## Deliverables
+
+**1. Final code-contract verdict.** **ACCEPT.** The `pet2_torch` package at `d2bead0` satisfies every mandatory preregistered gate: Step-1-only ablations on a fingerprinted frozen Step-2 with byte-identical truth tensors, correct density-ratio direction and explicit class-mass calibration (no renormalize-then-offset), separated `w_reco`/`w_truth`, POT fail-closed, native-miss/fake handling, literal-background target with retained signed provenance, full-order extraction, pad-0/explicit-mask/OOV/NaN guards, determinism, and fail-closed external seams. It is opt-in experimental code, not a publication estimator.
+
+**2. Admissibility of the result artifacts as their labeled classes.** **ADMISSIBLE, each only within its label.** `code-contract` (67-test + deterministic smoke): admissible. `synthetic-fixture` (matched C/D/E/token/overflow + TF A/B): admissible as feasibility/stability evidence showing **no representation benefit and no promotable arm at pilot resolution** — not closure, not architecture, not physics. `public-gregor-dataset`: admissible as schema/provenance only (MC-only, OmniFold-ineligible). `recoil-input-pilot` (xps2): admissible as engine/tail/throughput diagnostic only. **No artifact supports a B-vs-C, typed-object, closure, or publication conclusion, and none claims to.** The single blemish is the mislabeled "preregistered absolute gate" (Finding 1), which is a wording defect, not an admissibility defect.
+
+**3. Required revisions before final handoff.**
+- (Finding 1) In `GREGOR_PET2_OMNIFOLD_ASSESSMENT.md` and the `VALIDATION_LEDGER.md` 2026-07-23 entry, stop calling the RMSE<0.25 threshold "preregistered"; either cite the actual preregistered relative rule or relabel it a post-hoc descriptive observation, and state that no-promotion follows from the preregistered >5% relative gate that every arm fails.
+- (Finding 2) Scope the "cross-engine" claim to the analytic unit test; keep TF↔PyTorch tensor-level equivalence listed as a G2 item.
+- (housekeeping) Keep KNOWN_ISSUES #20 quarantine until the Gate-2 independent runtime receipt is rerun on real G2.
+
+**4. Remaining dissent and G2-only blockers.** Dissent: none material — the conclusions are appropriately conservative and no scientific winner is asserted (nor should be). **G2-only blockers before any publication-level PET2/typed-object conclusion:** literal G2 NPZ + target + receipts staged/hash-verified; symmetric reconstructed typed-object D/S/B dump for D-typed/dE-dx/Michel/pion/per-type sums/overflow; hash-bound event-key sidecar for cross-universe correspondence; chunked/memmap G2 loader (current path fail-closed at ≤1 GiB / ≤1M-row mini-packets); on-G2 verification of `w_reco` vs `w_truth`, raw target mass, POT scale, all units, all-playlist categories, native misses, empty-fake inventory; a licensed/hash-pinned/dimensionally-exact checkpoint for arm F; true TF-vs-PyTorch density-ratio equivalence on identical tensors; and the Gate-2 independent-receipt rerun.
+
+**5. Same-session revision-round mechanical reassessment checklist.**
+1. Re-`grep` assessment + ledger for "preregistered absolute"/"0.25"; confirm the label is corrected and the decision is re-anchored to the relative >5% gate.
+2. Confirm "cross-engine" now names only the analytic unit test.
+3. Re-diff `d2bead0..HEAD` for `nd-unfolding/pet2_torch` and the assessment/ledger — revisions must be documentation-only; if any `pet2_torch/*.py` or product JSON changes, the full campaign must be rerun and re-fingerprinted, not edited.
+4. Re-verify the 8-variant seed-101 receipt invariant (single-valued step2-model/truth-prep/truth-arm/truth-row-hash; 8-valued step1-arm) still holds after any doc edit (it must, since code is frozen).
+5. Confirm `publication_promotion_permitted=false` and `g2_validation_claim=false` remain in every aggregate and the final summary.
+6. Confirm KNOWN_ISSUES #19 stays OPEN and #20 stays quarantined-pending-G2.
+
+No scientific winner is inferred; training AUC was not accepted as evidence at any step.

@@ -780,11 +780,13 @@ Relative mean closure changes against the declared parent were D-view
 `+0.3855%`, D-typed `+0.2317%`, E-muon `-0.1456%`,
 E-rich-no-charge `+0.1615%`, and E-rich charge increment `-0.0978%`.
 Only D-view repeated a favorable direction across all seeds. Every arm failed
-the preregistered absolute composite direction gate because log-ratio RMSE
-exceeded 0.25, although mean maximum projection relative-L1 was
-`0.1017--0.1064`, inside its 0.25 subgate. No ratio saturated; cap-10 and
-cap-30 inference ESS were identical. All relative global and declared-tail
-ESS changes were below 1%, far inside the 10% tolerance. No arm reached the
+the implementation's descriptive composite direction diagnostic because
+log-ratio RMSE exceeded 0.25, although mean maximum projection relative-L1
+was `0.1017--0.1064`, inside its 0.25 subgate. The 0.25 threshold was not in
+the frozen preregistration and is not an independent promotion criterion.
+No ratio saturated; cap-10 and cap-30 inference ESS were identical. All
+relative global and declared-tail ESS changes were below 1%, far inside the
+10% tolerance. No arm reached the genuinely preregistered
 strictly-greater-than-5% benefit threshold.
 
 The tagged C-parent variants gave:
@@ -794,16 +796,19 @@ The tagged C-parent variants gave:
 - overflow aggregate: RMSE `0.309039`, a `+0.06549%` change repeated across
   seeds, global/tail ESS degradation `0.0201/0.0159%`.
 
-Both variants failed the same absolute gate. The correct evidence verdict for
-all D/E/token/overflow comparisons is
+Both variants failed the same descriptive diagnostic. The product's literal
+machine decision label for all D/E/token/overflow comparisons is
 `insufficiently-validated-absolute-closure-gate-failed`; none is promoted.
+That label is interpreted as diagnostic metadata, while no-promotion follows
+from the preregistered relative improvement, ESS, tails, and all-seed rules.
 Canonical products:
 `nd-unfolding/pet2_torch/products/synthetic_matched/{aggregate,representation_aggregate}.json`.
 
 The current-engine TensorFlow matched synthetic A/B jobs
 `20427122`--`20427124` gave recoil-A versus full-event-B mean RMSE
 `0.315250` versus `0.313546`, a `+0.5407%` change. Direction was not
-reproduced across seeds and B failed the absolute gate. Mean global ESS was
+reproduced across seeds and B failed the descriptive absolute diagnostic.
+Mean global ESS was
 `57,650.27` versus `57,761.87`; mean maximum ratio was `5.497` versus
 `5.907`. The B tail remained within the preregistered 10% comparison bound,
 but the harness has no cap scan, uses one MC weight convention, and does not
@@ -838,5 +843,9 @@ initialization until a symmetric reco data/signal/background dump, a licensed
 hash-pinned compatible checkpoint where applicable, and literal publication
 G2 validation exist. Do not adopt the distinguished muon token. This campaign
 does not establish that the current architecture is intrinsically superior.
+The matched matrix is a 100,000-event-per-inventory pilot, not a production-
+statistics comparison. Percent-level arm differences are unresolved at this
+scale; the result establishes only that none met the preregistered pilot
+benefit rule, not that the additions are intrinsically neutral or harmful.
 Canonical campaign summary:
 `nd-unfolding/pet2_torch/products/final_campaign_summary.json`.

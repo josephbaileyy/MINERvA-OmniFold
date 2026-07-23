@@ -382,3 +382,30 @@ Append-only orchestration and experimental ledger for branch
   `2026-07-24T02:51:01Z`; no reset credits exist. Claude and agy percentages
   remain unknown. The final auditors use the preserved Claude-school and agy
   sessions, not the exhausted Codex-school implementation role.
+
+## 2026-07-23 — Final audit round 1 and revisions
+
+- The preserved `omnifold_contract_auditor` session returned **ACCEPT** with no
+  blocker, major, implementation, product, or aggregation finding. It
+  mechanically confirmed a single truth-arm/tensor footprint across all eight
+  reco variants, correct ratio/class-mass/weight/POT/miss/background/full-order
+  semantics, matched aggregate footing, complete TensorFlow/XPS2 downgrades,
+  and compartment-bounded recommendations.
+- That auditor found two documentation-only MINORs: RMSE<0.25 was a product
+  diagnostic but not in the frozen preregistration, and the fixed-logit test
+  is analytic convention equivalence rather than an end-to-end
+  TensorFlow/PyTorch test.
+- The preserved `evidence_ablation_auditor` returned **CONDITIONAL PASS** and
+  one MAJOR power caveat: a 100k-event pilot cannot resolve percent-level
+  architecture effects. Its assertion that the preregistration anticipated
+  2M events is not supported by the frozen preregistration; 2M is a historical
+  baseline elsewhere. The substantive dissent is accepted.
+- The assessment and validation ledger now label the absolute threshold
+  descriptive, anchor no-promotion to the preregistered >5% relative rule,
+  scope the fixed-logit test as analytic, state the 100k power limitation,
+  classify sub-percent differences as unresolved rather than intrinsic
+  neutrality, and require higher-statistics identical-tensor end-to-end
+  framework validation when G2 is available.
+- Raw and canonical audit responses are preserved under
+  `docs/orchestration/gregor-pet2/`. No estimator source or product JSON
+  changed during the revision.
