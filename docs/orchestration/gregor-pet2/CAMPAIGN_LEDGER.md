@@ -431,3 +431,67 @@ Append-only orchestration and experimental ledger for branch
   `2026-07-30T04:09:42Z`), Codex school 0% (reset
   `2026-07-24T02:51:01Z`), no reset credits; Claude percentages missing and
   agy percentage unavailable. No further provider dispatch is required.
+
+## 2026-07-23 — conditional-information continuation initialized
+
+- This is a continuation on the same branch, worktree, ledger, and four
+  durable provider sessions. No role was started, adopted, migrated, or
+  replaced.
+- Independent review correctly identified that the original analytic fixture
+  injected its density ratio only through `mu_pt` and total token energy,
+  both already visible to arm C. The completed 100k matrix is therefore
+  retained as baseline-sufficient null-feature/safety evidence; it is not
+  evidence about the learnability or benefit of information unique to
+  detector view, reconstructed type, rich globals, a distinguished muon
+  representation, or pre-truncation overflow.
+- Continuation scope: preregister and execute five feature-conditional stress
+  fixtures with direct-parent negative controls and frozen Step 2; add a
+  receipt-bound chunked/memmap production-G2 conversion/loader without
+  claiming unavailable G2 validation; specify a checkpoint-compatible Gregor
+  PET2 integration path distinct from the independent PET2-family backend;
+  then obtain adversarial review and reassessment from the same auditors.
+- Dispatch-authorizing usage snapshot at `2026-07-23T23:26:30Z`:
+  `gate_ok=true`; Codex personal 36% seven-day remaining, reset unchanged at
+  `2026-07-30T04:09:42Z`; Codex school 0%, reset
+  `2026-07-24T02:51:01Z`; no reset credits. Claude capacity is unknown because
+  caches are missing; agy capacity is unknown by design. The exhausted
+  Codex-school implementation role is preserved for reuse after its existing
+  reset rather than replaced.
+- Delta control master
+  `/Users/josephbailey/.ssh/controlmasters/delta-codex2.sock` is healthy,
+  started 2026-07-23 19:24 EDT with `ControlPersist=8h`. Account
+  `bhvk-delta-gpu`, `/u`, `/work`, and `/work/nvme` are available; both
+  `gpuA100x4-interactive` and `gpuA100x4` are up. The only visible user job at
+  initialization is unrelated pending job `20434188`
+  (`pet_train_fps_delta`); it and its active checkout are out of scope.
+
+## 2026-07-23 — continuation independent design round COMPLETE
+
+- The same `evidence_ablation_auditor` session
+  `4be5058b-7e1a-49f2-a102-04fe530e5f3a` confirmed that five independent
+  fixtures are cleaner than a shared factorial injection and required a
+  fixed-amplitude, direct-parent, multi-seed comparison with negative
+  controls. Raw response:
+  `docs/orchestration/runs/evidence_ablation_auditor/20260723T232810Z-send-eec19d4c.txt`.
+- The same `omnifold_contract_auditor` session
+  `0d8740dd-23f7-494f-9664-924f5d6bdc34` independently verified the
+  parent-visible injection defect at source and required exclusive-carrier
+  certificates, Step-1-only construction, truth/background/miss integrity,
+  sham and carrier-shuffle controls, matched telemetry, atomic receipt-bound
+  G2 conversion, and a separate fail-closed Gregor-exact namespace. Raw
+  response:
+  `docs/orchestration/runs/omnifold_contract_auditor/20260723T232810Z-send-8065ec04.json`.
+- The same `gregor_source_archaeologist` session
+  `67e5b4d2-64d5-4bd9-a4e6-9debbfad30cd` specified the exact upstream
+  PET2/PET_body/PET_classifier symbols, transforms, tensor/state-dict schema,
+  known PID-0 and transformed-pT mask hazards, legacy-exact versus corrected
+  compatibility paths, strict manifest, transfer negative controls, and
+  licensing boundary. Raw response:
+  `docs/orchestration/runs/gregor_source_archaeologist/20260723T232810Z-send-d6711628.json`.
+- Root reconciled the reviews into
+  `CONDITIONAL_STRESS_PREREGISTRATION.md` before implementation or training.
+  The fixture uses split-local counterfactual pairs with byte-identical parent
+  tensors, an analytically fixed 0.5/1.5 ratio, the same unmodified truth
+  inventory across all families, and signal/unity-sham/carrier-shuffle modes.
+  The distinguished-muon test is explicitly an additive relational-token
+  channel test, not a same-information pure-tokenization claim.

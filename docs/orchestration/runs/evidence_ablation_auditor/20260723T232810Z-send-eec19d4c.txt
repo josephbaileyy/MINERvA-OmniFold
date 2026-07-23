@@ -1,0 +1,76 @@
+# Conditional-Information Continuation: Pre-registration Amendment
+
+I am operating as the durable `evidence_ablation_auditor` for session `4be5058b-7e1a-49f2-a102-04fe530e5f3a`. This amendment addresses the scientific-design gap in the initial synthetic matrix by defining bounded conditional stress fixtures.
+
+## 1. Challenge: Independent Fixtures vs. Shared Factorial Fixture
+
+**Decision:** **Five independent fixtures** are scientifically cleaner. 
+*Reasoning:* A shared factorial fixture (injecting all five conditional signals simultaneously) risks capacity interference, where the model prioritizes the easiest-to-learn signal and ignores the others. It also confounds the gradients, making it impossible to confidently attribute an optimization failure to a specific feature representation. Independent fixtures guarantee that if the enriched arm fails to recover the ratio, it is strictly an optimization/architecture failure for that specific representation, not interference from a stronger confounding signal.
+
+## 2. Calibration and Sample Size
+
+*   **Minimum Sample Size:** To lift the signal cleanly out of the 100k-event noise floor observed in the prior campaign, this continuation requires either a **2M-event sample** or a deliberately amplified injection strength. 
+*   **Calibration Smoke:** A single-seed calibration smoke test on 100k events must be run *only on the exact analytic formulas* to set the injection strength parameter ($A$) for each fixture. The criteria for freezing $A$ are:
+    1. The true injected log-ratio RMSE must be at least 0.15 (to ensure it is measurable).
+    2. The maximum injected physical ratio must remain $\leq 10.0$ and nonnegative.
+    3. The calibration step must NOT train the models; it only sets the fixture weights. The constants are then frozen and committed before any training job is launched.
+
+## 3. The Five Conditional Stress Fixtures
+
+For all fixtures, the baseline evaluation population, common rows, split (0.7/0.15/0.15), estimator seeds (101, 202, 303), truth-frozen Step-2 representation, and optimizer budgets are strictly matched to the existing campaign.
+
+### Fixture 1: Detector View
+*   **Pair:** C (generic tokens) vs. D-view (generic tokens + view IDs).
+*   **Injection Form:** $w_{\text{reco}} \times \exp(A \cdot z(\text{token\_energy}) \cdot \mathbb{I}(\text{view} == 2))$.
+*   **Conditional Independence:** C lacks the view ID and cannot distinguish view-2 energy from view-1/3 energy. 
+*   **Negative Control:** Arm C trained on this target must fail to recover the view-conditional shift, bounded by its ability to guess based on random chance.
+
+### Fixture 2: Reconstructed Object Type
+*   **Pair:** C (generic tokens) vs. D-typed (real object types).
+*   **Injection Form:** $w_{\text{reco}} \times \exp(A \cdot z(\text{token\_energy}) \cdot \mathbb{I}(\text{type} == \text{TYPE\_TRACK}))$.
+*   **Conditional Independence:** C sees only generic tokens and cannot selectively reweight tracks versus clusters.
+*   **Negative Control:** Arm C trained on this target.
+
+### Fixture 3: Rich Globals
+*   **Pair:** E-muon (muon globals only) vs. E-rich (audited rich globals).
+*   **Injection Form:** $w_{\text{reco}} \times \exp(A \cdot z(\text{mu\_energy}) \cdot z(\text{vertex\_z}))$.
+*   **Conditional Independence:** E-muon lacks `vertex_z`. The covariance between muon energy and vertex position is irreducible without the rich global.
+*   **Negative Control:** E-muon trained on this target.
+
+### Fixture 4: Distinguished Muon Representation
+*   **Pair:** E-muon (generic cloud + muon globals) vs. Distinguished Muon Token (muon integrated as token 0 with spatial coords).
+*   **Injection Form:** $w_{\text{reco}} \times \exp(A \cdot \Delta R(\text{muon\_coord}, \text{leading\_recoil\_coord}))$.
+*   **Conditional Independence:** E-muon has the muon globals but lacks the explicit spatial coordinates embedded *within the token cloud* to compute $\Delta R$ easily through attention. 
+*   **Negative Control:** E-muon trained on this target.
+
+### Fixture 5: Pre-Truncation Overflow Aggregate
+*   **Pair:** C (truncated at $N$ tokens) vs. Overflow (truncated at $N-1$ tokens + 1 overflow aggregate token).
+*   **Injection Form:** $w_{\text{reco}} \times \exp(A \cdot z(\text{overflow\_energy}))$.
+*   **Conditional Independence:** Arm C discards the overflow energy. It can approximate it by subtracting the sum of retained tokens from the total calorimetric energy, but if total calorimetric energy is withheld from globals, C cannot reconstruct the exact lost energy.
+*   **Negative Control:** Arm C trained on this target.
+
+## 4. Mechanical Demonstration of Conditional Independence
+
+For each fixture, **row-wise permutation** must be used to prove non-reconstructibility by the parent. 
+1. Group rows that have identical direct-parent features (or bin them infinitesimally).
+2. Permute the enriched feature (e.g., `view_id`) among the grouped rows.
+3. The variance of the injected ratio within the group proves it is conditionally independent of the parent features.
+
+## 5. Metrics, Pass/Fail Rules, and Gates
+
+*   **Primary Metric:** Improvement in log-ratio RMSE recovery.
+*   **Gate 1 (Representational Capacity vs. Optimization Failure):** The enriched arm must improve the log-ratio RMSE over the parent by at least **15%** (a threshold chosen to sit decisively above the noise floor). If the enriched arm fails this gate despite possessing the necessary feature, it is ruled an **optimization or architectural failure**.
+*   **Gate 2 (Safety):** The enriched arm must not degrade global or tail ESS by $>10\%$ and must not increase extreme-tail logit-cap saturation.
+*   **Pass/Fail:** To pass, an enriched arm must meet Gate 1 and Gate 2 consistently across all 3 estimator seeds. We do not select the "easiest" fixture post-hoc; each feature family is graded strictly on its own dedicated fixture.
+
+## 6. Evidence Limitations
+
+*   **Label:** `synthetic-fixture`.
+*   **Limitation:** Passing a synthetic conditional stress test proves only that the PET2 architecture *has the mathematical capacity* to route and utilize the feature. It **does not** prove that this conditional information exists in real MINERvA G2 data, nor does it guarantee a physics benefit. It merely authorizes the feature for the final G2 evaluation.
+
+## 7. Adversarial Checklist (Final Review)
+
+- [ ] **BLOCKER:** Are the calibration constants ($A$) derived from a frozen, non-training smoke test to prevent outcome-shopping?
+- [ ] **BLOCKER:** Are the injected signals strictly non-reconstructible by the direct parent (mechanically verifiable via permutation)?
+- [ ] **MAJOR:** Is the evaluation strictly bounded to comparing the enriched arm against its *exact direct parent negative control* to isolate the feature?
+- [ ] **ACCEPTABLE:** Five independent fixtures are chosen over a shared factorial fixture to preserve gradient clarity and isolate architectural capacity.
