@@ -256,26 +256,38 @@ def main() -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--max-mc-rows", type=int, default=100000)
     parser.add_argument("--max-data-rows", type=int, default=50000)
-    parser.add_argument("--seed", type=int, default=101)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        help=(
+            "legacy smoke shorthand that sets both selection and estimator "
+            "seeds; matched retraining comparisons must use the separate options"
+        ),
+    )
+    parser.add_argument("--selection-seed", type=int, default=424242)
+    parser.add_argument("--estimator-seed", type=int, default=101)
     parser.add_argument("--split-seed", type=int, default=424242)
     parser.add_argument("--iterations", type=int, default=1)
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--device", default="cuda")
     args = parser.parse_args()
-    seed_everything(args.seed, deterministic=True)
+    if args.seed is not None:
+        args.selection_seed = args.seed
+        args.estimator_seed = args.seed
+    seed_everything(args.estimator_seed, deterministic=True)
     dataset = build_xps2_recoil_dataset(
         args.directory,
         max_mc_rows=args.max_mc_rows,
         max_data_rows=args.max_data_rows,
-        seed=args.seed,
+        seed=args.selection_seed,
     )
     ratio = RatioTrainingConfig(
         epochs=args.epochs,
         batch_size=args.batch_size,
         learning_rate=1e-4,
         weight_decay=1e-2,
-        seed=args.seed,
+        seed=args.estimator_seed,
         device=args.device,
     )
     config = OneIterationConfig(ratio=ratio, split_seed=args.split_seed)
@@ -296,7 +308,9 @@ def main() -> int:
             "evidence_class": "recoil-input-pilot",
             "dataset_manifest": dataset.manifest(),
             "arm_manifest": _arm().payload(),
-            "seed": args.seed,
+            "selection_seed": args.selection_seed,
+            "estimator_seed": args.estimator_seed,
+            "legacy_coupled_seed_argument": args.seed,
             "split_seed": args.split_seed,
             "iterations": args.iterations,
             "epochs_per_step": args.epochs,

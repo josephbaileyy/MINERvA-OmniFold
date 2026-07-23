@@ -16,6 +16,7 @@ if ND not in sys.path:
     sys.path.insert(0, ND)
 
 from pet2_torch.checkpoints import arm_f_eligibility, current_arm_f_outcome
+from pet2_torch.aggregate_pilots import _comparison
 from pet2_torch.contracts import PAD_CATEGORY, TokenBatch
 from pet2_torch.density_ratio import (
     balanced_weighted_bce_numpy,
@@ -867,6 +868,35 @@ class ContractOnlyCLI(unittest.TestCase):
             )
         self.assertEqual(check.returncode, 0, check.stderr)
         self.assertIn("no submit, no module load, no training", check.stdout)
+
+    def test_pilot_decision_requires_global_and_tail_ess(self):
+        keyed = {
+            ("base", 101): {"log_ratio_rmse": 1.0},
+            ("child", 101): {"log_ratio_rmse": 0.9},
+        }
+        summaries = {
+            "base": {
+                "metrics": {
+                    "log_ratio_rmse": {"mean": 1.0},
+                    "global_ess": {"mean": 100.0},
+                    "tail_ess": {"mean": 100.0},
+                    "cap_saturated_count": {"mean": 0.0},
+                }
+            },
+            "child": {
+                "metrics": {
+                    "log_ratio_rmse": {"mean": 0.9},
+                    "global_ess": {"mean": 95.0},
+                    "tail_ess": {"mean": 80.0},
+                    "cap_saturated_count": {"mean": 0.0},
+                }
+            },
+        }
+        result = _comparison(keyed, summaries, "child", "base", (101,))
+        self.assertGreater(result["closure_rmse_improvement_percent"], 5.0)
+        self.assertEqual(
+            result["decision"], "harmful-or-unstable-on-synthetic-pilot"
+        )
 
 
 if __name__ == "__main__":

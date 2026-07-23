@@ -97,7 +97,9 @@ engine pilot. It uses `w_truth` as the unavailable reco-weight proxy, the
 precomputed xps2 measured target, no literal background inventory, no event
 globals/types/views, and a boolean mask derived from the historical producer's
 zero padding. Its runtime/tail evidence cannot be used as typed-token,
-full-event, G2, or publication evidence.
+full-event, G2, or publication evidence. Selection and estimator seeds are
+separate so retraining comparisons can hold the sampled rows fixed; `--seed`
+is retained only as a coupled legacy-smoke shorthand.
 
 `public_gregor.py` can inspect an explicitly trusted, caller-checksummed `.pb`
 using `torch.load(weights_only=True)` and emit row/schema/type/padding census
@@ -110,7 +112,8 @@ PYTHONPATH=nd-unfolding python3 -m pet2_torch.xps2_adapter \
   --directory /staged/xps2_npy --max-rows 100000 --out /tmp/xps2_census.json
 PYTHONPATH=nd-unfolding python3 -m pet2_torch.xps2_pilot \
   --directory /staged/xps2_npy --max-mc-rows 100000 \
-  --max-data-rows 50000 --out /isolated/xps2_pilot
+  --max-data-rows 50000 --selection-seed 424242 \
+  --estimator-seed 101 --out /isolated/xps2_pilot
 PYTHONPATH=nd-unfolding python3 -m pet2_torch.public_gregor \
   --path /staged/public.pb --expected-sha256 SHA256 --trusted \
   --out /tmp/public_pb_census.json
