@@ -10,10 +10,31 @@ record; it does not create a second numerical authority.
 
 ## 1. Executive recommendation
 
-The final recommendation is gated on the committed pilot summaries and final
-auditor reassessment. Regardless of pilot outcome, this campaign cannot
-authorize a publication-estimator replacement because the literal G2
-publication NPZ and its bound target payload are unavailable.
+Retain the current TensorFlow/Keras full-event estimator as the publication
+default. Keep the independently implemented PyTorch PET2-family backend as an
+opt-in experimental path, but do not promote it, typed reconstructed-object
+tokens, the richer global block, a distinguished muon token, overflow
+aggregates, or Gregor initialization from this campaign.
+
+This is a conservative evidence decision, not a finding that the current
+architecture is intrinsically superior. Every matched synthetic arm failed
+the preregistered absolute density-ratio closure gate. All representation
+effects were smaller than one percent in mean closure residual, far below the
+five-percent benefit threshold, and most did not repeat direction across
+seeds. Detector view was the only base-arm addition that moved closure in the
+same favorable direction for all three seeds; the effect remained too small
+and the absolute gate still failed. The current-engine TensorFlow full-event
+arm likewise showed only a sub-threshold, seed-inconsistent change from its
+recoil-only parent.
+
+The real typed-object vocabulary does not exist symmetrically for data,
+selected signal, and background in the available MINERvA input. Gregor's
+public rows are MC-only and cannot repair that omission. His advertised
+initializations were unavailable, unlicensed as weight artifacts, unhashed,
+and dimensionally unverified. Most importantly, the literal publication G2
+payload was unavailable to this campaign. There is therefore no defensible
+publication-level B-versus-C comparison and no basis for adopting the richer
+representation.
 
 The decision categories used below are:
 
@@ -76,6 +97,11 @@ history and deviations are in
   general architecture ideas, not copied Gregor/OmniLearned/HyperScale source,
   and is not checkpoint-compatible by name.
 - The TensorFlow/Keras and recoil-only paths remain unchanged defaults.
+- Implementation commit chain:
+  `342343a`, `0b9217d`, `7c8d6c0`, `491dcdf`, `c7dd325`, `30e11b0`,
+  `039f0a4`, `125a799`, and truth-frozen comparison source `23512b8`.
+- The canonical result products and their source commits are enumerated in
+  `nd-unfolding/pet2_torch/products/final_campaign_summary.json`.
 
 ## 4. Current MINERvA baselines
 
@@ -237,18 +263,92 @@ Exact criteria and evidence downgrades:
 
 ## 9. Results and ablations
 
-Result tables are inserted only after the result-bearing commit carries the
-machine-readable products and matching `VALIDATION_LEDGER.md`,
-`ND_OMNIFOLD_RUN_LOG.md`, and `ND_OMNIFOLD_STATUS.md` updates.
+Exact verified values are written once in `VALIDATION_LEDGER.md`. The
+machine-readable per-seed receipts and aggregates live under
+`nd-unfolding/pet2_torch/products/`; this section records the evidence class
+and decision rather than duplicating the numerical authority.
+
+| Evidence compartment | Test | Outcome | Claim allowed |
+|---|---|---|---|
+| Code-contract | Local 67-test suite, complete A100 67-test suite, malformed-input gates | PASS; ten local skips are only absent optional PyTorch/safetensors dependencies | Experimental backend satisfies the tested contract |
+| Reproducibility | Two A100 smoke jobs on different nodes | Core weights, models, preprocessing, indices, and arrays bitwise identical | Bounded deterministic execution |
+| Public Gregor data | Immutable 1A jagged census | Safe `weights_only=True` load; physical PID 0 confirmed; MC-only contract remains incomplete | Schema/provenance facts only |
+| TensorFlow synthetic A/B | Current-engine recoil versus full-event, three seeds | Absolute closure gate FAIL; sub-threshold and seed-inconsistent relative effect | No A/B superiority claim |
+| PyTorch synthetic C/D/E | Common sample, truth-frozen Step 2, matched seeds and budgets | Every arm absolute closure gate FAIL; every mean relative effect below one percent | No representation winner |
+| Muon-token/overflow synthetic | Tagged C-parent variants | Muon token moved mean closure unfavorably; overflow was practically neutral; both absolute gates FAIL | No promotion |
+| Recoil-input XPS2 | Three-seed bounded retraining over a fixed memmap selection | Finite weights, no cap saturation, stable throughput; no literal background, `w_reco`, full-event fields, or closure target | Engine/tail diagnostic only |
+| Publication G2 | Required full-event data/signal/background/miss input | Unavailable to the campaign | No publication-estimator conclusion |
+
+### Matched synthetic matrix
+
+The C control, D-view, D-typed, E-muon, E-rich without charge, and E-rich arms
+used the same fixture rows, split seed, three estimator seeds, training budget,
+parameter count, target, and fingerprinted truth-frozen Step-2 representation.
+All cap-10 versus cap-30 checks were unchanged and no ratio saturated. Global
+and declared-tail ESS changes remained far inside the ten-percent tolerance,
+and the synthetic projection-residual subgate passed. The composite direction
+gate nevertheless failed for every arm because direct log-density-ratio
+recovery remained outside its absolute threshold.
+
+Against C, detector view and typed tokens produced only sub-percent mean
+changes. Detector view repeated the favorable direction across seeds; typed
+tokens did not. Adding muon globals, the audited rich block, or charge did not
+produce a reproducible benefit. These results make the available additions
+neutral at pilot resolution but insufficiently validated, not beneficial.
+
+The distinguished-muon-token form was also seed-inconsistent and moved the
+mean residual in the wrong direction. Its extra GPU memory was modest, but
+the real-input coordinate and missing-muon semantics are still unaudited.
+The overflow aggregate moved all three seeds slightly favorably but by far
+less than the preregistered threshold; the real pre-truncation inventory
+needed to construct it is absent.
+
+### Baseline and cross-framework limits
+
+The TensorFlow A/B harness executed the repository's current vendored PET and
+MultiFold loop. Its B full-event arm did not establish a benefit over A
+recoil-only: the mean change was sub-threshold, one seed moved adversely, and
+the absolute gate failed. The TensorFlow harness also retains the historical
+single-MC-weight limitation and lacks cap telemetry.
+
+No direct B-versus-C architecture result is reported. The two frameworks do
+not share identical splits or every optimizer/weight convention, and the
+literal G2 footing was absent. Comparing their separate synthetic means would
+confound framework, representation, and training engine.
+
+### External-input evidence
+
+The larger XPS2 pilot demonstrates bounded memmap access and practically
+stable retraining on a real recoil inventory. Its pull weights have materially
+longer tails than its push weights, even though no configured cap saturated.
+Because it proxies missing `w_reco` with `w_truth`, consumes a precomputed
+target without literal background rows, and has no full-event types or
+globals, it cannot answer whether PET2 or typed tokens improve the existing
+estimators.
+
+The fixed C rerun reproduced its pre-fix push/pull arrays and model
+safetensors bitwise for all three seeds. The only intended difference is its
+truth-manifest/recipe provenance. The pre-fix D/E results remain quarantined
+because they altered both Step 1 and Step 2.
 
 ## 10. Compute and maintenance cost
 
-The new backend is isolated from ROOT and TensorFlow and targets the Delta
-`pytorch-conda/2.8` module plus safetensors. Receipts record software, GPU,
-seeds, source hashes, configuration, weights, ESS, tails, runtime, and memory.
-The operational cost still includes a second framework, separate environment,
-new checkpoint/artifact validation, and duplicated estimator-systematic
-validation.
+The new backend is isolated from ROOT and TensorFlow and ran with PyTorch
+2.8.0+cu128, NumPy 2.2.6, safetensors 0.5.3, and Python 3.11.13 on Delta A100
+GPUs. Each Step model has about 1.21 million parameters and a 4.87 MB
+safetensors artifact. The largest matched pilot stayed below 0.8 GB peak GPU
+memory. A PyTorch arm/seed took about four minutes of training wall time; a
+sequential TensorFlow A+B seed took about ten minutes. The full campaign used
+about 3.20 A100-hours, including fail-closed diagnostics and quarantined
+pre-fix runs. Exact accounting is in the validation ledger and final product
+summary.
+
+Those small pilot costs do not imply cheap publication use. A second framework
+requires a separate environment, artifact/checkpoint validation, framework-
+specific calibration checks, duplicated per-universe retraining, extraction
+compatibility, and long-term maintenance. That cost is justified for an
+experimental backend and future controlled comparisons, not for a default
+change unsupported by physics evidence.
 
 ## 11. Licensing and provenance decision
 
@@ -272,12 +372,34 @@ wiring, eager full-array loading, missing closure/cross-engine tests, and the
 Gate-2 telemetry-unit bug. The same implementation role received all findings
 for correction.
 
-Final evidence and writeup reassessments are recorded here without averaging
-away dissent.
+The implementation revision added periodic truth coordinates, receipt-bound
+POT scale, production-size compressed-input refusal, vectorized splits,
+known-ratio closure, fixed-logit cross-engine tests, separate D/E arms, safe
+public-data loading, cap telemetry, deterministic attention, and finally a
+single truth-frozen Step-2 representation. The corrected 67-test A100 suite
+passes.
+
+Final evidence and writeup reassessments are recorded below after the same
+durable auditors inspect the committed products. Their unresolved objections
+are preserved rather than averaged away.
 
 ## 13. Final include / exclude / defer decisions
 
-Populated after the final auditor round and result commit.
+| Candidate | Decision | Reason |
+|---|---|---|
+| Current TensorFlow/Keras full-event estimator | **retain as current default** | No alternative passed the acceptance gate; this is continuity, not evidence of architectural superiority |
+| Independent PyTorch PET2-family backend | **include as opt-in experimental code** | Contract, deterministic runtime, artifact, and bounded-input gates pass; physics superiority is unproved |
+| Existing generic recoil tokens | **retain** | Only real-input pilot available; stable bounded execution, but not a closure comparison |
+| Detector-view category | **neutral / defer promotion** | Small consistent synthetic movement, below threshold; G2 runtime and all-playlist systematic evidence absent |
+| Typed photon/blob/prong tokens | **defer** | Small inconsistent synthetic movement; no symmetric reconstructed D/S/B inventory; public rows are MC-only |
+| Truth-derived type, interaction, or target labels in Step 1 | **exclude** | Direct leakage and generator shortcut |
+| Muon globals | **retain only in the current audited full-event contract** | New synthetic evidence did not establish incremental benefit; missingness and detector-response risks remain |
+| Distinguished muon token | **do not adopt** | Mean synthetic closure worsened; seed direction inconsistent; real coordinates and missingness unaudited |
+| Rich globals without charge | **defer** | Sub-percent, seed-inconsistent synthetic effect; Eavail/q3 circularity and detector systematics require G2 |
+| Muon charge/q-p addition | **defer** | Incremental synthetic effect was slightly adverse; unit, sentinel, and wrong-sign-tail audits incomplete |
+| Overflow aggregate | **neutral / defer** | Negligible synthetic movement; real pre-truncation inventory unavailable |
+| Timing, dE/dx, PID, Michel, pion-prong, per-type sums | **defer reco-derived versions; exclude truth-derived versions** | Units, symmetric reconstruction semantics, and systematic response not established |
+| Generic or MINERvA-fine-tuned Gregor initialization | **defer** | Weight artifact inaccessible, license/checksum absent, preprocessing and tensor compatibility unverified |
 
 ## 14. Exact next steps when G2 becomes available
 

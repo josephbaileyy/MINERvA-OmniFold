@@ -2093,3 +2093,35 @@ and all pending comparison jobs were cancelled before compute. Step 2 is now
 frozen to one truth contract and the full matrix, including the unchanged C
 control for common-source provenance, must be rerun. No invalid comparison was
 entered in the validation ledger or assessment results.
+
+## 2026-07-23 — Gregor PET2 corrected experimental campaign complete
+
+The truth-frozen source passed the complete 67-test Delta runtime suite. All
+24 fixed C/D/E/muon-token/overflow jobs then completed from one clean commit,
+with common samples, splits, seeds, training budgets and a fingerprinted
+shared Step-2 truth arm. The C control reproduced its pre-fix numerical
+weights and models bitwise, confirming that the repair changed provenance
+rather than the C result.
+
+No synthetic representation passed the preregistered absolute log-ratio
+closure gate and every mean relative effect was below one percent. Detector
+view moved all three seeds slightly favorably but remained far below the
+benefit threshold; typed tokens and rich globals were seed-inconsistent; the
+distinguished muon token moved the mean adversely; overflow was practically
+neutral. ESS, tails and cap sensitivity did not expose an instability that
+would override the failed closure gate.
+
+Three matched current-engine TensorFlow A/B runs likewise failed to establish
+a full-event advantage over recoil-only on the synthetic footing. Three
+larger XPS2 retrains demonstrated bounded real-inventory execution and stable
+cap behavior but remained explicitly downgraded, without literal backgrounds,
+`w_reco`, full-event fields or a closure target. The public Gregor census
+remained MC-only, and no checkpoint became eligible.
+
+All summaries, receipts and logs were staged locally before the Delta access
+window closed. The implementation remains opt-in, the current TensorFlow
+full-event estimator remains the publication default by continuity, and
+typed/rich/pretrained promotion is deferred to literal G2 and symmetric
+reconstructed-object validation. No campaign Slurm job remains active or
+pending; unrelated job `20416508` was left untouched. Exact results and
+resource accounting are in `VALIDATION_LEDGER.md`.

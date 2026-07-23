@@ -153,6 +153,20 @@ Implementation gate, in order:
    zero-efficiency cells. No current recoil-PET covariance component is
    automatically transferable to the new estimator.
 
+Gregor PET2 follow-up from the 2026-07-23 completed experimental assessment:
+
+- stage the literal publication G2 payload and hash-bound Gate-2 target in an
+  accessible environment, then repeat matched A/B/C/D-view/E-muon/E-rich
+  closure, tails, ESS, seed, cap and 2D/3D/5D projection gates;
+- before testing typed photon/blob/prong tokens, produce one reconstruction-
+  defined vocabulary with identical data, selected-signal and literal-
+  background semantics across all playlists and required systematic
+  universes; preserve native misses as masked reco rows;
+- do not test Gregor initialization until a weight artifact has an explicit
+  compatible license, immutable checksum, exact architecture/tensor manifest,
+  and frozen preprocessing. Generic and MINERvA-fine-tuned claims remain
+  separate arms.
+
 ### Potential next step after the full-event FPS gate: broaden reconstructed acceptance
 
 Do not enlarge the truth denominator beyond the declared FPS fiducial domain

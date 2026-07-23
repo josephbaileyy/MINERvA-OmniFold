@@ -1,0 +1,14 @@
+...................................................................      [100%]
+=============================== warnings summary ===============================
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::ModelBehavior::test_all_declared_arms_have_identical_parameter_tensors
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::ModelBehavior::test_padded_values_do_not_change_output
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::ModelBehavior::test_permutation_invariance
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::ModelBehavior::test_tiny_overfit_loss_decreases
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::OneIterationEngine::test_native_miss_and_full_order_extraction
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::OneIterationEngine::test_two_iteration_known_closure_emits_full_metrics
+MINERvA-OmniFold-gregor-pet2-23512b8/nd-unfolding/tests/test_pet2_torch_optional.py::StrictSaveLoad::test_safetensors_roundtrip_and_shape_rejection
+  /sw/rh9.4/user/python/conda-env/pytorch-2.8-cu128/lib/python3.11/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+67 passed, 7 warnings in 10.65s

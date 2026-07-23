@@ -1,0 +1,238 @@
+{
+  "campaign": "gregor-pet2-omnifold",
+  "date": "2026-07-23",
+  "status": "complete-scoped-experimental-assessment",
+  "publication_g2_available_to_campaign": false,
+  "publication_promotion_permitted": false,
+  "source_commits": {
+    "campaign_base": "f7b7a77544f436afea212250254143083d846754",
+    "truth_frozen_pet2_matrix": "23512b8a6491eb93c2e364145fc36660414f4f17",
+    "tensorflow_ab": "039f0a45df4d9c2bcc10c300c43b9eed1cefee45",
+    "xps2_practical": "c7dd325dfb9a53263c88ee91efd882b128abbffb"
+  },
+  "code_contract": {
+    "local_tests": {
+      "total": 67,
+      "passed": 57,
+      "expected_optional_dependency_skips": 10,
+      "failures": 0
+    },
+    "delta_job": 20427267,
+    "delta_tests_passed": 67,
+    "delta_tests_skipped": 0,
+    "deterministic_smoke_jobs": [
+      20426848,
+      20426860
+    ],
+    "bitwise_reproducible_core_artifacts": true,
+    "truth_frozen_c_control_rerun": "pass"
+  },
+  "synthetic_matched_matrix": {
+    "evidence_class": "synthetic-fixture",
+    "training_events": 100000,
+    "measured_events": 100000,
+    "background_events": 10000,
+    "estimator_seeds": [
+      101,
+      202,
+      303
+    ],
+    "split_seed": 424242,
+    "iterations": 2,
+    "epochs_per_step": 8,
+    "batch_size": 512,
+    "all_arms_absolute_direction_gate_pass": false,
+    "arms": {
+      "C": {
+        "log_ratio_rmse_mean": 0.3092414267340722,
+        "log_ratio_rmse_population_std": 0.006403563780550388,
+        "global_ess_mean": 59588.36362549733,
+        "tail_ess_mean": 12399.624444903338,
+        "predicted_ratio_q99_mean": 3.1926279502501136,
+        "predicted_ratio_max_mean": 4.471966120848311,
+        "runtime_seconds_mean": 252.93968638560423,
+        "peak_gpu_memory_bytes": 745645056
+      },
+      "D-view": {
+        "log_ratio_rmse_mean": 0.3080494280132484,
+        "global_ess_mean": 59800.48011458154,
+        "tail_ess_mean": 12423.045114077775,
+        "predicted_ratio_q99_mean": 3.1527859069841964,
+        "predicted_ratio_max_mean": 4.401992890141994
+      },
+      "D-typed": {
+        "log_ratio_rmse_mean": 0.30852476595786227,
+        "global_ess_mean": 59822.27054671702,
+        "tail_ess_mean": 12445.762805908707,
+        "predicted_ratio_q99_mean": 3.160535245134822,
+        "predicted_ratio_max_mean": 4.425462461640115
+      },
+      "E-muon": {
+        "log_ratio_rmse_mean": 0.30969162111512594,
+        "global_ess_mean": 59640.00935788669,
+        "tail_ess_mean": 12419.47483248707,
+        "predicted_ratio_q99_mean": 3.17996459074217,
+        "predicted_ratio_max_mean": 4.451846920337803
+      },
+      "E-rich-no-charge": {
+        "log_ratio_rmse_mean": 0.309191470292158,
+        "global_ess_mean": 60016.35702753015,
+        "tail_ess_mean": 12499.16159173609,
+        "predicted_ratio_q99_mean": 3.1178489204021367,
+        "predicted_ratio_max_mean": 4.423400363317036
+      },
+      "E-rich": {
+        "log_ratio_rmse_mean": 0.3094937993256497,
+        "global_ess_mean": 59968.25171019012,
+        "tail_ess_mean": 12501.927423727078,
+        "predicted_ratio_q99_mean": 3.1217607424090517,
+        "predicted_ratio_max_mean": 4.431370883460557
+      }
+    },
+    "comparisons": {
+      "D-view_vs_C": {
+        "closure_rmse_improvement_percent": 0.3854589384781244,
+        "direction_reproduced_all_seeds": true,
+        "decision": "insufficiently-validated-absolute-closure-gate-failed"
+      },
+      "D-typed_vs_C": {
+        "closure_rmse_improvement_percent": 0.23174798531316831,
+        "direction_reproduced_all_seeds": false,
+        "decision": "insufficiently-validated-absolute-closure-gate-failed"
+      },
+      "E-muon_vs_C": {
+        "closure_rmse_improvement_percent": -0.14558023024544423,
+        "direction_reproduced_all_seeds": false,
+        "decision": "insufficiently-validated-absolute-closure-gate-failed"
+      },
+      "E-rich-no-charge_vs_E-muon": {
+        "closure_rmse_improvement_percent": 0.16149963023443265,
+        "direction_reproduced_all_seeds": false,
+        "decision": "insufficiently-validated-absolute-closure-gate-failed"
+      },
+      "E-rich_vs_E-rich-no-charge": {
+        "closure_rmse_improvement_percent": -0.0977805219548993,
+        "direction_reproduced_all_seeds": false,
+        "decision": "insufficiently-validated-absolute-closure-gate-failed"
+      }
+    }
+  },
+  "synthetic_representation_ablations": {
+    "muon_token_vs_base": {
+      "closure_rmse_improvement_percent": -0.7383048050990543,
+      "direction_reproduced_all_seeds": false,
+      "global_ess_degradation_percent": -0.9066443144729293,
+      "tail_ess_degradation_percent": -1.258238819410358,
+      "peak_gpu_memory_bytes": 787902976,
+      "decision": "insufficiently-validated-absolute-closure-gate-failed"
+    },
+    "overflow_vs_base": {
+      "closure_rmse_improvement_percent": 0.0654857591136261,
+      "direction_reproduced_all_seeds": true,
+      "global_ess_degradation_percent": 0.02014504689826722,
+      "tail_ess_degradation_percent": 0.01591330888011853,
+      "decision": "insufficiently-validated-absolute-closure-gate-failed"
+    }
+  },
+  "tensorflow_current_engine_ab": {
+    "evidence_class": "synthetic-fixture",
+    "jobs": [
+      20427122,
+      20427123,
+      20427124
+    ],
+    "A_recoil_log_ratio_rmse_mean": 0.31525036201213,
+    "B_full_event_log_ratio_rmse_mean": 0.31354583442909656,
+    "B_vs_A_closure_rmse_improvement_percent": 0.5406901270958351,
+    "B_vs_A_direction_reproduced_all_seeds": false,
+    "B_absolute_direction_gate_pass_all_seeds": false,
+    "A_global_ess_mean": 57650.267902545726,
+    "B_global_ess_mean": 57761.873326050394,
+    "A_predicted_ratio_max_mean": 5.496756871541341,
+    "B_predicted_ratio_max_mean": 5.907353242238362,
+    "B_vs_A_decision": "insufficiently-validated-absolute-closure-gate-failed",
+    "b_to_c_architecture_claim_permitted": false,
+    "caveats": [
+      "TensorFlow uses w_truth for both steps in this experimental harness",
+      "TensorFlow and PyTorch splits are not identical",
+      "TensorFlow cap-sensitivity telemetry is unavailable"
+    ]
+  },
+  "xps2_practical": {
+    "evidence_class": "recoil-input-pilot",
+    "jobs": [
+      20427079,
+      20427080,
+      20427081
+    ],
+    "inventory_rows": 49152885,
+    "requested_mc_rows": 100000,
+    "selected_mc_rows_after_truth_gate": 99995,
+    "truth_gate_dropped_rows": 5,
+    "selected_data_rows": 50000,
+    "push_ess_fraction_mean": 0.893052793439209,
+    "push_q99_mean": 7.057845968892906,
+    "push_max_mean": 8.27447605639424,
+    "pull_ess_fraction_mean": 0.7977779383204039,
+    "pull_q99_mean": 11.048221788005304,
+    "pull_max_mean": 30.17357117925456,
+    "cap_saturated_count": 0,
+    "cap10_vs_cap30_max_relative_ess_shift": 0.0,
+    "runtime_seconds_mean": 68.15718701963003,
+    "peak_gpu_memory_bytes": 745567232,
+    "closure_available": false,
+    "architecture_comparison_permitted": false,
+    "contract_downgrades": [
+      "w_truth proxy for unavailable w_reco",
+      "precomputed target without literal background rows",
+      "historical zero-padding-derived mask",
+      "no full-event globals, detector views, or object types"
+    ]
+  },
+  "public_gregor_dataset": {
+    "evidence_class": "public-gregor-dataset",
+    "revision": "32e2f5040ff2678a2ef7ca1bc0b450b324f4fd83",
+    "events": 760041,
+    "stored_tokens": 8495266,
+    "median_tokens_per_event": 9,
+    "maximum_tokens_per_event": 32,
+    "raw_type_zero_count": 534562,
+    "raw_type_zero_with_nonzero_feature2": 534562,
+    "omnifold_eligible": false
+  },
+  "compute": {
+    "delta_gpu_timed_jobs": 49,
+    "delta_gpu_completed_jobs": 47,
+    "delta_gpu_expected_fail_closed_failures": 2,
+    "delta_a100_seconds": 11505,
+    "delta_a100_hours": 3.1958333333333333,
+    "fixed_matrix_a100_hours": 1.8280555555555555,
+    "tensorflow_ab_a100_hours": 0.52,
+    "xps2_practical_a100_hours": 0.13083333333333333,
+    "maximum_observed_training_peak_gpu_memory_bytes": 787902976,
+    "local_machine": "Apple M-series, 10 CPU cores, 16 GiB RAM",
+    "local_heavy_training": false
+  },
+  "decisions": {
+    "publication_default": "retain-current-tensorflow-keras-full-event-architecture-pending-g2",
+    "pytorch_pet2_backend": "retain-opt-in-experimental-only",
+    "detector_view": "neutral-at-pilot-scale-but-insufficiently-validated; defer-promotion",
+    "typed_reconstructed_object_tokens": "defer-until-symmetric-data-signal-background-dump-and-g2-validation",
+    "richer_global_feature_block": "defer; synthetic-effects-subpercent-inconsistent-and-absolute-gate-failed",
+    "distinguished_muon_token": "do-not-adopt; worsened-mean-synthetic-closure-and-lacks-physical-real-input-contract",
+    "overflow_aggregate": "neutral-at-pilot-scale; defer-until-pre-truncation-inventory-exists",
+    "generic_pretraining": "defer-unavailable-unlicensed-unhashed-and-dimensionally-unverified",
+    "minerva_finetuned_pretraining": "defer-unavailable-unlicensed-unhashed-and-dimensionally-unverified",
+    "truth_derived_reco_types_or_labels": "exclude-permanently"
+  },
+  "canonical_products": {
+    "synthetic_matrix": "synthetic_matched/aggregate.json",
+    "representation_ablations": "synthetic_matched/representation_aggregate.json",
+    "tensorflow_ab": "tf_ab_matched/aggregate.json",
+    "xps2_practical": "xps2_practical/aggregate.json",
+    "external_diagnostics": "external_diagnostics_summary.json",
+    "deterministic_gpu_smoke": "deterministic_gpu_smoke_reproducibility.json",
+    "truth_freeze_c_control": "c_control_truth_freeze_reproducibility.json",
+    "assessment": "../../../docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md"
+  }
+}

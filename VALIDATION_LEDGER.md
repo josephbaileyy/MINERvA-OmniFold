@@ -754,3 +754,89 @@ comes from historical zero padding.
 
 Canonical summary:
 `nd-unfolding/pet2_torch/products/external_diagnostics_summary.json`.
+
+## 2026-07-23 Gregor PET2 matched pilot campaign — COMPLETE, NO PROMOTION
+
+The corrected comparison source `23512b8` freezes one fingerprinted Step-2
+truth representation across every reco-side arm. Delta job `20427267` passed
+all 67 PyTorch/safetensors/Gate-2 tests with zero skips. Fixed C reruns
+`20427268`--`20427270` reproduced their pre-fix push/pull arrays and Step-1/2
+model safetensors bitwise for all three seeds; only the intended recipe/truth
+provenance changed.
+
+The matched synthetic matrix used 100,000 signal, 100,000 measured and 10,000
+background rows; split seed 424242; estimator seeds 101/202/303; two
+OmniFold iterations; eight epochs/step; batch 512; and equal 1,214,977-
+parameter Step models. Mean log-ratio RMSE (population seed spread) was:
+
+- C `0.309241 (0.006404)`;
+- D-view `0.308049 (0.006175)`;
+- D-typed `0.308525 (0.005565)`;
+- E-muon `0.309692 (0.005462)`;
+- E-rich-no-charge `0.309191 (0.004961)`;
+- E-rich `0.309494 (0.005182)`.
+
+Relative mean closure changes against the declared parent were D-view
+`+0.3855%`, D-typed `+0.2317%`, E-muon `-0.1456%`,
+E-rich-no-charge `+0.1615%`, and E-rich charge increment `-0.0978%`.
+Only D-view repeated a favorable direction across all seeds. Every arm failed
+the preregistered absolute composite direction gate because log-ratio RMSE
+exceeded 0.25, although mean maximum projection relative-L1 was
+`0.1017--0.1064`, inside its 0.25 subgate. No ratio saturated; cap-10 and
+cap-30 inference ESS were identical. All relative global and declared-tail
+ESS changes were below 1%, far inside the 10% tolerance. No arm reached the
+strictly-greater-than-5% benefit threshold.
+
+The tagged C-parent variants gave:
+
+- distinguished muon token: RMSE `0.311525`, a `-0.7383%` mean change versus
+  base, inconsistent across seeds, peak GPU memory 787,902,976 B;
+- overflow aggregate: RMSE `0.309039`, a `+0.06549%` change repeated across
+  seeds, global/tail ESS degradation `0.0201/0.0159%`.
+
+Both variants failed the same absolute gate. The correct evidence verdict for
+all D/E/token/overflow comparisons is
+`insufficiently-validated-absolute-closure-gate-failed`; none is promoted.
+Canonical products:
+`nd-unfolding/pet2_torch/products/synthetic_matched/{aggregate,representation_aggregate}.json`.
+
+The current-engine TensorFlow matched synthetic A/B jobs
+`20427122`--`20427124` gave recoil-A versus full-event-B mean RMSE
+`0.315250` versus `0.313546`, a `+0.5407%` change. Direction was not
+reproduced across seeds and B failed the absolute gate. Mean global ESS was
+`57,650.27` versus `57,761.87`; mean maximum ratio was `5.497` versus
+`5.907`. The B tail remained within the preregistered 10% comparison bound,
+but the harness has no cap scan, uses one MC weight convention, and does not
+share exact splits with PyTorch. A B-versus-C architecture claim is forbidden.
+Canonical product:
+`nd-unfolding/pet2_torch/products/tf_ab_matched/aggregate.json`.
+
+The fixed-selection XPS2 recoil-input pilots `20427079`--`20427081` requested
+100,000 MC rows, retained 99,995 after the truth gate, and used 50,000 data
+rows for two iterations and two epochs/step. Across seeds, push ESS fraction
+was `0.893053`, q99/max `7.05785/8.27448`; pull ESS fraction was
+`0.797778`, q99/max `11.0482/30.1736`. No ratio saturated and cap-10 versus
+cap-30 changed no inference ESS. Mean engine runtime was `68.157 s`, mean
+step throughput `14,864 rows/s`, and peak GPU memory 745,567,232 B. This is
+not closure or architecture evidence: `w_truth` proxies missing `w_reco`,
+the target is precomputed without literal background rows, the mask is
+historical zero-padding-derived, and full-event globals/types are absent.
+Canonical product:
+`nd-unfolding/pet2_torch/products/xps2_practical/aggregate.json`.
+
+Including fail-closed diagnostics, two expected failed harness probes, the
+quarantined pre-fix comparisons, and all valid pilots, 49 jobs accumulated
+11,505 A100-seconds (`3.195833 A100-hours`); 47 completed and two failed
+closed. The fixed 24-job matrix used `1.828056 A100-hours`, TensorFlow A/B
+`0.520000`, and XPS2 `0.130833`. No campaign job remains active or pending;
+unrelated job `20416508` was never modified.
+
+**Decision:** retain the current TensorFlow/Keras full-event estimator as the
+publication default; retain the PyTorch backend only as opt-in experimental
+code. Defer typed tokens, rich globals, overflow and pretrained/fine-tuned
+initialization until a symmetric reco data/signal/background dump, a licensed
+hash-pinned compatible checkpoint where applicable, and literal publication
+G2 validation exist. Do not adopt the distinguished muon token. This campaign
+does not establish that the current architecture is intrinsically superior.
+Canonical campaign summary:
+`nd-unfolding/pet2_torch/products/final_campaign_summary.json`.

@@ -2,13 +2,13 @@
   "campaign": "gregor-pet2-omnifold",
   "date": "2026-07-23",
   "evidence_class": "code-contract",
-  "status": "local-code-contract-pass-deterministic-delta-smoke-pass",
+  "status": "local-and-truth-frozen-delta-code-contract-pass",
   "source_base_commit": "f7b7a77544f436afea212250254143083d846754",
   "implementation": {
     "backend": "independent-pytorch-pet2-family-experimental",
     "legacy_default_changed": false,
     "publication_g2_loaded": false,
-    "training_executed": "bounded-diagnostic-smoke-only",
+    "training_executed": "bounded synthetic and downgraded recoil-input pilots",
     "g2_validation_claim": false
   },
   "local_verification": {
@@ -34,11 +34,11 @@
     "failure_scope": "seven pre-existing hard-coded /pscratch dependencies and one missing scikit-learn dependency"
   },
   "delta_focused_suite": {
-    "job": 20426952,
-    "source_commit": "491dcdf2f5bc9e2f82bb828ecb1646819fe1b7c3",
+    "job": 20427267,
+    "source_commit": "23512b8a6491eb93c2e364145fc36660414f4f17",
     "torch": "2.8.0+cu128",
     "gpu": "NVIDIA A100-SXM4-40GB",
-    "passed": 65,
+    "passed": 67,
     "skipped": 0,
     "failures": 0,
     "warnings": 7
@@ -54,13 +54,13 @@
     "pot_scale_binding": "pass",
     "periodic_truth_phi": "pass",
     "large_compressed_g2_fail_closed": "pass",
-    "bounded_xps2_memmap": "pass-on-fixture-real-census-pending",
-    "trusted_public_pb_weights_only": "pass-on-contract-runtime-census-pending",
+        "bounded_xps2_memmap": "pass-on-49,152,885-row-inventory-three-seed-pilot",
+        "trusted_public_pb_weights_only": "pass-on-760,041-event-runtime-census",
     "fixed_logit_tf_torch_ratio_equivalence": "pass",
     "validation_test_weighted_bce_receipts": "pass-in-delta-smoke",
     "cap_sensitivity_telemetry": "pass-in-delta-smoke",
     "deterministic_attention_backend": "pass-bitwise-two-job-delta-smoke",
-    "reco_ablation_truth_isolation": "pass-common-fingerprinted-truth-manifest"
+        "reco_ablation_truth_isolation": "pass-common-fingerprinted-truth-manifest-and-67-test-delta-suite"
   },
   "delta_smoke": {
     "status": "pass",

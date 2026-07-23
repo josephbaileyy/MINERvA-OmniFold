@@ -5,10 +5,11 @@ verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
 Gregor PET2 assessment (2026-07-23): isolated PyTorch backend passes the local
-code-contract gate and a bitwise two-job Delta A100 smoke; matched
-runtime/ablation evidence is in progress. The public-data census and bounded
-xps2 recoil smoke passed as diagnostics only; no architecture or
-representation change is yet authorized.
+and complete Delta code-contract gates plus a bitwise two-job A100 smoke. The
+truth-frozen matched synthetic, TensorFlow A/B, and bounded XPS2 pilots are
+complete: no arm passed the absolute closure gate and no architecture or
+representation promotion is authorized. Keep the PyTorch path experimental;
+publication choice remains deferred to literal G2 validation.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

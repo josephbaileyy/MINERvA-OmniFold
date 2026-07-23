@@ -316,3 +316,47 @@ Append-only orchestration and experimental ledger for branch
   for every arm. Login-safe regressions compare every truth tensor exactly and
   an optional runtime test checks the persisted receipt. `KNOWN_ISSUES.md`
   #21 indexes the trap.
+
+## 2026-07-23 — Corrected comparison execution and result freeze
+
+- Normal-partition jobs remained priority-blocked after the first diagnostic
+  wave. Read-only partition inspection identified the one-hour
+  `gpuA100x4-interactive` Slurm partition with preemption disabled. Only this
+  campaign's queued jobs were moved there; every training command still ran
+  as a one-GPU Slurm job rather than on the login node.
+- Fixed contract job `20427267` passed 67/67 tests from clean commit
+  `23512b8`, including persisted truth-arm equality.
+- Fixed matched matrix jobs `20427268`--`20427296` (non-contiguous Slurm IDs,
+  24 total) all completed `0:0`. They cover C, D-view, D-typed, E-muon,
+  E-rich-no-charge, E-rich, distinguished-muon-token and overflow arms at
+  estimator seeds 101/202/303.
+- Every reco arm used the same truth-arm fingerprint
+  `c514d4379eab4e1afdc1327984201dfb1816102263547eacfe3f7de301db90a0`.
+  Fixed C reproduced all pre-fix push/pull arrays and Step-1/2 model
+  safetensors bitwise. Its extraction array values and indices also match;
+  only the intended recipe fingerprint changed.
+- The aggregate rejected every arm for publication promotion because the
+  absolute closure gate failed. All parent-relative mean closure changes were
+  below one percent. D-view alone repeated a small favorable direction across
+  seeds; D-typed and all global/muon comparisons were not direction-stable.
+  The muon-token mean moved adversely; overflow was practically neutral.
+- TensorFlow current-engine A/B jobs `20427122`--`20427124` all completed.
+  Full-event B did not pass the absolute gate or repeat a benefit across all
+  seeds. The aggregate explicitly forbids a B-versus-C architecture claim.
+- XPS2 practical jobs `20427079`--`20427081` completed on a fixed 100k/50k
+  selection. Five MC rows were removed by the truth gate. No cap saturated
+  across seeds, but missing `w_reco`, literal backgrounds, full-event fields
+  and closure keep this as recoil-input engine evidence only.
+- Result artifacts staged locally include all 24 fixed summary/receipt pairs,
+  all 52 matrix/aggregate logs, three TensorFlow per-seed products and logs,
+  three XPS2 summary/receipt pairs and logs, both final aggregates, the
+  corrected contract log, and a machine-readable campaign summary. Models and
+  large weight arrays remain on the isolated Delta output volume; committed
+  receipts bind their hashes.
+- Campaign accounting: 49 jobs accrued GPU time, 47 completed and two early
+  harness probes failed closed; 11,505 A100-seconds (3.195833 A100-hours).
+  The fixed matrix used 1.828056 A100-hours, TensorFlow A/B 0.520000, and
+  practical XPS2 0.130833. The Mac ran only login-safe tests and aggregation.
+- `squeue -u jbailey2` after the result freeze contains only unrelated job
+  `20416508`. The campaign has no active or pending job and has not modified
+  that unrelated job or checkout.

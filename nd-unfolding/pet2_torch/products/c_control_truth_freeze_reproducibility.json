@@ -1,0 +1,62 @@
+{
+  "campaign": "gregor-pet2-omnifold",
+  "date": "2026-07-23",
+  "status": "pass",
+  "purpose": "Verify that the truth-frozen Step-2 repair changes provenance for the C control but not its numerical training products.",
+  "old_source_commit": "491dcdf2f5bc9e2f82bb828ecb1646819fe1b7c3",
+  "fixed_source_commit": "23512b8a6491eb93c2e364145fc36660414f4f17",
+  "fixed_truth_arm_fingerprint": "c514d4379eab4e1afdc1327984201dfb1816102263547eacfe3f7de301db90a0",
+  "runs": [
+    {
+      "seed": 101,
+      "old_job": 20426957,
+      "fixed_job": 20427268,
+      "conditional_closure_equal": true,
+      "weights_push_equal": true,
+      "weights_push_sha256": "c71427fb913e4a4769a735d0b89a86072c16a93013b3e74721e27ec83329a417",
+      "weights_pull_equal": true,
+      "weights_pull_sha256": "13338c1bb9a7b2c615d3f6358eb959f0451518a1eb82c7136e750bb9751aad52",
+      "step1_model_equal": true,
+      "step1_model_sha256": "6f2a8d212b7c66c920fff67561e0dad64f103112a7a91916c9a5949e2ca8f4bb",
+      "step2_model_equal": true,
+      "step2_model_sha256": "624c8f06814d52cb55c3582f576905818f9479e85c6775d335706a04139a6daa",
+      "extraction_weight_and_indices_equal": true,
+      "recipe_fingerprint_changed_as_expected": true
+    },
+    {
+      "seed": 202,
+      "old_job": 20426958,
+      "fixed_job": 20427269,
+      "conditional_closure_equal": true,
+      "weights_push_equal": true,
+      "weights_push_sha256": "ea58af0c0d0835758185b04b7c4871265e654f634810bd208b32ce8150924778",
+      "weights_pull_equal": true,
+      "weights_pull_sha256": "cc7d1004f64130c819f125939a8100b5fb376bc36feaa35fcab38420531b34d5",
+      "step1_model_equal": true,
+      "step1_model_sha256": "ea144dac7202db5150412373f6d03c0ceded09fc8f113f6accf004d4baf20280",
+      "step2_model_equal": true,
+      "step2_model_sha256": "7bd8e0c7f55acc6e4fde3a3f9cb200bc87798e23fd2a333b1fe9cf569a8f2144",
+      "extraction_weight_and_indices_equal": true,
+      "recipe_fingerprint_changed_as_expected": true
+    },
+    {
+      "seed": 303,
+      "old_job": 20426959,
+      "fixed_job": 20427270,
+      "conditional_closure_equal": true,
+      "weights_push_equal": true,
+      "weights_push_sha256": "5b238616bff24efbe7a561125b69a5d2913543b65053f96c61a62356bb300cca",
+      "weights_pull_equal": true,
+      "weights_pull_sha256": "415cee346eff8121aa4ae7cddf8cb4f3ddc2ef1e5dac08fdfda0105c911d47f9",
+      "step1_model_equal": true,
+      "step1_model_sha256": "38e40b5365c49fdfc3b00629ad6d46ed702fd809d6aa9dda758e94892d49dc54",
+      "step2_model_equal": true,
+      "step2_model_sha256": "76cf4596e1405957d912f50f775a8077b2548d7617a9f68276ee30ebac90c852",
+      "extraction_weight_and_indices_equal": true,
+      "recipe_fingerprint_changed_as_expected": true
+    }
+  ],
+  "comparison_claim": "The C control is numerically unchanged, but all fixed comparison arms must still use the common fixed-source rerun.",
+  "g2_validation_claim": false,
+  "publication_promotion_permitted": false
+}
