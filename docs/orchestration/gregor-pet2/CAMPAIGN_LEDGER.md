@@ -798,3 +798,45 @@ Append-only orchestration and experimental ledger for branch
   fail-closed local aggregate, canonical evidence updates, and post-result
   auditor rounds per handoff steps 1–8. Unrelated job `20434188` untouched; no
   provider turn was dispatched.
+
+## 2026-07-24 — interim-root turn 2: recovery matrix verified locally; BLOCKED on Delta SSH
+
+- This is orchestration bookkeeping, not the result-bearing commit. Numbers
+  below are verified locally and reproducibly but are NOT yet promoted to
+  `VALIDATION_LEDGER.md`; the result-bearing commit (handoff step 6) awaits the
+  Delta accounting cross-check and staged logs.
+- The 06:15Z waker deadline `gregor-pet2-conditional-array-20441096-deadline`
+  fired and resumed the Codex Personal root, which FAILED (`rc=1`) on a
+  network/DNS error to chatgpt.com (not capacity) and is exhausting its bounded
+  retries harmlessly. The interim Claude School root (session `54080160`) drove
+  the adjudication via its self-paced loop, waking at 06:20Z.
+- The 06:15Z Codex turn ran ~6 min before its API stream died and, over the
+  still-live control master, had staged the full inventory to
+  `nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096`
+  (uncommitted). Treated as interrupted-turn output and verified, not trusted:
+  exactly 45 unique cell summaries and 90 arm receipts; single frozen truth
+  (`truth_tensor a717d31d…`, `truth_arm c514d437…`); provenance to `ba28bed`
+  in all files. An independent re-run of `pet2_torch.aggregate_conditional_stress`
+  passed all fail-closed gates (`rc=0`) and reproduced the staged aggregate
+  BITWISE (`aggregate_fingerprint d244c7b6878258ea57d77b392f3fcb8c4b2b6e04fc6d17ced97361c7c3537f93`),
+  `evidence_class synthetic-fixture`, `g2_validation_claim=false`,
+  `publication_promotion_permitted=false`, `arm_result_count=90`.
+- Scientific outcome (local, pending result-bearing commit): all five families
+  return `fail-synthetic-channel-or-control`; `all_families_passed=false`. Each
+  enriched carrier is direction-favorable in all three seeds with mean push
+  log-ratio RMSE improving ~27–28% (parent ~0.431 → enriched ~0.31), but every
+  family falls just short of the preregistered ≥30% improvement / enriched-RMSE
+  ≤0.25 gate. Negative controls (carrier-shuffle, unity-sham) pass; no cap
+  saturation; ESS/projection sub-gates pass. Conservative/null-within-fixture;
+  no feature adoption or publication promotion is authorized.
+- BLOCKER: the Delta SSH control master
+  (`/Users/josephbailey/.ssh/controlmasters/delta-codex2.sock`) is dead (socket
+  file absent, master process gone). Re-auth needs NCSA Kerberos + Duo (user).
+  Without it the handoff-required bounded `sacct` accounting cross-check for all
+  45 elements (step 1) and staging of the 90 stdout/stderr logs (step 3) cannot
+  be done, so the result-bearing commit and auditor dispatch are withheld.
+  `state/waker-gregor-pet2/BLOCKED-ON-USER.json` records the ask and silences the
+  futile Codex idle-guard wakes. The self-paced Claude loop is stopped; the
+  campaign resumes when the user re-establishes SSH and re-engages session
+  `54080160`. Durable worker UUIDs unchanged; unrelated job `20434188` untouched;
+  no reset credit consumed.
