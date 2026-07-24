@@ -869,3 +869,39 @@ Append-only orchestration and experimental ledger for branch
   `agentctl.py send` for post-result adversarial review (handoff step 7);
   repair findings and finalize the assessment (step 8). Durable worker UUIDs
   unchanged; unrelated job `20434188` untouched; no reset credit consumed.
+
+## 2026-07-24 — interim-root turn 4: post-result auditor round COMPLETE
+
+- A pre-dispatch usage snapshot returned `gate_ok=true` with Codex Personal at
+  0% (exhausted), Codex School 91%, claude-school cache missing (headroom
+  unknown but available), agy unknown. Both post-result reviews were sent to
+  the preserved auditor UUIDs via `agentctl.py send`; no role was started or
+  replaced and no reset credit was consumed.
+- `omnifold_contract_auditor` (`0d8740dd-…`, claude-school) returned **ACCEPT**
+  with no blocker/major/minor. It independently re-ran the fail-closed
+  aggregator (bitwise `d244c7b6…` match), tamper-tested the gates (drop-cell,
+  dirty, mixed-source, mutated-truth all correctly REJECT), confirmed estimator
+  code byte-identical to `ba28bed`, verified all 45 exclusivity certificates
+  against a single frozen truth Step-2, full-order extraction, correct negative
+  controls, and non-promotional containment across all 137 products/docs; its
+  prior overflow-conservation minor is resolved. Raw response:
+  `docs/orchestration/runs/omnifold_contract_auditor/20260724T114445Z-send-5b62a166.json`.
+- `evidence_ablation_auditor` (`4be5058b-…`, agy) returned **PASS** with no
+  findings: gate fidelity (no post-hoc threshold change), result consistency,
+  controls validate the sub-threshold signal as a genuine structural effect,
+  correct evidence containment. Its 100k pilot-power dissent is preserved and
+  reinforced. Raw response:
+  `docs/orchestration/runs/evidence_ablation_auditor/20260724T114447Z-send-107cce52.txt`.
+- No findings required repair, so no revision/re-send was needed; these reviews
+  are the final reassessment. One OPTIONAL, explicitly non-gating contract
+  suggestion — compute (vs. assert) three structurally-guaranteed certificate
+  booleans (`parent_analytic_carrier_auc`, `truth_modified_by_carrier`,
+  `bookkeeping_excluded_from_model_tensors`) — is DEFERRED as future hardening
+  because it would require re-running the 45-cell matrix; the auditor already
+  independently confirmed those facts hold, so the committed result is
+  unaffected.
+- Assessment finalized (§9 review-complete note, §12 post-result round, §13
+  decisions unchanged). VALIDATION_LEDGER/STATUS pending-review notes updated to
+  ACCEPT/PASS. The conservative no-promotion recommendation stands and is better
+  supported. Durable worker UUIDs unchanged; unrelated job `20434188` untouched;
+  no reset credit consumed.

@@ -23,8 +23,9 @@ enriched carrier was direction-favorable in all three seeds with ~27–28% push
 RMSE improvement (parent ~0.431 → enriched ~0.31) but fell short of the ≥30% /
 ≤0.25 threshold; both negative controls (unity-sham, carrier-shuffle) passed.
 This is `synthetic-fixture` channel-capacity evidence only; no feature adoption
-or publication promotion is authorized. Post-result auditor review is pending.
-Verified numbers live in `../VALIDATION_LEDGER.md`.
+or publication promotion is authorized. Post-result auditor review is COMPLETE
+(contract ACCEPT, evidence PASS, no findings; 100k pilot-power dissent
+preserved). Verified numbers live in `../VALIDATION_LEDGER.md`.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

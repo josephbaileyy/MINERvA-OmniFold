@@ -398,8 +398,9 @@ This is the intended clean interpretation: even a perfectly exclusive synthetic
 conditional is only partially and sub-threshold transmissible through this
 harness at the 100k-event pilot scale. It establishes bounded harness
 channel capacity, not that MINERvA data contains such a conditional, and it
-does not lift the no-promotion decision. Post-result adversarial review by the
-contract and evidence auditors is pending and will be recorded in §12.
+does not lift the no-promotion decision. Post-result adversarial review is
+complete (contract auditor ACCEPT, evidence auditor PASS, no findings; dissent
+preserved), recorded in §12.
 
 ### Baseline and cross-framework limits
 
@@ -500,6 +501,39 @@ Both same-session final reassessments returned **PASS** on revision
 `e530536`. No additional correction was requested. The 100k pilot-power
 objection remains the sole unresolved dissent and is carried into the G2 next
 steps.
+
+### Post-result round — feature-conditional stress matrix 20441096 (2026-07-24)
+
+Both durable auditors reviewed the committed recovery result (commit
+`77c57b5`) after execution. The **contract auditor returned ACCEPT** with no
+blocker, major, or load-bearing minor. It independently re-ran the fail-closed
+aggregator (bitwise fingerprint match), tamper-tested the gates (drop-cell,
+dirty, mixed-source, and mutated-truth inputs all correctly rejected),
+confirmed the estimator code is byte-identical to `ba28bed`, verified all 45
+per-cell exclusivity certificates against a single frozen truth Step-2, full-
+order extraction, correct negative controls, and non-promotional evidence
+containment across all 137 products and docs. Its earlier overflow-conservation
+minor is resolved by the split
+`synthetic_declared_overflow_energy_matches_aggregate_token` /
+`real_pretruncation_overflow_conservation_claim=false` keys. Its only remaining
+suggestion is optional and explicitly non-gating: compute (rather than assert)
+three structurally-guaranteed certificate booleans so each cell is
+self-verifying independent of the aggregator's cross-matrix footing gate. This
+is deferred as future hardening (it would require re-running the matrix) and
+recorded in the campaign ledger; it does not affect the committed result, whose
+certificate facts the auditor independently confirmed.
+
+The **evidence auditor returned PASS** with no findings. It confirmed gate
+fidelity (no post-hoc threshold change when the outcome landed at ~28% and
+~0.31), result consistency, that the passing negative controls establish the
+sub-threshold signal as a genuine structural effect rather than a leak, and
+that evidence containment is correct. Its standing dissent is preserved and, if
+anything, reinforced: at the 100k-event pilot scale "no channel-capacity pass"
+cannot be distinguished from "true partial capacity too small to resolve," so
+percent-level representation questions still require higher-statistics literal-
+G2 evaluation. Neither verdict lifts the no-promotion recommendation; both find
+it better supported, since even a perfectly exclusive injected conditional was
+only partially transmissible through this harness at pilot scale.
 
 ## 13. Final include / exclude / defer decisions
 

@@ -936,5 +936,8 @@ matched ESS, and carrier-shuffle with carrier AUC within 0.02 of chance and
 sub-threshold transmits an exclusively-carried conditional; this is synthetic
 channel-capacity evidence only, not evidence that MINERvA data contains such a
 conditional, and it authorizes no feature adoption or publication promotion.
-Post-result adversarial auditor review pending. Products:
+Post-result adversarial review COMPLETE: contract auditor ACCEPT (independently
+reproduced the aggregate bitwise and tamper-tested the fail-closed gates),
+evidence auditor PASS (gate fidelity confirmed; 100k pilot-power dissent
+preserved); no BLOCKER/MAJOR/MINOR. Products:
 `nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/{aggregate.json,result_summary.json,delta_inspection_receipt.json,sacct_20441096.txt,runs/,logs/}`.
