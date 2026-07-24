@@ -754,3 +754,47 @@ Append-only orchestration and experimental ledger for branch
   migration to a Claude root only if that Claude session's UUID is
   authoritatively known and no resume is in flight; it forbids guessing or
   disarming the sole wake path.
+
+## 2026-07-24 — Claude School interim-root turn 1: state recheck, wake-path decision
+
+- The interim Claude School root took over per
+  `CLAUDE_SCHOOL_ROOT_HANDOFF_20260724.md`. Acting session is
+  `54080160-df7b-4c8a-85bf-104a6f654660` under `CLAUDE_CONFIG_DIR`
+  `~/.claude-school`, identified authoritatively from the harness
+  `CLAUDE_CODE_SESSION_ID` and its live-appended transcript, not guessed. No
+  role was started, adopted, migrated, or replaced; all four durable worker
+  UUIDs are unchanged and the independent `omnifold_contract_auditor`
+  (`0d8740dd-…`, same `~/.claude-school` home) was not contacted.
+- Rechecked live state: branch head `3b21145`, worktree clean; the
+  result-bearing source is still immutable `ba28bed`. Recovery array
+  `20441096` was in flight; deadline watch
+  `gregor-pet2-conditional-array-20441096-deadline` is armed for
+  `2026-07-24T06:15:00Z`. The Gregor-PET2 waker loop is live and healthy on
+  this Mac (PID 16103, config `state/waker-gregor-pet2/config.json`, last tick
+  `2026-07-24T05:28:50Z`). No resume is in flight (last event
+  `evt-…-20439948-deadline` done `rc=0` at `05:06:49Z`). Delta not polled;
+  the single bounded inspection is reserved for the fired-watch adjudication.
+- Usage snapshot at `2026-07-24T05:32:02Z` returned `gate_ok=true`. Codex
+  Personal fell from 2% to **1%** seven-day remaining (reset unchanged
+  `2026-07-30T04:09:42Z`); no reset credits exist or were consumed. Claude
+  capacity remains cache-unknown and agy capacity remains unavailable.
+- The Gregor-PET2 waker root still points at Codex Personal thread
+  `019f8f02-144a-7050-b9d9-d73818ab4cd3`, so the 06:15Z watch would auto-wake
+  Codex Personal at 1%. A *safe automatic* migration to a Claude waker root
+  was judged not cleanly provable in advance: the `claude-school` profile
+  carries a read-only `allowedTools` set (`Read,Glob,Grep,WebSearch,WebFetch`
+  — the same policy that keeps the auditor read-only), so a waker-driven
+  resume under it would likely be unable to run Bash/git/Edit for the
+  adjudication; making it full-tool needs `profiles.json`/`usage-policy.json`
+  edits with usage-gate risk; the self-resume path cannot be validated from
+  within the session; and an interactive/headless collision on session
+  `54080160` is possible.
+- Per the handoff fallback and with explicit user authorization, the campaign
+  will use a **manual Claude School drive** for the recovery adjudication. The
+  armed Codex-rooted watch is left intact as a non-destructive backstop (never
+  disarm the only wake path); no waker or profile config was changed. If the
+  06:15Z watch auto-fires and the Codex root does resume, it should DEFER —
+  the interim Claude root drives the single bounded Delta inspection,
+  fail-closed local aggregate, canonical evidence updates, and post-result
+  auditor rounds per handoff steps 1–8. Unrelated job `20434188` untouched; no
+  provider turn was dispatched.
