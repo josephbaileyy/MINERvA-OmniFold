@@ -495,3 +495,139 @@ Append-only orchestration and experimental ledger for branch
   inventory across all families, and signal/unity-sham/carrier-shuffle modes.
   The distinguished-muon test is explicitly an additive relational-token
   channel test, not a same-information pure-tokenization claim.
+
+## 2026-07-23 — continuation implementation development checks
+
+- The live usage snapshot at `2026-07-23T23:58:17Z` returned
+  `gate_ok=true`. Codex personal changed from 30% to 28% seven-day remaining
+  with reset still `2026-07-30T04:09:42Z`; Codex school remains at 0% until
+  `2026-07-24T02:51:01Z`; no reset credits exist. Missing Claude caches and
+  unavailable agy percentages remain explicit. No provider turn was
+  dispatched from the exhausted Codex-school account.
+- Two deliberately downgraded development jobs ran from the isolated dirty
+  checkout
+  `/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-dev`, never from the
+  unrelated active checkout and never into an evidence aggregate. Job
+  `20434544` completed the full PyTorch PET2 suite: 74/74 tests passed in
+  11.935 s. Job `20434545` completed a 10k-event, one-iteration,
+  two-epoch view/signal smoke; its receipt labels the recipe
+  `smoke_or_custom_downgrade` and forbids comparison and publication claims.
+  Both jobs completed `0:0` in 22 s on one A100 each.
+- The smoke mechanically confirmed exact paired parent tensors, parent
+  analytic carrier AUC 0.5, enriched carrier AUC 1.0, common frozen truth
+  hash, no cap saturation, and executable parent/enriched training. Its
+  numerical closure is development evidence only and is excluded from the
+  frozen 45-run matched matrix.
+- The Mac reran 74 PET2 tests: 64 passed and the 10 PyTorch/safetensors tests
+  skipped as expected because those optional dependencies are absent. Python
+  compilation and `git diff --check` passed. No memory- or compute-heavy
+  local experiment was launched.
+- A later pre-wait snapshot at `2026-07-24T00:08:44Z` remained
+  `gate_ok=true`; Codex personal changed from 28% to 24% seven-day remaining,
+  its reset stayed `2026-07-30T04:09:42Z`, Codex school remained 0% until
+  `2026-07-24T02:51:01Z`, and no reset credits existed. Root therefore
+  stopped spending provider turns during the dependency wait and armed the
+  repository waker for the exact school reset.
+
+## 2026-07-24 — continuation pre-execution adversarial code reviews
+
+- The dispatch-wave usage snapshot at `2026-07-24T01:05:40Z` returned
+  `gate_ok=true`: Codex personal had 23% seven-day remaining; the preserved
+  Codex-school implementation account remained at 0% until its unchanged
+  `2026-07-24T02:51:01Z` reset; no reset credits existed. Claude capacities
+  remained cache-unknown and agy capacity remained API-unknown.
+- The same `evidence_ablation_auditor` session
+  `4be5058b-7e1a-49f2-a102-04fe530e5f3a` found no BLOCKER or MAJOR in the
+  frozen implementation/gates. Its one MINOR noted that the unity-sham ESS
+  gate checked global but not tail fidelity; the aggregate now requires both.
+  It ruled the 45-cell matrix statistically admissible on its frozen footing.
+  Raw response:
+  `docs/orchestration/runs/evidence_ablation_auditor/20260724T010632Z-send-d0d1f77e.txt`.
+- The same `omnifold_contract_auditor` session
+  `0d8740dd-23f7-494f-9664-924f5d6bdc34` mechanically audited the eight
+  requested contract areas and returned no BLOCKER or MAJOR, authorizing a
+  clean source commit and isolated matched Delta execution. It identified
+  four MINORs: three certificate facts were derived but literal; a
+  fault-injection seam remains in the converter signature; the advisory lock
+  inode intentionally persists; and the synthetic overflow check must not be
+  read as real discarded-energy conservation. Root now computes and asserts
+  truth immutability, parent chance AUC, and bookkeeping exclusion, and
+  relabeled overflow as synthetic declared-energy consistency with an
+  explicit no-real-conservation claim. The test-only fault seam and persistent
+  `flock` inode remain documented non-gating design choices. Raw response:
+  `docs/orchestration/runs/omnifold_contract_auditor/20260724T010632Z-send-0306a036.json`.
+- The same `gregor_source_archaeologist` session
+  `67e5b4d2-64d5-4bd9-a4e6-9debbfad30cd` initially found one MAJOR in the
+  checkpoint design: the advertised artifacts are generic OmniLearned
+  jet-pretrained weights, not MINERvA-fine-tuned weights, and the historical
+  shape-filtered loader may make strict legacy transfer unconstructible. The
+  design was revised to state that boundary, exact config/key/truncation/head
+  semantics, deterministic load receipts, and the full licensing boundary.
+  Same-session reassessment resolved the MAJOR and all eight original MINORs;
+  two new MINORs were then repaired with an explicit
+  `diagnostic_only`/`diagnostic_partial` state and direct availability-boundary
+  cross-links. Raw responses:
+  `docs/orchestration/runs/gregor_source_archaeologist/20260724T010632Z-send-ab4dab9f.json`
+  and
+  `docs/orchestration/runs/gregor_source_archaeologist/20260724T012026Z-send-5affe0f7.json`.
+- Root's post-audit review additionally preserved literal NPY Fortran-header
+  order, closed the publish-versus-lock race, bound completion markers to the
+  input receipt, rejected path/units/evidence-status manifest mutations, and
+  added truncated/trailing payload tests. The Mac PET2 suite reached 78/78
+  passing with PyTorch available; Python compilation, launcher syntax and
+  isolation self-test, and `git diff --check` pass. The broad orchestration
+  test suite remains host-specific and was not claimed: 20 of 100 tests fail
+  on this Mac because the unrelated NERSC watcher fixtures require
+  `/usr/bin/python3.11`, `/pscratch/...`, and provider-home fixtures. The
+  campaign-specific waker preflight and isolated smoke both pass.
+
+## 2026-07-24 — Codex-school reset event reconciled
+
+- Waker event
+  `evt-gregor-pet2-school-reset-20260724t025101z` fired exactly once at
+  `2026-07-24T02:51:01Z`. Its schema version, `provider-reset` type, watch ID,
+  `codex-school` account, reset time, and event head
+  `0396787a2f642bba92828815c5e9fa74d946042c` match the armed continuation
+  dependency. The campaign ledger had no prior reconciliation entry, and the
+  preserved implementation session still had exactly its original three
+  turns before dispatch.
+- The required pre-dispatch snapshot at `2026-07-24T02:51:40Z` returned
+  `gate_ok=true`. Codex-school reset from 0% to 100% seven-day remaining with
+  a new reset at `2026-07-31T02:51:41Z`; Codex personal is at 15% with its
+  unchanged `2026-07-30T04:09:42Z` reset. No reset credits exist or were
+  consumed. Claude capacity remains cache-unknown and agy percentage remains
+  unavailable.
+- The next action is one `agentctl.py send` to the existing
+  `pet2_implementation_lead` UUID
+  `019f8f08-9e4f-7de0-bfe2-98c63be814c4`; no role is started or replaced.
+
+## 2026-07-24 — same-session continuation implementation review COMPLETE
+
+- The preserved `pet2_implementation_lead` session
+  `019f8f08-9e4f-7de0-bfe2-98c63be814c4` completed turn 4 after the reset.
+  It used the root-prepared implementation as its starting point, edited only
+  the authorized PET2 package/tests/launchers/README, and started no provider,
+  compute, commit, download, or push.
+- No BLOCKER or MAJOR remains. The lead removed an unpreregistered
+  carrier-shuffle cap gate while retaining its telemetry; constructed two
+  complete three-recoil neighborhoods so the distinguished-muon carrier is
+  expressible by the model's K=3 edge mechanism; removed the G2 hash bypass
+  and closed source/publication races; and replaced asserted parameter parity
+  with computed model-configuration fingerprints checked across all 90 arm
+  results.
+- Additional hardening fingerprints partial-conversion journals and final
+  manifests, revalidates resumed array semantics and source payloads, moves
+  fault injection into tests, strengthens exclusivity certificates, and makes
+  matched Delta launchers reject dirty or non-git source checkouts. The
+  checkpoint design required no further edit and remains documentation-only
+  with arm F unavailable.
+- Provider-side verification: 83 PET2 tests produced 73 pass plus 10
+  dependency skips; seven Gate-2 regressions passed; compilation, both
+  launcher syntax/self-tests, dirty-checkout rejection, and tracked/untracked
+  diff checks passed. Raw response:
+  `docs/orchestration/runs/pet2_implementation_lead/20260724T025200Z-send-d1056476.jsonl`.
+- Root then ran the same 83 PET2 tests with local PyTorch available: 83/83
+  passed in 10.045 s. The seven Gate-2 regressions, Python compilation, both
+  launcher syntax and self-tests, and tracked/untracked whitespace checks also
+  passed. The implementation is authorized for the clean commit gate and
+  exact-source Delta validation; no 45-cell outcome exists yet.

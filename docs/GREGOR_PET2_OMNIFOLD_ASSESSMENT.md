@@ -17,24 +17,30 @@ tokens, the richer global block, a distinguished muon token, overflow
 aggregates, or Gregor initialization from this campaign.
 
 This is a conservative evidence decision, not a finding that the current
-architecture is intrinsically superior. Every matched synthetic arm failed
-the implementation's descriptive absolute density-ratio diagnostic. That
-threshold was not in the frozen preregistration and is not used as an
-independent promotion rule here. The preregistered decision instead follows
-from all representation effects being smaller than one percent in mean
-closure residual, far below the five-percent benefit threshold, with most not
-repeating direction across seeds. Detector view was the only base-arm addition
-that moved closure in the same favorable direction for all three seeds; its
-effect remained too small. The current-engine TensorFlow full-event arm
-likewise showed only a sub-threshold, seed-inconsistent change from its
-recoil-only parent.
+architecture is intrinsically superior. The completed matched synthetic
+matrix injected its ratio only through reconstructed `mu_pt` and total
+recoil-token energy, both already visible to arm C. It is therefore a
+**baseline-sufficient null-feature test**: its sub-percent D/E/token/overflow
+movements show that adding those irrelevant channels did not create a large
+instability on that fixture, but they do not test whether information unique
+to an enriched channel can improve ratio recovery.
 
-The synthetic matrix used 100,000 training events per inventory, a practical
-pilot rather than production statistics. It cannot resolve whether
+Every arm in that null-feature matrix failed the implementation's descriptive
+absolute density-ratio diagnostic. That threshold was not in the frozen
+preregistration and is not used as an independent promotion rule here. The
+current-engine TensorFlow full-event arm likewise showed only a sub-threshold,
+seed-inconsistent change from its recoil-only parent. Those results still
+support no promotion, but the original parent-relative ordering is not
+evidence that detector view, type, rich globals, a muon token, or overflow
+lacks useful conditional information.
+
+The original synthetic matrix used 100,000 training events per inventory, a
+practical pilot rather than production statistics. It cannot resolve whether
 percent-level differences would persist or become significant at the
 historical multi-million-event scale. “No benefit established” therefore
-means unresolvable at this pilot scale, not that a feature is intrinsically
-neutral or harmful.
+means both that the original injected target was parent-sufficient and that
+the pilot cannot resolve percent-level real-data effects; it does not mean a
+feature is intrinsically neutral or harmful.
 
 The real typed-object vocabulary does not exist symmetrically for data,
 selected signal, and background in the available MINERvA input. Gregor's
@@ -194,6 +200,13 @@ features.
 The experimental backend instead uses an explicit boolean mask and reserves
 category 0 only for padding/unknown; every real category starts at 1.
 
+A future checkpoint-compatible implementation is specified separately in
+`docs/GREGOR_PET2_CHECKPOINT_COMPATIBILITY_DESIGN.md`. It freezes Gregor's
+exact forward/tensor/state-dict contract, separates legacy-exact from
+PID/mask-corrected semantics, and requires a licensed, accessible,
+size-and-SHA-bound checkpoint before deserialization. It is a design, not the
+independent backend and not pretrained evidence.
+
 ## 6. Feature provenance, availability, and decision table
 
 `reco` below means detector-observable Step-1 use. Truth-only fields may be
@@ -271,6 +284,18 @@ seeds. Training AUC is diagnostic only.
 Exact criteria and evidence downgrades:
 `docs/orchestration/gregor-pet2/EXPERIMENT_PREREGISTRATION.md`.
 
+The continuation correction has its own preregistration:
+`docs/orchestration/gregor-pet2/CONDITIONAL_STRESS_PREREGISTRATION.md`.
+For each of detector view, reconstructed type, rich globals, additive
+muon-token geometry, and pre-truncation overflow, it creates split-local
+counterfactual pairs whose materialized direct-parent tensors are
+byte-identical. Only the enriched carrier distinguishes the pair members and
+encodes a fixed 0.5/1.5 ratio. Signal, unity-sham, and within-split
+carrier-shuffle modes use matched rows, seeds, budgets, a common truth
+inventory, and a truth-frozen Step 2. These fixtures test end-to-end channel
+capacity only; a pass cannot establish that MINERvA data contains a useful
+conditional.
+
 ## 9. Results and ablations
 
 Exact verified values are written once in `VALIDATION_LEDGER.md`. The
@@ -284,12 +309,20 @@ and decision rather than duplicating the numerical authority.
 | Reproducibility | Two A100 smoke jobs on different nodes | Core weights, models, preprocessing, indices, and arrays bitwise identical | Bounded deterministic execution |
 | Public Gregor data | Immutable 1A jagged census | Safe `weights_only=True` load; physical PID 0 confirmed; MC-only contract remains incomplete | Schema/provenance facts only |
 | TensorFlow synthetic A/B | Current-engine recoil versus full-event, three seeds | Descriptive absolute diagnostic FAIL; preregistered relative effect sub-threshold and seed-inconsistent | No A/B superiority claim |
-| PyTorch synthetic C/D/E | Common 100k-event sample, truth-frozen Step 2, matched seeds and budgets | Every descriptive absolute diagnostic FAIL; every preregistered mean relative effect below one percent | No representation winner; percent-level effects unresolved |
-| Muon-token/overflow synthetic | Tagged C-parent variants | Muon token moved mean closure unfavorably; overflow was practically neutral at 100k events | No promotion |
+| PyTorch synthetic C/D/E | Common 100k-event sample, truth-frozen Step 2, matched seeds and budgets; target depends only on C-visible inputs | Baseline-sufficient null-feature test: no large instability, but no unique-information challenge | No representation winner or unique-feature benefit claim |
+| Muon-token/overflow synthetic | Tagged C-parent variants on the same C-sufficient target | Sub-percent movements are null/safety evidence only | No promotion; no channel-capacity conclusion |
 | Recoil-input XPS2 | Three-seed bounded retraining over a fixed memmap selection | Finite weights, no cap saturation, stable throughput; no literal background, `w_reco`, full-event fields, or closure target | Engine/tail diagnostic only |
 | Publication G2 | Required full-event data/signal/background/miss input | Unavailable to the campaign | No publication-estimator conclusion |
 
 ### Matched synthetic matrix
+
+The original matrix must be read as a baseline-sufficient null-feature test.
+Its known ratio is a function of reconstructed muon pT and total token energy,
+both available to C. Consequently D-view, D-typed, E-rich, muon-token, and
+overflow were asked primarily to ignore irrelevant extra inputs. Their
+sub-percent differences cannot distinguish a channel that is useful when it
+carries new information from one that is inert; the feature-conditional
+continuation is the separate channel-capacity test.
 
 The C control, D-view, D-typed, E-muon, E-rich without charge, and E-rich arms
 used the same fixture rows, split seed, three estimator seeds, training budget,
@@ -307,17 +340,18 @@ percent.
 Against C, detector view and typed tokens produced only sub-percent mean
 changes. Detector view repeated the favorable direction across seeds; typed
 tokens did not. Adding muon globals, the audited rich block, or charge did not
-produce a reproducible benefit. These results make the available additions
-unresolved at pilot resolution and insufficiently validated, not beneficial.
-The 100k-event noise floor prevents treating the sub-percent ordering as an
-intrinsic architecture ranking.
+produce a reproducible benefit. Because the target contained no information
+unique to those additions, these results establish only bounded null-feature
+behavior. The 100k-event noise floor and the parent-sufficient target both
+forbid treating the sub-percent ordering as an intrinsic architecture
+ranking.
 
-The distinguished-muon-token form was also seed-inconsistent and moved the
-mean residual in the wrong direction. Its extra GPU memory was modest, but
-the real-input coordinate and missing-muon semantics are still unaudited.
-The overflow aggregate moved all three seeds slightly favorably but by far
-less than the preregistered threshold; the real pre-truncation inventory
-needed to construct it is absent.
+The distinguished-muon-token form was seed-inconsistent and moved the mean
+residual in the wrong direction on this null-feature target. The overflow
+aggregate moved all three seeds slightly favorably. Neither direction is
+scientific benefit or harm evidence because C already contained the complete
+injected target. Real muon-coordinate/missingness semantics and the real
+pre-truncation overflow inventory also remain unavailable.
 
 ### Baseline and cross-framework limits
 
@@ -440,8 +474,11 @@ steps.
 ## 14. Exact next steps when G2 becomes available
 
 1. Stage and hash-verify the literal G2 NPZ, target weights, and receipts.
-2. Convert the compressed production inventory once into a receipt-bound
-   chunked or `.npy`/memmap representation; do not eagerly load 49M events.
+2. Run the tested `g2_memmap.py` conversion on that literal receipt-bound
+   file. Verify its per-array units, row families, ordered-inventory hashes,
+   immutable manifest and completion marker before exposing read-only
+   windows; do not eagerly load 49M events. Generated mini-packet tests are
+   code-contract evidence, not execution on G2.
 3. Persist or independently build a hash-bound event-key sidecar for
    cross-universe correspondence.
 4. Verify `w_reco` versus `w_truth`, target raw mass, POT scale, all units,

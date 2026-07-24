@@ -1,0 +1,17 @@
+{
+  "action": {
+    "context": "Gregor PET2 continuation: the preserved codex-school implementation account reset. Resume the same root thread; run usagectl snapshot and ledger it, then send docs/orchestration/gregor-pet2/continuation-round2-implementation-lead.md to the existing pet2_implementation_lead UUID with agentctl.py. Review its edits/response, make one clean implementation commit, stage an isolated clean Delta checkout, and continue the frozen 45-job conditional matrix. Do not replace any role or use reset credits.",
+    "type": "root-resume"
+  },
+  "armed_at_utc": "2026-07-24T00:09:47+00:00",
+  "armed_by": "MacBookPro.lan:16094",
+  "fired_at_utc": "2026-07-24T02:51:01+00:00",
+  "kind": "provider-reset",
+  "params": {
+    "account": "codex-school",
+    "at_utc": "2026-07-24T02:51:01+00:00"
+  },
+  "state": "fired",
+  "unreliable": 0,
+  "watch_id": "gregor-pet2-school-reset-20260724t025101z"
+}

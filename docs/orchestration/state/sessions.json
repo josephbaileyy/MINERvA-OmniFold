@@ -651,9 +651,17 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T232810Z-send-eec19d4c.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260723T232810Z-send-eec19d4c.txt"
+        },
+        {
+          "action": "send",
+          "number": 5,
+          "provider_log": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260724T010632Z-send-d0d1f77e.agy.log",
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260724T010632Z-send-d0d1f77e.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/evidence_ablation_auditor/20260724T010632Z-send-d0d1f77e.txt"
         }
       ],
-      "updated_at": "2026-07-23T23:28:54+00:00"
+      "updated_at": "2026-07-24T01:08:26+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",
@@ -720,9 +728,23 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260723T232810Z-send-d6711628.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260723T232810Z-send-d6711628.json"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260724T010632Z-send-ab4dab9f.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260724T010632Z-send-ab4dab9f.json"
+        },
+        {
+          "action": "send",
+          "number": 5,
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260724T012026Z-send-5affe0f7.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/gregor_source_archaeologist/20260724T012026Z-send-5affe0f7.json"
         }
       ],
-      "updated_at": "2026-07-23T23:31:16+00:00"
+      "updated_at": "2026-07-24T01:21:52+00:00"
     },
     "interim-root": {
       "created_at": "2026-07-20T12:48:45+00:00",
@@ -789,9 +811,16 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T232810Z-send-8065ec04.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260723T232810Z-send-8065ec04.json"
+        },
+        {
+          "action": "send",
+          "number": 7,
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260724T010632Z-send-0306a036.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/omnifold_contract_auditor/20260724T010632Z-send-0306a036.json"
         }
       ],
-      "updated_at": "2026-07-23T23:32:04+00:00"
+      "updated_at": "2026-07-24T01:17:27+00:00"
     },
     "pet2_implementation_lead": {
       "created_at": "2026-07-23T13:06:34+00:00",
@@ -820,9 +849,16 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/pet2_implementation_lead/20260723T134918Z-send-ac5fdad3.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/pet2_implementation_lead/20260723T134918Z-send-ac5fdad3.jsonl"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/pet2_implementation_lead/20260724T025200Z-send-d1056476.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold-gregor-pet2/docs/orchestration/runs/pet2_implementation_lead/20260724T025200Z-send-d1056476.jsonl"
         }
       ],
-      "updated_at": "2026-07-23T14:19:53+00:00"
+      "updated_at": "2026-07-24T03:11:57+00:00"
     },
     "publication-plan-verifier": {
       "created_at": "2026-07-18T11:25:40+00:00",

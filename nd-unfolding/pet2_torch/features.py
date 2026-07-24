@@ -110,8 +110,10 @@ def build_arm_manifest(
     default_muon = "global"
     if muon_representation is None:
         muon_representation = default_muon
-    if muon_representation not in {"global", "token", "disabled"}:
-        raise ValueError("muon_representation must be global, token, or disabled")
+    if muon_representation not in {"global", "token", "global+token", "disabled"}:
+        raise ValueError(
+            "muon_representation must be global, token, global+token, or disabled"
+        )
     disabled = dict(capabilities.unsupported_reasons)
     use_types = arm == "D-typed"
     if use_types and not capabilities.real_object_types:
@@ -121,10 +123,10 @@ def build_arm_manifest(
         )
     if use_detector_view and not capabilities.detector_view:
         raise ValueError("detector-view ablation requested but view is unavailable")
-    if muon_representation == "token" and not capabilities.muon_token:
+    if muon_representation in {"token", "global+token"} and not capabilities.muon_token:
         raise ValueError("muon-token ablation requested but aligned muon fields are unavailable")
     if (
-        muon_representation == "token"
+        muon_representation in {"token", "global+token"}
         and not capabilities.muon_token_coordinates_audited
     ):
         raise ValueError(
@@ -134,7 +136,7 @@ def build_arm_manifest(
     if use_overflow_aggregate and not capabilities.overflow_aggregate:
         raise ValueError("overflow aggregate requested but pre-truncation evidence is unavailable")
     active_globals: list[str] = []
-    if muon_representation == "global":
+    if muon_representation in {"global", "global+token"}:
         active_globals.extend(BASELINE_GLOBALS)
         if arm.startswith("E-"):
             missing = [
@@ -253,7 +255,7 @@ def materialize_feature_view(batch: TokenBatch, manifest: ArmManifest) -> TokenB
         globals=globals_,
         provenance=f"{batch.provenance}|arm={manifest.arm}",
     )
-    if manifest.muon_representation == "token":
+    if manifest.muon_representation in {"token", "global+token"}:
         if batch.muon_present is None:
             raise ValueError("muon token seam is unavailable")
         n = batch.n_rows

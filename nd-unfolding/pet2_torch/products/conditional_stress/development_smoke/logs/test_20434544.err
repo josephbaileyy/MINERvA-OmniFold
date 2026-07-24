@@ -1,0 +1,112 @@
+=====================================================
+Conda-Forge PyTorch 2.8 Environment Loaded Successfully!
+=====================================================
+
+To activate the environment:
+  conda activate base
+
+If 'conda activate' fails, use:
+  source $CONDA_PREFIX/etc/profile.d/conda.sh && conda activate base
+
+To verify PyTorch installation:
+  python -c "import torch; print(f'PyTorch {torch.__version__} CUDA:
+{torch.cuda.is_available()}')"
+
+Environment includes:
+  - PyTorch 2.8 with CUDA 12.8 support
+  - Scientific Python stack (numpy, scipy, pandas)
+  - ML libraries (transformers, lightning, timm)
+  - Cray PE integration with optimized MPI
+
+For Jupyter notebook support:
+  setup-kernel (creates Jupyter kernel for this environment)
+
+For distributed training, load:
+  module load aws-ofi-nccl/1.14.2
+
+Ready for single-node and distributed training!
+=====================================================
+
+test_all_families_have_exact_parent_pairs_and_one_truth_inventory (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_all_families_have_exact_parent_pairs_and_one_truth_inventory) ... ok
+test_contract_only_cli_is_receipted_and_never_claims_g2 (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_contract_only_cli_is_receipted_and_never_claims_g2) ... ok
+test_enriched_changes_carrier_while_parent_model_tensors_tie (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_enriched_changes_carrier_while_parent_model_tensors_tie) ... ok
+test_frozen_aggregate_signal_and_negative_control_gates (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_frozen_aggregate_signal_and_negative_control_gates) ... ok
+test_muon_token_is_additive_and_keeps_parent_globals (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_muon_token_is_additive_and_keeps_parent_globals) ... ok
+test_target_alignment_pair_mass_and_native_misses (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_target_alignment_pair_mass_and_native_misses) ... ok
+test_unity_sham_and_carrier_shuffle_are_frozen_negative_controls (test_pet2_conditional_fixtures.FeatureConditionalFixtureContract.test_unity_sham_and_carrier_shuffle_are_frozen_negative_controls) ... ok
+test_bound_input_rejects_wrong_hash_or_size (test_pet2_g2_memmap.G2MemmapConversionContract.test_bound_input_rejects_wrong_hash_or_size) ... ok
+test_interrupted_and_content_verified_resume (test_pet2_g2_memmap.G2MemmapConversionContract.test_interrupted_and_content_verified_resume) ... ok
+test_manifest_mutation_and_stale_source_fail (test_pet2_g2_memmap.G2MemmapConversionContract.test_manifest_mutation_and_stale_source_fail) ... ok
+test_object_dtype_and_missing_member_fail_preflight (test_pet2_g2_memmap.G2MemmapConversionContract.test_object_dtype_and_missing_member_fail_preflight) ... ok
+test_row_family_mismatch_fails_before_publish (test_pet2_g2_memmap.G2MemmapConversionContract.test_row_family_mismatch_fails_before_publish) ... ok
+test_stale_input_missing_array_and_mutated_array_fail (test_pet2_g2_memmap.G2MemmapConversionContract.test_stale_input_missing_array_and_mutated_array_fail) ... ok
+test_success_read_only_windows_and_idempotence (test_pet2_g2_memmap.G2MemmapConversionContract.test_success_read_only_windows_and_idempotence) ... ok
+test_exact_direction_passes_full_iteration_metrics (test_pet2_torch_contracts.AnalyticConditionalClosure.test_exact_direction_passes_full_iteration_metrics) ... ok
+test_inverted_direction_fails (test_pet2_torch_contracts.AnalyticConditionalClosure.test_inverted_direction_fails) ... ok
+test_pseudodata_is_aligned_with_known_event_weight (test_pet2_torch_contracts.AnalyticConditionalClosure.test_pseudodata_is_aligned_with_known_event_weight) ... ok
+test_contract_cli_runs_without_torch (test_pet2_torch_contracts.ContractOnlyCLI.test_contract_cli_runs_without_torch) ... ok
+test_delta_launcher_is_one_gpu_bounded_and_selftests (test_pet2_torch_contracts.ContractOnlyCLI.test_delta_launcher_is_one_gpu_bounded_and_selftests) ... ok
+test_manifest_fingerprints_are_deterministic_and_sensitive (test_pet2_torch_contracts.ContractOnlyCLI.test_manifest_fingerprints_are_deterministic_and_sensitive) ... ok
+test_pilot_decision_requires_global_and_tail_ess (test_pet2_torch_contracts.ContractOnlyCLI.test_pilot_decision_requires_global_and_tail_ess) ... ok
+test_tf_ab_stress_contract_is_self_locating_and_login_safe (test_pet2_torch_contracts.ContractOnlyCLI.test_tf_ab_stress_contract_is_self_locating_and_login_safe) ... ok
+test_top_level_package_import_is_root_tf_torch_free (test_pet2_torch_contracts.ContractOnlyCLI.test_top_level_package_import_is_root_tf_torch_free) ... ok
+test_analytic_unequal_mass_calibration (test_pet2_torch_contracts.DensityRatioContract.test_analytic_unequal_mass_calibration) ... ok
+test_balanced_bce_rejects_negative_weights (test_pet2_torch_contracts.DensityRatioContract.test_balanced_bce_rejects_negative_weights) ... ok
+test_log_ratio_cap_telemetry (test_pet2_torch_contracts.DensityRatioContract.test_log_ratio_cap_telemetry) ... ok
+test_tf_odds_and_torch_mass_offset_are_same_physical_ratio (test_pet2_torch_contracts.DensityRatioContract.test_tf_odds_and_torch_mass_offset_are_same_physical_ratio) ... ok
+test_absent_g2_fails_closed (test_pet2_torch_contracts.FailClosedExternalSeams.test_absent_g2_fails_closed) ... ok
+test_arm_f_rejects_missing_and_unlicensed_manifest (test_pet2_torch_contracts.FailClosedExternalSeams.test_arm_f_rejects_missing_and_unlicensed_manifest) ... ok
+test_current_arm_f_is_unavailable_without_fallback (test_pet2_torch_contracts.FailClosedExternalSeams.test_current_arm_f_is_unavailable_without_fallback) ... ok
+test_g2_compressed_production_size_refuses_before_numpy_load (test_pet2_torch_contracts.FailClosedExternalSeams.test_g2_compressed_production_size_refuses_before_numpy_load) ... ok
+test_g2_row_inventory_refuses_from_headers_before_materialization (test_pet2_torch_contracts.FailClosedExternalSeams.test_g2_row_inventory_refuses_from_headers_before_materialization) ... ok
+test_public_adapter_never_downloads (test_pet2_torch_contracts.FailClosedExternalSeams.test_public_adapter_never_downloads) ... ok
+test_public_mapping_is_diagnostic_only (test_pet2_torch_contracts.FailClosedExternalSeams.test_public_mapping_is_diagnostic_only) ... ok
+test_public_pb_requires_explicit_trust_before_deserialization (test_pet2_torch_contracts.FailClosedExternalSeams.test_public_pb_requires_explicit_trust_before_deserialization) ... ok
+test_tiny_g2_seam_recovers_raw_target_mass_without_claim (test_pet2_torch_contracts.FailClosedExternalSeams.test_tiny_g2_seam_recovers_raw_target_mass_without_claim) ... ok
+test_truth_phi_boundary_uses_periodic_coordinates (test_pet2_torch_contracts.FailClosedExternalSeams.test_truth_phi_boundary_uses_periodic_coordinates) ... ok
+test_category_zero_is_never_a_real_type (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_category_zero_is_never_a_real_type) ... ok
+test_explicit_mask_not_energy (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_explicit_mask_not_energy) ... ok
+test_malformed_shape_fails (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_malformed_shape_fails) ... ok
+test_muon_missing_is_zero_masked_not_sentinel (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_muon_missing_is_zero_masked_not_sentinel) ... ok
+test_nan_real_token_fails (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_nan_real_token_fails) ... ok
+test_oov_type_fails (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_oov_type_fails) ... ok
+test_real_type_zero_fails (test_pet2_torch_contracts.MaskTypeAndFailureContract.test_real_type_zero_fails) ... ok
+test_arm_c_to_d_typed_changes_only_declared_type_controls (test_pet2_torch_contracts.OverflowAndArmContract.test_arm_c_to_d_typed_changes_only_declared_type_controls) ... ok
+test_direct_truncation_rejects_nonfinite (test_pet2_torch_contracts.OverflowAndArmContract.test_direct_truncation_rejects_nonfinite) ... ok
+test_muon_and_richer_global_blocks_are_isolated (test_pet2_torch_contracts.OverflowAndArmContract.test_muon_and_richer_global_blocks_are_isolated) ... ok
+test_muon_token_and_global_are_explicit (test_pet2_torch_contracts.OverflowAndArmContract.test_muon_token_and_global_are_explicit) ... ok
+test_overflow_energy_is_conserved (test_pet2_torch_contracts.OverflowAndArmContract.test_overflow_energy_is_conserved) ... ok
+test_view_and_overflow_are_separate_ablations (test_pet2_torch_contracts.OverflowAndArmContract.test_view_and_overflow_are_separate_ablations) ... ok
+test_fit_uses_selected_real_tokens_only (test_pet2_torch_contracts.PreprocessingAndSplitContract.test_fit_uses_selected_real_tokens_only) ... ok
+test_preprocessing_roundtrip_manifest (test_pet2_torch_contracts.PreprocessingAndSplitContract.test_preprocessing_roundtrip_manifest) ... ok
+test_split_is_key_deterministic_under_reordering (test_pet2_torch_contracts.PreprocessingAndSplitContract.test_split_is_key_deterministic_under_reordering) ... ok
+test_vectorized_three_way_partition_is_stable (test_pet2_torch_contracts.PreprocessingAndSplitContract.test_vectorized_three_way_partition_is_stable) ... ok
+test_data_mc_background_detector_schema_symmetry (test_pet2_torch_contracts.ThreeInventoryContract.test_data_mc_background_detector_schema_symmetry) ... ok
+test_deterministic_full_row_alignment (test_pet2_torch_contracts.ThreeInventoryContract.test_deterministic_full_row_alignment) ... ok
+test_literal_background_order_and_signed_provenance (test_pet2_torch_contracts.ThreeInventoryContract.test_literal_background_order_and_signed_provenance) ... ok
+test_native_misses_are_masked_but_truth_present (test_pet2_torch_contracts.ThreeInventoryContract.test_native_misses_are_masked_but_truth_present) ... ok
+test_reco_ablation_features_do_not_change_truth_contract (test_pet2_torch_contracts.ThreeInventoryContract.test_reco_ablation_features_do_not_change_truth_contract) ... ok
+test_separate_reco_truth_weights_are_not_collapsed (test_pet2_torch_contracts.ThreeInventoryContract.test_separate_reco_truth_weights_are_not_collapsed) ... ok
+test_signal_fake_population_fails_closed (test_pet2_torch_contracts.ThreeInventoryContract.test_signal_fake_population_fails_closed) ... ok
+test_truth_leakage_fields_absent_from_step1_schema (test_pet2_torch_contracts.ThreeInventoryContract.test_truth_leakage_fields_absent_from_step1_schema) ... ok
+test_read_only_bounded_deterministic_packet (test_pet2_torch_contracts.XPS2BoundedMemmap.test_read_only_bounded_deterministic_packet) ... ok
+test_row_limit_and_missing_array_fail_closed (test_pet2_torch_contracts.XPS2BoundedMemmap.test_row_limit_and_missing_array_fail_closed) ... ok
+test_all_declared_arms_have_identical_parameter_tensors (test_pet2_torch_optional.ModelBehavior.test_all_declared_arms_have_identical_parameter_tensors) ... /sw/rh9.4/user/python/conda-env/pytorch-2.8-cu128/lib/python3.11/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+ok
+test_learned_analytic_gaussian_ratio (test_pet2_torch_optional.ModelBehavior.test_learned_analytic_gaussian_ratio) ... ok
+test_padded_values_do_not_change_output (test_pet2_torch_optional.ModelBehavior.test_padded_values_do_not_change_output) ... /sw/rh9.4/user/python/conda-env/pytorch-2.8-cu128/lib/python3.11/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+ok
+test_permutation_invariance (test_pet2_torch_optional.ModelBehavior.test_permutation_invariance) ... ok
+test_seed_policy_disables_nondeterministic_attention (test_pet2_torch_optional.ModelBehavior.test_seed_policy_disables_nondeterministic_attention) ... ok
+test_tiny_overfit_loss_decreases (test_pet2_torch_optional.ModelBehavior.test_tiny_overfit_loss_decreases) ... ok
+test_native_miss_and_full_order_extraction (test_pet2_torch_optional.OneIterationEngine.test_native_miss_and_full_order_extraction) ... ok
+test_trusted_public_pb_weights_only_census (test_pet2_torch_optional.OneIterationEngine.test_trusted_public_pb_weights_only_census) ... ok
+test_two_iteration_known_closure_emits_full_metrics (test_pet2_torch_optional.OneIterationEngine.test_two_iteration_known_closure_emits_full_metrics) ... ok
+test_safetensors_roundtrip_and_shape_rejection (test_pet2_torch_optional.StrictSaveLoad.test_safetensors_roundtrip_and_shape_rejection) ... ok
+
+----------------------------------------------------------------------
+Ran 74 tests in 11.935s
+
+OK

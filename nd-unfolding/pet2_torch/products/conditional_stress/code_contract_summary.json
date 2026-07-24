@@ -1,0 +1,73 @@
+{
+  "status": "complete_conditional_continuation_code_contract",
+  "evidence_class": "code-contract",
+  "commit_gate": "the enclosing result-bearing source commit",
+  "preregistration_commit": "0396787a2f642bba92828815c5e9fa74d946042c",
+  "implementation_review": {
+    "role": "pet2_implementation_lead",
+    "session_id": "019f8f08-9e4f-7de0-bfe2-98c63be814c4",
+    "turn": 4,
+    "raw_response": "docs/orchestration/runs/pet2_implementation_lead/20260724T025200Z-send-d1056476.jsonl",
+    "blockers": 0,
+    "majors": 0
+  },
+  "local_validation": {
+    "pet2_tests": {
+      "command": "python -m unittest discover -s nd-unfolding/tests -p test_pet2*.py",
+      "tests": 83,
+      "passed": 83,
+      "skipped": 0,
+      "failures": 0,
+      "runtime_seconds": 10.045
+    },
+    "gate2_regressions": {
+      "command": "python -m unittest nd-unfolding/tests/test_gate2_target_runtime.py",
+      "tests": 7,
+      "passed": 7,
+      "failures": 0
+    },
+    "python_compilation": "pass",
+    "launcher_syntax": "pass",
+    "launcher_self_tests": "pass",
+    "tracked_and_untracked_whitespace": "pass"
+  },
+  "contract_scope": {
+    "conditional_families": [
+      "view",
+      "type",
+      "rich",
+      "muon-token",
+      "overflow"
+    ],
+    "control_modes": [
+      "signal",
+      "unity-sham",
+      "carrier-shuffle"
+    ],
+    "estimator_seeds": [
+      101,
+      202,
+      303
+    ],
+    "expected_cells": 45,
+    "expected_arm_results": 90,
+    "truth_step2": "common truth-frozen representation",
+    "production_g2_converter": "receipt-bound code-contract implementation",
+    "checkpoint_compatibility": "documentation-only design"
+  },
+  "development_delta_checks": {
+    "source_dirty": true,
+    "comparison_claim_permitted": false,
+    "jobs": [
+      20434544,
+      20434545
+    ],
+    "artifact_directory": "nd-unfolding/pet2_torch/products/conditional_stress/development_smoke",
+    "included_in_frozen_matrix": false
+  },
+  "matched_matrix_status": "not_run_at_this_commit",
+  "literal_g2_available": false,
+  "g2_validation_claim": false,
+  "publication_promotion_permitted": false,
+  "interpretation": "Implementation, schema, conversion, and launcher evidence only; no feature-channel outcome or publication-G2 claim exists at this source gate."
+}

@@ -1,0 +1,20 @@
+# Conditional continuation: preregistration/aggregation implementation audit
+
+I am operating as the durable `evidence_ablation_auditor` for session `4be5058b-7e1a-49f2-a102-04fe530e5f3a`. I have reviewed the conditional stress preregistration alongside its Python fixtures, CLI executor, aggregator, and tests. 
+
+The implementation faithfully and rigorously maps the frozen conditional-information stress design into executable, receipt-bound code. It perfectly translates the row-pairing, exclusivity certificates, frozen truth requirements, and strict evidence containment rules without any outcome-dependent selection. 
+
+## Findings
+
+**BLOCKER**: None. The implementation correctly isolates the evaluation features, completely freezes Step 2 across all 45 cells of the matrix, guarantees identical parent tensors, and isolates the target signals to exact 0.5/1.5 ratios. 
+
+**MAJOR**: None. The aggregator correctly prevents mixing of commits, dirty code, disparate parameters, or different dataset footprints. The evidence boundary is explicitly guarded inside the CLI summary output, the dataset schema, and the aggregator payload. 
+
+**MINOR**: 
+*   **Symbol**: `both_global_ess_fidelity_at_most_10_percent` in `_mode_gates()` for the `"unity-sham"` mode (`nd-unfolding/pet2_torch/aggregate_conditional_stress.py:321`).
+*   **Finding**: The preregistration specifies "expected-ESS agreement within 10%" for the `unity-sham` mode. The aggregator script strictly enforces this for global ESS (`run[role]["global_ess_fidelity_percent"] <= 10.0`), but it omits the symmetric check for tail ESS (`tail_ess_fidelity_percent <= 10.0`) which *is* properly enforced for the `"signal"` mode.
+*   **Repair**: Add `run[role]["tail_ess_fidelity_percent"] <= 10.0` to the unity-sham loop. *Note: Since the unity-sham target ratio is uniformly 1.0, the tail ESS is functionally degenerate with the global unweighted stability, so this omission does not compromise the sham control, but repairing it aligns it perfectly with the literal specification.*
+
+## Verdict
+
+The implementation is **statistically admissible** for the frozen Delta matrix. The experimental code accurately reflects the preregistered constraints and is mechanically cleared to run. After the matrix completes and the aggregates exist, this same session can perform the final post-result evidence/writeup audit.

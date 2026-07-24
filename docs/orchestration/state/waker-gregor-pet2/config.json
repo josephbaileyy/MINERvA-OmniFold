@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "python": "/opt/homebrew/bin/python3.14",
+  "state_dir": "state/waker-gregor-pet2",
+  "codex_bin": "/Users/josephbailey/.nvm/versions/node/v22.17.0/bin/codex",
+  "root": {
+    "provider": "codex",
+    "profile": "codex-personal",
+    "thread_id": "019f8f02-144a-7050-b9d9-d73818ab4cd3",
+    "disable_features": [
+      "goals"
+    ]
+  },
+  "poll_seconds": 60,
+  "claim_lease_seconds": 900,
+  "invoke_grace_seconds": 7200,
+  "max_retries_default": 2,
+  "idle_guard_ticks": 3,
+  "notify_command": null,
+  "status_report_interval_seconds": 0,
+  "prompt_preamble": null
+}

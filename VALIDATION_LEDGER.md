@@ -849,3 +849,29 @@ scale; the result establishes only that none met the preregistered pilot
 benefit rule, not that the additions are intrinsically neutral or harmful.
 Canonical campaign summary:
 `nd-unfolding/pet2_torch/products/final_campaign_summary.json`.
+
+## 2026-07-24 Gregor PET2 conditional-information continuation — SOURCE/CONTRACT PASS
+
+The continuation source implements five independently preregistered
+feature-conditional fixtures (view, reconstructed type, rich global,
+distinguished-muon relational token, and overflow), each with signal,
+unity-sham, and carrier-shuffle modes. The fixed production inventory is 45
+cells and 90 parent/enriched arm results. No matched result exists at this
+source gate.
+
+Root validation passed all 83 PET2 tests with no skips or failures in 10.045 s
+and all seven Gate-2 regressions. Python compilation, both Delta launcher
+syntax/self-tests, dirty-source rejection, and tracked/untracked whitespace
+checks passed. The preserved implementation lead independently reported 73
+pass plus 10 clean dependency skips across the same 83 PET2 tests, with zero
+failures, and no remaining BLOCKER or MAJOR.
+
+Development-only Delta jobs `20434544` and `20434545` ran from a dirty isolated
+checkout and are explicitly excluded from the frozen aggregate. The
+receipt-bound NPZ-to-readonly-memmap path is validated only with generated
+mini-packets. The literal production G2 NPZ remains absent from local and
+Delta storage, so this entry carries no G2 validation, feature-benefit, or
+publication-promotion claim.
+
+Canonical source-gate summary:
+`nd-unfolding/pet2_torch/products/conditional_stress/code_contract_summary.json`.

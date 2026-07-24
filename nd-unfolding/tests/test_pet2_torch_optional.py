@@ -117,15 +117,30 @@ class ModelBehavior(unittest.TestCase):
 
     def test_all_declared_arms_have_identical_parameter_tensors(self):
         schemas = []
-        for name in (
-            "C",
-            "D-view",
-            "D-typed",
-            "E-muon",
-            "E-rich-no-charge",
-            "E-rich",
-        ):
-            arm = build_arm_manifest(name, self.capabilities)
+        arms = [
+            build_arm_manifest(name, self.capabilities)
+            for name in (
+                "C",
+                "D-view",
+                "D-typed",
+                "E-muon",
+                "E-rich-no-charge",
+                "E-rich",
+            )
+        ]
+        arms.extend(
+            (
+                build_arm_manifest(
+                    "E-muon",
+                    self.capabilities,
+                    muon_representation="global+token",
+                ),
+                build_arm_manifest(
+                    "C", self.capabilities, use_overflow_aggregate=True
+                ),
+            )
+        )
+        for arm in arms:
             batch = materialize_feature_view(self.dataset.signal.reco, arm)
             config = replace(
                 self.config,

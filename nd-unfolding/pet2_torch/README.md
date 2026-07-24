@@ -87,6 +87,27 @@ are not permitted. `ratio_conventions.py` proves only the fixed-logit physical
 ratio equivalence between TF posterior odds and balanced PyTorch logits plus
 the class-mass offset; it makes no layer/training equivalence claim.
 
+The completed known-ratio matrix is a baseline-sufficient null-feature test:
+its ratio depends only on muon pT and total token energy, both visible to C.
+`conditional_fixtures.py` supplies the separate continuation test. It builds
+split-local counterfactual pairs whose materialized parent tensors are
+byte-identical while exactly one enriched carrier—view, reconstructed type,
+rich global, additive muon-token geometry, or overflow—encodes a fixed
+0.5/1.5 target. Each family has signal, unity-sham, and carrier-shuffle modes
+on one unchanged truth inventory. The muon fixture constructs two
+three-recoil neighborhoods, so the model's fixed K=3 coordinate graph—not
+just an external decoder—can express the carrier. This tests whether the
+channel can transmit conditional information; it does not show that real
+MINERvA data contains a beneficial conditional.
+
+Login-safe contract example:
+
+```bash
+PYTHONPATH=nd-unfolding python3 -m pet2_torch.conditional_stress_cli \
+  --out /tmp/pet2-conditional-contract --family view --mode signal \
+  --recipe smoke --events 800 --background-events 40 --contract-only
+```
+
 The optional `tf_ab_conditional_stress.py` runner is self-locating and can run
 in the existing TensorFlow container. It executes the vendored `PET` and
 `MultiFold` loop for recoil-cloud A and the same cloud plus reconstructed-muon
@@ -106,6 +127,28 @@ zero padding. Its runtime/tail evidence cannot be used as typed-token,
 full-event, G2, or publication evidence. Selection and estimator seeds are
 separate so retraining comparisons can hold the sampled rows fixed; `--seed`
 is retained only as a coupled legacy-smoke shorthand.
+
+`g2_memmap.py` is the production-size conversion seam for the still-unavailable
+G2 NPZ. Given an externally receipt-bound input SHA-256 and size, it parses
+safe NPY headers inside the ZIP, copies array payloads with a bounded buffer,
+writes per-array dtype/shape/order/units/hashes, validates row-family and
+legacy inventory-order hashes, and atomically publishes a readonly `.npy`
+inventory. Interrupted conversions resume only after content verification.
+The loader rechecks the source, completion marker, manifest, every array hash,
+row family and identity hash before opening readonly memmaps and exposing
+bounded windows; there is no hash-verification bypass. Progress and final
+manifests are fingerprinted, and the input is rehashed before atomic
+publication. Generated mini-packet tests are code-contract evidence, not G2
+validation.
+
+```bash
+PYTHONPATH=nd-unfolding python3 -m pet2_torch.g2_memmap_cli convert \
+  --source /receipt-bound/g2.npz --out /isolated/g2-npy \
+  --expected-sha256 SHA256 --expected-size-bytes BYTES \
+  --timestamp-utc YYYY-MM-DDTHH:MM:SSZ
+PYTHONPATH=nd-unfolding python3 -m pet2_torch.g2_memmap_cli verify \
+  --source /receipt-bound/g2.npz --directory /isolated/g2-npy
+```
 
 `public_gregor.py` can inspect an explicitly trusted, caller-checksummed `.pb`
 using `torch.load(weights_only=True)` and emit row/schema/type/padding census
@@ -134,6 +177,9 @@ PYTHONPATH=nd-unfolding python3 -m unittest \
   nd-unfolding/tests/test_pet2_torch_contracts.py -v
 PYTHONPATH=nd-unfolding python3 -m unittest \
   nd-unfolding/tests/test_pet2_torch_optional.py -v
+PYTHONPATH=nd-unfolding python3 -m unittest \
+  nd-unfolding/tests/test_pet2_conditional_fixtures.py \
+  nd-unfolding/tests/test_pet2_g2_memmap.py -v
 PYTHONPATH=nd-unfolding python3 -m unittest \
   nd-unfolding/tests/test_gate2_target_runtime.py -v
 PYTHONPATH=nd-unfolding python3 -m pet2_torch.cli \
@@ -183,3 +229,26 @@ arm/seed/job-specific output names, and rejects
 the active `/u/jbailey2/MINERvA-OmniFold` checkout and known shared result
 namespaces. The resulting evidence is synthetic-only and makes no G2 or
 physics claim.
+
+The conditional continuation launcher runs exactly one
+family/control-mode/seed cell and refuses a dirty source checkout:
+
+```bash
+PET2_REPO="$PWD" \
+PET2_OUT_BASE=/work/nvme/bhvk/$USER/pet2_gregor_conditional \
+PET2_FAMILY=view PET2_CONTROL_MODE=signal PET2_ESTIMATOR_SEED=101 \
+PET2_DELTA_SELFTEST=1 \
+bash nd-unfolding/pet2_torch/sbatch_pet2_conditional_delta.sh
+
+sbatch --job-name=pet2cs_view_signal_101 \
+  --export=ALL,PET2_REPO="$PWD",\
+PET2_OUT_BASE=/work/nvme/bhvk/$USER/pet2_gregor_conditional,\
+PET2_VENV="$PET2_VENV",PET2_FAMILY=view,PET2_CONTROL_MODE=signal,\
+PET2_ESTIMATOR_SEED=101 \
+  nd-unfolding/pet2_torch/sbatch_pet2_conditional_delta.sh
+```
+
+Submit the frozen Cartesian inventory—five families, three modes and seeds
+101/202/303—as 45 separately named jobs. Aggregate only after all 45
+summaries exist; the aggregator rejects omissions, duplicates, smoke recipes,
+dirty/mixed commits, and mixed truth/model/row footing.

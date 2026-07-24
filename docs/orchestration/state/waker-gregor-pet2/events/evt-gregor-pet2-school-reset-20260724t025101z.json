@@ -1,0 +1,16 @@
+{
+  "event_id": "evt-gregor-pet2-school-reset-20260724t025101z",
+  "event_type": "provider-reset",
+  "head_at_event": "0396787a2f642bba92828815c5e9fa74d946042c",
+  "observed_at_utc": "2026-07-24T02:51:01+00:00",
+  "payload": {
+    "account": "codex-school",
+    "at_utc": "2026-07-24T02:51:01+00:00"
+  },
+  "schema_version": 1,
+  "source": {
+    "node": "MacBookPro.lan",
+    "pid": 16103
+  },
+  "watch_id": "gregor-pet2-school-reset-20260724t025101z"
+}

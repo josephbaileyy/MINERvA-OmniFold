@@ -11,6 +11,12 @@ complete: no arm passed the absolute closure gate and no architecture or
 representation promotion is authorized. Keep the PyTorch path experimental;
 publication choice remains deferred to literal G2 validation.
 
+Conditional-information continuation (2026-07-24): the original matrix is
+reclassified as a baseline-sufficient null-feature test. The five-family
+conditional fixture, G2 memmap code-contract, and checkpoint-compatible design
+pass the source gate; the clean 45-cell Delta matrix is the next action and no
+new feature outcome is yet quotable.
+
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
 [the publication runbook](../docs/PUBLICATION_COMPLETION_RUNBOOK.md).

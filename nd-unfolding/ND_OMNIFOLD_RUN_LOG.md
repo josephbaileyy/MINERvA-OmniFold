@@ -2125,3 +2125,25 @@ typed/rich/pretrained promotion is deferred to literal G2 and symmetric
 reconstructed-object validation. No campaign Slurm job remains active or
 pending; unrelated job `20416508` was left untouched. Exact results and
 resource accounting are in `VALIDATION_LEDGER.md`.
+
+## 2026-07-24 — Gregor PET2 conditional-information continuation source gate PASS
+
+Independent review correctly reclassified the completed matched matrix as a
+baseline-sufficient null-feature test: its injected ratio used only
+arm-C-visible muon pT and total token energy. A separate preregistration now
+defines five split-local conditional carriers with signal, unity-sham and
+carrier-shuffle controls, exact parent ties, one common truth-frozen Step 2,
+matched seeds/budgets, ESS/tail/cap/projection receipts, and fail-closed
+aggregation.
+
+The same persistent contract, evidence, source-provenance and implementation
+roles reviewed the continuation. The implementation lead's post-reset
+same-session turn repaired the remaining preregistration, muon-KNN,
+parameter-parity and G2 resume/publication issues. Root and provider tests
+close the source/code-contract gate; exact counts are written in
+`../VALIDATION_LEDGER.md`. A receipt-bound chunked NPZ-to-readonly-memmap
+converter/loader and a separate Gregor checkpoint-compatibility design are
+included, but the literal G2 and eligible checkpoint weights remain absent.
+No matched conditional result or feature-promotion claim exists at this
+entry. Next action: stage this exact clean commit on Delta, pass its runtime
+suite, and execute the frozen 45-cell matrix.

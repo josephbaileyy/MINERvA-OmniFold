@@ -1293,7 +1293,10 @@ def smoke(config_path: Path) -> int:
         assert invocations == 1, f"expected exactly one resume, saw {invocations}"
         assert "00000000-0000-0000-0000-00000000abcd" in text
         assert "--disable goals" in text
-        assert "codex-homes/personal" in text
+        expected_home = agentctl.expand_path(
+            agentctl.get_profile(ctx.profiles(), "codex-personal")["home"]
+        )
+        assert f"CODEX_HOME={expected_home}" in text
         print("[smoke] PASS: quiet ticks silent; one event -> exactly one resume")
         return 0
 
