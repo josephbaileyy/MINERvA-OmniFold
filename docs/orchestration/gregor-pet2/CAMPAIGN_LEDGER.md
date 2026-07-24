@@ -631,3 +631,28 @@ Append-only orchestration and experimental ledger for branch
   launcher syntax and self-tests, and tracked/untracked whitespace checks also
   passed. The implementation is authorized for the clean commit gate and
   exact-source Delta validation; no 45-cell outcome exists yet.
+
+## 2026-07-24 — conditional continuation source commit and Delta runtime launch
+
+- Result-bearing source commit
+  `ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d` lands the implementation,
+  tests, launchers, code-contract/development summaries and logs,
+  `VALIDATION_LEDGER.md`, ND run log/status, assessment correction,
+  provider/session receipts, checkpoint design, and immutable reset-event
+  receipt together. No result is quoted from uncommitted source.
+- An incremental verified bundle was staged without push or merge. New Delta
+  checkout
+  `/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed`, branch
+  `codex/gregor-pet2-conditional-ba28bed`, resolves exactly to `ba28bed` and
+  had empty porcelain status before submission. The bundle is retained at
+  `/u/jbailey2/gregor-pet2-ba28bed-20260724.bundle`; output is isolated at
+  `/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed`.
+- Clean-source runtime job `20437380` was submitted to
+  `gpuA100x4-interactive`, one A100/eight CPUs/64 GiB, 20-minute wall, to run
+  the complete PET2 and Gate-2 suites plus compilation, launcher syntax and
+  self-test. It asserts the exact commit and clean status inside the job.
+- No Slurm polling is active. Deadline watch
+  `gregor-pet2-delta-test-20437380-deadline` is armed for
+  `2026-07-24T03:50:00Z`; the resumed root must inspect the job once and either
+  submit the frozen matrix after PASS or re-arm if it remains nonterminal.
+  Unrelated pending job `20434188` remains untouched.

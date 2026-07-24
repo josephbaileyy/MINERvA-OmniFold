@@ -1,0 +1,15 @@
+{
+  "action": {
+    "context": "Gregor PET2 clean-source Delta runtime job 20437380 from ba28bed. Inspect this job once through the delta-codex2 control socket. If terminal PASS, stage its logs/receipt and submit the frozen 45-cell array from the same clean checkout; if active or pending, re-arm a later deadline. Never poll, replace roles, consume reset credits, or touch unrelated job 20434188.",
+    "type": "root-resume"
+  },
+  "armed_at_utc": "2026-07-24T03:21:47+00:00",
+  "armed_by": "MacBookPro.lan:27004",
+  "kind": "deadline",
+  "params": {
+    "at_utc": "2026-07-24T03:50:00Z"
+  },
+  "state": "armed",
+  "unreliable": 0,
+  "watch_id": "gregor-pet2-delta-test-20437380-deadline"
+}

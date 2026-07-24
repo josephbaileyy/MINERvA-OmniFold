@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "campaign": "Gregor PET2 conditional-information continuation",
+  "current_dag_node": "Clean-source Delta runtime validation",
+  "state": "SOURCE/CONTRACT COMMIT ba28bed PASS; Delta runtime job 20437380 submitted; frozen 45-cell matrix awaits this gate.",
+  "orchestrator_thread_id": "019f8f02-144a-7050-b9d9-d73818ab4cd3",
+  "owners": [
+    {
+      "role": "gregor_source_archaeologist",
+      "uuid": "67e5b4d2-64d5-4bd9-a4e6-9debbfad30cd",
+      "purpose": "Gregor source, checkpoint, licensing and provenance owner"
+    },
+    {
+      "role": "pet2_implementation_lead",
+      "uuid": "019f8f08-9e4f-7de0-bfe2-98c63be814c4",
+      "purpose": "Independent PET2-family implementation and Delta launcher owner"
+    },
+    {
+      "role": "omnifold_contract_auditor",
+      "uuid": "0d8740dd-23f7-494f-9664-924f5d6bdc34",
+      "purpose": "Adversarial physics and OmniFold data-contract reviewer"
+    },
+    {
+      "role": "evidence_ablation_auditor",
+      "uuid": "4be5058b-7e1a-49f2-a102-04fe530e5f3a",
+      "purpose": "Matched-design, statistics and evidence-boundary auditor"
+    }
+  ],
+  "jobs": [],
+  "wake": {
+    "waker": true,
+    "config": "docs/orchestration/state/waker-gregor-pet2/config.json"
+  },
+  "blockers": [
+    "Literal publication G2 NPZ is absent locally and on Delta; no publication-G2 validation claim is permitted.",
+    "Advertised generic checkpoint bytes remain inaccessible, unlicensed and unhashed; arm F remains unavailable."
+  ],
+  "next_authorized_action": "Deadline watch gregor-pet2-delta-test-20437380-deadline fires at 2026-07-24T03:50:00Z. Inspect job 20437380 once. On PASS, stage its logs and submit the exact ba28bed frozen 45-cell conditional array; if nonterminal, re-arm without polling.",
+  "canonical_science": [
+    "docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md",
+    "VALIDATION_LEDGER.md",
+    "nd-unfolding/ND_OMNIFOLD_STATUS.md"
+  ],
+  "append_only_history": [
+    "docs/orchestration/gregor-pet2/CAMPAIGN_LEDGER.md",
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md"
+  ],
+  "archival_index_only": [
+    "nd-unfolding/pet2_torch/products/conditional_stress/development_smoke",
+    "superseded followup prompts"
+  ]
+}

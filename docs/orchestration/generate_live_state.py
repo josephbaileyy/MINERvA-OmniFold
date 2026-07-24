@@ -246,7 +246,13 @@ def main() -> int:
     if wake.get("waker"):
         import wakerctl
 
-        wake_state = {"waker_status": wakerctl.status(wakerctl.Ctx())}
+        configured_waker = wake.get("config")
+        waker_context = (
+            wakerctl.Ctx((REPO / configured_waker).resolve())
+            if configured_waker
+            else wakerctl.Ctx()
+        )
+        wake_state = {"waker_status": wakerctl.status(waker_context)}
     else:
         tmux_rc = subprocess.run(["tmux", "has-session", "-t", wake["tmux_session"]], capture_output=True).returncode
         wake_state = {

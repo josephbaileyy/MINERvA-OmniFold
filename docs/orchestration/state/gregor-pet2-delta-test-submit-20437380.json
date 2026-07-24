@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "status": "submitted",
+  "submitted_at_utc": "2026-07-24T03:21:35Z",
+  "job_id": "20437380",
+  "job_name": "pet2cs_test_ba28",
+  "account": "bhvk-delta-gpu",
+  "partition": "gpuA100x4-interactive",
+  "resources": {
+    "nodes": 1,
+    "gpus": 1,
+    "cpus_per_task": 8,
+    "memory": "64g",
+    "wall_time": "00:20:00"
+  },
+  "source": {
+    "commit": "ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d",
+    "checkout": "/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed",
+    "branch": "codex/gregor-pet2-conditional-ba28bed",
+    "clean_porcelain_before_submit": true
+  },
+  "output": {
+    "stdout": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/logs/test_20437380.out",
+    "stderr": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/logs/test_20437380.err"
+  },
+  "scope": [
+    "complete PET2 test suite",
+    "Gate-2 regressions",
+    "Python compilation",
+    "launcher syntax",
+    "conditional launcher self-test"
+  ],
+  "watch_id": "gregor-pet2-delta-test-20437380-deadline",
+  "watch_deadline_utc": "2026-07-24T03:50:00Z",
+  "unrelated_job_20434188_untouched": true
+}
