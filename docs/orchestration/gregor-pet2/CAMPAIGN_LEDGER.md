@@ -733,3 +733,24 @@ Append-only orchestration and experimental ledger for branch
   `2026-07-24T06:15:00Z`. There is no polling, provider dispatch, role
   replacement, reset-credit use, or interaction with unrelated job
   `20434188`.
+
+## 2026-07-24 — Claude School interim-root handoff prepared
+
+- At the user's request, a self-contained interim-root prompt was written to
+  `docs/orchestration/gregor-pet2/CLAUDE_SCHOOL_ROOT_HANDOFF_20260724.md` so
+  the remaining campaign can be orchestrated from Claude School while
+  conserving Codex Personal capacity.
+- The handoff snapshot at `2026-07-24T05:22:28Z` returned `gate_ok=true`:
+  Codex Personal had 2% seven-day remaining, Codex School 91%, no reset
+  credits, and unknown Claude/agy percentages. No provider turn was
+  dispatched for this documentation step.
+- The prompt preserves all four durable worker UUIDs and explicitly keeps the
+  existing Claude School `omnifold_contract_auditor` independent from the
+  acting interim root. It records exact branch/source commits, recovery array
+  `20441096`, Delta paths, evidence boundaries, commit gate, post-results
+  auditor rounds, and the final clean/no-unmonitored-job end condition.
+- Waker routing is unchanged at this entry: the recovery deadline watch
+  remains armed and still targets the canonical Codex root. The prompt allows
+  migration to a Claude root only if that Claude session's UUID is
+  authoritatively known and no resume is in flight; it forbids guessing or
+  disarming the sole wake path.
