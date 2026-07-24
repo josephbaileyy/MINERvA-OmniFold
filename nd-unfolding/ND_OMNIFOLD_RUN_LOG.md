@@ -2160,3 +2160,16 @@ With the runtime dependency satisfied, frozen array `20439948` launched the
 contains its matched parent and enriched arm, common rows and budgets, and
 truth-frozen Step 2. A one-shot deadline watch—not a polling loop—covers the
 array. There is still no conditional channel-capacity result at this entry.
+
+## 2026-07-24 — Gregor PET2 array 20439948 failed closed before training
+
+The one-shot deadline inspection found no summaries. Staged logs from all 45
+array elements show the same environment-gate mismatch: Delta's PyTorch
+module exposed `safetensors 0.6.2` while the reviewed package lock requires
+`0.5.3`. No model fit began and no arm result exists.
+
+This does not revise any scientific conclusion. The recovery is to create the
+documented isolated venv overlay, install the one locked pure-Python
+dependency, and relaunch exactly the same 45 cells from clean `ba28bed`.
+Source, samples, splits, seeds, truth Step 2 and optimizer budgets remain
+frozen.

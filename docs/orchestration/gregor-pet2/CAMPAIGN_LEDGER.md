@@ -686,3 +686,29 @@ Append-only orchestration and experimental ledger for branch
   `gregor-pet2-conditional-array-20439948-deadline` is armed for
   `2026-07-24T05:00:00Z`; no Slurm or LLM polling is active. Unrelated job
   `20434188` was not touched.
+
+## 2026-07-24 — conditional-array deadline reconciled; environment gate failed closed
+
+- Waker event
+  `evt-gregor-pet2-conditional-array-20439948-deadline` was read exactly
+  once and validated as schema version 1, type `deadline`, watch
+  `gregor-pet2-conditional-array-20439948-deadline`, payload deadline
+  `2026-07-24T05:00:00Z`, observation
+  `2026-07-24T05:00:13+00:00`, and event head `48eb705`. The campaign ledger
+  contained no earlier reconciliation.
+- The single Delta inspection found no completed summary and no scheduler
+  row addressable by the array-master ID at the deadline. All 45 stdout and
+  stderr files nevertheless exist and identify 45 unique Slurm element job
+  IDs. Every element failed at the same pre-training environment gate:
+  module `safetensors 0.6.2` did not match the reviewed lock `0.5.3`.
+- The failure is operational and fail-closed: zero summaries and zero
+  parent/enriched arm results exist, so it contributes no scientific
+  evidence. All 90 small logs were staged; exact counts, hashes, and the
+  recovery decision are in
+  `nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20439948_failure_receipt.json`.
+- Recovery is limited to all 45 failed cells: construct the already
+  documented isolated `--system-site-packages` venv, install only locked
+  `safetensors==0.5.3`, pass `PET2_VENV`, and relaunch the unchanged exact
+  `ba28bed` source, rows, splits, seeds, truth-frozen Step 2, and training
+  budget. No worker was replaced, no reset credit was consumed, and unrelated
+  job `20434188` was not touched.

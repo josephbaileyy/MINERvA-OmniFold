@@ -891,3 +891,17 @@ The frozen five-family x three-mode x three-seed matrix was submitted
 unchanged as array `20439948`; no numerical matrix result exists at this
 entry. Canonical receipt:
 `nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20437380/receipt.json`.
+
+## 2026-07-24 Gregor PET2 conditional-information continuation — ARRAY 20439948 FAIL-CLOSED
+
+All 45 submitted cells reached the Delta environment gate and stopped before
+training because module `safetensors 0.6.2` differed from the reviewed
+`0.5.3` lock. There are 45 stdout plus 45 stderr logs, zero cell summaries,
+and zero parent/enriched arm results. This is operational failure evidence,
+not a failed representation test; it creates no closure, ESS, tail, cap,
+projection, feature-benefit, G2, or publication evidence.
+
+Recovery changes only the runtime overlay: create the documented isolated
+`--system-site-packages` venv with `safetensors==0.5.3` and rerun all 45
+failed cells from exact `ba28bed`. Canonical failure receipt:
+`nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20439948_failure_receipt.json`.

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "failed-closed-no-training",
+  "evidence_class": "operational-failure",
+  "array": {
+    "job_id": "20439948",
+    "declared_tasks": "0-44",
+    "expected_cell_count": 45,
+    "stdout_log_count": 45,
+    "stderr_log_count": 45,
+    "unique_element_job_id_count": 45,
+    "element_job_id_min": "20439948",
+    "element_job_id_max": "20440007"
+  },
+  "source": {
+    "commit": "ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d",
+    "checkout": "/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed",
+    "clean_porcelain_at_inspection": true
+  },
+  "inspection": {
+    "inspected_once_at_utc": "2026-07-24T05:00:13Z",
+    "sacct_array_task_rows_matched": 0,
+    "squeue_result": "Invalid job id specified",
+    "summary_count": 0,
+    "arm_result_count": 0,
+    "missing_cell_count": 45,
+    "stdout_and_stderr_logs_staged": true
+  },
+  "failure": {
+    "failed_cell_count": 45,
+    "environment_gate_status": "fail",
+    "common_problem": "safetensors 0.6.2 != package lock 0.5.3",
+    "launcher_terminal_message": "[pet2cs][FAIL] Delta environment gate failed",
+    "training_started": false,
+    "scientific_result_created": false
+  },
+  "logs": {
+    "directory": "job20439948_failed_logs",
+    "file_count": 90,
+    "total_bytes": 77355,
+    "sorted_sha256_inventory_sha256": "47511a24cd61fde6a30ccb9188e532f1f8e3481463adae36272005e0273d0d92",
+    "representative_stdout": {
+      "path": "job20439948_failed_logs/matrix_20439948_0.out",
+      "sha256": "9a3ee349ac1aeaa1e3aad15045103a3a86f6cbed74de97121bd662e2fed1f337"
+    },
+    "representative_stderr": {
+      "path": "job20439948_failed_logs/matrix_20439948_0.err",
+      "sha256": "795a58414d53e42a07ff9deeb51edeb8f2506e3aaca2dd87e7dac7bcfa3ad120"
+    }
+  },
+  "recovery": {
+    "decision": "relaunch-all-45-failed-cells",
+    "required_change": "Create the documented isolated --system-site-packages venv, install locked safetensors 0.5.3, and export PET2_VENV.",
+    "frozen_science_contract_changed": false,
+    "source_code_changed": false,
+    "samples_splits_seeds_budgets_changed": false
+  },
+  "claims": {
+    "feature_benefit_claim": false,
+    "g2_validation_claim": false,
+    "publication_promotion_permitted": false
+  },
+  "unrelated_job_20434188_untouched": true
+}

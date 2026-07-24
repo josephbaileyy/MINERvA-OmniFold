@@ -1,0 +1,15 @@
+{
+  "event_id": "evt-gregor-pet2-conditional-array-20439948-deadline",
+  "event_type": "deadline",
+  "head_at_event": "48eb705069c361d05d3fbe3551d132e7c3138ed7",
+  "observed_at_utc": "2026-07-24T05:00:13+00:00",
+  "payload": {
+    "at_utc": "2026-07-24T05:00:00Z"
+  },
+  "schema_version": 1,
+  "source": {
+    "node": "MacBookPro.lan",
+    "pid": 16103
+  },
+  "watch_id": "gregor-pet2-conditional-array-20439948-deadline"
+}
