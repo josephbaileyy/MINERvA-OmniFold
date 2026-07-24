@@ -1,0 +1,26 @@
+{
+  "all_elements_completed_0_0": true,
+  "array_job": "20441096",
+  "delta_log_base": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/logs",
+  "delta_output_base": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/matrix",
+  "element_state_counts": {
+    "COMPLETED 0:0": 45
+  },
+  "elements_indices_complete": true,
+  "elements_total": 45,
+  "inspected_by": "claude-school interim root (session 54080160-df7b-4c8a-85bf-104a6f654660)",
+  "inspection_utc": "2026-07-24T11:36Z",
+  "logs_staged": {
+    "checksums_file": "logs/SHA256SUMS.txt",
+    "count": 90,
+    "err": 45,
+    "out": 45
+  },
+  "method": "bounded sacct accounting + output artifacts over delta-codex2 control master (not squeue-absence inference)",
+  "note": "Independent confirmation that all 45 recovery cells completed 0:0 from clean ba28bed; corroborates locally-verified reproducible aggregate d244c7b6878258ea57d77b392f3fcb8c4b2b6e04fc6d17ced97361c7c3537f93.",
+  "sacct_raw_file": "sacct_20441096.txt",
+  "sacct_raw_sha256": "2191f4b87b715fb53c628b745137b2c911b75cecf20ae2b189ae0eb5d292b9ed",
+  "schema_version": 1,
+  "source_commit": "ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d",
+  "venv_overlay": "/u/jbailey2/pet2-venvs/ba28bed-safetensors053 (safetensors==0.5.3)"
+}

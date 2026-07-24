@@ -12,13 +12,19 @@ representation promotion is authorized. Keep the PyTorch path experimental;
 publication choice remains deferred to literal G2 validation.
 
 Conditional-information continuation (2026-07-24): the original matrix is
-reclassified as a baseline-sufficient null-feature test. The five-family
-conditional fixture, G2 memmap code-contract, and checkpoint-compatible design
-pass the source gate, and the exact-clean Delta runtime gate passed 83/83 PET2
-plus 7/7 Gate-2 tests. Frozen array `20439948` failed closed before training
-on a `safetensors` lock mismatch; the unchanged 45 cells require a venv-overlay
-relaunch. Recovery array `20441096` is in flight with that isolated locked
-overlay. No new feature outcome is yet quotable.
+reclassified as a baseline-sufficient null-feature test. The preregistered
+five-family feature-conditional stress matrix completed as recovery array
+`20441096` from exact `ba28bed` (safetensors 0.5.3 overlay); Delta `sacct`
+confirms all 45 cells `COMPLETED 0:0`, and an independent local re-run of the
+fail-closed aggregator reproduces the staged aggregate bitwise
+(`d244c7b6…`, 90 arms). Result: `all_families_passed=false` — no family
+(view/type/rich/muon-token/overflow) passed the channel-capacity gate. Each
+enriched carrier was direction-favorable in all three seeds with ~27–28% push
+RMSE improvement (parent ~0.431 → enriched ~0.31) but fell short of the ≥30% /
+≤0.25 threshold; both negative controls (unity-sham, carrier-shuffle) passed.
+This is `synthetic-fixture` channel-capacity evidence only; no feature adoption
+or publication promotion is authorized. Post-result auditor review is pending.
+Verified numbers live in `../VALIDATION_LEDGER.md`.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

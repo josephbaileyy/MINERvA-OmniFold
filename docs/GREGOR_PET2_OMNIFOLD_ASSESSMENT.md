@@ -42,6 +42,21 @@ means both that the original injected target was parent-sufficient and that
 the pilot cannot resolve percent-level real-data effects; it does not mean a
 feature is intrinsically neutral or harmful.
 
+The follow-up five-family feature-conditional stress matrix (recovery array
+`20441096`, exact `ba28bed`) directly addressed the parent-sufficiency gap by
+injecting a ratio that only an exclusive enriched carrier can decode, with
+matched unity-sham and carrier-shuffle controls. It, too, produced no
+channel-capacity pass: for every family (detector view, reconstructed type,
+rich globals, distinguished muon token, pre-truncation overflow) the enriched
+carrier moved the mean push log-ratio RMSE ~27–28% in the favorable direction
+in all three seeds but fell short of the preregistered ≥30% improvement and
+enriched-RMSE ≤0.25 gate, while both negative controls behaved correctly. This
+sharpens rather than softens the conservative decision: even a perfectly
+exclusive synthetic conditional was only partially, sub-threshold transmissible
+through this harness at the pilot scale. It is channel-capacity evidence about
+the harness, not evidence that MINERvA data contains such a conditional, and it
+still authorizes no promotion.
+
 The real typed-object vocabulary does not exist symmetrically for data,
 selected signal, and background in the available MINERvA input. Gregor's
 public rows are MC-only and cannot repair that omission. His advertised
@@ -311,6 +326,7 @@ and decision rather than duplicating the numerical authority.
 | TensorFlow synthetic A/B | Current-engine recoil versus full-event, three seeds | Descriptive absolute diagnostic FAIL; preregistered relative effect sub-threshold and seed-inconsistent | No A/B superiority claim |
 | PyTorch synthetic C/D/E | Common 100k-event sample, truth-frozen Step 2, matched seeds and budgets; target depends only on C-visible inputs | Baseline-sufficient null-feature test: no large instability, but no unique-information challenge | No representation winner or unique-feature benefit claim |
 | Muon-token/overflow synthetic | Tagged C-parent variants on the same C-sufficient target | Sub-percent movements are null/safety evidence only | No promotion; no channel-capacity conclusion |
+| Feature-conditional stress (channel capacity) | Five families, exclusive enriched carriers, unity-sham + carrier-shuffle controls, three seeds, 100k events (array `20441096`) | All families sub-threshold: ~27–28% favorable but below the ≥30%/≤0.25 gate; both negative controls pass | Partial synthetic channel capacity only; no real-benefit or promotion claim |
 | Recoil-input XPS2 | Three-seed bounded retraining over a fixed memmap selection | Finite weights, no cap saturation, stable throughput; no literal background, `w_reco`, full-event fields, or closure target | Engine/tail diagnostic only |
 | Publication G2 | Required full-event data/signal/background/miss input | Unavailable to the campaign | No publication-estimator conclusion |
 
@@ -352,6 +368,38 @@ aggregate moved all three seeds slightly favorably. Neither direction is
 scientific benefit or harm evidence because C already contained the complete
 injected target. Real muon-coordinate/missingness semantics and the real
 pre-truncation overflow inventory also remain unavailable.
+
+### Feature-conditional stress matrix (channel-capacity continuation)
+
+The preregistered continuation replaced the parent-sufficient target with five
+isolated families whose injected 0.5/1.5 ratio is decodable only from an
+exclusive enriched carrier, verified per cell by an exclusivity certificate
+(parent analytic carrier AUC 0.5, enriched AUC 1.0, byte-identical parent
+tensors within each counterfactual pair, bookkeeping excluded from model
+tensors, unmodified truth). It ran at matched rows, splits, seeds, budget, and
+a single frozen truth-Step-2 footing across all 90 arms, completed on Delta as
+recovery array `20441096` (all 45 cells `COMPLETED 0:0`), and its fail-closed
+aggregate reproduces bitwise on independent re-run.
+
+No family passed. For detector view, reconstructed type, rich globals, the
+distinguished muon token, and pre-truncation overflow the enriched carrier
+lowered mean push log-ratio RMSE from a hard parent (~0.431) to ~0.31 — a
+~27–28% improvement that was direction-favorable in all three seeds — but did
+not reach the preregistered ≥30% improvement or the enriched-RMSE ≤0.25 (mean)
+/ ≤0.30 (per seed) bar. Every remaining signal sub-gate passed (parent RMSE
+≥0.35, no cap-10/cap-30 saturation, global and declared-tail ESS within ten
+percent, projection-residual L1 ≤0.25, cap ESS shift <1%). The unity-sham
+control held both arms at mean RMSE ≤0.15 with matched ESS, and the
+carrier-shuffle control held carrier AUC within 0.02 of chance with <15%
+enriched improvement, so the sub-threshold signal is a genuine partial channel
+effect and not a spurious capacity or bookkeeping leak.
+
+This is the intended clean interpretation: even a perfectly exclusive synthetic
+conditional is only partially and sub-threshold transmissible through this
+harness at the 100k-event pilot scale. It establishes bounded harness
+channel capacity, not that MINERvA data contains such a conditional, and it
+does not lift the no-promotion decision. Post-result adversarial review by the
+contract and evidence auditors is pending and will be recorded in §12.
 
 ### Baseline and cross-framework limits
 

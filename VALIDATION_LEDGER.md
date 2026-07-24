@@ -905,3 +905,36 @@ Recovery changes only the runtime overlay: create the documented isolated
 `--system-site-packages` venv with `safetensors==0.5.3` and rerun all 45
 failed cells from exact `ba28bed`. Canonical failure receipt:
 `nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20439948_failure_receipt.json`.
+
+## 2026-07-24 Gregor PET2 conditional-information continuation — RECOVERY ARRAY 20441096 COMPLETE, NO CHANNEL-CAPACITY PASS
+
+The frozen five-family feature-conditional stress matrix reran cleanly as
+recovery array `20441096` from exact `ba28bed` with the isolated
+`safetensors==0.5.3` venv overlay (`/u/jbailey2/pet2-venvs/ba28bed-safetensors053`).
+Delta `sacct` accounting confirms all 45 array elements `COMPLETED 0:0`
+(indices 0–44, none failed or nonterminal); 45 unique cell summaries, 90 arm
+results, and 90 stdout/stderr logs (with SHA-256 sums) are staged locally. An
+independent local re-run of `pet2_torch.aggregate_conditional_stress` passed
+every fail-closed gate and reproduced the staged aggregate bitwise
+(`aggregate_fingerprint d244c7b6878258ea57d77b392f3fcb8c4b2b6e04fc6d17ced97361c7c3537f93`,
+`arm_result_count=90`). Common footing is single-valued across all 90 arms
+(`truth_tensor_sha256 a717d31d…`, `truth_arm_fingerprint c514d437…`). Evidence
+class `synthetic-fixture`; `g2_validation_claim=false`;
+`publication_promotion_permitted=false`.
+
+Outcome: `all_families_passed=false`; no family passed the preregistered
+channel-capacity gate. For every family (view, type, rich, muon-token,
+overflow) the enriched carrier was direction-favorable in all three seeds and
+improved mean push log-ratio RMSE by ~27–28% (parent mean RMSE ~0.431 →
+enriched ~0.308–0.313), but fell short of the required ≥30% improvement and
+enriched RMSE ≤0.25 mean (≤0.30 per seed). Every other signal sub-gate passed
+(parent RMSE ≥0.35, no cap-10/cap-30 saturation, global and declared-tail ESS
+within 10%, projection L1 ≤0.25, cap ESS shift <1%). Both negative controls
+passed for all five families: unity-sham with both arms' mean RMSE ≤0.15 and
+matched ESS, and carrier-shuffle with carrier AUC within 0.02 of chance and
+<15% enriched improvement. Interpretation: the harness partially but
+sub-threshold transmits an exclusively-carried conditional; this is synthetic
+channel-capacity evidence only, not evidence that MINERvA data contains such a
+conditional, and it authorizes no feature adoption or publication promotion.
+Post-result adversarial auditor review pending. Products:
+`nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/{aggregate.json,result_summary.json,delta_inspection_receipt.json,sacct_20441096.txt,runs/,logs/}`.

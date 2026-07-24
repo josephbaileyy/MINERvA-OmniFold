@@ -2179,3 +2179,32 @@ documented isolated system-site-packages venv with locked
 `safetensors==0.5.3`. It reruns all 45 pre-training failures without changing
 the scientific contract. A one-shot deadline watch covers the next
 inspection.
+
+## 2026-07-24 — Gregor PET2 conditional-information continuation: recovery matrix 20441096 adjudicated (no channel-capacity pass)
+
+The preregistered five-family feature-conditional stress matrix completed as
+Delta recovery array `20441096` from exact clean `ba28bed` with the isolated
+`safetensors==0.5.3` venv overlay (the earlier array `20439948` had failed
+closed on a `safetensors 0.6.2` lock mismatch before training).
+
+Adjudication ran under the Claude School interim root during a Codex-Personal
+capacity-conservation window. The `06:15Z` waker deadline resumed the Codex
+root, which failed on a transient network/DNS error; the interim Claude root
+drove the adjudication instead. The `06:15Z` Codex turn had, over the then-live
+SSH control master, already staged the full inventory (uncommitted); it was
+treated as interrupted-turn output and verified, not trusted. Bounded Delta
+`sacct` accounting confirmed all 45 array elements `COMPLETED 0:0`; 45 unique
+cell summaries, 90 arm results, and 90 stdout/stderr logs (with SHA-256 sums)
+are staged; an independent local re-run of
+`pet2_torch.aggregate_conditional_stress` passed every fail-closed gate and
+reproduced the staged aggregate bitwise
+(`d244c7b6878258ea57d77b392f3fcb8c4b2b6e04fc6d17ced97361c7c3537f93`).
+
+Result: `all_families_passed=false`. For every family (view, type, rich,
+muon-token, overflow) the enriched carrier was direction-favorable in all three
+seeds with ~27–28% mean push log-ratio RMSE improvement (parent ~0.431 →
+enriched ~0.31) but fell short of the ≥30% / enriched-RMSE ≤0.25 gate; all
+other signal sub-gates passed; both negative controls (unity-sham,
+carrier-shuffle) passed. Synthetic channel-capacity evidence only — no feature
+adoption or publication promotion. Numbers: `../VALIDATION_LEDGER.md`
+(2026-07-24 RECOVERY ARRAY 20441096 entry). Post-result auditor review pending.

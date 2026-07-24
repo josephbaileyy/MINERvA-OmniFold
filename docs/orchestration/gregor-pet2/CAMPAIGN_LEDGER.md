@@ -840,3 +840,32 @@ Append-only orchestration and experimental ledger for branch
   campaign resumes when the user re-establishes SSH and re-engages session
   `54080160`. Durable worker UUIDs unchanged; unrelated job `20434188` untouched;
   no reset credit consumed.
+
+## 2026-07-24 — interim-root turn 3: Delta cross-check, result-bearing commit, auditor dispatch
+
+- The user re-established the Delta SSH control master (pid 52197). The interim
+  Claude root completed the bounded inspection: `sacct` shows all 45 elements
+  of array `20441096` `COMPLETED 0:0` (indices 0–44, none failed); staged the
+  90 stdout/stderr logs with SHA-256 sums and a
+  `delta_inspection_receipt.json` (raw `sacct` retained). This independently
+  corroborates the locally reproduced fail-closed aggregate
+  (`d244c7b6878258ea57d77b392f3fcb8c4b2b6e04fc6d17ced97361c7c3537f93`, 90 arms,
+  single truth `a717d31d…`/`c514d437…`).
+- Full-metric review (handoff step 5): all five families
+  `fail-synthetic-channel-or-control`; enriched carriers ~27–28%
+  direction-favorable in all three seeds (parent ~0.431 → enriched ~0.31) but
+  below the ≥30% / ≤0.25 gate; parent RMSE ≥0.35, no cap saturation, global and
+  tail ESS within 10%, projection L1 ≤0.25; unity-sham and carrier-shuffle
+  controls pass for every family. Training AUC not used as acceptance.
+- Result-bearing commit (handoff step 6) carries, together: the staged/verified
+  products + Delta receipt + 90 logs, `VALIDATION_LEDGER.md`,
+  `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`, `nd-unfolding/ND_OMNIFOLD_STATUS.md`,
+  `docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md` (§1, §9), and `KNOWN_ISSUES.md` #22.
+  Conclusion unchanged and sharpened: no channel-capacity pass, no feature
+  adoption, no publication promotion; `synthetic-fixture` evidence only.
+- The `BLOCKED-ON-USER.json` was removed (block resolved). Next: send the
+  committed results + revised assessment to the same `omnifold_contract_auditor`
+  (`0d8740dd-…`) and `evidence_ablation_auditor` (`4be5058b-…`) sessions via
+  `agentctl.py send` for post-result adversarial review (handoff step 7);
+  repair findings and finalize the assessment (step 8). Durable worker UUIDs
+  unchanged; unrelated job `20434188` untouched; no reset credit consumed.
