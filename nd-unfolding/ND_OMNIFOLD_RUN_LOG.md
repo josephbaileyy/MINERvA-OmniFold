@@ -2147,3 +2147,16 @@ included, but the literal G2 and eligible checkpoint weights remain absent.
 No matched conditional result or feature-promotion claim exists at this
 entry. Next action: stage this exact clean commit on Delta, pass its runtime
 suite, and execute the frozen 45-cell matrix.
+
+## 2026-07-24 — Gregor PET2 clean Delta gate PASS; conditional matrix launched
+
+Delta runtime job `20437380` completed from exact clean commit `ba28bed`:
+83/83 PET2 tests and 7/7 Gate-2 tests passed together with compilation,
+launcher syntax and the conditional-launcher self-test. The log hashes and
+resource receipt were staged locally and committed with the ledger entry.
+
+With the runtime dependency satisfied, frozen array `20439948` launched the
+45 preregistered family/mode/seed cells from the same checkout. Each cell
+contains its matched parent and enriched arm, common rows and budgets, and
+truth-frozen Step 2. A one-shot deadline watch—not a polling loop—covers the
+array. There is still no conditional channel-capacity result at this entry.

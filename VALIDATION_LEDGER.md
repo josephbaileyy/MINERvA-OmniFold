@@ -875,3 +875,19 @@ publication-promotion claim.
 
 Canonical source-gate summary:
 `nd-unfolding/pet2_torch/products/conditional_stress/code_contract_summary.json`.
+
+## 2026-07-24 Gregor PET2 conditional-information continuation — DELTA RUNTIME PASS
+
+Clean-source Delta job `20437380` completed with exit code `0:0` in 32 s
+using one A100, eight CPUs and 64 GiB. The checkout resolved exactly to
+`ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d` and had empty porcelain status.
+All 83 PET2 tests passed in 17.825 s and all seven Gate-2 tests passed in
+0.039 s; Python compilation, launcher syntax and the conditional-launcher
+self-test also passed.
+
+This closes only the Delta code/runtime gate. It supplies no
+feature-benefit, literal-G2, checkpoint, or publication-promotion evidence.
+The frozen five-family x three-mode x three-seed matrix was submitted
+unchanged as array `20439948`; no numerical matrix result exists at this
+entry. Canonical receipt:
+`nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20437380/receipt.json`.

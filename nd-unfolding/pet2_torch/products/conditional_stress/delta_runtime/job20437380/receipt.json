@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "evidence_class": "code-contract",
+  "job": {
+    "job_id": "20437380",
+    "job_name": "pet2cs_test_ba28",
+    "account": "bhvk-delta-gpu",
+    "partition": "gpuA100x4-interactive",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:32",
+    "start_delta_local": "2026-07-23T22:21:26",
+    "end_delta_local": "2026-07-23T22:21:58",
+    "delta_timezone": "America/Chicago",
+    "resources": {
+      "nodes": 1,
+      "gpus": 1,
+      "cpus": 8,
+      "memory": "64G"
+    }
+  },
+  "source": {
+    "commit": "ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d",
+    "checkout": "/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed",
+    "clean_porcelain_at_inspection": true
+  },
+  "validation": {
+    "pet2_tests": {
+      "run": 83,
+      "passed": 83,
+      "failed": 0,
+      "skipped": 0,
+      "elapsed_seconds": 17.825
+    },
+    "gate2_tests": {
+      "run": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "elapsed_seconds": 0.039
+    },
+    "python_compilation": "pass",
+    "launcher_syntax": "pass",
+    "conditional_launcher_selftest": "pass"
+  },
+  "logs": {
+    "stdout": {
+      "path": "test_20437380.out",
+      "bytes": 277,
+      "sha256": "c4d720f23dc7f7812f1fb33aef3f8004d87fb8e28d222c6238cc4d31225833cb"
+    },
+    "stderr": {
+      "path": "test_20437380.err",
+      "bytes": 1716,
+      "sha256": "b7f4ced526216c5a91375b94a6482cc838bb5a0fbb7348448fdf577c08c3ffca"
+    }
+  },
+  "claims": {
+    "feature_benefit_claim": false,
+    "g2_validation_claim": false,
+    "publication_promotion_permitted": false
+  },
+  "inspected_once_at_utc": "2026-07-24T03:50:58Z",
+  "unrelated_job_20434188_untouched": true
+}

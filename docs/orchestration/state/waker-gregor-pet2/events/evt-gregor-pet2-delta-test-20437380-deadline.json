@@ -1,0 +1,15 @@
+{
+  "event_id": "evt-gregor-pet2-delta-test-20437380-deadline",
+  "event_type": "deadline",
+  "head_at_event": "f0019459a06e059d54f0404601f0388f66d3cb74",
+  "observed_at_utc": "2026-07-24T03:50:58+00:00",
+  "payload": {
+    "at_utc": "2026-07-24T03:50:00Z"
+  },
+  "schema_version": 1,
+  "source": {
+    "node": "MacBookPro.lan",
+    "pid": 16103
+  },
+  "watch_id": "gregor-pet2-delta-test-20437380-deadline"
+}

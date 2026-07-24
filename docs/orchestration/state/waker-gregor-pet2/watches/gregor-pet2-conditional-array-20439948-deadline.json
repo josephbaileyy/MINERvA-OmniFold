@@ -1,0 +1,15 @@
+{
+  "action": {
+    "context": "Gregor PET2 frozen 45-cell conditional matrix array 20439948 from exact clean ba28bed. Inspect the array exactly once through the delta-codex2 socket. If all 45 tasks terminal PASS with complete parent/child products, stage receipts and aggregate; if any task is nonterminal, re-arm a later deadline without polling; if failed, diagnose only this campaign array and relaunch only failed cells after recording the failure. Never touch unrelated job 20434188, replace roles, or consume reset credits.",
+    "type": "root-resume"
+  },
+  "armed_at_utc": "2026-07-24T03:54:31+00:00",
+  "armed_by": "MacBookPro.lan:28651",
+  "kind": "deadline",
+  "params": {
+    "at_utc": "2026-07-24T05:00:00Z"
+  },
+  "state": "armed",
+  "unreliable": 0,
+  "watch_id": "gregor-pet2-conditional-array-20439948-deadline"
+}

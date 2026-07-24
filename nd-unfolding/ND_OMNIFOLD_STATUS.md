@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-07-23. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-07-24. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -14,8 +14,9 @@ publication choice remains deferred to literal G2 validation.
 Conditional-information continuation (2026-07-24): the original matrix is
 reclassified as a baseline-sufficient null-feature test. The five-family
 conditional fixture, G2 memmap code-contract, and checkpoint-compatible design
-pass the source gate; the clean 45-cell Delta matrix is the next action and no
-new feature outcome is yet quotable.
+pass the source gate, and the exact-clean Delta runtime gate passed 83/83 PET2
+plus 7/7 Gate-2 tests. Frozen 45-cell array `20439948` is in flight; no new
+feature outcome is yet quotable.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

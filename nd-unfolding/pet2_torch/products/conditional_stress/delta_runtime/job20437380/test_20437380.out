@@ -1,0 +1,4 @@
+[pet2cs-selftest] repo=/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed
+[pet2cs-selftest] out=/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/selftest
+[pet2cs-selftest] family=view mode=signal seed=101
+[pet2cs-selftest] no submit, module load, or training

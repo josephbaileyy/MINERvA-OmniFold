@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Gregor PET2 conditional-information continuation",
-  "current_dag_node": "Clean-source Delta runtime validation",
-  "state": "SOURCE/CONTRACT COMMIT ba28bed PASS; Delta runtime job 20437380 submitted; frozen 45-cell matrix awaits this gate.",
+  "current_dag_node": "Frozen conditional-information matrix",
+  "state": "DELTA RUNTIME PASS at ba28bed; frozen 45-cell array 20439948 submitted.",
   "orchestrator_thread_id": "019f8f02-144a-7050-b9d9-d73818ab4cd3",
   "owners": [
     {
@@ -35,7 +35,7 @@
     "Literal publication G2 NPZ is absent locally and on Delta; no publication-G2 validation claim is permitted.",
     "Advertised generic checkpoint bytes remain inaccessible, unlicensed and unhashed; arm F remains unavailable."
   ],
-  "next_authorized_action": "Deadline watch gregor-pet2-delta-test-20437380-deadline fires at 2026-07-24T03:50:00Z. Inspect job 20437380 once. On PASS, stage its logs and submit the exact ba28bed frozen 45-cell conditional array; if nonterminal, re-arm without polling.",
+  "next_authorized_action": "Deadline watch gregor-pet2-conditional-array-20439948-deadline fires at 2026-07-24T05:00:00Z. Inspect array 20439948 once. On complete 45/45 PASS, stage summaries, receipts and logs and run the fail-closed aggregate; if nonterminal, re-arm without polling.",
   "canonical_science": [
     "docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md",
     "VALIDATION_LEDGER.md",

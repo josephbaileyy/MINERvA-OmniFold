@@ -656,3 +656,33 @@ Append-only orchestration and experimental ledger for branch
   `2026-07-24T03:50:00Z`; the resumed root must inspect the job once and either
   submit the frozen matrix after PASS or re-arm if it remains nonterminal.
   Unrelated pending job `20434188` remains untouched.
+
+## 2026-07-24 — Delta runtime deadline reconciled; frozen matrix submitted
+
+- Waker event
+  `evt-gregor-pet2-delta-test-20437380-deadline` was consumed once. The
+  one-pass validator initially asked for obsolete top-level
+  `evidence`/`observed_at` names; it did not reopen the immutable receipt.
+  The current schema in `wakerctl.py`, fired watch, and append-only waker
+  ledger jointly validate schema version 1, event type `deadline`, watch ID,
+  the `2026-07-24T03:50:00Z` deadline payload, emission at
+  `2026-07-24T03:50:58Z`, and exactly one invocation. There was no earlier
+  campaign-ledger reconciliation.
+- The single authorized Delta inspection found job `20437380`
+  `COMPLETED 0:0` in 32 seconds from the exact clean
+  `ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d` checkout. All 83 PET2 tests
+  and seven Gate-2 tests passed, as did compilation, launcher syntax and
+  self-test. Staged log SHA-256 values are recorded in
+  `nd-unfolding/pet2_torch/products/conditional_stress/delta_runtime/job20437380/receipt.json`.
+- The dependency-ready frozen matrix was then submitted as Delta array
+  `20439948` on `gpuA100x4-interactive`: 45 tasks spanning five families,
+  three control modes and three estimator seeds. Every task asserts exact
+  clean source and runs the fixed 100,000 signal / 10,000 background,
+  two-iteration, eight-epoch matched budget with the common frozen Step 2.
+  The task map and source/launcher hashes are in
+  `docs/orchestration/state/gregor-pet2-conditional-array-submit-20439948.json`.
+- No provider was dispatched and no reset credit was consumed. Durable worker
+  UUIDs are unchanged. Deadline watch
+  `gregor-pet2-conditional-array-20439948-deadline` is armed for
+  `2026-07-24T05:00:00Z`; no Slurm or LLM polling is active. Unrelated job
+  `20434188` was not touched.

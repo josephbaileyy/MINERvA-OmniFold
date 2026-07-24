@@ -5,11 +5,12 @@
   },
   "armed_at_utc": "2026-07-24T03:21:47+00:00",
   "armed_by": "MacBookPro.lan:27004",
+  "fired_at_utc": "2026-07-24T03:50:58+00:00",
   "kind": "deadline",
   "params": {
     "at_utc": "2026-07-24T03:50:00Z"
   },
-  "state": "armed",
+  "state": "fired",
   "unreliable": 0,
   "watch_id": "gregor-pet2-delta-test-20437380-deadline"
 }
