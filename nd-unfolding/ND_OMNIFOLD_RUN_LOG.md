@@ -2173,3 +2173,9 @@ documented isolated venv overlay, install the one locked pure-Python
 dependency, and relaunch exactly the same 45 cells from clean `ba28bed`.
 Source, samples, splits, seeds, truth Step 2 and optimizer budgets remain
 frozen.
+
+Recovery array `20441096` was submitted after the failure commit, using the
+documented isolated system-site-packages venv with locked
+`safetensors==0.5.3`. It reruns all 45 pre-training failures without changing
+the scientific contract. A one-shot deadline watch covers the next
+inspection.

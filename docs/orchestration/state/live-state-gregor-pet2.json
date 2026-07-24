@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Gregor PET2 conditional-information continuation",
   "current_dag_node": "Frozen conditional-information matrix",
-  "state": "DELTA RUNTIME PASS at ba28bed; frozen 45-cell array 20439948 submitted.",
+  "state": "DELTA RUNTIME PASS at ba28bed; array 20439948 failed closed before training; unchanged 45-cell recovery array 20441096 submitted with locked venv overlay.",
   "orchestrator_thread_id": "019f8f02-144a-7050-b9d9-d73818ab4cd3",
   "owners": [
     {
@@ -35,7 +35,7 @@
     "Literal publication G2 NPZ is absent locally and on Delta; no publication-G2 validation claim is permitted.",
     "Advertised generic checkpoint bytes remain inaccessible, unlicensed and unhashed; arm F remains unavailable."
   ],
-  "next_authorized_action": "Deadline watch gregor-pet2-conditional-array-20439948-deadline fires at 2026-07-24T05:00:00Z. Inspect array 20439948 once. On complete 45/45 PASS, stage summaries, receipts and logs and run the fail-closed aggregate; if nonterminal, re-arm without polling.",
+  "next_authorized_action": "Deadline watch gregor-pet2-conditional-array-20441096-deadline fires at 2026-07-24T06:15:00Z. Inspect recovery array 20441096 once. On complete 45/45 PASS, stage summaries, receipts and logs, run the fail-closed aggregate, commit canonical evidence, then send post-result reassessments to the same contract and evidence auditors after one usage snapshot; if nonterminal, re-arm without polling.",
   "canonical_science": [
     "docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md",
     "VALIDATION_LEDGER.md",

@@ -712,3 +712,24 @@ Append-only orchestration and experimental ledger for branch
   `ba28bed` source, rows, splits, seeds, truth-frozen Step 2, and training
   budget. No worker was replaced, no reset credit was consumed, and unrelated
   job `20434188` was not touched.
+
+## 2026-07-24 — unchanged conditional matrix recovery array submitted
+
+- Failure receipt and all 90 logs for array `20439948` landed in commit
+  `02d14fd`; the failure was recorded before recovery.
+- The documented isolated venv overlay was created at
+  `/u/jbailey2/pet2-venvs/ba28bed-safetensors053` with system site packages
+  and the sole lockfile dependency `safetensors==0.5.3`. The reviewed lock
+  SHA-256 is
+  `5761583480da603c824cee512754de070dc4c6d601b7eed93b74a17eac6b54e2`.
+- Recovery array `20441096` resubmits all and only the 45 cells that failed
+  before training. It uses the same exact clean `ba28bed` checkout, task
+  map, source launcher, samples, splits, seeds, truth-frozen Step 2,
+  optimizer budget and output namespace. The venv path is the only changed
+  execution input. Machine receipt:
+  `docs/orchestration/state/gregor-pet2-conditional-array-recovery-submit-20441096.json`.
+- Deadline watch
+  `gregor-pet2-conditional-array-20441096-deadline` is armed for
+  `2026-07-24T06:15:00Z`. There is no polling, provider dispatch, role
+  replacement, reset-credit use, or interaction with unrelated job
+  `20434188`.

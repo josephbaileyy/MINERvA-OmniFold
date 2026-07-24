@@ -17,7 +17,8 @@ conditional fixture, G2 memmap code-contract, and checkpoint-compatible design
 pass the source gate, and the exact-clean Delta runtime gate passed 83/83 PET2
 plus 7/7 Gate-2 tests. Frozen array `20439948` failed closed before training
 on a `safetensors` lock mismatch; the unchanged 45 cells require a venv-overlay
-relaunch. No new feature outcome is yet quotable.
+relaunch. Recovery array `20441096` is in flight with that isolated locked
+overlay. No new feature outcome is yet quotable.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

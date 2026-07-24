@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "status": "submitted",
+  "recorded_at_utc": "2026-07-24T05:05:12Z",
+  "job_id": "20441096",
+  "job_name": "pet2cs45r1_ba28",
+  "account": "bhvk-delta-gpu",
+  "partition": "gpuA100x4-interactive",
+  "recovery_of": "20439948",
+  "recovery_scope": "all 45 cells; all failed before training",
+  "array": {
+    "tasks": "0-44",
+    "cell_count": 45,
+    "mapping": "task = family_index*9 + mode_index*3 + seed_index",
+    "families": [
+      "view",
+      "type",
+      "rich",
+      "muon-token",
+      "overflow"
+    ],
+    "modes": [
+      "signal",
+      "unity-sham",
+      "carrier-shuffle"
+    ],
+    "seeds": [
+      101,
+      202,
+      303
+    ]
+  },
+  "resources_per_task": {
+    "nodes": 1,
+    "gpus": 1,
+    "cpus_per_task": 8,
+    "memory": "64g",
+    "wall_time": "00:45:00"
+  },
+  "source": {
+    "commit": "ba28bed7e7d5d99a4be22f36eb729cd65da4fa7d",
+    "checkout": "/u/jbailey2/MINERvA-OmniFold-gregor-pet2-conditional-ba28bed",
+    "clean_porcelain_before_submit": true,
+    "launcher": "nd-unfolding/pet2_torch/sbatch_pet2_conditional_delta.sh",
+    "launcher_sha256": "2d5cd89cbf64959b7af2f92ebd5f7c6a4e11cf8568e709715ff8cd173d4fab48"
+  },
+  "runtime_overlay": {
+    "venv": "/u/jbailey2/pet2-venvs/ba28bed-safetensors053",
+    "system_site_packages": true,
+    "requirements_lock": "nd-unfolding/pet2_torch/requirements-delta.lock",
+    "requirements_lock_sha256": "5761583480da603c824cee512754de070dc4c6d601b7eed93b74a17eac6b54e2",
+    "safetensors": "0.5.3",
+    "torch_source": "pytorch-conda/2.8 module"
+  },
+  "frozen_budget": {
+    "events": 100000,
+    "background_events": 10000,
+    "fixture_seed": 424242,
+    "split_seed": 424242,
+    "iterations": 2,
+    "epochs_per_step": 8,
+    "batch_size": 512,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "device": "cuda",
+    "truth_step2": "common-frozen"
+  },
+  "output": {
+    "base": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/matrix",
+    "stdout_pattern": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/logs/matrixr1_%A_%a.out",
+    "stderr_pattern": "/work/nvme/bhvk/jbailey2/gregor_pet2_conditional/ba28bed/logs/matrixr1_%A_%a.err"
+  },
+  "science_contract_changed_from_20439948": false,
+  "watch_id": "gregor-pet2-conditional-array-20441096-deadline",
+  "watch_deadline_utc": "2026-07-24T06:15:00Z",
+  "unrelated_job_20434188_untouched": true
+}

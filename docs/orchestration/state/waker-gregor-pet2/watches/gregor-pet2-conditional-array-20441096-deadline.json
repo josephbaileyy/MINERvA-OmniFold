@@ -1,0 +1,15 @@
+{
+  "action": {
+    "context": "Gregor PET2 frozen 45-cell conditional matrix recovery array 20441096 from exact clean ba28bed with isolated safetensors 0.5.3 venv overlay. Inspect the array exactly once through delta-codex2. If all 45 cells have complete parent/child products, stage summaries/receipts/logs, run the fail-closed local aggregate, update canonical evidence, and send post-result reassessment prompts to the existing contract and evidence auditor UUIDs after one usage snapshot. If nonterminal, re-arm without polling; if any cell fails, diagnose only this campaign array and relaunch only failed cells after recording the failure. Never touch unrelated job 20434188, replace roles, or consume reset credits.",
+    "type": "root-resume"
+  },
+  "armed_at_utc": "2026-07-24T05:05:04+00:00",
+  "armed_by": "MacBookPro.lan:32107",
+  "kind": "deadline",
+  "params": {
+    "at_utc": "2026-07-24T06:15:00Z"
+  },
+  "state": "armed",
+  "unreliable": 0,
+  "watch_id": "gregor-pet2-conditional-array-20441096-deadline"
+}
