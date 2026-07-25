@@ -2038,3 +2038,50 @@ had disappeared from `squeue`; `wakerctl` now requires allocation-level
 once start evidence exists. All 93 orchestration tests pass. The terminal array
 watch remains armed, Gate 3 stays open, and nominal PET remains prohibited.
 Evidence: `docs/orchestration/state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json`.
+
+## 2026-07-24 — Delta full-stats xps2 recoil PET training COMPLETE (shutdown insurance; not Gate-4/P5A)
+
+During the Perlmutter maintenance window, the extended-phase-space (`xps2`)
+**recoil-only** PET training completed on NCSA Delta. Job `20445933` ran on
+`gpua012` under an 18-hour limit and finished `COMPLETED 0:0` in 9h32m32s on
+4xA100 in the NGC `tensorflow:24.01-tf2-py3` container (TF 2.14.0, horovod
+0.28.1). Recipe as frozen: `--niter 5 --epochs 8 --max-events 40000000`,
+launcher seed 101, estimator seed 42. Per rank the loaders reported data
+1,029,032 rows and MC 10,000,000 rows (4 ranks = 4.12M data / 40M MC), with
+`pass_reco` 0.418-0.419.
+
+Reweight-all over the complete generator set (`n=49,152,885`) gave push weights
+`mean=1.0021 std=0.1588 finite=True`; the F3 logit-space cap of 30.0 saturated
+`0/49152885` rows with weight-mass sum 4.9255e+07 and max 2.3737. A scan of the
+79 MB job log for `traceback|error|nan|diverg` returns zero matches, and all
+five OmniFold iterations are present. Output
+`products/pet/pet_weights_fps_xps2_delta_s101.npz` (sha256 `9a09125f...f0c5`,
+266,051,960 bytes) currently exists **only** on Delta `/u/jbailey2`; the NERSC
+DTN outage extends past the Perlmutter restore date, so CFS staging is deferred.
+The staged input hashes `dfd52750...812`, bit-identical to the Perlmutter input
+already recorded in `docs/orchestration/RUNS.tsv`, so the transfer is
+provenance-clean.
+
+Getting there took four attempts and one real fix. `20412941` failed in 20s on
+container/env setup; `20413251` completed the 10M fast check on `gpua059` in
+2h44; the first full-stats attempt `20416508` hit the launcher's default 12-hour
+wall on `gpua065` and was killed at `TIMEOUT`. Commit `c752d65` diagnosed the
+cause as horovod slot allocation: the container's OpenMPI is not built with
+SLURM PMI, so with `--ntasks-per-node=1` it could neither bootstrap through
+SLURM nor size a 4-rank allocation from it, and setting `OMPI_MCA_plm=isolated`
+together with `ras=^slurm` makes mpirun treat the node as standalone and fork
+NP local ranks over NVLink/NCCL. With that fix and an 18-hour limit the same
+40M recipe fit comfortably.
+
+**Scope, stated explicitly.** This is the recoil-only `xps2` representation
+cross-check and **not** a publication result. Per the artifact guard in
+`docs/OPEN_ITEMS.md`, `of_inputs_pc_fps_xps2.npz` is not a full-event
+publication input, so this run neither is nor advances the Gate-4/P5A full-event
+nominal; the Gate-4 launcher remains `PASS_CODE_ONLY` with training unlaunched.
+TF 2.14 on Delta A100 is not the authoritative TF 2.15 Perlmutter footing. No
+extraction has been run against these weights, so **no cross-section number
+exists** from this run. The matched GPU-floor repeat has not been run, so the
+GPU-nondeterminism floor is unbounded and no spread from this run is
+interpretable. Evidence: `docs/orchestration/RUNS.tsv` row
+`DELTA-PET-FPS-XPS2-FULLSTATS`; job log
+`/u/jbailey2/MINERvA-OmniFold/nd-unfolding/pet_train_fps_delta_20445933.out`.
