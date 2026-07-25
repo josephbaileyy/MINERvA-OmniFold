@@ -1,0 +1,268 @@
+{
+  "schema": "pet-push-weight-diagnostics-v1",
+  "produced_utc": "2026-07-25T13:07:33Z",
+  "producer": {
+    "analysis": "local numpy weight-level diagnostics (no allocation, no GPU)",
+    "python": "3.12.2",
+    "numpy": "1.26.4"
+  },
+  "scope_and_limits": {
+    "estimator": "recoil-only extended-phase-space (xps2) PET",
+    "is_publication_result": false,
+    "is_gate4_or_p5a": false,
+    "reason": "of_inputs_pc_fps_xps2.npz is not a full-event publication input (docs/OPEN_ITEMS.md artifact guard); this run is the Perlmutter-shutdown insurance cross-check",
+    "tensorflow": "2.14.0 (Delta NGC container); the authoritative footing is TF 2.15 on Perlmutter",
+    "cross_section_extracted": false,
+    "matched_gpu_floor_repeat_run": false,
+    "floor_interpretation_note": "No spread from this run is interpretable until the matched 40M repeat lands; the repeat bounds GPU/parallel nondeterminism PLUS node-to-node variation, not kernel-level nondeterminism alone"
+  },
+  "nominal": {
+    "slurm_job": "20445933",
+    "node": "gpua012",
+    "state": "COMPLETED 0:0",
+    "elapsed": "09:32:32",
+    "timelimit": "18:00:00",
+    "git_commit": "c752d65",
+    "gpus": "4xA100 gpuA100x4",
+    "container": "nvcr.io/nvidia/tensorflow:24.01-tf2-py3 (TF 2.14.0, horovod 0.28.1)",
+    "recipe": {
+      "niter": 5,
+      "epochs": 8,
+      "max_events": 40000000,
+      "launcher_seed": 101,
+      "estimator_seed": 42
+    },
+    "artifact": {
+      "path": "nd-unfolding/products/pet/pet_weights_fps_xps2_delta_s101.npz",
+      "location": "Delta /u/jbailey2 only (NERSC DTN outage; CFS staging deferred)",
+      "sha256": "9a09125fd0cfd6318b7e5273a8881dfffb58f361ec871b60ef88f70a3257f0c5",
+      "size_bytes": 266051960
+    },
+    "input": {
+      "npz": "of_inputs_pc_fps_xps2.npz",
+      "sha256": "dfd52750722d8aece1b0797129ee1401af7dffd62c39969a9699ded478eeb812",
+      "note": "bit-identical to the Perlmutter input recorded in docs/orchestration/RUNS.tsv"
+    },
+    "model": "pet",
+    "closure_flag": false,
+    "pass_truth": {
+      "passing": 49150928,
+      "total": 49152885,
+      "fraction": 0.9999601854499487,
+      "failing": 1957
+    },
+    "log_agreement": {
+      "log_mean": 1.0021,
+      "log_std": 0.1588,
+      "log_sum": 49255000.0,
+      "log_max": 2.3737,
+      "log_cap_saturated": "0/49152885 at F3 logit cap 30.0",
+      "reproduced": true
+    }
+  },
+  "weights_full_gen": {
+    "n": 49152885,
+    "mean": 1.0020754377191914,
+    "std": 0.15882508762099695,
+    "min": 0.4095427393913269,
+    "max": 2.3737051486968994,
+    "sum": 49254898.75153607,
+    "ess": 47948372.68313805,
+    "ess_over_n": 0.9754945754076907,
+    "quantile_levels": [
+      0.0,
+      1e-06,
+      0.0001,
+      0.01,
+      0.25,
+      0.5,
+      0.75,
+      0.99,
+      0.9999,
+      0.999999,
+      1.0
+    ],
+    "quantiles": [
+      0.4095427393913269,
+      0.41092904782962797,
+      0.4168310646533966,
+      0.6883406472206116,
+      0.9104477167129517,
+      0.9885971546173096,
+      1.051869511604309,
+      1.5401087999343872,
+      2.1503829642295624,
+      2.3314523527852025,
+      2.3737051486968994
+    ],
+    "nonfinite": 0,
+    "zeros": 0,
+    "negatives": 0,
+    "tails": {
+      "gt_1.5": {
+        "count": 635821,
+        "fraction": 0.012935578450786765,
+        "weight_mass_fraction": 0.02135328696534443
+      },
+      "gt_2.0": {
+        "count": 21574,
+        "fraction": 0.00043891625079585866,
+        "weight_mass_fraction": 0.000918071443770026
+      },
+      "gt_2.5": {
+        "count": 0,
+        "fraction": 0.0,
+        "weight_mass_fraction": 0.0
+      }
+    }
+  },
+  "weights_full_gen_pass_truth": {
+    "n": 49150928,
+    "mean": 1.002073374908046,
+    "std": 0.15882631891666557,
+    "min": 0.4095427393913269,
+    "max": 2.3737051486968994,
+    "sum": 49252836.30082238,
+    "ess": 47946440.58511303,
+    "ess_over_n": 0.9754941063394171,
+    "quantile_levels": [
+      0.0,
+      1e-06,
+      0.0001,
+      0.01,
+      0.25,
+      0.5,
+      0.75,
+      0.99,
+      0.9999,
+      0.999999,
+      1.0
+    ],
+    "quantiles": [
+      0.4095427393913269,
+      0.41092903989768026,
+      0.41683097133636476,
+      0.688335948586464,
+      0.9104429930448532,
+      0.9885944724082947,
+      1.0518687963485718,
+      1.5401092767715454,
+      2.1503703411818886,
+      2.3314525422187096,
+      2.3737051486968994
+    ],
+    "nonfinite": 0,
+    "zeros": 0,
+    "negatives": 0,
+    "tails": {
+      "gt_1.5": {
+        "count": 635801,
+        "fraction": 0.012935686585612382,
+        "weight_mass_fraction": 0.02135346587797598
+      },
+      "gt_2.0": {
+        "count": 21570,
+        "fraction": 0.00043885234476142545,
+        "weight_mass_fraction": 0.0009179389186994871
+      },
+      "gt_2.5": {
+        "count": 0,
+        "fraction": 0.0,
+        "weight_mass_fraction": 0.0
+      }
+    }
+  },
+  "fast10m_reference": {
+    "slurm_job": "20413251",
+    "node": "gpua059",
+    "elapsed": "02:44:29",
+    "max_events": 10000000,
+    "artifact": "pet_weights_fps_xps2_delta_fast10M_s101.npz",
+    "role": "pipeline fast check (runbook step 5b), NOT a matched floor member",
+    "weights_full_gen": {
+      "n": 49152885,
+      "mean": 1.0262329515920279,
+      "std": 0.12488182021346127,
+      "min": 0.7308666706085205,
+      "max": 1.8750925064086914,
+      "sum": 50442310.25281352,
+      "ess": 48435633.420844935,
+      "ess_over_n": 0.9854077420042574,
+      "quantile_levels": [
+        0.0,
+        1e-06,
+        0.0001,
+        0.01,
+        0.25,
+        0.5,
+        0.75,
+        0.99,
+        0.9999,
+        0.999999,
+        1.0
+      ],
+      "quantiles": [
+        0.7308666706085205,
+        0.7386376258006095,
+        0.75432986805439,
+        0.8081293416023254,
+        0.9513179659843445,
+        1.0075393915176392,
+        1.0693247318267822,
+        1.4457504940032955,
+        1.700858842992779,
+        1.8269418708994678,
+        1.8750925064086914
+      ],
+      "nonfinite": 0,
+      "zeros": 0,
+      "negatives": 0,
+      "tails": {
+        "gt_1.5": {
+          "count": 252230,
+          "fraction": 0.0051315400916955335,
+          "weight_mass_fraction": 0.007800084580822607
+        },
+        "gt_2.0": {
+          "count": 0,
+          "fraction": 0.0,
+          "weight_mass_fraction": 0.0
+        },
+        "gt_2.5": {
+          "count": 0,
+          "fraction": 0.0,
+          "weight_mass_fraction": 0.0
+        }
+      }
+    }
+  },
+  "comparison_40M_vs_10M": {
+    "interpretation": "conflates training-statistics difference, GPU nondeterminism and node variation; it is a convergence check and explicitly NOT a nondeterminism floor",
+    "aligned_rows": 49152885,
+    "mc_indices_identical": true,
+    "pearson_r": 0.9149325716452426,
+    "total_ratio_40_over_10": 0.9764600095569331,
+    "per_event_ratio": {
+      "mean": 0.9740876219286406,
+      "median": 0.9810876780959485,
+      "std": 0.0647004117371129,
+      "min": 0.38385387059863146,
+      "max": 1.7226288263294836
+    },
+    "mean_abs_rel_dev": 0.04387048373032874,
+    "median_abs_rel_dev": 0.02681189486236879,
+    "l1_over_sum40": 0.044832893010279644,
+    "consequence": "a floor measured at 10M would characterise a materially different estimator (std 0.1249 vs 0.1588, 4.4% per-event disagreement), so the matched repeat must run at the nominal 40M configuration"
+  },
+  "floor_metric_template": {
+    "when": "on arrival of pet_weights_fps_xps2_delta_s101_rep.npz",
+    "metrics": [
+      "std(w_rep - w_nom)",
+      "L1(w_rep - w_nom)/sum(w_nom)",
+      "pearson_r",
+      "total ratio"
+    ],
+    "aligned_rows": 49152885,
+    "credibility_bound": "must land far below the 4.4833% L1/sum of the 10M-vs-40M comparison to be credible as nondeterminism-only"
+  }
+}

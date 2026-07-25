@@ -2085,3 +2085,46 @@ GPU-nondeterminism floor is unbounded and no spread from this run is
 interpretable. Evidence: `docs/orchestration/RUNS.tsv` row
 `DELTA-PET-FPS-XPS2-FULLSTATS`; job log
 `/u/jbailey2/MINERvA-OmniFold/nd-unfolding/pet_train_fps_delta_20445933.out`.
+
+## 2026-07-25 — Weight-level diagnostics on the Delta xps2 nominal (no allocation; still no floor)
+
+The `20445933` push weights were pulled off Delta and characterized locally in
+NumPy — no GPU, no allocation, no login-node compute. The transferred copy
+hashes `9a09125f...f0c5` and reproduces the job log exactly (`mean=1.002075`,
+`std=0.158825`, `sum=4.925490e+07`, `max=2.373705`), so the diagnostics are on
+the real artifact. Full numbers:
+`products/pet/pet_weights_fps_xps2_delta_s101.diagnostics.json`.
+
+**Weight health.** Over all 49,152,885 generator rows the estimator retains
+`ESS=4.7948e+07`, i.e. **ESS/n = 0.9755**, with weights confined to
+`[0.409543, 2.373705]` and median 0.9886 (IQR 0.9105-1.0519). There are zero
+non-finite, zero zero-valued and zero negative weights, so coverage is complete.
+Tails are mild: `w>1.5` is 1.29% of events carrying 2.14% of the weight mass,
+`w>2.0` is 0.044% carrying 0.092%, and **nothing exceeds 2.5**. The F3
+logit-space cap of 30.0 is therefore inert by an enormous margin, and even a
+drastic tightening to `w<=2.0` would touch 0.044% of events. `pass_truth` holds
+for 49,150,928 of 49,152,885 rows (1,957 failing). This rehearses two P5A gate
+requirements — finite/full-coverage weights and cap sensitivity — on real
+full-stats weights. Note for extraction: the push weights sum 0.21% above unity,
+so absolute normalization is not automatically preserved.
+
+**10M-versus-40M convergence (not a floor).** Against the `20413251` fast check
+on the same aligned rows and identical `mc_indices`, the two runs give Pearson
+`r=0.914933`, total ratio 0.976460, per-event mean `|w40/w10 - 1| = 4.3870%`
+(median 2.6812%) and `L1/sum = 4.4833%`. The 10M estimator is materially
+different rather than merely noisier: `std` 0.124882 versus 0.158825 and `max`
+1.875093 versus 2.373705. This is quantitative grounds for running the matched
+GPU-floor repeat at the **nominal 40M configuration**; a 10M repeat would
+characterize a different estimator, and the nondeterminism it is meant to
+isolate would be swamped by the 4.4% statistics gap it introduces. An earlier
+suggestion in this campaign to economize with a 10M repeat is therefore
+withdrawn.
+
+**Status unchanged.** These are diagnostics of the recoil-only `xps2`
+cross-check, not publication numbers. No cross section has been extracted, and
+with no matched repeat yet the GPU-nondeterminism floor remains unbounded. When
+`pet_weights_fps_xps2_delta_s101_rep.npz` lands, the floor metrics are
+`std(w_rep - w_nom)` and `L1/sum` on these same 49,152,885 aligned rows, and
+must come in far below 4.4833% to be credible as nondeterminism-only — bearing
+in mind the repeat will land on a different node, so it bounds nondeterminism
+plus node-to-node variation.
