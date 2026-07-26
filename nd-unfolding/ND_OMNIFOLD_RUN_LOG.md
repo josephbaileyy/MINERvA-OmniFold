@@ -2128,3 +2128,63 @@ with no matched repeat yet the GPU-nondeterminism floor remains unbounded. When
 must come in far below 4.4833% to be credible as nondeterminism-only — bearing
 in mind the repeat will land on a different node, so it bounds nondeterminism
 plus node-to-node variation.
+
+## 2026-07-26 — Full-event (Gate-4/P5A) code path exercised on a synthetic fixture; two blockers found
+
+Delta CPU job `20489224`, `COMPLETED 0:0` in 00:01:29 on `cn093`, commit `b5ec859`.
+**Synthetic random data. Not a physics result, not the P5A closure receipt.**
+
+**Why this ran.** `build_fullevent_loaders` fail-closes on any input that is not a
+`g2-fullevent-v1` NPZ, and the only such file is `G2_FPS_MEFHC_P12.npz` on Perlmutter
+`/pscratch`. During the 2026-07-22..08-03 maintenance nothing on Delta could reach the
+full-event code path at all, so every latent launch defect was scheduled to surface on
+08-04 instead of now. `pet/make_synthetic_g2_fullevent.py` removes that blind spot; it
+writes through `fullevent_dump_contract.write_fullevent_npz_atomic`, so the fixture is
+validated by the same schema/manifest/alignment/identity/no-purity gates as a real dump.
+
+**What executed.** Negweight-refined target construction: 12000 data + 4000 bkg = 16000
+measured rows, `raw_positive_sum` 12000.0, `raw_negative_sum` 406.996, `refined_sum`
+11592.864 (= 12000 − 407.0), 58 rows floored to zero, `pot_scale` 0.1; all three stored
+identity hashes recomputed and matched; CLM-007 satisfied from `measured_scalars`; clouds
+built as reco (n,40,3) coord (1,2) and gen (n,40,8) coord (5,6,7). Ordinary closure
+(purity control): push mean 0.9985, median 0.9979, std 0.0090, all finite; (pT,p‖)
+marginal L1 0.0035; normalization deviation 0.0015.
+
+**How much this closure is worth: little, by construction.** On random features there is
+no structure to learn and the pseudo-data *is* the MC, so push ≈ 1 is nearly guaranteed
+whether or not the estimator is correct. The PASS shows the code path runs end to end. It
+has close to zero power to detect a real estimator defect, and is the same category of
+weak control as the degenerate Gate-2 spatial check. The verdict line is tagged
+`[SYNTHETIC FIXTURE - PLUMBING ONLY, NOT THE P5A RECEIPT] [purity control]` so it cannot
+be harvested later as evidence.
+
+**Blocker 1 — the P5A closure has been dead since 2026-07-19.**
+`pet/closure_fullevent_fps.py` was committed at `9d7a4c6` (07-18) passing the recoil-only
+`of_inputs_pc_fps_xps2.npz` with `bkg_mode="purity"`. The `g2-fullevent-v1` schema gate
+landed the next day (`01d324a`) and rejects exactly that input. Verified by replaying the
+staged xps2 member set (18 members, no `petSchemaVersion`) through the loader: raises
+`[G2] input is not a g2-fullevent-v1 schema NPZ`. **The closure PASS recorded at `36ab84d`
+was therefore obtained against the pre-gate dataloader and does not certify the current
+code path.** The script is repaired in `b5ec859` (repo root from `__file__`, CLI recipe,
+G2 default, negweight-refined default, synthetic tagging) but the receipt is only
+reinstated by re-running against the real dump after the restore.
+
+**Blocker 2 — the publication nominal cannot run on Delta at all.** The NGC container has
+no ROOT (`sklearn 1.2.0`, `TF 2.14.0`, `horovod 0.28.1`, `numpy 1.24.4` present; `ROOT`
+absent). `u2d.refine_stay_positive` — the canonical Stay-Positive refiner the
+negweight-refined nominal requires — imports ROOT at module load. Delta can therefore run
+only the purity control or an injected sklearn refinement, and the latter self-reports
+`refinement_is_learned_production=False`. This holds **even after the data is staged**, so
+the Gate-4 Delta port cannot deliver a publication nominal; it can only pre-validate the
+launch path. Any P5A nominal must run on Perlmutter under TF 2.15.
+
+**Gate-2 units question — failure modes now settled empirically** (the substantive answer
+still needs the real dump). On known-unit inputs: dividing GeV scalars by 1000 retains
+500/500 rows inside the canonical FPS grid, so the domain guard at
+`gate2_target_runtime.py:432-435` passes silently and the `rel_l1`/`max_rel`/`cosine`
+comparisons run on two identically-misscaled histograms; the pass-through patch on MeV
+input retains 0/500 and dies loudly. The resolution procedure cannot return an ambiguous
+answer.
+
+Status unchanged: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross section
+extracted, the recoil xps2 GPU-nondeterminism floor still unbounded pending `20488861`.
