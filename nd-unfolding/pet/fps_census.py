@@ -14,7 +14,11 @@ import zipfile
 import numpy as np
 import numpy.lib.format as npf
 
-_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+import os
+
+# nd-unfolding dir from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_ND = os.path.join(os.environ["MNV_REPO"], "nd-unfolding") if os.environ.get("MNV_REPO") \
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ND + "/pet" not in sys.path:
     sys.path.insert(0, _ND + "/pet")
 import fullevent_fps_dataloader as fe  # noqa: E402

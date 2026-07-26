@@ -14,7 +14,9 @@ import subprocess
 import sys
 import tempfile
 
-REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# Repo root from this file location (<repo>/nd-unfolding/tests/); MNV_REPO overrides.
+REPO = os.environ.get("MNV_REPO") or os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 LAUNCHER = os.path.join(REPO, "nd-unfolding/pet/sbatch_p3f_pet_fullevent_evloop_array.sh")
 TEXT = open(LAUNCHER).read()
 

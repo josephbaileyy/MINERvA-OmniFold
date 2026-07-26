@@ -19,7 +19,9 @@ import os
 
 import numpy as np
 
-_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+# nd-unfolding dir from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_ND = os.path.join(os.environ["MNV_REPO"], "nd-unfolding") if os.environ.get("MNV_REPO") \
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # predeclared set: model knobs (+1sigma) + dominant flux universe
 DEFAULT_TAGS = ["MaRES_1", "2p2h_1", "MaCCQE_1", "LowQ2_1", "CCQEPauliSupViaKF_1", "flux_55"]
 

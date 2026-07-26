@@ -29,7 +29,11 @@ import ROOT
 
 ROOT.gROOT.SetBatch(True)
 AXES = ["pt", "pz", "eavail", "q3"]
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+import os
+
+# Repo root from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_REPO = os.environ.get("MNV_REPO") or os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def _edges(h):

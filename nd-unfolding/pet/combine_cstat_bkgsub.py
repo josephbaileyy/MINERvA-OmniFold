@@ -26,7 +26,9 @@ import sys
 
 import numpy as np
 
-_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+# nd-unfolding dir from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_ND = os.path.join(os.environ["MNV_REPO"], "nd-unfolding") if os.environ.get("MNV_REPO") \
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ND not in sys.path:
     sys.path.insert(0, _ND)
 from replica_manifest import load_replica_manifest  # noqa: E402

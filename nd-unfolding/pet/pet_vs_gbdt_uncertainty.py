@@ -60,7 +60,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# Repo root from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_REPO = os.environ.get("MNV_REPO") or os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)

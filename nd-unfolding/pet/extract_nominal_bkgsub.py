@@ -16,7 +16,9 @@ import json
 import os
 import sys
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# Repo root from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+_REPO = os.environ.get("MNV_REPO") or os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _ROOT_PREFIX = os.environ.get("ROOT628_PREFIX",
                               "/global/homes/j/josephrb/.conda/envs/root_6_28")
 

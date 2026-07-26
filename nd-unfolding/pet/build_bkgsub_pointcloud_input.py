@@ -51,7 +51,9 @@ import zipfile
 
 import numpy as np
 
-REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# Repo root from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
+REPO = os.environ.get("MNV_REPO") or os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ND = os.path.join(REPO, "nd-unfolding")
 
 DEFAULT_FULLCLOUD_NPZ = os.path.join(ND, "of_inputs_pc_fullcloud.npz")
