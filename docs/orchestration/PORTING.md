@@ -41,6 +41,11 @@ commit it; `scp` it off-site for extra safety.** Last built:
 
 ## 4. Post-maintenance restore (2026-08-03)
 
+This section is the **control plane only**. The science-side restore — durability
+of the sole G2 dump copy, the Gate-2 units resolution, the dead P5A closure
+receipt, and the P5A launch — is [RESTORE-2026-08-03.md](RESTORE-2026-08-03.md),
+which is ordered and independent of the steps below.
+
 ```bash
 cd /pscratch/sd/j/josephrb/MINERvA-OmniFold   # if missing: re-clone + restore untracked from bundle
 git fetch github && git status                # sanity: repo intact at expected head

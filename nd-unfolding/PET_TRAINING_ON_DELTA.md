@@ -142,6 +142,10 @@ CFS or off-cluster backup. Making a durable second copy should be the first
 action after the 08-03 restore, before any P5A work.
 
 ## After the restore (Perlmutter)
+Ordered science restore sequence, with the reasoning for each step:
+[docs/orchestration/RESTORE-2026-08-03.md](../docs/orchestration/RESTORE-2026-08-03.md).
+Summary of the same in brief:
+
 Pull the Delta weights from CFS into `nd-unfolding/products/pet/`, record the
 Delta run(s) in `RUNS.tsv` (cluster = Delta A100, **TF 2.14**, seeds, matched-
 repeat spread), and feed the downstream extraction as the Perlmutter path would.
