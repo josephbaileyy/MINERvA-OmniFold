@@ -116,8 +116,9 @@ Account `m3246`; CFS `/global/cfs/cdirs/m3246/josephrb`. The **only** copy of
 
 ## Priority work item: the host-RAM measurement
 
-**Status: SUBMITTED 2026-07-28 as Delta job `20557622`** (`cpu` partition,
-`sbatch_fe_hostmem_ladder_delta.sh` at commit `7ed009a`), results landing in
+**Status: SUBMITTED 2026-07-28 as Delta job `20558496`** (`cpu` partition,
+`sbatch_fe_hostmem_ladder_delta.sh` at commit `68f1291`; supersedes cancelled
+`20557622`, which lacked thread pinning), results landing in
 `/work/nvme/bhvk/jbailey2/hostmem/rung_n*.json` with the job log
 `fe_hostmem_20557622.out` in the same directory. **Do not re-submit it** — read
 the results, and if the job died, diagnose from its log rather than starting over.
