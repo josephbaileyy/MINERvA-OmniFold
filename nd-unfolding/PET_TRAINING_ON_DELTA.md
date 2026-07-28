@@ -116,6 +116,31 @@ it **back to CFS**
 (`/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/results/`) so it's
 durable and the Perlmutter orchestrator can pick it up after 08-03.
 
+## Staging reality check (added 2026-07-28)
+
+**The DTN return does not unblock the full-event G2 dump.** The NERSC outage feed
+splits the maintenance into two windows: the shared-facility group (CFS, DTNs,
+Globus, auth) 07-22 → 07-24 as scheduled — in practice slipped, ~07-29 — and
+**Perlmutter itself 07-22 → 08-03 22:00 PT**, for facility power work ahead of
+the Doudna installation. `/pscratch` is Perlmutter-attached and returns with
+Perlmutter, not with the DTNs.
+
+`G2_FPS_MEFHC_P12.npz` (9,897,374,636 bytes, sha `fa6b3463…`) exists **only** on
+Perlmutter `/pscratch`. The pre-shutdown CFS stage
+(`minerva-shutdown-stage/pet_inputs`) holds only the recoil `of_inputs_pc_fps_xps2.npz`,
+which is already on Delta; the handoff bundle went to Global Homes, also down.
+So Gate-4/P5A staging waits for **08-03**, not the DTN return, and no amount of
+DTN availability changes that.
+
+What the DTN return *does* enable is Step 6 in reverse: pushing the Delta-only
+products (`pet_weights_fps_xps2_delta_s101.npz` + `_rep.npz`, ~532 MB combined,
+76 GPU-hr to regenerate) back to CFS `results/` for durability. They currently
+live only on Delta `$HOME`.
+
+**Also note:** the only copy of the G2 dump sits on purgeable scratch with no
+CFS or off-cluster backup. Making a durable second copy should be the first
+action after the 08-03 restore, before any P5A work.
+
 ## After the restore (Perlmutter)
 Pull the Delta weights from CFS into `nd-unfolding/products/pet/`, record the
 Delta run(s) in `RUNS.tsv` (cluster = Delta A100, **TF 2.14**, seeds, matched-
