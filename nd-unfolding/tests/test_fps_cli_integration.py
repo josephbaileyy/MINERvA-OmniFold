@@ -146,6 +146,52 @@ def test_cli_pub_builder_aggregates_missing():
     _assert(r, "negweight output missing", "pub_aggregate")
 
 
+def test_cli_pub_builder_receipt_gate_still_closes_when_endpoints_valid():
+    """Ordering guard, paired with test_cli_pub_builder_aggregates_missing.
+
+    That test proves ten ABSENT outputs report "negweight output missing" rather than
+    the downstream "receipt: required file absent: COMPLETE" symptom -- i.e. that the
+    merged-input receipt gate is resolved lazily, below PASS 1. This test proves the
+    gate was only DEFERRED, not weakened: with all ten outputs present and their
+    configs valid, the builder must still refuse to emit a manifest.
+
+    Together they pin the ordering from both sides. Hoisting fvm.verify() back above
+    PASS 1 breaks the other test; deleting the gate breaks this one.
+
+    Deliberately platform-portable. fps_verify_merged_receipt.REPO is a hardcoded
+    /pscratch literal, so verify() RAISES off-Perlmutter ("required file absent") but
+    SUCCEEDS on Perlmutter, where the empty temp --merged-dir then fails the receipt
+    membership check instead ("merged input not in validated receipt"). Both are the
+    gate doing its job, so either message satisfies this test; what must hold on every
+    platform is that no manifest is written and that aggregation did not short-circuit.
+    """
+    d = tempfile.mkdtemp()
+    nw = os.path.join(d, "negweight"); os.makedirs(nw)
+    cfg = dict(fp.REQUIRED_FOOTING)
+    cfg["bkg_mode"] = fp.PUBLICATION_BKG_MODE
+    cfg["launcher"] = "sbatch_unfold_active_fps.sh"     # in KNOWN_LAUNCHERS and exists under cwd=ND
+    for b in fp.BANDS:
+        for ep in fp.ENDPOINTS:
+            out = os.path.join(nw, f"fps2d_xsec_MEFHC_5iter_lgbm_uni_full_{b}_{ep}.root")
+            with open(out, "w") as fh:
+                fh.write("placeholder")                 # never hashed; PASS 1 only checks existence
+            _write(out + ".config.json", cfg)
+    man = os.path.join(d, "m.json")
+    r = run([PUB, "--negweight-dir", nw, "--merged-dir", os.path.join(d, "merged"),
+             "--cv", os.path.join(d, "cv.root"), "--utc", "u",
+             "--out-manifest", man, "--out-receipt", os.path.join(d, "r.json")])
+    blob = (r.stdout or "") + (r.stderr or "")
+    assert r.returncode != 0, "pub_receipt_gate: expected nonzero exit, got 0"
+    assert any(n in blob for n in ("receipt: required file absent",
+                                  "merged input not in validated receipt")), \
+        f"pub_receipt_gate: expected a merged-input receipt gate message; got:\n{blob[-600:]}"
+    assert "negweight output missing" not in blob, \
+        "pub_receipt_gate: aggregation fired, so the ten endpoints were not actually valid -- " \
+        "this test no longer exercises the receipt gate"
+    assert not os.path.exists(man), \
+        "pub_receipt_gate: manifest emitted without a verified merged-input receipt"
+
+
 def _run_all():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:

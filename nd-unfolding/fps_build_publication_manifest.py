@@ -6,8 +6,9 @@ Each of the exact ten (band,endpoint) entries carries CANONICAL PATHS (unfold_ro
 config_path, source_path, launcher_path [the launcher ACTUALLY used, from the endpoint's config],
 central_path, audit_path) plus strict lowercase-64-hex SHA256 for each, the fixed footing (lgbm/seed42/
 5iter/weights/fps/negweight-refined), and the canonical 266/285 reported-mask fingerprint. All worker/
-inventory failures are AGGREGATED (never first-failure exit) before ROOT is touched. ROOT is imported
-lazily only to recompute the reported mask from CV.
+inventory failures are AGGREGATED (never first-failure exit) before ROOT is touched, and before the
+merged-input receipt gate -- an empty/partial negweight tree reports the missing outputs, not the
+downstream receipt symptom. ROOT is imported lazily only to recompute the reported mask from CV.
 
 NOT RUN in the repair round (no negweight-refined endpoints). Login-safe up to the mask recompute.
 
@@ -15,6 +16,7 @@ NOT RUN in the repair round (no negweight-refined endpoints). Login-safe up to t
       --cv CV.root --utc <iso> --out-manifest M.json --out-receipt R.json
 """
 import argparse
+import functools
 import json
 import os
 import subprocess
@@ -40,6 +42,26 @@ def _complete(path):
     return r.returncode == 0
 
 
+@functools.lru_cache(maxsize=None)
+def _merged_receipt():
+    """The merged-input receipt gate, resolved on FIRST USE rather than at entry.
+
+    Deliberately lazy (2026-07-28). PASS 1 aggregates every endpoint/inventory
+    failure before any receipt or hash work, so an operator whose ten negweight
+    outputs are simply absent is told exactly that, instead of "receipt: required
+    file absent: COMPLETE" -- which for an empty tree is a symptom of the same
+    cause and hides it. This restores the ordering PASS 1's own comment has always
+    claimed; `fvm.verify()` had been sitting above it, contradicting the docstring,
+    and `test_cli_pub_builder_aggregates_missing` had been failing on exactly that.
+
+    Fail-closed strength is unchanged. Every endpoint reaching `valid` must first
+    clear the receipt-membership test, which forces this call, and the gate is
+    forced again before the writer -- so no manifest is emitted against an
+    unverified receipt. `fvm.verify()` raises FpsGateError, so a bad receipt still
+    aborts nonzero; lru_cache does not cache exceptions, it re-raises on retry."""
+    return fvm.verify()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--negweight-dir", default="active_universe_5d/fps/unfolds_negweight_refined")
@@ -53,8 +75,6 @@ def main():
     ap.add_argument("--utc", required=True)
     a = ap.parse_args()
 
-    receipt = fvm.verify()                                     # validated full input hashes (no re-hash)
-    input_hashes = receipt["verified_input_sha256"]
     lay = fp.layout_fingerprint()
 
     # ---- PASS 1: aggregate ALL endpoint/inventory failures FIRST (login-safe; before any header hash) ----
@@ -79,7 +99,7 @@ def main():
             if launcher not in KNOWN_LAUNCHERS or not os.path.exists(launcher):
                 failures.append(f"{tag}: config launcher '{launcher}' unknown/absent"); continue
             abs_mp = os.path.abspath(mp)
-            if abs_mp not in input_hashes:
+            if abs_mp not in _merged_receipt()["verified_input_sha256"]:
                 failures.append(f"{tag}: merged input not in validated receipt"); continue
             if not _complete(out):
                 failures.append(f"{tag}: output not COMPLETE"); continue
@@ -91,6 +111,14 @@ def main():
         sys.exit(2)
 
     # ---- all ten valid: NOW compute header hashes + build entries ----
+    # Force the receipt gate unconditionally before anything is emitted. Every surviving endpoint
+    # already forced it via the membership test, but a degenerate empty BANDS/ENDPOINTS product
+    # would reach the writer with neither `failures` nor a resolved receipt; refuse that path.
+    receipt = _merged_receipt()
+    input_hashes = receipt["verified_input_sha256"]
+    if not valid:
+        raise fp.FpsGateError("no endpoints validated and no failures recorded -- refusing to "
+                              "emit an empty publication manifest")
     cv_sha = fp.sha256_file(a.cv)
     src_sha = fp.sha256_file(a.source)
     audit_sha = fp.sha256_file(a.audit_json)
