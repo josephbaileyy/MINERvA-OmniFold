@@ -1,0 +1,279 @@
+{
+  "schema": "pet-gpu-nondeterminism-floor-v1",
+  "scope_and_limits": {
+    "estimator": "recoil-only extended-phase-space (xps2) PET",
+    "is_publication_result": false,
+    "is_gate4_or_p5a": false,
+    "is_covariance_component": false,
+    "reason": "recoil-only xps2 cross-check; docs/OPEN_ITEMS.md bars promoting or extending recoil-only covariance as a full-event estimator product",
+    "what_this_bounds": "GPU/parallel nondeterminism PLUS node-to-node variation (nominal gpua012, repeat gpua072), not kernel-level nondeterminism alone"
+  },
+  "nominal": {
+    "job": 20445933,
+    "node": "gpua012",
+    "elapsed": "09:32:32",
+    "sha256": "9a09125fd0cfd6318b7e5273a8881dfffb58f361ec871b60ef88f70a3257f0c5"
+  },
+  "repeat": {
+    "job": 20488861,
+    "node": "gpua072",
+    "elapsed": "09:38:51",
+    "sha256": "85b595b2976325eaf9adf3a79fa19c946389fdf265ebf69c406ff43193819717",
+    "size_bytes": 266046028
+  },
+  "recipe_matched": "np=4 niter=5 epochs=8 train=40000000 seed=101 estimator_seed=42, same input of_inputs_pc_fps_xps2.npz",
+  "n_aligned_rows": 49152885,
+  "n_pass_truth": 49150928,
+  "mc_indices_identical": true,
+  "per_event_floor": {
+    "std_diff": 0.0035717223803446527,
+    "L1_over_sum_pct": 0.20602262953239187,
+    "pearson_r": 0.9997494046880254,
+    "total_ratio": 0.999772920390632,
+    "mean_abs_rel_pct": 0.20561494890628368,
+    "median_abs_rel_pct": 0.10983081960300958,
+    "p99_abs_rel_pct": 1.278860448145896,
+    "max_abs_rel_pct": 14.888841411549564
+  },
+  "per_bin_floor": {
+    "grid": {
+      "pt_edges": [
+        0.0,
+        0.07,
+        0.15,
+        0.25,
+        0.33,
+        0.4,
+        0.47,
+        0.55,
+        0.7,
+        0.85,
+        1.0,
+        1.25,
+        1.5,
+        2.5,
+        4.5,
+        30.0
+      ],
+      "ppar_edges": [
+        0.0,
+        0.75,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        15.0,
+        20.0,
+        40.0,
+        60.0,
+        120.0
+      ],
+      "n_bins": 285,
+      "n_occupied": 266
+    },
+    "spectrum_definition": "sum(w_truth * w_push) over pass_truth events",
+    "binned_L1_over_sum_pct": 0.03493527932147934,
+    "max_abs_rel_pct": 0.6032729918035162,
+    "p99_abs_rel_pct": 0.49936946361501117,
+    "median_abs_rel_pct": 0.028310843424039778,
+    "mean_abs_rel_pct": 0.057052965306712465,
+    "n_bins_over_1pct": 0,
+    "n_bins_over_0.5pct": 3,
+    "min_events_in_occupied_bin": 1,
+    "worst_bins": [
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          4.0,
+          4.5
+        ],
+        "n_events": 44,
+        "sum_w_truth": 10.089063512487941,
+        "S_nom": 14.391768965773412,
+        "rel_pct": -0.6032729918035162
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          3.0,
+          3.5
+        ],
+        "n_events": 2,
+        "sum_w_truth": 0.44875792585754126,
+        "S_nom": 0.6321509009415054,
+        "rel_pct": -0.5621034528307867
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          3.5,
+          4.0
+        ],
+        "n_events": 11,
+        "sum_w_truth": 2.5272054583427357,
+        "S_nom": 3.5457685188880914,
+        "rel_pct": -0.5233366487873092
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          4.5,
+          5.0
+        ],
+        "n_events": 93,
+        "sum_w_truth": 21.372555741928377,
+        "S_nom": 30.60334969833934,
+        "rel_pct": -0.4864640562145417
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          5.0,
+          6.0
+        ],
+        "n_events": 590,
+        "sum_w_truth": 135.641780301948,
+        "S_nom": 190.46948684068002,
+        "rel_pct": -0.4266544062172861
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          8.0,
+          9.0
+        ],
+        "n_events": 3504,
+        "sum_w_truth": 811.129088431753,
+        "S_nom": 1168.7320391149724,
+        "rel_pct": -0.4001619944030699
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          7.0,
+          8.0
+        ],
+        "n_events": 2419,
+        "sum_w_truth": 558.3776524271515,
+        "S_nom": 801.2319977283179,
+        "rel_pct": -0.39347466333281567
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          6.0,
+          7.0
+        ],
+        "n_events": 1455,
+        "sum_w_truth": 335.43237080651846,
+        "S_nom": 476.0307205457361,
+        "rel_pct": -0.39147774080143805
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          9.0,
+          10.0
+        ],
+        "n_events": 4386,
+        "sum_w_truth": 1012.6000540958127,
+        "S_nom": 1464.4063388939246,
+        "rel_pct": -0.383176644448624
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          10.0,
+          15.0
+        ],
+        "n_events": 30500,
+        "sum_w_truth": 7195.178046940955,
+        "S_nom": 10559.359233178016,
+        "rel_pct": -0.35735173937410103
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          15.0,
+          20.0
+        ],
+        "n_events": 31392,
+        "sum_w_truth": 7782.015282529815,
+        "S_nom": 11559.538317762008,
+        "rel_pct": -0.32734207942644034
+      },
+      {
+        "pt_bin": [
+          2.5,
+          4.5
+        ],
+        "ppar_bin": [
+          20.0,
+          40.0
+        ],
+        "n_events": 57178,
+        "sum_w_truth": 15929.026791366257,
+        "S_nom": 23652.366367838687,
+        "rel_pct": -0.2956330431896026
+      }
+    ],
+    "catch_bins": {
+      "pt_top_bin_4.5_30": {
+        "n_events": 439,
+        "max_abs_rel_pct": 0.2757971599193332
+      },
+      "ppar_top_bin_60_120": {
+        "n_events": 6889,
+        "max_abs_rel_pct": 0.24629623833718473
+      },
+      "outer_corner_pt4.5_30_x_ppar60_120": {
+        "n_events": 12,
+        "rel_pct": -0.06507626441497605
+      }
+    }
+  },
+  "credibility_bar_10M_vs_40M_L1_over_sum_pct": 4.4833,
+  "per_event_ratio_to_bar": 0.045953344530232615
+}

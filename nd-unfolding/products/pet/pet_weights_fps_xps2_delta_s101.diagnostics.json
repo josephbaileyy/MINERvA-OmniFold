@@ -13,8 +13,8 @@
     "reason": "of_inputs_pc_fps_xps2.npz is not a full-event publication input (docs/OPEN_ITEMS.md artifact guard); this run is the Perlmutter-shutdown insurance cross-check",
     "tensorflow": "2.14.0 (Delta NGC container); the authoritative footing is TF 2.15 on Perlmutter",
     "cross_section_extracted": false,
-    "matched_gpu_floor_repeat_run": false,
-    "floor_interpretation_note": "No spread from this run is interpretable until the matched 40M repeat lands; the repeat bounds GPU/parallel nondeterminism PLUS node-to-node variation, not kernel-level nondeterminism alone"
+    "matched_gpu_floor_repeat_run": true,
+    "floor_interpretation_note": "Floor MEASURED 2026-07-28 from repeat job 20488861 (gpua072) against nominal 20445933 (gpua012); it bounds GPU/parallel nondeterminism PLUS node-to-node variation, not kernel-level nondeterminism alone. Full receipt: products/pet/pet_weights_fps_xps2_delta_s101_floor.json"
   },
   "nominal": {
     "slurm_job": "20445933",
@@ -264,5 +264,32 @@
     ],
     "aligned_rows": 49152885,
     "credibility_bound": "must land far below the 4.4833% L1/sum of the 10M-vs-40M comparison to be credible as nondeterminism-only"
+  },
+  "floor_measured": {
+    "amended_utc": "2026-07-28",
+    "receipt": "products/pet/pet_weights_fps_xps2_delta_s101_floor.json",
+    "repeat_job": 20488861,
+    "repeat_node": "gpua072",
+    "repeat_sha256": "85b595b2976325eaf9adf3a79fa19c946389fdf265ebf69c406ff43193819717",
+    "recipe_matched": "np=4 niter=5 epochs=8 train=40000000 seed=101 estimator_seed=42, same input of_inputs_pc_fps_xps2.npz",
+    "per_event": {
+      "std_diff": 0.0035717223803446527,
+      "L1_over_sum_pct": 0.20602262953239187,
+      "pearson_r": 0.9997494046880254,
+      "total_ratio": 0.999772920390632,
+      "mean_abs_rel_pct": 0.20561494890628368,
+      "median_abs_rel_pct": 0.10983081960300958,
+      "p99_abs_rel_pct": 1.278860448145896,
+      "max_abs_rel_pct": 14.888841411549564
+    },
+    "per_bin": {
+      "binned_L1_over_sum_pct": 0.03493527932147934,
+      "max_abs_rel_pct": 0.6032729918035162,
+      "p99_abs_rel_pct": 0.49936946361501117,
+      "median_abs_rel_pct": 0.028310843424039778,
+      "n_bins_over_1pct": 0,
+      "n_bins_over_0.5pct": 3
+    },
+    "verdict": "PASS - per-event L1/sum 0.2060% is 4.6% of the 4.4833% 10M-vs-40M bar (21.8x separation); binning into the canonical extended FPS grid SUPPRESSES it a further ~5.9x to 0.0349%, and no occupied bin exceeds 1%. The floor does not limit any downstream extraction at this grid."
   }
 }

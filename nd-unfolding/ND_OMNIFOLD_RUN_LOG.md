@@ -2188,3 +2188,57 @@ answer.
 
 Status unchanged: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross section
 extracted, the recoil xps2 GPU-nondeterminism floor still unbounded pending `20488861`.
+
+## 2026-07-28 — GPU-nondeterminism floor BOUNDED; binning suppresses it rather than amplifying
+
+The matched 40M repeat `20488861` completed `0:0` in 09:38:51 on **`gpua072`** — a
+different node from the nominal `20445933` (`gpua012`, 09:32:32), so what follows bounds
+nondeterminism **plus** node-to-node variation, as intended. The recipe echo confirms the
+nominal configuration verbatim (`np=4 niter=5 epochs=8 train=40000000 seed=101`, estimator
+seed 42, same `of_inputs_pc_fps_xps2.npz`), so there is no `--export=ALL` leakage; all five
+iterations ran, no traceback, and the full-stats reweight covered all 49,152,885 rows.
+`mc_indices` is bit-identical between the two runs, so the comparison is genuinely
+row-aligned rather than merely same-length. The nominal artifact was **not** overwritten
+(sha `9a09125f…` unchanged); the repeat is `85b595b2…`, 266,046,028 bytes.
+
+**Per-event floor.** `L1/sum = 0.2060%` against the `4.4833%` 10M-vs-40M bar — **4.6% of
+it, a 21.8x separation** — with `std(w_rep − w_nom) = 0.003572` (against a weight std of
+0.1588), Pearson `r = 0.9997494` (vs `0.914933` for 10M-vs-40M) and total ratio `0.9997729`.
+Zero non-finite, zero negative, zero zero-valued weights. The two trainings are the same
+estimator to well within the statistics gap, so the floor is credible as nondeterminism-only
+and the earlier decision to run the repeat at the nominal 40M rather than economizing at
+10M is vindicated: a 10M repeat would have been swamped.
+
+**Per-bin floor — the number that actually propagates.** A per-event floor is not what
+enters a cross section; the binned spectrum is. Summing `w_truth * w_push` over `pass_truth`
+events into the canonical extended FPS grid (15 pT x 19 p‖ = 285 bins, 266 occupied) gives
+`L1/sum = 0.0349%`, **a further ~5.9x suppression** below the per-event 0.2060%. Per-bin
+`|rel|` is median 0.0283%, mean 0.0571%, p99 0.4994%, max **0.6033%**. **No occupied bin
+exceeds 1%**, and only 3 of 266 exceed 0.5%. Binning averages the per-event jitter down
+rather than concentrating it.
+
+**The prior expectation about where the risk sat was wrong.** The concern going in was the
+outer catch bins — pT `4.5–30` and p‖ `60–120` — on the reasoning that sparse bins would
+concentrate the tail events driving the per-event `max_abs_rel` of 14.89%. They are in fact
+among the quieter regions: the pT catch row maxes at `0.2758%` (439 events), the p‖ catch
+column at `0.2463%` (6,889 events), and the outer corner is `−0.0651%` (12 events). All
+three worst bins are instead in the **pT `2.5–4.5` band at moderate p‖** — `[4.0,4.5]` with
+44 events at `−0.6033%`, `[3.0,3.5]` with 2 events at `−0.5621%`, `[3.5,4.0]` with 11 events
+at `−0.5233%`. The driver is raw sparsity (the least-occupied bin holds a single event), not
+position on the grid, and the catch bins escape precisely because they are wide enough to
+accumulate events. Every worst bin carries a negative sign, consistent with the global
+total ratio of 0.9997729.
+
+**Consequence for P5A.** The floor does not limit any extraction at this grid, so no third
+repeat is justified: decomposing a 0.2% per-event / 0.035% per-bin effect into kernel-level
+versus node-to-node parts would buy nothing, and `docs/OPEN_ITEMS.md` bars extending the
+recoil-only campaign regardless. The transferable methodological result is that per-bin
+floors must be quoted alongside per-event ones and that sparse-bin occupancy, not grid
+position, predicts where reproducibility degrades — worth re-checking on the full-event
+estimator, whose occupancy pattern will differ.
+
+**Scope.** Recoil-only `xps2` cross-check. Not a covariance component, not a publication
+number, not Gate-4/P5A (`is_publication_result=False` in both receipts). Gate-4 remains
+PASS_CODE_ONLY, P5A unlaunched, no cross section extracted. Receipt:
+`products/pet/pet_weights_fps_xps2_delta_s101_floor.json`; reproducer
+`pet/floor_gpu_nondeterminism.py` (6m14s, 4.13 GiB peak on the Delta login node).
