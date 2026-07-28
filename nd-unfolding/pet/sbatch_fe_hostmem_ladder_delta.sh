@@ -41,13 +41,22 @@ set -eo pipefail
 REPO="${REPO:-$HOME/MINERvA-OmniFold}"
 SIF="${SIF:-$HOME/tf215.sif}"                  # NOTE: filename says 215, contents are TF 2.14.0
 WORK="${WORK:-/work/nvme/bhvk/$USER/hostmem}"
-RUNGS="${RUNGS:-2000000 5000000 10000000 20000000}"
+# First rung is a deliberately tiny self-validation: the whole path (fixture ->
+# schema gates -> clouds -> refinement -> DataLoader) either works in ~2 minutes or
+# the job tells you so before it spends hours. Do not drop it.
+RUNGS="${RUNGS:-200000 2000000 5000000 10000000 20000000}"
 TOKENS="${TOKENS:-12}"
 KEEP_FIXTURES="${KEEP_FIXTURES:-0}"            # 1 = keep (tens of GB); 0 = delete after each rung
 
 mkdir -p "${WORK}"
 cd "${REPO}/nd-unfolding/pet"
-RUN="apptainer exec --bind ${REPO},${WORK} --env PYTHONPATH=${REPO}/omnifold_nn ${SIF}"
+# UCX_LOG_LEVEL: omnifold pulls in horovod, whose UCX/IB init emits hundreds of
+# "GID table change" WARN lines that bury the actual measurement output.
+RUN="apptainer exec --bind ${REPO},${WORK} \
+     --env PYTHONPATH=${REPO}/omnifold_nn \
+     --env UCX_LOG_LEVEL=error \
+     --env TF_CPP_MIN_LOG_LEVEL=2 \
+     --env OMPI_MCA_btl_base_warn_component_unused=0 ${SIF}"
 
 echo "[hostmem] $(date -u +%FT%TZ) start on $(hostname)"
 echo "[hostmem] commit $(cd ${REPO} && git rev-parse --short HEAD)"
