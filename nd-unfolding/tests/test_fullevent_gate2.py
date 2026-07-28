@@ -21,9 +21,7 @@ import unittest
 
 import numpy as np
 
-# Repo root from this file location (<repo>/nd-unfolding/tests/); MNV_REPO overrides.
-REPO = os.environ.get("MNV_REPO") or os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 ND = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ND, "pet"))
 

@@ -27,9 +27,7 @@ import tempfile
 import numpy as np
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-# Repo root from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
-_REPO = os.environ.get("MNV_REPO") or os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 for _p in (_HERE, f"{_REPO}/nd-unfolding", f"{_REPO}/nd-unfolding/pet"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
