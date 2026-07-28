@@ -52,11 +52,22 @@ mkdir -p "${WORK}"
 cd "${REPO}/nd-unfolding/pet"
 # UCX_LOG_LEVEL: omnifold pulls in horovod, whose UCX/IB init emits hundreds of
 # "GID table change" WARN lines that bury the actual measurement output.
+# THREAD PINNING is not cosmetic here. The 2026-07-28 login-node attempt burned
+# 2h35m of CPU in 10 minutes of wall on a 60k-row fixture before NCSA's watchdog
+# killed it -- the signature of TF sizing its intra-op pool to the visible core
+# count (128) and spin-waiting on tiny arrays, not of a starved process. Without
+# these the ladder can burn its whole time limit making no progress.
+NTHREADS="${SLURM_CPUS_PER_TASK:-16}"
 RUN="apptainer exec --bind ${REPO},${WORK} \
      --env PYTHONPATH=${REPO}/omnifold_nn \
      --env UCX_LOG_LEVEL=error \
      --env TF_CPP_MIN_LOG_LEVEL=2 \
-     --env OMPI_MCA_btl_base_warn_component_unused=0 ${SIF}"
+     --env OMPI_MCA_btl_base_warn_component_unused=0 \
+     --env OMP_NUM_THREADS=${NTHREADS} \
+     --env OPENBLAS_NUM_THREADS=${NTHREADS} \
+     --env MKL_NUM_THREADS=${NTHREADS} \
+     --env TF_NUM_INTRAOP_THREADS=${NTHREADS} \
+     --env TF_NUM_INTEROP_THREADS=2 ${SIF}"
 
 echo "[hostmem] $(date -u +%FT%TZ) start on $(hostname)"
 echo "[hostmem] commit $(cd ${REPO} && git rev-parse --short HEAD)"
