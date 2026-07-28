@@ -116,10 +116,19 @@ Account `m3246`; CFS `/global/cfs/cdirs/m3246/josephrb`. The **only** copy of
 
 ## Priority work item: the host-RAM measurement
 
-**Status as of 2026-07-28: designed, not submitted.** On the 08-03 critical path,
-CPU-only, no GPU hours. Do this before any GPU rehearsal — if it confirms the
-projection, the fix is a code change and a GPU wall-clock number for the current
-loader is worthless.
+**Status: SUBMITTED 2026-07-28 as Delta job `20557622`** (`cpu` partition,
+`sbatch_fe_hostmem_ladder_delta.sh` at commit `7ed009a`), results landing in
+`/work/nvme/bhvk/jbailey2/hostmem/rung_n*.json` with the job log
+`fe_hostmem_20557622.out` in the same directory. **Do not re-submit it** — read
+the results, and if the job died, diagnose from its log rather than starting over.
+
+On the 08-03 critical path, CPU-only, no GPU hours. Nothing GPU should be spent on
+a rehearsal until this reports: if it confirms the projection, the fix is a code
+change and a wall-clock number for the current loader is worthless.
+
+**Do not run this path on a login node.** A 60k-row attempt on `dt-login02` never
+finished and bogged the node down — `omnifold` pulls in horovod, whose TF/UCX/IB
+init does not belong there. Batch only.
 
 **What is being tested.** `fullevent_fps_dataloader.py:520-521` materializes the
 full 49.15M-row `part_gen` before `[imc]` subsamples it, `build_truth_cloud`
