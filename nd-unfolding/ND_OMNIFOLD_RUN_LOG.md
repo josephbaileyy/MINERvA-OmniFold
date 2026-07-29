@@ -2545,3 +2545,38 @@ Operationally: the verifier *is* a valid backstop for every file §2a/§2c/§2d 
 MISMATCH on each edited file is the expected, correct signal that the receipt needs re-issuing.
 The implementer brief's constraint bullet telling the implementer to distrust it and hand-record
 sha256s has been withdrawn.
+
+### 2026-07-29 — restore runbook gains Step 2b (Gate-4 re-issue); a Step 6 claim corrected
+
+**Step 2b added.** The B1 fix voids bindings in **three** receipts, and the runbook owned only
+one of them. Step 2 covers the Gate-2 canonical-runtime freeze (scheduled there for the
+separate MeV/GeV units question — B1 now rides along on the same re-issue). But design §2d
+edits the Gate-4 **driver** (`train_fullevent_nominal.py`, to persist the reco-masked sums) and
+**validator** (`validate_pet_nominal_gate4.py`, the ratio check plus the plumbing that makes it
+fire at all), both frozen by `p3f-pet-gate4-launch-code-gate-20260721.json` — which binds five
+files: driver, launcher, validator, launcher_test, validator_test. Nothing scheduled that
+re-issue. Gate-4 is `PASS_CODE_ONLY` and has never run at runtime, so it costs a receipt and no
+physics re-run, but P5A must not launch under a voided launch-code gate, so Step 2b sits before
+Step 4. Numbered 2b rather than renumbering, to keep existing references to Steps 3–6 valid.
+
+Step 2b also records the full expected-red set — five bindings across three receipts
+(`fullevent_fps_dataloader.py` is bound **twice**, by `g2-gate2-construction-20260719.json` as
+well as the target-runtime receipt; that second binding had been missed in two prior reviews) —
+so an implementer who watches the verifier go red knows that is the fix working rather than
+reaching for the one prohibited action. And it folds in three audit findings at zero marginal
+cost while the receipt is open: bind `omnifold/net.py` + `omnifold/omnifold.py` (B-1, currently
+in no receipt at all); bind and finally run `stress_closure_muon.py` (B-6 — verified login-safe
+directly: synthetic events, no ROOT/`/pscratch`/dump, `reco=cloud, gen=cloud` and all-ones
+masks at `:70-71`, though it does import TensorFlow and train); and resolve B-2's dangling
+independence citation, whose `agy-publication-redteam` uuid is the same session Step 6 rescues.
+
+**Step 6 correction.** Its closing paragraph claimed the four Codex-profile verifier roles are
+Perlmutter-only because `~/codex-homes/{personal,school}` is absent and `usagectl.py snapshot`
+returns `gate_ok: false`. That generalized an `agentctl` *registry* problem into an *account*
+problem. Verified: `~/.codex-personal`, `~/.codex-school` and `~/.claude-school` are all
+present locally; only `~/codex-homes` — the path `profiles.json` points at — is missing, and
+both Codex accounts plus the school Claude account ran from this Mac during the 2026-07-29
+four-lane audit by direct `CODEX_HOME=` / `CLAUDE_CONFIG_DIR=` invocation. Fixing
+`profiles.json` makes all four roles reachable without touching Perlmutter. The `agy` roles
+remain a genuinely different problem: their conversation state exists only in Perlmutter's
+`$HOME` and no local config change recovers it.
