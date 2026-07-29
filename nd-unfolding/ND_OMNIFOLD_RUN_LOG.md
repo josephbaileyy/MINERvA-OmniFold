@@ -2242,3 +2242,64 @@ number, not Gate-4/P5A (`is_publication_result=False` in both receipts). Gate-4 
 PASS_CODE_ONLY, P5A unlaunched, no cross section extracted. Receipt:
 `products/pet/pet_weights_fps_xps2_delta_s101_floor.json`; reproducer
 `pet/floor_gpu_nondeterminism.py` (6m14s, 4.13 GiB peak on the Delta login node).
+
+## 2026-07-28/29 — Host memory BOUNDED but thin; full-event audit finds Gate-4's CLI evaluates none of its physics checks
+
+**Host-memory ladder.** Delta CPU job `20558496`, `COMPLETED 0:0`, 00:41:27 on `cn126`,
+commit `68f1291`, ~11 CPU-hr. Five rungs at `--tokens 12` (the real dump's slot count, not
+the generator's default 40), each with `max_events = 0.8138 x rows` so the
+materialize-then-subsample pattern at `fullevent_fps_dataloader.py:520-521` is reproduced at
+every scale. Peak RSS scales cleanly linearly —
+`peak_GiB = 1.238e-6 * rows + 0.239` — from 0.766 GiB at 200k rows to 25.078 GiB at 20M,
+with the high-water mark landing at `after_build_truth_cloud_1` at every rung.
+
+Production (rows 49,152,885, max_events 40M) extrapolates to **~61 GiB per rank, ~246 GiB
+across 4 ranks against a 251.6 GiB node — ~98% of capacity.**
+
+**The prior projection was wrong in magnitude, right in location.** The ~78 GiB/rank hand
+estimate that predicted a ~310 GiB hard OOM was ~25% high: it assumed the full-size numpy
+temporaries inside `build_truth_cloud` all coexist at peak, and they are freed as the
+expression evaluates. **But this is not a clearance to launch.** The measurement was on a
+CPU node, so it excludes the host memory each rank pins for its CUDA context and TF's GPU
+allocator; ~246 GiB is a lower bound, and ~1.5 GiB/rank of GPU-side overhead would consume
+the entire remaining margin. Separately, `sacct` reported `MaxRSS 14.45 GiB` for a job whose
+largest rung measured 25.08 GiB by `VmHWM` — `sacct MaxRSS` undersamples and must not be
+used to size this. Synthetic fixtures and a non-production refiner: memory only.
+
+**Full-event audit.** 13-agent orchestrated audit across six dimensions (unfolding,
+negative weights/Stay-Positive, closure and test POWER, covariance, binning/mask/leakage,
+code contracts and provenance), each dimension's findings put through an adversarial
+refutation pass: **43 findings survived, 8 refuted, 5 blockers, 14 majors.** Report:
+`docs/orchestration/AUDIT-FINDINGS-20260728.md`.
+
+Two blockers were independently verified by the orchestrating session against the code
+rather than taken on the agents' word:
+
+1. **The Gate-4 CLI validator evaluates none of its four physics checks.**
+   `validate_pet_nominal_gate4.py:223-229` calls `build_gate4_report` with no `marginal=`,
+   `normalization=`, `saturation_frac=` or `closure=`, and `:169-176` silently skips every
+   component whose argument is `None`. Worse, `:218-222` builds `frozen_observed` by copying
+   `FROZEN["edges_pt"]`, `FROZEN["edges_pparallel"]`, `FROZEN["bin_order"]` and
+   `FROZEN["seed_policy"]` into the "observed" dict, so `check_freeze` compares FROZEN to
+   FROZEN. What remains is finiteness/coverage and index order, and
+   `verdict = bool(checks) and all(...)` then returns PASS. Gate-4's PASS_CODE_ONLY status
+   rests on a validator that cannot fail for physics reasons.
+
+2. **`normalize=True` on both full-event loaders makes the unfold shape-only.**
+   `fullevent_fps_dataloader.py:613` and `:658` both pass `normalize=True`;
+   `omnifold_nn/omnifold/dataloader.py:110-113` rescales each loader's weights so the
+   `pass_reco` sum equals 1e6, and `omnifold_nn/omnifold/omnifold.py:176-177` weights the
+   step-1 classes by exactly those sums — so the POT-scaled data-vs-MC rate difference is
+   gone at iteration 0 and nothing restores it. The repo documents this exact failure mode
+   against itself: `omnifold_nn_core.py`'s `_balance_weights` docstring says that without
+   multiplying the ratio back "the unfolded normalization collapses", and `_class_ratio`
+   exists specifically as "the normalization to restore" — which the reference loop does and
+   the full-event path does not. This is a testable candidate explanation for the ~10%
+   PET/GBDT normalization gap the log currently attributes to under-iteration (`:919`
+   records the higher-iteration retrain as "essentially flat", which fits this cause and not
+   that one). Magnitude remains unverified; the audit proposes a login-safe scalar check on
+   the real dump.
+
+Status unchanged by this entry: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross
+section extracted. The audit is a code-and-methodology read; the real G2 dump was never
+exercised, since Perlmutter is down until 08-03.
