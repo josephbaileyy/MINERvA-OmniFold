@@ -2416,3 +2416,40 @@ Status unchanged: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross sectio
 `R` still unmeasured pending the 08-03 restore. What changed is the decision: **B1 option (b)
 is off the table on physics grounds, option (a) as previously stated is also wrong, and the
 target is now the `1e6 * R` / in-loop variant.**
+
+## 2026-07-29 — B1 fix design recorded; two corrections to the previous entry
+
+`docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md` now holds the proposed resolution, its
+rationale, the rejected alternatives with reasons, the required tests, and the sequencing.
+Nothing implemented; no frozen file touched.
+
+Two corrections to the entry above.
+
+**(1) The fix is `1e6 * R` on the measured loader, not `normalize=False` on both.** Keeping
+the MC loader normalized to 1e6 makes the class ratio subsample-invariant for free — which
+matters because the nominal trains on a bounded 2M MC subsample against a full measured
+inventory — and it keeps absolute weight magnitudes in the same well-conditioned range as the
+currently-working configuration. `normalization_factor` is already a DataLoader argument
+(`omnifold_nn/omnifold/dataloader.py:13`, default 1e6, applied at `:113`), so the vendored
+engine needs no change. `R` is computed *inside* the loader from full-inventory POT-scaled
+sums, never piped or hardcoded: each bootstrap replica has its own yield ratio, so a frozen
+constant would be wrong for every replica but the nominal.
+
+**(2) Gate-4's `check_normalization` must be REPLACED, not retargeted to ~R.** The earlier
+entry's "retarget to ~R" is wrong. `normalization=(sum_w_push, sum_w)`
+(`validate_pet_nominal_gate4.py:160`) is a **truth-level** pair, and at truth level — over the
+full population including off-acceptance events where `push == 1` — a correct unfold gives
+`sum(w*push)/sum(w) -> 1 + <a>_w*(R-1)`, i.e. ~1.08 with row-fraction acceptance 0.621, not
+`R`. That target depends on the acceptance, i.e. on the quantity being measured. The correct
+check is a reco-level folded-forward closure: require
+`pot_scale * sum(w_truth*push over pass_reco) == n_data - pot_scale*sum(w_bkg)`. That target
+is measured rather than modelled, and it fails the current broken result while passing a
+corrected one.
+
+Also recorded: Gate-2's `learned_vs_normalized_clipped_*` telemetry is invariant under
+retargeting the constant from `1e6` to `1e6*R` (both histograms renormalize to the same value
+and `rel_l1` divides by it), so no diagnostic content is lost; and the dominant 08-03 hazard
+is a *partial* fix — correcting the loader while leaving the hardcoded Gate-2 (`:411-412`,
+`:442-443`) and Gate-4 assertions in place, so the corrected ~13.5% shift aborts the pipeline
+inside the tight restore window. Section 2 of the design doc is entirely code-only and should
+land before the restore.
