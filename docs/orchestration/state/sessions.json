@@ -347,6 +347,24 @@
       ],
       "updated_at": "2026-07-19T16:38:16+00:00"
     },
+    "agy-pubjudgement-handoff-20260729": {
+      "created_at": "2026-07-29T04:52:22+00:00",
+      "cwd": "/Users/josephbailey/local-research/MINERvA-OmniFold",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "ade70c1f-5efb-42a1-a09b-df4e475c97ad",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "provider_log": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/agy-pubjudgement-handoff-20260729/20260729T045042Z-start-a42f78f1.agy.log",
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/agy-pubjudgement-handoff-20260729/20260729T045042Z-start-a42f78f1.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/agy-pubjudgement-handoff-20260729/20260729T045042Z-start-a42f78f1.txt"
+        }
+      ],
+      "updated_at": "2026-07-29T04:52:22+00:00"
+    },
     "agy-publication-redteam": {
       "created_at": "2026-07-18T13:39:03+00:00",
       "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
@@ -720,9 +738,17 @@
           "returncode": 0,
           "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/refute-fe-norm-physics-agy/20260729T034805Z-start-8b2b76db.stderr.log",
           "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/refute-fe-norm-physics-agy/20260729T034805Z-start-8b2b76db.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/refute-fe-norm-physics-agy/20260729T041329Z-send-4e8f8a1f.agy.log",
+          "returncode": 0,
+          "stderr": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/refute-fe-norm-physics-agy/20260729T041329Z-send-4e8f8a1f.stderr.log",
+          "stdout": "/Users/josephbailey/local-research/MINERvA-OmniFold/docs/orchestration/runs/refute-fe-norm-physics-agy/20260729T041329Z-send-4e8f8a1f.txt"
         }
       ],
-      "updated_at": "2026-07-29T03:50:52+00:00"
+      "updated_at": "2026-07-29T04:14:51+00:00"
     },
     "standard-p4-verifier": {
       "created_at": "2026-07-18T10:47:03+00:00",

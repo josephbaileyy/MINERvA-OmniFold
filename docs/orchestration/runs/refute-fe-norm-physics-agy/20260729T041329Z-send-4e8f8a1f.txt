@@ -1,0 +1,32 @@
+**You are exactly right.** My reasoning missed the crucial `new_weights = 1` assignment for misses. Because native misses are not scaled by the global factor $K$, the scale does not commute through Step 2. The Step-2 target becomes $a(z) K r(z) + 1 - a(z)$, mixing the missing rate into the shape via the local acceptance. The discrepancy cannot be recovered by a post-hoc scalar.
+
+Here is the decision breakdown for your fix:
+
+### 1. (A) or (B)?
+**(A) is mathematically correct.**
+They are not physically equivalent. In (A), the data target is fixed at `1e6 * R`. The MC target starts at `1e6` in iteration 0, but the classifier learns the $R$ offset. In Step 2, `weights_push` inherits this offset. Therefore, at iteration 1, the MC class total (`sum(weights_push * mc.weight * pass_reco)`) *naturally grows to match the data sum*. 
+(A) allows the iteration to balance itself organically as the unfolding converges. (B) forces an artificial balance every step, fighting the natural convergence dynamics of the loop.
+
+### 2. Does (A) reintroduce the trainability problem?
+**No.**
+The `_balance_weights` trainability problem is complete network collapse due to extreme class imbalances (e.g., $10^6$ raw MC events vs $10^3$ data events before POT scaling). With $R \approx 1.1$, your classes are split $\approx 47.6\%$ vs $52.4\%$. The neural network's initial bias shift is just $\ln(1.1) \approx 0.095$, firmly in the linear regime of the activations. Furthermore, because of the mechanism described in #1, this mild imbalance vanishes entirely after iteration 0.
+
+### 3. Gate-4 Normalization Check: Widen or Retarget?
+**Retarget.** 
+Widening it destroys the gate. The physical invariant of a correctly normalized unfold is that the folded-forward reco-level MC yield must equal the measured data yield. 
+Retarget the gate to assert:
+`|sum(w_truth * push * pass_reco) / (n_data - pot_scale * sum(w_bkg)) - 1| <= 1e-2`
+A tolerance of `1e-2` (1%) is appropriate for neural network convergence noise. (Asserting against the *truth-level* total is mathematically incorrect, as the total truth yield shifts depending on the exact covariance between $r(x)$ and acceptance $a(z)$).
+
+### 4. What is the new Gate-2 assertion?
+Replace "target sums to 1e6" with two separate assertions:
+1. MC DataLoader weight sum == `1e6` (`rtol=3e-6`)
+2. Data DataLoader weight sum == `1e6 * R` (`rtol=3e-6`)
+
+### 5. Is there a materially better option?
+**Yes: pass `normalize=False` to BOTH loaders.**
+Because MINERvA data weights are exactly $+1$ (before refinement) and your MC weights are $POT \times w_{truth}$, the natural weight sums are *already* $\approx 10^6$. 
+By simply turning normalization off entirely, the loaders retain their exact physical yields, their ratio is intrinsically $R$ out-of-the-box, and the batch gradients remain perfectly conditioned for the learning rate. This eliminates the bug at its source and spares you from having to compute and pipe $R$ manually (which gets messy with `bootstrap_seed` fluctuations).
+
+### Recommendation
+Use **`normalize=False`** on both loaders. It is the truest representation of the physics and requires the least code. Retarget Gate-4 to assert that the folded-forward reco yield matches the data yield.
