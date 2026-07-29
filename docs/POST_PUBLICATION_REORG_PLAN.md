@@ -163,6 +163,38 @@ Acceptance: no stale path in tracked files; all wrappers pass; every PET/FPS
 published claim maps to the same freeze-tag summary and artifact fingerprint;
 no GPU or event-loop production was triggered by the move.
 
+## Measured coupling (recorded 2026-07-29, no move performed)
+
+Numbers to size Stage 3's stale-reference search before it starts, rather than
+discovering them during it. Re-measure at the freeze tag; these will have grown.
+
+- **115 distinct `sbatch_*.sh` filenames are cited by name** in tracked `.md`/
+  `.json` records; `sbatch_g2_fullevent_evloop_array.sh` alone is cited 20×.
+  **55 distinct `nd-unfolding/<file>.py|sh` paths** are likewise cited. Build the
+  citation set as a worklist before the first move:
+
+  ```
+  grep -rhoE '(nd-unfolding/)?[a-zA-Z0-9_]+\.(py|sh)' --include='*.md' \
+    --include='*.json' --include='*.sh' --include='*.py' . | sort -u
+  ```
+
+- `nd-unfolding/` carries **280 files in its flat root** (177 `.sh`, 85 `.py`).
+  It is not a cold family, so Stage 3 does not reach it; sequence it explicitly
+  or it will be the largest remaining item after Stage 6.
+
+- **`docs/orchestration/` (322 files) is not covered by any stage** and does not
+  split cleanly. Its tooling and dispatch transcripts are separable, but
+  `docs/orchestration/state/` holds provenance receipts read at runtime by
+  analysis code — `nd-unfolding/p4_evidence.py:45,170`,
+  `fps_verify_merged_receipt.py:23`, `tests/conftest.py:6`, and three `pet/*.sh`
+  launchers. Any split must keep `state/` on the analysis side. The root symlink
+  `orchestration -> docs/orchestration` and `.gitattributes` need updating too.
+
+Precedent for this plan's "never bulk-move then repair" rule: the 2026-07-26
+`__file__` de-rooting across 26 `pet/` and `tests/` modules voided six gate hash
+bindings, restored two days later in a separate commit. That refactor was an
+order of magnitude smaller than Stage 3.
+
 ## Final reorganization audit
 
 The reorganization is complete only when:
