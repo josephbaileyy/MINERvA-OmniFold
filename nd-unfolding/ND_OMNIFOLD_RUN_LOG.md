@@ -2303,3 +2303,116 @@ rather than taken on the agents' word:
 Status unchanged by this entry: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross
 section extracted. The audit is a code-and-methodology read; the real G2 dump was never
 exercised, since Perlmutter is down until 08-03.
+
+## 2026-07-29 — B1 adversarial re-verification: my own proposed fix was WRONG, and the ~10% PET/GBDT gap is explained by measured data already in this log
+
+Four independent adversarial referees (three Claude Code subagents, one Gemini 3.1 Pro via
+`agentctl` role `refute-fe-norm-physics-agy`), each instructed to default to REFUTED,
+re-examined the B1 finding and the fix proposed for it in the previous entry. The mechanism
+survived. **The proposed fix did not, and neither did the reasoning I used to justify it.**
+Codex profiles were unreachable for this round (no `codex-homes/*` on the local machine) and
+`claude-school` was unauthenticated, so the external cross-check is Gemini-only.
+
+**The mechanism is CONFIRMED, and it is not a code-reading conjecture — it is already the
+measured behavior of the recoil-only PET result.** `dataloader.py:110-113` rescales
+`self.weight` in place (verified by executing the vendored module: `normalize=True` gives
+`weight.sum() = 999999.96`, omitted gives the raw `15.0`, and `weight.base is caller_array`);
+`omnifold.py:176-177` feeds exactly those arrays as the two step-1 class blocks, so W1/W0 == 1
+at iteration 0. Step 2 (`omnifold.py:196-197`) trains on the same points and transmits
+whatever rate `w_pull` carries without creating any, and the efficiency handling
+(`:184-187`) only pins off-acceptance weights to 1. Nothing restores the ratio.
+
+**This falsifies this log's own stated interpretation of the PET/GBDT gap.** `:466` records
+`mean(w_push) = 1.0277` and the higher-iteration retrain records `1.0101` — it FELL.
+Under-iteration predicts it *rising* toward the data's demand of 1.135 (`:930`, GBDT
+data/CV). PET/CV is therefore 1.035 then 1.018, and 1.018/1.135 = 0.897, reproducing the
+reported `PET/GBDT = 0.8970` (`:913`) to three digits. The entry at `:917-921` attributing
+the gap to under-iteration should be treated as superseded: the normalization erasure
+accounts for it quantitatively, on real MEFHC data, with no new run required.
+
+**REFUTED — "keep shape-only and restore the yield ratio at extraction" is not a fix.** The
+decisive line is `omnifold.py:185`, `new_weights = np.ones_like(self.weights_pull)`, with
+only `[pass_reco]` receiving the classifier ratio. Off-acceptance events are pinned at 1 in
+BOTH the correct and the normalized run — the normalized run does not carry `1/R` there. So
+the loop is not scale-equivariant in the step-1 output: with `a(z)` the local reco
+acceptance, step 2's optimum is `push'(z) = 1 + a(z)(R-1)` against `push(z) = 1`, and since
+completeness (`pet_systematics_5d.py:146-152,161`) is built from `w_truth` only and is
+identical in both runs, the per-bin ratio is
+
+    sigma_correct(bin) / sigma_shape-only(bin) = 1 + a(bin) * (R - 1)
+
+a function of acceptance, not a constant. No global scalar recovers it. With `R-1 ~ 0.10-0.19`
+and global row acceptance 20,404,292/32,849,103 = 0.621
+(`products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.summary.json:17-18`) and real per-bin spread,
+the irreducible residual is a **few-percent bin-to-bin distortion correlated with
+completeness — worst exactly in the low-completeness FPS-extension cells that are this
+measurement's novelty**. Area-normalizing does not remove it, so "publish it as shape-only"
+is not a safe harbor either. The error is better described as an acceptance-multiplicative
+error than as a lost normalization.
+
+**Also REFUTED — "just delete `normalize=True`" is wrong, for a reason not previously
+identified.** The nominal trains on a bounded 2M MC subsample
+(`validate_pet_nominal_gate4.py:55-56`) while the measured target is the FULL data+background
+inventory (`fullevent_fps_dataloader.py:645-659`). With `normalize=False` the step-1 class
+ratio becomes the arbitrary MC *sampling fraction*, not `R` — strictly worse than 1.
+`normalize=True` is load-bearing.
+
+**Correction to the previous entry's reasoning.** I cited `_balance_weights`/`_class_ratio`
+as precedent for restoring normalization at extraction. That is backwards on two counts.
+(1) `_balance_weights` is an *optimization* fix — its docstring (`omnifold_nn_core.py:158-169`)
+attributes the ~1e-6 collapse to an MLP falling into the trivial bias solution — and
+`_class_ratio` exists to undo `_balance_weights`' own side effect; neither concerns the
+DataLoader, which the reference loop never constructs. (2) The restoration is **in-loop, per
+step, per iteration**: `fit_reweight` recomputes `_class_ratio` from the current step's
+weights at `:233` and applies it at `:246`, and is called twice per iteration (`:257`,
+`:266`). The precedent therefore mandates carrying the ratio through the loop, not patching
+the result afterward.
+
+**The fix consistent with both the physics and the precedent** is to make the step-1 class
+ratio equal the physical `R` computed from full-inventory POT-scaled sums: keep the MC loader
+at 1e6 and pass `normalization_factor = 1e6 * R` to the data loader — the argument already
+exists at `dataloader.py:13` — or restore in-loop as `omnifold_nn_core.py:246` does. That
+preserves subsample invariance and the rate, and needs no change to the vendored mechanism.
+
+**Two gates currently entrench the defect.** `gate2_target_runtime.py:411-412` and `:442-443`
+hard-assert the step-1 target sums to exactly 1e6 (`rtol=3e-6, atol=2.0`), and Gate-4's
+`check_normalization` (`validate_pet_nominal_gate4.py:107-110`) requires
+`|sum(w*push)/sum(w) - 1| <= 1e-3` (`:61`). **A correctly normalized unfold moves the rate by
+~13.5% and would FAIL that Gate-4 contract by two orders of magnitude, while the broken one
+passes it.** Combined with the separately confirmed finding that the Gate-4 CLI never passes
+`normalization=` at all, the contract as written cannot detect this and would reject its fix.
+
+**Collateral corrections to the previous entry's Delta claim.** The conclusion (no canonical
+Gate-2 on Delta) stands, but three of the four reasons given were wrong: the backend-string
+check at `gate2_target_runtime.py:400` is derived from the same `refine_fn is None` predicate
+as `:398` and is not an independent barrier; `refine_stay_positive` itself is pure
+NumPy+sklearn and never touches ROOT (the module-level `import ROOT` at
+`unfold_2d_omnifold_unbinned.py:21` is an accident of file layout); and the identity-hash
+guard at `:402` binds *bytes, not a filesystem*, so a staged byte-identical copy would satisfy
+it. The genuine code-enforced blocker is the hardcoded, non-overridable
+`REPO = Path("/pscratch/sd/j/josephrb/MINERvA-OmniFold")` at `gate2_target_runtime.py:35`
+(also `fullevent_fps_dataloader.py:40`), which dies at `:209` before ROOT is ever reached.
+Framing this as "code, not policy" was also a false dichotomy — `RESTORE-2026-08-03.md:198-206`
+HARD BAR #1 states the policy explicitly.
+
+**Audit weakness recorded.** `refinement_is_learned_production` asserts only that no refiner
+was *injected* (`fullevent_fps_dataloader.py:664` = `refine_fn is None`); monkeypatching
+`fed.learned_stay_positive_refiner` keeps the flag `True` while a substitute runs. The
+validator *records* but does not *assert* the loader/u2d sha256 (`:481-486`); the only sha
+freeze is in the shell wrapper (`run_gate2_target_validator.sh:19-21,39-41`).
+
+**New tool, login-safe and read-only:** `nd-unfolding/pet/check_step1_class_ratio.py` measures
+`R` from the frozen dump reading only small 1-D members (never the point clouds). It is
+fail-closed against the promoted Gate-2 receipt: it recomputes the signed-data numerator and
+refuses to report `R` unless that reproduces `raw_signed_sum = 4006528.6006158064`. Verified
+both paths against a synthetic fixture built to the receipt constants — valid input reports
+`R` and the receipt check `OK`; a 10%-perturbed background exits 1 with
+`numerator ... does not reproduce ...`. Note `w_truth` in the G2 npz is RAW, not POT-scaled
+(`fullevent_fps_dataloader.py:551`; convention at `dump_pointcloud_inputs.py:183-186`), so the
+physical denominator is `pot_scale * sum(w_truth[pass_reco])`; the script reports both
+conventions because they differ by `1/pot_scale ~ 4.7x`.
+
+Status unchanged: Gate-4 remains PASS_CODE_ONLY, P5A unlaunched, no cross section extracted,
+`R` still unmeasured pending the 08-03 restore. What changed is the decision: **B1 option (b)
+is off the table on physics grounds, option (a) as previously stated is also wrong, and the
+target is now the `1e6 * R` / in-loop variant.**

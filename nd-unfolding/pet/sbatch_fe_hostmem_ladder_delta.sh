@@ -21,6 +21,13 @@
 # OOMs on launch and the fix is a code change (shard before build / chunked
 # construction / a full-event memmap builder that does not exist yet).
 #
+# MEASURED (Delta 20558496, 2026-07-28): that hand estimate was ~25% HIGH --
+# the full-size temporaries in build_truth_cloud do not all coexist. Fit was
+# peak_GiB = 1.238e-6*rows + 0.239 => ~61 GiB/rank, ~246 GiB over 4 ranks
+# against 251.6 GiB (~98% of the node). Hard OOM refuted; the margin is ~2-3%.
+# This was a CPU node, so it EXCLUDES the host memory each rank pins for its
+# CUDA context and TF's allocator: treat ~246 GiB as a LOWER BOUND.
+#
 # This measures it instead of arguing about it, on CPU hours, so the 814
 # remaining GPU-hours are not spent extrapolating wall-clock for a
 # configuration that cannot run.
@@ -128,7 +135,11 @@ if len(rows) >= 2:
     icept = (sy - slope * sx) / n
     cap = 257630.0 / 1024.0
     print(f"\n  fit: peak_GiB = {slope:.6e} * rows + {icept:.3f}")
-    for target, label in ((40_000_000, "max_events=40M"), (49_152_885, "full 49.15M dump")):
+    # The fit's x-axis is rows_signal, so these targets are ROW counts, not
+    # max_events. The production point is the full dump (49,152,885 rows), which
+    # is max_events = 40M via the 0.8138 pass-reco ratio -- the two are the same
+    # point, so do not read the first line as "the 40M-max_events case".
+    for target, label in ((40_000_000, "rows=40M"), (49_152_885, "full dump, 49.15M rows")):
         one = slope * target + icept
         print(f"  extrapolated {label:22s}: 1 rank {one:7.2f} GiB | "
               f"4 ranks {4*one:7.1f} GiB | node {cap:.1f} GiB | "

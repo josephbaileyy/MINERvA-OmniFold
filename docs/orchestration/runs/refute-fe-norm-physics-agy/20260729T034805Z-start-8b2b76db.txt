@@ -1,0 +1,37 @@
+**VERDICTS**
+* **(i) The "shape-only" mechanism:** **CONFIRMED.** `normalize=True` does exactly what the claim describes. It scales the data and MC weights in-place to equal totals, permanently erasing the physical data-vs-MC rate difference before training begins.
+* **(ii) The proposed fix:** **CONFIRMED** (as a mathematically valid fix), but its central justification is **REFUTED**. A post-hoc scalar *does* recover the rate, but not for the reasons the claim asserts.
+
+**STRONGEST ARGUMENT AGAINST THE CLAIM**
+The claim's justification for the fix is completely false. It asserts that `_class_ratio` and `_balance_weights` in `nd-unfolding/omnifold_nn_core.py` exist "precisely to restore a normalization the DataLoader collapsed." They do not. As explicitly documented in the `_balance_weights` docstring (`nd-unfolding/omnifold_nn_core.py:161-169`), they exist to balance the classes for **TRAINING STABILITY / optimization conditioning** because "An MLP trained on imbalanced class totals collapses to the trivial bias solution... GBDT does not need this, so balancing is applied only on the NN path." They have nothing to do with a DataLoader (which the standalone `omnifold_nn_core.py` doesn't even use); they restore a physical normalization they deliberately suspended themselves for numerical reasons.
+
+---
+
+### 1. Is the mechanism real?
+**Yes.** 
+* `nd-unfolding/pet/fullevent_fps_dataloader.py` passes `normalize=True` to both the MC loader (line 613) and data loader (line 658).
+* In `omnifold_nn/omnifold/dataloader.py:110-113`, `self.weight` is normalized **in-place** (`self.weight *= (normalization_factor/sumw).astype(np.float32)`).
+* In `omnifold_nn/omnifold/omnifold.py:176-177`, the step-1 classifier is fed `self.mc.weight` and `self.data.weight` directly. Since `weights_push` starts at 1.0, both classes enter iteration 0 with exactly `1_000_000` total weight. The physical POT-scaled difference is completely erased.
+
+### 2. Is there a later restoration?
+**No.** 
+Step 2 (`omnifold.py:196-197`) maps the MC shape to the updated MC shape, naturally inheriting the shape-only normalization from Step 1. The cross-section extraction applies efficiency corrections but does not contain a step that resets the global data/MC yield ratio. The unfold is purely shape-only.
+
+### 3. THE CRUX — what are `_class_ratio` and `_balance_weights` actually for?
+**Reading (b) is correct.**
+They balance classifier classes for **training stability**, which is a numerical concern with no bearing on physical rate. The docstring (`omnifold_nn_core.py:161-169`) states this unequivocally. Thus, the claim's central justification for proposing a post-hoc scalar is **REFUTED**.
+
+### 4. Can a scalar even fix it?
+**Yes.**
+The claim asserts that because weights evolve nonlinearly, no scalar can recover the lost rate. This is mathematically false. The OmniFold classifier learns a density ratio: $p/(1-p) = f_{data}/f_{MC}$. If the data targets were properly scaled by a factor $K = N_{data}/N_{MC}$, the learned ratio would simply be $K \cdot f_{data}/f_{MC}$. Because the weight updates are purely multiplicative ($w_{pull} = w_{push} \cdot r(x)$), this global scalar factor $K$ commutes perfectly through every iteration step. A single scalar applied at the end *exactly* reproduces what a correctly-normalized unfold would have produced. So the proposed fix mathematically works. 
+
+### 5. Does the absolute rate even matter here?
+**Yes, it matters.**
+The extraction does *not* independently fix the absolute normalization. In `nd-unfolding/xsec_nd.py:79-82`, the cross section is computed as `counts / (completeness * flux_b * n_nucleons * data_pot * vol)`. The `counts` array comes directly from the unfolded weights, which sum to the total MC yield ($N_{MC}$), not the data yield ($N_{data}$). Since the extraction applies `data_pot` (the data's POT) to `counts` that have the MC's yield scale, the final cross section will be off by exactly the missing $N_{data}/N_{MC}$ scalar. The "shape-only" concern is severe.
+
+### 6. Documented convention?
+There is no documentation or test establishing that the full-event step-1 target is *intentionally* shape-only. The only reference to this mechanism is the very log entry (lines 2288-2301 in `ND_OMNIFOLD_RUN_LOG.md`) that the user's prompt is quoting, where it is logged explicitly as a failure mode/hypothesis, not a deliberate convention.
+
+### Overstatements and Imprecision in the Claim
+* **The Justification:** The claim asserts that the repo's reference implementation justifies fixing a DataLoader normalization bug at extraction. The reference implementation (`omnifold_nn_core.py`) doesn't use a DataLoader, and its normalization balancing is a deliberate neural-network conditioning trick, not a bug workaround. 
+* **The Math:** The claim implies the non-linearity of the iterative unfolding process prevents a post-hoc scalar fix. It doesn't. The iterative update is linear with respect to constant scaling factors.
