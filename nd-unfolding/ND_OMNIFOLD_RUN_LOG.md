@@ -2515,3 +2515,33 @@ plumbing but not its physics, and it is a second reason the §2a fix routes thro
 And the design doc's open question was mis-framed — the Gate-2 receipt moves regardless because
 it binds the loader; the live question is only whether the canonical **refiner re-run** can be
 skipped on `w_refined` being bit-identical.
+
+### 2026-07-29 — a claimed hole in verify_hash_bindings.py, refuted before it was recorded
+
+A review of the B1 implementer brief claimed `verify_hash_bindings.py` cannot detect an edit to
+`omnifold_nn/omnifold/dataloader.py` because the Gate-2 receipt binds it by absolute
+`/pscratch` path, putting it in the 301-unresolvable set. This session accepted that and
+generalized it further — to the whole Gate-2 quartet, including the two files the B1 patch set
+edits — and was about to write it into the audit doc and here as a finding.
+
+**It is false.** `verify_hash_bindings.py:74-78` (`localize`) strips the
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/` prefix before hashing, and the docstring at
+`:17-21` records that the remapping was added because that exact binding was missed on a first
+pass. Driving `collect()`/`localize()` over every receipt JSON: `dataloader.py`,
+`fullevent_fps_dataloader.py`, `gate2_target_runtime.py`, `train_fullevent_nominal.py` and
+`validate_pet_nominal_gate4.py` all resolve and all MATCH. Only `omnifold/net.py` and
+`omnifold/omnifold.py` are bound by nothing — audit B-1 stands exactly as written and does not
+extend.
+
+**The trap, recorded because it will recur.** `verify_hash_bindings.py:115-123` prints only the
+summary, the known-drift list, and mismatches — it never names a binding that is OK. So
+`grep <filename>` over its stdout is empty both for an unbound file and for a perfectly intact
+one, which are the two cases B-1 exists to distinguish. Settle coverage from the receipt JSONs,
+never from the verifier's stdout. This session hit the same trap earlier in the same review,
+caught it when a `grep` for the Gate-4 files came back empty, went to the receipt — and failed
+to apply that correction backwards to a claim it had already accepted.
+
+Operationally: the verifier *is* a valid backstop for every file §2a/§2c/§2d touch, and a
+MISMATCH on each edited file is the expected, correct signal that the receipt needs re-issuing.
+The implementer brief's constraint bullet telling the implementer to distrust it and hand-record
+sha256s has been withdrawn.

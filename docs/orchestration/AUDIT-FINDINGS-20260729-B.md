@@ -563,3 +563,48 @@ asking as stated, is whether the expensive **canonical refiner re-run** can be s
 **Standing constraints observed.** No repo file edited, no receipt or `RUNS.tsv` touched, no
 sha256 hand-edited, no job submitted, no de-rooting of the load-bearing `/pscratch` literals.
 `verify_hash_bindings.py` → `ALL BINDINGS INTACT`, before and after.
+
+---
+
+## 9. Addendum — a claimed generalization of B-1, refuted (2026-07-29, reviewing session)
+
+A review of this document proposed extending B-1: that because
+`G2_GATE2_TARGET_RUNTIME_RECEIPT.json` records its four code bindings as absolute
+`/pscratch/...` paths, they fall in the 301-unresolvable set, so `verify_hash_bindings.py`
+would print `ALL BINDINGS INTACT` after an edit to the vendored `omnifold/dataloader.py` — or
+to `fullevent_fps_dataloader.py` and `gate2_target_runtime.py`, the files the B1 patch set
+edits.
+
+**Refuted.** `verify_hash_bindings.py:74-78` (`localize`) strips the
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/` prefix and hashes the local checkout, and the
+module docstring at `:17-21` records that this remapping exists *precisely because* the Gate-2
+dataloader binding was missed on a first pass. Driving `collect()` + `localize()` directly over
+every receipt JSON:
+
+| bound file | resolved | hash | receipt |
+|---|---|---|---|
+| `omnifold_nn/omnifold/dataloader.py` | yes | MATCH | `G2_GATE2_TARGET_RUNTIME_RECEIPT.json` |
+| `fullevent_fps_dataloader.py` | yes | MATCH | `G2_GATE2_TARGET_RUNTIME_RECEIPT.json` + `g2-gate2-construction-20260719.json` |
+| `gate2_target_runtime.py` | yes | MATCH | `G2_GATE2_TARGET_RUNTIME_RECEIPT.json` |
+| `train_fullevent_nominal.py` | yes | MATCH | `p3f-pet-gate4-launch-code-gate-20260721.json` |
+| `validate_pet_nominal_gate4.py` | yes | MATCH | `p3f-pet-gate4-launch-code-gate-20260721.json` |
+| `omnifold/net.py`, `omnifold/omnifold.py` | — | — | **bound by nothing (B-1 stands)** |
+
+The 301 unresolvable entries are data files, off-repo artifacts and binaries, as the summary
+line says — not these.
+
+**The inference trap that produced it, recorded because it will recur.**
+`verify_hash_bindings.py:115-123` prints only the summary count, the known-drift list, and
+mismatches. It **never names a binding that is OK.** So `grep <filename>` over its stdout
+returns nothing both when a file is unbound *and* when its binding is perfectly intact — the
+two cases this document's B-1 needs to distinguish. Absence of a filename in the verifier's
+output is not evidence about coverage in either direction; the receipt JSONs are the only place
+to settle it. B-1's own evidence is sound because it greps the *receipts*, not the verifier;
+the reviewing session's `grep -c` over verifier stdout (0 matches) added nothing and was
+misread as corroboration.
+
+**Consequence for the B1 patch set:** `verify_hash_bindings.py` *is* a valid backstop for every
+file §2a/§2c/§2d touch. Run it before and after and expect a MISMATCH on each edited file —
+that is the receipt correctly reporting it must be re-issued, not a failure. What it still
+cannot see is an edit to `net.py` or `omnifold.py`, which is why §2a routes through the existing
+`normalization_factor` argument rather than the vendored engine.
