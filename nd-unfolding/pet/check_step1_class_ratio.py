@@ -75,9 +75,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 import numpy as np
+
+# B1: the R formula lives in ONE body (fullevent_fps_dataloader.step1_class_ratio) so a B-4 flip
+# is a one-line change rather than a search. This script MEASURES R on 08-03, so a private copy
+# of the arithmetic here would be the first place that rule broke. Login-safe: the loader module
+# imports only numpy at module level (ROOT/TF/u2d are all deferred).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fullevent_fps_dataloader as fed  # noqa: E402
 
 # ---- frozen expectations from the promoted Gate-2 receipt --------------------
 # nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json
@@ -200,7 +208,15 @@ def run(inputs: str, max_events: int | None) -> dict:
     if denom_pot <= 0.0:
         die(f"non-positive MC denominator {denom_pot!r}")
 
-    R_pot = numerator / denom_pot
+    # THE shared formula -- identical body to the one the loader and both gates use.
+    try:
+        R_pot = fed.step1_class_ratio(n_data=float(n_data), sum_w_bkg_raw=sum_w_bkg,
+                                      sum_w_mc_reco_raw=sum_w_truth_pass, pot_scale=pot_scale)
+    except ValueError as exc:
+        die(str(exc))
+    # NOT the formula: the denominator-unscaled convention, reported only because it is easy to
+    # arrive at by mistake and differs by 1/pot_scale ~ 4.7x. Deliberately kept inline so it can
+    # never be confused for the shared one above.
     R_unscaled = numerator / sum_w_truth_pass
 
     out.update({
@@ -224,8 +240,11 @@ def run(inputs: str, max_events: int | None) -> dict:
     # --- R under the w_reco denominator (what B-4's fix would make it) --------
     if wreco is not None:
         denom_wreco = pot_scale * wreco["sum_w_reco_pass_reco_raw"]
-        wreco["R_pot_scaled_wreco_denominator"] = (numerator / denom_wreco
-                                                   if denom_wreco > 0 else None)
+        wreco["R_pot_scaled_wreco_denominator"] = (
+            fed.step1_class_ratio(n_data=float(n_data), sum_w_bkg_raw=sum_w_bkg,
+                                  sum_w_mc_reco_raw=wreco["sum_w_reco_pass_reco_raw"],
+                                  pot_scale=pot_scale)
+            if denom_wreco > 0 else None)
         wreco["R_shift_factor_if_B4_fixed"] = (sum_w_truth_pass
                                                / wreco["sum_w_reco_pass_reco_raw"]
                                                if wreco["sum_w_reco_pass_reco_raw"] else None)

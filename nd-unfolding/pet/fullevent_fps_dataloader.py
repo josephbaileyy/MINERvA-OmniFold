@@ -436,6 +436,194 @@ RECOIL_OR_OLD_INPUT_MARKERS = ("of_inputs_pc_fullcloud", "of_inputs_pc_fps.npz",
                                "xps2", "recoil")
 
 
+# --------------------------------------------------------------------------------------------
+# B1 — the step-1 class ratio R (B1-NORMALIZATION-FIX-DESIGN.md §2b).
+#
+# The vendored DataLoader rescales each loader's pass_reco weight sum in place to
+# `normalization_factor` (omnifold/dataloader.py:110-113), and omnifold.py:176-177 feeds exactly
+# those two arrays as the step-1 class weight blocks. Normalizing BOTH to 1e6 forces W1/W0 == 1 at
+# iteration 0 and erases the physical data/MC rate ratio. The fix keeps the MC block at
+# STEP1_MC_NORMALIZATION and gives the measured block STEP1_MC_NORMALIZATION * R, so the class
+# ratio IS R -- subsample-invariant, because the MC side is renormalized regardless of how many
+# rows the `imc` draw took and R is built from the FULL inventory.
+# --------------------------------------------------------------------------------------------
+STEP1_MC_NORMALIZATION = 1_000_000.0
+
+
+def step1_class_ratio(*, n_data, sum_w_bkg_raw, sum_w_mc_reco_raw, pot_scale):
+    """THE B1 formula, deliberately in ONE function body.
+
+        R = (n_data - pot_scale * sum_w_bkg_raw) / (pot_scale * sum_w_mc_reco_raw)
+
+    Numerator: the signed measured inventory -- unit-weight data rows minus the POT-scaled
+    background injection. Denominator: the POT-scaled signal-MC reco-level prediction.
+
+    THE pot_scale TRAP. `w_truth` / `w_reco` / `w_bkg` in the G2 npz are the RAW literal ROOT
+    per-event MC weights, NOT POT-scaled (`dump_pointcloud_inputs.py:182-186`, "Consumers apply
+    pot_scale"). Nothing between the dump and `DataLoader(weight=w_truth, ...)` multiplies by it.
+    Omitting `pot_scale` from the denominator inflates R by 1/pot_scale ~ 4.7x; two independent
+    reviewers arrived at the formula without it.
+
+    THE w_truth-vs-w_reco ASSUMPTION -- audit finding B-4, UNRESOLVED as of 2026-07-29.
+    `sum_w_mc_reco_raw` is the reco-leg MC weight sum. Callers pass `w_truth` over `pass_reco`,
+    because `w_truth` is what the reco leg is ACTUALLY fed today: the G2 contract carries a
+    separate `w_reco` (`dump_pointcloud_inputs.py:201`, required at `:299`/`:540`) and the
+    validated 2D path uses the two legs separately
+    (`2d-unfolding/unfold_2d_omnifold_unbinned.py:1715-1716`), but this loader never reads
+    `w_reco` -- the single `w_truth` vector drives both `omnifold.py:176-177` (step 1, reco) and
+    `:196-197` (step 2, truth). So R as computed here is self-consistent with the code as it
+    exists. IF B-4 is fixed so the reco leg uses `w_reco`, the physical denominator becomes
+    `pot_scale * sum(w_reco[pass_reco])` and R moves by
+    `sum(w_truth[pass_reco]) / sum(w_reco[pass_reco])`.
+
+    That is why R is DERIVED here and never frozen as a constant: when B-4 is answered, this one
+    function body changes -- not a search through the patch. `step1_class_ratio_from_dump` records
+    the `w_reco`-vs-`w_truth` comparison at runtime, so the first 08-03 run answers B-4 as a side
+    effect of computing R. Every bootstrap replica also has its own yield ratio, so a hardcoded R
+    would be wrong for every replica but the nominal.
+    """
+    pot_scale = float(pot_scale)
+    if not (np.isfinite(pot_scale) and pot_scale > 0.0):
+        raise ValueError(f"[B1] invalid pot_scale {pot_scale!r} (require finite > 0)")
+    numerator = float(n_data) - pot_scale * float(sum_w_bkg_raw)
+    denominator = pot_scale * float(sum_w_mc_reco_raw)
+    if not (np.isfinite(denominator) and denominator > 0.0):
+        raise ValueError(f"[B1] non-positive MC reco denominator {denominator!r} "
+                         "(cannot form the step-1 class ratio; fail closed)")
+    R = numerator / denominator
+    if not (np.isfinite(R) and R > 0.0):
+        raise ValueError(f"[B1] step-1 class ratio R={R!r} is not finite and positive "
+                         f"(numerator {numerator!r}, denominator {denominator!r}); fail closed")
+    return float(R)
+
+
+def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=None,
+                                pass_reco_full=None, w_bkg_full=None, data_factor=None,
+                                bkg_factor=None, sig_factor=None, check_w_reco=True):
+    """Derive R and its telemetry straight out of an open g2-fullevent-v1 npz mapping.
+
+    Every consumer of R calls THIS -- the loader (§2a), the Gate-2 validator (§2c) and the Gate-4
+    validator (§2d) -- so the formula lives in one body. The consumers do NOT share inputs: each
+    opens the dump and reads its own arrays, which is the independence §2c requires. A validator
+    that read R out of the loader's `meta` would certify the loader against the loader's own claim.
+
+    Already-materialized arrays may be passed in to avoid a redundant read; anything not supplied
+    is read from `d`. Bootstrap factors are the replica's coherent draws
+    (`coherent_bootstrap_factors`): `data_factor` replaces the unit data-row weight, `bkg_factor`
+    multiplies the negative background injection, `sig_factor` multiplies the signal MC -- exactly
+    as `build_signed_measured_inventory` applies them, so R tracks the replica's own yield ratio.
+
+    Returns (R, telem). `telem` carries the ingredients, and the `w_reco`-vs-`w_truth` comparison
+    that is audit finding B-4's own minimal check.
+    """
+    if pot_scale is None:
+        if "pot_scale" in d.files:
+            pot_scale = float(np.asarray(d["pot_scale"]).item())
+        elif "data_pot" in d.files and "mc_pot" in d.files:
+            pot_scale = (float(np.asarray(d["data_pot"]).item())
+                         / float(np.asarray(d["mc_pot"]).item()))
+        else:
+            raise ValueError("[B1] no pot_scale (and no data_pot/mc_pot) in input; cannot form R")
+
+    w_truth_full = (np.asarray(d["w_truth"], dtype=np.float64) if w_truth_full is None
+                    else np.asarray(w_truth_full, dtype=np.float64))
+    pass_reco_full = (np.asarray(d["pass_reco"]) if pass_reco_full is None
+                      else np.asarray(pass_reco_full)).astype(bool)
+    w_bkg_full = (np.asarray(d["w_bkg"], dtype=np.float64) if w_bkg_full is None
+                  else np.asarray(w_bkg_full, dtype=np.float64))
+    if w_truth_full.shape != pass_reco_full.shape:
+        raise ValueError(f"[B1] w_truth {w_truth_full.shape} and pass_reco {pass_reco_full.shape} "
+                         "disagree (wrong inventory; fail closed)")
+    if not (np.all(np.isfinite(w_truth_full)) and np.all(np.isfinite(w_bkg_full))):
+        raise ValueError("[B1] non-finite w_truth / w_bkg (fail closed)")
+
+    # Data row count: prefer the small scalars block over materializing the measured cloud.
+    if n_data is None:
+        if "measured_scalars" in d.files:
+            n_data_rows = int(np.asarray(d["measured_scalars"]).shape[0])
+        elif "measured_pc" in d.files:
+            n_data_rows = int(np.asarray(d["measured_pc"]).shape[0])
+        else:
+            raise ValueError("[B1] neither measured_scalars nor measured_pc present; cannot count "
+                             "data rows (fail closed)")
+    else:
+        n_data_rows = int(n_data)
+
+    # Replica draws, applied exactly as build_signed_measured_inventory applies them.
+    if data_factor is None:
+        n_data_eff = float(n_data_rows)
+    else:
+        df = np.asarray(data_factor, dtype=np.float64)
+        if df.shape != (n_data_rows,):
+            raise ValueError(f"[B1] data_factor {df.shape} != data rows {(n_data_rows,)}")
+        n_data_eff = float(df.sum())
+    if bkg_factor is None:
+        sum_w_bkg_raw = float(w_bkg_full.sum())
+    else:
+        bf = np.asarray(bkg_factor, dtype=np.float64)
+        if bf.shape != w_bkg_full.shape:
+            raise ValueError(f"[B1] bkg_factor {bf.shape} != w_bkg {w_bkg_full.shape}")
+        sum_w_bkg_raw = float((w_bkg_full * bf).sum())
+    w_sig = w_truth_full if sig_factor is None else (
+        w_truth_full * np.asarray(sig_factor, dtype=np.float64))
+    if w_sig.shape != w_truth_full.shape:
+        raise ValueError(f"[B1] sig_factor broadcast {w_sig.shape} != w_truth "
+                         f"{w_truth_full.shape}")
+    sum_w_mc_reco_raw = float(w_sig[pass_reco_full].sum())
+
+    R = step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
+                          sum_w_mc_reco_raw=sum_w_mc_reco_raw, pot_scale=pot_scale)
+
+    telem = {
+        "R": R,
+        "formula": "R = (n_data - pot_scale*sum(w_bkg)) / (pot_scale*sum(w_truth[pass_reco]))",
+        "pot_scale": float(pot_scale),
+        "n_data_rows": n_data_rows,
+        "n_data_effective": n_data_eff,
+        "sum_w_bkg_raw": sum_w_bkg_raw,
+        "bkg_pot_scaled_sum": float(pot_scale) * sum_w_bkg_raw,
+        "numerator_signed_data": n_data_eff - float(pot_scale) * sum_w_bkg_raw,
+        "sum_w_truth_pass_reco_raw": sum_w_mc_reco_raw,
+        "n_signal_rows": int(w_truth_full.shape[0]),
+        "n_signal_pass_reco": int(pass_reco_full.sum()),
+        "is_bootstrap_replica": any(f is not None for f in (data_factor, bkg_factor, sig_factor)),
+        "reco_leg_weight_used": "w_truth",
+    }
+
+    # B-4's minimal check, recorded at runtime so the first real run answers it as a side effect.
+    if check_w_reco and "w_reco" in getattr(d, "files", ()):
+        w_reco = np.asarray(d["w_reco"], dtype=np.float64)
+        if w_reco.shape != w_truth_full.shape:
+            raise ValueError(f"[B1/B-4] w_reco {w_reco.shape} != w_truth {w_truth_full.shape}")
+        wt_p, wr_p = w_truth_full[pass_reco_full], w_reco[pass_reco_full]
+        n_differs = int((wr_p != wt_p).sum())
+        sum_w_reco_pass = float(wr_p.sum())
+        telem["b4_w_reco_vs_w_truth"] = {
+            "present_in_dump": True,
+            "bit_identical_over_pass_reco": n_differs == 0,
+            "n_pass_reco_differing": n_differs,
+            "sum_w_reco_pass_reco_raw": sum_w_reco_pass,
+            "R_if_reco_leg_used_w_reco": (
+                step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
+                                  sum_w_mc_reco_raw=sum_w_reco_pass, pot_scale=pot_scale)
+                if sum_w_reco_pass > 0 else None),
+            "R_shift_factor_if_B4_fixed": (sum_w_mc_reco_raw / sum_w_reco_pass
+                                           if sum_w_reco_pass else None),
+            "verdict": ("B-4 INACTIVE for this dump (R above stands; re-check per systematic "
+                        "endpoint before P5B)" if n_differs == 0 else
+                        "B-4 ACTIVE -- the reco leg is fed w_truth but w_reco differs; resolve "
+                        "B-4 before freezing R"),
+        }
+        del w_reco, wt_p, wr_p
+    elif check_w_reco:
+        telem["b4_w_reco_vs_w_truth"] = {
+            "present_in_dump": False,
+            "verdict": "w_reco absent -- required by dump_pointcloud_inputs.py:299; "
+                       "contract violation, B-4 unanswerable from this input",
+        }
+    return R, telem
+
+
 def assert_publication_config(cfg):
     """Fail closed (no-GPU) unless a full-event PET PUBLICATION run is configured correctly, so a
     launcher can NEVER select old xps2 / recoil-only / purity inputs for a publication product:
@@ -609,8 +797,14 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         meta["bootstrap"] = None
 
     from omnifold.dataloader import DataLoader                    # vendored engine, imported late
+    # B1 §2a: the MC block keeps the 1e6 normalization (unchanged -- STEP1_MC_NORMALIZATION is the
+    # DataLoader default, passed explicitly so the measured block's 1e6*R below is visibly the SAME
+    # base times R). Normalizing MC is load-bearing, not incidental: it is what makes the class
+    # ratio independent of how many rows the `imc` draw took.
     mc = DataLoader(reco=reco_cloud, gen=gen_cloud, pass_reco=pass_reco, pass_gen=pass_truth,
-                    weight=w_truth, normalize=True, reco_evt=event_reco, gen_evt=event_truth,
+                    weight=w_truth, normalize=True,
+                    normalization_factor=STEP1_MC_NORMALIZATION,
+                    reco_evt=event_reco, gen_evt=event_truth,
                     rank=rank, size=size)
 
     if bkg_mode == "purity":
@@ -655,11 +849,22 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
             == n_data + n_bkg):
         raise ValueError("[negweight-refined] concatenated measured target rows misaligned "
                          "(cloud/event-feature/weight; fail closed).")
+    # B1 §2a: the measured block is normalized to 1e6 * R, not 1e6. R is DERIVED here from the
+    # full inventory in hand (never piped in, never hardcoded -- see step1_class_ratio), and under
+    # bootstrap it is rebuilt from THIS replica's coherent draws, which are in scope above.
+    R, r_telem = step1_class_ratio_from_dump(
+        d, pot_scale=pot_scale, n_data=M, w_truth_full=w_truth_full, w_bkg_full=w_bkg_full,
+        data_factor=data_factor, bkg_factor=bkg_factor,
+        sig_factor=(sig_factor if bootstrap_seed is not None else None))
     data = DataLoader(reco=meas_cloud_all, weight=w_refined.astype(np.float32), normalize=True,
+                      normalization_factor=STEP1_MC_NORMALIZATION * R,
                       reco_evt=event_meas_all)
 
     meta["target"] = {
         "target_mode": "negweight-refined", "bootstrap_seed": bootstrap_seed,
+        "step1_mc_normalization": STEP1_MC_NORMALIZATION,
+        "step1_measured_normalization": STEP1_MC_NORMALIZATION * R,
+        "step1_class_ratio": R, "step1_class_ratio_telemetry": r_telem,
         "refinement": "stay-positive (arXiv:2505.03724)", "refinement_backend": refine_backend,
         "refinement_is_learned_production": (refine_fn is None),
         "estimator_fingerprint": meta["estimator_fingerprint"],

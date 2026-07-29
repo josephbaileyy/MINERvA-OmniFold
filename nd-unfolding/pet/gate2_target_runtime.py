@@ -56,6 +56,17 @@ def die(message: str) -> None:
     raise RuntimeError(message)
 
 
+def step1_target_sum_matches(observed_sum, target_norm) -> bool:
+    """The Gate-2 step-1 normalization predicate, in one named place.
+
+    B1 §2c retargets `target_norm` from the bare 1e6 to 1e6*R. Named rather than left inline at
+    the two assertion sites so the tests can exercise the REAL predicate: a test that re-types
+    `np.isclose(..., rtol=3e-6, atol=2.0)` proves only that the test agrees with itself, which is
+    the tautology pattern AUDIT-FINDINGS-20260729-B.md §4 found across all 49 provenance tests.
+    """
+    return bool(np.isclose(float(observed_sum), float(target_norm), rtol=3e-6, atol=2.0))
+
+
 def sha256_file(path: Path, block: int = 16 * 1024 * 1024) -> str:
     h = hashlib.sha256()
     with path.open("rb") as handle:
@@ -359,6 +370,12 @@ def run_validate(args) -> int:
             sys.path.insert(0, str(value))
     import fullevent_fps_dataloader as fed
     dataloader_module = install_target_only_dataloader()
+    # B1 §2c: this module's NORMALIZATION is the MC-side base that the measured target is now
+    # 1e6*R against. If the loader's base ever moves, this gate must move with it or it silently
+    # asserts against the wrong constant -- so refuse to run on a mismatch.
+    if not np.isclose(NORMALIZATION, fed.STEP1_MC_NORMALIZATION, rtol=0.0, atol=0.0):
+        die(f"gate NORMALIZATION {NORMALIZATION} != loader STEP1_MC_NORMALIZATION "
+            f"{fed.STEP1_MC_NORMALIZATION} (constants drifted; fail closed)")
 
     config = {
         "target_mode": "negweight-refined",
@@ -370,7 +387,10 @@ def run_validate(args) -> int:
         "bootstrap_seed": None,
         "max_mc_events": int(args.max_mc_events),
         "full_measured_inventory": True,
-        "normalization_factor": NORMALIZATION,
+        # B1 §2c: the MC block normalizes to this; the MEASURED block normalizes to this * R,
+        # with R derived independently below (never read from the loader's meta).
+        "mc_normalization_factor": NORMALIZATION,
+        "measured_normalization_factor": "STEP1_MC_NORMALIZATION * R (R derived at runtime)",
         "dataloader_import_mode": "target-only exact NumPy source; no TensorFlow/PET training",
     }
     build_started = time.monotonic()
@@ -408,8 +428,8 @@ def run_validate(args) -> int:
         die(f"step-1 target rows {weights.shape} != {(expected_measured,)}")
     if not np.all(np.isfinite(weights)) or np.any(weights < 0):
         die("normalized step-1 target is non-finite or negative")
-    if not np.isclose(float(weights.sum(dtype=np.float64)), NORMALIZATION, rtol=3e-6, atol=2.0):
-        die(f"normalized step-1 sum {weights.sum(dtype=np.float64)} != {NORMALIZATION}")
+    # (the step-1 sum assertion moved below -- its target is now 1e6*R and R is derived from the
+    #  dump in this gate's OWN read, a few lines down)
     if data.reco.shape[0] != expected_measured or data.reco_evt.shape[0] != expected_measured:
         die("step-1 DataLoader cloud/event-feature target is not row-aligned")
     if mc.reco.shape[0] != int(args.max_mc_events) or mc.gen.shape[0] != int(args.max_mc_events):
@@ -421,6 +441,16 @@ def run_validate(args) -> int:
         measured = np.asarray(source["measured_scalars"], dtype=np.float64)[:, :2] / 1000.0
         background = np.asarray(source["bkg_reco_scalars"], dtype=np.float64)[:, :2] / 1000.0
         w_bkg = np.asarray(source["w_bkg"], dtype=np.float64)
+        # B1 §2c: derive R from the dump HERE, in this gate's own read of its own arrays. The
+        # formula is shared with the loader (fed.step1_class_ratio, so a B-4 flip is a one-body
+        # change) but the INPUTS are not: reading R out of meta/target would certify the loader
+        # against the loader's own claim, and two independent computations agreeing is the whole
+        # point of the gate.
+        class_ratio, class_ratio_telem = fed.step1_class_ratio_from_dump(source)
+    target_norm = NORMALIZATION * class_ratio
+    if not step1_target_sum_matches(weights.sum(dtype=np.float64), target_norm):
+        die(f"normalized step-1 sum {weights.sum(dtype=np.float64)} != 1e6*R = {target_norm} "
+            f"(R={class_ratio!r} derived independently from the dump)")
     edges_pt = np.asarray(fed.CANONICAL_PT_EDGES, dtype=np.float64)
     edges_ppar = np.asarray(fed.CANONICAL_PPARALLEL_EDGES, dtype=np.float64)
     data_hist = _hist2(measured, edges_pt, edges_ppar)
@@ -437,15 +467,28 @@ def run_validate(args) -> int:
     target_raw_signed = float(target["raw_positive_sum"]) - float(target["raw_negative_sum"])
     if not np.isclose(raw_signed_sum, target_raw_signed, rtol=2e-11, atol=1e-5):
         die("independent signed binned sum does not reproduce runtime construction telemetry")
+    # B1 §2c: R's numerator IS the signed measured inventory, and the binned projection above
+    # reaches it by a different route (2-D histogram over the canonical grid, all rows verified
+    # in-domain at the retention check). Requiring the two to agree makes the R this gate asserts
+    # against independently corroborated, not merely independently typed.
+    if not np.isclose(raw_signed_sum, float(class_ratio_telem["numerator_signed_data"]),
+                      rtol=1e-9, atol=1e-3):
+        die(f"binned signed sum {raw_signed_sum} does not reproduce the R numerator "
+            f"{class_ratio_telem['numerator_signed_data']} (R is not trustworthy; fail closed)")
     if not np.all(np.isfinite(refined_hist)) or np.any(refined_hist < 0):
         die("independent refined binned projection is non-finite or negative")
-    if not np.isclose(float(refined_hist.sum()), NORMALIZATION, rtol=3e-6, atol=2.0):
-        die("independent refined binned projection does not reproduce DataLoader normalization")
+    if not step1_target_sum_matches(refined_hist.sum(), target_norm):
+        die("independent refined binned projection does not reproduce DataLoader normalization "
+            f"(got {float(refined_hist.sum())}, expected 1e6*R = {target_norm})")
 
-    clipped_norm = clipped_hist * (NORMALIZATION / clipped_hist.sum())
+    # The learned-vs-clipped telemetry below is INVARIANT under the 1e6 -> 1e6*R retarget, but
+    # only because both histograms are renormalized to the SAME constant and rel_l1 divides by
+    # it. Leaving NORMALIZATION here while refined_hist sums to 1e6*R would not "keep the old
+    # diagnostic" -- it would compare two differently-scaled histograms and inflate rel_l1 by R.
+    clipped_norm = clipped_hist * (target_norm / clipped_hist.sum())
     denom = np.maximum(clipped_norm, 1e-12)
     occupied = (clipped_norm > 0) | (refined_hist > 0)
-    rel_l1 = float(np.abs(refined_hist - clipped_norm).sum() / NORMALIZATION)
+    rel_l1 = float(np.abs(refined_hist - clipped_norm).sum() / target_norm)
     max_rel = float(np.max(np.abs(refined_hist[occupied] - clipped_norm[occupied]) / denom[occupied]))
     cosine = float(
         np.vdot(refined_hist.ravel(), clipped_norm.ravel())
@@ -491,6 +534,7 @@ def run_validate(args) -> int:
             "cloud_shape": list(data.reco.shape),
             "event_feature_shape": list(data.reco_evt.shape),
             "normalized_sum": float(weights.sum(dtype=np.float64)),
+            "normalization_target": target_norm,
             "min": float(weights.min()),
             "max": float(weights.max()),
             "zero_rows": int((weights == 0).sum()),
@@ -506,6 +550,18 @@ def run_validate(args) -> int:
             "mc_gen_shape": list(mc.gen.shape),
             "coord_reco": list(coord_reco),
             "coord_gen": list(coord_gen),
+        },
+        "step1_class_ratio": {
+            "R": class_ratio,
+            "derivation": ("recomputed by THIS validator from its own read of the dump "
+                           "(fed.step1_class_ratio_from_dump); NOT read from the loader's meta"),
+            "mc_normalization": NORMALIZATION,
+            "measured_normalization_target": target_norm,
+            "numerator_corroborated_by_binned_projection": True,
+            "telemetry": class_ratio_telem,
+            "b4_note": ("R's denominator uses w_truth because that is what the reco leg is fed. "
+                        "See telemetry.b4_w_reco_vs_w_truth: if B-4 is ACTIVE, resolve it before "
+                        "any R is frozen anywhere."),
         },
         "independent_binned_checks": {
             "grid_shape": list(signed_hist.shape),

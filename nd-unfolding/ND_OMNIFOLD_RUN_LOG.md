@@ -2580,3 +2580,79 @@ four-lane audit by direct `CODEX_HOME=` / `CLAUDE_CONFIG_DIR=` invocation. Fixin
 `profiles.json` makes all four roles reachable without touching Perlmutter. The `agy` roles
 remain a genuinely different problem: their conversation state exists only in Perlmutter's
 `$HOME` and no local config change recovers it.
+
+### 2026-07-29 — B1 normalization fix IMPLEMENTED (code-only); the Gate-4 tolerance is now bracketed, not invented
+
+`B1-NORMALIZATION-FIX-DESIGN.md` §2a/§2c/§2d plus both §4 tests landed as one patch set. Nothing
+was measured, no job ran, `R` is still unknown until 08-03. Suite: **9 failed / 376 passed / 1
+skipped**, i.e. the documented 7-failure `/pscratch` baseline unchanged, +45 new tests, +2
+expected hash-binding failures. `verify_hash_bindings.py` went from `ALL BINDINGS INTACT` to
+four MISMATCH lines, `88 OK -> 84 OK`.
+
+**§2a — the loader.** `R` is derived inside `build_fullevent_loaders` and the measured
+`DataLoader` takes `normalization_factor = STEP1_MC_NORMALIZATION * R`; the MC block keeps 1e6,
+passed explicitly so the two are visibly the same base. The formula lives in ONE body,
+`fed.step1_class_ratio`, with the `w_truth`-vs-`w_reco` (B-4) assumption stated at the
+definition, and `fed.step1_class_ratio_from_dump` records the `w_reco == w_truth` comparison at
+runtime — so 08-03's first run answers B-4 as a side effect and a flip is a one-body change.
+`check_step1_class_ratio.py` (unbound) was refactored to call the same body: it is the tool that
+MEASURES `R`, so a private copy there would have been the first place that rule broke.
+
+**§2c — Gate-2 retargets four sites, not two.** The design says `:411-412` and `:442-443` become
+`1e6*R` and calls the `learned_vs_normalized_clipped_*` telemetry invariant. It is invariant only
+if `:445` and `:448` are retargeted as well — `refined_hist` now sums to `1e6*R`, so leaving
+`clipped_norm` at `1e6` would compare two differently-scaled histograms and inflate `rel_l1` by
+exactly `R`. The invariance claim itself is correct and is now pinned by a test. The gate derives
+`R` from its own read of the dump inside its existing `np.load` block, never from the loader's
+`meta`, and additionally requires the R numerator to reproduce the independently-binned
+`raw_signed_sum` — same number by a different route. A drift guard refuses to run if the gate's
+`NORMALIZATION` and the loader's `STEP1_MC_NORMALIZATION` ever diverge.
+
+**§2d — the check could not be replaced in place, and the plumbing was most of the work.**
+`test_pet_nominal_gate4_validator.py` is bound by the Gate-4 receipt and pins
+`check_normalization`'s two-argument signature and `ratio ≈ 1` semantics, so it was generalized
+(`target_ratio=1.0` default; the frozen test still passes) into a primitive, and the gate now
+wires a NEW `check_fold_forward_ratio`. Retiring the legacy entry point is queued for Step 2b,
+which re-freezes that test anyway. The driver persists the reco-masked sums, the validator
+recomputes them from the G2 dump via a now-**required** `--inputs`, and their agreement is
+asserted — the driver is a cross-check, never the source. A pre-B1 weights npz now aborts rather
+than producing a green receipt with the check skipped, which was the original failure one level
+down.
+
+**The tolerance is bracketed rather than invented.** §2d could not say what it should be. With
+acceptance statistically independent of the truth features — the worst case, since step 2's
+regressor then cannot separate the acceptance classes — the recursion has a closed form
+`push_k = R - (1-a)^k (R-1)`, so the floor is `(1-a)^k (R-1)/R`. Confirmed empirically by the new
+`closure_b1_rate_injection.py` (observed vs predicted 1.1734/1.1800, 1.2577/1.2520, 1.2773/1.2923
+at R=1.30, a=0.60, k=1/2/4). At the nominal that bound is **1.71%** against a defect size of
+**11.9%**; `fold_forward_ratio_dev_max = 0.05` sits between them and is marked
+`PROVISIONAL_PENDING_CLOSURE_MEASUREMENT` in the frozen contract and in every receipt it emits.
+A parameter-free companion check — the result must land nearer `R` than `1` — carries the
+broken-vs-corrected discrimination with no threshold at all.
+
+**A trap for 08-03: `epochs` is not the unit of optimization, steps are.** At the nominal's
+`epochs=8` a small closure run is optimization-limited, not floor-limited, and reads as though
+the fix underperforms: deviation 2.6–6.7% at N=8,000, 1.8–3.4% at N=30,000, 1.4–1.6% at
+N=120,000, converging onto the 1.71% closed form from above as the step count rises. The 2M-row
+nominal sits far to the right of that table. Do not run the closure small and conclude anything.
+
+**Two corrections to the implementer brief and Step 2b, both about the same thing.** Both state
+the expected red as "five bindings", which is right at the receipt level but wrong about what you
+will see: `verify_hash_bindings.py:105-107` dedupes on `(path, expected_hash)`, and both Gate-2
+receipts bind `fullevent_fps_dataloader.py` to the *same* sha256, so the second is collapsed and
+only **four** MISMATCH lines print. Both Gate-2 receipts still need re-issuing. Both documents now
+say so; the five-binding table remains the re-issue list, the verifier's line count is not.
+
+**One thing the new tests nearly did silently.** The new test file installs a stub `omnifold`
+package into `sys.modules` to reach the numpy-only DataLoader without importing TensorFlow. Left
+installed, it rescued six of `test_fullevent_gate2.py`'s expected `/pscratch` failures — the
+baseline briefly read 3F/382P instead of 7F/376P — because that module short-circuits when
+`omnifold.dataloader` is already loaded. That is order-dependent coupling that would have read as
+"the end-to-end loader boundary is covered off-cluster" when the coverage was a side effect of
+file ordering. The stub is now installed and torn down by a context manager, and the 7-failure
+baseline is preserved exactly.
+
+Status unchanged otherwise: Gate-4 `PASS_CODE_ONLY`, P5A unlaunched, no cross section extracted,
+nothing pushed. What 08-03 inherits is a patch set that leaves both re-issues performable, a
+closure that sizes the one number still marked provisional, and a Gate-4 that now fails the
+defect instead of tolerating it.

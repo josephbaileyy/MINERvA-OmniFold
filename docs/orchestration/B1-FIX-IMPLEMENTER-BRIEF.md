@@ -129,6 +129,12 @@ correctly noticing their frozen code changed. Record the exact list. Any file ou
 going red is yours to explain. **Never hand-edit a sha256 to restore green.** Also record each
 edited file's sha256 by hand, before and after, as documentation for the re-issue.
 
+**The verifier will print FOUR `MISMATCH` lines, not five** (`88 OK` → `84 OK`) — confirmed by
+running the patch on 2026-07-29. Both Gate-2 receipts bind the loader to the *same* sha256, and
+`verify_hash_bindings.py:105-107` dedupes on `(path, expected_hash)`, so the second binding is
+collapsed and only one receipt is named. The five-binding table above is still the correct
+re-issue list; the verifier's line count is not. Do not go hunting for a fifth line.
+
 **Three receipts must be re-issued on 08-03, and both re-issues are now scheduled** — say so in
 your commit message rather than flagging anything as missing:
 

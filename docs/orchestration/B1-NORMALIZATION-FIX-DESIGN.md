@@ -1,7 +1,15 @@
 # B1 normalization fix — design and rationale
 
-**Status:** proposed, not implemented. Three receipt-frozen files change; none has been
-touched. `R` is unmeasured until the 2026-08-03 restore.
+**Status: IMPLEMENTED 2026-07-29** (code-only; `R` still unmeasured until the 2026-08-03
+restore). All of §2 plus the §4 tests landed as one patch set. Four receipt-frozen files
+changed — `fullevent_fps_dataloader.py`, `gate2_target_runtime.py`,
+`train_fullevent_nominal.py`, `validate_pet_nominal_gate4.py` — voiding five bindings across
+three receipts, as `RESTORE-2026-08-03.md` Steps 2 and 2b schedule. See §8 for what the
+implementation changed about this design.
+
+*(Historical status line, retained so the diff reads: "proposed, not implemented. Three
+receipt-frozen files change; none has been touched." The count was three because §2d's
+plumbing requirement — the driver — had not yet been recognised as an edit.)*
 **Supersedes:** recommendation item 6 of `AUDIT-FINDINGS-20260728.md` and the
 `normalize=False`-on-both variant recorded in the 2026-07-29 run-log entry.
 **Read first:** the "Addendum — adversarial re-verification of B1 (2026-07-29)" in
@@ -271,6 +279,56 @@ the freeze covers the vendored engine's plumbing but not its physics.)
 
 This has not been confirmed. The role best placed to answer, `agy-g2-gate-verifier`, is stranded
 until its session is recovered per `RESTORE-2026-08-03.md` Step 6.
+
+## 7A. What the implementation changed about this design (2026-07-29)
+
+Recorded here rather than by silently editing the sections above, so the design and what was
+actually built can be compared.
+
+**§2c understated the retarget.** It says `:411-412` and `:442-443` "both become `1e6 * R`" and
+that the `learned_vs_normalized_clipped_*` telemetry at `:445`/`:448` is *invariant*. The
+telemetry is invariant only **if `:445` and `:448` are retargeted too**. `refined_hist` now sums
+to `1e6*R`; leaving `clipped_norm` renormalized to `1e6` would compare two differently-scaled
+histograms and inflate `rel_l1` by exactly `R`. Four sites changed, not two. The invariance claim
+itself is correct and is now pinned by a test.
+
+**§2d's `check_normalization` could not be replaced in place.** The frozen launch-code test
+`test_pet_nominal_gate4_validator.py` binds its two-argument signature and `ratio ≈ 1` semantics,
+and editing that test would void two further bindings for no necessary reason. It was instead
+generalized (`target_ratio=1.0` default — the frozen test still passes) into a primitive, and the
+gate now wires a new `check_fold_forward_ratio`. Retiring the legacy entry point is queued for
+the Step 2b re-issue, which re-freezes that test anyway.
+
+**§2d asked for a tolerance and could not say what it should be.** It is now bracketed rather
+than invented. With acceptance statistically independent of the truth features — the worst case,
+because step 2's regressor then cannot separate the acceptance classes at all — the recursion has
+a closed form:
+
+```
+push_k = R - (1-a)^k (R-1)        =>   floor_k = (1-a)^k (R-1)/R
+```
+
+which `closure_b1_rate_injection.py` confirms empirically (observed vs predicted 1.1734/1.1800,
+1.2577/1.2520, 1.2773/1.2923 at R=1.30/a=0.60/k=1,2,4). At the nominal (`a=0.621`, `R≈1.135`,
+`niter=2`) that bound is **1.71%**, and the defect the gate must detect is **11.9%**.
+`fold_forward_ratio_dev_max = 0.05` sits between them with ~2x headroom either side, and is
+marked `PROVISIONAL_PENDING_CLOSURE_MEASUREMENT` in the frozen contract and in every receipt it
+produces. A second, **parameter-free** check rides alongside it — the result must land nearer `R`
+than `1` — which carries the broken-vs-corrected discrimination with no invented threshold, so
+the gate has power even before the measurement lands.
+
+**A trap §4's closure will spring on 08-03.** `epochs` is not the unit of optimization; steps
+are, and steps scale with `N/batch_size`. At the nominal's `epochs=8` a small closure run is
+optimization-limited, not floor-limited, and reads as though the fix underperforms — measured
+deviation 2.6–6.7% at N=8,000, 1.8–3.4% at N=30,000, 1.4–1.6% at N=120,000, converging onto the
+1.71% closed form from above. The 2M-row nominal sits far to the right of that. This is written
+up at length in the closure script's docstring.
+
+**§6's open question is unchanged and still open** — whether the canonical refiner re-run can be
+skipped on `w_refined` being bit-identical. §2a does not touch the refiner, and the patch leaves
+`w_refined` byte-identical: the `1e6*R` factor is applied by the vendored DataLoader *after*
+refinement, so `signed_target_hash` should be unmoved. That is an argument for the skip, not a
+demonstration of it.
 
 ## 7. Provenance
 

@@ -131,11 +131,53 @@ def main(argv=None):
                    weights_folder=os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}"),
                    verbose=False)
     of.Unfold()
+
+    # ---- B1 §2d: the reco-level fold-forward sums Gate-4's normalization check needs ----
+    # Gate-4 asserts that the reco-weighted mean of push equals the physical rate ratio R, i.e.
+    # that the unfolded result, folded back through acceptance, reproduces the background-
+    # subtracted data yield. Neither w_truth nor pass_reco is in scope in the validator, so
+    # without this the check is not computable and is silently skipped.
+    #
+    # These are the DRIVER's side of a two-sided check. The validator recomputes both sums from
+    # the G2 dump independently and asserts the two agree; a gate fed only the driver's own
+    # arithmetic certifies nothing. Note the ratio is scale-free, so it does not matter that
+    # `mc.weight` has already been rescaled in place to 1e6 by the DataLoader.
+    push = np.asarray(of.weights_push, dtype=np.float64)
+    w_mc = np.asarray(mc.weight, dtype=np.float64)
+    pass_reco_sub = np.asarray(mc.pass_reco).astype(bool)
+    if not (push.shape == w_mc.shape == pass_reco_sub.shape):
+        raise SystemExit(f"[gate4] push {push.shape} / mc.weight {w_mc.shape} / pass_reco "
+                         f"{pass_reco_sub.shape} are not row-aligned (fail closed)")
+    if not pass_reco_sub.any():
+        raise SystemExit("[gate4] no pass_reco rows in the training subsample; the fold-forward "
+                         "ratio is undefined (fail closed)")
+    sum_w_push_reco = float((w_mc[pass_reco_sub] * push[pass_reco_sub]).sum())
+    sum_w_reco = float(w_mc[pass_reco_sub].sum())
+    target_meta = meta.get("target") or {}
+    class_ratio = target_meta.get("step1_class_ratio")
+    if class_ratio is None:
+        raise SystemExit("[gate4] loader meta carries no step1_class_ratio -- this driver requires "
+                         "the B1-corrected loader (fail closed)")
+
     np.savez_compressed(args.out, weights_push=np.asarray(of.weights_push),
                         mc_indices=imc, estimator_fingerprint=ESTIMATOR_FINGERPRINT,
                         bkg_mode=BKG_MODE, tag=args.tag,
-                        target=meta.get("target"))
+                        target=meta.get("target"),
+                        # B1 §2d fold-forward inputs (see comment above)
+                        fold_forward_sum_w_push_reco=np.asarray(sum_w_push_reco),
+                        fold_forward_sum_w_reco=np.asarray(sum_w_reco),
+                        fold_forward_n_pass_reco=np.asarray(int(pass_reco_sub.sum())),
+                        step1_class_ratio=np.asarray(float(class_ratio)),
+                        # -1 = nominal (no bootstrap); the validator's recomputation from the dump
+                        # is only valid for the nominal, so it must be able to tell.
+                        bootstrap_seed=np.asarray(
+                            -1 if target_meta.get("bootstrap_seed") is None
+                            else int(target_meta["bootstrap_seed"])),
+                        inputs_path=np.asarray(os.path.abspath(args.inputs)))
     print(f"[gate4] wrote {args.out} (tag={args.tag})")
+    print(json.dumps({"fold_forward_reco_ratio": sum_w_push_reco / sum_w_reco,
+                      "step1_class_ratio_R": float(class_ratio),
+                      "n_pass_reco_subsample": int(pass_reco_sub.sum())}, indent=2))
     return 0
 
 
