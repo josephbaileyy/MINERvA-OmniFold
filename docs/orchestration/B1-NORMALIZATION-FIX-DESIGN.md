@@ -71,6 +71,24 @@ weight, NOT POT-scaled (`:551` comment; convention stated at
 Under bootstrap, `R` must be recomputed from that replica's `data_factor` / `bkg_factor` /
 `sig_factor`, which are already in scope at the call site.
 
+**`R`'s denominator depends on finding B-4, so B-4 must be settled first.**
+`AUDIT-FINDINGS-20260729-B.md` B-4 establishes that `w_reco` — carried by the G2 contract
+(`dump_pointcloud_inputs.py:201`, required at `:299`/`:540`) and used as a separate leg by the
+validated 2D path (`unfold_2d_omnifold_unbinned.py:1715-1716`) — is **never read** by the
+full-event loader (`grep -c w_reco` → 0); the one `w_truth` vector at `:551` drives both
+`omnifold.py:176-177` (step 1, reco) and `:196-197` (step 2, truth). The denominator above uses
+`w_truth` because that is what the reco leg is actually fed, so it is self-consistent with the
+code as it exists. But if B-4 is fixed, the physical denominator becomes
+`pot_scale * sum(w_reco[pass_reco])` and `R` moves by
+`sum(w_truth[pass_reco]) / sum(w_reco[pass_reco])`.
+
+Consequence for sequencing: **do not freeze a measured `R` before B-4 is resolved**, or `R`
+gets certified against a denominator the corrected loader no longer uses.
+`check_step1_class_ratio.py` now reports both denominators, the shift factor, and the
+`w_reco`-vs-`w_truth` comparison that is B-4's own minimal check — one pass over the dump
+answers both. Bit-identical over `pass_reco` ⇒ B-4 inactive for the CV and this section stands
+unchanged; that must be re-checked per systematic endpoint before P5B.
+
 ### 2c. Gate-2 — retarget the constant, do not delete the assertion
 
 `gate2_target_runtime.py:411-412` and `:442-443` assert the step-1 target sums to exactly
@@ -105,16 +123,61 @@ is ≈1.08 — a number that depends on the acceptance, i.e. on the very thing b
 Asserting `≈R` would fail a correct unfold; asserting `≈1` fails it worse.
 
 The right check is a **reco-level folded-forward closure**: fold the unfolded truth back
-through acceptance and require it reproduce the background-subtracted data yield,
+through acceptance and require it reproduce the background-subtracted data yield. State it as a
+**ratio**, not an absolute yield:
 
 ```
-pot_scale * sum(w_truth * push over pass_reco)  ==  n_data - pot_scale * sum(w_bkg)
+sum(w_truth * push over pass_reco) / sum(w_truth over pass_reco)  ==  R
 ```
 
-within tolerance. This has an exact target that is measured rather than modelled, it is the
-physical statement "the result, folded back, reproduces what we saw," and — decisively — **it
-fails the current broken result while passing a corrected one.** It converts Gate-4 from
-tolerating this defect into detecting its whole class.
+i.e. *the reco-weighted mean of `push` equals `R`*. This is exactly `R` by construction:
+dividing the absolute fold-forward identity
+`pot_scale * sum(w_truth * push over pass_reco) == n_data - pot_scale * sum(w_bkg)` by
+`pot_scale * sum(w_truth over pass_reco)` reproduces §2b's definition of `R` on the
+right-hand side.
+
+**Why the ratio and not the absolute form** (correcting the first version of this section, per
+`AUDIT-FINDINGS-20260729-B.md` §7). The nominal trains on a 2M subsample of 49,152,885 rows, so
+`push` exists only for the subsample while the measured yield is a full-inventory quantity. The
+absolute form therefore fails a *correct* unfold by ≈ N/n_sub ≈ 24 — the same class of trap as
+the `pot_scale` trap two sections above. The ratio needs no subsample factor. Restricting the
+mask to `pass_reco` is also what removes the acceptance dependence that makes `≈R` wrong at
+truth level: the earlier objection was right, the absolute form was an over-reaction to it, and
+the mask change was sufficient.
+
+The target is measured rather than modelled, it is the physical statement "the result, folded
+back, reproduces what we saw," and — decisively — **it fails the current broken result while
+passing a corrected one.** It converts Gate-4 from tolerating this defect into detecting its
+whole class.
+
+**This is not a pure mask change — the validator cannot see the inputs.** Gate-4's CLI
+(`:210-231`) loads only the driver's weights npz and forwards `weights_push` and `mc_indices`.
+Neither `w_truth` nor `pass_reco` is in scope anywhere in `validate_pet_nominal_gate4.py`, so
+neither form of the check is computable today; `check_normalization`'s existence at `:107-110`
+is necessary but not sufficient. Two options, and the choice matters:
+
+- **Validator opens the G2 dump** and recomputes both sums plus `R` itself. Preferred. It has
+  dump access at P5A runtime anyway, and it preserves the independence property — the same
+  reason §2c insists the Gate-2 validator recompute `R` rather than read it from `meta`.
+- **Driver persists** `(Σ w_truth·push, Σ w_truth, R)` over `pass_reco ∩ subsample` into the
+  weights npz. Cheaper, but the gate would then certify the driver's own arithmetic. Acceptable
+  only as a *supplement* to the above, never as a replacement.
+
+**Tolerance — three terms, and it cannot inherit `1e-3`.** The check is not exact even for a
+correct unfold:
+
+1. *Structural floor.* Because `omnifold.py:185` pins off-acceptance `pull` to 1, step 2
+   regresses across both acceptance classes at once and smooths `pass_reco` pushes toward 1.
+   This does **not** vanish with more iterations — it is a property of the estimator, not of
+   finite `niter`, and it sets the irreducible floor.
+2. *Finite iteration.* At `niter = 2` the reco-level sum under `push` differs from that under
+   `pull`.
+3. *Subsample sampling.* The ratio is subsample-invariant in expectation, not algebraically:
+   both sums run over the 2M draw, so a sampling term enters.
+
+Term 1 caps the check's power and must be quantified before the tolerance is frozen, or the
+gate is either toothless or fails a correct unfold. All three come out of the closure run
+required in §4.
 
 This is on top of the separate B2 defect: the Gate-4 CLI passes no `normalization=` at all
 (`:223-229`), so today the check never executes regardless of its target.
@@ -189,10 +252,24 @@ Order on 08-03: measure `R` → re-run Gate-2 (678.7 s, CPU, zero GPU-hr) → re
 
 ## 6. Open question
 
-Can the Gate-2 re-issue be **validator-only**? The refiner runs upstream of the
-normalization, so `signed_target_hash` should be unchanged and `w_refined` bit-identical — in
-which case only the assertion target moves and no canonical refiner re-run is needed. This
-has not been confirmed. The role best placed to answer, `agy-g2-gate-verifier`, is stranded
+**Can the expensive canonical refiner re-run be skipped?** The refiner runs upstream of the
+normalization, so `w_refined` should be bit-identical and `signed_target_hash` unchanged — in
+which case only the assertion target moves.
+
+*(This was first written as "can the Gate-2 re-issue be validator-only?", which is
+mis-framed — `AUDIT-FINDINGS-20260729-B.md` §7. The Gate-2 receipt binds four code paths
+jointly: `unfold_2d_omnifold_unbinned.py`, `fullevent_fps_dataloader.py`,
+`omnifold_nn/omnifold/dataloader.py`, and `gate2_target_runtime.py`. §2a edits the second of
+those, so the **receipt moves regardless**. The live question is only whether the re-run behind
+it can be avoided.)*
+
+Note that `dataloader.py` being in that bound set is a second reason §2a routes through the
+existing `normalization_factor` argument rather than editing the vendored loader: the argument
+already exists, so the one vendored file Gate-2 *does* freeze stays byte-identical. (Per
+`AUDIT-FINDINGS-20260729-B.md` B-1, `net.py` and `omnifold.py` are bound by nothing at all —
+the freeze covers the vendored engine's plumbing but not its physics.)
+
+This has not been confirmed. The role best placed to answer, `agy-g2-gate-verifier`, is stranded
 until its session is recovered per `RESTORE-2026-08-03.md` Step 6.
 
 ## 7. Provenance

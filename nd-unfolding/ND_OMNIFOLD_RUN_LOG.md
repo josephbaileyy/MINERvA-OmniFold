@@ -2453,3 +2453,65 @@ is a *partial* fix — correcting the loader while leaving the hardcoded Gate-2 
 `:442-443`) and Gate-4 assertions in place, so the corrected ~13.5% shift aborts the pipeline
 inside the tight restore window. Section 2 of the design doc is entirely code-only and should
 land before the restore.
+
+### 2026-07-29 — audit pass B reviewed; two more corrections to the B1 fix design
+
+`docs/orchestration/AUDIT-FINDINGS-20260729-B.md` (four-lane parallel audit, one lane
+discarded) was reviewed and its load-bearing claims re-verified independently on this host
+rather than relayed. Confirmed by direct execution: the suite baseline is exactly
+**7 failed / 333 passed / 1 skipped**, all seven from the `/pscratch` literal at
+`gate2_target_runtime.py:56` (so the document's §4 mutation matrix rests on a real baseline);
+no JSON in the repo names `omnifold_nn/omnifold/net.py` or `omnifold.py` and
+`verify_hash_bindings.py` resolves neither (B-1); all three cited independent-verification
+transcripts have **zero** `git log --diff-filter=A` commits and 2026-07-21 is a hole in the
+committed transcript dates (B-2); `w_reco` occurrence count in the full-event loader is 0 while
+the 2D path uses both legs at `unfold_2d_omnifold_unbinned.py:1715-1716` (B-4); the eight
+full-event arrays all have loader count 0 (B-3); `stress_closure_muon.py` was last touched at
+`2732304` and is named by no JSON (B-6); both `test_g2_*.py` guard files sit under `pet/` with
+no pytest config redirecting collection (B-8). Also confirmed the iteration-policy note:
+`epochs=8` (`train_fullevent_nominal.py:36`) against `EarlyStopping` patience 10
+(`omnifold.py:58`, not overridden at `:129-130`) and `ReduceLROnPlateau(patience=1000)`
+(`:247`) — both stopping mechanisms are structurally unreachable at the frozen configuration.
+
+**Correction 1 — Gate-4's new check must be a RATIO, not an absolute yield.** The previous
+entry's reco-level closure
+`pot_scale*sum(w_truth*push over pass_reco) == n_data - pot_scale*sum(w_bkg)` is not
+subsample-invariant: `push` exists only for the 2M subsample of 49,152,885 rows while the
+measured yield is full-inventory, so as written it fails a *correct* unfold by a factor
+≈ N/n_sub ≈ 24. Use
+`sum(w_truth*push over pass_reco) / sum(w_truth over pass_reco) == R`, which is exactly `R`
+by construction of `R` and needs no subsample factor. The truth-level-vs-reco-level objection
+recorded above was right; the absolute form was an over-reaction to it and the mask change was
+sufficient. Credited to `AUDIT-FINDINGS-20260729-B.md` §7.
+
+Two additions to §7 found in review. It calls this a mask-and-target change with "no new
+machinery" — but Gate-4's CLI (`validate_pet_nominal_gate4.py:210-231`) loads only the driver's
+weights npz and forwards `weights_push`/`mc_indices`; neither `w_truth` nor `pass_reco` is in
+scope anywhere in that file, so **neither** form is computable today. The validator must open
+the G2 dump and recompute `R` itself (the driver persisting the sums would have the gate certify
+the driver's own arithmetic). And the tolerance has three terms, not one: a **structural floor**
+that does not vanish with more iterations, because `omnifold.py:185` pins off-acceptance `pull`
+to 1 so step 2 smooths `pass_reco` pushes toward 1 across acceptance classes; a finite-`niter`
+term; and a subsample sampling term (the ratio is invariant in expectation, not algebraically).
+Term 1 caps the check's power and must be quantified before the tolerance is frozen.
+
+**Correction 2 — B-4 changes `R`, so it must be settled before `R` is frozen.** `R`'s
+denominator uses `w_truth` because that is what the reco leg is actually fed. If B-4 is fixed
+so the reco leg uses `w_reco`, the physical denominator becomes
+`pot_scale*sum(w_reco[pass_reco])` and `R` moves by
+`sum(w_truth[pass_reco])/sum(w_reco[pass_reco])`. B-4 and B1 are therefore not independent
+items in the consolidated patch set. `check_step1_class_ratio.py` now reports R under both
+denominators, the shift factor, and the `w_reco`-vs-`w_truth` comparison that is B-4's own
+minimal check, so one pass over the dump on 08-03 answers both questions. Tested on synthetic
+fixtures in both branches (bit-identical → "B-4 INACTIVE"; perturbed → "B-4 is ACTIVE" with the
+shift factor).
+
+Two smaller notes. B-1's heading overstates: `omnifold_nn/omnifold/dataloader.py` **is** bound,
+by the Gate-2 receipt, jointly with `unfold_2d_omnifold_unbinned.py`,
+`fullevent_fps_dataloader.py` and `gate2_target_runtime.py` — the body is correctly scoped to
+`net.py`/`omnifold.py`. The accurate framing is that the freeze covers the vendored engine's
+plumbing but not its physics, and it is a second reason the §2a fix routes through the existing
+`normalization_factor` argument: the one vendored file Gate-2 does freeze stays byte-identical.
+And the design doc's open question was mis-framed — the Gate-2 receipt moves regardless because
+it binds the loader; the live question is only whether the canonical **refiner re-run** can be
+skipped on `w_refined` being bit-identical.

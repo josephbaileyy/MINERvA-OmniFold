@@ -32,6 +32,26 @@ Both conventions are reported. `R_pot_scaled` is the physical one and the one to
 `R_unscaled` (denominator without pot_scale) is printed only because it is easy to
 arrive at by mistake, and the two differ by 1/pot_scale ~ 4.7x.
 
+WHICH MC WEIGHT BELONGS IN THE DENOMINATOR (finding B-4 changes this answer)
+---------------------------------------------------------------------------
+The denominator above uses `w_truth` because that is what the loader actually feeds the
+reco leg: `grep -c w_reco fullevent_fps_dataloader.py` is 0, and the single
+`w_truth_full` vector at `:551` is passed to `DataLoader(weight=w_truth, ...)` at
+`:612-614` and consumed by BOTH `omnifold.py:176-177` (step 1, detector level) and
+`:196-197` (step 2, truth level). The G2 contract nonetheless carries a separate
+reco-leg weight (`dump_pointcloud_inputs.py:201`, required at `:299`/`:540`), and the
+validated 2D path uses the two legs separately
+(`2d-unfolding/unfold_2d_omnifold_unbinned.py:1715-1716`).
+
+So R is denominator-dependent, and B-4 and B1 are NOT independent fixes: if the reco leg
+is corrected to use `w_reco`, the physical denominator becomes
+`pot_scale * sum(w_reco[pass_reco])` and R moves by
+`sum(w_truth[pass_reco]) / sum(w_reco[pass_reco])`. This script therefore reports R under
+both denominators, plus the w_reco-vs-w_truth comparison that is B-4's own minimal check,
+so one pass over the dump answers both questions. If the two agree bit-for-bit for the
+CV, B-4 is inactive for the nominal and `R_pot_scaled` stands as written -- but repeat per
+systematic endpoint before P5B, since reco-side reweighters are exactly the point there.
+
 SELF-CHECK
 ----------
 The numerator is independently known: the promoted Gate-2 receipt records
@@ -115,6 +135,35 @@ def run(inputs: str, max_events: int | None) -> dict:
         n_pass_reco = int(pass_reco.sum())
         sum_w_truth_pass = float(w_truth[pass_reco].sum())
 
+        # --- B-4: the reco-leg weight the loader ignores ----------------------
+        # Costs one more ~400 MB float64 view; released immediately. Absence is not
+        # fatal here (the loader never reads it), but it IS a contract violation.
+        wreco: dict | None = None
+        if "w_reco" in d.files:
+            w_reco = np.asarray(d["w_reco"], dtype=np.float64)
+            if w_reco.shape != w_truth.shape:
+                die(f"w_reco {w_reco.shape} and w_truth {w_truth.shape} disagree")
+            if not np.all(np.isfinite(w_reco)):
+                die("w_reco contains non-finite entries")
+            wt_p, wr_p = w_truth[pass_reco], w_reco[pass_reco]
+            differs = wr_p != wt_p
+            n_differs = int(differs.sum())
+            nz = wt_p != 0.0
+            ratio = wr_p[nz] / wt_p[nz]
+            wreco = {
+                "sum_w_reco_pass_reco_raw": float(wr_p.sum()),
+                "bit_identical_to_w_truth_over_pass_reco": n_differs == 0,
+                "n_pass_reco_differing": n_differs,
+                "frac_pass_reco_differing": n_differs / n_pass_reco if n_pass_reco else None,
+                "ratio_w_reco_over_w_truth": {
+                    "min": float(ratio.min()) if ratio.size else None,
+                    "median": float(np.median(ratio)) if ratio.size else None,
+                    "max": float(ratio.max()) if ratio.size else None,
+                    "n_w_truth_zero": int((~nz).sum()),
+                },
+            }
+            del w_reco, wt_p, wr_p, differs, nz, ratio
+
         # --- data side: unit-weight data rows minus POT-scaled background ------
         w_bkg = np.asarray(d["w_bkg"], dtype=np.float64)
         if not np.all(np.isfinite(w_bkg)):
@@ -171,6 +220,20 @@ def run(inputs: str, max_events: int | None) -> dict:
         "R_unscaled": R_unscaled,
         "erased_factor_note": "step-1 forced W1/W0 == 1; the physical value is R_pot_scaled",
     })
+
+    # --- R under the w_reco denominator (what B-4's fix would make it) --------
+    if wreco is not None:
+        denom_wreco = pot_scale * wreco["sum_w_reco_pass_reco_raw"]
+        wreco["R_pot_scaled_wreco_denominator"] = (numerator / denom_wreco
+                                                   if denom_wreco > 0 else None)
+        wreco["R_shift_factor_if_B4_fixed"] = (sum_w_truth_pass
+                                               / wreco["sum_w_reco_pass_reco_raw"]
+                                               if wreco["sum_w_reco_pass_reco_raw"] else None)
+        out["w_reco_reco_leg"] = wreco
+    else:
+        out["w_reco_reco_leg"] = {"present_in_dump": False,
+                                  "note": "w_reco absent -- required by "
+                                          "dump_pointcloud_inputs.py:299; contract violation"}
 
     # --- what normalize=False would actually give (option-1 counterexample) ---
     if max_events:
@@ -230,6 +293,25 @@ def main(argv=None) -> int:
           f"shown to prevent the mistake)")
     print(f"\n  step 1 currently forces W1/W0 = 1.0, so the erased factor is "
           f"{rep['R_pot_scaled']:.6f}.")
+
+    wr = rep.get("w_reco_reco_leg") or {}
+    if wr.get("present_in_dump") is False:
+        print(f"\n  [B-4] {wr['note']}")
+    elif wr:
+        print("\n  [B-4] reco-leg weight the loader never reads (w_reco):")
+        if wr["bit_identical_to_w_truth_over_pass_reco"]:
+            print("    w_reco == w_truth bit-for-bit over pass_reco -> B-4 INACTIVE for this "
+                  "\n    dump; R above stands. Re-check per systematic endpoint before P5B.")
+        else:
+            rr = wr["ratio_w_reco_over_w_truth"]
+            print(f"    differs on {wr['n_pass_reco_differing']:,} pass_reco rows "
+                  f"({wr['frac_pass_reco_differing']:.6f} of them)")
+            print(f"    w_reco/w_truth  min={rr['min']:.6g}  median={rr['median']:.6g}  "
+                  f"max={rr['max']:.6g}  (w_truth==0 on {rr['n_w_truth_zero']:,} rows)")
+            print(f"    R with w_reco denominator   = "
+                  f"{wr['R_pot_scaled_wreco_denominator']:.6f}")
+            print(f"    -> B-4 is ACTIVE. Fixing the reco leg moves R by "
+                  f"{wr['R_shift_factor_if_B4_fixed']:.6f}; resolve B-4 BEFORE freezing R.")
 
     if "subsample" in rep:
         s = rep["subsample"]
