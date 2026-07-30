@@ -183,6 +183,45 @@ def run_arm(cache, arm, seed, cfg):
             "feature_meta": fmeta}
 
 
+def median_fill_nonfinite(scalars, mask, label):
+    """Replace non-finite scalar entries with the finite-row median of their column.
+
+    WHY THIS IS NEEDED (found the hard way, Delta job 20599606 died here). `truth_scalars` col 3
+    (`q3`) carries 14 non-finite values among pass_truth rows in a 400k subsample -- ~1,700 in the
+    full 49.15M inventory. `_event_block` applies NO nan_to_num, unlike the cloud path
+    (`_scale_clean`, dataloader.py:90). So `tsd = tsub.std(0)` is NaN, the WHOLE event_truth column
+    becomes NaN, and step 2 trains to `Last val loss nan`. Step 1 is unaffected because the reco
+    leg's q3 is clean, which is exactly the observed signature.
+
+    `assert_no_truth_leakage` does not catch it: it asserts event_reco != the truth block, and NaN
+    compares unequal, so the guard PASSES. Production is safe only because the adopted schema reads
+    cols 0,1; any added column carrying a NaN kills step 2 with no pointer to the cause.
+
+    Median fill, not row dropping, on purpose: dropping rows would change the row set and make the
+    already-completed arms incomparable, reintroducing the very confound these arms exist to avoid.
+    A median-filled row lands at z-score ~0 after normalization -- the block mean -- which is the
+    same neutral treatment the loader already gives undefined (!pass) rows at :171-172.
+    """
+    a = np.array(scalars, dtype=np.float32, copy=True)
+    bad = ~np.isfinite(a)
+    if not bad.any():
+        return a, {}
+    report = {}
+    for col in range(a.shape[1]):
+        n_bad = int(bad[:, col].sum())
+        if not n_bad:
+            continue
+        good = np.isfinite(a[:, col]) & np.asarray(mask, bool)
+        if good.sum() == 0:
+            raise SystemExit(f"{label} col{col}: no finite in-mask rows to take a median from")
+        med = float(np.median(a[good, col]))
+        a[bad[:, col], col] = med
+        report[f"col{col}"] = {"n_nonfinite": n_bad, "median_fill": med}
+        print(f"[frank] NON-FINITE FILL {label} col{col}: {n_bad} rows -> median {med:.6g} "
+              f"({100.0*n_bad/a.shape[0]:.5f}% of rows)", flush=True)
+    return a, report
+
+
 def load_cache(path, half_seed):
     d = np.load(path, allow_pickle=True)
     c = {k: np.asarray(d[k]) for k in
@@ -190,6 +229,11 @@ def load_cache(path, half_seed):
           "pass_reco", "pass_truth", "w_truth")}
     c["pass_reco"] = c["pass_reco"].astype(bool)
     c["pass_truth"] = c["pass_truth"].astype(bool)
+    c["reco_scalars"], rrep = median_fill_nonfinite(
+        c["reco_scalars"], c["pass_reco"], "reco_scalars")
+    c["truth_scalars"], trep = median_fill_nonfinite(
+        c["truth_scalars"], c["pass_truth"], "truth_scalars")
+    c["nonfinite_report"] = {"reco_scalars": rrep, "truth_scalars": trep}
     fed.assert_extended_fps_edges(d["edges_0"], d["edges_1"])   # measurement-domain guard
     c["edges_pt"] = np.asarray(d["edges_0"], float)
     c["edges_ppar"] = np.asarray(d["edges_1"], float)
@@ -318,7 +362,9 @@ def main():
 
     with open(os.path.join(cfg.outdir, "arms_summary.json"), "w") as fh:
         json.dump({"config": vars(cfg), "gap": gap, "stat_floor": stat_floor,
-                   "recovery_ceiling": ceiling, "target": target.tolist(),
+                   "recovery_ceiling": ceiling,
+                   "nonfinite_report": cache["nonfinite_report"],
+                   "target": target.tolist(),
                    "prior": prior.tolist(), "arms": results}, fh, indent=2)
     print(f"\n[frank] wrote {cfg.outdir}/arms_summary.json")
 
