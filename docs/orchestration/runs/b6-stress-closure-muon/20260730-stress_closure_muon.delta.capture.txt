@@ -1,0 +1,82 @@
+# stress_closure_muon.py — NCSA Delta (horovodrun -np 1)
+# date_utc: 2026-07-30T04:38:18Z
+# git HEAD: 68f12914e55dc7eaa9a082aa654fd7cb246f9c98
+# sha256(script): 3c3e092fa37b3fd6a3656f7fb552d0d14af467fdaf52270a5394689a6d4865a0
+# container: tf215.sif = TF 2.14.0 / Keras 2.14.0
+
+2026-07-29 23:38:26.091601: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9360] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-07-29 23:38:26.093369: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-07-29 23:38:26.097782: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1537] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-07-29 23:38:26.551347: I tensorflow/core/platform/cpu_feature_guard.cc:183] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+[1,0]<stderr>:2026-07-29 23:38:37.791759: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9360] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+[1,0]<stderr>:2026-07-29 23:38:37.791802: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+[1,0]<stderr>:2026-07-29 23:38:37.791844: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1537] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+[1,0]<stderr>:2026-07-29 23:38:37.799737: I tensorflow/core/platform/cpu_feature_guard.cc:183] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+[1,0]<stderr>:To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Horovod instalation found.
+[stress] injected per-stratum muon tilt alpha=1.20; recoil marginal held fixed
+INFO: Creating pass reco flag ...
+INFO: Normalizing sum of weights to 1000000 ...
+INFO: Normalizing sum of weights to 1000000 ...
+[1,0]<stderr>:2026-07-29 23:38:41.650867: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1883] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 38218 MB memory:  -> device: 0, name: NVIDIA A100-SXM4-40GB, pci bus id: 0000:c7:00.0, compute capability: 8.0
+78 training steps at reco and 78 steps at gen
+ITERATION: 1
+RUNNING STEP 1
+[1,0]<stderr>:2026-07-29 23:38:56.725272: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x7fa16598f840 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+[1,0]<stderr>:2026-07-29 23:38:56.725305: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA A100-SXM4-40GB, Compute Capability 8.0
+[1,0]<stderr>:2026-07-29 23:38:56.737940: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+[1,0]<stderr>:2026-07-29 23:38:56.781190: I tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:442] Loaded cuDNN version 8907
+[1,0]<stderr>:2026-07-29 23:38:56.850613: I ./tensorflow/compiler/jit/device_compiler.h:186] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+[1,0]<stderr>:WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.0202s vs `on_train_batch_end` time: 0.1457s). Check your callbacks.
+Last val loss 34.73628616333008
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 34.15605163574219
+INFO: Dumping training history ...
+ITERATION: 2
+RUNNING STEP 1
+Last val loss 35.003482818603516
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 34.518184661865234
+INFO: Dumping training history ...
+ITERATION: 3
+RUNNING STEP 1
+Last val loss 34.52249526977539
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 35.685691833496094
+INFO: Dumping training history ...
+INFO: Creating pass reco flag ...
+INFO: Normalizing sum of weights to 1000000 ...
+INFO: Normalizing sum of weights to 1000000 ...
+78 training steps at reco and 78 steps at gen
+ITERATION: 1
+RUNNING STEP 1
+[1,0]<stderr>:WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.0218s vs `on_train_batch_end` time: 0.1391s). Check your callbacks.
+Last val loss 33.10753631591797
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 34.51620101928711
+INFO: Dumping training history ...
+ITERATION: 2
+RUNNING STEP 1
+Last val loss 38.72350311279297
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 31.023542404174805
+INFO: Dumping training history ...
+ITERATION: 3
+RUNNING STEP 1
+Last val loss 32.782081604003906
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 32.08281707763672
+INFO: Dumping training history ...
+[stress] PRIOR      vs data  L1/stratum: median=0.5820 max=0.7915
+[stress] RECOIL-ONLY vs data L1/stratum: median=0.5811 max=0.7779
+[stress] FULL-EVENT  vs data L1/stratum: median=0.0428 max=0.3496
+[stress] recoil-only FAILS to recover (>=0.5*prior): True
+[stress] full-event RECOVERS (<0.5*recoil-only):      True
+STRESS CLOSURE PASS: full-event recovers the omitted muon variable; recoil-only cannot.

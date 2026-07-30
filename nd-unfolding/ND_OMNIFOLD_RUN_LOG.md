@@ -2744,3 +2744,50 @@ Suite **9 failed / 391 passed / 1 skipped** — the documented 7-failure `/pscra
 unchanged, +54 B1 tests, +6 guard-wrapper tests, +2 expected hash-binding failures. Verifier still
 red on exactly the same four MISMATCH lines; `validate_gate2_target_receipt.py` is bound by nothing,
 so retargeting it adds no receipt debt.
+
+### 2026-07-30 — B-6 RETIRED: the omitted-muon stress closure PASSES on Delta, first recorded PASS anywhere
+
+Run on NCSA Delta, `gpua092`, container `tf215.sif` (which contains **TF 2.14.0 / Keras 2.14.0** —
+the filename is misleading and `AUDIT-FINDINGS-20260728.md:547` was right). Script sha256
+`3c3e092f…4865a0`, **byte-identical to the local checkout**, Delta HEAD `68f1291`. Transcript:
+`docs/orchestration/runs/b6-stress-closure-muon/20260730-stress_closure_muon.delta.capture.txt`.
+Cost seconds of the 796 remaining GPU-hr.
+
+```
+[stress] injected per-stratum muon tilt alpha=1.20; recoil marginal held fixed
+[stress] PRIOR       vs data L1/stratum: median=0.5820 max=0.7915
+[stress] RECOIL-ONLY vs data L1/stratum: median=0.5811 max=0.7779
+[stress] FULL-EVENT  vs data L1/stratum: median=0.0428 max=0.3496
+STRESS CLOSURE PASS: full-event recovers the omitted muon variable; recoil-only cannot.
+```
+
+**B-6 is retired.** The finding was that this closure is named in Gate-4's own frozen contract
+(`validate_pet_nominal_gate4.py:57-59`), was edited after the Gate-4 PASS, is bound by no receipt,
+and had never recorded a PASS anywhere. It now has one, against code whose hash is recorded above.
+Binding it is still Step 2b's job.
+
+**Two launch gotchas, both worth having in the runbook.** Direct `python3` under `srun` **aborts**:
+`omnifold/__init__.py` finds horovod in the Delta container and calls `hvd.init()`, and OMPI was
+not built with SLURM PMI, so it dies with `OPAL ERROR: Unreachable in pmix3x_client.c` before
+reaching any physics. `PET_TRAINING_ON_DELTA.md` already documents the shape of the fix for the
+4-rank launcher; for a single-rank job it is `horovodrun -np 1 python3 …` inside `apptainer exec`.
+Note this is why Step 5a's "no MPI" validation works while this did not — that path imports the
+dataloader module directly and never executes the package `__init__`.
+
+**What this does and does NOT say about B-3.** It says the event-feature channel is *decisive and
+functional*: recoil-only recovers essentially nothing (median 0.5811 against a prior of 0.5820,
+i.e. ~0.15% of the injected tilt) while the full-event estimator closes it to 0.0428 — a **13.6×**
+residual reduction, using only the two muon scalars `(pt, pparallel)` the loader actually reads. So
+the reduced representation is **not blind to the muon**, and the B-3 framing "the estimator
+overstates what it saw" should not be read as "the estimator is crippled" — it is working, the
+*label* is over-specific.
+
+It does **not** measure whether the eight unread arrays add anything, and cannot: the injected tilt
+is a function of the muon feature the loader already consumes, so by construction this closure
+cannot separate "PET uses muon information" from "PET needs the full muon object". The evidence
+that would settle B-3 is a *variant* of this closure injecting a tilt in an **unread** variable
+(view/timing are the cheap candidates — per-token, present on all three reco-level legs, and
+needing no truth counterpart because `m1`/`m2` take independent cloud dims). That is a small
+extension of an existing script, needs no dump, and runs on Delta. Until it exists, extending the
+feature block is a change with no measured benefit, and correcting
+`FULL_EVENT_FEATURE_CONTRACT.md:19-21` remains the only claim that is actively false today.
