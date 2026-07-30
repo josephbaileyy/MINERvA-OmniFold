@@ -252,6 +252,37 @@ class ClassRatioFormula(unittest.TestCase):
         self.assertAlmostEqual(nominal, 1.3, places=6)
         self.assertAlmostEqual(doubled, 2.0 * 1.3, places=6)   # numerator doubles, denominator not
 
+    def test_b4_telemetry_is_replica_consistent(self):
+        """Regression, found by adversarial review of b3751cc. The B-4 telemetry's derived numbers
+        are compared against a numerator that carries the replica's draws and against a denominator
+        that carries `sig_factor`. If the reco leg is left unscaled, the shift factor reports
+        `sig_factor` itself: with sig_factor=2 and w_reco == w_truth BIT-FOR-BIT it claimed a shift
+        of 2.0 and an alternative R equal to the nominal rather than the replica's. Telemetry only
+        -- the normalization R was never wrong -- but B-4 is decided off these numbers."""
+        arrays = g2_arrays_with_R(target_R=1.3, ns=80)      # w_reco == w_truth bit-for-bit
+        with tempfile.TemporaryDirectory() as td:
+            with np.load(write_npz(td, arrays), allow_pickle=True) as d:
+                R, telem = fed.step1_class_ratio_from_dump(d, sig_factor=np.full(80, 2.0))
+        b4 = telem["b4_w_reco_vs_w_truth"]
+        self.assertTrue(b4["bit_identical_over_pass_reco"])
+        # identical weights => fixing B-4 changes nothing, whatever the replica scaling
+        self.assertAlmostEqual(b4["R_shift_factor_if_B4_fixed"], 1.0, places=9)
+        self.assertAlmostEqual(b4["R_if_reco_leg_used_w_reco"], R, places=9)
+
+    def test_b4_shift_is_replica_consistent_when_w_reco_differs(self):
+        """The same consistency when B-4 IS active: the shift must report the w_reco/w_truth ratio
+        and nothing else, independently of any replica scaling applied to both legs."""
+        arrays = g2_arrays_with_R(target_R=1.3, ns=80, w_reco_scale=1.25)
+        with tempfile.TemporaryDirectory() as td:
+            with np.load(write_npz(td, arrays), allow_pickle=True) as d:
+                nom = fed.step1_class_ratio_from_dump(d)[1]["b4_w_reco_vs_w_truth"]
+                rep = fed.step1_class_ratio_from_dump(
+                    d, sig_factor=np.full(80, 3.0))[1]["b4_w_reco_vs_w_truth"]
+        for b4 in (nom, rep):
+            self.assertAlmostEqual(b4["R_shift_factor_if_B4_fixed"], 1.0 / 1.25, places=6)
+        self.assertAlmostEqual(nom["R_shift_factor_if_B4_fixed"],
+                               rep["R_shift_factor_if_B4_fixed"], places=9)
+
     def test_sig_factor_enters_the_denominator(self):
         arrays = g2_arrays_with_R(target_R=1.3, ns=80)
         with tempfile.TemporaryDirectory() as td:
@@ -380,20 +411,70 @@ class Gate2RetargetedAssertion(unittest.TestCase):
         """§2c's drift guard: the gate refuses to run if its base has diverged from the loader's."""
         self.assertEqual(g2rt.NORMALIZATION, fed.STEP1_MC_NORMALIZATION)
 
-    def test_clipped_telemetry_is_invariant_under_the_retarget(self):
-        """§2c claims the learned-vs-clipped telemetry survives the 1e6 -> 1e6*R change verbatim,
-        BECAUSE both histograms renormalize to the same constant and rel_l1 divides by it. Verify
-        the invariance rather than trusting it -- leaving the old constant in `clipped_norm` would
-        silently inflate rel_l1 by R."""
+    def _telemetry(self, refined, clipped, target_norm):
+        """The gate's clipped-shape telemetry, computed exactly as `run_validate` does -- INCLUDING
+        the zero-guard floor, which is where the invariance actually lives."""
+        clipped_norm = clipped * (target_norm / clipped.sum())
+        denom = np.maximum(clipped_norm, g2rt.EPS_NORM_FRAC * target_norm)
+        occupied = (clipped_norm > 0) | (refined > 0)
+        return {
+            "l1": float(np.abs(refined - clipped_norm).sum() / target_norm),
+            "max_rel": float(np.max(np.abs(refined[occupied] - clipped_norm[occupied])
+                                    / denom[occupied])),
+            "cosine": float(np.vdot(refined.ravel(), clipped_norm.ravel())
+                            / (np.linalg.norm(refined) * np.linalg.norm(clipped_norm))),
+        }
+
+    def test_clipped_telemetry_is_invariant_including_the_zero_guard(self):
+        """§2c claims the learned-vs-clipped telemetry survives the 1e6 -> 1e6*R change verbatim.
+
+        The first version of this test re-typed the rel_l1 algebra on strictly-positive random data
+        and asserted only rel_l1 -- so it never reached `denom`, never touched the zero-guard floor,
+        and never checked max_relative or cosine. Exactly the tautology pattern audit §4 found in
+        the provenance tests, in a test written to prevent one. Caught by adversarial review of
+        b3751cc.
+
+        `max_relative` was genuinely NOT invariant: with an ABSOLUTE 1e-12 floor, a cell where
+        clipped_norm == 0 but refined > 0 pins the denominator while the numerator scales with the
+        target, so max_rel scaled by exactly R. The fixture below contains such a cell on purpose.
+        Benign on the frozen grid today (negative_signed_cells == 0), but the pending MeV/GeV units
+        fix is expected to create those cells -- in the same restore window as this retarget."""
         rng = np.random.default_rng(11)
         refined = rng.random(40) * 100.0
         clipped = rng.random(40) * 100.0
-        for R in (1.0, 1.135, 2.5):
-            base_rel = np.abs(refined - clipped * (1e6 / clipped.sum())).sum() / 1e6
-            scaled_refined = refined * R
-            scaled_rel = (np.abs(scaled_refined - clipped * ((1e6 * R) / clipped.sum())).sum()
-                          / (1e6 * R))
-            self.assertAlmostEqual(base_rel, scaled_rel, places=10)
+        clipped[7] = 0.0            # the case `occupied` admits and the absolute floor mishandled
+        refined[7] = 12.5
+        base = self._telemetry(refined, clipped, g2rt.NORMALIZATION)
+        for R in (1.135, 2.5, 0.4):
+            # under the retarget the whole refined histogram scales by exactly R
+            scaled = self._telemetry(refined * R, clipped, g2rt.NORMALIZATION * R)
+            for key in ("l1", "max_rel", "cosine"):
+                # RELATIVE: max_rel is ~1e13 here (the zero cell divides by the floor), so an
+                # absolute tolerance would be meaningless on it and vacuous on cosine.
+                self.assertAlmostEqual(scaled[key] / base[key], 1.0, places=9,
+                                       msg=f"{key} not invariant at R={R}: "
+                                           f"{base[key]!r} -> {scaled[key]!r}")
+
+    def test_absolute_floor_would_have_broken_max_relative(self):
+        """Pin the defect itself, so a revert to an absolute floor fails here rather than silently
+        degrading a diagnostic nobody re-derives."""
+        refined = np.array([10.0, 12.5]); clipped = np.array([10.0, 0.0])
+        def max_rel(target_norm, floor):
+            cn = clipped * (target_norm / clipped.sum())
+            occ = (cn > 0) | (refined * (target_norm / g2rt.NORMALIZATION) > 0)
+            r = refined * (target_norm / g2rt.NORMALIZATION)
+            return float(np.max(np.abs(r[occ] - cn[occ]) / np.maximum(cn, floor)[occ]))
+        R = 1.135
+        self.assertAlmostEqual(max_rel(g2rt.NORMALIZATION * R, 1e-12)
+                               / max_rel(g2rt.NORMALIZATION, 1e-12), R, places=6)
+        self.assertAlmostEqual(
+            max_rel(g2rt.NORMALIZATION * R, g2rt.EPS_NORM_FRAC * g2rt.NORMALIZATION * R)
+            / max_rel(g2rt.NORMALIZATION, g2rt.EPS_NORM_FRAC * g2rt.NORMALIZATION), 1.0, places=9)
+
+    def test_zero_guard_floor_is_backward_compatible_at_R_one(self):
+        """The floor is a fraction so it stays invariant, but it must still reproduce the pre-B1
+        absolute 1e-12 exactly at R == 1, or the frozen telemetry values move."""
+        self.assertAlmostEqual(g2rt.EPS_NORM_FRAC * g2rt.NORMALIZATION, 1e-12, places=24)
 
 
 # ==================================================================================== §2d
@@ -510,6 +591,32 @@ class Gate4FoldForward(unittest.TestCase):
             with self.assertRaises(ValueError):     # push not row-aligned to mc_indices
                 g4.fold_forward_sums_from_dump(path, np.ones(10), np.arange(40))
 
+    def test_R_equal_one_does_not_fail_a_correct_no_change_unfold(self):
+        """Regression, adversarial review of b3751cc. The parameter-free discriminator is
+        `|ratio-R| < |ratio-1|`; at R == 1 that is `x < x`, False for EVERY input, so a correct
+        no-change result with push == 1 was failed outright. §4 explicitly contemplates R coming
+        back near 1.0, so this is reachable."""
+        w = np.array([1.0, 2.0, 3.0, 4.0])
+        ok, checks = g4.check_fold_forward_ratio(float(w.sum()), float(w.sum()), 1.0)
+        self.assertTrue(ok, checks)
+        note = [c for c in checks if c["name"].endswith("rate_recovered_not_erased")][0]
+        self.assertIn("not applicable", note["detail"])
+
+    def test_R_near_one_still_gates_on_the_tolerance(self):
+        """Disabling the discriminator must not disable the gate: at R ~ 1 the tolerance check is
+        the exact statement and must still reject a result that misses it."""
+        w = np.array([1.0, 2.0, 3.0, 4.0])
+        self.assertTrue(g4.check_fold_forward_ratio(float(w.sum()), float(w.sum()), 1.0)[0])
+        self.assertFalse(g4.check_fold_forward_ratio(float(w.sum()) * 1.5, float(w.sum()), 1.0)[0])
+
+    def test_discriminator_still_active_at_the_physical_R(self):
+        """And it must NOT be silently disabled at the R that matters."""
+        w = np.array([1.0, 2.0, 3.0, 4.0])
+        ok, checks = g4.check_fold_forward_ratio(float(w.sum()), float(w.sum()), 1.135)
+        self.assertFalse(ok)
+        note = [c for c in checks if c["name"].endswith("rate_recovered_not_erased")][0]
+        self.assertNotIn("not applicable", note["detail"])
+
     def test_tolerance_is_marked_provisional(self):
         """§2d requires the tolerance be measured before it is frozen. Until then the receipt must
         say so, or a reader takes a provisional number for a validated one."""
@@ -537,6 +644,50 @@ class Gate4DriverContract(unittest.TestCase):
                 g4.main(["--nominal-weights", old, "--inputs", dump,
                          "--work", os.path.join(td, "w.json")])
             self.assertIn("fold_forward", str(cm.exception))
+
+    def test_validator_rejects_a_dump_the_result_was_not_trained_on(self):
+        """Regression, adversarial review of b3751cc. The driver records `inputs_path`; without
+        comparing it the validator believes whatever --inputs the caller passes, so a DIFFERENT
+        dump becomes the reference for every fold-forward sum -- and the reference being independent
+        of the driver is the entire point of §2d."""
+        with tempfile.TemporaryDirectory() as td:
+            arrays = g2_arrays_with_R(ns=40)
+            right = write_npz(td, arrays, name="G2_right.npz")
+            wrong = write_npz(td, arrays, name="G2_wrong.npz")   # same content, different identity
+            wpath = os.path.join(td, "nominal.npz")
+            np.savez(wpath, weights_push=np.full(40, 1.1), mc_indices=np.arange(40),
+                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
+                     fold_forward_sum_w_push_reco=np.asarray(1.0),
+                     fold_forward_sum_w_reco=np.asarray(1.0),
+                     step1_class_ratio=np.asarray(1.135),
+                     bootstrap_seed=np.asarray(-1),
+                     inputs_path=np.asarray(right))
+            with self.assertRaises(SystemExit) as cm:
+                g4.main(["--nominal-weights", wpath, "--inputs", wrong,
+                         "--work", os.path.join(td, "w.json")])
+            self.assertIn("not the dump this result was trained on", str(cm.exception))
+
+    def test_skipping_the_check_cannot_produce_a_green_verdict(self):
+        """Regression, adversarial review of b3751cc. --allow-missing-fold-forward previously
+        yielded verdict PASS and exit 0, with only a buried `promotable: false` dissenting -- so a
+        consumer reading the exit status or the verdict string saw a pass with the normalization
+        gate never run. That is the B2 failure one level up."""
+        import json
+        with tempfile.TemporaryDirectory() as td:
+            old = os.path.join(td, "pre_b1.npz")
+            np.savez(old, weights_push=np.ones(10), mc_indices=np.arange(10),
+                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE)
+            dump = write_npz(td, g2_arrays_with_R(ns=40))
+            work = os.path.join(td, "w.json")
+            rc = g4.main(["--nominal-weights", old, "--inputs", dump, "--work", work,
+                          "--allow-missing-fold-forward"])
+            with open(work) as fh:
+                receipt = json.load(fh)
+        self.assertEqual(rc, 1, "a skipped normalization gate exited 0")
+        self.assertNotEqual(receipt["verdict"], "PASS")
+        self.assertIn("NOT_CHECKED", receipt["verdict"])
+        self.assertFalse(receipt["component_verdicts"]["fold_forward"])
+        self.assertFalse(receipt["fold_forward"]["promotable"])
 
     def test_driver_persists_every_key_the_validator_reads(self):
         """Pin the driver/validator interface by name. A rename on one side that silently skips

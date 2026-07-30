@@ -50,6 +50,10 @@ FEATURE_NAMES = ("pt", "pparallel")
 MASTER_SEED = 42
 REFINEMENT_SEED = MASTER_SEED + 3
 NORMALIZATION = 1_000_000.0
+# Zero-guard floor for the clipped-shape telemetry, as a FRACTION of the step-1 normalization.
+# 1e-18 * 1e6 == the pre-B1 absolute 1e-12, so this is bit-identical at R == 1 while remaining
+# invariant under the 1e6 -> 1e6*R retarget. See the `denom` comment in run_validate.
+EPS_NORM_FRAC = 1e-18
 
 
 def die(message: str) -> None:
@@ -486,7 +490,16 @@ def run_validate(args) -> int:
     # it. Leaving NORMALIZATION here while refined_hist sums to 1e6*R would not "keep the old
     # diagnostic" -- it would compare two differently-scaled histograms and inflate rel_l1 by R.
     clipped_norm = clipped_hist * (target_norm / clipped_hist.sum())
-    denom = np.maximum(clipped_norm, 1e-12)
+    # The guard floor must be a fixed FRACTION of the normalization, not an absolute constant.
+    # `occupied` deliberately admits cells with clipped_norm == 0 and refined_hist > 0; there the
+    # denominator pins to the floor while the numerator scales with the target, so an absolute
+    # 1e-12 makes `max_relative` scale by exactly R -- i.e. NOT invariant, contrary to §2c.
+    # EPS_NORM_FRAC * 1e6 == 1e-12 reproduces the pre-B1 value bit-for-bit at R == 1, and is
+    # exactly invariant for any R. Benign today only because the frozen grid has
+    # negative_signed_cells == 0; the pending MeV/GeV units fix (Step 2) is expected to create
+    # negative signed cells, which is precisely that case, and it lands in the same window.
+    # Found by adversarial review of b3751cc, 2026-07-29.
+    denom = np.maximum(clipped_norm, EPS_NORM_FRAC * target_norm)
     occupied = (clipped_norm > 0) | (refined_hist > 0)
     rel_l1 = float(np.abs(refined_hist - clipped_norm).sum() / target_norm)
     max_rel = float(np.max(np.abs(refined_hist[occupied] - clipped_norm[occupied]) / denom[occupied]))

@@ -591,30 +591,46 @@ def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=
     }
 
     # B-4's minimal check, recorded at runtime so the first real run answers it as a side effect.
+    #
+    # Both legs must carry the SAME replica scaling. The bit-identity question is about the dump's
+    # RAW contract weights, but the derived numbers (`R_if_reco_leg_used_w_reco` and the shift
+    # factor) are compared against a numerator that already carries this replica's data/bkg draws
+    # and against `sum_w_mc_reco_raw`, which carries `sig_factor`. Leaving the reco leg unscaled
+    # made the shift factor report `sig_factor` itself: with sig_factor=2 and w_reco == w_truth
+    # bit-for-bit, it claimed a shift of 2.0 and an alternative R equal to the NOMINAL R rather
+    # than the replica's. Found by an adversarial review of b3751cc, 2026-07-29; telemetry only --
+    # the normalization-driving R above was never affected -- but B-4 is *decided* off these
+    # numbers, so a replica reading would have argued for a shift that does not exist.
     if check_w_reco and "w_reco" in getattr(d, "files", ()):
-        w_reco = np.asarray(d["w_reco"], dtype=np.float64)
-        if w_reco.shape != w_truth_full.shape:
-            raise ValueError(f"[B1/B-4] w_reco {w_reco.shape} != w_truth {w_truth_full.shape}")
-        wt_p, wr_p = w_truth_full[pass_reco_full], w_reco[pass_reco_full]
-        n_differs = int((wr_p != wt_p).sum())
-        sum_w_reco_pass = float(wr_p.sum())
+        w_reco_full = np.asarray(d["w_reco"], dtype=np.float64)
+        if w_reco_full.shape != w_truth_full.shape:
+            raise ValueError(f"[B1/B-4] w_reco {w_reco_full.shape} != w_truth "
+                             f"{w_truth_full.shape}")
+        wt_raw, wr_raw = w_truth_full[pass_reco_full], w_reco_full[pass_reco_full]
+        n_differs = int((wr_raw != wt_raw).sum())
+        # raw: the contract question. scaled: consistent with sum_w_mc_reco_raw and the numerator.
+        sum_w_reco_raw = float(wr_raw.sum())
+        w_reco_sig = (w_reco_full if sig_factor is None
+                      else w_reco_full * np.asarray(sig_factor, dtype=np.float64))
+        sum_w_reco_scaled = float(w_reco_sig[pass_reco_full].sum())
         telem["b4_w_reco_vs_w_truth"] = {
             "present_in_dump": True,
             "bit_identical_over_pass_reco": n_differs == 0,
             "n_pass_reco_differing": n_differs,
-            "sum_w_reco_pass_reco_raw": sum_w_reco_pass,
+            "sum_w_reco_pass_reco_raw": sum_w_reco_raw,
+            "sum_w_reco_pass_reco_replica_scaled": sum_w_reco_scaled,
             "R_if_reco_leg_used_w_reco": (
                 step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
-                                  sum_w_mc_reco_raw=sum_w_reco_pass, pot_scale=pot_scale)
-                if sum_w_reco_pass > 0 else None),
-            "R_shift_factor_if_B4_fixed": (sum_w_mc_reco_raw / sum_w_reco_pass
-                                           if sum_w_reco_pass else None),
+                                  sum_w_mc_reco_raw=sum_w_reco_scaled, pot_scale=pot_scale)
+                if sum_w_reco_scaled > 0 else None),
+            "R_shift_factor_if_B4_fixed": (sum_w_mc_reco_raw / sum_w_reco_scaled
+                                           if sum_w_reco_scaled else None),
             "verdict": ("B-4 INACTIVE for this dump (R above stands; re-check per systematic "
                         "endpoint before P5B)" if n_differs == 0 else
                         "B-4 ACTIVE -- the reco leg is fed w_truth but w_reco differs; resolve "
                         "B-4 before freezing R"),
         }
-        del w_reco, wt_p, wr_p
+        del w_reco_full, w_reco_sig, wt_raw, wr_raw
     elif check_w_reco:
         telem["b4_w_reco_vs_w_truth"] = {
             "present_in_dump": False,

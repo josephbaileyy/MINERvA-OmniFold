@@ -161,17 +161,27 @@ def check_fold_forward_ratio(sum_w_push_reco, sum_w_reco, R, tol=None):
     result (which forces the step-1 class ratio to 1) while PASSING a corrected one. It converts
     Gate-4 from tolerating this defect into detecting its whole class.
 
-    TOLERANCE -- three terms, and it cannot inherit normalization_dev_max's 1e-3:
-      1. Structural floor. omnifold.py:185 pins off-acceptance `pull` to 1, so step 2 regresses
-         across both acceptance classes at once and smooths pass_reco pushes toward 1. This does
-         NOT vanish with more iterations -- it is a property of the estimator, not of finite
-         niter -- and it sets the irreducible floor.
-      2. Finite iteration. At niter=2 the reco-level sum under `push` differs from that under
-         `pull`.
-      3. Subsample sampling. The ratio is subsample-invariant in expectation, not algebraically.
-    Term 1 caps the check's power. `fold_forward_ratio_dev_max` is PROVISIONAL until the closure
-    run measures these; it must stay well below R-1 (~0.135) or the check detects nothing, and
-    above the floor or it fails a correct unfold.
+    TOLERANCE -- and it cannot inherit normalization_dev_max's 1e-3:
+      1. Acceptance-smoothing residual at finite iteration. omnifold.py:185 pins off-acceptance
+         `new_weights` to 1, so step 2 regresses across both acceptance classes at once and
+         smooths pass_reco pushes toward 1. When acceptance is statistically independent of the
+         truth features -- the worst case, since the step-2 regressor then cannot separate the
+         classes at all -- the recursion has a closed form:
+
+             push_k = R - (1-a)^k (R-1)      =>   dev_k = (1-a)^k (R-1)/R
+
+         CORRECTION (adversarial review of b3751cc, 2026-07-29): an earlier version of this
+         comment called this an irreducible "structural floor" that "does NOT vanish with more
+         iterations". That is wrong, and the closed form above refutes it -- it tends to 0 as
+         k -> infinity. `weights_pull = weights_push * new_weights` (omnifold.py:184-187) RETAINS
+         the previous push off-acceptance, so each iteration lets the off-acceptance weights catch
+         up. Measured: 9.23% / 3.69% / 0.59% at k=1/2/4 (R=1.30, a=0.60). It is a finite-iteration
+         residual, and at the frozen niter=2 it is what it is -- but it is not a floor, and it must
+         not be cited as one to justify a loose tolerance.
+      2. Subsample sampling. The ratio is subsample-invariant in expectation, not algebraically.
+    `fold_forward_ratio_dev_max` is PROVISIONAL until the closure run measures these at the
+    measured R; it must stay well below (R-1)/R (~0.119) or the check detects nothing, and above
+    term 1 at niter=2 (~1.71% at a=0.621, R=1.135) or it fails a correct unfold.
 
     The second, PARAMETER-FREE check below carries the power claim on its own: a result must land
     nearer R than 1. That is precisely the broken-vs-corrected discriminator, and unlike the
@@ -185,10 +195,24 @@ def check_fold_forward_ratio(sum_w_push_reco, sum_w_reco, R, tol=None):
     ratio = float(sum_w_push_reco) / float(sum_w_reco)
     ok_tol, checks = check_normalization(sum_w_push_reco, sum_w_reco, target_ratio=R, tol=tol,
                                          name="normalization:fold_forward_reco_ratio")
-    nearer_R = abs(ratio - R) < abs(ratio - 1.0)
-    checks.append(_ck("normalization:rate_recovered_not_erased", nearer_R,
-                      f"reco-weighted mean push={ratio:.6f} is nearer R={R:.6f} than 1.0 "
-                      f"(|d_R|={abs(ratio - R):.3e} vs |d_1|={abs(ratio - 1.0):.3e})"))
+    # The discriminator is only MEANINGFUL when R differs from 1. At R == 1 the two distances are
+    # identical, so `<` is False for every possible input -- including a correct no-change unfold
+    # with push == 1, which would then be failed outright. More generally, if |R-1| <= tol, any
+    # result inside the tolerance is within tol of BOTH targets and the comparison decides nothing.
+    # §4 explicitly contemplates R coming back near 1.0 ("the defect is far less serious than the
+    # recoil-only evidence suggests"), so this is a reachable configuration, not a theoretical
+    # edge. Found by adversarial review of b3751cc, 2026-07-29.
+    if abs(R - 1.0) > tol:
+        nearer_R = abs(ratio - R) < abs(ratio - 1.0)
+        checks.append(_ck("normalization:rate_recovered_not_erased", nearer_R,
+                          f"reco-weighted mean push={ratio:.6f} is nearer R={R:.6f} than 1.0 "
+                          f"(|d_R|={abs(ratio - R):.3e} vs |d_1|={abs(ratio - 1.0):.3e})"))
+    else:
+        nearer_R = True
+        checks.append(_ck("normalization:rate_recovered_not_erased", True,
+                          f"not applicable: R={R:.6f} is within tol={tol} of 1.0, so rate erasure "
+                          "and rate recovery are indistinguishable by construction. The tolerance "
+                          "check above is the exact statement in this regime."))
     return (ok_tol and nearer_R), checks
 
 
@@ -416,6 +440,19 @@ def main(argv=None):
                 "recomputation reconstructs the NOMINAL inventory only; a replica's R is built "
                 "from its own coherent draws, which are not in this file. This gate certifies the "
                 "nominal (fail closed).")
+        # The driver records the dump it trained against. Without comparing it, the validator
+        # simply believes whatever --inputs the caller passed, so a DIFFERENT dump can silently
+        # become the reference for every sum below -- the reference data being independent of the
+        # driver is the whole point of §2d. Basenames rather than full paths, because the dump is
+        # legitimately re-staged between filesystems; a content-level guarantee needs the Gate-2
+        # receipt's NPZ sha256 and belongs to the re-issue. Found by adversarial review of b3751cc.
+        driver_inputs = str(z["inputs_path"]) if "inputs_path" in z.files else None
+        if driver_inputs and (os.path.basename(driver_inputs)
+                              != os.path.basename(os.path.abspath(args.inputs))):
+            raise SystemExit(
+                f"[gate4] --inputs {args.inputs!r} is not the dump this result was trained on "
+                f"({driver_inputs!r}). The fold-forward reference sums would come from a different "
+                "inventory than the weights (fail closed).")
         v_push, v_w, v_R, fold_forward_telemetry = fold_forward_sums_from_dump(
             args.inputs, z["weights_push"], z["mc_indices"])
         fold_forward = (v_push, v_w, v_R)
@@ -434,8 +471,17 @@ def main(argv=None):
         fold_forward_telemetry=fold_forward_telemetry,
         observed_at_utc=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     if fold_forward is None:
+        # A skipped normalization gate must NOT read as green. Previously this produced
+        # verdict PASS and exit 0 with only a buried `promotable: false` dissenting -- so any
+        # consumer checking the exit status or the verdict string saw a pass, which is the exact
+        # B2 failure (a check that does not run) one level up. Found by adversarial review of
+        # b3751cc. The flag is diagnostic; a diagnostic run is not a PASS.
         payload["fold_forward"] = {"skipped": True, "promotable": False,
                                    "reason": f"--allow-missing-fold-forward; npz lacks {missing}"}
+        payload["verdict"] = "FAIL_NORMALIZATION_NOT_CHECKED"
+        payload["component_verdicts"]["fold_forward"] = False
+        payload["n_failed"] = payload.get("n_failed", 0) + 1
+        verdict = False
     write_work_receipt(args.work, payload)
     print(json.dumps({"verdict": payload["verdict"], "n_failed": payload["n_failed"],
                       "component_verdicts": payload["component_verdicts"]}, indent=2))

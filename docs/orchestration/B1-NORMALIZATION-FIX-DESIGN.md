@@ -285,12 +285,33 @@ until its session is recovered per `RESTORE-2026-08-03.md` Step 6.
 Recorded here rather than by silently editing the sections above, so the design and what was
 actually built can be compared.
 
-**§2c understated the retarget.** It says `:411-412` and `:442-443` "both become `1e6 * R`" and
-that the `learned_vs_normalized_clipped_*` telemetry at `:445`/`:448` is *invariant*. The
-telemetry is invariant only **if `:445` and `:448` are retargeted too**. `refined_hist` now sums
-to `1e6*R`; leaving `clipped_norm` renormalized to `1e6` would compare two differently-scaled
-histograms and inflate `rel_l1` by exactly `R`. Four sites changed, not two. The invariance claim
-itself is correct and is now pinned by a test.
+**§2c understated the retarget, twice, and missed a file.** It says `:411-412` and `:442-443`
+"both become `1e6 * R`" and that the `learned_vs_normalized_clipped_*` telemetry at `:445`/`:448`
+is *invariant*. Two corrections:
+
+1. The telemetry is invariant only **if `:445` and `:448` are retargeted too**. `refined_hist` now
+   sums to `1e6*R`; leaving `clipped_norm` at `1e6` compares two differently-scaled histograms and
+   inflates `rel_l1` by exactly `R`. Four sites, not two.
+2. `max_relative` is **not** invariant as originally written, even after that. Its zero-guard
+   `denom = np.maximum(clipped_norm, 1e-12)` is an *absolute* constant, while `occupied`
+   deliberately admits cells with `clipped_norm == 0` and `refined_hist > 0` — there the
+   denominator pins to the floor while the numerator scales, so `max_relative` scales by exactly
+   `R`. The floor is now a fixed *fraction* of the normalization (`EPS_NORM_FRAC = 1e-18`, which
+   reproduces `1e-12` bit-for-bit at `R == 1`). Benign on the frozen grid today
+   (`negative_signed_cells == 0`) but the pending MeV/GeV units fix is expected to create exactly
+   those cells, in the same restore window.
+
+**And §2c's file list was incomplete.** `validate_gate2_target_receipt.py` — the *independent*
+Gate-2 receipt validator, named in the Gate-2 verifier's file set — carried the bare `1e6` at four
+places and was not among the files the first patch touched. Left alone it would have hard-failed a
+correct post-B1 product at `:104` (a ~13.5% miss on `rtol=3e-6`) and inflated its own
+`l1_fraction` by `R`: the §5 "partial fix aborts inside the restore window" failure mode, one file
+to the left of where the patch looked. Retargeted, with `R` read from the receipt and corroborated
+against ingredients that file derives from the dump itself — it cannot import
+`step1_class_ratio` without breaking the independence charter in its own docstring, so it falsifies
+the receipt's `R` rather than re-deriving it through a duplicate formula.
+
+Both found by adversarial review of `b3751cc`, 2026-07-29.
 
 **§2d's `check_normalization` could not be replaced in place.** The frozen launch-code test
 `test_pet_nominal_gate4_validator.py` binds its two-argument signature and `ratio ≈ 1` semantics,
@@ -305,8 +326,19 @@ because step 2's regressor then cannot separate the acceptance classes at all �
 a closed form:
 
 ```
-push_k = R - (1-a)^k (R-1)        =>   floor_k = (1-a)^k (R-1)/R
+push_k = R - (1-a)^k (R-1)        =>   dev_k = (1-a)^k (R-1)/R
 ```
+
+**§2d's "structural floor" is a misnomer, and the closed form above refutes it.** §2d asserts
+term 1 "does **not** vanish with more iterations — it is a property of the estimator, not of
+finite `niter`". Wrong: `(1-a)^k → 0`. `omnifold.py:184-187` forms
+`weights_pull = weights_push * new_weights`, so off-acceptance events *retain the previous push*
+and catch up each iteration; only `new_weights` is pinned to 1, not `pull`. Measured deviations
+9.23% / 3.69% / 0.59% at `k = 1/2/4` (R=1.30, a=0.60) — converging, not flooring. At the frozen
+`niter = 2` the **value** is unchanged and the tolerance bracket stands, but it is a
+finite-iteration residual and must not be cited as irreducible: that argument would justify a
+permanently loose gate, and it would also mean more iterations could not improve the rate closure
+when in fact they can. Corrected after adversarial review of `b3751cc`.
 
 which `closure_b1_rate_injection.py` confirms empirically (observed vs predicted 1.1734/1.1800,
 1.2577/1.2520, 1.2773/1.2923 at R=1.30/a=0.60/k=1,2,4). At the nominal (`a=0.621`, `R≈1.135`,
@@ -323,6 +355,22 @@ optimization-limited, not floor-limited, and reads as though the fix underperfor
 deviation 2.6–6.7% at N=8,000, 1.8–3.4% at N=30,000, 1.4–1.6% at N=120,000, converging onto the
 1.71% closed form from above. The 2M-row nominal sits far to the right of that. This is written
 up at length in the closure script's docstring.
+
+**Three §2d defects the first patch shipped, all found by adversarial review and all now fixed
+with regression tests.** Recorded because each is a variant of the same failure the section exists
+to prevent — a check that does not bite:
+
+- **`R == 1` failed a correct unfold outright.** The parameter-free discriminator is
+  `|ratio − R| < |ratio − 1|`; at `R == 1` that is `x < x`, False for every possible input,
+  including a correct no-change result with `push == 1`. §4 explicitly contemplates `R` coming back
+  near 1.0, so this was reachable. Now skipped when `|R − 1| <= tol`, where it decides nothing
+  anyway, leaving the tolerance check — which is exact in that regime — to carry the gate.
+- **The validator never checked it was given the dump the result was trained on.** The driver
+  records `inputs_path`; nothing compared it to `--inputs`, so a different dump could silently
+  supply every reference sum. The independence of the reference data is the whole point of §2d.
+- **Skipping the check produced a green verdict.** `--allow-missing-fold-forward` returned
+  `verdict: PASS` and exit 0, with only a buried `promotable: false` dissenting. That is B2 exactly
+  one level up. It now yields `FAIL_NORMALIZATION_NOT_CHECKED` and exit 1.
 
 **§6's open question is unchanged and still open** — whether the canonical refiner re-run can be
 skipped on `w_refined` being bit-identical. §2a does not touch the refiner, and the patch leaves

@@ -21,23 +21,33 @@ see this defect. The discriminating assertion is that the broken configuration F
 
 WHAT IT ALSO PRODUCES: THE GATE-4 TOLERANCE
 -------------------------------------------
-§2d requires the Gate-4 fold-forward tolerance to be measured before it is frozen, and names three
-terms. This script measures all three, and compares term 1 against a closed form.
+§2d requires the Gate-4 fold-forward tolerance to be measured before it is frozen. This script
+measures it, and compares term 1 against a closed form.
 
-  1. STRUCTURAL FLOOR. `omnifold.py:185` pins off-acceptance `pull` to 1, so step 2 regresses
-     across both acceptance classes at once and smooths `pass_reco` pushes toward 1. When
-     acceptance is statistically INDEPENDENT of the truth features -- the worst case, because the
-     step-2 regressor then cannot separate the classes at all -- the recursion has a closed form:
+  1. ACCEPTANCE-SMOOTHING RESIDUAL AT FINITE ITERATION. `omnifold.py:185` pins off-acceptance
+     `new_weights` to 1, so step 2 regresses across both acceptance classes at once and smooths
+     `pass_reco` pushes toward 1. When acceptance is statistically INDEPENDENT of the truth
+     features -- the worst case, because the step-2 regressor then cannot separate the classes at
+     all -- the recursion has a closed form:
 
          push_k = R - (1-a)^k * (R - 1)        =>   floor_k = (1-a)^k * (R-1) / R
 
      Verified against this script on 2026-07-29 (N=8000, epochs=25): observed vs predicted
      1.1734/1.1800 (R=1.30, a=0.60, k=1), 1.2577/1.2520 (k=2), 1.2773/1.2923 (k=4), and
      1.1078/1.1156 at the nominal-like point (R=1.135, a=0.621, k=2). Real acceptance IS partly
-     predictable from truth kinematics, so the realized floor is BELOW this bound.
+     predictable from truth kinematics, so the realized residual is BELOW this bound.
      At the nominal (a=0.621, R~1.135, niter=2) the bound is 1.71%.
-  2. FINITE ITERATION. Folded into the same closed form via k = niter.
-  3. SUBSAMPLE SAMPLING. The ratio is subsample-invariant in expectation, not algebraically.
+
+     NOT A FLOOR. An earlier version of this docstring, and of §2d, called this an irreducible
+     "structural floor" that does not vanish with more iterations. The closed form above refutes
+     that: `(1-a)^k -> 0`, and the k=1/2/4 measurements above (9.23% / 3.69% / 0.59% deviation)
+     show it converging. `weights_pull = weights_push * new_weights` (`omnifold.py:184-187`)
+     RETAINS the previous push off-acceptance, so each iteration lets the off-acceptance weights
+     catch up. It is a finite-iteration residual. At the frozen `niter=2` its VALUE is unchanged
+     and the tolerance bracket still holds -- but "irreducible" was the wrong justification, and
+     citing it as one would argue for a permanently loose gate. Corrected after adversarial
+     review of b3751cc, 2026-07-29.
+  2. SUBSAMPLE SAMPLING. The ratio is subsample-invariant in expectation, not algebraically.
      Re-run with several --seed values and read the spread.
 
 Against that, the defect the gate must DETECT is the broken configuration's ratio of ~1, i.e. a

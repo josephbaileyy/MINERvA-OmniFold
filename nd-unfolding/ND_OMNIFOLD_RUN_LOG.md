@@ -2656,3 +2656,91 @@ Status unchanged otherwise: Gate-4 `PASS_CODE_ONLY`, P5A unlaunched, no cross se
 nothing pushed. What 08-03 inherits is a patch set that leaves both re-issues performable, a
 closure that sizes the one number still marked provisional, and a Gate-4 that now fails the
 defect instead of tolerating it.
+
+### 2026-07-30 — b3751cc adversarially reviewed: six real defects, and my "structural floor" was wrong
+
+Three referee lanes against `b3751cc`, each given one narrow target and told to default to REFUTED
+(`codex-personal` on the R computation, `codex-personal` again on Gate-4 §2d, `claude-school` on
+Gate-2 §2c). Every finding below was reproduced locally before being accepted. Two lane-mechanics
+notes for next time: **`codex-school` is out of workspace credits** (returns
+`ERROR: Your workspace is out of credits`, exit 0 — a silent-looking failure), and **`claude -p`
+needs `< /dev/null` exactly as `codex exec` does**, or it waits on stdin and returns a warning
+instead of a report.
+
+**The miss that mattered: `validate_gate2_target_receipt.py`.** The *independent* Gate-2 receipt
+validator carried the bare `1e6` at four sites and was not among the four files the B1 patch
+touched. Left alone it would have hard-failed a correct post-B1 product at `:104` (13.5% miss on
+`rtol=3e-6`) and inflated its own `l1_fraction` by exactly `R` — verbatim the bug the b3751cc
+commit message claims to have avoided in the neighbouring file. That is design §5's "partial fix
+aborts inside the restore window", one file to the left of where I looked. Retargeted; `R` is read
+from the receipt and then *corroborated* against ingredients that file derives from the dump
+itself (its own binned `signed_hist.sum()` as numerator, its own `w_truth[pass_reco]` read as
+denominator), because importing `step1_class_ratio` would break the "does not import the
+construction loader" charter in its own docstring.
+
+**`max_relative` was not invariant, and my test for it was a tautology.** §2c's invariance claim
+holds for `l1_fraction` and `cosine` but not `max_relative`: its zero-guard
+`denom = np.maximum(clipped_norm, 1e-12)` is an ABSOLUTE constant while `occupied` deliberately
+admits `clipped_norm == 0 & refined_hist > 0`, so there the denominator pins while the numerator
+scales — `max_rel` scales by exactly `R`. The floor is now a fixed FRACTION
+(`EPS_NORM_FRAC = 1e-18`, reproducing `1e-12` bit-for-bit at `R == 1`). Benign on today's grid
+(`negative_signed_cells == 0`) but the pending MeV/GeV units fix is expected to create exactly
+those cells, in the same window. My test had re-typed the `rel_l1` algebra on strictly-positive
+random data and asserted only `rel_l1` — never reaching `denom`, never checking `max_relative` or
+`cosine`. The tautology pattern audit §4 diagnoses, in a test written to prevent one.
+
+**Three Gate-4 defects, each a variant of "the check does not bite".**
+- **`R == 1` failed a correct unfold outright.** The parameter-free discriminator is
+  `|ratio-R| < |ratio-1|`; at `R == 1` that is `x < x`, False for every input, including a correct
+  no-change result with `push == 1`. §4 explicitly contemplates `R` near 1.0. Now skipped when
+  `|R-1| <= tol`, where it decides nothing anyway.
+- **The validator never checked it was handed the dump the result was trained on.** The driver
+  records `inputs_path`; nothing compared it to `--inputs`, so a different dump could supply every
+  reference sum — and the reference being independent of the driver is the entire point of §2d.
+- **Skipping the check produced a green verdict.** `--allow-missing-fold-forward` returned
+  `verdict: PASS` and exit 0 with only a buried `promotable: false` dissenting. B2 one level up.
+  Now `FAIL_NORMALIZATION_NOT_CHECKED`, exit 1.
+
+**A `sig_factor` bug in the B-4 telemetry.** With `sig_factor = 2` and `w_reco == w_truth`
+bit-for-bit, `R_shift_factor_if_B4_fixed` reported 2.0 and `R_if_reco_leg_used_w_reco` the nominal
+`R` rather than the replica's — the reco leg was left unscaled while the numerator and the
+`w_truth` denominator both carried the replica draws. Telemetry only, the normalization `R` was
+never affected, but **B-4 is decided off these numbers**, so a replica reading would have argued
+for a shift that does not exist.
+
+**And a claim of mine that was simply wrong: the "structural floor" is not a floor.** §2d asserts
+term 1 "does NOT vanish with more iterations — it is a property of the estimator, not of finite
+`niter`", and I propagated that into the code and the closure. My own closed form refutes it:
+`(1-a)^k -> 0`. `omnifold.py:184-187` forms `weights_pull = weights_push * new_weights`, so
+off-acceptance events RETAIN the previous push and catch up each iteration — only `new_weights` is
+pinned to 1, not `pull`. My own measurements said so too: 9.23% / 3.69% / 0.59% at `k = 1/2/4`.
+At the frozen `niter = 2` the value and the tolerance bracket are unchanged, but "irreducible" was
+the wrong justification — it would argue for a permanently loose gate and would wrongly imply more
+iterations cannot improve the rate closure.
+
+**B-6 cannot run on this host, and that is a better explanation than "nobody ran it".**
+`stress_closure_muon.py` exits non-zero before printing a verdict: `PET` will not construct under
+Keras 3 (`net.py:148` passes a `KerasTensor` to `tf.cast`), and this Mac has TF 2.16.2 / Keras
+3.15 while `sbatch_pet_fullevent_nominal.sh:106` pins `tensorflow/2.15.0`. Transcript recorded at
+`docs/orchestration/runs/b6-stress-closure-muon/`. So `RESTORE-2026-08-03.md` Step 2b's
+"login-safe by construction ... budget CPU minutes" is right about resources and wrong about
+runnability off-cluster. **Delta is the answer and needs no dump**: the script is fully synthetic
+(`grep -c "refine_stay_positive|build_fullevent_loaders|\.npz"` → 0), so HARD BAR #1 (which bars
+the *nominal* on Delta because the canonical refiner imports ROOT) does not apply, and Delta's
+container is Keras 2. My own B1 closure was unaffected because it uses `MLP`, not `PET` — the
+choice was luck, and it is now a documented reason for it.
+
+**B-8 wired in, and its proposed fix would not have worked.** The finding is CONFIRMED on
+substance — 503 guard checks never ran. But "add a `pytest.ini` / `conftest.py` collection path"
+collects those two files and finds **zero** tests: they are `main()` scripts with no `test_`
+functions and no `unittest.TestCase`. Run as scripts both exit 0 here — 29 + 474 = the 503 lane D
+reported, now executed rather than relayed — and neither imports ROOT or `/pscratch`, so B-8's
+stated risk that they might make the baseline a moving target is also refuted. Wired via
+`nd-unfolding/tests/test_g2_guards_collected.py`, which shells out and gates on exit code AND the
+reported check counts (a guard script that silently stopped checking would still exit 0).
+A wrapper rather than an edit because `test_g2_domain_validator.py` is named by a receipt.
+
+Suite **9 failed / 391 passed / 1 skipped** — the documented 7-failure `/pscratch` baseline
+unchanged, +54 B1 tests, +6 guard-wrapper tests, +2 expected hash-binding failures. Verifier still
+red on exactly the same four MISMATCH lines; `validate_gate2_target_receipt.py` is bound by nothing,
+so retargeting it adds no receipt debt.
