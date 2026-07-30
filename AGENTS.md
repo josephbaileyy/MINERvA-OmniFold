@@ -383,6 +383,10 @@ cross-check, not a final result.
 - `2d-unfolding/playlist_manifests/` — per-playlist Data/MC file lists.
 - `2d-unfolding/baseline_flux/` — per-playlist baseline-flux ROOTs (gitignored).
 - `2d-unfolding/reference/` — reference papers (Ruterbories PDF + slide deck).
+- `3d-unfolding/` — 3D production scripts, outputs, STATUS/RUN_LOG.
+- `nd-unfolding/` — 4D/5D/PET/FPS production. Its subdirectories are the
+  working units: `pet/`, `tests/`, `uq_4d/`, `uq_5d/`, `uq_fps/`, `products/`,
+  `active_universe_5d/`, `g2_fullevent/`.
 - `unbinned_unfolding/` — RooUnfold/OmniFold source + in-tree `build/`.
 - `unbinned_unfolding/examples/` — reference OmniFold usage.
 
@@ -392,6 +396,16 @@ cross-check, not a final result.
   filenames at the canonical level once the pipeline is finalized.
 - Never leave invalidated outputs at canonical production paths once a
   corrected rerun is complete.
+- Do not rename or delete a tracked script that is cited in a RUN_LOG, ledger,
+  or receipt JSON. 115 `sbatch_*.sh` names are load-bearing provenance; the
+  2026-07-26 `__file__` de-rooting voided six gate hash bindings this way.
+- `nd-unfolding/`'s root is at capacity (280 files) and is a known reorg target
+  (`docs/POST_PUBLICATION_REORG_PLAN.md`, "Measured coupling"). Put new work in
+  the subdirectory that owns it — `pet/` for PET/full-event, `uq_*/` for
+  covariance and throws, `tests/` for fixtures. Add to the root only for a
+  genuinely shared library (`xsec_nd.py`, `p4_lib.py`, `fps_provenance.py`,
+  `omnifold_nn_core.py` are each imported 4–18×). Do not start a new top-level
+  `scripts/` split before the freeze tag — that move belongs to the reorg.
 
 ## Common failure modes
 - Branch mismatch between writer and reader.
