@@ -1,0 +1,72 @@
+{
+  "gap": 0.2378032406,
+  "baseline": "base",
+  "floor_l1": 0.03188954000438627,
+  "arms": {
+    "base": {
+      "n": 3,
+      "seeds": [
+        101,
+        202,
+        303
+      ],
+      "recovery_mean": 0.4236037770446585,
+      "recovery_sd": 0.014054322291826063,
+      "seed_spread_l1": 0.03188954000438627
+    },
+    "both": {
+      "n": 2,
+      "seeds": [
+        101,
+        202
+      ],
+      "recovery_mean": 0.41067849607901685,
+      "recovery_sd": 0.014424330005834356,
+      "seed_spread_l1": 0.01795454641305027
+    },
+    "eavail": {
+      "n": 2,
+      "seeds": [
+        101,
+        202
+      ],
+      "recovery_mean": 0.4283711795349503,
+      "recovery_sd": 0.027594718799288848,
+      "seed_spread_l1": 0.021131735469876713
+    },
+    "q3": {
+      "n": 2,
+      "seeds": [
+        101,
+        202
+      ],
+      "recovery_mean": 0.42793355831851404,
+      "recovery_sd": 0.02028177301681686,
+      "seed_spread_l1": 0.01791475708990215
+    }
+  },
+  "ranking": {
+    "q3": {
+      "shift_l1": 0.01501038995826263,
+      "x_floor": 0.47069948190528976,
+      "verdict": "NOT RANKED (at/below floor)",
+      "recovery_mean": 0.42793355831851404,
+      "recovery_delta_vs_base": 0.004329781273855526
+    },
+    "both": {
+      "shift_l1": 0.0143849395556915,
+      "x_floor": 0.451086455110764,
+      "verdict": "NOT RANKED (at/below floor)",
+      "recovery_mean": 0.41067849607901685,
+      "recovery_delta_vs_base": -0.012925280965641661
+    },
+    "eavail": {
+      "shift_l1": 0.014110693890926528,
+      "x_floor": 0.44248659243707067,
+      "verdict": "NOT RANKED (at/below floor)",
+      "recovery_mean": 0.4283711795349503,
+      "recovery_delta_vs_base": 0.004767402490291783
+    }
+  },
+  "ranked_above_floor": []
+}
