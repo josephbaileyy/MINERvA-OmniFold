@@ -1,0 +1,59 @@
+{
+  "config": {
+    "n_data": 30000,
+    "n_bkg": 12000,
+    "pot_scale": 0.25,
+    "bkg_weight": 1.0,
+    "seed": 0,
+    "bins": 20,
+    "out": "products/pet/b5_refiner_feature_space.json"
+  },
+  "arms": {
+    "2d_muon_only": {
+      "n_features": 2,
+      "frac_negative_clipped": 0.000619047619047619,
+      "g_spread": 0.019419544412968528,
+      "muon": {
+        "observable": "muon_pT",
+        "l1": 144.53695135667886,
+        "l1_frac": 0.0053813729736744585,
+        "signed_min_bin": 58.25,
+        "signed_total": 26858.75,
+        "refined_total": 26859.094119982045
+      },
+      "cloud": {
+        "observable": "recoil_E_total",
+        "l1": 2949.2544471307347,
+        "l1_frac": 0.10996474448660458,
+        "signed_min_bin": 0.0,
+        "signed_total": 26820.0,
+        "refined_total": 26843.22260426007
+      }
+    },
+    "cloud_augmented": {
+      "n_features": 5,
+      "frac_negative_clipped": 0.0006428571428571428,
+      "g_spread": 0.05868674868989749,
+      "muon": {
+        "observable": "muon_pT",
+        "l1": 150.1284317292998,
+        "l1_frac": 0.005589553934166698,
+        "signed_min_bin": 58.25,
+        "signed_total": 26858.75,
+        "refined_total": 26861.70283535095
+      },
+      "cloud": {
+        "observable": "recoil_E_total",
+        "l1": 100.74474151442703,
+        "l1_frac": 0.003756328915526735,
+        "signed_min_bin": 0.0,
+        "signed_total": 26820.0,
+        "refined_total": 26820.139331407005
+      }
+    }
+  },
+  "verdict_muon_agrees": true,
+  "verdict_cloud_fails": true,
+  "verdict_augmented_closes": true,
+  "verdict": "B5_DEMONSTRATED"
+}
