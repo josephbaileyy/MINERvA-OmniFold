@@ -71,6 +71,36 @@ def step1_target_sum_matches(observed_sum, target_norm) -> bool:
     return bool(np.isclose(float(observed_sum), float(target_norm), rtol=3e-6, atol=2.0))
 
 
+def b4_blocking_reason(class_ratio_telem, class_ratio=None):
+    """Why B-4 blocks certification of R, or None if it does not.
+
+    Named rather than left inline at the assertion site for the same reason
+    `step1_target_sum_matches` is: a test that re-types the three conditions proves only that the
+    test agrees with itself. This is the predicate the gate actually runs.
+
+    Three blocking states, all fail-closed. `w_reco` absent is NOT the same as B-4 inactive:
+    dump_pointcloud_inputs.py:299 requires the array, so its absence is a contract violation that
+    leaves the question unanswerable, and an unanswered denominator is not a certified one. A
+    missing telemetry block means a caller passed check_w_reco=False and the question was never
+    asked at all.
+    """
+    b4 = (class_ratio_telem or {}).get("b4_w_reco_vs_w_truth")
+    if b4 is None:
+        return ("step1_class_ratio telemetry carries no b4_w_reco_vs_w_truth block (a caller "
+                "passed check_w_reco=False); B-4 is unanswerable for this run and this gate does "
+                "not certify an unchecked denominator (fail closed)")
+    if not b4.get("present_in_dump"):
+        return (f"B-4 unanswerable: {b4.get('verdict')}. R={class_ratio!r} is uncorroborated on "
+                f"its denominator (fail closed)")
+    if not b4.get("bit_identical_over_pass_reco"):
+        return (f"B-4 is ACTIVE: w_reco differs from w_truth on "
+                f"{b4.get('n_pass_reco_differing')} pass_reco rows, so the reco leg is fed the "
+                f"wrong weight and R would move by a factor "
+                f"{b4.get('R_shift_factor_if_B4_fixed')!r} once B-4 is fixed. Resolve B-4 before "
+                f"this gate can certify R (fail closed)")
+    return None
+
+
 def sha256_file(path: Path, block: int = 16 * 1024 * 1024) -> str:
     h = hashlib.sha256()
     with path.open("rb") as handle:
@@ -479,6 +509,20 @@ def run_validate(args) -> int:
                       rtol=1e-9, atol=1e-3):
         die(f"binned signed sum {raw_signed_sum} does not reproduce the R numerator "
             f"{class_ratio_telem['numerator_signed_data']} (R is not trustworthy; fail closed)")
+    # B-4 is GATED here, not merely recorded. The telemetry answers whether the reco leg's
+    # `w_reco` differs from the `w_truth` this R's denominator actually uses, and its own verdict
+    # string ends "resolve B-4 before freezing R". Emitting that into `step1_class_ratio.b4_note`
+    # while the receipt says status PASS made the gate contradict its own telemetry, because every
+    # consumer reads `status`, not a note -- the same class of defect as a check that never runs.
+    # R is derived per-run and never frozen, so an ACTIVE B-4 corrupts no stored constant; what it
+    # does mean is that THIS receipt's R was built on the wrong denominator, which is precisely
+    # what the gate exists to stop. Absence of `w_reco` is fatal for the same reason it is in
+    # check_step1_class_ratio.py: dump_pointcloud_inputs.py:299 requires the array, so its absence
+    # is a contract violation that leaves B-4 unanswerable -- and unanswerable is not inactive.
+    # Found by adversarial review, 2026-07-31 (the b4_note at :575 was telemetry with no gate).
+    b4_reason = b4_blocking_reason(class_ratio_telem, class_ratio)
+    if b4_reason:
+        die(b4_reason)
     if not np.all(np.isfinite(refined_hist)) or np.any(refined_hist < 0):
         die("independent refined binned projection is non-finite or negative")
     if not step1_target_sum_matches(refined_hist.sum(), target_norm):
@@ -573,8 +617,11 @@ def run_validate(args) -> int:
             "numerator_corroborated_by_binned_projection": True,
             "telemetry": class_ratio_telem,
             "b4_note": ("R's denominator uses w_truth because that is what the reco leg is fed. "
-                        "See telemetry.b4_w_reco_vs_w_truth: if B-4 is ACTIVE, resolve it before "
-                        "any R is frozen anywhere."),
+                        "See telemetry.b4_w_reco_vs_w_truth. This is GATED, not advisory: an "
+                        "ACTIVE B-4, an absent w_reco, or a missing telemetry block all die() "
+                        "before this receipt is written, so a PASS here asserts B-4 INACTIVE for "
+                        "this dump. Re-check per systematic endpoint before P5B."),
+            "b4_gated": True,
         },
         "independent_binned_checks": {
             "grid_shape": list(signed_hist.shape),

@@ -217,10 +217,40 @@ def main() -> int:
             f"receipt R={class_ratio!r} is not supported by this file's own dump ingredients "
             f"(R*pot_scale*sum(w_truth[pass_reco])={implied_numerator} vs independently binned "
             f"signed sum {telemetry['raw_signed_sum']})")
-    recorded_ratio = receipt.get("step1_class_ratio") or {}
-    require(close(recorded_ratio.get("measured_normalization_target", target_norm), target_norm,
+    # PRESENCE FIRST, THEN VALUE. This was `recorded_ratio.get("measured_normalization_target",
+    # target_norm)` compared against `target_norm` -- i.e. the default was the expected value, so a
+    # receipt omitting the key compared target_norm to itself and passed vacuously, as did one
+    # omitting the whole step1_class_ratio block via `or {}`. A check that cannot fail on absent
+    # input is not a check. NaN is the sentinel rather than None because `close()` calls float()
+    # on both sides, and `require` accumulates instead of raising, so the value check below still
+    # has to be evaluable after the presence check fails. Found by review, 2026-07-31.
+    # (No block-presence require here: `:131` already fails closed and returns 1 when
+    # step1_class_ratio.R is absent, so this site is only reached with the block present. Adding a
+    # second presence check would itself be a check that cannot fail.)
+    recorded_ratio = ratio_block
+    require("measured_normalization_target" in recorded_ratio,
+            "receipt omits step1_class_ratio.measured_normalization_target")
+    require(close(recorded_ratio.get("measured_normalization_target", float("nan")), target_norm,
                   rtol=1e-9, atol=1e-6),
             "receipt's recorded measured_normalization_target disagrees with 1e6*R")
+    # B-4, independently gated here as well as in the runtime. gate2_target_runtime.py now dies on
+    # an ACTIVE or unanswerable B-4 before writing a receipt, but this validator exists precisely
+    # so a receipt is not believed on its own say-so: without a require here, a hand-built or
+    # older receipt carrying an ACTIVE verdict would still validate. The telemetry is the runtime's
+    # (this file deliberately does not re-derive R through a second copy of the formula, per the
+    # module docstring), so what is checked is that the receipt DECLARES B-4 inactive and that the
+    # declaration is internally consistent.
+    b4 = (recorded_ratio.get("telemetry") or {}).get("b4_w_reco_vs_w_truth")
+    require(isinstance(b4, dict),
+            "receipt carries no step1_class_ratio.telemetry.b4_w_reco_vs_w_truth; B-4 is "
+            "unanswerable from this receipt and an unchecked R denominator is not certifiable")
+    b4 = b4 if isinstance(b4, dict) else {}
+    require(b4.get("present_in_dump") is True,
+            f"receipt reports w_reco absent from the dump ({b4.get('verdict')!r}); B-4 "
+            "unanswerable, R uncorroborated on its denominator")
+    require(b4.get("bit_identical_over_pass_reco") is True,
+            f"receipt reports B-4 ACTIVE ({b4.get('n_pass_reco_differing')!r} pass_reco rows "
+            f"differ); the reco leg is fed w_truth but w_reco differs, so R is not trustworthy")
     require(receipt["runtime_target"].get("refinement_backend") == "u2d.refine_stay_positive", "noncanonical refinement backend")
     require(receipt["runtime_target"].get("refinement_is_learned_production") is True, "learned production refinement not proven")
 
