@@ -67,6 +67,12 @@ from closure_unread_variable_phi import (  # noqa: E402  (path set above)
 )
 
 
+# Did-this-arm-train-at-all floor, applied to the positive control AND to the extended arm.
+# Mirrored by closure_coupled_phi_summarize.EXTENDED_FLOOR, which re-derives the extended-arm gate
+# from the recorded value so sweeps predating `extended_ok` are covered.
+ARM_TRAINED_FLOOR = 0.5
+
+
 def draw_candidates(m, p_tokens, rng):
     """The independent fixture's generator, verbatim in law: cloud, R, muon block, azimuth.
 
@@ -174,14 +180,26 @@ def sweep_point(coupling, cfg, rng):
     ext = arm("extended_phi_tilt", EXTENDED, w_phi, phi, phi_bins)
     ctrl = arm("base_pt_tilt_control", BASE, w_pt, pt, pt_bins)
 
-    control_ok = ctrl > 0.5
+    control_ok = ctrl > ARM_TRAINED_FLOOR
+    # THE CONTROL ABOVE ONLY EXERCISES THE BASE ARM. It runs BASE on a pT tilt, so it answers "is
+    # this fixture trainable at all" for the two-feature arm and says nothing about the three-
+    # feature one. But `gain = extended - leak` collapses whether the leak rose or the extended arm
+    # failed to train, so an undertrained extended arm at high lambda -- where acceptance is 3% and
+    # the epoch budget is unchanged -- would be read as a real crossing. That is precisely the
+    # confound the control exists to exclude, for the arm it does not test. The extended arm's own
+    # phi recovery IS its control: same tilt, same metric, so no extra run is needed, only the
+    # gate. (In the recorded sweeps `ext` sits at ~0.90 everywhere, so nothing is invalidated --
+    # this exists so a future point cannot slip through.) Found by review, 2026-07-31.
+    extended_ok = ext > ARM_TRAINED_FLOOR
     gain = ext - leak
-    print(f"[sweep]   gain = extended - leak = {gain:+.4f}   control {'OK' if control_ok else 'FAILED'}"
-          f" ({ctrl:+.4f})", flush=True)
+    print(f"[sweep]   gain = extended - leak = {gain:+.4f}   control "
+          f"{'OK' if control_ok else 'FAILED'} ({ctrl:+.4f})   extended arm "
+          f"{'OK' if extended_ok else 'FAILED (undertrained, not a gain collapse)'} ({ext:+.4f})",
+          flush=True)
     return {"coupling": coupling, "corr": corr, "accepted_fraction": acc_frac,
             "n": int(len(phi)), "ess": ess, "leak": leak, "extended": ext, "control": ctrl,
-            "gain": gain, "control_ok": bool(control_ok),
-            "valid": bool(control_ok)}
+            "gain": gain, "control_ok": bool(control_ok), "extended_ok": bool(extended_ok),
+            "valid": bool(control_ok and extended_ok)}
 
 
 def main():
@@ -237,14 +255,28 @@ def main():
                     t = (gs[i] - 0.25) / (gs[i] - gs[i + 1])
                     cross = xs[i] + t * (xs[i + 1] - xs[i])
                     break
-            out["gain_at_zero_coupling"] = gs[0]
+            # This was `gs[0]` -- the first point of WHATEVER grid ran, named as though it were
+            # the independent fixture. The high-lambda extension starts at lambda=2.2, so in those
+            # JSONs the field asserted a zero-coupling gain from a run that never sampled zero
+            # coupling. Emit it only when lambda=0 was actually measured, and record the lowest
+            # tested point under its own honest name. Found by review, 2026-07-31.
+            zero = next((p for p in valid if p["coupling"] == 0.0), None)
+            out["gain_at_zero_coupling"] = zero["gain"] if zero else None
+            out["gain_at_lowest_tested_coupling"] = {"coupling": valid[0]["coupling"],
+                                                     "gain": gs[0]}
             out["crossing_corr_cosphi_pt"] = cross
             if cross is None and min(gs) > 0.25:
                 out["verdict"] = "GAIN_SURVIVES_ALL_TESTED_COUPLINGS"
                 print(f"\nThe gain clears +0.25 at EVERY tested coupling, out to "
-                      f"corr(cos phi,pT)={max(xs):+.3f}. The independent-fixture number "
-                      f"{gs[0]:+.4f} is an upper bound, but the capability claim does not depend "
-                      f"on independence over this range.")
+                      f"corr(cos phi,pT)={max(xs):+.3f}.")
+                if zero is not None:
+                    print(f"The independent-fixture (lambda=0) number {zero['gain']:+.4f} is an "
+                          f"upper bound, but the capability claim does not depend on independence "
+                          f"over this range.")
+                else:
+                    print(f"This grid starts at lambda={valid[0]['coupling']:.2f} "
+                          f"(corr {xs[0]:+.3f}), so it carries no zero-coupling point and says "
+                          f"nothing about the independent-fixture upper bound.")
             elif cross is None:
                 out["verdict"] = "GAIN_BELOW_THRESHOLD_THROUGHOUT"
                 print("\nThe gain never clears +0.25 on this grid -- including at zero coupling, "

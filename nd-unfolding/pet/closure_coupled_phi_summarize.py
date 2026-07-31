@@ -26,6 +26,12 @@ import os
 import numpy as np
 
 CLEARANCE = 0.25   # the threshold job 20600383 used for "the extension adds capability"
+# Trained-or-not floor for an arm's own recovery, matching the driver's `control_ok = ctrl > 0.5`.
+# Applied to the EXTENDED arm here because the driver's positive control only exercises the base
+# arm. This is a did-it-train gate, nowhere near the ~0.90 the extended arm actually reaches, so it
+# invalidates nothing in the recorded sweeps -- it exists so a future undertrained point cannot be
+# read as a real gain collapse.
+EXTENDED_FLOOR = 0.5
 
 
 def main():
@@ -55,40 +61,84 @@ def main():
     seeds = [r["config"]["seed"] for r in runs]
     print(f"{len(runs)} seed runs {seeds} from {len(files)} files")
 
+    # ONE FIXTURE, OR THE GAINS ARE NOT ON ONE CURVE. feature_rank_summarize.py:51 hard-fails when
+    # its arms disagree on the injected gap, for exactly this reason; this script globbed two files
+    # and merged them on trust. Everything that defines the fixture must match. The lambda GRID is
+    # the deliberate exception -- the high-lambda extension is a different grid by design, which is
+    # the whole reason the glob picks up both files.
+    FIXTURE_KEYS = ("n_events", "tokens", "strata", "amplitude", "niter", "epochs", "batch_size")
+    fixtures = {}
+    for r in runs:
+        fixtures.setdefault(tuple(r["config"].get(k) for k in FIXTURE_KEYS), []).append(r["_file"])
+    if len(fixtures) != 1:
+        detail = "\n".join(
+            f"    {', '.join(f'{k}={v!r}' for k, v in zip(FIXTURE_KEYS, key))}\n"
+            f"      <- {', '.join(fs)}" for key, fs in fixtures.items())
+        raise SystemExit("sweep files disagree on the fixture, so their gains do not lie on one "
+                         f"curve and merging them would confound coupling with configuration:\n"
+                         f"{detail}\n  Only the lambda grid may differ between files.")
+
     # Grids are UNIONED, not required identical: the high-lambda extension is a different grid by
     # design, and the overlap point (lambda 2.2) is a deliberate cross-job tie-in rather than a
-    # mistake. What still has to hold is that every coupling carries >=2 seeds, since a
+    # mistake. What still has to hold is that every coupling carries >=2 DISTINCT SEEDS, since a
     # single-seed point has no spread and cannot gate its own step.
     grid = sorted({round(p["coupling"], 6) for r in runs for p in r["points"]})
 
+    def pairwise_spread(v):
+        """Mean pairwise |difference| = this point's retraining noise in whatever quantity."""
+        return float(np.mean([abs(v[i] - v[j])
+                              for i in range(len(v)) for j in range(i + 1, len(v))]))
+
     rows = []
     for lam in grid:
-        pts = [p for r in runs for p in r["points"] if round(p["coupling"], 6) == lam]
-        if len(pts) < 2:
-            raise SystemExit(f"coupling {lam} has only {len(pts)} seed(s); every point needs >=2 "
-                             "or its step cannot be gated against retraining noise")
+        # Tagged with the seed, because counting POINTS is not counting SEEDS: lambda 2.2 appears
+        # in both the original and high-lambda grids, so a same-seed pair of files would satisfy
+        # `len(pts) >= 2` while carrying zero retraining information. Found by review 2026-07-31.
+        tagged = [(r["config"]["seed"], p) for r in runs for p in r["points"]
+                  if round(p["coupling"], 6) == lam]
+        pts = [p for _s, p in tagged]
+        n_distinct = len({s for s, _p in tagged})
+        if n_distinct < 2:
+            raise SystemExit(f"coupling {lam} carries {len(pts)} point(s) from only {n_distinct} "
+                             f"distinct seed(s); every point needs >=2 SEEDS or its spread "
+                             f"measures nothing and its step cannot be gated against retraining "
+                             f"noise")
         # A point is usable only if EVERY seed's positive control passed there. One failed control
         # means that fixture is untrained, not that the gain vanished.
-        valid = all(p.get("control_ok", False) for p in pts)
-        g = np.array([p["gain"] for p in pts])
-        spread = float(np.mean([abs(g[i] - g[j])
-                                for i in range(len(g)) for j in range(i + 1, len(g))]))
+        #
+        # THE EXTENDED ARM IS GATED TOO, on the same threshold. The driver's positive control runs
+        # the BASE arm on a pT tilt, so it cannot detect an extended arm that failed to train --
+        # and `gain = extended - leak` collapses either way, so an untrained extended arm would be
+        # read as a real crossing. That is the confound the control exists to exclude, for the arm
+        # it does not test. The extended arm's own phi recovery IS the right control for it (same
+        # tilt, same metric), so it is gated here rather than inferred: recomputed from the
+        # recorded value so runs predating the driver's `extended_ok` field are covered too.
+        valid = (all(p.get("control_ok", False) for p in pts)
+                 and all(p.get("extended", 0.0) > EXTENDED_FLOOR for p in pts))
         rows.append({
             "coupling": lam,
             "corr": float(np.mean([p["corr"]["cosphi_pt"] for p in pts])),
             "leak": float(np.mean([p["leak"] for p in pts])),
             "extended": float(np.mean([p["extended"] for p in pts])),
-            "gain": float(g.mean()), "gain_spread": spread,
+            "gain": float(np.mean([p["gain"] for p in pts])),
+            "gain_spread": pairwise_spread([p["gain"] for p in pts]),
+            # The law below judges LEAK residuals, so it needs the leak's own seed noise. Using
+            # the gain's was a 26x understatement at lambda=1.60 (leaks 0.2148/0.2378, spread
+            # 0.0230; gains 0.6473/0.6464, spread 0.0009) because the extended arm's scatter
+            # cancels in the difference. Found by review 2026-07-31.
+            "leak_spread": pairwise_spread([p["leak"] for p in pts]),
+            "extended_min": float(min(p["extended"] for p in pts)),
             "control_min": float(min(p["control"] for p in pts)),
             "accepted": float(np.mean([p["accepted_fraction"] for p in pts])),
-            "valid": bool(valid), "n_seeds": len(pts)})
+            "valid": bool(valid), "n_seeds": n_distinct, "n_points": len(pts)})
 
     print(f"\n{'lambda':>7s} {'corr':>7s} {'accept':>7s} {'leak':>8s} {'extended':>9s} "
-          f"{'gain':>8s} {'spread':>8s} {'ctrl min':>9s}  valid")
+          f"{'gain':>8s} {'gn sprd':>8s} {'lk sprd':>8s} {'ext min':>8s} {'ctrl min':>9s}  valid")
     for r in rows:
         print(f"{r['coupling']:7.2f} {r['corr']:+7.3f} {100*r['accepted']:6.1f}% "
               f"{r['leak']:+8.4f} {r['extended']:+9.4f} {r['gain']:+8.4f} {r['gain_spread']:8.4f} "
-              f"{r['control_min']:+9.4f}  {'yes' if r['valid'] else 'NO'}")
+              f"{r['leak_spread']:8.4f} {r['extended_min']:+8.4f} {r['control_min']:+9.4f}  "
+              f"{'yes' if r['valid'] else 'NO'}")
 
     usable = [r for r in rows if r["valid"]]
     if len(usable) < 3:
@@ -117,14 +167,15 @@ def main():
     # reason the steps are.
     law = [{"corr": r["corr"], "leak": r["leak"], "pred": r["corr"] ** 2,
             "ratio": r["leak"] / r["corr"] ** 2, "resid": r["leak"] - r["corr"] ** 2,
-            "spread": r["gain_spread"], "in_fit": bool(abs(r["corr"]) <= a.law_fit_max_corr),
+            "spread": r["leak_spread"], "gain_spread": r["gain_spread"],
+            "in_fit": bool(abs(r["corr"]) <= a.law_fit_max_corr),
             "extended": r["extended"]}
            for r in usable if abs(r["corr"]) >= 0.05]   # corr^2 ~ 0: the ratio is meaningless
     out_law = {"fit_max_corr": a.law_fit_max_corr, "points": law}
     if law:
         print(f"\nleak vs corr^2 (the conjecture from the lambda<=2.2 sweep)")
         print(f"{'corr':>7s} {'corr^2':>8s} {'leak':>8s} {'ratio':>7s} {'resid':>8s} "
-              f"{'seed sd':>8s}  range")
+              f"{'leak sd':>8s}  range")
         for L in law:
             print(f"{L['corr']:+7.3f} {L['pred']:8.4f} {L['leak']:8.4f} {L['ratio']:7.3f} "
                   f"{L['resid']:+8.4f} {L['spread']:8.4f}  "
@@ -137,6 +188,13 @@ def main():
             # luck of the draw. The yardstick is instead the law's OWN residual scatter where it
             # was fitted, floored by the pooled seed noise so a suspiciously tight fit cannot make
             # the test unfalsifiable in the other direction.
+            #
+            # The pooled floor is the LEAK's seed noise, since leak is what the residual is in.
+            # It was the GAIN's, which is systematically larger (median 0.0192 vs 0.0104 over the
+            # ten-point curve) because the extended arm's scatter enters the gain and cancels out
+            # of the leak -- i.e. the floor was too LOOSE, biasing toward "the law holds". The
+            # recorded verdict is unaffected: 3xRMS = 0.0233 dominated the max() either way, so
+            # the same 2 of 4 out-of-sample points break. Found by review 2026-07-31.
             in_fit = [L for L in law if L["in_fit"]]
             rms = float(np.sqrt(np.mean([L["resid"] ** 2 for L in in_fit]))) if in_fit else 0.0
             pooled = float(np.median([L["spread"] for L in law]))
@@ -145,7 +203,7 @@ def main():
             out_law.update({"out_of_sample_n": len(oos), "out_of_sample_broken": len(broke),
                             "in_fit_resid_rms": rms, "pooled_seed_noise": pooled,
                             "tolerance": tol, "holds_out_of_sample": not broke})
-            print(f"\nin-fit residual RMS {rms:.4f}, pooled seed noise {pooled:.4f} "
+            print(f"\nin-fit residual RMS {rms:.4f}, pooled LEAK seed noise {pooled:.4f} "
                   f"-> tolerance max(3xRMS, pooled) = {tol:.4f}")
             if broke:
                 print(f"LEAK = CORR^2 BREAKS out of sample: {len(broke)} of {len(oos)} points "
