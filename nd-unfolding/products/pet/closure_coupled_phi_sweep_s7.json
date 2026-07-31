@@ -1,0 +1,147 @@
+{
+  "config": {
+    "couplings": "0.0,0.4,0.6,0.9,1.6,2.2",
+    "n_events": 60000,
+    "tokens": 5,
+    "strata": 10,
+    "amplitude": 1.2,
+    "niter": 3,
+    "epochs": 8,
+    "batch_size": 512,
+    "seed": 7,
+    "workdir": "/work/nvme/bhvk/jbailey2/cphi_s7",
+    "out": "/u/jbailey2/MINERvA-OmniFold/nd-unfolding/products/pet/closure_coupled_phi_sweep_s7.json",
+    "calibrate_only": false
+  },
+  "points": [
+    {
+      "coupling": 0.0,
+      "corr": {
+        "cosphi_pt": -0.0033403913511966567,
+        "cosphi_ppar": 0.010719928720113693,
+        "cosphi_R": -0.28573454962789474,
+        "phi_pt_raw": 0.0007295951795515035
+      },
+      "accepted_fraction": 1.0,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5941454966909472,
+        "pT": 0.6947318215682955
+      },
+      "leak": 0.00023020305307908107,
+      "extended": 0.8736065847947418,
+      "control": 0.8987655962730074,
+      "gain": 0.8733763817416628,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 0.4,
+      "corr": {
+        "cosphi_pt": 0.13691516178293917,
+        "cosphi_ppar": -0.006842197353632918,
+        "cosphi_R": -0.28081619215279435,
+        "phi_pt_raw": -0.05273803602934106
+      },
+      "accepted_fraction": 0.6789416666666667,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5932917603487602,
+        "pT": 0.6950379716571682
+      },
+      "leak": 0.020500357831132465,
+      "extended": 0.9021827096090896,
+      "control": 0.9568333209330353,
+      "gain": 0.8816823517779572,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 0.6,
+      "corr": {
+        "cosphi_pt": 0.20801077681213753,
+        "cosphi_ppar": -0.002740045815596034,
+        "cosphi_R": -0.28784912979988364,
+        "phi_pt_raw": -0.08355876430359581
+      },
+      "accepted_fraction": 0.5629375,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5896716178605413,
+        "pT": 0.6953495365236112
+      },
+      "leak": 0.041356636944206215,
+      "extended": 0.871063939020467,
+      "control": 0.9638111093167494,
+      "gain": 0.8297073020762608,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 0.9,
+      "corr": {
+        "cosphi_pt": 0.3012357073417586,
+        "cosphi_ppar": -0.003968833119729027,
+        "cosphi_R": -0.2893422179396019,
+        "phi_pt_raw": -0.11787211717231708
+      },
+      "accepted_fraction": 0.43330833333333335,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5874638714721354,
+        "pT": 0.6963449059375536
+      },
+      "leak": 0.09374095164151774,
+      "extended": 0.9366063206020995,
+      "control": 0.9518549078073394,
+      "gain": 0.8428653689605817,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 1.6,
+      "corr": {
+        "cosphi_pt": 0.4940271526336457,
+        "cosphi_ppar": 0.0022481921055974158,
+        "cosphi_R": -0.29710244389158114,
+        "phi_pt_raw": -0.16871807087922389
+      },
+      "accepted_fraction": 0.24760416666666665,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5698100234408844,
+        "pT": 0.700986546943926
+      },
+      "leak": 0.23780748137158103,
+      "extended": 0.8842345850402722,
+      "control": 0.9379863529529268,
+      "gain": 0.6464271036686912,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 2.2,
+      "corr": {
+        "cosphi_pt": 0.6154051796844154,
+        "cosphi_ppar": 0.0036178170146635223,
+        "cosphi_R": -0.2986644605184171,
+        "phi_pt_raw": -0.2123291822573236
+      },
+      "accepted_fraction": 0.1645625,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5507705127396038,
+        "pT": 0.705246066074565
+      },
+      "leak": 0.3674765697853887,
+      "extended": 0.9151696167051138,
+      "control": 0.8979934416404053,
+      "gain": 0.5476930469197251,
+      "control_ok": true,
+      "valid": true
+    }
+  ],
+  "gain_at_zero_coupling": 0.8733763817416628,
+  "crossing_corr_cosphi_pt": null,
+  "verdict": "GAIN_SURVIVES_ALL_TESTED_COUPLINGS"
+}
