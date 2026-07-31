@@ -1,0 +1,126 @@
+{
+  "config": {
+    "couplings": "2.2,2.8,3.5,4.5,6.0",
+    "n_events": 60000,
+    "tokens": 5,
+    "strata": 10,
+    "amplitude": 1.2,
+    "niter": 3,
+    "epochs": 8,
+    "batch_size": 512,
+    "seed": 7,
+    "workdir": "/work/nvme/bhvk/jbailey2/cphi_hi_s7",
+    "out": "/u/jbailey2/MINERvA-OmniFold/nd-unfolding/products/pet/closure_coupled_phi_sweep_hi_s7.json",
+    "calibrate_only": false
+  },
+  "points": [
+    {
+      "coupling": 2.2,
+      "corr": {
+        "cosphi_pt": 0.6172750203285798,
+        "cosphi_ppar": -0.004020921341294643,
+        "cosphi_R": -0.3063852588762668,
+        "phi_pt_raw": -0.2266195728978574
+      },
+      "accepted_fraction": 0.1641375,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5514670088747194,
+        "pT": 0.7054728523994598
+      },
+      "leak": 0.4067497988531926,
+      "extended": 0.8817831390903691,
+      "control": 0.9308450671607822,
+      "gain": 0.47503334023717647,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 2.8,
+      "corr": {
+        "cosphi_pt": 0.7089900456710293,
+        "cosphi_ppar": -0.0010327326020605886,
+        "cosphi_R": -0.3168694637501639,
+        "phi_pt_raw": -0.2540129609674953
+      },
+      "accepted_fraction": 0.11278472222222222,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5308868364596224,
+        "pT": 0.710500500595125
+      },
+      "leak": 0.5258817094146604,
+      "extended": 0.9213507476144072,
+      "control": 0.9306069164900042,
+      "gain": 0.39546903819974677,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 3.5,
+      "corr": {
+        "cosphi_pt": 0.7883263168596648,
+        "cosphi_ppar": -0.0033643513968738777,
+        "cosphi_R": -0.32492260448020366,
+        "phi_pt_raw": -0.2769773385396702
+      },
+      "accepted_fraction": 0.0785125,
+      "n": 60000,
+      "ess": {
+        "phi": 0.5091345071829247,
+        "pT": 0.7162090011988482
+      },
+      "leak": 0.6779511304200676,
+      "extended": 0.8909886659403394,
+      "control": 0.924198557524794,
+      "gain": 0.21303753552027183,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 4.5,
+      "corr": {
+        "cosphi_pt": 0.8505004646165969,
+        "cosphi_ppar": -0.0007094593540066563,
+        "cosphi_R": -0.3424812079182723,
+        "phi_pt_raw": -0.28037438426230193
+      },
+      "accepted_fraction": 0.050840833333333335,
+      "n": 60000,
+      "ess": {
+        "phi": 0.48218170720873726,
+        "pT": 0.7230525712909193
+      },
+      "leak": 0.7784104987306655,
+      "extended": 0.9340799167290318,
+      "control": 0.9221860687121539,
+      "gain": 0.1556694179983663,
+      "control_ok": true,
+      "valid": true
+    },
+    {
+      "coupling": 6.0,
+      "corr": {
+        "cosphi_pt": 0.8980575102596405,
+        "cosphi_ppar": 0.00242695437901976,
+        "cosphi_R": -0.34630038019285375,
+        "phi_pt_raw": -0.2846904193179842
+      },
+      "accepted_fraction": 0.030939351851851853,
+      "n": 60000,
+      "ess": {
+        "phi": 0.45547812830749956,
+        "pT": 0.7272864980094633
+      },
+      "leak": 0.8581062660907715,
+      "extended": 0.9114299856516411,
+      "control": 0.8892835110618412,
+      "gain": 0.053323719560869676,
+      "control_ok": true,
+      "valid": true
+    }
+  ],
+  "gain_at_zero_coupling": 0.47503334023717647,
+  "crossing_corr_cosphi_pt": 0.7722519872472171,
+  "verdict": "GAIN_DEGRADES_WITH_COUPLING"
+}

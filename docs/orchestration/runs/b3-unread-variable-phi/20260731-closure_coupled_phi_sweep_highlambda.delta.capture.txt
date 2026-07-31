@@ -1,0 +1,146 @@
+# closure_coupled_phi_sweep.py HIGH-LAMBDA EXTENSION — Delta jobs 20648055 (seed 0) / 20648056 (seed 7)
+# date_utc: 2026-07-31T05:0x start   elapsed 01:23:40 / 01:23:22   exit 0:0 both
+# sha256(driver) dbfab7343a025ec72eb86558504a8adf64101a3a6b6efad4fb193d67a2ff9eba
+#   (chunk cap 12 -> 40 vs the 286163b5 driver used for jobs 20636012/13; no other change)
+# sha256(base module) 3afb3f1b9c8e34ddc9f1e42814983fd3522c4dec597f0d1c0b9a918972914da4  (unchanged)
+# grid: COUPLINGS=2.2,2.8,3.5,4.5,6.0  n=60000 niter=3 epochs=8 amplitude=1.2
+# lambda 2.2 repeated from jobs 20636012/13 as a cross-job tie-in.
+
+PREDECLARED before launch (commit 93435af), under gain = 0.8905 - corr^2:
+  lambda   2.2     2.8     3.5     4.5     6.0
+  pred    +0.505  +0.378  +0.275  +0.171  +0.078
+  crossing of +0.25 predicted BETWEEN lambda 3.5 and 4.5, at corr ~ 0.80
+
+MEASURED:
+  lambda   2.2     2.8     3.5     4.5     6.0
+  gain    +0.5055 +0.3886 +0.2288 +0.1459 +0.0868
+  -> crossing fell between lambda 2.8 and 3.5. THE PREDICTION IS FALSIFIED.
+
+---------- job 20648055 ----------
+=== coupling lambda=2.20  accepted=16.5%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.6257  corr(cos phi, p‖)=+0.0060  corr(cos phi, R)=-0.3037  [raw corr(phi,pT)=-0.2312, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=55.1%  pT=70.6%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.4314 (prior 0.6868) recovered=+0.3719
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0831 (prior 0.6868) recovered=+0.8790
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0328 (prior 0.5357) recovered=+0.9387
+[sweep]   gain = extended - leak = +0.5070   control OK (+0.9387)
+=== coupling lambda=2.80  accepted=11.3%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.7134  corr(cos phi, p‖)=-0.0018  corr(cos phi, R)=-0.3124  [raw corr(phi,pT)=-0.2618, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=53.2%  pT=71.1%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.3440 (prior 0.7061) recovered=+0.5127
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0745 (prior 0.7061) recovered=+0.8944
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0431 (prior 0.5266) recovered=+0.9182
+[sweep]   gain = extended - leak = +0.3817   control OK (+0.9182)
+=== coupling lambda=3.50  accepted=7.8%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.7853  corr(cos phi, p‖)=+0.0015  corr(cos phi, R)=-0.3245  [raw corr(phi,pT)=-0.2808, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=50.7%  pT=71.6%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.2516 (prior 0.7288) recovered=+0.6548
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0733 (prior 0.7288) recovered=+0.8994
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0524 (prior 0.5218) recovered=+0.8996
+[sweep]   gain = extended - leak = +0.2446   control OK (+0.8996)
+=== coupling lambda=4.50  accepted=5.1%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.8500  corr(cos phi, p‖)=-0.0045  corr(cos phi, R)=-0.3376  [raw corr(phi,pT)=-0.2975, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=48.2%  pT=72.2%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.1693 (prior 0.7383) recovered=+0.7707
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0688 (prior 0.7383) recovered=+0.9068
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0629 (prior 0.5089) recovered=+0.8765
+[sweep]   gain = extended - leak = +0.1361   control OK (+0.8765)
+=== coupling lambda=6.00  accepted=3.1%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.8970  corr(cos phi, p‖)=+0.0039  corr(cos phi, R)=-0.3491  [raw corr(phi,pT)=-0.2772, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=45.2%  pT=72.6%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.1625 (prior 0.7560) recovered=+0.7850
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0716 (prior 0.7560) recovered=+0.9053
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0988 (prior 0.4844) recovered=+0.7959
+[sweep]   gain = extended - leak = +0.1203   control OK (+0.7959)
+The gain falls below the +0.25 clearance at corr(cos phi, pT) ~ +0.783 (linear interpolation between bracketing points, crude). THE 08-03 TEST: measure corr(cos phi, pT) in the real FPS sample; if it is below +0.783 the extension's phi channel still buys something, if above, it does not.
+CLOSURE, not data: pseudo-data is a reweighted MC half. This bounds a CAPABILITY and is not evidence that the real data carries an azimuthal mismatch.
+[sweep] wrote /u/jbailey2/MINERvA-OmniFold/nd-unfolding/products/pet/closure_coupled_phi_sweep_hi_s0.json
+
+---------- job 20648056 ----------
+=== coupling lambda=2.20  accepted=16.4%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.6173  corr(cos phi, p‖)=-0.0040  corr(cos phi, R)=-0.3064  [raw corr(phi,pT)=-0.2266, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=55.1%  pT=70.5%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.4059 (prior 0.6841) recovered=+0.4067
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0809 (prior 0.6841) recovered=+0.8818
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0375 (prior 0.5417) recovered=+0.9308
+[sweep]   gain = extended - leak = +0.4750   control OK (+0.9308)
+=== coupling lambda=2.80  accepted=11.3%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.7090  corr(cos phi, p‖)=-0.0010  corr(cos phi, R)=-0.3169  [raw corr(phi,pT)=-0.2540, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=53.1%  pT=71.1%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.3360 (prior 0.7086) recovered=+0.5259
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0557 (prior 0.7086) recovered=+0.9214
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0363 (prior 0.5227) recovered=+0.9306
+[sweep]   gain = extended - leak = +0.3955   control OK (+0.9306)
+=== coupling lambda=3.50  accepted=7.9%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.7883  corr(cos phi, p‖)=-0.0034  corr(cos phi, R)=-0.3249  [raw corr(phi,pT)=-0.2770, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=50.9%  pT=71.6%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.2362 (prior 0.7333) recovered=+0.6780
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0799 (prior 0.7333) recovered=+0.8910
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0393 (prior 0.5187) recovered=+0.9242
+[sweep]   gain = extended - leak = +0.2130   control OK (+0.9242)
+=== coupling lambda=4.50  accepted=5.1%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.8505  corr(cos phi, p‖)=-0.0007  corr(cos phi, R)=-0.3425  [raw corr(phi,pT)=-0.2804, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=48.2%  pT=72.3%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.1658 (prior 0.7483) recovered=+0.7784
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0493 (prior 0.7483) recovered=+0.9341
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0397 (prior 0.5102) recovered=+0.9222
+[sweep]   gain = extended - leak = +0.1557   control OK (+0.9222)
+=== coupling lambda=6.00  accepted=3.1%  n=60000 ===
+[sweep] corr(cos phi, pT)=+0.8981  corr(cos phi, p‖)=+0.0024  corr(cos phi, R)=-0.3463  [raw corr(phi,pT)=-0.2847, the WRONG statistic, shown for continuity with job 20600383]
+[sweep] ESS phi=45.5%  pT=72.7%
+[sweep]   base_phi_tilt          feats=[0, 1] median L1=0.1071 (prior 0.7550) recovered=+0.8581
+[sweep]   extended_phi_tilt      feats=[0, 1, 2] median L1=0.0669 (prior 0.7550) recovered=+0.9114
+[sweep]   base_pt_tilt_control   feats=[0, 1] median L1=0.0527 (prior 0.4763) recovered=+0.8893
+[sweep]   gain = extended - leak = +0.0533   control OK (+0.8893)
+The gain falls below the +0.25 clearance at corr(cos phi, pT) ~ +0.772 (linear interpolation between bracketing points, crude). THE 08-03 TEST: measure corr(cos phi, pT) in the real FPS sample; if it is below +0.772 the extension's phi channel still buys something, if above, it does not.
+CLOSURE, not data: pseudo-data is a reweighted MC half. This bounds a CAPABILITY and is not evidence that the real data carries an azimuthal mismatch.
+[sweep] wrote /u/jbailey2/MINERvA-OmniFold/nd-unfolding/products/pet/closure_coupled_phi_sweep_hi_s7.json
+
+---------- combined curve, all 10 couplings x 2 seeds (local) ----------
+4 seed runs [0, 7, 0, 7] from 4 files
+
+ lambda    corr  accept     leak  extended     gain   spread  ctrl min  valid
+   0.00  -0.001  100.0%  +0.0003   +0.8733  +0.8730   0.0008   +0.8988  yes
+   0.40  +0.136   67.9%  +0.0192   +0.8980  +0.8789   0.0057   +0.9503  yes
+   0.60  +0.204   56.4%  +0.0381   +0.8772  +0.8391   0.0188   +0.9448  yes
+   0.90  +0.298   43.3%  +0.0929   +0.9123  +0.8194   0.0470   +0.9353  yes
+   1.60  +0.491   24.8%  +0.2263   +0.8732  +0.6469   0.0009   +0.8915  yes
+   2.20  +0.619   16.4%  +0.3893   +0.8948  +0.5055   0.0388   +0.8980  yes
+   2.80  +0.711   11.3%  +0.5193   +0.9079  +0.3886   0.0138   +0.9182  yes
+   3.50  +0.787    7.8%  +0.6664   +0.8952  +0.2288   0.0316   +0.8996  yes
+   4.50  +0.850    5.1%  +0.7746   +0.9204  +0.1459   0.0196   +0.8765  yes
+   6.00  +0.898    3.1%  +0.8216   +0.9084  +0.0868   0.0670   +0.7959  yes
+
+            step  delta gain  seed noise  resolved
+  0.00 ->  0.40     +0.0059      0.0057  yes
+  0.40 ->  0.60     -0.0398      0.0188  yes
+  0.60 ->  0.90     -0.0197      0.0470  no (inside noise)
+  0.90 ->  1.60     -0.1725      0.0470  yes
+  1.60 ->  2.20     -0.1413      0.0388  yes
+  2.20 ->  2.80     -0.1169      0.0388  yes
+  2.80 ->  3.50     -0.1598      0.0316  yes
+  3.50 ->  4.50     -0.0830      0.0316  yes
+  4.50 ->  6.00     -0.0591      0.0670  no (inside noise)
+
+leak vs corr^2 (the conjecture from the lambda<=2.2 sweep)
+   corr   corr^2     leak   ratio    resid  seed sd  range
+ +0.136   0.0184   0.0192   1.041  +0.0007   0.0057  fitted
+ +0.204   0.0415   0.0381   0.916  -0.0035   0.0188  fitted
+ +0.298   0.0890   0.0929   1.044  +0.0039   0.0470  fitted
+ +0.491   0.2415   0.2263   0.937  -0.0152   0.0009  fitted
+ +0.619   0.3829   0.3893   1.017  +0.0064   0.0388  fitted
+ +0.711   0.5058   0.5193   1.027  +0.0135   0.0138  OUT-OF-SAMPLE
+ +0.787   0.6191   0.6664   1.076  +0.0473   0.0316  OUT-OF-SAMPLE
+ +0.850   0.7229   0.7746   1.071  +0.0516   0.0196  OUT-OF-SAMPLE
+ +0.898   0.8055   0.8216   1.020  +0.0161   0.0670  OUT-OF-SAMPLE
+
+in-fit residual RMS 0.0078, pooled seed noise 0.0196 -> tolerance max(3xRMS, pooled) = 0.0233
+LEAK = CORR^2 BREAKS out of sample: 2 of 4 points above corr 0.62 miss by more than 0.0233 (worst +0.0516). The relation was a curve-fit over the original range, not a mechanism, and any crossing inferred from it is void -- read the crossing off the measured points below instead.
+extended arm over the same points: mean +0.8986 sd 0.0157 min +0.8732 -- the 'flat extension' half of the conjecture HOLDS
+
+The gain falls through +0.25 at corr(cos phi,pT) = +0.777 (+-1 seed spread: +0.764 to +0.794).
+THE 08-03 TEST: measure corr(cos phi, pT) in the real FPS sample. Below +0.777, the extension's phi channel still buys something; above, it does not.
+
+CLOSURE, not data: pseudo-data is a reweighted MC half. This bounds a CAPABILITY and is not evidence that the real data carries an azimuthal mismatch.
+
+wrote nd-unfolding/products/pet/coupled_phi_curve.json
