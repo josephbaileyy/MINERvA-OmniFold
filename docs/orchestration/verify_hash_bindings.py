@@ -20,6 +20,21 @@ skips those, which is how the Gate-2 dataloader binding was missed on a first
 pass. Absolute paths under the known Perlmutter root are therefore remapped onto
 the local checkout before hashing.
 
+SHELL PINS. Receipts are not the only place code is frozen by hash. Launchers and
+final-writers carry their own `EXPECTED_<ROLE>_SHA=` constants and abort on
+mismatch, and until 2026-07-31 nothing walked them -- so when b3751cc and f6a9e8e
+rewrote `gate2_target_runtime.py` and `fullevent_fps_dataloader.py`, the pins in
+`run_gate2_target_validator.sh` went stale silently and made that route
+unrunnable. The receipt-backed Gate-4 pair broke in the same commits and was
+loud, because this file already covered it. Shell pins are now collected from the
+comparison sites themselves, which is the only place the pin is unambiguously
+tied to the file it pins (the constant names do not map to the variable names --
+`EXPECTED_BASE_G2_VAL_SHA` guards `$BASE_G2_VALIDATOR`).
+
+A stale pin is not repaired by editing the hash. The constant records what the
+gate ran against; moving it to match the working tree converts the guard into a
+no-op and destroys the evidence. Re-issue the owning gate and record the move.
+
 Exit 0 if every resolvable binding matches, 1 otherwise.
 """
 import argparse
@@ -27,6 +42,7 @@ import glob
 import hashlib
 import json
 import os
+import re
 import sys
 
 PERLMUTTER_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/"
@@ -40,6 +56,12 @@ KNOWN_PREEXISTING = {
     "docs/orchestration/gate2_queue_hedge_controller.sh",
     "nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
 }
+
+
+# Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in
+# the checkout. Raise it when launchers add pins; lowering it needs the same
+# justification as deleting a guard, because that is what it does.
+SHELL_PIN_FLOOR = 10
 
 
 def sha256(path):
@@ -71,6 +93,48 @@ def collect(obj, src, out):
             collect(v, src, out)
 
 
+# A pin is only credible where it is USED, so pairing is read off the comparison
+# line rather than from the constant's name. Both hashing idioms in the tree are
+# accepted, and the indirection through a temporary (`g=$(sha_of "$BIN"); [[ "$g"
+# == ... ]]`) stays on one line in every current site.
+_SHA_OF = re.compile(r'(?:sha_of|sha256sum)\s+"\$\{?(\w+)\}?"')
+_PIN_USE = re.compile(r'\$\{?(EXPECTED_[A-Z0-9_]*_SHA)\}?')
+_PIN_DEF = re.compile(r'^\s*(EXPECTED_[A-Z0-9_]*_SHA)=["\']?([0-9a-f]{64})["\']?\s*$', re.M)
+_VAR_DEF = re.compile(r'^\s*(\w+)=["\']?([^"\'\s|;]+)["\']?\s*$', re.M)
+
+
+def _expand(value, env, depth=0):
+    """Resolve ${REPO}/... style assignments against the script's own constants."""
+    if depth > 5:
+        return value
+    out = re.sub(r'\$\{(\w+)\}|\$(\w+)',
+                 lambda m: env.get(m.group(1) or m.group(2), m.group(0)), value)
+    return _expand(out, env, depth + 1) if out != value else out
+
+
+def collect_shell(text, src, out):
+    """Harvest (path, sha256, src) from `EXPECTED_*_SHA` guards in a shell script."""
+    pins = dict(_PIN_DEF.findall(text))
+    if not pins:
+        return
+    env = {k: v for k, v in _VAR_DEF.findall(text) if not k.startswith("EXPECTED_")}
+    for line in text.splitlines():
+        # Deduped, because the guards restate both operands in their failure text
+        # (`[[ "$g" == "$EXPECTED_BIN_SHA" ]] || die "drift: $g != $EXPECTED_BIN_SHA"`).
+        # Counting raw occurrences reads that as two pins and drops the line, which
+        # silently cost the entire evloop launcher family on the first pass -- the
+        # collector reported a clean 6 while walking none of them.
+        files, used = set(_SHA_OF.findall(line)), set(_PIN_USE.findall(line))
+        # One file against one pin is what a real comparison looks like. Anything
+        # else is an echo, an argv splat, or a self-comparison of two staged
+        # copies -- none of which bind a pin to a file.
+        if len(files) != 1 or len(used) != 1 or not used <= set(pins):
+            continue
+        target = _expand(env.get(next(iter(files)), ""), env)
+        if target:
+            out.append((target, pins[next(iter(used))], src))
+
+
 def localize(p, root):
     if p.startswith(PERLMUTTER_ROOT):
         p = p[len(PERLMUTTER_ROOT):]
@@ -95,6 +159,16 @@ def main():
         except (json.JSONDecodeError, OSError):
             continue
 
+    shell_pairs = []
+    for f in (glob.glob(os.path.join(a.root, "docs/**/*.sh"), recursive=True)
+              + glob.glob(os.path.join(a.root, "nd-unfolding/**/*.sh"), recursive=True)
+              + glob.glob(os.path.join(a.root, "2d-unfolding/**/*.sh"), recursive=True)):
+        try:
+            collect_shell(open(f).read(), os.path.relpath(f, a.root), shell_pairs)
+        except OSError:
+            continue
+    pairs += shell_pairs
+
     seen, ok, new_bad, known_bad, unresolved = set(), 0, [], [], 0
     for p, want, src in pairs:
         lp = localize(p, a.root)
@@ -102,9 +176,14 @@ def main():
             unresolved += 1
             continue
         rel = os.path.relpath(lp, a.root)
-        if (rel, want) in seen:
+        # Receipts that pin the same file to the same hash are deduped as noise,
+        # but a shell pin is a SEPARATE remediation site: repairing the receipt
+        # leaves the launcher's constant stale, and collapsing them would hide
+        # exactly that. Dedupe within a source kind, never across.
+        key = (rel, want, src.endswith(".sh"))
+        if key in seen:
             continue
-        seen.add((rel, want))
+        seen.add(key)
         if sha256(lp) == want:
             ok += 1
         elif rel in KNOWN_PREEXISTING:
@@ -112,9 +191,25 @@ def main():
         else:
             new_bad.append((rel, want, sha256(lp), src))
 
+    # The shell collector parses source rather than reading a schema, so it can go
+    # blind if the launchers change idiom -- and a collector that silently matches
+    # nothing reports ALL BINDINGS INTACT, which is the failure mode this whole
+    # file exists to catch. Resolving zero shell pins is therefore an error, not a
+    # quiet zero. The floor is deliberately the count that exists today.
+    shell_resolved = sum(1 for p, _, _ in shell_pairs if localize(p, a.root))
+    blind = shell_resolved < SHELL_PIN_FLOOR
+
     print(f"resolved {ok + len(new_bad) + len(known_bad)} bindings "
           f"({unresolved} unresolvable: data files, off-repo artifacts, binaries)")
     print(f"  {ok} OK")
+    print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
+          f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
+    if blind:
+        print(f"\n*** SHELL PIN COLLECTOR WENT BLIND ***\n"
+              f"  resolved {shell_resolved}, expected at least {SHELL_PIN_FLOOR}.\n"
+              f"  Either pins were deleted, or a launcher changed hashing idiom and\n"
+              f"  the parser no longer sees its guards. Do NOT lower the floor to\n"
+              f"  make this pass -- an unwalked pin is how the Gate-2 pair went stale.")
     if known_bad:
         print(f"  {len(known_bad)} known pre-existing drift (submit-time provenance):")
         for rel, src in known_bad:
@@ -122,7 +217,7 @@ def main():
     for rel, want, got, src in new_bad:
         print(f"\nMISMATCH {rel}\n  want {want}\n  got  {got}\n  from {src}")
 
-    failed = bool(new_bad) or (a.strict and bool(known_bad))
+    failed = bool(new_bad) or blind or (a.strict and bool(known_bad))
     print("\n" + ("*** BINDINGS BROKEN ***" if failed else "ALL BINDINGS INTACT"))
     return 1 if failed else 0
 
