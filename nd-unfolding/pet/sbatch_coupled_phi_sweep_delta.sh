@@ -44,6 +44,20 @@
 # and the container's OMPI was not built with SLURM PMI, so `srun python3` dies
 # at OPAL ERROR ... pmix3x_client.c:112 before reaching any physics.
 #
+# HIGH-LAMBDA EXTENSION (2026-07-31, jobs after 20636013). The first sweep found
+# leak = corr^2 to 6% and a flat extension arm, which together CONJECTURE a
+# +0.25 crossing near corr 0.80 -- outside the tested range, so the summarizer
+# refuses to quote it. Testing it means measuring past lambda 2.2, not extending
+# a line. Calibrated grid for that run:
+#   lambda  2.2   2.8   3.5   4.5   6.0
+#   corr    0.621 0.716 0.784 0.848 0.901
+#   accept  16.4% 11.4%  7.9%  5.1%  3.1%
+# lambda 2.2 is repeated deliberately as a cross-job tie-in. 3.1% acceptance is
+# the practical floor at n=60000 (lambda 8+ trips the acceptance guard), and
+# build_event_coupled's chunk cap was raised 12 -> 40 to reach it. Submit with
+#   COUPLINGS=2.2,2.8,3.5,4.5,6.0 OUT=<...>_hi_s$SEED.json WORKDIR=<...>_hi_s$SEED
+# so the original grid's JSONs are not overwritten; the summarizer globs both.
+#
 # CONFIG MATCHES job 20600383 (n 60000 / niter 3 / epochs 8 / amplitude 1.2) so
 # the lambda=0 point is directly comparable to the +0.8755 already on the books.
 # It is an independent redraw, not a bit-reproduction: the thinning path draws

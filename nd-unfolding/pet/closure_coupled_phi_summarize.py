@@ -31,12 +31,17 @@ CLEARANCE = 0.25   # the threshold job 20600383 used for "the extension adds cap
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dirs", nargs="+", default=["products/pet"],
-                    help="directories holding closure_coupled_phi_sweep_s<seed>.json")
+                    help="directories holding closure_coupled_phi_sweep[_hi]_s<seed>.json")
+    ap.add_argument("--pattern", default="closure_coupled_phi_sweep*_s*.json",
+                    help="glob for the per-seed sweep JSONs; the default picks up BOTH the "
+                         "original lambda grid and the high-lambda extension")
+    ap.add_argument("--law-fit-max-corr", type=float, default=0.62,
+                    help="upper edge of the range leak=corr^2 was originally fitted on; points "
+                         "above this are the OUT-OF-SAMPLE test of the law")
     ap.add_argument("--out", default="products/pet/coupled_phi_curve.json")
     a = ap.parse_args()
 
-    files = sorted({f for d in a.dirs
-                    for f in glob.glob(os.path.join(d, "closure_coupled_phi_sweep_s*.json"))})
+    files = sorted({f for d in a.dirs for f in glob.glob(os.path.join(d, a.pattern))})
     if len(files) < 2:
         raise SystemExit(f"need >=2 seed files to have a spread; found {files}. A single-seed "
                          "curve cannot separate a bend from retraining noise.")
@@ -44,18 +49,24 @@ def main():
     runs = []
     for f in files:
         with open(f) as fh:
-            runs.append(json.load(fh))
+            r = json.load(fh)
+        r["_file"] = os.path.basename(f)
+        runs.append(r)
     seeds = [r["config"]["seed"] for r in runs]
     print(f"{len(runs)} seed runs {seeds} from {len(files)} files")
 
-    grids = {tuple(round(p["coupling"], 6) for p in r["points"]) for r in runs}
-    if len(grids) != 1:
-        raise SystemExit(f"seeds disagree on the lambda grid {grids} -- not comparable")
-    grid = sorted(grids.pop())
+    # Grids are UNIONED, not required identical: the high-lambda extension is a different grid by
+    # design, and the overlap point (lambda 2.2) is a deliberate cross-job tie-in rather than a
+    # mistake. What still has to hold is that every coupling carries >=2 seeds, since a
+    # single-seed point has no spread and cannot gate its own step.
+    grid = sorted({round(p["coupling"], 6) for r in runs for p in r["points"]})
 
     rows = []
     for lam in grid:
         pts = [p for r in runs for p in r["points"] if round(p["coupling"], 6) == lam]
+        if len(pts) < 2:
+            raise SystemExit(f"coupling {lam} has only {len(pts)} seed(s); every point needs >=2 "
+                             "or its step cannot be gated against retraining noise")
         # A point is usable only if EVERY seed's positive control passed there. One failed control
         # means that fixture is untrained, not that the gain vanished.
         valid = all(p.get("control_ok", False) for p in pts)
@@ -98,6 +109,69 @@ def main():
     resolved_down = [s for s in steps if s["resolved"] and s["delta"] < 0]
     total_drop = usable[0]["gain"] - usable[-1]["gain"]
 
+    # ---- leak = corr^2, tested OUT OF SAMPLE.
+    # The relation was read off points with corr <= --law-fit-max-corr. Anything above that edge
+    # is a PREDICTION, not a fit, and is the only thing that can tell a mechanism from a
+    # curve-fit: a law that holds only where it was fitted has explained nothing. Residuals are
+    # judged against each point's own seed spread, not against a fixed tolerance, for the same
+    # reason the steps are.
+    law = [{"corr": r["corr"], "leak": r["leak"], "pred": r["corr"] ** 2,
+            "ratio": r["leak"] / r["corr"] ** 2, "resid": r["leak"] - r["corr"] ** 2,
+            "spread": r["gain_spread"], "in_fit": bool(abs(r["corr"]) <= a.law_fit_max_corr),
+            "extended": r["extended"]}
+           for r in usable if abs(r["corr"]) >= 0.05]   # corr^2 ~ 0: the ratio is meaningless
+    out_law = {"fit_max_corr": a.law_fit_max_corr, "points": law}
+    if law:
+        print(f"\nleak vs corr^2 (the conjecture from the lambda<=2.2 sweep)")
+        print(f"{'corr':>7s} {'corr^2':>8s} {'leak':>8s} {'ratio':>7s} {'resid':>8s} "
+              f"{'seed sd':>8s}  range")
+        for L in law:
+            print(f"{L['corr']:+7.3f} {L['pred']:8.4f} {L['leak']:8.4f} {L['ratio']:7.3f} "
+                  f"{L['resid']:+8.4f} {L['spread']:8.4f}  "
+                  f"{'fitted' if L['in_fit'] else 'OUT-OF-SAMPLE'}")
+        oos = [L for L in law if not L["in_fit"]]
+        if oos:
+            # TOLERANCE IS POOLED, NOT PER-POINT. A two-seed spread is a terrible noise estimate:
+            # in the lambda<=2.2 sweep it ranged 0.0009 to 0.0553 across points that differ only
+            # in coupling, so a point whose two seeds happened to agree would "break" any law by
+            # luck of the draw. The yardstick is instead the law's OWN residual scatter where it
+            # was fitted, floored by the pooled seed noise so a suspiciously tight fit cannot make
+            # the test unfalsifiable in the other direction.
+            in_fit = [L for L in law if L["in_fit"]]
+            rms = float(np.sqrt(np.mean([L["resid"] ** 2 for L in in_fit]))) if in_fit else 0.0
+            pooled = float(np.median([L["spread"] for L in law]))
+            tol = max(3.0 * rms, pooled)
+            broke = [L for L in oos if abs(L["resid"]) > tol]
+            out_law.update({"out_of_sample_n": len(oos), "out_of_sample_broken": len(broke),
+                            "in_fit_resid_rms": rms, "pooled_seed_noise": pooled,
+                            "tolerance": tol, "holds_out_of_sample": not broke})
+            print(f"\nin-fit residual RMS {rms:.4f}, pooled seed noise {pooled:.4f} "
+                  f"-> tolerance max(3xRMS, pooled) = {tol:.4f}")
+            if broke:
+                print(f"LEAK = CORR^2 BREAKS out of sample: {len(broke)} of {len(oos)} points "
+                      f"above corr {a.law_fit_max_corr:.2f} miss by more than {tol:.4f} "
+                      f"(worst {max(abs(L['resid']) for L in broke):+.4f}). The relation was a "
+                      f"curve-fit over the original range, not a mechanism, and any crossing "
+                      f"inferred from it is void -- read the crossing off the measured points "
+                      f"below instead.")
+            else:
+                print(f"LEAK = CORR^2 HOLDS out of sample: all {len(oos)} points above corr "
+                      f"{a.law_fit_max_corr:.2f} sit within {tol:.4f} (worst "
+                      f"{max(abs(L['resid']) for L in oos):+.4f}). The baseline recovers the "
+                      f"shared variance and nothing else -- a mechanism, not a fit.")
+        else:
+            out_law["holds_out_of_sample"] = None
+            print(f"\nNo point above corr {a.law_fit_max_corr:.2f}: the law is untested outside "
+                  "the range it was read off, so it stays a conjecture.")
+        # The flat-extension half of the conjecture has to survive too, or a crossing arrives
+        # early for a reason that has nothing to do with the leak.
+        e = np.array([L["extended"] for L in law])
+        out_law["extended_mean"] = float(e.mean())
+        out_law["extended_sd"] = float(e.std(ddof=1)) if len(e) > 1 else float("nan")
+        print(f"extended arm over the same points: mean {e.mean():+.4f} sd {e.std(ddof=1):.4f} "
+              f"min {e.min():+.4f} -- the 'flat extension' half of the conjecture "
+              f"{'HOLDS' if e.std(ddof=1) < 0.05 else 'BREAKS (the extension itself degrades)'}")
+
     def crossing(offset):
         """corr at which the (mean + offset*spread) curve falls through CLEARANCE."""
         xs = [r["corr"] for r in usable]
@@ -110,7 +184,8 @@ def main():
 
     mid, hi, lo = crossing(0.0), crossing(+1.0), crossing(-1.0)
     corr_max = usable[-1]["corr"]
-    out = {"seeds": seeds, "clearance": CLEARANCE, "points": rows, "steps": steps,
+    out = {"seeds": seeds, "files": [r["_file"] for r in runs], "clearance": CLEARANCE,
+           "points": rows, "steps": steps, "law_leak_eq_corr2": out_law,
            "total_drop": total_drop, "crossing_mean": mid,
            "crossing_band": [lo, hi], "corr_max_tested": corr_max}
 

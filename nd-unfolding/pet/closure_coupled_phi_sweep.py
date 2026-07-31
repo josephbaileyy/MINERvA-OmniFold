@@ -85,7 +85,7 @@ def draw_candidates(m, p_tokens, rng):
     return cloud, R, pt, ppar, phi
 
 
-def build_event_coupled(n, p_tokens, rng, coupling, max_chunks=12):
+def build_event_coupled(n, p_tokens, rng, coupling, max_chunks=40):
     """Draw n events whose azimuth is coupled to the muon block by acceptance thinning."""
     parts, kept = [], 0
     for _ in range(max_chunks):
@@ -103,8 +103,14 @@ def build_event_coupled(n, p_tokens, rng, coupling, max_chunks=12):
         if kept >= n:
             break
     if kept < n:
+        # Raised to 40 chunks (from 12) for the high-lambda extension: lambda=6.0 accepts ~3.1%,
+        # so 60000 events needs ~8 chunks of 4n and the old cap aborted the whole job. This is a
+        # runaway guard, not a budget -- candidate generation is seconds against ~17 min of
+        # training per point. Points that still hit it are genuinely unreachable at this n.
         raise SystemExit(f"acceptance too tight at coupling={coupling}: only {kept}/{n} events "
-                         f"after {max_chunks} chunks")
+                         f"after {max_chunks} chunks of {4*n} candidates "
+                         f"({100.0*kept/(max_chunks*4*n):.2f}% accepted). Lower --coupling or "
+                         f"raise --n-events.")
     out = [np.concatenate([p[i] for p in parts], axis=0)[:n] for i in range(5)]
     return (*out, float(kept) / (len(parts) * 4 * n))   # accepted fraction of drawn candidates
 
