@@ -8,7 +8,7 @@ RUN_DIR=${REPO}/nd-unfolding/g2_fullevent/gate2/runtime/${RUN_ID}
 RUNNER=${REPO}/nd-unfolding/pet/run_gate2_target_validator.sh
 LOG=${RUN_DIR}/runtime.log
 SENTINEL=${RUN_DIR}/terminal.txt
-EXPECTED_RUNNER_SHA=3e43962602a630f49eea590e031cc0c5538d6442cee3d5c209903a821032a159
+EXPECTED_RUNNER_SHA=a8ba8934d87ab1d861e06d561c83fdbe53b7c35b1ecd4269c8d759bb79d550dc
 
 fail() { echo "[gate2-r4-driver][FAIL] $*" >&2; exit 1; }
 [[ -x "$RUNNER" ]] || fail "runner missing/not executable"

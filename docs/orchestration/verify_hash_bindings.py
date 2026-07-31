@@ -180,7 +180,10 @@ def main():
         # but a shell pin is a SEPARATE remediation site: repairing the receipt
         # leaves the launcher's constant stale, and collapsing them would hide
         # exactly that. Dedupe within a source kind, never across.
-        key = (rel, want, src.endswith(".sh"))
+        # ...and never across shell SITES either: two launchers pinning the same
+        # runner are two constants to edit, so collapsing them hides half the
+        # remediation. Receipts still dedupe, where repeats are genuinely noise.
+        key = (rel, want, src if src.endswith(".sh") else "")
         if key in seen:
             continue
         seen.add(key)

@@ -106,6 +106,28 @@ def die(msg: str) -> None:
     raise CheckError(msg)
 
 
+def _rows_from_header(d, key: str) -> int | None:
+    """Row count from a member's .npy header, without decompressing the array.
+
+    `np.asarray(d[key])` materializes the WHOLE member; for `measured_pc` that is the 4.1M-row
+    cloud. numpy's NpzFile keeps the backing ZipFile, and an .npy header carries the shape, so a
+    row count costs a few hundred bytes instead of gigabytes. Returns None -- caller falls back to
+    the full read -- rather than raising, because this reaches into numpy internals
+    (`_read_array_header`) and an unreadable header must not turn a working check into a failing
+    one. Same idiom as gate2_target_runtime._npy_header.
+    """
+    zf = getattr(d, "zip", None)
+    if zf is None:
+        return None
+    try:
+        with zf.open(key + ".npy") as handle:
+            version = np.lib.format.read_magic(handle)
+            shape, _fortran, _dtype = np.lib.format._read_array_header(handle, version)
+        return int(shape[0])
+    except Exception:
+        return None
+
+
 def _resolve_pot_scale(d) -> tuple[float, str]:
     """Mirror the loader's own resolution order (fullevent_fps_dataloader.py:570-578)."""
     if "pot_scale" in d.files:
@@ -180,13 +202,23 @@ def run(inputs: str, max_events: int | None) -> dict:
         sum_w_bkg = float(w_bkg.sum())
         bkg_pot_scaled = pot_scale * sum_w_bkg
 
-        # data row count: prefer the measured cloud's own row count
-        if "measured_pc" in d.files:
-            n_data = int(np.asarray(d["measured_pc"]).shape[0])
-        elif "measured_scalars" in d.files:
-            n_data = int(np.asarray(d["measured_scalars"]).shape[0])
-        else:
-            die("neither measured_pc nor measured_scalars present; cannot count data rows")
+        # Data row count. PREFER measured_scalars, and read the row count out of the member's
+        # .npy header rather than the array. This block used to prefer measured_pc and take
+        # `np.asarray(d["measured_pc"]).shape[0]`, which decompresses the entire 4.1M-row point
+        # cloud -- several GB resident -- to learn one integer, in a script whose whole purpose is
+        # to be runnable on a login node. It also contradicted its own dependency:
+        # fullevent_fps_dataloader.step1_class_ratio_from_dump:540 prefers the small scalars block
+        # and says why. The two agreed on the answer and disagreed on the method, with the
+        # expensive method as this script's default. Found by review, 2026-07-31.
+        n_data = None
+        for key in ("measured_scalars", "measured_pc"):
+            if key in d.files:
+                n_data = _rows_from_header(d, key)
+                if n_data is None:      # header unreadable: pay for the read rather than fail
+                    n_data = int(np.asarray(d[key]).shape[0])
+                break
+        if n_data is None:
+            die("neither measured_scalars nor measured_pc present; cannot count data rows")
 
     numerator = float(n_data) - bkg_pot_scaled
 

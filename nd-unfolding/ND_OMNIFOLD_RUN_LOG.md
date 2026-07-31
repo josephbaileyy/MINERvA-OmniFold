@@ -2791,3 +2791,61 @@ needing no truth counterpart because `m1`/`m2` take independent cloud dims). Tha
 extension of an existing script, needs no dump, and runs on Delta. Until it exists, extending the
 feature block is a change with no measured benefit, and correcting
 `FULL_EVENT_FEATURE_CONTRACT.md:19-21` remains the only claim that is actively false today.
+
+### 2026-07-31 — Gate-2 final-writer pins re-armed; the shell pins are now walked
+
+`run_gate2_target_validator.sh` froze its validator and loader by sha256 at 3d4cbdb. Both files
+were rewritten afterwards — b3751cc (B1: `1e6*R` on the measured loader), f6a9e8e (six defects
+from the adversarial review), and, validator only, 3b93409 (B-4 gated instead of recorded) — and
+the pins were not re-issued in any of those commits. Lines 38-39 abort before any physics runs, so
+**this route has never executed post-B1**: the 08-03 re-issue could not have run the `1e6*R` logic
+through its own production path. The run log has no record of the route executing at all.
+
+Pins moved `a8539d83…→f9e20f4c…` (validator) and `c0521d21…→538031732…` (loader). `EXPECTED_U2D_SHA`
+and `EXPECTED_INPUT_SHA` still match and are untouched.
+
+**What this restores and what it does not.** The constant is a precondition — "refuse to run if the
+code changed" — and moving it re-arms that guard against current code. It does **not** restore the
+frozen-at-hedge-submission property the `die` message claims ("validator changed after hedge
+submission"); b3751cc ended that, and no edit here brings it back. The honest reading of these two
+pins is now "unchanged since 3b93409", not "unchanged since the hedge".
+
+**Editing the hash is not the general repair.** An earlier attempt in this session moved these two
+pins inline, justified by a comment arguing that because the cluster copy is a `git pull` of this
+repo, pin and pinned file always travel together and a stale pin is therefore unreachable code
+rather than a guard. That reasoning is circular — the guard fires exactly when file and pin
+diverge, and updating the pin to match is what converts it into a no-op, which was then cited as
+evidence it had never been a guard. It was reverted. `verify_hash_bindings.py` has said the rule
+since 2026-07-28: *do not just update the hash*. What makes this instance legitimate is that the
+move is recorded, attributed to the commits that caused it, and scoped to a precondition rather
+than to evidence.
+
+**The four receipt bindings are NOT repaired and must not be.** `G2_GATE2_TARGET_RUNTIME_RECEIPT.json`
+(`PASS`), `g2-gate2-construction-20260719.json` (`CONSTRUCTION_PASS_RUNTIME_PENDING`), and both
+Gate-4 launch-code bindings assert that a gate *passed against specific code*. Rewriting those
+hashes would assert a PASS that never happened against the current files. They stay red pending an
+actual re-run — Gate-4's rides Step 2b. They were deliberately **not** added to the verifier's
+`KNOWN_PREEXISTING` list, which would silence them permanently; that call is still open, and is
+only correct if those receipts are closed history rather than about to become informative again.
+
+**The repair cascades, and the guard caught it.** `run_gate2_target_validator.sh` is itself pinned
+by its two callers — `sbatch_gate2_target_validator.sh:18` (batch) and
+`docs/orchestration/run_gate2_r4_detached.sh:11` (detached), both holding `EXPECTED_RUNNER_SHA`.
+Editing the two constants inside the runner changed the runner's own hash and broke both, which
+the extended verifier reported on the next run. Those were green immediately before this change,
+so the break was caused by the repair, not inherited. Both moved `3e439626…→a8ba8934…`. The
+cascade terminates there: nothing sha-pins either caller (`gate2-queue-hedge-armed-20260719.json`
+names `sbatch_gate2_target_validator.sh` in `submission_command` only, and records no hash for
+it). This is worth knowing before the next pin move — a re-pin is not a local edit, and without a
+walker the second-order break is invisible.
+
+Finding it also exposed a defect in the new guard: shell pins were deduped by *kind*, so two
+launchers pinning the same runner to the same hash collapsed into one report and half the
+remediation was hidden. Dedup is now per shell site; receipts still dedupe, where repeats are
+noise rather than separate edits.
+
+**Coverage.** fa06bb6 extended `verify_hash_bindings.py` to walk `EXPECTED_*_SHA` guards in `*.sh`,
+which is the class of pin nothing had ever checked — 10 of 15 resolve to files in the checkout
+(the rest are `/pscratch` data and built binaries). Its `SHELL_PIN_FLOOR` fails loudly if the
+parser ever stops matching, since a source-parsing collector that silently finds nothing would
+print ALL BINDINGS INTACT.
