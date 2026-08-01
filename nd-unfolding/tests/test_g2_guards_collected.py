@@ -104,8 +104,18 @@ class LeakageGuardIsAmongThem(unittest.TestCase):
     cannot pass while the guard that motivated it has been removed."""
 
     def test_leakage_guard_present(self):
+        """Assert on the EXECUTABLE guard, not on the word "leak". The file's own module
+        docstring says "truth<->reco feature leakage" on line 11, so a bare `(?i)leak` search
+        matches prose and would keep passing after the guard itself was deleted -- the exact
+        vacuous-pass shape this wrapper exists to prevent. Pin the two constructs the guard
+        cannot work without: pulling the truth-muon helper body out of the C++, and screening
+        that body against the reco getters."""
         src = open(os.path.join(PET, "test_g2_fullevent_dump_schema.py")).read()
-        self.assertRegex(src, r"(?i)leak", "no leakage guard found in the wrapped dump-schema guards")
+        self.assertIn('function_body(cpp, "inline TruthMuonKin GetTruthMuonKin("', src,
+                      "leakage guard no longer extracts the truth-muon helper body")
+        for bad in ("GetPhimu", "GetMuon4V", "GetMuonQP", "IsMinosMatchMuon"):
+            self.assertRegex(src, rf'"{bad}"',
+                             f"leakage guard no longer screens the truth muon against {bad}")
 
 
 if __name__ == "__main__":
