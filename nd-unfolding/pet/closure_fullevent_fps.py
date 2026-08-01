@@ -25,8 +25,18 @@ Changes made in the repair (physics untouched):
 
 Re-running this against the real G2 dump is required to restore the P5A closure receipt;
 that is blocked until the Perlmutter restore (2026-08-03).
+
+2026-07-31 (Gate-4 re-issue, RESTORE-2026-08-03.md Step 2b). `--json` writes a machine-readable
+report. Gate-4 COMPOSES this closure's verdict (`validate_pet_nominal_gate4.py --closure-report`)
+and until now had no way to read it: its `closure=` and `marginal=` arguments were never wired and
+the corresponding checks never executed. The report carries the two (pT,p‖) marginal histograms
+rather than only their L1, so the gate re-derives the L1 itself; and it carries `bkg_mode`,
+`is_synthetic_fixture` and the run's own CLI thresholds, so the gate can refuse the purity control,
+refuse the synthetic-fixture run, and refuse a run whose thresholds were loosened -- three
+substitutions the runbook previously only refused in prose.
 """
 import argparse
+import json
 import os
 import sys
 import zipfile
@@ -65,7 +75,13 @@ def parse_args():
     p.add_argument("--l1-max", type=float, default=0.10, help="marginal L1 pass threshold")
     p.add_argument("--push-med-tol", type=float, default=0.15,
                    help="|median(push) - 1| pass threshold")
+    p.add_argument("--json", default=None,
+                   help="write the machine-readable closure report here (Gate-4 consumes it as "
+                        "--closure-report)")
     return p.parse_args()
+
+
+REPORT_SCHEMA = "pet-fullevent-ordinary-closure-v1"
 
 
 def main():
@@ -138,14 +154,49 @@ def main():
           f"(closure: pseudo-data=MC -> should be small)")
     norm_ok = abs((wt * push)[sel].sum() / wt[sel].sum() - 1.0)
     print(f"[closure] normalization |sum(w*push)/sum(w) - 1| = {norm_ok:.4f}")
-    ok = (l1 < a.l1_max) and (abs(np.median(push) - 1.0) < a.push_med_tol) \
-        and np.all(np.isfinite(push))
+    push_median = float(np.median(push))
+    push_finite = bool(np.all(np.isfinite(push)))
+    ok = (l1 < a.l1_max) and (abs(push_median - 1.0) < a.push_med_tol) and push_finite
 
     tag = " [SYNTHETIC FIXTURE - PLUMBING ONLY, NOT THE P5A RECEIPT]" if is_synth else ""
     if a.bkg_mode == "purity":
         tag += " [purity control]"
     print(("ORDINARY CLOSURE PASS" if ok else
            "ORDINARY CLOSURE CHECK (inspect L1/push/norm)") + tag)
+
+    if a.json:
+        # The histograms go in whole (285 floats each), NOT just their L1: Gate-4 re-derives the L1
+        # from them, so a report cannot assert a closure quality its own spectra do not support.
+        report = {
+            "report_schema": REPORT_SCHEMA,
+            "verdict": "PASS" if ok else "CHECK",
+            "pass": bool(ok),
+            "bkg_mode": a.bkg_mode,
+            "is_synthetic_fixture": bool(is_synth),
+            "inputs": os.path.abspath(a.inputs),
+            "inputs_basename": os.path.basename(a.inputs),
+            "estimator_fingerprint": meta.get("estimator_fingerprint"),
+            "marginal_l1": l1,
+            "marginal_h_truth": [float(x) for x in H_truth.ravel()],
+            "marginal_h_reweighted": [float(x) for x in H_rw.ravel()],
+            "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
+            "edges_pt": [float(x) for x in edges_pt],
+            "edges_pparallel": [float(x) for x in edges_pz],
+            "push_median": push_median,
+            "push_mean": float(push.mean()),
+            "push_std": float(push.std()),
+            "push_finite": push_finite,
+            "normalization_dev": float(norm_ok),
+            "l1_max": float(a.l1_max),
+            "push_med_tol": float(a.push_med_tol),
+            "niter": int(a.niter), "epochs": int(a.epochs), "seed": int(a.seed),
+            "max_events": int(a.max_events), "n_pass_gen": int(sel.sum()),
+            "tag": tag.strip(),
+        }
+        with open(a.json, "w") as fh:
+            json.dump(report, fh, indent=2)
+            fh.write("\n")
+        print(f"[closure] wrote report {a.json}")
     return 0 if ok else 3
 
 

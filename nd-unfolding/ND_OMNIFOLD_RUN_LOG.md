@@ -2546,6 +2546,57 @@ MISMATCH on each edited file is the expected, correct signal that the receipt ne
 The implementer brief's constraint bullet telling the implementer to distrust it and hand-record
 sha256s has been withdrawn.
 
+### 2026-07-31 — Step 2b executed: Gate-4 re-issued, and the validator's dead checks are wired
+
+`p3f-pet-gate4-launch-code-gate-20260731.json` (`PASS_CODE_ONLY`, no physics re-run) supersedes the
+07-21 receipt, whose five hashes move to `files_at_issue` — preserved on the record, no longer live,
+no hash hand-edited. Eleven files bound: the original five re-frozen (the launcher and launcher_test
+byte-identical, re-frozen only because the receipt moved) plus six additive — B-1's `net.py` and
+`omnifold.py`, both closure scripts, `closure_b1_rate_injection.py`, `test_b1_normalization_fix.py`.
+Verifier `92 OK → 101 OK`; the three remaining mismatches are Gate-2's, including the
+`run_gate2_target_validator.sh` shell pin, which is a separate remediation site.
+
+**What the re-issue window was actually for.** Audit B2 (`AUDIT-FINDINGS-20260729-B.md` §B2,
+`AUDIT-FINDINGS-20260728.md` §B2) — reproduced by three independent dimensions. The Gate-4 CLI
+called `build_gate4_report` without `marginal=`, `normalization=`, `saturation_frac=` or `closure=`,
+and the builder **skipped** any component whose argument was `None`; `frozen_observed` was built by
+copying four `FROZEN` entries into the "observed" dict, so four of six freeze checks compared FROZEN
+to FROZEN; and it never populated `central_vector` or `reported_bin_mask`, so three more never ran.
+Result: `verdict PASS, 0 failed` on `|N(1,0.3)|` noise, with the receipt still embedding the
+tolerances a reader would assume were met. Two structural rules now hold: **absent evidence fails**
+(each component emits a named `<component>:evidence_supplied` check rather than being dropped), and
+**everything compared against FROZEN is read from the artifact** or recomputed from the dump.
+Consequences: the driver persists the run's real seed policy, grid, unit-normalized 285-cell central
+vector, reported mask, cap-saturation fraction and input sha256; both closure scripts gained `--json`
+reports that are now **required** validator arguments (which is also how the purity control and the
+2026-07-26 synthetic-fixture run stop being admissible as closure evidence in code rather than in
+prose); `z['target']` is read at last and `refinement_is_learned_production` gated, so a Delta
+sklearn-refined result cannot be validated as the publication nominal; and `--n-full` stops being an
+optional flag whose omission silently skipped `index:in_range`. The four mutations the §4 audit found
+uncaught (driver `niter`, driver `train_events`, validator `epochs`, garbage grid) are all covered
+now.
+
+**Retired, deliberately.** `check_normalization` — the truth-level `sum(w*push)/sum(w) ~ 1`
+primitive — and `normalization_dev_max` with it. It had no caller, its target is acceptance-dependent
+(`1 + <a>(R-1) ≈ 1.08`, not 1), and it survived the 07-29 patch only as a binding-preserving shim for
+the two frozen `validator_test` cases that pinned its signature. Step 2b reserved that decision for
+this window.
+
+**Also landed:** the `FINDING-20260730` fail-closed non-finite event-feature guard, naming the
+offending column, screening only the *selected* columns (so it does not fire on today's `(pt, p‖)`
+schema despite the dump's ~1,700 non-finite `q3` rows, and does fire the moment the block widens) —
+plus a finiteness assert at the head of `assert_no_truth_leakage`, which is a *dissimilarity* test
+and so used to pass on an all-NaN block. That file is Gate-2-bound; Step 2 owns its binding.
+
+**What this re-issue does NOT have.** No independent second reviewer — the 07-21 issue claimed an agy
+red-team PASS; this one has only its own adversarial test coverage. B-2's citation was checked and is
+**unrecoverable**: the 07-21 build capture is absent and there are zero 07-21 files under either
+`runs/` directory, so it is dropped rather than carried forward (Step 6 is the recovery path). Owed:
+the measured `fold_forward_ratio_dev_max` (needs the real R), the `stress_closure_muon.py` **run**
+(the script is bound and reports, but the vendored PET net cannot be constructed under this host's TF
+2.16/Keras 3 — `net.py:148` uses the Keras-2 idiom; Perlmutter TF 2.15 and Delta TF 2.14 both
+satisfy it), and the ordinary closure receipt (Step 3).
+
 ### 2026-07-29 — restore runbook gains Step 2b (Gate-4 re-issue); a Step 6 claim corrected
 
 **Step 2b added.** The B1 fix voids bindings in **three** receipts, and the runbook owned only

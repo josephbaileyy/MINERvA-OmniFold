@@ -155,6 +155,105 @@ def write_npz(td, arrays, name="G2_b1.npz"):
     return p
 
 
+def _sha256(path):
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def write_closure_reports(td, ordinary_over=None, stress_over=None):
+    """Write the two closure reports Gate-4 composes, in the schema the two scripts' `--json` emits.
+
+    Gate-4 requires both. Its `closure=` and `marginal=` arguments were never wired before the
+    2026-07-31 re-issue, so `closure:ordinary_pass`, `closure:stress_recoil_blind` and
+    `closure:stress_fullevent_recovers` never executed at all. Returns (ordinary_path, stress_path).
+    """
+    import json as _json
+    h = np.random.default_rng(0).random(g4.N_CELLS)
+    ordinary = {"report_schema": g4.ORDINARY_CLOSURE_SCHEMA, "verdict": "PASS", "pass": True,
+                "bkg_mode": g4.BKG_MODE, "is_synthetic_fixture": False, "marginal_l1": 0.0,
+                "marginal_h_truth": [float(x) for x in h],
+                "marginal_h_reweighted": [float(x) for x in h],
+                "edges_pt": g4.FROZEN["edges_pt"],
+                "edges_pparallel": g4.FROZEN["edges_pparallel"],
+                "push_median": 1.0, "push_finite": True, "l1_max": 0.10, "push_med_tol": 0.15}
+    stress = {"report_schema": g4.STRESS_CLOSURE_SCHEMA, "verdict": "PASS", "pass": True,
+              "recoil_only_fails_to_recover": True, "fullevent_recovers": True}
+    ordinary.update(ordinary_over or {})
+    stress.update(stress_over or {})
+    op = os.path.join(td, "ordinary_closure.json")
+    sp = os.path.join(td, "stress_closure.json")
+    for path, payload in ((op, ordinary), (sp, stress)):
+        with open(path, "w") as fh:
+            _json.dump(payload, fh)
+    return op, sp
+
+
+def driver_spectra(arrays, imc, push):
+    """The reporting spectra the DRIVER would persist, via the driver's own function.
+
+    Deliberately fed `mc.weight`-shaped input -- the dump's raw signal weights rescaled to sum to
+    1e6, as the DataLoader does in place -- while the validator recomputes from the raw dump
+    weights. Both sides normalize, so agreement here is evidence the comparison is scale-free rather
+    than evidence the two sides share a scale."""
+    import train_fullevent_nominal as drv
+    w_raw = np.asarray(arrays["w_truth"], np.float64)[imc]
+    w_mc = w_raw * (1e6 / w_raw.sum())
+    return drv.reporting_spectra(np.asarray(arrays["truth_scalars"])[imc], w_mc, push,
+                                 np.asarray(arrays["pass_truth"])[imc])
+
+
+def driver_npz(td, arrays, imc, push, name="nominal.npz", target=None, **over):
+    """A weights npz shaped exactly as the post-re-issue driver writes one.
+
+    Every key here exists because a Gate-4 check reads it; audit B2's compounding finding was that
+    the artifact carried none of the configuration, so `freeze:seed_policy` was unfalsifiable and the
+    central-vector / reported-mask / cap-saturation checks had no artifact to read."""
+    imc = np.asarray(imc)
+    push = np.asarray(push, np.float64)
+    w_truth = np.asarray(arrays["w_truth"], np.float64)[imc]
+    mask = np.asarray(arrays["pass_reco"])[imc].astype(bool)
+    cv, rep_mask = driver_spectra(arrays, imc, push)
+    if target is None:
+        target = {"target_mode": "negweight-refined",
+                  "refinement": "stay-positive (arXiv:2505.03724)",
+                  "refinement_is_learned_production": True,
+                  "signed_target_hash": "b" * 64, "pot_scale": 0.22,
+                  "refined_sum": 1.0e5, "refined_min": 0.0}
+    kw = dict(weights_push=push, mc_indices=imc,
+              estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
+              fold_forward_sum_w_push_reco=np.asarray((w_truth[mask] * push[mask]).sum()),
+              fold_forward_sum_w_reco=np.asarray(w_truth[mask].sum()),
+              step1_class_ratio=np.asarray(float(_fixture_R(arrays))),
+              bootstrap_seed=np.asarray(-1),
+              seed_policy=np.asarray(dict(g4.FROZEN["seed_policy"]), dtype=object),
+              edges_pt=fed.CANONICAL_PT_EDGES, edges_pparallel=fed.CANONICAL_PPARALLEL_EDGES,
+              bin_order=np.asarray(g4.FROZEN["bin_order"]),
+              central_vector=cv, reported_bin_mask=rep_mask,
+              cap_saturation_frac=np.asarray(
+                  g4.cap_saturation_frac_from_push(push)),
+              target=np.asarray(target, dtype=object))
+    kw.update(over)
+    p = os.path.join(td, name)
+    np.savez(p, **kw)
+    return p
+
+
+def _fixture_R(arrays):
+    """R read off the fixture itself, never from the loader -- the same non-circularity rule the
+    rest of this file follows."""
+    pot = float(np.asarray(arrays["pot_scale"]).item())
+    n_data = int(np.asarray(arrays["measured_pc"]).shape[0])
+    w_bkg = np.asarray(arrays["w_bkg"], np.float64)
+    w_truth = np.asarray(arrays["w_truth"], np.float64)
+    pr = np.asarray(arrays["pass_reco"]).astype(bool)
+    return fed.step1_class_ratio(n_data=n_data, sum_w_bkg_raw=float(w_bkg.sum()),
+                                 sum_w_mc_reco_raw=float(w_truth[pr].sum()), pot_scale=pot)
+
+
 def build(td, arrays=None, **kw):
     arrays = g2_arrays_with_R() if arrays is None else arrays
     p = write_npz(td, arrays)
@@ -511,11 +610,21 @@ class Gate4FoldForward(unittest.TestCase):
 
     def test_truth_level_target_of_one_is_not_what_is_gated(self):
         """§2d's own correction: over the full truth population a correct unfold gives
-        1 + <a>(R-1), not 1 and not R. Confirm the legacy primitive still defaults to 1 (the
-        frozen launch-code test binds that) while the gate does NOT use it."""
-        self.assertTrue(g4.check_normalization(100.0, 100.0)[0])
-        self.assertFalse(g4.check_normalization(110.0, 100.0)[0])
-        self.assertTrue(g4.check_normalization(113.5, 100.0, target_ratio=1.135)[0])
+        1 + <a>(R-1), not 1 and not R.
+
+        The legacy `check_normalization` primitive that asserted `ratio ~ 1` was RETIRED at the
+        2026-07-31 Gate-4 re-issue (RESTORE-2026-08-03.md Step 2b explicitly reserved that decision
+        for the re-issue). It survived the 07-29 patch only as a binding-preserving shim for the
+        frozen launch-code test that pinned its signature; it had no caller of its own. What must
+        stay true is the physics: the truth-level `ratio ~ 1` statement is NOT the gate, and the
+        reco-level ratio against R is."""
+        self.assertFalse(hasattr(g4, "check_normalization"),
+                         "the retired truth-level primitive is back; it must not be wired")
+        self.assertNotIn("normalization_dev_max", g4.FROZEN["tolerances"],
+                         "the receipt would embed a tolerance no check uses")
+        # a truth-level ratio of exactly 1 is what a rate-ERASING result gives at reco level
+        self.assertFalse(g4.check_fold_forward_ratio(100.0, 100.0, 1.135)[0])
+        self.assertTrue(g4.check_fold_forward_ratio(113.5, 100.0, 1.135)[0])
 
     def test_tolerance_has_power_against_the_defect_and_admits_the_floor(self):
         """The provisional tolerance must sit between the structural floor and the defect size.
@@ -539,7 +648,13 @@ class Gate4FoldForward(unittest.TestCase):
             (113.5, 100.0, 1.135), (113.5, 100.0, 1.30))[0])
 
     def test_report_wires_the_check_into_the_verdict(self):
-        """B2 was that a correct assertion never executed. Assert it now reaches the verdict."""
+        """B2 was that a correct assertion never executed. Assert it now reaches the verdict.
+
+        The report is assembled with ONLY the fold-forward evidence, so the overall verdict is FAIL
+        either way -- every other component correctly reports its evidence as absent, which is the
+        08-03 change. What this pins is that the fold-forward COMPONENT tracks the arithmetic: it is
+        present in `component_verdicts` in both arms, True for a rate-recovering result and False for
+        a rate-erasing one."""
         common = dict(result_meta={"path": "/x/nom.npz", "sha256": "abc"},
                       frozen_observed={"estimator_fingerprint": g4.ESTIMATOR_FINGERPRINT,
                                        "bkg_mode": g4.BKG_MODE,
@@ -547,12 +662,29 @@ class Gate4FoldForward(unittest.TestCase):
                                        "edges_pparallel": g4.FROZEN["edges_pparallel"],
                                        "bin_order": g4.FROZEN["bin_order"],
                                        "seed_policy": g4.FROZEN["seed_policy"]})
-        good, v_good = g4.build_gate4_report(fold_forward=(113.5, 100.0, 1.135), **common)
-        self.assertTrue(v_good)
-        self.assertIn("fold_forward", good["component_verdicts"])
+        good, _ = g4.build_gate4_report(fold_forward=(113.5, 100.0, 1.135), **common)
+        self.assertTrue(good["component_verdicts"]["fold_forward"])
         bad, v_bad = g4.build_gate4_report(fold_forward=(100.0, 100.0, 1.135), **common)
         self.assertFalse(v_bad)
         self.assertFalse(bad["component_verdicts"]["fold_forward"])
+
+    def test_a_report_with_no_evidence_at_all_cannot_pass(self):
+        """The B2 receipt read `verdict PASS, n_failed 0` because every component whose argument was
+        None was DROPPED. Hand the builder nothing but a valid freeze and require a FAIL."""
+        payload, verdict = g4.build_gate4_report(
+            result_meta={"path": "/x/nom.npz", "sha256": "abc"},
+            frozen_observed={"estimator_fingerprint": g4.ESTIMATOR_FINGERPRINT,
+                             "bkg_mode": g4.BKG_MODE,
+                             "edges_pt": g4.FROZEN["edges_pt"],
+                             "edges_pparallel": g4.FROZEN["edges_pparallel"],
+                             "bin_order": g4.FROZEN["bin_order"],
+                             "seed_policy": g4.FROZEN["seed_policy"],
+                             "central_vector": np.ones(g4.N_CELLS),
+                             "reported_bin_mask": np.ones(g4.N_CELLS, bool)})
+        self.assertFalse(verdict)
+        self.assertGreater(payload["n_failed"], 0)
+        self.assertTrue(all(not v for k, v in payload["component_verdicts"].items()
+                            if k != "freeze"))
 
     def test_validator_recomputes_the_sums_from_the_dump(self):
         """The independence property: the validator's reference sums come from the G2 dump, not
@@ -680,6 +812,20 @@ class Gate4DriverContract(unittest.TestCase):
         with self.assertRaises(SystemExit):
             g4.main(["--nominal-weights", "/nonexistent.npz", "--work", "/tmp/x.json"])
 
+    def test_validator_cli_requires_both_closure_reports(self):
+        """Audit B2: `closure=` was never wired, so the two closure verdicts Gate-4 claims to
+        compose were evaluated by nothing. Both reports are now required argv, which is the only
+        way a caller cannot forget them."""
+        with tempfile.TemporaryDirectory() as td:
+            arrays = g2_arrays_with_R(ns=40)
+            dump = write_npz(td, arrays)
+            wpath = driver_npz(td, arrays, np.arange(40), np.full(40, 1.135))
+            op, sp = write_closure_reports(td)
+            work = os.path.join(td, "w.json")
+            for argv in ([], ["--closure-report", op], ["--stress-report", sp]):
+                with self.assertRaises(SystemExit):
+                    g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work] + argv)
+
     def test_validator_refuses_a_pre_b1_weights_npz(self):
         """The failure mode this whole section exists to prevent: a weights file with no
         fold-forward inputs must abort, not produce a green receipt with the check skipped."""
@@ -688,8 +834,10 @@ class Gate4DriverContract(unittest.TestCase):
             np.savez(old, weights_push=np.ones(10), mc_indices=np.arange(10),
                      estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE)
             dump = write_npz(td, g2_arrays_with_R(ns=40))
+            op, sp = write_closure_reports(td)
             with self.assertRaises(SystemExit) as cm:
                 g4.main(["--nominal-weights", old, "--inputs", dump,
+                         "--closure-report", op, "--stress-report", sp,
                          "--work", os.path.join(td, "w.json")])
             self.assertIn("fold_forward", str(cm.exception))
 
@@ -702,18 +850,35 @@ class Gate4DriverContract(unittest.TestCase):
             arrays = g2_arrays_with_R(ns=40)
             right = write_npz(td, arrays, name="G2_right.npz")
             wrong = write_npz(td, arrays, name="G2_wrong.npz")   # same content, different identity
-            wpath = os.path.join(td, "nominal.npz")
-            np.savez(wpath, weights_push=np.full(40, 1.1), mc_indices=np.arange(40),
-                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
-                     fold_forward_sum_w_push_reco=np.asarray(1.0),
-                     fold_forward_sum_w_reco=np.asarray(1.0),
-                     step1_class_ratio=np.asarray(1.135),
-                     bootstrap_seed=np.asarray(-1),
-                     inputs_path=np.asarray(right))
+            wpath = driver_npz(td, arrays, np.arange(40), np.full(40, 1.1),
+                               inputs_path=np.asarray(right))
+            op, sp = write_closure_reports(td)
             with self.assertRaises(SystemExit) as cm:
                 g4.main(["--nominal-weights", wpath, "--inputs", wrong,
+                         "--closure-report", op, "--stress-report", sp,
                          "--work", os.path.join(td, "w.json")])
             self.assertIn("not the dump this result was trained on", str(cm.exception))
+
+    def test_validator_rejects_a_dump_with_the_right_name_and_wrong_content(self):
+        """The basename check cannot see a substitution, and the 07-29 patch said so in a comment:
+        "a content-level guarantee needs the Gate-2 receipt's NPZ sha256 and belongs to the
+        re-issue". This is that. The driver persists `inputs_sha256`; the validator hashes the file
+        it was handed."""
+        with tempfile.TemporaryDirectory() as td:
+            arrays = g2_arrays_with_R(ns=40)
+            sub = os.path.join(td, "other"); os.makedirs(sub)
+            trained_on = write_npz(td, arrays, name="G2_same_name.npz")
+            substituted = write_npz(sub, g2_arrays_with_R(ns=40, seed=9),
+                                    name="G2_same_name.npz")   # same basename, other content
+            wpath = driver_npz(td, arrays, np.arange(40), np.full(40, 1.1),
+                               inputs_path=np.asarray(trained_on),
+                               inputs_sha256=np.asarray(_sha256(trained_on)))
+            op, sp = write_closure_reports(td)
+            with self.assertRaises(SystemExit) as cm:
+                g4.main(["--nominal-weights", wpath, "--inputs", substituted,
+                         "--closure-report", op, "--stress-report", sp,
+                         "--work", os.path.join(td, "w.json")])
+            self.assertIn("sha256", str(cm.exception))
 
     def test_skipping_the_check_cannot_produce_a_green_verdict(self):
         """Regression, adversarial review of b3751cc. --allow-missing-fold-forward previously
@@ -726,8 +891,10 @@ class Gate4DriverContract(unittest.TestCase):
             np.savez(old, weights_push=np.ones(10), mc_indices=np.arange(10),
                      estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE)
             dump = write_npz(td, g2_arrays_with_R(ns=40))
+            op, sp = write_closure_reports(td)
             work = os.path.join(td, "w.json")
             rc = g4.main(["--nominal-weights", old, "--inputs", dump, "--work", work,
+                          "--closure-report", op, "--stress-report", sp,
                           "--allow-missing-fold-forward"])
             with open(work) as fh:
                 receipt = json.load(fh)
@@ -743,7 +910,11 @@ class Gate4DriverContract(unittest.TestCase):
         import train_fullevent_nominal as drv
         src = open(drv.__file__).read()
         for key in ("fold_forward_sum_w_push_reco", "fold_forward_sum_w_reco",
-                    "step1_class_ratio", "bootstrap_seed", "inputs_path"):
+                    "step1_class_ratio", "bootstrap_seed", "inputs_path",
+                    # added at the 2026-07-31 re-issue: without these the freeze compared FROZEN
+                    # to FROZEN and three freeze checks had no artifact to read (audit B2)
+                    "inputs_sha256", "seed_policy", "edges_pt", "edges_pparallel", "bin_order",
+                    "central_vector", "reported_bin_mask", "cap_saturation_frac"):
             self.assertIn(key, src, f"driver no longer persists {key!r}")
 
     def test_validator_rejects_a_bootstrap_replica(self):
@@ -752,41 +923,30 @@ class Gate4DriverContract(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             arrays = g2_arrays_with_R(ns=40)
             dump = write_npz(td, arrays)
-            wpath = os.path.join(td, "replica.npz")
-            np.savez(wpath, weights_push=np.ones(40), mc_indices=np.arange(40),
-                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
-                     fold_forward_sum_w_push_reco=np.asarray(1.0),
-                     fold_forward_sum_w_reco=np.asarray(1.0),
-                     step1_class_ratio=np.asarray(1.135),
-                     bootstrap_seed=np.asarray(99))
+            wpath = driver_npz(td, arrays, np.arange(40), np.ones(40),
+                               name="replica.npz", bootstrap_seed=np.asarray(99))
+            op, sp = write_closure_reports(td)
             with self.assertRaises(SystemExit) as cm:
                 g4.main(["--nominal-weights", wpath, "--inputs", dump,
+                         "--closure-report", op, "--stress-report", sp,
                          "--work", os.path.join(td, "w.json")])
             self.assertIn("bootstrap_seed", str(cm.exception))
 
     def test_end_to_end_receipt_carries_the_fold_forward_verdict(self):
-        """Driver-shaped npz -> validator CLI -> receipt, with the check actually firing."""
+        """Driver-shaped npz -> validator CLI -> receipt, with every check actually firing."""
         import json
         arrays = g2_arrays_with_R(target_R=1.28, ns=60)
         with tempfile.TemporaryDirectory() as td:
             dump = write_npz(td, arrays)
             imc = np.arange(60)
-            push = np.full(60, 1.28)
-            w_truth = np.asarray(arrays["w_truth"], np.float64)[imc]
-            mask = np.asarray(arrays["pass_reco"])[imc].astype(bool)
-            wpath = os.path.join(td, "nominal.npz")
-            np.savez(wpath, weights_push=push, mc_indices=imc,
-                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
-                     fold_forward_sum_w_push_reco=np.asarray((w_truth[mask] * push[mask]).sum()),
-                     fold_forward_sum_w_reco=np.asarray(w_truth[mask].sum()),
-                     step1_class_ratio=np.asarray(1.28),
-                     bootstrap_seed=np.asarray(-1))
+            wpath = driver_npz(td, arrays, imc, np.full(60, 1.28))
+            op, sp = write_closure_reports(td)
             work = os.path.join(td, "gate4.json")
             rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
-                          "--n-full", "60"])
+                          "--closure-report", op, "--stress-report", sp, "--n-full", "60"])
             with open(work) as fh:
                 receipt = json.load(fh)
-        self.assertEqual(rc, 0)
+        self.assertEqual(rc, 0, [c for c in receipt["checks"] if not c["ok"]])
         self.assertEqual(receipt["verdict"], "PASS")
         self.assertTrue(receipt["component_verdicts"]["fold_forward"])
         self.assertTrue(receipt["component_verdicts"]["fold_forward_independence"])
@@ -794,30 +954,296 @@ class Gate4DriverContract(unittest.TestCase):
         names = {c["name"] for c in receipt["checks"]}
         self.assertIn("normalization:fold_forward_reco_ratio", names)
 
+    def test_end_to_end_receipt_evaluates_every_component(self):
+        """The B2 receipt was `15 checks, 0 failed` with four physics components and three freeze
+        checks absent. Pin the full component set and pin that NO check reports absent evidence on a
+        complete submission -- an `evidence_supplied` failure anywhere means the gate abstained."""
+        import json
+        arrays = g2_arrays_with_R(target_R=1.28, ns=60)
+        with tempfile.TemporaryDirectory() as td:
+            dump = write_npz(td, arrays)
+            wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28))
+            op, sp = write_closure_reports(td)
+            work = os.path.join(td, "gate4.json")
+            g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                     "--closure-report", op, "--stress-report", sp])
+            with open(work) as fh:
+                receipt = json.load(fh)
+        for component in ("freeze", "weights", "index_order", "marginal", "fold_forward",
+                          "fold_forward_independence", "spectra_independence", "cap", "target",
+                          "closure", "closure_provenance"):
+            self.assertTrue(receipt["component_verdicts"][component], component)
+        self.assertEqual([c for c in receipt["checks"] if c["name"].endswith(":evidence_supplied")],
+                         [])
+        names = {c["name"] for c in receipt["checks"]}
+        for expected in ("freeze:central_vector_len", "freeze:reported_mask_len",
+                         "freeze:seed_policy", "marginal:pt_ppar_l1", "cap:saturation_frac",
+                         "closure:ordinary_pass", "closure:stress_recoil_blind",
+                         "closure:stress_fullevent_recovers",
+                         "closure:ordinary_not_synthetic_fixture",
+                         "target:refinement_is_learned_production",
+                         "spectra:driver_validator_central_vector_agree"):
+            self.assertIn(expected, names)
+
+    def test_end_to_end_refuses_a_synthetic_fixture_closure(self):
+        """RESTORE Step 3: the 2026-07-26 Delta run passed on random data and is tagged
+        `[SYNTHETIC FIXTURE - PLUMBING ONLY, NOT THE P5A RECEIPT]`. The gate must refuse it as
+        evidence rather than relying on a human reading the tag."""
+        import json
+        arrays = g2_arrays_with_R(target_R=1.28, ns=60)
+        with tempfile.TemporaryDirectory() as td:
+            dump = write_npz(td, arrays)
+            wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28))
+            op, sp = write_closure_reports(td, ordinary_over={"is_synthetic_fixture": True})
+            work = os.path.join(td, "gate4.json")
+            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                          "--closure-report", op, "--stress-report", sp])
+            with open(work) as fh:
+                receipt = json.load(fh)
+        self.assertEqual(rc, 1)
+        self.assertFalse(receipt["component_verdicts"]["closure_provenance"])
+
+    def test_end_to_end_refuses_an_off_policy_seed_config(self):
+        """Audit B2's failure scenario, end to end: `--niter 1 --epochs 2` are plain CLI args on the
+        driver, cross-checked against nothing, and the validator recorded its own constant."""
+        import json
+        arrays = g2_arrays_with_R(target_R=1.28, ns=60)
+        offpolicy = dict(g4.FROZEN["seed_policy"]); offpolicy["niter"] = 1; offpolicy["epochs"] = 2
+        with tempfile.TemporaryDirectory() as td:
+            dump = write_npz(td, arrays)
+            wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28),
+                               seed_policy=np.asarray(offpolicy, dtype=object))
+            op, sp = write_closure_reports(td)
+            work = os.path.join(td, "gate4.json")
+            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                          "--closure-report", op, "--stress-report", sp])
+            with open(work) as fh:
+                receipt = json.load(fh)
+        self.assertEqual(rc, 1)
+        self.assertFalse(receipt["component_verdicts"]["freeze"])
+        self.assertFalse([c for c in receipt["checks"]
+                          if c["name"] == "freeze:seed_policy"][0]["ok"])
+
+    def test_end_to_end_refuses_a_reshaped_central_vector(self):
+        """The freeze exists so a later result cannot silently reshape the 285-cell vector. The
+        checks read the DRIVER's array, so a driver that persists a different-length one must fail
+        -- and the independence check must notice it does not match the dump."""
+        import json
+        arrays = g2_arrays_with_R(target_R=1.28, ns=60)
+        with tempfile.TemporaryDirectory() as td:
+            dump = write_npz(td, arrays)
+            wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28),
+                               central_vector=np.ones(g4.N_CELLS - 1) / (g4.N_CELLS - 1))
+            op, sp = write_closure_reports(td)
+            work = os.path.join(td, "gate4.json")
+            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                          "--closure-report", op, "--stress-report", sp])
+            with open(work) as fh:
+                receipt = json.load(fh)
+        self.assertEqual(rc, 1)
+        self.assertFalse(receipt["component_verdicts"]["freeze"])
+        self.assertFalse(receipt["component_verdicts"]["spectra_independence"])
+
     def test_end_to_end_receipt_fails_a_null_estimator(self):
         """`push = ones` passes the ordinary closure (audit §3). It must NOT pass Gate-4 now."""
         import json
         arrays = g2_arrays_with_R(target_R=1.28, ns=60)
         with tempfile.TemporaryDirectory() as td:
             dump = write_npz(td, arrays)
-            imc = np.arange(60)
-            push = np.ones(60)
-            w_truth = np.asarray(arrays["w_truth"], np.float64)[imc]
-            mask = np.asarray(arrays["pass_reco"])[imc].astype(bool)
-            wpath = os.path.join(td, "null.npz")
-            np.savez(wpath, weights_push=push, mc_indices=imc,
-                     estimator_fingerprint=g4.ESTIMATOR_FINGERPRINT, bkg_mode=g4.BKG_MODE,
-                     fold_forward_sum_w_push_reco=np.asarray((w_truth[mask] * push[mask]).sum()),
-                     fold_forward_sum_w_reco=np.asarray(w_truth[mask].sum()),
-                     step1_class_ratio=np.asarray(1.28),
-                     bootstrap_seed=np.asarray(-1))
+            wpath = driver_npz(td, arrays, np.arange(60), np.ones(60), name="null.npz")
+            op, sp = write_closure_reports(td)
             work = os.path.join(td, "gate4.json")
-            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work])
+            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                          "--closure-report", op, "--stress-report", sp])
             with open(work) as fh:
                 receipt = json.load(fh)
         self.assertEqual(rc, 1)
         self.assertEqual(receipt["verdict"], "FAIL")
         self.assertFalse(receipt["component_verdicts"]["fold_forward"])
+
+
+class Gate4ArtifactContract(unittest.TestCase):
+    """The three cross-side constants and two recomputations the 2026-07-31 re-issue added.
+
+    Each exists because the corresponding Gate-4 check reads the ARTIFACT rather than FROZEN. That
+    is what makes the check falsifiable -- and it is also what creates a new way to be wrong: the
+    two sides can drift apart. These pin them together WITHOUT letting either side read the other
+    (which would put the self-comparison back)."""
+
+    def test_driver_bin_order_matches_the_frozen_bin_order(self):
+        import train_fullevent_nominal as drv
+        self.assertEqual(drv.BIN_ORDER, g4.FROZEN["bin_order"],
+                         "driver and validator disagree on the ravel convention; the freeze check "
+                         "would fail every correct run")
+
+    def test_frozen_logit_cap_matches_the_engine(self):
+        """FROZEN mirrors omnifold.REWEIGHT_LOGIT_CAP rather than importing it (importing pulls
+        TensorFlow and this validator is login-safe). Read the engine's SOURCE so the mirror cannot
+        go stale silently -- a cap of 30 read against an engine clipping at 25 would report zero
+        saturation on a fully saturated result."""
+        import re
+        src = open(os.path.join(ROOT, "omnifold_nn", "omnifold", "omnifold.py")).read()
+        m = re.search(r"^REWEIGHT_LOGIT_CAP\s*=\s*([0-9.]+)", src, re.M)
+        self.assertIsNotNone(m, "cannot find REWEIGHT_LOGIT_CAP in the engine")
+        self.assertEqual(float(m.group(1)), float(g4.FROZEN["reweight_logit_cap"]))
+
+    def test_cap_saturation_detects_a_saturated_push(self):
+        cap = g4.FROZEN["reweight_logit_cap"]
+        clean = np.full(1000, 1.5)
+        self.assertEqual(g4.cap_saturation_frac_from_push(clean), 0.0)
+        sat = clean.copy()
+        sat[:5] = np.exp(cap)                       # exactly at the cap
+        sat[5:8] = np.exp(-cap)                     # and at the lower cap
+        self.assertAlmostEqual(g4.cap_saturation_frac_from_push(sat), 8 / 1000.0, places=12)
+        self.assertFalse(g4.check_cap_sensitivity(g4.cap_saturation_frac_from_push(sat))[0])
+        self.assertTrue(g4.check_cap_sensitivity(g4.cap_saturation_frac_from_push(clean))[0])
+
+    def test_cap_saturation_survives_float32_storage(self):
+        """`weights_push` is stored float32, so log(float32(exp(30))) is 30 to ~1e-6 and an exact
+        `>=` would report zero saturation on a fully saturated result."""
+        cap = g4.FROZEN["reweight_logit_cap"]
+        sat32 = np.full(100, np.exp(cap), dtype=np.float32)
+        self.assertAlmostEqual(g4.cap_saturation_frac_from_push(sat32), 1.0, places=12)
+
+    def test_driver_and_validator_agree_on_the_reporting_spectra(self):
+        """The two-sided check: the driver histograms `mc.weight` (rescaled to 1e6 in place) and the
+        validator the dump's raw `w_truth`. Agreement is evidence the comparison is scale-free."""
+        arrays = g2_arrays_with_R(target_R=1.28, ns=80)
+        imc = np.arange(80)
+        push = np.linspace(0.8, 1.8, 80)
+        d_cv, d_mask = driver_spectra(arrays, imc, push)
+        with tempfile.TemporaryDirectory() as td:
+            path = write_npz(td, arrays)
+            v_cv, v_mask, telem = g4.nominal_spectra_from_dump(path, push, imc)
+        self.assertEqual(v_cv.shape, (g4.N_CELLS,))
+        self.assertEqual(v_mask.shape, (g4.N_CELLS,))
+        np.testing.assert_allclose(v_cv, d_cv, rtol=0, atol=1e-9)
+        np.testing.assert_array_equal(v_mask, d_mask)
+        self.assertTrue(g4.check_spectra_independence((v_cv, v_mask, 0.0), (d_cv, d_mask, 0.0))[0])
+        self.assertEqual(telem["n_pass_truth_subsample"], int(arrays["pass_truth"][imc].sum()))
+
+    def test_independence_check_catches_a_reshuffled_central_vector(self):
+        """A permuted central vector has the same length, sum and finiteness, so only a
+        recomputation can see it. This is the check that makes the freeze's order clause real."""
+        arrays = g2_arrays_with_R(target_R=1.28, ns=80)
+        imc = np.arange(80)
+        push = np.linspace(0.8, 1.8, 80)
+        d_cv, d_mask = driver_spectra(arrays, imc, push)
+        shuffled = d_cv.copy()
+        np.random.default_rng(3).shuffle(shuffled)
+        self.assertAlmostEqual(float(shuffled.sum()), float(d_cv.sum()), places=12)
+        self.assertFalse(
+            g4.check_spectra_independence((d_cv, d_mask, 0.0), (shuffled, d_mask, 0.0))[0])
+
+    def test_independence_check_catches_a_driver_cap_fraction_that_does_not_match(self):
+        cv = np.ones(g4.N_CELLS) / g4.N_CELLS
+        m = np.ones(g4.N_CELLS, bool)
+        self.assertFalse(g4.check_spectra_independence((cv, m, 0.0), (cv, m, 0.5))[0])
+
+    def test_spectra_recomputation_rejects_a_non_frozen_grid(self):
+        """The dump's own edges are asserted against the canonical grid before its truth scalars are
+        histogrammed against FROZEN's -- otherwise a dump on a different grid would be silently
+        reported as agreeing with the frozen one."""
+        arrays = dict(g2_arrays_with_R(ns=40))
+        arrays["edges_0"] = np.linspace(0.0, 4.5, 16)          # paper-ish grid, not the FPS grid
+        with tempfile.TemporaryDirectory() as td:
+            path = write_npz(td, arrays)
+            with self.assertRaises(ValueError):
+                g4.nominal_spectra_from_dump(path, np.ones(40), np.arange(40))
+
+
+class EventFeatureFiniteGuard(unittest.TestCase):
+    """FINDING-20260730-event-feature-nonfinite.md, found by execution (Delta job 20599606 died
+    after 49m45s), fixed in this window because the file is Gate-2-bound and Step 2b is when it is
+    open. ONE non-finite value in a selected column NaNs that column for EVERY row via the
+    normalization statistic, and step 2 reports `Last val loss nan` naming neither column nor cause.
+    """
+
+    def _scalars(self, n=50, seed=1):
+        return _scal(np.random.default_rng(seed), n)
+
+    def test_clean_scalars_pass(self):
+        r, t, d = self._scalars(), self._scalars(seed=2), self._scalars(30, seed=3)
+        er, et, ed, meta = fed.build_event_features(r, t, d)
+        for blk in (er, et, ed):
+            self.assertTrue(np.all(np.isfinite(blk)))
+        self.assertEqual(meta["n_evt"], 2)
+
+    def test_one_nan_in_a_selected_truth_column_fails_and_names_it(self):
+        """The exact observed defect: `truth_scalars` col 1 with a single NaN among pass_truth rows.
+        The message must name the column, because the NaN loss did not."""
+        t = self._scalars(seed=2); t[7, fed.SCALAR_COLS["pparallel"]] = np.nan
+        with self.assertRaises(ValueError) as cm:
+            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+        msg = str(cm.exception)
+        self.assertIn("pparallel", msg)
+        self.assertIn("truth_scalars", msg)
+        self.assertIn("EVT-FINITE", msg)
+
+    def test_the_guard_is_not_a_nan_to_num(self):
+        """0 is the cloud path's pad sentinel but the BLOCK MEAN of a z-scored event feature, so
+        quiet filling would place undefined events at the centre of the conditioning distribution.
+        Assert it RAISES rather than returning something finite."""
+        t = self._scalars(seed=2); t[3, 0] = np.inf
+        with self.assertRaises(ValueError):
+            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+
+    def test_a_nan_outside_the_selected_columns_is_tolerated(self):
+        """The real dump's `q3` (col 3) carries ~1,700 non-finite rows and the adopted schema reads
+        cols 0,1. The guard must not fail the CURRENT production configuration -- the defect is
+        latent, and a guard that fires today would be a false alarm, not a fix."""
+        t = self._scalars(seed=2); t[5, fed.SCALAR_COLS["q3"]] = np.nan
+        _er, et, _ed, _m = fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+        self.assertTrue(np.all(np.isfinite(et)))
+
+    def test_a_nan_outside_the_selected_columns_fails_once_the_block_widens(self):
+        """...and it must fire the moment the block widens, which is what the publication estimator
+        requires (FULL_EVENT_FEATURE_CONTRACT.md:98-101)."""
+        t = self._scalars(seed=2); t[5, fed.SCALAR_COLS["q3"]] = np.nan
+        with self.assertRaises(ValueError) as cm:
+            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3),
+                                     feature_names=("pt", "pparallel", "eavail", "q3"))
+        self.assertIn("q3", str(cm.exception))
+
+    def test_a_nan_only_among_masked_out_rows_is_tolerated(self):
+        """The normalization is formed over in-mask rows only, and !pass rows are zeroed after it,
+        so a non-finite value on a row that never enters either is not a defect."""
+        n = 50
+        t = self._scalars(n, seed=2)
+        pass_truth = np.ones(n, bool); pass_truth[9] = False
+        t[9, 0] = np.nan
+        _er, et, _ed, _m = fed.build_event_features(
+            self._scalars(n), t, self._scalars(30, seed=3),
+            pass_reco=np.ones(n, bool), pass_truth=pass_truth)
+        self.assertTrue(np.all(np.isfinite(et)))
+
+    def test_data_scalars_are_screened_too(self):
+        d = self._scalars(30, seed=3); d[4, 0] = np.nan
+        with self.assertRaises(ValueError) as cm:
+            fed.build_event_features(self._scalars(), self._scalars(seed=2), d)
+        self.assertIn("measured_scalars", str(cm.exception))
+
+    def test_leakage_guard_cannot_pass_on_an_all_nan_block(self):
+        """Fix (2) of the finding. `assert_no_truth_leakage` is a DISSIMILARITY test and NaN differs
+        from everything, so an all-NaN event_reco used to satisfy it -- the guard designed to catch
+        leakage was silently certifying a poisoned block."""
+        r = self._scalars()
+        poisoned = np.full((r.shape[0], 2), np.nan, np.float32)
+        with self.assertRaises(AssertionError) as cm:
+            fed.assert_no_truth_leakage(poisoned, r, self._scalars(seed=2), ("pt", "pparallel"))
+        self.assertIn("EVT-FINITE", str(cm.exception))
+
+    def test_the_loader_fails_closed_on_a_nonfinite_dump(self):
+        """End to end through build_fullevent_loaders, so the guard is known to be on the real path
+        and not only on the helper."""
+        arrays = dict(g2_arrays_with_R(ns=40))
+        ts = np.array(arrays["truth_scalars"], copy=True)
+        ts[3, fed.SCALAR_COLS["pt"]] = np.nan
+        arrays["truth_scalars"] = ts
+        with tempfile.TemporaryDirectory() as td:
+            with self.assertRaises(ValueError) as cm:
+                build(td, arrays, verify_identities=False)
+        self.assertIn("EVT-FINITE", str(cm.exception))
 
 
 # ==================================================================================== §4

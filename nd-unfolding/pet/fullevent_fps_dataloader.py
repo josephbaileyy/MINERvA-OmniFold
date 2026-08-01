@@ -144,6 +144,43 @@ def _event_block(scalars, feature_names, norm):
     return block.astype(np.float32)
 
 
+def assert_finite_event_scalars(scalars, feature_names, mask, label):
+    """FAIL CLOSED, naming the column, on any non-finite value in a SELECTED event-feature column.
+
+    FINDING-20260730-event-feature-nonfinite.md (found by execution: Delta job 20599606 died on it
+    after 49m45s). `_event_block` computes the normalization from the in-mask rows of the selected
+    columns, so ONE non-finite entry makes `mu`/`sd` NaN and turns the ENTIRE column NaN for EVERY
+    row -- step 1 trains fine off the clean reco leg and step 2 reports `Last val loss nan`, naming
+    neither the column nor the cause. `truth_scalars` `q3` carries 14 such rows per 400,000
+    (~1,700 in the full 49,152,885-row inventory).
+
+    The existing guard cannot catch it: `assert_no_truth_leakage` asserts the reco and truth blocks
+    are NOT allclose, and NaN compares unequal to everything, so an all-NaN block passes.
+
+    NOT `nan_to_num`. 0 is the cloud path's pad/mask sentinel but the BLOCK MEAN of a z-scored event
+    feature, so quiet filling would place undefined events at the centre of the conditioning
+    distribution -- biasing the estimator instead of announcing a bad dump. Latent while the adopted
+    schema reads cols 0,1 (both clean on both legs); live the moment the block widens, which is what
+    the publication estimator requires (FULL_EVENT_FEATURE_CONTRACT.md:98-101)."""
+    arr = np.asarray(scalars, np.float32)
+    cols = [SCALAR_COLS[f] for f in feature_names]
+    m = np.ones(arr.shape[0], bool) if mask is None else np.asarray(mask, bool)
+    sub = arr[m][:, cols]
+    bad = ~np.isfinite(sub)
+    if bad.any():
+        offenders = "; ".join(
+            f"{feature_names[j]} (column {cols[j]}): {int(bad[:, j].sum())} non-finite"
+            for j in range(len(cols)) if bad[:, j].any())
+        raise ValueError(
+            f"[EVT-FINITE] {label}: non-finite values in selected event-feature column(s) over "
+            f"{int(m.sum())} in-mask rows -- {offenders}. ONE such value NaNs the whole column for "
+            "every row via the normalization statistic and trains step 2 to `Last val loss nan`. "
+            "Fail closed: fix the dump (or drop the column from the schema). Do NOT nan_to_num -- "
+            "0 is the block mean here, not a pad sentinel. "
+            "See docs/orchestration/FINDING-20260730-event-feature-nonfinite.md")
+    return True
+
+
 def build_event_features(reco_scalars, truth_scalars, measured_scalars,
                          feature_names=DEFAULT_EVT_FEATURES,
                          pass_reco=None, pass_truth=None):
@@ -165,12 +202,27 @@ def build_event_features(reco_scalars, truth_scalars, measured_scalars,
     cols = [SCALAR_COLS[f] for f in feature_names]
     rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
     tmask = np.ones(truth_scalars.shape[0], bool) if pass_truth is None else np.asarray(pass_truth, bool)
+    # FINDING-20260730: screen BEFORE the normalization statistics are formed, on the exact rows
+    # that form them, so the error names the offending column instead of surfacing as a NaN loss.
+    assert_finite_event_scalars(reco_scalars, feature_names, rmask, "reco_scalars over pass_reco")
+    assert_finite_event_scalars(truth_scalars, feature_names, tmask, "truth_scalars over pass_truth")
+    assert_finite_event_scalars(measured_scalars, feature_names, None,
+                                "measured_scalars (data; all rows pass_reco)")
     rsub = reco_scalars[rmask][:, cols]; tsub = truth_scalars[tmask][:, cols]
     rmu = rsub.mean(0); rsd = rsub.std(0) + 1e-6
     tmu = tsub.mean(0); tsd = tsub.std(0) + 1e-6
     event_reco = _event_block(reco_scalars, feature_names, (rmu, rsd)); event_reco[~rmask] = 0.0
     event_truth = _event_block(truth_scalars, feature_names, (tmu, tsd)); event_truth[~tmask] = 0.0
     event_data = _event_block(measured_scalars, feature_names, (rmu, rsd))  # data all pass_reco
+    # Belt-and-braces on the built blocks: a degenerate (all-equal) column survives the +1e-6 on sd,
+    # but nothing downstream inspects these arrays for finiteness and a NaN block is what cost
+    # 49m45s of Delta once. Cheap relative to the training that follows.
+    for _blk, _lbl in ((event_reco, "event_reco"), (event_truth, "event_truth"),
+                       (event_data, "event_data")):
+        if not np.all(np.isfinite(_blk)):
+            raise ValueError(
+                f"[EVT-FINITE] normalized {_lbl} block contains non-finite values even though the "
+                "input columns were finite -- a degenerate normalization statistic (fail closed).")
     meta = {"feature_names": list(feature_names),
             "reco_norm_mean": rmu.tolist(), "reco_norm_std": rsd.tolist(),
             "truth_norm_mean": tmu.tolist(), "truth_norm_std": tsd.tolist(),
@@ -191,6 +243,14 @@ def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_nam
     rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
     rmu = reco_scalars[rmask][:, cols].mean(0); rsd = reco_scalars[rmask][:, cols].std(0) + 1e-6
     rebuilt = _event_block(reco_scalars, feature_names, (rmu, rsd)); rebuilt[~rmask] = 0.0
+    # FINDING-20260730 fix (2): this guard is a DISSIMILARITY test, and NaN is maximally dissimilar,
+    # so an all-NaN block used to sail through it. Finiteness first, or the leakage verdict is
+    # meaningless.
+    if not np.all(np.isfinite(event_reco)):
+        raise AssertionError(
+            f"[EVT-FINITE] event_reco has {int((~np.isfinite(event_reco)).sum())} non-finite "
+            "entries; the no-truth-leakage comparison below is a dissimilarity test and NaN differs "
+            "from everything, so it would PASS on a poisoned block (fail closed).")
     if not np.allclose(rebuilt, event_reco, atol=1e-5):
         raise AssertionError("event_reco is NOT a pure function of reco_scalars+pass_reco (leak?)")
     tblock = _event_block(truth_scalars, feature_names, (rmu, rsd)); tblock[~rmask] = 0.0

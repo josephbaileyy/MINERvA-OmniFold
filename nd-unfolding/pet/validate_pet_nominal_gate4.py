@@ -8,16 +8,34 @@ stays false). The validator COMPOSES the existing closure evidence (ordinary clo
 `closure_fullevent_fps.py` + omitted-muon stress closure `stress_closure_muon.py`) and adds:
 
   * finite / full-coverage push weights;
-  * strict MC index/order (sorted, unique, in range);
-  * exact lower-dimensional (pT,p_parallel) marginal closure;
+  * strict MC index/order (sorted, unique, in range) AND the subsample size the seed policy froze;
+  * the ordinary closure's exact lower-dimensional (pT,p_parallel) marginal closure, recomputed
+    here from the histograms that run persisted rather than trusted as a scalar;
   * the RECO-LEVEL FOLDED-FORWARD NORMALIZATION gate (B1 §2d): the reco-weighted mean of the push
     weights must equal the physical data/MC rate ratio R, with R and the reference sums recomputed
     HERE from the G2 dump rather than taken from the driver. This replaces the truth-level
     `sum_w_push/sum_w ~ 1` identity, which a correct unfold does not satisfy (its expected value
     is 1 + <a>(R-1), a function of the acceptance being measured) and which the CLI never wired;
-  * cap-sensitivity telemetry (logit-cap saturation fraction bounded);
+  * cap-sensitivity telemetry (logit-cap saturation fraction bounded), recomputed from the push
+    weights themselves;
+  * the measured-target provenance the driver already persists and nothing read: target mode,
+    the LEARNED production Stay-Positive refinement, the signed-target hash, and pot_scale;
   * the FREEZE of estimator fingerprint + central vector (length/finite/order) + reported-bin
     mask/order + extended-FPS edges + seed/config policy.
+
+NO CHECK MAY BE SILENTLY SKIPPED (audit B2, `AUDIT-FINDINGS-20260729-B.md` §B2 /
+`AUDIT-FINDINGS-20260728.md` §B2). Until the 08-03 re-issue this validator called
+`build_gate4_report` without `marginal=`, `normalization=`, `saturation_frac=` or `closure=`, and
+the report builder skipped every component whose argument was None; `frozen_observed` was built by
+copying four FROZEN entries into the "observed" dict, so four freeze checks compared FROZEN to
+FROZEN; and it carried no central vector or reported mask, so those checks never ran either. The
+result was `verdict PASS, 0 failed` on `|N(1,0.3)|` noise. Two structural rules follow, and both
+are load-bearing:
+
+  1. `build_gate4_report` FAILS on absent evidence -- it emits a named failing check rather than
+     dropping the component. A gate that cannot see its input says so.
+  2. Everything compared against FROZEN is read from the ARTIFACT (or recomputed from the G2 dump),
+     never copied out of FROZEN. A self-comparison is not a check.
 
 The output receipt binds the nominal result path/hash, the frozen contract, every check, and a single
 PASS/FAIL verdict. It is written unique-temp + fsync + atomic os.replace ONLY to a caller-supplied
@@ -42,6 +60,10 @@ import fullevent_fps_dataloader as fe  # noqa: E402  (login-safe)
 RECEIPT_SCHEMA = "pet-fullevent-gate4-nominal-validation-v1"
 ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"
 BKG_MODE = "negweight-refined"
+# Report schemas the two closure scripts write with --json. The validator refuses a report whose
+# schema it does not recognise rather than guessing at the fields.
+ORDINARY_CLOSURE_SCHEMA = "pet-fullevent-ordinary-closure-v1"
+STRESS_CLOSURE_SCHEMA = "pet-fullevent-omitted-muon-stress-v1"
 
 # ----------------------------- FROZEN nominal contract -----------------------------
 # Frozen NOW (code-only): fingerprint, extended-FPS reporting grid + bin geometry/order, and the
@@ -62,22 +84,39 @@ FROZEN = {
     "closure_scripts": {
         "ordinary": "nd-unfolding/pet/closure_fullevent_fps.py",
         "omitted_muon_stress": "nd-unfolding/pet/stress_closure_muon.py"},
+    # Mirrors omnifold.REWEIGHT_LOGIT_CAP (omnifold_nn/omnifold/omnifold.py). Mirrored rather than
+    # imported because importing the package pulls TensorFlow and this validator is login-safe;
+    # `test_frozen_logit_cap_matches_the_engine` reads the engine's SOURCE and fails if the two
+    # drift apart, so the mirror cannot go stale silently.
+    "reweight_logit_cap": 30.0,
     "tolerances": {"marginal_l1_max": 0.10, "push_median_dev_max": 0.15,
-                   "normalization_dev_max": 1e-3, "cap_saturation_frac_max": 1e-3,
+                   "cap_saturation_frac_max": 1e-3,
                    # B1 §2d. PROVISIONAL -- must be re-derived from the closure run before the
                    # 08-03 re-issue freezes it. See check_fold_forward_ratio for the three terms
-                   # that set it and why it cannot inherit normalization_dev_max's 1e-3.
+                   # that set it and why it cannot inherit a 1e-3-scale identity tolerance.
                    "fold_forward_ratio_dev_max": 0.05,
                    "fold_forward_ratio_dev_max_status": "PROVISIONAL_PENDING_CLOSURE_MEASUREMENT",
-                   # Independence check: the driver's reported ratio vs the validator's own
-                   # recomputation from the dump. Same arithmetic on the same rows -- this one
-                   # IS tight, and a mismatch means the two are not looking at the same result.
-                   "fold_forward_driver_agreement_max": 1e-6},
+                   # Independence checks: the driver's reported quantities vs the validator's own
+                   # recomputation from the dump. Same arithmetic on the same rows -- these ARE
+                   # tight, and a mismatch means the two are not looking at the same result.
+                   "fold_forward_driver_agreement_max": 1e-6,
+                   "spectra_driver_agreement_max": 1e-6},
 }
 
 
 def _ck(name, ok, detail=""):
     return {"name": name, "ok": bool(ok), "detail": str(detail)}
+
+
+def _missing(component, what):
+    """The absent-evidence check. A component whose input was not supplied FAILS, by name.
+
+    This is rule 1 of the module docstring. `build_gate4_report` used to drop such a component
+    entirely, which is how four physics checks and three freeze checks came to never execute while
+    the receipt still read `verdict PASS, n_failed 0` and embedded the tolerances they would have
+    used."""
+    return False, [_ck(f"{component}:evidence_supplied", False,
+                       f"NOT SUPPLIED: {what} -- the check could not run, so it FAILS")]
 
 
 def check_weights_finite_coverage(push, n_expected=None):
@@ -92,7 +131,15 @@ def check_weights_finite_coverage(push, n_expected=None):
     return all(c["ok"] for c in checks), checks
 
 
-def check_mc_index_order(imc, n_full=None):
+def check_mc_index_order(imc, n_full=None, n_expected_subsample=None):
+    """Strict index/order, plus the subsample SIZE the seed policy froze.
+
+    The size check is not cosmetic. `check_weights_finite_coverage` is called with
+    `n_expected = len(imc)`, i.e. the push array is only ever compared against the subsample's own
+    length, so a nominal trained on 1,000 rows instead of 2,000,000 satisfied every index check
+    (audit B3 / §4 mutation table: `train_events 2_000_000 -> 1000` was caught by nothing). The
+    frozen `seed_policy.train_events` is the only statement of how many rows the nominal is.
+    """
     imc = np.asarray(imc)
     checks = [_ck("index:1d_integer", imc.ndim == 1 and np.issubdtype(imc.dtype, np.integer),
                   f"{imc.ndim}d {imc.dtype}"),
@@ -102,6 +149,11 @@ def check_mc_index_order(imc, n_full=None):
     if n_full is not None:
         checks.append(_ck("index:in_range", imc.size > 0 and int(imc.max()) < int(n_full),
                           f"max {int(imc.max()) if imc.size else None} < {n_full}"))
+    if n_expected_subsample is not None:
+        want = min(int(n_expected_subsample), int(n_full)) if n_full is not None \
+            else int(n_expected_subsample)
+        checks.append(_ck("index:subsample_size_matches_policy", imc.size == want,
+                          f"{imc.size} trained rows vs frozen policy {want}"))
     return all(c["ok"] for c in checks), checks
 
 
@@ -118,28 +170,25 @@ def check_marginal_closure(h_truth, h_rw, tol=None):
     return (l1 <= tol), [_ck("marginal:pt_ppar_l1", l1 <= tol, f"L1={l1:.4f} <= {tol}")], l1
 
 
-def check_normalization(sum_w_push, sum_w, target_ratio=1.0, tol=None, name="normalization:sum_ratio"):
-    """Primitive: |(sum_w_push/sum_w) / target_ratio - 1| <= tol.
+def _ratio_dev(numerator, denominator, target_ratio):
+    """|(numerator/denominator)/target_ratio - 1|, or inf on a degenerate input.
 
-    NOT the Gate-4 normalization gate -- `check_fold_forward_ratio` below is. Left at its original
-    default (`target_ratio=1.0`) because the frozen launch-code test binds this signature, and
-    generalized rather than duplicated so the arithmetic lives in one place.
-
-    Do NOT wire this directly with truth-level sums and the default target. Over the full truth
-    population, including off-acceptance events where push == 1, a CORRECT unfold gives
+    The former public `check_normalization` primitive, retired at the 08-03 re-issue. It was a
+    truth-level `sum_w_push/sum_w ~ 1` gate that main() never wired and MUST NOT be wired: over the
+    full truth population, including off-acceptance events where push == 1, a CORRECT unfold gives
     sum(w*push)/sum(w) -> 1 + <a>_w*(R-1) ~ 1.08, not 1 -- a target that depends on the acceptance
     being measured. Asserting ~1 there fails a correct unfold; asserting ~R there fails it worse.
-    Restricting the mask to pass_reco is what removes the acceptance dependence.
-    """
+    Restricting the mask to pass_reco is what removes the acceptance dependence, which is
+    `check_fold_forward_ratio` below. It survived the 07-29 patch only as a binding-preserving shim
+    for the two frozen launch-code tests that pinned its signature; RESTORE-2026-08-03.md Step 2b
+    asked for that decision to be made at the re-issue, and this is it -- the entry point is gone,
+    the arithmetic lives here, and `normalization_dev_max` is gone from FROZEN with it (nothing
+    read it, and the receipt embedded it as though it had been met)."""
+    denominator = float(denominator)
     target_ratio = float(target_ratio)
-    if sum_w and target_ratio:
-        dev = abs((float(sum_w_push) / float(sum_w)) / target_ratio - 1.0)
-    else:
-        dev = float("inf")
-    tol = FROZEN["tolerances"]["normalization_dev_max"] if tol is None else tol
-    detail = (f"|ratio-1|={dev:.3e} <= {tol}" if target_ratio == 1.0
-              else f"|ratio/{target_ratio:.6g}-1|={dev:.3e} <= {tol}")
-    return (dev <= tol), [_ck(name, dev <= tol, detail)]
+    if denominator and target_ratio:
+        return abs((float(numerator) / denominator) / target_ratio - 1.0)
+    return float("inf")
 
 
 def check_fold_forward_ratio(sum_w_push_reco, sum_w_reco, R, tol=None):
@@ -161,7 +210,7 @@ def check_fold_forward_ratio(sum_w_push_reco, sum_w_reco, R, tol=None):
     result (which forces the step-1 class ratio to 1) while PASSING a corrected one. It converts
     Gate-4 from tolerating this defect into detecting its whole class.
 
-    TOLERANCE -- and it cannot inherit normalization_dev_max's 1e-3:
+    TOLERANCE -- and it cannot inherit a 1e-3-scale identity tolerance:
       1. Acceptance-smoothing residual at finite iteration. omnifold.py:185 pins off-acceptance
          `new_weights` to 1, so step 2 regresses across both acceptance classes at once and
          smooths pass_reco pushes toward 1. When acceptance is statistically independent of the
@@ -193,8 +242,10 @@ def check_fold_forward_ratio(sum_w_push_reco, sum_w_reco, R, tol=None):
         return False, [_ck("normalization:fold_forward_reco_ratio", False,
                            f"undegenerate inputs required (sum_w_reco={sum_w_reco}, R={R})")]
     ratio = float(sum_w_push_reco) / float(sum_w_reco)
-    ok_tol, checks = check_normalization(sum_w_push_reco, sum_w_reco, target_ratio=R, tol=tol,
-                                         name="normalization:fold_forward_reco_ratio")
+    dev = _ratio_dev(sum_w_push_reco, sum_w_reco, R)
+    ok_tol = dev <= tol
+    checks = [_ck("normalization:fold_forward_reco_ratio", ok_tol,
+                  f"|ratio/{R:.6g}-1|={dev:.3e} <= {tol}")]
     # The discriminator is only MEANINGFUL when R differs from 1. At R == 1 the two distances are
     # identical, so `<` is False for every possible input -- including a correct no-change unfold
     # with push == 1, which would then be failed outright. More generally, if |R-1| <= tol, any
@@ -247,7 +298,96 @@ def fold_forward_sums_from_dump(inputs_npz, weights_push, mc_indices):
     if not mask.any():
         raise ValueError("[gate4] no pass_reco rows in the recomputed subsample (fail closed)")
     telem["n_pass_reco_subsample"] = int(mask.sum())
+    # The dump is the authority on how many signal rows exist, so `index:in_range` no longer
+    # depends on the caller remembering --n-full (it silently skipped the check when omitted).
+    telem["n_signal_inventory"] = int(w_truth_full.shape[0])
     return float((w_sub[mask] * push[mask]).sum()), float(w_sub[mask].sum()), R, telem
+
+
+def nominal_spectra_from_dump(inputs_npz, weights_push, mc_indices):
+    """Recompute the reporting-grid spectra the FREEZE checks need, INDEPENDENTLY of the driver.
+
+    Histograms the subsample's TRUTH (pT, p_parallel) over pass_truth on the frozen 285-cell
+    extended-FPS grid, once with the prior weights and once with `w_truth * push`, and ravels in
+    the frozen pt-major row-major order (C order over (n_pt, n_pparallel) is exactly
+    `cell = i_pt * n_pparallel_bins + i_pparallel`).
+
+    Returns (central_vector, reported_bin_mask, telem). `central_vector` is the pushed spectrum --
+    the 285-cell object the freeze fixes the length/order/finiteness of; `reported_bin_mask` is the
+    prior-occupied cells, i.e. the cells this estimator can report. The driver persists both, and
+    `check_spectra_independence` requires the two sides to agree: the freeze checks run on the
+    DRIVER's arrays (so they are falsifiable -- a self-computed vector is 285 long by construction
+    and its length check would prove nothing), and this recomputation is what stops the driver
+    certifying its own reshape.
+
+    UNIT-NORMALIZED, deliberately. The driver histograms `mc.weight`, which the DataLoader rescaled
+    in place to sum to 1e6; this reads the dump's raw `w_truth`. Both are the same spectrum up to a
+    positive scale, so the two sides can only be compared after normalizing -- and the freeze only
+    fixes the vector's length, order and finiteness, none of which the scale carries. The absolute
+    cross-section normalization is the extraction step's, not this gate's.
+    """
+    push = np.asarray(weights_push, float)
+    imc = np.asarray(mc_indices)
+    with np.load(inputs_npz, allow_pickle=True) as d:
+        edges_pt = np.asarray(d["edges_0"], float)
+        edges_pp = np.asarray(d["edges_1"], float)
+        w_truth_full = np.asarray(d["w_truth"], dtype=np.float64)
+        pass_truth_full = np.asarray(d["pass_truth"]).astype(bool)
+        ts = np.asarray(d["truth_scalars"], dtype=np.float64)[imc]
+    # The grid is frozen; a dump on a different grid must not be histogrammed against FROZEN's
+    # edges and reported as agreeing with it (this is the same guard build_fullevent_loaders runs).
+    fe.assert_extended_fps_edges(edges_pt, edges_pp)
+    if imc.shape != push.shape:
+        raise ValueError(f"[gate4] mc_indices {imc.shape} and weights_push {push.shape} are not "
+                         "row-aligned (fail closed)")
+    w_sub = w_truth_full[imc]
+    sel = pass_truth_full[imc]
+    if not sel.any():
+        raise ValueError("[gate4] no pass_truth rows in the recomputed subsample -- the reporting "
+                         "spectrum is undefined (fail closed)")
+    pt = ts[:, fe.SCALAR_COLS["pt"]]
+    ppar = ts[:, fe.SCALAR_COLS["pparallel"]]
+    bins = [np.asarray(FROZEN["edges_pt"], float), np.asarray(FROZEN["edges_pparallel"], float)]
+    h_prior, _, _ = np.histogram2d(pt[sel], ppar[sel], bins, weights=w_sub[sel])
+    h_push, _, _ = np.histogram2d(pt[sel], ppar[sel], bins, weights=(w_sub * push)[sel])
+    central = h_push.ravel()
+    total = central.sum()
+    if not (np.isfinite(total) and total > 0.0):
+        raise ValueError(f"[gate4] pushed reporting spectrum sums to {total} -- not normalizable "
+                         "(fail closed)")
+    telem = {"n_pass_truth_subsample": int(sel.sum()),
+             "push_median_pass_truth": float(np.median(push[sel])),
+             "prior_occupied_cells": int((h_prior.ravel() > 0.0).sum()),
+             "pushed_spectrum_raw_sum": float(total),
+             "grid": f"{N_PT_BINS}x{N_PPAR_BINS}",
+             "normalization": "central_vector normalized to unit sum (scale-free comparison with "
+                              "the driver, whose mc.weight was rescaled to 1e6 in place)"}
+    return central / total, (h_prior.ravel() > 0.0), telem
+
+
+def cap_saturation_frac_from_push(weights_push, cap=None):
+    """Fraction of push weights sitting at the PREDECLARED symmetric logit cap.
+
+    `omnifold.MultiFold.reweight` returns `exp(clip(logit, -cap, +cap))` and logs the saturated
+    count without persisting it, so the fraction is recovered from the artifact itself:
+    `|log(push)| >= cap`. Off-acceptance rows carry push == 1 exactly (log 0) and so are never
+    counted. Computed HERE rather than trusted from the driver -- the driver persists its own
+    value and `check_spectra_independence` requires agreement.
+
+    The comparison carries a small relative slack because `weights_push` is stored float32:
+    `log(float32(exp(30)))` is 30 to ~1e-6, not exactly 30, and an exact `>=` would report zero
+    saturation on a fully saturated result.
+    """
+    cap = FROZEN["reweight_logit_cap"] if cap is None else float(cap)
+    push = np.asarray(weights_push, float)
+    if push.size == 0:
+        return float("nan")
+    with np.errstate(divide="ignore", invalid="ignore"):
+        logit = np.log(push)
+    # A non-finite or non-positive push is a defect, not a saturation datum;
+    # check_weights_finite_coverage owns it. Count it as saturated so it cannot hide here.
+    bad = ~np.isfinite(logit)
+    return float((bad | (np.abs(logit) >= cap * (1.0 - 1e-6))).mean())
 
 
 def check_fold_forward_independence(validator, driver, tol=None):
@@ -273,10 +413,83 @@ def check_fold_forward_independence(validator, driver, tol=None):
             f"validator R {v_R:.9f} vs driver R {d_R:.9f} (rel {r_dev:.3e} <= {tol})")]
 
 
+def check_spectra_independence(validator, driver, tol=None):
+    """Cross-check the reporting spectra + cap telemetry the driver persisted.
+
+    `validator`/`driver` are each (central_vector, reported_bin_mask, cap_saturation_frac). The
+    freeze checks read the DRIVER's arrays -- that is what makes their length/order/finiteness
+    falsifiable -- so something has to establish that those arrays describe the result they are
+    attached to. This does: same rows, same grid, two independent reads.
+    """
+    tol = FROZEN["tolerances"]["spectra_driver_agreement_max"] if tol is None else tol
+    v_cv, v_mask, v_sat = validator
+    d_cv, d_mask, d_sat = driver
+    v_cv = np.asarray(v_cv, float); d_cv = np.asarray(d_cv, float)
+    v_mask = np.asarray(v_mask, bool); d_mask = np.asarray(d_mask, bool)
+    shapes_agree = v_cv.shape == d_cv.shape and v_mask.shape == d_mask.shape
+    if shapes_agree and v_cv.size:
+        scale = float(np.abs(v_cv).max()) or 1.0
+        cv_dev = float(np.abs(v_cv - d_cv).max() / scale)
+    else:
+        cv_dev = float("inf")
+    mask_agree = shapes_agree and bool(np.array_equal(v_mask, d_mask))
+    sat_dev = abs(float(v_sat) - float(d_sat)) if np.isfinite(v_sat) and np.isfinite(d_sat) \
+        else float("inf")
+    checks = [_ck("spectra:driver_validator_central_vector_agree", cv_dev <= tol,
+                  f"max|dv|/max|v| = {cv_dev:.3e} <= {tol} "
+                  f"(validator {v_cv.shape} vs driver {d_cv.shape})"),
+              _ck("spectra:driver_validator_mask_agree", mask_agree,
+                  f"validator {int(v_mask.sum()) if v_mask.size else None} occupied cells vs "
+                  f"driver {int(d_mask.sum()) if d_mask.size else None}"),
+              _ck("spectra:driver_validator_cap_saturation_agree", sat_dev <= tol,
+                  f"validator {v_sat} vs driver {d_sat} (abs {sat_dev:.3e} <= {tol})")]
+    return all(c["ok"] for c in checks), checks
+
+
 def check_cap_sensitivity(saturation_frac, tol=None):
     tol = FROZEN["tolerances"]["cap_saturation_frac_max"] if tol is None else tol
-    ok = saturation_frac is not None and float(saturation_frac) <= tol
+    ok = (saturation_frac is not None and np.isfinite(float(saturation_frac))
+          and float(saturation_frac) <= tol)
     return ok, [_ck("cap:saturation_frac", ok, f"{saturation_frac} <= {tol}")]
+
+
+def check_target_provenance(target):
+    """Gate the measured-target provenance the driver persists and nothing read.
+
+    Audit B2: "a grep for `target`/`refinement` over the validator returns zero hits: `z['target']`
+    -- the sole carrier of `refinement_is_learned_production`, `refined_sum`, `pot_scale` and
+    `signed_target_hash` -- is never read, even though the driver writes it."
+
+    The load-bearing one is `refinement_is_learned_production`. RESTORE-2026-08-03.md Step 4: Delta
+    has no ROOT, so `u2d.refine_stay_positive` cannot import there and a Delta run can only inject
+    an sklearn refinement, which self-reports `refinement_is_learned_production=False`. Nothing
+    stopped such a result being validated as the publication nominal. Now it fails closed.
+    """
+    if not isinstance(target, dict):
+        return _missing("target", f"weights npz carries no `target` mapping (got {type(target)})")
+    mode = target.get("target_mode")
+    learned = target.get("refinement_is_learned_production")
+    sth = target.get("signed_target_hash")
+    pot = target.get("pot_scale")
+    checks = [
+        _ck("target:mode_is_negweight_refined", mode == "negweight-refined", mode),
+        _ck("target:refinement_is_learned_production", learned is True,
+            f"{learned!r} -- False means an injected/sklearn refinement, not the canonical "
+            "u2d.refine_stay_positive (Delta has no ROOT); not promotable"),
+        _ck("target:refinement_is_stay_positive",
+            str(target.get("refinement", "")).startswith("stay-positive"),
+            target.get("refinement")),
+        _ck("target:signed_target_hash_bound", isinstance(sth, str) and len(sth) == 64, sth),
+        _ck("target:pot_scale_valid",
+            pot is not None and np.isfinite(float(pot)) and float(pot) > 0.0, pot),
+        _ck("target:refined_weights_nonnegative",
+            target.get("refined_min") is not None and float(target["refined_min"]) >= 0.0,
+            target.get("refined_min")),
+        _ck("target:refined_sum_positive",
+            target.get("refined_sum") is not None and float(target["refined_sum"]) > 0.0,
+            target.get("refined_sum")),
+    ]
+    return all(c["ok"] for c in checks), checks
 
 
 def check_closure_verdicts(ordinary_pass, stress_recoil_blind, stress_fullevent_recovers):
@@ -289,70 +502,212 @@ def check_closure_verdicts(ordinary_pass, stress_recoil_blind, stress_fullevent_
     return all(c["ok"] for c in checks), checks
 
 
+def check_closure_provenance(ordinary, stress):
+    """Refuse closure evidence that is not the publication closure.
+
+    Two runs in this repo look like the ordinary closure and are not it, and RESTORE-2026-08-03.md
+    Step 3 refuses both in prose. This refuses them in code:
+
+      * `--bkg-mode purity` is a LABELED CONTROL, not the nominal;
+      * the 2026-07-26 Delta run (job 20489224) passed on a SYNTHETIC FIXTURE, where the
+        pseudo-data IS the MC and push ~ 1 is nearly guaranteed regardless of estimator
+        correctness -- "close to zero power to detect a real defect".
+
+    It also requires the run's own CLI thresholds be no looser than FROZEN's, so a closure re-run
+    with `--l1-max 0.9` cannot launder itself into a Gate-4 PASS, and requires the grid it
+    histogrammed on to be the frozen extended-FPS grid.
+    """
+    tol = FROZEN["tolerances"]
+    o = ordinary if isinstance(ordinary, dict) else {}
+    s = stress if isinstance(stress, dict) else {}
+    checks = [
+        _ck("closure:ordinary_report_schema", o.get("report_schema") == ORDINARY_CLOSURE_SCHEMA,
+            o.get("report_schema")),
+        _ck("closure:ordinary_is_negweight_refined", o.get("bkg_mode") == BKG_MODE,
+            f"{o.get('bkg_mode')!r} (purity is a labeled control, never the nominal)"),
+        _ck("closure:ordinary_not_synthetic_fixture", o.get("is_synthetic_fixture") is False,
+            f"is_synthetic_fixture={o.get('is_synthetic_fixture')!r} -- a synthetic-fixture run "
+            "shows the code path runs and has ~no power to detect a defect"),
+        _ck("closure:ordinary_thresholds_not_loosened",
+            _num_le(o.get("l1_max"), tol["marginal_l1_max"])
+            and _num_le(o.get("push_med_tol"), tol["push_median_dev_max"]),
+            f"run l1_max={o.get('l1_max')!r} <= {tol['marginal_l1_max']}, "
+            f"push_med_tol={o.get('push_med_tol')!r} <= {tol['push_median_dev_max']}"),
+        _ck("closure:ordinary_push_finite", o.get("push_finite") is True, o.get("push_finite")),
+        _ck("closure:ordinary_push_median",
+            _num_le(abs(float(o["push_median"]) - 1.0) if _isnum(o.get("push_median"))
+                    else None, tol["push_median_dev_max"]),
+            f"|median(push)-1| for push_median={o.get('push_median')!r} "
+            f"<= {tol['push_median_dev_max']}"),
+        _ck("closure:ordinary_grid_is_frozen",
+            _edges_match(o.get("edges_pt"), FROZEN["edges_pt"])
+            and _edges_match(o.get("edges_pparallel"), FROZEN["edges_pparallel"]),
+            "closure histogrammed on the canonical extended-FPS grid"),
+        _ck("closure:stress_report_schema", s.get("report_schema") == STRESS_CLOSURE_SCHEMA,
+            s.get("report_schema")),
+    ]
+    return all(c["ok"] for c in checks), checks
+
+
+def _isnum(x):
+    try:
+        return np.isfinite(float(x))
+    except (TypeError, ValueError):
+        return False
+
+
+def _num_le(x, bound):
+    return bool(_isnum(x) and float(x) <= float(bound))
+
+
+def _edges_match(observed, frozen, tol=1e-9):
+    if observed is None:
+        return False
+    o = np.asarray(observed, float)
+    f = np.asarray(frozen, float)
+    return bool(o.shape == f.shape and np.allclose(o, f, atol=tol, rtol=0))
+
+
 def check_freeze(observed):
     """Verify a nominal result's declared contract against the FROZEN policy (fingerprint, edges, bin
-    geometry/order, seed/config) and the central vector's length/finiteness/order."""
+    geometry/order, seed/config) and the central vector's length/finiteness/order.
+
+    EVERY value in `observed` must come from the artifact under test. Passing FROZEN's own entries
+    in is a self-comparison that cannot fail -- audit B2 found four of the six freeze checks in that
+    state, and the central-vector / reported-mask checks not running at all because main() never
+    populated the keys. Absent keys therefore FAIL here rather than being skipped."""
     checks = []
     checks.append(_ck("freeze:fingerprint", observed.get("estimator_fingerprint")
                       == ESTIMATOR_FINGERPRINT, observed.get("estimator_fingerprint")))
     checks.append(_ck("freeze:bkg_mode", observed.get("bkg_mode") == BKG_MODE,
                       observed.get("bkg_mode")))
-    checks.append(_ck("freeze:edges_pt", observed.get("edges_pt") == FROZEN["edges_pt"], "pt edges"))
+    checks.append(_ck("freeze:edges_pt", _edges_match(observed.get("edges_pt"), FROZEN["edges_pt"]),
+                      "pt edges"))
     checks.append(_ck("freeze:edges_pparallel",
-                      observed.get("edges_pparallel") == FROZEN["edges_pparallel"], "p|| edges"))
+                      _edges_match(observed.get("edges_pparallel"), FROZEN["edges_pparallel"]),
+                      "p|| edges"))
     checks.append(_ck("freeze:bin_order", observed.get("bin_order") == FROZEN["bin_order"],
                       observed.get("bin_order")))
     checks.append(_ck("freeze:seed_policy", observed.get("seed_policy") == FROZEN["seed_policy"],
                       observed.get("seed_policy")))
     cv = observed.get("central_vector")
     mask = observed.get("reported_bin_mask")
-    if cv is not None:
+    if cv is None:
+        checks.append(_ck("freeze:central_vector_present", False,
+                          "NOT SUPPLIED: the artifact carries no central_vector, so its length / "
+                          "finiteness / bin order are unchecked"))
+    else:
         cv = np.asarray(cv, float)
         checks.append(_ck("freeze:central_vector_len", cv.shape == (N_CELLS,), cv.shape))
         checks.append(_ck("freeze:central_vector_finite", bool(np.all(np.isfinite(cv))), "finite"))
-    if mask is not None:
-        checks.append(_ck("freeze:reported_mask_len", np.asarray(mask).shape == (N_CELLS,),
-                          np.asarray(mask).shape))
+        checks.append(_ck("freeze:central_vector_nonnegative", bool(np.all(cv >= 0.0)),
+                          f"min={float(cv.min()) if cv.size else None}"))
+        checks.append(_ck("freeze:central_vector_nonzero", bool(np.any(cv > 0.0)),
+                          "some reported cell is populated"))
+    if mask is None:
+        checks.append(_ck("freeze:reported_mask_present", False,
+                          "NOT SUPPLIED: the artifact carries no reported_bin_mask, so the "
+                          "reporting mask and its order are untouched by the gate"))
+    else:
+        m = np.asarray(mask)
+        checks.append(_ck("freeze:reported_mask_len", m.shape == (N_CELLS,), m.shape))
+        mb = np.asarray(m, bool)
+        checks.append(_ck("freeze:reported_mask_nonempty", bool(mb.any()),
+                          f"{int(mb.sum())} of {mb.size} cells reported"))
+        if cv is not None and cv.shape == (N_CELLS,) and mb.shape == (N_CELLS,):
+            # Order agreement between the two 285-vectors: a reshuffled central vector would
+            # populate cells the mask calls empty.
+            checks.append(_ck("freeze:central_vector_zero_outside_mask",
+                              bool(np.all(cv[~mb] == 0.0)),
+                              f"{int((cv[~mb] != 0.0).sum())} populated cells outside the mask"))
     return all(c["ok"] for c in checks), checks
 
 
 def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=None, n_full=None,
-                       marginal=None, normalization=None, saturation_frac=None,
-                       closure=None, observed_at_utc=None, fold_forward=None,
-                       fold_forward_driver=None, fold_forward_telemetry=None):
+                       n_expected_subsample=None, marginal=None, saturation_frac=None,
+                       closure=None, closure_reports=None, observed_at_utc=None, fold_forward=None,
+                       fold_forward_driver=None, fold_forward_telemetry=None, target=None,
+                       spectra=None, spectra_driver=None, spectra_telemetry=None):
     """Assemble the Gate-4 receipt + single verdict. Pure (no training). `marginal`=(h_truth,h_rw);
-    `closure`=(ordinary,recoil_blind,fullevent_recovers).
+    `closure`=(ordinary,recoil_blind,fullevent_recovers); `closure_reports`=(ordinary, stress) as
+    written by the two closure scripts' `--json`.
 
     `fold_forward`=(sum_w_push_reco, sum_w_reco, R) is the B1 §2d normalization gate -- the
     validator's OWN recomputation from the G2 dump. `fold_forward_driver` is the same triple as
-    persisted by the driver; when both are present their agreement is asserted.
+    persisted by the driver; their agreement is asserted. `spectra`/`spectra_driver` are the
+    matching pair for (central_vector, reported_bin_mask, cap_saturation_frac).
 
-    `normalization`=(sum_w_push,sum_w) is the LEGACY truth-level pair. It is retained because the
-    frozen launch-code test binds it, and is deliberately NOT what main() wires: see
-    check_normalization's docstring for why the truth-level target is acceptance-dependent and so
-    cannot be gated on."""
+    ABSENT EVIDENCE FAILS. Every component below either runs or contributes an explicit failing
+    `<component>:evidence_supplied` check. The pre-08-03 builder skipped any component whose
+    argument was None, which is how `marginal`, `normalization`, `saturation_frac` and `closure`
+    came to be evaluated by nothing while the receipt reported `verdict PASS, n_failed 0` and
+    embedded their tolerances (audit B2). A gate is allowed to fail; it is not allowed to abstain
+    and call that a pass."""
     checks, comps = [], {}
-    fz_ok, fz = check_freeze(frozen_observed); checks += fz; comps["freeze"] = fz_ok
-    if weights_push is not None:
-        w_ok, wc = check_weights_finite_coverage(weights_push, n_full if imc is None else
-                                                 (len(imc) if hasattr(imc, "__len__") else None))
-        checks += wc; comps["weights"] = w_ok
-    if imc is not None:
-        i_ok, ic = check_mc_index_order(imc, n_full); checks += ic; comps["index_order"] = i_ok
-    if marginal is not None:
-        m_ok, mc, _l1 = check_marginal_closure(*marginal); checks += mc; comps["marginal"] = m_ok
-    if normalization is not None:
-        n_ok, nc = check_normalization(*normalization); checks += nc; comps["normalization"] = n_ok
-    if fold_forward is not None:
-        f_ok, fc = check_fold_forward_ratio(*fold_forward)
-        checks += fc; comps["fold_forward"] = f_ok
-        if fold_forward_driver is not None:
-            d_ok, dc = check_fold_forward_independence(fold_forward, fold_forward_driver)
-            checks += dc; comps["fold_forward_independence"] = d_ok
-    if saturation_frac is not None:
-        c_ok, cc = check_cap_sensitivity(saturation_frac); checks += cc; comps["cap"] = c_ok
-    if closure is not None:
-        cl_ok, clc = check_closure_verdicts(*closure); checks += clc; comps["closure"] = cl_ok
+
+    def add(component, ok, cks):
+        checks.extend(cks)
+        comps[component] = bool(ok)
+
+    add("freeze", *check_freeze(frozen_observed))
+    if weights_push is None:
+        add("weights", *_missing("weights", "no weights_push in the artifact"))
+    else:
+        add("weights", *check_weights_finite_coverage(
+            weights_push, len(imc) if (imc is not None and hasattr(imc, "__len__")) else n_full))
+    if imc is None:
+        add("index_order", *_missing("index_order", "no mc_indices in the artifact"))
+    else:
+        add("index_order", *check_mc_index_order(imc, n_full, n_expected_subsample))
+    if marginal is None:
+        add("marginal", *_missing(
+            "marginal", "no (pT,p_parallel) closure histograms -- the ordinary closure report must "
+                        "carry them (closure_fullevent_fps.py --json)"))
+    else:
+        m_ok, mc, _l1 = check_marginal_closure(*marginal)
+        add("marginal", m_ok, mc)
+    if fold_forward is None:
+        add("fold_forward", *_missing(
+            "fold_forward", "no reco-level fold-forward sums; see --allow-missing-fold-forward"))
+        add("fold_forward_independence", *_missing(
+            "fold_forward_independence", "no fold-forward sums to cross-check"))
+    else:
+        add("fold_forward", *check_fold_forward_ratio(*fold_forward))
+        if fold_forward_driver is None:
+            add("fold_forward_independence", *_missing(
+                "fold_forward_independence",
+                "the driver persisted no fold-forward sums, so the gate would be certifying its "
+                "own arithmetic"))
+        else:
+            add("fold_forward_independence",
+                *check_fold_forward_independence(fold_forward, fold_forward_driver))
+    if spectra is None or spectra_driver is None:
+        add("spectra_independence", *_missing(
+            "spectra_independence",
+            "the reporting spectra were not available from both the dump and the artifact"))
+    else:
+        add("spectra_independence", *check_spectra_independence(spectra, spectra_driver))
+    if saturation_frac is None:
+        add("cap", *_missing("cap", "no logit-cap saturation fraction"))
+    else:
+        add("cap", *check_cap_sensitivity(saturation_frac))
+    if target is None:
+        add("target", *_missing("target", "no measured-target provenance block"))
+    else:
+        add("target", *check_target_provenance(target))
+    if closure is None:
+        add("closure", *_missing(
+            "closure", "no closure verdicts -- Gate-4 composes the ordinary and omitted-muon "
+                       "stress closures and cannot certify a result without them"))
+    else:
+        add("closure", *check_closure_verdicts(*closure))
+    if closure_reports is None:
+        add("closure_provenance", *_missing(
+            "closure_provenance", "no closure reports, so purity-control and synthetic-fixture "
+                                  "runs cannot be told apart from the publication closure"))
+    else:
+        add("closure_provenance", *check_closure_provenance(*closure_reports))
+
     verdict = bool(checks) and all(c["ok"] for c in checks)
     payload = {
         "receipt_schema": RECEIPT_SCHEMA, "verdict": "PASS" if verdict else "FAIL",
@@ -371,6 +726,20 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
             "tolerance_status": FROZEN["tolerances"]["fold_forward_ratio_dev_max_status"],
             "telemetry": fold_forward_telemetry,
         }
+    if spectra is not None:
+        v_cv, v_mask, v_sat = spectra
+        payload["reporting_spectra"] = {
+            "validator_n_reported_cells": int(np.asarray(v_mask, bool).sum()),
+            "validator_central_vector_sum": float(np.asarray(v_cv, float).sum()),
+            "validator_cap_saturation_frac": float(v_sat),
+            "logit_cap": FROZEN["reweight_logit_cap"],
+            "telemetry": spectra_telemetry,
+        }
+    if closure_reports is not None:
+        o, s = closure_reports
+        payload["closure_evidence"] = {"ordinary": o, "stress": s}
+    if target is not None:
+        payload["measured_target"] = target
     return payload, verdict
 
 
@@ -397,11 +766,35 @@ def _sha256_file(path, chunk=1 << 20):
     return h.hexdigest()
 
 
+def _npz_get(z, key, default=None):
+    """Read a persisted scalar/array/mapping member, or `default` when the driver omitted it."""
+    if key not in z.files:
+        return default
+    v = z[key]
+    if isinstance(v, np.ndarray) and v.dtype == object and v.shape == ():
+        return v.item()
+    if isinstance(v, np.ndarray) and v.ndim == 0:
+        item = v.item()
+        return item.decode() if isinstance(item, bytes) else item
+    return v
+
+
+def _read_report(path, label):
+    try:
+        with open(path) as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"[gate4] cannot read the {label} closure report {path!r}: {exc} "
+                         "(fail closed)")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Gate-4 nominal validator (runtime; needs a trained result)")
     ap.add_argument("--nominal-weights", required=True, help="nominal weights npz (from the driver)")
     ap.add_argument("--work", required=True, help="caller-supplied WORK receipt path (JSON)")
-    ap.add_argument("--n-full", type=int, default=None)
+    ap.add_argument("--n-full", type=int, default=None,
+                    help="OPTIONAL cross-check only. The authoritative signal-inventory row count "
+                         "is read from the dump; supplying a different one fails closed.")
     # B1 §2d: the G2 dump the result was trained against. REQUIRED, because without it the
     # normalization check is not computable and would be silently skipped -- which is exactly the
     # state this gate was in before the B1 fix: a correct assertion that never executes.
@@ -409,6 +802,16 @@ def main(argv=None):
                     help="the G2 dump the nominal was trained on (g2-fullevent-v1 npz). Required: "
                          "the fold-forward normalization gate recomputes its reference sums and R "
                          "from it, independently of the driver.")
+    # The two closure verdicts Gate-4 COMPOSES. Required for the same reason as --inputs: the
+    # `closure=` argument was never wired, so `closure:ordinary_pass`,
+    # `closure:stress_recoil_blind` and `closure:stress_fullevent_recovers` never executed.
+    ap.add_argument("--closure-report", required=True,
+                    help="JSON report from closure_fullevent_fps.py --json (the ordinary closure). "
+                         "Carries the (pT,p||) marginal histograms this gate re-derives its L1 "
+                         "from, the push median, and the run's bkg_mode / fixture provenance.")
+    ap.add_argument("--stress-report", required=True,
+                    help="JSON report from stress_closure_muon.py --json (the omitted-muon stress "
+                         "closure: recoil-only stays blind, full-event recovers the tilt).")
     ap.add_argument("--allow-missing-fold-forward", action="store_true",
                     help="DIAGNOSTIC ONLY. Skip the fold-forward gate when the weights npz "
                          "predates the B1 fix. A receipt produced this way does not certify the "
@@ -416,14 +819,26 @@ def main(argv=None):
     args = ap.parse_args(argv)
     import datetime
     z = np.load(args.nominal_weights, allow_pickle=True)
-    frozen_observed = {"estimator_fingerprint": str(z["estimator_fingerprint"]) if
-                       "estimator_fingerprint" in z.files else None,
-                       "bkg_mode": str(z["bkg_mode"]) if "bkg_mode" in z.files else None,
-                       "edges_pt": FROZEN["edges_pt"], "edges_pparallel": FROZEN["edges_pparallel"],
-                       "bin_order": FROZEN["bin_order"], "seed_policy": FROZEN["seed_policy"]}
+
+    # ---- the freeze reads the ARTIFACT, never FROZEN (rule 2 of the module docstring) ----
+    seed_policy = _npz_get(z, "seed_policy")
+    frozen_observed = {
+        "estimator_fingerprint": _npz_get(z, "estimator_fingerprint"),
+        "bkg_mode": _npz_get(z, "bkg_mode"),
+        "edges_pt": _npz_get(z, "edges_pt"),
+        "edges_pparallel": _npz_get(z, "edges_pparallel"),
+        "bin_order": _npz_get(z, "bin_order"),
+        # dict(...) so a persisted mapping compares equal to FROZEN's plain dict
+        "seed_policy": dict(seed_policy) if isinstance(seed_policy, dict) else seed_policy,
+        "central_vector": _npz_get(z, "central_vector"),
+        "reported_bin_mask": _npz_get(z, "reported_bin_mask"),
+    }
+    target = _npz_get(z, "target")
 
     # ---- B1 §2d: assemble the fold-forward gate's two sides ----
     fold_forward = fold_forward_driver = fold_forward_telemetry = None
+    spectra = spectra_driver = spectra_telemetry = None
+    n_full = args.n_full
     driver_keys = ("fold_forward_sum_w_push_reco", "fold_forward_sum_w_reco", "step1_class_ratio")
     missing = [k for k in driver_keys if k not in z.files]
     if missing and not args.allow_missing_fold_forward:
@@ -440,35 +855,76 @@ def main(argv=None):
                 "recomputation reconstructs the NOMINAL inventory only; a replica's R is built "
                 "from its own coherent draws, which are not in this file. This gate certifies the "
                 "nominal (fail closed).")
-        # The driver records the dump it trained against. Without comparing it, the validator
-        # simply believes whatever --inputs the caller passed, so a DIFFERENT dump can silently
-        # become the reference for every sum below -- the reference data being independent of the
-        # driver is the whole point of §2d. Basenames rather than full paths, because the dump is
-        # legitimately re-staged between filesystems; a content-level guarantee needs the Gate-2
-        # receipt's NPZ sha256 and belongs to the re-issue. Found by adversarial review of b3751cc.
-        driver_inputs = str(z["inputs_path"]) if "inputs_path" in z.files else None
-        if driver_inputs and (os.path.basename(driver_inputs)
+        # The driver records the dump it trained against, by path AND by content. Without comparing
+        # them the validator simply believes whatever --inputs the caller passed, so a DIFFERENT
+        # dump can silently become the reference for every sum below -- the reference data being
+        # independent of the driver is the whole point of §2d. The basename check catches the
+        # ordinary mistake (the dump is legitimately re-staged between filesystems, so paths must
+        # not be compared whole); the sha256 makes it a CONTENT bind, which the 07-29 patch flagged
+        # as belonging to this re-issue. Found by adversarial review of b3751cc.
+        driver_inputs = _npz_get(z, "inputs_path")
+        if driver_inputs and (os.path.basename(str(driver_inputs))
                               != os.path.basename(os.path.abspath(args.inputs))):
             raise SystemExit(
                 f"[gate4] --inputs {args.inputs!r} is not the dump this result was trained on "
                 f"({driver_inputs!r}). The fold-forward reference sums would come from a different "
                 "inventory than the weights (fail closed).")
+        driver_inputs_sha = _npz_get(z, "inputs_sha256")
+        if driver_inputs_sha:
+            observed_sha = _sha256_file(args.inputs)
+            if str(driver_inputs_sha) != observed_sha:
+                raise SystemExit(
+                    f"[gate4] --inputs {args.inputs!r} sha256 {observed_sha} != the dump this "
+                    f"result was trained on ({driver_inputs_sha}). Same basename, different "
+                    "content (fail closed).")
         v_push, v_w, v_R, fold_forward_telemetry = fold_forward_sums_from_dump(
             args.inputs, z["weights_push"], z["mc_indices"])
         fold_forward = (v_push, v_w, v_R)
         fold_forward_driver = (float(z["fold_forward_sum_w_push_reco"]),
                                float(z["fold_forward_sum_w_reco"]),
                                float(z["step1_class_ratio"]))
+        inventory = fold_forward_telemetry.get("n_signal_inventory")
+        if n_full is None:
+            n_full = inventory
+        elif inventory is not None and int(n_full) != int(inventory):
+            raise SystemExit(f"[gate4] --n-full {n_full} != the dump's signal inventory "
+                             f"{inventory} (fail closed)")
+        # The freeze checks run on the DRIVER's spectra; this is the independent side.
+        v_cv, v_mask, spectra_telemetry = nominal_spectra_from_dump(
+            args.inputs, z["weights_push"], z["mc_indices"])
+        v_sat = cap_saturation_frac_from_push(z["weights_push"])
+        spectra = (v_cv, v_mask, v_sat)
+        spectra_driver = (_npz_get(z, "central_vector"), _npz_get(z, "reported_bin_mask"),
+                          _npz_get(z, "cap_saturation_frac"))
+        if any(x is None for x in spectra_driver):
+            spectra_driver = None
+
+    ordinary = _read_report(args.closure_report, "ordinary")
+    stress = _read_report(args.stress_report, "omitted-muon stress")
+    marginal = None
+    if isinstance(ordinary.get("marginal_h_truth"), list) \
+            and isinstance(ordinary.get("marginal_h_reweighted"), list):
+        marginal = (ordinary["marginal_h_truth"], ordinary["marginal_h_reweighted"])
+    closure = (ordinary.get("pass") is True,
+               stress.get("recoil_only_fails_to_recover") is True,
+               stress.get("fullevent_recovers") is True)
 
     payload, verdict = build_gate4_report(
         result_meta={"path": os.path.abspath(args.nominal_weights),
                      "sha256": _sha256_file(args.nominal_weights),
-                     "inputs_path": os.path.abspath(args.inputs)},
+                     "inputs_path": os.path.abspath(args.inputs),
+                     "inputs_sha256_declared_by_driver": _npz_get(z, "inputs_sha256"),
+                     "closure_report": os.path.abspath(args.closure_report),
+                     "stress_report": os.path.abspath(args.stress_report)},
         frozen_observed=frozen_observed,
         weights_push=z["weights_push"] if "weights_push" in z.files else None,
-        imc=z["mc_indices"] if "mc_indices" in z.files else None, n_full=args.n_full,
+        imc=z["mc_indices"] if "mc_indices" in z.files else None, n_full=n_full,
+        n_expected_subsample=FROZEN["seed_policy"]["train_events"],
+        marginal=marginal, saturation_frac=(spectra[2] if spectra is not None else None),
+        closure=closure, closure_reports=(ordinary, stress), target=target,
         fold_forward=fold_forward, fold_forward_driver=fold_forward_driver,
         fold_forward_telemetry=fold_forward_telemetry,
+        spectra=spectra, spectra_driver=spectra_driver, spectra_telemetry=spectra_telemetry,
         observed_at_utc=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     if fold_forward is None:
         # A skipped normalization gate must NOT read as green. Previously this produced
@@ -480,7 +936,6 @@ def main(argv=None):
                                    "reason": f"--allow-missing-fold-forward; npz lacks {missing}"}
         payload["verdict"] = "FAIL_NORMALIZATION_NOT_CHECKED"
         payload["component_verdicts"]["fold_forward"] = False
-        payload["n_failed"] = payload.get("n_failed", 0) + 1
         verdict = False
     write_work_receipt(args.work, payload)
     print(json.dumps({"verdict": payload["verdict"], "n_failed": payload["n_failed"],

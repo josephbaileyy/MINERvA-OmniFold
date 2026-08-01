@@ -11,8 +11,18 @@ this path.
 `--config-gate-only` runs ONLY the fail-closed publication config gate (login-safe: no TensorFlow,
 no NPZ materialization -- it reads just the tiny scalar marker members from the npz zip header) and
 prints the plan. The full training path (build loaders + MultiFold + save) imports TensorFlow lazily
-and runs only on a GPU node; this driver NEVER auto-submits and is NEVER invoked at import time."""
+and runs only on a GPU node; this driver NEVER auto-submits and is NEVER invoked at import time.
+WHAT THIS DRIVER MUST PERSIST, AND WHY (audit B2). Until the 08-03 Gate-4 re-issue it wrote only
+`weights_push, mc_indices, estimator_fingerprint, bkg_mode, tag, target` -- no niter, epochs, seeds,
+train_events, grid, input hash or reporting spectrum. The consequence was not a missing convenience:
+`freeze:seed_policy` was UNFALSIFIABLE by construction (the validator compared its own FROZEN policy
+to itself), and the central-vector / reported-mask / cap-saturation checks had no artifact to read
+and so never executed at all. A nominal launched with `--niter 1 --epochs 2` validated PASS against
+a receipt that recorded `niter: 2, epochs: 8`. Everything added below exists so that the gate reads
+the RESULT rather than its own constants; see `validate_pet_nominal_gate4.check_freeze`.
+"""
 import argparse
+import hashlib
 import io
 import json
 import os
@@ -35,6 +45,71 @@ BKG_MODE = "negweight-refined"
 # reuses the SAME seeds/config with a different output tag to expose the GPU-nondeterminism floor).
 NOMINAL_SEED_POLICY = {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
                        "train_events": 2000000}
+# The ravel convention of `central_vector` / `reported_bin_mask`. Stated INDEPENDENTLY of the
+# validator's FROZEN["bin_order"] on purpose: the whole point of persisting it is that the gate can
+# find the two disagreeing, which it cannot do if both sides read one constant. The two literals are
+# pinned equal by test_b1_normalization_fix.Gate4ArtifactContract.
+BIN_ORDER = "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel"
+
+
+def sha256_file(path, chunk=1 << 22):
+    """Content hash of the G2 dump. Gate-4 compares it against its own read of --inputs, which turns
+    the validator's basename check into a CONTENT bind (a re-staged dump legitimately changes path;
+    a substituted one must not pass as the same inventory)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for b in iter(lambda: f.read(chunk), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def reporting_spectra(truth_scalars, w_truth, push, pass_truth):
+    """The 285-cell reporting spectra Gate-4's freeze checks read from the artifact.
+
+    Returns (central_vector, reported_bin_mask). `central_vector` is the pushed (pT,p_parallel)
+    spectrum over pass_truth on the canonical extended-FPS grid, ravelled in the frozen pt-major
+    row-major order and NORMALIZED TO UNIT SUM; `reported_bin_mask` marks the prior-occupied cells.
+
+    Unit-normalized because `w_truth` here is `mc.weight`, which the DataLoader rescaled in place to
+    sum to 1e6, while the validator's independent recomputation reads the dump's raw weights. The
+    two are the same spectrum up to a positive scale and the freeze fixes only length/order/
+    finiteness, so normalizing is what makes the two-sided agreement check exact. The absolute
+    cross-section normalization belongs to the extraction step, not to this artifact."""
+    ts = np.asarray(truth_scalars, dtype=np.float64)
+    w = np.asarray(w_truth, dtype=np.float64)
+    p = np.asarray(push, dtype=np.float64)
+    sel = np.asarray(pass_truth).astype(bool)
+    if not (ts.shape[0] == w.shape[0] == p.shape[0] == sel.shape[0]):
+        raise SystemExit(f"[gate4] reporting-spectra inputs not row-aligned: truth_scalars "
+                         f"{ts.shape}, weight {w.shape}, push {p.shape}, pass_truth {sel.shape}")
+    if not sel.any():
+        raise SystemExit("[gate4] no pass_truth rows in the training subsample; the reporting "
+                         "spectrum is undefined (fail closed)")
+    bins = [fe.CANONICAL_PT_EDGES, fe.CANONICAL_PPARALLEL_EDGES]
+    pt = ts[:, fe.SCALAR_COLS["pt"]]; ppar = ts[:, fe.SCALAR_COLS["pparallel"]]
+    h_prior, _, _ = np.histogram2d(pt[sel], ppar[sel], bins, weights=w[sel])
+    h_push, _, _ = np.histogram2d(pt[sel], ppar[sel], bins, weights=(w * p)[sel])
+    central = h_push.ravel()
+    total = central.sum()
+    if not (np.isfinite(total) and total > 0.0):
+        raise SystemExit(f"[gate4] pushed reporting spectrum sums to {total} (fail closed)")
+    return central / total, (h_prior.ravel() > 0.0)
+
+
+def cap_saturation_frac(push, cap):
+    """Fraction of push weights sitting at the engine's PREDECLARED symmetric logit cap.
+
+    `MultiFold.reweight` returns `exp(clip(logit, -cap, +cap))` and logs the saturated count without
+    persisting it, so the fraction is recovered as `|log(push)| >= cap`. `cap` is read from the
+    engine itself; Gate-4 mirrors the constant and recomputes this fraction from `weights_push`
+    independently, so a drift on either side shows up as a disagreement rather than silently."""
+    p = np.asarray(push, dtype=np.float64)
+    if p.size == 0:
+        return float("nan")
+    with np.errstate(divide="ignore", invalid="ignore"):
+        logit = np.log(p)
+    bad = ~np.isfinite(logit)
+    return float((bad | (np.abs(logit) >= float(cap) * (1.0 - 1e-6))).mean())
 
 
 def read_npz_markers(npz_path):
@@ -159,6 +234,23 @@ def main(argv=None):
         raise SystemExit("[gate4] loader meta carries no step1_class_ratio -- this driver requires "
                          "the B1-corrected loader (fail closed)")
 
+    # ---- audit B2: the run's ACTUAL configuration + reporting spectra, for the Gate-4 freeze ----
+    # `seed_policy` is what the run really did, read off argv -- not NOMINAL_SEED_POLICY. Persisting
+    # the constant instead would recreate the self-comparison the freeze check exists to avoid.
+    seed_policy = {"estimator_seed": int(args.estimator_seed),
+                   "subsample_seed": int(args.subsample_seed), "niter": int(args.niter),
+                   "epochs": int(args.epochs), "train_events": int(args.max_events)}
+    # The truth (pT,p||) of the SAME subsample, from the dump (build_fullevent_loaders keeps the
+    # scalars only for the event-feature block, so they are re-read here rather than plumbed out).
+    with np.load(args.inputs, allow_pickle=True) as _d:
+        truth_scalars_sub = np.asarray(_d["truth_scalars"])[imc]
+    pass_truth_sub = np.asarray(mc.pass_gen).astype(bool)
+    central_vector, reported_bin_mask = reporting_spectra(
+        truth_scalars_sub, w_mc, push, pass_truth_sub)
+    del truth_scalars_sub
+    import omnifold.omnifold as _of_engine                # the authoritative F3 cap, not a copy
+    sat_frac = cap_saturation_frac(push, _of_engine.REWEIGHT_LOGIT_CAP)
+
     np.savez_compressed(args.out, weights_push=np.asarray(of.weights_push),
                         mc_indices=imc, estimator_fingerprint=ESTIMATOR_FINGERPRINT,
                         bkg_mode=BKG_MODE, tag=args.tag,
@@ -173,11 +265,25 @@ def main(argv=None):
                         bootstrap_seed=np.asarray(
                             -1 if target_meta.get("bootstrap_seed") is None
                             else int(target_meta["bootstrap_seed"])),
-                        inputs_path=np.asarray(os.path.abspath(args.inputs)))
+                        inputs_path=np.asarray(os.path.abspath(args.inputs)),
+                        # audit B2: the freeze must read the RESULT, not the validator's constants
+                        inputs_sha256=np.asarray(sha256_file(args.inputs)),
+                        seed_policy=np.asarray(seed_policy, dtype=object),
+                        edges_pt=fe.CANONICAL_PT_EDGES,
+                        edges_pparallel=fe.CANONICAL_PPARALLEL_EDGES,
+                        bin_order=np.asarray(BIN_ORDER),
+                        central_vector=central_vector,
+                        reported_bin_mask=reported_bin_mask,
+                        cap_saturation_frac=np.asarray(sat_frac),
+                        reweight_logit_cap=np.asarray(float(_of_engine.REWEIGHT_LOGIT_CAP)))
     print(f"[gate4] wrote {args.out} (tag={args.tag})")
     print(json.dumps({"fold_forward_reco_ratio": sum_w_push_reco / sum_w_reco,
                       "step1_class_ratio_R": float(class_ratio),
-                      "n_pass_reco_subsample": int(pass_reco_sub.sum())}, indent=2))
+                      "n_pass_reco_subsample": int(pass_reco_sub.sum()),
+                      "n_pass_truth_subsample": int(pass_truth_sub.sum()),
+                      "n_reported_cells": int(reported_bin_mask.sum()),
+                      "cap_saturation_frac": sat_frac,
+                      "seed_policy": seed_policy}, indent=2))
     return 0
 
 

@@ -157,13 +157,32 @@ frozen: the launcher/driver route through `fullevent_fps_dataloader`, call
 `assert_publication_config` (fingerprint `pet-fullevent-fps-v1`,
 `bkg_mode=negweight-refined`, G2 full-schema markers + background inventory,
 Gate-2 target `G2_FPS_MEFHC_P12.npz` sha `fa6b3463`, Gate-3 manifest bound),
-fail closed on mismatch, and never auto-submit (require `SLURM_JOB_ID`). Tests:
-196/196 PASS (14 launcher + 36 validator + 146 frozen regressions).
-Independently verified by agy (VERDICT PASS). Receipt:
-`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json`.
+fail closed on mismatch, and never auto-submit (require `SLURM_JOB_ID`).
 `nominal_pet_training_allowed` stays **false** — the training LAUNCH is a
 separate post-restore user decision (the 2026-07-22 shutdown precludes a long
 GPU job now).
+
+**RE-ISSUED 2026-07-31** (`RESTORE-2026-08-03.md` Step 2b). Receipt:
+`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json`; the
+07-21 receipt is `SUPERSEDED`. The B1 §2d patch had voided all five bindings,
+and the re-issue was also the window for the audit-B2 validator defects: the
+CLI evaluated **none** of its four physics checks (`marginal`, `normalization`,
+`saturation_frac`, `closure` were never passed and the report builder silently
+skipped any component whose argument was `None`), self-compared four of its six
+freeze checks (`frozen_observed` was built out of `FROZEN`), and never populated
+`central_vector` / `reported_bin_mask` at all — so it returned `verdict PASS,
+0 failed` on `|N(1,0.3)|` noise. Now: absent evidence emits a failing
+`<component>:evidence_supplied` check, every value compared against `FROZEN` is
+read from the artifact, the two closure reports are required CLI arguments, and
+the measured-target provenance (including
+`refinement_is_learned_production`) is gated. The legacy truth-level
+`check_normalization` primitive is retired. Tests: 13+1s launcher / 62 validator
+/ 80 B1 / 93 frozen regressions. **Not independently reviewed** — unlike the
+07-21 issue, no second agent verified this; and B-2's agy citation was checked
+and found unrecoverable, so it is not carried forward. Four items remain owed —
+the measured `fold_forward_ratio_dev_max`, the `stress_closure_muon.py` run
+(blocked by TF 2.16/Keras 3 on the local host), the ordinary closure receipt,
+and the Gate-2 re-issue.
 
 Train and extract one unbootstrapped publication nominal from the Gate-2 target
 using the frozen estimator fingerprint. Freeze its central vector, reported-bin

@@ -1,6 +1,11 @@
 {
-  "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
-  "verdict": "PASS_CODE_ONLY",
+  "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1-superseded",
+  "status": "SUPERSEDED",
+  "superseded_by": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json",
+  "superseded_at_utc": "2026-07-31T00:00:00Z",
+  "superseded_why": "The B1 normalization fix (B1-NORMALIZATION-FIX-DESIGN.md §2d) edited the driver and the validator, so this receipt is no longer the receipt that passed, and editing any one of the five voids the bindings of all five. RESTORE-2026-08-03.md Step 2b re-issued the gate on 2026-07-31.",
+  "superseded_bindings_note": "NOTHING HERE WAS HAND-EDITED. The five sha256 values this gate ran against are preserved verbatim below, moved from `files` to `files_at_issue` and from `sha256` to `sha256_at_issue`. The rename is what takes them out of docs/orchestration/verify_hash_bindings.py's collector: they are a historical record of what the 07-21 gate saw, not a live freeze, and leaving them live would have kept the verifier red on a receipt that no longer owns those files. The successor receipt records the old->new move for every role in its `reissue.binding_moves` block, so no hash disappears -- it changes owner. Per the verifier's own docstring: re-issue the owning gate and record the move.",
+  "verdict": "PASS_CODE_ONLY (AT ISSUE 2026-07-21; SUPERSEDED -- see superseded_by)",
   "observed_at_utc": "2026-07-21T19:35:00Z",
   "actor": "interim-claude-root(4a8668e1, interim_for codex 019f749a)",
   "user_decision": {
@@ -23,12 +28,12 @@
     "dispatch_note": "First two dispatches (raw nohup& and harness-tracked background) were reaped at session teardown without executing (WAKER F4 node-local fragility); the successful build used a SYNCHRONOUS foreground agentctl send so the child stayed alive within the live orchestrator turn.",
     "capture": "docs/orchestration/runs/agent-B-p5b/gate4-build.capture.txt"
   },
-  "files": {
-    "driver": {"path": "nd-unfolding/pet/train_fullevent_nominal.py", "sha256": "aa9f66a862e78a4abb3e5b647a5505287398d67178f1a784cbab135d07bae1d4"},
-    "launcher": {"path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh", "sha256": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"},
-    "validator": {"path": "nd-unfolding/pet/validate_pet_nominal_gate4.py", "sha256": "0cb4b41dce3ef4ff984c862130597630068dee0e9f19521f05ae87c34fbc9fa7"},
-    "launcher_test": {"path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py", "sha256": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"},
-    "validator_test": {"path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py", "sha256": "7b669484dbf2a0157854783963201c4358b8b1d2b8dc31e64005ef9f37577d39"}
+  "files_at_issue": {
+    "driver": {"path": "nd-unfolding/pet/train_fullevent_nominal.py", "sha256_at_issue": "aa9f66a862e78a4abb3e5b647a5505287398d67178f1a784cbab135d07bae1d4"},
+    "launcher": {"path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh", "sha256_at_issue": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"},
+    "validator": {"path": "nd-unfolding/pet/validate_pet_nominal_gate4.py", "sha256_at_issue": "0cb4b41dce3ef4ff984c862130597630068dee0e9f19521f05ae87c34fbc9fa7"},
+    "launcher_test": {"path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py", "sha256_at_issue": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"},
+    "validator_test": {"path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py", "sha256_at_issue": "7b669484dbf2a0157854783963201c4358b8b1d2b8dc31e64005ef9f37577d39"}
   },
   "publication_config_binding": {
     "routes_through": "nd-unfolding/pet/fullevent_fps_dataloader.py :: assert_publication_config",
@@ -69,6 +74,7 @@
     "data_files_modified": 0
   },
   "independent_verification": {
+    "UNRESOLVABLE_CITATION_20260731": "AUDIT-FINDINGS-20260729-B.md B-2, re-checked 2026-07-31: neither artifact cited in this block exists. `build.capture` (docs/orchestration/runs/agent-B-p5b/gate4-build.capture.txt) is absent, and there are ZERO 2026-07-21 files under docs/orchestration/runs/agent-B-p5b/ or docs/orchestration/runs/agy-publication-redteam/ -- 07-21 is a hole in the committed transcript dates. The agy turn-32 red-team PASS below is therefore a CLAIM with no supporting artifact in this repo. RESTORE-2026-08-03.md Step 6 is the recovery path (the session lives only in Perlmutter $HOME/.gemini) and is blocked until the restore. The successor receipt deliberately does NOT carry this citation forward.",
     "orchestrator_sanity": "5 files exist with matching sha256; git status shows only the 5 new files; no *.root/*.npz/frozen validator modified; byte-compile + bash -n PASS",
     "agy": {
       "role": "agy-publication-redteam",

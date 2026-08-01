@@ -13,7 +13,23 @@ unchanged and ONLY the conditional muon distribution p(m | recoil) is tilted. Th
 
 Runs under the TF module. Prints a PASS/FAIL verdict and the per-stratum residuals for
 both models on the same stress sample (this is the FE-D + FE-E ablation core).
+
+LOGIN-SAFE BY CONSTRUCTION: synthetic event set, no ROOT, no /pscratch, no dump, identity
+response (`reco=gen=cloud`) with all-pass masks. It does import TensorFlow and train, so budget
+CPU minutes, not seconds.
+
+2026-07-31 (Gate-4 re-issue, RESTORE-2026-08-03.md Step 2b / AUDIT-FINDINGS-20260729-B.md B-6).
+Two changes, physics untouched:
+  * `--json` writes a machine-readable report. This closure is named inside Gate-4's own frozen
+    contract (`validate_pet_nominal_gate4.py FROZEN["closure_scripts"]["omitted_muon_stress"]`) and
+    supplies two of its three `closure=` verdicts, which the validator had no way to read -- so
+    `closure:stress_recoil_blind` and `closure:stress_fullevent_recovers` never executed.
+  * the run is behind `main()` / `__name__ == "__main__"`. It used to train at IMPORT time, so
+    nothing could inspect the predeclared verdict thresholds without paying for two trainings.
+    The synthetic sample is still built at module scope: it is cheap and deterministic.
 """
+import argparse
+import json
 import sys
 
 import numpy as np
@@ -100,22 +116,73 @@ def residual(push):
     return res[:, 0], res[:, 1]   # (unfolded-vs-data, prior-vs-data)
 
 
-print("[stress] injected per-stratum muon tilt alpha=%.2f; recoil marginal held fixed" % ALPHA)
-push_r = run(full_event=False)
-push_f = run(full_event=True)
-res_r, prior = residual(push_r)
-res_f, _ = residual(push_f)
-print(f"[stress] PRIOR      vs data  L1/stratum: median={np.median(prior):.4f} max={prior.max():.4f}")
-print(f"[stress] RECOIL-ONLY vs data L1/stratum: median={np.median(res_r):.4f} max={res_r.max():.4f}")
-print(f"[stress] FULL-EVENT  vs data L1/stratum: median={np.median(res_f):.4f} max={res_f.max():.4f}")
-# recoil-only should stay near the prior residual (cannot move m|R); full-event should
-# recover data (residual much smaller than prior). Predeclared verdict:
-recoil_fails = np.median(res_r) > 0.5 * np.median(prior)         # stays >= half the prior gap
-full_recovers = np.median(res_f) < 0.5 * np.median(res_r)        # closes >= 2x better than recoil
-print(f"[stress] recoil-only FAILS to recover (>=0.5*prior): {recoil_fails}")
-print(f"[stress] full-event RECOVERS (<0.5*recoil-only):      {full_recovers}")
-if recoil_fails and full_recovers:
-    print("STRESS CLOSURE PASS: full-event recovers the omitted muon variable; recoil-only cannot.")
-else:
-    print("STRESS CLOSURE INCONCLUSIVE (inspect residuals/tuning).")
-    sys.exit(3)
+REPORT_SCHEMA = "pet-fullevent-omitted-muon-stress-v1"
+# Predeclared verdict thresholds (unchanged from the 2026-07-19 original; named so the report can
+# state them and Gate-4 can see they were not loosened for the run it is reading).
+RECOIL_BLIND_FRAC = 0.5      # recoil-only residual must stay >= this * the prior gap
+FULLEVENT_GAIN_FRAC = 0.5    # full-event residual must fall below this * the recoil-only residual
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--json", default=None,
+                    help="write the machine-readable stress-closure report here (Gate-4 consumes "
+                         "it as --stress-report)")
+    a = ap.parse_args(argv)
+
+    print("[stress] injected per-stratum muon tilt alpha=%.2f; recoil marginal held fixed" % ALPHA)
+    push_r = run(full_event=False)
+    push_f = run(full_event=True)
+    res_r, prior = residual(push_r)
+    res_f, _ = residual(push_f)
+    print(f"[stress] PRIOR      vs data  L1/stratum: median={np.median(prior):.4f} max={prior.max():.4f}")
+    print(f"[stress] RECOIL-ONLY vs data L1/stratum: median={np.median(res_r):.4f} max={res_r.max():.4f}")
+    print(f"[stress] FULL-EVENT  vs data L1/stratum: median={np.median(res_f):.4f} max={res_f.max():.4f}")
+    # recoil-only should stay near the prior residual (cannot move m|R); full-event should
+    # recover data (residual much smaller than prior). Predeclared verdict:
+    recoil_fails = bool(np.median(res_r) > RECOIL_BLIND_FRAC * np.median(prior))
+    full_recovers = bool(np.median(res_f) < FULLEVENT_GAIN_FRAC * np.median(res_r))
+    print(f"[stress] recoil-only FAILS to recover (>=0.5*prior): {recoil_fails}")
+    print(f"[stress] full-event RECOVERS (<0.5*recoil-only):      {full_recovers}")
+    ok = recoil_fails and full_recovers
+    if ok:
+        print("STRESS CLOSURE PASS: full-event recovers the omitted muon variable; recoil-only cannot.")
+    else:
+        print("STRESS CLOSURE INCONCLUSIVE (inspect residuals/tuning).")
+
+    if a.json:
+        report = {
+            "report_schema": REPORT_SCHEMA,
+            "verdict": "PASS" if ok else "INCONCLUSIVE",
+            "pass": ok,
+            "recoil_only_fails_to_recover": recoil_fails,
+            "fullevent_recovers": full_recovers,
+            "alpha": float(ALPHA), "seed": int(SEED),
+            "n_events": int(N), "n_tokens": int(P), "n_strata": 10,
+            "niter": 3, "epochs": 8,
+            "recoil_blind_frac": float(RECOIL_BLIND_FRAC),
+            "fullevent_gain_frac": float(FULLEVENT_GAIN_FRAC),
+            "residual_median": {"prior": float(np.median(prior)),
+                                "recoil_only": float(np.median(res_r)),
+                                "fullevent": float(np.median(res_f))},
+            "residual_max": {"prior": float(prior.max()),
+                             "recoil_only": float(res_r.max()),
+                             "fullevent": float(res_f.max())},
+            "residual_per_stratum": {"prior": [float(x) for x in prior],
+                                     "recoil_only": [float(x) for x in res_r],
+                                     "fullevent": [float(x) for x in res_f]},
+            "synthetic_event_set": True,
+            "note": "synthetic full-event stress sample by construction (identity response, "
+                    "all-pass masks); this is the omitted-variable ABLATION, not the ordinary "
+                    "physics closure of the G2 dump.",
+        }
+        with open(a.json, "w") as fh:
+            json.dump(report, fh, indent=2)
+            fh.write("\n")
+        print(f"[stress] wrote report {a.json}")
+    return 0 if ok else 3
+
+
+if __name__ == "__main__":
+    sys.exit(main())
