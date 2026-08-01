@@ -570,6 +570,54 @@ class Gate4FoldForward(unittest.TestCase):
         ok, _ = g4.check_fold_forward_ratio(s_push, s_w, R)
         self.assertTrue(ok)
 
+    def test_varying_push_separates_the_weighted_mean_from_the_plain_mean(self):
+        """The blind spot every other case here shares: they all feed a CONSTANT push, and
+        sum(w*push)/sum(w) == c for any w when push == c. So none of them can tell a correct
+        w-weighted mean from an implementation that dropped the weights entirely. Feed a push
+        that varies row to row, anti-correlated with w_truth so the two means are far apart,
+        and pin the weighted one."""
+        arrays = g2_arrays_with_R(target_R=1.28, ns=80)
+        w = np.asarray(arrays["w_truth"], dtype=np.float64)
+        mask = np.asarray(arrays["pass_reco"]).astype(bool)
+        push = np.empty(80, dtype=np.float64)
+        push[np.argsort(w)] = np.linspace(1.6, 0.7, 80)   # largest push onto the smallest weight
+        with tempfile.TemporaryDirectory() as td:
+            path = write_npz(td, arrays)
+            s_push, s_w, _R, _telem = g4.fold_forward_sums_from_dump(path, push, np.arange(80))
+
+        weighted = float((w[mask] * push[mask]).sum() / w[mask].sum())
+        plain = float(push[mask].mean())
+        # If the fixture's two means coincided, the assertions below would prove nothing.
+        self.assertGreater(abs(weighted - plain), 1e-3,
+                           "degenerate fixture: weighted and unweighted means agree")
+        self.assertAlmostEqual(s_push / s_w, weighted, places=12)
+        self.assertNotAlmostEqual(s_push / s_w, plain, places=4)
+
+    def test_gate_accepts_a_correct_unfold_whose_push_is_not_flat(self):
+        """A correct unfold does not return a flat push; §2d gates the w-weighted mean against R.
+        Build a push whose WEIGHTED mean is exactly R but whose plain mean is not, and the
+        converse, so the check is shown to key on the right one in both directions."""
+        R = 1.135
+        rng = np.random.default_rng(11)
+        w = rng.random(500) + 0.5
+        # The spread must RISE WITH w, not be shuffled: a spread independent of the weights has a
+        # weighted mean within ~0.5% of its plain mean, far inside the 5% tolerance, and the
+        # converse below would then have no power to detect anything.
+        spread = np.empty(500)
+        spread[np.argsort(w)] = np.linspace(-0.8, 0.8, 500)          # plain mean exactly 0
+
+        push_ok = R + spread - float((w * spread).sum() / w.sum())   # weighted mean == R exactly
+        self.assertNotAlmostEqual(float(push_ok.mean()), R, places=4)
+        ok, _ = g4.check_fold_forward_ratio(float((w * push_ok).sum()), float(w.sum()), R)
+        self.assertTrue(ok, "gate rejected a correct unfold because its push was not flat")
+
+        push_bad = R + spread                                        # plain mean == R, weighted != R
+        dev = abs(float((w * push_bad).sum() / w.sum()) - R) / R
+        self.assertGreater(dev, g4.FROZEN["tolerances"]["fold_forward_ratio_dev_max"],
+                           "fixture's weighted deviation is inside tolerance; test has no power")
+        bad, _ = g4.check_fold_forward_ratio(float((w * push_bad).sum()), float(w.sum()), R)
+        self.assertFalse(bad, "gate accepted a push whose weighted mean misses R")
+
     def test_validator_recomputation_respects_the_subsample(self):
         """mc_indices selects the trained rows; the reference sums must use the SAME rows."""
         arrays = g2_arrays_with_R(target_R=1.28, ns=80)
