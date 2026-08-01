@@ -60,12 +60,79 @@ Source: codex personal, cross-validated by claude school.
   `train_fullevent_nominal.py:32` sets `ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"`.
   The contract's own text makes this self-refuting. **Gate-4 must stay closed.**
 
+  **FIXED 2026-08-01 — the loader reads the full event.** `DEFAULT_EVT_FEATURES` is now the
+  13-feature publication schema: the reported `(pT, p‖)`, the full reconstructed muon object from
+  `reco_muon` (px, py, pz, E, **cos φ, sin φ**, q/p, MINOS match) and the reco vertex from
+  `reco_vertex`; `reco_view`/`reco_time` (and the `data_*`/`bkg_*` twins throughout) become token
+  columns 3,4 of the reco cloud. Three judgment calls worth stating, because none is forced by the
+  arrays:
+  - **φ is encoded as (cos φ, sin φ), not as a raw angle.** z-scoring an angle places φ = −π and
+    φ = +π at opposite ends of a feature the network cannot glue back together. This is CLM-008
+    F10 — already fixed once, for the truth cloud's KNN coordinates — recurring one level up.
+  - **view/time went into the CLOUD, not the event block**, though the contract listed them under
+    `event_reco`. They are per-token vectors whose length the dump contract pins to the cloud's
+    token dimension, and summarizing them into event scalars would discard exactly the per-hit
+    structure §B of the interface request asked for.
+  - **`eavail`/`q3` were left out**, though they are dumped on both legs and free. Whether they
+    earn a place is RESTORE Step 7's open measurement; adding them in passing would have
+    prejudged it, and they are not part of what `pet-fullevent-fps-v1` claims.
+
+  The two legs now differ in width — the truth leg has no muon object, no vertex and no MINOS
+  counterpart, and requesting one is refused by name at construction time — so `meta` carries
+  `n_evt_reco` and `n_evt_truth` and every caller builds the two networks separately. Gate-4 now
+  **freezes both feature lists and the cloud's token columns, read from the artifact**, so the
+  fingerprint means the schema it names: a reduced-schema result is refused by a named check
+  rather than validated. Re-issued as
+  [`state/p3f-pet-gate4-launch-code-gate-20260801b.json`](state/p3f-pet-gate4-launch-code-gate-20260801b.json)
+  per RESTORE Step 2b, `PASS_CODE_ONLY`, no physics re-run. Tests:
+  `nd-unfolding/tests/test_fullevent_schema.py`.
+
+  *One thing the fix exposed on the way past.* `make_synthetic_g2_fullevent._muon` built a
+  **6-column** `[px,py,pz,E,charge,quality]` block against the dumper's 7-column
+  `[px,py,pz,E,phi,qp,minos_ok]`, and filled plausible values on `!pass_reco` rows where the dump
+  writes −9999. It passed every G2 gate for as long as nothing read it, because
+  `fullevent_dump_contract.assert_inventory_alignment` checks that block's **row count and never
+  its width**. That is the same shape as J07: the contract's checks did not bind the thing that
+  mattered. The fixture now matches the dumper, the width is checked where it is consumed, and the
+  loader's mirrored column orders are pinned against the dumper's own constants by a test — a
+  hand-mirrored column order being precisely what goes stale in silence.
+
 - **J02 — No full-inventory inference or extraction exists. [tier B, strengthened]**
   Training selects 2M of 49,152,885 MC rows and the driver saves only that subsample's weights.
   The verifier sharpened the original claim: `extract_nominal_bkgsub.py` is the *recoil/5D*
   extractor, and there is **no full-event extractor in the tree at all**. The recoil loader has
   a `--reweight-all` full-cloud pass that the full-event driver dropped. Key and coverage both
   mismatch (`weights_push` vs `w_push`; 2M vs `arange(49152885)`).
+
+  **ADDRESSED 2026-08-01, code-only.** `nd-unfolding/pet/extract_fullevent_fps.py`, in two stages:
+  `push` (TensorFlow) streams the FULL 49,152,885-row inventory through the trained step-2 network
+  in chunks and writes `w_push` over `arange(N)`; `xsec` (ROOT + numpy, no TF, no GPU) turns that
+  into the extended-FPS differential cross section. Split because the push pass costs GPU time that
+  must not be re-spent when the extraction recipe changes, and because the extraction is then
+  reviewable on a login node.
+
+  Three things that were not obvious until the pass was written:
+  - **The input space has to be REPRODUCED, not re-derived.** `event_truth` was z-normalized with
+    the 2M training subsample's statistic. Recomputing it over 49.2M rows feeds the trained model
+    differently-scaled inputs and returns confident wrong weights with nothing downstream able to
+    tell. The driver now persists the statistic in an `inference_contract`; an artifact without one
+    is refused rather than reconstructed.
+  - **The reweight is the engine's own.** CLM-008 F3 requires one shared implementation of the
+    logit cap across nominal, replicas, universes and extraction. Rather than re-type it or edit
+    the hash-bound engine, `MultiFold.reweight` is invoked on a minimal instance; a test reads the
+    engine's source and fails if that method grows a dependency the shim does not supply.
+  - **The full pass is cross-checked against the training pass** on the 2M rows they share. Without
+    that, a model rebuilt at the wrong architecture — or fed a re-derived normalization — produces
+    plausible weights and the whole reweight-all is unfalsifiable.
+
+  The extraction arithmetic is a **port** of `pet_systematics_5d.PETxsec5D.xsec` to the two FPS
+  axes through the shared `xsec_nd.extract_cross_section_nd`, minus `PETxsec5D`'s `comp_rescale`
+  (which anchors completeness to a validated GBDT 5D ROOT product that does not exist for this
+  domain; inventing an anchor would silently rescale the answer, and its absence is recorded in
+  the telemetry). **It has never run**: the push stage needs a trained checkpoint and the xsec
+  stage needs ROOT, so both are blocked until the 08-03 restore. Its guards and its arithmetic are
+  unit-tested (`nd-unfolding/tests/test_fullevent_extract.py`); the pass itself is unexecuted.
+  Bound additively by the 08-01b Gate-4 receipt.
 
 - **J03 — The Gate-4 validator returns PASS without running its advertised checks. [tier B,
   reproduced]** The verifier re-ran the repro: 18 checks, 0 failed, exit 0 — with
@@ -89,6 +156,22 @@ Source: codex personal, cross-validated by claude school.
   subtracted conditionally. Already tracked as B-5, with `demo_b5_refiner_feature_space.py`
   demonstrating that the muon-projection agreement is an algebraic identity, not evidence.
   `[corroborates AUDIT-FINDINGS-20260729-B]`
+
+  **NARROWED 2026-08-01, not closed.** `g(x) = D/(D+B)` is now fitted on the same normalized event
+  block the step-1 classifier is conditioned on, so the vertex and the full muon object — two of
+  the four things this finding names — are inside the refiner's feature space. The remaining two,
+  **recoil cloud structure and the per-token view/timing**, are not, and cannot be by widening a
+  column list: `refine_stay_positive` is a tabular classifier over a fixed-width design matrix,
+  and giving it a variable-length token cloud is a different (set-valued) estimator, not a wider
+  argument. The loader records this in `meta['target']['refinement_feature_space']` so the
+  narrowing is visible in the receipt rather than only in a comment, and a test asserts the
+  disclaimer is present. **B-5 stays open on the cloud.**
+
+  Consequence to carry into RESTORE Step 2: the negweight-refined Gate-2 target changes
+  **numerically**. `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` and the Gate-2 runtime receipt
+  describe a target the loader no longer produces. The rebuild was already owed on a bytes
+  argument (the loader has been red against both Gate-2 receipts since the B1 patch); it is now
+  owed on a physics one. Do not read the difference between old and new as a regression.
 
 - **J06 — `w_reco` is unused by the estimator. [tier B]** The loader passes one weight vector;
   MultiFold uses it for both reco and truth legs. `gate2_target_runtime.py` now blocks
@@ -119,6 +202,25 @@ Source: codex personal, cross-validated by claude school.
   is a bare `np.savez_compressed` — no temp file, no `os.replace`, no no-clobber guard. The repo
   already contains the correct pattern (`write_fullevent_npz_atomic`); the driver ignores it.
   See J35 for the same defect class at repo scale.
+
+  **FIXED 2026-08-01.** The pattern was generalized into `nd-unfolding/pet/atomic_write.py`
+  (temp sibling → fsync → `os.replace` → completion marker last, plus `overwrite=False`), and the
+  driver now calls it. The no-clobber guard refuses to replace an output that already carries a
+  *valid* completion marker (`--allow-overwrite` opts in) and runs **before** training, not after;
+  a partial leftover carries no marker and is freely overwritten, which is the case the old
+  behaviour had backwards. The driver also reports the path actually written — numpy appends
+  `.npz` to a name that lacks it, so the old success line could name a file that did not exist.
+  No physics changed: same arrays, keys, seeds and sums. Gate-4 re-issued as
+  [`state/p3f-pet-gate4-launch-code-gate-20260801.json`](state/p3f-pet-gate4-launch-code-gate-20260801.json)
+  per RESTORE Step 2b, `PASS_CODE_ONLY`, no physics re-run. Tests:
+  `nd-unfolding/tests/test_atomic_write.py`.
+
+  *One thing this fix deliberately did not do.* `fullevent_dump_contract.py` — the file J10 names
+  as the correct pattern — was **not** refactored to delegate. The delegation was written, went
+  green, and was reverted: that file is frozen by `state/g2-dump-submit-20260719.json`, a
+  **data-provenance** receipt recording which code produced `G2_FPS_MEFHC_P12.npz`, the only
+  `g2-fullevent-v1` input in existence. Re-issuing it would rewrite what ran at submit time, which
+  is exactly what `verify_hash_bindings.py` refuses. Six duplicated lines are the cheaper cost.
 
 ## 4. Hash bindings and gate machinery (`docs/orchestration`)
 
@@ -359,6 +461,33 @@ all tier C unless marked, and none were cross-validated.
   defect class as J10** — size-as-completion-proof — found independently by a different account
   in a different subtree, which argues it is systemic rather than local.
 
+  **FIXED 2026-08-01, and the extent was larger than reported.** 47 files was a lower bound: the
+  count missed guards written against a *literal path* rather than a variable
+  (`[[ -s "boot_nd_4d/res_boot_${SLURM_ARRAY_TASK_ID}.npz" ]] && …`), which is the same idiom.
+  Final tally: **85 guards across 84 shell files**, all converted to `lib/resume_guard.sh`
+  (`rg_skip_if_complete` + `rg_run`/`rg_publish`), which gate resume on a `${OUT}.done` marker
+  stamped only after the producer returns 0 and bound to the output's size+mtime.
+
+  Notes on scope, each checked rather than assumed:
+  - **No hash-bound launcher was touched.** All six bound `*.sh` files use `-s` only as an input
+    precondition or a post-run assertion — never as a resume guard. The Gate-4 launcher's
+    `[[ -s "$TARGET_NPZ" ]]` is immediately followed by a sha256 *and* size drift check.
+  - **`run_p4_unfold_std.sh` and `run_p4_merge_audit_std.sh` were left alone**: they already do
+    temp → validate → atomic rename → receipt-last, and were the model for the library. Their
+    older receipts (no size/mtime field) stay readable by `rg_is_complete`.
+  - **Input-side `-s` checks were not converted wholesale.** In particular
+    `sbatch_analyze_MEFHC_universes.sh:42` uses `-s "$BOOT_COV"` to decide whether to *include* the
+    bootstrap covariance. Tightening it would silently DROP a covariance term from the analysis
+    when the marker is absent — a worse failure than the one being fixed. Left as-is, deliberately.
+  - **A backfill is owed before the first resume** (RESTORE Step 0b), or every completed unit in
+    the campaign re-runs. `lib/backfill_completion_markers.sh` stamps only what a real content
+    validator accepts and prints the rest; that FAIL list is the set of partials the old guard was
+    hiding.
+
+  Pinned by `nd-unfolding/tests/test_resume_guard.py`, which fails on any reintroduction of the
+  idiom, on any `rg_*` call in a file that never sourced the library, and on any guarded output
+  with no matching producer stamp.
+
 - **J36 — Global POT scaling applied post-merge. [tier C]** A single global
   `pot_scale = data_pot / mc_pot` is read from the `hadd`-merged ROOT file and applied uniformly.
   Because `hadd` sums the POT metadata and concatenates trees, per-playlist Data/MC POT ratios
@@ -428,10 +557,19 @@ all tier C unless marked, and none were cross-validated.
 2. **Gate-4 Step 2b re-issue** (`RESTORE-2026-08-03.md`) — closes
    `test_gate3_and_gate4_launch_code_freezes_specifically` and resolves two of the four J11
    mismatches. Target state **8 failed / 407 passed / 1 skipped**.
-3. **J11 expected-red baseline** — *after* step 2, so it pins the two surviving Gate-2 tuples
-   rather than four.
-4. **J01** — decide whether to relabel the estimator or implement the full schema. Blocks any
-   Gate-4 launch regardless of the gate's state.
+3. **J11 expected-red baseline** — *after* step 2, so it pins the surviving Gate-2 tuples rather
+   than all of them. **Note the list grew on 2026-08-01, from three tuples to five**: the J01 fix
+   necessarily edited `tests/test_fullevent_fps.py` (bound by `g2-gate2-construction-20260719`)
+   and `pet/gate2_target_runtime.py`'s shell pin in `run_gate2_target_validator.sh`. No new FILE
+   entered the red set at the receipt level — both receipts and the shell pin were already red on
+   `fullevent_fps_dataloader.py` — but Step 2 must now move five tuples, not three.
+4. ~~**J01** — decide whether to relabel the estimator or implement the full schema.~~
+   **DONE 2026-08-01: the full schema was implemented**, not relabelled. See J01 above. Gate-4
+   re-issued as `state/p3f-pet-gate4-launch-code-gate-20260801b.json` and now freezes the feature
+   schema itself, so the fingerprint is falsifiable. Still `PASS_CODE_ONLY`; the launch remains
+   blocked on everything Step 2b lists as owed, plus a Gate-2 target rebuild that is now required
+   for a *physics* reason (J05).
 5. **J17/J18** — note corrections; cheap, and J18 currently has the document contradicting
    itself in print.
-6. J12–J16, J35 — machinery hardening, no result impact.
+6. J12–J16, J35 — machinery hardening, no result impact. (J35 + J10 FIXED 2026-08-01; a
+   completion-marker backfill is owed at restore before anything is resubmitted — Step 0b.)

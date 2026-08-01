@@ -31,6 +31,14 @@ import zipfile
 
 import numpy as np
 
+# The dataloader is login-safe at import (numpy only; TensorFlow and ROOT are both deferred), so
+# this gate can read the publication feature schema from the module that defines it instead of
+# retyping it. `sys.path` is primed from this file's own directory rather than REPO, which is the
+# frozen /pscratch literal and is absent off-cluster.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
+import fullevent_fps_dataloader as _fed          # noqa: E402
 
 REPO = Path("/pscratch/sd/j/josephrb/MINERvA-OmniFold")
 EXPECTED_SCHEMA = {
@@ -46,7 +54,14 @@ EXPECTED_IDENTITY = {
     "data": "fd2b14c6f3dbbd7c8747edfd36fcf24c35f29a629350cac84e07027d398e3fc7",
     "bkg": "d79848885f177259e5934c70ddcfc1bb3dea39272da0e67759a5d1b596ca024b",
 }
-FEATURE_NAMES = ("pt", "pparallel")
+# The event-feature schema the target is CONSTRUCTED in. Deliberately a REFERENCE, not a literal:
+# since 2026-08-01 the Stay-Positive refinement is fitted on the same widened reco manifold the
+# step-1 classifier is conditioned on (B-5 / AUDIT-FINDINGS-20260731 J05), so a hardcoded
+# ("pt","pparallel") here would certify a target the loader no longer builds -- this gate would
+# pass while describing something else. `TRUTH_FEATURE_NAMES` is the narrower, detector-free
+# truth leg.
+FEATURE_NAMES = _fed.DEFAULT_EVT_FEATURES
+TRUTH_FEATURE_NAMES = _fed.DEFAULT_TRUTH_EVT_FEATURES
 MASTER_SEED = 42
 REFINEMENT_SEED = MASTER_SEED + 3
 NORMALIZATION = 1_000_000.0
@@ -416,6 +431,7 @@ def run_validate(args) -> int:
         "estimator": "exact",
         "device": "cpu",
         "features": list(FEATURE_NAMES),
+        "truth_features": list(TRUTH_FEATURE_NAMES),
         "master_seed": MASTER_SEED,
         "refinement_random_state": REFINEMENT_SEED,
         "bootstrap_seed": None,
@@ -434,6 +450,7 @@ def run_validate(args) -> int:
         seed=MASTER_SEED,
         bootstrap_seed=None,
         feature_names=FEATURE_NAMES,
+        truth_feature_names=TRUTH_FEATURE_NAMES,
         enforce_fps_edges=True,
         bkg_mode="negweight-refined",
         refine_fn=None,

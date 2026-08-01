@@ -218,17 +218,43 @@ class NativeMissAndLeakage(unittest.TestCase):
     def test_no_truth_leakage_into_event_reco(self):
         # Build a signal block where misses carry the reco SENTINEL; the fullevent event-feature
         # builder must normalize over pass_reco only and never see a truth quantity.
+        #
+        # The muon and vertex blocks are assembled through the DUMPER'S OWN row helpers rather
+        # than filled by hand, so this is an end-to-end statement about the two modules agreeing:
+        # `reco_muon_row` writes the sentinel (minos_ok = 0, not -9999) and the loader's masked
+        # normalization has to survive it on all thirteen columns, not just the two the reduced
+        # schema used to read.
         rng = np.random.default_rng(1)
         ns = 8
         pass_reco = np.array([1, 1, 0, 1, 0, 1, 1, 0], bool)
         reco = rng.random((ns, 4)).astype(np.float32)
         reco[~pass_reco] = dp.SENTINEL                         # miss reco scalars = sentinel
+        muon = np.array([dp.reco_muon_row(bool(p), rng.random(7) * 1000.0 + 1.0)
+                         for p in pass_reco], np.float32)
+        vtx = np.array([dp.reco_vertex_row(bool(p), rng.random(3) * 100.0)
+                        for p in pass_reco], np.float32)
         truth = (rng.random((ns, 4)).astype(np.float32) + 10.0)  # clearly distinct from reco
-        er, et, ed, meta = fed.build_event_features(
-            reco, truth, rng.random((3, 4)).astype(np.float32),
-            pass_reco=pass_reco, pass_truth=np.ones(ns, bool))
-        fed.assert_no_truth_leakage(er, reco, truth, fed.DEFAULT_EVT_FEATURES, pass_reco=pass_reco)
+        r = fed.evt_blocks(scalars=reco, muon=muon, vertex=vtx)
+        t = fed.evt_blocks(scalars=truth)
+        m = fed.evt_blocks(scalars=rng.random((3, 4)).astype(np.float32),
+                           muon=np.array([dp.reco_muon_row(True, rng.random(7) * 1000.0 + 1.0)
+                                          for _ in range(3)], np.float32),
+                           vertex=np.array([dp.reco_vertex_row(True, rng.random(3) * 100.0)
+                                            for _ in range(3)], np.float32))
+        er, _et, _ed, _meta = fed.build_event_features(
+            r, t, m, pass_reco=pass_reco, pass_truth=np.ones(ns, bool))
+        fed.assert_no_truth_leakage(er, r, t, fed.DEFAULT_EVT_FEATURES, pass_reco=pass_reco)
         self.assertTrue(np.allclose(er[~pass_reco], 0.0))      # miss rows zeroed post-normalization
+        # No column's normalization statistic saw a sentinel. Stated as a bound on the NEGATIVE
+        # side rather than on |mean|: the pathology is a mean dragged toward -9999 (the observed
+        # -5732), and this fixture's random muon magnitudes are deliberately unphysical, so an
+        # |mean| bound would fail on the fixture rather than on the defect.
+        self.assertTrue(all(x > -100.0 for x in _meta["reco_norm_mean"]),
+                        _meta["reco_norm_mean"])
+        # ...and it is exactly the pass_reco mean, which is the positive statement.
+        np.testing.assert_allclose(
+            _meta["reco_norm_mean"],
+            fed._event_block(r, fed.DEFAULT_EVT_FEATURES, None)[pass_reco].mean(0), rtol=1e-4)
 
 
 class Padding(unittest.TestCase):

@@ -82,8 +82,14 @@ bootstrap. No purity-only P5B baseline may be launched.
 | recoil token E | 0 | GeV | ÷1000 (MeV→GeV) | energy>0 = valid-token / pad mask |
 | recoil token pos | 1 | m | ÷1000 (mm→m) | transverse position in cluster's view |
 | recoil token z | 2 | m | ÷1000 | KNN coord |
+| recoil token view | 3 | — | raw | `*_view`, 1=X/2=U/3=V. **Adopted 2026-08-01.** Not rescaled: dividing a 3-valued detector-plane code collapses the views onto each other numerically |
+| recoil token time | 4 | — | ÷100 (ns→O(1)) | `*_time`. Its own rescale: /1000 would sit at 1e-2 against an O(1) energy column |
 KNN neighborhood coords = **(pos, z) = cols (1,2)** (detector geometry), set via PET `coord_idx`.
-Padding: zero-pad/truncate to num_part=12 (loader top-N by energy).
+View and time are token FEATURES, never neighborhood coordinates — a hit's view is a categorical
+plane and adjacency in it is not a distance.
+Padding: zero-pad/truncate to num_part=12 (loader top-N by energy). The dump pads all five vectors
+under one permutation (`pad_reco_cloud_tokens`); the loader nonetheless re-zeroes view/time from
+the energy mask, because energy(col 0)==0 is the only pad authority the model keys on.
 
 ### truth cloud (step-2)
 | feature | col | unit | norm | notes |
@@ -93,13 +99,39 @@ Padding: zero-pad/truncate to num_part=12 (loader top-N by energy).
 | theta,phi | 5,6 | rad | raw | appended angular direction; **KNN coords = (theta,phi)=(5,6)** |
 
 ### event_reco / event_data (continuous, SAME observable schema) — the distinguished muon
-- ADOPTED NOW (reduced): `[muon_pT, muon_p‖]` (reco_scalars / measured cols 0,1), z-normalized
-  with the RECO-MC statistic (data uses the reco norm → no truth statistic touches it).
-- REQUIRED for production (needs new C++ branches, getters exist — FULL_EVENT_INTERFACE_REQUEST.md):
-  muon `px,py,pz,E,phi`, `charge/qp`, `MINOS match/range/curvature quality` (step-1 detector
-  context, reco+data ONLY), reco vertex `x,y,z`, residual-energy summary tokens
-  (unclustered/detector-region), recoil `view ID` + `timing`.
-- Detector/MINOS features are step-1 ONLY. NEVER a truth counterpart.
+**ADOPTED 2026-08-01 — the FULL schema (13 features).** `fullevent_fps_dataloader.DEFAULT_EVT_FEATURES`:
+
+| feature | source (reco / data / bkg) | unit | note |
+|---|---|---|---|
+| `pt`, `pparallel` | `*_scalars` cols 0,1 | GeV | the reported observables + the FPS domain-gate coordinates |
+| `mu_px`, `mu_py`, `mu_pz`, `mu_E` | `*_muon` cols 0–3 | MeV→GeV | the muon 4-vector |
+| `mu_cos_phi`, `mu_sin_phi` | `*_muon` col 4 | — | azimuth encoded **periodically**; a raw z-scored φ puts −π and +π maximally far apart (CLM-008 F10, one level up from the truth cloud) |
+| `mu_qp` | `*_muon` col 5 | MeV⁻¹→GeV⁻¹ | charge/curvature; reciprocal unit convention so the +1e-6 sd floor is not a 1 % squeeze on this column |
+| `mu_minos_ok` | `*_muon` col 6 | 0/1 | MINOS match |
+| `vtx_x`, `vtx_y`, `vtx_z` | `*_vertex` cols 0–2 | mm→m | reco vertex |
+
+Column orders mirror `dump_pointcloud_inputs.RECO_MUON_BRANCHES` / `RECO_VERTEX_BRANCHES` and are
+pinned against them by `tests/test_fullevent_schema.py`. z-normalized with the RECO-MC statistic
+(data and background use the reco norm → no truth statistic touches them); the −9999 !pass_reco
+sentinel is carried by **every** one of these columns and is handled by the masked normalization
+below. `pT`/`p‖` are kept alongside the 4-vector they are derivable from so the reduced schema
+stays a literal SUBSET, i.e. a true ablation of the same code path.
+
+Recoil **view ID + timing** are per-token, not event scalars: the dump pins their length to the
+cloud's token dimension P and pads them under the same energy-descending permutation, so they are
+cloud columns 3,4 (see the reco-cloud table above), not part of this block.
+
+- STILL NOT DUMPED, so still absent: residual-energy summary tokens (unclustered/detector-region).
+  `FULL_EVENT_INTERFACE_REQUEST.md` §D asked for them; the G2 dump does not carry them.
+- NOT adopted, deliberately: `eavail`, `q3`. They are dumped on both legs and unread, and whether
+  they earn a place is the open measurement of RESTORE Step 7 (base/eavail/q3/both arms). They are
+  selectable via `feature_names` for that ranking; adding them to the nominal without that
+  evidence would prejudge it, and unlike the muon object they are not what
+  `pet-fullevent-fps-v1` claims.
+- Detector/MINOS features are step-1 ONLY. NEVER a truth counterpart — enforced at construction
+  time by `TRUTH_ELIGIBLE_FEATURES`, not only by convention.
+- The reduced `[muon_pT, muon_p‖]` block is retained as `REDUCED_EVT_FEATURES`, which is the
+  `pet-reduced-fps-cross` estimator. CROSS-CHECK ONLY.
 
 ### event_truth (DISTINCT schema, own normalization)
 - ADOPTED NOW: `[truth_muon_pT, truth_muon_p‖]` (truth_scalars cols 0,1), z-normalized with
@@ -113,7 +145,27 @@ Padding: zero-pad/truncate to num_part=12 (loader top-N by energy).
   a muon/recoil/view type embedding is only needed if muon becomes a cloud token (production
   option). Detector view distinction awaits the `part_reco_view` branch.
 
-## REDUCTION JUSTIFICATION (explicit, per user directive)
+## REDUCTION JUSTIFICATION — RETIRED 2026-08-01. There is no longer a reduction.
+> **Historical, and it outlived its own premise.** The text below justified validating the P5A
+> INTERFACE milestone on the reduced `{pT, p‖}` set while the full-event C++ branches were
+> pending. The branches landed, the G2 dump
+> (`nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz`) carried `reco_muon`, `reco_vertex`,
+> `reco_view`, `reco_time` and their `data_*`/`bkg_*` twins — aligned, correctly stamped, and
+> checked by `fullevent_dump_contract` — and the loader went on reading two columns. A `grep` for
+> those four names across the loader and the driver returned **zero** hits while
+> `train_fullevent_nominal.py` stamped `pet-fullevent-fps-v1`, so this section's own last sentence
+> ("NOT a publication-ready feature set") was refuting the fingerprint the code was writing.
+> That is AUDIT-FINDINGS-20260731 **J01**, and it is fixed: the adopted schema is the full one
+> above, `DEFAULT_EVT_FEATURES` is that schema, and Gate-4 freezes both feature lists so a reduced
+> run can no longer validate under the full-schema fingerprint.
+>
+> Two things did NOT become true just because the reduction ended. The residual-energy summary
+> tokens (§D of the interface request) are still not dumped and so are still absent. And
+> `eavail`/`q3` are still unranked — see the note in the schema table.
+>
+> The reduced set survives as `REDUCED_EVT_FEATURES`, under its correct ID
+> `pet-reduced-fps-cross`, so the ablation is runnable and labelled.
+
 The P5A INTERFACE milestone is validated with the reduced distinguished-muon set
 `{pT, p‖}` — the dominant muon kinematics the recoil-only estimator is blind to. This is
 sufficient to (a) prove the paired continuous-feature interface works end-to-end and (b)

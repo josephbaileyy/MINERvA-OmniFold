@@ -38,6 +38,7 @@ for _p in (_HERE, f"{_REPO}/nd-unfolding", f"{_REPO}/nd-unfolding/pet"):
         sys.path.insert(0, _p)
 
 import fullevent_fps_dataloader as fe  # noqa: E402  (login-safe: TF imported lazily inside)
+from atomic_write import atomic_savez_compressed, is_complete  # noqa: E402  (login-safe)
 
 ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"
 BKG_MODE = "negweight-refined"
@@ -174,6 +175,9 @@ def main(argv=None):
     ap.add_argument("--max-events", type=int, default=NOMINAL_SEED_POLICY["train_events"])
     ap.add_argument("--config-gate-only", action="store_true",
                     help="run ONLY the fail-closed publication config gate (login-safe; no TF)")
+    ap.add_argument("--allow-overwrite", action="store_true",
+                    help="replace an output that already carries a valid completion marker "
+                         "(J10 no-clobber guard; a partial leftover is always replaceable)")
     args = ap.parse_args(argv)
 
     cfg = run_config_gate(args.inputs, args.gate3_manifest)
@@ -187,6 +191,14 @@ def main(argv=None):
         return 0
     if not args.out:
         raise SystemExit("[gate4] --out is required for a training run")
+    # J10 no-clobber guard, BEFORE the eight GPU-hours rather than after them. A completed
+    # publication artifact (one carrying a valid completion marker) is not silently replaced;
+    # a partial leftover from an interrupted run carries no marker and is freely overwritten,
+    # which is exactly the case the old resume behaviour got backwards.
+    if is_complete(args.out) and not args.allow_overwrite:
+        raise SystemExit(f"[gate4] {args.out} already exists AND is marked complete. Refusing to "
+                         f"overwrite a finished publication artifact; pass --allow-overwrite if "
+                         f"replacing it is intended.")
 
     # ---- GPU training path (lazy TF; NEVER runs under --config-gate-only / tests / import) ----
     import tensorflow as tf
@@ -196,16 +208,67 @@ def main(argv=None):
         args.inputs, max_events=args.max_events, seed=int(args.subsample_seed),
         bkg_mode=BKG_MODE)
     P = np.asarray(mc.reco).shape[1]
-    ev = meta["n_evt"]
-    m1 = PET(np.asarray(mc.reco).shape[-1], num_evt=ev, num_part=P, num_transformer=2, num_heads=2,
+    # The two legs have DIFFERENT event-feature widths as of the full-schema loader (J01): step 1
+    # is conditioned on the reconstructed muon object + reco vertex, step 2 only on the truth muon,
+    # because no truth counterpart for the detector quantities exists. Passing one `n_evt` to both
+    # -- as this driver did while both legs read {pT,p||} -- now builds the step-2 network at the
+    # wrong input width and dies inside Keras with a shape error rather than here with a reason.
+    ev_reco, ev_truth = meta["n_evt_reco"], meta["n_evt_truth"]
+    if ev_reco != np.asarray(mc.reco_evt).shape[1] or ev_truth != np.asarray(mc.gen_evt).shape[1]:
+        raise SystemExit(f"[gate4] loader meta widths ({ev_reco}, {ev_truth}) disagree with the "
+                         f"built blocks ({np.asarray(mc.reco_evt).shape[1]}, "
+                         f"{np.asarray(mc.gen_evt).shape[1]}) -- fail closed")
+    if list(meta["feature_names"]) == list(fe.REDUCED_EVT_FEATURES):
+        raise SystemExit(
+            "[gate4] the loader built the REDUCED {pT,p||} schema, which "
+            "FULL_EVENT_FEATURE_CONTRACT.md marks 'CROSS-CHECK ONLY -- never a publication "
+            f"lateral/central source', yet this driver stamps {ESTIMATOR_FINGERPRINT!r}. That "
+            "self-contradiction is AUDIT-FINDINGS-20260731 J01; it is now refused rather than "
+            "written. Run the reduced ablation through a driver that stamps "
+            "'pet-reduced-fps-cross'.")
+    m1 = PET(np.asarray(mc.reco).shape[-1], num_evt=ev_reco, num_part=P,
+             num_transformer=2, num_heads=2,
              projection_dim=32, local=True, K=3, coord_idx=coord_reco)
-    m2 = PET(np.asarray(mc.gen).shape[-1], num_evt=ev, num_part=P, num_transformer=2, num_heads=2,
+    m2 = PET(np.asarray(mc.gen).shape[-1], num_evt=ev_truth, num_part=P,
+             num_transformer=2, num_heads=2,
              projection_dim=32, local=True, K=3, coord_idx=coord_gen)
-    of = MultiFold(f"fe_nominal_{args.tag}", m1, m2, data, mc, niter=int(args.niter),
+    mf_name = f"fe_nominal_{args.tag}"
+    weights_folder = os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}")
+    of = MultiFold(mf_name, m1, m2, data, mc, niter=int(args.niter),
                    epochs=int(args.epochs), batch_size=512,
-                   weights_folder=os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}"),
+                   weights_folder=weights_folder,
                    verbose=False)
     of.Unfold()
+    # Everything `extract_fullevent_fps.py` needs to rebuild the step-2 network and reproduce the
+    # exact input space at full-inventory inference: the architecture, the checkpoint location,
+    # and -- decisively -- the event-feature normalization. The truth block was z-scored with the
+    # statistic of THIS 2M subsample's pass_truth rows; re-deriving it over 49.2M rows at
+    # extraction would feed the trained model a differently-scaled input and produce a confident
+    # wrong answer with nothing to notice it.
+    inference_contract = {
+        "multifold_name": mf_name,
+        "weights_folder": os.path.abspath(weights_folder),
+        "step2_checkpoint": os.path.abspath(os.path.join(
+            weights_folder, f"OmniFold_{mf_name}_iter{int(args.niter) - 1}_step2.weights.h5")),
+        "pet_arch": {"num_feat_gen": int(np.asarray(mc.gen).shape[-1]), "num_evt": int(ev_truth),
+                     "num_part": int(P), "num_transformer": 2, "num_heads": 2,
+                     "projection_dim": 32, "local": True, "K": 3, "coord_idx": list(coord_gen)},
+        "event_features_reco": list(meta["feature_names"]),
+        "event_features_truth": list(meta["truth_feature_names"]),
+        "reco_cloud_cols": list(meta["reco_cloud_cols"]),
+        "truth_norm_mean": list(meta["truth_norm_mean"]),
+        "truth_norm_std": list(meta["truth_norm_std"]),
+        "reco_norm_mean": list(meta["reco_norm_mean"]),
+        "reco_norm_std": list(meta["reco_norm_std"]),
+        "degenerate_reco_columns": list(meta["degenerate_reco_columns"]),
+        "degenerate_truth_columns": list(meta["degenerate_truth_columns"]),
+    }
+    if meta["degenerate_reco_columns"] or meta["degenerate_truth_columns"]:
+        # Not fatal (a selection cut can legitimately make a column constant) but it must be
+        # visible: a feature constant on one leg and not the other is a pure data/MC label.
+        print(f"[gate4] WARNING degenerate event-feature columns "
+              f"reco={meta['degenerate_reco_columns']} "
+              f"truth={meta['degenerate_truth_columns']}", file=sys.stderr)
 
     # ---- B1 §2d: the reco-level fold-forward sums Gate-4's normalization check needs ----
     # Gate-4 asserts that the reco-weighted mean of push equals the physical rate ratio R, i.e.
@@ -251,32 +314,55 @@ def main(argv=None):
     import omnifold.omnifold as _of_engine                # the authoritative F3 cap, not a copy
     sat_frac = cap_saturation_frac(push, _of_engine.REWEIGHT_LOGIT_CAP)
 
-    np.savez_compressed(args.out, weights_push=np.asarray(of.weights_push),
-                        mc_indices=imc, estimator_fingerprint=ESTIMATOR_FINGERPRINT,
-                        bkg_mode=BKG_MODE, tag=args.tag,
-                        target=meta.get("target"),
-                        # B1 §2d fold-forward inputs (see comment above)
-                        fold_forward_sum_w_push_reco=np.asarray(sum_w_push_reco),
-                        fold_forward_sum_w_reco=np.asarray(sum_w_reco),
-                        fold_forward_n_pass_reco=np.asarray(int(pass_reco_sub.sum())),
-                        step1_class_ratio=np.asarray(float(class_ratio)),
-                        # -1 = nominal (no bootstrap); the validator's recomputation from the dump
-                        # is only valid for the nominal, so it must be able to tell.
-                        bootstrap_seed=np.asarray(
-                            -1 if target_meta.get("bootstrap_seed") is None
-                            else int(target_meta["bootstrap_seed"])),
-                        inputs_path=np.asarray(os.path.abspath(args.inputs)),
-                        # audit B2: the freeze must read the RESULT, not the validator's constants
-                        inputs_sha256=np.asarray(sha256_file(args.inputs)),
-                        seed_policy=np.asarray(seed_policy, dtype=object),
-                        edges_pt=fe.CANONICAL_PT_EDGES,
-                        edges_pparallel=fe.CANONICAL_PPARALLEL_EDGES,
-                        bin_order=np.asarray(BIN_ORDER),
-                        central_vector=central_vector,
-                        reported_bin_mask=reported_bin_mask,
-                        cap_saturation_frac=np.asarray(sat_frac),
-                        reweight_logit_cap=np.asarray(float(_of_engine.REWEIGHT_LOGIT_CAP)))
-    print(f"[gate4] wrote {args.out} (tag={args.tag})")
+    # J10: TRANSACTIONAL publication write. A bare np.savez_compressed streams straight to
+    # args.out, so an interrupted train leaves a nonempty, plausible, incomplete npz there --
+    # which every `[[ -s ... ]]` resume guard in the tree then reads as a finished result, and
+    # which Gate-4 would validate as if it were one. atomic_savez_compressed writes a temp
+    # sibling, fsyncs it, and os.replace()s it into position, so args.out is either the old
+    # file or the whole new one. The completion marker is stamped LAST (mark=True), so its
+    # presence always implies a fully published artifact and never the reverse.
+    written = atomic_savez_compressed(
+        args.out,
+        dict(weights_push=np.asarray(of.weights_push),
+             mc_indices=imc, estimator_fingerprint=ESTIMATOR_FINGERPRINT,
+             bkg_mode=BKG_MODE, tag=args.tag,
+             target=meta.get("target"),
+             # B1 §2d fold-forward inputs (see comment above)
+             fold_forward_sum_w_push_reco=np.asarray(sum_w_push_reco),
+             fold_forward_sum_w_reco=np.asarray(sum_w_reco),
+             fold_forward_n_pass_reco=np.asarray(int(pass_reco_sub.sum())),
+             step1_class_ratio=np.asarray(float(class_ratio)),
+             # -1 = nominal (no bootstrap); the validator's recomputation from the dump
+             # is only valid for the nominal, so it must be able to tell.
+             bootstrap_seed=np.asarray(
+                 -1 if target_meta.get("bootstrap_seed") is None
+                 else int(target_meta["bootstrap_seed"])),
+             inputs_path=np.asarray(os.path.abspath(args.inputs)),
+             # audit B2: the freeze must read the RESULT, not the validator's constants
+             inputs_sha256=np.asarray(sha256_file(args.inputs)),
+             seed_policy=np.asarray(seed_policy, dtype=object),
+             edges_pt=fe.CANONICAL_PT_EDGES,
+             edges_pparallel=fe.CANONICAL_PPARALLEL_EDGES,
+             bin_order=np.asarray(BIN_ORDER),
+             central_vector=central_vector,
+             reported_bin_mask=reported_bin_mask,
+             cap_saturation_frac=np.asarray(sat_frac),
+             reweight_logit_cap=np.asarray(float(_of_engine.REWEIGHT_LOGIT_CAP)),
+             # J01: the schema the result was ACTUALLY trained on, so Gate-4's freeze can read it
+             # instead of assuming it. Without this the fingerprint is a label with nothing behind
+             # it -- which is how `pet-fullevent-fps-v1` came to be stamped on a {pT,p||} run.
+             event_features_reco=np.asarray(list(meta["feature_names"]), dtype=object),
+             event_features_truth=np.asarray(list(meta["truth_feature_names"]), dtype=object),
+             reco_cloud_cols=np.asarray(list(meta["reco_cloud_cols"]), dtype=object),
+             n_evt_reco=np.asarray(int(ev_reco)), n_evt_truth=np.asarray(int(ev_truth)),
+             # J02: the full-inventory extractor's contract (architecture, checkpoint, and the
+             # normalization statistics inference must reuse).
+             inference_contract=np.asarray(inference_contract, dtype=object)),
+        mark=True, note=f"gate4 fullevent nominal tag={args.tag}")
+    # Report where it actually landed, not where it was asked to go: numpy appends '.npz' to a
+    # name that lacks it, and a receipt that records the requested path can then name a file
+    # that does not exist.
+    print(f"[gate4] wrote {written} (tag={args.tag})")
     print(json.dumps({"fold_forward_reco_ratio": sum_w_push_reco / sum_w_reco,
                       "step1_class_ratio_R": float(class_ratio),
                       "n_pass_reco_subsample": int(pass_reco_sub.sum()),

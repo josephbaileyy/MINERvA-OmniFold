@@ -8,23 +8,40 @@ are used ONLY for domain retention, reporting, covariance and validation -- NEVE
 classifier inputs or training bins (user directive 2026-07-16).
 
 Representation (three explicit schemas; no manufactured counterparts):
-  * reco cloud  : recoil tokens (E, pos, z). KNN neighborhood = detector geometry (pos, z),
-                  NOT the first two columns by accident. Padding = energy(col 0)==0.
+  * reco cloud  : recoil tokens (E, pos, z, view, time). KNN neighborhood = detector geometry
+                  (pos, z), NOT the first two columns by accident. Padding = energy(col 0)==0.
+                  `view`/`time` are the G2 `*_view`/`*_time` per-token vectors, which the dump
+                  pads under the SAME energy-descending permutation as (E,pos,z), so they are
+                  token-aligned by construction (`dump_pointcloud_inputs.pad_reco_cloud_tokens`).
   * truth cloud : FS-hadron tokens (E, px, py, pz, pdg, theta, phi). KNN neighborhood =
                   angular direction (theta, phi). PDG retained (recoil-only loader dropped it);
                   a learned categorical embedding is the production refinement (documented).
-  * event_reco / event_data  (SAME observable schema): a distinguished RECONSTRUCTED muon,
-                  continuous [pT, p_parallel] now (full px,py,pz,phi,E,charge,MINOS-quality
-                  + reco vertex + residual-energy summaries fold in once the full-event C++
-                  dump provides them -- see FULL_EVENT_INTERFACE_REQUEST.md). event_data uses
+  * event_reco / event_data  (SAME observable schema): the distinguished RECONSTRUCTED muon --
+                  continuous [pT, p_parallel] PLUS the full muon object (px, py, pz, E, cos/sin
+                  of phi, qp, MINOS match) and the reco vertex (x, y, z), read from the G2
+                  `reco_muon`/`reco_vertex` and `data_muon`/`data_vertex` blocks. event_data uses
                   the DATA muon, event_reco the MC-reco muon. Detector/MINOS features are
                   step-1 only; NO truth counterpart is ever manufactured.
-  * event_truth (DISTINCT schema, own normalization): truth muon continuous [pT, p_parallel]
-                  (+ truth event quantities when adopted). NO MINOS/range/quality, NO sentinels.
+  * event_truth (DISTINCT schema, own normalization AND its own width): truth muon continuous
+                  [pT, p_parallel] from `truth_scalars`. NO MINOS/range/quality/vertex, NO
+                  sentinels -- those quantities do not exist at truth level and the dump carries
+                  no truth counterpart for them (`fullevent_dump_contract.TRUTH_KEYS`).
+
+WHY THE TWO WIDTHS DIFFER, AND WHY THAT IS THE POINT. Until 2026-08-01 both legs read the same
+two columns and `meta["n_evt"]` was a single number. That made `DEFAULT_EVT_FEATURES =
+("pt","pparallel")` -- the REDUCED `pet-reduced-fps-cross` schema, which
+FULL_EVENT_FEATURE_CONTRACT.md marks "CROSS-CHECK ONLY -- never a publication lateral/central
+source" -- the input to a driver stamping `pet-fullevent-fps-v1` (AUDIT-FINDINGS-20260731 J01).
+The extension arrays were present in the dump and referenced nowhere. Reading them makes the two
+schemas genuinely distinct, so `meta` now carries `n_evt_reco` and `n_evt_truth` and the caller
+builds the step-1 and step-2 networks at different `num_evt`. `n_evt` is retained as an alias for
+`n_evt_reco` for the recoil-era callers that assumed one width.
 
 LEAKAGE INVARIANT (tested): event_reco/event_data carry only reconstructed/detector
 quantities; a step-1 classifier never receives any truth-only quantity (truth muon, truth
-vertex, PDG-mode, incoming-nu energy, ...).
+vertex, PDG-mode, incoming-nu energy, ...). With distinct schemas this is enforced in two
+places: `TRUTH_ELIGIBLE_FEATURES` refuses a detector feature on the truth leg at construction
+time, and `assert_no_truth_leakage` proves event_reco is a pure function of the reco blocks.
 
 This module's PURE functions (edge assertion, cloud/feature builders, leakage check) import
 NO TensorFlow, so they are unit-testable on the login node. `build_fullevent_loaders` imports
@@ -58,6 +75,28 @@ _PAPER_PPAR_MAX = 60.0   # paper p|| top edge; FPS adds [60,120]
 # scalar column order in reco_scalars/truth_scalars (SCALAR_AXES of the recoil-only loader)
 SCALAR_COLS = {"pt": 0, "pparallel": 1, "eavail": 2, "q3": 3}
 _SCALE = 1000.0          # MeV->GeV, mm->m (same O(1) rescale as the recoil-only loader)
+# Recoil-token hit time is dumped in ns over a window of order +/-50; /1000 would push it to 1e-2
+# while the energy column sits at O(1), so it gets its own O(1) rescale. View is a small integer
+# code already at O(1) and is NOT rescaled -- dividing it by anything would collapse the three
+# detector views onto each other numerically.
+_TIME_SCALE = 100.0      # ns -> O(1)
+
+# ---- G2 extension blocks: the exact column orders the dump writes -------------------------
+# Mirrored from `dump_pointcloud_inputs.RECO_MUON_BRANCHES` / `RECO_VERTEX_BRANCHES`, which are
+# what produced `G2_FPS_MEFHC_P12.npz`. Mirrored rather than imported because that module imports
+# ROOT at use time and this one must stay login-safe; `test_fullevent_schema.py` reads the dumper's
+# SOURCE and fails if the two orders drift apart, so the mirror cannot go stale silently. The same
+# orders apply to the `data_*` and `bkg_*` twins -- the dumper fills all three from one
+# `_reco_row` helper.
+MUON_COLS = {"mu_px": 0, "mu_py": 1, "mu_pz": 2, "mu_E": 3, "mu_phi": 4, "mu_qp": 5,
+             "mu_minos_ok": 6}
+VERTEX_COLS = {"vtx_x": 0, "vtx_y": 1, "vtx_z": 2}
+N_MUON_COLS = len(MUON_COLS)        # 7
+N_VERTEX_COLS = len(VERTEX_COLS)    # 3
+# The dump's !pass_reco marker in reco_scalars / reco_muon / reco_vertex (there is no
+# reconstructed muon on a native truth-only miss). Never a feature value: those rows are excluded
+# from every normalization statistic and zeroed afterwards.
+SENTINEL = -9999.0
 
 
 def assert_extended_fps_edges(edges_pt, edges_pparallel, tol=1e-9):
@@ -91,11 +130,49 @@ def _scale_clean(a):
     return np.nan_to_num(np.asarray(a, np.float32) / _SCALE, nan=0.0, posinf=0.0, neginf=0.0)
 
 
-def build_reco_cloud(part_reco):
-    """Recoil reco cloud (E, pos, z) scaled to O(1). Returns (cloud, coord_idx).
-    coord_idx=(1,2) => KNN neighborhood is the (pos, z) detector geometry, not cols (0,1)."""
+RECO_CLOUD_COLS = ("E", "pos", "z", "view", "time")
+
+
+def build_reco_cloud(part_reco, view=None, time=None):
+    """Recoil reco cloud scaled to O(1). Returns (cloud, coord_idx).
+
+    (N,P,3) = (E, pos, z) when `view`/`time` are omitted -- the recoil-era shape, kept so the
+    pure-function callers that hold only a cloud (feature_rank_arms' cached arms, the unit tests)
+    keep working. With the G2 per-token `*_view` (1=X/2=U/3=V) and `*_time` (ns) vectors supplied
+    the cloud is (N,P,5) = (E, pos, z, view, time). coord_idx is (1,2) either way => the KNN
+    neighborhood stays the (pos, z) detector geometry; view and time are carried as token
+    FEATURES, not as neighborhood coordinates, because a hit's view is a categorical detector
+    plane and adjacency in it is not a distance.
+
+    WHY THE CLOUD AND NOT THE EVENT BLOCK. `*_view`/`*_time` are per-token vectors whose length
+    the dump contract pins to the cloud's token dimension P
+    (`fullevent_dump_contract.assert_inventory_alignment`), and the dumper pads them under the
+    SAME energy-descending permutation as (E,pos,z). Summarizing them into event scalars would
+    discard exactly the per-hit structure they were requested for
+    (FULL_EVENT_INTERFACE_REQUEST.md §B).
+
+    PAD DISCIPLINE. Padded tokens are re-zeroed in view/time from the energy mask rather than
+    trusted: the pad sentinel the model keys on is energy(col 0)==0, and a dump that padded the
+    parallel vectors separately would otherwise leave a nonzero view/time on a token the network
+    treats as absent.
+    """
     cloud = _scale_clean(part_reco)          # (N, P, 3) = E, pos, z
-    return cloud, (1, 2)
+    if view is None and time is None:
+        return cloud, (1, 2)
+    if view is None or time is None:
+        raise ValueError("[G2] build_reco_cloud needs BOTH view and time or neither; got "
+                         f"view={'set' if view is not None else 'None'}, "
+                         f"time={'set' if time is not None else 'None'} (fail closed)")
+    v = np.nan_to_num(np.asarray(view, np.float32), nan=0.0, posinf=0.0, neginf=0.0)
+    t = np.nan_to_num(np.asarray(time, np.float32) / _TIME_SCALE,
+                      nan=0.0, posinf=0.0, neginf=0.0)
+    if v.shape != cloud.shape[:2] or t.shape != cloud.shape[:2]:
+        raise ValueError(f"[G2] view {v.shape} / time {t.shape} are not token-aligned to the "
+                         f"cloud {cloud.shape[:2]} (fail closed)")
+    real = cloud[:, :, 0] != 0.0             # the energy pad mask, the only pad authority
+    v = np.where(real, v, 0.0).astype(np.float32)
+    t = np.where(real, t, 0.0).astype(np.float32)
+    return np.concatenate([cloud, v[..., None], t[..., None]], axis=-1), (1, 2)
 
 
 def build_truth_cloud(part_gen):
@@ -127,24 +204,153 @@ def build_truth_cloud(part_gen):
     return cloud.astype(np.float32), (5, 6, 7)
 
 
-# Event-feature spec: which CONTINUOUS scalars form the distinguished-muon/context block.
-# Default = the muon (pT, p_parallel) available NOW (reduced set; the reduction is recorded
-# in the feature contract). The full object folds in when the full-event dump lands.
-DEFAULT_EVT_FEATURES = ("pt", "pparallel")
+# ============================================================================================
+# Event-feature spec: which CONTINUOUS quantities form the distinguished-muon/context block.
+# ============================================================================================
+# Each name resolves to (source block, column, transform). `scalars` is reco_scalars /
+# truth_scalars / measured_scalars / bkg_reco_scalars; `muon` is reco_muon / data_muon /
+# bkg_muon; `vertex` is reco_vertex / data_vertex / bkg_vertex.
+#
+# Transforms are unit conversions, not modelling choices -- every column is z-normalized
+# downstream, so they change the recorded `*_norm_mean` into readable GeV/m and nothing else.
+# The one exception is the azimuth, which is NOT a scale:
+#
+#   PERIODICITY. mu_phi is dumped as a raw angle in (-pi, pi]. z-scoring a raw angle puts
+#   phi = -pi and phi = +pi at opposite ends of the feature while they are the same direction,
+#   so the network has to learn to glue the ends together and cannot. It is encoded as the pair
+#   (cos phi, sin phi) instead -- the same fix CLM-008 F10 applied to the truth cloud's KNN
+#   coordinates in `build_truth_cloud`, for the same reason, one level up.
+_EVT_SPEC = {
+    # name              (block,     column,                      transform)
+    "pt":               ("scalars", SCALAR_COLS["pt"],           "as_is"),    # already GeV
+    "pparallel":        ("scalars", SCALAR_COLS["pparallel"],    "as_is"),    # already GeV
+    "eavail":           ("scalars", SCALAR_COLS["eavail"],       "as_is"),
+    "q3":               ("scalars", SCALAR_COLS["q3"],           "as_is"),
+    "mu_px":            ("muon",    MUON_COLS["mu_px"],          "div_scale"),   # MeV -> GeV
+    "mu_py":            ("muon",    MUON_COLS["mu_py"],          "div_scale"),
+    "mu_pz":            ("muon",    MUON_COLS["mu_pz"],          "div_scale"),
+    "mu_E":             ("muon",    MUON_COLS["mu_E"],           "div_scale"),
+    "mu_cos_phi":       ("muon",    MUON_COLS["mu_phi"],         "cos"),
+    "mu_sin_phi":       ("muon",    MUON_COLS["mu_phi"],         "sin"),
+    # qp = charge/momentum, so it takes the RECIPROCAL of the momentum convention: MeV^-1 -> GeV^-1.
+    # Not cosmetic. Raw q/p is O(1e-4 / MeV), and the +1e-6 floor added to every column's standard
+    # deviation would then be a ~1% squeeze on this column alone rather than the negligible guard
+    # against division by zero it is everywhere else.
+    "mu_qp":            ("muon",    MUON_COLS["mu_qp"],          "mul_scale"),
+    "mu_minos_ok":      ("muon",    MUON_COLS["mu_minos_ok"],    "as_is"),    # 0/1 match flag
+    "vtx_x":            ("vertex",  VERTEX_COLS["vtx_x"],        "div_scale"),   # mm -> m
+    "vtx_y":            ("vertex",  VERTEX_COLS["vtx_y"],        "div_scale"),
+    "vtx_z":            ("vertex",  VERTEX_COLS["vtx_z"],        "div_scale"),
+}
+
+# Features that EXIST at truth level. `truth_scalars` is the only truth-side event array the G2
+# dump carries (`fullevent_dump_contract.TRUTH_KEYS` is `("part_gen",)`; the truth muon is
+# summarized into truth_scalars); there is no truth muon object, no truth vertex, and by
+# construction no truth MINOS/view/timing. Requesting anything else on the truth leg is a
+# leakage attempt, not a configuration, and is refused at construction time.
+TRUTH_ELIGIBLE_FEATURES = frozenset(n for n, (blk, _c, _t) in _EVT_SPEC.items() if blk == "scalars")
+DETECTOR_ONLY_FEATURES = frozenset(_EVT_SPEC) - TRUTH_ELIGIBLE_FEATURES
+
+# THE FULL publication schema (`pet-fullevent-fps-v1`): reported muon coordinates + the full
+# reconstructed muon object + the reco vertex. pT and p_parallel are retained alongside the
+# 4-vector they are derivable from -- deliberately. They are the reported observables, the
+# quantities the extended-FPS domain gate is defined on, and the ones the -9999 miss convention is
+# documented against; keeping them also makes the reduced cross-check schema a literal SUBSET of
+# this one, so `pet-reduced-fps-cross` is a true ablation of the same code path rather than a
+# different one.
+#
+# NOT here, deliberately: `eavail` and `q3`. They are dumped on both legs and unread, and whether
+# they earn their place is the open measurement of RESTORE-2026-08-03.md Step 7 (the
+# base/eavail/q3/both arms). Adding them on the way past would prejudge that with no evidence,
+# and unlike the muon object they are not what `pet-fullevent-fps-v1` claims.
+DEFAULT_EVT_FEATURES = (
+    "pt", "pparallel",
+    "mu_px", "mu_py", "mu_pz", "mu_E", "mu_cos_phi", "mu_sin_phi", "mu_qp", "mu_minos_ok",
+    "vtx_x", "vtx_y", "vtx_z",
+)
+# The truth leg's own schema. Same NAMES as the reco leg's first two, its OWN normalization
+# statistic, and a different width.
+DEFAULT_TRUTH_EVT_FEATURES = ("pt", "pparallel")
+# The reduced `pet-reduced-fps-cross` estimator, named so a cross-check run selects it by
+# contract ID instead of by retyping a tuple. NEVER a publication central/lateral source.
+REDUCED_EVT_FEATURES = ("pt", "pparallel")
 
 
-def _event_block(scalars, feature_names, norm):
-    """Assemble + normalize a continuous event-feature block from a (N, ncol) scalar array."""
-    scalars = np.asarray(scalars, np.float32)
-    cols = [SCALAR_COLS[f] for f in feature_names]
-    block = scalars[:, cols].astype(np.float32)
+def evt_blocks(scalars=None, muon=None, vertex=None):
+    """Bundle one inventory's event-feature source arrays. Missing blocks stay None and are
+    reported by name if a requested feature needs them."""
+    return {"scalars": scalars, "muon": muon, "vertex": vertex}
+
+
+def assert_evt_block_widths(blocks, label):
+    """Fail closed unless the supplied muon/vertex blocks have the dump's column count.
+
+    `fullevent_dump_contract.assert_inventory_alignment` checks these blocks' ROW counts and the
+    view/time token length, but never their width, so a 6-column muon satisfies every G2 gate and
+    then silently means something else here -- `make_synthetic_g2_fullevent.py` carried exactly
+    that (a 6-col [px,py,pz,E,charge,quality] placeholder against the dumper's 7-col
+    [px,py,pz,E,phi,qp,minos_ok]) for as long as nothing read the block. Reading it makes the
+    width load-bearing, so it is checked where it is consumed."""
+    for key, want in (("muon", N_MUON_COLS), ("vertex", N_VERTEX_COLS)):
+        arr = blocks.get(key)
+        if arr is None:
+            continue
+        arr = np.asarray(arr)
+        if arr.ndim != 2 or arr.shape[1] != want:
+            raise ValueError(
+                f"[G2-SCHEMA] {label}: '{key}' block has shape {arr.shape}, expected (N, {want}) "
+                f"-- the G2 column order is "
+                f"{sorted(MUON_COLS, key=MUON_COLS.get) if key == 'muon' else sorted(VERTEX_COLS, key=VERTEX_COLS.get)}"
+                " (dump_pointcloud_inputs.py). Fail closed: a wrong width silently remaps every "
+                "column of this block onto a different physical quantity.")
+    return True
+
+
+def _evt_column(name, blocks, label):
+    """Resolve ONE event feature to a 1-D float32 column from its source block."""
+    try:
+        block_key, col, transform = _EVT_SPEC[name]
+    except KeyError:
+        raise ValueError(
+            f"[EVT-SCHEMA] unknown event feature {name!r}; known: {sorted(_EVT_SPEC)}") from None
+    arr = blocks.get(block_key)
+    if arr is None:
+        raise ValueError(
+            f"[EVT-SCHEMA] {label}: feature {name!r} needs the '{block_key}' block and none was "
+            f"supplied. The G2 dump carries it; refusing to silently drop the feature or fall "
+            f"back to a narrower schema (that is how a reduced estimator came to be stamped "
+            f"`pet-fullevent-fps-v1` -- AUDIT-FINDINGS-20260731 J01).")
+    v = np.asarray(arr, np.float32)[:, col]
+    if transform == "div_scale":
+        v = v / _SCALE
+    elif transform == "mul_scale":
+        v = v * _SCALE
+    elif transform == "cos":
+        v = np.cos(v.astype(np.float64))
+    elif transform == "sin":
+        v = np.sin(v.astype(np.float64))
+    elif transform != "as_is":
+        raise ValueError(f"[EVT-SCHEMA] unknown transform {transform!r} for {name!r}")
+    return np.asarray(v, np.float32)
+
+
+def _event_block(blocks, feature_names, norm):
+    """Assemble + normalize a continuous event-feature block from one inventory's source arrays.
+
+    `blocks` is an `evt_blocks(...)` mapping; a bare (N, ncol) array is accepted as shorthand for
+    a scalars-only inventory so the scalar-schema callers read unchanged."""
+    if not isinstance(blocks, dict):
+        blocks = evt_blocks(scalars=blocks)
+    block = np.column_stack([_evt_column(f, blocks, "event block") for f in feature_names]) \
+        if feature_names else np.zeros((0, 0), np.float32)
+    block = np.asarray(block, np.float32)
     if norm is not None:
         mu, sd = norm
         block = (block - np.asarray(mu, np.float32)) / np.asarray(sd, np.float32)
     return block.astype(np.float32)
 
 
-def assert_finite_event_scalars(scalars, feature_names, mask, label):
+def assert_finite_event_scalars(blocks, feature_names, mask, label):
     """FAIL CLOSED, naming the column, on any non-finite value in a SELECTED event-feature column.
 
     FINDING-20260730-event-feature-nonfinite.md (found by execution: Delta job 20599606 died on it
@@ -160,60 +366,132 @@ def assert_finite_event_scalars(scalars, feature_names, mask, label):
     NOT `nan_to_num`. 0 is the cloud path's pad/mask sentinel but the BLOCK MEAN of a z-scored event
     feature, so quiet filling would place undefined events at the centre of the conditioning
     distribution -- biasing the estimator instead of announcing a bad dump. Latent while the adopted
-    schema reads cols 0,1 (both clean on both legs); live the moment the block widens, which is what
-    the publication estimator requires (FULL_EVENT_FEATURE_CONTRACT.md:98-101)."""
-    arr = np.asarray(scalars, np.float32)
-    cols = [SCALAR_COLS[f] for f in feature_names]
-    m = np.ones(arr.shape[0], bool) if mask is None else np.asarray(mask, bool)
-    sub = arr[m][:, cols]
-    bad = ~np.isfinite(sub)
-    if bad.any():
-        offenders = "; ".join(
-            f"{feature_names[j]} (column {cols[j]}): {int(bad[:, j].sum())} non-finite"
-            for j in range(len(cols)) if bad[:, j].any())
+    schema read cols 0,1 (both clean on both legs); LIVE as of 2026-08-01, because the block has
+    widened to the muon object and vertex -- which is exactly the condition this guard was written
+    against (FULL_EVENT_FEATURE_CONTRACT.md:98-101).
+
+    `blocks` is an `evt_blocks(...)` mapping, or a bare scalar array for a scalars-only schema."""
+    if not isinstance(blocks, dict):
+        blocks = evt_blocks(scalars=blocks)
+    n = None
+    for arr in blocks.values():
+        if arr is not None:
+            n = int(np.asarray(arr).shape[0])
+            break
+    if n is None:
+        raise ValueError(f"[EVT-FINITE] {label}: no event-feature source blocks supplied")
+    m = np.ones(n, bool) if mask is None else np.asarray(mask, bool)
+    offenders = []
+    for name in feature_names:
+        col = _evt_column(name, blocks, label)[m]
+        bad = int((~np.isfinite(col)).sum())
+        if bad:
+            src, idx, _t = _EVT_SPEC[name]
+            offenders.append(f"{name} ({src} column {idx}): {bad} non-finite")
+    if offenders:
         raise ValueError(
             f"[EVT-FINITE] {label}: non-finite values in selected event-feature column(s) over "
-            f"{int(m.sum())} in-mask rows -- {offenders}. ONE such value NaNs the whole column for "
-            "every row via the normalization statistic and trains step 2 to `Last val loss nan`. "
-            "Fail closed: fix the dump (or drop the column from the schema). Do NOT nan_to_num -- "
-            "0 is the block mean here, not a pad sentinel. "
+            f"{int(m.sum())} in-mask rows -- {'; '.join(offenders)}. ONE such value NaNs the whole "
+            "column for every row via the normalization statistic and trains step 2 to `Last val "
+            "loss nan`. Fail closed: fix the dump (or drop the column from the schema). Do NOT "
+            "nan_to_num -- 0 is the block mean here, not a pad sentinel. "
             "See docs/orchestration/FINDING-20260730-event-feature-nonfinite.md")
     return True
 
 
-def build_event_features(reco_scalars, truth_scalars, measured_scalars,
+def _degenerate_columns(feature_names, sd):
+    """Names of z-scored columns whose in-mask spread is numerically zero.
+
+    Reported, NOT failed. A constant column is a legitimate outcome of a selection cut --
+    `mu_minos_ok` is 1 for every pass_reco row if the selection requires a MINOS match -- and
+    failing the publication nominal over a wasted input dimension would be a false alarm. But it
+    is worth seeing in the receipt for the opposite reason: a feature that is constant on ONE leg
+    and not the other is a pure data/MC label, and step 1 will find it."""
+    sd = np.asarray(sd, np.float64)
+    return [feature_names[j] for j in range(len(feature_names)) if sd[j] <= 1e-6 * (1.0 + 1e-9)]
+
+
+def assert_truth_schema_is_eligible(truth_feature_names):
+    """Refuse a detector-only quantity on the TRUTH leg, by name, before anything is built.
+
+    With one shared feature list this was unrepresentable. With distinct schemas it becomes the
+    single cheapest place to enforce the contract's "no manufactured counterparts" rule: the
+    truth leg may only read quantities that exist at truth level, and a MINOS match flag, a reco
+    vertex or a reconstructed muon momentum is not one of them. This is a stronger statement than
+    `assert_no_truth_leakage`, which can only compare the blocks that were actually built."""
+    bad = [n for n in truth_feature_names if n not in TRUTH_ELIGIBLE_FEATURES]
+    if bad:
+        raise ValueError(
+            f"[EVT-SCHEMA] detector-only feature(s) {bad} requested for event_truth. These have "
+            "NO truth counterpart in the G2 dump and manufacturing one is forbidden "
+            "(FULL_EVENT_FEATURE_CONTRACT.md 'Unavailable counterparts'). Truth-eligible: "
+            f"{sorted(TRUTH_ELIGIBLE_FEATURES)}.")
+    return True
+
+
+def build_event_features(reco_blocks, truth_blocks, measured_blocks,
                          feature_names=DEFAULT_EVT_FEATURES,
-                         pass_reco=None, pass_truth=None):
+                         pass_reco=None, pass_truth=None,
+                         truth_feature_names=DEFAULT_TRUTH_EVT_FEATURES):
     """Return (event_reco, event_truth, event_data, meta).
 
-    event_reco/event_data share the SAME observable feature schema (reconstructed muon);
-    event_truth uses the SAME feature NAMES but the TRUTH scalars and its OWN normalization
-    (distinct schema/dimension is allowed to differ in production). All continuous.
+    event_reco/event_data share the SAME observable feature schema (the reconstructed muon object
+    + reco vertex); event_truth has its OWN, NARROWER schema (`truth_feature_names`), its own
+    normalization statistic, and therefore its own width. All continuous.
+
+    Each `*_blocks` argument is an `evt_blocks(scalars=, muon=, vertex=)` mapping for one
+    inventory, or a bare (N, ncol) scalar array when the requested schema is scalars-only.
 
     SENTINEL HANDLING (critical): the reconstructed muon is UNDEFINED for events that fail
-    reco (FPS misses carry a -9999 sentinel in reco_scalars). The normalization is therefore
-    computed over pass_reco events ONLY (truth over pass_truth ONLY), and the undefined
-    (!pass_reco) reco rows are set to 0 post-normalization (the block mean). Those rows are
-    masked by pass_reco in the step-1 loss, so zeroing keeps them numerically neutral without
-    injecting the sentinel. This also keeps the reco-side normalization a pure detector
-    statistic (no truth leakage)."""
-    reco_scalars = np.asarray(reco_scalars, np.float32)
-    truth_scalars = np.asarray(truth_scalars, np.float32)
-    cols = [SCALAR_COLS[f] for f in feature_names]
-    rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
-    tmask = np.ones(truth_scalars.shape[0], bool) if pass_truth is None else np.asarray(pass_truth, bool)
+    reco -- FPS misses carry -9999 in reco_scalars AND, since the extension arrays landed, in
+    reco_muon/reco_vertex too (`dump_pointcloud_inputs.reco_muon_row` / `reco_vertex_row`, with
+    minos_ok = 0 rather than -9999). The normalization is therefore computed over pass_reco
+    events ONLY (truth over pass_truth ONLY), and the undefined (!pass_reco) reco rows are set to
+    0 post-normalization (the block mean). Those rows are masked by pass_reco in the step-1 loss,
+    so zeroing keeps them numerically neutral without injecting the sentinel. This also keeps the
+    reco-side normalization a pure detector statistic (no truth leakage). Widening the block did
+    not weaken this: every added column carries the same sentinel on the same rows.
+    """
+    if not isinstance(reco_blocks, dict):
+        reco_blocks = evt_blocks(scalars=reco_blocks)
+    if not isinstance(truth_blocks, dict):
+        truth_blocks = evt_blocks(scalars=truth_blocks)
+    if not isinstance(measured_blocks, dict):
+        measured_blocks = evt_blocks(scalars=measured_blocks)
+    assert_truth_schema_is_eligible(truth_feature_names)
+    assert_evt_block_widths(reco_blocks, "reco (signal MC)")
+    assert_evt_block_widths(measured_blocks, "measured (data)")
+
+    n_reco = int(np.asarray(reco_blocks["scalars"]).shape[0])
+    n_truth = int(np.asarray(truth_blocks["scalars"]).shape[0])
+    rmask = np.ones(n_reco, bool) if pass_reco is None else np.asarray(pass_reco, bool)
+    tmask = np.ones(n_truth, bool) if pass_truth is None else np.asarray(pass_truth, bool)
+    # Row alignment across an inventory's own blocks: a muon array from a different dump would
+    # otherwise pair muon row i with cloud row i and be silently wrong rather than loudly wrong.
+    for blocks, n, label in ((reco_blocks, n_reco, "reco"), (truth_blocks, n_truth, "truth"),
+                             (measured_blocks, None, "measured")):
+        rows = {k: int(np.asarray(v).shape[0]) for k, v in blocks.items() if v is not None}
+        if len(set(rows.values())) > 1:
+            raise ValueError(f"[EVT-SCHEMA] {label} event-feature blocks are not row-aligned: "
+                             f"{rows} (fail closed)")
+        if n is not None and set(rows.values()) != {n}:
+            raise ValueError(f"[EVT-SCHEMA] {label} blocks {rows} disagree with the scalars' "
+                             f"{n} rows (fail closed)")
     # FINDING-20260730: screen BEFORE the normalization statistics are formed, on the exact rows
     # that form them, so the error names the offending column instead of surfacing as a NaN loss.
-    assert_finite_event_scalars(reco_scalars, feature_names, rmask, "reco_scalars over pass_reco")
-    assert_finite_event_scalars(truth_scalars, feature_names, tmask, "truth_scalars over pass_truth")
-    assert_finite_event_scalars(measured_scalars, feature_names, None,
+    assert_finite_event_scalars(reco_blocks, feature_names, rmask, "reco_scalars over pass_reco")
+    assert_finite_event_scalars(truth_blocks, truth_feature_names, tmask,
+                                "truth_scalars over pass_truth")
+    assert_finite_event_scalars(measured_blocks, feature_names, None,
                                 "measured_scalars (data; all rows pass_reco)")
-    rsub = reco_scalars[rmask][:, cols]; tsub = truth_scalars[tmask][:, cols]
+    rsub = _event_block(reco_blocks, feature_names, None)[rmask]
+    tsub = _event_block(truth_blocks, truth_feature_names, None)[tmask]
     rmu = rsub.mean(0); rsd = rsub.std(0) + 1e-6
     tmu = tsub.mean(0); tsd = tsub.std(0) + 1e-6
-    event_reco = _event_block(reco_scalars, feature_names, (rmu, rsd)); event_reco[~rmask] = 0.0
-    event_truth = _event_block(truth_scalars, feature_names, (tmu, tsd)); event_truth[~tmask] = 0.0
-    event_data = _event_block(measured_scalars, feature_names, (rmu, rsd))  # data all pass_reco
+    event_reco = _event_block(reco_blocks, feature_names, (rmu, rsd)); event_reco[~rmask] = 0.0
+    event_truth = _event_block(truth_blocks, truth_feature_names, (tmu, tsd))
+    event_truth[~tmask] = 0.0
+    event_data = _event_block(measured_blocks, feature_names, (rmu, rsd))  # data all pass_reco
     # Belt-and-braces on the built blocks: a degenerate (all-equal) column survives the +1e-6 on sd,
     # but nothing downstream inspects these arrays for finiteness and a NaN block is what cost
     # 49m45s of Delta once. Cheap relative to the training that follows.
@@ -224,25 +502,47 @@ def build_event_features(reco_scalars, truth_scalars, measured_scalars,
                 f"[EVT-FINITE] normalized {_lbl} block contains non-finite values even though the "
                 "input columns were finite -- a degenerate normalization statistic (fail closed).")
     meta = {"feature_names": list(feature_names),
+            "truth_feature_names": list(truth_feature_names),
             "reco_norm_mean": rmu.tolist(), "reco_norm_std": rsd.tolist(),
             "truth_norm_mean": tmu.tolist(), "truth_norm_std": tsd.tolist(),
+            "n_evt_reco": len(feature_names), "n_evt_truth": len(truth_feature_names),
+            # Back-compat alias for the recoil-era callers that assumed one width. The two legs
+            # now differ, so a caller reading this for the STEP-2 network is wrong; every
+            # in-tree caller was moved to the explicit pair.
             "n_evt": len(feature_names),
+            "degenerate_reco_columns": _degenerate_columns(list(feature_names), rsd),
+            "degenerate_truth_columns": _degenerate_columns(list(truth_feature_names), tsd),
             "normalized_over": "pass_reco (reco/data) / pass_truth (truth); !pass rows zeroed"}
     return event_reco, event_truth, event_data, meta
 
 
-def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
-                            pass_reco=None):
-    """Prove event_reco is a function of RECO scalars (+ pass_reco) ONLY, no truth-only info.
+def assert_no_truth_leakage(event_reco, reco_blocks, truth_blocks, feature_names,
+                            pass_reco=None, truth_feature_names=DEFAULT_TRUTH_EVT_FEATURES):
+    """Prove event_reco is a function of the RECO blocks (+ pass_reco) ONLY, no truth-only info.
 
-    Rebuild event_reco from reco_scalars alone (same pass_reco-masked normalization + !pass
-    zeroing) and require an exact match; also require it NOT equal the block built from
-    truth_scalars. This is the explicit step-1 no-truth-leakage test the gate requires."""
-    reco_scalars = np.asarray(reco_scalars, np.float32)
-    cols = [SCALAR_COLS[f] for f in feature_names]
-    rmask = np.ones(reco_scalars.shape[0], bool) if pass_reco is None else np.asarray(pass_reco, bool)
-    rmu = reco_scalars[rmask][:, cols].mean(0); rsd = reco_scalars[rmask][:, cols].std(0) + 1e-6
-    rebuilt = _event_block(reco_scalars, feature_names, (rmu, rsd)); rebuilt[~rmask] = 0.0
+    Three statements, because with distinct schemas one is no longer enough:
+
+      1. SCHEMA. No feature in the reco list is one the truth leg is allowed to read back, and
+         no feature in the truth list is detector-only. (`assert_truth_schema_is_eligible`.)
+      2. PURITY. Rebuild event_reco from the reco blocks alone -- same pass_reco-masked
+         normalization, same !pass zeroing -- and require an exact match. Anything the truth
+         arrays contributed would show up here.
+      3. DISSIMILARITY, on the comparable columns only. The original guard required event_reco
+         not to equal "the truth block"; that comparison is shape-invalid now that the two
+         schemas have different widths, and skipping it would quietly retire the check. It is
+         instead restricted to the feature names the two legs SHARE (pT, p_parallel), which is
+         the whole set on which a truth-for-reco substitution is even expressible.
+    """
+    if not isinstance(reco_blocks, dict):
+        reco_blocks = evt_blocks(scalars=reco_blocks)
+    if not isinstance(truth_blocks, dict):
+        truth_blocks = evt_blocks(scalars=truth_blocks)
+    assert_truth_schema_is_eligible(truth_feature_names)
+    n_reco = int(np.asarray(reco_blocks["scalars"]).shape[0])
+    rmask = np.ones(n_reco, bool) if pass_reco is None else np.asarray(pass_reco, bool)
+    raw = _event_block(reco_blocks, feature_names, None)
+    rmu = raw[rmask].mean(0); rsd = raw[rmask].std(0) + 1e-6
+    rebuilt = _event_block(reco_blocks, feature_names, (rmu, rsd)); rebuilt[~rmask] = 0.0
     # FINDING-20260730 fix (2): this guard is a DISSIMILARITY test, and NaN is maximally dissimilar,
     # so an all-NaN block used to sail through it. Finiteness first, or the leakage verdict is
     # meaningless.
@@ -252,10 +552,15 @@ def assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_nam
             "entries; the no-truth-leakage comparison below is a dissimilarity test and NaN differs "
             "from everything, so it would PASS on a poisoned block (fail closed).")
     if not np.allclose(rebuilt, event_reco, atol=1e-5):
-        raise AssertionError("event_reco is NOT a pure function of reco_scalars+pass_reco (leak?)")
-    tblock = _event_block(truth_scalars, feature_names, (rmu, rsd)); tblock[~rmask] = 0.0
-    if np.allclose(tblock, event_reco, atol=1e-5):
-        raise AssertionError("event_reco equals the truth block -- truth leaked into step 1")
+        raise AssertionError("event_reco is NOT a pure function of the reco blocks+pass_reco (leak?)")
+    shared = [f for f in feature_names if f in set(truth_feature_names)]
+    if shared:
+        take = [list(feature_names).index(f) for f in shared]
+        tsh = _event_block(truth_blocks, shared, (rmu[take], rsd[take])); tsh[~rmask] = 0.0
+        if np.allclose(tsh, event_reco[:, take], atol=1e-5):
+            raise AssertionError(
+                f"event_reco columns {shared} equal the TRUTH block built on the same names -- "
+                "truth leaked into step 1")
     return True
 
 
@@ -737,12 +1042,20 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
                             feature_names=DEFAULT_EVT_FEATURES, rank=0, size=1,
                             enforce_fps_edges=True, data_scalars_npz=None,
                             bkg_mode="negweight-refined", refine_fn=None, refine_kwargs=None,
-                            verify_identities=True):
+                            verify_identities=True,
+                            truth_feature_names=DEFAULT_TRUTH_EVT_FEATURES):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
     domain. Returns (data, mc, imc, coord_reco, coord_gen, meta). Mirrors the recoil-only
     build_loaders subsample/bootstrap contract, but sets reco_evt/gen_evt on the loaders and
     keeps the truth PDG + angular geometry. FPS edges are asserted (fail closed) unless
     enforce_fps_edges=False (tests with synthetic edges).
+
+    THE FULL EVENT IS ACTUALLY READ (2026-08-01, AUDIT-FINDINGS-20260731 J01). Every G2 extension
+    array is consumed: `reco_view`/`reco_time` (and the data/bkg twins) become token columns 3,4
+    of the reco cloud; `reco_muon`/`reco_vertex` (and twins) become event features. The two event
+    schemas differ in width, so the caller must build the step-1 network at `meta["n_evt_reco"]`
+    and the step-2 network at `meta["n_evt_truth"]`. `feature_names=REDUCED_EVT_FEATURES` selects
+    the `pet-reduced-fps-cross` ablation, which is a cross-check and never a publication source.
 
     NEGWEIGHT-REFINED (locked publication nominal): the measured DataLoader carries the COMPLETE
     signed measured inventory -- positive data rows ++ the aligned literal background clouds/event
@@ -777,16 +1090,64 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     # GB). The MEASURED target (data ++ injected background) is always the COMPLETE inventory -- its
     # size is set by the measurement, independent of the MC training subsample -- so D vs B relative
     # POT normalization is never broken by subsampling.
+    #
+    # HOST MEMORY GREW ON 2026-08-01 and the 08-03 sizing must account for it. The reco cloud is now
+    # five token columns instead of three, and `np.asarray(d[key])[imc]` materializes each member in
+    # full before subsampling it (a pre-existing property of NpzFile that
+    # `measure_fullevent_host_memory.py` exists to measure -- see its docstring). The additions are
+    # `reco_view`/`reco_time`, two full-inventory (N,P) float32 arrays, plus two more token columns
+    # on each of the three clouds. Re-run the ladder before sizing the nominal's node; do not carry
+    # the pre-08-01 high-water mark forward.
     imc = np.arange(N)
     if max_events is not None:
         imc = np.sort(np.random.default_rng(seed).choice(N, min(max_events, N), replace=False))
 
-    reco_cloud, coord_reco = build_reco_cloud(np.asarray(d["part_reco"])[imc])
+    # Which G2 extension arrays this schema needs. The muon/vertex blocks are demanded only when a
+    # requested feature reads them, so `feature_names=REDUCED_EVT_FEATURES` still runs against a
+    # reduced fixture -- but demanded loudly when it does, because a silent narrowing here is J01
+    # all over again. The per-token vectors below are unconditional; see the note there.
+    need = {_EVT_SPEC[f][0] for f in feature_names} | {_EVT_SPEC[f][0]
+                                                       for f in truth_feature_names}
+    required = []
+    if "muon" in need:
+        required += ["reco_muon", "data_muon"]
+    if "vertex" in need:
+        required += ["reco_vertex", "data_vertex"]
+    # The per-token view/time vectors are required UNCONDITIONALLY, not per-schema: every input
+    # that reaches this line has already passed the `petSchemaVersion == g2-fullevent-v1` gate
+    # above, and the contract's REQUIRED_KEYS mandate them. Building a 3-column cloud from a dump
+    # that carries 5 would be the same silent narrowing as the event block's -- the estimator would
+    # simply be blind to the detector view, with nothing but a `meta` flag to say so.
+    required += ["reco_view", "reco_time", "data_view", "data_time"]
+    missing = [k for k in required if k not in d.files]
+    if missing:
+        raise ValueError(
+            f"[G2] the requested event-feature schema needs {missing}, absent from this input. "
+            "The g2-fullevent-v1 contract requires them "
+            "(fullevent_dump_contract.RECO_KEYS/DATA_KEYS); an input that lacks them is not the "
+            "full-event dump. Fail closed rather than quietly training the reduced "
+            "`pet-reduced-fps-cross` estimator under the publication fingerprint.")
+
+    def _tok(key, idx=None):
+        """A per-token extension vector, subsampled like its cloud, or None if absent."""
+        if key not in d.files:
+            return None
+        a = np.asarray(d[key])
+        return a if idx is None else a[idx]
+
+    reco_cloud, coord_reco = build_reco_cloud(np.asarray(d["part_reco"])[imc],
+                                              _tok("reco_view", imc), _tok("reco_time", imc))
     gen_cloud, coord_gen = build_truth_cloud(np.asarray(d["part_gen"])[imc])
     reco_scalars = np.asarray(d["reco_scalars"])[imc]
     truth_scalars = np.asarray(d["truth_scalars"])[imc]
     pass_reco = np.asarray(d["pass_reco"])[imc]
     pass_truth = np.asarray(d["pass_truth"])[imc]
+    reco_blocks = evt_blocks(scalars=reco_scalars,
+                             muon=(np.asarray(d["reco_muon"])[imc] if "reco_muon" in d.files
+                                   else None),
+                             vertex=(np.asarray(d["reco_vertex"])[imc] if "reco_vertex" in d.files
+                                     else None))
+    truth_blocks = evt_blocks(scalars=truth_scalars)   # truth_scalars is the only truth-side array
     # DATA event-feature scalars = the DATA-side reconstructed muon (G2 measured_scalars, full M).
     # CLM-007: NEVER silently fall back to MC reco_scalars.
     if "measured_scalars" in d.files:
@@ -799,17 +1160,32 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         if meas_scalars.shape[0] != M:
             raise ValueError(f"[CLM-007] data-scalar rows {meas_scalars.shape[0]} != measured_pc "
                              f"rows {M} in {data_scalars_npz} -- not row-aligned; refuse to build.")
+        # CLM-007 extended to the muon object: a sidecar carries scalars only, so a wide schema
+        # over a sidecar data leg would have no data muon and MUST NOT borrow the MC one.
+        if "muon" in need or "vertex" in need:
+            raise ValueError(
+                f"[CLM-007 GUARD] the requested schema reads the muon object/vertex, but the data "
+                f"leg comes from the sidecar {data_scalars_npz!r}, which carries scalars only. "
+                "Refusing to pair a wide MC schema with a narrow data one (that is how MC-miss "
+                "sentinels reach the step-1 data classifier). Use the G2 dump, or select "
+                "feature_names=REDUCED_EVT_FEATURES for a scalars-only cross-check.")
     else:
         raise ValueError(
             "[CLM-007 GUARD] pc npz has no 'measured_scalars' and no data_scalars_npz was given. "
             "Refusing to fall back to MC reco_scalars (would inject -9999 MC-miss sentinels into "
             "the step-1 data classifier).")
+    meas_blocks = evt_blocks(scalars=meas_scalars,
+                             muon=(np.asarray(d["data_muon"]) if "data_muon" in d.files else None),
+                             vertex=(np.asarray(d["data_vertex"]) if "data_vertex" in d.files
+                                     else None))
     event_reco, event_truth, event_data, meta = build_event_features(
-        reco_scalars, truth_scalars, meas_scalars, feature_names,
-        pass_reco=pass_reco, pass_truth=pass_truth)
+        reco_blocks, truth_blocks, meas_blocks, feature_names,
+        pass_reco=pass_reco, pass_truth=pass_truth, truth_feature_names=truth_feature_names)
     meta["data_scalar_source"] = data_src
-    assert_no_truth_leakage(event_reco, reco_scalars, truth_scalars, feature_names,
-                            pass_reco=pass_reco)
+    meta["reco_cloud_cols"] = list(RECO_CLOUD_COLS[:reco_cloud.shape[-1]])
+    meta["token_view_time_read"] = reco_cloud.shape[-1] == len(RECO_CLOUD_COLS)
+    assert_no_truth_leakage(event_reco, reco_blocks, truth_blocks, feature_names,
+                            pass_reco=pass_reco, truth_feature_names=truth_feature_names)
     rmu = np.asarray(meta["reco_norm_mean"], np.float32); rsd = np.asarray(meta["reco_norm_std"], np.float32)
 
     w_truth_full = np.asarray(d["w_truth"]).astype(np.float32)            # FULL signal-MC (raw)
@@ -827,7 +1203,11 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
                 "[negweight-refined] input has NO background inventory ('w_bkg'/background clouds "
                 "absent). The Option-A negweight + Stay-Positive nominal needs the aligned background "
                 "clouds/scalars/weights. Fail closed. bkg_mode='purity' is a labeled control only.")
-        for k in ("bkg_part_reco", "bkg_reco_scalars", "w_bkg"):
+        # bkg_view/bkg_time are in this list for the same reason as the data twins: the injected
+        # background clouds are concatenated onto the measured clouds, so a background inventory
+        # without them yields a 3-column block against a 5-column one. That surfaces as a numpy
+        # shape error several lines later, which is a worse way to learn it.
+        for k in ("bkg_part_reco", "bkg_reco_scalars", "w_bkg", "bkg_view", "bkg_time"):
             if k not in d.files:
                 raise ValueError(f"[negweight-refined] missing required background inventory '{k}' "
                                  "(misaligned/incomplete background; fail closed).")
@@ -887,7 +1267,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         # Labeled REGRESSION CONTROL only (never the publication nominal). Data-only measured
         # sample at unit weight; the all-ones purity placeholder is acceptable HERE (control), and
         # is forbidden for the negweight-refined nominal by write/loader guards.
-        meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]))
+        meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]),
+                                         _tok("data_view"), _tok("data_time"))
         data = DataLoader(reco=meas_cloud, weight=np.ones(M, np.float32), normalize=True,
                           reco_evt=event_data)
         meta["bkg_control"] = "purity = REGRESSION CONTROL, not the publication nominal"
@@ -896,19 +1277,49 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
 
     # ---------------- negweight-refined (locked publication nominal) ----------------
     # (background presence + a valid pot_scale were already validated above, before identity check)
-    meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]))           # FULL data cloud
-    bkg_cloud, _ = build_reco_cloud(np.asarray(d["bkg_part_reco"]))          # aligned bkg cloud
+    meas_cloud, _ = build_reco_cloud(np.asarray(d["measured_pc"]),           # FULL data cloud
+                                     _tok("data_view"), _tok("data_time"))
+    bkg_cloud, _ = build_reco_cloud(np.asarray(d["bkg_part_reco"]),          # aligned bkg cloud
+                                    _tok("bkg_view"), _tok("bkg_time"))
     bkg_reco_scalars = np.asarray(d["bkg_reco_scalars"])
     w_bkg_full = np.asarray(d["w_bkg"]).astype(np.float32)
     if not (bkg_cloud.shape[0] == bkg_reco_scalars.shape[0] == w_bkg_full.shape[0]):
         raise ValueError("[negweight-refined] background cloud/scalars/w_bkg row counts disagree "
                          "(misaligned background inventory; fail closed).")
+    if "muon" in need and "bkg_muon" not in d.files:
+        raise ValueError("[negweight-refined] the requested schema reads the muon object but the "
+                         "background inventory carries no 'bkg_muon'; the injected background rows "
+                         "would occupy a different feature space from the data rows they are "
+                         "subtracted from (fail closed).")
+    if "vertex" in need and "bkg_vertex" not in d.files:
+        raise ValueError("[negweight-refined] the requested schema reads the reco vertex but the "
+                         "background inventory carries no 'bkg_vertex' (fail closed).")
+    bkg_blocks = evt_blocks(scalars=bkg_reco_scalars,
+                            muon=(np.asarray(d["bkg_muon"]) if "bkg_muon" in d.files else None),
+                            vertex=(np.asarray(d["bkg_vertex"]) if "bkg_vertex" in d.files
+                                    else None))
+    assert_evt_block_widths(bkg_blocks, "background")
     # background event features under the SAME reconstructed-muon normalization as the data
-    event_bkg = _event_block(bkg_reco_scalars, feature_names, (rmu, rsd))
-    # refinement feature = continuous reco (pT, p_parallel) on the reco manifold (g(x)=D/(D+B))
-    cols = [SCALAR_COLS[f] for f in feature_names]
-    refine_feat_data = np.asarray(meas_scalars, float)[:, cols]
-    refine_feat_bkg = bkg_reco_scalars[:, cols]
+    assert_finite_event_scalars(bkg_blocks, feature_names, None,
+                                "bkg_reco_scalars (background; all rows reco-selected)")
+    event_bkg = _event_block(bkg_blocks, feature_names, (rmu, rsd))
+    # ---- B-5 / J05: the refinement feature space is the CLASSIFIER's reco manifold ----------
+    # g(x) = D/(D+B) was previously fitted on (pT, p_parallel) alone and the refined weights then
+    # attached to cloud-plus-event space, so background structure carried by anything else could
+    # not be subtracted conditionally -- it could only be subtracted on average
+    # (AUDIT-FINDINGS-20260731 J05; `demo_b5_refiner_feature_space.py` shows the muon-projection
+    # agreement that seemed to license the reduction is an algebraic identity, not evidence).
+    # The refiner now sees the SAME normalized event block the step-1 classifier is conditioned
+    # on, so every event feature the estimator can exploit is one the target was built in.
+    #
+    # WHAT THIS DOES NOT CLOSE. The per-token recoil cloud -- including the view/time columns
+    # added above -- is still outside the refiner's feature space: `refine_stay_positive` is a
+    # tabular classifier over a fixed-width design matrix, and giving it the cloud is a different
+    # (set-valued) estimator, not a wider column list. J05 is narrowed to the cloud, not retired.
+    refine_feat_data = np.asarray(event_data, float)
+    refine_feat_bkg = np.asarray(event_bkg, float)
+    refine_space = ("normalized event_reco block (" + ",".join(feature_names)
+                    + "); per-token cloud still excluded -- see B-5/J05")
 
     feat, signed, n_data, n_bkg, raw_pos_sum, raw_neg_sum = build_signed_measured_inventory(
         refine_feat_data, refine_feat_bkg, w_bkg_full, pot_scale,
@@ -943,6 +1354,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         "step1_class_ratio": R, "step1_class_ratio_telemetry": r_telem,
         "refinement": "stay-positive (arXiv:2505.03724)", "refinement_backend": refine_backend,
         "refinement_is_learned_production": (refine_fn is None),
+        "refinement_feature_space": refine_space,
+        "refinement_feature_names": list(feature_names),
         "estimator_fingerprint": meta["estimator_fingerprint"],
         "input_identity_hashes": ident, "pot_scale": pot_scale,
         "raw_positive_sum": raw_pos_sum, "raw_negative_sum": raw_neg_sum,
@@ -964,10 +1377,15 @@ if __name__ == "__main__":
     ap.add_argument("--bkg-mode", default="purity", choices=["negweight-refined", "purity"],
                     help="nominal=negweight-refined (needs the Option-A background-cloud omnifile); "
                          "'purity' is a regression control (the xps2 scaffolding default).")
+    ap.add_argument("--schema", default="full", choices=["full", "reduced"],
+                    help="full = pet-fullevent-fps-v1 (muon object + reco vertex + view/time); "
+                         "reduced = the pet-reduced-fps-cross {pT,p||} CROSS-CHECK, never a "
+                         "publication central/lateral source.")
     a = ap.parse_args()
     data, mc, imc, cr, cg, meta = build_fullevent_loaders(
         a.inputs, max_events=a.max_events, enforce_fps_edges=not a.no_fps_guard,
-        data_scalars_npz=a.data_scalars, bkg_mode=a.bkg_mode)
+        data_scalars_npz=a.data_scalars, bkg_mode=a.bkg_mode,
+        feature_names=(DEFAULT_EVT_FEATURES if a.schema == "full" else REDUCED_EVT_FEATURES))
     print(f"[fullevent] reco cloud {np.asarray(mc.reco).shape} coord_reco={cr} "
           f"reco_evt {np.asarray(mc.reco_evt).shape}")
     print(f"[fullevent] gen  cloud {np.asarray(mc.gen).shape} coord_gen={cg} "

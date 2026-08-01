@@ -28,8 +28,17 @@ NPZ = f"{_ND}/of_inputs_pc_fps_xps2.npz"
 DATA_SCALARS = f"{_ND}/of_inputs_5d_fps_xps2.npz"   # data muon pT,p‖ (CLM-007: no silent MC fallback)
 tf.keras.utils.set_random_seed(0)
 
+# xps2 = purity regression control, and it is a RECOIL-ONLY scaffolding npz: it carries no
+# reco_muon/reco_vertex/reco_view/reco_time (verified 2026-07-31, 18 members), so the full
+# `pet-fullevent-fps-v1` schema cannot be built from it and the loader says so. This smoke
+# therefore selects the reduced `pet-reduced-fps-cross` block explicitly rather than inheriting
+# a default -- the reduction is a property of the INPUT here, and naming it is the difference
+# between a labeled cross-check and J01.
+# (Note this file is in any case already blocked upstream by the g2-fullevent-v1 schema gate,
+# for the same reason `closure_fullevent_fps.py` was; see that script's 2026-07-25 repair note.)
 data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
-    NPZ, max_events=8000, seed=0, data_scalars_npz=DATA_SCALARS, bkg_mode="purity")  # xps2 = purity regression control
+    NPZ, max_events=8000, seed=0, data_scalars_npz=DATA_SCALARS, bkg_mode="purity",
+    feature_names=fe.REDUCED_EVT_FEATURES)
 print(f"[fps-smoke] data_scalar_source = {meta.get('data_scalar_source')}")
 reco = np.asarray(mc.reco); gen = np.asarray(mc.gen)
 print(f"[fps-smoke] reco cloud {reco.shape} coord_reco={coord_reco} "
@@ -45,10 +54,10 @@ assert np.all(np.isfinite(reco)) and np.all(np.isfinite(gen)), "non-finite cloud
 assert np.all(np.isfinite(mc.reco_evt)) and np.all(np.isfinite(mc.gen_evt)), "non-finite evt"
 
 P = reco.shape[1]
-ev = meta["n_evt"]
-m1 = PET(reco.shape[-1], num_evt=ev, num_part=P, num_transformer=1, num_heads=1,
+ev_reco, ev_truth = meta["n_evt_reco"], meta["n_evt_truth"]
+m1 = PET(reco.shape[-1], num_evt=ev_reco, num_part=P, num_transformer=1, num_heads=1,
          projection_dim=16, local=True, K=3, coord_idx=coord_reco)
-m2 = PET(gen.shape[-1], num_evt=ev, num_part=P, num_transformer=1, num_heads=1,
+m2 = PET(gen.shape[-1], num_evt=ev_truth, num_part=P, num_transformer=1, num_heads=1,
          projection_dim=16, local=True, K=3, coord_idx=coord_gen)
 of = MultiFold("fps_smoke", m1, m2, data, mc, niter=1, epochs=2, batch_size=256,
                weights_folder="/tmp/fps_smoke_w", verbose=False)

@@ -111,14 +111,16 @@ def main():
     counters = {"reco": 0, "truth": 0}
     real_reco, real_truth = fe.build_reco_cloud, fe.build_truth_cloud
 
-    def reco_wrap(part_reco):
-        out = real_reco(part_reco)
+    # *args/**kwargs: build_reco_cloud now also takes the per-token view/time vectors, and this
+    # ladder measures whatever the loader passes rather than pinning a signature.
+    def reco_wrap(*args, **kwargs):
+        out = real_reco(*args, **kwargs)
         counters["reco"] += 1
         marks[f"after_build_reco_cloud_{counters['reco']}"] = peak_gib()
         return out
 
-    def truth_wrap(part_gen):
-        out = real_truth(part_gen)
+    def truth_wrap(*args, **kwargs):
+        out = real_truth(*args, **kwargs)
         counters["truth"] += 1
         marks[f"after_build_truth_cloud_{counters['truth']}"] = peak_gib()
         return out

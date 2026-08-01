@@ -9,7 +9,7 @@ buried in run-log prose.
 
 | # | Issue | Status | Detail lives in |
 |---|---|---|---|
-| J | **2026-07-31 four-account audit — 42 findings (J01–J42), indexed here as one block.** Highlights, each with an evidence tier in the detail doc: **J28** PPFX flux universes divided by the CV integral at five ND/5D sites plus a fail-open — reaches the adopted 5D covariance; code FIXED `081ae4a`, numbers NOT re-rolled, ledger scales QUARANTINED. **J01** the loader reads `{pt,pparallel}` while the driver stamps `pet-fullevent-fps-v1`, which the contract reserves for the full schema and forbids as a publication source — Gate-4 must stay closed regardless of gate state. **J11** hash bindings red at HEAD; Gate-4 pair resolved by the Step 2b re-issue (`5410ab0`), Gate-2 pair still red pending a Gate-2 re-run, which is correct. **J17/J18** the note's estimator claim and its stale pre-fluxfix UQ appendix — both FIXED. **J02** no full-event extractor exists in the tree. **J35/J10** size-as-completion-proof (47 shell files + the nominal NPZ write) — same class as BEN-023, OPEN. **J42** an audit lane with write access refactored `omnifold_nn/omnifold/net.py`; reverted, and the dispatch rule is now in `AGENTS.md`. | MIXED — see detail doc per finding | `docs/orchestration/AUDIT-FINDINGS-20260731.md` |
+| J | **2026-07-31 four-account audit — 42 findings (J01–J42), indexed here as one block.** Highlights, each with an evidence tier in the detail doc: **J28** PPFX flux universes divided by the CV integral at five ND/5D sites plus a fail-open — reaches the adopted 5D covariance; code FIXED `081ae4a`, numbers NOT re-rolled, ledger scales QUARANTINED. **J01** the loader reads `{pt,pparallel}` while the driver stamps `pet-fullevent-fps-v1`, which the contract reserves for the full schema and forbids as a publication source — Gate-4 must stay closed regardless of gate state. **J11** hash bindings red at HEAD; Gate-4 pair resolved by the Step 2b re-issue (`5410ab0`), Gate-2 pair still red pending a Gate-2 re-run, which is correct. **J17/J18** the note's estimator claim and its stale pre-fluxfix UQ appendix — both FIXED. **J01/J02/J05** the loader read `{pt,pparallel}` while the driver stamped `pet-fullevent-fps-v1`; no full-event extractor existed at all; the Stay-Positive target was fitted in a narrower space than the classifier. **FIXED 2026-08-01**: the loader reads every G2 extension array (muon object + reco vertex as event features, view/timing as cloud token columns), Gate-4 now freezes the feature schema so the fingerprint is falsifiable, `nd-unfolding/pet/extract_fullevent_fps.py` is the full-inventory reweight-all + FPS extraction (code-only, never run — needs the 08-03 restore), and the refiner is fitted in the classifier's space. Gate-4 re-issued (`…-20260801b.json`). **J05/B-5 stays OPEN on the per-token cloud**, and the Gate-2 target must be rebuilt at Step 2 for a physics reason, not just a bytes one. **J35/J10** size-as-completion-proof (the nominal NPZ write + 85 guards in 84 shell files — J35's "47 in-scope files" was a lower bound; literal-path guards were missed) — same class as BEN-023, **FIXED 2026-08-01** via `lib/resume_guard.sh` + `nd-unfolding/pet/atomic_write.py`; Gate-4 re-issued (`…-20260801.json`); **backfill owed at restore** (Step 0b) or the first resume re-runs the campaign. **J42** an audit lane with write access refactored `omnifold_nn/omnifold/net.py`; reverted, and the dispatch rule is now in `AGENTS.md`. | MIXED — see detail doc per finding | `docs/orchestration/AUDIT-FINDINGS-20260731.md` |
 | 1 | **N-D driver no-`--use-weights` mode is globally low by pot_scale** (unscaled unit MC weights into OmniFold vs POT-scaled binning weights). FIX APPLIED 2026-06-10: driver always passes the POT-scaled weights (closure pseudo-data mirrors them); 1/pot_scale corrections REMOVED from `fps_pilot_compare.py`/`fps_prior_envelope.py`. Verification job 54271042 PASS: both bare-GENIE unfolds + battery + envelope reproduce the ledger numbers without correction. | RESOLVED 2026-06-10 | `VALIDATION_LEDGER.md` (2026-06-10 fix-verification entry) |
 | 2 | **Coverage 200-toy ROOTs not on disk** — headline coverage numbers documented but not regenerable from the checkout. REGEN DONE 2026-06-11 (arrays 54273493/54273495, 200 toys → `2d-unfolding/uq/coverage/`): `uq/coverage_toys.py` reproduces every documented number EXACTLY (mean 68.71%, median 68.50%, ⟨\|r\|⟩ 0.794, signed +0.006±0.082, 97.6% bins ≥65%, same 5/205 below, STATUS PASS). | RESOLVED 2026-06-11 | `VALIDATION_LEDGER.md` (Validation Diagnostics) |
 | 3 | **PET lateral band is a frozen-cloud transfer**, not per-lateral re-inference. RESOLVED 2026-06-10 (job 54284039, `pet_lateral_band.py`): PET-native band computed via the event-aligned 5D join (alignment asserted over all 32.85M rows; miss rows pinned to CV per #12; reco-weight ratio carries the GEANT/MinosEfficiency response). Result: native median 1.74% vs transferred 4.03%; total budget 22.5% vs published 23.0%. The transfer is the CONSERVATIVE side (frozen-push misses retraining response), so the published budget stands; `products/pet/pet_4d_covariance_combined_wlat.root` is the cross-check artifact. | RESOLVED (transfer validated as conservative) | `VALIDATION_LEDGER.md` (2026-06-10 PET-native lateral entry) |
@@ -46,3 +46,32 @@ Caught only by the combine's `--expected-throws` manifest gate. Repair: partials
 `uq_4d/corrected/uthrow_slabs_4d/partial_20260716_interrupted/`, regen 56025478 -> combine
 56025481 -> adopt 56025483. Fix pattern for future launchers: content-validated resume (open the
 file, check unit inventory) or write-to-temp + rename-on-complete. (BEN-023.)
+
+**FIXED REPO-WIDE 2026-08-01** (closes BEN-023 and audit J35 + J10, which are the same defect
+found independently in two subtrees). Completion is now an explicit record, not an inference from
+size: `lib/resume_guard.sh` provides `rg_skip_if_complete` / `rg_run` / `rg_publish`, which stamp a
+`${OUT}.done` marker **only after the producer exits 0** and bind it to the output's size+mtime, so
+a later truncation invalidates its own marker. An interrupted producer cannot leave one behind, so
+the resume re-runs. 85 guards across 84 shell files converted. The marker convention is deliberately
+the one `nd-unfolding/run_p4_unfold_std.sh` already used — that script was the in-repo precedent and
+is left alone, as is `run_p4_merge_audit_std.sh`; both already validate content.
+
+On the Python side (J10) `nd-unfolding/pet/atomic_write.py` carries the transaction —
+temp sibling → fsync → `os.replace` → marker last — and `train_fullevent_nominal.py:254` uses it
+instead of the bare `np.savez_compressed`, plus a no-clobber guard that refuses to replace an
+output already marked complete (`--allow-overwrite` opts in) and that fires *before* the eight
+GPU-hours. Gate-4 re-issued as
+`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json` (Step 2b; no physics
+re-run). `fullevent_dump_contract.py` was deliberately left byte-identical — it is frozen by the
+G2 **dump-provenance** receipt, not a code gate; see that receipt's `not_reissued_deliberately`.
+
+**Two traps in the fix itself.**
+1. **Nothing on disk has a marker.** The first resume after this lands re-runs everything.
+   Run `lib/backfill_completion_markers.sh --validator {root|npz} --glob '<pattern>'` over the live
+   output trees *before* resubmitting — RESTORE-2026-08-03 Step 0b. Read its FAIL list: those are
+   the partials the old guard was hiding.
+2. **`RESUME_ADOPT_LEGACY=1` is the old bug, opted into.** It adopts on a bare size check and warns
+   every time. Prefer a validator.
+
+Regression-pinned by `nd-unfolding/tests/test_resume_guard.py`, whose repo-wide scan fails if
+`[[ -s $OUT ]] && skip` reappears anywhere, and `nd-unfolding/tests/test_atomic_write.py`.

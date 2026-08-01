@@ -64,40 +64,70 @@ def _clouds(rng, n, tokens, ncol):
     return a, nreal
 
 
-def _scalars(rng, n):
+def _apply_sentinel(arr, pass_reco, minos_col=None):
+    """Stamp the dump's !pass_reco convention onto a reco-side block.
+
+    `dump_pointcloud_inputs.reco_scalar_row` / `reco_muon_row` / `reco_vertex_row` write
+    -9999 on every row with no reconstructed muon (minos_ok gets 0, not -9999). Before
+    2026-08-01 this generator filled plausible values on every row, so the fixture never
+    exercised the masked-normalization path that the whole event-feature block depends on --
+    and, since the reduced schema read only clean columns, nothing noticed. Widening the block
+    makes that path load-bearing on eleven more columns, so the fixture has to be faithful."""
+    if pass_reco is None:
+        return arr
+    miss = ~np.asarray(pass_reco, bool)
+    arr[miss, :] = fe.SENTINEL
+    if minos_col is not None:
+        arr[miss, minos_col] = 0.0
+    return arr
+
+
+def _scalars(rng, n, pass_reco=None):
     """(n,4) = pt, p_parallel, eavail, q3 in GeV, drawn strictly INSIDE the canonical extended
     FPS grid so the domain-retention guards keep every row (they fail closed on out-of-domain).
-    GeV, not MeV: the P5A record quotes raw reco_norm_mean 0.73 / 6.09 GeV."""
+    GeV, not MeV: the P5A record quotes raw reco_norm_mean 0.73 / 6.09 GeV.
+
+    `pass_reco` (reco-side inventories only) stamps the -9999 miss sentinel."""
     s = np.zeros((n, 4), dtype=np.float32)
     s[:, 0] = rng.uniform(0.05, 4.0, n)          # pt   (grid tops out at 30.0)
     s[:, 1] = rng.uniform(1.6, 20.0, n)          # p||  (grid spans 0 .. 120.0)
     s[:, 2] = rng.uniform(0.0, 3.0, n)           # eavail
     s[:, 3] = rng.uniform(0.0, 2.5, n)           # q3
-    return s
+    return _apply_sentinel(s, pass_reco)
 
 
-def _muon(rng, n):
-    """(n,6) = px,py,pz,E,charge,minos_quality. NOTE: the dump contract constrains only the ROW
-    COUNT of the muon/vertex blocks, and the current dataloader takes the muon (pT,p||) from
-    *_scalars rather than from these arrays. The column layout here is therefore a PLACEHOLDER
-    chosen to be plausible, not a verified match to the C++ dump."""
-    m = np.zeros((n, 6), dtype=np.float32)
-    m[:, 0] = rng.normal(0.0, 500.0, n)
-    m[:, 1] = rng.normal(0.0, 500.0, n)
-    m[:, 2] = rng.uniform(1500.0, 20000.0, n)
-    m[:, 3] = np.sqrt(m[:, 0] ** 2 + m[:, 1] ** 2 + m[:, 2] ** 2 + 105.66 ** 2)
-    m[:, 4] = -1.0
-    m[:, 5] = rng.uniform(0.0, 1.0, n)
-    return m
+def _muon(rng, n, pass_reco=None):
+    """(n,7) = px, py, pz, E, phi, qp, minos_ok -- the EXACT order of
+    `dump_pointcloud_inputs.RECO_MUON_BRANCHES`, which is what produced the real G2 dump.
+
+    This was a 6-column [px,py,pz,E,charge,quality] PLACEHOLDER until 2026-08-01, and the
+    docstring said so. It survived because the dump contract's `assert_inventory_alignment`
+    checks the muon block's ROW count and never its width, and no consumer read the columns --
+    so a fixture that disagreed with the dumper about what column 4 means passed every gate.
+    Now that `fullevent_fps_dataloader` reads the block, the width is checked where it is
+    consumed (`assert_evt_block_widths`) and this layout is pinned against the dumper's own
+    constant by `test_fullevent_schema.py`."""
+    m = np.zeros((n, 7), dtype=np.float32)
+    m[:, 0] = rng.normal(0.0, 500.0, n)                       # px (MeV)
+    m[:, 1] = rng.normal(0.0, 500.0, n)                       # py (MeV)
+    m[:, 2] = rng.uniform(1500.0, 20000.0, n)                 # pz (MeV)
+    m[:, 3] = np.sqrt(m[:, 0] ** 2 + m[:, 1] ** 2 + m[:, 2] ** 2 + 105.66 ** 2)   # E (MeV)
+    # phi spans the FULL (-pi, pi] so the fixture actually exercises the wrap the loader's
+    # (cos, sin) encoding exists for; a [0, 1) placeholder would not.
+    m[:, 4] = np.arctan2(m[:, 1], m[:, 0])                    # phi (rad), consistent with px,py
+    m[:, 5] = -1.0 / np.maximum(m[:, 3], 1.0)                 # qp = charge/p (negative muon)
+    m[:, 6] = (rng.random(n) < 0.97).astype(np.float32)       # minos_ok, mostly matched
+    return _apply_sentinel(m, pass_reco, minos_col=6)
 
 
-def _vertex(rng, n):
-    """(n,3) = x,y,z (mm) inside a tracker-like fiducial volume. Placeholder layout, see _muon."""
+def _vertex(rng, n, pass_reco=None):
+    """(n,3) = x,y,z (mm) inside a tracker-like fiducial volume
+    (`dump_pointcloud_inputs.RECO_VERTEX_BRANCHES` order)."""
     v = np.zeros((n, 3), dtype=np.float32)
     v[:, 0] = rng.uniform(-850.0, 850.0, n)
     v[:, 1] = rng.uniform(-850.0, 850.0, n)
     v[:, 2] = rng.uniform(5990.0, 8340.0, n)
-    return v
+    return _apply_sentinel(v, pass_reco)
 
 
 def _view_time(rng, n, tokens, nreal):
@@ -123,7 +153,9 @@ def build(n_sig, n_data, n_bkg, tokens, seed, fingerprint):
     data_view, data_time = _view_time(rng, n_data, tokens, nreal_d)
     bkg_view, bkg_time = _view_time(rng, n_bkg, tokens, nreal_b)
 
-    # pass fractions chosen to match the observed full-stats run (pass_reco ~0.418).
+    # pass fractions chosen to match the observed full-stats run (pass_reco ~0.418). Drawn BEFORE
+    # the reco-side blocks so their -9999 miss sentinels land on the same rows the dump would put
+    # them on -- the masked-normalization path is only exercised if the two agree.
     pass_reco = rng.random(n_sig) < 0.418
     pass_truth = rng.random(n_sig) < 0.99
     w_truth = rng.lognormal(0.0, 0.15, n_sig).astype(np.float32)
@@ -134,17 +166,18 @@ def build(n_sig, n_data, n_bkg, tokens, seed, fingerprint):
     data_pot, mc_pot = 1.0e20, 1.0e21                             # => pot_scale 0.1
 
     arrays = {
-        # ---- reco (signal MC) ----
-        "part_reco": part_reco, "reco_scalars": _scalars(rng, n_sig),
-        "reco_muon": _muon(rng, n_sig), "reco_vertex": _vertex(rng, n_sig),
+        # ---- reco (signal MC): the ONLY inventory with misses, hence the only one sentinelled ----
+        "part_reco": part_reco, "reco_scalars": _scalars(rng, n_sig, pass_reco),
+        "reco_muon": _muon(rng, n_sig, pass_reco),
+        "reco_vertex": _vertex(rng, n_sig, pass_reco),
         "reco_view": reco_view, "reco_time": reco_time,
-        # ---- data ----
+        # ---- data: every row is reconstructed by construction, so no sentinel ----
         "measured_pc": measured_pc, "measured_scalars": _scalars(rng, n_data),
         "data_muon": _muon(rng, n_data), "data_vertex": _vertex(rng, n_data),
         "data_view": data_view, "data_time": data_time,
         # ---- truth ----
         "part_gen": part_gen,
-        # ---- background MC ----
+        # ---- background MC: reco-selected and domain-gated at dump time, so no sentinel ----
         "bkg_part_reco": bkg_part_reco, "bkg_reco_scalars": _scalars(rng, n_bkg),
         "bkg_muon": _muon(rng, n_bkg), "bkg_vertex": _vertex(rng, n_bkg),
         "bkg_view": bkg_view, "bkg_time": bkg_time, "w_bkg": w_bkg,

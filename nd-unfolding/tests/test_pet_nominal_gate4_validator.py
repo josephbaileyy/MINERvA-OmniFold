@@ -68,6 +68,16 @@ def frozen_observed(**over):
          "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
          "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
                          "train_events": 2000000},
+         # J01: the event-feature schema the run was trained on, retyped for the same reason as
+         # the edges above -- reading it out of FROZEN would make `freeze:event_features_reco` a
+         # comparison of FROZEN with itself, which is the exact defect audit B2 found in four
+         # other freeze checks. This literal IS the publication schema; if the loader's
+         # DEFAULT_EVT_FEATURES moves, this test must fail rather than follow it.
+         "event_features_reco": ["pt", "pparallel", "mu_px", "mu_py", "mu_pz", "mu_E",
+                                 "mu_cos_phi", "mu_sin_phi", "mu_qp", "mu_minos_ok",
+                                 "vtx_x", "vtx_y", "vtx_z"],
+         "event_features_truth": ["pt", "pparallel"],
+         "reco_cloud_cols": ["E", "pos", "z", "view", "time"],
          "central_vector": central_vector(m), "reported_bin_mask": m}
     o.update(over)
     return o
@@ -88,6 +98,9 @@ def ordinary_report(**over):
          "marginal_l1": 0.0, "marginal_h_truth": [float(x) for x in h],
          "marginal_h_reweighted": [float(x) for x in h],
          "edges_pt": g4.FROZEN["edges_pt"], "edges_pparallel": g4.FROZEN["edges_pparallel"],
+         # J01: which estimator this closure is evidence about.
+         "event_features_reco": list(g4.FROZEN["event_features_reco"]),
+         "event_features_truth": list(g4.FROZEN["event_features_truth"]),
          "push_median": 1.001, "push_finite": True, "l1_max": 0.10, "push_med_tol": 0.15}
     r.update(over)
     return r

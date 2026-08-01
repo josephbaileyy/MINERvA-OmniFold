@@ -75,6 +75,16 @@ N_CELLS = N_PT_BINS * N_PPAR_BINS                          # 285
 FROZEN = {
     "estimator_fingerprint": ESTIMATOR_FINGERPRINT,
     "bkg_mode": BKG_MODE,
+    # J01. `pet-fullevent-fps-v1` is defined by FULL_EVENT_FEATURE_CONTRACT.md as the FULL-schema
+    # estimator (full muon object + reco vertex + view/timing); `pet-reduced-fps-cross` is the
+    # {pT,p||} one, "CROSS-CHECK ONLY -- never a publication lateral/central source". Until
+    # 2026-08-01 the gate froze the fingerprint STRING and nothing behind it, so a run on the
+    # reduced schema validated as the publication estimator -- the contract refuting itself in
+    # code. These two lists are what the fingerprint now MEANS, read from the artifact.
+    "event_features_reco": list(fe.DEFAULT_EVT_FEATURES),
+    "event_features_truth": list(fe.DEFAULT_TRUTH_EVT_FEATURES),
+    "reco_cloud_cols": list(fe.RECO_CLOUD_COLS),
+    "reduced_cross_check_features": list(fe.REDUCED_EVT_FEATURES),
     "edges_pt": [float(x) for x in fe.CANONICAL_PT_EDGES],
     "edges_pparallel": [float(x) for x in fe.CANONICAL_PPARALLEL_EDGES],
     "n_pt_bins": N_PT_BINS, "n_pparallel_bins": N_PPAR_BINS, "n_reported_cells": N_CELLS,
@@ -543,6 +553,17 @@ def check_closure_provenance(ordinary, stress):
             _edges_match(o.get("edges_pt"), FROZEN["edges_pt"])
             and _edges_match(o.get("edges_pparallel"), FROZEN["edges_pparallel"]),
             "closure histogrammed on the canonical extended-FPS grid"),
+        # J01: a closure is evidence about the estimator it ran on. The ordinary closure that
+        # backs a `pet-fullevent-fps-v1` result must have exercised the full schema; one run on
+        # {pT,p||} certifies `pet-reduced-fps-cross` and nothing else.
+        _ck("closure:ordinary_schema_is_the_full_event_schema",
+            [str(x) for x in (o.get("event_features_reco") or [])]
+            == FROZEN["event_features_reco"]
+            and [str(x) for x in (o.get("event_features_truth") or [])]
+            == FROZEN["event_features_truth"],
+            f"closure reco schema {o.get('event_features_reco')!r} / truth schema "
+            f"{o.get('event_features_truth')!r} vs frozen "
+            f"{FROZEN['event_features_reco']} / {FROZEN['event_features_truth']}"),
         _ck("closure:stress_report_schema", s.get("report_schema") == STRESS_CLOSURE_SCHEMA,
             s.get("report_schema")),
     ]
@@ -590,6 +611,47 @@ def check_freeze(observed):
                       observed.get("bin_order")))
     checks.append(_ck("freeze:seed_policy", observed.get("seed_policy") == FROZEN["seed_policy"],
                       observed.get("seed_policy")))
+    # ---- J01: the fingerprint has to mean the schema it names ----
+    feat_r = observed.get("event_features_reco")
+    feat_t = observed.get("event_features_truth")
+    if feat_r is None or feat_t is None:
+        checks.append(_ck(
+            "freeze:event_feature_schema_present", False,
+            "NOT SUPPLIED: the artifact declares no event-feature schema, so nothing establishes "
+            f"that a result stamped {ESTIMATOR_FINGERPRINT!r} was trained on the full schema that "
+            "fingerprint names. Produced by a driver predating the J01 fix."))
+    else:
+        feat_r = [str(x) for x in np.asarray(feat_r).ravel().tolist()]
+        feat_t = [str(x) for x in np.asarray(feat_t).ravel().tolist()]
+        checks.append(_ck("freeze:event_features_reco", feat_r == FROZEN["event_features_reco"],
+                          f"{feat_r} vs frozen {FROZEN['event_features_reco']}"))
+        checks.append(_ck("freeze:event_features_truth", feat_t == FROZEN["event_features_truth"],
+                          f"{feat_t} vs frozen {FROZEN['event_features_truth']}"))
+        # Stated separately from the equality above, and deliberately redundant with it: this is
+        # the specific substitution J01 found in the tree, and a named failing check is worth more
+        # in a receipt than "the list differs".
+        checks.append(_ck(
+            "freeze:not_the_reduced_cross_check_schema",
+            feat_r != FROZEN["reduced_cross_check_features"],
+            f"reco schema is {feat_r}; {FROZEN['reduced_cross_check_features']} is "
+            "`pet-reduced-fps-cross`, a CROSS-CHECK that may never be a publication source"))
+        # The detector quantities have no truth counterpart; one appearing on the truth leg is a
+        # leak that survived the loader's own guard only if the artifact was hand-built.
+        leaked = sorted(set(feat_t) & set(fe.DETECTOR_ONLY_FEATURES))
+        checks.append(_ck("freeze:no_detector_feature_on_the_truth_leg", not leaked,
+                          f"detector-only features on event_truth: {leaked}" if leaked
+                          else "truth leg reads truth-eligible quantities only"))
+    cloud_cols = observed.get("reco_cloud_cols")
+    if cloud_cols is None:
+        checks.append(_ck(
+            "freeze:reco_cloud_cols_present", False,
+            "NOT SUPPLIED: the artifact does not record the reco cloud's token columns, so a run "
+            "that dropped the G2 view/timing columns is indistinguishable from one that read "
+            "them"))
+    else:
+        cloud_cols = [str(x) for x in np.asarray(cloud_cols).ravel().tolist()]
+        checks.append(_ck("freeze:reco_cloud_cols", cloud_cols == FROZEN["reco_cloud_cols"],
+                          f"{cloud_cols} vs frozen {FROZEN['reco_cloud_cols']}"))
     cv = observed.get("central_vector")
     mask = observed.get("reported_bin_mask")
     if cv is None:
@@ -832,6 +894,10 @@ def main(argv=None):
         "seed_policy": dict(seed_policy) if isinstance(seed_policy, dict) else seed_policy,
         "central_vector": _npz_get(z, "central_vector"),
         "reported_bin_mask": _npz_get(z, "reported_bin_mask"),
+        # J01: read from the artifact, never from FROZEN (rule 2 of the module docstring).
+        "event_features_reco": _npz_get(z, "event_features_reco"),
+        "event_features_truth": _npz_get(z, "event_features_truth"),
+        "reco_cloud_cols": _npz_get(z, "reco_cloud_cols"),
     }
     target = _npz_get(z, "target")
 

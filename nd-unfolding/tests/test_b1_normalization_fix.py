@@ -179,6 +179,10 @@ def write_closure_reports(td, ordinary_over=None, stress_over=None):
                 "marginal_h_reweighted": [float(x) for x in h],
                 "edges_pt": g4.FROZEN["edges_pt"],
                 "edges_pparallel": g4.FROZEN["edges_pparallel"],
+                # J01: a closure is evidence about the estimator it ran on, so the report declares
+                # the schema it exercised and Gate-4 requires it to be the full one.
+                "event_features_reco": list(g4.FROZEN["event_features_reco"]),
+                "event_features_truth": list(g4.FROZEN["event_features_truth"]),
                 "push_median": 1.0, "push_finite": True, "l1_max": 0.10, "push_med_tol": 0.15}
     stress = {"report_schema": g4.STRESS_CLOSURE_SCHEMA, "verdict": "PASS", "pass": True,
               "recoil_only_fails_to_recover": True, "fullevent_recovers": True}
@@ -235,6 +239,14 @@ def driver_npz(td, arrays, imc, push, name="nominal.npz", target=None, **over):
               central_vector=cv, reported_bin_mask=rep_mask,
               cap_saturation_frac=np.asarray(
                   g4.cap_saturation_frac_from_push(push)),
+              # J01: the event-feature schema the run was trained on. Gate-4 freezes it, so an
+              # artifact without it now fails `freeze:event_feature_schema_present` -- which is
+              # the point: a fingerprint with nothing behind it is what let a {pT,p||} run
+              # validate as `pet-fullevent-fps-v1`.
+              event_features_reco=np.asarray(list(g4.FROZEN["event_features_reco"]), dtype=object),
+              event_features_truth=np.asarray(list(g4.FROZEN["event_features_truth"]),
+                                              dtype=object),
+              reco_cloud_cols=np.asarray(list(g4.FROZEN["reco_cloud_cols"]), dtype=object),
               target=np.asarray(target, dtype=object))
     kw.update(over)
     p = os.path.join(td, name)
@@ -1152,11 +1164,21 @@ class Gate4ArtifactContract(unittest.TestCase):
                 g4.nominal_spectra_from_dump(path, np.ones(40), np.arange(40))
 
 
+_REDUCED = ("pt", "pparallel")
+
+
 class EventFeatureFiniteGuard(unittest.TestCase):
     """FINDING-20260730-event-feature-nonfinite.md, found by execution (Delta job 20599606 died
     after 49m45s), fixed in this window because the file is Gate-2-bound and Step 2b is when it is
     open. ONE non-finite value in a selected column NaNs that column for EVERY row via the
     normalization statistic, and step 2 reports `Last val loss nan` naming neither column nor cause.
+
+    2026-08-01: every call below now names `_REDUCED` explicitly. The subject of these tests is
+    the non-finite guard, not the schema, and they supply scalars-only sources; the loader's
+    default became the full `pet-fullevent-fps-v1` schema (J01), which needs the muon and vertex
+    blocks and correctly refuses to run without them. Passing the schema in keeps each test
+    testing what it was written to test -- and `_REDUCED` is written out rather than imported from
+    `fed` so a future change to the loader's constants cannot silently redefine these fixtures.
     """
 
     def _scalars(self, n=50, seed=1):
@@ -1164,7 +1186,7 @@ class EventFeatureFiniteGuard(unittest.TestCase):
 
     def test_clean_scalars_pass(self):
         r, t, d = self._scalars(), self._scalars(seed=2), self._scalars(30, seed=3)
-        er, et, ed, meta = fed.build_event_features(r, t, d)
+        er, et, ed, meta = fed.build_event_features(r, t, d, feature_names=_REDUCED)
         for blk in (er, et, ed):
             self.assertTrue(np.all(np.isfinite(blk)))
         self.assertEqual(meta["n_evt"], 2)
@@ -1174,7 +1196,8 @@ class EventFeatureFiniteGuard(unittest.TestCase):
         The message must name the column, because the NaN loss did not."""
         t = self._scalars(seed=2); t[7, fed.SCALAR_COLS["pparallel"]] = np.nan
         with self.assertRaises(ValueError) as cm:
-            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3),
+                                     feature_names=_REDUCED)
         msg = str(cm.exception)
         self.assertIn("pparallel", msg)
         self.assertIn("truth_scalars", msg)
@@ -1186,14 +1209,17 @@ class EventFeatureFiniteGuard(unittest.TestCase):
         Assert it RAISES rather than returning something finite."""
         t = self._scalars(seed=2); t[3, 0] = np.inf
         with self.assertRaises(ValueError):
-            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+            fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3),
+                                     feature_names=_REDUCED)
 
     def test_a_nan_outside_the_selected_columns_is_tolerated(self):
         """The real dump's `q3` (col 3) carries ~1,700 non-finite rows and the adopted schema reads
         cols 0,1. The guard must not fail the CURRENT production configuration -- the defect is
         latent, and a guard that fires today would be a false alarm, not a fix."""
         t = self._scalars(seed=2); t[5, fed.SCALAR_COLS["q3"]] = np.nan
-        _er, et, _ed, _m = fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3))
+        _er, et, _ed, _m = fed.build_event_features(self._scalars(), t,
+                                                    self._scalars(30, seed=3),
+                                                    feature_names=_REDUCED)
         self.assertTrue(np.all(np.isfinite(et)))
 
     def test_a_nan_outside_the_selected_columns_fails_once_the_block_widens(self):
@@ -1201,8 +1227,13 @@ class EventFeatureFiniteGuard(unittest.TestCase):
         requires (FULL_EVENT_FEATURE_CONTRACT.md:98-101)."""
         t = self._scalars(seed=2); t[5, fed.SCALAR_COLS["q3"]] = np.nan
         with self.assertRaises(ValueError) as cm:
+            # The NaN is on the TRUTH leg, so it is the truth schema that has to widen for the
+            # guard to see it. The two lists became independent when the reco leg gained the muon
+            # object (J01); widening only `feature_names` here would leave the truth block reading
+            # {pT,p||} and the test would assert that a guard fires on a column nobody selected.
             fed.build_event_features(self._scalars(), t, self._scalars(30, seed=3),
-                                     feature_names=("pt", "pparallel", "eavail", "q3"))
+                                     feature_names=("pt", "pparallel", "eavail", "q3"),
+                                     truth_feature_names=("pt", "pparallel", "eavail", "q3"))
         self.assertIn("q3", str(cm.exception))
 
     def test_a_nan_only_among_masked_out_rows_is_tolerated(self):
@@ -1213,14 +1244,15 @@ class EventFeatureFiniteGuard(unittest.TestCase):
         pass_truth = np.ones(n, bool); pass_truth[9] = False
         t[9, 0] = np.nan
         _er, et, _ed, _m = fed.build_event_features(
-            self._scalars(n), t, self._scalars(30, seed=3),
+            self._scalars(n), t, self._scalars(30, seed=3), feature_names=_REDUCED,
             pass_reco=np.ones(n, bool), pass_truth=pass_truth)
         self.assertTrue(np.all(np.isfinite(et)))
 
     def test_data_scalars_are_screened_too(self):
         d = self._scalars(30, seed=3); d[4, 0] = np.nan
         with self.assertRaises(ValueError) as cm:
-            fed.build_event_features(self._scalars(), self._scalars(seed=2), d)
+            fed.build_event_features(self._scalars(), self._scalars(seed=2), d,
+                                     feature_names=_REDUCED)
         self.assertIn("measured_scalars", str(cm.exception))
 
     def test_leakage_guard_cannot_pass_on_an_all_nan_block(self):

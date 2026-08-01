@@ -49,6 +49,45 @@ class CloudBuilders(unittest.TestCase):
         self.assertTrue(np.all(cloud[0, 1:] == 0))      # padding preserved as 0
         self.assertTrue(np.all(cloud[1:] == 0))
 
+    def test_reco_cloud_carries_view_and_time(self):
+        part = np.zeros((2, 4, 3), np.float32)
+        part[0, 0] = [1000., 200., 5000.]
+        part[0, 1] = [500., -100., 6000.]
+        view = np.zeros((2, 4), np.float32); view[0, :2] = [1, 3]
+        time = np.zeros((2, 4), np.float32); time[0, :2] = [25.0, -50.0]
+        cloud, coord = fe.build_reco_cloud(part, view, time)
+        self.assertEqual(cloud.shape[-1], 5)            # E, pos, z, view, time
+        self.assertEqual(coord, (1, 2))                 # KNN is still detector geometry only
+        self.assertAlmostEqual(float(cloud[0, 0, 3]), 1.0, places=5)     # view id kept raw
+        self.assertAlmostEqual(float(cloud[0, 1, 3]), 3.0, places=5)
+        self.assertAlmostEqual(float(cloud[0, 0, 4]), 0.25, places=5)    # 25 ns / 100
+        self.assertAlmostEqual(float(cloud[0, 1, 4]), -0.5, places=5)
+        self.assertTrue(np.all(cloud[0, 2:] == 0))      # padding still all-zero
+        self.assertTrue(np.all(cloud[1] == 0))
+
+    def test_view_and_time_are_re_zeroed_on_padded_tokens(self):
+        """The pad sentinel the model keys on is energy == 0. A dump that padded the parallel
+        vectors separately would otherwise leave a live view/time on an absent token."""
+        part = np.zeros((1, 3, 3), np.float32)
+        part[0, 0] = [1000., 200., 5000.]               # exactly one real token
+        view = np.full((1, 3), 2.0, np.float32)         # nonzero on the pads
+        time = np.full((1, 3), 40.0, np.float32)
+        cloud, _ = fe.build_reco_cloud(part, view, time)
+        self.assertTrue(np.all(cloud[0, 1:, 3] == 0.0))
+        self.assertTrue(np.all(cloud[0, 1:, 4] == 0.0))
+
+    def test_half_supplied_token_vectors_fail_closed(self):
+        part = np.zeros((1, 3, 3), np.float32); part[0, 0] = [1000., 200., 5000.]
+        with self.assertRaises(ValueError):
+            fe.build_reco_cloud(part, np.zeros((1, 3), np.float32), None)
+        with self.assertRaises(ValueError):
+            fe.build_reco_cloud(part, None, np.zeros((1, 3), np.float32))
+
+    def test_misaligned_token_vectors_fail_closed(self):
+        part = np.zeros((1, 3, 3), np.float32); part[0, 0] = [1000., 200., 5000.]
+        with self.assertRaises(ValueError):
+            fe.build_reco_cloud(part, np.zeros((1, 4), np.float32), np.zeros((1, 4), np.float32))
+
     def test_truth_cloud_angular_coords_pdg(self):
         part = np.zeros((2, 3, 5), np.float32)
         part[0, 0] = [2000., 0., 0., 2000., 2212.]      # proton, forward (pz)
@@ -68,57 +107,169 @@ class CloudBuilders(unittest.TestCase):
 
 
 class EventSchemas(unittest.TestCase):
-    def _scalars(self, n=200, seed=0):
-        rng = np.random.default_rng(seed)
-        reco = np.stack([rng.uniform(0, 2, n), rng.uniform(1, 10, n),
-                         rng.uniform(0, 1, n), rng.uniform(0, 2, n)], axis=1).astype(np.float32)
-        truth = reco + rng.normal(0, 0.05, reco.shape).astype(np.float32)  # muon smearing
-        meas = np.stack([rng.uniform(0, 2, n), rng.uniform(1, 10, n),
-                         rng.uniform(0, 1, n), rng.uniform(0, 2, n)], axis=1).astype(np.float32)
-        return reco, truth, meas
+    """The two event-feature schemas.
 
-    def test_reco_data_same_schema_truth_distinct(self):
-        reco, truth, meas = self._scalars()
-        er, et, ed, meta = fe.build_event_features(reco, truth, meas)
-        self.assertEqual(er.shape[1], ed.shape[1])          # reco == data feature dim
+    Rewritten 2026-08-01 with the full-schema loader. These previously exercised the reduced
+    {pT,p||} block on both legs, where "reco and truth have the same schema" was true and the
+    distinction the contract draws was untestable. `REDUCED` below keeps that configuration under
+    its real name (`pet-reduced-fps-cross`); everything else tests the publication schema."""
+
+    def _sources(self, n=200, seed=0, pass_reco=None):
+        """(reco_blocks, truth_blocks, measured_blocks) with the dump's own column orders."""
+        rng = np.random.default_rng(seed)
+
+        def scal(m):
+            return np.stack([rng.uniform(0, 2, m), rng.uniform(1, 10, m),
+                             rng.uniform(0, 1, m), rng.uniform(0, 2, m)], axis=1).astype(np.float32)
+
+        def muon(m):
+            px = rng.normal(0, 500, m); py = rng.normal(0, 500, m)
+            pz = rng.uniform(1500, 20000, m)
+            E = np.sqrt(px ** 2 + py ** 2 + pz ** 2 + 105.66 ** 2)
+            # phi spans the full (-pi, pi] so the periodic encoding is actually exercised
+            return np.stack([px, py, pz, E, np.arctan2(py, px), -1.0 / E,
+                             (rng.random(m) < 0.97).astype(float)], axis=1).astype(np.float32)
+
+        def vtx(m):
+            return np.stack([rng.uniform(-850, 850, m), rng.uniform(-850, 850, m),
+                             rng.uniform(5990, 8340, m)], axis=1).astype(np.float32)
+
+        reco_s, reco_m, reco_v = scal(n), muon(n), vtx(n)
+        if pass_reco is not None:
+            for arr in (reco_s, reco_m, reco_v):
+                arr[~pass_reco, :] = fe.SENTINEL
+            reco_m[~pass_reco, fe.MUON_COLS["mu_minos_ok"]] = 0.0
+        truth_s = scal(n)
+        return (fe.evt_blocks(scalars=reco_s, muon=reco_m, vertex=reco_v),
+                fe.evt_blocks(scalars=truth_s),
+                fe.evt_blocks(scalars=scal(n), muon=muon(n), vertex=vtx(n)))
+
+    def test_reco_and_data_share_a_schema_the_truth_leg_does_not(self):
+        r, t, m = self._sources()
+        er, et, ed, meta = fe.build_event_features(r, t, m)
+        self.assertEqual(er.shape[1], ed.shape[1])                  # reco == data feature dim
         self.assertEqual(er.shape[1], len(fe.DEFAULT_EVT_FEATURES))
+        self.assertEqual(et.shape[1], len(fe.DEFAULT_TRUTH_EVT_FEATURES))
+        # The point of J01: the two legs are NOT the same width any more.
+        self.assertGreater(er.shape[1], et.shape[1])
+        self.assertEqual(meta["n_evt_reco"], er.shape[1])
+        self.assertEqual(meta["n_evt_truth"], et.shape[1])
         self.assertEqual(meta["feature_names"], list(fe.DEFAULT_EVT_FEATURES))
-        # reco/data normalized with the SAME (reco) statistics; truth with its OWN
-        self.assertNotEqual(meta["reco_norm_mean"], meta["truth_norm_mean"])
-        self.assertTrue(np.all(np.isfinite(er)) and np.all(np.isfinite(et)) and np.all(np.isfinite(ed)))
+        self.assertEqual(meta["truth_feature_names"], list(fe.DEFAULT_TRUTH_EVT_FEATURES))
+        self.assertTrue(all(np.all(np.isfinite(b)) for b in (er, et, ed)))
+
+    def test_the_extension_arrays_are_actually_read(self):
+        """The J01 regression, stated as a behaviour rather than a name list: perturbing ONLY
+        `reco_muon` and ONLY `reco_vertex` must change event_reco. Under the reduced schema both
+        perturbations were invisible, which is exactly what the audit found."""
+        r, t, m = self._sources(seed=11)
+        base, _, _, _ = fe.build_event_features(r, t, m)
+        perm = np.random.default_rng(0).permutation(base.shape[0])
+        for key in ("muon", "vertex"):
+            # PERMUTE the column rather than shifting or scaling it. The block is z-scored, so any
+            # affine change to a column leaves the output bit-identical -- an "insensitive to +250"
+            # assertion would pass on a loader that reads the block perfectly. A permutation holds
+            # the mean and standard deviation fixed and moves every row, so the only thing it can
+            # detect is whether the per-row values reach the output at all.
+            bumped = dict(r)
+            bumped[key] = np.asarray(r[key]).copy()
+            bumped[key][:, 0] = bumped[key][perm, 0]
+            got, _, _, _ = fe.build_event_features(bumped, t, m)
+            self.assertFalse(np.allclose(got, base),
+                             f"event_reco is insensitive to the '{key}' block -- it is not read")
+
+    def test_reduced_schema_is_still_selectable_and_is_narrower(self):
+        r, t, m = self._sources(seed=5)
+        er, et, _ed, meta = fe.build_event_features(r, t, m,
+                                                    feature_names=fe.REDUCED_EVT_FEATURES)
+        self.assertEqual(er.shape[1], 2)
+        self.assertEqual(meta["n_evt_reco"], 2)
+        self.assertEqual(et.shape[1], 2)
+        # and it is a literal subset of the publication schema, so it is a true ablation
+        self.assertTrue(set(fe.REDUCED_EVT_FEATURES) <= set(fe.DEFAULT_EVT_FEATURES))
+
+    def test_azimuth_is_encoded_periodically(self):
+        """CLM-008 F10 one level up: phi = -pi and phi = +pi are the same direction, and a raw
+        z-scored angle puts them maximally far apart."""
+        r, t, m = self._sources(seed=2)
+        self.assertIn("mu_cos_phi", fe.DEFAULT_EVT_FEATURES)
+        self.assertIn("mu_sin_phi", fe.DEFAULT_EVT_FEATURES)
+        self.assertNotIn("mu_phi", fe.DEFAULT_EVT_FEATURES)
+        muon = np.asarray(r["muon"]).copy()
+        muon[0, fe.MUON_COLS["mu_phi"]] = -np.pi + 1e-7
+        muon[1, fe.MUON_COLS["mu_phi"]] = +np.pi - 1e-7
+        r = dict(r); r["muon"] = muon
+        er, _et, _ed, _meta = fe.build_event_features(r, t, m)
+        i_cos = list(fe.DEFAULT_EVT_FEATURES).index("mu_cos_phi")
+        i_sin = list(fe.DEFAULT_EVT_FEATURES).index("mu_sin_phi")
+        np.testing.assert_allclose(er[0, [i_cos, i_sin]], er[1, [i_cos, i_sin]], atol=1e-4)
 
     def test_no_truth_leakage_invariant(self):
-        reco, truth, meas = self._scalars()
-        er, et, ed, meta = fe.build_event_features(reco, truth, meas)
-        self.assertTrue(fe.assert_no_truth_leakage(er, reco, truth, fe.DEFAULT_EVT_FEATURES))
+        r, t, m = self._sources()
+        er, _et, _ed, _meta = fe.build_event_features(r, t, m)
+        self.assertTrue(fe.assert_no_truth_leakage(er, r, t, fe.DEFAULT_EVT_FEATURES))
 
     def test_leakage_detector_catches_truth_injection(self):
-        reco, truth, meas = self._scalars()
-        # forge an "event_reco" built from TRUTH scalars -> the detector must catch it
-        cols = [fe.SCALAR_COLS[f] for f in fe.DEFAULT_EVT_FEATURES]
-        rmu = reco[:, cols].mean(0); rsd = reco[:, cols].std(0) + 1e-6
-        leaked = (truth[:, cols] - rmu) / rsd
+        """A forged event_reco whose SHARED columns came from truth must be caught. The forgery
+        keeps the full width -- only (pT, p||) are substituted -- because that is the only
+        substitution the two schemas make expressible, and a width-mismatched forgery would be
+        rejected for the wrong reason."""
+        r, t, m = self._sources()
+        er, _et, _ed, _meta = fe.build_event_features(r, t, m)
+        shared = list(fe.DEFAULT_TRUTH_EVT_FEATURES)
+        take = [list(fe.DEFAULT_EVT_FEATURES).index(f) for f in shared]
+        raw = fe._event_block(r, fe.DEFAULT_EVT_FEATURES, None)
+        rmu, rsd = raw.mean(0), raw.std(0) + 1e-6
+        leaked = np.array(er, copy=True)
+        leaked[:, take] = fe._event_block(t, shared, (rmu[take], rsd[take]))
         with self.assertRaises(AssertionError):
-            fe.assert_no_truth_leakage(leaked.astype(np.float32), reco, truth,
-                                       fe.DEFAULT_EVT_FEATURES)
+            fe.assert_no_truth_leakage(leaked, r, t, fe.DEFAULT_EVT_FEATURES)
+
+    def test_detector_feature_on_the_truth_leg_is_refused_by_name(self):
+        r, t, m = self._sources()
+        for bad in ("mu_px", "vtx_z", "mu_minos_ok"):
+            with self.assertRaises(ValueError) as cm:
+                fe.build_event_features(r, t, m, truth_feature_names=("pt", bad))
+            self.assertIn(bad, str(cm.exception))
+            self.assertIn("EVT-SCHEMA", str(cm.exception))
+
+    def test_a_missing_source_block_fails_closed_rather_than_narrowing(self):
+        """The J01 failure mode itself: asked for the full schema with no muon block, the answer
+        must be an error, never a quietly narrower estimator."""
+        r, t, m = self._sources()
+        with self.assertRaises(ValueError) as cm:
+            fe.build_event_features(fe.evt_blocks(scalars=r["scalars"]), t, m)
+        self.assertIn("EVT-SCHEMA", str(cm.exception))
+        self.assertIn("muon", str(cm.exception))
+
+    def test_a_wrong_width_muon_block_fails_closed(self):
+        """`fullevent_dump_contract.assert_inventory_alignment` checks the muon block's rows and
+        never its width, so the 6-column placeholder in `make_synthetic_g2_fullevent.py` passed
+        every G2 gate. Reading the block makes the width load-bearing."""
+        r, t, m = self._sources()
+        r = dict(r); r["muon"] = np.asarray(r["muon"])[:, :6]
+        with self.assertRaises(ValueError) as cm:
+            fe.build_event_features(r, t, m)
+        self.assertIn("G2-SCHEMA", str(cm.exception))
 
     def test_sentinel_pass_masked_normalization(self):
         # Regression for the FPS reco-muon sentinel bug: reco muon = -9999 where !pass_reco.
         # Normalization must use pass_reco rows only, and !pass rows must be zeroed post-norm.
-        reco, truth, meas = self._scalars(n=400, seed=3)
+        # Now over ALL thirteen columns: the extension arrays carry the same sentinel
+        # (`dump_pointcloud_inputs.reco_muon_row` / `reco_vertex_row`), so widening the block
+        # widened this failure mode too.
         pr = np.zeros(400, bool); pr[:250] = True          # 250 real, 150 misses
-        reco[~pr, :] = -9999.0                              # sentinel in the miss rows
+        r, t, m = self._sources(n=400, seed=3, pass_reco=pr)
         pt = np.ones(400, bool)
-        er, et, ed, meta = fe.build_event_features(reco, truth, meas, pass_reco=pr, pass_truth=pt)
-        cols = [fe.SCALAR_COLS[f] for f in fe.DEFAULT_EVT_FEATURES]
-        # norm mean must be the pass_reco muon mean (physical, ~O(1)), NOT polluted by -9999
-        expected_mu = reco[pr][:, cols].mean(0)
+        er, _et, _ed, meta = fe.build_event_features(r, t, m, pass_reco=pr, pass_truth=pt)
+        expected_mu = fe._event_block(r, fe.DEFAULT_EVT_FEATURES, None)[pr].mean(0)
         np.testing.assert_allclose(meta["reco_norm_mean"], expected_mu, rtol=1e-4)
-        self.assertLess(abs(meta["reco_norm_mean"][0]), 100.0)   # not the -5732 pathology
+        # No column's mean may be anywhere near the sentinel: the -5732 pathology, per column.
+        self.assertTrue(all(abs(x) < 100.0 for x in meta["reco_norm_mean"]),
+                        meta["reco_norm_mean"])
         self.assertTrue(np.all(er[~pr] == 0.0))            # undefined reco rows zeroed
         self.assertTrue(np.all(np.isfinite(er)))
-        # leakage detector must still pass with pass_reco supplied
-        self.assertTrue(fe.assert_no_truth_leakage(er, reco, truth, fe.DEFAULT_EVT_FEATURES,
+        self.assertTrue(fe.assert_no_truth_leakage(er, r, t, fe.DEFAULT_EVT_FEATURES,
                                                    pass_reco=pr))
 
 

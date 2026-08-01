@@ -129,10 +129,14 @@ def main():
     # pseudo-data = MC reco (pass_reco), weighted by the (normalized) prior; carry reco_evt
     pdata = DataLoader(reco=reco[pr], weight=np.asarray(mc.weight)[pr], normalize=True,
                        reco_evt=reco_evt[pr])
-    P = reco.shape[1]; ev = meta["n_evt"]
-    m1 = PET(reco.shape[-1], num_evt=ev, num_part=P, num_transformer=2, num_heads=2,
+    # Distinct widths since the full-schema loader landed (J01): step 1 sees the reconstructed
+    # muon object + reco vertex, step 2 only the truth muon.
+    P = reco.shape[1]
+    ev_reco, ev_truth = meta["n_evt_reco"], meta["n_evt_truth"]
+    m1 = PET(reco.shape[-1], num_evt=ev_reco, num_part=P, num_transformer=2, num_heads=2,
              projection_dim=32, local=True, K=3, coord_idx=coord_reco)
-    m2 = PET(np.asarray(mc.gen).shape[-1], num_evt=ev, num_part=P, num_transformer=2, num_heads=2,
+    m2 = PET(np.asarray(mc.gen).shape[-1], num_evt=ev_truth, num_part=P,
+             num_transformer=2, num_heads=2,
              projection_dim=32, local=True, K=3, coord_idx=coord_gen)
     of = MultiFold("fe_closure", m1, m2, pdata, mc, niter=a.niter, epochs=a.epochs,
                    batch_size=a.batch_size, weights_folder=a.weights_folder, verbose=False)
@@ -176,6 +180,11 @@ def main():
             "inputs": os.path.abspath(a.inputs),
             "inputs_basename": os.path.basename(a.inputs),
             "estimator_fingerprint": meta.get("estimator_fingerprint"),
+            # The schema this closure actually exercised. Gate-4 composes this report as evidence
+            # for a result stamped `pet-fullevent-fps-v1`; a closure run on the reduced schema is
+            # evidence about a different estimator (J01).
+            "event_features_reco": list(meta.get("feature_names") or []),
+            "event_features_truth": list(meta.get("truth_feature_names") or []),
             "marginal_l1": l1,
             "marginal_h_truth": [float(x) for x in H_truth.ravel()],
             "marginal_h_reweighted": [float(x) for x in H_rw.ravel()],

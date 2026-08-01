@@ -1,0 +1,240 @@
+{
+ "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
+ "verdict": "PASS_CODE_ONLY",
+ "observed_at_utc": "2026-08-01T00:00:00Z",
+ "actor": "claude-opus-5(local, J01/J02/J05 full-event schema lane)",
+ "reissue": {
+  "supersedes": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json",
+  "why": "AUDIT-FINDINGS-20260731 J01: `pet-fullevent-fps-v1` is defined by FULL_EVENT_FEATURE_CONTRACT.md as the FULL-schema publication estimator (full muon object + reco vertex + view/timing), while `pet-reduced-fps-cross` is the {pT,p_parallel} estimator marked 'CROSS-CHECK ONLY -- never a publication lateral/central source'. The loader read the reduced set, the extension arrays the G2 dump carries were referenced nowhere, and the driver stamped the full-schema fingerprint on the result. The loader now reads the full event; the driver and validator move with it, which voids the bindings of every file the 2026-08-01 receipt froze. No physics was re-run: Gate-4 is PASS_CODE_ONLY and has still never run at runtime.",
+  "runbook_step": "docs/orchestration/RESTORE-2026-08-03.md Step 2b",
+  "never_hand_edited_a_hash": "The 2026-08-01 receipt's bindings are preserved verbatim in its own `files_at_issue` block (renamed so the verifier's collector no longer treats them as live) and every old->new move is recorded in `binding_moves` below. Its 07-31 and 07-21 predecessors stay superseded. NOTE FOR THE NEXT RE-ISSUE, learned by getting it wrong here first: what makes a superseded block inert is renaming each ENTRY's key `sha256` -> `sha256_at_issue`, not renaming the containing `files` block. `verify_hash_bindings.collect` recurses over the whole document and pairs any dict carrying both `path` and `sha256`, so a renamed block whose entries still say `sha256` stays live and the superseded receipt goes on reporting mismatches against the working tree. The 07-21 and 07-31 supersedes get this right; their prose ('renamed so the verifier's collector no longer treats them as live') describes the block rather than the key and reads as though either would do.",
+  "binding_moves": [
+   {
+    "role": "atomic_write",
+    "path": "nd-unfolding/pet/atomic_write.py",
+    "was": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+    "now": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "b1_normalization_test",
+    "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+    "was": "c3f4561f7f49ddc518fea7ecb8e5af5ceebb558bdef0e99a775f532ebd8522b2",
+    "now": "13867a3a6b20c380063ec8c8a49ae8ef27352d318934d366ac22bcd43b561493",
+    "reason": "J01: `EventFeatureFiniteGuard` names the reduced schema explicitly at each call (its subject is the non-finite guard, not the schema, and it supplies scalars-only sources), the truth leg is widened alongside the reco leg in the block-widening test, and `driver_npz`/`write_closure_reports` carry the schema keys Gate-4 now freezes."
+   },
+   {
+    "role": "closure_omitted_muon_stress",
+    "path": "nd-unfolding/pet/stress_closure_muon.py",
+    "was": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+    "now": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "closure_ordinary",
+    "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+    "was": "047a4aa91319938fa78c86683aa38477b9ce87eec607c519529e241691df02a6",
+    "now": "0d51213a515f29697e505653295f656d2b9b872c7c007316cf02b5322a018a6f",
+    "reason": "J01: the `--json` report declares the event-feature schema the closure actually exercised, and the two model widths are taken from `n_evt_reco`/`n_evt_truth` rather than one `n_evt`. Physics untouched."
+   },
+   {
+    "role": "closure_rate_injection",
+    "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+    "was": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24",
+    "now": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "driver",
+    "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+    "was": "42194360faff339e1953f1484a8b60f4c1580b62fb318a916962d4c1a3f7559c",
+    "now": "0287a94c827d4d975813fa60cec1df56077237c50b3cbbabbd73d9bc19663dbe",
+    "reason": "J01/J02: builds the step-1 and step-2 networks at the two DIFFERENT event-feature widths the full schema implies (one shared `n_evt` now mis-shapes step 2), refuses outright to stamp `pet-fullevent-fps-v1` on a run the loader built in the reduced schema, and persists both feature lists, the reco cloud's token columns, and an `inference_contract` carrying the architecture, the step-2 checkpoint and the event-feature normalization the extractor must reuse."
+   },
+   {
+    "role": "estimator_engine_multifold",
+    "path": "omnifold_nn/omnifold/omnifold.py",
+    "was": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b",
+    "now": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "estimator_engine_net",
+    "path": "omnifold_nn/omnifold/net.py",
+    "was": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+    "now": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "launcher",
+    "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+    "was": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
+    "now": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "launcher_test",
+    "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+    "was": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
+    "now": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   },
+   {
+    "role": "validator",
+    "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+    "was": "f2054645f79036114ae27778f44c4f9a8809970ee9b5911f4cc3d2017ff2e1e0",
+    "now": "69c5a577d41749d57016e1df5e9a92a7aa507be5fd5bedf94e180e1ab2b9f5bb",
+    "reason": "J01: the fingerprint now has to mean the schema it names. FROZEN gains `event_features_reco` / `event_features_truth` / `reco_cloud_cols`; `check_freeze` reads all three from the ARTIFACT and fails absent evidence; a reduced-schema result is refused by a separately named check; a detector feature on the truth leg is refused; and the ordinary closure report must declare the same schema, so a closure of a different estimator cannot be composed as evidence."
+   },
+   {
+    "role": "validator_test",
+    "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+    "was": "8bc237b2168a2789c2fbff1512d1ea8505543a3ed05eccc52b44d54ba709ac0a",
+    "now": "9e268bc4e1cde3b637a75dc8f169c57b5d6d11073e40ca2cf9e775412ac9f08a",
+    "reason": "J01: `frozen_observed` and `ordinary_report` gain the schema keys. The schema literal is RETYPED rather than read from FROZEN, for the same reason the edges are -- audit B2 found four freeze checks comparing FROZEN with itself."
+   },
+   {
+    "role": "fullevent_extract_test",
+    "path": "nd-unfolding/tests/test_fullevent_extract.py",
+    "was": null,
+    "now": "893115e4d690778f8acf4bbf8276306eeef9b94c82194e3b49f9a04b5b0d8b25",
+    "reason": "NEW additive binding -- see additive_bindings."
+   },
+   {
+    "role": "fullevent_extractor",
+    "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+    "was": null,
+    "now": "545816b577de1cec698ac260db07724606807fc4ed03e618ee32f1e3549f76e3",
+    "reason": "NEW additive binding -- see additive_bindings."
+   },
+   {
+    "role": "fullevent_schema_test",
+    "path": "nd-unfolding/tests/test_fullevent_schema.py",
+    "was": null,
+    "now": "ae3686b9ec03f61c40a81cb331299a23a71e82d64e66b059bd8f36ae4b6bb3c7",
+    "reason": "NEW additive binding -- see additive_bindings."
+   },
+   {
+    "role": "synthetic_g2_fixture",
+    "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+    "was": null,
+    "now": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f",
+    "reason": "NEW additive binding -- see additive_bindings."
+   }
+  ],
+  "scope_of_the_edit": "The estimator's INPUT SPACE changed, so unlike the J10 re-issue this is not a plumbing change and must not be read as one. The step-1 classifier is now conditioned on thirteen event features instead of two, the reco cloud carries five token columns instead of three, and the Stay-Positive refinement is fitted in the widened space. Any number produced by the previous configuration is a number from a DIFFERENT estimator -- correctly labelled `pet-reduced-fps-cross`, never `pet-fullevent-fps-v1`.",
+  "what_this_gate_now_refuses_that_it_did_not": [
+   "a nominal whose artifact declares no event-feature schema at all (pre-J01 driver)",
+   "a nominal trained on the reduced {pT,p_parallel} schema but stamped pet-fullevent-fps-v1",
+   "a nominal whose reco cloud dropped the G2 view/timing token columns",
+   "a detector-only quantity (muon object, vertex, MINOS flag) appearing on the truth leg",
+   "an ordinary-closure report that exercised a different schema from the result it is composed for"
+  ]
+ },
+ "prerequisite": {
+  "gate3": "PROMOTED_PASS",
+  "gate3_source_manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+  "gate3_source_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+  "gate2": "PASS (RE-ISSUE PENDING -- see open_blockers.gate2_reissue_pending)",
+  "frozen_contract": "pet-fullevent-fps-v1"
+ },
+ "files": {
+  "atomic_write": {
+   "path": "nd-unfolding/pet/atomic_write.py",
+   "sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e"
+  },
+  "b1_normalization_test": {
+   "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+   "sha256": "13867a3a6b20c380063ec8c8a49ae8ef27352d318934d366ac22bcd43b561493"
+  },
+  "closure_omitted_muon_stress": {
+   "path": "nd-unfolding/pet/stress_closure_muon.py",
+   "sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
+  },
+  "closure_ordinary": {
+   "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+   "sha256": "0d51213a515f29697e505653295f656d2b9b872c7c007316cf02b5322a018a6f"
+  },
+  "closure_rate_injection": {
+   "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+   "sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
+  },
+  "driver": {
+   "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+   "sha256": "0287a94c827d4d975813fa60cec1df56077237c50b3cbbabbd73d9bc19663dbe"
+  },
+  "estimator_engine_multifold": {
+   "path": "omnifold_nn/omnifold/omnifold.py",
+   "sha256": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b"
+  },
+  "estimator_engine_net": {
+   "path": "omnifold_nn/omnifold/net.py",
+   "sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
+  },
+  "launcher": {
+   "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+   "sha256": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
+  },
+  "launcher_test": {
+   "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+   "sha256": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"
+  },
+  "validator": {
+   "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+   "sha256": "69c5a577d41749d57016e1df5e9a92a7aa507be5fd5bedf94e180e1ab2b9f5bb"
+  },
+  "validator_test": {
+   "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+   "sha256": "9e268bc4e1cde3b637a75dc8f169c57b5d6d11073e40ca2cf9e775412ac9f08a"
+  },
+  "fullevent_extract_test": {
+   "path": "nd-unfolding/tests/test_fullevent_extract.py",
+   "sha256": "893115e4d690778f8acf4bbf8276306eeef9b94c82194e3b49f9a04b5b0d8b25"
+  },
+  "fullevent_extractor": {
+   "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+   "sha256": "545816b577de1cec698ac260db07724606807fc4ed03e618ee32f1e3549f76e3"
+  },
+  "fullevent_schema_test": {
+   "path": "nd-unfolding/tests/test_fullevent_schema.py",
+   "sha256": "ae3686b9ec03f61c40a81cb331299a23a71e82d64e66b059bd8f36ae4b6bb3c7"
+  },
+  "synthetic_g2_fixture": {
+   "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+   "sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f"
+  }
+ },
+ "additive_bindings": {
+  "J01_J02_full_event_schema": "`extract_fullevent_fps.py` is new and is the extraction path for the result this gate gates -- J02 found there was no full-event extractor in the tree at all and that the recoil/5D one is not it (wrong key, `weights_push` vs `w_push`, and wrong coverage, 2M vs arange(49152885)). Binding it here is the same zero-cost move B-1 and B-6 made: a gate whose result cannot be extracted without a script should be able to detect that the script changed. `test_fullevent_schema.py` and `test_fullevent_extract.py` are the new tests. `make_synthetic_g2_fullevent.py` is bound because its muon block silently disagreed with the dumper's column order for as long as nothing read it, and it is now the fixture the full-event path is exercised against off-cluster."
+ },
+ "code_fixes_in_this_reissue": {
+  "J01_the_full_event_is_read": "`fullevent_fps_dataloader` consumes every G2 extension array. reco_view/reco_time (and the data/bkg twins) become token columns 3,4 of the reco cloud, re-zeroed from the energy pad mask rather than trusted. reco_muon/reco_vertex (and twins) become event features, with the azimuth encoded as (cos phi, sin phi) -- the CLM-008 F10 periodicity fix, one level up from the truth cloud -- and q/p taking the reciprocal unit convention so the +1e-6 standard-deviation floor is not a 1% squeeze on that column alone. The reco and truth schemas are now genuinely distinct in width, enforced by TRUTH_ELIGIBLE_FEATURES refusing a detector quantity on the truth leg at construction time.",
+  "J05_refiner_feature_space": "The Stay-Positive refinement g(x)=D/(D+B) is fitted on the same normalized event block the step-1 classifier is conditioned on, instead of on (pT,p_parallel) alone with the refined weights then attached to cloud-plus-event space. B-5/J05 is NARROWED, not closed: the per-token recoil cloud, including the new view/time columns, is still outside a tabular refiner's design matrix, and meta['target']['refinement_feature_space'] says so in the receipt rather than in a comment.",
+  "J02_full_event_extractor": "`extract_fullevent_fps.py`, in two stages. `push` rebuilds the trained step-2 network from the driver's `inference_contract` and streams the FULL 49,152,885-row inventory through it in chunks, writing `w_push` over `arange(N)`; `xsec` turns that into the extended-FPS differential cross section. Three things it gets right that a naive reweight-all would not: the event-feature normalization is REPRODUCED from the artifact rather than re-derived over the full inventory (re-deriving it feeds the trained model a differently scaled input and returns confident wrong weights); the reweight is the ENGINE's own `MultiFold.reweight`, invoked on a minimal instance so the F3 logit cap and fail-closed check are one implementation as CLM-008 F3 requires, with no edit to the hash-bound engine; and it is chunked, because the full truth cloud in the widened representation is ~19 GB materialized. The extraction arithmetic is a PORT of pet_systematics_5d.PETxsec5D.xsec to the two FPS axes through the shared xsec_nd.extract_cross_section_nd, minus PETxsec5D's comp_rescale, which anchors completeness to a validated GBDT 5D product that does not exist for this domain.",
+  "synthetic_fixture_muon_layout": "`make_synthetic_g2_fullevent._muon` built a 6-column [px,py,pz,E,charge,quality] placeholder against the dumper's 7-column [px,py,pz,E,phi,qp,minos_ok], and said so in its own docstring. It passed every G2 gate because `fullevent_dump_contract.assert_inventory_alignment` checks the muon block's ROW count and never its width. Fixed to the dumper's order, given the -9999 !pass_reco sentinel convention it also lacked, pinned against the dumper's constants by test_fullevent_schema.py, and the width is now checked where it is consumed (`assert_evt_block_widths`)."
+ },
+ "verification": {
+  "tests": "python3 -m pytest nd-unfolding/tests -q -> 8 failed, 590 passed, 1 skipped",
+  "failures_are": "The SAME 8 as the pre-change baseline (which was 8 failed / 540 passed / 1 skipped): 7 are the documented off-Perlmutter artifact of the absent /pscratch omnifold/dataloader.py (6 in test_fullevent_gate2.py, 1 in test_gate2_target_runtime.py), and the 8th is test_no_new_broken_hash_bindings, red on the Gate-2 set before and after -- see gate_state. test_gate3_and_gate4_launch_code_freezes_specifically is GREEN again after this re-issue.",
+  "end_to_end_coverage_off_cluster": "test_fullevent_gate2.py's 6 platform failures are the END-TO-END negweight-refined loader boundary, which is the code this change touches most, so they were re-run locally with the vendored DataLoader pre-seeded from this repo instead of the /pscratch literal: 28/28 pass. test_fullevent_schema.py covers the same boundary permanently and off-cluster.",
+  "lint": "py_compile + pyflakes clean on every changed module; the two pyflakes warnings that remain (unused `os` in fullevent_fps_dataloader.py, unused `struct` in gate2_target_runtime.py) both predate this change and were left alone rather than churn two hash-bound files for cosmetics."
+ },
+ "gate_state": {
+  "test_gate3_and_gate4_launch_code_freezes_specifically": "GREEN after this re-issue.",
+  "test_no_new_broken_hash_bindings": "STILL RED, on the Gate-2 set only, which is RESTORE Step 2's to close on 08-03. It was red before this change (3 lines) and is red after it (5). The two ADDED lines are disclosed rather than folded in: `nd-unfolding/tests/test_fullevent_fps.py` (bound by g2-gate2-construction-20260719.json; its EventSchemas class tested the reduced block on both legs, where the distinction the contract draws was untestable, and was rewritten to test the publication schema) and the `nd-unfolding/pet/gate2_target_runtime.py` SHELL pin in run_gate2_target_validator.sh (that file's hardcoded FEATURE_NAMES would otherwise certify a target the loader no longer builds -- a gate passing while describing something else; it now reads the schema from the loader by reference). Neither file is newly IN the red set at the receipt level: g2-gate2-construction and the shell pin were already red on fullevent_fps_dataloader.py. Step 2 must re-issue both Gate-2 receipts AND move the shell pin, and its list is now five tuples, not three. J11's proposed expected-red baseline should be built after Step 2, as J11 itself sequences it."
+ },
+ "open_blockers": {
+  "gate2_target_must_be_rebuilt": "The negweight-refined Gate-2 target changes NUMERICALLY, because the refiner is fitted in a wider space (J05). `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` and the Gate-2 runtime receipt therefore describe a target the loader no longer produces. This was already owed -- the loader has been red against both Gate-2 receipts since the B1 patch -- but it is now owed for a physics reason and not only a bytes reason. Do not compare the new target to the old one and call a difference a regression.",
+  "gate4_still_never_ran_at_runtime": "PASS_CODE_ONLY. Everything RESTORE Step 2b still lists as owed remains owed: the measured fold_forward_ratio_dev_max, the stress_closure_muon.py run, the ordinary closure receipt (Step 3), and B-2's unrecoverable citation.",
+  "extractor_has_never_run": "`extract_fullevent_fps.py` is code-only. Its push stage needs a trained checkpoint and its xsec stage needs ROOT, so neither can run before the 08-03 restore. Its guards and its extraction arithmetic are unit-tested against the shared ND helper; the pass itself is unexecuted.",
+  "no_independent_second_reviewer": "As with the 07-31 and 08-01 re-issues, this one has no independent red-team review."
+ },
+ "authorization": {
+  "gate4_launch_code_gate": "PASS_CODE_ONLY",
+  "nominal_pet_training_allowed": false,
+  "training_launch_decision": "SEPARATE post-restore user decision. This gate authorizes only that the code is frozen, tested and hash-bound -- not any submission.",
+  "p5a_launch_precondition": "RESTORE Step 4 must not launch P5A under a voided launch-code gate. This re-issue un-voids it. Note that a Gate-4 RUNTIME verdict now additionally requires the two closure reports, so Step 3 is a hard precondition for validating whatever Step 4 produces.",
+  "nothing_launched_or_submitted": true
+ },
+ "nominal_pet_training_allowed": false
+}

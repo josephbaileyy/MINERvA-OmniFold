@@ -133,11 +133,19 @@ def run_arm(cache, arm, seed, cfg):
     # measured_scalars = the DATA-half reco scalars: this is the closure's pseudo-data leg, and
     # it is MC by construction -- NOT a CLM-007 fallback, which is about real data silently
     # indexing MC rows. There is no real data in this run.
+    #
+    # Both legs read the SAME arm block here, explicitly. Since the full-schema loader landed the
+    # reco and truth schemas differ by default (the reco leg gains the muon object and vertex,
+    # which have no truth counterpart), but this ranking is a SYMMETRIC ablation of scalar
+    # features present on both legs -- `truth_feature_names` has to be passed or the truth leg
+    # would silently stay at {pT,p||} and every arm would measure the reco leg alone.
     ev_reco, ev_truth, ev_data_all, fmeta = fed.build_event_features(
         cache["reco_scalars"], cache["truth_scalars"], cache["reco_scalars"],
-        feature_names=names, pass_reco=cache["pass_reco"], pass_truth=cache["pass_truth"])
+        feature_names=names, pass_reco=cache["pass_reco"], pass_truth=cache["pass_truth"],
+        truth_feature_names=names)
     fed.assert_no_truth_leakage(ev_reco, cache["reco_scalars"], cache["truth_scalars"],
-                                names, pass_reco=cache["pass_reco"])
+                                names, pass_reco=cache["pass_reco"],
+                                truth_feature_names=names)
 
     # --- data leg (half A, reco-level only: unreconstructed rows are not observable as data)
     a_pass = ia[cache["pass_reco"][ia]]
