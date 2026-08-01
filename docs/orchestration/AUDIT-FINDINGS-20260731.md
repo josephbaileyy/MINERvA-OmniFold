@@ -27,7 +27,9 @@
   sha256 hand-edited, no `git` write command run, no job submitted.
 - Delegate line citations were frequently off by 5–15 lines (e.g. `unified_throw.py` 271 vs
   actual 287; the LightGBM universe launcher 69 vs actual 74). Tier-A citations below were
-  re-read directly; tier-B and tier-C line numbers should be treated as approximate.
+  re-read directly; remaining tier-B line numbers should be treated as approximate. **Exception:
+  the fifteen findings re-verified on 2026-08-01 (§2) carry line numbers re-read at `6cabd4d`, and
+  every citation in them was checked — the delegates' line drift was NOT reproduced in that set.**
 - Round-1 prompts were, in full: *"Audit nd-unfolding/pet. Find real bugs."* / *"Audit
   docs/analysis-note. Which claims does the code not support?"* / *"Audit docs/orchestration.
   Do the gates actually gate?"* / *"Audit this repo for correctness bugs."* The terseness was
@@ -44,6 +46,18 @@
 Both cross-validation rounds returned **zero false positives**. In several cases the verifier
 *strengthened* the finding (J07, J02) or corrected a sub-claim while upholding the substance
 (J04, J09). That is recorded per-finding.
+
+> **Tier-C verification pass, 2026-08-01.** Every tier-C finding (J19–J27, J29, J31–J33, J36,
+> J37) was re-verified by direct read at `6cabd4d`, plus git archaeology and one computation from
+> a committed receipt. **Result: 14 of 15 promoted, 1 deleted, 1 sub-claim deleted.** Three reach
+> tier A on this document's own definition (J22, J29, J36 — read or executed directly here). The
+> tier-C population behaved differently from the tier-A/B population: no finding was wholly
+> wrong, but **six carried an incorrect scoping or characterization** that a single-source pass
+> had no way to catch, in both directions — J31/J32/J33 were live-sounding but are latent,
+> J22/J36 were hedged but are provable, J24 understated its own number. **The lesson: for a
+> single-source finding, the code fact is usually right and the *consequence* is usually wrong.**
+> Verify the blast radius, not the citation. Line numbers below were re-read at `6cabd4d`;
+> `app_negweight.tex` numbers are at `b27d1e1`, which moved them by +5 after line 52.
 
 ## 3. PET full-event path (`nd-unfolding/pet`)
 
@@ -275,6 +289,18 @@ Source: claude school, cross-validated by codex personal. **All six confirmed, n
 ## 5. Analysis note (`docs/analysis-note`)
 
 Source: codex school, with an independent numbers-vs-ledger sweep as cross-validation.
+J19–J27 re-verified 2026-08-01 (see §2); J17/J18 were already fixed before that pass.
+
+**Pattern across the nine note findings.** Eight of nine are *emphasis* defects, not errors: in
+almost every case the technical section states the limitation correctly and quantitatively, and a
+summary, intro bullet, abstract line or paragraph heading then drops the qualifier. J19
+(`sec_method` discloses / `sec_intro` does not), J24 (§3d-anchor quantifies / four summaries say
+"reproduces"), J25 (§pet-projection-next limits it / `sec_results` does not), J26 (`sec_method`
+says "within 2 %" / the appendix says "few-per-mille"), J27.1 (body says 46 % / exec summary says
+"fills"). **Two are substantive and need work, not wording:** J21 (the PET central value is not
+background-subtracted and the note implies it is) and J22 (the FPS footing claim is
+chronologically impossible). Triage accordingly — the wording set is cheap and should be done in
+one pass; J21/J22 need a decision about the products.
 
 - **J17 — The headline 2D central value and its uncertainty budget use different classifiers.
   [tier A]** `sec_method.tex` describes LightGBM as the production classifier. The production
@@ -296,61 +322,158 @@ Source: codex school, with an independent numbers-vs-ledger sweep as cross-valid
   `0.069/0.466` against the active ledger's `0.051/0.409`, an inconsistency
   `docs/INTEGRATION_CHECKLIST.md:80` already records as unresolved.
 
-- **J19 — "No binning until the final histogram" is false for the headline method. [tier C]**
-  Claimed in `sec_intro.tex` and `sec_method.tex`, but the default `purity` background mode
-  assigns every data event a `D−B` weight via analysis-bin lookup *before* training, in both the
-  2D and ND implementations. So the measurement is not fully unbinned, reporting bins are not
-  freely changeable after the fact, and a self-consistent change to the background-correction
-  binning requires another run. The claim is defensible only for the negative-weight path.
+- **J19 — "No binning until the final histogram" is false for the headline method.
+  [tier B — verified 2026-08-01, one sub-claim corrected]**
+  The default `purity` background mode assigns every data event a `D−B` weight via analysis-bin
+  lookup *before* training, in both implementations. Confirmed: default `--bkg-mode purity` at
+  `unfold_2d_omnifold_unbinned.py:1008` and `unfold_nd_omnifold_unbinned.py:508`; the per-event
+  analysis-bin lookup is `build_measured_training_2d:358-367` (`FindFixBin` → `max(0,D−B)/D`) and
+  the ND `histnd`-on-`edges` equivalent at `:819-823`. The production launcher
+  `sbatch_unfold_2d_MEFHC.sh:38-43` passes no `--bkg-mode`.
+
+  *Sub-claim corrected:* "reporting bins are not freely changeable after the fact" is too strong.
+  The reported histogram can be rebinned freely; what is frozen is the reco grid the purity weight
+  was computed on. *Scope corrected — the finding attacked the wrong target:* `sec_method.tex:53-54`
+  already states "This correction is, deliberately, the one place the analysis binning enters
+  before the final histogramming." The note is not silent and not self-contradictory in the method
+  section. The live defect is the **unqualified intro bullet** at `sec_intro.tex:36-38` ("**No
+  binning at unfold time.**"), which the method section then walks back. Fix the intro bullet.
 
 - **J20 — The documented "canonical LightGBM seed scan" points to a script that uses histogram
-  GBT. [tier C]** `app_statmethods.tex:121` cites `sbatch_unfold_2d_MEFHC_5iter_seedscan.sh`,
-  which passes `hist`, not `lgbm`.
+  GBT. [tier B — verified 2026-08-01, as written]** `app_statmethods.tex:121` cites
+  `sbatch_unfold_2d_MEFHC_5iter_seedscan.sh`, which passes `--estimator hist` at `:61` and whose
+  own header (`:15`, `:23`) documents it as the HistGBT scan. The appendix's worked example says
+  "$n=10$ `lgbm` trials" and its covariance output path is `uq/seedscan_lgbm_ml/`.
+  **The correct driver exists and was not cited:** `2d-unfolding/seedscan_lgbm/run_seedscan_lgbm_interactive.sh`
+  (`--estimator lgbm` at `:61`, seeds 1–10, writing `seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed{1..10}.root`).
+  Documentation-pointer error only; the quoted numbers match the lgbm output directory. Swap the
+  citation.
 
-- **J21 — The PET result is not a production-contract-equivalent cross section. [tier C]** The
-  quoted PET central value was produced with unit measured-event weights and without the MC
-  background tree; the extraction script performs no background subtraction. The figure recipe
-  additionally generates PET central plots from the old `of_inputs_pc.npz` while surrounding
-  text discusses the coverage-fixed `of_inputs_pc_fullcloud.npz`. The 0.912 PET/GBDT ratio is
-  supportable as a historical diagnostic, not as a coverage-complete comparison.
+- **J21 — The PET result is not a production-contract-equivalent cross section.
+  [tier B — verified 2026-08-01, strengthened]** All three code claims confirmed, and the
+  measured-weight claim is literal:
+  - `dump_pointcloud_inputs.py:629` writes `measured_weights=np.ones(len(meas_cl))`.
+  - The recoil dump `main()` (`:482-637`) reads only `mc_signal_reco` and `data` — **no
+    `mc_background` tree at all**. Its schema stamp at `:624` is `"recoil-only-crosscheck"`.
+  - `pet_vs_gbdt.py:run_absolute` (`:44-99`) bins truth-side push weights and divides by
+    completeness; there is no background term anywhere in the extraction.
+  - `make_figures.sh:68-69` passes `--pc of_inputs_pc.npz` while `:66` and `:80` use the
+    coverage-fixed `of_inputs_pc_fullcloud.npz` / `pet_weights_fullcloud.npz`. Already tracked as
+    KNOWN_ISSUES #18.
 
-- **J22 — The quoted extended-fiducial/FPS result is not shown to use the claimed negative-weight
-  baseline. [tier C]** The recorded regeneration on that footing was cancelled and no replacement
-  central product was adopted; a later-edited launcher cannot establish how the existing
-  `4.502e-38` product was generated.
+  **Strengthening.** `sec_pet.tex:70-71` states "The calculation uses the same
+  background-subtracted five-dimensional measured target as the scalar GBDT." That describes the
+  5D uncertainty product, not the 4D central value quoted at `:41-43` — a reader will merge them,
+  and the note gives no cue not to. Separately: at the note's own ~3 % background scale, leaving
+  background in the data biases PET **high**, so the training-configuration gap behind the 0.912
+  ratio is *larger* than 8.8 %, not smaller. First-order estimate; not a quotable number.
 
-- **J23 — Closure does not "mirror the production analysis". [tier C]** Closure restricts
-  pseudo-data to reco-and-truth-passing signal MC and forces completeness to 1. It tests training
-  and extraction bookkeeping, not real-data background subtraction, empirical completeness, or
-  extrapolation beyond detector support.
+- **J22 — The quoted extended-fiducial/FPS result cannot have used the claimed negative-weight
+  baseline. [tier A — verified 2026-08-01; upgraded from "not shown to" to a date proof]**
+  The claim is `app_negweight.tex:227-228`: negweight injection is carried "as the baseline
+  subtraction for the extended-fiducial analysis (§sec:fps)". It is impossible:
+  - `σ_ext = 4.502e-38` was produced **2026-06-10**, job 54244120
+    (`VALIDATION_LEDGER.md:251`, re-verified post-fix at `:359`). No later regeneration is recorded
+    anywhere in the ledger or run log.
+  - The negweight driver code landed **2026-07-11** (`cf8a4a6`). On 2026-06-10 it did not exist.
+  - `sbatch_fps_mefhc.sh` was created 2026-06-10 (`29a1186`) with **no** `--bkg-mode`;
+    `git log -S"bkg-mode negweight-refined"` puts that flag's arrival at **2026-07-20**
+    (`541dd48`, a "WIP: pre-shutdown snapshot"). `git show 29a1186:` on the launcher confirms the
+    flag was absent when the product was made.
+  - The negweight-refined FPS production never ran. `uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md:262-289`
+    quarantines the ten existing endpoints as "**PURITY CONTROLS**, not publication inputs"; the
+    `RUNS.tsv` rows MIG-C3 / V1R2 / C4 / V1R3 each record "No negweight-refined endpoint authorized".
+
+  A month-wide date gap, not an evidentiary one. The note's claim must be demoted to intent
+  ("the baseline for the extended-fiducial analysis **going forward**") or the product regenerated.
+
+- **J23 — Closure does not "mirror the production analysis".
+  [tier B — verified 2026-08-01, refined]** The claim is `sec_method.tex:207-211`. Confirmed in
+  both drivers: ND `:786` `cmask = pass_reco & pass_truth`, `:792`
+  `measured_weights = w_reco[cmask]` — **the purity down-weight is bypassed entirely** — and
+  `:926-927` `completeness = np.ones(...)` with `print("[INFO] closure: completeness=1")`; 2D
+  `:1518` same mask, `:1393-1394` skips the truth-denom load so the denominator self-consistently
+  degenerates.
+
+  **Strengthening the finding missed.** The same section credits `c` as "a monitored self-check (a
+  configuration that dropped the misses would surface as `c<1`)" at `:226-228`. Closure hard-sets
+  `c=1`, which disables *precisely that check* — the one the note advertises two paragraphs
+  earlier. *Refinement:* under `--bkg-mode negweight/negweight-refined`, closure **does** inject
+  and subtract simulated background (`:806-818`), so the background sub-claim is purity-specific,
+  not general.
 
 - **J24 — "Every higher-dimensional result reproduces its predecessor under marginalization" is
-  too categorical. [tier C]** Documented tests show approximate agreement: 3D→2D differs by
-  0.95 % in normalization with 4.4 % per-bin scatter; 4D anchor projections differ by up to
-  1.68 %. "Passes the projection anchors within ≈1–2 %" is supported; exact reproduction is not.
+  too categorical. [tier B — verified 2026-08-01; the finding understated its own numbers]**
+  `sec_3d.tex:77-84`: +0.95 % on total σ, per-bin ratio median 1.0016, χ²/ndf 4.98, ~4.4 % per-bin
+  scatter. `VALIDATION_LEDGER.md:434-436`: `check_4d_anchors.py` PASS, 4D/3D integral ratio
+  0.9960, projection differences 0.38 % / 0.64 % / **1.68 %**.
+
+  *Correction:* those three figures are **medians, not maxima**, so "differ by up to 1.68 %"
+  understates the per-bin spread. The overclaim is summary-level only — `sec_execsummary.tex:22`,
+  `main_note.tex:50`, `paper_body.tex:86` and `sec_summary.tex:17` all say "reproduces", against
+  the note's own §3d-anchor. "Passes the projection anchors within ≈1–2 %" is supported.
 
 - **J25 — "Any projection or dimension can be obtained without re-unfolding" is unsupported.
-  [tier C]** True only for projections of variables already in the classifier's feature space; a
-  variable omitted from the classifier remains conditioned on the simulation prior. The PET
-  section itself acknowledges this.
+  [tier B — verified 2026-08-01, strengthened]** The claim is `sec_results.tex:170-174`. The note
+  refutes it at `sec_pet.tex:207-215`: "They do not turn the recoil-derived weight into a
+  full-event weight or remove the prior conditional for omitted muon information."
 
-- **J26 — Negative-weight validation does not establish full covariance equivalence. [tier C]**
-  The appendix claims reproduction "per bin and in aggregate" and calls the replacement fully
-  validated. The recorded comparison establishes ≈0.986 and 0.982 ratios of covariance
-  trace-derived scales plus central-value summaries — not element-wise covariance, correlations,
-  eigenmodes, or that every difference is sampling noise.
+  **Strengthening.** The offending sentence calls this "a capability we exploit for the 3D
+  extension (§sec:3d)" — but the 3D result is a **new unfold with `E_avail` added as a classifier
+  feature**, not a projection of the 2D result. The example cited in support is the
+  counter-example. Qualify to "for observables in the classifier's feature space".
+
+- **J26 — Negative-weight validation does not establish full covariance equivalence.
+  [tier B — verified 2026-08-01, strengthened; one new sub-defect already fixed]**
+  Confirmed. The entire covariance evidence is two scalars (`values.tex:109-111`: systematic
+  √tr 2.9828e-39 / 3.0242e-39 = 0.986; statistical 1.7260e-40 / 1.7576e-40 = 0.982).
+  `app_negweight.tex:216-218` concludes it "reproduces not only the central cross section but its
+  full covariance, **per bin and in aggregate**". A trace ratio is one number; per-bin,
+  correlation and eigenmode comparisons are absent. Note the asymmetry the finding did not draw:
+  the *central-value* comparison **is** per-bin (median 1.000, RMS 1.4 %, worst bin −12.6 %), so
+  the sentence conflates a per-bin central-value result with an aggregate-only covariance result.
+
+  **Two sub-defects found in verification:**
+  1. **OPEN.** `app_negweight.tex:215` calls the residuals "few-per-mille". They are 1.4 % and
+     1.8 % — off by ~5×, and `sec_method.tex:67-68` describes the same comparison correctly as
+     "to within 2 %". The appendix disagrees with the method section about its own numbers.
+  2. **FIXED `b27d1e1`.** `app_negweight.tex:55` previously said the comparison used "the
+     histogrammed gradient-boosted density estimator used for **the production result**" — a
+     residual of the pre-J17 state, left standing when J17 was corrected in `sec_method.tex`
+     only. Now corrected in place, and correctly: `hist` is neither the production central
+     backend (`exact`) nor the ensemble backend (`lgbm`), so per `values.tex:91-95` this
+     validation establishes equivalence **on a third backend**, and its transfer to the
+     production configuration is an assumption rather than a demonstration.
 
 - **J27 — Several physics interpretations are causal claims the code supports only as
-  associations. [tier C]** Added MEC fills ≈46 % of the low-`E_avail` dip gap (not "2p2h
-  confirmed"); the high-`E_avail`/high-`W` excess has no adopted corrected covariance
-  establishing significance; "all four generators underpredict the corner by 54–58 %" has no
-  committed GiBUU corner ratio; and the "published cuts discard a third of the signal rate"
-  figure derives from `mc_truth_denom` weighted by the MnvTune prior, so it is a
-  MnvTune-weighted simulated truth rate, not a model-independent measured fraction.
+  associations. [tier B — verified 2026-08-01; 3 of 4 sub-claims confirmed, 1 deleted]**
+  1. **Confirmed, narrowed.** `sec_3d.tex:262` heads the paragraph "*Enabling Valencia 2p2h
+     confirms it*" while its own body says the added MEC "fills 46 % of the data−CV gap in the dip
+     and 27 % of the integrated deficit". The body is quantitative and honest; the overclaim is
+     `sec_execsummary.tex:25`, which says 2p2h "fills the quasielastic–Δ dip" unqualified.
+  2. **DELETED — void as a finding.** "The high-`E_avail`/high-`W` excess has no adopted corrected
+     covariance establishing significance" is true as a fact but is *what the note already says*:
+     `sec_execsummary.tex:28` and `sec_eavailw.tex:103-104` both report the comparison at
+     central-value level, and `values.tex:53` records `% (Eavail,W) significances removed
+     2026-07-12: historical covariance quarantined`. The note was corrected before this audit ran.
+  3. **Confirmed, strengthened.** `sec_eavailw.tex:62-64` says "All four underpredict the ... corner
+     by 54–58 % (data/generator $=1.54$, $1.58$, $1.56$)" — **three** ratios for four generators,
+     and 54–58 % is exactly the span of the three listed. GiBUU's corner ratio is absent, and
+     independent repo evidence suggests it lies outside that band: corner χ² 381.1/12 versus
+     GENIE 116.9/12 (`ND_OMNIFOLD_RUN_LOG.md:1155-1157`), and integrated data/GiBUU =
+     3.07/2.22 = 1.38. **Compute the GiBUU corner ratio before the range is quotable** — it was
+     not computed here.
+  4. **Confirmed.** `fps_acceptance.py:59-70` computes the 66.4 / 22.3 / 11.3 % fractions from
+     `mc_truth_denom` summed over `w_truth`, and `runEventLoopOmniFold.cpp:595` sets
+     `w_truth = model.GetWeight(*truthCV, evt)` — the MnvTune-carrying central-value weight.
+     `paper_body.tex:171` and `primer_body.tex:146` state the "about a third" figure flatly. It is
+     a MnvTune-weighted simulated truth fraction and needs that qualifier.
 
 ## 6. Repo-wide, outside `nd-unfolding/pet`
 
-Source: codex personal (round 3). Single-source except where marked.
+Source: codex personal (round 3). Single-source as found; J29 and J31–J33 re-verified 2026-08-01
+(see §2). All four survived, and all four had their *consequence* restated: J29 was live and is now
+resolved, while J31–J33 are latent rather than live.
 
 - **J28 — Flux universes are divided by the CV flux integral in every ND/5D kernel.
   [tier A — mechanism and scope]**
@@ -406,11 +529,23 @@ Source: codex personal (round 3). Single-source except where marked.
   in the same family and should be fixed in the same pass. **Highest-priority finding in this
   document.**
 
-- **J29 — FPS flux universes leave the final extended-pT bin at CV flux. [tier C]** The ND driver
-  correctly remaps the 15-bin FPS pT grid onto the 14-bin reference flux grid for CV, but its
-  universe loop requests histogram bin `b+1` directly. For the `[4.5,30]` FPS bin that reads the
-  14-bin histogram's overflow, the validity condition fails, and the scale silently stays 1. The
-  production launcher demonstrably supplies the 15-bin grid.
+- **J29 — FPS flux universes leave the final extended-pT bin at CV flux.
+  [tier A — verified 2026-08-01; RESOLVED in `081ae4a`]** Confirmed exactly as described, and the
+  mechanism is now closed. The pre-fix code (`git show 081ae4a -- nd-unfolding/unfold_nd_omnifold_unbinned.py`)
+  looped `for b in range(len(flux_bins))` reading `h_cv.GetBinContent(b+1)` under
+  `if cvf > 0 and unf > 0`. `hFluxCV` is a **14-bin** TH1D and `hFluxUniv` a 14×100 TH2D
+  (`2d-unfolding/uq/build_flux_universe_band.py:20-21`); the FPS grid is **15** bins ending
+  `[4.50, 30.0]` (`sbatch_unfold_fps_universes_full.sh:32`). `GetBinContent(15)` therefore read
+  the overflow, returned 0, failed the `>0` test, and left `scale[14] = 1.0` — CV flux in the
+  extended bin, silently.
+
+  **It was live, not hypothetical.** `3d-unfolding/uq_3d/universes_full_list.txt` carries 100
+  `Flux:*` entries and `sbatch_unfold_fps_universes_full.sh:57-67` runs the whole list on the
+  15-bin grid. Every saved FPS Flux universe has an uncorrected final pT bin. Note the pre-fix code
+  *did* fail closed on a missing file or missing histogram; the only silent path was the per-bin
+  validity fallback. Fixed at `:744-751` — CV and universe now share one remap helper and
+  `fluxu.flux_universe_bins` fails closed. **Reclassify as RESOLVED-`081ae4a`**; the saved FPS
+  `*_uthrow*` slabs remain inside J28's re-roll blast radius.
 
 - **J30 — The canonical P4 driver cannot reach covariance validation. [tier A]**
   `run_p4_standard.sh:50-51` invokes the validator with `--active` and `--merged-dir`;
@@ -421,28 +556,68 @@ Source: codex personal (round 3). Single-source except where marked.
   **The canonical P4 chain has therefore never run end to end.** P4 is a deferred/non-adopted
   lane, so this is not urgent — but it is not the state the runbook implies.
 
-- **J31 — P4 merge failures are converted into success. [tier C]** In
-  `run_p4_merge_audit_std.sh:23`, a failed merge executes `echo` then `rm`, and the function
-  returns the successful `rm` status rather than the merge failure. Background jobs are collected
-  by a bare `wait`, and `NMERGED` is printed but never asserted to equal 10.
+- **J31 — P4 merge failures are converted into success.
+  [tier B — verified 2026-08-01, strengthened; latent, never bit]** Confirmed at
+  `run_p4_merge_audit_std.sh:23-24`: the `||` branch is `{ echo "[merge] FAIL ..."; rm -f "${MERGED}"; }`,
+  and `rm -f` returns 0 whether or not the file exists, so `merge_one` — whose last command this
+  is — exits 0. `NMERGED` is computed at `:31`, printed at `:32`, and the script proceeds to the
+  audit at `:34` without ever asserting it equals 10. No `set -e`.
 
-- **J32 — The P4 adoption command is a successful no-op. [tier C]**
-  `p4_adopt_standard.py:39` checks only that hashing the candidate returns a nonempty string,
-  never binding that hash to the validation receipt or component manifest. It then prints that it
-  "would promote" the candidate and exits 0; `--out` is never created. Automation can report
-  adoption succeeded while no adopted product exists.
+  **Strengthening.** The return status is moot in *both* directions: jobs are launched with `&` at
+  `:28` and collected by a bare `wait` at `:30`, which discards every child status — including the
+  `return 3` abort path at `:22` that the author did write. Fixing only the `rm` would change
+  nothing. *Scope corrected:* it never bit. `active_universe_5d/standard/P4_STANDARD_STATUS.md:11-13`
+  records 10/10 merges with full-file hashes validated by an independent owner-neutral orchestrator
+  receipt, so the one recorded run is externally confirmed complete. Latent, and P4 is a
+  deferred lane.
 
-- **J33 — ND schema checking fails open. [tier C]** `_addr()` initializes to zero and ignores
-  `SetBranchAddress` failure. Startup validation checks extra-axis branches on signal, background
-  and data trees but omits `mc_truth_denom`, so missing truth-denominator axes can become
-  all-zero coordinates and corrupt completeness. Missing lateral q3/W branches likewise retain CV
-  values silently, understating detector covariance instead of failing.
+- **J32 — The P4 adoption command is a successful no-op.
+  [tier B — verified 2026-08-01, strengthened; framing corrected]** Confirmed at
+  `p4_adopt_standard.py:39-42`: `P.require(P.sha256_file(a.candidate), "candidate unreadable")`
+  tests only truthiness of the digest, then the script prints "would promote" and exits 0 without
+  creating `--out`.
+
+  **Strengthening — the binding is not skipped, it is impossible.**
+  `p4_validate_active_lateral.py:41-79` writes a receipt containing `gates`, `active_traces`,
+  `active_only_sum_relerr`, `support_comparison` and `result` — and **no candidate path and no
+  candidate SHA256**. There is nothing in the PASS receipt to bind a candidate to, so *any* PASS
+  receipt satisfies *any* candidate. The fix has to start in the validator, not the adopter.
+
+  *Framing corrected:* "automation can report adoption succeeded" is latent, not live. Nothing
+  invokes the script — the only references in the tree are `tests/test_p4_repair.py:305` and two
+  status docs, and `P4_STANDARD_STATUS.md:29` labels it "(not run/not wired)". The no-op is also
+  disclosed in the module docstring (`:8-9`) and in the printed string itself.
+
+- **J33 — ND schema checking fails open.
+  [tier B — verified 2026-08-01, all three sub-claims confirmed; latent]**
+  1. `unfold_nd_omnifold_unbinned.py:151-154`: `_addr` allocates `array("d", [0.0])` and discards
+     `SetBranchAddress`'s return code, so a missing branch yields a silent column of zeros. The
+     same pattern at `:216-218` covers CV `w_truth`, where a missing branch silently yields
+     `w = 1.0` for every row — the exact failure mode of KNOWN_ISSUES #1.
+  2. `:639-644` validates each extra axis on `(t_sig, reco)`, `(t_sig, truth)`, `(t_bkg, bkg)` and
+     `(t_data, data)`. **`t_td` is absent from that list**, yet `:675` passes `t_td` into
+     `collect_truth_denom_nd`, which `_addr`s `ax["truth"]` unchecked at `:215`. All-zero
+     coordinates would *not* trip the `:684-688` closure gate, which compares counts only — and
+     counts are unaffected by zeroed coordinates.
+  3. `:287-294` (signal) and `:432` (background): `if t.GetBranch(nt): ax_truth[k] = nt` — a
+     missing shifted q3/W branch silently retains the CV branch name, understating the lateral
+     band rather than failing.
+
+  *Scope corrected — all three are latent, not live.* The C++ writes `MC_eavail`/`MC_q3`/`MC_W` to
+  `mc_truth_denom` (`runEventLoopOmniFold.cpp:433-435`), and `BuildUniverseBranchTable` (`:358-373`)
+  emits shifted-axis names that match `_axis_universe_branch` exactly in all four contexts
+  (`q3_truth_`, `MC_q3_`, `sim_q3_`, `sim_background_q3_`). Nothing is corrupt today; the gate
+  simply cannot detect it if that ever changes.
 
 ## 7. Peripheral lane (gemini) — partially discarded
 
 This lane was dispatched twice. **Round 1 is discarded and its findings are not carried
 forward** (§8). Round 3 re-ran it inside a disposable git worktree; those findings are below,
-all tier C unless marked, and none were cross-validated.
+all tier C as found and none cross-validated at the time. J36 and J37 were re-verified
+2026-08-01 (see §2), with opposite outcomes: **J36 promoted to tier A** — its explicitly unchecked
+premise turned out to be true by a factor of 1.39 — and **J37 deleted** as unreachable. The
+discarded-lane provenance predicted neither; a lane that must be contained for process reasons can
+still surface the strongest and the weakest finding in a document.
 
 - **J34 — The efficiency numerator is filled with the reco weight. [tier A — code fact;
   physics judgment open]** In `compute_efficiency_2d`,
@@ -488,16 +663,58 @@ all tier C unless marked, and none were cross-validated.
   idiom, on any `rg_*` call in a file that never sourced the library, and on any guarded output
   with no matching producer stamp.
 
-- **J36 — Global POT scaling applied post-merge. [tier C]** A single global
-  `pot_scale = data_pot / mc_pot` is read from the `hadd`-merged ROOT file and applied uniformly.
-  Because `hadd` sums the POT metadata and concatenates trees, per-playlist Data/MC POT ratios
-  are discarded; if playlists differ, the combined MC mix is skewed. **Unverified, and the
-  premise that playlist ratios differ materially is itself unchecked.**
+- **J36 — Global POT scaling applied post-merge.
+  [tier A — verified 2026-08-01; the unchecked premise is now checked, and it is TRUE]**
+  Code fact confirmed: `get_pot_scales` (`2d-unfolding/unfold_2d_omnifold_unbinned.py:114-123`)
+  returns one `data_pot / mc_pot` from two `hadd`-summed `TParameter<double>`, applied uniformly as
+  `w * pot_scale` in every collector.
 
-- **J37 — `Erecoil` registered against `q0True` without spline correction. [tier C]** In
-  `MINERvA101/.../runEventLoop.cpp:425`, with an in-code `TODO` acknowledging it. Baseline
-  reference code, not the OmniFold path; relevance depends on whether that definition is carried
-  forward.
+  **The premise the finding could not check.** `docs/orchestration/state/g2-gate1-all12-validation-20260719.json`
+  carries all 12 per-playlist POT pairs. Computed from that receipt:
+
+  | PL | Data/MC ratio | vs global | share of MC POT |
+  |---|---|---|---|
+  | 1D | 0.237148 | +11.65 % | 12.20 % |
+  | 1F | 0.235964 | +11.09 % | 14.20 % |
+  | 1G | 0.231043 | +8.77 % | 11.96 % |
+  | 1L | 0.229626 | +8.11 % | 1.17 % |
+  | 1P | 0.224652 | +5.77 % | 4.18 % |
+  | 1A | 0.220501 | +3.81 % | 8.17 % |
+  | 1N | 0.208090 | −2.03 % | 10.29 % |
+  | 1C | 0.205730 | −3.14 % | 4.19 % |
+  | 1E | 0.202437 | −4.69 % | 10.22 % |
+  | 1O | 0.188301 | −11.35 % | 3.18 % |
+  | 1M | 0.176110 | −17.09 % | 18.04 % |
+  | 1B | 0.170739 | −19.62 % | 2.20 % |
+
+  Global ratio 0.212405. **Spread max/min − 1 = 38.9 %.** POT-weighted mean absolute mixture error
+  **9.4 %**. Playlist 1M — 18 % of MC POT — is over-weighted by 17 %; 1D and 1F (26 % combined) are
+  under-weighted by ~11 %. The playlist ratios differ, and not marginally.
+
+  **Scoping the finding did not supply, and which matters.** The **total normalization is not
+  biased**: if the MC rate per POT is playlist-independent, global and per-playlist scaling give
+  the identical total (`Σ(D_i/M_i)·νM_i = ν·ΣD = (ΣD/ΣM)·νΣM`). The error is purely in the
+  playlist *mixture*, and reaches a result only through playlist-dependent flux shape and detector
+  conditions. That is consistent with the 2D paper reproduction standing at 1.011 — this defect
+  cannot explain, or be excluded by, that number.
+
+  **Supporting evidence that the hazard class was already recognized here and defended
+  inconsistently:** `unfold_2d_omnifold_unbinned.py:1320-1329` explicitly refuses to trust the
+  `hadd`-summed `pTmu_fiducial_nucleons` and substitutes a geometry constant, commenting "do not
+  trust the merged `TParameter<double>` because `hadd` sums it across playlists" — and
+  `:38-40` says the same about keeping the nucleon constant local. The identical reasoning was
+  never applied to the POT ratio one function away. Now indexed as its own KNOWN_ISSUES row.
+
+- **~~J37 — `Erecoil` registered against `q0True` without spline correction.~~
+  [DELETED 2026-08-01 — true statement, zero reachability]**
+  The code fact is exact: `MINERvA101/.../runEventLoop.cpp:425` pairs `GetRecoilE` with
+  `Getq0True` under an in-code `TODO`. It is unreachable from this analysis in two independent
+  ways, either of which is sufficient: it sits inside `if(doCCQENuValidation)` (`:419`), a
+  validation-histogram branch gated on the tree name being CCQENu; and `runEventLoopOmniFold.cpp`
+  contains **zero** occurrences of `GetRecoilE` or `Getq0True`. The OmniFold path uses a matched
+  pair throughout — `NewEavail()` for reco (`:1178`, `:1460`, `:1591`) and `GetEAvailableTrue()`
+  for truth (`:589`, `:1140`). Deleted rather than demoted: carrying it as a lead implies a live
+  question that does not exist. The ID is retained struck-through so the numbering is not reused.
 
 ## 8. Findings from the audit process itself
 
@@ -569,7 +786,29 @@ all tier C unless marked, and none were cross-validated.
    schema itself, so the fingerprint is falsifiable. Still `PASS_CODE_ONLY`; the launch remains
    blocked on everything Step 2b lists as owed, plus a Gate-2 target rebuild that is now required
    for a *physics* reason (J05).
-5. **J17/J18** — note corrections; cheap, and J18 currently has the document contradicting
-   itself in print.
-6. J12–J16, J35 — machinery hardening, no result impact. (J35 + J10 FIXED 2026-08-01; a
+5. ~~**J17/J18** — note corrections.~~ **DONE**: both fixed, and the J17 residual in
+   `app_negweight.tex:55` closed at `b27d1e1` (found by the 2026-08-01 tier-C pass; see J26).
+6. **J22 — decide the FPS footing.** Promoted to tier A on 2026-08-01: the note claims a
+   negative-weight baseline for a product made a month before that code existed. This is the only
+   tier-C finding that changes what the note may claim about an existing number. Either demote the
+   `app_negweight.tex:227-228` claim to stated intent, or regenerate `σ_ext` on the
+   negweight-refined footing — which is already the gated, verifier-blocked C turn in
+   `FPS_UQ_CORRECTED_STATE.md`. Cheap if the answer is "demote".
+7. **J21 — decide what the PET central value is.** The quoted 4D ratio has unit measured weights
+   and no background subtraction, while `sec_pet.tex:70-71` describes a background-subtracted
+   target one subsection later. Either qualify the 0.912 as a non-background-subtracted historical
+   diagnostic, or re-extract on the `bkgsub` input. Interacts with the 2026-08-01 full-event
+   landing: pre-08-01 PET numbers are a different estimator, so do this once, after that settles.
+8. **The note wording pass** — J19, J24, J25, J26.1, J27.1, J27.3, J27.4 in one edit. All are
+   qualifiers dropped between a technical section and a summary (§5 preamble). J27.3 needs the
+   GiBUU corner ratio computed first; if it lands outside 1.54–1.58, that sentence is numerically
+   wrong and not merely unqualified.
+9. **J36 — scope the POT mixture.** Own KNOWN_ISSUES row as of 2026-08-01. Does not move the
+   total, so it is not urgent; it needs a decision on whether per-playlist scaling is worth
+   implementing, given a 38.9 % ratio spread and 9.4 % POT-weighted mixture error.
+10. J12–J16, J35 — machinery hardening, no result impact. (J35 + J10 FIXED 2026-08-01; a
    completion-marker backfill is owed at restore before anything is resubmitted — Step 0b.)
+11. **J31–J33 — latent-gate hardening, lowest priority.** Verification downgraded all three from
+   live to latent (§6). Real defects, no current corruption, and J31/J32 are in the deferred P4
+   lane. Fix J32 in the validator (make the receipt carry a candidate SHA at all) rather than in
+   the adopter.
