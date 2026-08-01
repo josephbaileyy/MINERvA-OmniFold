@@ -523,26 +523,28 @@ traces; the per-bin median $4.822\%$ is taken directly from the
 matcorr rollup summary.)
 
 \begin{quote}
-\textbf{\textcolor{red}{UNRESOLVED CONFLICT --- flagged 2026-07-31, do not quote
-either table until reconciled.}} The table above disagrees with the uncertainty
-budget in \S\ref{sec:systematics}, and the two reach \emph{opposite conclusions}.
-This table gives a combined per-bin median of $4.822\%$ against the paper's
-$6.86\%$, i.e.\ an envelope $\approx\!70\%$ of the paper's. The main text gives a
-combined $6.865\%$, i.e.\ an envelope that essentially \emph{matches} the paper.
-The systematic rows differ correspondingly ($2.463\times10^{-39}$ / $4.783\%$ here
-versus $3.21\times10^{-39}$ / $6.830\%$ there), and even the statistical row
-differs ($0.564\%$ versus $0.549\%$). The pull widths quoted later in this
-appendix ($0.069/0.466$) likewise disagree with the active
-\texttt{VALIDATION\_LEDGER.md} entry ($0.051/0.409$) --- an inconsistency
-\texttt{docs/INTEGRATION\_CHECKLIST.md} already records as open.
+\textbf{Provenance note (2026-07-31).} The figures above are the \emph{pre-flux-fix}
+rollup --- systematic $2.463\times10^{-39}$ / $4.783\%$, combined
+$2.470\times10^{-39}$ / $4.822\%$ --- and the inference drawn from them, that the
+OmniFold envelope is $\approx\!70\%$ of the paper's, is an artefact of that
+superseded product. The current budget is the one tabulated in
+\S\ref{sec:systematics}, where the envelope essentially \emph{matches} the paper
+($6.865\%$ against $6.86\%$).
 
-The two tables are labelled for different sweeps (``matcorr sweep $+$ norm'' here,
-``universe sweep $+$ \SI{1.4}{\percent} norm'' in the main text), so this may be a
-stale table, a different configuration, or both --- and
-\texttt{VALIDATION\_LEDGER.md} carries neither set, so the authoritative rollup
-cannot be identified from the record alone. Reconciling it requires whoever owns
-the UQ rollup to say which product is current. See
-\texttt{AUDIT-FINDINGS-20260731.md} J18.
+The two rollups differ in \emph{exactly one band}. Comparing
+\texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
+\texttt{...\_matcorr\_fluxfix/}, every systematic band agrees to the last quoted
+digit except \texttt{full\_Flux}, whose per-bin median rises
+$1.008\% \rightarrow 4.993\%$ once each PPFX universe is divided by its own flux
+integral $\Phi_u$ instead of by $\Phi_{\rm CV}$. That single correction carries the
+universe total $4.783\% \rightarrow 6.830\%$ and the combined figure to
+$6.845\%$ before the ML block, which is the whole of the discrepancy. The pull
+widths quoted later in this appendix ($0.069/0.466$) were computed on the same
+superseded covariance; the flux-fixed values are $0.051/0.409$
+(\texttt{VALIDATION\_LEDGER.md}).
+
+The same defect, uncorrected, is still present in the N-D and 5-D kernels; see
+\texttt{AUDIT-FINDINGS-20260731.md} J18 and J28.
 \end{quote}
 
 \subsection{Comparing to the paper}
