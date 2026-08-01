@@ -51,6 +51,7 @@ for p in (_2D, _ND):
     if p not in sys.path:
         sys.path.insert(0, p)
 import unfold_2d_omnifold_unbinned as u2d  # noqa: E402
+import flux_universe as fluxu  # noqa: E402
 from xsec_nd import (  # noqa: E402
     extract_cross_section_nd, project_marginal, project_axis, total_xsec,
 )
@@ -650,16 +651,17 @@ def main():
         # the integrated flux is pT-independent (constant per bin); map each new bin
         # to the flux bin containing its centre, falling back to the last flux bin
         # beyond the histogram range (exact for a constant flux, which it is).
+        # flux_ref_edges is carried to the Flux-universe block below so the
+        # universe rides this same remap (J29).
         flux_ref, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, u2d.PT_EDGES)
-        ref_e = np.asarray(u2d.PT_EDGES, float)
-        ctrs = 0.5 * (np.asarray(pt_edges[:-1]) + np.asarray(pt_edges[1:]))
-        ref_i = np.clip(np.digitize(ctrs, ref_e) - 1, 0, len(flux_ref) - 1)
-        flux_bins = flux_ref[ref_i]
+        flux_ref_edges = np.asarray(u2d.PT_EDGES, float)
+        flux_bins = fluxu.flux_on_target_grid(flux_ref, pt_edges, flux_ref_edges)
         spread = flux_ref.max() / flux_ref.min() - 1.0
         print(f"[INFO] flux remapped to {len(pt_edges)-1} pT bins "
               f"(reference flux pT-spread {100*spread:.2g}% -- constant)")
     else:
         flux_bins, _ = u2d.load_flux_bins(args.mcfile, args.flux_hist, pt_edges)
+        flux_ref_edges = None
     print(f"[INFO] flux sum = {flux_bins.sum():.4g} m^-2/POT")
 
     meas_pt, meas_pz, meas_ex = collect_data_nd(
@@ -733,27 +735,20 @@ def main():
               f"truth-denom mean {r_td.mean():.4f}")
 
     # Flux universe: divide by that PPFX universe's flux integral (mirrors 3D driver).
+    # The universe histogram lives on the reference pT grid, so it goes through the
+    # SAME bin-centre remap as the CV flux above. The previous code indexed the
+    # reference histogram with the analysis bin number directly, which for the
+    # extended FPS grid read the 14-bin histogram's overflow in the final [4.5,30]
+    # bin, failed the >0 validity test, and silently left that bin at CV flux (J29).
+    # flux_universe_bins fails closed instead of falling back to a scale of 1.
     if universe_branch is not None and universe_branch[0] == "Flux":
-        fu = ROOT.TFile.Open(args.flux_universe_file)
-        if not fu or fu.IsZombie():
-            raise SystemExit(f"[FAIL] Flux universe {universe_branch[1]} requested but flux "
-                             f"universe file {args.flux_universe_file} is unavailable; refusing "
-                             "to produce an incomplete systematic universe with CV flux")
-        h_cv, h_un = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
-        if not h_cv or not h_un:
-            fu.Close()
-            raise SystemExit(f"[FAIL] Flux universe {universe_branch[1]}: hFluxCV/hFluxUniv "
-                             f"missing in {args.flux_universe_file}; refusing incomplete universe")
         uidx = int(universe_branch[1])
-        scale = np.ones(len(flux_bins))
-        for b in range(len(flux_bins)):
-            cvf = h_cv.GetBinContent(b + 1)
-            unf = h_un.GetBinContent(b + 1, uidx + 1)
-            if cvf > 0 and unf > 0:
-                scale[b] = unf / cvf
-        flux_bins = np.asarray(flux_bins, float) * scale
-        print(f"[INFO] Flux universe {uidx}: per-pT flux scaled (mean {scale.mean():.4f})")
-        fu.Close()
+        phi_u = fluxu.flux_universe_bins(args.flux_universe_file, uidx, pt_edges,
+                                         flux_bins, ref_edges=flux_ref_edges)
+        scale = phi_u / np.asarray(flux_bins, float)
+        flux_bins = phi_u
+        print(f"[INFO] Flux universe {uidx}: dividing by per-universe flux integral "
+              f"(Phi_u/Phi_CV per pT = {np.array2string(scale, precision=4)})")
     if sig["truth_pt"].size == 0 or meas_pt.size == 0:
         raise RuntimeError("empty signal or data after selection")
 

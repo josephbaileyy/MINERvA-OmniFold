@@ -77,6 +77,11 @@ def main():
     ap.add_argument("--bank", default="bank_uthrow_5d")
     ap.add_argument("--mcfile", default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
+    ap.add_argument("--flux-universe-file",
+                    default=f"{_REPO}/2d-unfolding/baseline_flux/"
+                            "flux_integral_universes_MEFHC.root",
+                    help="ROOT (hFluxCV/hFluxUniv) per-PPFX flux integrals; each Flux "
+                         "universe divides by its own Phi_u, not the CV integral")
     ap.add_argument("--comp-ref", default="products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--phaseB", default="products/pet/pet_5d_covariance_combined_wlat.root",
                     help="Phase B PET combined cov: source of C_stat/C_ML/C_lateral")
@@ -106,6 +111,9 @@ def main():
     }
     flux = {u: ratio(_opt(args.bank, f"sig_flux_t_{u}.npy"), f"Flux:{u}")
             for u in flux_ids}
+    # ...and the matching per-universe flux integral. The event reweight alone is
+    # only half of a Flux universe; keeping Phi_CV in the denominator is J28.
+    phi = {u: pet.flux_universe(args.flux_universe_file, u) for u in flux_ids}
     print(f"[petuni] bank: {len(KNOB_BANDS)} complete knob bands, "
           f"{len(flux_ids)} flux universes")
 
@@ -117,7 +125,7 @@ def main():
         cb = mat_covariance(pair)
         C_block += cb
         print(f"[block] {b}: sqrt-tr={np.sqrt(np.trace(cb)):.3e}", flush=True)
-    fX = np.asarray([pet.xsec(flux[u])[rep] for u in flux_ids])
+    fX = np.asarray([pet.xsec(flux[u], flux=phi[u])[rep] for u in flux_ids])
     C_flux = mat_covariance(fX)
     C_block += C_flux
     print(f"[block] flux ({len(flux_ids)}) sqrt-tr={np.sqrt(np.trace(C_flux)):.3e}")
@@ -136,7 +144,7 @@ def main():
         # composition over/underflows or becomes non-positive.
         rho = guarded_ratio(rho, f"joint throw {j}",
                             invalid_policy=args.invalid_ratio, clip=None)
-        xs.append(pet.xsec(rho)[rep])
+        xs.append(pet.xsec(rho, flux=phi[u])[rep])
         if j % 20 == 0:
             print(f"[throw {j}] flux_u={u}", flush=True)
     X = np.array(xs)

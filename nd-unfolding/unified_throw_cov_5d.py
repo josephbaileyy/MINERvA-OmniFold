@@ -29,10 +29,14 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
 import unified_throw_cov as base
 
 
-def _xsec_for_weights_5d(d, edges, wt_sig, wr_sig, wt_td, iters, seed):
+def _xsec_for_weights_5d(d, edges, wt_sig, wr_sig, wt_td, iters, seed, flux=None):
     """td_W-aware copy of compare_unified_throw._xsec_for_weights (5D-ready).
     Identical to the upstream function except the truth-denom coordinate stack
-    appends td_W when the binning is 5D."""
+    appends td_W when the binning is 5D.
+
+    Being a copy is exactly why J28 had to be fixed here separately: the `flux`
+    override must be honoured in this kernel too, or the 5D throws keep dividing
+    every Flux universe by the CV integral."""
     from omnifold_nn_core import omnifold_loop
     from xsec_nd import extract_cross_section_nd
     MCgen, MCreco, measured = d["MCgen"], d["MCreco"], d["measured"]
@@ -59,7 +63,8 @@ def _xsec_for_weights_5d(d, edges, wt_sig, wr_sig, wt_td, iters, seed):
     completeness = np.zeros_like(of_in)
     nz = denom_nd > 0
     completeness[nz] = of_in[nz] / denom_nd[nz]
-    xsec, _ = extract_cross_section_nd(unfold_nd, completeness, d["flux"],
+    xsec, _ = extract_cross_section_nd(unfold_nd, completeness,
+                                       d["flux"] if flux is None else flux,
                                        float(d["data_pot"]), float(d["n_nucleons"]), edges)
     return xsec
 

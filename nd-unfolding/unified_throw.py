@@ -269,21 +269,19 @@ def do_dump(args):
                  **td_extra_cols,
                  **{f"edges_{i}": np.asarray(e, float) for i, e in enumerate(edges)})
         # flux-universe per-pT ratios (for Flux integral re-scaling per throw);
-        # built on the frozen flux-histogram edges, then remapped if extended
-        fu = ROOT.TFile.Open(args.flux_universe_file)
-        hcv, hun = fu.Get("hFluxCV"), fu.Get("hFluxUniv")
-        nb_ref = len(ref_pt) - 1
-        fr = np.ones((N_FLUX, nb_ref))
-        if hcv and hun:
-            for b in range(nb_ref):
-                cvf = hcv.GetBinContent(b + 1)
-                for k in range(N_FLUX):
-                    uf = hun.GetBinContent(b + 1, k + 1)
-                    if cvf > 0 and uf > 0:
-                        fr[k, b] = uf / cvf
-        fu.Close()
-        if ref_i is not None:
-            fr = fr[:, np.clip(ref_i, 0, nb_ref - 1)]
+        # built on the frozen flux-histogram edges, then remapped if extended.
+        # This used to open the file unchecked and leave fr at 1 whenever the
+        # histograms were missing or a bin was non-positive -- i.e. an unreadable
+        # flux file produced a bank in which every universe divides by the CV
+        # integral, silently (J28). flux_universe_ratio_table fails closed and
+        # applies the same bin-centre remap the CV flux got.
+        import flux_universe
+        fr = flux_universe.flux_universe_ratio_table(
+            args.flux_universe_file, pt_e, flux_bins,
+            ref_edges=(ref_pt if ref_i is not None else None))
+        if fr.shape[0] != N_FLUX:
+            raise RuntimeError(f"[FAIL] {args.flux_universe_file} has {fr.shape[0]} PPFX "
+                               f"universes but the bank expects {N_FLUX}")
         np.save(os.path.join(args.bankdir, "flux_univ_ratio.npy"), fr)
         print(f"[dump g0] wrote cv.npz ({len(keep_wt)} signal, {len(d_w)} denom) + flux_univ_ratio")
     f.Close()

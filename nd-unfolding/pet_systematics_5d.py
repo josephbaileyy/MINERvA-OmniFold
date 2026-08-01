@@ -115,12 +115,14 @@ class PETxsec5D:
         # frozen flux histogram) -- remap by bin-centre lookup into the standard-edge
         # flux (flux is pT-flat to ~2e-14%, so this is exact); identity when edges[0]
         # already IS the standard grid, same pattern as nn_dump_inputs.py.
+        import flux_universe
         flux_ref, _ = u2d.load_flux_bins(mcfile, flux_hist, u2d.PT_EDGES)
-        ref_e = np.asarray(u2d.PT_EDGES, float)
-        pt_e0 = np.asarray(self.edges[0], float)
-        ctrs = 0.5 * (pt_e0[:-1] + pt_e0[1:])
-        ref_i = np.clip(np.digitize(ctrs, ref_e) - 1, 0, len(flux_ref) - 1)
-        self.flux = flux_ref[ref_i]
+        # flux_ref_edges is kept so a Flux universe can be remapped identically --
+        # CV and universe must ride the same lookup or the extended bin keeps CV
+        # flux (J29).
+        self.flux_ref_edges = np.asarray(u2d.PT_EDGES, float)
+        self.flux = flux_universe.flux_on_target_grid(
+            flux_ref, self.edges[0], self.flux_ref_edges)
         self.n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
         self.pt = self.pass_truth
         self.ptr = self.pass_truth & self.pass_reco
@@ -151,17 +153,29 @@ class PETxsec5D:
         comp[nz] = ofin[nz] / denom[nz]
         return comp
 
-    def xsec(self, rho=None):
-        """xsec for a per-event truth reweight rho (None = CV); completeness anchored."""
+    def xsec(self, rho=None, flux=None):
+        """xsec for a per-event truth reweight rho (None = CV); completeness anchored.
+
+        `flux` overrides the CV integrated flux for a Flux systematic universe,
+        which must divide by its own Phi_u (J28). Reweighting the events by a
+        PPFX universe while leaving this at CV is the Task #70 bug.
+        """
         wt = self.w_truth * self.mc_bootstrap_factor
         if rho is not None:
             wt = wt * rho
         counts, _ = np.histogramdd(self.truth[self.pt], bins=self.edges,
                                    weights=self.w_push[self.pt] * wt[self.pt])
         comp = self._comp(wt) * self.comp_rescale
-        xs, _ = extract_cross_section_nd(counts, comp, self.flux, self.data_pot,
-                                         self.n_nucleons, self.edges)
+        xs, _ = extract_cross_section_nd(counts, comp,
+                                         self.flux if flux is None else flux,
+                                         self.data_pot, self.n_nucleons, self.edges)
         return xs.ravel(order="C")
+
+    def flux_universe(self, path, idx):
+        """Phi_u for PPFX universe `idx` on this object's pT grid (fail-closed)."""
+        import flux_universe
+        return flux_universe.flux_universe_bins(path, idx, self.edges[0], self.flux,
+                                                ref_edges=self.flux_ref_edges)
 
 
 def main():

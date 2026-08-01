@@ -262,7 +262,17 @@ def do_run(args):
     nz = denom_nd > 0
     comp[nz] = of_in[nz] / denom_nd[nz]
     cglob = of_in.sum() / denom_nd.sum() if denom_nd.sum() > 0 else float("nan")
-    xsec, _ = extract_cross_section_nd(unfold_nd, comp, cv["flux"],
+    # A Flux universe must divide by its OWN integrated flux Phi_u, not the CV one
+    # (J28/Task #70): applying the PPFX event reweights while keeping Phi_CV
+    # normalizes against the wrong flux. flux_universe_bins fails closed.
+    flux = np.asarray(cv["flux"], float)
+    if band == "Flux":
+        import flux_universe
+        flux = flux_universe.flux_universe_bins(args.flux_universe_file, idx,
+                                                edges[0], flux)
+        print(f"[run] {tag}: dividing by Phi_u (mean Phi_u/Phi_CV = "
+              f"{(flux / np.asarray(cv['flux'], float)).mean():.4f})")
+    xsec, _ = extract_cross_section_nd(unfold_nd, comp, flux,
                                        float(cv["data_pot"]), float(cv["n_nucleons"]), edges)
     flat = xsec.ravel(order="C")
     rf = ROOT.TFile.Open(out, "RECREATE")
@@ -284,6 +294,11 @@ def main():
     ap.add_argument("--omnifile", default=OMNIFILE_5D)
     ap.add_argument("--mcfile", default=f"{_REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
+    ap.add_argument("--flux-universe-file",
+                    default=f"{_REPO}/2d-unfolding/baseline_flux/"
+                            "flux_integral_universes_MEFHC.root",
+                    help="ROOT (hFluxCV/hFluxUniv) per-PPFX flux integrals; used with "
+                         "--universe Flux:IDX to divide by that universe's own flux")
     ap.add_argument("--bankdir", default=f"{_REPO}/nd-unfolding/bank_sweep_5d")
     ap.add_argument("--vlist", default=VLIST)
     ap.add_argument("--outdir", default=SWEEPDIR)

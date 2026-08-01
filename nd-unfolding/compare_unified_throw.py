@@ -107,9 +107,15 @@ def do_dump(args):
     print(f"[dump] wrote {args.out}: MCgen{MCgen.shape}, bands={bands}")
 
 
-def _xsec_for_weights(d, edges, wt_sig, wr_sig, wt_td, iters, seed):
+def _xsec_for_weights(d, edges, wt_sig, wr_sig, wt_td, iters, seed, flux=None):
     """Run OmniFold with given (per-event) signal truth/reco weights + denom weights,
-    return the reported-bin xsec (flat, C order over the nd shape)."""
+    return the reported-bin xsec (flat, C order over the nd shape).
+
+    `flux` overrides the CV integrated flux for a Flux systematic universe, which
+    must divide by its OWN Phi_u -- see nd-unfolding/flux_universe.py. Passing the
+    universe's event reweights while leaving this at the CV flux is the J28 bug;
+    the flux-universe callers resolve Phi_u through a fail-closed table, so an
+    unresolvable table raises rather than quietly reaching this default."""
     from omnifold_nn_core import omnifold_loop
     from xsec_nd import extract_cross_section_nd
     MCgen, MCreco, measured = d["MCgen"], d["MCreco"], d["measured"]
@@ -136,7 +142,8 @@ def _xsec_for_weights(d, edges, wt_sig, wr_sig, wt_td, iters, seed):
     completeness = np.zeros_like(of_in)
     nz = denom_nd > 0
     completeness[nz] = of_in[nz] / denom_nd[nz]
-    xsec, _ = extract_cross_section_nd(unfold_nd, completeness, d["flux"],
+    xsec, _ = extract_cross_section_nd(unfold_nd, completeness,
+                                       d["flux"] if flux is None else flux,
                                        float(d["data_pot"]), float(d["n_nucleons"]), edges)
     return xsec
 

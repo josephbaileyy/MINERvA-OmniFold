@@ -44,6 +44,7 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+import flux_universe
 from compare_unified_throw import _xsec_for_weights
 from uq_math import (interpolate_asymmetric_ratio, joint_throw_covariance,
                      mat_covariance)
@@ -162,11 +163,58 @@ def _flux_universe(bank, u):
             _opt(bank, f"td_flux_{u}.npy"))
 
 
+def _flux_normalized(slab):
+    """True when a slab was produced with per-universe flux normalization (J28).
+
+    Slabs written before the fix carry no stamp; combine refuses them rather than
+    folding Phi_CV-normalized flux universes into a fresh adopted covariance.
+    rescale_flux_universes.py corrects such a slab in place of a re-throw and
+    stamps the result.
+    """
+    return "flux_normalized" in slab.files and int(slab["flux_normalized"]) == 1
+
+
+def _flux_ratio_table(args, d, n_flux):
+    """Phi_u/Phi_CV per pT bin for every flux universe -- fail-closed (J28).
+
+    A Flux universe reweights the events AND changes the flux integral the xsec
+    divides by; applying only the reweights and keeping Phi_CV is the Task #70
+    bug. The uthrow banks already carry this table on their own pT grid
+    (unified_throw.py --dump writes flux_univ_ratio.npy), so the correction needs
+    no re-dump; --flux-universe-file is the fallback. There is no CV fallback.
+    """
+    if not n_flux:
+        return None
+    n_pt = len(d["flux"])
+    try:
+        table = flux_universe.load_banked_flux_ratio_table(args.bank, n_pt, n_flux)
+        source = os.path.join(args.bank, flux_universe.BANKED_RATIO_NAME)
+    except (RuntimeError, ValueError, OSError) as exc:
+        print(f"[bank] no usable banked flux ratio table ({exc});\n"
+              f"[bank] rebuilding from {args.flux_universe_file}", flush=True)
+        import unfold_2d_omnifold_unbinned as u2d      # ROOT; fallback path only
+        table = flux_universe.resolve_flux_ratio_table(
+            n_pt=n_pt, n_flux=n_flux, universe_file=args.flux_universe_file,
+            pt_edges=d["edges"][0], cv_flux_bins=d["flux"],
+            ref_edges=np.asarray(u2d.PT_EDGES, float))
+        source = args.flux_universe_file
+    spread = float(np.abs(table - 1.0).max())
+    print(f"[bank] flux ratio table {table.shape} from {source}: "
+          f"max |Phi_u/Phi_CV - 1| = {spread:.4f}")
+    return table
+
+
+def _flux_for_universe(d, table, u):
+    """The integrated flux a Flux universe must divide by: Phi_u = Phi_CV * r_u."""
+    return np.asarray(d["flux"], float) * table[u]
+
+
 def do_throws(args):
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
     ratios = _knob_ratios(args.bank, bands, args.invalid_ratio)
+    flux_ratio = _flux_ratio_table(args, d, n_flux)
 
     xs = []
     metas = []
@@ -186,11 +234,15 @@ def do_throws(args):
             wt_j *= _ratio(fwt, f"Flux:{u}:t", args.invalid_ratio)
             wr_j *= _ratio(fwr, f"Flux:{u}:r", args.invalid_ratio)
             wtd_j *= _ratio(fwtd, f"Flux:{u}:td", args.invalid_ratio)
+            # ...and divide by THAT universe's flux integral, not the CV one (J28).
+            flux_j = _flux_for_universe(d, flux_ratio, u)
         else:
             u = -1
+            flux_j = None
         # Systematic throws all use the SAME estimator seed. ML variation belongs
         # exclusively in C_ML and must not leak into C_syst.
-        x = _xsec_for_weights(d, edges, wt_j, wr_j, wtd_j, args.iters, args.seed)
+        x = _xsec_for_weights(d, edges, wt_j, wr_j, wtd_j, args.iters, args.seed,
+                              flux=flux_j)
         xs.append(x.ravel(order="C"))
         metas.append((gj, u))
         print(f"[throw {gj}] flux_u={u} sum(x)={x.sum():.4e}", flush=True)
@@ -200,6 +252,7 @@ def do_throws(args):
                       throws=np.array([m[0] for m in metas]),
                       flux_u=np.array([m[1] for m in metas]),
                       seed=np.int64(args.seed),
+                      flux_normalized=np.int64(1),
                       bands=np.array(bands, dtype=object))
     print(f"[throws] wrote {args.out}: xs{np.array(xs).shape}")
 
@@ -212,6 +265,7 @@ def do_blockunits(args):
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
+    flux_ratio = _flux_ratio_table(args, d, n_flux) if args.block_flux else None
     xs, labels, kinds = [], [], []
 
     knob_list = bands if args.block_knobs == "all" else [b for b in args.block_knobs.split(",") if b in bands]
@@ -223,11 +277,13 @@ def do_blockunits(args):
                                  f"{b}:{sign}:r", args.invalid_ratio)
             wtd = td_cv * _ratio(_opt(args.bank, f"td_{b}_{idx}.npy"),
                                  f"{b}:{sign}:td", args.invalid_ratio)
+            # knob endpoints do not move the flux integral: CV flux is correct here
             x = _xsec_for_weights(d, edges, wt, wr, wtd, args.iters, args.seed).ravel(order="C")
             xs.append(x); labels.append(f"{b}:{idx}"); kinds.append("knob")
             print(f"[blockunit] knob {b} {sign} done", flush=True)
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
                           seed=np.int64(args.seed),
+                          flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     if args.block_flux:
         lo, hi = (int(x) for x in args.block_flux.split("-"))
@@ -238,11 +294,13 @@ def do_blockunits(args):
                 w_truth * _ratio(fwt, f"Flux:{u}:t", args.invalid_ratio),
                 w_reco * _ratio(fwr, f"Flux:{u}:r", args.invalid_ratio),
                 td_cv * _ratio(fwtd, f"Flux:{u}:td", args.invalid_ratio),
-                args.iters, args.seed).ravel(order="C")
+                args.iters, args.seed,
+                flux=_flux_for_universe(d, flux_ratio, u)).ravel(order="C")
             xs.append(x); labels.append(f"flux{u}"); kinds.append("flux")
             print(f"[blockunit] flux {u} done", flush=True)
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
                           seed=np.int64(args.seed),
+                          flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     print(f"[blockunit] wrote {args.out}: {len(xs)} units")
 
@@ -266,10 +324,13 @@ def do_combine(args):
     slab_rows = []
     throw_ids = []
     slab_seeds = set()
+    unnormalized = []
     for s in slabs:
         z = np.load(s, allow_pickle=True)
         if "seed" in z.files:
             slab_seeds.add(int(z["seed"]))
+        if not _flux_normalized(z):
+            unnormalized.append(s)
         xx = np.asarray(z["xs"], dtype=float)
         ids = np.asarray(z["throws"], dtype=int)
         if xx.ndim != 2 or xx.shape[0] != ids.size or xx.shape[1] != x_cv.size:
@@ -308,6 +369,8 @@ def do_combine(args):
         z = np.load(s, allow_pickle=True)
         if "seed" in z.files:
             slab_seeds.add(int(z["seed"]))
+        if not _flux_normalized(z):
+            unnormalized.append(s)
         xx = np.asarray(z["xs"], dtype=float)
         if xx.ndim != 2 or xx.shape[1] != x_cv.size or not np.all(np.isfinite(xx)):
             raise SystemExit(f"[FAIL] malformed/non-finite block slab {s}: {xx.shape}")
@@ -354,6 +417,16 @@ def do_combine(args):
     if slab_seeds and slab_seeds != {int(args.seed)}:
         raise SystemExit(f"[FAIL] slabs carry estimator seed(s) {sorted(slab_seeds)} != "
                          f"--seed {args.seed}; refusing mixed-seed combine")
+    # J28 guard: a slab whose flux universes divided by the CV integral must not
+    # be folded into a fresh covariance. Correct it with rescale_flux_universes.py
+    # (exact, no re-unfold) or re-throw with the current code.
+    if unnormalized:
+        raise SystemExit(
+            f"[FAIL] {len(unnormalized)} slab(s) carry no per-universe flux "
+            f"normalization stamp, e.g. {unnormalized[0]}. They were produced "
+            "before the J28 fix, so their Flux universes divided by the CV flux "
+            "integral. Run rescale_flux_universes.py over them (exact post-hoc "
+            "correction, no re-unfold) or regenerate the throws/blocks.")
     if not slab_seeds:
         raise SystemExit("[FAIL] slabs carry no estimator-seed stamp; refusing combine to "
                          "prevent accidental reuse of pre-remediation products -- regenerate "
@@ -430,6 +503,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--bank", default="bank_uthrow")
+    ap.add_argument("--flux-universe-file",
+                    default=f"{_REPO}/2d-unfolding/baseline_flux/"
+                            "flux_integral_universes_MEFHC.root",
+                    help="ROOT (hFluxCV/hFluxUniv) per-PPFX flux integrals, used to "
+                         "divide each Flux universe by its own Phi_u. Only consulted "
+                         "when the bank carries no flux_univ_ratio.npy.")
     ap.add_argument("--throws", type=int, default=0, help="number of throws this task")
     ap.add_argument("--throw-offset", type=int, default=0)
     ap.add_argument("--seed", type=int, default=1000)
