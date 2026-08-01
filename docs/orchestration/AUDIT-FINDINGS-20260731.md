@@ -253,11 +253,25 @@ Source: codex personal (round 3). Single-source except where marked.
 - **J28 — Flux universes are divided by the CV flux integral in every ND/5D kernel.
   [tier A — mechanism and scope]**
   `unified_throw.py:287` writes `flux_univ_ratio.npy` (`Φu/ΦCV`). The only files that load it are
-  `assemble_bank_4d.py` and `unified_throw.py` itself. **Three independent sites repeat the
-  error:** `compare_unified_throw.py:139` and `unified_throw_cov_5d.py:65` call extraction with
-  fixed `d["flux"]`, and `sweep_bank_5d.py:265` does the same with `cv["flux"]` — the last is a
-  separate implementation, not a shared call path, so fixing the unified-throw kernel alone is
-  insufficient. PPFX event reweighting is applied against the wrong normalization throughout.
+  `assemble_bank_4d.py` and `unified_throw.py` itself. This finding named **three** independent
+  sites: `compare_unified_throw.py:139`, `unified_throw_cov_5d.py:65` (both calling extraction
+  with fixed `d["flux"]`) and `sweep_bank_5d.py:265` (`cv["flux"]`). They are separate
+  implementations, not one call path, so fixing the unified-throw kernel alone is insufficient.
+
+  > **Correction, 2026-07-31 (post-fix).** Three was a **lower bound**. The remediation found
+  > **five sites plus a fail-open**: additionally `sweep_bank.py:254` (the 4D sweep runs the same
+  > `Flux:0..99` list) and the PET 5D path (`pet_unified_throw_5d.py` reweighted events while
+  > `pet_systematics_5d.xsec` held `self.flux` at CV). Separately, `unified_throw.py`'s bank
+  > builder opened the flux file **unchecked and left the ratio at 1 on any failure**, so an
+  > unreadable flux file silently produced a bank in which every universe divided by `Φ_CV` —
+  > the same defect arriving through a different door, and invisible because it failed open.
+  > Fixed in `081ae4a`, which is fail-closed throughout.
+  >
+  > **Method note.** An audit that enumerates call sites by grepping a symbol finds the sites
+  > that share that symbol. It does not find independent reimplementations of the same
+  > arithmetic, and it does not find a guard that silently degrades to the defective value. Both
+  > escaped this audit and were caught only by someone fixing the code. Treat "N sites" in any
+  > finding here as a floor.
 
   **There is a correct reference implementation in-repo.** The 2D path
   (`unfold_2d_omnifold_unbinned.py:145`, `load_flux_universe_bins`) divides each universe by its
