@@ -52,9 +52,14 @@ treatment there is a positive-target prescription. In this analysis we use the
 by an explicit zero clip of the learned refinement factor, before step-1
 training. Whether the plain injection and this clipped refinement coincide in
 practice depends on the classifier.
-With the histogrammed gradient-boosted density estimator used for the
-production result they agree to the median of $\nwMedianBin$ reported below, at
-the sub-percent genuine-background scale of this measurement. With an
+With the histogrammed gradient-boosted density estimator used for \emph{this
+comparison} they agree to the median of $\nwMedianBin$ reported below, at
+the sub-percent genuine-background scale of this measurement. Note that
+\texttt{hist} is neither the backend of the production central value
+(\texttt{exact}) nor of its covariance ensemble (\texttt{lgbm}); see
+\S\ref{sec:method}. This validation therefore establishes the equivalence on a
+third backend, and its transfer to the production configuration is an assumption
+rather than a demonstration. With an
 \emph{exact} (tree-boosted) classifier the raw signed weights instead
 destabilize training --- a full low-$p_T$ row of the cross section inflates by
 up to a factor ${\sim}\nwSpRawMax$ where the local background is large --- and
