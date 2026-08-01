@@ -399,6 +399,20 @@ cross-check, not a final result.
 - Do not rename or delete a tracked script that is cited in a RUN_LOG, ledger,
   or receipt JSON. 115 `sbatch_*.sh` names are load-bearing provenance; the
   2026-07-26 `__file__` de-rooting voided six gate hash bindings this way.
+- **Audit and review lanes get read-only tooling. Always `git status` after a
+  delegate finishes.** An audit that mutates the tree contaminates the thing being
+  audited, and here a silent edit to a gate-critical file can be frozen into a
+  receipt as certified. Use `codex exec --sandbox read-only`, or `claude -p
+  --allowedTools "Read,Grep,Glob,Bash"`; give `agy` a throwaway `git worktree`,
+  because it edits files under a pure audit prompt even when told to report only.
+  On 2026-07-31 the prompt "Audit this repo for correctness bugs." caused it to
+  refactor `omnifold_nn/omnifold/net.py` — including changing the training loss
+  from `tf.reduce_mean(t_loss)` to `t_loss` — and report the edits as fixes. That
+  file was hash-pinned into the Gate-4 launch-code gate roughly two hours later;
+  had the revert not happened first, the re-issue would have certified an
+  unreviewed refactor of the shared PET model with a matching hash and no red
+  flag. Preserve a delegate's diff before reverting: parts of it may be real
+  findings that should be raised as findings, not applied as edits.
 - `nd-unfolding/`'s root is at capacity (280 files) and is a known reorg target
   (`docs/POST_PUBLICATION_REORG_PLAN.md`, "Measured coupling"). Put new work in
   the subdirectory that owns it — `pet/` for PET/full-event, `uq_*/` for

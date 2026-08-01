@@ -27,17 +27,42 @@ result were never invalidated by this quarantine.
   combined systematic+statistical+ML covariance by **+0.30%**. This closes
   KNOWN_ISSUES #13 as a numerically negligible refinement, not a central-value
   change.
+> ## ⚠ QUARANTINED 2026-07-31 — every covariance scale in this section is NOT QUOTABLE
+>
+> **Do not cite any sqrt-trace or median-uncertainty number below until the flux re-roll runs.**
+> The PPFX flux universes feeding these products were divided by the **CV** flux integral instead
+> of each universe's own `Φu` (`AUDIT-FINDINGS-20260731.md` J28 — five sites plus a fail-open).
+> The Flux block inside the background-aware sweep is therefore misnormalized, and the
+> unified-throw products are wrong **twice**: once through that block and again through the
+> per-bin inflation `g`, which `adopt_unified_5d.py` derives from the same misnormalized throws.
+>
+> **What is NOT affected and remains quotable:** all central cross sections, the corrected 4D
+> block-sum core, closure, the dimensional anchors, statistical and ML covariance, detector
+> laterals, and the finalized 2D covariance (the 2D path always divided by `Φu` correctly).
+>
+> **Status.** The code fix is committed (`081ae4a`), fail-closed, and mutation-tested; new slabs
+> carry a `flux_normalized` stamp and `--combine` refuses unstamped ones. **No corrected number
+> exists yet** — sizing needs the `/pscratch` slabs and waits for the Perlmutter restore
+> (08-03 22:00 PT), then `nd-unfolding/rescale_flux_universes.py`. A first-order estimate
+> suggested a few percent upward, but it is **not quotable**: correcting the same Flux draw in
+> both the unified and block ensembles moves `g`, the tail inflation and the finite-throw cross
+> terms together. Lift this quarantine only by replacing the numbers, not by deleting the notice.
+
 - On 10,694 reported 5D bins, the corrected block sum has systematic
-  sqrt-trace **4.3515e-38** and median relative uncertainty **13.235%**; after
-  adding corrected statistical and split-ML blocks the corresponding values are
-  **4.3578e-38** and **13.359%**.
+  sqrt-trace **4.3515e-38** *(quarantined)* and median relative uncertainty
+  **13.235%** *(quarantined)*; after adding corrected statistical and split-ML
+  blocks the corresponding values are **4.3578e-38** and **13.359%**
+  *(both quarantined)*.
 - The corrected unified-throw candidate uses actual asymmetric endpoints,
   one fixed estimator seed, throw-mean centering, MAT `1/N`, exact manifests,
   and no scalar jitter subtraction. The candidate mean-centered covariance is PSD
-  with sqrt-trace **5.8077e-38**. The joint mean shift has norm **1.654e-38** and
-  is reported separately. The CV-centered PSD variant, sqrt-trace
-  **6.2367e-38**, is retained as a conservative alternative rather than the
-  headline.
+  with sqrt-trace **5.8077e-38** *(quarantined — see notice above)*. The joint
+  mean shift has norm **1.654e-38** *(quarantined; the CV-centered variant's
+  stored shift is itself flux-misnormalized)* and is reported separately. The
+  CV-centered PSD variant, sqrt-trace **6.2367e-38** *(quarantined)*, is retained
+  as a conservative alternative rather than the headline.
+  `docs/analysis-note/values.tex:58` (`\gbdtFiveAdoptTrace`) quotes `5.81e-38`
+  from this line and inherits the quarantine.
 - Artifacts:
   `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware{,_uthrow,_uthrow_cvcentered}.root`
   and `uq_universe_5d_summary.txt`. The dedicated estimator-only seed scan is an

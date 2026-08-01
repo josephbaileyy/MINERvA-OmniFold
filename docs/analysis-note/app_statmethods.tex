@@ -522,6 +522,29 @@ $\sqrt{\Tr}$ is the quadrature sum of the three independent component
 traces; the per-bin median $4.822\%$ is taken directly from the
 matcorr rollup summary.)
 
+\begin{quote}
+\textbf{\textcolor{red}{UNRESOLVED CONFLICT --- flagged 2026-07-31, do not quote
+either table until reconciled.}} The table above disagrees with the uncertainty
+budget in \S\ref{sec:systematics}, and the two reach \emph{opposite conclusions}.
+This table gives a combined per-bin median of $4.822\%$ against the paper's
+$6.86\%$, i.e.\ an envelope $\approx\!70\%$ of the paper's. The main text gives a
+combined $6.865\%$, i.e.\ an envelope that essentially \emph{matches} the paper.
+The systematic rows differ correspondingly ($2.463\times10^{-39}$ / $4.783\%$ here
+versus $3.21\times10^{-39}$ / $6.830\%$ there), and even the statistical row
+differs ($0.564\%$ versus $0.549\%$). The pull widths quoted later in this
+appendix ($0.069/0.466$) likewise disagree with the active
+\texttt{VALIDATION\_LEDGER.md} entry ($0.051/0.409$) --- an inconsistency
+\texttt{docs/INTEGRATION\_CHECKLIST.md} already records as open.
+
+The two tables are labelled for different sweeps (``matcorr sweep $+$ norm'' here,
+``universe sweep $+$ \SI{1.4}{\percent} norm'' in the main text), so this may be a
+stale table, a different configuration, or both --- and
+\texttt{VALIDATION\_LEDGER.md} carries neither set, so the authoritative rollup
+cannot be identified from the record alone. Reconciling it requires whoever owns
+the UQ rollup to say which product is current. See
+\texttt{AUDIT-FINDINGS-20260731.md} J18.
+\end{quote}
+
 \subsection{Comparing to the paper}
 \label{sec:compare}
 
