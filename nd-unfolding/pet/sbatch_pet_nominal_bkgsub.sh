@@ -33,6 +33,7 @@
 set -eo pipefail
 export HOME=/global/homes/j/josephrb          # school-account HOME fix
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 cd "${REPO}/nd-unfolding"
 
 INPUTS="${PET_INPUTS:-of_inputs_pc_fullcloud_bkgsub_5d.npz}"
@@ -53,13 +54,13 @@ mkdir -p "${OUTDIR}"
 [[ -s "$INPUTS" ]]  || { echo "[FAIL] missing $INPUTS" >&2; exit 2; }
 [[ -s "$WSOURCE" ]] || { echo "[FAIL] missing $WSOURCE" >&2; exit 2; }
 
-if [[ "${FORCE_RETRAIN:-0}" != "1" && -s "$WEIGHTS" ]]; then
+if [[ "${FORCE_RETRAIN:-0}" != "1" ]] && rg_is_complete "$WEIGHTS"; then
   echo "[nom] weights ${WEIGHTS} already present; skip training (FORCE_RETRAIN=1 to redo)."
 else
   module load tensorflow/2.15.0
   python3 -c "import tensorflow as tf; print('TF',tf.__version__,'GPU',tf.config.list_physical_devices('GPU'))"
   echo "[nom] train $(date -u +%FT%TZ): input=${INPUTS} train=${TRAIN_EVENTS} niter=${NITER} epochs=${EPOCHS} est_seed=${ESTIMATOR_SEED} sub_seed=${SUBSAMPLE_SEED}"
-  python3 pet/minerva_pet_dataloader.py \
+  rg_run "$WEIGHTS" python3 pet/minerva_pet_dataloader.py \
     --inputs "$INPUTS" --mode pointcloud --model pet --smoke --reweight-all \
     --max-events "$TRAIN_EVENTS" --niter "$NITER" --epochs "$EPOCHS" \
     --seed "$SUBSAMPLE_SEED" --estimator-seed "$ESTIMATOR_SEED" \

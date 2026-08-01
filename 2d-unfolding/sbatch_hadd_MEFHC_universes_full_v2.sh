@@ -19,6 +19,7 @@
 
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/2d-unfolding"
 
@@ -32,6 +33,6 @@ if [[ -s "${OUT}" ]]; then
 fi
 
 echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-python uq/hadd_universes_full.py
+rg_run "${OUT}" python uq/hadd_universes_full.py
 echo "[sbatch] done:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 ls -lh "${OUT}"

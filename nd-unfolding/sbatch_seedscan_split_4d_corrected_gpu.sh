@@ -13,8 +13,9 @@
 # Writes ONLY to uq_4d/corrected/. skip-if-exists.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_4d/corrected/seedscan_split_4d
 OUT="uq_4d/corrected/seedscan_split_4d/res_split_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
-python3 seedscan_split.py --npz of_inputs_4d.npz --split-seed ${SLURM_ARRAY_TASK_ID} \
+rg_skip_if_complete "${OUT}" && exit 0
+rg_run "${OUT}" python3 seedscan_split.py --npz of_inputs_4d.npz --split-seed ${SLURM_ARRAY_TASK_ID} \
   --estimator-seed 42 --train-frac 0.8 --iters 5 --out "${OUT}"

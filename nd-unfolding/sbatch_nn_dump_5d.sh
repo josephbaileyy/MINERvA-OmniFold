@@ -7,8 +7,9 @@
 # for the dimension-general C_stat (bootstrap_nd.py) and C_ML (seedscan_split.py).
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
-[[ -s of_inputs_5d.npz ]] && { echo "skip (of_inputs_5d.npz exists)"; exit 0; }
-python3 nn_dump_inputs.py \
+rg_skip_if_complete "of_inputs_5d.npz" && exit 0
+rg_run "of_inputs_5d.npz" python3 nn_dump_inputs.py \
   --omnifile "${REPO}/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root" \
   --axes eavail,q3,W --out of_inputs_5d.npz

@@ -22,6 +22,7 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-128}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 ND="${REPO}/nd-unfolding"
 OMNIFILE="${ND}/runEventLoopOmniFold_4D_MEFHC_universes_full.root"
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
@@ -35,13 +36,13 @@ UNIVERSE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "${LIST}")
 [[ -z "${UNIVERSE}" ]] && { echo "[sbatch] SKIP: index ${SLURM_ARRAY_TASK_ID} beyond list"; exit 0; }
 BAND="${UNIVERSE%:*}"; UIDX="${UNIVERSE#*:}"; TAG="${BAND}_${UIDX}"
 XSEC_OUT="${OUTDIR}/4d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
-[[ -s "${XSEC_OUT}" ]] && { echo "[sbatch] SKIP: ${XSEC_OUT} exists"; exit 0; }
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${OUTDIR}"
 cd "${ND}"
 echo "[sbatch] universe=${UNIVERSE} jobid=${SLURM_JOB_ID} task=${SLURM_ARRAY_TASK_ID} $(date -u +%T)"
-python3 unfold_nd_omnifold_unbinned.py \
+rg_run "${XSEC_OUT}" python3 unfold_nd_omnifold_unbinned.py \
     --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" \
     --axes eavail,q3 --iters 5 --use-weights --estimator lgbm --seed 42 \
     --universe "${UNIVERSE}" --out "${XSEC_OUT}"

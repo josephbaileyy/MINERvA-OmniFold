@@ -11,8 +11,9 @@
 # pc dump).
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
-[[ -s of_inputs_5d_fps_full.npz ]] && { echo "skip (exists)"; exit 0; }
-python3 nn_dump_inputs.py \
+rg_skip_if_complete "of_inputs_5d_fps_full.npz" && exit 0
+rg_run "of_inputs_5d_fps_full.npz" python3 nn_dump_inputs.py \
   --omnifile "${REPO}/nd-unfolding/runEventLoopOmniFold_PC_FPS_MEFHC.root" \
   --axes eavail,q3,W --out of_inputs_5d_fps_full.npz

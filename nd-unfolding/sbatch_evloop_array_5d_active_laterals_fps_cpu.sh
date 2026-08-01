@@ -28,6 +28,7 @@
 # =====================================================================================
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 
@@ -50,7 +51,7 @@ OUTDIR="${REPO}/nd-unfolding/active_universe_5d/${MODE}/${BAND}_${ENDPOINT}"
 WORKDIR="${REPO}/nd-unfolding/evloop_work_5d_active_${MODE}_${BAND}_${ENDPOINT}_${PL}"
 mkdir -p "${OUTDIR}" "${REPO}/nd-unfolding/active_universe_5d/${MODE}/logs" "${WORKDIR}"
 FINAL="${OUTDIR}/runEventLoopOmniFold_5D_${PL}_active_${BAND}_${ENDPOINT}.root"
-[[ -s "${FINAL}" ]] && { echo "[active-fps] skip (exists) ${FINAL}"; exit 0; }
+rg_skip_if_complete "${FINAL}" && exit 0
 
 DATA_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
 MC_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
@@ -68,5 +69,5 @@ cd "${WORKDIR}"
 echo "[active-fps] task=${TASK} playlist=${PL} universe=${MNV101_ACTIVE_UNIVERSE} mode=${MODE} pointcloud=1"
 echo "[active-fps] binary=${EVLOOP_BIN} ($(stat -c '%y' "${EVLOOP_BIN}"))"
 "${EVLOOP_BIN}" "${DATA_MANIFEST}" "${MC_MANIFEST}"
-mv -v runEventLoopOmniFold.root "${FINAL}"
+rg_publish runEventLoopOmniFold.root "${FINAL}"   # atomic mv + completion marker
 echo "[active-fps] wrote ${FINAL}"

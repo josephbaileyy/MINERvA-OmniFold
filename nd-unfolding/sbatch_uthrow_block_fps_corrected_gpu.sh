@@ -16,19 +16,20 @@
 # High --nice yields to PET(B)/4D(D). Non-destructive: uq_fps/corrected/uthrow_slabs_fps_neutral/.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_fps/corrected/uthrow_slabs_fps_neutral
 T=${SLURM_ARRAY_TASK_ID}
 KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES" "MFP_N,MvRES" "Rvn2pi,Rvp2pi")
 OUT="uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_${T}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
+rg_skip_if_complete "${OUT}" && exit 0
 if (( T <= 5 )); then
   echo "[blkfpsC] task=$T knobs=${KNOBS[$T]} $(date -u '+%F %T UTC')"
-  python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
+  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
       --block-knobs "${KNOBS[$T]}" --out "${OUT}"
 else
   LO=$(( (T-6)*5 )); HI=$(( LO+4 ))
   echo "[blkfpsC] task=$T flux=${LO}-${HI} $(date -u '+%F %T UTC')"
-  python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
+  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
       --block-knobs "" --block-flux "${LO}-${HI}" --out "${OUT}"
 fi
 echo "[blkfpsC] task=$T done $(date -u '+%F %T UTC')"

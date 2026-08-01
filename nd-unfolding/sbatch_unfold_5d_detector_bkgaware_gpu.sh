@@ -19,6 +19,7 @@ export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"; cd "${ND}"
 OMNIFILE="${ND}/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root"
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
@@ -29,9 +30,9 @@ mkdir -p "${OUTDIR}"
 
 if [[ "${SLURM_ARRAY_TASK_ID}" -eq 0 ]]; then
   XSEC_OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
-  [[ -s "${XSEC_OUT}" ]] && { echo "[det-bkg] SKIP: CV exists"; exit 0; }
+  rg_skip_if_complete "${XSEC_OUT}" && exit 0
   echo "[det-bkg] MATCHED CV node=$(hostname) $(date -u '+%F %T UTC')"
-  python3 unfold_nd_omnifold_unbinned.py \
+  rg_run "${XSEC_OUT}" python3 unfold_nd_omnifold_unbinned.py \
       --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" \
       --axes eavail,q3,W --iters 5 --use-weights --estimator lgbm --seed 42 \
       --closure-slack 5000 \
@@ -43,9 +44,9 @@ UNIVERSE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "${LIST}")
 [[ -z "${UNIVERSE}" ]] && { echo "[det-bkg] SKIP: index ${SLURM_ARRAY_TASK_ID} beyond list"; exit 0; }
 BAND="${UNIVERSE%:*}"; UIDX="${UNIVERSE#*:}"; TAG="${BAND}_${UIDX}"
 XSEC_OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
-[[ -s "${XSEC_OUT}" ]] && { echo "[det-bkg] SKIP: ${XSEC_OUT} exists"; exit 0; }
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 echo "[det-bkg] universe=${UNIVERSE} node=$(hostname) task=${SLURM_ARRAY_TASK_ID} $(date -u '+%F %T UTC')"
-python3 unfold_nd_omnifold_unbinned.py \
+rg_run "${XSEC_OUT}" python3 unfold_nd_omnifold_unbinned.py \
     --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" \
     --axes eavail,q3,W --iters 5 --use-weights --estimator lgbm --seed 42 \
     --closure-slack 5000 \

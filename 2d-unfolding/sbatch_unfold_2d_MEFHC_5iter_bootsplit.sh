@@ -36,6 +36,7 @@ STREAM=${STREAM:?must set STREAM=data or STREAM=mc via --export=ALL,STREAM=...}
 case "${STREAM}" in data|mc) ;; *) echo "bad STREAM=${STREAM}"; exit 1;; esac
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 DOCS="${REPO}/2d-unfolding"
 OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
 FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
@@ -43,10 +44,7 @@ SEED=${SLURM_ARRAY_TASK_ID}
 OUTDIR="${DOCS}/uq/boot_${STREAM}"
 XSEC_OUT="${OUTDIR}/2d_xsec_MEFHC_5iter_lgbm_boot${SEED}.root"
 
-if [[ -s "${XSEC_OUT}" ]]; then
-  echo "[sbatch] SKIP: ${XSEC_OUT} already on disk (seed=${SEED})"
-  exit 0
-fi
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${OUTDIR}"
@@ -55,7 +53,7 @@ cd "${DOCS}"
 echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID} task=${SLURM_ARRAY_TASK_ID} stream=${STREAM}"
 echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')  seed=${SEED}  out=${XSEC_OUT}"
 
-python unfold_2d_omnifold_unbinned.py \
+rg_run "${XSEC_OUT}" python unfold_2d_omnifold_unbinned.py \
   --omnifile          "${OMNIFILE}" \
   --mcfile            "${FLUX_MC}" \
   --iters             5 \

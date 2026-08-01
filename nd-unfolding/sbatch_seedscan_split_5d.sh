@@ -7,7 +7,8 @@
 # C_ML (train/test-split seedscan) for 5D: dimension-general seedscan_split.py on of_inputs_5d.npz.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p seedscan_split_5d
-[[ -s "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz" ]] && { echo "skip (exists)"; exit 0; }
-python3 seedscan_split.py --npz of_inputs_5d.npz --split-seed ${SLURM_ARRAY_TASK_ID} \
+rg_skip_if_complete "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz" && exit 0
+rg_run "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz" python3 seedscan_split.py --npz of_inputs_5d.npz --split-seed ${SLURM_ARRAY_TASK_ID} \
   --train-frac 0.8 --iters 5 --out seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz

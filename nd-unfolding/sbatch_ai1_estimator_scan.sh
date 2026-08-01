@@ -15,10 +15,11 @@ export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=12 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold; source "$REPO/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 cd "$REPO/nd-unfolding"
 OUT="boot_nd_5d_ai1/res_ai1_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "$OUT" ]] && { echo "[ai1] skip ${SLURM_ARRAY_TASK_ID} (exists)"; exit 0; }
+rg_skip_if_complete "$OUT" && exit 0
 echo "[ai1] est-seed=${SLURM_ARRAY_TASK_ID} fixed-data-seed=0 start $(date -u +%T) on $(hostname)"
-python3 bootstrap_nd.py --npz of_inputs_5d.npz --seed ${SLURM_ARRAY_TASK_ID} \
+rg_run "$OUT" python3 bootstrap_nd.py --npz of_inputs_5d.npz --seed ${SLURM_ARRAY_TASK_ID} \
   --fixed-data-seed 0 --iters 5 --out "$OUT"
 echo "[ai1] done ${SLURM_ARRAY_TASK_ID} $(date -u +%T)"

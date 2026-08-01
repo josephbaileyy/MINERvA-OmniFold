@@ -10,12 +10,13 @@
 # 12 reweight knobs + 1 sampled flux universe and re-unfolding on the extended grid.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_fps/uthrow_slabs_fps
 THROWS_PER="${THROWS_PER:-8}"
 OFF=$(( SLURM_ARRAY_TASK_ID * THROWS_PER ))
-[[ -s "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz" ]] && { echo "skip (exists)"; exit 0; }
+rg_skip_if_complete "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz" && exit 0
 echo "[uthrowfps] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+THROWS_PER-1)) $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
+rg_run "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz" python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
     --seed 1000 --bank bank_uthrow_fps --iters 5 \
     --out "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz"
 echo "[uthrowfps] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

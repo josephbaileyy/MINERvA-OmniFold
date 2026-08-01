@@ -46,6 +46,7 @@
 set -eo pipefail
 
 REPO="${REPO:-$HOME/MINERvA-OmniFold}"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 SIF="${SIF:-$HOME/tf215.sif}"                  # NOTE: filename says 215, contents are TF 2.14.0
 WORK="${WORK:-/work/nvme/bhvk/$USER/hostmem}"
 # First rung is a deliberately tiny self-validation: the whole path (fixture ->
@@ -91,11 +92,11 @@ for N_SIG in ${RUNGS}; do
 
     echo "[hostmem] ---- rung ${TAG}: sig=${N_SIG} data=${N_DATA} bkg=${N_BKG} ----"
 
-    if [ -s "${FIX}" ]; then
+    if rg_is_complete "${FIX}"; then
         echo "[hostmem] fixture exists, reusing: ${FIX}"
     else
         echo "[hostmem] generating fixture (compressed npz; this is the slow part)"
-        /usr/bin/time -v ${RUN} python3 make_synthetic_g2_fullevent.py \
+        rg_run "${FIX}" /usr/bin/time -v ${RUN} python3 make_synthetic_g2_fullevent.py \
             --out "${FIX}" --n-sig "${N_SIG}" --n-data "${N_DATA}" --n-bkg "${N_BKG}" \
             --tokens "${TOKENS}" --seed 0 \
             --receipt "${FIX%.npz}_RECEIPT.json" 2>&1 | grep -E "Maximum resident|Elapsed|^\[" || true

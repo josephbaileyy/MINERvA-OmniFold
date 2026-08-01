@@ -31,6 +31,7 @@ set -o pipefail   # NOT set -u: setup_MAT.sh references unset vars under nounset
 export HOME=/global/homes/j/josephrb
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 
@@ -52,9 +53,7 @@ if [[ "${FPS:-0}" == "1" ]]; then export MNV101_FULL_PHASE_SPACE=1; MODE=fps; el
 OUTDIR="${REPO}/nd-unfolding/active_universe_5d/${MODE}/${BAND}_${ENDPOINT}"
 FINAL="${OUTDIR}/runEventLoopOmniFold_5D_${PL}_active_${BAND}_${ENDPOINT}.root"
 mkdir -p "${OUTDIR}"
-if [[ -s "${FINAL}" ]]; then
-  echo "[active] SKIP task=${TASK} ${BAND}:${ENDPOINT} ${PL} exists ($(stat -c '%s' "${FINAL}") bytes)"; exit 0
-fi
+rg_skip_if_complete "${FINAL}" && exit 0
 
 # unique workdir per batch task so a concurrent interactive orchestrator (which
 # uses the un-suffixed name) can never collide on rm -rf / cwd for the same unit.
@@ -65,6 +64,6 @@ MC="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
 BIN="${REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
 echo "[active] task=${TASK} ${BAND}:${ENDPOINT} ${PL} pointcloud=1 md5=$(md5sum "${BIN}"|cut -d' ' -f1)"
 "${BIN}" "${DATA}" "${MC}"
-mv -v runEventLoopOmniFold.root "${FINAL}"
+rg_publish runEventLoopOmniFold.root "${FINAL}"   # atomic mv + completion marker
 echo "[active] wrote ${FINAL} ($(stat -c '%s' "${FINAL}") bytes)"
 cd "${REPO}" && rm -rf "${WORKDIR}"

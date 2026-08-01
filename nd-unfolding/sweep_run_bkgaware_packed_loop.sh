@@ -11,6 +11,7 @@ set -o pipefail
 export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "$REPO/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=12 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
@@ -26,9 +27,9 @@ for i in "${!UNIS[@]}"; do
   U="${UNIS[$i]}"; [[ -z "$U" ]] && continue
   TAG="${U%:*}_${U#*:}"
   out="$OUTDIR/5d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
-  [[ -s "$out" ]] && continue
+  rg_skip_if_complete "$out" && continue
   while [ "$(jobs -rp | wc -l)" -ge "$CONC" ]; do sleep 10; done
-  python3 sweep_bank_5d.py --run --universe "$U" --bankdir "$BANKDIR" \
+  rg_run "$out" python3 sweep_bank_5d.py --run --universe "$U" --bankdir "$BANKDIR" \
     --outdir "$OUTDIR" --iters 5 > "$OUTDIR/isweeprun_${TAG}.log" 2>&1 &
 done
 wait

@@ -21,6 +21,7 @@ THREADS=$((TOTAL_CPUS / WIDTH))
 TS=$(date +%Y%m%d_%H%M%S)
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 DOCS="${REPO}/2d-unfolding"
 OUTDIR="${DOCS}/seedscan_lgbm"
 mkdir -p "${OUTDIR}"
@@ -40,14 +41,11 @@ run_trial() {
   local SEED=$1
   local LOG="${OUTDIR}/seed${SEED}_${TS}.log"
   local OUT="${OUTDIR}/2d_xsec_MEFHC_5iter_lgbm_seed${SEED}.root"
-  if [[ -s "${OUT}" ]]; then
-    echo "[trial seed=${SEED}] SKIP: ${OUT} already on disk" | tee "${LOG}"
-    return 0
-  fi
+  rg_skip_if_complete "${OUT}" && return 0
   {
     echo "[trial seed=${SEED}] start: $(date -u '+%H:%M:%S UTC')"
     T0=$(date +%s)
-    srun --jobid="${JOBID}" --overlap -n 1 --cpus-per-task="${THREADS}" bash -lc "
+    rg_run "${OUT}" srun --jobid="${JOBID}" --overlap -n 1 --cpus-per-task="${THREADS}" bash -lc "
       set -eo pipefail
       export PYTHONUNBUFFERED=1
       export OMP_NUM_THREADS=${THREADS}

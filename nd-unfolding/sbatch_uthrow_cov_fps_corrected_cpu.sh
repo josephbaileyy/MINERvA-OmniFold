@@ -16,12 +16,13 @@
 # to PET(B)/4D(D). Non-destructive: uq_fps/corrected/uthrow_slabs_fps_neutral/.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_fps/corrected/uthrow_slabs_fps_neutral
 THROWS_PER="${THROWS_PER:-4}"
 OFF=$(( SLURM_ARRAY_TASK_ID * THROWS_PER ))
 OUT="uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
+rg_skip_if_complete "${OUT}" && exit 0
 echo "[uthrowfpsC] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+THROWS_PER-1)) $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
+rg_run "${OUT}" python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
     --seed 1000 --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --out "${OUT}"
 echo "[uthrowfpsC] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

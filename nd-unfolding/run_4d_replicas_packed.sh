@@ -9,6 +9,7 @@
 set -o pipefail
 export HOME=/global/homes/j/josephrb      # school-acct conda-by-prefix trap (salloc has no --export)
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1
 cd "${REPO}/nd-unfolding"
@@ -27,15 +28,15 @@ run_one() {
   if [ "$kind" = boot ]; then
     out="uq_4d/corrected/boot_nd_4d/res_boot_${id}.npz"
     log="uq_4d/corrected/logs/pk_boot_${id}.log"
-    [ -s "$out" ] && { echo "[skip] boot $id"; return 0; }
-    srun --overlap --exact -n1 -c"$CPT" --gres=none \
+    rg_skip_if_complete "$out" && return 0
+    rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
       python3 bootstrap_nd.py --npz of_inputs_4d.npz --seed "$id" \
         --estimator-seed 42 --iters 5 --out "$out" > "$log" 2>&1
   else
     out="uq_4d/corrected/seedscan_split_4d/res_split_${id}.npz"
     log="uq_4d/corrected/logs/pk_ssp_${id}.log"
-    [ -s "$out" ] && { echo "[skip] ssp $id"; return 0; }
-    srun --overlap --exact -n1 -c"$CPT" --gres=none \
+    rg_skip_if_complete "$out" && return 0
+    rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
       python3 seedscan_split.py --npz of_inputs_4d.npz --split-seed "$id" \
         --estimator-seed 42 --train-frac 0.8 --iters 5 --out "$out" > "$log" 2>&1
   fi

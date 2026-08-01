@@ -8,7 +8,8 @@
 # FPS statistical bootstrap (C_stat): 100 Poisson replicas on the extended grid.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p boot_nd_fps
-[[ -s "boot_nd_fps/res_boot_${SLURM_ARRAY_TASK_ID}.npz" ]] && { echo "skip (exists)"; exit 0; }
-python3 bootstrap_nd.py --npz of_inputs_fps.npz --seed ${SLURM_ARRAY_TASK_ID} \
+rg_skip_if_complete "boot_nd_fps/res_boot_${SLURM_ARRAY_TASK_ID}.npz" && exit 0
+rg_run "boot_nd_fps/res_boot_${SLURM_ARRAY_TASK_ID}.npz" python3 bootstrap_nd.py --npz of_inputs_fps.npz --seed ${SLURM_ARRAY_TASK_ID} \
   --iters 5 --out boot_nd_fps/res_boot_${SLURM_ARRAY_TASK_ID}.npz

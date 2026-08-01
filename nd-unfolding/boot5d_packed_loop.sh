@@ -11,6 +11,7 @@ set -o pipefail
 export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "$REPO/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=12 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
@@ -20,9 +21,9 @@ echo "[boot5dI proc ${PROCID}/${NPROC}] start $(date -u +%T) on $(hostname); ban
 for s in $(seq 100 -1 1); do
   (( (s-1) % NPROC == PROCID )) || continue          # this node's disjoint slice
   out=boot_nd_5d/res_boot_${s}.npz
-  [[ -s "$out" ]] && continue
+  rg_skip_if_complete "$out" && continue
   while [ "$(jobs -rp | wc -l)" -ge "$CONC" ]; do sleep 10; done
-  python3 bootstrap_nd.py --npz of_inputs_5d.npz --seed ${s} --iters 5 --out "$out" \
+  rg_run "$out" python3 bootstrap_nd.py --npz of_inputs_5d.npz --seed ${s} --iters 5 --out "$out" \
     > boot_nd_5d/iboot_${s}.log 2>&1 &
 done
 wait

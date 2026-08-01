@@ -11,6 +11,7 @@ set -o pipefail
 export HOME=/global/homes/j/josephrb
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 ND="${REPO}/nd-unfolding"
 BIN="${REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
@@ -28,13 +29,13 @@ for BAND in "${BANDS[@]}"; do
     mkdir -p "${OUTDIR}"
     for PL in "${PLAYLISTS[@]}"; do
       FINAL="${OUTDIR}/runEventLoopOmniFold_5D_${PL}_active_${BAND}_${EP}.root"
-      [[ -s "${FINAL}" ]] && continue
+      rg_skip_if_complete "${FINAL}" && continue
       while [ "$(jobs -rp | wc -l)" -ge "$MAX" ]; do sleep 8; done
       W="${ND}/evloop_work_5d_active_${MODE}_${BAND}_${EP}_${PL}"
       D="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
       M="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
       FPSENV=""; [[ "${MODE}" == "fps" ]] && FPSENV="export MNV101_FULL_PHASE_SPACE=1;"
-      srun --overlap --exact --gres=none -n1 -c"${CPT}" bash -lc "
+      rg_run "${FINAL}" srun --overlap --exact --gres=none -n1 -c"${CPT}" bash -lc "
         export HOME=/global/homes/j/josephrb
         source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1
         export MNV101_ACTIVE_UNIVERSE='${BAND}:${EP}' MNV101_DUMP_POINTCLOUD=1 PYTHONUNBUFFERED=1

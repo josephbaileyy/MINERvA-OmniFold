@@ -10,19 +10,20 @@
 # (flux 0..99). skip-if-exists. uq_4d/corrected/.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=16 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 cd "${REPO}/nd-unfolding"; mkdir -p uq_4d/corrected/uthrow_slabs_4d
 T=${SLURM_ARRAY_TASK_ID}
 OUT="uq_4d/corrected/uthrow_slabs_4d/block4d_${T}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
+rg_skip_if_complete "${OUT}" && exit 0
 COMMON=(--blockunits --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --seed 1000 --invalid-ratio neutral --out "$OUT")
 if [ "$T" -lt 6 ]; then
   KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES" "MFP_N,MvRES" "Rvn2pi,Rvp2pi")
   echo "[blk4dCc] task=$T knobs=${KNOBS[$T]} $(date -u '+%F %T')"
-  python3 unified_throw_cov.py "${COMMON[@]}" --block-knobs "${KNOBS[$T]}"
+  rg_run "$OUT" python3 unified_throw_cov.py "${COMMON[@]}" --block-knobs "${KNOBS[$T]}"
 else
   lo=$(( (T-6)*5 )); hi=$(( lo+4 ))
   echo "[blk4dCc] task=$T flux=${lo}-${hi} $(date -u '+%F %T')"
-  python3 unified_throw_cov.py "${COMMON[@]}" --block-knobs none --block-flux "${lo}-${hi}"
+  rg_run "$OUT" python3 unified_throw_cov.py "${COMMON[@]}" --block-knobs none --block-flux "${lo}-${hi}"
 fi
 echo "[blk4dCc] task=$T done $(date -u '+%F %T')"

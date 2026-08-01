@@ -9,6 +9,7 @@ set -o pipefail
 export HOME=/global/homes/j/josephrb
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 ND="${REPO}/nd-unfolding"
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 CONC="${CONC:-6}"; CPT="${CPT:-20}"
@@ -29,10 +30,10 @@ for BAND in "${BANDS[@]}"; do
   for EP in 0 1; do
     MERGED="${MERGEDIR}/runEventLoopOmniFold_5D_MEFHC_active_${BAND}_${EP}.root"
     OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${BAND}_${EP}.root"
-    if [[ -s "${OUT}" ]]; then echo "[p4-unfold] SKIP ${BAND}:${EP} (exists)"; continue; fi
+    rg_skip_if_complete "${OUT}" && continue
     if [[ ! -s "${MERGED}" ]]; then echo "[p4-unfold] WAIT ${BAND}:${EP} merged ROOT absent"; continue; fi
     while [ "$(jobs -rp | wc -l)" -ge "$CONC" ]; do sleep 8; done
-    srun --overlap --exact --gres=none -n1 -c"${CPT}" bash -lc "
+    rg_run "${OUT}" srun --overlap --exact --gres=none -n1 -c"${CPT}" bash -lc "
       export HOME=/global/homes/j/josephrb OMP_NUM_THREADS=${CPT}
       source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1
       cd '${ND}'

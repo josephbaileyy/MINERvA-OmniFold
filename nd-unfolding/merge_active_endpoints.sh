@@ -9,6 +9,7 @@ set -o pipefail
 export HOME=/global/homes/j/josephrb/
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 ND="${REPO}/nd-unfolding"
 source "${REPO}/setup_salloc_env.sh" >/dev/null 2>&1
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
@@ -29,9 +30,7 @@ for BAND in "${BANDS[@]}"; do
   for EP in 0 1; do
     OUTDIR="${ND}/active_universe_5d/${MODE}/${BAND}_${EP}"
     MERGED="${MERGEDIR}/runEventLoopOmniFold_5D_MEFHC_active_${BAND}_${EP}.root"
-    if [[ -s "${MERGED}" ]]; then
-      echo "[merge] SKIP ${BAND}:${EP} merged exists ($(stat -c '%s' "${MERGED}") bytes)"; continue
-    fi
+    rg_skip_if_complete "${MERGED}" && continue
     INPUTS=(); MISS=0
     for PL in "${PLAYLISTS[@]}"; do
       f="${OUTDIR}/runEventLoopOmniFold_5D_${PL}_active_${BAND}_${EP}.root"
@@ -41,7 +40,7 @@ for BAND in "${BANDS[@]}"; do
       echo "[merge] WAIT ${BAND}:${EP} only $((12-MISS))/12 playlists present; skipping"; continue
     fi
     echo "[merge] ${BAND}:${EP} -> ${MERGED} (12 inputs)"
-    if python "${REPO}/2d-unfolding/uq/hadd_universes_full.py" "${MERGED}" "${INPUTS[@]}" > "${MERGEDIR}/merge_${BAND}_${EP}.log" 2>&1; then
+    if rg_run "${MERGED}" python "${REPO}/2d-unfolding/uq/hadd_universes_full.py" "${MERGED}" "${INPUTS[@]}" > "${MERGEDIR}/merge_${BAND}_${EP}.log" 2>&1; then
       echo "[merge] DONE ${BAND}:${EP} ($(stat -c '%s' "${MERGED}") bytes)"
     else
       echo "[merge] FAIL ${BAND}:${EP} (see ${MERGEDIR}/merge_${BAND}_${EP}.log)"; rm -f "${MERGED}"

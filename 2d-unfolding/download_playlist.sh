@@ -12,9 +12,10 @@
 #      /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/
 #      named ${PLAYLIST}_MC.txt and ${PLAYLIST}_Data.txt for the event loop.
 #
-# Resumable: if the local file already exists and has non-zero size, skip it.
-# (Size-vs-remote check is expensive over xrootd; re-downloading a truncated
-# file is the pathological case. Pass --force to re-download everything.)
+# Resumable: skips a file only if a completion marker records that ITS OWN xrdcp
+# returned 0. The previous rule was "exists and has non-zero size", whose own comment
+# named the hole -- a truncated transfer is nonempty, so it was skipped forever
+# (BEN-023 / AUDIT-FINDINGS-20260731 J35). Pass --force to re-download everything.
 
 set -euo pipefail
 
@@ -25,6 +26,8 @@ REMOTE_HOST="root://fndca1.fnal.gov:1095"
 REMOTE_BASE="/pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC"
 LOCAL_BASE="/pscratch/sd/j/josephrb/minerva/minerva_large_files"
 MANIFEST_DIR="/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests"
+REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 
 MC_REMOTE="${REMOTE_BASE}/MC/StandardMC/Playlist${PLAYLIST}"
 DATA_REMOTE="${REMOTE_BASE}/Data/Playlist${PLAYLIST}"
@@ -61,12 +64,12 @@ download_dir() {
         fname=$(basename "${remote_path}")
         local local_path="${local_dir}/${fname}"
 
-        if [[ -s "${local_path}" && "${FORCE}" != "--force" ]]; then
+        if rg_is_complete "${local_path}" && [[ "${FORCE}" != "--force" ]]; then
             n_skipped=$((n_skipped + 1))
         else
             # -f: force overwrite;  -N: no checksum
             # (omit --parallel: xrdcp picks a sensible default; -N speeds this up)
-            xrdcp -f -N "${REMOTE_HOST}${remote_path}" "${local_path}"
+            rg_run "${local_path}" xrdcp -f -N "${REMOTE_HOST}${remote_path}" "${local_path}"
             n_downloaded=$((n_downloaded + 1))
         fi
 

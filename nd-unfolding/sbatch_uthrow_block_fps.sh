@@ -10,13 +10,14 @@
 # unified throw): 6 tasks x (2 knobs + 2 flux) = 12 knobs + 12 flux. Mirrors 4D.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_fps/uthrow_slabs_fps
 T=${SLURM_ARRAY_TASK_ID}
 KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES" "MFP_N,MvRES" "Rvn2pi,Rvp2pi")
 FLUX=("0-1" "2-3" "4-5" "6-7" "8-9" "10-11")
-[[ -s "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" ]] && { echo "skip (exists)"; exit 0; }
+rg_skip_if_complete "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" && exit 0
 echo "[blkfps] task=$T knobs=${KNOBS[$T]} flux=${FLUX[$T]} $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --seed 1000 \
+rg_run "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --seed 1000 \
     --block-knobs "${KNOBS[$T]}" --block-flux "${FLUX[$T]}" \
     --out "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz"
 echo "[blkfps] task=$T done $(date -u '+%F %T UTC')"

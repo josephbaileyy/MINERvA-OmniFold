@@ -10,12 +10,13 @@
 # atomic-saves each throw. Reads the from-5D-assembled bank_uthrow_4d. uq_4d/corrected/.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=16 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 cd "${REPO}/nd-unfolding"; mkdir -p uq_4d/corrected/uthrow_slabs_4d
 TPT=4; OFF=$(( SLURM_ARRAY_TASK_ID * TPT ))
 OUT="uq_4d/corrected/uthrow_slabs_4d/uthrow4d_slab_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
+rg_skip_if_complete "${OUT}" && exit 0
 echo "[uthr4dCc] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+TPT-1)) $(date -u '+%F %T')"
-python3 unified_throw_cov.py --throws ${TPT} --throw-offset ${OFF} \
+rg_run "${OUT}" python3 unified_throw_cov.py --throws ${TPT} --throw-offset ${OFF} \
     --seed 1000 --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --invalid-ratio neutral \
     --out "${OUT}"

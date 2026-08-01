@@ -16,6 +16,7 @@
 set -eo pipefail
 export HOME=/global/homes/j/josephrb          # school-account HOME fix (see INCIDENT 2026-07-11)
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1
 cd "${REPO}/nd-unfolding"
@@ -23,7 +24,7 @@ cd "${REPO}/nd-unfolding"
 OUT="of_inputs_pc_fullcloud_bkgsub_5d.npz"
 FORCE_REBUILD="${FORCE_REBUILD:-0}"
 MODE_ARGS=""
-if [[ -s "${OUT}" && "${FORCE_REBUILD}" != "1" ]]; then
+if rg_is_complete "${OUT}" && [[ "${FORCE_REBUILD}" != "1" ]]; then
   echo "[bkgsub] ${OUT} already present; re-running gates only (--check-only). Set FORCE_REBUILD=1 to rebuild."
   MODE_ARGS="--check-only"
 fi
@@ -37,7 +38,13 @@ echo "[bkgsub] remediation suite (informational)"
 python3 -m unittest tests.test_uq_remediation -v || echo "[WARN] remediation suite had failures/errors (informational, does not block Phase-1 build)"
 
 echo "[bkgsub] start $(date -u +%FT%TZ)"
-python3 pet/build_bkgsub_pointcloud_input.py ${MODE_ARGS}
+# --check-only re-runs the gates against an existing product and writes nothing, so it
+# must not re-stamp the marker; only a real build publishes one.
+if [[ -n "${MODE_ARGS}" ]]; then
+  python3 pet/build_bkgsub_pointcloud_input.py ${MODE_ARGS}
+else
+  rg_run "${OUT}" python3 pet/build_bkgsub_pointcloud_input.py
+fi
 echo "[bkgsub] done $(date -u +%FT%TZ)"
 ls -lh "${OUT}" 2>/dev/null || echo "[bkgsub] (check-only: no npz built this run)"
 ls -lh products/pet/bkgsub/ 2>/dev/null || true

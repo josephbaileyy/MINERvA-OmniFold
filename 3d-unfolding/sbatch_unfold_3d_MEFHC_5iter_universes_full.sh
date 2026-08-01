@@ -31,6 +31,7 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-128}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 D3="${REPO}/3d-unfolding"
 OMNIFILE="${D3}/runEventLoopOmniFold_MEFHC_3D_universes_full.root"
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
@@ -57,10 +58,7 @@ BAND="${UNIVERSE%:*}"
 UIDX="${UNIVERSE#*:}"
 TAG="${BAND}_${UIDX}"
 XSEC_OUT="${OUTDIR}/3d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
-if [[ -s "${XSEC_OUT}" ]]; then
-  echo "[sbatch] SKIP: ${XSEC_OUT} already on disk"
-  exit 0
-fi
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${OUTDIR}"
@@ -73,7 +71,7 @@ echo "[sbatch] universe: ${UNIVERSE} (tag=${TAG})"
 echo "[sbatch] omnifile: ${OMNIFILE}"
 echo "[sbatch] xsec out: ${XSEC_OUT}"
 
-python unfold_3d_omnifold_unbinned.py \
+rg_run "${XSEC_OUT}" python unfold_3d_omnifold_unbinned.py \
   --omnifile  "${OMNIFILE}" \
   --mcfile    "${FLUX_MC}" \
   --iters     5 \

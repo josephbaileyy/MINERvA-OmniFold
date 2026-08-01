@@ -3,14 +3,17 @@
 # sweep_bank --run has skip-if-exists, so it only does the remaining universes and is
 # safe to re-run across salloc windows.
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 echo "[q3-inside] SLURM_JOB_ID=$SLURM_JOB_ID node=$(hostname) start $(date -u +%H:%M:%S)"
 MAX=10
 while read U; do
   [ -z "$U" ] && continue
   TAG="${U/:/_}"
-  [ -s "${REPO}/nd-unfolding/uq_4d/universe_sweep/4d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root" ] && continue
+  OUT="${REPO}/nd-unfolding/uq_4d/universe_sweep/4d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
+  rg_skip_if_complete "$OUT" && continue
   while [ "$(jobs -rp | wc -l)" -ge "$MAX" ]; do sleep 5; done
-  srun --overlap --exact -n1 -c12 bash -lc \
+  # rg_run wraps the OUTER srun: the inner `bash -lc` never sourced the library.
+  rg_run "$OUT" srun --overlap --exact -n1 -c12 bash -lc \
     "source '${REPO}/setup_salloc_env.sh' >/dev/null 2>&1; export OMP_NUM_THREADS=12; cd '${REPO}/nd-unfolding' && python3 sweep_bank.py --run --universe '$U' --bankdir bank_sweep --iters 5 >/dev/null 2>&1 && echo '[done] $U'" &
 done < "${REPO}/nd-unfolding/uq_4d/vertical_universes.txt"
 wait

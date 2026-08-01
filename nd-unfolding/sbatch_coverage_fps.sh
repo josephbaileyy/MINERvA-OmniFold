@@ -10,8 +10,9 @@
 # published/extension region split: fps_extension_validation.py --toys-glob.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p cov_fps
 OUT="cov_fps/res_toy_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists)"; exit 0; }
-python3 coverage_toy_nd.py --npz of_inputs_fps.npz \
+rg_skip_if_complete "${OUT}" && exit 0
+rg_run "${OUT}" python3 coverage_toy_nd.py --npz of_inputs_fps.npz \
   --seed $((SLURM_ARRAY_TASK_ID + 1000)) --iters 5 --out "${OUT}"

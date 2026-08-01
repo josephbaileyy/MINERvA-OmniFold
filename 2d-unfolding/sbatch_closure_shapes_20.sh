@@ -24,6 +24,7 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-128}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 DOCS="${REPO}/2d-unfolding"
 
 # 20 shape configurations: 16 gauss_pt (4 amplitudes x 4 pt0 centers,
@@ -59,10 +60,7 @@ IFS='|' read -r SHAPE AMPL SIGMA PT0 ALPHA PZREF <<< "${SPEC}"
 XSEC_OUT="${DOCS}/uq/closure/2d_xsec_1A_5iter_lgbm_closure_shape${SLURM_ARRAY_TASK_ID}.root"
 LOG_OUT="${DOCS}/uq/closure/closure_shape${SLURM_ARRAY_TASK_ID}_$(date +%Y%m%d_%H%M%S).log"
 
-if [[ -s "${XSEC_OUT}" ]]; then
-  echo "[sbatch] SKIP: ${XSEC_OUT} already on disk"
-  exit 0
-fi
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${DOCS}/uq/closure"
@@ -72,7 +70,7 @@ echo "[sbatch] node=$(hostname) jobid=${SLURM_JOB_ID} array_task=${SLURM_ARRAY_T
 echo "[sbatch] shape=${SHAPE} amplitude=${AMPL} sigma=${SIGMA} pt0=${PT0} alpha=${ALPHA} pz_ref=${PZREF}"
 echo "[sbatch] xsec out: ${XSEC_OUT}"
 
-python uq/closure/closure_truth_reweight.py \
+rg_run "${XSEC_OUT}" python uq/closure/closure_truth_reweight.py \
   --shape       "${SHAPE}" \
   --amplitude   "${AMPL}" \
   --sigma       "${SIGMA}" \

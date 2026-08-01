@@ -10,6 +10,7 @@
 set -o pipefail
 export HOME=/global/homes/j/josephrb
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1
 cd "${REPO}/nd-unfolding"
@@ -26,22 +27,22 @@ KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES
 
 run_throw() {   # $1 = task id 0..39
   local T=$1 off=$(( $1 * 4 )) out="$SL/uthrow4d_slab_$1.npz" log="uq_4d/corrected/logs/pk_thr_$1.log"
-  [ -s "$out" ] && { echo "[skip] throw $T"; return 0; }
-  srun --overlap --exact -n1 -c"$CPT" --gres=none \
+  rg_skip_if_complete "$out" && return 0
+  rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
     python3 unified_throw_cov.py --throws 4 --throw-offset "$off" --seed 1000 \
       --bank "$BANK" --iters 5 --invalid-ratio neutral --out "$out" > "$log" 2>&1
   echo "[done] throw $T rc=$?"
 }
 run_block() {   # $1 = block task id 0..25
   local T=$1 out="$SL/block4d_$1.npz" log="uq_4d/corrected/logs/pk_blk_$1.log"
-  [ -s "$out" ] && { echo "[skip] block $T"; return 0; }
+  rg_skip_if_complete "$out" && return 0
   local common=(--blockunits --bank "$BANK" --iters 5 --seed 1000 --invalid-ratio neutral --out "$out")
   if [ "$T" -lt 6 ]; then
-    srun --overlap --exact -n1 -c"$CPT" --gres=none \
+    rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
       python3 unified_throw_cov.py "${common[@]}" --block-knobs "${KNOBS[$T]}" > "$log" 2>&1
   else
     local lo=$(( (T-6)*5 )) hi=$(( (T-6)*5 + 4 ))
-    srun --overlap --exact -n1 -c"$CPT" --gres=none \
+    rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
       python3 unified_throw_cov.py "${common[@]}" --block-knobs none --block-flux "${lo}-${hi}" > "$log" 2>&1
   fi
   echo "[done] block $T rc=$?"

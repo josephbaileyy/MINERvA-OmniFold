@@ -28,6 +28,7 @@
 set -eo pipefail
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/3d-unfolding"
 
@@ -62,7 +63,7 @@ echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 echo "[sbatch] merge ${OUT} <- ${INPUTS[*]}"
 
 # Reuse the generic 300 GB-tree-size Python merger (OUT then INPUTs).
-python "${REPO}/2d-unfolding/uq/hadd_universes_full.py" "${OUT}" "${INPUTS[@]}"
+rg_run "${OUT}" python "${REPO}/2d-unfolding/uq/hadd_universes_full.py" "${OUT}" "${INPUTS[@]}"
 
 echo "[sbatch] done:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 ls -lh "${OUT}"

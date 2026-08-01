@@ -32,16 +32,14 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-128}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 DOCS="${REPO}/2d-unfolding"
 OMNIFILE="${DOCS}/runEventLoopOmniFold_MEFHC.root"
 FLUX_MC="${DOCS}/baseline_flux/runEventLoopMC_MEFHC.root"
 SEED=${SLURM_ARRAY_TASK_ID}
 XSEC_OUT="${DOCS}/uq/2d_xsec_MEFHC_5iter_lgbm_boot${SEED}.root"
 
-if [[ -s "${XSEC_OUT}" ]]; then
-  echo "[sbatch] SKIP: ${XSEC_OUT} already on disk (seed=${SEED})"
-  exit 0
-fi
+rg_skip_if_complete "${XSEC_OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${DOCS}/uq"
@@ -53,7 +51,7 @@ echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 echo "[sbatch] seed:  ${SEED}"
 echo "[sbatch] xsec out: ${XSEC_OUT}"
 
-python unfold_2d_omnifold_unbinned.py \
+rg_run "${XSEC_OUT}" python unfold_2d_omnifold_unbinned.py \
   --omnifile        "${OMNIFILE}" \
   --mcfile          "${FLUX_MC}" \
   --iters           5 \

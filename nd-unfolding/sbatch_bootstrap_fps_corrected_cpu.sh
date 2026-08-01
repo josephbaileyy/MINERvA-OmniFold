@@ -15,8 +15,9 @@
 # Non-destructive: writes uq_fps/corrected/boot_nd_fps/, leaving old boot_nd_fps/ intact.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_fps/corrected/boot_nd_fps
 OUT="uq_fps/corrected/boot_nd_fps/res_boot_${SLURM_ARRAY_TASK_ID}.npz"
-[[ -s "${OUT}" ]] && { echo "skip (exists) ${OUT}"; exit 0; }
-python3 bootstrap_nd.py --npz of_inputs_fps.npz --seed ${SLURM_ARRAY_TASK_ID} \
+rg_skip_if_complete "${OUT}" && exit 0
+rg_run "${OUT}" python3 bootstrap_nd.py --npz of_inputs_fps.npz --seed ${SLURM_ARRAY_TASK_ID} \
   --estimator-seed 42 --iters 5 --out "${OUT}"

@@ -30,6 +30,7 @@ THREADS=$((128 / WIDTH))
 TS=$(date +%Y%m%d_%H%M%S)
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 DOCS="${REPO}/2d-unfolding"
 OUTDIR="${DOCS}/uq"
 mkdir -p "${OUTDIR}"
@@ -104,7 +105,7 @@ for ((i = 0; i < ${#SEEDS[@]}; i += WIDTH)); do
   echo "[boot] batch done ($(date -u '+%H:%M:%S UTC'))"
   for SEED in "${BATCH[@]}"; do
     F="${OUTDIR}/2d_xsec_${DSET}_5iter_${EST}_boot${SEED}.root"
-    if [[ -s "${F}" ]]; then
+    if rg_is_complete "${F}"; then
       echo "  [ok] boot=${SEED} -> ${F##*/} ($(du -h "${F}" | cut -f1))"
     else
       echo "  [MISSING] boot=${SEED}"

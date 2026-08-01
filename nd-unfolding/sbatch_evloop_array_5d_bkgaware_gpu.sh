@@ -17,12 +17,13 @@ set -eo pipefail
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 PL="${PLAYLISTS[$((SLURM_ARRAY_TASK_ID - 1))]}"
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"
 export MNV101_DUMP_UNIVERSES="1"
 export PYTHONUNBUFFERED=1
 EVLOOP_BIN="${REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
 FINAL="${REPO}/nd-unfolding/runEventLoopOmniFold_5D_${PL}_universes_full_bkgaware.root"
-[[ -s "${FINAL}" ]] && { echo "[ev-bkg] skip ${PL} (exists)"; exit 0; }
+rg_skip_if_complete "${FINAL}" && exit 0
 WORKDIR="${REPO}/nd-unfolding/evloop_work_5d_uni_bkgaware_${PL}"
 mkdir -p "${WORKDIR}"; cd "${WORKDIR}"
 DATA_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_Data.txt"
@@ -30,5 +31,5 @@ MC_MANIFEST="${REPO}/2d-unfolding/playlist_manifests/${PL}_MC.txt"
 echo "[ev-bkg] node=$(hostname) task=${SLURM_ARRAY_TASK_ID} playlist=${PL} bin=$(stat -c '%y' ${EVLOOP_BIN})"
 echo "[ev-bkg] start $(date -u '+%F %T UTC')"
 "${EVLOOP_BIN}" "${DATA_MANIFEST}" "${MC_MANIFEST}"
-mv -v runEventLoopOmniFold.root "${FINAL}"
+rg_publish runEventLoopOmniFold.root "${FINAL}"   # atomic mv + completion marker
 echo "[ev-bkg] done $(date -u '+%F %T UTC') -> ${FINAL}"

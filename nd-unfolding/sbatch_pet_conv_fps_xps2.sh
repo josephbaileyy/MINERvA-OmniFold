@@ -22,6 +22,7 @@
 # a single queue-wait episode instead of paying it per job.
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
@@ -37,10 +38,10 @@ NEVT=${EVENTS[$i]}
 TAG=${TAGS[$i]}
 OUT="products/pet/pet_weights_fps_xps2_conv_${TAG}.npz"
 
-[[ -s "${OUT}" ]] && { echo "[conv] task ${i}: skip (exists) ${OUT}"; exit 0; }
+rg_skip_if_complete "${OUT}" && exit 0
 
 echo "[conv] task ${i}: seed=${SEED} max-events=${NEVT} -> ${OUT}  $(date -u '+%F %T UTC')"
-srun -u python3 pet/minerva_pet_dataloader.py --inputs of_inputs_pc_fps_xps2.npz \
+rg_run "${OUT}" srun -u python3 pet/minerva_pet_dataloader.py --inputs of_inputs_pc_fps_xps2.npz \
     --mode pointcloud --model pet --niter 5 --epochs 8 --max-events "${NEVT}" \
     --seed "${SEED}" --reweight-all --smoke --save-weights "${OUT}" \
     --memmap-dir of_inputs_pc_fps_xps2_npy

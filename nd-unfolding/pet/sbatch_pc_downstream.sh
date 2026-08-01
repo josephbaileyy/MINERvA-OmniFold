@@ -5,6 +5,7 @@
 #SBATCH --output=pc_down_%j.out --error=pc_down_%j.err
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 OUT="runEventLoopOmniFold_PC_MEFHC.root"; INP=""
 FORCE_PC_REBUILD="${FORCE_PC_REBUILD:-0}"
@@ -22,14 +23,10 @@ for PL in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do
 done
 archive_if_forcing "${OUT}"
 archive_if_forcing "of_inputs_pc.npz"
-if [[ -s "${OUT}" ]]; then
-  echo "[pc] merged omnifile ${OUT} already present ($(date -u +%T)); skip hadd"
-else
-  echo "[pc] hadd $(date -u +%T)"; hadd -f "${OUT}" ${INP}
+if ! rg_skip_if_complete "${OUT}"; then
+  echo "[pc] hadd $(date -u +%T)"; rg_run "${OUT}" hadd -f "${OUT}" ${INP}
 fi
-if [[ -s of_inputs_pc.npz ]]; then
-  echo "[pc] of_inputs_pc.npz already present; skip dump"; ls -lh of_inputs_pc.npz; exit 0
-fi
+rg_skip_if_complete of_inputs_pc.npz && { ls -lh of_inputs_pc.npz; exit 0; }
 echo "[pc] dump pointcloud inputs $(date -u +%T)"
-python3 pet/dump_pointcloud_inputs.py --omnifile "${OUT}" --num-part 12 --out of_inputs_pc.npz
+rg_run of_inputs_pc.npz python3 pet/dump_pointcloud_inputs.py --omnifile "${OUT}" --num-part 12 --out of_inputs_pc.npz
 echo "[pc] done $(date -u +%T)"; ls -lh of_inputs_pc.npz

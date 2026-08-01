@@ -20,6 +20,7 @@
 set -eo pipefail
 export HOME=/global/homes/j/josephrb
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 cd "${REPO}/nd-unfolding"
 
 UNIVERSE="${UNIVERSE:?set UNIVERSE=MaRES:1 or flux:37}"
@@ -39,13 +40,13 @@ RESP="${OUTDIR}/pet_p7_${TAG}_response.npz"
 [[ -s "$NOMW"   ]] || { echo "[FAIL] missing nominal weights $NOMW" >&2; exit 2; }
 [[ -d "$BANK"   ]] || { echo "[FAIL] missing bank $BANK" >&2; exit 2; }
 
-if [[ "${FORCE_RETRAIN:-0}" != "1" && -s "$RETW" ]]; then
+if [[ "${FORCE_RETRAIN:-0}" != "1" ]] && rg_is_complete "$RETW"; then
   echo "[p7] retrained weights ${RETW} present; skip training (FORCE_RETRAIN=1 to redo)."
 else
   module load tensorflow/2.15.0
   python3 -c "import tensorflow as tf; print('TF',tf.__version__,'GPU',tf.config.list_physical_devices('GPU'))"
   echo "[p7] train $(date -u +%FT%TZ): universe=${UNIVERSE} bank=${BANK} events=${TRAIN_EVENTS} niter=${NITER} epochs=${EPOCHS} est_seed=${EST_SEED}"
-  python3 pet/phase7_retrain_universe.py \
+  rg_run "$RETW" python3 pet/phase7_retrain_universe.py \
     --universe "$UNIVERSE" --inputs "$INPUTS" --bank "$BANK" --invalid-ratio neutral \
     --max-events "$TRAIN_EVENTS" --niter "$NITER" --epochs "$EPOCHS" \
     --seed "$SUB_SEED" --estimator-seed "$EST_SEED" --save-weights "$RETW"

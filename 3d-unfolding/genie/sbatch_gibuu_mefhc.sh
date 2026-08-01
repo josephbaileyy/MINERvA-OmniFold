@@ -27,6 +27,7 @@ set -eo pipefail
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 G=$REPO/3d-unfolding/genie
 source "$G/setup_gibuu.sh"
 
@@ -36,7 +37,7 @@ WORK="$G/work_gibuu_arr/task${N}"
 SHORT_INPUT=/pscratch/sd/j/josephrb/gbi          # short path -> buuinput_local (avoids GiBUU filename truncation)
 OUT="$WORK/FinalEvents.dat"
 
-if [[ -s "$OUT" ]]; then echo "[gibuu] SKIP task $N: $OUT exists"; exit 0; fi
+rg_skip_if_complete "$OUT" && exit 0
 mkdir -p "$WORK"; cd "$WORK"
 
 # per-task jobcard: base ME jobcard + a unique &initRandom seed prepended
@@ -50,7 +51,7 @@ mkdir -p "$WORK"; cd "$WORK"
 sed -i "s|path_to_input='[^']*'|path_to_input='${SHORT_INPUT}'|" task.job
 
 echo "[gibuu] task $N seed=$SEED node=$(hostname) start $(date -u '+%F %T UTC')"
-"$GIBUU_BIN" < task.job > gibuu.log 2>&1
+rg_run "$OUT" "$GIBUU_BIN" < task.job > gibuu.log 2>&1
 RC=$?
 echo "[gibuu] task $N rc=$RC end $(date -u '+%F %T UTC')"
 grep -iE "error opening|Directory does not|STOP:" gibuu.log | head -3 || true

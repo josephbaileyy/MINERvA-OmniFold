@@ -32,6 +32,7 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-128}
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 D3="${REPO}/3d-unfolding"
 OMNIFILE="${D3}/runEventLoopOmniFold_MEFHC_3D.root"          # CV omnifile (not universes)
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
@@ -43,10 +44,7 @@ if [[ ! -s "${OMNIFILE}" ]]; then
   echo "[sbatch] FAIL: CV omnifile ${OMNIFILE} missing/empty." >&2
   exit 2
 fi
-if [[ -s "${OUT}" ]]; then
-  echo "[sbatch] SKIP: ${OUT} already on disk"
-  exit 0
-fi
+rg_skip_if_complete "${OUT}" && exit 0
 
 source "${REPO}/setup_salloc_env.sh"
 mkdir -p "${OUTDIR}"
@@ -57,7 +55,7 @@ echo "[sbatch] OMP_NUM_THREADS=${OMP_NUM_THREADS}"
 echo "[sbatch] start: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 echo "[sbatch] out: ${OUT}"
 
-python unfold_3d_omnifold_unbinned.py \
+rg_run "${OUT}" python unfold_3d_omnifold_unbinned.py \
   --omnifile  "${OMNIFILE}" \
   --mcfile    "${FLUX_MC}" \
   --iters     5 \

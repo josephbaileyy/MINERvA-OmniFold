@@ -33,6 +33,7 @@
 set -eo pipefail
 
 REPO="${REPO:-$HOME/MINERvA-OmniFold}"
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 SIF="${SIF:-$HOME/tf215.sif}"
 SYNTH_DIR="${SYNTH_DIR:-/work/nvme/bhvk/$USER/synth}"
 FIXTURE="${FIXTURE:-$SYNTH_DIR/G2_SYNTH_P12.npz}"
@@ -46,11 +47,11 @@ RUN="apptainer exec --bind ${REPO},${SYNTH_DIR} --env PYTHONPATH=${REPO}/omnifol
 echo "[dryrun] $(date -u +%FT%TZ) start on $(hostname)"
 
 # ---- stage 1: fixture (idempotent) ----------------------------------------
-if [ -s "${FIXTURE}" ]; then
+if rg_is_complete "${FIXTURE}"; then
     echo "[dryrun] stage 1 SKIP -- fixture exists: ${FIXTURE}"
 else
     echo "[dryrun] stage 1 -- generating synthetic g2-fullevent-v1 fixture"
-    ${RUN} python3 make_synthetic_g2_fullevent.py --out "${FIXTURE}" \
+    rg_run "${FIXTURE}" ${RUN} python3 make_synthetic_g2_fullevent.py --out "${FIXTURE}" \
         --n-sig "${N_SIG}" --n-data "${N_DATA}" --n-bkg "${N_BKG}" --tokens "${TOKENS}" \
         --seed 0 --receipt "${FIXTURE%.npz}_RECEIPT.json"
 fi
