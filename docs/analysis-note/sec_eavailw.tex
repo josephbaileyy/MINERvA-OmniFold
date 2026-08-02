@@ -71,8 +71,10 @@ predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 % Source of 1.54/1.58/1.56: ND_OMNIFOLD_RUN_LOG.md:988-990 (2026-06-08 band run),
 % which reads "All THREE underpredict ... 1.54 CV, 1.58 +MEC, 1.56 NuWro" and states
 % "GiBUU excluded (FinalEvents.dat lacks per-event Enu)". GiBUU was structurally
-% ABSENT from the run these three numbers come from; "All four" below is a later
-% edit that was not accompanied by a recomputation. GiBUU was afterwards added to
+% ABSENT from the run these three numbers come from. This paragraph previously read
+% "All four underpredict ... by 54-58%" -- a later edit that attached three
+% magnitudes to four generators without a recomputation; corrected 2026-08-02 to
+% attribute them to the three that produced them. GiBUU was afterwards added to
 % the band (gibuu_to_xsec_eavailW.py, Task 16; make_figures.sh:55 passes it and the
 % figure legend shows it), so the 4-generator overlay DID print a GiBUU corner
 % ratio -- to stdout, never captured. To close: re-run make_figures.sh:55 and read
@@ -82,16 +84,22 @@ predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 %     integrates over ALL W, not W>=1.8.
 %   - corner chi2 381.1/12 (RUN_LOG:1155-1157) uses Eavail>=0.4 -> 12 cells,
 %     a different sub-block that adds the 0.4-0.8 Eavail row.
-% Until recomputed, "all four" and the 54-58% span remain three-generator numbers.
+% Until recomputed, 54-58% is a THREE-generator span. When the GiBUU ratio arrives
+% this is a one-line upgrade: add it, and widen the span only if it lands outside.
 % --------------------------------------------------------------------------------
-All four underpredict the
+GENIE~CV, GENIE$+$MEC, and NuWro underpredict the
 high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
-(data/generator $=1.54$, $1.58$, $1.56$). Crucially, enabling Valencia 2p2h
-does \emph{not} close the corner --- it slightly worsens it ($1.54\to1.58$),
-since 2p2h populates low $W$ --- and the independent NuWro and GiBUU
-generators miss it by the same or a larger margin (GiBUU is the most
-deficient overall, integrated $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against
-the data's \SI{3.07e-38}{}); at $W\in[2.2,3.0)\,\si{GeV}$ all four sit
+(data/generator $=1.54$, $1.58$, and $1.56$ respectively). Crucially,
+enabling Valencia 2p2h does \emph{not} close the corner --- it slightly
+worsens it ($1.54\to1.58$), since 2p2h populates low $W$ --- and the
+independent NuWro generator misses it by the same margin. GiBUU's corner
+ratio has not been computed: it was excluded from the band run that produced
+these three numbers, and although it was subsequently added to the
+comparison the corner reduction was never rerun. GiBUU is the most deficient
+generator overall (integrated $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against
+the data's \SI{3.07e-38}{}), but that is an integrated statement and does not
+fix its position relative to the \numrange{1.54}{1.58} corner band. At
+$W\in[2.2,3.0)\,\si{GeV}$ the same three generators sit
 \SIrange{23}{25}{\percent} below the data.
 
 \begin{figure}[H]
