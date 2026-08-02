@@ -83,3 +83,38 @@ The sequence that keeps the contract intact:
    re-examined rather than left describing a file that has moved again.
 
 Owner: whoever takes `PORTING.md` §4. Not the science restore.
+
+
+---
+
+# ADDENDUM — a second instance of the same class: a binding the verifier cannot see
+
+Found the same afternoon, by asking the same question of a different artifact.
+
+`nd-unfolding/active_universe_5d/fps/covariance/fps_control_manifest.json` binds
+`unfold_nd_omnifold_unbinned.py` at sha256 `9431d56a…`. It records the path as a **bare
+filename**, with no directory. `verify_hash_bindings.localize()` joins a relative path to the repo
+root, so it looks for `./unfold_nd_omnifold_unbinned.py`; the file lives at
+`nd-unfolding/unfold_nd_omnifold_unbinned.py`. The binding therefore resolves to `None` and is
+counted in the verifier's `303 unresolvable (data files, off-repo artifacts, binaries)` — a
+parenthetical nobody has ever enumerated.
+
+**It had already drifted, invisibly.** The frozen sha is `9431d56a…`; the file was `3b107b67…`
+before the J33 fix landed today and is `3f6d3e06…` after. So the freeze was stale before this
+session touched the file, and nothing could report it.
+
+Scope: `fps_control_manifest.json` is the **purity-control** lane
+(`fps_provenance.CONTROL_LABEL = "purity-control"`), not a publication endpoint, so the blast
+radius is a control product rather than a reported number. That is why this is an addendum and not
+its own finding.
+
+**Do not "fix" `localize()` to accept bare filenames right now.** It would resolve an unknown
+number of the other 302 in one step and could turn the verifier red, un-triaged, two days before a
+restore — the same objection as wiring `docs/orchestration/` into collection. Enumerate the 303
+first, decide which are genuinely off-repo (154 `.root`, 121 `.out`, 10 `.log` almost certainly
+are), and land the resolver change together with whatever it exposes.
+
+Counted properly, of the 303 exactly **one** is a code path. That is the good news: the
+unresolvable bucket really is mostly data. It is also the whole point — one real binding was
+hiding in a bucket labelled "data files, off-repo artifacts, binaries", and the label was doing
+the work of a check.
