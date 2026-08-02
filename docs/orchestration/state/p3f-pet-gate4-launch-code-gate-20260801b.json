@@ -225,7 +225,7 @@
  },
  "open_blockers": {
   "gate2_target_must_be_rebuilt": "The negweight-refined Gate-2 target changes NUMERICALLY, because the refiner is fitted in a wider space (J05). `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` and the Gate-2 runtime receipt therefore describe a target the loader no longer produces. This was already owed -- the loader has been red against both Gate-2 receipts since the B1 patch -- but it is now owed for a physics reason and not only a bytes reason. Do not compare the new target to the old one and call a difference a regression.",
-  "gate4_still_never_ran_at_runtime": "PASS_CODE_ONLY. Everything RESTORE Step 2b still lists as owed remains owed: the measured fold_forward_ratio_dev_max, the stress_closure_muon.py run, the ordinary closure receipt (Step 3), and B-2's unrecoverable citation.",
+  "gate4_still_never_ran_at_runtime": "PASS_CODE_ONLY. Still owed from RESTORE Step 2b: the measured fold_forward_ratio_dev_max, the ordinary closure receipt (Step 3), and B-2's unrecoverable citation. The stress_closure_muon.py run is NO LONGER among them -- see closure_evidence_recorded.omitted_muon_stress.",
   "extractor_has_never_run": "`extract_fullevent_fps.py` is code-only. Its push stage needs a trained checkpoint and its xsec stage needs ROOT, so neither can run before the 08-03 restore. Its guards and its extraction arithmetic are unit-tested against the shared ND helper; the pass itself is unexecuted.",
   "no_independent_second_reviewer": "As with the 07-31 and 08-01 re-issues, this one has no independent red-team review."
  },
@@ -236,5 +236,35 @@
   "p5a_launch_precondition": "RESTORE Step 4 must not launch P5A under a voided launch-code gate. This re-issue un-voids it. Note that a Gate-4 RUNTIME verdict now additionally requires the two closure reports, so Step 3 is a hard precondition for validating whatever Step 4 produces.",
   "nothing_launched_or_submitted": true
  },
- "nominal_pet_training_allowed": false
+ "nominal_pet_training_allowed": false,
+ "closure_evidence_recorded": {
+  "omitted_muon_stress": {
+   "status": "RESOLVED -- B-6 fully retired (bound + run + PASS + machine-readable report)",
+   "verdict": "PASS",
+   "first_pass": "2026-07-30, Delta, commit df7397e, script sha256 3c3e092f (the pre---json version). AUDIT-FINDINGS-20260729-B.md B-6 said the closure 'has never recorded a PASS anywhere in the repo'; that was true when the finding was written on 07-29 and STALE by 07-30. The 20260731 receipt carried the stale wording forward without checking docs/orchestration/runs/b6-stress-closure-muon/, which was already in the checkout. Corrected here and annotated there.",
+   "pass_against_the_bound_script": {
+    "slurm_job": 20758087,
+    "observed_at_utc": "2026-08-02T02:40:45Z",
+    "why_it_was_still_needed": "The 07-30 PASS was against script sha256 3c3e092f. This receipt binds 7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b, so no PASS existed against the code actually frozen. The 07-30 run also predates --json, and Gate-4's --stress-report is now a REQUIRED argument -- a console capture is evidence this gate cannot consume.",
+    "script_sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+    "engine_net_sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+    "engine_multifold_sha256": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b",
+    "engine_hashes_match_this_receipt": true,
+    "platform": "NCSA Delta, partition cpu / bhvk-delta-cpu, 16 cores, horovodrun -np 1 inside tf215.sif. The container's FILENAME says 215; its runtime is TF 2.14.0 / Keras 2.14.0. Perlmutter is TF 2.15, so neither Delta run matches the production TF exactly.",
+    "elapsed": "00:09:15",
+    "max_rss": "3467664K",
+    "residual_median": {
+     "prior": 0.5819618291691901,
+     "recoil_only": 0.5811057455573538,
+     "fullevent": 0.04281527145804394
+    },
+    "predeclared_criteria": "recoil_only/prior = 0.9985 (blind if > 0.5, 2.0x margin); fullevent/recoil_only = 0.0737 (recovers if < 0.5, 6.8x margin). Both clear by wide margins, not marginally.",
+    "evidence": [
+     "docs/orchestration/runs/b6-stress-closure-muon/20260801-stress_closure_muon.delta.20758087.capture.txt",
+     "docs/orchestration/runs/b6-stress-closure-muon/20260801-stress_closure_muon.delta.20758087.report.json"
+    ]
+   },
+   "power_note": "The predeclared blindness criterion `median(res_recoil) > 0.5*median(prior)` cannot by itself distinguish an estimator that is blind AS DESIGNED from one that never ran (push == 1 reproduces the prior). A macOS run of the same script hash resolves it empirically: the PRIOR residual agrees across platforms to 9 significant figures (0.5819618292 vs 0.5819618295) because it involves no training, while the recoil-only residual does NOT (0.5811057 vs 0.5819366) -- and only training is platform-dependent. So the recoil leg ran and learned nothing useful. Persisting push mean/std/frac!=1 in the report would make a single run self-interpreting; deferred to the next re-issue rather than voiding this gate for a non-urgent improvement."
+  }
+ }
 }

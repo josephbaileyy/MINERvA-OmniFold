@@ -1,320 +1,321 @@
 {
-  "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
-  "verdict": "PASS_CODE_ONLY",
-  "observed_at_utc": "2026-07-31T00:00:00Z",
-  "actor": "claude-opus-5(local, Gate-4 lane)",
-  "reissue": {
-    "supersedes": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json",
-    "why": "The B1 normalization fix (B1-NORMALIZATION-FIX-DESIGN.md \u00a72d) edited the driver and the validator, so the receipt that froze all five bound files was no longer the receipt that passed. RESTORE-2026-08-03.md Step 2b owns this re-issue and reserved it as the window for the code fixes below. No physics was re-run: Gate-4 is PASS_CODE_ONLY and has never run at runtime.",
-    "runbook_step": "docs/orchestration/RESTORE-2026-08-03.md Step 2b",
-    "never_hand_edited_a_hash": "The 07-21 receipt's bindings are preserved verbatim in its own `files_at_issue` block (renamed so the verifier's collector no longer treats them as live) and the old->new move for every role is recorded in `binding_moves` below.",
-    "unbound_files_also_touched": {
-      "nd-unfolding/tests/test_hash_bindings.py": "Made the launch-code freeze test discover receipts instead of naming them, and added a supersession-convention test. Bound by no receipt. See tests.test_hash_bindings.",
-      "nd-unfolding/pet/fullevent_fps_dataloader.py": "FINDING-20260730 guard. Bound by GATE-2, not by this receipt. See loose_ends_bound_in_this_window.",
-      "docs": [
-        "docs/orchestration/RESTORE-2026-08-03.md (Step 2b marked done + carry-forwards)",
-        "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
-        "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md",
-        "docs/orchestration/RUNS.tsv (row MIG-P3F-PET-G4-CODEGATE-REISSUE)"
-      ]
-    },
-    "binding_moves": [
-      {
-        "role": "driver",
-        "path": "nd-unfolding/pet/train_fullevent_nominal.py",
-        "was": "aa9f66a862e78a4abb3e5b647a5505287398d67178f1a784cbab135d07bae1d4",
-        "now": "f1c7ee627098e7b9c763b1717921e6890b109e954b61e87990c50c72ea628227",
-        "reason": "B1 \u00a72d fold-forward sums (2026-07-29) + audit B2: persist the run's ACTUAL seed policy, reporting grid, central vector, reported-bin mask, cap-saturation fraction and input sha256, so the Gate-4 freeze reads the result instead of its own constants."
-      },
-      {
-        "role": "validator",
-        "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
-        "was": "0cb4b41dce3ef4ff984c862130597630068dee0e9f19521f05ae87c34fbc9fa7",
-        "now": "f2054645f79036114ae27778f44c4f9a8809970ee9b5911f4cc3d2017ff2e1e0",
-        "reason": "B1 \u00a72d fold-forward gate (2026-07-29) + audit B2: absent evidence now FAILS instead of being skipped; the freeze reads the artifact instead of FROZEN; the two closure reports, the target provenance block and the cap-saturation fraction are wired; the legacy truth-level primitive is retired."
-      },
-      {
-        "role": "validator_test",
-        "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
-        "was": "7b669484dbf2a0157854783963201c4358b8b1d2b8dc31e64005ef9f37577d39",
-        "now": "8bc237b2168a2789c2fbff1512d1ea8505543a3ed05eccc52b44d54ba709ac0a",
-        "reason": "Deliberately edited in this window, which Step 2b reserved for exactly this decision. The file's two `check_normalization` tests were the only thing keeping the retired truth-level primitive alive, and its `frozen_observed()` helper had to start supplying a central vector and reported-bin mask now that their absence fails. 36 -> 62 tests."
-      },
-      {
-        "role": "launcher",
-        "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
-        "was": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
-        "now": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
-        "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving. The launcher invokes the driver, not the validator, so the new required validator arguments do not reach it."
-      },
-      {
-        "role": "launcher_test",
-        "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
-        "was": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
-        "now": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
-        "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
-      }
-    ]
+ "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
+ "verdict": "PASS_CODE_ONLY",
+ "observed_at_utc": "2026-07-31T00:00:00Z",
+ "actor": "claude-opus-5(local, Gate-4 lane)",
+ "reissue": {
+  "supersedes": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json",
+  "why": "The B1 normalization fix (B1-NORMALIZATION-FIX-DESIGN.md \u00a72d) edited the driver and the validator, so the receipt that froze all five bound files was no longer the receipt that passed. RESTORE-2026-08-03.md Step 2b owns this re-issue and reserved it as the window for the code fixes below. No physics was re-run: Gate-4 is PASS_CODE_ONLY and has never run at runtime.",
+  "runbook_step": "docs/orchestration/RESTORE-2026-08-03.md Step 2b",
+  "never_hand_edited_a_hash": "The 07-21 receipt's bindings are preserved verbatim in its own `files_at_issue` block (renamed so the verifier's collector no longer treats them as live) and the old->new move for every role is recorded in `binding_moves` below.",
+  "unbound_files_also_touched": {
+   "nd-unfolding/tests/test_hash_bindings.py": "Made the launch-code freeze test discover receipts instead of naming them, and added a supersession-convention test. Bound by no receipt. See tests.test_hash_bindings.",
+   "nd-unfolding/pet/fullevent_fps_dataloader.py": "FINDING-20260730 guard. Bound by GATE-2, not by this receipt. See loose_ends_bound_in_this_window.",
+   "docs": [
+    "docs/orchestration/RESTORE-2026-08-03.md (Step 2b marked done + carry-forwards)",
+    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md",
+    "docs/orchestration/RUNS.tsv (row MIG-P3F-PET-G4-CODEGATE-REISSUE)"
+   ]
   },
-  "user_decision": {
-    "event_id": "evt-user-decision-20260721-0002",
-    "option": "A",
-    "context": "Carried forward from the 07-21 issue: build+validate the Gate-4 nominal PET launch-code gate WITHOUT launching any training. Training-launch authorization remains a separate post-restore decision. This re-issue was directed by the user on 2026-07-31 as the Gate-4 lane of RESTORE-2026-08-03.md Step 2b."
+  "binding_moves": [
+   {
+    "role": "driver",
+    "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+    "was": "aa9f66a862e78a4abb3e5b647a5505287398d67178f1a784cbab135d07bae1d4",
+    "now": "f1c7ee627098e7b9c763b1717921e6890b109e954b61e87990c50c72ea628227",
+    "reason": "B1 \u00a72d fold-forward sums (2026-07-29) + audit B2: persist the run's ACTUAL seed policy, reporting grid, central vector, reported-bin mask, cap-saturation fraction and input sha256, so the Gate-4 freeze reads the result instead of its own constants."
+   },
+   {
+    "role": "validator",
+    "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+    "was": "0cb4b41dce3ef4ff984c862130597630068dee0e9f19521f05ae87c34fbc9fa7",
+    "now": "f2054645f79036114ae27778f44c4f9a8809970ee9b5911f4cc3d2017ff2e1e0",
+    "reason": "B1 \u00a72d fold-forward gate (2026-07-29) + audit B2: absent evidence now FAILS instead of being skipped; the freeze reads the artifact instead of FROZEN; the two closure reports, the target provenance block and the cap-saturation fraction are wired; the legacy truth-level primitive is retired."
+   },
+   {
+    "role": "validator_test",
+    "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+    "was": "7b669484dbf2a0157854783963201c4358b8b1d2b8dc31e64005ef9f37577d39",
+    "now": "8bc237b2168a2789c2fbff1512d1ea8505543a3ed05eccc52b44d54ba709ac0a",
+    "reason": "Deliberately edited in this window, which Step 2b reserved for exactly this decision. The file's two `check_normalization` tests were the only thing keeping the retired truth-level primitive alive, and its `frozen_observed()` helper had to start supplying a central vector and reported-bin mask now that their absence fails. 36 -> 62 tests."
+   },
+   {
+    "role": "launcher",
+    "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+    "was": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
+    "now": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving. The launcher invokes the driver, not the validator, so the new required validator arguments do not reach it."
+   },
+   {
+    "role": "launcher_test",
+    "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+    "was": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
+    "now": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
+    "reason": "UNCHANGED, re-frozen only because its binding was voided by the receipt moving."
+   }
+  ]
+ },
+ "user_decision": {
+  "event_id": "evt-user-decision-20260721-0002",
+  "option": "A",
+  "context": "Carried forward from the 07-21 issue: build+validate the Gate-4 nominal PET launch-code gate WITHOUT launching any training. Training-launch authorization remains a separate post-restore decision. This re-issue was directed by the user on 2026-07-31 as the Gate-4 lane of RESTORE-2026-08-03.md Step 2b."
+ },
+ "prerequisite": {
+  "gate3": "PROMOTED_PASS",
+  "gate3_source_manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+  "gate3_source_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+  "gate2": "PASS (RE-ISSUE PENDING -- see open_blockers.gate2_reissue_pending)",
+  "frozen_contract": "pet-fullevent-fps-v1"
+ },
+ "additive_bindings": {
+  "note": "Purely additive: these files were bound by NO receipt anywhere, so verify_hash_bindings.py printed ALL BINDINGS INTACT no matter what happened to them. Adding them here costs nothing and closes the corresponding audit findings.",
+  "B-1_estimator_engine": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B-1",
+   "files": [
+    "omnifold_nn/omnifold/net.py",
+    "omnifold_nn/omnifold/omnifold.py"
+   ],
+   "why": "net.py is the PET network and omnifold.py is MultiFold (the iteration loop, both classifier legs, the weight recursion) -- the code that actually computes the answer. Both were modified at 25d8360 and appeared in no receipt. Contrast omnifold_nn/omnifold/dataloader.py, which IS bound (by the Gate-2 receipt) and IS checked: the freeze covered the vendored engine's plumbing but not its physics.",
+   "additional_reason_this_receipt": "omnifold.py also owns REWEIGHT_LOGIT_CAP, which the validator's FROZEN block now mirrors and its cap-saturation check depends on. `Gate4ArtifactContract.test_frozen_logit_cap_matches_the_engine` reads the engine's source and fails if the two drift; binding the file makes the drift visible to the verifier as well."
   },
-  "prerequisite": {
-    "gate3": "PROMOTED_PASS",
-    "gate3_source_manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
-    "gate3_source_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
-    "gate2": "PASS (RE-ISSUE PENDING -- see open_blockers.gate2_reissue_pending)",
-    "frozen_contract": "pet-fullevent-fps-v1"
+  "B-6_omitted_muon_stress": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B-6",
+   "file": "nd-unfolding/pet/stress_closure_muon.py",
+   "why": "Named inside this gate's own frozen contract (FROZEN['closure_scripts']['omitted_muon_stress']) yet bound by no receipt; last touched at 2732304, AFTER the 07-21 Gate-4 PASS, and not among the six files reverted at 5a22e1c.",
+   "status": "BOUND here. The RUN is still owed -- see open_blockers.stress_closure_run_not_recorded."
   },
-  "additive_bindings": {
-    "note": "Purely additive: these files were bound by NO receipt anywhere, so verify_hash_bindings.py printed ALL BINDINGS INTACT no matter what happened to them. Adding them here costs nothing and closes the corresponding audit findings.",
-    "B-1_estimator_engine": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B-1",
-      "files": [
-        "omnifold_nn/omnifold/net.py",
-        "omnifold_nn/omnifold/omnifold.py"
-      ],
-      "why": "net.py is the PET network and omnifold.py is MultiFold (the iteration loop, both classifier legs, the weight recursion) -- the code that actually computes the answer. Both were modified at 25d8360 and appeared in no receipt. Contrast omnifold_nn/omnifold/dataloader.py, which IS bound (by the Gate-2 receipt) and IS checked: the freeze covered the vendored engine's plumbing but not its physics.",
-      "additional_reason_this_receipt": "omnifold.py also owns REWEIGHT_LOGIT_CAP, which the validator's FROZEN block now mirrors and its cap-saturation check depends on. `Gate4ArtifactContract.test_frozen_logit_cap_matches_the_engine` reads the engine's source and fails if the two drift; binding the file makes the drift visible to the verifier as well."
-    },
-    "B-6_omitted_muon_stress": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B-6",
-      "file": "nd-unfolding/pet/stress_closure_muon.py",
-      "why": "Named inside this gate's own frozen contract (FROZEN['closure_scripts']['omitted_muon_stress']) yet bound by no receipt; last touched at 2732304, AFTER the 07-21 Gate-4 PASS, and not among the six files reverted at 5a22e1c.",
-      "status": "BOUND here. The RUN is still owed -- see open_blockers.stress_closure_run_not_recorded."
-    },
-    "B-6_adjacent_ordinary_closure": {
-      "file": "nd-unfolding/pet/closure_fullevent_fps.py",
-      "why": "The other half of the same pair, bound for the identical reason B-6 gives: it is named in FROZEN['closure_scripts']['ordinary'], the validator now consumes its --json report as required evidence, and a gate whose closure verdict rests on a script should be able to detect that the script changed. Not itemized in Step 2b; the argument is B-6's, applied to its twin."
-    },
-    "B1_fold_forward_evidence": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B1 (bind the new fold-forward evidence)",
-      "files": [
-        "nd-unfolding/pet/closure_b1_rate_injection.py",
-        "nd-unfolding/tests/test_b1_normalization_fix.py"
-      ],
-      "why": "closure_b1_rate_injection.py is the \u00a74 rate-injection closure that SIZES this gate's fold_forward_ratio_dev_max; test_b1_normalization_fix.py carries the two \u00a74 tests plus the \u00a72d plumbing coverage. A gate whose tolerance rests on a closure script must be able to detect that the script changed."
-    }
+  "B-6_adjacent_ordinary_closure": {
+   "file": "nd-unfolding/pet/closure_fullevent_fps.py",
+   "why": "The other half of the same pair, bound for the identical reason B-6 gives: it is named in FROZEN['closure_scripts']['ordinary'], the validator now consumes its --json report as required evidence, and a gate whose closure verdict rests on a script should be able to detect that the script changed. Not itemized in Step 2b; the argument is B-6's, applied to its twin."
   },
-  "code_fixes_in_this_reissue": {
-    "source": "AUDIT-FINDINGS-20260729-B.md \u00a7B2 and AUDIT-FINDINGS-20260728.md \u00a7B2 ('The Gate-4 CLI validator evaluates none of its four physics checks, self-compares four of its six freeze checks, and returns PASS on pure noise'). Reproduced by three independent audit dimensions; verdict 'reproduced'.",
-    "what_was_wrong": [
-      "main() called build_gate4_report without marginal=, normalization=, saturation_frac= or closure=, and the builder SKIPPED every component whose argument was None -- so four physics checks never executed.",
-      "frozen_observed was built by copying FROZEN['edges_pt'], FROZEN['edges_pparallel'], FROZEN['bin_order'] and FROZEN['seed_policy'] into the 'observed' dict, so four of the six freeze checks compared FROZEN to FROZEN.",
-      "frozen_observed carried no central_vector and no reported_bin_mask, so those three freeze checks never ran either; the reporting mask was untouched by the gate.",
-      "The driver persisted no niter/epochs/seeds/train_events/input-sha, so freeze:seed_policy was unfalsifiable by construction: a nominal launched with --niter 1 --epochs 2 validated PASS against a receipt recording niter 2 / epochs 8.",
-      "z['target'] -- the sole carrier of refinement_is_learned_production, refined_sum, pot_scale and signed_target_hash -- was never read, although the driver writes it. A grep for target/refinement over the validator returned zero hits.",
-      "check_weights_finite_coverage was called with n_expected = len(imc), i.e. coverage was only ever compared against the subsample's own length, so train_events 2,000,000 -> 1000 was caught by nothing.",
-      "Net effect, reproduced by the audit: 15 checks, 0 failed, verdict PASS on an npz whose weights_push was |N(1,0.3)| random noise -- while the emitted receipt embedded frozen_contract.tolerances, so a reader concluded they were met."
-    ],
-    "structural_rules_now_enforced": [
-      "ABSENT EVIDENCE FAILS. build_gate4_report emits a named failing '<component>:evidence_supplied' check instead of dropping the component. A gate is allowed to fail; it is not allowed to abstain and call that a pass.",
-      "EVERYTHING COMPARED AGAINST FROZEN IS READ FROM THE ARTIFACT (or recomputed from the G2 dump). A self-comparison is not a check."
-    ],
-    "checks_that_now_execute": {
-      "marginal:pt_ppar_l1": "from the ordinary closure report's two 285-cell histograms, with the L1 re-derived here rather than trusted as a scalar. Uses the frozen marginal_l1_max = 0.10, which is that script's own predeclared --l1-max.",
-      "closure:ordinary_pass / closure:stress_recoil_blind / closure:stress_fullevent_recovers": "from the two new required CLI arguments --closure-report and --stress-report. Both closure scripts gained a --json report in this patch; neither had any machine-readable output, which is why these three checks had nothing to read.",
-      "closure:ordinary_is_negweight_refined / closure:ordinary_not_synthetic_fixture / closure:ordinary_thresholds_not_loosened / closure:ordinary_grid_is_frozen / closure:ordinary_push_median": "RESTORE-2026-08-03.md Step 3 refuses the purity control and the 2026-07-26 Delta synthetic-fixture run (job 20489224) as closure evidence in prose. These refuse them in code, and additionally refuse a closure re-run whose own --l1-max / --push-med-tol were loosened, or that histogrammed on a non-frozen grid. push_median_dev_max = 0.15 (that script's --push-med-tol) is live for the first time.",
-      "cap:saturation_frac": "the logit-cap saturation fraction, recomputed by the validator from weights_push itself as |log(push)| >= REWEIGHT_LOGIT_CAP. Previously cap_saturation_frac_max = 1e-3 was a tolerance no check used.",
-      "freeze:central_vector_len / _finite / _nonnegative / _nonzero, freeze:reported_mask_len / _nonempty, freeze:central_vector_zero_outside_mask": "the driver now persists a unit-normalized 285-cell pushed reporting spectrum and the prior-occupied mask; the validator recomputes both from the dump and requires agreement (spectra:driver_validator_*), so the length/order checks read the artifact and are falsifiable rather than 285-long by construction.",
-      "freeze:edges_pt / edges_pparallel / bin_order / seed_policy": "read from the artifact. The driver states its bin order in its own literal (train_fullevent_nominal.BIN_ORDER) so the two sides can disagree; a test pins them equal.",
-      "index:subsample_size_matches_policy": "imc.size against the frozen seed_policy.train_events (clamped to a smaller inventory, since the loader draws min(max_events, N)).",
-      "target:mode_is_negweight_refined / refinement_is_learned_production / refinement_is_stay_positive / signed_target_hash_bound / pot_scale_valid / refined_weights_nonnegative / refined_sum_positive": "the measured-target provenance block. The load-bearing one is refinement_is_learned_production: per Step 4, Delta has no ROOT, so u2d.refine_stay_positive cannot import there and a Delta run can only inject an sklearn refinement, which self-reports False. Nothing previously stopped such a result being validated as the publication nominal.",
-      "inputs sha256 content bind": "the driver persists inputs_sha256 and the validator hashes the --inputs file it was handed. The 07-29 patch flagged this as belonging to the re-issue: the basename check cannot see a substituted dump with the same name."
-    },
-    "retired": {
-      "what": "check_normalization -- the legacy truth-level `sum(w*push)/sum(w) ~ 1` primitive -- and FROZEN['tolerances']['normalization_dev_max'] with it.",
-      "why": "Step 2b asked for this decision to be made at the re-issue. It had no caller of its own, main() deliberately never wired it, and its target is acceptance-dependent (over the full truth population a correct unfold gives 1 + <a>(R-1) ~ 1.08, not 1), so it could never be the gate. It survived the 07-29 patch only as a binding-preserving shim for the two frozen validator_test cases that pinned its signature; this re-issue re-freezes that file, so the shim is gone and the arithmetic lives in the private _ratio_dev. normalization_dev_max went with it because nothing read it while the receipt embedded it as though it had been met -- the exact 'reader reasonably concludes they were met' complaint in audit B2.",
-      "build_gate4_report_signature": "the `normalization=` parameter is removed. New parameters: n_expected_subsample, closure_reports, target, spectra, spectra_driver, spectra_telemetry."
-    },
-    "new_required_cli_arguments": [
-      "--closure-report",
-      "--stress-report"
-    ],
-    "changed_cli_arguments": {
-      "--n-full": "now an OPTIONAL cross-check. The authoritative signal-inventory row count is read from the dump, so index:in_range can no longer be silently skipped by a caller who omitted the flag; supplying a different value fails closed."
-    }
-  },
-  "loose_ends_bound_in_this_window": {
-    "FINDING-20260730-event-feature-nonfinite": {
-      "file_touched": "nd-unfolding/pet/fullevent_fps_dataloader.py",
-      "owning_gate": "GATE-2 (both Gate-2 receipts bind this file), NOT this receipt",
-      "fix": "New fail-closed assert_finite_event_scalars(), called on reco_scalars over pass_reco, truth_scalars over pass_truth and measured_scalars (all rows) BEFORE the normalization statistics are formed, naming the offending column and its non-finite count. Plus a finiteness assert on the three built blocks, and a finiteness assert at the head of assert_no_truth_leakage -- that guard is a DISSIMILARITY test and NaN differs from everything, so an all-NaN block used to satisfy it.",
-      "deliberately_not": "nan_to_num. 0 is the cloud path's pad sentinel but the BLOCK MEAN of a z-scored event feature, so quiet filling would place undefined events at the centre of the conditioning distribution and bias the estimator instead of announcing a bad dump.",
-      "scope_note": "The guard screens only the SELECTED columns, so it does not fire on the adopted (pt, pparallel) schema even though the real dump's q3 carries ~1,700 non-finite rows -- and it fires the moment the block widens, which is what the publication estimator requires. Both directions are tested.",
-      "tests": "nd-unfolding/tests/test_b1_normalization_fix.py::EventFeatureFiniteGuard (9 tests, including one end-to-end through build_fullevent_loaders)",
-      "receipt_ownership": "This file's sha256 is bound by g2-gate2-construction-20260719.json and G2_GATE2_TARGET_RUNTIME_RECEIPT.json, both of which were ALREADY red before this patch (see RESTORE Step 2b 'Expected verifier state'). Step 2b directs the fix into this window; the BINDING is re-issued by Step 2, not here. This receipt deliberately does not bind it -- a second binding site would mean two places to remediate."
-    }
-  },
-  "open_blockers": {
-    "note": "Enumerated rather than resolved. None of them is a reason to withhold PASS_CODE_ONLY -- the gate certifies that the launch code is frozen, tested and hash-bound -- but every one of them must be closed before a Gate-4 RUNTIME verdict can certify a nominal.",
-    "fold_forward_tolerance_still_provisional": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B1 (replace the PROVISIONAL Gate-4 tolerance with a measured one)",
-      "state": "fold_forward_ratio_dev_max = 0.05, status PROVISIONAL_PENDING_CLOSURE_MEASUREMENT. UNCHANGED by this re-issue.",
-      "why_blocked": "Measuring it needs the real R, which needs the 9.9 GB G2 dump on Perlmutter /pscratch (unreachable until 2026-08-03). The bracket is intact and checked by test_tolerance_has_power_against_the_defect_and_admits_the_floor: structural floor (1-a)^k(R-1)/R = 1.71% at a=0.621,R=1.135,niter=2 < 0.05 < the 11.9% defect it must catch.",
-      "owed": "python3 nd-unfolding/pet/closure_b1_rate_injection.py --r-inject <measured R> --acceptance <measured> --scan-seeds 5, then freeze the number and drop the marking. Read that script's 'gradient-step confound' note first: a small-N run is optimization-limited, not floor-limited, and reads as though the fix underperforms."
-    },
-    "stress_closure_run_not_recorded": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B-6 -- half closed",
-      "closed_here": "stress_closure_muon.py is now BOUND by this receipt, and it emits a machine-readable report Gate-4 consumes.",
-      "still_owed": "the PASS itself. It has never recorded a verdict anywhere in the repo.",
-      "why_blocked": "Attempted 2026-07-31 on this host and it does not run: the local TensorFlow is 2.16.2 (Keras 3) and the vendored PET network uses the Keras-2 idiom -- omnifold_nn/omnifold/net.py:148 does tf.cast(inputs_part[:,:,0,None] != 0) on a symbolic tensor, which Keras 3 rejects with 'A KerasTensor cannot be used as input to a TensorFlow function'. tf_keras (the legacy-Keras shim) is not installed. This is an environment mismatch, not a defect in the closure and not a consequence of the shutdown: Perlmutter's tensorflow/2.15.0 and Delta's TF 2.14.0 both satisfy it. The same mismatch is why test_b1_normalization_fix's in-suite rate-injection closure reaches only the MLP path.",
-      "owed": "run it under TF 2.14/2.15 (or after `pip install tf_keras` with TF_USE_LEGACY_KERAS=1), record the verdict, and reference the report path here. It is login-safe by construction: synthetic event set, identity response, all-pass masks, no ROOT, no /pscratch, no dump -- CPU minutes."
-    },
-    "ordinary_closure_receipt_absent": {
-      "state": "The ordinary closure has no valid recorded PASS -- RESTORE Step 3. Its report is now REQUIRED evidence for a Gate-4 runtime verdict, which is the point: Gate-4 can no longer be run without it.",
-      "why_blocked": "Needs the real G2 dump and ROOT. Step 3, blocked until 2026-08-03."
-    },
-    "gate2_reissue_pending": {
-      "state": "Both Gate-2 receipts remain red on fullevent_fps_dataloader.py, and G2_GATE2_TARGET_RUNTIME_RECEIPT.json on gate2_target_runtime.py. RESTORE Step 2 owns them, and this patch added the FINDING-20260730 guard to the dataloader, deepening (not creating) that drift.",
-      "consequence": "nd-unfolding/tests/test_hash_bindings.py::test_no_new_broken_hash_bindings stays RED until Step 2 re-runs Gate-2 on the real dump. That red is correct behaviour. Do not repair it by editing receipt hashes to match the tree."
-    },
-    "no_full_event_central_vector_extractor": {
-      "finding": "AUDIT-FINDINGS-20260728.md \u00a7B3",
-      "state": "NOT addressed here and deliberately out of scope for Step 2b. The 285-cell `central_vector` this receipt freezes is the unfolded pushed spectrum on the reporting grid, NOT a cross-section: no full-event extractor exists (nd-unfolding/pet/ carries only recoil-5D bkgsub extractors), extract_nominal_bkgsub.py requires the key `w_push` and ordered full coverage, and the driver writes `weights_push` over a 2M-of-49.15M subsample.",
-      "owed": "B3 in its own right."
-    }
-  },
-  "publication_config_binding": {
-    "routes_through": "nd-unfolding/pet/fullevent_fps_dataloader.py :: assert_publication_config",
-    "estimator_fingerprint": "pet-fullevent-fps-v1",
-    "bkg_mode": "negweight-refined",
-    "fail_closed_on": [
-      "wrong fingerprint (reduced/recoil/unset rejected)",
-      "purity bkg_mode rejected",
-      "missing G2 full-schema markers",
-      "missing/invalid background inventory",
-      "recoil/xps2 input paths rejected",
-      "non-finite values in a selected event-feature column (FINDING-20260730)"
-    ],
-    "gate2_target": {
-      "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
-      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
-      "size_bytes": 9897374636,
-      "markers": {
-        "petSchemaVersion": "g2-fullevent-v1",
-        "hasFullEventSchema": 1,
-        "fullPhaseSpace": 1
-      },
-      "inventory": {
-        "signal": 49152885,
-        "data": 4116128,
-        "background_rows_w_bkg": 564591,
-        "playlists": 12
-      }
-    },
-    "gate3_source_manifest_bound": true,
-    "no_auto_submit": "launcher fails closed without SLURM_JOB_ID: 'must run as an sbatch job (SLURM_JOB_ID unset); this script never auto-submits'",
-    "login_safe_selftest": "PET_FE_NOMINAL_SELFTEST=1 / --config-gate-only runs the config gate only, no GPU"
-  },
-  "validator_checks": [
-    "ordinary closure (verdict + provenance: negweight-refined, not a synthetic fixture, thresholds not loosened, frozen grid)",
-    "omitted-muon stress closure (recoil-only stays blind, full-event recovers)",
-    "finite / non-negative / row-aligned push weights",
-    "strict MC index/order + subsample size against the frozen seed policy",
-    "(pT,p_par) marginal closure L1, re-derived from the closure report's histograms",
-    "reco-level folded-forward normalization against R, with driver/validator independence",
-    "reporting-spectra independence (central vector, reported mask, cap fraction: dump vs artifact)",
-    "cap-sensitivity telemetry (logit-cap saturation fraction, recomputed from the push weights)",
-    "measured-target provenance (negweight-refined mode, LEARNED production Stay-Positive refinement, signed-target hash, pot_scale, refined-weight positivity)",
-    "freeze: estimator fingerprint + bkg_mode + central-vector length/finiteness/order + reported-bin mask/order + extended-FPS edges + seed/config policy -- every value read from the ARTIFACT",
-    "absent evidence FAILS: every component emits a named '<component>:evidence_supplied' check rather than being skipped"
-  ],
-  "launcher_design": "one unbootstrapped nominal + one matched GPU-floor repeat (same seeds/config, tag=floor), both via fullevent_fps_dataloader.build_fullevent_loaders; isolated output namespace nd-unfolding/pet/fullevent_nominal/",
-  "tests": {
-    "test_pet_fullevent_nominal_launcher": "13 passed, 1 skipped (was 14/14; the skip is nd-unfolding/tests/conftest.py collect_ignore-adjacent platform gating off Perlmutter, not a regression -- see runbook Step 0)",
-    "test_pet_nominal_gate4_validator": "62/62 PASS (was 36/36)",
-    "test_b1_normalization_fix": "80/80 PASS (was 50/50 at the 07-29 patch)",
-    "frozen_contract_regressions": "test_p3f_pet_fullevent_validator 51, test_fullevent_dump_contract 10, test_g2_dump_branch 32 -- all PASS",
-    "full_suite": "8 failed / 458 passed / 1 skipped, against a pre-patch baseline of 9 failed / 406 passed / 1 skipped. The failure SET shrank by exactly one: test_gate3_and_gate4_launch_code_freezes_specifically now CLOSES. The remaining 8 are the 7 documented off-Perlmutter /pscratch failures plus test_no_new_broken_hash_bindings, which stays red on the Gate-2 pair by design. +52 tests, 0 new failures. Measured with --ignore=nd-unfolding/tests/test_flux_universe_fix.py: that file arrived mid-session from a concurrent unrelated session (see concurrent_working_tree_note) and its own failures are not in this lane's scope.",
-    "test_hash_bindings": "3 tests: 2 pass, 1 red by design. EDITED in this patch (bound by no receipt). test_gate3_and_gate4_launch_code_freezes_specifically hardcoded the two launch-code receipt FILENAMES and pytest.skip()ed if one was absent -- so this very re-issue's rename would have turned it into a vacuous pass. It now DISCOVERS live launch-code receipts by glob, skips any marked SUPERSEDED (whose hashes are a historical record, not a live freeze), and asserts a floor of 2 found, on the same reasoning as verify_hash_bindings.SHELL_PIN_FLOOR: a discoverer that matches nothing reports success. Added test_superseded_receipts_hold_no_live_bindings, which pins the supersession convention (files -> files_at_issue, sha256 -> sha256_at_issue, superseded_by must resolve) so a future supersession cannot half-apply it and leave the verifier permanently red on a receipt that no longer owns the files.",
-    "launcher_bash_syntax": "PASS (bash -n)",
-    "python_byte_compile": "PASS (validator, driver, both closure scripts, dataloader)",
-    "mutation_coverage_added": "The \u00a74 mutation table recorded that driver niter 2->1, driver train_events 2,000,000->1000, validator epochs 8->99 and a garbage Gate-4 grid were caught by NOTHING. All four are now covered: test_freeze_niter_tamper, test_subsample_size_must_match_the_frozen_policy, test_end_to_end_refuses_an_off_policy_seed_config, test_spectra_recomputation_rejects_a_non_frozen_grid, test_end_to_end_refuses_a_reshaped_central_vector, and test_noise_weights_do_not_pass (the |N(1,0.3)| submission the audit passed)."
-  },
-  "preflight": {
-    "active_compute_writers_to_namespace": 0,
-    "interactive_allocations": 0,
-    "output_namespace_exists": false,
-    "frozen_gate2_gate3_artifacts_modified": "fullevent_fps_dataloader.py modified (FINDING-20260730 guard) -- Gate-2-bound and already red; Step 2 owns its re-issue. No Gate-3 artifact touched. No *.root / *.npz touched.",
-    "data_files_modified": 0,
-    "nothing_launched_or_submitted": true
-  },
-  "independent_verification": {
-    "b2_dangling_citation_resolved_as_UNRECOVERABLE": {
-      "finding": "AUDIT-FINDINGS-20260729-B.md B-2",
-      "what_the_07_21_receipt_cited": [
-        "docs/orchestration/runs/agent-B-p5b/gate4-build.capture.txt",
-        "agy-publication-redteam uuid 440f42ef-c271-4f77-a410-a4a999166f44 turn 32"
-      ],
-      "checked_2026_07_31": "The capture file is ABSENT from the checkout. `ls docs/orchestration/runs/agent-B-p5b/ docs/orchestration/runs/agy-publication-redteam/ | grep 20260721` returns NOTHING in either directory -- 2026-07-21 is a hole in the committed transcript dates, exactly as B-2 states. Step 6 (rescuing the agy SQLite store off Perlmutter's $HOME/.gemini) is the recovery path and is blocked until the 2026-08-03 restore.",
-      "decision": "The citation is NOT carried forward. Per Step 2b: 'If it is not recoverable, say so in the re-issued receipt -- do not carry forward a citation that does not resolve.' The 07-21 independent-verification claim therefore stands unsupported by any artifact in this repo, and this receipt does not inherit it.",
-      "consequence": "If Step 6 recovers the transcript, commit it and amend this receipt. Until then the 07-21 agy PASS is a claim, not evidence."
-    },
-    "this_reissue": {
-      "method": "Self-verified against executable gates only, on this host: recomputed all 11 bound sha256 with shasum -a 256; ran the full nd-unfolding/tests suite before and after and compared the failure SET (not just the count); ran docs/orchestration/verify_hash_bindings.py before and after; bash -n on the launcher; py_compile on all five touched Python files; and drove the validator CLI end to end over synthetic G2 fixtures including the |N(1,0.3)| noise submission the audit passed.",
-      "honest_limit": "NO SECOND REVIEWER. The 07-21 issue claimed an independent agy red-team pass; this re-issue has no independent agent verification of any kind. What replaces it is adversarial coverage inside the suite -- every assertion that something PASSES is paired with a mutation that must FAIL, and the four mutations the \u00a74 audit found uncaught are now covered -- but that is the same actor's tests, not an independent read. Treat the code fixes as unreviewed by a second party.",
-      "also_not_verified": "Nothing was run against the real G2 dump, the real R, ROOT, or a GPU. Every fixture is synthetic. The PET network itself could not even be constructed on this host (see open_blockers.stress_closure_run_not_recorded), so no full-event training path was exercised end to end."
-    }
-  },
-  "authorization": {
-    "gate4_launch_code_gate": "PASS_CODE_ONLY",
-    "nominal_pet_training_allowed": false,
-    "training_launch_decision": "SEPARATE post-restore user decision. This gate authorizes only that the code is frozen, tested and hash-bound -- not any submission.",
-    "p5a_launch_precondition": "RESTORE Step 4 must not launch P5A under a voided launch-code gate. This re-issue un-voids it. Note that a Gate-4 RUNTIME verdict now additionally requires the two closure reports, so Step 3 is a hard precondition for validating whatever Step 4 produces.",
-    "nothing_launched_or_submitted": true
-  },
-  "concurrent_working_tree_note": "At the time of writing, the working tree also carried unrelated in-progress edits by another session (nd-unfolding/flux_universe.py and the sweep/unified-throw flux-universe changes, timestamps 2026-07-31 23:30-23:35). None of them is bound by this receipt and none was touched by this patch; they are recorded here only so the sha256 set above is not read as covering them.",
-  "status": "SUPERSEDED",
-  "superseded_by": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json",
-  "superseded_on": "2026-08-01",
-  "superseded_why": "The J10 transactional-write fix edited the driver, so the receipt that froze all five bound files is no longer the receipt that passed.",
-  "files_at_issue": {
-    "driver": {
-      "path": "nd-unfolding/pet/train_fullevent_nominal.py",
-      "sha256_at_issue": "f1c7ee627098e7b9c763b1717921e6890b109e954b61e87990c50c72ea628227"
-    },
-    "launcher": {
-      "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
-      "sha256_at_issue": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
-    },
-    "validator": {
-      "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
-      "sha256_at_issue": "f2054645f79036114ae27778f44c4f9a8809970ee9b5911f4cc3d2017ff2e1e0"
-    },
-    "launcher_test": {
-      "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
-      "sha256_at_issue": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"
-    },
-    "validator_test": {
-      "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
-      "sha256_at_issue": "8bc237b2168a2789c2fbff1512d1ea8505543a3ed05eccc52b44d54ba709ac0a"
-    },
-    "estimator_engine_net": {
-      "path": "omnifold_nn/omnifold/net.py",
-      "sha256_at_issue": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
-    },
-    "estimator_engine_multifold": {
-      "path": "omnifold_nn/omnifold/omnifold.py",
-      "sha256_at_issue": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b"
-    },
-    "closure_ordinary": {
-      "path": "nd-unfolding/pet/closure_fullevent_fps.py",
-      "sha256_at_issue": "047a4aa91319938fa78c86683aa38477b9ce87eec607c519529e241691df02a6"
-    },
-    "closure_omitted_muon_stress": {
-      "path": "nd-unfolding/pet/stress_closure_muon.py",
-      "sha256_at_issue": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
-    },
-    "closure_rate_injection": {
-      "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
-      "sha256_at_issue": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
-    },
-    "b1_normalization_test": {
-      "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
-      "sha256_at_issue": "c3f4561f7f49ddc518fea7ecb8e5af5ceebb558bdef0e99a775f532ebd8522b2"
-    }
+  "B1_fold_forward_evidence": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B1 (bind the new fold-forward evidence)",
+   "files": [
+    "nd-unfolding/pet/closure_b1_rate_injection.py",
+    "nd-unfolding/tests/test_b1_normalization_fix.py"
+   ],
+   "why": "closure_b1_rate_injection.py is the \u00a74 rate-injection closure that SIZES this gate's fold_forward_ratio_dev_max; test_b1_normalization_fix.py carries the two \u00a74 tests plus the \u00a72d plumbing coverage. A gate whose tolerance rests on a closure script must be able to detect that the script changed."
   }
+ },
+ "code_fixes_in_this_reissue": {
+  "source": "AUDIT-FINDINGS-20260729-B.md \u00a7B2 and AUDIT-FINDINGS-20260728.md \u00a7B2 ('The Gate-4 CLI validator evaluates none of its four physics checks, self-compares four of its six freeze checks, and returns PASS on pure noise'). Reproduced by three independent audit dimensions; verdict 'reproduced'.",
+  "what_was_wrong": [
+   "main() called build_gate4_report without marginal=, normalization=, saturation_frac= or closure=, and the builder SKIPPED every component whose argument was None -- so four physics checks never executed.",
+   "frozen_observed was built by copying FROZEN['edges_pt'], FROZEN['edges_pparallel'], FROZEN['bin_order'] and FROZEN['seed_policy'] into the 'observed' dict, so four of the six freeze checks compared FROZEN to FROZEN.",
+   "frozen_observed carried no central_vector and no reported_bin_mask, so those three freeze checks never ran either; the reporting mask was untouched by the gate.",
+   "The driver persisted no niter/epochs/seeds/train_events/input-sha, so freeze:seed_policy was unfalsifiable by construction: a nominal launched with --niter 1 --epochs 2 validated PASS against a receipt recording niter 2 / epochs 8.",
+   "z['target'] -- the sole carrier of refinement_is_learned_production, refined_sum, pot_scale and signed_target_hash -- was never read, although the driver writes it. A grep for target/refinement over the validator returned zero hits.",
+   "check_weights_finite_coverage was called with n_expected = len(imc), i.e. coverage was only ever compared against the subsample's own length, so train_events 2,000,000 -> 1000 was caught by nothing.",
+   "Net effect, reproduced by the audit: 15 checks, 0 failed, verdict PASS on an npz whose weights_push was |N(1,0.3)| random noise -- while the emitted receipt embedded frozen_contract.tolerances, so a reader concluded they were met."
+  ],
+  "structural_rules_now_enforced": [
+   "ABSENT EVIDENCE FAILS. build_gate4_report emits a named failing '<component>:evidence_supplied' check instead of dropping the component. A gate is allowed to fail; it is not allowed to abstain and call that a pass.",
+   "EVERYTHING COMPARED AGAINST FROZEN IS READ FROM THE ARTIFACT (or recomputed from the G2 dump). A self-comparison is not a check."
+  ],
+  "checks_that_now_execute": {
+   "marginal:pt_ppar_l1": "from the ordinary closure report's two 285-cell histograms, with the L1 re-derived here rather than trusted as a scalar. Uses the frozen marginal_l1_max = 0.10, which is that script's own predeclared --l1-max.",
+   "closure:ordinary_pass / closure:stress_recoil_blind / closure:stress_fullevent_recovers": "from the two new required CLI arguments --closure-report and --stress-report. Both closure scripts gained a --json report in this patch; neither had any machine-readable output, which is why these three checks had nothing to read.",
+   "closure:ordinary_is_negweight_refined / closure:ordinary_not_synthetic_fixture / closure:ordinary_thresholds_not_loosened / closure:ordinary_grid_is_frozen / closure:ordinary_push_median": "RESTORE-2026-08-03.md Step 3 refuses the purity control and the 2026-07-26 Delta synthetic-fixture run (job 20489224) as closure evidence in prose. These refuse them in code, and additionally refuse a closure re-run whose own --l1-max / --push-med-tol were loosened, or that histogrammed on a non-frozen grid. push_median_dev_max = 0.15 (that script's --push-med-tol) is live for the first time.",
+   "cap:saturation_frac": "the logit-cap saturation fraction, recomputed by the validator from weights_push itself as |log(push)| >= REWEIGHT_LOGIT_CAP. Previously cap_saturation_frac_max = 1e-3 was a tolerance no check used.",
+   "freeze:central_vector_len / _finite / _nonnegative / _nonzero, freeze:reported_mask_len / _nonempty, freeze:central_vector_zero_outside_mask": "the driver now persists a unit-normalized 285-cell pushed reporting spectrum and the prior-occupied mask; the validator recomputes both from the dump and requires agreement (spectra:driver_validator_*), so the length/order checks read the artifact and are falsifiable rather than 285-long by construction.",
+   "freeze:edges_pt / edges_pparallel / bin_order / seed_policy": "read from the artifact. The driver states its bin order in its own literal (train_fullevent_nominal.BIN_ORDER) so the two sides can disagree; a test pins them equal.",
+   "index:subsample_size_matches_policy": "imc.size against the frozen seed_policy.train_events (clamped to a smaller inventory, since the loader draws min(max_events, N)).",
+   "target:mode_is_negweight_refined / refinement_is_learned_production / refinement_is_stay_positive / signed_target_hash_bound / pot_scale_valid / refined_weights_nonnegative / refined_sum_positive": "the measured-target provenance block. The load-bearing one is refinement_is_learned_production: per Step 4, Delta has no ROOT, so u2d.refine_stay_positive cannot import there and a Delta run can only inject an sklearn refinement, which self-reports False. Nothing previously stopped such a result being validated as the publication nominal.",
+   "inputs sha256 content bind": "the driver persists inputs_sha256 and the validator hashes the --inputs file it was handed. The 07-29 patch flagged this as belonging to the re-issue: the basename check cannot see a substituted dump with the same name."
+  },
+  "retired": {
+   "what": "check_normalization -- the legacy truth-level `sum(w*push)/sum(w) ~ 1` primitive -- and FROZEN['tolerances']['normalization_dev_max'] with it.",
+   "why": "Step 2b asked for this decision to be made at the re-issue. It had no caller of its own, main() deliberately never wired it, and its target is acceptance-dependent (over the full truth population a correct unfold gives 1 + <a>(R-1) ~ 1.08, not 1), so it could never be the gate. It survived the 07-29 patch only as a binding-preserving shim for the two frozen validator_test cases that pinned its signature; this re-issue re-freezes that file, so the shim is gone and the arithmetic lives in the private _ratio_dev. normalization_dev_max went with it because nothing read it while the receipt embedded it as though it had been met -- the exact 'reader reasonably concludes they were met' complaint in audit B2.",
+   "build_gate4_report_signature": "the `normalization=` parameter is removed. New parameters: n_expected_subsample, closure_reports, target, spectra, spectra_driver, spectra_telemetry."
+  },
+  "new_required_cli_arguments": [
+   "--closure-report",
+   "--stress-report"
+  ],
+  "changed_cli_arguments": {
+   "--n-full": "now an OPTIONAL cross-check. The authoritative signal-inventory row count is read from the dump, so index:in_range can no longer be silently skipped by a caller who omitted the flag; supplying a different value fails closed."
+  }
+ },
+ "loose_ends_bound_in_this_window": {
+  "FINDING-20260730-event-feature-nonfinite": {
+   "file_touched": "nd-unfolding/pet/fullevent_fps_dataloader.py",
+   "owning_gate": "GATE-2 (both Gate-2 receipts bind this file), NOT this receipt",
+   "fix": "New fail-closed assert_finite_event_scalars(), called on reco_scalars over pass_reco, truth_scalars over pass_truth and measured_scalars (all rows) BEFORE the normalization statistics are formed, naming the offending column and its non-finite count. Plus a finiteness assert on the three built blocks, and a finiteness assert at the head of assert_no_truth_leakage -- that guard is a DISSIMILARITY test and NaN differs from everything, so an all-NaN block used to satisfy it.",
+   "deliberately_not": "nan_to_num. 0 is the cloud path's pad sentinel but the BLOCK MEAN of a z-scored event feature, so quiet filling would place undefined events at the centre of the conditioning distribution and bias the estimator instead of announcing a bad dump.",
+   "scope_note": "The guard screens only the SELECTED columns, so it does not fire on the adopted (pt, pparallel) schema even though the real dump's q3 carries ~1,700 non-finite rows -- and it fires the moment the block widens, which is what the publication estimator requires. Both directions are tested.",
+   "tests": "nd-unfolding/tests/test_b1_normalization_fix.py::EventFeatureFiniteGuard (9 tests, including one end-to-end through build_fullevent_loaders)",
+   "receipt_ownership": "This file's sha256 is bound by g2-gate2-construction-20260719.json and G2_GATE2_TARGET_RUNTIME_RECEIPT.json, both of which were ALREADY red before this patch (see RESTORE Step 2b 'Expected verifier state'). Step 2b directs the fix into this window; the BINDING is re-issued by Step 2, not here. This receipt deliberately does not bind it -- a second binding site would mean two places to remediate."
+  }
+ },
+ "open_blockers": {
+  "note": "Enumerated rather than resolved. None of them is a reason to withhold PASS_CODE_ONLY -- the gate certifies that the launch code is frozen, tested and hash-bound -- but every one of them must be closed before a Gate-4 RUNTIME verdict can certify a nominal.",
+  "fold_forward_tolerance_still_provisional": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B1 (replace the PROVISIONAL Gate-4 tolerance with a measured one)",
+   "state": "fold_forward_ratio_dev_max = 0.05, status PROVISIONAL_PENDING_CLOSURE_MEASUREMENT. UNCHANGED by this re-issue.",
+   "why_blocked": "Measuring it needs the real R, which needs the 9.9 GB G2 dump on Perlmutter /pscratch (unreachable until 2026-08-03). The bracket is intact and checked by test_tolerance_has_power_against_the_defect_and_admits_the_floor: structural floor (1-a)^k(R-1)/R = 1.71% at a=0.621,R=1.135,niter=2 < 0.05 < the 11.9% defect it must catch.",
+   "owed": "python3 nd-unfolding/pet/closure_b1_rate_injection.py --r-inject <measured R> --acceptance <measured> --scan-seeds 5, then freeze the number and drop the marking. Read that script's 'gradient-step confound' note first: a small-N run is optimization-limited, not floor-limited, and reads as though the fix underperforms."
+  },
+  "stress_closure_run_not_recorded": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B-6 -- half closed",
+   "closed_here": "stress_closure_muon.py is now BOUND by this receipt, and it emits a machine-readable report Gate-4 consumes.",
+   "still_owed": "the PASS itself. It has never recorded a verdict anywhere in the repo.",
+   "why_blocked": "Attempted 2026-07-31 on this host and it does not run: the local TensorFlow is 2.16.2 (Keras 3) and the vendored PET network uses the Keras-2 idiom -- omnifold_nn/omnifold/net.py:148 does tf.cast(inputs_part[:,:,0,None] != 0) on a symbolic tensor, which Keras 3 rejects with 'A KerasTensor cannot be used as input to a TensorFlow function'. tf_keras (the legacy-Keras shim) is not installed. This is an environment mismatch, not a defect in the closure and not a consequence of the shutdown: Perlmutter's tensorflow/2.15.0 and Delta's TF 2.14.0 both satisfy it. The same mismatch is why test_b1_normalization_fix's in-suite rate-injection closure reaches only the MLP path.",
+   "owed": "run it under TF 2.14/2.15 (or after `pip install tf_keras` with TF_USE_LEGACY_KERAS=1), record the verdict, and reference the report path here. It is login-safe by construction: synthetic event set, identity response, all-pass masks, no ROOT, no /pscratch, no dump -- CPU minutes.",
+   "CORRECTION_20260801": "THIS ENTRY WAS WRONG WHEN WRITTEN. It claimed the closure 'has never recorded a verdict anywhere in the repo', repeating AUDIT-FINDINGS-20260729-B.md B-6 verbatim. That was true on 07-29 and false by 07-30: commit df7397e recorded a PASS on Delta, and its capture (docs/orchestration/runs/b6-stress-closure-muon/20260730-stress_closure_muon.delta.capture.txt) was already in the checkout when this receipt was written on 07-31. A stale finding was carried forward without re-checking the artifact directory it pointed at. The substantive gap was narrower than stated and is now closed: no PASS existed against the BOUND script hash, and none was machine-readable. See closure_evidence_recorded in p3f-pet-gate4-launch-code-gate-20260801b.json."
+  },
+  "ordinary_closure_receipt_absent": {
+   "state": "The ordinary closure has no valid recorded PASS -- RESTORE Step 3. Its report is now REQUIRED evidence for a Gate-4 runtime verdict, which is the point: Gate-4 can no longer be run without it.",
+   "why_blocked": "Needs the real G2 dump and ROOT. Step 3, blocked until 2026-08-03."
+  },
+  "gate2_reissue_pending": {
+   "state": "Both Gate-2 receipts remain red on fullevent_fps_dataloader.py, and G2_GATE2_TARGET_RUNTIME_RECEIPT.json on gate2_target_runtime.py. RESTORE Step 2 owns them, and this patch added the FINDING-20260730 guard to the dataloader, deepening (not creating) that drift.",
+   "consequence": "nd-unfolding/tests/test_hash_bindings.py::test_no_new_broken_hash_bindings stays RED until Step 2 re-runs Gate-2 on the real dump. That red is correct behaviour. Do not repair it by editing receipt hashes to match the tree."
+  },
+  "no_full_event_central_vector_extractor": {
+   "finding": "AUDIT-FINDINGS-20260728.md \u00a7B3",
+   "state": "NOT addressed here and deliberately out of scope for Step 2b. The 285-cell `central_vector` this receipt freezes is the unfolded pushed spectrum on the reporting grid, NOT a cross-section: no full-event extractor exists (nd-unfolding/pet/ carries only recoil-5D bkgsub extractors), extract_nominal_bkgsub.py requires the key `w_push` and ordered full coverage, and the driver writes `weights_push` over a 2M-of-49.15M subsample.",
+   "owed": "B3 in its own right."
+  }
+ },
+ "publication_config_binding": {
+  "routes_through": "nd-unfolding/pet/fullevent_fps_dataloader.py :: assert_publication_config",
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
+  "bkg_mode": "negweight-refined",
+  "fail_closed_on": [
+   "wrong fingerprint (reduced/recoil/unset rejected)",
+   "purity bkg_mode rejected",
+   "missing G2 full-schema markers",
+   "missing/invalid background inventory",
+   "recoil/xps2 input paths rejected",
+   "non-finite values in a selected event-feature column (FINDING-20260730)"
+  ],
+  "gate2_target": {
+   "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+   "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "size_bytes": 9897374636,
+   "markers": {
+    "petSchemaVersion": "g2-fullevent-v1",
+    "hasFullEventSchema": 1,
+    "fullPhaseSpace": 1
+   },
+   "inventory": {
+    "signal": 49152885,
+    "data": 4116128,
+    "background_rows_w_bkg": 564591,
+    "playlists": 12
+   }
+  },
+  "gate3_source_manifest_bound": true,
+  "no_auto_submit": "launcher fails closed without SLURM_JOB_ID: 'must run as an sbatch job (SLURM_JOB_ID unset); this script never auto-submits'",
+  "login_safe_selftest": "PET_FE_NOMINAL_SELFTEST=1 / --config-gate-only runs the config gate only, no GPU"
+ },
+ "validator_checks": [
+  "ordinary closure (verdict + provenance: negweight-refined, not a synthetic fixture, thresholds not loosened, frozen grid)",
+  "omitted-muon stress closure (recoil-only stays blind, full-event recovers)",
+  "finite / non-negative / row-aligned push weights",
+  "strict MC index/order + subsample size against the frozen seed policy",
+  "(pT,p_par) marginal closure L1, re-derived from the closure report's histograms",
+  "reco-level folded-forward normalization against R, with driver/validator independence",
+  "reporting-spectra independence (central vector, reported mask, cap fraction: dump vs artifact)",
+  "cap-sensitivity telemetry (logit-cap saturation fraction, recomputed from the push weights)",
+  "measured-target provenance (negweight-refined mode, LEARNED production Stay-Positive refinement, signed-target hash, pot_scale, refined-weight positivity)",
+  "freeze: estimator fingerprint + bkg_mode + central-vector length/finiteness/order + reported-bin mask/order + extended-FPS edges + seed/config policy -- every value read from the ARTIFACT",
+  "absent evidence FAILS: every component emits a named '<component>:evidence_supplied' check rather than being skipped"
+ ],
+ "launcher_design": "one unbootstrapped nominal + one matched GPU-floor repeat (same seeds/config, tag=floor), both via fullevent_fps_dataloader.build_fullevent_loaders; isolated output namespace nd-unfolding/pet/fullevent_nominal/",
+ "tests": {
+  "test_pet_fullevent_nominal_launcher": "13 passed, 1 skipped (was 14/14; the skip is nd-unfolding/tests/conftest.py collect_ignore-adjacent platform gating off Perlmutter, not a regression -- see runbook Step 0)",
+  "test_pet_nominal_gate4_validator": "62/62 PASS (was 36/36)",
+  "test_b1_normalization_fix": "80/80 PASS (was 50/50 at the 07-29 patch)",
+  "frozen_contract_regressions": "test_p3f_pet_fullevent_validator 51, test_fullevent_dump_contract 10, test_g2_dump_branch 32 -- all PASS",
+  "full_suite": "8 failed / 458 passed / 1 skipped, against a pre-patch baseline of 9 failed / 406 passed / 1 skipped. The failure SET shrank by exactly one: test_gate3_and_gate4_launch_code_freezes_specifically now CLOSES. The remaining 8 are the 7 documented off-Perlmutter /pscratch failures plus test_no_new_broken_hash_bindings, which stays red on the Gate-2 pair by design. +52 tests, 0 new failures. Measured with --ignore=nd-unfolding/tests/test_flux_universe_fix.py: that file arrived mid-session from a concurrent unrelated session (see concurrent_working_tree_note) and its own failures are not in this lane's scope.",
+  "test_hash_bindings": "3 tests: 2 pass, 1 red by design. EDITED in this patch (bound by no receipt). test_gate3_and_gate4_launch_code_freezes_specifically hardcoded the two launch-code receipt FILENAMES and pytest.skip()ed if one was absent -- so this very re-issue's rename would have turned it into a vacuous pass. It now DISCOVERS live launch-code receipts by glob, skips any marked SUPERSEDED (whose hashes are a historical record, not a live freeze), and asserts a floor of 2 found, on the same reasoning as verify_hash_bindings.SHELL_PIN_FLOOR: a discoverer that matches nothing reports success. Added test_superseded_receipts_hold_no_live_bindings, which pins the supersession convention (files -> files_at_issue, sha256 -> sha256_at_issue, superseded_by must resolve) so a future supersession cannot half-apply it and leave the verifier permanently red on a receipt that no longer owns the files.",
+  "launcher_bash_syntax": "PASS (bash -n)",
+  "python_byte_compile": "PASS (validator, driver, both closure scripts, dataloader)",
+  "mutation_coverage_added": "The \u00a74 mutation table recorded that driver niter 2->1, driver train_events 2,000,000->1000, validator epochs 8->99 and a garbage Gate-4 grid were caught by NOTHING. All four are now covered: test_freeze_niter_tamper, test_subsample_size_must_match_the_frozen_policy, test_end_to_end_refuses_an_off_policy_seed_config, test_spectra_recomputation_rejects_a_non_frozen_grid, test_end_to_end_refuses_a_reshaped_central_vector, and test_noise_weights_do_not_pass (the |N(1,0.3)| submission the audit passed)."
+ },
+ "preflight": {
+  "active_compute_writers_to_namespace": 0,
+  "interactive_allocations": 0,
+  "output_namespace_exists": false,
+  "frozen_gate2_gate3_artifacts_modified": "fullevent_fps_dataloader.py modified (FINDING-20260730 guard) -- Gate-2-bound and already red; Step 2 owns its re-issue. No Gate-3 artifact touched. No *.root / *.npz touched.",
+  "data_files_modified": 0,
+  "nothing_launched_or_submitted": true
+ },
+ "independent_verification": {
+  "b2_dangling_citation_resolved_as_UNRECOVERABLE": {
+   "finding": "AUDIT-FINDINGS-20260729-B.md B-2",
+   "what_the_07_21_receipt_cited": [
+    "docs/orchestration/runs/agent-B-p5b/gate4-build.capture.txt",
+    "agy-publication-redteam uuid 440f42ef-c271-4f77-a410-a4a999166f44 turn 32"
+   ],
+   "checked_2026_07_31": "The capture file is ABSENT from the checkout. `ls docs/orchestration/runs/agent-B-p5b/ docs/orchestration/runs/agy-publication-redteam/ | grep 20260721` returns NOTHING in either directory -- 2026-07-21 is a hole in the committed transcript dates, exactly as B-2 states. Step 6 (rescuing the agy SQLite store off Perlmutter's $HOME/.gemini) is the recovery path and is blocked until the 2026-08-03 restore.",
+   "decision": "The citation is NOT carried forward. Per Step 2b: 'If it is not recoverable, say so in the re-issued receipt -- do not carry forward a citation that does not resolve.' The 07-21 independent-verification claim therefore stands unsupported by any artifact in this repo, and this receipt does not inherit it.",
+   "consequence": "If Step 6 recovers the transcript, commit it and amend this receipt. Until then the 07-21 agy PASS is a claim, not evidence."
+  },
+  "this_reissue": {
+   "method": "Self-verified against executable gates only, on this host: recomputed all 11 bound sha256 with shasum -a 256; ran the full nd-unfolding/tests suite before and after and compared the failure SET (not just the count); ran docs/orchestration/verify_hash_bindings.py before and after; bash -n on the launcher; py_compile on all five touched Python files; and drove the validator CLI end to end over synthetic G2 fixtures including the |N(1,0.3)| noise submission the audit passed.",
+   "honest_limit": "NO SECOND REVIEWER. The 07-21 issue claimed an independent agy red-team pass; this re-issue has no independent agent verification of any kind. What replaces it is adversarial coverage inside the suite -- every assertion that something PASSES is paired with a mutation that must FAIL, and the four mutations the \u00a74 audit found uncaught are now covered -- but that is the same actor's tests, not an independent read. Treat the code fixes as unreviewed by a second party.",
+   "also_not_verified": "Nothing was run against the real G2 dump, the real R, ROOT, or a GPU. Every fixture is synthetic. The PET network itself could not even be constructed on this host (see open_blockers.stress_closure_run_not_recorded), so no full-event training path was exercised end to end."
+  }
+ },
+ "authorization": {
+  "gate4_launch_code_gate": "PASS_CODE_ONLY",
+  "nominal_pet_training_allowed": false,
+  "training_launch_decision": "SEPARATE post-restore user decision. This gate authorizes only that the code is frozen, tested and hash-bound -- not any submission.",
+  "p5a_launch_precondition": "RESTORE Step 4 must not launch P5A under a voided launch-code gate. This re-issue un-voids it. Note that a Gate-4 RUNTIME verdict now additionally requires the two closure reports, so Step 3 is a hard precondition for validating whatever Step 4 produces.",
+  "nothing_launched_or_submitted": true
+ },
+ "concurrent_working_tree_note": "At the time of writing, the working tree also carried unrelated in-progress edits by another session (nd-unfolding/flux_universe.py and the sweep/unified-throw flux-universe changes, timestamps 2026-07-31 23:30-23:35). None of them is bound by this receipt and none was touched by this patch; they are recorded here only so the sha256 set above is not read as covering them.",
+ "status": "SUPERSEDED",
+ "superseded_by": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json",
+ "superseded_on": "2026-08-01",
+ "superseded_why": "The J10 transactional-write fix edited the driver, so the receipt that froze all five bound files is no longer the receipt that passed.",
+ "files_at_issue": {
+  "driver": {
+   "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+   "sha256_at_issue": "f1c7ee627098e7b9c763b1717921e6890b109e954b61e87990c50c72ea628227"
+  },
+  "launcher": {
+   "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+   "sha256_at_issue": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
+  },
+  "validator": {
+   "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+   "sha256_at_issue": "f2054645f79036114ae27778f44c4f9a8809970ee9b5911f4cc3d2017ff2e1e0"
+  },
+  "launcher_test": {
+   "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+   "sha256_at_issue": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"
+  },
+  "validator_test": {
+   "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+   "sha256_at_issue": "8bc237b2168a2789c2fbff1512d1ea8505543a3ed05eccc52b44d54ba709ac0a"
+  },
+  "estimator_engine_net": {
+   "path": "omnifold_nn/omnifold/net.py",
+   "sha256_at_issue": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
+  },
+  "estimator_engine_multifold": {
+   "path": "omnifold_nn/omnifold/omnifold.py",
+   "sha256_at_issue": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b"
+  },
+  "closure_ordinary": {
+   "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+   "sha256_at_issue": "047a4aa91319938fa78c86683aa38477b9ce87eec607c519529e241691df02a6"
+  },
+  "closure_omitted_muon_stress": {
+   "path": "nd-unfolding/pet/stress_closure_muon.py",
+   "sha256_at_issue": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
+  },
+  "closure_rate_injection": {
+   "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+   "sha256_at_issue": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
+  },
+  "b1_normalization_test": {
+   "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+   "sha256_at_issue": "c3f4561f7f49ddc518fea7ecb8e5af5ceebb558bdef0e99a775f532ebd8522b2"
+  }
+ }
 }

@@ -1,0 +1,95 @@
+# stress_closure_muon.py — NCSA Delta (horovodrun -np 1), slurm 20758087
+# date_utc: 2026-08-02T02:40:45Z
+# git HEAD (local, staged file copied in): 45a7a41
+# sha256(script): 7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b
+# container: tf215.sif = TF 2.14.0 / Keras 2.14.0  (the FILENAME says 215; the runtime is 2.14.0)
+# sha256(net.py):      f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953
+# sha256(omnifold.py): 5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b
+# partition: cpu / bhvk-delta-cpu, 16 cores, elapsed 00:09:15, MaxRSS 3467664K
+#
+# NOT the first PASS. 20260730-stress_closure_muon.delta.capture.txt already recorded one
+# (commit df7397e). What this run adds is the three things that one could not:
+#   1. it is the FIRST pass against the script hash the LIVE Gate-4 receipt binds. The 07-30
+#      run used 3c3e092f, the pre---json version; the receipt binds 7fb43e63.
+#   2. a machine-readable report (--json). Gate-4's --stress-report is a REQUIRED argument
+#      now, so the 07-30 console capture is evidence Gate-4 cannot actually consume.
+#   3. a second platform. See the note below the verdict.
+[b6] 2026-08-02T02:31:37Z start on cn061.delta.ncsa.illinois.edu
+[b6] sha256(script) 7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b
+[b6] expected       7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b
+[b6] sha256(net.py) f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953
+[b6] sha256(omnifold.py) 5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b
+[1,0]<stdout>:Horovod instalation found.
+[1,0]<stdout>:[stress] injected per-stratum muon tilt alpha=1.20; recoil marginal held fixed
+[1,0]<stdout>:INFO: Creating pass reco flag ...
+[1,0]<stdout>:INFO: Normalizing sum of weights to 1000000 ...
+[1,0]<stdout>:INFO: Normalizing sum of weights to 1000000 ...
+[1,0]<stdout>:78 training steps at reco and 78 steps at gen
+[1,0]<stdout>:ITERATION: 1
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 34.73625183105469
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 34.15730285644531
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:ITERATION: 2
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 35.00349807739258
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 34.518924713134766
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:ITERATION: 3
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 34.52284240722656
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 35.68648147583008
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:INFO: Creating pass reco flag ...
+[1,0]<stdout>:INFO: Normalizing sum of weights to 1000000 ...
+[1,0]<stdout>:INFO: Normalizing sum of weights to 1000000 ...
+[1,0]<stdout>:78 training steps at reco and 78 steps at gen
+[1,0]<stdout>:ITERATION: 1
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 33.107479095458984
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 34.516536712646484
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:ITERATION: 2
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 38.71661376953125
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 31.023834228515625
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:ITERATION: 3
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 32.77583694458008
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 32.08378982543945
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:[stress] PRIOR      vs data  L1/stratum: median=0.5820 max=0.7915
+[1,0]<stdout>:[stress] RECOIL-ONLY vs data L1/stratum: median=0.5811 max=0.7779
+[1,0]<stdout>:[stress] FULL-EVENT  vs data L1/stratum: median=0.0428 max=0.3497
+[1,0]<stdout>:[stress] recoil-only FAILS to recover (>=0.5*prior): True
+[1,0]<stdout>:[stress] full-event RECOVERS (<0.5*recoil-only):      True
+[1,0]<stdout>:STRESS CLOSURE PASS: full-event recovers the omitted muon variable; recoil-only cannot.
+[1,0]<stdout>:[stress] wrote report /work/nvme/bhvk/jbailey2/b6_stress/stress_closure_muon_delta.json
+[b6] python rc=0
+[b6] done 2026-08-02T02:40:45Z
+
+# ---------------------------------------------------------------------------------------
+# CROSS-PLATFORM NOTE (macOS TF 2.16.2 + tf_keras 2.16 shim, 2026-08-01, same script hash):
+#   prior       0.5819618295   vs Delta 0.5819618292   -- identical to 9 significant figures
+#   recoil-only 0.5819366      vs Delta 0.5811057      -- DIFFERS
+#   full-event  0.0459884      vs Delta 0.0428153      -- DIFFERS
+# This settles an ambiguity in the predeclared blindness criterion. `median(res_recoil) >
+# 0.5*median(prior)` passes both for an estimator that is blind AS DESIGNED and for one that
+# never ran at all (push == 1 reproduces the prior exactly). The prior involves no training
+# and is identical across platforms to 9 figures; the recoil-only residual is NOT, and only
+# training is platform-dependent. So the recoil-only leg trained and learned nothing useful,
+# which is the claim. Worth persisting push mean/std/frac!=1 in the report on the next
+# re-issue so a single run no longer needs a second platform to be interpretable.
