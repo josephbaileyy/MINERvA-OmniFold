@@ -149,8 +149,48 @@ def numpy_to_th1d(edges, vals, name, title):
 # Generic multi-axis TTree readers (CV weights; pt/pz fixed + extra branches)
 # ---------------------------------------------------------------------------
 def _addr(t, name):
+    """Bind a double branch, FAILING CLOSED if it is absent or mismatched.
+
+    J33 (AUDIT-FINDINGS-20260731): this discarded `SetBranchAddress`'s return code, so a missing
+    branch left the buffer at its initial value and produced a silent column of zeros. At the CV
+    `w_truth` site the initial value is 1.0, which silently reproduces KNOWN_ISSUES #1 -- unit MC
+    weights instead of POT-scaled ones -- and no downstream gate can see it: the finite-support
+    closure check compares COUNTS, and counts are unaffected by zeroed coordinates or unit weights.
+
+    ROOT returns negative TTree::ESetBranchAddressStatus values for kMissingBranch (-5), kMismatch
+    (-2) and friends; >= 0 is a match. The explicit GetBranch check comes first because it gives
+    the better message and does not depend on those enum values staying put."""
+    if not t.GetBranch(name):
+        raise RuntimeError(
+            f"[FAIL] branch '{name}' missing from TTree '{t.GetName()}'. Reading it would have "
+            "produced a silent column of the buffer's initial value (0.0 for coordinates, 1.0 for "
+            "weights), which no downstream gate detects -- the closure check compares counts. "
+            "Re-run the event loop.")
     a = array("d", [0.0])
-    t.SetBranchAddress(name, a)
+    rc = t.SetBranchAddress(name, a)
+    if rc is not None and int(rc) < 0:
+        raise RuntimeError(
+            f"[FAIL] SetBranchAddress('{name}') on '{t.GetName()}' returned {int(rc)} "
+            "(negative = missing/type-mismatched branch); refusing to read a buffer ROOT did "
+            "not bind.")
+    return a
+
+
+def _addr_weight(t, name, a):
+    """`_addr` for a caller-supplied weight buffer, whose initial value is 1.0, not 0.0.
+
+    Split out rather than parameterized so the 1.0 default is visible at the one site that uses
+    it: a missing `w_truth` here is exactly the KNOWN_ISSUES #1 failure mode."""
+    if not t.GetBranch(name):
+        raise RuntimeError(
+            f"[FAIL] weight branch '{name}' missing from TTree '{t.GetName()}'. Every event would "
+            "have carried w = 1.0 -- unbinned OmniFold's unit-weight defect (KNOWN_ISSUES #1), "
+            "globally low by pot_scale and invisible to every count-based gate. Re-run the event "
+            "loop.")
+    rc = t.SetBranchAddress(name, a)
+    if rc is not None and int(rc) < 0:
+        raise RuntimeError(
+            f"[FAIL] SetBranchAddress('{name}') on '{t.GetName()}' returned {int(rc)}.")
     return a
 
 
@@ -207,15 +247,24 @@ def collect_truth_denom_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
             for k, ax in enumerate(extras):
                 if not ax.get("lateral_invariant", True):
                     nm = _axis_universe_branch(ax["name"], suffix, "truth_tree")
-                    if t.GetBranch(nm):
-                        ax_truth[k] = nm
+                    # J33: `if GetBranch(nm)` silently retained the CV branch when the shifted one
+                    # was absent, understating the lateral band instead of failing. Reaching here
+                    # means the universe IS kinematic (pt/pz shifted branches exist) AND this axis
+                    # is declared not lateral_invariant -- i.e. it is supposed to shift. A missing
+                    # branch is then an error, not a fallback. Weight-only bands never get here.
+                    if not t.GetBranch(nm):
+                        raise RuntimeError(
+                            f"[FAIL] shifted branch '{nm}' missing from mc_truth_denom for axis "
+                            f"'{ax['name']}' in universe {universe_branch}. Falling back to the CV "
+                            "branch would understate this lateral band. Re-run the event loop.")
+                    ax_truth[k] = nm
             if verbose:
                 print(f"[INFO] truth_denom lateral universe: pt/pz+{ '/'.join(ax_truth)} swapped")
     pt_a = _addr(t, pt_name); pz_a = _addr(t, pz_name)
     ex_a = [_addr(t, nm) for nm in ax_truth]
     wt_a = array("d", [1.0])
     if use_weights:
-        t.SetBranchAddress(wt_name, wt_a)
+        _addr_weight(t, wt_name, wt_a)          # J33: was an unchecked SetBranchAddress
     xw_a = [_addr(t, nm) for nm in (extra_wbranches or [])]
     pt_l, pz_l, w_l = [], [], []
     ex_l = [[] for _ in extras]
@@ -288,10 +337,15 @@ def collect_signal_nd(t, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                 if not ax.get("lateral_invariant", True):
                     nt = _axis_universe_branch(ax["name"], suffix, "reco_tree_truth")
                     nr = _axis_universe_branch(ax["name"], suffix, "reco_tree_reco")
-                    if t.GetBranch(nt):
-                        ax_truth[k] = nt
-                    if t.GetBranch(nr):
-                        ax_reco[k] = nr
+                    for _nm in (nt, nr):          # J33: was a silent CV fallback -- see below
+                        if not t.GetBranch(_nm):
+                            raise RuntimeError(
+                                f"[FAIL] shifted branch '{_nm}' missing from the signal tree for "
+                                f"axis '{ax['name']}' in universe {universe_branch}. Retaining the "
+                                "CV branch would understate this lateral band. Re-run the event "
+                                "loop.")
+                    ax_truth[k] = nt
+                    ax_reco[k] = nr
             if verbose:
                 print(f"[INFO] signal lateral universe: kinematics+q3 swapped "
                       f"(truth {pt_truth_name}, reco {pt_reco_name}, axes {ax_reco})")
@@ -429,8 +483,12 @@ def collect_bkg_nd(t, extras, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi,
             for k, ax in enumerate(extras):
                 if not ax.get("lateral_invariant", True):
                     nm = _axis_universe_branch(ax["name"], suffix, "bkg_tree")
-                    if t.GetBranch(nm):
-                        ax_bkg[k] = nm
+                    if not t.GetBranch(nm):       # J33: was a silent CV fallback
+                        raise RuntimeError(
+                            f"[FAIL] shifted branch '{nm}' missing from the background tree for "
+                            f"axis '{ax['name']}' in universe {universe_branch}. Retaining the CV "
+                            "branch would understate this lateral band. Re-run the event loop.")
+                    ax_bkg[k] = nm
             if verbose:
                 print(f"[INFO] bkg lateral universe: pt/pz+{'/'.join(ax_bkg)} swapped")
     sb = _addr(t, sb_name); sb_pz = _addr(t, sb_pz_name)
@@ -637,8 +695,14 @@ def main():
     # verify the extra-axis branches exist (incl. a hidden closure-bump axis)
     load_extras = extras + ([hidden_ax] if hidden_ax is not None else [])
     for ax in load_extras:
+        # J33: `t_td` was absent from this list, yet collect_truth_denom_nd binds ax["truth"] on
+        # it unchecked. All-zero truth-denominator coordinates would NOT trip the finite-support
+        # closure gate below, which compares COUNTS -- and counts are unaffected by zeroed
+        # coordinates. The truth denominator is the cross section's denominator, so a silent
+        # column of zeros there rescales every reported bin.
         for tree, br in [(t_sig, ax["reco"]), (t_sig, ax["truth"]),
-                         (t_bkg, ax["bkg"]), (t_data, ax["data"])]:
+                         (t_bkg, ax["bkg"]), (t_data, ax["data"]),
+                         (t_td, ax["truth"])]:
             if not tree.GetListOfBranches().FindObject(br):
                 raise RuntimeError(f"branch '{br}' missing from '{tree.GetName()}' "
                                    f"(axis {ax['name']}); re-run the event loop")

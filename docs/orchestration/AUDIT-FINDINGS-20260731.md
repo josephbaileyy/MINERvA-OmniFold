@@ -834,6 +834,13 @@ still surface the strongest and the weakest finding in a document.
    first, as this entry said it had to be — `p4_validate_active_lateral.py` records
    `candidate` and `candidate_sha256` in its receipt, and `p4_adopt_standard.py` now requires the
    receipt's SHA to equal the candidate's instead of merely testing that the digest is truthy.
-   Neither file is hash-bound, so no receipt moved. J33 (ND schema fails open: `_addr` discards
-   `SetBranchAddress`'s return code, `t_td` is absent from the axis-validation list) is untouched
-   and still latent.
+   Neither file is hash-bound, so no receipt moved.
+   **J33 FIXED 2026-08-02**, all three sub-claims. `_addr` now refuses a branch it cannot bind
+   (GetBranch first, then a negative `SetBranchAddress` status, which catches a type mismatch that
+   GetBranch alone cannot see), and the weight site is split into `_addr_weight` so the 1.0
+   initial value is visible at the one place where a miss reproduces KNOWN_ISSUES #1. `t_td` joins
+   the axis-branch validation list. The three shifted-branch swap sites raise instead of retaining
+   the CV name — reaching them means the universe IS kinematic and the axis IS declared to shift,
+   so a missing branch is an error, not a fallback; weight-only bands never enter those blocks.
+   `unfold_nd_omnifold_unbinned.py` is hash-bound by nothing. Regression coverage:
+   `tests/test_nd_branch_binding_fails_closed.py` (12 tests, ROOT stubbed at import).
