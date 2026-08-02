@@ -84,6 +84,24 @@ The sequence that keeps the contract intact:
 
 Owner: whoever takes `PORTING.md` §4. Not the science restore.
 
+### And a landmine for anyone widening collection more broadly
+
+The 2026-08-02 coverage survey found four more `test_*.py` files, in
+`omnifold_nn/omnifold/tests/`. **Do not add that directory to collection.** They are vendored
+upstream *demo scripts*, not tests: module-level script bodies with **zero assertions**, where the
+"check" is a `print()`. They are referenced by no file anywhere in this repo. Two cannot be
+imported here at all (the TF 2.16/Keras 3 vs vendored Keras-2 mismatch), and importing
+`test_omnifold.py` **runs a real MultiFold training at module scope** — measured at 118 s, and it
+writes `omnifold_nn/log_test.txt` into the working tree. Collection alone trains a model and
+dirties the checkout; there is no assertion at the end of it to be worth that.
+
+The general rule this suggests: *pytest-shaped* and *is a test* are different properties, and
+widening `testpaths` conflates them. `docs/orchestration/` is the case where widening is right
+(real tests, real failures, blocked only on triage). `omnifold_nn/omnifold/tests/` is the case
+where it is wrong. `nd-unfolding/uq_fps/corrected/` (4 real tests, but they only import from an
+`nd-unfolding/` cwd) is a third case again, and needs a `conftest.py` `sys.path` entry before
+collection from the repo root would even work.
+
 
 ---
 
@@ -118,3 +136,34 @@ Counted properly, of the 303 exactly **one** is a code path. That is the good ne
 unresolvable bucket really is mostly data. It is also the whole point — one real binding was
 hiding in a bucket labelled "data files, off-repo artifacts, binaries", and the label was doing
 the work of a check.
+
+### Correction, same day — the enumeration was done, and it moves three numbers
+
+`COVERAGE-SURVEY-20260802.md` §4 enumerated all of them. Three claims above need amending:
+
+1. **The count is 308, not 303.** 303 was right when this was written; receipts landed the same
+   afternoon. Not a defect — a reminder that the number is a moving target and citing it without a
+   date is meaningless.
+2. **The resolver bug affects three bindings, not one.** All three come from the same receipt,
+   `fps_control_manifest.json`, which writes paths relative to `nd-unfolding/`:
+   `unfold_nd_omnifold_unbinned.py` (**drifted**, as above),
+   `active_universe_5d/fps/covariance/audit_merged_fps.json` (MATCH) and
+   `.../fps_reported_mask.json` (MATCH). "Exactly one is a code path" is still true — only one is
+   a `.py` — but that framing undercounted the resolver's blast radius. The two JSON bindings
+   happen to match, which is luck, not verification: nothing would have reported them if they had
+   drifted, and they are the *reported mask* and the *merge audit*.
+3. **One member of the bucket is not a file path at all.** `g2-attempt2-terminal`, from
+   `qp5-wake-reconciliation-20260719.json`, is an event *name*; `collect`'s `<base>_sha256` +
+   sibling `<base>` rule harvests it as a binding. So the unresolvable count is not a clean measure
+   of anything and should not be treated as one.
+
+**The precondition set above is now satisfied** — "enumerate the 303 first, then land the resolver
+change together with whatever it exposes." The exposure is known exactly: three bindings, one of
+which goes red. The resolver fix is therefore no longer blocked on triage; it is blocked only on
+deciding how the one drifted binding is handled, which is a re-issue of the purity-control lane,
+not a hand-edited hash.
+
+Also worth naming, because the label hides it: **4 bindings pin `runEventLoopOmniFold`**, the
+canonical compiled analysis binary. It is built in-tree and untracked, so all four are unresolvable
+*in this checkout* and would resolve on Perlmutter. The single most load-bearing executable in the
+2D/PET pipeline has four hash pins that have never been checked anywhere. See RESTORE Step 0.

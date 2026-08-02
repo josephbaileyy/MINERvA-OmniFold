@@ -96,7 +96,16 @@ the energy mask, because energy(col 0)==0 is the only pad authority the model ke
 |---|---|---|---|---|
 | FS-hadron E,px,py,pz | 0–3 | GeV | ÷1000 | muon±13 & ν removed at source |
 | pdg | 4 | — | raw | **retained** (recoil-only loader dropped it); learned embedding = production refinement |
-| theta,phi | 5,6 | rad | raw | appended angular direction; **KNN coords = (theta,phi)=(5,6)** |
+| theta | 5 | rad | raw | polar angle wrt beam, `arctan2(pt, pz)` ∈ [0,π]; not periodic, so carried raw |
+| cos_phi, sin_phi | 6,7 | — | raw | azimuth encoded **periodically**; **KNN coords = (theta,cos_phi,sin_phi)=(5,6,7)** |
+
+The truth cloud is **8 columns**, not 7. This row said `theta,phi = (5,6)` until 2026-08-02; that
+predates the CLM-008 **F10** fix of 2026-07-17, which is recorded further down this same document
+(§CLM-008) and which replaced raw φ with (cos φ, sin φ) precisely because −π and +π were maximally
+far apart in the KNN metric. `build_truth_cloud` (`fullevent_fps_dataloader.py:178-204`) returns
+`coord_idx=(5,6,7)` and `test_fullevent_fps.py:96` pins it, so the table was the only thing in the
+repo still asserting the pre-fix layout — a *green* test contradicted a sentence in the contract
+for six weeks. Found by the 2026-08-02 coverage survey, category 5.
 
 ### event_reco / event_data (continuous, SAME observable schema) — the distinguished muon
 **ADOPTED 2026-08-01 — the FULL schema (13 features).** `fullevent_fps_dataloader.DEFAULT_EVT_FEATURES`:

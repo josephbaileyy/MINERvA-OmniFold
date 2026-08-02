@@ -190,6 +190,38 @@ discovering them during it. Re-measure at the freeze tag; these will have grown.
   launchers. Any split must keep `state/` on the analysis side. The root symlink
   `orchestration -> docs/orchestration` and `.gitattributes` need updating too.
 
+### Added 2026-08-02 — the unexercised inventory, measured
+
+`docs/orchestration/COVERAGE-SURVEY-20260802.md` §2 (+ Appendix A) is the worklist
+this section asks for, already built. **Read it before Stage 3, and read its
+caveats before believing it.** Headline: of **577 runnable artifacts**, **371 have
+no `RUNS.tsv` row, no test, and no in-tree caller** (261 `.sh`, 107 `.py`, 3
+`.cpp`). A stricter independent pass — basename named *nowhere at all*, including
+RUN_LOGs and receipts — leaves **88 shell scripts**, a strict subset, so the two
+methods bracket the answer.
+
+**That is not a deletion list, and the gap between 88 and 371 is exactly why.**
+`RUNS.tsv` covers 38 of 577, so "no row" means *not logged*, not *never run* — most
+of the 261 `sbatch_*.sh` plainly did run, and this plan's own paragraph above says
+115 of those names are load-bearing provenance cited in tracked records. An earlier
+pass this campaign produced a 95-file "unreferenced" list of which at least 10 were
+live Step 0b launchers; reference-counting is a lead, not a verdict. The 88 is the
+only subset worth opening at the freeze tag, and each entry still needs a reason.
+
+Two other survey categories touch this plan and both argue for *not* acting:
+
+- §3's **30 guards with an unreachable failing branch** are mostly `raise
+  ValueError(f"unknown {x}")` that is dead only because every caller passes a
+  literal. Deleting them converts a disciplined-callers invariant into a silent
+  wrong answer. Leave them. No shell guard was confirmed dead at all, over 309
+  files — an absence of findings, not a clean bill.
+- §4's binding enumeration is the concrete version of this plan's precedent
+  paragraph below: `fps_control_manifest.json` records paths relative to
+  `nd-unfolding/` while `verify_hash_bindings.localize()` joins to the repo root,
+  so **three of its bindings were invisible to the verifier and one had already
+  drifted**. A move that rewrites paths in receipts can produce exactly this, and
+  the verifier will report success.
+
 Precedent for this plan's "never bulk-move then repair" rule: the 2026-07-26
 `__file__` de-rooting across 26 `pet/` and `tests/` modules voided six gate hash
 bindings, restored two days later in a separate commit. That refactor was an
