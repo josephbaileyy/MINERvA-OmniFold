@@ -59,7 +59,32 @@ low-$W$ (below \SI{1.1}{GeV}, QE-like) excess and a small $\Delta$-region
 \label{sec:eavailw-band}
 We confirm this against independent spline-normalized $(\Eavail,W)$
 predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
-(Fig.~\ref{fig:eavailWband}). All four underpredict the
+(Fig.~\ref{fig:eavailWband}).
+% --- PROVENANCE / REDUCTION for the corner ratios (J27.3, recorded 2026-08-02) ---
+% The ratios below are CORNER-INTEGRATED cross-section ratios -- not per-bin means,
+% not a weighted mean, not the worst bin. Reduction, from
+% 3d-unfolding/genie/overlay_eavailW_band.py:88-108:
+%   corner = outer(EAVAIL_EDGES[:-1] >= 0.8, W_EDGES[:-1] >= 1.8)  -> 3x3 = 9 cells
+%            [Eavail 0.8-1.5, 1.5-3.0, 3.0-100] x [W 1.8-2.2, 2.2-3.0, 3.0-100]
+%   data/gen = sum_corner(hData2D * dEavail * dW)
+%              / sum_corner(hXSec_eavailW * dEavail * dW)
+% Source of 1.54/1.58/1.56: ND_OMNIFOLD_RUN_LOG.md:988-990 (2026-06-08 band run),
+% which reads "All THREE underpredict ... 1.54 CV, 1.58 +MEC, 1.56 NuWro" and states
+% "GiBUU excluded (FinalEvents.dat lacks per-event Enu)". GiBUU was structurally
+% ABSENT from the run these three numbers come from; "All four" below is a later
+% edit that was not accompanied by a recomputation. GiBUU was afterwards added to
+% the band (gibuu_to_xsec_eavailW.py, Task 16; make_figures.sh:55 passes it and the
+% figure legend shows it), so the 4-generator overlay DID print a GiBUU corner
+% ratio -- to stdout, never captured. To close: re-run make_figures.sh:55 and read
+% the "hiE-hiW corner ... data/gen=" line. Inputs live only on Perlmutter /pscratch.
+% Do NOT substitute either of these -- both are different reductions:
+%   - Eavail-projected GiBUU data/gen 1.59 / 1.36 / 1.91 (RUN_LOG:1126-1127)
+%     integrates over ALL W, not W>=1.8.
+%   - corner chi2 381.1/12 (RUN_LOG:1155-1157) uses Eavail>=0.4 -> 12 cells,
+%     a different sub-block that adds the 0.4-0.8 Eavail row.
+% Until recomputed, "all four" and the 54-58% span remain three-generator numbers.
+% --------------------------------------------------------------------------------
+All four underpredict the
 high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
 (data/generator $=1.54$, $1.58$, $1.56$). Crucially, enabling Valencia 2p2h
 does \emph{not} close the corner --- it slightly worsens it ($1.54\to1.58$),

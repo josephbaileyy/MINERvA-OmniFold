@@ -771,9 +771,12 @@ still surface the strongest and the weakest finding in a document.
    `load_flux_universe_bins` pattern (including its fail-closed guard) to all three ND/5D sites,
    and fix J29 in the same pass. Quarantine the adopted 5D covariance scales until re-rolled;
    central results are unaffected and stay quotable.
-2. **Gate-4 Step 2b re-issue** (`RESTORE-2026-08-03.md`) — closes
+2. ~~**Gate-4 Step 2b re-issue** (`RESTORE-2026-08-03.md`) — closes
    `test_gate3_and_gate4_launch_code_freezes_specifically` and resolves two of the four J11
-   mismatches. Target state **8 failed / 407 passed / 1 skipped**.
+   mismatches. Target state **8 failed / 407 passed / 1 skipped**.~~ **DONE 2026-07-31**
+   (`5410ab0`). That test closes. The 407 figure is stale — the J10/J35 and J01/J02/J05 lanes
+   landed the same day, so the actual state is **8 failed / 590 passed / 1 skipped**; the failure
+   SET is what was being pinned and it is as predicted (7 platform + `test_no_new_broken_hash_bindings`).
 3. **J11 expected-red baseline** — *after* step 2, so it pins the surviving Gate-2 tuples rather
    than all of them. **Note the list grew on 2026-08-01, from three tuples to five**: the J01 fix
    necessarily edited `tests/test_fullevent_fps.py` (bound by `g2-gate2-construction-20260719`)

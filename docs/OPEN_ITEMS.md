@@ -128,8 +128,15 @@ Implementation gate, in order:
    for `event_reco`, `event_data`, and `event_truth` through PET, DataLoader,
    both `MultiFold.cache()` steps, reweight-all inference, bootstrap
    persistence, and extraction. Permit different step-1/step-2 feature counts
-   and normalization contracts. The current `num_evt` branch is not functional
-   end-to-end, and fixing `net.py` alone is insufficient.
+   and normalization contracts. **Updated 2026-08-01:** the `num_evt` branch is
+   no longer the blocker — `dfef335` landed the 13-feature reco schema with
+   `n_evt_reco`/`n_evt_truth` carried separately, so the two legs may now differ
+   in width, and `pet/extract_fullevent_fps.py` supplies the missing
+   reweight-all + extraction path. What remains is that **none of it has been
+   proven end-to-end**: the driver calls `build_fullevent_loaders` with no
+   `refine_fn` override, so it takes the learned Stay-Positive refiner, which
+   imports ROOT at module load — meaning the Gate-4 driver is executable only on
+   Perlmutter and has never run anywhere. Code-complete, unexercised.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the
    current tensors begin with energy and one position/momentum component. Use
@@ -138,12 +145,22 @@ Implementation gate, in order:
 4. Prove row alignment and reco/data schema parity; document every input, mask,
    normalization, truncation, and unavailable counterpart. Add an explicit
    leakage test proving that step 1 contains no truth-only feature.
-5. Add an omitted-variable stress closure that changes muon kinematics at fixed
-   recoil. It must expose the recoil-only estimator and close with the full-event
-   estimator. Also retain ordinary closure, central normalization,
-   lower-dimensional marginal gates, and full-event-versus-recoil comparisons
-   in the FPS extension and dead-cell tiers. Passing this stress closure alone
-   does not satisfy the FPS controls.
+5. ~~Add an omitted-variable stress closure that changes muon kinematics at
+   fixed recoil. It must expose the recoil-only estimator and close with the
+   full-event estimator.~~ **DONE 2026-08-01** — `pet/stress_closure_muon.py`,
+   Delta slurm 20758087, commit `0e19f66`. Recoil-only sits at the prior
+   (0.5811 vs 0.5820, blind if above 0.5x prior — 2.0x margin); full-event
+   closes to 0.0428, 7.4% of the recoil-only residual (recovers if below 0.5 —
+   6.8x margin). Evidence in
+   `docs/orchestration/runs/b6-stress-closure-muon/`. Note the earlier PASS at
+   `df7397e` (07-30) was against the pre-`--json` script; this one is against
+   the hash the live Gate-4 receipt binds and is machine-readable, which
+   Gate-4's now-required `--stress-report` needs.
+   **The rest of this item is still open:** retain ordinary closure, central
+   normalization, lower-dimensional marginal gates, and full-event-versus-recoil
+   comparisons in the FPS extension and dead-cell tiers. Passing the stress
+   closure alone does not satisfy the FPS controls — the ordinary closure is
+   RESTORE Step 3 and needs the real dump.
 6. Freeze the full-event FPS feature and measurement contracts before
    production, then rerun the PET nominal, GPU floor, coherent statistical
    ensemble, PET-specific ML ensemble, vertical/retraining response,
@@ -187,8 +204,25 @@ largest nominal truth-space volume.
    [map lines 90–92](https://github.com/MinervaExpt/MAT-MINERvA/blob/c20ad220e95f55b4ef2e9426c56dd2a3800f7533/universes/GenieSystematics.cxx#L90-L92)),
    unchanged since the 2021-07-07 initial public
    [commit](https://github.com/MinervaExpt/MAT-MINERvA/commit/69e841ef53e336090dee7db25b70b8562bae76dc).
-   **Ready-to-send draft: `docs/COLLABORATOR_QUESTIONS.md` (2026-06-12)** —
-   needs only the user to send it.
+   **ASKED AND PARTIALLY ANSWERED 2026-08-02** (in person at the presentation;
+   verbal, no citable thread — see the ANSWERS section of
+   `docs/COLLABORATOR_QUESTIONS.md`):
+   - **FrInel_pi — CLOSED.** Still current practice, but the reason is a
+     *degeneracy*: a set of dials overlap / are circularly dependent and any one
+     of them must be commented out. So the choice of `FrInel_pi` is conventional,
+     not a statement that the knob is individually suspect — which is what the
+     MAT source comment reads like. Cite the practice and the degeneracy, not
+     the comment's implication.
+   - **Ours-only truncated-spectral chi^2 — CLOSED.** The collaboration uses the
+     same truncated-spectral pseudo-inverse. Confirmed as practice, not as a
+     citation; a reference is a separate ask if the note needs one.
+   - **First 3D+ unfolded covariance — STILL OPEN, narrowed.** The endorsement
+     question was not answered, and the reply ("they do have the 3D unfolding
+     result") may contradict the question's own premise that no prior MINERvA
+     3D+ unfolding exists. Ambiguous between *they have their own* and *they
+     have seen ours*. **Do not touch the novelty claim in either direction until
+     disambiguated.** One question closes it: is there a MINERvA 3D+ unfolded
+     result, published or internal, predating ours?
 
 ## Deferred analysis refinements
 

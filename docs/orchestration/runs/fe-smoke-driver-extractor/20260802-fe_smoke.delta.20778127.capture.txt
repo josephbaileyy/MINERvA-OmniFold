@@ -1,0 +1,144 @@
+# fe_smoke: first end-to-end run of the Gate-4 driver and the J02 extractor
+# date_utc: 2026-08-02T12:35Z   slurm: 20778127 (Delta, cpu, tf215.sif = TF 2.14.0)
+# worktree HEAD: 0e19f66   fixture sha256: ad588118846fadfa48c79ac12ce08a3c1b3c64edf21b408a3e8de362f0b4fcdc
+# SYNTHETIC FIXTURE + injected sklearn refiner (refinement_is_learned_production=False).
+# Plumbing only. Gate-4's target-provenance check refuses this by construction.
+# stage 1 fixture PASS | stage 2 DRIVER PASS (first ever) | stage 3 EXTRACTOR FAILED CLOSED
+# see docs/orchestration/FINDING-20260802-extractor-pass-truth-mask.md
+
+[smoke] 2026-08-02T12:33:25Z cn006.delta.ncsa.illinois.edu  HEAD 0e19f66
+[smoke] stage 1 -- synthetic g2-fullevent-v1 fixture
+{
+  "schema": "synthetic-g2-fullevent-fixture-v1",
+  "path": "/work/nvme/bhvk/jbailey2/fe_smoke/smoke_out/G2_synth.npz",
+  "sha256": "ad588118846fadfa48c79ac12ce08a3c1b3c64edf21b408a3e8de362f0b4fcdc",
+  "size_bytes": 47970692,
+  "n_sig": 60000,
+  "n_data": 12000,
+  "n_bkg": 4000,
+  "tokens": 40,
+  "seed": 0,
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
+  "bkg_mode": "negweight-refined",
+  "members": [
+    "bkg_current",
+    "bkg_identity_hash",
+    "bkg_indices",
+    "bkg_inttype",
+    "bkg_muon",
+    "bkg_nuPDG",
+    "bkg_part_reco",
+    "bkg_reco_scalars",
+    "bkg_time",
+    "bkg_vertex",
+    "bkg_view",
+    "data_identity_hash",
+    "data_muon",
+    "data_pot",
+    "data_time",
+    "data_vertex",
+    "data_view",
+    "edges_0",
+    "edges_1",
+    "estimator_fingerprint",
+    "fullPhaseSpace",
+    "hasFullEventSchema",
+    "mc_pot",
+    "measured_pc",
+    "measured_scalars",
+    "part_gen",
+    "part_reco",
+    "pass_reco",
+    "pass_truth",
+    "petSchemaVersion",
+    "reco_muon",
+    "reco_scalars",
+    "reco_time",
+    "reco_vertex",
+    "reco_view",
+    "sig_identity_hash",
+    "synthetic_fixture",
+    "synthetic_provenance",
+    "truth_scalars",
+    "w_bkg",
+    "w_reco",
+    "w_truth"
+  ],
+  "IS_SYNTHETIC": true,
+  "warning": "RANDOM DATA. Plumbing/launch-path validation only. Never a physics result."
+}
+[smoke] stage 2 -- Gate-4 DRIVER end-to-end (13-feature loader -> PET -> MultiFold -> save)
+[1,0]<stdout>:{
+[1,0]<stdout>:  "config_gate": "PASS",
+[1,0]<stdout>:  "tag": "nominal",
+[1,0]<stdout>:  "estimator_fingerprint": "pet-fullevent-fps-v1",
+[1,0]<stdout>:  "bkg_mode": "negweight-refined",
+[1,0]<stdout>:  "petSchemaVersion": "g2-fullevent-v1",
+[1,0]<stdout>:  "hasFullEventSchema": 1,
+[1,0]<stdout>:  "fullPhaseSpace": 1,
+[1,0]<stdout>:  "has_background": true,
+[1,0]<stdout>:  "input": "/work/nvme/bhvk/jbailey2/fe_smoke/smoke_out/G2_synth.npz",
+[1,0]<stdout>:  "seed_policy": {
+[1,0]<stdout>:    "estimator_seed": 42,
+[1,0]<stdout>:    "subsample_seed": 0,
+[1,0]<stdout>:    "niter": 2,
+[1,0]<stdout>:    "epochs": 8,
+[1,0]<stdout>:    "train_events": 2000000
+[1,0]<stdout>:  }
+[1,0]<stdout>:}
+[1,0]<stdout>:Horovod instalation found.
+[1,0]<stdout>:INFO: Normalizing sum of weights to 1000000.0 ...
+[1,0]<stdout>:INFO: Creating pass reco flag ...
+[1,0]<stdout>:INFO: Normalizing sum of weights to 4553456.7104383195 ...
+[1,0]<stdout>:42 training steps at reco and 23 steps at gen
+[1,0]<stdout>:ITERATION: 1
+[1,0]<stdout>:RUNNING STEP 1
+[1,0]<stdout>:Last val loss 117.02339935302734
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:RUNNING STEP 2
+[1,0]<stdout>:Last val loss 375.8128356933594
+[1,0]<stdout>:INFO: Dumping training history ...
+[1,0]<stdout>:[gate4] wrote /work/nvme/bhvk/jbailey2/fe_smoke/smoke_out/nominal.npz (tag=nominal)
+[1,0]<stdout>:{
+[1,0]<stdout>:  "fold_forward_reco_ratio": 1.8618115199284977,
+[1,0]<stdout>:  "step1_class_ratio_R": 4.5534567104383195,
+[1,0]<stdout>:  "n_pass_reco_subsample": 2515,
+[1,0]<stdout>:  "n_pass_truth_subsample": 5929,
+[1,0]<stdout>:  "n_reported_cells": 191,
+[1,0]<stdout>:  "cap_saturation_frac": 0.0,
+[1,0]<stdout>:  "seed_policy": {
+[1,0]<stdout>:    "estimator_seed": 42,
+[1,0]<stdout>:    "subsample_seed": 0,
+[1,0]<stdout>:    "niter": 1,
+[1,0]<stdout>:    "epochs": 1,
+[1,0]<stdout>:    "train_events": 6000
+[1,0]<stdout>:  }
+[1,0]<stdout>:}
+[smoke] stage 3 -- J02 EXTRACTOR, push stage (chunked full-inventory reweight-all)
+[1,0]<stdout>:Horovod instalation found.
+[1,0]<stdout>:[extract] reweight-all 8192/60000 (13.7%)
+[1,0]<stdout>:[extract] reweight-all 16384/60000 (27.3%)
+[1,0]<stdout>:[extract] reweight-all 24576/60000 (41.0%)
+[1,0]<stdout>:[extract] reweight-all 32768/60000 (54.6%)
+[1,0]<stdout>:[extract] reweight-all 40960/60000 (68.3%)
+[1,0]<stdout>:[extract] reweight-all 49152/60000 (81.9%)
+[1,0]<stdout>:[extract] reweight-all 57344/60000 (95.6%)
+[1,0]<stdout>:[extract] reweight-all 60000/60000 (100.0%)
+
+# ---- stderr (filtered) ----
+
+[synthetic-g2] wrote /work/nvme/bhvk/jbailey2/fe_smoke/smoke_out/G2_synth.npz (48.0 MB)
+[synthetic-g2] sha256 ad588118846fadfa48c79ac12ce08a3c1b3c64edf21b408a3e8de362f0b4fcdc
+[synthetic-g2] SYNTHETIC -- do not publish anything derived from this file.
+[1,0]<stderr>:[extract] the full-inventory reweight disagrees with the training pass on the 6000 shared rows: max relative deviation 9.655e-01 > 0.001. The rebuilt step-2 model is not the one that produced this result (wrong checkpoint, wrong architecture, or an input space that was re-derived instead of reproduced).
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[43131,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------
