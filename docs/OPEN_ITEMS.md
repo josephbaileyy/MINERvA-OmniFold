@@ -14,7 +14,7 @@ cleanup behind the publication-results freeze tag.
 
 ## Active remediation gate (5D GBDT closed; PET full-event gate reopened)
 
-**Presentation deadline: 2026-07-16.** Central values, closure tests,
+**Presentation deadline 2026-07-16 --- PASSED; the talk workstream is closed.** This section is now framed by the 2026-08-03 Perlmutter restore, not the talk. Central values, closure tests,
 dimensional anchors, and the finalized 2D reproduction remain current. Old
 4D/FPS unified/adopted covariances, `(E_avail,W)` covariance-dependent
 generator significances, and their historical products remain unquotable. The

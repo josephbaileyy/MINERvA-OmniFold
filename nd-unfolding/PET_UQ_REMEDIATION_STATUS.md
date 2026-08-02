@@ -162,9 +162,13 @@ fail closed on mismatch, and never auto-submit (require `SLURM_JOB_ID`).
 separate post-restore user decision (the 2026-07-22 shutdown precludes a long
 GPU job now).
 
-**RE-ISSUED 2026-07-31** (`RESTORE-2026-08-03.md` Step 2b). Receipt:
-`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json`; the
-07-21 receipt is `SUPERSEDED`. The B1 §2d patch had voided all five bindings,
+**RE-ISSUED 2026-07-31, AND TWICE MORE SINCE.** The live receipt is
+`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801b.json`
+(J01/J02/J05 full-event schema). The chain is 20260721 -> 20260731 (Step 2b,
+below) -> 20260801 (J35/J10) -> **20260801b (LIVE)**; every earlier one carries
+`"status": "SUPERSEDED"` and its hashes under `files_at_issue`. Check that field
+rather than trusting a date in prose --- this paragraph named 20260731 as the
+receipt for two days after it stopped being one. The B1 §2d patch had voided all five bindings,
 and the re-issue was also the window for the audit-B2 validator defects: the
 CLI evaluated **none** of its four physics checks (`marginal`, `normalization`,
 `saturation_frac`, `closure` were never passed and the report builder silently
