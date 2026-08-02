@@ -33,7 +33,16 @@ these fingerprints and never mix the two; recoil-only PET UQ is NEVER attached t
 - **preprocessing:** cloud ÷1000 (MeV→GeV, mm→m), non-finite→0 (pad/mask sentinel); event
   features z-normalized over pass_reco (reco/data) / pass_truth (truth), !pass rows zeroed.
 - **backend:** vendored `omnifold_nn` PET (multi-input Model, explicit `coord_idx`, FiLM event
-  conditioning) + MultiFold; niter 2, epochs 8, batch 1024, Adam lr 1e-4, train subsample 2M.
+  conditioning) + MultiFold; niter 2, epochs 8, **batch 512**, Adam lr 1e-4, train subsample 2M.
+  *(Corrected 2026-08-02 from `batch 1024`. 1024 is the **recoil-only** value —
+  `minerva_pet_dataloader.py:360`, `phase7_retrain_universe.py:153` — and this line was written
+  2026-07-16, five days before a full-event driver existed. Every full-event training in the tree
+  is 512: the driver, `stress_closure_muon.py:95`, and `closure_fullevent_fps.py --batch-size`'s
+  default; the B-6 stress PASS this gate records was produced at 512. A recoil-only
+  hyperparameter reaching the full-event estimator's definition is the exact leak this document
+  quarantines elsewhere. Not yet plumbed — batch size is still absent from `NOMINAL_SEED_POLICY`,
+  the driver CLI, and Gate-4's `FROZEN["seed_policy"]`, so nothing enforces this sentence. See
+  `FINDING-20260802-estimator-definition-vs-driver.md`; the plumbing rides the Step 2b re-issue.)*
 - **seed policy:** estimator seed 42 FIXED for central + vertical/end-to-end universes + C_stat
   (so C_stat varies only the coherent data+MC Poisson replica id); C_ml varies subsample/split
   seed × TF estimator seed (predeclared crossed design), no Poisson.

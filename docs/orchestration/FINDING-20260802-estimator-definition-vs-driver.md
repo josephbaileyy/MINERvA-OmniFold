@@ -3,7 +3,8 @@
 *Found by the 2026-08-02 coverage survey, category 5 ("invariants with no executable check"), by
 asking what enforces `batch 1024` and discovering the answer is nothing — and then that nothing
 uses it either.*
-*Status: CONFIRMED as a discrepancy. The RESOLUTION is a physics decision, not a code fix.*
+*Status: CONFIRMED, and RESOLVED as **512** on 2026-08-02 — see "Which number wins" below. The
+contract sentence is corrected; the plumbing is still owed and rides the Step 2b re-issue.*
 *Severity: it is the definition of the estimator that launches at Step 4. Bounded — it changes the
 optimization trajectory, not the observable schema.*
 
@@ -58,19 +59,60 @@ computed in different-sized chunks. It is not on the same footing as, say, an in
 
 ## What to do
 
-**Do not patch either side unilaterally, and do not "fix" the contract by writing 512 into it.**
-Two things follow:
+## Which number wins: 512. Resolved 2026-08-02 by provenance, not by preference
 
-1. **Decide which number is the nominal estimator.** The evidence favours 512 being the practice
-   and the sentence being stale — three independent sites say 512 and nothing but that sentence
-   says 1024 — but this is a decision about the published estimator and it is Joseph's, not a
-   session's. Ask whether 1024 was ever run, or whether the sentence was written from an intended
-   configuration that never landed.
-2. **Whichever way it goes, plumb it.** `batch_size` should become a `NOMINAL_SEED_POLICY` entry, a
-   `--batch-size` CLI arg defaulted from it, and a `FROZEN["seed_policy"]` key read from the
-   artifact — the same four-part treatment niter/epochs/seed/subsample already get. That is the
-   part that stops this recurring, and it is worth doing even if the answer is "512 was always
-   right."
+The question "was 1024 ever run for the full-event estimator?" has a clean answer, and it is *no —
+and it never could have been.*
+
+**1024 is the recoil-only campaign's batch size.** It appears in exactly two places in the tree,
+both on the quarantined recoil-only path: `minerva_pet_dataloader.py:360` and
+`phase7_retrain_universe.py:153`. Nowhere else.
+
+**The contract sentence predates the estimator it describes by five days.** `git log -S'batch 1024'`
+puts it at `b7ba96f`, **2026-07-16**. `train_fullevent_nominal.py` did not exist until `ada72b0`,
+**2026-07-21**. So the line could only have been describing the recoil-only configuration that
+existed when it was written; it was never a decision about the full-event estimator, because there
+was nothing to decide about yet.
+
+**Every full-event training in the tree is 512**, and one of them is load-bearing:
+
+* `train_fullevent_nominal.py:238` — the driver, since the day it was created
+* `stress_closure_muon.py:95` — hardcoded
+* `closure_fullevent_fps.py:73` — `--batch-size` default
+* and therefore the **B-6 omitted-muon stress PASS this very gate records** (Delta job 20758087,
+  2026-08-02) was produced at 512. Launching the nominal at 1024 would gate it on a closure run
+  under a different optimization trajectory.
+
+**No nominal precedent is being overridden.** Gate-4 is `PASS_CODE_ONLY` and Step 4 has never
+launched, so the full-event nominal has not been trained at either value. There is no result to
+preserve — only a definition to make true.
+
+Decisive framing: this document is the one that quarantines the recoil-only lane ("recoil-only PET
+UQ is NEVER attached to either"; "the recoil-only campaign's additive C_syst+C_retrain is a
+QUARANTINED cross-check, never transferred"). A recoil-only *hyperparameter* reaching the
+full-event estimator's own definition is exactly the leak this contract exists to prevent, arriving
+by the one route it does not screen — prose.
+
+The contract sentence was corrected to 512 on 2026-08-02. It is safe to correct alone because the
+`.md` is not in the live receipt's `files`.
+
+## Still owed: plumb it, at Step 2b
+
+Correcting the sentence removes a contradiction; it does not create enforcement. `batch_size` should
+get the same four-part treatment `niter`/`epochs`/`seed`/`subsample` already have:
+
+1. a `NOMINAL_SEED_POLICY["batch_size"] = 512` entry,
+2. a `--batch-size` CLI arg defaulted from it,
+3. the `MultiFold(...)` call reading `args.batch_size` instead of the literal,
+4. a `FROZEN["seed_policy"]["batch_size"]` key that `check_freeze` reads **from the artifact**.
+
+Step 4 records it, so (4) needs the driver to persist it alongside the other seed-policy keys.
+Without (4) this recurs: the sentence is true today and unguarded tomorrow.
+
+**No rationale for 512 is recorded anywhere** — `ada72b0`'s message does not mention it. The
+plausible reason is memory: a full event carries more tokens than a recoil cloud, so halving the
+batch is the natural adjustment. That is a guess and is *not* written down; if the real reason was
+something else, it belongs in the docstring when (1)–(4) land.
 
 ## Sequencing: this rides the 08-03 re-issue, it does not precede it
 
