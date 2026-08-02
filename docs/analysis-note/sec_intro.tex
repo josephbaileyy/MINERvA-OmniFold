@@ -33,9 +33,14 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
 
 \paragraph{Why unbinned:}
 \begin{itemize}
-  \item \textbf{No binning at unfold time.} OmniFold learns event weights in the
-        full observable space; the result is histogrammed only at the end, so the
-        binning can be chosen (or refined) after unfolding without re-running.
+  \item \textbf{No binning at unfold time, with one deliberate exception.}
+        OmniFold learns event weights in the full observable space; the result is
+        histogrammed only at the end, so the reported binning can be chosen (or
+        refined) after unfolding without re-running. The exception is the
+        background subtraction: the default purity mode assigns each data event a
+        $(D-B)/D$ weight by analysis-bin lookup \emph{before} training, so the
+        reco grid that weight was computed on is fixed even though the reported
+        grid is not (\S\ref{sec:method}).
   \item \textbf{Natural path to higher dimensions.} Adding observables is adding
         input features, not multiplying response-matrix bins --- this is the
         enabling property for the available-energy extension

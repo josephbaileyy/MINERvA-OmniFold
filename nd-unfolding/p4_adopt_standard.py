@@ -36,7 +36,18 @@ def main():
     reals = {os.path.realpath(p) for p in (a.candidate, prov["support_family"],
                                            prov["stat_cov"].split(":")[0], prov["ml_cov"].split(":")[0])}
     P.require(os.path.realpath(a.out) not in reals, "aliasing: --out coincides with an input/candidate")
-    P.require(P.sha256_file(a.candidate), "candidate unreadable")
+    # J32: `P.require(P.sha256_file(...))` tested only that the digest was TRUTHY -- i.e. that the
+    # file was readable. It bound nothing. Now that the validator's receipt records which candidate
+    # it validated (p4_validate_active_lateral.py), require that this is that candidate.
+    cand_sha = P.sha256_file(a.candidate)
+    P.require(cand_sha, "candidate unreadable")
+    receipt_sha = val.get("candidate_sha256") if isinstance(val, dict) else None
+    P.require(receipt_sha is not None,
+              "the validation receipt records no candidate_sha256 -- it predates the J32 fix and "
+              "cannot bind a candidate; re-run p4_validate_active_lateral.py")
+    P.require(receipt_sha == cand_sha,
+              f"candidate sha256 {cand_sha} does not match the validated candidate {receipt_sha} "
+              "-- this PASS receipt does not certify this file")
     print(f"[adopt] gates PASS; would promote {a.candidate} -> {a.out} "
           f"(not executed here — separate authorized adoption step)")
     sys.exit(0)

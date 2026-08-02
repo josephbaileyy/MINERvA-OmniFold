@@ -108,7 +108,26 @@ Two problems with treating that as an answer:
     *they have their own 3D unfolding result* (premise false, novelty claim
     moves) and *they have received/seen ours* (premise intact).
 
-**DO NOT edit the novelty claim in either direction until this is disambiguated**
+**RESOLVED 2026-08-02 (clarified by Joseph):** MINERvA *does* have a 3D unfolding
+publication, we already found and cite it, and there is nothing beyond that. So:
+
+  * The question's premise --- "there is no prior MINERvA 3D+ unfolding result to
+    use as precedent" --- **was wrong as written**, and any note text repeating it
+    must be narrowed. What survives is the narrower and still-true claim: prior
+    MINERvA multi-differential results used *binned* unfolding, and the novelty
+    here is the *unbinned, simultaneously-unfolded* formulation plus the full
+    3D+ unfolded **covariance**, which the prior publication does not provide.
+    The note already states it that way in `sec_execsummary.tex` and
+    `sec_summary.tex` (both cite `MINERvA:2022qe` and say "the methodological
+    distinction is the unbinned, simultaneously-unfolded formulation") --- so the
+    note is correct and it was this DOCUMENT's framing that was wrong.
+  * **The endorsement question remains unanswered.** "Nothing beyond that" means
+    no view was given on publishing the full 1431-bin covariance or its
+    rank-deficient GoF treatment. That is still owed, and it is the part that
+    actually gates App. A item 5.
+
+Superseded guidance, kept so the reasoning is legible:
+~~**DO NOT edit the novelty claim in either direction until this is disambiguated**~~
 — guessing it "safe" by dropping "first" discards a real result if the second
 reading is right, and leaving it discards a correctness obligation if the first
 is. One clarifying question closes it: *is there a MINERvA 3D+ unfolded result,

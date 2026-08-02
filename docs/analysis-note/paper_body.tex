@@ -82,8 +82,8 @@ carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator.
 
 \subsection{Available energy: the low-recoil deficit}
 Extending to $(\pT,\pPar,\Eavail)$ and then $(\pT,\pPar,\Eavail,q_{3})$ yields
-\emph{unbinned} three- and four-observable MINERvA unfolds; each reproduces its
-lower-dimensional predecessor under marginalization. Four truth-level generators
+\emph{unbinned} three- and four-observable MINERvA unfolds; each passes the
+projection anchors against its lower-dimensional predecessor to $\approx$1--2\,\%. Four truth-level generators
 (GENIE CV, MINERvA Tune v1, NuWro, GiBUU) all underpredict the data at low
 $\Eavail$ (Fig.~\ref{fig:pgen}), the established MINERvA low-recoil/2p2h deficit.
 We confirm its origin directly: pion final-state-interaction dials move
@@ -168,8 +168,10 @@ used here; the full-event estimator receives a fresh uncertainty budget.
 \end{figure}
 
 \section{Extended-fiducial central-value study}
-The published phase space discards about a third of the signal rate (events with
-the muon below \SI{1.5}{GeV/c} or beyond $20^{\circ}$). Because OmniFold corrects
+The published phase space discards about a third of the simulated signal rate
+(events with the muon below \SI{1.5}{GeV/c} or beyond $20^{\circ}$); the fraction is
+computed from the MnvTune-weighted GENIE truth denominator and is therefore
+model-dependent. Because OmniFold corrects
 for acceptance natively, removing those truth-level cuts is a configuration change,
 and the unfold extrapolates into the unmeasured regions through the miss
 regressor. The resulting preliminary extended-fiducial CC-inclusive central value is

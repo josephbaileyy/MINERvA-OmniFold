@@ -12,7 +12,7 @@ INSEPARABLY to the audited merged inputs (no cosmetic --merged-dir):
     10 per-endpoint SHA256, exactly (and both are the canonical 10).
 Any failure -> nonzero exit, no PASS summary. Reuses p4_lib gates.
 """
-import argparse, json, sys
+import argparse, json, os, sys
 import numpy as np
 import p4_lib as P
 
@@ -38,7 +38,14 @@ def main():
     ap.add_argument("--merged-audit", required=True, help="p4_merged_audit.json")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
-    out = {"gates": [], "result": "FAIL"}
+    # J32 (AUDIT-FINDINGS-20260731): the PASS receipt used to carry `gates`, `active_traces`,
+    # `active_only_sum_relerr`, `support_comparison` and `result` -- and NO candidate path and NO
+    # candidate sha256. There was nothing in it to bind a candidate to, so ANY pass receipt
+    # satisfied ANY candidate and `p4_adopt_standard.py` could only test that its own candidate was
+    # readable. The fix has to start here, not in the adopter: record WHAT was validated.
+    out = {"gates": [], "result": "FAIL",
+           "candidate": os.path.abspath(a.candidate),
+           "candidate_sha256": P.sha256_file(a.candidate)}
     try:
         # merged inseparability (no cosmetic dir): manifest 10 SHA == merged-audit 10 SHA
         man = json.load(open(a.manifest)); aud = json.load(open(a.merged_audit))

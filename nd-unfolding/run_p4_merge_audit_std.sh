@@ -21,15 +21,36 @@ merge_one () {
   local INPUTS=(); for PL in "${PLAYLISTS[@]}"; do local f="${ND}/active_universe_5d/standard/${BAND}_${EP}/runEventLoopOmniFold_5D_${PL}_active_${BAND}_${EP}.root"; [[ -s "$f" ]] && INPUTS+=("$f"); done
   [[ ${#INPUTS[@]} -ne 12 ]] && { echo "[merge] ABORT ${BAND}:${EP} ${#INPUTS[@]}/12"; return 3; }
   python "${REPO}/2d-unfolding/uq/hadd_universes_full.py" "${MERGED}" "${INPUTS[@]}" > "${MERGEDIR}/merge_${BAND}_${EP}.log" 2>&1 \
-    && echo "[merge] DONE ${BAND}:${EP} ($(stat -c '%s' "${MERGED}")B)" || { echo "[merge] FAIL ${BAND}:${EP}"; rm -f "${MERGED}"; }
+    && echo "[merge] DONE ${BAND}:${EP} ($(stat -c '%s' "${MERGED}")B)" || { echo "[merge] FAIL ${BAND}:${EP}"; rm -f "${MERGED}"; return 4; }
 }
+# J31 (AUDIT-FINDINGS-20260731): merge failures used to be converted into success, twice over.
+# `merge_one`'s last command on the failure path was `rm -f`, which returns 0 whether or not the
+# file exists, so the function exited 0; and a bare `wait` discards every child status anyway,
+# including the `return 3` abort the author did write. NMERGED was computed, printed, and never
+# compared to EXPECTED, and there is no `set -e`. Fixing only the `rm` would have changed nothing.
+# So: collect the PIDs, wait on each one individually, and fail closed on the count.
+EXPECTED=$(( ${#BANDS[@]} * 2 ))
+PIDS=(); LABELS=()
 for BAND in "${BANDS[@]}"; do for EP in 0 1; do
   while [ "$(jobs -rp | wc -l)" -ge "$CONC" ]; do sleep 5; done
   merge_one "$BAND" "$EP" &
+  PIDS+=($!); LABELS+=("${BAND}:${EP}")
 done; done
-wait
+NFAILED=0
+for i in "${!PIDS[@]}"; do
+  if ! wait "${PIDS[$i]}"; then
+    echo "[merge] child ${LABELS[$i]} exited non-zero (rc=$?)" >&2
+    NFAILED=$(( NFAILED + 1 ))
+  fi
+done
 NMERGED=$(find "${MERGEDIR}" -name 'runEventLoopOmniFold_5D_MEFHC_active_*.root' -size +0c 2>/dev/null | wc -l)
-echo "[p4-merge] merges done $(date -u +%T); merged=${NMERGED}/10"
+echo "[p4-merge] merges done $(date -u +%T); merged=${NMERGED}/${EXPECTED}; failed_children=${NFAILED}"
+if [[ "${NFAILED}" -ne 0 || "${NMERGED}" -ne "${EXPECTED}" ]]; then
+  echo "[p4-merge][FAIL] ${NMERGED}/${EXPECTED} merged, ${NFAILED} child failure(s) -- refusing to" >&2
+  echo "  run the acceptance audit on an incomplete merge set. Re-run; merge_one is idempotent" >&2
+  echo "  (it SKIPs a valid merged file and REDOes an invalid one)." >&2
+  exit 5
+fi
 echo "[p4-audit] running acceptance audit..."
 cd "${ND}" && python3 p3s_manifest_summary.py --mode standard
 echo "[p4-merge-audit] complete $(date -u +%T)"

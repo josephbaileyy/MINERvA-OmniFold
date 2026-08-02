@@ -170,8 +170,10 @@ The published analysis~\cite{MINERvA:2021owq}
 additionally compares to NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and
 NEUT~\cite{Hayato:2009zz}; because OmniFold delivers a per-event reweighted
 truth ensemble, any such generator prediction can be compared to our result in
-\emph{any} projection or dimension without re-unfolding --- a capability we
-exploit for the 3D extension (\S\ref{sec:3d}).
+\emph{any} projection of the observables already in the classifier's feature
+space, without re-unfolding. Adding an observable outside that space is a new
+unfold, not a projection: the 3D extension (\S\ref{sec:3d}) adds $\Eavail$ as a
+classifier feature and is re-unfolded accordingly.
 
 \begin{figure}[H]
   \centering

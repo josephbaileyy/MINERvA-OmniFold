@@ -216,13 +216,16 @@ largest nominal truth-space volume.
    - **Ours-only truncated-spectral chi^2 — CLOSED.** The collaboration uses the
      same truncated-spectral pseudo-inverse. Confirmed as practice, not as a
      citation; a reference is a separate ask if the note needs one.
-   - **First 3D+ unfolded covariance — STILL OPEN, narrowed.** The endorsement
-     question was not answered, and the reply ("they do have the 3D unfolding
-     result") may contradict the question's own premise that no prior MINERvA
-     3D+ unfolding exists. Ambiguous between *they have their own* and *they
-     have seen ours*. **Do not touch the novelty claim in either direction until
-     disambiguated.** One question closes it: is there a MINERvA 3D+ unfolded
-     result, published or internal, predating ours?
+   - **First 3D+ unfolded covariance — PREMISE CORRECTED; endorsement still
+     owed.** Clarified 2026-08-02: MINERvA does have a 3D unfolding publication,
+     already found and cited, and nothing beyond that. The question's premise
+     ("no prior MINERvA 3D+ unfolding result") was therefore wrong, but the
+     note never made that claim — it says prior multi-differential results were
+     *binned* and the distinction here is the unbinned, simultaneously-unfolded
+     formulation plus the full 3D+ covariance. No note edit needed. **What is
+     still owed is the endorsement itself**: no view was given on publishing the
+     1431-bin covariance or its rank-deficient GoF, which is what App. A item 5
+     actually gates.
 
 ## Deferred analysis refinements
 

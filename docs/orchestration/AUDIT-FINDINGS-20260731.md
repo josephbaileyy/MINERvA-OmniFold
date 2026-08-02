@@ -802,16 +802,38 @@ still surface the strongest and the weakest finding in a document.
    target one subsection later. Either qualify the 0.912 as a non-background-subtracted historical
    diagnostic, or re-extract on the `bkgsub` input. Interacts with the 2026-08-01 full-event
    landing: pre-08-01 PET numbers are a different estimator, so do this once, after that settles.
-8. **The note wording pass** — J19, J24, J25, J26.1, J27.1, J27.3, J27.4 in one edit. All are
-   qualifiers dropped between a technical section and a summary (§5 preamble). J27.3 needs the
-   GiBUU corner ratio computed first; if it lands outside 1.54–1.58, that sentence is numerically
-   wrong and not merely unqualified.
+8. **The note wording pass** — ~~J19, J24, J25, J26.1, J27.1,~~ J27.3, ~~J27.4~~.
+   **DONE 2026-08-02 except J27.3.** J19 → the `sec_intro.tex` bullet now names the purity
+   background subtraction as the one deliberate pre-training binning. J24 → "reproduces its
+   predecessor" became "passes the projection anchors to ≈1–2 %" at all four summary sites.
+   J25 → qualified to projections *within the classifier's feature space*, with the 3D extension
+   named as a re-unfold rather than a projection. J26.1 → "few-per-mille" corrected to the actual
+   1.4 %/1.8 %, and the per-bin/aggregate conflation split. J27.1 → the exec summary now carries
+   the 46 %/27 % figures instead of "fills the dip". J27.4 → "about a third" now says *simulated*
+   and names the MnvTune weighting.
+   **J27.3 is worse than a dropped qualifier and is NOT in that batch.** The three ratios come from
+   the 2026-06-08 band run (`ND_OMNIFOLD_RUN_LOG.md:988-990`), whose own summary reads "All THREE
+   underpredict" and ends "GiBUU excluded (`FinalEvents.dat` lacks per-event Enu)". "All three"
+   later became "all four" in the note-v2 subtree with no recomputation, so the numbers predate
+   GiBUU's presence in this comparison entirely. The reduction is recovered
+   (`overlay_eavailW_band.py:88-108`: a ratio of corner-INTEGRATED cross sections over the 3×3
+   `Eavail>=0.8 × W>=1.8` block, not a per-bin or worst-bin statistic), and both tempting proxies
+   are different sub-blocks — the Eavail-projected 1.59/1.36/1.91 integrates over all W, and the
+   corner χ² 381.1/12 uses `Eavail>=0.4` → 12 cells. Close it by re-running `make_figures.sh:55`
+   and reading the `hiE-hiW corner ... data/gen=` line; inputs are Perlmutter-only and gated on
+   Step 0a. Provenance block recorded at `sec_eavailw.tex:62`.
 9. **J36 — scope the POT mixture.** Own KNOWN_ISSUES row as of 2026-08-01. Does not move the
    total, so it is not urgent; it needs a decision on whether per-playlist scaling is worth
    implementing, given a 38.9 % ratio spread and 9.4 % POT-weighted mixture error.
 10. J12–J16, J35 — machinery hardening, no result impact. (J35 + J10 FIXED 2026-08-01; a
    completion-marker backfill is owed at restore before anything is resubmitted — Step 0b.)
-11. **J31–J33 — latent-gate hardening, lowest priority.** Verification downgraded all three from
-   live to latent (§6). Real defects, no current corruption, and J31/J32 are in the deferred P4
-   lane. Fix J32 in the validator (make the receipt carry a candidate SHA at all) rather than in
-   the adopter.
+11. ~~**J31–J33 — latent-gate hardening, lowest priority.**~~ **J31 and J32 FIXED 2026-08-02;
+   J33 remains.** J31: `run_p4_merge_audit_std.sh` now collects child PIDs and waits on each
+   individually (a bare `wait` discarded every status, so fixing only the `rm -f` would have
+   changed nothing), and fails closed when `NMERGED != EXPECTED`. J32: fixed in the validator
+   first, as this entry said it had to be — `p4_validate_active_lateral.py` records
+   `candidate` and `candidate_sha256` in its receipt, and `p4_adopt_standard.py` now requires the
+   receipt's SHA to equal the candidate's instead of merely testing that the digest is truthy.
+   Neither file is hash-bound, so no receipt moved. J33 (ND schema fails open: `_addr` discards
+   `SetBranchAddress`'s return code, `t_td` is absent from the axis-validation list) is untouched
+   and still latent.

@@ -212,10 +212,13 @@ construction with identical settings. The two agree at the level the $(D-B)/S$
 identity predicts: the systematic covariance matches in overall magnitude to a
 $\sqrt{\mathrm{tr}}$ ratio of $\nwSystRatio$ (negative-weight/purity), and the
 statistical covariance, compared on matched bootstrap seeds, to $\nwStatRatio$.
-The residual few-per-mille differences are bootstrap and classifier-seed
-sampling noise, not a method bias. Negative-weight injection thus reproduces not
-only the central cross section but its full covariance, per bin and in
-aggregate.
+The residual differences --- \SI{1.4}{\percent} and \SI{1.8}{\percent}, consistent with
+the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} --- are bootstrap and
+classifier-seed sampling noise, not a method bias. Negative-weight injection thus
+reproduces the central cross section \emph{per bin} (median $1.000$, RMS
+\SI{1.4}{\percent}, worst bin $-\SI{12.6}{\percent}$) and its covariance \emph{in
+aggregate}. The covariance comparison is two trace ratios; per-bin, correlation and
+eigenmode equivalence are not established.
 
 The equivalence at the 2D scale --- in the central value, the closed-form
 estimator recovery, and now the full systematic and statistical covariance ---
