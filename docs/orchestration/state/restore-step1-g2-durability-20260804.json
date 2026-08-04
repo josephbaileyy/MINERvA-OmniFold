@@ -1,0 +1,41 @@
+{
+ "receipt_schema": "restore-step1-g2-durability-v1",
+ "verdict": "PASS",
+ "observed_at_utc": "2026-08-04T06:28:17Z",
+ "repo_commit_at_verification": "f424427",
+ "step": "RESTORE-2026-08-03 Step 1",
+ "why": "G2_FPS_MEFHC_P12.npz is the only g2-fullevent-v1 input in existence, it sat on purgeable scratch, and it had no CFS or off-cluster backup. Every downstream step (Gate-2 re-issue, P5A closure, P5A nominal) fail-closes without it because build_fullevent_loaders rejects any input that is not this schema.",
+ "source_survived_maintenance": {
+  "note": "Verified AFTER the 2026-07-22 -> 2026-08-03 maintenance window. The recorded hash matched, so the scratch copy was not damaged or partially purged; the runbook's reproduce-from-source contingency was not needed.",
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "size_bytes": 9897374636,
+  "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+  "matches_recorded_value": true
+ },
+ "destination": {
+  "preexisting": false,
+  "note": "The destination directory did not exist before this step, confirming there was genuinely no backup.",
+  "files": [
+   {
+    "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+    "size_bytes": 9897374636,
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "hash_verified_at_destination": true
+   },
+   {
+    "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json",
+    "size_bytes": 6943,
+    "note": "producer receipt copied alongside the dump; it records how to reproduce it"
+   }
+  ]
+ },
+ "method": {
+  "copy": "cp -p (mode and mtime preserved; destination mtime reads Jul 19 03:10 as at source)",
+  "verification": "sha256sum computed independently at source and at destination, both compared to the recorded value",
+  "fail_closed": "the script refused to copy at all if the source hash did not match, and exits nonzero if the destination hash does not"
+ },
+ "scope": {
+  "is_publication_result": false,
+  "description": "Data durability only. No science was computed, no gate was issued or re-issued, and no receipt hash binding moved."
+ }
+}
