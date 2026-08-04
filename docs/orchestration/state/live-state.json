@@ -11,8 +11,8 @@
     "superseded followup prompts"
   ],
   "blockers": [
-    "Codex root's handback turn ran and self-restored routing but was SIGTERM'd by the interim's 600s foreground wall before committing; interim finalized the routing commit. The root resumes via the wakerctl dispatcher (full cron walltime) to complete RESTORE-2026-08-03.md.",
-    "codex-personal 6% weekly remaining (reset 2026-08-08); codex-school 75%. Conserve. 0 Full reset credits."
+    "RESTORE Step 0 freeze verification is running as Slurm job 56313000. Steps 1 onward remain blocked until its terminal log is reconciled and contains no mismatch outside the three documented Gate-2 sites owned by Step 2.",
+    "codex-personal 3% weekly remaining (reset 2026-08-08T03:35:36Z); codex-school 72% (reset 2026-08-07T06:27:42Z). Conserve. 0 Full reset credits."
   ],
   "campaign": "Publication PET UQ remediation",
   "canonical_science": [
@@ -21,19 +21,20 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
-  "current_dag_node": "HANDBACK to canonical Codex root complete (post-restore 2026-08-03). Campaign resumes from RESTORE-2026-08-03.md.",
+  "current_dag_node": "RESTORE-2026-08-03 Step 0 — verify all gate/hash freezes before science changes.",
   "jobs": [
     {
-      "job_id": "56169838",
-      "output": "nd-unfolding/p3f_pet_fullevent/{work,final,logs}",
-      "owner": "Slurm m3246 shared array 0-119%16",
-      "purpose": "fresh 5 x 2 x 12 P3F-PET full-schema shifted-source ROOT and per-task receipt production",
-      "receipt": "docs/orchestration/state/p3f-pet-gate3-source-submit-56169838.json",
-      "state": "15 COMPLETED/0:0 and 105 PENDING at queue-latency reconciliation; terminal state owned by armed slurm-array watch",
-      "tasks": "0-119"
+      "job_id": "56313000",
+      "output": "docs/orchestration/state/waker/logs/restore-step0-hash-56313000.{out,err}",
+      "owner": "Slurm m3246 shared, one CPU",
+      "purpose": "exact RESTORE Step 0 verify_hash_bindings.py over the native Perlmutter artifact inventory",
+      "receipt": "docs/orchestration/state/restore-step0-hash-submit-56313000.json",
+      "state": "SUBMITTED; terminal and one-hour wholly-prestart queue watches armed",
+      "tasks": "0",
+      "single_job": true
     }
   ],
-  "next_authorized_action": "Codex root (019f749a) is canonical again. On the armed handback-continue deadline, the dispatcher resumes the Codex root to complete RESTORE-2026-08-03.md (Step 0 verify_hash_bindings.py onward) and re-arm its own watches. Interim Claude root is stood down; no further interim dispatch.",
+  "next_authorized_action": "On the real terminal event for job 56313000, reconcile accounting and the Step-0 log exactly once. Accept only the documented current baseline (101 OK plus the three Gate-2 mismatch sites owned by RESTORE Step 2); any additional mismatch stops science. If accepted, continue immediately to Step 1 and protect the sole G2 dump on CFS.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -53,7 +54,7 @@
     }
   ],
   "schema_version": 1,
-  "state": "Interim Claude root STOOD DOWN; routing restored to Codex root 019f749a. Post-restore science plan RESTORE-2026-08-03.md is authoritative. Gate 3 PROMOTED PASS; Gate 4 launch-code gate re-issued PASS_CODE_ONLY (07-31); nominal PET training NOT launched.",
+  "state": "Canonical Codex root 019f749a active; interim Claude root stood down. RESTORE Step 0 is scheduler-owned and in progress. Gate 3 PROMOTED PASS; Gate 4 launch-code gate re-issued PASS_CODE_ONLY (07-31); nominal PET training NOT launched.",
   "wake": {
     "waker": true
   }
