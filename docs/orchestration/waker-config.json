@@ -14,7 +14,7 @@
   "invoke_grace_seconds": 7200,
   "max_retries_default": 2,
   "cron_walltime": "12:00:00",
-  "idle_guard_ticks": 3,
+  "idle_guard_ticks": 0,
   "notify_command": ["/usr/bin/mail", "-s", "{subject}", "josephrb@nersc.gov"],
   "status_report_interval_seconds": 21600,
   "prompt_preamble": null

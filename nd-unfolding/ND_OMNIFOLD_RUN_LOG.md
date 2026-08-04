@@ -2900,3 +2900,14 @@ which is the class of pin nothing had ever checked — 10 of 15 resolve to files
 (the rest are `/pscratch` data and built binaries). Its `SHELL_PIN_FLOOR` fails loudly if the
 parser ever stops matching, since a source-parsing collector that silently finds nothing would
 print ALL BINDINGS INTACT.
+
+## 2026-08-04 — RESTORE Step 5 Delta-product durability verified
+
+Both recoil-only `xps2` shutdown-insurance products are present in the declared CFS staging
+directory. Their destination SHA-256 values and exact byte counts were recomputed rather than
+copied from the truncated historical records. The full evidence is recorded in
+`docs/orchestration/state/restore-step5-delta-durability-20260804.json` and the corresponding
+`MIG-RESTORE-STEP5-DURABILITY-20260804` `RUNS.tsv` row.
+
+This closes durability only. No copy or training was performed in the verification, and neither
+artifact is a Gate-4/P5A or publication result.

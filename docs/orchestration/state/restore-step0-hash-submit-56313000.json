@@ -53,7 +53,7 @@
       "stderr": "docs/orchestration/state/waker/logs/restore-step0-hash-56313000.err",
       "duplicate_job_detected_before_submit": false
     },
-    "acceptance": "No mismatch outside the three documented Gate-2 sites pending RESTORE Step 2; any additional mismatch stops science",
+    "acceptance": "No mismatch outside the five documented Gate-2 sites pending RESTORE Step 2; any additional mismatch stops science",
     "step1_started": false
   },
   "continuation": {

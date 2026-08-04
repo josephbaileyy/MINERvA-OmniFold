@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-07-14. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-04. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -38,6 +38,10 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- RESTORE Step 5 is closed: both Delta recoil-only `xps2` insurance products
+  have a hash-verified durable CFS copy. Exact destination evidence is indexed
+  by `../docs/orchestration/state/restore-step5-delta-durability-20260804.json`;
+  this does not advance the full-event Gate-4/P5A result.
 - P3F-scalar interface inventory is committed PASS: the complete 5-band x
   2-endpoint x 12-playlist (120/120) manifest is SHA- and producer-bound with
   zero failures. This is prerequisite evidence only; P3F-PET generation and PET
