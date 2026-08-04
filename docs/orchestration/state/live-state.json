@@ -11,9 +11,8 @@
     "superseded followup prompts"
   ],
   "blockers": [
-    "Perlmutter maintenance 2026-07-22 -> 2026-08-03: campaign holds; nothing running. Handoff bundle rebuilt (orchestration-handoff-20260721T200209Z, sha a1006bae).",
-    "Gate-4 nominal PET TRAINING launch is a separate post-restore user decision (launch-code gate is built/frozen/verified PASS_CODE_ONLY).",
-    "codex-personal weekly reset appears to have moved early (100% remaining, rolling resets_at); handback watch codex-personal-reset-20260726 flagged for post-restore re-evaluation. Not acted on."
+    "Codex root's handback turn ran and self-restored routing but was SIGTERM'd by the interim's 600s foreground wall before committing; interim finalized the routing commit. The root resumes via the wakerctl dispatcher (full cron walltime) to complete RESTORE-2026-08-03.md.",
+    "codex-personal 6% weekly remaining (reset 2026-08-08); codex-school 75%. Conserve. 0 Full reset credits."
   ],
   "campaign": "Publication PET UQ remediation",
   "canonical_science": [
@@ -22,7 +21,7 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md"
   ],
-  "current_dag_node": "Pre-shutdown READY (2026-07-22 maintenance). Gate 4 launch-code gate PASS_CODE_ONLY; training launch deferred post-restore.",
+  "current_dag_node": "HANDBACK to canonical Codex root complete (post-restore 2026-08-03). Campaign resumes from RESTORE-2026-08-03.md.",
   "jobs": [
     {
       "job_id": "56169838",
@@ -34,8 +33,8 @@
       "tasks": "0-119"
     }
   ],
-  "next_authorized_action": "Hold through maintenance. On restore (2026-08-03) run PORTING.md section 4 (preflight/install-cron/status). Armed: codex-personal-reset-20260726 (handback). Training launch and handback timing are post-restore decisions.",
-  "orchestrator_thread_id": "4a8668e1-7fb2-41f9-8cc9-59caea50ea75",
+  "next_authorized_action": "Codex root (019f749a) is canonical again. On the armed handback-continue deadline, the dispatcher resumes the Codex root to complete RESTORE-2026-08-03.md (Step 0 verify_hash_bindings.py onward) and re-arm its own watches. Interim Claude root is stood down; no further interim dispatch.",
+  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
       "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input",
@@ -54,7 +53,7 @@
     }
   ],
   "schema_version": 1,
-  "state": "GATE 1/2 PASS / P3F-SCALAR PASS / GATE 3 PROMOTED PASS / GATE 4 LAUNCH-CODE GATE PASS_CODE_ONLY. Pre-shutdown checklist PASS; ready for 2026-07-22 -> 2026-08-03 maintenance.",
+  "state": "Interim Claude root STOOD DOWN; routing restored to Codex root 019f749a. Post-restore science plan RESTORE-2026-08-03.md is authoritative. Gate 3 PROMOTED PASS; Gate 4 launch-code gate re-issued PASS_CODE_ONLY (07-31); nominal PET training NOT launched.",
   "wake": {
     "waker": true
   }
