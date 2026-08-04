@@ -489,9 +489,24 @@ def run_validate(args) -> int:
     # Independent binned checks use raw input scalars and the normalized weights
     # actually carried by the step-1 DataLoader; they do not call the refiner.
     with np.load(inputs, allow_pickle=True) as source:
-        measured = np.asarray(source["measured_scalars"], dtype=np.float64)[:, :2] / 1000.0
-        background = np.asarray(source["bkg_reco_scalars"], dtype=np.float64)[:, :2] / 1000.0
+        # The dump is GeV, so there is nothing to convert -- measured 2026-08-04 against the real
+        # input: p|| max 119.8773 and pt max 29.9998, both sitting on the canonical grid's top edge,
+        # and the dump's own edges_0/edges_1 equal fed.CANONICAL_*_EDGES. The `/1000.0` that stood
+        # here collapsed 231/285 occupied bins into 1/285 while BOTH guards below reported success:
+        # the domain check at :513 tests range membership and both grids start at 0.0, and the
+        # metrics scale both histograms identically so they agree while being equally wrong. That
+        # made this whole independent re-derivation vacuous from the 2026-07-19 receipt onward.
+        measured = np.asarray(source["measured_scalars"], dtype=np.float64)[:, :2]
+        background = np.asarray(source["bkg_reco_scalars"], dtype=np.float64)[:, :2]
         w_bkg = np.asarray(source["w_bkg"], dtype=np.float64)
+        # The canonical grid also ships INSIDE the dump, as edges_0/edges_1. Capture it while the
+        # archive is open so the cross-check below can compare two independent statements of one
+        # contract, rather than trusting fed.CANONICAL_* on its own authority.
+        dump_edges = {}
+        for _key in ("edges_0", "edges_1"):
+            if _key not in source.files:
+                die(f"dump does not carry its own {_key}; the canonical grid cannot be corroborated")
+            dump_edges[_key] = np.asarray(source[_key], dtype=np.float64)
         # B1 §2c: derive R from the dump HERE, in this gate's own read of its own arrays. The
         # formula is shared with the loader (fed.step1_class_ratio, so a B-4 flip is a one-body
         # change) but the INPUTS are not: reading R out of meta/target would certify the loader
@@ -504,6 +519,15 @@ def run_validate(args) -> int:
             f"(R={class_ratio!r} derived independently from the dump)")
     edges_pt = np.asarray(fed.CANONICAL_PT_EDGES, dtype=np.float64)
     edges_ppar = np.asarray(fed.CANONICAL_PPARALLEL_EDGES, dtype=np.float64)
+    # Two sources of truth for one grid, finally compared (added 2026-08-04 with the units fix).
+    # Tolerance is absolute and loose against the narrowest bin (0.07) but far tighter than any
+    # real disagreement, so a float32-stored edge array does not trip it.
+    for _key, _module_edges, _label in (("edges_0", edges_pt, "pT"),
+                                        ("edges_1", edges_ppar, "p||")):
+        if (dump_edges[_key].shape != _module_edges.shape
+                or not np.allclose(dump_edges[_key], _module_edges, rtol=0.0, atol=1e-6)):
+            die(f"dump's own {_key} disagrees with the module's canonical {_label} edges; refusing "
+                f"to bin against a grid the data itself does not share")
     data_hist = _hist2(measured, edges_pt, edges_ppar)
     bkg_hist = _hist2(background, edges_pt, edges_ppar, w_bkg * float(target["pot_scale"]))
     signed_hist = data_hist - bkg_hist
@@ -514,6 +538,16 @@ def run_validate(args) -> int:
     in_domain_bkg = int(_hist2(background, edges_pt, edges_ppar).sum())
     if in_domain_data != measured.shape[0] or in_domain_bkg != background.shape[0]:
         die("retained measured/background inventory is outside the canonical FPS grid")
+    # Occupancy floor. The membership test above cannot see a scale error: both canonical axes
+    # begin at 0.0, so dividing the inputs by 1000 kept 100.000% of rows "in domain" while
+    # collapsing the whole distribution into one bin. That is precisely what made this gate
+    # vacuous from the 2026-07-19 receipt until 2026-08-04. Occupancy is the quantity a scale
+    # error cannot preserve, which is why it belongs here and a retention count does not.
+    occupied_pt = int(np.count_nonzero(data_hist.sum(axis=1)))
+    occupied_ppar = int(np.count_nonzero(data_hist.sum(axis=0)))
+    if occupied_pt < 2 or occupied_ppar < 2:
+        die(f"measured inventory occupies {occupied_pt} pT bin(s) x {occupied_ppar} p|| bin(s); a "
+            f"real distribution spans many, so this is the signature of a unit/scale error")
     raw_signed_sum = float(signed_hist.sum())
     target_raw_signed = float(target["raw_positive_sum"]) - float(target["raw_negative_sum"])
     if not np.isclose(raw_signed_sum, target_raw_signed, rtol=2e-11, atol=1e-5):
@@ -642,6 +676,13 @@ def run_validate(args) -> int:
         },
         "independent_binned_checks": {
             "grid_shape": list(signed_hist.shape),
+            # Recorded so a future run can compare occupancy instead of only sums. Every other
+            # quantity here is a sum or a ratio, and sums are scale-invariant -- which is why the
+            # 2026-07-19 receipt could record a full set of healthy-looking numbers while the
+            # histogram behind them had collapsed to a single occupied cell.
+            "occupied_pt_bins": occupied_pt,
+            "occupied_pparallel_bins": occupied_ppar,
+            "occupied_cells": int(np.count_nonzero(data_hist)),
             "in_domain_data_rows": in_domain_data,
             "in_domain_background_rows": in_domain_bkg,
             "raw_data_sum": float(data_hist.sum()),
