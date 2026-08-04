@@ -88,10 +88,22 @@ launching is the correct execution of that authorisation, not a departure from i
 
 ## Options, all of which are the user's call
 
-1. **Build one combined env** (`conda create -n root_tf215 python=3.11 root tensorflow=2.15 ...`).
-   Cleanest technically and touches nothing existing — but it introduces an environment that no
-   receipt references, and the closure's provenance would record it. For a publication gate that
-   is a real consideration, not a detail.
+1. **Build one combined env.** **Measured feasible 2026-08-04** — `conda create --dry-run -c
+   conda-forge python=3.11 root tensorflow=2.15` solves cleanly and proposes exactly the right set:
+
+   | | python | ROOT | TF | Keras | numpy |
+   |---|---|---|---|---|---|
+   | `tensorflow=2.15` **(pin it)** | 3.11.15 | 6.32.2 | **2.15.0** | **2.15.0** | 1.26.4 |
+   | `tensorflow` unpinned | 3.11.15 | 6.40.02 | 2.19.1 | **3.15.1** | 2.4.6 |
+
+   **The pin is not optional.** Unpinned resolves to Keras **3**, which is the exact reason local
+   Mac TF cannot run the vendored Keras-2 PET net. Pinned gives Keras 2.15.0 and a numpy matching
+   the TF module's 1.26.3. Add `scikit-learn` explicitly — the refiner needs it.
+
+   Two honest caveats: ROOT would move **6.28 → 6.32.2**, and a conda TF is not the NERSC
+   `tensorflow/2.15.0` module the receipts reference. So the closure's provenance would record an
+   environment no receipt has seen. For a publication gate that is a real consideration, not a
+   detail. It is, however, low-risk to *try*: a new env touches nothing existing.
 2. **Give the closure a precomputed-target path**, so it consumes
    `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` the way the nominal does. This is the change most
    consistent with the existing architecture, and it makes Step 3 depend on Step 2's re-issued
