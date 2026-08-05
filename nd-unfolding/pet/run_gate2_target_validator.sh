@@ -26,9 +26,15 @@ LOCK=${REPO}/nd-unfolding/g2_fullevent/gate2/.gate2-final-writer.lock
 # validator=f9e20f4c3a92748e6c52deebd26c1c94c09d94bf26f259675a04e6f3695669d1
 # loader=538031732c46d08540dcf64ae244b79cf001a43f518fcc7a1fb5d2b24b66abee, and the products they
 # certified are archived alongside the 2026-07-19 receipt rather than deleted.
+# 2026-08-05 SECOND ADVANCE, loader only. Run 56342333 PASSED against loader
+# 4c3a001cb5b6a52a3e2a1f04be4aabe9ea4666b86ef550623508a56d049af0c4 (R=1.1240802949941018,
+# occupied_cells=231, B-4 resolved), but the audit repairs in 2cef7e6 then moved the loader again, so
+# that receipt pinned already-superseded code. Rather than argue the change was semantically inert
+# for the negweight-refined path -- which is exactly the reasoning hash pins exist to reject -- the
+# gate is re-run. The r1 products are archived, not deleted.
 EXPECTED_INPUT_SHA=fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
 EXPECTED_VALIDATOR_SHA=13fa4853040d0afcb3c323e69b76f9b1ec20678124338c537801177a486510a0
-EXPECTED_LOADER_SHA=4c3a001cb5b6a52a3e2a1f04be4aabe9ea4666b86ef550623508a56d049af0c4
+EXPECTED_LOADER_SHA=57f33f87b07e0c6b9bd27a8c56f8013acf9863c72f80f1c01de556ad09f97117
 EXPECTED_U2D_SHA=8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e
 
 ROUTE=${GATE2_EXECUTION_ROUTE:-}
