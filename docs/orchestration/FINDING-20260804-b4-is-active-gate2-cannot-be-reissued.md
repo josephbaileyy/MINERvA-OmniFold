@@ -4,6 +4,12 @@
 code was written to extract, not a failure of the run. **Nothing was published; the 2026-07-19
 products are byte-identical to how they were found.***
 
+> **DECIDED 2026-08-04; implementation pending.** Step 1 will use `w_reco`; Step 2 and
+> truth-space yields will use `w_truth`. The single PET `mc.weight` must be split by leg rather
+> than globally replaced. Canonical rationale and the re-issue transaction are in
+> [`DECISION-20260804-B4-STEP3-RECEIPTS.md`](DECISION-20260804-B4-STEP3-RECEIPTS.md#d1--b-4-use-the-weight-belonging-to-each-omnifold-leg).
+> This finding remains the canonical measurement evidence; it is not a repair or receipt.
+
 ## The result
 
 ```
@@ -70,11 +76,9 @@ old degenerate 1/285) and the weights-vs-published comparison are still unmeasur
 
 ## Why I stopped here
 
-Resolving B-4 means deciding whether the reco leg should be fed `w_reco` instead of `w_truth`. The
-comment at `gate2_target_runtime.py` notes the formula is shared with `fed.step1_class_ratio` so
-"a B-4 flip is a one-body change" — the *edit* is small. The *decision* is a physics judgment that
-moves the publication nominal's step-1 normalization by 1.9%, and it is explicitly the thing the
-gate exists to force a human to answer. I did not flip it.
+Resolving B-4 meant deciding whether the reco leg should be fed `w_reco` instead of `w_truth`.
+That decision has now been made in the record linked above. No implementation or gate re-issue
+was performed as part of recording it.
 
 ## Consequences for the restore chain
 
@@ -82,8 +86,8 @@ Gate-2 is now blocked by B-4, and Step 3 is independently blocked by an environm
 ([FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter](FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md)):
 
 ```
-B-4 unresolved      ->  Gate-2 re-issue blocked
-Step 3 env conflict ->  Step 2b blocked  ->  Step 4 precondition unreachable
+D1 implementation pending -> Gate-2 re-issue blocked
+D2 implementation pending -> Step 2b blocked -> Step 4 precondition unreachable
 ```
 
 Step 4's unattended-launch authorisation was conditional on every gate passing. Two independent

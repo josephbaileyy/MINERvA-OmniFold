@@ -2911,3 +2911,26 @@ copied from the truncated historical records. The full evidence is recorded in
 
 This closes durability only. No copy or training was performed in the verification, and neither
 artifact is a Gate-4/P5A or publication result.
+
+## 2026-08-04 — B-4, Step 3 architecture, and construction-receipt lifecycle decided
+
+The user delegated the three open RESTORE judgments and requested a durable repository record.
+They are now one transaction in
+`docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`:
+
+- Step 1 uses `w_reco`; Step 2 and truth-space yields use `w_truth`. The PET engine must carry
+  distinct leg weights rather than replacing its one shared `mc.weight` wholesale. B1's `R`
+  denominator follows the Step-1 `w_reco` ensemble.
+- The nominal consumes and verifies the precomputed Gate-2 target. The ordinary identity closure
+  gets an MC-only TF path and is labeled a plumbing smoke, while a nontrivial injected-reweight
+  recovery closure supplies publication power. No combined ROOT/TF publication environment and no
+  ROOT-to-TF closure handoff.
+- The hand-authored 2026-07-19 construction attestation is superseded without changing or deleting
+  any at-issue hash. Its entire binding block is historical; the runtime receipt owns the live
+  Gate-2 freeze. No load-bearing path was added to the path-wide `KNOWN_PREEXISTING` exemption.
+
+The environment finding was corrected at the same time: despite its launcher comment, the current
+nominal does not consume `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy`; it reaches the same in-process
+refinement as closure (audit J04). This entry records decisions and receipt lifecycle only. No
+loader, engine, target, closure result, Gate-2/Gate-4 receipt, or training artifact was produced.
+`nominal_pet_training_allowed` remains false.

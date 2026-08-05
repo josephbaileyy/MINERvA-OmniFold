@@ -132,11 +132,14 @@ Implementation gate, in order:
    no longer the blocker — `dfef335` landed the 13-feature reco schema with
    `n_evt_reco`/`n_evt_truth` carried separately, so the two legs may now differ
    in width, and `pet/extract_fullevent_fps.py` supplies the missing
-   reweight-all + extraction path. What remains is that **none of it has been
-   proven end-to-end**: the driver calls `build_fullevent_loaders` with no
-   `refine_fn` override, so it takes the learned Stay-Positive refiner, which
-   imports ROOT at module load — meaning the Gate-4 driver is executable only on
-   Perlmutter and has never run anywhere. Code-complete, unexercised.
+   reweight-all + extraction path. **Decision recorded 2026-08-04:** Step 1 uses
+   `w_reco`, Step 2/truth yields use `w_truth`; the nominal must consume the
+   hash-bound precomputed Gate-2 target; and closure gets an MC-only TF path.
+   Implement the dual-leg loader/engine boundary, mandatory target consumer,
+   row/hash/provenance gates, and MC-only construction as one receipt-bound
+   patch set, then re-issue Gate 2 and Gate 4. Canonical requirements:
+   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. None of this has
+   yet been proven end-to-end.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the
    current tensors begin with energy and one position/momentum component. Use
@@ -156,11 +159,14 @@ Implementation gate, in order:
    `df7397e` (07-30) was against the pre-`--json` script; this one is against
    the hash the live Gate-4 receipt binds and is machine-readable, which
    Gate-4's now-required `--stress-report` needs.
-   **The rest of this item is still open:** retain ordinary closure, central
-   normalization, lower-dimensional marginal gates, and full-event-versus-recoil
-   comparisons in the FPS extension and dead-cell tiers. Passing the stress
-   closure alone does not satisfy the FPS controls — the ordinary closure is
-   RESTORE Step 3 and needs the real dump.
+   **The rest of this item is still open:** the present identity closure is now
+   classified as an MC self-consistency smoke, not evidence for the
+   `negweight-refined` target. Add and run a nontrivial injected truth-reweight
+   recovery closure at the nominal estimator configuration, enforce central
+   normalization and lower-dimensional marginal gates, and retain
+   full-event-versus-recoil comparisons in the FPS extension and dead-cell
+   tiers. Passing either the stress closure or the MC smoke alone does not
+   satisfy the FPS controls. See decision D2 in the canonical record above.
 6. Freeze the full-event FPS feature and measurement contracts before
    production, then rerun the PET nominal, GPU floor, coherent statistical
    ensemble, PET-specific ML ensemble, vertical/retraining response,

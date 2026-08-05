@@ -38,6 +38,10 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- The three 2026-08-04 full-event blockers now have one canonical decision record:
+  `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
+  (`w_reco` Step 1, `w_truth` Step 2), target/closure architecture, and construction-receipt
+  lifecycle. Implementation and Gate-2/Gate-4 re-issues remain pending; P5A training is prohibited.
 - RESTORE Step 5 is closed: both Delta recoil-only `xps2` insurance products
   have a hash-verified durable CFS copy. Exact destination evidence is indexed
   by `../docs/orchestration/state/restore-step5-delta-durability-20260804.json`;

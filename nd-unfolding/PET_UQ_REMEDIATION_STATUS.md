@@ -82,12 +82,13 @@ RUN_LOG, and STATUS evidence. Present `xps2` recoil tensors remain scaffolding.
 
 ## Gate 2 — literal `negweight-refined` target
 
-**Current (2026-07-19): Gate 2 PASS; Gate 3 not started.** The exact canonical
-`u2d.refine_stay_positive` ran on the complete production G2 data-plus-literal-
-background inventory. Receipt-last publication, an independent hash/configuration/
-binned-telemetry validator, and the preserved agy promotion verifier all PASS.
-The published target has 4,680,719 finite nonnegative rows, including 20 zeros,
-and is bound to the frozen input and configuration. Evidence:
+**Current (2026-08-04): RE-ISSUE REQUIRED; no current Gate-2 PASS.** The 2026-07-19
+target and receipts remain historical evidence, but the first restored run proved B-4 active and
+the current gate correctly stopped. Decision D1 now requires `w_reco` in Step 1, `w_truth` in
+Step 2/truth yields, and a leg-specific loader/engine interface; decision D2 requires the nominal
+to consume the re-issued target rather than silently rebuilding it. Implementation, tests, and a
+real Gate-2 run remain pending. Canonical decision:
+`docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. Historical evidence:
 `nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
 `docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
 and `docs/orchestration/state/g2-gate2-verifier-20260719.json`.
@@ -148,7 +149,15 @@ at Gate 8.
 
 ## Gate 4 — nominal and GPU floor
 
-**Current (2026-07-21): launch-code gate PASS_CODE_ONLY; training NOT launched.**
+**Current (2026-08-04): launch-code re-issue required; training NOT launched.**
+The live code-only receipt predates decisions D1/D2. The present nominal still rebuilds the
+Gate-2 target in process, and the ordinary closure builds then discards that measured target;
+neither can produce the required evidence as written. The adopted repair is a mandatory,
+hash-verified precomputed-target path for the nominal plus an MC-only TF closure path and a
+separate powered injected-reweight closure. No combined ROOT/TF publication environment or
+two-process closure handoff. See the canonical decision record above.
+
+**Historical launch-code state (2026-07-21): PASS_CODE_ONLY; training was not launched.**
 The publication full-event PET nominal launcher
 (`nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh` + driver
 `train_fullevent_nominal.py`), the Gate-4 validator

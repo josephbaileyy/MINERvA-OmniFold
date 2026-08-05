@@ -1,8 +1,20 @@
 # FINDING 2026-08-04 — RESTORE Step 3 cannot run: the closure needs ROOT *and* TF 2.15 in one interpreter, and no such interpreter exists on Perlmutter
 
-*Measured on Perlmutter, 2026-08-04, by running the step. This is a blocker, not a defect in the
-closure's physics. **No code was changed and no substitute refiner was injected** — the sanctioned
-options all require a decision that is not mine to take.*
+*Measured on Perlmutter, 2026-08-04, by running the step. This establishes the environment blocker;
+subsequent review also found the target construction is discarded by the closure and its identity
+test has only smoke-test power. **No code was changed and no substitute refiner was injected** by
+the measured run.*
+
+> **DECIDED 2026-08-04; implementation pending.** The nominal will consume the hash-bound
+> precomputed Gate-2 target; the ordinary MC closure will use an MC-only loader path and will not
+> claim to exercise that target. No combined ROOT/TF publication environment and no two-process
+> closure handoff will be introduced. The canonical decision, including the required powered
+> closure, is
+> [`DECISION-20260804-B4-STEP3-RECEIPTS.md`](DECISION-20260804-B4-STEP3-RECEIPTS.md#d2--restore-step-3-separate-target-ownership-from-mc-closure-construction).
+>
+> **Correction to this finding's original premise:** the nominal does *not* currently consume
+> `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy`; it also rebuilds refinement through
+> `build_fullevent_loaders` (audit J04). The environment measurements below remain valid.
 
 ## The blocker
 
@@ -50,16 +62,18 @@ ModuleNotFoundError: No module named 'unfold_2d_omnifold_unbinned'
 *"Extraction needs PyROOT (TF-module python has none): source the analysis env."* It solves it by
 running the two stages as separate jobs. The closure is a single process and cannot.
 
-## Why the nominal is NOT affected, which is the asymmetry worth understanding
+## Correction: the nominal is affected too
 
 `sbatch_pet_fullevent_nominal.sh:20` says it *"Consumes the negweight-refined **literal Gate-2
-target**"*. The refiner runs exactly once — inside Gate-2, under `root_6_28`, with no TF needed —
-and publishes `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy`. Everything downstream reads that
-product. That is why Step 4 can run under TF-only and why Gate-2 can run under ROOT-only.
+target**"*, but the launcher passes the raw G2 NPZ and `train_fullevent_nominal.py` calls
+`build_fullevent_loaders` without a precomputed-target argument. The loader has no such argument;
+its signature (`:1041-1046`) offers only `refine_fn`, a callable. Thus Step 4 would reach the same
+ROOT/TF conflict. This is the already-confirmed J04 defect: the certified Gate-2 target is silently
+rebuilt rather than consumed.
 
-The closure is the one consumer that re-derives the refinement in-process instead of reading the
-published product. `build_fullevent_loaders` has **no parameter for a precomputed refined
-target** — its signature (`:1041-1046`) offers only `refine_fn`, a callable.
+The closure additionally discards the measured loader returned by that call and constructs its
+pseudo-data from MC reco rows. Its refinement call is therefore both environment-blocking and dead
+with respect to the statistic the closure reports.
 
 ## Why the obvious workarounds are not available
 
@@ -113,8 +127,9 @@ launching is the correct execution of that authorisation, not a departure from i
 3. **Split the closure into two processes** — refine under `root_6_28`, hand the weights to a
    TF-only stage. Mirrors what `sbatch_pet_nominal_bkgsub.sh` already does for extraction.
 
-Option 2 is the one I would argue for, because it removes a second, divergent path to the
-refinement rather than adding an environment to maintain.
+The decision record supersedes this option list. Its nominal half takes the precomputed-target
+architecture of option 2; its closure half removes the unused measured-target construction
+entirely, because making the closure read an artifact it discards would not certify that artifact.
 
 ## Provenance
 
