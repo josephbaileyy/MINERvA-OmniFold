@@ -67,6 +67,7 @@ def frozen_observed(**over):
                              9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 120.0],
          "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
          "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
+                         "batch_size": 512,
                          "train_events": 2000000},
          # J01: the event-feature schema the run was trained on, retyped for the same reason as
          # the edges above -- reading it out of FROZEN would make `freeze:event_features_reco` a
@@ -191,10 +192,14 @@ def good_report(**over):
               fold_forward=(113.5, 100.0, 1.135), fold_forward_driver=(113.5, 100.0, 1.135),
               spectra=spectra, spectra_driver=spectra, target=good_target(),
               closure=(True, True, True),
-              closure_reports=(ordinary_report(), stress_report(), powered_report()),
               observed_at_utc="2026-07-21T00:00:00Z")
-    kw.update(over)
-    return g4.build_gate4_report(**kw)
+    # The powered component is re-derived from a dump, so a complete submission has to carry one.
+    # The fixture's tempdir must outlive build_gate4_report, hence the context here.
+    with powered_fixture(half=240) as (prep, pdump, _met):
+        kw["closure_reports"] = (ordinary_report(), stress_report(), prep)
+        kw["powered_inputs_npz"] = pdump
+        kw.update(over)
+        return g4.build_gate4_report(**kw)
 
 
 class FrozenContract(unittest.TestCase):
@@ -543,21 +548,134 @@ if __name__ == "__main__":
     unittest.main(verbosity=2)
 
 
-class PoweredClosureIsRecomputed(unittest.TestCase):
-    """D2's powered closure, and the point that it is RECOMPUTED.
+import contextlib          # noqa: E402
+import tempfile as _tf        # noqa: E402
 
-    The first version of this gate read `is_powered_closure` and `recovery_criteria_met` -- two
-    booleans the report asserts about itself, which is the self-agreeing shape this repo's audits
-    keep finding. Every case below breaks exactly ONE thing, so each criterion is shown to bite on
-    its own rather than only in company.
+
+@contextlib.contextmanager
+def powered_fixture(n_pairs=240, amplitude=None, clip_z=None, recover=1.0, half=None,
+                    overlap=0, **over):
+    """A REAL powered-closure submission at small scale: synthetic dump + artifact + report.
+
+    Gate-4 re-derives every spectrum from the dump, so testing it needs a dump. The rows come in
+    IDENTICAL PAIRS and half A takes the evens while half B takes the odds, which makes the
+    sample-split floor exactly zero -- otherwise a 240-row fixture's statistical noise would swamp
+    the injected tilt and floor/gap could never meet its criterion for reasons that say nothing
+    about the code.
+
+    `recover` blends the ideal per-cell push toward 1.0, so residual/gap is dialable: 1.0 recovers
+    the tilt exactly, 0.0 leaves the prior untouched.
+    """
+    P = g4.FROZEN["powered_closure"]
+    amp = P["amplitude"] if amplitude is None else amplitude
+    cz = P["clip_z"] if clip_z is None else clip_z
+    half = P["half_size"] if half is None else half
+    sys.path.insert(0, PET) if "PET" in globals() else None
+    from closure_powered_truth_reweight import clipped_exponential_tilt, unit_spectrum
+
+    rng = np.random.default_rng(4)
+    pt_pair = np.exp(rng.normal(0.0, 0.55, n_pairs)) * 0.8      # a spread wide enough to tilt
+    pp_pair = rng.uniform(0.5, 9.0, n_pairs)
+    w_pair = rng.uniform(0.6, 1.4, n_pairs)
+    n = 2 * n_pairs
+    pt = np.repeat(pt_pair, 2); pp = np.repeat(pp_pair, 2); wt = np.repeat(w_pair, 2)
+    ts = np.zeros((n, 4)); ts[:, 0] = pt; ts[:, 1] = pp
+    pass_truth = np.ones(n, bool); pass_reco = np.ones(n, bool)
+
+    rows_a = np.arange(0, n, 2)[:half] if half <= n_pairs else np.arange(0, n, 2)
+    rows_b = np.arange(1, n, 2)[:half] if half <= n_pairs else np.arange(1, n, 2)
+    if overlap:
+        rows_b = rows_b.copy(); rows_b[:overlap] = rows_a[:overlap]
+
+    e_pt, e_pp = g4.FROZEN["edges_pt"], g4.FROZEN["edges_pparallel"]
+    tilt_a = np.ones(rows_a.size)
+    tilt_on, spec = clipped_exponential_tilt(pt[rows_a], amplitude=amp, clip_z=cz)
+    tilt_a[:] = tilt_on
+    h_prior = unit_spectrum(pt[rows_b], pp[rows_b], wt[rows_b], e_pt, e_pp)
+    h_target = unit_spectrum(pt[rows_a], pp[rows_a], wt[rows_a] * tilt_a, e_pt, e_pp)
+    h_untilt = unit_spectrum(pt[rows_a], pp[rows_a], wt[rows_a], e_pt, e_pp)
+
+    # ideal per-cell push: target/prior for the cell each half-B row lands in
+    ipt = np.clip(np.digitize(pt[rows_b], e_pt[1:-1]), 0, len(e_pt) - 2)
+    ipp = np.clip(np.digitize(pp[rows_b], e_pp[1:-1]), 0, len(e_pp) - 2)
+    cell = ipt * (len(e_pp) - 1) + ipp
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ratio = np.where(h_prior[cell] > 0, h_target[cell] / np.maximum(h_prior[cell], 1e-300), 1.0)
+    push = 1.0 + float(recover) * (ratio - 1.0)
+    h_unfold = unit_spectrum(pt[rows_b], pp[rows_b], wt[rows_b] * push, e_pt, e_pp)
+
+    def _l1(x, y):
+        return float(np.abs(x - y).sum())
+    gap, floor, resid = (_l1(h_prior, h_target), _l1(h_prior, h_untilt), _l1(h_unfold, h_target))
+
+    _saved_half = g4.FROZEN["powered_closure"]["half_size"]
+    g4.FROZEN["powered_closure"]["half_size"] = half   # scale is policy; the logic is under test
+    with _tf.TemporaryDirectory() as td:
+        dump = os.path.join(td, "dump.npz")
+        np.savez(dump, truth_scalars=ts, w_truth=wt, pass_truth=pass_truth, pass_reco=pass_reco)
+        art = os.path.join(td, "artifact.npz")
+        np.savez_compressed(art, dump_rows_a=rows_a.astype(np.int64),
+                            dump_rows_b=rows_b.astype(np.int64), weights_push=push,
+                            mc_indices=np.arange(n, dtype=np.int64))
+        sp = g4.FROZEN["seed_policy"]
+        rep = {"report_schema": P["report_schema"], "verdict": "PASS",
+               "is_powered_closure": True, "recovery_criteria_met": True,
+               "closure_class": "injected-truth-reweight-recovery",
+               "h_prior": [float(x) for x in h_prior], "h_target": [float(x) for x in h_target],
+               "h_unfolded": [float(x) for x in h_unfold],
+               "h_untilted": [float(x) for x in h_untilt],
+               "bin_order": g4.FROZEN["bin_order"],
+               "edges_pt": list(e_pt), "edges_pparallel": list(e_pp),
+               "metrics": {"gap": gap, "floor": floor, "residual": resid,
+                           "floor_over_gap": floor / gap, "residual_over_gap": resid / gap,
+                           "recovery": 1.0 - resid / gap},
+               "injection": {"form": spec["form"], "amplitude": amp, "clip_z": cz,
+                             "rate_preserving": True, "applied_on": "pass_truth rows only"},
+               "samples": {"half_size": half, "split_seed": P["split_seed"], "disjoint": True,
+                           "step1_population": P["step1_population"]},
+               "configuration": {k: sp[k] for k in ("niter", "epochs", "estimator_seed",
+                                                    "subsample_seed", "batch_size")},
+               "artifact": {"path": art, "sha256": g4._sha256_file(art)},
+               "source": {"inputs": dump, "inputs_sha256": g4._sha256_file(dump),
+                          "producer_receipt": "x.json", "producer_receipt_sha256": "d" * 64},
+               "estimator_fingerprint": "pet-fullevent-fps-v1",
+               "event_features_reco": list(g4.FROZEN["event_features_reco"]),
+               "event_features_truth": list(g4.FROZEN["event_features_truth"]),
+               "reco_leg_weight_used": "w_reco", "mc_only": True,
+               "input_identity_hashes": {"sig": "1" * 64}}
+        rep.update(over)
+        try:
+            yield rep, dump, {"gap": gap, "floor": floor, "residual": resid,
+                              "floor_over_gap": floor / gap, "residual_over_gap": resid / gap}
+        finally:
+            g4.FROZEN["powered_closure"]["half_size"] = _saved_half
+
+
+class PoweredClosureIsRecomputed(unittest.TestCase):
+    """D2's powered closure, and the point that Gate-4 RE-DERIVES it from the dump.
+
+    The first version read `is_powered_closure` and `recovery_criteria_met` -- two booleans the report
+    asserts about itself. The second recomputed ratios from the report's own vectors, which is still
+    the report checking itself. This version rebuilds every spectrum from the dump via the persisted
+    A/B rows and push weights, recomputes the tilt through the closure's own function, and tests
+    disjointness on the actual index arrays. Each case breaks exactly ONE thing.
     """
 
-    def _ok(self, **over):
-        return g4.check_powered_closure(powered_report(**over))
+    HALF = 240
 
-    def test_matching_report_passes(self):
-        ok, checks = self._ok()
-        self.assertTrue(ok, [c for c in checks if not c["ok"]])
+    def _run(self, gate2=None, **kw):
+        with powered_fixture(half=self.HALF, **kw) as (rep, dump, met):
+            return g4.check_powered_closure(rep, inputs_npz=dump, gate2_receipt=gate2) + (met,)
+
+    def _failing(self, **kw):
+        ok, checks, _met = self._run(**kw)
+        self.assertFalse(ok)
+        return {c["name"] for c in checks if not c["ok"]}
+
+    def test_a_real_submission_passes(self):
+        ok, checks, met = self._run()
+        self.assertTrue(ok, [c["name"] for c in checks if not c["ok"]])
+        self.assertGreaterEqual(met["gap"], g4.FROZEN["powered_closure"]["gap_min"])
 
     def test_absent_report_fails_and_names_evidence(self):
         ok, checks = g4.check_powered_closure(None)
@@ -565,118 +683,139 @@ class PoweredClosureIsRecomputed(unittest.TestCase):
         self.assertEqual([c["name"] for c in checks], ["powered:evidence_supplied"])
 
     def test_a_complete_report_emits_no_evidence_supplied_check(self):
-        """Audit B2's shape: `:evidence_supplied` exists only where evidence is MISSING."""
-        _ok, checks = self._ok()
+        _ok, checks, _m = self._run()
         self.assertEqual([c for c in checks if c["name"].endswith(":evidence_supplied")], [])
 
-    # ---- the three acceptance numbers, each broken alone ----------------------------------------
-    def _vectors_report(self, **kw):
-        prior, target, unfolded, untilted = powered_vectors(**kw)
-        gap = float(np.abs(prior - target).sum())
-        floor = float(np.abs(prior - untilted).sum())
-        resid = float(np.abs(unfolded - target).sum())
-        return powered_report(
-            h_prior=[float(x) for x in prior], h_target=[float(x) for x in target],
-            h_unfolded=[float(x) for x in unfolded], h_untilted=[float(x) for x in untilted],
-            metrics={"gap": gap, "floor": floor, "residual": resid,
-                     "floor_over_gap": floor / gap, "residual_over_gap": resid / gap,
-                     "recovery": 1.0 - resid / gap})
-
-    def _failing(self, report):
-        ok, checks = g4.check_powered_closure(report)
+    def test_without_the_dump_it_refuses_to_accept_the_report(self):
+        """The report is never accepted on its own authority."""
+        with powered_fixture(half=self.HALF) as (rep, _dump, _m):
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=None)
         self.assertFalse(ok)
-        return {c["name"] for c in checks if not c["ok"]}
+        self.assertIn("powered:independent_rederivation",
+                      {c["name"] for c in checks if not c["ok"]})
 
-    def test_too_small_a_gap_fails(self):
-        """Nothing injected means nothing to recover, and a pass would be vacuous."""
-        bad = self._failing(self._vectors_report(gap=0.10))
-        self.assertIn("powered:gap_is_large_enough", bad)
+    # ---- disjointness, from the ACTUAL arrays ---------------------------------------------------
+    def test_overlapping_halves_are_caught_from_the_index_arrays(self):
+        """`disjoint: true` in the report is not evidence; the rows are."""
+        bad = self._failing(overlap=17)
+        self.assertIn("powered:artifact_and_split_verified", bad)
 
-    def test_floor_comparable_to_gap_fails(self):
-        """If sample-split noise is the same size as the injection, the test has no power."""
-        bad = self._failing(self._vectors_report(gap=0.30, floor_frac=0.5))
-        self.assertIn("powered:floor_small_against_gap", bad)
+    def test_artifact_tampering_is_caught(self):
+        with powered_fixture(half=self.HALF) as (rep, dump, _m):
+            art = rep["artifact"]["path"]
+            with np.load(art) as z:
+                d = {k: z[k] for k in z.files}
+            d["weights_push"] = d["weights_push"] * 1.5
+            np.savez_compressed(art, **d)          # same members, different content
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=dump)
+        self.assertFalse(ok)
+        self.assertIn("powered:artifact_and_split_verified",
+                      {c["name"] for c in checks if not c["ok"]})
 
-    def test_recovery_below_eighty_percent_fails(self):
-        bad = self._failing(self._vectors_report(gap=0.30, resid_frac=0.5))
+    # ---- the spectra themselves -----------------------------------------------------------------
+    def test_doctored_spectra_are_caught_against_the_rederivation(self):
+        """THE point. Every reported field is internally consistent -- vectors, metrics and verdict
+        all agree with each other -- and only the DUMP disagrees. Nothing short of re-deriving
+        catches this."""
+        with powered_fixture(half=self.HALF) as (rep, dump, _m):
+            h = np.asarray(rep["h_unfolded"], float)
+            h = np.roll(h, 3); h = h / h.sum()      # still a valid unit spectrum
+            rep["h_unfolded"] = [float(x) for x in h]
+            rep["metrics"]["residual"] = float(np.abs(h - np.asarray(rep["h_target"])).sum())
+            rep["metrics"]["residual_over_gap"] = (rep["metrics"]["residual"]
+                                                   / rep["metrics"]["gap"])
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=dump)
+        bad = {c["name"] for c in checks if not c["ok"]}
+        self.assertFalse(ok)
+        self.assertIn("powered:spectrum_matches_rederivation_h_unfolded", bad)
+
+    def test_asserted_booleans_alone_do_not_pass(self):
+        self.assertFalse(g4.check_powered_closure(
+            {"is_powered_closure": True, "recovery_criteria_met": True}, inputs_npz="x")[0])
+
+    # ---- the three acceptance numbers ----------------------------------------------------------
+    def test_recovery_below_the_criterion_fails(self):
+        bad = self._failing(recover=0.5)
         self.assertIn("powered:recovery_meets_criterion", bad)
 
     def test_recovery_just_inside_the_criterion_passes(self):
-        """Sensitivity for the test above: 0.20 is a boundary, not a wall the fixture never reaches."""
-        ok, checks = g4.check_powered_closure(self._vectors_report(gap=0.30, resid_frac=0.19))
-        self.assertTrue(ok, [c for c in checks if not c["ok"]])
+        """Sensitivity: 0.20 is a boundary the fixture can actually approach, not a wall."""
+        ok, checks, met = self._run(recover=0.85)
+        self.assertLessEqual(met["residual_over_gap"], 0.20)
+        self.assertTrue(ok, [c["name"] for c in checks if not c["ok"]])
 
-    # ---- the one that proves it recomputes -----------------------------------------------------
-    def test_a_doctored_metrics_block_cannot_launder_bad_spectra(self):
-        """THE point of the rewrite. The report claims criteria met and carries a metrics block that
-        agrees with the claim; only the SPECTRA disagree. A gate that read either the verdict or the
-        metrics would pass this."""
-        honest = powered_report()
-        bad = self._vectors_report(gap=0.30, resid_frac=0.6)
-        bad["metrics"] = honest["metrics"]              # keep the healthy-looking numbers
-        bad["verdict"] = "PASS"
-        bad["recovery_criteria_met"] = True
-        failing = self._failing(bad)
-        self.assertIn("powered:recovery_meets_criterion", failing)
-        self.assertIn("powered:reported_metrics_match_recomputation", failing)
+    def test_too_small_a_gap_fails(self):
+        bad = self._failing(amplitude=0.35, clip_z=0.001)   # tilt collapses toward 1
+        self.assertIn("powered:gap_is_large_enough", bad)
 
-    def test_asserted_booleans_alone_do_not_pass(self):
-        """The exact shape the first implementation accepted."""
-        self.assertFalse(g4.check_powered_closure(
-            {"is_powered_closure": True, "recovery_criteria_met": True})[0])
+    # ---- protocol -------------------------------------------------------------------------------
+    def test_off_protocol_amplitude_fails(self):
+        self.assertIn("powered:injection_amplitude", self._failing(amplitude=0.05))
 
-    # ---- protocol, because criteria only mean something for the declared experiment -------------
-    def test_wrong_injection_amplitude_fails(self):
-        self.assertIn("powered:injection_amplitude",
-                      self._failing(powered_report(
-                          injection={"amplitude": 0.05, "rate_preserving": True, "form": "x"})))
+    def test_off_protocol_clip_fails(self):
+        self.assertIn("powered:injection_clip_z", self._failing(clip_z=1.0))
 
-    def test_a_rate_changing_injection_fails(self):
-        self.assertIn("powered:injection_rate_preserving",
-                      self._failing(powered_report(
-                          injection={"amplitude": 0.35, "rate_preserving": False, "form": "x"})))
+    def test_non_nominal_batch_size_fails(self):
+        """batch_size changes the optimizer trajectory, so it is part of the configuration."""
+        sp = g4.FROZEN["seed_policy"]
+        cfg = {k: sp[k] for k in ("niter", "epochs", "estimator_seed", "subsample_seed")}
+        cfg["batch_size"] = 64
+        self.assertIn("powered:nominal_configuration", self._failing(configuration=cfg))
 
-    def test_overlapping_split_fails(self):
-        self.assertIn("powered:samples_disjoint_as_declared",
-                      self._failing(powered_report(
-                          samples={"half_size": 2000000, "split_seed": 7, "disjoint": False})))
+    def test_injection_not_restricted_to_truth_rows_fails(self):
+        with powered_fixture(half=self.HALF) as (rep, dump, _m):
+            rep["injection"]["applied_on"] = "all rows"
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=dump)
+        self.assertFalse(ok)
+        self.assertIn("powered:injection_on_truth_rows_only",
+                      {c["name"] for c in checks if not c["ok"]})
 
-    def test_off_protocol_split_seed_fails(self):
-        self.assertIn("powered:samples_disjoint_as_declared",
-                      self._failing(powered_report(
-                          samples={"half_size": 2000000, "split_seed": 99, "disjoint": True})))
-
-    def test_non_nominal_configuration_fails(self):
-        self.assertIn("powered:nominal_configuration",
-                      self._failing(powered_report(
-                          configuration={"niter": 1, "epochs": 2, "estimator_seed": 42,
-                                         "subsample_seed": 0})))
+    def test_wrong_step1_population_fails(self):
+        self.assertIn("powered:step1_population",
+                      self._failing(samples={"half_size": HALF_FOR_SAMPLES, "split_seed": 7,
+                                             "disjoint": True,
+                                             "step1_population": "pass_reco only"}))
 
     def test_wrong_schema_fails(self):
-        self.assertIn("powered:report_schema",
-                      self._failing(powered_report(report_schema="ordinary-closure-v9")))
+        self.assertIn("powered:report_schema", self._failing(report_schema="ordinary-v9"))
 
     def test_truth_leg_reco_weight_fails(self):
-        self.assertIn("powered:reco_leg_is_w_reco",
-                      self._failing(powered_report(reco_leg_weight_used="w_truth")))
+        self.assertIn("powered:reco_leg_is_w_reco", self._failing(reco_leg_weight_used="w_truth"))
 
-    def test_off_grid_histogram_fails(self):
-        self.assertIn("powered:grid_is_frozen",
-                      self._failing(powered_report(edges_pt=[0.0, 1.0, 2.0])))
+    # ---- binding to the dump and to Gate-2 ------------------------------------------------------
+    def test_source_digest_mismatch_fails(self):
+        with powered_fixture(half=self.HALF) as (rep, dump, _m):
+            rep["source"]["inputs_sha256"] = "0" * 64
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=dump)
+        self.assertFalse(ok)
+        self.assertIn("powered:source_dump_digest_matches",
+                      {c["name"] for c in checks if not c["ok"]})
 
-    def test_a_denormalized_spectrum_fails(self):
-        bad = powered_report()
-        bad["h_unfolded"] = [2.0 * x for x in bad["h_unfolded"]]
-        failing = self._failing(bad)
-        self.assertIn("powered:vector_h_unfolded", failing)
+    def test_unbound_producer_receipt_fails(self):
+        with powered_fixture(half=self.HALF) as (rep, dump, _m):
+            rep["source"]["producer_receipt_sha256"] = None
+            ok, checks = g4.check_powered_closure(rep, inputs_npz=dump)
+        self.assertFalse(ok)
+        self.assertIn("powered:producer_receipt_bound",
+                      {c["name"] for c in checks if not c["ok"]})
 
-    def test_a_truncated_spectrum_fails(self):
-        bad = powered_report()
-        bad["h_target"] = bad["h_target"][:-1]
-        self.assertIn("powered:vector_h_target", self._failing(bad))
+    def test_identity_values_are_compared_not_merely_present(self):
+        """A closure run on another dump must not certify this estimator."""
+        good = {"runtime_target": {"input_identity_hashes": {"sig": "1" * 64}}}
+        bad = {"runtime_target": {"input_identity_hashes": {"sig": "9" * 64}}}
+        ok, _c, _m = self._run(gate2=good)
+        self.assertTrue(ok)
+        ok2, checks2, _m2 = self._run(gate2=bad)
+        self.assertFalse(ok2)
+        self.assertIn("powered:identity_values_match_gate2",
+                      {c["name"] for c in checks2 if not c["ok"]})
 
-    def test_unusable_spectra_do_not_fall_back_to_reported_metrics(self):
-        bad = powered_report()
-        bad["h_prior"] = bad["h_prior"][:10]
-        failing = self._failing(bad)
-        self.assertIn("powered:recomputed_metrics", failing)
+    def test_no_overlapping_identity_keys_fails(self):
+        empty = {"runtime_target": {"input_identity_hashes": {"bkg": "7" * 64}}}
+        ok, checks, _m = self._run(gate2=empty)
+        self.assertFalse(ok)
+        self.assertIn("powered:identity_values_match_gate2",
+                      {c["name"] for c in checks if not c["ok"]})
+
+
+HALF_FOR_SAMPLES = 240

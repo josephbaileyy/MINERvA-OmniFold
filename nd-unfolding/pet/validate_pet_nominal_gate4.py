@@ -90,6 +90,7 @@ FROZEN = {
     "n_pt_bins": N_PT_BINS, "n_pparallel_bins": N_PPAR_BINS, "n_reported_cells": N_CELLS,
     "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
     "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
+                    "batch_size": 512,
                     "train_events": 2000000},
     "closure_scripts": {
         "ordinary": "nd-unfolding/pet/closure_fullevent_fps.py",
@@ -101,8 +102,11 @@ FROZEN = {
     # D2 POWERED CLOSURE, predeclared 2026-08-05 before any run. Frozen here so the gate checks the
     # protocol it was promised rather than whatever protocol a report happens to describe.
     "powered_closure": {
-        "report_schema": "powered-truth-reweight-closure-v1",
+        "report_schema": "powered-truth-reweight-closure-v2",
         "amplitude": 0.35,
+        "clip_z": 3.0,
+        "step1_population": "pass_reco & pass_truth on both sides",
+        "spectrum_agreement_atol": 1e-9,
         "half_size": 2000000,
         "split_seed": 7,
         "rate_preserving": True,
@@ -621,7 +625,87 @@ def check_closure_provenance(ordinary, stress, powered=None):
     return all(c["ok"] for c in checks), checks
 
 
-def check_powered_closure(powered):
+def _powered_rederive(p, inputs_npz):
+    """Re-derive the powered closure's four spectra FROM THE DUMP. Returns (spectra, diag, problems).
+
+    This is the difference between checking a report and checking a RESULT. The report's own vectors
+    are not inputs here: the persisted artifact gives the absolute dump rows of both halves plus the
+    push weights, the tilt is recomputed by importing the closure's own function (one implementation,
+    so the two sides cannot drift), and every spectrum is rebuilt from the dump's raw arrays.
+
+    The spectra are unit-normalized, which is what makes this comparable at all: the closure
+    histogrammed the DataLoader's rescaled `mc.weight` while this reads the dump's raw `w_truth`, and
+    those differ by a single positive constant that unit normalization divides out.
+    """
+    probs = []
+    art = (p.get("artifact") or {})
+    apath = art.get("path")
+    if not apath or not os.path.exists(apath):
+        return None, {}, [f"artifact npz missing: {apath!r}"]
+    got = _sha256_file(apath)
+    if got != art.get("sha256"):
+        return None, {}, [f"artifact sha256 {got[:16]} != reported {str(art.get('sha256'))[:16]}"]
+    with np.load(apath, allow_pickle=False) as z:
+        for k in ("dump_rows_a", "dump_rows_b", "weights_push"):
+            if k not in z.files:
+                return None, {}, [f"artifact carries no {k}"]
+        rows_a = np.asarray(z["dump_rows_a"]).astype(np.int64)
+        rows_b = np.asarray(z["dump_rows_b"]).astype(np.int64)
+        push = np.asarray(z["weights_push"]).astype(np.float64)
+
+    P = FROZEN["powered_closure"]
+    if rows_a.size != P["half_size"] or rows_b.size != P["half_size"]:
+        probs.append(f"half sizes {rows_a.size}/{rows_b.size} != {P['half_size']}")
+    overlap = int(np.intersect1d(rows_a, rows_b).size)
+    if overlap:
+        probs.append(f"{overlap} rows appear in BOTH halves -- the split is not disjoint, which "
+                     f"restores the identity shortcut and destroys the power")
+    if np.unique(rows_a).size != rows_a.size or np.unique(rows_b).size != rows_b.size:
+        probs.append("a half contains duplicate rows")
+    if push.size != rows_b.size:
+        probs.append(f"push {push.size} not aligned to half B ({rows_b.size})")
+    if probs:
+        return None, {"overlap_rows": overlap}, probs
+
+    with np.load(inputs_npz, allow_pickle=True) as d:
+        n = int(np.asarray(d["pass_reco"]).shape[0])
+        if int(max(rows_a.max(), rows_b.max())) >= n:
+            return None, {}, ["persisted rows fall outside the dump's signal inventory"]
+        ts = np.asarray(d["truth_scalars"])
+        pt = ts[:, fe.SCALAR_COLS["pt"]].astype(np.float64)
+        pp = ts[:, fe.SCALAR_COLS["pparallel"]].astype(np.float64)
+        del ts
+        wt = np.asarray(d["w_truth"], dtype=np.float64)
+        pgen = np.asarray(d["pass_truth"]).astype(bool)
+
+    from closure_powered_truth_reweight import clipped_exponential_tilt, unit_spectrum
+    inj = p.get("injection") or {}
+    amp = float(inj.get("amplitude", P["amplitude"]))
+    cz = float(inj.get("clip_z", P["clip_z"]))
+    ma, mb = pgen[rows_a], pgen[rows_b]
+    if not (ma.any() and mb.any()):
+        return None, {}, ["a half has no truth-passing rows"]
+    tilt_a = np.ones(rows_a.size, dtype=np.float64)
+    tilt_on_truth, spec = clipped_exponential_tilt(pt[rows_a][ma], amplitude=amp, clip_z=cz)
+    tilt_a[ma] = tilt_on_truth
+
+    e_pt, e_pp = FROZEN["edges_pt"], FROZEN["edges_pparallel"]
+    spectra = {
+        "h_prior": unit_spectrum(pt[rows_b][mb], pp[rows_b][mb], wt[rows_b][mb], e_pt, e_pp),
+        "h_unfolded": unit_spectrum(pt[rows_b][mb], pp[rows_b][mb],
+                                    (wt[rows_b] * push)[mb], e_pt, e_pp),
+        "h_target": unit_spectrum(pt[rows_a][ma], pp[rows_a][ma],
+                                  (wt[rows_a] * tilt_a)[ma], e_pt, e_pp),
+        "h_untilted": unit_spectrum(pt[rows_a][ma], pp[rows_a][ma], wt[rows_a][ma], e_pt, e_pp),
+    }
+    diag = {"overlap_rows": 0, "n_truth_a": int(ma.sum()), "n_truth_b": int(mb.sum()),
+            "recomputed_tilt_min": spec["tilt_min"], "recomputed_tilt_max": spec["tilt_max"],
+            "recomputed_pt_p50": spec["pt_p50"], "recomputed_pt_iqr": spec["pt_iqr"]}
+    return spectra, diag, []
+
+
+def check_powered_closure(powered, inputs_npz=None,
+                          gate2_receipt=None):
     """Recompute the D2 powered-closure metrics FROM THE VECTORS. Returns (ok, checks).
 
     The first version of this gate accepted `is_powered_closure` and `recovery_criteria_met` -- two
@@ -676,6 +760,18 @@ def check_powered_closure(powered):
                       _isnum(inj.get("amplitude"))
                       and abs(float(inj["amplitude"]) - P["amplitude"]) <= 1e-12,
                       f"amplitude={inj.get('amplitude')!r} (predeclared {P['amplitude']})"))
+    checks.append(_ck("powered:injection_clip_z",
+                      _isnum(inj.get("clip_z"))
+                      and abs(float(inj["clip_z"]) - P["clip_z"]) <= 1e-12,
+                      f"clip_z={inj.get('clip_z')!r} (predeclared {P['clip_z']})"))
+    checks.append(_ck("powered:injection_on_truth_rows_only",
+                      str(inj.get("applied_on", "")).startswith("pass_truth"),
+                      f"applied_on={inj.get('applied_on')!r} -- a truth-level reweighting is only "
+                      f"defined where a truth record exists"))
+    checks.append(_ck("powered:step1_population",
+                      (p.get("samples") or {}).get("step1_population") == P["step1_population"],
+                      f"{(p.get('samples') or {}).get('step1_population')!r} vs predeclared "
+                      f"{P['step1_population']!r}"))
     checks.append(_ck("powered:injection_rate_preserving",
                       inj.get("rate_preserving") is P["rate_preserving"],
                       f"rate_preserving={inj.get('rate_preserving')!r} -- a rate change would let a "
@@ -693,9 +789,10 @@ def check_powered_closure(powered):
     sp = FROZEN["seed_policy"]
     checks.append(_ck("powered:nominal_configuration",
                       all(cfg.get(k) == sp[k] for k in ("niter", "epochs", "estimator_seed",
-                                                        "subsample_seed")),
-                      f"{ {k: cfg.get(k) for k in ('niter','epochs','estimator_seed','subsample_seed')} } "
-                      f"vs frozen { {k: sp[k] for k in ('niter','epochs','estimator_seed','subsample_seed')} }"))
+                                                        "subsample_seed", "batch_size")),
+                      f"{ {k: cfg.get(k) for k in ('niter','epochs','estimator_seed','subsample_seed','batch_size')} } "
+                      f"vs frozen { {k: sp[k] for k in ('niter','epochs','estimator_seed','subsample_seed','batch_size')} } "
+                      f"-- batch_size changes the optimizer trajectory, so it is part of the config"))
     checks.append(_ck("powered:estimator_and_schema",
                       p.get("estimator_fingerprint") == ESTIMATOR_FINGERPRINT
                       and [str(x) for x in (p.get("event_features_reco") or [])]
@@ -717,11 +814,59 @@ def check_powered_closure(powered):
                           "report's own numbers are NOT accepted as a substitute"))
         return all(c["ok"] for c in checks), checks
 
-    gap = float(np.abs(vecs["h_prior"] - vecs["h_target"]).sum())
-    floor = float(np.abs(vecs["h_prior"] - vecs["h_untilted"]).sum())
-    resid = float(np.abs(vecs["h_unfolded"] - vecs["h_target"]).sum())
+    # ---- INDEPENDENT RE-DERIVATION. The acceptance numbers come from HERE, not from the report ----
+    # Checking the report's own vectors would still be checking the report. The artifact's absolute
+    # dump rows plus the push weights let the gate rebuild every spectrum from the dump, recompute the
+    # tilt through the closure's own function, and test disjointness on the ACTUAL index arrays
+    # rather than on a `disjoint: true` field the report asserts about itself.
+    if not inputs_npz:
+        checks.append(_ck("powered:independent_rederivation", False,
+                          "no --inputs given, so the powered closure cannot be re-derived from the "
+                          "dump; its report is not accepted on its own authority (fail closed)"))
+        return all(c["ok"] for c in checks), checks
+    rederived, diag, problems = _powered_rederive(p, inputs_npz)
+    checks.append(_ck("powered:artifact_and_split_verified", not problems,
+                      "; ".join(problems) if problems else
+                      f"artifact hash matches, halves are {P['half_size']}+{P['half_size']} with "
+                      f"{diag.get('overlap_rows')} overlapping rows, push aligned to half B"))
+    if rederived is None:
+        checks.append(_ck("powered:independent_rederivation", False,
+                          "re-derivation could not run, and the report's own spectra are NOT "
+                          "accepted as a substitute"))
+        return all(c["ok"] for c in checks), checks
+
+    satol = P["spectrum_agreement_atol"]
+    for name, ours in rederived.items():
+        theirs = vecs[name]
+        dmax = float(np.max(np.abs(ours - theirs)))
+        checks.append(_ck(f"powered:spectrum_matches_rederivation_{name}", dmax <= satol,
+                          f"max|reported-rederived| = {dmax:.3e} <= {satol:g}"))
+
+    gap = float(np.abs(rederived["h_prior"] - rederived["h_target"]).sum())
+    floor = float(np.abs(rederived["h_prior"] - rederived["h_untilted"]).sum())
+    resid = float(np.abs(rederived["h_unfolded"] - rederived["h_target"]).sum())
     fog = (floor / gap) if gap > 0 else None
     rog = (resid / gap) if gap > 0 else None
+
+    # Identity VALUES, not merely presence: the inventory the closure consumed must be the one the
+    # Gate-2 receipt was built against, or the closure certifies a different dump's estimator.
+    if gate2_receipt is not None:
+        want = ((gate2_receipt.get("runtime_target") or {}).get("input_identity_hashes")) or {}
+        got = p.get("input_identity_hashes") or {}
+        shared = sorted(set(want) & set(got))
+        checks.append(_ck("powered:identity_values_match_gate2",
+                          bool(shared) and all(got[k] == want[k] for k in shared),
+                          f"compared {shared or 'NOTHING -- no overlapping inventory keys'}: "
+                          + "; ".join(f"{k}:{'ok' if got.get(k) == want.get(k) else 'MISMATCH'}"
+                                      for k in shared)))
+    src = p.get("source") or {}
+    checks.append(_ck("powered:source_dump_digest_matches",
+                      bool(src.get("inputs_sha256"))
+                      and src["inputs_sha256"] == _sha256_file(inputs_npz),
+                      f"report inputs_sha256={str(src.get('inputs_sha256'))[:16]} vs this gate's own "
+                      f"read of --inputs"))
+    checks.append(_ck("powered:producer_receipt_bound", bool(src.get("producer_receipt_sha256")),
+                      f"producer_receipt_sha256={str(src.get('producer_receipt_sha256'))[:16]}"))
 
     checks.append(_ck("powered:gap_is_large_enough", gap >= P["gap_min"],
                       f"recomputed gap={gap:.6f} >= {P['gap_min']} -- below this there is no "
@@ -869,6 +1014,7 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
                        n_expected_subsample=None, marginal=None, saturation_frac=None,
                        closure=None, closure_reports=None, observed_at_utc=None, fold_forward=None,
                        fold_forward_driver=None, fold_forward_telemetry=None, target=None,
+                       powered_inputs_npz=None, powered_gate2_receipt=None,
                        spectra=None, spectra_driver=None, spectra_telemetry=None):
     """Assemble the Gate-4 receipt + single verdict. Pure (no training). `marginal`=(h_truth,h_rw);
     `closure`=(ordinary,recoil_blind,fullevent_recovers);
@@ -952,7 +1098,8 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
         add("closure_provenance", *check_closure_provenance(*closure_reports))
     # D2: recomputed from the powered closure's own spectra, never from its verdict.
     add("powered_closure", *check_powered_closure(
-        closure_reports[2] if (closure_reports and len(closure_reports) > 2) else None))
+        closure_reports[2] if (closure_reports and len(closure_reports) > 2) else None,
+        inputs_npz=powered_inputs_npz, gate2_receipt=powered_gate2_receipt))
 
     verdict = bool(checks) and all(c["ok"] for c in checks)
     payload = {
@@ -1062,6 +1209,17 @@ def main(argv=None):
     ap.add_argument("--stress-report", required=True,
                     help="JSON report from stress_closure_muon.py --json (the omitted-muon stress "
                          "closure: recoil-only stays blind, full-event recovers the tilt).")
+    ap.add_argument("--powered-inputs", default=None,
+                    help="the dump the POWERED closure was run on, which Gate-4 re-derives its "
+                         "spectra from. Defaults to --inputs, and in a real run they are the same "
+                         "file. It is a separate flag only because the powered closure may legally "
+                         "have been run in an earlier job against the same certified inventory; the "
+                         "binding is enforced by digest (source.inputs_sha256) and by comparing the "
+                         "consumed identity VALUES against the Gate-2 receipt, not by path.")
+    ap.add_argument("--gate2-receipt", default=None,
+                    help="the Gate-2 runtime receipt. Used to compare the powered closure's "
+                         "consumed inventory identity VALUES against the ones Gate-2 was built "
+                         "against, so a closure on another dump cannot certify this estimator.")
     ap.add_argument("--powered-closure-report", default=None,
                     help="JSON report from the D2 injected truth-reweight RECOVERY closure, at "
                          "nominal configuration with predeclared recovery criteria "
@@ -1163,6 +1321,12 @@ def main(argv=None):
     stress = _read_report(args.stress_report, "omitted-muon stress")
     powered = (_read_report(args.powered_closure_report, "powered recovery closure")
                if args.powered_closure_report else None)
+    target_receipt_payload = None
+    if args.gate2_receipt:
+        try:
+            target_receipt_payload = json.load(open(args.gate2_receipt))
+        except (json.JSONDecodeError, OSError) as exc:
+            raise SystemExit(f"[gate4] --gate2-receipt unreadable ({exc}); fail closed")
     marginal = None
     if isinstance(ordinary.get("marginal_h_truth"), list) \
             and isinstance(ordinary.get("marginal_h_reweighted"), list):
@@ -1184,6 +1348,10 @@ def main(argv=None):
         n_expected_subsample=FROZEN["seed_policy"]["train_events"],
         marginal=marginal, saturation_frac=(spectra[2] if spectra is not None else None),
         closure=closure, closure_reports=(ordinary, stress, powered), target=target,
+        # D2: the powered closure is re-derived from THIS dump, and its consumed inventory is
+        # compared against the Gate-2 receipt's actual identity values.
+        powered_inputs_npz=(args.powered_inputs or args.inputs),
+        powered_gate2_receipt=target_receipt_payload,
         fold_forward=fold_forward, fold_forward_driver=fold_forward_driver,
         fold_forward_telemetry=fold_forward_telemetry,
         spectra=spectra, spectra_driver=spectra_driver, spectra_telemetry=spectra_telemetry,

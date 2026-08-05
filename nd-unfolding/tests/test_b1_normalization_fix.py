@@ -201,51 +201,80 @@ def write_closure_reports(td, ordinary_over=None, stress_over=None):
     return op, sp
 
 
-def write_powered_report(td, **over):
-    """The D2 injected truth-reweight RECOVERY closure report.
+def write_powered_report(td, half=120, recover=1.0, **over):
+    """Write a REAL powered-closure submission: paired dump + artifact + report.
 
-    Separate from write_closure_reports so the twelve callers that expect a FAILING verdict keep
-    their two-value unpack: Gate-4 fails closed without this report, which is the point.
+    Returns (report_path, powered_dump_path). Gate-4 re-derives every spectrum from that dump, so a
+    boolean-only stub no longer suffices -- which is the point of the D2 hardening.
+
+    Rows come in IDENTICAL PAIRS, half A takes the evens and half B the odds, so the sample-split
+    floor is exactly zero. At 240 rows a random split's statistical noise would dwarf the injected
+    tilt and floor/gap could never pass for reasons unrelated to the code under test.
+
+    FROZEN's half_size is reduced for the duration, because the predeclared 2,000,000 is a policy
+    scale and cannot be met by a fixture; the LOGIC is what these tests exercise.
     """
     import json as _json
-    # Real spectra: Gate-4 recomputes gap/floor/residual from them and refuses to read the verdict.
-    n = g4.N_CELLS
-    base = np.full(n, 1.0 / n)
+    import contextlib as _cl
+    sys.path.insert(0, PET) if "PET" in globals() else None
+    from closure_powered_truth_reweight import clipped_exponential_tilt, unit_spectrum
 
-    def _pert(target_l1, offset, k=100):
-        d = np.zeros(n)
-        d[offset:offset + k] += target_l1 / (2 * k)
-        d[offset + k:offset + 2 * k] -= target_l1 / (2 * k)
-        return d
-
-    gap = 0.30
-    prior = base.copy()
-    target = base + _pert(gap, 0)
-    untilted = base + _pert(gap * 0.05, 40)
-    unfolded = target + _pert(gap * 0.10, 80)
-    g = float(np.abs(prior - target).sum())
-    fl = float(np.abs(prior - untilted).sum())
-    rs = float(np.abs(unfolded - target).sum())
     P = g4.FROZEN["powered_closure"]
     sp = g4.FROZEN["seed_policy"]
+    rng = np.random.default_rng(4)
+    pt_pair = np.exp(rng.normal(0.0, 0.55, half)) * 0.8
+    pp_pair = rng.uniform(0.5, 9.0, half)
+    w_pair = rng.uniform(0.6, 1.4, half)
+    n = 2 * half
+    pt = np.repeat(pt_pair, 2); pp = np.repeat(pp_pair, 2); wt = np.repeat(w_pair, 2)
+    ts = np.zeros((n, 4)); ts[:, 0] = pt; ts[:, 1] = pp
+    rows_a = np.arange(0, n, 2); rows_b = np.arange(1, n, 2)
+
+    e_pt, e_pp = g4.FROZEN["edges_pt"], g4.FROZEN["edges_pparallel"]
+    tilt, spec = clipped_exponential_tilt(pt[rows_a], amplitude=P["amplitude"],
+                                          clip_z=P["clip_z"])
+    h_prior = unit_spectrum(pt[rows_b], pp[rows_b], wt[rows_b], e_pt, e_pp)
+    h_target = unit_spectrum(pt[rows_a], pp[rows_a], wt[rows_a] * tilt, e_pt, e_pp)
+    h_untilt = unit_spectrum(pt[rows_a], pp[rows_a], wt[rows_a], e_pt, e_pp)
+    ipt = np.clip(np.digitize(pt[rows_b], e_pt[1:-1]), 0, len(e_pt) - 2)
+    ipp = np.clip(np.digitize(pp[rows_b], e_pp[1:-1]), 0, len(e_pp) - 2)
+    cell = ipt * (len(e_pp) - 1) + ipp
+    ratio = np.where(h_prior[cell] > 0, h_target[cell] / np.maximum(h_prior[cell], 1e-300), 1.0)
+    push = 1.0 + float(recover) * (ratio - 1.0)
+    h_unfold = unit_spectrum(pt[rows_b], pp[rows_b], wt[rows_b] * push, e_pt, e_pp)
+
+    def _l1(x, y):
+        return float(np.abs(x - y).sum())
+    gap, floor, resid = _l1(h_prior, h_target), _l1(h_prior, h_untilt), _l1(h_unfold, h_target)
+
+    pdump = os.path.join(td, "powered_dump.npz")
+    np.savez(pdump, truth_scalars=ts, w_truth=wt,
+             pass_truth=np.ones(n, bool), pass_reco=np.ones(n, bool))
+    art = os.path.join(td, "powered_artifact.npz")
+    np.savez_compressed(art, dump_rows_a=rows_a.astype(np.int64),
+                        dump_rows_b=rows_b.astype(np.int64), weights_push=push,
+                        mc_indices=np.arange(n, dtype=np.int64))
     payload = {"report_schema": P["report_schema"], "verdict": "PASS",
                "is_powered_closure": True, "recovery_criteria_met": True,
                "closure_class": "injected-truth-reweight-recovery",
-               "h_prior": [float(x) for x in prior], "h_target": [float(x) for x in target],
-               "h_unfolded": [float(x) for x in unfolded],
-               "h_untilted": [float(x) for x in untilted],
+               "h_prior": [float(x) for x in h_prior], "h_target": [float(x) for x in h_target],
+               "h_unfolded": [float(x) for x in h_unfold],
+               "h_untilted": [float(x) for x in h_untilt],
                "bin_order": g4.FROZEN["bin_order"],
-               "edges_pt": list(g4.FROZEN["edges_pt"]),
-               "edges_pparallel": list(g4.FROZEN["edges_pparallel"]),
-               "metrics": {"gap": g, "floor": fl, "residual": rs,
-                           "floor_over_gap": fl / g, "residual_over_gap": rs / g,
-                           "recovery": 1.0 - rs / g},
-               "injection": {"form": "1 + A*tanh((pT - p50)/IQR), normalized to unit mean",
-                             "amplitude": P["amplitude"], "rate_preserving": True},
-               "samples": {"half_size": P["half_size"], "split_seed": P["split_seed"],
-                           "disjoint": True},
+               "edges_pt": list(e_pt), "edges_pparallel": list(e_pp),
+               "metrics": {"gap": gap, "floor": floor, "residual": resid,
+                           "floor_over_gap": floor / gap, "residual_over_gap": resid / gap,
+                           "recovery": 1.0 - resid / gap},
+               "injection": {"form": spec["form"], "amplitude": P["amplitude"],
+                             "clip_z": P["clip_z"], "rate_preserving": True,
+                             "applied_on": "pass_truth rows only"},
+               "samples": {"half_size": half, "split_seed": P["split_seed"], "disjoint": True,
+                           "step1_population": P["step1_population"]},
                "configuration": {k: sp[k] for k in ("niter", "epochs", "estimator_seed",
-                                                    "subsample_seed")},
+                                                    "subsample_seed", "batch_size")},
+               "artifact": {"path": art, "sha256": g4._sha256_file(art)},
+               "source": {"inputs": pdump, "inputs_sha256": g4._sha256_file(pdump),
+                          "producer_receipt": "p.json", "producer_receipt_sha256": "d" * 64},
                "estimator_fingerprint": "pet-fullevent-fps-v1",
                "event_features_reco": list(g4.FROZEN["event_features_reco"]),
                "event_features_truth": list(g4.FROZEN["event_features_truth"]),
@@ -255,7 +284,17 @@ def write_powered_report(td, **over):
     path = os.path.join(td, "powered_closure.json")
     with open(path, "w") as fh:
         _json.dump(payload, fh)
-    return path
+
+    @_cl.contextmanager
+    def _scale():
+        saved = g4.FROZEN["powered_closure"]["half_size"]
+        g4.FROZEN["powered_closure"]["half_size"] = half
+        try:
+            yield
+        finally:
+            g4.FROZEN["powered_closure"]["half_size"] = saved
+
+    return path, pdump, _scale()
 
 
 def driver_spectra(arrays, imc, push):
@@ -1033,11 +1072,13 @@ class Gate4DriverContract(unittest.TestCase):
             op, sp = write_closure_reports(td)
             # D2: Gate-4 fails closed without the powered recovery closure, so a test that expects
             # a PASS must supply one. The identity closure cannot stand in for it.
-            pp = write_powered_report(td)
+            pp, pdump, scale = write_powered_report(td)
             work = os.path.join(td, "gate4.json")
-            rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
-                          "--closure-report", op, "--stress-report", sp,
-                          "--powered-closure-report", pp, "--n-full", "60"])
+            with scale:
+                rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                              "--closure-report", op, "--stress-report", sp,
+                              "--powered-closure-report", pp, "--powered-inputs", pdump,
+                              "--n-full", "60"])
             with open(work) as fh:
                 receipt = json.load(fh)
         self.assertEqual(rc, 0, [c for c in receipt["checks"] if not c["ok"]])
@@ -1058,11 +1099,12 @@ class Gate4DriverContract(unittest.TestCase):
             dump = write_npz(td, arrays)
             wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28))
             op, sp = write_closure_reports(td)
-            pp = write_powered_report(td)      # D2: required for closure_provenance to pass
+            pp, pdump, scale = write_powered_report(td)   # D2: the powered component
             work = os.path.join(td, "gate4.json")
-            g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
-                     "--closure-report", op, "--stress-report", sp,
-                     "--powered-closure-report", pp])
+            with scale:
+                g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
+                         "--closure-report", op, "--stress-report", sp,
+                         "--powered-closure-report", pp, "--powered-inputs", pdump])
             with open(work) as fh:
                 receipt = json.load(fh)
         for component in ("freeze", "weights", "index_order", "marginal", "fold_forward",

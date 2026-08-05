@@ -44,8 +44,12 @@ ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"
 BKG_MODE = "negweight-refined"
 # Frozen nominal seed/config policy (mirrors the adopted per-train config; the matched floor repeat
 # reuses the SAME seeds/config with a different output tag to expose the GPU-nondeterminism floor).
+# `batch_size` belongs HERE, not as a literal at the MultiFold call. It changes the optimizer's
+# trajectory, so a run at a different batch size is a differently-configured estimator; leaving it
+# uncommitted meant the artifact could not record it, FROZEN could not gate it, and a closure could
+# claim "nominal configuration" while training at another batch size.
 NOMINAL_SEED_POLICY = {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
-                       "train_events": 2000000}
+                       "train_events": 2000000, "batch_size": 512}
 # The ravel convention of `central_vector` / `reported_bin_mask`. Stated INDEPENDENTLY of the
 # validator's FROZEN["bin_order"] on purpose: the whole point of persisting it is that the gate can
 # find the two disagreeing, which it cannot do if both sides read one constant. The two literals are
@@ -314,6 +318,8 @@ def main(argv=None):
     ap.add_argument("--niter", type=int, default=NOMINAL_SEED_POLICY["niter"])
     ap.add_argument("--epochs", type=int, default=NOMINAL_SEED_POLICY["epochs"])
     ap.add_argument("--max-events", type=int, default=NOMINAL_SEED_POLICY["train_events"])
+    ap.add_argument("--batch-size", type=int, default=NOMINAL_SEED_POLICY["batch_size"],
+                    help="training batch size; part of the frozen nominal policy")
     ap.add_argument("--config-gate-only", action="store_true",
                     help="run ONLY the fail-closed publication config gate (login-safe; no TF)")
     ap.add_argument("--allow-overwrite", action="store_true",
@@ -383,7 +389,7 @@ def main(argv=None):
     mf_name = f"fe_nominal_{args.tag}"
     weights_folder = os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}")
     of = MultiFold(mf_name, m1, m2, data, mc, niter=int(args.niter),
-                   epochs=int(args.epochs), batch_size=512,
+                   epochs=int(args.epochs), batch_size=int(args.batch_size),
                    weights_folder=weights_folder,
                    verbose=False)
     of.Unfold()
@@ -465,7 +471,8 @@ def main(argv=None):
     # the constant instead would recreate the self-comparison the freeze check exists to avoid.
     seed_policy = {"estimator_seed": int(args.estimator_seed),
                    "subsample_seed": int(args.subsample_seed), "niter": int(args.niter),
-                   "epochs": int(args.epochs), "train_events": int(args.max_events)}
+                   "epochs": int(args.epochs), "train_events": int(args.max_events),
+                   "batch_size": int(args.batch_size)}
     # The truth (pT,p||) of the SAME subsample, from the dump (build_fullevent_loaders keeps the
     # scalars only for the event-feature block, so they are re-read here rather than plumbed out).
     with np.load(args.inputs, allow_pickle=True) as _d:
