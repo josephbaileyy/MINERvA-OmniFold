@@ -1,0 +1,7 @@
+# Tracked so this directory EXISTS IN EVERY CHECKOUT.
+#
+# sbatch_powered_closure.sh sends --output/--error here. slurmstepd opens those paths before it
+# execs the script, and SLURM does not create their parent directories, so the mkdir -p inside the
+# script runs far too late. Job 56355818 was submitted with this directory absent: it would have
+# held its queue slot and then died at dispatch with no log to say why. An empty tracked directory
+# is a cheaper guard than remembering.

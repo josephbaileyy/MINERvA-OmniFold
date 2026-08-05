@@ -61,7 +61,19 @@ KNOWN_PREEXISTING = {
 # Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in
 # the checkout. Raise it when launchers add pins; lowering it needs the same
 # justification as deleting a guard, because that is what it does.
-SHELL_PIN_FLOOR = 10
+#
+# COUNT ONLY PINS ON TRACKED FILES. This host resolves 17, but 5 of those are pins
+# on artifacts that are NOT in git -- G2_FPS_MEFHC_P12.npz twice and the compiled
+# MINERvA101/opt/bin/runEventLoopOmniFold three times -- which localize() resolves
+# here only because this scratch checkout happens to hold them. A fresh clone, or
+# this one after a scratch purge, resolves 12. Setting the floor to the observed 17
+# would therefore make the guard fail on any checkout without a 9.9 GB dump and a
+# built binary, and the obvious way out of THAT is lowering the floor, which is the
+# one move the docstring forbids. 12 is the count every checkout can honour.
+# Was 10, which was likewise exactly the tracked count before
+# sbatch_powered_closure.sh started pinning its driver and preflight in the one-line
+# idiom collect_shell can actually see (2026-08-05).
+SHELL_PIN_FLOOR = 12
 
 
 def sha256(path):
