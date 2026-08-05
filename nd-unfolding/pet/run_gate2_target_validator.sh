@@ -15,9 +15,20 @@ FINAL_WEIGHTS=${FINAL_DIR}/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy
 FINAL_RECEIPT=${FINAL_DIR}/G2_GATE2_TARGET_RUNTIME_RECEIPT.json
 LOCK=${REPO}/nd-unfolding/g2_fullevent/gate2/.gate2-final-writer.lock
 
+# These are this wrapper's pin on the code it is ABOUT TO RUN -- they say "the tree still holds what
+# was reviewed", not "a past receipt is still valid".
+#
+# 2026-08-04 RE-ISSUE. The validator and loader hashes below were advanced because decisions D1
+# (B-4: step 1 consumes w_reco) and D2 (the nominal consumes the published target) changed both
+# files, and Gate-2 is being re-run against the changed code. That is the sanctioned path -- re-issue
+# the owning gate -- and NOT the forbidden one, which is editing a digest so an existing receipt's
+# mismatch disappears while the receipt itself is never re-earned. The previous values were
+# validator=f9e20f4c3a92748e6c52deebd26c1c94c09d94bf26f259675a04e6f3695669d1
+# loader=538031732c46d08540dcf64ae244b79cf001a43f518fcc7a1fb5d2b24b66abee, and the products they
+# certified are archived alongside the 2026-07-19 receipt rather than deleted.
 EXPECTED_INPUT_SHA=fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
-EXPECTED_VALIDATOR_SHA=f9e20f4c3a92748e6c52deebd26c1c94c09d94bf26f259675a04e6f3695669d1
-EXPECTED_LOADER_SHA=538031732c46d08540dcf64ae244b79cf001a43f518fcc7a1fb5d2b24b66abee
+EXPECTED_VALIDATOR_SHA=13fa4853040d0afcb3c323e69b76f9b1ec20678124338c537801177a486510a0
+EXPECTED_LOADER_SHA=4c3a001cb5b6a52a3e2a1f04be4aabe9ea4666b86ef550623508a56d049af0c4
 EXPECTED_U2D_SHA=8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e
 
 ROUTE=${GATE2_EXECUTION_ROUTE:-}
