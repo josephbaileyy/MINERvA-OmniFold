@@ -9,6 +9,7 @@ class DataLoader():
             gen = None,
             pass_gen = None,
             weight = None,
+            weight_reco = None,
             normalize=False,
             normalization_factor = 1_000_000,
             bootstrap = False,
@@ -33,7 +34,14 @@ class DataLoader():
             A boolean array or mask for the truth-level data, specifying a subset of generated data to be used.        
         weight : numpy.ndarray, optional (default=None)
             An array of weights associated with the reconstructed or truth-level data. 
-            These weights can be initial MC weights for the simulation        
+            These weights can be initial MC weights for the simulation
+        weight_reco : numpy.ndarray, optional (default=None)
+            OPTIONAL second MC weight array for the DETECTOR-level (step-1) leg -- audit finding
+            B-4, decision D1 (2026-08-04). When supplied, `weight` is the TRUTH-leg weight (step 2
+            and every truth-space quantity) and `weight_reco` is what step 1 consumes. The two are
+            two views of ONE MC event, so they share the bootstrap draw and a single normalization
+            constant. Leave as `None` for the historical single-weight contract, which is preserved
+            byte-for-byte.
         normalize : bool, optional (default=False)
             If `True`, the dataset will be normalized according to the provided `normalization_factor`.
             Normalization ensures that the total sum of weights equals the normalization factor.        
@@ -52,6 +60,7 @@ class DataLoader():
         self.nmax = reco.shape[0]
         self.reco = reco
         self.weight = weight
+        self.weight_reco = weight_reco
         self.gen = gen
         self.pass_reco = pass_reco
         self.pass_gen = pass_gen
@@ -82,8 +91,21 @@ class DataLoader():
         else:
             self.weight = self.weight[rank::size]
             
+        # B-4 / D1: shard the reco leg exactly like the truth leg. Kept as `None` when absent so
+        # every historical single-weight consumer is untouched.
+        if self.weight_reco is not None:
+            self.weight_reco = self.weight_reco[rank::size]
+            assert self.weight_reco.shape[0] == self.weight.shape[0], \
+                "ERROR: weight_reco and weight have different number of entries"
+
         if self.bootstrap:
-            self.weight = np.random.poisson(1,self.weight.shape[0])*self.weight
+            # ONE Poisson draw shared by both legs. Independent draws would decorrelate the reco
+            # and truth views of the same MC event and smear the migration matrix
+            # (2d-unfolding/2D_OMNIFOLD_REFERENCE.md, bootstrap invariant 2).
+            _draw = np.random.poisson(1,self.weight.shape[0])
+            self.weight = _draw*self.weight
+            if self.weight_reco is not None:
+                self.weight_reco = _draw*self.weight_reco
             
         if self.pass_reco is None:
             if self.rank==0:print("INFO: Creating pass reco flag ...")
@@ -109,5 +131,26 @@ class DataLoader():
 
         if normalize:
             if self.rank==0:print(f"INFO: Normalizing sum of weights to {normalization_factor} ...")
-            sumw = np.sum(self.weight[np.array(self.pass_reco)==1])
-            self.weight *= (normalization_factor/sumw).astype(np.float32)
+            # B-4 / D1, Option A (decided 2026-08-04). The step-1 class ratio is set by the weight
+            # step 1 ACTUALLY consumes, so when a reco leg is supplied the constant is derived from
+            # IT, and the SAME constant scales both legs. That preserves the per-event
+            # weight_reco/weight ratio, which is a physical MINOS-efficiency factor measured in
+            # [0.931, 0.998] on the production dump -- renormalizing the legs separately would
+            # multiply it by sum(w_truth)/sum(w_reco) and destroy that meaning. Step 2 loses
+            # nothing, because it weights BOTH of its classes by `weight` and is therefore
+            # scale-invariant.
+            #
+            # CONSEQUENCE, stated because it is a trap: with a reco leg supplied,
+            # sum(weight[pass_reco]) is NOT normalization_factor -- it is that times
+            # sum(w_truth[pass_reco])/sum(w_reco[pass_reco]). Truth-space yields must therefore be
+            # built from the RAW truth weights times pot_scale, never from this normalized copy.
+            _pr = np.array(self.pass_reco)==1
+            _src = self.weight if self.weight_reco is None else self.weight_reco
+            sumw = np.sum(_src[_pr])
+            _c = (normalization_factor/sumw).astype(np.float32)
+            # In-place on purpose: `self.weight` is a view of the caller's array, and callers rely
+            # on seeing the rescale (train_fullevent_nominal.py:74 documents that dependency). Do
+            # not convert these to `x = x*_c` -- it would silently break that aliasing.
+            self.weight *= _c
+            if self.weight_reco is not None:
+                self.weight_reco *= _c

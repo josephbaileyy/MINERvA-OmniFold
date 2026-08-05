@@ -150,6 +150,17 @@ class MultiFold():
         self.step1_models = []  # list for model1 ensembles
         self.step2_models = []  # list for model2 ensembles
 
+        # B-4 / D1 (2026-08-04): step 1 consumes the DETECTOR-leg MC weight, step 2 and every
+        # truth-space quantity consume the TRUTH-leg one. A loader that supplies only `weight` --
+        # the historical contract, and what the 2D path uses -- puts both legs on that single array
+        # exactly as before, so this resolves to a no-op there.
+        self.mc_weight_reco = getattr(self.mc, "weight_reco", None)
+        if self.mc_weight_reco is None:
+            self.mc_weight_reco = self.mc.weight
+        elif self.rank==0:
+            self.log_string("INFO: B-4 dual-leg MC weights ACTIVE -- step 1 on weight_reco, "
+                            "step 2 on weight")
+
         self.weights_pull = np.ones(self.mc.weight.shape[0],dtype=np.float32)
         if self.start>0:
             self.LoadStart()  # Loads 'self.start' iteration. Starts at ensemble=0
@@ -173,7 +184,9 @@ class MultiFold():
         self.RunModel(
             np.concatenate((self.labels_mc,self.labels_data)),
             
-            np.concatenate((self.weights_push*self.mc.weight*self.mc.pass_reco,
+            # B-4 / D1: RECO leg here. self.mc_weight_reco is self.mc.weight unless the loader
+            # supplied a distinct detector-level weight.
+            np.concatenate((self.weights_push*self.mc_weight_reco*self.mc.pass_reco,
                             self.data.weight*self.data.pass_reco)),
             
             i,self.model1,stepn=1,
@@ -193,7 +206,10 @@ class MultiFold():
         
         self.RunModel(
             np.concatenate((self.labels_mc, self.labels_gen)),
-            np.concatenate((self.mc.weight*self.mc.pass_gen, 
+            # B-4 / D1: TRUTH leg -- deliberately self.mc.weight, NOT self.mc_weight_reco. Both
+            # classes carry the same weight, so step 2 is scale-invariant and is unaffected by the
+            # common normalization constant the loader derives from the reco leg.
+            np.concatenate((self.mc.weight*self.mc.pass_gen,
                             self.mc.weight*self.weights_pull*self.mc.pass_gen)),
             i,self.model2,stepn=2,
             NTRAIN = self.num_steps_gen*self.BATCH_SIZE,
