@@ -71,8 +71,9 @@ def reporting_spectra(truth_scalars, w_truth, push, pass_truth):
     spectrum over pass_truth on the canonical extended-FPS grid, ravelled in the frozen pt-major
     row-major order and NORMALIZED TO UNIT SUM; `reported_bin_mask` marks the prior-occupied cells.
 
-    Unit-normalized because `w_truth` here is `mc.weight`, which the DataLoader rescaled in place to
-    sum to 1e6, while the validator's independent recomputation reads the dump's raw weights. The
+    Unit-normalized because `w_truth` here is `mc.weight`, which the DataLoader rescaled in place --
+    to 1e6 pre-D1, and post-D1 to 1e6*sum(w_truth)/sum(w_reco), since the constant is derived from
+    the reco leg -- while the validator's independent recomputation reads the dump's raw weights. The
     two are the same spectrum up to a positive scale and the freeze fixes only length/order/
     finiteness, so normalizing is what makes the two-sided agreement check exact. The absolute
     cross-section normalization belongs to the extraction step, not to this artifact."""
@@ -161,6 +162,122 @@ def run_config_gate(npz_path, gate3_manifest=None):
     return cfg
 
 
+DEFAULT_TARGET_NPY = os.path.join(
+    _REPO, "nd-unfolding", "g2_fullevent", "gate2", "final",
+    "G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy")
+DEFAULT_TARGET_RECEIPT = os.path.join(
+    _REPO, "nd-unfolding", "g2_fullevent", "gate2", "final",
+    "G2_GATE2_TARGET_RUNTIME_RECEIPT.json")
+
+
+def assert_target_provenance(target_npy, receipt_path, inputs_npz):
+    """Bind the precomputed Gate-2 target to the receipt that owns it. Returns the receipt.
+
+    D2 (2026-08-04). Audit J04: this driver used to call `build_fullevent_loaders` with no target
+    path, silently re-running the whole 4,680,719-row refinement in process, and NOTHING ever
+    compared the result against the published array. So the target Gate-2 certified was certified
+    and then discarded, and the launcher comment claiming the nominal 'consumes the negweight-refined
+    literal Gate-2 target' described an intent, not the code.
+
+    Every check here is fail-closed, and none of them is a substitute for another: the target hash
+    proves WHICH array, the receipt status proves it was certified, the fingerprint and target_mode
+    prove it is the publication estimator's target and not a control's, `bootstrap_seed is None`
+    proves it is the nominal rather than a replica, and the input size binds it to the source dump.
+    Row order -- the one property a hash cannot express on its own -- is bound separately by
+    `assert_consumed_inventory_matches_receipt`, against the arrays the loader actually read.
+    """
+    if not os.path.exists(receipt_path):
+        raise SystemExit(f"[gate4/D2] Gate-2 runtime receipt missing: {receipt_path}. The nominal "
+                         f"must consume a target some receipt owns (fail closed).")
+    try:
+        rec = json.load(open(receipt_path))
+    except (json.JSONDecodeError, OSError) as exc:
+        raise SystemExit(f"[gate4/D2] Gate-2 runtime receipt unreadable ({exc}); fail closed")
+    if rec.get("status") != "PASS":
+        raise SystemExit(f"[gate4/D2] Gate-2 runtime receipt status is {rec.get('status')!r}, not "
+                         f"'PASS'; its target is not certified (fail closed)")
+    feed = rec.get("step1_feed") or {}
+    wmeta = feed.get("weights") or {}
+    rt = rec.get("runtime_target") or {}
+
+    if not os.path.exists(target_npy):
+        raise SystemExit(f"[gate4/D2] precomputed target missing: {target_npy}. There is NO fallback "
+                         f"to rebuilding it in process -- that is the J04 defect (fail closed).")
+    want_sha = wmeta.get("sha256")
+    if not want_sha:
+        raise SystemExit("[gate4/D2] receipt records no step1_feed.weights.sha256; it cannot own a "
+                         "target (fail closed)")
+    got_sha = sha256_file(target_npy)
+    if got_sha != want_sha:
+        raise SystemExit(f"[gate4/D2] target sha256 mismatch\n  receipt {want_sha}\n  on disk "
+                         f"{got_sha}\nThis is not the array Gate-2 certified (fail closed)")
+    want_size = wmeta.get("size_bytes")
+    got_size = os.path.getsize(target_npy)
+    if want_size is not None and int(want_size) != int(got_size):
+        raise SystemExit(f"[gate4/D2] target size {got_size} != receipt {want_size} (fail closed)")
+
+    if rt.get("estimator_fingerprint") != ESTIMATOR_FINGERPRINT:
+        raise SystemExit(f"[gate4/D2] receipt's target fingerprint "
+                         f"{rt.get('estimator_fingerprint')!r} != {ESTIMATOR_FINGERPRINT!r}; it "
+                         f"belongs to a different estimator (fail closed)")
+    if rt.get("target_mode") != BKG_MODE:
+        raise SystemExit(f"[gate4/D2] receipt's target_mode {rt.get('target_mode')!r} != "
+                         f"{BKG_MODE!r}; a control's target cannot serve the nominal (fail closed)")
+    if not rt.get("refinement_is_learned_production"):
+        raise SystemExit("[gate4/D2] receipt reports refinement_is_learned_production=False; the "
+                         "target came from a substitute refiner and cannot certify the nominal "
+                         "estimator (fail closed)")
+    if rt.get("bootstrap_seed") is not None:
+        raise SystemExit(f"[gate4/D2] receipt's target is bootstrap replica "
+                         f"{rt.get('bootstrap_seed')!r}, not the nominal (fail closed)")
+
+    nsum = feed.get("normalized_sum")
+    if nsum is None or not np.isfinite(nsum) or nsum <= 0:
+        raise SystemExit(f"[gate4/D2] receipt's step1_feed.normalized_sum is {nsum!r}; a target "
+                         f"whose own normalization is unrecorded is not certifiable (fail closed)")
+    pre = rec.get("input_preflight") or {}
+    want_in_size = pre.get("size_bytes")
+    if want_in_size is not None and int(want_in_size) != int(os.path.getsize(inputs_npz)):
+        raise SystemExit(f"[gate4/D2] source NPZ size {os.path.getsize(inputs_npz)} != the size the "
+                         f"receipt was built against ({want_in_size}); the target belongs to a "
+                         f"different dump (fail closed)")
+    print(json.dumps({"target_provenance": "PASS", "target": target_npy, "target_sha256": got_sha,
+                      "receipt": receipt_path, "receipt_status": rec.get("status"),
+                      "receipt_verdict": rec.get("verdict"),
+                      "receipt_rows": feed.get("rows"),
+                      "receipt_normalized_sum": nsum,
+                      "refinement_rebuilt_in_process": False}, indent=2))
+    return rec
+
+
+def assert_consumed_inventory_matches_receipt(meta, rec):
+    """Bind ROW ORDER, which the target hash cannot.
+
+    The target is row-aligned to the concatenated data++background order. A same-length target from a
+    differently-ordered dump would pass every hash check above and silently attach the wrong weight
+    to every row. The loader recomputes each inventory's identity/order hash from the arrays it
+    actually read (`_verify_stored_identity`), so comparing those against the receipt's closes it.
+    """
+    want = ((rec.get("runtime_target") or {}).get("input_identity_hashes")) or {}
+    got = (meta.get("input_identity_hashes") or {})
+    if not want:
+        raise SystemExit("[gate4/D2] receipt carries no runtime_target.input_identity_hashes; row "
+                         "order cannot be corroborated (fail closed)")
+    missing = [k for k in want if k not in got]
+    if missing:
+        raise SystemExit(f"[gate4/D2] loader recomputed no identity hash for {missing}; run with "
+                         f"verify_identities=True (fail closed)")
+    bad = {k: (want[k], got[k]) for k in want if got[k] != want[k]}
+    if bad:
+        detail = "; ".join(f"{k}: receipt {v[0][:16]} vs consumed {v[1][:16]}"
+                           for k, v in sorted(bad.items()))
+        raise SystemExit(f"[gate4/D2] consumed inventory does not match the receipt's -- {detail}. "
+                         f"The precomputed target's row order does not correspond to the rows this "
+                         f"run built (fail closed)")
+    print(json.dumps({"consumed_inventory_matches_receipt": True,
+                      "inventories": sorted(want)}, indent=2))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--inputs", required=True, help="negweight-refined Gate-2 target NPZ")
@@ -168,6 +285,13 @@ def main(argv=None):
     ap.add_argument("--tag", default="nominal", choices=["nominal", "floor"],
                     help="nominal, or the matched GPU-floor repeat (same seeds/config, new output)")
     ap.add_argument("--gate3-manifest", default=None)
+    ap.add_argument("--target-npy", default=DEFAULT_TARGET_NPY,
+                    help="the PRECOMPUTED negweight-refined Gate-2 target to consume (D2). "
+                         "Mandatory: there is no fallback to rebuilding the refinement in process, "
+                         "which is audit defect J04 and also needs ROOT in this interpreter.")
+    ap.add_argument("--target-receipt", default=DEFAULT_TARGET_RECEIPT,
+                    help="the Gate-2 runtime receipt that OWNS --target-npy; every provenance "
+                         "check is made against it")
     ap.add_argument("--estimator-seed", type=int, default=NOMINAL_SEED_POLICY["estimator_seed"])
     ap.add_argument("--subsample-seed", type=int, default=NOMINAL_SEED_POLICY["subsample_seed"])
     ap.add_argument("--niter", type=int, default=NOMINAL_SEED_POLICY["niter"])
@@ -187,6 +311,10 @@ def main(argv=None):
                       "hasFullEventSchema": cfg["hasFullEventSchema"],
                       "fullPhaseSpace": cfg["fullPhaseSpace"], "has_background": cfg["has_background"],
                       "input": cfg["input"], "seed_policy": NOMINAL_SEED_POLICY}, indent=2))
+    # D2: the target binding is checked HERE, inside the login-safe gate, so --config-gate-only
+    # verifies it too. Step 2b's launch-code gate is exactly the question "may this train?", and a
+    # nominal that cannot name a certified target is not launchable.
+    target_receipt = assert_target_provenance(args.target_npy, args.target_receipt, args.inputs)
     if args.config_gate_only:
         return 0
     if not args.out:
@@ -206,7 +334,10 @@ def main(argv=None):
     tf.keras.utils.set_random_seed(int(args.estimator_seed))
     data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
         args.inputs, max_events=args.max_events, seed=int(args.subsample_seed),
-        bkg_mode=BKG_MODE)
+        bkg_mode=BKG_MODE, precomputed_target=args.target_npy)
+    # D2: row ORDER, which no file hash can bind. Compares the identity hashes the loader recomputed
+    # from the arrays it just read against the ones the receipt was built against.
+    assert_consumed_inventory_matches_receipt(meta, target_receipt)
     P = np.asarray(mc.reco).shape[1]
     # The two legs have DIFFERENT event-feature widths as of the full-schema loader (J01): step 1
     # is conditioned on the reconstructed muon object + reco vertex, step 2 only on the truth muon,
@@ -278,13 +409,20 @@ def main(argv=None):
     #
     # These are the DRIVER's side of a two-sided check. The validator recomputes both sums from
     # the G2 dump independently and asserts the two agree; a gate fed only the driver's own
-    # arithmetic certifies nothing. Note the ratio is scale-free, so it does not matter that
-    # `mc.weight` has already been rescaled in place to 1e6 by the DataLoader.
+    # arithmetic certifies nothing. Note the ratio is scale-free, so it does not matter that the
+    # DataLoader has already rescaled the leg in place -- nor, post-D1, that the constant it used
+    # was derived from the reco leg and leaves the truth leg off 1e6.
     push = np.asarray(of.weights_push, dtype=np.float64)
-    w_mc = np.asarray(mc.weight, dtype=np.float64)
+    # D1 (2026-08-04): this is a STEP-1-space ratio, so it must be built from the leg step 1
+    # actually consumed -- the reco leg. It is cross-checked against the loader's
+    # step1_class_ratio, whose denominator is now sum(w_reco[pass_reco]); building it from
+    # mc.weight would compare a truth-leg ratio against a reco-leg R. Falls back to mc.weight only
+    # for a single-weight loader, where the two legs are the same array.
+    _w_reco_leg = getattr(mc, "weight_reco", None)
+    w_mc = np.asarray(mc.weight if _w_reco_leg is None else _w_reco_leg, dtype=np.float64)
     pass_reco_sub = np.asarray(mc.pass_reco).astype(bool)
     if not (push.shape == w_mc.shape == pass_reco_sub.shape):
-        raise SystemExit(f"[gate4] push {push.shape} / mc.weight {w_mc.shape} / pass_reco "
+        raise SystemExit(f"[gate4] push {push.shape} / mc reco-leg weight {w_mc.shape} / pass_reco "
                          f"{pass_reco_sub.shape} are not row-aligned (fail closed)")
     if not pass_reco_sub.any():
         raise SystemExit("[gate4] no pass_reco rows in the training subsample; the fold-forward "

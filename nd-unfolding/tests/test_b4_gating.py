@@ -71,8 +71,13 @@ class B4BlocksCertification(unittest.TestCase):
         self.assertTrue(telem["b4_w_reco_vs_w_truth"]["bit_identical_over_pass_reco"])
         self.assertIsNone(gtr.b4_blocking_reason(telem))
 
-    def test_active_blocks_and_names_the_row_count(self):
-        """The case the old code recorded and passed."""
+    def test_differing_legs_no_longer_block(self):
+        """POST-D1 INVERSION (2026-08-04). Differing legs used to block -- that was B-4 ACTIVE, and
+        it is what stopped job 56320955. B-4 is now resolved in favour of the reco leg, so the reco
+        leg carrying the reco-only MINOS efficiency correction is the CORRECT state and must pass.
+
+        Kept as its own test rather than deleted: if someone restores the old condition, this goes
+        red and names why, instead of the change looking like a silent weakening of a gate."""
         d, pass_reco = dump(w_reco_delta=None)
         delta = np.zeros(d["w_truth"].shape)
         delta[np.flatnonzero(pass_reco)[:5]] = 0.25      # 5 differing pass_reco rows
@@ -81,10 +86,24 @@ class B4BlocksCertification(unittest.TestCase):
         b4 = telem["b4_w_reco_vs_w_truth"]
         self.assertFalse(b4["bit_identical_over_pass_reco"])
         self.assertEqual(b4["n_pass_reco_differing"], 5)
+        self.assertEqual(telem["reco_leg_weight_used"], "w_reco")
+        self.assertIsNone(gtr.b4_blocking_reason(telem),
+                          "post-D1 a differing reco leg is the correct configuration, not a block")
+
+    def test_truth_leg_denominator_blocks(self):
+        """The INVERTED gate. What must fail closed now is a denominator built from the truth leg --
+        i.e. exactly the pre-D1 behaviour. Without this the D1 change has no gate at all: the old
+        condition was removed, so something has to hold the new invariant."""
+        d, _ = dump()
+        _, telem = fed.step1_class_ratio_from_dump(d)
+        self.assertIsNone(gtr.b4_blocking_reason(telem))
+        telem["reco_leg_weight_used"] = "w_truth"          # the pre-D1 configuration
         reason = gtr.b4_blocking_reason(telem)
-        self.assertIsNotNone(reason, "B-4 ACTIVE must block; recording it in a note is the defect")
-        self.assertIn("ACTIVE", reason)
-        self.assertIn("5", reason)
+        self.assertIsNotNone(reason, "a truth-leg denominator must not certify post-D1")
+        self.assertIn("w_reco", reason)
+        for bogus in (None, "", "w_bkg"):
+            telem["reco_leg_weight_used"] = bogus
+            self.assertIsNotNone(gtr.b4_blocking_reason(telem))
 
     def test_difference_outside_pass_reco_does_not_block(self):
         """The contract question is over pass_reco only, so the gate must not be over-eager.
@@ -100,12 +119,23 @@ class B4BlocksCertification(unittest.TestCase):
         self.assertTrue(telem["b4_w_reco_vs_w_truth"]["bit_identical_over_pass_reco"])
         self.assertIsNone(gtr.b4_blocking_reason(telem))
 
-    def test_absent_w_reco_blocks(self):
-        """Unanswerable is not inactive -- dump_pointcloud_inputs.py:299 requires the array."""
+    def test_absent_w_reco_now_raises_rather_than_reporting(self):
+        """Post-D1 this fails EARLIER and harder. w_reco is no longer diagnostic -- it IS R's
+        denominator -- so its absence cannot be recorded and passed downstream; there is nothing to
+        build R from. dump_pointcloud_inputs.py:299 requires the array."""
         d, _ = dump(drop_w_reco=True)
-        _, telem = fed.step1_class_ratio_from_dump(d)
-        self.assertFalse(telem["b4_w_reco_vs_w_truth"]["present_in_dump"])
-        reason = gtr.b4_blocking_reason(telem)
+        with self.assertRaises(ValueError) as cm:
+            fed.step1_class_ratio_from_dump(d)
+        self.assertIn("w_reco", str(cm.exception))
+
+    def test_gate_still_blocks_a_present_in_dump_false_telemetry(self):
+        """The predicate keeps its own defence. The loader can no longer emit `present_in_dump:
+        False`, but receipts written before D1 can, and re-validating one of those must not pass on
+        a denominator that was never corroborated."""
+        stale = {"reco_leg_weight_used": "w_reco",
+                 "b4_w_reco_vs_w_truth": {"present_in_dump": False,
+                                          "verdict": "w_reco absent -- contract violation"}}
+        reason = gtr.b4_blocking_reason(stale)
         self.assertIsNotNone(reason)
         self.assertIn("unanswerable", reason.lower())
 

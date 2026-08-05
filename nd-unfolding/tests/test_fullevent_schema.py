@@ -293,5 +293,166 @@ class FailClosedOnANarrowerInput(unittest.TestCase):
             self.assertIn("bkg_muon", str(cm.exception))
 
 
+class McOnlyBuildsWithoutAMeasuredTarget(unittest.TestCase):
+    """D2 (2026-08-04): `bkg_mode='mc-only'` builds the MC side alone.
+
+    The closure's pseudo-data is MC, and it never referenced the `data` loader it was handed
+    (AUDIT-FINDINGS-20260728.md (b)) -- so building the measured target for it wasted the whole
+    Stay-Positive refinement AND required ROOT and TensorFlow in one interpreter, which no
+    Perlmutter environment provides. That conflict is what blocked RESTORE Step 3.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls._td = tempfile.TemporaryDirectory()
+        cls.path, cls.arrays = synthetic(cls._td.name)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._td.cleanup()
+
+    def _mc_only(self, **kw):
+        kw.setdefault("max_events", 400)
+        with real_dataloader():
+            return fed.build_fullevent_loaders(self.path, bkg_mode="mc-only", **kw)
+
+    def test_no_refiner_is_needed_at_all(self):
+        """THE point of the mode. `refine_fn=None` sends the negweight-refined path into
+        learned_stay_positive_refiner() -> `import unfold_2d_omnifold_unbinned` -> ROOT. If mc-only
+        completes with no refiner supplied, the refiner was never reached, so no ROOT import can
+        occur on this path. Sensitivity is proved by the companion test below, which shows the SAME
+        fixture with the same refine_fn=None does reach the refiner under negweight-refined."""
+        data, mc, imc, _cr, _cg, meta = self._mc_only()
+        self.assertIsNone(data, "mc-only must return no measured loader")
+        self.assertTrue(meta["mc_only"])
+        self.assertEqual(meta["bkg_mode"], "mc-only")
+        self.assertGreater(np.asarray(mc.reco).shape[0], 0)
+        self.assertEqual(np.asarray(mc.reco).shape[0], len(imc))
+
+    def test_mc_only_skips_the_refiner_that_negweight_refined_calls(self):
+        """Sensitivity BOTH ways, via a sentinel. Without the second half, mc-only 'not needing' a
+        refiner could just mean this fixture never needs one.
+
+        An earlier version asserted that negweight-refined RAISES with refine_fn=None, since there
+        is no ROOT on a Mac. That passed alone and failed inside the full suite: by then another
+        test had already placed a stub for the ROOT-importing module in sys.modules, so nothing
+        raised. A sentinel does not care what else the suite has imported.
+        """
+        calls = []
+
+        def sentinel(*a, **k):
+            calls.append(1)
+            return sklearn_refine(*a, **k)
+
+        with real_dataloader():
+            fed.build_fullevent_loaders(self.path, bkg_mode="mc-only", max_events=400,
+                                        refine_fn=sentinel)
+        self.assertEqual(calls, [], "mc-only must never reach the refiner -- that import is ROOT")
+        with real_dataloader():
+            fed.build_fullevent_loaders(self.path, bkg_mode="negweight-refined", max_events=400,
+                                        refine_fn=sentinel)
+        self.assertEqual(len(calls), 1,
+                         "negweight-refined must reach the refiner on this same fixture, or the "
+                         "first assertion proves nothing")
+
+    def test_it_claims_nothing_about_the_measured_target(self):
+        """A report that says negweight-refined for an MC-only build reads as evidence about the
+        measured target. D2 requires the artifact to state what it supports."""
+        _d, _mc, _imc, _cr, _cg, meta = self._mc_only()
+        tgt = meta["target"]
+        self.assertEqual(tgt["target_mode"], "mc-only")
+        self.assertFalse(tgt["measured_target_constructed"])
+        self.assertFalse(tgt["refinement_invoked"])
+        self.assertIsNone(tgt["step1_class_ratio"])
+        self.assertIn("certifies", tgt)
+
+    def test_a_publication_run_can_never_select_it(self):
+        """assert_publication_config requires negweight-refined, so mc-only is locked out of the
+        publication path by the gate that already exists rather than by convention."""
+        _d, _mc, _imc, _cr, _cg, meta = self._mc_only()
+        cfg = {"estimator_fingerprint": "pet-fullevent-fps-v1", "bkg_mode": meta["bkg_mode"],
+               "petSchemaVersion": "g2-fullevent-v1", "hasFullEventSchema": 1, "fullPhaseSpace": 1,
+               "has_background": True, "input": self.path}
+        with self.assertRaises(ValueError):
+            fed.assert_publication_config(cfg)
+
+    def test_the_mc_loader_still_carries_both_D1_legs(self):
+        """mc-only must build the SAME MC side as the nominal, dual-leg weights included, or the
+        closure exercises a different estimator from the one it certifies."""
+        _d, mc, _imc, _cr, _cg, _meta = self._mc_only()
+        self.assertIsNotNone(getattr(mc, "weight_reco", None))
+        self.assertEqual(np.asarray(mc.weight_reco).shape, np.asarray(mc.weight).shape)
+
+
+class PrecomputedTargetIsConsumedNotRebuilt(unittest.TestCase):
+    """D2: the nominal consumes the published Gate-2 array. Audit J04 -- it used to re-derive it and
+    never compare, so the certified target was certified and then thrown away."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._td = tempfile.TemporaryDirectory()
+        cls.path, cls.arrays = synthetic(cls._td.name)
+        # the row count the measured inventory will have: data ++ background
+        with real_dataloader():
+            _d, _mc, _i, _cr, _cg, _m = fed.build_fullevent_loaders(
+                cls.path, bkg_mode="negweight-refined", max_events=400,
+                refine_fn=sklearn_refine)
+        cls.n_rows = int(np.asarray(_d.weight).shape[0])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._td.cleanup()
+
+    def _target(self, name, arr):
+        p = os.path.join(self._td.name, name)
+        np.save(p, np.asarray(arr, dtype=np.float32))
+        return p
+
+    def _build(self, target, **kw):
+        with real_dataloader():
+            return fed.build_fullevent_loaders(self.path, bkg_mode="negweight-refined",
+                                               max_events=400, precomputed_target=target, **kw)
+
+    def test_a_valid_target_is_consumed_without_any_refiner(self):
+        """No refine_fn, and it still builds: the refinement -- and its ROOT import -- is skipped."""
+        t = self._target("good.npy", np.linspace(0.1, 2.0, self.n_rows))
+        data, _mc, _i, _cr, _cg, meta = self._build(t)
+        self.assertIsNotNone(data)
+        self.assertFalse(meta["target"]["refinement_invoked"])
+        self.assertEqual(meta["target"]["refinement_backend"],
+                         "precomputed:gate2-published-target")
+
+    def test_wrong_row_count_fails_closed(self):
+        t = self._target("short.npy", np.ones(self.n_rows - 1))
+        with self.assertRaises(ValueError) as cm:
+            self._build(t)
+        self.assertIn("rows", str(cm.exception))
+
+    def test_negative_weights_fail_closed(self):
+        w = np.ones(self.n_rows); w[0] = -0.5
+        with self.assertRaises(ValueError) as cm:
+            self._build(self._target("neg.npy", w))
+        self.assertIn("negative", str(cm.exception))
+
+    def test_non_finite_weights_fail_closed(self):
+        w = np.ones(self.n_rows); w[1] = np.nan
+        with self.assertRaises(ValueError) as cm:
+            self._build(self._target("nan.npy", w))
+        self.assertIn("non-finite", str(cm.exception))
+
+    def test_all_zero_target_fails_closed(self):
+        with self.assertRaises(ValueError) as cm:
+            self._build(self._target("zero.npy", np.zeros(self.n_rows)))
+        self.assertIn("<= 0", str(cm.exception))
+
+    def test_a_bootstrap_replica_may_not_consume_the_nominal_target(self):
+        """The nominal array carries the nominal's draws. Handing it to every replica would collapse
+        the measured-side variance -- silently, since the row count still matches."""
+        t = self._target("nominal.npy", np.linspace(0.1, 2.0, self.n_rows))
+        with self.assertRaises(ValueError) as cm:
+            self._build(t, bootstrap_seed=11)
+        self.assertIn("replica", str(cm.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
-"""Ordinary self-consistency closure for the full-event FPS estimator (P5A).
+"""MC self-consistency smoke for the full-event FPS estimator (P5A).
+
+WHAT THIS IS, STATED FIRST (decision D2, 2026-08-04). This is an MC-only self-consistency check. It
+does NOT certify the negweight-refined measured target, and it cannot distinguish a correct
+estimator from a constant/null one -- the identity closure it performs is optimized by a null
+estimator (AUDIT-FINDINGS-20260728.md, structural zero power). Before closure evidence can gate
+publication, the powered injected truth-reweight recovery test must be added and run at nominal
+configuration with predeclared recovery criteria. Gate-2 certifies the measured target's
+construction; Gate-4 must separately prove the nominal consumes that exact array.
+
+It used to build the measured target and then throw it away: `data` came back from
+`build_fullevent_loaders` and was never referenced again, while the pseudo-data was assembled from
+MC reco rows. That wasted the whole Stay-Positive refinement AND required ROOT and TensorFlow in one
+interpreter, which no Perlmutter environment provides -- the wall that blocked RESTORE Step 3. It
+now defaults to `--bkg-mode mc-only`, which builds the MC side only.
 
 Pseudo-data = MC reco of the pass_reco events (weighted by the prior). A correct unfold then
 pushes the truth back onto the MC truth: push weights stay ~1 and the reweighted-gen (pT,p‖)
@@ -63,9 +77,13 @@ def parse_args():
     p.add_argument("--data-scalars", default=None,
                    help="explicit data muon scalars (CLM-007); unnecessary when the input "
                         "carries measured_scalars, as the G2 dump does")
-    p.add_argument("--bkg-mode", default="negweight-refined",
-                   choices=("negweight-refined", "purity"),
-                   help="negweight-refined = locked nominal; purity = labeled control only")
+    p.add_argument("--bkg-mode", default="mc-only",
+                   choices=("mc-only", "negweight-refined", "purity"),
+                   help="mc-only (DEFAULT, D2) = build the MC side alone; this closure's "
+                        "pseudo-data is MC, so no measured target is needed and no ROOT import "
+                        "occurs. negweight-refined = build the measured target too; it is then "
+                        "DISCARDED unused, needs ROOT+TF in one interpreter, and does not make "
+                        "this an unfolding-of-data closure. purity = labeled control only.")
     p.add_argument("--max-events", type=int, default=12000)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--niter", type=int, default=2)
@@ -110,6 +128,13 @@ def main():
         print("=" * 78)
     if a.bkg_mode == "purity":
         print("[closure] bkg_mode=purity -- LABELED CONTROL, not the publication nominal.")
+    if a.bkg_mode == "mc-only":
+        print("[closure] bkg_mode=mc-only (D2) -- MC self-consistency ONLY. No measured target is "
+              "built, so this run certifies NOTHING about the negweight-refined target.")
+    elif a.bkg_mode == "negweight-refined":
+        print("[closure] bkg_mode=negweight-refined -- the measured target will be built and then "
+              "DISCARDED UNUSED (this closure's pseudo-data is MC). It still does not certify that "
+              "target. Prefer --bkg-mode mc-only; this path also needs ROOT+TF in one interpreter.")
 
     tf.keras.utils.set_random_seed(a.seed)
 
@@ -126,8 +151,17 @@ def main():
 
     reco = np.asarray(mc.reco); reco_evt = np.asarray(mc.reco_evt)
     pr = np.asarray(mc.pass_reco); pg = np.asarray(mc.pass_gen)
-    # pseudo-data = MC reco (pass_reco), weighted by the (normalized) prior; carry reco_evt
-    pdata = DataLoader(reco=reco[pr], weight=np.asarray(mc.weight)[pr], normalize=True,
+    # pseudo-data = MC reco (pass_reco), weighted by the (normalized) prior; carry reco_evt.
+    #
+    # D1 (2026-08-04): this MUST mirror the leg step 1 actually consumes, which is now the RECO leg.
+    # Step 1 puts `weights_push * mc.weight_reco * pass_reco` against `pdata.weight`, so building
+    # pseudo-data from mc.weight (the TRUTH leg) would hand step 1 two genuinely different
+    # densities, differing by the reco-only MINOS efficiency factor. Push weights would then move
+    # away from 1 and the identity closure would fail for a reason that has nothing to do with the
+    # estimator. Falls back to mc.weight for a single-weight loader.
+    _mc_reco_leg = getattr(mc, "weight_reco", None)
+    _prior = np.asarray(mc.weight if _mc_reco_leg is None else _mc_reco_leg)
+    pdata = DataLoader(reco=reco[pr], weight=_prior[pr], normalize=True,
                        reco_evt=reco_evt[pr])
     # Distinct widths since the full-schema loader landed (J01): step 1 sees the reconstructed
     # muon object + reco vertex, step 2 only the truth muon.
@@ -177,6 +211,27 @@ def main():
             "pass": bool(ok),
             "bkg_mode": a.bkg_mode,
             "is_synthetic_fixture": bool(is_synth),
+            # D2 (2026-08-04): say what this artifact supports, so a consumer cannot infer more.
+            # Gate-4 composes this report; without these fields an MC-only identity check labelled
+            # `bkg_mode=negweight-refined` reads as evidence about the measured target, which it has
+            # never been -- the target was built and discarded unused even before mc-only existed.
+            "mc_only": bool(meta.get("mc_only", False)),
+            "measured_target_constructed": bool(
+                (meta.get("target") or {}).get("measured_target_constructed", True)),
+            "refinement_invoked": bool(
+                (meta.get("target") or {}).get("refinement_invoked", False)),
+            "closure_class": "mc-self-consistency-identity",
+            "is_powered_closure": False,
+            "certifies": ("MC self-consistency of the estimator plumbing and the (pT,p||) marginal. "
+                          "Does NOT certify the negweight-refined measured target, and cannot "
+                          "distinguish a correct estimator from a null one -- the identity closure "
+                          "is optimized by a constant estimator. A powered injected "
+                          "truth-reweight recovery test is required before closure evidence gates "
+                          "publication."),
+            # D1 provenance: which MC leg step 1 consumed, so a report from before the dual-leg
+            # split is distinguishable from one after it.
+            "reco_leg_weight_used": ("w_reco" if getattr(mc, "weight_reco", None) is not None
+                                     else "w_truth"),
             "inputs": os.path.abspath(a.inputs),
             "inputs_basename": os.path.basename(a.inputs),
             "estimator_fingerprint": meta.get("estimator_fingerprint"),

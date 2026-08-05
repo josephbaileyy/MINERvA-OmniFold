@@ -93,11 +93,16 @@ def b4_blocking_reason(class_ratio_telem, class_ratio=None):
     `step1_target_sum_matches` is: a test that re-types the three conditions proves only that the
     test agrees with itself. This is the predicate the gate actually runs.
 
-    Three blocking states, all fail-closed. `w_reco` absent is NOT the same as B-4 inactive:
-    dump_pointcloud_inputs.py:299 requires the array, so its absence is a contract violation that
-    leaves the question unanswerable, and an unanswered denominator is not a certified one. A
-    missing telemetry block means a caller passed check_w_reco=False and the question was never
-    asked at all.
+    Three blocking states, all fail-closed. `w_reco` absent is NOT the same as B-4 being a
+    non-issue: dump_pointcloud_inputs.py:299 requires the array, so its absence is a contract
+    violation, and post-D1 it is also what the reco leg consumes. A missing telemetry block means a
+    caller passed check_w_reco=False and the question was never asked at all.
+
+    B-4 IS RESOLVED (D1, 2026-08-04) and the third condition inverted with it: this gate now blocks
+    when the reco leg is fed anything other than `w_reco`. It used to block when `w_reco` and
+    `w_truth` DIFFERED, which post-D1 would reject the correct configuration and pass the broken
+    one -- the reco leg carries the reco-only MINOS efficiency correction, so it differs on every
+    selected row by construction.
     """
     b4 = (class_ratio_telem or {}).get("b4_w_reco_vs_w_truth")
     if b4 is None:
@@ -107,12 +112,18 @@ def b4_blocking_reason(class_ratio_telem, class_ratio=None):
     if not b4.get("present_in_dump"):
         return (f"B-4 unanswerable: {b4.get('verdict')}. R={class_ratio!r} is uncorroborated on "
                 f"its denominator (fail closed)")
-    if not b4.get("bit_identical_over_pass_reco"):
-        return (f"B-4 is ACTIVE: w_reco differs from w_truth on "
-                f"{b4.get('n_pass_reco_differing')} pass_reco rows, so the reco leg is fed the "
-                f"wrong weight and R would move by a factor "
-                f"{b4.get('R_shift_factor_if_B4_fixed')!r} once B-4 is fixed. Resolve B-4 before "
-                f"this gate can certify R (fail closed)")
+    # POST-D1 (2026-08-04) this condition is INVERTED. B-4 was resolved in favour of the reco-leg
+    # weight, so differing rows are expected -- the reco leg carries the MINOS efficiency
+    # correction, which is reco-only, and it differs on every selected row by construction. What
+    # must now be gated is that the denominator was actually built from the reco leg. The old
+    # `bit_identical_over_pass_reco` test would today reject the CORRECT configuration and accept
+    # the defective one.
+    leg = (class_ratio_telem or {}).get("reco_leg_weight_used")
+    if leg != "w_reco":
+        return (f"the step-1 reco leg is fed {leg!r}, not 'w_reco'. Decision D1 (2026-08-04) "
+                f"resolved B-4 in favour of the reco-leg weight, so R's denominator must be "
+                f"sum(w_reco[pass_reco]); a denominator built from anything else is not "
+                f"certifiable (fail closed)")
     return None
 
 
@@ -667,12 +678,17 @@ def run_validate(args) -> int:
             "measured_normalization_target": target_norm,
             "numerator_corroborated_by_binned_projection": True,
             "telemetry": class_ratio_telem,
-            "b4_note": ("R's denominator uses w_truth because that is what the reco leg is fed. "
-                        "See telemetry.b4_w_reco_vs_w_truth. This is GATED, not advisory: an "
-                        "ACTIVE B-4, an absent w_reco, or a missing telemetry block all die() "
-                        "before this receipt is written, so a PASS here asserts B-4 INACTIVE for "
-                        "this dump. Re-check per systematic endpoint before P5B."),
+            "b4_note": ("R's denominator uses w_reco because that is what the step-1 reco leg is "
+                        "fed -- audit finding B-4, RESOLVED by decision D1 (2026-08-04). See "
+                        "telemetry.b4_w_reco_vs_w_truth, which also carries the legacy "
+                        "w_truth-denominator value for comparability. This is GATED, not advisory: "
+                        "a reco leg fed anything but w_reco, an absent w_reco, or a missing "
+                        "telemetry block all die() before this receipt is written, so a PASS here "
+                        "asserts the denominator IS the reco leg. Rows differing between the legs "
+                        "are expected, not a defect: the reco leg carries the reco-only MINOS "
+                        "efficiency correction."),
             "b4_gated": True,
+            "b4_resolution": "D1-2026-08-04-reco-leg-uses-w-reco",
         },
         "independent_binned_checks": {
             "grid_shape": list(signed_hist.shape),

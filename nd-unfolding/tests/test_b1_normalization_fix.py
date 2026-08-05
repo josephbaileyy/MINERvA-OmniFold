@@ -323,8 +323,11 @@ class ClassRatioFormula(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with np.load(write_npz(td, arrays), allow_pickle=True) as d:
                 R, telem = fed.step1_class_ratio_from_dump(d)
+        # The fixture's w_reco == w_truth by default, so the D1 denominator switch leaves R alone.
         self.assertAlmostEqual(R, 1.42, places=6)
-        self.assertEqual(telem["reco_leg_weight_used"], "w_truth")
+        self.assertEqual(telem["reco_leg_weight_used"], "w_reco")   # D1: was "w_truth" pre-2026-08-04
+        self.assertEqual(telem["denominator_leg"], "w_reco")
+        self.assertIn("sum(w_reco[pass_reco])", telem["formula"])
         self.assertFalse(telem["is_bootstrap_replica"])
 
     def test_b4_telemetry_reports_identical_weights(self):
@@ -333,22 +336,33 @@ class ClassRatioFormula(unittest.TestCase):
                 _, telem = fed.step1_class_ratio_from_dump(d)
         b4 = telem["b4_w_reco_vs_w_truth"]
         self.assertTrue(b4["present_in_dump"])
+        self.assertTrue(b4["resolved"])
         self.assertTrue(b4["bit_identical_over_pass_reco"])
         self.assertEqual(b4["n_pass_reco_differing"], 0)
-        self.assertIn("INACTIVE", b4["verdict"])
+        self.assertIn("RESOLVED", b4["verdict"])
+        self.assertIn("unchanged", b4["verdict"])
 
-    def test_b4_telemetry_detects_a_differing_reco_leg(self):
-        """The brief requires recording whether w_reco == w_truth at runtime. If it does not, the
-        telemetry must say so AND report what R would become -- that is B-4's own minimal check."""
+    def test_b4_differing_reco_leg_drives_R_and_reports_the_legacy_value(self):
+        """POST-D1 (2026-08-04). A differing reco leg is no longer a defect to flag -- it is what R
+        is built from. The telemetry must show R following the RECO leg, and must still report the
+        old truth-leg value so a post-D1 receipt stays comparable with a pre-D1 one.
+
+        Pre-D1 this test asserted the opposite: that R followed w_truth and the reco-leg value was
+        the hypothetical. The inversion is the whole content of D1."""
         with tempfile.TemporaryDirectory() as td:
             arrays = g2_arrays_with_R(target_R=1.2, w_reco_scale=1.25)
             with np.load(write_npz(td, arrays), allow_pickle=True) as d:
                 R, telem = fed.step1_class_ratio_from_dump(d)
         b4 = telem["b4_w_reco_vs_w_truth"]
         self.assertFalse(b4["bit_identical_over_pass_reco"])
-        self.assertIn("ACTIVE", b4["verdict"])
-        self.assertAlmostEqual(b4["R_shift_factor_if_B4_fixed"], 1.0 / 1.25, places=6)
-        self.assertAlmostEqual(b4["R_if_reco_leg_used_w_reco"], R / 1.25, places=6)
+        self.assertIn("RESOLVED", b4["verdict"])
+        self.assertIn("expected", b4["verdict"])
+        # w_reco = 1.25*w_truth, so the reco-leg denominator is 1.25x larger and R is 1.25x smaller
+        # than the fixture's truth-leg target.
+        self.assertAlmostEqual(R, 1.2 / 1.25, places=6)
+        self.assertAlmostEqual(b4["R_if_reco_leg_used_w_reco"], R, places=9)
+        self.assertAlmostEqual(b4["R_if_reco_leg_used_w_truth"], 1.2, places=6)
+        self.assertAlmostEqual(b4["R_shift_factor_vs_legacy_w_truth"], 1.0 / 1.25, places=6)
 
     def test_bootstrap_factors_change_R(self):
         """§2b: under bootstrap R must be rebuilt from THAT replica's draws. Doubling every data
@@ -376,13 +390,15 @@ class ClassRatioFormula(unittest.TestCase):
                 R, telem = fed.step1_class_ratio_from_dump(d, sig_factor=np.full(80, 2.0))
         b4 = telem["b4_w_reco_vs_w_truth"]
         self.assertTrue(b4["bit_identical_over_pass_reco"])
-        # identical weights => fixing B-4 changes nothing, whatever the replica scaling
-        self.assertAlmostEqual(b4["R_shift_factor_if_B4_fixed"], 1.0, places=9)
+        # identical weights => the D1 denominator switch changes nothing, whatever the replica scaling
+        self.assertAlmostEqual(b4["R_shift_factor_vs_legacy_w_truth"], 1.0, places=9)
         self.assertAlmostEqual(b4["R_if_reco_leg_used_w_reco"], R, places=9)
+        self.assertAlmostEqual(b4["R_if_reco_leg_used_w_truth"], R, places=9)
 
     def test_b4_shift_is_replica_consistent_when_w_reco_differs(self):
-        """The same consistency when B-4 IS active: the shift must report the w_reco/w_truth ratio
-        and nothing else, independently of any replica scaling applied to both legs."""
+        """The same consistency when the legs DIFFER: the reported shift must be the w_reco/w_truth
+        ratio and nothing else, independently of any replica scaling applied to both legs. This is
+        the b3751cc regression -- it is what catches a draw applied to one leg only."""
         arrays = g2_arrays_with_R(target_R=1.3, ns=80, w_reco_scale=1.25)
         with tempfile.TemporaryDirectory() as td:
             with np.load(write_npz(td, arrays), allow_pickle=True) as d:
@@ -390,9 +406,9 @@ class ClassRatioFormula(unittest.TestCase):
                 rep = fed.step1_class_ratio_from_dump(
                     d, sig_factor=np.full(80, 3.0))[1]["b4_w_reco_vs_w_truth"]
         for b4 in (nom, rep):
-            self.assertAlmostEqual(b4["R_shift_factor_if_B4_fixed"], 1.0 / 1.25, places=6)
-        self.assertAlmostEqual(nom["R_shift_factor_if_B4_fixed"],
-                               rep["R_shift_factor_if_B4_fixed"], places=9)
+            self.assertAlmostEqual(b4["R_shift_factor_vs_legacy_w_truth"], 1.0 / 1.25, places=6)
+        self.assertAlmostEqual(nom["R_shift_factor_vs_legacy_w_truth"],
+                               rep["R_shift_factor_vs_legacy_w_truth"], places=9)
 
     def test_sig_factor_enters_the_denominator(self):
         arrays = g2_arrays_with_R(target_R=1.3, ns=80)

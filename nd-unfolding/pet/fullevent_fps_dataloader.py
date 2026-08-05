@@ -863,6 +863,7 @@ def step1_class_ratio(*, n_data, sum_w_bkg_raw, sum_w_mc_reco_raw, pot_scale):
 
 
 def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=None,
+                                w_reco_full=None,
                                 pass_reco_full=None, w_bkg_full=None, data_factor=None,
                                 bkg_factor=None, sig_factor=None, check_w_reco=True):
     """Derive R and its telemetry straight out of an open g2-fullevent-v1 npz mapping.
@@ -879,7 +880,14 @@ def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=
     as `build_signed_measured_inventory` applies them, so R tracks the replica's own yield ratio.
 
     Returns (R, telem). `telem` carries the ingredients, and the `w_reco`-vs-`w_truth` comparison
-    that is audit finding B-4's own minimal check.
+    that was audit finding B-4's own minimal check.
+
+    B-4 IS RESOLVED (decision D1, 2026-08-04): the step-1 reco leg is fed `w_reco`, so R's
+    denominator is `pot_scale * sum(w_reco[pass_reco])`. `w_reco` is therefore load-bearing for R
+    itself, not merely for telemetry -- its absence raises rather than being recorded as an
+    unanswered question. `check_w_reco=False` suppresses only the comparison BLOCK; it can no
+    longer make R fall back to `w_truth`. The old truth-leg value is still reported as
+    `b4_w_reco_vs_w_truth.R_if_reco_leg_used_w_truth` so the two are comparable across the change.
     """
     if pot_scale is None:
         if "pot_scale" in d.files:
@@ -901,6 +909,25 @@ def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=
                          "disagree (wrong inventory; fail closed)")
     if not (np.all(np.isfinite(w_truth_full)) and np.all(np.isfinite(w_bkg_full))):
         raise ValueError("[B1] non-finite w_truth / w_bkg (fail closed)")
+
+    # D1 (2026-08-04): the reco leg's own weight IS R's denominator now, so this array is
+    # load-bearing rather than diagnostic. Absence is a contract violation
+    # (dump_pointcloud_inputs.py:299 requires it), and an absent denominator is not a certifiable
+    # one -- so this raises instead of being recorded as an open question.
+    if w_reco_full is None:
+        if "w_reco" not in getattr(d, "files", ()):
+            raise ValueError("[B1/B-4] w_reco absent from the dump; required by "
+                             "dump_pointcloud_inputs.py:299 and, since decision D1, it is what the "
+                             "step-1 reco leg is fed. R has no certifiable denominator without it "
+                             "(fail closed)")
+        w_reco_full = np.asarray(d["w_reco"], dtype=np.float64)
+    else:
+        w_reco_full = np.asarray(w_reco_full, dtype=np.float64)
+    if w_reco_full.shape != w_truth_full.shape:
+        raise ValueError(f"[B1/B-4] w_reco {w_reco_full.shape} != w_truth {w_truth_full.shape} "
+                         "(fail closed)")
+    if not np.all(np.isfinite(w_reco_full)):
+        raise ValueError("[B1/B-4] non-finite w_reco (fail closed)")
 
     # Data row count: prefer the small scalars block over materializing the measured cloud.
     if n_data is None:
@@ -929,33 +956,44 @@ def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=
         if bf.shape != w_bkg_full.shape:
             raise ValueError(f"[B1] bkg_factor {bf.shape} != w_bkg {w_bkg_full.shape}")
         sum_w_bkg_raw = float((w_bkg_full * bf).sum())
-    w_sig = w_truth_full if sig_factor is None else (
-        w_truth_full * np.asarray(sig_factor, dtype=np.float64))
-    if w_sig.shape != w_truth_full.shape:
+    # Both legs carry the SAME replica scaling: they are two views of one MC event, so a draw that
+    # scaled only one of them would decorrelate them (2D_OMNIFOLD_REFERENCE.md bootstrap item 2).
+    _sf = None if sig_factor is None else np.asarray(sig_factor, dtype=np.float64)
+    w_sig = w_truth_full if _sf is None else (w_truth_full * _sf)
+    w_sig_reco = w_reco_full if _sf is None else (w_reco_full * _sf)
+    if w_sig.shape != w_truth_full.shape or w_sig_reco.shape != w_reco_full.shape:
         raise ValueError(f"[B1] sig_factor broadcast {w_sig.shape} != w_truth "
                          f"{w_truth_full.shape}")
-    sum_w_mc_reco_raw = float(w_sig[pass_reco_full].sum())
+    # D1: the denominator is the weight step 1 ACTUALLY consumes -- the reco leg.
+    sum_w_mc_reco_raw = float(w_sig_reco[pass_reco_full].sum())
+    sum_w_truth_pass_reco = float(w_sig[pass_reco_full].sum())
 
     R = step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
                           sum_w_mc_reco_raw=sum_w_mc_reco_raw, pot_scale=pot_scale)
 
     telem = {
         "R": R,
-        "formula": "R = (n_data - pot_scale*sum(w_bkg)) / (pot_scale*sum(w_truth[pass_reco]))",
+        "formula": "R = (n_data - pot_scale*sum(w_bkg)) / (pot_scale*sum(w_reco[pass_reco]))",
         "pot_scale": float(pot_scale),
         "n_data_rows": n_data_rows,
         "n_data_effective": n_data_eff,
         "sum_w_bkg_raw": sum_w_bkg_raw,
         "bkg_pot_scaled_sum": float(pot_scale) * sum_w_bkg_raw,
         "numerator_signed_data": n_data_eff - float(pot_scale) * sum_w_bkg_raw,
-        "sum_w_truth_pass_reco_raw": sum_w_mc_reco_raw,
+        # D1: the denominator now comes from the RECO leg. `sum_w_truth_pass_reco_raw` keeps its
+        # literal meaning -- the truth-leg sum over pass_reco -- and is no longer the denominator.
+        "sum_w_reco_pass_reco_raw": sum_w_mc_reco_raw,
+        "sum_w_truth_pass_reco_raw": sum_w_truth_pass_reco,
+        "denominator_leg": "w_reco",
         "n_signal_rows": int(w_truth_full.shape[0]),
         "n_signal_pass_reco": int(pass_reco_full.sum()),
         "is_bootstrap_replica": any(f is not None for f in (data_factor, bkg_factor, sig_factor)),
-        "reco_leg_weight_used": "w_truth",
+        "reco_leg_weight_used": "w_reco",
     }
 
-    # B-4's minimal check, recorded at runtime so the first real run answers it as a side effect.
+    # B-4's comparison block. It was the runtime check that ANSWERED B-4 (job 56320955, 2026-08-04,
+    # all 20,573,521 pass_reco rows differing); post-D1 it is the record that the question was put
+    # and how it was settled, plus the legacy value for comparability. It no longer gates.
     #
     # Both legs must carry the SAME replica scaling. The bit-identity question is about the dump's
     # RAW contract weights, but the derived numbers (`R_if_reco_leg_used_w_reco` and the shift
@@ -966,42 +1004,40 @@ def step1_class_ratio_from_dump(d, *, pot_scale=None, n_data=None, w_truth_full=
     # than the replica's. Found by an adversarial review of b3751cc, 2026-07-29; telemetry only --
     # the normalization-driving R above was never affected -- but B-4 is *decided* off these
     # numbers, so a replica reading would have argued for a shift that does not exist.
-    if check_w_reco and "w_reco" in getattr(d, "files", ()):
-        w_reco_full = np.asarray(d["w_reco"], dtype=np.float64)
-        if w_reco_full.shape != w_truth_full.shape:
-            raise ValueError(f"[B1/B-4] w_reco {w_reco_full.shape} != w_truth "
-                             f"{w_truth_full.shape}")
+    if check_w_reco:
         wt_raw, wr_raw = w_truth_full[pass_reco_full], w_reco_full[pass_reco_full]
         n_differs = int((wr_raw != wt_raw).sum())
-        # raw: the contract question. scaled: consistent with sum_w_mc_reco_raw and the numerator.
-        sum_w_reco_raw = float(wr_raw.sum())
-        w_reco_sig = (w_reco_full if sig_factor is None
-                      else w_reco_full * np.asarray(sig_factor, dtype=np.float64))
-        sum_w_reco_scaled = float(w_reco_sig[pass_reco_full].sum())
+        # The legacy value, so a post-D1 receipt and a pre-D1 one are still comparable. This is what
+        # R WAS before the reco leg was corrected; it is reported, never used.
+        R_legacy = (step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
+                                      sum_w_mc_reco_raw=sum_w_truth_pass_reco, pot_scale=pot_scale)
+                    if sum_w_truth_pass_reco > 0 else None)
         telem["b4_w_reco_vs_w_truth"] = {
-            "present_in_dump": True,
+            # Whether the DUMP carried it, which is the contract question. R itself is already
+            # guaranteed to have a reco leg by the fail-closed read above.
+            "present_in_dump": "w_reco" in getattr(d, "files", ()),
+            "resolved": True,
+            "resolution": ("D1 (2026-08-04): the step-1 reco leg is fed w_reco, so R's denominator "
+                           "is pot_scale*sum(w_reco[pass_reco]). Differing rows are EXPECTED -- the "
+                           "reco leg carries the MINOS efficiency correction, which is reco-only."),
             "bit_identical_over_pass_reco": n_differs == 0,
             "n_pass_reco_differing": n_differs,
-            "sum_w_reco_pass_reco_raw": sum_w_reco_raw,
-            "sum_w_reco_pass_reco_replica_scaled": sum_w_reco_scaled,
-            "R_if_reco_leg_used_w_reco": (
-                step1_class_ratio(n_data=n_data_eff, sum_w_bkg_raw=sum_w_bkg_raw,
-                                  sum_w_mc_reco_raw=sum_w_reco_scaled, pot_scale=pot_scale)
-                if sum_w_reco_scaled > 0 else None),
-            "R_shift_factor_if_B4_fixed": (sum_w_mc_reco_raw / sum_w_reco_scaled
-                                           if sum_w_reco_scaled else None),
-            "verdict": ("B-4 INACTIVE for this dump (R above stands; re-check per systematic "
-                        "endpoint before P5B)" if n_differs == 0 else
-                        "B-4 ACTIVE -- the reco leg is fed w_truth but w_reco differs; resolve "
-                        "B-4 before freezing R"),
+            "sum_w_reco_pass_reco_raw": float(wr_raw.sum()),
+            "sum_w_reco_pass_reco_replica_scaled": sum_w_mc_reco_raw,
+            "sum_w_truth_pass_reco_replica_scaled": sum_w_truth_pass_reco,
+            # By construction now equal to R; kept so the key does not vanish from receipts.
+            "R_if_reco_leg_used_w_reco": R,
+            "R_if_reco_leg_used_w_truth": R_legacy,
+            "R_shift_factor_vs_legacy_w_truth": (sum_w_truth_pass_reco / sum_w_mc_reco_raw
+                                                 if sum_w_mc_reco_raw else None),
+            "verdict": ("B-4 RESOLVED: the reco leg is fed w_reco. "
+                        + ("w_reco == w_truth bit-for-bit over pass_reco for this dump, so R is "
+                           "numerically unchanged by the correction."
+                           if n_differs == 0 else
+                           f"w_reco differs on {n_differs} pass_reco rows, which is expected for a "
+                           f"reco-only calibration; R is built from the reco leg.")),
         }
-        del w_reco_full, w_reco_sig, wt_raw, wr_raw
-    elif check_w_reco:
-        telem["b4_w_reco_vs_w_truth"] = {
-            "present_in_dump": False,
-            "verdict": "w_reco absent -- required by dump_pointcloud_inputs.py:299; "
-                       "contract violation, B-4 unanswerable from this input",
-        }
+        del wt_raw, wr_raw
     return R, telem
 
 
@@ -1042,6 +1078,7 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
                             feature_names=DEFAULT_EVT_FEATURES, rank=0, size=1,
                             enforce_fps_edges=True, data_scalars_npz=None,
                             bkg_mode="negweight-refined", refine_fn=None, refine_kwargs=None,
+                            precomputed_target=None,
                             verify_identities=True,
                             truth_feature_names=DEFAULT_TRUTH_EVT_FEATURES):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
@@ -1064,12 +1101,20 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     derived from the G2 data inventory `measured_pc` (NOT any legacy/purity `measured_weights`).
     `refine_fn` (default = the deferred canonical u2d.refine_stay_positive) is injectable so the
     login-safe tests can pass an algorithm-identical sklearn refinement; the refined-target
-    telemetry lands in meta['target'] for decision review."""
+    telemetry lands in meta['target'] for decision review.
+
+    MC-ONLY (`bkg_mode='mc-only'`, decision D2 2026-08-04): build the MC side alone -- same clouds,
+    event features, masks, subsample and D1 dual-leg weights as the nominal -- and return
+    `data=None`. No measured inventory, no background injection, no Stay-Positive refinement, and
+    therefore no ROOT import. This exists for the closure, whose pseudo-data is MC anyway. It
+    constructs no measured target and so certifies nothing about one; `assert_publication_config`
+    rejects it for publication runs."""
     d = np.load(inputs_npz, allow_pickle=True)
     if enforce_fps_edges:
         assert_extended_fps_edges(d["edges_0"], d["edges_1"])
-    if bkg_mode not in ("negweight-refined", "purity"):
-        raise ValueError(f"[F7] unknown bkg_mode {bkg_mode!r} (negweight-refined|purity)")
+    if bkg_mode not in ("negweight-refined", "purity", "mc-only"):
+        raise ValueError(f"[F7] unknown bkg_mode {bkg_mode!r} "
+                         "(negweight-refined|purity|mc-only)")
     # Old / recoil-only / purity-scaffolding schema: reject before any construction (fail closed).
     if str(np.asarray(d["petSchemaVersion"]).item() if "petSchemaVersion" in d.files
            else "") != "g2-fullevent-v1":
@@ -1189,6 +1234,18 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     rmu = np.asarray(meta["reco_norm_mean"], np.float32); rsd = np.asarray(meta["reco_norm_std"], np.float32)
 
     w_truth_full = np.asarray(d["w_truth"]).astype(np.float32)            # FULL signal-MC (raw)
+    # D1 (2026-08-04): the RECO leg's own weight, same length and row order as w_truth. Required by
+    # the dump contract (dump_pointcloud_inputs.py:299) and, since B-4 was resolved, consumed by
+    # step 1. Mandatory rather than optional-with-fallback: a silent fallback to w_truth here is
+    # exactly the defect B-4 named.
+    if "w_reco" not in d.files:
+        raise ValueError("[B-4/D1] input carries no 'w_reco'. It is required by "
+                         "dump_pointcloud_inputs.py:299 and is what the step-1 reco leg consumes "
+                         "since decision D1; there is no fallback (fail closed).")
+    w_reco_full = np.asarray(d["w_reco"]).astype(np.float32)
+    if w_reco_full.shape != w_truth_full.shape:
+        raise ValueError(f"[B-4/D1] w_reco {w_reco_full.shape} != w_truth {w_truth_full.shape} "
+                         "-- the two legs must be row-aligned views of one MC event (fail closed).")
     has_bkg = "w_bkg" in d.files
     meta["bkg_mode"] = bkg_mode
     meta["estimator_fingerprint"] = (str(np.asarray(d["estimator_fingerprint"]).item())
@@ -1228,6 +1285,10 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     if verify_identities:
         ident["sig"] = _verify_stored_identity(
             d, "sig_identity_hash", (w_truth_full, np.asarray(d["pass_truth"])), "signal")
+    # D2: an mc-only build touches no measured or background inventory, so verifying their stored
+    # identities would certify arrays it never consumes. The SIGNAL identity above still runs --
+    # that is the inventory an mc-only closure actually uses.
+    if verify_identities and bkg_mode != "mc-only":
         ident["data"] = _verify_stored_identity(
             d, "data_identity_hash", (np.asarray(d["measured_pc"]),), "data")
         if has_bkg:
@@ -1243,6 +1304,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(
             M, N, n_bkg_full, int(bootstrap_seed))
         w_truth = (w_truth_full[imc] * sig_factor[imc]).astype(np.float32)
+        # D1: the same draw on the same rows -- the two legs are one event.
+        w_reco = (w_reco_full[imc] * sig_factor[imc]).astype(np.float32)
         meta["bootstrap"] = {
             "bootstrap_seed": int(bootstrap_seed), "n_sig_full": int(N), "n_data_full": int(M),
             "n_bkg_full": int(n_bkg_full), "mc_indices": imc, "sig_bootstrap_factor": sig_factor[imc],
@@ -1250,6 +1313,7 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
             "bkg_bootstrap_factor": (bkg_factor if has_bkg else None)}
     else:
         w_truth = w_truth_full[imc]
+        w_reco = w_reco_full[imc]
         meta["bootstrap"] = None
 
     from omnifold.dataloader import DataLoader                    # vendored engine, imported late
@@ -1257,11 +1321,47 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     # DataLoader default, passed explicitly so the measured block's 1e6*R below is visibly the SAME
     # base times R). Normalizing MC is load-bearing, not incidental: it is what makes the class
     # ratio independent of how many rows the `imc` draw took.
+    #
+    # D1: `weight_reco` is the step-1 leg, `weight` the step-2 / truth-space leg. The DataLoader
+    # derives ONE constant from sum(weight_reco[pass_reco]) and applies it to both, so the block
+    # that reaches 1e6 is the SAME leg whose sum forms R's denominator -- the measured side's 1e6*R
+    # is therefore the same base times R, exactly as before. The truth leg lands at
+    # 1e6*sum(w_truth)/sum(w_reco) by construction; truth-space YIELDS must be built from the raw
+    # weights times pot_scale, never from mc.weight.
     mc = DataLoader(reco=reco_cloud, gen=gen_cloud, pass_reco=pass_reco, pass_gen=pass_truth,
-                    weight=w_truth, normalize=True,
+                    weight=w_truth, weight_reco=w_reco, normalize=True,
                     normalization_factor=STEP1_MC_NORMALIZATION,
                     reco_evt=event_reco, gen_evt=event_truth,
                     rank=rank, size=size)
+
+    # ---------------- mc-only (D2: closure construction without a measured target) --------------
+    # The ordinary closure's pseudo-data is built entirely from MC reco rows -- closure_fullevent_
+    # fps.py constructs it from mc.reco/mc.weight and never references the `data` loader it was
+    # handed (AUDIT-FINDINGS-20260728.md (b)). Building the measured target for it is therefore
+    # wasted work that also drags in ROOT: the negweight-refined path calls
+    # learned_stay_positive_refiner(), which imports unfold_2d_omnifold_unbinned -> ROOT, and no
+    # interpreter on Perlmutter carries both ROOT and TensorFlow (FINDING-20260804-step3-closure-
+    # needs-root-and-tf-in-one-interpreter.md). That conflict is what blocked RESTORE Step 3.
+    #
+    # This mode is neither a control nor a nominal: it constructs NO measured target, so it cannot
+    # certify one, and it must never be described as having exercised refinement.
+    # assert_publication_config requires bkg_mode == 'negweight-refined', and the Gate-4 driver
+    # fails closed on a meta with no step1_class_ratio, so a publication run cannot select it.
+    if bkg_mode == "mc-only":
+        meta["mc_only"] = True
+        meta["target"] = {
+            "target_mode": "mc-only",
+            "measured_target_constructed": False,
+            "refinement_invoked": False,
+            "step1_class_ratio": None,
+            "bootstrap_seed": bootstrap_seed,
+            "certifies": ("MC self-consistency only. No measured inventory, no background "
+                          "injection, no Stay-Positive refinement -- so this build supports no "
+                          "claim whatever about the negweight-refined measured target. Gate-2 "
+                          "certifies that target's construction; Gate-4 must separately show the "
+                          "nominal consumes that exact array."),
+        }
+        return None, mc, imc, coord_reco, coord_gen, meta
 
     if bkg_mode == "purity":
         # Labeled REGRESSION CONTROL only (never the publication nominal). Data-only measured
@@ -1325,10 +1425,58 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         refine_feat_data, refine_feat_bkg, w_bkg_full, pot_scale,
         data_factor=(data_factor if data_factor is not None else None),
         bkg_factor=(bkg_factor if bkg_factor is not None else None))
-    refiner = refine_fn if refine_fn is not None else learned_stay_positive_refiner()
-    refine_backend = (getattr(refine_fn, "__name__", repr(refine_fn)) if refine_fn is not None
-                      else "u2d.refine_stay_positive")
-    w_refined, ref_telem = refine_signed_measured(feat, signed, refiner, refine_kwargs)
+    if precomputed_target is not None:
+        # D2 (2026-08-04): CONSUME the certified Gate-2 target rather than re-deriving it. Audit J04
+        # found the Gate-4 path re-running the full refinement in process and never comparing the
+        # result to the published array -- so the target Gate-2 certified was silently rebuilt by
+        # every consumer, and nothing checked they agreed. Re-deriving also drags ROOT into the
+        # training interpreter, which is what blocked RESTORE Step 3.
+        #
+        # STRUCTURAL validation lives here, where the row alignment is in hand. PROVENANCE
+        # validation -- target sha256, the owning runtime receipt, source-NPZ identity, fingerprint
+        # -- belongs to the driver (train_fullevent_nominal.assert_target_provenance), because only
+        # the driver knows which receipt is supposed to own this array.
+        if bootstrap_seed is not None:
+            raise ValueError(
+                "[negweight-refined] a precomputed target is the NOMINAL target; a bootstrap "
+                "replica draws its own data/background factors, so consuming the nominal array "
+                "here would silently give every replica the nominal's measured weights and "
+                "collapse the measured-side variance (fail closed).")
+        w_refined = np.asarray(np.load(precomputed_target), dtype=np.float64).ravel()
+        if w_refined.shape[0] != n_data + n_bkg:
+            raise ValueError(
+                f"[negweight-refined] precomputed target has {w_refined.shape[0]} rows but this "
+                f"inventory has {n_data + n_bkg} ({n_data} data ++ {n_bkg} background). The target "
+                f"is row-aligned to the concatenated data++background order, so a length mismatch "
+                f"means it belongs to a different dump (fail closed).")
+        if not np.all(np.isfinite(w_refined)):
+            raise ValueError("[negweight-refined] precomputed target carries non-finite weights "
+                             "(fail closed).")
+        n_neg = int((w_refined < 0.0).sum())
+        if n_neg:
+            raise ValueError(
+                f"[negweight-refined] precomputed target has {n_neg} negative weights. "
+                "Stay-Positive output is non-negative by construction, so this array is not a "
+                "refined target (fail closed).")
+        if not float(w_refined.sum()) > 0.0:
+            raise ValueError("[negweight-refined] precomputed target sums to <= 0; it cannot be "
+                             "renormalized to 1e6*R (fail closed).")
+        refine_backend = "precomputed:gate2-published-target"
+        ref_telem = {
+            "refinement_invoked": False,
+            "consumed_precomputed_target": os.path.abspath(precomputed_target),
+            "n_rows": int(w_refined.shape[0]),
+            "sum_before_normalization": float(w_refined.sum()),
+            "n_zero_weight_rows": int((w_refined == 0.0).sum()),
+            "note": ("consumed the published Gate-2 target; NOT re-derived in process (audit J04). "
+                     "The DataLoader renormalizes it to 1e6*R below, so its absolute scale here is "
+                     "not load-bearing -- its length and row ORDER are."),
+        }
+    else:
+        refiner = refine_fn if refine_fn is not None else learned_stay_positive_refiner()
+        refine_backend = (getattr(refine_fn, "__name__", repr(refine_fn)) if refine_fn is not None
+                          else "u2d.refine_stay_positive")
+        w_refined, ref_telem = refine_signed_measured(feat, signed, refiner, refine_kwargs)
 
     meas_cloud_all = np.concatenate([meas_cloud, bkg_cloud], axis=0)
     event_meas_all = np.concatenate([event_data, event_bkg], axis=0)
@@ -1340,7 +1488,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     # full inventory in hand (never piped in, never hardcoded -- see step1_class_ratio), and under
     # bootstrap it is rebuilt from THIS replica's coherent draws, which are in scope above.
     R, r_telem = step1_class_ratio_from_dump(
-        d, pot_scale=pot_scale, n_data=M, w_truth_full=w_truth_full, w_bkg_full=w_bkg_full,
+        d, pot_scale=pot_scale, n_data=M, w_truth_full=w_truth_full, w_reco_full=w_reco_full,
+        w_bkg_full=w_bkg_full,
         data_factor=data_factor, bkg_factor=bkg_factor,
         sig_factor=(sig_factor if bootstrap_seed is not None else None))
     data = DataLoader(reco=meas_cloud_all, weight=w_refined.astype(np.float32), normalize=True,
