@@ -98,6 +98,19 @@ FROZEN = {
     # imported because importing the package pulls TensorFlow and this validator is login-safe;
     # `test_frozen_logit_cap_matches_the_engine` reads the engine's SOURCE and fails if the two
     # drift apart, so the mirror cannot go stale silently.
+    # D2 POWERED CLOSURE, predeclared 2026-08-05 before any run. Frozen here so the gate checks the
+    # protocol it was promised rather than whatever protocol a report happens to describe.
+    "powered_closure": {
+        "report_schema": "powered-truth-reweight-closure-v1",
+        "amplitude": 0.35,
+        "half_size": 2000000,
+        "split_seed": 7,
+        "rate_preserving": True,
+        "gap_min": 0.15,
+        "floor_over_gap_max": 0.10,
+        "residual_over_gap_max": 0.20,
+        "metric_agreement_atol": 1e-9,
+    },
     "reweight_logit_cap": 30.0,
     "tolerances": {"marginal_l1_max": 0.10, "push_median_dev_max": 0.15,
                    "cap_saturation_frac_max": 1e-3,
@@ -600,23 +613,140 @@ def check_closure_provenance(ordinary, stress, powered=None):
             f"{FROZEN['event_features_reco']} / {FROZEN['event_features_truth']}"),
         _ck("closure:stress_report_schema", s.get("report_schema") == STRESS_CLOSURE_SCHEMA,
             s.get("report_schema")),
-        # D2 item 4, and this one FAILS CLOSED TODAY BY DESIGN.
-        #
-        # The ordinary closure is an identity check: pseudo-data IS the MC, so push ~ 1 is very
-        # nearly guaranteed and a constant/null estimator optimizes it (AUDIT-FINDINGS-20260728.md,
-        # structural zero power). Composing it as the closure evidence behind a publication result
-        # asserts something it cannot support, whichever bkg_mode it ran in. D2 requires a powered
-        # injected truth-reweight recovery closure, at nominal configuration with predeclared
-        # recovery criteria, before closure evidence may gate publication. That run does not exist
-        # yet, so this check is red -- which is the honest state, not a regression. Supply a powered
-        # report (is_powered_closure=True with its recovery criteria met) and it goes green.
-        _ck("closure:powered_recovery_closure_present",
-            (powered or {}).get("is_powered_closure") is True
-            and (powered or {}).get("recovery_criteria_met") is True,
-            "D2 requires an injected truth-reweight recovery closure at nominal configuration with "
-            "predeclared criteria; the identity closure has ~no power to detect a real defect and "
-            f"cannot stand in for it. powered_report={'absent' if not powered else powered}"),
+        # D2 item 4 lives in check_powered_closure(), as its own component. It used to be a
+        # boolean-only check HERE, which accepted `is_powered_closure` and `recovery_criteria_met` --
+        # two claims the report makes about itself. Not duplicated back into this list: two copies of
+        # one rule drift apart, and the surviving copy should be the one that recomputes.
     ]
+    return all(c["ok"] for c in checks), checks
+
+
+def check_powered_closure(powered):
+    """Recompute the D2 powered-closure metrics FROM THE VECTORS. Returns (ok, checks).
+
+    The first version of this gate accepted `is_powered_closure` and `recovery_criteria_met` -- two
+    booleans the report asserts about itself. That is the same self-agreeing shape this repo's audits
+    keep finding (four of six freeze checks comparing FROZEN to itself; a binned check that scaled
+    both histograms identically and so agreed while being equally wrong). A report can claim
+    recovery; only arithmetic on its spectra can establish it.
+
+    So every acceptance number below is recomputed here from `h_prior`, `h_target`, `h_unfolded` and
+    `h_untilted`, and the report's OWN metrics block must agree with the recomputation -- which
+    catches a doctored metrics block that a criteria-only check would wave through. The protocol
+    itself (injection amplitude, disjoint 2M/2M split, seed, nominal configuration) is checked
+    against FROZEN, because criteria are only meaningful for the experiment they were declared for.
+    """
+    P = FROZEN["powered_closure"]
+    p = powered if isinstance(powered, dict) else {}
+    if not p:
+        # An `:evidence_supplied` check exists ONLY when evidence is MISSING -- that is the shape
+        # `_missing` uses, and a complete submission must carry none of them (audit B2: a gate is
+        # allowed to fail, not to abstain and call it a pass). Emitting one unconditionally, even
+        # passing, would put an evidence_supplied entry in every healthy receipt.
+        return False, [_ck("powered:evidence_supplied", False,
+                           "a powered injected-truth-reweight recovery closure report is REQUIRED: "
+                           "the identity closure is optimized by a null estimator and cannot stand "
+                           "in for it (D2)")]
+    checks = [_ck("powered:report_schema", p.get("report_schema") == P["report_schema"],
+                  p.get("report_schema"))]
+
+    vecs, vec_ok = {}, True
+    for name in ("h_prior", "h_target", "h_unfolded", "h_untilted"):
+        v = p.get(name)
+        good = isinstance(v, list) and len(v) == N_CELLS
+        arr = np.asarray(v, dtype=float) if good else None
+        if good:
+            good = bool(np.all(np.isfinite(arr)) and np.all(arr >= -1e-12)
+                        and abs(float(arr.sum()) - 1.0) <= 1e-6)
+        checks.append(_ck(f"powered:vector_{name}", good,
+                          f"{name}: {N_CELLS} cells, finite, non-negative, unit sum "
+                          f"(len={len(v) if isinstance(v, list) else None}, "
+                          f"sum={float(arr.sum()) if arr is not None else None})"))
+        vec_ok = vec_ok and good
+        vecs[name] = arr
+    checks.append(_ck("powered:grid_is_frozen",
+                      _edges_match(p.get("edges_pt"), FROZEN["edges_pt"])
+                      and _edges_match(p.get("edges_pparallel"), FROZEN["edges_pparallel"]),
+                      "powered closure histogrammed on the canonical extended-FPS grid"))
+    checks.append(_ck("powered:bin_order", p.get("bin_order") == FROZEN["bin_order"],
+                      p.get("bin_order")))
+
+    inj = p.get("injection") or {}
+    checks.append(_ck("powered:injection_amplitude",
+                      _isnum(inj.get("amplitude"))
+                      and abs(float(inj["amplitude"]) - P["amplitude"]) <= 1e-12,
+                      f"amplitude={inj.get('amplitude')!r} (predeclared {P['amplitude']})"))
+    checks.append(_ck("powered:injection_rate_preserving",
+                      inj.get("rate_preserving") is P["rate_preserving"],
+                      f"rate_preserving={inj.get('rate_preserving')!r} -- a rate change would let a "
+                      f"pure normalization fix look like shape recovery"))
+    smp = p.get("samples") or {}
+    checks.append(_ck("powered:samples_disjoint_as_declared",
+                      smp.get("disjoint") is True
+                      and smp.get("half_size") == P["half_size"]
+                      and smp.get("split_seed") == P["split_seed"],
+                      f"disjoint={smp.get('disjoint')!r}, half_size={smp.get('half_size')!r}, "
+                      f"split_seed={smp.get('split_seed')!r} (predeclared "
+                      f"{P['half_size']}/{P['half_size']}, seed {P['split_seed']}) -- an "
+                      f"overlapping split restores the identity shortcut and the power goes to zero"))
+    cfg = p.get("configuration") or {}
+    sp = FROZEN["seed_policy"]
+    checks.append(_ck("powered:nominal_configuration",
+                      all(cfg.get(k) == sp[k] for k in ("niter", "epochs", "estimator_seed",
+                                                        "subsample_seed")),
+                      f"{ {k: cfg.get(k) for k in ('niter','epochs','estimator_seed','subsample_seed')} } "
+                      f"vs frozen { {k: sp[k] for k in ('niter','epochs','estimator_seed','subsample_seed')} }"))
+    checks.append(_ck("powered:estimator_and_schema",
+                      p.get("estimator_fingerprint") == ESTIMATOR_FINGERPRINT
+                      and [str(x) for x in (p.get("event_features_reco") or [])]
+                      == FROZEN["event_features_reco"]
+                      and [str(x) for x in (p.get("event_features_truth") or [])]
+                      == FROZEN["event_features_truth"],
+                      f"fingerprint={p.get('estimator_fingerprint')!r}; a closure on another schema "
+                      f"is evidence about another estimator (J01)"))
+    checks.append(_ck("powered:reco_leg_is_w_reco", p.get("reco_leg_weight_used") == "w_reco",
+                      f"reco_leg_weight_used={p.get('reco_leg_weight_used')!r} (D1)"))
+    checks.append(_ck("powered:input_identity_recorded",
+                      bool(p.get("input_identity_hashes")),
+                      "the inventory identity hashes the run consumed, so the closure is bound to a "
+                      "dump rather than floating free"))
+
+    if not vec_ok:
+        checks.append(_ck("powered:recomputed_metrics", False,
+                          "spectra unusable, so gap/floor/residual cannot be recomputed -- the "
+                          "report's own numbers are NOT accepted as a substitute"))
+        return all(c["ok"] for c in checks), checks
+
+    gap = float(np.abs(vecs["h_prior"] - vecs["h_target"]).sum())
+    floor = float(np.abs(vecs["h_prior"] - vecs["h_untilted"]).sum())
+    resid = float(np.abs(vecs["h_unfolded"] - vecs["h_target"]).sum())
+    fog = (floor / gap) if gap > 0 else None
+    rog = (resid / gap) if gap > 0 else None
+
+    checks.append(_ck("powered:gap_is_large_enough", gap >= P["gap_min"],
+                      f"recomputed gap={gap:.6f} >= {P['gap_min']} -- below this there is no "
+                      f"injected signal to recover and a pass would be vacuous"))
+    checks.append(_ck("powered:floor_small_against_gap",
+                      fog is not None and fog <= P["floor_over_gap_max"],
+                      f"recomputed floor/gap={fog if fog is None else round(fog, 6)} <= "
+                      f"{P['floor_over_gap_max']} -- bounds how much of `gap` is sample-split noise "
+                      f"between the two disjoint halves rather than injection"))
+    checks.append(_ck("powered:recovery_meets_criterion",
+                      rog is not None and rog <= P["residual_over_gap_max"],
+                      f"recomputed residual/gap={rog if rog is None else round(rog, 6)} <= "
+                      f"{P['residual_over_gap_max']} (recovery "
+                      f"{None if rog is None else round(1.0 - rog, 6)} >= "
+                      f"{round(1.0 - P['residual_over_gap_max'], 6)})"))
+
+    # A doctored metrics block cannot slip past a criteria-only check, so compare it too.
+    claimed = p.get("metrics") or {}
+    atol = P["metric_agreement_atol"]
+    agree = all(_isnum(claimed.get(k)) and abs(float(claimed[k]) - v) <= atol
+                for k, v in (("gap", gap), ("floor", floor), ("residual", resid)))
+    checks.append(_ck("powered:reported_metrics_match_recomputation", agree,
+                      f"report claims gap={claimed.get('gap')!r} floor={claimed.get('floor')!r} "
+                      f"residual={claimed.get('residual')!r}; recomputed "
+                      f"{gap:.9f}/{floor:.9f}/{resid:.9f}"))
     return all(c["ok"] for c in checks), checks
 
 
@@ -820,6 +950,9 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
                                   "runs cannot be told apart from the publication closure"))
     else:
         add("closure_provenance", *check_closure_provenance(*closure_reports))
+    # D2: recomputed from the powered closure's own spectra, never from its verdict.
+    add("powered_closure", *check_powered_closure(
+        closure_reports[2] if (closure_reports and len(closure_reports) > 2) else None))
 
     verdict = bool(checks) and all(c["ok"] for c in checks)
     payload = {

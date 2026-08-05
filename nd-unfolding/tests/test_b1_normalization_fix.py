@@ -208,8 +208,49 @@ def write_powered_report(td, **over):
     their two-value unpack: Gate-4 fails closed without this report, which is the point.
     """
     import json as _json
-    payload = {"is_powered_closure": True, "recovery_criteria_met": True,
-               "closure_class": "injected-truth-reweight-recovery"}
+    # Real spectra: Gate-4 recomputes gap/floor/residual from them and refuses to read the verdict.
+    n = g4.N_CELLS
+    base = np.full(n, 1.0 / n)
+
+    def _pert(target_l1, offset, k=100):
+        d = np.zeros(n)
+        d[offset:offset + k] += target_l1 / (2 * k)
+        d[offset + k:offset + 2 * k] -= target_l1 / (2 * k)
+        return d
+
+    gap = 0.30
+    prior = base.copy()
+    target = base + _pert(gap, 0)
+    untilted = base + _pert(gap * 0.05, 40)
+    unfolded = target + _pert(gap * 0.10, 80)
+    g = float(np.abs(prior - target).sum())
+    fl = float(np.abs(prior - untilted).sum())
+    rs = float(np.abs(unfolded - target).sum())
+    P = g4.FROZEN["powered_closure"]
+    sp = g4.FROZEN["seed_policy"]
+    payload = {"report_schema": P["report_schema"], "verdict": "PASS",
+               "is_powered_closure": True, "recovery_criteria_met": True,
+               "closure_class": "injected-truth-reweight-recovery",
+               "h_prior": [float(x) for x in prior], "h_target": [float(x) for x in target],
+               "h_unfolded": [float(x) for x in unfolded],
+               "h_untilted": [float(x) for x in untilted],
+               "bin_order": g4.FROZEN["bin_order"],
+               "edges_pt": list(g4.FROZEN["edges_pt"]),
+               "edges_pparallel": list(g4.FROZEN["edges_pparallel"]),
+               "metrics": {"gap": g, "floor": fl, "residual": rs,
+                           "floor_over_gap": fl / g, "residual_over_gap": rs / g,
+                           "recovery": 1.0 - rs / g},
+               "injection": {"form": "1 + A*tanh((pT - p50)/IQR), normalized to unit mean",
+                             "amplitude": P["amplitude"], "rate_preserving": True},
+               "samples": {"half_size": P["half_size"], "split_seed": P["split_seed"],
+                           "disjoint": True},
+               "configuration": {k: sp[k] for k in ("niter", "epochs", "estimator_seed",
+                                                    "subsample_seed")},
+               "estimator_fingerprint": "pet-fullevent-fps-v1",
+               "event_features_reco": list(g4.FROZEN["event_features_reco"]),
+               "event_features_truth": list(g4.FROZEN["event_features_truth"]),
+               "reco_leg_weight_used": "w_reco", "mc_only": True,
+               "input_identity_hashes": {"sig": "1" * 64}}
     payload.update(over)
     path = os.path.join(td, "powered_closure.json")
     with open(path, "w") as fh:
@@ -1026,7 +1067,7 @@ class Gate4DriverContract(unittest.TestCase):
                 receipt = json.load(fh)
         for component in ("freeze", "weights", "index_order", "marginal", "fold_forward",
                           "fold_forward_independence", "spectra_independence", "cap", "target",
-                          "closure", "closure_provenance"):
+                          "closure", "closure_provenance", "powered_closure"):
             self.assertTrue(receipt["component_verdicts"][component], component)
         self.assertEqual([c for c in receipt["checks"] if c["name"].endswith(":evidence_supplied")],
                          [])

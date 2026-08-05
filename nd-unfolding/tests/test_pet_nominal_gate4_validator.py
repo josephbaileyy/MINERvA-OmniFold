@@ -110,11 +110,62 @@ def ordinary_report(**over):
     return r
 
 
+def powered_vectors(gap=0.30, floor_frac=0.05, resid_frac=0.10):
+    """Four unit-normalized 285-cell spectra with EXACTLY prescribed pairwise L1 distances.
+
+    Built from zero-sum perturbations of a flat base so gap/floor/residual are known in closed form
+    and the fixture cannot accidentally satisfy the criteria for the wrong reason.
+    """
+    n = g4.N_CELLS
+    base = np.full(n, 1.0 / n)
+
+    def pert(target_l1, offset, k=100):
+        d = np.zeros(n)
+        d[offset:offset + k] += target_l1 / (2 * k)
+        d[offset + k:offset + 2 * k] -= target_l1 / (2 * k)
+        return d                                    # sums to 0, |d|_1 == target_l1
+
+    prior = base.copy()
+    target = base + pert(gap, 0)
+    untilted = base + pert(gap * floor_frac, 40)
+    unfolded = target + pert(gap * resid_frac, 80)
+    return prior, target, unfolded, untilted
+
+
 def powered_report(**over):
     """The D2 injected truth-reweight RECOVERY closure. The identity closure cannot substitute for
-    it: pseudo-data IS the MC there, so a constant estimator optimizes it."""
-    r = {"is_powered_closure": True, "recovery_criteria_met": True,
-         "closure_class": "injected-truth-reweight-recovery"}
+    it: pseudo-data IS the MC there, so a constant estimator optimizes it.
+
+    Carries real spectra, because Gate-4 recomputes every metric from them rather than reading the
+    verdict. The `metrics` block is derived from the same vectors so it agrees by construction.
+    """
+    prior, target, unfolded, untilted = powered_vectors()
+    gap = float(np.abs(prior - target).sum())
+    floor = float(np.abs(prior - untilted).sum())
+    resid = float(np.abs(unfolded - target).sum())
+    P = g4.FROZEN["powered_closure"]
+    sp = g4.FROZEN["seed_policy"]
+    r = {"report_schema": P["report_schema"], "verdict": "PASS",
+         "is_powered_closure": True, "recovery_criteria_met": True,
+         "closure_class": "injected-truth-reweight-recovery",
+         "h_prior": [float(x) for x in prior], "h_target": [float(x) for x in target],
+         "h_unfolded": [float(x) for x in unfolded], "h_untilted": [float(x) for x in untilted],
+         "bin_order": g4.FROZEN["bin_order"],
+         "edges_pt": list(g4.FROZEN["edges_pt"]),
+         "edges_pparallel": list(g4.FROZEN["edges_pparallel"]),
+         "metrics": {"gap": gap, "floor": floor, "residual": resid,
+                     "floor_over_gap": floor / gap, "residual_over_gap": resid / gap,
+                     "recovery": 1.0 - resid / gap},
+         "injection": {"form": "1 + A*tanh((pT - p50)/IQR), normalized to unit mean",
+                       "amplitude": P["amplitude"], "rate_preserving": True},
+         "samples": {"half_size": P["half_size"], "split_seed": P["split_seed"], "disjoint": True},
+         "configuration": {k: sp[k] for k in ("niter", "epochs", "estimator_seed",
+                                              "subsample_seed")},
+         "estimator_fingerprint": "pet-fullevent-fps-v1",
+         "event_features_reco": list(g4.FROZEN["event_features_reco"]),
+         "event_features_truth": list(g4.FROZEN["event_features_truth"]),
+         "reco_leg_weight_used": "w_reco", "mc_only": True,
+         "input_identity_hashes": {"sig": "1" * 64}}
     r.update(over)
     return r
 
@@ -490,3 +541,142 @@ class SyntaxAndImport(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class PoweredClosureIsRecomputed(unittest.TestCase):
+    """D2's powered closure, and the point that it is RECOMPUTED.
+
+    The first version of this gate read `is_powered_closure` and `recovery_criteria_met` -- two
+    booleans the report asserts about itself, which is the self-agreeing shape this repo's audits
+    keep finding. Every case below breaks exactly ONE thing, so each criterion is shown to bite on
+    its own rather than only in company.
+    """
+
+    def _ok(self, **over):
+        return g4.check_powered_closure(powered_report(**over))
+
+    def test_matching_report_passes(self):
+        ok, checks = self._ok()
+        self.assertTrue(ok, [c for c in checks if not c["ok"]])
+
+    def test_absent_report_fails_and_names_evidence(self):
+        ok, checks = g4.check_powered_closure(None)
+        self.assertFalse(ok)
+        self.assertEqual([c["name"] for c in checks], ["powered:evidence_supplied"])
+
+    def test_a_complete_report_emits_no_evidence_supplied_check(self):
+        """Audit B2's shape: `:evidence_supplied` exists only where evidence is MISSING."""
+        _ok, checks = self._ok()
+        self.assertEqual([c for c in checks if c["name"].endswith(":evidence_supplied")], [])
+
+    # ---- the three acceptance numbers, each broken alone ----------------------------------------
+    def _vectors_report(self, **kw):
+        prior, target, unfolded, untilted = powered_vectors(**kw)
+        gap = float(np.abs(prior - target).sum())
+        floor = float(np.abs(prior - untilted).sum())
+        resid = float(np.abs(unfolded - target).sum())
+        return powered_report(
+            h_prior=[float(x) for x in prior], h_target=[float(x) for x in target],
+            h_unfolded=[float(x) for x in unfolded], h_untilted=[float(x) for x in untilted],
+            metrics={"gap": gap, "floor": floor, "residual": resid,
+                     "floor_over_gap": floor / gap, "residual_over_gap": resid / gap,
+                     "recovery": 1.0 - resid / gap})
+
+    def _failing(self, report):
+        ok, checks = g4.check_powered_closure(report)
+        self.assertFalse(ok)
+        return {c["name"] for c in checks if not c["ok"]}
+
+    def test_too_small_a_gap_fails(self):
+        """Nothing injected means nothing to recover, and a pass would be vacuous."""
+        bad = self._failing(self._vectors_report(gap=0.10))
+        self.assertIn("powered:gap_is_large_enough", bad)
+
+    def test_floor_comparable_to_gap_fails(self):
+        """If sample-split noise is the same size as the injection, the test has no power."""
+        bad = self._failing(self._vectors_report(gap=0.30, floor_frac=0.5))
+        self.assertIn("powered:floor_small_against_gap", bad)
+
+    def test_recovery_below_eighty_percent_fails(self):
+        bad = self._failing(self._vectors_report(gap=0.30, resid_frac=0.5))
+        self.assertIn("powered:recovery_meets_criterion", bad)
+
+    def test_recovery_just_inside_the_criterion_passes(self):
+        """Sensitivity for the test above: 0.20 is a boundary, not a wall the fixture never reaches."""
+        ok, checks = g4.check_powered_closure(self._vectors_report(gap=0.30, resid_frac=0.19))
+        self.assertTrue(ok, [c for c in checks if not c["ok"]])
+
+    # ---- the one that proves it recomputes -----------------------------------------------------
+    def test_a_doctored_metrics_block_cannot_launder_bad_spectra(self):
+        """THE point of the rewrite. The report claims criteria met and carries a metrics block that
+        agrees with the claim; only the SPECTRA disagree. A gate that read either the verdict or the
+        metrics would pass this."""
+        honest = powered_report()
+        bad = self._vectors_report(gap=0.30, resid_frac=0.6)
+        bad["metrics"] = honest["metrics"]              # keep the healthy-looking numbers
+        bad["verdict"] = "PASS"
+        bad["recovery_criteria_met"] = True
+        failing = self._failing(bad)
+        self.assertIn("powered:recovery_meets_criterion", failing)
+        self.assertIn("powered:reported_metrics_match_recomputation", failing)
+
+    def test_asserted_booleans_alone_do_not_pass(self):
+        """The exact shape the first implementation accepted."""
+        self.assertFalse(g4.check_powered_closure(
+            {"is_powered_closure": True, "recovery_criteria_met": True})[0])
+
+    # ---- protocol, because criteria only mean something for the declared experiment -------------
+    def test_wrong_injection_amplitude_fails(self):
+        self.assertIn("powered:injection_amplitude",
+                      self._failing(powered_report(
+                          injection={"amplitude": 0.05, "rate_preserving": True, "form": "x"})))
+
+    def test_a_rate_changing_injection_fails(self):
+        self.assertIn("powered:injection_rate_preserving",
+                      self._failing(powered_report(
+                          injection={"amplitude": 0.35, "rate_preserving": False, "form": "x"})))
+
+    def test_overlapping_split_fails(self):
+        self.assertIn("powered:samples_disjoint_as_declared",
+                      self._failing(powered_report(
+                          samples={"half_size": 2000000, "split_seed": 7, "disjoint": False})))
+
+    def test_off_protocol_split_seed_fails(self):
+        self.assertIn("powered:samples_disjoint_as_declared",
+                      self._failing(powered_report(
+                          samples={"half_size": 2000000, "split_seed": 99, "disjoint": True})))
+
+    def test_non_nominal_configuration_fails(self):
+        self.assertIn("powered:nominal_configuration",
+                      self._failing(powered_report(
+                          configuration={"niter": 1, "epochs": 2, "estimator_seed": 42,
+                                         "subsample_seed": 0})))
+
+    def test_wrong_schema_fails(self):
+        self.assertIn("powered:report_schema",
+                      self._failing(powered_report(report_schema="ordinary-closure-v9")))
+
+    def test_truth_leg_reco_weight_fails(self):
+        self.assertIn("powered:reco_leg_is_w_reco",
+                      self._failing(powered_report(reco_leg_weight_used="w_truth")))
+
+    def test_off_grid_histogram_fails(self):
+        self.assertIn("powered:grid_is_frozen",
+                      self._failing(powered_report(edges_pt=[0.0, 1.0, 2.0])))
+
+    def test_a_denormalized_spectrum_fails(self):
+        bad = powered_report()
+        bad["h_unfolded"] = [2.0 * x for x in bad["h_unfolded"]]
+        failing = self._failing(bad)
+        self.assertIn("powered:vector_h_unfolded", failing)
+
+    def test_a_truncated_spectrum_fails(self):
+        bad = powered_report()
+        bad["h_target"] = bad["h_target"][:-1]
+        self.assertIn("powered:vector_h_target", self._failing(bad))
+
+    def test_unusable_spectra_do_not_fall_back_to_reported_metrics(self):
+        bad = powered_report()
+        bad["h_prior"] = bad["h_prior"][:10]
+        failing = self._failing(bad)
+        self.assertIn("powered:recomputed_metrics", failing)
