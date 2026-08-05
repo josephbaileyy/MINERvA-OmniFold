@@ -1,0 +1,8 @@
+# This directory is TRACKED (logs/.gitkeep) because slurmstepd needs --output's parent to exist at
+# submit time. That makes it a live output directory inside git, so keep the heavy products out and
+# the EVIDENCE in: the JSON receipts and the DONE sentinels are the whole point of the gate, the
+# multi-GB artifact and the Keras weights are reproducible from them plus the dump.
+weights.*/
+*.npz
+logs/*.out
+logs/*.err
