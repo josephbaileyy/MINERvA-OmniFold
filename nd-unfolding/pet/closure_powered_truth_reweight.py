@@ -36,6 +36,20 @@ four spectra from the dump, and checks disjointness on the actual index arrays. 
 here are convenience; none of them is load-bearing for the verdict.
 
 Runs `bkg_mode='mc-only'` (D2), so no ROOT import and no ROOT/TF environment conflict.
+
+ENVIRONMENT, measured 2026-08-05 rather than assumed. `mc-only` avoids ROOT, which is the conflict
+with no resolution on Perlmutter -- but it still needs TENSORFLOW IMPORTABLE, because
+`build_fullevent_loaders` ends at `from omnifold.dataloader import DataLoader`, and that triggers
+`omnifold/__init__.py`, which imports MultiFold and therefore TF. So this does NOT run under the
+ROOT-only `root_6_28` env: a memory-sizing probe there died with `ModuleNotFoundError: No module
+named 'tensorflow'` at exactly that line. Gate-2 sidesteps it via
+`gate2_target_runtime.load_exact_numpy_dataloader`, which pre-binds the exact NumPy module in
+sys.modules. Nothing here needs that trick -- PET wants TF anyway -- but a reader trying `mc-only`
+in the ROOT env will otherwise conclude D2 is broken.
+
+(Recorded here rather than in the loader's own docstring on purpose: `fullevent_fps_dataloader.py` is
+hash-pinned by the Gate-2 runtime receipt and by run_gate2_target_validator.sh, so editing it even
+for a comment invalidates the receipt and costs a full gate re-issue.)
 """
 import argparse
 import hashlib
@@ -220,12 +234,28 @@ def main(argv=None):
     if not (s1_a.any() and s1_b.any()):
         raise SystemExit("[powered] a step-1 side has no pass_reco & pass_truth rows (fail closed)")
 
-    pdata = DataLoader(reco=reco[ia][s1_a], weight=(w_reco[ia] * tilt_a)[s1_a],
+    # FLOAT32 INTO THE ENGINE. `net.weighted_binary_crossentropy` does
+    # `weights * tf.nn.sigmoid_cross_entropy_with_logits(...)`, and the logits are float32, so a
+    # float64 weight array dies inside a tf.function with `Input 'y' of 'Mul' Op has type float64`
+    # -- a traceback that names Keras internals and not the caller. Measured on the first GPU smoke,
+    # 2026-08-05. build_fullevent_loaders passes float32, which is why the nominal never hits it, so
+    # float32 is the engine's actual contract and this matches it rather than widening the engine
+    # (whose dataloader.py is hash-pinned by the Gate-2 receipt and must not move).
+    # The float64 copies above stay float64 for the spectra arithmetic, where precision is free.
+    pdata = DataLoader(reco=reco[ia][s1_a],
+                       weight=((w_reco[ia] * tilt_a)[s1_a]).astype(np.float32),
                        normalize=True, reco_evt=reco_evt[ia][s1_a])
     mcB = DataLoader(reco=reco[ib], gen=gen[ib], pass_reco=s1_b, pass_gen=pg[ib],
-                     weight=w_truth[ib].copy(), weight_reco=w_reco[ib].copy(),
+                     weight=w_truth[ib].astype(np.float32),
+                     weight_reco=w_reco[ib].astype(np.float32),
                      normalize=True, normalization_factor=fe.STEP1_MC_NORMALIZATION,
                      reco_evt=reco_evt[ib], gen_evt=gen_evt[ib])
+    for _nm, _dl in (("pdata", pdata), ("mcB", mcB)):
+        for _f in ("weight", "weight_reco"):
+            _arr = getattr(_dl, _f, None)
+            if _arr is not None and np.asarray(_arr).dtype != np.float32:
+                raise SystemExit(f"[powered] {_nm}.{_f} is {np.asarray(_arr).dtype}, not float32; "
+                                 f"the engine multiplies it against float32 logits (fail closed)")
 
     P = reco.shape[1]
     m1 = PET(reco.shape[-1], num_evt=meta["n_evt_reco"], num_part=P, num_transformer=2,
