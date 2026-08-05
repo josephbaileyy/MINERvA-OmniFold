@@ -19,6 +19,48 @@ quarantined. Central cross
 sections, closure tests, dimensional anchors, and the finalized Phase-18.2 2D
 result were never invalidated by this quarantine.
 
+## 2026-08-05 Gate-2 re-issued under D1/D2 — VERIFIED, promotion still pending
+
+Job 56344268, 55:32 on `nid004178`, `status: PASS`,
+verdict `GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`.
+
+| quantity | value |
+|---|---|
+| `R` (step-1 class ratio) | **1.1240802949941018** |
+| R denominator | `pot_scale * sum(w_reco[pass_reco])` — the RECO leg (D1) |
+| `R_if_reco_leg_used_w_truth` (pre-D1 value) | 1.103260884167167 |
+| `R_shift_factor_vs_legacy_w_truth` | 1.018870795770713 |
+| `sum(w_reco[pass_reco])` | 16,780,549.17866151 |
+| `sum(w_truth[pass_reco])` | 17,097,211.49513244 |
+| `pass_reco` rows | 20,573,521 |
+| B-4 | RESOLVED; the legs differ on **all** 20,573,521 rows, which is expected |
+| measured target normalization | 1e6 * R = 1,124,080.5876521247 |
+| `occupied_cells` | **231** of 285 (15 pT x 18 p‖) |
+| `negative_signed_cells` | 0 |
+| refined target sha256 | `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` |
+| refined target rows / bytes | 4,680,719 / 18,723,004 |
+| receipt sha256 | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` |
+| refiner | `u2d.refine_stay_positive`, `refinement_is_learned_production: true` |
+
+**Two corroborations worth recording, because each closes a way this could have been wrong.**
+
+1. The `R` shift matches the value measured directly off the dump on 2026-08-04 — 1.018870795770713
+   vs 1.01887079577071 — to twelve digits, by an independent code path (a direct npz read, no
+   validator). D1's +1.887% was therefore not an artefact of the validator.
+2. `occupied_cells = 231` against the pre-fix degenerate **1** of 285. The units repair is confirmed
+   by the gate's own independent binned check rather than by inspecting maxima. A stray `/1000.0`
+   had collapsed the grid while both guards reported success, because the domain check tests range
+   membership and both grids start at 0.0, and the metrics scaled both histograms identically.
+
+**Not quotable as a cross section.** This certifies the CONSTRUCTION of the measured target only.
+Gate-4 must separately prove the nominal consumes this exact array (audit J04), and Gate-4 cannot
+PASS until the D2 powered recovery closure exists — see `docs/OPEN_ITEMS.md`.
+
+**The r1 run is bit-identical.** Job 56342333 produced the SAME target digest `544b2f6a...`, and was
+superseded only because its receipt pinned a loader hash the audit repairs then moved. That is direct
+evidence the loader edit was semantically inert for this path, which is why it was re-run rather than
+argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent/gate2/final/`.
+
 ## 2026-07-14 corrected 5D GBDT covariance — CANDIDATE; final lateral replacement pending
 
 - The full background-aware re-quote contains 169 vertical universes, 18

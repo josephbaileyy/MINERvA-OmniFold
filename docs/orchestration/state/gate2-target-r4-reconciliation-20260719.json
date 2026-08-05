@@ -17,16 +17,16 @@
   "runtime": {
     "status": "PASS",
     "receipt_path": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
-    "receipt_sha256": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
+    "receipt_sha256_at_issue": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
     "weights_path": "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
-    "weights_sha256": "1ef7e0d2fa8c36a6f9eabd86a21f0b41617cc7d0bb4cd6bee96d74d5334074b6",
+    "weights_sha256_at_issue": "1ef7e0d2fa8c36a6f9eabd86a21f0b41617cc7d0bb4cd6bee96d74d5334074b6",
     "collision_lock_free_after_publication": true,
     "pet_training_started": false
   },
   "independent_validation": {
     "status": "PASS",
     "receipt_path": "docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json",
-    "receipt_sha256": "2f11ce2f7be4472ebac66514418a046ff03ddb3742222904babaca5fb245f049"
+    "receipt_sha256_at_issue": "2f11ce2f7be4472ebac66514418a046ff03ddb3742222904babaca5fb245f049"
   },
   "promotion_verifier": {
     "status": "PASS",
@@ -46,5 +46,6 @@
     "agy-g2-gate-verifier": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2"
   },
   "gate2_promoted": true,
-  "gate3_started": false
+  "gate3_started": false,
+  "bindings_note": "Renamed to *_at_issue on 2026-08-05. This record faithfully reconciles the 2026-07-19 r4 outcome and its status stays PASS -- what is retired is only its LIVE PIN on two files that have since been legitimately re-issued twice (D1/D2 Gate-2 re-issues, jobs 56342333 and 56344268). The at-issue digests are preserved verbatim; the archived products they name are at gate2/final/superseded-20260719/. Same convention as decision D3 (2026-08-04). KNOWN_PREEXISTING was NOT used: verify_hash_bindings exempts by PATH only, and this path is the LIVE Gate-2 receipt, so exempting it would blind the verifier to a future real drift on the very file it most needs to watch. CHAIN NOTE: these three 2026-07-19 records (r4 reconciliation, runtime independent validation, promotion verifier) describe ONE superseded Gate-2 run and pin each other as well as its products, so retiring a pin inside one changes that file's hash and breaks its siblings' pins on it. The chain was therefore retired to a fixpoint together rather than one file per round."
 }

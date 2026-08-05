@@ -113,3 +113,46 @@ def test_superseded_receipts_hold_no_live_bindings():
             assert "sha256" not in info, (
                 f"{name}:{role} kept a live `sha256` key under files_at_issue; the verifier's "
                 "collector harvests any dict with path+sha256, so this binding is still live")
+
+
+@pytest.mark.skipif(not os.path.exists(_VERIFIER), reason="verifier not present")
+def test_archived_gate2_receipts_hold_no_live_bindings():
+    """The same convention, for ARCHIVED Gate-2 runtime receipts under gate2/final/superseded-*/.
+
+    Learned the hard way on 2026-08-05. Archiving the 2026-07-19 and r1 receipts INTO the repo made
+    the verifier red again immediately: it walks every receipt it finds, so an archived one goes on
+    pinning the code hashes that were current when it was written. The live pins had just been closed
+    by the re-issue, and the archives re-broke them.
+
+    Gate-2 receipts use a `code` block rather than `files`, so the sibling test above does not reach
+    them. Retiring it is the same move: `code` -> `code_at_issue`, `sha256` -> `sha256_at_issue`,
+    every digest preserved verbatim.
+    """
+    import glob
+    import json
+    pattern = os.path.join(_REPO, "nd-unfolding", "g2_fullevent", "gate2", "final",
+                           "superseded-*", "*RECEIPT*.json")
+    found = sorted(glob.glob(pattern))
+    assert found, "no archived Gate-2 receipts found; this test would pass vacuously"
+    for p in found:
+        name = os.path.relpath(p, _REPO)
+        payload = json.load(open(p))
+        assert payload.get("status") == "SUPERSEDED", (
+            f"{name} sits in a superseded-* directory but its status is "
+            f"{payload.get('status')!r}; an archived receipt that still claims PASS will be read as "
+            f"a live one")
+        assert "code" not in payload, (
+            f"{name} still carries a live `code` block; rename it to `code_at_issue` (and each "
+            f"inner `sha256` -> `sha256_at_issue`) or the verifier stays red on files this receipt "
+            f"no longer owns")
+        at_issue = payload.get("code_at_issue")
+        assert at_issue, f"{name} has neither `code` nor `code_at_issue`"
+        for role, info in at_issue.items():
+            assert "sha256" not in info, (
+                f"{name}:{role} kept a live `sha256` under code_at_issue; the collector harvests any "
+                f"dict carrying path+sha256, so that binding is still live")
+            assert info.get("sha256_at_issue"), f"{name}:{role} lost its at-issue digest"
+        assert payload.get("superseded_by"), f"{name} is SUPERSEDED with no `superseded_by`"
+        successor = os.path.join(_REPO, payload["superseded_by"])
+        assert os.path.exists(successor), (
+            f"{name} points at a successor that does not exist: {payload['superseded_by']}")

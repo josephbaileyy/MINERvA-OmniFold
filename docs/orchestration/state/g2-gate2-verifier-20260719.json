@@ -11,7 +11,7 @@
     "path": "docs/orchestration/runs/agy-g2-gate-verifier/20260719T163712Z-send-e703214a.txt",
     "sha256": "5198129821f318e4b4703b9630ba5b768b247114bd1ab57de332dbd04dbb47b6"
   },
-  "runtime_receipt_sha256": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
+  "runtime_receipt_sha256_at_issue": "f09db8fc4b2aa177d188f456bd53fccc0e965f1ea319e0764c355051e92f8c44",
   "independent_validation_sha256": "2f11ce2f7be4472ebac66514418a046ff03ddb3742222904babaca5fb245f049",
   "findings": {
     "hash_bound_chain": "PASS",
@@ -22,5 +22,6 @@
     "binned_telemetry": "PASS",
     "agent_B_owner_receipt_correction_needed": false
   },
-  "pet_training_started": false
+  "pet_training_started": false,
+  "bindings_note": "Renamed to *_at_issue on 2026-08-05. This record's own findings and status are unchanged and remain true of 2026-07-19; what is retired is only its LIVE PIN on the Gate-2 products, which have since been legitimately re-issued twice (D1/D2, jobs 56342333 and 56344268). At-issue digests preserved verbatim; the products they name are archived at gate2/final/superseded-20260719/. Convention from decision D3 (2026-08-04). KNOWN_PREEXISTING was NOT used: it exempts by PATH only, and these paths are the LIVE Gate-2 products, so an exemption would blind the verifier to future real drift on exactly the files it most needs to watch."
 }

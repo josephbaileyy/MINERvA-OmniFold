@@ -138,8 +138,21 @@ Implementation gate, in order:
    Implement the dual-leg loader/engine boundary, mandatory target consumer,
    row/hash/provenance gates, and MC-only construction as one receipt-bound
    patch set, then re-issue Gate 2 and Gate 4. Canonical requirements:
-   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. None of this has
-   yet been proven end-to-end.
+   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`.
+   **STATUS 2026-08-05: D1/D2/D3 implemented; GATE 2 RE-ISSUED AND PASSED** (job
+   56344268). What remains, in order:
+   (a) **run the D2 powered recovery closure** --- `pet/closure_powered_truth_reweight.py`
+       exists, its Gate-4 component re-derives every metric from the dump, and a GPU
+       smoke proved the path; the predeclared run (clipped-exponential truth-pT tilt
+       at amplitude 0.35, clip |z|<=3, disjoint deterministic 2M/2M at split seed 7,
+       nominal policy incl. batch 512, accept at gap>=0.15, floor/gap<=0.10,
+       residual/gap<=0.20) has NOT run. Sized at 12.84 GiB peak host memory.
+       Until it passes, `powered_closure` is red BY DESIGN and Gate-4 cannot PASS.
+   (b) **re-issue the Gate-4 launch-code gate (Step 2b)** --- the 8 remaining verifier
+       mismatches are all from `p3f-pet-gate4-launch-code-gate-20260801b.json`, on files
+       D1/D2 legitimately changed.
+   (c) then, and only then, Step 4.
+   The end-to-end nominal is still unproven: nothing has yet trained on this target.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the
    current tensors begin with energy and one position/momentum component. Use

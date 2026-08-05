@@ -2934,3 +2934,65 @@ nominal does not consume `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy`; it reaches
 refinement as closure (audit J04). This entry records decisions and receipt lifecycle only. No
 loader, engine, target, closure result, Gate-2/Gate-4 receipt, or training artifact was produced.
 `nominal_pet_training_allowed` remains false.
+
+## 2026-08-05 — D1/D2 implemented, Gate-2 re-issued twice, and the pin cascade walked to its end
+
+**Gate-2 PASSED under D1/D2.** Numbers in `../VALIDATION_LEDGER.md`. Two runs: 56342333 (r1) and
+56344268 (r2), both PASS, both producing the identical target digest `544b2f6a...`. r1 was superseded
+within the hour because the audit repairs in 2cef7e6 moved `fullevent_fps_dataloader.py` after r1 had
+hashed it, so r1's receipt pinned code that no longer existed. The loader diff was confined to the
+`mc-only` branch and to comments — and the identical digests prove it was inert here — but "the change
+was semantically inert" is exactly the reasoning hash pins exist to reject, so the gate was re-run.
+
+**What D1 changed.** Step 1 consumes `w_reco`, step 2 and every truth-space quantity `w_truth`. The
+vendored engine used one `mc.weight` for both legs, so a wholesale swap would have moved the defect
+rather than fixed it. `normalize=True` derives ONE constant from `sum(w_reco[pass_reco])` and applies
+it to both legs, which holds the per-event ratio at its measured [0.931, 0.998] — a reco-only MINOS
+efficiency factor — instead of scaling it by 1.0189. Step 2 is scale-invariant, so this costs it
+nothing.
+
+**The B-4 gate was INVERTED, not deleted.** It used to block when the legs differed. Post-D1 that
+would reject the correct configuration and accept the broken one, since the reco leg carries a
+reco-only calibration and therefore differs on every selected row. It now blocks unless the reco leg
+is fed `w_reco`.
+
+**What D2 changed.** `bkg_mode='mc-only'` builds the MC side alone and cannot reach the refiner, so it
+cannot import ROOT — the conflict that blocked RESTORE Step 3. The nominal now CONSUMES the published
+target with provenance checks instead of silently rebuilding it (audit J04), and row ORDER is bound by
+comparing recomputed inventory identity hashes, which no file digest can express.
+
+**Bugs found and fixed along the way, recorded because each was invisible to the tests that existed.**
+
+* The truth-space reporting spectrum was being built from the RECO leg: a variable named `w_mc` was
+  pointed at the reco leg for a step-1 ratio and then reused for `reporting_spectra`, whose parameter
+  is literally named `w_truth`. Both arrays are the right shape and the spectrum is unit-normalized,
+  so the artifact looked healthy and was the wrong spectrum. Variables are now named by leg.
+* Gate-4's independent fold-forward still read `w_truth` for a step-1-space quantity, which would have
+  failed the strict independence check for a reason that was not a defect in either side.
+* The ordinary closure's pseudo-data was built from the truth leg, so the identity closure would have
+  been handed two densities differing by the efficiency factor and failed for unrelated reasons.
+* The powered closure passed float64 weights into an engine whose logits are float32, dying inside a
+  tf.function with a traceback naming only Keras internals. Caught by a 20-minute GPU smoke rather
+  than by an 8-GPU-hour queued run.
+
+**THE PIN CASCADE, which bit four times in one day and is the transferable lesson.** Any byte-level
+edit to a hash-pinned file is a gate re-issue, whether or not it changes behaviour, and a file can be
+both pinner and pinnee:
+
+1. advancing `EXPECTED_LOADER_SHA` inside `run_gate2_target_validator.sh` changed that FILE's hash,
+   breaking both callers that pin the runner;
+2. fixing those callers, then editing the runner again, broke them a second time;
+3. writing a one-line docstring note into the pinned loader would have invalidated the receipt being
+   produced at that moment — caught and reverted before commit, the note moved to an unpinned file;
+4. archiving the superseded receipts INTO the repo made the verifier red again immediately, because it
+   walks every receipt it finds and an archived one keeps pinning the code current when it was written.
+
+(4) needed the D3 at-issue convention applied to runtime receipts, and then to three 2026-07-19
+orchestration records that pin the products AND each other — retiring a pin inside one changes that
+file's hash and breaks its siblings' pins on it, so the chain had to be retired to a fixpoint
+together rather than one file per round. The verifier's dedup key `(rel, want, src if .sh else "")`
+masks siblings pinning the same (file, hash), which is why each fix appeared to reveal a new problem.
+
+**End state.** Every LIVE Gate-2 pin is satisfied. The verifier reports exactly 8 mismatches, all
+from `p3f-pet-gate4-launch-code-gate-20260801b.json`, all on files D1/D2 legitimately changed, and all
+of which resolve when Step 2b re-issues that gate. No digest was hand-edited anywhere.

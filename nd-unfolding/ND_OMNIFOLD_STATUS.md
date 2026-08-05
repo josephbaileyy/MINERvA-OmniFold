@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-04. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-05. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -41,7 +41,13 @@ replacement is implied for 4D/FPS or dependent significances. See
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
   (`w_reco` Step 1, `w_truth` Step 2), target/closure architecture, and construction-receipt
-  lifecycle. Implementation and Gate-2/Gate-4 re-issues remain pending; P5A training is prohibited.
+  lifecycle. **D1, D2 and D3 are IMPLEMENTED and Gate-2 is RE-ISSUED as of 2026-08-05** (job
+  56344268, PASS, R = 1.1240802949941018, occupied_cells 231/285, B-4 resolved on the reco leg;
+  numbers in `../VALIDATION_LEDGER.md`). Every live Gate-2 pin is satisfied. **P5A training remains
+  prohibited**, now for one stated reason rather than several: Gate-4 cannot PASS until the D2 powered
+  injected-truth-reweight recovery closure has run, because the ordinary closure is an identity check
+  that a constant estimator optimizes. The verifier's remaining 8 mismatches all come from
+  `p3f-pet-gate4-launch-code-gate-20260801b.json` and resolve when Step 2b re-issues that gate.
 - RESTORE Step 5 is closed: both Delta recoil-only `xps2` insurance products
   have a hash-verified durable CFS copy. Exact destination evidence is indexed
   by `../docs/orchestration/state/restore-step5-delta-durability-20260804.json`;
