@@ -38,7 +38,8 @@ def synth_g2_npz(path, with_bkg=True, fingerprint="pet-fullevent-fps-v1",
 def synth_target_and_receipt(td, inputs_npz, *, rows=8, status="PASS",
                              fingerprint="pet-fullevent-fps-v1",
                              target_mode="negweight-refined", learned=True, bootstrap_seed=None,
-                             normalized_sum=1.0e6, identity=None, input_size=None):
+                             normalized_sum=1.0e6, identity=None, input_size=None,
+                             input_sha=None):
     """A precomputed target plus the Gate-2 runtime receipt that owns it (D2 fixture).
 
     Mirrors only the fields `assert_target_provenance` reads, and the sha is computed from the file
@@ -58,7 +59,12 @@ def synth_target_and_receipt(td, inputs_npz, *, rows=8, status="PASS",
                            "input_identity_hashes": identity or {"sig": "1" * 64, "data": "2" * 64,
                                                                  "bkg": "3" * 64}},
         "input_preflight": {"size_bytes": (input_size if input_size is not None
-                                           else os.path.getsize(inputs_npz))},
+                                           else os.path.getsize(inputs_npz)),
+                            # D2/audit: the source dump is bound by DIGEST, not only by size, so a
+                            # same-size substitution cannot pair the certified target with a
+                            # different dump. Computed from the fixture so a matching pair matches.
+                            "sha256": (input_sha if input_sha is not None
+                                       else drv.sha256_file(inputs_npz))},
     }
     rp = os.path.join(td, "RECEIPT.json")
     with open(rp, "w") as fh:
@@ -204,6 +210,29 @@ class TargetProvenanceGate(unittest.TestCase):
     def test_unrecorded_normalization_is_caught(self):
         with tempfile.TemporaryDirectory() as td:
             p, tgt, rec = self._pair(td, normalized_sum=None)
+            with self.assertRaises(SystemExit):
+                drv.assert_target_provenance(tgt, rec, p)
+
+    def test_same_size_source_substitution_is_caught(self):
+        """The gap size-only binding left open: a re-dump of the same inventory with different
+        values has the same length, so only the digest separates them."""
+        with tempfile.TemporaryDirectory() as td:
+            p, tgt, rec = self._pair(td)
+            with open(p, "r+b") as fh:          # flip a byte; size unchanged
+                fh.seek(-1, os.SEEK_END)
+                b = fh.read(1)
+                fh.seek(-1, os.SEEK_END)
+                fh.write(bytes([b[0] ^ 0xFF]))
+            with self.assertRaises(SystemExit) as cm:
+                drv.assert_target_provenance(tgt, rec, p)
+            self.assertIn("sha256", str(cm.exception))
+
+    def test_receipt_without_source_digest_is_caught(self):
+        with tempfile.TemporaryDirectory() as td:
+            p, tgt, rec = self._pair(td)
+            payload = json.load(open(rec))
+            payload["input_preflight"].pop("sha256")
+            json.dump(payload, open(rec, "w"))
             with self.assertRaises(SystemExit):
                 drv.assert_target_provenance(tgt, rec, p)
 

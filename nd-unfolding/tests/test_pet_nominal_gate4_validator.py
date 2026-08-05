@@ -94,7 +94,11 @@ def good_target(**over):
 def ordinary_report(**over):
     h = np.random.default_rng(0).random(g4.N_CELLS)
     r = {"report_schema": g4.ORDINARY_CLOSURE_SCHEMA, "verdict": "PASS", "pass": True,
-         "bkg_mode": "negweight-refined", "is_synthetic_fixture": False,
+         # D2 (2026-08-04): the ordinary closure defaults to mc-only and must SAY what it supports.
+         # A report lacking these fields cannot be composed as evidence.
+         "bkg_mode": "mc-only", "is_synthetic_fixture": False,
+         "mc_only": True, "measured_target_constructed": False, "refinement_invoked": False,
+         "closure_class": "mc-self-consistency-identity", "is_powered_closure": False,
          "marginal_l1": 0.0, "marginal_h_truth": [float(x) for x in h],
          "marginal_h_reweighted": [float(x) for x in h],
          "edges_pt": g4.FROZEN["edges_pt"], "edges_pparallel": g4.FROZEN["edges_pparallel"],
@@ -102,6 +106,15 @@ def ordinary_report(**over):
          "event_features_reco": list(g4.FROZEN["event_features_reco"]),
          "event_features_truth": list(g4.FROZEN["event_features_truth"]),
          "push_median": 1.001, "push_finite": True, "l1_max": 0.10, "push_med_tol": 0.15}
+    r.update(over)
+    return r
+
+
+def powered_report(**over):
+    """The D2 injected truth-reweight RECOVERY closure. The identity closure cannot substitute for
+    it: pseudo-data IS the MC there, so a constant estimator optimizes it."""
+    r = {"is_powered_closure": True, "recovery_criteria_met": True,
+         "closure_class": "injected-truth-reweight-recovery"}
     r.update(over)
     return r
 
@@ -127,7 +140,7 @@ def good_report(**over):
               fold_forward=(113.5, 100.0, 1.135), fold_forward_driver=(113.5, 100.0, 1.135),
               spectra=spectra, spectra_driver=spectra, target=good_target(),
               closure=(True, True, True),
-              closure_reports=(ordinary_report(), stress_report()),
+              closure_reports=(ordinary_report(), stress_report(), powered_report()),
               observed_at_utc="2026-07-21T00:00:00Z")
     kw.update(over)
     return g4.build_gate4_report(**kw)
@@ -341,12 +354,14 @@ class ClosureComposition(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(os.path.dirname(ND), rel)), rel)
 
     def test_provenance_pass(self):
-        self.assertTrue(g4.check_closure_provenance(ordinary_report(), stress_report())[0])
+        self.assertTrue(g4.check_closure_provenance(
+            ordinary_report(), stress_report(), powered_report())[0])
 
     def test_purity_control_closure_refused(self):
         """RESTORE Step 3 refuses `--bkg-mode purity` as the closure in prose; refuse it in code."""
         self.assertFalse(
-            g4.check_closure_provenance(ordinary_report(bkg_mode="purity"), stress_report())[0])
+            g4.check_closure_provenance(ordinary_report(bkg_mode="purity"), stress_report(),
+                                        powered_report())[0])
 
     def test_synthetic_fixture_closure_refused(self):
         """The 2026-07-26 Delta run (20489224) passed on random data, where the pseudo-data IS the

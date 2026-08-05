@@ -174,7 +174,12 @@ def write_closure_reports(td, ordinary_over=None, stress_over=None):
     import json as _json
     h = np.random.default_rng(0).random(g4.N_CELLS)
     ordinary = {"report_schema": g4.ORDINARY_CLOSURE_SCHEMA, "verdict": "PASS", "pass": True,
-                "bkg_mode": g4.BKG_MODE, "is_synthetic_fixture": False, "marginal_l1": 0.0,
+                # D2 (2026-08-04): the ordinary closure is mc-only and must declare what it
+                # supports; Gate-4 refuses a report that does not.
+                "bkg_mode": "mc-only", "is_synthetic_fixture": False, "marginal_l1": 0.0,
+                "mc_only": True, "measured_target_constructed": False,
+                "refinement_invoked": False, "is_powered_closure": False,
+                "closure_class": "mc-self-consistency-identity",
                 "marginal_h_truth": [float(x) for x in h],
                 "marginal_h_reweighted": [float(x) for x in h],
                 "edges_pt": g4.FROZEN["edges_pt"],
@@ -194,6 +199,22 @@ def write_closure_reports(td, ordinary_over=None, stress_over=None):
         with open(path, "w") as fh:
             _json.dump(payload, fh)
     return op, sp
+
+
+def write_powered_report(td, **over):
+    """The D2 injected truth-reweight RECOVERY closure report.
+
+    Separate from write_closure_reports so the twelve callers that expect a FAILING verdict keep
+    their two-value unpack: Gate-4 fails closed without this report, which is the point.
+    """
+    import json as _json
+    payload = {"is_powered_closure": True, "recovery_criteria_met": True,
+               "closure_class": "injected-truth-reweight-recovery"}
+    payload.update(over)
+    path = os.path.join(td, "powered_closure.json")
+    with open(path, "w") as fh:
+        _json.dump(payload, fh)
+    return path
 
 
 def driver_spectra(arrays, imc, push):
@@ -969,9 +990,13 @@ class Gate4DriverContract(unittest.TestCase):
             imc = np.arange(60)
             wpath = driver_npz(td, arrays, imc, np.full(60, 1.28))
             op, sp = write_closure_reports(td)
+            # D2: Gate-4 fails closed without the powered recovery closure, so a test that expects
+            # a PASS must supply one. The identity closure cannot stand in for it.
+            pp = write_powered_report(td)
             work = os.path.join(td, "gate4.json")
             rc = g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
-                          "--closure-report", op, "--stress-report", sp, "--n-full", "60"])
+                          "--closure-report", op, "--stress-report", sp,
+                          "--powered-closure-report", pp, "--n-full", "60"])
             with open(work) as fh:
                 receipt = json.load(fh)
         self.assertEqual(rc, 0, [c for c in receipt["checks"] if not c["ok"]])
@@ -992,9 +1017,11 @@ class Gate4DriverContract(unittest.TestCase):
             dump = write_npz(td, arrays)
             wpath = driver_npz(td, arrays, np.arange(60), np.full(60, 1.28))
             op, sp = write_closure_reports(td)
+            pp = write_powered_report(td)      # D2: required for closure_provenance to pass
             work = os.path.join(td, "gate4.json")
             g4.main(["--nominal-weights", wpath, "--inputs", dump, "--work", work,
-                     "--closure-report", op, "--stress-report", sp])
+                     "--closure-report", op, "--stress-report", sp,
+                     "--powered-closure-report", pp])
             with open(work) as fh:
                 receipt = json.load(fh)
         for component in ("freeze", "weights", "index_order", "marginal", "fold_forward",

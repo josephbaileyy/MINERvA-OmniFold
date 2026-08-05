@@ -15,7 +15,7 @@ set -eo pipefail
 
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
 RUNNER=${REPO}/nd-unfolding/pet/run_gate2_target_validator.sh
-EXPECTED_RUNNER_SHA=a8ba8934d87ab1d861e06d561c83fdbe53b7c35b1ecd4269c8d759bb79d550dc
+EXPECTED_RUNNER_SHA=283ea34d6f8e89b7aae1a5cb4d0c60f1a70fb7774d717302be363c07fde4aac9
 
 [[ -x "$RUNNER" ]] || { echo "[g2gate2][FAIL] runner missing/not executable" >&2; exit 1; }
 [[ "$(sha256sum "$RUNNER" | awk '{print $1}')" == "$EXPECTED_RUNNER_SHA" ]] || {

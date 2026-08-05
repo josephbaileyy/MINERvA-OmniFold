@@ -1103,12 +1103,20 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     login-safe tests can pass an algorithm-identical sklearn refinement; the refined-target
     telemetry lands in meta['target'] for decision review.
 
-    MC-ONLY (`bkg_mode='mc-only'`, decision D2 2026-08-04): build the MC side alone -- same clouds,
-    event features, masks, subsample and D1 dual-leg weights as the nominal -- and return
-    `data=None`. No measured inventory, no background injection, no Stay-Positive refinement, and
-    therefore no ROOT import. This exists for the closure, whose pseudo-data is MC anyway. It
-    constructs no measured target and so certifies nothing about one; `assert_publication_config`
-    rejects it for publication runs."""
+    MC-ONLY (`bkg_mode='mc-only'`, decision D2 2026-08-04): build the MC side -- same clouds, event
+    features, masks, subsample and D1 dual-leg weights as the nominal -- and return `data=None`. No
+    measured TARGET is constructed: no background injection, no signed inventory, no Stay-Positive
+    refinement, and therefore no ROOT import, which is the environment conflict this exists to
+    avoid. It certifies nothing about the measured target, and `assert_publication_config` rejects
+    it for publication runs.
+
+    Precisely what it still touches, because 'MC-only' would otherwise overstate it: the
+    `measured_pc` PRESENCE check still runs (a schema assertion), the data-side event-feature block
+    `event_data` is still built by `build_event_features` alongside the MC ones, and a supplied
+    data-scalars sidecar or a bootstrap seed will still read the data row count. The data ROW COUNT
+    is otherwise deferred, so the ~592 MB `measured_pc` read is skipped. Narrowing this further
+    means splitting `build_event_features` by leg, which is a bigger change than D2 asked for; it is
+    recorded in `meta['target']['mc_only_residual_data_reads']` rather than glossed."""
     d = np.load(inputs_npz, allow_pickle=True)
     if enforce_fps_edges:
         assert_extended_fps_edges(d["edges_0"], d["edges_1"])
@@ -1128,7 +1136,11 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         raise ValueError("[G2] input has no 'measured_pc' data inventory; cannot derive the data "
                          "row count for the full-event measured target (fail closed).")
     N = np.asarray(d["pass_reco"]).shape[0]
-    M = np.asarray(d["measured_pc"]).shape[0]
+    # D2: mc-only forms no measured target, so it does not need the data row count -- and reading
+    # `measured_pc` for one integer decompresses ~592 MB of point cloud. Materialized on demand at
+    # the two sites below that can still want it (a supplied data-scalars file, or a bootstrap draw).
+    # The PRESENCE check above still runs for every mode: that is a schema assertion, not a read.
+    M = None if bkg_mode == "mc-only" else np.asarray(d["measured_pc"]).shape[0]
 
     # Subsample the MC TRAINING side BEFORE the (heavy) cloud processing so build_truth_cloud's
     # angular transform only touches the training subset (a full 49.2M process would spike tens of
@@ -1202,6 +1214,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
             dkey = "measured_scalars" if "measured_scalars" in dz.files else "measured"
             meas_scalars = np.asarray(dz[dkey])
         data_src = f"{data_scalars_npz}:{dkey}"
+        if M is None:                       # deferred by mc-only; this check genuinely needs it
+            M = np.asarray(d["measured_pc"]).shape[0]
         if meas_scalars.shape[0] != M:
             raise ValueError(f"[CLM-007] data-scalar rows {meas_scalars.shape[0]} != measured_pc "
                              f"rows {M} in {data_scalars_npz} -- not row-aligned; refuse to build.")
@@ -1300,6 +1314,8 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
     # post-subset redraw. The measured-side factors are applied to the FULL measured inventory below.
     data_factor = sig_factor = bkg_factor = None
     if bootstrap_seed is not None:
+        if M is None:                       # deferred by mc-only; the draw is over the data rows too
+            M = np.asarray(d["measured_pc"]).shape[0]
         n_bkg_full = int(np.asarray(d["w_bkg"]).shape[0]) if has_bkg else 0
         data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(
             M, N, n_bkg_full, int(bootstrap_seed))
@@ -1355,11 +1371,17 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
             "refinement_invoked": False,
             "step1_class_ratio": None,
             "bootstrap_seed": bootstrap_seed,
-            "certifies": ("MC self-consistency only. No measured inventory, no background "
-                          "injection, no Stay-Positive refinement -- so this build supports no "
-                          "claim whatever about the negweight-refined measured target. Gate-2 "
-                          "certifies that target's construction; Gate-4 must separately show the "
-                          "nominal consumes that exact array."),
+            "certifies": ("MC self-consistency only. No measured TARGET is constructed: no "
+                          "background injection, no signed inventory, no Stay-Positive refinement "
+                          "-- so this build supports no claim whatever about the negweight-refined "
+                          "measured target. Gate-2 certifies that target's construction; Gate-4 "
+                          "must separately show the nominal consumes that exact array."),
+            # Stated rather than glossed: 'mc-only' is about the TARGET, not about never touching a
+            # data array. Narrowing these means splitting build_event_features by leg.
+            "mc_only_residual_data_reads": ["measured_pc presence check (schema assertion)",
+                                            "event_data block built by build_event_features",
+                                            "data row count if a data-scalars sidecar or "
+                                            "bootstrap_seed is supplied"],
         }
         return None, mc, imc, coord_reco, coord_gen, meta
 

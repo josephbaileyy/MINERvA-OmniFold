@@ -241,12 +241,29 @@ def assert_target_provenance(target_npy, receipt_path, inputs_npz):
         raise SystemExit(f"[gate4/D2] source NPZ size {os.path.getsize(inputs_npz)} != the size the "
                          f"receipt was built against ({want_in_size}); the target belongs to a "
                          f"different dump (fail closed)")
+    # Size alone is NOT enough, and the receipt carries the digest, so use it. A same-size
+    # substitution -- a re-dump of the same inventory with different values, or a differently
+    # ordered one -- would otherwise pair the certified target with a different dump and pass every
+    # other check here. This costs one sequential read of the ~9.9 GB NPZ; that is proportionate for
+    # the gate that authorizes eight GPU-hours, and the digest is returned so the caller reuses it
+    # for the artifact record rather than hashing twice.
+    want_in_sha = pre.get("sha256")
+    if not want_in_sha:
+        raise SystemExit("[gate4/D2] receipt records no input_preflight.sha256; the target cannot be "
+                         "bound to a source dump (fail closed)")
+    got_in_sha = sha256_file(inputs_npz)
+    if got_in_sha != want_in_sha:
+        raise SystemExit(f"[gate4/D2] source NPZ sha256 mismatch\n  receipt {want_in_sha}\n  on disk "
+                         f"{got_in_sha}\nThe certified target was built against a different dump "
+                         f"(fail closed)")
     print(json.dumps({"target_provenance": "PASS", "target": target_npy, "target_sha256": got_sha,
                       "receipt": receipt_path, "receipt_status": rec.get("status"),
                       "receipt_verdict": rec.get("verdict"),
                       "receipt_rows": feed.get("rows"),
                       "receipt_normalized_sum": nsum,
+                      "source_npz_sha256": got_in_sha,
                       "refinement_rebuilt_in_process": False}, indent=2))
+    rec["_verified_input_sha256"] = got_in_sha
     return rec
 
 
@@ -418,17 +435,25 @@ def main(argv=None):
     # step1_class_ratio, whose denominator is now sum(w_reco[pass_reco]); building it from
     # mc.weight would compare a truth-leg ratio against a reco-leg R. Falls back to mc.weight only
     # for a single-weight loader, where the two legs are the same array.
-    _w_reco_leg = getattr(mc, "weight_reco", None)
-    w_mc = np.asarray(mc.weight if _w_reco_leg is None else _w_reco_leg, dtype=np.float64)
+    # NAMED BY LEG, deliberately. An earlier draft of this called the reco leg `w_mc` and then
+    # reused that same variable for the TRUTH-space reporting spectrum below -- whose parameter is
+    # literally named `w_truth`. Nothing caught it, because both arrays are the right shape and the
+    # spectrum is unit-normalized, so the artifact looked fine and was simply the wrong spectrum.
+    # There is no single "the MC weight" any more; every use site must say which leg it means.
+    _reco_leg = getattr(mc, "weight_reco", None)
+    w_reco_leg = np.asarray(mc.weight if _reco_leg is None else _reco_leg, dtype=np.float64)
+    w_truth_leg = np.asarray(mc.weight, dtype=np.float64)
     pass_reco_sub = np.asarray(mc.pass_reco).astype(bool)
-    if not (push.shape == w_mc.shape == pass_reco_sub.shape):
-        raise SystemExit(f"[gate4] push {push.shape} / mc reco-leg weight {w_mc.shape} / pass_reco "
-                         f"{pass_reco_sub.shape} are not row-aligned (fail closed)")
+    if not (push.shape == w_reco_leg.shape == w_truth_leg.shape == pass_reco_sub.shape):
+        raise SystemExit(f"[gate4] push {push.shape} / reco leg {w_reco_leg.shape} / truth leg "
+                         f"{w_truth_leg.shape} / pass_reco {pass_reco_sub.shape} are not "
+                         f"row-aligned (fail closed)")
     if not pass_reco_sub.any():
         raise SystemExit("[gate4] no pass_reco rows in the training subsample; the fold-forward "
                          "ratio is undefined (fail closed)")
-    sum_w_push_reco = float((w_mc[pass_reco_sub] * push[pass_reco_sub]).sum())
-    sum_w_reco = float(w_mc[pass_reco_sub].sum())
+    # Step-1 space => reco leg.
+    sum_w_push_reco = float((w_reco_leg[pass_reco_sub] * push[pass_reco_sub]).sum())
+    sum_w_reco = float(w_reco_leg[pass_reco_sub].sum())
     target_meta = meta.get("target") or {}
     class_ratio = target_meta.get("step1_class_ratio")
     if class_ratio is None:
@@ -446,8 +471,9 @@ def main(argv=None):
     with np.load(args.inputs, allow_pickle=True) as _d:
         truth_scalars_sub = np.asarray(_d["truth_scalars"])[imc]
     pass_truth_sub = np.asarray(mc.pass_gen).astype(bool)
+    # TRUTH space => truth leg. Not the reco leg, and not a variable that used to hold either.
     central_vector, reported_bin_mask = reporting_spectra(
-        truth_scalars_sub, w_mc, push, pass_truth_sub)
+        truth_scalars_sub, w_truth_leg, push, pass_truth_sub)
     del truth_scalars_sub
     import omnifold.omnifold as _of_engine                # the authoritative F3 cap, not a copy
     sat_frac = cap_saturation_frac(push, _of_engine.REWEIGHT_LOGIT_CAP)
@@ -477,7 +503,9 @@ def main(argv=None):
                  else int(target_meta["bootstrap_seed"])),
              inputs_path=np.asarray(os.path.abspath(args.inputs)),
              # audit B2: the freeze must read the RESULT, not the validator's constants
-             inputs_sha256=np.asarray(sha256_file(args.inputs)),
+             # Already computed and CHECKED against the receipt by assert_target_provenance; reused
+             # rather than recomputed, so the artifact records the digest that was actually verified.
+             inputs_sha256=np.asarray(target_receipt["_verified_input_sha256"]),
              seed_policy=np.asarray(seed_policy, dtype=object),
              edges_pt=fe.CANONICAL_PT_EDGES,
              edges_pparallel=fe.CANONICAL_PPARALLEL_EDGES,

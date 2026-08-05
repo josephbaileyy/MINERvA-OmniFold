@@ -281,29 +281,39 @@ def fold_forward_sums_from_dump(inputs_npz, weights_push, mc_indices):
     """Recompute the §2d fold-forward sums and R from the G2 dump, INDEPENDENTLY of the driver.
 
     The driver persists its own `(sum(w*push), sum(w))` so the gate can cross-check; this is the
-    other side. It reads `w_truth` and `pass_reco` from the dump itself, re-derives the training
+    other side. It reads the weights and `pass_reco` from the dump itself, re-derives the training
     subsample's reco mask from `mc_indices`, and pairs it with the driver's `weights_push` -- the
     result under test is the driver's, the reference data is not. R likewise comes from
     `fe.step1_class_ratio_from_dump`, never from the weights npz.
 
-    Note both sums are scale-free in `w_truth`'s normalization: the driver's `mc.weight` was
-    rescaled in place to 1e6 by the DataLoader, this reads the raw dump weights, and the RATIO is
-    identical either way. Returns (sum_w_push_reco, sum_w_reco, R, telem).
+    D1 (2026-08-04): THIS IS A STEP-1-SPACE QUANTITY, so it reads `w_reco`, matching the leg step 1
+    consumes and the leg the driver now sums. It read `w_truth` until the D1 repair; leaving it there
+    would have compared a truth-leg reference against a reco-leg result and failed the strict
+    independence check for a reason that is not a defect in either side.
+
+    Note both sums are scale-free in the leg's normalization: the driver's arrays were rescaled in
+    place by the DataLoader, this reads the raw dump weights, and the RATIO is identical either way.
+    Returns (sum_w_push_reco, sum_w_reco, R, telem).
     """
     push = np.asarray(weights_push, float)
     imc = np.asarray(mc_indices)
     with np.load(inputs_npz, allow_pickle=True) as d:
         w_truth_full = np.asarray(d["w_truth"], dtype=np.float64)
+        if "w_reco" not in d.files:
+            raise ValueError("[gate4] dump carries no 'w_reco'; since D1 the step-1 leg is w_reco "
+                             "and this independent recomputation cannot be formed (fail closed)")
+        w_reco_full = np.asarray(d["w_reco"], dtype=np.float64)
         pass_reco_full = np.asarray(d["pass_reco"]).astype(bool)
         R, telem = fe.step1_class_ratio_from_dump(
-            d, w_truth_full=w_truth_full, pass_reco_full=pass_reco_full)
+            d, w_truth_full=w_truth_full, w_reco_full=w_reco_full,
+            pass_reco_full=pass_reco_full)
     if imc.shape != push.shape:
         raise ValueError(f"[gate4] mc_indices {imc.shape} and weights_push {push.shape} are not "
                          "row-aligned (fail closed)")
     if imc.size and int(imc.max()) >= w_truth_full.shape[0]:
         raise ValueError(f"[gate4] mc_indices max {int(imc.max())} outside the dump's signal "
                          f"inventory ({w_truth_full.shape[0]} rows) -- wrong dump (fail closed)")
-    w_sub = w_truth_full[imc]
+    w_sub = w_reco_full[imc]          # D1: reco leg, to match the driver's step-1-space sums
     mask = pass_reco_full[imc]
     if not mask.any():
         raise ValueError("[gate4] no pass_reco rows in the recomputed subsample (fail closed)")
@@ -512,7 +522,7 @@ def check_closure_verdicts(ordinary_pass, stress_recoil_blind, stress_fullevent_
     return all(c["ok"] for c in checks), checks
 
 
-def check_closure_provenance(ordinary, stress):
+def check_closure_provenance(ordinary, stress, powered=None):
     """Refuse closure evidence that is not the publication closure.
 
     Two runs in this repo look like the ordinary closure and are not it, and RESTORE-2026-08-03.md
@@ -533,8 +543,32 @@ def check_closure_provenance(ordinary, stress):
     checks = [
         _ck("closure:ordinary_report_schema", o.get("report_schema") == ORDINARY_CLOSURE_SCHEMA,
             o.get("report_schema")),
-        _ck("closure:ordinary_is_negweight_refined", o.get("bkg_mode") == BKG_MODE,
-            f"{o.get('bkg_mode')!r} (purity is a labeled control, never the nominal)"),
+        # D2 (2026-08-04). This used to require bkg_mode == negweight-refined, which is now wrong in
+        # BOTH directions: it rejects the mc-only smoke, and it accepts a negweight-refined run as
+        # though that run were evidence about the measured target -- which it never was, because the
+        # closure built the refined target and then never referenced it
+        # (AUDIT-FINDINGS-20260728.md (b)). 'purity' stays refused: it is a labeled control.
+        _ck("closure:ordinary_build_mode_allowed",
+            o.get("bkg_mode") in ("mc-only", BKG_MODE),
+            f"{o.get('bkg_mode')!r} (mc-only or {BKG_MODE}; purity is a labeled control, never the "
+            f"nominal)"),
+        # An old report predates the honesty fields and would otherwise pass the checks below by
+        # simply not carrying them. Require them present and correctly typed.
+        _ck("closure:ordinary_declares_what_it_supports",
+            (o.get("closure_class") == "mc-self-consistency-identity"
+             and isinstance(o.get("is_powered_closure"), bool)
+             and isinstance(o.get("mc_only"), bool)
+             and isinstance(o.get("measured_target_constructed"), bool)),
+            f"closure_class={o.get('closure_class')!r}, is_powered_closure="
+            f"{o.get('is_powered_closure')!r}, mc_only={o.get('mc_only')!r}, "
+            f"measured_target_constructed={o.get('measured_target_constructed')!r} -- a report that "
+            f"does not say what it supports cannot be composed as evidence"),
+        # The claim the legacy report invited: that a negweight-refined build certified the target.
+        # It does not, whichever mode it ran in, because the closure's pseudo-data is MC either way.
+        _ck("closure:ordinary_makes_no_measured_target_claim",
+            o.get("refinement_invoked") is False,
+            f"refinement_invoked={o.get('refinement_invoked')!r} -- this closure never consumes the "
+            f"refined target, so a report claiming it exercised the refinement is mislabelled"),
         _ck("closure:ordinary_not_synthetic_fixture", o.get("is_synthetic_fixture") is False,
             f"is_synthetic_fixture={o.get('is_synthetic_fixture')!r} -- a synthetic-fixture run "
             "shows the code path runs and has ~no power to detect a defect"),
@@ -566,6 +600,22 @@ def check_closure_provenance(ordinary, stress):
             f"{FROZEN['event_features_reco']} / {FROZEN['event_features_truth']}"),
         _ck("closure:stress_report_schema", s.get("report_schema") == STRESS_CLOSURE_SCHEMA,
             s.get("report_schema")),
+        # D2 item 4, and this one FAILS CLOSED TODAY BY DESIGN.
+        #
+        # The ordinary closure is an identity check: pseudo-data IS the MC, so push ~ 1 is very
+        # nearly guaranteed and a constant/null estimator optimizes it (AUDIT-FINDINGS-20260728.md,
+        # structural zero power). Composing it as the closure evidence behind a publication result
+        # asserts something it cannot support, whichever bkg_mode it ran in. D2 requires a powered
+        # injected truth-reweight recovery closure, at nominal configuration with predeclared
+        # recovery criteria, before closure evidence may gate publication. That run does not exist
+        # yet, so this check is red -- which is the honest state, not a regression. Supply a powered
+        # report (is_powered_closure=True with its recovery criteria met) and it goes green.
+        _ck("closure:powered_recovery_closure_present",
+            (powered or {}).get("is_powered_closure") is True
+            and (powered or {}).get("recovery_criteria_met") is True,
+            "D2 requires an injected truth-reweight recovery closure at nominal configuration with "
+            "predeclared criteria; the identity closure has ~no power to detect a real defect and "
+            f"cannot stand in for it. powered_report={'absent' if not powered else powered}"),
     ]
     return all(c["ok"] for c in checks), checks
 
@@ -691,7 +741,8 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
                        fold_forward_driver=None, fold_forward_telemetry=None, target=None,
                        spectra=None, spectra_driver=None, spectra_telemetry=None):
     """Assemble the Gate-4 receipt + single verdict. Pure (no training). `marginal`=(h_truth,h_rw);
-    `closure`=(ordinary,recoil_blind,fullevent_recovers); `closure_reports`=(ordinary, stress) as
+    `closure`=(ordinary,recoil_blind,fullevent_recovers);
+    `closure_reports`=(ordinary, stress[, powered_recovery]) as
     written by the two closure scripts' `--json`.
 
     `fold_forward`=(sum_w_push_reco, sum_w_reco, R) is the B1 §2d normalization gate -- the
@@ -798,8 +849,12 @@ def build_gate4_report(*, result_meta, frozen_observed, weights_push=None, imc=N
             "telemetry": spectra_telemetry,
         }
     if closure_reports is not None:
-        o, s = closure_reports
-        payload["closure_evidence"] = {"ordinary": o, "stress": s}
+        # D2: the tuple grew a third member (the powered recovery closure). Unpacked tolerantly so a
+        # 2-tuple from an older caller still works and simply carries no powered report -- which the
+        # provenance check then fails closed on, rather than crashing here.
+        o, s = closure_reports[0], closure_reports[1]
+        pw = closure_reports[2] if len(closure_reports) > 2 else None
+        payload["closure_evidence"] = {"ordinary": o, "stress": s, "powered_recovery": pw}
     if target is not None:
         payload["measured_target"] = target
     return payload, verdict
@@ -874,6 +929,12 @@ def main(argv=None):
     ap.add_argument("--stress-report", required=True,
                     help="JSON report from stress_closure_muon.py --json (the omitted-muon stress "
                          "closure: recoil-only stays blind, full-event recovers the tilt).")
+    ap.add_argument("--powered-closure-report", default=None,
+                    help="JSON report from the D2 injected truth-reweight RECOVERY closure, at "
+                         "nominal configuration with predeclared recovery criteria "
+                         "(is_powered_closure=true, recovery_criteria_met=true). Optional as a flag "
+                         "but REQUIRED for a PASS: the ordinary identity closure has ~no power to "
+                         "detect a real defect, so it cannot stand in for this.")
     ap.add_argument("--allow-missing-fold-forward", action="store_true",
                     help="DIAGNOSTIC ONLY. Skip the fold-forward gate when the weights npz "
                          "predates the B1 fix. A receipt produced this way does not certify the "
@@ -967,6 +1028,8 @@ def main(argv=None):
 
     ordinary = _read_report(args.closure_report, "ordinary")
     stress = _read_report(args.stress_report, "omitted-muon stress")
+    powered = (_read_report(args.powered_closure_report, "powered recovery closure")
+               if args.powered_closure_report else None)
     marginal = None
     if isinstance(ordinary.get("marginal_h_truth"), list) \
             and isinstance(ordinary.get("marginal_h_reweighted"), list):
@@ -987,7 +1050,7 @@ def main(argv=None):
         imc=z["mc_indices"] if "mc_indices" in z.files else None, n_full=n_full,
         n_expected_subsample=FROZEN["seed_policy"]["train_events"],
         marginal=marginal, saturation_frac=(spectra[2] if spectra is not None else None),
-        closure=closure, closure_reports=(ordinary, stress), target=target,
+        closure=closure, closure_reports=(ordinary, stress, powered), target=target,
         fold_forward=fold_forward, fold_forward_driver=fold_forward_driver,
         fold_forward_telemetry=fold_forward_telemetry,
         spectra=spectra, spectra_driver=spectra_driver, spectra_telemetry=spectra_telemetry,
