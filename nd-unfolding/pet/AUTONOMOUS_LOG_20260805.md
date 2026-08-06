@@ -2479,3 +2479,39 @@ else red. Track the arc across the day:
    `sstat` showed `AveCPU 00:17:59` against 17:25 elapsed (~100% CPU) and `MaxRSS 3.1 GB`. This is exactly
    **BEN-028**, added to the ledger only hours earlier — the entry earned its keep immediately, on the
    first job it could have applied to.
+
+## 12:20Z — `56381674` IS RUNNING. Preflight PASS, and the training-independent claim held EXACTLY.
+
+The niter=3 powered closure dispatched after ~10.9h queued.
+
+    56381674  RUNNING on nid008668   started 2026-08-06T11:52:56Z   12h wall -> HARD KILL 23:52:56Z
+    at 12:19:53Z: elapsed 26:58, sstat AveCPU 00:30:05 (~100% CPU), MaxRSS 13.9 GiB
+    artifacts appeared: POWERED_PREFLIGHT.slurm-56381674.json, weights.slurm-56381674/
+
+Liveness judged by `sstat` CPU time and produced artifacts, **not** log growth (BEN-028).
+
+### The preflight gate PASSED, and it reproduced the receipted numbers bit-for-bit
+
+`POWERED_PREFLIGHT.slurm-56381674.json`, `verdict: PASS`, `criteria_are_training_independent`:
+
+| quantity | receipted (`PREFLIGHT_GAP_FLOOR.json`) | this run |
+|---|---|---|
+| `gap` | 0.23427036248451102 | **0.23427036248451102** |
+| `floor` | 0.010747273589844064 | **0.010747273589844064** |
+| `floor_over_gap` | 0.045875515263074 | **0.045875515263074** |
+
+Identical to the last digit, on a **different job at a different `niter`**. That upgrades "these two criteria
+are training-independent so they stand regardless" from an assertion carried all day to a **measured**
+fact. It also confirms the niter 2 -> 3 switch perturbed nothing it was not supposed to touch — which was
+the one thing that could have quietly invalidated the preflight half of the gate.
+
+**A precision correction to my own shorthand.** I have written "gap/floor 0.2343 / 0.0459" repeatedly,
+including in mail. 0.0459 is `floor_over_gap`, not `floor`; `floor` is **0.01075**. The comparison against
+the `<= 0.10` threshold was always the ratio, so no conclusion changes, but the label was wrong.
+
+### What is still open
+
+`residual <= 0.0469`, i.e. recovery >= 0.80. That needs the full training and cannot be short-circuited.
+Nothing to do but let it run: 12h wall, **no resume**, so a walltime kill is a total loss and there is no
+intervention that helps. The wakerctl watch `pwclosure-56381674` reports the verdict independently of this
+session, and its notifier is now tracked in git rather than sitting on purgeable scratch.
