@@ -350,3 +350,27 @@ readable, and commands run (login04/22/23 all answered). `dtn01` is unreachable.
 - **`git pull` on the cluster fails** — not a repo problem: git needs the GitHub key from the stale
   `~/.ssh`. Propagating instead by `git bundle` streamed over ssh stdin, which needs no GitHub auth and
   no sftp. The checkout was 7 commits behind.
+
+### Home recovered; two jobs I sized or launched wrong, both re-done
+
+No new mail. `/global/homes/j/josephrb` is **readable again** — the stale handle cleared on NERSC's side,
+so the `HOME=/pscratch` workaround is no longer needed. Two things I got wrong were exposed by that:
+
+**The fresh-context consult on the `niter=4` decision was dead, not slow.** Zero `claude` processes and no
+answer file, after ~20 minutes of me reporting it as "still running". Cause: I launched it *while* home was
+stale, and `ask_claude.sh` sets `ACCOUNT_HOME=/global/homes/j/josephrb/claude-homes/school` — on exactly
+the filesystem that was broken. So the one check I flagged as load-bearing (the closure-ceiling argument
+behind the `niter=4` answer) never ran. Relaunched at 22:41:13Z now that `ACCOUNT_HOME` resolves. The
+lesson is narrow and worth keeping: **when a filesystem is degraded, a background job that reads it fails
+silently and "still running" is indistinguishable from "died"** — check for the process, not just for the
+absence of output.
+
+**The cluster suite allocation was sized from the local runtime.** I gave `srun` 20 minutes because the
+suite takes ~30 s locally; on the cluster it reached only **~47%** before walltime, and the verifier
+(which hashes ~1 TiB) never ran at all. The mistake is the same shape as BEN-030 — sizing a wall from a
+differently-shaped run — and the fix is the same: measure the thing you are actually sizing. Resubmitted as
+**batch** `56427511` (2 h, `shared`, 8 cores) rather than an interactive `srun`, so it also survives this
+session rather than dying with it.
+
+`56415634` is still `PENDING` — priority 67891, no start estimate, no artifacts, watch armed. Its queue wait
+is now over 10.5 h.
