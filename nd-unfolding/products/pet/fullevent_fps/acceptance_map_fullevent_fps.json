@@ -1,4 +1,327 @@
 {
+ "product_schema": "pet-fullevent-fps-acceptance-map-v1",
+ "what_this_is": "per-cell reco acceptance a_b on the canonical extended-FPS grid, and the prior weight (1-a_b)^k = the fraction of the answer still uncorrected by data after k OmniFold iterations",
+ "definition": "a_b = sum(w_truth | pass_truth & pass_reco) / sum(w_truth | pass_truth)",
+ "matches": "extract_fullevent_fps.completeness_2d:390-404 (same formula, diagnostic use)",
+ "caveat": "this quantity is a reco EFFICIENCY. KNOWN_ISSUES records that the extractor wrongly divides the cross section by it. Using it as a blindness diagnostic is unaffected by that defect.",
+ "inputs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+ "inputs_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+ "git_head": "c39693e",
+ "n_pt_bins": 15,
+ "n_pparallel_bins": 19,
+ "n_cells": 285,
+ "edges_pt": [
+  0.0,
+  0.07,
+  0.15,
+  0.25,
+  0.33,
+  0.4,
+  0.47,
+  0.55,
+  0.7,
+  0.85,
+  1.0,
+  1.25,
+  1.5,
+  2.5,
+  4.5,
+  30.0
+ ],
+ "edges_pparallel": [
+  0.0,
+  0.75,
+  1.5,
+  2.0,
+  2.5,
+  3.0,
+  3.5,
+  4.0,
+  4.5,
+  5.0,
+  6.0,
+  7.0,
+  8.0,
+  9.0,
+  10.0,
+  15.0,
+  20.0,
+  40.0,
+  60.0,
+  120.0
+ ],
+ "global_acceptance_w_truth_weighted": 0.42351622464830585,
+ "global_acceptance_unweighted": 0.4185386693004047,
+ "gate2_receipt_acceptance_for_comparison": 0.4185618199216587,
+ "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL": {
+  "1": 0.42351622464830585,
+  "2": 0.6676664567562574,
+  "3": 0.8084151043148418,
+  "4": 0.8895544160350595
+ },
+ "ideal_recovery_percell_truthmass_weighted_by_k": {
+  "1": 0.4235162246483055,
+  "2": 0.555372914603149,
+  "3": 0.6094746703987659,
+  "4": 0.6374517543207181
+ },
+ "recovery_field_scope_note": "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL is the SCALAR-scope curve: 1-(1-a_global)^k. By Jensen it is an UPPER bound on per-cell recovery (+19.9 pp at k=3 here) and must not be compared with a differential criterion such as the powered closure's L1 recovery. ideal_recovery_percell_truthmass_weighted_by_k is the per-cell form but is TRUTH-MASS weighted, so it is a reference curve and NOT that closure's ceiling either: an L1 shape criterion weights each cell by its injected displacement |prior_b-target_b|, giving 0.6332 at k=3 and 0.6629 at k=4 (FINDING-20260806-niter4-decision.md, where it is graded ASSUMED because omnifold.py:218-220 lets a smooth learner transport the tilt across cells). The global form IS correct for a scalar observable, which is why B1's structural_floor_worst_case legitimately uses it.",
+ "pparallel_marginal": [
+  {
+   "i_pparallel": 0,
+   "pparallel_lo": 0.0,
+   "pparallel_hi": 0.75,
+   "frac_of_fiducial_truth": 0.10320452414613442,
+   "acceptance": 0.0025103883644201084,
+   "prior_weight_by_k": {
+    "1": 0.9974896116355799,
+    "2": 0.9949855253209,
+    "3": 0.9924877252353681,
+    "4": 0.9899961955981075
+   }
+  },
+  {
+   "i_pparallel": 1,
+   "pparallel_lo": 0.75,
+   "pparallel_hi": 1.5,
+   "frac_of_fiducial_truth": 0.10803957909082074,
+   "acceptance": 0.007215926847806806,
+   "prior_weight_by_k": {
+    "1": 0.9927840731521932,
+    "2": 0.9856202159046593,
+    "3": 0.9785080525269717,
+    "4": 0.9714472099999472
+   }
+  },
+  {
+   "i_pparallel": 2,
+   "pparallel_lo": 1.5,
+   "pparallel_hi": 2.0,
+   "frac_of_fiducial_truth": 0.07510116813672212,
+   "acceptance": 0.10023573137291611,
+   "prior_weight_by_k": {
+    "1": 0.8997642686270839,
+    "2": 0.8095757390980313,
+    "3": 0.728427322787771,
+    "4": 0.6554128773361235
+   }
+  },
+  {
+   "i_pparallel": 3,
+   "pparallel_lo": 2.0,
+   "pparallel_hi": 2.5,
+   "frac_of_fiducial_truth": 0.07656199739494766,
+   "acceptance": 0.22379057235287125,
+   "prior_weight_by_k": {
+    "1": 0.7762094276471287,
+    "2": 0.6025010755682833,
+    "3": 0.46766701502363656,
+    "4": 0.3630075460609381
+   }
+  },
+  {
+   "i_pparallel": 4,
+   "pparallel_lo": 2.5,
+   "pparallel_hi": 3.0,
+   "frac_of_fiducial_truth": 0.07599996514941369,
+   "acceptance": 0.35117716098298946,
+   "prior_weight_by_k": {
+    "1": 0.6488228390170105,
+    "2": 0.42097107643009357,
+    "3": 0.27313564895342024,
+    "4": 0.1772166471907117
+   }
+  },
+  {
+   "i_pparallel": 5,
+   "pparallel_lo": 3.0,
+   "pparallel_hi": 3.5,
+   "frac_of_fiducial_truth": 0.07344409876561132,
+   "acceptance": 0.4606887020651257,
+   "prior_weight_by_k": {
+    "1": 0.5393112979348743,
+    "2": 0.2908566760801988,
+    "3": 0.1568622914898353,
+    "4": 0.08459760602042167
+   }
+  },
+  {
+   "i_pparallel": 6,
+   "pparallel_lo": 3.5,
+   "pparallel_hi": 4.0,
+   "frac_of_fiducial_truth": 0.06995566652410419,
+   "acceptance": 0.5477996742843375,
+   "prior_weight_by_k": {
+    "1": 0.4522003257156625,
+    "2": 0.20448513457735124,
+    "3": 0.09246824445988931,
+    "4": 0.04181417026311745
+   }
+  },
+  {
+   "i_pparallel": 7,
+   "pparallel_lo": 4.0,
+   "pparallel_hi": 4.5,
+   "frac_of_fiducial_truth": 0.06606278290241739,
+   "acceptance": 0.617118935041285,
+   "prior_weight_by_k": {
+    "1": 0.382881064958715,
+    "2": 0.14659790990391972,
+    "3": 0.056129563864734534,
+    "4": 0.021490947188197766
+   }
+  },
+  {
+   "i_pparallel": 8,
+   "pparallel_lo": 4.5,
+   "pparallel_hi": 5.0,
+   "frac_of_fiducial_truth": 0.06096974122407401,
+   "acceptance": 0.6690457464684154,
+   "prior_weight_by_k": {
+    "1": 0.3309542535315846,
+    "2": 0.10953071793064836,
+    "3": 0.03624965699151628,
+    "4": 0.011996978170403256
+   }
+  },
+  {
+   "i_pparallel": 9,
+   "pparallel_lo": 5.0,
+   "pparallel_hi": 6.0,
+   "frac_of_fiducial_truth": 0.10096802946664654,
+   "acceptance": 0.7203679699728788,
+   "prior_weight_by_k": {
+    "1": 0.2796320300271212,
+    "2": 0.07819407221708882,
+    "3": 0.02186556715015187,
+    "4": 0.006114312929891303
+   }
+  },
+  {
+   "i_pparallel": 10,
+   "pparallel_lo": 6.0,
+   "pparallel_hi": 7.0,
+   "frac_of_fiducial_truth": 0.06589201560323617,
+   "acceptance": 0.764070893735112,
+   "prior_weight_by_k": {
+    "1": 0.23592910626488806,
+    "2": 0.05566254318294884,
+    "3": 0.013132414065583858,
+    "4": 0.0030983187135936443
+   }
+  },
+  {
+   "i_pparallel": 11,
+   "pparallel_lo": 7.0,
+   "pparallel_hi": 8.0,
+   "frac_of_fiducial_truth": 0.03564076433474798,
+   "acceptance": 0.7788229464827491,
+   "prior_weight_by_k": {
+    "1": 0.22117705351725092,
+    "2": 0.04891928900257288,
+    "3": 0.010819824201747926,
+    "4": 0.0023930968365172478
+   }
+  },
+  {
+   "i_pparallel": 12,
+   "pparallel_lo": 8.0,
+   "pparallel_hi": 9.0,
+   "frac_of_fiducial_truth": 0.018533735790544556,
+   "acceptance": 0.7693877816256223,
+   "prior_weight_by_k": {
+    "1": 0.23061221837437773,
+    "2": 0.05318199526355168,
+    "3": 0.012264417905303302,
+    "4": 0.0028283246202124336
+   }
+  },
+  {
+   "i_pparallel": 13,
+   "pparallel_lo": 9.0,
+   "pparallel_hi": 10.0,
+   "frac_of_fiducial_truth": 0.010891414180398976,
+   "acceptance": 0.7515354364963845,
+   "prior_weight_by_k": {
+    "1": 0.24846456350361545,
+    "2": 0.06173463931704216,
+    "3": 0.015338870210962016,
+    "4": 0.0038111656916052874
+   }
+  },
+  {
+   "i_pparallel": 14,
+   "pparallel_lo": 10.0,
+   "pparallel_hi": 15.0,
+   "frac_of_fiducial_truth": 0.026543556786319793,
+   "acceptance": 0.7406713224040831,
+   "prior_weight_by_k": {
+    "1": 0.25932867759591693,
+    "2": 0.06725136302364702,
+    "3": 0.01744020703944533,
+    "4": 0.004522745828538359
+   }
+  },
+  {
+   "i_pparallel": 15,
+   "pparallel_lo": 15.0,
+   "pparallel_hi": 20.0,
+   "frac_of_fiducial_truth": 0.012945989713034942,
+   "acceptance": 0.7502170553278878,
+   "prior_weight_by_k": {
+    "1": 0.24978294467211215,
+    "2": 0.06239151944907144,
+    "3": 0.01558433745055642,
+    "4": 0.0038927016991638598
+   }
+  },
+  {
+   "i_pparallel": 16,
+   "pparallel_lo": 20.0,
+   "pparallel_hi": 40.0,
+   "frac_of_fiducial_truth": 0.016803974319902115,
+   "acceptance": 0.7617851581737785,
+   "prior_weight_by_k": {
+    "1": 0.23821484182622155,
+    "2": 0.05674631086629175,
+    "3": 0.013517813467235287,
+    "4": 0.003220143796933821
+   }
+  },
+  {
+   "i_pparallel": 17,
+   "pparallel_lo": 40.0,
+   "pparallel_hi": 60.0,
+   "frac_of_fiducial_truth": 0.0022758107064069556,
+   "acceptance": 0.7998580734384559,
+   "prior_weight_by_k": {
+    "1": 0.20014192656154406,
+    "2": 0.0400567907677665,
+    "3": 0.008017043276133458,
+    "4": 0.0016045464866126231
+   }
+  },
+  {
+   "i_pparallel": 18,
+   "pparallel_lo": 60.0,
+   "pparallel_hi": 120.0,
+   "frac_of_fiducial_truth": 0.00016518576451707994,
+   "acceptance": 0.8048509722803704,
+   "prior_weight_by_k": {
+    "1": 0.1951490277196296,
+    "2": 0.03808314301991676,
+    "3": 0.007431888332844356,
+    "4": 0.001450325782275435
+   }
+  }
+ ],
+ "prior_domination_census": {
+  "cells_with_acceptance_below_0.01": 37,
+  "cells_with_acceptance_below_0.05": 48,
+  "n_populated_cells": 266,
+  "truth_mass_fraction_in_cells_below_0.01": 0.2592693017810049,
+  "truth_mass_fraction_with_prior_weight_above_0.9_at_k3": 0.3084393666153026
+ },
  "acceptance_cells_pt_major": [
   0.0038522755139872886,
   0.036538780417300944,
@@ -573,329 +896,6 @@
   0.5185185185185185,
   0.5833333333333334
  ],
- "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
- "caveat": "this quantity is a reco EFFICIENCY. KNOWN_ISSUES records that the extractor wrongly divides the cross section by it. Using it as a blindness diagnostic is unaffected by that defect.",
- "corrected_20260806": "The v1 field `ideal_recovery_global_by_k` evaluated 1-(1-a)^k at the GLOBAL acceptance. 1-(1-a)^k is concave in a, so that OVERSTATES achievable per-cell (differential) recovery by Jensen: +19.9 pp at k=3 (0.8084 vs 0.6095). It read 0.8084 at k=3, essentially the powered closure's 0.80 bar, which invites the false conclusion that the bar is achievable. Renamed and labelled rather than deleted, and the per-cell curve added alongside. NOTE the per-cell field is truth-mass weighted and is therefore a REFERENCE CURVE, not the closure's ceiling: an L1 shape criterion weights each cell by its injected tilt |prior_b-target_b|. The closure-specific ceiling is 0.6332 at k=3 and 0.6629 at k=4, recorded with FINDING-20260806-niter4-decision.md.",
- "definition": "a_b = sum(w_truth | pass_truth & pass_reco) / sum(w_truth | pass_truth)",
- "edges_pparallel": [
-  0.0,
-  0.75,
-  1.5,
-  2.0,
-  2.5,
-  3.0,
-  3.5,
-  4.0,
-  4.5,
-  5.0,
-  6.0,
-  7.0,
-  8.0,
-  9.0,
-  10.0,
-  15.0,
-  20.0,
-  40.0,
-  60.0,
-  120.0
- ],
- "edges_pt": [
-  0.0,
-  0.07,
-  0.15,
-  0.25,
-  0.33,
-  0.4,
-  0.47,
-  0.55,
-  0.7,
-  0.85,
-  1.0,
-  1.25,
-  1.5,
-  2.5,
-  4.5,
-  30.0
- ],
- "gate2_receipt_acceptance_for_comparison": 0.4185618199216587,
- "git_head": "1b0e499",
- "global_acceptance_unweighted": 0.4185386693004047,
- "global_acceptance_w_truth_weighted": 0.42351622464830585,
- "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL": {
-  "1": 0.42351622464830585,
-  "2": 0.6676664567562574,
-  "3": 0.8084151043148418,
-  "4": 0.8895544160350595
- },
- "ideal_recovery_percell_truthmass_weighted_by_k": {
-  "1": 0.4235162246483055,
-  "2": 0.555372914603149,
-  "3": 0.6094746703987659,
-  "4": 0.6374517543207181
- },
- "inputs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
- "inputs_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
- "matches": "extract_fullevent_fps.completeness_2d:390-404 (same formula, diagnostic use)",
- "n_cells": 285,
- "n_pparallel_bins": 19,
- "n_pt_bins": 15,
- "pparallel_marginal": [
-  {
-   "acceptance": 0.0025103883644201084,
-   "frac_of_fiducial_truth": 0.10320452414613442,
-   "i_pparallel": 0,
-   "pparallel_hi": 0.75,
-   "pparallel_lo": 0.0,
-   "prior_weight_by_k": {
-    "1": 0.9974896116355799,
-    "2": 0.9949855253209,
-    "3": 0.9924877252353681,
-    "4": 0.9899961955981075
-   }
-  },
-  {
-   "acceptance": 0.007215926847806806,
-   "frac_of_fiducial_truth": 0.10803957909082074,
-   "i_pparallel": 1,
-   "pparallel_hi": 1.5,
-   "pparallel_lo": 0.75,
-   "prior_weight_by_k": {
-    "1": 0.9927840731521932,
-    "2": 0.9856202159046593,
-    "3": 0.9785080525269717,
-    "4": 0.9714472099999472
-   }
-  },
-  {
-   "acceptance": 0.10023573137291611,
-   "frac_of_fiducial_truth": 0.07510116813672212,
-   "i_pparallel": 2,
-   "pparallel_hi": 2.0,
-   "pparallel_lo": 1.5,
-   "prior_weight_by_k": {
-    "1": 0.8997642686270839,
-    "2": 0.8095757390980313,
-    "3": 0.728427322787771,
-    "4": 0.6554128773361235
-   }
-  },
-  {
-   "acceptance": 0.22379057235287125,
-   "frac_of_fiducial_truth": 0.07656199739494766,
-   "i_pparallel": 3,
-   "pparallel_hi": 2.5,
-   "pparallel_lo": 2.0,
-   "prior_weight_by_k": {
-    "1": 0.7762094276471287,
-    "2": 0.6025010755682833,
-    "3": 0.46766701502363656,
-    "4": 0.3630075460609381
-   }
-  },
-  {
-   "acceptance": 0.35117716098298946,
-   "frac_of_fiducial_truth": 0.07599996514941369,
-   "i_pparallel": 4,
-   "pparallel_hi": 3.0,
-   "pparallel_lo": 2.5,
-   "prior_weight_by_k": {
-    "1": 0.6488228390170105,
-    "2": 0.42097107643009357,
-    "3": 0.27313564895342024,
-    "4": 0.1772166471907117
-   }
-  },
-  {
-   "acceptance": 0.4606887020651257,
-   "frac_of_fiducial_truth": 0.07344409876561132,
-   "i_pparallel": 5,
-   "pparallel_hi": 3.5,
-   "pparallel_lo": 3.0,
-   "prior_weight_by_k": {
-    "1": 0.5393112979348743,
-    "2": 0.2908566760801988,
-    "3": 0.1568622914898353,
-    "4": 0.08459760602042167
-   }
-  },
-  {
-   "acceptance": 0.5477996742843375,
-   "frac_of_fiducial_truth": 0.06995566652410419,
-   "i_pparallel": 6,
-   "pparallel_hi": 4.0,
-   "pparallel_lo": 3.5,
-   "prior_weight_by_k": {
-    "1": 0.4522003257156625,
-    "2": 0.20448513457735124,
-    "3": 0.09246824445988931,
-    "4": 0.04181417026311745
-   }
-  },
-  {
-   "acceptance": 0.617118935041285,
-   "frac_of_fiducial_truth": 0.06606278290241739,
-   "i_pparallel": 7,
-   "pparallel_hi": 4.5,
-   "pparallel_lo": 4.0,
-   "prior_weight_by_k": {
-    "1": 0.382881064958715,
-    "2": 0.14659790990391972,
-    "3": 0.056129563864734534,
-    "4": 0.021490947188197766
-   }
-  },
-  {
-   "acceptance": 0.6690457464684154,
-   "frac_of_fiducial_truth": 0.06096974122407401,
-   "i_pparallel": 8,
-   "pparallel_hi": 5.0,
-   "pparallel_lo": 4.5,
-   "prior_weight_by_k": {
-    "1": 0.3309542535315846,
-    "2": 0.10953071793064836,
-    "3": 0.03624965699151628,
-    "4": 0.011996978170403256
-   }
-  },
-  {
-   "acceptance": 0.7203679699728788,
-   "frac_of_fiducial_truth": 0.10096802946664654,
-   "i_pparallel": 9,
-   "pparallel_hi": 6.0,
-   "pparallel_lo": 5.0,
-   "prior_weight_by_k": {
-    "1": 0.2796320300271212,
-    "2": 0.07819407221708882,
-    "3": 0.02186556715015187,
-    "4": 0.006114312929891303
-   }
-  },
-  {
-   "acceptance": 0.764070893735112,
-   "frac_of_fiducial_truth": 0.06589201560323617,
-   "i_pparallel": 10,
-   "pparallel_hi": 7.0,
-   "pparallel_lo": 6.0,
-   "prior_weight_by_k": {
-    "1": 0.23592910626488806,
-    "2": 0.05566254318294884,
-    "3": 0.013132414065583858,
-    "4": 0.0030983187135936443
-   }
-  },
-  {
-   "acceptance": 0.7788229464827491,
-   "frac_of_fiducial_truth": 0.03564076433474798,
-   "i_pparallel": 11,
-   "pparallel_hi": 8.0,
-   "pparallel_lo": 7.0,
-   "prior_weight_by_k": {
-    "1": 0.22117705351725092,
-    "2": 0.04891928900257288,
-    "3": 0.010819824201747926,
-    "4": 0.0023930968365172478
-   }
-  },
-  {
-   "acceptance": 0.7693877816256223,
-   "frac_of_fiducial_truth": 0.018533735790544556,
-   "i_pparallel": 12,
-   "pparallel_hi": 9.0,
-   "pparallel_lo": 8.0,
-   "prior_weight_by_k": {
-    "1": 0.23061221837437773,
-    "2": 0.05318199526355168,
-    "3": 0.012264417905303302,
-    "4": 0.0028283246202124336
-   }
-  },
-  {
-   "acceptance": 0.7515354364963845,
-   "frac_of_fiducial_truth": 0.010891414180398976,
-   "i_pparallel": 13,
-   "pparallel_hi": 10.0,
-   "pparallel_lo": 9.0,
-   "prior_weight_by_k": {
-    "1": 0.24846456350361545,
-    "2": 0.06173463931704216,
-    "3": 0.015338870210962016,
-    "4": 0.0038111656916052874
-   }
-  },
-  {
-   "acceptance": 0.7406713224040831,
-   "frac_of_fiducial_truth": 0.026543556786319793,
-   "i_pparallel": 14,
-   "pparallel_hi": 15.0,
-   "pparallel_lo": 10.0,
-   "prior_weight_by_k": {
-    "1": 0.25932867759591693,
-    "2": 0.06725136302364702,
-    "3": 0.01744020703944533,
-    "4": 0.004522745828538359
-   }
-  },
-  {
-   "acceptance": 0.7502170553278878,
-   "frac_of_fiducial_truth": 0.012945989713034942,
-   "i_pparallel": 15,
-   "pparallel_hi": 20.0,
-   "pparallel_lo": 15.0,
-   "prior_weight_by_k": {
-    "1": 0.24978294467211215,
-    "2": 0.06239151944907144,
-    "3": 0.01558433745055642,
-    "4": 0.0038927016991638598
-   }
-  },
-  {
-   "acceptance": 0.7617851581737785,
-   "frac_of_fiducial_truth": 0.016803974319902115,
-   "i_pparallel": 16,
-   "pparallel_hi": 40.0,
-   "pparallel_lo": 20.0,
-   "prior_weight_by_k": {
-    "1": 0.23821484182622155,
-    "2": 0.05674631086629175,
-    "3": 0.013517813467235287,
-    "4": 0.003220143796933821
-   }
-  },
-  {
-   "acceptance": 0.7998580734384559,
-   "frac_of_fiducial_truth": 0.0022758107064069556,
-   "i_pparallel": 17,
-   "pparallel_hi": 60.0,
-   "pparallel_lo": 40.0,
-   "prior_weight_by_k": {
-    "1": 0.20014192656154406,
-    "2": 0.0400567907677665,
-    "3": 0.008017043276133458,
-    "4": 0.0016045464866126231
-   }
-  },
-  {
-   "acceptance": 0.8048509722803704,
-   "frac_of_fiducial_truth": 0.00016518576451707994,
-   "i_pparallel": 18,
-   "pparallel_hi": 120.0,
-   "pparallel_lo": 60.0,
-   "prior_weight_by_k": {
-    "1": 0.1951490277196296,
-    "2": 0.03808314301991676,
-    "3": 0.007431888332844356,
-    "4": 0.001450325782275435
-   }
-  }
- ],
- "prior_domination_census": {
-  "cells_with_acceptance_below_0.01": 37,
-  "cells_with_acceptance_below_0.05": 48,
-  "n_populated_cells": 266,
-  "truth_mass_fraction_in_cells_below_0.01": 0.2592693017810049,
-  "truth_mass_fraction_with_prior_weight_above_0.9_at_k3": 0.3084393666153026
- },
- "product_schema": "pet-fullevent-fps-acceptance-map-v1",
  "truth_mass_cells_pt_major": [
   42802.93810266256,
   4326.856172502041,
@@ -1183,5 +1183,5 @@
   129.3182457089424,
   9.622188687324524
  ],
- "what_this_is": "per-cell reco acceptance a_b on the canonical extended-FPS grid, and the prior weight (1-a_b)^k = the fraction of the answer still uncorrected by data after k OmniFold iterations"
+ "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel"
 }

@@ -411,3 +411,46 @@ how the 38 throws became unreproducible in the first place. Both are now committ
 
 `56415634` (PET niter=3) remains **PENDING**, priority 67891, no artifacts, watch armed — still watching as
 asked.
+
+### The consult came back and dismantled my own load-bearing argument — conclusion survived, reasoning did not
+
+The fresh-context review of the `niter=4` decision (relaunched after it died on the stale mount) returned
+**agree: no, for now** — and then took apart the argument I had called decisive. Four corrections landed:
+
+1. **The dilution ceiling is my WEAKEST support, not my strongest, and only `ASSUMED`-grade.**
+   `(1-a_b)^k` presumes step 2 resolves cells independently; `omnifold.py:218-220` evaluates the truth
+   classifier on **all** `pass_gen` rows, so a smooth learner can transport the injected `f(pT)` from
+   high-acceptance cells into low-acceptance ones — and the injection is smooth in pT while the acceptance
+   gradient lives on p∥. A well-generalising network could **beat** the ceiling. Measured 0.5469 sitting
+   below 0.6332 shows that is not happening at k=3, but that is one run at one k. "Validated as an upper
+   bound" was an overstatement, and I have downgraded it.
+2. **A model-free version of the same conclusion exists and now carries the decision (§2a).**
+   `PREFLIGHT_GAP_FLOOR.json` declares `residual_budget_abs = 0.046854` against a measured residual of
+   0.106159, so passing at k=4 needs a **2.266× cut from one iteration**. The best single-iteration factor
+   this campaign has ever measured is 1.738 (B1 k=2→3) → k=4 lands at **0.739**. Short of 0.80 on every
+   factor we have evidence for, regardless of the ceiling debate.
+3. **My k=4 caution had the sign backwards.** The closed form under-predicting at k=4 makes the ideal
+   ceiling *optimistic*, so k=4 helps **even less**. Reinforcement, not caution.
+4. **BEN-027 violation, mine:** I reported `56415634` as "10h14m queued" across several cycles. Verified
+   in-turn: submitted `12:04:38`, queued **3h46m** at 15:50:44 PDT. I had carried over the
+   *powered-closure* job's 10h39m wait. The forward requeue cost is what matters and that precedent still
+   supports ~10h, so the decision holds — but the sunk cost was a quarter of what I said. A number in a
+   report must come from a command run in the same turn, and "carried over from my own earlier message"
+   is exactly the failure BEN-027 describes.
+
+Two further fixes it prompted. The Jensen entry is reframed as a **scope mislabel, not a wrong formula**:
+the global form is correct for a *scalar* observable, which is precisely what B1's
+`structural_floor_worst_case` uses (matching measurement to 1.9%/0.8% at k=2/3) — without that framing
+someone would "fix" B1 by analogy and break it. And the provenance note I had **hand-added** to the
+acceptance-map product is now **producer-emitted**: the script's own docstring says the product must be
+regenerated rather than hand-edited, and my in-place edit had left it unreproducible with a pre-fix
+`git_head`. Regenerated on compute — `git_head` now `c39693e`, numbers reproduce (per-cell 0.60947), and
+the `inputs_sha256` live pin on the G2 dump is unchanged.
+
+Also worth recording: `56381674` shows `State=FAILED ExitCode=3:0` in `sacct`, which is the driver's own
+`return 0 if ok else 3` on a FAIL **verdict**, not a crash — noted next to the recovery number so nobody
+discards 0.5469 as junk from a broken run.
+
+**Regeneration `56427580`: all 10 tasks RUNNING at 8:28** (originals took 42–54 min). Throws still show
+122–159 missing, as expected — the driver saves atomically at task end. `56415634` still PENDING. The
+adoption stays gated on 160 distinct throws.
