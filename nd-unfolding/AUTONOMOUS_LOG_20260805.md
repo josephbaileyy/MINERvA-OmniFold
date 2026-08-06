@@ -374,3 +374,40 @@ session rather than dying with it.
 
 `56415634` is still `PENDING` — priority 67891, no start estimate, no artifacts, watch armed. Its queue wait
 is now over 10.5 h.
+
+### Regenerating the missing 38 throws — and the launcher that made them was never in git
+
+Joseph: *"Can you do the J28 adoption and regeneration of the missing 38? Keep watching the PET niter=3"*.
+Regeneration must come **first**: adopting on 122/160 would adopt the subsample I had already flagged as
+not a drop-in replacement.
+
+**Exactly which throws are missing, measured rather than inferred.** Slabs 0–30 hold throws **0–121**;
+missing is **122–159**, contiguous, 38 of them. Note "slabs 31–39" understates it by 2, because slab 30 is
+*partial* (2 rows, not 4) — which is why I enumerated throw ids from the slab contents (`throws` key)
+instead of counting files.
+
+**Regeneration is BIT-REPRODUCIBLE, which changes what this is.** `unified_throw_cov.py:222-223` seeds per
+**global** throw index — `gj = throw_offset + j; rng = default_rng(seed + gj)` — so throw 122 depends only
+on `--seed 1000` and its index, never on how tasks are packed. The regenerated throws are therefore the
+*same* throws the adopted covariance used, with identical `flux_u` draws. This repairs the original
+ensemble rather than substituting a statistically-equivalent one, and that distinction is what makes a
+later adoption legitimate.
+
+Submitted as **`56427580`, array tasks 30–39** of the existing `sbatch_uthrow_run_5d_fast.sh`, overriding
+only `--array` on the command line so the launcher itself stays byte-identical provenance. Task 30 → offset
+120 regenerates 120,121 identically *and* completes the partial slab with 122,123; tasks 31–39 → 124–159.
+Original tasks cost ~42–54 min at ~30 GB RSS, and all inputs are intact (`cv.npz` 2.94 GB, 373 per-band
+files, ratio table). Running within 36 s of submission.
+
+**Two things I got wrong and fixed in the same turn.** (1) I armed the watch with `notify_nominal.sh`, which
+reports `pet_fullevent_nominal_weights.npz` — artifacts this array does not produce. It would have fired
+and reported them ABSENT, i.e. **invented a failure**, which is worse than no notification. Replaced with
+`notify_uthrow_regen.sh`, which reports *throw completeness* — the actual gate for the re-roll — and says
+explicitly not to proceed below 160. (2) `git status` on the launcher returned `??`: both
+`sbatch_uthrow_run_5d_fast.sh` and `sbatch_uthrow_combine_5d_fast.sh` were **untracked**, existing only on
+scratch — despite being the launchers that produced the adopted 160 throws and the adopted
+`unified_throw_cov_5d.root`. That is load-bearing provenance on a purgeable filesystem, and losing it is
+how the 38 throws became unreproducible in the first place. Both are now committed.
+
+`56415634` (PET niter=3) remains **PENDING**, priority 67891, no artifacts, watch armed — still watching as
+asked.
