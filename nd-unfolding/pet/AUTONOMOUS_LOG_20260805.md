@@ -2550,3 +2550,44 @@ There are now two sessions writing to this repo. I am NOT touching `56397442`, i
 `products/pet/b1_closure/`, and I am not editing item (e) while another session is measuring it. My lane
 this cycle is `56381674` only. Recording that division here because a log both sessions can read is the
 only place it is real.
+
+## 13:20Z — WATCH ITEM: `56381674`'s working set is growing, and I am predeclaring the escalation rule
+
+Both jobs running: `56381674` at 1:27:07 (12h wall), `56397442 b1niter4` at 23:19 (2h wall, other session's
+lane). `56381674` is healthy on CPU (`AveCPU 01:39:18` vs 1:27 elapsed) and past preflight into training —
+stdout confirms `preflight PASS -- allocating the training`, stderr shows XLA compiled and batch callbacks
+firing. Preflight echo, for the record: `gap=0.2343 (min 0.15) floor=0.0107 floor/gap=0.0459 (max 0.1)
+residual_budget=0.0469 budget/floor=4.36x -> PASS`.
+
+### The memory trend, stated as data rather than as reassurance
+
+    elapsed   MaxRSS
+    27 min    13.90 GiB
+    57 min    15.44 GiB
+    87 min    17.64 GiB       AveRSS 17.2 GiB  <- ~= MaxRSS, so the WORKING SET is growing,
+                                                  not transient peaks
+    limit     56.13 GiB  (mem=57472M, from MinMemoryCPU=1796M x 32)
+
+Observed growth over that window is ~3.6 GiB/h. **Linear extrapolation to the 12h wall gives ~55.5 GiB
+against a 56.13 GiB limit** — i.e. marginal, arriving right at the deadline. An OOM kill would be a total
+loss (no resume) and the *second* lost attempt at this closure.
+
+I am NOT raising this with Joseph yet, and the reason is the lesson from this morning: extrapolating a
+3-point trend for a quantity that normally **plateaus** once caching is done would be precisely the
+small-sample overreach of BEN-025. Training-phase RSS typically flattens after the first epoch; the
+inputs are 9.9 GB and both `MultiFold` legs cache early, so the memory-hungry phase is behind it.
+
+### Predeclared escalation rule, fixed now so the outcome cannot be rationalised later
+
+- **RSS > 28 GiB (50% of limit) before 6h elapsed** -> the linear trend is real, not a plateau. Escalate
+  immediately with a recommendation to cancel and resubmit with a raised `--mem`, because losing 2-3h is
+  strictly better than losing 10h. That is his call, not mine, and it is time-sensitive the same way the
+  niter decision was.
+- **RSS flattens below that** -> plateau confirmed, no action, no mail. This is the expected case.
+- **Either way**: keep sampling every cycle and record the points, so the trajectory is legible to whoever
+  reads this rather than living in one session's head.
+
+One incidental observation, not acted on: stderr warns `on_train_batch_end` takes 0.1455s against a
+0.0230s batch time — a 6x callback overhead. If that callback accumulates per-batch state it would be both
+a throughput drag and a candidate source of the RSS growth. Recording it as a lead for whoever profiles
+this later; I am not touching a running critical-path job to chase it.
