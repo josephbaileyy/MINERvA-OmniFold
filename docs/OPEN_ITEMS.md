@@ -190,8 +190,13 @@ Implementation gate, in order:
          with 128 of 262 bins under 0.8 and **29 bins moving the wrong way** (recovery < 0).
        - The residual is **broadly distributed**, not a few bad cells: the top 10 bins carry
          26.5% of the L1 residual, top 20 carry 44.8%, top 50 carry 75.1%.
-       - Worst-recovered cells cluster at the `i_pparallel = 0` edge across several pT bins
-         (cells 38/57/76/95 = pT 2--5 at pparallel 0, recovery 0.17--0.24).
+       - **The miss is asymmetric in the TILT DIRECTION**, which is the explanation --- superseding
+         this session's first reading that the worst cells "cluster at the `i_pparallel = 0` edge".
+         They do sit there, but that is a displacement-magnitude artifact, not a cause: the tilt is a
+         function of truth pT, so all 19 pparallel cells at a given pT share it. Down-tilted cells
+         (pT idx 2--5, factor ~0.55x) recover **0.17--0.24**; up-tilted cells (pT idx 12, ~2.65x)
+         recover **0.72--0.91**. The estimator resists moving DOWN. Credit: concurrent session,
+         `AUTONOMOUS_LOG_20260805.md` 14:20Z.
 
        That signature --- direction right, magnitude short, normalization exact, spread over the
        whole grid --- is **over-regularization**, i.e. too few effective iterations and/or an
@@ -200,8 +205,27 @@ Implementation gate, in order:
        it suffices for **rate** closure; (ii) `epochs=8` leaves the fit optimization-limited ---
        `B1-NORMALIZATION-FIX-DESIGN.md:352-357` warns explicitly that epochs is not the unit of
        optimization, steps are, though the 2M half-size should sit right of that regime.
-       **No niter=2 comparison exists** (56355818 was cancelled at 5:18), so the failure cannot
-       be attributed to the niter switch either way.
+       **CORRECTED --- this session first wrote "no niter=2 comparison exists, so the failure cannot
+       be attributed to the niter switch either way." That was too weak.** The concurrent session
+       supplied the structural argument: with acceptance `a = n_step1_a/n_truth_a = 837494/1999920 =
+       0.418764` (the report's own `samples` block), `RunStep2` pins the other 58.1% of truth rows to
+       exactly 1, so B1's bound gives a **ceiling on recovery** of `1-(1-a)^k` --- reproduced
+       independently here: `k=1` 0.41876, **`k=2` 0.66216**, `k=3` 0.80364, `k=4` 0.88587. So
+       **`56355818` at `niter=2` could never have passed a 0.80 bar; it was doomed by construction**,
+       and the 2->3 switch was not merely better for B1 but *necessary for this criterion to be
+       satisfiable at all*. **Caveat, theirs and important:** `1-(1-a)^k` is B1's bound for the
+       fold-forward **RATE** ratio, applied here by analogy to a **spectral L1**. Same mechanism, and
+       the numbers line up, but the transfer is **NOT proven** --- verify before quoting. Measured
+       0.546853 is 68% of the k=3 ceiling, sitting between the k=1 and k=2 ceilings.
+
+       **And the bar was never checked against that ceiling.** At `k=3` the ceiling is 0.80364 against
+       a predeclared `recovery_min = 0.80` --- **0.36 pp of headroom**, i.e. the criterion demands a
+       near-perfect estimator. Same species as the B1 defect where any `tol >= C` is inert: a
+       threshold set without reference to the achievable limit. Recording it is **not** a proposal to
+       lower it.
+
+       Note also that `residual/gap` and `recovery` are **one criterion stated twice**, not two
+       independent failures: `recovery == 1 - residual/gap` holds exactly (verified).
 
        **This inverts the reading of item (e).** The B1 argument for `k=3` is about a
        normalization scalar; this is the differential test, and it fails. If (i) is the cause,

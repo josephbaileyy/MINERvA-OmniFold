@@ -3095,3 +3095,34 @@ Also this turn: BEN-026 amended after this session repeated it a third time (`py
 and `verify_hash_bindings.py | tail -12`), having read the rule in the same session — it composes with
 BEN-028 into a *total* evidence loss, not a partial one, because SIGTERM arrives before any flush.
 `test_hash_bindings.py` 4 passed (1:55:25); bindings intact across this commit's edits.
+
+### 2026-08-06, same day — three corrections to the entry above, from the concurrent session
+
+A second session was analysing 56381674 in parallel (`AUTONOMOUS_LOG_20260805.md` 14:20Z, commit
+`291229e`) and got further on three points. Recorded rather than silently merged, because two of them
+change conclusions this session had already written down.
+
+1. **"Nothing is attributable to the niter switch" was too weak — the niter=2 run was unpassable BY
+   CONSTRUCTION.** Acceptance from the report's own `samples` block is `837494/1999920 = 0.418764`;
+   `RunStep2` pins the remaining 58.1% of truth rows to 1, so recovery has a structural ceiling
+   `1-(1-a)^k`. Reproduced independently here: k=1 0.41876, **k=2 0.66216**, k=3 0.80364, k=4 0.88587.
+   A 0.80 bar was **unreachable at k=2**, so `56355818` would have burned 12 h to prove it, and the
+   2->3 switch was necessary for the criterion to be satisfiable at all — not merely preferable.
+   *Their caveat, which stands:* this is B1's **RATE** bound applied by analogy to a **spectral L1**.
+   Unproven transfer. Do not quote it as established.
+2. **The bar was never checked against the ceiling.** k=3 ceiling 0.80364 vs `recovery_min = 0.80`
+   leaves 0.36 pp. Same species as the inert-tolerance defect B1 fixed. Not a proposal to lower it.
+3. **The tilt-direction asymmetry is the explanation; this session's "pparallel edge" reading was an
+   artifact.** The tilt is a function of truth pT, so all 19 pparallel cells at one pT share it — the
+   worst cells sit at pparallel 0 only because displacement is largest there. Real structure:
+   down-tilted cells (pT 2–5, ~0.55x) recover 0.17–0.24, up-tilted (pT 12, ~2.65x) recover 0.72–0.91.
+   The estimator resists moving DOWN.
+
+Also from them, adopted here: `residual/gap` and `recovery` are one criterion stated twice
+(`recovery == 1 - residual/gap` exactly, verified), so the FAIL is one missed criterion, not two; and
+the reweight-logit-cap hypothesis is **refuted** (cap 30.0 spans 1e-13..1e13, injection needs
+0.55..2.65, engine logged zero saturation lines).
+
+Both sessions independently reached the same leading hypothesis — under-fitting, pointing at
+`epochs=8` and the effective-iteration count — from different evidence. That is convergence, not
+confirmation: neither has tested it.
