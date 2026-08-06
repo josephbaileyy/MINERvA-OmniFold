@@ -86,8 +86,19 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > carry a `flux_normalized` stamp and `--combine` refuses unstamped ones.
 >
 > **THE EXACT CORRECTED NUMBERS NOW EXIST as of 2026-08-06** (Perlmutter job `56417324`, 31 throw
-> slabs / 122 throws + 36 block units of the adopted `_sb` ensemble, `bank_uthrow_5d`; receipt
-> `nd-unfolding/uq_5d/rescaled_20260806/j28_reroll_20260806.json`). Sqrt-traces, before → after:
+> slabs / **122 throws** + 36 block units, `bank_uthrow_5d`; receipt
+> `nd-unfolding/uq_5d/rescaled_20260806/j28_reroll_20260806.json`).
+>
+> **SCOPE, corrected later the same day — this is 122 of the adopted 160 throws (76.2%).** Read from the
+> adopted ROOT directly: `n_throws = 160`, `sqrt_tr_unified = 4.4607819710748654e-38`,
+> `joint_mean_shift_norm = 1.654393237996853e-38`. Slabs **31–39 of `uthrow_slabs_5d_sb/` are lost**
+> (9 slabs, ~38 throws; only 0–30 survive), so the re-roll's "before" sits **−2.62%** below the adopted
+> `sqrt_tr_unified` and −7.21% below its mean shift. The before → after comparison is computed from the
+> same 122 slabs on both sides, so every **relative** change below is a controlled measurement of the
+> correction; the corrected **absolute** values are a 76.2% subsample and are **not** drop-in
+> replacements for the adopted covariance. Replacing it exactly requires re-throwing slabs 31–39.
+>
+> Sqrt-traces, before → after (same 122 slabs both sides):
 >
 > | quantity | before | after | change |
 > |---|---|---|---|
@@ -101,10 +112,18 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > | `g_max` | 22.302611 | 17.202930 | −22.87% |
 >
 > **The quarantine STAYS IN FORCE**, because these numbers are a *measurement*, not an adoption:
-> `rescale_flux_universes.py` writes its own output and adopts nothing, and the F7 mean-shift
-> convention that decides which `g` column above is the operative one is still open
-> (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`). Lift it by adopting, in a commit that replaces the
-> numbers — not by deleting the notice.
+> `rescale_flux_universes.py` writes its own output and adopts nothing, and the ensemble is a 76.2%
+> subsample of the adopted one. Lift it by adopting, in a commit that replaces the numbers — not by
+> deleting the notice.
+>
+> **F7 is settled by its own predeclared rule, not open.** `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78`
+> fixed the criterion before the data: `~floor` → mean-centered OK; `>> floor` → also produce the
+> CV-centered variant and report the shift either way, never silently drop it. On the adopted ensemble
+> `||mean_shift||` is **4.69×** the sampling floor `sqrt_tr/√160` (37.1% of `sqrt_tr` against a 7.9%
+> floor — the same 37% `:325` flagged as NON-negligible on 07-13), and the flux correction pushes it to
+> **4.83×**. So **quoting the mean-centered variant alone is disqualified**, and the operative `g` change
+> is the CV-centered **+0.62%**, not the mean-centered −2.55%. What remains open is presentation only
+> (CV-centered as sole headline vs both side by side).
 >
 > **The first-order estimate is superseded and was not confirmed.** It suggested "a few percent
 > upward" and ~+6% on the combined block; the exact block sum moved **+10.19%** and the flux block

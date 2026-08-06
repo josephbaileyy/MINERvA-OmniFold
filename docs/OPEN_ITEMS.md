@@ -336,6 +336,17 @@ Implementation gate, in order:
        whether the full-event PET budget is publication-blocking at all (the note quotes **no** PET
        covariance --- `\petTotalMedian`/`\petTotalTrace`/`\petFourMedian` are QUARANTINED and referenced
        **0** times). Cost floor for that build is **>=100 GPU-h**; the "170-250" figure is unverified.
+   (g) **NEW 2026-08-06 --- nine throw slabs of the adopted 5D ensemble are LOST, so the corrected
+       covariance is a 76.2% subsample.** The adopted `uq_5d/unified_throw_cov_5d.root` records
+       `n_throws = 160` (read from the ROOT) and `sqrt_tr_unified = 4.4607819710748654e-38`, but
+       `uq_5d/uthrow_slabs_5d_sb/` now holds only slabs **0-30**; slabs **31-39 (~38 throws) are gone**
+       from purgeable scratch. The J28 re-roll therefore ran on **122** throws, and its "before" sits
+       **-2.62%** below the adopted `sqrt_tr_unified`. The before/after *relative* changes are controlled
+       (same slabs both sides) and stand, but the corrected **absolute** numbers are **not** drop-in
+       replacements for the adopted covariance. **To replace it exactly, slabs 31-39 must be re-thrown**
+       --- otherwise the replacement is a 122-throw product and must be labelled as one. Note Step 0's
+       protection could only ever cover the survivors, so it does not mitigate this. See BEN-033 for the
+       generalisable trap (read ensemble size from the product, not the launcher).
    (f) **NEW 2026-08-06 --- J28 has a SIXTH site that the fix never touched:
        `nd-unfolding/eavailW_covariance.py`.** Not among `081ae4a`'s twelve files, not scoped by
        `AUDIT-FINDINGS-20260731.md`. It loads `flux_bins` once from the CV histogram (`:104`) and passes

@@ -6,10 +6,21 @@ units, 10,694 bins; receipt `uq_5d/rescaled_20260806/j28_reroll_20260806.json`. 
 understated ~4.2×**, not inflated: `sqrt_tr_flux_block` **+316.83%**, `sqrt_tr_blocksum` **+10.19%**,
 `sqrt_tr_unified` **−0.72%**, `sqrt_tr_cross` −21.12%, `joint_mean_shift_norm` +22.81%. The
 first-order "+3–4% upward" estimate is **superseded and was not confirmed** — do not cite it again.
-`g` direction is **convention-dependent** (mean-centered `g_mean` −2.55%, CV-centered **+0.62%**), so
-the F7 decision at line 66 below must be settled before any adoption quotes a direction; both agree
-`g_max` falls ~23%. **The ledger scales remain QUARANTINED**: this is a measurement, and
-`rescale_flux_universes.py` adopts nothing. Write-up
+
+**SCOPE CORRECTION (same day): the re-roll covers 122 of the adopted 160 throws (76.2%).** The adopted
+ROOT reads `n_throws = 160`, `sqrt_tr_unified = 4.4607819710748654e-38`; slabs **31–39 of
+`uthrow_slabs_5d_sb/` are lost** (only 0–30 survive), so the "before" sits −2.62% below the adopted
+value. Relative changes are controlled (same slabs both sides); the corrected **absolute** numbers are a
+subsample and not drop-in replacements. Exact replacement needs slabs 31–39 re-thrown.
+
+**F7 (item 1 below) is SETTLED BY ITS OWN PREDECLARED RULE, not open.** `||mean_shift||` is **4.69×**
+the sampling floor `sqrt_tr/√160` on the adopted ensemble (37.1% of `sqrt_tr` vs a 7.9% floor — the same
+37% line 325 flagged as NON-negligible on 07-13), and the correction pushes it to 4.83×. Per the rule at
+lines 73-78 that is `>> floor`, so **mean-centered-only is disqualified**: the CV-centered variant must be
+produced and the shift reported either way. The operative `g` change is therefore CV-centered **+0.62%**,
+not mean-centered −2.55%. Only *presentation* remains open. Both variants agree `g_max` falls ~23%.
+**The ledger scales remain QUARANTINED**: this is a measurement, and `rescale_flux_universes.py` adopts
+nothing. Write-up
 `../docs/orchestration/FINDING-20260806-j28-reroll-exact.md`. These slabs are the **5-iteration GBDT**
 lane, so this does **not** discharge `OPEN_ITEMS.md` item (d) — Step 2 of the plan is next. (Slab
 precondition corrected: **542** files, not 365 — BEN-032.)
