@@ -117,9 +117,29 @@ Note for Step 2: these slabs are the **5-iteration GBDT 5D** lane (`--iters 5`, 
 `xsec_5d_MEFHC_5iter_lgbm.root`), not the PET lane whose policy moved 2 → 3. Step 1 was deliberately
 `niter`-agnostic, so this result is complete on its own terms and **does not** discharge item (d).
 
-**Step 2 — decide what must be re-thrown at `niter=3` versus what transfers.** Not everything in the
-budget is estimator-dependent in the same way. The honest split has to be made explicitly and
-written down, not assumed:
+**Step 2 — decide what must be re-thrown at `niter=3` versus what transfers.** **DONE 2026-08-06 —
+[`STEP2-20260806-niter3-budget-classification.md`](STEP2-20260806-niter3-budget-classification.md)**,
+fresh-context reviewed before landing (that review corrected two of the seven findings it rested on).
+Four results worth reading here:
+
+1. **Item (d) is misframed for the PET lane.** There is no full-event PET covariance to *recompute* —
+   `products/pet/fullevent_fps/` holds two non-covariance files and `PET_UQ_PRODUCTION_STATUS.md`
+   contains zero occurrences of "full-event". The work is a **BUILD**, which item 6 already required.
+2. **The 5D GBDT lane transfers, argued positively:** its covariance is a closed function of an
+   enumerated input list containing no PET quantity (`adopt_unified_5d.py:75,78`, `--iters 5` on
+   `bank_uthrow_5d`), and `NOMINAL_SEED_POLICY['niter']` is read by one driver that writes nothing any
+   5D GBDT product reads. Falsifiable by one new dependency — which is the point.
+3. **A sixth J28 site: `eavailW_covariance.py`**, absent from `081ae4a` and unscoped by the audit. Now
+   in `KNOWN_ISSUES.md`. Code-read, not run.
+4. **The real exposed decision is Joseph's, and it is not a classification question.** The note quotes
+   **no** PET covariance — `\petTotalMedian/\petTotalTrace/\petFourMedian` are all `QUARANTINED` and
+   referenced **0 times**; only `\petRatio` and `\petClosure` are used, and `sec_pet.tex:1` titles the
+   section a cross-*check*. So the full-event PET budget (≥100 GPU-h floor, not the unverified
+   "170–250") buys a comparison the note presently declines to make, and whether that is
+   publication-blocking or discretionary is recorded nowhere.
+
+~~Not everything in the budget is estimator-dependent in the same way. The honest split has to be made
+explicitly and written down, not assumed:~~ *(original wording, kept for the record)*
 - Components that are *definitionally* tied to the estimator (anything derived from unfolded throws:
   `C_unified`, `C_blocksum`, `g`, the joint mean shift) → **re-throw at `niter=3`**.
 - Components the audit already lists as J28-**unaffected** (central cross sections, corrected 4D

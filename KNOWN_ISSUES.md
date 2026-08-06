@@ -176,30 +176,62 @@ reproducing a run by inference. The nominal driver stores its norms; the closure
 inference-only reproduction must reproduce the same row population (`dump_rows_b` makes that possible) and
 must treat the spectrum reproduction as its only falsification handle.
 
-## The PET C_stat summaries record no estimator provenance, so they cannot be classified
+## The PET covariance summaries carry no estimator stamp — the fact lives only in the launcher
 
-`products/pet/bkgsub/pet_cstat_bkgsub_5d.summary.json` (and its pilot) record `n_replicas`,
-`replica_ids`, `n_reported_bins`, the sqrt-trace and per-bin ratios — and **nothing about the
-estimator that produced them**: no `niter`, no schema/feature set, no commit, no job id. Their
-producers (`pet/combine_cstat_bkgsub.py`, `pet/assemble_ctotal_bkgsub.py`) do not record it either,
-because they combine replica outputs and never see the training config.
+`products/pet/bkgsub/pet_cstat_bkgsub_5d.summary.json` and its siblings record `n_replicas`,
+`replica_ids`, `n_reported_bins`, the sqrt-trace and per-bin ratios — and **nothing about the estimator
+that produced them**: no `niter`, no schema/feature set, no commit, no job id. Their producers
+(`pet/combine_cstat_bkgsub.py`, `pet/assemble_ctotal_bkgsub.py`) do not record it either, because they
+combine replica outputs and never see the training config.
 
-Why this is debt and not a nitpick: the `niter` 2 → 3 switch (`2b2e5f1`) made "which covariance
-components were computed at which estimator setting?" a question the budget has to answer, and
-`PLAN-20260806-niter3-budget-and-J28-reroll.md` rule 5 requires a **positive** argument before any
-component may be declared to transfer unchanged. For these files no such argument can be constructed
-from the artifact at all — the fact needed to classify them was never written down. The practical
-consequence is that they must be treated as non-transferable by default, which is the same conclusion
-`OPEN_ITEMS.md` item 6 reaches on separate grounds ("no current recoil-PET covariance component is
-automatically transferable to the new estimator"), so nothing is lost *here* — but the next component
-that lands without provenance will force the same rebuild.
+**Correction, 2026-08-06:** an earlier version of this entry said the fact "was never written down."
+That is wrong, and wrong in the direction that matters. `pet/sbatch_pet_nominal_bkgsub.sh:42` pins
+`NITER="${PET_NITER:-2}"`, its header at `:29` states `iters = 2` in as many words, and `:14` carries
+the banner **"QUARANTINED RECOIL-ONLY CROSS-CHECK LAUNCHER — NOT a publication path"**, with `:15-17`
+naming the recoil loader and the bkgsub purity target and noting that "C_stat, C_ml, and systematic
+blocks all reference THIS nominal." So the provenance is recorded — just not in the artifact a reader
+of the covariance would open.
 
-Corroborating signal that these are a different estimator/domain, independent of the missing fields:
-their reported-bin count is **10550**, against **10694** for the 5D lane re-rolled in
-`uq_5d/rescaled_20260806/j28_reroll_20260806.json`.
+That makes the classification **stronger**, not weaker. These components are disqualified from the
+`niter=3` budget by three *positive* facts, not by an absence: they were built at **`niter=2`**, on a
+path the repo itself labels **non-publication**, over a **10550-bin recoil domain** (against 10694 for
+the 5D lane re-rolled in `uq_5d/rescaled_20260806/j28_reroll_20260806.json`). This satisfies
+`PLAN-20260806-niter3-budget-and-J28-reroll.md` rule 5, which demands a stated reason rather than the
+absence of a reason to doubt.
+
+The debt that remains is the **stamp**, and it is real: nothing in the artifact chain would have told a
+future reader any of the above, and the whole `bkgsub` budget — C_syst, C_retrain, C_stat, C_ml,
+C_lateral and the assembled C_total — hangs off that one quarantined nominal.
 
 **Fix forward:** any new covariance component must stamp the estimator config it was computed under
 (at minimum `niter`, schema/feature-set identifier, and the producing commit) into its own summary,
 the way `train_fullevent_nominal.py` stamps `seed_policy` into its weights artifact. A covariance
-without that stamp is unclassifiable the moment the estimator moves, and the estimator has now moved
-twice (full-event schema 2026-08-01, `niter` 2026-08-06).
+without that stamp is unclassifiable from the artifact the moment the estimator moves, and the
+estimator has now moved twice (full-event schema 2026-08-01, `niter` 2026-08-06).
+
+## J28's scope misses a sixth site: `eavailW_covariance.py` divides every flux universe by the CV flux
+
+The J28 fix commit `081ae4a` touches **12 files and `eavailW_covariance.py` is not among them**, and
+neither `AUDIT-FINDINGS-20260731.md` nor this file scopes it into J28's blast radius. But it carries
+the same defect by the same mechanism:
+
+- `:104` loads `flux_bins` **once**, from the CV histogram `pTmu_reweightedflux_integrated`;
+- `:232` passes that same CV array into `extract_cross_section_nd` on **every** call, with no
+  per-universe override — contrast a fixed site, `unified_throw_cov_5d.py:67`, which threads
+  `d["flux"] if flux is None else flux` precisely so a universe can supply its own `Φu`;
+- `:259 def _y_band(sig_u, td_u)` takes weight arrays only — there is no flux parameter to thread;
+- `:274-276` runs **all 100 PPFX flux universes** through `_y_band` and forms
+  `C_flux = mat_covariance(fX)`, added into `C_syst` at `:277`.
+
+So every flux universe is divided by `Φ_CV` instead of its own `Φu`, which **removes the normalization
+spread the flux universes exist to carry** and therefore *understates* `C_flux`. Direction is fixed by
+the same identity the re-roll used; magnitude is not, because this is a **code read and has not been
+run** — do not quote a number for it. For scale only, the analogous correction in the 5D lane raised
+`sqrt_tr_flux_block` by 316.83%.
+
+Nothing quoted today is wrong: `values.tex:53-54` records the (E_avail,W) significances as removed
+2026-07-12, and `sec_eavailw.tex:136-138` states compatibility "is not evaluated without the corrected
+projected covariance." But that corrected covariance **is** a stated deliverable, and it cannot be
+built from this script as it stands. Found 2026-08-06 by a fresh-context review of the Step 2
+classification and confirmed independently at the mechanism level; it is neither in scope nor
+explicitly excluded by `PLAN-20260806-niter3-budget-and-J28-reroll.md`.
