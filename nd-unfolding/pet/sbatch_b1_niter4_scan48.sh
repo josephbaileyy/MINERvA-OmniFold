@@ -12,7 +12,16 @@
 #SBATCH --output=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/b1_closure/logs/b1niter4_%j.out
 #SBATCH --error=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/b1_closure/logs/b1niter4_%j.err
 #
-# B1 FOLD-FORWARD RATE-INJECTION CLOSURE AT niter=4 -- the k-upper-bound arm.
+# B1 FOLD-FORWARD RATE-INJECTION CLOSURE at a parameterised niter -- the k-scan arms.
+#
+# WALLTIME MUST BE SIZED PER k, ON THE COMMAND LINE (BEN-030, second rule: measure the per-unit rate
+# from the run you are actually sizing, never from a note about a differently-shaped one). Measured
+# k=4 rates from the split arms themselves: 56400517 16 seeds / 01:34:24 = 5.90 min/seed; 56400519
+# 32 seeds / 03:16:09 = 6.13 min/seed. Cost is ~linear in k, so scale by k/4 and add margin:
+#   k=5 -> ~7.5 min/seed  =>  16 seeds ~2.0 h (4 h wall ok);  32 seeds ~4.0 h (NEEDS 8 h, not 4).
+# The 4 h default in the header above is the k=4 sizing. Pass `--time` explicitly for any other k.
+# Note the 48-seed job's apparent 2.9 min/seed was NOT reproducible on the split runs (different
+# nodes / contention), which is itself the reason to re-measure rather than reuse a rate.
 #
 # WHY THIS ARM EXISTS. docs/OPEN_ITEMS.md item (e) says the niter=3 choice owes a REGULARIZATION
 # justification rather than a gate-shaped one. The receipted 48-seed k=2/k=3 arms actually supply
@@ -62,8 +71,13 @@ R_INJECT="1.1240802949941018"
 ACCEPTANCE="0.4185618199216587"
 N_EVENTS="240000"
 EPOCHS="8"
-NITER="4"
 TOLERANCE="0.05"
+
+# `niter` is a parameter, not a constant, despite this file's name. The name is HISTORICAL and must
+# not be changed: it is cited in ND_OMNIFOLD_RUN_LOG.md and in BEN-030, and renaming a tracked script
+# cited in a RUN_LOG is forbidden (CLAUDE.md). Read the arm's k from `B1_NITER` or from the product
+# filename, never from this file's name.
+NITER="${B1_NITER:-4}"
 
 # SPLIT THE ARM, and do not "tidy" it back into one job. The first attempt (56397442) ran all 48
 # seeds in ONE job with a 2 h wall, sized off the k=3 arm's "~7 minutes" note. Measured rate here is
@@ -79,9 +93,9 @@ SCAN_SEEDS="${B1_SCAN_SEEDS:-16}"
 
 # Mirror the k=3 arm's exact naming so the four-arm set reads as one family.
 if [[ "$SEED_START" == "7" ]]; then
-  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter4.json"
+  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter${NITER}.json"
 else
-  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter4_seeds${SEED_START}plus.json"
+  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter${NITER}_seeds${SEED_START}plus.json"
 fi
 PARTIAL="${FINAL}.partial"
 
@@ -90,13 +104,13 @@ mkdir -p "$OUTDIR" "$LOG_DIR"
 sha_of() { sha256sum "$1" | awk '{print $1}'; }
 
 fail() {
-  echo "[b1niter4][FAIL] $1" >&2
+  echo "[b1nit${NITER}][FAIL] $1" >&2
   {
     echo "run_id=${RUN_ID}"
     echo "outcome=FAIL"
     echo "reason=$1"
     echo "end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  } > "${OUTDIR}/DONE.b1niter4.${RUN_ID}.txt"
+  } > "${OUTDIR}/DONE.b1niter${NITER}.${RUN_ID}.txt"
   exit 1
 }
 
@@ -108,10 +122,10 @@ fail() {
 module load tensorflow/2.15.0
 
 cd "$REPO"
-echo "[b1niter4] run_id=${RUN_ID} host=$(hostname) start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-echo "[b1niter4] driver=${EXPECTED_DRIVER_SHA}"
-echo "[b1niter4] HEAD=$(git rev-parse --short HEAD) dirty=$(git status --porcelain --untracked-files=no | wc -l)"
-echo "[b1niter4] R=${R_INJECT} a=${ACCEPTANCE} niter=${NITER} epochs=${EPOCHS} N=${N_EVENTS} seeds=${SEED_START}..$((SEED_START + SCAN_SEEDS - 1))"
+echo "[b1nit${NITER}] run_id=${RUN_ID} host=$(hostname) start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "[b1nit${NITER}] driver=${EXPECTED_DRIVER_SHA}"
+echo "[b1nit${NITER}] HEAD=$(git rev-parse --short HEAD) dirty=$(git status --porcelain --untracked-files=no | wc -l)"
+echo "[b1nit${NITER}] R=${R_INJECT} a=${ACCEPTANCE} niter=${NITER} epochs=${EPOCHS} N=${N_EVENTS} seeds=${SEED_START}..$((SEED_START + SCAN_SEEDS - 1))"
 
 # Write to .partial and rename only after the driver returns. BEN-023 / J35: a resume guard that
 # tests existence rather than completeness lets a truncated product permanently block its own
@@ -130,7 +144,7 @@ srun -n 1 -c 32 --gpus=1 python3 "$DRIVER" \
 rc=$?
 set -e
 
-echo "[b1niter4] driver exit=${rc} end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "[b1nit${NITER}] driver exit=${rc} end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 # rc=1 means VERDICT:FAIL, which for THIS arm is a result, not an error: the arm exists to measure
 # the k=4 bias and spread, and those numbers are equally valid either way. Only a missing or
@@ -145,11 +159,11 @@ assert all(r['niter']==${NITER} for r in runs), 'niter drift in report'
 " "$PARTIAL" || fail "report incomplete or wrong configuration (exit ${rc})"
 
 mv "$PARTIAL" "$FINAL"
-echo "[b1niter4] wrote ${FINAL}"
+echo "[b1nit${NITER}] wrote ${FINAL}"
 
 # The sentinel records the OUTCOME and the two numbers this arm was launched to get, so a collector
 # that reads only the sentinel is not misled into thinking "the job ran" means "the gate passed".
-python3 - "$FINAL" "${OUTDIR}/DONE.b1niter4.${RUN_ID}.txt" "${RUN_ID}" "${rc}" <<'PY'
+python3 - "$FINAL" "${OUTDIR}/DONE.b1niter${NITER}.${RUN_ID}.txt" "${RUN_ID}" "${rc}" <<'PY'
 import json, statistics, sys
 rep, out, run_id, rc = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 d = json.load(open(rep))
@@ -172,4 +186,4 @@ with open(out, "w") as fh:
 print(open(out).read())
 PY
 
-echo "[b1niter4] sentinel=${OUTDIR}/DONE.b1niter4.${RUN_ID}.txt"
+echo "[b1nit${NITER}] sentinel=${OUTDIR}/DONE.b1niter${NITER}.${RUN_ID}.txt"

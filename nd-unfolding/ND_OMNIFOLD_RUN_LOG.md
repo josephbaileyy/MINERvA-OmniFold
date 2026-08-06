@@ -3233,3 +3233,47 @@ On the adopted ensemble `||mean_shift||` is **4.69×** the sampling floor `sqrt_
 flagged that same 37% as NON-negligible on 07-13. So **mean-centered-only is disqualified** and the
 operative `g` change is the CV-centered **+0.62%**, not the mean-centered −2.55% — the corrected
 inflation edges slightly *up*. Only presentation remains a choice.
+
+### 2026-08-06 — k=4 products committed; k=5 arm submitted as a completeness arm (56427556/56427557)
+
+**k=4 landed and PASSED, both halves.** `56400517` (seeds 7–22, 01:34:24) and `56400519` (seeds 23–54,
+03:16:09), pooled 48 seeds: closed form 0.012616, mean 0.014256, **sd 0.008023**, max 0.034619,
+**0/48** over tol 0.05. Products committed here — they had been sitting untracked, which by this
+repo's own rule means they did not exist.
+
+Full k-series, 48 seeds per arm, identical operating point:
+
+    k   closed form      mean         sd        max   exceed .05
+    2      0.037318   0.038008   0.008153   0.053764        6/48
+    3      0.021698   0.021876   0.008444   0.042750        0/48
+    4      0.012616   0.014256   0.008023   0.034619        0/48
+                       sd ratios: k2->k3 1.036, k3->k4 0.950
+
+**The predeclaration fired exactly as written.** Bias falls monotonically and tracks the closed form;
+variance is flat across all three arms. So the B1 measurement does **not** choose the stopping point,
+and the record must not imply it did.
+
+**The niter decision itself is already settled elsewhere — do not re-derive it here.**
+[`FINDING-20260806-niter4-decision.md`](../docs/orchestration/FINDING-20260806-niter4-decision.md)
+is the canonical record: `k=3` stands on cost and convention, the 0.80 closure bar is unreachable at
+any `k <= 39`, and it discharges CLM-010 (ii). This entry adds only the arm and its sizing.
+
+**k=5 submitted for bookkeeping**, at Joseph's request: `56427556` (seeds 7–22, 4 h) and `56427557`
+(seeds 23–54, 8 h). **Predeclared before the data exists, so this cannot be read either way after the
+fact:**
+- k=5 is a *completeness* arm. It does **not** reopen the niter decision, which rests on cost and
+  convention, not on this scan.
+- The one genuinely new thing it can show: at k=5 the closed-form bias (0.007335) falls **below** the
+  measured seed spread (~0.0080) for the first time. If variance is still flat there, the bias term is
+  formally subdominant to seed noise — a clean, principled "nothing left to gain on this axis" marker.
+- **If instead the spread GROWS at k=5, that is the first evidence of the classical bias–variance
+  tradeoff anywhere in this campaign** and it is a finding, not a footnote. Nothing measured so far
+  (k=2/3/4, all flat) has seen it.
+
+**Sizing, per BEN-030's second rule.** Rates measured from the k=4 split arms themselves — 5.90 and
+6.13 min/seed — not from the 48-seed job's apparent 2.9 min/seed, which did not reproduce on the split
+runs (different nodes/contention). That is itself the argument for re-measuring rather than reusing a
+rate. Scaled by k/4: k=5 ≈ 7.5 min/seed, so 16 seeds ≈ 2.0 h and **32 seeds ≈ 4.0 h, which would have
+missed a 4 h wall** — hence 8 h on the second arm. The launcher now takes `B1_NITER` and names its
+products by it; its filename stays `sbatch_b1_niter4_scan48.sh` because renaming a tracked script
+cited in a RUN_LOG is forbidden, and a note in the header says so.

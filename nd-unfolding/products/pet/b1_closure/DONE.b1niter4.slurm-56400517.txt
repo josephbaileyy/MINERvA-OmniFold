@@ -1,0 +1,12 @@
+run_id=slurm-56400517
+outcome=REPORT_COMPLETE
+driver_exit=0
+verdict=PASS
+niter=4
+seeds=16
+closed_form_floor=0.012616
+dev_mean=0.014715
+dev_sd=0.009035
+dev_max=0.034619
+exceed_tol=0/16
+report=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan16_measured_N240k_niter4.json
