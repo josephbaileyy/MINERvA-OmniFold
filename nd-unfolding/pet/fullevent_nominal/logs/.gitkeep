@@ -1,0 +1,10 @@
+Slurm opens the paths in `#SBATCH --output/--error` BEFORE the job script runs, so a `mkdir -p`
+inside sbatch_pet_fullevent_nominal.sh cannot save it: if this directory is missing, the job holds
+its queue slot for however long the wait is and then dies instantly at dispatch with nothing to read.
+
+This file exists so the directory exists in every checkout. Same fix, same reason, as
+nd-unfolding/pet/powered_closure/logs/.gitkeep -- that launcher's header records the identical
+lesson. Do not delete it because it "looks empty".
+
+Found 2026-08-06 while pre-flighting RESTORE Step 4: the directory was absent on the cluster tree and
+the job would have wasted the queue wait.
