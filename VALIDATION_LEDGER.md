@@ -83,17 +83,46 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > laterals, and the finalized 2D covariance (the 2D path always divided by `Φu` correctly).
 >
 > **Status.** The code fix is committed (`081ae4a`), fail-closed, and mutation-tested; new slabs
-> carry a `flux_normalized` stamp and `--combine` refuses unstamped ones. **No corrected number
-> exists yet** — sizing needs the `/pscratch` slabs and waits for the Perlmutter restore
-> (08-03 22:00 PT), then `nd-unfolding/rescale_flux_universes.py`. **That wait is over as of
-> 2026-08-06**: the restore completed, and the 365 throw slabs, the three `bank_uthrow_*` banks and
-> the rescale tool are all verified present, so the re-roll is schedulable — see
-> [`docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`](docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md),
-> which sequences it jointly with the `niter=3` budget recompute (`OPEN_ITEMS.md` item (d)) so the
-> budget is not built twice. A first-order estimate
-> suggested a few percent upward, but it is **not quotable**: correcting the same Flux draw in
-> both the unified and block ensembles moves `g`, the tail inflation and the finite-throw cross
-> terms together. Lift this quarantine only by replacing the numbers, not by deleting the notice.
+> carry a `flux_normalized` stamp and `--combine` refuses unstamped ones.
+>
+> **THE EXACT CORRECTED NUMBERS NOW EXIST as of 2026-08-06** (Perlmutter job `56417324`, 31 throw
+> slabs / 122 throws + 36 block units of the adopted `_sb` ensemble, `bank_uthrow_5d`; receipt
+> `nd-unfolding/uq_5d/rescaled_20260806/j28_reroll_20260806.json`). Sqrt-traces, before → after:
+>
+> | quantity | before | after | change |
+> |---|---|---|---|
+> | `sqrt_tr_flux_block` | 3.892270e-39 | 1.622406e-38 | **+316.83%** |
+> | `sqrt_tr_blocksum` | 3.403264e-38 | 3.750055e-38 | **+10.19%** |
+> | `sqrt_tr_unified` | 4.343878e-38 | 4.312442e-38 | −0.72% |
+> | `sqrt_tr_cross` | 2.699457e-38 | 2.129377e-38 | −21.12% |
+> | `joint_mean_shift_norm` | 1.535143e-38 | 1.885299e-38 | +22.81% |
+> | `g_mean` (mean-centered) | 1.0565550 | 1.0295687 | −2.55% |
+> | `g_mean` (CV-centered) | 1.1117482 | 1.1186232 | **+0.62%** |
+> | `g_max` | 22.302611 | 17.202930 | −22.87% |
+>
+> **The quarantine STAYS IN FORCE**, because these numbers are a *measurement*, not an adoption:
+> `rescale_flux_universes.py` writes its own output and adopts nothing, and the F7 mean-shift
+> convention that decides which `g` column above is the operative one is still open
+> (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`). Lift it by adopting, in a commit that replaces the
+> numbers — not by deleting the notice.
+>
+> **The first-order estimate is superseded and was not confirmed.** It suggested "a few percent
+> upward" and ~+6% on the combined block; the exact block sum moved **+10.19%** and the flux block
+> **+317%**, and the *total* unified sqrt-trace moved **down** 0.72%. Per the plan's predeclared
+> rule 1, the exact number replaces the estimate rather than being corroborated by it.
+> Interpretation, which is the physics and not just bookkeeping: dividing every universe by `Φ_CV`
+> instead of its own `Φu` **removes the normalization spread the flux universes exist to carry**, so
+> the Flux block was severely *understated*. Correcting it raises the block sum toward the (nearly
+> unchanged) unified total, which is why the finite-throw cross term collapses 21% and `g` — a ratio
+> of unified to block variance — falls toward 1. Direction is **convention-dependent**: `mean_shift`
+> grew 22.8%, and CV-centering adds `shift²`, so mean-centered `g_mean` falls 2.55% while
+> CV-centered `g_mean` *rises* 0.62%. Written up in
+> [`FINDING-20260806-j28-reroll-exact.md`](docs/orchestration/FINDING-20260806-j28-reroll-exact.md).
+>
+> Sequenced jointly with the `niter=3` budget recompute (`OPEN_ITEMS.md` item (d)) so the budget is
+> not built twice — see
+> [`docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`](docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md).
+> Note the slab precondition it records was **542 files, not 365** (BEN-032).
 
 - On 10,694 reported 5D bins, the corrected block sum has systematic
   sqrt-trace **4.3515e-38** *(quarantined)* and median relative uncertainty

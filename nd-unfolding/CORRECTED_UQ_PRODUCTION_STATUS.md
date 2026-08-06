@@ -1,11 +1,18 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
-**2026-08-06 one-liner.** The J28 flux re-roll is **schedulable now** — the Perlmutter restore the
-ledger cited as its blocker has completed, and the 365 throw slabs, three `bank_uthrow_*` banks and
-`rescale_flux_universes.py` are all verified present. It is planned as ONE pass with the `niter=3`
-uncertainty-budget recompute (`OPEN_ITEMS.md` item (d)) at
-`../docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`, so the budget is not built
-twice against a moving target. Nothing has run; the ledger scales remain QUARANTINED.
+**2026-08-06 one-liner.** The J28 flux re-roll **has run** (job `56417324`, ~2 min on one CPU node) and
+the exact corrected covariance now exists for the adopted `_sb` ensemble — 122 throws, 100 flux block
+units, 10,694 bins; receipt `uq_5d/rescaled_20260806/j28_reroll_20260806.json`. **The Flux block was
+understated ~4.2×**, not inflated: `sqrt_tr_flux_block` **+316.83%**, `sqrt_tr_blocksum` **+10.19%**,
+`sqrt_tr_unified` **−0.72%**, `sqrt_tr_cross` −21.12%, `joint_mean_shift_norm` +22.81%. The
+first-order "+3–4% upward" estimate is **superseded and was not confirmed** — do not cite it again.
+`g` direction is **convention-dependent** (mean-centered `g_mean` −2.55%, CV-centered **+0.62%**), so
+the F7 decision at line 66 below must be settled before any adoption quotes a direction; both agree
+`g_max` falls ~23%. **The ledger scales remain QUARANTINED**: this is a measurement, and
+`rescale_flux_universes.py` adopts nothing. Write-up
+`../docs/orchestration/FINDING-20260806-j28-reroll-exact.md`. These slabs are the **5-iteration GBDT**
+lane, so this does **not** discharge `OPEN_ITEMS.md` item (d) — Step 2 of the plan is next. (Slab
+precondition corrected: **542** files, not 365 — BEN-032.)
 
 UNCOMMITTED working-tree tracking doc. Autonomous production launched after
 verification (Opus disprove 14/14 clean; Fable blind audit; Opus secondary

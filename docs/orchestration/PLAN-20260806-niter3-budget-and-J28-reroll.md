@@ -89,10 +89,33 @@ was real; only its remedy was mispriced.
 Re-check at any time with `--verify-only --root <tree> --manifest <path>`, which is how a future
 session should confirm the slabs before spending anything on Step 1.
 
-**Step 1 — J28 re-roll on the existing slabs, at whatever `niter` they were produced with.** The
-flux correction is a *post-extraction rescale along pT*; it does not care which `niter` produced the
-slab. Doing it first therefore costs nothing extra and immediately answers the question the ledger
-quarantine is waiting on. Predeclare the comparison before running (§5).
+**Step 1 — J28 re-roll on the existing slabs, at whatever `niter` they were produced with.**
+~~The flux correction is a *post-extraction rescale along pT*; it does not care which `niter` produced
+the slab. Doing it first therefore costs nothing extra and immediately answers the question the ledger
+quarantine is waiting on. Predeclare the comparison before running (§5).~~ **DONE 2026-08-06** — job
+`56417324`, one CPU node, ~2 min. Adopted `_sb` ensemble (31 throw slabs / **122 throws**, 36 block
+units / 100 flux units corrected, `bank_uthrow_5d`, max |r_u − 1| = 0.1371, 10,694 reported bins).
+Receipt `nd-unfolding/uq_5d/rescaled_20260806/j28_reroll_20260806.json`; write-up
+[`FINDING-20260806-j28-reroll-exact.md`](FINDING-20260806-j28-reroll-exact.md).
+
+**Headline: the Flux block was *understated* ~4.2×, not inflated.** `sqrt_tr_flux_block` +316.83%,
+`sqrt_tr_blocksum` +10.19%, `sqrt_tr_unified` **−0.72%**, `sqrt_tr_cross` −21.12%,
+`joint_mean_shift_norm` +22.81%. Dividing by `Φ_CV` instead of `Φu` removes the normalization spread
+the flux universes exist to carry, so correcting it raises the block sum toward a nearly unchanged
+unified total — which collapses the cross term and pushes `g` toward 1.
+
+**Rule 2 fired: the direction is not what the first-order estimate predicted, and it is
+convention-dependent.** The estimate said a few percent *upward* (+3–4%) and ~+6% on the combined
+block; exact is **+10.19%** on the block sum and **−0.72%** on the unified total. And because
+`mean_shift` grew 22.81% while CV-centering adds `shift²`: mean-centered `g_mean` **falls 2.55%**,
+CV-centered `g_mean` **rises 0.62%**. So no adoption may quote a direction for `g` until the F7
+convention is fixed (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`); both conventions do agree `g_max` falls
+~23%, a single-bin extremum with no interval (rule 3). Per rule 1 the estimate is superseded, not
+corroborated, and should not be cited again.
+
+Note for Step 2: these slabs are the **5-iteration GBDT 5D** lane (`--iters 5`, CV
+`xsec_5d_MEFHC_5iter_lgbm.root`), not the PET lane whose policy moved 2 → 3. Step 1 was deliberately
+`niter`-agnostic, so this result is complete on its own terms and **does not** discharge item (d).
 
 **Step 2 — decide what must be re-thrown at `niter=3` versus what transfers.** Not everything in the
 budget is estimator-dependent in the same way. The honest split has to be made explicitly and

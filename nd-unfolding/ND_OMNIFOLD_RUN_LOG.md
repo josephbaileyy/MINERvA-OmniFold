@@ -3155,3 +3155,44 @@ the possibility that k=3 is too few for SHAPE, in which case the k-question is o
 Verification this turn: standalone `verify_hash_bindings.py` (rerun unbuffered to a file, per the
 amended BEN-026) reports **858 OK / ALL BINDINGS INTACT**, 4 known pre-existing submit-time drift,
 matching `test_hash_bindings.py` 4 passed.
+
+## 2026-08-06 — J28 flux re-roll: the exact corrected 5D covariance (Flux block was understated ~4.2×)
+
+Job `56417324`, one Perlmutter CPU node via `srun -q interactive`, ~2 minutes wall. Step 1 of
+`../docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`, run against its predeclared
+rules. Inputs are the ensemble the **adopted** `uq_5d/unified_throw_cov_5d.root` was built from,
+identified from two agreeing sources (`sbatch_uthrow_combine_5d_fast.sh:16-19` and the run-F entry at
+`CORRECTED_UQ_PRODUCTION_STATUS.md:266-268`): 31 throw slabs = **122 throws**, 36 block units with
+**100 flux units corrected**, `bank_uthrow_5d` (100 flux universes, max |r_u − 1| = 0.1371), CV
+`products/5d/xsec_5d_MEFHC_5iter_lgbm.root`, 10,694 reported bins.
+
+No re-unfolding: the correction `x/r_u` along `pT` is an identity, which is the whole reason this was
+minutes rather than a re-throw campaign. Knob endpoints correctly untouched — every
+`block5d_knob_*.npz` reports `0/2 corrected`, which is the tool working as designed, not failing.
+
+    sqrt_tr_flux_block     3.892270e-39 -> 1.622406e-38   +316.83%
+    sqrt_tr_blocksum       3.403264e-38 -> 3.750055e-38    +10.19%
+    sqrt_tr_unified        4.343878e-38 -> 4.312442e-38     -0.72%
+    sqrt_tr_cross          2.699457e-38 -> 2.129377e-38    -21.12%
+    joint_mean_shift_norm  1.535143e-38 -> 1.885299e-38    +22.81%
+    g_mean  mean-centered  1.0565550    -> 1.0295687        -2.55%
+    g_mean  CV-centered    1.1117482    -> 1.1186232        +0.62%
+    g_max                  22.302611    -> 17.202930       -22.87%
+
+Physics: dividing every universe by `Φ_CV` instead of its own `Φu` **removes the normalization spread
+the flux universes exist to carry**, so the defect *understated* the Flux block rather than inflating
+it. Correcting it raises the block sum toward a nearly unchanged unified total, which is why the
+finite-throw cross term collapses 21% and `g` falls toward 1.
+
+**Two things the predeclared rules force into the record.** (1) The first-order estimate (+3–4% upward,
+~+6% on the combined block) is **superseded and was not confirmed** — exact is +10.19% on the block sum
+and *down* 0.72% on the unified total; rule 1 says the exact number replaces it. (2) The `g` direction
+is **convention-dependent**: `mean_shift` grew 22.81% and CV-centering adds `shift²`, so mean-centered
+`g_mean` falls 2.55% while CV-centered `g_mean` rises 0.62%. No adoption may quote a direction for `g`
+until the F7 convention is settled. Both conventions agree `g_max` falls ~23%, a single-bin extremum
+over 10,694 bins with no interval attached (rule 3); `n_throws = 122` is the real `n`.
+
+**Adopts nothing** — the tool writes its own output and the ledger quarantine stays in force. These are
+the **5-iteration GBDT 5D** slabs, not the PET lane whose policy moved 2 → 3, so this does not
+discharge `OPEN_ITEMS.md` item (d). Receipt `uq_5d/rescaled_20260806/j28_reroll_20260806.json`;
+write-up `../docs/orchestration/FINDING-20260806-j28-reroll-exact.md`.
