@@ -12,6 +12,15 @@ assigns the remaining packets, and
 [the post-publication reorganization plan](POST_PUBLICATION_REORG_PLAN.md) gates
 cleanup behind the publication-results freeze tag.
 
+> **Starting a fresh session? Read the latest handoff first:**
+> [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
+> flight, what was settled 2026-08-06 (D2 powered closure FAILED; `niter` stays at 3; J28 re-roll
+> exact but 122/160), the decisions that are Joseph's, and what to do first.
+> **Handoffs must be indexed here.** The previous one
+> (`nd-unfolding/pet/HANDOFF-20260805-2300Z.md`) was referenced by nothing in the repo, which is the
+> same orphaning failure that left nine findings unread until 2026-08-06. Add a line, replace the one
+> above, and keep only the current handoff linked.
+
 ## Active remediation gate (5D GBDT closed; PET full-event gate reopened)
 
 **Presentation deadline 2026-07-16 --- PASSED; the talk workstream is closed.** This section is now framed by the 2026-08-03 Perlmutter restore, not the talk. Central values, closure tests,
