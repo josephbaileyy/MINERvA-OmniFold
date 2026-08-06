@@ -1,5 +1,11 @@
 # MINERvA-OmniFold Agent Context
 
+> **Companion file: `CLAUDE.md` (repo root).** Codex reads this file; Claude Code auto-loads `CLAUDE.md`
+> and does **not** read `AGENTS.md`. Before 2026-08-06 no `CLAUDE.md` existed, so Claude sessions started
+> with no project context at all. `CLAUDE.md` is orientation + hard rules and routes here for domain
+> depth; this file remains the full domain reference. **When you change a hard rule, a canonical-home
+> row, or the read-first order, update both.**
+
 ## Project Scope
 MINERvA-101 cross-section and OmniFold studies for muon kinematics:
 - 1D **p_T** unbinned OmniFold (revalidated 2026-05-02 against playlist 1A;
@@ -30,6 +36,9 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 | Chronology / archaeology | `*_RUN_LOG.md` (append-only, never trimmed) |
 | Durable invariants & gotchas (full detail) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` (shared by 3D/ND) |
 | Deliverables | `docs/analysis-note/` (Overleaf subtree; ALL THREE builds: note/primer/paper), slides |
+| **How agents/campaigns fail** (process lessons) | `docs/orchestration/FINDINGS.md` — `BEN-*` ledger |
+| **Physics claims + verification status** | `docs/orchestration/CLAIMS.md` — `CLM-*` ledger |
+| Long-form finding detail | `docs/orchestration/FINDING-<YYYYMMDD>-<slug>.md`, indexed at the top of `FINDINGS.md` |
 
 `docs/PREPUB_READINESS.md` and `docs/FUTURE_DIRECTIONS.md` are RETIRED
 tombstones (content → OPEN_ITEMS/KNOWN_ISSUES/ledger; full text in git
@@ -51,7 +60,12 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
 (`2D_OMNIFOLD_*`, `3D_OMNIFOLD_*`, `ND_OMNIFOLD_*`).
 
 **Authoritative docs (read these before touching the pipeline):**
-- `KNOWN_ISSUES.md` — bugs/traps index. Read FIRST.
+- `docs/orchestration/FINDINGS.md` — the `BEN-*` process-failure ledger. **Read FIRST, before
+  KNOWN_ISSUES.** `KNOWN_ISSUES.md` records how the *code* fails; `FINDINGS.md` records how *agents
+  working on this campaign* fail, which is the class of error that has actually repeated here. If you
+  are about to report a status, pick an operating point, judge a spread, or trust a delegate's
+  self-validation, the relevant entry already exists (see BEN-023 … BEN-028).
+- `KNOWN_ISSUES.md` — bugs/traps index. Read FIRST among code docs.
 - `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas (shared 2D+3D+ND).
 - `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — 2D dashboard, current numbers, next actions.
 - `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — 2D append-only chronology of phases 1-18.2.
