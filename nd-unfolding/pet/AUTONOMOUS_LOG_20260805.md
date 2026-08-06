@@ -2670,3 +2670,86 @@ that had ~224 GiB allocated, so it never described this 2M-row 56 GiB run.
 The powered closure is its publication-power evidence and does not clear its own predeclared bar. Evidence
 preserved off purgeable scratch (report 32 KB, DONE 755 B, preflight 25 KB); the 20.8 MB artifact npz is
 **not** committed pending his say-so.
+
+## 15:10Z — FRESH-CONTEXT CONSULT: it corrected me twice, and the framing was the error
+
+Joseph asked (mail 14:29Z) for a fresh claude-school session's view on the decisions and next steps.
+Launched via `ask_claude.sh` (school HOME, `--model opus`, READ-ONLY), 13 min, rc=0, 13,042 bytes.
+Transcript committed as `docs/orchestration/CONSULT-20260806-fresh-context-powered-closure.md`.
+It was the highest-value consult of the campaign and it overturned my two central claims.
+
+### Correction 1 — `1-(1-a)^k` is an EQUALITY, not a ceiling
+
+Derived from `omnifold.py:198-200,218-220`:
+`nu_k(x) = a(x) C_k t(x) + (1-a(x)) nu_{k-1}(x)`, so for x-independent `a`,
+`nu_k - t = (1-a)^k (1-t)` pointwise and the spectral L1 follows exactly. **So the transfer I flagged as
+unproven DOES hold** — but calling it a *ceiling* let 0.547 read as "68% of the way to a structural limit"
+when the ideal limit **predicts** 0.804 and the estimator **missed it by 0.257**. The correct framing makes
+the result look worse, not partially excused. Verified the derivation against the source.
+
+### Correction 2 — my number was wrong: `a(x)` spans 0.003 to 0.81
+
+Measured per-bin from the dump. The driver is the **MINOS match threshold**: below `p_parallel` 0.75 GeV
+the muon never reaches MINOS. **35 bins with `a_b < 1%` carry 23.2% of the injected displacement mass**, so
+by Jensen my global-`a` form was only an upper bound.
+
+    exact per-bin recursion   k=1 0.426   k=2 0.572   k=3 0.635   k=4 0.657   k=8 0.686
+    my global-a claim         k=1 0.419   k=2 0.662   k=3 0.804   k=4 0.886   <- WRONG
+
+Confirmed, not fitted: over the 121 bins carrying the top 90% of displacement mass, measured vs predicted
+per-bin recovery gives **Pearson 0.862 / Spearman 0.879**, weighted signed means agreeing to **0.3%**.
+**Measured 0.5469 against an achievable 0.6347.**
+
+Consequence (i) **survives and strengthens** — `niter=2`'s ideal is 0.572, further below 0.80, so
+`56355818` was unpassable. Consequence (ii) **retracted and reversed**: the bar sits **16.5 pp ABOVE** the
+achievable, not 0.36 pp under a ceiling. Unreachable at any practical `k` (~100). **No `k` fixes this.**
+
+### Correction 3 — my tilt-direction diagnosis was CONFOUNDED, and I verified that myself
+
+`cell = i_pt*19 + i_pp`, checked against the report's own edges: bins 38/57/76/95 are **all four at
+`i_pp = 0`** (`p_parallel` 0.0-0.75 GeV, `a_b = 0.003`); 242/243/244 at `i_pp = 14/15/16` (10-40 GeV,
+`a_b ~ 0.64-0.71`). My 0.17-0.24 vs 0.72-0.91 contrast was **the `p_parallel` acceptance gradient read at
+two different `p_parallel` values.** Marginalized over all 19 `p_parallel` cells there is **no down-tilt
+deficit** and the sign is if anything opposite. Ironically the reading the concurrent session *retracted*
+was closer to right than my correction to it.
+
+`epochs=8` is dead too, and measured rather than argued: the six surviving training histories show step-2
+train loss moving **3.2e-5** across 8 epochs with iteration 2's `val_loss` getting **worse**.
+
+### The enabling bug, now filed in `KNOWN_ISSUES.md`
+
+`omnifold.py:303` logs `hist.history['val_loss'][0]` under the label **"Last val loss"** — it prints
+**epoch 1**. Two sessions proposed "optimization-limited, raise epochs" without ever opening the pickles.
+Verified the line myself. Related: `ModelCheckpoint(save_best_only=True)` (`:272-275`) saves best-val
+weights while `reweight` uses the last-epoch in-memory model, so on-disk checkpoints are **not**
+bit-identical to what a run used — a calibration caveat for any inference-only reproduction.
+
+### What all three of us missed, and it is the important part
+
+**The test grades the wrong thing, and a PASS would be bad news.** The injection is a function of truth pT
+only; the acceptance gradient is almost entirely in `p_parallel`. **Orthogonal.** So an estimator that
+*pools across `p_parallel`* scores well on this closure whether or not the pooling is justified — and the
+PET net **is** pooling: it recovers 0.208 in cells where the detector sees 0.3% of events, ~25x the
+pointwise-optimal 0.008. Getting 0.635 -> 0.80 requires **more** of exactly that extrapolation into
+near-zero-efficiency cells, which `OPEN_ITEMS` item 6 already forbids trusting. So the FAIL is arguably
+**correct behaviour**, and a future PASS on this criterion should be treated as **suspicious**. The test
+with real power is a **second injection carrying `p_parallel` dependence**.
+
+Underneath it, a publication-level fact: **21.1% of the declared fiducial truth population sits at
+`p_parallel` < 1.5 GeV with 0.3-1.2% reco acceptance.** `KNOWN_ISSUES.md:17` (#5) tracks a data/MC **ratio**
+gradient in exactly that region; the **absolute** acceptance appears nowhere in the repo. Two independent
+problems on the same fifth of phase space, one of them untracked.
+
+On my convergence worry its answer was blunt and correct: **all three prior readings shared the framing
+"the estimator under-performed, find the mechanism." Nobody computed `a(x)`. The convergence was on a
+framing, and the framing was the error.** That is the lesson of the day, and it outranks any of the
+numbers.
+
+### Done, and not done
+
+Step 0 (retract and record) is **done** — `25d276b` rewrites both wrong passages in `OPEN_ITEMS` rather
+than patching them quietly, and files the telemetry bug. Steps 1-5 I have **not** run: step 1 is free
+(inference-only from the step-2 checkpoints, predicted 0.426/0.572/0.635) but belongs with steps 2-3; step 2
+redefines a Gate-4 criterion (`recovery / ideal_recovery(a_b,k) >= theta`, theta from a measured noise floor,
+**not** from today's numbers) and is a re-issue; step 3 spends 16 GPU-hours on an 8-seed ensemble to decide
+whether the 0.212 per-bin scatter averages down or is bias. Both are Joseph's.
