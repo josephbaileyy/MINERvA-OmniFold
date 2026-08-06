@@ -202,6 +202,28 @@ def good_report(**over):
         return g4.build_gate4_report(**kw)
 
 
+
+class SeedPolicyHasOneSourceOfTruth(unittest.TestCase):
+    """Pin the retyped policy literal to the DRIVER's policy, not just to FROZEN.
+
+    Added 2026-08-06. `frozen_observed()`'s `seed_policy` was already pinned to `g4.FROZEN` by the
+    freeze checks, but NOTHING pinned it to `train_fullevent_nominal.NOMINAL_SEED_POLICY`. So a policy
+    change landing in only one of the two Python files was invisible until `freeze:seed_policy`
+    rejected a finished 8-GPU-hour result -- the identical eight-hours-late failure that hit the
+    launcher, one file over.
+
+    Deliberately NOT `assert g4.FROZEN["seed_policy"] == drv.NOMINAL_SEED_POLICY`: both sides are
+    constants that one careless edit touches together, which is the audit-B2 self-agreement
+    antipattern this repo keeps re-finding. Routing through the retyped literal keeps every comparison
+    literal-vs-code: one retyped hub, two spokes."""
+
+    def test_the_retyped_policy_is_also_the_drivers(self):
+        import train_fullevent_nominal as drv
+        self.assertEqual(frozen_observed()["seed_policy"], dict(drv.NOMINAL_SEED_POLICY),
+                         "the retyped seed_policy literal and the driver's NOMINAL_SEED_POLICY "
+                         "disagree; a policy change landed in one Python site and not the other")
+
+
 class FrozenContract(unittest.TestCase):
     def test_geometry_matches_edges(self):
         self.assertEqual(g4.N_PT_BINS, len(fe.CANONICAL_PT_EDGES) - 1)

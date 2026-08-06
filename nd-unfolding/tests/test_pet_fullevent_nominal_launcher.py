@@ -282,6 +282,64 @@ class DriverContract(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
 
 
+# Every key of the frozen nominal policy -> the driver flag that sets it. RETYPED on purpose: derived
+# from NOMINAL_SEED_POLICY it would follow a rename silently, and the point is a third independent
+# statement (same device as test_pet_nominal_gate4_validator.py:69's retyped seed_policy literal).
+POLICY_FLAGS = {"estimator_seed": "--estimator-seed", "subsample_seed": "--subsample-seed",
+                "niter": "--niter", "epochs": "--epochs", "train_events": "--max-events",
+                "batch_size": "--batch-size"}
+
+
+class LauncherRestatesNoPolicy(unittest.TestCase):
+    """The launcher must own bound FOOTING only, never estimator configuration.
+
+    Added 2026-08-06 after the failure it would have caught in 0.01s. Commit 2b2e5f1 moved the frozen
+    policy niter 2 -> 3 in the driver and the validator but NOT in the launcher, which hardcoded
+    `NITER=2` and passed `--niter "$NITER"`. Job 56410365 would have trained 8 GPU-hours and been
+    rejected by `freeze:seed_policy`, which only fires on a FINISHED artifact. Caught while PENDING.
+
+    Worse, the evidence was already on screen in a passing test: `test_selftest_config_gate_pass`
+    runs the launcher, whose selftest echo printed `niter=2` into captured stdout, and asserted only
+    that "CONFIG GATE PASS" appeared in it.
+
+    NOT a self-agreement test: one side is the launcher's actual BYTES -- the artifact that drifted --
+    and the other is a retyped list. Mutation-proved both ways."""
+
+    def test_flag_map_covers_the_whole_policy(self):
+        """A NEW policy key with no entry here would leave the next test silently blind to it."""
+        self.assertEqual(set(POLICY_FLAGS), set(drv.NOMINAL_SEED_POLICY),
+                         "POLICY_FLAGS and NOMINAL_SEED_POLICY disagree; a policy key was added or "
+                         "renamed without extending this map, so the launcher check below would not "
+                         "cover it")
+
+    @staticmethod
+    def _executable_lines(path):
+        """Lines the shell actually runs: comment-only lines dropped.
+
+        A whole-file substring search cannot tell `--niter "$NITER"` from a comment EXPLAINING why
+        `--niter` is no longer passed, and the first draft of this test failed on its own rationale
+        comment. That is the same trap as
+        test_resume_guard.py::test_every_rg_caller_sources_the_library_first, which reads the first
+        MENTION of an rg_ helper as its first use. Checking executable lines keeps the test about
+        behaviour instead of about prose."""
+        return [ln for ln in open(path).read().splitlines()
+                if ln.strip() and not ln.lstrip().startswith("#")]
+
+    def test_launcher_passes_no_policy_owned_flag(self):
+        body = "\n".join(self._executable_lines(LAUNCHER))
+        found = sorted(f for f in POLICY_FLAGS.values() if f in body)
+        self.assertEqual(found, [], (
+            "the launcher restates policy the driver already defaults from NOMINAL_SEED_POLICY: "
+            f"{found}. Remove the flag rather than updating its value -- an override here makes "
+            "launcher-vs-policy drift possible, and it is only detected after a full training run."))
+
+    def test_the_target_footing_pins_are_still_there(self):
+        """The converse: removing policy must not have removed the footing this launcher DOES own."""
+        body = "\n".join(self._executable_lines(LAUNCHER))
+        for keep in ("EXPECTED_TARGET_SHA", "EXPECTED_TARGET_SIZE", "GATE3_MANIFEST"):
+            self.assertIn(keep, body, f"{keep} is footing, not policy; it must stay")
+
+
 class LauncherScript(unittest.TestCase):
     def test_bash_syntax(self):
         r = subprocess.run(["bash", "-n", LAUNCHER], capture_output=True, text=True)

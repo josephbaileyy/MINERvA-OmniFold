@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=32
-#SBATCH --time=08:00:00
+#SBATCH --time=12:00:00   # was 08:00:00; see the WALLTIME note below
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 #SBATCH --output=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_%j.out
 #SBATCH --error=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_%j.err
@@ -37,21 +37,53 @@ EXPECTED_TARGET_SIZE="9897374636"
 GATE3_MANIFEST="${REPO}/docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json"
 DATALOADER="${REPO}/nd-unfolding/pet/fullevent_fps_dataloader.py"
 DRIVER="${REPO}/nd-unfolding/pet/train_fullevent_nominal.py"
-EXPECTED_FINGERPRINT="pet-fullevent-fps-v1"
-EXPECTED_BKG_MODE="negweight-refined"
-EXPECTED_SCHEMA="g2-fullevent-v1"
+# EXPECTED_FINGERPRINT / EXPECTED_BKG_MODE / EXPECTED_SCHEMA were removed 2026-08-06. All three
+# were restatements of drv.ESTIMATOR_FINGERPRINT, drv.BKG_MODE and the G2 schema marker, and all three
+# appeared ONLY in a selftest echo -- never asserted against anything. `config_gate` already prints the
+# real values from the real source (train_fullevent_nominal.py:331-336), so these could only ever have
+# produced a LYING LOG. Same failure mode as the stale "niter 2" comment in sbatch_powered_closure.sh.
 
 OUTDIR="${REPO}/nd-unfolding/pet/fullevent_nominal"
 LOG_DIR="${OUTDIR}/logs"
 NOMINAL_OUT="${OUTDIR}/pet_fullevent_nominal_weights.npz"
 FLOOR_OUT="${OUTDIR}/pet_fullevent_floor_weights.npz"
 
-# adopted nominal seed/config policy (the floor repeat reuses these; only the output tag differs)
-ESTIMATOR_SEED=42
-SUBSAMPLE_SEED=0
-NITER=2
-EPOCHS=8
-TRAIN_EVENTS=2000000
+# THE SEED/CONFIG POLICY IS DELIBERATELY NOT RESTATED HERE (2026-08-06).
+#
+# This block used to carry ESTIMATOR_SEED=42, SUBSAMPLE_SEED=0, NITER=2, EPOCHS=8,
+# TRAIN_EVENTS=2000000 and pass all five to the driver explicitly. On 2026-08-06 commit 2b2e5f1 moved
+# the frozen policy niter 2 -> 3 in train_fullevent_nominal.py and validate_pet_nominal_gate4.py --
+# and NOT here, because the commit's own site checklist omitted this file. The next submission
+# (job 56410365) would therefore have trained 8 GPU-hours at niter=2 and been REJECTED by
+# `freeze:seed_policy`, which compares the artifact's argv-derived policy against FROZEN. Caught
+# while PENDING; 0 GPU-hours lost.
+#
+# `sbatch_powered_closure.sh:34-40` had already ruled on exactly this: it restates nothing, so the
+# same policy change cost it only a stale comment. The driver's own flag defaults ARE
+# NOMINAL_SEED_POLICY (train_fullevent_nominal.py:316-321), so omitting the flags makes
+# launcher-vs-policy drift IMPOSSIBLE rather than merely detectable eight hours late.
+#
+# This does not weaken `freeze:seed_policy`: the driver still persists what argv did
+# (train_fullevent_nominal.py:472-475), the comparison is still driver-policy vs validator-FROZEN --
+# two constants in two files, both pinned by the retyped literal at
+# test_pet_nominal_gate4_validator.py:69 -- and a hand override still lands in argv and is still
+# caught. What is removed is a STANDING override, not the mechanism.
+#
+# TRAIN_EVENTS is the most important one to leave out: it is gated by
+# `index:subsample_size_matches_policy` (validate_pet_nominal_gate4.py:190-193), and :178 records
+# that `train_events 2_000_000 -> 1000` was once "caught by nothing". Smoke runs belong in
+# sbatch_pet_smoke.sh, and the driver keeps `--max-events` for them.
+#
+# THE LINE: this launcher owns the bound FOOTING -- target path/sha/size, manifest path, output
+# namespace, SLURM resources. It owns nothing about estimator configuration.
+#
+# WALLTIME: raised 8h -> 12h in the same edit. No wall time has ever been measured for this
+# configuration (the nominal has never been trained), niter 2 -> 3 raised the work ~50%, and this job
+# runs TWO full trainings. The failure mode is what forces the change: time out during the floor
+# repeat and NOMINAL_OUT exists while FLOOR_OUT does not, whereupon a resubmit hits
+# `is_complete(args.out)` (train_fullevent_nominal.py:349-352) -> `die` -> the floor repeat never
+# runs. An overrun is unrecoverable without hand intervention. sbatch_powered_closure.sh:10 already
+# uses 12h at qos=shared, so it is demonstrably schedulable.
 
 die() { echo "[fe_pet_nom][FAIL] $*" >&2; exit 1; }
 sha_of() { sha256sum "$1" | awk '{print $1}'; }
@@ -83,9 +115,10 @@ config_gate() {
 if [[ "${PET_FE_NOMINAL_SELFTEST:-0}" == "1" ]]; then
   assert_isolated_namespace
   echo "[fe_pet_nom-selftest] target=${TARGET_NPZ} sha=${EXPECTED_TARGET_SHA} size=${EXPECTED_TARGET_SIZE}"
-  echo "[fe_pet_nom-selftest] fingerprint=${EXPECTED_FINGERPRINT} bkg_mode=${EXPECTED_BKG_MODE} schema=${EXPECTED_SCHEMA}"
   echo "[fe_pet_nom-selftest] gate3_manifest=${GATE3_MANIFEST}"
-  echo "[fe_pet_nom-selftest] plan: nominal(seed=${ESTIMATOR_SEED},sub=${SUBSAMPLE_SEED},niter=${NITER},epochs=${EPOCHS},train=${TRAIN_EVENTS}) + matched GPU-floor repeat (same seeds, tag=floor)"
+  # The plan line used to restate the policy here too, and printed niter=2 into a PASSING
+  # test's captured stdout. `config_gate` prints the real policy from the driver two lines below.
+  echo "[fe_pet_nom-selftest] plan: nominal + matched GPU-floor repeat (same seeds, tag=floor); policy printed by config_gate"
   echo "[fe_pet_nom-selftest] outputs: ${NOMINAL_OUT} , ${FLOOR_OUT}"
   config_gate
   echo "[fe_pet_nom-selftest] CONFIG GATE PASS (no GPU, no training, no submit)"
@@ -107,13 +140,11 @@ module load tensorflow/2.15.0
 
 echo "[fe_pet_nom] NOMINAL train $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 python3 "$DRIVER" --inputs "$TARGET_NPZ" --out "$NOMINAL_OUT" --tag nominal \
-  --gate3-manifest "$GATE3_MANIFEST" --estimator-seed "$ESTIMATOR_SEED" \
-  --subsample-seed "$SUBSAMPLE_SEED" --niter "$NITER" --epochs "$EPOCHS" --max-events "$TRAIN_EVENTS" \
+  --gate3-manifest "$GATE3_MANIFEST" \
   || die "nominal training failed"
 
 echo "[fe_pet_nom] MATCHED GPU-FLOOR repeat (same seeds/config) $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 python3 "$DRIVER" --inputs "$TARGET_NPZ" --out "$FLOOR_OUT" --tag floor \
-  --gate3-manifest "$GATE3_MANIFEST" --estimator-seed "$ESTIMATOR_SEED" \
-  --subsample-seed "$SUBSAMPLE_SEED" --niter "$NITER" --epochs "$EPOCHS" --max-events "$TRAIN_EVENTS" \
+  --gate3-manifest "$GATE3_MANIFEST" \
   || die "floor repeat failed"
 echo "[fe_pet_nom] DONE $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
