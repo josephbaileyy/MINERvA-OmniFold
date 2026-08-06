@@ -454,3 +454,47 @@ discards 0.5469 as junk from a broken run.
 **Regeneration `56427580`: all 10 tasks RUNNING at 8:28** (originals took 42–54 min). Throws still show
 122–159 missing, as expected — the driver saves atomically at task end. `56415634` still PENDING. The
 adoption stays gated on 160 distinct throws.
+
+### The regeneration handed me a free experiment: the J28 rescale is an identity, verified
+
+Regeneration `56427580` is progressing — throws **122 → 137 present, 23 missing**, all 10 tasks RUNNING at
+37:38. One correction to what I said last cycle: the slabs are written **incrementally per throw**, not
+atomically at task end, so completeness climbs rather than flipping at once. The missing set is interleaved
+(`123, 126, 127, 129–131, …`) because each task is partway through its four throws.
+
+**The valuable result this cycle was an accident of the repair.** Array task 30 covers throws 120–123, so it
+recomputed throws 120 and 121 **natively** with a driver that divides by each universe's own `Φu` — while
+`uq_5d/rescaled_20260806/` already held the **post-hoc rescaled** version of those same two throws from this
+morning. That makes the J28 identity testable against an independent computation for the first time. Across
+all **10,694** reported bins:
+
+    throw 120 (flux_u=5  in both forms):  max |rel diff| 1.377e-12,  median 3.952e-14
+    throw 121 (flux_u=13 in both forms):  max |rel diff| 6.708e-12,  median 8.393e-13
+
+Agreement at floating-point noise. This matters more than it looks: the entire J28 remediation, and any lift
+of the ledger quarantine, rests on `rescale_flux_universes.py`'s claim that `x/r_u` is an *identity* rather
+than an approximation, and that claim had never been checked against anything but its own derivation. It is
+now verified on production throws — so the rescaled numbers are not an approximation of the right answer,
+they **are** it, which is what makes replacing the quarantined scales legitimate rather than a substitution.
+Recorded in the ledger; re-runnable as `nd-unfolding/validate_rescale_identity.py`.
+
+A second thing fell out for free: the **flux universes match** (5 and 13 in both forms). That confirms
+*empirically* what I had previously only read off `unified_throw_cov.py:222-223` — the RNG is seeded per
+global throw index, so regeneration reproduces the original draws rather than statistically similar ones.
+
+**And a sequencing trap I would have walked into.** The repaired ensemble has **mixed provenance**:
+`unified_throw_cov.py:255` stamps `flux_normalized=1` on newly-written throws, so slabs 30–39 are *already*
+corrected, while 0–29 are unstamped pre-J28. Rescaling uniformly would double-correct the new ones.
+`rescale_flux_universes.py:261` fails closed on a stamped slab and `--combine` refuses unstamped ones, so
+both mistakes are caught rather than silently wrong — good design — but the adoption recipe is now written
+down as **`rescaled(0–29) ∪ new(30–39)`** (plan §2b) so the pass is right first time.
+
+**Cluster suite finished: 763 passed, 1 failed, 764 collected** — matching the 764 I announced. The single
+failure is `test_uq_remediation.py::UnifiedThrowTests::test_synthetic_slab_and_block_combine_end_to_end`,
+exactly the known J28-fixture failure plan Step 4 describes (its flux guard rejects its own synthetic fixture
+for lacking a stamp), and Step 4 deliberately defers it until after the budget rebuild. The verifier half of
+that job is still running (it hashes ~1 TiB). Note the brief's expectation of "exactly 8 mismatches from
+`p3f-pet-gate4-launch-code-gate-20260801b.json`" is **stale** — that gate has since been re-issued and both
+trees now report ALL BINDINGS INTACT.
+
+`56415634` (PET niter=3): PENDING, queued **4h15m** as computed in-turn, watch armed. Still watching.
