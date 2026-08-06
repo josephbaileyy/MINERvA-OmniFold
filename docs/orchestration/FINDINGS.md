@@ -25,6 +25,7 @@ will read.
 | `FINDING-20260804-wakerctl-tick-correction.md` | CORRECTION: the waker tick is not broken; it runs clean |
 | `FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md` | A campaign pin was inverted on a variance estimate that was never significant (BEN-025) |
 | `FINDING-20260806-j28-reroll-exact.md` | The exact J28 re-roll: the Flux block was *understated* ~4.2×, `g` moves convention-dependently, and it covered 122 of 160 adopted throws (BEN-033) |
+| `FINDING-20260806-niter4-decision.md` | Measured answer on `niter=4`: bias falls 1.535x at flat variance, but the 0.80 closure bar is unreachable at any k<=39, so k=3 stands on cost and convention (discharges CLM-010 (ii)); plus a Jensen bug in the acceptance map |
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|

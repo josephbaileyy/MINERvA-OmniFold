@@ -152,8 +152,24 @@ def main():
         "global_acceptance_w_truth_weighted": global_acc,
         "global_acceptance_unweighted": global_acc_u,
         "gate2_receipt_acceptance_for_comparison": 20573521 / 49152885,
-        "ideal_recovery_global_by_k": {str(k): 1.0 - (1.0 - global_acc) ** k
-                                      for k in range(1, a.kmax + 1)},
+        # WRONG FOR A DIFFERENTIAL CRITERION -- kept, renamed, and labelled rather than deleted,
+        # because it was published in the v1 product and a reader needs to know what they read.
+        # `1-(1-a)^k` is CONCAVE in a, so evaluating it at the GLOBAL acceptance overstates the
+        # achievable per-cell (shape) recovery by Jensen: +19.9 pp at k=3 on this map. It read
+        # 0.8084 at k=3, essentially exactly the powered closure's 0.80 bar, which invites the
+        # conclusion that the bar is achievable and the estimator is broken -- the opposite of the
+        # truth. Same error class as the CLM-011 magnitudes (cell-by-cell 122.6x vs aggregate 2.36x).
+        "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL": {
+            str(k): 1.0 - (1.0 - global_acc) ** k for k in range(1, a.kmax + 1)},
+        # The per-cell average is the right FORM for any per-bin criterion. Note the WEIGHT still
+        # has to match the criterion: an L1 shape criterion like the powered closure weights each
+        # cell by its injected tilt |prior_b - target_b|, not by truth mass, so this field is a
+        # reference curve and NOT the closure's ceiling. The closure-specific ceiling requires the
+        # tilt from POWERED_CLOSURE_REPORT.*.json and is recorded with that finding.
+        "ideal_recovery_percell_truthmass_weighted_by_k": {
+            str(k): float(1.0 - np.average((1.0 - acc[np.isfinite(acc) & (denom > 0)]) ** k,
+                                           weights=denom[np.isfinite(acc) & (denom > 0)]))
+            for k in range(1, a.kmax + 1)},
         "pparallel_marginal": marg,
         "prior_domination_census": below,
         "acceptance_cells_pt_major": [float(x) for x in acc.ravel(order="C")],
