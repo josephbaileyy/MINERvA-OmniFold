@@ -24,6 +24,7 @@ will read.
 | `FINDING-20260804-step7b-corr-cosphi-pt-measured.md` | RESTORE Step 7b measured: corr(cos φ, pT) ≈ +0.002 to +0.006 |
 | `FINDING-20260804-wakerctl-tick-correction.md` | CORRECTION: the waker tick is not broken; it runs clean |
 | `FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md` | A campaign pin was inverted on a variance estimate that was never significant (BEN-025) |
+| `FINDING-20260806-j28-reroll-exact.md` | The exact J28 re-roll: the Flux block was *understated* ~4.2×, `g` moves convention-dependently, and it covered 122 of 160 adopted throws (BEN-033) |
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|

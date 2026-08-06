@@ -156,3 +156,54 @@ def test_archived_gate2_receipts_hold_no_live_bindings():
         successor = os.path.join(_REPO, payload["superseded_by"])
         assert os.path.exists(successor), (
             f"{name} points at a successor that does not exist: {payload['superseded_by']}")
+
+
+# --------------------------------------------------------------------------------------
+# FINDINGS long-form index completeness.
+#
+# CLAUDE.md: "an unindexed finding is one nobody will read, which is how nine of them sat
+# orphaned until 2026-08-06", and FINDINGS.md's own index header says "Every
+# `FINDING-*.md` in this directory must appear here." That rule was violated again the
+# same day it was written down -- FINDING-20260806-j28-reroll-exact.md was created and
+# left out of the index -- so it is now checked rather than remembered.
+#
+# Lives here, in the collected suite, and NOT in docs/orchestration/test_*.py: per
+# FINDING-20260802-orchestration-tests-never-run.md those files are never collected, so a
+# guard placed there would itself be the antipattern it is meant to prevent.
+_ORCH = os.path.join(_REPO, "docs", "orchestration")
+_FINDINGS = os.path.join(_ORCH, "FINDINGS.md")
+
+
+def _indexed_finding_files():
+    """Backticked FINDING-*.md names from TABLE ROWS only.
+
+    Prose in the header legitimately mentions the literal patterns `FINDING-*.md` and
+    `FINDING-<YYYYMMDD>-<slug>.md`; scanning the whole file would read those as index
+    entries pointing at nonexistent files.
+    """
+    import re
+    out = set()
+    for line in open(_FINDINGS, encoding="utf-8"):
+        if not line.lstrip().startswith("|"):
+            continue
+        for name in re.findall(r"`(FINDING-\d{8}-[^`]+\.md)`", line):
+            out.add(name)
+    return out
+
+
+def test_every_longform_finding_is_indexed():
+    on_disk = {f for f in os.listdir(_ORCH)
+               if f.startswith("FINDING-") and f.endswith(".md")}
+    assert on_disk, "no FINDING-*.md files found -- wrong directory?"
+    missing = sorted(on_disk - _indexed_finding_files())
+    assert not missing, (
+        "these long-form findings are not in the FINDINGS.md index and so are invisible "
+        "to a new session: " + ", ".join(missing))
+
+
+def test_the_index_has_no_dangling_rows():
+    dangling = sorted(n for n in _indexed_finding_files()
+                      if not os.path.isfile(os.path.join(_ORCH, n)))
+    assert not dangling, (
+        "the FINDINGS.md index points at files that do not exist (renamed or deleted "
+        "without updating the index): " + ", ".join(dangling))

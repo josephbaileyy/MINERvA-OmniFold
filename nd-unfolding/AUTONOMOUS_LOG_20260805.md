@@ -265,3 +265,28 @@ campaign keeps finding.
 **Collection: 703 → 708 local (+5), cluster 757 → 762. ANNOUNCED.** Suite 700 passed with the same 7
 pre-existing cluster-path failures. **No number was produced** — rebuilding the `(E_avail,W)` covariance
 needs the cluster and belongs with the `M C_5D M^T` projection.
+
+### I orphaned a finding the same day the rule against it was written, so it is now checked
+
+Still no ssh, no new mail, nothing cluster-side actionable. One local obligation remained, and it was
+mine: `FINDINGS.md`'s index header says **"Every `FINDING-*.md` in this directory must appear here"**, and
+CLAUDE.md explains why — *"an unindexed finding is one nobody will read, which is how nine of them sat
+orphaned until 2026-08-06."* That file was written **today**, and today I created
+`FINDING-20260806-j28-reroll-exact.md` and left it out of the index. Indexed now; all 11 `FINDING-*.md`
+files check out in both directions.
+
+Since remembering the rule demonstrably did not work, it is now a guard:
+`test_every_longform_finding_is_indexed` and `test_the_index_has_no_dangling_rows` in
+`tests/test_hash_bindings.py`. Both **mutation-proved** — dropping my new row fails the first, a row
+naming a nonexistent file fails the second.
+
+Two placement decisions worth recording. It lives in `nd-unfolding/tests/` and **not** in
+`docs/orchestration/test_*.py`, because per `FINDING-20260802-orchestration-tests-never-run.md` those are
+never collected — a guard placed there would itself be the antipattern it exists to prevent.
+`test_hash_bindings.py` is the right file: it already guards `docs/orchestration` state invariants from
+inside the collected suite. And the row parser reads **table rows only**, because the header prose
+legitimately contains the literal `FINDING-*.md` and `FINDING-<YYYYMMDD>-<slug>.md`; scanning the whole
+file reports those as index rows pointing at nonexistent files, which I saw on the first pass.
+
+**Collection: 708 → 710 local (+2), cluster 762 → 764. ANNOUNCED.** 702 passed, same 7 pre-existing
+cluster-path failures. Verifier ALL BINDINGS INTACT.
