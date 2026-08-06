@@ -175,3 +175,31 @@ Architecture comes from `meta` (`:261-263`) and the input normalization is deriv
 reproducing a run by inference. The nominal driver stores its norms; the closure driver does not. Any
 inference-only reproduction must reproduce the same row population (`dump_rows_b` makes that possible) and
 must treat the spectrum reproduction as its only falsification handle.
+
+## The PET C_stat summaries record no estimator provenance, so they cannot be classified
+
+`products/pet/bkgsub/pet_cstat_bkgsub_5d.summary.json` (and its pilot) record `n_replicas`,
+`replica_ids`, `n_reported_bins`, the sqrt-trace and per-bin ratios — and **nothing about the
+estimator that produced them**: no `niter`, no schema/feature set, no commit, no job id. Their
+producers (`pet/combine_cstat_bkgsub.py`, `pet/assemble_ctotal_bkgsub.py`) do not record it either,
+because they combine replica outputs and never see the training config.
+
+Why this is debt and not a nitpick: the `niter` 2 → 3 switch (`2b2e5f1`) made "which covariance
+components were computed at which estimator setting?" a question the budget has to answer, and
+`PLAN-20260806-niter3-budget-and-J28-reroll.md` rule 5 requires a **positive** argument before any
+component may be declared to transfer unchanged. For these files no such argument can be constructed
+from the artifact at all — the fact needed to classify them was never written down. The practical
+consequence is that they must be treated as non-transferable by default, which is the same conclusion
+`OPEN_ITEMS.md` item 6 reaches on separate grounds ("no current recoil-PET covariance component is
+automatically transferable to the new estimator"), so nothing is lost *here* — but the next component
+that lands without provenance will force the same rebuild.
+
+Corroborating signal that these are a different estimator/domain, independent of the missing fields:
+their reported-bin count is **10550**, against **10694** for the 5D lane re-rolled in
+`uq_5d/rescaled_20260806/j28_reroll_20260806.json`.
+
+**Fix forward:** any new covariance component must stamp the estimator config it was computed under
+(at minimum `niter`, schema/feature-set identifier, and the producing commit) into its own summary,
+the way `train_fullevent_nominal.py` stamps `seed_policy` into its weights artifact. A covariance
+without that stamp is unclassifiable the moment the estimator moves, and the estimator has now moved
+twice (full-event schema 2026-08-01, `niter` 2026-08-06).
