@@ -3126,3 +3126,32 @@ the reweight-logit-cap hypothesis is **refuted** (cap 30.0 spans 1e-13..1e13, in
 Both sessions independently reached the same leading hypothesis — under-fitting, pointing at
 `epochs=8` and the effective-iteration count — from different evidence. That is convergence, not
 confirmation: neither has tested it.
+
+### 2026-08-06 — k=4 arm: 56397442 lost to a walltime kill, resubmitted as the original 16+32 split
+
+`56397442` (48 seeds, k=4, 2 h wall) will not finish and will write nothing. Measured from its own
+log — 37 seeds started at 1:47:26 elapsed, i.e. **~2.9 min/seed** — 48 seeds needs ~2 h 20 m. The
+driver writes its single `--json` only after the last seed returns, and the launcher writes to
+`.partial` and renames on success, so a walltime kill correctly leaves no corrupt file and also **no
+file**. ~1 h 50 m of GPU for zero product. Left to expire rather than cancelled: it produces nothing
+either way, and letting it run out carries no risk of my arithmetic being wrong.
+
+**Root cause was mine and it is now BEN-030.** The k=2/k=3 arms were each two jobs (seeds 7–22,
+23–54). I consolidated k=4 into one job because a single file read as tidier, which silently removed
+the only checkpointing this scan has, and I sized the wall from a stale "~7 minutes" note describing a
+differently-shaped run instead of measuring the rate.
+
+**Resubmitted** as `56400517` (seeds 7–22, 16) and `56400519` (seeds 23–54, 32), both 4 h wall, via
+`B1_SEED_START` / `B1_SCAN_SEEDS` overrides on the same launcher. Output names now mirror the k=3 arm
+exactly (`..._scan16_measured_N240k_niter4.json`,
+`..._scan32_measured_N240k_niter4_seeds23plus.json`) so the four-arm set is file-for-file comparable.
+The launcher carries the reason for the split inline so the next reader does not re-tidy it.
+
+Predeclaration from this morning is unchanged and still binding: **if the k=4 spread is also flat, the
+record must say the stopping point is set by cost and by the literature default of 3, not chosen by
+this measurement.** Note the k=4 arm now matters more than when it was queued — the D2 failure raises
+the possibility that k=3 is too few for SHAPE, in which case the k-question is open upward.
+
+Verification this turn: standalone `verify_hash_bindings.py` (rerun unbuffered to a file, per the
+amended BEN-026) reports **858 OK / ALL BINDINGS INTACT**, 4 known pre-existing submit-time drift,
+matching `test_hash_bindings.py` 4 passed.

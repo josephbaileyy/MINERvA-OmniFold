@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=b1niter4
+#SBATCH --job-name=b1nit4
 #SBATCH --account=m3246
 #SBATCH --qos=shared
 #SBATCH --constraint=gpu
@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=32
-#SBATCH --time=02:00:00
+#SBATCH --time=04:00:00
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 #SBATCH --output=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/b1_closure/logs/b1niter4_%j.out
 #SBATCH --error=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/b1_closure/logs/b1niter4_%j.err
@@ -29,7 +29,11 @@
 # recoil-only operating point (r-inject 1.135, acceptance 0.621, niter 2), which is exactly the
 # hardcoded-superseded-constant trap written up in
 # docs/orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md.
-# Seeds 7..54 reproduce the union of the two existing arms (16 + 32) in one run.
+# Seeds 7..54 reproduce the union of the two existing arms, submitted as the SAME 16 + 32 split they
+# use -- see the SPLIT THE ARM note below for why that split is load-bearing and not cosmetic.
+# Submit both halves with:
+#   sbatch --export=ALL,HOME=/global/homes/j/josephrb,B1_SEED_START=7,B1_SCAN_SEEDS=16  <this file>
+#   sbatch --export=ALL,HOME=/global/homes/j/josephrb,B1_SEED_START=23,B1_SCAN_SEEDS=32 <this file>
 #
 # GPU, not login node, and not CPU. The k=2/k=3 arms were produced on interactive GPU; the local
 # login-node wrapper for this same script was killed three times on 08-05
@@ -59,11 +63,26 @@ ACCEPTANCE="0.4185618199216587"
 N_EVENTS="240000"
 EPOCHS="8"
 NITER="4"
-SEED_START="7"
-SCAN_SEEDS="48"
 TOLERANCE="0.05"
 
-FINAL="${OUTDIR}/closure_b1_rate_injection_scan48_measured_N240k_niter4.json"
+# SPLIT THE ARM, and do not "tidy" it back into one job. The first attempt (56397442) ran all 48
+# seeds in ONE job with a 2 h wall, sized off the k=3 arm's "~7 minutes" note. Measured rate here is
+# ~2.9 min/seed, so 48 seeds needs ~2 h 20 m: it timed out at seed ~41 and wrote NOTHING, because the
+# driver emits its single --json only after the last seed returns. ~1 h 50 m of GPU, zero product.
+#
+# The k=2/k=3 arms were split 16 (seeds 7-22) + 32 (seeds 23-54). That split was NOT cosmetic -- it is
+# the only checkpointing this scan has. Collapsing it removed the partial credit and made a walltime
+# kill total. Keeping the same split also makes the k=4 products file-for-file comparable with the
+# four hash-bound k=2/k=3 products.
+SEED_START="${B1_SEED_START:-7}"
+SCAN_SEEDS="${B1_SCAN_SEEDS:-16}"
+
+# Mirror the k=3 arm's exact naming so the four-arm set reads as one family.
+if [[ "$SEED_START" == "7" ]]; then
+  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter4.json"
+else
+  FINAL="${OUTDIR}/closure_b1_rate_injection_scan${SCAN_SEEDS}_measured_N240k_niter4_seeds${SEED_START}plus.json"
+fi
 PARTIAL="${FINAL}.partial"
 
 mkdir -p "$OUTDIR" "$LOG_DIR"
