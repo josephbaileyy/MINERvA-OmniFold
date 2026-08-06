@@ -290,3 +290,31 @@ file reports those as index rows pointing at nonexistent files, which I saw on t
 
 **Collection: 708 → 710 local (+2), cluster 762 → 764. ANNOUNCED.** 702 passed, same 7 pre-existing
 cluster-path failures. Verifier ALL BINDINGS INTACT.
+
+### Cert renewal worked; NERSC sessions now hang AFTER authentication (server-side)
+
+Joseph ran `sshproxy.sh`. The credential is genuinely fixed — new cert `Valid: 2026-08-06T17:57:00 →
+2026-08-07T17:58:56`, new fingerprint `8G7iAbZJ…` replacing `hNuQuFzU…`, and verbose ssh reports
+**`Authenticated to saul.nersc.gov ([128.55.126.10]:22) using "publickey"`**. So BEN-034 is closed as a
+*credential* problem.
+
+**A different failure is now in front of it.** Every session hangs immediately after
+`debug1: Entering interactive session` — the remote side never returns a byte. Reproduced on
+`saul.nersc.gov` and `perlmutter.nersc.gov`, and, decisively, **`sftp` hangs identically**. That last
+point matters: sftp uses the SFTP subsystem and never sources shell rc files, so this is **not** a hung
+`$HOME` or a slow `.bashrc` — the session itself stalls post-auth, which is server-side and not
+something this session can fix.
+
+Two self-inflicted complications cleared along the way, worth recording because they made the picture
+look worse than it was. (1) The early hung attempts left **wedged ControlMaster sockets** in `~/.ssh/cm/`
+for both hosts, and `ControlMaster auto` then reused them — so config-based connections failed while a
+`ControlPath=none` connection authenticated fine. Cleared with `ssh -O exit` per host plus killing the
+orphaned clients (PIDs 19520, 20277 had been hanging 9m42s and 2m20s). (2) I filtered a verbose ssh
+stream through `grep` into a file and saw **nothing**, because grep block-buffers a pipe — the same
+write-time-truncation trap as BEN-026, in a new costume. Redirecting the whole stream and reading the
+file showed the answer immediately.
+
+Still queued and still blocked, now on NERSC rather than on the cert: the staged reply to his 20:29Z
+mail, a `git pull` on a checkout **7 commits behind**, job state for `56415634`, and rebuilding the
+`(E_avail,W)` covariance with the sixth-site fix. The nominal's wakerctl watch is cluster-side, so if the
+login nodes are wedged but Slurm and the cron are not, its verdict mail still fires without me.
