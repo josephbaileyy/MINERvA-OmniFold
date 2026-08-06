@@ -2839,3 +2839,26 @@ themselves nearly blind.
 The product **deliberately creates one live hash pin** on the G2 dump (`inputs`/`inputs_sha256`), verified
 to resolve and match on compute and to be silently unresolved on a laptop. Documented in the script so a
 future editor does not "clean it up".
+
+## 16:45Z — MY ERROR: `git stash -u` on the shared cluster tree swept up 2147 files. Restored and filed.
+
+To clear the way for a fast-forward merge on the cluster I ran `git stash -q -u`. It captured **2147
+untracked files** — `.mcp.json`, `scratch/`, `scratch_audit.py`, and **302
+`2d-unfolding/uq/*.root.done`**. No tracked edits were taken (`git stash show --stat` was empty), so
+nobody's in-progress work was lost, and the concurrent session's commits were untouched.
+
+**But the `.root.done` files are not clutter — they are the resume markers.** `rg_marker_path()` is
+`printf '%s.done\n'` (`lib/resume_guard.sh:67`), so those 302 files are exactly the completion markers
+`rg_is_complete` reads. With them gone, a re-run of the 2D bootstrap launchers would have recomputed
+hundreds of unfolds — **the precise failure the BEN-023 conversion I did this morning exists to prevent.**
+I removed the safety net for the defect I had just finished repairing.
+
+Restored with `git stash pop`, then **verified every one of the 2147 stashed paths was present on disk
+before dropping the stash** rather than trusting pop's exit status. Cluster clean at `1dd92ca`, 0 stashes,
+0 tracked modifications, 302 markers back.
+
+What went wrong is not the command's syntax but its **scope**: I reached for a bulk verb on a tree another
+session shares, minutes after writing in this log that I would stay out of its lane. The correct move —
+which I had already used twice today for the pull-abort trap — is to move the *specific* blocking paths
+aside. Filed as **BEN-030**, with the general rule: in this repo the untracked set is load-bearing state,
+so any `git` verb scoped to "everything not tracked" is unsafe by default.
