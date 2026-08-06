@@ -318,9 +318,35 @@ Implementation gate, in order:
        [`PLAN-20260806-niter3-budget-and-J28-reroll.md`](orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md)**
        (2026-08-06), including predeclared decision rules. Note what it establishes at §2: the J28
        re-roll is **no longer blocked on the Perlmutter restore** the ledger still cites as its
-       blocker --- the 365 throw slabs, the three banks and `rescale_flux_universes.py` are all
-       present, so the pass is schedulable now. Scratch is purgeable and those slabs are the largest
-       schedule risk, which is why the plan's Step 0 is protecting them.
+       blocker --- the ~~365~~ **542** throw/block slabs (the original count missed every block slab;
+       BEN-032), the three banks and `rescale_flux_universes.py` are all present, so the pass is
+       schedulable now. Scratch is purgeable and those slabs are the largest schedule risk, which is
+       why the plan's Step 0 is protecting them.
+       **STEPS 0-2 ARE DONE (2026-08-06).** Step 0: 548 files / 8.1 GiB protected off-scratch with a
+       digest+readability manifest (`nd-unfolding/products/slab_manifest_20260806.json`). Step 1: the
+       exact re-roll, job `56417324` --- the Flux block was **understated ~4.2x**, `sqrt_tr_blocksum`
+       **+10.19%**, `sqrt_tr_unified` **-0.72%**; the old "+3-4% upward" first-order estimate is
+       superseded and was **not** confirmed, and the `g` direction is **convention-dependent**
+       (mean-centered -2.55%, CV-centered +0.62%), so **adoption is blocked on the F7 decision**
+       (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`). Step 2:
+       [`STEP2-20260806-niter3-budget-classification.md`](orchestration/STEP2-20260806-niter3-budget-classification.md)
+       --- **this item's own framing is wrong for the PET lane**: there is no full-event PET covariance
+       to *recompute*, so it is a BUILD (which item 6 already required), and the 5D GBDT lane transfers
+       on a positive closed-input argument. Steps 3-5 are blocked on two of Joseph's decisions: F7, and
+       whether the full-event PET budget is publication-blocking at all (the note quotes **no** PET
+       covariance --- `\petTotalMedian`/`\petTotalTrace`/`\petFourMedian` are QUARANTINED and referenced
+       **0** times). Cost floor for that build is **>=100 GPU-h**; the "170-250" figure is unverified.
+   (f) **NEW 2026-08-06 --- J28 has a SIXTH site that the fix never touched:
+       `nd-unfolding/eavailW_covariance.py`.** Not among `081ae4a`'s twelve files, not scoped by
+       `AUDIT-FINDINGS-20260731.md`. It loads `flux_bins` once from the CV histogram (`:104`) and passes
+       it to `extract_cross_section_nd` on every call (`:232`) with no per-universe override, while
+       running all 100 PPFX universes through `_y_band` (`:259`, `:274-276`) into `C_flux` --- so
+       `C_flux` is **understated** exactly as the five known sites were. Mechanism confirmed; **code
+       read, not run**, so no magnitude is quoted. Nothing published is wrong today (`values.tex:53-54`
+       records the (E_avail,W) significances as removed; `sec_eavailw.tex:136-138` declines compatibility
+       "without the corrected projected covariance") --- but that corrected covariance is a stated
+       deliverable and **cannot be built from this script as it stands**. Detail in `KNOWN_ISSUES.md`;
+       it is neither in scope nor explicitly excluded by the plan, and the plan's §7 should say which.
    (e) **The niter=3 choice still owes a REGULARIZATION justification --- but a narrower one than
        this item claimed when it was opened.** `niter` is a regularization parameter: more iterations
        = less regularization = more variance, less bias. As opened, this item read everything in
