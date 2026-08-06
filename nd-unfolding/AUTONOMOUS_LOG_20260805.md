@@ -55,3 +55,53 @@ factor" is true under one convention and false under the other, and the F7 choic
 **Adopts nothing.** The quarantine stays in force. And these are the **5-iteration GBDT** slabs, not the
 PET lane whose policy moved 2 → 3 — Step 1 was deliberately `niter`-agnostic, so this is complete on its
 own terms but does **not** discharge item (d). Landed in all three homes §6 requires plus the plan.
+
+### Step 2: the classification, a sixth J28 site, and a correction I owe on the end-goal question
+
+Fresh-context review before landing, per the 15:22Z standing condition. It corrected **two of my seven
+findings**, and both corrections matter more than the classification did.
+
+**Item (d) is misframed for the PET lane.** There is no full-event PET covariance to *recompute* —
+`products/pet/fullevent_fps/` holds two non-covariance files, `PET_UQ_PRODUCTION_STATUS.md` contains
+**zero** occurrences of "full-event", and no full-event counterpart to any `bkgsub` covariance launcher
+exists. The work is a **BUILD**, which item 6 already required.
+
+**Correction 1 — what is being written off is ~3× what I said.** Not "a C_stat plus a pilot" but a
+complete assembled budget: C_syst 2.970e-38, C_retrain 2.190e-38, C_stat 7.439e-39, C_ml 8.036e-39,
+C_lateral 4.690e-39, C_total 3.878e-38, plus a *newer* 42-replica interim C_stat and six combined ROOTs.
+Conclusion unchanged; the inventory in the record was wrong.
+
+**Correction 2 — `niter` IS recorded, and that makes the case stronger.** I had written that the
+provenance "was never written down." `sbatch_pet_nominal_bkgsub.sh:42` pins `NITER=2`, `:29` states
+`iters = 2`, and `:14` banners **"QUARANTINED RECOIL-ONLY CROSS-CHECK LAUNCHER — NOT a publication
+path"**. So those components are disqualified by three *positive* facts — `niter=2`, a non-publication
+path, a 10550-bin recoil domain against 10694 — which is exactly what rule 5 asks for, instead of by an
+absence. I had committed the wrong version and corrected `KNOWN_ISSUES.md` in place; the real remaining
+debt is the missing **stamp**, since none of that is visible from the artifact a reader would open.
+
+**My "transfers" argument was the forbidden form, and I rewrote it.** "Different estimator family,
+therefore irrelevant" is a *disjointness assertion* — what I would have written whether or not a hidden
+dependency existed. The positive form: the 5D GBDT covariance is a **closed function of an enumerated
+input list containing no PET quantity** (`adopt_unified_5d.py:75,78`; `--iters 5` on `bank_uthrow_5d`),
+and `NOMINAL_SEED_POLICY['niter']` is read by exactly one driver that writes nothing any 5D GBDT product
+reads. Falsifiable by one new dependency, which is the point. The dependency that *does* exist runs the
+other way — PET C_syst consumes `bank_uthrow_5d` — so today's re-roll is a **prerequisite** for the PET
+build rather than independent of it.
+
+**A sixth J28 site: `eavailW_covariance.py`.** Absent from `081ae4a`'s twelve files and unscoped by the
+audit. `:104` loads `flux_bins` once from the CV histogram; `:232` passes it into
+`extract_cross_section_nd` on every call with no per-universe override; `_y_band` (`:259`) has no flux
+parameter; `:274-276` runs all 100 PPFX universes through it into `C_flux`. The fixed
+`unified_throw_cov_5d.py:67` threads `d["flux"] if flux is None else flux` for exactly this reason. So
+`C_flux` is understated by the mechanism I measured today. I confirmed it at the mechanism level myself
+rather than taking the review's word — but it is a **code read, not run**, so no magnitude.
+
+**The correction I owe on "how far are we."** I told him the full-event PET budget was the main gap to a
+cross section plus an uncertainty. **The note quotes no PET covariance at all**:
+`\petTotalMedian`/`\petTotalTrace`/`\petFourMedian` are `QUARANTINED` and referenced **0 times** in the
+tex tree; only `\petRatio` (2×) and `\petClosure` (3×) are used; `sec_pet.tex:1` titles the section a
+cross-**check**; the headline budget is the GBDT 5D lane. So that build buys a precision comparison the
+note presently *declines* to make, and whether it is publication-blocking or discretionary is recorded
+nowhere. That is a bigger question than the classification, and it is his. Also: **"170–250 GPU-h" is
+not verified** — the defensible floor is **≥100 GPU-h** for C_stat alone (one train ~1 h/GPU at
+`sbatch_pet_nominal_bkgsub.sh:31`, 100 replicas, full-event at `niter=3` strictly more per train).
