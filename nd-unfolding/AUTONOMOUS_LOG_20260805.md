@@ -105,3 +105,48 @@ note presently *declines* to make, and whether it is publication-blocking or dis
 nowhere. That is a bigger question than the classification, and it is his. Also: **"170–250 GPU-h" is
 not verified** — the defensible floor is **≥100 GPU-h** for C_stat alone (one train ~1 h/GPU at
 `sbatch_pet_nominal_bkgsub.sh:31`, 100 replicas, full-event at `niter=3` strictly more per train).
+
+### Two corrections to this morning's re-roll, both from reading the product instead of the launcher
+
+Nothing was unblocked this cycle — nominal still PENDING, no reply, Steps 3–5 gated on Joseph — so
+instead of idling I went back at the two things I had escalated. Both turned out to be wrong in my
+favour and against it respectively.
+
+**1. The re-roll covers 122 of the adopted 160 throws (BEN-033).** I had written, in the finding, the
+ledger, the RUN_LOG and a STATUS one-liner, that its inputs were "the ensemble the **adopted**
+`unified_throw_cov_5d.root` was built from." The ROOT itself says **`n_throws = 160`**;
+job `56417324` processed **122**. `uthrow_slabs_5d_sb/` holds slabs **0–30** and slabs **31–39 are
+gone** (~38 throws), lost from purgeable scratch after the combine ran. So the "before" sits **−2.62%**
+below the adopted `sqrt_tr_unified` (and −7.21% on the mean shift).
+
+What survives: the before→after comparison uses the *same* 122 slabs on both sides, so it is a
+controlled measurement of the correction and the +316.83% / +10.19% / −0.72% figures hold. What does
+not: the corrected *absolute* numbers are a 76.2% subsample, **not** drop-in replacements for the
+adopted covariance. Exact replacement needs slabs 31–39 re-thrown → `OPEN_ITEMS.md` (g).
+
+The lesson is sharper than the slip. I had *cross-checked two independent sources* — the fast combine's
+globs and a STATUS run-F entry — and they agreed. But both were the wrong **kind** of source: a launcher
+says what it *would* consume, the product records what it *did*, and they diverge precisely when inputs
+have been lost since. Agreement between two same-kind sources bought nothing; one `TFile.Open` +
+`Get("n_throws")` would have caught it in seconds. Also worth stating plainly:
+`--expected-throws 0-159` resolving to 122 files is a **failed precondition**, not a detail. And Step 0
+can only ever protect survivors — it does not mitigate a loss that already happened.
+
+**2. F7 was never an open decision, and I was wrong to escalate it to Joseph as one.**
+`CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` predeclared the criterion before the data existed: `~floor` →
+mean-centered acceptable; `>> floor` → **also produce the CV-centered variant**, report the shift either
+way, **never silently drop it**. Measured on the adopted ensemble:
+
+    ||mean_shift|| = 1.6544e-38   sampling floor sqrt_tr/sqrt(160) = 3.5266e-39   ratio 4.69x
+      -> 37.1% of sqrt_tr against a 7.9% floor;  after the correction, 4.83x / 43.7%
+
+That is `>> floor` on any reading, and the 37% is not my interpretation — `:325` recorded exactly that
+figure as "NON-negligible, FEED Fable-F7 adopt decision" when the headline landed on 07-13. So
+**quoting mean-centered alone is disqualified**, the CV-centered variant must exist, and the operative
+`g` change is CV-centered **+0.62%** — the corrected inflation edges slightly **up**. My "g falls toward
+1" emphasis described the variant the rule rules out. Only *presentation* (sole headline vs both side by
+side) is genuinely his.
+
+Net: one of the two decisions I escalated last cycle answers itself from a rule the repo wrote in
+advance. That is the campaign's own standard working — and the reason to re-read the predeclaration
+before escalating, not after.
