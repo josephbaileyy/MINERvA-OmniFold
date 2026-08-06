@@ -66,7 +66,7 @@ def frozen_observed(**over):
          "edges_pparallel": [0.0, 0.75, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0,
                              9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 120.0],
          "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
-         "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
+         "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8,
                          "batch_size": 512,
                          "train_events": 2000000},
          # J01: the event-feature schema the run was trained on, retyped for the same reason as

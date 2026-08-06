@@ -138,72 +138,6 @@
   "gate2": "PASS (RE-ISSUE PENDING -- see open_blockers.gate2_reissue_pending)",
   "frozen_contract": "pet-fullevent-fps-v1"
  },
- "files": {
-  "atomic_write": {
-   "path": "nd-unfolding/pet/atomic_write.py",
-   "sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e"
-  },
-  "b1_normalization_test": {
-   "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
-   "sha256": "13867a3a6b20c380063ec8c8a49ae8ef27352d318934d366ac22bcd43b561493"
-  },
-  "closure_omitted_muon_stress": {
-   "path": "nd-unfolding/pet/stress_closure_muon.py",
-   "sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
-  },
-  "closure_ordinary": {
-   "path": "nd-unfolding/pet/closure_fullevent_fps.py",
-   "sha256": "0d51213a515f29697e505653295f656d2b9b872c7c007316cf02b5322a018a6f"
-  },
-  "closure_rate_injection": {
-   "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
-   "sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
-  },
-  "driver": {
-   "path": "nd-unfolding/pet/train_fullevent_nominal.py",
-   "sha256": "0287a94c827d4d975813fa60cec1df56077237c50b3cbbabbd73d9bc19663dbe"
-  },
-  "estimator_engine_multifold": {
-   "path": "omnifold_nn/omnifold/omnifold.py",
-   "sha256": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b"
-  },
-  "estimator_engine_net": {
-   "path": "omnifold_nn/omnifold/net.py",
-   "sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
-  },
-  "launcher": {
-   "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
-   "sha256": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
-  },
-  "launcher_test": {
-   "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
-   "sha256": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"
-  },
-  "validator": {
-   "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
-   "sha256": "69c5a577d41749d57016e1df5e9a92a7aa507be5fd5bedf94e180e1ab2b9f5bb"
-  },
-  "validator_test": {
-   "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
-   "sha256": "9e268bc4e1cde3b637a75dc8f169c57b5d6d11073e40ca2cf9e775412ac9f08a"
-  },
-  "fullevent_extract_test": {
-   "path": "nd-unfolding/tests/test_fullevent_extract.py",
-   "sha256": "893115e4d690778f8acf4bbf8276306eeef9b94c82194e3b49f9a04b5b0d8b25"
-  },
-  "fullevent_extractor": {
-   "path": "nd-unfolding/pet/extract_fullevent_fps.py",
-   "sha256": "545816b577de1cec698ac260db07724606807fc4ed03e618ee32f1e3549f76e3"
-  },
-  "fullevent_schema_test": {
-   "path": "nd-unfolding/tests/test_fullevent_schema.py",
-   "sha256": "ae3686b9ec03f61c40a81cb331299a23a71e82d64e66b059bd8f36ae4b6bb3c7"
-  },
-  "synthetic_g2_fixture": {
-   "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
-   "sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f"
-  }
- },
  "additive_bindings": {
   "J01_J02_full_event_schema": "`extract_fullevent_fps.py` is new and is the extraction path for the result this gate gates -- J02 found there was no full-event extractor in the tree at all and that the recoil/5D one is not it (wrong key, `weights_push` vs `w_push`, and wrong coverage, 2M vs arange(49152885)). Binding it here is the same zero-cost move B-1 and B-6 made: a gate whose result cannot be extracted without a script should be able to detect that the script changed. `test_fullevent_schema.py` and `test_fullevent_extract.py` are the new tests. `make_synthetic_g2_fullevent.py` is bound because its muon block silently disagreed with the dumper's column order for as long as nothing read it, and it is now the fixture the full-event path is exercised against off-cluster."
  },
@@ -265,6 +199,98 @@
     ]
    },
    "power_note": "The predeclared blindness criterion `median(res_recoil) > 0.5*median(prior)` cannot by itself distinguish an estimator that is blind AS DESIGNED from one that never ran (push == 1 reproduces the prior). A macOS run of the same script hash resolves it empirically: the PRIOR residual agrees across platforms to 9 significant figures (0.5819618292 vs 0.5819618295) because it involves no training, while the recoil-only residual does NOT (0.5811057 vs 0.5819366) -- and only training is platform-dependent. So the recoil leg ran and learned nothing useful. Persisting push mean/std/frac!=1 in the report would make a single run self-interpreting; deferred to the next re-issue rather than voiding this gate for a non-urgent improvement."
+  },
+  "ordinary_closure": {
+   "status": "RECORDED -- run, PASS, machine-readable, and now TRACKED",
+   "verdict": "PASS",
+   "report": {
+    "path": "nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json",
+    "sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4"
+   },
+   "marginal_l1": 0.006594,
+   "l1_max": 0.1,
+   "push_median": 1.085782766342163,
+   "push_median_dev": 0.085782766342163,
+   "push_med_tol": 0.15,
+   "bkg_mode": "mc-only",
+   "is_powered_closure": false,
+   "is_synthetic_fixture": false,
+   "refinement_invoked": false,
+   "closure_class": "mc-self-consistency-identity",
+   "niter": 2,
+   "epochs": 6,
+   "why_niter_2_here_is_correct": "Step 3's ordinary closure is prescribed at --niter 2 --epochs 6 (RESTORE-2026-08-03.md:942-944) and is an MC self-consistency smoke, not the nominal. check_closure_provenance does not compare it against the seed policy, verified by running it with FROZEN patched to niter=3: still True, 11/11. So the niter 2->3 policy change does NOT void this receipt.",
+   "certifies_caveat": "An mc-only identity closure cannot distinguish a correct estimator from a null one -- its own `certifies` field says so. Necessary for Gate-4, not sufficient for publication power. That is what the powered closure supplies, and it must be re-run at niter=3."
+  }
+ },
+ "status": "SUPERSEDED",
+ "superseded_by": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260806.json",
+ "superseded_at_utc": "2026-08-06T01:20:00Z",
+ "superseded_why": "RESTORE Step 2b's four owed items landed together, and the seed policy moved niter 2 -> 3, which voids the bindings of every file this receipt froze. Digests preserved verbatim under files_at_issue; every move recorded in the successor's reissue.binding_moves.",
+ "files_at_issue": {
+  "atomic_write": {
+   "path": "nd-unfolding/pet/atomic_write.py",
+   "sha256_at_issue": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e"
+  },
+  "b1_normalization_test": {
+   "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+   "sha256_at_issue": "13867a3a6b20c380063ec8c8a49ae8ef27352d318934d366ac22bcd43b561493"
+  },
+  "closure_omitted_muon_stress": {
+   "path": "nd-unfolding/pet/stress_closure_muon.py",
+   "sha256_at_issue": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
+  },
+  "closure_ordinary": {
+   "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+   "sha256_at_issue": "0d51213a515f29697e505653295f656d2b9b872c7c007316cf02b5322a018a6f"
+  },
+  "closure_rate_injection": {
+   "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+   "sha256_at_issue": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
+  },
+  "driver": {
+   "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+   "sha256_at_issue": "0287a94c827d4d975813fa60cec1df56077237c50b3cbbabbd73d9bc19663dbe"
+  },
+  "estimator_engine_multifold": {
+   "path": "omnifold_nn/omnifold/omnifold.py",
+   "sha256_at_issue": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b"
+  },
+  "estimator_engine_net": {
+   "path": "omnifold_nn/omnifold/net.py",
+   "sha256_at_issue": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
+  },
+  "launcher": {
+   "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+   "sha256_at_issue": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
+  },
+  "launcher_test": {
+   "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+   "sha256_at_issue": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d"
+  },
+  "validator": {
+   "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+   "sha256_at_issue": "69c5a577d41749d57016e1df5e9a92a7aa507be5fd5bedf94e180e1ab2b9f5bb"
+  },
+  "validator_test": {
+   "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+   "sha256_at_issue": "9e268bc4e1cde3b637a75dc8f169c57b5d6d11073e40ca2cf9e775412ac9f08a"
+  },
+  "fullevent_extract_test": {
+   "path": "nd-unfolding/tests/test_fullevent_extract.py",
+   "sha256_at_issue": "893115e4d690778f8acf4bbf8276306eeef9b94c82194e3b49f9a04b5b0d8b25"
+  },
+  "fullevent_extractor": {
+   "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+   "sha256_at_issue": "545816b577de1cec698ac260db07724606807fc4ed03e618ee32f1e3549f76e3"
+  },
+  "fullevent_schema_test": {
+   "path": "nd-unfolding/tests/test_fullevent_schema.py",
+   "sha256_at_issue": "ae3686b9ec03f61c40a81cb331299a23a71e82d64e66b059bd8f36ae4b6bb3c7"
+  },
+  "synthetic_g2_fixture": {
+   "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+   "sha256_at_issue": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f"
   }
  }
 }

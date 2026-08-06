@@ -263,13 +263,20 @@ def reweight_full_inventory(inputs_npz, contract, chunk=DEFAULT_CHUNK, batch_siz
 
     with np.load(inputs_npz, allow_pickle=True) as d:
         fe.assert_extended_fps_edges(d["edges_0"], d["edges_1"])
-        n = int(np.asarray(d["pass_truth"]).shape[0])
+        # The MASK ITSELF, not just its length: off-acceptance rows must be pinned to 1.0 exactly as
+        # MultiFold.RunStep2 pins them (omnifold.py:203-205). See
+        # FINDING-20260802-extractor-pass-truth-mask.md.
+        pass_truth = np.asarray(d["pass_truth"]).astype(bool)
+    n = int(pass_truth.shape[0])
     arch_evt = int(contract["pet_arch"]["num_evt"])
     if arch_evt != len(tnames):
         raise SystemExit(f"[extract] the step-2 network takes num_evt={arch_evt} but the "
                          f"recorded truth schema has {len(tnames)} features (fail closed)")
     of = _engine_reweighter(model2, batch_size)
-    out = np.empty(n, np.float64)
+    # ONES, not empty: every row this pass does not overwrite must already hold the engine's
+    # off-acceptance value. `empty` made an unwritten row uninitialized garbage; the mask below means
+    # !pass_truth rows are deliberately never written, so the initializer IS the value they keep.
+    out = np.ones(n, np.float64)
     zf = zipfile.ZipFile(inputs_npz)
     gen_stream = _RowStream(zf, "part_gen")
     ts_stream = _RowStream(zf, "truth_scalars")
@@ -290,8 +297,18 @@ def reweight_full_inventory(inputs_npz, contract, chunk=DEFAULT_CHUNK, batch_siz
                     "the full inventory -- do not nan_to_num, this is a real disagreement between "
                     "the trained input space and the inventory being reweighted "
                     "(see docs/orchestration/FINDING-20260730-event-feature-nonfinite.md).")
-            out[lo:hi] = of.reweight((gen_cloud, evt), model2, batch_size=batch_size)
-            del gen_cloud, evt
+            # Mirror MultiFold.RunStep2 exactly: evaluate the model on the whole chunk, then KEEP
+            # the classifier value only where pass_truth, leaving 1.0 elsewhere. The engine does
+            # `new_weights = ones; new_weights[pass_gen] = reweight(...)[pass_gen]`; anything else
+            # makes the full-inventory pass and the training pass disagree on every off-acceptance
+            # row by construction, which is what made check_subsample_agreement fire on a CORRECT
+            # result (max rel dev 9.655e-01, Delta 20778127). Measured on the real G2 dump
+            # 2026-08-05: 11,999 of 12,000 rows pass_gen at max_events=12000, and 1,999,920 of
+            # 2,000,000 in the powered-closure half -- so off-acceptance rows DO exist here and this
+            # guard is not vacuous, which the finding had left open.
+            chunk_w = of.reweight((gen_cloud, evt), model2, batch_size=batch_size)
+            out[lo:hi] = np.where(pass_truth[lo:hi], chunk_w, 1.0)
+            del gen_cloud, evt, chunk_w
             if progress:
                 print(f"[extract] reweight-all {hi}/{n} ({100.0 * hi / n:.1f}%)", flush=True)
     finally:
@@ -299,9 +316,16 @@ def reweight_full_inventory(inputs_npz, contract, chunk=DEFAULT_CHUNK, batch_siz
     if not np.all(np.isfinite(out)):
         raise SystemExit(f"[extract] {int((~np.isfinite(out)).sum())} non-finite push weights "
                          "(fail closed)")
+    # Report the pin explicitly. `check_subsample_agreement` passing is only meaningful if we know
+    # whether any off-acceptance rows existed to disagree about -- with none, the check is vacuous
+    # and should say so rather than read as evidence.
+    n_off = int((~pass_truth).sum())
     telem = {"n_rows": n, "chunk": int(chunk), "batch_size": int(batch_size),
              "w_push_min": float(out.min()), "w_push_max": float(out.max()),
-             "w_push_mean": float(out.mean()), "w_push_median": float(np.median(out))}
+             "w_push_mean": float(out.mean()), "w_push_median": float(np.median(out)),
+             "n_off_acceptance_pinned": n_off,
+             "off_acceptance_all_exactly_one": bool(np.all(out[~pass_truth] == 1.0)),
+             "subsample_agreement_is_vacuous": n_off == 0}
     return out, telem
 
 

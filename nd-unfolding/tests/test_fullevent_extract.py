@@ -271,6 +271,31 @@ class RowStream(unittest.TestCase):
                 self.assertNotIsInstance(d["a"], np.memmap)
             self.assertNotIn("mmap_mode", inspect.getsource(ex.reweight_full_inventory))
 
+    def test_off_acceptance_rows_are_pinned_to_one_like_runstep2(self):
+        """FINDING-20260802-extractor-pass-truth-mask: the full-inventory pass must pin
+        `pass_truth == False` rows to exactly 1.0, because `MultiFold.RunStep2` does
+        (`omnifold.py:203-205`). Without it the two passes disagree on every off-acceptance row by
+        construction and `check_subsample_agreement` fails closed on a CORRECT result -- measured at
+        max rel dev 9.655e-01 on Delta 20778127.
+
+        Structural, in the idiom of the mmap test above: a behavioural version needs a trained
+        step-2 model and a point-cloud fixture, so it could only live in a GPU integration test,
+        which is precisely where this defect already hid for a month.
+        """
+        src = inspect.getsource(ex.reweight_full_inventory)
+        self.assertIn("np.ones(n", src,
+                      "out must be initialized to ones; np.empty leaves unwritten rows as garbage")
+        self.assertNotIn("np.empty(n", src)
+        self.assertIn("pass_truth[lo:hi]", src,
+                      "each chunk must be masked by pass_truth, not assigned wholesale")
+
+    def test_the_pin_reports_whether_it_was_vacuous(self):
+        """A guard that cannot distinguish "no off-acceptance rows existed" from "they all agreed"
+        reads as evidence when it is not. The telemetry must say which."""
+        src = inspect.getsource(ex.reweight_full_inventory)
+        for key in ("n_off_acceptance_pinned", "subsample_agreement_is_vacuous"):
+            self.assertIn(key, src)
+
 
 class SubsampleAgreement(unittest.TestCase):
     def test_agreement_passes_within_the_nondeterminism_floor(self):

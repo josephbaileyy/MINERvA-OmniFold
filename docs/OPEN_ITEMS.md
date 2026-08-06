@@ -142,16 +142,58 @@ Implementation gate, in order:
    **STATUS 2026-08-05: D1/D2/D3 implemented; GATE 2 RE-ISSUED AND PASSED** (job
    56344268). What remains, in order:
    (a) **run the D2 powered recovery closure** --- `pet/closure_powered_truth_reweight.py`
-       exists, its Gate-4 component re-derives every metric from the dump, and a GPU
-       smoke proved the path; the predeclared run (clipped-exponential truth-pT tilt
-       at amplitude 0.35, clip |z|<=3, disjoint deterministic 2M/2M at split seed 7,
-       nominal policy incl. batch 512, accept at gap>=0.15, floor/gap<=0.10,
-       residual/gap<=0.20) has NOT run. Sized at 12.84 GiB peak host memory.
-       Until it passes, `powered_closure` is red BY DESIGN and Gate-4 cannot PASS.
-   (b) **re-issue the Gate-4 launch-code gate (Step 2b)** --- the 8 remaining verifier
-       mismatches are all from `p3f-pet-gate4-launch-code-gate-20260801b.json`, on files
-       D1/D2 legitimately changed.
-   (c) then, and only then, Step 4.
+       exists and its Gate-4 component re-derives every metric from the dump. The 08-04 GPU
+       smoke (job 56347531) exercised the whole path and **returned FAIL, exit 3** --- not a
+       crash: it ran the complete protocol and wrote a verdict. That FAIL was an artifact of
+       the smoke's 20,000-row half-size, and it is now PROVABLE rather than inferred: the
+       submission-side gate scores `floor/gap = 0.4040` at 20k (acceptance budget 0.50x the
+       sampling floor --- unpassable however well the estimator performed) against
+       `floor/gap = 0.0459` at the predeclared 2M. The smoke's report and artifact were
+       deleted, which is why this had to be reconstructed; `--json` is mandatory on the gate
+       now so a FAIL can never again leave no evidence.
+       The predeclared run (clipped-exponential truth-pT tilt at amplitude 0.35, clip
+       |z|<=3, disjoint deterministic 2M/2M at split seed 7, nominal policy incl. batch 512,
+       accept at gap>=0.15, floor/gap<=0.10, residual/gap<=0.20) has NOT completed. Sized at
+       12.84 GiB peak host memory. The two training-independent criteria are already measured
+       and pass with margin (gap 0.2343 = 1.56x, floor/gap 0.0459 = 2.2x), so the only open
+       number is `residual <= 0.0469` (recovery >= 0.80). Until it passes, `powered_closure`
+       is red BY DESIGN and Gate-4 cannot PASS.
+       **Job 56355818 was CANCELLED 2026-08-06 at 00:57Z, 5:18 into its 12 h run**, on the
+       user's instruction and for a mechanical reason: it was executing `niter=2`, and the
+       seed policy moved to `niter=3` in the same window. Its report would have recorded
+       `niter: 2` and been rejected by `powered:nominal_configuration`
+       (`validate_pet_nominal_gate4.py:790-795`) and `freeze:seed_policy` (`:937`). **It must
+       be RE-RUN at niter=3**, which is now the only thing standing between Gate-4 and a
+       runtime verdict. Cancelling cost ~5 min of GPU because it was caught minutes after
+       dispatch rather than hours; see
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md).
+   (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
+       PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
+       `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,
+       `refinement_invoked = False`. Receipt
+       `nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json`, sha256
+       `6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4`, **now committed and
+       hash-bound** --- it had been an untracked, cluster-only file, so earlier statements that
+       item 4 was "done" were true about the digest and false about the repository. Verified by
+       execution that the gate can consume it: `check_closure_provenance` returns True, 11/11,
+       and still does with the policy at `niter=3` (it does not reference `niter`, and Step 3
+       legitimately runs at its own `--niter 2 --epochs 6`).
+       Not blocked by the ROOT/TF interpreter split: D2 made `closure_fullevent_fps.py` default
+       to `--bkg-mode mc-only`, which needs TF alone (`closure_fullevent_fps.py:14-16`).
+   (a3) ~~**item 3, the measured `fold_forward_ratio_dev_max`**~~ --- **RESOLVED 2026-08-06,
+       and NOT as a new number.** The tolerance stays at **0.05**; the **seed policy** moved
+       `niter` 2 -> 3, which lowers the structural floor `(1-a)^k (R-1)/R` from 3.7318% to
+       2.1698%. Measured on 48 seeds per arm (identical seeds 7-54, N=240,000, epochs 8, at
+       R=1.1240802949941018 / a=0.4185618199216587): `niter=2` gave **6/48** exceedances of
+       0.05, `niter=3` gave **0/48** (Fisher exact p ~ 0.026). Status string moved
+       `PROVISIONAL_PENDING_CLOSURE_MEASUREMENT` -> `MEASURED_20260806_B1_48SEEDS_NITER3`. The
+       four B1 receipts are committed as evidence. **No tolerance was raised.**
+   (b) ~~**re-issue the Gate-4 launch-code gate (Step 2b)**~~ --- **DONE 2026-08-06** as
+       `state/p3f-pet-gate4-launch-code-gate-20260806.json`, with all four owed items in ONE
+       commit and `20260801b` retired under the D3 at-issue convention. 10 binding moves;
+       verifier goes **10 mismatches -> 0** and both `test_hash_bindings.py` guards go green.
+   (c) then, and only then, Step 4 --- now gated only on the powered closure re-run at
+       `niter=3` (a1).
    The end-to-end nominal is still unproven: nothing has yet trained on this target.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the

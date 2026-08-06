@@ -27,6 +27,7 @@ TensorFlow and trains briefly (a few seconds); it skips if TF is absent.
 """
 import contextlib
 import importlib.util
+import json
 import os
 import sys
 import tempfile
@@ -756,15 +757,64 @@ class Gate4FoldForward(unittest.TestCase):
         self.assertTrue(g4.check_fold_forward_ratio(113.5, 100.0, 1.135)[0])
 
     def test_tolerance_has_power_against_the_defect_and_admits_the_floor(self):
-        """The provisional tolerance must sit between the structural floor and the defect size.
-        Both bounds are computed from the closure's closed form, not asserted by fiat."""
+        """The tolerance must sit between the structural floor and the PARAMETER-FREE CEILING.
+
+        REPAIRED 2026-08-06. This test used to hardcode `R, acc, k = 1.135, 0.621, 2` and bound the
+        tolerance above by the defect signal `(R-1)/R`. It kept PASSING while proving nothing --
+        exactly the vacuity this file's header warns about -- for two independent reasons:
+
+          * `0.621` is the RECOIL-ONLY acceptance. Full-event FPS expands the truth denominator
+            32.8M -> 49.2M while the reco population stays ~20.5M, so `a` is 0.4186 and the
+            structural floor more than doubles (1.71% -> 3.73% at k=2). The floor bound was being
+            checked against a campaign this estimator does not run.
+          * the real upper bound is NOT the defect signal. The second, "parameter-free" leg of
+            `check_fold_forward_ratio` is algebraically `dev < C = (R-1)/(2R)`, so ANY tolerance at
+            or above C is INERT: the parameter-free leg always binds first and the number does
+            nothing. Bounding by `(R-1)/R = 2C` admitted an entire range of inert tolerances.
+
+        Both bounds now derive from the tracked Gate-2 runtime receipt and the frozen seed policy,
+        so this test follows the campaign's operating point instead of pinning a dead one."""
         import closure_b1_rate_injection as clo
-        R, acc, k = 1.135, 0.621, 2
+        receipt = os.path.join(ROOT, "nd-unfolding", "g2_fullevent", "gate2", "final",
+                               "G2_GATE2_TARGET_RUNTIME_RECEIPT.json")
+        with open(receipt) as fh:
+            g2 = json.load(fh)
+        R = float(g2["step1_class_ratio"]["R"])
+        tel = g2["step1_class_ratio"]["telemetry"]
+        acc = float(tel["n_signal_pass_reco"]) / float(tel["n_signal_rows"])
+        k = int(g4.FROZEN["seed_policy"]["niter"])
+
         floor = clo.structural_floor(acc, R, k)
+        ceiling = (R - 1.0) / (2.0 * R)
         signal = abs(R - 1.0) / R
         tol = g4.FROZEN["tolerances"]["fold_forward_ratio_dev_max"]
-        self.assertLess(floor, tol, "tolerance is below the structural floor -> fails a correct unfold")
-        self.assertLess(tol, signal, "tolerance exceeds the defect size -> the gate detects nothing")
+
+        # Soundness of the parameter-free leg itself: it demands >50% recovery, and the worst case
+        # recovers 1-(1-a)^k, so it is only satisfiable when 2(1-a)^k < 1. At k=1 this FAILS and the
+        # leg would reject a correct unfold, which is why the frozen niter is load-bearing.
+        self.assertLess(2.0 * (1.0 - acc) ** k, 1.0,
+                        f"at a={acc:.4f}, niter={k}: 2(1-a)^k = {2.0 * (1.0 - acc) ** k:.4f} >= 1, "
+                        f"so the parameter-free leg would reject a CORRECT unfold")
+        self.assertLess(floor, ceiling,
+                        f"structural floor {floor:.6f} is above the ceiling {ceiling:.6f}; no "
+                        f"tolerance value can work at this operating point")
+
+        def admissible(t):
+            """The real admissible window: above the floor, strictly below the ceiling."""
+            return floor < t < ceiling
+
+        self.assertTrue(admissible(tol),
+                        f"tol={tol} outside the admissible window "
+                        f"({floor:.6f}, {ceiling:.6f}) at R={R:.6f}, a={acc:.6f}, niter={k}")
+        # Paired mutations, per this file's rule that every PASS is paired with a must-FAIL:
+        self.assertFalse(admissible(ceiling),
+                         "a tolerance AT the parameter-free ceiling is inert, not admissible")
+        self.assertFalse(admissible(signal),
+                         "the OLD upper bound (the defect signal) is inert and must be rejected")
+        self.assertFalse(admissible(floor * 0.5),
+                         "a tolerance below the structural floor must be rejected")
+        # and the ceiling is the strictly tighter of the two candidate upper bounds
+        self.assertLess(ceiling, signal)
 
     def test_independence_check_catches_a_driver_validator_disagreement(self):
         agree = g4.check_fold_forward_independence((113.5, 100.0, 1.135), (113.5, 100.0, 1.135))
@@ -926,11 +976,23 @@ class Gate4FoldForward(unittest.TestCase):
         note = [c for c in checks if c["name"].endswith("rate_recovered_not_erased")][0]
         self.assertNotIn("not applicable", note["detail"])
 
-    def test_tolerance_is_marked_provisional(self):
-        """§2d requires the tolerance be measured before it is frozen. Until then the receipt must
-        say so, or a reader takes a provisional number for a validated one."""
-        self.assertEqual(g4.FROZEN["tolerances"]["fold_forward_ratio_dev_max_status"],
-                         "PROVISIONAL_PENDING_CLOSURE_MEASUREMENT")
+    def test_tolerance_status_records_the_measurement(self):
+        """§2d requires the tolerance be measured before it is frozen, and the receipt must say
+        which it is -- a reader must never take a provisional number for a validated one.
+
+        Measured 2026-08-06: 48 seeds (7-54) at N=240,000, epochs 8, niter 3, at the measured
+        operating point; 0/48 exceeded 0.05 and 0/48 exceeded the parameter-free ceiling. The
+        tolerance VALUE did not change -- the seed policy did (niter 2 -> 3), which lowered the
+        structural floor. Renamed from `test_tolerance_is_marked_provisional`, which asserted the
+        opposite marking.
+
+        The status is asserted as a literal on purpose: reverting it without re-running the
+        measurement must fail here, and a future re-measurement has to move this string
+        deliberately rather than inherit it."""
+        status = g4.FROZEN["tolerances"]["fold_forward_ratio_dev_max_status"]
+        self.assertEqual(status, "MEASURED_20260806_B1_48SEEDS_NITER3")
+        self.assertNotIn("PROVISIONAL", status,
+                         "the tolerance has been measured; a PROVISIONAL marking understates it")
 
 
 class Gate4DriverContract(unittest.TestCase):

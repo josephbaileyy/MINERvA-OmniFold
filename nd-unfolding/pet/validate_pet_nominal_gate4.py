@@ -89,7 +89,7 @@ FROZEN = {
     "edges_pparallel": [float(x) for x in fe.CANONICAL_PPARALLEL_EDGES],
     "n_pt_bins": N_PT_BINS, "n_pparallel_bins": N_PPAR_BINS, "n_reported_cells": N_CELLS,
     "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
-    "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
+    "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8,
                     "batch_size": 512,
                     "train_events": 2000000},
     "closure_scripts": {
@@ -118,11 +118,21 @@ FROZEN = {
     "reweight_logit_cap": 30.0,
     "tolerances": {"marginal_l1_max": 0.10, "push_median_dev_max": 0.15,
                    "cap_saturation_frac_max": 1e-3,
-                   # B1 §2d. PROVISIONAL -- must be re-derived from the closure run before the
-                   # 08-03 re-issue freezes it. See check_fold_forward_ratio for the three terms
-                   # that set it and why it cannot inherit a 1e-3-scale identity tolerance.
+                   # B1 §2d. MEASURED 2026-08-06, and the VALUE IS UNCHANGED at 0.05 -- this is not
+                   # a tolerance raise. What moved is the structural floor: niter 2 -> 3 drops
+                   # (1-a)^k (R-1)/R from 3.7318% to 2.1698%, which is where the margin came from.
+                   # 48 seeds (7-54) at the measured operating point (R=1.1240802949941018,
+                   # a=20573521/49152885=0.4185618199216587), N=240,000, epochs 8, niter 3:
+                   #   max 4.2750%   mean 2.1876%   sd 0.8444%   0/48 above 0.05
+                   # At niter=2 this SAME tolerance saw 6/48 exceedances, which is why the policy
+                   # moved rather than the number. Clearance is F_3 + 3.35 sigma.
+                   # Upper bound is NOT the defect signal (R-1)/R: the parameter-free check is
+                   # algebraically dev < C = (R-1)/(2R) = 5.5192%, so any tol >= C is INERT and the
+                   # usable range is (worst correct dev, C). 0.05 sits inside it.
+                   # See check_fold_forward_ratio for the three terms that set it and why it cannot
+                   # inherit a 1e-3-scale identity tolerance.
                    "fold_forward_ratio_dev_max": 0.05,
-                   "fold_forward_ratio_dev_max_status": "PROVISIONAL_PENDING_CLOSURE_MEASUREMENT",
+                   "fold_forward_ratio_dev_max_status": "MEASURED_20260806_B1_48SEEDS_NITER3",
                    # Independence checks: the driver's reported quantities vs the validator's own
                    # recomputation from the dump. Same arithmetic on the same rows -- these ARE
                    # tight, and a mismatch means the two are not looking at the same result.

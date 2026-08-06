@@ -1,0 +1,283 @@
+{
+ "receipt_schema": "p3f-pet-gate4-launch-code-gate-v1",
+ "verdict": "PASS_CODE_ONLY",
+ "observed_at_utc": "2026-08-06T01:20:00Z",
+ "actor": "claude-opus-5(local, RESTORE Step 2b re-issue; niter 2->3 on Joseph's 2026-08-06 decision)",
+ "reissue": {
+  "supersedes": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801b.json",
+  "why": "RESTORE-2026-08-03.md Step 2b's four owed items land here in ONE commit. (1) the extractor `pass_truth` mask fix; (2) `batch_size` plumbed through the driver and validator; (3) the measured `fold_forward_ratio_dev_max`, which resolved as a SEED POLICY change rather than a tolerance change -- niter 2 -> 3 with the tolerance held at 0.05; (4) the Step 3 ordinary closure receipt, now committed rather than referenced. Landing them piecemeal would turn `test_gate3_and_gate4_launch_code_freezes_specifically` red between each, and would additionally drop the live launch-code receipt count below its floor of 2.",
+  "runbook_step": "docs/orchestration/RESTORE-2026-08-03.md Step 2b",
+  "never_hand_edited_a_hash": "No digest was edited to clear a mismatch. Every digest here was recomputed from the working tree after the code edits landed. The 20260801b bindings are preserved verbatim in its own `files_at_issue` block (renamed so the verifier's collector no longer treats them as live) and every old->new move is recorded in `binding_moves`.",
+  "binding_moves": {
+   "b1_normalization_test": {
+    "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+    "from": "13867a3a6b20c380063ec8c8a49ae8ef27352d318934d366ac22bcd43b561493",
+    "to": "b4a3ceee23f9460ee7f8474044537e5a4126aae757f5dfe5faffeb4c66ffaf0e"
+   },
+   "closure_ordinary": {
+    "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+    "from": "0d51213a515f29697e505653295f656d2b9b872c7c007316cf02b5322a018a6f",
+    "to": "861b02cbbb6d5bf1d94145b387f2def56a31ef3c99b82fdd6e70bbdec80a794f"
+   },
+   "driver": {
+    "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+    "from": "0287a94c827d4d975813fa60cec1df56077237c50b3cbbabbd73d9bc19663dbe",
+    "to": "f22a3caa52ad23927be17ba404fa06dee4e15eddd392fcb9ac1b3964811cbf63"
+   },
+   "estimator_engine_multifold": {
+    "path": "omnifold_nn/omnifold/omnifold.py",
+    "from": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b",
+    "to": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+   },
+   "launcher_test": {
+    "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+    "from": "7caa3e082b0b30c8dca93605565ae5a3fa8c2d2612014dd2a668d6f1d796dc2d",
+    "to": "ff9982f5ab81e6f5c3659220153a55bf37cd5cc64059c026296630a0b4421937"
+   },
+   "validator": {
+    "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+    "from": "69c5a577d41749d57016e1df5e9a92a7aa507be5fd5bedf94e180e1ab2b9f5bb",
+    "to": "7cfbe33aed9cd936c2647c82d118cd004d8db10184613477c33e05cfa4766ffb"
+   },
+   "validator_test": {
+    "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+    "from": "9e268bc4e1cde3b637a75dc8f169c57b5d6d11073e40ca2cf9e775412ac9f08a",
+    "to": "b975a3bb98a0d1d1a006dbf9379a39685c4d2d90c68d18297f4babc7131ebe7d"
+   },
+   "fullevent_extract_test": {
+    "path": "nd-unfolding/tests/test_fullevent_extract.py",
+    "from": "893115e4d690778f8acf4bbf8276306eeef9b94c82194e3b49f9a04b5b0d8b25",
+    "to": "2bb8caed8fd44f0a4072c53f62ef6607647e9ee7d6faf72792ef28f94abdd0ad"
+   },
+   "fullevent_extractor": {
+    "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+    "from": "545816b577de1cec698ac260db07724606807fc4ed03e618ee32f1e3549f76e3",
+    "to": "c3f21e77615c1738086058dd3691b5c92de84cc7da51c5ab4c1167baccd481f4"
+   },
+   "fullevent_schema_test": {
+    "path": "nd-unfolding/tests/test_fullevent_schema.py",
+    "from": "ae3686b9ec03f61c40a81cb331299a23a71e82d64e66b059bd8f36ae4b6bb3c7",
+    "to": "28793b83c266839f188e68dd651f5e9a389c723abc30b080c9bb68ae308353ec"
+   }
+  },
+  "no_tolerance_was_raised": "`fold_forward_ratio_dev_max` is UNCHANGED at 0.05. The admissible window moved instead: niter 2 -> 3 lowers the structural floor (1-a)^k(R-1)/R from 3.7318% to 2.1698%, so the same tolerance went from 6/48 realized exceedances to 0/48. This is the opposite of raising a tolerance to make a check pass."
+ },
+ "prerequisite": {
+  "gate3": "PROMOTED_PASS",
+  "gate3_source_manifest": "docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json",
+  "gate3_source_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+  "gate2": "PASS (RE-ISSUE PENDING -- see open_blockers.gate2_reissue_pending)",
+  "frozen_contract": "pet-fullevent-fps-v1"
+ },
+ "files": {
+  "atomic_write": {
+   "path": "nd-unfolding/pet/atomic_write.py",
+   "sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e"
+  },
+  "b1_normalization_test": {
+   "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+   "sha256": "b4a3ceee23f9460ee7f8474044537e5a4126aae757f5dfe5faffeb4c66ffaf0e"
+  },
+  "closure_omitted_muon_stress": {
+   "path": "nd-unfolding/pet/stress_closure_muon.py",
+   "sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b"
+  },
+  "closure_ordinary": {
+   "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+   "sha256": "861b02cbbb6d5bf1d94145b387f2def56a31ef3c99b82fdd6e70bbdec80a794f"
+  },
+  "closure_rate_injection": {
+   "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+   "sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24"
+  },
+  "driver": {
+   "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+   "sha256": "f22a3caa52ad23927be17ba404fa06dee4e15eddd392fcb9ac1b3964811cbf63"
+  },
+  "estimator_engine_multifold": {
+   "path": "omnifold_nn/omnifold/omnifold.py",
+   "sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+  },
+  "estimator_engine_net": {
+   "path": "omnifold_nn/omnifold/net.py",
+   "sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953"
+  },
+  "launcher": {
+   "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+   "sha256": "52c9b3f0a74cec6b4a65261e456019ff3dd8710f12732f3f6b082fdcecd203de"
+  },
+  "launcher_test": {
+   "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+   "sha256": "ff9982f5ab81e6f5c3659220153a55bf37cd5cc64059c026296630a0b4421937"
+  },
+  "validator": {
+   "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+   "sha256": "7cfbe33aed9cd936c2647c82d118cd004d8db10184613477c33e05cfa4766ffb"
+  },
+  "validator_test": {
+   "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+   "sha256": "b975a3bb98a0d1d1a006dbf9379a39685c4d2d90c68d18297f4babc7131ebe7d"
+  },
+  "fullevent_extract_test": {
+   "path": "nd-unfolding/tests/test_fullevent_extract.py",
+   "sha256": "2bb8caed8fd44f0a4072c53f62ef6607647e9ee7d6faf72792ef28f94abdd0ad"
+  },
+  "fullevent_extractor": {
+   "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+   "sha256": "c3f21e77615c1738086058dd3691b5c92de84cc7da51c5ab4c1167baccd481f4"
+  },
+  "fullevent_schema_test": {
+   "path": "nd-unfolding/tests/test_fullevent_schema.py",
+   "sha256": "28793b83c266839f188e68dd651f5e9a389c723abc30b080c9bb68ae308353ec"
+  },
+  "synthetic_g2_fixture": {
+   "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+   "sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f"
+  },
+  "closure_ordinary_receipt": {
+   "path": "nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json",
+   "sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4"
+  }
+ },
+ "evidence_bindings": {
+  "why_not_in_files": "These are provenance for a frozen constant, not inputs the gate reads at runtime, so they are bound here rather than in `files`. They are still LIVE pins: verify_hash_bindings.collect() harvests any dict carrying path+sha256, so a byte change in any of them breaks the verifier. (`closure_ordinary_receipt` IS in `files`, because `validate_pet_nominal_gate4.py --closure-report` is a required argument and the gate genuinely reads it.)",
+  "b1_niter3_seeds7_22": {
+   "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan16_measured_N240k_niter3.json",
+   "sha256": "0c3f99ac2a5b2044bdaab44be9cb9b9a49c1c964b4b3e015f9dc9cebb600824f"
+  },
+  "b1_niter3_seeds23_54": {
+   "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan32_measured_N240k_niter3_seeds23plus.json",
+   "sha256": "72b4e9f4d10b2c18e0af4ff43456004cf39b6b5bf500997e668888ae9ebca985"
+  },
+  "b1_niter2_seeds7_22": {
+   "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan16_measured_N240k.json",
+   "sha256": "75c6842413e0a1ad0c58d2e8f796004ec10568cfbc8fdc7dd7819dfede3af429"
+  },
+  "b1_niter2_seeds23_54": {
+   "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan32_measured_N240k_seeds23plus.json",
+   "sha256": "984eb1471867d3aa78cb07a72d5e5efe425e9b26ee8e8151ac281a7c23ad6bab"
+  }
+ },
+ "seed_policy_change": {
+  "what": "NOMINAL_SEED_POLICY['niter'] and FROZEN['seed_policy']['niter']: 2 -> 3",
+  "decided_by": "Joseph, 2026-08-06, after the 48-vs-48 like-for-like comparison",
+  "sites": [
+   "nd-unfolding/pet/train_fullevent_nominal.py:51 (NOMINAL_SEED_POLICY)",
+   "nd-unfolding/pet/validate_pet_nominal_gate4.py:92 (FROZEN['seed_policy'])",
+   "nd-unfolding/tests/test_pet_nominal_gate4_validator.py:69 (independent retyped literal, deliberately NOT read from FROZEN so the freeze check is not FROZEN-vs-FROZEN)"
+  ],
+  "measurement": {
+   "operating_point": {
+    "R": 1.1240802949941018,
+    "R_source": "G2_GATE2_TARGET_RUNTIME_RECEIPT.json step1_class_ratio.R",
+    "acceptance": 0.4185618199216587,
+    "acceptance_source": "step1_class_ratio.telemetry.n_signal_pass_reco / n_signal_rows = 20573521 / 49152885",
+    "N": 240000,
+    "epochs": 8,
+    "seeds": "7-54 (48, contiguous, identical in both arms)"
+   },
+   "parameter_free_ceiling_C": 0.05519171553675116,
+   "niter2": {
+    "structural_floor": 0.037318,
+    "max": 0.053764,
+    "mean": 0.038008,
+    "sd": 0.008153,
+    "exceed_0.05": "6/48",
+    "exceed_C": "0/48",
+    "arm_verdict": "FAIL"
+   },
+   "niter3": {
+    "structural_floor": 0.021698,
+    "max": 0.04275,
+    "mean": 0.021876,
+    "sd": 0.008444,
+    "exceed_0.05": "0/48",
+    "exceed_C": "0/48",
+    "arm_verdict": "PASS"
+   },
+   "why_niter3": "At 48 seeds the two arms have essentially equal spread (sd ratio 1.036), so the advantage is entirely the 1.61 pp lower mean. niter=2's max sits 0.1428 pp below the immovable ceiling C AND grew +0.2291 pp going 16->48 seeds; niter=3's max did not move at all over the same expansion and sits 1.2441 pp below C. Realized exceedance of 0.05 is 6/48 vs 0/48 (Fisher exact p ~ 0.026, so the arms differ without any gaussian assumption).",
+   "corrected_earlier_claim": "A 2026-08-05 19:25Z reading that the niter=3 sd 'grew 56%' was a small-sample artifact of differencing two 16-seed variance estimates: F=2.4498 on df (15,15), two-sided p=0.093, 95% CI for the sd ratio [0.925, 2.648], which contains 1.0 and contains the eventual 48-seed value 1.036. That reading briefly inverted the recommendation toward raising the tolerance to 0.055; it was not significant.",
+   "independent_review": "agy (separate provider account, effort high) reproduced the F-test and interval, verified the operating point and both arms against the repo, and endorsed niter=3 + tol 0.05 on statistics, physics and tolerance governance."
+  },
+  "consequence_paid": "Job 56355818 (powered truth-reweight closure) was RUNNING at niter=2 and was CANCELLED at 00:57Z, 5:18 elapsed, on Joseph's instruction. Keeping it would have produced a report recording niter=2, which `powered:nominal_configuration` (validate_pet_nominal_gate4.py:790-795) and `freeze:seed_policy` (:937) both reject against a niter=3 policy. It must be re-run at niter=3; the report it would have produced could not have been used."
+ },
+ "code_fixes_in_this_reissue": {
+  "item1_extractor_pass_truth_mask": "`reweight_full_inventory` omitted the `pass_truth` mask that `MultiFold.RunStep2` applies (omnifold.py:203-205). Three edits in extract_fullevent_fps.py: load the mask itself rather than its length; `np.ones` instead of `np.empty` so unwritten rows are 1.0 not garbage; `np.where(pass_truth[lo:hi], chunk_w, 1.0)`. Plus telemetry `n_off_acceptance_pinned`, `off_acceptance_all_exactly_one`, `subsample_agreement_is_vacuous`. Authority: FINDING-20260802-extractor-pass-truth-mask.md. Two source-inspection regression tests added to test_fullevent_extract.py -- which is itself hash-pinned, so writing them is a gate event.",
+  "item2_batch_size_plumbed": "NOMINAL_SEED_POLICY['batch_size']=512, a --batch-size arg defaulted from it, the MultiFold call reads args.batch_size, it is persisted with the other seed-policy keys, and FROZEN['seed_policy']['batch_size'] is read FROM THE ARTIFACT. Authority: FINDING-20260802-estimator-definition-vs-driver.md.",
+  "item3_tolerance_measured": "See `seed_policy_change.measurement`. The status string moved PROVISIONAL_PENDING_CLOSURE_MEASUREMENT -> MEASURED_20260806_B1_48SEEDS_NITER3; the VALUE did not move.",
+  "item3_repaired_a_test_that_had_gone_VACUOUS": "test_b1_normalization_fix.py::test_tolerance_has_power_against_the_defect_and_admits_the_floor hardcoded the recoil-era operating point (R,acc,k = 1.135, 0.621, 2) and bounded the tolerance above by the defect signal (R-1)/R. It PASSED while proving nothing: 0.621 is the recoil-only acceptance (full-event FPS expands the truth denominator 32.8M -> 49.2M, so a=0.4186 and the floor more than doubles), and the real upper bound is the parameter-free ceiling C=(R-1)/(2R)=(R-1)/R / 2, so bounding by the defect signal admitted a whole range of INERT tolerances. It now reads R and the acceptance from the tracked Gate-2 receipt and niter from FROZEN, asserts the soundness condition 2(1-a)^k < 1, and pairs every PASS with a must-FAIL mutation.",
+  "item4_ordinary_closure_receipt_is_now_TRACKED": "The Step 3 receipt existed only as an UNTRACKED file in the cluster tree and did not exist locally at all, so previous statements that item 4 was 'DONE, sha 6c9520c7' were true about the digest and false about the repository. It is committed here. Verified by execution that the gate can consume it: check_closure_provenance(ordinary, stress) returns True, 11/11, including the J01 full-event schema check and thresholds_not_loosened. Also verified it still passes with FROZEN at niter=3 -- the provenance check does not reference niter, and the ordinary closure legitimately runs at Step 3's own niter=2/epochs=6."
+ },
+ "verification": {
+  "local_suite": "python3 -m pytest nd-unfolding/tests -q -> 9 failed, 688 passed, 1 skipped (698 collected, the local baseline). The 9 are the documented pre-existing set: 6 test_fullevent_gate2.py, 1 test_gate2_target_runtime.py TF-package-init (local TF is 2.16/Keras 3 and cannot run this PET path), 2 test_hash_bindings.py which are red BY DESIGN until this re-issue lands.",
+  "local_suite_caveat": "A green local run proves little: the verifier resolves ~111 pins locally vs ~856 on compute, and ~52 tests never execute locally. Cluster verification is required and is recorded separately.",
+  "verifier_expectation": "10 mismatches before this re-issue (8 at 61f2fb2 plus item 1's two), 0 after."
+ },
+ "gate_state": {
+  "test_gate3_and_gate4_launch_code_freezes_specifically": "GREEN after this re-issue.",
+  "test_no_new_broken_hash_bindings": "GREEN after this re-issue.",
+  "live_launch_code_receipt_floor": "This receipt replaces 20260801b in the live set, holding the count at 2 against _LAUNCH_CODE_FLOOR = 2. Retiring 20260801b without this successor in the same commit would fail that floor assert on its own."
+ },
+ "open_blockers": {
+  "powered_closure_must_be_RE-RUN_at_niter3": "The D2 powered truth-reweight closure is the publication-power evidence and no run of it exists at niter=3. gap/floor are training-independent and already receipted (0.2343 >= 0.15; 0.0459 <= 0.10, PREFLIGHT_GAP_FLOOR.json and POWERED_PREFLIGHT.audit-56355818.json), so they stand. The open number remains residual <= 0.0469, i.e. recovery >= 0.80.",
+  "nominal_has_never_been_trained": "Gate-4 remains PASS_CODE_ONLY and has still never run at runtime."
+ },
+ "authorization": {
+  "gate4_launch_code_gate": "PASS_CODE_ONLY",
+  "nominal_pet_training_allowed": false,
+  "training_launch_decision": "SEPARATE post-restore user decision. This gate authorizes only that the code is frozen, not that the nominal may run."
+ },
+ "nominal_pet_training_allowed": false,
+ "closure_evidence_recorded": {
+  "omitted_muon_stress": {
+   "status": "RESOLVED -- B-6 fully retired (bound + run + PASS + machine-readable report)",
+   "verdict": "PASS",
+   "first_pass": "2026-07-30, Delta, commit df7397e, script sha256 3c3e092f (the pre---json version). AUDIT-FINDINGS-20260729-B.md B-6 said the closure 'has never recorded a PASS anywhere in the repo'; that was true when the finding was written on 07-29 and STALE by 07-30. The 20260731 receipt carried the stale wording forward without checking docs/orchestration/runs/b6-stress-closure-muon/, which was already in the checkout. Corrected here and annotated there.",
+   "pass_against_the_bound_script": {
+    "slurm_job": 20758087,
+    "observed_at_utc": "2026-08-02T02:40:45Z",
+    "why_it_was_still_needed": "The 07-30 PASS was against script sha256 3c3e092f. This receipt binds 7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b, so no PASS existed against the code actually frozen. The 07-30 run also predates --json, and Gate-4's --stress-report is now a REQUIRED argument -- a console capture is evidence this gate cannot consume.",
+    "script_sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+    "engine_net_sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+    "engine_multifold_sha256": "5553f0b7b817cbd231cf68308113f8b3fd919539ed87c46ba6f2ae4d6f71ac1b",
+    "engine_hashes_match_this_receipt": true,
+    "platform": "NCSA Delta, partition cpu / bhvk-delta-cpu, 16 cores, horovodrun -np 1 inside tf215.sif. The container's FILENAME says 215; its runtime is TF 2.14.0 / Keras 2.14.0. Perlmutter is TF 2.15, so neither Delta run matches the production TF exactly.",
+    "elapsed": "00:09:15",
+    "max_rss": "3467664K",
+    "residual_median": {
+     "prior": 0.5819618291691901,
+     "recoil_only": 0.5811057455573538,
+     "fullevent": 0.04281527145804394
+    },
+    "predeclared_criteria": "recoil_only/prior = 0.9985 (blind if > 0.5, 2.0x margin); fullevent/recoil_only = 0.0737 (recovers if < 0.5, 6.8x margin). Both clear by wide margins, not marginally.",
+    "evidence": [
+     "docs/orchestration/runs/b6-stress-closure-muon/20260801-stress_closure_muon.delta.20758087.capture.txt",
+     "docs/orchestration/runs/b6-stress-closure-muon/20260801-stress_closure_muon.delta.20758087.report.json"
+    ]
+   },
+   "power_note": "The predeclared blindness criterion `median(res_recoil) > 0.5*median(prior)` cannot by itself distinguish an estimator that is blind AS DESIGNED from one that never ran (push == 1 reproduces the prior). A macOS run of the same script hash resolves it empirically: the PRIOR residual agrees across platforms to 9 significant figures (0.5819618292 vs 0.5819618295) because it involves no training, while the recoil-only residual does NOT (0.5811057 vs 0.5819366) -- and only training is platform-dependent. So the recoil leg ran and learned nothing useful. Persisting push mean/std/frac!=1 in the report would make a single run self-interpreting; deferred to the next re-issue rather than voiding this gate for a non-urgent improvement."
+  },
+  "ordinary_closure": {
+   "status": "RECORDED -- run, PASS, machine-readable, and now TRACKED",
+   "verdict": "PASS",
+   "report": {
+    "path": "nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json",
+    "sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4"
+   },
+   "marginal_l1": 0.006594,
+   "l1_max": 0.1,
+   "push_median": 1.085782766342163,
+   "push_median_dev": 0.085782766342163,
+   "push_med_tol": 0.15,
+   "bkg_mode": "mc-only",
+   "is_powered_closure": false,
+   "is_synthetic_fixture": false,
+   "refinement_invoked": false,
+   "closure_class": "mc-self-consistency-identity",
+   "niter": 2,
+   "epochs": 6,
+   "why_niter_2_here_is_correct": "Step 3's ordinary closure is prescribed at --niter 2 --epochs 6 (RESTORE-2026-08-03.md:942-944) and is an MC self-consistency smoke, not the nominal. check_closure_provenance does not compare it against the seed policy, verified by running it with FROZEN patched to niter=3: still True, 11/11. So the niter 2->3 policy change does NOT void this receipt.",
+   "certifies_caveat": "An mc-only identity closure cannot distinguish a correct estimator from a null one -- its own `certifies` field says so. Necessary for Gate-4, not sufficient for publication power. That is what the powered closure supplies, and it must be re-run at niter=3."
+  }
+ }
+}

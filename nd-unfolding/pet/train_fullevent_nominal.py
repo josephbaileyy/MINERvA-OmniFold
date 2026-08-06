@@ -48,7 +48,7 @@ BKG_MODE = "negweight-refined"
 # trajectory, so a run at a different batch size is a differently-configured estimator; leaving it
 # uncommitted meant the artifact could not record it, FROZEN could not gate it, and a closure could
 # claim "nominal configuration" while training at another batch size.
-NOMINAL_SEED_POLICY = {"estimator_seed": 42, "subsample_seed": 0, "niter": 2, "epochs": 8,
+NOMINAL_SEED_POLICY = {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8,
                        "train_events": 2000000, "batch_size": 512}
 # The ravel convention of `central_vector` / `reported_bin_mask`. Stated INDEPENDENTLY of the
 # validator's FROZEN["bin_order"] on purpose: the whole point of persisting it is that the gate can
