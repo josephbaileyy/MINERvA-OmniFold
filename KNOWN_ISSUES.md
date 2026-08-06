@@ -95,3 +95,50 @@ what a run actually used -- calibrate before trusting an inference-only reproduc
 
 Fixing the label touches `omnifold.py`, which is hash-bound by the Gate-4 launch-code gate, so it must
 ride a deliberate re-issue rather than a drive-by edit.
+
+## The FPS extractor divides the cross section by a reco efficiency it must not divide by
+
+**Severity: this would have produced a published cross section 2.36x too high on the integral and 398x too
+high in the lowest `p_parallel` bin.** Found 2026-08-06 by a fresh-context review; legs 1-3 below verified
+in source independently before the finding was relayed.
+
+1. `extract_fullevent_fps.py:390-404` `completeness_2d` computes
+   `c = sum_w(pass_truth & pass_reco) / sum_w(pass_truth)` -- **reco efficiency**. Its docstring says
+   "Verbatim `PETxsec5D._comp`".
+2. `xsec_nd.py:79` places it in the **denominator**: `denom = completeness * flux * n_nucleons * pot * vol`.
+3. `extract_fullevent_fps.py:431-434` histograms `(w_truth * push)` over **all** `pass_truth` rows,
+   including truth-only misses, whose `push` is the `nu_k` OmniFold step 2 assigns them
+   (`omnifold.py:218-220`). `counts` is therefore **already acceptance-corrected**, so dividing by
+   efficiency is a **double correction**.
+
+On this exact 285-cell grid the correct completeness is **identically 1**: the validated GBDT FPS unfolds
+carry `globalCompleteness = 1.0000000000000002` with all 266 nonzero `hCompletenessND_flat` bins at
+1.000000, and `unfold_nd_omnifold_unbinned.py:993-999` defines completeness as a **coverage** correction,
+not an efficiency. `PETxsec5D` only ever survived carrying an efficiency there because
+`pet_systematics_5d.py:127-141` overrides its own value with the GBDT one; the FPS port deliberately
+dropped that anchor (`extract_fullevent_fps.py:459-461`, "NONE -- no such anchor exists for this domain").
+**That comment is false** -- the anchor exists in this repo, on this grid, and it is the constant 1.
+
+**Two tests look like coverage and provide none:**
+
+- `tests/test_fullevent_extract.py:351-376` recomputes the formula by calling `ex.completeness_2d` **itself**
+  and asserts bit-equality (`rtol=0, atol=0`). It verifies the extractor calls the helpers it calls, and has
+  **zero power** over whether the quantity is the right physics. This is the self-agreement antipattern of
+  `AUDIT-FINDINGS-20260729-B.md` section 4.
+- `tests/test_fullevent_extract.py:331-342` **pins the reco-efficiency semantics as intended behaviour**, so
+  anyone repairing the double-correction must first break a test that reads as authoritative.
+
+**Do not run Step 4b until this is settled.** Step 4 (training) is unaffected. Two candidate repairs, and
+choosing between them is a physics decision about what the estimator's output means: (A) drop the division
+(`completeness == 1`), preserving step 2's full-inventory extrapolation and matching the GBDT reference; or
+(B) mask `counts` to `pass_truth & pass_reco` and keep dividing, which discards the FPS extension the
+campaign exists to add. Evidence favours (A). Held for Joseph; it sets the published normalization.
+
+## The closure driver persists no inference contract
+
+`closure_powered_truth_reweight.py:287` saves only `dump_rows_a/b`, `weights_push`, `mc_indices`.
+Architecture comes from `meta` (`:261-263`) and the input normalization is derived inside
+`build_fullevent_loaders` at run time, so **there is no stored normalization to assert against** when
+reproducing a run by inference. The nominal driver stores its norms; the closure driver does not. Any
+inference-only reproduction must reproduce the same row population (`dump_rows_b` makes that possible) and
+must treat the spectrum reproduction as its only falsification handle.
