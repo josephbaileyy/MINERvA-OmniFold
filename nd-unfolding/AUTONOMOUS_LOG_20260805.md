@@ -318,3 +318,35 @@ Still queued and still blocked, now on NERSC rather than on the cert: the staged
 mail, a `git pull` on a checkout **7 commits behind**, job state for `56415634`, and rebuilding the
 `(E_avail,W)` covariance with the sixth-site fix. The nominal's wakerctl watch is cluster-side, so if the
 login nodes are wedged but Slurm and the cron are not, its verdict mail still fires without me.
+
+### CORRECTION: it *is* the home filesystem — a stale NFS handle — and my discriminator was invalid
+
+The entry above concluded "**not** a hung `$HOME` … the session itself stalls post-auth, which is
+server-side". The mechanism was wrong. The actual error, once I stopped filtering the stream at write
+time and read it whole:
+
+    Could not chdir to home directory /global/homes/j/josephrb: Stale file handle
+    bash: /global/homes/j/josephrb/.bashrc: Stale file handle
+
+**My reasoning failed because the discriminator was not one.** I argued "sftp hangs too, and sftp never
+sources shell rc files, therefore not home" — but sftp resolves `$HOME` for its initial remote directory,
+so a stale home breaks sftp for exactly the same reason. The test could not distinguish the two
+hypotheses, which makes it a *vacuous* test in the same family the campaign keeps catching: it would have
+returned the same answer whichever hypothesis was true.
+
+Two other things that hid it, both self-inflicted, now **BEN-035**: `rc=$?` after `ssh … | tail -2`
+reported `ssh_rc=0` for three hosts that had all hung (that is `tail`'s status on empty input), and
+`ssh -v … | grep … > file` showed an empty file because grep block-buffers into a pipe. Each cost a
+diagnostic round trip and each briefly asserted the opposite of the truth.
+
+**Where this leaves the cluster: usable, with `$HOME` avoided.** `/pscratch` is healthy, the repo is
+readable, and commands run (login04/22/23 all answered). `dtn01` is unreachable. So, working with
+`HOME=/pscratch/sd/j/josephrb`:
+
+- **The staged reply to his 20:29Z mail is SENT** — the 5D GBDT answer, with a note that NERSC home needs
+  a remount from their side.
+- `56415634` is **still PENDING**, 10h14m queued, priority 67871, `Start=Unknown`; no artifacts; the
+  `nominal-56415634` watch is still **armed**.
+- **`git pull` on the cluster fails** — not a repo problem: git needs the GitHub key from the stale
+  `~/.ssh`. Propagating instead by `git bundle` streamed over ssh stdin, which needs no GitHub auth and
+  no sftp. The checkout was 7 commits behind.
