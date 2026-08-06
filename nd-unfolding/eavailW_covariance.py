@@ -74,6 +74,20 @@ def main():
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--nflux", type=int, default=100)
+    # J28 (sixth site, found 2026-08-06). The flux block below reweights events into every PPFX
+    # universe but used to divide all of them by the CV flux integral, which removes the very
+    # normalization spread the flux universes exist to carry and understates C_flux. One of these
+    # two must be supplied so each universe can be divided by its own Phi_u; there is deliberately
+    # no CV fallback, because a silent fallback is the bug.
+    ap.add_argument("--flux-universe-file", default=None,
+                    help="ROOT/npz carrying hFluxCV + hFluxUniv (per-universe PPFX flux). "
+                         "Required for the flux block unless --flux-bank is given.")
+    ap.add_argument("--flux-bank", default=None,
+                    help="throw bank holding a validated flux_univ_ratio.npy; alternative to "
+                         "--flux-universe-file")
+    ap.add_argument("--allow-cv-flux-universes", action="store_true",
+                    help="DIAGNOSTIC ONLY: rebuild the pre-fix (J28) flux block by dividing every "
+                         "universe by the CV flux. Understates C_flux; never use for a product.")
     ap.add_argument("--lateral-sweep-cv", default=None,
                     help="matched-CV 5D unfold ROOT from the detector-band sweep "
                          "(sbatch_unfold_5d_detector.sh task 0); enables the "
@@ -216,7 +230,10 @@ def main():
 
     RHO_CLIP = (1e-2, 1e2)     # per-event ratio guard (positivity / tail), as in unified_throw_cov
 
-    def xsec_ew(rho_sig=None, rho_td=None):
+    def xsec_ew(rho_sig=None, rho_td=None, flux=None):
+        # `flux=None` means the CV flux, which is correct for the CV and for every KNOB universe (a
+        # knob does not move the flux integral). A FLUX universe must pass its own Phi_u; the
+        # `flux is None else flux` idiom mirrors the fixed sites, e.g. unified_throw_cov_5d.py:67.
         if rho_sig is not None:
             rho_sig = np.clip(rho_sig, *RHO_CLIP)
         if rho_td is not None:
@@ -229,7 +246,8 @@ def main():
         denom_nd, _ = und.histnd(td_cols, dw_u, edges)
         comp = np.zeros_like(of_in); nz = denom_nd > 0
         comp[nz] = of_in[nz] / denom_nd[nz]
-        xs, _ = extract_cross_section_nd(unfold_nd, comp, np.asarray(flux_bins, float),
+        xs, _ = extract_cross_section_nd(unfold_nd, comp,
+                                         np.asarray(flux_bins if flux is None else flux, float),
                                          data_pot, n_nucleons, edges)
         return marginal_ew(xs), marginal_ew(np.where(unfold_nd > 0, unfold_err / np.maximum(unfold_nd, 1e-300), 0) * xs)
 
@@ -256,11 +274,11 @@ def main():
     #            universes, mean-centered. ----------
     from uq_math import mat_covariance
 
-    def _y_band(sig_u, td_u):
+    def _y_band(sig_u, td_u, flux=None):
         rho_s = np.ones(truth_pt.size); rho_d = np.ones(td_w.size)
         mm = w_truth > 0; rho_s[mm] = sig_u[mm] / w_truth[mm]
         dd = td_w > 0; rho_d[dd] = td_u[dd] / td_w[dd]
-        return xsec_ew(rho_s, rho_d)[0].ravel()
+        return xsec_ew(rho_s, rho_d, flux=flux)[0].ravel()
 
     C_syst = np.zeros((n, n))
     for b in VERT_BANDS:
@@ -269,10 +287,27 @@ def main():
         cb = mat_covariance(np.stack([y_minus, y_plus]))
         C_syst += cb
         print(f"[syst] {b:18s} sqrt-tr += {np.sqrt(np.trace(cb)):.3e} (mean-centered +/-)", flush=True)
-    # flux universes: mean-centered covariance over all PPFX universes
+    # flux universes: mean-centered covariance over all PPFX universes, each divided by ITS OWN
+    # Phi_u (J28, sixth site). Resolved once for all 100 universes rather than per universe --
+    # flux_universe_ratio_table returns r[u, b] = Phi_u(b)/Phi_CV(b) and already fails closed on a
+    # CV mismatch, a non-positive integral, and on an all-ones table (which is precisely what a
+    # missing or unreadable flux file produces, i.e. the bug itself).
+    flux_ratio = None
+    if args.allow_cv_flux_universes:
+        print("[syst] *** --allow-cv-flux-universes: dividing every flux universe by the CV flux. "
+              "This REPRODUCES the J28 defect and UNDERSTATES C_flux. Diagnostic only.", flush=True)
+    else:
+        import flux_universe
+        flux_ratio = flux_universe.resolve_flux_ratio_table(
+            len(flux_bins), args.nflux, bank=args.flux_bank,
+            universe_file=args.flux_universe_file, pt_edges=pt_e, cv_flux_bins=flux_bins)
+        print(f"[syst] flux universes divided by their own Phi_u; max |r_u - 1| = "
+              f"{np.abs(np.asarray(flux_ratio) - 1.0).max():.4f}", flush=True)
+
     fX = np.zeros((args.nflux, n))
     for u in range(args.nflux):
-        fX[u] = _y_band(sig_ft[u], td_ft[u])
+        flux_u = None if flux_ratio is None else np.asarray(flux_bins, float) * flux_ratio[u]
+        fX[u] = _y_band(sig_ft[u], td_ft[u], flux=flux_u)
     C_flux = mat_covariance(fX)
     C_syst += C_flux
     print(f"[syst] flux({args.nflux}) sqrt-tr={np.sqrt(np.trace(C_flux)):.3e} (mean-centered)  "

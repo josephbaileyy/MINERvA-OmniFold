@@ -364,8 +364,17 @@ Implementation gate, in order:
        read, not run**, so no magnitude is quoted. Nothing published is wrong today (`values.tex:53-54`
        records the (E_avail,W) significances as removed; `sec_eavailw.tex:136-138` declines compatibility
        "without the corrected projected covariance") --- but that corrected covariance is a stated
-       deliverable and **cannot be built from this script as it stands**. Detail in `KNOWN_ISSUES.md`;
-       it is neither in scope nor explicitly excluded by the plan, and the plan's §7 should say which.
+       deliverable and could not be built from this script as it stood. Detail in `KNOWN_ISSUES.md`.
+       **CODE FIXED 2026-08-06 (no number produced)** --- `xsec_ew`/`_y_band` take a `flux` override and
+       the flux loop resolves a per-universe table through the `flux_universe` helper 081ae4a already
+       shipped; fail-closed (no silent CV fallback; the old behaviour needs an explicit
+       `--allow-cv-flux-universes`), guarded by
+       `tests/test_flux_universe_fix.py::EavailWFluxBlockIsPerUniverse`, whose three guards are proved to
+       fire against the reconstructed pre-fix source. This is the same footing 081ae4a had for the first
+       five sites: code fixed and mutation-tested, **numbers not re-rolled**. The script is bound by no
+       receipt, so no gate re-issue was needed. **What remains:** rebuild the `(E_avail,W)` covariance
+       with the fix, as part of the `M C_5D M^T` projection this file already requires --- that needs the
+       cluster.
    (e) **The niter=3 choice still owes a REGULARIZATION justification --- but a narrower one than
        this item claimed when it was opened.** `niter` is a regularization parameter: more iterations
        = less regularization = more variance, less bias. As opened, this item read everything in

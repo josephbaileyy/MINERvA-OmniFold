@@ -714,6 +714,110 @@ class KernelsTakeAFluxOverride(unittest.TestCase):
         raise AssertionError("PT_EDGES not found in the 2D driver")
 
 
+class EavailWFluxBlockIsPerUniverse(unittest.TestCase):
+    """The SIXTH J28 site, found 2026-08-06 -- `eavailW_covariance.py`.
+
+    081ae4a fixed five sites and this one was not among its twelve files, nor scoped by
+    AUDIT-FINDINGS-20260731. Its flux block reweights events into all 100 PPFX universes through
+    one nested `xsec_ew`, which hard-coded the CV `flux_bins`, so `C_flux` was understated for the
+    same reason the other five were: dividing by Phi_CV removes the normalization spread the flux
+    universes exist to carry.
+
+    Static, like `KernelsTakeAFluxOverride`, and for the same reason -- this module imports ROOT
+    and reads a 142 GB omnifile, so it cannot be exercised here. It gets its own class rather than
+    a row in `KERNELS` because its override is wrapped (`np.asarray(flux_bins if flux is None else
+    flux, float)`), so the shared `_flux_arg` assertion of a bare `ast.IfExp` does not apply.
+
+    Every assertion below is proved to have power by `test_the_prefix_source_would_fail`, which
+    re-runs them against the pre-fix source and requires them to fail. Without that, a static
+    guard is just a spelling check.
+    """
+
+    FNAME = "eavailW_covariance.py"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.src = open(os.path.join(ND, cls.FNAME)).read()
+        cls.tree = ast.parse(cls.src)
+
+    @staticmethod
+    def _func(tree, funcname):
+        # ast.walk descends into nested defs, which matters: xsec_ew and _y_band are both
+        # closures inside main().
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == funcname:
+                return node
+        raise AssertionError(f"{funcname} not found")
+
+    @classmethod
+    def _params(cls, tree, funcname):
+        f = cls._func(tree, funcname)
+        return [a.arg for a in f.args.args] + [a.arg for a in f.args.kwonlyargs]
+
+    @classmethod
+    def _extract_flux_arg(cls, tree, funcname):
+        for node in ast.walk(cls._func(tree, funcname)):
+            if (isinstance(node, ast.Call)
+                    and getattr(node.func, "id", None) == "extract_cross_section_nd"):
+                return node.args[2]
+        raise AssertionError(f"no extract_cross_section_nd call in {funcname}")
+
+    # --- the three properties the fix must have -------------------------------------------
+    # unittest assertions, not bare `assert`: `python -O` strips the latter, which would make
+    # every guard here silently vacuous -- the exact failure mode this suite exists to catch.
+    # They still raise AssertionError, so test_the_prefix_source_would_fail still works.
+    def _assert_kernel_takes_an_override(self, tree):
+        for fn in ("xsec_ew", "_y_band"):
+            self.assertIn("flux", self._params(tree, fn), f"{fn} has no flux override")
+
+    def _assert_cv_is_conditional(self, tree):
+        arg = self._extract_flux_arg(tree, "xsec_ew")
+        # A bare Name means the CV flux is wired in unconditionally, which is the bug. The
+        # override may be wrapped (np.asarray(...)), so look for an IfExp anywhere inside.
+        self.assertNotIsInstance(arg, ast.Name, "CV flux passed unconditionally")
+        self.assertTrue(any(isinstance(n, ast.IfExp) for n in ast.walk(arg)),
+                        "flux argument is not conditional on the override")
+
+    def _assert_universes_resolve_their_own_phi(self, tree):
+        # The loop must obtain a per-universe table; resolve_flux_ratio_table fails closed when
+        # neither a bank nor a universe file is usable, which is the property that matters.
+        self.assertTrue(
+            any(isinstance(n, ast.Attribute) and n.attr == "resolve_flux_ratio_table"
+                for n in ast.walk(tree)),
+            "flux block does not resolve a per-universe table")
+
+    def test_kernel_takes_a_flux_override(self):
+        self._assert_kernel_takes_an_override(self.tree)
+
+    def test_cv_flux_is_only_a_fallback(self):
+        self._assert_cv_is_conditional(self.tree)
+
+    def test_flux_universes_resolve_their_own_integral(self):
+        self._assert_universes_resolve_their_own_phi(self.tree)
+
+    def test_no_cv_fallback_is_silent(self):
+        """The diagnostic that reproduces the defect must be opt-in and must say so."""
+        self.assertIn("--allow-cv-flux-universes", self.src)
+        self.assertRegex(self.src, r"UNDERSTATES C_flux|Diagnostic only")
+
+    def test_the_prefix_source_would_fail(self):
+        """Power proof: reconstruct the pre-fix source and require each guard to fire."""
+        prefix = (self.src
+                  .replace("def xsec_ew(rho_sig=None, rho_td=None, flux=None):",
+                           "def xsec_ew(rho_sig=None, rho_td=None):")
+                  .replace("np.asarray(flux_bins if flux is None else flux, float)",
+                           "np.asarray(flux_bins, float)")
+                  .replace("flux_universe.resolve_flux_ratio_table", "_removed_resolver"))
+        self.assertNotEqual(prefix, self.src, "the mutation did not change the source")
+        tree = ast.parse(prefix)
+        for name, fn in (("override", self._assert_kernel_takes_an_override),
+                         ("conditional CV", self._assert_cv_is_conditional),
+                         ("per-universe resolve", self._assert_universes_resolve_their_own_phi)):
+            with self.subTest(guard=name):
+                with self.assertRaises(AssertionError):
+                    fn(tree)
+
+
 class SyntaxOfTouchedFiles(unittest.TestCase):
     """Every file this fix touched must at least parse and compile off-cluster;
     most of them cannot be imported here because they pull in ROOT."""
@@ -721,7 +825,8 @@ class SyntaxOfTouchedFiles(unittest.TestCase):
     FILES = ["flux_universe.py", "rescale_flux_universes.py", "unified_throw_cov.py",
              "unified_throw_cov_5d.py", "compare_unified_throw.py", "sweep_bank.py",
              "sweep_bank_5d.py", "unified_throw.py", "unfold_nd_omnifold_unbinned.py",
-             "pet_systematics_5d.py", "pet_unified_throw_5d.py"]
+             "pet_systematics_5d.py", "pet_unified_throw_5d.py",
+             "eavailW_covariance.py"]
 
     def test_all_touched_files_compile(self):
         for fname in self.FILES:

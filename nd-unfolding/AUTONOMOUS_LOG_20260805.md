@@ -221,3 +221,47 @@ settling it, **the note already complies**: it quotes `\gbdtFiveAdoptTrace` 5.81
 `\gbdtFiveCVTrace` 6.24e-38 *and* `\gbdtFiveMeanShift` 1.65e-38 separately — precisely "report the shift
 either way, do not silently drop". So my escalation was unnecessary twice over. The lesson is the same
 one BEN-033 makes: read what the repo already recorded before asking.
+
+### Fixed the sixth J28 site in code — the one thing that was unblocked without a cluster
+
+Still no ssh (cert expired 06:08), so the reply to his 20:29Z mail stays staged and nothing could be
+run, submitted or propagated. One item was genuinely unblocked locally and is required rather than
+invented work: **the sixth J28 site**, `eavailW_covariance.py`, which item (f) recorded as blocking a
+stated deliverable (the `(E_avail,W)` projected covariance).
+
+Two risk checks first, because modifying a covariance builder deserves them. (1) **It is bound by no
+receipt or gate** — so the change voids no hash binding and needs no re-issue (verified after:
+ALL BINDINGS INTACT). (2) **There is a precedent for landing this without numbers**: `KNOWN_ISSUES`
+credits `081ae4a` with "the code fix is committed, fail-closed, and mutation-tested … **no corrected
+number exists yet**." Fixing the sixth site on the same footing is consistent with how the first five
+landed, not a new standard. And no fresh-context consult was possible — `ask_claude.sh` runs on the
+cluster too — so I deliberately kept the change to *applying an already-decided pattern* rather than
+choosing a new one.
+
+The fix reuses the helper `081ae4a` already shipped rather than inventing a mechanism: `xsec_ew` and
+`_y_band` take a `flux` override, and the flux loop resolves `r[u, b] = Φ_u(b)/Φ_CV(b)` once through
+`flux_universe.resolve_flux_ratio_table`. `flux=None` still means CV flux, which is **correct** for the
+CV and for every knob band — a knob does not move the flux integral — and wrong only for a flux
+universe. Same `d["flux"] if flux is None else flux` shape as `unified_throw_cov_5d.py:67`.
+
+**Fail-closed, deliberately with no silent fallback**, since a silent fallback *is* the bug:
+`resolve_flux_ratio_table` refuses when neither a bank nor `--flux-universe-file` is usable, and
+`_validate_ratio_table` independently rejects an all-ones table as "the J28/Task #70 bug, not a valid
+table". Reproducing the old behaviour now takes an explicit `--allow-cv-flux-universes` that announces it
+understates `C_flux`.
+
+Two details I checked rather than assumed. The ratio table is **`r[u, b]` — universe-major** (a
+transpose here would have been a silent wrong answer), and `resolve_flux_ratio_table`'s keyword
+signature, which I had guessed and then read.
+
+Test: `EavailWFluxBlockIsPerUniverse`, static like the existing `KernelsTakeAFluxOverride` because this
+module imports ROOT and reads a 142 GB omnifile. It gets its own class because my override is wrapped in
+`np.asarray(...)`, so the shared `_flux_arg` bare-`IfExp` assertion does not apply. **Proved to have
+power** — `test_the_prefix_source_would_fail` reconstructs the pre-fix source and requires all three
+guards to fire. I also converted the helpers from bare `assert` to unittest assertions: `python -O`
+strips the former, which would have made every guard silently vacuous — the exact defect class this
+campaign keeps finding.
+
+**Collection: 703 → 708 local (+5), cluster 757 → 762. ANNOUNCED.** Suite 700 passed with the same 7
+pre-existing cluster-path failures. **No number was produced** — rebuilding the `(E_avail,W)` covariance
+needs the cluster and belongs with the `M C_5D M^T` projection.
