@@ -2862,3 +2862,68 @@ session shares, minutes after writing in this log that I would stay out of its l
 which I had already used twice today for the pull-abort trap — is to move the *specific* blocking paths
 aside. Filed as **BEN-030**, with the general rule: in this repo the untracked set is load-bearing state,
 so any `git` verb scoped to "everything not tracked" is unsafe by default.
+
+## 18:25Z — CLM-011 fixed and Gate-4 re-issued; **RESTORE Step 4 SUBMITTED as 56410365**
+
+Joseph, mail 16:26Z: *"Do A. If you want, ask a fresh context claude, but otherwise keep going until the
+central value and uncertainties are done."*
+
+### The completeness fix landed as `d22dd20`, after a third fresh consult said "do not commit this version"
+
+I implemented (A), then had a fresh-context session review the 226-line diff before committing. Verdict:
+**"the decision is right, do not commit this version"** — four must-fixes, and the largest was mine.
+
+**MY MAGNITUDES WERE WRONG, AND TOO SMALL.** I told Joseph 2.36x on the integral and 398x in the lowest
+`p_parallel` bin. `2.36 = 1/<a>`, but the code divided **cell by cell**, so Jensen applies:
+
+    integral inflation   = sum_b m_b/a_b / sum_b m_b = **122.6x**   (not 2.36x)
+    per pT row, over rows carrying >99% of truth mass = **48-177x**
+    worst single CELL    a_b = 0.0012397 -> **807x**   (398x was the p_par MARGINAL, not a cell)
+
+Recomputed independently from the committed acceptance map. I had propagated 2.36 into a code comment,
+into telemetry **persisted into every future receipt**, and into two test docstrings. All four removed;
+the derivation now lives in **CLM-011**.
+
+The other three must-fixes, all real:
+- **Lead structurally, not empirically.** Coverage is 1 **by construction** — `extract_cross_section_nd`'s
+  argument means coverage of the truth denominator, and here the declared fiducial domain *is*
+  `pass_truth`. The GBDT `globalCompleteness = 1.0000000000000002` is corroboration only; leading with a
+  measurement is what invites a future re-anchoring.
+- **Guard it, don't assume it.** `assert_truth_denominator_coverage` now fails closed, mirroring
+  `unfold_nd_omnifold_unbinned.py:747-752`, which *raises* rather than assuming its analogue. Without it
+  the fix swapped a wrong divisor for an invisible assumption.
+- **The module docstring still stated the defect as the design.** I had corrected the telemetry copy and
+  left the copy at the top of the file — the first thing any reader sees. *That is how it survived the
+  first time.*
+
+Two errors of my own caught in flight: my replacement test was **itself vacuous** (numpy's default
+`atol=1e-8` is meaningless against cross sections of ~1e-38, so the mutation check passed trivially —
+`atol=0` is now load-bearing and commented), and my power-proof harness patched a name that is imported
+**function-locally**, so it reported "no power" for a test that has it.
+
+Also: the suite was **actively pinning the false claim** — a pre-existing assertion required
+`completeness_anchor.startswith("NONE")`. And two items from the concurrent session's lane, fixed rather
+than left red: `SHELL_PIN_FLOOR` 12 -> 13 (their `sbatch_b1_niter4_scan48.sh` pins a tracked file; I
+*verified* the verifier still resolves 13 rather than going BLIND, having first wrongly assumed it would
+not), and a duplicate `BEN-030` — mine renumbered **BEN-031**.
+
+**Collection announced: 698 -> 699 local, 752 -> 753 cluster.** Verifier 0 mismatches, ALL BINDINGS
+INTACT, 691 passed with exactly the documented 7 pre-existing failures.
+
+### Step 4 submitted — and pre-flighting it caught a job-killer
+
+    56410365  fe_pet_nom  PENDING  prio 67679  8h wall, qos=shared, 1 GPU, launcher UNMODIFIED
+
+Preconditions verified rather than assumed: Gate-2 target **size AND sha** both match the launcher's pins
+(`fa6b3463...`, 9897374636), Gate-3 is `PROMOTED_PASS`, policy is niter=3.
+
+**The catch:** `#SBATCH --output` writes into `nd-unfolding/pet/fullevent_nominal/logs/`, which **did not
+exist**. Slurm opens that path *before* the job script runs, so the launcher's own `mkdir -p` at `:98`
+cannot save it — the job would have held its queue slot for hours and died instantly at dispatch with
+nothing to diagnose. This is the identical failure the powered-closure launcher's header already
+documents. Fixed the same way, a committed `.gitkeep` (`e23bb13`), so it cannot recur in any checkout.
+
+**The product will be NON-QUOTABLE.** Gate-4 cannot PASS on present evidence — the powered closure's
+criterion is unreachable as written — so this run produces a central value for the first time but nothing
+promotable. That must be recorded with the product, per the fresh session's advice: train it, mark it
+non-quotable, and keep the gating on 4b.
