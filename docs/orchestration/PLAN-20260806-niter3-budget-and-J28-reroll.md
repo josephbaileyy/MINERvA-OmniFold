@@ -30,7 +30,8 @@ The ledger records the re-roll as waiting on "the `/pscratch` slabs and … the 
 
 | precondition | state |
 |---|---|
-| Throw slabs on scratch | **365** `*slab*.npz` under `nd-unfolding/` (205 in `uq_5d/`, 33 in `uq_4d/`) |
+| Throw slabs on scratch | ~~**365** `*slab*.npz`~~ → **542**, corrected 2026-08-06. The original count came from a filename filter that missed every **block** slab (`block5d_*.npz`, `blockfps_*.npz`, `block4d_*.npz` — no "slab" in the filename, only in the directory). `C_blocksum` is built from those, so they are not optional. See BEN-032. |
+| Bank inputs the rescale actually reads | `cv.npz` (2.9 GB each) + `flux_univ_ratio.npy` (11 KB each). **Not** the 26–37 GB of per-universe `sig_*`/`td_*` arrays per bank — those are re-THROW inputs, and the distinction is what keeps Step 0 an 8 GB copy instead of an 89 GB one. |
 | Throw banks | `bank_uthrow_5d/`, `bank_uthrow_fps/`, `bank_uthrow_5d_bkgaware/` each carry `cv.npz` + `flux_univ_ratio.npy` |
 | Re-roll tool | `nd-unfolding/rescale_flux_universes.py` exists, landed in `081ae4a` |
 | Restore | complete (the 08-03 blocker the ledger cites) |
@@ -62,11 +63,20 @@ writes its own output and prints a before/after. Adoption is a separate, later d
 **Step 0 — protect the inputs (do first, cheap).** ~~Verify the 365 slabs are readable, not merely
 present, and get an off-scratch copy or a verified inventory with digests.~~ **DONE 2026-08-06** —
 `nd-unfolding/protect_throw_slabs.py`, manifest `nd-unfolding/products/slab_manifest_20260806.json`,
-off-scratch copy at `/global/cfs/cdirs/m3246/josephrb/slab-protect-20260806`. All **365 readable**
-(`np.load` with every array materialised, not merely `stat`-ed) and 0 unreadable; every destination
-file re-hashed against its source; the copy independently re-verified **against the CFS root**, which
-is the restore path, rather than only against the source. The check has power: flipping one byte at
-offset 40 of a copy yields `*** SLAB SET DIVERGED ***`.
+off-scratch copy at `/global/cfs/cdirs/m3246/josephrb/slab-protect-20260806`. **548 files, 8.1 GiB,
+all 548 readable** (`np.load` with every array materialised, not merely `stat`-ed) and 0 unreadable;
+every destination file re-hashed against its source; the copy independently re-verified **against the
+CFS root**, which is the restore path, rather than only against the source. The check has power:
+flipping one byte at offset 40 of a copy yields `*** SLAB SET DIVERGED ***` naming the file.
+
+**The first pass of this step was wrong and is worth reading as a warning.** It protected **365 of
+542** slab files and reported "365 readable, 0 unreadable" — complete-looking, because the count of
+what was checked is not the count of what exists. It selected on `"slab" in filename`, which misses
+the entire **block** ensemble (`block5d_*.npz`, `blockfps_*.npz`, `block4d_*.npz`; only their
+*directory* names them). `rescale_flux_universes.py` rebuilds `C_blocksum` from precisely those, so a
+purge would have left Step 1 unrunnable while the manifest asserted the inputs were safe. Filed as
+**BEN-032**. The manifest now states its own selection criterion so coverage can be audited rather
+than trusted, and the 548 includes the 3 bank `cv.npz` and 3 `flux_univ_ratio.npy` the rescale reads.
 
 *Both halves were done rather than the "or" — the manifest is the durable half (it belongs in git and
 lets anyone later prove a restored slab is the same slab), the copy is the recoverable half.* One

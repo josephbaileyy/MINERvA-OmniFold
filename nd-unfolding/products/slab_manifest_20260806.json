@@ -1,11 +1,1411 @@
 {
  "copy_verified": "every destination file re-hashed and compared to its source digest",
- "count": 365,
+ "count": 548,
  "generated_by": "nd-unfolding/protect_throw_slabs.py",
  "offscratch_copy": "/global/cfs/cdirs/m3246/josephrb/slab-protect-20260806",
  "purpose": "Step 0 of PLAN-20260806-niter3-budget-and-J28-reroll: the throw slabs the J28 re-roll and the niter=3 budget recompute both consume. A purge of /pscratch before the re-roll converts a cheap post-hoc rescale into a full re-throw.",
  "readability_check": "np.load on every slab with every array materialised; a byte-identical copy of a corrupt npz is still corrupt, so presence and digests alone do not answer this",
+ "selection": "npz whose FILENAME contains 'slab' OR whose immediate DIRECTORY name does, plus every bank flux_univ_ratio.npy, plus any --extra. The directory clause is load-bearing: block slabs are named block5d_*.npz / blockfps_*.npz and a filename-only filter finds 365 of 542 while still reporting '0 unreadable'. Deliberately EXCLUDED: the banks' per-universe sig_*/td_* arrays (26-37 GB each), which are re-THROW inputs, not inputs to this post-hoc rescale.",
  "slabs": {
+  "nd-unfolding/bank_uthrow_5d/cv.npz": {
+   "arrays": {
+    "MCgen": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103,
+      5
+     ]
+    },
+    "MCreco": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103,
+      5
+     ]
+    },
+    "data_pot": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "edges_0": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      15
+     ]
+    },
+    "edges_1": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      17
+     ]
+    },
+    "edges_2": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      8
+     ]
+    },
+    "edges_3": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      8
+     ]
+    },
+    "edges_4": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      7
+     ]
+    },
+    "flux": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      14
+     ]
+    },
+    "measured": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      4091707,
+      5
+     ]
+    },
+    "measured_weights": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4091707
+     ]
+    },
+    "n_nucleons": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "pass_reco": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      32849103
+     ]
+    },
+    "pass_truth": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_W": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_ea": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_pt": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_pz": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_q3": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_w": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "w_reco": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "w_truth": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    }
+   },
+   "bytes": 2939596884,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "3c9bbd6283fcb157f3bc110a790ab45e9c499cb8c457dfcb9ad0193d951692bd"
+  },
+  "nd-unfolding/bank_uthrow_5d/flux_univ_ratio.npy": {
+   "arrays": {
+    "flux_univ_ratio.npy": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      100,
+      14
+     ]
+    }
+   },
+   "bytes": 11328,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "81320cb525a096f0145c7bc29fe8fd852d414b32562ed10b5dc5ecebcc3daa3f"
+  },
+  "nd-unfolding/bank_uthrow_5d_bkgaware/cv.npz": {
+   "arrays": {
+    "MCgen": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103,
+      5
+     ]
+    },
+    "MCreco": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103,
+      5
+     ]
+    },
+    "data_pot": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "edges_0": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      15
+     ]
+    },
+    "edges_1": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      17
+     ]
+    },
+    "edges_2": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      8
+     ]
+    },
+    "edges_3": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      8
+     ]
+    },
+    "edges_4": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      7
+     ]
+    },
+    "flux": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      14
+     ]
+    },
+    "measured": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      4091707,
+      5
+     ]
+    },
+    "measured_weights": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4091707
+     ]
+    },
+    "n_nucleons": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "pass_reco": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      32849103
+     ]
+    },
+    "pass_truth": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_W": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_ea": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_pt": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_pz": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_q3": {
+     "dtype": "float32",
+     "finite": false,
+     "shape": [
+      32849103
+     ]
+    },
+    "td_w": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "w_reco": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    },
+    "w_truth": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      32849103
+     ]
+    }
+   },
+   "bytes": 2939596884,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "3c9bbd6283fcb157f3bc110a790ab45e9c499cb8c457dfcb9ad0193d951692bd"
+  },
+  "nd-unfolding/bank_uthrow_5d_bkgaware/flux_univ_ratio.npy": {
+   "arrays": {
+    "flux_univ_ratio.npy": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      100,
+      14
+     ]
+    }
+   },
+   "bytes": 11328,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "81320cb525a096f0145c7bc29fe8fd852d414b32562ed10b5dc5ecebcc3daa3f"
+  },
+  "nd-unfolding/bank_uthrow_fps/cv.npz": {
+   "arrays": {
+    "MCgen": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      49152885,
+      2
+     ]
+    },
+    "MCreco": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      49152885,
+      2
+     ]
+    },
+    "data_pot": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "edges_0": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      16
+     ]
+    },
+    "edges_1": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      20
+     ]
+    },
+    "flux": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      15
+     ]
+    },
+    "measured": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      4116128,
+      2
+     ]
+    },
+    "measured_weights": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4116128
+     ]
+    },
+    "n_nucleons": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": []
+    },
+    "pass_reco": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      49152885
+     ]
+    },
+    "pass_truth": {
+     "dtype": "bool",
+     "finite": null,
+     "shape": [
+      49152885
+     ]
+    },
+    "td_pt": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      49150928
+     ]
+    },
+    "td_pz": {
+     "dtype": "float32",
+     "finite": true,
+     "shape": [
+      49150928
+     ]
+    },
+    "td_w": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      49150928
+     ]
+    },
+    "w_reco": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      49152885
+     ]
+    },
+    "w_truth": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      49152885
+     ]
+    }
+   },
+   "bytes": 2523475514,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "4f71d3e8cd5f02c3b0724d6d0fa80115226e34c2a9a321da8c700cb674fb0346"
+  },
+  "nd-unfolding/bank_uthrow_fps/flux_univ_ratio.npy": {
+   "arrays": {
+    "flux_univ_ratio.npy": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      100,
+      15
+     ]
+    }
+   },
+   "bytes": 12128,
+   "detail": "ok",
+   "readable": true,
+   "sha256": "a1d4081d06346df724d97cd74e01c6218256657c93636868fda680a827ee3fbd"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160156,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e93c6be634bea77bf06c066ebadadc76aaf777ee7177d2e6e6b556b4650979aa"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160241,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "3347a6f9c02f21ada505516c5b84a6e28f84a53b6294990f96b3f9e8c424b5e6"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_10.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199927,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "735b28fb4f292b61ca7d5be6d867b39f776f051844b520145c55b8a73029c57e"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_11.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199954,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1eed01a42337c9db9424ad79cc868165ca6b82ad7bda5228feb9c56ad17bd3a3"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_12.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199933,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "04dc04260a77aaee5eae34d4937a21a38560c165fb00dcecdef7255efcb5852c"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_13.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199886,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "429e44a8a38d051f7eee0f5f7e3d6e3a9deb74b8f3ec2466470d76c03a93aaed"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_14.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199925,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2a166eadcd3ffa4cc77be886e93ec4fc0630fb1c7b9acc740fa985185d75f63d"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_15.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199940,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2eeac639946bad46d327125fb96b2361265e90db5fbeebba56b2c6161026931b"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_16.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199875,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1b288646a402682c3fbada56435a6347adcea88224796b2ab2356ce192a91543"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_17.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199881,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2b04e5c2f7baf1f2f304d8a4a2f52e5241fcaf1e3128f170ac3bc7a5ae77a718"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_18.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199903,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ea1f56014b4997a824366b910932fe79c29d2dc7eddbe78079b5f17f16525231"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_19.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199851,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c8775058caa3544b3aa8355abc869bf5ada60bcfb758d3d3dbbe49efb8a3233f"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160145,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "12a45ec8c83dc64967191d57bee26ea866f0e55b4d501b8da78f44a04e1fbe57"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_20.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199909,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "911069326a25d0e5ed844fc49811974f0266a5496d7e80442fb1e102e1ed0781"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_21.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199928,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1506fe7085febf177dde44d1a11cd7fba441ee42d9776687cde2e2af71f5f904"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_22.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199900,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "62272c752b370e8ba551cae7f22b04a68a6f7affe2e61b9f2fb6c240fbceee00"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_23.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199865,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "560d719bc95f47b5ede5dd8f2151caa3dfaaa0a2829868ac399df0a107de1f9e"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_24.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199901,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5b79db08c80e8cf8fbfb75ec6c5491edf609d00d43442e47a99fcbcb001d6fc8"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_25.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199919,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1612c94053a6d446f40576d0ba66bd9b6d934e6a37575ed4b8e7f2d7f2eec95d"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160096,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a90e3aed9909a6b312a152a9a44e762b8cbf2c71a19613e0bbac7ecc78806b9a"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160128,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c10a54db3f2ab8c71f239d1e93be6676b7b1650c8f0ad9baf286b81a7dce82d5"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160196,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6e28b4e00a73b92cbcd03e80d555a04597a6bc35a89da14e1ab1a3cb6be6f772"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_6.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199848,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "b48c51b1333f096535b50701f4d58eaf1b8d2da82c9641368b9d03ea3997d2c7"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_7.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199910,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "982b8d799c092fd1da279fb7771e2ff7279938e565b2150e8ebb0e4d0592406a"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_8.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199918,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "821edfd82b0efadff827722661d16a6b8030855a4d2e96042aeb893b9b553fc0"
+  },
+  "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/block4d_9.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      10976
+     ]
+    }
+   },
+   "bytes": 199888,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a044a2f2286a8d735ff91ff14a2d2e2c84ea234a0b191318e3165ec68757b6e8"
+  },
   "nd-unfolding/uq_4d/corrected/uthrow_slabs_4d/partial_20260716_interrupted/uthrow4d_slab_31.npz": {
    "arrays": {
     "bands": {
@@ -1980,6 +3380,454 @@
    "readable": true,
    "sha256": "1c1a0bb1fbd3882a7172b87a6e2e3e11ebf08419cf46ace08f8fe6c2b46c12ea"
   },
+  "nd-unfolding/uq_4d/uthrow_slabs/block_flux0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      1568
+     ]
+    }
+   },
+   "bytes": 22777,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ea77918906e1b51ac7a2b66ca5552ce9822a293f195c4a97f48aa107a4f56bd2"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/block_flux1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      1568
+     ]
+    }
+   },
+   "bytes": 22788,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e2fcae28a497d3cef839c277f678ee3b3733ccfae86cbe74c490a1bab6058e4d"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/block_flux2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      1568
+     ]
+    }
+   },
+   "bytes": 11816,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d8eaf14b71c62813f0594abb2e1a6c75925030efc3520a19a0a886b9f817e3a2"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/block_knobs.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      1568
+     ]
+    }
+   },
+   "bytes": 22801,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d5a9e2078ef9e6063b20f0ac2817fc2fb1b770b947be5abffb62243fce4ba566"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44670,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "fa3e348c7d3e05f7fa03ff134628be110c0af2ae606bf166f9c00ef8aeae3480"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44672,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "89fa398825af6e105605b2fe52e316561518ce4a7b049f3f348ed019e7c81493"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44672,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "7caa418b65983230449710f1288dbc1e0faf54dc3a17fc4060c4d0602c0f15df"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44697,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6e6b1c5fecc4210e05ead0cf437df8109ad79e467e24f4fe38484f0d189ae985"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44687,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ee4e674a70029603a7a594ba38da0d04acd21e89a29dad50ae981c08f97d191b"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/blocknode_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      1568
+     ]
+    }
+   },
+   "bytes": 44672,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c4a3d7572a4ed6e6c4c85370e9aa0cb4036c87830e2d8e5be6774eb32c215287"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/uthrow_int2_0.npz": {
+   "arrays": {
+    "bands": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "flux_u": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "throws": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      1568
+     ]
+    }
+   },
+   "bytes": 22946,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1e6583f072845b655c168f86a57ecf98894f6855e2c58e6bff2cfc06ad48c526"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/uthrow_int2_1.npz": {
+   "arrays": {
+    "bands": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "flux_u": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "throws": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      1568
+     ]
+    }
+   },
+   "bytes": 11973,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5e18a2d81b1041d82b5fd25be0f4171b6873f58e5a62bd601b9d297cb38fffbc"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/uthrow_int2_2.npz": {
+   "arrays": {
+    "bands": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "flux_u": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "throws": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      1568
+     ]
+    }
+   },
+   "bytes": 22914,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2d67892b57cee4ed52995ec68ea1c1a05a0e3efb863fa7981806d2960c61bbde"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs/uthrow_int2_3.npz": {
+   "arrays": {
+    "bands": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "flux_u": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "throws": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      1568
+     ]
+    }
+   },
+   "bytes": 11968,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a1626c58c1156ac3bec2da1d2c1dcf295b7ac4298f040e235688cdf228558c64"
+  },
   "nd-unfolding/uq_4d/uthrow_slabs/uthrow_slab_0.npz": {
    "arrays": {
     "bands": {
@@ -2460,6 +4308,186 @@
    "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
    "readable": true,
    "sha256": "d2c83d4672186422e03d1204fad940582cecb4779da2cc52ce91bec58ccddeb8"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160027,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "23756cd4808abac076971a183af58d313186871b43ffae1f8234c720d45f8ec0"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 160000,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ed19e62e87c63b47fde00bf5c1815bf3cb16e216cf14ff7cd0c893f382907bf5"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 159934,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "43f9bf487b6ec184e5202d3434842e32e77134a0f38219a36f9e03203d5c4f28"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 159950,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "505c4d171226db6cab8660b4cacde0d453060eaf97a270dbfd28313983e1d897"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 159968,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e4003bc534116c1e661056c5e7112d2e585c9749e6003fc0d6ca71ada304c01c"
+  },
+  "nd-unfolding/uq_4d/uthrow_slabs_4d/block4d_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      10976
+     ]
+    }
+   },
+   "bytes": 159961,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "eec6b536ec54193e7701a4e00e778caa5e829fc8b38c4f48d77483c05c5c1984"
   },
   "nd-unfolding/uq_4d/uthrow_slabs_4d/uthrow4d_slab_0.npz": {
    "arrays": {
@@ -3201,6 +5229,636 @@
    "readable": true,
    "sha256": "30ff6414cda9d4ada061edb27614e604cdeabccd2e344c7ff95b73cf1b1b6cd0"
   },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464608,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ed93576782ce582ddd245b9bf2f17e16079ba317a9e6e266e5cef11a36b5d34d"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_10.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464578,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d5b657ea0011f28514896fa005d39306abdfadc6a7c21d5b72df0ce930a10fcb"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_11.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464673,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "847ab47d2094e8a63638199eec09f921d73fefbe7b8316bed7cb1ae2e4d1140e"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_12.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464626,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "4451a04ae5aa4e7a469ca3baaa3d4c463a78642565e3c40c93e43a6fbf90a23c"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_13.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464579,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "9c15c1f021b2ae59f119aa0005d97cb42f63851bc83ee29947f203fea96997be"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_14.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464648,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "9d0e17610552f6631aa081eaa5573f2823af219df74506e956a955e153e168f2"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_15.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464555,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1ff59543bd78834a4d6b7482b19274f51c0609984900cbfee46c26242573166b"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_16.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464601,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1497738b2a3cb428edf7b6214292c85f8711e429c6b0316043098e444e356564"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_17.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464567,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "edd05ffefbfb13fab504141bbc5c847ef1448f7c272ca7a678549809962272f5"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_18.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464595,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "9e8cc827fb6fe9a1421e7b9df4dc2742d00b869927a3c5c88377412326ce3d88"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_19.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464533,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "8882b6a4bc9da17160163a21d8c2f747289d525ee0d4dfcdca619758a6a7fef4"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464657,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "45c083f4cd31f962361c4581d3cd51f5599f1899c0a6f13e51c11d66f6c1a63a"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_20.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464704,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e61edc94c7bf7e0e6da8c7d2b486a6c3cb67600e4e3622f2257284482bc5178d"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464581,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d84c037b04da6fe10d4452ca5928d53131e230cbe12e6507ab196c5019dbf2eb"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464585,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ac37a493dfd87ed598778e38d84217fdffda04019fd64c49deaba92f05d31234"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464661,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c361c1dc61529cea0ae0c3f403def9517bbf5d6221eada67ace4bd19420d902f"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_6.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464600,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "70c95d6da1bbd55b9da12db3bd908a5160b7eadfdd1b1fa57fd9f3b23074f7f2"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_7.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464599,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "df24b1dab1e8077a18e33fd74bbf9343b66707221b9d36828cc3edb2a56defd8"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_8.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464557,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f3ec7b4a6242891df4681430561a7f5a23830aea4dc4e0f1b33e595085c7c1e8"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_flux_9.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464497,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "abde24aeaac34f58a4eb1bff0037e24edd1fa5960bd4c390c7881fc24d1230f8"
+  },
+  "nd-unfolding/uq_5d/_archive_prehm_20260711/block_slabs_5d/block5d_knobs.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      12
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      12,
+      65856
+     ]
+    }
+   },
+   "bytes": 1114175,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e5dba323d2e45ab8be2621f509aeda98b447466d7e3f889c35d7e1378922ac20"
+  },
   "nd-unfolding/uq_5d/_archive_prehm_20260711/uthrow_slabs_5d/uthrow5d_slab_0.npz": {
    "arrays": {
     "bands": {
@@ -3940,6 +6598,2001 @@
    "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
    "readable": true,
    "sha256": "ce02c33ea9b3728127a6480918a00889b56dded382476bfe2af874b7955f5fa4"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_2p2h.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93805,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6e0bf9f0b2e99d9c996b390f759186a266d95f0141dba444d16fa38f3c75cda3"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_CCQEPauliSupViaKF.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186518,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c103e53ae040da5143d3cb599eba6c471b0c2923cc21bb798e0ba4c88298381f"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_FrAbs_pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93795,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5b5d16cb39fa84daf5ba9b066dedecb0ad9b4de129038740c0504e2ea1b4ede2"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_FrElas_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186520,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "873707f03430db63135cbf10d13729c0434534dff0e3d5752d4ed21e7e84ec88"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_HighQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186546,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f0685f7422b69437b60969b0ae1654372e53e8169446a08559563813a8f14aea"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_LowQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186550,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c51dfae58c6d5de6bf89dc2dd784ed9ea33a3d350c83e7271101d6790720b399"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_MFP_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93833,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1e4930ff0121c0467d7091a6aab00bec73e5d9eb5068b82390b6cfa961bb3e8f"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d/block5d_knob_MaCCQE.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93815,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "db089491fe6cf2efee085cb9e3b442b5fa9e75fc0df290b2b8c7a8106fa8d63a"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_flux_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93745,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1db315dc047f776f287b33f6024edcebd6747279d1f53725d81c0019ac0b89b9"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_2p2h.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186565,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2f38a5eac363d35ef31876f5d7fbe5484b9c704864b4afc096cf4795e23eedf3"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_CCQEPauliSupViaKF.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186564,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "0ca2fe442719753e5b970c72dc4518d6a4204aa79746bba470befd3e9a869a8e"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_FrAbs_pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186477,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5d2ae22465f76ccbf515e705a0ec2a3bf6be5754043deba5cf938c7111662bb7"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_FrElas_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186507,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1daf9046706b35235d6ebdbfa8a6bda792087072e4511d5649097249ca242896"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_HighQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186553,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f331b44679f1a5c5b053bbc5149ec43cb5f73467c3b74b1a875c7e5bb6921618"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_LowQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186559,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d39b2a01fa651df8416184304fc2ab87f890d6173760038f49ed2db7661ccf35"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_MFP_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186587,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "31d22f5e4dd6258fed98e3f7adbb20d99a40bac3fe1414633eebdba0a5d1214d"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_MaCCQE.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186584,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "240ffd7a6c29bb563fdd9634b706775926c755d0d5c1b9af9cb9dc09146c63e5"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_MaRES.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186530,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "77a0204f6c95fd974898b5029e67e18f22d4e735e54b1c087d75ecbbc99a11c0"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_MvRES.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186545,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ec4b41836478c25bdb930e1d5930dba54fad28908a2bffbfea5f1c6512ade7b5"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_Rvn2pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186518,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5510b228a4036fad22ce98e8990d954671ec028937ec0e49a849e4ba5b5dd596"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_bkgaware/block5d_knob_Rvp2pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186522,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2c730cc8125c1b46043b2bcc71a011fa93161f93faaabf3e4ebea884ec62c478"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464850,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "178ce42f797625cbd45f875e856db469509b9fbb504c9bbd08e2c619873f9d3a"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464819,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "7df0f08fb1c7a09dea6bc24c3343ca5b238198c2ffa2dbda51d9bc3fb968c4dd"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_10.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464900,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c48507f41ad0e33e771059e1ea2325a0533fdfcfab7cb34aa036d3b514ddb700"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_11.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464828,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "0c5d3f36eb07fc30fa2302a34ea573929cab60ee295738b828558582f2e516b1"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_12.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464747,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e0466325c700f84ed6ee9ef3511b740a13bca7073054764f918ffe4c12400e40"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_13.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464799,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "aeff7b0adcdf823ed716e97b25bfb04c01536e023c6dc8b66b04c473b0c50fbe"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_14.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464783,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "61d71b669b2aa5c53acdfe55d9d5bb61dc5823580c8d7c1980ade72aa8ba175c"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_15.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464787,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "861c1bc40d8dd44bca37c788146478457375a4e3fe5f6cab1e445df169ba0887"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_16.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464730,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ed1d0e756870ee30bbe4d6dc25e696e911fe305ec0f14da39dc2c08d2aa82561"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_17.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464809,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a8e8d2dc4899d725b2638528ead9d5324f099853ecc1f016feebe0826acce9d2"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_18.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464723,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f905c7afed51158b2f4b20a9130f06419b59070649f7a613fd7ac98dbb139c50"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464798,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "aa2b31c5dc9a831690f61e4999ec95c703ee7860fa6b551523571236dd10baf5"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464821,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "59b79445399cb20216216b3daa017304229f04cb0dbc1e302078c9c3387dcffe"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464834,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1ca4e2d4634c43985d7b227a5fa94fa16f9c5cb61000600359dbe24f3b89921b"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464812,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "803ff68efd4581f0d725f60f2317a8415ed08e222fd106887ee74deca58f221b"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_6.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464817,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "180b40a5c0c5882e31e77c90440574eb662928299d22d969ed0dd987802143da"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_7.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464677,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f01f949a9cc4f118424eaf0b8d690566e09b4052bd4ba09283c9c2b3e2861d58"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_8.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464739,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "68d9cea26276608eddec678e453da892acf61c6213a7af8a257b0ac7110a0ce6"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_9.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      65856
+     ]
+    }
+   },
+   "bytes": 464809,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a4a908970fa7c936d6c6e3001a06108864bfcd371bf97d036b857ba43a5f6cc7"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_u95.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93842,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "51d3807416e86411d75b6f665fa7277bd3fa50f82c415fa0ae60bf38f828a10a"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_u96.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93771,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6c58ee448d0f55bb3111de0d92fb895e15edd8085097d44ffbe31ec80245fc2e"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_u97.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93821,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "b129f15b2c9417068d44e77a8c478de8cccc359deddc07b61de8c95d46fe58b9"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_u98.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93784,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "71cb7ddd24d8472329475acf3db31a5b96b2e775682909051a702ba9c1f47ed1"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_flux_u99.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      65856
+     ]
+    }
+   },
+   "bytes": 93815,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "617b2b2ff49e1eed8122098a493ca7754fb726c44716942d130e7a53818bd9f7"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_2p2h.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186586,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "0f36a08df971d109924efe8f5b8a3059367a9d7a9a88286b84afff18e4a291e2"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_CCQEPauliSupViaKF.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186551,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6afccae23a08d8df4e7a708270aa322e5f6381e887d626e98b8e3655025a8218"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_FrAbs_pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186500,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "341ab9e2672d0b071da0cf9809c6b820f02871ecef330f9e712400b04e7d4175"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_FrElas_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186527,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "52c7504f734c2083b2e8990d5df5bc608721f6fad3c88206b9809f83bde663d5"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_HighQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186581,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "37c3cf96b0505d125949d571ce673ec5e61d9d06f660c50803e97eaf675e18cb"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_LowQ2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186538,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "cbb64b0cf3125186ea90bbca41aec4ba95ae5d6931402d86dd88fbcfe6e7444c"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_MFP_N.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186556,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "0c68c2b72ccd88acd1e4dfaf34e4323e042866af46c7f23ce100c89df6324ca1"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_MaCCQE.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186606,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ed08f53a8935e69df3b4a1e6743e5cd43e38f2ad52376e04bca1672ade9424f8"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_MaRES.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186532,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "125ed2e1297b28735b9362976cb84c45b679c6aeee2bab0337f005dfaa5602f2"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_MvRES.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186534,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e7a22f1863b36f9ba6aabab64e5fd17f6acc4cf9aac057542ec2d38cac01132c"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_Rvn2pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186509,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "fa7c2c02ab1601680234a0ef5dbcb977912eeee914333032df99402f7c9b4889"
+  },
+  "nd-unfolding/uq_5d/block_slabs_5d_sb/block5d_knob_Rvp2pi.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      65856
+     ]
+    }
+   },
+   "bytes": 186492,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "4a94ac2bd1858c13610a09acaa14bb2dc31e97f91b3e13cb412b090a70a57bda"
   },
   "nd-unfolding/uq_5d/uthrow_slabs_5d/uthrow5d_slab_0.npz": {
    "arrays": {
@@ -12546,6 +17199,1651 @@
    "readable": true,
    "sha256": "88497f82cf5b23f0d9fe2444aca2c4b976dbbec4f61b6b2ead7c203ce160a38d"
   },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9273,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "8d2c9843716c9e28c250f78e4e4db8734f58a4055301ca904a2ea788d1f59d08"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9278,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e045c521a950af847f5f0ab96d6fffc96c8507542a082bfa028b912619f9b227"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_10.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11311,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c3c79efaaf79ed0e4f28cab25965d2722da2b7dd7756e475790611a220fad0c9"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_11.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5187,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "5226c75d8aaa466a14e3de4f463083e3ce74370718ff86242382fac56995c060"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_12.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5189,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "3d36788da5967632f810cdd4ec7b825234d15d6c61e3bae6b5c598b8e25f9e8b"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_13.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5194,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "01688a60f1ef832ca7d24e9b5fde1a05467f84b1bc8190e5e1c0d239f606aa80"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_14.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5187,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2e293b620586ebaa626471d0cb36e56dd69e74d9d1b010f177362ac3ebbcff04"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_15.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5186,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d712cc34c37b1e877c5752061fa7dac262a701cf5da10b6cc77aa0ebe6b1cc16"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_16.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5191,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1d1549bdfed9bd774753ba5b51bb80e47e2d012996cb4829fd32fa51a0e94c86"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_17.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5179,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "88243a1929bf05ef5285de20d01ddb977b0f82a3b0c1989e138e70eda708f804"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_18.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5185,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2e6724e271d944d66df5a6c9f6a8c49db0b41c16590c0577309390ea7240a8b0"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_19.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5183,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "d99362f05b992b7c38edc8f8a5cbbf04608df8a4ea86d578942079fdb4f01fb3"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      285
+     ]
+    }
+   },
+   "bytes": 3136,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "998c00655a7d90a58c178595a6837a68e58303b738baef097360427a5b97b345"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_20.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5185,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e1aabe3d7e7d92be0a21b43442ed510129e5db4b9abb159eded3b898ee370d08"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_21.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      1
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      1,
+      285
+     ]
+    }
+   },
+   "bytes": 3138,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "7ea48fca40ba0053b00a8c369f5d2a17e2cd4f5d491ba18e482ffcf029ee4fc9"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9276,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "bb15ef065ebfe79b8d01a488a123872c02ea646f85fa6cff8bc9ffbfbd9dbecd"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5195,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "3c34399db1a8e9e820a8bf85d240ca34053ac86f3b5c85459c7485343de6fa5b"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_6.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5187,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e22868b3fd05593eaaf6881e91df04ac246dcaeb188fc2b19298966c6ba9ef26"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_7.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11307,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "19ca6ebfc2ae0afda55cce83151f06bda875168c62fd276cf25705182bb68ff7"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_8.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      2
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      2,
+      285
+     ]
+    }
+   },
+   "bytes": 5192,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "6b982015f25454693ec2d57654fd0c0d74dbb60dfc15de5d341859cdaf2fb18c"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps/blockfps_9.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11315,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "255fd07c173f4c4265c174c9fb258d08a457afabe864f436920abdcf863ad30b"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9277,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a8bb6bb9619217b8ed93d9cde79309e08265c5cb81827ca6f2ef5c005d2bbfad"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9287,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "0f839a4e45b9190a3ddcb5986b0edc5d860f75ae7693a39e7a4815a8b66454df"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_10.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11318,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "eb291cb0774d03a1c463802ca4250adae6742830c6dab09103820edbfb8f1ed2"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_11.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11311,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "575be095895fda2c9ecb3c4e6de6b21a2a11914cc185c460fa040a466c70001c"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_12.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11319,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "839cb725592c6ed76661d4b011ba6198322b4620f60403fa7d0d1f9aff1aceb4"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_13.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11321,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "38401941a2773732349db638ca3fa4d9810a29ec616ab4fc7af58650aa1696d6"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_14.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11316,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "694880de4c70184edacec82d5d8a2ead4036b2537bf4323410039d991d24d5e1"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_15.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11324,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "7b0aefc5270e3f2b6e5d61ed601465c248a049e21c267a9e16889424b7f054f9"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_16.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11321,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "438e1d94764a5430a2ee51584764dde59b8be4b84f7c3888d71c0b6d6ae795cc"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_17.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11317,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "14206fa1827c2fb973c1065ff8cb55a9aaee139638a371b68e009fd552c43089"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_18.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11300,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "239bff3838c2189658c44b32ab7e2279bc8e73a768fc7d799ff22421d2510abb"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_19.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11306,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "29449d6b0bd1d821cf152a94ed503eaf6243eb862bc5f5c05aaa0e1d04095ee2"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9260,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "438d0c37a53265f6ba68f0c0c0e669994100cda290237fe5bddd97aad01d3a30"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_20.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11310,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "b936ced776e478b0709ec9c51fad45d2b2706f5dfbc41fc408502574ec9d276f"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_21.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11321,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "1e90f14949bfb91f0648c1555e3b66c80d29b1781330773b1222dceba2a392a3"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_22.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11320,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "70e4c42427a858d0f7886c485d6cce88a8a141e01caae7f6481ce596619ac3d8"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_23.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11297,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "c1662c46aa0bab523fe2aee3cc8af752fa0f843966f157a28ffc1a0b96214557"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_24.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11329,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "e460140792b804cf2c8f8130e0f071a7e6c3ab89465667db599630a6ad6bbce3"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_25.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11309,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "9c92e274fda67ad12fd07d2742952e06fd9b208a838b5b32ffc4e01515b7b2e9"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9282,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f73d99ec3a0ed61043c3e34c94755234efaf57768c86a862be766609b13dc030"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9272,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "818e509af57935f3dbd5703321df43c9020de60cfdd54ae2c5059a151bc9f6a3"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9278,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "a25a380c9dbf54be930ed69bbaf4c383c168d9a5e911c3f6f026fd08a8cb7f63"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_6.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11315,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "83bee644b3443ad108bf7542e92e64cac103eb977c5973ab222d57697db456fe"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_7.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11312,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "43246b047bd5fb4d33a58f40805e8d9c3ab42ac9b3c6ad79081a0f80aebf8804"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_8.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11318,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "b91228b638d2f04c44465ac117fb8544cf1b0aeb9055a915c80e6716e108534f"
+  },
+  "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_9.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      5
+     ]
+    },
+    "seed": {
+     "dtype": "int64",
+     "finite": null,
+     "shape": []
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      5,
+      285
+     ]
+    }
+   },
+   "bytes": 11314,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "4e8d23597f333c7168d258e92c34e57f4caa30e535f36672d3674522bd7447bf"
+  },
   "nd-unfolding/uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_0.npz": {
    "arrays": {
     "bands": {
@@ -14226,6 +20524,186 @@
    "readable": true,
    "sha256": "dce82c44408f853f06db6609ae21bc305f3afa3ce1c48a4d4b81203e9d769136"
   },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_0.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9105,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "32863cfe802a59dcaa58f3aedb73ffd5da1d9239f585f37e1c726c4da5cf3d39"
+  },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_1.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9107,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "01eb4ab6310f4b9cff1bb87b89cd0200c7c55ab47d4c40afd52057bcdd902433"
+  },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_2.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9100,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f61a29e5567233c6ca54374f9045dca0aeefb4bd7f05eeb2aaf68963c758c3d7"
+  },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_3.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9103,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "f384e92cdbead010bcc7fd79f13e1a03790e94a3269221d2484b703fe4d97936"
+  },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_4.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9100,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "ff9e799a2c9be301a418381fca5efd6e32eefac41da855ddbd4822587e1dc47d"
+  },
+  "nd-unfolding/uq_fps/uthrow_slabs_fps/blockfps_5.npz": {
+   "arrays": {
+    "kinds": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "labels": {
+     "dtype": "object",
+     "finite": null,
+     "shape": [
+      4
+     ]
+    },
+    "xs": {
+     "dtype": "float64",
+     "finite": true,
+     "shape": [
+      4,
+      285
+     ]
+    }
+   },
+   "bytes": 9108,
+   "detail": "ok (contains pickled objects; re-read with allow_pickle=True)",
+   "readable": true,
+   "sha256": "2a3d705d0ad08e1cd7d9fb429d852085840d03643905038c8b84db60482e3315"
+  },
   "nd-unfolding/uq_fps/uthrow_slabs_fps/uthrowfps_slab_0.npz": {
    "arrays": {
     "bands": {
@@ -14968,6 +21446,6 @@
   }
  },
  "source_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
- "total_bytes": 60901025,
+ "total_bytes": 8495812502,
  "unreadable_count": 0
 }
