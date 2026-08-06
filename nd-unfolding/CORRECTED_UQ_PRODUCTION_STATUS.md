@@ -1,5 +1,12 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
+**2026-08-06 one-liner.** The J28 flux re-roll is **schedulable now** — the Perlmutter restore the
+ledger cited as its blocker has completed, and the 365 throw slabs, three `bank_uthrow_*` banks and
+`rescale_flux_universes.py` are all verified present. It is planned as ONE pass with the `niter=3`
+uncertainty-budget recompute (`OPEN_ITEMS.md` item (d)) at
+`../docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`, so the budget is not built
+twice against a moving target. Nothing has run; the ledger scales remain QUARANTINED.
+
 UNCOMMITTED working-tree tracking doc. Autonomous production launched after
 verification (Opus disprove 14/14 clean; Fable blind audit; Opus secondary
 audit — all clean modulo the items handled below). User away until ~10pm ET,

@@ -167,6 +167,46 @@ Implementation gate, in order:
        runtime verdict. Cancelling cost ~5 min of GPU because it was caught minutes after
        dispatch rather than hours; see
        [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md).
+
+       **RE-RUN COMPLETED AND IT FAILED. Job 56381674, 2026-08-06, `niter=3` confirmed in
+       `configuration`, elapsed 01:58:19, rc=3, `verdict=FAIL`.** The two training-independent
+       criteria passed exactly as predicted (`gap = 0.234270` >= 0.15; `floor/gap = 0.045876`
+       <= 0.10, preflight cross-check AGREE). **The open number missed, and not marginally:
+       `residual = 0.106159` against the `<= 0.0469` budget, `residual/gap = 0.4531` against
+       `<= 0.20`, so recovery is `0.5469` against the predeclared `>= 0.80`.** Evidence:
+       `pet/powered_closure/{POWERED_CLOSURE_REPORT,POWERED_PREFLIGHT}.slurm-56381674.json`,
+       `DONE.slurm-56381674.txt`, artifact `...ARTIFACT.slurm-56381674.npz`
+       (report sha256 `d5a01f3f4ffd…`). **Do not touch the thresholds** --- diagnose.
+
+       **First-pass diagnosis from the report's own per-bin arrays (285 bins = 15 pT x 19
+       pparallel, `BIN_ORDER` pt-major).** The failure is **not** a normalization bug and
+       **not** localized pathology:
+       - Normalization closes *exactly*: `sum(h_prior) = sum(h_target) = sum(h_unfolded) = 1.0`
+         and `sum(h_unfolded - h_target) = 0.000000`. This is consistent with the B1 rate
+         closure passing at `k=3` and means the two closures are not in contradiction --- they
+         measure different things.
+       - The unfold moves in the right direction but **not far enough, globally**:
+         `L1(unfolded - prior) / L1(target - prior) = 0.6549`, per-bin median recovery `0.8233`,
+         with 128 of 262 bins under 0.8 and **29 bins moving the wrong way** (recovery < 0).
+       - The residual is **broadly distributed**, not a few bad cells: the top 10 bins carry
+         26.5% of the L1 residual, top 20 carry 44.8%, top 50 carry 75.1%.
+       - Worst-recovered cells cluster at the `i_pparallel = 0` edge across several pT bins
+         (cells 38/57/76/95 = pT 2--5 at pparallel 0, recovery 0.17--0.24).
+
+       That signature --- direction right, magnitude short, normalization exact, spread over the
+       whole grid --- is **over-regularization**, i.e. too few effective iterations and/or an
+       optimization-limited fit, rather than a defect. Two hypotheses, and the record should not
+       pick one before it is tested: (i) `niter=3` is too few for **shape** recovery even though
+       it suffices for **rate** closure; (ii) `epochs=8` leaves the fit optimization-limited ---
+       `B1-NORMALIZATION-FIX-DESIGN.md:352-357` warns explicitly that epochs is not the unit of
+       optimization, steps are, though the 2M half-size should sit right of that regime.
+       **No niter=2 comparison exists** (56355818 was cancelled at 5:18), so the failure cannot
+       be attributed to the niter switch either way.
+
+       **This inverts the reading of item (e).** The B1 argument for `k=3` is about a
+       normalization scalar; this is the differential test, and it fails. If (i) is the cause,
+       the regularization argument points to **more** iterations, not to 3 as a stopping point
+       --- which makes the k=4 arm (56397442) load-bearing rather than a formality.
    (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
        PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
        `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,
@@ -204,18 +244,82 @@ Implementation gate, in order:
        then again at `niter=3` is double work against a moving target.
        Consequence for sequencing: **resolve `test_uq_remediation.py`'s J28 fixture AFTER this**, not
        before --- deciding fixture-stale vs guard-over-strict now risks doing it twice.
-   (e) **The niter=3 choice still owes a REGULARIZATION justification.** `niter` is a
-       regularization parameter: more iterations = less regularization = more variance, less bias.
-       Everything recorded in `2b2e5f1` and in
+       **The joint plan is written up at
+       [`PLAN-20260806-niter3-budget-and-J28-reroll.md`](orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md)**
+       (2026-08-06), including predeclared decision rules. Note what it establishes at §2: the J28
+       re-roll is **no longer blocked on the Perlmutter restore** the ledger still cites as its
+       blocker --- the 365 throw slabs, the three banks and `rescale_flux_universes.py` are all
+       present, so the pass is schedulable now. Scratch is purgeable and those slabs are the largest
+       schedule risk, which is why the plan's Step 0 is protecting them.
+   (e) **The niter=3 choice still owes a REGULARIZATION justification --- but a narrower one than
+       this item claimed when it was opened.** `niter` is a regularization parameter: more iterations
+       = less regularization = more variance, less bias. As opened, this item read everything in
+       `2b2e5f1` and in
        [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md)
-       argues the choice from **gate behaviour** --- realized exceedance 0/48 vs 6/48, window width to
-       the parameter-free ceiling, false-reject rate. That establishes the choice is *sound*, i.e.
-       that it does not break the gate. **It does not establish that it is right.** A B1 closure
-       passing is not a bias-variance argument. This gap is recorded rather than papered over: the
-       switch was made on Joseph's explicit instruction and is defensible, but the justification in
-       the receipt is gate-shaped and needs a regularization-shaped one before publication.
-       Launching the nominal (which pins whatever `niter` the contract carries) should wait on it;
-       `nominal_pet_training_allowed: false` is doing its job.
+       as arguing the choice from **gate behaviour** --- realized exceedance 0/48 vs 6/48, window width
+       to the parameter-free ceiling, false-reject rate --- which establishes the choice is *sound*,
+       not that it is *right*. A B1 closure passing is not a bias-variance argument.
+
+       **Reassessed 2026-08-06: both halves of a bias--variance argument were already receipted in
+       `state/p3f-pet-gate4-launch-code-gate-20260806.json`; they had simply never been assembled into
+       one.** From `seed_policy_change.measurement`, at the measured operating point
+       (`R = 1.1240802949941018`, `a = 0.4185618199216587`, `N = 240000`, `epochs = 8`, seeds 7--54 in
+       both arms): at `k=2` the closed-form bias is `0.037318` against a measured mean deviation of
+       `0.038008` with `sd = 0.008153`; at `k=3` the closed form is `0.021698` against a measured mean
+       of `0.021876` with `sd = 0.008444`. So the **bias falls by a factor 1.72 and tracks the
+       `B1-NORMALIZATION-FIX-DESIGN.md:329` closed form `(1-a)^k (R-1)/R` to under 0.1 pp in both
+       arms**, while the **variance is flat** (sd ratio 1.036). Bias down at fixed variance *is* the
+       regularization statement; the 6/48 vs 0/48 exceedance is its observable consequence, not an
+       independent argument.
+
+       Two further points the original wording missed. The fold-forward deviation compares the
+       unfold's pushed reco-level normalization against the measured data/MC ratio `R` --- a
+       **reco-space, data-computable** quantity of the folding-back / bottom-line family --- so it does
+       **not** fall to the objection the note itself raises against Huang *et al.*'s truth-level
+       chi-square criterion (`docs/analysis-note/sec_method.tex:89-98`). And the scan is an MC closure
+       with an injected rate defect, not a fit to data, so it is not the tuning-on-result loop that
+       `sec_method.tex:155-167` disclaims.
+
+       **What is still genuinely owed:**
+       1. **The argument is bias--variance on ONE SCALAR** --- the reco-level rate closure --- not on
+          the differential cross section. The publication-grade version needs the per-bin closure
+          residual and the per-bin unfolded spread as functions of `k`. The per-bin half comes free:
+          `pet/closure_powered_truth_reweight.py:302-303` already persists `h_prior`, `h_target`,
+          `h_unfolded` and `h_untilted` as full per-bin arrays, so job **56381674** --- the a1 re-run,
+          confirmed 2026-08-06 to be running at `niter=3` because the driver reads
+          `NOMINAL_SEED_POLICY` (`closure_powered_truth_reweight.py:265`,
+          `train_fullevent_nominal.py:51`) --- yields it on completion with **no code change and no
+          Gate-4 re-issue**. **RESOLVED 2026-08-06, and the answer is bad:** 56381674 completed
+          `verdict=FAIL` with recovery 0.5469 against a predeclared 0.80, and its per-bin arrays show
+          globally-short, normalization-exact, broadly-distributed under-recovery (`L1` ratio 0.6549,
+          29 bins moving the wrong way). Full diagnosis under item 2(a) above. **The scalar-scope
+          caveat on CLM-010 was load-bearing: the differential test does NOT inherit the scalar
+          result.** If the cause is too-few iterations for shape, this argues `k > 3`, which is the
+          opposite of a stopping-point argument. Do not edit that driver to add per-bin output ---
+          the data is already there,
+          and `sbatch_powered_closure.sh` pins the driver's digest in `EXPECTED_DRIVER_SHA` and fails
+          closed, so an edit would silently break the next submission until that constant is updated
+          too. (The driver itself is *not* among the 22 live hash pins in the receipt --- the pinned
+          closure scripts are `closure_b1_rate_injection.py`, `closure_fullevent_fps.py` and
+          `stress_closure_muon.py` --- so the constraint here is the launcher's own pin, not the gate's.)
+       2. **Nothing measured bounds `k` from above.** `(1-a)^k -> 0`, so the same argument gives
+          `0.012617` at `k=4` and keeps improving; with variance flat over 2->3 it argues `k >= 3`, not
+          `k = 3`. Job **56397442** (`pet/sbatch_b1_niter4_scan48.sh`, 48 seeds, same operating point
+          read back out of the k=3 arm's own receipt entry) measures the k=4 point. **If its spread is
+          also flat, the record must say plainly that the stopping point is set by cost and by the
+          literature default of 3 --- not chosen by this measurement.** Writing it the other way round
+          would be the same overclaim BEN-025 exists to prevent.
+       3. **A note edit is queued but not yet owed.** `sec_pet.tex:24,47` describes the *recoil-only*
+          PET cross-check, which genuinely ran at two iterations --- that text is correct and must not
+          be "fixed". What will be needed once the full-event lane enters the note is one sentence
+          reconciling scalar production at `n=5` (`sec_method.tex:147`) with the full-event lane at
+          `n=3`, because a referee will ask; `LITERATURE_NOTES.md:65` (OmniFold default 3, <=5 typical)
+          is the citation for the latter. `sec_fps.tex` carries no iteration count today, so there is
+          nothing to correct in the note yet.
+
+       Launching the nominal (which pins whatever `niter` the contract carries) should still wait on
+       item 1; `nominal_pet_training_allowed: false` is doing its job. The switch was made on Joseph's
+       explicit instruction and is defensible.
    The end-to-end nominal is still unproven: nothing has yet trained on this target.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the

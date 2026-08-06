@@ -1,0 +1,13 @@
+run_id=slurm-56381674
+job=56381674
+rc=3
+verdict=FAIL
+preflight_verdict=PASS
+preflight_xcheck=AGREE
+preflight_receipt=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/powered_closure/POWERED_PREFLIGHT.slurm-56381674.json
+report=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/powered_closure/POWERED_CLOSURE_REPORT.slurm-56381674.json
+artifact=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/powered_closure/POWERED_CLOSURE_ARTIFACT.slurm-56381674.npz
+preflight_receipt_sha256=8411c2bddbe8c6de286c43cf39e6d936a5ba69da978f0d97f5937175d068bc01
+report_sha256=d5a01f3f4ffd60376c903789f14084857576ac87f1dca79911626a8d78904937
+artifact_sha256=1ad68bdd72faf814042898bfbc17b0802aad2b4ab4213d67e93f46df273dbbe8
+end=2026-08-06T13:51:12Z

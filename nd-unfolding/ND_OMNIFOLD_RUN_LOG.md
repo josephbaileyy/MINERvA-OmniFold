@@ -2996,3 +2996,102 @@ masks siblings pinning the same (file, hash), which is why each fix appeared to 
 **End state.** Every LIVE Gate-2 pin is satisfied. The verifier reports exactly 8 mismatches, all
 from `p3f-pet-gate4-launch-code-gate-20260801b.json`, all on files D1/D2 legitimately changed, and all
 of which resolve when Step 2b re-issues that gate. No digest was hand-edited anywhere.
+
+## 2026-08-06 — item (e) reassessed as already half-answered, k=4 arm launched, (d)+J28 planned jointly
+
+Three things, one commit.
+
+**(e) was overstated when it was opened.** The item said the `niter=3` justification is gate-shaped
+and needs a regularization-shaped one. Re-reading `state/p3f-pet-gate4-launch-code-gate-20260806.json`
+`seed_policy_change.measurement`: both halves of a bias-variance argument were already receipted and
+had simply never been put in one sentence. At the measured operating point (R=1.1240802949941018,
+a=0.4185618199216587, N=240k, epochs 8, seeds 7-54 both arms) the bias falls 0.038008 -> 0.021876 --
+tracking the `B1-NORMALIZATION-FIX-DESIGN.md:329` closed form `(1-a)^k (R-1)/R` (0.037318 / 0.021698)
+to under 0.1 pp -- while the 48-seed spread is flat (0.008153 -> 0.008444, ratio 1.036). Bias down at
+fixed variance IS the regularization statement; the 6/48 -> 0/48 exceedance is its consequence, not a
+separate argument. Recorded as **CLM-010**, scoped `VERIFIED-NUMERIC (scalar scope only)` because it
+is the reco-level rate closure, not the differential cross section. The assembly is single-source
+(this session) and is flagged as needing an independent check.
+
+Also recorded, because it is the part that would otherwise be quietly assumed: the criterion is
+reco-space and **data-computable**, so it does not fall to the note's own objection to Huang et al.'s
+truth-level chi-square (`sec_method.tex:89-98`), and the scan is an MC closure with an injected
+defect, so it is not the tuning-on-result loop `sec_method.tex:155-167` disclaims.
+
+**Two gaps remain and they are narrower than the item implied.** (i) Scalar, not differential -- the
+per-bin half comes FREE from job 56381674, because `closure_powered_truth_reweight.py:302-303` already
+persists `h_prior`/`h_target`/`h_unfolded`/`h_untilted` as full per-bin arrays. No code change, no
+Gate-4 re-issue, and specifically **do not** edit that driver mid-flight: `sbatch_powered_closure.sh`
+pins its digest in `EXPECTED_DRIVER_SHA` and fails closed. (ii) Nothing bounds `k` above --
+`(1-a)^k -> 0` predicts 0.012617 at k=4, so the receipted pair argues `k >= 3`, not `k = 3`.
+
+**Job 56397442** (`nd-unfolding/pet/sbatch_b1_niter4_scan48.sh`, new, shared/gpu, 2 h wall) measures
+the k=4 point: 48 seeds 7-54, every parameter read back out of the k=3 arm's own receipt entry rather
+than from the script's defaults, which are the STALE recoil-only operating point (1.135 / 0.621 /
+niter 2) -- the same hardcoded-superseded-constant trap the 08-06 FINDING is about. Predeclared, before
+the data exists: **if the k=4 spread is also flat, the record must say the stopping point is set by
+cost and by the literature default of 3 (`LITERATURE_NOTES.md:65`), NOT chosen by this measurement.**
+
+**Verified in the same turn, not from memory:** job 56381674 is the a1 powered-closure re-run and is
+running at `niter=3` -- the driver reads `NOMINAL_SEED_POLICY` (`closure_powered_truth_reweight.py:265`)
+which `2b2e5f1` set to 3 at `train_fullevent_nominal.py:51`, and the job started after that commit.
+Preflight PASS (gap 0.2343, floor/gap 0.0459). Its launcher's protocol comment still asserted
+"niter 2"; behaviour was always correct (it overrides nothing) but the comment was false from
+`2b2e5f1` onward. Fixed, with a note to read `configuration.niter` out of the report instead. That
+file is not among the 22 live hash pins, so the edit is safe on its own.
+
+**(d) + J28 planned as one pass**, at `docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`.
+The material finding: **J28 is no longer blocked on the Perlmutter restore.** `VALIDATION_LEDGER.md`
+still cited the 08-03 restore as the blocker; the restore completed and the inputs are all present --
+365 `*slab*.npz` under `nd-unfolding/` (205 `uq_5d/`, 33 `uq_4d/`), the three `bank_uthrow_*` banks
+with `cv.npz` + `flux_univ_ratio.npy`, and `rescale_flux_universes.py` from `081ae4a`. The re-roll is
+schedulable now. Scratch is purgeable, so protecting those 365 slabs is Step 0 and the plan says so.
+Ledger quarantine updated to point at the plan rather than at a blocker that has cleared.
+
+## 2026-08-06 — D2 powered closure re-run at niter=3 COMPLETED AND FAILED (job 56381674)
+
+**Result.** rc=3, `verdict=FAIL`, elapsed 01:58:19, `configuration.niter = 3` (confirmed in the
+report, not inferred). Training-independent criteria passed as predicted: `gap = 0.234270` (>= 0.15),
+`floor/gap = 0.045876` (<= 0.10), preflight cross-check AGREE. **The open number missed by more than
+2x: `residual = 0.106159` vs budget `<= 0.0469`; `residual/gap = 0.4531` vs `<= 0.20`; recovery
+`0.5469` vs predeclared `>= 0.80`.** Evidence in `pet/powered_closure/`:
+`POWERED_CLOSURE_REPORT.slurm-56381674.json` (sha256 `d5a01f3f4ffd…`), `POWERED_PREFLIGHT.…json`,
+`POWERED_CLOSURE_ARTIFACT.…npz`, `DONE.slurm-56381674.txt`. **Thresholds NOT touched** — the handoff
+says diagnose on FAIL, and that instruction is correct.
+
+**Diagnosis from the report's own per-bin arrays** (285 cells = 15 pT x 19 pparallel, pt-major). This
+is the payoff of the arrays being persisted at `closure_powered_truth_reweight.py:302-303`: the
+diagnosis cost zero additional compute.
+
+- **Not a normalization failure.** `sum(h_prior) = sum(h_target) = sum(h_unfolded) = 1.0` exactly and
+  `sum(h_unfolded - h_target) = 0.000000`. The B1 rate closure passing at k=3 and this failing are
+  therefore *not* in contradiction — they measure different quantities.
+- **Globally short, not locally broken.** `L1(unfolded-prior)/L1(target-prior) = 0.6549`; per-bin
+  median recovery 0.8233; 128 of 262 bins below 0.8; **29 bins move the wrong way**.
+- **Broadly distributed.** Top-10 cells carry 26.5% of the L1 residual, top-20 44.8%, top-50 75.1%.
+  There is no small set of pathological cells to excise.
+- **Edge-clustered worst cases** at `i_pparallel = 0` across pT 2–5 (cells 38/57/76/95, recovery
+  0.17–0.24), plus a run at cells 191–194.
+
+Direction right, magnitude short, normalization exact, spread across the grid = **over-regularization**,
+not a defect. Two live hypotheses, deliberately not adjudicated here: (i) `niter=3` is too few for
+SHAPE recovery even though it suffices for RATE closure; (ii) `epochs=8` leaves the fit
+optimization-limited (`B1-NORMALIZATION-FIX-DESIGN.md:352-357` — epochs is not the unit of
+optimization, steps are; the 2M half-size should sit right of that regime, but "should" is not
+"measured"). **No niter=2 arm exists** — 56355818 was cancelled at 5:18 — so nothing here can be
+attributed to the niter switch in either direction.
+
+**Consequence for item (e), recorded the same turn.** Earlier today this session assembled the
+receipted k=2/k=3 numbers into a bias-variance argument (CLM-010) and scoped it explicitly to the
+reco-level RATE scalar, flagging that the differential version was still owed. That caveat was
+load-bearing: the differential test has now run and failed. CLM-010's scalar claim stands as written;
+it must not be read as evidence that k=3 suffices for the cross section. If hypothesis (i) holds, the
+regularization argument points to k>3 — the opposite of a stopping point — which promotes the k=4 arm
+(56397442) from formality to load-bearing.
+
+**Gate-4 remains red and `nominal_pet_training_allowed: false` still holds.** Step 4 stays blocked.
+
+Also this turn: BEN-026 amended after this session repeated it a third time (`pytest … | tail -15`
+and `verify_hash_bindings.py | tail -12`), having read the rule in the same session — it composes with
+BEN-028 into a *total* evidence loss, not a partial one, because SIGTERM arrives before any flush.
+`test_hash_bindings.py` 4 passed (1:55:25); bindings intact across this commit's edits.

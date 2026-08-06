@@ -85,7 +85,12 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > **Status.** The code fix is committed (`081ae4a`), fail-closed, and mutation-tested; new slabs
 > carry a `flux_normalized` stamp and `--combine` refuses unstamped ones. **No corrected number
 > exists yet** — sizing needs the `/pscratch` slabs and waits for the Perlmutter restore
-> (08-03 22:00 PT), then `nd-unfolding/rescale_flux_universes.py`. A first-order estimate
+> (08-03 22:00 PT), then `nd-unfolding/rescale_flux_universes.py`. **That wait is over as of
+> 2026-08-06**: the restore completed, and the 365 throw slabs, the three `bank_uthrow_*` banks and
+> the rescale tool are all verified present, so the re-roll is schedulable — see
+> [`docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`](docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md),
+> which sequences it jointly with the `niter=3` budget recompute (`OPEN_ITEMS.md` item (d)) so the
+> budget is not built twice. A first-order estimate
 > suggested a few percent upward, but it is **not quotable**: correcting the same Flux draw in
 > both the unified and block ensembles moves `g`, the tail inflation and the finite-throw cross
 > terms together. Lift this quarantine only by replacing the numbers, not by deleting the notice.

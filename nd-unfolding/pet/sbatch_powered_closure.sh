@@ -28,8 +28,16 @@
 #
 # Protocol comes from closure_powered_truth_reweight.py's module constants (amplitude 0.35, clip
 # z=3, split seed 7, half size 2,000,000) and from train_fullevent_nominal.NOMINAL_SEED_POLICY
-# (niter 2, epochs 8, seeds 42/0, batch 512). NOTHING is overridden here -- no --half-size, no
+# (epochs 8, seeds 42/0, batch 512). NOTHING is overridden here -- no --half-size, no
 # --amplitude, no --max-events. Passing any of those would move the goalposts the gate checks.
+#
+# `niter` is DELIBERATELY NOT RESTATED HERE. It is read at runtime from NOMINAL_SEED_POLICY
+# (closure_powered_truth_reweight.py:265), and this comment used to assert "niter 2" alongside the
+# other constants. That became false the moment 2b2e5f1 switched the policy 2 -> 3 on 2026-08-06;
+# the launcher's BEHAVIOUR stayed correct (it overrides nothing) but its documentation did not, and
+# a stale protocol comment in a launcher is exactly what gets cited later as evidence of what a run
+# actually used. Job 56381674 ran at niter=3 under this file while the comment still said 2.
+# Read the configuration out of the report's `configuration.niter`, never out of this header.
 #
 # 1 GPU deliberately: batch_size=512 is part of the pinned nominal configuration, and a multi-GPU
 # Horovod run makes the EFFECTIVE batch 512*N. One GPU keeps the configuration literally nominal.

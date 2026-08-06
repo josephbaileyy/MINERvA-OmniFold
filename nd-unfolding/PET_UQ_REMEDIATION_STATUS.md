@@ -149,6 +149,18 @@ at Gate 8.
 
 ## Gate 4 — nominal and GPU floor
 
+**2026-08-06 one-liner.** Re-issued at `niter=3` (`20260806` receipt, verifier 10 mismatches -> 0);
+`nominal_pet_training_allowed: false` still holds. **The D2 powered closure re-run at `niter=3`
+(job 56381674) COMPLETED AND FAILED** — recovery 0.5469 vs predeclared >= 0.80, residual/gap 0.4531
+vs <= 0.20, with `gap`/`floor` passing as predicted. Diagnosis (per-bin, zero extra compute):
+normalization exact, shape recovery globally short (L1 ratio 0.6549), residual broadly distributed —
+over-regularization, not a defect. Thresholds untouched. **Gate 4 stays red; Step 4 stays blocked.** `OPEN_ITEMS.md` (e) narrowed: the scalar-level
+bias-variance justification for `niter=3` is assembled and recorded as **CLM-010** (bias 3.8008% ->
+2.1876% at flat 48-seed spread, sd ratio 1.036), leaving two gaps — the differential version, which
+job **56381674** yields free on completion, and the upper bound on `k`, which job **56397442**
+(k=4 arm) measures. The `niter=3` budget recompute is planned jointly with the J28 flux re-roll at
+`docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`.
+
 **Current (2026-08-04): launch-code re-issue required; training NOT launched.**
 The live code-only receipt predates decisions D1/D2. The present nominal still rebuilds the
 Gate-2 target in process, and the ordinary closure builds then discards that measured target;
