@@ -498,3 +498,43 @@ that job is still running (it hashes ~1 TiB). Note the brief's expectation of "e
 trees now report ALL BINDINGS INTACT.
 
 `56415634` (PET niter=3): PENDING, queued **4h15m** as computed in-turn, watch armed. Still watching.
+
+### Adoption chain submitted on a dependency; and an empty `squeue` that wasn't
+
+**A scare that was my own instrumentation.** A status query returned an empty `squeue` *and* an empty
+`sacct`, which reads as "every job vanished, including the nominal". Re-run with stderr captured instead of
+discarded: `squeue` returns 11 lines and `rc=0`, the controller is fine, and the nominal is still `PENDING`.
+The earlier query had `2>/dev/null`, so a transient `squeue` failure was indistinguishable from "no jobs" —
+BEN-035's family again, where the discarded channel is the one that explains the result. Worth stating the
+general form: **for a query whose empty output would be alarming, never discard stderr.**
+
+**Regeneration `56427580` is nearly done:** 4 tasks COMPLETED at exit `0:0` (30, 31, 33, 37), 6 still running
+at 1:10, and **155 of 160 throws present**. The 5 remaining — 139, 143, 147, 155, 159 — are each the *last*
+throw of their task, so they land together.
+
+**The adoption is submitted as `56429334` with `--dependency=afterok:56427580`**, which is better than
+polling: Slurm starts it the moment the array succeeds, it will not start if the array fails, and it does not
+depend on this session surviving. `nd-unfolding/sbatch_j28_adopt_5d.sh` does, in order: a **fail-closed gate**
+that aborts unless all 160 throws are present *and* the stamp split is exactly unstamped 0–29 / stamped
+30–39; rescale of the pre-J28 half only (staged by symlink so the split is explicit); a union of
+`rescaled(0–29) ∪ native(30–39)`; the combine at `--expected-throws 0-159`; and adopt in **both** mean-shift
+conventions.
+
+**One destructive default caught before submitting.** `adopt_unified_5d.py:79-80` defaults `--out` to
+`uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root` and opens it `RECREATE` (`:158`).
+Taking the default would have (a) **overwritten the existing July adopted product** — quarantined, but still
+the historical artifact the ledger describes, 892 MB, verified present — and (b) let the CV-centered run
+silently clobber the mean-centered one, leaving a single file that looked like both. Both adopt calls now pass
+explicit tagged `--out` paths, and the job prints a check that the July product is untouched.
+
+**The adoption adopts nothing into the ledger, by design.** It writes its own ROOT and prints both variants;
+replacing a quarantined number stays a separate human-reviewed commit (plan Step 5).
+
+Also landed: `docs/orchestration/notify_job_log.sh`, a **generic** notifier (job state + its own log tail,
+firing on every terminal state). Three notifiers in, the job-specific pattern had already produced one wrong
+watch this session, and for a job whose product *is* its printed output the log tail is the whole payload.
+Three watches now armed: nominal, regen array, adoption.
+
+**Cluster verification complete:** verifier **ALL BINDINGS INTACT**, suite **763 passed / 1 failed / 764
+collected**, the single failure being the known J28 fixture (`test_uq_remediation.py`) that plan Step 4
+defers on purpose.
