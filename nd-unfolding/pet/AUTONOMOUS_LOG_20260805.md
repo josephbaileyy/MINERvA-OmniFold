@@ -2927,3 +2927,33 @@ documents. Fixed the same way, a committed `.gitkeep` (`e23bb13`), so it cannot 
 criterion is unreachable as written — so this run produces a central value for the first time but nothing
 promotable. That must be recorded with the product, per the fresh session's advice: train it, mark it
 non-quotable, and keep the gating on 4b.
+
+### The launcher I called UNMODIFIED was the defect
+
+The line above — `launcher UNMODIFIED` — was written as reassurance. It was the bug. `sbatch_pet_fullevent_nominal.sh` **restated the policy it was supposed to inherit**: `NITER=2`, plus `ESTIMATOR_SEED`, `SUBSAMPLE_SEED`, `EPOCHS`, `TRAIN_EVENTS`, each passed as an explicit `--flag`. Every one of those overrides the driver's `NOMINAL_SEED_POLICY`, so job 56410365 would have trained at **niter=2** — the value we had just spent a day deciding against — while every receipt, validator and test in the tree said 3. `freeze:seed_policy` would have rejected the result after 8 GPU-hours.
+
+Caught pre-dispatch. `scancel 56410365`, **0 GPU-h lost**.
+
+The repair is structural, not a value edit: the launcher now passes **no policy-owned flag at all**, so the driver constant is the single source of truth. Two tests hold that shut, both mutation-proved — `test_launcher_passes_no_policy_owned_flag` (restore any flag, it fails) and `test_flag_map_covers_the_whole_policy` (add a policy key without a flag mapping, it fails). The retyped `POLICY_FLAGS` map is asserted equal to the driver's own dict, so the two cannot drift silently. Walltime also went 8h -> 12h. Gate-4 re-issued as `...-20260806c` (predecessor retired under `files_at_issue`, no digest hand-edited). Resubmitted as **56415634**.
+
+My own test failed on its own rationale comment twice — mention-vs-use, once on `rg_*` names and once on `--niter` in prose — so `_executable_lines()` is now comment-aware.
+
+### Armed a durable watch, and checked the thing that would have made it theater
+
+`56415634` had **no armed watch**: the `pwclosure-56381674` one fired at 13:55Z and is spent. A session-local watch dies with the session, so a 12-hour job needed a session-independent notifier. New `docs/orchestration/notify_nominal.sh`, armed as `nominal-56415634`.
+
+It reports the *outcome*, not "job finished" — a notifier that only says the latter is the vacuous-pass antipattern wearing a different hat. Three branches, each proved by running it, in a sandbox with the repo root redirected (writing anything to the real nominal path would make `is_complete()` true and cause the live job to skip its own training):
+
+- **both artifacts present** — sha + size for each;
+- **the policy the run actually used**, read from the artifact's argv-derived `seed_policy`. Proved to have power: an artifact carrying `niter=2` flips the line to `*** EXPECTED 3 -- freeze:seed_policy WILL REJECT THIS RUN`;
+- **the partial case** — nominal present, floor repeat absent, which a walltime kill between the two trainings produces and which a plain resubmit cannot recover, because `is_complete(nominal_out)` kills it before it reaches the floor.
+
+Two things I checked instead of assuming, one of which I had backwards:
+
+**The tick log looked dead and is not.** `cron-tick.log` was 17.5 days stale and ended in a traceback, which read as a broken cron. It isn't: the scrontab block sets `--open-mode=append` and the tick runs `--quiet`, so it writes *nothing* when it has nothing to say, and a stale mtime is the expected steady state. The live evidence is elsewhere — cron job 56160911 COMPLETED today 12:20:09 exit `0:0`, and `evt-pwclosure-56381674.log` was written at 06:55 by that same path firing a real watch.
+
+**The historical traceback could not hit this watch, but it was right to check.** The crash was `parse_utc('1784527278\nRUNNING|1784527278')` — multi-row `sacct` output — and `sacct -j` starts returning three rows (`X`, `X.batch`, `X.extern`) precisely when a job completes, which is the transition this watch depends on. It turns out that call is in the `queue-latency` branch, not `slurm-job`; the `slurm-job` branch goes through `slurm_job_state`, which handles multi-row output and carries an `unreliable` counter, and both queue-latency watches are retired. A clean `tick` confirmed the watch evaluates and correctly does **not** fire while PENDING. Worth noting the fragility anyway: that exception aborted the *whole* scan, so one bad watch can silently stop every other one.
+
+**It also fires on failure.** `run_action` resolves the action from the watch file by id, not from the event type, so `slurm-job-error` — a 12h TIMEOUT, the realistic bad outcome — dispatches the same notifier as `slurm-job-complete`.
+
+Verifier: 13 shell pins resolved against floor 13, ALL BINDINGS INTACT (a pin-free script leaves the collector untouched).
