@@ -8,6 +8,33 @@ committed products, not predicted.*
 Owning items: `CLAIMS.md` CLM-010 (this discharges its open item **(ii)**); `OPEN_ITEMS.md` (e);
 `FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md` (the 2→3 switch).
 
+> ## REVIEWED AND CORRECTED 2026-08-06 — the conclusion stands, three of its supports do not
+>
+> A fresh-context review agreed with **no, for now**, and then took apart the argument I had called
+> load-bearing. All four corrections are folded into the sections below; recorded here because the
+> *reasoning* changed even though the answer did not.
+>
+> 1. **§2's ceiling model is the WEAKEST support, not the strongest, and it is `ASSUMED`-grade.**
+>    `(1-a_b)^k` presumes step 2 resolves cells independently. It does not:
+>    `omnifold_nn/omnifold/omnifold.py:218-220` evaluates the truth classifier on **all** `pass_gen`
+>    rows, so a smooth learner can transport the injected `f(pT)` out of high-acceptance cells into
+>    low-acceptance ones — and this injection *is* smooth in pT while the acceptance gradient lives on
+>    p∥. So the per-cell dilution is **not a theorem-grade upper bound**; a well-generalising network
+>    could beat it. What rescues the *conclusion* is that the measured 0.5469 sits **below** the 0.6332
+>    ceiling, so no such transport is happening at k=3 — but that is one run at one k, which is
+>    evidence, not proof. My "validated as an upper bound" overstated it.
+> 2. **There is a model-free version of the same conclusion, and it should be the headline** — see the
+>    new §2a. It survives discarding the ceiling entirely.
+> 3. **My §1 caution had the sign backwards.** The closed form under-predicting at k=4 means the ideal
+>    table is **optimistic**, so k=4 helps *even less* than modelled. That reinforces the decision
+>    rather than cautioning against it.
+> 4. **My queue figure was wrong and I repeated it for several cycles.** `56415634` was submitted
+>    `2026-08-06T12:04:38` and at 15:50:44 PDT had been queued **3h46m**, not "10h14m" — I had carried
+>    over the *powered-closure* job's 10h39m wait (`56381674`: submit 08-05T18:13 → start
+>    08-06T04:52). A BEN-027 violation: a number in a report must come from a command run in the same
+>    turn. The forward requeue cost is what actually matters and that 10h39m precedent still supports
+>    ~10h, so §3's conclusion holds — but the sunk cost was a quarter of what I stated.
+
 ## 1. The bias-variance case for `k=4` is real and now measured
 
 The k=4 B1 rate-injection arm **ran and completed** — jobs `56400517` (16 seeds, 1h34m) and `56400519`
@@ -27,14 +54,39 @@ by **1.535×** and the **sd ratio is 0.9502** — variance did not grow, it fell
 So `k=4` is genuinely better on bias at flat variance. That is a measured improvement. It is not,
 however, a measured *requirement*, and the rest of this finding is why that distinction decides it.
 
-One caution: the closed form **starts under-predicting** at k=4 — measured 0.014256 against 0.012616
-(+13%), where k=3 agreed to 0.018 pp. The clean asymptotic story is beginning to degrade, which argues
-against extrapolating to larger k without measuring.
+One asymmetry worth stating in the right direction: the closed form **starts under-predicting** at k=4 —
+measured 0.014256 against 0.012616 (ratio 1.130), where k=3 agreed to 1.008. I first filed this as a
+mild caution about extrapolating; it is actually **reinforcement**. If the achieved bias exceeds the
+asymptotic form at k=4, then the §2 ideal ceiling (built from the same dilution algebra) is
+**optimistic**, so k=4 helps the closure *even less* than modelled.
 
-## 2. The decisive point: `k=4` does **not** fix the powered closure, and nothing does
+## 2a. The decisive point, model-free: one iteration cannot deliver a 2.27× residual cut
+
+**This is the argument to rely on.** It needs no dilution model and no per-cell-versus-global debate — only
+the closure's own predeclared budget and improvement factors this campaign has actually measured.
+
+`PREFLIGHT_GAP_FLOOR.json` declares `residual_budget_abs = 0.046854` for the 0.80 bar (against
+`gap = 0.234270`). The measured residual at k=3 is **0.106159**. So passing at k=4 requires a
+**2.266× residual reduction from a single extra iteration**. Compare every single-iteration factor on
+record:
+
+| basis for one extra iteration | factor | implied k=4 recovery | vs 0.80 |
+|---|---|---|---|
+| B1 measured k=2→3 — the best factor seen anywhere on this campaign | 1.738 | 0.739 | fails |
+| B1 measured k=3→4 (§1) | 1.535 | 0.705 | fails |
+| powered-closure ideal per-cell (§2) | 1.088 | 0.584 | fails |
+
+Even transplanting the most optimistic improvement this campaign has ever measured — from a *different,
+scalar* closure — k=4 lands at **0.739**, short of 0.80. The bar is not reachable by one iteration on any
+factor we have evidence for, and this holds whether or not the §2 ceiling is right.
+
+## 2. Supporting, and weaker than it looks: the dilution ceiling
 
 The real blocker is the D2 powered closure, `FAIL` at `niter=3` (job `56381674`, recovery 0.5469 against
-a predeclared 0.80). If `k=4` moved that to PASS it would be worth almost any cost. It does not.
+a predeclared 0.80). *Note for anyone reading `sacct`:* that job shows `State=FAILED ExitCode=3:0`, which
+is the driver's own `return 0 if ok else 3` on a FAIL verdict — **not a crash**. All products were written
+and `DONE.slurm-56381674.txt` records `rc=3 verdict=FAIL preflight_xcheck=AGREE`, so the 0.5469 is a
+real measurement, not junk from a broken run. If `k=4` moved that to PASS it would be worth almost any cost. It does not.
 
 `closure_powered_truth_reweight.py:280` defines
 `recovery = 1 − L1(h_unfold, h_target) / L1(h_prior, h_target)`, and `:28` states the injection is
@@ -47,11 +99,19 @@ and therefore
 weighted by the **injected tilt** `|p_b − t_b|` — not by truth mass, and not evaluated at the global
 acceptance.
 
-**The model is anchored, not assumed.** Recomputing `gap` from the report's own `h_prior`/`h_target`
-gives 0.234270 against the report's 0.234270, confirming the acceptance map and the closure report cover
-the same 285 cells. And it is **validated as an upper bound**: at k=3 it predicts residual 0.085929
-against the measured 0.106159, i.e. the trained estimator does **19.1% worse** than the ideal ceiling,
-which is the direction it must err.
+**The model is anchored on the same objects**: recomputing `gap` from the report's own
+`h_prior`/`h_target` gives 0.234270 against the report's 0.234270, so the acceptance map and the closure
+report cover the same 285 cells. At k=3 the model predicts residual 0.085929 against the measured
+0.106159 — the trained estimator lands **19.1% worse** than the ideal, the direction it must err if the
+ceiling is real.
+
+**But this is `ASSUMED`-grade, not verified, and I originally overstated it.** `(1-a_b)^k` assumes step 2
+resolves cells independently, and `omnifold_nn/omnifold/omnifold.py:218-220` evaluates the truth
+classifier on **all** `pass_gen` rows — so a smooth learner can transport the injected `f(pT)` from
+high-acceptance cells into low-acceptance ones, and this injection is smooth in pT while the acceptance
+gradient lives on p∥. A well-generalising network could therefore **beat** this ceiling. One measurement
+below it at one k is evidence that no such transport happens here; it is not a proof that none can.
+**§2a does not depend on any of this**, which is why it carries the decision.
 
 | k | ideal residual | **ideal recovery** | vs the 0.80 bar |
 |---|---|---|---|
@@ -68,8 +128,10 @@ and it strengthens the existing conclusion that **the criterion needs redesign**
 
 ## 3. What `k=4` would cost
 
-- **The queue position.** `56415634` is `PENDING` with **10h14m** queued at priority 67871. Switching
-  means cancelling it and starting over.
+- **The queue position.** `56415634` is `PENDING`, submitted `2026-08-06T12:04:38`, i.e. **3h46m** queued
+  as of 15:50:44 PDT. (An earlier draft said 10h14m; that was the *powered-closure* job's wait carried
+  over by mistake — BEN-027.) The cost that matters is the **forward** requeue, and the same lane's
+  10h39m precedent (`56381674`) is the honest estimate of that.
 - **The whole pin cascade, again.** The 2→3 switch required a Gate-4 re-issue, `validate_pet_nominal_gate4`
   `FROZEN["seed_policy"]`, `train_fullevent_nominal.NOMINAL_SEED_POLICY`, and three test files. All of it
   repeats for 3→4.

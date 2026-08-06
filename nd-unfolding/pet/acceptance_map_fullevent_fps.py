@@ -152,13 +152,20 @@ def main():
         "global_acceptance_w_truth_weighted": global_acc,
         "global_acceptance_unweighted": global_acc_u,
         "gate2_receipt_acceptance_for_comparison": 20573521 / 49152885,
-        # WRONG FOR A DIFFERENTIAL CRITERION -- kept, renamed, and labelled rather than deleted,
-        # because it was published in the v1 product and a reader needs to know what they read.
-        # `1-(1-a)^k` is CONCAVE in a, so evaluating it at the GLOBAL acceptance overstates the
-        # achievable per-cell (shape) recovery by Jensen: +19.9 pp at k=3 on this map. It read
-        # 0.8084 at k=3, essentially exactly the powered closure's 0.80 bar, which invites the
-        # conclusion that the bar is achievable and the estimator is broken -- the opposite of the
-        # truth. Same error class as the CLM-011 magnitudes (cell-by-cell 122.6x vs aggregate 2.36x).
+        # SCOPE MISLABEL, NOT A WRONG FORMULA -- and the distinction matters, so read on before
+        # "fixing" anything else with it. `(1-x)^k` is convex in x, so by Jensen
+        # `E_w[(1-a_b)^k] >= (1-E_w[a_b])^k`: evaluating at the GLOBAL acceptance overstates the
+        # achievable PER-CELL recovery (+19.9 pp at k=3 here). For a DIFFERENTIAL criterion that is
+        # simply the wrong quantity, and it read 0.8084 at k=3 -- essentially exactly the powered
+        # closure's 0.80 bar -- which invites the conclusion that the bar is achievable and the
+        # estimator broken, the opposite of the truth.
+        #
+        # BUT the global form is CORRECT for a SCALAR observable with a global acceptance, which is
+        # exactly what the B1 rate closure uses: `structural_floor_worst_case = (1-a)^k (R-1)/R` with
+        # the global a, and it matches measurement to 1.9% / 0.8% at k=2 / k=3. Do not "correct" B1
+        # by analogy with this entry. Kept, renamed and labelled rather than deleted because it was
+        # published in v1 and a reader needs to know what they read.
+        # Same error class as the CLM-011 magnitudes (cell-by-cell 122.6x vs aggregate 2.36x).
         "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL": {
             str(k): 1.0 - (1.0 - global_acc) ** k for k in range(1, a.kmax + 1)},
         # The per-cell average is the right FORM for any per-bin criterion. Note the WEIGHT still
@@ -170,6 +177,22 @@ def main():
             str(k): float(1.0 - np.average((1.0 - acc[np.isfinite(acc) & (denom > 0)]) ** k,
                                            weights=denom[np.isfinite(acc) & (denom > 0)]))
             for k in range(1, a.kmax + 1)},
+        # Emitted by the PRODUCER, not hand-added. The 2026-08-06 fix was first applied by editing
+        # the product in place, which left it no longer reproducible from this script and its
+        # `git_head` pointing at the pre-fix commit. A product that its own producer cannot
+        # regenerate is not a product; the note therefore lives here.
+        "recovery_field_scope_note": (
+            "ideal_recovery_from_global_acceptance_by_k__OVERSTATES_DIFFERENTIAL is the SCALAR-scope "
+            "curve: 1-(1-a_global)^k. By Jensen it is an UPPER bound on per-cell recovery (+19.9 pp "
+            "at k=3 here) and must not be compared with a differential criterion such as the powered "
+            "closure's L1 recovery. ideal_recovery_percell_truthmass_weighted_by_k is the per-cell "
+            "form but is TRUTH-MASS weighted, so it is a reference curve and NOT that closure's "
+            "ceiling either: an L1 shape criterion weights each cell by its injected displacement "
+            "|prior_b-target_b|, giving 0.6332 at k=3 and 0.6629 at k=4 "
+            "(FINDING-20260806-niter4-decision.md, where it is graded ASSUMED because "
+            "omnifold.py:218-220 lets a smooth learner transport the tilt across cells). The global "
+            "form IS correct for a scalar observable, which is why B1's structural_floor_worst_case "
+            "legitimately uses it."),
         "pparallel_marginal": marg,
         "prior_domination_census": below,
         "acceptance_cells_pt_major": [float(x) for x in acc.ravel(order="C")],
