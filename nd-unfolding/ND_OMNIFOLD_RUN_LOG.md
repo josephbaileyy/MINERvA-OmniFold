@@ -3196,3 +3196,40 @@ over 10,694 bins with no interval attached (rule 3); `n_throws = 122` is the rea
 the **5-iteration GBDT 5D** slabs, not the PET lane whose policy moved 2 → 3, so this does not
 discharge `OPEN_ITEMS.md` item (d). Receipt `uq_5d/rescaled_20260806/j28_reroll_20260806.json`;
 write-up `../docs/orchestration/FINDING-20260806-j28-reroll-exact.md`.
+
+## 2026-08-06 (same day, later) — CORRECTION to the entry above: the re-roll used 122 of 160 throws
+
+The entry above says the re-roll's inputs were "the ensemble the **adopted**
+`uq_5d/unified_throw_cov_5d.root` was built from." **That is wrong**, and this file is append-only, so
+the correction is recorded here rather than by editing it.
+
+Read from the adopted ROOT directly (`TFile.Open` → `Get`): **`n_throws = 160`**,
+`sqrt_tr_unified = 4.4607819710748654e-38`, `joint_mean_shift_norm = 1.654393237996853e-38`. Job
+`56417324` processed **122** throws. `uq_5d/uthrow_slabs_5d_sb/` holds slabs **0–30**; slabs **31–39
+are gone** — run F was `[0-39%40]` at 4 throws/task, so 30×4 + one 2-throw slab = 122, and the missing
+9 slabs are the remaining ~38 throws. They were lost from purgeable scratch *after* the combine ran.
+
+Consequences:
+
+- the re-roll's "before" sits **−2.62%** below the adopted `sqrt_tr_unified` and −7.21% below its mean
+  shift, so the corrected **absolute** numbers are a **76.2% subsample** and are **not** drop-in
+  replacements for the adopted covariance;
+- the before → after **relative** changes stand unchanged (+316.83% flux block, +10.19% block sum,
+  −0.72% unified), because both sides are computed from the same 122 slabs — that comparison was always
+  controlled;
+- **exact replacement of the adopted covariance requires re-throwing slabs 31–39.** Tracked as
+  `OPEN_ITEMS.md` item (g).
+
+Generalisable trap filed as **BEN-033**: read an ensemble's size from the **product**, never from the
+launcher's globs — a launcher states what it *would* consume, the product records what it *did*, and the
+two diverge exactly when inputs have been lost since. Two independent sources agreed on the input set and
+both were the wrong *kind* of source, so agreement bought nothing.
+
+**Also settled, and it was never actually open: the F7 mean-shift convention.**
+`CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` predeclared the test — `~floor` → mean-centered acceptable,
+`>> floor` → also produce the CV-centered variant, report the shift either way, never silently drop it.
+On the adopted ensemble `||mean_shift||` is **4.69×** the sampling floor `sqrt_tr/√160` (37.1% of
+`sqrt_tr` against a 7.9% floor), rising to **4.83×** after the flux correction. `:325` had already
+flagged that same 37% as NON-negligible on 07-13. So **mean-centered-only is disqualified** and the
+operative `g` change is the CV-centered **+0.62%**, not the mean-centered −2.55% — the corrected
+inflation edges slightly *up*. Only presentation remains a choice.
