@@ -150,3 +150,35 @@ side) is genuinely his.
 Net: one of the two decisions I escalated last cycle answers itself from a rule the repo wrote in
 advance. That is the campaign's own standard working — and the reason to re-read the predeclaration
 before escalating, not after.
+
+### Cluster access expired mid-cycle — and the durable watch is why that is survivable
+
+Immediately after landing the two corrections above, `ssh` to the cluster began failing with **exit 255
+and no stderr**, across `saul`, `perlmutter` and `dtn01` alike — which looks like a NERSC outage and is
+not one.
+
+`ssh-keygen -L -f ~/.ssh/nersc-cert.pub` gives it away: the sshproxy certificate was
+**`Valid: 2026-08-05T06:07 → 2026-08-06T06:08:08`**. It expired this morning. Everything since then —
+the launcher fix, the Step 0 protection, job `56417324`, two mails, several `git pull`s on the cluster —
+ran over an **already-authenticated multiplexed master socket**, because `~/.ssh/config` sets
+`ControlMaster auto` with `ControlPersist 12h`. When that master hit its persist limit `~/.ssh/cm/`
+emptied and the next connection failed instantly. **`ControlPersist` masked an expired credential for
+most of a working day.** Filed **BEN-034**.
+
+Renewal needs `sshproxy.sh` with password + MFA, so I cannot do it. Joseph will need to run it —
+`! sshproxy.sh -u josephrb` from this session works.
+
+**What is blocked:** cluster propagation (the checkout is 3 commits behind: `5b7b59f`, `60af231`,
+`9ee7622`) and **all outbound mail**, since `send_channel_mail.py` runs *on the cluster*. That is the
+sharp edge — the same failure takes out the work channel and the channel I would use to report it. I
+used `PushNotification` instead, which is local.
+
+**What is not blocked, and this is the point:** the `wakerctl` watch armed two cycles ago is a **Slurm
+cron job on the cluster**, so it does not care that my local session lost its credential. When
+`56415634` ends, Joseph still gets the verdict mail — artifact digests, the actual `seed_policy`, the
+partial-run warning, and the non-quotable notice. I armed it against *session death*; it is now earning
+its keep against something I did not anticipate, which is the better argument for the CLAUDE.md rule
+than the one I made at the time. A session does not have to die for its comms to.
+
+Local work is unaffected: repo edits, commits and pushes to origin all still work, and everything this
+cycle produced is safe on origin.
