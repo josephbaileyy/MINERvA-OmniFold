@@ -159,6 +159,30 @@ explicitly and written down, not assumed:~~ *(original wording, kept for the rec
   unaffected by `niter`. Each must be classified separately here. Do not carry the J28 exemption
   list across to the `niter` question by analogy — that is the mistake this step exists to prevent.
 
+**Step 2b — the adoption recipe, once regeneration lands (added 2026-08-06).** The repaired ensemble has
+**mixed provenance**, and rescaling it uniformly would be wrong:
+
+| slabs | throws | `flux_normalized` | what to do |
+|---|---|---|---|
+| 0–29 | 0–119 (120) | absent | **rescale** — these are the pre-J28 Φ_CV throws |
+| 30–39 | 120–159 (40) | **=1** | **do NOT rescale** — `unified_throw_cov.py:255` stamps newly-written throws, so the regenerated ones already divide by their own `Φu` |
+
+So the combine input is `rescaled(0–29) ∪ new(30–39)`, not `rescale(everything)`. Rescaling a stamped slab
+would double-correct it; `rescale_flux_universes.py:261` fails closed on exactly that, so the guard catches
+the mistake — but knowing the split in advance is what makes the pass right first time. `--combine` also
+refuses *unstamped* slabs (`unified_throw_cov.py:332,372`), which is why the old 30 must be rescaled rather
+than used as-is.
+
+**Why mixing the two is legitimate rather than a fudge:** the post-hoc rescale and the native correction were
+shown to agree to **1.4e-12 / 6.7e-12** max relative over all 10,694 bins on throws 120 and 121, which exist
+in both forms (`nd-unfolding/validate_rescale_identity.py`; see the ledger). The two halves of the union are
+therefore the same object computed two ways, not two different objects. That verification also confirmed
+empirically — via matching `flux_u` draws — that the RNG is seeded per global throw index, so the
+regenerated throws are the original draws.
+
+Then: combine → `adopt_unified_5d.py` in **both** variants (F7 requires the CV-centered one, since
+`||mean_shift||` is 4.69× the sampling floor) → replace the quarantined numbers.
+
 **Step 3 — rebuild the budget once, at `niter=3`, on flux-corrected universes.**
 
 **Step 4 — only then, `test_uq_remediation.py`'s J28 fixture.** Item (d) is explicit that this comes

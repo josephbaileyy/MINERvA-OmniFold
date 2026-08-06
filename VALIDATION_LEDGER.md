@@ -98,6 +98,27 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > correction; the corrected **absolute** values are a 76.2% subsample and are **not** drop-in
 > replacements for the adopted covariance. Replacing it exactly requires re-throwing slabs 31–39.
 >
+> **THE RESCALE IS AN IDENTITY — VERIFIED NUMERICALLY ON PRODUCTION THROWS, 2026-08-06.** The whole J28
+> remediation, and therefore any lift of this quarantine, rests on `rescale_flux_universes.py`'s claim that
+> `x_corrected[i_pt,...] = x_saved[i_pt,...] / r_u[i_pt]` is an *identity* rather than an approximation.
+> That claim had never been checked against an independent computation. Regenerating the lost throws
+> supplied the experiment for free: array task 30 recomputed throws 120 and 121 **natively**, with a driver
+> that divides by each universe's own `Φu`, while `uq_5d/rescaled_20260806/` already held the **post-hoc
+> rescaled** version of the same two throws. Across all **10,694** reported bins:
+>
+> | throw | flux universe | max \|rel diff\| | median |
+> |---|---|---|---|
+> | 120 | 5 (both forms) | 1.377e-12 | 3.952e-14 |
+> | 121 | 13 (both forms) | 6.708e-12 | 8.393e-13 |
+>
+> Agreement at floating-point noise, so the post-hoc correction reproduces a from-scratch corrected
+> unfold. Two things follow. (1) The rescaled numbers above are not an approximation of the right answer,
+> they *are* it — which is what makes replacing the quarantined scales legitimate rather than a
+> substitution. (2) The flux universes **match** in both forms (5 and 13), which independently confirms
+> that `unified_throw_cov.py:222-223` seeds per *global* throw index — so regeneration reproduces the
+> original draws, verified empirically and not merely read from the source. Re-runnable:
+> `nd-unfolding/validate_rescale_identity.py`.
+>
 > Sqrt-traces, before → after (same 122 slabs both sides):
 >
 > | quantity | before | after | change |
