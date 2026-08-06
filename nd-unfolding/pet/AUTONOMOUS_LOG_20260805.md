@@ -2591,3 +2591,82 @@ One incidental observation, not acted on: stderr warns `on_train_batch_end` take
 0.0230s batch time — a 6x callback overhead. If that callback accumulates per-batch state it would be both
 a throughput drag and a candidate source of the RSS growth. Recording it as a lead for whoever profiles
 this later; I am not touching a running critical-path job to chase it.
+
+## 14:20Z — POWERED CLOSURE VERDICT: **FAIL**. And the cancelled niter=2 run could never have passed.
+
+`56381674` ran the **complete protocol** in **1:58:19** and wrote a verdict — rc=3, not a crash.
+`DONE.slurm-56381674.txt`: `verdict=FAIL`, `preflight_verdict=PASS`, `preflight_xcheck=AGREE`.
+Configuration confirmed from the report: `niter=3, epochs=8, seeds 42/0, batch 512`.
+
+    metric              measured     threshold
+    gap                 0.234270     >= 0.15     PASS
+    floor_over_gap      0.045876     <= 0.10     PASS
+    residual_over_gap   0.453147     <= 0.20     FAIL  (2.27x over)
+    recovery            0.546853     >= 0.80     FAIL
+
+`residual = 0.106159` against the 0.0469 budget, 2.26x. Verified by recomputation from the report's own
+spectra: `gap` = L1(prior,target) = 0.234270, `residual` = L1(unfolded,target) = 0.106159, and
+`recovery == 1 - residual/gap` exactly — so those are **one criterion stated twice**, not two failures.
+`floor` = L1(untilted,prior) = 0.010747, which also confirms floor is the sampling-noise scale.
+
+**Not the 08-04 smoke's problem.** That FAIL was the 20k half-size making `floor/gap = 0.4040` unpassable.
+Here `floor/gap = 0.0459` with 2.2x margin. This is a genuine under-recovery. **No threshold touched.**
+
+### The finding that matters most, and it cuts two ways
+
+The report's own `samples` block gives `n_step1_a/n_truth_a = 837494/1999920 = 0.418764` — **the
+acceptance**. Only 41.9% of truth rows carry information; `RunStep2` pins the other 58.1% to exactly 1.
+Applying B1's structural bound `1-(1-a)^k` to recovery:
+
+| k | ceiling | vs predeclared `recovery_min = 0.80` |
+|---|---|---|
+| 1 | 0.41876 | impossible in principle |
+| **2 (old policy)** | **0.66216** | **IMPOSSIBLE IN PRINCIPLE**, short by 0.138 |
+| 3 (current) | 0.80364 | achievable, headroom **+0.0036** |
+| 4 | 0.88587 | headroom +0.086 |
+
+Measured 0.546853 = **68% of the k=3 ceiling**, sitting between the k=1 and k=2 ceilings.
+
+1. **`56355818` could never have passed.** Its ceiling was 0.662 against a 0.80 bar. I sold Joseph the
+   cancellation as a *cost* of the niter=3 decision. It was not a cost — that job was doomed by
+   construction and would have burned 12h to prove it. The niter 2->3 switch was not merely
+   statistically better for B1; it was **necessary for this criterion to be satisfiable at all.** Nobody
+   anticipated that, including both advisors.
+2. **`recovery_min = 0.80` was never compared against the achievable ceiling.** At k=3 it leaves 0.36 pp,
+   i.e. it demands a near-perfect estimator. Same species as the B1 defect where any `tol >= C` is inert:
+   a bar set without checking it against the structural limit. **Not** a proposal to lower it.
+
+**CAVEAT, and it is the first thing to verify:** `1-(1-a)^k` is B1's bound for the fold-forward **RATE**
+ratio. I applied it by analogy to a **spectral L1**. Same mechanism (each iteration propagates information
+only through accepted rows) and the numbers line up suggestively, but I have **not proven it transfers.**
+
+### Shape of the miss: asymmetric in the tilt direction
+
+    bins 242/244/243  (pt idx 12, tilt UP ~2.65x)     recovery 0.72 / 0.91 / 0.82
+    bins 38/57/76/95  (pt idx 2-5, tilt DOWN ~0.55x)  recovery 0.24 / 0.21 / 0.19 / 0.17
+
+89% of displaced bins move the **right** direction — it under-shoots rather than breaking, and resists
+moving DOWN. Median per-bin recovery 0.84, but the aggregate L1 is dominated by those large-displacement
+failing bins, which is why the headline 0.55 is so much worse than the median. Leading hypothesis: the
+step-2 classifier captures the sharp high-pT enhancement and under-fits the diffuse low-pT suppression —
+an under-fitting story consistent with ~1.5 effective iterations at k=3, which points at `epochs=8` and
+connects to OPEN_ITEMS item (e).
+
+**REFUTED before reporting it:** I suspected the reweight logit cap clipped downward weights. It does not.
+`REWEIGHT_LOGIT_CAP = 30.0` spans weights 1e-13..1e13; the injection needs only 0.55..2.65; and the engine
+logged **zero** saturation lines. Two independent checks, hypothesis dead.
+
+### The OOM escalation was a false alarm, and I own it
+
+The job finished in 1:58, never near the 56 GiB ceiling. My projection's arithmetic was fine but its
+runtime input was wrong — I flagged 5-10h, actual was 2h. Joseph replied "Do (c)" at 13:56Z, five minutes
+after the job had already finished at 13:51Z. **I did not queue the hedge**: the premise had evaporated and
+executing the letter of an instruction whose purpose is gone would waste a 12h GPU block. Told him so.
+The finding *underneath* the alarm still stands: the 12.84 GiB sizing came from a 20k-row 4-minute smoke
+that had ~224 GiB allocated, so it never described this 2M-row 56 GiB run.
+
+### Gate-4 cannot PASS
+
+The powered closure is its publication-power evidence and does not clear its own predeclared bar. Evidence
+preserved off purgeable scratch (report 32 KB, DONE 755 B, preflight 25 KB); the 20.8 MB artifact npz is
+**not** committed pending his say-so.
