@@ -59,10 +59,25 @@ writes its own output and prints a before/after. Adoption is a separate, later d
 
 ## 4. Ordering, and why this order
 
-**Step 0 — protect the inputs (do first, cheap).** Verify the 365 slabs are readable, not merely
-present, and get an off-scratch copy or a verified inventory with digests. A purge between now and
-the re-roll turns a cheap post-hoc correction into a full re-throw campaign. Per CLAUDE.md: anything
-irreplaceable needs a copy off scratch.
+**Step 0 — protect the inputs (do first, cheap).** ~~Verify the 365 slabs are readable, not merely
+present, and get an off-scratch copy or a verified inventory with digests.~~ **DONE 2026-08-06** —
+`nd-unfolding/protect_throw_slabs.py`, manifest `nd-unfolding/products/slab_manifest_20260806.json`,
+off-scratch copy at `/global/cfs/cdirs/m3246/josephrb/slab-protect-20260806`. All **365 readable**
+(`np.load` with every array materialised, not merely `stat`-ed) and 0 unreadable; every destination
+file re-hashed against its source; the copy independently re-verified **against the CFS root**, which
+is the restore path, rather than only against the source. The check has power: flipping one byte at
+offset 40 of a copy yields `*** SLAB SET DIVERGED ***`.
+
+*Both halves were done rather than the "or" — the manifest is the durable half (it belongs in git and
+lets anyone later prove a restored slab is the same slab), the copy is the recoverable half.* One
+correction to this plan's own framing: the slabs are the largest **schedule** risk, but they total
+**58.1 MiB**, so there was never a cost to weigh against protecting them — CFS has 37 PB free and the
+whole step took seconds. The plan's wording implied a tradeoff that does not exist. A purge between
+now and the re-roll still turns a cheap post-hoc correction into a full re-throw campaign, so the risk
+was real; only its remedy was mispriced.
+
+Re-check at any time with `--verify-only --root <tree> --manifest <path>`, which is how a future
+session should confirm the slabs before spending anything on Step 1.
 
 **Step 1 — J28 re-roll on the existing slabs, at whatever `niter` they were produced with.** The
 flux correction is a *post-extraction rescale along pT*; it does not care which `niter` produced the
