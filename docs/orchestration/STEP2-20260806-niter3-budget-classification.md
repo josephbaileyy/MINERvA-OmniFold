@@ -133,9 +133,17 @@ does not currently quote any PET covariance:**
 So the note is already internally consistent **without** a full-event PET budget, and the
 ~100+ GPU-h (see below) buys a PET precision comparison the note presently, deliberately, declines to
 make. `sec_pet.tex:100` does say the replacement "belongs to the full-event PET estimator and receives
-a fresh statistical and ML ensemble", so such a budget is *planned* — but whether it is
-**publication-blocking or discretionary is recorded nowhere**, and that question is worth more than the
-rest of this classification. It is Joseph's call, and it has been escalated.
+a fresh statistical and ML ensemble", so such a budget is *planned*.
+
+> **ANSWERED by Joseph, mail 2026-08-06 20:29Z:** *"Ideally, the fill [full] event PET uncertainty
+> budget is ready for the publication."* So it is **wanted for publication** — phrased as a preference
+> rather than declared a hard gate, but the direction is settled and the ≥100 GPU-h build should be
+> planned for rather than treated as discretionary. Two consequences: (i) the note's PET section will
+> need to move from quoting only `\petRatio`/`\petClosure` to quoting a full-event covariance, which
+> means `\petTotalMedian`/`\petTotalTrace`/`\petFourMedian` are not merely quarantined but must be
+> *replaced* by full-event values rather than un-quarantined; (ii) because the PET vertical block
+> consumes `bank_uthrow_5d` (§3), the J28 re-roll is a **prerequisite** for that build, so it must be
+> adopted — not merely measured — before the PET budget is assembled on top of it.
 
 **On the cost figure:** the previously-quoted "~170–250 GPU-h" is **not verified**. What is grounded:
 `sbatch_pet_nominal_bkgsub.sh:31` prices one recoil train at "~1 h on 1 GPU" (2M events, `niter=2`);

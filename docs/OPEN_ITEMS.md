@@ -332,10 +332,18 @@ Implementation gate, in order:
        [`STEP2-20260806-niter3-budget-classification.md`](orchestration/STEP2-20260806-niter3-budget-classification.md)
        --- **this item's own framing is wrong for the PET lane**: there is no full-event PET covariance
        to *recompute*, so it is a BUILD (which item 6 already required), and the 5D GBDT lane transfers
-       on a positive closed-input argument. Steps 3-5 are blocked on two of Joseph's decisions: F7, and
-       whether the full-event PET budget is publication-blocking at all (the note quotes **no** PET
-       covariance --- `\petTotalMedian`/`\petTotalTrace`/`\petFourMedian` are QUARANTINED and referenced
-       **0** times). Cost floor for that build is **>=100 GPU-h**; the "170-250" figure is unverified.
+       on a positive closed-input argument.
+       **BOTH escalated decisions are now resolved (2026-08-06).** (i) **F7 was never open** --- its
+       criterion was predeclared at `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` and the data answers it:
+       `||mean_shift||` is **4.69x** the sampling floor `sqrt_tr/sqrt(160)` (37.1% of `sqrt_tr` vs a 7.9%
+       floor), so mean-centered-only is disqualified and the CV-centered variant is required. **It is
+       also already satisfied in the note**, which quotes `\gbdtFiveAdoptTrace` 5.81e-38 (mean-centered)
+       **and** `\gbdtFiveCVTrace` 6.24e-38 (CV-centered) **and** `\gbdtFiveMeanShift` 1.65e-38 separately
+       --- exactly "report the shift either way, do not silently drop". (ii) **The full-event PET budget
+       is WANTED for publication** --- Joseph, mail 20:29Z: *"Ideally, the [full] event PET uncertainty
+       budget is ready for the publication."* So the **>=100 GPU-h** build (the "170-250" figure is
+       unverified) is planned work, not discretionary; and since the PET vertical block consumes
+       `bank_uthrow_5d`, the J28 re-roll must be **adopted** before that budget is assembled on it.
    (g) **NEW 2026-08-06 --- nine throw slabs of the adopted 5D ensemble are LOST, so the corrected
        covariance is a 76.2% subsample.** The adopted `uq_5d/unified_throw_cov_5d.root` records
        `n_throws = 160` (read from the ROOT) and `sqrt_tr_unified = 4.4607819710748654e-38`, but

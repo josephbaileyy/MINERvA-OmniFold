@@ -182,3 +182,42 @@ than the one I made at the time. A session does not have to die for its comms to
 
 Local work is unaffected: repo edits, commits and pushes to origin all still work, and everything this
 cycle produced is safe on origin.
+
+### He answered both escalations, and asked one back: is the 5D GBDT budget finished?
+
+Mail 20:29:05Z: *"Ideally, the fill [full] event PET uncertainty budget is ready for the publication.
+Is the 5d GBDT uncertainties finished?"* Still no ssh (cert expired 06:08), so the reply is **staged,
+not sent** — the answer is reproduced here so any later cycle can send it without re-deriving it.
+
+**His answer to my escalation:** the full-event PET budget **is wanted for publication**. Phrased as a
+preference, not a hard gate, but the direction is settled — the ≥100 GPU-h build is planned work, not
+discretionary. Recorded in `OPEN_ITEMS.md` (d) and the Step 2 classification. Two consequences I flagged
+back: the PET macros must be **replaced** by full-event values rather than un-quarantined (the recoil
+ones belong to a different estimator on a 10550-bin domain), and because the PET vertical block consumes
+`bank_uthrow_5d`, **the J28 re-roll must be adopted before a PET budget is built on it** — which orders
+the remaining work.
+
+**My answer: no, the 5D GBDT budget is NOT finished — it is a CANDIDATE.** The ledger says so in its own
+heading, `VALIDATION_LEDGER.md:64`: *"corrected 5D GBDT covariance — CANDIDATE; final lateral replacement
+pending"*, with `:13-14` *"final adoption waits for the selection-complete lateral"*; `values.tex:56`
+agrees. What **is** done is the budget chain — `STATUS:370` records "WORKSTREAM A (budget chain)
+COMPLETE: boot5d + ssplit + budget + adopt both (5.80/6.23e-38) + eavailW", and the assembled numbers
+exist (13.36%/bin block median, 5.81e-38 adopted, 6.24e-38 CV-centered, 1.65e-38 shift).
+
+Three things stand between that and finished:
+
+1. **Selection-complete five-band active laterals — explicitly "the publication gate"**
+   (`OPEN_ITEMS.md:41`). Infrastructure is all committed; I find no adopted product or ledger row, and
+   `followup-agent-C-fps-01.md` still frames it as work. *Caveat stated honestly in the reply:* "not
+   adopted" is certain, "not produced" is likely but unverified, because I could not check cluster-side
+   products this cycle.
+2. **The J28 quarantine is still in force** — every scale in that ledger section is NOT QUOTABLE until
+   the re-roll is **adopted**. Today's job was the sizing; and it covered 122 of 160 throws.
+3. **The (E_avail,W) projected covariance cannot currently be rebuilt** — `eavailW_covariance.py` is the
+   sixth J28 site, so it needs the same fix the other five got before `M C_5D M^T` can be projected.
+
+**F7 needs nothing from him, for a second independent reason.** Beyond the predeclared rule already
+settling it, **the note already complies**: it quotes `\gbdtFiveAdoptTrace` 5.81e-38 *and*
+`\gbdtFiveCVTrace` 6.24e-38 *and* `\gbdtFiveMeanShift` 1.65e-38 separately — precisely "report the shift
+either way, do not silently drop". So my escalation was unnecessary twice over. The lesson is the same
+one BEN-033 makes: read what the repo already recorded before asking.
