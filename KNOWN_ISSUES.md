@@ -98,9 +98,21 @@ ride a deliberate re-issue rather than a drive-by edit.
 
 ## The FPS extractor divides the cross section by a reco efficiency it must not divide by
 
-**Severity: this would have produced a published cross section 2.36x too high on the integral and 398x too
-high in the lowest `p_parallel` bin.** Found 2026-08-06 by a fresh-context review; legs 1-3 below verified
-in source independently before the finding was relayed.
+**RESOLVED 2026-08-06** (option A, authorized by Joseph; fix reviewed by an independent fresh-context
+session before commit). Left here rather than deleted: the *reason it survived* is the reusable part.
+
+**Severity, CORRECTED.** The first write-up of this entry said "2.36x on the integral and 398x in the
+lowest `p_parallel` bin". Both numbers were wrong and both were too small:
+
+* `2.36 = 1/<a>` is what you would get dividing the *aggregate* by the *global* acceptance. The code
+  divided **cell by cell**, so by Jensen the integral inflates far more:
+  `sum_b m_b/a_b / sum_b m_b = **122.6**` from the committed acceptance map, and **48-177x** per pT row
+  over the rows carrying >99% of the truth mass.
+* `398 = 1/0.00251` is the `p_parallel` **marginal slice** [0, 0.75], not a cell. The worst single
+  **cell** is `a_b = 0.0012397`, i.e. **807x**.
+
+Recomputed independently this turn from `products/pet/fullevent_fps/acceptance_map_fullevent_fps.json`.
+Legs 1-3 below were verified in source before the finding was relayed.
 
 1. `extract_fullevent_fps.py:390-404` `completeness_2d` computes
    `c = sum_w(pass_truth & pass_reco) / sum_w(pass_truth)` -- **reco efficiency**. Its docstring says
@@ -128,11 +140,32 @@ dropped that anchor (`extract_fullevent_fps.py:459-461`, "NONE -- no such anchor
 - `tests/test_fullevent_extract.py:331-342` **pins the reco-efficiency semantics as intended behaviour**, so
   anyone repairing the double-correction must first break a test that reads as authoritative.
 
-**Do not run Step 4b until this is settled.** Step 4 (training) is unaffected. Two candidate repairs, and
-choosing between them is a physics decision about what the estimator's output means: (A) drop the division
-(`completeness == 1`), preserving step 2's full-inventory extrapolation and matching the GBDT reference; or
-(B) mask `counts` to `pass_truth & pass_reco` and keep dividing, which discards the FPS extension the
-campaign exists to add. Evidence favours (A). Held for Joseph; it sets the published normalization.
+**FIXED via (A): the division is gone.** Joseph authorized (A) on 2026-08-06. The argument recorded in
+the extractor is now **structural rather than empirical**: `extract_cross_section_nd`'s `completeness`
+argument means *coverage of the truth denominator by the OmniFold input*
+(`unfold_nd_omnifold_unbinned.py:992-999` builds it as `of_in/denom_nd`), and this extractor has no
+separate truth denominator -- the declared fiducial domain **is** `pass_truth` -- so coverage is **1 by
+construction**. The GBDT `globalCompleteness = 1.0000000000000002` is corroboration, not the reason;
+leading with the measurement is what invites a future re-anchoring. Option (B) (mask `counts` to
+`pass_truth & pass_reco`) was rejected: it would delete the FPS extension the campaign exists to add.
+
+`comp` keeps one role, **as a reporting mask only**. It subsumes `denom > 0` by construction, so the
+reported domain is set entirely by the reco efficiency; this **preserves** the pre-fix domain, since
+`comp == 0` already forced those cells to 0. It is a **floor**, not the acceptance-supported vs
+model-dependent tiering decision, which remains open at `docs/OPEN_ITEMS.md:430-438` and covers far more
+truth mass (25.93% below `a_b < 0.01`) than this mask's 4 cells (4.6e-7 of truth mass).
+
+Coverage = 1 is now **guarded, not assumed**: `assert_truth_denominator_coverage` fails closed, mirroring
+`unfold_nd_omnifold_unbinned.py:747-752`, which raises rather than assuming its analogue.
+
+**Step 4b is unblocked.** Step 4 was never affected.
+
+## The same construction exists in `pointcloud_projection.py`, off the gated path
+
+`nd-unfolding/pet/pointcloud_projection.py:236-241` has the identical shape -- `counts` over
+`pass_truth`, `comp = ofin/denom`, passed as the divisor. It is **not** on the gated publication product
+path, so it is recorded rather than fixed, so that it is not rediscovered as a new finding. Anything
+promoting that path to a product must settle it first.
 
 ## The closure driver persists no inference contract
 

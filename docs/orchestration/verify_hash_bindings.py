@@ -73,7 +73,13 @@ KNOWN_PREEXISTING = {
 # Was 10, which was likewise exactly the tracked count before
 # sbatch_powered_closure.sh started pinning its driver and preflight in the one-line
 # idiom collect_shell can actually see (2026-08-05).
-SHELL_PIN_FLOOR = 12
+# Raised 12 -> 13 on 2026-08-06: the concurrent session's `sbatch_b1_niter4_scan48.sh`
+# (committed in 82968d4) pins `closure_b1_rate_injection.py`, a tracked source file that
+# every checkout holds, so the tracked count grew by one and
+# test_powered_closure_preflight.py::test_pin_floor_covers_these_pins went red on
+# `13 != 12`. Raising to match is what that test prescribes; verified locally that the
+# verifier still resolves 13 and reports ALL BINDINGS INTACT rather than going BLIND.
+SHELL_PIN_FLOOR = 13
 
 
 def sha256(path):

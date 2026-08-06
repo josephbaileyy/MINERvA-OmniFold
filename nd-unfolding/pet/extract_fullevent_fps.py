@@ -41,15 +41,30 @@ THREE THINGS THIS GETS RIGHT THAT A NAIVE REWEIGHT-ALL WOULD NOT.
      `build_fullevent_loaders` subsamples before cloud processing precisely to avoid that. This
      builds one chunk at a time and keeps only the scalar push weights.
 
-THE EXTRACTION IS A PORT, NOT A DESIGN. The cross-section arithmetic -- pushed truth counts over
-pass_truth, divided by a completeness formed from the same weights, the integrated flux on the pT
-axis, the fiducial nucleon count, the data POT and the bin volume -- is
-`pet_systematics_5d.PETxsec5D.xsec` restricted to the two extended-FPS axes, with
-`xsec_nd.extract_cross_section_nd` doing the division. Reproducing it rather than reinventing it is
-deliberate: the number this produces has to be comparable with the 5D/4D products, and the place to
-argue about the convention is the shared helper, not here. The one thing NOT carried over is
-`PETxsec5D`'s `comp_rescale`, which anchors completeness to a validated GBDT 5D ROOT product; there
-is no such anchor for this domain and inventing one would silently rescale the answer.
+THE EXTRACTION IS A PORT, NOT A DESIGN -- WITH ONE DELIBERATE DEPARTURE. The cross-section arithmetic
+is `pet_systematics_5d.PETxsec5D.xsec` restricted to the two extended-FPS axes: pushed truth counts
+over `pass_truth`, the integrated flux on the pT axis, the fiducial nucleon count, the data POT and
+the bin volume, with `xsec_nd.extract_cross_section_nd` doing the division. Reproducing it rather
+than reinventing it is deliberate: the number has to be comparable with the 5D/4D products.
+
+**THE DEPARTURE: this does NOT divide by a completeness formed from the same weights.** That
+paragraph used to say it did, and used to assert that no completeness anchor existed for this domain.
+Both were wrong, and the false claim is what allowed the error to survive review -- see
+`KNOWN_ISSUES.md` and `CLAIMS.md` CLM-011.
+
+The argument is STRUCTURAL, not empirical. `extract_cross_section_nd`'s `completeness` argument means
+*coverage of the truth denominator by the OmniFold input*, not reco efficiency:
+`unfold_nd_omnifold_unbinned.py:992-999` builds it as `of_in / denom_nd`, where `of_in` is
+histogrammed over the same `pass_truth` set fed to the unfold and `denom_nd` comes from an independent
+truth-denominator tree. **In this extractor there is no separate truth denominator -- the declared
+fiducial domain IS `pass_truth` -- so coverage is 1 BY CONSTRUCTION.** The validated GBDT FPS unfolds
+carrying `globalCompleteness = 1.0000000000000002` are corroboration, not the reason; an empirical
+anchor is exactly what a future reader would feel licensed to re-anchor.
+
+Dividing by the reco efficiency instead would double-correct, because `MultiFold.RunStep2` already
+assigns `nu_k` to the truth-only-miss rows (`omnifold.py:218-220`) -- acceptance correction is what
+step 2 *is*. `assert_truth_denominator_coverage` below fails closed rather than assuming it, mirroring
+`unfold_nd_omnifold_unbinned.py:747-752`.
 
 NOT A RECEIPT. This produces a product and a summary. Promotion is a separate gated step, and the
 summary carries `is_publication_result` unset on purpose.
@@ -387,12 +402,48 @@ def validate_push_coverage(w_push, mc_indices, n_events):
 # ============================================================================================
 # Stage 2 -- extended-FPS cross section
 # ============================================================================================
+def assert_truth_denominator_coverage(w, pass_truth, tol=0.0):
+    """Fail closed on the assumption that makes `completeness == 1` correct.
+
+    `extract_xsec` passes unity for `extract_cross_section_nd`'s `completeness` because coverage of
+    the truth denominator by the OmniFold input is 1 BY CONSTRUCTION here: the declared fiducial
+    domain *is* `pass_truth`, so there is no separate denominator to under-cover. That is an
+    assumption about the dump, and `unfold_nd_omnifold_unbinned.py:747-752` does not assume its
+    analogue -- it raises. Neither does this.
+
+    If a future dump ever carries a truth population that is not the full declared denominator (a
+    dump-time cut, a bad-weight truncation, a partial merge), the coverage correction would be
+    silently lost and no test would notice. Returns the telemetry it checked."""
+    pt = np.asarray(pass_truth, bool)
+    w = np.asarray(w, float)
+    n_truth = int(pt.sum())
+    sum_w = float(w[pt].sum())
+    if n_truth == 0:
+        raise RuntimeError("truth-denominator coverage: no pass_truth rows at all")
+    if not np.all(np.isfinite(w[pt])):
+        raise RuntimeError("truth-denominator coverage: non-finite w_truth on pass_truth rows")
+    if sum_w <= 0:
+        raise RuntimeError(f"truth-denominator coverage: sum(w_truth | pass_truth) = {sum_w}")
+    # The dump carries no independent denominator array; if one is ever added, compare it here and
+    # raise on a relative mismatch above `tol` exactly as the ND driver does.
+    return {"n_pass_truth": n_truth, "sum_w_pass_truth": sum_w,
+            "coverage_basis": "declared fiducial domain == pass_truth, so coverage == 1 by "
+                              "construction; no independent truth-denominator array exists in this "
+                              "dump to cross-check against",
+            "coverage_is_guarded": True, "coverage_tol": float(tol)}
+
+
 def completeness_2d(truth_pt, truth_ppar, w, pass_truth, pass_reco, edges):
     """c = sum(w over pass_truth & pass_reco) / sum(w over pass_truth), per reporting cell.
 
-    Verbatim `pet_systematics_5d.PETxsec5D._comp` on two axes. Cells with an empty denominator
-    stay 0 and `extract_cross_section_nd` then leaves their cross section at 0 rather than
-    dividing by nothing."""
+    THIS IS A RECO EFFICIENCY AND IT IS **NOT** A DIVISOR. It is retained for two uses: as the
+    blindness diagnostic that `pet/acceptance_map_fullevent_fps.py` reports, and as the reporting
+    mask (`c > 0`) in `extract_xsec`. See this module's docstring for why dividing by it would
+    double-correct.
+
+    Verbatim `pet_systematics_5d.PETxsec5D._comp` on two axes. Cells with an empty denominator stay
+    0, and because `c` is nonzero only where its own denominator is, `c > 0` implies the cell has
+    fiducial truth population."""
     pt_sel = np.asarray(pass_truth, bool)
     ptr = pt_sel & np.asarray(pass_reco, bool)
     coords = np.column_stack([truth_pt, truth_ppar])
@@ -442,8 +493,45 @@ def extract_xsec(inputs_npz, w_push, mcfile, flux_hist, n_nucleons=None):
                                              np.asarray(u2d.PT_EDGES, float))
     n_nuc = u2d.TRACKER_FIDUCIAL_N_NUCLEONS if n_nucleons is None else float(n_nucleons)
 
-    xsec, good = extract_cross_section_nd(counts, comp, flux, data_pot, n_nuc, edges, flux_axis=0)
+    # Coverage is 1 by construction here; guard it rather than assume it (see module docstring).
+    coverage_telem = assert_truth_denominator_coverage(w_truth, pass_truth)
+
+    # Unity completeness: the argument means COVERAGE, not efficiency. Rationale in this module's
+    # docstring; magnitudes and history in KNOWN_ISSUES and CLAIMS.md CLM-011. Written once here.
+    xsec, good = extract_cross_section_nd(counts, np.ones_like(counts), flux, data_pot, n_nuc,
+                                          edges, flux_axis=0)
+
+    # Reporting mask. `comp > 0` SUBSUMES `denom > 0` -- completeness_2d sets comp nonzero only
+    # where its own denominator is nonzero -- so the reported domain is set ENTIRELY by the reco
+    # efficiency. Stated rather than written as a conjunction, because a conjunction would read as
+    # if a prior-population mask were doing half the work, and it would not.
+    #
+    # This PRESERVES the status quo rather than narrowing it: before the divisor was removed,
+    # comp == 0 already forced denom == 0 inside extract_cross_section_nd and those cells were
+    # already 0. Dropping this mask would be the domain expansion.
+    #
+    # It is a FLOOR, not a phase-space decision: it excludes only cells the detector never saw at
+    # all. It does NOT discharge docs/OPEN_ITEMS.md item 6, whose acceptance-supported vs
+    # model-dependent-extrapolation tiering is deferred at OPEN_ITEMS:430-438 and covers far more
+    # truth mass than this mask does.
+    reported = comp > 0
+    xsec = np.where(reported, xsec, 0.0)
+    good = good & reported
     telem = {
+        "completeness_applied": False,
+        "completeness_applied_why_not":
+            "coverage of the truth denominator by the OmniFold input is 1 BY CONSTRUCTION -- the "
+            "declared fiducial domain IS pass_truth -- and counts is already acceptance-corrected "
+            "by MultiFold.RunStep2, which assigns nu_k to truth-only-miss rows "
+            "(omnifold.py:218-220). Dividing by the reco efficiency would double-correct. History, "
+            "measured magnitudes and the GBDT corroboration: KNOWN_ISSUES.md and CLAIMS.md CLM-011.",
+        "completeness_retained_as": "reporting mask only (comp > 0), not a divisor",
+        "reported_domain_set_by": "comp > 0, which subsumes denom > 0 by construction",
+        "reporting_mask_is_not_the_tiering_decision":
+            "excludes only cells with zero reco-accepted events; the acceptance-supported vs "
+            "model-dependent tiering of OPEN_ITEMS:430-438 is open and covers far more truth mass",
+        "truth_denominator_coverage": coverage_telem,
+        "n_cells_masked_zero_acceptance": int(((denom > 0) & (comp <= 0)).sum()),
         "shape": [int(x) for x in counts.shape],
         "n_cells": int(counts.size),
         "n_cells_populated": int((xsec > 0).sum()),
@@ -458,9 +546,13 @@ def extract_xsec(inputs_npz, w_push, mcfile, flux_hist, n_nucleons=None):
         "flux_hist": flux_hist,
         "flux_source": os.path.abspath(mcfile),
         "flux_reference_edges": [float(x) for x in u2d.PT_EDGES],
-        "completeness_anchor": "NONE -- PETxsec5D's comp_rescale anchors to a validated GBDT 5D "
-                               "ROOT product; no such anchor exists for this domain and "
-                               "inventing one would rescale the answer",
+        "completeness_anchor": "UNITY, and measured rather than inferred. The previous value of "
+                               "this field read 'NONE -- no such anchor exists for this domain', "
+                               "which was FALSE: the anchor exists in this repo on this exact "
+                               "285-cell grid and it is the constant 1 (validated GBDT FPS "
+                               "unfolds, globalCompleteness = 1.0000000000000002, all 266 nonzero "
+                               "hCompletenessND_flat bins at 1.000000). Corrected 2026-08-06; the "
+                               "false claim is what allowed the double-correction to survive.",
         "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
     }
     return xsec, telem

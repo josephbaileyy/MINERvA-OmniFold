@@ -328,7 +328,16 @@ class SubsampleAgreement(unittest.TestCase):
 
 
 class ExtractionArithmetic(unittest.TestCase):
-    def test_completeness_is_the_reco_and_truth_fraction(self):
+    def test_completeness_helper_still_computes_the_reco_fraction_as_a_DIAGNOSTIC(self):
+        """`completeness_2d` still returns the reco efficiency -- but it is NO LONGER A DIVISOR.
+
+        Redocumented 2026-08-06. This assertion is unchanged and correct *about the helper*, but as
+        written it read as endorsing the quantity's use in the cross section, and it was cited as
+        evidence that the 1/a division was intended behaviour. It is not: see
+        `test_xsec_is_NOT_divided_by_the_reco_efficiency`. The helper survives because the
+        efficiency is a genuine DIAGNOSTIC of where the estimator is blind -- that is what
+        `pet/acceptance_map_fullevent_fps.py` reports -- and because `comp > 0` remains the
+        reporting mask."""
         edges = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 10.0])]
         pt = np.array([0.5, 0.5, 0.5, 1.5])
         pp = np.array([5.0, 5.0, 5.0, 5.0])
@@ -348,10 +357,22 @@ class ExtractionArithmetic(unittest.TestCase):
         self.assertEqual(float(denom[1, 0]), 0.0)
         self.assertEqual(float(comp[1, 0]), 0.0)
 
-    def test_xsec_matches_the_shared_nd_helper(self):
-        """The extraction must equal `xsec_nd.extract_cross_section_nd` on the same inputs -- it
-        is a port of PETxsec5D, not a second formula."""
-        from xsec_nd import extract_cross_section_nd
+    def test_xsec_is_NOT_divided_by_the_reco_efficiency(self):
+        """The cross section must NOT carry a 1/acceptance factor, and this test has power.
+
+        REPLACES `test_xsec_matches_the_shared_nd_helper`, which was a **self-agreement test**: it
+        recomputed the formula by calling `ex.completeness_2d` itself and asserted bit-equality at
+        `rtol=0, atol=0`. It therefore verified only that the extractor calls the helpers it calls,
+        and had **zero power** over whether the quantity was the right physics -- the antipattern
+        `AUDIT-FINDINGS-20260729-B.md` section 4 catalogues. It passed happily while the extractor
+        double-corrected by 1/a. Magnitudes are in KNOWN_ISSUES and CLAIMS.md CLM-011 -- not
+        restated here, because the first draft of this docstring carried a wrong one.
+
+        `counts` is a sum of `w_truth * push` over ALL `pass_truth` rows, and `MultiFold.RunStep2`
+        assigns `nu_k` to the truth-only-miss rows (`omnifold.py:218-220`). Acceptance correction is
+        what step 2 does; dividing by the reco efficiency afterwards does it twice.
+
+        Every PASS below is paired with the mutation that must FAIL, per this file's own rule."""
         import flux_universe
         with tempfile.TemporaryDirectory() as td:
             path, n = tiny_dump(td)
@@ -367,17 +388,94 @@ class ExtractionArithmetic(unittest.TestCase):
                 pot = float(np.asarray(d["data_pot"]).item())
             coords = np.column_stack([ts[:, 0], ts[:, 1]])
             counts, _ = np.histogramdd(coords[pt_m], bins=edges, weights=(w * push)[pt_m])
-            comp, _, _ = ex.completeness_2d(ts[:, 0], ts[:, 1], w, pt_m, pr_m, edges)
+            comp, denom, _ = ex.completeness_2d(ts[:, 0], ts[:, 1], w, pt_m, pr_m, edges)
             flux = flux_universe.flux_on_target_grid(
                 np.full(len(PT_REF_EDGES) - 1, 2.5e-5), edges[0],
                 np.asarray(PT_REF_EDGES, float))
-            want, _ = extract_cross_section_nd(counts, comp, flux, pot, N_NUCLEONS, edges,
-                                               flux_axis=0)
-            np.testing.assert_allclose(xsec, want, rtol=0, atol=0)
+
+            # The fixture must actually exercise the difference, or the test is vacuous.
+            reported = (denom > 0) & (comp > 0)
+            self.assertTrue(reported.any(), "fixture reports no cells")
+            self.assertLess(float(comp[reported].min()), 0.95,
+                            "fixture acceptance is ~1 everywhere, so dividing by it would be "
+                            "undetectable and this test would have no power")
+
+            dpt = np.diff(edges[0])[:, None]
+            dpp = np.diff(edges[1])[None, :]
+            vol = dpt * dpp
+            no_div = np.zeros_like(counts)
+            with_div = np.zeros_like(counts)
+            base = flux[:, None] * N_NUCLEONS * pot * vol
+            np.divide(counts * 1.0e4, base, out=no_div, where=(base > 0))
+            np.divide(counts * 1.0e4, base * comp, out=with_div, where=(base * comp > 0))
+            no_div = np.where(reported, no_div, 0.0)
+            with_div = np.where(reported, with_div, 0.0)
+
+            # PASS: the extractor equals the undivided form.
+            np.testing.assert_allclose(xsec, no_div, rtol=1e-12, atol=0)
+            # MUTATION: it must NOT equal the divided form.
+            # `atol=0` IS LOAD-BEARING. numpy's default atol=1e-8 makes this comparison vacuous,
+            # because these cross sections are ~1e-38: every value is within 1e-8 of every other,
+            # so the mutation passed trivially on the first draft of this test. A powerless
+            # assertion inside the test written to give the check power is precisely the defect
+            # this test replaces, so it is called out rather than silently fixed.
+            self.assertFalse(np.allclose(xsec, with_div, rtol=1e-6, atol=0),
+                             "extractor still divides by the reco efficiency (the 1/a defect)")
+            inflation = with_div[reported].sum() / max(no_div[reported].sum(), 1e-300)
+            self.assertGreater(inflation, 1.05,
+                               f"fixture only inflates by {inflation:.4f}; choose a fixture where "
+                               f"the defect would be visible")
+            # And the telemetry must say so, so a reader of a receipt cannot be misled.
+            self.assertFalse(telem["completeness_applied"])
+            self.assertIn("reporting mask", telem["completeness_retained_as"])
+
+    def test_zero_acceptance_cells_are_not_reported(self):
+        """A cell with fiducial truth but zero reco-accepted events must stay 0.
+
+        Removing the 1/a division removed `comp`'s accidental second job as a reporting mask, so the
+        mask is now explicit. `comp > 0` subsumes `denom > 0` by construction. On the real grid 4 of the 266 populated
+        cells have `a_b == 0` exactly (carrying 4.6e-7 of the truth mass);
+        reporting a cross section there would be 100% prior with no data at all, which
+        `docs/OPEN_ITEMS.md` item 6 forbids."""
+        with tempfile.TemporaryDirectory() as td:
+            path, n = tiny_dump(td, n=400, seed=11)
+            with np.load(path) as d:
+                ts = np.asarray(d["truth_scalars"], np.float64)
+                edges = [np.asarray(d["edges_0"], float), np.asarray(d["edges_1"], float)]
+            # Kill reco acceptance in a low-pT band, leaving truth population intact. The band is
+            # chosen from the FIXTURE's own pT range, not from edges[0][1]: tiny_dump draws pT in
+            # (0.1, 3.0) while CANONICAL_PT_EDGES[1] is 0.07, so a cut at the first edge selects
+            # nothing and the test would assert on an empty set.
+            with np.load(path) as d:
+                arrs = {k: d[k] for k in d.files}
+            low = ts[:, 0] < 0.5
+            pr = np.asarray(arrs["pass_reco"]).astype(bool) & ~low
+            arrs["pass_reco"] = pr
+            np.savez(path, **arrs)
+            self.assertTrue(low.any(), "fixture has no low-pT rows to blind")
+
+            push = np.ones(n)
+            with stub_u2d(flux_value=2.5e-5):
+                xsec, telem = ex.extract_xsec(path, push, "unused.root", "hFlux")
+            comp, denom, _ = ex.completeness_2d(
+                ts[:, 0], ts[:, 1], np.asarray(arrs["w_truth"], np.float64),
+                np.asarray(arrs["pass_truth"]).astype(bool), pr, edges)
+            blinded = (denom > 0) & (comp <= 0)
+            self.assertTrue(blinded.any(), "fixture produced no zero-acceptance populated cell")
+            self.assertTrue(np.all(xsec[blinded] == 0.0),
+                            "a zero-acceptance cell was assigned a cross section")
+            self.assertEqual(telem["n_cells_masked_zero_acceptance"], int(blinded.sum()),
+                             "mask count disagrees with the same formula recomputed here; >= would "
+                             "have let an OVER-blinding mask pass silently")
             self.assertEqual(telem["shape"], [15, 19])
-            # PETxsec5D's comp_rescale is deliberately NOT carried over, and the telemetry has to
-            # say so rather than leave a reader to assume the 5D anchoring applied here too.
-            self.assertTrue(telem["completeness_anchor"].startswith("NONE"))
+            # UPDATED 2026-08-06. This assertion previously required the anchor field to start with
+            # "NONE", which PINNED A FALSE CLAIM: the field asserted "no such anchor exists for this
+            # domain" while the anchor does exist in this repo on this exact grid and is the
+            # constant 1 (validated GBDT FPS unfolds, globalCompleteness = 1.0000000000000002). That
+            # false claim is what let the 1/a double-correction survive, and this test was holding it
+            # in place. It now requires the corrected statement AND that the divisor is gone.
+            self.assertTrue(telem["completeness_anchor"].startswith("UNITY"))
+            self.assertFalse(telem["completeness_applied"])
 
     def test_the_extended_pt_bin_gets_a_flux_not_a_silent_one(self):
         """J29's failure mode, on the CV side: the [4.5,30] FPS bin has no reference flux bin of
