@@ -2515,3 +2515,38 @@ the `<= 0.10` threshold was always the ratio, so no conclusion changes, but the 
 Nothing to do but let it run: 12h wall, **no resume**, so a walltime kill is a total loss and there is no
 intervention that helps. The wakerctl watch `pwclosure-56381674` reports the verdict independently of this
 session, and its notifier is now tracked in git rather than sitting on purgeable scratch.
+
+## 12:50Z — a SECOND session is active in this repo, and the RSS question resolved
+
+### `56381674` healthy; the memory growth is not a risk
+
+    56:58 elapsed, sstat AveCPU 01:04:20 (>100%, multithreaded), MaxRSS 13.9 -> 15.4 GiB in 30 min
+    weights.slurm-56381674/ = 2.9M across 6 files  <- real artifact progress, unlike the buffered log
+
+RSS is above the predeclared 12.84 GiB peak sizing and still climbing, so I checked the headroom rather
+than either alarming or dismissing: `scontrol` gives `mem=57472M` (~56 GiB, from
+`MinMemoryCPU=1796M x 32`). **15.4 of 56 GiB = 27%, i.e. 3.6x headroom** — tripling would not OOM. Not a
+risk; still worth watching, since an OOM kill at hour 8 of a no-resume run is a total loss.
+
+### A job appeared that I did not submit: `56397442 b1niter4`
+
+    submitted 2026-08-06T12:24:12Z from login35, same account, QOS gpu_shared, 2h wall, 1 GPU
+    prio 67697 (below our 68313, so it queues behind the closure)
+    script: nd-unfolding/pet/sbatch_b1_niter4_scan48.sh
+
+Read its header rather than guessing: it is a **B1 rate-injection scan at niter=4, 48 seeds**, and its
+comment **explicitly cites `docs/OPEN_ITEMS.md` item (e)** — the regularization-justification gap I wrote
+at ~04:40Z. So a second agent session is acting on that entry. Its reasoning is sound and worth recording
+because it sharpens my own: the receipted k=2/k=3 pair shows bias 3.8008% -> 2.1876% tracking
+`(1-a)^k (R-1)/R` to under 0.1 pp at flat variance, which argues **`k >= 3`, not `k = 3`** — the bias term
+is monotone decreasing in k and nothing measured bounds k from above. It measures k=4 (closed form predicts
+bias 1.2617%) and predeclares that if the spread is again flat, the record must say plainly that the
+stopping point is set by **cost and the literature default**, not by the data. That is a better answer to
+item (e) than "the gate passes", which is exactly the criticism the audit levelled at me.
+
+**Coordination note, and it is the live risk now.** BEN-023's corollary: *"two agents each believed they
+owned the FPS P4 chain — ownership maps must live in a file agents re-read, not in each agent's memory."*
+There are now two sessions writing to this repo. I am NOT touching `56397442`, its script, or
+`products/pet/b1_closure/`, and I am not editing item (e) while another session is measuring it. My lane
+this cycle is `56381674` only. Recording that division here because a log both sessions can read is the
+only place it is real.
