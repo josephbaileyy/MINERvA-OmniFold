@@ -190,21 +190,42 @@ Implementation gate, in order:
          with 128 of 262 bins under 0.8 and **29 bins moving the wrong way** (recovery < 0).
        - The residual is **broadly distributed**, not a few bad cells: the top 10 bins carry
          26.5% of the L1 residual, top 20 carry 44.8%, top 50 carry 75.1%.
-       - **The miss is asymmetric in the TILT DIRECTION**, which is the explanation --- superseding
-         this session's first reading that the worst cells "cluster at the `i_pparallel = 0` edge".
-         They do sit there, but that is a displacement-magnitude artifact, not a cause: the tilt is a
-         function of truth pT, so all 19 pparallel cells at a given pT share it. Down-tilted cells
-         (pT idx 2--5, factor ~0.55x) recover **0.17--0.24**; up-tilted cells (pT idx 12, ~2.65x)
-         recover **0.72--0.91**. The estimator resists moving DOWN. Credit: concurrent session,
-         `AUTONOMOUS_LOG_20260805.md` 14:20Z.
+       - ~~**The miss is asymmetric in the TILT DIRECTION**~~ --- **REFUTED 2026-08-06 15:10Z. The
+         cited bins were CONFOUNDED with `p_parallel`, and the first reading ("worst cells cluster at
+         the `i_pparallel = 0` edge") was closer to right than the correction that replaced it.**
+         Decoded (`cell = i_pt * 19 + i_pp`, verified against the report's own edges): the four
+         "down-tilted" bins 38/57/76/95 are **all four at `i_pp = 0`**, i.e. `p_parallel` 0.0--0.75
+         GeV where `a_b = 0.003`; the three "up-tilted" bins 242/243/244 are at `i_pp = 14/15/16`,
+         `p_parallel` 10--40 GeV where `a_b ~ 0.64-0.71`. The 0.17--0.24 vs 0.72--0.91 contrast is
+         **the `p_parallel` acceptance gradient read off at two different `p_parallel` values**, not a
+         measurement of tilt direction at all.
+         Marginalizing over all 19 `p_parallel` cells --- the only way to isolate a pT-only tilt ---
+         **there is no down-tilt deficit, and the sign is if anything OPPOSITE**: down-tilted pT bins
+         0--6 recover 0.65--0.75 against an ideal of 0.61--0.65 (slightly *exceeding* it), while the
+         up-tilted extremes fall short (pT 12: 0.575 vs ideal 0.737; pT 13: 0.712 vs 0.854). The
+         pT-8 outlier is the tilt pivot (ratio 0.977), a ratio of two near-zero numbers.
 
-       That signature --- direction right, magnitude short, normalization exact, spread over the
-       whole grid --- is **over-regularization**, i.e. too few effective iterations and/or an
-       optimization-limited fit, rather than a defect. Two hypotheses, and the record should not
-       pick one before it is tested: (i) `niter=3` is too few for **shape** recovery even though
-       it suffices for **rate** closure; (ii) `epochs=8` leaves the fit optimization-limited ---
-       `B1-NORMALIZATION-FIX-DESIGN.md:352-357` warns explicitly that epochs is not the unit of
-       optimization, steps are, though the 2M half-size should sit right of that regime.
+       **So the over-regularization framing is dead, and so are BOTH of its hypotheses.**
+       (i) more iterations: `k=3 -> 4` buys 0.023, saturating by `k=8` --- no `k` fixes this.
+       (ii) `epochs=8` optimization-limited: **measured false.** The six surviving training histories
+       in `powered_closure/weights.slurm-56381674/` show step-2 train loss moving **3.2e-5** across 8
+       epochs in iteration 2 and 3.0e-5 in iteration 3, with iteration 2's `val_loss` getting
+       *worse* (0.829560 -> 0.829612, best at epoch 1). That is a fit with no remaining gradient
+       signal, not one starved of steps. Where information exists the fit already matches the
+       pointwise ideal.
+
+       **Why the wrong hypothesis was attractive --- a real telemetry bug, now the lead item in
+       `KNOWN_ISSUES`:** `omnifold.py:303` logs `hist.history['val_loss'][0]` under the label
+       **"Last val loss"**. It prints **epoch 1**, not the last epoch. Anyone judging convergence from
+       the log is reading the first epoch, which is plausibly how "optimization-limited" got proposed
+       without the history pickles ever being opened. Related: `ModelCheckpoint(save_best_only=True)`
+       (`omnifold.py:272-275`) writes best-val weights while `reweight` uses the **last-epoch
+       in-memory** model, so on-disk checkpoints are **not** bit-identical to what a run used.
+
+       **What is actually unexplained** is per-bin **scatter**, rms 0.212 about the ideal curve. It
+       costs 0.084 of the aggregate through the absolute value: overshoot bins (`r > 1`) contribute
+       9.3% of `residual/gap`, and `E_w[r] = 0.631` against an aggregate of 0.547 --- the signed mean
+       hides it. That is a **variance** question, so it needs a **seed ensemble**, not a longer run.
        **CORRECTED --- this session first wrote "no niter=2 comparison exists, so the failure cannot
        be attributed to the niter switch either way." That was too weak.** The concurrent session
        supplied the structural argument: with acceptance `a = n_step1_a/n_truth_a = 837494/1999920 =
@@ -218,19 +239,44 @@ Implementation gate, in order:
        the numbers line up, but the transfer is **NOT proven** --- verify before quoting. Measured
        0.546853 is 68% of the k=3 ceiling, sitting between the k=1 and k=2 ceilings.
 
-       **And the bar was never checked against that ceiling.** At `k=3` the ceiling is 0.80364 against
-       a predeclared `recovery_min = 0.80` --- **0.36 pp of headroom**, i.e. the criterion demands a
-       near-perfect estimator. Same species as the B1 defect where any `tol >= C` is inert: a
-       threshold set without reference to the achievable limit. Recording it is **not** a proposal to
-       lower it.
+       **RETRACTED 2026-08-06 15:10Z --- the two paragraphs that stood here were WRONG, and wrong in
+       the direction that flattered the result.** A fresh-context claude-school session (READ-ONLY,
+       `/pscratch/sd/j/josephrb/q_fresh.claude.txt`) derived the bound properly and measured what the
+       analogy had only assumed. Both of my/our errors are recorded rather than quietly patched:
 
-       Note also that `residual/gap` and `recovery` are **one criterion stated twice**, not two
-       independent failures: `recovery == 1 - residual/gap` holds exactly (verified).
+       1. **`1-(1-a)^k` is not a CEILING, it is an EQUALITY in the ideal-classifier limit.** From
+          `omnifold.py:198-200,218-220`: `nu_k(x) = a(x) C_k t(x) + (1-a(x)) nu_{k-1}(x)`, so for
+          x-independent `a`, `nu_k - t = (1-a)^k (1-t)` pointwise and the spectral L1 follows
+          exactly. So the transfer to L1 **does** hold --- but framing it as a ceiling let 0.547 read
+          as "68% of the way to a structural limit" when the ideal limit *predicts* 0.804 and the
+          estimator **missed it by 0.257**. The correct reading makes the result look **worse**, not
+          partially excused.
+       2. **The number was wrong, because `a(x)` is wildly non-constant.** Measured per-bin from the
+          dump: `a_b` runs **0.003 to 0.81**, driven by the **MINOS match threshold** --- at
+          `p_parallel < 0.75 GeV` the muon never reaches MINOS. **35 bins with `a_b < 1%` carry 23.2%
+          of the injected displacement mass.** Under heterogeneity the aggregate is
+          `1 - E_w[(1-a_b)^k]`, and by Jensen the global-`a` form is only an upper bound. Exact
+          per-bin recursion: `k=1` 0.426, `k=2` 0.572, **`k=3` 0.635**, `k=4` 0.657, `k=8` 0.686.
+          Model confirmed rather than fitted: over the 121 bins carrying the top 90% of displacement
+          mass, measured vs predicted per-bin recovery gives **Pearson 0.862 / Spearman 0.879**, and
+          the displacement-weighted signed means agree to 0.3% (0.63129 vs 0.63296).
 
-       **This inverts the reading of item (e).** The B1 argument for `k=3` is about a
-       normalization scalar; this is the differential test, and it fails. If (i) is the cause,
-       the regularization argument points to **more** iterations, not to 3 as a stopping point
-       --- which makes the k=4 arm (56397442) load-bearing rather than a formality.
+       **Consequence (i) SURVIVES and strengthens:** `niter=2`'s ideal is **0.572**, not 0.66216 ---
+       further below the 0.80 bar. `56355818` could not have passed. Keep that conclusion.
+
+       **Consequence (ii) is RETRACTED AND REVERSED.** The bar does **not** sit 0.36 pp *under* a
+       0.80364 ceiling. It sits **16.5 pp ABOVE the achievable 0.6347.** Reaching 0.80 on this domain
+       needs `k` of order **100** (0.780 at k=50, 0.815 at k=100). The bar was not tight --- it was
+       **unreachable at any practical k**. Same species as the inert-tolerance defect, **opposite
+       sign**. Still not a proposal to lower it; see (e) for what replaces it.
+
+       Note `residual/gap` and `recovery` are **one criterion stated twice**, not two independent
+       failures: `recovery == 1 - residual/gap` holds exactly (verified bit-for-bit).
+
+       **And the "more iterations" reading is dead.** `k=3 -> 4` buys **0.023** and the curve saturates
+       by `k=8`. **No `k` fixes this.** The k=4 B1 arms (`56400517`, `56400519`) are therefore **not
+       load-bearing** --- they still close (e)'s scalar question, so let them run, but they will not
+       rescue the differential test.
    (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
        PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
        `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,

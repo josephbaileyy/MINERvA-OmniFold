@@ -76,3 +76,22 @@ G2 **dump-provenance** receipt, not a code gate; see that receipt's `not_reissue
 
 Regression-pinned by `nd-unfolding/tests/test_resume_guard.py`, whose repo-wide scan fails if
 `[[ -s $OUT ]] && skip` reappears anywhere, and `nd-unfolding/tests/test_atomic_write.py`.
+
+## The engine's "Last val loss" prints the FIRST epoch, not the last
+
+`omnifold_nn/omnifold/omnifold.py:303` logs `hist.history['val_loss'][0]` under the label
+`Last val loss`. Index 0 is **epoch 1**. Anyone judging convergence from the training log is reading the
+first epoch of the fit.
+
+Found 2026-08-06 by a fresh-context review of the D2 powered-closure FAIL (job 56381674), and it had
+already done damage: two sessions independently proposed "the fit is optimization-limited, raise
+`epochs`" without opening the history pickles. The pickles refute it -- step-2 train loss moves 3.2e-5
+across 8 epochs in iteration 2, and that iteration's `val_loss` gets *worse* (0.829560 -> 0.829612, best
+at epoch 1). A fit with no remaining gradient signal, mislabelled as a fit starved of steps.
+
+Related, same file: `ModelCheckpoint(save_best_only=True)` (`:272-275`) writes **best-val** weights, while
+`reweight` uses the **last-epoch in-memory** model. On-disk checkpoints are therefore not bit-identical to
+what a run actually used -- calibrate before trusting an inference-only reproduction from them.
+
+Fixing the label touches `omnifold.py`, which is hash-bound by the Gate-4 launch-code gate, so it must
+ride a deliberate re-issue rather than a drive-by edit.
