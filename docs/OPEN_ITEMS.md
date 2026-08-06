@@ -194,6 +194,28 @@ Implementation gate, in order:
        verifier goes **10 mismatches -> 0** and both `test_hash_bindings.py` guards go green.
    (c) then, and only then, Step 4 --- now gated only on the powered closure re-run at
        `niter=3` (a1).
+   (d) **NEW 2026-08-06, opened by the niter 2 -> 3 switch itself: the uncertainty budget must be
+       RECOMPUTED at niter=3.** Any covariance component derived at `niter=2` is now inconsistent
+       with the central value the campaign will publish, because `niter` changes the estimator, not
+       a threshold. This is a consequence of `2b2e5f1` that the re-issue did **not** record and that
+       nothing else in the repo stated --- surfaced by an out-of-band audit, not by me.
+       It **couples directly to the pending flux covariance sizing** (see the J28 item), so the two
+       should be planned together rather than sequentially: recomputing the budget at `niter=2` and
+       then again at `niter=3` is double work against a moving target.
+       Consequence for sequencing: **resolve `test_uq_remediation.py`'s J28 fixture AFTER this**, not
+       before --- deciding fixture-stale vs guard-over-strict now risks doing it twice.
+   (e) **The niter=3 choice still owes a REGULARIZATION justification.** `niter` is a
+       regularization parameter: more iterations = less regularization = more variance, less bias.
+       Everything recorded in `2b2e5f1` and in
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md)
+       argues the choice from **gate behaviour** --- realized exceedance 0/48 vs 6/48, window width to
+       the parameter-free ceiling, false-reject rate. That establishes the choice is *sound*, i.e.
+       that it does not break the gate. **It does not establish that it is right.** A B1 closure
+       passing is not a bias-variance argument. This gap is recorded rather than papered over: the
+       switch was made on Joseph's explicit instruction and is defensible, but the justification in
+       the receipt is gate-shaped and needs a regularization-shaped one before publication.
+       Launching the nominal (which pins whatever `niter` the contract carries) should wait on it;
+       `nominal_pet_training_allowed: false` is doing its job.
    The end-to-end nominal is still unproven: nothing has yet trained on this target.
 3. Define the neighborhood metric explicitly. The vendored local PET assumes
    its first two token coordinates are an angular/geometric pair, while the
