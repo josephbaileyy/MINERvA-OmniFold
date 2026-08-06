@@ -2436,3 +2436,46 @@ every tick.
 Verification: verifier **0 mismatches, ALL BINDINGS INTACT**; `test_resume_guard.py` **21/21 passed**
 (was 2 failed); full suite **698 collected, 690 passed**, the same documented pre-existing 7, so
 **collection is unchanged and no new failure was introduced.**
+
+## 05:35Z — CLUSTER SUITE AT ITS FLOOR: 1 failed / 751 passed. Receipt for `62eab87`.
+
+`56388888`, nid004164, **`NumTasks=1`** (verified with `scontrol`/`sacct`, not inferred), 05:02:35Z ->
+05:34:40Z, `COMPLETED 0:0`, 32:03.
+
+    1 failed, 751 passed in 1923.83s        ->  752 collected
+    only failure: test_uq_remediation.py::UnifiedThrowTests::test_synthetic_slab_and_block_combine_end_to_end
+    test_hash_bindings: ZERO mentions in the whole log -> both guards PASSED -> 0 binding mismatches
+    test_resume_guard:  ABSENT from failures -> PASSED on the cluster
+
+**All three predeclared expectations met exactly**, written down before the run:
+
+| claim | predeclared | measured |
+|---|---|---|
+| cluster collection | 752 | **752** |
+| suite | 1 failed / 751 passed | **1 failed / 751 passed** |
+| binding mismatches | 0 | **0** |
+
+This closes the gap I had explicitly flagged to Joseph as "an EXPECTATION, not a measurement". Running it
+was not invented work: the prior full-suite figure came from the contaminated 8-copy run AND predated the
+three shell-script repairs, so nothing had actually measured the tree I pushed.
+
+**The cluster suite is now at its floor.** The single remaining failure is the J28 flux fixture, which the
+audit sequenced to come **after** the niter=3 covariance recompute (OPEN_ITEMS item (d)) — resolving it now
+would risk doing it twice against a moving target. So one known, deliberately-deferred item, and nothing
+else red. Track the arc across the day:
+
+    13:40Z  4 failed / 746 passed   (2 hash-binding by design, resume_guard, uq_remediation)
+    01:55Z  2 failed / 750 passed   (re-issue landed: both hash-binding guards green)
+    05:35Z  1 failed / 751 passed   (resume_guard repaired: the last 3 BEN-023 offenders retired)
+
+**Two instrumentation faults of my own this cycle, both caught before they misled me:**
+
+1. My task-count check was **self-defeating**: I keyed it on counting module-reload banners while the same
+   script suppressed module output, so `0` was uninformative rather than reassuring. `scontrol show job`
+   is the authority (`NumTasks=1`), and that is what I used. A check whose negative result is
+   indistinguishable from "nothing to report" is not a check — same family as the watcher whose liveness
+   signal equalled its alarm signal (23:00Z) and the `[[ -s ]]` guards retired this morning.
+2. The output file sat at **492 bytes with a 17-minute-old mtime** and read as stalled. It was not:
+   `sstat` showed `AveCPU 00:17:59` against 17:25 elapsed (~100% CPU) and `MaxRSS 3.1 GB`. This is exactly
+   **BEN-028**, added to the ledger only hours earlier — the entry earned its keep immediately, on the
+   first job it could have applied to.
