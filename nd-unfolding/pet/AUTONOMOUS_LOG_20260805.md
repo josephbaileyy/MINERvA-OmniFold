@@ -2753,3 +2753,89 @@ than patching them quietly, and files the telemetry bug. Steps 1-5 I have **not*
 redefines a Gate-4 criterion (`recovery / ideal_recovery(a_b,k) >= theta`, theta from a measured noise floor,
 **not** from today's numbers) and is a re-issue; step 3 spends 16 GPU-hours on an 8-seed ensemble to decide
 whether the 0.212 per-bin scatter averages down or is bias. Both are Joseph's.
+
+## 16:30Z — SECOND fresh consult found a 2.36x error in the DELIVERABLE, and I committed the acceptance map
+
+Joseph granted standing permission (mail 15:22Z) to execute any step **provided a fresh-context agent agrees
+with the decision**, and asked how far we are from a full-phase-space cross section with an uncertainty.
+Second consult run (16 min, rc=0, 18,204 bytes), transcript committed as
+`docs/orchestration/CONSULT-20260806-fresh-context-distance-to-goal.md`.
+
+### It found the extractor divides the cross section by an efficiency twice
+
+I verified all three legs in source before relaying it:
+
+    completeness_2d (:390-404)   c = sum_w(pass_truth & pass_reco)/sum_w(pass_truth)  <- reco EFFICIENCY
+    xsec_nd.py:79                denom = completeness * flux * n_nucleons * pot * vol  <- DIVIDES by it
+    :431-434                     counts histograms (w_truth*push) over ALL pass_truth rows, whose push
+                                 is the nu_k step 2 assigns to truth-only misses -> ALREADY corrected
+
+**2.36x too high on the integral (1/0.4235), 398x in the lowest `p_parallel` bin (1/0.00251).** On this
+grid the correct completeness is **identically 1** — the validated GBDT FPS unfolds carry
+`globalCompleteness = 1.0000000000000002`, all 266 nonzero bins at 1.000000, and the validated driver
+defines completeness as **coverage**, not efficiency. `PETxsec5D` only survived carrying an efficiency there
+because `pet_systematics_5d.py:127-141` overrides it with the GBDT value; the FPS port dropped that anchor
+and asserts "no such anchor exists for this domain" — **which is false.**
+
+Worse than the bug: **two tests look like coverage and provide none.**
+`test_fullevent_extract.py:351-376` recomputes the formula by calling `ex.completeness_2d` *itself* and
+asserts bit-equality at `rtol=0, atol=0` — the self-agreement antipattern of
+`AUDIT-FINDINGS-20260729-B.md` §4. And `:331-342` **pins the reco-efficiency semantics as intended
+behaviour**, so a repairer must first break a test that reads as authoritative. Both filed in
+`KNOWN_ISSUES.md` (`1b0e499`).
+
+**I am holding the fix**, although Joseph's permission formally covers it, because the two candidate repairs
+differ in *what the measurement is*: (A) drop the division, preserving step 2's full-inventory extrapolation
+and matching the GBDT reference; (B) mask `counts` to `pass_truth & pass_reco`, which discards the FPS
+extension the campaign exists to add. Evidence favours (A). It sets the published normalization, so it is
+his. **Step 4 (train) is unaffected; Step 4b (extract) must not run until it is settled.**
+
+### Four corrections to my own distance assessment
+
+1. **`nominal_pet_training_allowed: false` is not a gate.** Hardcoded literal at
+   `validate_pet_nominal_gate4.py:1117`, emitted unconditionally, no code path sets it True, and the
+   launcher never reads it. The nominal's real preconditions are all satisfied **today**.
+   *Training the nominal is unblocked; what is blocked is quoting the result.*
+2. The powered closure does **not** have to pass first — the redesign changes the criterion, not the
+   estimator, and even a mask change applies at histogramming.
+3. **Step 7 is not on the path.** `RESTORE:28-32` spine is `0a->0->0b->1->2->6->3->2b->4->4b`; 5/7/7b are
+   independent. I overstated the distance.
+4. My proposed `recovery / ideal_recovery >= theta` criterion is **the inert-tolerance defect in new dress**
+   — at `a_b = 0.0025` the ideal is 0.0075, so a *null* estimator passes. Needs two criteria: a ratio
+   criterion on a predeclared high-acceptance subdomain, and a prior-sensitivity criterion elsewhere.
+
+### And the long pole nobody had listed
+
+**C_stat for this lane has no implementation.** `extract_fullevent_fps.py:148,165` refuses
+`bootstrap_seed != -1`; the bootstrap launchers are the recoil/5D path. A full-event statistical covariance
+is an unwritten launcher plus ~20x(8h train + push) = **170-250 GPU-hours**, untracked as an open item.
+Distance: ~14-16 steps; **<100 GPU-h for the central value**, far more for the uncertainty.
+
+### ACCEPTANCE MAP COMMITTED — the tracked product all three items were arguing without
+
+`nd-unfolding/pet/acceptance_map_fullevent_fps.py` + product
+`products/pet/fullevent_fps/acceptance_map_fullevent_fps.json`, run on compute.
+
+    global acceptance   weighted 0.423516   unweighted 0.418539   (Gate-2 receipt 0.418562)
+    populated cells     266 of 285
+    37 cells with a_b < 0.01, carrying 25.93% of truth mass
+    30.84% OF TRUTH MASS SITS IN CELLS WHERE >90% OF THE ANSWER IS STILL PRIOR AT k=3
+
+    p_par (GeV)    % fiducial    a_b        (1-a_b)^3
+    0.00-0.75        10.32%    0.00251      0.9925
+    0.75-1.50        10.80%    0.00722      0.9785
+    1.50-2.00         7.51%    0.10024      0.7284
+    whole domain       100%    0.4235       0.3905
+
+**It settles the disagreement between the two consults**: `a_b` for `p_parallel` 0.75-1.5 is **0.00722**, so
+the second consult was right and the first's 0.012 was wrong. It also explains the 0.4235-vs-0.4186
+confusion — those are the `w_truth`-weighted and unweighted values, and the unweighted one reproduces the
+Gate-2 receipt to 2e-5.
+
+**The 30.84% is sharper than either consult had**, because it is a per-cell census rather than the
+`p_parallel` marginal (21.12%): the marginal hides cells inside better-accepted `p_parallel` slices that are
+themselves nearly blind.
+
+The product **deliberately creates one live hash pin** on the G2 dump (`inputs`/`inputs_sha256`), verified
+to resolve and match on compute and to be silently unresolved on a laptop. Documented in the script so a
+future editor does not "clean it up".
