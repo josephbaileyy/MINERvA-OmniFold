@@ -13,6 +13,16 @@ fingerprint canonical, CV 266/285 sha `16d99350…`, and the manifest-builder dr
 **exactly** the ten missing outputs and nothing else. Watch `fps-negweight-unfolds-56430128` armed.
 Chain still to run: manifest → rollup → p4 validate → adopt. **Nothing is adopted yet and no
 covariance scale here is quotable.**
+**2026-08-07 one-liner.** **J28 is RESOLVED on the full 160-throw ensemble.** Regeneration `56427580`
+restored the 38 lost throws (160/160); adoption `56429334` rescaled only the pre-J28 half and combined it
+with the natively-corrected half, its fail-closed gate having verified the split first. Full-160 like-for-like:
+`sqrt_tr_unified` 4.4608e-38 → **4.4437e-38** (−0.38%), `joint_mean_shift_norm` 1.6544e-38 → **1.8787e-38**
+(+13.6%). Adopted totals: mean-centered **5.2600e-38** (×1.210), CV-centered **5.6609e-38** (×1.303), both
+PSD. **~9% SMALLER than the quoted 5.81e-38 / 6.24e-38** — because correcting the flux raised the block-sum
+toward the unified total, pushing `g` toward 1 (median now exactly 1.000 mean-centered), and a smaller `G`
+inflates the vertical block less in `lateral+stat+ML + G C_vert G`. **Still CANDIDATE**: the selection-complete
+five-band lateral replacement remains the gate, `values.tex` is untouched, and item 1 below (F7) is satisfied
+by construction since both conventions are produced and the shift is reported separately.
 
 **2026-08-06 one-liner.** The J28 flux re-roll **has run** (job `56417324`, ~2 min on one CPU node) and
 the exact corrected covariance now exists for the adopted `_sb` ensemble — 122 throws, 100 flux block

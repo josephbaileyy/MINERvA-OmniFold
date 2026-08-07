@@ -69,6 +69,63 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
   combined systematic+statistical+ML covariance by **+0.30%**. This closes
   KNOWN_ISSUES #13 as a numerically negligible refinement, not a central-value
   change.
+> ## ✅ J28 RESOLVED 2026-08-07 — the flux defect is corrected on the full 160-throw ensemble
+>
+> **The quarantine notice below is retained deliberately, not deleted** — it records why these scales were
+> unquotable and what was done about it. What has changed is that the numbers are now **replaced** rather
+> than merely quarantined, which is the only sanctioned way to lift it (`PLAN-20260806-…` step 5).
+>
+> **Provenance.** Regeneration `56427580` (array tasks 30–39, all `COMPLETED 0:0`) restored the 38 throws
+> lost from purgeable scratch, taking the ensemble back to **160/160**; adoption `56429334` (31m23s, rc=0)
+> then rescaled *only* the pre-J28 half and combined it with the natively-corrected half. Its fail-closed
+> gate verified the split before doing any work: `160/160 throws present; unstamped 0-29, stamped 30-39`.
+> The corrected ROOT `nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root` carries
+> `n_throws = 160`, read back from the file.
+>
+> **Full-160 before → after** (both at n=160, so this is a like-for-like comparison — the 2026-08-06
+> morning pass could not provide one, having covered 122/160):
+>
+> | quantity | original (Φ_CV) | corrected (Φu) | change |
+> |---|---|---|---|
+> | `sqrt_tr_unified` | 4.4607819710748654e-38 | 4.443673650575504e-38 | **−0.38%** |
+> | `joint_mean_shift_norm` | 1.654393237996853e-38 | 1.878696733368378e-38 | **+13.6%** |
+>
+> **Adopted totals, both mean-shift conventions** (F7 requires the CV-centered variant to exist and the
+> shift to be reported either way; both are given, and both are PSD):
+>
+> | convention | old combined | new combined | factor | median frac/bin | bins with g>1 |
+> |---|---|---|---|---|---|
+> | mean-centered | 4.3455e-38 | **5.2600e-38** | ×1.210 | 13.43% → 13.61% | 2805 (26.2%), median g 1.000 |
+> | CV-centered | 4.3455e-38 | **5.6609e-38** | ×1.303 | 13.43% → 14.09% | 6526 (61.0%), median g 1.047 |
+>
+> **The corrected totals are ~9% SMALLER than the values currently in `values.tex`** (`\gbdtFiveAdoptTrace`
+> 5.81e-38 → 5.26e-38; `\gbdtFiveCVTrace` 6.24e-38 → 5.66e-38). That is not in tension with the Flux block
+> having grown 4.2×; it **is** the mechanism. Correcting the flux raised the block-sum toward a nearly
+> unchanged unified total, which drove the nonlinearity inflation `g` down toward 1 — mean-centered `g` now
+> has median exactly 1.000 with only 26.2% of bins above it. The adopted covariance is
+> `lateral+stat+ML + G C_vert G`, so a smaller `G` inflates the vertical block less. **The old 5.81e-38 was
+> overstated precisely because the understated Flux block had inflated `g`.**
+>
+> **STILL NOT FINAL, and not on J28 grounds.** This section's own heading reads *"CANDIDATE; final lateral
+> replacement pending"*, and lines 13-14 state that final adoption waits for the **selection-complete
+> lateral**. That remains true and is unaffected by J28. `values.tex` is therefore **not** updated here;
+> replacing published macros is a publication decision, not a bookkeeping one.
+>
+> **How far off that is, corrected by BEN-036 (2026-08-07, concurrent laterals session).** Read literally,
+> "full five-band coverage remains the publication gate" sizes the remainder as the 120-task, ~700 GB
+> `MNV101_ACTIVE_UNIVERSE` event-loop campaign. It is not: that campaign is **already complete on disk**
+> (120/120 P3F *and* P3S per-playlist ROOTs, all ten 74.8 GB merged endpoint omnifiles, merged-input receipt
+> `run_id 56090877` re-verified 10/10). The real blocker is a **footing** mismatch — the ten FPS endpoint
+> unfolds ran under the driver default `--bkg-mode=purity` while the publication footing is
+> `negweight-refined` — and re-running only the unfolds (~1h32m per wave of 5) reuses all 748 GB. So the
+> remaining distance to a defensible `values.tex` update is **hours, not a campaign**; `56430128_[0-9]` is
+> that step.
+>
+> **Underpinning verification:** the post-hoc rescale was shown to be an *identity* against an independent
+> native computation — agreement to 1.377e-12 / 6.708e-12 max relative over all 10,694 bins on throws 120
+> and 121 (`nd-unfolding/validate_rescale_identity.py`). Without that, replacing these numbers would be a
+> substitution rather than a correction.
+
 > ## ⚠ QUARANTINED 2026-07-31 — every covariance scale in this section is NOT QUOTABLE
 >
 > **Do not cite any sqrt-trace or median-uncertainty number below until the flux re-roll runs.**

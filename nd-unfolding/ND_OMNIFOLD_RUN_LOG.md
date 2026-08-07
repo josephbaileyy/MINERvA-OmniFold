@@ -3339,3 +3339,43 @@ Durable watch armed (a session-local monitor would die with the session): wakerc
 **Remaining chain once the ten land**, all committed infrastructure, each taking an explicit `--out`:
 `fps_build_publication_manifest.py` → `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py`
 → `adopt_active_lateral_fps.py`.
+## 2026-08-07 — J28 adoption on the repaired 160-throw ensemble; corrected totals are ~9% SMALLER
+
+Two jobs, chained by `--dependency=afterok` so the second could not run on an incomplete ensemble.
+
+`56427580` (array tasks 30–39 of `sbatch_uthrow_run_5d_fast.sh`, all `COMPLETED 0:0`, 45m41s–1h25m47s)
+regenerated throws 120–159, restoring the **160/160** the adopted covariance was built from. Regeneration is
+bit-reproducible because `unified_throw_cov.py:222-223` seeds per *global* throw index, verified empirically
+by the matching `flux_u` draws — so these are the original throws, not statistical stand-ins.
+
+`56429334` (31m23s, rc=0) then adopted. Its fail-closed gate ran first and confirmed the mixed-provenance
+split before any work: `160/160 throws present; unstamped 0-29, stamped 30-39 -- split as expected`. Only the
+30 pre-J28 slabs were rescaled (120 throws); the 40 natively-corrected throws were left alone, because
+`unified_throw_cov.py:255` stamps newly-written throws and rescaling a stamped slab would double-correct it.
+
+    full-160 before -> after (like-for-like, both n=160)
+    sqrt_tr_unified         4.4607819710748654e-38 -> 4.443673650575504e-38    -0.38%
+    joint_mean_shift_norm   1.654393237996853e-38  -> 1.878696733368378e-38   +13.6%
+
+    adopted totals            old          new        factor   median frac/bin
+    mean-centered          4.3455e-38   5.2600e-38   x1.210    13.43% -> 13.61%
+    CV-centered (F7)       4.3455e-38   5.6609e-38   x1.303    13.43% -> 14.09%
+
+Both PSD OK. `n_throws = 160` read back from the corrected ROOT.
+
+**The corrected totals are ~9% smaller than the quoted 5.81e-38 / 6.24e-38, and the mechanism is the point.**
+Correcting the flux raised the block-sum toward a nearly unchanged unified total, which drove the
+nonlinearity inflation `g` toward 1 (mean-centered median now exactly 1.000, only 26.2% of bins above it).
+Since the adopted covariance is `lateral+stat+ML + G C_vert G`, a smaller `G` inflates the vertical block
+less. The old value was overstated *because* the understated Flux block had inflated `g` — so the flux block
+growing 4.2× and the total falling 9% are the same fact seen twice.
+
+Two guards worth recording. `adopt_unified_5d.py:79-80` defaults `--out` to the July adopted product and
+opens it `RECREATE` (`:158`); both calls passed explicit tagged paths and the job verified the July file
+untouched (892224371 bytes, Jul 13 18:58). And the whole replacement rests on the rescale being an identity,
+which was checked against an independent native computation rather than assumed — 1.4e-12 agreement over
+10,694 bins (`validate_rescale_identity.py`).
+
+**Not final, and not for J28 reasons.** The section heading *"CANDIDATE; final lateral replacement pending"*
+still stands; `values.tex` is untouched. The five-band selection-complete laterals are the remaining gate
+(running as `56430128_[0-9]`).
