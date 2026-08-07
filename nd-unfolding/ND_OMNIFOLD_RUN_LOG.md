@@ -3577,3 +3577,58 @@ negation scoped to `nd-unfolding/tests/fixtures/*.log` fixes it.
 Next: G-3 (`STOP_AFTER=evidence`, then attest-or-reunfold), then the G-4 independent verifier.
 `P4_VERIFIER_PASS` is **not** set by this session — `run_p4_standard.sh:41` only tests non-emptiness,
 so setting it would defeat the checkpoint rather than pass it (`KNOWN_ISSUES.md` #21).
+
+## 2026-08-07 — GBDT G-3 preflight: EVIDENCE-COMPLETE, and the ten ROOTs are attestable
+
+`STOP_AFTER=evidence bash nd-unfolding/run_p4_standard.sh` inside its own CPU holder
+(`ALLOC_JOB_NAME=gbdt-hold`, job **56445593**, `nid004290`, interactive QoS, node in ~20 s). A
+separate holder deliberately, so the concurrent lane's shared `claude-hold` alloc was untouched.
+Wall **~71 s** (11:58:45 → 11:59:56Z). Holder released and the lingering login-node `salloc` client
+killed (AGENTS.md salloc lesson 3); `squeue --me` afterwards shows only the other lane's two PENDING
+jobs.
+
+**Stage 1** — 10/10 merged endpoint ROOTs SKIPped as valid (53.8 GB each, 538 GB total; nothing
+re-merged), `merged=10/10 failed_children=0`, acceptance audit `passing=120/120 complete=True
+missing=0 extras=0 failing=0`.
+
+**Stage 2** — `EVIDENCE-COMPLETE`. All five independent cross-checks MATCH (central5d, mask5d,
+endpoint_manifest, central4d, mask4d); `mask5d n=10694`, `mask4d n=4830`. Selection migration is
+exactly the expected pattern: `BeamAngleX/Y` nonzero (4792/4700/4807/4808), the three
+`MuonResolution`/`Muon_Energy` bands 0 (bin-migration-only).
+
+**Attest-or-re-unfold: ATTESTABLE, decided by measurement.** All ten on-disk endpoint ROOTs were
+sha256'd and compared to the committed manifest's `endpoint_sha256`: **10 match, 0 mismatch, 0
+missing**. So stage 3 will legacy-attest and the runbook's ~1h40m re-unfold budget does not apply.
+The reference manifest is preserved at
+`docs/orchestration/state/p4-standard-attestation/p4_standard_manifest-20260718-preserved.json`
+(scratch is purgeable, and stage 2 rewrites the live copy).
+
+**Two things the preflight settled that the runbook could not.**
+1. The pre-G-1 manifest has **no `footing` block and no `bkg_mode` in `config`** — read directly off
+   the file. That is `KNOWN_ISSUES.md` #20(a) confirmed against the artifact rather than the prose,
+   and it is what G-1 fixes.
+2. §1's "no `p4_standard_manifest.json`" impression was **my own probe error**, not a runbook error:
+   my first `find` used `-maxdepth 3` and the evidence dir is at depth 4. The manifest has existed
+   since 2026-07-18 11:14, which is precisely why attestation is available.
+
+**Stage 3 was deliberately NOT run.** `run_p4_unfold_std.sh` skips any endpoint that already has a
+receipt, so writing receipts now — on pre-G-1 code — would stamp ten `.done` files with **no
+`bkg_mode`**, and they would then be skipped forever. Deletions are frozen behind the reorg freeze
+tag, so that would be an unfixable provenance regression. Stage 3 waits for the G-1 patch to reach
+the cluster checkout.
+
+**Blocked on that delivery, and it is not mine to force.** The canonical cluster checkout is at
+`0028b49` and moved twice while this ran — a concurrent lane (push-provenance / pull-push
+decomposition) is committing and pushing to `main` in that same tree. Switching its branch to my
+`worktree-gbdt-closeout` would pull the code out from under a live session, so it is Joseph's call.
+Note a cluster-side `git worktree` does **not** work around this: `p4_evidence.py` hardcodes `REPO`
+and takes its `source_blobs` with `cwd=REPO`, so it would record the canonical tree's blobs while a
+different file actually ran — a provenance lie of exactly the kind this packet exists to remove.
+
+**G-4 is not the formality the runbook implies — see BEN-043.** The `standard-p4-verifier`
+(`019f74cb-…`) **BLOCKed** repair-3 `74fa362` with six ranked defects; `followup-agent-A-standard-05.md`
+is the repair-4 brief and **no repair-4 commit exists** (`git log 74fa362..HEAD` over `p4_*`/`run_p4_*`
+returns only `d5bd5da`, an unrelated note-overclaims commit, plus the FPS lane's own repairs and this
+packet). `P4_STANDARD_STATUS.md`'s "REPAIR round 3 complete" describes the attempt, not the verdict.
+
+`P4_VERIFIER_PASS` remains unset by this session, per `KNOWN_ISSUES.md` #21.
