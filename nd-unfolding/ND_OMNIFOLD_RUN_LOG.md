@@ -3632,3 +3632,48 @@ returns only `d5bd5da`, an unrelated note-overclaims commit, plus the FPS lane's
 packet). `P4_STANDARD_STATUS.md`'s "REPAIR round 3 complete" describes the attempt, not the verdict.
 
 `P4_VERIFIER_PASS` remains unset by this session, per `KNOWN_ISSUES.md` #21.
+
+## 2026-08-07 — GBDT G-4: the verifier's BLOCK still stands, and stages 4–6 cannot run at all
+
+**Verdict: BLOCK. `P4_VERIFIER_PASS` NOT set by this session** (`KNOWN_ISSUES.md` #21 — the gate at
+`run_p4_standard.sh:41` tests only non-emptiness, so setting it would defeat the checkpoint rather
+than pass it). Covariance stages 4–6 are **not** authorized, and G-5 onward is untouched.
+
+**Delegate attempts.** Two read-only lanes per `CLAUDE.md` were tried and neither returned a verdict:
+`claude -p --allowedTools "Read,Grep,Glob,Bash"` on `claude-personal` hit a weekly account limit
+(resets Aug 9), and `codex exec --sandbox read-only` hit a usage limit on `codex-personal` and then,
+on `codex-school`, ran ~2.5 h and wedged in tool-use without emitting its verdict block (killed).
+**No delegate opinion is recorded, and none is claimed.**
+
+**What replaced it is better than a fresh opinion: the ORIGINAL verifier's verdict is committed in
+this repo.** `docs/orchestration/runs/standard-p4-verifier/20260718T182040Z-send-8e4ca3d7.jsonl` is
+the `standard-p4-verifier` session transcript, and its final agent message opens with **`BLOCK`** on
+`74fa362`, with per-defect file:line citations. It confirms the chain is clean in the ways that were
+checked (HEAD == `github/main` == `74fa362`, all 11 commit-owned paths byte-identical, no candidate
+product, no working-tree contamination) and then says: *"Nevertheless, repair-3 does not safely
+authorize construction."*
+
+**Verifier defect 1 re-verified against HEAD in this same turn, and it is still 100% live — stages
+4–6 would CRASH, not merely be unreviewed.** New `KNOWN_ISSUES.md` **#22**. Three mismatches:
+- **Validator CLI.** Driver passes `--active … --support … --merged-dir …`
+  (`run_p4_standard.sh:49-52`); `p4_validate_active_lateral.py:35-39` defines
+  `--candidate --support --manifest --merged-audit --out`, all `required=True`. Two options passed
+  do not exist and three required ones are missing → argparse aborts.
+- **Projector CLI.** Driver passes `--proj` (`run_p4_standard.sh:54`); `p4_project_4d.py:46-49`
+  defines only `--c5 --manifest --out --central-rel`. No `--proj` → argparse aborts.
+- **Nonexistent ROOT key.** Driver names `hCov_std_final5_candidate` (`:50`, `:53`); a repo-wide
+  grep finds that string **only in those two lines**. The builder writes
+  `hCov_stdsyst5d_total_candidate` and `hCov_stdcombined5d_total_candidate`
+  (`p4_build_components.py:159-162`).
+
+So authorizing the token would not produce a candidate covariance — it would write a candidate ROOT
+at stage 4 and then abort at stage 5. **The reason this was never noticed is that `STOP_AFTER`
+defaults to `evidence`**, so the default path stops at stage 2 and stages 4–6 have never executed.
+Today's preflight ran cleanly for exactly that reason. An unexecuted fail-closed path is an untested
+one — BEN-040's lesson, one lane over.
+
+**Scope consequence.** G-4 is not a checkpoint to walk through; it is an unstarted repair round
+scoped by the six items in `docs/orchestration/followup-agent-A-standard-05.md`, of which defect 1
+alone also requires re-ordering the stages (merged audit → unfold → endpoint evidence) and updating
+`AGENT_A_HANDOFF.md:95` to the same executable contract. Repairing only the flag names would give a
+chain that runs and is still wrong. Recorded as BEN-043 and `KNOWN_ISSUES.md` #22.
