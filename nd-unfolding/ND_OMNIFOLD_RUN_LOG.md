@@ -3677,3 +3677,29 @@ scoped by the six items in `docs/orchestration/followup-agent-A-standard-05.md`,
 alone also requires re-ordering the stages (merged audit → unfold → endpoint evidence) and updating
 `AGENT_A_HANDOFF.md:95` to the same executable contract. Repairing only the flag names would give a
 chain that runs and is still wrong. Recorded as BEN-043 and `KNOWN_ISSUES.md` #22.
+
+## 2026-08-07 — Re-running evidence re-attributes the endpoints to newer code (KNOWN_ISSUES #23)
+
+Noticed by diffing the tracked `p4_standard_manifest.json` after the (idempotent) preflight rewrote
+it. **Every physics binding was byte-identical** — `central5d_sha256`, `central4d_sha256`,
+`mask5d_hash`, `mask4d_hash`, `config_hash` `5efd31a4…`, `endpoint_sha256`, `axis_edges`. So the
+regeneration was numerically a no-op, which is the reassuring half and is also why it would be easy
+to wave through.
+
+The provenance half moved: `binary_sha256` `6b60fc51…` → `61d7dfbf…` (mtime +290,733 s ≈ 3.4 days),
+`source_blobs.unfold` `7b65ebcf…` → `dc74c38f…`, `source_blobs.launcher` `559bc3fb…` → `f2a49e7d…`,
+and their `source_commits`. Structural, not a race: `p4_evidence.py:150-151` hashes the C++ binary as
+it is on disk at run time, and `:137-141` hash the **working-tree** copy of each source path. Neither
+is tied to the artifact being described, so a manifest regenerated today asserts today's driver blob
+and today's binary next to `endpoint_sha256` values for ROOTs produced on 2026-07-18 by the *older*
+driver — a producer claim that is demonstrably false.
+
+Nothing is corrupted and no quoted number moves. But this is the standing verifier's **defect 3**
+("regenerate evidence only from exact committed blobs … record the commit containing each blob")
+observed live, and an attestation built on the manifest would inherit the mis-attribution.
+
+**Action taken:** the regeneration was **reverted** on the cluster (`git checkout --` on that one
+tracked file) so the committed manifest still records the 07-18 producers, and the cluster tree is
+back to 0 tracked-dirty — it is shared with a live concurrent lane and must not be left dirty. A copy
+is preserved at `docs/orchestration/state/p4-standard-attestation/p4_standard_manifest-20260718-preserved.json`.
+No hash was hand-edited and no tolerance was touched.
