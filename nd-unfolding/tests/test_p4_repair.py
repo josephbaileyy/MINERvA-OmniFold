@@ -662,6 +662,37 @@ class Repair4CandidateProvenance(unittest.TestCase):
         # and the manifest publication is atomic
         self.assertIn("tmp_manifest", code)
 
+    def test_validator_checks_the_audit_it_loads(self):
+        """D3e: the merged-audit JSON was loaded and used only for its ten SHA values; every
+        census, completeness and migration field it exists to carry was ignored."""
+        src = (self.ND / "p4_validate_active_lateral.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        for tok in ("band_meta", "idx_meta", "tree_entries", "selection_migration_abs",
+                    "merged_audit_census_and_migration"):
+            self.assertIn(tok, code, f"validator still ignores {tok}")
+
+    def test_validator_binds_the_component_manifest(self):
+        """D4f: candidate and component provenance were separable -- the validator never opened
+        the manifest the builder wrote beside the candidate."""
+        src = (self.ND / "p4_validate_active_lateral.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("std_component_manifest.json", code)
+        self.assertIn("component manifest does not describe THIS candidate", code)
+        self.assertIn("component_manifest_bound", code)
+
+    def test_validator_recomputes_the_full_total_identity(self):
+        """D4f: the manifest asserted `pure_addition` as a boolean; the validator now proves
+        it from the candidate's own contents."""
+        src = (self.ND / "p4_validate_active_lateral.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("combined_minus_syst_is_psd", code)
+        self.assertIn("resid = Ccomb - Csyst", code)
+
+    def test_validator_uses_the_shared_key_constants(self):
+        src = (self.ND / "p4_validate_active_lateral.py").read_text()
+        self.assertIn("P.CANDIDATE_TOTAL_KEY", src)
+        self.assertIn("P.CANDIDATE_SYST_KEY", src)
+
     def test_builder_key_inventory_matches_what_it_writes(self):
         src = (self.ND / "p4_build_components.py").read_text()
         for tok in ("P.candidate_band_key(b)", "P.CANDIDATE_ACTIVE_TOTAL_KEY",

@@ -62,6 +62,58 @@ def main():
                   "merged SHA256 mismatch between manifest and merged-audit receipt")
         out["gates"].append("merged_inseparability")
 
+        # REPAIR-4 (defect 3e): the merged-audit JSON was LOADED and then used only for its ten
+        # SHA values. Every census, completeness and migration field it carries -- the evidence
+        # the audit exists to produce -- was ignored, so a validator PASS said nothing about
+        # whether the endpoints were the declared ones or behaved as declared.
+        NONZERO_MIG = {"BeamAngleX", "BeamAngleY"}
+        ZERO_SEL = {"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"}
+        for b in P.BANDS:
+            for ep in P.ENDPOINTS:
+                t = f"{b}_{ep}"
+                r = aud.get("merged", {}).get(t)
+                P.require(r is not None, f"merged-audit has no entry for {t}")
+                P.require(r.get("band_meta") == b,
+                          f"merged-audit {t} band identity {r.get('band_meta')!r} != {b}")
+                idx = r.get("idx_meta")
+                P.require(idx is not None and int(float(idx)) == int(ep),
+                          f"merged-audit {t} endpoint INDEX {idx!r} != {ep}")
+                te = r.get("tree_entries") or {}
+                P.require(te and all(int(v) > 0 for v in te.values()),
+                          f"merged-audit {t} has an empty tree")
+                P.require(int(te.get("mc_signal_reco", -1)) == int(te.get("mc_truth_denom", -2)),
+                          f"merged-audit {t} completeness: signal_reco != truth_denom")
+                sm = r.get("selection_migration_abs")
+                P.require(sm is not None, f"merged-audit {t} has no migration census")
+                if b in NONZERO_MIG:
+                    P.require(int(sm) > 0, f"merged-audit {t} expected NONZERO migration, got {sm}")
+                else:
+                    P.require(b in ZERO_SEL, f"merged-audit {t} band {b} in neither migration set")
+                    P.require(int(sm) == 0,
+                              f"merged-audit {t} is bin-migration-only but migrated {sm}")
+        out["gates"].append("merged_audit_census_and_migration")
+
+        # D4f: bind the component manifest the builder wrote next to this candidate, and prove
+        # it describes THIS file. Previously the validator never opened it, so candidate and
+        # component provenance were separable -- either could be swapped without detection.
+        comp_path = os.path.join(os.path.dirname(os.path.abspath(a.candidate)),
+                                 "std_component_manifest.json")
+        P.require(os.path.exists(comp_path),
+                  f"component manifest not found beside the candidate ({comp_path})")
+        comp = json.load(open(comp_path))
+        P.require(comp.get("candidate_sha256") == out["candidate_sha256"],
+                  "component manifest does not describe THIS candidate (sha256 mismatch)")
+        P.require(comp.get("identities", {}).get("pure_addition"),
+                  "component manifest is not pure-addition")
+        P.require(comp.get("reported_mask_hash") == man.get("mask5d_hash"),
+                  "component manifest reported-mask hash != evidence manifest")
+        for k in comp.get("candidate_keys", []):
+            P.require(_th2(a.candidate, k) is not None,
+                      f"component manifest claims key {k} which the candidate does not contain")
+        out["component_manifest"] = comp_path
+        out["component_manifest_sha256"] = P.sha256_file(comp_path)
+        out["gates"].append("component_manifest_bound")
+
         active = {b: _th2(a.candidate, f"hCov_active5d_{b}") for b in P.BANDS}
         active = {b: c for b, c in active.items() if c is not None}
         P.require_exact_bands(active); out["gates"].append("exact_5_active_bands")
@@ -70,9 +122,20 @@ def main():
         P.require(active_total is not None, "candidate active-only total missing")
         out["active_only_sum_relerr"] = P.check_component_sum(active_total, active)
         out["gates"].append("active_total_eq_sum5")
-        for key in ("hCov_active5d_total", "hCov_stdsyst5d_total_candidate", "hCov_stdcombined5d_total_candidate"):
+        for key in (P.CANDIDATE_ACTIVE_TOTAL_KEY, P.CANDIDATE_SYST_KEY, P.CANDIDATE_TOTAL_KEY):
             P.check_symmetric_psd(_th2(a.candidate, key))
         out["gates"].append("symmetric_psd")
+        # D4f: RECOMPUTE the full-total identity rather than trusting the manifest's boolean.
+        # C_combined = C_syst + C_stat + C_ML, so the residual must itself be a covariance:
+        # symmetric and PSD. A candidate whose combined total was not built by pure addition
+        # from its own C_syst fails here, using only what is inside the candidate file.
+        Csyst = _th2(a.candidate, P.CANDIDATE_SYST_KEY)
+        Ccomb = _th2(a.candidate, P.CANDIDATE_TOTAL_KEY)
+        resid = Ccomb - Csyst
+        P.check_symmetric_psd(resid)
+        out["combined_minus_syst_min_eig_ratio"] = float(
+            np.min(np.linalg.eigvalsh((resid + resid.T) / 2.0)) / max(1e-300, np.abs(resid).max()))
+        out["gates"].append("combined_minus_syst_is_psd")
         support_bands = {b: _th2(a.support, f"hCov_universe5d_{b}") for b in P.BANDS}
         P.require(all(support_bands[b] is not None for b in P.BANDS), "support family lateral block incomplete")
         out["support_comparison"] = P.check_support_comparison(active_total, sum(support_bands[b] for b in P.BANDS))
