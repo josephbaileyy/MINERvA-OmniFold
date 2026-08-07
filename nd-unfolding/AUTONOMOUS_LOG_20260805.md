@@ -709,3 +709,26 @@ on completion. This is the same family as BEN-035 — a measurement that cannot 
 Both concurrent sessions are visibly active: three `pwcprobe` jobs queued (`56431649/50/51` — the D2
 under-fitting probes, which is exactly the §4 handover), `fpsActLa` (`56431823`) and `d2_suite` (`56431780`)
 running, and the k=5 32-seed arm `b1nit5b` has started. Nothing in my lane changed; no mail (nothing finished).
+
+### Decision: stop timing this job by mtime — count iterations instead
+
+`56415634` is at 2:22:57 and has reached **iteration 2 of 3** (`iter2_step1` present), so the nominal training
+is about two-thirds done with the floor repeat to follow. That sits well inside the 12 h wall.
+
+I am dropping the mtime-based timing entirely, because it misled me twice in two cycles. Last cycle I
+corrected "steps are accelerating" after finding `iter1_step1` had still been growing when I read it. This
+cycle `iter1_step2` moved **19:16 → 19:27** on its own, so the refinement I substituted — "`step2` completions
+are the real boundaries" — is *also* unsound: Keras keeps touching a step's weights file until the step truly
+ends, and mtime cannot distinguish "last checkpoint flush" from "done". Even inferring a boundary from the
+*next* step's appearance fails, because that file's mtime creeps too, so it dates the last write rather than
+the creation.
+
+**The decision: report the coarse, robust quantity (which iteration is present, against elapsed and wall) and
+stop deriving per-step minutes from filesystem timestamps.** A projection built on an unreliable instrument is
+worse than a coarse one, because it carries false precision — and I published false precision twice. If this
+job ever genuinely needs per-step timing, the right fix is a producer-written completion marker, not sharper
+forensics on mtimes.
+
+Concurrent sessions active and on task: `pwcprobe` `56431649`/`56431650` running with `56431651` queued (the D2
+under-fitting probes), `fpsActLa` `56431823` and `d2_suite` `56431780` running, `b1nit5b` at 31:53. Nothing in
+my lane changed; nothing finished; no mail.
