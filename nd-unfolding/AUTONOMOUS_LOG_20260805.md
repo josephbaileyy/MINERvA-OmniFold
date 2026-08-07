@@ -1142,3 +1142,35 @@ committed consumer does, and a wrong preprocessing choice would produce a plausi
 headline failure. Plan Step 5 (`values.tex`) is gated on the five-band laterals another session owns; Step 3 is
 moot for the GBDT lane and needs the PET budget build for the PET lane. No mail: nothing finished, and the last
 three cycles each carried a real result, so another would be noise.
+
+### Standing down — lane complete pending five decisions, all of which are Joseph's
+
+Second consecutive cycle with nothing finished and nothing actionable, so this is the brief's "verify quietly,
+mail a short status, and stop". `56431651` (ep32) is still PENDING after ~13.5h at priority 67996 with no start
+estimate; only the cron is otherwise queued; no other session has pushed since `2bb1d21`.
+
+Mailed a **consolidated decision list** rather than another report. That is worth one mail because the five
+open items are currently spread across five separate mails, and a list of what is waiting on him is new
+information even though each item is not:
+
+1. **The nominal's normalization failure, where I have run out of safe diagnostics.** Everything cheap is done
+   and everything cheap came back negative — bookkeeping, global rescale, naive inversion, dilution, saturation
+   all excluded; deterministic; monotonic in acceptance and worst where acceptance is highest. The live
+   hypothesis needs new code on the reco leg, which I will not hand-roll unreviewed on the headline product.
+2. **The D2 criterion.** Four independent lines say the shortfall is neither optimization, convergence nor
+   noise. I think the criterion is the defect, and I have said so once while noting that "never raise a
+   tolerance to make a check pass" means I should not press it — a redesign is his call, not something to argue
+   into.
+3. **Seed-ensembling**, untested, ~2 GPU-h, sequenced after (1) because it prices a remedy for an unidentified
+   cause.
+4. **`values.tex`** — corrected numbers ready, macros untouched, gated on another session's laterals.
+5. **`combine_cstat_bkgsub_100rep.py`** untracked, so its 5 tests cannot land without either tracking
+   unreviewed code or guaranteeing a collection error.
+
+**Deliberately not doing:** running the extraction on a nominal that fails its own normalization gate. It would
+produce a cross section knowingly ~34% low in the reco-visible region, and creating that artifact invites a
+later reader to mistake it for a result. The absence of that file is the correct state.
+
+ep32's watch is armed, so its result reaches Joseph from Slurm cron whether or not this session is alive — which
+is the property that has already justified itself twice today, once when my ssh certificate expired and once
+when Slurm blipped. Thresholds untouched throughout.
