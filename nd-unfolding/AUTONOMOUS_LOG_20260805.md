@@ -1209,3 +1209,41 @@ decisive, because it records whether something *else* had been reaching Slurm al
 `56431651` (ep32) is confirmed still **PENDING**, priority 68121, submitted 2026-08-06T18:54:02 — ~15h queued
 with no start estimate. Watch armed, `unreliable=0`, so its result still arrives from cron regardless of this
 session. Nothing finished; no mail.
+
+### Memo items 0 and 1 (free check): checkpoints preserved; the leg mismatch is real but not the whole deficit
+
+**Item 0 DONE — all checkpoints off scratch.** `w_nominal` and `w_floor` (12 files each: 3 iterations × 2 steps
+× `.pkl`+`.weights.h5`, so both legs and every iteration), plus both weights artifacts and the run logs, copied
+to `/global/cfs/cdirs/m3246/josephrb/fullevent-nominal-checkpoints-20260807`. **28 files re-hashed on both sides,
+0 mismatches**, 31 MB. `iter2_step1` and `iter1_step2` — the pair the corrected diagnostic needs — confirmed
+present. One self-inflicted scare: `du` initially reported **11K** while the per-file listing showed ~987 KB
+files. It was a stale reading taken while CFS was still flushing; byte totals and a re-run both give 31M. I
+had also hidden `cp` stderr with `2>/dev/null` on the artifact copies, which is exactly the habit I flagged
+earlier today — the discrepancy is what forced me to check rather than assume.
+
+**Item 1 free check: it did NOT delete the step-1 work, but it priced a real effect.**
+
+    mean_w_truth(push | pass_truth) = 0.888234
+    mean_w_reco (push | pass_reco)  = 0.746483
+    ratio truth-leg / reco-leg      = 1.189891
+
+The leg choice is worth **~19%** of the 34% gap — a genuine contribution, and the memo's mechanism is real. But
+the truth leg is *also* far below R, so by the reading I predeclared before running ("both short → the deficit
+is upstream of the leg choice"), the step-1 harness is still required.
+
+**A caveat on the memo's framing, flagged rather than adopted:** comparing the truth-leg mean to R is plausibly a
+**category error**. R is a reco-space quantity — background-subtracted data yield over MC reco — and nothing
+requires the *truth*-weighted mean of push to equal it. That is structurally the same trap the memo itself warns
+about for `iter2_step1` (an incremental factor compared against a cumulative target). The defensible number is
+the inter-leg **ratio** 1.1899; "the truth leg is 21% short of R" should not be quoted as a defect.
+
+**Two memo predictions checked, one confirmed exactly and one numerically void.** Stored `push` is **exactly
+1.0** on truth-failing rows — 72/72, `max|push−1| = 0` — which is Gate B part (ii) satisfied in advance. But
+only **72** of 2,000,000 rows fail truth, so the "deficit is worse than 0.7465" correction is negligible:
+`f = 0.000089` gives 0.746461 against 0.746483, and the direct computation agrees with the memo's
+`(ratio−f)/(1−f)` to 2e-16. Correct in principle, irrelevant in magnitude here.
+
+**And it corrects an error of mine.** My earlier push anatomy split on `pass_reco` and reported off-acceptance
+pushes as *near* 1 rather than exactly 1. The pinning is on `pass_truth` — a different mask — and with 99.996%
+of rows passing truth, the two masks behave completely differently. Tool committed as
+`nd-unfolding/pet/leg_mismatch.py`.
