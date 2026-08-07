@@ -573,3 +573,48 @@ stderr on the adoption is benign — sklearn `X does not have valid feature name
 
 `56415634` (PET niter=3): still PENDING. `b1nit5a` RUNNING at 1:15, `b1nit5b` queued — the concurrent
 session's k=5 bookkeeping arms.
+
+### J28 adopted on 160/160 — the corrected total is ~9% SMALLER, and the mechanism explains why
+
+**The PET nominal `56415634` is RUNNING** — started 17:27:05 after ~5h20m queued, healthy by CPU time and
+artifacts rather than log growth (AveCPU 00:24:44 tracking elapsed, `w_nominal/` created 17:35). Watch armed.
+
+**Adoption `56429334` COMPLETE** (31m23s, rc=0) on the repaired ensemble. Its fail-closed gate confirmed the
+mixed-provenance split verbatim before doing any work, so only the pre-J28 half was rescaled. The corrected
+ROOT reads back `n_throws = 160`.
+
+    full-160, like-for-like (the 122/160 morning pass could not give this)
+    sqrt_tr_unified        4.4607819710748654e-38 -> 4.443673650575504e-38    -0.38%
+    joint_mean_shift_norm  1.654393237996853e-38  -> 1.878696733368378e-38   +13.6%
+
+    adopted            old          new        factor   median frac/bin   bins g>1
+    mean-centered   4.3455e-38   5.2600e-38   x1.210   13.43% -> 13.61%   2805 (26.2%), median 1.000
+    CV-centered     4.3455e-38   5.6609e-38   x1.303   13.43% -> 14.09%   6526 (61.0%), median 1.047
+
+**The corrected totals are ~9% SMALLER than the quoted 5.81e-38 / 6.24e-38 — and that is the same fact as the
+Flux block growing 4.2×, not a contradiction of it.** Correcting the flux raised the block-sum toward a nearly
+unchanged unified total, which drove the nonlinearity inflation `g` down toward 1. Since the adopted
+covariance is `lateral+stat+ML + G C_vert G`, a smaller `G` inflates the vertical block less. The old value
+was overstated *because* the understated Flux block had inflated `g`.
+
+Recorded in all three canonical homes with the quarantine notice **retained and the numbers replaced**, which
+is the only sanctioned way to lift it. `values.tex` deliberately untouched: the section still reads
+"CANDIDATE; final lateral replacement pending", and that is a publication decision.
+
+**The concurrent laterals session corrected how far off that is, and it is much closer than the prose said.**
+Their BEN-036: "full five-band coverage remains the publication gate" reads as a 120-task ~700 GB campaign,
+but that campaign is **already complete on disk** (120/120 P3F and P3S, ten 74.8 GB omnifiles, receipt
+re-verified). The real blocker is a **footing** mismatch — the FPS endpoint unfolds ran `--bkg-mode=purity`
+against a `negweight-refined` publication footing — fixable by re-running only the unfolds, ~3h, reusing all
+748 GB. Folded into my ledger entry, because it changes the answer to "when can `values.tex` move?" from
+*a campaign* to *hours*.
+
+**A rebase conflict, and my confirmation check failed a third time.** The laterals session and I both appended
+to `ND_OMNIFOLD_RUN_LOG.md` and `CORRECTED_UQ_PRODUCTION_STATUS.md`; resolved by keeping **both** sides,
+theirs first so the files stay chronological. The instructive part: my
+`[ HEAD = origin/main ] && echo PUSH CONFIRMED` printed CONFIRMED **while the push was rejected and my commit
+sat unapplied in the conflicted rebase** — because a conflicted rebase checks `HEAD` out at the upstream, so
+the hashes are equal exactly in the failure case. The check was anti-correlated with success. Amended onto
+**BEN-035** with the general rule: before trusting a check, ask what it prints when the thing fails. The
+working form asserts three things — no rebase in progress, the commit reachable from `origin/main`, and
+`HEAD == origin/main`.
