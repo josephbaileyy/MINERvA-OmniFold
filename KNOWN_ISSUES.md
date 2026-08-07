@@ -209,6 +209,40 @@ the way `train_fullevent_nominal.py` stamps `seed_policy` into its weights artif
 without that stamp is unclassifiable from the artifact the moment the estimator moves, and the
 estimator has now moved twice (full-event schema 2026-08-01, `niter` 2026-08-06).
 
+## 25 tests ran only from purgeable scratch, and one still does
+
+Found 2026-08-07 while working plan Step 4. The cluster suite collected **764** tests against the local
+tree's 710, and part of that gap was not path-dependent skips: **two test files existed only on
+`/pscratch`, in neither tree's git**.
+
+- `nd-unfolding/tests/test_uq_remediation.py` — **20 tests**, including the cluster suite's single
+  remaining failure. Now **tracked** (and its fixture fixed, below).
+- `nd-unfolding/tests/test_cstat_100rep.py` — **5 tests**, **still untracked**, because it imports
+  `combine_cstat_bkgsub_100rep`, and **that module is untracked too**. Committing the test alone would
+  guarantee a *collection error* (`ModuleNotFoundError` interrupts the whole run), which is strictly worse
+  than a failing test. Committing both would import unreviewed code into the tracked tree. Left for a
+  decision rather than resolved unilaterally.
+
+Why this matters beyond tidiness: 25 tests enforcing campaign invariants were one `/pscratch` purge from
+vanishing, and nothing in git referenced them, so a fresh clone silently ran 25 fewer checks than the
+cluster did. This is the same failure that cost 38 unified throws and left two production launchers
+untracked until 2026-08-06 — a purgeable filesystem holding load-bearing artifacts nothing else records.
+**When local and cluster collection counts disagree, resolve the difference to specific files before
+assuming it is environmental.**
+
+## The J28 combine guard was rejecting a stale fixture, not being over-strict
+
+`test_uq_remediation.py::UnifiedThrowTests::test_synthetic_slab_and_block_combine_end_to_end` failed on both
+trees because its synthetic slabs carried no `flux_normalized` stamp, and `081ae4a` correctly made
+`--combine` refuse unstamped slabs (`unified_throw_cov.py:332,372`). Plan Step 4 framed the question as
+*fixture-stale versus guard-over-strict*; the answer is **fixture-stale**.
+
+A fixture built inside the test has no flux normalisation to get wrong — there is no `Φ_CV` division to
+correct — so it is normalised by construction and the stamp states that. **Stamping loses no coverage**: the
+rejection behaviour is separately asserted by
+`test_flux_universe_fix.CombineRefusesUnstampedSlabs::test_predicate_accepts_only_a_stamped_slab`, verified
+still passing after the change. The guard stays fail-closed, which is the point of it.
+
 ## J28's scope misses a sixth site: `eavailW_covariance.py` divides every flux universe by the CV flux
 
 The J28 fix commit `081ae4a` touches **12 files and `eavailW_covariance.py` is not among them**, and
