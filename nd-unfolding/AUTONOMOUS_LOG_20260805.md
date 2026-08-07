@@ -1798,3 +1798,33 @@ caching (`cached = i > start`) bought no measurable speedup. Remaining work proj
 **~21:10-21:20Z** against a 00:52Z wall, ~3.5h margin.
 
 No mail: not a completion, not a verdict, not a blocking decision.
+
+### 19:50Z — the RSS rule CLOSES OUT unfired, and the stepwise reading I committed to beat the linear one
+
+ep32 is **5 of 6 trainings done** at 5:57:29 wall; the final training (`iter2_step2`) is in flight since
+12:43:32 local. `iter2_step1.pkl` took 59m23s, against 59m34s for iteration 1 and ~58 min for iteration 0 —
+the per-training figure has now held three times.
+
+**The predeclared rule is closed, unfired.** Its window was "> 28 GiB before 6h elapsed"; the job started
+13:52:11Z so the boundary is 19:52:11Z, and this is the last sample inside it:
+
+    MaxRSS  19.22 GiB   = 34.2% of the 56.12 GiB limit   at 5:57:29 elapsed
+    AveRSS  17.89 GiB
+    threshold 28 GiB before 6h -> NOT REACHED. Rule closed without firing.
+
+**And it discriminated between the two readings I wrote down rather than leaving it ambiguous.** At 17:50Z I
+recorded both: *"Extrapolating linearly here would predict ~24 GiB by the wall; the stepwise reading
+predicts ~20 GiB with one and a half iterations left."* Measured now, with the last training running:
+**19.22 GiB**. The stepwise reading is right and the linear one would have overstated by ~25%. That matters
+beyond this job — it is the third time this campaign that a linear extrapolation of a plateauing quantity
+would have driven an unnecessary escalation, and the first time I had both predictions on the record in
+advance to settle it.
+
+Growth remains at training transitions rather than in wall time: 13.84 flat -> 14.03 -> 16.32 -> 16.99 ->
+19.22 GiB, with each step landing at a step-1/step-2 or iteration boundary.
+
+**Verdict is imminent.** The final training projects to ~21:08Z, then the driver computes the spectra and
+writes the report, artifact and the preflight cross-check — so a mailable outcome in roughly 1h20m, against
+a 00:52Z wall. When it lands I compare against the pre-registration committed while it was still PENDING:
+`E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in [0.49, 0.537],
+verdict FAIL — with the falsifiers already written down.
