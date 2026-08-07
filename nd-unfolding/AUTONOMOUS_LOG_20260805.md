@@ -538,3 +538,38 @@ Three watches now armed: nominal, regen array, adoption.
 **Cluster verification complete:** verifier **ALL BINDINGS INTACT**, suite **763 passed / 1 failed / 764
 collected**, the single failure being the known J28 fixture (`test_uq_remediation.py`) that plan Step 4
 defers on purpose.
+
+### The ensemble is whole again: 160/160, and the adoption chain fired on its own
+
+**Regeneration `56427580` COMPLETE** — all 10 tasks `COMPLETED` at exit `0:0`, elapsed 45m41s to 1h25m47s.
+`scan_slabs.py` now reports **160 distinct throw ids, 0 missing**. The 38 throws lost to a scratch purge are
+back, and because `unified_throw_cov.py:222-223` seeds per global throw index they are the *same* draws the
+adopted covariance used — verified earlier by the matching `flux_u` values, not assumed.
+
+**The `--dependency=afterok:56427580` chain fired without me.** `56429334` started on its own and is
+running. Three things it confirms, each of which could have gone wrong:
+
+- **The fail-closed gate passed and validated my prediction exactly**: `[gate] 160/160 throws present;
+  unstamped 0-29, stamped 30-39 -- split as expected`. The mixed-provenance split I derived from
+  `unified_throw_cov.py:255` was right, so the adoption is operating on the ensemble I thought it was.
+- **Only the pre-J28 half was rescaled** — `[stage] 30 pre-J28 throw slabs staged`, `throws=120 corrected
+  rows=120`. The 40 natively-corrected throws were left alone, avoiding the double-correction.
+- **The union is 40 slabs**, and it is now inside the combine (`[bank] 12 knob bands, 100 flux universes,
+  32849103 events`), which is the expensive step.
+
+**Do not read the rescale block in that log as the final answer.** It reports the **120-throw pre-fix half**
+(`sqrt_tr_unified` −1.00%, `blocksum` +10.19%, `flux_block` +316.83%, `mean_shift` +24.45%, `g_mean` −2.69%),
+not the corrected 160-throw ensemble. The full-160 numbers come out of the combine and the two adopt runs.
+Worth noting the block-unit figures (+10.19%, +316.83%) are **identical** to the 122-throw pass, which is
+expected and a small consistency check: the 36 block slabs are the same files either way, since block units
+do not depend on the throw count.
+
+**The durable notification worked end to end.** `uthrow-regen-56427580b` shows `fired`, so the throw-
+completeness mail went out from a Slurm cron job rather than from this session — the property that mattered
+when my ssh certificate expired earlier today. The superseded watch (`...-56427580`, armed with the wrong
+notifier) correctly shows `disarmed`. `j28-adopt-56429334` and `nominal-56415634` remain armed.
+
+stderr on the adoption is benign — sklearn `X does not have valid feature names` warnings from LightGBM.
+
+`56415634` (PET niter=3): still PENDING. `b1nit5a` RUNNING at 1:15, `b1nit5b` queued — the concurrent
+session's k=5 bookkeeping arms.
