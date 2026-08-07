@@ -61,6 +61,10 @@ class MergedAudit(unittest.TestCase):
              "nTruthOnlyMisses": 66989,
              "census": {"TruthEntrants": 0, "TruthExits": 0,
                         "RecoEntrants": 21, "RecoExits": 21},
+             # repair-6: band + census are now REQUIRED, because making the policy comparison
+             # conditional on them let every caller opt out by omission.
+             "band": "BeamAngleX",
+             "selection_migration_abs": 4792,
              "migration_policy": "active-universe selection-complete"}
         m.update(ov); return m
 
@@ -75,6 +79,33 @@ class MergedAudit(unittest.TestCase):
     def test_missing_migration_policy_fails(self):
         with self.assertRaises(P4GateError):
             P.check_merged_metadata(self._meta(migration_policy=""))
+
+    def test_migration_fields_are_required_not_optional(self):
+        """repair-6: omitting band/census used to silently fall back to presence-only."""
+        for drop in ("band", "selection_migration_abs"):
+            m = self._meta()
+            del m[drop]
+            with self.assertRaises(P4GateError, msg=f"omitting {drop} was accepted"):
+                P.check_merged_metadata(m)
+
+    def test_native_miss_count_is_compared_not_merely_present(self):
+        """repair-6: zero or inconsistent values used to pass."""
+        with self.assertRaises(P4GateError):
+            P.check_merged_metadata(self._meta(nTruthOnlyMisses=0, hasTruthOnlyMisses=0))
+        with self.assertRaises(P4GateError):          # flag/count disagree
+            P.check_merged_metadata(self._meta(nTruthOnlyMisses=0, hasTruthOnlyMisses=1))
+        with self.assertRaises(P4GateError):
+            P.check_merged_metadata(self._meta(hasTruthOnlyMisses=7))
+
+    def test_zero_migration_band_may_not_claim_selection_completeness(self):
+        """repair-6: the zero side never validated the policy TEXT."""
+        with self.assertRaises(P4GateError):
+            P.check_merged_metadata(self._meta(
+                band="MuonResolution", selection_migration_abs=0,
+                migration_policy="active-universe selection-complete"))
+        self.assertTrue(P.check_merged_metadata(self._meta(
+            band="MuonResolution", selection_migration_abs=0,
+            migration_policy="bin-migration only")))
 
     def test_completeness_equality_and_empty_tree_and_pot(self):
         with self.assertRaises(P4GateError):     # signal_reco != truth_denom

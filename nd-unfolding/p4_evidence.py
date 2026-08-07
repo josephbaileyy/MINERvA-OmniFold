@@ -321,6 +321,16 @@ json.dump(man, open(f"{EVID}/p4_standard_manifest.json", "w"), indent=2)
 json.dump({"endpoints": ep_ev}, open(f"{EVID}/p4_endpoint_evidence.json", "w"), indent=2)
 json.dump({"merged": maudit}, open(f"{EVID}/p4_merged_audit.json", "w"), indent=2)
 
+# REPAIR-6: these five were computed, PRINTED as MATCH/DIFF, and never enforced -- a grep for
+# need(/require( on verifier_crosscheck returned zero. All five could read DIFF and this stage
+# still exited 0 with EVIDENCE-COMPLETE. They are the independently-observed bindings the whole
+# evidence stage exists to confirm, so printing them was the entire check. Found by the
+# mechanical sweep (REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md §A), on nobody's prior list.
+for _k, _v in man["verifier_crosscheck"].items():
+    need(_v, f"verifier cross-check {_k} is DIFF: recomputed binding disagrees with the "
+             f"independently observed value. This is the check the evidence stage exists to "
+             f"perform; it may not be reported and passed over.")
+
 print("=== recomputed vs observed ===")
 for k, v in man["verifier_crosscheck"].items():
     print(f"  {k}: {'MATCH' if v else 'DIFF'}")

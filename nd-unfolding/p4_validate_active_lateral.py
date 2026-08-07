@@ -166,10 +166,37 @@ def main():
         out["full_total_identity_relerr"] = float(
             P.check_full_total_identity(Ccomb, Csyst, C_stat, C_ml, 1e-9))
         out["gates"].append("full_total_identity_recomputed")
+
+        # REPAIR-6: C_syst itself was never recomputed. The builder recorded
+        # C_syst_eq_retained_plus_active_relerr and NEITHER consumer read it, so a wrong-but-PSD
+        # C_syst satisfying C_combined = C_syst + C_stat + C_ML passed every gate. It is
+        # recomputable because repair-4 (4a) started persisting the retained components into the
+        # candidate -- which made the omission worse, not better.
+        retained_keys = [k for k in comp.get("candidate_keys", [])
+                         if k.startswith("hCov_retained5d_")]
+        P.require(retained_keys,
+                  "candidate persists no retained components, so C_syst cannot be recomputed "
+                  "(pre-repair-4 candidate?)")
+        retained_sum = None
+        for k in retained_keys:
+            blk = _th2(a.candidate, k)
+            P.require(blk is not None, f"candidate is missing declared retained component {k}")
+            retained_sum = blk if retained_sum is None else retained_sum + blk
+        active_total_blk = _th2(a.candidate, P.CANDIDATE_ACTIVE_TOTAL_KEY)
+        out["c_syst_identity_relerr"] = float(
+            P.prove_identity(Csyst, retained_sum + active_total_blk, 1e-9,
+                             "C_syst == sum(retained) + active_total"))
+        out["n_retained_components"] = len(retained_keys)
+        out["gates"].append("c_syst_recomputed_from_components")
         support_bands = {b: _th2(a.support, f"hCov_universe5d_{b}") for b in P.BANDS}
         P.require(all(support_bands[b] is not None for b in P.BANDS), "support family lateral block incomplete")
         out["support_comparison"] = P.check_support_comparison(active_total, sum(support_bands[b] for b in P.BANDS))
-        out["gates"].append("complete_support_comparison")
+        # REPAIR-6: relabelled. The check compares TRACES and bounds nothing -- any finite ratio
+        # passes -- so calling it "complete" claimed more than it delivers, and BEN-043 rule 3
+        # adds that an aggregate cannot see a per-bin disagreement that preserves the trace.
+        # The ratio stays as a recorded DIAGNOSTIC; the gate name no longer asserts a comparison.
+        out["support_ratio_is_diagnostic_not_bounded"] = True
+        out["gates"].append("support_trace_ratio_recorded")
         out["result"] = "PASS"
     except P.P4GateError as e:
         out["error"] = str(e); json.dump(out, open(a.out, "w"), indent=2)

@@ -92,6 +92,33 @@ assumed correct.
 
 ---
 
+## E-bis. A THIRD pattern, found while fixing the first two: **a gate nothing calls**
+
+`p4_lib.check_merged_metadata` is a complete, well-tested fail-closed gate — tree completeness,
+POT positivity, census counters, native-miss metadata, migration policy — and a repo-wide grep
+for callers returns **only its own tests**. `p4_evidence.py` re-implements the same checks
+inline with `need()` instead of invoking it.
+
+So it has been exercised solely by fixtures since it was written. Everything repair-5 and
+repair-6 "fixed" in it — the migration-policy comparison, the native-miss comparison — improved
+a function **that does not run in production**. That is worth stating plainly rather than
+letting the round's diff imply a live repair.
+
+This is a distinct failure mode from the other two and belongs on the shared list:
+
+- Pattern A: *records a value, never checks it.*
+- Pattern B: *names a weak check strongly.*
+- **Pattern C: a gate that is never invoked.** Coverage looks green, the code reads as
+  defence-in-depth, and it protects nothing. It is the natural end state of maintaining a
+  library gate and an inline copy side by side — the inline copy is what runs, the library copy
+  is what gets improved.
+
+**Marked FIX, but deliberately NOT in this round:** collapsing the duplication means changing
+`p4_evidence.py`'s accumulate-`need()` semantics into `require()`-raises, which changes when the
+evidence stage stops and what it reports on a bad input. That is a behavioural change worth its
+own commit and its own verifier pass, not a rider on this one. A detection test would be: assert
+every `check_*`/`require_*` in `p4_lib` has at least one non-test caller.
+
 ## F. The pattern is REPO-WIDE, not this lane's — folding in BEN-043 and BEN-044
 
 Both were found in the **PET lane on the same day**, independently, and both are the same

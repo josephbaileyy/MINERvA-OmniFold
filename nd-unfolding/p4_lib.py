@@ -419,6 +419,11 @@ def check_declared_migration_policy(policy, census_abs, band, nonzero_bands, zer
                 f"selection completeness")
     else:
         require(n == 0, f"{band} is declared bin-migration-only but census is {n}")
+        # REPAIR-6: the zero side never validated the policy TEXT, so a band could migrate zero
+        # events while declaring a selection-complete policy and pass.
+        require("selection" not in policy.lower() or "only" in policy.lower(),
+                f"{band} has zero selection migration but declares policy {policy!r}, which "
+                f"claims selection completeness")
     return True
 
 
@@ -498,8 +503,20 @@ def check_merged_metadata(meta):
     require(da is not None and np.isfinite(da) and da > 0, "merged dataPOT not finite-positive")
     require(te["mc_signal_reco"] == te["mc_truth_denom"],
             f"signal_reco {te['mc_signal_reco']} != truth_denom {te['mc_truth_denom']} (completeness broken)")
-    require(meta.get("hasTruthOnlyMisses") is not None and meta.get("nTruthOnlyMisses") is not None,
-            "native-miss metadata missing")
+    # REPAIR-6: presence-only until now -- zero or mutually inconsistent values passed, though
+    # every real merged file carries a positive count. Repair-5 waived this on the grounds that
+    # no independent expected value existed without a physics read; the verifier was right that
+    # this overstated it. Requiring a positive count and flag/count agreement needs no new
+    # physics and the real files already satisfy it.
+    has_m, n_m = meta.get("hasTruthOnlyMisses"), meta.get("nTruthOnlyMisses")
+    require(has_m is not None and n_m is not None, "native-miss metadata missing")
+    n_m = int(float(n_m)); has_m = int(float(has_m))
+    require(has_m in (0, 1), f"hasTruthOnlyMisses is {has_m}, not a 0/1 flag")
+    require(bool(has_m) == (n_m > 0),
+            f"native-miss flag/count disagree: hasTruthOnlyMisses={has_m} but count={n_m}")
+    require(n_m > 0,
+            f"native-miss count is {n_m}; every real merged endpoint has truth-only misses "
+            f"(AppendTruthOnlyMisses), so zero means the append step did not run")
     cen = meta.get("census", {})
     for k in ("TruthEntrants", "TruthExits", "RecoEntrants", "RecoExits"):
         require(k in cen and cen[k] is not None, f"census counter {k} missing")
@@ -507,14 +524,18 @@ def check_merged_metadata(meta):
     # nothing else -- a declared policy that no consumer ever compared to the observed census,
     # so a merged file could declare any string, or the wrong one, and pass. When the caller
     # supplies the band and census, the declaration is now CHECKED against them.
+    # REPAIR-6: repair-5 made this comparison CONDITIONAL on optional fields, so every caller
+    # that omitted band/census kept the original presence-only behaviour -- a repair you could
+    # opt out of by omission. The fields are now REQUIRED, so the comparison always happens.
     band = meta.get("band")
     census_abs = meta.get("selection_migration_abs")
-    if band is not None and census_abs is not None:
-        check_declared_migration_policy(meta.get("migration_policy"), census_abs, band,
-                                        NONZERO_MIGRATION_BANDS, ZERO_MIGRATION_BANDS)
-    else:
-        require(isinstance(meta.get("migration_policy"), str) and meta["migration_policy"].strip(),
-                "declared migration policy missing")
+    require(band is not None,
+            "merged metadata has no `band`; the declared migration policy cannot be compared to "
+            "the observed census without it, and an uncomparable policy is not a check")
+    require(census_abs is not None,
+            "merged metadata has no `selection_migration_abs`; same reason")
+    check_declared_migration_policy(meta.get("migration_policy"), census_abs, band,
+                                    NONZERO_MIGRATION_BANDS, ZERO_MIGRATION_BANDS)
     return True
 
 
