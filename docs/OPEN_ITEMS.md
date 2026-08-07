@@ -11,6 +11,11 @@ invalidation frontiers, [the publication runbook](PUBLICATION_COMPLETION_RUNBOOK
 assigns the remaining packets, and
 [the post-publication reorganization plan](POST_PUBLICATION_REORG_PLAN.md) gates
 cleanup behind the publication-results freeze tag.
+**Per-lane close-out runbooks** (executable step lists for one lane, scoped so a fresh session does not
+straddle two): [GBDT/scalar close-out](orchestration/RUNBOOK-20260807-gbdt-closeout.md) — P3S,
+P3F-scalar, P4-5D/4D/FPS and their note update, including the footing scope decision that sizes the
+lane by an order of magnitude (`KNOWN_ISSUES.md` #20, BEN-041). **The PET lane has no equivalent
+runbook**; it is blocked on the five decisions below rather than on a step list.
 
 > **Starting a fresh session? Read the latest handoff first:**
 > [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
@@ -71,6 +76,18 @@ not close the literal full-event PET gate below.
   in `VALIDATION_LEDGER.md` ("2026-08-07 selection-complete five-band FPS active
   lateral"). This discharges the lateral precondition only — **the 2026-07-12
   quarantine stands and these scales are not yet quotable.**
+  **What this did NOT do, clarified 2026-08-07 (BEN-041):** the adopted product is the *FPS*
+  covariance (`uq_fps/.../uq_universe_fps_covariance_combined_activelat.root`, 266 reported bins) and
+  it is the **only** `*activelat*` product on scratch. The **5D GBDT covariance is a different object**
+  on a different grid (`p4_lib.GRID_NBINS = 65856`) and remains **CANDIDATE — "final lateral
+  replacement pending"** per its own ledger heading; its P4-5D lateral has not been built. So
+  `standard/` products are regression controls *for the FPS lane* — the sentence above — but they are
+  simultaneously the **intended P4-5D lateral inputs**, and reading them as controls full stop is what
+  hid this. Their state: ten ROOTs dated 2026-07-18, **purity-footed, zero `.done` receipts, produced
+  by the retired `run_active_lateral_unfolds_interactive.sh`** (`KNOWN_ISSUES.md` #20). The canonical
+  six-stage chain `run_p4_standard.sh` exists and is gated on a `P4_VERIFIER_PASS` token. Ordered
+  steps, cost, and the footing scope decision that sizes them:
+  [`orchestration/RUNBOOK-20260807-gbdt-closeout.md`](orchestration/RUNBOOK-20260807-gbdt-closeout.md).
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
