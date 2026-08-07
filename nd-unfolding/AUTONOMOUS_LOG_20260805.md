@@ -618,3 +618,43 @@ the hashes are equal exactly in the failure case. The check was anti-correlated 
 **BEN-035** with the general rule: before trusting a check, ask what it prints when the thing fails. The
 working form asserts three things — no rebase in progress, the commit reachable from `origin/main`, and
 `HEAD == origin/main`.
+
+### Nominal projected safe; and the local/cluster collection gap was not environmental
+
+**`56415634` is healthy and I can now project it.** The per-iteration weight files are the progress
+indicator, not the log (which is block-buffered and frozen at 17:28 — BEN-028 exactly): `iter0_step1` at
+18:02, `iter0_step2` at 18:18, so **iteration 0 took ~50 min**. At `niter=3` that is ~2.5 h per training and
+~5 h for the nominal plus the matched floor repeat, against a **12 h wall** — comfortable, and the earlier
+walltime raise from 8 h to 12 h is vindicated. GPU 50% / 8647 MiB confirms it independently. Its stderr is
+entirely benign TF startup noise, and the persisted policy reads `niter: 3, epochs: 8, batch_size: 512,
+estimator_seed: 42` — the pinned values. Note the 0-byte growth I measured over 60 s is *not* a stall; weights
+are written at the end of each step, so flat periods between writes are expected.
+
+**Plan Step 4 resolved: fixture-stale, not guard-over-strict.** The cluster suite's single failure
+(`test_uq_remediation.py::…test_synthetic_slab_and_block_combine_end_to_end`) reproduces **locally** too, and
+its cause is that the fixture writes synthetic slabs with no `flux_normalized` stamp while `081ae4a` correctly
+made `--combine` refuse unstamped slabs. A fixture built in-test has no flux normalisation to get wrong —
+there is no `Φ_CV` division to correct — so it is normalised by construction and the stamp states that.
+Stamping loses **no** coverage: the rejection behaviour is separately asserted by
+`CombineRefusesUnstampedSlabs::test_predicate_accepts_only_a_stamped_slab`, which I re-ran and confirmed still
+passes. The guard stays fail-closed, which is its whole purpose.
+
+**And the reason that test was invisible locally is worse than the test itself.** The cluster collected 764
+against local 710, and I had been treating that gap as path-dependent skips. Part of it was not:
+**two test files existed only on `/pscratch`, in neither tree's git** —
+`test_uq_remediation.py` (20 tests, including the only cluster failure) and `test_cstat_100rep.py` (5 tests).
+So 25 tests enforcing campaign invariants were one purge from vanishing, and a fresh clone silently ran 25
+fewer checks than the cluster did. Same failure as the 38 lost throws and the two untracked launchers: a
+purgeable filesystem holding load-bearing artifacts nothing in git records. **Rule worth keeping: when local
+and cluster collection counts disagree, resolve the difference to specific files before assuming it is
+environmental.**
+
+`test_uq_remediation.py` is now tracked with the fixture fixed. `test_cstat_100rep.py` is deliberately **not**
+committed — it imports `combine_cstat_bkgsub_100rep`, which is untracked on the cluster too, so committing the
+test alone would guarantee a *collection error* (`ModuleNotFoundError` interrupts the whole run, strictly worse
+than a failing test) and committing both would import unreviewed code into the tracked tree. Recorded in
+`KNOWN_ISSUES.md` as a decision for Joseph rather than resolved unilaterally.
+
+**Collection: 710 → 730 local (+20), 722 passed with the same 7 pre-existing cluster-path failures.
+ANNOUNCED.** Cluster stays 764 but its single failure becomes a pass, so the cluster suite should now be
+fully green for the first time in this campaign. Verifier ALL BINDINGS INTACT.
