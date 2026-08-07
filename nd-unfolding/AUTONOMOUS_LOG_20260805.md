@@ -854,3 +854,41 @@ k=3, observed is 32.1% below), cap saturation (0.0), a partial run, and driver b
 run inference with the saved `w_nominal/*_step1.weights.h5` and compare the classifier's reco-space mean
 against R. Nothing currently stored supports that comparison, which is itself the telemetry gap BEN-039
 records. Thresholds untouched throughout.
+
+### Anatomy of the missing third: a heavy low tail, not a scale error — and my pinning test was wrong
+
+Ran a numpy-only anatomy of `weights_push` split by `pass_reco` (no inference, no GPU contention — three
+jobs already hold GPUs, and reconstructing step-1 inference would need the PET net, the exact training-time
+normalisation and TF 2.15, where a mistake yields a *plausible wrong number* on the headline problem).
+
+**First, a correction to my own diagnostic.** It reported `*** PINNING DID NOT HOLD ***` because 0 of
+1,162,329 off-acceptance rows were exactly 1.0. **That expectation was wrong.** `weights_push` is cumulative —
+`weights_push = weights_push * new_weights` *retains* the prior push off-acceptance (the validator's own
+docstring says exactly this), so what `omnifold.py` pins to 1 is step 2's `new_weights`, not the accumulated
+product. Off-acceptance pushes are in fact tightly near 1 (median **1.0428**, mean 0.9943, p25 1.0031,
+p75 1.0630), which is consistent with the pinning working. I asked the wrong question and the script answered
+it faithfully; the verdict line is retracted.
+
+**The real structure, on `pass_reco`:** median push **0.9186** — near 1 — with a heavy low tail.
+
+    band      rows     reco weight carried   mean push
+    <0.5     24.38%          25.86%           0.2254
+    0.5-1.0  48.63%          48.47%           0.8632
+    1.0-R    25.93%          24.12%           1.0338
+    >R        1.06%           1.55%           1.4544
+
+So the deficit is **localised, not a global scale factor**: a quarter of the reco weight is being downweighted
+by ~4.4x. Removing just that tail's effect would lift the weighted mean from 0.7465 to roughly 0.95 — still
+short of R = 1.1241, but a different problem. And strikingly, only **1.06%** of rows exceed R at all, when the
+identity requires the *weighted average* to be 1.124: essentially nothing is being pushed **up**.
+
+**What this does and does not say.** It does not identify the cause, and I am not going to guess between step 1
+and step 2 from these numbers. What it does establish, cheaply and without inference: the failure is a
+subpopulation being strongly suppressed plus a bulk sitting just below 1, rather than a uniform mis-scaling —
+which is evidence *against* a simple normalisation or sign error and *for* something structure-dependent. The
+next real test remains measuring step-1 achievement by inference with the saved
+`w_nominal/*_step1.weights.h5`, which needs a GPU the floor repeat and two probe arms are currently using.
+
+Status unchanged otherwise: nominal at 3:52:49 with the floor repeat on iteration 0, probe arms at 1:50 and
+1:33 with the third queued. Thresholds untouched. No mail this cycle — nothing finished, and this refines a
+diagnosis I already sent rather than reversing it.
