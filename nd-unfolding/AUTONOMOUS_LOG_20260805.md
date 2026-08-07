@@ -759,3 +759,57 @@ Concurrent sessions: `pwcprobe` `56431649` (57:14) and `56431650` (40:18) runnin
 epochs 8/16/32 ladder, each with its own armed watch, so Session A can be closed without losing them. The
 laterals session has moved from `fpsActLatCha` to `suiteAct`. Holding mail until the nominal lands rather than
 sending twice in quick succession.
+
+### The central value EXISTS — and fails the Gate-4 normalization gate by 6.7×
+
+`56415634` completed its three OmniFold iterations, wrote
+`pet_fullevent_nominal_weights.npz` (10,110,334 bytes, 20:26), and moved to the matched GPU-floor repeat at
+03:26:50Z. **So the first full-event PET central value exists.** Its footing is entirely correct — verified
+from the artifact *and* the driver's own log, not inferred: `niter=3`, epochs 8, `estimator_seed 42`,
+`train_events 2,000,000`, `batch_size 512`; `bkg_mode negweight-refined` (the publication footing, not the
+forbidden purity); fingerprint `pet-fullevent-fps-v1`; `inputs_sha256 fa6b3463…` matching the Gate-2 pin;
+target `544b2f6a…` with receipt PASS; `step1_class_ratio` **exactly** Gate-2's R; `cap_saturation_frac 0.0`;
+259 of 285 cells reported, all finite; and val losses falling cleanly (step1 0.192→0.129→0.111, step2
+0.961→0.831→0.759).
+
+**But its normalization gate fails decisively.** Quoting the driver's own printed self-report rather than my
+recomputation — they agree to all digits:
+
+    "fold_forward_reco_ratio": 0.7464834064182863
+    "step1_class_ratio_R":     1.1240802949941018
+
+Applying `validate_pet_nominal_gate4.check_fold_forward_ratio` as written:
+
+    dev = |ratio/R - 1| = 0.335916   vs tolerance 0.05   -> FAIL, 6.7x over
+    parameter-free: |ratio-R| = 0.3776  vs  |ratio-1| = 0.2535
+        -> lands NEARER 1.0 THAN R -> FAIL
+
+The second check is the one that docstring calls *"precisely the broken-vs-corrected discriminator"*, and it
+carries the power claim with no invented threshold. It fails too, so this does not hinge on the tolerance.
+
+**Ruled out, each checked rather than assumed:**
+
+- **Not acceptance dilution.** The docstring's closed form `push_k = R − (1−a)^k (R−1)` predicts ratio
+  **1.0997** at k=3 (a=0.4186, R=1.1241). Observed 0.7465 is **32.1% below** that — finite-iteration
+  smoothing does not come close to explaining it.
+- **Not the classic step-1 defect**, whose signature is the class ratio forced to 1; ours is exactly R.
+- **Not cap saturation** (`0.0` against a logit cap of 30).
+- **Not a partial run** — three iterations completed, artifact written atomically, job advanced to the floor.
+
+The push weights are simply systematically small: mean **0.8954** over the 2M subsample and **0.7465**
+weighted over `pass_reco`, where the identity requires 1.1241.
+
+**Thresholds untouched and I will not touch them.** Nor am I claiming the gate is mis-specified: unlike the
+D2 recovery bar, this one is a normalization *identity* — fold the unfolded truth back through acceptance and
+it must reproduce the background-subtracted data yield — so a 34% miss is a real discrepancy, not a threshold
+quibble. Context worth recording without using it as an excuse: the 0.05 tolerance was measured on the B1
+**scalar rate** closure on the **recoil** lane, and CLM-010's "scalar scope only" caveat already proved
+load-bearing today when the D2 differential test failed. Whether it transfers to a full-event differential
+lane is now genuinely in question — but the identity argument does not depend on the tolerance at all.
+
+**The free next discriminator is already running.** The matched floor repeat uses the same seeds and config,
+so it isolates GPU-nondeterminism: if it also returns ~0.7465 the cause is structural, if it moves the cause
+is variance. ~3h, no extra cost, watch armed. Mailed as URGENT.
+
+Gate-4 stays red regardless — it was already blocked by D2 — so the NON-QUOTABLE status is unchanged. What is
+new is that the central value now has a *second, independent* problem.
