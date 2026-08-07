@@ -120,7 +120,7 @@ not close the literal full-event PET gate below.
     GradientBoosting backend (~5×10⁴ blow-up on the `iy=1` row). The standard 5D chain runs `lgbm`,
     the clean backend, so neither footing risks that pathology in this lane.
 - **BLOCKING for P4-5D covariance construction — the standard-p4-verifier's standing verdict is
-  BLOCK, with six never-repaired defects (BEN-043).** Found 2026-08-07 while executing the
+  BLOCK, with six never-repaired defects (BEN-044).** Found 2026-08-07 while executing the
   close-out runbook's G-4. `standard-p4-verifier` (UUID `019f74cb-…`) blocked repair-3 `74fa362`
   citing six ranked defects; `docs/orchestration/followup-agent-A-standard-05.md` is the repair-4
   brief; **no repair-4 commit exists**. `git log 74fa362..HEAD` over `nd-unfolding/p4_*`,

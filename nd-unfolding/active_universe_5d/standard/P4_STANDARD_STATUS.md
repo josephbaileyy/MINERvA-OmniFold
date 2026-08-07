@@ -7,7 +7,7 @@ session's uncommitted edit and is NOT absorbed, per the commit-gate ownership ru
 construction (component-build → validate → project → adopt) is gated on the
 standard-p4-verifier (019f74cb-…) returning PASS on the committed round-3 patch.
 
-> **CORRECTED 2026-08-07 (BEN-043) — read this before sizing any remaining work.** The line
+> **CORRECTED 2026-08-07 (BEN-044) — read this before sizing any remaining work.** The line
 > above says "repair round 3 complete", which describes the work *submitted* and is silent on
 > the *verdict returned*. The verdict was **BLOCK**: the same `standard-p4-verifier` UUID
 > blocked `74fa362` with **six ranked defects**, and

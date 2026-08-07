@@ -3625,7 +3625,7 @@ Note a cluster-side `git worktree` does **not** work around this: `p4_evidence.p
 and takes its `source_blobs` with `cwd=REPO`, so it would record the canonical tree's blobs while a
 different file actually ran — a provenance lie of exactly the kind this packet exists to remove.
 
-**G-4 is not the formality the runbook implies — see BEN-043.** The `standard-p4-verifier`
+**G-4 is not the formality the runbook implies — see BEN-044.** The `standard-p4-verifier`
 (`019f74cb-…`) **BLOCKed** repair-3 `74fa362` with six ranked defects; `followup-agent-A-standard-05.md`
 is the repair-4 brief and **no repair-4 commit exists** (`git log 74fa362..HEAD` over `p4_*`/`run_p4_*`
 returns only `d5bd5da`, an unrelated note-overclaims commit, plus the FPS lane's own repairs and this
@@ -3676,7 +3676,7 @@ one — BEN-040's lesson, one lane over.
 scoped by the six items in `docs/orchestration/followup-agent-A-standard-05.md`, of which defect 1
 alone also requires re-ordering the stages (merged audit → unfold → endpoint evidence) and updating
 `AGENT_A_HANDOFF.md:95` to the same executable contract. Repairing only the flag names would give a
-chain that runs and is still wrong. Recorded as BEN-043 and `KNOWN_ISSUES.md` #22.
+chain that runs and is still wrong. Recorded as BEN-044 and `KNOWN_ISSUES.md` #22.
 
 ## 2026-08-07 — Re-running evidence re-attributes the endpoints to newer code (KNOWN_ISSUES #23)
 
