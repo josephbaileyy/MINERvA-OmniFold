@@ -363,3 +363,11 @@ blocks any consumer that rebuilds from the checkpoint.
 weights (recommended; no estimator change, needs a re-run), make best-epoch the estimator (redefines the
 nominal, needs a gate re-issue), or extract from the best-epoch checkpoint and accept the inconsistency
 (not recommended). Filed as BEN-043.
+
+**And a trap in the fix itself:** `self.model1`/`self.model2` are assigned once in `__init__`
+(`omnifold.py:123-124`) and never reassigned; training runs on the `clone_model` copies held in
+`step1_models`/`step2_models` (`:278-287`, `:293`), and `clone_model` does not copy weights. **So
+`of.model2` still holds its initial random initialization when `Unfold()` returns** — implementing the fix
+as `of.model2.save_weights(...)` would persist an untrained network. Use `of.step2_models[0]` (and
+`of.step1_models[0]`). Both files that would change are sha-pinned by the live Gate-4 code gate (keys
+`driver`, `estimator_engine_multifold`), so the edit needs a gate re-issue in the same commit.

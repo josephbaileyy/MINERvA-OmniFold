@@ -164,3 +164,42 @@ deviation) are not equal.
 Recommendation: **(1)**. It is the only option that makes the products consistent without redefining the
 estimator, and the re-run cost is already sunk in the sense that Gate-4 is red and the product is
 non-quotable regardless.
+
+## 7. A trap in implementing the recommended fix — `of.model2` is NOT the trained model
+
+Verified before recommending anything, because the obvious one-line implementation of option (1) is
+silently wrong in a dangerous direction.
+
+    omnifold.py:123-124   self.model1 = model_reco ; self.model2 = model_gen     (set once, in __init__)
+    omnifold.py:278-284   if iteration < 1: model_e = tf.keras.models.clone_model(model)
+                                            self.step1_models.append(model_e) / step2_models.append(...)
+    omnifold.py:286-287   else: model_e = self.step1_models[e] if stepn == 1 else self.step2_models[e]
+    omnifold.py:293       hist = model_e.fit(...)
+
+`self.model1` / `self.model2` are assigned once and **never reassigned**, and nothing anywhere copies
+weights back into them (`grep` for `self.model1 =` / `self.model2 =` / `set_weights` returns only those
+two `__init__` lines). All training happens on `model_e`, which is a `clone_model` copy — and
+`clone_model` copies architecture, not weights. **So `of.model2` still holds its initial random
+initialization when `Unfold()` returns.** The trained objects are `of.step1_models[0]` and
+`of.step2_models[0]`.
+
+Implementing option (1) as `of.model2.save_weights(...)` after `Unfold()` would therefore persist an
+**untrained** network. It would be caught — `check_subsample_agreement` would fail even harder — but the
+tempting next move is to "fix" that by changing what gets stored, at which point the artifact would carry
+weights from an untrained model. Whoever implements this must use `of.step2_models[0]` (and
+`of.step1_models[0]` for the step-1 leg the pull decomposition needs).
+
+Related and already filed: `omnifold.py:302` logs `hist.history['val_loss'][0]` — the **first** epoch, not
+the last (see `KNOWN_ISSUES.md`, "The engine's 'Last val loss' prints the FIRST epoch"). So the engine's
+own per-training log cannot be used to see the best-vs-last gap that causes this finding; the `.pkl`
+histories are the only source.
+
+## 8. Status of the fix: NOT implemented, and why
+
+Both files that would have to change are sha-pinned by the live Gate-4 code gate
+(`docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260806c.json`, keys `driver` and
+`estimator_engine_multifold`), so any edit requires a gate re-issue landed in the same commit — and
+`test_hash_bindings.py:43`'s `_LAUNCH_CODE_FLOOR = 2` fails if a predecessor is retired without its
+successor. That is a well-trodden path in this repo, but re-issuing a gate in order to enable a ~6 GPU-h
+re-run, on a choice that may redefine the nominal estimator, is Joseph's decision and not a bookkeeping
+step. The options are in §6; he has been mailed. Nothing here is implemented.
