@@ -1,5 +1,47 @@
 # Repair-4 scope — the six verifier defects and their status at HEAD (2026-08-07)
 
+> ## OUTCOME 2026-08-07T13:46Z — repair-4 returned **BLOCK**, 2 of 6 closed
+>
+> An independent read-only `codex-school` pass over repair-4 at `39c2cf4` **closed defects 1
+> and 5** and left **four outstanding**. Receipt + full transcript:
+> `runs/standard-p4-verifier/20260807T134623Z-repair4-verdict.json`. `P4_VERIFIER_PASS` was
+> **not** set; stages 4–6 remain unauthorized. The delegate wrote nothing (`git status` clean
+> afterwards, no diff to preserve).
+>
+> **Tests: the delegate reported 82/99; a local re-run at the same commit is 99/99.** The 17
+> shortfalls are an environment artifact — the read-only sandbox has no writable temp dir, so
+> every `tempfile.TemporaryDirectory()` test errored before reaching an assertion. The delegate
+> diagnosed that itself and did not count it against the code. **Do not "fix" 17 phantom
+> failures.**
+>
+> **The four outstanding items, all accepted as correct:**
+>
+> 1. **D2 — the receipt gate checks `code_rev` for non-emptiness and nothing else.** No source
+>    blob or commit identity is recorded or compared, so an endpoint produced under changed
+>    source still skips. This is the *same* anti-pattern this lane already recorded as
+>    `KNOWN_ISSUES.md` #21 — written into the very gate meant to end it.
+>    `p4_lib.py:278,302`, `run_p4_unfold_std.sh:81`.
+> 2. **D3 — the dirty-source guard is fail-OPEN on deletion.** `need(_w is None or _c == _w)`
+>    passes when `git hash-object` fails on a missing file, so deleting a bound source is
+>    accepted. `p4_evidence.py:246`.
+> 3. **D4 — containment is still escapable, and the identity claim overreaches.** The
+>    component-sequence match succeeds anywhere the sequence appears, so
+>    `/evil/active_universe_5d/standard/candidate/out.root` passes, and `normpath` does not
+>    resolve symlinks; it must be realpath-based against the repo root. Separately, PSD of
+>    `C_combined − C_syst` is *necessary but not sufficient* for
+>    `C_combined = C_syst + C_stat + C_ML` — it never compares the residual to the bound
+>    stat+ML blocks. `p4_lib.py:190,200`, `p4_validate_active_lateral.py:128`.
+> 4. **D6 — coverage still does not execute a shell driver or a builder→validator happy path,**
+>    and `test_validator_recomputes_the_full_total_identity` blesses the weaker PSD check under
+>    a stronger name. The shell-driver gap was *disclosed* in the test docstring, but disclosure
+>    is not coverage; and a test that names a weaker check as a stronger one is the defect-6b
+>    family this round was supposed to end.
+>    `tests/test_p4_resume_integration.py:159`, `tests/test_p4_repair.py:683`.
+>
+> **Repair-5 is scoped to exactly those four.** Defects 1 and 5 are closed and should not be
+> re-opened. `4d` (no promotion in `p4_adopt_standard.py`) was judged an acceptable
+> non-repair — adoption is out of scope and the chain stops at CANDIDATE.
+
 **Purpose.** Scope repair-4 from *all six* defects the `standard-p4-verifier` raised, not from the one
 that was independently re-confirmed. Authorized by Joseph 2026-08-07 after he verified defect 1 himself.
 

@@ -119,8 +119,22 @@ not close the literal full-event PET gate below.
   - Note the estimator caveat that does *not* bite here: raw `negweight` breaks the `exact`
     GradientBoosting backend (~5×10⁴ blow-up on the `iy=1` row). The standard 5D chain runs `lgbm`,
     the clean backend, so neither footing risks that pathology in this lane.
+- **UPDATED 2026-08-07T13:46Z — repair-4 landed and the verifier closed 2 of 6; FOUR remain, so
+  the BLOCK stands.** Independent read-only `codex-school` pass at `39c2cf4`, receipt at
+  `orchestration/runs/standard-p4-verifier/20260807T134623Z-repair4-verdict.json`. **Closed:**
+  defect 1 (driver/CLI/key) and defect 5 (projection geometry). **Repair-5 is scoped to exactly
+  these four, all accepted as correct:** (2) the receipt gate checks `code_rev` for
+  non-emptiness only and records no source blob — the *same* anti-pattern as `KNOWN_ISSUES.md`
+  #21, inside the gate meant to end it; (3) the dirty-source guard is fail-OPEN on deletion; (4)
+  candidate containment matches the path components *anywhere* so an out-of-repo path passes,
+  and the "full-total identity" is only a PSD check on the residual, never a comparison to the
+  bound stat+ML blocks; (6) still no shell-driver or builder→validator happy-path execution, and
+  a test name blesses the weaker PSD check as the stronger claim. **`P4_VERIFIER_PASS` remains
+  unset and stages 4–6 unauthorized.** Tests: the delegate reported 82/99, a local re-run is
+  **99/99** — the 17 shortfalls are the read-only sandbox having no writable temp dir, which the
+  delegate diagnosed itself; do not "fix" them.
 - **BLOCKING for P4-5D covariance construction — the standard-p4-verifier's standing verdict is
-  BLOCK, with six never-repaired defects (BEN-044).** Found 2026-08-07 while executing the
+  BLOCK (originally six never-repaired defects, now four; BEN-044).** Found 2026-08-07 while executing the
   close-out runbook's G-4. `standard-p4-verifier` (UUID `019f74cb-…`) blocked repair-3 `74fa362`
   citing six ranked defects; `docs/orchestration/followup-agent-A-standard-05.md` is the repair-4
   brief; **no repair-4 commit exists**. `git log 74fa362..HEAD` over `nd-unfolding/p4_*`,

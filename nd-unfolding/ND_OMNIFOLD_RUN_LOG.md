@@ -3703,3 +3703,47 @@ tracked file) so the committed manifest still records the 07-18 producers, and t
 back to 0 tracked-dirty — it is shared with a live concurrent lane and must not be left dirty. A copy
 is preserved at `docs/orchestration/state/p4-standard-attestation/p4_standard_manifest-20260718-preserved.json`.
 No hash was hand-edited and no tolerance was touched.
+
+## 2026-08-07 — Repair-4 landed all six defects; the verifier closed two and BLOCKed on four
+
+**Verdict BLOCK. `P4_VERIFIER_PASS` NOT set. Stages 4–6 remain unauthorized.** Receipt and full
+transcript committed at `docs/orchestration/runs/standard-p4-verifier/20260807T134623Z-repair4-verdict.json`
+and `…-repair4-transcript.txt`. Delegate: `codex exec --sandbox read-only` on `codex-school`,
+188,847 tokens; it wrote nothing — `git status --short --untracked-files=all` and `git diff HEAD`
+were both empty afterwards, so there was no diff to preserve.
+
+**Repair-4 as built** (six commits, `ba2cdd8` `febb9a1` `c57746c` `6b875b2` `886c65f` `39c2cf4`):
+driver reordered to merge+audit → unfold → evidence with the real validator/projector CLIs and a
+candidate key single-sourced in `p4_lib`; content-validating resume via `p4_check_receipt.py`;
+committed-blob provenance; `(band,index)` and both migration directions enforced on producing and
+consuming sides; mandatory edge/bin-volume/4D-mask hashes plus an M-content hash; retained
+components persisted; candidate-then-manifest-last; and an integration harness that executes a
+real gate. `STOP_AFTER` default moved `evidence` → `audit`, because the reorder put a
+receipt-WRITING stage before evidence and the old default would have started writing.
+
+**Closed: defects 1 and 5.** **Outstanding: 2, 3, 4, 6** — all four accepted as correct.
+
+1. **D2** — `validate_endpoint_receipt` requires `code_rev` to be a *non-empty string* and never
+   compares it; no source blob is recorded at all, so an endpoint produced under changed source
+   still skips. This is the **same non-emptiness anti-pattern the lane already records as
+   `KNOWN_ISSUES.md` #21**, reproduced inside the gate written to end it. Worth stating plainly:
+   the failure mode is not exotic, it is the one already written down.
+2. **D3** — the dirty-source guard is **fail-open on deletion**: `need(_w is None or _c == _w)`
+   passes when `git hash-object` fails on a missing file.
+3. **D4** — containment matches the component sequence *anywhere*, so
+   `/evil/active_universe_5d/standard/candidate/out.root` passes, and `normpath` does not resolve
+   symlinks. Separately the PSD residual check was **named** a full-total identity: PSD of
+   `C_combined − C_syst` is necessary, not sufficient, and never compares the residual to the
+   bound stat+ML blocks.
+4. **D6** — still executes no shell driver and no builder→validator happy path, and a test name
+   blesses the weaker PSD check as the stronger claim. The shell-driver gap was disclosed in the
+   test docstring, but disclosure is not coverage.
+
+**Tests — read this before "fixing" anything.** The delegate reported **82/99**; a local re-run at
+the same commit is **99/99**. The 17 shortfalls are an environment artifact: the read-only sandbox
+has no writable temporary directory, so every `tempfile.TemporaryDirectory()` test errored before
+reaching an assertion. The delegate diagnosed that itself and did not count it against the code.
+
+**Repair-5 is scoped to exactly those four items.** Defects 1 and 5 are closed and must not be
+re-opened. `4d` (no promotion in `p4_adopt_standard.py`) was judged an acceptable non-repair —
+adoption is out of scope and the chain stops at CANDIDATE by design.
