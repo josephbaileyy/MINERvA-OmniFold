@@ -937,3 +937,46 @@ job would be inconsiderate rather than helpful. Flagged for Joseph's word.
 
 Tool committed as `nd-unfolding/pet/scatter_reproducibility.py`. Thresholds untouched; `recovery_min = 0.80`
 neither touched nor evaluated against. Mailed.
+
+### The deficit is worst where acceptance is HIGHEST — an inverted-correction signature
+
+I asked whether the nominal's fold-forward deficit and the D2 dispersion share an acceptance-driven cause,
+expecting the suppression to sit in **low**-acceptance cells. It is acceptance-structured — with the sign
+**inverted** from my hypothesis. Per-cell reco-weighted mean push against the committed acceptance map, over
+`pass_reco`, on the canonical 285-cell grid (numpy only, no inference, no GPU):
+
+    Pearson r(acceptance, mean push)   -0.4291      reco-weight-weighted  -0.5427
+
+    acceptance band   cells   reco wt %   mean push
+    [0.00,0.01)         31      0.17%      1.0534
+    [0.01,0.05)         10      0.26%      1.0374
+    [0.05,0.20)          7      1.59%      1.0259
+    [0.20,0.40)         13      6.47%      1.0121
+    [0.40,0.60)         25     15.51%      0.9751
+    [0.60,0.80)         53     42.76%      0.7875
+    [0.80,1.01)        117     33.23%      0.5180
+
+**Monotonic across all seven bands.** Low-acceptance cells sit near 1.0 — exactly what the prior-dominated
+picture predicts, and reassuring. But the 117 cells at acceptance ≥ 0.8, carrying a third of the reco weight,
+are pushed **down to 0.518** where the identity requires an average of 1.124.
+
+**The estimator is most wrong precisely where it has the most information, in the direction opposite to what
+the data demand.** With the earlier finding that only 1.06% of rows exceed R at all, the pattern reads: the
+better a cell is measured, the harder it is pushed the wrong way.
+
+That is the signature of a correction applied with the wrong **sense** — an inverted likelihood ratio, or the
+data and MC legs swapped between step 1 and the push. Where acceptance is high, step 1 has the most
+discrimination and applies the largest correction, so an inversion hurts most there and fades toward the
+prior-dominated cells. The observed monotonic profile is that shape.
+
+**Recorded as a hypothesis with a matching signature, not a diagnosis.** I have not read the step-1 path for a
+sign error and will not assert one from a correlation. But it is now the most specific testable candidate, it
+subsumes the earlier "step-1 under-achievement" hypothesis, and it is a far better place to look than the
+tolerance.
+
+**Cheap falsification available, no GPU:** recompute the fold-forward ratio with `push` replaced by its
+reciprocal, or by `2 − push`, on the high-acceptance subset. If an inversion reproduces R to within the
+dilution residual, the sign hypothesis is arithmetically settled. Offered to Joseph rather than run
+unprompted, since it is the kind of test whose framing he may want to set.
+
+Tool committed as `nd-unfolding/pet/push_vs_acceptance.py`. Thresholds untouched. Mailed.
