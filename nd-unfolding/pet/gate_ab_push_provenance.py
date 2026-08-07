@@ -97,6 +97,20 @@ def main():
     ap.add_argument("--batch-size", type=int, default=1000,
                     help="engine reweight batch; RunStep2 uses the MultiFold default, and "
                          "float32 batching non-associativity is why B(i) is 1e-6 and not 0")
+    # --- the two controls that turn "leading explanation" into "only surviving explanation" -------
+    # Run 1 (2026-08-07, log gate_ab_20260807.log) measured Gate B(i) failing at max rel dev 0.866
+    # with Gate A bit-exact, which excludes a wrong subsample and a wrong input space. Two knobs
+    # remain that are MINE rather than the pipeline's, and both are excluded by measurement here:
+    ap.add_argument("--batch-size-control", type=int, default=None,
+                    help="repeat Gate B(i) at a second batch size. RunStep2 reweights at "
+                         "MultiFold's BATCH_SIZE (512) while the default here is 1000, and float32 "
+                         "batching is non-associative. The magnitude says that cannot explain 0.866, "
+                         "but measuring it costs one forward pass and removes the last knob I own.")
+    ap.add_argument("--extra-artifact", default=None,
+                    help="repeat Gate B for a SECOND artifact sharing this subsample (the matched "
+                         "floor run). An independent training reproducing the same "
+                         "large-per-event / tiny-aggregate signature makes it a structural property "
+                         "of how checkpoints are saved, not a one-off in this run.")
     a = ap.parse_args()
 
     rec = {"gate": "A+B push provenance", "artifact": os.path.abspath(a.artifact),
@@ -216,6 +230,70 @@ def main():
         "stored_mean_on_shell": float(on_s.mean()), "rebuilt_mean_on_shell": float(on_r.mean()),
         "stored_min": float(on_s.min()), "stored_max": float(on_s.max()),
         "rebuilt_min": float(on_r.min()), "rebuilt_max": float(on_r.max())})
+
+    # ---- CONTROL 1: is the deviation mine, via float32 batching non-associativity? ---------------
+    if a.batch_size_control:
+        wc = np.asarray(of.reweight((np.asarray(mc.gen), np.asarray(mc.gen_evt)), model2,
+                                    batch_size=a.batch_size_control), np.float64)
+        rc = np.ones_like(stored_push)
+        rc[pass_gen] = wc[pass_gen]
+        d_batch = float((np.abs(rc[pass_gen] - on_r) /
+                         np.maximum(np.abs(on_r), 1e-12)).max())
+        d_stored = float((np.abs(rc[pass_gen] - on_s) /
+                          np.maximum(np.abs(on_s), 1e-12)).max())
+        print(f"\n=== CONTROL 1: batch size {a.batch_size} vs {a.batch_size_control} ===")
+        print(f"  checkpoint@{a.batch_size} vs checkpoint@{a.batch_size_control}: "
+              f"max rel dev {d_batch:.3e}")
+        print(f"  checkpoint@{a.batch_size_control} vs STORED:                 "
+              f"max rel dev {d_stored:.3e}")
+        print(f"  -> batching accounts for {100.0*d_batch/max(worst,1e-30):.4f}% of the "
+              f"{worst:.3e} Gate B(i) deviation")
+        rec["control_batch"] = {"batch_a": a.batch_size, "batch_b": a.batch_size_control,
+                                "max_rel_dev_between_batches": d_batch,
+                                "max_rel_dev_b_vs_stored": d_stored,
+                                "fraction_of_gate_deviation": d_batch / max(worst, 1e-30)}
+        del wc, rc
+
+    # ---- CONTROL 2: does an INDEPENDENT training show the same signature? ------------------------
+    if a.extra_artifact:
+        print(f"\n=== CONTROL 2: repeat Gate B on {a.extra_artifact} ===")
+        with np.load(a.extra_artifact, allow_pickle=True) as d2:
+            push2 = np.asarray(d2["weights_push"], np.float64)
+            imc2 = np.asarray(d2["mc_indices"])
+            contract2 = d2["inference_contract"].item()
+        same_rows = bool(np.array_equal(imc2, stored_imc))
+        print(f"  shares this subsample bit-exactly: {same_rows}")
+        rec["control_extra"] = {"artifact": os.path.abspath(a.extra_artifact),
+                                "shares_subsample": same_rows}
+        if not same_rows:
+            print("  -> different subsample; the rebuilt loader does not apply, SKIPPING rather "
+                  "than reporting a number about the wrong rows")
+        else:
+            m2b = build_step2_model(contract2)
+            of2 = _engine_reweighter(m2b, a.batch_size)
+            w2 = np.asarray(of2.reweight((np.asarray(mc.gen), np.asarray(mc.gen_evt)), m2b,
+                                         batch_size=a.batch_size), np.float64)
+            r2 = np.ones_like(push2)
+            r2[pass_gen] = w2[pass_gen]
+            o2r, o2s = r2[pass_gen], push2[pass_gen]
+            d2v = np.abs(o2r - o2s) / np.maximum(np.abs(o2s), 1e-12)
+            off2 = push2[~pass_gen]
+            print(f"  B(ii) stored push == 1.0 exactly off-shell: "
+                  f"{int((off2 == 1.0).sum())}/{int(off2.size)}")
+            print(f"  B(i)  max rel dev {float(d2v.max()):.6e}  median "
+                  f"{float(np.median(d2v)):.6e}  p90 {float(np.percentile(d2v,90)):.6e}")
+            print(f"        stored mean {o2s.mean():.6f}   rebuilt mean {o2r.mean():.6f}   "
+                  f"aggregate rel gap {abs(o2r.mean()/o2s.mean()-1):.3e}")
+            rec["control_extra"].update({
+                "Bii_n_exactly_one": int((off2 == 1.0).sum()), "n_off_shell": int(off2.size),
+                "Bi_max_rel_dev": float(d2v.max()),
+                "Bi_median_rel_dev": float(np.median(d2v)),
+                "Bi_rel_dev_p90": float(np.percentile(d2v, 90)),
+                "stored_mean": float(o2s.mean()), "rebuilt_mean": float(o2r.mean()),
+                "aggregate_rel_gap": float(abs(o2r.mean() / o2s.mean() - 1))})
+            print("  -> a second, independently trained run showing the same signature (large "
+                  "per-event, tiny aggregate) makes this structural, not a one-off.")
+            del w2, r2
 
     # What the discrepancy, if any, would do to the number the campaign actually reports. This is the
     # consequence that matters and it is free once both vectors are in hand.
