@@ -1361,3 +1361,64 @@ the concurrent session's probe finding rather than rewriting either. **No thresh
 confirmed this cycle from `sacct`: `56415634` COMPLETED 05:57:38 rc=0 and `56431650` COMPLETED 03:43:39
 rc=0 (both already logged), `56431651` the only non-cron job left. Joseph's 20:29Z GBDT question was
 answered in `STEP2-20260806-niter3-budget-classification.md:138`. Mailed.
+
+### Memo item 5, gates only — THE SAVED CHECKPOINT IS NOT THE TRAINED MODEL, and it blocks extraction
+
+I built the memo's two gates and ran them before writing any pull/push decomposition. Gate A passed
+bit-exactly and **Gate B(i) failed at max rel dev 0.866 against a 1e-6 tolerance.** That is not a
+formality failing; it is a real defect on the publication path, and it was found by building the gate the
+memo asked for rather than by looking for it.
+
+    A1  rebuilt mc_indices vs stored        BIT-EXACT, 0 differing rows of 2,000,000
+    A2  rebuilt truth normalization         BIT-EXACT against the contract
+    B(ii) stored push == 1.0 off pass_gen   72/72 EXACT (untoleranced, as the memo required)
+    B(i)  checkpoint-rebuilt vs stored      max 8.663e-01  median 8.34e-03  p90 1.68e-01  FAIL
+
+**Gate A passing is what makes it interpretable** — same rows, same input space, so this is not the
+preprocessing failure I had been holding this task to avoid. The weights themselves differ.
+
+**Mechanism, read off the engine while building the harness rather than found by guessing.**
+`omnifold.py:272-275` checkpoints with `save_best_only=True`; `:266-268` sets `EarlyStopping(patience=10,
+restore_best_weights=True)`; at `epochs=8` the patience can never be exhausted and Keras 2.15 restores
+best weights only in the stop branch. So the model **in memory** at reweight time is the **last** epoch
+and the file on disk is the **best-val-loss** epoch. `train_*:497` stores the last-epoch output;
+`inference_contract["step2_checkpoint"]`, which `extract_fullevent_fps.py:253` loads, is the best-epoch
+file. The nominal's own history has `argmin(val_loss)` at **epoch 4 of 8** for `iter2_step2`.
+
+**The sharpest form: the weights that produced the published artifact do not exist on disk.**
+`--step2-checkpoint` can point elsewhere, but `save_best_only=True` never wrote a last-epoch file, so
+there is nothing to point at.
+
+**Consequence, and it is a blocker.** `check_subsample_agreement` (`:347`, `tol=1e-3`, called
+unconditionally at `:609`) fails closed at 0.866, so the full-event push stage **cannot run**. The gate is
+right; the tolerance stays where it is. Full-event extraction is blocked until Joseph picks an option.
+
+**I did not stop at "leading explanation".** Two controls, both off one loader build (job 56445569):
+
+    Control 1  batch 1000 vs 512            2.901e-06  = 0.0003% of the deviation -> EXCLUDED
+    Control 1b B(i) bit-identical across jobs           -> GPU nondeterminism EXCLUDED
+    Control 2  matched floor run            max 8.643e-01, p90 1.650e-01, aggregate gap 1.53e-02
+               shares the subsample bit-exactly, 72/72 off-shell exact -> STRUCTURAL, not a one-off
+
+Six candidate explanations are now excluded by measurement and one survives. Unplanned corroboration: the
+floor run has the larger best-vs-last val-loss gap (+0.00149 vs +0.00074) **and** the larger aggregate
+deviation (1.53e-02 vs 4.63e-03) — right ordering, and I am claiming direction only, since 2.0x in val gap
+against 3.3x in deviation is not proportionality.
+
+**What it does NOT change.** The artifact is self-consistent (`central_vector` came from the same
+in-process `weights_push`), so the central value is not invalidated — only its reproducibility. And both
+models give the fold-forward ratio to 1e-4 (0.746483 vs 0.746407), so the normalization failure is a
+property of the estimator, not of which epoch was saved. The memo's step-1 decomposition remains the right
+next question; its harness is committed and **gated on this receipt**, refusing to run without Gate A and
+copying Gate B's verdict into its own output so the caveat travels with the number.
+
+**Memo item 4 (`values.tex`) — HELD, deliberately, and not silently.** The ledger half is already done
+(5.2600e-38 / 5.6609e-38 are recorded at `VALIDATION_LEDGER.md:142-143`). The edit half touches
+`\gbdtFive*`, which is squarely the GBDT lane Joseph launched today, and that session's prompt says in
+its own words *"do not update values.tex until a G-5 adoption has landed in the ledger"*. Doing it now
+would both cross a lane boundary and write a number G-5 is about to supersede. Left to G-5.
+
+Also this cycle: ep32 (`56431651`) still PENDING, watch `d2-probe-ep32-56431651` armed with
+`unreliable=0` and the cron ticking (11:45:13Z). The powered-closure driver and preflight shas were
+re-verified against the launcher pins after each cluster fast-forward, so ep32 cannot be killed by my
+transfers. Mailed.
