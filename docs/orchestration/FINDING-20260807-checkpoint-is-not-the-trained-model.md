@@ -4,6 +4,15 @@
 (GPU, 5m43s) + controls `56445569` · **Receipt:**
 `nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json` · **Ledger:** BEN-043
 
+> **Pointer note added 2026-08-07:** the receipt's `artifact` field names
+> `pet_fullevent_nominal_weights.npz` at its original path. That product has since been **archived**
+> to `nd-unfolding/pet/fullevent_nominal/superseded-20260806/` so the authorized re-train
+> (`56445883`) can write a fresh one, so the receipt's path is historical rather than current.
+> Digests verified identical across the move: `8d17140f697faca7…` (nominal), `28fe004c31dcb414…`
+> (floor). The same applies to `STEP1_DECOMPOSITION.json`. Both receipts were deliberately left at
+> their committed paths so the citations here and in `FINDING-20260807-step1-under-achieves.md`
+> keep resolving.
+
 > **This blocks full-event PET extraction.** `extract_fullevent_fps.py`'s
 > `check_subsample_agreement` (`:347`, default `tol=1e-3`, called unconditionally at `:609`) will
 > **fail closed** on the nominal artifact: the measured max relative deviation is **0.866**. The gate is
