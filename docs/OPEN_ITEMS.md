@@ -119,6 +119,29 @@ not close the literal full-event PET gate below.
   - Note the estimator caveat that does *not* bite here: raw `negweight` breaks the `exact`
     GradientBoosting backend (~5×10⁴ blow-up on the `iy=1` row). The standard 5D chain runs `lgbm`,
     the clean backend, so neither footing risks that pathology in this lane.
+- **BLOCKING for P4-5D covariance construction — the standard-p4-verifier's standing verdict is
+  BLOCK, with six never-repaired defects (BEN-043).** Found 2026-08-07 while executing the
+  close-out runbook's G-4. `standard-p4-verifier` (UUID `019f74cb-…`) blocked repair-3 `74fa362`
+  citing six ranked defects; `docs/orchestration/followup-agent-A-standard-05.md` is the repair-4
+  brief; **no repair-4 commit exists**. `git log 74fa362..HEAD` over `nd-unfolding/p4_*`,
+  `nd-unfolding/run_p4_*` and `tests/test_p4_repair.py` returns only `d5bd5da` (an unrelated
+  note-overclaims commit that incidentally touched three of the same files), the FPS lane's own
+  repairs, and the 2026-08-07 close-out commits. The BLOCK is recorded in
+  `MIGRATION-TAKEOVER-STATUS.md` rows T2 and PG3S; the close-out runbook's §1 state table has no
+  row for it, which is how it read as a formality. **What this changes:** G-4 is an unstarted
+  repair round scoped by six enumerated items, not a checkpoint to walk through — size it from
+  `followup-agent-A-standard-05.md`, and note `P4_STANDARD_STATUS.md`'s "REPAIR round 3 complete"
+  describes the attempt, not the verdict.
+- **Waiting on Joseph — how the G-1 footing patch reaches the cluster checkout.** It is committed
+  and pushed on branch `worktree-gbdt-closeout` (`5a4009f`, `e6e28c9`) but not on
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold`, whose `main` a **concurrent lane is actively
+  committing and pushing to** (it moved from `28d43aa` to `0028b49` mid-session). Switching that
+  tree's branch would pull code out from under a live session. A cluster-side `git worktree` is
+  not a workaround: `p4_evidence.py` hardcodes `REPO` and takes `source_blobs` with `cwd=REPO`, so
+  it would record the canonical tree's blobs while a different file actually ran. Until this
+  lands, **stage 3 must not run** — the launcher skips any endpoint that already has a receipt, so
+  attesting on pre-G-1 code would stamp ten `.done` files with no `bkg_mode` and freeze them that
+  way, and deletions are behind the reorg freeze tag.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
