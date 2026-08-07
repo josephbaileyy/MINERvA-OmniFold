@@ -29,7 +29,12 @@
 # Protocol comes from closure_powered_truth_reweight.py's module constants (amplitude 0.35, clip
 # z=3, split seed 7, half size 2,000,000) and from train_fullevent_nominal.NOMINAL_SEED_POLICY
 # (epochs 8, seeds 42/0, batch 512). NOTHING is overridden here -- no --half-size, no
-# --amplitude, no --max-events. Passing any of those would move the goalposts the gate checks.
+# --amplitude, no --max-events, and since 2026-08-07 no --niter, --epochs or --early-stop either.
+# Passing any of those would move the goalposts the gate checks. The three training-budget flags
+# exist for the D2 under-fitting probe and are exercised by sbatch_powered_closure_budget_probe.sh,
+# which writes to a different directory under a different report basename precisely so that a
+# diagnostic can never be picked up as gate evidence; test_launcher_overrides_no_protocol_constants
+# enforces their absence from THIS file.
 #
 # `niter` is DELIBERATELY NOT RESTATED HERE. It is read at runtime from NOMINAL_SEED_POLICY
 # (closure_powered_truth_reweight.py:265), and this comment used to assert "niter 2" alongside the
@@ -63,7 +68,17 @@ PRODUCER="${REPO}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json"
 # across an assignment and a comparison, which enforced the pin at runtime but left it invisible to
 # the repo-wide verifier -- so a later edit to the driver would have gone on satisfying the verifier
 # while this pin was already stale. That is the pin cascade with the alarm disconnected.
-EXPECTED_DRIVER_SHA="69bec69697f099fcc4b4760be7d807ae0ebe385f8bf04f5dbf0a889ba8d84a75"
+# MOVED 2026-08-07, 69bec696… -> a45fae7c…, and the move is recorded rather than quietly applied.
+# The driver gained --niter/--epochs/--early-stop for the D2 under-fitting probe; each defaults to the
+# value it already used, so this launcher -- which passes none of them -- runs byte-identical code
+# paths. This pin is a SUBMISSION-TIME guard ("did the file change between sbatch and dispatch"), not
+# a receipt of what a past gate ran against: no receipt anywhere binds this driver (verified by grep
+# over docs/orchestration/state/ and every *.json), and job 56381674's own log and report record
+# 69bec696… as what it ran, so no history is falsified by moving it. Had this been a receipt hash,
+# the rule in verify_hash_bindings.py's docstring applies instead and the gate must be re-issued.
+# test_code_pins_are_discoverable_by_the_repo_verifier asserts this equals the driver's CURRENT sha,
+# so leaving it stale is not an option the suite permits.
+EXPECTED_DRIVER_SHA="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
 EXPECTED_PREFLIGHT_SHA="dee9aa20a49a89eb5553a4f75672cfde5e9ce05df8f4c9ae00095c549e5ce9bb"
 EXPECTED_INPUTS_SHA="fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
 EXPECTED_INPUTS_SIZE="9897374636"

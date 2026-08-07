@@ -79,7 +79,14 @@ KNOWN_PREEXISTING = {
 # test_powered_closure_preflight.py::test_pin_floor_covers_these_pins went red on
 # `13 != 12`. Raising to match is what that test prescribes; verified locally that the
 # verifier still resolves 13 and reports ALL BINDINGS INTACT rather than going BLIND.
-SHELL_PIN_FLOOR = 13
+# Raised 13 -> 15 on 2026-08-07: `sbatch_powered_closure_budget_probe.sh` (the D2 under-fitting
+# probe) pins BOTH `closure_powered_truth_reweight.py` and `preflight_powered_closure.py` in the
+# one-line idiom collect_shell can see, and both are tracked source files every checkout holds, so
+# the tracked count grew by exactly two. Counted before raising, by running the collector over the
+# same three globs the test uses against `git ls-files`: 15, itemised. Raising to match is what the
+# test prescribes; the direction that is forbidden is lowering it to make a red test pass, which
+# would be deleting a guard.
+SHELL_PIN_FLOOR = 15
 
 
 def sha256(path):

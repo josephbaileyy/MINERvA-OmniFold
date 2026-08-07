@@ -29,6 +29,26 @@ WHY EACH OF THOSE, since a protocol nobody can justify is a protocol nobody can 
   * CLIPPED -- bounds the injected weight to [exp(-1.05), exp(+1.05)] so no handful of rows carries
     the result.
 
+TRAINING-BUDGET OVERRIDES (`--niter`, `--epochs`, `--early-stop`), added 2026-08-07 for the D2
+under-fitting probe. Each DEFAULTS to the value it would otherwise have used -- the first two from
+`NOMINAL_SEED_POLICY`, the third from `MultiFold.__init__`'s own signature, read with `inspect` rather
+than copied, so it cannot drift from the engine. Passing none of them is byte-identical to the
+behaviour before they existed, which is what makes the gate route unaffected. THE POLICY CONSTANT IS
+NOT EDITED: `train_fullevent_nominal.NOMINAL_SEED_POLICY` is read at run time by the queued nominal as
+well, so moving it to run one diagnostic would silently reconfigure a 12-hour publication training.
+
+The report records the EFFECTIVE values in `configuration`, not the policy's, alongside
+`configuration_policy`, `configuration_overrides` and `is_nominal_configuration`. That ordering is
+deliberate: `sbatch_powered_closure.sh`'s header already had to be corrected once for asserting
+"niter 2" after the policy moved to 3, and the lesson recorded there is that the configuration is read
+out of the report and never out of a launcher comment. A report that kept quoting the policy while
+training at another budget would reintroduce exactly that defect one layer down -- and it is not
+hypothetical: `train_fullevent_nominal`'s own docstring records a nominal launched with
+`--niter 1 --epochs 2` that validated PASS against a receipt claiming `niter: 2, epochs: 8`.
+Consequently `validate_pet_nominal_gate4.check_powered_closure`'s `powered:nominal_configuration`
+check FAILS CLOSED on any overridden run, which is the intended and only safe behaviour: a probe is
+not gate evidence.
+
 WHAT THIS SCRIPT PERSISTS, so Gate-4 can re-derive rather than believe: the ABSOLUTE dump row
 indices of both halves, the push weights, and the hashes of the source NPZ and its producer receipt.
 Gate-4 recomputes the tilt (importing the function below, so the two cannot drift), recomputes all
@@ -53,6 +73,7 @@ for a comment invalidates the receipt and costs a full gate re-issue.)
 """
 import argparse
 import hashlib
+import inspect
 import json
 import os
 import sys
@@ -179,6 +200,17 @@ def parse_args(argv=None):
     p.add_argument("--split-seed", type=int, default=SPLIT_SEED)
     p.add_argument("--max-events", type=int, default=None,
                    help="rows to load; defaults to 2*half-size, which is what the split needs")
+    # TRAINING BUDGET. `default=None` is the sentinel for "use the policy", resolved in main() where
+    # NOMINAL_SEED_POLICY is imported -- parse_args stays login-safe and importable without it. The
+    # numbers are deliberately NOT restated in these help strings: a literal here is the stale
+    # protocol comment that already bit sbatch_powered_closure.sh's header, one layer down.
+    p.add_argument("--niter", type=int, default=None,
+                   help="OmniFold iterations; defaults to NOMINAL_SEED_POLICY['niter'] at run time")
+    p.add_argument("--epochs", type=int, default=None,
+                   help="epochs per step; defaults to NOMINAL_SEED_POLICY['epochs'] at run time")
+    p.add_argument("--early-stop", type=int, default=None,
+                   help="EarlyStopping patience; defaults to MultiFold's own signature default, "
+                        "read via inspect so it cannot drift from the engine")
     p.add_argument("--weights-folder", default="./weights_powered_closure")
     return p.parse_args(argv)
 
@@ -192,6 +224,37 @@ def main(argv=None):
     from train_fullevent_nominal import NOMINAL_SEED_POLICY
 
     pol = NOMINAL_SEED_POLICY
+
+    # ---- effective training budget ------------------------------------------------------------
+    # `early_stop` has no entry in NOMINAL_SEED_POLICY, so its default is read off the engine's own
+    # signature rather than mirrored as a literal here. Two copies of a default is one of them going
+    # stale; and if the parameter is ever renamed this raises instead of silently passing an
+    # unrecognised kwarg. It is then passed EXPLICITLY on every run, including the nominal one, where
+    # it equals what MultiFold would have chosen anyway -- so the value in the report is the value the
+    # engine used, not an inference about it.
+    es_engine_default = int(
+        inspect.signature(MultiFold.__init__).parameters["early_stop"].default)
+    eff = {"niter": int(a.niter) if a.niter is not None else int(pol["niter"]),
+           "epochs": int(a.epochs) if a.epochs is not None else int(pol["epochs"]),
+           "estimator_seed": int(pol["estimator_seed"]),
+           "subsample_seed": int(pol["subsample_seed"]),
+           "batch_size": int(pol["batch_size"])}
+    eff_early_stop = int(a.early_stop) if a.early_stop is not None else es_engine_default
+    pol_cfg = {k: int(pol[k]) for k in ("niter", "epochs", "estimator_seed",
+                                        "subsample_seed", "batch_size")}
+    overrides = {k: {"policy": pol_cfg[k], "used": eff[k]}
+                 for k in ("niter", "epochs") if pol_cfg[k] != eff[k]}
+    if eff_early_stop != es_engine_default:
+        overrides["early_stop"] = {"engine_default": es_engine_default, "used": eff_early_stop}
+    if overrides:
+        print("[powered] *** DIAGNOSTIC RUN -- NON-NOMINAL TRAINING BUDGET ***")
+        for _k in sorted(overrides):
+            print(f"[powered]   {_k}: {overrides[_k]}")
+        print("[powered] this report is stamped is_nominal_configuration=false, and Gate-4's "
+              "powered:nominal_configuration check FAILS on it by design -- it is not gate evidence")
+    else:
+        print("[powered] nominal training budget; no overrides in force")
+
     need = int(a.max_events if a.max_events is not None else 2 * a.half_size)
     artifact = a.artifact or (os.path.splitext(a.json)[0] + "_artifact.npz")
     tf.keras.utils.set_random_seed(int(pol["estimator_seed"]))
@@ -262,8 +325,9 @@ def main(argv=None):
              num_heads=2, projection_dim=32, local=True, K=3, coord_idx=coord_reco)
     m2 = PET(gen.shape[-1], num_evt=meta["n_evt_truth"], num_part=P, num_transformer=2,
              num_heads=2, projection_dim=32, local=True, K=3, coord_idx=coord_gen)
-    of = MultiFold("fe_powered", m1, m2, pdata, mcB, niter=int(pol["niter"]),
-                   epochs=int(pol["epochs"]), batch_size=int(pol["batch_size"]),
+    of = MultiFold("fe_powered", m1, m2, pdata, mcB, niter=eff["niter"],
+                   epochs=eff["epochs"], batch_size=eff["batch_size"],
+                   early_stop=eff_early_stop,
                    weights_folder=a.weights_folder, verbose=False)
     of.Unfold()
     push = np.asarray(of.weights_push, dtype=np.float64)
@@ -315,8 +379,15 @@ def main(argv=None):
                     "n_step1_a": int(s1_a.sum()), "n_step1_b": int(s1_b.sum()),
                     "n_truth_a": int(ma.sum()), "n_truth_b": int(mb.sum()),
                     "step1_population": "pass_reco & pass_truth on both sides"},
-        "configuration": {k: int(pol[k]) for k in ("niter", "epochs", "estimator_seed",
-                                                   "subsample_seed", "batch_size")},
+        # EFFECTIVE, never the policy's. Gate-4 reads these five keys against FROZEN["seed_policy"],
+        # so an overridden run fails `powered:nominal_configuration` -- which is the point.
+        "configuration": dict(eff),
+        "configuration_policy": pol_cfg,
+        "configuration_overrides": overrides,
+        "is_nominal_configuration": not overrides,
+        # Read back off the constructed engine, so it reports what MultiFold holds rather than what
+        # this driver believes it passed.
+        "early_stop_patience": int(of.patience),
         "artifact": {"path": os.path.abspath(artifact), "sha256": art_sha,
                      "contains": ["dump_rows_a", "dump_rows_b", "weights_push", "mc_indices"]},
         "source": {"inputs": os.path.abspath(a.inputs),

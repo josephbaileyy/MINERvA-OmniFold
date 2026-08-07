@@ -280,7 +280,12 @@ class LauncherWiring(unittest.TestCase):
         and a raw substring search reads that promise as the violation it forbids.
         """
         code = "\n".join(ln for ln in self.src.splitlines() if not ln.lstrip().startswith("#"))
-        for flag in ("--half-size", "--amplitude", "--clip-z", "--split-seed", "--max-events"):
+        # --niter/--epochs/--early-stop joined the list on 2026-08-07, when the driver gained them for
+        # the D2 under-fitting probe. They default to the policy, so their mere existence is safe --
+        # but the GATE launcher passing one would train at a budget the frozen policy does not
+        # describe, which is the same class of defect as overriding the injection.
+        for flag in ("--half-size", "--amplitude", "--clip-z", "--split-seed", "--max-events",
+                     "--niter", "--epochs", "--early-stop"):
             self.assertNotIn(flag, code, f"launcher passes {flag}; that moves the goalposts")
 
     def test_cross_check_is_wired_and_can_fail_the_run(self):

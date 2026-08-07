@@ -96,6 +96,16 @@ what a run actually used -- calibrate before trusting an inference-only reproduc
 Fixing the label touches `omnifold.py`, which is hash-bound by the Gate-4 launch-code gate, so it must
 ride a deliberate re-issue rather than a drive-by edit.
 
+Extended 2026-08-07: the plateau is a property of **all six** trainings of `56381674`, not just iteration
+2 (train loss moves 1.13e-3 across 8 epochs on the first, 3.0e-5 on the last; val argmin at {5,5,7,1,6,5}
+of 8). Two consequences for anyone reading these logs. `EarlyStopping(patience=10)` **cannot fire** at
+`epochs=8`, and Keras 2.15 restores best weights *only* inside its stop branch (`on_train_end` merely
+prints) -- so every run on this campaign has used last-epoch weights, and the `ModelCheckpoint` mismatch
+noted above is therefore the norm rather than an edge case. `ReduceLROnPlateau` is at `patience=1000`
+(`:263-265`) and `get_optimizer` returns a bare Adam at a flat LR (`:376-380`, `num_steps` accepted and
+unused), so no schedule ever engages either. Table and consequences:
+`docs/orchestration/FINDING-20260807-d2-underfitting-probe.md` §1.
+
 ## The FPS extractor divides the cross section by a reco efficiency it must not divide by
 
 **RESOLVED 2026-08-06** (option A, authorized by Joseph; fix reviewed by an independent fresh-context

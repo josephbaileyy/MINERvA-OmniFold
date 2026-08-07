@@ -3379,3 +3379,70 @@ which was checked against an independent native computation rather than assumed 
 **Not final, and not for J28 reasons.** The section heading *"CANDIDATE; final lateral replacement pending"*
 still stands; `values.tex` is untouched. The five-band selection-complete laterals are the remaining gate
 (running as `56430128_[0-9]`).
+
+## 2026-08-07 — D2 under-fitting probe: the shortfall is 97.8% per-bin SCATTER, and a stale handoff instruction
+
+Tasked from `HANDOFF-20260806-2246Z.md` §4, "test the under-fitting hypothesis ... neither tested it".
+**That instruction was stale** — `docs/OPEN_ITEMS.md` (a) already recorded "(ii) `epochs=8`
+optimization-limited: **measured false**" from the six history pickles, and already carried the
+retraction of the tilt-direction structure the same handoff repeats as live. Filed as **BEN-037**; a
+session routed through the handoff alone spends ~14 GPU-hours re-deriving a settled null.
+
+**The new result, at zero GPU cost.** The closure scores `1 - E_w[|1-r_b|]` over 285 cells, and an
+absolute value turns per-cell noise into a one-sided penalty. Splitting it (`r_b =
+(u_b-p_b)/(t_b-p_b)`, `w_b = |t_b-p_b|`):
+
+    aggregate L1 recovery          0.54685
+    signed mean response  E_w[r]   0.63129     <- reproduces OPEN_ITEMS' number exactly
+    dilution ideal                 0.63321
+    bias vs ideal                 -0.00192
+    SCATTER PENALTY                0.08443     <- 97.8% of the 0.086354 gap to the ceiling
+    overshoot bins                 87 of 262, carrying 24.1% of displacement
+
+**The estimator has essentially no bias left to remove; the powered closure is measuring per-cell
+variance.** That is the substantive argument for redesigning the criterion rather than the estimator.
+Two traps recorded as **BEN-038**: the per-band L1 column reads like undershoot where the signed bias
+is ~0 (`a_b>=0.50`: L1 0.7943 vs ceiling 0.9704, bias only **-0.0116**; the `a_b>=0.70` band actually
+*overshoots*, `E_w[r]=1.0333`) — this session wrote the wrong reading into a draft before the signed
+split caught it — and an aggregate-phrased predeclared rule returns CONFIRMED for a synthetic pure
+bias shift, which is how the unit test caught it.
+
+Also ruled out free, from the artifact's 2,000,000 push weights: **saturation** (max implied logit
+**1.041** against `REWEIGHT_LOGIT_CAP = 30.0`, zero rows near the cap) and **global shrinkage** (push
+spans [0.562076, 2.832002] against an injected tilt range [0.548710, 2.653992]). The ceiling
+reproduces exactly at **0.633208** (k=3) from the committed acceptance map. Low-acceptance cells
+(`a_b < 0.01`, 23.2% of displacement) reach signed **+0.1525** against an independence ideal of
+**0.0082** — transport observed, so **0.6332 is a reference curve, not a bound**.
+
+**Code.** `closure_powered_truth_reweight.py` gained `--niter` / `--epochs` / `--early-stop`, each
+defaulting to what it already used (`early_stop` read off `MultiFold.__init__`'s signature via
+`inspect`, not mirrored as a literal). **The policy constant is untouched** — the queued nominal
+`56415634` reads it. The report now records **effective** values in `configuration` plus
+`configuration_policy` / `configuration_overrides` / `is_nominal_configuration` /
+`early_stop_patience`, so Gate-4's `powered:nominal_configuration` fails closed on a probe report by
+construction. Verified login-safe (importing the driver still does not import TensorFlow) and
+byte-identical on the gate route (the engine's own `early_stop` default is 10, which is what it
+already used). `sbatch_powered_closure.sh`'s `EXPECTED_DRIVER_SHA` moved `69bec696… -> a45fae7c…` with
+the move recorded in-file: it is a submission-time guard, **no receipt binds this driver** (grepped
+over `state/` and every `*.json`), and `56381674`'s log and report still record the old sha as what
+ran. Its no-override guard now also forbids the three new flags. New:
+`sbatch_powered_closure_budget_probe.sh` (writes to `powered_closure/underfit_probe/` under a
+different report basename, so a diagnostic can never be read as gate evidence) and
+`analyze_powered_closure_budget_probe.py`. `SHELL_PIN_FLOOR` 13 -> 15, counted before raising.
+
+**Arms submitted** (IDs and parameters read back from `scontrol` in the submitting turn, BEN-027):
+`56431649` ctl8 epochs=8 / 4h, `56431650` ep16 epochs=16 early_stop=1000 / 7h, `56431651` ep32
+epochs=32 early_stop=1000 / 11h. Sized off `weights.slurm-56381674/*.pkl` mtimes — 2.00 min/epoch
+step 1, 2.79 step 2, 14.4 min per epoch across all six trainings, reproducing the baseline's 1h58m.
+Durable wakerctl watches `d2-probe-{ctl8,ep16,ep32}-<job>` armed; waker tick live 2026-08-07T01:50:23Z.
+No fourth early-stopping arm: Keras 2.15 restores best weights **only** inside the stop branch, so with
+this flat val curve it would likely never fire and would duplicate ep32 for ~8 GPU-hours.
+
+**Suite.** BEFORE at `f3ba262`, clean tree, job `56430155`: 763 passed + 1 known J28-fixture failure,
+verifier ALL BINDINGS INTACT (863 resolved, 859 OK, 18 pins). Rebased onto `github/main` mid-session;
+`ae90c9b` **tracked** `test_uq_remediation.py` and **fixed** that fixture, so the baseline to compare
+against is now **764 passed / 0 failed**. The rebase was blocked by that same file as an untracked
+path — resolved per BEN-031 by copying it aside to
+`/pscratch/sd/j/josephrb/d2_pull_backup_1786067384/`, never `git stash`.
+
+**No threshold was touched.** `recovery_min = 0.80` is unchanged and is not evaluated by the analyzer.

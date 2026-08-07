@@ -1,0 +1,10 @@
+Tracked so this directory exists in every checkout BEFORE sbatch runs.
+
+slurmstepd opens the batch --output/--error paths before it execs the job script, and SLURM does not
+create their parent directories -- so the `mkdir -p "$LOG_DIR"` inside
+sbatch_powered_closure_budget_probe.sh is far too late to help. Job 56355818 was submitted with the
+sibling powered_closure/logs/ absent: it held a queue slot for hours and would have died at dispatch
+with nothing written anywhere. Same trap, same fix, one directory over.
+
+The probe's products deliberately live here rather than in powered_closure/ so that a diagnostic run
+at a non-nominal training budget can never be mistaken for the gate's D2 evidence.

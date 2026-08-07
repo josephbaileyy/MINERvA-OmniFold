@@ -300,6 +300,33 @@ Implementation gate, in order:
        by `k=8`. **No `k` fixes this.** The k=4 B1 arms (`56400517`, `56400519`) are therefore **not
        load-bearing** --- they still close (e)'s scalar question, so let them run, but they will not
        rescue the differential test.
+
+       **UPDATE 2026-08-07 --- the scatter reading above is now quantified, and it is the WHOLE
+       shortfall.** Splitting the criterion into a signed response and a scatter term, with
+       `r_b = (u_b-p_b)/(t_b-p_b)` and weights `w_b = |t_b-p_b|`: signed mean `E_w[r] = 0.63129`
+       against the dilution ideal `0.63321` (**bias -0.0019**), while
+       `scatter penalty = E_w[|1-r|] - |1-E_w[r]| = 0.08443` --- **97.8% of the 0.086354 gap between
+       the measured 0.546853 and the achievable ceiling**, with **87 of 262** occupied bins
+       *overshooting*. So the estimator has essentially **no bias left to remove** and the powered
+       closure, as defined, is measuring **per-cell variance**. This is the strongest available
+       argument that the criterion needs redesign rather than the estimator, and it strengthens (e).
+       Two traps this exposed, both filed: the per-band L1 column reads like undershoot where the
+       signed bias is ~0 (`a_b>=0.50`: L1 0.7943 vs ceiling 0.9704, but bias only **-0.0116**), and
+       the low-acceptance cells **beat** their own ceiling 19x (signed +0.1525 vs 0.0082), so 0.6332
+       is a reference curve, **not a bound** (BEN-038). Saturation and global shrinkage are also
+       excluded: max implied logit **1.041** against a cap of 30, and the push weights span
+       [0.562, 2.832] against an injected tilt range of [0.549, 2.654].
+
+       **Budget ladder submitted 2026-08-07** to convert the "(ii) measured false" *inference* (a loss
+       plateau) into a direct measurement: `56431649` ctl8 (epochs=8, the control and an independent
+       reproduction of 0.546853), `56431650` ep16, `56431651` ep32, reading predeclared in
+       `pet/analyze_powered_closure_budget_probe.py:PREDECLARED` on the **scatter** axis, so an
+       aggregate move that is really a bias shift returns a distinct verdict instead of a false
+       confirmation. `recovery_min = 0.80` untouched and not evaluated. **The higher-value follow-up
+       is the seed ensemble this item already called for** --- it needs an `--estimator-seed`
+       override the driver still lacks, deliberately not added while the three arms hold a
+       submission-time pin on the driver's sha. Detail:
+       [`FINDING-20260807-d2-underfitting-probe.md`](orchestration/FINDING-20260807-d2-underfitting-probe.md).
    (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
        PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
        `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,
