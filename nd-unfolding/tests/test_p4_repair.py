@@ -212,13 +212,20 @@ class IntegrationCLI(unittest.TestCase):
             self.assertFalse(os.path.exists(out))
 
     def test_project_rejects_protected_out_path(self):
+        """REPAIR-4 (verifier defect 6b). This test used to pass `--proj`, an argument the
+        projector does not define, so argparse exited nonzero BEFORE the path guard ran and
+        `assertNotEqual(rc, 0)` passed for the wrong reason. It asserted nothing about the
+        guard it was named for. Now: only real arguments, and the assertion is on the SPECIFIC
+        gate reached, not merely a nonzero return."""
         import tempfile, os
         with tempfile.TemporaryDirectory() as td:
             out = "uq_4d/corrected/proj_candidate.root"
-            rc, _ = self._run("p4_project_4d.py",
-                              ["--c5", os.path.join(td, "c5.root"), "--proj", os.path.join(td, "M.npz"),
-                               "--manifest", "/dev/null", "--out", out])
+            rc, err = self._run("p4_project_4d.py",
+                                ["--c5", os.path.join(td, "c5.root:k"),
+                                 "--manifest", "/dev/null", "--out", out])
             self.assertNotEqual(rc, 0)
+            self.assertNotIn("unrecognized arguments", err)   # would mean we never reached the guard
+            self.assertIn("candidate must be under", err)     # the guard we are actually testing
             self.assertFalse(os.path.exists(f"{self.ND}/{out}"))
 
 
@@ -414,6 +421,121 @@ class StandardFooting(unittest.TestCase):
         self.assertIn("--bkg-mode", sh)                    # no reliance on the driver default
         self.assertIn('"${BKG_MODE}"', sh)                 # and it comes from P4Config
         self.assertIn('"bkg_mode":"%s"', sh)               # stamped into the receipts
+
+
+class Repair4DriverContract(unittest.TestCase):
+    """REPAIR-4, verifier defect 1. Stages 4-6 had NEVER executed, so nothing caught that the
+    driver called the validator and projector with arguments they do not define and a ROOT key
+    nothing writes. These tests derive the expectation from the REAL callees -- each script's
+    own argparse and the builder's own key constants -- so they fail if either side drifts.
+    That is the point: the previous suite asserted only `rc != 0` and was satisfied by an
+    argparse error (defect 6b)."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    def _driver(self):
+        return (self.ND / "run_p4_standard.sh").read_text()
+
+    def _argparse_opts(self, script):
+        """The set of long options a script actually defines, read from its source."""
+        import re
+        src = (self.ND / script).read_text()
+        return set(re.findall(r'add_argument\("(--[a-z0-9-]+)"', src))
+
+    def _driver_opts_for(self, script):
+        """The long options the driver passes to `script`, read from the driver."""
+        import re
+        drv = self._driver()
+        m = re.search(rf"python3 {re.escape(script)}((?:[^\n]*\\\n)*[^\n]*)", drv)
+        self.assertIsNotNone(m, f"driver does not invoke {script}")
+        return set(re.findall(r"(--[a-z0-9-]+)", m.group(1)))
+
+    # ---------- D1b/D1c: the driver must speak each callee's real CLI ----------
+    def test_driver_passes_only_options_the_validator_defines(self):
+        passed = self._driver_opts_for("p4_validate_active_lateral.py")
+        defined = self._argparse_opts("p4_validate_active_lateral.py")
+        self.assertTrue(passed, "no options parsed from the validator invocation")
+        self.assertEqual(passed - defined, set(),
+                         f"driver passes options the validator does not define: {passed - defined}")
+
+    def test_driver_supplies_every_required_validator_option(self):
+        passed = self._driver_opts_for("p4_validate_active_lateral.py")
+        for req in ("--candidate", "--support", "--manifest", "--merged-audit", "--out"):
+            self.assertIn(req, passed, f"driver omits required validator option {req}")
+
+    def test_driver_passes_only_options_the_projector_defines(self):
+        passed = self._driver_opts_for("p4_project_4d.py")
+        defined = self._argparse_opts("p4_project_4d.py")
+        self.assertEqual(passed - defined, set(),
+                         f"driver passes options the projector does not define: {passed - defined}")
+        self.assertNotIn("--proj", passed)        # the exact retired argument from defect 1
+
+    def test_driver_passes_only_options_the_builder_defines(self):
+        passed = self._driver_opts_for("p4_build_components.py")
+        defined = self._argparse_opts("p4_build_components.py")
+        self.assertEqual(passed - defined, set(),
+                         f"driver passes options the builder does not define: {passed - defined}")
+
+    # ---------- D1c: the key must be one the builder actually writes ----------
+    DEAD_KEY = "hCov_std" + "_final5_candidate"      # split so this file is not its own hit
+
+    @staticmethod
+    def _code_lines(text):
+        """Lines that are not wholly a `#` comment. Keeps history in comments testable-around:
+        documenting the dead key is good, *referencing* it is the defect."""
+        return [l for l in text.splitlines() if not l.lstrip().startswith("#")]
+
+    def test_candidate_key_is_produced_by_the_builder(self):
+        builder = (self.ND / "p4_build_components.py").read_text()
+        self.assertIn("P.CANDIDATE_TOTAL_KEY", builder)      # builder writes the shared constant
+        self.assertIn("CANDIDATE_TOTAL_KEY", self._driver()) # driver reads the same one
+        self.assertNotIn(self.DEAD_KEY, "\n".join(self._code_lines(self._driver())))
+
+    def test_dead_candidate_key_appears_in_no_executable_line(self):
+        import subprocess
+        r = subprocess.run(["git", "grep", "-l", self.DEAD_KEY],
+                           cwd=self.ND.parent, capture_output=True, text=True)
+        offenders = []
+        for rel in r.stdout.splitlines():
+            if not rel.strip() or rel.endswith(".md") or "runs/" in rel or "tests/" in rel:
+                continue
+            body = (self.ND.parent / rel).read_text(errors="replace")
+            if self.DEAD_KEY in "\n".join(self._code_lines(body)):
+                offenders.append(rel)
+        self.assertEqual(offenders, [],
+                         f"dead candidate key referenced in executable code: {offenders}")
+
+    def test_candidate_keys_are_single_sourced(self):
+        self.assertEqual(P.CANDIDATE_TOTAL_KEY, "hCov_stdcombined5d_total_candidate")
+        self.assertEqual(P.CANDIDATE_SYST_KEY, "hCov_stdsyst5d_total_candidate")
+        self.assertEqual(P.candidate_band_key("BeamAngleX"), "hCov_active5d_BeamAngleX")
+        with self.assertRaises(P4GateError):
+            P.candidate_band_key("NotABand")
+
+    # ---------- D1a: stage order ----------
+    def test_stage_order_is_audit_then_unfold_then_evidence(self):
+        drv = self._driver()
+        i_audit = drv.index("run bash run_p4_merge_audit_std.sh")
+        i_unfold = drv.index("run bash run_p4_unfold_std.sh")
+        i_evid = drv.index("python3 p4_evidence.py")
+        self.assertLess(i_audit, i_unfold, "merge+audit must precede unfold")
+        self.assertLess(i_unfold, i_evid,
+                        "endpoint evidence must come AFTER unfold, or the manifest describes "
+                        "endpoints the next stage can rewrite")
+
+    def test_default_stop_after_is_the_safe_preflight(self):
+        drv = self._driver()
+        self.assertIn('STOP_AFTER="${STOP_AFTER:-audit}"', drv)
+        self.assertIn("unknown STOP_AFTER", drv)          # invalid values abort, not fall through
+
+    def test_covariance_stages_are_still_gated(self):
+        """Compare EXECUTABLE positions, not the header comment -- both strings appear in the
+        stage-list comment at the top, so a naive index() compares documentation."""
+        code = "\n".join(self._code_lines(self._driver()))
+        self.assertIn("P4_VERIFIER_PASS", code)
+        self.assertLess(code.index("P4_VERIFIER_PASS"),
+                        code.index("python3 p4_build_components.py"),
+                        "the verifier gate must precede component construction")
 
 
 if __name__ == "__main__":

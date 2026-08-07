@@ -43,6 +43,21 @@ STANDARD_REQUIRED_FOOTING = {
     "use_weights": True,
     "full_phase_space": False,      # standard phase space; the FPS lane sets this True
 }
+# ---------------------------------------------------- candidate ROOT keys (repair-4, D1c)
+# The driver used to hardcode `hCov_std_final5_candidate`, a key NOTHING wrote -- stages 4-6
+# had never executed, so nothing caught it. The builder's names and the driver's names now
+# come from here, so the two cannot drift apart again by editing one file.
+CANDIDATE_ACTIVE_BAND_PREFIX = "hCov_active5d_"
+CANDIDATE_ACTIVE_TOTAL_KEY = "hCov_active5d_total"
+CANDIDATE_SYST_KEY = "hCov_stdsyst5d_total_candidate"
+CANDIDATE_TOTAL_KEY = "hCov_stdcombined5d_total_candidate"   # full total: C_syst + stat + ML
+
+
+def candidate_band_key(band):
+    require(band in BANDS, f"unknown band {band!r}")
+    return f"{CANDIDATE_ACTIVE_BAND_PREFIX}{band}"
+
+
 KNOWN_BKG_MODES = ("purity", "negweight", "negweight-refined")
 STANDARD_BKG_MODE = "purity"        # the 2026-08-07 decision; see OPEN_ITEMS G-0
 STANDARD_FOOTING_KEYS = list(STANDARD_REQUIRED_FOOTING) + ["bkg_mode"]

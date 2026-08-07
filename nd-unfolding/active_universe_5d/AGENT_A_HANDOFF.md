@@ -90,23 +90,39 @@ Single authoritative, manifest-bound, fail-closed chain. Run inside a compute al
 ```
 srun --overlap --jobid=<HOLDER> -w <NODE> -n1 -c128 bash -lc \
   'export HOME=/global/homes/j/josephrb; source setup_salloc_env.sh >/dev/null 2>&1; \
-   cd nd-unfolding && STOP_AFTER=evidence bash run_p4_standard.sh'
+   cd nd-unfolding && STOP_AFTER=audit bash run_p4_standard.sh'
 ```
+> **UPDATED repair-4, 2026-08-07 (verifier defect 1).** The order below was wrong — it ran
+> evidence *before* unfold, so the manifest described endpoints the next stage could rewrite —
+> and the stage 5/6 contract quoted here named arguments the callees do not define. Both are
+> corrected. The safe preflight is now **`STOP_AFTER=audit`** (stage 1 only); `evidence` now
+> comes after `unfold`, which WRITES receipts, so it is no longer the safe default.
+> Valid `STOP_AFTER`: `audit | unfold | evidence | components | validate | project`.
+
 Ordered stages (each fail-closed; chain aborts on any nonzero stage):
 1. `run_p4_merge_audit_std.sh` — 10 endpoint hadd (large-tree-safe) + per-playlist audit.
-2. `p4_evidence.py` — recompute+bind hashes (endpoint SHA256s, mask/order 10694,
-   central 5D/4D, edges/bin-volume, endpoint-manifest) → `evidence/p4_standard_manifest.json`,
-   `p4_merged_audit.json`, `p4_endpoint_evidence.json`. (`STOP_AFTER=evidence` = repair preflight.)
-3. `run_p4_unfold_std.sh` — atomic (`OUT.tmp`→validate→rename ROOT+`.done` receipt),
-   resumable by exact tag set, `--seed 42`, no `--universe`, fail-closed parallel return.
+   (`STOP_AFTER=audit` = the safe preflight; nothing is written.)
+2. `run_p4_unfold_std.sh` — atomic (`OUT.tmp`→validate→rename ROOT+`.done` receipt),
+   resumable by exact tag set, `--seed 42`, explicit `--bkg-mode` from `P4Config`, no
+   `--universe`, fail-closed parallel return. Legacy attestation compares against the
+   **committed** manifest from the previous round.
+3. `p4_evidence.py` — recompute+bind hashes (endpoint SHA256s, mask/order 10694,
+   central 5D/4D, edges/bin-volume, endpoint-manifest, background footing) →
+   `evidence/p4_standard_manifest.json`, `p4_merged_audit.json`, `p4_endpoint_evidence.json`.
 --- HARD GATE: standard-p4-verifier PASS on the committed patch → set `P4_VERIFIER_PASS=<token>` ---
 4. `p4_build_components.py` — manifest-bound; C_final5 = named corrected **bkgaware**
    non-lateral components + 5 active per-band MAT blocks (no globs; traces>0; exact
    active-total identity). Writes candidate + component provenance manifest.
 5. `p4_validate_active_lateral.py` — exact 5 bands / positive-finite traces / exact
-   component sum / symmetry+PSD / complete support comparison / mandatory `--merged-dir`.
+   component sum / symmetry+PSD / complete support comparison. **Real CLI (repair-4):**
+   `--candidate <ROOT path>` `--support` `--manifest` `--merged-audit` `--out`. It hashes the
+   candidate itself and records `candidate_sha256` (the J32 binding). It does **not** take
+   `--active` or `--merged-dir`; those were the retired names defect 1 called it with.
 6. `p4_project_4d.py` — C4=M C5 M^T; 10694→4830 mask/edge hashes; frozen 5D/4D central
    byte-identical pre/post; PSD; declared central-reproduction. Candidate paths only.
+   **Real CLI (repair-4):** `--c5 <ROOT>:<key>` `--manifest` `--out`. There is no `--proj`.
+   The key is `p4_lib.CANDIDATE_TOTAL_KEY` (`hCov_stdcombined5d_total_candidate`), read from
+   `p4_lib` by the driver so it cannot drift from what `p4_build_components.py` writes.
 
 **RETIRED / FORBIDDEN for standard publication** (guarded to abort with `[RETIRED]`):
 `merge_active_endpoints.sh`, `run_active_lateral_unfolds_interactive.sh`,

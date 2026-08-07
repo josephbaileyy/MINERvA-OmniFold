@@ -155,11 +155,12 @@ def main():
         h = ROOT.TH2D(name, title, n, 0, n, n, 0, n)
         h.SetContent(np.ascontiguousarray(np.pad(C, 1)[0:n + 2, 0:n + 2], dtype=np.float64).ravel())
         h.Write()
+    # repair-4 (D1c): key names come from p4_lib so the driver cannot name a key nothing writes
     for b in P.BANDS:
-        wr(f"hCov_active5d_{b}", active[b], f"active MAT band {b}")
-    wr("hCov_active5d_total", active_only, "active-only total (sum of 5 MAT bands)")
-    wr("hCov_stdsyst5d_total_candidate", Csyst_active, "candidate C_syst (retained + active)")
-    wr("hCov_stdcombined5d_total_candidate", Ccomb_active, "candidate full total (C_syst + stat + ML)")
+        wr(P.candidate_band_key(b), active[b], f"active MAT band {b}")
+    wr(P.CANDIDATE_ACTIVE_TOTAL_KEY, active_only, "active-only total (sum of 5 MAT bands)")
+    wr(P.CANDIDATE_SYST_KEY, Csyst_active, "candidate C_syst (retained + active)")
+    wr(P.CANDIDATE_TOTAL_KEY, Ccomb_active, "candidate full total (C_syst + stat + ML)")
     fo.Close()
     print(f"CANDIDATE {a.out}: sqrt_tr_syst={np.sqrt(max(0,np.trace(Csyst_active))):.4e} "
           f"sqrt_tr_full={np.sqrt(max(0,np.trace(Ccomb_active))):.4e} bands={len(all_bands)} "
