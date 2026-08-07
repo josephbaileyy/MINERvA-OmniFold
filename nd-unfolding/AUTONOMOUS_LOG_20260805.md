@@ -1764,3 +1764,37 @@ observation into a bounded one, which is why I said I would.
 Secondary, and NOT a claim: at 32 epochs the best and last checkpoints nearly coincide, whereas the
 nominal at 8 epochs had gaps of +0.000744. If that holds, BEN-043's discrepancy would shrink at higher
 budget — but it would not vanish, and the fix already landed does not depend on it.
+
+### 17:50Z — the predeclared RSS escalation rule EVALUATED against ep32 and does NOT fire
+
+Logged because a predeclared rule is only worth declaring if its evaluation is recorded either way. ep32 is
+3 of 6 trainings done at 3:57:34 wall, `AveCPU 4:36:32` > wall, `56445883` still PENDING.
+
+The rule from the 13:20Z entry: *"RSS > 28 GiB (50% of limit) before 6h elapsed -> the linear trend is
+real, not a plateau. Escalate immediately with a recommendation to cancel and resubmit with a raised
+`--mem`."* Limit confirmed from `scontrol` TRES rather than carried over by assumption:
+`mem=57472M` = **56.12 GiB**, the same shape as the job the rule was written for.
+
+    MaxRSS now   16.32 GiB   = 29.1% of limit, at 3:57:34 elapsed
+    AveRSS now   14.99 GiB
+    threshold    28 GiB before 6h        -> does NOT fire
+
+**And the trend's SHAPE is the interesting part, because it vindicates the earlier refusal to escalate:**
+
+    0:57  13.84    1:27  13.84    1:57  13.84    2:27  13.84
+    2:57  14.03    3:27  14.03    3:57  16.32
+
+Flat for two and a half hours, then a step at the `iter1_step1 -> iter1_step2` boundary (10:20:07 local).
+So the working set grows **stepwise at training transitions, not linearly in wall time** — exactly the
+plateau behaviour I argued for when I declined to escalate the earlier job on a 3-point linear
+extrapolation, and which I flagged then as the BEN-025 overreach to avoid. Extrapolating linearly here
+would predict ~24 GiB by the wall; the stepwise reading predicts ~20 GiB with one and a half iterations
+left. Both are far under 56 GiB, so the conclusion is robust to which reading is right — which is the only
+reason I am content to state it.
+
+**Timing, from this job's own artifacts:** `iter1_step1.pkl` at 10:20:07 local, i.e. 59m34s after
+`iter0_step2` — within 1.5 min of iteration 0's ~58 min, so the per-iteration figure holds and the tf.data
+caching (`cached = i > start`) bought no measurable speedup. Remaining work projects to a finish of
+**~21:10-21:20Z** against a 00:52Z wall, ~3.5h margin.
+
+No mail: not a completion, not a verdict, not a blocking decision.
