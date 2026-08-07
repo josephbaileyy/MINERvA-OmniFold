@@ -158,6 +158,13 @@ def main():
         h = ROOT.TH2D(name, title, n, 0, n, n, 0, n)
         h.SetContent(np.ascontiguousarray(np.pad(C, 1)[0:n + 2, 0:n + 2], dtype=np.float64).ravel())
         h.Write()
+    # repair-4 (D4a): the candidate persisted only the five active blocks and three totals, so
+    # the RETAINED non-lateral components -- the other half of C_syst, and the half the reader
+    # cannot recompute -- existed only as a claim in the manifest. A consumer could not
+    # reproduce C_syst from the file it was handed. Every retained pure component is now
+    # written, which is also what makes the validator's component-sum check meaningful.
+    for b in retained:
+        wr(f"hCov_retained5d_{b}", comp[b], f"retained non-lateral component {b}")
     # repair-4 (D1c): key names come from p4_lib so the driver cannot name a key nothing writes
     for b in P.BANDS:
         wr(P.candidate_band_key(b), active[b], f"active MAT band {b}")
@@ -166,7 +173,8 @@ def main():
     wr(P.CANDIDATE_TOTAL_KEY, Ccomb_active, "candidate full total (C_syst + stat + ML)")
     fo.Close()
     # candidate is now published; bind it into the manifest and write that LAST
-    written_keys = ([P.candidate_band_key(b) for b in P.BANDS]
+    written_keys = ([f"hCov_retained5d_{b}" for b in retained]
+                    + [P.candidate_band_key(b) for b in P.BANDS]
                     + [P.CANDIDATE_ACTIVE_TOTAL_KEY, P.CANDIDATE_SYST_KEY, P.CANDIDATE_TOTAL_KEY])
     prov["candidate"] = os.path.abspath(a.out)
     prov["candidate_sha256"] = P.sha256_file(a.out)
