@@ -219,6 +219,28 @@ the way `train_fullevent_nominal.py` stamps `seed_policy` into its weights artif
 without that stamp is unclassifiable from the artifact the moment the estimator moves, and the
 estimator has now moved twice (full-event schema 2026-08-01, `niter` 2026-08-06).
 
+## `step1_class_ratio` in the nominal artifact is a stored TARGET, not an achieved measurement
+
+Found 2026-08-07 by making the mistake. Investigating the nominal's fold-forward failure I read
+`pet_fullevent_nominal_weights.npz`'s `step1_class_ratio = 1.1240802949941018`, saw it equal Gate-2's R
+exactly, and concluded *"not the classic step-1 defect — that signature is the class ratio forced to 1, ours
+is exactly R."* **That inference is invalid.** `train_fullevent_nominal.py:464` sets
+`class_ratio = target_meta.get("step1_class_ratio")` — from the loader's target metadata — and stores it
+verbatim at `:505`. `fullevent_fps_dataloader.step1_class_ratio_from_dump` derives R from the dump's data/MC
+yields. So the field is **the target R, re-stored**; it can never disagree with R and therefore carries **zero
+information** about what step 1 achieved. Agreement is tautological.
+
+The trap is the name. A field called `step1_class_ratio` sitting beside genuine measurements
+(`cap_saturation_frac`, `fold_forward_sum_w_push_reco`) reads as "the class ratio step 1 produced". It is a
+copy of the input. **Consequence:** the step-1 under-achievement hypothesis is *not* ruled out for the
+2026-08-07 nominal, and it is now the leading candidate — the historical defect drives the effective ratio
+toward 1, and a folded-forward ratio of 0.7465 against a required 1.1241 is the right direction for it.
+
+**Fix forward, two parts.** (1) Rename or re-document the stored field so it cannot be read as an outcome —
+`step1_class_ratio_target` would have prevented this. (2) If an achieved value is wanted, it has to be
+*measured*: run inference with the saved `w_nominal/*_step1.weights.h5` and compare the classifier's
+reco-space mean against R. Nothing currently stored supports that comparison.
+
 ## 25 tests ran only from purgeable scratch, and one still does
 
 Found 2026-08-07 while working plan Step 4. The cluster suite collected **764** tests against the local

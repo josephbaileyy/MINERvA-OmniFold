@@ -813,3 +813,44 @@ is variance. ~3h, no extra cost, watch armed. Mailed as URGENT.
 
 Gate-4 stays red regardless — it was already blocked by D2 — so the NON-QUOTABLE status is unchanged. What is
 new is that the central value now has a *second, independent* problem.
+
+### The fold-forward failure is REAL — and I falsely exonerated step 1
+
+**The independent recomputation agrees with the driver to 1.4e-12**, against an independence tolerance of
+1e-6. Run on compute with `validate_pet_nominal_gate4.fold_forward_sums_from_dump`, which re-reads `w_reco`
+and `pass_reco` from the G2 dump and re-derives R itself, using only the driver's `weights_push` as the object
+under test:
+
+    driver       sum_w_push 746483.427515 / sum_w 1000000.028261 -> ratio 0.7464834064182863
+    independent  sum_w_push 510280.391480 / sum_w  683579.014740 -> ratio 0.7464834064193590
+    R (from dump)                                                    1.1240802949941018
+    n_pass_reco  837671 on both sides
+
+The absolute sums differ because the driver's arrays were rescaled in place by the DataLoader while the
+independent side reads raw dump weights — exactly what that function's docstring predicts — and the **ratio**
+is identical to 12 digits. So the driver's bookkeeping is exonerated and **the estimator's folded-forward
+normalization really is off by a third.** Both checks fail on both sides (dev 0.335916 vs tol 0.05; and
+nearer-1.0-than-R).
+
+**And that result exposed a false claim I had already given Joseph.** I reported "not the classic step-1
+defect — that signature is the class ratio forced to 1, and ours is exactly R." **Invalid.**
+`train_fullevent_nominal.py:464` copies `step1_class_ratio` out of the loader's *target metadata* and `:505`
+stores it verbatim; `step1_class_ratio_from_dump` derives R from the dump's data/MC yields. The field is the
+**target R re-stored**, so it cannot disagree with R and carries **zero** information about what step 1
+achieved. The agreement I cited as evidence was a tautology — and it pointed away from what is now the
+**leading** hypothesis, since the historical step-1 defect drives the effective ratio toward 1 and a
+folded-forward 0.7465 against a required 1.1241 is the right direction for it.
+
+Filed as **BEN-039** and in `KNOWN_ISSUES.md`. The general form: before citing a stored field as evidence,
+find where the producer sets it — *a value copied from an input can only confirm the input*. And be suspicious
+of any field whose name describes an outcome while sitting beside genuine measurements: ask what it would read
+if the thing had gone wrong, and if the answer is "the same", it is not a measurement. Same defect class as a
+check that cannot fail (BEN-035), except here the *datum* was incapable of disagreeing rather than the
+assertion.
+
+**What is now actually ruled out, and what is not.** Still ruled out: acceptance dilution (predicts 1.0997 at
+k=3, observed is 32.1% below), cap saturation (0.0), a partial run, and driver bookkeeping (this cycle).
+**No longer ruled out: step-1 under-achievement**, which is testable but needs measuring rather than reading —
+run inference with the saved `w_nominal/*_step1.weights.h5` and compare the classifier's reco-space mean
+against R. Nothing currently stored supports that comparison, which is itself the telemetry gap BEN-039
+records. Thresholds untouched throughout.
