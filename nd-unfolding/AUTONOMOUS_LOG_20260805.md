@@ -1294,3 +1294,70 @@ establish that a real estimator can reach 0.80 given acceptance limits — the d
 and BEN-038 records that it is not a bound (low-acceptance cells beat it 19×). "Achievable in the sampling
 sense" is proven; "a real estimator can reach it" is not. Tool committed as `nd-unfolding/pet/d2_oracle.py`.
 Mailed.
+
+### Memo item 3 — the pre-registration is FALSIFIED IN ADVANCE, and D2's dominant term is not what we thought
+
+Joseph's memo asked for a free pre-registration before ep32 lands: *"4x budget overfits the finite training
+half harder => MORE per-cell scatter => recovery worse again."* Before registering it I decomposed the two
+arms already in hand, and the hypothesis is **wrong in mechanism even where it is right in direction** —
+so registering it would have been pre-registration in name only. What the decomposition turned up is
+larger than the pre-registration question.
+
+**The D2 miss is 81.4% a coherent under-application of the injected tilt, not 97.8% scatter.** Both
+readings are the same two numbers over different denominators:
+
+    total miss  E_w[|1-r|]              0.453147   (= 1 - recovery)
+    coherent    |1-E_w[r]|              0.368714   81.4%   <- the estimator applies 63.1% of the tilt
+    dispersion  published penalty       0.084433   18.6%
+
+The published **97.8%** is measured against the *dilution ideal* 0.63321; the **0.80 bar** compares against
+full recovery. 2b's denominator presupposes the under-application is unavoidable, which 2b's own refutation
+paragraph says is not established. Verified two independent ways agreeing to **9.2e-06**: as `|1-E_w[r]|` in
+response space, and as the pt-marginal L1 over the gap in spectrum space (the injection is a function of pt
+alone, so what survives marginalising over p-parallel is the part coherent with what is measured).
+
+**I nearly filed a false refutation, and that is the BEN-041 lesson.** 2b closes with *"the scatter penalty
+alone (0.08443) exceeds the entire residual headroom (residual_budget_abs = 0.046854)"*. The penalty is
+weight-normalised; `residual_budget_abs` is an absolute `0.20 x gap`. In consistent units the penalty is
+**2.37x INSIDE** the headroom — both ways of reconciling them agree — so the sentence inverts. I had
+"2b is refuted on a unit error" written down. **It is not.** The penalty is not the cost of removing the
+bias: with `x = 1-r`, a perfect-mean-response estimator pays `E_w[|x - E_w[x]|]`, a weighted MAD, not
+`E_w[|x|] - |E_w[x]|`, because `|.|` is nonlinear under a shift. Measured **MAD/penalty = 4.38**, the honest
+counterfactual is **recovery 0.6302, FAIL**, and the dispersion **exceeds** the headroom by 1.85x. So 2b's
+conclusion is right by a route its own arithmetic did not take, and the corrected number makes it stronger.
+
+**Each term alone fails the bar, which is what actually closes the remedy question:**
+
+    perfect mean response, measured dispersion   ->  0.6302   FAIL
+    zero dispersion, measured mean response      ->  0.6313   FAIL
+
+So **no single-axis remedy passes D2**, and specifically **seed-ensembling caps at 0.6313 for ANY N** —
+it moves dispersion and leaves the mean response alone. Against the memo's "N ~ 16-25 seeds, 30-50 GPU-h"
+that is a number, not a preference, and it is why I am **not submitting the seed arm**: it remains a
+legitimate diagnostic of whether the dispersion is seed-structured, but that answer now changes no
+decision. Joseph's call to overrule. The two terms are also comparable in size (0.3687 vs 0.3698), which
+neither previous framing showed.
+
+**The ladder moved the coherent term, not the scatter term** — the arm the ladder was armed to read:
+
+    ctl8(ep8) -> ep16   recovery 0.548769 -> 0.536695   E_w[r] 0.63250 -> 0.56324
+                        coherent 0.367501 -> 0.436756  (+18.8%)
+                        MAD      0.366439 -> 0.346135  (-5.5%)
+                        penalty  0.083729 -> 0.026549  (-68.3%)   <- not a dispersion measure
+
+Read through the penalty the ladder claims a 68% win that the MAD says did not happen: the penalty tracks
+how many cells straddle `r = 1`, and 2x budget pushed 38 of 86 overshooting cells back under. Dispersion
+went **down** on both measures, so the memo's mechanism is falsified; recovery fell because the coherent
+term grew more.
+
+**ep32 (`56431651`) is still PENDING** (submitted 18:54:02, ~16.4 h queued), so I pre-registered the
+*corrected* prediction while the window is genuinely open: `E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135
+in [0.31, 0.346], recovery < 0.536695 in [0.49, 0.537], verdict FAIL — each with an explicit falsifier.
+
+Tool committed as `nd-unfolding/pet/d2_response_decomposition.py`, gated on reproducing all four published
+2b numbers plus the report's own recovery before it prints anything, and on the two constructions agreeing.
+Finding: `FINDING-20260807-d2-response-reference-point.md`, indexed, with dated pointers added to 2b and to
+the concurrent session's probe finding rather than rewriting either. **No threshold touched.** Also
+confirmed this cycle from `sacct`: `56415634` COMPLETED 05:57:38 rc=0 and `56431650` COMPLETED 03:43:39
+rc=0 (both already logged), `56431651` the only non-cron job left. Joseph's 20:29Z GBDT question was
+answered in `STEP2-20260806-niter3-budget-classification.md:138`. Mailed.

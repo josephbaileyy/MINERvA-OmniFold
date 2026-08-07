@@ -82,6 +82,18 @@ factor we have evidence for, and this holds whether or not the §2 ceiling is ri
 
 ## 2b. MEASURED 2026-08-07 — the ceiling is right in aggregate, is NOT a bound, and the bar measures variance
 
+> **AMENDED 2026-08-07 — see `FINDING-20260807-d2-response-reference-point.md` (BEN-041).** Every number in
+> this section reproduces exactly. Two things about how they are *read* are corrected there, and **the
+> conclusion of this section survives both**: (1) "97.8% scatter" is measured against the dilution ideal,
+> not against the criterion's reference — against the 0.80 bar's reference the miss is **81.4% coherent
+> under-application** (the estimator applies 63.1% of the injected tilt) and 18.6% dispersion; (2) the
+> closing argument below compares the weight-normalised scatter penalty `0.08443` to the absolute
+> `residual_budget_abs = 0.046854`, which is a unit mismatch — **and the penalty is not the cost of the
+> dispersion anyway**. The correct counterfactual (`E_w[|x - E_w[x]|]`, a weighted MAD) is 0.3698, giving
+> recovery **0.6302, FAIL**, so "even a perfect-bias estimator fails the bar" is *more* robust than the
+> arithmetic below makes it, not less. Do not "fix" the unit mismatch without recomputing the
+> counterfactual; that produces a false refutation of a correct conclusion.
+
 The concurrent D2 session's probe (`FINDING-20260807-d2-underfitting-probe.md`, commit `2113130`) settled
 both halves of §2's open question with measurement rather than argument, and its numbers reproduce §2's
 independently:

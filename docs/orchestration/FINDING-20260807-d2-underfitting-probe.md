@@ -1,5 +1,14 @@
 # FINDING 2026-08-07 — the D2 recovery shortfall is 97.8% per-bin SCATTER, and the under-fitting probe measures the right thing only if it is read on that axis
 
+> **POINTER ADDED 2026-08-07 by the orchestrating session — `FINDING-20260807-d2-response-reference-point.md`
+> (BEN-041).** §3's split reproduces exactly (`E_w[r] = 0.63129`, penalty `0.08443`, 262 live / 87
+> overshooting bins, all gated). Two amendments, neither touching a number here: the **97.8% is measured
+> against the dilution ideal**, and against the 0.80 bar's own reference the miss is **81.4% coherent
+> under-application** with dispersion the minority term; and **the scatter penalty is not a dispersion
+> measure** — reading §6's ladder through it reports a 68.3% collapse ep8→ep16 where the actual spread
+> (a weighted MAD) moved 5.5%, because the penalty tracks how many cells straddle `r = 1`. §6's arms landed
+> and are analysed there; the ladder moved the coherent term, not the scatter term.
+
 **Status as of 2026-08-07.** §1–§5 are measured from committed products at zero GPU cost and are final.
 §6 is the probe: three arms submitted, reading predeclared in code before any arm reported. §7 is
 empty until they land and must not be filled in by inference.
