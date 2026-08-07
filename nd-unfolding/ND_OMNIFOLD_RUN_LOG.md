@@ -3526,3 +3526,54 @@ path — resolved per BEN-031 by copying it aside to
 `/pscratch/sd/j/josephrb/d2_pull_backup_1786067384/`, never `git stash`.
 
 **No threshold was touched.** `recovery_min = 0.80` is unchanged and is not evaluated by the analyzer.
+
+## 2026-08-07 — GBDT close-out G-0/G-1: the standard lane can now express a background footing
+
+Runbook `docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md`, packets G-0 and G-1. No physics ran.
+
+**§1 state table re-verified against Perlmutter before acting** (it was written the same day, and
+scratch is purgeable). All rows held: ten standard lateral ROOTs dated 2026-07-18 03:53–05:34Z with
+**zero** `.done` receipts and ten logs; exactly one `*activelat*` product on scratch and it is the FPS
+one; the J28 full-160 covariance present (2.67 GB, Aug 6 17:38); **no** `p4_standard_manifest.json` and
+**no** `std_final5_candidate*` anywhere, i.e. P4-5D genuinely unbuilt. `sacct` re-confirmed
+`56430128_[0-9]`, `56431823`, `56427580_[30-39]`, `56429334` all `COMPLETED 0:0`. The PET GPU job
+`56431651` is still `PENDING (Priority)`, which is why this CPU-only lane does not contend.
+
+**§3's log evidence independently re-derived in the same session**: all ten logs carry exactly one
+`[INFO] measured training:` line and **zero** carry a `bkg-mode=` line — the purity branch is the
+silent branch, so absence is positive identification (BEN-041).
+
+**G-0.** The purity decision and its revisit obligation are now an open item in `docs/OPEN_ITEMS.md`,
+including what would close it (a full 5D 187-universe both-mode comparison at 5-iter `lgbm`) and what
+stands in for it today (§2.1: SYST ratio 0.9863, STAT 0.982, real-data totals −0.13%, plus the
+ρ1 = D − B_u identity). The 5D leg of that evidence is a two-universe spot check at 1 iter/`hist`, so
+the entry states explicitly that "footing proven irrelevant in 5D" must not be written.
+
+**G-1.** The standard lane was footing-blind by construction (`KNOWN_ISSUES.md` #20(a)). Now:
+`P4Config.bkg_mode` is validated and participates in `config_hash`; `P4Config.footing()` emits the
+nested five-key + `bkg_mode` block in the **producer's** shape; `p4_lib.require_standard_footing`
+fails closed on absent, mismatched, or **flattened** footing, mirroring
+`fps_provenance.require_footing`'s "unprovable" semantics; `p4_lib.classify_log_bkg_mode` encodes the
+two-branch print asymmetry so an indeterminate log returns `None` rather than defaulting to purity;
+and `p4_evidence.py` writes both the declared `footing` and per-endpoint `footing_evidence`, blocking
+when they disagree. `run_p4_unfold_std.sh` passes `--bkg-mode` explicitly, read from `P4Config` so the
+launcher and the manifest cannot drift, and stamps it into both receipt shapes.
+
+**This is a provenance change and a physics no-op** — `purity` is already the driver default
+(`unfold_nd_omnifold_unbinned.py:566`), so a re-unfold must reproduce the 2026-07-18 ROOT hashes
+exactly. That is the check that gates G-3; a hash change means stop, not adjust.
+
+`fps_provenance.py` was deliberately **not** touched (verified by an empty diff): the standard
+constants are a separate copy rather than an import, because the FPS grid constants are hash-pinned
+into gates that just went green (BEN-040's lane).
+
+Tests **41 passed / 0 failed** (28 pre-existing unchanged, 13 new). The purity fixture is a **verbatim
+real unfold log** copied off scratch, not hand-assembled to match the consumer — the inversion BEN-040
+records. A contract test pins the classifier to the driver's actual `print` statements so a producer
+change fails a test instead of silently mislabelling a footing. `.gitignore`'s blanket `*.log` was
+silently excluding that fixture, which would have passed locally and failed on a fresh checkout; a
+negation scoped to `nd-unfolding/tests/fixtures/*.log` fixes it.
+
+Next: G-3 (`STOP_AFTER=evidence`, then attest-or-reunfold), then the G-4 independent verifier.
+`P4_VERIFIER_PASS` is **not** set by this session — `run_p4_standard.sh:41` only tests non-emptiness,
+so setting it would defeat the checkpoint rather than pass it (`KNOWN_ISSUES.md` #21).

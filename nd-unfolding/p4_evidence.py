@@ -9,6 +9,13 @@ nothing for write, consumes/mutates no product. Emits:
   evidence/p4_endpoint_evidence.json   (per-endpoint unfold content evidence)
 Cross-checks against the independently observed verifier hashes and prints MATCH/DIFF.
 Exit 0 iff every REQUIRED field is proven; else prints EVIDENCE-BLOCKED and exit 2.
+
+2026-08-07 (G-1): also records the BACKGROUND FOOTING. Until now this generator had no
+bkg/footing/mode handling whatsoever, so the manifest bound hashes only and the standard
+lane's footing was unprovable downstream (KNOWN_ISSUES #20(a)). It is now recorded two ways
+that must agree: `footing` asserts the declared P4Config value, and `footing_evidence`
+classifies each endpoint's unfold log by the driver's two-branch print asymmetry. Absent or
+mismatched fails closed, matching fps_provenance.require_footing's "unprovable" semantics.
 """
 import glob, hashlib, json, math, os, sys
 import numpy as np
@@ -56,6 +63,12 @@ def need(cond, msg):
     if not cond: blockers.append(msg)
     return cond
 
+# Built up front (not at the config section below) because the endpoint loop needs the
+# declared footing to check each log against. validate() fails closed on an out-of-policy
+# bkg_mode, so an unauthorized footing cannot reach the manifest at all.
+_cfg = P.P4Config(); _cfg.validate()
+_cfg_bkg_mode = _cfg.bkg_mode
+
 # ---- central hashes (recomputed) ----
 man = {"grid_nbins": P.GRID_NBINS, "corder": "C", "code_rev": os.environ.get("P4_CODE_REV", "")}
 man["central5d_sha256"] = P.sha256_file(CEN5)
@@ -86,6 +99,23 @@ for b in P.BANDS:
         f.Close()
         need(rec.get("nbins") == P.GRID_NBINS and rec.get("finite") and rec.get("sum", 0) > 0
              and not rec["zombie"] and not rec["recovered"], f"endpoint {tag} content invalid")
+        # ---- footing evidence (G-1): which background branch produced this endpoint ----
+        # Attestation certifies IDENTITY, not footing, so an attested legacy ROOT still needs
+        # its footing proven. The proof is the driver's two-branch print asymmetry, recorded
+        # here in the manifest instead of living only in the runbook prose (BEN-041).
+        lp = f"{UDIR}/unfold_{tag}.log"
+        if os.path.exists(lp):
+            with open(lp, errors="replace") as fh:
+                mode, why = P.classify_log_bkg_mode(fh.read())
+            rec["log_bkg_mode"] = mode; rec["log_bkg_mode_reason"] = why
+            rec["log_sha256"] = P.sha256_file(lp)
+            need(mode is not None, f"endpoint {tag} footing unprovable from log: {why}")
+            need(mode is None or mode == _cfg_bkg_mode,
+                 f"endpoint {tag} log says bkg_mode={mode} but config declares {_cfg_bkg_mode}")
+        else:
+            rec["log_bkg_mode"] = None
+            rec["log_bkg_mode_reason"] = "no unfold log on disk"
+            blockers.append(f"endpoint {tag} has no log; footing unprovable")
         ep_entries.append((b, ep, sh)); ep_ev[tag] = rec
 man["endpoint_sha256"] = {f"{b}_{e}": s for (b, e, s) in ep_entries}
 if len(ep_entries) == P.N_ENDPOINTS:
@@ -126,10 +156,21 @@ for b in P.BANDS:
         if b in NONZERO_MIG: need(selmig > 0, f"merged {tag} expected NONZERO selection migration, got {selmig}")
         maudit[tag] = rec
 
-# ---- config + hash ----
-_cfg = P.P4Config(); _cfg.validate()
+# ---- config + hash + footing ----
 man["config"] = _cfg.as_dict(); man["config_hash"] = _cfg.hash()
 man["config"]["full_phase_space_reported_grid"] = P.GRID_NBINS
+# G-1: the footing is now an ASSERTED field, not an inference from a silent driver branch.
+# Nested (producer shape) so a consumer reading it flat fails loudly instead of silently
+# seeing None on every key -- the exact failure BEN-040 records in the sibling FPS chain.
+man["footing"] = _cfg.footing()
+man["footing_evidence"] = {t: {"log_bkg_mode": ep_ev[t].get("log_bkg_mode"),
+                               "reason": ep_ev[t].get("log_bkg_mode_reason"),
+                               "log_sha256": ep_ev[t].get("log_sha256")}
+                           for t in ep_ev}
+try:
+    P.require_standard_footing(man)
+except P.P4GateError as e:
+    blockers.append(f"footing gate: {e}")
 
 # ---- source provenance: git blobs of code + binary digest + per-file source commits ----
 import subprocess
@@ -196,6 +237,10 @@ print("=== recomputed vs observed ===")
 for k, v in man["verifier_crosscheck"].items():
     print(f"  {k}: {'MATCH' if v else 'DIFF'}")
 print(f"mask5d n={man['mask5d_nreported']} mask4d n={man['mask4d_nreported']}")
+print(f"footing: bkg_mode={man['footing']['bkg_mode']} estimator={man['footing']['estimator']} "
+      f"seed={man['footing']['seed']} iters={man['footing']['iters']}")
+print("footing per endpoint (from log):",
+      {t: man["footing_evidence"][t]["log_bkg_mode"] for t in sorted(man["footing_evidence"])})
 print("selection migration:", {t: maudit[t]["selection_migration_abs"] for t in maudit if "selection_migration_abs" in maudit[t]})
 if blockers:
     print("EVIDENCE-BLOCKED:", "; ".join(blockers[:10]))

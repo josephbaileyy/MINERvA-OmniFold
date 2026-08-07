@@ -21,6 +21,32 @@ ENDPOINTS = (0, 1)                      # -1 sigma, +1 sigma (MAT two-endpoint p
 N_ENDPOINTS = len(BANDS) * len(ENDPOINTS)   # 10
 GRID_NBINS = 65856                      # 14*16*7*7*6 full 5D grid (pt,pz,eavail,q3,W)
 
+# ------------------------------------------------------------------ footing (G-1)
+# The standard lane was footing-BLIND by construction until 2026-08-07: this module and
+# p4_evidence.py had no bkg/footing/mode handling at all, so the manifest bound hashes only
+# and no downstream consumer could prove which background subtraction produced an endpoint
+# (KNOWN_ISSUES #20(a), BEN-041). These constants give it somewhere to record the choice.
+#
+# The recorded decision (2026-08-07, RUNBOOK-20260807-gbdt-closeout.md §2) is that the
+# standard 5D chain is quoted on `purity`, revisited before submission. `purity` is ALSO the
+# driver default (unfold_nd_omnifold_unbinned.py:566), so asserting it explicitly is a
+# provenance change and a physics no-op -- it must not move any output ROOT hash.
+#
+# Deliberately a standard-side copy, NOT an import from fps_provenance: that module's grid
+# constants are hash-pinned into freshly-green FPS gates and must not be mutated or coupled
+# to (BEN-040's lane). The five estimator keys happen to agree today; if the two lanes ever
+# diverge, they diverge independently instead of one silently redefining the other.
+STANDARD_REQUIRED_FOOTING = {
+    "estimator": "lgbm",
+    "seed": 42,
+    "iters": 5,
+    "use_weights": True,
+    "full_phase_space": False,      # standard phase space; the FPS lane sets this True
+}
+KNOWN_BKG_MODES = ("purity", "negweight", "negweight-refined")
+STANDARD_BKG_MODE = "purity"        # the 2026-08-07 decision; see OPEN_ITEMS G-0
+STANDARD_FOOTING_KEYS = list(STANDARD_REQUIRED_FOOTING) + ["bkg_mode"]
+
 
 class P4GateError(RuntimeError):
     """Raised by any fail-closed gate. Never swallow."""
@@ -36,16 +62,25 @@ class P4Config:
     """Frozen unfold configuration; its hash pins seed/axes/iters/estimator so a
     covariance can never be built from mismatched-config endpoints."""
     def __init__(self, axes="eavail,q3,W", iters=5, seed=42, estimator="lgbm",
-                 use_weights=True, universe=None):
+                 use_weights=True, universe=None, bkg_mode=STANDARD_BKG_MODE):
         self.axes = axes; self.iters = int(iters); self.seed = int(seed)
         self.estimator = estimator; self.use_weights = bool(use_weights)
         self.universe = universe          # MUST be None for active endpoints
+        self.bkg_mode = bkg_mode          # G-1: never inherited from the driver default
     def as_dict(self):
         return {"axes": self.axes, "iters": self.iters, "seed": self.seed,
                 "estimator": self.estimator, "use_weights": self.use_weights,
-                "universe": self.universe}
+                "universe": self.universe, "bkg_mode": self.bkg_mode}
     def hash(self):
         return hashlib.sha256(json.dumps(self.as_dict(), sort_keys=True).encode()).hexdigest()
+    def footing(self):
+        """The nested footing block as the PRODUCER emits it. Consumers must read this
+        shape, not a flattened copy of it -- a fixture shaped like the consumer is how
+        BEN-040's gate stayed green while failing on every real input."""
+        f = dict(STANDARD_REQUIRED_FOOTING)
+        f.update({"estimator": self.estimator, "seed": self.seed, "iters": self.iters,
+                  "use_weights": self.use_weights, "bkg_mode": self.bkg_mode})
+        return f
     def validate(self):
         require(self.universe is None, "active endpoint config must not set --universe")
         require(self.seed == 42, f"standard P4 requires fixed seed 42 (got {self.seed})")
@@ -53,7 +88,76 @@ class P4Config:
         require(self.iters == 5, f"standard P4 production uses 5 iters (got {self.iters})")
         require(self.axes == "eavail,q3,W", f"standard P4 requires axes=eavail,q3,W (got {self.axes})")
         require(self.estimator == "lgbm", f"standard P4 requires estimator=lgbm (got {self.estimator})")
+        require(self.bkg_mode in KNOWN_BKG_MODES,
+                f"unknown bkg_mode {self.bkg_mode!r} (known: {list(KNOWN_BKG_MODES)})")
+        require(self.bkg_mode == STANDARD_BKG_MODE,
+                f"standard P4 is quoted on {STANDARD_BKG_MODE!r} by the 2026-08-07 decision "
+                f"(got {self.bkg_mode!r}); changing it re-opens RUNBOOK-20260807 §2 reading (B) "
+                f"and invalidates the J28-corrected covariance")
         return True
+
+
+# ------------------------------------------------------- footing evidence from logs (G-1)
+# The driver announces its background mode on the NEGWEIGHT branches only
+# (unfold_nd_omnifold_unbinned.py:842,895 -> "[INFO] bkg-mode=<mode>: ..."); the purity
+# branch (:883) prints nothing about mode and instead calls build_measured_training_nd,
+# whose verbose line is "[INFO] measured training: sum=... zero=.../...".
+#
+# So in this two-branch print, SILENCE IS A BRANCH: a log with the measured-training line
+# and no bkg-mode line positively identifies purity rather than leaving it unknown. That is
+# exactly the inference BEN-041 records failing to make. Both the flag and both
+# announcements landed together in cf8a4a6 (2026-07-11), before the 2026-07-18 endpoint
+# ROOTs, so an absent announcement is informative and not a version gap.
+_BKG_MODE_ANNOUNCE = "[INFO] bkg-mode="
+_PURITY_SIGNATURE = "[INFO] measured training:"
+
+
+def classify_log_bkg_mode(text):
+    """Return (mode, reason) for one unfold log. mode is a member of KNOWN_BKG_MODES, or
+    None when the log cannot decide -- which callers must treat as UNPROVABLE, not as
+    'probably fine'."""
+    announced = None
+    for line in text.splitlines():
+        i = line.find(_BKG_MODE_ANNOUNCE)
+        if i >= 0:
+            tail = line[i + len(_BKG_MODE_ANNOUNCE):]
+            tok = tail.split(":", 1)[0].strip()
+            if tok in KNOWN_BKG_MODES:
+                if announced is not None and announced != tok:
+                    return None, f"log announces conflicting modes {announced!r} and {tok!r}"
+                announced = tok
+            else:
+                return None, f"log announces unrecognized bkg-mode {tok!r}"
+    if announced is not None:
+        if announced == "purity":
+            # the purity branch never announces; an announcement claiming purity means the
+            # log did not come from this driver's known print set.
+            return None, "log announces bkg-mode=purity, which this driver's purity branch never prints"
+        return announced, f"driver announced bkg-mode={announced}"
+    if _PURITY_SIGNATURE in text:
+        return "purity", ("no bkg-mode announcement + build_measured_training_nd signature "
+                          "present => purity branch (the silent branch)")
+    return None, ("no bkg-mode announcement and no measured-training signature; the run may "
+                  "have been non-verbose, so the branch is unprovable from this log")
+
+
+def require_standard_footing(manifest, required_bkg_mode=STANDARD_BKG_MODE):
+    """Fail closed unless the manifest carries a complete footing block that matches the
+    standard requirement. Mirrors fps_provenance.require_footing's semantics -- absent is
+    'unprovable' and fails, exactly like mismatched -- without importing or mutating it."""
+    foot = manifest.get("footing")
+    require(isinstance(foot, dict) and foot,
+            "manifest has no footing block (unprovable): the standard lane must record its "
+            "background footing, not inherit the driver default")
+    for k, v in STANDARD_REQUIRED_FOOTING.items():
+        require(foot.get(k) == v, f"footing.{k}={foot.get(k)!r} != {v!r}")
+    require("bkg_mode" in foot, "footing has no bkg_mode (unprovable)")
+    require(foot["bkg_mode"] in KNOWN_BKG_MODES,
+            f"footing.bkg_mode={foot['bkg_mode']!r} is not a known mode")
+    if required_bkg_mode is not None:
+        require(foot["bkg_mode"] == required_bkg_mode,
+                f"footing.bkg_mode={foot['bkg_mode']!r} != required {required_bkg_mode!r}")
+    return True
 
 
 # canonical candidate area (pre-adoption). Adopted/protected areas are forbidden outputs.

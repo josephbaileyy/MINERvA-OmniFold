@@ -9,6 +9,12 @@
 #   * otherwise                                     -> (re)run transactionally
 # Never a key-only/size-only skip. Aggregates every worker exit; requires the EXACT
 # 10-tag inventory; fail-closed.
+#
+# 2026-08-07 (G-1): --bkg-mode is passed EXPLICITLY (from P4Config, not hardcoded) and
+# stamped into every receipt. The value is `purity` per the 2026-08-07 footing decision,
+# which is also the driver default -- so this changes provenance, not physics, and the
+# produced ROOTs must hash identically to the 2026-07-18 ones. If a re-unfold after this
+# change yields a different ROOT, STOP and find out why; do not adjust the manifest.
 set -o pipefail
 export HOME=/global/homes/j/josephrb
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
@@ -19,8 +25,13 @@ MANIFEST="${ND}/active_universe_5d/standard/evidence/p4_standard_manifest.json"
 CONC="${CONC:-4}"
 cd "${ND}"
 CFG_HASH=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.hash())") || { echo "[p4-unfold] ABORT config"; exit 2; }
+# G-1 (2026-08-07): the background footing is passed EXPLICITLY, never inherited from the
+# driver default. Read from P4Config (validated above) rather than hardcoded here, so the
+# launcher and the manifest cannot drift apart. `purity` is also the driver default, so this
+# is a provenance change and a physics NO-OP: it must not move any output ROOT hash.
+BKG_MODE=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.bkg_mode)") || { echo "[p4-unfold] ABORT bkg_mode"; exit 2; }
 CODE_REV=$(git rev-parse HEAD 2>/dev/null)
-echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH}"
+echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH} bkg_mode=${BKG_MODE}"
 
 valid_root(){ python3 -c "import ROOT,sys; f=ROOT.TFile.Open('$1'); sys.exit(0 if (f and not f.IsZombie() and not f.TestBit(ROOT.TFile.kRecovered) and f.Get('hXSecND_flat') and f.Get('hXSecND_flat').GetNbinsX()==65856) else 1)" >/dev/null 2>&1; }
 attest(){ python3 -c "import json,hashlib,sys;m=json.load(open('$MANIFEST'));import p4_lib as P;sys.exit(0 if P.sha256_file('$1')==m['endpoint_sha256'].get('$2','') else 1)" >/dev/null 2>&1; }
@@ -33,20 +44,21 @@ unfold_one(){
   local REC="${OUT}.done"
   if [[ -s "${OUT}" && -s "${REC}" ]] && valid_root "${OUT}"; then echo "[unfold] SKIP ${tag} (receipt+valid)"; return 0; fi
   if [[ -s "${OUT}" && ! -s "${REC}" ]] && valid_root "${OUT}" && [[ -f "${MANIFEST}" ]] && attest "${OUT}" "${tag}"; then
-    printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","config_hash":"%s","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "$(sha "${OUT}")" "${CFG_HASH}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"
+    printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","t":"%s"}\n' \
+      "${tag}" "$(sha "${OUT}")" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"
     echo "[unfold] ATTEST ${tag} (legacy ROOT sha256 == manifest)"; return 0
   fi
   [[ ! -s "${MERGED}" ]] && { echo "[unfold] ABORT ${tag} merged missing"; return 3; }
   local TMP="${OUT}.$$.${RANDOM}.tmp.root"
   rm -f "${TMP}"
   if python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3,W \
-       --iters 5 --use-weights --estimator lgbm --seed 42 --out "${TMP}" --verbose \
+       --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode "${BKG_MODE}" \
+       --out "${TMP}" --verbose \
        > "${OUTDIR}/unfold_${tag}.log" 2>&1 && valid_root "${TMP}"; then
     local MH CH RH; MH=$(sha "${MERGED}"); CH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
     mv -f "${TMP}" "${OUT}"; RH=$(sha "${OUT}")                       # atomic ROOT publish
-    printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"  # receipt LAST
+    printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","t":"%s"}\n' \
+      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"  # receipt LAST
     echo "[unfold] DONE ${tag}"
   else
     echo "[unfold] FAIL ${tag} (see unfold_${tag}.log)"; rm -f "${TMP}"; return 4

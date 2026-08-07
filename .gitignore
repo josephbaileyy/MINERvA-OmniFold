@@ -13,6 +13,11 @@ docs/analysis-note/main_*.pdf
 *.out
 *.err
 *.log
+# ...except committed TEST FIXTURES, which are literal producer output kept verbatim so a
+# test exercises the shape the pipeline really emits rather than one hand-assembled to match
+# the consumer (BEN-040). Without this negation the fixture is silently absent from a fresh
+# checkout and its test fails there while passing locally.
+!nd-unfolding/tests/fixtures/*.log
 *.o
 *.d
 *.so

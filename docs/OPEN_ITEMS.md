@@ -92,6 +92,33 @@ not close the literal full-event PET gate below.
   six-stage chain `run_p4_standard.sh` exists and is gated on a `P4_VERIFIER_PASS` token. Ordered
   steps, cost, and the footing scope decision that sizes them:
   [`orchestration/RUNBOOK-20260807-gbdt-closeout.md`](orchestration/RUNBOOK-20260807-gbdt-closeout.md).
+- **DEFERRED, not closed — the standard 5D chain's background footing (G-0 of the GBDT
+  close-out runbook).** By decision of **2026-08-07**, the standard (non-FPS) 5D GBDT chain is
+  **quoted on `purity`**, and that choice is to be **revisited before submission**. This is a
+  recorded choice rather than a silent default: the ten lateral endpoint unfolds, the central, the
+  169 vertical and the 18 detector unfolds are *all* purity-footed, so the lane is uniformly footed
+  rather than mixed, and the alternative reading — re-running the whole chain on
+  `negweight-refined` — would invalidate the just-adopted J28-corrected covariance
+  (`RUNBOOK-20260807-gbdt-closeout.md` §2, readings (A) vs (B)). The FPS lane remains on
+  `negweight-refined`, so the published pair is two consistent footings, not one mixed product.
+  - **What stands in for a 5D measurement today** (§2.1 of the runbook): at full 2D MEFHC
+    statistics with the adopted `lgbm` estimator the two modes agree to ~1–2% on the covariance —
+    SYST (187 universes) `sqrt(tr)` ratio negweight/purity **0.9863**, STAT (matched first-50
+    bootstrap seeds) **0.982**, real-data totals to **−0.13%** with 1.4% RMS per bin; plus the
+    structural ρ1 = D − B_u identity, under which each universe shifts by the same ~0.1% in both
+    modes so the *spread across* universes is insensitive by construction.
+  - **What would actually close it:** a full **5D 187-universe both-mode comparison at the
+    publication 5-iter `lgbm` config**. That does not exist. The 5D leg of the present evidence is a
+    **two-universe spot check at 1 iter / `hist`** (`2p2h:0` exact, `MaCCQE:0` −0.03%).
+  - **Do not write "footing proven irrelevant in 5D"** anywhere in the note or the ledger — the
+    evidence supports "quote purity and say so", and does not reach that claim.
+  - The choice is now machine-readable rather than prose-only: `P4Config.bkg_mode` is recorded in
+    `p4_standard_manifest.json` under a `footing` block and checked fail-closed
+    (`p4_lib.require_standard_footing`), so a downstream consumer can prove the footing instead of
+    inferring it from a silent driver branch. See `KNOWN_ISSUES.md` #20(a).
+  - Note the estimator caveat that does *not* bite here: raw `negweight` breaks the `exact`
+    GradientBoosting backend (~5×10⁴ blow-up on the `iy=1` row). The standard 5D chain runs `lgbm`,
+    the clean backend, so neither footing risks that pathology in this lane.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe

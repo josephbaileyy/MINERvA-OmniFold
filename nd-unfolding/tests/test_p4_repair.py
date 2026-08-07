@@ -309,5 +309,112 @@ class IntegrationCLI2(unittest.TestCase):
             self.assertNotEqual(rc, 0)
 
 
+class StandardFooting(unittest.TestCase):
+    """G-1 (2026-08-07): the standard lane must RECORD its background footing rather than
+    inherit the driver default, and must fail closed when the footing is absent or wrong.
+
+    Fixtures here are the real producer's literal output, never hand-assembled to match what
+    the consumer expects -- that inversion is precisely BEN-040, in this same chain."""
+
+    FIXTURE = (Path(__file__).resolve().parent / "fixtures"
+               / "p4_std_unfold_purity_BeamAngleX_0.log")
+    DRIVER = Path(__file__).resolve().parents[1] / "unfold_nd_omnifold_unbinned.py"
+
+    # ---------- the declared footing ----------
+    def test_config_carries_and_hashes_bkg_mode(self):
+        c = P.P4Config()
+        self.assertEqual(c.bkg_mode, "purity")            # the 2026-08-07 decision
+        self.assertIn("bkg_mode", c.as_dict())
+        # the footing participates in the config hash, so it cannot drift unnoticed
+        self.assertNotEqual(c.hash(), P.P4Config(bkg_mode="negweight-refined").hash())
+
+    def test_config_rejects_unknown_and_unauthorized_bkg_mode(self):
+        with self.assertRaises(P4GateError):
+            P.P4Config(bkg_mode="nonsense").validate()     # not a driver choice at all
+        with self.assertRaises(P4GateError):
+            P.P4Config(bkg_mode="negweight-refined").validate()   # known, but not the decision
+
+    def test_footing_block_is_nested_producer_shape(self):
+        f = P.P4Config().footing()
+        for k in P.STANDARD_FOOTING_KEYS:
+            self.assertIn(k, f)
+        self.assertEqual(f["estimator"], "lgbm")
+        self.assertEqual(f["seed"], 42)
+        self.assertEqual(f["iters"], 5)
+        self.assertIs(f["use_weights"], True)
+        self.assertIs(f["full_phase_space"], False)        # standard, not FPS
+
+    # ---------- the fail-closed gate: positive, absent, mismatched ----------
+    def test_gate_accepts_purity(self):                    # POSITIVE: it can actually pass
+        self.assertTrue(P.require_standard_footing({"footing": P.P4Config().footing()}))
+
+    def test_gate_rejects_absent_footing(self):
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing({})                 # no field at all == unprovable
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing({"footing": {}})
+
+    def test_gate_rejects_missing_bkg_mode_and_mismatch(self):
+        f = P.P4Config().footing(); f.pop("bkg_mode")
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing({"footing": f})     # unprovable
+        bad = P.P4Config().footing(); bad["bkg_mode"] = "negweight-refined"
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing({"footing": bad})   # mismatched
+        wrong = P.P4Config().footing(); wrong["estimator"] = "nn"
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing({"footing": wrong})
+
+    def test_gate_rejects_flattened_footing(self):
+        """A manifest with the five keys at TOP level and no nested block must fail, not
+        silently read None on every key. This is the BEN-040 shape, inverted into a guard."""
+        flat = dict(P.STANDARD_REQUIRED_FOOTING); flat["bkg_mode"] = "purity"
+        with self.assertRaises(P4GateError):
+            P.require_standard_footing(flat)
+
+    # ---------- log classification, against real producer output ----------
+    def test_real_purity_log_is_positively_identified(self):
+        text = self.FIXTURE.read_text(errors="replace")
+        mode, why = P.classify_log_bkg_mode(text)
+        self.assertEqual(mode, "purity", why)
+        self.assertNotIn("[INFO] bkg-mode=", text)         # the silent branch, as claimed
+
+    def test_negweight_announcement_is_read_from_the_log(self):
+        base = self.FIXTURE.read_text(errors="replace")
+        for m in ("negweight", "negweight-refined"):
+            text = base + (f"[INFO] bkg-mode={m}: data side 4091707 events "
+                           f"(of 4119797) in the analysis window at +1.\n")
+            mode, why = P.classify_log_bkg_mode(text)
+            self.assertEqual(mode, m, why)                 # announcement beats the signature
+
+    def test_indeterminate_log_is_unprovable_not_assumed_purity(self):
+        mode, why = P.classify_log_bkg_mode("[INFO] axes (5D): pt, pz\nStarting iteration 0\n")
+        self.assertIsNone(mode)                            # no signature => cannot conclude
+        self.assertIn("unprovable", why)
+
+    def test_conflicting_and_unrecognized_announcements_fail(self):
+        two = ("[INFO] bkg-mode=negweight: x\n"
+               "[INFO] bkg-mode=negweight-refined: y\n")
+        self.assertIsNone(P.classify_log_bkg_mode(two)[0])
+        self.assertIsNone(P.classify_log_bkg_mode("[INFO] bkg-mode=banana: z\n")[0])
+
+    # ---------- contract: the classifier must track the real producer ----------
+    def test_classifier_markers_still_exist_in_the_driver(self):
+        """If the driver's print statements change, this classifier's inference from silence
+        becomes wrong. Pin both markers to the producer's source so drift fails a test
+        rather than silently mislabelling a footing."""
+        src = self.DRIVER.read_text(errors="replace")
+        self.assertIn('f"[INFO] bkg-mode={args.bkg_mode}', src)
+        self.assertIn('[INFO] measured training:', src)
+        self.assertIn('default="purity"', src)             # the default the launcher overrides
+        self.assertIn('elif args.bkg_mode == "purity":', src)   # the branch that stays silent
+
+    def test_launcher_passes_bkg_mode_explicitly(self):
+        sh = (Path(__file__).resolve().parents[1] / "run_p4_unfold_std.sh").read_text()
+        self.assertIn("--bkg-mode", sh)                    # no reliance on the driver default
+        self.assertIn('"${BKG_MODE}"', sh)                 # and it comes from P4Config
+        self.assertIn('"bkg_mode":"%s"', sh)               # stamped into the receipts
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
