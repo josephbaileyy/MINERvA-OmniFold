@@ -167,6 +167,77 @@ class D3_DirtySourceFailClosed(unittest.TestCase):
         self.assertTrue(c == w, "a guard that cannot pass is as broken as one that cannot fail")
 
 
+class BEN044_AbsoluteToleranceAtRealScale(unittest.TestCase):
+    """REPAIR-6, folding in the PET lane's BEN-044 ("an absolute tolerance inherited into a
+    problem whose natural scale is ~1e-80 makes a gate that cannot fail").
+
+    **Honest severity, because this thread is about not overclaiming.** `check_symmetric_psd`
+    did contain a bare absolute literal -- `d >= -1e-30` -- against a standard-5D covariance
+    whose diagonal sits near 1e-79, i.e. ~49 orders above what it bounds, so that specific
+    bound could not fire. But it was **redundant, not the sole line of defence**: for a
+    symmetric matrix min(diag) >= min(eigenvalue), so any negative diagonal is already a
+    negative eigenvalue, and the PSD check immediately above it IS relative
+    (`ev[0] >= -psd_atol_ratio * |ev[-1]|`) and rejects the same corruption first. The tests
+    below demonstrate exactly that, rather than claiming a live hole.
+
+    So the fix is hygiene under BEN-044 rule 1 (no bare literal in a covariance path) plus a
+    reintroduction guard -- not the closing of an exploitable gap. Stating it the other way
+    would be the overclaim this round exists to stop."""
+
+    SCALE = 1e-79            # realistic standard-5D diagonal magnitude
+
+    def _cov(self, n=4):
+        return np.diag(np.full(n, self.SCALE))
+
+    def test_gate_accepts_a_clean_covariance_at_the_real_scale(self):
+        st = P.check_symmetric_psd(self._cov())
+        self.assertGreater(st["max_eig"], 0.0)
+
+    def test_the_old_absolute_diagonal_bound_could_not_fire_at_this_scale(self):
+        """The literal itself: a corruption ~48 orders larger than the signal passes it."""
+        C = self._cov(); C[1, 1] = -1e-31
+        self.assertTrue(bool(np.all(np.diag(C) >= -1e-30)),
+                        "the absolute bound accepts it -- that is the BEN-044 shape")
+
+    def test_but_the_relative_PSD_check_already_rejected_that_matrix(self):
+        """Why the severity is 'redundant' and not 'exploitable'. Recording this so nobody
+        later reads the repair as having closed a hole that was open."""
+        C = self._cov(); C[1, 1] = -1e-31
+        with self.assertRaises(P4GateError) as cm:
+            P.check_symmetric_psd(C)
+        self.assertIn("not PSD", str(cm.exception))       # caught by the RELATIVE gate
+
+    def test_negative_diagonal_implies_negative_eigenvalue(self):
+        """The structural reason the diagonal bound is redundant for symmetric input."""
+        C = self._cov(); C[1, 1] = -1e-31
+        self.assertLessEqual(float(np.linalg.eigvalsh(0.5 * (C + C.T))[0]),
+                             float(np.min(np.diag(C))) + 0.0)
+
+    def test_repaired_bound_still_tolerates_round_off_at_the_real_scale(self):
+        """Tightening a dead bound must not make it fire on numerical noise."""
+        C = self._cov(); C[2, 2] = -1e-13 * self.SCALE
+        self.assertIsInstance(P.check_symmetric_psd(C), dict)
+
+    def test_no_bare_absolute_tolerance_remains_in_the_lane(self):
+        """BEN-044 rule 1, as a reintroduction guard. A source check by necessity, and declared
+        as the weaker kind of evidence it is."""
+        import re as _re
+        offenders = []
+        for f in ("p4_lib.py", "p4_validate_active_lateral.py", "p4_build_components.py",
+                  "p4_project_4d.py"):
+            for i, line in enumerate((ND / f).read_text().splitlines(), 1):
+                if line.lstrip().startswith("#"):
+                    continue
+                if not _re.search(r"\b(require|need)\(", line):
+                    continue
+                if not _re.search(r"[-+]?\d+(\.\d+)?e-\d+", line):
+                    continue
+                if _re.search(r"max\(1e-300|rtol|atol_ratio|/ ?denom|\* ?abs\(ev|\* ?denom|\* ?max", line):
+                    continue
+                offenders.append(f"{f}:{i}: {line.strip()[:90]}")
+        self.assertEqual(offenders, [], f"bare absolute tolerance(s): {offenders}")
+
+
 # ---------------------------------------------------------------------------------------
 # Guards that could NOT be made discriminating, recorded rather than quietly kept.
 NON_DISCRIMINATING = {

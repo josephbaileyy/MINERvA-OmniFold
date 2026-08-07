@@ -1,0 +1,36 @@
+{
+ "gate_receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+ "gate_verdict": "GATE_B_FAILED_ONSHELL",
+ "gate_Bi_pass": false,
+ "gate_Bi_max_rel_dev": 0.8663473678243816,
+ "reconstruction_is_checkpoint_based": true,
+ "quantities": {
+  "pull_final": {
+   "mean_w_reco_over_pass_reco": 0.7650312655638407,
+   "mean_w_truth_over_pass_gen": 0.93452990942306,
+   "dev_vs_R_reco": -0.31941582023030224
+  },
+  "push_final": {
+   "mean_w_reco_over_pass_reco": 0.7464073747108502,
+   "mean_w_truth_over_pass_gen": 0.884252518561594,
+   "dev_vs_R_reco": -0.3359839345686896
+  },
+  "push_prev": {
+   "mean_w_reco_over_pass_reco": 0.9363831768295339,
+   "mean_w_truth_over_pass_gen": 1.0069377663124273,
+   "dev_vs_R_reco": -0.16697839024529182
+  },
+  "increment1": {
+   "mean_w_reco_over_pass_reco": 0.7511185326896216,
+   "mean_w_truth_over_pass_gen": 0.8949409084399269,
+   "dev_vs_R_reco": -0.3317928122798711
+  },
+  "push_stored": {
+   "mean_w_reco_over_pass_reco": 0.7464834064193581,
+   "mean_w_truth_over_pass_gen": 0.8882337022081834,
+   "dev_vs_R_reco": -0.33591629553182856
+  }
+ },
+ "R": 1.1240802949941018,
+ "verdict": "STEP1_UNDER_ACHIEVES"
+}

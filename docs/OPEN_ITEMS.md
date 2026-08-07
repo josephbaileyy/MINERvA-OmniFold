@@ -163,6 +163,27 @@ not close the literal full-event PET gate below.
 
 ### PET full-event + FPS measurement-domain gate (KNOWN_ISSUES #19)
 
+> **STATE 2026-08-07 — one line each, pointers only (this file is the to-do, not the analysis).**
+>
+> - **Full-event extraction is BLOCKED and the nominal is being RE-TRAINED.** The saved step-2 checkpoint
+>   was not the model that produced `weights_push`, so `check_subsample_agreement` (tol 1e-3) fails closed
+>   at max rel dev 0.866. Joseph chose option (1) on 2026-08-07; the driver now persists the final-epoch
+>   weights, Gate-4 code gate re-issued as `...-20260807.json` with `nominal_pet_training_allowed: true`,
+>   and the re-train is queued as **`56445883`** (watch `nominal-rerun-56445883`). The 2026-08-06 products
+>   are archived under `pet/fullevent_nominal/superseded-20260806/`, digests verified across the move.
+>   → `docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md`, BEN-043.
+> - **Step 1 under-achieves by 32%**: `mean_w_reco(pull_final | pass_reco) = 0.765031` against
+>   `R = 1.124080`, i.e. 68.1% of step 1's *own* objective, with iteration 2's step 1 the largest single
+>   drop and moving *away* from R. F3 cap saturation and a biased train/val split are both excluded;
+>   reco-leg non-convergence is the leading candidate and no budget ladder has ever been run against the
+>   fold-forward ratio. → `FINDING-20260807-step1-under-achieves.md`.
+> - **The D2 "97.8% scatter" reading is against the wrong reference.** Against the 0.80 bar's own
+>   reference the miss is 81.4% a coherent under-application of the injected tilt (the estimator applies
+>   63.1% of it); each term alone exceeds the entire residual headroom, so no single-axis remedy passes and
+>   seed-ensembling caps at 0.6313 for any N. → `FINDING-20260807-d2-response-reference-point.md`, BEN-042.
+> - Gate-4 still cannot PASS, and this item is not closed by any of the above.
+
+
 The present PET step-1/step-2 classifiers see only the reconstructed recoil
 cloud and truth-hadron cloud. Muon/scalar arrays are phase-space and extraction
 metadata, not classifier features. Binning a recoil-derived event weight in

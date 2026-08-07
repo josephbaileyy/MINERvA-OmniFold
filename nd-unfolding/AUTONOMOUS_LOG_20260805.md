@@ -1361,3 +1361,601 @@ the concurrent session's probe finding rather than rewriting either. **No thresh
 confirmed this cycle from `sacct`: `56415634` COMPLETED 05:57:38 rc=0 and `56431650` COMPLETED 03:43:39
 rc=0 (both already logged), `56431651` the only non-cron job left. Joseph's 20:29Z GBDT question was
 answered in `STEP2-20260806-niter3-budget-classification.md:138`. Mailed.
+
+### Memo item 5, gates only — THE SAVED CHECKPOINT IS NOT THE TRAINED MODEL, and it blocks extraction
+
+I built the memo's two gates and ran them before writing any pull/push decomposition. Gate A passed
+bit-exactly and **Gate B(i) failed at max rel dev 0.866 against a 1e-6 tolerance.** That is not a
+formality failing; it is a real defect on the publication path, and it was found by building the gate the
+memo asked for rather than by looking for it.
+
+    A1  rebuilt mc_indices vs stored        BIT-EXACT, 0 differing rows of 2,000,000
+    A2  rebuilt truth normalization         BIT-EXACT against the contract
+    B(ii) stored push == 1.0 off pass_gen   72/72 EXACT (untoleranced, as the memo required)
+    B(i)  checkpoint-rebuilt vs stored      max 8.663e-01  median 8.34e-03  p90 1.68e-01  FAIL
+
+**Gate A passing is what makes it interpretable** — same rows, same input space, so this is not the
+preprocessing failure I had been holding this task to avoid. The weights themselves differ.
+
+**Mechanism, read off the engine while building the harness rather than found by guessing.**
+`omnifold.py:272-275` checkpoints with `save_best_only=True`; `:266-268` sets `EarlyStopping(patience=10,
+restore_best_weights=True)`; at `epochs=8` the patience can never be exhausted and Keras 2.15 restores
+best weights only in the stop branch. So the model **in memory** at reweight time is the **last** epoch
+and the file on disk is the **best-val-loss** epoch. `train_*:497` stores the last-epoch output;
+`inference_contract["step2_checkpoint"]`, which `extract_fullevent_fps.py:253` loads, is the best-epoch
+file. The nominal's own history has `argmin(val_loss)` at **epoch 4 of 8** for `iter2_step2`.
+
+**The sharpest form: the weights that produced the published artifact do not exist on disk.**
+`--step2-checkpoint` can point elsewhere, but `save_best_only=True` never wrote a last-epoch file, so
+there is nothing to point at.
+
+**Consequence, and it is a blocker.** `check_subsample_agreement` (`:347`, `tol=1e-3`, called
+unconditionally at `:609`) fails closed at 0.866, so the full-event push stage **cannot run**. The gate is
+right; the tolerance stays where it is. Full-event extraction is blocked until Joseph picks an option.
+
+**I did not stop at "leading explanation".** Two controls, both off one loader build (job 56445569):
+
+    Control 1  batch 1000 vs 512            2.901e-06  = 0.0003% of the deviation -> EXCLUDED
+    Control 1b B(i) bit-identical across jobs           -> GPU nondeterminism EXCLUDED
+    Control 2  matched floor run            max 8.643e-01, p90 1.650e-01, aggregate gap 1.53e-02
+               shares the subsample bit-exactly, 72/72 off-shell exact -> STRUCTURAL, not a one-off
+
+Six candidate explanations are now excluded by measurement and one survives. Unplanned corroboration: the
+floor run has the larger best-vs-last val-loss gap (+0.00149 vs +0.00074) **and** the larger aggregate
+deviation (1.53e-02 vs 4.63e-03) — right ordering, and I am claiming direction only, since 2.0x in val gap
+against 3.3x in deviation is not proportionality.
+
+**What it does NOT change.** The artifact is self-consistent (`central_vector` came from the same
+in-process `weights_push`), so the central value is not invalidated — only its reproducibility. And both
+models give the fold-forward ratio to 1e-4 (0.746483 vs 0.746407), so the normalization failure is a
+property of the estimator, not of which epoch was saved. The memo's step-1 decomposition remains the right
+next question; its harness is committed and **gated on this receipt**, refusing to run without Gate A and
+copying Gate B's verdict into its own output so the caveat travels with the number.
+
+**Memo item 4 (`values.tex`) — HELD, deliberately, and not silently.** The ledger half is already done
+(5.2600e-38 / 5.6609e-38 are recorded at `VALIDATION_LEDGER.md:142-143`). The edit half touches
+`\gbdtFive*`, which is squarely the GBDT lane Joseph launched today, and that session's prompt says in
+its own words *"do not update values.tex until a G-5 adoption has landed in the ledger"*. Doing it now
+would both cross a lane boundary and write a number G-5 is about to supersede. Left to G-5.
+
+Also this cycle: ep32 (`56431651`) still PENDING, watch `d2-probe-ep32-56431651` armed with
+`unreliable=0` and the cron ticking (11:45:13Z). The powered-closure driver and preflight shas were
+re-verified against the launcher pins after each cluster fast-forward, so ep32 cannot be killed by my
+transfers. Mailed.
+
+### Memo item 5 ANSWERED — step 1 genuinely under-achieves, by 32%, and iteration 2 is where it breaks
+
+Job `56445667`, 4m38s. The predeclared reading fired its **second** branch, not the one the leg-mismatch
+result had me expecting.
+
+    quantity      mean_w_reco|pass_reco   dev vs R   mean_w_truth|pass_gen
+    push_stored              0.746483      -0.3359            0.888234
+    push_final               0.746407      -0.3360            0.884253
+    pull_final               0.765031      -0.3194            0.934530
+    push_prev                0.936383      -0.1670            1.006938
+    increment1               0.751119      -0.3318            0.894941
+
+**`pull_final` is the quantity step 1 itself normalizes, and it misses R by 32%.** Step 1 trains data vs
+reco MC with the MC side normalized to 1e6 and the target to 1e6*R, so `mean_w_reco(pull|pass_reco) == R`
+is step 1's OWN objective, not an identity imported from elsewhere. It delivers **68.1%** of it. So the
+fold-forward failure is **not** an artifact of reading a step-2 quantity against a reco-leg identity, which
+was the live alternative after `leg_mismatch.py` priced the leg at only ~19%.
+
+**Where it breaks, and it is not monotone convergence:**
+
+    iter1 step2   push_prev   0.936  dev -0.167
+    iter2 step1   pull_final  0.765  dev -0.319   <- largest single drop, and it is STEP 1's
+    iter2 step2   push_final  0.746  dev -0.336
+
+Step 1's last iteration moves the normalization AWAY from R. Nothing in the chain moves toward it. (Means
+do not multiply: 0.936 x 0.751 = 0.703 against a measured 0.765, so the two are positively correlated —
+stated as measured values, not as a product.)
+
+**A second, independent signal in the truth column.** Step 2 should reproduce
+`mean_w_truth(pull|pass_gen)`. At iteration 1 `push_prev` gives **1.0069**, within 0.7% of 1.0 — a
+well-fitted step 2. At iteration 2 `push_final` gives 0.8843 against its target 0.9345, under-shooting by
+**5.4%**. So both steps lose at iteration 2 and step 1 loses far more.
+
+**The checkpoint caveat is bounded, not merely declared.** Everything is a checkpoint-based reconstruction
+(BEN-043). But the one quantity that exists both ways agrees to **1e-4** — `push_stored` 0.746483 vs
+`push_final` 0.746407 — three orders below the 32% effect, and both legs are reconstructed identically so
+the comparison is sound by construction. Stated asymmetry: `push_prev` comes from `iter1_step2`, whose
+argmin IS the last epoch, so that checkpoint is faithful; `increment1` comes from `iter2_step1` (argmin
+6/8) and is not, which makes the 0.936 -> 0.765 drop the number most exposed to the caveat.
+
+**Not claimed:** why step 1 under-achieves. Untested candidates are listed in the finding — reco-leg
+under-training, asymmetric F3 cap saturation, the R=1.124 class imbalance being partly inexpressible, and
+the `pass_reco`-only update interacting with acceptance. `cap_saturation_frac` is already in the artifact
+and is the cheapest next check.
+
+Also recorded this cycle: **a trap in my own recommended fix.** `self.model1`/`self.model2` are assigned
+once at `omnifold.py:123-124` and never reassigned; training runs on the `clone_model` copies in
+`step1_models`/`step2_models`, and `clone_model` does not copy weights — so **`of.model2` still holds its
+initial random init when `Unfold()` returns**, and implementing option (1) as `of.model2.save_weights(...)`
+would persist an untrained network. Correct objects: `of.step2_models[0]`, `of.step1_models[0]`. Also
+`omnifold.py:302` logs `val_loss[0]`, the FIRST epoch, so the engine's own log cannot show the
+best-vs-last gap at all; only the `.pkl` histories can.
+
+**Fix NOT implemented, deliberately.** Both files that would change (`train_fullevent_nominal.py`,
+`omnifold.py`) are sha-pinned by the live Gate-4 code gate (`...-20260806c.json`, keys `driver` and
+`estimator_engine_multifold`), so the edit needs a gate re-issue in the same commit and
+`_LAUNCH_CODE_FLOOR = 2` fails if a predecessor retires without its successor. Re-issuing a gate to enable
+a ~6 GPU-h re-run on a choice that may redefine the nominal estimator is Joseph's call. No mail this cycle
+beyond the batched one already sent — this result goes in the next batch. ep32 (`56431651`) still PENDING.
+
+### JOSEPH CHOSE OPTION (1) — the fix is implemented, the gate is re-issued, and the re-run is authorized
+
+*"Do option (1), your recommendation, for the three options you gave me."* Option (1) as presented: save
+the last-epoch weights, **no estimator redefinition**, needs a re-run. Implemented driver-only.
+
+**The fix.** After `Unfold()`, `train_fullevent_nominal.py` saves `of.step1_models[0]` and
+`of.step2_models[0]` to `..._iter<niter-1>_step{1,2}_final.weights.h5` and points
+`inference_contract["step2_checkpoint"]` at the step-2 final file, adding `step1_checkpoint`,
+`step2_checkpoint_best_epoch` and `checkpoint_semantics`. **`extract_fullevent_fps.py` reads
+`step2_checkpoint` and therefore needs no change at all**, so the whole fix lands in one file.
+
+**It saves the trained clones, not the originals** — the trap I recorded before implementing rather than
+after. `of.model1`/`of.model2` are assigned once at `omnifold.py:123-124` and never reassigned; training
+runs on `clone_model` copies, which do not carry weights. `of.model2.save_weights(...)` would have
+persisted a **random initialization**.
+
+**Round-trip guard, exact and free.** Each saved file is loaded back into a fresh clone and every weight
+tensor must be bit-identical to the trained object's, else the driver exits rather than writing an
+artifact whose weights cannot be reproduced from disk. An empty `step{1,2}_models` list also fails
+closed. No forward pass needed; the end-to-end check remains the external `gate_ab_push_provenance.py`.
+
+**The engine is NOT touched.** `omnifold.py` and `net.py` shas are unchanged, which keeps the engine pin
+(shared with other lanes) intact *and* keeps `sbatch_powered_closure_budget_probe.sh`'s submission-time
+driver pin valid — the closure driver has the same latent defect and I am deliberately leaving it alone
+while ep32 (`56431651`) is PENDING, because editing it would kill the queued arm.
+
+**Gate-4 code gate re-issued as `...-20260807.json`, predecessor retired in the same commit.** Exactly two
+files drifted and both were re-frozen: `driver` and `launcher_test`. The predecessor got
+`status: SUPERSEDED`, `files` -> `files_at_issue`, `sha256` -> `sha256_at_issue`, and `superseded_by`,
+per the convention `test_hash_bindings.py::test_superseded_receipts_hold_no_live_bindings` pins. Live
+launch-code receipt count held at **2** against `_LAUNCH_CODE_FLOOR = 2`. Verifier: **ALL BINDINGS
+INTACT**, 116 OK, 15 shell pins against floor 15, 4 known pre-existing drifts. `test_hash_bindings.py`
+6 passed.
+
+`nominal_pet_training_allowed` moves **false -> true**, with Joseph's exact words recorded, and an
+explicit note that this does NOT authorize option (2)'s estimator redefinition.
+
+**Two stale blockers in the predecessor corrected rather than copied forward:**
+`nominal_has_never_been_trained` was false (it trained as `56415634`), and
+`powered_closure_criterion_is_unreachable`'s "the bar sits 16.5 pp ABOVE achievable" is superseded by
+BEN-042 — the sampling-only oracle scores 0.9542, so the bar is not unreachable; the estimator is short.
+The conclusion (Gate-4 cannot PASS) is unchanged; only the reason. Added the step-1 32% blocker.
+
+**COLLECTION ANNOUNCEMENT: local 730 -> 735 (+5).** All five are
+`test_pet_fullevent_nominal_launcher.py::FinalCheckpointIsPersisted`, four static guards plus
+`test_the_prefix_source_would_fail`, which reconstructs the pre-fix source and requires every guard to
+fire — without it all four could be vacuous (BEN-032/BEN-040 family).
+
+**Suite: 9 failed / 725 passed / 1 skipped, and MY DELTA IS ZERO.** The documented baseline is 7. The two
+extra are both in `test_resume_guard.py`, and **every** path they implicate is under
+`.claude/worktrees/gbdt-closeout*/` — the concurrent GBDT session's git worktrees, swept up by a
+repo-wide shell scan. It even flags `lib/resume_guard.sh`'s own explanatory `#` comment inside the
+worktree copy. That is the BEN-032 "scanned the wrong population" family and it will hit the GBDT session
+too; the fix is to exclude `.claude/worktrees/` from the sweep. Verified no real repo file is implicated
+before claiming my delta is zero.
+
+**Re-run plan, and why the launcher is not being edited.** The launcher deliberately does not pass
+`--allow-overwrite`, and both 08-06 products carry completion markers, so `is_complete` would `die`
+before the GPU hours (`train_fullevent_nominal.py:349`). Editing the launcher would both destroy the
+prior artifact silently and churn a freshly frozen sha, so instead the 08-06 products, their `.done`
+markers and `w_nominal/`/`w_floor/` get archived under `superseded-20260806/` with digests verified
+before and after the move, and the launcher runs unmodified. `w_nominal/` was already copied off scratch
+under memo item 0, so the checkpoints survive independently.
+
+### Re-run SUBMITTED as `56445883`; the worktree false-failures fixed; the 100-rep module reviewed and tracked
+
+**The authorized re-run is queued.** `56445883`, `fe_pet_nom`, PENDING, 12h wall, priority 67679,
+submitted `2026-08-07T05:24:27` — every field from `squeue`/`scontrol` in this turn. Watch
+`nominal-rerun-56445883` armed (`slurm-job`, `unreliable=0`), action `notify_nominal.sh`, whose three
+branches were already proved by execution earlier today; its body file writes to
+`/pscratch/sd/j/josephrb/.nominal_notify_body.txt`, outside the product directory, so it cannot make
+`is_complete` true. Launcher selftest run first as preflight: **CONFIG GATE PASS**, niter=3, target sha
+and size matched.
+
+**The 08-06 products are ARCHIVED, not overwritten.** `superseded-20260806/` now holds both npz, both
+`.done` markers, and `w_nominal/`+`w_floor/` (12 checkpoints each). Digests verified identical across
+the move — `8d17140f697faca7…` and `28fe004c31dcb414…`, the same values recorded in the earlier quiet
+integrity check. The two tracked receipts (`GATE_AB_PUSH_PROVENANCE.json`, `STEP1_DECOMPOSITION.json`)
+were deliberately left in place so the findings citing them do not break. The launcher was NOT edited:
+it withholds `--allow-overwrite` on purpose, and archiving respects that instead of defeating it.
+
+**The two extra suite failures were not mine, and are now fixed.** Both were in `test_resume_guard.py`
+and every path they implicated was under `.claude/worktrees/gbdt-closeout*/` — the concurrent session's
+worktrees, swept by a repo-wide `os.walk`. It even flagged `lib/resume_guard.sh`'s own explanatory `#`
+comment inside the worktree copy. Excluding `worktrees` narrows nothing real: every file in a worktree
+is a checkout of a tracked file the walk already visits at its true path. Verified after: **323 shell
+files still swept, 0 from worktrees**, 21 passed. Suite is back to the documented baseline of exactly
+**7 failures**.
+
+**`combine_cstat_bkgsub_100rep.py` reviewed and tracked — and it had two gates that could not fail.**
+Symmetry tested `sym_err > 1e-30` absolutely; PSD tested `min_eig >= -1e-9 * max(max_eig, 1.0)`, where
+the `max(...,1.0)` pins the tolerance to `-1e-9` absolute. On the real products `max|C| = 8.13e-79` and
+`max_eig = 2.72e-77`, so both sat ~49 and ~68 orders above what they bound. **Power-proved rather than
+argued:** inject an asymmetry of half the largest entry and `sym_err = 1.26e-80` — the old gate does not
+fire, the relative one does. The battery would have printed PASS on an arbitrarily wrong matrix. Both are
+now relative and still clear the two existing products with margin (symmetry exactly 0.0,
+`min_eig/max_eig = -8.4e-16`), so this **tightens a dead gate rather than loosening a live one**. Filed
+as **BEN-044** — third instance of this family in two days, after CLM-011's `atol=1e-8`-against-1e-38 and
+BEN-042's normalised-vs-absolute headroom.
+
+Also fixed there: `_ND` was hardcoded to an absolute `/pscratch` path, so the module could not be
+imported in any other checkout — which is *why* its gates had never been unit-tested. An untestable
+module is an unreviewed one. Now resolved from `__file__`.
+
+**COLLECTION ANNOUNCEMENT (supersedes the +5 in the previous entry): local 730 -> 740 (+10).** +5
+`FinalCheckpointIsPersisted`, +5 `CovarianceGatesAreScaleAware` — the latter including two explicit power
+proofs that the old thresholds were scale-blind. Suite 7 failed / 732 passed / 1 skipped: the 7 are the
+documented pre-existing path failures, and my delta is zero.
+
+### Quiet cycle — but I preflighted the one thing that could have wasted the re-run's 6 GPU-hours
+
+No new mail. Both watched jobs still PENDING at 12:32Z from a live `squeue`/`sacct`: `56445883`
+(fe_pet_nom, the authorized re-run) and `56431651` (ep32). Nothing finished, so no mail — one already
+went out this cycle and nothing new has a verdict.
+
+**The BEN-043 final-save block had never executed, and it runs AFTER the training.** That is the
+late-failure shape this campaign keeps paying for: a bug there kills `56445883` having already spent ~3
+GPU-hours on the nominal, then again on the floor repeat. The launcher's own selftest cannot cover it —
+it is config-gate only and imports no TF.
+
+The risk was specific, not vague: `tf.keras.models.clone_model` **raises on a subclassed Keras model**,
+and my block clones `step{1,2}_models[0]`, which is *itself already a clone*, then loads weights into
+that second-generation clone. The engine only ever clones a freshly-constructed PET, so "the engine does
+something similar, it must be fine" was exactly the reasoning to distrust.
+
+Preflighted by execution instead (GPU, seconds, arch read from the committed contract, no training):
+
+    step2  PET(num_feat=8,  num_evt=2)   clone OK, 96 tensors, 96/96 perturbed, round-trip BIT-IDENTICAL
+    step1  PET(num_feat=8,  num_evt=13)  clone OK, 96 tensors, 96/96 perturbed, round-trip BIT-IDENTICAL
+    PREFLIGHT PASS
+
+Two anti-vacuity guards in it, because a save/load round-trip is trivially "equal" if nothing happened:
+weights are perturbed **off the initializer first** (so a `save_weights` that wrote nothing, or a
+`load_weights` that matched nothing, cannot pass by both sides holding the same defaults), and a **fresh
+clone that never loaded is required to DIFFER** (so the equality is attributable to the load). Both
+fired.
+
+One incidental find: `omnifold` only reaches `sys.path` via `fullevent_fps_dataloader.py:58`, so any
+script outside that import chain must insert `omnifold_nn/` itself — worth knowing for future tools that
+do not need the 9.9 GB-capable loader.
+
+Committed as `nd-unfolding/pet/preflight_final_checkpoint_save.py`, made path-portable (resolves `ND`
+from `__file__`, output dir from `$SCRATCH`) specifically so it does not repeat the BEN-044 defect I
+filed against `combine_cstat_bkgsub_100rep.py` in the previous entry.
+
+Everything else verified quietly and unchanged: cluster at `9fbeeaf`, ep32's driver and preflight sha
+pins still match the launcher's submission-time values, both watches armed with `unreliable=0`, archived
+08-06 products intact.
+
+### Quiet cycle at 12:49Z — no mail sent, and the reason is the point
+
+`squeue`/`sacct` this turn: `56445883` (re-run) and `56431651` (ep32) both still PENDING, cron ticked
+12:45:08Z. No new mail — newest inbound is still the 20:29Z GBDT question, answered. Nothing finished,
+nothing unblocked.
+
+**Deliberately did NOT mail.** The brief's wrap-up branch says to mail a short status and stop, but I sent
+a full status 17 minutes ago covering exactly this state and nothing has changed since. A second mail
+saying "still pending" is the spam the brief prohibits, so the next mail waits for a job to land.
+
+**One piece of the repo's own bookkeeping was genuinely owed.** `docs/OPEN_ITEMS.md` is the canonical live
+to-do per CLAUDE.md's routing table, and a fresh session reading it would not have learned that full-event
+extraction is BLOCKED, that the nominal is being re-trained as `56445883`, or that step 1 under-achieves by
+32%. That is exactly the BEN-037 failure mode — the doc a session actually reads asserting stale state.
+Added one line per finding with a pointer to the finding, not the analysis, per the write-once convention.
+
+**Also closed a dead pointer I had knowingly created.** `GATE_AB_PUSH_PROVENANCE.json` and
+`STEP1_DECOMPOSITION.json` both name the nominal artifact at its original path, which is now under
+`superseded-20260806/`. I left the receipts where they are on purpose so the citations in two findings keep
+resolving, so the correction travels with the finding as a dated note rather than by editing a receipt —
+editing a record of what was measured would be the wrong repair.
+
+Nothing else in this lane is actionable and I am not inventing work. When either job dispatches its
+durable watch fires independently of this session; the re-run's post-landing plan is already fixed — re-run
+Gate A/B (writing to a run-specific receipt path so the superseded one is not clobbered), confirm B(i) now
+passes, then redo the step-1 decomposition on faithful checkpoints.
+
+### 14:20Z — ep32 (`56431651`) DISPATCHED after 19h in queue, and its own gates vindicated the transfers
+
+Material change, so logged (per the 03:50Z policy). Started `2026-08-07T13:52:56Z` on `nid001548`, 27:39
+elapsed at the poll. The re-run `56445883` is still PENDING.
+
+**Its submission-time sha checks passed, which is the real verification of eight bundle transfers.** I had
+been re-asserting after every transfer that ep32's pins still matched; the job has now executed those
+checks itself:
+
+    driver    = a45fae7c3f978c34...   PASSED
+    inputs    = fa6b3463160242164...  PASSED  (9.9 GB re-hashed in-job)
+    preflight = dee9aa20a49a89eb5...  PASSED
+    HEAD=1b7dd02 dirty=0
+    arm=ep32  epochs=32  early_stop=1000  niter=<nominal-policy>
+    preflight PASS -- allocating the training
+    is_nominal_configuration=false  (Gate-4's check FAILS on it by design)
+    ITERATION: 1 / RUNNING STEP 1
+
+So the deliberate decision not to touch `closure_powered_truth_reweight.py` while this job was queued was
+load-bearing, and it held. **Follow-up now unblocked but NOT taken:** the closure driver carries the same
+BEN-043 latent defect (its stored push comes from the in-memory last-epoch model while its checkpoints are
+best-epoch). Its sha check has now passed, so editing it would no longer kill this arm — but a failure and
+requeue would re-check, and no downstream consumer loads its checkpoints, so it stays untouched.
+
+**Liveness by CPU, not log growth (BEN-028):** `AveCPU 31:05` against `wall 27:59` — CPU exceeding wall
+means multiple threads working. RSS 14.5 GB.
+
+**Wall projection.** ep16 (2x budget) took 3:43:39, so 4x is ~7.5h against an 11h wall — roughly 3.5h of
+margin, and the launcher's own sizing said the same (~8h). No action needed; the watch fires on TIMEOUT as
+well as completion because `run_action` resolves by watch id, not event type.
+
+**No mail.** A dispatch is not one of the three mailable events (a job *finishing*, a PASS/FAIL verdict, or
+a blocking decision), and the last mail went out 77 minutes ago. The pre-registered comparison goes out
+when it lands: `E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in
+[0.49, 0.537], verdict FAIL — with the falsifiers already committed while it was PENDING.
+
+### 15:20Z — he asked "How's it going?"; answered. ep32 1 of 6 trainings done, progress read from artifacts
+
+Inbound at 15:13:25Z, so a status mail was owed and went out (this is the mailable-event branch: an
+inbound instruction, not a self-initiated update).
+
+**ep32 progress, measured from ARTIFACTS rather than the log.** This job emits no per-epoch output at all
+— MultiFold runs Keras with `verbose=False` — so its log will sit at 1726 bytes for eight hours and log
+growth is not merely a weak liveness signal here, it is a *constant*. The weights directory is the real
+clock:
+
+    OmniFold_fe_powered_iter0_step1.weights.h5 + .pkl   <- that training COMPLETE (pkl = history dumped)
+    OmniFold_fe_powered_iter0_step2.weights.h5          <- in progress, no .pkl yet
+    1 of 6 trainings done at 1:27:40 wall
+    AveCPU 1:40:47 > wall  -> multi-threaded and healthy
+    TIME_LEFT 9:32:20 of the 11h wall
+
+Projection from the launcher's own measured rates (2.00 min/epoch step 1, 2.79 step 2, so 32 epochs =
+153 min per iteration): ~7.75h total, finishing ~21:40Z against a 00:52Z wall — ~3.2h margin. On track.
+
+**Three things I told him I am deliberately NOT doing**, so the reasons are on the record rather than
+living only in a mail: `values.tex` held for G-5 (the `\gbdtFive*` macros are the GBDT lane's and that
+session was told to wait for adoption; writing 5.26e-38 now would also enshrine a number G-5 supersedes);
+the closure driver's BEN-043 defect left alone (its sha check has passed so an edit would no longer kill
+ep32, but a requeue would re-check and nothing downstream loads its checkpoints); and ep32 not cancelled
+to speed the re-run despite outranking it (60 higher-priority jobs sit ahead regardless, and I committed a
+pre-registration specifically to be tested by that arm — offered it to him as his call).
+
+Nothing is blocked on him. Trees: local == origin == cluster == `e2a0ea2`.
+
+### 16:50Z — ep32 halfway through iteration 0->1; and its histories provisionally settle the early-stopping question
+
+Logged because it discharges (provisionally) a question the launcher header explicitly deferred to this
+arm, not because progress ticked.
+
+**Measured per-iteration timing, from this job's own artifacts rather than the header's note:**
+
+    job start                 06:52:11 local
+    iter0_step1.pkl written    07:55:03   -> 62m52s incl. ~5 min load/hash, so step 1 ~58 min / 32 epochs
+    iter0_step2.pkl written    09:20:33   -> 85m30s
+    one full iteration        ~143.5 min
+    2 of 6 trainings complete at 2:57:36 wall; AveCPU 3:25:28 > wall, RSS 14.7 GB
+
+Remaining two iterations project to **~21:08Z**, against a wall of 00:52Z — ~3h45m margin. That is within
+8 minutes of the independent ep16-derived estimate (~21:15Z, from 3:43:39 over 96 training-epochs), so two
+different bases agree.
+
+**THE DEFERRED EARLY-STOPPING QUESTION, answered for free as `sbatch_powered_closure_budget_probe.sh`'s
+header predicted it could be.** That header declined to build a fourth "epochs=32 at default patience"
+arm, arguing the question was *"answerable for FREE from ep32's own history pickles: if the 32-epoch val
+curve is flat with an early argmin, best-versus-last selection is provably inside the validation noise and
+no arm was needed."* Iteration 0 says exactly that:
+
+    iter0_step1   argmin 21/32   BEST_IS_LAST=False   best 0.480890  last 0.480985  delta +0.000095
+    iter0_step2   argmin 32/32   BEST_IS_LAST=True    best 0.835638  last 0.835638  delta  0.000000
+
+So the step-1 argmin is early *in position* but the curve is flat to **1e-4** (0.02% of the loss) by then,
+and step 2's argmin **is** the last epoch. Best-versus-last selection is inside the validation noise at 4x
+budget, and the ~8 GPU-hours of a fourth arm were correctly not spent. **PARTIAL — 2 of 6 histories; I
+will complete it at 6/6 rather than generalize from iteration 0.**
+
+This also corrects, in the right direction, an inference I had flagged from mtimes last cycle: I read
+`iter0_step1.weights.h5` stopping at 07:34:35 while training ran to 07:55:03 and noted "best ~epoch 20 of
+32, best != last again". The *position* was right (21/32) but the quantity that matters is the val gap, and
+it is 9.5e-05 — negligible. Reading the history instead of the mtime is what turned a suggestive
+observation into a bounded one, which is why I said I would.
+
+Secondary, and NOT a claim: at 32 epochs the best and last checkpoints nearly coincide, whereas the
+nominal at 8 epochs had gaps of +0.000744. If that holds, BEN-043's discrepancy would shrink at higher
+budget — but it would not vanish, and the fix already landed does not depend on it.
+
+### 17:50Z — the predeclared RSS escalation rule EVALUATED against ep32 and does NOT fire
+
+Logged because a predeclared rule is only worth declaring if its evaluation is recorded either way. ep32 is
+3 of 6 trainings done at 3:57:34 wall, `AveCPU 4:36:32` > wall, `56445883` still PENDING.
+
+The rule from the 13:20Z entry: *"RSS > 28 GiB (50% of limit) before 6h elapsed -> the linear trend is
+real, not a plateau. Escalate immediately with a recommendation to cancel and resubmit with a raised
+`--mem`."* Limit confirmed from `scontrol` TRES rather than carried over by assumption:
+`mem=57472M` = **56.12 GiB**, the same shape as the job the rule was written for.
+
+    MaxRSS now   16.32 GiB   = 29.1% of limit, at 3:57:34 elapsed
+    AveRSS now   14.99 GiB
+    threshold    28 GiB before 6h        -> does NOT fire
+
+**And the trend's SHAPE is the interesting part, because it vindicates the earlier refusal to escalate:**
+
+    0:57  13.84    1:27  13.84    1:57  13.84    2:27  13.84
+    2:57  14.03    3:27  14.03    3:57  16.32
+
+Flat for two and a half hours, then a step at the `iter1_step1 -> iter1_step2` boundary (10:20:07 local).
+So the working set grows **stepwise at training transitions, not linearly in wall time** — exactly the
+plateau behaviour I argued for when I declined to escalate the earlier job on a 3-point linear
+extrapolation, and which I flagged then as the BEN-025 overreach to avoid. Extrapolating linearly here
+would predict ~24 GiB by the wall; the stepwise reading predicts ~20 GiB with one and a half iterations
+left. Both are far under 56 GiB, so the conclusion is robust to which reading is right — which is the only
+reason I am content to state it.
+
+**Timing, from this job's own artifacts:** `iter1_step1.pkl` at 10:20:07 local, i.e. 59m34s after
+`iter0_step2` — within 1.5 min of iteration 0's ~58 min, so the per-iteration figure holds and the tf.data
+caching (`cached = i > start`) bought no measurable speedup. Remaining work projects to a finish of
+**~21:10-21:20Z** against a 00:52Z wall, ~3.5h margin.
+
+No mail: not a completion, not a verdict, not a blocking decision.
+
+### 19:50Z — the RSS rule CLOSES OUT unfired, and the stepwise reading I committed to beat the linear one
+
+ep32 is **5 of 6 trainings done** at 5:57:29 wall; the final training (`iter2_step2`) is in flight since
+12:43:32 local. `iter2_step1.pkl` took 59m23s, against 59m34s for iteration 1 and ~58 min for iteration 0 —
+the per-training figure has now held three times.
+
+**The predeclared rule is closed, unfired.** Its window was "> 28 GiB before 6h elapsed"; the job started
+13:52:11Z so the boundary is 19:52:11Z, and this is the last sample inside it:
+
+    MaxRSS  19.22 GiB   = 34.2% of the 56.12 GiB limit   at 5:57:29 elapsed
+    AveRSS  17.89 GiB
+    threshold 28 GiB before 6h -> NOT REACHED. Rule closed without firing.
+
+**And it discriminated between the two readings I wrote down rather than leaving it ambiguous.** At 17:50Z I
+recorded both: *"Extrapolating linearly here would predict ~24 GiB by the wall; the stepwise reading
+predicts ~20 GiB with one and a half iterations left."* Measured now, with the last training running:
+**19.22 GiB**. The stepwise reading is right and the linear one would have overstated by ~25%. That matters
+beyond this job — it is the third time this campaign that a linear extrapolation of a plateauing quantity
+would have driven an unnecessary escalation, and the first time I had both predictions on the record in
+advance to settle it.
+
+Growth remains at training transitions rather than in wall time: 13.84 flat -> 14.03 -> 16.32 -> 16.99 ->
+19.22 GiB, with each step landing at a step-1/step-2 or iteration boundary.
+
+**Verdict is imminent.** The final training projects to ~21:08Z, then the driver computes the spectra and
+writes the report, artifact and the preflight cross-check — so a mailable outcome in roughly 1h20m, against
+a 00:52Z wall. When it lands I compare against the pre-registration committed while it was still PENDING:
+`E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in [0.49, 0.537],
+verdict FAIL — with the falsifiers already written down.
+
+### 21:20Z — ep32 COMPLETE, FAIL at recovery 0.511708. The pre-registration hit 4 of 4, and option (2) would have been a mistake
+
+`56431651` COMPLETED 07:18:06 rc=3 (the driver's expected FAIL code; the launcher exits 0 because a
+diagnostic that produced a number is a successful measurement). `preflight_verdict=PASS`,
+`preflight_xcheck=AGREE` — so this arm and `56381674` graded the **same 2M/2M population**, which is the
+premise that makes comparing their recoveries legitimate. `is_nominal_configuration=false`, overrides
+`{epochs: 8->32, early_stop: 10->1000}`, so Gate-4's check fails on it by design and it is not gate
+evidence. Digests: report `2f2df24596151484`, artifact `11c7d61e9d7704ca`, preflight `8411c2bddbe8c6de`.
+
+**THE PRE-REGISTRATION, committed while the job was still PENDING, HIT 4 OF 4 — every one inside its band:**
+
+    quantity     predicted                        measured    verdict
+    E_w[r]       < 0.56324, band [0.48, 0.56]      0.52350     HIT
+    MAD          < 0.346135, band [0.31, 0.346]    0.334954    HIT
+    recovery     < 0.536695, band [0.49, 0.537]    0.511708    HIT
+    verdict      FAIL                              FAIL        HIT
+
+And **no falsifier triggered**: `E_w[r]` did not rise above 0.56324, MAD did not rise, recovery did not
+rise above 0.548769. All three were written down as the ways this could lose.
+
+**The ladder is now monotone on three budget points, in opposite directions for the two terms:**
+
+    arm    ep   recovery   E_w[r]    coherent      MAD      penalty
+    ctl8    8   0.548769   0.63250   0.367501   0.366439   0.083729
+    ep16   16   0.536695   0.56324   0.436756   0.346135   0.026549
+    ep32   32   0.511708   0.52350   0.476496   0.334954   0.011796
+
+    coherent under-application  +18.8%  then  +29.7%   (vs ctl8)  -> monotone WORSE
+    dispersion, MAD             -5.5%   then   -8.6%              -> monotone BETTER
+
+So more training budget monotonically worsens the coherent under-application and monotonically improves
+dispersion, and the net is worse recovery at every step. **The memo's original hypothesis — "4x budget
+overfits harder => MORE per-cell scatter" — is now falsified at 4x as well as 2x**, and by the measure that
+matters: MAD fell 8.6%. The published "scatter penalty" fell 85.9% over the same move, a **10x
+exaggeration** of the real dispersion change, which is BEN-042's point demonstrated a third time.
+
+### The deferred early-stopping question is COMPLETE at 6/6 — and it retroactively vindicates option (1)
+
+    iter0_step1  argmin 21/32  delta +0.000095      iter0_step2  argmin 32/32  delta  0.000000
+    iter1_step1  argmin  3/32  delta +0.000333      iter1_step2  argmin  5/32  delta +0.000061
+    iter2_step1  argmin  1/32  delta +0.000975      iter2_step2  argmin  5/32  delta +0.000058
+
+The argmin positions are 1, 3, 5, 5, 21, 32 — **essentially random** — while every best-vs-last val_loss
+gap is <= 0.000975, i.e. <= 0.2% of a ~0.48 loss. That is exactly what
+`sbatch_powered_closure_budget_probe.sh`'s header predicted when it declined to build a fourth arm:
+*"if the 32-epoch val curve is flat with an early argmin, best-versus-last selection is provably inside the
+validation noise and no arm was needed."* **Confirmed at 6/6; the ~8 GPU-hours were correctly not spent.**
+
+**And this is now evidence that BEN-043's option (2) would have been a mistake.** Option (2) was "make
+best-epoch the estimator — let EarlyStopping restore." Here the argmin lands at **epoch 1 of 32** in one
+training and epoch 3 in another, so `restore_best_weights` would have selected a nearly-untrained network.
+Joseph chose option (1) — persist the last-epoch weights, no estimator redefinition — and the data
+supporting that choice arrived after the decision rather than before it. Worth stating plainly: the val-loss
+argmin is not a usable model-selection signal in this problem.
+
+### One correction to myself
+
+I told him "its log will NOT grow" and wrote here that log growth was "a constant" for this job. **Too
+strong.** The log emits nothing per *epoch* but does emit per *training* — `ITERATION`, `RUNNING STEP`,
+`Last val loss`, `Dumping training history` — so it grows six times. I inferred "constant" from observing it
+static inside a single 85-minute training. The operative advice was right (judge liveness by CPU time and
+artifacts, and the artifact clock is what I actually used) but the characterisation was wrong, and it went
+to him in a mail, so it is corrected in this cycle's mail too.
+
+Mailed. ep32 was the last of my two watched jobs to be diagnostic; `56445883` (the re-run, the critical
+path) is still PENDING with its watch armed.
+
+### 22:15Z — THE ACCEPTANCE-LIMITED ORACLE: 72% of D2's shortfall is SPECIFICATION, 28% is the estimator
+
+Joseph commissioned this as *"one measurement left, and it's the one that decides"*, with the
+interpretation rule set in advance: ~0.63 means the bar was specified without accounting for dilution,
+~0.9 means the estimator is deficient. **It came in at 0.618228.**
+
+    the bar                                        0.80
+    statistical oracle (d2_oracle.py, 151db63)     0.954204   <- SAMPLING only
+    acceptance-limited oracle, per-event           0.618228   <- acceptance + sampling
+    acceptance-limited oracle, spectrum-space      0.633208   <- acceptance only
+    measured estimator (56381674)                  0.546853
+
+    total shortfall   0.80 - 0.5469 = 0.2531
+    SPECIFICATION     0.80 - 0.6182 = 0.1818   71.8%
+    ESTIMATOR         0.6182 - 0.5469 = 0.0714  28.2%
+    -> the estimator reaches 88.5% of the ceiling acceptance permits
+
+No k rescues it: 0.4236 / 0.5642 / **0.6182** / 0.6441 / 0.6592 / 0.6691 at k = 1..6.
+
+**His comparison verified from the artifacts, not from his mail** — and the weighting was the thing worth
+checking. `E_w[r]` 0.631286 vs his 0.63129 OK; tilt-weighted dilution ideal 0.633208 vs 0.63321 OK; bias
+−0.001922 vs "−0.0019" OK. **But the acceptance map ships TWO weightings of the same curve** — tilt-weighted
+0.633208 and truth-mass-weighted 0.609475 — differing by **3.7%** in a comparison whose real signal is
+**0.19 pp**. He named the right one. Filed as **BEN-045**, the third member of the family with BEN-042 and
+BEN-044: a number compared against a differently-normalised number.
+
+**An identity fell out that explains an earlier coincidence.** The spectrum-space oracle equals the
+tilt-weighted mean response to **0.0e+00** exactly, because `r_b <= 1` for every cell so `|1-r| = 1-r` and
+the criterion's absolute value is **inert on a one-sided response**. That is why my own
+`d2_response_decomposition.py` "zero dispersion" column (0.6313) and BEN-038's dilution ideal (0.63321)
+agreed — algebra, not luck. It also explains why the per-event oracle is *lower*: adding two-sided sampling
+scatter makes the `|.|` start biting, and the 0.014980 difference IS that sampling term rather than an
+unexplained residual.
+
+**Bracketed on purpose**, so the conclusion does not rest on one construction: per-event 0.618228 pays the
+A/B sampling exactly as the criterion does for the real estimator; spectrum-space 0.633208 does not. Both
+are far below 0.80, so the verdict is robust to the choice.
+
+**The caveat is real and I am not burying it.** `(1-a_b)^k` assumes cells resolve independently;
+`omnifold.py:218-220` lets a smooth learner transport `f(pT)` across cells and BEAT the curve (BEN-038
+measured the top band overshooting at 1.0333). So **0.80 is not proven unreachable.** Two things make the
+number decision-grade anyway: the estimator's mean response sits **below** the curve (−0.001922), so no net
+transport gain is happening in practice; and the dilution model, correctly graded `ASSUMED`, now predicts
+the measured mean response to **0.19 pp** — an assumed model with one confirmed non-trivial prediction.
+
+**MY OPINION, which he asked for and which I had been withholding behind the tolerance rule.** He was right
+that the rule stops me moving a bar so a failing product passes; it does not stop me asking whether the bar
+measures something the estimator can observe. It does not. Truth-weighted global acceptance is 0.4235 and
+the recoverable fraction at k=3 is 0.633, so `recovery >= 0.80` conflates *is the estimator good* with *can
+transport beat dilution*, and only the first is a closure question. Nothing in the record derives 0.80 from
+an achievable range; it reads as a round number. **Recommendation: re-specify recovery relative to the
+acceptance-limited reference with a predeclared fraction, plus a separate absolute floor.** Under that this
+estimator scores 88.5%. Note this cuts against my own convenience — it leaves a visible 11.5% deficit and
+28.2% of the shortfall still owned by the estimator, rather than excusing all of it.
+
+Not recommending: k=4 (buys 0.026 of ceiling, still fails, costs a pin cascade), seed-ensembling (ceiling is
+the signed response 0.6313 for any N, and the identity above now explains *why* that is exactly the mean
+response), or more epochs (the ladder has the coherent term worsening +18.8% then +29.7%).
+
+Committed `nd-unfolding/pet/d2_acceptance_oracle.py` (double-gated, fails closed on either gate), the
+finding, **CLM-012**, and **BEN-045**. Also corrected for the record: `151db63` is my own commit, not
+another session's — the concurrent session's D2 work is `2113130` — so the oracle's stated limit was mine
+and I did not get to treat it as an inherited constraint. Mailed.

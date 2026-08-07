@@ -393,6 +393,51 @@ def main(argv=None):
                    weights_folder=weights_folder,
                    verbose=False)
     of.Unfold()
+
+    # ---- BEN-043: persist the weights that ACTUALLY produced `weights_push` --------------------
+    # MultiFold checkpoints with `save_best_only=True` (omnifold.py:272-275) while its
+    # `EarlyStopping(patience=self.patience, restore_best_weights=True)` (:266-268) takes the engine
+    # default patience=10, which CANNOT be exhausted inside epochs=8 -- and Keras 2.15 restores best
+    # weights only inside the `wait >= patience` stop branch. So the model in memory at `reweight`
+    # time is the LAST epoch while the file on disk is the BEST-val-loss epoch. Measured on the
+    # 2026-08-06 nominal: the two disagree by up to 87% per event (median 0.8%) while agreeing to
+    # 1e-4 in aggregate, which is why no coarse check ever noticed, and
+    # `extract_fullevent_fps.py`'s `check_subsample_agreement` (tol 1e-3) failed closed on it -- so
+    # no cross section could be extracted at all. See
+    # docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md.
+    #
+    # THE TRAINED OBJECTS ARE `of.step{1,2}_models[0]`, NOT `of.model1`/`of.model2`. The latter are
+    # assigned once in `MultiFold.__init__` (omnifold.py:123-124) and never reassigned; training runs
+    # on `tf.keras.models.clone_model` copies appended to those lists (:278-284), and `clone_model`
+    # does not copy weights. So `of.model2` still holds its RANDOM INITIALIZATION here, and saving it
+    # would persist an untrained network -- a worse failure than the one being fixed.
+    _last = int(args.niter) - 1
+    final_ckpt = {}
+    for _stepn, _models in ((1, of.step1_models), (2, of.step2_models)):
+        if not _models:
+            raise SystemExit(
+                f"[gate4] MultiFold left step{_stepn}_models empty, so there is no trained model to "
+                "persist. That happens only if the engine's ensemble bookkeeping changed "
+                "(omnifold.py:278-287); refusing to write an artifact whose weights cannot be "
+                "reproduced from disk (fail closed).")
+        _p = os.path.abspath(os.path.join(
+            weights_folder, f"OmniFold_{mf_name}_iter{_last}_step{_stepn}_final.weights.h5"))
+        _models[0].save_weights(_p)
+        # ROUND-TRIP GUARD, not a hope. Load the file back into a fresh clone and require every
+        # weight tensor to be bit-identical to the trained object's. This is exact and costs no
+        # forward pass; the end-to-end check (does it reproduce `weights_push`?) is
+        # `gate_ab_push_provenance.py`, which is the external gate this artifact is graded by.
+        _chk = tf.keras.models.clone_model(_models[0])
+        _chk.load_weights(_p)
+        _a, _b = _models[0].get_weights(), _chk.get_weights()
+        if len(_a) != len(_b) or not all(np.array_equal(x, y) for x, y in zip(_a, _b)):
+            raise SystemExit(
+                f"[gate4] step{_stepn} final checkpoint {_p} does not round-trip to the trained "
+                "weights bit-exactly, so it is not the model that produced this artifact "
+                "(fail closed).")
+        final_ckpt[_stepn] = _p
+        print(f"[gate4] step{_stepn} FINAL (last-epoch) weights -> {_p} (round-trip verified)")
+
     # Everything `extract_fullevent_fps.py` needs to rebuild the step-2 network and reproduce the
     # exact input space at full-inventory inference: the architecture, the checkpoint location,
     # and -- decisively -- the event-feature normalization. The truth block was z-scored with the
@@ -402,8 +447,15 @@ def main(argv=None):
     inference_contract = {
         "multifold_name": mf_name,
         "weights_folder": os.path.abspath(weights_folder),
-        "step2_checkpoint": os.path.abspath(os.path.join(
+        # BEN-043: this now points at the FINAL (last-epoch) weights, which are the ones that
+        # produced `weights_push`. `extract_fullevent_fps.py:253` reads this key and therefore needs
+        # no change. The best-val-loss file MultiFold wrote is kept alongside for provenance -- it is
+        # a legitimate model, just not this artifact's.
+        "step2_checkpoint": final_ckpt[2],
+        "step1_checkpoint": final_ckpt[1],
+        "step2_checkpoint_best_epoch": os.path.abspath(os.path.join(
             weights_folder, f"OmniFold_{mf_name}_iter{int(args.niter) - 1}_step2.weights.h5")),
+        "checkpoint_semantics": "final-epoch weights, round-trip verified (BEN-043)",
         "pet_arch": {"num_feat_gen": int(np.asarray(mc.gen).shape[-1]), "num_evt": int(ev_truth),
                      "num_part": int(P), "num_transformer": 2, "num_heads": 2,
                      "projection_dim": 32, "local": True, "K": 3, "coord_idx": list(coord_gen)},

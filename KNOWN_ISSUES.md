@@ -327,3 +327,49 @@ them. `eavailW_covariance.py` was also added to that file's `SyntaxOfTouchedFile
 **Still open:** no `(E_avail,W)` covariance has been rebuilt with the fix — that needs the cluster and
 belongs with the `M C_5D M^T` projection `OPEN_ITEMS.md` requires. The script is bound by no receipt or
 gate, so this changed no hash binding (verified: ALL BINDINGS INTACT).
+
+## The step-2 checkpoint is not the model that produced `weights_push`, and full-event extraction is blocked by it (found 2026-08-07)
+
+`omnifold.py:272-275` checkpoints with `save_best_only=True`; `:266-268` sets
+`EarlyStopping(patience=self.patience, restore_best_weights=True)` and `:128` takes `patience` from the
+engine default `10`. At the nominal `epochs=8` the patience can never be exhausted, and Keras 2.15
+restores best weights only inside the `wait >= patience` stop branch, so **the model in memory at
+`reweight` time is the last epoch while the file on disk is the best-val-loss epoch.**
+
+`train_fullevent_nominal.py:497` stores `of.weights_push` — the last-epoch output.
+`inference_contract["step2_checkpoint"]`, which `extract_fullevent_fps.py:253` loads, is the best-epoch
+file. Measured with `nd-unfolding/pet/gate_ab_push_provenance.py` (jobs `56445441`, `56445569`):
+
+    Gate A1  rebuilt mc_indices vs stored      bit-exact, 0 differing rows of 2,000,000
+    Gate A2  rebuilt truth normalization       bit-exact against the contract
+    Gate B(ii) stored push == 1.0 off-shell    72/72 exact
+    Gate B(i)  checkpoint vs stored push       max rel dev 8.663e-01, median 8.34e-03, p90 1.68e-01
+
+The aggregate agrees to **1e-4** (fold-forward ratio 0.746483 vs 0.746407), which is why no coarse check
+ever caught it. Batching non-associativity is excluded (2.9e-06 between batch 1000 and 512), GPU
+nondeterminism is excluded (bit-identical across two jobs), and the matched floor run reproduces the
+signature, so it is structural.
+
+**Effect: `check_subsample_agreement` (`extract_fullevent_fps.py:347`, default `tol=1e-3`, called
+unconditionally at `:609`) fails closed, so the full-event push stage cannot run.** That is the gate
+working as designed — do **not** raise `--subsample-agreement-tol`, and do not point
+`--step2-checkpoint` elsewhere: **no last-epoch checkpoint exists**, because `save_best_only=True` never
+wrote one. The artifact's `weights_push` is currently unreproducible from the repo's own products.
+
+The artifact itself is self-consistent (`central_vector` was computed in-process from the same
+`weights_push`), so this does not invalidate the nominal central value — it blocks *reproducing* it and
+blocks any consumer that rebuilds from the checkpoint.
+
+**Still open, and Joseph's call** — the options are written up in
+`docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md` §6: save the last-epoch
+weights (recommended; no estimator change, needs a re-run), make best-epoch the estimator (redefines the
+nominal, needs a gate re-issue), or extract from the best-epoch checkpoint and accept the inconsistency
+(not recommended). Filed as BEN-043.
+
+**And a trap in the fix itself:** `self.model1`/`self.model2` are assigned once in `__init__`
+(`omnifold.py:123-124`) and never reassigned; training runs on the `clone_model` copies held in
+`step1_models`/`step2_models` (`:278-287`, `:293`), and `clone_model` does not copy weights. **So
+`of.model2` still holds its initial random initialization when `Unfold()` returns** — implementing the fix
+as `of.model2.save_weights(...)` would persist an untrained network. Use `of.step2_models[0]` (and
+`of.step1_models[0]`). Both files that would change are sha-pinned by the live Gate-4 code gate (keys
+`driver`, `estimator_engine_multifold`), so the edit needs a gate re-issue in the same commit.

@@ -175,7 +175,14 @@ _SKIPPY = re.compile(r'\b(skip|SKIP|already on disk|exists)\b')
 def _shell_files():
     out = []
     for root, dirs, files in os.walk(_REPO):
-        dirs[:] = [d for d in dirs if d not in (".git", "__pycache__")]
+        # `.claude/worktrees/` holds transient `git worktree` checkouts that concurrent sessions
+        # create for read-only audit lanes (CLAUDE.md requires them). Walking into them makes this
+        # sweep assert about OTHER branches' shell scripts, and about copies of files it has already
+        # checked in the real tree -- so on 2026-08-07 two live worktrees turned this test red while
+        # nothing in the repo had changed, and one of the "violations" was `lib/resume_guard.sh`'s own
+        # explanatory `#` comment showing the anti-pattern. Excluding them narrows nothing real: every
+        # file in a worktree is a checkout of a tracked file this walk already visits at its true path.
+        dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "worktrees")]
         for fn in files:
             if not fn.endswith(".sh"):
                 continue

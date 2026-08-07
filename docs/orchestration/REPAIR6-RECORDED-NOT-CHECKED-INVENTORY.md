@@ -92,7 +92,60 @@ assumed correct.
 
 ---
 
-## F. Standing rule this file establishes
+## F. The pattern is REPO-WIDE, not this lane's — folding in BEN-043 and BEN-044
+
+Both were found in the **PET lane on the same day**, independently, and both are the same
+family this lane keeps hitting. That is the argument for one shared list rather than a
+per-lane one: two lanes rediscovering "a gate that cannot fail" in parallel is a repo
+property, not a coincidence.
+
+**`BEN-044` — an absolute tolerance in a ~1e-80-scale problem.** `combine_cstat_bkgsub_100rep.py`
+had symmetry tested as `sym_err > 1e-30` absolutely and PSD as
+`min_eig >= -1e-9 * max(max_eig, 1.0)`, where `max(..., 1.0)` pins it absolute. Measured
+`max|C| = 8.13e-79` — the thresholds sat ~49 and ~68 orders above what they bound, and an
+injected asymmetry of half the largest entry left `sym_err = 1.26e-80`, unflagged.
+
+  **Applied here, and it found one.** `p4_lib.check_symmetric_psd` carried
+  `require(... np.all(d >= -1e-30))` — a bare absolute literal against a standard-5D diagonal
+  near 1e-79. Now relative (`-psd_atol_ratio * max|C|`), with a reintroduction guard that
+  greps the lane for bare literals in `require`/`need` calls.
+
+  **Severity, stated honestly: redundant, not exploitable.** For a symmetric matrix
+  `min(diag) >= min(eigenvalue)`, so any negative diagonal is already a negative eigenvalue and
+  the **relative** PSD check immediately above it rejects the same corruption first —
+  demonstrated in `test_but_the_relative_PSD_check_already_rejected_that_matrix`. The literal
+  could not fire, but it was never the only line of defence. Recording it the other way would
+  be exactly the overclaim these rounds keep catching.
+
+**`BEN-043` — a checkpoint that is not the model that produced the product.** `save_best_only`
+plus an `EarlyStopping` that cannot fire (`patience=10`, `epochs=8`) means the in-memory model
+at reweight time is the LAST epoch while the file on disk is the BEST epoch; max relative
+deviation 0.866 against an aggregate that agreed to 1e-4.
+
+  **Applied here.** Its rule 1 — *a checkpoint is not provenance unless something asserts it
+  reproduces the product* — is the same statement as this lane's legacy-attest defect: a
+  receipt is not provenance unless something asserts the producer claim is true. Repair-6
+  resolves that the same way BEN-043 implies, by making the claim true by construction
+  (re-unfold) rather than by adding a guard over a false one. Its rule 3 — *an aggregate
+  cross-check cannot detect a per-event defect* — flags `check_support_comparison`, which
+  compares **traces**; a per-bin disagreement that preserves the trace is invisible to it. That
+  is a second, independent reason section A marks it FIX.
+
+**Cross-lane tally of the family, now seven:** `P4_VERIFIER_PASS` (#21) · `code_rev` ·
+`C_syst_eq_retained_plus_active_relerr` · `complete_support_comparison` · the
+full-total-identity overclaim · BEN-043's unasserted checkpoint · BEN-044's absolute tolerance
+(plus its own two cited precedents, CLM-011's `atol=1e-8` against ~1e-38 cross sections and
+BEN-042's normalisation mismatch).
+
+## G. BEN id allocation
+
+**Take new ids from 060 upward.** Two collisions in one day (041, then 044) because both lanes
+fetch, both see the same highest id, and both increment. Sequential allocation from a shared
+maximum does not work with concurrent lanes. This lane's finding is **BEN-046**; the two
+verifier transcripts still say BEN-044 deliberately — rewriting a committed receipt to match a
+later renumber would falsify it.
+
+## H. Standing rule this file establishes
 
 **A field may be recorded without being checked only if it appears in section C or D with a
 reason. Anything else is a defect.** And a gate label may not claim more than its body does —

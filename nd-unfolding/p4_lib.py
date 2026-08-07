@@ -530,8 +530,20 @@ def check_symmetric_psd(C, rtol_sym=1e-9, psd_atol_ratio=1e-12):
     require(ev[0] >= -psd_atol_ratio * abs(ev[-1]),
             f"covariance not PSD (min/max eig {ev[0]/max(1e-300,abs(ev[-1])):.2e})")
     d = np.diag(C)
-    require(np.all(np.isfinite(d)) and np.all(d >= -1e-30), "non-finite/negative diagonal")
-    return {"rel_asymmetry": float(asym), "min_eig": float(ev[0]), "max_eig": float(ev[-1])}
+    # REPAIR-6, folding in BEN-044 from the PET lane ("an absolute tolerance inherited into a
+    # problem whose natural scale is ~1e-80 makes a gate that cannot fail"). This read
+    # `d >= -1e-30` ABSOLUTELY. The standard 5D covariance has sqrt(tr) ~ 5.3e-38 over 10694
+    # reported bins, so a typical diagonal entry is ~1e-79 -- the old bound sat ~49 orders of
+    # magnitude above what it was supposed to bound, and a diagonal of -1e-31 (a corruption
+    # ~48 orders larger than the signal) passed it. Now relative to the matrix's own scale.
+    # Power-proved in tests/test_p4_guard_mutations.py at the real 1e-79 scale, per BEN-044's
+    # rule that a gate must be shown able to fail in the commit that writes it.
+    require(np.all(np.isfinite(d)), "non-finite diagonal")
+    require(np.all(d >= -psd_atol_ratio * denom),
+            f"negative diagonal beyond tolerance (min {np.min(d):.3e} vs "
+            f"-{psd_atol_ratio:.0e} * max|C| = {-psd_atol_ratio * denom:.3e})")
+    return {"rel_asymmetry": float(asym), "min_eig": float(ev[0]), "max_eig": float(ev[-1]),
+            "diag_tol_absolute": float(psd_atol_ratio * denom)}
 
 
 def require_exact_bands(band_covs):
