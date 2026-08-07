@@ -892,3 +892,48 @@ next real test remains measuring step-1 achievement by inference with the saved
 Status unchanged otherwise: nominal at 3:52:49 with the floor repeat on iteration 0, probe arms at 1:50 and
 1:33 with the third queued. Thresholds untouched. No mail this cycle — nothing finished, and this refines a
 diagnosis I already sent rather than reversing it.
+
+### The D2 scatter is deterministic structure, not noise — one remedy class eliminated
+
+Session A's **epochs-8 control** (`56431649`) COMPLETED cleanly (1:58:13, rc=0) and its watch fired. Session A
+is closed, so I read the science per brief item 2. It is an independent repeat of the D2 closure at the nominal
+config and it reproduces the original:
+
+                            56381674        56431649 (ctl8)
+    recovery                0.546853            0.548769
+    gap                     0.234270            0.234270   (identical)
+    floor                   0.010747            0.010747   (identical)
+    residual                0.106159            0.105710
+
+`gap`/`floor` are bit-identical because they are training-independent, as the preflight states. Recovery
+reproduces to 0.002.
+
+**That makes the valuable question answerable.** Session A showed the shortfall is 97.8% per-bin scatter rather
+than bias, but two very different worlds give that same number: independent per-run noise (averaging shrinks it
+like 1/√N, so an ensemble could pass) versus deterministic structure (averaging changes nothing). With two
+independent runs and all 285 cells in both reports:
+
+    Pearson r(per-cell residual_A, residual_B)   0.999942
+    L1 between the two unfolded spectra          0.001392   against gap 0.234270
+    recovery of mean(A,B)                        0.547819   -- 0.21% WORSE than the better single run
+    independent noise would have cut the scatter term 29.3% with two runs
+
+**Structure, to five nines.** I measured the actual proposed remedy — recomputing recovery on the ensembled
+spectrum — rather than a proxy for it. Session A's word "scatter" is doing double duty: this is cell-to-cell
+**dispersion**, deterministic, not statistical randomness.
+
+**The scope limit matters and I am stating it rather than letting the result be over-read.** Both runs share
+identical seeds (`estimator_seed 42`, `subsample_seed 0`, `split_seed 7`), so r = 0.999942 measures **GPU
+nondeterminism only**. Ruled out: averaging repeat runs at the same seeds. **Not** ruled out: averaging over
+different **estimator seeds**, which is what "ensemble it" usually means and is untested. I am not claiming to
+have killed ensembling, only its cheap version.
+
+**Proposed next experiment, not queued:** one probe arm identical to the control but with a different
+`estimator_seed`. If its residual pattern correlates as tightly as the GPU repeat did, the dispersion is a
+property of the data and geometry, no ensemble helps, and the criterion must change — a definitive answer for
+~2 GPU-h. If it decorrelates, seed ensembling is a real lever worth costing. **Deliberately not submitted**:
+the floor repeat plus ep16 and ep32 are already contending and ep32 is still PENDING, so adding a fourth GPU
+job would be inconsiderate rather than helpful. Flagged for Joseph's word.
+
+Tool committed as `nd-unfolding/pet/scatter_reproducibility.py`. Thresholds untouched; `recovery_min = 0.80`
+neither touched nor evaluated against. Mailed.
