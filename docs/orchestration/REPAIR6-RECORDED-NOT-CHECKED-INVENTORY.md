@@ -1,0 +1,99 @@
+# Standard P4 lane — mechanical inventory of recorded-but-unchecked fields and named gates
+
+**Why this file exists.** "Records a value, never checks it" and "names a weak check strongly"
+have now appeared five times in this chain: `P4_VERIFIER_PASS` (#21), `code_rev`,
+`C_syst_eq_retained_plus_active_relerr`, `complete_support_comparison`, and the
+full-total-identity overclaim. Repair-5's sweep was **a pass I performed**, and it missed an
+item on its own list. So the list is now an artifact produced by a script, checked in, and
+re-runnable — not a judgement I assert I made.
+
+**Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
+`p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
+`p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
+drivers. **66 fields** written into a product with no same-line comparison, and **22 named
+gates**.
+
+## The sweep's own two failure modes, stated up front
+
+Both were found by running it, and both matter for reading the table:
+
+1. **It missed uppercase-initial keys on the first run** — the key-literal regex was
+   `"([a-z]...)"`, so `C_syst_eq_retained_plus_active_relerr`, `C_combined_eq_syst_stat_ml_relerr`,
+   `M_content_sha256` and `M_shape` were invisible. That is *the exact field the verifier caught
+   repair-5 missing*, missed a second time by the tool built to stop missing it. Fixed to
+   `[A-Za-z]`; the count went 62 → 66. **A mechanical sweep is only as good as its pattern, and
+   the pattern needs its own test.**
+2. **It is line-based, so it cannot see a check performed in a loop.** Where a consumer does
+   `for k in (...): require(ids[k] <= rtol)`, the field name appears only in the tuple and the
+   comparison only in the body. Those show as `SWEEP-FP` below and were hand-verified.
+
+---
+
+## A. Findings that are real and actionable
+
+| Field / gate | State | Mark |
+|---|---|---|
+| **`verifier_crosscheck`** | **Computed, printed as `MATCH`/`DIFF`, and NEVER enforced.** `p4_evidence.py:313` builds the five booleans against the independently-observed hashes `OBS`, `:325` prints them, and a grep for `need(`/`require(` on it returns **0**. All five could read `DIFF` and the stage still exits 0 with `EVIDENCE-COMPLETE`. These are the bindings the evidence stage exists to confirm. | **FIX — highest priority; new, not on any prior list** |
+| `C_syst_eq_retained_plus_active_relerr` | Recorded by the builder; checked by neither consumer; `C_syst` never recomputed from retained + active. A wrong-but-PSD `C_syst` passes. Recomputable since repair-4 began persisting the retained components. | **FIX** (verifier finding 2) |
+| `hasTruthOnlyMisses` / `nTruthOnlyMisses` | Presence-only in both `p4_lib.check_merged_metadata` and `p4_evidence.py`. Zero or mutually inconsistent values pass. | **FIX** (verifier finding 5) — requiring `n > 0` and flag/count consistency needs no new physics; the real files already satisfy it |
+| `complete_support_comparison` (gate label) | The gate checks presence, shape and a nonzero support trace. Any finite ratio passes, yet it is recorded in the PASS gate list as *complete*. | **FIX** (verifier finding 6) — drop the claim from the name and the receipt, or give the ratio a bound |
+| `migration_policy` | Comparison added in repair-5 but made **conditional on optional fields**, so every caller that omits `band`/`selection_migration_abs` keeps the old presence-only behaviour; and zero-migration bands never validate the policy text. | **FIX** (verifier finding 4) — a repair that can be opted out of by omission is not a repair |
+| `support_comparison` (recorded value) | The ratio is recorded and never bounded — the value half of the gate above. | **FIX** with the gate |
+
+## B. Sweep false positives — checked, but not on one line (hand-verified)
+
+`active_only_eq_sum5_relerr`, `C_combined_eq_syst_stat_ml_relerr`,
+`full_total_residual_eq_stat_plus_ml_relerr` (checked by the `for _k in (...)` loop in the
+validator and adopter) · `stat_sha256`, `ml_sha256` (re-verified in `_bound_block`) ·
+`source_blobs` (compared in the dirty-source loop) · `full_phase_space`, `use_weights`
+(compared by `require_standard_footing`'s loop over `STANDARD_REQUIRED_FOOTING`) ·
+`endpoint_mask_equality` (enforced via the `mask_ok` local before being recorded) · `zombie`,
+`recovered` (enforced in a compound `need(... and ...)`) · `central_reproduction_rel`,
+`central_rel_tol` (bounded inside `check_projection_nonmutation`) · `selection_migration_abs`
+(compared in both the producer and the validator) · `log_bkg_mode` (compared against the
+declared footing) · `source_commits` (presence is the correct check — the value is an output).
+
+## C. Waived — diagnostics with no declared expected value
+
+Recorded deliberately for a reader, not as claims. Waiving these is only defensible because
+none of them appears in a PASS-gate label: `min_eig`, `max_eig`, `n_bins`, `rel_asymmetry`,
+`sqrt_tr_active`, `sqrt_tr_support`, `active_traces`, `component_content_hash`,
+`manifest_endpoint_hash`, `merged_hash_list_digest`, `hash_list_digest`, `n_reported`,
+`all_syst_bands`, `retained_bands`, `replaced_lateral_bands`, `support_family`,
+`support_family_sha256`, `axis_edges`, `grid_nbins`, `corder`, `binary_mtime`,
+`candidate_keys`, `candidate_total_key`, `M_shape`.
+
+**Waived with an explicit caveat:** `binary_sha256` — cannot be tied to the artifact it
+describes (nothing proves which binary produced a 53.8 GB merged input), which is why it now
+carries `binary_sha256_semantics` saying so. `candidate_c5*`, `M_content_sha256`,
+`component_manifest_sha256` — recorded for a downstream consumer that **does not exist yet**;
+they become FIX items the moment anything reads the projection receipt.
+
+## D. Descriptive strings, not claims
+
+`note`, `reason`, `error`, `bkg_mode_basis`, `binary_sha256_semantics`, `component_manifest`,
+`merged_receipt_dir`, `stat_cov`, `ml_cov`, `builder`, `evidence_generator`, `footing_evidence`,
+`log_bkg_mode_reason`, `log_sha256`.
+
+---
+
+## E. The 22 named gates
+
+Twelve are library functions whose names match their bodies (`check_symmetric_psd`,
+`prove_identity`, `check_component_sum`, `require_exact_bands`, `require_exact_endpoint_tags`,
+`require_complete_unfold_set`, `require_standard_footing`, `require_candidate_path`,
+`check_projection_nonmutation`, `check_full_total_identity`, `check_declared_migration_policy`,
+`check_merged_metadata`).
+
+Ten are PASS labels recorded in the validator receipt. Nine are accurate. **One is not:**
+`complete_support_comparison` — see section A. `full_total_identity_recomputed` is accurate as
+of repair-5 and was **not** before, which is why the label is in this inventory rather than
+assumed correct.
+
+---
+
+## F. Standing rule this file establishes
+
+**A field may be recorded without being checked only if it appears in section C or D with a
+reason. Anything else is a defect.** And a gate label may not claim more than its body does —
+`complete`, `identity`, `verified`, `proven` are all load-bearing words.
