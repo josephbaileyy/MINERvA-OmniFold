@@ -1694,3 +1694,32 @@ well as completion because `run_action` resolves by watch id, not event type.
 a blocking decision), and the last mail went out 77 minutes ago. The pre-registered comparison goes out
 when it lands: `E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in
 [0.49, 0.537], verdict FAIL — with the falsifiers already committed while it was PENDING.
+
+### 15:20Z — he asked "How's it going?"; answered. ep32 1 of 6 trainings done, progress read from artifacts
+
+Inbound at 15:13:25Z, so a status mail was owed and went out (this is the mailable-event branch: an
+inbound instruction, not a self-initiated update).
+
+**ep32 progress, measured from ARTIFACTS rather than the log.** This job emits no per-epoch output at all
+— MultiFold runs Keras with `verbose=False` — so its log will sit at 1726 bytes for eight hours and log
+growth is not merely a weak liveness signal here, it is a *constant*. The weights directory is the real
+clock:
+
+    OmniFold_fe_powered_iter0_step1.weights.h5 + .pkl   <- that training COMPLETE (pkl = history dumped)
+    OmniFold_fe_powered_iter0_step2.weights.h5          <- in progress, no .pkl yet
+    1 of 6 trainings done at 1:27:40 wall
+    AveCPU 1:40:47 > wall  -> multi-threaded and healthy
+    TIME_LEFT 9:32:20 of the 11h wall
+
+Projection from the launcher's own measured rates (2.00 min/epoch step 1, 2.79 step 2, so 32 epochs =
+153 min per iteration): ~7.75h total, finishing ~21:40Z against a 00:52Z wall — ~3.2h margin. On track.
+
+**Three things I told him I am deliberately NOT doing**, so the reasons are on the record rather than
+living only in a mail: `values.tex` held for G-5 (the `\gbdtFive*` macros are the GBDT lane's and that
+session was told to wait for adoption; writing 5.26e-38 now would also enshrine a number G-5 supersedes);
+the closure driver's BEN-043 defect left alone (its sha check has passed so an edit would no longer kill
+ep32, but a requeue would re-check and nothing downstream loads its checkpoints); and ep32 not cancelled
+to speed the re-run despite outranking it (60 higher-priority jobs sit ahead regardless, and I committed a
+pre-registration specifically to be tested by that arm — offered it to him as his call).
+
+Nothing is blocked on him. Trees: local == origin == cluster == `e2a0ea2`.
