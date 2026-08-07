@@ -658,3 +658,27 @@ than a failing test) and committing both would import unreviewed code into the t
 **Collection: 710 → 730 local (+20), 722 passed with the same 7 pre-existing cluster-path failures.
 ANNOUNCED.** Cluster stays 764 but its single failure becomes a pass, so the cluster suite should now be
 fully green for the first time in this campaign. Verifier ALL BINDINGS INTACT.
+
+### Quiet cycle: nominal on track, per-step timing refined, nothing in my lane unblocked
+
+No new mail. `56415634` at 1:22:46, and the per-step timing is now measurable from the weight files rather
+than estimated from one iteration:
+
+    iter0_step1  17:28 -> 18:02   ~34 min   (includes XLA compile + 5.34M-row shuffle-buffer fill)
+    iter0_step2        -> 18:26   ~24 min
+    iter1_step1        -> 18:43   ~17 min
+
+Steps are **accelerating** as the cold-start cost amortises, so my earlier "~50 min/iteration" was an
+overestimate drawn from the most expensive iteration. Three steps remain in the nominal (~55 min), then the
+matched floor repeat with no cold start — call it ~4 h more against a wall expiring 12:27Z. Wide margin.
+
+Concurrent sessions are healthy and following the pattern: the laterals array `56430128` is down to task 9 and
+they have armed their own durable watch (`fps-negweight-unfolds-56430128`); `d2_suite` and `b1nit5a` have both
+finished. I am deliberately not reading their products — the k=5 arm's reading was predeclared and does not
+reopen the `niter` decision, and the laterals are theirs to report.
+
+**Nothing in my lane is unblocked**, so this cycle is verification only rather than invented work. Step 4
+landed last cycle; Step 3 is moot for the GBDT lane (it transfers, on the positive closed-input argument) and
+needs the PET budget build for the PET lane; Step 5 — replacing the `values.tex` macros — is gated on the
+five-band footing fix now in flight. The two open decisions remain Joseph's: whether
+`combine_cstat_bkgsub_100rep.py` should be tracked or its 5 tests retired, and the `g` presentation.
