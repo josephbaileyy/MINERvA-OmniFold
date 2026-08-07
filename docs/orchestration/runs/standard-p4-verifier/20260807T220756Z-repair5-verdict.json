@@ -1,0 +1,94 @@
+{
+  "receipt_kind": "standard-p4-verifier verdict",
+  "utc": "2026-08-07T22:07:56Z",
+  "subject": "repair-5 (the four defects repair-4 left open, plus two pattern sweeps)",
+  "code_rev": "3da6aee",
+  "branch": "worktree-gbdt-closeout",
+  "verdict": "BLOCK",
+  "previously_outstanding_now_closed": 2,
+  "previously_outstanding_total": 4,
+  "defects_outstanding": 6,
+  "self_guards_adequate": "PARTIAL",
+  "authorizes_covariance_stages_4_6": false,
+  "p4_verifier_pass_token": null,
+
+  "delegate": {
+    "tool": "codex exec --sandbox read-only --skip-git-repo-check",
+    "account": "codex-school",
+    "independent": true,
+    "wrote_nothing": true,
+    "post_run_git_status": "clean; `git status --short --untracked-files=all` empty, no diff to preserve",
+    "tokens_used": 287574,
+    "transcript": "20260807T220756Z-repair5-transcript.txt"
+  },
+
+  "reason": "Legacy attestation still misattributes old endpoints to HEAD's driver, and validation misses a material systematic-component identity.",
+
+  "closed_this_round": [
+    {"defect": "D3", "title": "dirty-source guard fail-open on deletion"},
+    {"defect": "D4a", "title": "candidate containment (realpath, symlink- and escape-proof)"}
+  ],
+  "also_accepted": [
+    "the narrow stat+ML residual comparison (the D4b identity itself)",
+    "fps_provenance.py constants unmutated"
+  ],
+
+  "tests": {
+    "reported_by_delegate": "90/111 (21 environment errors)",
+    "local_rerun_same_commit": "111/111",
+    "note": "TMPDIR was exported for this run specifically to remove the previous round's 17 tempfile errors; 21 still occurred, so the export did not reach the sandbox. Local run at the same commit passes all 111. Environment, not code -- but see outstanding item 3: the delegate is right that passing locally is not the same as the guards being strong."
+  },
+
+  "outstanding": [
+    {
+      "n": 1,
+      "defect": "D2 (still open)",
+      "finding": "legacy attestation checks only the endpoint hash, then stamps the CURRENT code_rev and unfold_blob rather than the historical producer the manifest records. The real unreceipted endpoints can therefore be attested and then skipped under a changed driver.",
+      "sites": ["nd-unfolding/run_p4_unfold_std.sh:33", "nd-unfolding/run_p4_unfold_std.sh:41", "nd-unfolding/run_p4_unfold_std.sh:60", "nd-unfolding/run_p4_unfold_std.sh:67"],
+      "accepted": true,
+      "self_assessment": "Correct, verified in-code, and a bug I INTRODUCED in repair-5. The ten ROOTs date 2026-07-18 and were produced by an older driver; stamping HEAD's blob onto their receipts asserts a producer that demonstrably did not produce them. This is the same provenance lie as KNOWN_ISSUES #23 -- which I found myself, in the manifest -- reproduced in the receipt while fixing something else. A legacy-attested receipt must record the HISTORICAL producer (or record explicitly that the producer is unknown and refuse to let that satisfy a source-identity comparison), never today's."
+    },
+    {
+      "n": 2,
+      "defect": "Pattern A, missed instance",
+      "finding": "C_syst_eq_retained_plus_active_relerr is recorded by the builder but checked by neither consumer, and the validator never recomputes C_syst from the retained + active blocks. A wrong-but-PSD C_syst with C_combined = C_syst + C_stat + C_ML passes.",
+      "sites": ["nd-unfolding/p4_build_components.py:165", "nd-unfolding/p4_validate_active_lateral.py:115", "nd-unfolding/p4_validate_active_lateral.py:137", "nd-unfolding/p4_adopt_standard.py:44"],
+      "accepted": true,
+      "self_assessment": "Correct, and it is my own sweep missing an item in the list it produced. Worse, it is now RECOMPUTABLE and I did not recompute it: repair-4's 4a persists the retained components into the candidate, so the validator has everything it needs. The fix is a second check_full_total_identity-style comparison, not another recorded number."
+    },
+    {
+      "n": 3,
+      "defect": "D6 (still open)",
+      "finding": "the deleted-source self-guard asserts source strings only and would pass if need() or the final blocker exit became ineffective; the validator-use check is likewise textual. The D2 integration test stubs the live blob and revision to equal its own fixture, so it cannot expose the legacy producer mis-stamp.",
+      "sites": ["nd-unfolding/tests/test_p4_repair.py:719", "nd-unfolding/tests/test_p4_repair.py:685", "nd-unfolding/tests/test_p4_resume_integration.py:66", "nd-unfolding/tests/test_p4_resume_integration.py:83"],
+      "accepted": true,
+      "self_assessment": "The sharpest finding of the round. The D2 self-guard was constructed so that it could not catch defect 1 -- the stub sets the live values equal to the fixture, which is precisely the configuration in which the mis-stamp is invisible. A self-guard that shares an assumption with the code it guards is not independent. Joseph's rule was right and my implementation of it had exactly the hole the rule was meant to prevent."
+    },
+    {
+      "n": 4,
+      "defect": "Pattern A, incomplete repair",
+      "finding": "zero-migration bands never validate the policy TEXT, and callers that omit the optional band/census fields fall back to the original presence-only behaviour.",
+      "sites": ["nd-unfolding/p4_lib.py:404", "nd-unfolding/p4_lib.py:420", "nd-unfolding/p4_lib.py:510"],
+      "accepted": true,
+      "self_assessment": "Correct. Making the comparison conditional on optional fields preserved the defect for every caller that does not pass them -- a repair that can be opted out of by omission."
+    },
+    {
+      "n": 5,
+      "defect": "Pattern A, item I declared acceptable to leave",
+      "finding": "hasTruthOnlyMisses / nTruthOnlyMisses remain presence-only; zero or mutually inconsistent values pass, though the real merged files carry positive values.",
+      "sites": ["nd-unfolding/p4_lib.py:501", "nd-unfolding/p4_evidence.py:161"],
+      "accepted": true,
+      "self_assessment": "I reported this as open on the grounds that no independent expected value exists without a physics read. The delegate is right that this overstates the difficulty: requiring n > 0 and mutual consistency between the flag and the count needs no new physics, and the real files already satisfy it. My judgement call was wrong, not merely deferred."
+    },
+    {
+      "n": 6,
+      "defect": "Pattern B, item I declared acceptable to leave",
+      "finding": "check_support_comparison checks only presence, shape and a nonzero support trace -- any finite ratio passes -- yet the validator records `complete_support_comparison` in the PASS gate list.",
+      "sites": ["nd-unfolding/p4_lib.py:572", "nd-unfolding/p4_validate_active_lateral.py:171"],
+      "accepted": true,
+      "self_assessment": "I flagged this as diagnostic-not-a-gate and left it. The delegate's point is stronger and correct: it is RECORDED as a gate named 'complete', so the label is doing work the check does not support. Either the name and the receipt entry drop the claim, or the check acquires a bound. Leaving a mislabelled entry in a PASS receipt is the Pattern B defect, not an exception to it."
+    }
+  ],
+
+  "next_action": "repair-6 scoped to these six. Do NOT set P4_VERIFIER_PASS until a subsequent verifier pass returns PASS on the committed patch."
+}

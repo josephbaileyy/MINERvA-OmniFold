@@ -3747,3 +3747,50 @@ reaching an assertion. The delegate diagnosed that itself and did not count it a
 **Repair-5 is scoped to exactly those four items.** Defects 1 and 5 are closed and must not be
 re-opened. `4d` (no promotion in `p4_adopt_standard.py`) was judged an acceptable non-repair —
 adoption is out of scope and the chain stops at CANDIDATE by design.
+
+## 2026-08-07 — Repair-5 closed D3 and D4a; BLOCK again, and finding 1 is a bug I introduced
+
+**Verdict BLOCK. `P4_VERIFIER_PASS` NOT set. Stages 4–6 remain unauthorized.** Receipt and
+8,441-line transcript at `docs/orchestration/runs/standard-p4-verifier/20260807T220756Z-repair5-verdict.json`
+and `…-repair5-transcript.txt`. `codex exec --sandbox read-only` on `codex-school`, 287,574
+tokens; wrote nothing (`git status` clean afterwards, no diff to preserve).
+
+**Closed: D3** (dirty-source fail-open on deletion) and **D4a** (containment, now realpath-
+anchored and symlink-proof). The narrow stat+ML residual comparison and the untouched
+`fps_provenance.py` constants were also accepted. **Six outstanding.**
+
+**Finding 1 is the one that matters, and it is mine.** The legacy-attest path stamps the
+CURRENT `CODE_REV` and `UNFOLD_BLOB` onto a receipt for a ROOT produced **2026-07-18 by an
+older driver**, then the skip gate compares against those same current values and passes. So
+the receipt asserts a producer that demonstrably did not produce the file. **This is the exact
+provenance lie recorded as `KNOWN_ISSUES.md` #23 — which I found myself, in the manifest —
+reproduced in the receipt while repairing something else.** A legacy-attested receipt must
+carry the HISTORICAL producer, or record that the producer is unknown and refuse to let that
+satisfy a source-identity comparison. Verified in-code at `run_p4_unfold_std.sh:60-68`.
+
+**Finding 3 is the sharpest.** The D2 self-guard **stubs the live blob and revision to equal
+its own fixture**, which is precisely the configuration in which finding 1 is invisible. A
+self-guard that shares an assumption with the code it guards is not independent. Joseph's rule
+that each repair must name an assertion which fails on reintroduction was right, and my
+implementation of it had exactly the hole the rule exists to prevent.
+
+**Finding 2** — my own pattern sweep missed `C_syst_eq_retained_plus_active_relerr`: recorded
+by the builder, checked by neither consumer, and never recomputed, so a wrong-but-PSD `C_syst`
+passes. It is *recomputable* now that repair-4's 4a persists the retained components, which
+makes the omission worse, not better.
+
+**Findings 5 and 6 overturn two judgement calls I made, correctly.** I reported the native-miss
+fields and `check_support_comparison` as acceptable to leave. For the native-miss fields,
+requiring `n > 0` plus mutual consistency needs no new physics and the real files already
+satisfy it — I overstated the difficulty. For `check_support_comparison`, the point is not that
+it is diagnostic but that the validator records it as `complete_support_comparison` in the PASS
+gate list, so the label claims what the check does not deliver. **Finding 4**: making the
+migration-policy comparison conditional on optional fields left the defect in place for every
+caller that omits them — a repair that can be opted out of by omission.
+
+**Tests.** Delegate 90/111 with 21 environment errors; local re-run at the same commit is
+**111/111**. `TMPDIR` was exported specifically to remove the previous round's 17 tempfile
+errors and did not reach the sandbox. Environment, not code — but finding 3 is the reminder
+that passing locally is not the same as the guards being strong.
+
+**Repair-6 is scoped to those six.** D3 and D4a are closed and must not be re-opened.
