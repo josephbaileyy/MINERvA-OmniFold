@@ -376,6 +376,19 @@ paper); run the link/reference/provenance checks. The Overleaf subtree sync is a
 - **A number's existence on disk is not a footing claim, and not a receipt.** This runbook exists
   because ten ROOTs sat in a publication namespace for three weeks, purity-footed, unreceipted, from a
   retired launcher (BEN-036, BEN-041).
+- **`P4_VERIFIER_PASS` is a speed bump, not a lock — do not set it yourself.**
+  `run_p4_standard.sh:41` tests only `[[ -z "${P4_VERIFIER_PASS}" ]]`, so *any* non-empty string opens
+  stages 4–6; nothing binds the value to a `standard-p4-verifier` PASS, a receipt, or a patch hash. The
+  gate's own refusal message names the variable, which is precisely the shape that invites an agent
+  under "finish the task" pressure to self-authorize. Treat it as a **human/independent checkpoint**:
+  run the verifier read-only per `CLAUDE.md`, report the verdict, and let Joseph authorize. Same family
+  as BEN-040 — a gate whose PASS condition cannot distinguish success from a caller asserting success.
+- **The chain stops at CANDIDATE by design.** Its final line says so
+  (`CANDIDATE only; adoption is a separate authorized step`). Adoption (G-5), the 4D marginal
+  adoption (G-6), `values.tex` (G-8) and any Overleaf sync are **publication decisions**: the ledger
+  states that replacing published macros "is a publication decision, not a bookkeeping one", and the
+  negweight state doc holds the Overleaf push for explicit user OK. Do not cross that line unattended,
+  and never write "quarantine lifted" on your own judgment.
 - **Never apply +10.96% or +9.12% as a uniform scale.** Per-bin σ ratio 0.79–1.44.
 - **Do not rerun the corrected R1 4D throws or the non-lateral 5D components** to repair
   documentation. `RESULT_DEPENDENCY_AND_RERUN_MAP.md`'s last trigger row is explicit: a missing
