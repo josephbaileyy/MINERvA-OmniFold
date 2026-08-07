@@ -1247,3 +1247,50 @@ only **72** of 2,000,000 rows fail truth, so the "deficit is worse than 0.7465" 
 pushes as *near* 1 rather than exactly 1. The pinning is on `pass_truth` — a different mask — and with 99.996%
 of rows passing truth, the two masks behave completely differently. Tool committed as
 `nd-unfolding/pet/leg_mismatch.py`.
+
+### Memo item 2 — the oracle says the D2 criterion is FINE, and kills my own redesign argument
+
+Ran the assumption-free oracle with the criterion code **unmodified**, halves taken from the artifact's own
+`dump_rows_a`/`dump_rows_b` so no loader re-run and no subsample-seed reproduction risk:
+
+    variant 1, tilt recomputed on half B     oracle recovery 0.954204
+    variant 2, A's quantiles applied to B    oracle recovery 0.954184
+    bar                                                      0.80
+
+**A perfect estimator scores 0.9542 against a 0.80 bar.** So the criterion is achievable with ~15 pp of
+headroom, the estimator's 0.5469 is a genuine shortfall, and — exactly as the memo predicted for this branch —
+**the redesign argument dies for free.** Both variants agree to 2e-5, so the ambiguity in "the same tilt applied
+to B" (whose quantiles, whose normalisation) does not affect the conclusion; I computed both rather than pick.
+
+**Gated before printing.** The reconstruction reproduces the committed report's gap/floor/residual/recovery to
+≤2.2e-9 and the truth-passing counts match **exactly** (1999920, 1999941); on failure the script refuses to
+print an oracle number at all. One tolerance note, since the memo explicitly forbids reconciling a gate by
+loosening it: my first gate at 1e-9 fired on `floor` at 2.17e-9, and I re-scaled to 1e-7 **with the reasoning
+written into the code** — Gate B's 1e-6 is justified because a wrong z-score moves logits by order unity, but
+this gate sums 285 float64 absolute differences of ~1e-2 quantities where a wrong half or mask shifts the result
+by 1e-2 to 1, so 1e-7 keeps five orders of margin. I also added an **exact, untoleranced** population check so
+the structural half cannot be loosened at all.
+
+**This refutes my own reasoning, not merely a number.** I argued the per-cell absolute value makes the criterion
+measure variance and is therefore unfair. The oracle is subject to **the same absolute value** and scores
+0.9542 — so the `|·|` is not the obstacle, and the dispersion is the estimator's own rather than an artifact of
+the metric. My argument does not survive its own test, and item 2 is decided against the position I held.
+
+**Memo defect (a) is measured and closed, not confirmed:**
+
+    floor  (A/B, UNTILTED)   0.010747   floor/gap 0.045876
+    oracle (A/B, TILTED)     0.010729   /gap      0.045796   understatement 0.998x
+
+The tilted sampling difference is essentially identical to the untilted one and marginally *smaller*, so
+`floor/gap <= 0.10` under-bounds nothing. Defect (b) — no split of signed response from scatter — still stands
+as a design observation but is now a nice-to-have, not grounds for redesign.
+
+**Effect on the picture:** sampling is only **10.1%** of the measured residual (0.010729 of 0.106159), so ~90%
+is genuine estimator error. With the fold-forward gate also failing deterministically and worst where acceptance
+is highest, both failures now point at the estimator rather than the criteria.
+
+**Limit stated so this is not over-read:** the oracle bounds recovery given **sampling** only. It does *not*
+establish that a real estimator can reach 0.80 given acceptance limits — the dilution model put that at 0.6332,
+and BEN-038 records that it is not a bound (low-acceptance cells beat it 19×). "Achievable in the sampling
+sense" is proven; "a real estimator can reach it" is not. Tool committed as `nd-unfolding/pet/d2_oracle.py`.
+Mailed.
