@@ -1723,3 +1723,44 @@ to speed the re-run despite outranking it (60 higher-priority jobs sit ahead reg
 pre-registration specifically to be tested by that arm — offered it to him as his call).
 
 Nothing is blocked on him. Trees: local == origin == cluster == `e2a0ea2`.
+
+### 16:50Z — ep32 halfway through iteration 0->1; and its histories provisionally settle the early-stopping question
+
+Logged because it discharges (provisionally) a question the launcher header explicitly deferred to this
+arm, not because progress ticked.
+
+**Measured per-iteration timing, from this job's own artifacts rather than the header's note:**
+
+    job start                 06:52:11 local
+    iter0_step1.pkl written    07:55:03   -> 62m52s incl. ~5 min load/hash, so step 1 ~58 min / 32 epochs
+    iter0_step2.pkl written    09:20:33   -> 85m30s
+    one full iteration        ~143.5 min
+    2 of 6 trainings complete at 2:57:36 wall; AveCPU 3:25:28 > wall, RSS 14.7 GB
+
+Remaining two iterations project to **~21:08Z**, against a wall of 00:52Z — ~3h45m margin. That is within
+8 minutes of the independent ep16-derived estimate (~21:15Z, from 3:43:39 over 96 training-epochs), so two
+different bases agree.
+
+**THE DEFERRED EARLY-STOPPING QUESTION, answered for free as `sbatch_powered_closure_budget_probe.sh`'s
+header predicted it could be.** That header declined to build a fourth "epochs=32 at default patience"
+arm, arguing the question was *"answerable for FREE from ep32's own history pickles: if the 32-epoch val
+curve is flat with an early argmin, best-versus-last selection is provably inside the validation noise and
+no arm was needed."* Iteration 0 says exactly that:
+
+    iter0_step1   argmin 21/32   BEST_IS_LAST=False   best 0.480890  last 0.480985  delta +0.000095
+    iter0_step2   argmin 32/32   BEST_IS_LAST=True    best 0.835638  last 0.835638  delta  0.000000
+
+So the step-1 argmin is early *in position* but the curve is flat to **1e-4** (0.02% of the loss) by then,
+and step 2's argmin **is** the last epoch. Best-versus-last selection is inside the validation noise at 4x
+budget, and the ~8 GPU-hours of a fourth arm were correctly not spent. **PARTIAL — 2 of 6 histories; I
+will complete it at 6/6 rather than generalize from iteration 0.**
+
+This also corrects, in the right direction, an inference I had flagged from mtimes last cycle: I read
+`iter0_step1.weights.h5` stopping at 07:34:35 while training ran to 07:55:03 and noted "best ~epoch 20 of
+32, best != last again". The *position* was right (21/32) but the quantity that matters is the val gap, and
+it is 9.5e-05 — negligible. Reading the history instead of the mtime is what turned a suggestive
+observation into a bounded one, which is why I said I would.
+
+Secondary, and NOT a claim: at 32 epochs the best and last checkpoints nearly coincide, whereas the
+nominal at 8 epochs had gaps of +0.000744. If that holds, BEN-043's discrepancy would shrink at higher
+budget — but it would not vanish, and the fix already landed does not depend on it.
