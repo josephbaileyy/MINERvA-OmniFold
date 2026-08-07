@@ -167,8 +167,15 @@ def test_cli_pub_builder_receipt_gate_still_closes_when_endpoints_valid():
     """
     d = tempfile.mkdtemp()
     nw = os.path.join(d, "negweight"); os.makedirs(nw)
-    cfg = dict(fp.REQUIRED_FOOTING)
-    cfg["bkg_mode"] = fp.PUBLICATION_BKG_MODE
+    # Shape this EXACTLY as fps_endpoint_receipt.cmd_write emits it: the footing is a NESTED
+    # block, not five top-level keys. This fixture used to be flat, which is the only reason the
+    # 2026-08-07 producer/consumer mismatch survived -- the builder read the keys off the top
+    # level, the fixture put them there, and the test went green while no real receipt could ever
+    # pass. A fixture that does not match its producer tests nothing. Keep this in sync with
+    # fps_endpoint_receipt.SCHEMA.
+    cfg = {"schema": "fps_endpoint_receipt.v1", "result": "PASS",
+           "bkg_mode": fp.PUBLICATION_BKG_MODE,
+           "footing": {**fp.REQUIRED_FOOTING, "bkg_mode": fp.PUBLICATION_BKG_MODE}}
     cfg["launcher"] = "sbatch_unfold_active_fps.sh"     # in KNOWN_LAUNCHERS and exists under cwd=ND
     for b in fp.BANDS:
         for ep in fp.ENDPOINTS:

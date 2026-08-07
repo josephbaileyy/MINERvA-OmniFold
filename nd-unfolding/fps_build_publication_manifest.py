@@ -92,9 +92,19 @@ def main():
             conf = json.load(open(cfg))
             if conf.get("bkg_mode") != fp.PUBLICATION_BKG_MODE:
                 failures.append(f"{tag}: config bkg_mode={conf.get('bkg_mode')} != {fp.PUBLICATION_BKG_MODE}"); continue
+            # The footing lives in the receipt's NESTED "footing" block -- that is what
+            # fps_endpoint_receipt.cmd_write emits and what fps_provenance.require_footing reads.
+            # This loop used to read the five keys off the TOP level, where they never appear, so
+            # every real receipt reported estimator/seed/iters/use_weights/full_phase_space = None
+            # and the gate could not pass for ANY input (fail-closed, so nothing bad escaped -- but
+            # it blocked the publication chain outright). Found on the first real end-to-end run,
+            # 2026-08-07; both this file and build_active_lateral_fps.py had said "NOT RUN in the
+            # repair round". Flat is still accepted when there is no "footing" block at all, for
+            # pre-nesting receipts; when the block exists it is authoritative and must be correct.
+            foot = conf["footing"] if isinstance(conf.get("footing"), dict) else conf
             for k, v in fp.REQUIRED_FOOTING.items():
-                if conf.get(k) != v:
-                    failures.append(f"{tag}: config {k}={conf.get(k)} != {v}")
+                if foot.get(k) != v:
+                    failures.append(f"{tag}: config footing {k}={foot.get(k)} != {v}")
             launcher = conf.get("launcher")                    # attribute the ACTUAL launcher used
             if launcher not in KNOWN_LAUNCHERS or not os.path.exists(launcher):
                 failures.append(f"{tag}: config launcher '{launcher}' unknown/absent"); continue

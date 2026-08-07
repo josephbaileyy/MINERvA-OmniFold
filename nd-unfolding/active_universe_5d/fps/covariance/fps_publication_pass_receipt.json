@@ -1,0 +1,7 @@
+{
+  "schema": "fps_publication_pass_receipt.v1",
+  "result": "PASS",
+  "manifest": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/fps/covariance/fps_publication_manifest.json",
+  "manifest_sha256": "303e6ff7d6205e2cb66d0a90455168f566cff10218e2f55f2fe9207ddc37186a",
+  "validated_utc": "2026-08-07T02:07:58Z"
+}

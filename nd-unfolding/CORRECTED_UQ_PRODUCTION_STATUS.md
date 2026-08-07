@@ -1,18 +1,22 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
-**2026-08-07 one-liner — five-band active laterals.** The publication gate is **footing, not coverage**
-(BEN-036). Five-band coverage is already complete on disk — 120/120 P3F and 120/120 P3S event loops,
-all ten 74.8 GB merged FPS endpoint omnifiles, merged-input receipt `run_id 56090877` re-verifying
-10/10 unchanged across 748 GB. The blocker is that the ten FPS endpoint unfolds ran
-`--bkg-mode=purity` and publication footing is `negweight-refined`, which
-`require_publication_manifest` rejects by construction. Job **`56430128_[0-9]`** (committed
-`sbatch_unfold_active_fps.sh`, 4 h wall, `%5`) is producing the publication-footing unfolds into the
-separate `unfolds_negweight_refined/` namespace, leaving the purity controls untouched; sized at
-~1h32m per wave of 5 from the July driver logs. Preflight all green beforehand: audit `PASS`, mask
-fingerprint canonical, CV 266/285 sha `16d99350…`, and the manifest-builder dry-run failing on
-**exactly** the ten missing outputs and nothing else. Watch `fps-negweight-unfolds-56430128` armed.
-Chain still to run: manifest → rollup → p4 validate → adopt. **Nothing is adopted yet and no
-covariance scale here is quotable.**
+**2026-08-07 one-liner — five-band active laterals: DONE, gate chain PASSED end to end.** The gate was
+**footing, not coverage** (BEN-036): coverage was already 120/120 P3F + 120/120 P3S with all ten
+74.8 GB merged omnifiles, and the real blocker was that the ten FPS endpoint unfolds ran
+`--bkg-mode=purity` against a `negweight-refined` publication footing. `56430128_[0-9]` produced the
+ten publication-footing unfolds (all `COMPLETED 0:0`, purity controls untouched);
+`56431823` then ran manifest → rollup → p4 validate → adopt, **all four rc=0**, 53:56.
+**Result: the selection-complete lateral is `8.10399e-39` against the support-limited `7.30356e-39`,
+`+10.96%`; the combined FPS budget moves `8.040779e-39 → 8.774217e-39`, `+9.1215%`.** Per-bin σ ratio
+runs 0.7897 / 1.0071 / 1.4402 (min/median/max over 266 bins), so **this is a redistribution and must
+not be applied as a single scale factor.** p4 PASS with zero fails, PSD, rollup identity holds,
+pure-sum vs subtraction `3.45e-16`. Adopted product
+`uq_universe_fps_covariance_combined_activelat.root` (`3039183cf81d8d8f…`), five replaced blocks
+renamed `*__SUPERSEDED_support`. The first chain attempt (`56431689`) failed on a real bug in
+committed infra — nested-vs-flat footing in `fps_build_publication_manifest.py`, a gate that could
+never pass on real input, masked by a hand-built flat test fixture (**BEN-040**, fixed). **The
+2026-07-12 quarantine is NOT lifted by this and no scale here is quotable yet;** ledger entry
+"2026-08-07 selection-complete five-band FPS active lateral".
 **2026-08-07 one-liner.** **J28 is RESOLVED on the full 160-throw ensemble.** Regeneration `56427580`
 restored the 38 lost throws (160/160); adoption `56429334` rescaled only the pre-J28 half and combined it
 with the natively-corrected half, its fail-closed gate having verified the split first. Full-160 like-for-like:

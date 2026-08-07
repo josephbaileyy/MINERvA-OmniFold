@@ -11,13 +11,57 @@ seeds, scalar jitter subtraction, frozen PET weights, incomplete statistical
 projection, or CV-support-limited lateral selection.
 
 Corrected 5D GBDT non-lateral/support-limited candidate products are recorded
-immediately below, but final adoption waits for the selection-complete lateral
-replacement. The recoil-PET budget is quarantined pending a joint
+immediately below. **Updated 2026-08-07: the selection-complete lateral
+replacement now EXISTS and passed its full gate chain** — see
+"2026-08-07 selection-complete five-band FPS active lateral" below. That
+discharges the specific precondition this paragraph named ("CV-support-limited
+lateral selection"); it does **not** by itself lift this quarantine, whose other
+listed causes and whose PET / 4D-FPS / significance scope are untouched, and no
+scale in this section becomes quotable on the strength of it. The recoil-PET
+budget is quarantined pending a joint
 nuisance--retraining construction and selection-complete detector samples. The
 4D/FPS replacements and covariance-dependent generator significances remain
 quarantined. Central cross
 sections, closure tests, dimensional anchors, and the finalized Phase-18.2 2D
 result were never invalidated by this quarantine.
+
+## 2026-08-07 selection-complete five-band FPS active lateral — VERIFIED-NUMERIC, gate chain PASSED
+
+Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=0, on the ten
+`negweight-refined` publication-footing endpoint unfolds from `56430128`. Bands: `BeamAngleX`,
+`BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`, `Muon_Energy_MINOS` (the five genuinely
+kinematic ones; `MinosEfficiency` and `GEANT_*` are weight-only and were correctly left as ordinary
+universe bands).
+
+| quantity | value |
+|---|---|
+| active lateral total, sqrt-trace | **8.10399e-39** |
+| support-limited block it replaces | 7.30356e-39 |
+| **ratio** | **1.10960 (+10.96%)** |
+| combined FPS budget before | 8.040779e-39 |
+| combined FPS budget after | **8.774217e-39 (+9.1215%)** |
+| per-bin σ ratio, 266 reported bins | min 0.7897, median 1.0071, max 1.4402 |
+| pure-sum vs subtraction residual | 3.45e-16 (tol 1e-9) |
+
+Per band: `Muon_Energy_MINERvA` 7.8043e-39 dominates, then `Muon_Energy_MINOS` 2.1341e-39,
+`MuonResolution` 4.3796e-40, `BeamAngleX` 1.1493e-40, `BeamAngleY` 9.3351e-41; total == sum of the
+five (rollup identity PASS).
+
+p4 validation `RESULT PASS` with zero fails: 266×266, finite, PSD (min/max eig −3.87e-16),
+`rel_asymmetry` 0.0, dim tied to the recomputed canonical mask `23b2a2f4…`, exact 5 active + 5
+support band inventories.
+
+Receipt chain (all committed; the ROOTs are `.gitignore`d as `*.root`): manifest
+`303e6ff7d6205e2c…` → `receipt_component_build.json` → `receipt_p4_validation.json` →
+`receipt_active_adoption.json`; active cov `c82c6610e4943fe1…`, adopted product
+`3039183cf81d8d8f…` at
+`nd-unfolding/uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root`.
+
+**Scope.** These are verified measurements of the lateral replacement itself. The
++9.12% is the change to the *pre-uthrow* combined FPS covariance; it is **not** a
+statement about the final quoted budget, and the `+10.96%` must not be applied as
+a uniform scale — the per-bin spread above (0.79 to 1.44) is the reason. The
+2026-07-12 quarantine above is **not** lifted by this entry.
 
 ## 2026-08-05 Gate-2 re-issued under D1/D2 — VERIFIED, promotion still pending
 

@@ -1,0 +1,12 @@
+{
+  "schema": "fps_receipt.p4_validation.v1",
+  "result": "PASS",
+  "transition": "p4_validation",
+  "manifest_sha256": "303e6ff7d6205e2cb66d0a90455168f566cff10218e2f55f2fe9207ddc37186a",
+  "predecessor_sha256": "c82c6610e4943fe1db37325b10b52b2df4729a12a17f488be39b2328f99d773d",
+  "candidate_sha256": "c82c6610e4943fe1db37325b10b52b2df4729a12a17f488be39b2328f99d773d",
+  "central_sha256": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+  "reported_mask_hash": "23b2a2f4e75f242141c0651052258a930ed38abc4f1740afaa0b349da78bda78",
+  "validated_utc": "2026-08-07T02:07:58Z",
+  "summary_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/fps/covariance/p4_summary_active_lateral_fps.json"
+}

@@ -1,0 +1,39 @@
+{
+  "gates": {
+    "fails": [],
+    "result": "PASS"
+  },
+  "active": {
+    "shape": [
+      266,
+      266
+    ],
+    "all_finite": true,
+    "rel_asymmetry": 0.0,
+    "min_over_max_eig": -3.868653995065653e-16,
+    "psd": true,
+    "diag_finite_nonneg": true,
+    "sqrt_trace": 8.10399360016385e-39,
+    "n_reported": 266,
+    "rollup_identity": "PASS (total == sum of 5 nonzero bands)"
+  },
+  "support": {
+    "bands_present": [
+      "BeamAngleX",
+      "BeamAngleY",
+      "MuonResolution",
+      "Muon_Energy_MINERvA",
+      "Muon_Energy_MINOS"
+    ]
+  },
+  "comparison": {
+    "sqrt_trace_active": 8.10399360016385e-39,
+    "sqrt_trace_support": 7.303557422853358e-39,
+    "ratio": 1.109595383587438
+  },
+  "provenance": {
+    "manifest_sha256": "303e6ff7d6205e2cb66d0a90455168f566cff10218e2f55f2fe9207ddc37186a",
+    "active_sha256": "c82c6610e4943fe1db37325b10b52b2df4729a12a17f488be39b2328f99d773d",
+    "reported_mask_hash": "23b2a2f4e75f242141c0651052258a930ed38abc4f1740afaa0b349da78bda78"
+  }
+}

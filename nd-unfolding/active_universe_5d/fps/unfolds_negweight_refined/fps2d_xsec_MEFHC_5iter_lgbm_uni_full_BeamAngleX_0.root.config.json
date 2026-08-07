@@ -1,0 +1,24 @@
+{
+  "schema": "fps_endpoint_receipt.v1",
+  "result": "PASS",
+  "band": "BeamAngleX",
+  "endpoint": 0,
+  "bkg_mode": "negweight-refined",
+  "footing": {
+    "estimator": "lgbm",
+    "seed": 42,
+    "iters": 5,
+    "use_weights": true,
+    "full_phase_space": true,
+    "bkg_mode": "negweight-refined"
+  },
+  "reported_mask_hash": "23b2a2f4e75f242141c0651052258a930ed38abc4f1740afaa0b349da78bda78",
+  "output_sha256": "1bbba3600996785775dbe5137ed5fef5ce7934855f31fb07ffa95904de374ada",
+  "input_merged_sha256": "4a9905c2bceea14d62f6930ca9882453dd39674109135a48634e541aa3386a7b",
+  "source_sha256": "3f6d3e060eac2de3c9014d681d44fab9749ce36d57fe2010b0d7a8d5b1c7ed43",
+  "launcher": "sbatch_unfold_active_fps.sh",
+  "launcher_sha256": "dd5875e82309259fd10b76a892735cf42c649c0e8eeabd4beeda22a238bea467",
+  "central_sha256": "16d99350cbfe6997a0b4718316c3d0f8fce85da5eeeaa2e47672c75dfe170a0b",
+  "audit_sha256": "19ca5c60aaaf7092bda9729fb0b0ac1b38ddbca34896204c0bbe753a86e1b915",
+  "completed_utc": "2026-08-07T01:17:49Z"
+}

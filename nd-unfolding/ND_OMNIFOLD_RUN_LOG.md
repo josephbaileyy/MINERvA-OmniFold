@@ -3339,6 +3339,86 @@ Durable watch armed (a session-local monitor would die with the session): wakerc
 **Remaining chain once the ten land**, all committed infrastructure, each taking an explicit `--out`:
 `fps_build_publication_manifest.py` → `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py`
 → `adopt_active_lateral_fps.py`.
+
+### 2026-08-07 — the five-band chain RAN END TO END: +10.96% lateral, +9.12% combined (56430128, 56431823)
+
+**Unfolds.** `56430128_[0-9]`, all ten `COMPLETED` exit `0:0`, 29–38 min each against a 4 h wall. Ten
+ROOTs + ten receipts in `active_universe_5d/fps/unfolds_negweight_refined/`, every receipt reading
+`bkg_mode: negweight-refined`, `result: PASS`, `launcher: sbatch_unfold_active_fps.sh`. The purity
+controls in `unfolds/` were not touched.
+
+**The first chain attempt failed, and the failure was a real bug in committed infrastructure — BEN-040.**
+`56431689` exited rc=2 at step 1 in 192 s (before any hashing, because PASS 1 aggregates and exits).
+All ten endpoints reported `config estimator=None != lgbm` and the same for the other four footing
+keys. Cause: `fps_endpoint_receipt.cmd_write` writes the footing as a **nested** `"footing"` block
+while `fps_build_publication_manifest.py` read those keys off the **top level**. They were always
+`None`, so that gate **could not pass for any input that has ever existed**. It is fail-closed, so
+nothing wrong escaped — it simply blocked the chain. It survived because the test fixture was
+hand-built flat, matching the buggy reader instead of the real writer. Measured: on the real receipt
+the old reader fails 5 keys and the new one 0; on the old fixture both pass. Fix is one line plus
+reshaping the fixture to the producer's actual output, which converts that test into the guard.
+
+**`56431823` — ALL FOUR STEPS PASSED**, 53:56 wall (16 + 12 + 12 + 12 min; the per-step floor is the
+748 GB `require_recompute_hashes` pass, not the 266×266 algebra).
+
+Per-band sqrt-trace of the selection-complete active lateral:
+
+    BeamAngleX            1.1493e-40
+    BeamAngleY            9.3351e-41
+    MuonResolution        4.3796e-40
+    Muon_Energy_MINERvA   7.8043e-39      <- dominant
+    Muon_Energy_MINOS     2.1341e-39
+    total                 8.1040e-39      (== sum of the 5; rollup identity PASS)
+
+**p4 validation `RESULT PASS`, zero fails.** 266×266, finite, PSD (`min/max eig = -3.87e-16`),
+`rel_asymmetry = 0.0`, all 266 diagonal entries reported, dim tied to the recomputed canonical mask
+`23b2a2f4…`. Exact 5 active + 5 support band inventories.
+
+**The headline comparison — this is what the gate was for:**
+
+    sqrt_tr  active (selection-complete)  8.10399e-39
+    sqrt_tr  support-limited block        7.30356e-39
+    ratio                                 1.10960     -> +10.96%
+
+So restoring the migrated lateral support **raises** the five-band lateral block by ~11%. The
+support-limited construction was understating it, which is the direction the quarantine assumed but
+had never measured.
+
+**Adoption.** `adopt_active_lateral_fps.py` → `uq_universe_fps_covariance_combined_activelat.root`
+(cand `3039183cf81d8d8f`). Pure component sum vs same-source subtraction agree to
+**`rel = 3.45e-16`** against a `1e-9` tolerance — the hard gate that the swap is a sum and not a
+subtraction. The five replaced blocks are renamed `*__SUPERSEDED_support` and never re-summed;
+`hCov_universe4d_active_lateral_total` is added. `MinosEfficiency` and the three `GEANT_*` bands stay
+ordinary universe bands, as they must — they are weight-only, not kinematic.
+
+Effect on the combined FPS budget (`hCov_combined4d_total`):
+
+    before  8.040779e-39
+    after   8.774217e-39      +9.1215%
+
+**It is not a uniform inflation.** Per-bin σ ratio over the 266 reported bins runs
+min **0.7897**, median **1.0071**, max **1.4402** — some bins tighten, the tail grows by up to 44%.
+Anything quoting a single scale factor for this replacement would be wrong.
+
+Products (ROOTs are `.gitignore`d as `*.root`; every JSON receipt is committed):
+`fps_publication_manifest.json` (sha `303e6ff7d6205e2c…`), its PASS receipt,
+`receipt_component_build.json`, `p4_summary_active_lateral_fps.json`, `receipt_p4_validation.json`,
+`receipt_active_adoption.json`. Active cov sha `c82c6610e4943fe1…`.
+
+Launcher: `sbatch_fps_active_lateral_chain.sh`, new here, 8 h wall sized off the ~3 TB of hashing the
+four steps do rather than off the arithmetic.
+
+**Verification `56432855` (1:06:50, both rc=0).** Suite **`764 passed`** in 33:22, zero failures —
+note that is 764/764, *better* than the 763-passed + 1-known-J28-fixture-failure baseline, because
+`ae90c9b` fixed that fixture; the new cluster baseline is a clean 764. Verifier: **`ALL BINDINGS
+INTACT`**, 868 bindings resolved / 864 OK / 20 shell pins seen against a floor of 15, and the same
+4 known pre-existing submit-time drifts as before (`gate2_queue_hedge_controller.sh`,
+`pet/sbatch_dump_g2_mefhc.sh`, `wakerctl.py`, `test_wakerctl.py`) — none touched by this work.
+Worth recording for the next reader: `verify_hash_bindings.py` prints **only** at the end
+(all prints are in the summary block), so its log is 0 bytes for the entire ~33 min run. That is
+BEN-028 in its structural form rather than its buffering form — judge it by CPU (it held ~99.6%
+of wall) and never by log growth.
+
 ## 2026-08-07 — J28 adoption on the repaired 160-throw ensemble; corrected totals are ~9% SMALLER
 
 Two jobs, chained by `--dependency=afterok` so the second could not run on an incomplete ensemble.

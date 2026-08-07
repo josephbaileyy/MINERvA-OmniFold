@@ -60,9 +60,17 @@ not close the literal full-event PET gate below.
   true`). Publication footing is `negweight-refined`. The gate is therefore the
   four-step chain `fps_build_publication_manifest.py` →
   `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py` →
-  `adopt_active_lateral_fps.py`, whose only missing input is the negweight-refined
-  unfold set (`56430128`, launched 2026-08-07). P3S products under `standard/` are
+  `adopt_active_lateral_fps.py`. P3S products under `standard/` are
   regression controls and can never be relabeled as FPS endpoints.
+  **DONE 2026-08-07.** `56430128` produced the ten negweight-refined unfolds and
+  `56431823` ran all four chain steps rc=0. Selection-complete lateral
+  `8.10399e-39` vs support-limited `7.30356e-39` = **+10.96%**; combined FPS
+  budget `8.040779e-39 → 8.774217e-39` = **+9.1215%**; per-bin σ ratio
+  0.7897/1.0071/1.4402 so it is a redistribution, **not** a uniform scale. p4
+  PASS, zero fails, pure-sum vs subtraction 3.45e-16. Numbers and receipt chain
+  in `VALIDATION_LEDGER.md` ("2026-08-07 selection-complete five-band FPS active
+  lateral"). This discharges the lateral precondition only — **the 2026-07-12
+  quarantine stands and these scales are not yet quotable.**
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
