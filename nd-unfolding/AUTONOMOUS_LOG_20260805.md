@@ -1658,3 +1658,39 @@ Nothing else in this lane is actionable and I am not inventing work. When either
 durable watch fires independently of this session; the re-run's post-landing plan is already fixed — re-run
 Gate A/B (writing to a run-specific receipt path so the superseded one is not clobbered), confirm B(i) now
 passes, then redo the step-1 decomposition on faithful checkpoints.
+
+### 14:20Z — ep32 (`56431651`) DISPATCHED after 19h in queue, and its own gates vindicated the transfers
+
+Material change, so logged (per the 03:50Z policy). Started `2026-08-07T13:52:56Z` on `nid001548`, 27:39
+elapsed at the poll. The re-run `56445883` is still PENDING.
+
+**Its submission-time sha checks passed, which is the real verification of eight bundle transfers.** I had
+been re-asserting after every transfer that ep32's pins still matched; the job has now executed those
+checks itself:
+
+    driver    = a45fae7c3f978c34...   PASSED
+    inputs    = fa6b3463160242164...  PASSED  (9.9 GB re-hashed in-job)
+    preflight = dee9aa20a49a89eb5...  PASSED
+    HEAD=1b7dd02 dirty=0
+    arm=ep32  epochs=32  early_stop=1000  niter=<nominal-policy>
+    preflight PASS -- allocating the training
+    is_nominal_configuration=false  (Gate-4's check FAILS on it by design)
+    ITERATION: 1 / RUNNING STEP 1
+
+So the deliberate decision not to touch `closure_powered_truth_reweight.py` while this job was queued was
+load-bearing, and it held. **Follow-up now unblocked but NOT taken:** the closure driver carries the same
+BEN-043 latent defect (its stored push comes from the in-memory last-epoch model while its checkpoints are
+best-epoch). Its sha check has now passed, so editing it would no longer kill this arm — but a failure and
+requeue would re-check, and no downstream consumer loads its checkpoints, so it stays untouched.
+
+**Liveness by CPU, not log growth (BEN-028):** `AveCPU 31:05` against `wall 27:59` — CPU exceeding wall
+means multiple threads working. RSS 14.5 GB.
+
+**Wall projection.** ep16 (2x budget) took 3:43:39, so 4x is ~7.5h against an 11h wall — roughly 3.5h of
+margin, and the launcher's own sizing said the same (~8h). No action needed; the watch fires on TIMEOUT as
+well as completion because `run_action` resolves by watch id, not event type.
+
+**No mail.** A dispatch is not one of the three mailable events (a job *finishing*, a PASS/FAIL verdict, or
+a blocking decision), and the last mail went out 77 minutes ago. The pre-registered comparison goes out
+when it lands: `E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in
+[0.49, 0.537], verdict FAIL — with the falsifiers already committed while it was PENDING.
