@@ -88,12 +88,24 @@ therefore mixes one faithful and one unfaithful checkpoint, and is the number mo
 
 ## 5. What this does not establish
 
-- It does not identify *why* step 1 under-achieves. Candidates not tested here: the classifier is
-  under-trained on the reco leg specifically (the budget ladder tested step 2's effect on D2, not this);
-  the F3 logit cap is biting asymmetrically; the data/MC class imbalance at `R = 1.124` is being partly
-  absorbed as a constant the classifier cannot express; or the `pass_reco`-only update
-  (`omnifold.py:198-199`) interacts with the acceptance structure. `cap_saturation_frac` is in the
-  artifact and is the cheapest of these to check next.
+- It does not identify *why* step 1 under-achieves. **Two candidates are now excluded, both for free:**
+
+  | candidate | status |
+  |---|---|
+  | F3 logit cap biting asymmetrically | **EXCLUDED by measurement.** `cap_saturation_frac = 0.0`; implied logits span `[-3.141, +1.366]` against a cap of `±30`. Nothing is near it. |
+  | biased train/validation split | **EXCLUDED by code.** `data.take(N)/.skip(N)` (`omnifold.py:370-371`) is a *positional* split, which on an unshuffled `[MC; data]` concatenation would have made the validation set almost pure label-1. But `:341-345` shuffles the index and applies it to the concatenation first, so the split is random. |
+  | reco-leg under-training / non-convergence | **open, and now the leading candidate.** A converged weighted-BCE classifier on classes with totals `1e6` and `1e6*R` has optimum `exp(logit) = w_1/w_0`, which *includes* the `R` factor — so a correctly converged step 1 would return `R` by construction. Missing it by 32% is a convergence statement. |
+  | `pass_reco`-only update × acceptance | open (`omnifold.py:198-199`) |
+
+  Worth noting as a pointer rather than a conclusion: the implied logit range is strongly **asymmetric**,
+  reaching −3.14 downward but only +1.37 upward. Since `push = exp(logit)`, the estimator is far more
+  willing to suppress than to enhance — consistent with a genuine downward bias rather than a clipping
+  artifact, and consistent with the under-achievement being in the direction it is.
+
+- **No budget ladder has ever been run against the fold-forward ratio.** The ep8/ep16/ep32 ladder varied
+  the *closure* driver's budget and was read on D2 recovery. If Joseph takes option (1) in
+  `FINDING-20260807-checkpoint-is-not-the-trained-model.md` §6, that re-run can carry a higher-epoch arm and
+  answer the convergence question in the same GPU spend, since both need a nominal re-train anyway.
 - It does not contradict the acceptance-dilution picture for D2. That is a different criterion on a
   different quantity; this is the reco-space normalization.
 - It does not license a repair. The step-1 diagnosis is now specific enough to act on, but which action
