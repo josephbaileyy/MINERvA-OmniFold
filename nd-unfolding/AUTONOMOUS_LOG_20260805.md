@@ -1190,3 +1190,22 @@ is expected and not a symptom: `--open-mode=append` with `--quiet` writes nothin
 
 No mail, no other action: nothing finished and nothing to decide. Recording this because a future reader
 otherwise has to re-derive whether today's intermittent Slurm affected the watches, and the answer is no.
+
+### CORRECTION: there was no Slurm outage — I inferred one from a single flaky query
+
+Earlier this cycle I reported a **sustained** Slurm outage because `squeue -u josephrb` failed at both 09:19Z and
+09:49Z. **Wrong.** Probing the service directly: `scontrol ping` returns `Slurmctld(primary) at slurmctld is UP`,
+`sinfo` lists partitions up, a single-job `squeue -j 56160911` works, the ep32 watch's `unreliable` counter is
+still **0** — so the tick's own `sacct` calls had been succeeding the whole time — and three immediate retries of
+the user-wide query succeeded 3/3. The user-wide form is simply heavier than a single-job query and times out
+intermittently under load.
+
+Both directions of this mistake happened within hours today: earlier an *empty* `squeue` (stderr discarded) led
+me to report every job had vanished; now two failures led me to report an outage. Amended onto **BEN-035** with
+the rule: **never infer service state from one client command** — probe the service (`scontrol ping`, `sinfo`,
+single-job query) and check local state that would corroborate. Here the watch's `unreliable` counter was
+decisive, because it records whether something *else* had been reaching Slurm all along.
+
+`56431651` (ep32) is confirmed still **PENDING**, priority 68121, submitted 2026-08-06T18:54:02 — ~15h queued
+with no start estimate. Watch armed, `unreliable=0`, so its result still arrives from cron regardless of this
+session. Nothing finished; no mail.
