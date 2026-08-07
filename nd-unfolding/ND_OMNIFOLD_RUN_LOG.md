@@ -3277,3 +3277,65 @@ rate. Scaled by k/4: k=5 ≈ 7.5 min/seed, so 16 seeds ≈ 2.0 h and **32 seeds 
 missed a 4 h wall** — hence 8 h on the second arm. The launcher now takes `B1_NITER` and names its
 products by it; its filename stays `sbatch_b1_niter4_scan48.sh` because renaming a tracked script
 cited in a RUN_LOG is forbidden, and a note in the header says so.
+
+### 2026-08-07 — five-band active laterals: the gate was FOOTING, not coverage; publication unfolds launched (56430128)
+
+**The expensive part of the publication gate was already done.** Every number here came from a command
+run while writing this entry.
+
+| stage | measured state |
+|---|---|
+| P3F active event loops (5 bands × 2 endpoints × 12 playlists) | **120/120**, ~700 GB |
+| P3S standard (regression controls, not FPS endpoints) | **120/120**, ~510 GB |
+| FPS merged endpoint omnifiles | **10/10**, 74.8 GB each, 748,174,751,685 B total |
+| FPS endpoint unfolds in `active_universe_5d/fps/unfolds/` | 10/10 present — **`bkg_mode=purity`** |
+| `active_scalar_lateral_fps_cov.root` | **absent** |
+| publication manifest / PASS receipt / component_build / p4 receipts | **absent** |
+
+So `OPEN_ITEMS.md`'s "full five-band coverage remains the publication gate" is, read literally,
+**already satisfied** — all five kinematic bands are covered at both endpoints in both modes. What
+actually blocks adoption is the estimator **footing**: `fps_provenance.PUBLICATION_BKG_MODE` is
+`negweight-refined`, the ten existing unfolds ran the driver default `--bkg-mode=purity`, and
+`fps_control_manifest.json` says so about itself (`"label": "purity-control"`,
+`"publication_gate_rejects_this": true`). `require_publication_manifest` fails closed on that footing,
+so a control cannot enter the rollup even by accident. Recorded as **BEN-036**; the prose in three
+docs was the thing that was wrong, not the campaign.
+
+**Preflight, all green before any compute was spent** (each redirected whole to a file, then read —
+BEN-026):
+- `fps_verify_merged_receipt.py` → **PASS**, `run_id=56090877`, 10/10 live size+`int(mtime)` equal to
+  the committed inventory, so the 748 GB is provably unchanged since it was hashed and needs no
+  second hash pass.
+- `audit_merged_fps.json` → `result = PASS`.
+- mask artifact fingerprint == canonical `23b2a2f4e75f2421…`.
+- CV `uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root` recomputes to **266 nonzero
+  of 285** bins, fingerprint == canonical, sha256 `16d99350cbfe6997…` == the manifest's bound
+  `central_cv_sha256`.
+- `fps_build_publication_manifest.py` dry-run → exits 2 listing **exactly** the ten missing negweight
+  outputs and nothing else, and emits no manifest. That is the whole point of running it early: it
+  proves no *other* gate is lurking four hours downstream.
+
+**Launched `56430128_[0-9]`** — the committed `sbatch_unfold_active_fps.sh`, unmodified, 4 h wall,
+`--array=0-9%5`. It writes into the separate mode-explicit namespace
+`active_universe_5d/fps/unfolds_negweight_refined/` and leaves the purity controls in `unfolds/`
+untouched, refusing to run at all unless `BKG_MODE=negweight-refined`.
+
+**Sizing, per BEN-030.** Measured from the July driver logs of the runs actually being repeated, not
+from a note: `p4fps_unfold_driver.log` 05:34:31 → 07:06:12 and `p4fps_unfold_driver2.log`
+08:39:11 → 10:11:42, i.e. **~1h32m per wave of 5 concurrent** at CPT=24, twice, consistent. Two waves
+under the `%5` throttle ⟹ ~3–4 h against a 4 h wall, with headroom for the extra Stay-Positive
+refinement pass that `negweight-refined` does and `purity` does not.
+
+**Why the CV's own background mode does not contaminate the result.** `build_active_lateral_fps.py`
+forms `D = [x₀ − cv, x₁ − cv]` then mean-centers: `Z = D − D.mean(axis=0)` = `[(x₀−x₁)/2, (x₁−x₀)/2]`.
+The CV cancels **exactly**, so it fixes only the reported mask and the hash binding, never the
+covariance. Worth stating because it is the obvious thing to worry about when the endpoints change
+background mode and the CV does not.
+
+Durable watch armed (a session-local monitor would die with the session): wakerctl
+`fps-negweight-unfolds-56430128`, kind `slurm-array`, tasks `0-9`. Waker cron verified live —
+`last_tick 2026-08-07T00:41:02Z`.
+
+**Remaining chain once the ten land**, all committed infrastructure, each taking an explicit `--out`:
+`fps_build_publication_manifest.py` → `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py`
+→ `adopt_active_lateral_fps.py`.

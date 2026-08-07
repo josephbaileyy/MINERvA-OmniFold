@@ -47,8 +47,22 @@ not close the literal full-event PET gate below.
   `MNV101_ACTIVE_UNIVERSE=BAND:IDX` per playlist. Five bands are genuinely
   kinematic (`BeamAngleX/Y`, `MuonResolution`, `Muon_Energy_MINERvA/MINOS`);
   MinosEfficiency and GEANT are weight-only. The unrun three-band presentation
-  bound is retired with the completed talk workstream; full five-band coverage
-  remains the publication gate.
+  bound is retired with the completed talk workstream.
+  **Corrected 2026-08-07 (BEN-036): five-band *coverage* is COMPLETE and is no
+  longer the gate.** Verified on disk: 120/120 P3F and 120/120 P3S per-playlist
+  event loops, all ten 74.8 GB merged FPS endpoint omnifiles present, and the
+  merged-input receipt (`run_id 56090877`, 748 GB) re-verifying 10/10 unchanged.
+  What remains is the **estimator footing**, not coverage: the ten FPS endpoint
+  unfolds in `active_universe_5d/fps/unfolds/` ran the driver default
+  `--bkg-mode=purity` and are purity *controls* that
+  `fps_provenance.require_publication_manifest` rejects by construction
+  (`fps_control_manifest.json` self-declares `publication_gate_rejects_this:
+  true`). Publication footing is `negweight-refined`. The gate is therefore the
+  four-step chain `fps_build_publication_manifest.py` →
+  `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py` →
+  `adopt_active_lateral_fps.py`, whose only missing input is the negweight-refined
+  unfold set (`56430128`, launched 2026-08-07). P3S products under `standard/` are
+  regression controls and can never be relabeled as FPS endpoints.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe

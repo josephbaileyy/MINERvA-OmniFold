@@ -1,5 +1,19 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
+**2026-08-07 one-liner — five-band active laterals.** The publication gate is **footing, not coverage**
+(BEN-036). Five-band coverage is already complete on disk — 120/120 P3F and 120/120 P3S event loops,
+all ten 74.8 GB merged FPS endpoint omnifiles, merged-input receipt `run_id 56090877` re-verifying
+10/10 unchanged across 748 GB. The blocker is that the ten FPS endpoint unfolds ran
+`--bkg-mode=purity` and publication footing is `negweight-refined`, which
+`require_publication_manifest` rejects by construction. Job **`56430128_[0-9]`** (committed
+`sbatch_unfold_active_fps.sh`, 4 h wall, `%5`) is producing the publication-footing unfolds into the
+separate `unfolds_negweight_refined/` namespace, leaving the purity controls untouched; sized at
+~1h32m per wave of 5 from the July driver logs. Preflight all green beforehand: audit `PASS`, mask
+fingerprint canonical, CV 266/285 sha `16d99350…`, and the manifest-builder dry-run failing on
+**exactly** the ten missing outputs and nothing else. Watch `fps-negweight-unfolds-56430128` armed.
+Chain still to run: manifest → rollup → p4 validate → adopt. **Nothing is adopted yet and no
+covariance scale here is quotable.**
+
 **2026-08-06 one-liner.** The J28 flux re-roll **has run** (job `56417324`, ~2 min on one CPU node) and
 the exact corrected covariance now exists for the adopted `_sb` ensemble — 122 throws, 100 flux block
 units, 10,694 bins; receipt `uq_5d/rescaled_20260806/j28_reroll_20260806.json`. **The Flux block was
