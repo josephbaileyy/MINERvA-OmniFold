@@ -134,7 +134,7 @@ not close the literal full-event PET gate below.
   **99/99** — the 17 shortfalls are the read-only sandbox having no writable temp dir, which the
   delegate diagnosed itself; do not "fix" them.
 - **BLOCKING for P4-5D covariance construction — the standard-p4-verifier's standing verdict is
-  BLOCK (originally six never-repaired defects, now four; BEN-044).** Found 2026-08-07 while executing the
+  BLOCK (originally six never-repaired defects, now four; BEN-046).** Found 2026-08-07 while executing the
   close-out runbook's G-4. `standard-p4-verifier` (UUID `019f74cb-…`) blocked repair-3 `74fa362`
   citing six ranked defects; `docs/orchestration/followup-agent-A-standard-05.md` is the repair-4
   brief; **no repair-4 commit exists**. `git log 74fa362..HEAD` over `nd-unfolding/p4_*`,
