@@ -732,3 +732,30 @@ forensics on mtimes.
 Concurrent sessions active and on task: `pwcprobe` `56431649`/`56431650` running with `56431651` queued (the D2
 under-fitting probes), `fpsActLa` `56431823` and `d2_suite` `56431780` running, `b1nit5b` at 31:53. Nothing in
 my lane changed; nothing finished; no mail.
+
+### The cluster suite is fully green — 764 passed, 0 failed — and a Slurm blip that stderr caught
+
+**Verified, not inferred:** `/pscratch/sd/j/josephrb/d2_suite_AFTER_56431780.log` ends
+`764 passed in 2027.67s (0:33:47)` with `pytest rc=0`. The BEFORE run from the same session
+(`d2_suite_BEFORE_56430155.log`) reads `763 passed / 1 failed`. So the Step 4 fixture fix landed exactly as
+predicted, and **the cluster suite is fully green for the first time in this campaign.** The single failure it
+carried was the J28 synthetic-slab stamp, and the fix stamped the fixture rather than weakening the guard —
+the guard's rejection behaviour was separately re-verified still passing.
+
+**A Slurm controller outage, and the stderr practice paid for itself.** A status query returned
+`slurm_load_jobs error: Unable to contact slurm controller (connect failure)` — on stderr. Had I used
+`2>/dev/null`, as I did before this cycle's habit, I would have seen an empty `squeue` and concluded every job
+had vanished, which is precisely the false alarm I raised two cycles ago. Instead the failure named itself.
+It was transient: the controller came back within the same turn, `sinfo` confirms partitions up, and all jobs
+are intact. **Keeping stderr on a query whose empty output would be alarming is now twice-vindicated.**
+
+`56415634` at 2:59:21 has **all six step files** (`iter0`–`iter2` × `step1`/`step2`), so the three OmniFold
+iterations are complete. No `.npz` and no `w_floor` yet, which is expected rather than concerning: the
+launcher runs `--reweight-all`, so the push weights are evaluated over the **full 32.8M-row generator cloud**
+after the iterations, and that pass precedes the artifact write. Per my own decision last cycle I am reporting
+the iteration count and phase, not deriving minutes from mtimes.
+
+Concurrent sessions: `pwcprobe` `56431649` (57:14) and `56431650` (40:18) running, `56431651` queued — the
+epochs 8/16/32 ladder, each with its own armed watch, so Session A can be closed without losing them. The
+laterals session has moved from `fpsActLatCha` to `suiteAct`. Holding mail until the nominal lands rather than
+sending twice in quick succession.
