@@ -1118,3 +1118,27 @@ it I will write it and put it through fresh-context review before trusting the o
 Also complete: `56415634` COMPLETED 05:57:38 rc=0 (mailed last cycle, watch fired) and `b1nit5b` COMPLETED
 04:07:38 rc=0 — the latter belongs to the k-scan session, so I have deliberately not read it. Only ep32
 remains queued. Thresholds untouched; Gate-4 red and product NON-QUOTABLE, both unchanged. Mailed.
+
+### Quiet cycle: everything in my lane is either done or waiting on Joseph
+
+No new mail, nothing finished. Only the `wakerctl` cron is running; `56431651` (ep32) is still PENDING,
+submitted 18:54:02 — about 13h queued at priority 67996 with `Start=Unknown`. Its watch is armed.
+
+**Kept ep32 rather than cancelling it, on purpose.** With only ctl8 (0.548769) and ep16 (0.536695) I cannot
+separate a monotone worsening trend from scatter beyond the ~0.35% GPU band, and ep32 at 4× budget
+discriminates those. Cancelling would free an allocation that is idle anyway, so there is nothing concrete to
+gain and one real point to lose.
+
+**Quiet integrity check** on the campaign's two new artifacts, both digests recorded so a later reader can
+detect drift:
+
+    pet_fullevent_nominal_weights.npz   sha 8d17140f697faca7   27 keys   no non-finite arrays
+    pet_fullevent_floor_weights.npz     sha 28fe004c31dcb414   27 keys   no non-finite arrays
+
+**Nothing else is actionable and I am not inventing work.** The two remaining diagnostic steps — step-1
+achievement by inference, and the different-`estimator_seed` arm — are both held for Joseph's word, and the
+step-1 one for a substantive reason rather than politeness: it needs new code evaluating the reco leg, which no
+committed consumer does, and a wrong preprocessing choice would produce a plausible wrong number on the
+headline failure. Plan Step 5 (`values.tex`) is gated on the five-band laterals another session owns; Step 3 is
+moot for the GBDT lane and needs the PET budget build for the PET lane. No mail: nothing finished, and the last
+three cycles each carried a real result, so another would be noise.
