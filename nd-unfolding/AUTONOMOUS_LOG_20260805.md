@@ -1546,3 +1546,48 @@ prior artifact silently and churn a freshly frozen sha, so instead the 08-06 pro
 markers and `w_nominal/`/`w_floor/` get archived under `superseded-20260806/` with digests verified
 before and after the move, and the launcher runs unmodified. `w_nominal/` was already copied off scratch
 under memo item 0, so the checkpoints survive independently.
+
+### Re-run SUBMITTED as `56445883`; the worktree false-failures fixed; the 100-rep module reviewed and tracked
+
+**The authorized re-run is queued.** `56445883`, `fe_pet_nom`, PENDING, 12h wall, priority 67679,
+submitted `2026-08-07T05:24:27` — every field from `squeue`/`scontrol` in this turn. Watch
+`nominal-rerun-56445883` armed (`slurm-job`, `unreliable=0`), action `notify_nominal.sh`, whose three
+branches were already proved by execution earlier today; its body file writes to
+`/pscratch/sd/j/josephrb/.nominal_notify_body.txt`, outside the product directory, so it cannot make
+`is_complete` true. Launcher selftest run first as preflight: **CONFIG GATE PASS**, niter=3, target sha
+and size matched.
+
+**The 08-06 products are ARCHIVED, not overwritten.** `superseded-20260806/` now holds both npz, both
+`.done` markers, and `w_nominal/`+`w_floor/` (12 checkpoints each). Digests verified identical across
+the move — `8d17140f697faca7…` and `28fe004c31dcb414…`, the same values recorded in the earlier quiet
+integrity check. The two tracked receipts (`GATE_AB_PUSH_PROVENANCE.json`, `STEP1_DECOMPOSITION.json`)
+were deliberately left in place so the findings citing them do not break. The launcher was NOT edited:
+it withholds `--allow-overwrite` on purpose, and archiving respects that instead of defeating it.
+
+**The two extra suite failures were not mine, and are now fixed.** Both were in `test_resume_guard.py`
+and every path they implicated was under `.claude/worktrees/gbdt-closeout*/` — the concurrent session's
+worktrees, swept by a repo-wide `os.walk`. It even flagged `lib/resume_guard.sh`'s own explanatory `#`
+comment inside the worktree copy. Excluding `worktrees` narrows nothing real: every file in a worktree
+is a checkout of a tracked file the walk already visits at its true path. Verified after: **323 shell
+files still swept, 0 from worktrees**, 21 passed. Suite is back to the documented baseline of exactly
+**7 failures**.
+
+**`combine_cstat_bkgsub_100rep.py` reviewed and tracked — and it had two gates that could not fail.**
+Symmetry tested `sym_err > 1e-30` absolutely; PSD tested `min_eig >= -1e-9 * max(max_eig, 1.0)`, where
+the `max(...,1.0)` pins the tolerance to `-1e-9` absolute. On the real products `max|C| = 8.13e-79` and
+`max_eig = 2.72e-77`, so both sat ~49 and ~68 orders above what they bound. **Power-proved rather than
+argued:** inject an asymmetry of half the largest entry and `sym_err = 1.26e-80` — the old gate does not
+fire, the relative one does. The battery would have printed PASS on an arbitrarily wrong matrix. Both are
+now relative and still clear the two existing products with margin (symmetry exactly 0.0,
+`min_eig/max_eig = -8.4e-16`), so this **tightens a dead gate rather than loosening a live one**. Filed
+as **BEN-044** — third instance of this family in two days, after CLM-011's `atol=1e-8`-against-1e-38 and
+BEN-042's normalised-vs-absolute headroom.
+
+Also fixed there: `_ND` was hardcoded to an absolute `/pscratch` path, so the module could not be
+imported in any other checkout — which is *why* its gates had never been unit-tested. An untestable
+module is an unreviewed one. Now resolved from `__file__`.
+
+**COLLECTION ANNOUNCEMENT (supersedes the +5 in the previous entry): local 730 -> 740 (+10).** +5
+`FinalCheckpointIsPersisted`, +5 `CovarianceGatesAreScaleAware` — the latter including two explicit power
+proofs that the old thresholds were scale-blind. Suite 7 failed / 732 passed / 1 skipped: the 7 are the
+documented pre-existing path failures, and my delta is zero.
