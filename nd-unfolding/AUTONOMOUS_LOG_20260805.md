@@ -1316,7 +1316,7 @@ paragraph says is not established. Verified two independent ways agreeing to **9
 response space, and as the pt-marginal L1 over the gap in spectrum space (the injection is a function of pt
 alone, so what survives marginalising over p-parallel is the part coherent with what is measured).
 
-**I nearly filed a false refutation, and that is the BEN-041 lesson.** 2b closes with *"the scatter penalty
+**I nearly filed a false refutation, and that is the BEN-042 lesson (renumbered from 041: the concurrent GBDT lane took 041 in the same window, caught on a rejected push).** 2b closes with *"the scatter penalty
 alone (0.08443) exceeds the entire residual headroom (residual_budget_abs = 0.046854)"*. The penalty is
 weight-normalised; `residual_budget_abs` is an absolute `0.20 x gap`. In consistent units the penalty is
 **2.37x INSIDE** the headroom — both ways of reconciling them agree — so the sentence inverts. I had

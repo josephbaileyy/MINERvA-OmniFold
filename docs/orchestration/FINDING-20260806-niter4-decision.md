@@ -82,7 +82,7 @@ factor we have evidence for, and this holds whether or not the §2 ceiling is ri
 
 ## 2b. MEASURED 2026-08-07 — the ceiling is right in aggregate, is NOT a bound, and the bar measures variance
 
-> **AMENDED 2026-08-07 — see `FINDING-20260807-d2-response-reference-point.md` (BEN-041).** Every number in
+> **AMENDED 2026-08-07 — see `FINDING-20260807-d2-response-reference-point.md` (BEN-042).** Every number in
 > this section reproduces exactly. Two things about how they are *read* are corrected there, and **the
 > conclusion of this section survives both**: (1) "97.8% scatter" is measured against the dilution ideal,
 > not against the criterion's reference — against the 0.80 bar's reference the miss is **81.4% coherent

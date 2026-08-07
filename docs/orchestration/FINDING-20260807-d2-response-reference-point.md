@@ -1,7 +1,7 @@
 # D2's miss is 81% coherent under-application, not 97.8% scatter — and both terms alone fail the bar
 
 **Date:** 2026-08-07 · **Tool:** `nd-unfolding/pet/d2_response_decomposition.py` (gated; reproduces every
-published number before printing anything) · **Cross-stream:** CLM-010 (i) · **Ledger:** BEN-041
+published number before printing anything) · **Cross-stream:** CLM-010 (i) · **Ledger:** BEN-042
 
 > **The standing conclusion does not change.** `FINDING-20260806-niter4-decision.md` 2b concluded that a
 > perfect-bias estimator still fails the 0.80 bar, and that `niter` is not the lever. **Both hold.** What
