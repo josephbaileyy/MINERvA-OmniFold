@@ -980,3 +980,45 @@ dilution residual, the sign hypothesis is arithmetically settled. Offered to Jos
 unprompted, since it is the kind of test whose framing he may want to set.
 
 Tool committed as `nd-unfolding/pet/push_vs_acceptance.py`. Thresholds untouched. Mailed.
+
+### The inversion screen weakens my own leading hypothesis — and rules out a global rescale twice over
+
+I had offered this test and said its framing was Joseph's to set, because picking one inversion form is the
+easiest way to manufacture a clean-looking answer. Resolved that by testing a **family** and reporting every
+member, so there is no framing choice to get wrong. Reco-weighted mean over `pass_reco`, exactly as the gate
+evaluates the real one:
+
+    candidate           reco-wtd mean   dev vs R   r(acc,mean)   low-acc   high-acc
+    push (observed)          0.746483     0.3359      -0.4291     1.0297     0.5180
+    1/push                   2.532831     1.2532      +0.3995     0.9745     4.5146
+    2 - push                 1.253517     0.1151      +0.4291     0.9703     1.4820
+    R/push                   2.847105     1.5328      +0.3995     1.0955     5.0747
+    R^2/push                 3.200375     1.8471      +0.3995     1.2314     5.7044
+    push * R/mean            1.124080     0.0000      -0.4291     1.5506     0.7800
+
+**No candidate meets both requirements** — a genuine explanation has to put *both* acceptance bands near R
+*and* flatten the slope. Every inversion form flips `r` from −0.43 to **+0.40**: it mirrors the defect rather
+than removing it, turning "suppressed at high acceptance" into "enhanced at high acceptance". And `1/push`
+overshoots absurdly (mean 2.53, high-acceptance band 4.51, max 23), because the small-push tail (min 0.0432)
+inverts to ~23 — a naive inversion does not shift the mean, it manufactures a tail the data cannot support.
+
+**So the cheap version of my inverted-correction hypothesis is not supported.** The final cumulative push is
+not a simple algebraic inversion of a correct one. I raised that hypothesis last cycle as "the most specific
+testable candidate"; the test weakened it, and the record should say so rather than leave the stronger claim
+standing.
+
+**What it does NOT do is exonerate a step-1 sign error**, and the caveat was written into the script before
+running it: `weights_push` is a product over three iterations with a step-2 regression that pins
+off-acceptance rows, so an inverted step-1 likelihood ratio would not propagate to *any* of these closed
+forms. This screen tests the final push, not step 1. That question still needs the inference test.
+
+**One control earned its place.** `push * R/mean` is a pure global rescale: it hits R *exactly* by
+construction, yet leaves the acceptance slope at −0.4291 with bands at 1.5506 and 0.7800. So no global
+normalisation factor can fix this, re-confirming by a second and independent route what the band table already
+implied — the defect is acceptance-structured, not a scale error. Worth keeping because it is the one
+hypothesis someone would otherwise be tempted to try first.
+
+Tool committed as `nd-unfolding/pet/inversion_screen.py`. Thresholds untouched. No mail: this weakens a
+hypothesis I already sent rather than adding a decision, and the floor repeat is close enough that batching is
+better than two mails an hour apart. Nominal at 5:22:53 with the floor on `iter2_step1`; ep16 at 3:03, ep32
+queued, both watches armed.
