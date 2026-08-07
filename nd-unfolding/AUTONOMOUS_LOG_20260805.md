@@ -1591,3 +1591,43 @@ module is an unreviewed one. Now resolved from `__file__`.
 `FinalCheckpointIsPersisted`, +5 `CovarianceGatesAreScaleAware` — the latter including two explicit power
 proofs that the old thresholds were scale-blind. Suite 7 failed / 732 passed / 1 skipped: the 7 are the
 documented pre-existing path failures, and my delta is zero.
+
+### Quiet cycle — but I preflighted the one thing that could have wasted the re-run's 6 GPU-hours
+
+No new mail. Both watched jobs still PENDING at 12:32Z from a live `squeue`/`sacct`: `56445883`
+(fe_pet_nom, the authorized re-run) and `56431651` (ep32). Nothing finished, so no mail — one already
+went out this cycle and nothing new has a verdict.
+
+**The BEN-043 final-save block had never executed, and it runs AFTER the training.** That is the
+late-failure shape this campaign keeps paying for: a bug there kills `56445883` having already spent ~3
+GPU-hours on the nominal, then again on the floor repeat. The launcher's own selftest cannot cover it —
+it is config-gate only and imports no TF.
+
+The risk was specific, not vague: `tf.keras.models.clone_model` **raises on a subclassed Keras model**,
+and my block clones `step{1,2}_models[0]`, which is *itself already a clone*, then loads weights into
+that second-generation clone. The engine only ever clones a freshly-constructed PET, so "the engine does
+something similar, it must be fine" was exactly the reasoning to distrust.
+
+Preflighted by execution instead (GPU, seconds, arch read from the committed contract, no training):
+
+    step2  PET(num_feat=8,  num_evt=2)   clone OK, 96 tensors, 96/96 perturbed, round-trip BIT-IDENTICAL
+    step1  PET(num_feat=8,  num_evt=13)  clone OK, 96 tensors, 96/96 perturbed, round-trip BIT-IDENTICAL
+    PREFLIGHT PASS
+
+Two anti-vacuity guards in it, because a save/load round-trip is trivially "equal" if nothing happened:
+weights are perturbed **off the initializer first** (so a `save_weights` that wrote nothing, or a
+`load_weights` that matched nothing, cannot pass by both sides holding the same defaults), and a **fresh
+clone that never loaded is required to DIFFER** (so the equality is attributable to the load). Both
+fired.
+
+One incidental find: `omnifold` only reaches `sys.path` via `fullevent_fps_dataloader.py:58`, so any
+script outside that import chain must insert `omnifold_nn/` itself — worth knowing for future tools that
+do not need the 9.9 GB-capable loader.
+
+Committed as `nd-unfolding/pet/preflight_final_checkpoint_save.py`, made path-portable (resolves `ND`
+from `__file__`, output dir from `$SCRATCH`) specifically so it does not repeat the BEN-044 defect I
+filed against `combine_cstat_bkgsub_100rep.py` in the previous entry.
+
+Everything else verified quietly and unchanged: cluster at `9fbeeaf`, ep32's driver and preflight sha
+pins still match the launcher's submission-time values, both watches armed with `unreliable=0`, archived
+08-06 products intact.
