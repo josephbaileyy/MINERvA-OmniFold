@@ -1422,3 +1422,63 @@ Also this cycle: ep32 (`56431651`) still PENDING, watch `d2-probe-ep32-56431651`
 `unreliable=0` and the cron ticking (11:45:13Z). The powered-closure driver and preflight shas were
 re-verified against the launcher pins after each cluster fast-forward, so ep32 cannot be killed by my
 transfers. Mailed.
+
+### Memo item 5 ANSWERED — step 1 genuinely under-achieves, by 32%, and iteration 2 is where it breaks
+
+Job `56445667`, 4m38s. The predeclared reading fired its **second** branch, not the one the leg-mismatch
+result had me expecting.
+
+    quantity      mean_w_reco|pass_reco   dev vs R   mean_w_truth|pass_gen
+    push_stored              0.746483      -0.3359            0.888234
+    push_final               0.746407      -0.3360            0.884253
+    pull_final               0.765031      -0.3194            0.934530
+    push_prev                0.936383      -0.1670            1.006938
+    increment1               0.751119      -0.3318            0.894941
+
+**`pull_final` is the quantity step 1 itself normalizes, and it misses R by 32%.** Step 1 trains data vs
+reco MC with the MC side normalized to 1e6 and the target to 1e6*R, so `mean_w_reco(pull|pass_reco) == R`
+is step 1's OWN objective, not an identity imported from elsewhere. It delivers **68.1%** of it. So the
+fold-forward failure is **not** an artifact of reading a step-2 quantity against a reco-leg identity, which
+was the live alternative after `leg_mismatch.py` priced the leg at only ~19%.
+
+**Where it breaks, and it is not monotone convergence:**
+
+    iter1 step2   push_prev   0.936  dev -0.167
+    iter2 step1   pull_final  0.765  dev -0.319   <- largest single drop, and it is STEP 1's
+    iter2 step2   push_final  0.746  dev -0.336
+
+Step 1's last iteration moves the normalization AWAY from R. Nothing in the chain moves toward it. (Means
+do not multiply: 0.936 x 0.751 = 0.703 against a measured 0.765, so the two are positively correlated —
+stated as measured values, not as a product.)
+
+**A second, independent signal in the truth column.** Step 2 should reproduce
+`mean_w_truth(pull|pass_gen)`. At iteration 1 `push_prev` gives **1.0069**, within 0.7% of 1.0 — a
+well-fitted step 2. At iteration 2 `push_final` gives 0.8843 against its target 0.9345, under-shooting by
+**5.4%**. So both steps lose at iteration 2 and step 1 loses far more.
+
+**The checkpoint caveat is bounded, not merely declared.** Everything is a checkpoint-based reconstruction
+(BEN-043). But the one quantity that exists both ways agrees to **1e-4** — `push_stored` 0.746483 vs
+`push_final` 0.746407 — three orders below the 32% effect, and both legs are reconstructed identically so
+the comparison is sound by construction. Stated asymmetry: `push_prev` comes from `iter1_step2`, whose
+argmin IS the last epoch, so that checkpoint is faithful; `increment1` comes from `iter2_step1` (argmin
+6/8) and is not, which makes the 0.936 -> 0.765 drop the number most exposed to the caveat.
+
+**Not claimed:** why step 1 under-achieves. Untested candidates are listed in the finding — reco-leg
+under-training, asymmetric F3 cap saturation, the R=1.124 class imbalance being partly inexpressible, and
+the `pass_reco`-only update interacting with acceptance. `cap_saturation_frac` is already in the artifact
+and is the cheapest next check.
+
+Also recorded this cycle: **a trap in my own recommended fix.** `self.model1`/`self.model2` are assigned
+once at `omnifold.py:123-124` and never reassigned; training runs on the `clone_model` copies in
+`step1_models`/`step2_models`, and `clone_model` does not copy weights — so **`of.model2` still holds its
+initial random init when `Unfold()` returns**, and implementing option (1) as `of.model2.save_weights(...)`
+would persist an untrained network. Correct objects: `of.step2_models[0]`, `of.step1_models[0]`. Also
+`omnifold.py:302` logs `val_loss[0]`, the FIRST epoch, so the engine's own log cannot show the
+best-vs-last gap at all; only the `.pkl` histories can.
+
+**Fix NOT implemented, deliberately.** Both files that would change (`train_fullevent_nominal.py`,
+`omnifold.py`) are sha-pinned by the live Gate-4 code gate (`...-20260806c.json`, keys `driver` and
+`estimator_engine_multifold`), so the edit needs a gate re-issue in the same commit and
+`_LAUNCH_CODE_FLOOR = 2` fails if a predecessor retires without its successor. Re-issuing a gate to enable
+a ~6 GPU-h re-run on a choice that may redefine the nominal estimator is Joseph's call. No mail this cycle
+beyond the batched one already sent — this result goes in the next batch. ep32 (`56431651`) still PENDING.
