@@ -80,6 +80,43 @@ Even transplanting the most optimistic improvement this campaign has ever measur
 scalar* closure — k=4 lands at **0.739**, short of 0.80. The bar is not reachable by one iteration on any
 factor we have evidence for, and this holds whether or not the §2 ceiling is right.
 
+## 2b. MEASURED 2026-08-07 — the ceiling is right in aggregate, is NOT a bound, and the bar measures variance
+
+The concurrent D2 session's probe (`FINDING-20260807-d2-underfitting-probe.md`, commit `2113130`) settled
+both halves of §2's open question with measurement rather than argument, and its numbers reproduce §2's
+independently:
+
+| quantity | value |
+|---|---|
+| dilution ideal `E_w[1-(1-a_b)^k]` | **0.63321** — §2's tilt-weighted ceiling, recomputed |
+| **signed mean response** `E_w[r]` | **0.63129** |
+| aggregate L1 recovery `1 − E_w[|1−r|]` | 0.54685 |
+| **scatter penalty** `E_w[|1−r|] − |1−E_w[r]|` | **0.08443**, i.e. **97.8%** of the 0.086354 gap |
+| overshoot bins (`r > 1`) | 87 of 262, carrying 24.1% of displacement |
+
+**Upgrade.** §2's ceiling is confirmed: the estimator's mean per-bin response matches it to **0.19 pp**. What
+was `ASSUMED` about the *aggregate* value is now measured, and by an independent implementation.
+
+**Refutation, exactly as the review predicted.** It is **not an upper bound**. The top acceptance band
+(`a_b ≥ 0.70`, 152 bins) *overshoots*, `E_w[r] = 1.0333`, and 87 of 262 bins have `r > 1`. That is the smooth
+learner transporting the injected `f(pT)` across cells via `omnifold.py:218-220` — the mechanism the
+fresh-context review named. So **0.6332 is a reference curve and must not be quoted as a proof of
+impossibility.** §2 is corrected accordingly, and the header note that graded it `ASSUMED` was right to.
+
+**And the conclusion is now stronger, not weaker, because the defect is in the criterion's specification.**
+The estimator has essentially **no bias left to remove** (−0.00192 against the ideal). The shortfall is
+**97.8% per-bin scatter**, and it registers as a loss only because the closure's `L1` takes an absolute value
+per cell, which converts symmetric per-cell noise into a one-sided penalty. So a criterion named "recovery"
+is in fact measuring **per-cell variance**.
+
+That retires `niter` as the lever more decisively than §2a did. Even a *perfect-bias* estimator sitting exactly
+on the ideal fails the 0.80 bar, because the scatter penalty alone (0.08443) exceeds the entire residual
+headroom (`residual_budget_abs = 0.046854`). Variance is reduced by data, averaging or ensembling — **not by
+more iterations**. `niter=4` was never going to buy this, and now that is measured rather than modelled.
+
+*(Also ruled out for free by that probe: classifier saturation — max implied logit 1.041 against a cap of 30 —
+and global shrinkage — pushed weights span [0.562, 2.832] against an injected [0.549, 2.654].)*
+
 ## 2. Supporting, and weaker than it looks: the dilution ceiling
 
 The real blocker is the D2 powered closure, `FAIL` at `niter=3` (job `56381674`, recovery 0.5469 against
