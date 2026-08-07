@@ -682,3 +682,30 @@ landed last cycle; Step 3 is moot for the GBDT lane (it transfers, on the positi
 needs the PET budget build for the PET lane; Step 5 — replacing the `values.tex` macros — is gated on the
 five-band footing fix now in flight. The two open decisions remain Joseph's: whether
 `combine_cstat_bkgsub_100rep.py` should be tracked or its 5 tests retired, and the `g` presentation.
+
+### CORRECTION to last cycle: I read in-progress mtimes as completions
+
+Last cycle I reported the nominal's steps "accelerating — 34 → 24 → 17 min" and projected ~4 h remaining.
+**That was wrong, and the error is worth naming.** I read `iter1_step1` at mtime 18:43 as a *completed* step;
+it was still being written and did not finish until **19:05**. A weights file's mtime while training is in
+progress is the last checkpoint flush, not the step boundary. The real cadence, taken from consecutive
+`step2` completions which *are* boundaries:
+
+    training start           17:28
+    iter0 complete (step2)   18:26    58 min  (includes XLA compile + 5.34M-row shuffle-buffer fill)
+    iter1 complete (step2)   19:16    50 min
+
+So iterations run ~50 min steadily; they are not accelerating. Corrected projection: iter2 finishes ~20:06,
+ending the nominal training at ~2 h 38 m; the matched floor repeat then takes ~2.5 h, landing ~22:36 PDT
+(05:36Z) against a wall expiring **12:27Z**. Still a ~6.9 h margin, so the conclusion ("comfortable") survives
+even though the arithmetic behind it did not.
+
+The general form, which is the reusable part: **an mtime tells you when a file was last touched, not that the
+producer is done with it.** To measure a stage boundary, use the artifact whose write *is* the boundary
+(here `step2`, since a new `step1` cannot start until the iteration closes), or a marker the producer writes
+on completion. This is the same family as BEN-035 — a measurement that cannot distinguish "finished" from
+"still going" was reported as if it could.
+
+Both concurrent sessions are visibly active: three `pwcprobe` jobs queued (`56431649/50/51` — the D2
+under-fitting probes, which is exactly the §4 handover), `fpsActLa` (`56431823`) and `d2_suite` (`56431780`)
+running, and the k=5 32-seed arm `b1nit5b` has started. Nothing in my lane changed; no mail (nothing finished).
