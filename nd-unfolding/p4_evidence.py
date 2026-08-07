@@ -193,22 +193,72 @@ except P.P4GateError as e:
 
 # ---- source provenance: git blobs of code + binary digest + per-file source commits ----
 import subprocess
-def _blob(rel):
-    try: return subprocess.check_output(["git", "hash-object", rel], cwd=REPO, text=True).strip()
-    except Exception: return None
-def _srccommit(rel):
-    try: return subprocess.check_output(["git", "log", "-1", "--format=%H", "--", rel], cwd=REPO, text=True).strip()
-    except Exception: return None
+# REPAIR-4 (verifier defect 3b/3c, and KNOWN_ISSUES #23). These used to hash the WORKING TREE
+# (`git hash-object <path>`), so the manifest recorded whatever happened to be checked out --
+# which is how an unrelated dirty OmniFold blob was absorbed in 2026-07, and how re-running
+# evidence in 2026-08 silently re-attributed 07-18 endpoints to a newer driver and binary.
+# Now: hash the COMMITTED object at HEAD, record the commit that introduced that exact blob,
+# and fail closed if the working tree differs from HEAD for any bound path -- because a
+# provenance record that can disagree with what actually ran is worse than none.
+def _committed_blob(rel):
+    """The blob sha of `rel` as committed at HEAD (not the working-tree copy)."""
+    try:
+        return subprocess.check_output(["git", "rev-parse", f"HEAD:{rel}"],
+                                       cwd=REPO, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return None
+def _worktree_blob(rel):
+    try:
+        return subprocess.check_output(["git", "hash-object", rel],
+                                       cwd=REPO, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return None
+def _blob_introducing_commit(rel, blob):
+    """The most recent commit whose version of `rel` IS `blob`. The old code recorded
+    `git log -1 -- <rel>`, i.e. the last commit to touch the path, which need not be the commit
+    that introduced the blob it recorded beside it."""
+    if not blob:
+        return None
+    try:
+        revs = subprocess.check_output(["git", "log", "--format=%H", "--", rel],
+                                       cwd=REPO, text=True, stderr=subprocess.DEVNULL).split()
+        for r in revs:
+            try:
+                b = subprocess.check_output(["git", "rev-parse", f"{r}:{rel}"],
+                                            cwd=REPO, text=True, stderr=subprocess.DEVNULL).strip()
+            except Exception:
+                continue
+            if b == blob:
+                return r
+    except Exception:
+        pass
+    return None
 SRC = {"unfold": "nd-unfolding/unfold_nd_omnifold_unbinned.py",
        "omnifold": "unbinned_unfolding/python/omnifold.py",
        "xsec": "nd-unfolding/xsec_nd.py",
        "launcher": "nd-unfolding/sbatch_evloop_array_5d_active_laterals.sh",
        "evidence_generator": "nd-unfolding/p4_evidence.py",
        "builder": "nd-unfolding/p4_build_components.py"}
-man["source_blobs"] = {k: _blob(v) for k, v in SRC.items()}
-man["source_commits"] = {k: _srccommit(v) for k, v in SRC.items()}
+man["source_blobs"] = {k: _committed_blob(v) for k, v in SRC.items()}
+man["source_commits"] = {k: _blob_introducing_commit(v, man["source_blobs"][k])
+                         for k, v in SRC.items()}
+# D3b: refuse to record a committed blob while a DIFFERENT version is what would actually run.
+for _k, _rel in SRC.items():
+    _c, _w = man["source_blobs"][_k], _worktree_blob(_rel)
+    need(_c is not None, f"source {_k} ({_rel}) is not committed at HEAD; provenance unprovable")
+    need(_w is None or _c == _w,
+         f"source {_k} ({_rel}) is DIRTY: working tree {_w} != committed {_c}. Commit or revert "
+         f"before generating evidence -- a manifest that records the committed blob while a "
+         f"different file runs is the 2026-07 dirty-OmniFold absorption (defect 3b).")
+    need(man["source_commits"][_k] is not None,
+         f"source {_k} ({_rel}): cannot find the commit that introduced its recorded blob")
 _bin = f"{REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"
 man["binary_sha256"] = P.sha256_file(_bin); man["binary_mtime"] = os.path.getmtime(_bin)
+# D3b/#23: the binary is hashed AS IT IS ON DISK NOW, which is not necessarily the binary that
+# produced the merged inputs. Label it so no reader can mistake "what exists" for "what
+# produced this". The producing binary, when it is knowable, comes from the endpoint receipts.
+man["binary_sha256_semantics"] = ("hash of the binary present at evidence-generation time; "
+                                  "NOT proof that this binary produced the merged inputs")
 man["code_rev"] = os.environ.get("P4_CODE_REV", "")
 
 # ---- ordered 5-axis edges + edge/bin-volume hash ----

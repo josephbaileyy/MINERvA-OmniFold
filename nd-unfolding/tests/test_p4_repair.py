@@ -575,6 +575,33 @@ class Repair4EvidenceBindings(unittest.TestCase):
         self.assertIn("idx_meta", code)
         self.assertIn("endpoint INDEX mismatch", code)
 
+    def test_source_blobs_come_from_the_commit_not_the_working_tree(self):
+        """D3b: `git hash-object <path>` records whatever is checked out, which is how an
+        unrelated dirty blob was absorbed in 2026-07 and how re-running evidence in 2026-08
+        re-attributed 07-18 endpoints to newer code (KNOWN_ISSUES #23)."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn('"rev-parse", f"HEAD:{rel}"', code)      # committed object
+        self.assertIn("_committed_blob", code)
+        self.assertIn("is DIRTY", code)                        # dirty source fails closed
+        # the old working-tree call must not be what populates source_blobs
+        self.assertNotIn('man["source_blobs"] = {k: _blob(', code)
+
+    def test_source_commit_is_the_one_that_introduced_the_blob(self):
+        """D3c: the old code recorded the last commit to TOUCH the path, which need not be the
+        commit that introduced the blob recorded beside it."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("_blob_introducing_commit", code)
+        self.assertNotIn('"log", "-1", "--format=%H", "--", rel', code)
+
+    def test_binary_hash_is_labelled_as_present_not_producing(self):
+        """#23: the binary is hashed as it is on disk now, which need not be what produced the
+        merged inputs. The manifest must not let a reader confuse the two."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        self.assertIn("binary_sha256_semantics", src)
+        self.assertIn("NOT proof that this binary produced", src)
+
     def test_the_two_band_sets_partition_the_five_bands(self):
         import importlib.util
         spec = importlib.util.spec_from_file_location("_ev", self.ND / "p4_evidence.py")
