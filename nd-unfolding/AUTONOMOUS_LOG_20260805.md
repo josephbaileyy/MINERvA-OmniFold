@@ -1022,3 +1022,20 @@ Tool committed as `nd-unfolding/pet/inversion_screen.py`. Thresholds untouched. 
 hypothesis I already sent rather than adding a decision, and the floor repeat is close enough that batching is
 better than two mails an hour apart. Nominal at 5:22:53 with the floor on `iter2_step1`; ep16 at 3:03, ep32
 queued, both watches armed.
+
+### Holding: floor repeat in its final push; both decisive next steps need a GPU
+
+No new mail, nothing finished. `56415634` at 5:53:21 has all six floor step files
+(`iter0`–`iter2` × `step1`/`step2`) but no `pet_fullevent_floor_weights.npz` yet, so it is in the
+`--reweight-all` pass over the full 32.8M-row cloud — the same phase that took the nominal ~45 min between
+its last step file and its artifact. Wall expires 12:27Z, so there is ample margin.
+
+Deliberately doing nothing this cycle. The two steps that would advance the diagnosis both need a GPU —
+the step-1 inference test, and the different-`estimator_seed` arm that would settle whether *any* ensemble
+can help — and `56415634`, `b1nit5b` and ep16 are already contending with ep32 still PENDING. Adding a
+fourth GPU job to diagnose a problem is not worth delaying the floor repeat that is about to produce the
+GPU-nondeterminism reference for that same problem.
+
+The cheap numpy-only avenues are exhausted for now: the failure is independently confirmed, localised to
+the high-acceptance cells, and both a global rescale and a naive inversion of the final push are excluded.
+What remains genuinely requires either inference or Joseph's framing, and both are flagged.
