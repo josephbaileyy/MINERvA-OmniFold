@@ -1,8 +1,11 @@
 # RUNBOOK — closing out the GBDT (scalar) lane, 2026-08-07
 
 **Purpose.** Take the scalar/GBDT side from its 2026-08-07 state (FPS lateral adopted, 5D still
-CANDIDATE) to *adopted 5D + adopted-or-marginalized 4D + final FPS + note updated*. Written to be
-handed to a fresh Claude session that has read `CLAUDE.md` and nothing else about this lane.
+CANDIDATE) to *adopted 5D + marginalized 4D + final FPS + note updated*. Written to be handed to a
+fresh Claude session that has read `CLAUDE.md` and nothing else about this lane.
+
+**Both blocking decisions were made by Joseph on 2026-08-07, before this runbook was handed off — see
+§2.** You do not need to wait on anything to start. Nothing in this lane needs a GPU.
 
 **Scope.** Runbook packets **P3S, P3F-scalar, P4-5D, P4-4D, P4-FPS**, plus the P7 note update for
 those products only. The PET lane (`P5A`/`P5B`, Gate-4, the D2 closure, the nominal's normalization
@@ -15,7 +18,7 @@ reading `nd-unfolding/pet/`, you have left this runbook.
 RUN_LOGs. Do not record results here.
 
 **Read first:** `docs/orchestration/FINDINGS.md` (especially BEN-036, BEN-040, BEN-041 — all three are
-this lane), `KNOWN_ISSUES.md` #26, then `docs/PUBLICATION_COMPLETION_RUNBOOK.md` packets P3S /
+this lane), `KNOWN_ISSUES.md` **#20**, then `docs/PUBLICATION_COMPLETION_RUNBOOK.md` packets P3S /
 P3F-scalar / P4, and `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md` for the invalidation frontiers.
 
 ---
@@ -46,7 +49,54 @@ been PENDING ~16 h) — this lane can proceed in parallel without contending.
 
 ---
 
-## 2. THE ONE DECISION THAT SIZES EVERYTHING (Joseph's)
+## 2. DECISIONS — both made by Joseph 2026-08-07, before the executing session starts
+
+> **DECIDED (2026-08-07).**
+> 1. **Footing: the standard 5D chain is quoted on `purity`, revisited before submission.** Not a
+>    silent default — a recorded choice, backed by the measurements in §2.1, and carrying an explicit
+>    obligation to revisit (tracked as **G-0** below). Proceed on purity so P4-5D/4D and the note
+>    unblock; do **not** re-run the standard chain on `negweight-refined`.
+> 2. **4D: adopt the exact 5D→4D marginal and label the independent 4D estimator a cross-check.**
+>    No separate 4D lateral work — the 4D inherits the corrected 5D lateral. `p4_project_4d.py` is the
+>    implementation (stage 6 of the canonical chain).
+>
+> The reasoning that produced these is kept below because a referee question, or a future session
+> tempted to "fix" the footing, needs it.
+
+### 2.1 The data backing the purity choice
+
+Joseph asked whether the negweight-vs-purity impact was ever quantified. **It was, at full statistics
+with the adopted estimator, and the answer is ~1–2% on the covariance.** All of this is 2D MEFHC unless
+stated; source `2d-unfolding/HANDOFF_bkg_negweight/bkg_negweight_state.md`, 2026-07-09/11 entries.
+
+| Comparison | Result |
+|---|---|
+| **SYST (universe) covariance**, 187 universes, both modes, #13-active | negweight `sqrt(tr) = 2.9828e-39` vs purity `3.0242e-39` → **ratio 0.9863** |
+| **STAT (bootstrap) covariance**, matched first-50 seeds | negweight `1.7260e-40` vs purity `1.7576e-40` → **ratio 0.982** |
+| **CV identity**, MEFHC, adopted **lgbm** | per-bin median **1.0001**; 127/148 within 1%, 145/148 within 5% |
+| **Real-data totals** | agree to **−0.13%**; per-bin median 1.000, **1.4% RMS**; the only >few-% bin is one low-`pT`, high-background edge bin (0.874) |
+| **5D spot check** — the on-disk 5D universe omnifile, 2 universes | `2p2h:0` purity `3.014e-38` = negweight `3.014e-38`, per-bin median 1.0005; `MaCCQE:0` **−0.03%**, median 0.9990 |
+
+**Why this generalizes rather than being two lucky universes:** the ρ1 = D − B_u identity. A systematic
+covariance is the *spread across* universes, and each universe shifts by the same ~0.1% in both modes,
+so the two covariances agree by construction. The negweight state doc calls the full 187-universe
+rebuild "CONFIRMATORY" on exactly those grounds — and then ran it anyway, which is where the 0.9863
+comes from.
+
+**The one real estimator caveat, and why it does not bite here.** Raw `negweight` *breaks* the `exact`
+GradientBoosting backend — a ~5×10⁴ blow-up across the `iy=1` row, the classic negative-sample-weight
+pathology of gradient-boosted trees. Stay-Positive (`negweight-refined`) cures it (refined/purity
+median 0.9991, 141/148 within 5%, blow-up row 36000× → ~0.9×). **The standard 5D chain runs `lgbm`**
+(`--estimator lgbm` in the unfold invocation), which is the clean backend, so neither footing risks
+that pathology in this lane.
+
+**What is still NOT measured, and is the whole content of the revisit obligation:** there is no full 5D
+187-universe both-mode comparison at the publication 5-iter lgbm config. The 5D evidence is a
+two-universe spot check at 1 iter / `hist`, plus the structural identity, plus the 2D full-statistics
+result. That is ample for "quote purity and say so" and **not** ample for "footing is proven
+irrelevant in 5D". Do not write the latter.
+
+### 2.2 The reasoning (retained)
 
 **Question: what background footing does the *standard* 5D chain stand on for publication?**
 
@@ -81,15 +131,15 @@ two readings differ by more than an order of magnitude in cost:
    remain the user's call."* The port added `--bkg-mode` to the ND driver as an **option**; the
    standard default was never switched. That is a deliberate deferral, not an oversight.
 
-**Do not resolve this by reading the runbook sentence harder.** It is genuinely ambiguous, and under
-reading (B) the correct next action is to *stop and rebuild*, not to adopt. Get the answer, then
-proceed. If the answer is (B), this runbook's §4 is wrong about cost and you should re-plan from
+**Do not re-open this by reading the runbook sentence harder.** It is genuinely ambiguous; that is why
+it went to Joseph rather than being resolved from the text. Reading (A) is the recorded decision. If
+someone later reverses it to (B), this runbook's §4 is wrong about cost and the re-plan starts from
 `RESULT_DEPENDENCY_AND_RERUN_MAP.md`'s "Scalar FPS background mode or target changes" trigger row.
 
-**Secondary decision (small, also Joseph's): P4-4D route.** Either replace only the lateral in the
-corrected R1 4D and re-adopt, or use the exact 5D→4D marginal and label the independent 4D a
-cross-check. The runbook permits both. `p4_project_4d.py` (stage 6 of the canonical chain) implements
-the marginal route. **Do not rerun the corrected R1 4D throws under either route.**
+**The 4D route.** Decided: the exact 5D→4D marginal, with the independent 4D labeled a cross-check.
+`p4_project_4d.py` (stage 6) implements it, and the 4D inherits the corrected 5D lateral, so there is
+no separate 4D lateral component to build. **Do not rerun the corrected R1 4D throws** — that holds
+under either route and is an explicit "explicitly unaffected" row in the dependency map.
 
 ---
 
@@ -140,7 +190,7 @@ default; (c) negative evidence from the logs.
    subtraction mode.)
 
 **Verdict.** The ten standard lateral unfolds are **purity-footed, unreceipted, and produced by a
-retired launcher**. Under decision (A) their *footing* is correct and only their *provenance* needs
+retired launcher**. Under the recorded purity decision their *footing* is correct and only their *provenance* needs
 repair — which the canonical chain can do by attestation without recomputing physics. Under (B) they
 must be re-run along with the rest of the chain.
 
@@ -152,16 +202,30 @@ Preflight for every packet: the "Execution preflight" list in
 `docs/PUBLICATION_COMPLETION_RUNBOOK.md` §"Execution preflight for every packet". In particular record
 source commit, input manifests, target namespace, and the output validation command *before* launching.
 
-### G-1 — Get the §2 decision. **BLOCKS EVERYTHING BELOW.**
+### G-0 — Record the footing decision and its revisit obligation. **Do this first; it is cheap.**
 
-Do not start G-2 on assumption. If the answer is (B), stop and re-plan; if (A), continue.
+The purity choice is provisional-by-design ("revisit before submission"), and a provisional decision
+that is not written down becomes a silent default — which is the exact failure this whole runbook
+documents. Before touching the chain:
 
-### G-2 — Make the footing explicit in code, and give the standard manifest somewhere to record it
+1. Add an open item to `docs/OPEN_ITEMS.md`: *the standard 5D chain is quoted on `purity` by decision
+   of 2026-08-07; revisit before submission; what would close it is a full 5D 187-universe both-mode
+   comparison at 5-iter lgbm, and what stands in for it today is §2.1 of this runbook.*
+2. Add the `bkg_mode` field (G-1) so the choice is machine-readable, not merely prose.
+3. Do **not** write "footing proven irrelevant in 5D" anywhere. §2.1's last paragraph says exactly how
+   far the evidence reaches.
 
-Required under **either** reading of §2, because "no reliance on a default is allowed" is a locked
-runbook rule and §3.3 shows the standard lane currently cannot express a footing at all.
+### G-1 — Make the footing explicit in code, and give the standard manifest somewhere to record it
 
-1. `run_p4_unfold_std.sh:43` — pass `--bkg-mode <chosen>` explicitly.
+Required regardless of which footing had been chosen, because "no reliance on a default is allowed" is
+a locked runbook rule and §3's finding 3 shows the standard lane currently cannot express a footing at
+all. **The value to pass is `purity`**, per §2.
+
+1. `run_p4_unfold_std.sh:43` — pass `--bkg-mode purity` explicitly. Note this is a *no-op on the
+   physics* (it is already the driver default) and a change purely to provenance: after it, the footing
+   is asserted by the launcher instead of inferred from a silent branch. Which means **it must not
+   change any output hash** — if a re-unfold after this edit produces a different ROOT than the
+   attested one, stop and find out why before proceeding.
 2. `p4_evidence.py` — record the footing (at minimum `bkg_mode`, ideally the five-key estimator
    footing `fps_provenance.REQUIRED_FOOTING` uses) in `p4_standard_manifest.json`, and fail closed
    when it is absent or mismatched.
@@ -173,7 +237,10 @@ runbook rule and §3.3 shows the standard lane currently cannot express a footin
    consumer expects — that is exactly the defect BEN-040 records, in this same chain.
 
 Gate: existing standard-lane tests green, plus a new negative test proving a missing/mismatched
-footing is rejected, plus a positive test proving the chosen footing is accepted.
+footing is rejected, plus a positive test proving `purity` is accepted.
+
+> *There is no G-2 — it was folded into G-1 when the footing decision landed. G-3…G-9 keep their
+> original numbers so that cross-references elsewhere in this file stay valid.*
 
 ### G-3 — Run the canonical standard chain to `evidence`, then attest or re-unfold
 
@@ -183,14 +250,14 @@ inside a compute alloc via `srun --overlap --jobid=<holder>`; do not nest `srun`
 `STOP_AFTER` defaults to `evidence`, which is a safe preflight that stops *before* covariance.
 
 1. `STOP_AFTER=evidence bash run_p4_standard.sh` — builds hashes, receipts and the manifest.
-2. Then stage 3 (`STOP_AFTER=unfold`). Under decision (A) `run_p4_unfold_std.sh` will
-   **legacy-attest** the existing ten ROOTs if their sha256 matches the committed manifest, writing
-   the missing receipts without recomputing — nearly free. Under (B), or if attestation fails, they
-   re-unfold: budget **~1h40m wall** for all ten at `CONC=6` (measured from the 07-18 log span
-   03:53→05:34Z), CPU only.
-   - **Attestation certifies identity, not footing.** If you attest under (A), the footing claim rests
-     on §3's launcher+default+log evidence, so record that evidence in the manifest via G-2 rather
-     than leaving it implicit in this file.
+2. Then stage 3 (`STOP_AFTER=unfold`). Because the purity decision means the existing ten are on the
+   *correct* footing, `run_p4_unfold_std.sh` should **legacy-attest** them if their sha256 matches the
+   committed manifest — writing the missing receipts without recomputing, nearly free. If attestation
+   fails, they re-unfold: budget **~1h40m wall** for all ten at `CONC=6` (measured from the 07-18 log
+   span 03:53→05:34Z), CPU only.
+   - **Attestation certifies identity, not footing.** If you attest, the footing claim rests on §3's
+     launcher+default+log evidence, so record that evidence in the manifest via G-1 rather than
+     leaving it implicit in this file.
 3. **Preserve the ten 07-18 ROOTs.** Deletions are frozen behind
    `docs/POST_PUBLICATION_REORG_PLAN.md`'s freeze tag. If they are superseded, supersede by
    namespace and keep them as labeled controls (the FPS lane's `*__SUPERSEDED_support` renaming is the
@@ -229,12 +296,19 @@ apply any single factor to a published number.
 Output: a committed adoption packet — product summary + ledger entry + RUN_LOG entry + STATUS
 one-liner **in the same commit** as the code/launcher. An uncommitted artifact is provisional.
 
-### G-6 — P4-4D, per the §2 secondary decision
+### G-6 — P4-4D: adopt the exact 5D→4D marginal (decided, §2)
 
-Route (a): replace only the lateral in the corrected R1 4D, prove every other component hash
-unchanged, re-adopt. Route (b): use the exact 5D→4D marginal from `p4_project_4d.py` and label the
-independent 4D estimator a cross-check. **Either way, do not rerun the corrected R1 4D throws** —
-`RESULT_DEPENDENCY_AND_RERUN_MAP.md` lists them as explicitly unaffected by a lateral change.
+Use `p4_project_4d.py` (stage 6 of the canonical chain) to project the G-5-adopted 5D covariance, and
+label the independent 4D estimator a **cross-check** in the note. The 4D inherits the corrected 5D
+lateral, so **there is no separate 4D lateral component to build.**
+
+- Validate `M C M^T` against direct block sums, plus the stage's own 5D→4D mask/edge hashes and
+  central non-mutation checks, plus symmetry, PSD, and normalization.
+- **Do not rerun the corrected R1 4D throws or non-lateral components.**
+  `RESULT_DEPENDENCY_AND_RERUN_MAP.md` lists them as explicitly unaffected by a lateral change.
+- Keep the independent 4D product as provenance, reported as a cross-check. If the two disagree by more
+  than the projection tolerance, that is a finding to report, **not** a number to reconcile by
+  adjusting either one.
 
 ### G-7 — Finalize the FPS budget
 
@@ -268,11 +342,16 @@ the nonlinearity inflation `g` toward 1.
   lands", and re-check the surrounding sentences at `:163-168` which narrate the block median, the
   adopted trace, the separately-reported mean shift, and the retained conservative CV-centered
   variant.
-- **Add an explicit footing statement.** Whatever §2 decides, the note must say which background
-  footing the standard 5D covariance stands on, and that the FPS product stands on
-  `negweight-refined`. `app_negweight.tex` is the home for the mode discussion; the systematics
-  section should carry one sentence. Under decision (A) this is the referee-facing consequence of the
-  choice and must not be left implicit.
+- **Add an explicit footing statement — this is now a positive claim, not a caveat.** The note must say
+  that the standard 5D covariance is quoted on `purity` while the FPS product is on
+  `negweight-refined`, and it must back that with §2.1's measurements rather than asserting
+  equivalence. The defensible sentence is: *the two background treatments agree to 1.4% (SYST
+  covariance ratio 0.9863) and 1.8% (STAT, matched-seed ratio 0.982) at full 2D statistics with the
+  adopted lgbm estimator, consistent with the ρ1 = D − B_u identity, which makes the systematic
+  covariance insensitive to the choice by construction.* `app_negweight.tex` is the home for the mode
+  discussion and already carries the Phase-E writeup; the systematics section carries one sentence.
+  **Do not write that footing is proven irrelevant in 5D** — §2.1's last paragraph bounds what the
+  evidence supports, and the 5D leg of it is a two-universe spot check at 1 iter/`hist`.
 
 **Build and check:** `docs/analysis-note/build_all.sh` builds all three targets (note, primer,
 paper); run the link/reference/provenance checks. The Overleaf subtree sync is a separate action and
@@ -323,25 +402,29 @@ The GBDT lane is closed when all of:
 
 1. A committed **P4-5D adoption packet** exists on the selection-complete lateral, with pre/post
    hashes proving no frozen component moved.
-2. A committed **P4-4D** packet exists, or the independent 4D is explicitly labeled a cross-check with
-   the 5D marginal adopted in its place.
+2. The **exact 5D→4D marginal** is adopted and validated, and the independent 4D is explicitly labeled
+   a cross-check.
 3. The **final FPS budget** is adopted post-unified-throw.
 4. `values.tex` and the systematics prose quote only post-adoption numbers, all three note targets
-   build, and the footing is stated explicitly.
+   build, and the footing is stated explicitly **with §2.1's numbers**.
 5. Every quoted number traces to a `VALIDATION_LEDGER.md` entry whose artifacts are reachable from a
    commit.
 6. The quarantine paragraph names exactly which causes remain open, per product.
+7. The **footing revisit obligation** (G-0) is an open item in `docs/OPEN_ITEMS.md`, stating what would
+   close it. The lane is *closed*; that question is *deferred*, and the difference has to be legible.
 
 What is **not** required for this lane and must not be waited on: anything in P5A/P5B/PET, and the
 `combine_cstat_bkgsub_100rep.py` tracking question (that is a PET-lane item).
 
 ---
 
-## 7. Open questions I could not resolve
+## 7. Open questions
 
-1. **§2's footing scope.** Joseph's. Sizes the lane by an order of magnitude.
-2. **P4-4D route.** Joseph's, small.
-3. **G-7's cost.** No timing evidence found for the FPS unified-throw adoption stage.
+1. ~~§2's footing scope.~~ **DECIDED 2026-08-07: purity, revisit before submission** (§2). The revisit
+   is tracked as G-0; what would close it is a full 5D 187-universe both-mode comparison at 5-iter lgbm.
+2. ~~P4-4D route.~~ **DECIDED 2026-08-07: exact 5D→4D marginal, independent 4D a cross-check** (§2).
+3. **G-7's cost — still open.** No timing evidence found for the FPS unified-throw adoption stage.
+   Measure before committing to a window.
 4. ~~Whether the standard 5D reported-bin mask has a pinned fingerprint.~~ **Resolved while writing
    this file, and the answer is a caveat rather than a blocker.** The mechanism exists —
    `p4_lib.mask_order_hash(mask)` hashes the reported-bin mask plus C-order over

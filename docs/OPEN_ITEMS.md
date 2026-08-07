@@ -13,9 +13,13 @@ assigns the remaining packets, and
 cleanup behind the publication-results freeze tag.
 **Per-lane close-out runbooks** (executable step lists for one lane, scoped so a fresh session does not
 straddle two): [GBDT/scalar close-out](orchestration/RUNBOOK-20260807-gbdt-closeout.md) — P3S,
-P3F-scalar, P4-5D/4D/FPS and their note update, including the footing scope decision that sizes the
-lane by an order of magnitude (`KNOWN_ISSUES.md` #20, BEN-041). **The PET lane has no equivalent
-runbook**; it is blocked on the five decisions below rather than on a step list.
+P3F-scalar, P4-5D/4D/FPS and their note update (`KNOWN_ISSUES.md` #20, BEN-041). **Both of its blocking
+decisions were made 2026-08-07** and are recorded in its §2: the standard 5D chain is quoted on
+**`purity`** (revisit before submission; backed by SYST covariance ratio 0.9863 / STAT 0.982 at full 2D
+statistics on the adopted lgbm estimator, plus the ρ1 = D − B_u identity), and 4D is the **exact 5D→4D
+marginal** with the independent 4D labeled a cross-check. That lane is therefore executable now and
+needs no GPU. **The PET lane has no equivalent runbook**; it is blocked on the decisions below rather
+than on a step list.
 
 > **Starting a fresh session? Read the latest handoff first:**
 > [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
