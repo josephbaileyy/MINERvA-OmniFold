@@ -1039,3 +1039,46 @@ GPU-nondeterminism reference for that same problem.
 The cheap numpy-only avenues are exhausted for now: the failure is independently confirmed, localised to
 the high-acceptance cells, and both a global rescale and a naive inversion of the final push are excluded.
 What remains genuinely requires either inference or Joseph's framing, and both are flagged.
+
+### 56415634 COMPLETE — the floor repeat confirms the failure is deterministic, and measures the GPU floor
+
+`[fe_pet_nom] DONE 2026-08-07T06:24:41Z`. Both artifacts written — `pet_fullevent_nominal_weights.npz`
+(10,110,334 B) and `pet_fullevent_floor_weights.npz` (10,158,903 B) — with **no walltime kill and no partial
+state**, so the failure mode the 8h→12h raise was made to avoid did not occur. Two full trainings in ~6h
+against a 12h wall.
+
+**The determinism answer, which is the entire point of the matched floor repeat.** Identical seeds and config,
+so the only difference is GPU nondeterminism:
+
+                                nominal                floor
+    fold_forward_reco_ratio     0.7464834064182863     0.7388746403442940
+    dev vs R = 1.1241           0.335916               0.342685
+    mean push                   0.895412               0.886783
+    n_pass_reco / cells         837671 / 259           identical
+    cap_saturation_frac         0.0                    0.0
+
+The runs differ by **1.02%** relative on the ratio (0.97% on mean push) while both miss R by ~34%. GPU
+nondeterminism is two orders of magnitude too small to explain the failure: **deterministic**, matching what
+the D2 control established independently at r=0.99994.
+
+**Useful by-product worth keeping separately from the failure:** the GPU-nondeterminism floor for this
+estimator is now **measured at ~1%** on the fold-forward ratio. That is exactly what the launcher's "matched
+GPU-floor repeat" was built to expose, it is a legitimate deliverable, and it stands even though the central
+value does not.
+
+**Diagnosis status — every item established by an independent check rather than by argument.** Confirmed: the
+failure is real (independent recomputation, 1.4e-12); deterministic (this repeat, plus the D2 control);
+monotonic in acceptance and worst where acceptance is highest (push 0.518 in the 117 cells at a≥0.8 carrying a
+third of the reco weight); **not** a global normalisation error (a pure rescale hits R exactly yet leaves the
+slope at −0.4291); **not** a simple inversion of the final push (every form mirrors the slope rather than
+flattening it, and 1/push overshoots to mean 2.53, max 23).
+
+Still open, both needing a GPU rather than more arithmetic: **(1)** step-1 achievement by inference with the
+saved `w_nominal/*_step1.weights.h5` — nothing stored supports that comparison, which is the BEN-039 trap
+itself; **(2)** whether *any* ensemble helps, via one arm at a different `estimator_seed` — this repeat has
+ruled out averaging over GPU noise specifically, which was the cheap version.
+
+GPUs are freeing up now this job is done. I proposed (1) first, since it targets the leading hypothesis whereas
+(2) prices a remedy for a cause not yet identified — asked Joseph whether he wants that order. Gate-4 stays
+red and the product NON-QUOTABLE, unchanged and already red from D2. Slurm blipped again mid-cycle
+(`Unable to contact slurm controller`) and was again caught only because stderr was kept. Mailed.
