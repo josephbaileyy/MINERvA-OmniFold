@@ -1828,3 +1828,70 @@ writes the report, artifact and the preflight cross-check — so a mailable outc
 a 00:52Z wall. When it lands I compare against the pre-registration committed while it was still PENDING:
 `E_w[r]` < 0.56324 in [0.48, 0.56], MAD < 0.346135 in [0.31, 0.346], recovery < 0.536695 in [0.49, 0.537],
 verdict FAIL — with the falsifiers already written down.
+
+### 21:20Z — ep32 COMPLETE, FAIL at recovery 0.511708. The pre-registration hit 4 of 4, and option (2) would have been a mistake
+
+`56431651` COMPLETED 07:18:06 rc=3 (the driver's expected FAIL code; the launcher exits 0 because a
+diagnostic that produced a number is a successful measurement). `preflight_verdict=PASS`,
+`preflight_xcheck=AGREE` — so this arm and `56381674` graded the **same 2M/2M population**, which is the
+premise that makes comparing their recoveries legitimate. `is_nominal_configuration=false`, overrides
+`{epochs: 8->32, early_stop: 10->1000}`, so Gate-4's check fails on it by design and it is not gate
+evidence. Digests: report `2f2df24596151484`, artifact `11c7d61e9d7704ca`, preflight `8411c2bddbe8c6de`.
+
+**THE PRE-REGISTRATION, committed while the job was still PENDING, HIT 4 OF 4 — every one inside its band:**
+
+    quantity     predicted                        measured    verdict
+    E_w[r]       < 0.56324, band [0.48, 0.56]      0.52350     HIT
+    MAD          < 0.346135, band [0.31, 0.346]    0.334954    HIT
+    recovery     < 0.536695, band [0.49, 0.537]    0.511708    HIT
+    verdict      FAIL                              FAIL        HIT
+
+And **no falsifier triggered**: `E_w[r]` did not rise above 0.56324, MAD did not rise, recovery did not
+rise above 0.548769. All three were written down as the ways this could lose.
+
+**The ladder is now monotone on three budget points, in opposite directions for the two terms:**
+
+    arm    ep   recovery   E_w[r]    coherent      MAD      penalty
+    ctl8    8   0.548769   0.63250   0.367501   0.366439   0.083729
+    ep16   16   0.536695   0.56324   0.436756   0.346135   0.026549
+    ep32   32   0.511708   0.52350   0.476496   0.334954   0.011796
+
+    coherent under-application  +18.8%  then  +29.7%   (vs ctl8)  -> monotone WORSE
+    dispersion, MAD             -5.5%   then   -8.6%              -> monotone BETTER
+
+So more training budget monotonically worsens the coherent under-application and monotonically improves
+dispersion, and the net is worse recovery at every step. **The memo's original hypothesis — "4x budget
+overfits harder => MORE per-cell scatter" — is now falsified at 4x as well as 2x**, and by the measure that
+matters: MAD fell 8.6%. The published "scatter penalty" fell 85.9% over the same move, a **10x
+exaggeration** of the real dispersion change, which is BEN-042's point demonstrated a third time.
+
+### The deferred early-stopping question is COMPLETE at 6/6 — and it retroactively vindicates option (1)
+
+    iter0_step1  argmin 21/32  delta +0.000095      iter0_step2  argmin 32/32  delta  0.000000
+    iter1_step1  argmin  3/32  delta +0.000333      iter1_step2  argmin  5/32  delta +0.000061
+    iter2_step1  argmin  1/32  delta +0.000975      iter2_step2  argmin  5/32  delta +0.000058
+
+The argmin positions are 1, 3, 5, 5, 21, 32 — **essentially random** — while every best-vs-last val_loss
+gap is <= 0.000975, i.e. <= 0.2% of a ~0.48 loss. That is exactly what
+`sbatch_powered_closure_budget_probe.sh`'s header predicted when it declined to build a fourth arm:
+*"if the 32-epoch val curve is flat with an early argmin, best-versus-last selection is provably inside the
+validation noise and no arm was needed."* **Confirmed at 6/6; the ~8 GPU-hours were correctly not spent.**
+
+**And this is now evidence that BEN-043's option (2) would have been a mistake.** Option (2) was "make
+best-epoch the estimator — let EarlyStopping restore." Here the argmin lands at **epoch 1 of 32** in one
+training and epoch 3 in another, so `restore_best_weights` would have selected a nearly-untrained network.
+Joseph chose option (1) — persist the last-epoch weights, no estimator redefinition — and the data
+supporting that choice arrived after the decision rather than before it. Worth stating plainly: the val-loss
+argmin is not a usable model-selection signal in this problem.
+
+### One correction to myself
+
+I told him "its log will NOT grow" and wrote here that log growth was "a constant" for this job. **Too
+strong.** The log emits nothing per *epoch* but does emit per *training* — `ITERATION`, `RUNNING STEP`,
+`Last val loss`, `Dumping training history` — so it grows six times. I inferred "constant" from observing it
+static inside a single 85-minute training. The operative advice was right (judge liveness by CPU time and
+artifacts, and the artifact clock is what I actually used) but the characterisation was wrong, and it went
+to him in a mail, so it is corrected in this cycle's mail too.
+
+Mailed. ep32 was the last of my two watched jobs to be diagnostic; `56445883` (the re-run, the critical
+path) is still PENDING with its watch armed.
