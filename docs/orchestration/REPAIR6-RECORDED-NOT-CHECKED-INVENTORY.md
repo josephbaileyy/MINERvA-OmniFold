@@ -150,3 +150,45 @@ later renumber would falsify it.
 **A field may be recorded without being checked only if it appears in section C or D with a
 reason. Anything else is a defect.** And a gate label may not claim more than its body does —
 `complete`, `identity`, `verified`, `proven` are all load-bearing words.
+
+---
+
+## A+. Contributed by the PET lane, 2026-08-07 — one instance this sweep's patterns cannot see
+
+Added here rather than kept in a separate list, per Joseph's instruction that the "gates that cannot fail"
+inventory be repo-wide and shared. Generator:
+`docs/orchestration/audit_gates_that_cannot_fail.py` (624 files, seven detectors, each power-tested against
+a reconstruction of the real pre-fix source). Full write-up:
+`FINDING-20260807-gates-that-cannot-fail-sweep.md`, ledger **BEN-070**.
+
+**Why it is here and not in your table already: this sweep and that one look for different classes.** Yours
+finds *recorded-but-not-compared* and *strong-name-over-weak-check*. Mine adds *unreachable trigger*
+(BEN-043), *scale-blind absolute tolerance* (BEN-044), *size-as-completeness* (BEN-023) and *tautological
+datum* (BEN-039). The instance below sits in a file your sweep reads — it is simply not the shape your
+patterns match.
+
+| Field / gate | State | Mark |
+|---|---|---|
+| **`p4_lib.py:219` diagonal non-negativity** — `require(np.all(np.isfinite(d)) and np.all(d >= -1e-30), "non-finite/negative diagonal")`. Measured on `products/pet/bkgsub/pet_cstat_bkgsub_5d.npz`: diagonal median `3.867e-86`, min `5.510e-102`, max `8.128e-79`. **The `-1e-30` floor is `2.586e+55x` larger than the median**, so a negative variance of `-1e-40` — itself `2.6e+45x` the median magnitude — PASSES. No physically possible negative variance can fail this check. Diagnostic rather than sloppy: the **same function** validates symmetry as `max\|C-C^T\| / max(1e-300, max\|C\|)` and PSD as `ev[0] >= -psd_atol_ratio * abs(ev[-1])`, both correctly relative and one carrying a div-by-zero floor. The idiom was known, used twice, and the third check written in absolute units. Duplicated at `p4_validate_active_lateral_fps.py:70`. | **FIX — new, on no prior list.** One-line: `-1e-30` → a floor relative to `max(abs(d))` or to `abs(ev[-1])`. Left to this lane; a concurrent edit to a shared library during your repair round is the collision CLAUDE.md warns about. | **FIX** |
+
+**Also, and it affects how A1 reads:** `run_p4_standard.sh:41` still contains
+`if [[ -z "${P4_VERIFIER_PASS}" ]]` on `main`. That is consistent with A1 being deliberately OPEN, so this
+is confirmation rather than a new finding — but the BEN-046 ledger row reads as resolved while the code is
+unchanged, and `329d230` touches only prose. Worth one sentence in the row so a later reader does not take
+the renumber for a repair.
+
+**Convergent lesson, independently.** This file records that the sweep "missed uppercase-initial keys on the
+first run … a mechanical sweep is only as good as its pattern, and the pattern needs its own test." Mine
+failed the same way three times: two detectors were silent on their own known instances (`\btol\b` cannot
+match inside `psd_tol`, because `_` is a word character), the first sweep printed **0 hits** from a `--root`
+that had resolved to a directory containing none of the code, and mention-vs-use made the loudest hits the
+ledger prose describing these very defects. Two lanes, two sweeps, the same three traps — which is the
+strongest argument yet that the pattern-needs-a-test rule belongs in the shared list and not in either
+lane's notes.
+
+**What neither sweep can reach, and where the rest of the family probably lives.** Three historical
+instances have no static signature: BEN-032/025 (a check run over a population that cannot exhibit the
+defect — a runtime property), BEN-040 (a fail-closed gate that had never returned PASS on real input — needs
+execution history), BEN-042 (a normalised quantity compared against an absolute one across two documents).
+A coverage harness recording which guards have ever fired in **either** direction on real inputs would find
+all three classes at once, and is the higher-yield next step for whichever lane takes it.
