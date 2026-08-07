@@ -1174,3 +1174,19 @@ later reader to mistake it for a result. The absence of that file is the correct
 ep32's watch is armed, so its result reaches Joseph from Slurm cron whether or not this session is alive — which
 is the property that has already justified itself twice today, once when my ssh certificate expired and once
 when Slurm blipped. Thresholds untouched throughout.
+
+### Verified the notification mechanism survived three Slurm outages — which is what makes standing down safe
+
+Third Slurm controller outage today (~03:19Z, ~06:50Z, ~09:19Z), so `squeue`/`sacct` were unreadable this
+cycle and ep32's state could not be polled. That prompted the one check worth doing while idle: `wakerctl`
+evaluates a `slurm-job` watch by calling `sacct`, and on failure increments an `unreliable` counter that emits a
+spurious `monitor-error` at 10 — so repeated blips could in principle degrade the very mechanism I am relying
+on to deliver ep32's result.
+
+It has not. `d2-probe-ep32-56431651.json` shows **`unreliable: 0`**, no `monitor-error` events are spooled, and
+`evt-nominal-56415634.done` plus `evt-d2-probe-ep16-56431650.done` show both earlier watches fired **and
+completed dispatch** — positive end-to-end evidence rather than merely "armed". The stale `cron-tick.log` mtime
+is expected and not a symptom: `--open-mode=append` with `--quiet` writes nothing when there is nothing to say.
+
+No mail, no other action: nothing finished and nothing to decide. Recording this because a future reader
+otherwise has to re-derive whether today's intermittent Slurm affected the watches, and the answer is no.
