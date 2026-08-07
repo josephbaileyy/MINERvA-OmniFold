@@ -1082,3 +1082,39 @@ GPUs are freeing up now this job is done. I proposed (1) first, since it targets
 (2) prices a remedy for a cause not yet identified — asked Joseph whether he wants that order. Gate-4 stays
 red and the product NON-QUOTABLE, unchanged and already red from D2. Slurm blipped again mid-cycle
 (`Unable to contact slurm controller`) and was again caught only because stderr was kept. Mailed.
+
+### The under-fitting hypothesis is dead, and dead in the wrong direction
+
+`56431650` (ep16) COMPLETED 03:43:39 rc=0, watch fired. Session A owned the probes and is closed, so I read
+the science per brief item 2. It was the handoff's *"what I would do first"*, so this closes that thread:
+
+    arm                    epochs  niter   recovery   residual   verdict
+    56381674 (original)         8      3   0.546853   0.106159    FAIL
+    56431649 (ctl8 control)     8      3   0.548769   0.105710    FAIL
+    56431650 (ep16)            16      3   0.536695   0.108539    FAIL
+    criterion                              >= 0.80    <= 0.046854
+
+**Doubling the epochs moved recovery 0.548769 → 0.536695 — a 2.2% relative DECREASE.** That is outside the
+GPU-nondeterminism band the control pinned at ~0.35% (0.548769 vs 0.546853 at identical config), so the change
+is real, small, and backwards. `56431651` (ep32, 4× budget) is still PENDING and will add a third point; I
+expect confirmation but would rather have the point than assume, and it costs nothing now it is queued.
+
+**Four independent directions now converge.** The shortfall is 97.8% per-bin dispersion rather than bias
+(Session A); that dispersion is deterministic (r = 0.99994 across identical-seed runs); averaging repeat runs
+does not help (measured on the ensembled spectrum, not inferred); and more training budget does not help
+either. So D2 is not an optimization problem, not a convergence problem, and not a noise problem. What remains
+is seed-ensembling (untested) or the criterion itself — and since the criterion takes a per-cell absolute
+value, it converts deterministic dispersion into a one-sided penalty by construction. I have said so to Joseph
+while flagging that "never raise a tolerance to make a check pass" cuts against me pressing that view too hard.
+
+**On the step-1 test: I checked whether it could be done safely instead of hand-rolled, and only partly.**
+`extract_fullevent_fps.py:152,247-253` already reads the `inference_contract`, builds the model and loads a
+saved checkpoint — so that idiom is committed and supported. But it loads the **step-2** checkpoint in **truth**
+space. Step-1 achievement needs the **reco** leg, which no committed consumer evaluates, so it is genuinely new
+code in a different input space. **Still holding it.** A wrong preprocessing choice there yields a
+plausible-looking wrong number on the headline failure, which is worse than having no number; if Joseph wants
+it I will write it and put it through fresh-context review before trusting the output.
+
+Also complete: `56415634` COMPLETED 05:57:38 rc=0 (mailed last cycle, watch fired) and `b1nit5b` COMPLETED
+04:07:38 rc=0 — the latter belongs to the k-scan session, so I have deliberately not read it. Only ep32
+remains queued. Thresholds untouched; Gate-4 red and product NON-QUOTABLE, both unchanged. Mailed.
