@@ -10,7 +10,7 @@ finite, rel-symmetry <= 1e-9, PSD; and an IN-CODE central-reproduction tolerance
 (CLI overrides rejected). Candidate paths only. Authorized to RUN only after the
 standard-p4-verifier PASS; not run in the repair round.
 """
-import argparse, json, sys
+import argparse, json, os, sys
 import numpy as np
 import p4_lib as P
 
@@ -57,18 +57,29 @@ def main():
     P.require(P.sha256_file(CEN4) == man["central4d_sha256"], "4D central mutated (sha256 drift)")
     pre5, pre4 = P.sha256_file(CEN5), P.sha256_file(CEN4)
 
+    # REPAIR-4 (verifier defect 5): geometry binding was partial. The edge hash was checked
+    # only `if "edge_hash" in man`, so a manifest lacking the key silently skipped it; the
+    # bin-volume hash was written into the receipt but never COMPARED; the 4D mask was checked
+    # by reported COUNT only, not by hash -- and a count is not an ordering, so a permuted 4D
+    # mask with the same population passed; and only M_shape was recorded, so nothing pinned
+    # the projector's actual contents. All four are now mandatory.
     edges = canonical_edges()
     ebv = P.edges_bin_volume_hash(edges)
-    if "edge_hash" in man:
-        P.require(ebv["edge_hash"] == man["edge_hash"], "edge-array hash drift vs manifest")
+    P.require("edge_hash" in man, "manifest has no edge_hash (unprovable geometry)")
+    P.require("bin_volume_hash" in man, "manifest has no bin_volume_hash (unprovable geometry)")
+    P.require(ebv["edge_hash"] == man["edge_hash"], "edge-array hash drift vs manifest")
+    P.require(ebv["bin_volume_hash"] == man["bin_volume_hash"], "bin-volume hash drift vs manifest")
 
     x5 = _flat(CEN5); x4 = _flat(CEN4); m5 = x5 > 0; m4 = x4 > 0
     P.require(int(m5.sum()) == man["mask5d_nreported"], "5D reported count drift")
     P.require(int(m4.sum()) == man["mask4d_nreported"], "4D reported count drift")
     h5, _ = P.mask_order_hash(m5)
     P.require(h5 == man["mask5d_hash"], "5D mask/order hash drift")
+    h4 = P.cmask_order_hash_4d(m4)
+    P.require(h4 == man["mask4d_hash"], "4D mask/order hash drift")
 
     M = P.build_projection_M(edges, W_AXIS, m5, m4)               # deterministic
+    m_hash = P.matrix_content_hash(M)                             # pins M's CONTENTS, not its shape
     cpath, ckey = a.c5.rsplit(":", 1)
     C5 = _th2(cpath, ckey)
     P.require(C5.shape[0] == int(m5.sum()), "C5 dim != 5D reported bins")
@@ -85,7 +96,10 @@ def main():
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
                "central5d_sha256": pre5, "central4d_sha256": pre4,
                "central_reproduction_rel": stats["central_max_rel"], "central_rel_tol": CENTRAL_REL,
-               "M_shape": list(M.shape), "psd": stats},
+               "M_shape": list(M.shape), "M_content_sha256": m_hash,
+               "candidate_c5": os.path.abspath(cpath), "candidate_c5_key": ckey,
+               "candidate_c5_sha256": P.sha256_file(cpath),
+               "psd": stats},
               open(a.out.replace(".root", "_projmanifest.json"), "w"), indent=2)
     print(f"CANDIDATE {a.out} n={n} central_rel={stats['central_max_rel']:.2e}<= {CENTRAL_REL}")
     sys.exit(0)

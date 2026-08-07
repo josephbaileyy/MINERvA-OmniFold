@@ -589,6 +589,111 @@ class Repair4EvidenceBindings(unittest.TestCase):
         self.assertEqual(nz & zs, set(), "a band cannot be in both sets")
 
 
+class Repair4CandidateProvenance(unittest.TestCase):
+    """REPAIR-4, verifier defect 4 (the parts that are testable without ROOT)."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    def test_candidate_guard_rejects_traversal_out_of_the_candidate_dir(self):
+        """D4e: the guard was a bare substring test, so a path merely CONTAINING the candidate
+        directory passed -- including one that climbs back out of it."""
+        good = "nd-unfolding/active_universe_5d/standard/candidate/std5d.root"
+        self.assertTrue(P.require_candidate_path(good))
+        escapes = [
+            "active_universe_5d/standard/candidate/../../../products/5d/xsec_5d.root",
+            "active_universe_5d/standard/candidate/../../fps/x.root",
+            "a/active_universe_5d/standard/candidate/../evil.root",
+        ]
+        for bad in escapes:
+            with self.assertRaises(P4GateError, msg=f"traversal accepted: {bad}"):
+                P.require_candidate_path(bad)
+
+    def test_candidate_guard_rejects_lookalike_directory_names(self):
+        """Structural containment, not textual: a directory merely NAMED like the candidate
+        path fragment must not satisfy it."""
+        with self.assertRaises(P4GateError):
+            P.require_candidate_path("nd-unfolding/active_universe_5d_standard_candidate/x.root")
+        with self.assertRaises(P4GateError):
+            P.require_candidate_path("some/other/place/x.root")
+
+    def test_candidate_guard_still_rejects_adopted_tokens(self):
+        for bad in ("active_universe_5d/standard/candidate/std_uthrow.root",
+                    "active_universe_5d/standard/candidate/uq_universe_5d_covariance_combined.root"):
+            with self.assertRaises(P4GateError):
+                P.require_candidate_path(bad)
+
+    def test_builder_writes_candidate_before_manifest_and_binds_it(self):
+        """D4b: the manifest was written BEFORE the candidate ROOT existed and carried no
+        candidate hash, so it could describe a candidate that was never completed."""
+        src = (self.ND / "p4_build_components.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        i_root = code.index('ROOT.TFile.Open(a.out, "RECREATE")')
+        i_man = code.index("os.replace(tmp_manifest, a.out_manifest)")
+        self.assertLess(i_root, i_man, "candidate ROOT must be published before the manifest")
+        self.assertIn('prov["candidate_sha256"]', code)
+        self.assertIn('prov["candidate_keys"]', code)
+        # and the manifest publication is atomic
+        self.assertIn("tmp_manifest", code)
+
+    def test_builder_key_inventory_matches_what_it_writes(self):
+        src = (self.ND / "p4_build_components.py").read_text()
+        for tok in ("P.candidate_band_key(b)", "P.CANDIDATE_ACTIVE_TOTAL_KEY",
+                    "P.CANDIDATE_SYST_KEY", "P.CANDIDATE_TOTAL_KEY"):
+            self.assertIn(tok, src)
+
+
+class Repair4ProjectionGeometry(unittest.TestCase):
+    """REPAIR-4, verifier defect 5: the projector bound only some of its geometry."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    def test_4d_mask_hash_distinguishes_a_permutation(self):
+        """D5c: the projector compared the reported COUNT only. A count is not an ordering."""
+        a = np.array([True, True, False, True, False])
+        b = np.array([True, False, True, True, False])       # same population, different bins
+        self.assertEqual(int(a.sum()), int(b.sum()))
+        self.assertNotEqual(P.cmask_order_hash_4d(a), P.cmask_order_hash_4d(b))
+        self.assertEqual(P.cmask_order_hash_4d(a), P.cmask_order_hash_4d(a.copy()))
+        with self.assertRaises(P4GateError):
+            P.cmask_order_hash_4d(np.zeros(5, dtype=bool))    # empty mask fails closed
+
+    def test_4d_mask_hash_matches_the_evidence_generator_construction(self):
+        """Both sides must hash the same thing or the comparison is meaningless."""
+        import hashlib
+        x4 = np.array([0.0, 1.5, 0.0, 2.5, 3.5])
+        m4 = x4 > 0
+        idx = np.nonzero(x4 > 0)[0].astype(np.int64)          # p4_evidence.cmask_hash's form
+        expect = hashlib.sha256(idx.tobytes() + b"|C").hexdigest()
+        self.assertEqual(P.cmask_order_hash_4d(m4), expect)
+
+    def test_matrix_content_hash_catches_a_changed_weight(self):
+        """D5d: only M_shape was recorded, and two different projectors share a shape."""
+        M1 = np.array([[1.0, 2.0], [0.0, 1.0]])
+        M2 = np.array([[1.0, 2.0000001], [0.0, 1.0]])
+        self.assertEqual(P.matrix_content_hash(M1), P.matrix_content_hash(M1.copy()))
+        self.assertNotEqual(P.matrix_content_hash(M1), P.matrix_content_hash(M2))
+        self.assertEqual(len(P.matrix_content_hash(M1)), 64)
+
+    def test_matrix_content_hash_is_shape_sensitive(self):
+        flat = np.arange(6, dtype=float)
+        self.assertNotEqual(P.matrix_content_hash(flat.reshape(2, 3)),
+                            P.matrix_content_hash(flat.reshape(3, 2)))
+
+    def test_projector_requires_both_geometry_hashes(self):
+        src = (self.ND / "p4_project_4d.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertNotIn('if "edge_hash" in man:', code)      # no longer optional
+        self.assertIn('P.require("edge_hash" in man', code)
+        self.assertIn('P.require("bin_volume_hash" in man', code)
+        self.assertIn("bin-volume hash drift", code)
+        self.assertIn("4D mask/order hash drift", code)
+
+    def test_projection_receipt_records_m_contents_and_its_input(self):
+        src = (self.ND / "p4_project_4d.py").read_text()
+        self.assertIn("M_content_sha256", src)
+        self.assertIn("candidate_c5_sha256", src)             # binds WHICH candidate was projected
+
+
 class Repair4ReceiptSchema(unittest.TestCase):
     """REPAIR-4, verifier defect 2. The resume path accepted any ROOT plus any nonempty .done.
 

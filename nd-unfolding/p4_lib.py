@@ -192,7 +192,18 @@ def require_candidate_path(path):
     candidate subdir and MUST NOT match any adopted/protected token. Prevents both
     the round-2 self-rejection (candidate name containing '_final') and any write
     onto an adopted/central path."""
-    require(CANDIDATE_SUBDIR in path, f"candidate must be under {CANDIDATE_SUBDIR} (got {path})")
+    # repair-4 (defect 4e): this was a bare substring test, so any path merely CONTAINING the
+    # candidate directory passed -- including one that traverses back out of it, e.g.
+    # ".../standard/candidate/../../../products/5d/x.root". Normalize first (which collapses
+    # every "..") and then require the candidate directory to appear as a contiguous run of
+    # real path COMPONENTS, so containment is structural rather than textual.
+    norm = os.path.normpath(path)
+    require(".." not in norm.split(os.sep),
+            f"candidate path escapes via '..' after normalization (got {path} -> {norm})")
+    parts = norm.split(os.sep)
+    want = CANDIDATE_SUBDIR.split("/")
+    contained = any(parts[i:i + len(want)] == want for i in range(len(parts) - len(want) + 1))
+    require(contained, f"candidate must be under {CANDIDATE_SUBDIR} (got {path})")
     for t in _ADOPTED_TOKENS:
         require(t not in path, f"refusing candidate onto adopted/protected path (token {t!r})")
     return True
@@ -291,6 +302,32 @@ def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
     require(isinstance(rec["code_rev"], str) and rec["code_rev"],
             f"receipt {tag} has no code_rev")
     return True
+
+
+def cmask_order_hash_4d(mask):
+    """4D reported-mask + C-order fingerprint (repair-4, defect 5c).
+
+    `mask_order_hash` fails closed on GRID_NBINS, which is the 5D grid, so the 4D mask had no
+    hash helper and the projector compared only the reported COUNT. A count is not an ordering:
+    a permuted 4D mask with the same population passed. Same construction as the 5D helper --
+    C-order indices of the selected bins -- so the two are comparable by eye in a manifest.
+    Deliberately NOT size-pinned: the 4D grid is a marginal of the 5D one and the standard lane
+    has no pinned canonical 4D target (see RUNBOOK-20260807 §7.4)."""
+    idx = np.nonzero(np.asarray(mask))[0].astype(np.int64)
+    require(idx.size > 0, "4D reported mask is empty")
+    return hashlib.sha256(idx.tobytes() + b"|C").hexdigest()
+
+
+def matrix_content_hash(M):
+    """Deterministic digest of a matrix's CONTENTS (repair-4, defect 5d).
+
+    The projection receipt recorded only `M_shape`, which two different projectors of the same
+    dimensions share. Hashes C-contiguous float64 bytes plus the shape, so a changed weight is
+    caught and a transposed/reshaped M cannot collide with the original."""
+    A = np.ascontiguousarray(np.asarray(M, dtype=np.float64))
+    h = hashlib.sha256()
+    h.update(repr(A.shape).encode()); h.update(b"|C|f8|"); h.update(A.tobytes())
+    return h.hexdigest()
 
 
 def require_exact_endpoint_tags(tags):

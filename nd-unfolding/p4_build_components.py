@@ -19,7 +19,7 @@ and in JSON: every retained pure component key + content hash + source, active t
 all identities. Candidate path only. NOT run in the repair round (candidate construction is
 gated on the standard-p4-verifier PASS).
 """
-import argparse, json, sys
+import argparse, json, os, sys
 import numpy as np
 import p4_lib as P
 from uq_math import mat_covariance
@@ -147,8 +147,11 @@ def main():
             "reported_mask_hash": man["mask5d_hash"], "n_reported": man["mask5d_nreported"],
             "identities": {"C_syst_eq_sum_bands": True, "C_combined_eq_syst_stat_ml": True,
                            "active_only_eq_sum5": True, "pure_addition": True}}
-    json.dump(prov, open(a.out_manifest, "w"), indent=2)
-
+    # repair-4 (defect 4b): the manifest used to be written HERE, before the candidate ROOT
+    # existed and with no candidate hash in it -- so a manifest could describe a candidate that
+    # was never completed, and nothing bound the two. Inverted below: candidate first, then the
+    # manifest LAST carrying the candidate's sha256 and key inventory. Same receipt-last
+    # discipline the unfold launcher already uses.
     import ROOT
     n = Ccomb_active.shape[0]; fo = ROOT.TFile.Open(a.out, "RECREATE")
     def wr(name, C, title):
@@ -162,6 +165,16 @@ def main():
     wr(P.CANDIDATE_SYST_KEY, Csyst_active, "candidate C_syst (retained + active)")
     wr(P.CANDIDATE_TOTAL_KEY, Ccomb_active, "candidate full total (C_syst + stat + ML)")
     fo.Close()
+    # candidate is now published; bind it into the manifest and write that LAST
+    written_keys = ([P.candidate_band_key(b) for b in P.BANDS]
+                    + [P.CANDIDATE_ACTIVE_TOTAL_KEY, P.CANDIDATE_SYST_KEY, P.CANDIDATE_TOTAL_KEY])
+    prov["candidate"] = os.path.abspath(a.out)
+    prov["candidate_sha256"] = P.sha256_file(a.out)
+    prov["candidate_keys"] = written_keys
+    prov["candidate_total_key"] = P.CANDIDATE_TOTAL_KEY
+    tmp_manifest = a.out_manifest + ".tmp"
+    json.dump(prov, open(tmp_manifest, "w"), indent=2)
+    os.replace(tmp_manifest, a.out_manifest)        # atomic; manifest-last
     print(f"CANDIDATE {a.out}: sqrt_tr_syst={np.sqrt(max(0,np.trace(Csyst_active))):.4e} "
           f"sqrt_tr_full={np.sqrt(max(0,np.trace(Ccomb_active))):.4e} bands={len(all_bands)} "
           f"retained={len(retained)}; prov -> {a.out_manifest}")
