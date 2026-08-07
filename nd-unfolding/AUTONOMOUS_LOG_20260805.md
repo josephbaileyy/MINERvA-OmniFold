@@ -1631,3 +1631,30 @@ filed against `combine_cstat_bkgsub_100rep.py` in the previous entry.
 Everything else verified quietly and unchanged: cluster at `9fbeeaf`, ep32's driver and preflight sha
 pins still match the launcher's submission-time values, both watches armed with `unreliable=0`, archived
 08-06 products intact.
+
+### Quiet cycle at 12:49Z — no mail sent, and the reason is the point
+
+`squeue`/`sacct` this turn: `56445883` (re-run) and `56431651` (ep32) both still PENDING, cron ticked
+12:45:08Z. No new mail — newest inbound is still the 20:29Z GBDT question, answered. Nothing finished,
+nothing unblocked.
+
+**Deliberately did NOT mail.** The brief's wrap-up branch says to mail a short status and stop, but I sent
+a full status 17 minutes ago covering exactly this state and nothing has changed since. A second mail
+saying "still pending" is the spam the brief prohibits, so the next mail waits for a job to land.
+
+**One piece of the repo's own bookkeeping was genuinely owed.** `docs/OPEN_ITEMS.md` is the canonical live
+to-do per CLAUDE.md's routing table, and a fresh session reading it would not have learned that full-event
+extraction is BLOCKED, that the nominal is being re-trained as `56445883`, or that step 1 under-achieves by
+32%. That is exactly the BEN-037 failure mode — the doc a session actually reads asserting stale state.
+Added one line per finding with a pointer to the finding, not the analysis, per the write-once convention.
+
+**Also closed a dead pointer I had knowingly created.** `GATE_AB_PUSH_PROVENANCE.json` and
+`STEP1_DECOMPOSITION.json` both name the nominal artifact at its original path, which is now under
+`superseded-20260806/`. I left the receipts where they are on purpose so the citations in two findings keep
+resolving, so the correction travels with the finding as a dated note rather than by editing a receipt —
+editing a record of what was measured would be the wrong repair.
+
+Nothing else in this lane is actionable and I am not inventing work. When either job dispatches its
+durable watch fires independently of this session; the re-run's post-landing plan is already fixed — re-run
+Gate A/B (writing to a run-specific receipt path so the superseded one is not clobbered), confirm B(i) now
+passes, then redo the step-1 decomposition on faithful checkpoints.
