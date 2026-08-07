@@ -83,9 +83,14 @@ class P4Config:
         self.universe = universe          # MUST be None for active endpoints
         self.bkg_mode = bkg_mode          # G-1: never inherited from the driver default
     def as_dict(self):
+        # repair-4 (D3a): `full_phase_space_reported_grid` used to be bolted onto
+        # man["config"] in p4_evidence.py AFTER config_hash was computed, so the recorded hash
+        # did not cover the recorded configuration -- the declared config was not hash-bound.
+        # It belongs in the config object, where as_dict() and hash() both see it.
         return {"axes": self.axes, "iters": self.iters, "seed": self.seed,
                 "estimator": self.estimator, "use_weights": self.use_weights,
-                "universe": self.universe, "bkg_mode": self.bkg_mode}
+                "universe": self.universe, "bkg_mode": self.bkg_mode,
+                "full_phase_space_reported_grid": GRID_NBINS}
     def hash(self):
         return hashlib.sha256(json.dumps(self.as_dict(), sort_keys=True).encode()).hexdigest()
     def footing(self):
@@ -245,6 +250,56 @@ def validate_orchestrator_merged_receipt(recdir, live_stat):
         require(lsz == sz and int(lmt) == mt, f"live size/mtime drift for {p}")
     digest = hashlib.sha256("\n".join(sorted(f"{merged[p]}  {p}" for p in merged)).encode()).hexdigest()
     return {"merged_sha256": merged, "hash_list_digest": digest, "n": len(merged)}
+
+
+# ------------------------------------------- endpoint receipt schema (repair-4, defect 2)
+# Before repair-4 the resume path skipped an endpoint on `[[ -s ROOT && -s RECEIPT ]]` plus a
+# ROOT-key/dimension check. Receipt tag, ROOT sha, merged sha, central sha, config hash and
+# source provenance were never read, and the legacy-attest receipt did not even record the
+# merged/central hashes -- so "resumable" meant "any nonempty file pair is accepted forever".
+# That is the same size-as-completion family as BEN-023 and KNOWN_ISSUES #20(c).
+#
+# NOTE ON COST: the merged inputs are 53.8 GB each (538 GB total). This validator therefore
+# does NOT re-hash them; it compares the receipt's recorded merged sha against the
+# owner-neutral orchestrator receipt's committed hash, whose own live size+integer-mtime check
+# is what detects a changed input. Same reuse p4_evidence.py already relies on. The ROOT and
+# central files are ~480 KB and ARE re-hashed live on every skip.
+RECEIPT_MODES = ("produced", "legacy-attested")
+RECEIPT_REQUIRED_KEYS = ("tag", "mode", "root_sha256", "merged_sha256", "central5d_sha256",
+                         "config_hash", "bkg_mode", "code_rev", "t")
+
+
+def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
+                              central5d_sha256, config_hash, bkg_mode):
+    """Fail closed unless the receipt is complete AND every recorded identity matches the
+    live/committed one. Returns True, or raises P4GateError naming the first mismatch."""
+    require(isinstance(rec, dict) and rec, f"receipt for {tag} is not a JSON object")
+    missing = [k for k in RECEIPT_REQUIRED_KEYS if k not in rec]
+    require(not missing, f"receipt {tag} missing required keys {missing} (incomplete legacy format)")
+    require(rec["mode"] in RECEIPT_MODES, f"receipt {tag} unknown mode {rec['mode']!r}")
+    require(rec["tag"] == tag, f"receipt tag {rec['tag']!r} != {tag!r} (receipt/ROOT pair mismatch)")
+    require(rec["root_sha256"] == root_sha256,
+            f"receipt {tag} root_sha256 drift: recorded {rec['root_sha256']} vs live {root_sha256}")
+    require(rec["merged_sha256"] == merged_sha256,
+            f"receipt {tag} merged_sha256 drift vs the orchestrator receipt")
+    require(rec["central5d_sha256"] == central5d_sha256,
+            f"receipt {tag} central5d_sha256 drift (the central moved under this endpoint)")
+    require(rec["config_hash"] == config_hash,
+            f"receipt {tag} config_hash drift: produced under a different unfold configuration")
+    require(rec["bkg_mode"] == bkg_mode,
+            f"receipt {tag} bkg_mode {rec['bkg_mode']!r} != declared {bkg_mode!r}")
+    require(isinstance(rec["code_rev"], str) and rec["code_rev"],
+            f"receipt {tag} has no code_rev")
+    return True
+
+
+def require_exact_endpoint_tags(tags):
+    """Reject BOTH missing and EXTRA tags. The old inventory only looked for the ten expected
+    names, so an eleventh product in the directory was invisible to it."""
+    got, want = set(tags), {f"{b}_{e}" for b in BANDS for e in ENDPOINTS}
+    require(not (want - got), f"missing endpoint tags: {sorted(want - got)}")
+    require(not (got - want), f"unexpected extra endpoint tags: {sorted(got - want)}")
+    return True
 
 
 def sha256_file(path, _bufsz=1 << 20):

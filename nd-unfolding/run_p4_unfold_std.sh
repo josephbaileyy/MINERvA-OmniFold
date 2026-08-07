@@ -42,10 +42,28 @@ unfold_one(){
   local MERGED="${MERGEDIR}/runEventLoopOmniFold_5D_MEFHC_active_${tag}.root"
   local OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${tag}.root"
   local REC="${OUT}.done"
-  if [[ -s "${OUT}" && -s "${REC}" ]] && valid_root "${OUT}"; then echo "[unfold] SKIP ${tag} (receipt+valid)"; return 0; fi
+  # D2a: the skip is now CONTENT-validating. A ROOT plus any nonempty .done used to be enough;
+  # p4_check_receipt.py re-derives root/central/config/bkg_mode identities live and compares the
+  # merged sha against the orchestrator receipt. A reject falls through and re-runs the endpoint.
+  if [[ -s "${OUT}" && -s "${REC}" ]] && valid_root "${OUT}"; then
+    if RCHK=$(python3 p4_check_receipt.py --receipt "${REC}" --tag "${tag}" \
+                --root "${OUT}" --merged "${MERGED}" 2>&1); then
+      echo "[unfold] SKIP ${tag} (receipt validated)"; return 0
+    fi
+    echo "[unfold] STALE ${tag} -> re-running: ${RCHK}"
+    rm -f "${REC}"                       # D2: never leave a stale ROOT/receipt pair behind
+  fi
   if [[ -s "${OUT}" && ! -s "${REC}" ]] && valid_root "${OUT}" && [[ -f "${MANIFEST}" ]] && attest "${OUT}" "${tag}"; then
-    printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "$(sha "${OUT}")" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"
+    # D2b: the legacy receipt used to omit merged/central provenance, so an attested endpoint
+    # was permanently less provable than a produced one. It now carries the same fields.
+    local AMH ACH
+    AMH=$(python3 -c "import p4_check_receipt as C;print(C.committed_merged_sha('${MERGED}'))") || {
+      echo "[unfold] ABORT ${tag} cannot resolve committed merged sha"; return 6; }
+    ACH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
+    if ! { printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","t":"%s"}\n' \
+      "${tag}" "$(sha "${OUT}")" "${AMH}" "${ACH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
+      echo "[unfold] FAIL ${tag} attest receipt publication failed"; rm -f "${REC}.tmp"; return 7
+    fi
     echo "[unfold] ATTEST ${tag} (legacy ROOT sha256 == manifest)"; return 0
   fi
   [[ ! -s "${MERGED}" ]] && { echo "[unfold] ABORT ${tag} merged missing"; return 3; }
@@ -57,8 +75,13 @@ unfold_one(){
        > "${OUTDIR}/unfold_${tag}.log" 2>&1 && valid_root "${TMP}"; then
     local MH CH RH; MH=$(sha "${MERGED}"); CH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
     mv -f "${TMP}" "${OUT}"; RH=$(sha "${OUT}")                       # atomic ROOT publish
-    printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"  # receipt LAST
+    # D2c: this used to be an unchecked `printf … && mv`, so a failed receipt write still fell
+    # through to `echo DONE` and returned 0 -- a published ROOT with no receipt, reported as
+    # success. The write is now the function's success condition.
+    if ! { printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","t":"%s"}\n' \
+      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
+      echo "[unfold] FAIL ${tag} receipt publication failed after ROOT publish"; rm -f "${REC}.tmp"; return 8
+    fi
     echo "[unfold] DONE ${tag}"
   else
     echo "[unfold] FAIL ${tag} (see unfold_${tag}.log)"; rm -f "${TMP}"; return 4
@@ -78,5 +101,17 @@ missing=0
 for BAND in "${BANDS[@]}"; do for EP in 0 1; do
   t="${BAND}_${EP}"; [[ -s "${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${t}.root" && -s "${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${t}.root.done" ]] || { echo "[p4-unfold] MISSING published ${t}"; missing=1; }
 done; done
-if [[ "${fail}" -ne 0 || "${missing}" -ne 0 ]]; then echo "[p4-unfold] FAIL-CLOSED (worker fail or incomplete inventory)"; exit 5; fi
+# D2d: the loop above only asks whether the ten EXPECTED tags exist, so an eleventh product in
+# the directory was invisible to it. Reject extras as well as missing -- an unexplained endpoint
+# in a publication namespace is exactly the state this lane spent three weeks in.
+extras=0
+LIVE_TAGS=$(ls "${OUTDIR}"/5d_xsec_MEFHC_5iter_lgbm_uni_full_*.root 2>/dev/null \
+  | sed -e 's#.*uni_full_##' -e 's#\.root$##' | sort)
+python3 -c "
+import sys; sys.path.insert(0,'.')
+import p4_lib as P
+tags=[t for t in sys.stdin.read().split() if t]
+P.require_exact_endpoint_tags(tags)
+" <<< "${LIVE_TAGS}" || { echo "[p4-unfold] EXTRA/UNEXPECTED endpoint products present"; extras=1; }
+if [[ "${fail}" -ne 0 || "${missing}" -ne 0 || "${extras}" -ne 0 ]]; then echo "[p4-unfold] FAIL-CLOSED (worker fail, incomplete inventory, or extra products)"; exit 5; fi
 echo "[p4-unfold] COMPLETE 10/10 published+receipted $(date -u +%T)"

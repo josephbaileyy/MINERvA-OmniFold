@@ -151,14 +151,33 @@ for b in P.BANDS:
              f"merged {tag} completeness signal_reco!=truth_denom")
         need(rec["mcPOT"] and rec["mcPOT"] > 0 and rec["dataPOT"] and rec["dataPOT"] > 0, f"merged {tag} POT invalid")
         need(rec["band_meta"] == b, f"merged {tag} endpoint identity mismatch ({rec['band_meta']})")
+        # D3d: `idx_meta` was recorded and never asserted, so only the BAND half of each
+        # (band,index) identity was ever proven -- a +1sigma file sitting at the -1sigma path
+        # would have passed. Assert the index too, tolerating str/float stamps.
+        need(rec["idx_meta"] is not None and int(float(rec["idx_meta"])) == int(ep),
+             f"merged {tag} endpoint INDEX mismatch (stamped {rec['idx_meta']!r}, expected {ep})")
         need(rec["nTruthOnlyMisses"] is not None, f"merged {tag} native-miss meta missing")
         need(all(cen[k] is not None for k in cen), f"merged {tag} census incomplete")
-        if b in NONZERO_MIG: need(selmig > 0, f"merged {tag} expected NONZERO selection migration, got {selmig}")
+        # D3d: NONZERO_MIG was enforced; ZERO_SEL was declared at the top of this file and
+        # referenced by NO check -- a dead constant. So the "bin-migration-only" claim for the
+        # three muon bands was documentation, not a gate, and a band that silently started
+        # migrating events would have been recorded and accepted. Both directions now bind.
+        if b in NONZERO_MIG:
+            need(selmig > 0, f"merged {tag} expected NONZERO selection migration, got {selmig}")
+        elif b in ZERO_SEL:
+            need(selmig == 0,
+                 f"merged {tag} is declared bin-migration-only but shows selection migration {selmig}")
+        else:
+            blockers.append(f"merged {tag} band {b} is in neither NONZERO_MIG nor ZERO_SEL")
         maudit[tag] = rec
 
 # ---- config + hash + footing ----
+# D3a: hash the COMPLETE config. `full_phase_space_reported_grid` used to be added here, after
+# config_hash was already computed, so the hash did not cover what the manifest declared. It is
+# now a field of P4Config, so as_dict() and hash() cannot disagree about what was configured.
 man["config"] = _cfg.as_dict(); man["config_hash"] = _cfg.hash()
-man["config"]["full_phase_space_reported_grid"] = P.GRID_NBINS
+P.require("full_phase_space_reported_grid" in man["config"],
+          "config is missing the reported-grid field it is supposed to bind")
 # G-1: the footing is now an ASSERTED field, not an inference from a silent driver branch.
 # Nested (producer shape) so a consumer reading it flat fails loudly instead of silently
 # seeing None on every key -- the exact failure BEN-040 records in the sibling FPS chain.

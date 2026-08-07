@@ -538,5 +538,173 @@ class Repair4DriverContract(unittest.TestCase):
                         "the verifier gate must precede component construction")
 
 
+class Repair4EvidenceBindings(unittest.TestCase):
+    """REPAIR-4, verifier defect 3 (the two parts that are pure logic and testable ROOT-free)."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    def test_config_hash_covers_the_reported_grid(self):
+        """D3a: the grid field used to be added to man["config"] AFTER config_hash was
+        computed, so the recorded hash did not cover the recorded configuration."""
+        c = P.P4Config()
+        self.assertIn("full_phase_space_reported_grid", c.as_dict())
+        self.assertEqual(c.as_dict()["full_phase_space_reported_grid"], P.GRID_NBINS)
+        # and it is inside the hash, not bolted on beside it
+        import hashlib, json
+        expect = hashlib.sha256(json.dumps(c.as_dict(), sort_keys=True).encode()).hexdigest()
+        self.assertEqual(c.hash(), expect)
+
+    def test_evidence_no_longer_mutates_config_after_hashing(self):
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = [l for l in src.splitlines() if not l.lstrip().startswith("#")]
+        joined = "\n".join(code)
+        self.assertNotIn('man["config"]["full_phase_space_reported_grid"]', joined)
+
+    def test_zero_sel_is_actually_enforced(self):
+        """D3d: ZERO_SEL was declared and referenced by no check -- the bin-migration-only
+        claim for the three muon bands was documentation, not a gate."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("ZERO_SEL", code)
+        self.assertIn("elif b in ZERO_SEL", code)
+        self.assertIn("selmig == 0", code)
+
+    def test_endpoint_index_is_asserted(self):
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("idx_meta", code)
+        self.assertIn("endpoint INDEX mismatch", code)
+
+    def test_the_two_band_sets_partition_the_five_bands(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("_ev", self.ND / "p4_evidence.py")
+        # do not import (needs ROOT); read the literals instead
+        src = (self.ND / "p4_evidence.py").read_text()
+        import re
+        nz = set(re.findall(r'NONZERO_MIG = \{([^}]*)\}', src)[0].replace('"', '').split(", "))
+        zs = set(re.findall(r'ZERO_SEL\s*= \{([^}]*)\}', src)[0].replace('"', '').split(", "))
+        nz = {s.strip() for s in nz if s.strip()}
+        zs = {s.strip() for s in zs if s.strip()}
+        self.assertEqual(nz | zs, set(P.BANDS), "the two sets must cover exactly the five bands")
+        self.assertEqual(nz & zs, set(), "a band cannot be in both sets")
+
+
+class Repair4ReceiptSchema(unittest.TestCase):
+    """REPAIR-4, verifier defect 2. The resume path accepted any ROOT plus any nonempty .done.
+
+    The receipt fixture here is built by running the launcher's OWN `printf` format string,
+    extracted from run_p4_unfold_std.sh at test time -- not hand-written to match the reader.
+    If the producer's field list changes, this fixture changes with it, and a reader that
+    drifted from the writer fails here. That inversion (fixture shaped like the consumer) is
+    precisely BEN-040, in this same chain."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    GOOD = dict(tag="BeamAngleX_0", root_sha256="a" * 64, merged_sha256="b" * 64,
+                central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity")
+
+    def _producer_receipt(self, mode="produced", **over):
+        """Render a receipt through the launcher's real format string."""
+        import re, subprocess, json
+        sh = (self.ND / "run_p4_unfold_std.sh").read_text()
+        m = re.search(r"printf '(\{\"tag\".*?\}\\n)'", sh, re.S)
+        self.assertIsNotNone(m, "could not extract the launcher's receipt format")
+        fmt = m.group(1)
+        vals = dict(self.GOOD); vals.update(over)
+        # positional order matches the launcher's own argument order
+        args = [vals["tag"], vals["root_sha256"], vals["merged_sha256"], vals["central5d_sha256"],
+                vals["config_hash"], vals["bkg_mode"], "deadbeef", "2026-08-07T00:00:00Z"]
+        if mode == "legacy-attested":
+            fmt = fmt.replace('"mode":"produced"', '"mode":"legacy-attested"')
+        out = subprocess.run(["printf", fmt, *args], capture_output=True, text=True).stdout
+        return json.loads(out)
+
+    def test_producer_receipt_has_every_required_key(self):
+        rec = self._producer_receipt()
+        for k in P.RECEIPT_REQUIRED_KEYS:
+            self.assertIn(k, rec, f"the real producer omits required key {k}")
+
+    def test_validator_accepts_the_real_producer_output(self):
+        rec = self._producer_receipt()
+        self.assertTrue(P.validate_endpoint_receipt(rec, **self.GOOD))
+
+    def test_legacy_attested_receipt_now_carries_merged_and_central(self):
+        """D2b: the legacy receipt used to omit these, making an attested endpoint permanently
+        less provable than a produced one."""
+        rec = self._producer_receipt(mode="legacy-attested")
+        self.assertEqual(rec["mode"], "legacy-attested")
+        self.assertIn("merged_sha256", rec)
+        self.assertIn("central5d_sha256", rec)
+        self.assertTrue(P.validate_endpoint_receipt(rec, **self.GOOD))
+
+    def test_incomplete_legacy_format_is_rejected(self):
+        rec = self._producer_receipt()
+        for drop in ("merged_sha256", "central5d_sha256", "bkg_mode", "config_hash", "tag"):
+            bad = {k: v for k, v in rec.items() if k != drop}
+            with self.assertRaises(P4GateError, msg=f"missing {drop} accepted"):
+                P.validate_endpoint_receipt(bad, **self.GOOD)
+
+    def test_every_identity_drift_is_rejected(self):
+        rec = self._producer_receipt()
+        for field, kw in (("root_sha256", "root_sha256"), ("merged_sha256", "merged_sha256"),
+                          ("central5d_sha256", "central5d_sha256"), ("config_hash", "config_hash"),
+                          ("bkg_mode", "bkg_mode")):
+            drifted = dict(rec); drifted[field] = "z" * 64 if field != "bkg_mode" else "negweight"
+            with self.assertRaises(P4GateError, msg=f"{field} drift accepted"):
+                P.validate_endpoint_receipt(drifted, **self.GOOD)
+
+    def test_receipt_root_pair_mismatch_is_rejected(self):
+        rec = self._producer_receipt(tag="BeamAngleY_1")
+        with self.assertRaises(P4GateError):
+            P.validate_endpoint_receipt(rec, **self.GOOD)      # receipt belongs to another endpoint
+
+    def test_unknown_mode_rejected(self):
+        rec = self._producer_receipt(); rec["mode"] = "hand-written"
+        with self.assertRaises(P4GateError):
+            P.validate_endpoint_receipt(rec, **self.GOOD)
+
+    # ---------- D2d: extras as well as missing ----------
+    def test_exact_tag_set_rejects_missing_and_extra(self):
+        full = [f"{b}_{e}" for b in P.BANDS for e in P.ENDPOINTS]
+        self.assertTrue(P.require_exact_endpoint_tags(full))
+        with self.assertRaises(P4GateError):
+            P.require_exact_endpoint_tags(full[:-1])                    # missing
+        with self.assertRaises(P4GateError):
+            P.require_exact_endpoint_tags(full + ["BeamAngleX_2"])      # extra
+        with self.assertRaises(P4GateError):
+            P.require_exact_endpoint_tags(full + ["SomeOtherBand_0"])   # foreign product
+
+    # ---------- D2a/D2c: the launcher wires them ----------
+    def test_launcher_uses_the_receipt_gate_and_clears_stale_pairs(self):
+        sh = (self.ND / "run_p4_unfold_std.sh").read_text()
+        self.assertIn("p4_check_receipt.py", sh)         # skip is content-validating
+        self.assertIn("STALE", sh)                       # and a reject re-runs
+        self.assertIn('rm -f "${REC}"', sh)              # leaving no stale ROOT/receipt pair
+
+    def test_launcher_propagates_receipt_write_failure(self):
+        sh = (self.ND / "run_p4_unfold_std.sh").read_text()
+        self.assertIn("receipt publication failed after ROOT publish", sh)
+        self.assertIn("return 8", sh)
+
+    def test_receipt_checker_rejects_absent_and_malformed(self):
+        import subprocess, tempfile, os
+        with tempfile.TemporaryDirectory() as td:
+            missing = os.path.join(td, "nope.done")
+            r = subprocess.run([sys.executable, str(self.ND / "p4_check_receipt.py"),
+                                "--receipt", missing, "--tag", "BeamAngleX_0",
+                                "--root", missing, "--merged", missing],
+                               capture_output=True, text=True, cwd=str(self.ND))
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("RECEIPT-REJECT", r.stdout + r.stderr)
+            bad = os.path.join(td, "bad.done")
+            open(bad, "w").write("not json")
+            r2 = subprocess.run([sys.executable, str(self.ND / "p4_check_receipt.py"),
+                                 "--receipt", bad, "--tag", "BeamAngleX_0",
+                                 "--root", bad, "--merged", bad],
+                                capture_output=True, text=True, cwd=str(self.ND))
+            self.assertNotEqual(r2.returncode, 0)
+            self.assertIn("RECEIPT-REJECT", r2.stdout + r2.stderr)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
