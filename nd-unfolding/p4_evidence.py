@@ -33,8 +33,10 @@ OBS = {"central5d": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a95282
        "endpoint_manifest": "af568b4a2bb2f08e66e7a4380cb0c5b9af72a37ddec94a5b3297c2f50d999c54",
        "central4d": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
        "mask4d": "c977c643d4017a3cc909f85e7f2725b4a96a0060a5b79b56294c231290039d25"}
-NONZERO_MIG = {"BeamAngleX", "BeamAngleY"}          # selection-migration bands
-ZERO_SEL    = {"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"}  # bin-migration-only
+# repair-5: single-sourced in p4_lib so this file and the validator cannot disagree about
+# which bands are expected to migrate.
+NONZERO_MIG = P.NONZERO_MIGRATION_BANDS
+ZERO_SEL    = P.ZERO_MIGRATION_BANDS
 
 def flat(path, key="hXSecND_flat"):
     f = ROOT.TFile.Open(path); h = f.Get(key)
@@ -243,13 +245,30 @@ man["source_blobs"] = {k: _committed_blob(v) for k, v in SRC.items()}
 man["source_commits"] = {k: _blob_introducing_commit(v, man["source_blobs"][k])
                          for k, v in SRC.items()}
 # D3b: refuse to record a committed blob while a DIFFERENT version is what would actually run.
+# REPAIR-5 (defect 3): the previous guard read `need(_w is None or _c == _w, ...)`, which is
+# FAIL-OPEN -- `_worktree_blob` returns None when `git hash-object` fails, i.e. when the bound
+# source has been DELETED, so deleting a file passed the dirty check instead of blocking it.
+# The None case is now a blocker, and "absent from the working tree" is distinguished from
+# "git could not be run", because those need different fixes.
 for _k, _rel in SRC.items():
-    _c, _w = man["source_blobs"][_k], _worktree_blob(_rel)
+    _c = man["source_blobs"][_k]
+    _abs = os.path.join(REPO, _rel)
     need(_c is not None, f"source {_k} ({_rel}) is not committed at HEAD; provenance unprovable")
-    need(_w is None or _c == _w,
-         f"source {_k} ({_rel}) is DIRTY: working tree {_w} != committed {_c}. Commit or revert "
-         f"before generating evidence -- a manifest that records the committed blob while a "
-         f"different file runs is the 2026-07 dirty-OmniFold absorption (defect 3b).")
+    if not os.path.exists(_abs):
+        blockers.append(f"source {_k} ({_rel}) is committed but ABSENT from the working tree; "
+                        f"evidence cannot claim a blob for a file that is not there")
+    else:
+        _w = _worktree_blob(_rel)
+        need(_w is not None,
+             f"source {_k} ({_rel}) exists but `git hash-object` failed; cannot prove the working "
+             f"tree matches the committed blob (is git available in this environment?)")
+        # NOTE the missing `_w is None or` disjunct: that is what made this fail-OPEN, and it is
+        # deliberately gone. `need` does not short-circuit, so an unresolvable _w reaches here as
+        # `_c == None` -> False -> blocker, which is the correct direction.
+        need(_c == _w,
+             f"source {_k} ({_rel}) is DIRTY: working tree {_w} != committed {_c}. Commit or revert "
+             f"before generating evidence -- a manifest that records the committed blob while a "
+             f"different file runs is the 2026-07 dirty-OmniFold absorption (defect 3b).")
     need(man["source_commits"][_k] is not None,
          f"source {_k} ({_rel}): cannot find the commit that introduced its recorded blob")
 _bin = f"{REPO}/MINERvA101/opt/bin/runEventLoopOmniFold"

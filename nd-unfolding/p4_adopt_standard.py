@@ -31,7 +31,21 @@ def main():
                       ("ml_sha256", prov["ml_cov"].split(":")[0])):
         P.require(os.path.exists(path), f"expected input missing: {path}")
         P.require(P.sha256_file(path) == prov[key], f"input identity drift: {path}")
-    P.require(prov["identities"].get("pure_addition"), "component manifest is not pure-addition")
+    # repair-5 (pattern sweep): this read `identities.pure_addition` and tested it for
+    # truthiness, but the builder wrote that key as a literal `True` -- so the strictest gate in
+    # the chain was reading a constant and calling it evidence. The builder now records MEASURED
+    # errors; this consumer checks them against the declared tolerance instead of a boolean.
+    _ids = prov.get("identities", {})
+    P.require(isinstance(_ids, dict) and _ids, "component manifest records no identities")
+    P.require("pure_addition" not in _ids,
+              "component manifest carries the retired self-asserted `pure_addition` flag; it "
+              "predates repair-5, when the identities were literals rather than measurements")
+    _rtol = float(_ids.get("identity_rtol", 1e-9))
+    for _k in ("active_only_eq_sum5_relerr", "C_combined_eq_syst_stat_ml_relerr",
+               "full_total_residual_eq_stat_plus_ml_relerr"):
+        P.require(_k in _ids, f"component manifest missing measured identity {_k}")
+        P.require(float(_ids[_k]) <= _rtol,
+                  f"component manifest records a FAILING identity {_k}={_ids[_k]} > {_rtol}")
     # reject aliasing: out must differ from candidate and every input (by realpath)
     reals = {os.path.realpath(p) for p in (a.candidate, prov["support_family"],
                                            prov["stat_cov"].split(":")[0], prov["ml_cov"].split(":")[0])}

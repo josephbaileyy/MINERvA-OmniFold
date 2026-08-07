@@ -225,7 +225,7 @@ class IntegrationCLI(unittest.TestCase):
                                  "--manifest", "/dev/null", "--out", out])
             self.assertNotEqual(rc, 0)
             self.assertNotIn("unrecognized arguments", err)   # would mean we never reached the guard
-            self.assertIn("candidate must be under", err)     # the guard we are actually testing
+            self.assertIn("candidate must resolve inside", err)  # the guard we are actually testing
             self.assertFalse(os.path.exists(f"{self.ND}/{out}"))
 
 
@@ -603,17 +603,18 @@ class Repair4EvidenceBindings(unittest.TestCase):
         self.assertIn("NOT proof that this binary produced", src)
 
     def test_the_two_band_sets_partition_the_five_bands(self):
-        import importlib.util
-        spec = importlib.util.spec_from_file_location("_ev", self.ND / "p4_evidence.py")
-        # do not import (needs ROOT); read the literals instead
-        src = (self.ND / "p4_evidence.py").read_text()
-        import re
-        nz = set(re.findall(r'NONZERO_MIG = \{([^}]*)\}', src)[0].replace('"', '').split(", "))
-        zs = set(re.findall(r'ZERO_SEL\s*= \{([^}]*)\}', src)[0].replace('"', '').split(", "))
-        nz = {s.strip() for s in nz if s.strip()}
-        zs = {s.strip() for s in zs if s.strip()}
-        self.assertEqual(nz | zs, set(P.BANDS), "the two sets must cover exactly the five bands")
-        self.assertEqual(nz & zs, set(), "a band cannot be in both sets")
+        """repair-5: the sets are single-sourced in p4_lib now (they were duplicated in
+        p4_evidence.py and the validator, one edit away from disagreeing)."""
+        nz, zs = P.NONZERO_MIGRATION_BANDS, P.ZERO_MIGRATION_BANDS
+        self.assertEqual(set(nz) | set(zs), set(P.BANDS),
+                         "the two sets must cover exactly the five bands")
+        self.assertEqual(set(nz) & set(zs), set(), "a band cannot be in both sets")
+
+    def test_consumers_use_the_single_source(self):
+        for f in ("p4_evidence.py", "p4_validate_active_lateral.py"):
+            src = (self.ND / f).read_text()
+            self.assertIn("P.NONZERO_MIGRATION_BANDS", src, f)
+            self.assertIn("P.ZERO_MIGRATION_BANDS", src, f)
 
 
 class Repair4CandidateProvenance(unittest.TestCase):
@@ -678,15 +679,20 @@ class Repair4CandidateProvenance(unittest.TestCase):
         code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
         self.assertIn("std_component_manifest.json", code)
         self.assertIn("component manifest does not describe THIS candidate", code)
+        self.assertIn("retired self-asserted `pure_addition` flag", code)
         self.assertIn("component_manifest_bound", code)
 
-    def test_validator_recomputes_the_full_total_identity(self):
-        """D4f: the manifest asserted `pure_addition` as a boolean; the validator now proves
-        it from the candidate's own contents."""
+    def test_validator_proves_full_total_against_the_bound_stat_and_ml_blocks(self):
+        """REPAIR-5 (D4b/D6). This test previously asserted the presence of a PSD-only check
+        while being NAMED `..._recomputes_the_full_total_identity` -- a strong name over a weak
+        check, the same pattern as the argparse false positive it sat beside. The gate is now a
+        real comparison against the bound stat/ML blocks, and this asserts THAT."""
         src = (self.ND / "p4_validate_active_lateral.py").read_text()
         code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
-        self.assertIn("combined_minus_syst_is_psd", code)
-        self.assertIn("resid = Ccomb - Csyst", code)
+        self.assertNotIn("combined_minus_syst_is_psd", code)      # the retired weak gate
+        self.assertIn("full_total_identity_recomputed", code)
+        self.assertIn("check_full_total_identity", code)
+        self.assertIn("_bound_block", code)                        # stat/ML sha re-verified
 
     def test_validator_uses_the_shared_key_constants(self):
         src = (self.ND / "p4_validate_active_lateral.py").read_text()
@@ -698,6 +704,110 @@ class Repair4CandidateProvenance(unittest.TestCase):
         for tok in ("P.candidate_band_key(b)", "P.CANDIDATE_ACTIVE_TOTAL_KEY",
                     "P.CANDIDATE_SYST_KEY", "P.CANDIDATE_TOTAL_KEY"):
             self.assertIn(tok, src)
+
+
+class Repair5SelfGuards(unittest.TestCase):
+    """REPAIR-5. One assertion per defect that FAILS if the defect is reintroduced.
+
+    Every check here is a live computation, not a source-text grep, except where the thing
+    being guarded IS a source property. If any of these can be deleted and the four defects
+    still stay fixed, the defect was not really closed."""
+
+    ND = Path(__file__).resolve().parents[1]
+
+    # ---------- D3: dirty-source guard must fail closed on a DELETED source ----------
+    def test_deleted_bound_source_is_a_blocker_not_a_pass(self):
+        """The old guard read `_w is None or _c == _w`; _worktree_blob returns None when the
+        file is gone, so DELETING a bound source passed the dirty check."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertNotIn("_w is None or _c == _w", code)   # the fail-OPEN disjunct is gone
+        self.assertIn("need(_c == _w,", code)              # replaced by a direct comparison
+        self.assertIn("ABSENT from the working tree", code)
+        self.assertIn("os.path.exists(_abs)", code)
+        self.assertIn("`git hash-object` failed", code)   # git-unavailable distinguished
+
+    # ---------- D4a: containment must survive a symlink escape ----------
+    def test_symlink_escape_is_rejected(self):
+        """A symlink inside the candidate dir pointing out of it must not launder a path.
+        normpath could not see this; realpath can."""
+        import tempfile, os
+        cand_root = os.path.join(P.ND_ROOT, P.CANDIDATE_SUBDIR)
+        os.makedirs(cand_root, exist_ok=True)
+        with tempfile.TemporaryDirectory() as outside:
+            link = os.path.join(cand_root, "_p5_escape_probe")
+            if os.path.islink(link) or os.path.exists(link):
+                os.remove(link)
+            os.symlink(outside, link)
+            try:
+                with self.assertRaises(P4GateError):
+                    P.require_candidate_path(os.path.join(link, "out.root"))
+            finally:
+                os.remove(link)
+
+    def test_absolute_path_outside_the_repo_is_rejected(self):
+        """The verifier's exact bypass: the component sequence appearing anywhere."""
+        with self.assertRaises(P4GateError):
+            P.require_candidate_path("/evil/active_universe_5d/standard/candidate/out.root")
+        with self.assertRaises(P4GateError):
+            P.require_candidate_path("/tmp/active_universe_5d/standard/candidate/x.root")
+
+    def test_legitimate_candidate_paths_still_accepted(self):
+        """A guard that cannot PASS is as broken as one that cannot FAIL."""
+        for good in ("active_universe_5d/standard/candidate/std_final5_candidate.root",
+                     "nd-unfolding/active_universe_5d/standard/candidate/std5d.root"):
+            self.assertTrue(P.require_candidate_path(good), good)
+
+    # ---------- D4b: PSD is not the identity ----------
+    def test_psd_residual_that_is_not_stat_plus_ml_fails(self):
+        """THE self-guard for the overclaim. This residual is symmetric PSD -- so it passes the
+        repair-4 check -- but it is NOT stat+ML, so the real identity must reject it."""
+        Csyst = np.diag([4.0, 9.0])
+        Cstat = np.diag([1.0, 1.0])
+        Cml = np.diag([0.5, 0.5])
+        Ccomb_good = Csyst + Cstat + Cml
+        self.assertLessEqual(
+            P.check_full_total_identity(Ccomb_good, Csyst, Cstat, Cml, 1e-9), 1e-9)
+        # residual = diag(3,3): symmetric, PSD, and wrong
+        Ccomb_bad = Csyst + np.diag([3.0, 3.0])
+        P.check_symmetric_psd(Ccomb_bad - Csyst)          # the weak check still passes...
+        with self.assertRaises(P4GateError):              # ...the real identity does not
+            P.check_full_total_identity(Ccomb_bad, Csyst, Cstat, Cml, 1e-9)
+
+    def test_full_total_identity_catches_a_swapped_stat_block(self):
+        Csyst = np.diag([4.0, 9.0]); Cstat = np.diag([1.0, 2.0]); Cml = np.diag([0.5, 0.5])
+        Ccomb = Csyst + Cstat + Cml
+        with self.assertRaises(P4GateError):
+            P.check_full_total_identity(Ccomb, Csyst, np.diag([2.0, 1.0]), Cml, 1e-9)
+
+    # ---------- pattern 1: declared-but-uncompared ----------
+    def test_declared_migration_policy_is_compared_to_the_census(self):
+        """`check_merged_metadata` required migration_policy to be truthy and compared it to
+        nothing -- a declared policy no consumer checked."""
+        nz, zs = {"BeamAngleX"}, {"MuonResolution"}
+        self.assertTrue(P.check_declared_migration_policy(
+            "active-universe selection-complete", 4792, "BeamAngleX", nz, zs))
+        self.assertTrue(P.check_declared_migration_policy(
+            "bin-migration only", 0, "MuonResolution", nz, zs))
+        with self.assertRaises(P4GateError):      # claims migration, census says none
+            P.check_declared_migration_policy(
+                "active-universe selection-complete", 0, "BeamAngleX", nz, zs)
+        with self.assertRaises(P4GateError):      # declared bin-only but migrated
+            P.check_declared_migration_policy("bin-migration only", 17, "MuonResolution", nz, zs)
+        with self.assertRaises(P4GateError):      # migrates but policy does not claim it
+            P.check_declared_migration_policy("weights only", 4792, "BeamAngleX", nz, zs)
+        with self.assertRaises(P4GateError):      # empty policy
+            P.check_declared_migration_policy("", 0, "MuonResolution", nz, zs)
+
+    def test_identities_are_measured_not_asserted(self):
+        """The builder wrote four identity flags as literal `True`, and two consumers read them
+        as evidence. They are now measured errors, and the retired flag is rejected."""
+        b = (self.ND / "p4_build_components.py").read_text()
+        self.assertNotIn('"pure_addition": True', b)
+        self.assertIn("_relerr", b)
+        self.assertIn("must RECOMPUTE", b)
+        v = (self.ND / "p4_validate_active_lateral.py").read_text()
+        self.assertIn("retired self-asserted `pure_addition` flag", v)
 
 
 class Repair4ProjectionGeometry(unittest.TestCase):
@@ -764,7 +874,8 @@ class Repair4ReceiptSchema(unittest.TestCase):
     ND = Path(__file__).resolve().parents[1]
 
     GOOD = dict(tag="BeamAngleX_0", root_sha256="a" * 64, merged_sha256="b" * 64,
-                central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity")
+                central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity",
+                code_rev="e" * 40, unfold_blob="f" * 40)
 
     def _producer_receipt(self, mode="produced", **over):
         """Render a receipt through the launcher's real format string."""
@@ -776,7 +887,8 @@ class Repair4ReceiptSchema(unittest.TestCase):
         vals = dict(self.GOOD); vals.update(over)
         # positional order matches the launcher's own argument order
         args = [vals["tag"], vals["root_sha256"], vals["merged_sha256"], vals["central5d_sha256"],
-                vals["config_hash"], vals["bkg_mode"], "deadbeef", "2026-08-07T00:00:00Z"]
+                vals["config_hash"], vals["bkg_mode"], vals["code_rev"], vals["unfold_blob"],
+                "2026-08-07T00:00:00Z"]
         if mode == "legacy-attested":
             fmt = fmt.replace('"mode":"produced"', '"mode":"legacy-attested"')
         out = subprocess.run(["printf", fmt, *args], capture_output=True, text=True).stdout

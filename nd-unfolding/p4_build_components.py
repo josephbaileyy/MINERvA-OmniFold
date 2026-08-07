@@ -132,9 +132,17 @@ def main():
     Csyst_active = Csyst_active + active_only
     Ccomb_active = Csyst_active + C_stat + C_ml
     # identity gates: active-only == sum(5 active); full == retained + active + stat + ml
-    P.check_component_sum(active_only, active)                          # exactly 5 bands
+    _err_active5 = P.check_component_sum(active_only, active)           # exactly 5 bands
     full_check = sum(comp[b] for b in retained) + active_only + C_stat + C_ml
-    P.prove_identity(Ccomb_active, full_check, 1e-9, "candidate full == retained + active + stat + ML")
+    _err_full = P.prove_identity(Ccomb_active, full_check, 1e-9,
+                                 "candidate full == retained + active + stat + ML")
+    # repair-5 (pattern sweep): also prove the identity a DOWNSTREAM reader can re-derive from
+    # the candidate plus the stat/ML blocks, and record its measured error rather than a
+    # literal True. See the identities block below.
+    _err_syst = P.prove_identity(Csyst_active,
+                                 sum(comp[b] for b in retained) + active_only, 1e-9,
+                                 "C_syst == retained + active")
+    _err_fulltotal = P.check_full_total_identity(Ccomb_active, Csyst_active, C_stat, C_ml, 1e-9)
     P.check_symmetric_psd(Csyst_active); P.check_symmetric_psd(Ccomb_active)
 
     prov = {"support_family": a.support_family, "support_family_sha256": P.sha256_file(a.support_family),
@@ -145,8 +153,21 @@ def main():
             "component_content_hash": comp_hash, "active_traces": {b: float(np.trace(active[b])) for b in P.BANDS},
             "manifest": a.manifest, "manifest_endpoint_hash": man.get("endpoint_manifest_hash"),
             "reported_mask_hash": man["mask5d_hash"], "n_reported": man["mask5d_nreported"],
-            "identities": {"C_syst_eq_sum_bands": True, "C_combined_eq_syst_stat_ml": True,
-                           "active_only_eq_sum5": True, "pure_addition": True}}
+            # repair-5 (pattern sweep: "assert presence, never compare"). These four were
+            # written as LITERAL `True` -- the proofs ran just above, but the recorded values
+            # were constants, so a consumer reading the manifest learned nothing. Two consumers
+            # then tested `pure_addition` for truthiness (p4_validate_active_lateral.py and
+            # p4_adopt_standard.py), i.e. read a literal and treated it as evidence: a closed
+            # loop of self-assertion, the same shape as the P4_VERIFIER_PASS non-emptiness gate
+            # (KNOWN_ISSUES #21). Now each records the MEASURED max-relative error from the
+            # gate that produced it, and downstream must recompute rather than read.
+            "identities": {"active_only_eq_sum5_relerr": float(_err_active5),
+                           "C_syst_eq_retained_plus_active_relerr": float(_err_syst),
+                           "C_combined_eq_syst_stat_ml_relerr": float(_err_full),
+                           "full_total_residual_eq_stat_plus_ml_relerr": float(_err_fulltotal),
+                           "identity_rtol": 1e-9,
+                           "note": ("measured errors, not assertions; a consumer must RECOMPUTE "
+                                    "these from the candidate + stat/ML blocks, not read them")}}
     # repair-4 (defect 4b): the manifest used to be written HERE, before the candidate ROOT
     # existed and with no candidate hash in it -- so a manifest could describe a candidate that
     # was never completed, and nothing bound the two. Inverted below: candidate first, then the

@@ -31,6 +31,10 @@ CFG_HASH=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c
 # is a provenance change and a physics NO-OP: it must not move any output ROOT hash.
 BKG_MODE=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.bkg_mode)") || { echo "[p4-unfold] ABORT bkg_mode"; exit 2; }
 CODE_REV=$(git rev-parse HEAD 2>/dev/null)
+# repair-5 (D2): stamp the PRODUCING driver's committed blob into every receipt, so the resume
+# gate can COMPARE source identity instead of merely observing that code_rev is non-empty.
+UNFOLD_BLOB=$(git rev-parse "HEAD:nd-unfolding/unfold_nd_omnifold_unbinned.py" 2>/dev/null)
+[[ -n "${CODE_REV}" && -n "${UNFOLD_BLOB}" ]] || { echo "[p4-unfold] ABORT cannot resolve code_rev/unfold blob"; exit 2; }
 echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH} bkg_mode=${BKG_MODE}"
 
 valid_root(){ python3 -c "import ROOT,sys; f=ROOT.TFile.Open('$1'); sys.exit(0 if (f and not f.IsZombie() and not f.TestBit(ROOT.TFile.kRecovered) and f.Get('hXSecND_flat') and f.Get('hXSecND_flat').GetNbinsX()==65856) else 1)" >/dev/null 2>&1; }
@@ -60,8 +64,8 @@ unfold_one(){
     AMH=$(python3 -c "import p4_check_receipt as C;print(C.committed_merged_sha('${MERGED}'))") || {
       echo "[unfold] ABORT ${tag} cannot resolve committed merged sha"; return 6; }
     ACH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
-    if ! { printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "$(sha "${OUT}")" "${AMH}" "${ACH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
+    if ! { printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","unfold_blob":"%s","t":"%s"}\n' \
+      "${tag}" "$(sha "${OUT}")" "${AMH}" "${ACH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "${UNFOLD_BLOB}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
       echo "[unfold] FAIL ${tag} attest receipt publication failed"; rm -f "${REC}.tmp"; return 7
     fi
     echo "[unfold] ATTEST ${tag} (legacy ROOT sha256 == manifest)"; return 0
@@ -78,8 +82,8 @@ unfold_one(){
     # D2c: this used to be an unchecked `printf … && mv`, so a failed receipt write still fell
     # through to `echo DONE` and returned 0 -- a published ROOT with no receipt, reported as
     # success. The write is now the function's success condition.
-    if ! { printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","t":"%s"}\n' \
-      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
+    if ! { printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","unfold_blob":"%s","t":"%s"}\n' \
+      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "${UNFOLD_BLOB}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
       echo "[unfold] FAIL ${tag} receipt publication failed after ROOT publish"; rm -f "${REC}.tmp"; return 8
     fi
     echo "[unfold] DONE ${tag}"

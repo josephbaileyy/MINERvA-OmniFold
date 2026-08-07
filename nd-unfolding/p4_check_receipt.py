@@ -18,10 +18,35 @@ import argparse, json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import p4_lib as P
 
-REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-ND = f"{REPO}/nd-unfolding"
+REPO = P.REPO_ROOT
+ND = P.ND_ROOT
 CEN5 = f"{ND}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 RECDIR = f"{REPO}/docs/orchestration/state/merged-input-hashes/p4-merged-20260718"
+UNFOLD_SRC = "nd-unfolding/unfold_nd_omnifold_unbinned.py"
+
+
+def committed_unfold_blob():
+    """The unfold driver's blob AS COMMITTED at HEAD (repair-5, defect 2).
+
+    The receipt gate previously required `code_rev` to be a non-empty string and compared it to
+    nothing, and recorded no source identity at all -- so an endpoint produced under a changed
+    driver was still skipped. Both are now compared, and this is the value they compare against.
+    Fails closed (returns None -> caller rejects) rather than guessing."""
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "rev-parse", f"HEAD:{UNFOLD_SRC}"],
+                                       cwd=REPO, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return None
+
+
+def current_code_rev():
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                       cwd=REPO, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return None
 
 
 def committed_merged_sha(merged_path):
@@ -58,13 +83,22 @@ def main():
         except Exception as e:
             raise P.P4GateError(f"receipt is not valid JSON ({e})")
         cfg = P.P4Config(); cfg.validate()
+        blob, rev = committed_unfold_blob(), current_code_rev()
+        if not blob:
+            raise P.P4GateError(f"cannot resolve the committed blob of {UNFOLD_SRC}; refusing to "
+                                f"accept a receipt whose producing source cannot be checked")
+        if not rev:
+            raise P.P4GateError("cannot resolve HEAD; refusing to accept a receipt whose "
+                                "code_rev cannot be compared")
         P.validate_endpoint_receipt(
             rec, tag=a.tag,
             root_sha256=P.sha256_file(a.root),
             merged_sha256=committed_merged_sha(a.merged),
             central5d_sha256=P.sha256_file(CEN5),
             config_hash=cfg.hash(),
-            bkg_mode=cfg.bkg_mode)
+            bkg_mode=cfg.bkg_mode,
+            code_rev=rev,
+            unfold_blob=blob)
     except P.P4GateError as e:
         print(f"RECEIPT-REJECT :: {e}"); sys.exit(1)
     except Exception as e:                      # never let an unexpected error read as PASS

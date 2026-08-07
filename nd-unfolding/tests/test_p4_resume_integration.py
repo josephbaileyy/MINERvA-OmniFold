@@ -37,11 +37,11 @@ def launcher_receipt_format():
 
 
 def render_receipt(tag, root_sha, merged_sha, central_sha, cfg_hash, bkg_mode,
-                   code_rev="deadbeef", when="2026-08-07T00:00:00Z"):
+                   code_rev, unfold_blob, when="2026-08-07T00:00:00Z"):
     fmt = launcher_receipt_format()
     out = subprocess.run(
         ["printf", fmt, tag, root_sha, merged_sha, central_sha, cfg_hash, bkg_mode,
-         code_rev, when],
+         code_rev, unfold_blob, when],
         capture_output=True, text=True, check=True).stdout
     return json.loads(out)
 
@@ -63,6 +63,8 @@ class ReceiptGateIntegration(unittest.TestCase):
         self.merged_sha = "m" * 64
         cfg = P.P4Config(); cfg.validate()
         self.cfg_hash, self.bkg = cfg.hash(), cfg.bkg_mode
+        self.code_rev = "c" * 40           # repair-5 (D2): now COMPARED, not merely present
+        self.unfold_blob = "u" * 40
 
     def tearDown(self):
         self.td.cleanup()
@@ -78,6 +80,8 @@ class ReceiptGateIntegration(unittest.TestCase):
             "import p4_check_receipt as C\n"
             f"C.CEN5 = {str(self.central)!r}\n"
             f"C.committed_merged_sha = lambda p: {self.merged_sha!r}\n"
+            f"C.committed_unfold_blob = lambda: {self.unfold_blob!r}\n"
+            f"C.current_code_rev = lambda: {self.code_rev!r}\n"
             "sys.argv = ['p4_check_receipt.py', '--receipt', sys.argv[1], '--tag', sys.argv[2],"
             "            '--root', sys.argv[3], '--merged', sys.argv[4]]\n"
             "C.main()\n")
@@ -93,7 +97,8 @@ class ReceiptGateIntegration(unittest.TestCase):
 
     def _good(self, **over):
         vals = dict(tag="BeamAngleX_0", root_sha=self.root_sha, merged_sha=self.merged_sha,
-                    central_sha=self.central_sha, cfg_hash=self.cfg_hash, bkg_mode=self.bkg)
+                    central_sha=self.central_sha, cfg_hash=self.cfg_hash, bkg_mode=self.bkg,
+                    code_rev=self.code_rev, unfold_blob=self.unfold_blob)
         vals.update(over)
         return render_receipt(**vals)
 
@@ -125,6 +130,28 @@ class ReceiptGateIntegration(unittest.TestCase):
         rc, out = self._run_gate(self._write(self._good(bkg_mode="negweight-refined")))
         self.assertEqual(rc, 1)
         self.assertIn("bkg_mode", out)
+
+    def test_stale_code_rev_rejected_with_reason(self):
+        """REPAIR-5 self-guard for D2. Reintroducing the defect means accepting a receipt whose
+        code_rev disagrees with HEAD; this asserts the rejection and names it."""
+        rc, out = self._run_gate(self._write(self._good(code_rev="0" * 40)))
+        self.assertEqual(rc, 1)
+        self.assertIn("code_rev", out)
+        self.assertIn("different revision", out)
+
+    def test_stale_unfold_blob_rejected_with_reason(self):
+        """REPAIR-5 self-guard for D2. An endpoint produced by a CHANGED unfold driver must not
+        be skipped -- previously the receipt carried no source identity at all."""
+        rc, out = self._run_gate(self._write(self._good(unfold_blob="9" * 40)))
+        self.assertEqual(rc, 1)
+        self.assertIn("unfold driver changed", out)
+
+    def test_receipt_without_source_identity_rejected(self):
+        """The pre-repair-5 receipt shape (no unfold_blob) must not validate."""
+        rec = self._good(); rec.pop("unfold_blob")
+        rc, out = self._run_gate(self._write(rec))
+        self.assertEqual(rc, 1)
+        self.assertIn("missing required keys", out)
 
     def test_receipt_for_a_different_endpoint_rejected(self):
         rc, out = self._run_gate(self._write(self._good(tag="Muon_Energy_MINOS_1")))

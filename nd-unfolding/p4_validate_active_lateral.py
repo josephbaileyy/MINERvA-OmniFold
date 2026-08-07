@@ -66,8 +66,8 @@ def main():
         # SHA values. Every census, completeness and migration field it carries -- the evidence
         # the audit exists to produce -- was ignored, so a validator PASS said nothing about
         # whether the endpoints were the declared ones or behaved as declared.
-        NONZERO_MIG = {"BeamAngleX", "BeamAngleY"}
-        ZERO_SEL = {"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"}
+        NONZERO_MIG = P.NONZERO_MIGRATION_BANDS      # repair-5: single-sourced in p4_lib
+        ZERO_SEL = P.ZERO_MIGRATION_BANDS
         for b in P.BANDS:
             for ep in P.ENDPOINTS:
                 t = f"{b}_{ep}"
@@ -103,8 +103,20 @@ def main():
         comp = json.load(open(comp_path))
         P.require(comp.get("candidate_sha256") == out["candidate_sha256"],
                   "component manifest does not describe THIS candidate (sha256 mismatch)")
-        P.require(comp.get("identities", {}).get("pure_addition"),
-                  "component manifest is not pure-addition")
+        # repair-5 (pattern sweep): this used to read `identities.pure_addition` and test it for
+        # truthiness -- but the builder wrote that key as a literal `True`, so the check could
+        # never fail and proved nothing. The identities are now MEASURED errors, and this
+        # consumer RECOMPUTES the full-total identity below rather than reading any of them.
+        ids = comp.get("identities", {})
+        P.require(isinstance(ids, dict) and ids, "component manifest records no identities")
+        P.require("pure_addition" not in ids,
+                  "component manifest carries the retired self-asserted `pure_addition` flag; "
+                  "it predates repair-5 and its identities were literals, not measurements")
+        for _k in ("active_only_eq_sum5_relerr", "C_combined_eq_syst_stat_ml_relerr",
+                   "full_total_residual_eq_stat_plus_ml_relerr"):
+            P.require(_k in ids, f"component manifest missing measured identity {_k}")
+            P.require(float(ids[_k]) <= float(ids.get("identity_rtol", 1e-9)),
+                      f"component manifest records a FAILING identity {_k}={ids[_k]}")
         P.require(comp.get("reported_mask_hash") == man.get("mask5d_hash"),
                   "component manifest reported-mask hash != evidence manifest")
         for k in comp.get("candidate_keys", []):
@@ -125,17 +137,35 @@ def main():
         for key in (P.CANDIDATE_ACTIVE_TOTAL_KEY, P.CANDIDATE_SYST_KEY, P.CANDIDATE_TOTAL_KEY):
             P.check_symmetric_psd(_th2(a.candidate, key))
         out["gates"].append("symmetric_psd")
-        # D4f: RECOMPUTE the full-total identity rather than trusting the manifest's boolean.
-        # C_combined = C_syst + C_stat + C_ML, so the residual must itself be a covariance:
-        # symmetric and PSD. A candidate whose combined total was not built by pure addition
-        # from its own C_syst fails here, using only what is inside the candidate file.
+        # D4b/D6 REPAIR-5: repair-4 checked only that (C_combined - C_syst) was symmetric PSD
+        # and named that the full-total identity, in the gate name, the receipt field and the
+        # test. PSD is necessary and nowhere near sufficient -- every covariance-shaped residual
+        # passes it. The identity is now PROVEN by loading the stat and ML blocks the component
+        # manifest binds (with their recorded sha256 re-verified, so the comparison cannot be
+        # satisfied by substituting different blocks) and comparing.
         Csyst = _th2(a.candidate, P.CANDIDATE_SYST_KEY)
         Ccomb = _th2(a.candidate, P.CANDIDATE_TOTAL_KEY)
-        resid = Ccomb - Csyst
-        P.check_symmetric_psd(resid)
-        out["combined_minus_syst_min_eig_ratio"] = float(
-            np.min(np.linalg.eigvalsh((resid + resid.T) / 2.0)) / max(1e-300, np.abs(resid).max()))
-        out["gates"].append("combined_minus_syst_is_psd")
+        stat_spec, ml_spec = comp.get("stat_cov"), comp.get("ml_cov")
+        P.require(stat_spec and ml_spec, "component manifest does not bind the stat/ML blocks")
+
+        def _bound_block(spec, sha_key, label):
+            """Load a `path:key` block AFTER re-verifying the sha256 the manifest recorded, so
+            the identity cannot be satisfied by substituting a different file."""
+            P.require(":" in spec, f"{label} spec {spec!r} is not path:key")
+            pth, key = spec.rsplit(":", 1)
+            ap = pth if os.path.isabs(pth) else os.path.join(P.ND_ROOT, pth)
+            P.require(os.path.exists(ap), f"{label} covariance not found: {pth}")
+            P.require(P.sha256_file(ap) == comp.get(sha_key),
+                      f"{label} covariance sha256 drift vs the component manifest ({pth})")
+            blk = _th2(ap, key)
+            P.require(blk is not None, f"{label} covariance key {key} missing in {pth}")
+            return blk
+
+        C_stat = _bound_block(stat_spec, "stat_sha256", "stat")
+        C_ml = _bound_block(ml_spec, "ml_sha256", "ML")
+        out["full_total_identity_relerr"] = float(
+            P.check_full_total_identity(Ccomb, Csyst, C_stat, C_ml, 1e-9))
+        out["gates"].append("full_total_identity_recomputed")
         support_bands = {b: _th2(a.support, f"hCov_universe5d_{b}") for b in P.BANDS}
         P.require(all(support_bands[b] is not None for b in P.BANDS), "support family lateral block incomplete")
         out["support_comparison"] = P.check_support_comparison(active_total, sum(support_bands[b] for b in P.BANDS))

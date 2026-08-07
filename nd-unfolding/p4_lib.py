@@ -58,6 +58,12 @@ def candidate_band_key(band):
     return f"{CANDIDATE_ACTIVE_BAND_PREFIX}{band}"
 
 
+# Which bands are expected to migrate selection. Single-sourced here (repair-5) because
+# p4_evidence.py and p4_validate_active_lateral.py each had their own private copy, and a
+# duplicated policy set is one edit away from two lanes disagreeing about what is expected.
+NONZERO_MIGRATION_BANDS = frozenset({"BeamAngleX", "BeamAngleY"})
+ZERO_MIGRATION_BANDS = frozenset({"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"})
+
 KNOWN_BKG_MODES = ("purity", "negweight", "negweight-refined")
 STANDARD_BKG_MODE = "purity"        # the 2026-08-07 decision; see OPEN_ITEMS G-0
 STANDARD_FOOTING_KEYS = list(STANDARD_REQUIRED_FOOTING) + ["bkg_mode"]
@@ -182,6 +188,11 @@ def require_standard_footing(manifest, required_bkg_mode=STANDARD_BKG_MODE):
 
 # canonical candidate area (pre-adoption). Adopted/protected areas are forbidden outputs.
 CANDIDATE_SUBDIR = "active_universe_5d/standard/candidate"
+# repair-5 (D4a): containment is anchored to THIS repository, resolved, not textual. Derived
+# from this file's own location (p4_lib.py lives in <repo>/nd-unfolding/), so it follows the
+# checkout rather than a hardcoded /pscratch path -- which also makes it testable off-cluster.
+ND_ROOT = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(ND_ROOT)
 _ADOPTED_TOKENS = ("uq_universe_5d_covariance_combined", "_uthrow", "_cvcentered",
                    "adopted", "uq_4d/corrected", "universe_stage2_5d",
                    "products/5d/xsec", "products/4d/xsec")
@@ -192,18 +203,34 @@ def require_candidate_path(path):
     candidate subdir and MUST NOT match any adopted/protected token. Prevents both
     the round-2 self-rejection (candidate name containing '_final') and any write
     onto an adopted/central path."""
-    # repair-4 (defect 4e): this was a bare substring test, so any path merely CONTAINING the
-    # candidate directory passed -- including one that traverses back out of it, e.g.
-    # ".../standard/candidate/../../../products/5d/x.root". Normalize first (which collapses
-    # every "..") and then require the candidate directory to appear as a contiguous run of
-    # real path COMPONENTS, so containment is structural rather than textual.
-    norm = os.path.normpath(path)
-    require(".." not in norm.split(os.sep),
-            f"candidate path escapes via '..' after normalization (got {path} -> {norm})")
-    parts = norm.split(os.sep)
-    want = CANDIDATE_SUBDIR.split("/")
-    contained = any(parts[i:i + len(want)] == want for i in range(len(parts) - len(want) + 1))
-    require(contained, f"candidate must be under {CANDIDATE_SUBDIR} (got {path})")
+    # repair-5 (defect 4a). History: this was first a bare substring test, then a
+    # normpath component match -- and the verifier defeated the second one too, because a
+    # component match succeeds ANYWHERE the sequence appears, so
+    # `/evil/active_universe_5d/standard/candidate/out.root` passed, and normpath does not
+    # resolve symlinks. Containment must be RESOLVED and anchored to this repository:
+    # realpath both sides, then require commonpath(candidate_root, target) == candidate_root.
+    cand_root = os.path.realpath(os.path.join(ND_ROOT, CANDIDATE_SUBDIR))
+    # Callers pass repo-relative ("nd-unfolding/active_universe_5d/...") or ND-relative
+    # ("active_universe_5d/...") paths depending on where they cd to, so resolve a relative
+    # path against BOTH known roots and accept it if either lands inside. An absolute path is
+    # taken as given. Resolution is realpath, so symlinks cannot smuggle a target out.
+    if os.path.isabs(path):
+        cands = [path]
+    else:
+        cands = [os.path.join(ND_ROOT, path), os.path.join(REPO_ROOT, path)]
+    resolved, inside = None, False
+    for c in cands:
+        t = os.path.realpath(c)
+        if resolved is None:
+            resolved = t
+        try:
+            if os.path.commonpath([cand_root, t]) == cand_root and t != cand_root:
+                resolved, inside = t, True
+                break
+        except ValueError:                 # different drives / unrelated roots
+            continue
+    require(inside,
+            f"candidate must resolve inside {cand_root} (got {path} -> {resolved})")
     for t in _ADOPTED_TOKENS:
         require(t not in path, f"refusing candidate onto adopted/protected path (token {t!r})")
     return True
@@ -277,13 +304,26 @@ def validate_orchestrator_merged_receipt(recdir, live_stat):
 # central files are ~480 KB and ARE re-hashed live on every skip.
 RECEIPT_MODES = ("produced", "legacy-attested")
 RECEIPT_REQUIRED_KEYS = ("tag", "mode", "root_sha256", "merged_sha256", "central5d_sha256",
-                         "config_hash", "bkg_mode", "code_rev", "t")
+                         "config_hash", "bkg_mode", "code_rev", "unfold_blob", "t")
+# The source whose blob decides whether a cached endpoint is still valid. The unfold driver is
+# the one that actually produces the ROOT; the others in p4_evidence.SRC describe downstream
+# consumers and do not invalidate an endpoint.
+RECEIPT_SOURCE_KEY = "unfold_blob"
 
 
 def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
-                              central5d_sha256, config_hash, bkg_mode):
+                              central5d_sha256, config_hash, bkg_mode,
+                              code_rev, unfold_blob):
     """Fail closed unless the receipt is complete AND every recorded identity matches the
-    live/committed one. Returns True, or raises P4GateError naming the first mismatch."""
+    live/committed one. Returns True, or raises P4GateError naming the first mismatch.
+
+    REPAIR-5 (defect 2). The previous version required `code_rev` to be a NON-EMPTY STRING and
+    compared it to nothing, and the receipt recorded no source identity at all -- so an
+    endpoint produced under a changed unfold driver was still skipped. That is the third
+    instance in this chain of "assert presence, never compare": the first is the
+    `P4_VERIFIER_PASS` non-emptiness gate (KNOWN_ISSUES #21), the second is the `identities`
+    block whose members were literal `True`. Presence is not evidence; both `code_rev` and the
+    producing driver's committed blob are now COMPARED."""
     require(isinstance(rec, dict) and rec, f"receipt for {tag} is not a JSON object")
     missing = [k for k in RECEIPT_REQUIRED_KEYS if k not in rec]
     require(not missing, f"receipt {tag} missing required keys {missing} (incomplete legacy format)")
@@ -299,8 +339,19 @@ def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
             f"receipt {tag} config_hash drift: produced under a different unfold configuration")
     require(rec["bkg_mode"] == bkg_mode,
             f"receipt {tag} bkg_mode {rec['bkg_mode']!r} != declared {bkg_mode!r}")
+    # D2: compared, not merely present.
     require(isinstance(rec["code_rev"], str) and rec["code_rev"],
             f"receipt {tag} has no code_rev")
+    require(isinstance(code_rev, str) and code_rev,
+            f"cannot validate receipt {tag}: no live code_rev to compare against")
+    require(rec["code_rev"] == code_rev,
+            f"receipt {tag} code_rev {rec['code_rev']} != current {code_rev}: this endpoint was "
+            f"produced by a different revision of the chain")
+    require(isinstance(unfold_blob, str) and unfold_blob,
+            f"cannot validate receipt {tag}: no committed unfold-driver blob to compare against")
+    require(rec[RECEIPT_SOURCE_KEY] == unfold_blob,
+            f"receipt {tag} unfold_blob {rec[RECEIPT_SOURCE_KEY]} != committed {unfold_blob}: the "
+            f"unfold driver changed since this endpoint was produced")
     return True
 
 
@@ -328,6 +379,47 @@ def matrix_content_hash(M):
     h = hashlib.sha256()
     h.update(repr(A.shape).encode()); h.update(b"|C|f8|"); h.update(A.tobytes())
     return h.hexdigest()
+
+
+def check_full_total_identity(Ccomb, Csyst, Cstat, Cml, rtol=1e-9):
+    """PROVE C_combined = C_syst + C_stat + C_ML by comparing the residual to the actual
+    stat and ML blocks. Returns the measured max-relative error.
+
+    REPAIR-5 (defect 4b / 6). Repair-4 checked only that `C_combined - C_syst` was symmetric
+    PSD and called that the full-total identity, in a gate name, a receipt field and a test
+    name. PSD is NECESSARY but nowhere near SUFFICIENT: every covariance-shaped residual passes
+    it, including one built from the wrong stat block, a doubled ML block, or a residual that
+    simply is not stat+ML at all. Naming a weak check after a strong claim is the same
+    "strong name over weak check" pattern as the test that passed because argparse rejected an
+    argument before the guard it named ever ran (verifier defect 6b). This compares."""
+    resid = np.asarray(Ccomb, float) - np.asarray(Csyst, float)
+    expect = np.asarray(Cstat, float) + np.asarray(Cml, float)
+    require(resid.shape == expect.shape,
+            f"full-total identity: residual {resid.shape} != stat+ML {expect.shape}")
+    # PSD of the residual is retained as a SEPARATE, weaker sanity check -- not as the identity.
+    check_symmetric_psd(resid)
+    return prove_identity(resid, expect, rtol, "C_combined - C_syst == C_stat + C_ML")
+
+
+def check_declared_migration_policy(policy, census_abs, band, nonzero_bands, zero_bands):
+    """Compare the DECLARED migration policy against the OBSERVED census.
+
+    REPAIR-5 (pattern sweep). `check_merged_metadata` required `migration_policy` to be
+    truthy and compared it to nothing -- a declared policy no consumer ever checked, which is
+    the same presence-not-comparison pattern as defect 2's `code_rev`. A merged file could
+    declare any policy string, or the wrong one, and pass."""
+    require(isinstance(policy, str) and policy.strip(), "declared migration policy missing")
+    require(band in nonzero_bands or band in zero_bands,
+            f"band {band} is in neither the nonzero- nor the zero-migration set")
+    n = int(census_abs)
+    if band in nonzero_bands:
+        require(n > 0, f"{band} declares selection-complete migration but census is {n}")
+        require("selection" in policy.lower(),
+                f"{band} migrates ({n}) but declares policy {policy!r}, which does not claim "
+                f"selection completeness")
+    else:
+        require(n == 0, f"{band} is declared bin-migration-only but census is {n}")
+    return True
 
 
 def require_exact_endpoint_tags(tags):
@@ -411,7 +503,18 @@ def check_merged_metadata(meta):
     cen = meta.get("census", {})
     for k in ("TruthEntrants", "TruthExits", "RecoEntrants", "RecoExits"):
         require(k in cen and cen[k] is not None, f"census counter {k} missing")
-    require(meta.get("migration_policy"), "declared migration policy missing")
+    # repair-5 (pattern sweep): this used to be `require(meta.get("migration_policy"))` and
+    # nothing else -- a declared policy that no consumer ever compared to the observed census,
+    # so a merged file could declare any string, or the wrong one, and pass. When the caller
+    # supplies the band and census, the declaration is now CHECKED against them.
+    band = meta.get("band")
+    census_abs = meta.get("selection_migration_abs")
+    if band is not None and census_abs is not None:
+        check_declared_migration_policy(meta.get("migration_policy"), census_abs, band,
+                                        NONZERO_MIGRATION_BANDS, ZERO_MIGRATION_BANDS)
+    else:
+        require(isinstance(meta.get("migration_policy"), str) and meta["migration_policy"].strip(),
+                "declared migration policy missing")
     return True
 
 
