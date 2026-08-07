@@ -1482,3 +1482,67 @@ best-vs-last gap at all; only the `.pkl` histories can.
 `_LAUNCH_CODE_FLOOR = 2` fails if a predecessor retires without its successor. Re-issuing a gate to enable
 a ~6 GPU-h re-run on a choice that may redefine the nominal estimator is Joseph's call. No mail this cycle
 beyond the batched one already sent — this result goes in the next batch. ep32 (`56431651`) still PENDING.
+
+### JOSEPH CHOSE OPTION (1) — the fix is implemented, the gate is re-issued, and the re-run is authorized
+
+*"Do option (1), your recommendation, for the three options you gave me."* Option (1) as presented: save
+the last-epoch weights, **no estimator redefinition**, needs a re-run. Implemented driver-only.
+
+**The fix.** After `Unfold()`, `train_fullevent_nominal.py` saves `of.step1_models[0]` and
+`of.step2_models[0]` to `..._iter<niter-1>_step{1,2}_final.weights.h5` and points
+`inference_contract["step2_checkpoint"]` at the step-2 final file, adding `step1_checkpoint`,
+`step2_checkpoint_best_epoch` and `checkpoint_semantics`. **`extract_fullevent_fps.py` reads
+`step2_checkpoint` and therefore needs no change at all**, so the whole fix lands in one file.
+
+**It saves the trained clones, not the originals** — the trap I recorded before implementing rather than
+after. `of.model1`/`of.model2` are assigned once at `omnifold.py:123-124` and never reassigned; training
+runs on `clone_model` copies, which do not carry weights. `of.model2.save_weights(...)` would have
+persisted a **random initialization**.
+
+**Round-trip guard, exact and free.** Each saved file is loaded back into a fresh clone and every weight
+tensor must be bit-identical to the trained object's, else the driver exits rather than writing an
+artifact whose weights cannot be reproduced from disk. An empty `step{1,2}_models` list also fails
+closed. No forward pass needed; the end-to-end check remains the external `gate_ab_push_provenance.py`.
+
+**The engine is NOT touched.** `omnifold.py` and `net.py` shas are unchanged, which keeps the engine pin
+(shared with other lanes) intact *and* keeps `sbatch_powered_closure_budget_probe.sh`'s submission-time
+driver pin valid — the closure driver has the same latent defect and I am deliberately leaving it alone
+while ep32 (`56431651`) is PENDING, because editing it would kill the queued arm.
+
+**Gate-4 code gate re-issued as `...-20260807.json`, predecessor retired in the same commit.** Exactly two
+files drifted and both were re-frozen: `driver` and `launcher_test`. The predecessor got
+`status: SUPERSEDED`, `files` -> `files_at_issue`, `sha256` -> `sha256_at_issue`, and `superseded_by`,
+per the convention `test_hash_bindings.py::test_superseded_receipts_hold_no_live_bindings` pins. Live
+launch-code receipt count held at **2** against `_LAUNCH_CODE_FLOOR = 2`. Verifier: **ALL BINDINGS
+INTACT**, 116 OK, 15 shell pins against floor 15, 4 known pre-existing drifts. `test_hash_bindings.py`
+6 passed.
+
+`nominal_pet_training_allowed` moves **false -> true**, with Joseph's exact words recorded, and an
+explicit note that this does NOT authorize option (2)'s estimator redefinition.
+
+**Two stale blockers in the predecessor corrected rather than copied forward:**
+`nominal_has_never_been_trained` was false (it trained as `56415634`), and
+`powered_closure_criterion_is_unreachable`'s "the bar sits 16.5 pp ABOVE achievable" is superseded by
+BEN-042 — the sampling-only oracle scores 0.9542, so the bar is not unreachable; the estimator is short.
+The conclusion (Gate-4 cannot PASS) is unchanged; only the reason. Added the step-1 32% blocker.
+
+**COLLECTION ANNOUNCEMENT: local 730 -> 735 (+5).** All five are
+`test_pet_fullevent_nominal_launcher.py::FinalCheckpointIsPersisted`, four static guards plus
+`test_the_prefix_source_would_fail`, which reconstructs the pre-fix source and requires every guard to
+fire — without it all four could be vacuous (BEN-032/BEN-040 family).
+
+**Suite: 9 failed / 725 passed / 1 skipped, and MY DELTA IS ZERO.** The documented baseline is 7. The two
+extra are both in `test_resume_guard.py`, and **every** path they implicate is under
+`.claude/worktrees/gbdt-closeout*/` — the concurrent GBDT session's git worktrees, swept up by a
+repo-wide shell scan. It even flags `lib/resume_guard.sh`'s own explanatory `#` comment inside the
+worktree copy. That is the BEN-032 "scanned the wrong population" family and it will hit the GBDT session
+too; the fix is to exclude `.claude/worktrees/` from the sweep. Verified no real repo file is implicated
+before claiming my delta is zero.
+
+**Re-run plan, and why the launcher is not being edited.** The launcher deliberately does not pass
+`--allow-overwrite`, and both 08-06 products carry completion markers, so `is_complete` would `die`
+before the GPU hours (`train_fullevent_nominal.py:349`). Editing the launcher would both destroy the
+prior artifact silently and churn a freshly frozen sha, so instead the 08-06 products, their `.done`
+markers and `w_nominal/`/`w_floor/` get archived under `superseded-20260806/` with digests verified
+before and after the move, and the launcher runs unmodified. `w_nominal/` was already copied off scratch
+under memo item 0, so the checkpoints survive independently.

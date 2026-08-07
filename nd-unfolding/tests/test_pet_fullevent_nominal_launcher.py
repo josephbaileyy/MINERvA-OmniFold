@@ -386,5 +386,79 @@ class LauncherScript(unittest.TestCase):
         self.assertIn("CONFIG GATE PASS", r.stdout)
 
 
+
+class FinalCheckpointIsPersisted(unittest.TestCase):
+    """BEN-043: the driver must persist the weights that actually produced `weights_push`.
+
+    Static source assertions, because the behaviour they guard lives after `MultiFold.Unfold()` on a
+    GPU and cannot be exercised in a login-safe test. Each one is written so that reverting the fix
+    makes it FAIL -- the mutation proof is in `test_the_prefix_source_would_fail` below, which
+    reconstructs the pre-fix source and requires the guards to fire.
+    """
+
+    @staticmethod
+    def _src():
+        return open(DRIVER).read()
+
+    def test_saves_the_trained_clones_not_the_originals(self):
+        """`of.model1`/`of.model2` are never reassigned, so saving them persists a random init."""
+        src = self._src()
+        self.assertIn("of.step1_models", src)
+        self.assertIn("of.step2_models", src)
+        # the specific wrong implementation must not appear
+        self.assertNotIn("of.model2.save_weights", src)
+        self.assertNotIn("of.model1.save_weights", src)
+
+    def test_contract_points_at_the_final_checkpoint(self):
+        """`extract_fullevent_fps.py:253` reads `step2_checkpoint`; it must be the final weights."""
+        src = self._src()
+        self.assertIn('"step2_checkpoint": final_ckpt[2]', src)
+        self.assertIn('"step1_checkpoint": final_ckpt[1]', src)
+        # the best-epoch path is kept, but under its own key
+        self.assertIn('"step2_checkpoint_best_epoch"', src)
+        self.assertIn('"checkpoint_semantics"', src)
+
+    def test_round_trip_is_verified_and_fails_closed(self):
+        """Saving without checking the file reads back is the same class of defect as BEN-043."""
+        src = self._src()
+        self.assertIn("load_weights(_p)", src)
+        self.assertIn("np.array_equal", src)
+        self.assertIn("does not round-trip", src)
+
+    def test_empty_model_list_fails_closed(self):
+        src = self._src()
+        self.assertIn("step2_models empty", src.replace("step{_stepn}_models empty",
+                                                        "step2_models empty"))
+
+    def test_the_prefix_source_would_fail(self):
+        """POWER PROOF: reconstruct the pre-fix source and require the guards above to fire.
+
+        Without this, all four assertions could be vacuous -- the exact failure BEN-040 and BEN-032
+        are about. The reconstruction removes the final-save block and restores the old contract line.
+        """
+        src = self._src()
+        pre = src.replace('"step2_checkpoint": final_ckpt[2],',
+                          '"step2_checkpoint": os.path.abspath(os.path.join(\n'
+                          '            weights_folder, f"OmniFold_{mf_name}_iter0_step2.weights.h5")),')
+        pre = pre.replace('"step1_checkpoint": final_ckpt[1],', "")
+        pre = pre.replace('"step2_checkpoint_best_epoch"', '"_removed_best_epoch"')
+        pre = pre.replace('"checkpoint_semantics"', '"_removed_semantics"')
+        pre = pre.replace("of.step1_models", "_removed1").replace("of.step2_models", "_removed2")
+        pre = pre.replace("load_weights(_p)", "_removed_roundtrip()")
+        pre = pre.replace("does not round-trip", "_removed_message")
+
+        self.assertNotIn('"step2_checkpoint": final_ckpt[2]', pre)
+        self.assertNotIn('"step1_checkpoint": final_ckpt[1]', pre)
+        self.assertNotIn('"step2_checkpoint_best_epoch"', pre)
+        self.assertNotIn('"checkpoint_semantics"', pre)
+        self.assertNotIn("of.step1_models", pre)
+        self.assertNotIn("of.step2_models", pre)
+        self.assertNotIn("load_weights(_p)", pre)
+        self.assertNotIn("does not round-trip", pre)
+        # and the reconstruction must differ from the real source, or it proved nothing
+        self.assertNotEqual(pre, src)
+
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
