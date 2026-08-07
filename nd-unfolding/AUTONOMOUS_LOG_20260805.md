@@ -1895,3 +1895,67 @@ to him in a mail, so it is corrected in this cycle's mail too.
 
 Mailed. ep32 was the last of my two watched jobs to be diagnostic; `56445883` (the re-run, the critical
 path) is still PENDING with its watch armed.
+
+### 22:15Z — THE ACCEPTANCE-LIMITED ORACLE: 72% of D2's shortfall is SPECIFICATION, 28% is the estimator
+
+Joseph commissioned this as *"one measurement left, and it's the one that decides"*, with the
+interpretation rule set in advance: ~0.63 means the bar was specified without accounting for dilution,
+~0.9 means the estimator is deficient. **It came in at 0.618228.**
+
+    the bar                                        0.80
+    statistical oracle (d2_oracle.py, 151db63)     0.954204   <- SAMPLING only
+    acceptance-limited oracle, per-event           0.618228   <- acceptance + sampling
+    acceptance-limited oracle, spectrum-space      0.633208   <- acceptance only
+    measured estimator (56381674)                  0.546853
+
+    total shortfall   0.80 - 0.5469 = 0.2531
+    SPECIFICATION     0.80 - 0.6182 = 0.1818   71.8%
+    ESTIMATOR         0.6182 - 0.5469 = 0.0714  28.2%
+    -> the estimator reaches 88.5% of the ceiling acceptance permits
+
+No k rescues it: 0.4236 / 0.5642 / **0.6182** / 0.6441 / 0.6592 / 0.6691 at k = 1..6.
+
+**His comparison verified from the artifacts, not from his mail** — and the weighting was the thing worth
+checking. `E_w[r]` 0.631286 vs his 0.63129 OK; tilt-weighted dilution ideal 0.633208 vs 0.63321 OK; bias
+−0.001922 vs "−0.0019" OK. **But the acceptance map ships TWO weightings of the same curve** — tilt-weighted
+0.633208 and truth-mass-weighted 0.609475 — differing by **3.7%** in a comparison whose real signal is
+**0.19 pp**. He named the right one. Filed as **BEN-045**, the third member of the family with BEN-042 and
+BEN-044: a number compared against a differently-normalised number.
+
+**An identity fell out that explains an earlier coincidence.** The spectrum-space oracle equals the
+tilt-weighted mean response to **0.0e+00** exactly, because `r_b <= 1` for every cell so `|1-r| = 1-r` and
+the criterion's absolute value is **inert on a one-sided response**. That is why my own
+`d2_response_decomposition.py` "zero dispersion" column (0.6313) and BEN-038's dilution ideal (0.63321)
+agreed — algebra, not luck. It also explains why the per-event oracle is *lower*: adding two-sided sampling
+scatter makes the `|.|` start biting, and the 0.014980 difference IS that sampling term rather than an
+unexplained residual.
+
+**Bracketed on purpose**, so the conclusion does not rest on one construction: per-event 0.618228 pays the
+A/B sampling exactly as the criterion does for the real estimator; spectrum-space 0.633208 does not. Both
+are far below 0.80, so the verdict is robust to the choice.
+
+**The caveat is real and I am not burying it.** `(1-a_b)^k` assumes cells resolve independently;
+`omnifold.py:218-220` lets a smooth learner transport `f(pT)` across cells and BEAT the curve (BEN-038
+measured the top band overshooting at 1.0333). So **0.80 is not proven unreachable.** Two things make the
+number decision-grade anyway: the estimator's mean response sits **below** the curve (−0.001922), so no net
+transport gain is happening in practice; and the dilution model, correctly graded `ASSUMED`, now predicts
+the measured mean response to **0.19 pp** — an assumed model with one confirmed non-trivial prediction.
+
+**MY OPINION, which he asked for and which I had been withholding behind the tolerance rule.** He was right
+that the rule stops me moving a bar so a failing product passes; it does not stop me asking whether the bar
+measures something the estimator can observe. It does not. Truth-weighted global acceptance is 0.4235 and
+the recoverable fraction at k=3 is 0.633, so `recovery >= 0.80` conflates *is the estimator good* with *can
+transport beat dilution*, and only the first is a closure question. Nothing in the record derives 0.80 from
+an achievable range; it reads as a round number. **Recommendation: re-specify recovery relative to the
+acceptance-limited reference with a predeclared fraction, plus a separate absolute floor.** Under that this
+estimator scores 88.5%. Note this cuts against my own convenience — it leaves a visible 11.5% deficit and
+28.2% of the shortfall still owned by the estimator, rather than excusing all of it.
+
+Not recommending: k=4 (buys 0.026 of ceiling, still fails, costs a pin cascade), seed-ensembling (ceiling is
+the signed response 0.6313 for any N, and the identity above now explains *why* that is exactly the mean
+response), or more epochs (the ladder has the coherent term worsening +18.8% then +29.7%).
+
+Committed `nd-unfolding/pet/d2_acceptance_oracle.py` (double-gated, fails closed on either gate), the
+finding, **CLM-012**, and **BEN-045**. Also corrected for the record: `151db63` is my own commit, not
+another session's — the concurrent session's D2 work is `2113130` — so the oracle's stated limit was mine
+and I did not get to treat it as an inherited constraint. Mailed.
