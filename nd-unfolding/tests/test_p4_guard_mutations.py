@@ -287,6 +287,77 @@ class ReproducibilityTolerance(unittest.TestCase):
             P.check_reproducibility(np.zeros(4), np.zeros(4))
 
 
+class A1_VerifierTokenBinding(unittest.TestCase):
+    """REPAIR-6 closes KNOWN_ISSUES #21 / inventory A1 -- the original instance of
+    'assert presence, never compare', and the one left open through repairs 4 and 5 because it
+    was the instrument authorising those rounds.
+
+    The mutation here is the pre-repair gate itself: `[[ -n "$TOKEN" ]]`. Every case below
+    shows a token the repaired gate REJECTS which the old one ACCEPTED."""
+
+    import subprocess as _sp
+
+    def _resolve(self, token):
+        import p4_check_verifier_token as T
+        return T.resolve(token)
+
+    @staticmethod
+    def _old_gate(token):
+        """The pre-repair gate, verbatim in semantics: non-empty is enough."""
+        return bool(token)
+
+    def test_MUTATION_old_gate_accepted_literally_anything(self):
+        for junk in ("x", "yes", "PASS", "1", "please"):
+            self.assertTrue(self._old_gate(junk),
+                            "the pre-repair gate accepted any non-empty string -- the defect")
+
+    def test_arbitrary_string_is_rejected(self):
+        for junk in ("x", "yes", "PASS", "1", "please"):
+            with self.assertRaises(P4GateError, msg=f"{junk!r} accepted"):
+                self._resolve(junk)
+
+    def test_well_formed_but_unknown_digest_is_rejected(self):
+        with self.assertRaises(P4GateError) as cm:
+            self._resolve("a" * 64)
+        self.assertIn("no verdict", str(cm.exception))
+
+    def test_a_real_BLOCK_verdict_does_not_authorize(self):
+        """The two committed verdicts are both BLOCK. Their digests must be refused -- a real
+        receipt is not the same as a passing one."""
+        import glob, json, os
+        import p4_check_verifier_token as T
+        found = 0
+        for f in sorted(glob.glob(os.path.join(T.RECEIPT_DIR, "*.json"))):
+            try:
+                v = json.load(open(f))
+            except Exception:
+                continue
+            if str(v.get("verdict", "")).upper() != "BLOCK":
+                continue
+            found += 1
+            with self.assertRaises(P4GateError) as cm:
+                self._resolve(P.sha256_file(f))
+            msg = str(cm.exception)
+            self.assertTrue("not PASS" in msg or "code_rev" in msg
+                            or "authorizes_covariance_stages_4_6" in msg, msg)
+        self.assertGreater(found, 0, "expected at least one committed BLOCK verdict to test")
+
+    def test_gate_is_wired_into_the_driver(self):
+        sh = (ND / "run_p4_standard.sh").read_text()
+        code = "\n".join(l for l in sh.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("p4_check_verifier_token.py", code)
+        # and the non-emptiness test is no longer the ONLY thing between here and stage 4
+        i_tok = code.index("p4_check_verifier_token.py")
+        i_build = code.index("python3 p4_build_components.py")
+        self.assertLess(i_tok, i_build)
+
+    def test_refusal_message_no_longer_reads_as_an_instruction(self):
+        """The old message named the variable to set, which is what invited self-authorization."""
+        sh = (ND / "run_p4_standard.sh").read_text()
+        self.assertIn("will NOT work", sh)
+        self.assertIn("sha256 of a", sh)
+
+
 # ---------------------------------------------------------------------------------------
 # Guards that could NOT be made discriminating, recorded rather than quietly kept.
 NON_DISCRIMINATING = {

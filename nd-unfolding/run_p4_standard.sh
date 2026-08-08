@@ -63,10 +63,29 @@ run env P4_CODE_REV="$(git rev-parse HEAD)" python3 p4_evidence.py
 [[ "${STOP_AFTER}" == "evidence" ]] && { echo "[p4-std] stop after evidence (covariance gated on verifier PASS)"; exit 0; }
 
 # ---- covariance stages: authorized ONLY after standard-p4-verifier PASS ----
+# REPAIR-6 closes KNOWN_ISSUES #21. This used to be `[[ -z "${P4_VERIFIER_PASS}" ]]` -- any
+# non-empty string opened stages 4-6, and the refusal message named the variable to set, so the
+# failure mode was not "agent guesses the bypass" but "gate documents its own bypass". It was
+# demonstrated load-bearing 2026-08-07: self-authorizing would have written a candidate ROOT at
+# stage 4 and died at stage 5.
+#
+# The token is now the SHA256 OF A COMMITTED VERIFIER VERDICT, resolved by
+# p4_check_verifier_token.py, which requires: the digest matches an actual receipt; that receipt
+# is tracked and identical to its committed blob; verdict == PASS; and its code_rev == HEAD.
+# Note what this does NOT claim -- it cannot stop someone committing a falsified verdict. It
+# moves the act from setting an invisible variable to committing a false receipt into the ledger
+# under their own name, which is the difference between an accident and a decision.
 if [[ -z "${P4_VERIFIER_PASS}" ]]; then
-  echo "[p4-std] HARD GATE: covariance construction requires P4_VERIFIER_PASS token (standard-p4-verifier PASS). Refusing."
+  echo "[p4-std] HARD GATE: covariance construction requires P4_VERIFIER_PASS = sha256 of a"
+  echo "         committed standard-p4-verifier verdict with verdict=PASS and code_rev=HEAD."
+  echo "         Setting it to an arbitrary string will NOT work (KNOWN_ISSUES #21). Refusing."
   exit 3
 fi
+if ! TOKCHK=$(python3 p4_check_verifier_token.py --token "${P4_VERIFIER_PASS}" 2>&1); then
+  echo "[p4-std] HARD GATE: ${TOKCHK}"
+  exit 3
+fi
+echo "[p4-std] verifier token accepted: ${TOKCHK}"
 mkdir -p "${CAND}"
 # D1c: read the candidate total key from p4_lib rather than hardcoding it here again.
 CAND_TOTAL_KEY=$(python3 -c "import p4_lib;print(p4_lib.CANDIDATE_TOTAL_KEY)") \
