@@ -110,3 +110,81 @@ therefore mixes one faithful and one unfaithful checkpoint, and is the number mo
   different quantity; this is the reco-space normalization.
 - It does not license a repair. The step-1 diagnosis is now specific enough to act on, but which action
   depends on Joseph's answer on the checkpoint options, since any re-run lands both.
+
+---
+
+## 7. RE-MEASURED 2026-08-08 ON BIT-FAITHFUL CHECKPOINTS — the caveat is gone, and step 2 is EXONERATED
+
+The §4 caveat is retired. Job `56445883` re-trained under the BEN-043 fix, Gate B(i) is **bit-exact**
+(`max_rel_dev 0.0`, `GATE_AB_PASSED`), and the harness now records
+`reconstruction_is_checkpoint_based: false`. Per-step batch sizes corrected to the engine's own values
+(step 1 → 1000 per `omnifold.py:199`, step 2 → 512 per `:219`; BEN-072), and the last iteration's
+`*_final.weights.h5` used where the driver wrote them.
+
+**The internal check that says the reconstruction is faithful:**
+
+    push_stored   0.736746        <- the run's own weights, straight from the artifact
+    push_final    0.736746        <- reconstructed from the checkpoint
+                  IDENTICAL to all printed digits
+
+On the superseded artifact these differed (`0.746483` vs `0.746407`). They no longer do, so every number
+below is the run's own, not a reconstruction of it.
+
+| quantity | `mean_w_reco \| pass_reco` | dev vs R | `mean_w_truth \| pass_gen` |
+|---|---|---|---|
+| `push_stored` | 0.736746 | −0.3446 | 0.876675 |
+| `push_final` | 0.736746 | −0.3446 | 0.876675 |
+| **`pull_final`** (what step 1 normalises) | **0.658944** | **−0.4138** | 0.880522 |
+| `push_prev` (model2 @ iter1) | 0.967659 | −0.1392 | 1.010853 |
+| `increment1` (classifier1 @ iter2) | 0.648331 | −0.4232 | 0.851573 |
+
+### Step 1 delivers 58.6% of its own objective
+
+`mean_w_reco(pull_final | pass_reco) = 0.658944` against `R = 1.124080`. That comparison is step 1's own
+fitted objective, so the verdict `STEP1_UNDER_ACHIEVES` stands and is sharper than the 68.1% the earlier,
+unfaithful reconstruction of a *different* run suggested. (The two runs are not directly comparable
+piece-by-piece — different weights throughout — which is why the conclusion, not the individual numbers,
+is what carries across.)
+
+### Step 2 is exonerated, and that is the new information
+
+Step 2 trains gen-vs-gen with class totals `sum(w)` and `sum(w·pull)` over `pass_gen`, so it should
+reproduce `mean_w_truth(pull | pass_gen)`:
+
+    target  pull_final truth-leg   0.880522
+    achieved push_final truth-leg  0.876675      undershoot 0.44%
+    and at iteration 1, push_prev truth-leg = 1.010853  -- within 1.1% of 1.0
+
+**A 0.44% undershoot is step 2 doing its job.** On the superseded run this read 5.4% and step 2 looked
+partly implicated; on faithful checkpoints it is not. The failure is squarely step 1's.
+
+### The chain is NOT monotone, and step 2 partially RECOVERS
+
+    iter1 step2   push_prev    0.967659    dev −0.139
+    iter2 step1   pull_final   0.658944    dev −0.414     <- step 1's increment, a collapse
+    iter2 step2   push_final   0.736746    dev −0.345     <- step 2 claws some back
+
+This inverts the earlier reading. On the superseded run the chain fell monotonically (0.936 → 0.765 →
+0.746) and I described step 2 as losing a further increment. Here `push_prev` is only 13.9% below `R`, step
+1's increment drops it to 41.4% below, and step 2 then *improves* it to 34.5% below.
+
+### The sharpest statement: step 1's correction has the wrong SIGN
+
+`increment1`'s reco-weighted mean is **0.648331**. To carry `push_prev`'s 0.967659 up to `R = 1.124080`
+the increment needs to average ≈1.16. **Step 1 applies a ~35% reduction where a ~16% increase is
+required** — the direction is wrong, not merely the magnitude. That is a much more specific defect than
+"under-achieves", and it is the first time the sign has been established on weights that are provably the
+run's own.
+
+(Means do not multiply — `0.967659 × 0.648331 = 0.6275` against a measured `pull_final` of `0.658944`, so
+`push_prev` and `increment1` are positively correlated. The chain above is measured values, not a product.)
+
+### What this does and does not settle
+
+- It **does** localise the failure to step 1's final-iteration increment, with step 2 exonerated at 0.44%.
+- It **does not** explain why. The four candidates in §5 stand, with the F3 cap and the biased split still
+  excluded; reco-leg non-convergence remains the leading one, and the wrong-sign finding is new evidence
+  that bears on it — a non-converged classifier would be expected to *under*-correct toward 1, not to
+  correct in the opposite direction.
+- Receipt: `nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json`.
+

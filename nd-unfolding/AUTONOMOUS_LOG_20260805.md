@@ -2178,3 +2178,45 @@ untouched, and **both receipts committed** so the near-miss is on the record rat
 The matched floor repeat is still running (started 14:58:55Z), so the run is not yet complete. Next: redo
 the step-1 pull/push decomposition on checkpoints that are finally bit-faithful — its harness is committed
 and gated on this receipt, and it will now run without the checkpoint-based caveat.
+
+### 16:10Z — step-1 decomposition RE-MEASURED on bit-faithful checkpoints: step 2 EXONERATED, step 1's sign is WRONG
+
+The caveat that qualified the first attempt is retired. `GATE_AB_PASSED`, `max_rel_dev 0.0`, and the harness
+records `reconstruction_is_checkpoint_based: false`. Per-step batch sizes corrected first (step 1 -> 1000,
+step 2 -> 512, BEN-072) and the `*_final.weights.h5` used where present.
+
+**The check that proves faithfulness:** `push_stored 0.736746` and `push_final 0.736746` — **identical to all
+printed digits**, where on the superseded artifact they differed (0.746483 vs 0.746407). So these are the
+run's own numbers, not a reconstruction of them.
+
+    push_stored   0.736746   dev -0.3446   truth 0.876675
+    push_final    0.736746   dev -0.3446   truth 0.876675
+    pull_final    0.658944   dev -0.4138   truth 0.880522
+    push_prev     0.967659   dev -0.1392   truth 1.010853
+    increment1    0.648331   dev -0.4232   truth 0.851573
+
+**Step 1 delivers 58.6% of its own objective** (`pull_final` 0.658944 vs R 1.124080). `STEP1_UNDER_ACHIEVES`
+stands, sharper than the 68.1% the earlier unfaithful reconstruction of a *different* run gave.
+
+**STEP 2 IS EXONERATED, and that is the new information.** It should reproduce
+`mean_w_truth(pull|pass_gen)`: target 0.880522, achieved 0.876675 — a **0.44% undershoot**, and at iteration
+1 it sits at **1.010853**, within 1.1% of 1.0. On the superseded run this read 5.4% and step 2 looked partly
+implicated. On faithful checkpoints it is not.
+
+**The chain is NOT monotone and step 2 partially RECOVERS** — which inverts my earlier reading:
+
+    iter1 step2  push_prev   0.967659   dev -0.139
+    iter2 step1  pull_final  0.658944   dev -0.414   <- step 1's increment, a collapse
+    iter2 step2  push_final  0.736746   dev -0.345   <- step 2 claws some back
+
+**And the sharpest result: step 1's correction has the WRONG SIGN.** `increment1`'s reco-weighted mean is
+**0.648331**; to carry 0.967659 up to R = 1.124080 it needs to average ~1.16. **Step 1 applies a ~35%
+reduction where a ~16% increase is required.** The direction is wrong, not merely the magnitude — the first
+time the sign has been established on weights provably the run's own.
+
+That bears on the leading hypothesis rather than confirming it: a merely non-converged classifier would be
+expected to under-correct *toward* 1, not to correct in the opposite direction. So reco-leg non-convergence
+now has to explain a sign, which is a stronger demand than explaining a shortfall.
+
+Receipt `STEP1_DECOMPOSITION.slurm-56445883.json` committed. Floor repeat still running (1 of 6 at last
+poll), so the job itself is not complete; this result rests on the nominal artifact, which is.
