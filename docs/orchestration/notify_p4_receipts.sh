@@ -16,6 +16,11 @@ LOG=$OUT/selfcheck_autofired_${STAMP}.log
   echo "=== receipts on disk ==="
   ls "$R/nd-unfolding/active_universe_5d/standard/unfolds"/*.done 2>/dev/null | wc -l
   echo
-  bash /pscratch/sd/j/josephrb/selfcheck_receipts.sh 2>&1
+  # MUST run inside a compute alloc. wakerctl fires on a LOGIN node, where python3 is 3.6.15
+  # (too old for p4_lib's `from __future__ import annotations`) and python3.11 has no numpy.
+  # Calling the self-check directly here would have produced a SyntaxError log and looked like
+  # a failed check. Found before this script ever fired, by running its inner command by hand --
+  # an automation that has never executed is untested, which is BEN-040's family.
+  cd "$R" && ALLOC_JOB_NAME=gbdt-hold ./alloc_run.sh "bash /pscratch/sd/j/josephrb/selfcheck_receipts.sh" 2>&1
 } > "$LOG" 2>&1
 echo "self-check written to $LOG"
