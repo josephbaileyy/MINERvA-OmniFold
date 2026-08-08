@@ -3881,3 +3881,52 @@ carry the verdict.
 
 Per Joseph: the CONC=4 confirmation run is skipped — thread order versus any other mechanism
 does not change a 1e-13 verdict.
+
+## 2026-08-08 — PET full-event nominal RE-TRAINED under the BEN-043 fix; Gate A/B bit-exact on both arms
+
+**Job `56445883`** `COMPLETED` `0:0`, elapsed **06:00:44**, `2026-08-08T04:57:12` → `2026-08-08T10:57:56`
+local (11:57:12Z → 17:57:56Z). Authorised by Joseph 2026-08-08 as option (1) of
+`FINDING-20260807-checkpoint-is-not-the-trained-model.md` §6; gate receipt
+`p3f-pet-gate4-launch-code-gate-20260807.json` with `nominal_pet_training_allowed: true`.
+
+Products (the 2026-08-06 pair is archived under `pet/fullevent_nominal/superseded-20260806/`, digests
+verified across the move):
+
+    pet_fullevent_nominal_weights.npz   sha 58f664cdef266d09cbae22a5…   10,127,331 B
+    pet_fullevent_floor_weights.npz     sha 14cccc231dfd92c93363eed2…   10,132,738 B
+
+Both carry the BEN-043 contract: `step2_checkpoint` → `*_step2_final.weights.h5`, `step1_checkpoint`
+added, `step2_checkpoint_best_epoch` retained, and
+`checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"`. The driver's in-run
+round-trip guard printed `(round-trip verified)` for both steps on both arms.
+
+**Gate A/B — bit-exact on BOTH arms**, at the engine's own `batch_size = 512`:
+
+    arm      A1 mc_indices   A2 truth norm   B(ii)    B(i) max rel dev   verdict
+    nominal  bit-exact       bit-exact       72/72    0.000000e+00       GATE_AB_PASSED
+    floor    bit-exact       bit-exact       72/72    0.000000e+00       GATE_AB_PASSED
+
+Receipts `GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json` and `…floor-56445883.json`. The
+batch-1000 receipt `…slurm-56445883.json` (`1.744800e-06`, FAIL) is retained deliberately: it is the
+BEN-072 near-miss, caused by this gate defaulting to a batch size the engine does not use.
+
+**Fold-forward ratio, and its reproducibility:**
+
+    nominal  0.736746   34.46% below R = 1.1240802949941018
+    floor    0.740546   34.12% below R
+    spread   0.003800 = 0.516%
+
+Two independent trainings at identical seeds agree to **0.52%**, so the ~34% deficit is a property of the
+estimator at this configuration and not run-to-run variation.
+
+**Step-1 decomposition on faithful weights** (`STEP1_DECOMPOSITION.slurm-56445883.json`,
+`reconstruction_is_checkpoint_based: false`): step 1 delivers **58.6%** of its own objective
+(`pull_final` 0.658944 vs R); **step 2 is exonerated** at a 0.44% undershoot of its own target and
+1.010853 at iteration 1; and step 1's final increment is **wrong-signed** — `increment1` 0.648331 where
+≈1.16 is required.
+
+**NOT QUOTABLE.** Gate-4 remains red on D2 recovery, and predeclaration branch C stands: no product is
+quoted while any leg is red. What changed is that full-event extraction is now *possible* —
+`check_subsample_agreement` (tol 1e-3) was failing closed at 0.866 and is now 0 — and whether to run it is
+Joseph's call, not a consequence of this run.
+
