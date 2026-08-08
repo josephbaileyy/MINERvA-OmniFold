@@ -238,6 +238,55 @@ class BEN044_AbsoluteToleranceAtRealScale(unittest.TestCase):
         self.assertEqual(offenders, [], f"bare absolute tolerance(s): {offenders}")
 
 
+class ReproducibilityTolerance(unittest.TestCase):
+    """REPAIR-6: the declared reproducibility SPECIFICATION (Joseph, 2026-08-07).
+
+    These ROOTs are not bit-reproducible, so the gate compares CONTENTS. The declared
+    tolerances are ~2 orders above the measured floor so a CONC change does not force a
+    re-derivation. This is a specification, not a loosening -- nothing was failing when it was
+    set, and the floor was measured on a clean 10/10 run.
+
+    The interesting property, and the reason there are TWO tolerances rather than one: together
+    they separate round-off from a coherent shift. The per-bin leg permits scatter; the integral
+    leg forbids that scatter from summing coherently."""
+
+    def setUp(self):
+        self.rng = np.random.default_rng(0)
+        self.base = self.rng.uniform(1, 10, 10694)     # one endpoint's reported bins
+
+    def test_declared_values_are_above_the_measured_floor(self):
+        f = P.REPRO_MEASURED_FLOOR
+        self.assertGreater(P.REPRO_RTOL_PER_BIN, f["worst_rel_bin"])
+        self.assertGreater(P.REPRO_RTOL_INTEGRAL, f["integral_rel"])
+        # and recorded separately, so re-measuring cannot silently move the gate
+        self.assertNotEqual(P.REPRO_RTOL_PER_BIN, f["worst_rel_bin"])
+
+    def test_accepts_round_off_at_the_measured_floor(self):
+        """A gate that cannot PASS on real input is unverified in the direction that matters."""
+        s = self.rng.normal(0, 4e-12, self.base.size); s -= s.mean()
+        r = P.check_reproducibility(self.base * (1 + s), self.base)
+        self.assertLess(r["max_rel_bin"], P.REPRO_RTOL_PER_BIN)
+
+    def test_rejects_a_coherent_shift_of_the_SAME_per_bin_magnitude(self):
+        """THE discriminating case. A uniform 2e-11 shift has a per-bin size inside the floor,
+        so the per-bin leg alone would accept it; the integral leg rejects it. This is what the
+        sign argument was mistakenly asked to do, and what magnitude+coherence actually does."""
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(self.base * (1 + 2e-11), self.base)
+        self.assertIn("integral relative difference", str(cm.exception))
+
+    def test_rejects_a_gross_shift_on_the_per_bin_leg(self):
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(self.base * (1 + 1e-3), self.base)
+        self.assertIn("per-bin relative difference", str(cm.exception))
+
+    def test_shape_mismatch_and_empty_reference_fail_closed(self):
+        with self.assertRaises(P4GateError):
+            P.check_reproducibility(self.base[:-1], self.base)
+        with self.assertRaises(P4GateError):
+            P.check_reproducibility(np.zeros(4), np.zeros(4))
+
+
 # ---------------------------------------------------------------------------------------
 # Guards that could NOT be made discriminating, recorded rather than quietly kept.
 NON_DISCRIMINATING = {

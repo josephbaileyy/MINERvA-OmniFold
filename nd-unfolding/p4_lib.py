@@ -64,6 +64,59 @@ def candidate_band_key(band):
 NONZERO_MIGRATION_BANDS = frozenset({"BeamAngleX", "BeamAngleY"})
 ZERO_MIGRATION_BANDS = frozenset({"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"})
 
+# ------------------------------------------- reproducibility tolerance (repair-6, 2026-08-07)
+# These endpoint ROOTs are NOT bit-reproducible. Re-unfolding the same inputs with the same
+# code and the same seed gives different bytes, because LightGBM/OpenMP reduction order depends
+# on the thread partitioning and five OmniFold iterations amplify last-bit differences. So a
+# reproducibility gate here must compare CONTENTS at a declared tolerance; sha256 identity
+# cannot express "same computation" (KNOWN_ISSUES #24).
+#
+# DECLARED tolerance -- a SPECIFICATION set by Joseph 2026-08-07, deliberately conservative,
+# roughly two orders above the measured floor so a CONC change does not force a re-derivation.
+# This is NOT a tolerance loosened to make something failing pass: nothing was failing, and the
+# floor below was measured on a clean 10/10 run with zero failures.
+REPRO_RTOL_PER_BIN = 1e-9        # per reported bin, relative
+REPRO_RTOL_INTEGRAL = 1e-12      # on the integrated cross section, relative
+
+# MEASURED floor, recorded separately from the declared tolerance on purpose: re-measuring it
+# must never silently move the gate. Job 56471429 (CONC=6) vs the 2026-07-18 set (CONC=4),
+# ten endpoints, 65856 bins each, 106940 reported bins pooled:
+#   worst relative bin difference   1.9e-11
+#   integral agreement              2.6e-14
+#   pooled mean deviation          -1.76e-13   (sd 1.96e-12)
+#   fraction of bins deviating +    0.4594     -- 26.6 sigma from 0.5, i.e. a REAL systematic
+#                                                 sign preference, which is the expected
+#                                                 signature of a deterministic rounding path
+#                                                 and NOT evidence of symmetric noise.
+# sqrt(N)*eps for ~1e7 events is 7.0e-13, the same order as the pooled mean.
+REPRO_MEASURED_FLOOR = {
+    "job": "56471429", "conc_new": 6, "conc_reference": 4,
+    "worst_rel_bin": 1.9e-11, "integral_rel": 2.6e-14,
+    "pooled_mean": -1.76e-13, "pooled_sd": 1.96e-12,
+    "frac_positive": 0.4594, "frac_positive_sigma_from_half": 26.6,
+    "n_reported_bins_pooled": 106940,
+}
+
+
+def check_reproducibility(a, b, rtol_bin=REPRO_RTOL_PER_BIN, rtol_int=REPRO_RTOL_INTEGRAL):
+    """Compare two runs of the same endpoint by CONTENT, not by bytes.
+
+    Returns the measured (max per-bin relative difference, integral relative difference).
+    Fails closed if either exceeds the declared tolerance."""
+    a = np.asarray(a, float); b = np.asarray(b, float)
+    require(a.shape == b.shape, f"reproducibility: shape {a.shape} != {b.shape}")
+    m = np.abs(b) > 0
+    require(m.any(), "reproducibility: reference has no positive bins")
+    rel = np.max(np.abs(a[m] - b[m]) / np.abs(b[m]))
+    sa, sb = float(a.sum()), float(b.sum())
+    rel_int = abs(sa / sb - 1.0) if sb != 0 else float("inf")
+    require(rel <= rtol_bin,
+            f"reproducibility: max per-bin relative difference {rel:.3e} > {rtol_bin:.0e}")
+    require(rel_int <= rtol_int,
+            f"reproducibility: integral relative difference {rel_int:.3e} > {rtol_int:.0e}")
+    return {"max_rel_bin": float(rel), "rel_integral": float(rel_int)}
+
+
 KNOWN_BKG_MODES = ("purity", "negweight", "negweight-refined")
 STANDARD_BKG_MODE = "purity"        # the 2026-08-07 decision; see OPEN_ITEMS G-0
 STANDARD_FOOTING_KEYS = list(STANDARD_REQUIRED_FOOTING) + ["bkg_mode"]

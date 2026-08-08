@@ -3850,3 +3850,34 @@ exactly the kind of near-miss that reads as confirmation later.
 **Also, my miss:** the re-unfold script did not use `python3 -u`, so per-endpoint progress was
 invisible for the whole 1h20m (BEN-028; the runbook says to use `-u`). Liveness had to be judged
 from `sstat` CPU time and process count instead, which worked, but the script should carry `-u`.
+
+## 2026-08-07 — CORRECTION to the entry above: the sign argument was wrong and is withdrawn
+
+The re-unfold entry above called the deviation **"scattered and sign-balanced"** and offered
+that as the discriminator against a coherent shift. **The sign half is wrong.** Joseph caught
+it; re-derived here in the same turn:
+
+    n = 106,940 reported bins,  SE(p) under p0 = 0.5  is  sqrt(0.25/n) = 0.001529
+    observed fraction positive = 0.4594  ->  z = (0.5 - 0.4594)/0.001529 = 26.6 sigma
+
+Bins are correlated so the effective n is smaller, but not nearly enough to rescue the claim:
+at 10% effective n it is still 8.4 sigma, at 1% still 2.7 sigma, and reaching balance needs the
+effective n down near **107** bins — not credible across 10,694 reported bins in each of ten
+endpoints. **There IS a systematic sign preference.** Calling 0.4594 "≈ 0.5" was eyeballing a
+number that is 26 sigma from its null.
+
+**The conclusion is unchanged and is in fact better founded, but it now rests on MAGNITUDE
+alone.** A different OpenMP partitioning is a different DETERMINISTIC rounding path, so a small
+consistent sign bias at the 1e-13 level is the *expected* signature of that mechanism —
+symmetric noise is not. `sqrt(N) * eps` for ~1e7 events is `7.0e-13` (double eps 2.22e-16),
+against a measured pooled mean of `-1.76e-13`: same order. So the sign bias is evidence *for*
+the round-off reading, not against it.
+
+**The sign argument is withdrawn rather than patched**, because it was offered as the
+discriminator against a coherent physics shift and it cannot do that job — a coherent shift
+would ALSO show a sign preference. What separates the two hypotheses is scale:
+max relative bin difference **1.9e-11** and integral agreement **2.6e-14**. Those numbers alone
+carry the verdict.
+
+Per Joseph: the CONC=4 confirmation run is skipped — thread order versus any other mechanism
+does not change a 1e-13 verdict.
