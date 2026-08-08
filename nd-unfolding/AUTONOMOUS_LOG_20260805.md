@@ -2030,3 +2030,49 @@ rather than as a bare one-liner from me. Handing it over is the correct move, no
 Also this cycle: pushed the re-run dispatch entry after **two** rebases — the other lane pushed five
 commits and then a sixth while I was resolving. Both rebases were clean (they touch `p4_*` and
 `KNOWN_ISSUES`, I touch the PET log), and the three-condition confirm passed on the second attempt.
+
+### 13:00Z — the mixed-units heuristic INSTITUTIONALISED as an exhaustive sweep; and I overstated a severity
+
+**Joseph's severity correction, accepted.** I reported `p4_validate_active_lateral_fps.py:70` as "still
+live" without checking reachability. It is **LATENT**. The adopted FPS lateral has
+`sqrt_trace = 8.10399e-39`, so `trace ~ 6.6e-77` over 266 bins and `|ev[-1]| ~ 1e-77…1e-78`; line 68's
+effective threshold is therefore `~1e-89` against line 70's `1e-30`, so **the PSD check subsumes the
+diagonal check by ~59 orders** and a negative diagonal forces a negative eigenvalue that L68 catches first.
+**The 2026-08-07 FPS adoption is not compromised and must not be re-opened.** Exploitable only for
+`|ev[-1]|` above `~1e-18`. Fix for consistency, not urgency. Same class of correction I accepted from the
+GBDT lane and they accepted from me — a defect in form is only a defect in fact once reachability is
+checked.
+
+**The heuristic is now a tool, not an observation.** `audit_validator_tolerance_units.py`, AST-based
+because `-1e-9 * max(eig, 1.0)` and `abs(a-b)/total < 1e-9` are similar characters in different shapes and
+regexes get it wrong. Classifies every tolerance comparison as RELATIVE / ABSOLUTE / FLOOR (a
+`max(1e-300, …)` div-by-zero guard is neither) and flags any function carrying both.
+
+    307 .py files   ->   3 functions mix units   ->   exactly 1 matters
+
+**And the two false positives are worth more than the hit.** Both are absolute-against-**O(1)**:
+`compare_3d_fullcov.py:162`'s `abs(t - args.tol) < 1e-30` is an exact-equality proxy between floats that
+should be bit-identical, where absolute is *correct*; and `test_fps_corrected_uq.py:63-64`'s
+`norm(Cn) < 1e-12` is a **synthetic** null test whose own covariance I measured at `max|C| = 2.725`, so
+1e-12 sits 12 orders *below* the data. **I first read that second one as "65 orders too loose" by assuming
+the production 1e-77 scale, and checking the actual inputs is what caught it** — the same mistake in
+miniature that Joseph had just corrected in me one paragraph earlier.
+
+So the finding sharpens to: **mixed units is a SMELL; the defect is mixed units where the data is far from
+O(1).** The tool classifies units mechanically; it cannot know the scale flowing through. That is why the
+table carries a per-row verdict rather than a hit list — a table whose rows are not triaged transfers the
+work instead of doing it.
+
+Table posted at `VALIDATOR-TOLERANCE-UNITS-20260808.md`; heuristic filed as **BEN-071** with four rules,
+including "prefer a LIVE positive control to a synthetic one" — `mat_gates` is unrepaired, so when it is
+fixed the control fails loudly and forces the table to be regenerated, where a synthetic control would pass
+forever.
+
+**COLLECTION ANNOUNCEMENT: 857 -> 865 (+8), mine**, all `test_validator_units_auditor.py` — six classifier
+cases (including that `recovery >= 0.80` must NOT be flagged, and that a `max(1e-300, …)` floor is neither
+unit) plus the live-control and fails-closed-on-empty-root guards. Separately note the 744 -> 857 jump is
+the GBDT lane's landed tests, not mine. Suite 7 failed / 857 passed / 1 skipped, the 7 documented and my
+delta zero.
+
+Re-run `56445883` still RUNNING; progress will be read off the checkpoint pkls and the Gate A/B receipt
+will use a run-specific path, both as Joseph confirmed.
