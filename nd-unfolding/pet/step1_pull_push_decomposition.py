@@ -88,7 +88,18 @@ def main():
                     help="the JSON written by gate_ab_push_provenance.py. Required: without Gate A "
                          "this script cannot claim its rebuilt input space is the trained one.")
     ap.add_argument("--json", default=None)
-    ap.add_argument("--batch-size", type=int, default=1000)
+    # PER-STEP batch sizes, read off the engine's actual call sites rather than shared (BEN-072).
+    # The engine does NOT use one batch size:
+    #     omnifold.py:199  RunStep1: reweight(..., self.model1, batch_size=1000)   <- explicitly 1000
+    #     omnifold.py:219  RunStep2: reweight(..., self.model2)                    <- no arg -> 512
+    # A single shared default would reproduce step 1 correctly and BOTH step-2 reweights wrongly. That is
+    # the same defect BEN-072 records in gate_ab_push_provenance.py, where batch 1000 against the engine's
+    # 512 produced a 1.744e-06 deviation and nearly inverted a verdict; at 512 the same comparison is
+    # bit-exact. So these are separate flags with the engine's own values as defaults.
+    ap.add_argument("--batch-size-step1", type=int, default=1000,
+                    help="must match omnifold.py:199's explicit batch_size=1000")
+    ap.add_argument("--batch-size-step2", type=int, default=512,
+                    help="must match MultiFold.BATCH_SIZE, which omnifold.py:219 falls through to")
     a = ap.parse_args()
 
     # ---- the receipt is a precondition, not a formality ------------------------------------------
@@ -113,6 +124,7 @@ def main():
               "it must not be quoted as the run's pull/push. ***")
 
     rec = {"gate_receipt": os.path.abspath(a.gate_receipt), "gate_verdict": gate_verdict,
+           "batch_size_step1": a.batch_size_step1, "batch_size_step2": a.batch_size_step2,
            "gate_Bi_pass": bool(gb.get("Bi_pass")),
            "gate_Bi_max_rel_dev": gb.get("Bi_max_rel_dev"),
            "reconstruction_is_checkpoint_based": not bool(gb.get("Bi_pass"))}
@@ -158,6 +170,16 @@ def main():
     name = contract["multifold_name"]
 
     def ckpt(it, step):
+        """Prefer the BEN-043 `_final` weights for the LAST iteration when the driver wrote them.
+
+        Post-fix artifacts carry `_final.weights.h5` for `iter{niter-1}` only -- those are the weights that
+        actually produced `weights_push`, and Gate B(i) is bit-exact against them. Earlier iterations have
+        only the best-epoch files, which is a real and stated limitation: `increment1` (model1 @ iter2) and
+        `push_prev` (model2 @ iter1) come from different provenance tiers.
+        """
+        fin = os.path.join(wf, f"OmniFold_{name}_iter{it}_step{step}_final.weights.h5")
+        if os.path.exists(fin):
+            return fin
         p = os.path.join(wf, f"OmniFold_{name}_iter{it}_step{step}.weights.h5")
         if not os.path.exists(p):
             raise SystemExit(f"[step1] missing checkpoint {p} (fail closed)")
@@ -173,6 +195,7 @@ def main():
                    num_heads=2, projection_dim=32, local=True, K=3, coord_idx=coord_gen)
 
     def engine_reweight(step, it, events):
+        bs = a.batch_size_step1 if step == 1 else a.batch_size_step2
         m = build(step)
         m.load_weights(ckpt(it, step))
         # `model1` must differ from the model passed in so `reweight` selects step2_models; for the
@@ -183,8 +206,8 @@ def main():
         # passed here is `!= None` and resolves to the single-model list. That is what makes it
         # legitimate to run the RECO leg through the committed step-2 helper: the helper only ever
         # evaluates the one model it was handed, with the engine's F3 cap and non-finite guard.
-        of = _engine_reweighter(m, a.batch_size)
-        return np.asarray(of.reweight(events, m, batch_size=a.batch_size), np.float64)
+        of = _engine_reweighter(m, bs)
+        return np.asarray(of.reweight(events, m, batch_size=bs), np.float64)
 
     # ---- the two pieces of pull_final, per omnifold.py:200 --------------------------------------
     # pull_final = push_{niter-2} * classifier1_{niter-1}(reco), each pinned to 1 off its own mask.
