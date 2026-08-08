@@ -1959,3 +1959,74 @@ Committed `nd-unfolding/pet/d2_acceptance_oracle.py` (double-gated, fails closed
 finding, **CLM-012**, and **BEN-045**. Also corrected for the record: `151db63` is my own commit, not
 another session's — the concurrent session's D2 work is `2113130` — so the oracle's stated limit was mine
 and I did not get to treat it as an inherited constraint. Mailed.
+
+### 12:20Z — THE RE-RUN DISPATCHED after ~28.5h queued, and it is running the FIXED driver
+
+`56445883` RUNNING on nid002172, 22:47 elapsed, 11:37:13 wall left. `NOMINAL train` began
+`2026-08-08T11:58:15Z`; `w_nominal/` has appeared in the product directory. This is the critical path —
+the option (1) re-train Joseph authorised.
+
+**Verified rather than assumed, because the whole point of this run is the fix:**
+
+    config gate      estimator_fingerprint pet-fullevent-fps-v1, bkg_mode negweight-refined
+    seed policy      niter=3, epochs=8            (matches FROZEN; no launcher restatement)
+    driver sha       MATCHES the gate 20260807 pin
+    nominal_pet_training_allowed   True           (the authorisation this receipt carries)
+    BEN-043 fix present in the running driver     `_models[0].save_weights` found
+
+So the run is using the driver that persists the final-epoch weights, not the pre-fix one — which is the
+only reason this re-train exists.
+
+**Sizing from the run being sized:** the previous nominal (`56415634`) took 5:57:38 for nominal + matched
+floor at the same config, so this projects to finish ~17:55Z against a wall that expires ~23:57Z — roughly
+6h of margin.
+
+**One honest note on liveness:** `sstat` returned an empty row this cycle. I am NOT reading that as a
+problem — BEN-035's fourth instance was exactly inferring a failure from one uncooperative client command.
+The positive evidence is that the job state is `R`, `w_nominal/` was created, and the log has advanced
+through the config gate into `NOMINAL train`. I will use the artifact clock (checkpoint `.pkl` files, six
+of them for niter=3) as the primary progress signal, as I did for ep32.
+
+**No mail this cycle.** A dispatch is not one of the three mailable events, and the next one carries the
+verdict. When it lands the plan is fixed and already committed: re-run `gate_ab_push_provenance.py` to a
+**run-specific** receipt path (so the superseded 56381674-era receipt is not clobbered), confirm Gate B(i)
+now passes at ~1e-6 instead of failing at 0.866, and then redo the step-1 decomposition on checkpoints that
+are finally bit-faithful to the artifact.
+
+### 12:30Z — the GBDT lane FIXED my BEN-070 finding in the library, but the duplicate I named is still live
+
+They repaired `p4_lib.py` properly and credited the class:
+
+    require(np.all(d >= -psd_atol_ratio * denom), "negative diagonal beyond tolerance")
+
+with a comment quantifying it ("~49 orders of magnitude above what it was supposed to bound") and a
+power-proof in `tests/test_p4_guard_mutations.py` at the real 1e-79 scale — exactly BEN-044's rule that a
+gate must be shown able to fail in the commit that writes it. That is the right fix and a better one than
+I proposed.
+
+**But the fix is HALF-LANDED.** My contribution named two sites; they patched the library and
+`p4_validate_active_lateral.py`, and **`p4_validate_active_lateral_fps.py:70` still reads**
+
+    r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-30))
+
+Different file — note the `_fps` suffix — and its git history is the FPS repair rounds, not this P4 round,
+so it fell outside the sweep they were running.
+
+**And it is the signature again, one line apart inside the SAME function.** `mat_gates` computes
+`ev = eigvalsh(Cs)` and already does the relative thing twice:
+
+    line 66   rel_asymmetry = max|C-C^T| / max(1e-300, max|C|)      relative
+    line 68   psd           = ev[0] >= -1e-12 * abs(ev[-1])          relative
+    line 70   diag          = d >= -1e-30                            ABSOLUTE
+
+So the correct scale is already in scope on the line above, and the one-line fix mirrors line 68. That is
+the third independent occurrence of "a guard written in different units from its neighbours" — and the
+second time the neighbour is two lines away.
+
+**Reported, not fixed.** Ownership is ambiguous (the `p4_` prefix is their lane, the git history is the FPS
+rounds), a repair round is live nearby, and the fix should land with the same mutation test they just built
+rather than as a bare one-liner from me. Handing it over is the correct move, not the timid one.
+
+Also this cycle: pushed the re-run dispatch entry after **two** rebases — the other lane pushed five
+commits and then a sixth while I was resolving. Both rebases were clean (they touch `p4_*` and
+`KNOWN_ISSUES`, I touch the PET log), and the three-condition confirm passed on the second attempt.
