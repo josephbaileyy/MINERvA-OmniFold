@@ -2220,3 +2220,41 @@ now has to explain a sign, which is a stronger demand than explaining a shortfal
 
 Receipt `STEP1_DECOMPOSITION.slurm-56445883.json` committed. Floor repeat still running (1 of 6 at last
 poll), so the job itself is not complete; this result rests on the nominal artifact, which is.
+
+### 18:25Z — `56445883` COMPLETE (06:00:44, rc=0). The fix holds on TWO independent trainings; the ~34% deficit reproduces to 0.52%
+
+Both products written, both carrying the BEN-043 contract with their own `_final` checkpoints and
+`checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"`.
+
+**Gate A/B is BIT-EXACT on BOTH artifacts:**
+
+    nominal  A1/A2 bit-exact, B(ii) 72/72, B(i) max rel dev 0.000000e+00   GATE_AB_PASSED
+    floor    A1/A2 bit-exact, B(ii) 72/72, B(i) max rel dev 0.000000e+00   GATE_AB_PASSED
+
+I ran the floor one for symmetry with how the DEFECT was established: BEN-043's Control 2 used the floor
+run to show the defect was structural rather than a one-off, so the matching move is to use the same
+independently-trained run to show the FIX is structural. It is — on two separate trainings, not one.
+
+**The fold-forward deficit is reproducible, not run-to-run noise:**
+
+    nominal  0.736746    deficit vs R  34.46%
+    floor    0.740546    deficit vs R  34.12%
+    spread   0.003800  = 0.516% of the value
+
+So the ~34% deficit reproduces to **0.52%** across two independent trainings at identical seeds. That
+closes any residual reading of it as noise: it is a property of the estimator at this configuration.
+
+**Where the lane now stands, all measured today on provably faithful weights:**
+
+  * branch A fired, so Gate-4's disposition routes through the D2 re-specification (Joseph's call, and the
+    independent re-derivation's five corrections plus the injection-dependence objection are in front of it);
+  * full-event extraction is UNBLOCKED for the first time — `check_subsample_agreement` was failing closed
+    at 0.866, now 0;
+  * step 2 is EXONERATED at a 0.44% undershoot of its own target, and 1.010853 at iteration 1;
+  * step 1 delivers **58.6%** of its own objective, and its final increment is **wrong-signed** — 0.648331
+    where ~1.16 is required;
+  * branch C holds: no product is quoted while any leg is red, and D2 recovery is still red.
+
+Receipts committed: `GATE_AB_PUSH_PROVENANCE.slurm-56445883{,.batch512}.json`,
+`GATE_AB_PUSH_PROVENANCE.floor-56445883.json`, `STEP1_DECOMPOSITION.slurm-56445883.json`. Mailed the
+batch.
