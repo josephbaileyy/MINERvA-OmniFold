@@ -83,7 +83,10 @@ unfold_one(){
   [[ ! -s "${MERGED}" ]] && { echo "[unfold] ABORT ${tag} merged missing"; return 3; }
   local TMP="${OUT}.$$.${RANDOM}.tmp.root"
   rm -f "${TMP}"
-  if python3 unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3,W \
+  # `-u`: unbuffered. On this Lustre filesystem st_blksize is 4 MiB, so a buffered redirect
+  # shows ZERO progress for the whole run and liveness has to be inferred from sstat
+  # instead (BEN-028). Cost me an hour of blind watching on the 2026-08-07 probe run.
+  if python3 -u unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3,W \
        --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode "${BKG_MODE}" \
        --out "${TMP}" --verbose \
        > "${OUTDIR}/unfold_${tag}.log" 2>&1 && valid_root "${TMP}"; then
