@@ -1959,3 +1959,36 @@ Committed `nd-unfolding/pet/d2_acceptance_oracle.py` (double-gated, fails closed
 finding, **CLM-012**, and **BEN-045**. Also corrected for the record: `151db63` is my own commit, not
 another session's — the concurrent session's D2 work is `2113130` — so the oracle's stated limit was mine
 and I did not get to treat it as an inherited constraint. Mailed.
+
+### 12:20Z — THE RE-RUN DISPATCHED after ~28.5h queued, and it is running the FIXED driver
+
+`56445883` RUNNING on nid002172, 22:47 elapsed, 11:37:13 wall left. `NOMINAL train` began
+`2026-08-08T11:58:15Z`; `w_nominal/` has appeared in the product directory. This is the critical path —
+the option (1) re-train Joseph authorised.
+
+**Verified rather than assumed, because the whole point of this run is the fix:**
+
+    config gate      estimator_fingerprint pet-fullevent-fps-v1, bkg_mode negweight-refined
+    seed policy      niter=3, epochs=8            (matches FROZEN; no launcher restatement)
+    driver sha       MATCHES the gate 20260807 pin
+    nominal_pet_training_allowed   True           (the authorisation this receipt carries)
+    BEN-043 fix present in the running driver     `_models[0].save_weights` found
+
+So the run is using the driver that persists the final-epoch weights, not the pre-fix one — which is the
+only reason this re-train exists.
+
+**Sizing from the run being sized:** the previous nominal (`56415634`) took 5:57:38 for nominal + matched
+floor at the same config, so this projects to finish ~17:55Z against a wall that expires ~23:57Z — roughly
+6h of margin.
+
+**One honest note on liveness:** `sstat` returned an empty row this cycle. I am NOT reading that as a
+problem — BEN-035's fourth instance was exactly inferring a failure from one uncooperative client command.
+The positive evidence is that the job state is `R`, `w_nominal/` was created, and the log has advanced
+through the config gate into `NOMINAL train`. I will use the artifact clock (checkpoint `.pkl` files, six
+of them for niter=3) as the primary progress signal, as I did for ep32.
+
+**No mail this cycle.** A dispatch is not one of the three mailable events, and the next one carries the
+verdict. When it lands the plan is fixed and already committed: re-run `gate_ab_push_provenance.py` to a
+**run-specific** receipt path (so the superseded 56381674-era receipt is not clobbered), confirm Gate B(i)
+now passes at ~1e-6 instead of failing at 0.866, and then redo the step-1 decomposition on checkpoints that
+are finally bit-faithful to the artifact.
