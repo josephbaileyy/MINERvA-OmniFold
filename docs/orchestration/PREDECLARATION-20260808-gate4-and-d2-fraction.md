@@ -123,3 +123,67 @@ fraction had to come from an argument and why the delegate's blind pick matters 
   `closure_powered_truth_reweight.py`; a re-specification lands only after the delegate reports and Joseph
   rules.
 - It does not decide Gate-4. §1 fixes the branches; the re-run picks one.
+
+---
+
+## 4. AMENDMENT 2026-08-08T13:00Z — the blind delegate's pick, and three conditions I had missed
+
+The delegated blind pick (condition (a)) has reported. **It chose `f = 0.80` independently**, with no repo
+access and no sight of the measured recovery, the ceiling, or §2. It reached it from the same anchor —
+`residual_over_gap_max = 0.20` was always a tolerance on *estimator error* and only its denominator was
+defective — and put the point more precisely than I did:
+
+> *"`0.20` was a tolerance on estimator error accidentally denominated in estimator-error-plus-impossibility.
+> Rebasing it onto `gap * ceiling(k)` restores the meaning the threshold was written to have."*
+
+**What that agreement is and is not worth.** One delegate agreeing with me is not verification — this
+campaign's own rule, and it applies to me. What makes it informative is narrower and specific: the delegate
+could not see the answer, so the agreement rules out the one failure mode the predeclaration was written to
+guard against, namely that `0.80` was reverse-engineered from `0.8845`. It does not make `0.80` correct.
+
+### It sharpened the rejection of f = 0.90 beyond my version
+
+I rejected 0.90 as a *category error* (a noise budget reused as an estimator budget). The delegate identified
+it as a **units error**: `floor_over_gap_max` is denominated in `gap` while `f` is denominated in
+`gap * ceiling`, so netting one against the other is a units mismatch dressed as a derivation — and the floor
+is **already checked separately**, so folding it into `f` double-counts it. That is a better statement of the
+same objection and is the correct one to carry forward.
+
+### And it produced a refinement worth its own decision
+
+> *"If the sampling floor is judged to belong anywhere in this criterion, it belongs in the CEILING:
+> `recovery >= f * (ceiling(k) - floor/gap)`, since the floor is a second irreducible loss that is
+> pre-computable from the sample without running the estimator."*
+
+That is a genuinely better idea than anything in §2 and it **leaves `f = 0.80` either way**. Recorded as a
+**separate, deferred decision for Joseph** — it would tighten the criterion (ceiling `0.618228 → 0.572352`
+at `floor/gap = 0.045876`, threshold `0.494582 → 0.457882`), and adopting it in the same edit as the
+reference-point repair would be the two-changes-at-once error this document exists to avoid.
+
+### Three adoption conditions, two of which I had not stated
+
+1. **`k` and the acceptances entering `ceiling(k)` must be pinned BEFORE the estimator's output is looked
+   at** — because `ceiling(k)` rises with `k`, so the bar rises with `k`, which is self-consistent only if
+   `k` is *declared* rather than *selected*. **Verified satisfied, not assumed:** `k = 3` is
+   `NOMINAL_SEED_POLICY["niter"]` (`train_fullevent_nominal.py:51`) and `validate_pet_nominal_gate4.py:804`
+   compares the artifact's policy against `FROZEN`, rejecting drift; and the acceptances come from the
+   committed map, which pins the dump at `fa6b346316024216…`. So neither `k` nor `a_b` is selectable after
+   the fact. I had stated `k = 3` without stating that it must not be selectable — the delegate was right
+   to raise it.
+2. **`ceiling(k)` and the RAW recovery must be reported next to every pass/fail.** After this change the
+   criterion certifies *"the estimator realised 80% of the recovery this observable's acceptance permits,"*
+   **not** *"the estimator recovered 80% of the injected distortion."* A low ceiling is itself a finding
+   about the information content of the measurement and belongs in the note as a caveat — **not absorbed
+   into a denominator where it silently makes a gate easier.** This is the same protection Joseph asked for
+   around the 28.2% shortfall, arrived at independently, and it is now part of the criterion.
+3. **`f` must remain a declared constant**, never data-dependent; measured quantities belong on the target
+   side (`ceiling`), computed from MC acceptances rather than from the estimator's own output, so the
+   criterion stays pre-registerable.
+
+`gap_min = 0.15` and `floor_over_gap_max = 0.10` stay untouched and stay denominated in `gap`: they are
+preconditions on whether the *test* is informative, not claims about estimator performance, so the
+reference-point defect does not reach them. That is the delegate's reasoning and I agree with it.
+
+**Still outstanding before CLM-012 moves past `VERIFIED-NUMERIC`:** the independent re-derivation of the
+four numbers (condition (d)) has not reported yet. Nothing here promotes the claim.
+
