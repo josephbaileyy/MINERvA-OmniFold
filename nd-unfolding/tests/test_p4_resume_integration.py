@@ -210,6 +210,30 @@ class LauncherWiring(unittest.TestCase):
         self.assertIn("require_exact_endpoint_tags", self.SH)
         self.assertIn("EXTRA/UNEXPECTED", self.SH)
 
+    def test_legacy_attest_path_is_GONE_not_guarded(self):
+        """REPAIR-6. The path stamped CURRENT provenance onto ROOTs an older driver produced.
+        It is deleted rather than repaired, so there is no code path that can write a receipt
+        whose producer claim was not observed by this launcher."""
+        self.assertNotIn("legacy-attested", self.SH)
+        self.assertNotIn('mode":"legacy-attested', self.SH)
+        # the helper it depended on, and the manifest pointer that only it consumed, are gone
+        self.assertNotIn("attest(){", self.SH)
+        self.assertNotIn('MANIFEST="', self.SH)
+
+    def test_every_receipt_is_produced_by_this_launcher(self):
+        """The replacement for the deleted guard: only one receipt mode can be written."""
+        import re
+        modes = set(re.findall(r'"mode":"([a-z-]+)"', self.SH))
+        self.assertEqual(modes, {"produced"},
+                         f"a receipt mode other than 'produced' can still be written: {modes}")
+
+    def test_header_no_longer_claims_byte_reproducibility(self):
+        """The header asserted produced ROOTs 'must hash identically to the 2026-07-18 ones'.
+        Measured false (KNOWN_ISSUES #24). A stale claim in a header is how the next session
+        re-derives a wrong invariant."""
+        self.assertNotIn("must hash identically", self.SH)
+        self.assertIn("not bit-reproducible", self.SH)
+
     def test_bkg_mode_is_explicit_and_stamped(self):
         self.assertIn('--bkg-mode "${BKG_MODE}"', self.SH)
         self.assertIn('"bkg_mode":"%s"', self.SH)

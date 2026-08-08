@@ -4,24 +4,29 @@
 # Per endpoint: unique temp path -> content/config validation -> ATOMIC rename of the
 # ROOT -> write the receipt LAST (so a receipt implies a fully-published ROOT). Nominal
 # unfold (NO --universe), FIXED --seed 42 (MAT +/- cancels CV). Resume rules:
-#   * .done receipt present + ROOT valid           -> skip
-#   * legacy ROOT (no receipt) + sha256 == committed manifest attestation -> attest, write receipt
-#   * otherwise                                     -> (re)run transactionally
+#   * .done receipt present + ROOT valid + receipt CONTENT-validated -> skip
+#   * otherwise                                                      -> (re)run transactionally
 # Never a key-only/size-only skip. Aggregates every worker exit; requires the EXACT
-# 10-tag inventory; fail-closed.
+# 10-tag inventory, rejecting extras as well as omissions; fail-closed.
 #
-# 2026-08-07 (G-1): --bkg-mode is passed EXPLICITLY (from P4Config, not hardcoded) and
-# stamped into every receipt. The value is `purity` per the 2026-08-07 footing decision,
-# which is also the driver default -- so this changes provenance, not physics, and the
-# produced ROOTs must hash identically to the 2026-07-18 ones. If a re-unfold after this
-# change yields a different ROOT, STOP and find out why; do not adjust the manifest.
+# 2026-08-07 (G-1): --bkg-mode is passed EXPLICITLY (from P4Config, not hardcoded) and stamped
+# into every receipt. The value is `purity` per the 2026-08-07 footing decision, which is also
+# the driver default -- so this changes provenance, not physics.
+#
+# REPAIR-6 corrects a claim this header used to make. It said the produced ROOTs "must hash
+# identically to the 2026-07-18 ones", and that is FALSE: these ROOTs are not bit-reproducible
+# (KNOWN_ISSUES #24 -- measured 0/10 sha256 match on a clean re-unfold, contents agreeing to
+# 1.9e-11 per bin and 2.6e-14 on the integral, from LightGBM/OpenMP reduction order). Sameness
+# of a re-run is a CONTENT question at a declared tolerance (p4_lib.check_reproducibility,
+# REPRO_RTOL_PER_BIN / REPRO_RTOL_INTEGRAL), never a hash question. The legacy-attest resume
+# rule that depended on the false assumption is deleted; see the comment in unfold_one().
 set -o pipefail
 export HOME=/global/homes/j/josephrb
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 MERGEDIR="${ND}/active_universe_5d/standard/merged"
 OUTDIR="${ND}/active_universe_5d/standard/unfolds"; mkdir -p "${OUTDIR}"
-MANIFEST="${ND}/active_universe_5d/standard/evidence/p4_standard_manifest.json"
+# (no MANIFEST variable: its only consumer was the deleted legacy-attest path)
 CONC="${CONC:-4}"
 cd "${ND}"
 CFG_HASH=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.hash())") || { echo "[p4-unfold] ABORT config"; exit 2; }
@@ -38,7 +43,6 @@ UNFOLD_BLOB=$(git rev-parse "HEAD:nd-unfolding/unfold_nd_omnifold_unbinned.py" 2
 echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH} bkg_mode=${BKG_MODE}"
 
 valid_root(){ python3 -c "import ROOT,sys; f=ROOT.TFile.Open('$1'); sys.exit(0 if (f and not f.IsZombie() and not f.TestBit(ROOT.TFile.kRecovered) and f.Get('hXSecND_flat') and f.Get('hXSecND_flat').GetNbinsX()==65856) else 1)" >/dev/null 2>&1; }
-attest(){ python3 -c "import json,hashlib,sys;m=json.load(open('$MANIFEST'));import p4_lib as P;sys.exit(0 if P.sha256_file('$1')==m['endpoint_sha256'].get('$2','') else 1)" >/dev/null 2>&1; }
 sha(){ python3 -c "import p4_lib;print(p4_lib.sha256_file('$1'))" 2>/dev/null; }
 
 unfold_one(){
@@ -57,19 +61,25 @@ unfold_one(){
     echo "[unfold] STALE ${tag} -> re-running: ${RCHK}"
     rm -f "${REC}"                       # D2: never leave a stale ROOT/receipt pair behind
   fi
-  if [[ -s "${OUT}" && ! -s "${REC}" ]] && valid_root "${OUT}" && [[ -f "${MANIFEST}" ]] && attest "${OUT}" "${tag}"; then
-    # D2b: the legacy receipt used to omit merged/central provenance, so an attested endpoint
-    # was permanently less provable than a produced one. It now carries the same fields.
-    local AMH ACH
-    AMH=$(python3 -c "import p4_check_receipt as C;print(C.committed_merged_sha('${MERGED}'))") || {
-      echo "[unfold] ABORT ${tag} cannot resolve committed merged sha"; return 6; }
-    ACH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
-    if ! { printf '{"tag":"%s","mode":"legacy-attested","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"log-branch-evidence (attestation certifies identity, not footing)","code_rev":"%s","unfold_blob":"%s","t":"%s"}\n' \
-      "${tag}" "$(sha "${OUT}")" "${AMH}" "${ACH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "${UNFOLD_BLOB}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
-      echo "[unfold] FAIL ${tag} attest receipt publication failed"; rm -f "${REC}.tmp"; return 7
-    fi
-    echo "[unfold] ATTEST ${tag} (legacy ROOT sha256 == manifest)"; return 0
-  fi
+  # REPAIR-6: the LEGACY-ATTEST path is DELETED, not repaired.
+  #
+  # It matched a legacy ROOT's sha256 against the committed manifest and then wrote a receipt
+  # stamped with the CURRENT code_rev and unfold_blob -- asserting that today's driver produced
+  # a file made on 2026-07-18 by an older one. That is a provenance lie, and guarding it would
+  # only have made the lie harder to see (repair-5 verifier finding 1, and the same class as
+  # KNOWN_ISSUES #23 and BEN-043's "a checkpoint is not provenance unless something asserts it
+  # reproduces the product").
+  #
+  # A second, independent reason it had to go: attestation-by-hash rested on the endpoint ROOTs
+  # being bit-reproducible, and they are NOT (KNOWN_ISSUES #24, measured 2026-08-07 -- 0/10
+  # sha256 match on a clean re-unfold while contents agreed to 1.9e-11 per bin and 2.6e-14 on
+  # the integral). So "re-unfold and compare hashes" could never have succeeded; the path could
+  # only ever certify that a file had not changed on disk, which is storage integrity, not
+  # provenance.
+  #
+  # The replacement is not a better guard -- it is removing the need for one. Every endpoint is
+  # PRODUCED by this launcher, so the receipt's producer claim is true by construction. The ten
+  # 2026-07-18 ROOTs are preserved under unfolds__SUPERSEDED_20260718/ and are never read here.
   [[ ! -s "${MERGED}" ]] && { echo "[unfold] ABORT ${tag} merged missing"; return 3; }
   local TMP="${OUT}.$$.${RANDOM}.tmp.root"
   rm -f "${TMP}"
