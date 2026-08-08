@@ -2311,3 +2311,32 @@ disposition, which branch A routed through the first. Also on the record and not
 shortfall, now characterised as ~98% per-cell dispersion rather than response quality.
 
 Mailed the stand-down. Not inventing further work.
+
+### 19:45Z — Post-mail addendum: the brief's own log path was dead, and I only found it standing down
+
+After the stand-down mail went out I checked something I had assumed for three days: that the log file the
+brief names is the one I have been writing to. **It is not.** The brief says
+`nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`; every entry of mine since 2026-08-06 is in
+`nd-unfolding/AUTONOMOUS_LOG_20260805.md`. The log moved up a level on 08-06, nothing recorded the move,
+and **neither file pointed at the other**.
+
+Why this is worse than a broken path: a *missing* file raises an error and gets fixed in seconds. A
+*superseded* file opens, parses, carries the right title and the right standing-constraints header, and
+reads as complete. An agent handed the brief would have read it, believed it had the campaign's context,
+and been silently two days stale — missing BEN-043 and its fix, the re-train, the decomposition, CLM-012,
+BEN-070/071/072. It also inverts the usual direction: the *successor* was the file with no header and no
+provenance, so the correct-looking document was the wrong one.
+
+Fixed by indexing both directions rather than merging — terminal pointer appended to the predecessor
+(append-only, and its entries are correct as written), provenance header plus inherited constraints on the
+successor. `84d8634`. Filed as **BEN-073** (`0388a03`) with the cheap check that would have caught it at
+minute one: compare the DATE of the last entry in any log you are told to read against the date the
+campaign is supposed to be at. A two-day gap in an append-only log is a missing file, not a quiet period.
+
+**No second mail.** The bar is a job finishing, a PASS/FAIL verdict, or a blocking decision, and this is
+none of them; the stand-down mail's `2c89523` is superseded by `0388a03` but nothing in its substance
+changed. Recording it here instead is the whole point of the file.
+
+Final state: `local == origin == cluster == 0388a03`, queue is the wakerctl cron alone, 0 armed watches,
+no new mail on either poll. Standing down for real this time.
+
