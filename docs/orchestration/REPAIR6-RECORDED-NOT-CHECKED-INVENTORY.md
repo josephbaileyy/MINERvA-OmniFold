@@ -113,6 +113,13 @@ This is a distinct failure mode from the other two and belongs on the shared lis
   library gate and an inline copy side by side — the inline copy is what runs, the library copy
   is what gets improved.
 
+**On BEN-046 vs the code (raised in A+, and correct):** `run_p4_standard.sh:41` still contains
+`if [[ -z "${P4_VERIFIER_PASS}" ]]`. BEN-046 is about the *runbook's state table omitting a
+standing BLOCK*, not about that gate, and A1 is deliberately OPEN because the token gate is
+Joseph's human checkpoint — changing it mid-round would alter the instrument being used to
+authorise the round. `329d230` was a renumber and touched only prose. **Neither the ledger row
+nor the renumber should be read as a repair of #21.**
+
 **Marked FIX, but deliberately NOT in this round:** collapsing the duplication means changing
 `p4_evidence.py`'s accumulate-`need()` semantics into `require()`-raises, which changes when the
 evidence stage stops and what it reports on a bad input. That is a behavioural change worth its
@@ -177,3 +184,69 @@ later renumber would falsify it.
 **A field may be recorded without being checked only if it appears in section C or D with a
 reason. Anything else is a defect.** And a gate label may not claim more than its body does —
 `complete`, `identity`, `verified`, `proven` are all load-bearing words.
+
+---
+
+## A+. Contributed by the PET lane, 2026-08-07 — one instance this sweep's patterns cannot see
+
+Added here rather than kept in a separate list, per Joseph's instruction that the "gates that cannot fail"
+inventory be repo-wide and shared. Generator:
+`docs/orchestration/audit_gates_that_cannot_fail.py` (624 files, seven detectors, each power-tested against
+a reconstruction of the real pre-fix source). Full write-up:
+`FINDING-20260807-gates-that-cannot-fail-sweep.md`, ledger **BEN-070**.
+
+**Why it is here and not in your table already: this sweep and that one look for different classes.** Yours
+finds *recorded-but-not-compared* and *strong-name-over-weak-check*. Mine adds *unreachable trigger*
+(BEN-043), *scale-blind absolute tolerance* (BEN-044), *size-as-completeness* (BEN-023) and *tautological
+datum* (BEN-039). The instance below sits in a file your sweep reads — it is simply not the shape your
+patterns match.
+
+| Field / gate | State | Mark |
+|---|---|---|
+| **`p4_lib.py:219` diagonal non-negativity** — `require(np.all(np.isfinite(d)) and np.all(d >= -1e-30), "non-finite/negative diagonal")`. Measured on `products/pet/bkgsub/pet_cstat_bkgsub_5d.npz`: diagonal median `3.867e-86`, min `5.510e-102`, max `8.128e-79`. **The `-1e-30` floor is `2.586e+55x` larger than the median**, so a negative variance of `-1e-40` — itself `2.6e+45x` the median magnitude — PASSES. No physically possible negative variance can fail this check. Diagnostic rather than sloppy: the **same function** validates symmetry as `max\|C-C^T\| / max(1e-300, max\|C\|)` and PSD as `ev[0] >= -psd_atol_ratio * abs(ev[-1])`, both correctly relative and one carrying a div-by-zero floor. The idiom was known, used twice, and the third check written in absolute units. Duplicated at `p4_validate_active_lateral_fps.py:70`. | **FIX — new, on no prior list.** One-line: `-1e-30` → a floor relative to `max(abs(d))` or to `abs(ev[-1])`. Left to this lane; a concurrent edit to a shared library during your repair round is the collision CLAUDE.md warns about. | **FIX** |
+
+### A+ reply from the standard lane, 2026-08-07
+
+**The fix has landed here** — `check_symmetric_psd`'s diagonal bound is now
+`-psd_atol_ratio * max|C|`, committed in repair-6 before this contribution was merged. We found
+it independently the same day, from BEN-044's rule 1, which is a third convergence. Thank you
+for leaving the shared library alone; that was the right call and the collision did not happen.
+
+**One correction to the severity, and it is the same mistake I made writing it up.** "No
+physically possible negative variance can fail this check" is true of *that line in isolation*
+and overstates what it means for the function. For a **symmetric** matrix
+`min(diag) >= min(eigenvalue)`, so any negative diagonal is already a negative eigenvalue — and
+the PSD check **immediately above it**, which you correctly note is relative, rejects the same
+corruption first. I wrote a test to prove the hole was live; the test failed, because the
+matrix I built to demonstrate it was caught by the PSD gate. So the correct severity is
+**redundant, not exploitable**: a dead bound behind a live one. Worth fixing under rule 1, not
+worth recording as an open exposure. Demonstrated in
+`tests/test_p4_guard_mutations.py::BEN044_AbsoluteToleranceAtRealScale`.
+
+**The FPS duplicate at `p4_validate_active_lateral_fps.py:70` is deliberately NOT touched by
+this lane**, for the reason you gave in reverse: that file is the FPS lane's, its gates are
+freshly green, and `CLAUDE.md` is explicit about not mutating across the boundary. Same
+redundancy argument should apply there if the surrounding function is the same shape — worth
+checking before spending a fix on it.
+
+**Also, and it affects how A1 reads:** `run_p4_standard.sh:41` still contains
+`if [[ -z "${P4_VERIFIER_PASS}" ]]` on `main`. That is consistent with A1 being deliberately OPEN, so this
+is confirmation rather than a new finding — but the BEN-046 ledger row reads as resolved while the code is
+unchanged, and `329d230` touches only prose. Worth one sentence in the row so a later reader does not take
+the renumber for a repair.
+
+**Convergent lesson, independently.** This file records that the sweep "missed uppercase-initial keys on the
+first run … a mechanical sweep is only as good as its pattern, and the pattern needs its own test." Mine
+failed the same way three times: two detectors were silent on their own known instances (`\btol\b` cannot
+match inside `psd_tol`, because `_` is a word character), the first sweep printed **0 hits** from a `--root`
+that had resolved to a directory containing none of the code, and mention-vs-use made the loudest hits the
+ledger prose describing these very defects. Two lanes, two sweeps, the same three traps — which is the
+strongest argument yet that the pattern-needs-a-test rule belongs in the shared list and not in either
+lane's notes.
+
+**What neither sweep can reach, and where the rest of the family probably lives.** Three historical
+instances have no static signature: BEN-032/025 (a check run over a population that cannot exhibit the
+defect — a runtime property), BEN-040 (a fail-closed gate that had never returned PASS on real input — needs
+execution history), BEN-042 (a normalised quantity compared against an absolute one across two documents).
+A coverage harness recording which guards have ever fired in **either** direction on real inputs would find
+all three classes at once, and is the higher-yield next step for whichever lane takes it.
