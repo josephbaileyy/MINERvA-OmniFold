@@ -182,6 +182,25 @@ not close the literal full-event PET gate below.
 >   63.1% of it); each term alone exceeds the entire residual headroom, so no single-axis remedy passes and
 >   seed-ensembling caps at 0.6313 for any N. → `FINDING-20260807-d2-response-reference-point.md`, BEN-042.
 > - Gate-4 still cannot PASS, and this item is not closed by any of the above.
+>
+> **STATE 2026-08-08 — two changes to the list itself, per Joseph.**
+>
+> - **NEW OPEN ITEM (d): the 28.2% estimator shortfall is UNEXPLAINED and must not be absorbed by the D2
+>   re-specification.** Of the `0.2531` gap between the `0.80` bar and the measured `0.546853`, `0.1818`
+>   (71.8%) is specification and **`0.0714` (28.2%) is the estimator's own deficiency** — it reaches
+>   **88.45%** of the acceptance-limited ceiling and the missing **11.55%** is not explained by acceptance,
+>   sampling (the statistical oracle is 0.9542), iteration count (no `k <= 6` helps), training budget (the
+>   8/16/32 ladder makes the coherent term monotonically worse) or seed (ensembling caps at 0.6313 for any
+>   N). The re-specified criterion says so in its own text. → CLM-012,
+>   `FINDING-20260807-d2-acceptance-limited-oracle.md`.
+>   *Working hypothesis, NOT a finding and not attributable to anyone as a claim:* it may be the same
+>   coherent under-application as the fold-forward deficit (`mean_w_reco(push|pass_reco) = 0.746483` vs
+>   `R = 1.124080`) and the ~19% leg mismatch (truth-leg `0.888234` vs reco-leg `0.746483`) — three
+>   symptoms, possibly one cause. Nothing has tested that.
+> - **REMOVED: `values.tex` is not a PET-lane decision and not a decision at all.** It is a queued task
+>   specified as **G-8** in `RUNBOOK-20260807-gbdt-closeout.md`, unblocking when **G-5** adopts. Dropped
+>   from this lane's open list. The PET macros stay untouched inside the **2026-07-12 quarantine**
+>   regardless of what G-5 does, so no PET action is pending on it in any branch.
 
 
 The present PET step-1/step-2 classifiers see only the reconstructed recoil
