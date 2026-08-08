@@ -2076,3 +2076,69 @@ delta zero.
 
 Re-run `56445883` still RUNNING; progress will be read off the checkpoint pkls and the Gate A/B receipt
 will use a run-specific path, both as Joseph confirmed.
+
+### 13:20Z — condition (d) reported: arithmetic CONFIRMED, my reasoning corrected in five places
+
+The independent re-derivation reproduced **all four numbers to display rounding (<=6e-7)**, confirmed A/B/C/D
+(the recovery identity to 1.1e-16, `r_dil <= 1` at every k, the two weightings genuinely differing and
+matching the map's own field, and both `bin_order` strings byte-identical), and reproduced unprompted the
+whole BEN-038 band table including the 1.0333 top band. **Nothing is void.**
+
+**It also found two real defects in my reasoning and three overstatements. I accept all five.**
+
+**Defect 1 — I asserted an algebraic identity that is not one, and it double-counted.** I wrote that the
+identity explains why `d2_response_decomposition.py`'s zero-dispersion column (0.6313) and the dilution ideal
+(0.63321) agree. **False:** that column is `1 - |1 - E_r|` with `E_r` the **estimator's** mean response, so it
+IS 0.631286; the dilution ideal is a different object and their agreement is the **empirical -0.001922 bias**.
+So I declared that agreement trivially algebraic in one section while resting the decision-grade status on the
+same agreement being meaningful empirical evidence in another. It cannot be both. Sentence removed.
+
+**Defect 2 — "confirmed to 0.19 pp" is budget-contingent and my OWN ladder is the counterexample.** `E_w[r]`
+is 0.63129 / 0.63250 / 0.56324 / ~0.5235 at ep8 / ctl8 / ep16 / ep32, so it moves 6.9 pp on doubling and ~11
+pp at 4x. The model predicts a *ceiling*; the agreement is between that ceiling and a *contingent* estimator
+value that sits at it at ep8 only. I used the ladder to kill the under-training hypothesis and then, in the
+same document, used the ep8 agreement as model validation. Claim WITHDRAWN.
+
+**Overstatement 1 — "no net transport gain" is true and analytically EMPTY.** Per-cell the gain is large: the
+two lowest acceptance bands carry **29.5% of the weight** and beat their own ceiling by +0.1443 and +0.1859,
+the lowest by **18.6x**; weighted `E_w|r_est - r_dil| = 0.1949` against a signed difference of 0.0019, so the
+aggregate agreement is **100x smaller than the typical per-cell deviation**. It survives only by a
+cancellation with mid-band undershoot. This **strengthens** caveat (i): the curve is demonstrably violated on
+30% of the weight. BEN-038 had already recorded this and I under-used it.
+
+**Overstatement 2 — the "28.2% estimator" bucket is ~98% DISPERSION, not response quality.** Of the 0.086355
+ceiling-to-measured gap, the scatter penalty is 0.084433 (**97.8%**) and the signed response deficit is
+0.001922 (2.2%). BEN-038's own rule is to split signed response from scatter before diagnosing; my §1 did not,
+and it is the section a reader quotes. **This directly serves Joseph's instruction** to keep the shortfall
+visible — it makes it MORE specific: located as dispersion, with only the *magnitude* of that dispersion
+unexplained. The finding's title said "28% is the estimator" and now says what it actually is.
+
+**Overstatement 3 — "reads as a round number" is wrong, and the truth is better for the finding.**
+`1-(1-0.42351622)^3 = 0.808415`, only **0.0084 above the bar**. So 0.80 was very likely *derived* — from the
+**scalar-scope** curve the acceptance map itself flags as Jensen-overstating differential recovery by +19.9 pp.
+The defect is not "nobody derived it", it is "**derived with a Jensen error**", and the corollary is the
+sharpest line in the review: *under the scalar reading the bar sits below the ceiling and CLM-012 is false.*
+Everything hinges on the per-cell Jensen correction, which is the finding's real contribution.
+
+**And one governance objection that bears directly on Joseph's decision:** the ceiling is a property of
+**(detector x injection x weighting)**, not of the detector. Re-injections at amplitude -0.35/+0.35/+0.70 give
+0.611760/0.628361/0.642253 — **+/-2 pp with the injected shape** — and weightings span 0.609475 to 0.776110.
+A criterion whose bar is computed from the probe must pin the injection alongside `k`. Added as adoption
+condition 4, flagged as the strongest argument *against* re-specifying against a computed ceiling at all.
+
+**One objection I partially contest.** The review says the 71.8% picks the favourable bracket end (65.9% at
+the sampling-free ceiling). I accept that advertising a bracket and silently using one end is a pattern to
+flag — but the per-event 0.618228 is the **matched** ceiling, because the criterion computes recovery with the
+A/B sampling *in it*, so comparing against a sampling-free ceiling would understate the specification share.
+The fix is to justify the end, which the finding now does, and to carry 66% as the sampling-free alternative —
+not to relabel the headline "66-72%", which would present an unmatched comparison as equally valid.
+
+**Provenance gaps now recorded** (the review could not close them): `0.618228` — the number the headline rests
+on — is **not verifiable from committed files**, needing the artifact npz and the 9.9 GB dump on purgeable
+scratch; ep32's +29.7% has no committed artifact; Gate 1's "<=2.2e-9" is an observed value where the code's
+tolerance is 1e-7; and Gate 2's `5e-4` absolute on 0.63 would pass a value **2.6x the entire 0.19 pp signal it
+protects**.
+
+**CLM-012 stays `VERIFIED-NUMERIC`.** One independent re-derivation confirms the arithmetic; it does not
+promote a claim whose reasoning it corrected in five places. Full disposition:
+`REVIEW-20260808-clm012-independent-rederivation.md`. Re-run `56445883` still RUNNING, 1 of 6 pkls.

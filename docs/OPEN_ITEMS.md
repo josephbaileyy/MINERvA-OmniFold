@@ -188,10 +188,14 @@ not close the literal full-event PET gate below.
 > - **NEW OPEN ITEM (d): the 28.2% estimator shortfall is UNEXPLAINED and must not be absorbed by the D2
 >   re-specification.** Of the `0.2531` gap between the `0.80` bar and the measured `0.546853`, `0.1818`
 >   (71.8%) is specification and **`0.0714` (28.2%) is the estimator's own deficiency** — it reaches
->   **88.45%** of the acceptance-limited ceiling and the missing **11.55%** is not explained by acceptance,
->   sampling (the statistical oracle is 0.9542), iteration count (no `k <= 6` helps), training budget (the
->   8/16/32 ladder makes the coherent term monotonically worse) or seed (ensembling caps at 0.6313 for any
->   N). The re-specified criterion says so in its own text. → CLM-012,
+>   **88.45%** of the acceptance-limited ceiling. **CORRECTED 2026-08-08 by independent re-derivation: that
+>   deficiency is ~98% per-cell DISPERSION charged by the L1, not response quality** — the scatter penalty is
+>   `0.084433` of the `0.086355` ceiling-to-measured gap (97.8%) and the signed response deficit is only
+>   `0.001922` (2.2%), i.e. the signed response is essentially AT ceiling. What is unexplained is why the
+>   dispersion is that large; it is not reducible by iteration count (no `k <= 6` helps), training budget (the
+>   8/16/32 ladder makes the coherent term monotonically worse) or seed (ensembling caps at 0.6313 for any N),
+>   and sampling is excluded (the statistical oracle is 0.9542). Do not describe it as "estimator response
+>   quality". → CLM-012,
 >   `FINDING-20260807-d2-acceptance-limited-oracle.md`.
 >   *Working hypothesis, NOT a finding and not attributable to anyone as a claim:* it may be the same
 >   coherent under-application as the fold-forward deficit (`mean_w_reco(push|pass_reco) = 0.746483` vs

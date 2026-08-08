@@ -107,11 +107,15 @@ fraction had to come from an argument and why the delegate's blind pick matters 
 > transport gain that **has never been demonstrated here**. The re-specification does not claim `0.80` is
 > unreachable; it claims `0.80` was set against the wrong reference.
 >
-> **An unexplained estimator shortfall remains, and this criterion does not absorb it.** Of the original
-> `0.2531` gap to `0.80`, `0.0714` (**28.2%**) is the estimator's own deficiency — it reaches `88.45%` of
-> the ceiling and the missing `11.55%` is **not explained** by acceptance, sampling, iteration count,
-> training budget or seed. It is tracked as a separate open item and must not be read as retired by this
-> re-specification.
+> **An estimator shortfall remains, this criterion does not absorb it, and it is now LOCATED rather than
+> merely unexplained (corrected 2026-08-08 after independent re-derivation).** Of the original `0.2531` gap
+> to `0.80`, `0.0714` (**28.2%**) is the estimator's own deficiency — it reaches `88.45%` of the ceiling.
+> But that deficiency is **~98% per-cell DISPERSION charged by the criterion's absolute value, not response
+> quality**: of the `0.086355` between ceiling and measured, the scatter penalty is `0.084433` (**97.8%**)
+> and the signed response deficit is `0.001922` (2.2%). So the signed response sits essentially *at*
+> ceiling. What remains genuinely unexplained is why the dispersion is that large — and it is not reducible
+> by budget, seed or iteration count. Tracked as a separate open item; must not be read as retired by this
+> re-specification, and must not be described as "estimator response quality".
 
 ---
 
@@ -179,6 +183,14 @@ reference-point repair would be the two-changes-at-once error this document exis
 3. **`f` must remain a declared constant**, never data-dependent; measured quantities belong on the target
    side (`ceiling`), computed from MC acceptances rather than from the estimator's own output, so the
    criterion stays pre-registerable.
+4. **ADDED 2026-08-08 from the independent re-derivation: the INJECTION must be pinned alongside `k` and the
+   acceptances.** The ceiling is a property of (detector × injection × weighting), not of the detector: the
+   same 285 cells give `0.609475` truth-mass-weighted through `0.776110` uniform, and re-injections at
+   amplitude `−0.35 / +0.35 / +0.70` give `0.611760 / 0.628361 / 0.642253` — **±2 pp with the injected
+   shape**. A criterion whose bar is computed from the probe must recompute the ceiling per injection and
+   declare the injection with it, or the bar becomes probe-dependent. This is a governance condition on the
+   re-specification, and it is Joseph's to weigh: it is the strongest argument *against* re-specifying
+   against a computed ceiling at all.
 
 `gap_min = 0.15` and `floor_over_gap_max = 0.10` stay untouched and stay denominated in `gap`: they are
 preconditions on whether the *test* is informative, not claims about estimator performance, so the
