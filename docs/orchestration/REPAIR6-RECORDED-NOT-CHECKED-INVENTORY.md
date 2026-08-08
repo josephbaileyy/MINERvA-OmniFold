@@ -126,6 +126,48 @@ evidence stage stops and what it reports on a bad input. That is a behavioural c
 own commit and its own verifier pass, not a rider on this one. A detection test would be: assert
 every `check_*`/`require_*` in `p4_lib` has at least one non-test caller.
 
+## A++. QUEUED — BEN-070 second site, `p4_validate_active_lateral_fps.py:70`
+
+**Found by the PET lane, verified by Joseph, assigned to this lane, and deliberately NOT started
+yet** — it is queued behind the receipts/verifier chain so a shared-library edit cannot collide
+with a run in flight.
+
+- **Defect:** line 70 bounds the diagonal with an absolute `-1e-30` while lines **66/67/68 of
+  the same function** are all relative. Same shape as the `p4_lib.py` instance repair-6 fixed.
+- **Severity, measured by Joseph, not assumed:** the PSD check at line 68 has an effective
+  threshold of ~`1e-89` at this product's scale, against line 70's `1e-30` — it **subsumes the
+  diagonal check by ~59 orders**. **Latent, not exploitable. The adopted FPS lateral is fine.**
+  This is the same "redundant behind a live relative check" conclusion the `p4_lib` instance
+  reached, now independently confirmed on the FPS product.
+- **Why my sweep missed it:** the file's git history is the FPS repair rounds, not this lane's,
+  so it fell outside the module list the sweep enumerates. **The sweep's scope was drawn by
+  provenance rather than by prefix** — a `p4_`-prefixed file that this lane owns was not in a
+  list this lane generated. Third failure mode of the sweep, after lowercase-only keys and
+  line-based blindness to loops.
+- **When and how:** after the verifier pass, and **with a mutation test**, not as a bare
+  one-liner — the guard has to be shown to reject what the absolute bound accepts, at the real
+  ~1e-86 scale, the same way `BEN044_AbsoluteToleranceAtRealScale` does.
+
+### The heuristic this third occurrence earns
+
+Three instances now of **a guard written in different units from its immediate neighbours**:
+`p4_lib.check_symmetric_psd` (symmetry and PSD relative, diagonal absolute), this FPS twin
+(66/67/68 relative, 70 absolute), and BEN-044's origin (`combine_cstat_bkgsub_100rep.py`, where
+`max(max_eig, 1.0)` pinned a relative tolerance to an absolute floor).
+
+**Adopt the PET lane's detector: read a validator's checks AGAINST EACH OTHER, not just against
+the data.** A single absolute threshold is ambiguous — it might be right for its quantity. A
+threshold that is absolute while its *siblings in the same function* are relative is a defect on
+sight, because the author demonstrably knew the relative idiom and did not apply it there. This
+is cheaper and more reliable than reasoning about scale from first principles, and it is
+mechanically checkable: flag any `require`/`need` in a function where some thresholds are
+normalised and at least one is not.
+
+**Note it also predicts severity, which is why all three came out "latent".** If the relative
+siblings are the *stronger* check, the absolute one is redundant and the finding is hygiene; if
+the absolute one is the only check of its kind in the function, it is live. Ask which before
+writing the severity down — twice now the first draft overstated it.
+
 ## F. The pattern is REPO-WIDE, not this lane's — folding in BEN-043 and BEN-044
 
 Both were found in the **PET lane on the same day**, independently, and both are the same
