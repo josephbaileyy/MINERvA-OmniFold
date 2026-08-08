@@ -3794,3 +3794,59 @@ errors and did not reach the sandbox. Environment, not code — but finding 3 is
 that passing locally is not the same as the guards being strong.
 
 **Repair-6 is scoped to those six.** D3 and D4a are closed and must not be re-opened.
+
+## 2026-08-07 — Re-unfold: NOT byte-identical, but NOT a semantics change. The ROOTs are non-deterministic.
+
+**Job `56471429`**, CONC=6, ten endpoints, 0 failures. The ten 07-18 ROOTs were moved (not
+deleted) to `active_universe_5d/standard/unfolds__SUPERSEDED_20260718/` first.
+
+**sha256: 0 of 10 identical.** That trips the runbook's stop condition, so the chain stopped
+here. But the sha256 test was the wrong instrument, and the right one gives the opposite answer.
+
+**Histogram contents, new vs superseded, all 65856 bins:**
+
+| | |
+|---|---|
+| max absolute bin difference | 6.5e-51 … 5.3e-49 |
+| **max RELATIVE bin difference (worst of ten)** | **1.912e-11** |
+| bins differing | ~10 677–10 694 of the 10 694 reported |
+
+**Coherence test — is it a shift or is it noise?** Pooled over **106 940** reported bins:
+mean `-1.758e-13`, sd `1.961e-12`, so **|mean|/sd = 0.090**; fraction of bins with positive
+deviation **0.4594**. Per band, |mean|/sd ≤ 0.484. The **integrated cross section agrees to
+`-2.6e-14`** — fourteen significant figures.
+
+So the deviation is **scattered and sign-balanced, not coherent**: floating-point
+non-determinism at the 1e-12 level, not a physics change. A real semantics change (a flux
+renormalisation, a different background branch) would appear as a coherent ratio, and does not.
+
+**Cause.** Almost certainly thread-order-dependent summation in LightGBM/OpenMP: the 07-18 run
+used CONC=4, this one CONC=6, so a different core allocation gives a different reduction order,
+and five OmniFold iterations amplify last-bit differences to ~1e-11. **Not confirmed by
+experiment** — confirming it costs one ~30 min single-endpoint run at CONC=4.
+
+**The load-bearing consequence, which is bigger than this comparison.**
+**These ROOTs are not bit-reproducible, so sha256 identity is not a reproducibility property of
+the computation — it pins one particular RUN.** Everything in this lane that treats an endpoint
+hash as a derivation fingerprint inherits that:
+
+- `endpoint_sha256` in `p4_standard_manifest.json` binds an artifact, not a derivation.
+- **The legacy-attest design was built on an assumption that is false.** "Re-unfold and compare
+  hashes" can never succeed, so attestation-by-hash could only ever have certified *the same
+  file*, never *the same computation*. Repair-6 deleted that path for provenance reasons; this
+  is a second, independent reason it had to go.
+- Any future re-unfold changes all ten hashes and every binding computed from them
+  (`endpoint_manifest_hash`, and the merged-inseparability comparison that consumes it).
+
+**What a reproducibility gate must compare here is CONTENTS at a declared tolerance, not bytes.**
+The observed floor is ~2e-11 relative per bin and ~3e-14 on the integral.
+
+Before the run I predicted byte-identity, from J28's remap being the identity on this grid
+(verified, `max abs diff 0.0`) and J33 being a fail-closed guard. That reasoning was right about
+the two code changes and wrong about determinism — the differences do not come from either
+commit. Recorded because the prediction being wrong for a reason unrelated to the hypothesis is
+exactly the kind of near-miss that reads as confirmation later.
+
+**Also, my miss:** the re-unfold script did not use `python3 -u`, so per-endpoint progress was
+invisible for the whole 1h20m (BEN-028; the runbook says to use `-u`). Liveness had to be judged
+from `sstat` CPU time and process count instead, which worked, but the script should carry `-u`.
