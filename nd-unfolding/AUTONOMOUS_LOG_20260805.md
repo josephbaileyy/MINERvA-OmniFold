@@ -2258,3 +2258,38 @@ closes any residual reading of it as noise: it is a property of the estimator at
 Receipts committed: `GATE_AB_PUSH_PROVENANCE.slurm-56445883{,.batch512}.json`,
 `GATE_AB_PUSH_PROVENANCE.floor-56445883.json`, `STEP1_DECOMPOSITION.slurm-56445883.json`. Mailed the
 batch.
+
+### 19:25Z — STANDING DOWN. Lane complete, nothing running, and NO WATCH IS ARMED
+
+Closing verification, every line from a command run in the same turn:
+
+    queue          only the wakerctl cron (56160911); no jobs of mine
+    armed watches  0 -- both spent: d2-probe-ep32-56431651 and nominal-rerun-56445883 have fired
+    cron           ticking, last 19:15:08Z
+    verifier       ALL BINDINGS INTACT: 116 OK, 15 shell pins vs floor 15, 4 known pre-existing drifts
+    suite          7 failed / 863 passed / 1 skipped; the 7 are documented; collection 871, the +6
+                   since my last count is the GBDT lane's
+    trees          local == origin == cluster == 2c89523
+
+**The cluster was two commits behind** (`e952d85`) when I checked at stand-down — `4fa420e`, `cf97d8b`,
+`2c89523`. Shipped. Unshipped work is invisible to the other session, and finding that at the last check
+rather than the first is the argument for making tree consistency part of the closing pass rather than a
+thing I assume.
+
+**The operationally important line is that no durable watch is armed.** Both fired today, so from here
+nothing pages Joseph from this lane until something new is launched — and anything new needs a watch armed
+with it or its outcome reaches nobody. Said so explicitly in the stand-down mail rather than leaving it to
+be discovered.
+
+**Deliberately not taken: full-event extraction.** It is unblocked for the first time and it is the obvious
+next move toward the campaign's stated goal. I am not taking it because the extractor has never run on real
+input (CLM-011 records that), its first run produces a publication-path product, and branch C says nothing
+is quoted while a leg is red — producing the product invites quoting it. That is Joseph's call, not a
+consequence of the re-run finishing, and I told him it is one command away.
+
+**Open and his:** the CLM-012 re-specification (f = 0.80 predeclared and blind-confirmed, four adoption
+conditions, and the injection-dependence objection that argues against the approach itself) and Gate-4's
+disposition, which branch A routed through the first. Also on the record and not retired: the 0.0714 / 28.2%
+shortfall, now characterised as ~98% per-cell dispersion rather than response quality.
+
+Mailed the stand-down. Not inventing further work.
