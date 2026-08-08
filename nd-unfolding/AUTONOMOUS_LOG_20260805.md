@@ -1992,3 +1992,41 @@ verdict. When it lands the plan is fixed and already committed: re-run `gate_ab_
 **run-specific** receipt path (so the superseded 56381674-era receipt is not clobbered), confirm Gate B(i)
 now passes at ~1e-6 instead of failing at 0.866, and then redo the step-1 decomposition on checkpoints that
 are finally bit-faithful to the artifact.
+
+### 12:30Z — the GBDT lane FIXED my BEN-070 finding in the library, but the duplicate I named is still live
+
+They repaired `p4_lib.py` properly and credited the class:
+
+    require(np.all(d >= -psd_atol_ratio * denom), "negative diagonal beyond tolerance")
+
+with a comment quantifying it ("~49 orders of magnitude above what it was supposed to bound") and a
+power-proof in `tests/test_p4_guard_mutations.py` at the real 1e-79 scale — exactly BEN-044's rule that a
+gate must be shown able to fail in the commit that writes it. That is the right fix and a better one than
+I proposed.
+
+**But the fix is HALF-LANDED.** My contribution named two sites; they patched the library and
+`p4_validate_active_lateral.py`, and **`p4_validate_active_lateral_fps.py:70` still reads**
+
+    r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-30))
+
+Different file — note the `_fps` suffix — and its git history is the FPS repair rounds, not this P4 round,
+so it fell outside the sweep they were running.
+
+**And it is the signature again, one line apart inside the SAME function.** `mat_gates` computes
+`ev = eigvalsh(Cs)` and already does the relative thing twice:
+
+    line 66   rel_asymmetry = max|C-C^T| / max(1e-300, max|C|)      relative
+    line 68   psd           = ev[0] >= -1e-12 * abs(ev[-1])          relative
+    line 70   diag          = d >= -1e-30                            ABSOLUTE
+
+So the correct scale is already in scope on the line above, and the one-line fix mirrors line 68. That is
+the third independent occurrence of "a guard written in different units from its neighbours" — and the
+second time the neighbour is two lines away.
+
+**Reported, not fixed.** Ownership is ambiguous (the `p4_` prefix is their lane, the git history is the FPS
+rounds), a repair round is live nearby, and the fix should land with the same mutation test they just built
+rather than as a bare one-liner from me. Handing it over is the correct move, not the timid one.
+
+Also this cycle: pushed the re-run dispatch entry after **two** rebases — the other lane pushed five
+commits and then a sixth while I was resolving. Both rebases were clean (they touch `p4_*` and
+`KNOWN_ISSUES`, I touch the PET log), and the three-condition confirm passed on the second attempt.
