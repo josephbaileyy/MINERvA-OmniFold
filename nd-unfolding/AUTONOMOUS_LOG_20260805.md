@@ -2142,3 +2142,39 @@ protects**.
 **CLM-012 stays `VERIFIED-NUMERIC`.** One independent re-derivation confirms the arithmetic; it does not
 promote a claim whose reasoning it corrected in five places. Full disposition:
 `REVIEW-20260808-clm012-independent-rederivation.md`. Re-run `56445883` still RUNNING, 1 of 6 pkls.
+
+### 15:35Z — BRANCH A FIRES. Gate B(i) is BIT-EXACT, extraction is unblocked, and my gate had a defect
+
+The re-run's nominal half completed, the **BEN-043 fix executed and self-verified on a real run**, and Gate
+A/B on the new artifact returned **GATE_AB_PASSED**.
+
+    [gate4] step1/step2 FINAL (last-epoch) weights -> *_final.weights.h5   (round-trip verified)
+    contract step2_checkpoint -> ..._step2_final.weights.h5, best-epoch retained under its own key,
+    checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"
+
+    A1 bit-exact (0 differing rows of 2,000,000)   A2 bit-exact   B(ii) 72/72 exact
+    B(i) max rel dev 0.000000e+00 at EVERY percentile -- bit-exact over 1,999,928 pass_gen rows
+
+Not "within tolerance" — **exactly zero**, which removes the tolerance from the argument entirely. Against
+0.866 on the superseded artifact, that is a factor of ~500,000 and the defect is closed.
+
+**But the first attempt nearly recorded the opposite, through a defect in MY tool.** The gate defaulted to
+batch 1000 while `RunStep2` reweights at 512; it reported `1.744800e-06` against `tol 1e-6`, and §1 of the
+predeclaration pins 1e-6..1e-3 as **branch B with a note** — i.e. Gate-4 red on grounds independent of D2. I
+did not raise the tolerance. I re-ran at the engine's own batch size, which is a fidelity correction decided
+on principle, and which **this tool's own Control 1 had already priced at 2.901e-06 on 2026-08-07** — larger
+than the residual AND larger than the gate's own tolerance. So the tool was mis-specified against a number
+it had itself produced the day before, and I did not check. **BEN-072**, default corrected to 512, tolerance
+untouched, and **both receipts committed** so the near-miss is on the record rather than tidied away.
+
+**Consequences.**
+- **Branch A**: Gate-4's disposition is now decided by the D2 re-specification (§2), exactly as predeclared.
+- **Full-event extraction is UNBLOCKED for the first time** — `check_subsample_agreement` (tol 1e-3) was
+  failing closed at 0.866; it is now 0.
+- **The fold-forward failure reproduces independently**: 0.736746 here against 0.746483 on the superseded
+  run, a ~1.3% shift consistent with the measured GPU floor. Estimator property, not checkpoint artifact.
+- Branch C holds: no product quoted while any leg is red, and D2 recovery is still red.
+
+The matched floor repeat is still running (started 14:58:55Z), so the run is not yet complete. Next: redo
+the step-1 pull/push decomposition on checkpoints that are finally bit-faithful — its harness is committed
+and gated on this receipt, and it will now run without the checkpoint-based caveat.

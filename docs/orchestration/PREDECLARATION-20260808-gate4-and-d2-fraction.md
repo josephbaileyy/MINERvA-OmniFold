@@ -199,3 +199,50 @@ reference-point defect does not reach them. That is the delegate's reasoning and
 **Still outstanding before CLM-012 moves past `VERIFIED-NUMERIC`:** the independent re-derivation of the
 four numbers (condition (d)) has not reported yet. Nothing here promotes the claim.
 
+---
+
+## 5. BRANCH RESOLUTION 2026-08-08T15:35Z — **BRANCH A FIRES**
+
+The re-run's nominal half completed and Gate A/B ran on its artifact, to the run-specific receipt path §1
+required. Both receipts are committed so the sequence is auditable:
+
+    GATE_AB_PUSH_PROVENANCE.slurm-56445883.json           batch 1000  GATE_B_FAILED_ONSHELL  1.744800e-06
+    GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json  batch  512  GATE_AB_PASSED         0.000000e+00
+
+**The BEN-043 fix executed and self-verified on a real run:**
+
+    [gate4] step1 FINAL (last-epoch) weights -> ..._iter2_step1_final.weights.h5 (round-trip verified)
+    [gate4] step2 FINAL (last-epoch) weights -> ..._iter2_step2_final.weights.h5 (round-trip verified)
+    contract: step2_checkpoint -> ..._step2_final.weights.h5   (best-epoch file retained under its own key)
+              checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"
+
+**Gate result at the engine's own batch size:** A1 bit-exact (0 differing rows of 2,000,000), A2 bit-exact,
+B(ii) 72/72 exact, and **B(i) max rel dev `0.000000e+00` at every percentile** — bit-exact over all
+1,999,928 `pass_gen` rows. Not "within tolerance": the tolerance is not in the argument at all.
+
+### Why there are two receipts, stated plainly rather than left to inference
+
+The first run used the gate's default batch size of **1000**; `RunStep2` reweights at **512**. It reported
+`1.744800e-06` against `tol 1e-6`, which under §1's pinned reading is **branch B with a note**. I did not
+raise the tolerance — that is the prohibited act and it stays prohibited. Instead I re-ran at the engine's
+own batch size, which is a **fidelity correction decided on principle** (match the computation being
+reproduced), and which this tool's *own Control 1* had already priced at **2.901e-06** on 2026-08-07 —
+larger than the residual, and larger than the gate's own tolerance.
+
+**That is a defect in my tool, not a pipeline result.** A gate built to reproduce a computation defaulted to
+a different configuration than the computation, and its resolution floor therefore exceeded its declared
+tolerance — on a number it had itself measured the day before. Filed as **BEN-072**; the default is corrected
+to 512 and the `1e-6` tolerance is untouched. Had I been more careful the first receipt would not exist, and
+I am leaving it committed precisely so the near-miss is on the record.
+
+### Consequences
+
+- **Branch A fires.** Gate B(i) passes and Gate-4's disposition is therefore decided by §2 — the
+  re-specified D2 criterion either clears it or does not. No separate judgement, as predeclared.
+- **Full-event extraction is UNBLOCKED for the first time.** `check_subsample_agreement`
+  (`extract_fullevent_fps.py:347`, tol `1e-3`) was failing closed at 0.866; the deviation is now **0**.
+- **The fold-forward failure reproduces independently:** `0.736746` on this run against `0.746483` on the
+  superseded one, a ~1.3% shift consistent with the measured GPU floor. So it is an estimator property, not
+  a checkpoint artifact — which is what the step-1 decomposition on now-faithful checkpoints will probe.
+- **Branch C still holds:** no product is quoted while any leg is red, and D2 recovery remains red.
+
