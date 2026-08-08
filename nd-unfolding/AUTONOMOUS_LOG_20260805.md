@@ -1,3 +1,21 @@
+# Autonomous work log — 2026-08-06 onward (continues `pet/AUTONOMOUS_LOG_20260805.md`)
+
+Append-only. Every entry records what was done, what was measured, and what was decided.
+
+**Provenance.** This file continues `nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`, which covers
+2026-08-05 to 2026-08-06 and holds the original standing-constraints header. The log moved up a level on
+2026-08-06; until 2026-08-08 neither file pointed at the other, so the brief's cited path dead-ended.
+
+## Standing constraints in force (unchanged from the predecessor)
+
+- Never hand-edit a hash to clear a mismatch — re-issue the owning gate.
+- Never raise a tolerance to make a check pass.
+- Stage with explicit paths, never `git add -A`. Commit only what is asked.
+- No `--validator size`, no `RESUME_ADOPT_LEGACY=1`, no `--bkg-mode purity` as the P5A closure.
+- Announce any change to what `pytest nd-unfolding/tests` collects.
+- Heavy sweeps run on compute (`srun -A m3246 -q interactive -C cpu`), never on a login node.
+
+---
 
 ### Uncertainties: Step 0 protected the wrong two-thirds, then Step 1 produced a real number
 

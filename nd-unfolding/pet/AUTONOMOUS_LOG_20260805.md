@@ -2957,3 +2957,18 @@ Two things I checked instead of assuming, one of which I had backwards:
 **It also fires on failure.** `run_action` resolves the action from the watch file by id, not from the event type, so `slurm-job-error` — a 12h TIMEOUT, the realistic bad outcome — dispatches the same notifier as `slurm-job-complete`.
 
 Verifier: 13 shell pins resolved against floor 13, ALL BINDINGS INTACT (a pin-free script leaves the collector untouched).
+
+---
+
+## THIS LOG ENDS 2026-08-06. THE CAMPAIGN CONTINUES IN `nd-unfolding/AUTONOMOUS_LOG_20260805.md`.
+
+Same campaign, same standing constraints (the header above still governs), different file — the log moved
+up a level on 2026-08-06 and nothing recorded that it had. Everything from 2026-08-06 onward is in
+`nd-unfolding/AUTONOMOUS_LOG_20260805.md`: the BEN-043 checkpoint defect and its fix, the nominal
+re-train, the step-1/step-2 decomposition, CLM-012, and BEN-070/071/072.
+
+Found on 2026-08-08 while standing down: the autonomous brief names *this* path, so an agent following it
+literally would read a log that stops on 08-06 and silently miss two days of work. Neither file pointed at
+the other. Pointer added in both directions rather than merging them — this file is append-only and its
+entries are correct as written.
+
