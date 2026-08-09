@@ -16,7 +16,14 @@ import p4_lib as P
 
 CEN5 = "products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 CEN4 = "products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
-CENTRAL_REL = 3.0e-2          # fixed in code; NOT a CLI knob
+# RETIRED 2026-08-09. `CENTRAL_REL = 3.0e-2` gated the 5D->4D marginal on reproducing the
+# INDEPENDENT 4D unfold bin-by-bin. That is the equivalence convention declined on 2026-08-07.
+# The comparison is now REPORTED without a verdict (see crosscheck_marginal_vs_independent);
+# there is deliberately no tolerance constant here to re-tune, because the correct value is
+# "none", not "larger". Measured: median 4.43%, p90 20.8%, 3009/4825 bins over the old 3%,
+# integral ratio 1.005578 -- and that disagreement reproduces from the 5D producer's OWN
+# hXSecND_dropLast_flat with no code from this lane involved, so it is a property of the two
+# estimators and not of the projector (whose M matches that marginal to 3.1e-16).
 W_AXIS = 4                    # marginalized axis (pt,pz,eavail,q3,W)
 
 
@@ -83,7 +90,18 @@ def main():
     cpath, ckey = a.c5.rsplit(":", 1)
     C5 = _th2(cpath, ckey)
     P.require(C5.shape[0] == int(m5.sum()), "C5 dim != 5D reported bins")
-    C4, stats = P.check_projection_nonmutation(C5, M, x5[m5], x4[m4], rtol_central=CENTRAL_REL)
+    # RE-SPECIFIED 2026-08-09 (Joseph): GATE projection validity, REPORT the marginal-vs-
+    # independent comparison. The old call gated on the marginal reproducing the independent 4D
+    # within 3% -- the equivalence convention declined on 2026-08-07, when 4D was adopted AS the
+    # marginal and the independent 4D became a cross-check. A gate on a proposition the analysis
+    # does not assert is removed, not widened; the measurement below is unchanged and reported in
+    # full. Measured values: FINDING-20260809-stage6-central-gate-cannot-pass.md.
+    C4, stats = P.check_projection_validity(C5, M)
+    xcheck = P.crosscheck_marginal_vs_independent(M, x5[m5], x4[m4])
+    print(f"[xcheck] marginal vs INDEPENDENT 4D (no pass/fail, cross-check only): "
+          f"n={xcheck['n_bins']} median={xcheck['median_abs_rel']:.4f} "
+          f"p90={xcheck['p90_abs_rel']:.4f} max={xcheck['max_abs_rel']:.4f} "
+          f"over3%={xcheck['n_over_3pct']} integral_ratio={xcheck['integral_ratio']:.6f}")
 
     P.require(P.sha256_file(CEN5) == pre5 and P.sha256_file(CEN4) == pre4,
               "frozen central ROOT changed during projection")
@@ -95,13 +113,14 @@ def main():
     json.dump({"edge_hash": ebv["edge_hash"], "bin_volume_hash": ebv["bin_volume_hash"],
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
                "central5d_sha256": pre5, "central4d_sha256": pre4,
-               "central_reproduction_rel": stats["central_max_rel"], "central_rel_tol": CENTRAL_REL,
+               "projection_identity_relerr": stats["projection_identity_relerr"],
+               "crosscheck_marginal_vs_independent_4d": xcheck,
                "M_shape": list(M.shape), "M_content_sha256": m_hash,
                "candidate_c5": os.path.abspath(cpath), "candidate_c5_key": ckey,
                "candidate_c5_sha256": P.sha256_file(cpath),
                "psd": stats},
               open(a.out.replace(".root", "_projmanifest.json"), "w"), indent=2)
-    print(f"CANDIDATE {a.out} n={n} central_rel={stats['central_max_rel']:.2e}<= {CENTRAL_REL}")
+    print(f"CANDIDATE {a.out} n={n} projection_identity={stats['projection_identity_relerr']:.2e}")
     sys.exit(0)
 
 

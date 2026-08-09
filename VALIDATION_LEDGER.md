@@ -941,3 +941,38 @@ This is a P3F-scalar interface prerequisite, not a PET or physics result;
 P3F-PET generation and PET training did not start in this wake. Canonical
 receipt:
 `docs/orchestration/state/p3f-scalar-fullaudit-promotion-20260720.json`.
+
+## 2026-08-09 Standard 5D endpoint set — re-unfold reproduction VERIFIED-NUMERIC
+
+**Claim.** The ten standard 5D lateral-endpoint unfolds published by job `56495756` reproduce the
+2026-07-18 reference set to within the declared content tolerance, on all ten endpoints.
+
+**Numbers** (evidence job `56532439`, code_rev `7053f68`, 10 694 reported 5D bins per endpoint):
+
+| quantity | value | tolerance | margin |
+|---|---|---|---|
+| worst per-bin relative difference | **1.831e-11** | 1e-9 | 54.6x |
+| worst integral relative difference | **2.874e-12** | 1e-11 | 3.48x |
+| endpoints within tolerance | **10 / 10** | — | — |
+
+Per-endpoint values are in `active_universe_5d/standard/evidence/p4_standard_manifest.json` under
+`endpoint_reproduction`. The worst of each is `BeamAngleY_1`.
+
+**Why this is content comparison and not hash identity.** These ROOTs are **not bit-reproducible**
+(KNOWN_ISSUES #24): 0 of 10 sha256 match across a correct re-run, because LightGBM/OpenMP
+reduction order depends on thread count. sha256 remains a storage-integrity property here and is
+not read as derivation identity.
+
+**Structural note on the integral leg — do not widen it again.** Its coherent ceiling is 1.831e-11
+(the worst per-bin deviation) and its incoherent floor is 1.770e-13 (that / sqrt(10 694)), so the
+entire range it can resolve is **103.4x**. The observation sits inside that band: 16.2x above the
+floor, 6.37x below the ceiling, i.e. N_eff = 40.6 independent groups rather than 10 694 —
+consistent with the recorded 0.4594 positive fraction (26.6 sigma from 0.5), since a different
+OpenMP partition is a different *deterministic* rounding path. The 3.48x margin is therefore not
+slack, and the 2.874e-12 observation **would have failed the 1e-12 tolerance in force before
+2026-08-08**. Response to a future breach is pre-specified at `p4_lib.REPRO_RTOL_INTEGRAL` and
+turns on sign balance and content correlation, never on magnitude.
+
+**Status.** VERIFIED-NUMERIC. This certifies the endpoint set only. The covariance candidate built
+2026-08-09 was produced without a `standard-p4-verifier` PASS, self-declares
+`publication_gate_rejects_this: true`, and is **not quotable**.

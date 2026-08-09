@@ -171,6 +171,56 @@ not close the literal full-event PET gate below.
     have prevented the original dead gate; introducing one without a caller recreates it.
   - **Do not** re-add the helper alone to restore a green test count. That is the failure this
     entry exists to prevent.
+- **OWED (writer side) — `hasTruthOnlyMisses` is a per-playlist 0/1 flag written with `hadd`'s
+  default summing merge mode, so every merged endpoint reports `12`.** Found 2026-08-09 when
+  `p4_evidence.py` required it to be in `(0, 1)` and fail-closed on all ten endpoints, which were
+  fine. The reader is fixed (it now records `native_miss_playlists_with_misses`, requires
+  `0 < v <= 12`, and requires agreement in direction with `nTruthOnlyMisses`), so nothing is
+  blocked — but the artifact is still misleading to anyone who has not read
+  `FINDING-20260809-tparameter-merge-semantics.md`.
+  - **The named fix:** in `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:2002`,
+    either pass the `'f'` merge mode (as lines 1900-1901 already do for `hasFullEventSchema` and
+    `fullPhaseSpace`) **or**, better, rename it `nPlaylistsWithTruthOnlyMisses` and keep `'+'`, so
+    the merged value's meaning is in its name and the reader cannot misread it. The rename is
+    preferred: it makes the summed value correct-by-construction rather than suppressed.
+  - **Why it is not done here:** it is an event-loop change, and re-running the 12-playlist
+    production to regenerate the merged endpoints is a multi-hour step owned by another lane.
+    Batch it with the next event-loop change rather than running production for a metadata label.
+  - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
+    writer is what is misnamed.
+- **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 8 (2026-08-09).**
+  The question "should we fix the global Data/MC POT scale in `unfold_2d_omnifold_unbinned.py`?"
+  was the wrong unit. The same computation — one `hadd`-summed extensive divided by another —
+  occurs at **8 live sites**, three of them production unfolders and two in the ND lane, which did
+  not know it was affected. Full per-site table and semantics:
+  `docs/orchestration/FINDING-20260809-derived-from-merged-extensives.md`; regenerate with
+  `audit_derived_from_merged_extensives.py --power`.
+  - **Deliberately NOT repaired.** The instruction was to size the class first, then decide scope.
+  - **What the count changes about the repair:** the ratio is recomputed from scratch in every
+    consumer, so there is no single place to fix and a corrected `get_pot_scales` in one file
+    leaves seven copies. Any repair has to be a single vetted producer that the other seven call.
+  - **The 8 is a floor.** Taint is intraprocedural, and C++ consumers are unswept.
+  - Total normalisation is still not biased, so no published number is withdrawn on this account.
+- **HANDED OVER to the FPS lane (Agent C) — BEN-070's second site,
+  `p4_validate_active_lateral_fps.py:70`.** `require(np.all(d >= -1e-30), "negative diagonal")`
+  sits in `mat_gates` beside a relative symmetry check (L66) and a relative PSD check (L68), on a
+  covariance whose diagonal median is `3.867e-86`. Same defect as the `p4_lib.py` twin, which the
+  GBDT lane fixed in its own file.
+  - **LATENT, not reachable.** L68's effective PSD threshold is ~1e-89 against L70's 1e-30, so PSD
+    subsumes the diagonal check by ~59 orders and no FPS adoption is compromised. This is a
+    correctness-of-form item, not a live risk — which is why it was handed over rather than
+    reached across for.
+  - **The named fix:** make L70 relative to `abs(ev[-1])` exactly as L68 already is (the
+    eigenvalues are computed on L65 and are in scope), and land it **with a mutation test at the
+    real ~1e-86 scale** — a test at O(1) would pass against the broken form and prove nothing,
+    which is the whole content of BEN-071's false-positive refinement.
+  - **Why the GBDT lane is not doing it:** it is a logic change in another lane's file. That
+    boundary was tested the hard way the same week — a five-line *guard* in a PET-lane test file
+    silently voided a gate-3 sha256 binding (BEN-077). This file is not hash-pinned (checked
+    2026-08-09), so that specific hazard does not apply here; the handover stands on ownership of
+    the physics, not on the hash.
+  - **This entry exists because the handover was previously recorded only in a commit message**,
+    which is BEN-073's failure mode: a decision nobody will find when they need it.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe

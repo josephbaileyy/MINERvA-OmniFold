@@ -133,16 +133,57 @@ class Projection(unittest.TestCase):
         with self.assertRaises(P4GateError):
             P.mask_order_hash(np.zeros(P.GRID_NBINS, bool))   # zero reported bins
 
-    def test_projection_nonmutation_and_invalid(self):
+    def test_projection_validity_is_gated(self):
+        """RE-SPECIFIED 2026-08-09: what is gated is the projection's own validity, which is a
+        recomputation identity, not agreement with a separately-produced product."""
         C = np.diag([4.0, 9.0, 16.0])
         M = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 1.0]])      # sum drop-axis
-        x = np.array([2.0, 3.0, 5.0]); xlow = M @ x
-        Clow, st = P.check_projection_nonmutation(C, M, x, xlow)
+        Clow, st = P.check_projection_validity(C, M)
         self.assertEqual(Clow.shape, (2, 2))
-        Mbad = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 1.0]])
-        xlow_wrong = np.array([2.0, 99.0])                    # invalid projection (mutated central)
-        with self.assertRaises(P4GateError):
-            P.check_projection_nonmutation(C, Mbad, x, xlow_wrong)
+        self.assertLess(st["projection_identity_relerr"], 1e-12)
+        with self.assertRaises(P4GateError):                   # non-PSD input must still fail
+            P.check_projection_validity(np.diag([1.0, -5.0, 1.0]), M)
+
+    def test_marginal_crosscheck_reports_and_never_raises(self):
+        """The cross-check has NO pass/fail by specification. Demonstrated: a disagreement that
+        the retired 3% gate would have rejected is reported, not raised."""
+        M = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 1.0]])
+        x = np.array([2.0, 3.0, 5.0])
+        indep = np.array([2.0, 4.0])                           # 100% off on the second bin
+        out = P.crosscheck_marginal_vs_independent(M, x, indep)   # must NOT raise
+        self.assertEqual(out["n_bins"], 2)
+        self.assertAlmostEqual(out["max_abs_rel"], 1.0)
+        self.assertEqual(out["n_over_3pct"], 1)
+        self.assertIn("NO pass/fail", out["note"])
+
+    def test_crosscheck_reports_a_distribution_not_only_a_max(self):
+        """BEN-080: a bare max is owned by the worst bin. One wildly-off bin among many good ones
+        must not be able to hide the body of the comparison."""
+        M = np.eye(100)
+        x = np.ones(100)
+        indep = np.ones(100)
+        indep[0] = 1e-6                                        # one degenerate bin -> huge rel
+        out = P.crosscheck_marginal_vs_independent(M, x, indep)
+        self.assertGreater(out["max_abs_rel"], 1e5)            # the max is enormous...
+        self.assertEqual(out["median_abs_rel"], 0.0)           # ...and the body is perfect
+        self.assertEqual(out["n_over_3pct"], 1)
+
+    def test_projection_M_rejects_an_unreachable_low_bin(self):
+        """BEN-080, the masking defect: a reported LOW bin no HIGH bin reaches used to yield an
+        all-zero row of M, which reached the central check as an exact 0 and reported rel=1.0
+        no matter how negligible the bin was. It must now fail at CONSTRUCTION."""
+        edges = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0]), np.array([0.0, 1.0]),
+                 np.array([0.0, 1.0]), np.array([0.0, 1.0, 2.0])]
+        nb = [2, 1, 1, 1, 2]
+        mh = np.zeros(int(np.prod(nb)), bool)
+        ml = np.ones(2, bool)                                  # both low bins reported
+        mh[0] = True; mh[1] = True                             # only low bin 0 is reachable
+        with self.assertRaises(P4GateError) as cm:
+            P.build_projection_M(edges, 4, mh, ml)
+        self.assertIn("receive no contribution", str(cm.exception))
+        mh2 = np.ones(int(np.prod(nb)), bool)                  # full coverage -> must succeed
+        M = P.build_projection_M(edges, 4, mh2, ml)
+        self.assertTrue(M.any(axis=1).all())
 
 
 class IntegrationCLI(unittest.TestCase):
@@ -1022,6 +1063,66 @@ class NonAdoptableMarker(unittest.TestCase):
             P.require_adoptable(prov)
         prov.pop(P.NON_ADOPTABLE_KEY)
         P.require_adoptable(prov)      # must not raise
+
+
+class IntegralLegIsADiscriminator(unittest.TestCase):
+    """2026-08-09. The integral reproducibility leg was widened once, correctly, and must not be
+    widened again: its whole dynamic range is ~100x (incoherent round-off floor to fully coherent
+    ceiling) and the tolerance already sits at 55% of the ceiling. A comment saying so is not a
+    guard -- the previous widening was also well-commented -- so the ceiling is asserted here."""
+
+    def test_tolerance_stays_below_the_coherent_ceiling(self):
+        """Widening toward the ceiling does not buy margin; it buys the inability to detect a
+        coherent shift, which is the leg's only purpose."""
+        self.assertLess(P.REPRO_RTOL_INTEGRAL, P.INTEGRAL_LEG_COHERENT_CEILING,
+                        "REPRO_RTOL_INTEGRAL has reached the fully-coherent ceiling: at this "
+                        "tolerance a uniform shift of every bin PASSES the integral leg, so the "
+                        "leg no longer discriminates anything. See the derivation in p4_lib.")
+        self.assertGreater(P.REPRO_RTOL_INTEGRAL, P.INTEGRAL_LEG_INCOHERENT_FLOOR,
+                           "REPRO_RTOL_INTEGRAL is at or below the pure round-off floor; it will "
+                           "false-alarm on every correct re-run")
+
+    def test_the_range_is_genuinely_narrow(self):
+        """The reason this cannot be fixed by picking a better number: the whole usable band is
+        two orders of magnitude, so 'leave more margin' has nowhere to go."""
+        span = P.INTEGRAL_LEG_COHERENT_CEILING / P.INTEGRAL_LEG_INCOHERENT_FLOOR
+        self.assertLess(span, 200.0,
+                        "the coherent/incoherent span grew; re-derive the argument rather than "
+                        "assuming the recorded reasoning still applies")
+        self.assertAlmostEqual(span, 103.4, delta=2.0)
+
+    def test_breach_diagnostic_separates_roundoff_from_a_coherent_shift(self):
+        """The pre-specified response, DEMONSTRATED on both branches rather than described. A
+        criterion written before a breach is worth nothing if it cannot actually tell the two
+        cases apart -- and 'sign' was already offered once as a discriminator that could not
+        (BEN-060), so this test is the check that the replacement is not the same mistake."""
+        rng = np.random.default_rng(20260809)
+        n = 10694
+        b = rng.uniform(1.0, 100.0, n)
+
+        # (1) round-off tail: scattered, sign-biased at the recorded 0.4594, content-independent
+        signs = np.where(rng.random(n) < 0.4594, 1.0, -1.0)
+        a_round = b + signs * b * rng.uniform(0, 2e-11, n)
+        d_round = P.diagnose_integral_breach(a_round, b, central=b)
+        self.assertLess(abs(d_round["sigma_from_roundoff_bias"]), 4.0,
+                        "a genuine round-off tail must look like the recorded bias")
+        self.assertLess(abs(d_round.get("corr_reldev_vs_central", 0.0)), 0.05,
+                        "round-off must be uncorrelated with bin content")
+
+        # (2) coherent shift: every bin moves the same way and the deviation scales with content
+        a_coh = b * (1.0 + 3e-11)
+        d_coh = P.diagnose_integral_breach(a_coh, b, central=b)
+        self.assertEqual(d_coh["frac_positive"], 1.0)
+        self.assertGreater(abs(d_coh["sigma_from_roundoff_bias"]), 50.0,
+                           "a coherent shift must be many sigma from the round-off bias -- if it "
+                           "is not, this diagnostic cannot do its job and must be replaced")
+
+        # the two branches must reach OPPOSITE verdicts under the pre-specified rule
+        def proceeds(d):
+            return (abs(d["sigma_from_roundoff_bias"]) < 4.0
+                    and abs(d.get("corr_reldev_vs_central", 0.0)) < 0.05)
+        self.assertTrue(proceeds(d_round))
+        self.assertFalse(proceeds(d_coh))
 
 
 if __name__ == "__main__":

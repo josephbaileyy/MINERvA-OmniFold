@@ -11,7 +11,7 @@ Nothing here BUILDS or ADOPTS a covariance; it only validates/guards. Candidate
 construction is authorized only after the standard-p4-verifier returns PASS.
 """
 from __future__ import annotations
-import hashlib, json, os, subprocess
+import hashlib, json, math, os, subprocess
 import numpy as np
 
 # Canonical standard lateral inventory (exactly these; order fixed).
@@ -104,6 +104,83 @@ REPRO_RTOL_INTEGRAL = 1e-11      # on the integrated cross section, relative
 # documented escape clause for marginal breaches: a gate you can talk your way past is the exact
 # anti-pattern this lane spent three rounds removing. REPRO_MEASURED_FLOOR below stays at the
 # OBSERVED values so the specification and the measurement can never be conflated.
+
+# ---------------------------------------------------------------------------------------------
+# DO NOT WIDEN THE INTEGRAL LEG AGAIN. Its thinness is STRUCTURAL, not a mis-set number.
+# (Recorded 2026-08-09 from the canonical re-unfold's own receipt, job 56495756, 10/10.)
+#
+# The 1e-12 -> 1e-11 widening above was correct and it is the LAST one available. The reason is
+# that the integral leg is a DISCRIMINATOR, not a margin, and its entire dynamic range is ~100x:
+#
+#   worst per-bin deviation observed        1.831e-11     <- the fully COHERENT ceiling: if every
+#                                                            bin moved the same way, the integral
+#                                                            would move by about this much
+#   that / sqrt(10694 reported bins)        1.770e-13     <- the fully INCOHERENT floor: pure
+#                                                            round-off with random signs
+#   total range the leg can ever resolve      103.4x
+#
+# READ 103.4x CORRECTLY: it is the leg's DYNAMIC RANGE -- a property of the instrument, derived
+# from one endpoint's worst per-bin deviation and sqrt(N). It is NOT a spread, and it is not the
+# observed variation across endpoints, which is 2589x (rel_integral 1.110e-15 to 2.874e-12 over
+# the ten). The two numbers are the same order of magnitude apart from each other as they are
+# from nothing in particular, and an earlier draft of this reasoning did quote a "~110x span" as
+# though it were an observed spread -- it was three maxima taken from three different
+# comparisons, which is not a distribution at all. If you find yourself citing a range here, say
+# which of the two you mean.
+#
+# The observation sits INSIDE that range, not below it: rel_integral 2.874e-12 is 16.2x above the
+# incoherent floor and only 6.37x below the coherent ceiling. Equivalently the bins behave as
+# N_eff = (1.831e-11 / 2.874e-12)^2 = 40.6 independent groups, not 10694 -- the same physical
+# statement as the 0.4594 positive fraction recorded below (26.6 sigma from 0.5): the round-off is
+# scattered but SIGN-BIASED, because a different OpenMP partition is a different DETERMINISTIC
+# rounding path, not a random one.
+#
+# So the 3.48x "margin" (1e-11 vs 2.874e-12) is NOT slack. The tolerance already sits at 54.6% of
+# the coherent ceiling. Widening toward 2e-11 does not buy safety; it buys the inability to detect
+# the one thing this leg exists to detect. Contrast the per-bin leg, whose 54.6x margin (1e-9 vs
+# 1.831e-11) IS slack, because the per-bin check is not a coherence discriminator and has no
+# comparable ceiling. The two legs look similar and must not be reasoned about the same way --
+# which is precisely the trap, since "both legs now carry comparable margin" was the argument for
+# the last widening, and it is true of the numbers and false of their meaning.
+#
+# PRE-SPECIFIED RESPONSE TO A BREACH, decided now rather than under pressure in front of a red
+# gate. If rel_integral exceeds 1e-11 on some future run, the question is NOT "how far over" -- a
+# coherent shift and a round-off tail can produce the same magnitude, which is exactly why
+# magnitude cannot be the discriminator (the mistake already made once here, BEN-060).
+# Run `diagnose_integral_breach()` below, which measures the two things that DO separate them:
+#   (1) SIGN BALANCE of the per-bin deviations. Round-off from a different reduction order keeps
+#       the ~0.46 bias recorded below. A coherent shift drives the fraction hard toward 0 or 1.
+#   (2) PER-BIN CORRELATION with the central value. Round-off is uncorrelated with bin content;
+#       a physics or normalisation change scales with it.
+# A breach that is sign-biased near 0.4594 AND uncorrelated with content is the round-off tail:
+# proceed, recording the measurement. ANYTHING ELSE BLOCKS. Note what this does not permit -- the
+# tolerance is not raised in either branch, and the second branch has no escape clause.
+INTEGRAL_LEG_COHERENT_CEILING = 1.831e-11   # worst observed per-bin deviation; see above
+INTEGRAL_LEG_INCOHERENT_FLOOR = 1.770e-13   # ceiling / sqrt(10694)
+
+
+def diagnose_integral_breach(a, b, central=None):
+    """PRE-SPECIFIED breach diagnostic (2026-08-09). Written BEFORE any breach, so the criterion
+    cannot be chosen to fit the number that triggers it. Returns measurements only; it does not
+    decide, because the decision is stated above and does not depend on anything it returns."""
+    a = np.asarray(a, float); b = np.asarray(b, float)
+    m = np.abs(b) > 0
+    d = a[m] - b[m]
+    nz = d != 0
+    n = int(nz.sum())
+    frac_pos = float(np.mean(d[nz] > 0)) if n else float("nan")
+    out = {"n_deviating_bins": n, "frac_positive": frac_pos}
+    if n:
+        se_roundoff = math.sqrt(0.4594 * (1 - 0.4594) / n)
+        out["sigma_from_roundoff_bias"] = (frac_pos - 0.4594) / se_roundoff
+        out["sigma_from_half"] = (frac_pos - 0.5) / math.sqrt(0.25 / n)
+    if central is not None:
+        c = np.asarray(central, float)[m]
+        rel = d / np.abs(b[m])
+        if np.std(c) > 0 and np.std(rel) > 0:
+            out["corr_reldev_vs_central"] = float(np.corrcoef(rel, c)[0, 1])
+    return out
+
 
 # MEASURED floor, recorded separately from the declared tolerance on purpose: re-measuring it
 # must never silently move the gate. Job 56471429 (CONC=6) vs the 2026-07-18 set (CONC=4),
@@ -871,6 +948,25 @@ def build_projection_M(edges, drop_axis, mask_high, mask_low):
         row = low_pos.get(glow)
         require(row is not None, f"high reported bin {g} maps to non-reported low bin {glow}")
         M[row, col] = wdrop[k]
+    # BOTH DIRECTIONS (2026-08-09, BEN-080). The loop above validates coverage one way only --
+    # every reported HIGH bin lands in a reported LOW bin -- and says nothing about reported LOW
+    # bins that no HIGH bin reaches. Those rows of M are all-zero, so they survive to the central
+    # check as an exact 0 against a nonzero frozen value, i.e. `rel = 1.0` exactly.
+    #
+    # That is not merely a missed case, it is a MASKING defect: on the real products 5 orphan bins
+    # carrying 0.0000% of the 4D total produced `projection mutates central (max rel 1.00e+00)`,
+    # and that message hid the actual result (62% of bins over tolerance at a median of 4.4%)
+    # behind a number contributed by bins nobody would care about. An error that is loudest about
+    # the least important thing is worse than no error, because it redirects the investigation.
+    #
+    # Fail here, at construction, where the diagnosis is the orphan list itself.
+    empty = np.nonzero(~M.any(axis=1))[0]
+    require(empty.size == 0,
+            f"{empty.size} reported LOW bin(s) receive no contribution from any reported HIGH bin "
+            f"(global indices {[int(ml[r]) for r in empty[:10]]}"
+            f"{' ...' if empty.size > 10 else ''}); the two reported supports are inconsistent. "
+            f"These rows would be all-zero and would reach a central comparison as exact zeros, "
+            f"reporting a relative error of 1.0 regardless of how small the bins are.")
     return M
 
 
@@ -882,17 +978,71 @@ def project(C_high, M):
     return M @ C_high @ M.T
 
 
-def check_projection_nonmutation(C_high, M, x_high, x_low_frozen, rtol_central=3e-2):
-    """Enforce projected covariance validity AND central non-mutation:
-    C_low = M C_high M^T is symmetric/PSD, and M @ x_high reproduces the frozen
-    lower-dim central within tolerance (the projection must not mutate the central)."""
+# RE-SPECIFIED 2026-08-09 (Joseph). The previous form GATED on `max |M@x5 - x4| / |x4| <= 3%`,
+# i.e. it required the 5D->4D marginal to reproduce the INDEPENDENTLY-UNFOLDED 4D central bin by
+# bin. That is the equivalence convention the campaign DECLINED on 2026-08-07: the adopted
+# position is that 4D IS the marginal and the independent 4D unfold is a CROSS-CHECK. The gate
+# therefore tested a proposition the analysis does not assert.
+#
+# THIS IS A GATE REMOVAL, NOT A TOLERANCE WIDENING, and the distinction is the whole point. The
+# measurement stays exactly as it was and is reported in full; what is withdrawn is the pass/fail
+# verdict attached to it. Nothing here makes a failing number pass -- see the measured values in
+# FINDING-20260809-stage6-central-gate-cannot-pass.md, which are unchanged by this edit.
+#
+# What IS gated is projection validity, which the analysis does assert: symmetry, PSD, exact
+# agreement of M C M^T against a direct block-sum recomputation, and shape/coverage. Those are
+# recomputation identities and hold at ~1e-14, the standard the stage-4 identities already meet.
+def check_projection_validity(C_high, M, rtol_identity=1e-9):
+    """GATE: the projection itself is valid. Recomputation identities only -- nothing here
+    compares against an independently-produced product.
+
+      * C_low = M C_high M^T is symmetric and PSD;
+      * that product equals a direct block-sum recomputation to `rtol_identity`.
+
+    The second is not redundant with the first: `project()` is one matrix expression and a bug in
+    it would produce a matrix that is still symmetric and still PSD. Recomputing the same quantity
+    by an independent route is what makes this a check rather than a restatement."""
     C_low = project(C_high, M)
     stats = check_symmetric_psd(C_low)
-    xin = np.asarray(x_high, dtype=float); xfr = np.asarray(x_low_frozen, dtype=float)
-    proj = M @ xin
-    require(proj.shape == xfr.shape, f"projected central shape {proj.shape} != frozen {xfr.shape}")
-    denom = np.where(np.abs(xfr) > 0, np.abs(xfr), 1.0)
-    rel = float(np.max(np.abs(proj - xfr) / denom))
-    require(rel <= rtol_central, f"projection mutates central (max rel {rel:.2e})")
-    stats["central_max_rel"] = rel
+    # independent route: accumulate row-block by row-block rather than as one M C M^T
+    direct = np.zeros_like(C_low)
+    MH = M @ np.asarray(C_high, dtype=float)
+    for i in range(C_low.shape[0]):
+        direct[i, :] = MH[i, :] @ M.T
+    scale = max(1e-300, float(np.max(np.abs(C_low))))
+    err = float(np.max(np.abs(C_low - direct)) / scale)
+    require(err <= rtol_identity,
+            f"projection identity M C M^T != direct block sum (rel {err:.3e} > {rtol_identity:.0e})")
+    stats["projection_identity_relerr"] = err
     return C_low, stats
+
+
+def crosscheck_marginal_vs_independent(M, x_high, x_low_independent):
+    """REPORT ONLY -- no pass/fail, by specification. Compares the 5D->4D marginal against the
+    independently-unfolded lower-dimensional central.
+
+    This is a cross-check between two DIFFERENT estimators, not a consistency requirement. Under
+    the adopted convention the marginal is the deliverable and this comparison characterises the
+    independent unfold; it does not constrain the marginal. Returns the full distribution rather
+    than a max, because on the real products the max is owned by a handful of near-empty bins and
+    is actively misleading about the body of the comparison (BEN-080)."""
+    proj = M @ np.asarray(x_high, dtype=float)
+    xind = np.asarray(x_low_independent, dtype=float)
+    require(proj.shape == xind.shape,
+            f"cross-check shape {proj.shape} != independent {xind.shape}")
+    denom = np.where(np.abs(xind) > 0, np.abs(xind), 1.0)
+    rel = (proj - xind) / denom
+    a = np.abs(rel)
+    out = {"n_bins": int(a.size),
+           "median_abs_rel": float(np.median(a)),
+           "p90_abs_rel": float(np.percentile(a, 90)),
+           "p99_abs_rel": float(np.percentile(a, 99)),
+           "max_abs_rel": float(a.max()),
+           "frac_marginal_above": float(np.mean(rel > 0)),
+           "signed_mean_rel": float(np.mean(rel)),
+           "integral_ratio": float(proj.sum() / xind.sum()) if xind.sum() else float("nan"),
+           "note": "cross-check between two estimators; NO pass/fail by specification "
+                   "(2026-08-09). The marginal is the deliverable."}
+    for t in (0.03, 0.10, 0.20):
+        out[f"n_over_{int(t*100)}pct"] = int((a > t).sum())
+    return out
