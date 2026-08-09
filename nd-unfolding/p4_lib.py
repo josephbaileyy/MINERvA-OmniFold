@@ -64,6 +64,21 @@ def candidate_band_key(band):
 NONZERO_MIGRATION_BANDS = frozenset({"BeamAngleX", "BeamAngleY"})
 ZERO_MIGRATION_BANDS = frozenset({"MuonResolution", "Muon_Energy_MINERvA", "Muon_Energy_MINOS"})
 
+# ---------------------------------------------------------------- WHEN A HASH IS RIGHT
+# Three rounds of this lane were spent removing bindings defined by a PROXY, and the live risk
+# after that is over-correction. The principle is NOT "hashes are bad". It is:
+#
+#     a hash is the right instrument for an artifact this chain READS and never re-produces;
+#     it is the wrong instrument for one the chain PRODUCES, because a correct re-run moves it.
+#
+# So in p4_evidence.py the central 5D/4D products and their masks stay frozen sha256 bindings --
+# if `xsec_5d_MEFHC_5iter_lgbm.root` changes underneath us that IS a defect and must block. The
+# endpoint-manifest hash was removed from that same dict because the endpoints ARE produced here
+# and are not bit-reproducible (KNOWN_ISSUES #24), so the frozen value rejected correct data.
+#
+# One hash tracking something that legitimately moves. That was the whole defect -- not the hash,
+# and not the freezing, but the mismatch between the instrument and what it pointed at.
+
 # ------------------------------------------- reproducibility tolerance (repair-6, 2026-08-07)
 # These endpoint ROOTs are NOT bit-reproducible. Re-unfolding the same inputs with the same
 # code and the same seed gives different bytes, because LightGBM/OpenMP reduction order depends

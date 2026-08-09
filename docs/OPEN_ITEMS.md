@@ -156,6 +156,21 @@ not close the literal full-event PET gate below.
   lands, **stage 3 must not run** — the launcher skips any endpoint that already has a receipt, so
   attesting on pre-G-1 code would stamp ten `.done` files with no `bkg_mode` and freeze them that
   way, and deletions are behind the reorg freeze tag.
+- **OWED — the native-miss and merged-audit checks are now verifiable only on the cluster
+  (repair-7 item 3 follow-up).** `p4_lib.check_merged_metadata` was deleted 2026-08-09 because it
+  had no production caller, and its checks — tree completeness, POT positivity, census counters,
+  the native-miss flag/count comparison, the two-sided migration-policy check — live only in
+  `p4_evidence.py`'s inline path. That path imports ROOT, so **none of them can be unit-tested
+  off-cluster**, and eight tests were deleted with the function. Declaring the loss was the
+  honest step; leaving it there is not, because "verifiable only in the least-exercised
+  environment" is how a check drifts back into being effectively dead — which is exactly how the
+  deleted function got that way.
+  - **The named fix, already identified:** extract those checks into a ROOT-free helper that
+    takes extracted metadata (the shape the deleted function had) **and wire `p4_evidence.py` to
+    call it in the SAME change**. Introducing a helper with its caller is the rule that would
+    have prevented the original dead gate; introducing one without a caller recreates it.
+  - **Do not** re-add the helper alone to restore a green test count. That is the failure this
+    entry exists to prevent.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
