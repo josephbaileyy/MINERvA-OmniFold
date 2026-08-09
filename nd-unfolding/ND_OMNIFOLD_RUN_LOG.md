@@ -4300,3 +4300,12 @@ reference `56445883` required 6h00m44s, longer than the four-hour interactive ce
 replacement was allocated, so the batch job was retained as sole writer without cancellation or a
 duplicate. Its terminal watch and corrected array `56534116` terminal watch remain armed. Receipt:
 `../docs/orchestration/state/step1-annealed-lr-r2-queue-56534117-reconciliation.json`.
+
+The changed factorial array `56534116` crossed the same one-hour prestart threshold. Its event was
+read once and matched the armed watch, array ID, and verified-prestart payload. One expanded scheduler
+and ownership snapshot found tasks 0-2 independently `PENDING (Priority)` at zero runtime, all three
+isolated task namespaces absent, and no interactive A100 allocation. The experiment needs three A100
+arms and the measured single-arm full-input reference took 6h00m44s, so no four-hour task-aware route
+was safe or allocated. Batch remains the sole writer for every task; none was cancelled or duplicated.
+The array and annealed-LR terminal watches remain armed. Receipt:
+`../docs/orchestration/state/step1-dynamics-r2-queue-56534116-reconciliation.json`.

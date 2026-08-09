@@ -76,7 +76,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   was accepted. At the changed LR job's one-hour wake, `56534117` remained prestart-pending with no
   output or interactive A100 allocation. The 6h00m44s full-input reference exceeds the four-hour
   interactive ceiling, so batch remains the sole writer; its terminal watch and corrected-array
-  terminal coverage remain armed. Branch C and every scientific threshold remain unchanged.
+  terminal coverage remain armed. The corrected array's simultaneous one-hour wake likewise found
+  tasks 0-2 independently prestart-pending, with all three namespaces absent and no task-aware A100
+  alternative. Its batch ownership is also retained without cancellation; both terminal watches
+  remain armed. Branch C and every scientific threshold remain unchanged.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
