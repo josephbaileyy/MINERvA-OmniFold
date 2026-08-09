@@ -11,7 +11,7 @@ Nothing here BUILDS or ADOPTS a covariance; it only validates/guards. Candidate
 construction is authorized only after the standard-p4-verifier returns PASS.
 """
 from __future__ import annotations
-import hashlib, json, os
+import hashlib, json, os, subprocess
 import numpy as np
 
 # Canonical standard lateral inventory (exactly these; order fixed).
@@ -364,6 +364,22 @@ RECEIPT_REQUIRED_KEYS = ("tag", "mode", "root_sha256", "merged_sha256", "central
 RECEIPT_SOURCE_KEY = "unfold_blob"
 
 
+def code_rev_in_history(rev, head=None):
+    """True iff `rev` is reachable from HEAD in this repository (ancestor of, or equal to).
+
+    Deliberately reachability rather than equality -- see the note in validate_endpoint_receipt.
+    Fails CLOSED: if git cannot answer, the answer is False, because an unverifiable provenance
+    claim is not a satisfied one."""
+    if not isinstance(rev, str) or not rev.strip():
+        return False
+    try:
+        subprocess.check_call(["git", "merge-base", "--is-ancestor", rev.strip(), head or "HEAD"],
+                              cwd=REPO_ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True
+    except Exception:
+        return False
+
+
 def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
                               central5d_sha256, config_hash, bkg_mode,
                               code_rev, unfold_blob):
@@ -397,9 +413,20 @@ def validate_endpoint_receipt(rec, *, tag, root_sha256, merged_sha256,
             f"receipt {tag} has no code_rev")
     require(isinstance(code_rev, str) and code_rev,
             f"cannot validate receipt {tag}: no live code_rev to compare against")
-    require(rec["code_rev"] == code_rev,
-            f"receipt {tag} code_rev {rec['code_rev']} != current {code_rev}: this endpoint was "
-            f"produced by a different revision of the chain")
+    # REPAIR-6b. This used to require code_rev == HEAD, and that was WRONG in the same way
+    # KNOWN_ISSUES #24 describes: it broke on correct behaviour. Any commit anywhere in the repo
+    # -- including another lane's, touching nothing this chain reads -- expired all ten receipts
+    # while the code that produced them was byte-identical. Caught by the self-check on the first
+    # production run: the PET lane advanced main by 8 commits mid-run, HEAD moved
+    # 42268b6 -> 203ff01, `git diff` on the unfold driver was EMPTY, and the gate rejected all ten.
+    #
+    # The producing-code binding is `unfold_blob`, which IS strictly compared below. `code_rev` is
+    # repository context, so the honest check is REACHABILITY, not equality: the receipt must come
+    # from this history. That still catches a receipt carried in from a foreign branch or a
+    # rewritten history, and does not expire on unrelated work.
+    require(code_rev_in_history(rec["code_rev"]),
+            f"receipt {tag} code_rev {rec['code_rev']} is not an ancestor of HEAD ({code_rev}): "
+            f"this receipt did not come from this repository's history")
     require(isinstance(unfold_blob, str) and unfold_blob,
             f"cannot validate receipt {tag}: no committed unfold-driver blob to compare against")
     require(rec[RECEIPT_SOURCE_KEY] == unfold_blob,

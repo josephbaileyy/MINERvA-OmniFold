@@ -63,7 +63,10 @@ class ReceiptGateIntegration(unittest.TestCase):
         self.merged_sha = "m" * 64
         cfg = P.P4Config(); cfg.validate()
         self.cfg_hash, self.bkg = cfg.hash(), cfg.bkg_mode
-        self.code_rev = "c" * 40           # repair-5 (D2): now COMPARED, not merely present
+        # repair-6b: code_rev is now checked for REACHABILITY in this repo's history, so the
+        # fixture must be a real commit. A synthetic sha is exactly what the gate rejects.
+        self.code_rev = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=str(ND.parent), text=True).strip()
         self.unfold_blob = "u" * 40
 
     def tearDown(self):
@@ -132,12 +135,13 @@ class ReceiptGateIntegration(unittest.TestCase):
         self.assertIn("bkg_mode", out)
 
     def test_stale_code_rev_rejected_with_reason(self):
-        """REPAIR-5 self-guard for D2. Reintroducing the defect means accepting a receipt whose
-        code_rev disagrees with HEAD; this asserts the rejection and names it."""
+        """REPAIR-5 self-guard for D2, updated by repair-6b: a code_rev that is not in this
+        repository's history must be rejected. (Equality with HEAD was too strict -- it expired
+        valid receipts on unrelated commits; see REPAIR6b_CodeRevReachability.)"""
         rc, out = self._run_gate(self._write(self._good(code_rev="0" * 40)))
         self.assertEqual(rc, 1)
         self.assertIn("code_rev", out)
-        self.assertIn("different revision", out)
+        self.assertIn("not an ancestor of HEAD", out)
 
     def test_stale_unfold_blob_rejected_with_reason(self):
         """REPAIR-5 self-guard for D2. An endpoint produced by a CHANGED unfold driver must not

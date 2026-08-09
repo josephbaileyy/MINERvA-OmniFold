@@ -904,9 +904,14 @@ class Repair4ReceiptSchema(unittest.TestCase):
 
     ND = Path(__file__).resolve().parents[1]
 
+    # repair-6b: code_rev is checked for REACHABILITY in this history, so the fixture uses the
+    # real HEAD. A synthetic sha is precisely what the gate now rejects.
+    import subprocess as _sp
+    _HEAD = _sp.check_output(["git", "rev-parse", "HEAD"],
+                             cwd=str(Path(__file__).resolve().parents[2]), text=True).strip()
     GOOD = dict(tag="BeamAngleX_0", root_sha256="a" * 64, merged_sha256="b" * 64,
                 central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity",
-                code_rev="e" * 40, unfold_blob="f" * 40)
+                code_rev=_HEAD, unfold_blob="f" * 40)
 
     def _producer_receipt(self, mode="produced", **over):
         """Render a receipt through the launcher's real format string."""

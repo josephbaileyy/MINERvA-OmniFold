@@ -47,9 +47,12 @@ def _load_mutated(module_name, replacements):
 class D2_ReceiptSourceIdentity(unittest.TestCase):
     """Repair-5 D2: code_rev and the producing blob must be COMPARED, not merely present."""
 
+    # repair-6b: code_rev must be reachable in this history, so use the real HEAD.
+    _HEAD = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                    cwd=str(ND.parent), text=True).strip()
     GOOD = dict(tag="BeamAngleX_0", root_sha256="a" * 64, merged_sha256="b" * 64,
                 central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity",
-                code_rev="e" * 40, unfold_blob="f" * 40)
+                code_rev=_HEAD, unfold_blob="f" * 40)
 
     def _rec(self, **over):
         r = {"mode": "produced", "t": "2026-08-07T00:00:00Z"}
@@ -57,10 +60,10 @@ class D2_ReceiptSourceIdentity(unittest.TestCase):
         r.update(over)
         return r
 
-    def test_guard_rejects_stale_code_rev(self):
+    def test_guard_rejects_a_code_rev_not_in_this_history(self):
         with self.assertRaises(P4GateError) as cm:
             P.validate_endpoint_receipt(self._rec(code_rev="0" * 40), **self.GOOD)
-        self.assertIn("different revision", str(cm.exception))
+        self.assertIn("not an ancestor of HEAD", str(cm.exception))
 
     def test_guard_rejects_stale_unfold_blob(self):
         with self.assertRaises(P4GateError) as cm:
@@ -72,8 +75,8 @@ class D2_ReceiptSourceIdentity(unittest.TestCase):
         receipt sails through. This is the demonstration that the guard discriminates: the
         SAME input that the guard rejects above is ACCEPTED by the mutated library."""
         mut = _load_mutated("p4_lib.py", [
-            ('    require(rec["code_rev"] == code_rev,',
-             '    require(True or rec["code_rev"] == code_rev,'),
+            ('    require(code_rev_in_history(rec["code_rev"]),',
+             '    require(True or code_rev_in_history(rec["code_rev"]),'),
             ('    require(rec[RECEIPT_SOURCE_KEY] == unfold_blob,',
              '    require(True or rec[RECEIPT_SOURCE_KEY] == unfold_blob,'),
         ])
@@ -356,6 +359,79 @@ class A1_VerifierTokenBinding(unittest.TestCase):
         sh = (ND / "run_p4_standard.sh").read_text()
         self.assertIn("will NOT work", sh)
         self.assertIn("sha256 of a", sh)
+
+
+class REPAIR6b_CodeRevReachability(unittest.TestCase):
+    """REPAIR-6b: the D2 code_rev check was too strict and broke on CORRECT behaviour.
+
+    Requiring `code_rev == HEAD` expired all ten receipts the moment ANY commit landed
+    anywhere in the repo -- including the PET lane's, touching nothing this chain reads. Caught
+    on the first production run: HEAD moved 42268b6 -> 203ff01 while `git diff` on the unfold
+    driver was EMPTY, and the gate rejected 10/10 valid receipts.
+
+    That is the same defect KNOWN_ISSUES #24 names -- a chain that breaks on correct behaviour
+    is a defect in the chain. The producing-code binding is `unfold_blob` (still strict); the
+    honest check on `code_rev` is REACHABILITY."""
+
+    import subprocess as _sp
+
+    def _head(self):
+        return self._sp.check_output(["git", "rev-parse", "HEAD"],
+                                     cwd=P.REPO_ROOT, text=True).strip()
+
+    def _older(self, n=3):
+        return self._sp.check_output(["git", "rev-parse", f"HEAD~{n}"],
+                                     cwd=P.REPO_ROOT, text=True).strip()
+
+    def test_an_older_in_history_commit_is_accepted(self):
+        """The case that broke: a receipt produced before unrelated commits landed."""
+        self.assertTrue(P.code_rev_in_history(self._older()))
+
+    def test_head_itself_is_accepted(self):
+        self.assertTrue(P.code_rev_in_history(self._head()))
+
+    def test_a_commit_not_in_this_history_is_rejected(self):
+        self.assertFalse(P.code_rev_in_history("0" * 40))
+
+    def test_empty_and_garbage_fail_closed(self):
+        for bad in ("", "   ", None, 12345, "not-a-sha"):
+            self.assertFalse(P.code_rev_in_history(bad), f"{bad!r} accepted")
+
+    def test_MUTATION_equality_would_reject_a_valid_older_receipt(self):
+        """The pre-repair-6b semantics, shown rejecting what the repaired check accepts."""
+        older, head = self._older(), self._head()
+        self.assertNotEqual(older, head)
+        self.assertFalse(older == head, "equality check rejects it -- that was the defect")
+        self.assertTrue(P.code_rev_in_history(older), "reachability accepts it")
+
+    def test_unfold_blob_is_still_strict(self):
+        """Loosening code_rev must NOT loosen the producing-code binding."""
+        good = dict(tag="BeamAngleX_0", root_sha256="a" * 64, merged_sha256="b" * 64,
+                    central5d_sha256="c" * 64, config_hash="d" * 64, bkg_mode="purity",
+                    code_rev=self._head(), unfold_blob="f" * 40)
+        rec = {"mode": "produced", "t": "x"}; rec.update(good)
+        self.assertTrue(P.validate_endpoint_receipt(rec, **good))
+        bad = dict(rec); bad["unfold_blob"] = "9" * 40
+        with self.assertRaises(P4GateError) as cm:
+            P.validate_endpoint_receipt(bad, **good)
+        self.assertIn("unfold driver changed", str(cm.exception))
+
+
+class REPAIR6b_SelfCheckPipelineBug(unittest.TestCase):
+    """REPAIR-6b: my own self-check reported `pass=10 fail=0` beside ten REJECT lines.
+
+    `if cmd | tail -1; then pass++` tests TAIL's exit status, never the command's -- BEN-035's
+    'rc after a pipeline' trap, in the script written to catch exactly this family of defect."""
+
+    def test_the_pipeline_idiom_is_the_bug(self):
+        import subprocess
+        rc = subprocess.call("if false | tail -1; then exit 0; else exit 1; fi", shell=True)
+        self.assertEqual(rc, 0, "a failing command piped to tail reports SUCCESS")
+
+    def test_capture_then_test_is_correct(self):
+        import subprocess
+        rc = subprocess.call('if OUT=$(false); then exit 0; else exit 1; fi', shell=True)
+        self.assertEqual(rc, 1, "capturing first preserves the command's status")
 
 
 # ---------------------------------------------------------------------------------------
