@@ -10,8 +10,23 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **66 fields** written into a product with no same-line comparison, and **22 named
+drivers. **87 fields** written into a product with no same-line comparison, and **23 named
 gates**.
+
+> **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
+> 66 fields / 22 gates while its own generator reported 82 / 24, and the pipeline section said
+> 22/324 while the tool said 23/326 — the artifact drifted from its generator *inside the round
+> that created it*, and the verifier found it rather than the author. Both sweeps now emit a
+> machine-readable `summary()`, the result is committed at
+> `state/p4-sweep-snapshots.json`, and `tests/test_p4_sweep_snapshots.py` regenerates and
+> compares. **Staleness is now a red test on the author's machine instead of a finding on
+> someone else's.** The snapshot also names any NEW unchecked field rather than only counting
+> them, because counts alone let one appear as another disappears. Update with
+> `python3 tests/test_p4_sweep_snapshots.py --update` and commit the diff, so a number change
+> lands in review where it can be seen.
+>
+> Current snapshot: **87 fields / 23 gates**; pipeline **23 candidates across 330 shell
+> files, 0 live**.
 
 ## The sweep's own two failure modes, stated up front
 
@@ -33,7 +48,7 @@ Both were found by running it, and both matter for reading the table:
 
 | Field / gate | State | Mark |
 |---|---|---|
-| **`verifier_crosscheck`** | **Computed, printed as `MATCH`/`DIFF`, and NEVER enforced.** `p4_evidence.py:313` builds the five booleans against the independently-observed hashes `OBS`, `:325` prints them, and a grep for `need(`/`require(` on it returns **0**. All five could read `DIFF` and the stage still exits 0 with `EVIDENCE-COMPLETE`. These are the bindings the evidence stage exists to confirm. | **FIX — highest priority; new, not on any prior list** |
+| **`verifier_crosscheck`** | **FIXED in repair-6 — now enforced.** *(Was: computed, printed as `MATCH`/`DIFF`, and never enforced.)* `p4_evidence.py:313` builds the five booleans against the independently-observed hashes `OBS`, `:325` prints them, and a grep for `need(`/`require(` on it returns **0**. All five could read `DIFF` and the stage still exits 0 with `EVIDENCE-COMPLETE`. These are the bindings the evidence stage exists to confirm. | **FIX — highest priority; new, not on any prior list** |
 | `C_syst_eq_retained_plus_active_relerr` | Recorded by the builder; checked by neither consumer; `C_syst` never recomputed from retained + active. A wrong-but-PSD `C_syst` passes. Recomputable since repair-4 began persisting the retained components. | **FIX** (verifier finding 2) |
 | `hasTruthOnlyMisses` / `nTruthOnlyMisses` | Presence-only in both `p4_lib.check_merged_metadata` and `p4_evidence.py`. Zero or mutually inconsistent values pass. | **FIX** (verifier finding 5) — requiring `n > 0` and flag/count consistency needs no new physics; the real files already satisfy it |
 | `complete_support_comparison` (gate label) | The gate checks presence, shape and a nonzero support trace. Any finite ratio passes, yet it is recorded in the PASS gate list as *complete*. | **FIX** (verifier finding 6) — drop the claim from the name and the receipt, or give the ratio a bound |
@@ -170,11 +185,11 @@ writing the severity down — twice now the first draft overstated it.
 
 ## E-ter. Third mechanical sweep: BEN-035's pipeline exit-status trap
 
-Generator: `nd-unfolding/tools_p4_sweep_pipeline_rc.py`, over **324 tracked shell files**. Flags
+Generator: `nd-unfolding/tools_p4_sweep_pipeline_rc.py`, over **330 tracked shell files**. Flags
 three shapes -- a pipeline through `tail/head/grep/...` used as an `if` condition, the same in a
 `&&`/`||` chain, and one followed by `rc=$?`.
 
-**Result: 22 candidate instances, and every single one is in a file that sets `set -o pipefail`.**
+**Result: 23 candidate instances, and every single one is in a file that sets `set -o pipefail`.**
 Under pipefail the first failing element propagates, so the shape is benign there. **There are no
 live instances in the tracked shell corpus.**
 

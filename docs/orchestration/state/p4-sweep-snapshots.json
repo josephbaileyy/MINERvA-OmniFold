@@ -1,0 +1,201 @@
+{
+  "pipeline": {
+    "files_with_candidates": {
+      "2d-unfolding/download_playlist.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "3d-unfolding/genie/run_fsi_reweight.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "3d-unfolding/genie/run_gevgen.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "3d-unfolding/genie/sbatch_gibuu_mefhc.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "3d-unfolding/genie/sbatch_gibuu_mirror.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "docs/analysis-note/build_all.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "docs/orchestration/gate2_queue_hedge_controller.sh": {
+        "hits": 3,
+        "pipefail": true
+      },
+      "docs/orchestration/make_handoff_bundle.sh": {
+        "hits": 2,
+        "pipefail": true
+      },
+      "docs/orchestration/notify_uthrow_regen.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "docs/orchestration/run_gate2_r4_detached.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "docs/orchestration/watch_g2_dump_resume.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/launch_phase7_final.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/orchestrate_gpu_node.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/sbatch_fe_hostmem_ladder_delta.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/sbatch_gate2_target_validator.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/sbatch_step1_trajectory.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/sbatch_eavailW_cov_wlat.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/uq_fps/corrected/supervise_fps_uq.sh": {
+        "hits": 3,
+        "pipefail": true
+      }
+    },
+    "live_instances": 0,
+    "n_candidates": 23,
+    "n_shell_files": 330,
+    "tool": "tools_p4_sweep_pipeline_rc"
+  },
+  "recorded_fields": {
+    "fields": [
+      "C_combined_eq_syst_stat_ml_relerr",
+      "C_syst_eq_retained_plus_active_relerr",
+      "M_content_sha256",
+      "M_shape",
+      "active_only_eq_sum5_relerr",
+      "active_only_sum_relerr",
+      "active_traces",
+      "all_syst_bands",
+      "axis_edges",
+      "binary_mtime",
+      "binary_sha256",
+      "binary_sha256_semantics",
+      "bkg_mode_basis",
+      "builder",
+      "c_syst_identity_relerr",
+      "candidate_c5",
+      "candidate_c5_key",
+      "candidate_c5_sha256",
+      "candidate_keys",
+      "candidate_total_key",
+      "central_rel_tol",
+      "central_reproduction_rel",
+      "code_rev",
+      "component_content_hash",
+      "component_manifest",
+      "component_manifest_sha256",
+      "conc_new",
+      "conc_reference",
+      "corder",
+      "diag_tol_absolute",
+      "endpoint_manifest_hash",
+      "endpoint_mask_equality",
+      "endpoint_reference_dir",
+      "endpoint_reproduction",
+      "endpoint_reproduction_tolerance",
+      "error",
+      "evidence_generator",
+      "footing_evidence",
+      "frac_positive",
+      "frac_positive_sigma_from_half",
+      "full_phase_space",
+      "full_phase_space_reported_grid",
+      "full_total_identity_relerr",
+      "full_total_residual_eq_stat_plus_ml_relerr",
+      "grid_nbins",
+      "hasTruthOnlyMisses",
+      "hash_list_digest",
+      "integral_rel",
+      "log_bkg_mode",
+      "log_bkg_mode_reason",
+      "log_sha256",
+      "manifest_endpoint_hash",
+      "max_eig",
+      "max_rel_bin",
+      "merged_hash_list_digest",
+      "merged_receipt_dir",
+      "min_eig",
+      "ml_cov",
+      "ml_sha256",
+      "nTruthOnlyMisses",
+      "n_bins",
+      "n_reported",
+      "n_reported_bins_pooled",
+      "n_retained_components",
+      "per_bin",
+      "pooled_mean",
+      "pooled_sd",
+      "recovered",
+      "rel_asymmetry",
+      "rel_integral",
+      "replaced_lateral_bands",
+      "retained_bands",
+      "selection_migration_abs",
+      "source_blobs",
+      "source_commits",
+      "sqrt_tr_active",
+      "sqrt_tr_support",
+      "stat_cov",
+      "stat_sha256",
+      "support_comparison",
+      "support_family",
+      "support_family_sha256",
+      "support_ratio_is_diagnostic_not_bounded",
+      "use_weights",
+      "verifier_crosscheck",
+      "worst_rel_bin",
+      "zombie"
+    ],
+    "gates": [
+      "active_total_eq_sum5",
+      "c_syst_recomputed_from_components",
+      "check_component_sum()",
+      "check_declared_migration_policy()",
+      "check_full_total_identity()",
+      "check_projection_nonmutation()",
+      "check_reproducibility()",
+      "check_support_comparison()",
+      "check_symmetric_psd()",
+      "component_manifest_bound",
+      "exact_5_active_bands",
+      "full_total_identity_recomputed",
+      "merged_audit_census_and_migration",
+      "merged_inseparability",
+      "prove_identity()",
+      "require_candidate_path()",
+      "require_complete_unfold_set()",
+      "require_exact_bands()",
+      "require_exact_endpoint_tags()",
+      "require_standard_footing()",
+      "support_trace_ratio_recorded",
+      "symmetric_psd",
+      "traces_pos_finite"
+    ],
+    "n_fields": 87,
+    "n_gates": 23,
+    "tool": "tools_p4_sweep_recorded_fields"
+  }
+}

@@ -78,6 +78,19 @@ for f, s in src.items():
                          s, re.M):
         gates.append((m.group(1) + "()", f))
 
+def summary():
+    """Machine-readable snapshot -- see the note in tools_p4_sweep_pipeline_rc.summary()."""
+    return {"tool": "tools_p4_sweep_recorded_fields",
+            "n_fields": len(rows),
+            "n_gates": len(set(gates)),
+            "fields": sorted(f for f, _, _ in rows),
+            "gates": sorted(n for n, _ in set(gates))}
+
+
+if __name__ != "__main__":
+    # importable for the CI guard without printing the whole report
+    pass
+
 print("=" * 78)
 print("A. FIELDS WRITTEN INTO A PRODUCT AND NEVER COMPARED ANYWHERE")
 print("=" * 78)

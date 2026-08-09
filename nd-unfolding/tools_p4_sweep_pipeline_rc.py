@@ -60,6 +60,28 @@ def scan(rel):
     return hits, pipefail
 
 
+def summary():
+    """Machine-readable snapshot of what this sweep currently finds.
+
+    REPAIR-7 item 4: the committed inventory drifted to 66 fields / 22 gates while the generator
+    reported 82 / 24 -- the artifact went stale against its own generator INSIDE one round, which
+    is precisely the failure the artifact was created to prevent. A prose document cannot be
+    diffed against a script, so the script now emits this, the snapshot is committed, and a test
+    compares them. Staleness becomes a test failure instead of a verifier finding."""
+    files = tracked_shell_files()
+    total = 0
+    per_file = {}
+    for rel in files:
+        hits, pf = scan(rel)
+        if hits:
+            total += len(hits)
+            per_file[rel] = {"pipefail": pf, "hits": len(hits)}
+    return {"tool": "tools_p4_sweep_pipeline_rc",
+            "n_shell_files": len(files), "n_candidates": total,
+            "files_with_candidates": per_file,
+            "live_instances": sum(v["hits"] for v in per_file.values() if not v["pipefail"])}
+
+
 def main():
     files = tracked_shell_files()
     total = 0
