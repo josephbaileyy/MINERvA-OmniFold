@@ -4159,3 +4159,41 @@ interactive ceiling, so no collision-safe replacement was available: the job was
 batch remains its sole writer. The `56531204` terminal watch and separate array `56531057` terminal
 watch remain armed. Receipt:
 `../docs/orchestration/state/step1-annealed-lr-queue-56531204-reconciliation.json`.
+
+## 2026-08-09 — Canonical standard 5D re-unfold `56495756` PUBLISHED, and its evidence closes
+
+**Owed entry.** The re-unfold landed 2026-08-08 and this log did not record it; the only trace was
+a fired wakerctl watch (`p4-std-receipts-56495756`). Recording it now, with every field below
+taken from a command run in the same turn (`sacct`, the receipt JSONs, the evidence stdout) rather
+than from memory.
+
+**Job `56495756`** (holder job-name `gbdt-hold`, partition `urgent_milan_ss11`, 256 NCPUS).
+Holder state **TIMEOUT at 03:00:05** — that is the 3 h interactive cap expiring on the *holder*,
+not a failure: step `.0` **COMPLETED in 02:37:18** on 128 CPUs and published everything. Reading
+the holder's state as the work's state is the misreading this note exists to prevent.
+
+**Products.** Ten endpoint ROOTs and ten `.done` receipts in
+`active_universe_5d/standard/unfolds/`. Each receipt carries `mode: produced` (never `attested`),
+`bkg_mode: purity` with `bkg_mode_basis: "passed explicitly to the driver by this launcher"`,
+`config_hash 4b41fab9…`, `code_rev 42268b6`, and the `unfold_blob` of the driver that ran.
+
+**Evidence, re-run 2026-08-09 under job `56532439` at `7053f68`: EVIDENCE-COMPLETE.**
+
+| | |
+|---|---|
+| OBS hashes `central5d` / `mask5d` / `central4d` / `mask4d` | 4/4 **MATCH** |
+| reported bins | 5D 10 694, 4D 4 830 |
+| endpoint reproduction vs the 07-18 reference | **10/10 within tolerance** |
+| worst per-bin relative difference | **1.83e-11** (tol 1e-9, 54.6x margin) |
+| worst integral relative difference | **2.87e-12** (tol 1e-11, 3.48x margin) |
+| footing | `purity` on all ten, read from each endpoint's log |
+| selection migration | nonzero on the four BeamAngle endpoints, exactly zero on the six others |
+
+**The worst integral, 2.87e-12, would have FAILED the 1e-12 tolerance in force before 08-08.**
+The widening was necessary rather than merely prudent, and it was the last one available — the
+integral leg is a discriminator whose whole dynamic range is ~103x, so its margin is not slack.
+Derivation and the pre-specified breach response are at `p4_lib.REPRO_RTOL_INTEGRAL`.
+
+**What this does NOT authorize.** Stages 4-6 remain gated on a `standard-p4-verifier` PASS. The
+candidate built today was produced by stepping around that gate under explicit instruction and
+carries `publication_gate_rejects_this: true`; it is not a step toward adoption.
