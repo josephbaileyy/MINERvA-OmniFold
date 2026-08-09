@@ -206,8 +206,24 @@ What survives as *description*, not mechanism:
 
 Averaging cannot produce (1) — a coherent axis-dependent swing is not what fluctuation-dilution
 looks like — so this is most likely a superposition of two effects. **I am not asserting that.**
-Four mechanisms have been excluded and none established; the honest state is that the disagreement
-is real, reproducible from the products alone, structured, and unexplained.
+Four mechanisms have been excluded and none established.
+
+**But the two observations together are a CONSTRAINT, which is more than "unexplained".** A
+deviation that is coherent in `(eavail, q3)` yet *dilutes* with the number of contributing W cells
+is a deviation **whose sign varies across W within a single 4D cell** — summing over W cancels it.
+That is a property the difference must have, derived from the data and independent of any cause:
+
+- it rules out any mechanism acting uniformly across W within a cell, since such a deviation would
+  survive the sum undiluted and show no `n_W` gradient;
+- it is consistent with the coherent `(eavail, q3)` structure, because a W-alternating deviation can
+  still have a net sign that varies systematically with position in `(eavail, q3)`;
+- and it says the 4D unfold and the 5D marginal differ in how they distribute content **across W
+  inside a cell**, which is precisely the freedom the 4D estimator does not have and the 5D does.
+
+Note the last point is a constraint on the *difference*, not a mechanism for it — it does not say
+which estimator is right, or why the W-internal signs arrange the way they do. **The honest state:
+the disagreement is real, reproducible from the products alone, structured, sign-alternating in W
+within cells, and unexplained.**
 
 ## 2f. DRAFT — reported estimator dependence (for the note, pending Joseph's review)
 

@@ -139,6 +139,69 @@ identifier rather than AST, so a ratio split across lines or hidden behind a hel
 **9 remains a floor** — but a much tighter one than 8 was, because the language that was entirely
 unswept turns out to contain exactly one reading file.
 
+## 2b. GATING MEASUREMENT — does `app_statmethods.tex:983` survive per-playlist scaling? **YES.**
+
+A quoted claim asserted sensitivity at 1–2 % in exactly the region where an unquantified 9.4 %
+mixture error lives. That had to be resolved before anything else, and it is a bounded measurement
+with a definite answer.
+
+**Method.** No unfolding. The mixture error acts on the MC prediction *before* unfolding, and its
+size there is what the claim must survive. From the 12 per-playlist event-loop outputs
+(`runEventLoopOmniFold_1{A..P}.root`), weighted reco distributions on the analysis' own 14 pT and
+16 p∥ edges:
+
+```
+N_glob(bin) = R_glob * sum_p MC_p(bin)      R_glob = sum(D_p)/sum(M_p)   <- what the code does
+N_pp(bin)   = sum_p R_p * MC_p(bin)         R_p    = D_p/M_p             <- what is correct
+```
+
+with the shape part taken as `N_pp/N_glob` renormalised to unit yield-weighted mean, because an
+overall scale is not a shape difference and is not what `χ²_shape` sees.
+
+**The mixture error is real and large in the weights** — `R_p` spans 0.1707 (1B) to 0.2371 (1D),
+`max/min − 1 = 38.90 %`, reproducing J36's figure exactly from the files.
+
+**And it is negligible in the shape:**
+
+| | pT | p∥ |
+|---|---|---|
+| overall normalisation shift | **+0.119 %** | +0.118 % |
+| shape max abs deviation | **0.073 %** | **0.143 %** |
+| shape rms | 0.035 % | 0.087 % |
+| shape peak-to-peak | 0.105 % | 0.281 % |
+
+In the cells the claim names — pT bins 2/7/10, which carry 16/11/12 % of the χ² — the shape
+deviations are **+0.010 %, +0.017 %, −0.033 %**. Across the low-pT peak ridge (pT ≤ 0.4 GeV/c) the
+maximum is **0.032 %** with a peak-to-peak of 0.029 %.
+
+**Verdict: the statement stands.** The mixture error's shape effect is **14–30× below** the ~1–2 %
+coherent difference the claim discusses, and ~30× below it in the specific ridge the claim
+localises to. `app_statmethods.tex:983` does not come out. It takes a caveat, not a rebuild.
+
+**Why so small, given a 38.9 % spread?** Because a mixture error only becomes a *shape* error to the
+extent the playlists differ in shape, and these twelve are nearly shape-identical in reco pT. A
+large reweighting of shape-similar components is almost pure normalisation — which is the same fact
+J36 already recorded ("total normalisation is NOT biased") seen from the other side, and it is why
+the residual +0.119 % lands in normalisation rather than shape. The deviation that *is* there is
+coherent — a monotone tilt, +0.03 % at low pT to −0.07 % at high pT — i.e. exactly the coherent kind
+the claim says is hard to absorb, just an order of magnitude too small to matter.
+
+**This also bounds J36 itself, and it is the first measured bound rather than an argument:** on the
+2D analysis, the shape consequence of the global-POT-scale defect is **≤ 0.15 %**. That is a
+material input to the scoping decision — it does not make the defect correct, but it does mean no
+2D shape statement is at risk from it.
+
+**Bounds on this measurement, stated because they are the only ways it could mislead:**
+
+- It is a **pre-unfolding** bound. Unfolding could amplify it, but a 0.03–0.15 % input error would
+  need ~10–50× amplification to reach the scale under discussion, and nothing in this chain does
+  that.
+- It uses the MC signal-reco sample. Background also carries `pot_scale`, but background is ~2 % of
+  the sample (52 626 vs 2 682 267 entries in 1A), so its contribution is subdominant to the numbers
+  above.
+- It is measured on pT and p∥, the observables the claim is about. It does not bound the 5D/ND
+  quantities.
+
 ## 3. What is NOT claimed
 
 - **No published number is withdrawn.** Total normalisation is unaffected (§1), and no result here
