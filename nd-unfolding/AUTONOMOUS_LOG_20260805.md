@@ -2567,3 +2567,37 @@ own three numbers rather than trusting its `deviation` field.
 `56525829` (step-1 trajectory, Joseph's priority) is STILL `PENDING (Priority)`, priority 67768, no start
 estimate from Slurm. Nothing I can do to advance it; the watch is armed.
 
+### 02:10Z — The artifact the whole campaign now rests on was NOT backed up, and a stale backup hid it
+
+Checking storage after preserving the extraction products, I found the real risk of the night.
+
+`/global/cfs/cdirs/m3246/josephrb/fullevent-nominal-checkpoints-20260807/` exists, is correctly named,
+sits in the right place, and contains exactly the right *filenames*. It holds **`8d17140f…`** — the
+**08-07 artifact that the BEN-043 re-train retired**. The artifact everything now depends on,
+**`58f664cdef266d09…`**, existed **only on purgeable `/pscratch`**: the one Gate A/B is bit-exact
+against, that the step-1 decomposition and the diagnostic extraction consumed, and that the still-pending
+trajectory job will consume. Six GPU-hours of training, one purge from gone.
+
+**This is BEN-073's mechanism one level over**, so I extended that row rather than minting a new id (the
+same write-once call I made an hour ago on the BEN-075 collision). A *missing* backup is obvious; a backup
+**of the wrong generation** is invisible, because presence and plausible naming do the reassuring and only
+a content comparison can tell. The new rules: verify a backup by DIGEST against the live artifact, never
+by `ls`; and a re-run that supersedes an artifact must re-back-it-up **in the same turn it lands**, exactly
+as a gate re-issue must retire its predecessor. The 08-07 backup was correct when written — it simply
+stopped being the thing that mattered, and nothing was watching for that.
+
+Closed: `fullevent-nominal-checkpoints-20260808/` — nominal `58f664cdef266d09` and floor
+`14cccc231dfd92c9` both **digest-verified against the live files**, 14 checkpoints including both BEN-043
+`_final` weights, 6 receipts, 36.1 MB.
+
+**And a trap inside the fix:** `du -sh` reported **15K** for that directory. Had I trusted it I would have
+concluded the copy failed and either retried pointlessly or reported a backup that did not exist.
+`du --apparent-size` gives 36.1 MB and the sha256 comparison is what actually proved the bytes arrived —
+CFS block accounting is lazy. Recorded as rule (8), because the failure mode is "your verification tool
+lies in the reassuring direction only half the time".
+
+Also noted, no action: the 254 MB push npz and the 6 KB xsec npz remain untracked because `.gitignore:29`
+excludes `*.npz` deliberately. Both are reproducible (13 GPU-min and 1:32 CPU respectively) and the xsec's
+sha256 is bound in the committed manifest, so a regenerated copy is verifiable. Force-adding past a
+deliberate repo rule for a reproducible non-quotable diagnostic is not justified.
+
