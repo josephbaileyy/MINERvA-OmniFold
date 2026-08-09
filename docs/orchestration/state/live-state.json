@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Full-event PET Step-1 trajectory diagnosis",
-  "state": "The NON-QUOTABLE diagnostic extraction is complete. The detached interactive A100 hedge exited before Slurm created an allocation and never became a writer. Step-1 batch 56525829 remains PENDING on Priority as the sole writer. Branch C still prohibits publication quoting.",
+  "current_dag_node": "Full-event PET Step-1 iteration-dynamics isolation",
+  "state": "Step-1 trajectory job 56525829 is validated CORRECT_AT_ITER0_DEGRADES_LATER. Batch array 56531057 runs three collision-isolated full-input controls in parallel to separate fixed split reuse, Step-1 warm-start, their interaction, or intrinsic push feedback. Branch C still prohibits publication quoting.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -23,23 +23,23 @@
   ],
   "jobs": [
     {
-      "job_id": "56525829",
-      "tasks": "0",
-      "single_job": true,
-      "owner": "Slurm m3246_g shared A100",
-      "purpose": "Step-1 increment trajectory and iteration-0 discriminator",
-      "state": "PENDING Priority; sole writer; terminal watch armed; interactive hedge closed pre-allocation",
-      "output": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.{out,err}",
-      "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json"
+      "job_id": "56531057",
+      "tasks": "0-2",
+      "single_job": false,
+      "owner": "Slurm m3246_g shared A100 array",
+      "purpose": "Step-1 iteration-dynamics factorial controls: warm/fresh, cold/fixed, cold/fresh",
+      "state": "PENDING Priority; three arm/job namespaces; terminal and queue-latency watches armed",
+      "output": "nd-unfolding/pet/step1_iteration_dynamics/{arm}/slurm-56531057_{task}/STEP1_DYNAMICS.json",
+      "receipt": "docs/orchestration/state/step1-dynamics-submit-56531057.json"
     }
   ],
   "blockers": [
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
-    "Step-1 failure localization depends on the terminal trajectory artifact from job 56525829; do not infer iteration dynamics from the final increment alone.",
-    "The detached interactive request exited before Slurm assigned an allocation ID; do not retry the unchanged hedge or create a duplicate writer."
+    "The trajectory localizes the failure after feedback but does not yet choose among fixed split reuse, Step-1 warm-start, their interaction, or intrinsic push feedback.",
+    "Array 56531057 is diagnostic-only. Do not promote an arm, edit the shared engine, change thresholds, or lift Branch C from these controls alone."
   ],
-  "next_authorized_action": "On the real terminal event for batch 56525829, reconcile accounting, logs, and the hash-bound Step-1 trajectory artifact exactly once. Keep the existing batch as the sole writer; do not poll, request another allocation, retry the unchanged hedge, or duplicate output.",
+  "next_authorized_action": "On the first real event for array 56531057, reconcile it exactly once. At aggregate terminal, compare all three arms to the warm/fixed baseline with the committed iteration-2 rule and mail the verified mechanism verdict. At queue latency, inspect task ownership once and retain batch unless a task-aware collision-safe alternative is actually proven. Do not poll or duplicate output.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

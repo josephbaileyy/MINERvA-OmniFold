@@ -54,7 +54,8 @@ replacement is implied for 4D/FPS or dependent significances. See
   iteration dynamics. Three full-input controls are ready in isolated namespaces: warm/fresh split,
   cold/fixed split, and cold/fresh split; together with the completed warm/fixed baseline they form a
   predeclared factorial over split reuse and Step-1 warm-start. Branch C remains and no publication
-  cross section is promoted.
+  cross section is promoted. The three arms are submitted as batch array `56531057` (`0-2%3`), each
+  on one A100 with an isolated arm/job namespace; terminal and one-hour prestart queue watches are armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

@@ -4116,3 +4116,11 @@ owns an arm/job namespace and all code, target, receipt, and manifest inputs are
 predeclared repair definition is correct-sign iteration 2 with achieved/required >= 0.90. Six focused
 tests, shell syntax, the canonical config gate, and all seven pins pass. Control plan:
 `../docs/orchestration/state/step1-iteration-dynamics-control-plan.json`.
+
+After a clean writer/capacity snapshot, the three controls were submitted as array `56531057`
+(`0-2%3`). Batch is the deliberate placement: the experiment needs three independent A100s in
+parallel and an 8h durable wall, while no interactive allocation existed. Every task was initially
+PENDING on Priority with zero runtime and no output. Terminal and one-hour queue-latency watches are
+armed; the orphaned sentinel for the failed 56525829 hedge was disarmed only after the original batch
+completed. Submission receipt:
+`../docs/orchestration/state/step1-dynamics-submit-56531057.json`.
