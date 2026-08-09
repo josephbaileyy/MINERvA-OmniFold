@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-05. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-09. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -37,6 +37,12 @@ replacement is implied for 4D/FPS or dependent significances. See
 `KNOWN_ISSUES.md` #14-16.
 
 ## Remediation in flight
+
+- Full-event diagnostic extraction job 56525297 is reconciled FAILED after its complete, validated
+  GPU push: the combined launcher crossed into the ROOT-only stage while still in the TensorFlow
+  environment. The preserved push is the sole input to a tested CPU/root_6_28 continuation; no GPU
+  retry is authorized. Every product remains in the NONQUOTABLE-DIAGNOSTIC namespace, and Joseph is
+  notified only after the continuation manifest proves both publication-rejection conditions.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

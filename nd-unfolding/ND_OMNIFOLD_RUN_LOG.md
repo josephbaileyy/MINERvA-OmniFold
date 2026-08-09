@@ -4005,3 +4005,21 @@ floor 15. Suite: `nd-unfolding/tests` **7 failed / 878 passed / 1 skipped** — 
 pre-existing path failures, unchanged. **Collection announced 970 -> 985** (+11 quarantine, +4
 criterion).
 
+## 2026-08-09 — NON-QUOTABLE full-event diagnostic attempt 1: reusable push, environment BLOCK
+
+The real terminal event for Slurm job 56525297 was read and reconciled once. Accounting is FAILED
+`1:0` after 14m06s. The expensive GPU stage nevertheless completed all 49,152,885 rows, wrote its
+atomic push plus completion marker, pinned every one of 1,957 off-acceptance rows to one, and passed
+the 2,000,000-row subsample-agreement check by a wide margin. Those bytes are preserved and reused.
+
+The changed blocker is mechanical and exact: `sbatch_fullevent_diagnostic_extract.sh` invoked
+`--stage all` under the TensorFlow module, although `extract_fullevent_fps.py` documents that push
+needs TensorFlow/GPU and extraction needs PyROOT/CPU. The xsec stage died at `import ROOT`; no
+quarantine manifest was written, so neither rejection boolean is yet confirmed and no completion
+mail was sent. No cross-section number is quoted.
+
+The committed repair is `pet/sbatch_fullevent_diagnostic_xsec_resume.sh`: it requires the completed
+push job ID, preflights PyROOT in `root_6_28`, runs only `--stage xsec`, refuses output collisions,
+then builds and independently asserts both publication-rejection booleans. Static and quarantine
+tests pass 13/13. The original launcher remains untouched as provenance; an unchanged GPU retry is
+prohibited. Receipt: `../docs/orchestration/state/diag-extract-56525297-failure-reconciliation.json`.
