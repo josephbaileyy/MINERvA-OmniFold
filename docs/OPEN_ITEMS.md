@@ -216,7 +216,7 @@ not close the literal full-event PET gate below.
     which is the whole content of BEN-071's false-positive refinement.
   - **Why the GBDT lane is not doing it:** it is a logic change in another lane's file. That
     boundary was tested the hard way the same week — a five-line *guard* in a PET-lane test file
-    silently voided a gate-3 sha256 binding (BEN-077). This file is not hash-pinned (checked
+    silently voided a gate-3 sha256 binding (BEN-061). This file is not hash-pinned (checked
     2026-08-09), so that specific hazard does not apply here; the handover stands on ownership of
     the physics, not on the hash.
   - **This entry exists because the handover was previously recorded only in a commit message**,

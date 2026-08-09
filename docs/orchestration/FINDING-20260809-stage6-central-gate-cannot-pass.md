@@ -319,7 +319,7 @@ two of the three are clean and the third cannot pass as specified.
 `CENTRAL_REL` is **deleted, not raised.** There is deliberately no tolerance constant left to
 re-tune, because the correct value is *none*, not *larger*.
 
-The cross-check is returned as a **distribution rather than a max**, which is BEN-080 applied to the
+The cross-check is returned as a **distribution rather than a max**, which is BEN-064 applied to the
 replacement rather than only recorded about the original: a test asserts that one degenerate bin
 among 100 perfect ones yields `max > 1e5` and `median = 0`, so the max can never again be the only
 number a reader sees.

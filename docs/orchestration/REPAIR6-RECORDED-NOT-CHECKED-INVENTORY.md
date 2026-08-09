@@ -25,7 +25,7 @@ gates**.
 > `python3 tests/test_p4_sweep_snapshots.py --update` and commit the diff, so a number change
 > lands in review where it can be seen.
 >
-> Current snapshot: **99 fields / 25 gates**; pipeline **23 candidates across 330 shell
+> Current snapshot: **99 fields / 25 gates**; pipeline **23 candidates across 332 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
