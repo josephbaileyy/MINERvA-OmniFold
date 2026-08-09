@@ -57,7 +57,8 @@ replacement is implied for 4D/FPS or dependent significances. See
   cross section is promoted. The three arms are submitted as batch array `56531057` (`0-2%3`), each
   on one A100 with an isolated arm/job namespace; terminal and one-hour prestart queue watches are armed.
   A separately pinned fourth arm, warm/fixed with the engine's intended post-iteration `1e-5` learning
-  rate made effective at fit time, is ready without modifying the shared engine or the pending array.
+  rate made effective at fit time, is batch job `56531204`, initially PENDING Priority with an isolated
+  namespace and terminal/queue-latency watches. It does not modify the shared engine or pending array.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

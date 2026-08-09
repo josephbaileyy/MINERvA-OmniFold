@@ -1,0 +1,76 @@
+{
+  "schema": "slurm-job-submission-receipt-v1",
+  "run_id": "DIAG-STEP1-LR-A1",
+  "recorded_at_utc": "2026-08-09T11:04:33Z",
+  "job_id": "56531204",
+  "job_name": "fe_s1lr",
+  "cpus_per_task": 32,
+  "memory_per_task": "57472M",
+  "gpus": "one A100",
+  "time_limit": "08:00:00",
+  "qos": "gpu_shared",
+  "submitted_at_utc": "2026-08-09T11:04:01Z",
+  "slurm_submit_time_local": "2026-08-09T04:04:01-07:00",
+  "submit_command": "sbatch --parsable nd-unfolding/pet/sbatch_step1_annealed_lr.sh",
+  "submit_return_code": 0,
+  "placement": {
+    "route": "batch",
+    "account": "m3246_g",
+    "partition": "shared_gpu_ss11",
+    "rationale": "The isolated full-input control needs one A100 and up to eight hours. No compatible interactive allocation existed in the pre-submit snapshot; batch gives durable execution without consuming LLM capacity."
+  },
+  "control": {
+    "arm": "warm_fixed_annealed_lr",
+    "baseline": "completed warm-model/fixed-split/full-LR nominal plus trajectory job 56525829",
+    "intervention": "make the intended 1e-5 learning rate effective at fit time for both steps after iteration 0",
+    "repair_definition": "iteration 2 Step-1 correction has correct sign and achieved/required >= 0.90",
+    "shared_engine_edited": false
+  },
+  "output_ownership": {
+    "namespace": "nd-unfolding/pet/step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56531204",
+    "result": "STEP1_DYNAMICS.json",
+    "weights": "weights.npz",
+    "collision_guard": "namespace was absent before submission and the launcher refuses any pre-existing result, weights, or completion marker",
+    "duplicate_writer": false
+  },
+  "code": {
+    "commit": "0144d21c08e847ed7cf95f2ea86ee7ad2c8f9e69",
+    "launcher": "nd-unfolding/pet/sbatch_step1_annealed_lr.sh",
+    "launcher_sha256": "5b16812df0bcb2df33bc15ad0e5ac91e66df19359e0b3cab34ea1c8ecb3085af",
+    "wrapper": "nd-unfolding/pet/diagnose_step1_annealed_lr.py",
+    "wrapper_sha256": "fa4ad80aee1457d851c82d426c565a35a2a522da12bcc858d0c6a1c8ecb3085af",
+    "test": "nd-unfolding/tests/test_step1_annealed_lr.py",
+    "test_sha256": "0ec48219d48509d7db30a7020533570e1a014d3883c705de4a812c421b97faec",
+    "focused_tests": "4/4 PASS",
+    "hash_pins": "8/8 PASS"
+  },
+  "initial_snapshot": {
+    "state": "PENDING",
+    "reason": "Priority",
+    "run_time": "00:00:00",
+    "start_time": "Unknown",
+    "outputs_present": false
+  },
+  "watches": {
+    "terminal": {
+      "watch_id": "step1-annealed-lr-56531204",
+      "kind": "slurm-job",
+      "state": "armed"
+    },
+    "queue_latency": {
+      "watch_id": "step1-annealed-lr-queue-56531204",
+      "kind": "queue-latency",
+      "threshold_seconds": 3600,
+      "state": "armed"
+    }
+  },
+  "scope": {
+    "publication_candidate": false,
+    "branch_c_unchanged": true,
+    "threshold_change": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "SUBMITTED_WATCHED_PENDING"
+}

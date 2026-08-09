@@ -4133,3 +4133,11 @@ forces only the fit-time compile at iterations 1/2 to `1e-5` for both steps, ret
 fixed split, and records all six actual optimizer rates. It passes four focused tests and eight pins;
 the shared engine remains unchanged. Control plan:
 `../docs/orchestration/state/step1-annealed-lr-control-plan.json`.
+
+The annealed-LR control was committed at `0144d21` before submission, then launched as batch job
+`56531204` on one A100/32 CPU with an 8h wall. Its job-owned namespace was absent before submission;
+the initial scheduler snapshot was PENDING on Priority with zero runtime and no output. A terminal
+watch and a one-hour prestart queue-latency watch are armed. The three-arm array `56531057` remains a
+separate writer in its own namespaces. A combined mechanism verdict is deferred until both experiments
+are independently reconciled. Submission receipt:
+`../docs/orchestration/state/step1-annealed-lr-submit-56531204.json`.
