@@ -2746,3 +2746,28 @@ Recorded, **not fixed**: `omnifold.py` is shared engine code on the gated path a
 would change every published number. Mailing it because it materially informs a run that is in the queue
 right now.
 
+### 08:40Z — BEN-075's preflight rule transferred, and it cost the other lane 4 queue-hours to need it
+
+`56531057` arms 0 and 1 FAILED in 25 s and 13 s (`1:0`); arm 2 and the LR job `56531204` were cancelled.
+Cause, from their own log: `ModuleNotFoundError: No module named 'omnifold'` at
+`diagnose_step1_iteration_dynamics.py:109`. Their import order puts `import omnifold` *before*
+`import train_fullevent_nominal`, and it is `train_fullevent_nominal` (lines 37-38) that inserts the
+engine path into `sys.path` — which is why my trajectory script, importing in the other order, worked.
+
+They had already relaunched as `56534116` / `56534117` before I looked, and the r2 launcher fixes it the
+right way rather than the minimal way: `export PYTHONPATH="${REPO}/omnifold_nn"` **plus a fail-closed
+import preflight** that dies with the offending PYTHONPATH in the message. Nothing for me to flag, so I
+did not mail — a self-corrected failure in another lane is not news for Joseph.
+
+**The transferable point, which is why this is worth six lines:** that preflight is exactly BEN-075
+rule (1) — *probe every stage's imports up front, it costs two seconds* — a rule written this morning
+after MY `--stage all` launcher paid 14 A100-minutes to die on a missing ROOT module. The same class of
+defect then bit the other lane from the other direction (missing engine module, not missing ROOT), and
+the fix they reached for is the one the row prescribes. A ledger row demonstrably changing a different
+lane's second attempt is the strongest evidence I have seen this campaign that FINDINGS.md earns its
+keep.
+
+**And the cost it exists to prevent, measured:** their v1 sat ~4 hours in `Reason=Priority` and then died
+in 13 seconds on an import. The preflight would have caught it before submission. Queue time is the
+expensive resource here, not GPU time.
+
