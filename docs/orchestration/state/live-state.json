@@ -1,4 +1,60 @@
 {
+  "schema_version": 1,
+  "campaign": "Publication PET full-event diagnosis and UQ remediation",
+  "current_dag_node": "Full-event PET diagnostic extraction recovery and Step-1 trajectory diagnosis",
+  "state": "The diagnostic GPU push is complete and preserved; CPU xsec-only continuation 56527676 and Step-1 trajectory 56525829 are scheduler-owned and pending. Branch C still prohibits publication quoting.",
+  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
+  "owners": [
+    {
+      "role": "agent-C-fps",
+      "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
+      "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input"
+    },
+    {
+      "role": "agent-B-p5b",
+      "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
+      "purpose": "Publication PET full-event schema and consumer-contract owner"
+    },
+    {
+      "role": "agy-publication-redteam",
+      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+      "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "56527676",
+      "tasks": "0",
+      "single_job": true,
+      "owner": "Slurm m3246 shared CPU",
+      "purpose": "ROOT-only continuation of the quarantined full-event diagnostic, reusing the completed GPU push",
+      "state": "PENDING Priority; terminal and one-hour queue watches armed",
+      "output": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/logs/fe_diag_xsec_56527676.{out,err}",
+      "receipt": "docs/orchestration/state/diag-xsec-submit-56527676.json"
+    },
+    {
+      "job_id": "56525829",
+      "tasks": "0",
+      "single_job": true,
+      "owner": "Slurm m3246_g shared A100",
+      "purpose": "Step-1 increment trajectory and iteration-0 discriminator",
+      "state": "PENDING Priority; terminal watch armed",
+      "output": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.{out,err}",
+      "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json"
+    }
+  ],
+  "blockers": [
+    "The diagnostic remains deliberately non-quotable. Completion requires the job-56527676 manifest to prove publication_gate_rejects_this and publication_gate_rejects_this_on_physics_alone; no cross-section number may be quoted.",
+    "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
+    "Step-1 failure localization depends on the terminal trajectory artifact from job 56525829; do not infer iteration dynamics from the final increment alone."
+  ],
+  "next_authorized_action": "On the first real terminal event, reconcile that job exactly once. For 56527676, confirm both quarantine rejection flags and then mail Joseph without a numerical cross section. For 56525829, reconcile the gated iteration trajectory and use its iteration-0 result to choose the next repair. Do not poll, duplicate a writer, or retry unchanged.",
+  "canonical_science": [
+    "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
+    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
+    "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
+    "VALIDATION_LEDGER.md"
+  ],
   "append_only_history": [
     "docs/orchestration/RUNS.tsv",
     "docs/orchestration/QUIET-PERIODS.tsv",
@@ -10,51 +66,6 @@
     "docs/orchestration/MIGRATION-TAKEOVER-STATUS.md",
     "superseded followup prompts"
   ],
-  "blockers": [
-    "RESTORE Step 0 freeze verification is running as Slurm job 56313000. Steps 1 onward remain blocked until its terminal log is reconciled and contains no mismatch outside the three documented Gate-2 sites owned by Step 2.",
-    "codex-personal 3% weekly remaining (reset 2026-08-08T03:35:36Z); codex-school 72% (reset 2026-08-07T06:27:42Z). Conserve. 0 Full reset credits."
-  ],
-  "campaign": "Publication PET UQ remediation",
-  "canonical_science": [
-    "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
-    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
-    "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
-    "VALIDATION_LEDGER.md"
-  ],
-  "current_dag_node": "RESTORE-2026-08-03 Step 0 — verify all gate/hash freezes before science changes.",
-  "jobs": [
-    {
-      "job_id": "56313000",
-      "output": "docs/orchestration/state/waker/logs/restore-step0-hash-56313000.{out,err}",
-      "owner": "Slurm m3246 shared, one CPU",
-      "purpose": "exact RESTORE Step 0 verify_hash_bindings.py over the native Perlmutter artifact inventory",
-      "receipt": "docs/orchestration/state/restore-step0-hash-submit-56313000.json",
-      "state": "SUBMITTED; terminal and one-hour wholly-prestart queue watches armed",
-      "tasks": "0",
-      "single_job": true
-    }
-  ],
-  "next_authorized_action": "On the real terminal event for job 56313000, reconcile accounting and the Step-0 log exactly once. Accept only the documented current baseline (101 OK plus the three Gate-2 mismatch sites owned by RESTORE Step 2); any additional mismatch stops science. If accepted, continue immediately to Step 1 and protect the sole G2 dump on CFS.",
-  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
-  "owners": [
-    {
-      "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input",
-      "role": "agent-C-fps",
-      "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82"
-    },
-    {
-      "purpose": "Publication PET full-event schema and consumer-contract owner",
-      "role": "agent-B-p5b",
-      "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282"
-    },
-    {
-      "purpose": "Owner-neutral launcher, inventory, and provenance verifier",
-      "role": "agy-publication-redteam",
-      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44"
-    }
-  ],
-  "schema_version": 1,
-  "state": "Canonical Codex root 019f749a active; interim Claude root stood down. RESTORE Step 0 is scheduler-owned and in progress. Gate 3 PROMOTED PASS; Gate 4 launch-code gate re-issued PASS_CODE_ONLY (07-31); nominal PET training NOT launched.",
   "wake": {
     "waker": true
   }

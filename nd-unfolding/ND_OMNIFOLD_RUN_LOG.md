@@ -4023,3 +4023,6 @@ push job ID, preflights PyROOT in `root_6_28`, runs only `--stage xsec`, refuses
 then builds and independently asserts both publication-rejection booleans. Static and quarantine
 tests pass 13/13. The original launcher remains untouched as provenance; an unchanged GPU retry is
 prohibited. Receipt: `../docs/orchestration/state/diag-extract-56525297-failure-reconciliation.json`.
+The repair was committed before compute, then submitted as CPU job 56527676 with terminal and
+one-hour prestart queue watches. Its submission receipt is
+`../docs/orchestration/state/diag-xsec-submit-56527676.json`.
