@@ -52,6 +52,11 @@ OBS = {"central5d": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a95282
 # REPRO_RTOL_PER_BIN / REPRO_RTOL_INTEGRAL. Fails closed when the reference is absent: an
 # unverifiable reproduction claim is not a satisfied one.
 ENDPOINT_REFERENCE_DIR = f"{ND}/active_universe_5d/standard/unfolds__SUPERSEDED_20260718"
+
+# The merge fans 12 per-playlist event loops into each endpoint ROOT, and `hadd` SUMS
+# TParameter<double> (KNOWN_ISSUES trap #8). Any per-playlist flag therefore arrives here as a
+# COUNT OF PLAYLISTS, not as a boolean. Declared once so a checker cannot silently assume 0/1.
+N_MERGED_PLAYLISTS = 12
 # repair-5: single-sourced in p4_lib so this file and the validator cannot disagree about
 # which bands are expected to migrate.
 NONZERO_MIG = P.NONZERO_MIGRATION_BANDS
@@ -180,15 +185,30 @@ for b in P.BANDS:
         # REPAIR-7 item 3: this was presence-only, and the strengthened comparison was put in
         # check_merged_metadata -- which has no production caller. The comparison now lives HERE,
         # in the path that actually runs. Every real merged endpoint carries a positive count.
+        # These are POST-MERGE values. `hadd` SUMS TParameter<double> (KNOWN_ISSUES trap #8),
+        # so a per-playlist boolean 1 becomes N_PLAYLISTS after the 12-playlist merge -- measured
+        # 2026-08-09: hasTruthOnlyMisses = 12, nTruthOnlyMisses = 8_999_007. The first draft of
+        # this check asserted `in (0, 1)` and blocked all ten endpoints on correct data, because
+        # it encoded the PRE-merge schema the field name suggests rather than the merged artifact
+        # actually on disk. Read the product, not the field name.
         _hm, _nm = rec["hasTruthOnlyMisses"], rec["nTruthOnlyMisses"]
         if need(_hm is not None and _nm is not None, f"merged {tag} native-miss meta missing"):
             _hm_i, _nm_i = int(float(_hm)), int(float(_nm))
-            need(_hm_i in (0, 1), f"merged {tag} hasTruthOnlyMisses={_hm_i} is not a 0/1 flag")
-            need(bool(_hm_i) == (_nm_i > 0),
-                 f"merged {tag} native-miss flag/count disagree: flag={_hm_i} count={_nm_i}")
+            rec["native_miss_playlists_with_misses"] = _hm_i
             need(_nm_i > 0,
                  f"merged {tag} native-miss count is {_nm_i}; every real merged endpoint has "
                  f"truth-only misses, so zero means AppendTruthOnlyMisses did not run")
+            need(_hm_i > 0,
+                 f"merged {tag} hasTruthOnlyMisses={_hm_i}: no constituent playlist reported "
+                 f"truth-only misses")
+            # the two must agree in direction -- a positive count with a zero flag, or the
+            # reverse, means the merge or the event loop disagreed with itself
+            need((_hm_i > 0) == (_nm_i > 0),
+                 f"merged {tag} native-miss flag/count disagree: flag={_hm_i} count={_nm_i}")
+            # and the summed flag cannot exceed the number of merged playlists
+            need(_hm_i <= N_MERGED_PLAYLISTS,
+                 f"merged {tag} hasTruthOnlyMisses={_hm_i} exceeds the {N_MERGED_PLAYLISTS} "
+                 f"merged playlists; the sum is impossible for a per-playlist 0/1 flag")
         need(all(cen[k] is not None for k in cen), f"merged {tag} census incomplete")
         # D3d: NONZERO_MIG was enforced; ZERO_SEL was declared at the top of this file and
         # referenced by NO check -- a dead constant. So the "bin-migration-only" claim for the
