@@ -2601,3 +2601,42 @@ excludes `*.npz` deliberately. Both are reproducible (13 GPU-min and 1:32 CPU re
 sha256 is bound in the committed manifest, so a regenerated copy is verifiable. Force-adding past a
 deliberate repo rule for a reproducible non-quotable diagnostic is not justified.
 
+### 02:30Z — The interactive hedge for `56525829` is dead; my batch job is intact and I am staying out of it
+
+`56525829` is still `PENDING (Priority)`, submitted 07:18 UTC, ~2h queued, `StartTime=Unknown`, no
+dependency — ordinary fair-share contention on `shared_gpu_ss11`, nothing broken.
+
+**The other lane built an interactive-QOS hedge for it, and the hedge died before submitting anything.**
+Two watches appeared on my job that I did not arm (`step1-ihedge-terminal-56525829`,
+`step1-ihedge-start-deadline-56525829`), plus a queue watch. Reading them first was the right move: the
+terminal watch's own context says **"Do not create another allocation or writer"**, so had I independently
+launched an interactive run to accelerate Joseph's priority job — which was my first instinct — I would
+have raced their controller and put two GPUs on the same six reweights.
+
+Evidence it is dead, and the *categorical* part is what settled it:
+
+    *.salloc.log / *.tmux.log      0 bytes, created 08:57 / 09:00 UTC
+    sacct, preceding 90 min        NO job record of any kind -> the salloc never reached the scheduler
+    ps -p 1440332 on login23       no row (its OWN login node, not mine)
+    start-deadline watch           FIRED 09:10 UTC because start was never proved
+
+The 0-byte logs prove nothing on their own — BEN-028 is exactly that this filesystem block-buffers, so a
+healthy multi-hour run also shows zero output. Filed as **BEN-076**: BEN-028 inverted. **For anything whose
+job is to create a job, the liveness probe is "did a Slurm record appear", not "is the log growing"** — a
+submitter that has submitted nothing produces no evidence, and 0 bytes is the expected reading in both the
+healthy and the dead case, so that signal carries no information here.
+
+**A wrong diagnosis I formed and discarded before reporting it:** I hypothesised their concurrent
+`gbdt-hold` was occupying the `interactive` QOS and blocking the hedge. `sacctmgr` shows
+`MaxSubmitJobsPerUser=2` with 1 in use — the limit was never the cause. Checking it took one command; had I
+mailed the guess I would have sent Joseph a confident and wrong explanation of another lane's failure.
+
+**Action taken: none, deliberately.** Their watch owns the routing, their context forbids a second
+allocation, and the `RETAIN_BATCH` route is satisfied by my batch job simply remaining intact — which it
+is. I did not write their terminal file; writing into another lane's control state is precisely the
+cross-lane interference that causes damage. Recorded here because the log is how they and future sessions
+see it.
+
+No mail: nothing finished, no verdict, nothing blocked on Joseph. `56525829` remains the only outstanding
+item in my lane and its own watch is armed.
+
