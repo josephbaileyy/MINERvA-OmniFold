@@ -1,5 +1,23 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-09 full-event Step-1 increment trajectory — VERIFIED DIAGNOSTIC
+
+Job `56525829` completed `0:0` in 7m55s. The hash-bound trajectory artifact
+(`032f548f1b7b85fe...`) passed an independent schema/arithmetic audit and reproduced the three
+committed decomposition anchors bit-exactly. Verdict: **`CORRECT_AT_ITER0_DEGRADES_LATER`**.
+
+| iteration | prior push | achieved Step-1 ratio | required ratio | achieved/required | sign |
+|---:|---:|---:|---:|---:|---|
+| 0 | 1.000000 | **1.233512** | **1.124080** | **1.09735** | correct |
+| 1 | 1.092736 | **0.915166** | **1.028684** | **0.88965** | wrong |
+| 2 | 0.967659 | **0.648331** | **1.161650** | **0.55811** | wrong |
+
+Cap-saturated weight fraction is zero at all three iterations. Iterations 0 and 1 use checkpoint files
+labelled best-epoch, but their history minima are epoch 8/8, so those are also the actual last-epoch
+models; iteration 2 uses the explicit BEN-043 final checkpoint. Thus the step-1 trajectory is fully
+last-epoch-faithful. Scope: this localizes a training defect to **iteration dynamics after initial
+feedback**; it is not a cross section and does not lift Branch C.
+
 ## 2026-07-12 uncertainty-remediation quarantine
 
 The entries below preserve the exact historical record, but the old 4D/5D/FPS

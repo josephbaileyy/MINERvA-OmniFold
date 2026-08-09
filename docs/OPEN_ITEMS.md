@@ -172,11 +172,13 @@ not close the literal full-event PET gate below.
 >   and the re-train is queued as **`56445883`** (watch `nominal-rerun-56445883`). The 2026-08-06 products
 >   are archived under `pet/fullevent_nominal/superseded-20260806/`, digests verified across the move.
 >   → `docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md`, BEN-043.
-> - **Step 1 under-achieves by 32%**: `mean_w_reco(pull_final | pass_reco) = 0.765031` against
->   `R = 1.124080`, i.e. 68.1% of step 1's *own* objective, with iteration 2's step 1 the largest single
->   drop and moving *away* from R. F3 cap saturation and a biased train/val split are both excluded;
->   reco-leg non-convergence is the leading candidate and no budget ladder has ever been run against the
->   fold-forward ratio. → `FINDING-20260807-step1-under-achieves.md`.
+> - **Step 1 is correct at iteration 0 and degrades later**: terminal trajectory job `56525829`
+>   measured 1.233512 against exact R=1.124080 at push=1 (correct sign, within the predeclared 10%),
+>   then 0.915166 vs 1.028684 required at iteration 1 and 0.648331 vs 1.161650 at iteration 2, both
+>   wrong-signed. The three decomposition anchors reproduce bit-exactly; cap saturation is zero; the
+>   lower step-1 best checkpoints are epoch 8/8 and therefore last-epoch faithful. Stale cached
+>   labels/weights are excluded by code (they are rebuilt each call); fixed split/order and warm-started
+>   model state remain separable iteration-dynamics candidates. → `FINDING-20260807-step1-under-achieves.md`.
 > - **The D2 "97.8% scatter" reading is against the wrong reference.** Against the 0.80 bar's own
 >   reference the miss is 81.4% a coherent under-application of the injected tilt (the estimator applies
 >   63.1% of it); each term alone exceeds the entire residual headroom, so no single-axis remedy passes and

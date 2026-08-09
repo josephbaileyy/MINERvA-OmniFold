@@ -48,8 +48,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   output, so a tested detached A100 hedge was selected. The first `setsid` child did not persist, and
   the changed tmux-supervised request also exited before Slurm created a named allocation. The start
   deadline therefore closed the hedge without cancellation or compute: batch 56525829 remains
-  PENDING on Priority, owns no output yet, and is still the sole writer. Its terminal watch remains
-  armed; no replacement allocation or second writer was started.
+  PENDING on Priority, owned no output then, and remained the sole writer. It later completed `0:0`.
+  Independent validation gives `CORRECT_AT_ITER0_DEGRADES_LATER`: iteration 0 is correct-sign and
+  within 9.74% of exact R, while iterations 1 and 2 are wrong-signed. The failure is post-feedback
+  iteration dynamics; Branch C remains and no publication cross section is promoted.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

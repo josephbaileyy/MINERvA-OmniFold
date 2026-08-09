@@ -188,3 +188,34 @@ run's own.
   correct in the opposite direction.
 - Receipt: `nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json`.
 
+---
+
+## 8. DEFINITIVE TRAJECTORY 2026-08-09 — correct at iteration 0, degrades later
+
+Job `56525829` measured every Step-1 increment on the BEN-043-corrected nominal and reproduced
+`increment1`, `push_prev`, and `push_final` from the committed decomposition receipt **bit-exactly**.
+The artifact verdict `CORRECT_AT_ITER0_DEGRADES_LATER` was independently re-derived:
+
+| iteration | prior push | achieved r1 | required r1 | achieved/required | sign |
+|---:|---:|---:|---:|---:|---|
+| 0 | 1.000000 | **1.233512** | **1.124080** | **1.09735** | correct |
+| 1 | 1.092736 | **0.915166** | **1.028684** | **0.88965** | wrong |
+| 2 | 0.967659 | **0.648331** | **1.161650** | **0.55811** | wrong |
+
+This retires the earlier ambiguity. At iteration 0 there is no feedback and Step 1 meets the
+predeclared within-10% criterion with the correct sign. The sign flips only after feedback exists.
+The failure is therefore in **iteration dynamics**, not a class-normalization/training defect already
+present at push=1. Cap saturation is zero at every iteration.
+
+The script's generic checkpoint caveat is also non-binding here. History minima for Step 1 iterations
+0 and 1 are epoch 8/8, so their files named best-epoch are the actual last-epoch models. Iteration 2
+uses the explicit BEN-043 final checkpoint. The complete Step-1 trajectory is last-epoch-faithful.
+
+A static audit narrows the next split: `MultiFold.cache()` reuses feature tensors and the shuffled
+index after iteration 0, but it rebuilds the label/weight dataset from the current arrays on every
+call. Stale cached labels or weights are excluded. The distinct remaining mechanisms are (a) reuse of
+the fixed train/test split/order and (b) warm-starting the Step-1 network across changing weighted
+classification problems. They require controlled arms; this result does not choose between them.
+
+Artifact: `nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json`, sha256
+`032f548f1b7b85fe672d0e7bf640299a720d0d1ecca95bbad23c4037ca16e9bb`.

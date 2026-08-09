@@ -242,9 +242,10 @@ copy of the input. **Consequence:** the step-1 under-achievement hypothesis is *
 toward 1, and a folded-forward ratio of 0.7465 against a required 1.1241 is the right direction for it.
 
 **Fix forward, two parts.** (1) Rename or re-document the stored field so it cannot be read as an outcome —
-`step1_class_ratio_target` would have prevented this. (2) If an achieved value is wanted, it has to be
-*measured*: run inference with the saved `w_nominal/*_step1.weights.h5` and compare the classifier's
-reco-space mean against R. Nothing currently stored supports that comparison.
+`step1_class_ratio_target` would have prevented this. (2) The achieved value has now been measured by
+trajectory job `56525829`: iteration 0 is correct-sign and within 9.74% of R, while iterations 1 and 2
+are wrong-signed. The defect is therefore in post-feedback iteration dynamics, not an initial class-ratio
+normalization failure. Detail and exact numbers: `docs/orchestration/FINDING-20260807-step1-under-achieves.md`.
 
 ## 25 tests ran only from purgeable scratch, and one still does
 

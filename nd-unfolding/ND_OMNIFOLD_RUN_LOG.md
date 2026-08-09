@@ -4086,3 +4086,24 @@ batch was not cancelled. It remains the sole writer. No replacement allocation o
 retry was launched. The batch terminal watch and controller-terminal file sentinel remain armed;
 progress now depends on the batch terminal event. Receipt:
 `../docs/orchestration/state/step1-ihedge-start-deadline-56525829-reconciliation.json`.
+
+## 2026-08-09 — Step-1 trajectory COMPLETE: correct at iter0, degrades later
+
+The terminal event for job 56525829 was valid and read exactly once. Accounting is COMPLETED `0:0`,
+7m55s on one A100. Stdout, stderr, the complete run log, and the trajectory JSON were each read once
+and hash-bound in the completion receipt. Stderr contains only a benign module version-change notice.
+The submitted launcher and trajectory driver still match their committed hashes.
+
+The artifact's `CORRECT_AT_ITER0_DEGRADES_LATER` verdict was independently recomputed. Iteration 0
+achieves 1.233512 against exact R=1.124080 (1.09735x, correct sign); iteration 1 achieves 0.915166
+against 1.028684 required and iteration 2 achieves 0.648331 against 1.161650, both wrong-signed. The
+three decomposition anchors reproduce bit-exactly and cap saturation is zero throughout. History
+minima show the step-1 checkpoints for iterations 0 and 1 are epoch 8/8, so their best-epoch files are
+also last-epoch-faithful; iteration 2 uses the explicit BEN-043 final checkpoint.
+
+The failure is therefore in post-feedback iteration dynamics, not a Step-1 normalization failure at
+push=1. Code inspection further excludes stale cached labels/weights: the engine reuses feature
+tensors and an index but rebuilds the current label/weight dataset every call. Fixed split/order and
+warm-started model state remain distinct controlled hypotheses. Joseph's verdict mail was accepted by
+the local MTA with rc=0. Branch C remains. Completion receipt:
+`../docs/orchestration/state/step1-trajectory-complete-56525829.json`.
