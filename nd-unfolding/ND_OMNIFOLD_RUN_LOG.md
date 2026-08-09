@@ -4141,3 +4141,12 @@ watch and a one-hour prestart queue-latency watch are armed. The three-arm array
 separate writer in its own namespaces. A combined mechanism verdict is deferred until both experiments
 are independently reconciled. Submission receipt:
 `../docs/orchestration/state/step1-annealed-lr-submit-56531204.json`.
+
+The one-hour queue-latency event for array `56531057` was read exactly once and validated after 3813s
+of verified prestart wait. One expanded snapshot found tasks 0/1/2 independently PENDING on Priority,
+each at zero runtime, with all three output namespaces absent. No A100 interactive allocation,
+detached controller, or tmux session existed. The closest full-input nominal (`56445883`) required
+6h00m44s, which exceeds the four-hour interactive ceiling, and this experiment needs three independent
+A100 arms. No replacement was therefore allocated or proven; no task was cancelled and batch remains
+the sole writer. Its terminal watch and the independent `56531204` watches remain armed. Receipt:
+`../docs/orchestration/state/step1-dynamics-queue-56531057-reconciliation.json`.

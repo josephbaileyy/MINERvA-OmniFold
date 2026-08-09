@@ -59,6 +59,9 @@ replacement is implied for 4D/FPS or dependent significances. See
   A separately pinned fourth arm, warm/fixed with the engine's intended post-iteration `1e-5` learning
   rate made effective at fit time, is batch job `56531204`, initially PENDING Priority with an isolated
   namespace and terminal/queue-latency watches. It does not modify the shared engine or pending array.
+  At the array's one-hour latency wake, all three tasks were still prestart-pending with absent outputs.
+  Batch remains the sole writer: the closest full-input nominal took 6h00m44s, so no four-hour
+  interactive replacement was safe or allocated. Terminal coverage remains armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
