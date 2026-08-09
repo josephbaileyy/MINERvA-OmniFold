@@ -1,0 +1,73 @@
+{
+  "schema": "step1-annealed-lr-completion-receipt-v1",
+  "run_id": "DIAG-STEP1-LR-A2-COMPLETE",
+  "recorded_at_utc": "2026-08-09T22:20:07Z",
+  "terminal_discovery": {
+    "source": "the single sacct snapshot taken while reconciling evt-step1-dynamics-r2-56534116",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "03:01:22",
+    "start": "2026-08-09T12:14:08",
+    "end": "2026-08-09T15:15:30",
+    "node": "nid002605",
+    "terminal_watch": "step1-annealed-lr-r2-56534117",
+    "terminal_watch_disposition": "DISARMED_AFTER_MANUAL_SAME_WAVE_RECONCILIATION_BEFORE_EVENT_EMISSION"
+  },
+  "code_gate": {
+    "launcher_commit": "783e674e428d9e49ea659952ca035836f009110f",
+    "launcher_sha256": "63247c48b4db3842ba7f090af7f287275bb4940df9ddb3b588ea645c1d8e1eea",
+    "pins": {
+      "wrapper": "fa4ad80aee1457d851c82d426c565a35a2a522da12bcc858d0c6a1c8e5d980ad",
+      "factorial_helper": "831117d84866d644a681e434dcf7c43de886e9393c61e582f4fae1cccd597288",
+      "driver": "66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd",
+      "loader": "57f33f87b07e0c6b9bd27a8c56f8013acf9863c72f80f1c01de556ad09f97117",
+      "engine": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "target": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "target_receipt": "336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f",
+      "gate3_manifest": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f"
+    },
+    "all_expected_equal_actual": true,
+    "scientific_pin_change": false,
+    "omnifold_import_preflight": "PASS_BY_FAIL_CLOSED_CONTROL_FLOW",
+    "preflight_evidence": "The set -e launcher passed the import command, entered the wrapper, emitted a validated COMPLETE result and DONE marker, and contains no ModuleNotFoundError, fail marker or traceback."
+  },
+  "artifact": {
+    "arm": "warm_fixed_annealed_lr",
+    "result": "nd-unfolding/pet/step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56534117/STEP1_DYNAMICS.json",
+    "result_sha256": "26e5ab46425155c4cf5c4d4500498d87e372578ea73a37751003a75e8d3fb648",
+    "weights_sha256": "7d7be09a5e290ea74bfd7371ac931afcf34434f4871f4a7395f69ffeafeac820",
+    "stdout_sha256": "67536a3db6cd2fcbc2e78b558023fd96a9aa846494199fd007508a6cf9cf64f9",
+    "stderr_sha256": "52aa4d76beb5ac92381f0d42bd950752e3ad06dc1e0687808458d8c53ed91d22",
+    "fit_learning_rates": [0.0001, 0.0001, 0.00001, 0.00001, 0.00001, 0.00001],
+    "fit_learning_rate_contract": "PASS",
+    "iteration2": {"correct_sign": false, "achieved_over_required": 0.8958691112794991},
+    "repair_gate": "FAIL_WRONG_SIGN_AND_BELOW_0.90"
+  },
+  "acceptance": {
+    "frozen_rule": "iteration 2 has correct sign and achieved_over_required >= 0.90",
+    "threshold_changed": false,
+    "formal_verdict": "DEAD_ANNEAL_DOES_NOT_REPAIR_INCREMENT_GATE",
+    "end_state_crosscheck": {
+      "target_R": 1.1240801811218262,
+      "iteration1_push": 1.1213931424689882,
+      "iteration1_deviation_fraction": -0.002390433260869629,
+      "iteration2_push": 1.1109012166615733,
+      "iteration2_deviation_fraction": -0.011724220995605772,
+      "fold_forward_abs_tolerance": 0.05,
+      "inside_tolerance": true,
+      "improvement_factor_vs_baseline_abs_deviation": 29.390335051741594
+    },
+    "interpretation_conflict": "The formal increment gate calls this a failure, but the end-state Gate-4 normalization reading is inside 5%. Normalization repair is not shape validation; neither reading authorizes promotion without Joseph's decision.",
+    "combined_factorial_receipt": "docs/orchestration/state/step1-dynamics-r2-complete-56534116.json",
+    "combined_interpretation": "Formal route: no control repairs and intrinsic feedback / representation-tail contraction remains. End-state route: annealed LR repairs normalization but remains unvalidated for shape."
+  },
+  "scope": {
+    "publication_candidate": false,
+    "branch_c_unchanged": true,
+    "unchanged_retry": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "VERIFIED_COMPLETE_NO_REPAIR"
+}

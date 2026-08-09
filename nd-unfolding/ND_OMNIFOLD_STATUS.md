@@ -71,15 +71,17 @@ replacement is implied for 4D/FPS or dependent significances. See
   no mechanism verdict is available. All scientific pins match. Changed r2 launchers add the missing
   `omnifold_nn` import path plus a fail-closed import preflight; unchanged retry is prohibited.
   The changed launchers were committed at `783e674`; only then were pending old task 2 and old LR job
-  cancelled. Replacement array `56534116` and LR job `56534117` are collision-isolated, initially
-  PENDING Priority, and covered by terminal plus one-hour queue watches. Joseph's no-verdict/fix mail
-  was accepted. At the changed LR job's one-hour wake, `56534117` remained prestart-pending with no
-  output or interactive A100 allocation. The 6h00m44s full-input reference exceeds the four-hour
-  interactive ceiling, so batch remains the sole writer; its terminal watch and corrected-array
-  terminal coverage remain armed. The corrected array's simultaneous one-hour wake likewise found
-  tasks 0-2 independently prestart-pending, with all three namespaces absent and no task-aware A100
-  alternative. Its batch ownership is also retained without cancellation; both terminal watches
-  remain armed. Branch C and every scientific threshold remain unchanged.
+  cancelled. Replacement array `56534116` and LR job `56534117` then completed `0:0` in isolated
+  namespaces. The changed import preflights and every frozen code/data pin pass. No arm meets the
+  predeclared iteration-2 gate (correct sign and achieved/required >=0.90): warm/fresh is wrong-sign
+  at 0.663688; cold/fixed is correct-sign but 0.788382; cold/fresh is wrong-sign at 25.065410; and
+  the effective `1e-5` annealed-LR arm is wrong-sign at 0.895869. Formally, no arm repairs and the
+  predeclared route leaves intrinsic push feedback / representation-tail contraction. A concurrent
+  end-state audit found the annealed push is only 1.17% low versus the frozen 5% normalization bar
+  (29.39x better than baseline), because it was already 0.24% low after iteration 1; the increment
+  criterion degenerates near target. This is a genuine disposition conflict, not a result mismatch:
+  normalization repair does not establish shape. Both readings were mailed to Joseph. Branch C and
+  every threshold remain unchanged; no retry, engine edit, or promotion is authorized.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
