@@ -113,79 +113,136 @@ FROZEN = {
         "gap_min": 0.15,
         "floor_over_gap_max": 0.10,
         # ---- CLM-012: the recovery bar is a FRACTION OF THE ACHIEVABLE CEILING ------------------
-        # Re-specified 2026-08-09 on Joseph's decision. This is a SPECIFICATION CORRECTION, not a
-        # tolerance raise, and the distinction is his to make and he made it. What follows is the
-        # whole argument, because a later reader must be able to audit it without re-deriving it.
+        # THIS IS A BUG FIX: WE CORRECTED A BAR COMPUTED IN THE WRONG SCOPE, OFF BY 0.0084.
         #
-        # WHY THE OLD BAR WAS WRONG. The old criterion was `residual/gap <= 0.20`, i.e. recovery >=
-        # 0.80 ABSOLUTE. But recovery in this closure is acceptance-limited: the injected tilt is
-        # applied in truth and only the fraction surviving reco can be observed, so recovery has a
-        # ceiling of `0.618228` (per-event; 0.633208 spectrum-space --
-        # FINDING-20260807-d2-acceptance-limited-oracle.md). 0.618228 < 0.80, so the old bar sat
-        # ABOVE the ceiling: no estimator, however good, could satisfy it. It was not measuring the
-        # estimator -- it was measuring the acceptance and reporting the answer as an estimator
-        # verdict.
+        # Not a re-specification, and not a tolerance raise. The old bar was `residual/gap <= 0.20`,
+        # i.e. recovery >= 0.80 absolute. The acceptance-limited ceiling computed in the WRONG scope
+        # -- a single aggregate acceptance pushed through the dilution formula -- is
+        #     phi(a_bar) = 1 - (1 - 0.42351622)^3 = 0.808415,
+        # which rounds to 0.80. The ceiling computed in the RIGHT scope is 0.618228. So the most
+        # probable history is not that someone invented an arbitrary 0.80: someone computed a ceiling,
+        # got 0.8084, rounded, and wrote it down -- with the scope error baked in. The defect is
+        # identifiable and its size is 0.0084 at the point of the mistake, opening to 0.190187 once
+        # the scope is corrected. That is a far stronger and more accurate position than "we
+        # re-specified a bar we could not meet", and it is the one to state anywhere referee-facing.
         #
-        # AND THE CONDITION THAT CLAIM RESTS ON, stated because it is load-bearing and easy to lose.
-        # "Unsatisfiable" holds under the PER-CELL (Jensen-corrected) ceiling. CLM-012 caveat (iv-d)
-        # records that the SCALAR-scope curve gives `1-(1-0.42351622)^3 = 0.808415`, which is ABOVE
-        # 0.80 -- under that reading the old bar was satisfiable and this rationale fails. The
-        # per-cell reading is the correct one (the acceptance map itself flags the scalar scope as
-        # overstating differential recovery by +19.9 pp), and it is also the reading under which the
-        # old bar looks DERIVED rather than invented: 0.808415 is only 0.0084 above 0.80. So the most
-        # likely history is that the bar was computed from the scalar curve, and the defect is the
-        # Jensen error in that derivation. That is a specification defect either way, but it is a
-        # CONDITIONAL claim about a derivation, not an unconditional impossibility proof, and it must
-        # not be cited as the latter.
+        # ================= SCOPE: WHY PER-CELL IS THE ONLY ADMISSIBLE READING ====================
+        # First-class, because it is the BIGGEST lever by a factor of 8 (see the ranking below). It was
+        # previously buried as caveat (iv-d) while the much smaller weighting choice carried the
+        # "load-bearing" label. That asymmetry was backwards and is fixed here.
         #
-        # That is the mirror image of the BEN-070/071 family (a gate whose threshold puts it beyond
-        # reach so it can never FIRE): here the threshold put it beyond reach so it could never
-        # PASS. Both are the same defect -- a bar specified without reference to the scale of the
-        # quantity it bounds -- and both are invisible until someone computes the achievable range.
+        # THE ARGUMENT IS FORCED BY THE CRITERION'S OWN DEFINITION, not chosen for convenience.
+        # `check_powered_closure` scores
+        #     recovery = 1 - residual/gap,  residual = sum_b |h_unfolded_b - h_target_b|,
+        #                                   gap      = sum_b |h_prior_b    - h_target_b|
+        # -- a ratio of L1 sums over CELLS. If cell b's displacement d_b = |h_prior_b - h_target_b|
+        # can be recovered only to fraction r_b = phi(a_b) = 1 - (1-a_b)^k, then
+        #     achievable residual = sum_b (1 - r_b) d_b
+        #     achievable recovery = sum_b r_b d_b / sum_b d_b  =  E_d[phi(a)],
+        # a DISPLACEMENT-WEIGHTED MEAN OF PER-CELL DILUTIONS. The scalar reading computes phi(E[a]) --
+        # the dilution of an average acceptance. Those are different functionals of the same
+        # acceptance map, and the criterion's structure selects the first: its denominator IS
+        # sum_b d_b, so the weight is the displacement and the average is over cells. Note this same
+        # argument also settles the WEIGHTING question, which is why displacement-weighting (0.633208)
+        # is correct and truth-mass-weighting (0.609475) is simply the wrong weight for THIS
+        # criterion, rather than a matter of taste.
+        #
+        # AND THE DIRECTION OF THE ERROR IS FORCED, not incidental. phi is concave on (0,1) for k>1:
+        #     phi''(a) = -k(k-1)(1-a)^(k-2) < 0   everywhere on (0,1)
+        # so Jensen gives E[phi(a)] <= phi(E[a]) -- the scalar scope must OVERSTATE the ceiling, for
+        # every possible acceptance map, with equality if and only if acceptance is UNIFORM across
+        # cells. MINERvA's acceptance is strongly non-uniform (the map spans roughly 0.05 to 0.80
+        # across the 285 reported cells), so the scalar reading is not an approximation with a small
+        # error here -- its error IS the acceptance spread, and that is where the 0.190187 comes from.
+        # Verified numerically: phi'' < 0 over 4e5 samples of (0,1), and a two-cell demo at fixed mean
+        # acceptance opens a gap of 0.086 at a spread of +/-0.22 and 0.241 at +/-0.37.
+        #
+        # SO THE SCOPE CHOICE IS CORRECT, NOT MERELY STABLE. `ceiling_scope` below is pinned and a
+        # test asserts it, but the test that matters asserts the DERIVATION: that phi is concave and
+        # that the frozen per-cell ceiling is strictly below the scalar value computed from the same
+        # a_bar and k. A tripwire on a string makes the choice stable; the concavity check is what
+        # makes it right, and only that survives a referee.
+        #
+        # That the retired bar could never be PASSED is the mirror image of the BEN-070/071 family (a
+        # threshold beyond reach so a gate can never FIRE). Same root cause -- a bar specified without
+        # reference to the scale of the quantity it bounds -- and the generalization is the point: the
+        # pattern is scope/scale blindness, and it shows up on both sides of the inequality.
         #
         # WHY f = 0.80 AND NOT ANOTHER NUMBER. f is numerically the old absolute bar, retained
-        # deliberately. Two readings, and the honest one matters:
-        #   * The strong reading -- "0.80 always meant 80% of achievable and was implemented against
-        #     1.0 by mistake" -- would make this a BUG FIX. The evidence FOR it is that the old bar
-        #     was unsatisfiable, which is hard to explain as a deliberate choice: nobody knowingly
-        #     writes a criterion no estimator can meet.
-        #   * The weak reading is anchoring: 0.80 is simply the number that was already there.
-        # What is PROVED is the first clause (unsatisfiability), not the author's intent, and this
-        # comment does not claim otherwise. f = 0.80 is retained because it preserves the original
-        # stringency at the only reading under which the criterion is satisfiable, and because the
-        # fraction was PREDECLARED and independently confirmed by a delegate that could not see the
-        # measured value (PREDECLARATION-20260808-gate4-and-d2-fraction.md) -- so the protocol is
-        # protected regardless of which reading is right.
+        # deliberately -- and under the bug-fix reading that is the natural choice rather than an
+        # anchor: the intended stringency was 0.80 OF THE CEILING, and only the ceiling was wrong. The
+        # fraction was also PREDECLARED and independently confirmed by a delegate that could not see
+        # the measured value (PREDECLARATION-20260808-gate4-and-d2-fraction.md), so the protocol is
+        # protected independently of the historical reading.
         #
-        # SENSITIVITY, so the next reader does not redo it. Joseph ran this rather than weighing the
-        # objection abstractly:
+        # SENSITIVITY, RANKED LARGEST LEVER FIRST. The ranking is the substance: before 2026-08-09
+        # this list led with the injection (+/-2 pp) and buried scope in a caveat, which inverted the
+        # true order of magnitude by 8x. What moves the ceiling, most to least:
+        #
+        #   1. SCOPE          0.190187   scalar phi(E[a]) 0.808415 -> per-cell E_d[phi(a)] 0.618228
+        #                                NOT a free parameter: forced by the criterion being a ratio
+        #                                of L1 sums, and signed by Jensen (phi concave). This is the
+        #                                lever that was pulled the WRONG WAY and is the whole bug.
+        #                                Equality only if acceptance is uniform, which it is not.
+        #   2. WEIGHTING      0.023733   displacement 0.633208 -> truth-mass 0.609475 (8.0x smaller
+        #                                than scope). Also forced -- the criterion's denominator IS
+        #                                the displacement -- so displacement-weighting is correct and
+        #                                truth-mass is the wrong weight, not an alternative.
+        #   3. SAMPLING       0.014980   spectrum-space 0.633208 -> per-event 0.618228. The realized
+        #                                measurement pays the A/B split cost, so per-event is the
+        #                                like-for-like value and is what is frozen.
+        #   4. INJECTION      +/-0.02    the ceiling moves with the injected shape (amplitude -0.35 /
+        #                                +0.35 / +0.70 give 0.611760 / 0.628361 / 0.642253). This IS
+        #                                a genuine free parameter, which is why it is pinned; it is
+        #                                also the SMALLEST of the four.
+        #
+        # Only #4 is a choice about the probe; #1-#3 are determined by what the criterion measures.
+        # That is the reason this is a bug fix rather than a re-specification: the corrected quantities
+        # were never free to begin with.
+        #
+        # DECISION SENSITIVITY at the adopted bar, so the next reader does not redo it (Joseph ran
+        # this rather than weighing the objection abstractly):
         #     threshold on recovery = f * ceiling = 0.80 * 0.618228 = 0.494582
         #     measured recovery                                     = 0.546853
         #     margin                                                = 0.052271
-        #   The ceiling depends on (detector x injection x weighting) and moves +/-2 pp with the
-        #   injected shape. That moves the threshold +/-0.016; worst case 0.510582, STILL CLEARED.
-        #   The ceiling would have to reach 0.683566 to flip the verdict -- +6.5 pp, or 3.3x the
-        #   stated sensitivity. So the injection dependence is real and documented, and it is NOT
-        #   decision-relevant at this margin.
+        #   The +/-2 pp injection swing (lever #4) moves the threshold +/-0.016; worst case 0.510582,
+        #   STILL CLEARED. The ceiling would have to reach 0.683566 to flip the verdict -- +6.5 pp, or
+        #   3.3x that swing. So the injection dependence is real, documented, and NOT decision-relevant
+        #   at this margin. Note the contrast that makes the ranking matter: lever #1 (0.190187) would
+        #   flip the verdict many times over, which is exactly why it must be argued rather than pinned.
         #
         # THE PIN, which is the condition that makes this a criterion at all. A ceiling that is a
-        # property of (detector x injection x weighting) is only comparable across analyses once all
-        # three are specified. The injection is pinned by `amplitude`/`clip_z`/`rate_preserving`
-        # above; the weighting and the ceiling's own provenance are pinned here. Unpinned, BEN-045
-        # repeats itself one level up -- a number that looks like a constant but silently depends on
-        # how it was produced.
+        # property of (detector x SCOPE x weighting x injection) is only comparable across analyses
+        # once all of them are specified. The injection is pinned by `amplitude`/`clip_z`/
+        # `rate_preserving` above; scope, weighting and the ceiling's provenance are pinned here.
+        # Unpinned, BEN-045 repeats itself one level up -- a number that looks like a constant but
+        # silently depends on how it was produced.
         "recovery_fraction_of_ceiling": 0.80,
         "acceptance_limited_ceiling": 0.618228,
+        # Scope is the largest lever (0.190187) and is FORCED, not chosen -- see the argued section
+        # above. `ceiling_scope_scalar_value` is retained as the refuted alternative so the bug stays
+        # legible and `test_scope_error_is_signed_by_concavity` can check the Jensen direction rather
+        # than merely asserting a string.
+        "ceiling_scope": "per-cell",
+        "ceiling_scope_scalar_value": 0.808415,
+        "ceiling_scope_aggregate_acceptance": 0.42351622,
+        "ceiling_scope_k": 3,
+        "ceiling_scope_delta": 0.190187,
         "ceiling_weighting": "per-event",
+        "ceiling_weighting_delta": 0.023733,
         "ceiling_provenance": "FINDING-20260807-d2-acceptance-limited-oracle.md; d2_acceptance_oracle.py",
         "ceiling_injection_pin": {"amplitude": 0.35, "clip_z": 3.0, "rate_preserving": True,
                                   "split_seed": 7, "half_size": 2000000},
         "ceiling_sensitivity_pp": 2.0,
         "ceiling_flip_value": 0.683566,
+        "criterion_defect_class": ("bar computed in the wrong SCOPE (scalar aggregate acceptance "
+                                   "instead of the per-cell displacement-weighted mean the criterion "
+                                   "actually scores); off by 0.0084 at the point of the mistake, "
+                                   "0.190187 once corrected"),
         # = 1 - f*ceiling. Kept as the enforced quantity so `check_powered_closure`'s arithmetic and
         # every existing receipt field stay in residual/gap space; the DERIVATION is what changed.
         "residual_over_gap_max": 1.0 - 0.80 * 0.618228,
-        "residual_over_gap_max_status": "RESPECIFIED_20260809_CLM012_FRACTION_OF_CEILING",
+        "residual_over_gap_max_status": "BUGFIX_20260809_CLM012_WRONG_SCOPE_CORRECTED",
         # NOT retired by the above, and deliberately kept adjacent so re-specifying the bar cannot
         # make it invisible: the estimator still falls 0.0714 (28.2%) short of the ceiling itself.
         # Characterised as ~98% per-cell dispersion charged by the L1 rather than response quality,

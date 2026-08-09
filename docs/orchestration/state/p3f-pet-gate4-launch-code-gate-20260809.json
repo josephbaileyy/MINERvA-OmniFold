@@ -5,13 +5,13 @@
   "actor": "claude-opus-5(local; CLM-012 acceptance-limited recovery criterion adopted by Joseph 2026-08-09, Gate-4 branch A)",
   "reissue": {
     "supersedes": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260807.json",
-    "why": "CLM-012 ADOPTED. The D2 recovery criterion is re-specified from an ABSOLUTE recovery >= 0.80 to a FRACTION OF THE ACHIEVABLE CEILING, recovery >= f*ceiling with f = 0.80 and ceiling = 0.618228 (per-event, injection-pinned). This is a specification correction, not a tolerance raise: the old bar sat ABOVE the ceiling, so no estimator could ever have satisfied it -- it was measuring the acceptance and reporting the answer as an estimator verdict.",
+    "why": "CLM-012 FIXED AS A BUG (not re-specified). The D2 recovery bar was computed in the wrong SCOPE: a scalar aggregate acceptance pushed through the dilution formula gives phi(0.42351622) with k=3 = 0.808415, which rounds to the retired 0.80. The criterion actually scores a ratio of L1 sums over cells, so its ceiling is the displacement-weighted mean of per-cell dilutions, E_d[phi(a)] = 0.618228. Jensen signs the error (phi concave, so the scalar scope must overstate, equality iff acceptance is uniform -- it is not). Defect size 0.0084 at the point of the mistake, 0.190187 once corrected. Criterion is now recovery >= f*ceiling, f = 0.80.",
     "criterion_before": {
       "form": "absolute",
       "residual_over_gap_max": 0.2,
       "recovery_bar": 0.8,
       "satisfiable": false,
-      "why_unsatisfiable": "0.80 > ceiling 0.618228"
+      "why_unsatisfiable": "0.80 > per-cell ceiling 0.618228. The 0.80 itself is what the WRONG-SCOPE ceiling 0.808415 rounds to, which is why this is a bug fix and not a re-specification."
     },
     "criterion_after": {
       "form": "fraction_of_acceptance_limited_ceiling",
@@ -41,7 +41,16 @@
       "unexplained_shortfall_vs_ceiling": 0.0714,
       "as_fraction": 0.282,
       "status": "OPEN -- ~98% per-cell dispersion charged by the L1; only the magnitude is unexplained. Kept adjacent in FROZEN so the re-specification cannot make it invisible."
-    }
+    },
+    "defect_class": "bar computed in the wrong scope (scalar phi(E[a]) instead of per-cell E_d[phi(a)])",
+    "lever_ranking": {
+      "1_scope": 0.190187,
+      "2_weighting": 0.023733,
+      "3_sampling": 0.01498,
+      "4_injection_free_parameter": 0.02,
+      "note": "levers 1-3 are FORCED by what the criterion measures; only 4 is a choice about the probe. Promoted scope out of caveat (iv-d) to a first-class argued section on 2026-08-09 -- it is 8.0x the weighting lever that previously carried the 'load-bearing' label."
+    },
+    "scope_justification": "criterion = 1 - sum_b|unfolded-target|/sum_b|prior-target| (ratio of L1 sums over cells) => achievable recovery = sum_b phi(a_b) d_b / sum_b d_b = E_d[phi(a)]. The denominator IS the displacement, which also settles the weighting. phi''(a) = -k(k-1)(1-a)^(k-2) < 0 => Jensen => scalar scope overstates for every acceptance map, equality iff uniform."
   },
   "prerequisite": {
     "gate3": "PROMOTED_PASS",
@@ -93,11 +102,11 @@
     },
     "validator": {
       "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
-      "sha256": "75a37217f2083160bf6a10c36131a810cad145fc631621fc2e9855e242dfe608"
+      "sha256": "f990ada33161bd2a69e0fee4c43119e7248a092fbc16d8ea1173071a6900e0e0"
     },
     "validator_test": {
       "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
-      "sha256": "cdbce57d5b8bdcc83673af185145c668c0806ddd8273a8d977feb0744223803e"
+      "sha256": "3a70792215bdcf32ff4b61a24c36cb5a591b348c22be2ad97980d0db608af3d2"
     },
     "fullevent_extract_test": {
       "path": "nd-unfolding/tests/test_fullevent_extract.py",
