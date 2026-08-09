@@ -461,11 +461,21 @@ class REPAIR6c_TokenGateReviewScope(unittest.TestCase):
         self.assertTrue(ok); self.assertEqual(diff, [])
 
     def test_changed_reviewed_file_is_detected(self):
-        """The property the rule exists to protect: a PASS must not authorize unseen code."""
-        files = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS)
-        ok, diff = P.paths_unchanged_between("HEAD~1", "HEAD", files)
-        self.assertFalse(ok, "HEAD~1 touched the P4 surface; that must be visible")
-        self.assertTrue(diff)
+        """The property the rule exists to protect: a PASS must not authorize unseen code.
+
+        Constructed DETERMINISTICALLY rather than from `HEAD~1`. The first version assumed the
+        previous commit touched the P4 surface, which is a fact about repo history, not about
+        the property under test -- it went red the moment a merge from another lane became
+        HEAD~1. A test whose premise depends on what someone else committed is a flaky test."""
+        target = "nd-unfolding/p4_lib.py"
+        # the last commit that actually changed p4_lib.py, and its parent
+        rev = self._sp.check_output(["git", "log", "-1", "--format=%H", "--", target],
+                                    cwd=P.REPO_ROOT, text=True).strip()
+        parent = self._sp.check_output(["git", "rev-parse", f"{rev}^"],
+                                       cwd=P.REPO_ROOT, text=True).strip()
+        ok, diff = P.paths_unchanged_between(parent, rev, [target])
+        self.assertFalse(ok, f"{target} changed in {rev[:8]}; that must be visible")
+        self.assertEqual(diff, [target])
 
     def test_unresolvable_path_fails_closed(self):
         ok, diff = P.paths_unchanged_between("HEAD", "HEAD", ["nd-unfolding/does_not_exist.py"])
