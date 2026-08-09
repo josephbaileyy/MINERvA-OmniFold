@@ -11,7 +11,7 @@ Nothing here BUILDS or ADOPTS a covariance; it only validates/guards. Candidate
 construction is authorized only after the standard-p4-verifier returns PASS.
 """
 from __future__ import annotations
-import hashlib, json, os, subprocess
+import hashlib, json, math, os, subprocess
 import numpy as np
 
 # Canonical standard lateral inventory (exactly these; order fixed).
@@ -104,6 +104,74 @@ REPRO_RTOL_INTEGRAL = 1e-11      # on the integrated cross section, relative
 # documented escape clause for marginal breaches: a gate you can talk your way past is the exact
 # anti-pattern this lane spent three rounds removing. REPRO_MEASURED_FLOOR below stays at the
 # OBSERVED values so the specification and the measurement can never be conflated.
+
+# ---------------------------------------------------------------------------------------------
+# DO NOT WIDEN THE INTEGRAL LEG AGAIN. Its thinness is STRUCTURAL, not a mis-set number.
+# (Recorded 2026-08-09 from the canonical re-unfold's own receipt, job 56495756, 10/10.)
+#
+# The 1e-12 -> 1e-11 widening above was correct and it is the LAST one available. The reason is
+# that the integral leg is a DISCRIMINATOR, not a margin, and its entire dynamic range is ~100x:
+#
+#   worst per-bin deviation observed        1.831e-11     <- the fully COHERENT ceiling: if every
+#                                                            bin moved the same way, the integral
+#                                                            would move by about this much
+#   that / sqrt(10694 reported bins)        1.770e-13     <- the fully INCOHERENT floor: pure
+#                                                            round-off with random signs
+#   total range the leg can ever resolve      103.4x
+#
+# The observation sits INSIDE that range, not below it: rel_integral 2.874e-12 is 16.2x above the
+# incoherent floor and only 6.37x below the coherent ceiling. Equivalently the bins behave as
+# N_eff = (1.831e-11 / 2.874e-12)^2 = 40.6 independent groups, not 10694 -- the same physical
+# statement as the 0.4594 positive fraction recorded below (26.6 sigma from 0.5): the round-off is
+# scattered but SIGN-BIASED, because a different OpenMP partition is a different DETERMINISTIC
+# rounding path, not a random one.
+#
+# So the 3.48x "margin" (1e-11 vs 2.874e-12) is NOT slack. The tolerance already sits at 54.6% of
+# the coherent ceiling. Widening toward 2e-11 does not buy safety; it buys the inability to detect
+# the one thing this leg exists to detect. Contrast the per-bin leg, whose 54.6x margin (1e-9 vs
+# 1.831e-11) IS slack, because the per-bin check is not a coherence discriminator and has no
+# comparable ceiling. The two legs look similar and must not be reasoned about the same way --
+# which is precisely the trap, since "both legs now carry comparable margin" was the argument for
+# the last widening, and it is true of the numbers and false of their meaning.
+#
+# PRE-SPECIFIED RESPONSE TO A BREACH, decided now rather than under pressure in front of a red
+# gate. If rel_integral exceeds 1e-11 on some future run, the question is NOT "how far over" -- a
+# coherent shift and a round-off tail can produce the same magnitude, which is exactly why
+# magnitude cannot be the discriminator (the mistake already made once here, BEN-060).
+# Run `diagnose_integral_breach()` below, which measures the two things that DO separate them:
+#   (1) SIGN BALANCE of the per-bin deviations. Round-off from a different reduction order keeps
+#       the ~0.46 bias recorded below. A coherent shift drives the fraction hard toward 0 or 1.
+#   (2) PER-BIN CORRELATION with the central value. Round-off is uncorrelated with bin content;
+#       a physics or normalisation change scales with it.
+# A breach that is sign-biased near 0.4594 AND uncorrelated with content is the round-off tail:
+# proceed, recording the measurement. ANYTHING ELSE BLOCKS. Note what this does not permit -- the
+# tolerance is not raised in either branch, and the second branch has no escape clause.
+INTEGRAL_LEG_COHERENT_CEILING = 1.831e-11   # worst observed per-bin deviation; see above
+INTEGRAL_LEG_INCOHERENT_FLOOR = 1.770e-13   # ceiling / sqrt(10694)
+
+
+def diagnose_integral_breach(a, b, central=None):
+    """PRE-SPECIFIED breach diagnostic (2026-08-09). Written BEFORE any breach, so the criterion
+    cannot be chosen to fit the number that triggers it. Returns measurements only; it does not
+    decide, because the decision is stated above and does not depend on anything it returns."""
+    a = np.asarray(a, float); b = np.asarray(b, float)
+    m = np.abs(b) > 0
+    d = a[m] - b[m]
+    nz = d != 0
+    n = int(nz.sum())
+    frac_pos = float(np.mean(d[nz] > 0)) if n else float("nan")
+    out = {"n_deviating_bins": n, "frac_positive": frac_pos}
+    if n:
+        se_roundoff = math.sqrt(0.4594 * (1 - 0.4594) / n)
+        out["sigma_from_roundoff_bias"] = (frac_pos - 0.4594) / se_roundoff
+        out["sigma_from_half"] = (frac_pos - 0.5) / math.sqrt(0.25 / n)
+    if central is not None:
+        c = np.asarray(central, float)[m]
+        rel = d / np.abs(b[m])
+        if np.std(c) > 0 and np.std(rel) > 0:
+            out["corr_reldev_vs_central"] = float(np.corrcoef(rel, c)[0, 1])
+    return out
+
 
 # MEASURED floor, recorded separately from the declared tolerance on purpose: re-measuring it
 # must never silently move the gate. Job 56471429 (CONC=6) vs the 2026-07-18 set (CONC=4),

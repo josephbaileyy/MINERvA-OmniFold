@@ -111,6 +111,7 @@
       "conc_new",
       "conc_reference",
       "corder",
+      "corr_reldev_vs_central",
       "diag_tol_absolute",
       "endpoint_manifest_hash",
       "endpoint_mask_equality",
@@ -143,6 +144,7 @@
       "ml_sha256",
       "nTruthOnlyMisses",
       "n_bins",
+      "n_deviating_bins",
       "n_reported",
       "n_reported_bins_pooled",
       "n_retained_components",
@@ -156,6 +158,8 @@
       "replaced_lateral_bands",
       "retained_bands",
       "selection_migration_abs",
+      "sigma_from_half",
+      "sigma_from_roundoff_bias",
       "source_blobs",
       "source_commits",
       "sqrt_tr_active",
@@ -198,7 +202,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 89,
+    "n_fields": 93,
     "n_gates": 25,
     "tool": "tools_p4_sweep_recorded_fields"
   }

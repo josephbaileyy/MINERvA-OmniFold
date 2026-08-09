@@ -171,6 +171,23 @@ not close the literal full-event PET gate below.
     have prevented the original dead gate; introducing one without a caller recreates it.
   - **Do not** re-add the helper alone to restore a green test count. That is the failure this
     entry exists to prevent.
+- **OWED (writer side) — `hasTruthOnlyMisses` is a per-playlist 0/1 flag written with `hadd`'s
+  default summing merge mode, so every merged endpoint reports `12`.** Found 2026-08-09 when
+  `p4_evidence.py` required it to be in `(0, 1)` and fail-closed on all ten endpoints, which were
+  fine. The reader is fixed (it now records `native_miss_playlists_with_misses`, requires
+  `0 < v <= 12`, and requires agreement in direction with `nTruthOnlyMisses`), so nothing is
+  blocked — but the artifact is still misleading to anyone who has not read
+  `FINDING-20260809-tparameter-merge-semantics.md`.
+  - **The named fix:** in `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:2002`,
+    either pass the `'f'` merge mode (as lines 1900-1901 already do for `hasFullEventSchema` and
+    `fullPhaseSpace`) **or**, better, rename it `nPlaylistsWithTruthOnlyMisses` and keep `'+'`, so
+    the merged value's meaning is in its name and the reader cannot misread it. The rename is
+    preferred: it makes the summed value correct-by-construction rather than suppressed.
+  - **Why it is not done here:** it is an event-loop change, and re-running the 12-playlist
+    production to regenerate the merged endpoints is a multi-hour step owned by another lane.
+    Batch it with the next event-loop change rather than running production for a metadata label.
+  - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
+    writer is what is misnamed.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
