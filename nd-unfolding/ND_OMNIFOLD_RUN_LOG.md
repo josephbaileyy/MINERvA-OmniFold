@@ -4026,3 +4026,24 @@ prohibited. Receipt: `../docs/orchestration/state/diag-extract-56525297-failure-
 The repair was committed before compute, then submitted as CPU job 56527676 with terminal and
 one-hour prestart queue watches. Its submission receipt is
 `../docs/orchestration/state/diag-xsec-submit-56527676.json`.
+
+## 2026-08-09 — NON-QUOTABLE diagnostic continuation COMPLETE, rejection proven
+
+The terminal event for CPU job 56527676 was valid and read exactly once. One accounting read found
+COMPLETED `0:0` on nid004116 in 1m32s. Stdout, stderr and the full run log were each read once; the
+only stderr content was benign duplicate RooUnfold rootmap warnings. The job ran only the PyROOT
+stage and reused the exact attempt-1 push path and SHA-256; no GPU recomputation occurred.
+
+The read-only quarantine manifest was read once and independently checked. Its xsec hash matches the
+artifact, its completion marker exists, both required publication-rejection booleans are true, and a
+fresh recomputation rejects it on the physics alone. This is a successful diagnostic completion, not
+a promoted result. No cross-section number is copied here or into the completion receipt.
+
+The authorized completion mail command returned 0 for `josephrb@nersc.gov`; it contained the job and
+gate status but no cross-section number. This records local mail acceptance, not an unverified claim
+about downstream inbox delivery. Completion receipt:
+`../docs/orchestration/state/diag-xsec-complete-56527676.json`.
+
+Next dependency-ready action was executed: job 56525829 is still wholly prestart-pending on Priority,
+so its terminal watch remains armed and a one-hour queue-latency watch now covers the batch-versus-
+interactive routing decision. No duplicate writer was started.

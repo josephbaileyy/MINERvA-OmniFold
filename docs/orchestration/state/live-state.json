@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Full-event PET diagnostic extraction recovery and Step-1 trajectory diagnosis",
-  "state": "The diagnostic GPU push is complete and preserved; CPU xsec-only continuation 56527676 and Step-1 trajectory 56525829 are scheduler-owned and pending. Branch C still prohibits publication quoting.",
+  "current_dag_node": "Full-event PET Step-1 trajectory diagnosis",
+  "state": "The NON-QUOTABLE diagnostic extraction is complete with both rejection proofs and a number-free completion mail. Step-1 trajectory 56525829 is scheduler-owned and pending. Branch C still prohibits publication quoting.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -23,32 +23,22 @@
   ],
   "jobs": [
     {
-      "job_id": "56527676",
-      "tasks": "0",
-      "single_job": true,
-      "owner": "Slurm m3246 shared CPU",
-      "purpose": "ROOT-only continuation of the quarantined full-event diagnostic, reusing the completed GPU push",
-      "state": "PENDING Priority; terminal and one-hour queue watches armed",
-      "output": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/logs/fe_diag_xsec_56527676.{out,err}",
-      "receipt": "docs/orchestration/state/diag-xsec-submit-56527676.json"
-    },
-    {
       "job_id": "56525829",
       "tasks": "0",
       "single_job": true,
       "owner": "Slurm m3246_g shared A100",
       "purpose": "Step-1 increment trajectory and iteration-0 discriminator",
-      "state": "PENDING Priority; terminal watch armed",
+      "state": "PENDING Priority; terminal and one-hour queue-latency watches armed",
       "output": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.{out,err}",
       "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json"
     }
   ],
   "blockers": [
-    "The diagnostic remains deliberately non-quotable. Completion requires the job-56527676 manifest to prove publication_gate_rejects_this and publication_gate_rejects_this_on_physics_alone; no cross-section number may be quoted.",
+    "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "Step-1 failure localization depends on the terminal trajectory artifact from job 56525829; do not infer iteration dynamics from the final increment alone."
   ],
-  "next_authorized_action": "On the first real terminal event, reconcile that job exactly once. For 56527676, confirm both quarantine rejection flags and then mail Joseph without a numerical cross section. For 56525829, reconcile the gated iteration trajectory and use its iteration-0 result to choose the next repair. Do not poll, duplicate a writer, or retry unchanged.",
+  "next_authorized_action": "On the first real event for 56525829, reconcile it exactly once. A terminal event owns the gated iteration trajectory and uses iteration 0 to select the next repair. A queue-latency event compares retaining gpu_shared batch against a collision-isolated interactive A100 route and cancels the exact pending batch only after a proven alternative. Do not poll or duplicate a writer.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
