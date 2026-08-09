@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
   "current_dag_node": "Full-event PET Step-1 trajectory diagnosis",
-  "state": "The NON-QUOTABLE diagnostic extraction is complete. Step-1 batch 56525829 remains the sole writer while tmux session step1-ihedge-56525829 requests a fresh interactive A100; the controller may transfer ownership only after allocation and confirmed batch cancellation. Branch C still prohibits publication quoting.",
+  "state": "The NON-QUOTABLE diagnostic extraction is complete. The detached interactive A100 hedge exited before Slurm created an allocation and never became a writer. Step-1 batch 56525829 remains PENDING on Priority as the sole writer. Branch C still prohibits publication quoting.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -28,7 +28,7 @@
       "single_job": true,
       "owner": "Slurm m3246_g shared A100",
       "purpose": "Step-1 increment trajectory and iteration-0 discriminator",
-      "state": "PENDING Priority; terminal watch armed; detached interactive hedge request active",
+      "state": "PENDING Priority; sole writer; terminal watch armed; interactive hedge closed pre-allocation",
       "output": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.{out,err}",
       "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json"
     }
@@ -37,9 +37,9 @@
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "Step-1 failure localization depends on the terminal trajectory artifact from job 56525829; do not infer iteration dynamics from the final increment alone.",
-    "The interactive allocation ID is not known until Slurm grants the tmux-owned request. A controller-terminal sentinel and 2026-08-09T09:07:43Z start deadline cover that external fact; do not poll."
+    "The detached interactive request exited before Slurm assigned an allocation ID; do not retry the unchanged hedge or create a duplicate writer."
   ],
-  "next_authorized_action": "On the first real external event, reconcile exactly once. The hedge controller either retains a batch that started first or proves a fresh GPU allocation, cancels only still-pending 56525829, confirms cancellation, and runs in its allocation-ID namespace. Its terminal sentinel owns the route/result; the start deadline owns allocation failure. Do not poll, request another allocation, or duplicate a writer.",
+  "next_authorized_action": "On the real terminal event for batch 56525829, reconcile accounting, logs, and the hash-bound Step-1 trajectory artifact exactly once. Keep the existing batch as the sole writer; do not poll, request another allocation, retry the unchanged hedge, or duplicate output.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

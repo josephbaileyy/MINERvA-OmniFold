@@ -4072,3 +4072,17 @@ controller command. A file-sentinel watch covers the controller's terminal JSON 
 deadline covers failure to acquire; the controller disarms that deadline as soon as allocation is
 proven. The original batch remains the sole writer until then. Launch receipt:
 `../docs/orchestration/state/step1-ihedge-launch-56525829.json`.
+
+## 2026-08-09 — Step-1 interactive hedge missed its start deadline; batch retained
+
+The real allocation-start deadline event was valid and read exactly once. One controller and
+scheduler snapshot found no tmux session, no named `step1-ihedge-56525829` Slurm request, no route or
+terminal receipt, and an empty tmux log. The proved pane PID from launch no longer exists as a live
+controller. The interactive route therefore failed before allocation and never became a writer.
+
+The same snapshot found original batch 56525829 still PENDING on Priority with zero runtime and no
+product, stdout, stderr, or run log. There was no pending interactive request to cancel, and the
+batch was not cancelled. It remains the sole writer. No replacement allocation or unchanged hedge
+retry was launched. The batch terminal watch and controller-terminal file sentinel remain armed;
+progress now depends on the batch terminal event. Receipt:
+`../docs/orchestration/state/step1-ihedge-start-deadline-56525829-reconciliation.json`.

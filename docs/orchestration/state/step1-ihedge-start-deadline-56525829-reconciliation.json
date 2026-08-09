@@ -1,0 +1,91 @@
+{
+  "schema": "campaign-event-reconciliation-v1",
+  "run_id": "DIAG-STEP1-TRAJ-QH3",
+  "reconciled_at_utc": "2026-08-09T09:14:41Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-step1-ihedge-start-deadline-56525829.json",
+    "event_id": "evt-step1-ihedge-start-deadline-56525829",
+    "watch_id": "step1-ihedge-start-deadline-56525829",
+    "event_type": "deadline",
+    "observed_at_utc": "2026-08-09T09:10:25+00:00",
+    "head_at_event": "af018beaab13eef295a1534cc240735c58565ee7",
+    "read_exactly_once": true,
+    "previously_reconciled": false,
+    "valid": true
+  },
+  "controller_snapshot": {
+    "session": "step1-ihedge-56525829",
+    "pane_pid_at_launch_proof": 1456374,
+    "tmux_session_present": false,
+    "named_slurm_request_present": false,
+    "allocation_job_id": null,
+    "controller_process_present": false,
+    "route_receipt_present": false,
+    "terminal_receipt_present": false,
+    "log": "docs/orchestration/state/step1-traj-ihedge-56525829.tmux.log",
+    "log_bytes": 0,
+    "interpretation": "The tmux-supervised salloc client exited before Slurm created a named request; no interactive allocation or controller writer ever existed."
+  },
+  "batch_snapshot": {
+    "job_id": "56525829",
+    "job_name": "fe_step1_traj",
+    "state": "PENDING",
+    "reason": "Priority",
+    "run_time": "00:00:00",
+    "start_time": "Unknown",
+    "qos": "gpu_shared",
+    "partition": "shared_gpu_ss11",
+    "requested": "one A100, 32 CPU, 57472M, 06:00:00",
+    "last_scheduler_evaluation": "2026-08-09T02:13:09",
+    "output_exists": false,
+    "stdout_exists": false,
+    "stderr_exists": false,
+    "run_log_exists": false,
+    "sole_writer": true
+  },
+  "route_decision": {
+    "decision": "RETAIN_ORIGINAL_BATCH_AS_SOLE_WRITER",
+    "interactive_request_cancelled": false,
+    "cancellation_reason": "There was no pending interactive Slurm request to cancel.",
+    "new_allocation_requested": false,
+    "duplicate_writer_started": false,
+    "batch_cancelled": false,
+    "unchanged_hedge_retry": false,
+    "next_dependency": "terminal event for batch job 56525829"
+  },
+  "watches": {
+    "allocation_start_deadline": {
+      "watch_id": "step1-ihedge-start-deadline-56525829",
+      "state": "fired"
+    },
+    "batch_terminal": {
+      "watch_id": "step1-traj-56525829",
+      "state": "armed"
+    },
+    "controller_terminal": {
+      "watch_id": "step1-ihedge-terminal-56525829",
+      "state": "armed",
+      "note": "Retained as requested for any late atomic controller receipt; no live controller is inferred."
+    }
+  },
+  "usage_snapshot": {
+    "observed_at_utc": "2026-08-09T09:12:58+00:00",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 90.0,
+    "codex_personal_resets_at_utc": "2026-08-16T08:01:03+00:00",
+    "codex_school_seven_day_remaining_percent": 77.0,
+    "codex_school_resets_at_utc": "2026-08-14T12:05:48+00:00",
+    "codex_five_hour_capacity": "unknown: absent from live response",
+    "claude_capacity": "unknown: stale caches",
+    "agy_capacity": "unknown: no installed percentage API",
+    "codex_full_reset_credits_available": 0,
+    "reset_credits_consumed": 0,
+    "provider_dispatches": 0
+  },
+  "continuity": {
+    "all_persistent_worker_uuids_preserved": true,
+    "worker_replaced": false,
+    "provider_followup_sent": false
+  },
+  "status": "INTERACTIVE_REQUEST_FAILED_PRESTART_BATCH_RETAINED"
+}

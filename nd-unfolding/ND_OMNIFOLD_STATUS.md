@@ -45,11 +45,11 @@ replacement is implied for 4D/FPS or dependent significances. See
   confirmed both publication-rejection conditions. The product remains permanently quarantined and
   non-quotable; Joseph's number-free completion mail was accepted locally. The dependency-ready focus
   is Step-1 trajectory job 56525829. Its one-hour queue event found it wholly prestart-pending with no
-  output, so a tested detached A100 hedge was selected. Batch ownership persists until the fresh
-  allocation is proven; only then may the controller cancel the exact pending job and write in its
-  allocation-ID namespace. The first `setsid` child did not persist beyond its tool shell; the changed
-  route is a proven-live named tmux session with controller-terminal and allocation-start-deadline
-  watches. No second writer has started.
+  output, so a tested detached A100 hedge was selected. The first `setsid` child did not persist, and
+  the changed tmux-supervised request also exited before Slurm created a named allocation. The start
+  deadline therefore closed the hedge without cancellation or compute: batch 56525829 remains
+  PENDING on Priority, owns no output yet, and is still the sole writer. Its terminal watch remains
+  armed; no replacement allocation or second writer was started.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
