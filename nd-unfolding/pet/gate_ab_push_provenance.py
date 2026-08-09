@@ -57,6 +57,19 @@ so no preprocessing is re-implemented here at all. That is the whole reason Gate
 
 Writes a JSON receipt so the gate outputs can be handed to a fresh-context review, per the memo.
 
+DEFECT IN THIS TOOL, FOUND BY USING IT (2026-08-08). The default batch size was 1000 while
+`MultiFold.RunStep2` reweights at `BATCH_SIZE = 512`. A gate whose entire purpose is to reproduce a
+computation must match that computation's configuration; any parameter it defaults differently is a FLOOR
+on its own resolution. Worse, this tool's own Control 1 had already measured that floor at **2.901e-06**
+between batch 1000 and 512 -- above the 1e-6 tolerance the gate declares -- so it was mis-specified
+against a number it had itself produced.
+
+The cost was real: on the 2026-08-08 re-run the gate reported `max rel dev 1.744800e-06` at batch 1000
+and I nearly recorded a repaired pipeline as a residual failure. At batch 512 the deviation is
+**identically 0.000000e+00 at every percentile** -- bit-exact over all 1,999,928 `pass_gen` rows. The
+tolerance was never needed. Default corrected to 512; the tolerance is UNCHANGED at 1e-6 and was not
+touched (BEN-072).
+
 Usage (GPU node -- 2M rows of PET inference):
   srun -A m3246_g -q interactive -C gpu -N1 -n1 -c32 --gpus=1 -t 60 \
       python3 -u gate_ab_push_provenance.py --json GATE_AB.json
@@ -94,18 +107,18 @@ def main():
     ap.add_argument("--tol-onshell", type=float, default=1e-6,
                     help="Gate B(i) relative tolerance on pass_gen rows. NOT to be raised to make "
                          "the gate pass -- if it fails, report the failure.")
-    ap.add_argument("--batch-size", type=int, default=1000,
-                    help="engine reweight batch; RunStep2 uses the MultiFold default, and "
-                         "float32 batching non-associativity is why B(i) is 1e-6 and not 0")
+    ap.add_argument("--batch-size", type=int, default=512,
+                    help="engine reweight batch. MUST match MultiFold.BATCH_SIZE (512), which is what "
+                         "RunStep2 reweights at. See the note below on why the default was wrong.")
     # --- the two controls that turn "leading explanation" into "only surviving explanation" -------
     # Run 1 (2026-08-07, log gate_ab_20260807.log) measured Gate B(i) failing at max rel dev 0.866
     # with Gate A bit-exact, which excludes a wrong subsample and a wrong input space. Two knobs
     # remain that are MINE rather than the pipeline's, and both are excluded by measurement here:
     ap.add_argument("--batch-size-control", type=int, default=None,
-                    help="repeat Gate B(i) at a second batch size. RunStep2 reweights at "
-                         "MultiFold's BATCH_SIZE (512) while the default here is 1000, and float32 "
-                         "batching is non-associative. The magnitude says that cannot explain 0.866, "
-                         "but measuring it costs one forward pass and removes the last knob I own.")
+                    help="repeat Gate B(i) at a second batch size, to measure how much of any "
+                         "deviation is float32 batching non-associativity rather than a weights "
+                         "difference. On 2026-08-07 it measured 2.901e-06 between 1000 and 512 -- the "
+                         "number that later explained a 1.744e-06 near-miss and forced the default to 512.")
     ap.add_argument("--extra-artifact", default=None,
                     help="repeat Gate B for a SECOND artifact sharing this subsample (the matched "
                          "floor run). An independent training reproducing the same "

@@ -112,7 +112,86 @@ FROZEN = {
         "rate_preserving": True,
         "gap_min": 0.15,
         "floor_over_gap_max": 0.10,
-        "residual_over_gap_max": 0.20,
+        # ---- CLM-012: the recovery bar is a FRACTION OF THE ACHIEVABLE CEILING ------------------
+        # Re-specified 2026-08-09 on Joseph's decision. This is a SPECIFICATION CORRECTION, not a
+        # tolerance raise, and the distinction is his to make and he made it. What follows is the
+        # whole argument, because a later reader must be able to audit it without re-deriving it.
+        #
+        # WHY THE OLD BAR WAS WRONG. The old criterion was `residual/gap <= 0.20`, i.e. recovery >=
+        # 0.80 ABSOLUTE. But recovery in this closure is acceptance-limited: the injected tilt is
+        # applied in truth and only the fraction surviving reco can be observed, so recovery has a
+        # ceiling of `0.618228` (per-event; 0.633208 spectrum-space --
+        # FINDING-20260807-d2-acceptance-limited-oracle.md). 0.618228 < 0.80, so the old bar sat
+        # ABOVE the ceiling: no estimator, however good, could satisfy it. It was not measuring the
+        # estimator -- it was measuring the acceptance and reporting the answer as an estimator
+        # verdict.
+        #
+        # AND THE CONDITION THAT CLAIM RESTS ON, stated because it is load-bearing and easy to lose.
+        # "Unsatisfiable" holds under the PER-CELL (Jensen-corrected) ceiling. CLM-012 caveat (iv-d)
+        # records that the SCALAR-scope curve gives `1-(1-0.42351622)^3 = 0.808415`, which is ABOVE
+        # 0.80 -- under that reading the old bar was satisfiable and this rationale fails. The
+        # per-cell reading is the correct one (the acceptance map itself flags the scalar scope as
+        # overstating differential recovery by +19.9 pp), and it is also the reading under which the
+        # old bar looks DERIVED rather than invented: 0.808415 is only 0.0084 above 0.80. So the most
+        # likely history is that the bar was computed from the scalar curve, and the defect is the
+        # Jensen error in that derivation. That is a specification defect either way, but it is a
+        # CONDITIONAL claim about a derivation, not an unconditional impossibility proof, and it must
+        # not be cited as the latter.
+        #
+        # That is the mirror image of the BEN-070/071 family (a gate whose threshold puts it beyond
+        # reach so it can never FIRE): here the threshold put it beyond reach so it could never
+        # PASS. Both are the same defect -- a bar specified without reference to the scale of the
+        # quantity it bounds -- and both are invisible until someone computes the achievable range.
+        #
+        # WHY f = 0.80 AND NOT ANOTHER NUMBER. f is numerically the old absolute bar, retained
+        # deliberately. Two readings, and the honest one matters:
+        #   * The strong reading -- "0.80 always meant 80% of achievable and was implemented against
+        #     1.0 by mistake" -- would make this a BUG FIX. The evidence FOR it is that the old bar
+        #     was unsatisfiable, which is hard to explain as a deliberate choice: nobody knowingly
+        #     writes a criterion no estimator can meet.
+        #   * The weak reading is anchoring: 0.80 is simply the number that was already there.
+        # What is PROVED is the first clause (unsatisfiability), not the author's intent, and this
+        # comment does not claim otherwise. f = 0.80 is retained because it preserves the original
+        # stringency at the only reading under which the criterion is satisfiable, and because the
+        # fraction was PREDECLARED and independently confirmed by a delegate that could not see the
+        # measured value (PREDECLARATION-20260808-gate4-and-d2-fraction.md) -- so the protocol is
+        # protected regardless of which reading is right.
+        #
+        # SENSITIVITY, so the next reader does not redo it. Joseph ran this rather than weighing the
+        # objection abstractly:
+        #     threshold on recovery = f * ceiling = 0.80 * 0.618228 = 0.494582
+        #     measured recovery                                     = 0.546853
+        #     margin                                                = 0.052271
+        #   The ceiling depends on (detector x injection x weighting) and moves +/-2 pp with the
+        #   injected shape. That moves the threshold +/-0.016; worst case 0.510582, STILL CLEARED.
+        #   The ceiling would have to reach 0.683566 to flip the verdict -- +6.5 pp, or 3.3x the
+        #   stated sensitivity. So the injection dependence is real and documented, and it is NOT
+        #   decision-relevant at this margin.
+        #
+        # THE PIN, which is the condition that makes this a criterion at all. A ceiling that is a
+        # property of (detector x injection x weighting) is only comparable across analyses once all
+        # three are specified. The injection is pinned by `amplitude`/`clip_z`/`rate_preserving`
+        # above; the weighting and the ceiling's own provenance are pinned here. Unpinned, BEN-045
+        # repeats itself one level up -- a number that looks like a constant but silently depends on
+        # how it was produced.
+        "recovery_fraction_of_ceiling": 0.80,
+        "acceptance_limited_ceiling": 0.618228,
+        "ceiling_weighting": "per-event",
+        "ceiling_provenance": "FINDING-20260807-d2-acceptance-limited-oracle.md; d2_acceptance_oracle.py",
+        "ceiling_injection_pin": {"amplitude": 0.35, "clip_z": 3.0, "rate_preserving": True,
+                                  "split_seed": 7, "half_size": 2000000},
+        "ceiling_sensitivity_pp": 2.0,
+        "ceiling_flip_value": 0.683566,
+        # = 1 - f*ceiling. Kept as the enforced quantity so `check_powered_closure`'s arithmetic and
+        # every existing receipt field stay in residual/gap space; the DERIVATION is what changed.
+        "residual_over_gap_max": 1.0 - 0.80 * 0.618228,
+        "residual_over_gap_max_status": "RESPECIFIED_20260809_CLM012_FRACTION_OF_CEILING",
+        # NOT retired by the above, and deliberately kept adjacent so re-specifying the bar cannot
+        # make it invisible: the estimator still falls 0.0714 (28.2%) short of the ceiling itself.
+        # Characterised as ~98% per-cell dispersion charged by the L1 rather than response quality,
+        # with only the MAGNITUDE of that dispersion unexplained. Tracked as its own open item.
+        "unexplained_shortfall_vs_ceiling": 0.0714,
+        "unexplained_shortfall_status": "OPEN -- see docs/OPEN_ITEMS.md; not closed by CLM-012",
         "metric_agreement_atol": 1e-9,
     },
     "reweight_logit_cap": 30.0,
@@ -886,12 +965,35 @@ def check_powered_closure(powered, inputs_npz=None,
                       f"recomputed floor/gap={fog if fog is None else round(fog, 6)} <= "
                       f"{P['floor_over_gap_max']} -- bounds how much of `gap` is sample-split noise "
                       f"between the two disjoint halves rather than injection"))
+    # CLM-012 (2026-08-09): the bar is f * ceiling, not an absolute. Recomputed here from the two
+    # pinned inputs rather than read from `residual_over_gap_max`, so the criterion the gate enforces
+    # and the criterion the comment describes cannot drift apart -- and a reader of the receipt sees
+    # the specification, not just a threshold. `residual_over_gap_max` is cross-checked against the
+    # derivation and a disagreement is a FAILING check, not a silent preference for one of them.
+    f_ceil = P.get("recovery_fraction_of_ceiling")
+    ceiling = P.get("acceptance_limited_ceiling")
+    if f_ceil is None or ceiling is None:
+        checks.append(_ck("powered:recovery_criterion_is_specified", False,
+                          "FROZEN lacks recovery_fraction_of_ceiling / acceptance_limited_ceiling: "
+                          "the acceptance-limited criterion cannot be evaluated (fail closed)"))
+        return all(c["ok"] for c in checks), checks
+    recovery_bar = float(f_ceil) * float(ceiling)
+    derived_rog_max = 1.0 - recovery_bar
+    checks.append(_ck("powered:criterion_derivation_consistent",
+                      abs(derived_rog_max - float(P["residual_over_gap_max"])) <= 1e-12,
+                      f"1 - f*ceiling = 1 - {f_ceil}*{ceiling} = {derived_rog_max:.9f} vs frozen "
+                      f"residual_over_gap_max={P['residual_over_gap_max']:.9f}"))
+    recovery = None if rog is None else 1.0 - rog
     checks.append(_ck("powered:recovery_meets_criterion",
-                      rog is not None and rog <= P["residual_over_gap_max"],
-                      f"recomputed residual/gap={rog if rog is None else round(rog, 6)} <= "
-                      f"{P['residual_over_gap_max']} (recovery "
-                      f"{None if rog is None else round(1.0 - rog, 6)} >= "
-                      f"{round(1.0 - P['residual_over_gap_max'], 6)})"))
+                      recovery is not None and recovery >= recovery_bar,
+                      f"recovery {None if recovery is None else round(recovery, 6)} >= "
+                      f"f*ceiling = {f_ceil}*{ceiling} = {recovery_bar:.6f} "
+                      f"[margin {None if recovery is None else round(recovery - recovery_bar, 6)}; "
+                      f"ceiling is per-event, injection-pinned, +/-{P.get('ceiling_sensitivity_pp')} pp "
+                      f"sensitive -> threshold moves +/-{0.01 * float(f_ceil) * float(P.get('ceiling_sensitivity_pp', 0)):.4f}, "
+                      f"flips only if the ceiling reaches {P.get('ceiling_flip_value')}] "
+                      f"(residual/gap={rog if rog is None else round(rog, 6)} <= "
+                      f"{derived_rog_max:.6f})"))
 
     # A doctored metrics block cannot slip past a criteria-only check, so compare it too.
     claimed = p.get("metrics") or {}

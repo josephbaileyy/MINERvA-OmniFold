@@ -1,0 +1,70 @@
+{
+ "gate": "A+B push provenance",
+ "artifact": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+ "tol_onshell": 1e-06,
+ "batch_size": 512,
+ "stored": {
+  "n_rows": 2000000,
+  "fold_forward": {
+   "sum_w_push_reco": 736746.2709517315,
+   "sum_w_reco": 1000000.0282607947,
+   "n_pass_reco": 837671,
+   "ratio": 0.736746250130697
+  },
+  "policy": {
+   "estimator_seed": 42,
+   "subsample_seed": 0,
+   "niter": 3,
+   "epochs": 8,
+   "train_events": 2000000,
+   "batch_size": 512
+  }
+ },
+ "gate_A": {
+  "A1_mc_indices_bit_exact": true,
+  "A1_differing_rows": 0,
+  "A2_truth_norm_bit_exact": true,
+  "truth_norm_mean_rebuilt": [
+   0.7399617433547974,
+   4.09384298324585
+  ],
+  "truth_norm_mean_contract": [
+   0.7399617433547974,
+   4.09384298324585
+  ],
+  "truth_norm_std_rebuilt": [
+   0.3748440444469452,
+   4.224154472351074
+  ],
+  "truth_norm_std_contract": [
+   0.3748440444469452,
+   4.224154472351074
+  ]
+ },
+ "gate_B": {
+  "n_pass_gen": 1999928,
+  "n_off_shell": 72,
+  "Bii_off_shell_exactly_one": true,
+  "Bii_n_exactly_one": 72,
+  "step2_checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5",
+  "step2_checkpoint_exists": true,
+  "Bi_max_rel_dev": 0.0,
+  "Bi_median_rel_dev": 0.0,
+  "Bi_pass": true,
+  "Bi_rel_dev_p90": 0.0,
+  "Bi_rel_dev_p99": 0.0,
+  "stored_mean_on_shell": 0.8825484964077722,
+  "rebuilt_mean_on_shell": 0.8825484964077722,
+  "stored_min": 0.12730546295642853,
+  "stored_max": 2.0036063194274902,
+  "rebuilt_min": 0.12730546295642853,
+  "rebuilt_max": 2.0036063194274902
+ },
+ "consequence": {
+  "ratio_artifact": 0.736746250130697,
+  "ratio_from_stored": 0.7367462501305516,
+  "ratio_from_checkpoint": 0.7367462501305516,
+  "w_reco_renorm_scale": 1.4628887176148802
+ },
+ "verdict": "GATE_AB_PASSED"
+}

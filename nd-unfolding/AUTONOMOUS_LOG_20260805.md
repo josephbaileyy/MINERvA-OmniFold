@@ -1,3 +1,21 @@
+# Autonomous work log — 2026-08-06 onward (continues `pet/AUTONOMOUS_LOG_20260805.md`)
+
+Append-only. Every entry records what was done, what was measured, and what was decided.
+
+**Provenance.** This file continues `nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`, which covers
+2026-08-05 to 2026-08-06 and holds the original standing-constraints header. The log moved up a level on
+2026-08-06; until 2026-08-08 neither file pointed at the other, so the brief's cited path dead-ended.
+
+## Standing constraints in force (unchanged from the predecessor)
+
+- Never hand-edit a hash to clear a mismatch — re-issue the owning gate.
+- Never raise a tolerance to make a check pass.
+- Stage with explicit paths, never `git add -A`. Commit only what is asked.
+- No `--validator size`, no `RESUME_ADOPT_LEGACY=1`, no `--bkg-mode purity` as the P5A closure.
+- Announce any change to what `pytest nd-unfolding/tests` collects.
+- Heavy sweeps run on compute (`srun -A m3246 -q interactive -C cpu`), never on a login node.
+
+---
 
 ### Uncertainties: Step 0 protected the wrong two-thirds, then Step 1 produced a real number
 
@@ -2030,3 +2048,372 @@ rather than as a bare one-liner from me. Handing it over is the correct move, no
 Also this cycle: pushed the re-run dispatch entry after **two** rebases — the other lane pushed five
 commits and then a sixth while I was resolving. Both rebases were clean (they touch `p4_*` and
 `KNOWN_ISSUES`, I touch the PET log), and the three-condition confirm passed on the second attempt.
+
+### 13:00Z — the mixed-units heuristic INSTITUTIONALISED as an exhaustive sweep; and I overstated a severity
+
+**Joseph's severity correction, accepted.** I reported `p4_validate_active_lateral_fps.py:70` as "still
+live" without checking reachability. It is **LATENT**. The adopted FPS lateral has
+`sqrt_trace = 8.10399e-39`, so `trace ~ 6.6e-77` over 266 bins and `|ev[-1]| ~ 1e-77…1e-78`; line 68's
+effective threshold is therefore `~1e-89` against line 70's `1e-30`, so **the PSD check subsumes the
+diagonal check by ~59 orders** and a negative diagonal forces a negative eigenvalue that L68 catches first.
+**The 2026-08-07 FPS adoption is not compromised and must not be re-opened.** Exploitable only for
+`|ev[-1]|` above `~1e-18`. Fix for consistency, not urgency. Same class of correction I accepted from the
+GBDT lane and they accepted from me — a defect in form is only a defect in fact once reachability is
+checked.
+
+**The heuristic is now a tool, not an observation.** `audit_validator_tolerance_units.py`, AST-based
+because `-1e-9 * max(eig, 1.0)` and `abs(a-b)/total < 1e-9` are similar characters in different shapes and
+regexes get it wrong. Classifies every tolerance comparison as RELATIVE / ABSOLUTE / FLOOR (a
+`max(1e-300, …)` div-by-zero guard is neither) and flags any function carrying both.
+
+    307 .py files   ->   3 functions mix units   ->   exactly 1 matters
+
+**And the two false positives are worth more than the hit.** Both are absolute-against-**O(1)**:
+`compare_3d_fullcov.py:162`'s `abs(t - args.tol) < 1e-30` is an exact-equality proxy between floats that
+should be bit-identical, where absolute is *correct*; and `test_fps_corrected_uq.py:63-64`'s
+`norm(Cn) < 1e-12` is a **synthetic** null test whose own covariance I measured at `max|C| = 2.725`, so
+1e-12 sits 12 orders *below* the data. **I first read that second one as "65 orders too loose" by assuming
+the production 1e-77 scale, and checking the actual inputs is what caught it** — the same mistake in
+miniature that Joseph had just corrected in me one paragraph earlier.
+
+So the finding sharpens to: **mixed units is a SMELL; the defect is mixed units where the data is far from
+O(1).** The tool classifies units mechanically; it cannot know the scale flowing through. That is why the
+table carries a per-row verdict rather than a hit list — a table whose rows are not triaged transfers the
+work instead of doing it.
+
+Table posted at `VALIDATOR-TOLERANCE-UNITS-20260808.md`; heuristic filed as **BEN-071** with four rules,
+including "prefer a LIVE positive control to a synthetic one" — `mat_gates` is unrepaired, so when it is
+fixed the control fails loudly and forces the table to be regenerated, where a synthetic control would pass
+forever.
+
+**COLLECTION ANNOUNCEMENT: 857 -> 865 (+8), mine**, all `test_validator_units_auditor.py` — six classifier
+cases (including that `recovery >= 0.80` must NOT be flagged, and that a `max(1e-300, …)` floor is neither
+unit) plus the live-control and fails-closed-on-empty-root guards. Separately note the 744 -> 857 jump is
+the GBDT lane's landed tests, not mine. Suite 7 failed / 857 passed / 1 skipped, the 7 documented and my
+delta zero.
+
+Re-run `56445883` still RUNNING; progress will be read off the checkpoint pkls and the Gate A/B receipt
+will use a run-specific path, both as Joseph confirmed.
+
+### 13:20Z — condition (d) reported: arithmetic CONFIRMED, my reasoning corrected in five places
+
+The independent re-derivation reproduced **all four numbers to display rounding (<=6e-7)**, confirmed A/B/C/D
+(the recovery identity to 1.1e-16, `r_dil <= 1` at every k, the two weightings genuinely differing and
+matching the map's own field, and both `bin_order` strings byte-identical), and reproduced unprompted the
+whole BEN-038 band table including the 1.0333 top band. **Nothing is void.**
+
+**It also found two real defects in my reasoning and three overstatements. I accept all five.**
+
+**Defect 1 — I asserted an algebraic identity that is not one, and it double-counted.** I wrote that the
+identity explains why `d2_response_decomposition.py`'s zero-dispersion column (0.6313) and the dilution ideal
+(0.63321) agree. **False:** that column is `1 - |1 - E_r|` with `E_r` the **estimator's** mean response, so it
+IS 0.631286; the dilution ideal is a different object and their agreement is the **empirical -0.001922 bias**.
+So I declared that agreement trivially algebraic in one section while resting the decision-grade status on the
+same agreement being meaningful empirical evidence in another. It cannot be both. Sentence removed.
+
+**Defect 2 — "confirmed to 0.19 pp" is budget-contingent and my OWN ladder is the counterexample.** `E_w[r]`
+is 0.63129 / 0.63250 / 0.56324 / ~0.5235 at ep8 / ctl8 / ep16 / ep32, so it moves 6.9 pp on doubling and ~11
+pp at 4x. The model predicts a *ceiling*; the agreement is between that ceiling and a *contingent* estimator
+value that sits at it at ep8 only. I used the ladder to kill the under-training hypothesis and then, in the
+same document, used the ep8 agreement as model validation. Claim WITHDRAWN.
+
+**Overstatement 1 — "no net transport gain" is true and analytically EMPTY.** Per-cell the gain is large: the
+two lowest acceptance bands carry **29.5% of the weight** and beat their own ceiling by +0.1443 and +0.1859,
+the lowest by **18.6x**; weighted `E_w|r_est - r_dil| = 0.1949` against a signed difference of 0.0019, so the
+aggregate agreement is **100x smaller than the typical per-cell deviation**. It survives only by a
+cancellation with mid-band undershoot. This **strengthens** caveat (i): the curve is demonstrably violated on
+30% of the weight. BEN-038 had already recorded this and I under-used it.
+
+**Overstatement 2 — the "28.2% estimator" bucket is ~98% DISPERSION, not response quality.** Of the 0.086355
+ceiling-to-measured gap, the scatter penalty is 0.084433 (**97.8%**) and the signed response deficit is
+0.001922 (2.2%). BEN-038's own rule is to split signed response from scatter before diagnosing; my §1 did not,
+and it is the section a reader quotes. **This directly serves Joseph's instruction** to keep the shortfall
+visible — it makes it MORE specific: located as dispersion, with only the *magnitude* of that dispersion
+unexplained. The finding's title said "28% is the estimator" and now says what it actually is.
+
+**Overstatement 3 — "reads as a round number" is wrong, and the truth is better for the finding.**
+`1-(1-0.42351622)^3 = 0.808415`, only **0.0084 above the bar**. So 0.80 was very likely *derived* — from the
+**scalar-scope** curve the acceptance map itself flags as Jensen-overstating differential recovery by +19.9 pp.
+The defect is not "nobody derived it", it is "**derived with a Jensen error**", and the corollary is the
+sharpest line in the review: *under the scalar reading the bar sits below the ceiling and CLM-012 is false.*
+Everything hinges on the per-cell Jensen correction, which is the finding's real contribution.
+
+**And one governance objection that bears directly on Joseph's decision:** the ceiling is a property of
+**(detector x injection x weighting)**, not of the detector. Re-injections at amplitude -0.35/+0.35/+0.70 give
+0.611760/0.628361/0.642253 — **+/-2 pp with the injected shape** — and weightings span 0.609475 to 0.776110.
+A criterion whose bar is computed from the probe must pin the injection alongside `k`. Added as adoption
+condition 4, flagged as the strongest argument *against* re-specifying against a computed ceiling at all.
+
+**One objection I partially contest.** The review says the 71.8% picks the favourable bracket end (65.9% at
+the sampling-free ceiling). I accept that advertising a bracket and silently using one end is a pattern to
+flag — but the per-event 0.618228 is the **matched** ceiling, because the criterion computes recovery with the
+A/B sampling *in it*, so comparing against a sampling-free ceiling would understate the specification share.
+The fix is to justify the end, which the finding now does, and to carry 66% as the sampling-free alternative —
+not to relabel the headline "66-72%", which would present an unmatched comparison as equally valid.
+
+**Provenance gaps now recorded** (the review could not close them): `0.618228` — the number the headline rests
+on — is **not verifiable from committed files**, needing the artifact npz and the 9.9 GB dump on purgeable
+scratch; ep32's +29.7% has no committed artifact; Gate 1's "<=2.2e-9" is an observed value where the code's
+tolerance is 1e-7; and Gate 2's `5e-4` absolute on 0.63 would pass a value **2.6x the entire 0.19 pp signal it
+protects**.
+
+**CLM-012 stays `VERIFIED-NUMERIC`.** One independent re-derivation confirms the arithmetic; it does not
+promote a claim whose reasoning it corrected in five places. Full disposition:
+`REVIEW-20260808-clm012-independent-rederivation.md`. Re-run `56445883` still RUNNING, 1 of 6 pkls.
+
+### 15:35Z — BRANCH A FIRES. Gate B(i) is BIT-EXACT, extraction is unblocked, and my gate had a defect
+
+The re-run's nominal half completed, the **BEN-043 fix executed and self-verified on a real run**, and Gate
+A/B on the new artifact returned **GATE_AB_PASSED**.
+
+    [gate4] step1/step2 FINAL (last-epoch) weights -> *_final.weights.h5   (round-trip verified)
+    contract step2_checkpoint -> ..._step2_final.weights.h5, best-epoch retained under its own key,
+    checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"
+
+    A1 bit-exact (0 differing rows of 2,000,000)   A2 bit-exact   B(ii) 72/72 exact
+    B(i) max rel dev 0.000000e+00 at EVERY percentile -- bit-exact over 1,999,928 pass_gen rows
+
+Not "within tolerance" — **exactly zero**, which removes the tolerance from the argument entirely. Against
+0.866 on the superseded artifact, that is a factor of ~500,000 and the defect is closed.
+
+**But the first attempt nearly recorded the opposite, through a defect in MY tool.** The gate defaulted to
+batch 1000 while `RunStep2` reweights at 512; it reported `1.744800e-06` against `tol 1e-6`, and §1 of the
+predeclaration pins 1e-6..1e-3 as **branch B with a note** — i.e. Gate-4 red on grounds independent of D2. I
+did not raise the tolerance. I re-ran at the engine's own batch size, which is a fidelity correction decided
+on principle, and which **this tool's own Control 1 had already priced at 2.901e-06 on 2026-08-07** — larger
+than the residual AND larger than the gate's own tolerance. So the tool was mis-specified against a number
+it had itself produced the day before, and I did not check. **BEN-072**, default corrected to 512, tolerance
+untouched, and **both receipts committed** so the near-miss is on the record rather than tidied away.
+
+**Consequences.**
+- **Branch A**: Gate-4's disposition is now decided by the D2 re-specification (§2), exactly as predeclared.
+- **Full-event extraction is UNBLOCKED for the first time** — `check_subsample_agreement` (tol 1e-3) was
+  failing closed at 0.866; it is now 0.
+- **The fold-forward failure reproduces independently**: 0.736746 here against 0.746483 on the superseded
+  run, a ~1.3% shift consistent with the measured GPU floor. Estimator property, not checkpoint artifact.
+- Branch C holds: no product quoted while any leg is red, and D2 recovery is still red.
+
+The matched floor repeat is still running (started 14:58:55Z), so the run is not yet complete. Next: redo
+the step-1 pull/push decomposition on checkpoints that are finally bit-faithful — its harness is committed
+and gated on this receipt, and it will now run without the checkpoint-based caveat.
+
+### 16:10Z — step-1 decomposition RE-MEASURED on bit-faithful checkpoints: step 2 EXONERATED, step 1's sign is WRONG
+
+The caveat that qualified the first attempt is retired. `GATE_AB_PASSED`, `max_rel_dev 0.0`, and the harness
+records `reconstruction_is_checkpoint_based: false`. Per-step batch sizes corrected first (step 1 -> 1000,
+step 2 -> 512, BEN-072) and the `*_final.weights.h5` used where present.
+
+**The check that proves faithfulness:** `push_stored 0.736746` and `push_final 0.736746` — **identical to all
+printed digits**, where on the superseded artifact they differed (0.746483 vs 0.746407). So these are the
+run's own numbers, not a reconstruction of them.
+
+    push_stored   0.736746   dev -0.3446   truth 0.876675
+    push_final    0.736746   dev -0.3446   truth 0.876675
+    pull_final    0.658944   dev -0.4138   truth 0.880522
+    push_prev     0.967659   dev -0.1392   truth 1.010853
+    increment1    0.648331   dev -0.4232   truth 0.851573
+
+**Step 1 delivers 58.6% of its own objective** (`pull_final` 0.658944 vs R 1.124080). `STEP1_UNDER_ACHIEVES`
+stands, sharper than the 68.1% the earlier unfaithful reconstruction of a *different* run gave.
+
+**STEP 2 IS EXONERATED, and that is the new information.** It should reproduce
+`mean_w_truth(pull|pass_gen)`: target 0.880522, achieved 0.876675 — a **0.44% undershoot**, and at iteration
+1 it sits at **1.010853**, within 1.1% of 1.0. On the superseded run this read 5.4% and step 2 looked partly
+implicated. On faithful checkpoints it is not.
+
+**The chain is NOT monotone and step 2 partially RECOVERS** — which inverts my earlier reading:
+
+    iter1 step2  push_prev   0.967659   dev -0.139
+    iter2 step1  pull_final  0.658944   dev -0.414   <- step 1's increment, a collapse
+    iter2 step2  push_final  0.736746   dev -0.345   <- step 2 claws some back
+
+**And the sharpest result: step 1's correction has the WRONG SIGN.** `increment1`'s reco-weighted mean is
+**0.648331**; to carry 0.967659 up to R = 1.124080 it needs to average ~1.16. **Step 1 applies a ~35%
+reduction where a ~16% increase is required.** The direction is wrong, not merely the magnitude — the first
+time the sign has been established on weights provably the run's own.
+
+That bears on the leading hypothesis rather than confirming it: a merely non-converged classifier would be
+expected to under-correct *toward* 1, not to correct in the opposite direction. So reco-leg non-convergence
+now has to explain a sign, which is a stronger demand than explaining a shortfall.
+
+Receipt `STEP1_DECOMPOSITION.slurm-56445883.json` committed. Floor repeat still running (1 of 6 at last
+poll), so the job itself is not complete; this result rests on the nominal artifact, which is.
+
+### 18:25Z — `56445883` COMPLETE (06:00:44, rc=0). The fix holds on TWO independent trainings; the ~34% deficit reproduces to 0.52%
+
+Both products written, both carrying the BEN-043 contract with their own `_final` checkpoints and
+`checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"`.
+
+**Gate A/B is BIT-EXACT on BOTH artifacts:**
+
+    nominal  A1/A2 bit-exact, B(ii) 72/72, B(i) max rel dev 0.000000e+00   GATE_AB_PASSED
+    floor    A1/A2 bit-exact, B(ii) 72/72, B(i) max rel dev 0.000000e+00   GATE_AB_PASSED
+
+I ran the floor one for symmetry with how the DEFECT was established: BEN-043's Control 2 used the floor
+run to show the defect was structural rather than a one-off, so the matching move is to use the same
+independently-trained run to show the FIX is structural. It is — on two separate trainings, not one.
+
+**The fold-forward deficit is reproducible, not run-to-run noise:**
+
+    nominal  0.736746    deficit vs R  34.46%
+    floor    0.740546    deficit vs R  34.12%
+    spread   0.003800  = 0.516% of the value
+
+So the ~34% deficit reproduces to **0.52%** across two independent trainings at identical seeds. That
+closes any residual reading of it as noise: it is a property of the estimator at this configuration.
+
+**Where the lane now stands, all measured today on provably faithful weights:**
+
+  * branch A fired, so Gate-4's disposition routes through the D2 re-specification (Joseph's call, and the
+    independent re-derivation's five corrections plus the injection-dependence objection are in front of it);
+  * full-event extraction is UNBLOCKED for the first time — `check_subsample_agreement` was failing closed
+    at 0.866, now 0;
+  * step 2 is EXONERATED at a 0.44% undershoot of its own target, and 1.010853 at iteration 1;
+  * step 1 delivers **58.6%** of its own objective, and its final increment is **wrong-signed** — 0.648331
+    where ~1.16 is required;
+  * branch C holds: no product is quoted while any leg is red, and D2 recovery is still red.
+
+Receipts committed: `GATE_AB_PUSH_PROVENANCE.slurm-56445883{,.batch512}.json`,
+`GATE_AB_PUSH_PROVENANCE.floor-56445883.json`, `STEP1_DECOMPOSITION.slurm-56445883.json`. Mailed the
+batch.
+
+### 19:25Z — STANDING DOWN. Lane complete, nothing running, and NO WATCH IS ARMED
+
+Closing verification, every line from a command run in the same turn:
+
+    queue          only the wakerctl cron (56160911); no jobs of mine
+    armed watches  0 -- both spent: d2-probe-ep32-56431651 and nominal-rerun-56445883 have fired
+    cron           ticking, last 19:15:08Z
+    verifier       ALL BINDINGS INTACT: 116 OK, 15 shell pins vs floor 15, 4 known pre-existing drifts
+    suite          7 failed / 863 passed / 1 skipped; the 7 are documented; collection 871, the +6
+                   since my last count is the GBDT lane's
+    trees          local == origin == cluster == 2c89523
+
+**The cluster was two commits behind** (`e952d85`) when I checked at stand-down — `4fa420e`, `cf97d8b`,
+`2c89523`. Shipped. Unshipped work is invisible to the other session, and finding that at the last check
+rather than the first is the argument for making tree consistency part of the closing pass rather than a
+thing I assume.
+
+**The operationally important line is that no durable watch is armed.** Both fired today, so from here
+nothing pages Joseph from this lane until something new is launched — and anything new needs a watch armed
+with it or its outcome reaches nobody. Said so explicitly in the stand-down mail rather than leaving it to
+be discovered.
+
+**Deliberately not taken: full-event extraction.** It is unblocked for the first time and it is the obvious
+next move toward the campaign's stated goal. I am not taking it because the extractor has never run on real
+input (CLM-011 records that), its first run produces a publication-path product, and branch C says nothing
+is quoted while a leg is red — producing the product invites quoting it. That is Joseph's call, not a
+consequence of the re-run finishing, and I told him it is one command away.
+
+**Open and his:** the CLM-012 re-specification (f = 0.80 predeclared and blind-confirmed, four adoption
+conditions, and the injection-dependence objection that argues against the approach itself) and Gate-4's
+disposition, which branch A routed through the first. Also on the record and not retired: the 0.0714 / 28.2%
+shortfall, now characterised as ~98% per-cell dispersion rather than response quality.
+
+Mailed the stand-down. Not inventing further work.
+
+### 19:45Z — Post-mail addendum: the brief's own log path was dead, and I only found it standing down
+
+After the stand-down mail went out I checked something I had assumed for three days: that the log file the
+brief names is the one I have been writing to. **It is not.** The brief says
+`nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`; every entry of mine since 2026-08-06 is in
+`nd-unfolding/AUTONOMOUS_LOG_20260805.md`. The log moved up a level on 08-06, nothing recorded the move,
+and **neither file pointed at the other**.
+
+Why this is worse than a broken path: a *missing* file raises an error and gets fixed in seconds. A
+*superseded* file opens, parses, carries the right title and the right standing-constraints header, and
+reads as complete. An agent handed the brief would have read it, believed it had the campaign's context,
+and been silently two days stale — missing BEN-043 and its fix, the re-train, the decomposition, CLM-012,
+BEN-070/071/072. It also inverts the usual direction: the *successor* was the file with no header and no
+provenance, so the correct-looking document was the wrong one.
+
+Fixed by indexing both directions rather than merging — terminal pointer appended to the predecessor
+(append-only, and its entries are correct as written), provenance header plus inherited constraints on the
+successor. `84d8634`. Filed as **BEN-073** (`0388a03`) with the cheap check that would have caught it at
+minute one: compare the DATE of the last entry in any log you are told to read against the date the
+campaign is supposed to be at. A two-day gap in an append-only log is a missing file, not a quiet period.
+
+**No second mail.** The bar is a job finishing, a PASS/FAIL verdict, or a blocking decision, and this is
+none of them; the stand-down mail's `2c89523` is superseded by `0388a03` but nothing in its substance
+changed. Recording it here instead is the whole point of the file.
+
+Final state: `local == origin == cluster == 0388a03`, queue is the wakerctl cron alone, 0 armed watches,
+no new mail on either poll. Standing down for real this time.
+
+### 19:55Z — Cycle ran clean; no action, no mail. And BEN-073's fix power-tested itself.
+
+Full cycle, nothing actionable: Gmail empty on both queries (`MNV-AUTO newer_than:1d`, `newer_than:2h`),
+queue is the wakerctl cron alone (`56160911` PENDING on BeginTime, which is its steady state between
+ticks, not a stall), trees `local == origin == cluster`, working tree clean.
+
+**The brief's cited jobs are all historical.** `56355818` — the brief's stated CRITICAL PATH — shows
+`CANCELLED` at 2026-08-05T17:56:54 after 00:05:18, three days ago; its chain resolved through `56381674`
+and then the 08-08 re-train `56445883`. Items 1–5 of the brief were closed on 08-06/08-07 (Gate-4 was
+re-issued as `...-20260807.json`, item 3's B1 call included). The brief is stale in every specific, which
+is expected — it is a standing document from 08-05 — and its wrap-up clause is the operative branch.
+
+**Unplanned power test of this morning's fix, and it passed.** Following the brief literally means opening
+`nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`, which is the file BEN-073 says dead-ends on 08-06. It now
+terminates in the redirect, so the cycle landed on the live log instead of a stale one that reads as
+complete. That is the fix working on the exact path it was written for, one cycle after it landed — cheap
+evidence, but it is the kind a pointer usually never gets.
+
+**No mail.** The stand-down already went out this cycle and the rule is one mail per cycle at most; nothing
+since meets the bar (job finishing / verdict / blocking decision). Per the wrap-up clause — verify quietly
+and stop — I am not inventing work. The two open decisions remain Joseph's and neither blocks me.
+
+### 08:15Z — Both decisions implemented; two jobs launched and watched; one overstatement of mine caught
+
+Joseph closed CLM-012 (adopt at f=0.80, injection pinned) and Gate-4 (branch A), reordered the queue to
+put the wrong-signed step-1 increment first, and authorized the extraction as a self-declaring
+non-quotable diagnostic. All four landed. `c1976eb`.
+
+**Order of operations, deliberately.** Launched the two GPU jobs FIRST (`56525297` extraction,
+`56525829` trajectory), then did the desk work while they queued. That is not deprioritizing his
+stated top priority — the trajectory job *is* the top priority and it went out first; the CLM-012
+paperwork is what filled the wait.
+
+**The thing I got wrong and fixed before committing.** I wrote that the retired 0.80 bar was
+"unsatisfiable by any estimator, provably and without appealing to intent." Too strong. It holds under
+the per-cell Jensen-corrected ceiling (0.618228); CLM-012's own caveat (iv-d) records that the
+**scalar** scope gives 0.808415 — *above* 0.80 — under which the old bar was satisfiable and the whole
+rationale collapses. The conclusion survives because the per-cell reading is correct, but the claim is
+conditional and I had written it as unconditional. Two things came out of fixing it, both improvements:
+it answers Joseph's "bug fix or anchoring?" better than I could before (0.808415 is only 0.0084 above
+0.80, so there is a specific arithmetic someone plausibly ran, with an identifiable defect), and the
+conditionality now has a tripwire — `test_the_old_absolute_bar_sat_above_the_per_cell_ceiling` asserts
+both `ceiling < 0.80` and `ceiling_weighting == "per-event"`, so re-freezing a scalar value goes red
+instead of silently preserving a void rationale.
+
+**The framing worth keeping:** the retired bar is BEN-070/071 with the inequality reversed — a gate that
+could never PASS rather than never FIRE. Same root cause, a bar specified without reference to the scale
+of the thing it bounds; same invisibility until someone computes the achievable range. That gives the
+cross-lane pattern Joseph said he would act on an instance on each side.
+
+**Second thing I got wrong, and reverted.** Editing the hash-pinned validator broke bindings. I
+"fixed" it by teaching `verify_hash_bindings.py` to skip receipts marked `superseded_by` — then found
+the repo already had a mechanism (`test_superseded_receipts_hold_no_live_bindings` requires renaming
+`files` -> `files_at_issue`) and reverted mine. One tested mechanism beats a second one invented because
+I did not look first. The near-miss was real: my skip briefly appeared to disable the Gate-2 runtime
+binding — three receipts share that basename, two retired under `superseded-*/` — and my basename-only
+output was what made it look like self-supersession. Being alarmed by my own bad display is cheaper than
+the alternative, but the display was still a defect and is why I print distinguishing paths now.
+
+**The quarantine design point.** `publication_gate_rejects_this` is a claim; this repo has been bitten
+twice by trusting claimed booleans (BEN-043; `check_powered_closure`'s first version). So
+`require_quotable` never reads the flag — it recomputes the fold-forward deviation from the artifact
+(0.344577 vs 0.05) and the builder **launders a copy of its own manifest** (publication schema, marker
+stripped, path rewritten) and dies rather than write if the gate accepts it. Also power-tested that it
+CAN say yes, because a gate that always refuses is the very defect we just retired.
+
+**Engine reading before spending GPU**, which narrowed the step-1 question usefully: `omnifold.py:189-200`
+confirms the target is `R/mean(push) = 1.1616`; `reweight()` is `w = exp(logit)` with label 1 = data, so
+there is no inversion in the conversion and the sign does not come from there; `patience=10` inside
+`epochs=8` means `restore_best_weights` can never fire, consistent with BEN-043 rather than a second
+defect. What survives is the iteration-0 discriminator, which is what `56525829` measures.
+
+Bindings ALL INTACT (120 resolved, 15 shell pins vs floor 15). Suite 7/878/1 — the documented 7, and I
+confirmed the 20 `docs/orchestration` failures reproduce on a stashed tree rather than assuming it.
+Collection **970 -> 985** announced. Mailed one batched report. Also deleted a stray empty `MORE` file I
+had created earlier with a redirect typo.
+

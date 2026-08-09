@@ -3881,3 +3881,127 @@ carry the verdict.
 
 Per Joseph: the CONC=4 confirmation run is skipped — thread order versus any other mechanism
 does not change a 1e-13 verdict.
+
+## 2026-08-08 — PET full-event nominal RE-TRAINED under the BEN-043 fix; Gate A/B bit-exact on both arms
+
+**Job `56445883`** `COMPLETED` `0:0`, elapsed **06:00:44**, `2026-08-08T04:57:12` → `2026-08-08T10:57:56`
+local (11:57:12Z → 17:57:56Z). Authorised by Joseph 2026-08-08 as option (1) of
+`FINDING-20260807-checkpoint-is-not-the-trained-model.md` §6; gate receipt
+`p3f-pet-gate4-launch-code-gate-20260807.json` with `nominal_pet_training_allowed: true`.
+
+Products (the 2026-08-06 pair is archived under `pet/fullevent_nominal/superseded-20260806/`, digests
+verified across the move):
+
+    pet_fullevent_nominal_weights.npz   sha 58f664cdef266d09cbae22a5…   10,127,331 B
+    pet_fullevent_floor_weights.npz     sha 14cccc231dfd92c93363eed2…   10,132,738 B
+
+Both carry the BEN-043 contract: `step2_checkpoint` → `*_step2_final.weights.h5`, `step1_checkpoint`
+added, `step2_checkpoint_best_epoch` retained, and
+`checkpoint_semantics = "final-epoch weights, round-trip verified (BEN-043)"`. The driver's in-run
+round-trip guard printed `(round-trip verified)` for both steps on both arms.
+
+**Gate A/B — bit-exact on BOTH arms**, at the engine's own `batch_size = 512`:
+
+    arm      A1 mc_indices   A2 truth norm   B(ii)    B(i) max rel dev   verdict
+    nominal  bit-exact       bit-exact       72/72    0.000000e+00       GATE_AB_PASSED
+    floor    bit-exact       bit-exact       72/72    0.000000e+00       GATE_AB_PASSED
+
+Receipts `GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json` and `…floor-56445883.json`. The
+batch-1000 receipt `…slurm-56445883.json` (`1.744800e-06`, FAIL) is retained deliberately: it is the
+BEN-072 near-miss, caused by this gate defaulting to a batch size the engine does not use.
+
+**Fold-forward ratio, and its reproducibility:**
+
+    nominal  0.736746   34.46% below R = 1.1240802949941018
+    floor    0.740546   34.12% below R
+    spread   0.003800 = 0.516%
+
+Two independent trainings at identical seeds agree to **0.52%**, so the ~34% deficit is a property of the
+estimator at this configuration and not run-to-run variation.
+
+**Step-1 decomposition on faithful weights** (`STEP1_DECOMPOSITION.slurm-56445883.json`,
+`reconstruction_is_checkpoint_based: false`): step 1 delivers **58.6%** of its own objective
+(`pull_final` 0.658944 vs R); **step 2 is exonerated** at a 0.44% undershoot of its own target and
+1.010853 at iteration 1; and step 1's final increment is **wrong-signed** — `increment1` 0.648331 where
+≈1.16 is required.
+
+**NOT QUOTABLE.** Gate-4 remains red on D2 recovery, and predeclaration branch C stands: no product is
+quoted while any leg is red. What changed is that full-event extraction is now *possible* —
+`check_subsample_agreement` (tol 1e-3) was failing closed at 0.866 and is now 0 — and whether to run it is
+Joseph's call, not a consequence of this run.
+
+## 2026-08-09 — CLM-012 ADOPTED, Gate-4 branch A taken, and two jobs launched
+
+**Joseph closed both open decisions.** Recorded here because a decision that lives only in mail is a
+decision the next session cannot audit.
+
+**1. CLM-012 adopted, and the bar is now a fraction of the achievable ceiling.** Gate-4's D2 criterion
+moves from `recovery >= 0.80` ABSOLUTE to `recovery >= f * ceiling` with `f = 0.80` and
+`ceiling = 0.618228` (per-event), giving a threshold of **0.494582** against a measured **0.546853** —
+margin **0.052271**. Enforced as `residual_over_gap_max = 1 - f*ceiling = 0.505418`, derived in code
+rather than restated, with `powered:criterion_derivation_consistent` failing the gate if the comment
+and the enforced number ever disagree.
+
+*Why this is a specification correction and not a tolerance raise:* 0.618228 < 0.80, so the retired bar
+sat **above** the ceiling — no estimator, however good, could satisfy it. It was measuring the
+acceptance and reporting the answer as an estimator verdict. That is the BEN-070/071 "threshold beyond
+reach" defect with the inequality reversed: a gate that could never PASS rather than never FIRE.
+
+*The one condition that rationale rests on, stated because it is easy to lose:* it holds under the
+per-cell (Jensen-corrected) reading. CLM-012 caveat (iv-d) records that the scalar-scope curve gives
+`1-(1-0.42351622)^3 = 0.808415`, **above** 0.80 — under that reading the old bar was satisfiable and
+the rationale fails. The per-cell reading is the correct one, and it also makes the old bar look
+*derived with a Jensen error* rather than invented (0.808415 is only 0.0084 above 0.80). Conditional
+claim about a derivation, not an impossibility proof; `test_the_old_absolute_bar_sat_above_the_per_cell_ceiling`
+goes red if a scalar-scope value is ever frozen in its place.
+
+*Sensitivity, verified independently against Joseph's numbers (all five reproduce exactly):* the
++/-2 pp ceiling swing moves the threshold +/-0.016, worst case 0.510582, still cleared; the ceiling
+would have to reach 0.683566 (+6.5 pp, 3.3x the stated sensitivity) to flip the verdict. Written into
+the criterion text so the next reader does not redo it.
+
+*Conditions (a)-(d) all met*, and per (c) the **injection is pinned alongside the weighting** —
+amplitude 0.35, clip_z 3.0, rate-preserving, split_seed 7, half 2e6 — because a ceiling that is a
+property of (detector x injection x weighting) is only a criterion once all three are specified.
+Unpinned, BEN-045 repeats one level up.
+
+*CLM-012 was NOT promoted past VERIFIED-NUMERIC.* Condition (d)'s re-derivation corrected the claim in
+five places and withdrew its one prediction, so the model stays `ASSUMED`-grade. Adopting a bar is a
+decision; it is not evidence for the model that motivated it.
+
+**2. Gate-4: branch A.** Re-issued as `p3f-pet-gate4-launch-code-gate-20260809.json`; predecessor
+`...-20260807.json` retired in the same commit with `files` renamed to `files_at_issue` per the repo
+convention — its two hashes legitimately no longer match the tree and must not be expected to.
+**Branch C still governs quotability:** the fold-forward deficit is untouched, so no product is quoted.
+Gate-4's disposition is not a quotability verdict.
+
+*Detour worth recording:* I first "fixed" the binding breakage by teaching `verify_hash_bindings.py` to
+skip receipts marked `superseded_by`, then found the repo already had a mechanism —
+`test_superseded_receipts_hold_no_live_bindings` requires the rename — and reverted mine. One mechanism,
+already tested, beats a second one I invented because I had not looked. The skip also briefly appeared
+to disable the Gate-2 runtime binding (three receipts share that basename; two are retired under
+`superseded-*/`), which my basename-only output made look like self-supersession.
+
+**3. Two jobs launched, both watched.**
+  * `56525297` — **NON-QUOTABLE diagnostic full-event extraction**, the first real-input run of
+    `extract_fullevent_fps.py`. Quarantined namespace, `NONQUOTABLE-DIAGNOSTIC` in every filename, and
+    a manifest whose non-quotability is **proven, not asserted**: `require_quotable` recomputes the
+    fold-forward deviation from the weights artifact (0.344577 vs FROZEN's 0.05, a 6.9x exceedance) and
+    the builder launders a copy of its own manifest — publication schema and label, marker stripped —
+    and dies rather than write if the gate accepts it. Flag-flipping, namespace-copying and renaming
+    all fail to make it quotable.
+  * `56525829` — **step-1 increment trajectory**, Joseph's top priority. The discriminator is
+    iteration 0, where `weights_push == 1` and the ideal step-1 ratio's reco-weighted mean is exactly
+    R: ~1.124 means step 1 starts correct and the iteration dynamics degrade it; ~0.65 means step 1 is
+    broken before any feedback exists and the iteration story is a red herring. Disjoint code paths,
+    which is what makes it worth a job. Read the engine first: `omnifold.py:189-200` confirms the
+    target is `R/mean(push) = 1.1616`, `reweight()` is `w = exp(logit)` with label 1 = data so there
+    is no inversion in the conversion, and `patience=10` inside `epochs=8` means `restore_best_weights`
+    can never fire (consistent with BEN-043, not a second defect).
+
+**Products:** `p3f-pet-gate4-launch-code-gate-20260809.json` (17 pins, validator re-pinned
+`75a37217f208`, test `cdbce57d5b8b`). Bindings **ALL INTACT**, 120 resolved, 15 shell pins against
+floor 15. Suite: `nd-unfolding/tests` **7 failed / 878 passed / 1 skipped** — the 7 documented
+pre-existing path failures, unchanged. **Collection announced 970 -> 985** (+11 quarantine, +4
+criterion).
+

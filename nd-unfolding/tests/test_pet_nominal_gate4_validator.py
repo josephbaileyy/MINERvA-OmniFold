@@ -757,14 +757,78 @@ class PoweredClosureIsRecomputed(unittest.TestCase):
 
     # ---- the three acceptance numbers ----------------------------------------------------------
     def test_recovery_below_the_criterion_fails(self):
-        bad = self._failing(recover=0.5)
+        """Re-specified 2026-08-09 (CLM-012). The old fixture used recover=0.5, chosen against the
+        old ABSOLUTE bar of 0.80. Under the acceptance-limited bar (f*ceiling = 0.494582) a recovery
+        of 0.5 legitimately PASSES, so the fixture -- not the criterion -- is what had to move."""
+        bad = self._failing(recover=0.35)
         self.assertIn("powered:recovery_meets_criterion", bad)
 
     def test_recovery_just_inside_the_criterion_passes(self):
-        """Sensitivity: 0.20 is a boundary the fixture can actually approach, not a wall."""
-        ok, checks, met = self._run(recover=0.85)
-        self.assertLessEqual(met["residual_over_gap"], 0.20)
+        """Sensitivity: f*ceiling is a boundary the fixture can approach, not a wall."""
+        P = g4.FROZEN["powered_closure"]
+        bar = P["recovery_fraction_of_ceiling"] * P["acceptance_limited_ceiling"]
+        ok, checks, met = self._run(recover=0.55)
+        self.assertLessEqual(met["residual_over_gap"], 1.0 - bar)
         self.assertTrue(ok, [c["name"] for c in checks if not c["ok"]])
+
+    def test_criterion_is_a_fraction_of_the_ceiling_not_an_absolute(self):
+        """The enforced threshold must equal 1 - f*ceiling, and the gate must say so itself.
+
+        `powered:criterion_derivation_consistent` exists so the comment and the enforced number
+        cannot drift apart; this asserts it is live and passing, not merely present.
+        """
+        P = g4.FROZEN["powered_closure"]
+        self.assertAlmostEqual(
+            P["residual_over_gap_max"],
+            1.0 - P["recovery_fraction_of_ceiling"] * P["acceptance_limited_ceiling"], places=12)
+        ok, checks, _met = self._run()
+        named = {c["name"]: c for c in checks}
+        self.assertIn("powered:criterion_derivation_consistent", named)
+        self.assertTrue(named["powered:criterion_derivation_consistent"]["ok"])
+        self.assertIn("f*ceiling", named["powered:recovery_meets_criterion"]["detail"])
+
+    def test_the_old_absolute_bar_sat_above_the_per_cell_ceiling(self):
+        """THE FINDING that justifies re-specifying rather than relaxing -- and its ONE condition.
+
+        The retired bar was recovery >= 0.80 ABSOLUTE against a per-cell ceiling of 0.618228, so it
+        sat above what any estimator could reach: the BEN-070/071 'threshold beyond reach' defect
+        with the inequality the other way round. Guards the re-specification against being re-read
+        later as a loosening.
+
+        NAMED, not glossed: this is CONDITIONAL on the per-cell (Jensen-corrected) reading. CLM-012
+        caveat (iv-d) records that the scalar-scope curve gives 0.808415, ABOVE 0.80, under which the
+        old bar was satisfiable and the rationale fails. The assertion below is written against the
+        frozen per-cell ceiling deliberately, so if anyone ever re-freezes a scalar-scope value the
+        test goes red instead of silently endorsing a rationale that no longer holds.
+        """
+        P = g4.FROZEN["powered_closure"]
+        ceiling = P["acceptance_limited_ceiling"]
+        self.assertLess(ceiling, 0.80, "if the frozen ceiling ever exceeds 0.80 the "
+                                       "re-specification rationale is VOID -- do not adjust this "
+                                       "assertion, re-open CLM-012")
+        self.assertEqual(P["ceiling_weighting"], "per-event",
+                         "the rationale is specific to the per-cell/per-event reading")
+        # And the new bar IS strictly inside the achievable range, which the old one was not.
+        self.assertLess(P["recovery_fraction_of_ceiling"] * ceiling, ceiling)
+        self.assertGreater(P["recovery_fraction_of_ceiling"] * ceiling, 0.0)
+
+    def test_unexplained_shortfall_stays_visible(self):
+        """Joseph's condition: re-specifying the bar must not make the 28.2% shortfall invisible."""
+        P = g4.FROZEN["powered_closure"]
+        self.assertAlmostEqual(P["unexplained_shortfall_vs_ceiling"], 0.0714, places=4)
+        self.assertIn("OPEN", P["unexplained_shortfall_status"])
+
+    def test_injection_and_weighting_are_pinned(self):
+        """A ceiling is a property of (detector x injection x weighting); unpinned it is not a
+        criterion. Joseph's adoption condition (c), extended to the injection."""
+        P = g4.FROZEN["powered_closure"]
+        self.assertEqual(P["ceiling_weighting"], "per-event")
+        pin = P["ceiling_injection_pin"]
+        for k in ("amplitude", "clip_z", "rate_preserving", "split_seed", "half_size"):
+            self.assertIn(k, pin)
+        # The pin must AGREE with the protocol actually frozen, or it pins a different injection.
+        for k in ("amplitude", "clip_z", "rate_preserving", "split_seed"):
+            self.assertEqual(pin[k], P[k], f"injection pin disagrees with frozen protocol on {k}")
 
     def test_too_small_a_gap_fails(self):
         bad = self._failing(amplitude=0.35, clip_z=0.001)   # tilt collapses toward 1
