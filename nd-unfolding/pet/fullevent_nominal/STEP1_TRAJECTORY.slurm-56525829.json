@@ -1,0 +1,133 @@
+{
+  "schema": "pet-fullevent-step1-trajectory-v1",
+  "verdict": "CORRECT_AT_ITER0_DEGRADES_LATER",
+  "reading": "step 1 recovers R to within 10% at iteration 0 and the sign inverts only later, so the defect is in the iteration dynamics -- what push feeds back, or the cached training-data reuse at omnifold.py:194/335.",
+  "R": 1.1240802949941018,
+  "niter": 3,
+  "logit_cap": 30.0,
+  "reproduction_gate": {
+    "increment1": {
+      "receipt": 0.6483314255077571,
+      "reproduced": 0.6483314255077571,
+      "rel_dev": 0.0,
+      "ok": true
+    },
+    "push_prev": {
+      "receipt": 0.9676586519823509,
+      "reproduced": 0.9676586519823509,
+      "rel_dev": 0.0,
+      "ok": true
+    },
+    "push_final": {
+      "receipt": 0.7367462501305516,
+      "reproduced": 0.7367462501305516,
+      "rel_dev": 0.0,
+      "ok": true
+    }
+  },
+  "trajectory": [
+    {
+      "iteration": 0,
+      "push_prev_mean_w_reco": 1.0,
+      "r1_mean_w_reco": 1.233512164852833,
+      "r1_required_mean": 1.1240802949941018,
+      "r1_achieved_over_required": 1.0973523602771682,
+      "r1_is_below_one": false,
+      "correction_sign_is_wrong": false,
+      "pull_mean_w_reco": 1.233512164852833,
+      "push_mean_w_reco": 1.0927362925830193,
+      "push_dev_vs_R": -0.027884131187662975,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.0066435547079890965,
+        "5": 0.010587119497358799,
+        "25": 0.040172189474105835,
+        "50": 0.23770558834075928,
+        "75": 0.8092957437038422,
+        "95": 4.647374391555786,
+        "99": 14.25855388641363
+      },
+      "r1_weight_mass_below_one": 0.8157062708479212,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "best-epoch"
+    },
+    {
+      "iteration": 1,
+      "push_prev_mean_w_reco": 1.0927362925830193,
+      "r1_mean_w_reco": 0.9151659489996286,
+      "r1_required_mean": 1.0286839584480088,
+      "r1_achieved_over_required": 0.8896473416192408,
+      "r1_is_below_one": true,
+      "correction_sign_is_wrong": true,
+      "pull_mean_w_reco": 0.9945993522632561,
+      "push_mean_w_reco": 0.9676586519823509,
+      "push_dev_vs_R": -0.13915522201425268,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.0047548066824674605,
+        "5": 0.009318855591118336,
+        "25": 0.025936972349882126,
+        "50": 0.1729825884103775,
+        "75": 0.7094152569770813,
+        "95": 2.792629599571228,
+        "99": 11.743462657928546
+      },
+      "r1_weight_mass_below_one": 0.8725748143141965,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "best-epoch"
+    },
+    {
+      "iteration": 2,
+      "push_prev_mean_w_reco": 0.9676586519823509,
+      "r1_mean_w_reco": 0.6483314255077571,
+      "r1_required_mean": 1.1616496092824724,
+      "r1_achieved_over_required": 0.5581127220524082,
+      "r1_is_below_one": true,
+      "correction_sign_is_wrong": true,
+      "pull_mean_w_reco": 0.6589437921453905,
+      "push_mean_w_reco": 0.7367462501305516,
+      "push_dev_vs_R": -0.34457862715721976,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.004421238275244832,
+        "5": 0.010528655257076025,
+        "25": 0.02571446355432272,
+        "50": 0.1293494999408722,
+        "75": 0.6726011037826538,
+        "95": 1.46820467710495,
+        "99": 8.9413531303406
+      },
+      "r1_weight_mass_below_one": 0.9164748925010212,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "final(BEN-043)"
+    }
+  ],
+  "checkpoints": {
+    "step1_iter2": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+      "provenance_tier": "final(BEN-043)"
+    },
+    "step2_iter1": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step2_iter2": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5",
+      "provenance_tier": "final(BEN-043)"
+    },
+    "step1_iter0": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step2_iter0": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step1_iter1": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+      "provenance_tier": "best-epoch"
+    }
+  },
+  "weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+  "decomposition_receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json",
+  "batch_size_step1": 1000,
+  "batch_size_step2": 512,
+  "caveat": "iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} has the BEN-043 _final weights. The ~1.3% best-vs-final gap cannot blur the 1.124-vs-0.65 discrimination this script turns on."
+}

@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-05. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-09. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -37,6 +37,34 @@ replacement is implied for 4D/FPS or dependent significances. See
 `KNOWN_ISSUES.md` #14-16.
 
 ## Remediation in flight
+
+- Full-event diagnostic extraction job 56525297 is reconciled FAILED after its complete, validated
+  GPU push: the combined launcher crossed into the ROOT-only stage while still in the TensorFlow
+  environment. The preserved push is the sole input to a tested CPU/root_6_28 continuation; no GPU
+  retry was run. CPU continuation 56527676 completed `0:0`, reused that exact push, and independently
+  confirmed both publication-rejection conditions. The product remains permanently quarantined and
+  non-quotable; Joseph's number-free completion mail was accepted locally. The dependency-ready focus
+  is Step-1 trajectory job 56525829. Its one-hour queue event found it wholly prestart-pending with no
+  output, so a tested detached A100 hedge was selected. The first `setsid` child did not persist, and
+  the changed tmux-supervised request also exited before Slurm created a named allocation. The start
+  deadline therefore closed the hedge without cancellation or compute: batch 56525829 remains
+  PENDING on Priority, owned no output then, and remained the sole writer. It later completed `0:0`.
+  Independent validation gives `CORRECT_AT_ITER0_DEGRADES_LATER`: iteration 0 is correct-sign and
+  within 9.74% of exact R, while iterations 1 and 2 are wrong-signed. The failure is post-feedback
+  iteration dynamics. Three full-input controls are ready in isolated namespaces: warm/fresh split,
+  cold/fixed split, and cold/fresh split; together with the completed warm/fixed baseline they form a
+  predeclared factorial over split reuse and Step-1 warm-start. Branch C remains and no publication
+  cross section is promoted. The three arms are submitted as batch array `56531057` (`0-2%3`), each
+  on one A100 with an isolated arm/job namespace; terminal and one-hour prestart queue watches are armed.
+  A separately pinned fourth arm, warm/fixed with the engine's intended post-iteration `1e-5` learning
+  rate made effective at fit time, is batch job `56531204`, initially PENDING Priority with an isolated
+  namespace and terminal/queue-latency watches. It does not modify the shared engine or pending array.
+  At the array's one-hour latency wake, all three tasks were still prestart-pending with absent outputs.
+  Batch remains the sole writer: the closest full-input nominal took 6h00m44s, so no four-hour
+  interactive replacement was safe or allocated. Terminal coverage remains armed.
+  The separate annealed-LR job's one-hour wake reached the same evidence-backed decision: `56531204`
+  remained prestart-clean with no output or alternative A100 allocation, so batch remains its sole
+  writer. Both the array and single-job terminal watches remain armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

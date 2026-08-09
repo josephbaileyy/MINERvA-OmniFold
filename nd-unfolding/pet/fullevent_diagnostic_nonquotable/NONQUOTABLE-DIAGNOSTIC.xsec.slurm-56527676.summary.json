@@ -1,0 +1,85 @@
+{
+  "schema": "pet-fullevent-fps-xsec-v1",
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
+  "event_features_reco": [
+    "pt",
+    "pparallel",
+    "mu_px",
+    "mu_py",
+    "mu_pz",
+    "mu_E",
+    "mu_cos_phi",
+    "mu_sin_phi",
+    "mu_qp",
+    "mu_minos_ok",
+    "vtx_x",
+    "vtx_y",
+    "vtx_z"
+  ],
+  "inputs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "push": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.push.slurm-56525297.npz",
+  "push_provenance": {
+    "source_weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+    "inputs_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "inputs_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "subsample_agreement": {
+      "checked": true,
+      "n_shared_rows": 2000000,
+      "max_rel_dev": 1.4997372199566771e-05,
+      "median_rel_dev": 0.0,
+      "tolerance": 0.001
+    }
+  },
+  "out": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz",
+  "total_sigma_cm2_per_nucleon": 1.6568692515128627e-37,
+  "extraction": {
+    "completeness_applied": false,
+    "completeness_applied_why_not": "coverage of the truth denominator by the OmniFold input is 1 BY CONSTRUCTION -- the declared fiducial domain IS pass_truth -- and counts is already acceptance-corrected by MultiFold.RunStep2, which assigns nu_k to truth-only-miss rows (omnifold.py:218-220). Dividing by the reco efficiency would double-correct. History, measured magnitudes and the GBDT corroboration: KNOWN_ISSUES.md and CLAIMS.md CLM-011.",
+    "completeness_retained_as": "reporting mask only (comp > 0), not a divisor",
+    "reported_domain_set_by": "comp > 0, which subsumes denom > 0 by construction",
+    "reporting_mask_is_not_the_tiering_decision": "excludes only cells with zero reco-accepted events; the acceptance-supported vs model-dependent tiering of OPEN_ITEMS:430-438 is open and covers far more truth mass",
+    "truth_denominator_coverage": {
+      "n_pass_truth": 49150928,
+      "sum_w_pass_truth": 40365648.74570045,
+      "coverage_basis": "declared fiducial domain == pass_truth, so coverage == 1 by construction; no independent truth-denominator array exists in this dump to cross-check against",
+      "coverage_is_guarded": true,
+      "coverage_tol": 0.0
+    },
+    "n_cells_masked_zero_acceptance": 4,
+    "shape": [
+      15,
+      19
+    ],
+    "n_cells": 285,
+    "n_cells_populated": 262,
+    "n_cells_no_denominator": 23,
+    "n_pass_truth": 49150928,
+    "n_pass_truth_and_reco": 20571564,
+    "completeness_min_populated": 0.0,
+    "completeness_median_populated": 0.7661618428123138,
+    "data_pot": 1.057394261158926e+21,
+    "n_nucleons": 3.2352943296224835e+30,
+    "flux_hist": "pTmu_reweightedflux_integrated",
+    "flux_source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+    "flux_reference_edges": [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5
+    ],
+    "completeness_anchor": "UNITY, and measured rather than inferred. The previous value of this field read 'NONE -- no such anchor exists for this domain', which was FALSE: the anchor exists in this repo on this exact 285-cell grid and it is the constant 1 (validated GBDT FPS unfolds, globalCompleteness = 1.0000000000000002, all 266 nonzero hCompletenessND_flat bins at 1.000000). Corrected 2026-08-06; the false claim is what allowed the double-correction to survive.",
+    "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel"
+  },
+  "note": "product only; promotion is a separate gated step"
+}

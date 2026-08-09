@@ -1,0 +1,61 @@
+{
+  "schema": "queue-latency-reconciliation-v1",
+  "run_id": "DIAG-STEP1-LR-QH1",
+  "recorded_at_utc": "2026-08-09T12:07:10Z",
+  "event": {
+    "event_id": "evt-step1-annealed-lr-queue-56531204",
+    "event_type": "queue-latency",
+    "watch_id": "step1-annealed-lr-queue-56531204",
+    "observed_at_utc": "2026-08-09T12:05:21+00:00",
+    "head_at_event": "f76d491445a4057dcc302b9729b3e0b3feac8dc8",
+    "sha256": "2b744ad30212a3c3d064750c796d33338b85b2bec67d39cd2dd5b2d3b9d5ad33",
+    "threshold_seconds": 3600,
+    "waited_seconds": 3680,
+    "prestart_verified": true,
+    "read_count": 1,
+    "validation": "PASS_UNRECONCILED_REAL_EVENT"
+  },
+  "job": {
+    "job_id": "56531204",
+    "arm": "warm_fixed_annealed_lr",
+    "state": "PENDING",
+    "reason": "Priority",
+    "runtime": "00:00:00",
+    "resources": "one A100, 32 CPU, 57472M, 08:00:00",
+    "output_namespace": "nd-unfolding/pet/step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56531204",
+    "output_namespace_exists": false,
+    "active_writer_count": 0,
+    "duplicate_writer": false
+  },
+  "route_decision": {
+    "decision": "RETAIN_BATCH_AS_SOLE_FINAL_WRITER",
+    "batch_cancelled": false,
+    "interactive_requested": false,
+    "new_writer_started": false,
+    "evidence": [
+      "The exact job is PENDING on Priority with zero runtime.",
+      "Its collision-isolated output namespace is absent.",
+      "No A100 interactive allocation, detached controller, or tmux session exists.",
+      "The closest full-input nominal job 56445883 required 06:00:44 on one A100, exceeding the four-hour interactive ceiling.",
+      "No collision-safe alternative was allocated or proven."
+    ],
+    "collision_policy": "Job 56531204 may be cancelled only after a replacement has an allocated A100, a disjoint namespace, and explicit ownership transfer; none exists."
+  },
+  "continuation": {
+    "annealed_lr_terminal_watch": "step1-annealed-lr-56531204",
+    "annealed_lr_terminal_watch_state": "armed",
+    "factorial_array_job_id": "56531057",
+    "factorial_array_terminal_watch": "step1-dynamics-56531057",
+    "factorial_array_terminal_watch_state": "armed",
+    "next_action": "Reconcile the first real terminal event exactly once; retain the other terminal watch and do not poll."
+  },
+  "scope": {
+    "publication_candidate": false,
+    "branch_c_unchanged": true,
+    "threshold_change": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "RECONCILED_BATCH_RETAINED_WATCHED"
+}

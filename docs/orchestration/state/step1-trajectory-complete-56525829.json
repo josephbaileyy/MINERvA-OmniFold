@@ -1,0 +1,108 @@
+{
+  "schema": "campaign-event-reconciliation-v1",
+  "run_id": "DIAG-STEP1-TRAJ-A1-COMPLETE",
+  "reconciled_at_utc": "2026-08-09T10:32:12Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-step1-traj-56525829.json",
+    "event_id": "evt-step1-traj-56525829",
+    "watch_id": "step1-traj-56525829",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-09T10:20:10+00:00",
+    "head_at_event": "640f9bcb6494739612e49cbb7b91b015d66cb16e",
+    "read_exactly_once": true,
+    "previously_reconciled": false,
+    "valid": true
+  },
+  "accounting": {
+    "job_id": "56525829",
+    "job_name": "fe_step1_traj",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:07:55",
+    "start": "2026-08-09T03:11:47",
+    "end": "2026-08-09T03:19:42",
+    "node": "nid008556",
+    "allocation": "one A100, 32 CPU, 57472M"
+  },
+  "products": {
+    "artifact": {
+      "path": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+      "bytes": 5373,
+      "sha256": "032f548f1b7b85fe672d0e7bf640299a720d0d1ecca95bbad23c4037ca16e9bb"
+    },
+    "stdout": {
+      "path": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.out",
+      "bytes": 373,
+      "sha256": "d1b713c6e28cba41545837268d5afdf71ae4cdc98df82feeb8335174847b4bb7"
+    },
+    "stderr": {
+      "path": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.err",
+      "bytes": 140,
+      "sha256": "9776134633aa9e338b02037e12295a4922b6ef017ee5d3350e87efcd696de663",
+      "classification": "benign module version-change notice only"
+    },
+    "run_log": {
+      "path": "nd-unfolding/pet/fullevent_nominal/logs/step1_traj_56525829.log",
+      "bytes": 2821,
+      "sha256": "c09def07cc7942d19741d96acce643c9da8e8b983ee81afe4529bd2e725bc67b"
+    }
+  },
+  "code_bindings": {
+    "launcher_commit": "6358376821bff465a0d87f211e839c5dc64ab2ab",
+    "launcher_sha256_at_submit_and_validation": "48be2ce4e1c2ab2deadc9fcdc5244adfbc9b51c9d96d3f1a4d4a6c1552a4dded",
+    "trajectory_driver_sha256_at_submit_and_validation": "140b7e05234efed65c22297ee81b06716a20bd649ea536a6c6680522b0f1bc2e"
+  },
+  "independent_validation": {
+    "schema": "pet-fullevent-step1-trajectory-v1",
+    "verdict_recorded": "CORRECT_AT_ITER0_DEGRADES_LATER",
+    "verdict_rederived": "CORRECT_AT_ITER0_DEGRADES_LATER",
+    "R": 1.1240802949941018,
+    "niter": 3,
+    "batch_size_step1": 1000,
+    "batch_size_step2": 512,
+    "reproduction_gate": {
+      "increment1": {"receipt": 0.6483314255077571, "reproduced": 0.6483314255077571, "rel_dev": 0.0, "ok": true},
+      "push_prev": {"receipt": 0.9676586519823509, "reproduced": 0.9676586519823509, "rel_dev": 0.0, "ok": true},
+      "push_final": {"receipt": 0.7367462501305516, "reproduced": 0.7367462501305516, "rel_dev": 0.0, "ok": true}
+    },
+    "trajectory": [
+      {"iteration": 0, "push_prev": 1.0, "r1": 1.233512164852833, "required": 1.1240802949941018, "achieved_over_required": 1.0973523602771682, "wrong_sign": false, "push": 1.0927362925830193, "cap_saturated_fraction": 0.0},
+      {"iteration": 1, "push_prev": 1.0927362925830193, "r1": 0.9151659489996286, "required": 1.0286839584480088, "achieved_over_required": 0.8896473416192408, "wrong_sign": true, "push": 0.9676586519823509, "cap_saturated_fraction": 0.0},
+      {"iteration": 2, "push_prev": 0.9676586519823509, "r1": 0.6483314255077571, "required": 1.1616496092824724, "achieved_over_required": 0.5581127220524082, "wrong_sign": true, "push": 0.7367462501305516, "cap_saturated_fraction": 0.0}
+    ],
+    "history_audit": {
+      "iter0_step1_best_epoch": 8,
+      "iter1_step1_best_epoch": 8,
+      "iter2_step1_best_epoch": 6,
+      "interpretation": "Iterations 0 and 1 use files named best-epoch, but best is epoch 8/8 in both, so those checkpoints are also the actual last-epoch models. Iteration 2 uses the explicit BEN-043 final checkpoint. The full step-1 trajectory is therefore last-epoch-faithful."
+    },
+    "cache_code_audit": "MultiFold.cache reuses feature tensors and the shuffled index after iteration 0, but rebuilds the label/weight Dataset from the current arrays on every call. Stale labels or stale weights are excluded; fixed split/order and warm-started model state remain distinct candidates."
+  },
+  "verdict": {
+    "name": "CORRECT_AT_ITER0_DEGRADES_LATER",
+    "meaning": "Step 1 is not broken before feedback. It has the correct sign and meets the predeclared 10% iteration-0 criterion, then becomes wrong-signed at iterations 1 and 2. The defect is in iteration dynamics, not an initial normalization failure.",
+    "publication_effect": "Branch C remains in force; this diagnostic is not a quotable cross section."
+  },
+  "notification": {
+    "recipient": "josephrb@nersc.gov",
+    "subject": "[MINERvA] Step-1 trajectory: correct at iter0, degrades later",
+    "local_mail_return_code": 0,
+    "claim": "local MTA acceptance only"
+  },
+  "continuity": {
+    "all_persistent_worker_uuids_preserved": true,
+    "worker_replaced": false,
+    "provider_followup_sent": false,
+    "reset_credits_consumed": 0
+  },
+  "usage_snapshot": {
+    "observed_at_utc": "2026-08-09T10:20:55+00:00",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 88.0,
+    "codex_personal_resets_at_utc": "2026-08-16T08:01:03+00:00",
+    "codex_school_seven_day_remaining_percent": 77.0,
+    "codex_school_resets_at_utc": "2026-08-14T12:05:48+00:00",
+    "codex_full_reset_credits_available": 0
+  },
+  "status": "PASS_DIAGNOSTIC_VERDICT_VALIDATED"
+}

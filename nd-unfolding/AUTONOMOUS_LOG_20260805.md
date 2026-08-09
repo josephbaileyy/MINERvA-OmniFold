@@ -2417,3 +2417,332 @@ confirmed the 20 `docs/orchestration` failures reproduce on a stashed tree rathe
 Collection **970 -> 985** announced. Mailed one batched report. Also deleted a stray empty `MORE` file I
 had created earlier with a redirect typo.
 
+### 09:30Z — CLM-012 restated as a BUG FIX; scope promoted above weighting; BEN-074 on `git stash`
+
+Joseph's directive, all four parts landed. `37b9355`.
+
+**The reframing is his and it is right.** `phi(E[a]) = 1-(1-0.42351622)^3 = 0.808415` **rounds to the
+retired 0.80**. So the bar was not invented — someone computed a ceiling in the wrong scope and wrote
+down the rounded value. "We corrected a bar computed in the wrong scope, off by 0.0084" now replaces
+"we re-specified a bar we could not meet" in the criterion text, CLAIMS.md, and the gate's reissue
+block. It is both the stronger position and the accurate one, and I had been carrying the weaker
+version because I stopped at "unsatisfiable" instead of asking *where 0.80 came from*.
+
+**The asymmetry he caught was real and mine.** Scope moves the ceiling **0.190187**; weighting moves
+it **0.023733**. Scope is **8.0x** the bigger lever and I had it as caveat (iv-d) while weighting
+carried the "load-bearing" label. Promoted scope to a first-class argued section in both FROZEN and
+CLAIMS.md, and re-ranked the sensitivity list largest-first: scope 0.190187, weighting 0.023733,
+sampling 0.014980, injection ±0.02. The ranking carries an argument of its own — **only the injection
+is a free parameter**; levers 1–3 are determined by what the criterion measures, which is precisely
+why this is a bug fix and not a re-specification.
+
+**His proposed justification is my reasoning, and I could state it tighter than he did.** The
+criterion scores a ratio of L1 sums over cells, so achievable recovery is
+`Σ_b φ(a_b) d_b / Σ_b d_b = E_d[φ(a)]` — a *displacement-weighted* mean of per-cell dilutions —
+whereas the retired bar used `φ(E[a])`, a different functional of the same map. Two things follow that
+he did not spell out: the criterion's denominator **is** `Σ_b d_b`, so **the same argument settles the
+weighting question** (truth-mass weighting is wrong for this criterion, not an alternative); and the
+error's **direction is forced**, since `φ'' = -k(k-1)(1-a)^(k-2) < 0` makes Jensen give
+`E[φ(a)] ≤ φ(E[a])` for *every* acceptance map, with equality **iff acceptance is uniform**. MINERvA's
+is not, so the scalar reading's error *is* the acceptance spread.
+
+**"Stable is not correct" — acted on, not acknowledged.** `test_scope_error_is_signed_by_concavity`
+checks φ's concavity numerically over 2e4 samples, **reproduces 0.808415 from a_bar and k rather than
+trusting the frozen literal**, and asserts the Jensen ordering. That is a test of the mathematics; the
+old `ceiling_weighting == "per-event"` assertion was a test of the bookkeeping. Both are kept, but only
+the first would survive a referee.
+
+**BEN-074, from his process note.** I used `git stash` twice to check whether failures were
+pre-existing. The instinct was right (confirm the baseline, don't assert it); the mechanism was not —
+the stash stack is repo-global with no per-agent namespace, and the GBDT lane is pushing to this same
+checkout. A concurrent pop silently reassigns uncommitted work between two agents and is nearly
+undiagnosable afterwards. WIP commit or detached worktree instead: both recoverable via reflog, the
+stash is not. Generalized in the row to *any* git command mutating repo-global state, because this
+checkout has not been single-tenant since 08-05.
+
+**Concrete proof that hazard is live:** my push was rejected non-fast-forward mid-turn — the other lane
+had landed 7 commits (p4 repair work, BEN-070's second site). No file overlap with my lane and no BEN
+id collision; rebased, re-verified bindings and suite on the merged tree, then pushed. Had I been
+mid-`stash` when that arrived, this entry would read differently.
+
+Bindings ALL INTACT. Suite 7 failed / 899 passed / 1 skipped on the merged tree (the 7 documented; the
+passed count includes the other lane's additions). My collection delta +3. Gate-4 re-issued again
+(validator `f990ada33161`, test `3a70792215bd`).
+
+**Both jobs still PENDING (Priority)**, watches armed. Per his instruction `56525829` lands before
+anything else — no new work started.
+
+### 01:35Z — `56525297` FAILED on my own avoidable error, but the push half succeeded and it VALIDATES the BEN-043 fix on real input
+
+**The failure is mine and it was preventable.** My launcher ran `--stage all` under
+`module load tensorflow/2.15.0`. The `push` stage (GPU/TF) completed; the `xsec` stage then imported
+`unfold_2d_omnifold_unbinned`, which imports PyROOT at module load, and **no Perlmutter interpreter has
+both ROOT and TensorFlow**. `ModuleNotFoundError: No module named 'ROOT'`, exit 1:0 at 00:14:06 — with
+the expensive half already paid for.
+
+I was carrying that exact constraint in working memory as a blocker for a *different* step. Holding the
+fact did not help, because nothing in the authoring path made me query it at the moment I typed
+`--stage all`. **A fact you hold and never query is operationally identical to one you never had.**
+Filed as **BEN-075**, whose operative rule is the cheap one: a launcher running N stages must probe
+every stage's imports up front (`python3 -c 'import ROOT, tensorflow'`, 2 seconds), and better, split
+the job at every environment boundary — the boundary belongs in the job graph, not in one script's
+control flow.
+
+**A concurrent session had already fixed it before I looked**, committing `5b718b6` ("Split diagnostic
+extraction across GPU and ROOT environments") and submitting `56527676`. I checked their script rather
+than assuming, because the thing that could have quietly gone wrong is the quarantine design: it
+reuses my preserved push artifact without recomputing, requires `DIAG_PUSH_JOB_ID` explicitly,
+**asserts the PyROOT contract before reading the 49M rows** (citing my failure in a comment), and still
+calls `build_diagnostic_manifest` and checks both rejection flags. The non-quotability proof survives,
+so there is nothing for me to duplicate or correct.
+
+**What made this a delay and not a loss:** the extractor writes the push artifact atomically *before*
+the xsec stage starts, so 13 minutes of A100 work survived and the resume runs on CPU. Stage isolation
+did the work here, not foresight.
+
+**AND THE PUSH STAGE PRODUCED A GENUINE RESULT — the first real-input confirmation of the BEN-043 fix.**
+Full inventory, 49,152,885 rows:
+
+    subsample_agreement  max_rel_dev  1.4997372199566771e-05   tol 1e-3   -> PASSES
+                         median_rel_dev  0.0    n_shared_rows 2,000,000   is_vacuous: false
+    off_acceptance       n_pinned 1957    off_acceptance_all_exactly_one: TRUE
+    w_push               min 0.127087  mean 0.882557  median 0.989147  max 2.130355
+
+`check_subsample_agreement` was failing **closed at 0.866** before the fix; it is now **1.4997e-05**, a
+factor of **~5.8e4**, and explicitly non-vacuous. Two independent cross-checks land as well: Gate B(ii)'s
+off-acceptance property (`push == 1` exactly) holds on the full inventory and not just the 2M subsample,
+and `w_push_mean = 0.882557` over 49.15M rows agrees with the artifact's stored subsample mean
+`0.882548` to ~1e-5. The extractor has now been exercised on real data for the first time and its
+internal gates pass.
+
+Trajectory `56525829` — Joseph's stated priority — is still `PENDING (Priority)`, queued behind this
+GPU work. Mailing the batched verdict.
+
+### 02:00Z — Diagnostic extraction COMPLETE end-to-end, and the quarantine proof fired on real data
+
+`56527676` (the other lane's CPU continuation) **COMPLETED in 1:32, exit 0:0**, consuming my preserved
+push without recomputation. So the full-event extractor has now run start-to-finish on real input for
+the first time.
+
+**The quarantine design validated on a real product, including the parts only a real run could test.**
+
+    tolerance_source                              validate_pet_nominal_gate4.FROZEN
+    deviation (recomputed from the artifact)      0.3445786271570904
+    tolerance / exceeds_tolerance_by              0.05  /  6.891572543141808x
+    rejection_reason                              cites the PHYSICS
+    rejection_reason_laundered                    cites the PHYSICS (identical)
+    publication_gate_rejects_this                 true
+    publication_gate_rejects_this_on_physics_alone true
+    manifest mode                                 -r--r--r--
+
+Three things I could not verify until now, all confirmed: (1) `tolerance_source` reads
+`validate_pet_nominal_gate4.FROZEN`, so on the cluster the validator WAS importable and the tolerance came
+from the live frozen contract — my drift cross-check ran and agreed rather than silently falling back to
+the local literal. (2) The **laundering power test fired on the real product**: a copy with publication
+schema and label and the marker stripped from every path was still rejected, and the reason it gives is
+the recomputed fold-forward deviation, not the labelling. (3) The builder refused nothing spuriously — it
+wrote, which means the physics ground was reached and was decisive.
+
+**Extractor structural health, which was the point of running it.** 262 of 285 cells populated on the
+[15,19] grid, 4 masked zero-acceptance, 23 without a denominator; CLM-011's no-double-correction logic
+present and firing (`completeness_applied = False` with its full justification); and
+`n_pass_truth_and_reco / n_pass_truth = 20571564/49150928 = 0.41854`, which matches the `a = 0.4185618`
+that CLM-012's scalar-scope reading uses — an independent consistency check between the extractor's own
+acceptance and the ceiling arithmetic.
+
+**I am deliberately NOT interpreting the cross-section magnitude.** The summary records
+`total_sigma_cm2_per_nucleon = 1.6568692515128627e-37` and the manifest declares it low by ~34.5%.
+Dividing it by `(1 - 0.345)` to "recover" a value would be exactly how a diagnostic becomes a quoted
+number, and I would then have produced the publication-path result branch C forbids. Recorded, not
+interpreted.
+
+**Preserved off purgeable scratch, which nothing else was doing.** The products were untracked and NOT
+gitignored, i.e. one `/pscratch` purge from gone. Committed the small ones — manifest (3061 B), summary
+(3995 B), xsec npz (6093 B), both `.done` receipts — 24 KB total. **Deliberately NOT the 254 MB push
+npz**: it is reproducible from the committed weights artifact in 13 GPU-minutes, so it fails the
+"irreplaceable" test that justifies the space. Verified the local xsec copy is bit-identical to the
+manifest's `xsec_sha256` (`d2a4497959fc8bbf`) and re-derived the 0.344578627 deviation from the manifest's
+own three numbers rather than trusting its `deviation` field.
+
+`56525829` (step-1 trajectory, Joseph's priority) is STILL `PENDING (Priority)`, priority 67768, no start
+estimate from Slurm. Nothing I can do to advance it; the watch is armed.
+
+### 02:10Z — The artifact the whole campaign now rests on was NOT backed up, and a stale backup hid it
+
+Checking storage after preserving the extraction products, I found the real risk of the night.
+
+`/global/cfs/cdirs/m3246/josephrb/fullevent-nominal-checkpoints-20260807/` exists, is correctly named,
+sits in the right place, and contains exactly the right *filenames*. It holds **`8d17140f…`** — the
+**08-07 artifact that the BEN-043 re-train retired**. The artifact everything now depends on,
+**`58f664cdef266d09…`**, existed **only on purgeable `/pscratch`**: the one Gate A/B is bit-exact
+against, that the step-1 decomposition and the diagnostic extraction consumed, and that the still-pending
+trajectory job will consume. Six GPU-hours of training, one purge from gone.
+
+**This is BEN-073's mechanism one level over**, so I extended that row rather than minting a new id (the
+same write-once call I made an hour ago on the BEN-075 collision). A *missing* backup is obvious; a backup
+**of the wrong generation** is invisible, because presence and plausible naming do the reassuring and only
+a content comparison can tell. The new rules: verify a backup by DIGEST against the live artifact, never
+by `ls`; and a re-run that supersedes an artifact must re-back-it-up **in the same turn it lands**, exactly
+as a gate re-issue must retire its predecessor. The 08-07 backup was correct when written — it simply
+stopped being the thing that mattered, and nothing was watching for that.
+
+Closed: `fullevent-nominal-checkpoints-20260808/` — nominal `58f664cdef266d09` and floor
+`14cccc231dfd92c9` both **digest-verified against the live files**, 14 checkpoints including both BEN-043
+`_final` weights, 6 receipts, 36.1 MB.
+
+**And a trap inside the fix:** `du -sh` reported **15K** for that directory. Had I trusted it I would have
+concluded the copy failed and either retried pointlessly or reported a backup that did not exist.
+`du --apparent-size` gives 36.1 MB and the sha256 comparison is what actually proved the bytes arrived —
+CFS block accounting is lazy. Recorded as rule (8), because the failure mode is "your verification tool
+lies in the reassuring direction only half the time".
+
+Also noted, no action: the 254 MB push npz and the 6 KB xsec npz remain untracked because `.gitignore:29`
+excludes `*.npz` deliberately. Both are reproducible (13 GPU-min and 1:32 CPU respectively) and the xsec's
+sha256 is bound in the committed manifest, so a regenerated copy is verifiable. Force-adding past a
+deliberate repo rule for a reproducible non-quotable diagnostic is not justified.
+
+### 02:30Z — The interactive hedge for `56525829` is dead; my batch job is intact and I am staying out of it
+
+`56525829` is still `PENDING (Priority)`, submitted 07:18 UTC, ~2h queued, `StartTime=Unknown`, no
+dependency — ordinary fair-share contention on `shared_gpu_ss11`, nothing broken.
+
+**The other lane built an interactive-QOS hedge for it, and the hedge died before submitting anything.**
+Two watches appeared on my job that I did not arm (`step1-ihedge-terminal-56525829`,
+`step1-ihedge-start-deadline-56525829`), plus a queue watch. Reading them first was the right move: the
+terminal watch's own context says **"Do not create another allocation or writer"**, so had I independently
+launched an interactive run to accelerate Joseph's priority job — which was my first instinct — I would
+have raced their controller and put two GPUs on the same six reweights.
+
+Evidence it is dead, and the *categorical* part is what settled it:
+
+    *.salloc.log / *.tmux.log      0 bytes, created 08:57 / 09:00 UTC
+    sacct, preceding 90 min        NO job record of any kind -> the salloc never reached the scheduler
+    ps -p 1440332 on login23       no row (its OWN login node, not mine)
+    start-deadline watch           FIRED 09:10 UTC because start was never proved
+
+The 0-byte logs prove nothing on their own — BEN-028 is exactly that this filesystem block-buffers, so a
+healthy multi-hour run also shows zero output. Filed as **BEN-076**: BEN-028 inverted. **For anything whose
+job is to create a job, the liveness probe is "did a Slurm record appear", not "is the log growing"** — a
+submitter that has submitted nothing produces no evidence, and 0 bytes is the expected reading in both the
+healthy and the dead case, so that signal carries no information here.
+
+**A wrong diagnosis I formed and discarded before reporting it:** I hypothesised their concurrent
+`gbdt-hold` was occupying the `interactive` QOS and blocking the hedge. `sacctmgr` shows
+`MaxSubmitJobsPerUser=2` with 1 in use — the limit was never the cause. Checking it took one command; had I
+mailed the guess I would have sent Joseph a confident and wrong explanation of another lane's failure.
+
+**Action taken: none, deliberately.** Their watch owns the routing, their context forbids a second
+allocation, and the `RETAIN_BATCH` route is satisfied by my batch job simply remaining intact — which it
+is. I did not write their terminal file; writing into another lane's control state is precisely the
+cross-lane interference that causes damage. Recorded here because the log is how they and future sessions
+see it.
+
+No mail: nothing finished, no verdict, nothing blocked on Joseph. `56525829` remains the only outstanding
+item in my lane and its own watch is armed.
+
+### 03:25Z — `56525829` COMPLETE. VERDICT `CORRECT_AT_ITER0_DEGRADES_LATER`. Step 1 is not broken; ITERATING breaks it
+
+Joseph's top-priority question is answered, and the answer is the branch I thought less likely. `COMPLETED`
+00:07:55, exit `0:0`. Reproduction gate passed **bit-exactly** — `rel 0.000e+00` on all three committed
+decomposition numbers, so the trajectory is measured on the same footing as the receipt it extends.
+
+    it  push_prev    r1 mean  r1 required  ach/req   sign       push  push dev            tier
+     0   1.000000   1.233512     1.124080   1.0974     ok   1.092736   -0.0279      best-epoch
+     1   1.092736   0.915166     1.028684   0.8896  WRONG   0.967659   -0.1392      best-epoch
+     2   0.967659   0.648331     1.161650   0.5581  WRONG   0.736746   -0.3446  final(BEN-043)
+
+**At iteration 0 step 1 WORKS — it slightly OVERSHOOTS.** `ach/req = 1.0974`, correct sign. With
+`push == 1` there is no feedback yet, and the classifier recovers R and then some. So the wrong-signed
+increment is **not** a defect in step 1's class normalization or its training, which was the alternative
+this measurement was built to separate. The iteration story is the real one.
+
+**The degradation is monotone and it is the whole deficit.** `push dev` runs `-0.0279 -> -0.1392 ->
+-0.3446`. The estimator starts 2.8% low and ends 34.5% low: **iterating is what creates the fold-forward
+deficit.**
+
+**One hypothesis dies cleanly:** `r1_cap_saturated_frac = 0.0` at every iteration. The F3 logit cap is not
+clipping anything, so "the mean is low because weight mass is pinned at the cap floor" is refuted by
+measurement rather than argued away.
+
+**And the mechanism has a clear signature — a collapsing tail, not a shifting bulk:**
+
+    it   r1 mean   median      p95       p99   mass<1
+     0    1.2335   0.2377   4.6474   14.2586   0.8157
+     1    0.9152   0.1730   2.7926   11.7435   0.8726
+     2    0.6483   0.1293   1.4682    8.9414   0.9165
+
+The **median sits at 0.13-0.24 at every iteration**, far below 1, while the mean is 0.65-1.23. So the mean
+is a *tail* phenomenon: ~82-92% of the reco weight mass has ratio < 1, and the mean is held up entirely by
+a thin high-ratio tail. That tail is being destroyed monotonically — **p95 shrinks 3.17x** (4.6474 ->
+1.4682) and p99 by 1.59x — while the sub-1 mass grows. Each iteration trains on data reweighted by the
+previous push, so the extreme-ratio events are progressively down-weighted out of the training
+distribution and the classifier loses the capacity to represent them. A self-reinforcing contraction.
+
+**The consequence that matters for Gate-4, stated carefully.** `|push dev|` at iteration 0 is **0.0279**,
+inside FROZEN's `fold_forward_ratio_dev_max = 0.05`; iterations 1 and 2 fail it at 0.1392 and 0.3446. And
+iteration 0 *is* what a `niter=1` unfold produces — `Unfold()` loops `range(start, niter)`, so niter=1 runs
+exactly `RunStep1(0)`/`RunStep2(0)` and stops. **So the Gate-4 normalization gate would very likely PASS at
+niter=1 and fails only because the frozen policy iterates three times.**
+
+**What I am NOT concluding.** This is not a recommendation to set niter=1. `niter` is the regularization
+knob: fewer iterations means less unfolding and a result closer to the prior, and the fold-forward
+criterion measures *normalization*, not shape recovery. A niter=1 unfold could pass fold-forward while
+badly under-unfolding the spectrum, and that trade-off is **unmeasured**. Reporting the localization, not
+prescribing the fix.
+
+**A tension worth Joseph's attention, flagged as a tension and not a refutation.** The seed policy moved
+`niter 2 -> 3` *specifically to fix* this same fold-forward tolerance — 48 seeds showed 6/48 exceedances at
+niter=2 and 0/48 at niter=3. This trajectory says fold-forward gets monotonically **worse** with
+iterations. Those point opposite ways. They are different setups (B1 was a 240,000-event synthetic rate
+injection; this is the 2M-event nominal), so it is not a contradiction on its face — but it means one of
+the two is not measuring what it is assumed to measure, and that is worth resolving before niter is treated
+as settled.
+
+**Provenance caveat, quantified rather than waved at.** Iterations 0 and 1 read best-epoch checkpoints;
+only iter 2 has the BEN-043 `_final` weights. For the iteration-0 sign conclusion to flip, `r1 mean` would
+have to fall **8.9%** (1.2335 -> 1.1241); BEN-043 measured the best-vs-final gap at ~1.3%. The verdict
+survives its own caveat by roughly 7x.
+
+Receipt committed and copied into the CFS backup's `receipts/` (now 7), per the rule I added to BEN-073
+four hours ago about re-backing-up in the same turn.
+
+### 04:00Z — Checked the other lane's dynamics factorial for a confound; the confound was not real, but finding that out found a DEAD LEARNING-RATE ANNEAL
+
+The other lane launched `56531057` (`fe_s1dyn`) off my trajectory verdict within ~20 minutes — a
+predeclared 3-arm factorial against the nominal's warm+fixed-split baseline: `warm_fresh_split`,
+`cold_fixed_split`, `cold_fresh_split`, with "repair" defined **in advance** as iteration-2 correct sign
+AND `ach/req >= 0.90`, and `shared_engine_edited: false`. It is a good design and it tests both mechanisms
+I named in my verdict, so there is nothing for me to duplicate.
+
+**I went looking for a confound and did not find one.** `Unfold():177` calls `CompileModels(fixed=True)`,
+which drops the LR to `1e-5`. My worry: a cold-restarted (freshly-initialised) step-1 model trained at
+`1e-5` would badly under-train, so arm 1 failing to repair could mean "the fresh model could not learn"
+rather than "warm-start was not the cause" — a null result that looks like an answer. **Wrong.**
+`RunModel:292` recompiles unconditionally with `fixed` defaulting to `False`, i.e. full `self.LR`,
+immediately before every `fit()`. Cold and warm arms train at the same LR. Their design is sound and I did
+not send them a confound that isn't there.
+
+**That is the second wrong hypothesis I killed by verification this cycle** — the first was blaming their
+`gbdt-hold` for occupying the `interactive` QOS (`sacctmgr` says `MaxSubmitJobsPerUser=2`, 1 in use). Both
+would have been confident, specific, wrong claims about another lane's work.
+
+**But checking it surfaced a real defect, now KNOWN_ISSUES:** the engine's per-iteration learning-rate
+anneal is **dead code**, for two independent reasons. (1) `CompileModels` compiles `self.model1`/
+`self.model2`, which are **never trained** — `RunModel` trains clones held in `step1_models`/
+`step2_models`, and the branch that would reach those clones is gated on `n_ensemble > 1` while
+`train_fullevent_nominal.py:54` sets `n_ensemble = 1`. That is the same trap as BEN-043: `model1`/`model2`
+are not the trained models. (2) Even where it does reach a clone, `RunModel:292` overwrites the compile
+with the full LR before `fit()`. So **every step-1 and step-2 fit in the publication configuration runs at
+full learning rate with warm-started weights, at every iteration.**
+
+**Why that is a finding and not tidy-up.** It is a *candidate mechanism for the degradation I measured*.
+Full-LR retraining of a warm-started classifier each round is exactly the regime where a representation
+gets reshaped hard enough to lose the high-ratio tail — and tail collapse is precisely the signature
+(`p95` 4.6474 -> 1.4682, median 0.13-0.24 throughout). The running factorial has **no learning-rate arm**,
+and its predeclared "no arm repairs" branch attributes the residue to "intrinsic push feedback /
+representation-tail contraction" — for which this is a concrete, cheap fourth arm they would want.
+
+Recorded, **not fixed**: `omnifold.py` is shared engine code on the gated path and repairing the anneal
+would change every published number. Mailing it because it materially informs a run that is in the queue
+right now.
+

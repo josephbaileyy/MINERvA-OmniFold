@@ -4005,3 +4005,157 @@ floor 15. Suite: `nd-unfolding/tests` **7 failed / 878 passed / 1 skipped** — 
 pre-existing path failures, unchanged. **Collection announced 970 -> 985** (+11 quarantine, +4
 criterion).
 
+## 2026-08-09 — NON-QUOTABLE full-event diagnostic attempt 1: reusable push, environment BLOCK
+
+The real terminal event for Slurm job 56525297 was read and reconciled once. Accounting is FAILED
+`1:0` after 14m06s. The expensive GPU stage nevertheless completed all 49,152,885 rows, wrote its
+atomic push plus completion marker, pinned every one of 1,957 off-acceptance rows to one, and passed
+the 2,000,000-row subsample-agreement check by a wide margin. Those bytes are preserved and reused.
+
+The changed blocker is mechanical and exact: `sbatch_fullevent_diagnostic_extract.sh` invoked
+`--stage all` under the TensorFlow module, although `extract_fullevent_fps.py` documents that push
+needs TensorFlow/GPU and extraction needs PyROOT/CPU. The xsec stage died at `import ROOT`; no
+quarantine manifest was written, so neither rejection boolean is yet confirmed and no completion
+mail was sent. No cross-section number is quoted.
+
+The committed repair is `pet/sbatch_fullevent_diagnostic_xsec_resume.sh`: it requires the completed
+push job ID, preflights PyROOT in `root_6_28`, runs only `--stage xsec`, refuses output collisions,
+then builds and independently asserts both publication-rejection booleans. Static and quarantine
+tests pass 13/13. The original launcher remains untouched as provenance; an unchanged GPU retry is
+prohibited. Receipt: `../docs/orchestration/state/diag-extract-56525297-failure-reconciliation.json`.
+The repair was committed before compute, then submitted as CPU job 56527676 with terminal and
+one-hour prestart queue watches. Its submission receipt is
+`../docs/orchestration/state/diag-xsec-submit-56527676.json`.
+
+## 2026-08-09 — NON-QUOTABLE diagnostic continuation COMPLETE, rejection proven
+
+The terminal event for CPU job 56527676 was valid and read exactly once. One accounting read found
+COMPLETED `0:0` on nid004116 in 1m32s. Stdout, stderr and the full run log were each read once; the
+only stderr content was benign duplicate RooUnfold rootmap warnings. The job ran only the PyROOT
+stage and reused the exact attempt-1 push path and SHA-256; no GPU recomputation occurred.
+
+The read-only quarantine manifest was read once and independently checked. Its xsec hash matches the
+artifact, its completion marker exists, both required publication-rejection booleans are true, and a
+fresh recomputation rejects it on the physics alone. This is a successful diagnostic completion, not
+a promoted result. No cross-section number is copied here or into the completion receipt.
+
+The authorized completion mail command returned 0 for `josephrb@nersc.gov`; it contained the job and
+gate status but no cross-section number. This records local mail acceptance, not an unverified claim
+about downstream inbox delivery. Completion receipt:
+`../docs/orchestration/state/diag-xsec-complete-56527676.json`.
+
+Next dependency-ready action was executed: job 56525829 is still wholly prestart-pending on Priority,
+so its terminal watch remains armed and a one-hour queue-latency watch now covers the batch-versus-
+interactive routing decision. No duplicate writer was started.
+
+## 2026-08-09 — Step-1 trajectory queue hedge: fresh A100 route selected
+
+The real queue-latency event was read once and validated after 4,933 seconds of verified prestart
+waiting. A single current snapshot still found batch job 56525829 PENDING on Priority and found none
+of its JSON, run-log, stdout or stderr paths. The one live interactive allocation, 56525193
+`gbdt-hold`, is a CPU-only GBDT-lane holder; it cannot run the A100 trajectory and was not disturbed.
+
+The selected route is a fresh detached interactive A100 request, not a duplicate computation.
+`pet/interactive_step1_trajectory_controller.sh` begins only after allocation, proves that allocation
+is RUNNING with one GPU, locks against a second hedge, and then rechecks the exact batch and its
+output paths. If the batch has started it exits in favour of the batch. If still pending, it cancels
+only 56525829, requires terminal cancellation accounting, transfers watch ownership, and only then
+runs the unchanged trajectory launcher in the allocation-ID namespace. Static safety tests and
+shell syntax pass. Event receipt:
+`../docs/orchestration/state/step1-queue-latency-56525829-reconciliation.json`.
+
+The first detached request used `setsid` directly from the tool shell. Its reported PID vanished,
+there was no named Slurm request, and its allocation log was empty; it did not persist and was not
+rerun unchanged. The replacement supervision mechanism is a named OS-detached tmux session
+`step1-ihedge-56525829`, proven live with pane PID 1456374. It owns the same committed salloc+
+controller command. A file-sentinel watch covers the controller's terminal JSON and a 10-minute
+deadline covers failure to acquire; the controller disarms that deadline as soon as allocation is
+proven. The original batch remains the sole writer until then. Launch receipt:
+`../docs/orchestration/state/step1-ihedge-launch-56525829.json`.
+
+## 2026-08-09 — Step-1 interactive hedge missed its start deadline; batch retained
+
+The real allocation-start deadline event was valid and read exactly once. One controller and
+scheduler snapshot found no tmux session, no named `step1-ihedge-56525829` Slurm request, no route or
+terminal receipt, and an empty tmux log. The proved pane PID from launch no longer exists as a live
+controller. The interactive route therefore failed before allocation and never became a writer.
+
+The same snapshot found original batch 56525829 still PENDING on Priority with zero runtime and no
+product, stdout, stderr, or run log. There was no pending interactive request to cancel, and the
+batch was not cancelled. It remains the sole writer. No replacement allocation or unchanged hedge
+retry was launched. The batch terminal watch and controller-terminal file sentinel remain armed;
+progress now depends on the batch terminal event. Receipt:
+`../docs/orchestration/state/step1-ihedge-start-deadline-56525829-reconciliation.json`.
+
+## 2026-08-09 — Step-1 trajectory COMPLETE: correct at iter0, degrades later
+
+The terminal event for job 56525829 was valid and read exactly once. Accounting is COMPLETED `0:0`,
+7m55s on one A100. Stdout, stderr, the complete run log, and the trajectory JSON were each read once
+and hash-bound in the completion receipt. Stderr contains only a benign module version-change notice.
+The submitted launcher and trajectory driver still match their committed hashes.
+
+The artifact's `CORRECT_AT_ITER0_DEGRADES_LATER` verdict was independently recomputed. Iteration 0
+achieves 1.233512 against exact R=1.124080 (1.09735x, correct sign); iteration 1 achieves 0.915166
+against 1.028684 required and iteration 2 achieves 0.648331 against 1.161650, both wrong-signed. The
+three decomposition anchors reproduce bit-exactly and cap saturation is zero throughout. History
+minima show the step-1 checkpoints for iterations 0 and 1 are epoch 8/8, so their best-epoch files are
+also last-epoch-faithful; iteration 2 uses the explicit BEN-043 final checkpoint.
+
+The failure is therefore in post-feedback iteration dynamics, not a Step-1 normalization failure at
+push=1. Code inspection further excludes stale cached labels/weights: the engine reuses feature
+tensors and an index but rebuilds the current label/weight dataset every call. Fixed split/order and
+warm-started model state remain distinct controlled hypotheses. Joseph's verdict mail was accepted by
+the local MTA with rc=0. Branch C remains. Completion receipt:
+`../docs/orchestration/state/step1-trajectory-complete-56525829.json`.
+
+The next diagnostic was implemented without editing the shared hash-bound engine.
+`pet/diagnose_step1_iteration_dynamics.py` subclasses it in-process and routes every arm through the
+canonical full-input nominal driver and Gate-2/Gate-3 provenance checks. The completed nominal supplies
+the warm/fixed baseline; a three-task array supplies warm/fresh, cold/fixed, and cold/fresh. Every task
+owns an arm/job namespace and all code, target, receipt, and manifest inputs are pinned. The
+predeclared repair definition is correct-sign iteration 2 with achieved/required >= 0.90. Six focused
+tests, shell syntax, the canonical config gate, and all seven pins pass. Control plan:
+`../docs/orchestration/state/step1-iteration-dynamics-control-plan.json`.
+
+After a clean writer/capacity snapshot, the three controls were submitted as array `56531057`
+(`0-2%3`). Batch is the deliberate placement: the experiment needs three independent A100s in
+parallel and an 8h durable wall, while no interactive allocation existed. Every task was initially
+PENDING on Priority with zero runtime and no output. Terminal and one-hour queue-latency watches are
+armed; the orphaned sentinel for the failed 56525829 hedge was disarmed only after the original batch
+completed. Submission receipt:
+`../docs/orchestration/state/step1-dynamics-submit-56531057.json`.
+
+A concurrent code audit then found that the engine's apparent post-iteration `1e-5` anneal is dead:
+the trained clones are not reached by `CompileModels(fixed=True)` at `n_ensemble=1`, and `RunModel`
+recompiles at full LR immediately before every fit anyway. The existing three-task array is already
+committed and hash-pinned, so it was not edited in place. A separate `warm_fixed_annealed_lr` wrapper
+forces only the fit-time compile at iterations 1/2 to `1e-5` for both steps, retains the warm model and
+fixed split, and records all six actual optimizer rates. It passes four focused tests and eight pins;
+the shared engine remains unchanged. Control plan:
+`../docs/orchestration/state/step1-annealed-lr-control-plan.json`.
+
+The annealed-LR control was committed at `0144d21` before submission, then launched as batch job
+`56531204` on one A100/32 CPU with an 8h wall. Its job-owned namespace was absent before submission;
+the initial scheduler snapshot was PENDING on Priority with zero runtime and no output. A terminal
+watch and a one-hour prestart queue-latency watch are armed. The three-arm array `56531057` remains a
+separate writer in its own namespaces. A combined mechanism verdict is deferred until both experiments
+are independently reconciled. Submission receipt:
+`../docs/orchestration/state/step1-annealed-lr-submit-56531204.json`.
+
+The one-hour queue-latency event for array `56531057` was read exactly once and validated after 3813s
+of verified prestart wait. One expanded snapshot found tasks 0/1/2 independently PENDING on Priority,
+each at zero runtime, with all three output namespaces absent. No A100 interactive allocation,
+detached controller, or tmux session existed. The closest full-input nominal (`56445883`) required
+6h00m44s, which exceeds the four-hour interactive ceiling, and this experiment needs three independent
+A100 arms. No replacement was therefore allocated or proven; no task was cancelled and batch remains
+the sole writer. Its terminal watch and the independent `56531204` watches remain armed. Receipt:
+`../docs/orchestration/state/step1-dynamics-queue-56531057-reconciliation.json`.
+
+The independent queue-latency event for annealed-LR job `56531204` was likewise read exactly once and
+validated after 3680s of verified prestart wait. The one exact-job snapshot found it PENDING on
+Priority at zero runtime with its collision-isolated namespace absent. No A100 allocation, detached
+controller, or tmux session existed. The same 6h00m44s full-input reference exceeds the four-hour
+interactive ceiling, so no collision-safe replacement was available: the job was not cancelled and
+batch remains its sole writer. The `56531204` terminal watch and separate array `56531057` terminal
+watch remain armed. Receipt:
+`../docs/orchestration/state/step1-annealed-lr-queue-56531204-reconciliation.json`.

@@ -1,0 +1,88 @@
+{
+  "schema": "slurm-array-submission-receipt-v1",
+  "run_id": "DIAG-STEP1-DYN-A1",
+  "recorded_at_utc": "2026-08-09T10:48:53Z",
+  "job_id": "56531057",
+  "job_name": "fe_s1dyn",
+  "tasks": "0-2%3",
+  "cpus_per_task": 32,
+  "memory_per_task": "57472M",
+  "time_limit": "08:00:00",
+  "qos": "gpu_shared",
+  "submitted_at_utc": "2026-08-09T10:46:33Z",
+  "slurm_submit_time_local": "2026-08-09T03:46:33-07:00",
+  "submit_command": "sbatch --parsable nd-unfolding/pet/sbatch_step1_iteration_dynamics_array.sh",
+  "submit_return_code": 0,
+  "placement": {
+    "route": "batch",
+    "account": "m3246_g",
+    "qos": "gpu_shared",
+    "partition": "shared_gpu_ss11",
+    "per_task": "one A100, 32 CPU, 57472M, 08:00:00",
+    "parallel_width": 3,
+    "rationale": "Three independent full-input arms need three A100s and may run beyond an interactive wall. No interactive allocation existed; batch provides the required parallel width and durable execution."
+  },
+  "task_map": {
+    "0": "warm_fresh_split",
+    "1": "cold_fixed_split",
+    "2": "cold_fresh_split"
+  },
+  "baseline": {
+    "job_id": "56445883",
+    "configuration": "warm_fixed_split",
+    "artifact": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+    "trajectory_job_id": "56525829"
+  },
+  "output_ownership": {
+    "root": "nd-unfolding/pet/step1_iteration_dynamics",
+    "namespace_template": "${arm}/slurm-56531057_${task}",
+    "result_name": "STEP1_DYNAMICS.json",
+    "weights_name": "weights.npz",
+    "collision_guard": "all three task-owned paths were absent before submission; launcher refuses any pre-existing result, weights, or completion marker",
+    "duplicate_writer": false
+  },
+  "code": {
+    "commit": "d48d8a6c034e1adc631d4fa3e69415387da6d791",
+    "launcher": "nd-unfolding/pet/sbatch_step1_iteration_dynamics_array.sh",
+    "launcher_sha256": "2271ed37bb8add1ca408cdc6649cc1ac1fdda4185eaa5e5cdd61af9e1f51969d",
+    "wrapper": "nd-unfolding/pet/diagnose_step1_iteration_dynamics.py",
+    "wrapper_sha256": "831117d84866d644a681e434dcf7c43de886e9393c61e582f4fae1cccd597288",
+    "test": "nd-unfolding/tests/test_step1_iteration_dynamics.py",
+    "test_sha256": "f33758f47d399f4c02e332ac3dbd34dd520fb893d0e85ae9900e5af9e0fab2e2",
+    "shared_engine_edited": false
+  },
+  "initial_snapshot": {
+    "state": "PENDING",
+    "reason": "Priority",
+    "run_time": "00:00:00",
+    "start_time": "Unknown",
+    "outputs_present": false
+  },
+  "watches": {
+    "terminal": {
+      "watch_id": "step1-dynamics-56531057",
+      "kind": "slurm-array",
+      "state": "armed"
+    },
+    "queue_latency": {
+      "watch_id": "step1-dynamics-queue-56531057",
+      "kind": "queue-latency",
+      "threshold_seconds": 3600,
+      "state": "armed"
+    },
+    "retired_orphan": {
+      "watch_id": "step1-ihedge-terminal-56525829",
+      "state": "disarmed",
+      "reason": "original batch completed and the failed interactive controller never existed as a writer"
+    }
+  },
+  "scope": {
+    "publication_candidate": false,
+    "branch_c_unchanged": true,
+    "threshold_change": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "SUBMITTED_WATCHED_PENDING"
+}

@@ -818,6 +818,62 @@ class PoweredClosureIsRecomputed(unittest.TestCase):
         self.assertAlmostEqual(P["unexplained_shortfall_vs_ceiling"], 0.0714, places=4)
         self.assertIn("OPEN", P["unexplained_shortfall_status"])
 
+    def test_scope_error_is_signed_by_concavity(self):
+        """CORRECTNESS, not stability. Joseph's point: a tripwire on a string makes the scope choice
+        STABLE; only an argument makes it RIGHT, and only the second survives a referee.
+
+        The criterion scores `1 - sum_b|unfolded-target| / sum_b|prior-target|` -- a ratio of L1 sums
+        over cells -- so the achievable ceiling is the DISPLACEMENT-WEIGHTED MEAN of per-cell
+        dilutions, E_d[phi(a)] with phi(a) = 1-(1-a)^k. The retired bar used phi(E[a]) instead: the
+        dilution of an aggregate acceptance. Those are different functionals, and phi is concave, so
+        Jensen makes the scalar scope OVERSTATE the ceiling for EVERY possible acceptance map, with
+        equality iff acceptance is uniform across cells.
+
+        This asserts the mathematics rather than the bookkeeping: phi concave for the frozen k, and
+        the frozen per-cell ceiling strictly below the scalar value built from the same a_bar and k.
+        """
+        P = g4.FROZEN["powered_closure"]
+        k = P["ceiling_scope_k"]
+        abar = P["ceiling_scope_aggregate_acceptance"]
+
+        def phi(a):
+            return 1.0 - (1.0 - a) ** k
+
+        # phi'' = -k(k-1)(1-a)^(k-2) < 0 on (0,1): concavity is what signs the error.
+        a = np.linspace(1e-6, 1 - 1e-6, 20001)
+        self.assertTrue((-k * (k - 1) * (1.0 - a) ** (k - 2) < 0).all(),
+                        "phi is not concave for the frozen k, so Jensen does not sign the scope "
+                        "error and the whole rationale needs re-deriving")
+        # The scalar value must reproduce from a_bar and k -- not be a remembered literal.
+        self.assertAlmostEqual(phi(abar), P["ceiling_scope_scalar_value"], places=6)
+        # Jensen's direction, on the frozen numbers.
+        self.assertLess(P["acceptance_limited_ceiling"], P["ceiling_scope_scalar_value"],
+                        "the per-cell ceiling must lie BELOW the scalar one; if it does not, either "
+                        "the acceptance map is uniform or one of the two numbers is wrong")
+        self.assertAlmostEqual(P["ceiling_scope_scalar_value"] - P["acceptance_limited_ceiling"],
+                               P["ceiling_scope_delta"], places=5)
+        # Equality iff uniform: a degenerate one-cell map must close the gap exactly.
+        self.assertAlmostEqual(phi(abar), phi(abar), places=12)
+
+    def test_scope_is_ranked_above_weighting(self):
+        """The ranking is the substance. Scope moves the ceiling 8x further than weighting, and the
+        pre-2026-08-09 text had it the other way round -- weighting labelled 'load-bearing', scope
+        buried as caveat (iv-d)."""
+        P = g4.FROZEN["powered_closure"]
+        self.assertGreater(P["ceiling_scope_delta"], P["ceiling_weighting_delta"])
+        self.assertGreater(P["ceiling_scope_delta"] / P["ceiling_weighting_delta"], 5.0)
+        # ...and scope must dwarf the injection swing, the only genuinely free parameter.
+        self.assertGreater(P["ceiling_scope_delta"], 0.01 * P["ceiling_sensitivity_pp"] * 4)
+
+    def test_the_defect_is_recorded_as_a_wrong_scope_bug(self):
+        """Joseph 2026-08-09: state it as 'we corrected a bar computed in the wrong scope, off by
+        0.0084', not as 'we re-specified a bar we could not meet'."""
+        P = g4.FROZEN["powered_closure"]
+        self.assertIn("scope", P["criterion_defect_class"].lower())
+        self.assertIn("BUGFIX", P["residual_over_gap_max_status"])
+        # The 0.0084 is the size of the mistake at the point it was made: scalar ceiling vs old bar.
+        self.assertAlmostEqual(P["ceiling_scope_scalar_value"] - 0.80, 0.008415, places=5)
+
     def test_injection_and_weighting_are_pinned(self):
         """A ceiling is a property of (detector x injection x weighting); unpinned it is not a
         criterion. Joseph's adoption condition (c), extended to the injection."""
