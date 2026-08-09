@@ -402,8 +402,14 @@ json.dump(man, open(_man_path, "w"), indent=2)
 if blockers:
     print(f"[evidence] BLOCKED -- manifest written to {os.path.basename(_man_path)}, "
           f"NOT to the consumable name")
-json.dump({"endpoints": ep_ev}, open(f"{EVID}/p4_endpoint_evidence.json", "w"), indent=2)
-json.dump({"merged": maudit}, open(f"{EVID}/p4_merged_audit.json", "w"), indent=2)
+# The two sibling receipts follow the same rule as the manifest. The first version of this
+# redirect covered only p4_standard_manifest.json, so a BLOCKED run still published these two
+# under their consumable names -- an incomplete fix of my own, caught because a blocked run left
+# p4_endpoint_evidence.json modified in the cluster tree. Either all three are publishable or
+# none are.
+_sfx = "" if not blockers else ".FAILED"
+json.dump({"endpoints": ep_ev}, open(f"{EVID}/p4_endpoint_evidence{_sfx}.json", "w"), indent=2)
+json.dump({"merged": maudit}, open(f"{EVID}/p4_merged_audit{_sfx}.json", "w"), indent=2)
 
 # REPAIR-6: these five were computed, PRINTED as MATCH/DIFF, and never enforced -- a grep for
 # need(/require( on verifier_crosscheck returned zero. All five could read DIFF and this stage
