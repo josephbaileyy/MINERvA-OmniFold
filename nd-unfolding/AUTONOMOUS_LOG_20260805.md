@@ -2362,3 +2362,58 @@ evidence, but it is the kind a pointer usually never gets.
 since meets the bar (job finishing / verdict / blocking decision). Per the wrap-up clause — verify quietly
 and stop — I am not inventing work. The two open decisions remain Joseph's and neither blocks me.
 
+### 08:15Z — Both decisions implemented; two jobs launched and watched; one overstatement of mine caught
+
+Joseph closed CLM-012 (adopt at f=0.80, injection pinned) and Gate-4 (branch A), reordered the queue to
+put the wrong-signed step-1 increment first, and authorized the extraction as a self-declaring
+non-quotable diagnostic. All four landed. `c1976eb`.
+
+**Order of operations, deliberately.** Launched the two GPU jobs FIRST (`56525297` extraction,
+`56525829` trajectory), then did the desk work while they queued. That is not deprioritizing his
+stated top priority — the trajectory job *is* the top priority and it went out first; the CLM-012
+paperwork is what filled the wait.
+
+**The thing I got wrong and fixed before committing.** I wrote that the retired 0.80 bar was
+"unsatisfiable by any estimator, provably and without appealing to intent." Too strong. It holds under
+the per-cell Jensen-corrected ceiling (0.618228); CLM-012's own caveat (iv-d) records that the
+**scalar** scope gives 0.808415 — *above* 0.80 — under which the old bar was satisfiable and the whole
+rationale collapses. The conclusion survives because the per-cell reading is correct, but the claim is
+conditional and I had written it as unconditional. Two things came out of fixing it, both improvements:
+it answers Joseph's "bug fix or anchoring?" better than I could before (0.808415 is only 0.0084 above
+0.80, so there is a specific arithmetic someone plausibly ran, with an identifiable defect), and the
+conditionality now has a tripwire — `test_the_old_absolute_bar_sat_above_the_per_cell_ceiling` asserts
+both `ceiling < 0.80` and `ceiling_weighting == "per-event"`, so re-freezing a scalar value goes red
+instead of silently preserving a void rationale.
+
+**The framing worth keeping:** the retired bar is BEN-070/071 with the inequality reversed — a gate that
+could never PASS rather than never FIRE. Same root cause, a bar specified without reference to the scale
+of the thing it bounds; same invisibility until someone computes the achievable range. That gives the
+cross-lane pattern Joseph said he would act on an instance on each side.
+
+**Second thing I got wrong, and reverted.** Editing the hash-pinned validator broke bindings. I
+"fixed" it by teaching `verify_hash_bindings.py` to skip receipts marked `superseded_by` — then found
+the repo already had a mechanism (`test_superseded_receipts_hold_no_live_bindings` requires renaming
+`files` -> `files_at_issue`) and reverted mine. One tested mechanism beats a second one invented because
+I did not look first. The near-miss was real: my skip briefly appeared to disable the Gate-2 runtime
+binding — three receipts share that basename, two retired under `superseded-*/` — and my basename-only
+output was what made it look like self-supersession. Being alarmed by my own bad display is cheaper than
+the alternative, but the display was still a defect and is why I print distinguishing paths now.
+
+**The quarantine design point.** `publication_gate_rejects_this` is a claim; this repo has been bitten
+twice by trusting claimed booleans (BEN-043; `check_powered_closure`'s first version). So
+`require_quotable` never reads the flag — it recomputes the fold-forward deviation from the artifact
+(0.344577 vs 0.05) and the builder **launders a copy of its own manifest** (publication schema, marker
+stripped, path rewritten) and dies rather than write if the gate accepts it. Also power-tested that it
+CAN say yes, because a gate that always refuses is the very defect we just retired.
+
+**Engine reading before spending GPU**, which narrowed the step-1 question usefully: `omnifold.py:189-200`
+confirms the target is `R/mean(push) = 1.1616`; `reweight()` is `w = exp(logit)` with label 1 = data, so
+there is no inversion in the conversion and the sign does not come from there; `patience=10` inside
+`epochs=8` means `restore_best_weights` can never fire, consistent with BEN-043 rather than a second
+defect. What survives is the iteration-0 discriminator, which is what `56525829` measures.
+
+Bindings ALL INTACT (120 resolved, 15 shell pins vs floor 15). Suite 7/878/1 — the documented 7, and I
+confirmed the 20 `docs/orchestration` failures reproduce on a stashed tree rather than assuming it.
+Collection **970 -> 985** announced. Mailed one batched report. Also deleted a stray empty `MORE` file I
+had created earlier with a redirect typo.
+
