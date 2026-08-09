@@ -2601,3 +2601,108 @@ excludes `*.npz` deliberately. Both are reproducible (13 GPU-min and 1:32 CPU re
 sha256 is bound in the committed manifest, so a regenerated copy is verifiable. Force-adding past a
 deliberate repo rule for a reproducible non-quotable diagnostic is not justified.
 
+### 02:30Z — The interactive hedge for `56525829` is dead; my batch job is intact and I am staying out of it
+
+`56525829` is still `PENDING (Priority)`, submitted 07:18 UTC, ~2h queued, `StartTime=Unknown`, no
+dependency — ordinary fair-share contention on `shared_gpu_ss11`, nothing broken.
+
+**The other lane built an interactive-QOS hedge for it, and the hedge died before submitting anything.**
+Two watches appeared on my job that I did not arm (`step1-ihedge-terminal-56525829`,
+`step1-ihedge-start-deadline-56525829`), plus a queue watch. Reading them first was the right move: the
+terminal watch's own context says **"Do not create another allocation or writer"**, so had I independently
+launched an interactive run to accelerate Joseph's priority job — which was my first instinct — I would
+have raced their controller and put two GPUs on the same six reweights.
+
+Evidence it is dead, and the *categorical* part is what settled it:
+
+    *.salloc.log / *.tmux.log      0 bytes, created 08:57 / 09:00 UTC
+    sacct, preceding 90 min        NO job record of any kind -> the salloc never reached the scheduler
+    ps -p 1440332 on login23       no row (its OWN login node, not mine)
+    start-deadline watch           FIRED 09:10 UTC because start was never proved
+
+The 0-byte logs prove nothing on their own — BEN-028 is exactly that this filesystem block-buffers, so a
+healthy multi-hour run also shows zero output. Filed as **BEN-076**: BEN-028 inverted. **For anything whose
+job is to create a job, the liveness probe is "did a Slurm record appear", not "is the log growing"** — a
+submitter that has submitted nothing produces no evidence, and 0 bytes is the expected reading in both the
+healthy and the dead case, so that signal carries no information here.
+
+**A wrong diagnosis I formed and discarded before reporting it:** I hypothesised their concurrent
+`gbdt-hold` was occupying the `interactive` QOS and blocking the hedge. `sacctmgr` shows
+`MaxSubmitJobsPerUser=2` with 1 in use — the limit was never the cause. Checking it took one command; had I
+mailed the guess I would have sent Joseph a confident and wrong explanation of another lane's failure.
+
+**Action taken: none, deliberately.** Their watch owns the routing, their context forbids a second
+allocation, and the `RETAIN_BATCH` route is satisfied by my batch job simply remaining intact — which it
+is. I did not write their terminal file; writing into another lane's control state is precisely the
+cross-lane interference that causes damage. Recorded here because the log is how they and future sessions
+see it.
+
+No mail: nothing finished, no verdict, nothing blocked on Joseph. `56525829` remains the only outstanding
+item in my lane and its own watch is armed.
+
+### 03:25Z — `56525829` COMPLETE. VERDICT `CORRECT_AT_ITER0_DEGRADES_LATER`. Step 1 is not broken; ITERATING breaks it
+
+Joseph's top-priority question is answered, and the answer is the branch I thought less likely. `COMPLETED`
+00:07:55, exit `0:0`. Reproduction gate passed **bit-exactly** — `rel 0.000e+00` on all three committed
+decomposition numbers, so the trajectory is measured on the same footing as the receipt it extends.
+
+    it  push_prev    r1 mean  r1 required  ach/req   sign       push  push dev            tier
+     0   1.000000   1.233512     1.124080   1.0974     ok   1.092736   -0.0279      best-epoch
+     1   1.092736   0.915166     1.028684   0.8896  WRONG   0.967659   -0.1392      best-epoch
+     2   0.967659   0.648331     1.161650   0.5581  WRONG   0.736746   -0.3446  final(BEN-043)
+
+**At iteration 0 step 1 WORKS — it slightly OVERSHOOTS.** `ach/req = 1.0974`, correct sign. With
+`push == 1` there is no feedback yet, and the classifier recovers R and then some. So the wrong-signed
+increment is **not** a defect in step 1's class normalization or its training, which was the alternative
+this measurement was built to separate. The iteration story is the real one.
+
+**The degradation is monotone and it is the whole deficit.** `push dev` runs `-0.0279 -> -0.1392 ->
+-0.3446`. The estimator starts 2.8% low and ends 34.5% low: **iterating is what creates the fold-forward
+deficit.**
+
+**One hypothesis dies cleanly:** `r1_cap_saturated_frac = 0.0` at every iteration. The F3 logit cap is not
+clipping anything, so "the mean is low because weight mass is pinned at the cap floor" is refuted by
+measurement rather than argued away.
+
+**And the mechanism has a clear signature — a collapsing tail, not a shifting bulk:**
+
+    it   r1 mean   median      p95       p99   mass<1
+     0    1.2335   0.2377   4.6474   14.2586   0.8157
+     1    0.9152   0.1730   2.7926   11.7435   0.8726
+     2    0.6483   0.1293   1.4682    8.9414   0.9165
+
+The **median sits at 0.13-0.24 at every iteration**, far below 1, while the mean is 0.65-1.23. So the mean
+is a *tail* phenomenon: ~82-92% of the reco weight mass has ratio < 1, and the mean is held up entirely by
+a thin high-ratio tail. That tail is being destroyed monotonically — **p95 shrinks 3.17x** (4.6474 ->
+1.4682) and p99 by 1.59x — while the sub-1 mass grows. Each iteration trains on data reweighted by the
+previous push, so the extreme-ratio events are progressively down-weighted out of the training
+distribution and the classifier loses the capacity to represent them. A self-reinforcing contraction.
+
+**The consequence that matters for Gate-4, stated carefully.** `|push dev|` at iteration 0 is **0.0279**,
+inside FROZEN's `fold_forward_ratio_dev_max = 0.05`; iterations 1 and 2 fail it at 0.1392 and 0.3446. And
+iteration 0 *is* what a `niter=1` unfold produces — `Unfold()` loops `range(start, niter)`, so niter=1 runs
+exactly `RunStep1(0)`/`RunStep2(0)` and stops. **So the Gate-4 normalization gate would very likely PASS at
+niter=1 and fails only because the frozen policy iterates three times.**
+
+**What I am NOT concluding.** This is not a recommendation to set niter=1. `niter` is the regularization
+knob: fewer iterations means less unfolding and a result closer to the prior, and the fold-forward
+criterion measures *normalization*, not shape recovery. A niter=1 unfold could pass fold-forward while
+badly under-unfolding the spectrum, and that trade-off is **unmeasured**. Reporting the localization, not
+prescribing the fix.
+
+**A tension worth Joseph's attention, flagged as a tension and not a refutation.** The seed policy moved
+`niter 2 -> 3` *specifically to fix* this same fold-forward tolerance — 48 seeds showed 6/48 exceedances at
+niter=2 and 0/48 at niter=3. This trajectory says fold-forward gets monotonically **worse** with
+iterations. Those point opposite ways. They are different setups (B1 was a 240,000-event synthetic rate
+injection; this is the 2M-event nominal), so it is not a contradiction on its face — but it means one of
+the two is not measuring what it is assumed to measure, and that is worth resolving before niter is treated
+as settled.
+
+**Provenance caveat, quantified rather than waved at.** Iterations 0 and 1 read best-epoch checkpoints;
+only iter 2 has the BEN-043 `_final` weights. For the iteration-0 sign conclusion to flip, `r1 mean` would
+have to fall **8.9%** (1.2335 -> 1.1241); BEN-043 measured the best-vs-final gap at ~1.3%. The verdict
+survives its own caveat by roughly 7x.
+
+Receipt committed and copied into the CFS backup's `receipts/` (now 7), per the rule I added to BEN-073
+four hours ago about re-backing-up in the same turn.
+
