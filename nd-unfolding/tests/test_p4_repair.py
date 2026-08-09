@@ -965,5 +965,64 @@ class Repair4ReceiptSchema(unittest.TestCase):
             self.assertIn("RECEIPT-REJECT", r2.stdout + r2.stderr)
 
 
+class NonAdoptableMarker(unittest.TestCase):
+    """2026-08-09. The CANDIDATE is being produced WITHOUT a verifier PASS, deliberately, so it
+    carries a self-declaring rejection. A marker whose only test is truthiness is worth nothing
+    unless BOTH directions are demonstrated: that a marked manifest is refused, and that an
+    unmarked one is not refused on that ground (otherwise a gate that always fires reads the
+    same as a gate that works). Both are exercised against the real adopter CLI, not the
+    library, because the adopter is what a future adoption step will actually invoke."""
+
+    def _prov(self, marked):
+        env = {"P4_NON_ADOPTABLE": "1"} if marked else {}
+        prov = {"identities": {"active_only_eq_sum5_relerr": 0.0,
+                               "C_combined_eq_syst_stat_ml_relerr": 0.0,
+                               "full_total_residual_eq_stat_plus_ml_relerr": 0.0}}
+        return P.stamp_non_adoptable(prov, env=env)
+
+    def test_producer_stamps_only_under_the_env_var(self):
+        self.assertIs(self._prov(True)[P.NON_ADOPTABLE_KEY], True)
+        self.assertNotIn(P.NON_ADOPTABLE_KEY, self._prov(False))
+        # an unset/other value must not stamp -- a truthy-string bug here would mark every build
+        for v in ("", "0", "true", "yes"):
+            self.assertNotIn(P.NON_ADOPTABLE_KEY,
+                             P.stamp_non_adoptable({}, env={"P4_NON_ADOPTABLE": v}),
+                             f"value {v!r} should not stamp; only the exact string '1' does")
+
+    def test_marked_manifest_is_refused_and_unmarked_is_not(self):
+        import json, subprocess, tempfile
+        outs = {}
+        for marked in (True, False):
+            with tempfile.TemporaryDirectory() as d:
+                mf = Path(d) / "std_component_manifest.json"
+                mf.write_text(json.dumps(self._prov(marked)))
+                val = Path(d) / "val.json"
+                val.write_text(json.dumps({"result": "PASS"}))
+                cand = Path(d) / "cand.root"; cand.write_bytes(b"x")
+                r = subprocess.run([sys.executable, str(ND / "p4_adopt_standard.py"),
+                                    "--candidate", str(cand), "--component-manifest", str(mf),
+                                    "--validation", str(val), "--out", str(Path(d) / "o.root"),
+                                    "--i-understand-adoption"],
+                                   capture_output=True, text=True, cwd=str(ND))
+                outs[marked] = r.stdout + r.stderr
+        self.assertIn(P.NON_ADOPTABLE_KEY, outs[True],
+                      "the adopter did not cite the non-adoptable marker when refusing")
+        self.assertIn("not adoptable", outs[True])
+        # the unmarked one still fails (its inputs are fake) -- but it must NOT fail HERE, or
+        # the refusal is unconditional and proves nothing about the marker
+        self.assertNotIn("not adoptable", outs[False],
+                         "an UNMARKED manifest was refused as non-adoptable; the gate fires "
+                         "unconditionally and would refuse a real candidate too")
+
+    def test_removing_the_marker_from_a_manifest_makes_the_gate_pass(self):
+        """Self-guard: if someone deletes the stamp from the builder, this is what the adopter
+        would then see -- and it would sail through. Demonstrated, not asserted."""
+        prov = self._prov(True)
+        with self.assertRaises(P4GateError):
+            P.require_adoptable(prov)
+        prov.pop(P.NON_ADOPTABLE_KEY)
+        P.require_adoptable(prov)      # must not raise
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

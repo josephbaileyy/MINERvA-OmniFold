@@ -25,6 +25,9 @@ def main():
     prov = json.load(open(a.component_manifest))
     val = json.load(open(a.validation))
     P.require(val.get("result") == "PASS", "candidate validator did not PASS")
+    # Refuse a self-declared non-adoptable candidate before anything else. The whole point of
+    # the marker is that it cannot be missed by a reader who does not know how the file was made.
+    P.require_adoptable(prov)
     # identities: the expected vertical/unified inputs are present and hash-matched
     for key, path in (("support_family_sha256", prov["support_family"]),
                       ("stat_sha256", prov["stat_cov"].split(":")[0]),

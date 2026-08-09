@@ -94,6 +94,17 @@ if __name__ != "__main__":
 print("=" * 78)
 print("A. FIELDS WRITTEN INTO A PRODUCT AND NEVER COMPARED ANYWHERE")
 print("=" * 78)
+print("""
+  READING RULE (2026-08-09). This list is a list of SHAPES, not of defects; polarity decides.
+  A recorded boolean read only for truthiness is a defect when its truthy value means "this
+  was verified" -- the producer writes a literal, the consumer reads a constant, and the gate
+  is fail-OPEN. That was `identities.pure_addition`. The same shape is HARMLESS, and in fact
+  correct, when the truthy value means "refuse this" -- a literal that can only ever cause a
+  refusal is fail-CLOSED, and the failure mode to guard is the field going ABSENT, which a
+  comparison against it could not catch either. That is `publication_gate_rejects_this`; its
+  guard is the both-directions test in tests/test_p4_repair.py, not an operator on this line.
+  Fields ending in _reason / _requires are prose carried for a human reader and gate nothing.
+""")
 for field, files, pres in rows:
     print(f"\n  {field}")
     print(f"    written by : {', '.join(files)}")

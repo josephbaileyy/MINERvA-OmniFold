@@ -81,3 +81,25 @@ def pytest_collection_modifyitems(config, items):
 def pytest_report_header(config):
     return (f"standard-P4 suites: writable tmpdir = {TMPDIR_WRITABLE}"
             + ("" if TMPDIR_WRITABLE else "  -> tmpdir-dependent tests will SKIP, not error"))
+
+
+# ---------------------------------------------------------------------------
+# Import-time-unsafe modules in OTHER lanes (2026-08-09).
+#
+# tests/test_p3f_pet_fullevent_launcher.py does `TEXT = open(LAUNCHER).read()` at module scope
+# against a hardcoded /pscratch path, so off the cluster it raises FileNotFoundError during
+# COLLECTION and pytest aborts the entire tests/ directory -- every off-cluster run of every
+# suite, not just theirs.
+#
+# The obvious fix -- guard inside that module -- is the WRONG one, and I made it first and had to
+# undo it: that file's sha256 is frozen into
+# docs/orchestration/state/p3f-pet-gate3-launch-code-gate-20260720.json as `launcher_test`, so a
+# one-line guard silently voided a PET gate binding, and tests/test_hash_bindings.py went red on
+# a receipt this lane does not own. Editing another lane's file to fix MY collection problem was
+# the error; the repo rule is that a drifted binding is re-issued by re-running the owning gate,
+# never by editing the file or the hash. Skipping collection from here is equivalent for the
+# purpose and leaves the frozen file byte-identical.
+_PET_LAUNCHER = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/sbatch_p3f_pet_fullevent_evloop_array.sh"
+collect_ignore = []
+if not os.path.exists(_PET_LAUNCHER):
+    collect_ignore.append("test_p3f_pet_fullevent_launcher.py")

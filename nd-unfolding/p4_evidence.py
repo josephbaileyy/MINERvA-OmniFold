@@ -205,8 +205,11 @@ for b in P.BANDS:
             # reverse, means the merge or the event loop disagreed with itself
             need((_hm_i > 0) == (_nm_i > 0),
                  f"merged {tag} native-miss flag/count disagree: flag={_hm_i} count={_nm_i}")
-            # and the summed flag cannot exceed the number of merged playlists
-            need(_hm_i <= N_MERGED_PLAYLISTS,
+            # and the summed flag cannot exceed the number of merged playlists.
+            # Check the RECORDED field, not the local it was derived from: a check that reads a
+            # parallel local can pass while the value written into the receipt drifts away from
+            # it, which is the recorded-vs-checked split this lane keeps rediscovering.
+            need(rec["native_miss_playlists_with_misses"] <= N_MERGED_PLAYLISTS,
                  f"merged {tag} hasTruthOnlyMisses={_hm_i} exceeds the {N_MERGED_PLAYLISTS} "
                  f"merged playlists; the sum is impossible for a per-playlist 0/1 flag")
         need(all(cen[k] is not None for k in cen), f"merged {tag} census incomplete")

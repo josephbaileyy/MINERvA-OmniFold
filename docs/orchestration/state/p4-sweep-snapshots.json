@@ -88,6 +88,7 @@
       "active_only_eq_sum5_relerr",
       "active_only_sum_relerr",
       "active_traces",
+      "adoption_requires",
       "all_syst_bands",
       "axis_edges",
       "binary_mtime",
@@ -145,6 +146,7 @@
       "n_reported",
       "n_reported_bins_pooled",
       "n_retained_components",
+      "non_adoptable_reason",
       "per_bin",
       "pooled_mean",
       "pooled_sd",
@@ -172,6 +174,7 @@
     "gates": [
       "active_total_eq_sum5",
       "c_syst_recomputed_from_components",
+      "candidate_self_declares_non_adoptable",
       "check_component_sum()",
       "check_declared_migration_policy()",
       "check_full_total_identity()",
@@ -185,6 +188,7 @@
       "merged_audit_census_and_migration",
       "merged_inseparability",
       "prove_identity()",
+      "require_adoptable()",
       "require_candidate_path()",
       "require_complete_unfold_set()",
       "require_exact_bands()",
@@ -194,8 +198,8 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 87,
-    "n_gates": 23,
+    "n_fields": 89,
+    "n_gates": 25,
     "tool": "tools_p4_sweep_recorded_fields"
   }
 }

@@ -16,22 +16,6 @@ import tempfile
 
 REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 LAUNCHER = os.path.join(REPO, "nd-unfolding/pet/sbatch_p3f_pet_fullevent_evloop_array.sh")
-
-# GUARD ADDED BY THE GBDT LANE, 2026-08-09 -- guard only, no test logic touched.
-# `TEXT = open(LAUNCHER).read()` ran at IMPORT time against a hardcoded /pscratch path, so off
-# the cluster this raised FileNotFoundError during COLLECTION and pytest aborted the entire
-# tests/ directory -- not just this module. Every off-cluster run of any suite was degraded.
-# Prefer the repo-relative copy when the absolute one is absent, and skip cleanly if neither
-# exists, so a missing launcher costs this module and nothing else.
-_REL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                    "pet/sbatch_p3f_pet_fullevent_evloop_array.sh")
-_PATH = LAUNCHER if os.path.exists(LAUNCHER) else _REL
-if not os.path.exists(_PATH):
-    import pytest
-    pytest.skip(f"launcher not present at {LAUNCHER} or {_REL}; this module needs it at import "
-                f"time. Skipped so collection of the rest of tests/ still succeeds.",
-                allow_module_level=True)
-LAUNCHER = _PATH
 TEXT = open(LAUNCHER).read()
 
 P3F_SHA = "d782a47868863f2fc9a743f25f91549f0ab70a3ce7ff64f4db946b36a2df38ed"

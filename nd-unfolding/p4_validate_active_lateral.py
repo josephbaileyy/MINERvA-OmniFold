@@ -122,6 +122,12 @@ def main():
         for k in comp.get("candidate_keys", []):
             P.require(_th2(a.candidate, k) is not None,
                       f"component manifest claims key {k} which the candidate does not contain")
+        # A self-declared rejection must PROPAGATE into the validation receipt, or a downstream
+        # reader sees only "result: PASS" and the refusal is invisible where it matters.
+        if comp.get(P.NON_ADOPTABLE_KEY):
+            out[P.NON_ADOPTABLE_KEY] = True
+            out["non_adoptable_reason"] = comp.get("non_adoptable_reason")
+            out["gates"].append("candidate_self_declares_non_adoptable")
         out["component_manifest"] = comp_path
         out["component_manifest_sha256"] = P.sha256_file(comp_path)
         out["gates"].append("component_manifest_bound")

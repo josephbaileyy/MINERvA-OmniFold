@@ -10,7 +10,7 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **87 fields** written into a product with no same-line comparison, and **23 named
+drivers. **89 fields** written into a product with no same-line comparison, and **25 named
 gates**.
 
 > **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
@@ -25,8 +25,31 @@ gates**.
 > `python3 tests/test_p4_sweep_snapshots.py --update` and commit the diff, so a number change
 > lands in review where it can be seen.
 >
-> Current snapshot: **87 fields / 23 gates**; pipeline **23 candidates across 330 shell
+> Current snapshot: **89 fields / 25 gates**; pipeline **23 candidates across 330 shell
 > files, 0 live**.
+
+### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
+
+Adding the self-declaring rejection marker put three fields on list A
+(`publication_gate_rejects_this`, `non_adoptable_reason`, `adoption_requires`) and that is the
+right outcome — the sweep should flag them — but only one of the three is even a gate, and it is
+not a defect. The distinction the list cannot draw for you:
+
+- A recorded boolean read only for truthiness is a **defect** when its truthy value means *this
+  was verified*. The producer writes a literal, the consumer reads a constant, the gate is
+  **fail-open**. That was `identities.pure_addition`, and it was the strictest gate in the chain.
+- The same shape is **correct** when the truthy value means *refuse this*. A literal that can
+  only ever cause a refusal is **fail-closed**. That is `publication_gate_rejects_this`. The
+  failure mode worth guarding is not a wrong value but the key going **absent** — which no
+  comparison operator on that line would catch either. Its guard is therefore a both-directions
+  test (`tests/test_p4_repair.py::NonAdoptableMarker`), which demonstrates that a marked manifest
+  is refused *and* that an unmarked one is not refused on that ground.
+- Fields ending `_reason` / `_requires` are prose carried for a human reader and gate nothing.
+
+That test earned its place immediately: it found that `require_adoptable` sat *after* the
+input-identity loop in `p4_adopt_standard.py`, so a marked manifest missing any other key died on
+a `KeyError` and the refusal never surfaced. The check now runs before the other gates, which is
+what its comment had claimed all along.
 
 ## The sweep's own two failure modes, stated up front
 

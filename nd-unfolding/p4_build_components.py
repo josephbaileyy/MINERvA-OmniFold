@@ -197,6 +197,9 @@ def main():
     written_keys = ([f"hCov_retained5d_{b}" for b in retained]
                     + [P.candidate_band_key(b) for b in P.BANDS]
                     + [P.CANDIDATE_ACTIVE_TOTAL_KEY, P.CANDIDATE_SYST_KEY, P.CANDIDATE_TOTAL_KEY])
+    # Self-declaring rejection when built without a verifier PASS; see p4_lib for the pattern
+    # and why the consumer's truthiness test is the correct shape here.
+    P.stamp_non_adoptable(prov)
     prov["candidate"] = os.path.abspath(a.out)
     prov["candidate_sha256"] = P.sha256_file(a.out)
     prov["candidate_keys"] = written_keys

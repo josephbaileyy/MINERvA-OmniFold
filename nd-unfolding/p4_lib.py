@@ -280,6 +280,45 @@ _ADOPTED_TOKENS = ("uq_universe_5d_covariance_combined", "_uthrow", "_cvcentered
                    "products/5d/xsec", "products/4d/xsec")
 
 
+NON_ADOPTABLE_KEY = "publication_gate_rejects_this"
+NON_ADOPTABLE_ENV = "P4_NON_ADOPTABLE"
+NON_ADOPTABLE_REASON = (
+    "Built WITHOUT a standard-p4-verifier PASS, by explicit instruction, to learn whether "
+    "stages 4-6 have defects of their own before another provenance round. This is NOT a step "
+    "toward adoption and does not shorten the path to it: adoption still requires a PASS on the "
+    "committed patch plus the separate authorized adoption step. Any consumer that reads this "
+    "key must refuse the product.")
+NON_ADOPTABLE_REQUIRES = ["standard-p4-verifier PASS on the committed patch",
+                          "separately authorized adoption step (p4_adopt_standard.py)"]
+
+
+def stamp_non_adoptable(prov, env=None):
+    """SELF-DECLARING REJECTION (2026-08-09). A candidate built without a verifier PASS carries
+    its own refusal, the pattern fps_control_manifest.json already uses, so the artifact declares
+    its status instead of depending on a reader knowing how it was made -- which is exactly how
+    the 07-18 endpoints sat in a publication namespace for three weeks.
+
+    Producer and consumer are single-sourced here so the two cannot drift into disagreeing about
+    the key's name, and so both directions are testable without ROOT."""
+    env = os.environ if env is None else env
+    if env.get(NON_ADOPTABLE_ENV) == "1":
+        prov[NON_ADOPTABLE_KEY] = True
+        prov["non_adoptable_reason"] = NON_ADOPTABLE_REASON
+        prov["adoption_requires"] = list(NON_ADOPTABLE_REQUIRES)
+    return prov
+
+
+def require_adoptable(prov):
+    """Refuse a self-declared non-adoptable candidate. Truthiness is the right test here and
+    the recorded-fields sweep's flag on it is a shape match, not a defect: the truthy value
+    means REFUSE, so a literal True is fail-closed. The failure mode worth guarding is the key
+    going absent, which no comparison operator would catch either -- the guard is the
+    both-directions test in tests/test_p4_repair.py."""
+    require(not prov.get(NON_ADOPTABLE_KEY),
+            f"this candidate declares {NON_ADOPTABLE_KEY}=true -- it was built without a "
+            f"verifier PASS and is not adoptable. {prov.get('non_adoptable_reason', '')}")
+
+
 def require_candidate_path(path):
     """Positive allowlist + negative denylist: a candidate MUST live under the
     candidate subdir and MUST NOT match any adopted/protected token. Prevents both
