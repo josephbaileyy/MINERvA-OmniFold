@@ -185,7 +185,14 @@ not close the literal full-event PET gate below.
 >
 > **STATE 2026-08-08 — two changes to the list itself, per Joseph.**
 >
-> - **NEW OPEN ITEM (d): the 28.2% estimator shortfall is UNEXPLAINED and must not be absorbed by the D2
+> - **OPEN ITEM (d) — STILL OPEN AFTER THE 2026-08-09 ADOPTION, which is the point of it.**
+>   The D2 re-specification was ADOPTED on 2026-08-09 (`recovery >= f*ceiling`, f=0.80,
+>   ceiling=0.618228 per-event, injection-pinned) and Gate-4's D2 leg is consequently GREEN. That does
+>   **not** close this item, and the criterion code now says so in the same place it states the bar:
+>   `FROZEN["powered_closure"]["unexplained_shortfall_vs_ceiling"] = 0.0714` with status `OPEN`, plus
+>   `test_unexplained_shortfall_stays_visible`. Joseph's condition was that re-specifying the bar must
+>   not make the shortfall invisible; pinning it adjacent to the bar in the frozen contract is how.
+>   **The shortfall is UNEXPLAINED and must not be absorbed by the D2
 >   re-specification.** Of the `0.2531` gap between the `0.80` bar and the measured `0.546853`, `0.1818`
 >   (71.8%) is specification and **`0.0714` (28.2%) is the estimator's own deficiency** — it reaches
 >   **88.45%** of the acceptance-limited ceiling. **CORRECTED 2026-08-08 by independent re-derivation: that
