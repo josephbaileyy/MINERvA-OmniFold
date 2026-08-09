@@ -62,6 +62,9 @@ replacement is implied for 4D/FPS or dependent significances. See
   At the array's one-hour latency wake, all three tasks were still prestart-pending with absent outputs.
   Batch remains the sole writer: the closest full-input nominal took 6h00m44s, so no four-hour
   interactive replacement was safe or allocated. Terminal coverage remains armed.
+  The separate annealed-LR job's one-hour wake reached the same evidence-backed decision: `56531204`
+  remained prestart-clean with no output or alternative A100 allocation, so batch remains its sole
+  writer. Both the array and single-job terminal watches remain armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

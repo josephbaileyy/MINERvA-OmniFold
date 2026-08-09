@@ -4150,3 +4150,12 @@ detached controller, or tmux session existed. The closest full-input nominal (`5
 A100 arms. No replacement was therefore allocated or proven; no task was cancelled and batch remains
 the sole writer. Its terminal watch and the independent `56531204` watches remain armed. Receipt:
 `../docs/orchestration/state/step1-dynamics-queue-56531057-reconciliation.json`.
+
+The independent queue-latency event for annealed-LR job `56531204` was likewise read exactly once and
+validated after 3680s of verified prestart wait. The one exact-job snapshot found it PENDING on
+Priority at zero runtime with its collision-isolated namespace absent. No A100 allocation, detached
+controller, or tmux session existed. The same 6h00m44s full-input reference exceeds the four-hour
+interactive ceiling, so no collision-safe replacement was available: the job was not cancelled and
+batch remains its sole writer. The `56531204` terminal watch and separate array `56531057` terminal
+watch remain armed. Receipt:
+`../docs/orchestration/state/step1-annealed-lr-queue-56531204-reconciliation.json`.
