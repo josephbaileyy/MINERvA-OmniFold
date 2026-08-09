@@ -47,7 +47,9 @@ replacement is implied for 4D/FPS or dependent significances. See
   is Step-1 trajectory job 56525829. Its one-hour queue event found it wholly prestart-pending with no
   output, so a tested detached A100 hedge was selected. Batch ownership persists until the fresh
   allocation is proven; only then may the controller cancel the exact pending job and write in its
-  allocation-ID namespace.
+  allocation-ID namespace. The first `setsid` child did not persist beyond its tool shell; the changed
+  route is a proven-live named tmux session with controller-terminal and allocation-start-deadline
+  watches. No second writer has started.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

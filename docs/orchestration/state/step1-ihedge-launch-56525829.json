@@ -1,0 +1,77 @@
+{
+  "schema": "detached-interactive-request-receipt-v1",
+  "run_id": "DIAG-STEP1-TRAJ-QH2",
+  "recorded_at_utc": "2026-08-09T08:58:00Z",
+  "batch_job_id": "56525829",
+  "purpose": "Request a fresh A100 for the collision-safe Step-1 trajectory queue hedge without blocking the model turn",
+  "controller": {
+    "path": "nd-unfolding/pet/interactive_step1_trajectory_controller.sh",
+    "sha256": "d3601be6a7e5f73aebdbb23f920e96531710d531dcd762e097ae7f314184d160",
+    "commit": "1a66394",
+    "arguments": [
+      "56525829"
+    ]
+  },
+  "allocation_request": {
+    "account": "m3246_g",
+    "qos": "interactive",
+    "constraint": "gpu",
+    "nodes": 1,
+    "tasks": 1,
+    "gpus": 1,
+    "cpus_per_task": 32,
+    "time_limit": "02:00:00",
+    "job_name": "step1-ihedge-56525829",
+    "allocation_job_id": "unknown until Slurm grants the request",
+    "batch_remains_owner_until_controller_proves_allocation_and_cancellation": true
+  },
+  "first_detach_attempt": {
+    "mechanism": "setsid background child of the tool shell",
+    "reported_pid": 1440336,
+    "post_launch_process_present": false,
+    "named_slurm_request_present": false,
+    "log": "docs/orchestration/state/step1-traj-ihedge-56525829.salloc.log",
+    "log_bytes": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "outcome": "FAILED_TO_PERSIST",
+    "unchanged_detach_retry": false
+  },
+  "active_detach": {
+    "mechanism": "tmux",
+    "session": "step1-ihedge-56525829",
+    "pane_pid_at_proof": 1456374,
+    "pane_dead_at_proof": false,
+    "tmux_has_session_return_code": 0,
+    "log": "docs/orchestration/state/step1-traj-ihedge-56525829.tmux.log",
+    "status": "OS_DETACHED_REQUEST_ACTIVE",
+    "note": "tmux owns the salloc client beyond the Codex tool shell; no model wait or polling is required"
+  },
+  "watches": {
+    "controller_terminal": {
+      "watch_id": "step1-ihedge-terminal-56525829",
+      "kind": "file-sentinel",
+      "path": "docs/orchestration/state/step1-traj-ihedge-56525829.terminal.json",
+      "state": "armed"
+    },
+    "allocation_start_deadline": {
+      "watch_id": "step1-ihedge-start-deadline-56525829",
+      "kind": "deadline",
+      "at_utc": "2026-08-09T09:07:43Z",
+      "state": "armed",
+      "controller_disarms_on_allocation_start": true
+    },
+    "batch_terminal": {
+      "watch_id": "step1-traj-56525829",
+      "state": "armed until controller confirms batch cancellation"
+    }
+  },
+  "collision_policy": {
+    "batch_output": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+    "interactive_output": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-${INTERACTIVE_ALLOCATION_JOB_ID}.json",
+    "duplicate_writer": false,
+    "cancel_order": "allocation proven -> batch still PENDING and outputs absent -> exact scancel -> cancellation confirmed -> interactive srun"
+  },
+  "provider_dispatches": 0,
+  "reset_credits_consumed": 0,
+  "all_worker_uuids_preserved": true
+}

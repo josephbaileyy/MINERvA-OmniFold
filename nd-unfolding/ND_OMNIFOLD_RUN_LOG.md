@@ -4063,3 +4063,12 @@ only 56525829, requires terminal cancellation accounting, transfers watch owners
 runs the unchanged trajectory launcher in the allocation-ID namespace. Static safety tests and
 shell syntax pass. Event receipt:
 `../docs/orchestration/state/step1-queue-latency-56525829-reconciliation.json`.
+
+The first detached request used `setsid` directly from the tool shell. Its reported PID vanished,
+there was no named Slurm request, and its allocation log was empty; it did not persist and was not
+rerun unchanged. The replacement supervision mechanism is a named OS-detached tmux session
+`step1-ihedge-56525829`, proven live with pane PID 1456374. It owns the same committed salloc+
+controller command. A file-sentinel watch covers the controller's terminal JSON and a 10-minute
+deadline covers failure to acquire; the controller disarms that deadline as soon as allocation is
+proven. The original batch remains the sole writer until then. Launch receipt:
+`../docs/orchestration/state/step1-ihedge-launch-56525829.json`.
