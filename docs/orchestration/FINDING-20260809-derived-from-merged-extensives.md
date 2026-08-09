@@ -1,7 +1,7 @@
-# FINDING 2026-08-09 — Quantities DERIVED from merged extensives: J36 is not one site, it is eight
+# FINDING 2026-08-09 — Quantities DERIVED from merged extensives: J36 is not one site, it is nine
 
 **Headline.** J36 has been carried since 2026-08-01 as a scoping decision owed on one function in
-one file. It is one member of a class, and the class has **8 live members across two lanes**, all
+one file. It is one member of a class, and the class has **9 live members across three code bases** (8 Python + 1 C++), all
 computing the same thing the same wrong way: a global Data/MC POT ratio recovered by dividing one
 `hadd`-summed extensive by another. Nothing is fixed here — the instruction was to size the class
 first.
@@ -73,9 +73,40 @@ once from a vetted helper, so there was never a single place to fix it. That is 
 propagated, and it is the thing a repair has to address — a corrected `get_pot_scales` in one file
 leaves seven copies.
 
+### C++ — the unswept language, now swept (2026-08-09)
+
+`git ls-files` C++ corpus, targeted pass (`scan_cpp`): **exactly one file reads a merged extensive
+at all** — every other C++ occurrence is a `new TParameter(...)` *write* in `runEventLoop*.cpp`.
+
+| | |
+|---|---|
+| C++ read sites | **2** — `ExtractCrossSection.cpp:171,172` (`mcPOT`, `dataPOT`, both from `"POTUsed"`) |
+| C++ ratio lines | **2** — `:224` and `:225`, the identical expression `-dataPOT/mcPOT` |
+| **C++ defect sites** | **1** — `:225` `sum->Add(hist, -dataPOT/mcPOT)`, with `:224` printing the same value into a log line |
+
+So **the class is 9, not 8**: 8 Python + 1 C++.
+
+**Two things about that C++ site that bear on scoping, and cut in opposite directions:**
+
+- It is the *background subtraction* scale, applied per-histogram — arguably a more consequential
+  use than most of the eight, since it enters the subtracted MC directly.
+- It is in `MINERvA101/MINERvA-101-Cross-Section/`, the **reference/legacy extraction**, not the
+  OmniFold chain that produces the current results. Whether it is in the live path for anything
+  quoted is a question I have not answered and did not try to.
+
+**Method note, because it nearly went the wrong way.** The first C++ pass reported 7 reads and 2
+ratios. Five of the "reads" were multi-line `new TParameter<long>(` writes whose name string sits
+on a continuation line. Fixing that by looking back for `TParameter<` then over-corrected to 1 read
+and **0 ratios** — because `GetIngredient<TParameter<double>>` is the *read* idiom and matched the
+write test, so a real read was reclassified and the defect disappeared from the report. Only
+`new TParameter` marks a construction. **Turning a false positive into a false negative is the
+worse of the two errors**, and it would have reported "C++ is clean" for a class we were sizing.
+
 **Bound.** Taint is intraprocedural, so a helper returning a ratio and a caller consuming it count
-as one site, not two; and taint arriving via a dict argument is invisible. The 8 is a **floor**.
-`.C`/`.cpp` consumers are not swept at all.
+as one site, not two; and taint arriving via a dict argument is invisible. C++ is now swept but by
+identifier rather than AST, so a ratio split across lines or hidden behind a helper is not found.
+**9 remains a floor** — but a much tighter one than 8 was, because the language that was entirely
+unswept turns out to contain exactly one reading file.
 
 ## 3. What is NOT claimed
 

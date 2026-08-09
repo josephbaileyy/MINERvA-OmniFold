@@ -74,6 +74,7 @@ import argparse
 import ast
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -190,6 +191,73 @@ class Scan(ast.NodeVisitor):
     visit_AsyncFunctionDef = visit_FunctionDef
 
 
+CPP_EXTS = (".cpp", ".cxx", ".cc", ".C", ".h", ".hpp")
+
+
+def scan_cpp(root):
+    """C++ pass (2026-08-09, added because an unswept language is where a count hides).
+
+    Deliberately NOT an AST pass. Only ONE tracked C++ file reads a merged extensive at all
+    (`ExtractCrossSection.cpp` -- everything else WRITES them), so the population is small enough
+    to enumerate by identifier and verify by eye, and a clang-level tool would be more machinery
+    than the corpus justifies. Two stages: find every C++ read of a merged-extensive TParameter,
+    then find every `/` on a line mentioning two identifiers bound from those reads.
+
+    Bound, stated plainly: this finds ratios formed on ONE line from locally-named values. A ratio
+    split across lines, or hidden behind a helper, is not found. Like the Python pass it is a
+    floor."""
+    out = subprocess.run(["git", "ls-files"], cwd=root, capture_output=True, text=True).stdout
+    files = [f for f in out.splitlines() if f.endswith(CPP_EXTS)]
+    reads, ratios = [], []
+    for rel in files:
+        try:
+            raw = open(os.path.join(root, rel), encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        if not any(f in raw for f in MERGED_EXTENSIVE):
+            continue
+        local = set()
+        lines = raw.splitlines()
+        for i, line in enumerate(lines, 1):
+            code = line.split("//")[0]
+            if not code.strip():
+                continue
+            hit = [f for f in MERGED_EXTENSIVE if f'"{f}"' in code]
+            # A READ is a GetIngredient/Get of the name, not a construction. The construction is
+            # frequently SPLIT across lines --
+            #     auto pNMisses = new TParameter<long>(
+            #         "nTruthOnlyMisses", nTruthOnlyMisses);
+            # -- so testing the current line alone reported five writes as reads. Look back over
+            # the preceding continuation lines until a statement boundary.
+            if hit:
+                j, is_write = i - 2, False
+                while j >= 0:
+                    prev = lines[j].split("//")[0]
+                    # ONLY `new TParameter` marks a construction. An earlier version also keyed
+                    # on `TParameter<`, which matches `GetIngredient<TParameter<double>>` -- i.e.
+                    # the READ idiom -- and silently reclassified a real read as a write, taking
+                    # the count from 2 to 1 and the ratios from 2 to 0. Over-correcting a false
+                    # positive into a false negative is the worse of the two errors here.
+                    if "new TParameter" in prev:
+                        is_write = True
+                    if prev.rstrip().endswith(";") or not prev.strip():
+                        break
+                    j -= 1
+                if is_write or "new TParameter" in code:
+                    hit = []
+            if hit:
+                reads.append({"file": rel, "line": i, "fields": sorted(hit),
+                              "source": code.strip()[:130]})
+                for nm in re.findall(r"\b([A-Za-z_]\w*)\s*=", code):
+                    local.add(nm)
+            if "/" in code and local:
+                present = [n for n in local if re.search(rf"\b{re.escape(n)}\b", code)]
+                if len(present) >= 2 and re.search(r"\b\w+\s*/\s*\w+", code):
+                    ratios.append({"file": rel, "line": i, "locals": sorted(present),
+                                   "source": code.strip()[:130]})
+    return {"reads": reads, "ratios": ratios}
+
+
 def summary(root="."):
     hits = []
     for rel in tracked_py(root):
@@ -213,8 +281,10 @@ def summary(root="."):
     by_shape = {}
     for h in hits:
         by_shape[h["shape"]] = by_shape.get(h["shape"], 0) + 1
+    cpp = scan_cpp(root)
     return {"tool": "audit_derived_from_merged_extensives",
             "n_sites": len(hits), "by_shape": by_shape,
+            "cpp": cpp, "n_cpp_reads": len(cpp["reads"]), "n_cpp_ratios": len(cpp["ratios"]),
             "n_files": len({h["file"] for h in hits}),
             "sites": hits}
 
@@ -244,6 +314,16 @@ def main():
             print(f"\n  {h['file']}:{h['line']}  in {h['function']}()   [{h['op']}]")
             print(f"     fields : {', '.join(h['fields'])}")
             print(f"     source : {h['source']}")
+
+        print("\n" + "=" * 100)
+        print(f"C++ PASS -- {s['n_cpp_reads']} read site(s), {s['n_cpp_ratios']} ratio site(s)")
+        print("=" * 100)
+        for r in s["cpp"]["reads"]:
+            print(f"  READ  {r['file']}:{r['line']}  {', '.join(r['fields'])}")
+            print(f"        {r['source']}")
+        for r in s["cpp"]["ratios"]:
+            print(f"  RATIO {r['file']}:{r['line']}  locals: {', '.join(r['locals'])}")
+            print(f"        {r['source']}")
 
     if a.power:
         j36 = [h for h in s["sites"]

@@ -10,7 +10,7 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **93 fields** written into a product with no same-line comparison, and **25 named
+drivers. **99 fields** written into a product with no same-line comparison, and **25 named
 gates**.
 
 > **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
@@ -25,7 +25,7 @@ gates**.
 > `python3 tests/test_p4_sweep_snapshots.py --update` and commit the diff, so a number change
 > lands in review where it can be seen.
 >
-> Current snapshot: **93 fields / 25 gates**; pipeline **23 candidates across 330 shell
+> Current snapshot: **99 fields / 25 gates**; pipeline **23 candidates across 330 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
@@ -56,6 +56,15 @@ not a defect. The distinction the list cannot draw for you:
   branches are demonstrated against synthetic round-off and a synthetic coherent shift
   (`tests/test_p4_repair.py::IntegralLegIsADiscriminator`). Absent that test it would be exactly
   the pattern this inventory exists to catch.
+- **The same category again, 2026-08-09:** `crosscheck_marginal_vs_independent` returns
+  `median_abs_rel`, `p90_abs_rel`, `p99_abs_rel`, `max_abs_rel`, `frac_marginal_above`,
+  `signed_mean_rel`, `integral_ratio` and `n_over_*pct`, and checks **none** of them. That is the
+  specification: Joseph removed the pass/fail on this comparison on 2026-08-09 because it tested a
+  proposition the analysis does not assert. The fields are a reported distribution, not a gate, and
+  the function's docstring says so. Distinguishing this from a Pattern-A defect is exactly the
+  judgement this inventory is for: *a recorded-and-unchecked field is a defect when something was
+  supposed to check it.* Here nothing was, deliberately, and the removal is documented at the call
+  site in `p4_project_4d.py`.
 
 That test earned its place immediately: it found that `require_adoptable` sat *after* the
 input-identity loop in `p4_adopt_standard.py`, so a marked manifest missing any other key died on

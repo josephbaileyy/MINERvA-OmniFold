@@ -12,8 +12,10 @@ justified the exercise was whether stages 4-6 have defects of their own. Answer,
 Stage 6 had **never executed before** (repair-4 established that stages 4-6 were unreachable). This
 is first contact.
 
-**Nothing was changed to make it pass. No tolerance was touched.** The decision this raises is
-Joseph's, not mine.
+**Nothing was changed to make it pass. No tolerance was touched.** Joseph re-specified the stage on
+2026-08-09 (§6): the projection's own validity is GATED, the marginal-vs-independent comparison is
+REPORTED without a verdict. That is removing a gate on a proposition the analysis does not assert,
+not widening a tolerance — the measurement below is unchanged and is now published in full.
 
 ---
 
@@ -54,6 +56,76 @@ which are numerically irrelevant. The real result is the line under it: the marg
 independent 4D disagree at a **median of 4.4 % and a p90 of 21 %**, while their **integrals agree
 to 0.56 %**. That is the signature of a genuine shape difference between two estimators, not a
 units error or a plumbing bug — and it is nowhere near a 3 % per-bin gate.
+
+## 2b. The lateral hypothesis: tested and REFUTED, at two independent levels
+
+Joseph proposed that the gap is the adopted lateral replacement — the independent 4D still carrying
+the support-limited lateral while the marginal carries the selection-complete one built at stage 4 —
+which would make the disagreement expected and quantified rather than novel. It is not that, and it
+cannot be.
+
+**Level 1 — the failing comparison contains no systematic content at all.** Listing the keys of
+both operands:
+
+| file | keys |
+|---|---|
+| `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` | 13: `dataPOT`, `globalCompleteness`, `ndim`, and 10 central histograms |
+| `products/4d/xsec_4d_MEFHC_5iter_lgbm.root` | 12: the same, minus `hXSec_W` |
+
+**Keys naming a lateral band: NONE. Keys naming a universe or a covariance: NONE.** Both are pure
+CV cross sections, produced 2026-06-04 and 2026-06-06. Laterals are systematic universes that live
+in the covariance; the stage-6 check that failed is `M @ x5` vs `x4`, centrals on both sides. The
+lateral convention cannot move either operand, so it cannot be the cause. Note this also means the
+two proposed tests — restricting to non-lateral blocks, and substituting the support-limited
+lateral — are not defined on this quantity: there are no blocks in a central vector.
+
+**Level 2 — the disagreement reproduces with none of my code.** The 5D product carries
+`hXSecND_dropLast_flat`, a W-marginal computed by the 5D producer itself in June:
+
+| comparison | result |
+|---|---|
+| `M @ x5` vs the producer's own `hXSecND_dropLast_flat` | median **0.0**, p90 **0.0**, max **3.1e-16** |
+| producer's own `dropLast` vs independent 4D | median **0.0444**, p90 **0.2091** |
+
+The first line says the projection matrix is exactly right — it reproduces an independently
+computed marginal to machine epsilon. The second says the 4.4 % / 21 % gap is a property of the two
+*products*, reproducible without stage 6, without `build_projection_M`, and without anything this
+lane wrote. (It also confirms the 5 orphan bins: `dropLast` has 4825 nonzero entries against the
+4D's 4830, and 4830 − 4825 = 5.)
+
+## 2c. What it actually is
+
+Neither hypothesis on the table survives:
+
+- **not lateral** — no systematic content in either operand (§2b);
+- **not statistical** — `corr(log10 bin content, log10 |rel|) = +0.058`, and the median `|rel|` by
+  content quintile is flat: 0.037, 0.044, 0.044, 0.068, 0.041. The estimator-noise reading predicts
+  a clearly negative correlation and does not get one.
+
+What the data show instead is a **coherent shape redistribution localized in `(eavail, q3)`**, with
+the muon-kinematic axes nearly flat:
+
+| axis | signed mean relative difference across the axis |
+|---|---|
+| `pt` (14 bins) | −0.017 → −0.031 → −0.038 → −0.034 → −0.010 → +0.006 → −0.024 (shallow) |
+| `pz` (16 bins) | −0.027 → −0.030 → −0.031 → −0.029 → −0.022 → −0.023 → −0.020 → −0.012 (flat) |
+| **`eavail` (7 bins)** | **−0.091 → −0.069 → −0.002 → +0.043 → +0.013 → −0.004 → −0.010** |
+| **`q3` (7 bins)** | **+0.098 → +0.064 → −0.012 → −0.079 → −0.092 → −0.029 → +0.011** |
+
+Sign fraction 0.4676, signed mean −0.024, integral ratio 1.005578.
+
+**The reading I take from this, stated as an inference and not a measurement:** `(eavail, q3)` is
+the subspace most strongly correlated with the W axis the 5D unfold adds — W is kinematically
+reconstructed from them. A 5D unfold that resolves W and is then marginalized distributes
+probability differently in that plane than a direct 4D unfold does, and leaves the muon kinematics
+largely alone. That is coherent with the campaign's own quotable result that the data-minus-generator
+excess localizes at high `E_avail` and high `W`. **I have not proven this mechanism** — I have shown
+the disagreement is real, is not lateral, is not statistical, and is concentrated in `(eavail, q3)`.
+
+**This is the referee-facing statement, and it is a different one from what we expected.** Not "an
+expected consequence of an adopted replacement", and not "two estimators disagree by 4.4 %", but:
+*adding the W dimension changes the recovered `(eavail, q3)` shape by a median of 4.4 % while
+preserving the integral to 0.56 %, and the marginal is the adopted result.*
 
 ## 3. Why this is a specification question, not a bug to fix
 
@@ -114,3 +186,28 @@ The candidate is **not adoptable and not quotable**. It was built without a `sta
 PASS, by explicit instruction, and `p4_adopt_standard.py` refuses it outright. Producing it did
 not shorten the path to adoption; it answered a question about stages 4-6, and the answer is that
 two of the three are clean and the third cannot pass as specified.
+
+## 6. The re-specification, as landed 2026-08-09
+
+`check_projection_nonmutation` is replaced by two functions with disjoint jobs:
+
+- **`check_projection_validity(C_high, M)` — GATE.** Symmetry, PSD, and `M C M^T` against a direct
+  block-sum recomputation at `1e-9`. All recomputation identities; nothing compares against a
+  separately-produced product. The block-sum leg is not a restatement of the PSD leg: `project()`
+  is one matrix expression and a bug in it yields a matrix that is still symmetric and still PSD,
+  so an independent route is what makes it a check.
+- **`crosscheck_marginal_vs_independent(M, x_high, x_indep)` — REPORT, no pass/fail.** Returns
+  median, p90, p99, max, sign fraction, signed mean, integral ratio and counts over 3/10/20 %, and
+  is written so it cannot raise. Tested on a comparison the retired 3 % gate would have rejected.
+
+`CENTRAL_REL` is **deleted, not raised.** There is deliberately no tolerance constant left to
+re-tune, because the correct value is *none*, not *larger*.
+
+The cross-check is returned as a **distribution rather than a max**, which is BEN-080 applied to the
+replacement rather than only recorded about the original: a test asserts that one degenerate bin
+among 100 perfect ones yields `max > 1e5` and `median = 0`, so the max can never again be the only
+number a reader sees.
+
+`build_projection_M` now validates coverage in **both** directions and fails at construction, with
+the orphan indices in the message, rather than letting all-zero rows surface 4830 bins later as a
+`max rel` of 1.0.
