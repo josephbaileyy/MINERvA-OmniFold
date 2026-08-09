@@ -4197,3 +4197,77 @@ Derivation and the pre-specified breach response are at `p4_lib.REPRO_RTOL_INTEG
 **What this does NOT authorize.** Stages 4-6 remain gated on a `standard-p4-verifier` PASS. The
 candidate built today was produced by stepping around that gate under explicit instruction and
 carries `publication_gate_rejects_this: true`; it is not a step toward adoption.
+
+## 2026-08-09 — TEST COUNTS BEFORE 2026-08-09 ARE OVERSTATED FOR BOTH LANES. Read this before comparing any two.
+
+`tests/test_p3f_pet_fullevent_launcher.py` executed `TEXT = open(LAUNCHER).read()` at MODULE
+scope against a hardcoded `/pscratch` path. Off the cluster that raises during **collection**, and
+pytest then aborts the **entire `nd-unfolding/tests/` directory** — not just that module. Fixed
+2026-08-09 by excluding the module at collection level from `tests/conftest.py`.
+
+**The fix did not only restore hygiene. It UNMASKED 7 real, pre-existing failures**, all
+environment-dependent PET-lane tests (`test_fullevent_gate2.py` ×6 — `/pscratch` paths and
+`ImportError: cannot import name 'DataLoader' from 'omnifold.dataloader'`; `test_gate2_target_runtime.py`
+×1 — canonical NumPy DataLoader source missing). Those failures did not appear on 08-09. They had
+been invisible for as long as the collection abort existed, because a directory that will not
+collect reports nothing at all.
+
+**Consequence for the record, and the reason this is its own entry:**
+
+- Any off-cluster test count taken **before** 2026-08-09 counted only the modules that happened to
+  collect before the abort, and is therefore **an undercount of the total and an overcount of the
+  pass rate.** The post-fix numbers are 932 passing / 7 failing / 1 skipped.
+- **Do not read the 7 as a regression.** Comparing a pre-fix count to a post-fix count will show
+  failures appearing out of nowhere and tests appearing out of nowhere, and neither happened.
+- This affects **both lanes**, not only the one that fixed it: the aborted collection took the
+  GBDT/P4 suites down with the PET ones, and vice versa. A green report from either lane before
+  this date is scoped to whatever collected.
+- The general form: **a collection-time failure is not a test failure, it is a measurement
+  outage.** A suite that cannot collect does not report red — it reports nothing, and nothing
+  reads like fine. Judge suite health by collected count as well as pass count.
+
+Cross-referenced from BEN-077, which covers the separate error made while fixing this (the first
+attempt edited the PET module directly and drifted a sha256 frozen into a gate-3 receipt).
+
+## 2026-08-09 — CANDIDATE built without a verifier PASS (deliberately). Stages 4-5 clean; stage 6 cannot pass.
+
+Built under allocation `56532439` at code_rev `aa220b4` with `P4_NON_ADOPTABLE=1` and **no**
+`P4_VERIFIER_PASS` — stages 4-6 invoked directly rather than through `run_p4_standard.sh`, by
+explicit instruction, to find out whether those stages have defects of their own before another
+provenance round. **This did not shorten the path to adoption and must not be read as progress
+toward it.**
+
+**Products** in `active_universe_5d/standard/candidate/` (scratch, purgeable):
+
+| file | |
+|---|---|
+| `std_final5_candidate.root` | 42.3 GB; 45 bands, 40 retained; sqrt_tr_syst 4.3513e-38, sqrt_tr_full 4.3576e-38 |
+| `std_component_manifest.json` | carries `publication_gate_rejects_this: true` + `adoption_requires` |
+| `p4_standard_validation.json` | `RESULT PASS`, 11 gates, incl. `candidate_self_declares_non_adoptable` |
+| `std_proj4d_candidate.root` | **not produced — stage 6 aborted** |
+
+**Stage 4 clean.** Measured identities all at or below `4.6e-14` against a `1e-9` rtol.
+
+**Stage 5 PASS**, and the self-declared rejection propagated into the receipt as a named gate, so
+a downstream reader sees the refusal rather than only `result: PASS`.
+
+**Stage 6 FAIL-CLOSED, on its first execution ever.** `projection mutates central (max rel
+1.00e+00)`. That message is a mask: the `1.00` comes from 5 of 4830 4D bins that receive nothing
+from the 5D support and carry **0.0000 %** of the 4D total. The real measurement, excluding them:
+
+| | |
+|---|---|
+| median relative difference, marginal vs independent 4D | **4.43 %** |
+| p90 / max | **20.8 % / 72.8 %** |
+| bins over the 3 % tolerance | **3009 of 4825 (62 %)** |
+| integral agreement | **1.005578** (0.56 %) |
+
+Integrals agreeing to 0.56 % while bins disagree at a median of 4.4 % is a genuine shape
+difference between two estimators, not a units or plumbing error.
+
+**Escalated, not resolved.** The gate requires the 5D→4D marginal to reproduce the INDEPENDENT 4D
+unfold per bin — which is the convention the campaign explicitly did **not** adopt on 2026-08-07
+(4D *is* the marginal; the independent 4D is a cross-check). The gate predates that decision and
+nothing forced the contradiction into the open while stages 4-6 were unreachable. **No tolerance
+was touched and none will be**; a 3 % gate failing at a median of 4.4 % is not repaired by widening
+it. Detail: `docs/orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md` (BEN-080).

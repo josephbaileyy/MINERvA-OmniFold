@@ -119,6 +119,15 @@ REPRO_RTOL_INTEGRAL = 1e-11      # on the integrated cross section, relative
 #                                                            round-off with random signs
 #   total range the leg can ever resolve      103.4x
 #
+# READ 103.4x CORRECTLY: it is the leg's DYNAMIC RANGE -- a property of the instrument, derived
+# from one endpoint's worst per-bin deviation and sqrt(N). It is NOT a spread, and it is not the
+# observed variation across endpoints, which is 2589x (rel_integral 1.110e-15 to 2.874e-12 over
+# the ten). The two numbers are the same order of magnitude apart from each other as they are
+# from nothing in particular, and an earlier draft of this reasoning did quote a "~110x span" as
+# though it were an observed spread -- it was three maxima taken from three different
+# comparisons, which is not a distribution at all. If you find yourself citing a range here, say
+# which of the two you mean.
+#
 # The observation sits INSIDE that range, not below it: rel_integral 2.874e-12 is 16.2x above the
 # incoherent floor and only 6.37x below the coherent ceiling. Equivalently the bins behave as
 # N_eff = (1.831e-11 / 2.874e-12)^2 = 40.6 independent groups, not 10694 -- the same physical

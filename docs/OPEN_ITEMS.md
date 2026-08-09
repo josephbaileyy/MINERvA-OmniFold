@@ -188,6 +188,19 @@ not close the literal full-event PET gate below.
     Batch it with the next event-loop change rather than running production for a metadata label.
   - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
     writer is what is misnamed.
+- **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 8 (2026-08-09).**
+  The question "should we fix the global Data/MC POT scale in `unfold_2d_omnifold_unbinned.py`?"
+  was the wrong unit. The same computation — one `hadd`-summed extensive divided by another —
+  occurs at **8 live sites**, three of them production unfolders and two in the ND lane, which did
+  not know it was affected. Full per-site table and semantics:
+  `docs/orchestration/FINDING-20260809-derived-from-merged-extensives.md`; regenerate with
+  `audit_derived_from_merged_extensives.py --power`.
+  - **Deliberately NOT repaired.** The instruction was to size the class first, then decide scope.
+  - **What the count changes about the repair:** the ratio is recomputed from scratch in every
+    consumer, so there is no single place to fix and a corrected `get_pot_scales` in one file
+    leaves seven copies. Any repair has to be a single vetted producer that the other seven call.
+  - **The 8 is a floor.** Taint is intraprocedural, and C++ consumers are unswept.
+  - Total normalisation is still not biased, so no published number is withdrawn on this account.
 - **HANDED OVER to the FPS lane (Agent C) — BEN-070's second site,
   `p4_validate_active_lateral_fps.py:70`.** `require(np.all(d >= -1e-30), "negative diagonal")`
   sits in `mat_gates` beside a relative symmetry check (L66) and a relative PSD check (L68), on a
