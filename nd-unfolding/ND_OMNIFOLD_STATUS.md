@@ -73,7 +73,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   The changed launchers were committed at `783e674`; only then were pending old task 2 and old LR job
   cancelled. Replacement array `56534116` and LR job `56534117` are collision-isolated, initially
   PENDING Priority, and covered by terminal plus one-hour queue watches. Joseph's no-verdict/fix mail
-  was accepted. Branch C and every scientific threshold remain unchanged.
+  was accepted. At the changed LR job's one-hour wake, `56534117` remained prestart-pending with no
+  output or interactive A100 allocation. The 6h00m44s full-input reference exceeds the four-hour
+  interactive ceiling, so batch remains the sole writer; its terminal watch and corrected-array
+  terminal coverage remain armed. Branch C and every scientific threshold remain unchanged.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

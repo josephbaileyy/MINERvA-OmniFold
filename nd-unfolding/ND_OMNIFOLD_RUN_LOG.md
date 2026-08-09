@@ -4291,3 +4291,12 @@ armed for both experiments. Joseph's mail explicitly reports no scientific verdi
 repair; local MTA rc=0. Receipts:
 `../docs/orchestration/state/step1-dynamics-r2-submit-56534116.json` and
 `../docs/orchestration/state/step1-annealed-lr-r2-submit-56534117.json`.
+
+The changed annealed-LR job `56534117` then crossed its one-hour prestart threshold. The wake event
+was read once and matched the armed watch, job, and verified-prestart payload. A single scheduler and
+ownership snapshot found the job still `PENDING (Priority)` at zero runtime, with its isolated
+`slurm-56534117` namespace absent and no interactive A100 allocation. The measured full-input
+reference `56445883` required 6h00m44s, longer than the four-hour interactive ceiling. No safe
+replacement was allocated, so the batch job was retained as sole writer without cancellation or a
+duplicate. Its terminal watch and corrected array `56534116` terminal watch remain armed. Receipt:
+`../docs/orchestration/state/step1-annealed-lr-r2-queue-56534117-reconciliation.json`.
