@@ -188,6 +188,26 @@ not close the literal full-event PET gate below.
     Batch it with the next event-loop change rather than running production for a metadata label.
   - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
     writer is what is misnamed.
+- **HANDED OVER to the FPS lane (Agent C) — BEN-070's second site,
+  `p4_validate_active_lateral_fps.py:70`.** `require(np.all(d >= -1e-30), "negative diagonal")`
+  sits in `mat_gates` beside a relative symmetry check (L66) and a relative PSD check (L68), on a
+  covariance whose diagonal median is `3.867e-86`. Same defect as the `p4_lib.py` twin, which the
+  GBDT lane fixed in its own file.
+  - **LATENT, not reachable.** L68's effective PSD threshold is ~1e-89 against L70's 1e-30, so PSD
+    subsumes the diagonal check by ~59 orders and no FPS adoption is compromised. This is a
+    correctness-of-form item, not a live risk — which is why it was handed over rather than
+    reached across for.
+  - **The named fix:** make L70 relative to `abs(ev[-1])` exactly as L68 already is (the
+    eigenvalues are computed on L65 and are in scope), and land it **with a mutation test at the
+    real ~1e-86 scale** — a test at O(1) would pass against the broken form and prove nothing,
+    which is the whole content of BEN-071's false-positive refinement.
+  - **Why the GBDT lane is not doing it:** it is a logic change in another lane's file. That
+    boundary was tested the hard way the same week — a five-line *guard* in a PET-lane test file
+    silently voided a gate-3 sha256 binding (BEN-077). This file is not hash-pinned (checked
+    2026-08-09), so that specific hazard does not apply here; the handover stands on ownership of
+    the physics, not on the hash.
+  - **This entry exists because the handover was previously recorded only in a commit message**,
+    which is BEN-073's failure mode: a decision nobody will find when they need it.
 - The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
   unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
   sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
