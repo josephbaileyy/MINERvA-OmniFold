@@ -948,7 +948,7 @@ def build_projection_M(edges, drop_axis, mask_high, mask_low):
         row = low_pos.get(glow)
         require(row is not None, f"high reported bin {g} maps to non-reported low bin {glow}")
         M[row, col] = wdrop[k]
-    # BOTH DIRECTIONS (2026-08-09, BEN-080). The loop above validates coverage one way only --
+    # BOTH DIRECTIONS (2026-08-09, BEN-064). The loop above validates coverage one way only --
     # every reported HIGH bin lands in a reported LOW bin -- and says nothing about reported LOW
     # bins that no HIGH bin reaches. Those rows of M are all-zero, so they survive to the central
     # check as an exact 0 against a nonzero frozen value, i.e. `rel = 1.0` exactly.
@@ -1025,7 +1025,7 @@ def crosscheck_marginal_vs_independent(M, x_high, x_low_independent):
     the adopted convention the marginal is the deliverable and this comparison characterises the
     independent unfold; it does not constrain the marginal. Returns the full distribution rather
     than a max, because on the real products the max is owned by a handful of near-empty bins and
-    is actively misleading about the body of the comparison (BEN-080)."""
+    is actively misleading about the body of the comparison (BEN-064)."""
     proj = M @ np.asarray(x_high, dtype=float)
     xind = np.asarray(x_low_independent, dtype=float)
     require(proj.shape == xind.shape,

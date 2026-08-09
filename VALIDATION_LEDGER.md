@@ -1008,3 +1008,36 @@ These are diagnostic mechanism results, not a cross section: Branch C remains an
 quotable. Receipts:
 `docs/orchestration/state/step1-dynamics-r2-complete-56534116.json` and
 `docs/orchestration/state/step1-annealed-lr-r2-complete-56534117.json`.
+
+## 2026-08-09 J36 global-POT-scale mixture error — SHAPE effect BOUNDED, VERIFIED-NUMERIC
+
+**Claim.** The J36 defect (one global `sum(D_p)/sum(M_p)` POT scale in place of per-playlist
+`D_p/M_p`) changes the 2D analysis' reco **shape** by **≤ 0.15 %**, and by **≤ 0.04 %** in the
+low-pT peak ridge where the paper-comparison tension is localised.
+
+**Measured** from the 12 per-playlist event-loop outputs, on the analysis' own 14 pT / 16 p∥ edges,
+comparing `R_glob * Σ_p MC_p` against `Σ_p R_p MC_p`, shape taken after renormalising to unit
+yield-weighted mean:
+
+| | pT | p∥ |
+|---|---|---|
+| normalisation shift | +0.119 % | +0.118 % |
+| **shape max abs** | **0.073 %** | **0.143 %** |
+| shape rms | 0.035 % | 0.087 % |
+| shape peak-to-peak | 0.105 % | 0.281 % |
+
+pT bins 2 / 7 / 10 (16 / 11 / 12 % of the χ²): **+0.010 % / +0.017 % / −0.033 %**.
+Low-pT ridge (pT ≤ 0.4 GeV/c): max **0.032 %**.
+
+The per-playlist ratios span 0.1707–0.2371, `max/min − 1 = 38.90 %`, reproducing J36's spread
+exactly from the files — the error is large in the weights and small in the shape, because the
+twelve playlists are nearly shape-identical in reco pT and a large reweighting of shape-similar
+components is almost pure normalisation.
+
+**Consequence.** The `app_statmethods.tex` statement that tight bin-to-bin correlation in the
+flux/Muon_Energy region leaves little freedom to absorb a coherent ~1–2 % shape difference
+**SURVIVES**: the mixture error there is 14–30× smaller. The sentence takes a caveat, not a rebuild.
+
+**Scope.** Pre-unfolding bound on the MC prediction; MC signal-reco sample (background is ~2 % of
+entries); pT and p∥ only — it does not bound 5D/ND quantities. **Status: VERIFIED-NUMERIC.** The
+defect is not thereby correct; it is bounded.

@@ -114,18 +114,150 @@ the muon-kinematic axes nearly flat:
 
 Sign fraction 0.4676, signed mean −0.024, integral ratio 1.005578.
 
-**The reading I take from this, stated as an inference and not a measurement:** `(eavail, q3)` is
-the subspace most strongly correlated with the W axis the 5D unfold adds — W is kinematically
-reconstructed from them. A 5D unfold that resolves W and is then marginalized distributes
-probability differently in that plane than a direct 4D unfold does, and leaves the muon kinematics
-largely alone. That is coherent with the campaign's own quotable result that the data-minus-generator
-excess localizes at high `E_avail` and high `W`. **I have not proven this mechanism** — I have shown
-the disagreement is real, is not lateral, is not statistical, and is concentrated in `(eavail, q3)`.
+## 2d. The W-mixing mechanism: tested and REFUTED — the correlation is REVERSED, not absent
 
-**This is the referee-facing statement, and it is a different one from what we expected.** Not "an
-expected consequence of an adopted replacement", and not "two estimators disagree by 4.4 %", but:
-*adding the W dimension changes the recovered `(eavail, q3)` shape by a median of 4.4 % while
-preserving the integral to 0.56 %, and the marginal is the adopted result.*
+My §2c inference was that `(eavail, q3)` is the subspace most correlated with the W axis the 5D
+adds. Joseph sharpened it into a causal mechanism worth testing: a 4D unfold marginalizes over W
+*at the unfolding step*, so its response matrix mixes W-populations with different migration while
+the 5D resolves them — on which reading the 4.4 % is the 4D's integration bias and the marginal is
+the *better* object, not merely the adopted one.
+
+**It is not that.** Two predictions, both measured on the 5D product, both failed.
+
+**P1 — |rel| should rise with a cell's W-width. It falls.** W-width measured on the marginal's own
+weighting (`p_k ∝ w_k · x5[j,k]`), as both the occupancy `n_W` and the entropy `H`:
+
+| Spearman | value |
+|---|---|
+| `(H, |rel|)` | **−0.223** |
+| `(n_W, |rel|)` | **−0.198** |
+| Pearson `(H, |rel|)` | −0.270 |
+
+and monotone the wrong way across the whole range:
+
+| `n_W` (5D cells feeding the 4D bin) | cells | median \|rel\| |
+|---|---|---|
+| 1 | 1309 | **0.0572** |
+| 2 | 2036 | 0.0519 |
+| 3 | 1027 | 0.0363 |
+| 4 | 205 | 0.0215 |
+| 5 | 76 | **0.0190** |
+| 6 | 172 | 0.0264 |
+
+By H quintile: 0.0684 → 0.0487 → 0.0458 → 0.0505 → **0.0278**. **Cells with the MOST W-mixing agree
+BEST.** The mechanism predicts the opposite, and by a factor of three across the range.
+
+**P2 — W-width should vary on (eavail, q3) and stay flat on (pt, pz). It does the reverse.** Range
+of median-H across each axis's bins:
+
+| axis | range of median H |
+|---|---|
+| **`pt`** | **1.532** |
+| `q3` | 0.806 |
+| `eavail` | 0.236 |
+| `pz` | 0.044 |
+
+The axis with by far the largest W-width variation is **`pt`** — the axis on which `|rel|` is
+*flattest*. `eavail`, where the signed mean swings −9.1 % → +4.3 %, has the second-*smallest*
+W-width variation. P2 is not merely unsupported; it is anti-correlated with the observation it was
+meant to explain.
+
+**Why the mechanism had little room to operate: W is largely redundant with (eavail, q3).** Over
+the whole pt–pz plane, the number of W bins reachable per `(eavail, q3)` cell is a kinematic
+triangle — median **3 of 6**, with the upper-left of the plane identically zero:
+
+```
+             q3 ->
+eavail 0 :  2 2 3 3 3 4 6
+eavail 1 :  2 2 3 3 3 4 6
+eavail 2 :  2 2 3 3 3 4 6
+eavail 3 :  0 1 2 3 3 4 6
+eavail 4 :  0 0 0 1 3 4 6
+eavail 5 :  0 0 0 0 0 3 6
+eavail 6 :  0 0 0 0 0 0 6
+```
+
+and **69.3 % of 4D cells (3345 / 4825) span ≤ 2 W bins**. That is the expected consequence of
+`W² = M² + 2M·E_avail − Q²`: given `(eavail, q3)`, W is nearly determined. So there is not much
+W-population mixing available for a 4D unfold to get wrong, which is consistent with P1 failing —
+though it does not explain the *sign*.
+
+**A fourth hypothesis, also refuted.** If narrow-W cells are phase-space-boundary cells, the
+gradient might be an edge effect. It is not: 3624 / 4825 cells (75.1 %) have an unreported 4D
+neighbour, and their median `|rel|` is **0.0411** against **0.0543** for interior cells — edge cells
+agree *better*, and median `n_W` is 2.0 for both.
+
+## 2e. Where that leaves the explanation: four mechanisms excluded, none established
+
+| hypothesis | verdict | evidence |
+|---|---|---|
+| lateral replacement | **refuted** | no systematic content in either operand (§2b) |
+| statistical, keyed to bin content | **refuted** | `corr(log content, log \|rel\|) = +0.058`; flat quintiles |
+| 4D mixes W-populations | **refuted, reversed** | Spearman −0.22; monotone the wrong way; P2 anti-correlated |
+| phase-space edge effect | **refuted** | edge 0.0411 vs interior 0.0543 |
+
+What survives as *description*, not mechanism:
+
+1. a **coherent** shape redistribution in `(eavail, q3)` (signed means −9.1 % → +4.3 % and
+   +9.8 % → −9.2 %), with `pt`/`pz` flat at −2 to −3 %; and
+2. a component that **dilutes with the number of 5D cells feeding a 4D bin** — the `n_W` gradient
+   above, roughly consistent with averaging (a 4D bin fed by one 5D cell inherits that cell's full
+   deviation; one fed by four averages them), though not a clean `1/√n`.
+
+Averaging cannot produce (1) — a coherent axis-dependent swing is not what fluctuation-dilution
+looks like — so this is most likely a superposition of two effects. **I am not asserting that.**
+Four mechanisms have been excluded and none established.
+
+**But the two observations together are a CONSTRAINT, which is more than "unexplained".** A
+deviation that is coherent in `(eavail, q3)` yet *dilutes* with the number of contributing W cells
+is a deviation **whose sign varies across W within a single 4D cell** — summing over W cancels it.
+That is a property the difference must have, derived from the data and independent of any cause:
+
+- it rules out any mechanism acting uniformly across W within a cell, since such a deviation would
+  survive the sum undiluted and show no `n_W` gradient;
+- it is consistent with the coherent `(eavail, q3)` structure, because a W-alternating deviation can
+  still have a net sign that varies systematically with position in `(eavail, q3)`;
+- and it says the 4D unfold and the 5D marginal differ in how they distribute content **across W
+  inside a cell**, which is precisely the freedom the 4D estimator does not have and the 5D does.
+
+Note the last point is a constraint on the *difference*, not a mechanism for it — it does not say
+which estimator is right, or why the W-internal signs arrange the way they do. **The honest state:
+the disagreement is real, reproducible from the products alone, structured, sign-alternating in W
+within cells, and unexplained.**
+
+## 2f. DRAFT — reported estimator dependence (for the note, pending Joseph's review)
+
+Written against the outcome the test actually produced. **This is a draft, not a landed claim**, and
+it deliberately does not assert a mechanism.
+
+> **Estimator dependence of the 4D result.** The 4D cross section is reported as the exact
+> marginal of the 5D unfold over W. An independent direct 4D unfold, retained as a cross-check,
+> agrees with that marginal in normalisation to **0.56 %** (integral ratio 1.005578) but differs
+> bin-by-bin at a **median of 4.4 %** (p90 20.8 %, p99 33.9 %, max 72.8 %; 3009 of 4825 reported
+> bins above 3 %). The difference is **not** a statistical fluctuation of either unfold — it is
+> uncorrelated with bin content (Spearman +0.06) — and is **structured**: the signed difference
+> swings from −9.1 % to +4.3 % across `E_avail` and from +9.8 % to −9.2 % across `q3`, while
+> remaining flat at −2 to −3 % across `p_T` and `p_z`.
+>
+> We tested and excluded the natural explanation that a 4D unfold mixes W-populations with
+> differing migration: the difference *falls* with the number of W bins a 4D cell spans
+> (Spearman −0.22), and W-width varies most strongly along `p_T`, the axis on which the difference
+> is flattest. W is in any case largely determined by `(E_avail, q3)` — 69 % of reported 4D cells
+> span two or fewer W bins — leaving little W-mixing for a 4D unfold to misestimate. A
+> phase-space-boundary effect is also excluded (edge cells agree better than interior cells).
+>
+> We therefore report this as an **unexplained estimator dependence of the 4D shape**, not as a
+> quantified bias of either estimator, and we note that it is concentrated in the `(E_avail, q3)`
+> region where the data-minus-generator excess is reported. The marginal is quoted because the 4D
+> result is *defined* as the 5D marginal; the size of this dependence is a systematic-adjacent
+> uncertainty on any 4D shape statement and is reported in full rather than summarised by a
+> single number.
+
+**Open, and it should be flagged as open:** whether this dependence should enter the 4D shape
+uncertainty budget, and whether the `(E_avail, W)` excess claim needs a corresponding statement.
+`app_statmethods.tex` already argues that a coherent 1–2 % OmniFold-vs-IBU shape difference becomes
+a large χ² in this region; a 4.4 % median estimator dependence is larger than that and sits in the
+same place.
 
 ## 3. Why this is a specification question, not a bug to fix
 
@@ -203,7 +335,7 @@ two of the three are clean and the third cannot pass as specified.
 `CENTRAL_REL` is **deleted, not raised.** There is deliberately no tolerance constant left to
 re-tune, because the correct value is *none*, not *larger*.
 
-The cross-check is returned as a **distribution rather than a max**, which is BEN-080 applied to the
+The cross-check is returned as a **distribution rather than a max**, which is BEN-064 applied to the
 replacement rather than only recorded about the original: a test asserts that one degenerate bin
 among 100 perfect ones yields `max > 1e5` and `median = 0`, so the max can never again be the only
 number a reader sees.

@@ -86,13 +86,44 @@ at all** — every other C++ occurrence is a `new TParameter(...)` *write* in `r
 
 So **the class is 9, not 8**: 8 Python + 1 C++.
 
-**Two things about that C++ site that bear on scoping, and cut in opposite directions:**
+#### Is the C++ site in a live path? YES — determined, not left open (2026-08-09)
 
-- It is the *background subtraction* scale, applied per-histogram — arguably a more consequential
-  use than most of the eight, since it enters the subtracted MC directly.
-- It is in `MINERvA101/MINERvA-101-Cross-Section/`, the **reference/legacy extraction**, not the
-  OmniFold chain that produces the current results. Whether it is in the live path for anything
-  quoted is a question I have not answered and did not try to.
+The provenance chain, each link verified:
+
+1. `2d-unfolding/ibu_1d_projection/build_1d_ibu_inputs.py` reads **`runEventLoopOmniFold_MEFHC.root`**
+   (its `--omnifile` default) — the `hadd` of 12 playlists — and reads `dataPOTUsed` / `mcPOTUsed`
+   from it (`:371`). Both are hadd-summed.
+2. It **rewrites them** as a single `POTUsed` into each of `runEventLoop_proj_data.root` and
+   `runEventLoop_proj_mc.root` (`:430`, `:443`).
+3. `2d-unfolding/ibu_1d_projection/sbatch_ibu_1d_projection.sh:51` runs
+   `ExtractCrossSection 5 runEventLoop_proj_data.root runEventLoop_proj_mc.root`.
+4. `ExtractCrossSection.cpp:171,172` reads `POTUsed` from each and `:225` forms `-dataPOT/mcPOT`.
+
+So the operands **do** trace to hadd-summed POT from the merged MEFHC omnifile — the same defect,
+one step removed through an intermediate file, which is precisely why a same-file review would
+never have found it.
+
+**And its output is quoted.** The 1D IBU projection is the repo's OmniFold-vs-IBU cross-check, whose
+Phase-16 verdict quotes post-fix integrals (paper 3.039e-38, OmniFold-2D 3.054e-38 / ratio 1.005,
+IBU 3.003e-38 / ratio 0.988 on `p_T`, 2.965e-38 / 0.976 on `p_∥`) and concludes both methods
+reproduce the paper to ≤ 2.5 % and agree with each other to ~1.7 %.
+
+**So it is in scope. Two qualifications that bound how much it matters, and they pull opposite ways:**
+
+- **The quoted headline is integrals, which this defect does not bias** (§1: total normalisation is
+  unaffected; the error is purely in the playlist mixture). And both arms of the OF-vs-IBU
+  comparison carry the *same* global scale, so it largely **cancels** in the ~1.7 % agreement figure.
+- **But the note's argument is about shape at the 1–2 % level.** `app_statmethods.tex:983` argues
+  that a coherent 1–2 % OmniFold-vs-IBU shape difference becomes a large χ² precisely where the
+  flux and Muon_Energy bands dominate the covariance. A 9.4 % POT-weighted mixture error propagates
+  through playlist-dependent flux shape — the same channel — and is several times larger than the
+  shape differences that discussion turns on. It does not cancel in the paper comparison, only in
+  the OF-vs-IBU one.
+
+The specific 1D-projection numbers are **not currently in `docs/analysis-note/`** (checked); the
+note references IBU conceptually and discusses the OmniFold-vs-IBU shape difference. So the C++
+site is live for a repo-internal quoted cross-check, and adjacent to — not inside — a note argument
+it could materially affect.
 
 **Method note, because it nearly went the wrong way.** The first C++ pass reported 7 reads and 2
 ratios. Five of the "reads" were multi-line `new TParameter<long>(` writes whose name string sits
@@ -107,6 +138,69 @@ as one site, not two; and taint arriving via a dict argument is invisible. C++ i
 identifier rather than AST, so a ratio split across lines or hidden behind a helper is not found.
 **9 remains a floor** — but a much tighter one than 8 was, because the language that was entirely
 unswept turns out to contain exactly one reading file.
+
+## 2b. GATING MEASUREMENT — does `app_statmethods.tex:983` survive per-playlist scaling? **YES.**
+
+A quoted claim asserted sensitivity at 1–2 % in exactly the region where an unquantified 9.4 %
+mixture error lives. That had to be resolved before anything else, and it is a bounded measurement
+with a definite answer.
+
+**Method.** No unfolding. The mixture error acts on the MC prediction *before* unfolding, and its
+size there is what the claim must survive. From the 12 per-playlist event-loop outputs
+(`runEventLoopOmniFold_1{A..P}.root`), weighted reco distributions on the analysis' own 14 pT and
+16 p∥ edges:
+
+```
+N_glob(bin) = R_glob * sum_p MC_p(bin)      R_glob = sum(D_p)/sum(M_p)   <- what the code does
+N_pp(bin)   = sum_p R_p * MC_p(bin)         R_p    = D_p/M_p             <- what is correct
+```
+
+with the shape part taken as `N_pp/N_glob` renormalised to unit yield-weighted mean, because an
+overall scale is not a shape difference and is not what `χ²_shape` sees.
+
+**The mixture error is real and large in the weights** — `R_p` spans 0.1707 (1B) to 0.2371 (1D),
+`max/min − 1 = 38.90 %`, reproducing J36's figure exactly from the files.
+
+**And it is negligible in the shape:**
+
+| | pT | p∥ |
+|---|---|---|
+| overall normalisation shift | **+0.119 %** | +0.118 % |
+| shape max abs deviation | **0.073 %** | **0.143 %** |
+| shape rms | 0.035 % | 0.087 % |
+| shape peak-to-peak | 0.105 % | 0.281 % |
+
+In the cells the claim names — pT bins 2/7/10, which carry 16/11/12 % of the χ² — the shape
+deviations are **+0.010 %, +0.017 %, −0.033 %**. Across the low-pT peak ridge (pT ≤ 0.4 GeV/c) the
+maximum is **0.032 %** with a peak-to-peak of 0.029 %.
+
+**Verdict: the statement stands.** The mixture error's shape effect is **14–30× below** the ~1–2 %
+coherent difference the claim discusses, and ~30× below it in the specific ridge the claim
+localises to. `app_statmethods.tex:983` does not come out. It takes a caveat, not a rebuild.
+
+**Why so small, given a 38.9 % spread?** Because a mixture error only becomes a *shape* error to the
+extent the playlists differ in shape, and these twelve are nearly shape-identical in reco pT. A
+large reweighting of shape-similar components is almost pure normalisation — which is the same fact
+J36 already recorded ("total normalisation is NOT biased") seen from the other side, and it is why
+the residual +0.119 % lands in normalisation rather than shape. The deviation that *is* there is
+coherent — a monotone tilt, +0.03 % at low pT to −0.07 % at high pT — i.e. exactly the coherent kind
+the claim says is hard to absorb, just an order of magnitude too small to matter.
+
+**This also bounds J36 itself, and it is the first measured bound rather than an argument:** on the
+2D analysis, the shape consequence of the global-POT-scale defect is **≤ 0.15 %**. That is a
+material input to the scoping decision — it does not make the defect correct, but it does mean no
+2D shape statement is at risk from it.
+
+**Bounds on this measurement, stated because they are the only ways it could mislead:**
+
+- It is a **pre-unfolding** bound. Unfolding could amplify it, but a 0.03–0.15 % input error would
+  need ~10–50× amplification to reach the scale under discussion, and nothing in this chain does
+  that.
+- It uses the MC signal-reco sample. Background also carries `pot_scale`, but background is ~2 % of
+  the sample (52 626 vs 2 682 267 entries in 1A), so its contribution is subdominant to the numbers
+  above.
+- It is measured on pT and p∥, the observables the claim is about. It does not bound the 5D/ND
+  quantities.
 
 ## 3. What is NOT claimed
 

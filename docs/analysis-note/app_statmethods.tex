@@ -980,7 +980,16 @@ the flux and Muon\_Energy bands --- the two largest, and the only named
 cross-band correlation (Bashyal, \S\ref{sec:rank}) --- dominate the
 covariance: tight bin-to-bin correlation there leaves little freedom to
 absorb a coherent $\sim1$--$2\%$ shape difference, so a small
-OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.
+OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.%
+\footnote{The pipeline applies one global $\mathrm{POT}_{\mathrm{data}}/\mathrm{POT}_{\mathrm{MC}}$
+ratio rather than a per-playlist ratio (KNOWN\_ISSUES J36), and the per-playlist ratios span
+$0.1707$--$0.2371$. Because this statement asserts sensitivity at the $1$--$2\%$ level, the
+mixture error was measured directly against it: comparing $R_{\mathrm{glob}}\sum_p \mathrm{MC}_p$
+with $\sum_p R_p\,\mathrm{MC}_p$ over the twelve playlists changes the reco shape by at most
+$0.07\%$ in $\pT$ and $0.14\%$ in $\pPar$ (and $0.03\%$ across the low-$\pT$ ridge), with the
+residual $+0.12\%$ appearing as normalization rather than shape. The twelve playlists are nearly
+shape-identical, so a large reweighting of them is almost pure normalization. The statement above
+is therefore unaffected at the $14$--$30\times$ level.}
 
 \paragraph{A methodological component (estimator and iteration).}
 Part of the tension is regularization-dependent --- the same data, same

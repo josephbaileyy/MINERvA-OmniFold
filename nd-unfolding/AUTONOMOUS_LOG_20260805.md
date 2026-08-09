@@ -2771,3 +2771,67 @@ keep.
 in 13 seconds on an import. The preflight would have caught it before submission. Queue time is the
 expensive resource here, not GPU time.
 
+### 22:15Z — All four arms COMPLETE. The dead LR anneal accounts for nearly the whole deficit — and their predeclared criterion scores that arm as a failure
+
+`56534116_[0-2]` and `56534117` all `COMPLETED`, exit `0:0`, ~3:00 each against an 8 h wall (so no
+truncation; the tight clustering is just equal work). Their receipts omit `push_dev`, so I computed the
+quantity **Gate-4's normalization gate actually enforces**, at iteration 2 only — see the caveat below.
+
+    arm                       push_final   dev vs R   |dev| <= 0.05   their criterion
+    BASELINE warm_fixed         0.736746    -0.3446        fail             not repaired
+    warm_fresh_split            0.873181    -0.2232        fail             not repaired
+    cold_fixed_split            0.968892    -0.1381        fail             not repaired
+    cold_fresh_split           17.669132   +14.7187        fail             not repaired
+    warm_fixed_annealed_lr      1.110901    -0.0117        **PASS**         not repaired
+
+**The annealed-LR arm takes the fold-forward deficit from -34.46% to -1.17% — a 29.4x improvement, and
+the only arm inside the frozen 5% tolerance.** That is the arm that exists because of this morning's
+dead-code finding.
+
+**And by their predeclared criterion, NO ARM REPAIRS**, which routes to *"intrinsic push feedback /
+representation-tail contraction remains."* That conclusion would be wrong, and the reason is worth
+stating precisely rather than waving at.
+
+Their criterion asks whether the **iteration-2 increment** has the right sign and `ach/req >= 0.90`. In
+the annealed arm push is already `1.121393` (dev **-0.24%**) after iteration 1, so the required
+correction at iteration 2 is `1.002396` — *do essentially nothing*. The arm delivers `0.898016`: a ~10%
+reduction where ~0 was needed. Technically "wrong sign", while the **end state is excellent**. So the
+criterion **degenerates when push ~ R**: `required -> 1`, every small correction reads as a sign error,
+and `ach/req` becomes hypersensitive to a correction that no longer matters. It was calibrated on the
+baseline, where the required correction was `1.161650` — large, and where sign genuinely discriminates.
+
+**This is the same defect class I have been finding all session**, and I want that on the record because
+it is now three for three: CLM-012's bar was computed in the wrong *scope*; the retired 0.80 could never
+*pass*; and this repair criterion is evaluated at the wrong *point* — the increment rather than the end
+state — in a regime it was not calibrated for. None of the three is a sloppy number. All three are
+correct arithmetic answering a subtly different question than the one asked.
+
+**MY CONFLICT OF INTEREST, stated plainly.** The annealed-LR arm was my suggestion, so I am the last
+agent who should be re-scoring a predeclared criterion in a direction that makes my arm the winner. I am
+therefore *not* overruling their predeclaration — it stands, and protocol matters more than my being
+right. What I am doing is reporting **both readings and exactly why they diverge**, and handing the call
+to Joseph.
+
+**What the other arms establish, which is real and independent of the above.**
+  * `cold_fixed_split` is the **only** arm with a correct iteration-2 sign (`ach/req 0.7884`) and it
+    improves the deficit to -13.8%. **Warm-start is genuinely implicated in the sign inversion** — their
+    arm-1 hypothesis fires, partially.
+  * `warm_fresh_split` improves to -22.3%, so split/order reuse contributes too, less.
+  * `cold_fresh_split` **DIVERGES catastrophically**: push `17.669132`, `ach/req 25.07`. Resetting the
+    model *and* refreshing the split is destabilising, not additive. A genuine negative result and a
+    warning against "apply both fixes".
+  * Ordering at iteration 2: `-34.5% -> -22.3% -> -13.8% -> -1.2%`. Every intervention helps; the LR
+    anneal dominates by ~12x over the next best.
+
+**Comparability caveat, and it is mine coming back.** My baseline's iterations 0-1 are best-epoch
+checkpoint reconstructions while the arms report in-run values, so **only iteration 2 is like-for-like**
+(my iter-2 used the BEN-043 `_final` weights). Every cross-arm number above is therefore quoted at
+iteration 2 only. The apparent 7.5% baseline-vs-annealed difference at iteration 0 — where the anneal
+should be inert by construction — is that provenance gap, not a physics effect, and I am not treating it
+as one.
+
+**What this does NOT establish.** That the anneal is *correct*. It repairs the **normalization**;
+whether the spectrum is properly unfolded is unmeasured, exactly as with the niter question. And
+repairing `omnifold.py` would change every published number, including everything Gate-4 was re-issued
+against this morning. Not touching it.
+

@@ -4226,7 +4226,7 @@ collect reports nothing at all.
   outage.** A suite that cannot collect does not report red — it reports nothing, and nothing
   reads like fine. Judge suite health by collected count as well as pass count.
 
-Cross-referenced from BEN-077, which covers the separate error made while fixing this (the first
+Cross-referenced from BEN-061, which covers the separate error made while fixing this (the first
 attempt edited the PET module directly and drifted a sha256 frozen into a gate-3 receipt).
 
 ## 2026-08-09 — CANDIDATE built without a verifier PASS (deliberately). Stages 4-5 clean; stage 6 cannot pass.
@@ -4270,7 +4270,7 @@ unfold per bin — which is the convention the campaign explicitly did **not** a
 (4D *is* the marginal; the independent 4D is a cross-check). The gate predates that decision and
 nothing forced the contradiction into the open while stages 4-6 were unreachable. **No tolerance
 was touched and none will be**; a 3 % gate failing at a median of 4.4 % is not repaired by widening
-it. Detail: `docs/orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md` (BEN-080).
+it. Detail: `docs/orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md` (BEN-064).
 
 Array `56531057` later emitted an error event, but not an aggregate-terminal one: tasks 0/1 failed
 `1:0` after 25s/13s while task 2 remained pending. Each existing stdout/stderr and each result path was

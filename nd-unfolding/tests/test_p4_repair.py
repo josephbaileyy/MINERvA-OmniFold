@@ -157,7 +157,7 @@ class Projection(unittest.TestCase):
         self.assertIn("NO pass/fail", out["note"])
 
     def test_crosscheck_reports_a_distribution_not_only_a_max(self):
-        """BEN-080: a bare max is owned by the worst bin. One wildly-off bin among many good ones
+        """BEN-064: a bare max is owned by the worst bin. One wildly-off bin among many good ones
         must not be able to hide the body of the comparison."""
         M = np.eye(100)
         x = np.ones(100)
@@ -169,7 +169,7 @@ class Projection(unittest.TestCase):
         self.assertEqual(out["n_over_3pct"], 1)
 
     def test_projection_M_rejects_an_unreachable_low_bin(self):
-        """BEN-080, the masking defect: a reported LOW bin no HIGH bin reaches used to yield an
+        """BEN-064, the masking defect: a reported LOW bin no HIGH bin reaches used to yield an
         all-zero row of M, which reached the central check as an exact 0 and reported rel=1.0
         no matter how negligible the bin was. It must now fail at CONSTRUCTION."""
         edges = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0]), np.array([0.0, 1.0]),
