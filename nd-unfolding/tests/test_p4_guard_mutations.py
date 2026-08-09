@@ -535,6 +535,124 @@ class REPAIR6c_WidenedIntegralTolerance(unittest.TestCase):
         self.assertIsInstance(P.check_reproducibility(base * (1 + sc), base), dict)
 
 
+class REPAIR7_EndpointContentReproduction(unittest.TestCase):
+    """REPAIR-7 item 1: the frozen endpoint-manifest hash is replaced by content comparison.
+
+    Joseph's success criterion, stated as two tests rather than one: **a legitimate re-unfold
+    PASSES and a semantics change FAILS.** A gate that only demonstrates one direction is the
+    failure mode this lane has hit repeatedly."""
+
+    def _endpoint(self, n=10694, seed=0):
+        return np.random.default_rng(seed).uniform(1e-40, 1e-38, n)
+
+    # ---- direction 1: a legitimate re-unfold PASSES ----
+    def test_legitimate_rerun_passes(self):
+        """Non-bit-identical, scattered at the MEASURED floor -- exactly what a real re-unfold
+        produces. The frozen-hash check rejected this; content comparison accepts it."""
+        ref = self._endpoint()
+        rng = np.random.default_rng(1)
+        noise = rng.normal(0, 4e-12, ref.size); noise -= noise.mean()
+        rerun = ref * (1 + noise)
+        self.assertFalse(np.array_equal(rerun, ref), "must not be bit-identical")
+        r = P.check_reproducibility(rerun, ref)
+        self.assertLess(r["max_rel_bin"], P.REPRO_RTOL_PER_BIN)
+        self.assertLess(r["rel_integral"], P.REPRO_RTOL_INTEGRAL)
+
+    def test_MUTATION_the_frozen_hash_check_would_have_REJECTED_that_rerun(self):
+        """The defect, demonstrated: identical physics, different bytes, hash comparison fails."""
+        import hashlib
+        ref = self._endpoint()
+        rng = np.random.default_rng(1)
+        noise = rng.normal(0, 4e-12, ref.size); noise -= noise.mean()
+        rerun = ref * (1 + noise)
+        h_ref = hashlib.sha256(ref.tobytes()).hexdigest()
+        h_new = hashlib.sha256(rerun.tobytes()).hexdigest()
+        self.assertNotEqual(h_ref, h_new,
+                            "the frozen-hash check rejects a legitimate rerun -- that was the defect")
+
+    # ---- direction 2: a semantics change FAILS ----
+    def test_coherent_normalisation_change_fails(self):
+        ref = self._endpoint()
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(ref * 1.001, ref)
+        self.assertIn("relative difference", str(cm.exception))
+
+    def test_small_coherent_shift_inside_the_per_bin_leg_still_fails_on_the_integral(self):
+        """The discriminating case: 5e-11 is inside the 1e-9 per-bin leg and outside 1e-11."""
+        ref = self._endpoint()
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(ref * (1 + 5e-11), ref)
+        self.assertIn("integral relative difference", str(cm.exception))
+
+    def test_a_single_corrupted_bin_fails(self):
+        """A localised semantics change: one bin moved by 1%, integral barely perturbed."""
+        ref = self._endpoint(); bad = ref.copy(); bad[17] *= 1.01
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(bad, ref)
+        self.assertIn("per-bin relative difference", str(cm.exception))
+
+    def test_evidence_no_longer_pins_the_endpoint_manifest_to_a_frozen_hash(self):
+        src = (ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertNotIn('"endpoint_manifest":', code)          # gone from OBS
+        self.assertIn("ENDPOINT_REFERENCE_DIR", code)
+        self.assertIn("check_reproducibility", code)
+        # and a failed manifest is not written under the consumable name
+        self.assertIn("p4_standard_manifest.FAILED.json", code)
+
+
+class REPAIR7_ExecutionDerivedSurface(unittest.TestCase):
+    """REPAIR-7 item 2: the review surface is derived from the import graph, not a name glob.
+
+    Third instance of the corpus-definition error, so the derivation is mechanical and this test
+    asserts the specific modules the glob omitted are now covered."""
+
+    def test_surface_includes_the_modules_the_glob_omitted(self):
+        surf = P.standard_p4_execution_surface()
+        for mod in ("nd-unfolding/uq_math.py", "nd-unfolding/project_cov_nd.py",
+                    "nd-unfolding/unfold_nd_omnifold_unbinned.py", "nd-unfolding/xsec_nd.py",
+                    "unbinned_unfolding/python/omnifold.py"):
+            self.assertIn(mod, surf, f"{mod} missing from the execution surface")
+
+    def test_surface_is_strictly_more_than_the_name_glob_for_execution(self):
+        glob_surface = set(P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS))
+        exec_surface = set(P.standard_p4_execution_surface())
+        gained = exec_surface - glob_surface
+        self.assertTrue(gained, "the derived surface must add the executed modules")
+        self.assertIn("unbinned_unfolding/python/omnifold.py", gained)
+
+    def test_shell_drivers_are_included_though_never_imported(self):
+        surf = P.standard_p4_execution_surface()
+        self.assertTrue(any(f.startswith("nd-unfolding/run_p4_") for f in surf))
+
+    def test_token_gate_uses_the_execution_surface(self):
+        src = (ND / "p4_check_verifier_token.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("standard_p4_execution_surface", code)
+
+
+class REPAIR7_DeadPathDeleted(unittest.TestCase):
+    """REPAIR-7 item 3: check_merged_metadata is deleted, and its comparison moved to the live
+    path. A fix inside a dead function reads as done and is worse than no fix."""
+
+    def test_the_dead_gate_is_gone(self):
+        self.assertFalse(hasattr(P, "check_merged_metadata"),
+                         "the uncalled gate must be deleted, not kept")
+
+    def test_a_tombstone_explains_why(self):
+        src = (ND / "p4_lib.py").read_text()
+        self.assertIn("check_merged_metadata` is DELETED", src)
+        self.assertIn("NO production caller", src)
+
+    def test_the_native_miss_comparison_now_lives_in_the_live_path(self):
+        src = (ND / "p4_evidence.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("native-miss flag/count disagree", code)
+        self.assertIn("AppendTruthOnlyMisses did not run", code)
+        # and it is no longer presence-only
+        self.assertNotIn('need(rec["nTruthOnlyMisses"] is not None,', code)
+
+
 # ---------------------------------------------------------------------------------------
 # Guards that could NOT be made discriminating, recorded rather than quietly kept.
 NON_DISCRIMINATING = {

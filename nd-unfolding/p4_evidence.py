@@ -28,11 +28,30 @@ CEN4 = f"{ND}/products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
 UDIR = f"{ND}/active_universe_5d/standard/unfolds"
 MDIR = f"{ND}/active_universe_5d/standard/merged"
 EVID = f"{ND}/active_universe_5d/standard/evidence"; os.makedirs(EVID, exist_ok=True)
+# REPAIR-7 item 1. These four bind CENTRAL products, which this chain reads and never
+# re-produces, so a frozen hash is the right instrument for them: if xsec_5d/4d changes
+# underneath us that IS a defect and must block.
+#
+# `endpoint_manifest` was the fifth entry and did NOT belong here. It is derived from the ten
+# endpoint sha256s, which change on every legitimate re-unfold because these ROOTs are not
+# bit-reproducible (KNOWN_ISSUES #24). Comparing it to a frozen 2026-07-18 value made the
+# evidence stage reject the correct current artifacts -- and repair-6 then ENFORCED that
+# comparison, turning a silent no-op into a hard block against good data.
+#
+# KNOWN_ISSUES #24 already named the replacement: content comparison at the declared tolerance.
+# That is now what happens, below. The endpoint_manifest_hash is still COMPUTED and RECORDED --
+# it binds this run's ten endpoints to each other, which is a real property -- it is simply no
+# longer compared against a historical constant.
 OBS = {"central5d": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
        "mask5d": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
-       "endpoint_manifest": "af568b4a2bb2f08e66e7a4380cb0c5b9af72a37ddec94a5b3297c2f50d999c54",
        "central4d": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
        "mask4d": "c977c643d4017a3cc909f85e7f2725b4a96a0060a5b79b56294c231290039d25"}
+
+# The declared physics reference the current endpoints are compared AGAINST, by content. The
+# 2026-07-18 set is the accepted physics; the ten live endpoints must reproduce it within
+# REPRO_RTOL_PER_BIN / REPRO_RTOL_INTEGRAL. Fails closed when the reference is absent: an
+# unverifiable reproduction claim is not a satisfied one.
+ENDPOINT_REFERENCE_DIR = f"{ND}/active_universe_5d/standard/unfolds__SUPERSEDED_20260718"
 # repair-5: single-sourced in p4_lib so this file and the validator cannot disagree about
 # which bands are expected to migrate.
 NONZERO_MIG = P.NONZERO_MIGRATION_BANDS
@@ -158,7 +177,18 @@ for b in P.BANDS:
         # would have passed. Assert the index too, tolerating str/float stamps.
         need(rec["idx_meta"] is not None and int(float(rec["idx_meta"])) == int(ep),
              f"merged {tag} endpoint INDEX mismatch (stamped {rec['idx_meta']!r}, expected {ep})")
-        need(rec["nTruthOnlyMisses"] is not None, f"merged {tag} native-miss meta missing")
+        # REPAIR-7 item 3: this was presence-only, and the strengthened comparison was put in
+        # check_merged_metadata -- which has no production caller. The comparison now lives HERE,
+        # in the path that actually runs. Every real merged endpoint carries a positive count.
+        _hm, _nm = rec["hasTruthOnlyMisses"], rec["nTruthOnlyMisses"]
+        if need(_hm is not None and _nm is not None, f"merged {tag} native-miss meta missing"):
+            _hm_i, _nm_i = int(float(_hm)), int(float(_nm))
+            need(_hm_i in (0, 1), f"merged {tag} hasTruthOnlyMisses={_hm_i} is not a 0/1 flag")
+            need(bool(_hm_i) == (_nm_i > 0),
+                 f"merged {tag} native-miss flag/count disagree: flag={_hm_i} count={_nm_i}")
+            need(_nm_i > 0,
+                 f"merged {tag} native-miss count is {_nm_i}; every real merged endpoint has "
+                 f"truth-only misses, so zero means AppendTruthOnlyMisses did not run")
         need(all(cen[k] is not None for k in cen), f"merged {tag} census incomplete")
         # D3d: NONZERO_MIG was enforced; ZERO_SEL was declared at the top of this file and
         # referenced by NO check -- a dead constant. So the "bin-migration-only" claim for the
@@ -310,14 +340,48 @@ except Exception as e:
     blockers.append(f"orchestrator merged receipt binding failed: {e}")
 
 # ---- cross-check vs observed ----
+# ---- REPAIR-7 item 1: endpoint reproduction, by CONTENT at the declared tolerance ----
+# Replaces the frozen endpoint-manifest hash. Success criterion, per the self-guard rule: a
+# legitimate re-unfold PASSES here and a semantics change FAILS, both demonstrated in
+# tests/test_p4_guard_mutations.py::REPAIR7_EndpointContentReproduction.
+repro = {}
+if not os.path.isdir(ENDPOINT_REFERENCE_DIR):
+    blockers.append(f"endpoint reference set missing at {ENDPOINT_REFERENCE_DIR}; cannot prove "
+                    f"the current endpoints reproduce the accepted physics")
+else:
+    for b in P.BANDS:
+        for ep in P.ENDPOINTS:
+            tag = f"{b}_{ep}"; nm = f"5d_xsec_MEFHC_5iter_lgbm_uni_full_{tag}.root"
+            cur, ref = f"{UDIR}/{nm}", f"{ENDPOINT_REFERENCE_DIR}/{nm}"
+            if not (os.path.exists(cur) and os.path.exists(ref)):
+                blockers.append(f"endpoint {tag}: cannot compare (cur={os.path.exists(cur)} "
+                                f"ref={os.path.exists(ref)})")
+                continue
+            try:
+                r = P.check_reproducibility(flat(cur), flat(ref))
+                repro[tag] = r
+            except P.P4GateError as e:
+                repro[tag] = {"error": str(e)}
+                blockers.append(f"endpoint {tag} does not reproduce the reference: {e}")
+man["endpoint_reproduction"] = repro
+man["endpoint_reference_dir"] = os.path.relpath(ENDPOINT_REFERENCE_DIR, REPO)
+man["endpoint_reproduction_tolerance"] = {"per_bin": P.REPRO_RTOL_PER_BIN,
+                                          "integral": P.REPRO_RTOL_INTEGRAL}
+
 man["verifier_crosscheck"] = {
     "central5d": man["central5d_sha256"] == OBS["central5d"],
     "mask5d": man["mask5d_hash"] == OBS["mask5d"],
-    "endpoint_manifest": man.get("endpoint_manifest_hash") == OBS["endpoint_manifest"],
     "central4d": man["central4d_sha256"] == OBS["central4d"],
     "mask4d": man["mask4d_hash"] == OBS["mask4d"]}
 
-json.dump(man, open(f"{EVID}/p4_standard_manifest.json", "w"), indent=2)
+# REPAIR-7: a manifest that FAILED its own checks must not be written where a consumer will
+# read it as authoritative. On failure it goes to a .FAILED name -- diagnosable, not consumable.
+_man_path = (f"{EVID}/p4_standard_manifest.json" if not blockers
+             else f"{EVID}/p4_standard_manifest.FAILED.json")
+json.dump(man, open(_man_path, "w"), indent=2)
+if blockers:
+    print(f"[evidence] BLOCKED -- manifest written to {os.path.basename(_man_path)}, "
+          f"NOT to the consumable name")
 json.dump({"endpoints": ep_ev}, open(f"{EVID}/p4_endpoint_evidence.json", "w"), indent=2)
 json.dump({"merged": maudit}, open(f"{EVID}/p4_merged_audit.json", "w"), indent=2)
 
@@ -335,6 +399,13 @@ print("=== recomputed vs observed ===")
 for k, v in man["verifier_crosscheck"].items():
     print(f"  {k}: {'MATCH' if v else 'DIFF'}")
 print(f"mask5d n={man['mask5d_nreported']} mask4d n={man['mask4d_nreported']}")
+_ok = sum(1 for v in repro.values() if "error" not in v)
+print(f"endpoint reproduction vs reference: {_ok}/{len(repro)} within tolerance "
+      f"(per-bin {P.REPRO_RTOL_PER_BIN:.0e}, integral {P.REPRO_RTOL_INTEGRAL:.0e})")
+if repro:
+    _wb = max((v.get("max_rel_bin", 0) for v in repro.values()), default=0)
+    _wi = max((v.get("rel_integral", 0) for v in repro.values()), default=0)
+    print(f"  worst per-bin {_wb:.2e}   worst integral {_wi:.2e}")
 print(f"footing: bkg_mode={man['footing']['bkg_mode']} estimator={man['footing']['estimator']} "
       f"seed={man['footing']['seed']} iters={man['footing']['iters']}")
 print("footing per endpoint (from log):",

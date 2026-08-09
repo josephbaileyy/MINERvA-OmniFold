@@ -257,7 +257,9 @@ CANDIDATE_SUBDIR = "active_universe_5d/standard/candidate"
 # from this file's own location (p4_lib.py lives in <repo>/nd-unfolding/), so it follows the
 # checkout rather than a hardcoded /pscratch path -- which also makes it testable off-cluster.
 ND_ROOT = os.path.dirname(os.path.abspath(__file__))
+import pathlib as _pl
 REPO_ROOT = os.path.dirname(ND_ROOT)
+REPO_ROOT_PATH = _pl.Path(REPO_ROOT)
 _ADOPTED_TOKENS = ("uq_universe_5d_covariance_combined", "_uthrow", "_cvcentered",
                    "adopted", "uq_4d/corrected", "universe_stage2_5d",
                    "products/5d/xsec", "products/4d/xsec")
@@ -379,11 +381,79 @@ RECEIPT_SOURCE_KEY = "unfold_blob"
 # The standard-P4 review surface: what a verifier verdict is understood to have reviewed when
 # it does not declare its own scope. Used by the token gate to prove that the files the verdict
 # covered have not changed between the reviewed commit and HEAD.
+# REPAIR-7 item 2. This was drawn by FILENAME PREFIX, which is a proxy, and it omitted every
+# module the chain actually executes -- uq_math, project_cov_nd, unfold_nd_omnifold_unbinned,
+# xsec_nd, omnifold. A verdict could therefore authorize materially changed execution code.
+# Third instance of the corpus-definition error, so the surface is now DERIVED from the import
+# graph rather than curated, and a test asserts the previously-missing modules are in it.
 STANDARD_P4_SURFACE_GLOBS = (
     "nd-unfolding/p4_*.py",
     "nd-unfolding/run_p4_*.sh",
     "nd-unfolding/tests/test_p4_*.py",
 )
+# Roots of the standard-P4 execution graph: what the driver actually invokes.
+STANDARD_P4_ENTRYPOINTS = (
+    "nd-unfolding/p4_evidence.py",
+    "nd-unfolding/p4_build_components.py",
+    "nd-unfolding/p4_validate_active_lateral.py",
+    "nd-unfolding/p4_project_4d.py",
+    "nd-unfolding/p4_check_receipt.py",
+    "nd-unfolding/p4_check_verifier_token.py",
+    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+)
+# Where first-party imports may resolve. Anything outside these is a third-party dependency and
+# is out of scope for a source-identity check.
+_IMPORT_SEARCH_DIRS = ("nd-unfolding", "2d-unfolding", "unbinned_unfolding/python", ".")
+
+
+def standard_p4_execution_surface(entrypoints=None, max_depth=6):
+    """Every tracked first-party module reachable from the chain's entrypoints, by IMPORT.
+
+    Derived, not curated: the previous surface was a filename-prefix glob and silently omitted
+    the modules that do the work. Falls back to the glob surface if git is unavailable, and the
+    caller must treat an empty result as a refusal rather than an empty scope."""
+    import ast
+    tracked = set()
+    try:
+        tracked = set(subprocess.check_output(["git", "ls-files"], cwd=REPO_ROOT,
+                                              text=True).splitlines())
+    except Exception:
+        return sorted(tracked_files_matching(STANDARD_P4_SURFACE_GLOBS))
+
+    def resolve(mod):
+        for d in _IMPORT_SEARCH_DIRS:
+            cand = f"{d}/{mod.replace('.', '/')}.py".lstrip("./")
+            if cand in tracked:
+                return cand
+        return None
+
+    seen, frontier = set(), list(entrypoints or STANDARD_P4_ENTRYPOINTS)
+    for _ in range(max_depth):
+        nxt = []
+        for rel in frontier:
+            if rel in seen or rel not in tracked:
+                continue
+            seen.add(rel)
+            try:
+                tree = ast.parse((REPO_ROOT_PATH / rel).read_text(errors="replace"))
+            except Exception:
+                continue
+            for node in ast.walk(tree):
+                names = []
+                if isinstance(node, ast.Import):
+                    names = [a.name for a in node.names]
+                elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+                    names = [node.module]
+                for n in names:
+                    r = resolve(n)
+                    if r and r not in seen:
+                        nxt.append(r)
+        if not nxt:
+            break
+        frontier = nxt
+    # the shell drivers are executed, not imported, so add them explicitly
+    seen.update(p for p in tracked if p.startswith("nd-unfolding/run_p4_") and p.endswith(".sh"))
+    return sorted(seen)
 
 
 def tracked_files_matching(globs, rev="HEAD"):
@@ -629,53 +699,17 @@ def require_complete_unfold_set(present_tags):
     return True
 
 
-def check_merged_metadata(meta):
-    """Merged-endpoint audit on extracted metadata (ROOT-free, so testable).
-    meta keys: tree_entries{mc_truth_denom,mc_signal_reco,mc_background,data},
-    mcPOT, dataPOT, hasTruthOnlyMisses, nTruthOnlyMisses,
-    census{TruthEntrants,TruthExits,RecoEntrants,RecoExits}, migration_policy."""
-    te = meta.get("tree_entries", {})
-    for t in ("mc_truth_denom", "mc_signal_reco", "mc_background", "data"):
-        require(te.get(t, 0) and te[t] > 0, f"merged tree {t} empty/absent")
-    mc, da = meta.get("mcPOT"), meta.get("dataPOT")
-    require(mc is not None and np.isfinite(mc) and mc > 0, "merged mcPOT not finite-positive")
-    require(da is not None and np.isfinite(da) and da > 0, "merged dataPOT not finite-positive")
-    require(te["mc_signal_reco"] == te["mc_truth_denom"],
-            f"signal_reco {te['mc_signal_reco']} != truth_denom {te['mc_truth_denom']} (completeness broken)")
-    # REPAIR-6: presence-only until now -- zero or mutually inconsistent values passed, though
-    # every real merged file carries a positive count. Repair-5 waived this on the grounds that
-    # no independent expected value existed without a physics read; the verifier was right that
-    # this overstated it. Requiring a positive count and flag/count agreement needs no new
-    # physics and the real files already satisfy it.
-    has_m, n_m = meta.get("hasTruthOnlyMisses"), meta.get("nTruthOnlyMisses")
-    require(has_m is not None and n_m is not None, "native-miss metadata missing")
-    n_m = int(float(n_m)); has_m = int(float(has_m))
-    require(has_m in (0, 1), f"hasTruthOnlyMisses is {has_m}, not a 0/1 flag")
-    require(bool(has_m) == (n_m > 0),
-            f"native-miss flag/count disagree: hasTruthOnlyMisses={has_m} but count={n_m}")
-    require(n_m > 0,
-            f"native-miss count is {n_m}; every real merged endpoint has truth-only misses "
-            f"(AppendTruthOnlyMisses), so zero means the append step did not run")
-    cen = meta.get("census", {})
-    for k in ("TruthEntrants", "TruthExits", "RecoEntrants", "RecoExits"):
-        require(k in cen and cen[k] is not None, f"census counter {k} missing")
-    # repair-5 (pattern sweep): this used to be `require(meta.get("migration_policy"))` and
-    # nothing else -- a declared policy that no consumer ever compared to the observed census,
-    # so a merged file could declare any string, or the wrong one, and pass. When the caller
-    # supplies the band and census, the declaration is now CHECKED against them.
-    # REPAIR-6: repair-5 made this comparison CONDITIONAL on optional fields, so every caller
-    # that omitted band/census kept the original presence-only behaviour -- a repair you could
-    # opt out of by omission. The fields are now REQUIRED, so the comparison always happens.
-    band = meta.get("band")
-    census_abs = meta.get("selection_migration_abs")
-    require(band is not None,
-            "merged metadata has no `band`; the declared migration policy cannot be compared to "
-            "the observed census without it, and an uncomparable policy is not a check")
-    require(census_abs is not None,
-            "merged metadata has no `selection_migration_abs`; same reason")
-    check_declared_migration_policy(meta.get("migration_policy"), census_abs, band,
-                                    NONZERO_MIGRATION_BANDS, ZERO_MIGRATION_BANDS)
-    return True
+# REPAIR-7 item 3: `check_merged_metadata` is DELETED, not repaired.
+#
+# It had NO production caller -- only its own tests -- while `p4_evidence.py` re-implemented the
+# same checks inline with `need()`. Repair-5 and repair-6 both improved it, which means both
+# improved a function that does not run, and the verifier was right that deferring Pattern C is
+# indefensible when the deferral makes the fix a no-op: a fix inside a dead path is WORSE than
+# no fix, because it reads as done.
+#
+# Same disposition as legacy-attest. The checks it performed live in p4_evidence.py's inline
+# path, which is the one that executes; the native-miss comparison repair-6 put here has been
+# moved there. If a shared helper is wanted later, it must be introduced WITH its caller.
 
 
 # ---------------------------------------------------------------- covariance gates

@@ -116,8 +116,11 @@ def resolve(token):
     if isinstance(scope, list) and scope:
         paths, scope_src = sorted(str(x) for x in scope), "declared review_scope"
     else:
-        paths = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS, rev=head)
-        scope_src = "default standard-P4 surface (%d tracked files)" % len(paths)
+        # REPAIR-7 item 2: derived from the IMPORT GRAPH, not a filename glob. The glob omitted
+        # uq_math, project_cov_nd, unfold_nd_omnifold_unbinned, xsec_nd and omnifold -- i.e. the
+        # code that actually runs -- so a verdict could authorize materially changed execution.
+        paths = P.standard_p4_execution_surface()
+        scope_src = "default standard-P4 EXECUTION surface (%d tracked modules)" % len(paths)
     if not paths:
         raise P.P4GateError("could not resolve a review scope; refusing to authorize blind")
     ok, differing = P.paths_unchanged_between(cr, head, paths)
