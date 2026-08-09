@@ -70,6 +70,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   `ModuleNotFoundError: omnifold`, while task 2 remained pending; no result JSON exists and therefore
   no mechanism verdict is available. All scientific pins match. Changed r2 launchers add the missing
   `omnifold_nn` import path plus a fail-closed import preflight; unchanged retry is prohibited.
+  The changed launchers were committed at `783e674`; only then were pending old task 2 and old LR job
+  cancelled. Replacement array `56534116` and LR job `56534117` are collision-isolated, initially
+  PENDING Priority, and covered by terminal plus one-hour queue watches. Joseph's no-verdict/fix mail
+  was accepted. Branch C and every scientific threshold remain unchanged.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

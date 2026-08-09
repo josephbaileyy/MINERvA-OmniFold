@@ -4281,3 +4281,13 @@ environment defect and yields no scientific mechanism verdict. New r2 array and 
 preserve every scientific pin, add `${REPO}/omnifold_nn` to `PYTHONPATH`, and fail closed on both
 OmniFold imports before training. Shell syntax, three focused tests, and a live import probe pass.
 Receipt: `../docs/orchestration/state/step1-dynamics-error-56531057.json`.
+
+The changed repair was committed and pushed at `783e674` before any scheduler mutation. A fail-closed
+check then confirmed old task `56531057_2` and sibling job `56531204` were still PENDING with no result;
+both were cancelled without GPU runtime and their terminal watches disarmed. Replacement array
+`56534116` and annealed-LR job `56534117` were submitted from the r2 launchers. All four new namespaces
+were absent and all tasks were initially PENDING on Priority. Terminal and one-hour latency watches are
+armed for both experiments. Joseph's mail explicitly reports no scientific verdict and the changed
+repair; local MTA rc=0. Receipts:
+`../docs/orchestration/state/step1-dynamics-r2-submit-56534116.json` and
+`../docs/orchestration/state/step1-annealed-lr-r2-submit-56534117.json`.
