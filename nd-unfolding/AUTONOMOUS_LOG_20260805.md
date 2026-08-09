@@ -2706,3 +2706,43 @@ survives its own caveat by roughly 7x.
 Receipt committed and copied into the CFS backup's `receipts/` (now 7), per the rule I added to BEN-073
 four hours ago about re-backing-up in the same turn.
 
+### 04:00Z — Checked the other lane's dynamics factorial for a confound; the confound was not real, but finding that out found a DEAD LEARNING-RATE ANNEAL
+
+The other lane launched `56531057` (`fe_s1dyn`) off my trajectory verdict within ~20 minutes — a
+predeclared 3-arm factorial against the nominal's warm+fixed-split baseline: `warm_fresh_split`,
+`cold_fixed_split`, `cold_fresh_split`, with "repair" defined **in advance** as iteration-2 correct sign
+AND `ach/req >= 0.90`, and `shared_engine_edited: false`. It is a good design and it tests both mechanisms
+I named in my verdict, so there is nothing for me to duplicate.
+
+**I went looking for a confound and did not find one.** `Unfold():177` calls `CompileModels(fixed=True)`,
+which drops the LR to `1e-5`. My worry: a cold-restarted (freshly-initialised) step-1 model trained at
+`1e-5` would badly under-train, so arm 1 failing to repair could mean "the fresh model could not learn"
+rather than "warm-start was not the cause" — a null result that looks like an answer. **Wrong.**
+`RunModel:292` recompiles unconditionally with `fixed` defaulting to `False`, i.e. full `self.LR`,
+immediately before every `fit()`. Cold and warm arms train at the same LR. Their design is sound and I did
+not send them a confound that isn't there.
+
+**That is the second wrong hypothesis I killed by verification this cycle** — the first was blaming their
+`gbdt-hold` for occupying the `interactive` QOS (`sacctmgr` says `MaxSubmitJobsPerUser=2`, 1 in use). Both
+would have been confident, specific, wrong claims about another lane's work.
+
+**But checking it surfaced a real defect, now KNOWN_ISSUES:** the engine's per-iteration learning-rate
+anneal is **dead code**, for two independent reasons. (1) `CompileModels` compiles `self.model1`/
+`self.model2`, which are **never trained** — `RunModel` trains clones held in `step1_models`/
+`step2_models`, and the branch that would reach those clones is gated on `n_ensemble > 1` while
+`train_fullevent_nominal.py:54` sets `n_ensemble = 1`. That is the same trap as BEN-043: `model1`/`model2`
+are not the trained models. (2) Even where it does reach a clone, `RunModel:292` overwrites the compile
+with the full LR before `fit()`. So **every step-1 and step-2 fit in the publication configuration runs at
+full learning rate with warm-started weights, at every iteration.**
+
+**Why that is a finding and not tidy-up.** It is a *candidate mechanism for the degradation I measured*.
+Full-LR retraining of a warm-started classifier each round is exactly the regime where a representation
+gets reshaped hard enough to lose the high-ratio tail — and tail collapse is precisely the signature
+(`p95` 4.6474 -> 1.4682, median 0.13-0.24 throughout). The running factorial has **no learning-rate arm**,
+and its predeclared "no arm repairs" branch attributes the residue to "intrinsic push feedback /
+representation-tail contraction" — for which this is a concrete, cheap fourth arm they would want.
+
+Recorded, **not fixed**: `omnifold.py` is shared engine code on the gated path and repairing the anneal
+would change every published number. Mailing it because it materially informs a run that is in the queue
+right now.
+
