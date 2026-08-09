@@ -1,0 +1,115 @@
+{
+  "receipt_kind": "standard-p4-verifier verdict",
+  "utc": "2026-08-09T07:56:32Z",
+  "subject": "repair-6 / 6b / 6c, plus the first production receipts",
+  "code_rev": "cf8128bd906f5519c584554cb5397fa647f04a3d",
+  "branch": "worktree-gbdt-closeout",
+  "verdict": "BLOCK",
+  "previously_outstanding_now_closed": 4,
+  "previously_outstanding_total": 6,
+  "defects_outstanding": 9,
+  "self_guards_adequate": "PARTIAL",
+  "a1_token_binding": "DEFECTIVE",
+  "authorizes_covariance_stages_4_6": false,
+  "p4_verifier_pass_token": null,
+
+  "delegate": {
+    "tool": "codex exec --sandbox read-only --skip-git-repo-check",
+    "account": "codex-school",
+    "independent": true,
+    "wrote_nothing": true,
+    "post_run_git_status": "clean; no diff to preserve",
+    "tokens_used": 304193,
+    "transcript": "20260809T075632Z-repair6-transcript.txt"
+  },
+
+  "accepted_as_closed": [
+    "the legacy-attest writer is deleted and only mode:produced can be emitted",
+    "verifier_crosscheck is enforced (but see outstanding #1 for what that enforcement now does)",
+    "C_syst is persisted and recomputed (but see outstanding #6 for the gap)",
+    "the support ratio is honestly relabelled",
+    "fps_provenance constants unmutated; deferring the FPS diagonal twin judged defensible"
+  ],
+
+  "tests": {
+    "reported_by_delegate": "142/165 (23 environment errors)",
+    "local_rerun_same_commit": "167/167",
+    "note": "third pass in a row where the read-only sandbox lacks a writable temp dir despite an exported TMPDIR; the export does not reach codex's sandbox. Environment, not code."
+  },
+
+  "sweep_drift_found_by_delegate": {
+    "recorded_fields": "generator now reports 82 fields / 24 gates; the checked-in inventory says 66 / 22",
+    "pipeline": "generator now reports 23 candidates / 326 files; the document says 22 / 324",
+    "note": "the artifacts were not regenerated after repair-6b/6c changed the code, so the committed inventory is stale relative to its own generator -- exactly the failure the artifact was created to prevent"
+  },
+
+  "outstanding": [
+    {
+      "n": 1,
+      "severity": "critical, and self-inflicted",
+      "finding": "endpoint evidence is still pinned to the FROZEN July endpoint-manifest hash OBS['endpoint_manifest'], so a legitimate canonical rerun with different ROOT bytes is rejected. The failed manifest is also written before the blocker exits.",
+      "sites": ["nd-unfolding/p4_evidence.py:33", "nd-unfolding/p4_evidence.py:316", "nd-unfolding/p4_evidence.py:330"],
+      "accepted": true,
+      "self_assessment": "Verified. This is KNOWN_ISSUES #24 for the THIRD time and I created this instance. Enforcing verifier_crosscheck was correct in isolation, but its reference values are hardcoded 2026-07-18 hashes and endpoint_manifest_hash is derived from the ten endpoint sha256s, which the re-unfold changed by design. So enforcing the check converted a silent no-op into a HARD BLOCK against correct data: p4_evidence.py can no longer pass on the very endpoints the chain just produced. I made the chain more broken, not less."
+    },
+    {
+      "n": 2,
+      "finding": "resume provenance binds only unfold_nd_omnifold_unbinned.py; changes to omnifold.py or xsec_nd.py leave receipts valid and re-create producer mis-attribution.",
+      "sites": ["nd-unfolding/p4_check_receipt.py:25", "nd-unfolding/p4_lib.py:376"],
+      "accepted": true,
+      "self_assessment": "Correct. I bound the one file I reasoned was the producer and did not enumerate its dependencies."
+    },
+    {
+      "n": 3,
+      "severity": "the Pattern C trap, walked into after documenting it",
+      "finding": "the LIVE evidence path still treats native-miss as presence-only; the strengthened check_merged_metadata has no production caller, so deferring Pattern C is not defensible while the inline copy stays weaker.",
+      "sites": ["nd-unfolding/p4_evidence.py:161", "nd-unfolding/p4_lib.py:632"],
+      "accepted": true,
+      "self_assessment": "Verified: p4_evidence.py:161 is still `need(rec['nTruthOnlyMisses'] is not None)`, and a grep for callers of check_merged_metadata returns only its own definition. I wrote Pattern C -- 'a gate that is never invoked' -- into the inventory, marked it FIX-but-deferred, and then put repair-6's native-miss fix into exactly that dead function. The delegate is right that the deferral is not defensible when it makes the fix a no-op."
+    },
+    {
+      "n": 4,
+      "finding": "review_scope may be arbitrarily narrow, and the 16-file fallback omits the real execution dependencies (uq_math.py, project_cov_nd.py, unfold_nd_omnifold_unbinned.py, xsec_nd.py, omnifold.py). A genuine older PASS can authorize materially changed execution code.",
+      "sites": ["nd-unfolding/p4_check_verifier_token.py:115", "nd-unfolding/p4_lib.py:382"],
+      "accepted": true,
+      "self_assessment": "Correct, and it is the corpus-definition error again: I drew the surface by FILENAME PREFIX (p4_*) rather than by what the chain executes. Third instance of a sweep/scope being right about what it looked at and wrong about what it needed to cover."
+    },
+    {
+      "n": 5,
+      "finding": "the token gate accepts symbolic revisions such as HEAD and compares reviewed files only between committed revisions, never against the working tree that will actually execute.",
+      "sites": ["nd-unfolding/p4_check_verifier_token.py:106", "nd-unfolding/p4_lib.py:404"],
+      "accepted": true,
+      "self_assessment": "Correct. The gate proves something about git objects and not about the bytes that will run."
+    },
+    {
+      "n": 6,
+      "finding": "C_syst is recomputed only over retained keys the component manifest names; the validator never requires that set to equal retained_bands/all_syst_bands nor checks the persisted matrices against component_content_hash, so a candidate missing or substituting a retained systematic can be self-consistent and pass.",
+      "sites": ["nd-unfolding/p4_validate_active_lateral.py:175", "nd-unfolding/p4_build_components.py:151"],
+      "accepted": true,
+      "self_assessment": "Correct: the recomputation trusts the manifest's own key list, which is the self-assertion pattern one level up."
+    },
+    {
+      "n": 7,
+      "finding": "the mutation harness is incomplete -- the dirty-source case tests a detached boolean rather than the live need()/exit path, A1 has no positive genuine-PASS execution, and no mutation reconstructs the pre-repair cross-check, C_syst, native-miss, migration or support-label behaviour. NON_DISCRIMINATING lists only two gaps.",
+      "sites": ["nd-unfolding/tests/test_p4_guard_mutations.py:152,293,437,538"],
+      "accepted": true,
+      "self_assessment": "Correct. I applied the rule to the guards I had just written and not retroactively to the repair-6 fixes, which is the same partial application the rule exists to prevent."
+    },
+    {
+      "n": 8,
+      "finding": "the committed inventory matches neither generator at HEAD (82/24 vs 66/22; 23/326 vs 22/324) and still describes verifier_crosscheck as unenforced; its corpus omits p4_check_verifier_token.py.",
+      "sites": ["docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md:13,36,173"],
+      "accepted": true,
+      "self_assessment": "Correct and avoidable. I built the artifact to stop a sweep being a claim rather than a measurement, then let it go stale relative to its own generator within the same round."
+    },
+    {
+      "n": 9,
+      "finding": "the 56495756 production receipts have no committed products summary, RUN_LOG entry or current STATUS line; the canonical status still records zero .done receipts, so under the repository's commit gate the result cannot be relied on at HEAD.",
+      "sites": ["nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md:6,37"],
+      "accepted": true,
+      "self_assessment": "Correct, and it is CLAUDE.md's first hard rule -- a result does not exist until its commit lands. I deferred the bookkeeping to avoid touching the P4 surface before the verifier pass, which was the right sequencing instinct applied to the wrong files: STATUS and RUN_LOG are not on that surface."
+    }
+  ],
+
+  "next_action": "STOPPED, not scoped. Joseph's standing instruction: if the outstanding count does not drop substantially, stop and raise whether the candidate covariance must come through this driver at all. It went 6 -> 9."
+}
