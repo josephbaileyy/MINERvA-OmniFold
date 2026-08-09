@@ -4124,3 +4124,12 @@ PENDING on Priority with zero runtime and no output. Terminal and one-hour queue
 armed; the orphaned sentinel for the failed 56525829 hedge was disarmed only after the original batch
 completed. Submission receipt:
 `../docs/orchestration/state/step1-dynamics-submit-56531057.json`.
+
+A concurrent code audit then found that the engine's apparent post-iteration `1e-5` anneal is dead:
+the trained clones are not reached by `CompileModels(fixed=True)` at `n_ensemble=1`, and `RunModel`
+recompiles at full LR immediately before every fit anyway. The existing three-task array is already
+committed and hash-pinned, so it was not edited in place. A separate `warm_fixed_annealed_lr` wrapper
+forces only the fit-time compile at iterations 1/2 to `1e-5` for both steps, retains the warm model and
+fixed split, and records all six actual optimizer rates. It passes four focused tests and eight pins;
+the shared engine remains unchanged. Control plan:
+`../docs/orchestration/state/step1-annealed-lr-control-plan.json`.
