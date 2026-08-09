@@ -2417,3 +2417,58 @@ confirmed the 20 `docs/orchestration` failures reproduce on a stashed tree rathe
 Collection **970 -> 985** announced. Mailed one batched report. Also deleted a stray empty `MORE` file I
 had created earlier with a redirect typo.
 
+### 09:30Z — CLM-012 restated as a BUG FIX; scope promoted above weighting; BEN-074 on `git stash`
+
+Joseph's directive, all four parts landed. `37b9355`.
+
+**The reframing is his and it is right.** `phi(E[a]) = 1-(1-0.42351622)^3 = 0.808415` **rounds to the
+retired 0.80**. So the bar was not invented — someone computed a ceiling in the wrong scope and wrote
+down the rounded value. "We corrected a bar computed in the wrong scope, off by 0.0084" now replaces
+"we re-specified a bar we could not meet" in the criterion text, CLAIMS.md, and the gate's reissue
+block. It is both the stronger position and the accurate one, and I had been carrying the weaker
+version because I stopped at "unsatisfiable" instead of asking *where 0.80 came from*.
+
+**The asymmetry he caught was real and mine.** Scope moves the ceiling **0.190187**; weighting moves
+it **0.023733**. Scope is **8.0x** the bigger lever and I had it as caveat (iv-d) while weighting
+carried the "load-bearing" label. Promoted scope to a first-class argued section in both FROZEN and
+CLAIMS.md, and re-ranked the sensitivity list largest-first: scope 0.190187, weighting 0.023733,
+sampling 0.014980, injection ±0.02. The ranking carries an argument of its own — **only the injection
+is a free parameter**; levers 1–3 are determined by what the criterion measures, which is precisely
+why this is a bug fix and not a re-specification.
+
+**His proposed justification is my reasoning, and I could state it tighter than he did.** The
+criterion scores a ratio of L1 sums over cells, so achievable recovery is
+`Σ_b φ(a_b) d_b / Σ_b d_b = E_d[φ(a)]` — a *displacement-weighted* mean of per-cell dilutions —
+whereas the retired bar used `φ(E[a])`, a different functional of the same map. Two things follow that
+he did not spell out: the criterion's denominator **is** `Σ_b d_b`, so **the same argument settles the
+weighting question** (truth-mass weighting is wrong for this criterion, not an alternative); and the
+error's **direction is forced**, since `φ'' = -k(k-1)(1-a)^(k-2) < 0` makes Jensen give
+`E[φ(a)] ≤ φ(E[a])` for *every* acceptance map, with equality **iff acceptance is uniform**. MINERvA's
+is not, so the scalar reading's error *is* the acceptance spread.
+
+**"Stable is not correct" — acted on, not acknowledged.** `test_scope_error_is_signed_by_concavity`
+checks φ's concavity numerically over 2e4 samples, **reproduces 0.808415 from a_bar and k rather than
+trusting the frozen literal**, and asserts the Jensen ordering. That is a test of the mathematics; the
+old `ceiling_weighting == "per-event"` assertion was a test of the bookkeeping. Both are kept, but only
+the first would survive a referee.
+
+**BEN-074, from his process note.** I used `git stash` twice to check whether failures were
+pre-existing. The instinct was right (confirm the baseline, don't assert it); the mechanism was not —
+the stash stack is repo-global with no per-agent namespace, and the GBDT lane is pushing to this same
+checkout. A concurrent pop silently reassigns uncommitted work between two agents and is nearly
+undiagnosable afterwards. WIP commit or detached worktree instead: both recoverable via reflog, the
+stash is not. Generalized in the row to *any* git command mutating repo-global state, because this
+checkout has not been single-tenant since 08-05.
+
+**Concrete proof that hazard is live:** my push was rejected non-fast-forward mid-turn — the other lane
+had landed 7 commits (p4 repair work, BEN-070's second site). No file overlap with my lane and no BEN
+id collision; rebased, re-verified bindings and suite on the merged tree, then pushed. Had I been
+mid-`stash` when that arrived, this entry would read differently.
+
+Bindings ALL INTACT. Suite 7 failed / 899 passed / 1 skipped on the merged tree (the 7 documented; the
+passed count includes the other lane's additions). My collection delta +3. Gate-4 re-issued again
+(validator `f990ada33161`, test `3a70792215bd`).
+
+**Both jobs still PENDING (Priority)**, watches armed. Per his instruction `56525829` lands before
+anything else — no new work started.
+
