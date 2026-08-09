@@ -65,6 +65,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   The separate annealed-LR job's one-hour wake reached the same evidence-backed decision: `56531204`
   remained prestart-clean with no output or alternative A100 allocation, so batch remains its sole
   writer. Both the array and single-job terminal watches remain armed.
+  Array `56531057` then emitted a mixed error: tasks 0/1 failed before training with
+  `ModuleNotFoundError: omnifold`, while task 2 remained pending; no result JSON exists and therefore
+  no mechanism verdict is available. All scientific pins match. Changed r2 launchers add the missing
+  `omnifold_nn` import path plus a fail-closed import preflight; unchanged retry is prohibited.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

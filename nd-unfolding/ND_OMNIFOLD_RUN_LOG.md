@@ -4159,3 +4159,13 @@ interactive ceiling, so no collision-safe replacement was available: the job was
 batch remains its sole writer. The `56531204` terminal watch and separate array `56531057` terminal
 watch remain armed. Receipt:
 `../docs/orchestration/state/step1-annealed-lr-queue-56531204-reconciliation.json`.
+
+Array `56531057` later emitted an error event, but not an aggregate-terminal one: tasks 0/1 failed
+`1:0` after 25s/13s while task 2 remained pending. Each existing stdout/stderr and each result path was
+read/checked once. Both failures occurred before training with `ModuleNotFoundError: No module named
+'omnifold'`; all three result JSONs are absent. The launcher plus wrapper, driver, loader, engine,
+target, target receipt, and Gate-3 manifest all match their committed hashes, so this is a launcher
+environment defect and yields no scientific mechanism verdict. New r2 array and annealed-LR launchers
+preserve every scientific pin, add `${REPO}/omnifold_nn` to `PYTHONPATH`, and fail closed on both
+OmniFold imports before training. Shell syntax, three focused tests, and a live import probe pass.
+Receipt: `../docs/orchestration/state/step1-dynamics-error-56531057.json`.
