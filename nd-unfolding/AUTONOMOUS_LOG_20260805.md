@@ -2518,3 +2518,86 @@ internal gates pass.
 Trajectory `56525829` — Joseph's stated priority — is still `PENDING (Priority)`, queued behind this
 GPU work. Mailing the batched verdict.
 
+### 02:00Z — Diagnostic extraction COMPLETE end-to-end, and the quarantine proof fired on real data
+
+`56527676` (the other lane's CPU continuation) **COMPLETED in 1:32, exit 0:0**, consuming my preserved
+push without recomputation. So the full-event extractor has now run start-to-finish on real input for
+the first time.
+
+**The quarantine design validated on a real product, including the parts only a real run could test.**
+
+    tolerance_source                              validate_pet_nominal_gate4.FROZEN
+    deviation (recomputed from the artifact)      0.3445786271570904
+    tolerance / exceeds_tolerance_by              0.05  /  6.891572543141808x
+    rejection_reason                              cites the PHYSICS
+    rejection_reason_laundered                    cites the PHYSICS (identical)
+    publication_gate_rejects_this                 true
+    publication_gate_rejects_this_on_physics_alone true
+    manifest mode                                 -r--r--r--
+
+Three things I could not verify until now, all confirmed: (1) `tolerance_source` reads
+`validate_pet_nominal_gate4.FROZEN`, so on the cluster the validator WAS importable and the tolerance came
+from the live frozen contract — my drift cross-check ran and agreed rather than silently falling back to
+the local literal. (2) The **laundering power test fired on the real product**: a copy with publication
+schema and label and the marker stripped from every path was still rejected, and the reason it gives is
+the recomputed fold-forward deviation, not the labelling. (3) The builder refused nothing spuriously — it
+wrote, which means the physics ground was reached and was decisive.
+
+**Extractor structural health, which was the point of running it.** 262 of 285 cells populated on the
+[15,19] grid, 4 masked zero-acceptance, 23 without a denominator; CLM-011's no-double-correction logic
+present and firing (`completeness_applied = False` with its full justification); and
+`n_pass_truth_and_reco / n_pass_truth = 20571564/49150928 = 0.41854`, which matches the `a = 0.4185618`
+that CLM-012's scalar-scope reading uses — an independent consistency check between the extractor's own
+acceptance and the ceiling arithmetic.
+
+**I am deliberately NOT interpreting the cross-section magnitude.** The summary records
+`total_sigma_cm2_per_nucleon = 1.6568692515128627e-37` and the manifest declares it low by ~34.5%.
+Dividing it by `(1 - 0.345)` to "recover" a value would be exactly how a diagnostic becomes a quoted
+number, and I would then have produced the publication-path result branch C forbids. Recorded, not
+interpreted.
+
+**Preserved off purgeable scratch, which nothing else was doing.** The products were untracked and NOT
+gitignored, i.e. one `/pscratch` purge from gone. Committed the small ones — manifest (3061 B), summary
+(3995 B), xsec npz (6093 B), both `.done` receipts — 24 KB total. **Deliberately NOT the 254 MB push
+npz**: it is reproducible from the committed weights artifact in 13 GPU-minutes, so it fails the
+"irreplaceable" test that justifies the space. Verified the local xsec copy is bit-identical to the
+manifest's `xsec_sha256` (`d2a4497959fc8bbf`) and re-derived the 0.344578627 deviation from the manifest's
+own three numbers rather than trusting its `deviation` field.
+
+`56525829` (step-1 trajectory, Joseph's priority) is STILL `PENDING (Priority)`, priority 67768, no start
+estimate from Slurm. Nothing I can do to advance it; the watch is armed.
+
+### 02:10Z — The artifact the whole campaign now rests on was NOT backed up, and a stale backup hid it
+
+Checking storage after preserving the extraction products, I found the real risk of the night.
+
+`/global/cfs/cdirs/m3246/josephrb/fullevent-nominal-checkpoints-20260807/` exists, is correctly named,
+sits in the right place, and contains exactly the right *filenames*. It holds **`8d17140f…`** — the
+**08-07 artifact that the BEN-043 re-train retired**. The artifact everything now depends on,
+**`58f664cdef266d09…`**, existed **only on purgeable `/pscratch`**: the one Gate A/B is bit-exact
+against, that the step-1 decomposition and the diagnostic extraction consumed, and that the still-pending
+trajectory job will consume. Six GPU-hours of training, one purge from gone.
+
+**This is BEN-073's mechanism one level over**, so I extended that row rather than minting a new id (the
+same write-once call I made an hour ago on the BEN-075 collision). A *missing* backup is obvious; a backup
+**of the wrong generation** is invisible, because presence and plausible naming do the reassuring and only
+a content comparison can tell. The new rules: verify a backup by DIGEST against the live artifact, never
+by `ls`; and a re-run that supersedes an artifact must re-back-it-up **in the same turn it lands**, exactly
+as a gate re-issue must retire its predecessor. The 08-07 backup was correct when written — it simply
+stopped being the thing that mattered, and nothing was watching for that.
+
+Closed: `fullevent-nominal-checkpoints-20260808/` — nominal `58f664cdef266d09` and floor
+`14cccc231dfd92c9` both **digest-verified against the live files**, 14 checkpoints including both BEN-043
+`_final` weights, 6 receipts, 36.1 MB.
+
+**And a trap inside the fix:** `du -sh` reported **15K** for that directory. Had I trusted it I would have
+concluded the copy failed and either retried pointlessly or reported a backup that did not exist.
+`du --apparent-size` gives 36.1 MB and the sha256 comparison is what actually proved the bytes arrived —
+CFS block accounting is lazy. Recorded as rule (8), because the failure mode is "your verification tool
+lies in the reassuring direction only half the time".
+
+Also noted, no action: the 254 MB push npz and the 6 KB xsec npz remain untracked because `.gitignore:29`
+excludes `*.npz` deliberately. Both are reproducible (13 GPU-min and 1:32 CPU respectively) and the xsec's
+sha256 is bound in the committed manifest, so a regenerated copy is verifiable. Force-adding past a
+deliberate repo rule for a reproducible non-quotable diagnostic is not justified.
+
