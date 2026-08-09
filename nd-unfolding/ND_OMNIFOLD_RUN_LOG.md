@@ -4107,3 +4107,12 @@ tensors and an index but rebuilds the current label/weight dataset every call. F
 warm-started model state remain distinct controlled hypotheses. Joseph's verdict mail was accepted by
 the local MTA with rc=0. Branch C remains. Completion receipt:
 `../docs/orchestration/state/step1-trajectory-complete-56525829.json`.
+
+The next diagnostic was implemented without editing the shared hash-bound engine.
+`pet/diagnose_step1_iteration_dynamics.py` subclasses it in-process and routes every arm through the
+canonical full-input nominal driver and Gate-2/Gate-3 provenance checks. The completed nominal supplies
+the warm/fixed baseline; a three-task array supplies warm/fresh, cold/fixed, and cold/fresh. Every task
+owns an arm/job namespace and all code, target, receipt, and manifest inputs are pinned. The
+predeclared repair definition is correct-sign iteration 2 with achieved/required >= 0.90. Six focused
+tests, shell syntax, the canonical config gate, and all seven pins pass. Control plan:
+`../docs/orchestration/state/step1-iteration-dynamics-control-plan.json`.

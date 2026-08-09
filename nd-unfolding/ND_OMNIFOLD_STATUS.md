@@ -51,7 +51,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   PENDING on Priority, owned no output then, and remained the sole writer. It later completed `0:0`.
   Independent validation gives `CORRECT_AT_ITER0_DEGRADES_LATER`: iteration 0 is correct-sign and
   within 9.74% of exact R, while iterations 1 and 2 are wrong-signed. The failure is post-feedback
-  iteration dynamics; Branch C remains and no publication cross section is promoted.
+  iteration dynamics. Three full-input controls are ready in isolated namespaces: warm/fresh split,
+  cold/fixed split, and cold/fresh split; together with the completed warm/fixed baseline they form a
+  predeclared factorial over split reuse and Step-1 warm-start. Branch C remains and no publication
+  cross section is promoted.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract
