@@ -2472,3 +2472,49 @@ passed count includes the other lane's additions). My collection delta +3. Gate-
 **Both jobs still PENDING (Priority)**, watches armed. Per his instruction `56525829` lands before
 anything else — no new work started.
 
+### 01:35Z — `56525297` FAILED on my own avoidable error, but the push half succeeded and it VALIDATES the BEN-043 fix on real input
+
+**The failure is mine and it was preventable.** My launcher ran `--stage all` under
+`module load tensorflow/2.15.0`. The `push` stage (GPU/TF) completed; the `xsec` stage then imported
+`unfold_2d_omnifold_unbinned`, which imports PyROOT at module load, and **no Perlmutter interpreter has
+both ROOT and TensorFlow**. `ModuleNotFoundError: No module named 'ROOT'`, exit 1:0 at 00:14:06 — with
+the expensive half already paid for.
+
+I was carrying that exact constraint in working memory as a blocker for a *different* step. Holding the
+fact did not help, because nothing in the authoring path made me query it at the moment I typed
+`--stage all`. **A fact you hold and never query is operationally identical to one you never had.**
+Filed as **BEN-075**, whose operative rule is the cheap one: a launcher running N stages must probe
+every stage's imports up front (`python3 -c 'import ROOT, tensorflow'`, 2 seconds), and better, split
+the job at every environment boundary — the boundary belongs in the job graph, not in one script's
+control flow.
+
+**A concurrent session had already fixed it before I looked**, committing `5b718b6` ("Split diagnostic
+extraction across GPU and ROOT environments") and submitting `56527676`. I checked their script rather
+than assuming, because the thing that could have quietly gone wrong is the quarantine design: it
+reuses my preserved push artifact without recomputing, requires `DIAG_PUSH_JOB_ID` explicitly,
+**asserts the PyROOT contract before reading the 49M rows** (citing my failure in a comment), and still
+calls `build_diagnostic_manifest` and checks both rejection flags. The non-quotability proof survives,
+so there is nothing for me to duplicate or correct.
+
+**What made this a delay and not a loss:** the extractor writes the push artifact atomically *before*
+the xsec stage starts, so 13 minutes of A100 work survived and the resume runs on CPU. Stage isolation
+did the work here, not foresight.
+
+**AND THE PUSH STAGE PRODUCED A GENUINE RESULT — the first real-input confirmation of the BEN-043 fix.**
+Full inventory, 49,152,885 rows:
+
+    subsample_agreement  max_rel_dev  1.4997372199566771e-05   tol 1e-3   -> PASSES
+                         median_rel_dev  0.0    n_shared_rows 2,000,000   is_vacuous: false
+    off_acceptance       n_pinned 1957    off_acceptance_all_exactly_one: TRUE
+    w_push               min 0.127087  mean 0.882557  median 0.989147  max 2.130355
+
+`check_subsample_agreement` was failing **closed at 0.866** before the fix; it is now **1.4997e-05**, a
+factor of **~5.8e4**, and explicitly non-vacuous. Two independent cross-checks land as well: Gate B(ii)'s
+off-acceptance property (`push == 1` exactly) holds on the full inventory and not just the 2M subsample,
+and `w_push_mean = 0.882557` over 49.15M rows agrees with the artifact's stored subsample mean
+`0.882548` to ~1e-5. The extractor has now been exercised on real data for the first time and its
+internal gates pass.
+
+Trajectory `56525829` — Joseph's stated priority — is still `PENDING (Priority)`, queued behind this
+GPU work. Mailing the batched verdict.
+
