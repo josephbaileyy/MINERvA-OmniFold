@@ -86,13 +86,44 @@ at all** — every other C++ occurrence is a `new TParameter(...)` *write* in `r
 
 So **the class is 9, not 8**: 8 Python + 1 C++.
 
-**Two things about that C++ site that bear on scoping, and cut in opposite directions:**
+#### Is the C++ site in a live path? YES — determined, not left open (2026-08-09)
 
-- It is the *background subtraction* scale, applied per-histogram — arguably a more consequential
-  use than most of the eight, since it enters the subtracted MC directly.
-- It is in `MINERvA101/MINERvA-101-Cross-Section/`, the **reference/legacy extraction**, not the
-  OmniFold chain that produces the current results. Whether it is in the live path for anything
-  quoted is a question I have not answered and did not try to.
+The provenance chain, each link verified:
+
+1. `2d-unfolding/ibu_1d_projection/build_1d_ibu_inputs.py` reads **`runEventLoopOmniFold_MEFHC.root`**
+   (its `--omnifile` default) — the `hadd` of 12 playlists — and reads `dataPOTUsed` / `mcPOTUsed`
+   from it (`:371`). Both are hadd-summed.
+2. It **rewrites them** as a single `POTUsed` into each of `runEventLoop_proj_data.root` and
+   `runEventLoop_proj_mc.root` (`:430`, `:443`).
+3. `2d-unfolding/ibu_1d_projection/sbatch_ibu_1d_projection.sh:51` runs
+   `ExtractCrossSection 5 runEventLoop_proj_data.root runEventLoop_proj_mc.root`.
+4. `ExtractCrossSection.cpp:171,172` reads `POTUsed` from each and `:225` forms `-dataPOT/mcPOT`.
+
+So the operands **do** trace to hadd-summed POT from the merged MEFHC omnifile — the same defect,
+one step removed through an intermediate file, which is precisely why a same-file review would
+never have found it.
+
+**And its output is quoted.** The 1D IBU projection is the repo's OmniFold-vs-IBU cross-check, whose
+Phase-16 verdict quotes post-fix integrals (paper 3.039e-38, OmniFold-2D 3.054e-38 / ratio 1.005,
+IBU 3.003e-38 / ratio 0.988 on `p_T`, 2.965e-38 / 0.976 on `p_∥`) and concludes both methods
+reproduce the paper to ≤ 2.5 % and agree with each other to ~1.7 %.
+
+**So it is in scope. Two qualifications that bound how much it matters, and they pull opposite ways:**
+
+- **The quoted headline is integrals, which this defect does not bias** (§1: total normalisation is
+  unaffected; the error is purely in the playlist mixture). And both arms of the OF-vs-IBU
+  comparison carry the *same* global scale, so it largely **cancels** in the ~1.7 % agreement figure.
+- **But the note's argument is about shape at the 1–2 % level.** `app_statmethods.tex:983` argues
+  that a coherent 1–2 % OmniFold-vs-IBU shape difference becomes a large χ² precisely where the
+  flux and Muon_Energy bands dominate the covariance. A 9.4 % POT-weighted mixture error propagates
+  through playlist-dependent flux shape — the same channel — and is several times larger than the
+  shape differences that discussion turns on. It does not cancel in the paper comparison, only in
+  the OF-vs-IBU one.
+
+The specific 1D-projection numbers are **not currently in `docs/analysis-note/`** (checked); the
+note references IBU conceptually and discusses the OmniFold-vs-IBU shape difference. So the C++
+site is live for a repo-internal quoted cross-check, and adjacent to — not inside — a note argument
+it could materially affect.
 
 **Method note, because it nearly went the wrong way.** The first C++ pass reported 7 reads and 2
 ratios. Five of the "reads" were multi-line `new TParameter<long>(` writes whose name string sits
