@@ -2518,3 +2518,52 @@ internal gates pass.
 Trajectory `56525829` — Joseph's stated priority — is still `PENDING (Priority)`, queued behind this
 GPU work. Mailing the batched verdict.
 
+### 02:00Z — Diagnostic extraction COMPLETE end-to-end, and the quarantine proof fired on real data
+
+`56527676` (the other lane's CPU continuation) **COMPLETED in 1:32, exit 0:0**, consuming my preserved
+push without recomputation. So the full-event extractor has now run start-to-finish on real input for
+the first time.
+
+**The quarantine design validated on a real product, including the parts only a real run could test.**
+
+    tolerance_source                              validate_pet_nominal_gate4.FROZEN
+    deviation (recomputed from the artifact)      0.3445786271570904
+    tolerance / exceeds_tolerance_by              0.05  /  6.891572543141808x
+    rejection_reason                              cites the PHYSICS
+    rejection_reason_laundered                    cites the PHYSICS (identical)
+    publication_gate_rejects_this                 true
+    publication_gate_rejects_this_on_physics_alone true
+    manifest mode                                 -r--r--r--
+
+Three things I could not verify until now, all confirmed: (1) `tolerance_source` reads
+`validate_pet_nominal_gate4.FROZEN`, so on the cluster the validator WAS importable and the tolerance came
+from the live frozen contract — my drift cross-check ran and agreed rather than silently falling back to
+the local literal. (2) The **laundering power test fired on the real product**: a copy with publication
+schema and label and the marker stripped from every path was still rejected, and the reason it gives is
+the recomputed fold-forward deviation, not the labelling. (3) The builder refused nothing spuriously — it
+wrote, which means the physics ground was reached and was decisive.
+
+**Extractor structural health, which was the point of running it.** 262 of 285 cells populated on the
+[15,19] grid, 4 masked zero-acceptance, 23 without a denominator; CLM-011's no-double-correction logic
+present and firing (`completeness_applied = False` with its full justification); and
+`n_pass_truth_and_reco / n_pass_truth = 20571564/49150928 = 0.41854`, which matches the `a = 0.4185618`
+that CLM-012's scalar-scope reading uses — an independent consistency check between the extractor's own
+acceptance and the ceiling arithmetic.
+
+**I am deliberately NOT interpreting the cross-section magnitude.** The summary records
+`total_sigma_cm2_per_nucleon = 1.6568692515128627e-37` and the manifest declares it low by ~34.5%.
+Dividing it by `(1 - 0.345)` to "recover" a value would be exactly how a diagnostic becomes a quoted
+number, and I would then have produced the publication-path result branch C forbids. Recorded, not
+interpreted.
+
+**Preserved off purgeable scratch, which nothing else was doing.** The products were untracked and NOT
+gitignored, i.e. one `/pscratch` purge from gone. Committed the small ones — manifest (3061 B), summary
+(3995 B), xsec npz (6093 B), both `.done` receipts — 24 KB total. **Deliberately NOT the 254 MB push
+npz**: it is reproducible from the committed weights artifact in 13 GPU-minutes, so it fails the
+"irreplaceable" test that justifies the space. Verified the local xsec copy is bit-identical to the
+manifest's `xsec_sha256` (`d2a4497959fc8bbf`) and re-derived the 0.344578627 deviation from the manifest's
+own three numbers rather than trusting its `deviation` field.
+
+`56525829` (step-1 trajectory, Joseph's priority) is STILL `PENDING (Priority)`, priority 67768, no start
+estimate from Slurm. Nothing I can do to advance it; the watch is armed.
+
