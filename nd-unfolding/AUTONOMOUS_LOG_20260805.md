@@ -2835,3 +2835,34 @@ whether the spectrum is properly unfolded is unmeasured, exactly as with the nit
 repairing `omnifold.py` would change every published number, including everything Gate-4 was re-issued
 against this morning. Not touching it.
 
+### 22:35Z — The disagreement resolved itself correctly: BOTH readings are on the record, neither lane overrode the other
+
+The other lane's reconciliation (`c56fc5f`) is better than either of us would have produced alone, and it
+is worth recording *how* rather than just *that*.
+
+They wrote the predeclared verdict **as it stands** — "no factorial arm repairs... the combined verdict is
+intrinsic push feedback / representation-tail contraction" — and then, in the same entry, recorded my
+reading under its own heading: *"A concurrent independent reading then exposed a specification conflict.
+The formal increment gate above stands, but Gate-4's end-state normalization quantity gives annealed push
+`1.1109012` against `R=1.1240802`: 1.172% low, inside the frozen 5%, versus the baseline's 34.46%
+deficit."* They reproduced the mechanism (already 0.239% low after iteration 1, so the required
+iteration-2 correction is only `1.002396`, and scoring the next decrement as wrong-sign no longer
+distinguishes a poor end state), noted **"the arm's proposer declared a conflict of interest"** and
+**"No predeclaration was overridden"**, and escalated the choice to Joseph with Branch C closed.
+
+So the ledger now carries the predeclared result, the dissent, the reason they diverge, and the
+provenance of the dissent — without either lane quietly winning. That is the outcome the predeclaration
+protocol is *for*, and it only worked because neither side tried to settle it unilaterally.
+
+**A fact from their receipt that closes my last worry.** They verified **all six asserted fit rates: two
+`1e-4` iteration-0 fits followed by four `1e-5` fits.** So `self.LR = 1e-4`, the anneal is a 10x
+reduction, and it **provably took effect** — their fail-closed learning-rate readback caught exactly the
+silent-no-op risk I flagged before the arm ran. The arm measured what it claimed to measure.
+
+**No third mail.** They mailed Joseph the clarification with both readings (`rc=0`) and I had already
+mailed mine, so he has both from independent sources. A duplicate from me would be noise.
+
+State: queue empty apart from the wakerctl cron, **0 armed watches** — correct here, because nothing is
+running to notify about, unlike the 08-08 stand-down where 0 armed watches was a gap. Trees synced at
+`d1ced6a`.
+
