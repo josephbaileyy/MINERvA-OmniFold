@@ -4271,3 +4271,41 @@ unfold per bin — which is the convention the campaign explicitly did **not** a
 nothing forced the contradiction into the open while stages 4-6 were unreachable. **No tolerance
 was touched and none will be**; a 3 % gate failing at a median of 4.4 % is not repaired by widening
 it. Detail: `docs/orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md` (BEN-080).
+
+Array `56531057` later emitted an error event, but not an aggregate-terminal one: tasks 0/1 failed
+`1:0` after 25s/13s while task 2 remained pending. Each existing stdout/stderr and each result path was
+read/checked once. Both failures occurred before training with `ModuleNotFoundError: No module named
+'omnifold'`; all three result JSONs are absent. The launcher plus wrapper, driver, loader, engine,
+target, target receipt, and Gate-3 manifest all match their committed hashes, so this is a launcher
+environment defect and yields no scientific mechanism verdict. New r2 array and annealed-LR launchers
+preserve every scientific pin, add `${REPO}/omnifold_nn` to `PYTHONPATH`, and fail closed on both
+OmniFold imports before training. Shell syntax, three focused tests, and a live import probe pass.
+Receipt: `../docs/orchestration/state/step1-dynamics-error-56531057.json`.
+
+The changed repair was committed and pushed at `783e674` before any scheduler mutation. A fail-closed
+check then confirmed old task `56531057_2` and sibling job `56531204` were still PENDING with no result;
+both were cancelled without GPU runtime and their terminal watches disarmed. Replacement array
+`56534116` and annealed-LR job `56534117` were submitted from the r2 launchers. All four new namespaces
+were absent and all tasks were initially PENDING on Priority. Terminal and one-hour latency watches are
+armed for both experiments. Joseph's mail explicitly reports no scientific verdict and the changed
+repair; local MTA rc=0. Receipts:
+`../docs/orchestration/state/step1-dynamics-r2-submit-56534116.json` and
+`../docs/orchestration/state/step1-annealed-lr-r2-submit-56534117.json`.
+
+The changed annealed-LR job `56534117` then crossed its one-hour prestart threshold. The wake event
+was read once and matched the armed watch, job, and verified-prestart payload. A single scheduler and
+ownership snapshot found the job still `PENDING (Priority)` at zero runtime, with its isolated
+`slurm-56534117` namespace absent and no interactive A100 allocation. The measured full-input
+reference `56445883` required 6h00m44s, longer than the four-hour interactive ceiling. No safe
+replacement was allocated, so the batch job was retained as sole writer without cancellation or a
+duplicate. Its terminal watch and corrected array `56534116` terminal watch remain armed. Receipt:
+`../docs/orchestration/state/step1-annealed-lr-r2-queue-56534117-reconciliation.json`.
+
+The changed factorial array `56534116` crossed the same one-hour prestart threshold. Its event was
+read once and matched the armed watch, array ID, and verified-prestart payload. One expanded scheduler
+and ownership snapshot found tasks 0-2 independently `PENDING (Priority)` at zero runtime, all three
+isolated task namespaces absent, and no interactive A100 allocation. The experiment needs three A100
+arms and the measured single-arm full-input reference took 6h00m44s, so no four-hour task-aware route
+was safe or allocated. Batch remains the sole writer for every task; none was cancelled or duplicated.
+The array and annealed-LR terminal watches remain armed. Receipt:
+`../docs/orchestration/state/step1-dynamics-r2-queue-56534116-reconciliation.json`.

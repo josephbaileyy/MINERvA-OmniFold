@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
   "current_dag_node": "Full-event PET Step-1 iteration-dynamics isolation",
-  "state": "Step-1 trajectory job 56525829 is validated CORRECT_AT_ITER0_DEGRADES_LATER. Array 56531057 tests split reuse/warm-start and job 56531204 tests the bypassed LR anneal. Both one-hour latency wakes retained batch: every writer was prestart-clean and the 6h00m44s full-input reference exceeds interactive wall. All controls remain collision-isolated and terminal-watched. Branch C still prohibits publication quoting.",
+  "state": "Step-1 trajectory job 56525829 is validated CORRECT_AT_ITER0_DEGRADES_LATER. Original array 56531057 produced no scientific result: tasks 0/1 failed before training because omnifold_nn was absent from PYTHONPATH; pending task 2 and sibling 56531204 were cancelled after the changed repair committed. Replacement array 56534116 and annealed-LR job 56534117 add a fail-closed import preflight and preserve every scientific pin. Both one-hour queue wakes were reconciled prestart-clean; batch remains the sole writer for all four arms and both terminal watches are armed. Branch C still prohibits publication quoting.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -23,33 +23,33 @@
   ],
   "jobs": [
     {
-      "job_id": "56531057",
+      "job_id": "56534116",
       "tasks": "0-2",
       "single_job": false,
       "owner": "Slurm m3246_g shared A100 array",
       "purpose": "Step-1 iteration-dynamics factorial controls: warm/fresh, cold/fixed, cold/fresh",
-      "state": "PENDING Priority after 3813s queue-latency decision; zero runtime/output; batch retained as sole writer; terminal watch armed",
-      "output": "nd-unfolding/pet/step1_iteration_dynamics/{arm}/slurm-56531057_{task}/STEP1_DYNAMICS.json",
-      "receipt": "docs/orchestration/state/step1-dynamics-submit-56531057.json"
+      "state": "Tasks 0-2 independently PENDING Priority after the one-hour queue wake; zero runtime and all namespaces absent; batch retained as sole writer because three A100 arms are required and the 6h00m44s reference exceeds the four-hour interactive ceiling; terminal watch armed",
+      "output": "nd-unfolding/pet/step1_iteration_dynamics/{arm}/slurm-56534116_{task}/STEP1_DYNAMICS.json",
+      "receipt": "docs/orchestration/state/step1-dynamics-r2-submit-56534116.json"
     },
     {
-      "job_id": "56531204",
+      "job_id": "56534117",
       "tasks": "0",
       "single_job": true,
       "owner": "Slurm m3246_g shared A100 job",
       "purpose": "Step-1 warm/fixed control with effective post-iteration 1e-5 fit-time learning rate",
-      "state": "PENDING Priority after 3680s queue-latency decision; zero runtime/output; batch retained as sole writer; terminal watch armed",
-      "output": "nd-unfolding/pet/step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56531204/STEP1_DYNAMICS.json",
-      "receipt": "docs/orchestration/state/step1-annealed-lr-submit-56531204.json"
+      "state": "PENDING Priority after the one-hour queue wake; zero runtime and absent namespace; batch retained as sole writer because the 6h00m44s reference exceeds the four-hour interactive ceiling; terminal watch armed",
+      "output": "nd-unfolding/pet/step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56534117/STEP1_DYNAMICS.json",
+      "receipt": "docs/orchestration/state/step1-annealed-lr-r2-submit-56534117.json"
     }
   ],
   "blockers": [
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "The trajectory localizes the failure after feedback but does not yet choose among fixed split reuse, Step-1 warm-start, their interaction, or intrinsic push feedback.",
-    "Jobs 56531057 and 56531204 are diagnostic-only. Do not promote an arm, edit the shared engine, change thresholds, or lift Branch C from these controls alone."
+    "Jobs 56534116 and 56534117 are diagnostic-only. Do not promote an arm, edit the shared engine, change thresholds, or lift Branch C from these controls alone."
   ],
-  "next_authorized_action": "On the first real terminal event for array 56531057 or job 56531204, reconcile it exactly once and retain the other terminal watch. Apply the committed iteration-2 rule independently and mail the combined mechanism verdict only after both experiments are terminal and verified. Do not poll, cancel either retained batch writer, or duplicate output.",
+  "next_authorized_action": "On the first real terminal event for changed array 56534116 or job 56534117, reconcile it exactly once and retain the other terminal watch. Apply the committed iteration-2 rule only to verified complete results and mail the combined mechanism verdict only after both experiments are terminal and verified. Do not poll or duplicate output.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
