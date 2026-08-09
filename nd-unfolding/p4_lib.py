@@ -76,7 +76,19 @@ ZERO_MIGRATION_BANDS = frozenset({"MuonResolution", "Muon_Energy_MINERvA", "Muon
 # This is NOT a tolerance loosened to make something failing pass: nothing was failing, and the
 # floor below was measured on a clean 10/10 run with zero failures.
 REPRO_RTOL_PER_BIN = 1e-9        # per reported bin, relative
-REPRO_RTOL_INTEGRAL = 1e-12      # on the integrated cross section, relative
+REPRO_RTOL_INTEGRAL = 1e-11      # on the integrated cross section, relative
+# WIDENED 1e-12 -> 1e-11 by Joseph, 2026-08-08, from measured SPREAD. The per-bin leg carried 52x
+# margin (1.93e-11 vs 1e-9) while the integral leg carried 3.2x (3.14e-13 vs 1e-12), and the two
+# integral observations span 12x (2.6e-14, 3.14e-13) -- a leg set up to false-alarm on a third
+# run. At 1e-11 both legs carry comparable margin (32x and 52x) and the discrimination survives:
+# a uniform shift still passes per-bin and fails integral anywhere from 1e-11 to 1e-9, a 100x
+# window instead of 1000x.
+#
+# This is SPECIFICATION from measured spread with nothing currently failing -- not a tolerance
+# loosened to rescue a result. The alternative considered and REJECTED was keeping 1e-12 with a
+# documented escape clause for marginal breaches: a gate you can talk your way past is the exact
+# anti-pattern this lane spent three rounds removing. REPRO_MEASURED_FLOOR below stays at the
+# OBSERVED values so the specification and the measurement can never be conflated.
 
 # MEASURED floor, recorded separately from the declared tolerance on purpose: re-measuring it
 # must never silently move the gate. Job 56471429 (CONC=6) vs the 2026-07-18 set (CONC=4),
@@ -362,6 +374,53 @@ RECEIPT_REQUIRED_KEYS = ("tag", "mode", "root_sha256", "merged_sha256", "central
 # the one that actually produces the ROOT; the others in p4_evidence.SRC describe downstream
 # consumers and do not invalidate an endpoint.
 RECEIPT_SOURCE_KEY = "unfold_blob"
+
+
+# The standard-P4 review surface: what a verifier verdict is understood to have reviewed when
+# it does not declare its own scope. Used by the token gate to prove that the files the verdict
+# covered have not changed between the reviewed commit and HEAD.
+STANDARD_P4_SURFACE_GLOBS = (
+    "nd-unfolding/p4_*.py",
+    "nd-unfolding/run_p4_*.sh",
+    "nd-unfolding/tests/test_p4_*.py",
+)
+
+
+def tracked_files_matching(globs, rev="HEAD"):
+    """Tracked paths at `rev` matching any glob. Sorted, so the result is order-stable."""
+    out = set()
+    for g in globs:
+        try:
+            r = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", rev],
+                                        cwd=REPO_ROOT, text=True,
+                                        stderr=subprocess.DEVNULL).splitlines()
+        except Exception:
+            return []
+        import fnmatch
+        out.update(p for p in r if fnmatch.fnmatch(p, g))
+    return sorted(out)
+
+
+def paths_unchanged_between(rev_a, rev_b, paths):
+    """Every path in `paths` has the same blob at rev_a and rev_b.
+
+    Returns (ok, [differing paths]). Fails CLOSED: if git cannot answer for a path, that path
+    counts as differing, because an unverifiable claim is not a satisfied one."""
+    differing = []
+    for p in paths:
+        try:
+            a = subprocess.check_output(["git", "rev-parse", f"{rev_a}:{p}"], cwd=REPO_ROOT,
+                                        text=True, stderr=subprocess.DEVNULL).strip()
+        except Exception:
+            a = None
+        try:
+            b = subprocess.check_output(["git", "rev-parse", f"{rev_b}:{p}"], cwd=REPO_ROOT,
+                                        text=True, stderr=subprocess.DEVNULL).strip()
+        except Exception:
+            b = None
+        if a is None or b is None or a != b:
+            differing.append(p)
+    return (not differing), differing
 
 
 def code_rev_in_history(rev, head=None):

@@ -168,6 +168,45 @@ siblings are the *stronger* check, the absolute one is redundant and the finding
 the absolute one is the only check of its kind in the function, it is live. Ask which before
 writing the severity down — twice now the first draft overstated it.
 
+## E-ter. Third mechanical sweep: BEN-035's pipeline exit-status trap
+
+Generator: `nd-unfolding/tools_p4_sweep_pipeline_rc.py`, over **324 tracked shell files**. Flags
+three shapes -- a pipeline through `tail/head/grep/...` used as an `if` condition, the same in a
+`&&`/`||` chain, and one followed by `rc=$?`.
+
+**Result: 22 candidate instances, and every single one is in a file that sets `set -o pipefail`.**
+Under pipefail the first failing element propagates, so the shape is benign there. **There are no
+live instances in the tracked shell corpus.**
+
+**Which relocates the finding, and is the useful part.** The trap has now bitten five times, and
+the most recent -- `selfcheck_receipts.sh` reporting `pass=10 fail=0` beside ten REJECT lines --
+was in an **ad-hoc script that was never committed and had no `pipefail`**. All three tracked P4
+drivers set it; my throwaway helper did not. So the danger zone is not the reviewed corpus, it is
+the scripts nobody commits and nobody sweeps.
+
+**Rule this earns:** *every* shell script sets `set -o pipefail`, including one-off helpers and
+anything written into a scratch directory. A sweep over tracked files cannot see the place this
+defect actually lives, which is the same blind spot as A++ (a `p4_`-prefixed file absent from a
+list drawn by provenance) -- **twice now a mechanical sweep has been correct about what it looked
+at and wrong about what it looked at.**
+
+## E-quater. ATTRIBUTION CORRECTION -- the `code_rev == HEAD` defect was a SPEC defect
+
+Repair-6b's commit message records the receipt-gate `code_rev == HEAD` flaw as mine. **It was
+not.** Joseph specified "bind the token to the sha256 of a PASS receipt whose `code_rev` matches
+HEAD"; I implemented that faithfully, and the flaw is in the specification, not the
+implementation. He corrected the attribution himself.
+
+Recording it because **a finding that misidentifies where a defect entered is worth less later**:
+the lesson here is about *spec review* -- an equality against a moving repo-wide pointer looks
+precise and is a proxy -- not about implementation care, and a future reader tracing "how did this
+get in" needs the right answer. The implementation lesson that IS mine is the second one: my
+self-check could not fail.
+
+The same spec flaw was **live in the token gate** (`p4_check_verifier_token.py` rule 4) and fixed
+before the verifier pass rather than after, because a push between the PASS and stages 4-6 would
+have rejected a valid token and wasted the delegate run.
+
 ## F. The pattern is REPO-WIDE, not this lane's — folding in BEN-043 and BEN-044
 
 Both were found in the **PET lane on the same day**, independently, and both are the same

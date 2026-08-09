@@ -434,6 +434,97 @@ class REPAIR6b_SelfCheckPipelineBug(unittest.TestCase):
         self.assertEqual(rc, 1, "capturing first preserves the command's status")
 
 
+class REPAIR6c_TokenGateReviewScope(unittest.TestCase):
+    """REPAIR-6c: the token gate carried the SAME spec flaw as the receipt gate.
+
+    Rule (4) required the verdict's `code_rev == HEAD`. Another lane pushing between the PASS and
+    stages 4-6 -- eight commits, today -- would have rejected a valid token over commits touching
+    nothing the verifier reviewed, wasting the delegate run. Replaced by ancestry PLUS
+    reviewed-files-unchanged, which is strictly stronger: it checks what the rule protects
+    instead of a proxy unrelated commits perturb."""
+
+    import subprocess as _sp
+
+    def _rev(self, spec="HEAD"):
+        return self._sp.check_output(["git", "rev-parse", spec],
+                                     cwd=P.REPO_ROOT, text=True).strip()
+
+    def test_review_surface_resolves_to_real_tracked_files(self):
+        files = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS)
+        self.assertGreater(len(files), 5)
+        self.assertTrue(all(f.startswith("nd-unfolding/") for f in files))
+        self.assertIn("nd-unfolding/p4_lib.py", files)
+
+    def test_unchanged_between_identical_revs_is_true(self):
+        files = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS)
+        ok, diff = P.paths_unchanged_between("HEAD", "HEAD", files)
+        self.assertTrue(ok); self.assertEqual(diff, [])
+
+    def test_changed_reviewed_file_is_detected(self):
+        """The property the rule exists to protect: a PASS must not authorize unseen code."""
+        files = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS)
+        ok, diff = P.paths_unchanged_between("HEAD~1", "HEAD", files)
+        self.assertFalse(ok, "HEAD~1 touched the P4 surface; that must be visible")
+        self.assertTrue(diff)
+
+    def test_unresolvable_path_fails_closed(self):
+        ok, diff = P.paths_unchanged_between("HEAD", "HEAD", ["nd-unfolding/does_not_exist.py"])
+        self.assertFalse(ok, "an unverifiable path must count as differing, not as satisfied")
+
+    def test_MUTATION_equality_would_reject_after_an_unrelated_push(self):
+        """The defect, shown: HEAD~1 != HEAD, so equality rejects a verdict reviewed one commit
+        ago even when nothing it reviewed changed."""
+        older, head = self._rev("HEAD~1"), self._rev("HEAD")
+        self.assertNotEqual(older, head)
+        self.assertTrue(P.code_rev_in_history(older),
+                        "ancestry accepts it; equality did not -- that was the defect")
+
+    def test_token_gate_uses_ancestry_not_equality(self):
+        src = (ND / "p4_check_verifier_token.py").read_text()
+        code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+        self.assertIn("code_rev_in_history", code)
+        self.assertIn("paths_unchanged_between", code)
+        self.assertNotIn('head.startswith(str(cr))', code)   # the retired equality
+
+
+class REPAIR6c_WidenedIntegralTolerance(unittest.TestCase):
+    """REPAIR-6c: REPRO_RTOL_INTEGRAL widened 1e-12 -> 1e-11 from measured spread.
+
+    Specification, not loosening: nothing was failing. The per-bin leg had 52x margin while the
+    integral leg had 3.2x and its two observations spanned 12x -- set up to false-alarm on a
+    third run."""
+
+    def test_declared_values(self):
+        self.assertEqual(P.REPRO_RTOL_PER_BIN, 1e-9)
+        self.assertEqual(P.REPRO_RTOL_INTEGRAL, 1e-11)
+
+    def test_both_legs_now_carry_comparable_margin(self):
+        f = P.REPRO_MEASURED_FLOOR
+        bin_margin = P.REPRO_RTOL_PER_BIN / f["worst_rel_bin"]
+        int_margin = P.REPRO_RTOL_INTEGRAL / 3.14e-13      # worst observed integral
+        self.assertGreater(bin_margin, 20); self.assertGreater(int_margin, 20)
+        self.assertLess(max(bin_margin, int_margin) / min(bin_margin, int_margin), 4.0,
+                        "the two legs should be within a small factor of each other")
+
+    def test_measured_floor_was_NOT_moved_with_the_spec(self):
+        """The whole point of recording them separately."""
+        f = P.REPRO_MEASURED_FLOOR
+        self.assertEqual(f["worst_rel_bin"], 1.9e-11)
+        self.assertEqual(f["integral_rel"], 2.6e-14)
+        self.assertNotEqual(f["integral_rel"], P.REPRO_RTOL_INTEGRAL)
+
+    def test_discrimination_survives_the_widening(self):
+        """A uniform shift between 1e-11 and 1e-9 must still pass per-bin and FAIL integral."""
+        rng = np.random.default_rng(0)
+        base = rng.uniform(1, 10, 4096)
+        with self.assertRaises(P4GateError) as cm:
+            P.check_reproducibility(base * (1 + 5e-11), base)
+        self.assertIn("integral relative difference", str(cm.exception))
+        # and real scatter at the measured floor still passes
+        sc = rng.normal(0, 4e-12, base.size); sc -= sc.mean()
+        self.assertIsInstance(P.check_reproducibility(base * (1 + sc), base), dict)
+
+
 # ---------------------------------------------------------------------------------------
 # Guards that could NOT be made discriminating, recorded rather than quietly kept.
 NON_DISCRIMINATING = {

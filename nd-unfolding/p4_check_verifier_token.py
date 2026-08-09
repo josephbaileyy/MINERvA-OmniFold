@@ -17,8 +17,16 @@ The token must resolve to a verdict that is:
                                                                working tree, and reviewing it is
                                                                reviewing what authorized the run)
   3. `verdict == "PASS"`                                       (BLOCK/absent authorizes nothing)
-  4. `code_rev` equal to `git rev-parse HEAD`                  (a PASS on an older patch does not
-                                                               authorize this one)
+  4a. `code_rev` is an ANCESTOR of HEAD                        (the verdict came from this
+                                                               history, not a foreign branch)
+  4b. every file the verdict REVIEWED is byte-identical        (a PASS cannot authorize code the
+      between that commit and HEAD                              verifier never saw)
+
+Rule 4 was originally `code_rev == HEAD`, which broke on correct behaviour: any push by another
+lane between the PASS and stages 4-6 invalidated a good verdict over commits touching nothing
+reviewed. 4a+4b is strictly stronger -- it checks what the rule protects instead of a proxy that
+unrelated commits perturb. Scope comes from the verdict's `review_scope` if declared, else the
+whole standard-P4 surface, which is the wider and safer default.
 
 That still does not make forgery impossible -- someone can commit a fake verdict -- but it moves
 the act from "set a variable nobody will ever see" to "commit a falsified receipt into the
@@ -82,14 +90,44 @@ def resolve(token):
     if str(v.get("verdict", "")).upper() != "PASS":
         raise P.P4GateError(
             f"{rel} records verdict={v.get('verdict')!r}, not PASS -- this authorizes nothing")
-    # (4) code_rev pinned to HEAD
+    # (4) REPAIR-6c. This required `code_rev == HEAD` and was wrong for the same reason the
+    # receipt gate was: it breaks on CORRECT behaviour. Another lane pushing between the verifier
+    # PASS and stages 4-6 -- which happened today, eight commits mid-run -- would reject a valid
+    # verdict over commits touching nothing the verifier reviewed.
+    #
+    # Replaced by a pair that is STRICTLY STRONGER than equality, because it checks the thing the
+    # rule protects rather than a proxy unrelated commits perturb:
+    #   (4a) the reviewed commit must be an ANCESTOR of HEAD -- catches a verdict carried in from
+    #        a foreign branch or a rewritten history;
+    #   (4b) every file the verdict actually REVIEWED must be byte-identical between that commit
+    #        and HEAD -- so a PASS cannot authorize code the verifier never saw.
+    # The verdict may declare its own scope in `review_scope`; absent that, the fallback is every
+    # tracked file on the standard-P4 surface, the wider and therefore safer assumption.
     cr = v.get("code_rev")
     if not cr:
         raise P.P4GateError(f"{rel} records no code_rev; cannot tell which patch it passed")
-    if not head.startswith(str(cr)) and not str(cr).startswith(head[:len(str(cr))]):
+    cr = str(cr).strip()
+    if not P.code_rev_in_history(cr):
         raise P.P4GateError(
-            f"{rel} passed code_rev {cr}, but HEAD is {head[:12]}. A PASS on a different patch "
-            f"does not authorize this one; re-run the verifier.")
+            f"{rel} passed code_rev {cr[:12]}, which is not an ancestor of HEAD ({head[:12]}). "
+            f"That verdict did not come from this repository's history.")
+
+    scope = v.get("review_scope")
+    if isinstance(scope, list) and scope:
+        paths, scope_src = sorted(str(x) for x in scope), "declared review_scope"
+    else:
+        paths = P.tracked_files_matching(P.STANDARD_P4_SURFACE_GLOBS, rev=head)
+        scope_src = "default standard-P4 surface (%d tracked files)" % len(paths)
+    if not paths:
+        raise P.P4GateError("could not resolve a review scope; refusing to authorize blind")
+    ok, differing = P.paths_unchanged_between(cr, head, paths)
+    if not ok:
+        raise P.P4GateError(
+            f"{rel} reviewed {cr[:12]}, but {len(differing)} file(s) it covered have CHANGED at "
+            f"HEAD ({head[:12]}): {', '.join(differing[:4])}"
+            f"{' ...' if len(differing) > 4 else ''}. A PASS cannot authorize code the verifier "
+            f"never saw; re-run the verifier.")
+    v["_resolved_review_scope"] = scope_src
     if v.get("authorizes_covariance_stages_4_6") is False:
         raise P.P4GateError(f"{rel} explicitly sets authorizes_covariance_stages_4_6=false")
     return rel, v

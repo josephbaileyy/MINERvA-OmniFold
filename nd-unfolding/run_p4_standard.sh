@@ -71,13 +71,16 @@ run env P4_CODE_REV="$(git rev-parse HEAD)" python3 p4_evidence.py
 #
 # The token is now the SHA256 OF A COMMITTED VERIFIER VERDICT, resolved by
 # p4_check_verifier_token.py, which requires: the digest matches an actual receipt; that receipt
-# is tracked and identical to its committed blob; verdict == PASS; and its code_rev == HEAD.
+# is tracked and identical to its committed blob; verdict == PASS; the reviewed commit is an
+# ANCESTOR of HEAD; and every file that verdict reviewed is byte-identical between the reviewed
+# commit and HEAD. (Not `code_rev == HEAD` -- that broke whenever another lane pushed anything.)
 # Note what this does NOT claim -- it cannot stop someone committing a falsified verdict. It
 # moves the act from setting an invisible variable to committing a false receipt into the ledger
 # under their own name, which is the difference between an accident and a decision.
 if [[ -z "${P4_VERIFIER_PASS}" ]]; then
   echo "[p4-std] HARD GATE: covariance construction requires P4_VERIFIER_PASS = sha256 of a"
-  echo "         committed standard-p4-verifier verdict with verdict=PASS and code_rev=HEAD."
+  echo "         committed standard-p4-verifier verdict: PASS, reviewed commit an ancestor of"
+  echo "         HEAD, and every reviewed file unchanged since."
   echo "         Setting it to an arbitrary string will NOT work (KNOWN_ISSUES #21). Refusing."
   exit 3
 fi
