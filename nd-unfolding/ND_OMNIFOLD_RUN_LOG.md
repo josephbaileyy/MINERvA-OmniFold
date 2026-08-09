@@ -4047,3 +4047,19 @@ about downstream inbox delivery. Completion receipt:
 Next dependency-ready action was executed: job 56525829 is still wholly prestart-pending on Priority,
 so its terminal watch remains armed and a one-hour queue-latency watch now covers the batch-versus-
 interactive routing decision. No duplicate writer was started.
+
+## 2026-08-09 — Step-1 trajectory queue hedge: fresh A100 route selected
+
+The real queue-latency event was read once and validated after 4,933 seconds of verified prestart
+waiting. A single current snapshot still found batch job 56525829 PENDING on Priority and found none
+of its JSON, run-log, stdout or stderr paths. The one live interactive allocation, 56525193
+`gbdt-hold`, is a CPU-only GBDT-lane holder; it cannot run the A100 trajectory and was not disturbed.
+
+The selected route is a fresh detached interactive A100 request, not a duplicate computation.
+`pet/interactive_step1_trajectory_controller.sh` begins only after allocation, proves that allocation
+is RUNNING with one GPU, locks against a second hedge, and then rechecks the exact batch and its
+output paths. If the batch has started it exits in favour of the batch. If still pending, it cancels
+only 56525829, requires terminal cancellation accounting, transfers watch ownership, and only then
+runs the unchanged trajectory launcher in the allocation-ID namespace. Static safety tests and
+shell syntax pass. Event receipt:
+`../docs/orchestration/state/step1-queue-latency-56525829-reconciliation.json`.
