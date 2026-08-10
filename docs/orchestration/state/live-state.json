@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Annealed-LR powered-closure independent finalization",
-  "state": "Changed A100 job 56552326 completed all six fits and persisted a hash-bound report/artifact. Recovery 0.512603276 passes the adopted PRIMARY 0.494582400 criterion but falls outside the SECONDARY 0.546853 +/- 0.02 band, so the predeclared finding is criterion disagreement. The committed quarantine manifest proves the product remains non-quotable. CPU-only job 56562169 is now independently re-deriving the spectra from the frozen dump and existing artifact; it does not retrain or overwrite the manifest.",
+  "current_dag_node": "Annealed-LR publication-estimator promotion disposition",
+  "state": "CPU finalizer 56562169 completed 0:0. All 31 authoritative powered-closure checks and all 47 total checks pass; maximum spectrum re-derivation difference is 5.898e-12 versus 1e-9. Recovery 0.512603276 passes the adopted PRIMARY criterion but triggers the SECONDARY TRADE-OFF/ARM-REJECTED reading, so criterion disagreement is the fixed finding. The product remains independently non-quotable. No engine edit or promotion was authorized; the next estimator disposition is blocked on Joseph.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -21,22 +21,16 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56562169",
-      "tasks": "0",
-      "single_job": true,
-      "receipt": "docs/orchestration/state/annealed-shape-finalizer-submit-56562169.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "The annealed powered closure has a predeclared criterion disagreement: its PRIMARY adopted absolute criterion passes while its SECONDARY baseline-comparison band calls a shape trade-off and rejects the arm.",
     "The source job's retired internal recovery>=0.80 check caused rc=3 after training and before its manifest step; that stale return code is not the adopted verdict and no A100 retry is allowed.",
-    "A clean independent finalizer result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication."
+    "The independently finalized result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication.",
+    "Joseph must choose whether to promote the anneal while accepting the quantified shape trade-off, reject it and authorize another normalization-remediation branch, or stop the PET publication path."
   ],
-  "next_authorized_action": "External Slurm and wakerctl own progress: reconcile CPU finalizer 56562169 only on its terminal event. Require authoritative dump/artifact re-derivation PASS, exact hash pins, the six-fit LR proof, both ranked readings, and independent dual quarantine rejection. Then commit the final receipt without retraining, editing the engine, changing thresholds, promoting the arm, or opening Branch C.",
+  "next_authorized_action": "BLOCKED ON USER: choose authorize_anneal_promotion, reject_anneal_continue_remediation, or stop_pet_path as defined in docs/orchestration/state/waker/BLOCKED-ON-USER.json. Until then do not edit the shared engine, re-issue Gate 4, launch nominal PET, change criteria, promote the arm, or rerun the closure.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

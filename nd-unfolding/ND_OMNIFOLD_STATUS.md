@@ -92,10 +92,11 @@ replacement is implied for 4D/FPS or dependent significances. See
   recovery>=0.80 self-check before manifest creation. Recomputed recovery is **0.512603276**: the
   PRIMARY adopted 0.494582400 criterion passes by 0.018020876, while the SECONDARY
   0.546853+/-0.02 band says TRADE-OFF/REJECT. The disagreement is the predeclared finding. A CPU-only,
-  no-training finalizer job `56562169` is running on a shared CPU node to perform the authoritative
-  dump/artifact re-derivation and independently verify the committed dual-rejection quarantine proof.
-  Its terminal and queue-latency watches are armed. Branch C, shared engine, thresholds, and promotion
-  status remain unchanged.
+  no-training finalizer job `56562169` completed `0:0`: all 31 authoritative powered-closure checks
+  and all 47 total checks pass, with maximum spectrum re-derivation difference `5.898e-12` versus
+  `1e-9`. Exact hashes, disjoint split, Gate-2 identity, source provenance, six fit-time LR records,
+  and both quarantine rejection conditions pass. Branch C, shared engine, thresholds, and promotion
+  status remain unchanged. The next gate is Joseph's explicit promotion/remediation disposition.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

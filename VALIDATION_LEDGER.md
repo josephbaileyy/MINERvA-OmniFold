@@ -1025,11 +1025,19 @@ The fit-time anneal is proven by six records: two iteration-0 fits at `1e-4`, fo
 at `1e-5`. The Slurm `3:0` status is a post-training launcher artifact: the driver still returns 3
 against its retired absolute 0.80 self-check, so `set -e` stopped before the quarantine-manifest step.
 The report and artifact are complete and hash-bound. Per the predeclaration amendment, the adopted
-PRIMARY criterion decides and the PRIMARY/SECONDARY disagreement is itself the finding. This entry is
-diagnostic only; a CPU finalizer still owes the authoritative independent dump/artifact re-derivation
-and dual publication-rejection manifest. No engine edit, threshold change, promotion, or Branch C
-reopening is authorized. Receipt:
-`docs/orchestration/state/annealed-shape-r2-terminal-56552326.json`.
+PRIMARY criterion decides and the PRIMARY/SECONDARY disagreement is itself the finding.
+
+CPU finalizer `56562169` subsequently completed `0:0`. Its authoritative full-dump/artifact
+re-derivation passed all 31 powered-closure checks and all 47 total checks, with zero failures; the
+largest reported-versus-rederived spectrum difference is `5.898e-12` against `1e-9`. All 14 code/data
+hash pins, the disjoint `2M+2M` split, Gate-2 identity, source digest, producer receipt, and six fit-time
+LR records pass. The committed quarantine manifest was reused without overwrite and independently
+re-established both publication rejection conditions, including the physics-only rejection.
+
+This remains diagnostic and non-quotable. No engine edit, threshold change, promotion, or Branch C
+reopening is authorized. Receipts:
+`docs/orchestration/state/annealed-shape-r2-terminal-56552326.json` and
+`docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.
 
 ## 2026-08-09 J36 global-POT-scale mixture error — SHAPE effect BOUNDED, VERIFIED-NUMERIC
 

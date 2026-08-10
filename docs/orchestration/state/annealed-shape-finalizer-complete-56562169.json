@@ -1,0 +1,125 @@
+{
+  "schema": "campaign-event-reconciliation-v1",
+  "run_id": "DIAG-ANNEALED-SHAPE-A2-FINALIZE-COMPLETE",
+  "reconciled_at_utc": "2026-08-10T11:07:29Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-annealed-shape-finalize-56562169.json",
+    "event_id": "evt-annealed-shape-finalize-56562169",
+    "watch_id": "annealed-shape-finalize-56562169",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-10T11:05:29+00:00",
+    "head_at_event": "70cc28ff7124d50c8dcaa8c05c902aa2e2924510",
+    "sha256": "cfb19a532f99e5eca882cee0c6dad2f792d0283d25e151265b403bfa8e8477bd",
+    "read_count": 1,
+    "previously_reconciled": false,
+    "valid": true
+  },
+  "accounting": {
+    "job_id": "56562169",
+    "job_name": "ann_shape_fin",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:41",
+    "submit_display": "2026-08-10T03:58:33",
+    "start_display": "2026-08-10T03:58:39",
+    "end_display": "2026-08-10T03:59:20",
+    "timestamp_timezone_note": "Preserved exactly as emitted by the single terminal accounting read; the finalizer receipt independently records 10:58:50Z to 10:59:20Z.",
+    "node": "nid004092",
+    "allocation": "shared CPU, 4 billed CPU, 64G, one node"
+  },
+  "products": {
+    "independent_validation_receipt": {
+      "path": "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.INDEPENDENT_VALIDATION.slurm-56562169.json",
+      "bytes": 14065,
+      "sha256": "f6e94ffcb75a809622d718a74785f753fb7771e9759fc37745c0d475d3628ff5",
+      "status": "PASS_DIAGNOSTIC_PRIMARY_PASS_SECONDARY_TRADE_OFF_NONQUOTABLE",
+      "exit_code": 0
+    },
+    "stdout": {
+      "path": "nd-unfolding/pet/annealed_shape_validation/logs/ann_shape_finalize_56562169.out",
+      "bytes": 462,
+      "sha256": "db5de6055ec75feb542fff8bd402860a23ff4f44bdf0d10ec64632b492189348",
+      "done_marker": true
+    },
+    "stderr": {
+      "path": "nd-unfolding/pet/annealed_shape_validation/logs/ann_shape_finalize_56562169.err",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "collision_lock": {
+      "path": "nd-unfolding/pet/annealed_shape_validation/.finalize-source-56552326.lock",
+      "sha256": "95b9d454060372299dc5c06201958fca11967ce277bf4611ff0d5f9d34952160",
+      "owner_job": "56562169",
+      "source_job": "56552326"
+    }
+  },
+  "independent_validation": {
+    "authoritative_validator": "validate_pet_nominal_gate4.check_powered_closure",
+    "validator_sha256": "024e718d97efb3fc80d23d333a5126a789b9e5f48411907e823b9ec2149a20f9",
+    "authoritative_checks": 31,
+    "authoritative_failed": 0,
+    "total_checks": 47,
+    "total_failed": 0,
+    "exact_hash_pins": 14,
+    "artifact_split": "2,000,000 + 2,000,000 rows, zero overlap, push aligned to half B",
+    "maximum_spectrum_rederivation_difference": 5.898e-12,
+    "spectrum_tolerance": 1e-9,
+    "gate2_identity": "shared sig identity hash matches",
+    "source_dump_digest": "PASS",
+    "producer_receipt_bound": true
+  },
+  "scientific_reading": {
+    "gap": 0.23427036251295683,
+    "floor": 0.010747273613151719,
+    "floor_over_gap": 0.04587551535699407,
+    "residual": 0.11418260718355933,
+    "residual_over_gap": 0.48739672384825977,
+    "recovery": 0.5126032761517403,
+    "primary": {
+      "threshold": 0.49458240000000003,
+      "margin": 0.01802087615174025,
+      "verdict": "PASS",
+      "rank": "PRIMARY_DECIDES"
+    },
+    "secondary": {
+      "baseline": 0.546853,
+      "band": 0.02,
+      "difference": -0.03424972384825975,
+      "verdict": "TRADE_OFF_CONFIRMED_ARM_REJECTED",
+      "rank": "SECONDARY_ASSUMPTION"
+    },
+    "combined": "PRIMARY_PASS_SECONDARY_TRADE_OFF_CRITERION_DISAGREEMENT"
+  },
+  "anneal_lr_proof": {
+    "pass": true,
+    "iteration_0": "two fits at 9.999999747378752e-05",
+    "iterations_1_2": "four fits at 9.999999747378752e-06",
+    "records": 6
+  },
+  "quarantine": {
+    "manifest_sha256": "d21b87ba308b88d8b3f6994db7e8da79aeb5503e0708c9df8f69544faed5b4d7",
+    "reused_without_overwrite": true,
+    "hashes_match": true,
+    "fold_values_match": true,
+    "publication_gate_rejects_this": true,
+    "publication_gate_rejects_this_on_physics_alone": true,
+    "recomputed_fold_forward_deviation": 0.3445786271570904,
+    "tolerance": 0.05
+  },
+  "scope": {
+    "retrained": false,
+    "shared_engine_edited": false,
+    "threshold_changed": false,
+    "promotion_authorized": false,
+    "branch_c_opened": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "next_dependency": {
+    "state": "BLOCKED_ON_USER",
+    "decision": "Whether to promote the annealed fit-time LR behavior into the publication estimator despite the quantified shape trade-off, reject it and authorize a different normalization-remediation branch, or stop the PET publication path.",
+    "declaration": "docs/orchestration/state/waker/BLOCKED-ON-USER.json"
+  },
+  "status": "PASS_FINALIZED_DIAGNOSTIC_NONQUOTABLE_USER_PROMOTION_DECISION_REQUIRED"
+}

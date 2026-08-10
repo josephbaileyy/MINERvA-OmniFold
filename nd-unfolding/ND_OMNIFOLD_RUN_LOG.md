@@ -4398,3 +4398,17 @@ This diagnostic does not authorize an engine edit, threshold change, promotion, 
 A hash-pinned CPU-only finalizer will reuse the existing artifact to run the authoritative full-dump
 re-derivation and create the missing dual-rejection quarantine manifest; it does not retrain. Receipt:
 `../docs/orchestration/state/annealed-shape-r2-terminal-56552326.json`.
+
+CPU finalizer `56562169` completed `0:0` in 41 seconds with empty stderr. It reused the committed
+source report, artifact, preflight, and quarantine manifest without retraining or overwriting. The
+authoritative Gate-4 powered-closure evaluator independently rebuilt all four spectra from the frozen
+dump and persisted row/weight artifact: the largest difference from the reported spectra is
+`5.898e-12` against the `1e-9` tolerance. Its 31 powered-closure checks and 47 total checks have zero
+failures; all 14 exact hashes, the disjoint `2M+2M` split, Gate-2 identity, source digest, producer
+receipt, and six fit-time LR records pass.
+
+The final scientific reading is therefore fixed: PRIMARY PASS at recovery `0.512603276`, SECONDARY
+TRADE-OFF/ARM-REJECTED at `-0.034249724` versus baseline, with criterion disagreement as the finding.
+The dual quarantine rejection was recomputed and remains true. The isolated diagnostic still does not
+authorize a shared-engine edit, threshold change, promotion, or Branch C reopening. Receipt:
+`../docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.

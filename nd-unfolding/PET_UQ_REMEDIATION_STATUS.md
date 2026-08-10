@@ -149,19 +149,17 @@ at Gate 8.
 
 ## Gate 4 — nominal and GPU floor
 
-**2026-08-06 one-liner.** Re-issued at `niter=3` (`20260806` receipt, verifier 10 mismatches -> 0);
-`nominal_pet_training_allowed: false` still holds. **The D2 powered closure re-run at `niter=3`
-(job 56381674) COMPLETED AND FAILED** — recovery 0.5469 vs predeclared >= 0.80, residual/gap 0.4531
-vs <= 0.20, with `gap`/`floor` passing as predicted. Diagnosis (per-bin, zero extra compute):
-normalization exact, shape recovery globally short (L1 ratio 0.6549), residual broadly distributed —
-over-regularization, not a defect. Thresholds untouched. **Gate 4 stays red; Step 4 stays blocked.** `OPEN_ITEMS.md` (e) narrowed: the scalar-level
-bias-variance justification for `niter=3` is assembled and recorded as **CLM-010** (bias 3.8008% ->
-2.1876% at flat 48-seed spread, sd ratio 1.036), leaving two gaps — the differential version, which
-job **56381674** yields free on completion, and the upper bound on `k`, which job **56397442**
-(k=4 arm) measures. The `niter=3` budget recompute is planned jointly with the J28 flux re-roll at
-`docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md`.
+**2026-08-10 one-liner.** The `niter=3` launch-code gate is re-issued with zero binding mismatch, but
+`nominal_pet_training_allowed: false` still holds. CLM-012 retired the stale absolute 0.80 recovery
+bar: the adopted D2 criterion is `0.80 * 0.618228 = 0.494582`. The full-LR powered closure recovery
+`0.546853` therefore passes. The isolated annealed-LR candidate was independently re-derived by CPU
+finalizer `56562169`: 31/31 authoritative and 47/47 total checks pass, recovery `0.512603276` passes
+the adopted PRIMARY criterion by `0.018020876`, but lies `0.034249724` below the full-LR baseline and
+therefore triggers the SECONDARY TRADE-OFF/ARM-REJECTED reading. That predeclared disagreement is the
+finding. No engine edit or promotion was authorized; Gate 4 remains blocked on Joseph's explicit
+estimator disposition and subsequent nominal-launch authorization. Branch C stays closed.
 
-**Current (2026-08-04): launch-code re-issue required; training NOT launched.**
+**Historical status (2026-08-04): launch-code re-issue required; training NOT launched.**
 The live code-only receipt predates decisions D1/D2. The present nominal still rebuilds the
 Gate-2 target in process, and the ordinary closure builds then discards that measured target;
 neither can produce the required evidence as written. The adopted repair is a mandatory,
