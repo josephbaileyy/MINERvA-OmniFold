@@ -166,6 +166,9 @@
       "rel_integral",
       "replaced_lateral_bands",
       "retained_bands",
+      "row_index_basis",
+      "row_index_key",
+      "row_index_sha256",
       "selection_migration_abs",
       "sigma_from_half",
       "sigma_from_roundoff_bias",
@@ -212,7 +215,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 103,
+    "n_fields": 106,
     "n_gates": 25,
     "tool": "tools_p4_sweep_recorded_fields"
   }

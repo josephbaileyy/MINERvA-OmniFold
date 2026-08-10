@@ -122,7 +122,23 @@ def main():
     import ROOT
     n = C4.shape[0]; fo = ROOT.TFile.Open(a.out, "RECREATE")
     h = ROOT.TH2D("hCov_std_proj4d_candidate", "std 5D->4D projected CANDIDATE", n, 0, n, n, 0, n)
-    h.SetContent(np.ascontiguousarray(np.pad(C4, 1), dtype=np.float64).ravel()); h.Write(); fo.Close()
+    h.SetContent(np.ascontiguousarray(np.pad(C4, 1), dtype=np.float64).ravel()); h.Write()
+    # ITEM 2 of the narrow freeze lift (2026-08-10). BOTH product-audit legs reported the same
+    # artifact defect: neither product encoded a row-to-physical-bin index vector, so covariance
+    # row alignment could only be tested INDIRECTLY (support dimension, covariance-to-central
+    # scale correlation). Every future consumer inherits that ambiguity, and it is one array.
+    #
+    # Row r of C4 corresponds to global 4D grid index rows4d[r], on the (pt,pz,eavail,q3) grid
+    # in C order. Written into the product itself, not only the manifest, so the binding travels
+    # with the object rather than with a sidecar someone may not copy.
+    rows4d = np.nonzero(m4_eff)[0].astype(np.int64)
+    P.require(rows4d.size == C4.shape[0], "index vector length != covariance dimension")
+    hidx = ROOT.TH1D("hRowIndex4D", "global 4D grid index of each covariance row",
+                     rows4d.size, 0, rows4d.size)
+    for _i, _g in enumerate(rows4d):
+        hidx.SetBinContent(_i + 1, float(_g))
+    hidx.Write()
+    fo.Close()
     json.dump({"edge_hash": ebv["edge_hash"], "bin_volume_hash": ebv["bin_volume_hash"],
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
                "central5d_sha256": pre5, "central4d_sha256": pre4,
@@ -133,6 +149,14 @@ def main():
                "mask4d_neffective": int(m4_eff.sum()),
                "mask4d_unreachable_n": int(dropped.size),
                "mask4d_unreachable_global_indices": [int(i) for i in dropped],
+               "row_index_key": "hRowIndex4D",
+               "row_index_sha256": P.hashlib.sha256(
+                   np.ascontiguousarray(np.nonzero(m4_eff)[0].astype(np.int64)).tobytes()).hexdigest(),
+               "row_index_basis":
+                   "row r of the covariance is global 4D grid index hRowIndex4D[r], on the "
+                   "(pt,pz,eavail,q3) grid in C order. Written into the product ROOT so the "
+                   "binding travels with the object. Added 2026-08-10 because both product-audit "
+                   "legs could only test row alignment INDIRECTLY without it.",
                "projected_support": "reported 4D bins REACHABLE from the reported 5D support; "
                                     "see mask4d_unreachable_* for what was excluded and why",
                "projected_support_basis":
