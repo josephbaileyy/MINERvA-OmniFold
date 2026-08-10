@@ -3897,3 +3897,58 @@ behind the bisect.
 No mail this cycle: he already has three items and a correction from tonight, this is the other lane's to
 raise since it found it, and a fourth mail after midnight would be the spam the brief forbids. It is on the
 record in the canonical place if he reaches it first.
+
+### 22:30Z — AUTHORIZATION CHANGED, and the bisect narrowed from unknown-cause to two identified deltas — with no GPU spent
+
+**Joseph mailed twice (22:04:41Z and 22:17:16Z), both from his address on the verified channel:**
+
+> *"Feel free to follow any decision made by the other sessions you can communicate with. You also can submit
+> any compute jobs you'd like"* — and — *"You can ask the overnight session for a decision and if you agree
+> with it, go ahead"*
+
+So compute is authorized and the bisect is unblocked, with **my own agreement as the governing condition** —
+he wrote "if you agree with it", not "do what it says". What this does **not** touch: the HARD CONSTRAINTS
+(no hand-edited hashes, no raised tolerances, explicit staging, no `--validator size`, no
+`RESUME_ADOPT_LEGACY=1`, no `--bkg-mode purity`, announce collection changes). Nothing in either mail revokes
+those and I am not reading a general grant as a specific one. I am also **not** treating it as authorizing
+promotion of an arm to canonical nominal — that is publication-grade, nobody has decided it, and "submit
+compute jobs" is not "promote results".
+
+**Then I read the code before buying anything, and it collapsed most of the hypothesis space for free.**
+
+**(1) The measurement-point hypothesis is DEAD, and this is the important one.** The diagnostic's
+`RunStep2` override computes `push_mean_w_reco` *inside the loop* at iteration 2, so an obvious explanation
+was that I had compared an in-loop value against an end-of-run one. But `diagnose_step1_annealed_lr.py:115`
+monkeypatches `omnifold.MultiFold` and then **invokes the production driver**, so job `56534117` also wrote a
+driver-format artifact. Read it:
+
+    step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56534117/weights.npz
+      driver's OWN fold_forward ratio = 1.1109012167   dev = -0.011724321
+
+Identical to the in-loop number. **So the same driver code, computing the same quantity the same way, gave
+1.1109012167 on 08-09 and 1.0840529523 on 08-10.** The difference is in the training, not the measurement.
+
+**(2) Definition mismatch is dead at source level too**, confirming the earlier empirical five-candidate test.
+Production: `sum_w_push_reco = Σ(w_reco_leg[pass_reco] × push[pass_reco])`, over `sum_w_reco`. Diagnostic:
+`Σ(weights_push[m] × w[m]) / Σ w[m]` with `w = self.mc_weight_reco`, `m = self.mc.pass_reco`. And
+`omnifold.py:157` shows `self.mc_weight_reco` **is** `mc.weight_reco`. Same operands, same formula.
+
+**(3) Configuration is identical on every recorded axis** — both artifacts: fingerprint
+`pet-fullevent-fps-v1`, `bkg_mode negweight-refined`, `reweight_logit_cap 30.0`, `n_evt_reco 13`, and the same
+six seed-policy core keys. The only `seed_policy` difference is the added `lr_policy` **declaration**, which
+is not a training input.
+
+**So the hypothesis space is now exactly two deltas, both identified by diff:**
+
+    (a) DRIVER VERSION.  56534117 ran the driver at 8f2bcb0, which constructs a PLAIN MultiFold -- the
+        anneal came entirely from the monkeypatch. 56563761 ran the adopted driver (54a8797), which
+        constructs _AnnealedMultiFold itself. The executable diff between them is the anneal machinery,
+        the fail-closed assertion, and the lr_policy declaration -- nothing that should move numerics.
+    (b) SUBCLASS.  The diagnostic's AnnealedMultiFold additionally overrides `cache`, `RunStep1` and
+        `RunStep2`. All three call `super()` and only record -- they should be numerically inert.
+
+**Both deltas look inert, and one of them is not.** That is the finding: the anneal logic in the two
+subclasses is line-for-line equivalent (`_inside_fit_compile and iteration > self.start`), so whatever moved
+`push` by 2.42% is something I currently believe cannot move it. That is worth more than a guess at which.
+
+Design and concurrence next, per his instruction to ask the overnight session.
