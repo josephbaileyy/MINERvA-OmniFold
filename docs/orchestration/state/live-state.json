@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Annealed-LR powered-closure shape validation — changed attempt r2",
-  "state": "Joseph authorized the isolated annealed shape validation. Attempt 56547490 failed before training on a diagnostic-subclass signature defect and produced no scientific verdict. The isolated wrapper repair is committed and pushed at 1ddc3f4. Changed full-input A100 job 56552326 remained wholly prestart-pending at its one-hour queue wake; no collision-safe A100 alternative exists, so batch remains the sole writer with its terminal watch armed. The shared engine, frozen criteria, and Branch C remain unchanged.",
+  "current_dag_node": "Annealed-LR powered-closure independent finalization",
+  "state": "Changed A100 job 56552326 completed all six fits and persisted a hash-bound report/artifact. Recovery 0.512603276 passes the adopted PRIMARY 0.494582400 criterion but falls outside the SECONDARY 0.546853 +/- 0.02 band, so the predeclared finding is criterion disagreement. The committed quarantine manifest proves the product remains non-quotable. CPU-only job 56562169 is now independently re-deriving the spectra from the frozen dump and existing artifact; it does not retrain or overwrite the manifest.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -23,20 +23,20 @@
   ],
   "jobs": [
     {
-      "job_id": "56552326",
+      "job_id": "56562169",
       "tasks": "0",
       "single_job": true,
-      "receipt": "docs/orchestration/state/annealed-shape-r2-submit-56552326.json"
+      "receipt": "docs/orchestration/state/annealed-shape-finalizer-submit-56562169.json"
     }
   ],
   "blockers": [
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
-    "All Step-1 controls fail the formal frozen iteration-2 increment gate, while the annealed end state is inside the separate 5% normalization tolerance; only the powered closure can now adjudicate shape.",
-    "Attempt 56547490 produced no recovery value or LR proof because it failed before training; it is not evidence for or against the annealed arm.",
-    "Changed attempt 56552326 is scheduler-dependent and has no safe interactive hedge: its measured runtime exceeds the interactive wall. A clean result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication."
+    "The annealed powered closure has a predeclared criterion disagreement: its PRIMARY adopted absolute criterion passes while its SECONDARY baseline-comparison band calls a shape trade-off and rejects the arm.",
+    "The source job's retired internal recovery>=0.80 check caused rc=3 after training and before its manifest step; that stale return code is not the adopted verdict and no A100 retry is allowed.",
+    "A clean independent finalizer result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication."
   ],
-  "next_authorized_action": "External Slurm and wakerctl now own progress: reconcile job 56552326 only on its terminal event. Then verify recovery and the fit-time LR proof against the frozen predeclaration, mail Joseph, and commit the diagnostic receipt. Do not poll, edit the shared engine, promote the arm, or open Branch C.",
+  "next_authorized_action": "External Slurm and wakerctl own progress: reconcile CPU finalizer 56562169 only on its terminal event. Require authoritative dump/artifact re-derivation PASS, exact hash pins, the six-fit LR proof, both ranked readings, and independent dual quarantine rejection. Then commit the final receipt without retraining, editing the engine, changing thresholds, promoting the arm, or opening Branch C.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
