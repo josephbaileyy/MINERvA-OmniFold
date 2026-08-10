@@ -3224,3 +3224,43 @@ equality**, never as a total-size test. A test asserts that smallness, so the po
 attribute inside a method, so the class-level marker did not exist and the contract check read the default.
 Moved to class scope. A marker that the contract test cannot see would have made the contract vacuous.
 
+### 14:20Z — `56563092` REFUSED at 1:12 by the driver's own overwrite guard, and the guard was RIGHT
+
+**The failure was a correct refusal, and it stopped me destroying the baseline.**
+
+    [gate4] pet_fullevent_nominal_weights.npz already exists AND is marked complete.
+            Refusing to overwrite a finished publication artifact; pass --allow-overwrite if intended.
+
+I launched the annealed production nominal through the **canonical** launcher, which writes to
+`fullevent_nominal/pet_fullevent_nominal_weights.npz` — the 2026-08-08 artifact `58f664cdef266d09`. That
+artifact is the baseline the predeclaration's expected value, CLM-012's measured recovery and margin, the
+Gate A/B receipts, and the whole shape-validation chain are measured **against**. Overwriting it would
+have cost the comparison, not just a file. **The refusal cost 1:12.**
+
+The adoption itself was fine: the config gate PASSED and printed `seed_policy` **with** `lr_policy`, and
+target provenance PASSED. The defect was purely my choice of vehicle.
+
+**What I did NOT do: pass `--allow-overwrite`.** That flag exists and would have "worked". The annealed run
+is a **different estimator** — a different training policy — not a redo of the same one, so it gets its own
+artifact. Whether it ever becomes the canonical nominal is a **promotion** decision, and Joseph authorized
+the run and explicitly not a promotion. Reaching for the override would have quietly converted a run
+authorization into a promotion.
+
+**Relaunched as `56563761`** through a new, unpinned launcher writing to `fullevent_nominal_annealed/`.
+`--tag` is constrained to `nominal|floor`, so separation comes from `--out` and `weights_folder` follows
+`dirname` automatically. The launcher **asserts the baseline's sha before and after the run** and fails if
+it moved — the entire reason the file exists is that the canonical one would have replaced it.
+
+**One improvement taken while I was in there.** It runs BOTH arms, like the canonical launcher. The
+predeclared ±0.010 band was scaled from the *single* 08-08 matched pair (0.003380 in deviation), which is a
+scale and not a distribution — the weakest part of the predeclaration. A fresh matched pair **measures the
+annealed configuration's own scatter**, inside the authorized ~6 GPU-h. It also asserts the driver declares
+the adopted `lr_policy` before training, and prints the predeclared verdict without widening the band.
+
+**No second mail this cycle.** I sent the status update Joseph asked for by mail earlier this cycle, and the
+batching rule is one per cycle; nothing here is blocked on him, and this belongs in the reproduction mail
+with the result rather than as its own alert.
+
+Watch armed on `56563761` (the `56563092` watch fired and is spent). Baseline verified `58f664cdef266d09`
+at submit time.
+
