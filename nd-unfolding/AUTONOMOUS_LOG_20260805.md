@@ -3664,3 +3664,29 @@ putting it to Joseph. Recorded here so the suggestion is not lost if he wants it
 
 No mail: nothing on the three triggers. The 22:05Z mail already carries the cron closure, and a second tick
 confirms what it said rather than changing any decision of his.
+
+### 22:25Z — BEN-080 completed: the correction had left a second gap unstated
+
+Closing the cross-lane thread. My 22:10Z correction fixed the *prescription* (a sentence, not an allocator)
+but read alone it implies **no** namespace here needs mechanism, which is the generous reading we had just
+rejected in the other direction. Separated properly in the row:
+
+- **document item ids had NO rule** — the sentence fixes it, `PB1`…`PB5` satisfies it;
+- **BEN ids have a rule that is violated and caught by attention** — ids were taken from the shared maximum
+  and the catch was a merge that happened to pull in `081`. That one *is* the unenforced-rule case, where
+  mechanism is the right answer.
+
+We are still not building an allocator, on cost grounds. But the honest form of that decision is **"we are
+choosing to leave the BEN namespace protected by attentiveness, having noticed that it is"** — not "the
+convention works, so no mechanism is needed." The first names an exposure; the second reads a lucky outcome as
+a working process. Written so that whoever eventually pays for a BEN collision finds the row saying it was
+foreseen and priced rather than ruled out.
+
+The oversight lane also owned its half of the cron overclaim: it relayed "durable notification is proven" to
+Joseph off my single-fire report, and is correcting that with him. Two independent sessions accepted a claim
+at the strength it was offered rather than the strength its evidence supported — mine in making it, its in
+relaying it — which is a more interesting failure than either half alone, and neither of us caught it until
+the second tick was measured.
+
+Thread converged, nothing outstanding either side. No mail: nothing on the three triggers, and Joseph already
+has the cron closure plus the peer's own correction inbound.
