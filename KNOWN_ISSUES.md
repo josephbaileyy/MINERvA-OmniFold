@@ -444,3 +444,30 @@ Cross-reference: the *dominant* term turned out to be neither of these but the d
 `FINDING-20260810-criteria-that-answer-a-different-question.md` for why the factorial's own repair
 criterion scored that arm as "no information" rather than a pass.
 
+## The powered closure's `recovery_criteria_met` is computed against the RETIRED bar (found 2026-08-10)
+
+`closure_powered_truth_reweight.py:105` hardcodes `RESIDUAL_OVER_GAP_MAX = 0.20` — `recovery >= 0.80`, the
+absolute bar that **CLM-012 retired on 2026-08-09**. The adopted criterion is `recovery >= f × ceiling =
+0.80 × 0.618228 = 0.494582`, i.e. `residual/gap <= 0.505418`.
+
+Consequence, on the numbers already measured: the graded closure's `recovery = 0.546853` **fails** the
+closure's own literal (`0.546853 < 0.80`) and **passes** the adopted criterion (`0.546853 >= 0.494582`). So
+any report this driver writes carries `"recovery_criteria_met": false` for a result the campaign has
+adopted as passing.
+
+**Who is authoritative:** `validate_pet_nominal_gate4.check_powered_closure`, which reads
+`FROZEN["powered_closure"]["residual_over_gap_max"]` — the adopted value — and re-derives the spectra rather
+than trusting the report. The closure's flag is a **self-report and is not the gate**. Since 2026-08-09 the
+validator also fails a check if the frozen threshold and its `f × ceiling` derivation disagree.
+
+**NOT FIXED, deliberately.** Editing a threshold inside a closure to make a check pass is the prohibited
+act regardless of justification, and it is unnecessary because the validator already governs. The adopted
+criterion should be evaluated from the report's raw `metrics.recovery`.
+
+**Read this way:** treat `recovery_criteria_met` in any `POWERED_CLOSURE_*` report as *"met the 2026-08-05
+protocol's original bar"*, never as *"passed Gate-4"*.
+
+Same file, line 230, states the principle it breaks — *"Two copies of a default is one of them going
+stale"* — about `early_stop`, which it correctly reads off the engine's own signature. The recovery bar sits
+three lines into its constants block as a literal. Knowing the rule is not applying it.
+

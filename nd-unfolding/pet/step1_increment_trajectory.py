@@ -285,10 +285,14 @@ def main(argv=None):
                    "defect is in step 1's own class normalization or training, NOT in the iteration "
                    "dynamics.")
     elif abs(it0["end_to_end_achieved_over_required"] - 1.0) <= 0.10:
-        verdict = "CORRECT_AT_ITER0_DEGRADES_LATER"
-        reading = ("step 1 recovers R to within 10% at iteration 0 and the sign inverts only later, "
-                   "so the defect is in the iteration dynamics -- what push feeds back, or the "
-                   "cached training-data reuse at omnifold.py:194/335.")
+        verdict = "RIGHT_SIGN_AT_ITER0_INVERTS_LATER"
+        reading = ("step 1's correction has the RIGHT SIGN at iteration 0 and inverts only later, so "
+                   "the defect is in the iteration dynamics -- what push feeds back, or the cached "
+                   "training-data reuse at omnifold.py:194/335. NOTE the sign is the claim, not "
+                   "accuracy: end-to-end at iteration 0 the correction UNDERSHOOTS by ~2.8% "
+                   "(0.9721 of required). The predecessor label CORRECT_AT_ITER0_DEGRADES_LATER "
+                   "overstated this and is retired; receipt STEP1_TRAJECTORY.slurm-56525829.json "
+                   "carries the old string and means exactly this.")
     else:
         verdict = "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN"
         reading = ("step 1 under-achieves at iteration 0 but with the CORRECT sign, so the sign "
@@ -297,6 +301,11 @@ def main(argv=None):
     print(f"\n[traj] VERDICT: {verdict}\n  {reading}")
 
     payload = {"schema": "pet-fullevent-step1-trajectory-v1", "verdict": verdict,
+               "verdict_label_history": {
+                   "CORRECT_AT_ITER0_DEGRADES_LATER": "RETIRED 2026-08-10 -- 'CORRECT' overstated a "
+                   "correction that end-to-end UNDERSHOOTS by ~2.8% at iteration 0; the load-bearing "
+                   "claim was always the SIGN. Renamed RIGHT_SIGN_AT_ITER0_INVERTS_LATER. Same meaning, "
+                   "honest name."},
                "reading": reading, "R": R, "niter": niter, "logit_cap": cap,
                "reproduction_gate": gate, "trajectory": rows, "checkpoints": prov,
                "weights": os.path.abspath(a.weights),
