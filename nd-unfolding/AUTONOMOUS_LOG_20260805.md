@@ -3560,3 +3560,73 @@ move that needs Joseph. Noted here so the question is on the record rather than 
 
 No mail: no job finished, no PASS/FAIL, no blocking decision — and the 21:05Z mail already carries the three
 open items. Queue still holds only the held cron.
+
+### 22:05Z — DURABLE NOTIFICATION RESTORED, proven by a real tick. And the recovery path has a fail-open trap.
+
+The oversight session answered the one question I said I would act on — whether `install-cron` replaces or
+duplicates a held scrontab entry — with a code-level reading. **It replaces.** I verified all four of its
+claims against the file on the cluster before touching anything, because a peer's reading of repo state is a
+claim and BEN-078 is my own entry for converting one into a directive unchecked.
+
+    read_scrontab        returns [] on non-zero exit           CONFIRMED
+    strip_managed_block  drops BEGIN..END inclusive            CONFIRMED
+    install_cron         strip -> extend -> write whole table  CONFIRMED
+    write_scrontab       whole-table replace via tempfile      CONFIRMED
+
+**What made it safe to do autonomously rather than leave with Joseph.** My stated blocker was an *unknown*
+("I cannot tell whether it replaces or duplicates"), not a permission question, and the unknown is now
+resolved by reading the code myself. I then reduced the risk further before writing: `python_bin` defaults to
+`/usr/bin/python3.11`, `--interval-minutes` to 5, `cron_walltime` to `12:00:00`, and no `config.json`
+overrides any of them, so `scrontab_lines` regenerates the existing 7 lines **byte-identically**. The
+operation was therefore "resubmit the same entry", with an exact backup in hand.
+
+    scrontab -l        exit 0, 7 lines, saved to scrontab_backup_20260810.txt
+    markers            lines 1 and 7 -- the WHOLE table is managed, nothing unmanaged to lose
+    install-cron       exit 0, "installed scrontab tick every 5m"
+    diff before/after  IDENTICAL -- schedule unchanged, nothing destroyed
+    queue              56160911 held  ->  56585597 PENDING (Dependency)
+
+**And then I proved it fires, which is the part that matters.** `PENDING (Dependency)` is scheduled, not
+working, and a held entry *looking* installed is exactly how this broke. A watcher polled
+`last-tick.json`'s mtime:
+
+    CRON FIRED after 40s: 1786396775 -> 1786399213
+    {"at_utc": "2026-08-10T22:00:13+00:00", "node": "login04", "pid": 720900}
+    queue now: 56585597 PENDING (BeginTime)   <- healthy steady state, waiting for the next */5
+
+On a 5-minute boundary, in a window where I ran no manual tick, so it is the cron and not me.
+
+**The trap the peer found, and it is worth more than the repair.** `read_scrontab` fails **open**: a failed
+`scrontab -l` returns `[]`, and `write_scrontab` then replaces the whole table — so `install-cron` on a
+transient listing failure writes a scrontab containing *only* the managed block, silently deleting every
+unmanaged entry, and reports success. Either lane can run it. Recorded in `KNOWN_ISSUES.md` with the safe
+procedure, and NOT fixed in code because `wakerctl.py` is one of the four known submit-time hash drifts and
+editing it moves a sha a receipt cites.
+
+**Stated honestly: repaired, not exercised.** `state/waker/` holds only `BLOCKED-ON-USER.json`,
+`idle-state.json`, `last-tick.json` — **zero armed watches**. So the cron ticks and correctly emits nothing.
+The next job either lane launches is what proves it end to end.
+
+This closes one of the three items I left in Joseph's inbox, so it earns the one mail this cycle.
+
+### 22:15Z — BEN-080 resolved at source by the other lane; one mail sent; standing down again
+
+The oversight lane owns the `B1` collision and fixed it rather than annotating it (`315bc51`): Packet B items
+are `PB1`…`PB5` going forward, `PB1 == B1` recorded so existing citations stay valid, and the rate-injection
+closure is `CLM-010 B1`. BEN-080 updated with the resolution. Its own note on it is the part worth keeping —
+*"writing the packet that enforces the convention didn't make me exempt from it"* — which is BEN-061 rule (7)
+independently rediscovered. **Second shared-id-space collision in three days** (BEN ids 08-07, packet ids
+today), same remedy both times, which argues the prefix should be mechanical rather than remembered.
+
+One thing it said that I am recording because it sharpens my own reasoning rather than flatters it: the
+difference between its install-cron procedure and what I ran is *detect-then-act* versus *prove-no-op-first*.
+Its version would have detected damage after the fact; establishing that `scrontab_lines` regenerates
+byte-identical content established there was nothing to damage. **General form worth keeping: prove the
+operation is content-identical before arguing about whether it is safe.**
+
+Mailed Joseph one short note — the cron restoration closes one of the three items I left with him, so it
+prevents him spending a decision on something already fixed. Nothing else in that mail: no new physics, and
+the finding's disposition is still his.
+
+Queue: `56585597 PENDING (BeginTime)`, the cron's healthy steady state. Zero armed watches, so it ticks and
+emits nothing until a job needs watching. `origin/main` at the push below. No jobs running. Standing down.
