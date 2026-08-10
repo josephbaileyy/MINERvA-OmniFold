@@ -87,7 +87,8 @@ replacement is implied for 4D/FPS or dependent significances. See
   `KeyError`. No recovery or LR proof exists, so neither predeclared shape reading was evaluated. The
   changed isolated-wrapper repair preserves the inherited signature and adds a fail-closed signature
   preflight; focused and live compute tests pass. The shared engine remains byte-identical and no
-  promotion is authorized.
+  promotion is authorized. Changed A100 batch attempt `56552326` is submitted in a new job-keyed
+  namespace, initially `PENDING (Priority)`, with terminal and one-hour queue-latency watches armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

@@ -4363,3 +4363,10 @@ entering `srun`. Three login-safe regression tests, shell syntax, and a live Ten
 signature probe on interactive holder `56548506` pass. The shared engine and closure logic were not
 edited; Branch C remains closed and neither threshold nor promotion status changed. Receipt:
 `../docs/orchestration/state/annealed-shape-error-56547490.json`.
+
+The repair commit `1ddc3f4` was pushed before scheduler mutation. Changed attempt `56552326` was then
+submitted as one full-input A100 batch job with an eight-hour wall; the measured full-input reference
+is approximately six hours, while the only live interactive holder is CPU-only and had less than
+thirty minutes remaining. The job was initially `PENDING (Priority)` and its job-keyed report,
+artifact, and manifest paths were all absent. Terminal and one-hour queue-latency watches are armed.
+Receipt: `../docs/orchestration/state/annealed-shape-r2-submit-56552326.json`.
