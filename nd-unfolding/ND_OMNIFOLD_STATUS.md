@@ -87,11 +87,14 @@ replacement is implied for 4D/FPS or dependent significances. See
   `KeyError`. No recovery or LR proof exists, so neither predeclared shape reading was evaluated. The
   changed isolated-wrapper repair preserves the inherited signature and adds a fail-closed signature
   preflight; focused and live compute tests pass. The shared engine remains byte-identical and no
-  promotion is authorized. Changed A100 batch attempt `56552326` is submitted in a new job-keyed
-  namespace. Its one-hour wake found it still prestart-clean and `PENDING (Priority)`, with every
-  output/log path absent and no interactive allocation or detached A100 controller. The measured
-  roughly six-hour runtime exceeds the four-hour interactive wall, so batch remains the sole writer
-  without cancellation or duplication; its terminal watch remains armed.
+  promotion is authorized. Changed A100 batch attempt `56552326` completed training and persisted all
+  six fits, report, and row/weight artifact, but exited `3:0` because the driver propagated its retired
+  recovery>=0.80 self-check before manifest creation. Recomputed recovery is **0.512603276**: the
+  PRIMARY adopted 0.494582400 criterion passes by 0.018020876, while the SECONDARY
+  0.546853+/-0.02 band says TRADE-OFF/REJECT. The disagreement is the predeclared finding. A CPU-only,
+  no-training finalizer is prepared to perform the authoritative dump/artifact re-derivation and
+  dual-rejection quarantine proof. Branch C, shared engine, thresholds, and promotion status remain
+  unchanged.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

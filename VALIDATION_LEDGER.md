@@ -1009,6 +1009,28 @@ quotable. Receipts:
 `docs/orchestration/state/step1-dynamics-r2-complete-56534116.json` and
 `docs/orchestration/state/step1-annealed-lr-r2-complete-56534117.json`.
 
+## 2026-08-10 Annealed-LR powered-closure shape validation — PRIMARY PASS / SECONDARY TRADE-OFF
+
+Changed job `56552326` completed its three-iteration/six-fit powered closure. Independent arithmetic
+on the persisted 285-cell spectra gives:
+
+| quantity | value | criterion / comparison | reading |
+|---|---:|---:|---|
+| injected gap | 0.234270363 | >= 0.15 | PASS |
+| floor/gap | 0.045875515 | <= 0.10 | PASS |
+| recovery | **0.512603276** | PRIMARY >= 0.494582400 | **PASS by 0.018020876** |
+| recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
+
+The fit-time anneal is proven by six records: two iteration-0 fits at `1e-4`, followed by four fits
+at `1e-5`. The Slurm `3:0` status is a post-training launcher artifact: the driver still returns 3
+against its retired absolute 0.80 self-check, so `set -e` stopped before the quarantine-manifest step.
+The report and artifact are complete and hash-bound. Per the predeclaration amendment, the adopted
+PRIMARY criterion decides and the PRIMARY/SECONDARY disagreement is itself the finding. This entry is
+diagnostic only; a CPU finalizer still owes the authoritative independent dump/artifact re-derivation
+and dual publication-rejection manifest. No engine edit, threshold change, promotion, or Branch C
+reopening is authorized. Receipt:
+`docs/orchestration/state/annealed-shape-r2-terminal-56552326.json`.
+
 ## 2026-08-09 J36 global-POT-scale mixture error — SHAPE effect BOUNDED, VERIFIED-NUMERIC
 
 **Claim.** The J36 defect (one global `sum(D_p)/sum(M_p)` POT scale in place of per-playlist

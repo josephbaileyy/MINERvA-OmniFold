@@ -4380,3 +4380,21 @@ the four-hour interactive ceiling—there is no proven alternative to receive ow
 the sole writer; it was not cancelled or duplicated, and its terminal watch remains the continuation
 path. Receipt:
 `../docs/orchestration/state/annealed-shape-r2-queue-56552326-reconciliation.json`.
+
+Changed attempt `56552326` then completed all six fits and persisted its report, row/weight artifact,
+preflight, histories, and fit-time LR proof, but Slurm recorded `FAILED 3:0`. The error is post-training
+control flow: the shared closure driver still returns 3 against its explicitly retired absolute
+`recovery >= 0.80` self-check, and the launcher's `set -e` stopped before its quarantine-manifest step.
+No unchanged A100 retry is warranted.
+
+Independent arithmetic on the four persisted 285-cell spectra gives gap `0.234270363`, floor/gap
+`0.045875515`, residual `0.114182607`, and recovery **`0.512603276`**. The PRIMARY adopted criterion
+passes (`>=0.494582400`, margin `+0.018020876`). The SECONDARY assumed baseline band rejects the arm:
+recovery is `-0.034249724` below `0.546853`, outside `+/-0.02`. Per Amendment 1, PRIMARY decides and
+the disagreement itself is the finding. The LR proof is exact: two iteration-0 fits at `1e-4`, then
+four iteration-1/2 fits at `1e-5`. Joseph's verdict mail was accepted locally (`rc=0`).
+
+This diagnostic does not authorize an engine edit, threshold change, promotion, or Branch C reopening.
+A hash-pinned CPU-only finalizer will reuse the existing artifact to run the authoritative full-dump
+re-derivation and create the missing dual-rejection quarantine manifest; it does not retrain. Receipt:
+`../docs/orchestration/state/annealed-shape-r2-terminal-56552326.json`.
