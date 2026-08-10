@@ -2905,3 +2905,47 @@ baseline returns to the documented 7. Bindings ALL INTACT, 141 resolved.
 **No mail:** Joseph said nothing further from him until `56547490` reports, and none of this meets the bar
 (no job finished, no verdict, nothing blocked on him).
 
+### 03:50Z — Condition (e) extended: absolute recovery + ceiling reported WITH the relative margin
+
+Joseph's extension, and he is right that re-statement alone was insufficient. **A relative criterion cannot
+adjudicate a choice of k**: lowering niter lowers the bar, so a lower-k configuration can post a *better*
+relative margin at a *worse* absolute recovery. Re-stating the verdict at the new k does not expose that;
+reporting the absolute number and the ceiling next to the margin does.
+
+Implemented as `powered:absolute_recovery_reported_with_ceiling` — the validator now prints the absolute
+recovery, the ceiling at the k in force, the recovery as a fraction of that ceiling, and the relative bar,
+**in one place**. Written into CLM-012 condition (e).
+
+**THE TRADE-OFF, NOW IN BOTH CURRENCIES** — which is the point, since it converts the shape-recovery open
+item into a decidable choice. Both of his numbers verify exactly:
+
+    k = 3 -> 1   normalization:  fold-forward dev  -34.46%  ->  -2.79%    buys 31.67 points
+                 shape:          reference ceiling  0.618228 -> 0.4236    forfeits 0.194628
+
+**One correction to the framing, from this claim's OWN caveat (i).** He wrote that the ceiling "IS
+achievable shape recovery, and it is a hard cap." CLM-012 (i) says the opposite and the status line says
+"reference curve, NOT a bound": `(1-a_b)^k` assumes step 2 resolves cells independently, a smooth learner
+can transport `f(pT)` across cells and BEAT the curve, and **BEN-038 measured the top acceptance band at
+`E_w[r] = 1.0333`**. So the `0.194628` is a fall in the REFERENCE, not a proven loss of attainable
+performance. The gaming-prevention mechanism is unaffected — it rests on the *measured* absolute number
+being visible, not on the ceiling being a bound — so his instruction stands as given, only the word "cap"
+does not.
+
+**And the shape leg is still one-sided, which I would rather say now than have him discover when deciding.**
+Recovery at `k=1` (or `k=2`) has **never been measured**. So what is quantified is 31.67 points of
+normalization against 0.194628 of *reference headroom*. Making it a decidable trade needs the low-k recovery
+measured — a concrete next run, not an open item. Written into the claim in those terms.
+
+**BEN-078 recorded as HIS, at his instruction** — verify a repo-state claim before converting it into a
+directive, especially one that modifies a frozen artifact. His diagnosis of the asymmetry is the finding: he
+had been independently checking every *arithmetic* claim, but took a claim about *state* on trust, because
+derived numbers look checkable while assertions of state read as reportage. Added rule (2), mine: a claim of
+ABSENCE is the highest-risk kind, because absence cannot be spotted in the artifact the way a wrong number
+can — grep for the thing itself, not for a sibling, which is exactly the error I made. He asked me not to
+extend the ingredients convention tonight and I have not.
+
+Gate-4 re-issued `...-20260810b.json` (validator only re-pinned), predecessor retired, 17 pins unchanged, and
+the receipt again records that the engine was pinned before the whole 08-10 chain. Bindings ALL INTACT,
+suite 7/943/1. Collection unchanged. No mail: `56547490` has not reported and he asked for nothing until it
+does.
+
