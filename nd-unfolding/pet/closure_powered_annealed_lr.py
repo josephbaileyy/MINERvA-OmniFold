@@ -29,6 +29,7 @@ and which their control guarded the same way.
         --weights-folder <dir> [--max-events N]
 """
 import argparse
+import functools
 import hashlib
 import json
 import os
@@ -67,6 +68,10 @@ def install_annealed_multifold():
     fit_lr_records = []
 
     class AnnealedMultiFold(BaseMultiFold):
+        # Preserve the base constructor's public signature.  The powered-closure driver reads the
+        # engine's early_stop default through inspect.signature rather than duplicating it.  A bare
+        # (*a, **kw) override masks that contract and fails before training (job 56547490).
+        @functools.wraps(BaseMultiFold.__init__)
         def __init__(self, *a, **kw):
             super().__init__(*a, **kw)
             self._ann_iteration = 0

@@ -4342,3 +4342,24 @@ scoring the next decrement as wrong-sign no longer distinguishes a poor end stat
 validate unfolded shape, and the arm's proposer declared a conflict of interest. No predeclaration
 was overridden. A clarification mail with both readings was accepted locally (`rc=0`), and the choice
 is escalated to Joseph with Branch C still closed.
+
+## 2026-08-10 — Annealed powered-closure shape validation attempt 1 failed before training
+
+Joseph selected the isolated annealed shape-validation option. The predeclaration and its two ranked
+readings remain unchanged: the adopted `recovery >= 0.494582` criterion is primary and the assumed
+`0.546853 +/- 0.02` comparison band is secondary. Job `56547490` reached `FAILED 1:0` after 81 seconds.
+The frozen input hash, TensorFlow/OmniFold import, and training-independent protocol preflight all
+passed; the latter emitted `PASS` with gap `0.2342704` and floor/gap `0.0458755`.
+
+Training never started. The isolated `AnnealedMultiFold.__init__(*a, **kw)` wrapper masked the base
+`MultiFold.__init__` signature, so the shared closure driver's fail-closed default lookup raised
+`KeyError: 'early_stop'`. The recovery JSON, push artifact, quarantine manifest, weights, and anneal
+LR proof are absent. Therefore this attempt supplies **no scientific verdict** and is neither evidence
+for nor against the annealed arm. Joseph was mailed that number-free disposition (`rc=0`).
+
+The changed repair is confined to the isolated wrapper and launcher: `functools.wraps` exposes the
+base constructor contract, and the import preflight now asserts the inherited `early_stop=10` before
+entering `srun`. Three login-safe regression tests, shell syntax, and a live TensorFlow/OmniFold
+signature probe on interactive holder `56548506` pass. The shared engine and closure logic were not
+edited; Branch C remains closed and neither threshold nor promotion status changed. Receipt:
+`../docs/orchestration/state/annealed-shape-error-56547490.json`.
