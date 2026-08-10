@@ -65,6 +65,11 @@
         "lr_policy_realized": "optimizer-verified realized rates; an anneal cannot be CLAIMED without them (freeze:lr_policy_realized)",
         "fingerprint": "UNCHANGED pet-fullevent-fps-v1 -- it identifies the FEATURE SCHEMA and not the training policy; bumping it would contradict its declared meaning and invalidate every v1-keyed artifact incl. the Gate-2 target",
         "legacy_rule": "artifacts without lr_policy are GRANDFATHERED explicitly as pre-adoption constant-full-LR, with the reason in the receipt detail, per KNOWN_ISSUES #24 -- a new check must not fail on correct existing data"
+      },
+      "reasoning_not_just_decisions": {
+        "why_grandfathering_is_defensible_here": "Most grandfathering is convenience. This one is EVIDENCE: absence of `lr_policy` is UNAMBIGUOUS rather than missing, because the engine's per-iteration anneal was dead code (CompileModels(fixed=True) targeted objects never fit, and RunModel recompiled at full LR before every fit). So every pre-adoption run PROVABLY trained at constant self.LR, and the absent field means exactly one thing. That is what converts a grandfather clause from a loophole into an inference. Corollary that keeps it honest: absence can never support an `annealed` claim -- that direction requires the field AND optimizer-verified realized rates.",
+        "known_issues_24_avoided_before_it_fired": "freeze:seed_policy compared dicts with ==. Adding lr_policy to one side only would have failed every artifact on the other: pre-adoption artifacts if FROZEN carried it, post-adoption artifacts if it did not. That is KNOWN_ISSUES #24's mechanism -- a check demanding a field correct data legitimately does not carry -- caught at design time rather than after it rejected correct data. The lane's two prior instances (code_rev == HEAD, verifier_crosscheck) each cost a repair round. Converted to a core-key SUBSET compare, so the shared policy is still compared exactly, key for key.",
+        "cli_prohibition_makes_the_driver_pin_load_bearing": "lr_policy is mapped to None in the launcher's POLICY_FLAGS and a test forbids --lr / --base-lr / --learning-rate in driver or launcher. With no flag, changing the anneal requires editing the driver, which moves its sha, breaks this gate's `driver` pin, and forces a re-issue. With a flag, a run could declare the adopted policy and train under something else with every sha unchanged -- the fingerprint hole reopened at the command line."
       }
     },
     "niter_unchanged": 3,
@@ -123,7 +128,7 @@
     },
     "launcher_test": {
       "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
-      "sha256": "fba6507b0704fe3ce8a154d472b3521685abcd89a845d25f17846b97a41a0cb7"
+      "sha256": "f3d47176db89940035a32da652f5ccf3fc4774764e3f856d5a9a5fbd63ccf3f5"
     },
     "validator": {
       "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",

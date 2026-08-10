@@ -346,6 +346,14 @@ class LauncherRestatesNoPolicy(unittest.TestCase):
         declare the adopted policy in seed_policy while training under an override, which is the exact
         claim-without-measurement failure the realized-LR assertion exists to prevent. Cheaper to
         forbid the flag than to detect the divergence afterwards.
+
+        JOSEPH 2026-08-10, AND THIS IS THE REASON TO KEEP IT -- do not re-add the flag as a convenience:
+        FORBIDDING THE FLAG IS WHAT MAKES THE DRIVER PIN LOAD-BEARING FOR THE LR POLICY. With no flag,
+        changing the anneal requires editing the driver, which moves its sha256, breaks the Gate-4 pin,
+        and forces a re-issue -- so a policy change cannot happen without the gate noticing. WITH a
+        flag, a run could declare the adopted policy in `seed_policy` and train under something else
+        with EVERY sha UNCHANGED. That is precisely the fingerprint hole closed on 2026-08-10 (a string
+        meaning "features" being read as meaning "the estimator"), reopened at the command line.
         """
         unflagged = [k for k, v in POLICY_FLAGS.items() if v is None]
         self.assertTrue(unflagged, "this test is vacuous if no key is unflagged")
