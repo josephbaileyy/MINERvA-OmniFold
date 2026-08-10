@@ -192,6 +192,13 @@ def main():
     wr(P.CANDIDATE_ACTIVE_TOTAL_KEY, active_only, "active-only total (sum of 5 MAT bands)")
     wr(P.CANDIDATE_SYST_KEY, Csyst_active, "candidate C_syst (retained + active)")
     wr(P.CANDIDATE_TOTAL_KEY, Ccomb_active, "candidate full total (C_syst + stat + ML)")
+    _rows5 = np.nonzero(mask)[0].astype(np.int64)
+    P.require(_rows5.size == int(mask.sum()), "5D index vector length != reported bin count")
+    _h5 = ROOT.TH1D("hRowIndex5D", "global 5D grid index of each covariance row",
+                    _rows5.size, 0, _rows5.size)
+    for _i, _g in enumerate(_rows5):
+        _h5.SetBinContent(_i + 1, float(_g))
+    _h5.Write()
     fo.Close()
     # candidate is now published; bind it into the manifest and write that LAST
     written_keys = ([f"hCov_retained5d_{b}" for b in retained]
@@ -200,6 +207,24 @@ def main():
     # Self-declaring rejection when built without a verifier PASS; see p4_lib for the pattern
     # and why the consumer's truthiness test is the correct shape here.
     P.stamp_non_adoptable(prov)
+    # ITEM 2 (2026-08-10), 5D half. Both product-audit legs reported that neither product encoded
+    # a row-to-physical-bin index vector. The 4D projector now writes hRowIndex4D. The 5D candidate
+    # gets the same treatment HERE, for FUTURE builds only.
+    #
+    # The already-audited 42.3 GB artifact is deliberately NOT rewritten: appending a histogram
+    # changes its sha256, and 602bbcf2... is the digest the 4D, 5D and cross-object audits all
+    # verified and recorded. Invalidating three passing audits to add a convenience array would be
+    # a bad trade. For that existing file the row order remains RECOVERABLE -- it is
+    # np.nonzero(central5d > 0) in C order, and central5d's sha256 is hash-pinned in the manifest
+    # and was itself verified by the 5D audit -- so the binding is derivable, just not
+    # self-contained. That is the gap this closes going forward.
+    prov["row_index_key"] = "hRowIndex5D"
+    prov["row_index_sha256"] = P.hashlib.sha256(
+        np.ascontiguousarray(_rows5).tobytes()).hexdigest()
+    prov["row_index_basis"] = (
+        "row r of every 5D covariance block is global 5D grid index hRowIndex5D[r] on the "
+        "(pt,pz,eavail,q3,W) grid in C order. Added 2026-08-10; builds before that date lack it "
+        "and their row order must be recovered as np.nonzero(central5d > 0).")
     prov["candidate"] = os.path.abspath(a.out)
     prov["candidate_sha256"] = P.sha256_file(a.out)
     prov["candidate_keys"] = written_keys

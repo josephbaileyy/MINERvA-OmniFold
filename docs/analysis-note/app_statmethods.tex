@@ -590,6 +590,34 @@ on the $205$-bin set and $\mathbf{C}$ the chosen covariance,
 \qquad
 \chi^{2}/\mathrm{ndf} \;=\; \chi^{2}/205.
 \end{equation}
+
+\paragraph{This $\mathrm{ndf}$ is dimension-conditional, and is justified here by the truncation
+scan --- not by convention.} Setting $\mathrm{ndf}=n_{\text{reported}}$ presumes the covariance has
+close to $n_{\text{reported}}$ well-determined directions. On the $205$-bin 2D problem that
+presumption is \emph{tested and holds}: the rank-truncation scan below rises smoothly
+$0.69\,(r{=}50)\to2.35\,(100)\to3.30\,(180)\to3.66\,(205)$ with no plateau or late jump, the
+signature of a spectrum whose effective rank is comparable to its dimension. The scan is the
+evidence; $205$ is not assumed.
+
+\textbf{It does not transfer to the N-D covariances.} The standard-P4 5D candidate covariance has
+$10\,694$ reported bins and a measured effective positive rank of $\mathbf{263}$ (numerical
+condition number infinite), and its $4825$-bin 5D$\to$4D projection preserves that rank exactly at
+$263$. A sum of ${\sim}45$ two-endpoint MAT bands plus statistical and ML blocks cannot span
+$10\,694$ directions, so this is a property of the construction, not a defect. Quoting
+$\chi^{2}/n_{\text{reported}}$ against such a covariance divides by a number roughly $40\times$
+(5D) or $18\times$ (4D) larger than the count of directions actually contributing to the quadratic
+form, and would understate any tension by that factor.
+
+\textbf{Therefore $\mathrm{ndf}=n_{\text{reported}}$ must not be used for an N-D covariance.} Any
+N-D $\chi^{2}$ shall instead quote (i) the inverse actually used --- pseudo-inverse with its
+\texttt{rcond}, or the truncation rank --- stated at the point of quotation rather than by
+reference; (ii) the \emph{retained rank} as $\mathrm{ndf}$; (iii) the rank-truncation scan for that
+covariance, which is expected \emph{not} to be smooth, and whose smoothness is precisely what
+licensed the 2D choice above; and (iv) which covariance is meant, since the 5D candidate, its 4D
+projection and the published 2D block have different ranks. Measurements and derivation:
+\texttt{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is a
+statistics decision recorded in \texttt{docs/STATVAL\_REPAIR.md}.
+
 The implementation (\texttt{chi2\_with\_cov} in
 \texttt{compare\_to\_paper\_fullcov.py}) builds the $205\times205$
 block, inverts with \texttt{np.linalg.pinv} (\S\ref{sec:invert}), and
