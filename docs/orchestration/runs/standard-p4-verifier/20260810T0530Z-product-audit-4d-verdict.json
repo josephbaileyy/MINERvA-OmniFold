@@ -1,0 +1,168 @@
+{
+  "receipt_kind": "standard-p4 PRODUCT audit",
+  "utc": "2026-08-10T02:37:24Z",
+  "object": "std_proj4d_candidate.root:hCov_std_proj4d_candidate (4825x4825), via p4_product_4d.npz",
+  "verdict": "CORRECT",
+  "checks": [
+    {
+      "name": "symmetry",
+      "computed": "max_abs=1.9176146348819244e-93; relative=1.8784345274449862e-16",
+      "verdict": "pass",
+      "note": "Asymmetry is at machine precision relative to max|C|=1.0208578509735073e-77."
+    },
+    {
+      "name": "PSD and full eigenspectrum",
+      "computed": "lambda_min=-7.85375303306293e-92; lambda_max=1.502140892508424e-76; 2282 algebraically negative, 0 significantly negative",
+      "verdict": "pass",
+      "note": "Worst negativity is 5.228373098842915e-16 of lambda_max, far inside the n*epsilon eigensolver scale."
+    },
+    {
+      "name": "condition number",
+      "computed": "raw kappa2=3.485826261553191e36; numerical kappa2=infinity; effective-rank=263; effective-subspace kappa=25871457.59331465",
+      "verdict": "pass",
+      "note": "The covariance is numerically rank-deficient, not indefinite."
+    },
+    {
+      "name": "finite matrix and diagonal",
+      "computed": "23280625/23280625 entries finite; diagonal min/median/max=3.009030035623895e-98/1.883521120177169e-84/1.0208578509735073e-77",
+      "verdict": "pass",
+      "note": "No NaN, Inf, zero variance, or negative variance."
+    },
+    {
+      "name": "mask and reachable support",
+      "computed": "n5_reported=10694; n4_reported=4830; n4_reachable=4825; covariance dimension=4825; unreachable=[9679,9686,9714,9721,10169]",
+      "verdict": "pass",
+      "note": "The five unreachable bins carry 2.651253588748856e-05 percent of the volume-weighted 4D total."
+    },
+    {
+      "name": "row-order consistency",
+      "computed": "corr(log10(sqrt(diag(C))),log10(W-marginal central))=0.9923345972567148; reversed-order control=-0.015249124243731434",
+      "verdict": "pass",
+      "note": "Strong evidence for the expected sorted C-order support alignment; exact row-label proof is impossible because no row-index vector is included."
+    },
+    {
+      "name": "width-weighted W marginal identity",
+      "computed": "tensor-vs-flat-route max relative discrepancy=8.070145764322027e-17",
+      "verdict": "pass",
+      "note": "The two independently implemented marginalisation routes agree at floating-point precision."
+    },
+    {
+      "name": "marginal versus independent 4D central",
+      "computed": "median_abs_rel=0.04428179223787287; p90=0.20831713443380576; p99=0.3393330104824539; max=0.7284923771285122; n_over_3pct=3009",
+      "verdict": "pass",
+      "note": "Reproduces the metadata cross-check exactly; this is an estimator difference, not a covariance identity."
+    },
+    {
+      "name": "independent whole-matrix spectral identities",
+      "computed": "trace relative difference=1.3591587342137337e-15; Frobenius relative difference=7.807383174532755e-14",
+      "verdict": "pass",
+      "note": "Establishes that the full eigenspectrum is consistent with the entire stored C4 matrix. It does not establish C4=M C5 M^T."
+    },
+    {
+      "name": "all-pairs covariance inequality",
+      "computed": "0 of 23280625 entries violate |Cij|<=sqrt(Cii*Cjj)",
+      "verdict": "pass",
+      "note": "Independent necessary PSD and scale check."
+    },
+    {
+      "name": "scale sanity",
+      "computed": "relative uncertainty min/median/p90/p99/max=0.0340376020/0.1154497813/0.2553690321/0.7052474515/1.4245595251; integrated=0.02285504544",
+      "verdict": "pass",
+      "note": "Only five sparse bins exceed 100 percent and none exceeds 143 percent; no unphysical scale outlier was found."
+    }
+  ],
+  "manifest_claims_checked": [
+    {
+      "claim": "C4_projected_shape",
+      "stated": "4825x4825",
+      "recomputed": "4825x4825",
+      "holds": true
+    },
+    {
+      "claim": "grid_5d",
+      "stated": "14x16x7x7x6",
+      "recomputed": "14x16x7x7x6 from supplied edges; product 65856",
+      "holds": true
+    },
+    {
+      "claim": "W_axis",
+      "stated": "4",
+      "recomputed": "4",
+      "holds": true
+    },
+    {
+      "claim": "reported mask counts",
+      "stated": "5D=10694, 4D=4830, effective 4D=4825",
+      "recomputed": "5D=10694, 4D=4830, effective 4D=4825",
+      "holds": true
+    },
+    {
+      "claim": "unreachable 4D support",
+      "stated": "5 bins at [9679,9686,9714,9721,10169], 0.0000 percent",
+      "recomputed": "same five indices; 0.00002651253588748856 percent, which rounds to 0.0000 percent",
+      "holds": true
+    },
+    {
+      "claim": "relative asymmetry",
+      "stated": "1.8784345274449862e-16",
+      "recomputed": "1.8784345274449862e-16",
+      "holds": true
+    },
+    {
+      "claim": "maximum eigenvalue",
+      "stated": "1.502140892508421e-76",
+      "recomputed": "1.502140892508424e-76",
+      "holds": true
+    },
+    {
+      "claim": "minimum eigenvalue",
+      "stated": "-3.708896069535619e-92",
+      "recomputed": "-7.85375303306293e-92 on the explicitly symmetrized matrix",
+      "holds": false
+    },
+    {
+      "claim": "projection identity relative error",
+      "stated": "9.392172637224931e-17",
+      "recomputed": "8.070145764322027e-17 by max-absolute-error/matrix-scale; 3.456826391228557e-17 by L2 relative error",
+      "holds": false
+    },
+    {
+      "claim": "marginal comparison distribution",
+      "stated": "median=0.04428179223787287, p90=0.20831713443380576, p99=0.3393330104824539, max=0.7284923771285122, n_over_3pct=3009",
+      "recomputed": "exactly the stated values",
+      "holds": true
+    },
+    {
+      "claim": "integral_ratio",
+      "stated": "1.0055775688062398",
+      "recomputed": "1.0055775688062398 as an unweighted bin-content sum; volume-weighted physical ratio=1.0011307330441666 on reachable bins",
+      "holds": true
+    }
+  ],
+  "findings": [
+    {
+      "severity": "low",
+      "finding": "The metadata field integral_ratio is an unweighted sum of differential-bin contents, not a phase-space integral.",
+      "evidence": "The stated 1.0055775688062398 reproduces only without the four retained-axis bin widths; the physical volume-weighted ratio is 1.0011307330441666."
+    },
+    {
+      "severity": "informational",
+      "finding": "The exact manifest minimum eigenvalue does not reproduce.",
+      "evidence": "Stated -3.708896069535619e-92 versus recomputed -7.85375303306293e-92. Both lie deep in the numerical nullspace and imply the same PSD verdict."
+    },
+    {
+      "severity": "informational",
+      "finding": "The manifest projection_identity_relerr does not reproduce exactly under independently specified common norms.",
+      "evidence": "Stated 9.392172637224931e-17 versus max-scale 8.070145764322027e-17 and L2-relative 3.456826391228557e-17. All are floating-point summation residuals."
+    }
+  ],
+  "five_d_leg": "UNAUDITED - script authored for separate execution",
+  "what_this_audit_does_not_cover": [
+    "The identity C4_projected = M C5 M^T, because the 5D covariance C5 was not supplied or accessed in this pass.",
+    "The 5D component decomposition, active-band traces, stat/ML reconstruction identities, or 5D PSD; those remain unaudited until the supplied script's raw output is returned and judged.",
+    "An exact binding between each covariance row and its physical 4D bin label, because the NPZ carries no covariance-row index vector; alignment was tested indirectly through support dimension and covariance-to-central scale structure.",
+    "The source ROOT-file digests claimed for the central products, component files, or 5D candidate, because those source files were not supplied locally.",
+    "Provenance machinery, adoption state, manifests as software, guards, tests, launchers, or any pipeline code that produced the fixed arrays.",
+    "Whether the uncertainty ensemble includes every physically required systematic source; this audit tests the supplied covariance object's numerical and central-product consistency, not the completeness of the uncertainty model."
+  ]
+}

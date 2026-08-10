@@ -76,6 +76,58 @@ they were made:
 - endpoint content reproduction against the 2026-07-18 reference at a declared tolerance
   (per-bin 1e-9, integral 1e-11), 10/10, worst 1.83e-11 / 2.87e-12.
 
+## 2b. PRODUCT AUDIT RESULT — 4D leg: **CORRECT** (2026-08-10)
+
+Independent audit of the projected 4D covariance, performed by the `codex-school` delegate
+**directly on the object** from a raw-array numpy dump — no execution step of mine in this leg.
+Receipt: `runs/standard-p4-verifier/20260810T0530Z-product-audit-4d-verdict.json`.
+
+**Verdict: CORRECT.** All eleven checks pass:
+
+| check | computed |
+|---|---|
+| symmetry | relative `1.878e-16` |
+| PSD | λ_min `-7.85e-92` against λ_max `1.50e-76` — negativity at round-off, ratio ~5e-16 |
+| finite | 23 280 625 / 23 280 625 entries finite; diagonal strictly positive |
+| mask / reachable support | `n5=10694`, `n4=4830`, `n4_reachable=4825` = covariance dimension |
+| unreachable bins | the same five indices, independently rederived, carrying 0.0000 % |
+| row-order consistency | `corr(log sqrt(diag C), log W-marginal central) = 0.9923` |
+| W-marginal identity | two routes agree to `8.07e-17` |
+| trace, Frobenius | two routes agree to `1.36e-15` |
+| **Cauchy–Schwarz** | **0 of 23 280 625 entries violate `|C_ij| ≤ sqrt(C_ii C_jj)`** |
+| scale sanity | relative uncertainty median 11.5 %, no unphysical bins |
+
+Eleven manifest claims were recomputed rather than believed; nine reproduce exactly, and the two
+that do not are informational: the minimum eigenvalue (`-3.71e-92` stated vs `-7.85e-92`, both at
+round-off, different eigensolver paths) and `projection_identity_relerr` (`9.39e-17` vs `8.07e-17`,
+a different norm convention).
+
+**One LOW finding, recorded not fixed** (the freeze): the report-only field `integral_ratio` is an
+unweighted sum of differential bin contents, **not a phase-space integral** — the bins are
+densities and the sum omits bin volumes. The number is a legitimate comparison statistic; its
+*name* overclaims. Same shape as the "direct block sum" naming defect. It affects no gate.
+
+### What the 4D audit explicitly does NOT cover
+
+Copied verbatim from the delegate's receipt, because this is the boundary of what has been checked:
+
+- The identity C4_projected = M C5 M^T, because the 5D covariance C5 was not supplied or accessed in this pass.
+- The 5D component decomposition, active-band traces, stat/ML reconstruction identities, or 5D PSD; those remain unaudited until the supplied script's raw output is returned and judged.
+- An exact binding between each covariance row and its physical 4D bin label, because the NPZ carries no covariance-row index vector; alignment was tested indirectly through support dimension and covariance-to-central scale structure.
+- The source ROOT-file digests claimed for the central products, component files, or 5D candidate, because those source files were not supplied locally.
+- Provenance machinery, adoption state, manifests as software, guards, tests, launchers, or any pipeline code that produced the fixed arrays.
+- Whether the uncertainty ensemble includes every physically required systematic source; this audit tests the supplied covariance object's numerical and central-product consistency, not the completeness of the uncertainty model.
+
+The third bullet is a defect in **my dump**, not in the product: the npz carried no covariance-row
+index vector, so row-to-physical-bin alignment could only be tested indirectly, through support
+dimension and covariance-to-central scale structure. A future dump should ship the index vector.
+
+**5D leg: UNAUDITED as of this pass.** The delegate authored a self-identifying audit script
+(`runs/standard-p4-verifier/20260810T0530Z-product-audit-5d-script.py`) which hashes every input
+against a claimed digest, prints all shapes and independently derived counts, and computes
+deliberately redundant quantities that must agree. It is being executed and its raw output returned
+for the delegate's judgement.
+
 ## 3. What it does NOT establish — the debt
 
 ### 3a. Open verifier defects, carried deliberately
