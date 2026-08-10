@@ -217,6 +217,14 @@ FROZEN = {
         # `rate_preserving` above; scope, weighting and the ceiling's provenance are pinned here.
         # Unpinned, BEN-045 repeats itself one level up -- a number that looks like a constant but
         # silently depends on how it was produced.
+        # SELF-ADJUSTING IN k, ONE DIRECTION ONLY (CLM-012 (vii), 2026-08-10). ceiling(k) is monotone
+        # increasing, so the bar rises with niter: 0.338880 / 0.451360 / 0.494582 / 0.515280 / 0.527360 /
+        # 0.535280 at k = 1..6. RAISING niter therefore cannot buy a pass -- the estimator must capture more
+        # than f of the headroom each iteration opens (k=3->4 opens +0.025872, the bar takes +0.020698).
+        # LOWERING niter DOES lower the bar (k=3->1 drops it 0.155702), and fewer iterations is what the
+        # 2026-08-09 trajectory favours on normalization, so that direction needs its own guard: adoption
+        # condition (e) requires the D2 verdict re-stated at the new k AND the shape/normalization
+        # trade-off measured before a lower-k configuration is credited.
         "recovery_fraction_of_ceiling": 0.80,
         "acceptance_limited_ceiling": 0.618228,
         # Scope is the largest lever (0.190187) and is FORCED, not chosen -- see the argued section

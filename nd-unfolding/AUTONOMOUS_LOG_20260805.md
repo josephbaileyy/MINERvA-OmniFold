@@ -2866,3 +2866,42 @@ State: queue empty apart from the wakerctl cron, **0 armed watches** — correct
 running to notify about, unlike the 08-08 stand-down where 0 armed watches was a gap. Trees synced at
 `d1ced6a`.
 
+### 03:10Z — CLM-012 (vii): the bar self-adjusts in k, but ONLY UPWARD, and the open direction is the live one
+
+Joseph's one remaining task, and checking his numbers turned up an asymmetry worth more than the property
+itself.
+
+**His point verifies exactly.** `ceiling(k)` is monotone increasing (`φ(a)=1-(1-a)^k` rises with k on
+(0,1)), so the bar `f×ceiling(k)` runs `0.338880 / 0.451360 / 0.494582 / 0.515280 / 0.527360 / 0.535280`
+at k=1..6. His k=3..6 ceilings (0.6182/0.6441/0.6592/0.6691) match to <5e-4. **Nobody can buy a pass by
+adding iterations** — precisely, `margin(k) = measured(k) − f·ceiling(k)` improves only if the estimator
+captures **more than f** of the headroom each iteration opens: k=3→4 opens `+0.025872` of ceiling and the
+bar takes `+0.020698` of it, so the estimator must gain `>0.020698` in recovery merely to hold its margin.
+
+**But the protection is ONE-DIRECTIONAL, and that is the part that matters here.** The same monotonicity
+means **lowering** k lowers the bar — `k=3 → 1` drops it `0.155702`, from `0.494582` to `0.338880`. And
+fewer iterations is exactly what the 08-09 trajectory favours on normalization (`push dev −2.79%` at k=1
+against `−34.46%` at k=3). So *"buy a D2 pass by REMOVING iterations"* is **not** blocked by this property.
+Since `niter` is now the single exposure, that is the direction someone would actually take.
+
+Added as **adoption condition (e)**: if `niter` is ever lowered, the D2 verdict must be re-stated at the new
+k *and* the shape/normalization trade-off measured, because both the bar and the measured recovery fall and
+the sign of the margin change is not determined a priori. **A lower-k configuration that passes a lower bar
+is not evidence of a better estimator.**
+
+Written into CLM-012 (vii), mirrored in `FROZEN` beside the criterion it governs, and asserted by
+`test_bar_is_self_adjusting_in_k_and_only_one_way` — which tests the **monotonicity** rather than the
+literals, since monotonicity is what the argument rests on. Collection **1049 → 1050 (+1)**.
+
+Gate-4 re-issued as `...-20260810.json` (validator `abb8119ff81b`, test `3185f86cc8d2`), predecessor retired
+with `files → files_at_issue`, **17 pins unchanged** — and the receipt records explicitly that the engine was
+already pinned before this re-issue, so the retracted pin-hole claim cannot be re-read out of the gate
+history. This time the rename popped `sha256` *before* unpacking; last time I built `{**v, ...: v.pop(...)}`
+and left the live key in place, which the suite caught.
+
+Suite back to **7 failed / 943 passed** — the other lane fixed their `test_p4_sweep_snapshots`, so the
+baseline returns to the documented 7. Bindings ALL INTACT, 141 resolved.
+
+**No mail:** Joseph said nothing further from him until `56547490` reports, and none of this meets the bar
+(no job finished, no verdict, nothing blocked on him).
+
