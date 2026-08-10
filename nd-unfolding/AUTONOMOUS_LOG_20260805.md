@@ -3690,3 +3690,34 @@ the second tick was measured.
 
 Thread converged, nothing outstanding either side. No mail: nothing on the three triggers, and Joseph already
 has the cron closure plus the peer's own correction inbound.
+
+### 22:35Z — the relay failure filed as BEN-082, because a chronology entry is not its canonical home
+
+The cross-lane thread is closed on both sides. One thing from it was sitting in the wrong place: the relay
+formulation was only in this log, and per `CLAUDE.md` how agents/campaigns fail belongs in `FINDINGS.md`. A
+finding recorded in chronology is a finding nobody will read — which is the same failure that left nine of
+them orphaned until 08-06. Filed as **BEN-082**, id taken from the PET lane range (070+, highest in use 081)
+after re-fetching, per BEN-061 rule (7) that the moment of allocation is when to re-read the range.
+
+The content, stated as the pair rather than as my error with a relay appended:
+
+- I observed **one** tick and wrote *"proven by a real tick"*. One fire proves **reinstallation**; it does not
+  prove the **schedule**, because a `*/5` entry that fires once and dies looks identical at that moment.
+- The oversight session relayed it to Joseph as *"durable notification is proven"* — at full strength, without
+  either of us asking **what the single fire distinguished**.
+- Caught only by measuring a second tick (297 s apart, different login nodes), which is the observation that
+  earns the word.
+
+**The structural half is the part worth having.** Joseph had been reading both lanes through one relay for
+days, so every claim he saw passed through a step that can only preserve or inflate confidence, never audit
+it — a relay has no access to the evidence unless the evidence travels with the claim. So the fix is in the
+relay *format* (carry the job id, the measurement, and what the claim distinguishes) rather than in the
+relayer's care. The other lane has committed to relaying that way and has told Joseph the relay itself was a
+defect, not just my original.
+
+Also kept from the exchange: the diagnostic question **"what would be false if this were wrong?"** — a single
+observation consistent with both a claim and its negation is not evidence for the claim, however cleanly it
+fired. That is the check that would have caught this in either seat.
+
+No mail. Nothing on the three triggers, Joseph has the cron closure and the peer's correction inbound, and
+adding a third mail tonight about a ledger row would be the spam the brief forbids.
