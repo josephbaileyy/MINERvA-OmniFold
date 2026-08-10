@@ -26,9 +26,13 @@ and the ideal classifier ratio therefore has reco-weighted mean EXACTLY R. So:
 Those two readings point at disjoint parts of the code, which is why this measurement is worth a job.
 
 WHAT ELSE IT REPORTS, because each kills a specific alternative:
-  * `required_r1[i] = R / mean_w_reco(push[i-1])` against the achieved value -- the per-iteration
-    version of the memo's "0.648331 where ~1.16 is required", so the sign claim is checked at every
-    iteration and not just the last.
+  * `required[i] = R / mean_w_reco(push[i-1])` against the END-TO-END achieved factor
+    `mean_w_reco(push[i]) / mean_w_reco(push[i-1])`. BOTH SIDES ARE END-TO-END, which matters: an
+    earlier version of this harness compared `required` against `mean_w_reco(r1)` alone -- the first
+    leg's average -- omitting `Cov_w(push_prev, r1)` and step 2's re-estimation (measured at +4.22%
+    and +5.85% on the annealed arm). That is BEN-077's defect class and it inflated the apparent
+    shortfall. `mean_w_reco(r1)` is still reported, explicitly labelled as a first-leg decomposition
+    diagnostic that is NOT comparable to `required`.
   * the ratio distribution (percentiles) and the F3 logit-cap saturation fraction. If the mean is low
     because a large weight-mass is pinned at the cap floor, that is a saturation artifact rather than
     a learned ratio, and the cap telemetry says so directly.
@@ -222,12 +226,28 @@ def main(argv=None):
         required = R / base if base else None
         v = r1[it][pass_reco]
         ww = w_reco[pass_reco]
+        # BEN-077: `required` = R/mean_w(push_prev) is an END-TO-END requirement -- it asks what factor
+        # carries mean_w(push_prev) to R. `mean_w(r1)` is only the FIRST LEG's average, and reaching the
+        # requirement through r1 also passes through Cov_w(push_prev, r1) and step 2's re-estimation
+        # (measured at +4.22% and +5.85% respectively on the annealed arm). Comparing them is
+        # apples-to-oranges, and the original version of this harness did exactly that. Both are now
+        # reported, with the END-TO-END pair carrying the sign/ratio verdict and the first-leg average
+        # retained as a decomposition diagnostic.
+        m_push = wmean(push[it], w_reco, pass_reco)
+        e2e = (m_push / base) if base else None
         rows.append({
             "iteration": it,
             "push_prev_mean_w_reco": base,
             "r1_mean_w_reco": m_r1,
             "r1_required_mean": required,
-            "r1_achieved_over_required": (m_r1 / required) if required else None,
+            # --- the like-for-like comparison: both sides end-to-end (BEN-077) ---
+            "end_to_end_achieved": e2e,
+            "end_to_end_achieved_over_required": (e2e / required) if (required and e2e) else None,
+            "end_to_end_sign_is_wrong": bool(required is not None and e2e is not None
+                                             and (e2e - 1.0) * (required - 1.0) < 0),
+            # --- first-leg decomposition, NOT comparable to `r1_required_mean` ---
+            "r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE":
+                (m_r1 / required) if required else None,
             "r1_is_below_one": bool(m_r1 < 1.0),
             "correction_sign_is_wrong": bool(required is not None
                                              and (m_r1 - 1.0) * (required - 1.0) < 0),
@@ -244,25 +264,27 @@ def main(argv=None):
 
     print("=== STEP-1 INCREMENT TRAJECTORY ===")
     print(f"  R = {R:.6f}\n")
-    print(f"  {'it':>2} {'push_prev':>10} {'r1 mean':>10} {'r1 required':>12} {'ach/req':>8} "
-          f"{'sign':>6} {'push':>10} {'push dev':>9} {'tier':>16}")
+    print(f"  {'it':>2} {'push_prev':>10} {'e2e ach':>9} {'required':>10} {'ach/req':>8} "
+          f"{'sign':>6} {'push':>10} {'push dev':>9} | {'r1 mean':>9} {'(1st leg)':>9}")
     for r in rows:
-        print(f"  {r['iteration']:>2} {r['push_prev_mean_w_reco']:10.6f} {r['r1_mean_w_reco']:10.6f} "
-              f"{r['r1_required_mean']:12.6f} {r['r1_achieved_over_required']:8.4f} "
-              f"{'WRONG' if r['correction_sign_is_wrong'] else 'ok':>6} "
-              f"{r['push_mean_w_reco']:10.6f} {r['push_dev_vs_R']:+9.4f} "
-              f"{r['checkpoint_tier_step1']:>16}")
+        print(f"  {r['iteration']:>2} {r['push_prev_mean_w_reco']:10.6f} "
+              f"{r['end_to_end_achieved']:9.6f} {r['r1_required_mean']:10.6f} "
+              f"{r['end_to_end_achieved_over_required']:8.4f} "
+              f"{'WRONG' if r['end_to_end_sign_is_wrong'] else 'ok':>6} "
+              f"{r['push_mean_w_reco']:10.6f} {r['push_dev_vs_R']:+9.4f} | "
+              f"{r['r1_mean_w_reco']:9.6f} "
+              f"{r['r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE']:9.4f}")
 
     it0 = rows[0]
     # The discriminator. At iteration 0 push == 1, so required == R exactly and the two readings are
     # far apart; `verdict` names which part of the code the evidence points at.
-    if it0["correction_sign_is_wrong"]:
+    if it0["end_to_end_sign_is_wrong"]:
         verdict = "BROKEN_AT_ITER0"
         reading = ("step 1's ratio is already wrong-signed at iteration 0, where push == 1 and the "
                    "ideal ratio's reco-weighted mean is EXACTLY R. No feedback exists yet, so the "
                    "defect is in step 1's own class normalization or training, NOT in the iteration "
                    "dynamics.")
-    elif abs(it0["r1_achieved_over_required"] - 1.0) <= 0.10:
+    elif abs(it0["end_to_end_achieved_over_required"] - 1.0) <= 0.10:
         verdict = "CORRECT_AT_ITER0_DEGRADES_LATER"
         reading = ("step 1 recovers R to within 10% at iteration 0 and the sign inverts only later, "
                    "so the defect is in the iteration dynamics -- what push feeds back, or the "
