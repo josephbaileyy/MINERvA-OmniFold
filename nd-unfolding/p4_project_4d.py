@@ -135,6 +135,18 @@ def main():
                "mask4d_unreachable_global_indices": [int(i) for i in dropped],
                "projected_support": "reported 4D bins REACHABLE from the reported 5D support; "
                                     "see mask4d_unreachable_* for what was excluded and why",
+               "projected_support_basis":
+                   "CONTRACT CORRECTION, not a relaxed guard (2026-08-10). The defect was the "
+                   "CALLER's assertion that the projection's low support equals the 4D reported "
+                   "mask; it does not, because 5 reported 4D bins are unreachable from the "
+                   "reported 5D support. p4_lib.build_projection_M's bidirectional coverage check "
+                   "is UNCHANGED by this fix and is now an invariant that must never fire in "
+                   "production -- it was correct to reject the inconsistent supports it was "
+                   "handed. The support is now DERIVED (p4_lib.reachable_low_mask) rather than "
+                   "asserted. mask4d_unreachable_global_indices and the reported/effective counts "
+                   "are recorded so that a future set with a MATERIAL drop is visible rather than "
+                   "absorbed; the 0.0000% these five carry is a fact about these products, not a "
+                   "licence.",
                "candidate_c5": os.path.abspath(cpath), "candidate_c5_key": ckey,
                "candidate_c5_sha256": P.sha256_file(cpath),
                "psd": stats},

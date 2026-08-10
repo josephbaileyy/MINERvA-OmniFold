@@ -11,6 +11,41 @@ throughout and `p4_adopt_standard.py` refuses it.
 
 ---
 
+## 0. THE LARGEST GAP: there is no CI in this repository
+
+Stated first because it conditions every other claim in this document and every test count in the
+repo.
+
+**Verified 2026-08-09 by `git ls-files`:** no `.github/workflows`, no `.gitlab-ci.yml`, no
+pre-commit config, no Makefile target. Every guard described anywhere in this lane —
+fail-closed gates, snapshot regeneration, hash bindings, mutation harnesses — **binds an author who
+happens to run `pytest`. None binds a commit.**
+
+**Therefore: "the suite is green" is a statement about a machine, not about the repository, and
+every citation of a test count should carry that qualifier.** A green count means *someone ran it
+somewhere*, not that the tree is in that state.
+
+**Three incidents this plausibly underlies**, all from this campaign and all caught late or by
+accident rather than by a gate:
+
+1. **The ledger id collision risk.** BEN ids 077–080 were allocated from the shared maximum into
+   the PET lane's range while the header paragraph forbidding exactly that was on screen. Caught
+   during a manual merge, not by anything automatic; the PET lane took 077 two commits later.
+2. **The hash-pinned file drift.** A five-line guard added to `test_p3f_pet_fullevent_launcher.py`
+   silently voided a sha256 frozen into `p3f-pet-gate3-launch-code-gate-20260720.json`. The binding
+   test that should have caught it *was itself red for a full working session*, invisible because
+   nobody's `pytest` run was authoritative.
+3. **The collection abort that masked seven failures.** A module-scope `open()` on a hardcoded
+   `/pscratch` path aborted collection of the entire `tests/` directory off-cluster. Seven real
+   PET-lane failures were hidden behind it for an unknown period — a directory that cannot collect
+   reports nothing, and nothing reads like fine.
+
+Each is the same shape: a check existed, was correct, and was not binding on anyone.
+
+**This is recorded, not scheduled.** Adding CI now is the add-surface reflex this freeze exists to
+stop, and it is post-publication infrastructure rather than a repair-round item. The correct
+disposition is: record it, qualify the claims that depend on it, move on.
+
 ## 1. Why the standard was reduced
 
 Five `standard-p4-verifier` passes on the provenance pipeline returned outstanding-defect counts of
@@ -132,10 +167,8 @@ or a product small enough to transfer, and neither is available today.
 
 ### 3d. Enforcement debt
 
-There is **no CI in this repository** — no `.github/workflows`, no `.gitlab-ci.yml`, no pre-commit,
-no Makefile target (verified 2026-08-09 by `git ls-files`). Every guard described here binds an
-author who runs `pytest`. **None binds a commit.** That is the single largest structural gap, and it
-is why "the suite is green" is a statement about a machine and not about the repository.
+See **§0** — no CI exists, so no guard in this document binds a commit. Listed here only so the
+debt inventory is complete; the discussion and the incidents it underlies are at the top.
 
 ## 4. The reduced standard, stated for the record
 

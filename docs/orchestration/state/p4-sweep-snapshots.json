@@ -159,6 +159,7 @@
       "pooled_mean",
       "pooled_sd",
       "projected_support",
+      "projected_support_basis",
       "projection_identity_relerr",
       "recovered",
       "rel_asymmetry",
@@ -211,7 +212,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 102,
+    "n_fields": 103,
     "n_gates": 25,
     "tool": "tools_p4_sweep_recorded_fields"
   }
