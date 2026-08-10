@@ -38,8 +38,9 @@ FINALIZER="${PET}/finalize_annealed_shape_validation.py"
 for path in "$REPORT" "$ARTIFACT" "$PREFLIGHT" "$INPUTS" "$GATE2" "$NOMINAL_WEIGHTS" "$FINALIZER"; do
   [[ -s "$path" ]] || { echo "[ann-finalize] FATAL: missing $path" >&2; exit 3; }
 done
-[[ ! -e "$MANIFEST" && ! -e "$RECEIPT" && ! -e "$LOCK" ]] || {
-  echo "[ann-finalize] FATAL: collision in finalizer outputs" >&2
+[[ -s "$MANIFEST" ]] || { echo "[ann-finalize] FATAL: missing committed manifest" >&2; exit 4; }
+[[ ! -e "$RECEIPT" && ! -e "$LOCK" ]] || {
+  echo "[ann-finalize] FATAL: collision in finalizer receipt/lock" >&2
   exit 4
 }
 
@@ -62,10 +63,11 @@ cd "$REPO"
   --expected report:"$REPORT":f7f764594f384ea5dcb0f68809d6e1e185bb405992faaf87a013928daee9c015 \
   --expected artifact:"$ARTIFACT":1c5a8fef4683b2114a27272b6d7652129c9d3d22aed7dae68d54c0ddaa780202 \
   --expected preflight:"$PREFLIGHT":8411c2bddbe8c6de286c43cf39e6d936a5ba69da978f0d97f5937175d068bc01 \
+  --expected manifest:"$MANIFEST":d21b87ba308b88d8b3f6994db7e8da79aeb5503e0708c9df8f69544faed5b4d7 \
   --expected inputs:"$INPUTS":fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625 \
   --expected gate2-receipt:"$GATE2":336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f \
   --expected nominal-weights:"$NOMINAL_WEIGHTS":58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084 \
-  --expected finalizer:"$FINALIZER":91ded4ccebfb0b9455db459ab0c262c76b77fbceb5c36267acfe964390143047 \
+  --expected finalizer:"$FINALIZER":aa9533ce623736de2335577d48fa48a9d8bfe5b9db0984a57946b064ef7718e6 \
   --expected validator:"${PET}/validate_pet_nominal_gate4.py":024e718d97efb3fc80d23d333a5126a789b9e5f48411907e823b9ec2149a20f9 \
   --expected quarantine:"${PET}/pet_diagnostic_quarantine.py":62cec59b3072c10a276e0ab85d76b95bdfa0c96ae2e35d545cb066d4e5e4a641 \
   --expected source-wrapper:"${PET}/closure_powered_annealed_lr.py":ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911 \

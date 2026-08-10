@@ -133,8 +133,10 @@ def main():
     lock_fd = None
     exit_code = 1
     try:
-        if Path(args.receipt).exists() or Path(args.manifest).exists():
-            raise RuntimeError("collision: receipt or source-job manifest already exists")
+        if Path(args.receipt).exists():
+            raise RuntimeError("collision: finalizer receipt already exists")
+        if not Path(args.manifest).is_file():
+            raise RuntimeError("the committed source-job quarantine manifest is missing")
         lock_fd = os.open(args.lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
         os.write(lock_fd, ("job={} source_job={} started={}\n".format(
             receipt["finalizer_job_id"], args.source_job, receipt["started_at_utc"])).encode())
@@ -199,36 +201,48 @@ def main():
         if not lr_ok:
             raise RuntimeError("fit-time annealed learning-rate proof failed")
 
-        manifest = quarantine.build_diagnostic_manifest(
-            weights_npz=args.nominal_weights,
-            xsec_npz=args.report,
-            push_npz=args.artifact,
-            xsec_summary=args.preflight,
-            inputs_npz=args.inputs,
-            out_path=args.manifest,
-            job_id=args.source_job,
-            extra={
-                "launcher": "sbatch_finalize_annealed_shape_validation.sh",
-                "finalizer_job_id": receipt["finalizer_job_id"],
-                "source_training_job_id": str(args.source_job),
-                "arm": "powered_closure_warm_fixed_annealed_lr",
-                "predeclaration": "docs/orchestration/PREDECLARATION-20260810-annealed-shape-validation.md",
-                "reused_existing_artifact_without_retraining": True,
-                "engine_edited": False,
-                "authorizes_engine_change": False,
-            })
-        quarantine_ok = (manifest.get("publication_gate_rejects_this") is True
+        # A concurrent continuity owner already built and committed the manifest from these exact
+        # products after the source launcher's retired rc=3 stopped its in-job manifest step.  Do
+        # not overwrite it or create a duplicate writer: independently recompute its hashes and
+        # physics-only rejection here.
+        manifest = json.load(open(args.manifest))
+        dev, numerator, denominator, ratio = quarantine.measured_fold_forward_dev(
+            args.nominal_weights)
+        tolerance, tolerance_source = quarantine._frozen_tolerance()
+        manifest_hashes_ok = (
+            manifest.get("xsec_sha256") == sha256_file(args.report)
+            and manifest.get("push_sha256") == sha256_file(args.artifact)
+            and manifest.get("weights_sha256") == sha256_file(args.nominal_weights)
+            and manifest.get("inputs_sha256") == sha256_file(args.inputs))
+        manifest_fold = manifest.get("fold_forward") or {}
+        fold_values_ok = (
+            abs(float(manifest_fold.get("deviation")) - dev) <= 1e-12
+            and abs(float(manifest_fold.get("sum_w_push_reco")) - numerator) <= 1e-8
+            and abs(float(manifest_fold.get("sum_w_reco")) - denominator) <= 1e-8
+            and abs(float(manifest_fold.get("R")) - ratio) <= 1e-12
+            and abs(float(manifest_fold.get("tolerance")) - tolerance) <= 1e-12)
+        rejection_reason = quarantine._assert_rejects(
+            manifest, args.nominal_weights, "the committed source-job diagnostic manifest")
+        quarantine_ok = (manifest_hashes_ok and fold_values_ok and dev > tolerance
+                         and manifest.get("publication_gate_rejects_this") is True
                          and manifest.get("publication_gate_rejects_this_on_physics_alone") is True)
         checks.append({"name": "quarantine:dual_publication_rejection", "ok": quarantine_ok,
                        "detail": {"as_written": manifest.get("publication_gate_rejects_this"),
                                   "physics_alone": manifest.get(
-                                      "publication_gate_rejects_this_on_physics_alone")}})
+                                      "publication_gate_rejects_this_on_physics_alone"),
+                                  "hashes_match": manifest_hashes_ok,
+                                  "fold_values_match": fold_values_ok,
+                                  "recomputed_deviation": dev,
+                                  "recomputed_tolerance": tolerance,
+                                  "tolerance_source": tolerance_source,
+                                  "recomputed_rejection_reason": rejection_reason}})
         if not quarantine_ok:
             raise RuntimeError("quarantine proof did not establish both rejection conditions")
 
         receipt["quarantine_manifest"] = {
             "path": str(Path(args.manifest).resolve()),
             "sha256": sha256_file(args.manifest),
+            "reused_committed_manifest_without_overwrite": True,
             "publication_gate_rejects_this": True,
             "publication_gate_rejects_this_on_physics_alone": True,
         }
