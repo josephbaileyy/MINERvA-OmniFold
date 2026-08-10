@@ -4309,3 +4309,36 @@ arms and the measured single-arm full-input reference took 6h00m44s, so no four-
 was safe or allocated. Batch remains the sole writer for every task; none was cancelled or duplicated.
 The array and annealed-LR terminal watches remain armed. Receipt:
 `../docs/orchestration/state/step1-dynamics-r2-queue-56534116-reconciliation.json`.
+
+Changed array `56534116` later emitted one aggregate COMPLETE event: tasks 0-2 are each `COMPLETED
+0:0`, with runtimes near three hours. The event, accounting snapshot, six task logs, and three
+collision-isolated `STEP1_DYNAMICS.json` artifacts were each consumed once. Changed launcher commit
+`783e674`, launcher hash, wrapper, driver, loader, shared engine, Gate-2 target and receipt, and Gate-3
+manifest all match. The fail-closed import step necessarily passed before each COMPLETE wrapper run;
+there is no import error, fail marker, or traceback, and every stdout ends with its arm-specific DONE
+marker.
+
+The frozen iteration-2 repair rule is correct sign plus achieved/required >=0.90. Warm/fresh fails
+wrong-sign at 0.6636878; cold/fixed has the correct sign but fails at 0.7883825; cold/fresh fails
+wrong-sign at 25.0654103. Therefore no factorial arm repairs: fixed split/order, Step-1 warm-start,
+and their interaction are not sufficient standalone explanations. Receipt:
+`../docs/orchestration/state/step1-dynamics-r2-complete-56534116.json`.
+
+The same accounting snapshot found annealed-LR job `56534117` already `COMPLETED 0:0`; its armed
+watch had not emitted. Its two logs and result were consumed once, all nine changed-launcher pins
+match, and all six asserted fit rates are exactly the intended two `1e-4` iteration-0 fits followed
+by four `1e-5` fits. Iteration 2 is nevertheless wrong-sign at 0.8958691, so the dead anneal does not
+repair. The pending terminal watch was disarmed after this same-wave reconciliation to prevent a
+duplicate wake. The combined verdict is intrinsic push feedback / representation-tail contraction;
+Joseph's mail was accepted locally (`rc=0`). Branch C remains, with no threshold change, unchanged
+retry, shared-engine edit, or publication promotion. Receipt:
+`../docs/orchestration/state/step1-annealed-lr-r2-complete-56534117.json`.
+
+A concurrent independent reading then exposed a specification conflict. The formal increment gate
+above stands, but Gate-4's end-state normalization quantity gives annealed push `1.1109012` against
+`R=1.1240802`: 1.172% low, inside the frozen 5%, versus the baseline's 34.46% deficit. The arm was
+already 0.239% low after iteration 1, so its required iteration-2 correction is only `1.002396`;
+scoring the next decrement as wrong-sign no longer distinguishes a poor end state. This does not
+validate unfolded shape, and the arm's proposer declared a conflict of interest. No predeclaration
+was overridden. A clarification mail with both readings was accepted locally (`rc=0`), and the choice
+is escalated to Joseph with Branch C still closed.

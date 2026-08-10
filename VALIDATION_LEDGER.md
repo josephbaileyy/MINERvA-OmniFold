@@ -977,6 +977,38 @@ turns on sign balance and content correlation, never on magnitude.
 2026-08-09 was produced without a `standard-p4-verifier` PASS, self-declares
 `publication_gate_rejects_this: true`, and is **not quotable**.
 
+## 2026-08-09 Full-event PET Step-1 dynamics controls — VERIFIED DIAGNOSTIC
+
+Changed array `56534116` and annealed-LR job `56534117` completed `0:0`. The r2 launcher commit is
+`783e674`; the OmniFold import preflight, launcher hashes, wrapper/driver/loader/engine, Gate-2
+target and receipt, and Gate-3 manifest all pass their frozen hashes. Each result is COMPLETE,
+diagnostic-only, collision-isolated, and independently checked against the predeclared iteration-2
+repair rule: **correct sign and achieved/required >= 0.90**.
+
+| control | iteration-2 sign | achieved/required | frozen gate |
+|---|---:|---:|---|
+| warm model / fresh split | wrong | 0.6636878 | FAIL |
+| cold model / fixed split | correct | 0.7883825 | FAIL (<0.90) |
+| cold model / fresh split | wrong | 25.0654103 | FAIL |
+| warm/fixed with effective post-iteration `1e-5` LR | wrong | 0.8958691 | FAIL |
+
+**Formal predeclared verdict:** no factorial arm repairs, and the annealed arm does not repair the
+iteration-2 increment gate. That formal route leaves intrinsic push feedback / representation-tail
+contraction. Thresholds were not changed.
+
+**Independent end-state cross-check:** the increment gate and publication normalization ask different
+questions near the target. Against `R = 1.1240802`, the annealed arm is already only 0.239% low after
+iteration 1 and ends 1.172% low after iteration 2 (`push = 1.1109012`), inside the separate frozen 5%
+fold-forward tolerance and a 29.39x improvement over the baseline's 34.46% deficit. Thus “wrong-sign
+increment” does not imply “bad end state” here: the required increment has collapsed to approximately
+unity. This does **not** establish correct unfolded shape, and the arm's proposer explicitly declared a
+conflict of interest. The predeclaration is not overruled; both readings are escalated to Joseph.
+
+These are diagnostic mechanism results, not a cross section: Branch C remains and no product is
+quotable. Receipts:
+`docs/orchestration/state/step1-dynamics-r2-complete-56534116.json` and
+`docs/orchestration/state/step1-annealed-lr-r2-complete-56534117.json`.
+
 ## 2026-08-09 J36 global-POT-scale mixture error — SHAPE effect BOUNDED, VERIFIED-NUMERIC
 
 **Claim.** The J36 defect (one global `sum(D_p)/sum(M_p)` POT scale in place of per-playlist
