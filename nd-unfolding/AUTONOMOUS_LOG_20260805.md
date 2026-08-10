@@ -3296,3 +3296,45 @@ nobody watching. I will tick manually each cycle and re-check whether scron reco
 not by the time the job lands, that goes in the mail alongside the reproduction verdict, since it affects
 both lanes.
 
+### 18:10Z — REPRODUCTION FINDING FIRED. The anneal happened; the two code paths DISAGREE
+
+The annealed production nominal arm completed and the **predeclared reading returned a FINDING**, which is
+the outcome Joseph fixed in advance as the one to report rather than average away.
+
+    production (driver)     push 1.0840529523   dev -0.035608971
+    diagnostic (56534117)   push 1.1109012167   dev -0.011724321   <- the predeclared expectation
+    non-annealed baseline   push 0.7367462501   dev -0.344578627
+
+    window [-0.021724, -0.001724]   |dev - expected| = 0.023885   band exceeded 2.39x
+    VERDICT: FINDING -- code paths disagree  (|dev| = 0.0356 < 0.05, so not an anneal failure)
+
+**The discriminator settled the question it was built for, on its first production use.** The driver's own
+assertion printed `[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05`, and the
+artifact carries `lr_policy_realized` with `verified_from_optimizer: True`. **So the anneal DID happen** —
+this is not a policy failure, and without that field the two candidate explanations would be
+indistinguishable. That is exactly why Joseph insisted the assertion was the half that mattered.
+
+**And the configurations are identical on every recorded axis.** Read both artifacts: the diagnostic arm's
+`seed_policy` is `{estimator_seed 42, subsample_seed 0, niter 3, epochs 8, train_events 2000000,
+batch_size 512}` — the same as production's core keys. So the disagreement is not a configuration drift.
+
+**Scale of it:** push means differ by `0.0268482644`, i.e. **2.42%**; `dev` is **3.04x worse** than the
+diagnostic while still **9.68x better** than the non-annealed baseline. Production **passes** FROZEN's
+`0.05` at `|dev| = 0.0356`, but with margin `0.0144` where `0.0383` was expected — a real loss of headroom.
+
+**The gap is 7.1x the measured 08-08 scatter (0.003380)**, which is the strongest argument that this is
+systematic rather than noise — but it is not proof, because that scatter came from a single non-annealed
+pair. **The matched floor repeat is running now** (started 18:00:47Z) and is precisely the measurement that
+discriminates: if the floor arm also lands near `-0.0356`, the difference is systematic and the code paths
+genuinely differ; if it scatters widely, the annealed configuration's own run-to-run spread is larger than
+the band assumed. Running both arms was the right call for exactly this reason.
+
+**What I did NOT do, per the predeclaration:** no averaging, no re-running past it, no widening the band,
+and nothing downstream. Candidate mechanisms exist (the diagnostic subclass also overrode `cache`,
+`RunStep1` and `RunStep2`; its harness builds loaders through its own path) but I am not asserting a cause
+before the scatter measurement lands, because a wrong cause reported confidently is worse than a named open
+question.
+
+Mailing the finding — a predeclared verdict on the critical path clears the bar, and Joseph asked for the
+reproduction before anything downstream.
+
