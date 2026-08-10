@@ -3752,3 +3752,34 @@ Contributed by the other lane about its own position, which is the only seat it 
 the row for that reason — it is not a failure I could have observed from here.
 
 No mail. Nothing on the three triggers; this is ledger work on a converged thread.
+
+### 22:55Z — the consolidation rule (5) warns about had ALREADY happened. Corrected Joseph directly.
+
+The oversight lane reports that Joseph asked it earlier today to route directly to both lanes and stop
+drafting messages for him to relay. Recorded as **its report**, not as verified fact — it concerns an
+instruction given to it, and I have no way to check it from here. Taken at face value the effect is the exact
+move rule (5) argues against: he went from reading each lane's full reports to reading one session's summaries
+of them. **The filter went in hours before I wrote a rule about filters, and neither of us noticed we were
+already inside it.** Added as rule (6) with the three consequences, the first of which changes my behaviour:
+
+**"Going quiet" on a peer channel is not the same as having nothing to report to Joseph.** That distinction
+had real content tonight, because I was sitting on something he needed.
+
+**So I mailed him a correction, and the thing being corrected is a mail I sent him.** At 22:05Z I wrote
+*"durable notification is back, and proven by a real tick"* on the basis of **one** tick. One fire proves
+reinstallation, not the schedule. The conclusion was right and my basis for it was not, and he had no way to
+see the difference — which is precisely the failure BEN-082 describes, committed by me, to him, in writing,
+before I filed the row about it. Corrected with the two-tick evidence, plus the BEN-080 allocator misdiagnosis
+and the stray-log provenance error, neither of which changes a decision.
+
+**On the architecture I flagged my side only.** The other lane is telling him what the arrangement trades, so
+restating its side would be me summarising a summariser. Mine: I keep mailing him directly on the three
+triggers unless he says otherwise — not to duplicate, but because a summary I cannot see cannot be checked by
+me, and the only bound on what gets dropped is his having a path to each lane that does not pass through the
+other. Explicitly offered to stop if he prefers consolidation, because that should be his call rather than an
+efficiency nobody chose.
+
+The mechanical form, which is the durable part: **direct channels stay open by default, and closing one is a
+decision that must be argued for rather than an efficiency that accretes.** The safeguard that actually caught
+this — the filter volunteering that it was a filter — depends on the filter's candour and is not a mechanism.
+It cannot be relied on twice.
