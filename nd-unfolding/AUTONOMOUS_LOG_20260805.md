@@ -3630,3 +3630,94 @@ the finding's disposition is still his.
 
 Queue: `56585597 PENDING (BeginTime)`, the cron's healthy steady state. Zero armed watches, so it ticks and
 emits nothing until a job needs watching. `origin/main` at the push below. No jobs running. Standing down.
+
+### 22:10Z — cron RECURS (second autonomous tick), and I had BEN-080's prescription wrong
+
+**The cron is not a one-shot.** Last cycle proved one fire, which proves reinstallation worked, not that the
+schedule works. Confirmed the difference:
+
+    tick 1   2026-08-10T22:00:13Z   login04   pid 720900
+    tick 2   2026-08-10T22:05:10Z   login25   pid 812176
+    interval 297s (the */5 schedule), different login node, job RUNNING at the second
+
+So durable notification is genuinely recurring. Worth having spent four minutes on: "it fired when I
+reinstalled it" and "it ticks on schedule" are different claims, and I had only earned the first.
+
+**BEN-080's prescription was wrong and I corrected it.** I had written that this was the second shared-id
+collision in three days and therefore *"argues the convention should be mechanical rather than remembered"* —
+i.e. pointing at an id allocator. The oversight lane's objection is right and it changes the fix: **the
+per-lane BEN ranges did not fail.** PET took ids inside 070+, the GBDT lane vacated into 061–064, and no
+collision resulted — the rule existed, was violated once, and the violation was caught before costing
+anything. What failed with `B1` was **document item ids, where there was no convention at all.** That is a
+*missing* rule, not an unenforced one, so the minimal fix is a sentence (*item ids inside a document are
+prefixed with that document's short name*), which `PB1`…`PB5` already satisfies. An allocator would be new
+surface enforcing a rule nobody had written.
+
+The reasoning error is the part worth keeping: **"same remedy twice" made two unlike failures look like one
+recurring failure, and it was the apparent recurrence that argued for mechanism.** Rule added to the row:
+check whether the rule existed before concluding it needs enforcing.
+
+**What I did NOT do:** the peer suggests the sentence belongs in `CLAUDE.md`, and by that file's own criterion
+it plausibly qualifies. I have not touched `CLAUDE.md`. Those are project instructions, and amending them on
+a peer's prompting is not mine to do even where I agree — the peer drew the same boundary itself and is
+putting it to Joseph. Recorded here so the suggestion is not lost if he wants it.
+
+No mail: nothing on the three triggers. The 22:05Z mail already carries the cron closure, and a second tick
+confirms what it said rather than changing any decision of his.
+
+### 22:25Z — BEN-080 completed: the correction had left a second gap unstated
+
+Closing the cross-lane thread. My 22:10Z correction fixed the *prescription* (a sentence, not an allocator)
+but read alone it implies **no** namespace here needs mechanism, which is the generous reading we had just
+rejected in the other direction. Separated properly in the row:
+
+- **document item ids had NO rule** — the sentence fixes it, `PB1`…`PB5` satisfies it;
+- **BEN ids have a rule that is violated and caught by attention** — ids were taken from the shared maximum
+  and the catch was a merge that happened to pull in `081`. That one *is* the unenforced-rule case, where
+  mechanism is the right answer.
+
+We are still not building an allocator, on cost grounds. But the honest form of that decision is **"we are
+choosing to leave the BEN namespace protected by attentiveness, having noticed that it is"** — not "the
+convention works, so no mechanism is needed." The first names an exposure; the second reads a lucky outcome as
+a working process. Written so that whoever eventually pays for a BEN collision finds the row saying it was
+foreseen and priced rather than ruled out.
+
+The oversight lane also owned its half of the cron overclaim: it relayed "durable notification is proven" to
+Joseph off my single-fire report, and is correcting that with him. Two independent sessions accepted a claim
+at the strength it was offered rather than the strength its evidence supported — mine in making it, its in
+relaying it — which is a more interesting failure than either half alone, and neither of us caught it until
+the second tick was measured.
+
+Thread converged, nothing outstanding either side. No mail: nothing on the three triggers, and Joseph already
+has the cron closure plus the peer's own correction inbound.
+
+### 22:35Z — the relay failure filed as BEN-082, because a chronology entry is not its canonical home
+
+The cross-lane thread is closed on both sides. One thing from it was sitting in the wrong place: the relay
+formulation was only in this log, and per `CLAUDE.md` how agents/campaigns fail belongs in `FINDINGS.md`. A
+finding recorded in chronology is a finding nobody will read — which is the same failure that left nine of
+them orphaned until 08-06. Filed as **BEN-082**, id taken from the PET lane range (070+, highest in use 081)
+after re-fetching, per BEN-061 rule (7) that the moment of allocation is when to re-read the range.
+
+The content, stated as the pair rather than as my error with a relay appended:
+
+- I observed **one** tick and wrote *"proven by a real tick"*. One fire proves **reinstallation**; it does not
+  prove the **schedule**, because a `*/5` entry that fires once and dies looks identical at that moment.
+- The oversight session relayed it to Joseph as *"durable notification is proven"* — at full strength, without
+  either of us asking **what the single fire distinguished**.
+- Caught only by measuring a second tick (297 s apart, different login nodes), which is the observation that
+  earns the word.
+
+**The structural half is the part worth having.** Joseph had been reading both lanes through one relay for
+days, so every claim he saw passed through a step that can only preserve or inflate confidence, never audit
+it — a relay has no access to the evidence unless the evidence travels with the claim. So the fix is in the
+relay *format* (carry the job id, the measurement, and what the claim distinguishes) rather than in the
+relayer's care. The other lane has committed to relaying that way and has told Joseph the relay itself was a
+defect, not just my original.
+
+Also kept from the exchange: the diagnostic question **"what would be false if this were wrong?"** — a single
+observation consistent with both a claim and its negation is not evidence for the claim, however cleanly it
+fired. That is the check that would have caught this in either seat.
+
+No mail. Nothing on the three triggers, Joseph has the cron closure and the peer's correction inbound, and
+adding a third mail tonight about a ledger row would be the spam the brief forbids.
