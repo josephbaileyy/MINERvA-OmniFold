@@ -76,7 +76,7 @@
     },
     "live_instances": 0,
     "n_candidates": 23,
-    "n_shell_files": 334,
+    "n_shell_files": 335,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
@@ -103,7 +103,6 @@
       "candidate_c5_sha256",
       "candidate_keys",
       "candidate_total_key",
-      "code_rev",
       "component_content_hash",
       "component_manifest_sha256",
       "conc_new",
@@ -201,6 +200,7 @@
       "check_full_total_identity()",
       "check_projection_validity()",
       "check_reproducibility()",
+      "check_resume_surface()",
       "check_support_comparison()",
       "check_symmetric_psd()",
       "component_manifest_bound",
@@ -220,8 +220,8 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 109,
-    "n_gates": 27,
+    "n_fields": 108,
+    "n_gates": 28,
     "tool": "tools_p4_sweep_recorded_fields"
   }
 }

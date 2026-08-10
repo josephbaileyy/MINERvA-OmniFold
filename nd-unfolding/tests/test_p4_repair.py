@@ -1308,5 +1308,62 @@ class PacketB1BandSetCompleteness(unittest.TestCase):
                             real["component_content_hash"][band])
 
 
+class PacketPB2ResumeSurface(unittest.TestCase):
+    """PACKET PB2 / verifier defect #2 — acceptance record.
+
+    Cases are GENERATED (`tests/fixtures/packet_b2_adversarial/gen_b2_cases.py`) rather than static,
+    because they reference repo blobs: a static receipt would, after the next commit to any surface
+    module, mismatch on several paths at once — still rejecting, but for the wrong reason, leaving a
+    green test that no longer isolates the defect. Authored by the oversight session; which cases
+    must be ACCEPTED was withheld, because for PB2 the live hazard is over-rejection."""
+
+    REPO = str(Path(__file__).resolve().parents[2])
+    DRIVER = "nd-unfolding/unfold_nd_omnifold_unbinned.py"
+
+    def _closure(self):
+        return P.producing_closure(self.REPO, self.DRIVER)
+
+    def test_closure_excludes_modules_that_cannot_run_during_production(self):
+        """The design decision, asserted: p4_* modules are in the execution surface but are not
+        reachable from the unfold driver, so they cannot have affected an endpoint ROOT."""
+        c = set(self._closure())
+        self.assertIn("unbinned_unfolding/python/omnifold.py", c)
+        self.assertIn("nd-unfolding/xsec_nd.py", c)
+        self.assertIn("nd-unfolding/omnifold_nn_core.py", c)   # transitive-only, depth 2
+        for excluded in ("nd-unfolding/p4_lib.py", "nd-unfolding/p4_evidence.py",
+                         "nd-unfolding/p4_project_4d.py"):
+            self.assertNotIn(excluded, c,
+                             f"{excluded} is not reachable from the unfold driver; binding it "
+                             f"would invalidate every endpoint resume on each p4_* commit")
+
+    def test_a_changed_closure_member_blocks_resume(self):
+        c = self._closure()
+        head = {q: f"blob{i}" for i, q in enumerate(c)}
+        ok, _ = P.check_resume_surface({P.RESUME_BLOB_FIELD: dict(head)}, c, head)
+        self.assertTrue(ok)
+        for victim in c:                       # every member, direct or transitive
+            with self.subTest(victim):
+                rec = dict(head); rec[victim] = "CHANGED"
+                ok, why = P.check_resume_surface({P.RESUME_BLOB_FIELD: rec}, c, head)
+                self.assertFalse(ok, f"a change to {victim} did not block resume")
+                self.assertIn(victim, why)
+
+    def test_an_incomplete_record_blocks_resume(self):
+        c = self._closure()
+        head = {q: f"blob{i}" for i, q in enumerate(c)}
+        rec = {q: v for q, v in head.items() if q != c[0]}
+        ok, why = P.check_resume_surface({P.RESUME_BLOB_FIELD: rec}, c, head)
+        self.assertFalse(ok)
+        self.assertIn("omits", why)
+
+    def test_a_legacy_receipt_is_grandfathered_not_blocked(self):
+        """KNOWN_ISSUES #24. The ten receipts on scratch carry no such field. A check that demands
+        one blocks demonstrably correct data, which this lane has shipped twice."""
+        c = self._closure()
+        ok, why = P.check_resume_surface({"tag": "BeamAngleX_0", "mode": "produced"}, c, {})
+        self.assertTrue(ok)
+        self.assertIn("GRANDFATHERED", why)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

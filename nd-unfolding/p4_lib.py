@@ -442,6 +442,96 @@ def require_band_set_completeness(comp, required_bands, required_hashes, lateral
             "n_candidate_keys_expected": len(exp_keys)}
 
 
+RESUME_BLOB_FIELD = "surface_blobs"
+RESUME_GRANDFATHER_REASON = (
+    "receipt predates the 2026-08-10 B2 surface binding and carries no per-path blob record")
+
+
+def producing_closure(repo_root, driver_rel):
+    """The modules that can actually execute while an endpoint ROOT is produced: the unfold driver
+    plus everything reachable from it through imports, transitively.
+
+    B2 DESIGN DECISION, 2026-08-10 -- resume binds the PRODUCING CLOSURE, not the whole execution
+    surface. The surface is 15 Python modules; only 6 are reachable from the unfold driver. The
+    other 9 (`p4_evidence`, `p4_lib`, `p4_project_4d`, `p4_build_components`,
+    `p4_validate_active_lateral`, `p4_check_receipt`, `p4_check_verifier_token`, `project_cov_nd`,
+    `uq_math`) are reached from OTHER entrypoints and cannot run while an endpoint is unfolded.
+
+    Why not bind all 15, which is simpler. A module that cannot execute during production cannot
+    have affected the product, so binding it is not conservatism -- it is a false positive by
+    construction. And the cost is concrete: this lane commits to `p4_lib.py` almost every round,
+    and whole-surface binding would invalidate all ten endpoint resumes on each such commit -- ten
+    re-unfolds, ~1h40m, for code that never ran. A check that fires constantly on correct data is
+    a check that gets disabled, which is `KNOWN_ISSUES #24` twice over (`code_rev == HEAD` and
+    `verifier_crosscheck` both blocked demonstrably correct data and both had to be withdrawn).
+    Re-introducing whole-tree binding through the resume path repeats exactly what repair-6 undid.
+
+    The claim the receipt therefore makes is "resume binds the producing closure", NOT "resume
+    binds the whole surface". Those are different claims and the acceptance record says which."""
+    import ast as _ast
+    root = _pl.Path(repo_root)
+    seen, out = set(), set()
+    stack = [driver_rel]
+    # module-name -> repo-relative path, over the dirs the chain actually imports from
+    index = {}
+    for d in ("nd-unfolding", "unbinned_unfolding/python", "2d-unfolding"):
+        for f in sorted((root / d).glob("*.py")) if (root / d).is_dir() else []:
+            index.setdefault(f.stem, str(f.relative_to(root)))
+    while stack:
+        rel = stack.pop()
+        if rel in seen:
+            continue
+        seen.add(rel)
+        out.add(rel)
+        src = root / rel
+        if not src.exists():
+            continue
+        try:
+            tree = _ast.parse(src.read_text(encoding="utf-8", errors="replace"))
+        except SyntaxError:
+            continue
+        for n in _ast.walk(tree):
+            names = []
+            if isinstance(n, _ast.Import):
+                names = [a.name.split(".")[0] for a in n.names]
+            elif isinstance(n, _ast.ImportFrom) and n.module and n.level == 0:
+                names = [n.module.split(".")[0]]
+            for nm in names:
+                tgt = index.get(nm)
+                if tgt and tgt not in seen:
+                    stack.append(tgt)
+    return sorted(out)
+
+
+def check_resume_surface(receipt, closure, head_blobs):
+    """B2 / verifier defect #2. Decide whether a receipt may be RESUMED (skipped).
+
+    Returns (may_skip, reason). Never raises for a legacy receipt -- over-rejection here means
+    re-running correct endpoints, which is the failure this lane has shipped twice.
+
+    LEGACY RULE, decided in this same commit per the packet: **explicit grandfather**, not backfill.
+    Backfilling `surface_blobs` from the receipt's recorded `code_rev` is possible and was
+    considered -- the blobs at that commit are resolvable -- but it would materialise a DERIVED
+    value into a field whose other instances are OBSERVED, making a derived blob indistinguishable
+    from a recorded one. That is precisely the proxy-binding pattern this lane spent four rounds
+    removing. A grandfathered receipt is honest about knowing less; a backfilled one is not."""
+    got = receipt.get(RESUME_BLOB_FIELD)
+    if got is None:
+        return True, f"GRANDFATHERED: {RESUME_GRANDFATHER_REASON}"
+    if not isinstance(got, dict):
+        return False, f"{RESUME_BLOB_FIELD} is not a path->blob mapping"
+    missing = [q for q in closure if q not in got]
+    if missing:
+        return False, (f"record omits {len(missing)} producing-closure path(s): {missing[:4]} -- "
+                       f"a record that is internally consistent about an incomplete set cannot "
+                       f"establish what produced the artifact")
+    diff = [q for q in closure if got.get(q) != head_blobs.get(q)]
+    if diff:
+        return False, (f"{len(diff)} producing-closure path(s) changed since this receipt: "
+                       f"{diff[:4]}")
+    return True, "producing closure matches HEAD"
+
+
 NON_ADOPTABLE_KEY = "publication_gate_rejects_this"
 NON_ADOPTABLE_ENV = "P4_NON_ADOPTABLE"
 NON_ADOPTABLE_REASON = (
