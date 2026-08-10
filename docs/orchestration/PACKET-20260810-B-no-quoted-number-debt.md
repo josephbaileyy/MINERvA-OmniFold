@@ -23,6 +23,23 @@ overwhelmingly about **repeatability of future runs**. This packet closes the su
 
 ---
 
+## ID DISAMBIGUATION — read this before citing an item (BEN-080)
+
+**`B1` was already taken when this packet was written, and that is an authoring error in this
+document.** It already denoted the **rate-injection closure** in the PET lane (`CLM-010`, jobs
+`56358196` / `56358288` / `56358954` / `56360955` / `56363377`), which is one of the items Gate-4 is
+blocked on. This packet then named its own items `B1`–`B5`.
+
+The collision is not cosmetic. A status line reading *"B1 closed"* is true of this packet's band-set
+completeness item and **false** of the rate-injection closure — and read at face value it would
+support a "Gate-4 unblocked" claim that is not the case. It was caught only because the commit *body*
+named its scope.
+
+**Going forward, cite these items as `PB1` … `PB5`.** `PB1 == B1` in this document's original
+numbering, and existing references in commits and in the provenance-debt document remain valid.
+Anything referring to the closure means `CLM-010 B1` and should say so. Same discipline as the BEN
+per-lane id blocks: a shared id space needs a prefix, and this document did not give it one.
+
 ## Scope: five items, in priority order
 
 ### B1 — `C_syst` band-set completeness (verifier defect #6) — **highest priority**
