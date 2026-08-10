@@ -3630,3 +3630,37 @@ the finding's disposition is still his.
 
 Queue: `56585597 PENDING (BeginTime)`, the cron's healthy steady state. Zero armed watches, so it ticks and
 emits nothing until a job needs watching. `origin/main` at the push below. No jobs running. Standing down.
+
+### 22:10Z — cron RECURS (second autonomous tick), and I had BEN-080's prescription wrong
+
+**The cron is not a one-shot.** Last cycle proved one fire, which proves reinstallation worked, not that the
+schedule works. Confirmed the difference:
+
+    tick 1   2026-08-10T22:00:13Z   login04   pid 720900
+    tick 2   2026-08-10T22:05:10Z   login25   pid 812176
+    interval 297s (the */5 schedule), different login node, job RUNNING at the second
+
+So durable notification is genuinely recurring. Worth having spent four minutes on: "it fired when I
+reinstalled it" and "it ticks on schedule" are different claims, and I had only earned the first.
+
+**BEN-080's prescription was wrong and I corrected it.** I had written that this was the second shared-id
+collision in three days and therefore *"argues the convention should be mechanical rather than remembered"* —
+i.e. pointing at an id allocator. The oversight lane's objection is right and it changes the fix: **the
+per-lane BEN ranges did not fail.** PET took ids inside 070+, the GBDT lane vacated into 061–064, and no
+collision resulted — the rule existed, was violated once, and the violation was caught before costing
+anything. What failed with `B1` was **document item ids, where there was no convention at all.** That is a
+*missing* rule, not an unenforced one, so the minimal fix is a sentence (*item ids inside a document are
+prefixed with that document's short name*), which `PB1`…`PB5` already satisfies. An allocator would be new
+surface enforcing a rule nobody had written.
+
+The reasoning error is the part worth keeping: **"same remedy twice" made two unlike failures look like one
+recurring failure, and it was the apparent recurrence that argued for mechanism.** Rule added to the row:
+check whether the rule existed before concluding it needs enforcing.
+
+**What I did NOT do:** the peer suggests the sentence belongs in `CLAUDE.md`, and by that file's own criterion
+it plausibly qualifies. I have not touched `CLAUDE.md`. Those are project instructions, and amending them on
+a peer's prompting is not mine to do even where I agree — the peer drew the same boundary itself and is
+putting it to Joseph. Recorded here so the suggestion is not lost if he wants it.
+
+No mail: nothing on the three triggers. The 22:05Z mail already carries the cron closure, and a second tick
+confirms what it said rather than changing any decision of his.
