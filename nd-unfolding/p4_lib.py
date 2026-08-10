@@ -473,10 +473,21 @@ def producing_closure(repo_root, driver_rel):
     seen, out = set(), set()
     stack = [driver_rel]
     # module-name -> repo-relative path, over the dirs the chain actually imports from
+    # TRACKED FILES ONLY. Globbing the filesystem let an UNTRACKED module enter the closure:
+    # demonstrated 2026-08-10 with a stray `scratch_probe.py`, which resume then demanded a blob
+    # for -- `git rev-parse HEAD:<path>` exits 128, no blob can exist, and a correct endpoint is
+    # blocked forever. That is the KNOWN_ISSUES #24 over-rejection class this very item exists to
+    # avoid, reached through the closure derivation instead of through the check. Found because
+    # the PET lane mentioned staging an old driver on scratch; theirs is outside the repo and was
+    # never a risk, but it prompted asking whether the derivation was restricted to tracked files.
+    # It was not.
+    tracked = set(subprocess.run(["git", "ls-files"], cwd=str(root),
+                                 capture_output=True, text=True).stdout.split())
     index = {}
     for d in ("nd-unfolding", "unbinned_unfolding/python", "2d-unfolding"):
-        for f in sorted((root / d).glob("*.py")) if (root / d).is_dir() else []:
-            index.setdefault(f.stem, str(f.relative_to(root)))
+        for rel_p in sorted(q for q in tracked if q.startswith(d + "/") and q.endswith(".py")
+                            and "/" not in q[len(d) + 1:]):
+            index.setdefault(_pl.Path(rel_p).stem, rel_p)
     while stack:
         rel = stack.pop()
         if rel in seen:
