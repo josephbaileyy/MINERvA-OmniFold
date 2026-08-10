@@ -3,11 +3,11 @@
 **Why this is its own finding.** It arrived as a by-product of refuting a mechanism (BEN-064), and
 it should not stay one. *What does the fifth axis buy?* is a question a referee **will** ask of a
 5D analysis, and it is much better measured by us than asked of us. This is that measurement, plus
-an explicitly-labelled interpretation of the 4.4 % marginal-vs-independent-4D difference that falls
-out of it.
+the disposition of the 4.4 % marginal-vs-independent-4D difference that falls out of it — which,
+as of 2026-08-10, is axis-dependence, with the interpretation that once accompanied it retired.
 
-**Status:** measurement VERIFIED-NUMERIC from the frozen 5D product; interpretation labelled as
-interpretation and not adopted.
+**Status:** measurement VERIFIED-NUMERIC from the frozen 5D product. The interpretation this
+finding originally carried is RETIRED (§3); the axis-dependence result (§3b) replaces it.
 
 ---
 
@@ -55,34 +55,31 @@ The honest reading cuts both ways and both halves should be said:
 That second point is the answer to the referee question, and it is stronger than a generic appeal
 to dimensionality because it is specific and checkable from the table above.
 
-## 3. INTERPRETATION (labelled, not adopted): the 4.4 % may measure W's independent content
+## 3. RETIRED: "the 4.4 % measures W's independent content" (proposed, tested, dropped)
 
-`FINDING-20260809-stage6-central-gate-cannot-pass.md` records that the 5D→4D marginal and an
-independent direct 4D unfold differ by a median of 4.4 % in shape while agreeing to 0.56 % in
-normalisation, with four candidate mechanisms excluded and none established.
+**The candidate is gone; the record of the attempt stays.** It was carried for one revision as a
+labelled, unadopted interpretation. That was the wrong disposition — a half-alive hypothesis sitting
+in a document is one a future reader promotes — so it is deleted rather than qualified.
 
-The redundancy measurement suggests a framing for it, which **Joseph proposed and which is offered
-here as interpretation, explicitly not as a result**:
+**What it said.** If W were fully redundant with `(pT, p∥, E_avail, q3)`, a 4D unfold and the
+W-marginal of a 5D unfold would estimate the same object and agree. They differ by a median 4.4 %,
+so the difference might *measure the independent content of W* — the part the other four
+coordinates do not determine.
 
-> If W were *fully* redundant with `(pT, p∥, E_avail, q3)`, a 4D unfold and the W-marginal of a 5D
-> unfold would be estimating the same object and should agree. They do not agree, at a median of
-> 4.4 %. On that reading the disagreement is plausibly **a measure of the independent content of
-> W** — the part of the fifth axis the other four do not determine.
+**Why it is dropped.** Two obstacles, and no successful prediction to set against them:
 
-**Why it is only an interpretation.** Three things would have to hold and none is established:
+1. **The `n_W` gradient.** Cells with *more* W freedom agree *better* (Spearman −0.22, monotone from
+   0.0572 at `n_W=1` to 0.0190 at `n_W=5`). A reading in which the difference measures residual
+   freedom predicts the opposite sign.
+2. **The axis ordering (§3b), which is decisive.** `q3` is *strongly* constraining of W — the
+   redundancy table in §1 is a kinematic triangle precisely because `(E_avail, q3)` fixes W's
+   range — so `q3` is itself highly non-redundant. An independent-content reading therefore predicts
+   that dropping `q3` should cost **at least** as much as dropping W. **Measured, it costs half:
+   2.30 % against 4.43 %.** The prediction is not merely unsupported, it is inverted.
 
-1. that the two unfolds differ *only* through W's independent content, rather than also through
-   regularisation, binning granularity, or iteration dynamics at different dimensionality;
-2. that the difference scales with the *degree* of residual freedom — which is **in tension with the
-   measured `n_W` gradient**, since cells with more W freedom agree *better* (Spearman −0.22), the
-   opposite of what a naive version of this framing predicts;
-3. that the constraint recorded alongside it — the deviation's sign varies across W *within* a cell,
-   since it dilutes under summation — is compatible with an "independent content" reading rather
-   than with a redistribution the marginal and the 4D handle differently.
-
-Point 2 is the serious one and it is why this is not adopted: the same `n_W` gradient that refuted
-the W-mixing mechanism also complicates this framing. Both cannot be waved past. **Recorded so the
-idea is not lost and so its obstacle is recorded with it.**
+An interpretation that has been contradicted twice and has never predicted anything correctly is not
+a live hypothesis. **Retired 2026-08-10.** The measurement in §1 stands on its own and does not
+depend on it; §3b's axis-dependence disposition is what replaces it.
 
 ## 3b. MEASURED 2026-08-10: it is AXIS-dependence, not dimension-independence
 
@@ -123,13 +120,11 @@ nothing to do with W, and still shows a few-percent effect. So:
 - *"axis-dependent, at the few-percent level"* — **what the two measured rungs support**, and the
   honest statement.
 
-### What it does to §3's interpretation
+### What it does to the retired interpretation
 
-It weakens it without killing it. "The 4.4 % measures the independent content of W" is still not
-adopted, and now has a second obstacle beside the `n_W` gradient: if the difference measured an
-axis's independent content, dropping `q3` — which the redundancy table in §1 shows is *strongly*
-constraining of W and therefore highly non-redundant itself — would not obviously cost half as much
-as dropping W. The interpretation would need to predict the ordering, and it has not been asked to.
+The axis ordering is the second and decisive obstacle that retired §3. It is recorded there rather
+than here, so the retirement is stated once, in the place a reader looking for the hypothesis will
+land.
 
 **Referee-facing consequence:** the estimator dependence should be reported per-axis with the
 measured numbers, not as a single global figure and not as a claimed regularity. Two rungs is

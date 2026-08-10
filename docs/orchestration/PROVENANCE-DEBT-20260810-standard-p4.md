@@ -42,6 +42,14 @@ accident rather than by a gate:
 
 Each is the same shape: a check existed, was correct, and was not binding on anyone.
 
+**One guard is already doing CI's job, and it should be kept when CI lands.** The sweep-snapshot
+test (`tests/test_p4_sweep_snapshots.py`) has now caught **three** corpus changes made entirely by
+the *other* lane — new shell launchers moving the pipeline corpus 330 → 332 → 333 → 334 — none of
+which this lane wrote or would have noticed. In a two-lane repo with no CI, a committed snapshot
+plus a regenerating test is the only thing detecting cross-lane drift at all. That is an argument
+*for* the post-freeze CI item, and equally an argument for **keeping this guard when CI arrives**
+rather than retiring it as scaffolding: CI would run it, not replace it.
+
 **This is recorded, not scheduled.** Adding CI now is the add-surface reflex this freeze exists to
 stop, and it is post-publication infrastructure rather than a repair-round item. The correct
 disposition is: record it, qualify the claims that depend on it, move on.
