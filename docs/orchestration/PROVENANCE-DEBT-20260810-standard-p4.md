@@ -194,6 +194,61 @@ pipeline's own claim and both audits correctly declined to credit it. Closing it
 recomputation of `M C5 Mᵀ` on the cluster compared against the stored `C4`, judged by the delegate.
 **Not done under the current freeze; flagged as the first thing worth doing if the freeze lifts.**
 
+## 2e. CLOSED 2026-08-10 — Packet B1: `C_syst` band-set completeness (verifier defect #6)
+
+**Closed.** The referee is the **support family**, not the manifest and not the candidate: a build
+that enumerated the wrong band set produces a manifest whose stored `C_syst` equals the sum of the
+bands it lists, so every identity reconstructs perfectly while the systematic budget is short. The
+candidate is downstream of that build and inherits the omission, so it cannot referee. The support
+family is upstream, `p4_build_components.py` enumerates from it, and the manifest pins its sha256.
+
+Both halves of the verdict's "band-set equality **or** component identity" are implemented and
+**both are demonstrated**, plus the over-rejection direction.
+
+**Eleven adversarial manifests, authored blind by the oversight session** independently of the
+check (Packet B constraint 3; BEN-040 and repair-7's self-guard are why the constraint exists),
+key withheld until after the run. Ten must-reject, one accept-control not identified in advance.
+**Eleven correct calls.** Pre-fix code accepts all ten must-reject variants — demonstrated, not
+asserted. Record: `tests/test_p4_repair.py::PacketB1BandSetCompleteness`, fixtures under
+`tests/fixtures/packet_b1_adversarial/`.
+
+Two variants are worth keeping visible because they would defeat the obvious implementations:
+`B1_E` omits a **lateral**, leaving `retained_bands` at the correct 40; and `B1_H`'s perturbed hash
+**matches the real one in its first 12 characters**, which this repo prints almost everywhere, so a
+prefix comparison is the natural thing to write.
+
+### 2e-i. An authority that is not pinned is not an authority (found by asking for the case that would break my own check)
+
+**This is the generalisable finding of B1 and it is not really about band sets.**
+
+The completeness check compares the manifest against an inventory taken from a support-family ROOT
+supplied by the caller (`--support`). Nothing required that ROOT to be the one the build actually
+enumerated from. `p4_validate_active_lateral.py` **never checked `support_family_sha256` at all**,
+and the adopter's check is a different thing — it hashes the file at the path the *manifest*
+records, which cannot detect a validator refereeing against a different object. So the check would
+have compared a manifest against the wrong inventory and reported a clean set match.
+
+**Generalise past B1: any check that names its own referee has this exposure.** The referee must be
+pinned by the same evidence chain as the thing being judged, or the judgement is about an unrelated
+object. Now bound before any set comparison runs.
+
+**How it was found, which is the part worth propagating.** Not by review, and not by the fixture
+author. After batch 1 came back clean I asked the oversight session for *the case that would break
+my own check* — naming `support_family_sha256` as a field I had trusted without verifying. It built
+it (`B1_J`), and the hole was real. **The habit is: after your check passes everything, ask
+someone else to attack the assumption you did not test, and name the assumption yourself.** A
+fixture author cannot guess which assumption you left implicit; only you know where you did not
+look.
+
+### 2e-ii. Cost, measured not estimated
+
+The validator now recomputes content hashes for all 45 support-family bands, i.e. reads the full
+support family on every stage-5 run. **This is the right trade** — B1 is the only debt item that
+can produce a *confidently wrong* number rather than an unverifiable one, and stage 5 runs rarely.
+The added wall-time is to be **measured on the next cluster run and recorded in the receipt**, not
+estimated: this project sizes run windows from measurements, and the next person to size a stage-5
+window would otherwise guess. *(Pending as of this writing.)*
+
 ## 3. What it does NOT establish — the debt
 
 ### 3a. Open verifier defects, carried deliberately
