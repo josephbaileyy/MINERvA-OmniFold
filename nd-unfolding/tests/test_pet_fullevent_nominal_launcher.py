@@ -287,7 +287,13 @@ class DriverContract(unittest.TestCase):
 # statement (same device as test_pet_nominal_gate4_validator.py:69's retyped seed_policy literal).
 POLICY_FLAGS = {"estimator_seed": "--estimator-seed", "subsample_seed": "--subsample-seed",
                 "niter": "--niter", "epochs": "--epochs", "train_events": "--max-events",
-                "batch_size": "--batch-size"}
+                "batch_size": "--batch-size",
+                # ADOPTED 2026-08-10: `lr_policy` is policy with NO FLAG -- deliberately not tunable
+                # per run, because a per-run LR override is exactly how an artifact could claim the
+                # adopted anneal while training under something else. None means "no flag exists and
+                # none may be added"; test_no_flag_is_added_for_unflagged_policy enforces that, so a
+                # future `--lr`/`--base-lr` cannot appear without this map being confronted.
+                "lr_policy": None}
 
 
 class LauncherRestatesNoPolicy(unittest.TestCase):
@@ -327,11 +333,29 @@ class LauncherRestatesNoPolicy(unittest.TestCase):
 
     def test_launcher_passes_no_policy_owned_flag(self):
         body = "\n".join(self._executable_lines(LAUNCHER))
-        found = sorted(f for f in POLICY_FLAGS.values() if f in body)
+        found = sorted(f for f in POLICY_FLAGS.values() if f and f in body)
         self.assertEqual(found, [], (
             "the launcher restates policy the driver already defaults from NOMINAL_SEED_POLICY: "
             f"{found}. Remove the flag rather than updating its value -- an override here makes "
             "launcher-vs-policy drift possible, and it is only detected after a full training run."))
+
+    def test_no_flag_is_added_for_unflagged_policy(self):
+        """A policy key mapped to None must stay flagless -- in the DRIVER as well as the launcher.
+
+        `lr_policy` is the adopted anneal. If someone later adds `--lr` or `--base-lr`, a run could
+        declare the adopted policy in seed_policy while training under an override, which is the exact
+        claim-without-measurement failure the realized-LR assertion exists to prevent. Cheaper to
+        forbid the flag than to detect the divergence afterwards.
+        """
+        unflagged = [k for k, v in POLICY_FLAGS.items() if v is None]
+        self.assertTrue(unflagged, "this test is vacuous if no key is unflagged")
+        drv_src = open(drv.__file__, encoding="utf-8").read()
+        for bad in ("--lr", "--base-lr", "--learning-rate", "--annealed-lr"):
+            self.assertNotIn(f'add_argument("{bad}"', drv_src,
+                             f"{bad} would make the adopted lr_policy overridable per run")
+        body = "\n".join(self._executable_lines(LAUNCHER))
+        for bad in ("--lr ", "--base-lr", "--learning-rate"):
+            self.assertNotIn(bad, body, f"the launcher must not set {bad}")
 
     def test_the_target_footing_pins_are_still_there(self):
         """The converse: removing policy must not have removed the footing this launcher DOES own."""

@@ -68,7 +68,27 @@ def frozen_observed(**over):
          "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
          "seed_policy": {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8,
                          "batch_size": 512,
-                         "train_events": 2000000},
+                         "train_events": 2000000,
+                         # ADOPTED 2026-08-10: the LR anneal. RETYPED here, not imported, for the same
+                         # reason as the rest of this hub -- the point is that a policy change landing
+                         # in only one Python site is caught. It caught this one.
+                         "lr_policy": {"schedule": "fit-time-anneal-after-iteration-0",
+                                       "base_lr": 1e-4, "annealed_lr": 1e-5,
+                                       "applies_from_iteration": 1,
+                                       "mechanism": ("MultiFold subclass overriding CompileModel at "
+                                                     "fit time; omnifold.py is NOT edited")}},
+         # REALIZED evidence, deliberately a sibling of seed_policy and not inside it: seed_policy must
+         # stay comparable key-for-key to the driver's NOMINAL_SEED_POLICY constant, and a measurement
+         # is not a policy. 2 fits at base LR (iteration 0, steps 1+2) then 4 annealed.
+         "lr_policy_realized": {"fits": [{"iteration": 0, "learning_rate": 1e-4},
+                                         {"iteration": 0, "learning_rate": 1e-4},
+                                         {"iteration": 1, "learning_rate": 1e-5},
+                                         {"iteration": 1, "learning_rate": 1e-5},
+                                         {"iteration": 2, "learning_rate": 1e-5},
+                                         {"iteration": 2, "learning_rate": 1e-5}],
+                                "verified_from_optimizer": True,
+                                "base_lr": 1e-4, "annealed_lr": 1e-5,
+                                "n_fits_base_lr": 2, "n_fits_annealed": 4},
          # J01: the event-feature schema the run was trained on, retyped for the same reason as
          # the edges above -- reading it out of FROZEN would make `freeze:event_features_reco` a
          # comparison of FROZEN with itself, which is the exact defect audit B2 found in four
@@ -854,6 +874,58 @@ class PoweredClosureIsRecomputed(unittest.TestCase):
                                P["ceiling_scope_delta"], places=5)
         # Equality iff uniform: a degenerate one-cell map must close the gap exactly.
         self.assertAlmostEqual(phi(abar), phi(abar), places=12)
+
+    def test_legacy_artifact_without_lr_policy_is_GRANDFATHERED_not_failed(self):
+        """KNOWN_ISSUES #24's lesson: a new check must not fail on correct existing data.
+
+        Every pre-2026-08-10 artifact correctly lacks `lr_policy` -- the engine's anneal was dead code,
+        so those runs provably trained at constant full LR. The check grandfathers them EXPLICITLY, with
+        the reason in the receipt detail, rather than silently or by failing.
+        """
+        obs = frozen_observed()
+        obs["seed_policy"] = {k: v for k, v in obs["seed_policy"].items() if k != "lr_policy"}
+        obs.pop("lr_policy_realized", None)
+        ok, checks = g4.check_freeze(obs)
+        named = {c["name"]: c for c in checks}
+        self.assertIn("freeze:lr_policy", named)
+        self.assertTrue(named["freeze:lr_policy"]["ok"], "a correct pre-adoption artifact must PASS")
+        self.assertIn("GRANDFATHERED", named["freeze:lr_policy"]["detail"])
+        self.assertIn("NEVER support", named["freeze:lr_policy"]["detail"])
+        # and the core policy comparison must still pass on the shared keys
+        self.assertTrue(named["freeze:seed_policy"]["ok"])
+
+    def test_declaring_an_anneal_without_realized_rates_FAILS(self):
+        """A recorded policy is a CLAIM; the realized rates are the MEASUREMENT. An artifact must not be
+        able to declare an anneal it did not perform -- the inverse of the diagnostic-side guard."""
+        obs = frozen_observed()
+        obs.pop("lr_policy_realized", None)          # policy declared, evidence absent
+        ok, checks = g4.check_freeze(obs)
+        named = {c["name"]: c for c in checks}
+        self.assertFalse(named["freeze:lr_policy_realized"]["ok"])
+        self.assertFalse(ok)
+
+    def test_realized_rates_contradicting_the_declared_policy_FAIL(self):
+        """The measurement has to be able to refute the claim, not merely accompany it."""
+        obs = frozen_observed()
+        obs["lr_policy_realized"] = dict(obs["lr_policy_realized"])
+        obs["lr_policy_realized"]["fits"] = [{"iteration": 0, "learning_rate": 1e-4},
+                                            {"iteration": 2, "learning_rate": 1e-4}]  # never annealed
+        ok, checks = g4.check_freeze(obs)
+        named = {c["name"]: c for c in checks}
+        self.assertFalse(named["freeze:lr_policy_realized"]["ok"])
+
+    def test_fingerprint_is_not_the_training_policy(self):
+        """The division Joseph asked to be documented: the fingerprint identifies the FEATURE SCHEMA.
+
+        The anneal changes optimisation, not features, so the fingerprint correctly stays v1. Asserting
+        it here so a later reader cannot conclude from a passing gate that the fingerprint distinguishes
+        estimators -- it does not, and `seed_policy.lr_policy` is what does.
+        """
+        self.assertEqual(g4.FROZEN["estimator_fingerprint"], "pet-fullevent-fps-v1")
+        self.assertIn("lr_policy", g4.FROZEN)
+        self.assertIn("ADOPTED", g4.FROZEN["lr_policy_status"])
+        src = open(g4.__file__, encoding="utf-8").read()
+        self.assertIn("FINGERPRINT IDENTIFIES THE FEATURE SCHEMA AND *NOT* THE TRAINING POLICY", src)
 
     def test_bar_is_self_adjusting_in_k_and_only_one_way(self):
         """CLM-012 (vii): raising niter cannot buy a pass; LOWERING it can, and that needs its own guard.

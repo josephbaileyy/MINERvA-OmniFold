@@ -3117,3 +3117,60 @@ State: queue is the wakerctl cron alone, **0 armed watches** — correct here, b
 the outstanding item is a human decision, not a job. Trees synced at `6b20122`. My lane has nothing running,
 nothing queued, and no decision of mine outstanding.
 
+### 13:20Z — LR ANNEAL ADOPTED as production policy, with NO ENGINE EDIT, discriminator as a precondition
+
+Joseph authorized adoption on the answer that no engine edit is needed. Verified, then implemented.
+
+**The engine claim, checked by comparison rather than asserted.** The driver applies the anneal as a
+`MultiFold` subclass overriding `CompileModel` at fit time; `omnifold.py` is byte-identical. The re-issue
+receipt carries `engine_pins_UNCHANGED` with the before/after shas for
+`estimator_engine_multifold` and `estimator_engine_net` and an equality assertion that would have
+**aborted the re-issue** had either moved. Four pins re-hashed — driver, validator, and their two tests —
+out of 17, and the engine is not among them.
+
+**The discriminator went in as a precondition, both halves.** `seed_policy.lr_policy` is the declared
+policy; `lr_policy_realized` carries the **optimizer-verified** rates. Joseph's framing was the useful
+one: the diagnostic needed an assertion so it could not report *"annealing does not help"* without
+annealing, and production needs the inverse — it must not report **annealed** when it did not. So the
+driver reads each fit's learning rate back off `model.optimizer.learning_rate`, compares against the
+declared policy, and **refuses to write the artifact** on mismatch; the validator's
+`freeze:lr_policy_realized` refuses to pass a declared anneal with no realized evidence.
+
+**A design error of mine that the test suite caught immediately, and it is instructive.** I first put the
+realized rates *inside* `seed_policy`. That broke `test_the_retyped_policy_is_also_the_drivers`, whose
+whole purpose is to catch a policy change landing in one Python site — and it was right to break: a
+**measurement is not a policy**, and mixing them made `seed_policy` un-comparable to the constant it must
+match. Split into `seed_policy.lr_policy` (claim) and `lr_policy_realized` (measurement). The test that
+caught it exists because a niter change once cost 8 GPU-hours; it earned itself again in 0.1 s.
+
+**Fingerprint: semantics fixed, value unchanged**, exactly as directed. `pet-fullevent-fps-v1` stays,
+because it identifies the FEATURE SCHEMA and the anneal changes optimisation rather than features —
+bumping it would contradict its declared meaning and invalidate every v1-keyed artifact including the
+Gate-2 target. FROZEN now says so in capitals, and a test asserts the sentence is present, because the
+2026-08-01 note had already warned the gate *"froze the fingerprint STRING and nothing behind it"* and
+the next reader will assume it covers training unless the text refuses.
+
+**Legacy rule, in the same commit as the check.** Took the other lane's KNOWN_ISSUES #24 rather than
+rediscovering it — there, `endpoint_sha256` binding an artifact instead of a derivation meant *"a
+correct, authorized re-unfold invalidates the entire chain."* So: artifacts without `lr_policy` are
+**grandfathered explicitly**, with the reason in the receipt detail. Absence here is *unambiguous rather
+than missing* — the dead anneal proves pre-adoption runs trained at constant LR — and absence can never
+support an `annealed` claim. Also converted `freeze:seed_policy` from dict equality to a **core-key
+subset** compare, because an exact `==` would now fail every pre-adoption artifact on one side or every
+post-adoption one on the other.
+
+**One thing I added unasked, and I think it earns its place:** `lr_policy` is mapped to `None` in the
+launcher's `POLICY_FLAGS` — policy with *no flag* — and a new test forbids `--lr` / `--base-lr` /
+`--learning-rate` from ever appearing in the driver or launcher. A per-run LR override is precisely how a
+run could declare the adopted policy while training under something else, which is the
+claim-without-measurement failure one level up. Cheaper to forbid the flag than to detect the divergence.
+
+Shape cost recorded beside the repair with the reference-curve qualifier, and the
+compliance framing written into CLM-012 (viii) in the terms he asked for: the hierarchy was fixed in
+Amendment 1 **before any number existed**, so following it is compliance and not a criterion swap.
+`niter` stays at 3; the (vii) exposure **closes** rather than reopening. Nothing authorized beyond
+adoption — no threshold, no Branch C, no other arm, no cross section.
+
+Bindings ALL INTACT. Suite 8 failed / 950 passed — 7 documented plus the other lane's p4 snapshot.
+Collection **1050 -> 1058 (+8)**.
+

@@ -74,6 +74,17 @@ N_PPAR_BINS = len(fe.CANONICAL_PPARALLEL_EDGES) - 1        # 19
 N_CELLS = N_PT_BINS * N_PPAR_BINS                          # 285
 FROZEN = {
     "estimator_fingerprint": ESTIMATOR_FINGERPRINT,
+    # THE FINGERPRINT IDENTIFIES THE FEATURE SCHEMA AND *NOT* THE TRAINING POLICY. Stated explicitly
+    # because the 2026-08-01 note below already warned that the gate "froze the fingerprint STRING and
+    # nothing behind it", and the next reader will otherwise assume it covers training. The 2026-08-10
+    # LR-anneal adoption changes optimisation, not features, so the fingerprint correctly stays
+    # `pet-fullevent-fps-v1`: bumping it would contradict its declared meaning and invalidate every
+    # v1-keyed artifact including the Gate-2 target. `seed_policy.lr_policy` is the TRAINING-POLICY
+    # discriminator; without it an annealed and a non-annealed artifact are indistinguishable by their
+    # own contract.
+    "lr_policy": {"schedule": "fit-time-anneal-after-iteration-0",
+                  "base_lr": 1e-4, "annealed_lr": 1e-5, "applies_from_iteration": 1},
+    "lr_policy_status": "ADOPTED_20260810_CLM012_SHAPE_VALIDATED",
     "bkg_mode": BKG_MODE,
     # J01. `pet-fullevent-fps-v1` is defined by FULL_EVENT_FEATURE_CONTRACT.md as the FULL-schema
     # estimator (full muon object + reco vertex + view/timing); `pet-reduced-fps-cross` is the
@@ -1127,8 +1138,59 @@ def check_freeze(observed):
                       "p|| edges"))
     checks.append(_ck("freeze:bin_order", observed.get("bin_order") == FROZEN["bin_order"],
                       observed.get("bin_order")))
-    checks.append(_ck("freeze:seed_policy", observed.get("seed_policy") == FROZEN["seed_policy"],
-                      observed.get("seed_policy")))
+    # SUBSET COMPARISON ON THE CORE KEYS, not dict equality. `seed_policy` grew `lr_policy` and its
+    # realized-fit evidence on 2026-08-10; an exact `==` would then fail EVERY pre-adoption artifact
+    # (which correctly lacks the keys) and every post-adoption one (if FROZEN lacked them) --
+    # KNOWN_ISSUES #24's lesson, where a check demanding a field that correct data legitimately does not
+    # carry invalidated a whole chain. The core policy is still compared exactly, key for key.
+    _sp_obs = observed.get("seed_policy")
+    _sp_core = ({k: _sp_obs.get(k) for k in FROZEN["seed_policy"]}
+                if isinstance(_sp_obs, dict) else _sp_obs)
+    checks.append(_ck("freeze:seed_policy", _sp_core == FROZEN["seed_policy"],
+                      f"core keys {_sp_core} vs frozen {FROZEN['seed_policy']} "
+                      f"(compared on FROZEN's keys only; lr_policy is checked separately below)"))
+
+    # ---- freeze:lr_policy -- the TRAINING-POLICY discriminator, with the legacy rule ---------------
+    # THE RULE, decided in the same commit as the check (Joseph 2026-08-10, per KNOWN_ISSUES #24):
+    #   present -> must match FROZEN's declared anneal AND carry optimizer-verified realized rates.
+    #              A recorded policy is a CLAIM; the realized rates are the MEASUREMENT, and an artifact
+    #              may not claim `annealed` without them.
+    #   absent  -> GRANDFATHERED, explicitly and with the reason stated in the receipt, NEVER silently.
+    #              Absence is not missing information here: the engine's anneal was dead code
+    #              (KNOWN_ISSUES), so every pre-adoption run provably trained at constant full LR.
+    #              Absence therefore MEANS `constant full LR` and can never support an `annealed` claim.
+    _lp = _sp_obs.get("lr_policy") if isinstance(_sp_obs, dict) else None
+    _want = FROZEN["lr_policy"]
+    if _lp is None:
+        checks.append(_ck("freeze:lr_policy", True,
+                          "ABSENT -> GRANDFATHERED as pre-adoption constant full LR. Not a silent "
+                          "pass: the engine's per-iteration anneal was dead code, so a pre-2026-08-10 "
+                          "run provably trained at constant self.LR and the absence is unambiguous "
+                          "evidence of that. Absence can NEVER support an `annealed` claim -- that "
+                          "requires the field AND optimizer-verified realized rates."))
+    else:
+        _keys = ("schedule", "base_lr", "annealed_lr", "applies_from_iteration")
+        _mismatch = {k: (_lp.get(k), _want.get(k)) for k in _keys if _lp.get(k) != _want.get(k)}
+        checks.append(_ck("freeze:lr_policy", not _mismatch,
+                          f"declared {{{', '.join(f'{k}={_lp.get(k)!r}' for k in _keys)}}} vs frozen "
+                          f"{_want}" + (f" MISMATCH on {sorted(_mismatch)}" if _mismatch else "")))
+        _lr_real = observed.get("lr_policy_realized") or {}
+        _fits = _lr_real.get("fits")
+        _verified = _lr_real.get("verified_from_optimizer") is True
+        _bad = []
+        if isinstance(_fits, list) and _fits:
+            for r in _fits:
+                _exp = (_want["base_lr"] if int(r.get("iteration", 0)) < _want["applies_from_iteration"]
+                        else _want["annealed_lr"])
+                if not _isnum(r.get("learning_rate")) or abs(float(r["learning_rate"]) / _exp - 1) > 1e-4:
+                    _bad.append(r)
+        checks.append(_ck("freeze:lr_policy_realized",
+                          bool(_fits) and _verified and not _bad,
+                          f"{len(_fits) if isinstance(_fits, list) else 0} realized fit rate(s), "
+                          f"verified_from_optimizer={_verified}, "
+                          f"{len(_bad)} not matching the declared policy{f' -- {_bad[:3]}' if _bad else ''}. "
+                          f"A recorded policy is a claim; these rates are the measurement, so an "
+                          f"artifact cannot declare an anneal it did not perform."))
     # ---- J01: the fingerprint has to mean the schema it names ----
     feat_r = observed.get("event_features_reco")
     feat_t = observed.get("event_features_truth")
@@ -1437,6 +1499,9 @@ def main(argv=None):
         "bin_order": _npz_get(z, "bin_order"),
         # dict(...) so a persisted mapping compares equal to FROZEN's plain dict
         "seed_policy": dict(seed_policy) if isinstance(seed_policy, dict) else seed_policy,
+        # Absent on every pre-2026-08-10 artifact, which freeze:lr_policy grandfathers explicitly
+        # rather than failing on -- KNOWN_ISSUES #24.
+        "lr_policy_realized": _npz_get(z, "lr_policy_realized"),
         "central_vector": _npz_get(z, "central_vector"),
         "reported_bin_mask": _npz_get(z, "reported_bin_mask"),
         # J01: read from the artifact, never from FROZEN (rule 2 of the module docstring).

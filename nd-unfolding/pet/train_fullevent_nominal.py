@@ -22,6 +22,7 @@ a receipt that recorded `niter: 2, epochs: 8`. Everything added below exists so 
 the RESULT rather than its own constants; see `validate_pet_nominal_gate4.check_freeze`.
 """
 import argparse
+import functools
 import hashlib
 import io
 import json
@@ -48,8 +49,25 @@ BKG_MODE = "negweight-refined"
 # trajectory, so a run at a different batch size is a differently-configured estimator; leaving it
 # uncommitted meant the artifact could not record it, FROZEN could not gate it, and a closure could
 # claim "nominal configuration" while training at another batch size.
+# ADOPTED 2026-08-10 (Joseph, CLM-012 shape validation): the fit-time LR anneal. `lr_policy` is part
+# of the policy because WITHOUT IT AN ANNEALED AND A NON-ANNEALED ARTIFACT ARE INDISTINGUISHABLE BY
+# THEIR OWN CONTRACT -- same estimator_fingerprint, same seeds, same epochs, different estimator. The
+# validator's own 2026-08-01 note warned that the gate "froze the fingerprint STRING and nothing behind
+# it"; this is that hole for the training policy rather than the feature schema.
+#
+# NOTE THE DIVISION, and it is deliberate: `estimator_fingerprint` identifies the FEATURE SCHEMA and
+# NOT the training policy. The anneal changes optimisation, not features, so the fingerprint correctly
+# stays `pet-fullevent-fps-v1` -- bumping it would contradict the validator's declared meaning and
+# invalidate every v1-keyed artifact including the Gate-2 target. `seed_policy` is the training-policy
+# discriminator. Anyone reading the fingerprint as "which estimator produced this" is reading it wrong.
+LR_POLICY_ANNEALED = {"schedule": "fit-time-anneal-after-iteration-0",
+                      "base_lr": 1e-4, "annealed_lr": 1e-5,
+                      "applies_from_iteration": 1,
+                      "mechanism": ("MultiFold subclass overriding CompileModel at fit time; "
+                                    "omnifold.py is NOT edited")}
 NOMINAL_SEED_POLICY = {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8,
-                       "train_events": 2000000, "batch_size": 512}
+                       "train_events": 2000000, "batch_size": 512,
+                       "lr_policy": LR_POLICY_ANNEALED}
 # The ravel convention of `central_vector` / `reported_bin_mask`. Stated INDEPENDENTLY of the
 # validator's FROZEN["bin_order"] on purpose: the whole point of persisting it is that the gate can
 # find the two disagreeing, which it cannot do if both sides read one constant. The two literals are
@@ -388,11 +406,73 @@ def main(argv=None):
              projection_dim=32, local=True, K=3, coord_idx=coord_gen)
     mf_name = f"fe_nominal_{args.tag}"
     weights_folder = os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}")
-    of = MultiFold(mf_name, m1, m2, data, mc, niter=int(args.niter),
-                   epochs=int(args.epochs), batch_size=int(args.batch_size),
-                   weights_folder=weights_folder,
-                   verbose=False)
+    # ---- ADOPTED LR ANNEAL, applied WITHOUT editing the engine (Joseph 2026-08-10) --------------
+    # `omnifold.py` calls CompileModels(fixed=True) after each iteration, but RunModel recompiles the
+    # trained clone at full self.LR immediately before every fit(), so the engine's intended anneal is
+    # dead code (KNOWN_ISSUES). This subclass forces the FIT-TIME compile to fixed=True for iterations
+    # > start, which is where the anneal has to bite. The engine file is untouched, so the Gate-4
+    # `estimator_engine_multifold` / `estimator_engine_net` pins stay INTACT and only this driver's pin
+    # moves.
+    #
+    # __init__ is wrapped rather than replaced: closure_powered_truth_reweight.py reads early_stop's
+    # default off `inspect.signature(MultiFold.__init__)`, and a bare (*a, **kw) override erases it
+    # (that is how job 56547490 died at 81 s). This driver does not introspect, but the subclass is
+    # kept substitutable for the one that does.
+    _fit_lr_records = []
+
+    class _AnnealedMultiFold(MultiFold):
+        @functools.wraps(MultiFold.__init__)
+        def __init__(self, *a, **kw):
+            super().__init__(*a, **kw)
+            self._ann_iter = 0
+            self._inside_fit_compile = False
+
+        def CompileModel(self, model, num_steps, fixed=False):
+            eff = bool(fixed)
+            if self._inside_fit_compile and self._ann_iter > self.start:
+                eff = True
+            out = super().CompileModel(model, num_steps, fixed=eff)
+            if self._inside_fit_compile:
+                _fit_lr_records.append(
+                    {"iteration": int(self._ann_iter),
+                     "learning_rate": float(tf.keras.backend.get_value(
+                         model.optimizer.learning_rate))})
+            return out
+
+        def RunModel(self, labels, weights, iteration, model, stepn, NTRAIN=1000, cached=False):
+            self._ann_iter = int(iteration)
+            self._inside_fit_compile = True
+            try:
+                return super().RunModel(labels, weights, iteration, model, stepn, NTRAIN, cached)
+            finally:
+                self._inside_fit_compile = False
+
+    of = _AnnealedMultiFold(mf_name, m1, m2, data, mc, niter=int(args.niter),
+                            epochs=int(args.epochs), batch_size=int(args.batch_size),
+                            weights_folder=weights_folder,
+                            verbose=False)
     of.Unfold()
+
+    # ---- the ASSERTION, which is the half that matters ------------------------------------------
+    # A recorded lr_policy is a CLAIM; an asserted realized LR is a MEASUREMENT. The diagnostic arm
+    # carried this so it could not report "annealing does not help" without annealing; production needs
+    # the inverse -- it must not be able to report ANNEALED when it did not anneal. Both, or neither is
+    # worth having.
+    if not _fit_lr_records:
+        raise SystemExit("[gate4] no fit-time learning rates were observed: the anneal interception "
+                         "never fired, so this run cannot be declared annealed (fail closed)")
+    _base, _ann = float(LR_POLICY_ANNEALED["base_lr"]), float(LR_POLICY_ANNEALED["annealed_lr"])
+    _bad = [r for r in _fit_lr_records
+            if not np.isclose(r["learning_rate"], _base if r["iteration"] <= of.start else _ann,
+                              rtol=1e-4, atol=1e-12)]
+    if _bad:
+        raise SystemExit(
+            f"[gate4] REALIZED learning rates do not match the declared lr_policy: {_bad[:6]} "
+            f"(expected {_base:g} at iteration<={of.start}, {_ann:g} after). Refusing to write an "
+            f"artifact whose seed_policy claims an anneal the run did not perform.")
+    _n_base = sum(1 for r in _fit_lr_records if r["iteration"] <= of.start)
+    print(f"[gate4] LR anneal VERIFIED from the optimizer: {_n_base} fit(s) at {_base:g}, "
+          f"{len(_fit_lr_records) - _n_base} at {_ann:g}")
 
     # ---- BEN-043: persist the weights that ACTUALLY produced `weights_push` --------------------
     # MultiFold checkpoints with `save_best_only=True` (omnifold.py:272-275) while its
@@ -524,7 +604,19 @@ def main(argv=None):
     seed_policy = {"estimator_seed": int(args.estimator_seed),
                    "subsample_seed": int(args.subsample_seed), "niter": int(args.niter),
                    "epochs": int(args.epochs), "train_events": int(args.max_events),
-                   "batch_size": int(args.batch_size)}
+                   "batch_size": int(args.batch_size),
+                   # The DECLARED policy only, so this dict stays comparable key-for-key against
+                   # NOMINAL_SEED_POLICY (the single-source-of-truth test depends on that). The
+                   # REALIZED rates are separate evidence and are persisted under their own key below:
+                   # a policy is a claim, a measurement is not, and mixing them into one dict made the
+                   # claim un-comparable to the constant it is supposed to match.
+                   "lr_policy": dict(LR_POLICY_ANNEALED)}
+    lr_policy_realized = {"fits": list(_fit_lr_records),
+                          "verified_from_optimizer": True,
+                          "base_lr": float(LR_POLICY_ANNEALED["base_lr"]),
+                          "annealed_lr": float(LR_POLICY_ANNEALED["annealed_lr"]),
+                          "n_fits_base_lr": int(_n_base),
+                          "n_fits_annealed": int(len(_fit_lr_records) - _n_base)}
     # The truth (pT,p||) of the SAME subsample, from the dump (build_fullevent_loaders keeps the
     # scalars only for the event-feature block, so they are re-read here rather than plumbed out).
     with np.load(args.inputs, allow_pickle=True) as _d:
@@ -566,6 +658,7 @@ def main(argv=None):
              # rather than recomputed, so the artifact records the digest that was actually verified.
              inputs_sha256=np.asarray(target_receipt["_verified_input_sha256"]),
              seed_policy=np.asarray(seed_policy, dtype=object),
+             lr_policy_realized=np.asarray(lr_policy_realized, dtype=object),
              edges_pt=fe.CANONICAL_PT_EDGES,
              edges_pparallel=fe.CANONICAL_PPARALLEL_EDGES,
              bin_order=np.asarray(BIN_ORDER),
