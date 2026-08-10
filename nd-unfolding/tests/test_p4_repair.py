@@ -1125,5 +1125,90 @@ class IntegralLegIsADiscriminator(unittest.TestCase):
         self.assertFalse(proceeds(d_coh))
 
 
+class TmpdirGuardItself(unittest.TestCase):
+    """The conftest tmpdir guard had NO test of its own (found in the 2026-08-09 verifier preflight).
+
+    It exists because three consecutive verifier passes lost ~14% of the suite -- 23 of 165 on the
+    last -- to ERRORS rather than failures, when the read-only audit sandbox provided no writable
+    temp directory. A guard whose whole job is to protect a run happening somewhere this machine is
+    NOT is the last place to rely on "it worked when I tried it": here the guard is INERT, because
+    a writable tmpdir exists, so an ordinary green run says nothing about it. Test the mechanism."""
+
+    def _fresh_conftest(self):
+        import importlib
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import conftest
+        return importlib.reload(conftest)
+
+    class _Boom:
+        def __init__(self, *a, **k):
+            raise OSError("read-only file system")
+
+    class _FakeItem:
+        def __init__(self, fn=None):
+            if fn is not None:
+                self.function = fn
+            self.marks = []
+
+        def get_closest_marker(self, _name):
+            return None
+
+        def add_marker(self, m):
+            self.marks.append(m)
+
+    def test_probe_is_true_when_a_tmpdir_works(self):
+        self.assertTrue(self._fresh_conftest()._tmpdir_is_writable())
+
+    def test_probe_is_false_when_tempfile_raises(self):
+        """The sandbox failure mode. TMPDIR alone CANNOT simulate it -- pointing TMPDIR at a
+        read-only directory does not reproduce the sandbox because tempfile falls through to
+        /tmp, /var/tmp and cwd. A preflight that set TMPDIR, saw green, and concluded the guard
+        was exercised would have been wrong; that is why this monkeypatches instead."""
+        import tempfile
+        real = tempfile.TemporaryDirectory
+        tempfile.TemporaryDirectory = self._Boom
+        try:
+            self.assertFalse(self._fresh_conftest().TMPDIR_WRITABLE)
+        finally:
+            tempfile.TemporaryDirectory = real
+            self._fresh_conftest()
+
+    def test_tmpdir_dependent_tests_are_SKIPPED_not_errored(self):
+        """The point of the guard: an error reads as a defect, a skip reads as a skip."""
+        import tempfile
+        real = tempfile.TemporaryDirectory
+
+        def needs_a_tmpdir():
+            with tempfile.TemporaryDirectory() as d:
+                return d
+
+        def needs_nothing():
+            return 1 + 1
+
+        tempfile.TemporaryDirectory = self._Boom
+        try:
+            cf = self._fresh_conftest()
+            items = [self._FakeItem(needs_a_tmpdir), self._FakeItem(needs_nothing)]
+            cf.pytest_collection_modifyitems(None, items)
+            self.assertEqual(len(items[0].marks), 1,
+                             "a tmpdir-dependent test was NOT skipped with no writable tmpdir; it "
+                             "would ERROR in the audit sandbox and read as a defect")
+            self.assertEqual(len(items[1].marks), 0,
+                             "a test needing no tmpdir was skipped; the guard over-fires and would "
+                             "hide real coverage behind phantom skips")
+        finally:
+            tempfile.TemporaryDirectory = real
+            self._fresh_conftest()
+
+    def test_guard_is_inert_when_a_tmpdir_exists(self):
+        """Both directions: with a writable tmpdir nothing is skipped -- so a green local run is
+        not evidence the guard works, which is exactly why the tests above exist."""
+        cf = self._fresh_conftest()
+        self.assertTrue(cf.TMPDIR_WRITABLE)
+        items = [self._FakeItem(lambda: 1)]
+        cf.pytest_collection_modifyitems(None, items)
+        self.assertEqual(len(items[0].marks), 0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

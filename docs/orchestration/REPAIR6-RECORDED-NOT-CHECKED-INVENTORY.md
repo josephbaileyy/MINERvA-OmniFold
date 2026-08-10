@@ -25,6 +25,25 @@ gates**.
 > `python3 tests/test_p4_sweep_snapshots.py --update` and commit the diff, so a number change
 > lands in review where it can be seen.
 >
+> **REPAIR-7 ITEM 4 STATUS, checked 2026-08-09 and PARTLY DEFERRED with a reason.** The item was
+> "generate the inventory in CI". **This repository has no CI**: no `.github/workflows`, no
+> `.gitlab-ci.yml`, no pre-commit config, no Makefile target — verified by `git ls-files`. So the
+> literal form is not deferred by choice, it is unimplementable without first standing up CI, which
+> is out of scope for this lane and would be a repo-wide decision.
+>
+> **What IS implemented is the property the item wanted:** the sweeps emit `summary()`, the result
+> is committed at `state/p4-sweep-snapshots.json`, and `tests/test_p4_sweep_snapshots.py`
+> regenerates and compares on every suite run — so staleness is a red test rather than a silent
+> drift, which is the whole point. It has already caught two real drifts it was not written for: my
+> own new fields, and a change made by the PET lane entirely (two new shell files moving the
+> pipeline corpus 330 → 332).
+>
+> **What is genuinely deferred:** enforcement for someone who never runs the suite. Today the guard
+> binds an author who runs `pytest`; it does not bind a commit. If CI is ever added, the named fix
+> is one job invoking `pytest nd-unfolding/tests/test_p4_sweep_snapshots.py`. Recorded here rather
+> than closed silently, because "done" and "done in the only form the repo supports" are different
+> claims and the second is the true one.
+>
 > Current snapshot: **99 fields / 25 gates**; pipeline **23 candidates across 332 shell
 > files, 0 live**.
 
