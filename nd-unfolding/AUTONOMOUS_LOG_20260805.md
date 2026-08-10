@@ -3441,3 +3441,43 @@ val-loss trace"*. It is not this run's: it reports `195 training steps at reco a
 losses `4.93 / 5.36 / 6.88 / 3.77 / 7.04 / 3.57`, where `56563761` reports `13048 / 7812` and `0.192 / 0.908
 / 0.117 / 0.877 / 0.112 / 0.830`. It is some earlier small run. The file is preserved in the scratchpad, so
 nothing is lost, but I stated a provenance I had not checked — in a repo where provenance is the product.
+
+### 21:30Z — queue empty, everything authorized is complete. Standing down.
+
+`squeue` shows only the held cron `56160911`; `56563761` is gone, COMPLETED and reported. **No jobs
+running, nothing unblocked, three decisions with Joseph.** Gmail: nothing since his 12:49Z request.
+
+**Quiet verification, and one of the checks was not a formality.** Four files were committed this session:
+`KNOWN_ISSUES.md`, the reproduction predeclaration, `FINDINGS.md`, and this log. Per BEN-061 rule (1) —
+*before editing ANY file, grep the receipt directory for its path* — two of them come back referenced:
+
+    KNOWN_ISSUES.md   p3f-pet-gate4-launch-code-gate-20260801.json:151
+    FINDINGS.md       qp4-reset-resume.log:442, :474
+
+Both turn out to be **prose citations, not sha pins** — a `"source": "KNOWN_ISSUES.md BEN-023; ..."`
+provenance string, and a path list inside a log. So no binding was voided by appending to them. Worth doing
+rather than assuming: BEN-061 is precisely the case where an append to a documentation file silently drifted
+a frozen sha, and "it's only a doc" is the reasoning that gets there.
+
+Verifier, run to confirm globally rather than by inference:
+
+    resolved 154 bindings   150 OK   15 shell pins vs floor 15   ALL BINDINGS INTACT
+    4 known pre-existing submit-time drifts, unchanged (wakerctl.py, test_wakerctl.py,
+      sbatch_dump_g2_mefhc.sh, gate2_queue_hedge_controller.sh)
+
+**COLLECTION, in the BEN-079 form:** `pytest nd-unfolding/tests = 973` on `local@7b2198a` — unchanged, as
+expected from a commit that added no code and no tests. Stated in scope because a bare `973` is what BEN-079
+exists to stop.
+
+**No mail this cycle, deliberately.** The 21:05Z mail already carried the stand-down: the verdict, the
+ruled-out mechanisms, and the three items waiting on him (disposition of the code-path finding, the
+unauthorized low-k measurement, the held cron). A second mail 25 minutes later restating it with a
+binding-verifier line appended is the spam his brief forbids, and none of the three mail triggers — job
+finished, PASS/FAIL, blocking decision — has fired since.
+
+**State at stand-down.** Annealed production nominal + matched floor both written to
+`fullevent_nominal_annealed/`, neither promoted. The 08-08 baseline `58f664cdef266d09` intact and still the
+canonical nominal. FROZEN untouched, no threshold moved, Branch C closed, `niter` 3. `origin/main` at
+`7b2198a`. Durable notification still dead (cron HELD, `scontrol release` refused for scrontab jobs,
+`install-cron` deliberately not run on shared infrastructure) — while this session lives its own polling is
+the notification path, and that limitation is in his inbox.
