@@ -3855,3 +3855,45 @@ it supported.
 
 No mail: I never told Joseph the pin was his, so there is nothing to correct in his inbox from me; the other
 lane did tell him and is correcting its own. Restating its correction would be me relaying a relay.
+
+### 23:35Z — a premise expired under my own claims ledger: CLM-010's k=3 override rests on the bar CLM-012 retired
+
+The oversight lane, closing out, read my CLM-010 quote and found something live in it. **Verified against
+`CLAIMS.md` and recomputed here rather than relayed**, because a claim about my own ledger arriving through a
+relay is exactly what rule (7) says to check.
+
+**It is correct, and it is a defect in my lane's bookkeeping.** CLM-010 justifies overriding a measurement
+that prefers `k=4` on the ground that *"the D2 powered closure's 0.80 bar is unreachable at **any** k … so
+`k=4` cannot rescue the FAIL."* **CLM-012 retired the 0.80 bar on 08-09.** The override therefore stands on a
+premise that no longer exists — and nobody noticed for a day because the two claims live in different rows of
+the same file. That is the failure mode worth naming: **a premise retired in one row does not propagate to the
+rows that depend on it, and a claims ledger has no mechanism that makes it.**
+
+Recomputed from CLM-012's own k-series (`0.4236/0.5642/0.6182/0.6441/0.6592/0.6691` at k=1..6):
+
+    bar at k=3   0.80 x 0.618228 = 0.4945824
+    bar at k=4   0.80 x 0.6441   = 0.5152800
+    bar RISE                       0.0206976   <- k=4 helps only if the estimator gains MORE than this
+    achieved     0.5126033 (finalizer 56562169)   margin at k=3 +0.0180209
+                 scored against the k=4 bar:      -0.0026767, i.e. it would MISS
+
+Pointing the other way: CLM-010's own k=4 arm **improves** fold-forward (mean deviation `0.014256` vs
+`0.021876`, paired `-0.007620` on 48 shared seeds), and fold-forward is precisely the axis where the annealed
+production nominal now sits at margin `0.0144` against FROZEN's `0.05` where `0.0383` was expected. So the two
+criteria genuinely pull opposite ways and the choice is not obvious.
+
+**What I did: recorded it as caveat (v) on CLM-010. What I did NOT do: touch `niter`, re-run anything, or
+treat "the premise expired" as "the decision was wrong."** The answer may well stay 3 — the pin cascade is
+real and k=4 raises a bar it might not clear. The honest statement is that the choice needs re-stating on
+current grounds, not that it needs reversing. I flagged an hour ago that the temptation on finding a bad
+citation is to re-open the result; this is the adjacent trap and the same discipline applies.
+
+**Sequencing, stated as a judgement rather than a decision: re-stating `k` should follow the code-path
+bisect.** With a 188x-scatter disagreement between the driver and diagnostic paths unexplained, a `k=4` result
+could not be attributed to `k` rather than to whatever makes those paths differ. Confounding two open
+questions to save one job is how you get an answer to neither. It goes to Joseph as a fourth item explicitly
+behind the bisect.
+
+No mail this cycle: he already has three items and a correction from tonight, this is the other lane's to
+raise since it found it, and a fourth mail after midnight would be the spam the brief forbids. It is on the
+record in the canonical place if he reaches it first.
