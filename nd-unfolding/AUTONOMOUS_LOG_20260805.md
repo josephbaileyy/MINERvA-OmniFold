@@ -2949,3 +2949,45 @@ the receipt again records that the engine was pinned before the whole 08-10 chai
 suite 7/943/1. Collection unchanged. No mail: `56547490` has not reported and he asked for nothing until it
 does.
 
+### 04:15Z — The low-k question may not exist. Contingency written in, PRE-SCOPED and NOT pre-authorized
+
+Joseph's point closes a loop I had left open: **the anneal and lowering k are alternative routes to the same
+normalization fix**, so `56547490` decides whether the low-k question exists at all. I had written "the low-k
+recovery must be measured — a concrete next run" as though it were unconditional. It is not.
+
+**Verified, including against my own caveat:**
+
+    normalization |dev|   k=3 + anneal   1.17%      vs   k=1 no anneal   2.79%    -> anneal better
+    reference ceiling     k=3            0.618228   vs   k=1            0.4236    -> k=3 higher
+
+So if the anneal's shape holds, **k=3 + anneal dominates k=1 on BOTH axes** and the `niter` exposure closes
+**with no run**. And the dominance survives the provenance caveat I attached to the −2.79% myself: granting
+k=1 the full BEN-043 best-vs-final gap (~1.3%) *in its favour* puts it at 1.49%, still worse than 1.17%. That
+check mattered — the whole argument rests on a number I had already flagged as best-epoch, so it had to be
+robust to its own caveat before being written into a claim.
+
+Written into condition (e) as a contingency: the low-k run (D2 at k=1 and k=2, no anneal, ~2 h per k ≈ **4
+GPU-h**) is launched **only if `56547490` fails its shape test**. Pre-scoped so it can go immediately if
+needed; **not pre-authorized**, so it cannot go by default. **Not running it.**
+
+**BEN-078 extended with his second instance, at his instruction.** He restated CLM-012's ceiling as "a hard
+cap" when the claim's own status line reads *"reference curve, NOT a bound"* and caveat (i) explains why. His
+diagnosis: *"I restated a claim past the bound its author had already put on it"* — same family as taking a
+state claim on trust, **except the correct qualifier was directly in front of him, in the field he was
+citing**. Added as rule (4): when citing a claim, carry its STATUS and caveats with the number, because a
+value quoted without its qualifier silently promotes it. That is the ingredients convention applied to
+*claims* rather than receipts — the status line **is** the ingredient. Practical form: if a claim's status is
+anything but `PROVED`, the qualifier travels with every restatement.
+
+Worth noting how bounded the consequence was: the mechanism his "hard cap" framing motivated
+(`powered:absolute_recovery_reported_with_ceiling`) rests on the **measured** absolute recovery being
+visible, not on the ceiling being a bound. **The instruction survived the correction; its stated
+justification did not.** That is a good property for an instruction to have and worth recognising rather
+than glossing.
+
+He asked that my absence rule be kept as stated, so it is unchanged: a claim of absence is the highest-risk
+kind, because absence cannot be spotted in the artifact the way a wrong number can — grep for the thing
+itself, never a sibling.
+
+Bindings ALL INTACT. No mail: `56547490` has not reported. Holding.
+
