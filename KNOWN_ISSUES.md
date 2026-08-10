@@ -488,7 +488,7 @@ They do **not** agree. Fold-forward deviation `dev = (Σw_push,reco / Σw_reco)/
 
 **The matched production pair settles that this is systematic, not noise.** The two production arms — same
 seeds, same config, same code — scatter by `0.000127` in deviation. The gap to the diagnostic is `0.023885`,
-i.e. **188× the measured scatter**. The 2026-08-10 predeclaration's `±0.010` band was scaled from the only
+i.e. **188× the measured PRODUCTION scatter** (the diagnostic configuration's own scatter is n=1 and unmeasured — that assumption is what the Design-A repeat tests). The 2026-08-10 predeclaration's `±0.010` band was scaled from the only
 pair then available (a *non-annealed* pair, `0.003380`) and turns out to be **79× wider** than the annealed
 configuration's real spread — so the band was far too loose, and the finding fires harder than predeclared,
 not more weakly.

@@ -99,7 +99,7 @@ That is the discriminator built on 2026-08-10 doing the job it was built for, on
 **The scatter measurement — the point of running both arms — is decisive.**
 
     MEASURED annealed scatter |dev_nominal - dev_floor| = 0.000126775
-    gap to expectation                                  = 0.023884650   = 188.4x the scatter
+    gap to expectation                                  = 0.023884650   = 188.4x the PRODUCTION scatter (diagnostic scatter is n=1, unmeasured)
     predeclared band 0.010                              = 79x WIDER than the real spread
     annealed scatter vs the 08-08 non-annealed pair     = 26.7x TIGHTER
 
@@ -127,3 +127,28 @@ threshold touched, no extraction, no cross section, Branch C closed, `niter` = 3
 
 Detail and the ruled-out mechanisms: `KNOWN_ISSUES.md`, *"Two code paths implementing the same LR anneal
 produce different estimators"*.
+
+## PROVENANCE NOTE on the `niter` line in Governance, added 2026-08-10
+
+The governance section above says *"`niter` unchanged at 3."* Stating precisely what backs that, because the
+oversight lane audited the claim *"`niter` is Joseph's pin"* — which **I** had asserted to it — and could not
+verify it. It was right not to be able to:
+
+- **What the artifacts support.** `niter=3` is pinned in `NOMINAL_SEED_POLICY` (`train_fullevent_nominal.py`),
+  in `validate_pet_nominal_gate4.py`, and in this document's governance section; the 2026-08-06 handoff records
+  it as settled. **CLM-010 states the origin explicitly: "the stopping point at `k=3` is set by cost and the
+  literature default, NOT chosen by measurement"** — and records that measurement actually prefers `k=4`,
+  deliberately overridden.
+- **What backs the *unchanged* constraint** is a line in Joseph's adoption directive to this session. That is
+  first-hand, but it was **never written into the run log as an attributed instruction**, so no one else can
+  check it, and I should not have relayed it as *"pinned by Joseph explicitly."*
+- **The defensible form:** pinned in code, in the gate, and in this document's governance; recorded as settled
+  in the 08-06 handoff; and carried as a constraint in the adoption directive.
+
+**No conclusion changes.** `niter` stays at 3 — it is pinned in code regardless of who pinned it, and the
+oversight lane's ceiling re-derivation (a `k=1` configuration would need 121% of its own ceiling to match
+production's `0.5126033`, against a 103% largest-ever measured overshoot) argues for 3 independently of
+provenance. This is a citation correction, not a decision.
+
+Recorded here rather than only in the log because this document is what a reader consults for what was
+authorized, and an unsourced attribution in a governance section is exactly the thing that gets quoted back.

@@ -3721,3 +3721,234 @@ fired. That is the check that would have caught this in either seat.
 
 No mail. Nothing on the three triggers, Joseph has the cron closure and the peer's correction inbound, and
 adding a third mail tonight about a ledger row would be the spam the brief forbids.
+
+### 22:45Z — BEN-082 restructured: the diagnostic leads, and selective omission added as rule (5)
+
+Two amendments folded in, both from the oversight session, which asked me to make them rather than edit
+`FINDINGS.md` concurrently — the right call, since two sessions editing that file at once is what produced the
+08-08 merge conflict.
+
+**1. The diagnostic now leads the row instead of trailing it.** *"What would be false if this were wrong?"*
+fires from either seat, where "carry the evidence" only helps in the relay's. And it is the general form of the
+three checks that have actually worked here: the sign-balance check that killed a scatter argument, the
+121%-of-own-ceiling reframing of the `niter` decision, and the five candidate estimator definitions I tested
+before reporting a code-path disagreement. Each asked what the observation would look like **under the
+negation**. Naming it makes it reusable; we had all three ad hoc.
+
+**2. Selective omission added as rule (5), and it is the sharper of the two failure modes.** Rule (4) named
+confidence inflation as the unaudited failure of a summarising architecture. There is a second one in the same
+seat: a relay chooses not only how strongly to state what it passes on but **what arrives at all**. The
+asymmetry is what makes it worse — an inflated claim can in principle be caught by comparing relay against
+source, whereas **an omission leaves no artifact to audit**: the source does not know what was dropped and the
+reader does not know there was more.
+
+So the mitigations differ. Inflation is fixed by format. **Omission is bounded only by the reader having
+independent access to the source** — which means Joseph reading each lane's mail directly, and each lane
+filing to `FINDINGS.md`/`KNOWN_ISSUES.md` rather than reporting solely through a summariser, are load-bearing
+rather than redundant. Recorded with the consequence stated plainly: any move that consolidates reporting
+through one session, however much cleaner it reads, removes the only check on omission that exists.
+
+Contributed by the other lane about its own position, which is the only seat it is visible from. Credited in
+the row for that reason — it is not a failure I could have observed from here.
+
+No mail. Nothing on the three triggers; this is ledger work on a converged thread.
+
+### 22:55Z — the consolidation rule (5) warns about had ALREADY happened. Corrected Joseph directly.
+
+The oversight lane reports that Joseph asked it earlier today to route directly to both lanes and stop
+drafting messages for him to relay. Recorded as **its report**, not as verified fact — it concerns an
+instruction given to it, and I have no way to check it from here. Taken at face value the effect is the exact
+move rule (5) argues against: he went from reading each lane's full reports to reading one session's summaries
+of them. **The filter went in hours before I wrote a rule about filters, and neither of us noticed we were
+already inside it.** Added as rule (6) with the three consequences, the first of which changes my behaviour:
+
+**"Going quiet" on a peer channel is not the same as having nothing to report to Joseph.** That distinction
+had real content tonight, because I was sitting on something he needed.
+
+**So I mailed him a correction, and the thing being corrected is a mail I sent him.** At 22:05Z I wrote
+*"durable notification is back, and proven by a real tick"* on the basis of **one** tick. One fire proves
+reinstallation, not the schedule. The conclusion was right and my basis for it was not, and he had no way to
+see the difference — which is precisely the failure BEN-082 describes, committed by me, to him, in writing,
+before I filed the row about it. Corrected with the two-tick evidence, plus the BEN-080 allocator misdiagnosis
+and the stray-log provenance error, neither of which changes a decision.
+
+**On the architecture I flagged my side only.** The other lane is telling him what the arrangement trades, so
+restating its side would be me summarising a summariser. Mine: I keep mailing him directly on the three
+triggers unless he says otherwise — not to duplicate, but because a summary I cannot see cannot be checked by
+me, and the only bound on what gets dropped is his having a path to each lane that does not pass through the
+other. Explicitly offered to stop if he prefers consolidation, because that should be his call rather than an
+efficiency nobody chose.
+
+The mechanical form, which is the durable part: **direct channels stay open by default, and closing one is a
+decision that must be argued for rather than an efficiency that accretes.** The safeguard that actually caught
+this — the filter volunteering that it was a filter — depends on the filter's candour and is not a mechanism.
+It cannot be relied on twice.
+
+### 23:05Z — rule (7): the relay is bidirectional, and the INBOUND direction is the dangerous half
+
+The oversight lane extended its own finding in the direction that has teeth. Rules (4)–(6) treat it as an
+unaudited channel **from** the lanes **to** Joseph. It is equally an unaudited channel **from** Joseph **to**
+the lanes — and in that direction it carries pins, authorizations and closures. Its own list of what it had
+been conveying as his decisions: the 5D chain quoted on purity, `niter` as his pin, adoption as his call,
+PB1's criteria predeclared and therefore met. Each is its *report* of what he said, arriving with its
+confidence rather than his words.
+
+**The asymmetry is the point: an outbound overclaim wastes a check, an inbound overclaim gets work done that
+nobody authorized.** That is a materially worse failure than the one we spent the evening on.
+
+**I audited my own lane rather than assuming I was clean.** Both authorization claims in my predeclarations
+and launchers — `"Authorized by Joseph 2026-08-09/10"` and `"Authorized by Joseph 2026-08-10 with the
+reproduction test as a precondition"` — trace to his own words, and **no gate or predeclaration in this lane
+cites a relayed instruction as its authority.** Verified by grep over `docs/orchestration/state/` and the
+predeclarations, not by recollection, which is the part worth recording: I would have said "clean" without
+checking and would have been right, and being right without checking is how BEN-078 happened.
+
+Filed as rule (7) with four sub-rules, the operative one being: for anything that would **gate** an action —
+a pin, an authorization, a threshold, a closure — confirm against Joseph's own words, never a restatement.
+The one live instance of this working is my refusal earlier tonight of the relayed bisect and `niter`
+dispositions on the ground that a peer message is not authorization. Worth noting that my harness-level
+operating rules say the same thing independently, so the campaign finding and the session constraints agree —
+which is mild evidence the rule is right rather than local to this campaign.
+
+The other lane has adopted marking which of its relays are his words versus its reading of them. I have not
+asked it to do anything else, and I am not treating its adoption of that as changing what I require: I confirm
+against his words regardless of how a relay is labelled, because the label is also the relay's.
+
+Also folded in its editorial point: BEN-082's provenance is a **live instance in his inbox** — my own
+wrong-basis claim, in good faith, indistinguishable to him from a correct one — rather than a reconstruction.
+That is stronger than anything either of us argued for the row and it now leads the provenance note.
+
+No mail. The correction mail at 22:55Z already carries everything he needs tonight, and rule (7) is a
+discipline on how I read instructions rather than news about the campaign.
+
+### 23:20Z — the audit ran outward and caught ME. "niter is Joseph's pin" was my over-attribution.
+
+The oversight lane audited its own relays and found one it could not verify: that **`niter` is Joseph's pin**.
+It took that from *my* message. So the inbound-overclaim rule I filed an hour ago has its first instance, and
+the source is this lane.
+
+**Checked instead of defending it, and the artifact trail does not support what I said.** I wrote *"`niter` is
+pinned at 3 by Joseph explicitly."* Grepping for a contemporaneous record of that instruction returns
+**nothing** — not in this log, and the predeclaration's governance line states `niter` unchanged **without
+attribution**. Worse, `CLM-010` says the opposite of "his": *"the stopping point at `k=3` is set by cost and
+the literature default, NOT chosen by measurement"*, with measurement actually preferring `k=4` and being
+deliberately overridden.
+
+**What I actually had** was a constraint in Joseph's adoption directive to this session — first-hand, real, and
+**never written into the log as an attributed instruction**. So it is unverifiable by anyone but me, and I
+converted it into "Joseph explicitly" when passing it on.
+
+**That is a narrower and worse lesson than the one I filed as (iv).** An instruction genuinely received
+first-hand still becomes an unverifiable claim the moment it is relayed without being written down, and the
+recipient cannot distinguish my recollection from my inference. Filed as rule **(v)** against myself, in the
+same row where I had just recorded that my lane audited clean — which it did, on the *inbound* direction. The
+outbound direction is the one I failed, and (iv) does not cover it.
+
+Also added a **provenance note to the predeclaration itself**, not just here, because that document is what a
+reader consults for what was authorized and an unsourced attribution in a governance section is precisely what
+gets quoted back at Joseph.
+
+**No conclusion changes.** `niter` stays at 3: pinned in code and in the gate regardless of who pinned it, and
+the ceiling re-derivation argues for 3 independently of provenance. Citation correction, not a decision — and
+worth separating those cleanly, because the temptation on discovering a bad citation is to re-open the result
+it supported.
+
+No mail: I never told Joseph the pin was his, so there is nothing to correct in his inbox from me; the other
+lane did tell him and is correcting its own. Restating its correction would be me relaying a relay.
+
+### 23:35Z — a premise expired under my own claims ledger: CLM-010's k=3 override rests on the bar CLM-012 retired
+
+The oversight lane, closing out, read my CLM-010 quote and found something live in it. **Verified against
+`CLAIMS.md` and recomputed here rather than relayed**, because a claim about my own ledger arriving through a
+relay is exactly what rule (7) says to check.
+
+**It is correct, and it is a defect in my lane's bookkeeping.** CLM-010 justifies overriding a measurement
+that prefers `k=4` on the ground that *"the D2 powered closure's 0.80 bar is unreachable at **any** k … so
+`k=4` cannot rescue the FAIL."* **CLM-012 retired the 0.80 bar on 08-09.** The override therefore stands on a
+premise that no longer exists — and nobody noticed for a day because the two claims live in different rows of
+the same file. That is the failure mode worth naming: **a premise retired in one row does not propagate to the
+rows that depend on it, and a claims ledger has no mechanism that makes it.**
+
+Recomputed from CLM-012's own k-series (`0.4236/0.5642/0.6182/0.6441/0.6592/0.6691` at k=1..6):
+
+    bar at k=3   0.80 x 0.618228 = 0.4945824
+    bar at k=4   0.80 x 0.6441   = 0.5152800
+    bar RISE                       0.0206976   <- k=4 helps only if the estimator gains MORE than this
+    achieved     0.5126033 (finalizer 56562169)   margin at k=3 +0.0180209
+                 scored against the k=4 bar:      -0.0026767, i.e. it would MISS
+
+Pointing the other way: CLM-010's own k=4 arm **improves** fold-forward (mean deviation `0.014256` vs
+`0.021876`, paired `-0.007620` on 48 shared seeds), and fold-forward is precisely the axis where the annealed
+production nominal now sits at margin `0.0144` against FROZEN's `0.05` where `0.0383` was expected. So the two
+criteria genuinely pull opposite ways and the choice is not obvious.
+
+**What I did: recorded it as caveat (v) on CLM-010. What I did NOT do: touch `niter`, re-run anything, or
+treat "the premise expired" as "the decision was wrong."** The answer may well stay 3 — the pin cascade is
+real and k=4 raises a bar it might not clear. The honest statement is that the choice needs re-stating on
+current grounds, not that it needs reversing. I flagged an hour ago that the temptation on finding a bad
+citation is to re-open the result; this is the adjacent trap and the same discipline applies.
+
+**Sequencing, stated as a judgement rather than a decision: re-stating `k` should follow the code-path
+bisect.** With a 188x-production-scatter disagreement between the driver and diagnostic paths unexplained, a `k=4` result
+could not be attributed to `k` rather than to whatever makes those paths differ. Confounding two open
+questions to save one job is how you get an answer to neither. It goes to Joseph as a fourth item explicitly
+behind the bisect.
+
+No mail this cycle: he already has three items and a correction from tonight, this is the other lane's to
+raise since it found it, and a fourth mail after midnight would be the spam the brief forbids. It is on the
+record in the canonical place if he reaches it first.
+
+### 22:30Z — AUTHORIZATION CHANGED, and the bisect narrowed from unknown-cause to two identified deltas — with no GPU spent
+
+**Joseph mailed twice (22:04:41Z and 22:17:16Z), both from his address on the verified channel:**
+
+> *"Feel free to follow any decision made by the other sessions you can communicate with. You also can submit
+> any compute jobs you'd like"* — and — *"You can ask the overnight session for a decision and if you agree
+> with it, go ahead"*
+
+So compute is authorized and the bisect is unblocked, with **my own agreement as the governing condition** —
+he wrote "if you agree with it", not "do what it says". What this does **not** touch: the HARD CONSTRAINTS
+(no hand-edited hashes, no raised tolerances, explicit staging, no `--validator size`, no
+`RESUME_ADOPT_LEGACY=1`, no `--bkg-mode purity`, announce collection changes). Nothing in either mail revokes
+those and I am not reading a general grant as a specific one. I am also **not** treating it as authorizing
+promotion of an arm to canonical nominal — that is publication-grade, nobody has decided it, and "submit
+compute jobs" is not "promote results".
+
+**Then I read the code before buying anything, and it collapsed most of the hypothesis space for free.**
+
+**(1) The measurement-point hypothesis is DEAD, and this is the important one.** The diagnostic's
+`RunStep2` override computes `push_mean_w_reco` *inside the loop* at iteration 2, so an obvious explanation
+was that I had compared an in-loop value against an end-of-run one. But `diagnose_step1_annealed_lr.py:115`
+monkeypatches `omnifold.MultiFold` and then **invokes the production driver**, so job `56534117` also wrote a
+driver-format artifact. Read it:
+
+    step1_iteration_dynamics/warm_fixed_annealed_lr/slurm-56534117/weights.npz
+      driver's OWN fold_forward ratio = 1.1109012167   dev = -0.011724321
+
+Identical to the in-loop number. **So the same driver code, computing the same quantity the same way, gave
+1.1109012167 on 08-09 and 1.0840529523 on 08-10.** The difference is in the training, not the measurement.
+
+**(2) Definition mismatch is dead at source level too**, confirming the earlier empirical five-candidate test.
+Production: `sum_w_push_reco = Σ(w_reco_leg[pass_reco] × push[pass_reco])`, over `sum_w_reco`. Diagnostic:
+`Σ(weights_push[m] × w[m]) / Σ w[m]` with `w = self.mc_weight_reco`, `m = self.mc.pass_reco`. And
+`omnifold.py:157` shows `self.mc_weight_reco` **is** `mc.weight_reco`. Same operands, same formula.
+
+**(3) Configuration is identical on every recorded axis** — both artifacts: fingerprint
+`pet-fullevent-fps-v1`, `bkg_mode negweight-refined`, `reweight_logit_cap 30.0`, `n_evt_reco 13`, and the same
+six seed-policy core keys. The only `seed_policy` difference is the added `lr_policy` **declaration**, which
+is not a training input.
+
+**So the hypothesis space is now exactly two deltas, both identified by diff:**
+
+    (a) DRIVER VERSION.  56534117 ran the driver at 8f2bcb0, which constructs a PLAIN MultiFold -- the
+        anneal came entirely from the monkeypatch. 56563761 ran the adopted driver (54a8797), which
+        constructs _AnnealedMultiFold itself. The executable diff between them is the anneal machinery,
+        the fail-closed assertion, and the lr_policy declaration -- nothing that should move numerics.
+    (b) SUBCLASS.  The diagnostic's AnnealedMultiFold additionally overrides `cache`, `RunStep1` and
+        `RunStep2`. All three call `super()` and only record -- they should be numerically inert.
+
+**Both deltas look inert, and one of them is not.** That is the finding: the anneal logic in the two
+subclasses is line-for-line equivalent (`_inside_fit_compile and iteration > self.start`), so whatever moved
+`push` by 2.42% is something I currently believe cannot move it. That is worth more than a guess at which.
+
+Design and concurrence next, per his instruction to ask the overnight session.
