@@ -88,7 +88,10 @@ replacement is implied for 4D/FPS or dependent significances. See
   changed isolated-wrapper repair preserves the inherited signature and adds a fail-closed signature
   preflight; focused and live compute tests pass. The shared engine remains byte-identical and no
   promotion is authorized. Changed A100 batch attempt `56552326` is submitted in a new job-keyed
-  namespace, initially `PENDING (Priority)`, with terminal and one-hour queue-latency watches armed.
+  namespace. Its one-hour wake found it still prestart-clean and `PENDING (Priority)`, with every
+  output/log path absent and no interactive allocation or detached A100 controller. The measured
+  roughly six-hour runtime exceeds the four-hour interactive wall, so batch remains the sole writer
+  without cancellation or duplication; its terminal watch remains armed.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

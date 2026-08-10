@@ -4370,3 +4370,13 @@ is approximately six hours, while the only live interactive holder is CPU-only a
 thirty minutes remaining. The job was initially `PENDING (Priority)` and its job-keyed report,
 artifact, and manifest paths were all absent. Terminal and one-hour queue-latency watches are armed.
 Receipt: `../docs/orchestration/state/annealed-shape-r2-submit-56552326.json`.
+
+At the one-hour queue wake, the event's job, threshold, verified-prestart flag, and 3904-second wait
+matched the armed watch. One expanded scheduler and ownership snapshot found `56552326` still
+`PENDING (Priority)` at zero runtime. Its report, artifact, preflight receipt, quarantine manifest,
+three logs, and weights namespace were all absent. No interactive allocation or detached A100
+controller exists. Since the measured full-input reference is approximately 6h00m44s—longer than
+the four-hour interactive ceiling—there is no proven alternative to receive ownership. Batch remains
+the sole writer; it was not cancelled or duplicated, and its terminal watch remains the continuation
+path. Receipt:
+`../docs/orchestration/state/annealed-shape-r2-queue-56552326-reconciliation.json`.

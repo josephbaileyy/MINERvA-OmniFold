@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
   "current_dag_node": "Annealed-LR powered-closure shape validation — changed attempt r2",
-  "state": "Joseph authorized the isolated annealed shape validation. Attempt 56547490 failed before training on a diagnostic-subclass signature defect and produced no scientific verdict. The isolated wrapper repair is committed and pushed at 1ddc3f4; changed full-input A100 job 56552326 is PENDING in a collision-isolated namespace with terminal and one-hour queue watches armed. The shared engine, frozen criteria, and Branch C remain unchanged.",
+  "state": "Joseph authorized the isolated annealed shape validation. Attempt 56547490 failed before training on a diagnostic-subclass signature defect and produced no scientific verdict. The isolated wrapper repair is committed and pushed at 1ddc3f4. Changed full-input A100 job 56552326 remained wholly prestart-pending at its one-hour queue wake; no collision-safe A100 alternative exists, so batch remains the sole writer with its terminal watch armed. The shared engine, frozen criteria, and Branch C remain unchanged.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -34,9 +34,9 @@
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "All Step-1 controls fail the formal frozen iteration-2 increment gate, while the annealed end state is inside the separate 5% normalization tolerance; only the powered closure can now adjudicate shape.",
     "Attempt 56547490 produced no recovery value or LR proof because it failed before training; it is not evidence for or against the annealed arm.",
-    "Changed attempt 56552326 is scheduler-dependent. A clean result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication."
+    "Changed attempt 56552326 is scheduler-dependent and has no safe interactive hedge: its measured runtime exceeds the interactive wall. A clean result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication."
   ],
-  "next_authorized_action": "External Slurm and wakerctl now own progress: reconcile job 56552326 only on its terminal event (or make one collision-safe routing decision on the one-hour queue event). Then verify recovery and the fit-time LR proof against the frozen predeclaration, mail Joseph, and commit the diagnostic receipt. Do not poll, edit the shared engine, promote the arm, or open Branch C.",
+  "next_authorized_action": "External Slurm and wakerctl now own progress: reconcile job 56552326 only on its terminal event. Then verify recovery and the fit-time LR proof against the frozen predeclaration, mail Joseph, and commit the diagnostic receipt. Do not poll, edit the shared engine, promote the arm, or open Branch C.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
