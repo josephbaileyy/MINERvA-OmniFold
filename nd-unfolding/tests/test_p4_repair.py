@@ -1315,7 +1315,22 @@ class PacketPB2ResumeSurface(unittest.TestCase):
     because they reference repo blobs: a static receipt would, after the next commit to any surface
     module, mismatch on several paths at once — still rejecting, but for the wrong reason, leaving a
     green test that no longer isolates the defect. Authored by the oversight session; which cases
-    must be ACCEPTED was withheld, because for PB2 the live hazard is over-rejection."""
+    must be ACCEPTED was withheld, because for PB2 the live hazard is over-rejection.
+
+    THE DECISION, in the form a future reader needs: resume binds the PRODUCING CLOSURE (6 modules
+    reachable from the unfold driver), not the 15-module surface. Whole-surface binding would
+    invalidate all ten endpoint resumes on every `p4_lib.py` commit -- and the point is not the
+    ~1h40m of re-unfolds. It is that such a check GETS SWITCHED OFF within two rounds, after which
+    there is neither the binding nor an honest record of not having one, while the documentation
+    still claims the property. A narrower check that stays on beats a broader one that is disabled.
+
+    THE CLOSURE WAS DERIVED TWICE, INDEPENDENTLY, AND AGREED. The oversight session walked the
+    import graph with its own AST traversal, deliberately not importing `p4_lib` so that it COULD
+    disagree; this lane derived it from the other side. Both returned the same six modules and the
+    same sole transitive-only member at depth 2 (`omnifold_nn_core.py`). That is a stronger
+    provenance claim than either derivation alone, and it is what makes case P a decision rather
+    than a possible miss.
+    """
 
     REPO = str(Path(__file__).resolve().parents[2])
     DRIVER = "nd-unfolding/unfold_nd_omnifold_unbinned.py"
