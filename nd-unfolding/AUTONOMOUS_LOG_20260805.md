@@ -3174,3 +3174,53 @@ adoption — no threshold, no Branch C, no other arm, no cross section.
 Bindings ALL INTACT. Suite 8 failed / 950 passed — 7 documented plus the other lane's p4 snapshot.
 Collection **1050 -> 1058 (+8)**.
 
+### 13:55Z — Status mailed on request; annealed production re-train launched; Packet B adversarial case built
+
+**Joseph mailed asking for a status update** ("I have left my computer for about 10 hours") — answered
+with the full picture. That is the first inbound instruction of the session that was not a directive.
+
+**`56563092` launched** — the annealed PRODUCTION nominal, first production artifact under the adopted
+policy. Watch armed (was zero). Reproduction test **predeclared and pushed before submission** (`42eb4fd`).
+
+**One operational mistake of mine, recorded because the checkout is shared.** Shipping to the cluster hit
+a merge conflict on `closure_powered_annealed_lr.py` — the file both lanes have edited — and I left the
+shared checkout mid-merge. Aborted back to `6b20122` clean, confirmed the other lane's three pre-existing
+modified files were undisturbed, then placed only the launch-critical files directly by scp and left their
+contested file untouched. Verified before submitting: driver sha `5fda80df43df` **matches the gate pin
+exactly**, engine `3a2022b0809fa457` unchanged. The lesson is narrow and mine: a bundle-merge into a
+checkout another lane is committing in is not a safe transport for a launch, and `git checkout <ref> --
+<paths>` silently gave me a STALE ref (pre-adoption driver, `66aa1f8f`), which I only caught because I
+checked the sha against the pin rather than trusting the copy.
+
+**PACKET B / B1 adversarial case delivered** —
+`nd-unfolding/tests/test_csyst_band_completeness_adversarial.py`, 7 cases, all passing, collection
+**1058 -> 1065 (+7)**. Built the case only, not the check, per the BEN-040 reasoning.
+
+The defect has **four independent** reasons the omission survives: `retained_keys` derives from the
+manifest's own `candidate_keys` so both sides of the identity come from the declaration; `:193` is
+one-directional (declared→exists, never exists→declared); `n_retained_components` is recorded and never
+compared; and `require_exact_bands` guards the 5 **active** bands, not the ~40 retained. Plus the universe
+itself is *discovered* — `all_bands = _band_keys(a.support_family)` reads ROOT keys — so nothing anywhere
+states how many retained bands there should be.
+
+**The contribution worth having is that there are THREE levels and the middle one discriminates a real fix
+from a plausible one.** The manifest also records `all_syst_bands` and `retained_bands`, which the
+validator never reads — making a cross-field check the *natural* fix. Demonstrated, not asserted:
+
+    LEVEL 1  declaration-only   identity relerr 0.0e+00 PASS   cross-field check CATCHES it
+    LEVEL 2  self-consistent    identity relerr 0.0e+00 PASS   cross-field check PASSES it
+
+So a fix comparing `candidate_keys` against `retained_bands` closes Level 1 and leaves Level 2 wide open.
+**Only an inventory declared outside the manifest rejects Level 2** — which is exactly what B1's acceptance
+criterion already says, and the case now shows why that wording is load-bearing rather than stylistic.
+Level 3 (band absent from the support ROOT, so never discovered) is out of B1's scope and noted because a
+required inventory *in code* closes it for free while a manifest cross-check cannot touch it.
+
+Every case drops the **smallest-trace** band deliberately: the under-count is `1.09e-05` relative on the
+quoted `sqrt(trace)`, so any magnitude heuristic is defeated and completeness has to be checked as **set
+equality**, never as a total-size test. A test asserts that smallness, so the point cannot be lost.
+
+**My own contract test caught a bug in my case** — I had set `must_be_rejected_by_B1` as an instance
+attribute inside a method, so the class-level marker did not exist and the contract check read the default.
+Moved to class scope. A marker that the contract test cannot see would have made the contract vacuous.
+
