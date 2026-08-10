@@ -3036,3 +3036,47 @@ because a comment is never worth breaking a pin over.
 
 No mail: `56552326` (their watched retry, same launcher) is still `PENDING`, so nothing has reported.
 
+### 05:40Z — `56552326` REPORTED. The two readings DISAGREE, which is exactly the predeclared finding
+
+The anneal **fixes normalization and costs shape**. Both predeclared readings fired, and they point
+opposite ways — which Joseph predeclared as the outcome he wanted before any promotion talk.
+
+    recovery (annealed)   0.5126032761517403
+    baseline (full-LR)    0.546853
+    adopted threshold     0.494582
+
+    PRIMARY   (adopted CLM-012 criterion)   0.512603 >= 0.494582   PASSES, margin +0.018021
+    SECONDARY (band +/-0.02 vs baseline)    -0.034250, band exceeded 1.71x
+                                            -> predeclared row: TRADE-OFF CONFIRMED, ARM REJECTED
+
+**The trade-off, finally measured in both currencies rather than one:**
+
+    normalization GAINED   |dev| 34.46% -> 1.17%          = 33.29 points
+    shape LOST             recovery 0.546853 -> 0.512603  =  3.42 points
+    fraction of ceiling    0.88455 -> 0.82915             =  5.54 pts of ceiling
+    exchange rate          9.72 points of normalization per point of shape
+
+So the mechanism Joseph named at the outset — *the anneal buys normalization by under-updating and
+therefore under-recovers shape* — **is real and is now quantified.** It is not fatal: the arm still clears
+the adopted absolute criterion with margin +0.018, i.e. it reaches 82.9% of the acceptance ceiling against
+the baseline's 88.5%.
+
+**The anneal provably took effect**, so the measurement is valid: `2` fits at `1e-4` (iteration 0) and `4`
+at `1e-5`, exactly the intended pattern, read back off the optimizer. Protocol identical to the graded run
+— `gap 0.234270`, `floor/gap 0.045876` against the preflight's `0.2343 / 0.0459`.
+
+**And the stale bar bit in a way my labelling fix did not cover.** The closure's own
+`recovery_criteria_met` (against the retired 0.80) was correctly relabelled
+`..._AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT = False` — the field fix worked. But that same retired
+criterion also drove the **process exit code to 3**, and under `set -eo pipefail` that aborted the
+launcher's remaining steps: the quarantine manifest and the printed predeclared reading never ran. **I
+labelled the output and forgot the exit status.** Built the manifest post-hoc (non-quotability re-proven,
+including the laundered-copy test) and applied the reading by hand. Products preserved locally and copied
+into the CFS backup's `receipts/` (now 9).
+
+Worth stating plainly: exit 3 here means *"the closure's own retired criteria decided against the run"*,
+**not** that the run failed. A reader seeing `FAILED 3:0` in `sacct` would draw the wrong conclusion, which
+is the same misreading risk as the field, one layer out.
+
+Mailing the verdict — a job finished and a predeclared reading resolved, so this clears the bar.
+
