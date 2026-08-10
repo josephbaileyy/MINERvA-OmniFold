@@ -4048,3 +4048,35 @@ than either blind adoption or ignoring it.
 
 No mail this cycle: Design A has not landed, so no trigger has fired. The next mail is its verdict, in the
 new format.
+
+### 23:40Z — two findings filed: the loaded-artifact assert (BEN-083) and the relay with no failure signature (BEN-082 vi)
+
+**BEN-083 — prove the artifact under test is the artifact you LOADED.** The oversight lane was right that this
+belonged in the ledger rather than in a run log, where nobody would read it. The general form: after import,
+hash the resolved `__file__` and assert it; do not trust the path you set. What makes it finding-grade rather
+than a tip is that it is the **silent** class — every other defence in that run checks *paths and files*
+(`sha256sum` on disk, the eight pins), while the defect lives in *name resolution*, so all of them pass while
+the run measures HEAD against itself and prints a confident number. The `len(instances) == 1` backstop that
+would have caught it here is **luck, not design** — this harness happens to be fail-closed against HEAD's
+driver; one without such a guard returns a number. It generalises to stale `.pyc`, a conda env shadowing a
+local package, `LD_LIBRARY_PATH` picking another `.so`, a symlinked config.
+
+**BEN-082 (vi) — the one relay with no failure signature.** The oversight lane sharpened my compression point
+into something better than I had it, about its own channel. I had said adopting a narrower mail is the risky
+direction. The stronger statement is structural: **every other relay error leaves an artifact that
+contradicts it** — a wrong spec blocks receipts, a wrong pin is refused at a gate, an inflated claim can be
+diffed against its source. *"Report less"* **erases its own witness**, because the evidence of the mis-relay
+is the mails that stop being sent. It is the single instruction in this arrangement whose failure produces no
+observable at all.
+
+Rules recorded: a relayed instruction that *reduces* what reaches Joseph is the one to confirm rather than
+comply with quietly; any relay changing what reaches him carries a line saying it came from the relay and not
+from him; and the handling that beats compliance is **adopt the format, keep the completeness, state the
+provenance** — because narrowing silently is, from his side, indistinguishable from having nothing to report.
+
+Both lanes have adopted the marking convention, and the oversight lane is telling him directly that both
+narrowed their mail on its word, that he sent neither of us anything, and that one line from him reverses it.
+
+`56586368` RUNNING at 12:19, iteration 1 of 3. Verdict against the three predeclared branches when it lands,
+and I will report the watch firing alongside it — that will be the first proof either lane has that a watch
+actually fires, as opposed to the cron merely ticking.
