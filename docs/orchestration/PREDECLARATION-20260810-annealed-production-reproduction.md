@@ -83,3 +83,47 @@ That is the discriminator built on 2026-08-10 doing the job it was built for, on
 - `R = 1.1240802949941018` — `target.step1_class_ratio`, the artifact's own
 - scatter pair `0.7367462501305516` / `0.740546` — job `56445883` nominal + matched floor repeat
 - `fold_forward_ratio_dev_max = 0.05` — `validate_pet_nominal_gate4.FROZEN["tolerances"]`
+
+---
+
+## RESULT — 2026-08-10, job `56563761` COMPLETED 06:00:36, exit `0:0`
+
+**Verdict: FINDING — the two code paths disagree.** Row 2 of the reading table above, fixed before the run.
+
+    arm                       push             dev            vs window [-0.021724, -0.001724]
+    production nominal        1.0840529523     -0.035608971    OUTSIDE (by 0.013885)
+    production floor          1.0841954573     -0.035482196    OUTSIDE (by 0.013758)
+    diagnostic 56534117       1.1109012167     -0.011724321    (the expectation)
+    non-annealed baseline     0.7367462501     -0.344578627    (33 band-widths away, as predicted)
+
+**The scatter measurement — the point of running both arms — is decisive.**
+
+    MEASURED annealed scatter |dev_nominal - dev_floor| = 0.000126775
+    gap to expectation                                  = 0.023884650   = 188.4x the scatter
+    predeclared band 0.010                              = 79x WIDER than the real spread
+    annealed scatter vs the 08-08 non-annealed pair     = 26.7x TIGHTER
+
+So the §"Why ±0.010" reasoning was **conservative in the safe direction and wrong in magnitude**: it
+scaled from a *non-annealed* pair because that was the only measurement available, and the annealed
+configuration is 26.7× more reproducible than that. Had the band been scaled correctly the finding would
+have fired at 188σ-equivalent rather than 2.39 band-widths. **The band being too loose is the reason this
+result is safe to believe** — a too-tight band is what would have made it suspect.
+
+**The discriminator did its job on its first production use.** `lr_policy_realized` in both arms:
+`n_fits_base_lr 2, n_fits_annealed 4, verified_from_optimizer True`, realized rate lists byte-identical.
+So the anneal **happened**, and row 3 of the table is excluded. Without that field rows 2 and 3 would be
+indistinguishable — which is the argument for making the assertion a precondition rather than a follow-up.
+
+**The alternative explanation was tested and refuted.** Before reporting a code-path defect I checked
+whether the two numbers are even the same estimator — the BEN-077 failure mode, and the one hypothesis that
+would dissolve this finding into my own error of expectation. Five candidate definitions computed on the
+production artifact against the diagnostic's `1.1109012167`: none within `0.026`; the closest is the
+ratio-of-sums production already reports; the unweighted mean is off by `0.183`. Same estimator, real
+difference. Recorded so that nobody re-opens it as a units question.
+
+**Scope honoured:** the recovery quantity this document explicitly declined to predeclare was not computed,
+claimed, or implied. Baseline `58f664cdef266d09` verified UNCHANGED before and after. No promotion, no
+threshold touched, no extraction, no cross section, Branch C closed, `niter` = 3.
+
+Detail and the ruled-out mechanisms: `KNOWN_ISSUES.md`, *"Two code paths implementing the same LR anneal
+produce different estimators"*.

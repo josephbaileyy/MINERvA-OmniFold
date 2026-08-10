@@ -471,3 +471,62 @@ Same file, line 230, states the principle it breaks — *"Two copies of a defaul
 stale"* — about `early_stop`, which it correctly reads off the engine's own signature. The recovery bar sits
 three lines into its constants block as a literal. Knowing the rule is not applying it.
 
+
+## Two code paths implementing the same LR anneal produce different estimators — CONFIRMED systematic, cause unknown (found 2026-08-10)
+
+The LR anneal adopted 2026-08-10 exists in two implementations, both `MultiFold` subclasses overriding
+`CompileModel` at fit time, both leaving `omnifold.py` untouched:
+
+- **diagnostic** — `diagnose_step1_annealed_lr.py`, job `56534117`
+- **production** — `_AnnealedMultiFold` in `train_fullevent_nominal.py`, jobs `56563761` (both arms)
+
+They do **not** agree. Fold-forward deviation `dev = (Σw_push,reco / Σw_reco)/R − 1`, `R = 1.1240802949941018`:
+
+    diagnostic  56534117     push 1.1109012167   dev -0.011724321
+    production  nominal      push 1.0840529523   dev -0.035608971
+    production  floor        push 1.0841954573   dev -0.035482196
+
+**The matched production pair settles that this is systematic, not noise.** The two production arms — same
+seeds, same config, same code — scatter by `0.000127` in deviation. The gap to the diagnostic is `0.023885`,
+i.e. **188× the measured scatter**. The 2026-08-10 predeclaration's `±0.010` band was scaled from the only
+pair then available (a *non-annealed* pair, `0.003380`) and turns out to be **79× wider** than the annealed
+configuration's real spread — so the band was far too loose, and the finding fires harder than predeclared,
+not more weakly.
+
+**What it is NOT.** Each ruled out by measurement, not by argument:
+
+- *Not a policy failure.* Both arms print `LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at
+  1e-05` and carry `lr_policy_realized` with `verified_from_optimizer: True` and byte-identical realized
+  rate lists. The anneal happened in production.
+- *Not configuration drift.* `seed_policy` core keys are identical across diagnostic, both production arms,
+  and the 08-08 baseline: `estimator_seed 42, subsample_seed 0, niter 3, epochs 8, train_events 2000000,
+  batch_size 512`. Both logs report the same `13048 training steps at reco and 7812 steps at gen`.
+- *Not a definition mismatch* — the BEN-077 failure mode, checked explicitly because it is the one that
+  would dissolve the finding. Five candidate definitions were computed on the production artifact against
+  the diagnostic's `1.1109012167`: ratio-of-sums `1.0840529523` (off by `0.0268`), unweighted mean
+  `S_push/n_pass = 1.2941273877` (off by `0.1832`), mean of `weights_push` over all 2M `1.0631052837` (off
+  by `0.0478`), `S_reco/n_pass = 1.1937861383` (off by `0.0829`). **None lands near it**, and the closest is
+  the definition production already reports. The two numbers are the same estimator and genuinely differ.
+- *Not localized at step 1.* Iteration-1 step-1 validation loss agrees to `~2e-6` across all three arms
+  (`0.19246924` production nominal, `0.19246675` production floor, `0.19246693` diagnostic).
+
+**Why validation loss cannot narrow it further.** Iteration-1 *step-2* loss scatters by `0.055` between the
+two identical production arms (`0.9083` vs `0.9636`; diagnostic `0.8572`) — step 2's loss is intrinsically
+noisy while its contribution to `push` is not. So the loss trace has no resolving power on this gap.
+
+**Candidate mechanisms, none asserted.** The diagnostic subclass also overrode `cache`, `RunStep1` and
+`RunStep2`, and its harness builds loaders through its own path. The diagnostic's push trajectory
+(`1.0 → 1.01068768 → 1.12139314 → 1.11090122`) sits above production's throughout, so the difference
+accumulates across iterations rather than appearing at one step.
+
+**Consequence for anything quoting the anneal.** Production `|dev| = 0.0356` still **passes** FROZEN's
+`fold_forward_ratio_dev_max = 0.05`, but with margin `0.0144` where `0.0383` was expected — a real loss of
+headroom. **The diagnostic's `−1.17%` must not be quoted as the production anneal's value.** Any number
+measured under `56534117` describes the diagnostic path only until this is explained.
+
+**Secondary result, and it is useful.** The anneal cuts run-to-run scatter by **26.7×** (`0.003380`
+non-annealed → `0.000127` annealed), which is what a 10× smaller LR from iteration 1 onward should do. Bands
+for future annealed comparisons should be scaled from `0.000127`, not from the non-annealed pair.
+
+**NOT FIXED and nothing downstream taken.** Per the predeclaration: not averaged, not re-run past, band not
+widened. Disposition is Joseph's.

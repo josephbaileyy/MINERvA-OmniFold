@@ -3383,3 +3383,61 @@ is authoritative, but it is evidence about a live job and deleting evidence mid-
 
 No mail this cycle: no job finished, no PASS/FAIL, no blocking decision. Mailing a bookkeeping fix while he
 is asleep would be the spam his brief forbids; it goes with the reproduction verdict when the floor arm lands.
+
+### 21:05Z — FLOOR ARM LANDED. Scatter 0.000127, gap 188x it: the reproduction FINDING is SYSTEMATIC
+
+`56563761` COMPLETED at 21:00:22Z, elapsed 06:00:36, exit `0:0`. Both arms wrote. Baseline
+`58f664cdef266d09` verified UNCHANGED before and after, which is the whole reason this launcher exists.
+
+    arm                     push            dev             window [-0.021724, -0.001724]
+    production nominal      1.0840529523    -0.035608971    OUTSIDE
+    production floor        1.0841954573    -0.035482196    OUTSIDE
+    diagnostic 56534117     1.1109012167    -0.011724321    (the predeclared expectation)
+
+    MEASURED annealed scatter                = 0.000126775
+    gap to expectation                       = 0.023884650  =  188.4x the scatter
+    predeclared band 0.010                   =  79x WIDER than the real spread
+    annealed vs 08-08 non-annealed scatter   =  26.7x TIGHTER
+
+**This is the answer to the question I left open last cycle, and it is the unambiguous branch.** I wrote:
+*"if the floor arm also lands near −0.0356, the difference is systematic; if it scatters widely, the annealed
+configuration's own spread is larger than the band assumed."* It landed at `−0.035482`, i.e. `1.27e-4` from
+the nominal arm. Systematic.
+
+**My band was too LOOSE, not too tight — and that direction is what makes the result safe to believe.** The
+predeclaration scaled `±0.010` from a *non-annealed* pair (`0.003380`) because that was the only scatter
+then measured. The annealed configuration is 26.7x more reproducible than that, so the correct band was
+~`0.0004` and the finding would have fired ~60x harder. A too-tight band is what would have made this
+suspect; too loose cannot manufacture a disagreement.
+
+**I tested the one hypothesis that would dissolve the finding, and it failed.** Before reporting "code paths
+disagree" I checked whether the two numbers are the same estimator at all — BEN-077's failure mode, a mean
+compared to a ratio-of-sums. Computed five candidate definitions on the production artifact against the
+diagnostic's `1.1109012167`: ratio-of-sums `1.0840529523` (off `0.0268`), `S_push/n_pass 1.2941273877` (off
+`0.1832`), mean of `weights_push` `1.0631052837` (off `0.0478`), `S_reco/n_pass 1.1937861383` (off `0.0829`).
+**None within `0.026`; the closest is what production already reports.** Same estimator, real difference.
+
+**Also ruled out by measurement rather than argument:** not a policy failure (both arms
+`verified_from_optimizer: True`, realized rate lists byte-identical, `2 fits at 1e-4 / 4 at 1e-5`); not
+config drift (`seed_policy` core keys identical across all four artifacts; both logs `13048 steps at reco and
+7812 at gen`); not localized at step 1 (iteration-1 step-1 val loss agrees to `~2e-6` across all three arms).
+
+**Why the loss trace cannot narrow it further:** iteration-1 *step-2* loss scatters `0.055` between the two
+identical production arms (`0.9083` / `0.9636`; diagnostic `0.8572`). Step 2's loss is noisy while its
+contribution to `push` is not, so the trace has no resolving power here. Candidates remain the diagnostic
+subclass's other overrides (`cache`, `RunStep1`, `RunStep2`) and its own loader path; the diagnostic's push
+trajectory `1.0 -> 1.0107 -> 1.1214 -> 1.1109` sits above production throughout, so the gap accumulates
+rather than appearing at one step. **No cause asserted.**
+
+**Consequence to carry:** production `|dev| = 0.0356` still passes FROZEN's `0.05`, but with margin `0.0144`
+where `0.0383` was expected. And the diagnostic's `−1.17%` must not be quoted as the production anneal's
+value until this is explained.
+
+Recorded in `KNOWN_ISSUES.md` and as a RESULT section on the predeclaration. Nothing downstream: not
+averaged, not re-run past, band not widened, no promotion, no threshold touched, Branch C closed, niter 3.
+
+**Correction to my 19:00Z entry.** I wrote that the stray `log_test.txt` was *"a local copy of this run's
+val-loss trace"*. It is not this run's: it reports `195 training steps at reco and 195 steps at gen` and val
+losses `4.93 / 5.36 / 6.88 / 3.77 / 7.04 / 3.57`, where `56563761` reports `13048 / 7812` and `0.192 / 0.908
+/ 0.117 / 0.877 / 0.112 / 0.830`. It is some earlier small run. The file is preserved in the scratchpad, so
+nothing is lost, but I stated a provenance I had not checked — in a repo where provenance is the product.
