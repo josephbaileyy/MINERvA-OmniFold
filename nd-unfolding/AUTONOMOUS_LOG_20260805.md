@@ -3952,3 +3952,56 @@ subclasses is line-for-line equivalent (`_inside_fit_compile and iteration > sel
 `push` by 2.42% is something I currently believe cannot move it. That is worth more than a guess at which.
 
 Design and concurrence next, per his instruction to ask the overnight session.
+
+### 22:50Z — DESIGN A LAUNCHED as 56586368, predeclared first, staged outside the repo
+
+Peer concurred with Design A and added the correction that made the predeclaration honest: **a third
+outcome.** I had named two (reproduces / dissolves) and the likeliest reading — a value in between — was
+undeclared and would have drifted to "closer to X, therefore X". Now three, with UNRESOLVED explicit and its
+next step fixed as *a second repeat of A, not the subclass run*.
+
+**Also corrected across four files: "188× the scatter" → "188× the PRODUCTION scatter."** The `0.000126775`
+is the production configuration at n=2; the diagnostic configuration is n=1. The loose phrasing silently
+assumed both scatter alike on zero measurements of the second — which is the very thing Design A tests. I had
+been generalising it since 21:05Z.
+
+**Verified there is no third delta before committing to the design:** `git diff --stat 8f2bcb0 HEAD` shows
+`omnifold.py` and `fullevent_fps_dataloader.py` **unchanged**, and the harness has a single commit
+(`0144d21`, 11:03Z) *before* the 12:14Z run. So engine, loader and harness are constant and only the driver
+differs.
+
+**Staged outside the repo, and the staging is byte-exact.** All three staged files match the ORIGINAL
+launcher's pins:
+
+    diagnose_step1_annealed_lr.py    fa4ad80a...   (original pin: fa4ad80a)
+    diagnose_step1_iteration_dynamics.py 831117d8...   (original pin: 831117d8)
+    train_fullevent_nominal.py       66aa1f8f...   (original pin: 66aa1f8f)
+    HEAD's driver                    5fda80df...   <- fails that pin, which IS the delta
+
+So this is `56534117`'s code reconstructed exactly, and the new launcher keeps all eight original pins
+unchanged — if they hold, the code is provably the same.
+
+**Two traps caught while building it, both of which would have wasted three hours:**
+
+1. **`sys.path[0]` is the SCRIPT's directory and outranks `PYTHONPATH`.** Running the wrapper from `${PET}`
+   would have silently re-imported HEAD's driver and measured nothing at all, while looking fine. The
+   wrapper is therefore executed *from* the staging directory, and there is a preflight that imports the
+   driver, hashes the resolved `__file__`, asserts it equals `66aa1f8f`, and asserts the module does **not**
+   carry `LR_POLICY_ANNEALED`. The single assumption the whole design rests on is now checked in 2 seconds
+   rather than assumed for 3 hours.
+2. **The harness is fail-closed against the current driver anyway** — `diagnose_step1_annealed_lr.py:123`
+   requires `len(instances) == 1`, and HEAD's driver constructs `_AnnealedMultiFold` directly rather than the
+   monkeypatched `MultiFold`, so `instances` would be empty. Design A genuinely requires the old driver; it
+   is not a stylistic choice.
+
+**Told the GBDT lane** the staging path and that it is transient, since it is mid-PB3 and a stale-looking
+driver could read as corpus drift. One correction I owe them: I said "nothing in the tracked tree changes",
+and then committed this launcher — which is a tracked-tree change, though a new file of mine rather than
+drift in one of theirs.
+
+**A watch is armed** (`designA-56586368`), which also gives the restored cron its first end-to-end exercise —
+it has been proven to tick but never to fire a watch. A manual tick confirms it evaluates and correctly
+emits nothing while the job is PENDING.
+
+`56586368` submitted, PENDING (Priority). No promotion, no threshold touched, niter 3, Branch C closed,
+baseline asserted before and after.
