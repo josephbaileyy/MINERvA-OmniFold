@@ -175,6 +175,51 @@ def main(argv=None):
     # Annotate the closure's own report in place -- additively, never overwriting its measurements.
     with open(a.json) as fh:
         rep = json.load(fh)
+
+    # ---- MAKE THE OUTPUT SELF-DECLARING (Joseph, 2026-08-10) --------------------------------------
+    # closure_powered_truth_reweight.py:105 hardcodes RESIDUAL_OVER_GAP_MAX = 0.20, i.e. the
+    # `recovery >= 0.80` bar that CLM-012 RETIRED. Its `recovery_criteria_met` therefore reads FALSE for
+    # a result the adopted criterion passes, and a reader will take it for the verdict.
+    #
+    # The fix is to LABEL THE OUTPUT, not to correct the threshold: editing a criterion inside a closure
+    # to make a check pass is the prohibited act, and it is unnecessary because
+    # validate_pet_nominal_gate4.check_powered_closure re-derives the spectra and reads the adopted
+    # value from FROZEN. Same move as `publication_gate_rejects_this` and
+    # `..._FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE`: rename the field so it cannot be mistaken for the verdict.
+    #
+    # Safe to rename, checked rather than assumed: `recovery_criteria_met` is read by NOTHING -- it
+    # appears only in test fixtures and comments. `is_powered_closure` IS read (validate:722) and is
+    # left untouched.
+    RETIRED_RECOVERY_BAR = 0.80
+    stale = rep.pop("recovery_criteria_met", None)
+    rep["recovery_criteria_met_AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT"] = stale
+    rep["recovery_criteria_met_field_note"] = (
+        "RENAMED from `recovery_criteria_met` by closure_powered_annealed_lr.py. The value is the "
+        f"closure driver's self-report against its own hardcoded recovery >= {RETIRED_RECOVERY_BAR} "
+        "(closure_powered_truth_reweight.py:105) -- the bar CLM-012 RETIRED on 2026-08-09. It is NOT "
+        "the Gate-4 verdict. The authoritative evaluation is "
+        "validate_pet_nominal_gate4.check_powered_closure, which re-derives the spectra and reads the "
+        "ADOPTED threshold from FROZEN. See `recovery_vs_adopted_criterion` below.")
+
+    _rec = (rep.get("metrics") or {}).get("recovery")
+    try:
+        import validate_pet_nominal_gate4 as _g4
+        _P = _g4.FROZEN["powered_closure"]
+        _f, _ceil = _P["recovery_fraction_of_ceiling"], _P["acceptance_limited_ceiling"]
+        _bar, _src = _f * _ceil, "validate_pet_nominal_gate4.FROZEN (adopted CLM-012)"
+    except Exception as exc:                      # login-safe / import-failure path: say so, do not guess
+        _f = _ceil = _bar = None
+        _src = f"UNAVAILABLE ({type(exc).__name__}) -- adopted criterion NOT evaluated"
+    rep["recovery_vs_adopted_criterion"] = {
+        "recovery": _rec,
+        "adopted_threshold": _bar,
+        "f": _f, "ceiling": _ceil,
+        "threshold_source": _src,
+        "meets_adopted_criterion": (None if (_rec is None or _bar is None) else bool(_rec >= _bar)),
+        "margin": (None if (_rec is None or _bar is None) else _rec - _bar),
+        "is_this_the_verdict": ("PRIMARY criterion per "
+                               "PREDECLARATION-20260810-annealed-shape-validation.md Amendment 1"),
+    }
     rep["annealed_lr_arm"] = {
         "arm": ARM,
         "predeclaration": "docs/orchestration/PREDECLARATION-20260810-annealed-shape-validation.md",

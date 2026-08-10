@@ -139,3 +139,61 @@ The irony is instructive and worth keeping: the same file states the principle i
 reads off the engine's signature) — while hardcoding the recovery bar three lines from the top of its
 constants block. Knowing a rule is not applying it, which is BEN-075's lesson in a different costume.
 
+---
+
+# AMENDMENT 2 — 2026-08-10. Record correction, and the output made self-declaring
+
+## (a) Correcting the record on the D2 objection — Joseph's side, at his instruction
+
+Joseph's 2026-08-10 objection asserted that `56547490` was **not** the D2 powered closure and that a
+separate D2 run was needed. **That assertion was factually wrong** — the job runs
+`closure_powered_truth_reweight.main()` via the annealed wrapper, and always did. He asked for the record
+to be corrected on his side rather than mine, so it is recorded here plainly rather than absorbed.
+
+**The substance held regardless, and it was the part that mattered:** the adopted criterion belongs in the
+PRIMARY position and my ±0.02 assumed band in the SECONDARY — adjudicating this arm on a fresh criterion
+resting on an assumed band would have been instance five of BEN-077. Amendment 1 made that change while
+`sacct` reported `PENDING 00:00:00`, i.e. before any number existed, which is the only legitimate time to
+reorder a reading.
+
+## (b) The line-105 trap is now handled in the OUTPUT, and it reaches this job
+
+`closure_powered_truth_reweight.py:105`'s `RESIDUAL_OVER_GAP_MAX = 0.20` is left alone — editing a
+criterion inside a closure is the prohibited act. Instead the **emitted field is relabelled** so it cannot
+be read as the verdict, which is labelling an output and breaks no prohibition. Same move as
+`publication_gate_rejects_this` and `..._FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE`.
+
+In `closure_powered_annealed_lr.py`, the annotation now:
+
+- **renames** `recovery_criteria_met` → `recovery_criteria_met_AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT`,
+  preserving the value;
+- adds `recovery_criteria_met_field_note` naming the retired bar, its source line, and the authoritative
+  evaluator;
+- adds `recovery_vs_adopted_criterion` with `recovery`, `adopted_threshold`, `f`, `ceiling`,
+  `threshold_source`, `meets_adopted_criterion`, `margin`, and `is_this_the_verdict` — per the ingredients
+  convention, so a reader can recompute the verdict rather than trust it.
+
+**Checked before renaming, not assumed:** `recovery_criteria_met` is read by nothing — it appears only in
+test fixtures and comments. `is_powered_closure` **is** read (`validate_pet_nominal_gate4.py:722`) and is
+left untouched.
+
+**Why this reaches `56547490` even though it is already submitted:** `sbatch` spools the batch script at
+submit time, so editing the launcher would *not* affect this job — but the launcher invokes
+`closure_powered_annealed_lr.py` by path, and that file is read when the job runs. The annotation lands.
+Joseph's point that a mislabelled artifact is far harder to correct after citation than before existence is
+the reason this was done now rather than at result time.
+
+## (c) The engine pin — there was no hole. RETRACTED.
+
+Joseph asked for `omnifold.py` to be pinned into the Gate-4 gate, on the strength of my scoping's claim
+that it was not. **The claim was false.** The live gate `...-20260809.json` already pins
+`estimator_engine_multifold` → `omnifold_nn/omnifold/omnifold.py` **and** `estimator_engine_net` →
+`net.py`. An engine edit breaks the binding and the gate says so, which is the correct behaviour.
+
+I asserted the absence **without running the check** — an earlier grep had looked for the *closure* driver,
+found nothing, and I carried that conclusion to the engine. That is the BEN-027 failure exactly: a claim in
+a status document not backed by a command run in the same turn, and it caused Joseph to direct a re-issue
+that was not needed. A gate adding a redundant second pin on an already-pinned file was written and then
+**reverted**; `...-20260809.json` is restored byte-identical from git and remains the single live gate with
+17 pins. Retracted in `SCOPING-20260810-engine-rebaseline-cost.md` at the point of claim.
+
