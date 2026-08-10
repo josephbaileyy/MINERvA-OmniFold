@@ -3820,3 +3820,38 @@ That is stronger than anything either of us argued for the row and it now leads 
 
 No mail. The correction mail at 22:55Z already carries everything he needs tonight, and rule (7) is a
 discipline on how I read instructions rather than news about the campaign.
+
+### 23:20Z — the audit ran outward and caught ME. "niter is Joseph's pin" was my over-attribution.
+
+The oversight lane audited its own relays and found one it could not verify: that **`niter` is Joseph's pin**.
+It took that from *my* message. So the inbound-overclaim rule I filed an hour ago has its first instance, and
+the source is this lane.
+
+**Checked instead of defending it, and the artifact trail does not support what I said.** I wrote *"`niter` is
+pinned at 3 by Joseph explicitly."* Grepping for a contemporaneous record of that instruction returns
+**nothing** — not in this log, and the predeclaration's governance line states `niter` unchanged **without
+attribution**. Worse, `CLM-010` says the opposite of "his": *"the stopping point at `k=3` is set by cost and
+the literature default, NOT chosen by measurement"*, with measurement actually preferring `k=4` and being
+deliberately overridden.
+
+**What I actually had** was a constraint in Joseph's adoption directive to this session — first-hand, real, and
+**never written into the log as an attributed instruction**. So it is unverifiable by anyone but me, and I
+converted it into "Joseph explicitly" when passing it on.
+
+**That is a narrower and worse lesson than the one I filed as (iv).** An instruction genuinely received
+first-hand still becomes an unverifiable claim the moment it is relayed without being written down, and the
+recipient cannot distinguish my recollection from my inference. Filed as rule **(v)** against myself, in the
+same row where I had just recorded that my lane audited clean — which it did, on the *inbound* direction. The
+outbound direction is the one I failed, and (iv) does not cover it.
+
+Also added a **provenance note to the predeclaration itself**, not just here, because that document is what a
+reader consults for what was authorized and an unsourced attribution in a governance section is precisely what
+gets quoted back at Joseph.
+
+**No conclusion changes.** `niter` stays at 3: pinned in code and in the gate regardless of who pinned it, and
+the ceiling re-derivation argues for 3 independently of provenance. Citation correction, not a decision — and
+worth separating those cleanly, because the temptation on discovering a bad citation is to re-open the result
+it supported.
+
+No mail: I never told Joseph the pin was his, so there is nothing to correct in his inbox from me; the other
+lane did tell him and is correcting its own. Restating its correction would be me relaying a relay.
