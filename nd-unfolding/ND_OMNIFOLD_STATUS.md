@@ -132,6 +132,14 @@ replacement is implied for 4D/FPS or dependent significances. See
 - The background-aware 12-playlist dump and full 188-entry re-quote are complete;
   the combined effect is below 0.3%. The code remains fail-closed against
   missing per-universe background columns.
+- Annealed production nominal attempt `56563092` was scientifically null: the
+  completed pre-anneal canonical artifact triggered the correct no-clobber
+  guard before any fit. Changed job `56563761` completed `0:0`; nominal/floor
+  deviations are `-0.035608971` / `-0.035482196`, outside the predeclared
+  reproduction window with only `0.000126775` scatter. Optimizer readback proves
+  the anneal ran, so the frozen verdict is a systematic code-path disagreement.
+  Baseline remains unchanged; no downstream action or promotion occurred. The
+  exact next experiment/disposition is blocked on Joseph.
 
 ## Presentation rule
 

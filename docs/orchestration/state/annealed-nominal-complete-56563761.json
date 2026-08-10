@@ -1,0 +1,153 @@
+{
+  "schema": "campaign-event-reconciliation-v1",
+  "run_id": "P5A-ANNEALED-NOMINAL-A2-COMPLETE",
+  "reconciled_at_utc": "2026-08-10T21:23:35Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-annealed-nominal-56563761.json",
+    "event_id": "evt-annealed-nominal-56563761",
+    "watch_id": "annealed-nominal-56563761",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-10T21:19:35+00:00",
+    "head_at_event": "6b20122946f1eca07db995b0943a1dac4317791a",
+    "sha256": "06a21492e5ff2f75b43b9b72777ba4c7b48f426463f57d5c705925fb25a085b8",
+    "bytes": 422,
+    "read_count": 1,
+    "previously_reconciled": false,
+    "valid": true
+  },
+  "accounting": {
+    "job_id": "56563761",
+    "job_name": "fe_pet_ann",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "06:00:36",
+    "start_displayed_by_sacct": "2026-08-10T07:59:48",
+    "end_displayed_by_sacct": "2026-08-10T14:00:24",
+    "timestamp_timezone_note": "The single sacct read is preserved verbatim in the site display timezone. The launcher independently printed DONE at 2026-08-10T21:00:22Z, consistent with PDT display plus seven hours.",
+    "node": "nid003192",
+    "allocation": "shared GPU, one GPU, 32 CPU, 57472M, one node"
+  },
+  "logs": {
+    "stdout": {
+      "path": "nd-unfolding/pet/fullevent_nominal_annealed/logs/fe_pet_ann_56563761.out",
+      "bytes": 9061,
+      "sha256": "3f42e95547b2b7d444f70bb65832a461d7e28462ebd41c1a4b2c917d07cd2854",
+      "terminal_marker": "DONE 2026-08-10T21:00:22Z",
+      "fail_or_traceback_lines": 0
+    },
+    "stderr": {
+      "path": "nd-unfolding/pet/fullevent_nominal_annealed/logs/fe_pet_ann_56563761.err",
+      "bytes": 7296,
+      "sha256": "ea6737551cc0583618cc81894d1ad5b8ecb300e540ffc2a7b9371c8c973742c9",
+      "fail_or_traceback_lines": 0
+    }
+  },
+  "products": {
+    "nominal": {
+      "path": "nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+      "bytes": 10001677,
+      "sha256": "559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e",
+      "marker_sha256": "53001e0d842b7f85e343edab993d88f0d16b3cba102906b6ce5110eb1fee49f4",
+      "marker_size_mtime_match": true,
+      "tag": "nominal"
+    },
+    "matched_floor": {
+      "path": "nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_floor_weights.npz",
+      "bytes": 9928916,
+      "sha256": "5c547a634f1c31e172847ccaa5d6a21542904ccfd23ca95e656a3fff63b821ad",
+      "marker_sha256": "86917c838decf559402d5aaa69f715372f5258742c37654deeaf7112e8950762",
+      "marker_size_mtime_match": true,
+      "tag": "floor"
+    },
+    "canonical_baseline": {
+      "path": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+      "sha256_before_and_after": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084",
+      "completion_marker_sha256": "de0c8e9a95c345d691b2bf13eb60e04551f1bf75f44f575b7655d9840faa1fa6",
+      "preserved": true
+    }
+  },
+  "provenance": {
+    "launcher_sha256": "1ac38875c62660477b7f030f1c97ea833b1be7b0d5c348318a1ae532ac5df29e",
+    "production_driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+    "diagnostic_driver_sha256": "66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd",
+    "shared_engine_sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+    "target_source_npz_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "predeclaration_sha256_at_submission": "b6023231795437964aeb567e390f63fd74c68467bb4d61ccdef1b2216485a4f1",
+    "predeclaration_sha256_after_result_append": "240681a517b39a2967e1cb3c851faf593fad972627da0ed7a8c0a30d0412107a",
+    "diagnostic_result_sha256": "26e5ab46425155c4cf5c4d4500498d87e372578ea73a37751003a75e8d3fb648"
+  },
+  "artifact_contract": {
+    "estimator_fingerprint": "pet-fullevent-fps-v1",
+    "inputs_sha256_both_arms": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "rows_per_arm": 2000000,
+    "pass_reco_rows_per_arm": 837671,
+    "step1_class_ratio_R_both_arms": 1.1240802949941018,
+    "seed_policy_equal": true,
+    "seed_policy": {
+      "estimator_seed": 42,
+      "subsample_seed": 0,
+      "niter": 3,
+      "epochs": 8,
+      "train_events": 2000000,
+      "batch_size": 512,
+      "lr_schedule": "fit-time-anneal-after-iteration-0"
+    },
+    "cap_saturation_fraction_both_arms": 0.0
+  },
+  "anneal_lr_proof": {
+    "pass": true,
+    "verified_from_optimizer_both_arms": true,
+    "realized_records_equal": true,
+    "iteration_0": "two fits at 9.999999747378752e-05",
+    "iterations_1_2": "four fits at 9.999999747378752e-06",
+    "records_per_arm": 6
+  },
+  "predeclared_reproduction": {
+    "expected_deviation": -0.011724,
+    "absolute_band": 0.01,
+    "pass_window": [-0.021724, -0.001724],
+    "nominal": {
+      "fold_forward_ratio": 1.0840529523112135,
+      "deviation": -0.0356089710505052,
+      "absolute_gap_to_expected": 0.023884971050505202,
+      "verdict": "FINDING_CODE_PATHS_DISAGREE"
+    },
+    "matched_floor": {
+      "fold_forward_ratio": 1.0841954572741048,
+      "deviation": -0.0354821963320745,
+      "verdict": "FINDING_CODE_PATHS_DISAGREE"
+    },
+    "measured_absolute_scatter": 0.00012677471843069998,
+    "nominal_gap_over_measured_scatter": 188.40484401124235,
+    "interpretation": "Both same-path production arms lie outside the frozen band while differing by only 1.26775e-4. The optimizer-readback discriminator proves the anneal ran, so the predeclared result is a systematic code-path disagreement relative to measured same-path scatter, not an anneal failure.",
+    "averaged": false,
+    "band_changed": false,
+    "rerun_past_finding": false
+  },
+  "static_postmortem": {
+    "diagnostic_wrapper_sha256": "fa4ad80aee1457d851c82d426c565a35a2a522da12bcc858d0c6a1c8e5d980ad",
+    "diagnostic_helper_sha256": "831117d84866d644a681e434dcf7c43de886e9393c61e582f4fae1cccd597288",
+    "diagnostic_and_production_driver_byte_identical": false,
+    "driver_diff": "The diagnostic used driver sha 66aa1f8f; production used 5fda80df. The 105-line source diff is confined to relocating the adopted anneal into the production driver plus declared/realized LR telemetry and persistence; the shared engine is identical.",
+    "loader_path_correction": "diagnose_step1_annealed_lr.py calls nominal.main, so it does not independently implement the loader. Its additional cache/RunStep1/RunStep2 overrides are telemetry wrappers around super calls.",
+    "cause_isolated": false,
+    "bounded_conclusion": "The production path is internally reproducible and differs from the historical instrumented diagnostic path. Existing evidence does not isolate whether the difference comes from wrapper instrumentation/timing or another TensorFlow path effect; validation-loss traces cannot decide it."
+  },
+  "scope": {
+    "recovery_evaluated": false,
+    "extraction_run": false,
+    "cross_section_run": false,
+    "artifact_promoted": false,
+    "threshold_changed": false,
+    "branch_c_opened": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "next_dependency": {
+    "state": "BLOCKED_ON_USER",
+    "decision": "Choose whether to authorize a scoped paired implementation-ablation that diagnoses the code-path disagreement, accept the current production path as authoritative and separately authorize its promotion, or reject/stop the annealed PET path.",
+    "declaration": "docs/orchestration/state/waker/BLOCKED-ON-USER.json"
+  },
+  "status": "COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM"
+}

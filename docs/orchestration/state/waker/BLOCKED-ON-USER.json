@@ -1,36 +1,37 @@
 {
   "schema": "campaign-blocked-on-user-v1",
-  "recorded_at_utc": "2026-08-10T11:07:29Z",
+  "recorded_at_utc": "2026-08-10T21:23:35Z",
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_gate": "Annealed-LR publication-estimator promotion disposition",
-  "decision_required": "Choose whether the publication PET estimator adopts the fit-time LR anneal, rejects that arm and opens another normalization-remediation branch, or stops the PET publication path.",
-  "why_user_decision_is_required": "The independently re-derived powered closure has the predeclared disagreement: recovery 0.512603276 passes the adopted PRIMARY 0.494582400 criterion by 0.018020876, but is 0.034249724 below the full-LR baseline and therefore triggers the SECONDARY TRADE-OFF/ARM-REJECTED reading. The anneal repairs fold-forward normalization from a 34.46% deficit to 1.17%, but a clean isolated diagnostic explicitly did not authorize changing the shared engine or promoting the arm. That scientific trade-off and the resulting estimator change are Joseph's decision.",
+  "current_gate": "Annealed production nominal reproduction finding disposition",
+  "decision_required": "Choose whether to diagnose, accept, or reject the production anneal after its predeclared reproduction test returned a systematic code-path disagreement.",
+  "why_user_decision_is_required": "Job 56563761 completed successfully and both optimizer-verified production arms give dev approximately -0.0355, outside the frozen [-0.021724,-0.001724] reproduction window. Their measured scatter is only 0.000126775, while the nominal gap to the diagnostic expectation is 0.023884971 (188.4 times that scatter). The anneal ran and current production still passes the separate absolute 0.05 normalization tolerance, but the diagnostic value that motivated adoption is not reproduced. The wake explicitly prohibits promotion, extraction, and cross section, and the predeclaration prohibits rerunning past the finding without a new decision.",
   "options": [
     {
-      "id": "authorize_anneal_promotion",
-      "description": "Authorize promotion of the proven fit-time anneal into the publication estimator, accepting the quantified shape trade-off because the adopted primary criterion still passes; require a scoped engine/launcher change, complete hash-gate re-issue, and explicit nominal-launch authorization before PET production."
+      "id": "authorize_scoped_implementation_ablation",
+      "description": "Authorize one predeclared paired GPU ablation under a single current driver revision to isolate wrapper instrumentation versus production implementation effects; no promotion or downstream products until it resolves."
     },
     {
-      "id": "reject_anneal_continue_remediation",
-      "description": "Reject the annealed arm because of the secondary shape trade-off and authorize a new, predeclared normalization-remediation branch; keep the current shared engine and Branch C unchanged meanwhile."
+      "id": "accept_production_path_then_decide_promotion",
+      "description": "Treat the internally reproducible production value as authoritative despite failure to reproduce the historical diagnostic, then separately authorize or reject promotion with the reduced 0.0144 normalization margin and existing shape trade-off visible."
     },
     {
-      "id": "stop_pet_path",
-      "description": "Keep Branch C closed and stop further publication PET remediation."
+      "id": "reject_or_stop_annealed_path",
+      "description": "Reject the annealed estimator or stop the PET publication path; retain all current artifacts as diagnostic evidence only."
     }
   ],
   "prohibited_without_decision": [
+    "averaging nominal and floor to erase the finding",
+    "widening the predeclared band",
+    "another unchanged production or diagnostic rerun",
     "editing the shared OmniFold engine",
-    "promoting the annealed diagnostic arm",
-    "re-issuing Gate 4 around an unapproved estimator",
-    "launching a publication PET nominal",
-    "changing either predeclared criterion or its rank",
-    "running another unchanged powered closure"
+    "promoting either annealed artifact",
+    "running extraction or a cross section",
+    "opening Branch C"
   ],
   "evidence": {
-    "completion_receipt": "docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json",
-    "independent_validation_receipt": "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.INDEPENDENT_VALIDATION.slurm-56562169.json",
-    "predeclaration": "docs/orchestration/PREDECLARATION-20260810-annealed-shape-validation.md"
+    "terminal_receipt": "docs/orchestration/state/annealed-nominal-complete-56563761.json",
+    "predeclaration": "docs/orchestration/PREDECLARATION-20260810-annealed-production-reproduction.md",
+    "known_issue": "KNOWN_ISSUES.md#two-code-paths-implementing-the-same-lr-anneal-produce-different-estimators--confirmed-systematic-cause-unknown-found-2026-08-10"
   },
   "continuity": {
     "all_worker_uuids_preserved": true,

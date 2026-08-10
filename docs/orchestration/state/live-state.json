@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Annealed-LR publication-estimator promotion disposition",
-  "state": "CPU finalizer 56562169 completed 0:0. All 31 authoritative powered-closure checks and all 47 total checks pass; maximum spectrum re-derivation difference is 5.898e-12 versus 1e-9. Recovery 0.512603276 passes the adopted PRIMARY criterion but triggers the SECONDARY TRADE-OFF/ARM-REJECTED reading, so criterion disagreement is the fixed finding. The product remains independently non-quotable. No engine edit or promotion was authorized; the next estimator disposition is blocked on Joseph.",
+  "current_dag_node": "Annealed production nominal reproduction finding disposition",
+  "state": "Job 56563761 completed 0:0. Nominal/floor deviations are -0.035608971/-0.035482196, both outside the fixed reproduction window, with measured scatter 0.000126775. Both artifacts prove the anneal ran, so this is the predeclared code-path-disagreement finding. The baseline is unchanged and no downstream action occurred. A static postmortem bounded but did not isolate the cause.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -27,10 +27,11 @@
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "The annealed powered closure has a predeclared criterion disagreement: its PRIMARY adopted absolute criterion passes while its SECONDARY baseline-comparison band calls a shape trade-off and rejects the arm.",
     "The source job's retired internal recovery>=0.80 check caused rc=3 after training and before its manifest step; that stale return code is not the adopted verdict and no A100 retry is allowed.",
-    "The independently finalized result remains diagnostic-only and cannot authorize an engine edit, threshold change, promotion, or Branch C publication.",
-    "Joseph must choose whether to promote the anneal while accepting the quantified shape trade-off, reject it and authorize another normalization-remediation branch, or stop the PET publication path."
+    "The independently finalized result remains diagnostic-only and cannot itself authorize an engine edit, threshold change, promotion, or Branch C publication.",
+    "The production anneal is internally reproducible but fails to reproduce the historical diagnostic path by 188.4 times its measured same-path scatter; the production value remains inside the separate absolute 0.05 normalization tolerance.",
+    "Current evidence does not isolate the code-path cause. Any paired GPU ablation, acceptance/promotion of the production estimator, or rejection of the annealed path is a new user decision."
   ],
-  "next_authorized_action": "BLOCKED ON USER: choose authorize_anneal_promotion, reject_anneal_continue_remediation, or stop_pet_path as defined in docs/orchestration/state/waker/BLOCKED-ON-USER.json. Until then do not edit the shared engine, re-issue Gate 4, launch nominal PET, change criteria, promote the arm, or rerun the closure.",
+  "next_authorized_action": "BLOCKED ON USER: choose authorize_scoped_implementation_ablation, accept_production_path_then_decide_promotion, or reject_or_stop_annealed_path as defined in docs/orchestration/state/waker/BLOCKED-ON-USER.json. Until then do not average, widen the band, rerun, edit the engine, promote, extract, calculate a cross section, or open Branch C.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",

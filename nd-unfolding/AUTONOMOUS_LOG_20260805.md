@@ -3174,3 +3174,310 @@ adoption — no threshold, no Branch C, no other arm, no cross section.
 Bindings ALL INTACT. Suite 8 failed / 950 passed — 7 documented plus the other lane's p4 snapshot.
 Collection **1050 -> 1058 (+8)**.
 
+### 13:55Z — Status mailed on request; annealed production re-train launched; Packet B adversarial case built
+
+**Joseph mailed asking for a status update** ("I have left my computer for about 10 hours") — answered
+with the full picture. That is the first inbound instruction of the session that was not a directive.
+
+**`56563092` launched** — the annealed PRODUCTION nominal, first production artifact under the adopted
+policy. Watch armed (was zero). Reproduction test **predeclared and pushed before submission** (`42eb4fd`).
+
+**One operational mistake of mine, recorded because the checkout is shared.** Shipping to the cluster hit
+a merge conflict on `closure_powered_annealed_lr.py` — the file both lanes have edited — and I left the
+shared checkout mid-merge. Aborted back to `6b20122` clean, confirmed the other lane's three pre-existing
+modified files were undisturbed, then placed only the launch-critical files directly by scp and left their
+contested file untouched. Verified before submitting: driver sha `5fda80df43df` **matches the gate pin
+exactly**, engine `3a2022b0809fa457` unchanged. The lesson is narrow and mine: a bundle-merge into a
+checkout another lane is committing in is not a safe transport for a launch, and `git checkout <ref> --
+<paths>` silently gave me a STALE ref (pre-adoption driver, `66aa1f8f`), which I only caught because I
+checked the sha against the pin rather than trusting the copy.
+
+**PACKET B / B1 adversarial case delivered** —
+`nd-unfolding/tests/test_csyst_band_completeness_adversarial.py`, 7 cases, all passing, collection
+**1058 -> 1065 (+7)**. Built the case only, not the check, per the BEN-040 reasoning.
+
+The defect has **four independent** reasons the omission survives: `retained_keys` derives from the
+manifest's own `candidate_keys` so both sides of the identity come from the declaration; `:193` is
+one-directional (declared→exists, never exists→declared); `n_retained_components` is recorded and never
+compared; and `require_exact_bands` guards the 5 **active** bands, not the ~40 retained. Plus the universe
+itself is *discovered* — `all_bands = _band_keys(a.support_family)` reads ROOT keys — so nothing anywhere
+states how many retained bands there should be.
+
+**The contribution worth having is that there are THREE levels and the middle one discriminates a real fix
+from a plausible one.** The manifest also records `all_syst_bands` and `retained_bands`, which the
+validator never reads — making a cross-field check the *natural* fix. Demonstrated, not asserted:
+
+    LEVEL 1  declaration-only   identity relerr 0.0e+00 PASS   cross-field check CATCHES it
+    LEVEL 2  self-consistent    identity relerr 0.0e+00 PASS   cross-field check PASSES it
+
+So a fix comparing `candidate_keys` against `retained_bands` closes Level 1 and leaves Level 2 wide open.
+**Only an inventory declared outside the manifest rejects Level 2** — which is exactly what B1's acceptance
+criterion already says, and the case now shows why that wording is load-bearing rather than stylistic.
+Level 3 (band absent from the support ROOT, so never discovered) is out of B1's scope and noted because a
+required inventory *in code* closes it for free while a manifest cross-check cannot touch it.
+
+Every case drops the **smallest-trace** band deliberately: the under-count is `1.09e-05` relative on the
+quoted `sqrt(trace)`, so any magnitude heuristic is defeated and completeness has to be checked as **set
+equality**, never as a total-size test. A test asserts that smallness, so the point cannot be lost.
+
+**My own contract test caught a bug in my case** — I had set `must_be_rejected_by_B1` as an instance
+attribute inside a method, so the class-level marker did not exist and the contract check read the default.
+Moved to class scope. A marker that the contract test cannot see would have made the contract vacuous.
+
+### 14:20Z — `56563092` REFUSED at 1:12 by the driver's own overwrite guard, and the guard was RIGHT
+
+**The failure was a correct refusal, and it stopped me destroying the baseline.**
+
+    [gate4] pet_fullevent_nominal_weights.npz already exists AND is marked complete.
+            Refusing to overwrite a finished publication artifact; pass --allow-overwrite if intended.
+
+I launched the annealed production nominal through the **canonical** launcher, which writes to
+`fullevent_nominal/pet_fullevent_nominal_weights.npz` — the 2026-08-08 artifact `58f664cdef266d09`. That
+artifact is the baseline the predeclaration's expected value, CLM-012's measured recovery and margin, the
+Gate A/B receipts, and the whole shape-validation chain are measured **against**. Overwriting it would
+have cost the comparison, not just a file. **The refusal cost 1:12.**
+
+The adoption itself was fine: the config gate PASSED and printed `seed_policy` **with** `lr_policy`, and
+target provenance PASSED. The defect was purely my choice of vehicle.
+
+**What I did NOT do: pass `--allow-overwrite`.** That flag exists and would have "worked". The annealed run
+is a **different estimator** — a different training policy — not a redo of the same one, so it gets its own
+artifact. Whether it ever becomes the canonical nominal is a **promotion** decision, and Joseph authorized
+the run and explicitly not a promotion. Reaching for the override would have quietly converted a run
+authorization into a promotion.
+
+**Relaunched as `56563761`** through a new, unpinned launcher writing to `fullevent_nominal_annealed/`.
+`--tag` is constrained to `nominal|floor`, so separation comes from `--out` and `weights_folder` follows
+`dirname` automatically. The launcher **asserts the baseline's sha before and after the run** and fails if
+it moved — the entire reason the file exists is that the canonical one would have replaced it.
+
+**One improvement taken while I was in there.** It runs BOTH arms, like the canonical launcher. The
+predeclared ±0.010 band was scaled from the *single* 08-08 matched pair (0.003380 in deviation), which is a
+scale and not a distribution — the weakest part of the predeclaration. A fresh matched pair **measures the
+annealed configuration's own scatter**, inside the authorized ~6 GPU-h. It also asserts the driver declares
+the adopted `lr_policy` before training, and prints the predeclared verdict without widening the band.
+
+**No second mail this cycle.** I sent the status update Joseph asked for by mail earlier this cycle, and the
+batching rule is one per cycle; nothing here is blocked on him, and this belongs in the reproduction mail
+with the result rather than as its own alert.
+
+Watch armed on `56563761` (the `56563092` watch fired and is spent). Baseline verified `58f664cdef266d09`
+at submit time.
+
+### 15:25Z — `56563761` training healthily; the wakerctl CRON is HELD, so durable notification is degraded
+
+**The annealed nominal is running properly.** `ITERATION 1 / RUNNING STEP 1` at 20:06 elapsed, CPU 22:10,
+RSS 14.1 GB. Footing all printed and passing, and the baseline `58f664cdef266d09` verified intact.
+
+**But the notification path is down, and it is not the watch — it is the ticker.** The wakerctl cron
+`56160911` sits at `Reason=user_env_retrieval_failed_requeued_held` after **2492** normal restarts, so this
+is a rare NERSC/Slurm transient rather than a broken cron. Consequence: the watch on `56563761` is armed and
+correct, and **nothing will fire it**, because the thing that evaluates watches every 5 minutes is held.
+
+That is the notification gap in a new shape. Previously I have found *zero armed watches*; here the watch is
+armed and the **evaluator** is dead — which is worse, because `wakerctl status` reports `ARMED: 1` and looks
+healthy.
+
+**`scontrol release` does not work on it:** *"Cannot modify scrontab jobs through scontrol."* So the
+documented release path is unavailable for a scrontab-managed cron.
+
+**What I did:** ran `wakerctl tick` manually. The machinery is fine — it recorded a tick at 15:20:59 and
+correctly emitted nothing, since the watched job is still RUNNING. So the watch will evaluate correctly the
+moment something ticks.
+
+**What I did NOT do:** `wakerctl install-cron`. It is the documented arm/rollback, but a held entry already
+exists and I cannot tell without reading scron internals whether re-installing REPLACES it or ADDS a
+duplicate. This is shared infrastructure — the other lane's notification runs through the same cron — so
+guessing at it mid-run is not mine to do unilaterally. Recorded instead, with the manual tick as the stopgap.
+
+**Practical effect, stated honestly:** while this session is alive its own polling *is* the notification
+path, so nothing is at risk right now. If the session dies before `56563761` finishes, the result lands with
+nobody watching. I will tick manually each cycle and re-check whether scron recovers on its own; if it has
+not by the time the job lands, that goes in the mail alongside the reproduction verdict, since it affects
+both lanes.
+
+### 18:10Z — REPRODUCTION FINDING FIRED. The anneal happened; the two code paths DISAGREE
+
+The annealed production nominal arm completed and the **predeclared reading returned a FINDING**, which is
+the outcome Joseph fixed in advance as the one to report rather than average away.
+
+    production (driver)     push 1.0840529523   dev -0.035608971
+    diagnostic (56534117)   push 1.1109012167   dev -0.011724321   <- the predeclared expectation
+    non-annealed baseline   push 0.7367462501   dev -0.344578627
+
+    window [-0.021724, -0.001724]   |dev - expected| = 0.023885   band exceeded 2.39x
+    VERDICT: FINDING -- code paths disagree  (|dev| = 0.0356 < 0.05, so not an anneal failure)
+
+**The discriminator settled the question it was built for, on its first production use.** The driver's own
+assertion printed `[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05`, and the
+artifact carries `lr_policy_realized` with `verified_from_optimizer: True`. **So the anneal DID happen** —
+this is not a policy failure, and without that field the two candidate explanations would be
+indistinguishable. That is exactly why Joseph insisted the assertion was the half that mattered.
+
+**And the configurations are identical on every recorded axis.** Read both artifacts: the diagnostic arm's
+`seed_policy` is `{estimator_seed 42, subsample_seed 0, niter 3, epochs 8, train_events 2000000,
+batch_size 512}` — the same as production's core keys. So the disagreement is not a configuration drift.
+
+**Scale of it:** push means differ by `0.0268482644`, i.e. **2.42%**; `dev` is **3.04x worse** than the
+diagnostic while still **9.68x better** than the non-annealed baseline. Production **passes** FROZEN's
+`0.05` at `|dev| = 0.0356`, but with margin `0.0144` where `0.0383` was expected — a real loss of headroom.
+
+**The gap is 7.1x the measured 08-08 scatter (0.003380)**, which is the strongest argument that this is
+systematic rather than noise — but it is not proof, because that scatter came from a single non-annealed
+pair. **The matched floor repeat is running now** (started 18:00:47Z) and is precisely the measurement that
+discriminates: if the floor arm also lands near `-0.0356`, the difference is systematic and the code paths
+genuinely differ; if it scatters widely, the annealed configuration's own run-to-run spread is larger than
+the band assumed. Running both arms was the right call for exactly this reason.
+
+**What I did NOT do, per the predeclaration:** no averaging, no re-running past it, no widening the band,
+and nothing downstream. Candidate mechanisms exist (the diagnostic subclass also overrode `cache`,
+`RunStep1` and `RunStep2`; its harness builds loaders through its own path) but I am not asserting a cause
+before the scatter measurement lands, because a wrong cause reported confidently is worse than a named open
+question.
+
+Mailing the finding — a predeclared verdict on the critical path clears the bar, and Joseph asked for the
+reproduction before anything downstream.
+
+
+### 19:00Z — floor arm still training; a quiet verification found my own collection announcements are unreconcilable (BEN-079)
+
+`56563761` at 4:50 elapsed, CPU 5:02:53, RSS 26.2 GB, floor arm on **iteration 2 of 3** (5 `ITERATION`
+lines = 3 nominal + 2 floor). Roughly an hour to the reproduction block. Manual `wakerctl tick` each cycle;
+cron `56160911` still HELD and `scontrol release` still refused for scrontab jobs. Gmail: nothing new since
+his 12:49Z status request, which I answered. Nothing downstream touched.
+
+**COLLECTION ANNOUNCEMENT, in the form BEN-079 says to use:**
+
+    pytest nd-unfolding/tests = 973   on local@b1414df
+    pytest nd-unfolding/tests = 993   on cluster@6b20122 (+ uncommitted lane edits)
+
+**Why the second number is larger while that tree is BEHIND:** ~20 cluster-path tests do not import off the
+cluster, so the two counts are not comparable even at equal code. That is the whole defect below.
+
+**What the check found.** My last announcement in this log says *"Collection 970 -> 985"*. Under the scope
+this log's own header fixes — `pytest nd-unfolding/tests` — today gives **973**, so the written record
+implies **12 tests vanished**. They did not:
+
+- `git log --since=2026-08-08 --diff-filter=DR -- nd-unfolding/tests` is **empty**. Nothing deleted, nothing
+  renamed.
+- A read-only worktree at `aa4d291`, the commit that announcement accompanied, collects **882** in that
+  scope. `nd-unfolding` gives 886; repo-wide-minus-vendored gives 1084. **No scope at that commit yields
+  985.** So `985` came from a tree this log does not name.
+- Locally the count has only ever risen: 882 -> 973.
+
+So the constraint was satisfied in letter and not in function. A bare integer cannot be differenced against
+anything, and the series silently mixed two forked trees. The part worth keeping is the direction: this
+failure is invisible precisely *because* the count kept going up — had a test actually been dropped, the same
+series would have concealed it. Rules in BEN-079; the three-token form `<scope> = <n>` on `<tree>@<sha>` is
+now used above.
+
+**Two things verified rather than assumed while in there.** (1) `origin/main` **is** at `b1414df`, so the
+reproduction finding and everything before it are pushed and visible to other sessions — the hard rule holds.
+(2) The cluster tree is at `6b20122` with the other lane's edits uncommitted, and I deliberately did **not**
+fetch or merge it: `56563761` is mid-run out of that tree, and the last time I merged there it left the
+shared checkout mid-conflict on the file both lanes edit.
+
+Also moved a stray `log_test.txt` out of the repo root into the scratchpad rather than deleting it — it is a
+local copy of this run's val-loss trace (step 1 and step 2 across all three iterations) and the cluster log
+is authoritative, but it is evidence about a live job and deleting evidence mid-run is the wrong instinct.
+
+No mail this cycle: no job finished, no PASS/FAIL, no blocking decision. Mailing a bookkeeping fix while he
+is asleep would be the spam his brief forbids; it goes with the reproduction verdict when the floor arm lands.
+
+### 21:05Z — FLOOR ARM LANDED. Scatter 0.000127, gap 188x it: the reproduction FINDING is SYSTEMATIC
+
+`56563761` COMPLETED at 21:00:22Z, elapsed 06:00:36, exit `0:0`. Both arms wrote. Baseline
+`58f664cdef266d09` verified UNCHANGED before and after, which is the whole reason this launcher exists.
+
+    arm                     push            dev             window [-0.021724, -0.001724]
+    production nominal      1.0840529523    -0.035608971    OUTSIDE
+    production floor        1.0841954573    -0.035482196    OUTSIDE
+    diagnostic 56534117     1.1109012167    -0.011724321    (the predeclared expectation)
+
+    MEASURED annealed scatter                = 0.000126775
+    gap to expectation                       = 0.023884650  =  188.4x the scatter
+    predeclared band 0.010                   =  79x WIDER than the real spread
+    annealed vs 08-08 non-annealed scatter   =  26.7x TIGHTER
+
+**This is the answer to the question I left open last cycle, and it is the unambiguous branch.** I wrote:
+*"if the floor arm also lands near −0.0356, the difference is systematic; if it scatters widely, the annealed
+configuration's own spread is larger than the band assumed."* It landed at `−0.035482`, i.e. `1.27e-4` from
+the nominal arm. Systematic.
+
+**My band was too LOOSE, not too tight — and that direction is what makes the result safe to believe.** The
+predeclaration scaled `±0.010` from a *non-annealed* pair (`0.003380`) because that was the only scatter
+then measured. The annealed configuration is 26.7x more reproducible than that, so the correct band was
+~`0.0004` and the finding would have fired ~60x harder. A too-tight band is what would have made this
+suspect; too loose cannot manufacture a disagreement.
+
+**I tested the one hypothesis that would dissolve the finding, and it failed.** Before reporting "code paths
+disagree" I checked whether the two numbers are the same estimator at all — BEN-077's failure mode, a mean
+compared to a ratio-of-sums. Computed five candidate definitions on the production artifact against the
+diagnostic's `1.1109012167`: ratio-of-sums `1.0840529523` (off `0.0268`), `S_push/n_pass 1.2941273877` (off
+`0.1832`), mean of `weights_push` `1.0631052837` (off `0.0478`), `S_reco/n_pass 1.1937861383` (off `0.0829`).
+**None within `0.026`; the closest is what production already reports.** Same estimator, real difference.
+
+**Also ruled out by measurement rather than argument:** not a policy failure (both arms
+`verified_from_optimizer: True`, realized rate lists byte-identical, `2 fits at 1e-4 / 4 at 1e-5`); not
+config drift (`seed_policy` core keys identical across all four artifacts; both logs `13048 steps at reco and
+7812 at gen`); not localized at step 1 (iteration-1 step-1 val loss agrees to `~2e-6` across all three arms).
+
+**Why the loss trace cannot narrow it further:** iteration-1 *step-2* loss scatters `0.055` between the two
+identical production arms (`0.9083` / `0.9636`; diagnostic `0.8572`). Step 2's loss is noisy while its
+contribution to `push` is not, so the trace has no resolving power here. Candidates remain the diagnostic
+subclass's other overrides (`cache`, `RunStep1`, `RunStep2`) and its own loader path; the diagnostic's push
+trajectory `1.0 -> 1.0107 -> 1.1214 -> 1.1109` sits above production throughout, so the gap accumulates
+rather than appearing at one step. **No cause asserted.**
+
+**Consequence to carry:** production `|dev| = 0.0356` still passes FROZEN's `0.05`, but with margin `0.0144`
+where `0.0383` was expected. And the diagnostic's `−1.17%` must not be quoted as the production anneal's
+value until this is explained.
+
+Recorded in `KNOWN_ISSUES.md` and as a RESULT section on the predeclaration. Nothing downstream: not
+averaged, not re-run past, band not widened, no promotion, no threshold touched, Branch C closed, niter 3.
+
+**Correction to my 19:00Z entry.** I wrote that the stray `log_test.txt` was *"a local copy of this run's
+val-loss trace"*. It is not this run's: it reports `195 training steps at reco and 195 steps at gen` and val
+losses `4.93 / 5.36 / 6.88 / 3.77 / 7.04 / 3.57`, where `56563761` reports `13048 / 7812` and `0.192 / 0.908
+/ 0.117 / 0.877 / 0.112 / 0.830`. It is some earlier small run. The file is preserved in the scratchpad, so
+nothing is lost, but I stated a provenance I had not checked — in a repo where provenance is the product.
+
+### 21:30Z — queue empty, everything authorized is complete. Standing down.
+
+`squeue` shows only the held cron `56160911`; `56563761` is gone, COMPLETED and reported. **No jobs
+running, nothing unblocked, three decisions with Joseph.** Gmail: nothing since his 12:49Z request.
+
+**Quiet verification, and one of the checks was not a formality.** Four files were committed this session:
+`KNOWN_ISSUES.md`, the reproduction predeclaration, `FINDINGS.md`, and this log. Per BEN-061 rule (1) —
+*before editing ANY file, grep the receipt directory for its path* — two of them come back referenced:
+
+    KNOWN_ISSUES.md   p3f-pet-gate4-launch-code-gate-20260801.json:151
+    FINDINGS.md       qp4-reset-resume.log:442, :474
+
+Both turn out to be **prose citations, not sha pins** — a `"source": "KNOWN_ISSUES.md BEN-023; ..."`
+provenance string, and a path list inside a log. So no binding was voided by appending to them. Worth doing
+rather than assuming: BEN-061 is precisely the case where an append to a documentation file silently drifted
+a frozen sha, and "it's only a doc" is the reasoning that gets there.
+
+Verifier, run to confirm globally rather than by inference:
+
+    resolved 154 bindings   150 OK   15 shell pins vs floor 15   ALL BINDINGS INTACT
+    4 known pre-existing submit-time drifts, unchanged (wakerctl.py, test_wakerctl.py,
+      sbatch_dump_g2_mefhc.sh, gate2_queue_hedge_controller.sh)
+
+**COLLECTION, in the BEN-079 form:** `pytest nd-unfolding/tests = 973` on `local@7b2198a` — unchanged, as
+expected from a commit that added no code and no tests. Stated in scope because a bare `973` is what BEN-079
+exists to stop.
+
+**No mail this cycle, deliberately.** The 21:05Z mail already carried the stand-down: the verdict, the
+ruled-out mechanisms, and the three items waiting on him (disposition of the code-path finding, the
+unauthorized low-k measurement, the held cron). A second mail 25 minutes later restating it with a
+binding-verifier line appended is the spam his brief forbids, and none of the three mail triggers — job
+finished, PASS/FAIL, blocking decision — has fired since.
+
+**State at stand-down.** Annealed production nominal + matched floor both written to
+`fullevent_nominal_annealed/`, neither promoted. The 08-08 baseline `58f664cdef266d09` intact and still the
+canonical nominal. FROZEN untouched, no threshold moved, Branch C closed, `niter` 3. `origin/main` at
+`7b2198a`. Durable notification still dead (cron HELD, `scontrol release` refused for scrontab jobs,
+`install-cron` deliberately not run on shared infrastructure) — while this session lives its own polling is
+the notification path, and that limitation is in his inbox.
