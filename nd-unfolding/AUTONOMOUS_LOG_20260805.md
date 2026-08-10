@@ -3264,3 +3264,35 @@ with the result rather than as its own alert.
 Watch armed on `56563761` (the `56563092` watch fired and is spent). Baseline verified `58f664cdef266d09`
 at submit time.
 
+### 15:25Z — `56563761` training healthily; the wakerctl CRON is HELD, so durable notification is degraded
+
+**The annealed nominal is running properly.** `ITERATION 1 / RUNNING STEP 1` at 20:06 elapsed, CPU 22:10,
+RSS 14.1 GB. Footing all printed and passing, and the baseline `58f664cdef266d09` verified intact.
+
+**But the notification path is down, and it is not the watch — it is the ticker.** The wakerctl cron
+`56160911` sits at `Reason=user_env_retrieval_failed_requeued_held` after **2492** normal restarts, so this
+is a rare NERSC/Slurm transient rather than a broken cron. Consequence: the watch on `56563761` is armed and
+correct, and **nothing will fire it**, because the thing that evaluates watches every 5 minutes is held.
+
+That is the notification gap in a new shape. Previously I have found *zero armed watches*; here the watch is
+armed and the **evaluator** is dead — which is worse, because `wakerctl status` reports `ARMED: 1` and looks
+healthy.
+
+**`scontrol release` does not work on it:** *"Cannot modify scrontab jobs through scontrol."* So the
+documented release path is unavailable for a scrontab-managed cron.
+
+**What I did:** ran `wakerctl tick` manually. The machinery is fine — it recorded a tick at 15:20:59 and
+correctly emitted nothing, since the watched job is still RUNNING. So the watch will evaluate correctly the
+moment something ticks.
+
+**What I did NOT do:** `wakerctl install-cron`. It is the documented arm/rollback, but a held entry already
+exists and I cannot tell without reading scron internals whether re-installing REPLACES it or ADDS a
+duplicate. This is shared infrastructure — the other lane's notification runs through the same cron — so
+guessing at it mid-run is not mine to do unilaterally. Recorded instead, with the manual tick as the stopgap.
+
+**Practical effect, stated honestly:** while this session is alive its own polling *is* the notification
+path, so nothing is at risk right now. If the session dies before `56563761` finishes, the result lands with
+nobody watching. I will tick manually each cycle and re-check whether scron recovers on its own; if it has
+not by the time the job lands, that goes in the mail alongside the reproduction verdict, since it affects
+both lanes.
+
