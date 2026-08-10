@@ -2,6 +2,11 @@
   "schema": "slurm-job-submit-v1",
   "run_id": "P5A-ANNEALED-NOMINAL-A2",
   "recorded_at_utc": "2026-08-10T13:59:06Z",
+  "job_id": "56563761",
+  "cpus_per_task": 32,
+  "memory_per_task": "57472M",
+  "time_limit": "12:00:00",
+  "qos": "shared",
   "job": {
     "job_id": "56563761",
     "job_name": "fe_pet_ann",
