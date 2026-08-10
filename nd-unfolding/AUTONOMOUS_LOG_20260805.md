@@ -3338,3 +3338,48 @@ question.
 Mailing the finding — a predeclared verdict on the critical path clears the bar, and Joseph asked for the
 reproduction before anything downstream.
 
+
+### 19:00Z — floor arm still training; a quiet verification found my own collection announcements are unreconcilable (BEN-079)
+
+`56563761` at 4:50 elapsed, CPU 5:02:53, RSS 26.2 GB, floor arm on **iteration 2 of 3** (5 `ITERATION`
+lines = 3 nominal + 2 floor). Roughly an hour to the reproduction block. Manual `wakerctl tick` each cycle;
+cron `56160911` still HELD and `scontrol release` still refused for scrontab jobs. Gmail: nothing new since
+his 12:49Z status request, which I answered. Nothing downstream touched.
+
+**COLLECTION ANNOUNCEMENT, in the form BEN-079 says to use:**
+
+    pytest nd-unfolding/tests = 973   on local@b1414df
+    pytest nd-unfolding/tests = 993   on cluster@6b20122 (+ uncommitted lane edits)
+
+**Why the second number is larger while that tree is BEHIND:** ~20 cluster-path tests do not import off the
+cluster, so the two counts are not comparable even at equal code. That is the whole defect below.
+
+**What the check found.** My last announcement in this log says *"Collection 970 -> 985"*. Under the scope
+this log's own header fixes — `pytest nd-unfolding/tests` — today gives **973**, so the written record
+implies **12 tests vanished**. They did not:
+
+- `git log --since=2026-08-08 --diff-filter=DR -- nd-unfolding/tests` is **empty**. Nothing deleted, nothing
+  renamed.
+- A read-only worktree at `aa4d291`, the commit that announcement accompanied, collects **882** in that
+  scope. `nd-unfolding` gives 886; repo-wide-minus-vendored gives 1084. **No scope at that commit yields
+  985.** So `985` came from a tree this log does not name.
+- Locally the count has only ever risen: 882 -> 973.
+
+So the constraint was satisfied in letter and not in function. A bare integer cannot be differenced against
+anything, and the series silently mixed two forked trees. The part worth keeping is the direction: this
+failure is invisible precisely *because* the count kept going up — had a test actually been dropped, the same
+series would have concealed it. Rules in BEN-079; the three-token form `<scope> = <n>` on `<tree>@<sha>` is
+now used above.
+
+**Two things verified rather than assumed while in there.** (1) `origin/main` **is** at `b1414df`, so the
+reproduction finding and everything before it are pushed and visible to other sessions — the hard rule holds.
+(2) The cluster tree is at `6b20122` with the other lane's edits uncommitted, and I deliberately did **not**
+fetch or merge it: `56563761` is mid-run out of that tree, and the last time I merged there it left the
+shared checkout mid-conflict on the file both lanes edit.
+
+Also moved a stray `log_test.txt` out of the repo root into the scratchpad rather than deleting it — it is a
+local copy of this run's val-loss trace (step 1 and step 2 across all three iterations) and the cluster log
+is authoritative, but it is evidence about a live job and deleting evidence mid-run is the wrong instinct.
+
+No mail this cycle: no job finished, no PASS/FAIL, no blocking decision. Mailing a bookkeeping fix while he
+is asleep would be the spam his brief forbids; it goes with the reproduction verdict when the floor arm lands.
