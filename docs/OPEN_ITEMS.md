@@ -886,6 +886,19 @@ largest nominal truth-space volume.
     `nd-unfolding/fps_extension_validation.py`). Remaining: report verdicts
     when the chain drains.
 
+    - **UNSIZED (flagged 2026-08-10): the mandatory unified throw has NO TIMING
+      EVIDENCE.** `FPS_PILOT.md` calls it "mandatory, not optional" (line 81) and
+      contains zero occurrences of hour / walltime / node-h / GPU-h / runtime;
+      this item says only "report verdicts when the chain drains". So the last
+      required step before FPS final adoption has no cost estimate attached to
+      it anywhere. Every other outstanding step in the lane is either done or
+      sized. **This should be sized before the FPS adoption is scheduled, not
+      during it** — a mandatory step of unknown cost is the one that turns an
+      adoption window into an open-ended wait. Sizing it needs either a
+      recorded walltime from the 2026-06-11 chain (`.fps_uq_chain_jobs.txt` job
+      IDs, via `sacct`) or a short scaling run; the first is free and should be
+      tried before the second.
+
 ## Active campaign — PET capstone (kickoff 2026-06-19)
 
 11. **5D unified-throw adoption decision** — DONE 2026-07-01/02. The 5D
