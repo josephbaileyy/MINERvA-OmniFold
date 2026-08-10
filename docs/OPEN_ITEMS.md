@@ -188,6 +188,21 @@ not close the literal full-event PET gate below.
     Batch it with the next event-loop change rather than running production for a metadata label.
   - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
     writer is what is misnamed.
+- **THE STANDARD-P4 PROVENANCE DEBT IS NOW A DOCUMENT, and it is a deliverable:**
+  `docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md`. After five verifier passes went
+  6 → 4 → 6 → 9 → 14 outstanding — with three of the last round's six new defects sitting in guards
+  written that same round to close other defects — the audit target changed from the PIPELINE to
+  the PRODUCT (Joseph, 2026-08-10). The covariance is validated as a fixed object; the machinery
+  that produced it is not claimed to be verified.
+  - **The price is written down in advance, completely.** Four verifier defects stay deliberately
+    open (#2 resume binds only the unfold blob, #5 token accepts symbolic revs and skips the
+    working tree, #6 `C_syst` trusts the manifest's key set, #7 mutation harness incomplete), four
+    more are partial, and four unfixed new ones are itemised.
+  - **The single largest structural gap: there is no CI in this repository.** Every guard binds an
+    author who runs `pytest`; none binds a commit.
+  - **Anyone quoting a number derived from this covariance must cite that document alongside it.**
+    If the reduced standard is not acceptable for publication, the response is to close the open
+    items — not to restate the product's status more favourably.
 - **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 8 (2026-08-09).**
   The question "should we fix the global Data/MC POT scale in `unfold_2d_omnifold_unbinned.py`?"
   was the wrong unit. The same computation — one `hadd`-summed extensive divided by another —
