@@ -76,6 +76,14 @@ These are not style preferences. Each one is here because it was broken and cost
   (BEN-077).
 - **Do not rename or delete a tracked script cited in a RUN_LOG, ledger, or receipt JSON.** 115
   `sbatch_*.sh` names are load-bearing provenance.
+- **Item ids inside a document are prefixed with that document's short name** — `PB1`, not `B1`. Two id
+  collisions in four days: `BEN-041`/`BEN-044` between concurrent lanes, then Packet B's items landing on a
+  `B1` that already meant the CLM-010 rate-injection closure. The second is the dangerous shape: *"B1
+  closed"* is true of one and false of the other, and read at face value it supports a "Gate-4 unblocked"
+  claim that isn't the case. It was caught only because a commit *body* named its scope. **This closes the
+  namespace that had no rule; it does not cover `BEN-*` ids, which have per-lane ranges that were violated
+  anyway and caught by attention rather than by mechanism** — that exposure is known and accepted, not
+  fixed. (BEN-080, BEN-082.)
 
 ## Compute quick reference
 
