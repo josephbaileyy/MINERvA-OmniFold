@@ -3481,3 +3481,48 @@ canonical nominal. FROZEN untouched, no threshold moved, Branch C closed, `niter
 `7b2198a`. Durable notification still dead (cron HELD, `scontrol release` refused for scrontab jobs,
 `install-cron` deliberately not run on shared infrastructure) — while this session lives its own polling is
 the notification path, and that limitation is in his inbox.
+
+### 21:45Z — cross-lane contact from the oversight session; identity confirmed, authorization refused
+
+The oversight session (author of Packet B) asked me to self-identify as the PET lane before sending lane
+instructions, saying no peer in its list identified as PET. Confirmed from commands run in the same turn
+(BEN-027), not from memory: `56563761 fe_pet_ann COMPLETED 06:00:36`, commit `7b2198a`, and
+`_AnnealedMultiFold` present in the driver.
+
+**I refused the substantive part.** It offered "a disposition for the three items you left with Joseph",
+including that its dominance argument for `niter = 3` is void now that production reads −3.56%. The
+information is welcome; the disposition is not a peer's to give. `niter` is pinned at 3 by Joseph explicitly
+and by the predeclaration's governance section, and production's launcher and FROZEN both carry it. So: no
+`niter` change, no promotion, no bisect launched. Its retraction goes to Joseph as *input*, which is where a
+peer's reasoning belongs. I said I would apply the same rule to a pin of theirs.
+
+**Checking its job IDs turned up something worth having, and it is not new but it is easy to misread.** It
+attributed the annealed shape validation to `56547490`. Verified:
+
+    56547490  ann_shape   FAILED  00:01:21   <- died at 81 s, the signature-erasure death. No physics.
+    56552326  ann_shape   FAILED  01:56:32   <- THIS is the shape validation, and FAILED is misleading
+    56534117  fe_s1lr2 COMPLETED  03:01:22   <- the diagnostic arm the -1.17% comes from
+    56563761  fe_pet_ann COMPLETED 06:00:36  <- production, both arms
+
+`56552326` exited **3** *after* completing the closure, writing report + npz, and verifying the LR pattern.
+Exit 3 is `closure_powered_truth_reweight.py:105`'s hardcoded `RESIDUAL_OVER_GAP_MAX = 0.20` — the bar
+**CLM-012 retired on 08-09** — so the driver self-reports FAIL against a bar we no longer use and Slurm
+records a job failure. Already in `KNOWN_ISSUES.md` and deliberately not fixed. Its real result, independently
+validated by finalizer `56562169` (exit 0, 31/31 authoritative validator checks, 8/8 hash checks):
+
+    recovery 0.5126032761517403   PRIMARY recovery >= 0.494582 PASS, margin +0.01802088, PRIMARY_DECIDES
+    SECONDARY vs baseline 0.546853 +/-0.02: difference -0.03424972, TRADE_OFF_CONFIRMED
+    promotion_authorized False, engine_edited False, threshold_changed False, branch_c_opened False
+
+Worth recording because a `sacct` line reading `ann_shape FAILED` is exactly what a future agent — or a peer
+lane — will take at face value, and the number it produced is one CLM-012 depends on.
+
+**What I told it that it did not have:** that −3.56% is reproducible to `1.3e-4` so it should not be treated
+as a noisy replacement for −1.17%; that an argument resting on −1.17% needs *re-deriving* rather than
+sign-flipping, since that number is now established as describing the diagnostic path only with the cause
+unknown; and that CLM-012 (vii)'s ceiling rises with k, so any niter comparison against a fixed `0.494582`
+needs redoing against the k-dependent ceiling — which may bear on its conclusion more than the swap does.
+
+**The one thing I asked it for, because it is shared-infrastructure repair rather than a lane decision:**
+whether `wakerctl install-cron` replaces or duplicates a HELD scrontab entry. That cron carries both lanes'
+notifications and is the reason durable notification is currently dead. If it knows, I act immediately.
