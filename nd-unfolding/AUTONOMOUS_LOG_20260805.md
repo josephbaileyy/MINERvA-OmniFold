@@ -3080,3 +3080,40 @@ is the same misreading risk as the field, one layer out.
 
 Mailing the verdict — a job finished and a predeclared reading resolved, so this clears the bar.
 
+### 11:15Z — Independently confirmed to the last digit, and my exit-3 inference is now a measured fact
+
+The other lane ran a finalizer (`56562169`) that re-derived the reading independently. **Every number
+matches mine bit-for-bit:**
+
+    recovery        0.5126032761517403     identical
+    threshold       0.49458240000000003    identical
+    primary margin  0.01802087615174025    identical
+    secondary diff  -0.03424972384825975   identical
+    combined        PRIMARY_PASS_SECONDARY_TRADE_OFF_CRITERION_DISAGREEMENT
+
+**And it adds the one thing I had only reasoned to.** I argued that exit 3 was purely the driver's stale
+internal `0.80` bar and that `check_powered_closure` — which reads the adopted threshold from FROZEN and
+re-derives the spectra — was authoritative and would pass. They **ran** it:
+`31 checks, 0 failed, ok=True`. So the closure passes the authoritative Gate-4 powered-closure validator,
+and "exit 3 was not a failure" is now demonstrated rather than argued. That is exactly the kind of claim I
+should not have been left holding on inference, and it is the second time this week the other lane's
+independent pass converted one of my inferences into evidence.
+
+Their hygiene is also worth noting: `reused_committed_manifest_without_overwrite: True` with the sha
+matching the manifest I built post-hoc — they verified mine rather than regenerating a competing one, which
+is what keeps two lanes from producing two receipts for one measurement.
+
+End state, all four flags where they should be: `promotion_authorized=False`, `branch_c_opened=False`,
+`threshold_changed=False`, `engine_edited=False`. They have filed `BLOCKED-ON-USER.json` naming the decision
+in the correct terms — adopt the fit-time LR anneal, reject the arm and open another
+normalization-remediation branch, or stop the PET publication path — with the options and the prohibited
+actions enumerated.
+
+**No mail from me.** I sent the verdict last cycle with the full trade-off; their blocker record carries the
+same evidence through their own channel, and a second mail would be the same decision arriving twice. The
+`31/0` confirmation strengthens what he already has rather than changing it.
+
+State: queue is the wakerctl cron alone, **0 armed watches** — correct here, because nothing is running and
+the outstanding item is a human decision, not a job. Trees synced at `6b20122`. My lane has nothing running,
+nothing queued, and no decision of mine outstanding.
+
