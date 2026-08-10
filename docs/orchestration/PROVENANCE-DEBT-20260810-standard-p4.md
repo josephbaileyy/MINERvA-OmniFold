@@ -288,6 +288,31 @@ or a product small enough to transfer, and neither is available today.
 See **§0** — no CI exists, so no guard in this document binds a commit. Listed here only so the
 debt inventory is complete; the discussion and the incidents it underlies are at the top.
 
+## 3e. SUPERSEDING DECISION 2026-08-10 — five of these items are being closed under Packet B
+
+Joseph chose standard **B** (no debt that can affect a *quoted* number) over both leaving the debt as
+declared and attempting standard C (no pipeline debt at all).
+
+**In scope and being closed** — see
+[`PACKET-20260810-B-no-quoted-number-debt.md`](PACKET-20260810-B-no-quoted-number-debt.md):
+defect **#6** (band-set completeness — the only item here that can yield a *confidently wrong* number
+rather than an unverifiable one), defect **#2** (resume binds one blob), defect **#1** (consumable
+evidence written before blockers), the **projected artifact not inheriting the rejection marker**, and
+**J36's C++ site** at `build_1d_ibu_inputs.py` → `ExtractCrossSection`, which reaches the quoted
+OmniFold-vs-IBU cross-check.
+
+**Remaining declared debt, unchanged:** #4, #5, #7, #8, #9, the NaN summaries, the
+`check_projection_validity` naming overclaim, `TmpdirGuardItself`, CI (§0), surface reduction, and the
+5D artifact's derivable-not-self-contained row order.
+
+**Standard C is deferred post-publication, on measured grounds.** Across four repair rounds the lane
+closed 9 defects while outstanding went 6 → 14 — introduction ran about **1.9× closure**, and three of
+repair-7's six new defects were in guards written that same session. C is therefore not schedulable as
+a pre-publication gate, and it would certify a chain that will not be re-run before the paper. It
+remains the right eventual target; §0 is its precondition.
+
+**Do not read B as C.** When Packet B closes, this document must say that B is met and C is not.
+
 ## 4. The reduced standard, stated for the record
 
 The covariance product is offered as: **an object whose internal consistency, mask/order

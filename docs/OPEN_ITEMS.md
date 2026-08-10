@@ -21,6 +21,15 @@ marginal** with the independent 4D labeled a cross-check. That lane is therefore
 needs no GPU. **The PET lane has no equivalent runbook**; it is blocked on the decisions below rather
 than on a step list.
 
+**Provenance-debt standard — DECIDED 2026-08-10.** Joseph chose standard **B**: no debt that can affect
+a quoted number. Scoped as five items (band-set completeness, resume blob binding, evidence-before-
+blockers, projected-artifact marker, J36's C++ site) in
+[PACKET-20260810-B](orchestration/PACKET-20260810-B-no-quoted-number-debt.md); the residual stays
+declared in [the provenance-debt document](orchestration/PROVENANCE-DEBT-20260810-standard-p4.md).
+**Standard C (no pipeline debt at all) is deferred post-publication** — measured across four repair
+rounds the lane closed 9 defects while outstanding went 6 → 14, i.e. introduction ran ~1.9× closure,
+so C is not schedulable as a pre-publication gate. CI is its precondition (debt document §0).
+
 > **Starting a fresh session? Read the latest handoff first:**
 > [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
 > flight, what was settled 2026-08-06 (D2 powered closure FAILED; `niter` stays at 3; J28 re-roll
