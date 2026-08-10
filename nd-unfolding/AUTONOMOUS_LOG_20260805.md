@@ -3608,3 +3608,25 @@ editing it moves a sha a receipt cites.
 The next job either lane launches is what proves it end to end.
 
 This closes one of the three items I left in Joseph's inbox, so it earns the one mail this cycle.
+
+### 22:15Z — BEN-080 resolved at source by the other lane; one mail sent; standing down again
+
+The oversight lane owns the `B1` collision and fixed it rather than annotating it (`315bc51`): Packet B items
+are `PB1`…`PB5` going forward, `PB1 == B1` recorded so existing citations stay valid, and the rate-injection
+closure is `CLM-010 B1`. BEN-080 updated with the resolution. Its own note on it is the part worth keeping —
+*"writing the packet that enforces the convention didn't make me exempt from it"* — which is BEN-061 rule (7)
+independently rediscovered. **Second shared-id-space collision in three days** (BEN ids 08-07, packet ids
+today), same remedy both times, which argues the prefix should be mechanical rather than remembered.
+
+One thing it said that I am recording because it sharpens my own reasoning rather than flatters it: the
+difference between its install-cron procedure and what I ran is *detect-then-act* versus *prove-no-op-first*.
+Its version would have detected damage after the fact; establishing that `scrontab_lines` regenerates
+byte-identical content established there was nothing to damage. **General form worth keeping: prove the
+operation is content-identical before arguing about whether it is safe.**
+
+Mailed Joseph one short note — the cron restoration closes one of the three items I left with him, so it
+prevents him spending a decision on something already fixed. Nothing else in that mail: no new physics, and
+the finding's disposition is still his.
+
+Queue: `56585597 PENDING (BeginTime)`, the cron's healthy steady state. Zero armed watches, so it ticks and
+emits nothing until a job needs watching. `origin/main` at the push below. No jobs running. Standing down.
