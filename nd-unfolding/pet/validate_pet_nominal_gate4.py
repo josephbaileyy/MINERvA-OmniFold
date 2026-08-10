@@ -1049,6 +1049,22 @@ def check_powered_closure(powered, inputs_npz=None,
                       f"1 - f*ceiling = 1 - {f_ceil}*{ceiling} = {derived_rog_max:.9f} vs frozen "
                       f"residual_over_gap_max={P['residual_over_gap_max']:.9f}"))
     recovery = None if rog is None else 1.0 - rog
+    # CONDITION (e) EXTENSION, Joseph 2026-08-10: the ABSOLUTE recovery and the CEILING are reported
+    # alongside the relative margin, ALWAYS and in the SAME PLACE. A relative criterion cannot adjudicate
+    # a choice of k -- lowering niter lowers the bar, so a lower-k configuration can post a BETTER
+    # relative margin while reaching a WORSE absolute recovery. Printing all three together is what makes
+    # that visible; re-stating the verdict at the new k is not, on its own, enough.
+    frac_of_ceiling = None if (recovery is None or not ceiling) else recovery / float(ceiling)
+    checks.append(_ck("powered:absolute_recovery_reported_with_ceiling",
+                      recovery is not None and ceiling is not None,
+                      f"ABSOLUTE recovery {None if recovery is None else round(recovery, 6)} against "
+                      f"ceiling {ceiling} at k={P.get('ceiling_scope_k')} "
+                      f"({'n/a' if frac_of_ceiling is None else format(frac_of_ceiling, '.4f')} of it); "
+                      f"relative bar {recovery_bar:.6f}. REPORTED TOGETHER because a relative margin "
+                      f"cannot adjudicate a choice of k: a lower k lowers BOTH the ceiling and the bar, so "
+                      f"a lower-k pass can show a better margin at a worse absolute recovery. The ceiling "
+                      f"is a REFERENCE curve, not a proven cap (CLM-012 (i): a smooth learner can beat it; "
+                      f"BEN-038 measured a band at E_w[r]=1.0333)."))
     checks.append(_ck("powered:recovery_meets_criterion",
                       recovery is not None and recovery >= recovery_bar,
                       f"recovery {None if recovery is None else round(recovery, 6)} >= "
