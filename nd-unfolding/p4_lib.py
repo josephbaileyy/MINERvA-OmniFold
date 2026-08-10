@@ -357,6 +357,91 @@ _ADOPTED_TOKENS = ("uq_universe_5d_covariance_combined", "_uthrow", "_cvcentered
                    "products/5d/xsec", "products/4d/xsec")
 
 
+RETAINED_KEY_PREFIX = "hCov_retained5d_"
+
+
+def retained_key(band):
+    """Forward construction ONLY. Never recover a band name by stripping this prefix: band
+    `__Normalization_flat` yields `hCov_retained5d___Normalization_flat` -- THREE underscores,
+    because the band's own leading `__` follows a prefix already ending in `_`. A naive strip or an
+    `[A-Za-z]*` glob mishandles it, which is why every expected-key set below is built forward from
+    band names and no code here parses a key backwards."""
+    require(isinstance(band, str) and band, "band name must be a non-empty string")
+    return f"{RETAINED_KEY_PREFIX}{band}"
+
+
+def require_band_set_completeness(comp, required_bands, required_hashes, lateral_bands,
+                                  required_support_sha=None):
+    """B1 / verifier defect #6. Verify the manifest's band set and component identity against an
+    EXTERNAL REQUIRED INVENTORY, never against the manifest's own list.
+
+    Why the manifest cannot be its own referee, and why the candidate ROOT cannot either: the
+    hazard is a BUILD that enumerated the wrong set. In that case the stored `C_syst` was built
+    from the short set, the manifest lists the short set, and `retained_sum + active_total ==
+    C_syst` reconstructs PERFECTLY. Both the total and the list are consistent -- they are simply
+    both missing a band. The candidate ROOT is a downstream product of the same build and inherits
+    the omission, so the only object that can referee is the SUPPORT FAMILY, whose sha256 the
+    manifest itself pins (`support_family_sha256`) and from which `p4_build_components.py`
+    enumerates `hCov_universe5d_*` in the first place.
+
+    `required_bands`  : every band in the support family (excluding its `_total`).
+    `required_hashes` : {band: content sha256} recomputed from the support family.
+    `lateral_bands`   : the bands replaced by active MAT blocks (p4_lib.BANDS).
+
+    Checks set equality on all four places the band set appears, then component IDENTITY. The
+    verdict wording is "band-set equality OR component identity"; both halves are done here."""
+    # BIND THE REFEREE FIRST. Everything below compares the manifest against an inventory taken
+    # from a support-family ROOT chosen by the caller (`--support`). Nothing previously required
+    # that ROOT to be the one the build actually enumerated: the validator never checked
+    # `support_family_sha256`, and the adopter's check is a different thing (it hashes the file at
+    # the path the manifest records, which cannot detect a validator refereeing against another
+    # object). An authority that is not pinned is not an authority -- the check would happily
+    # confirm a manifest against the wrong inventory and report a clean set match.
+    if required_support_sha is not None:
+        got = comp.get("support_family_sha256")
+        require(got is not None,
+                "component manifest records no support_family_sha256, so the inventory it was "
+                "built from cannot be identified")
+        require(got == required_support_sha,
+                f"support-family mismatch: this check is refereeing against a support family whose "
+                f"sha256 is {required_support_sha}, but the manifest was built from {got}. The "
+                f"band-set comparison below would be meaningless against the wrong inventory.")
+    req = set(required_bands)
+    lat = set(lateral_bands)
+    require(lat <= req, f"lateral bands not present in the support family: {sorted(lat - req)}")
+    exp_retained = req - lat
+
+    def _cmp(name, got, want):
+        got, want = set(got or []), set(want)
+        require(got == want,
+                f"{name}: band set does not match the support-family inventory -- "
+                f"missing {sorted(want - got)!r}, unexpected {sorted(got - want)!r}. This is "
+                f"checked against the support family, not against the manifest, because a build "
+                f"that enumerated the wrong set produces a manifest that reconstructs perfectly.")
+
+    _cmp("all_syst_bands", comp.get("all_syst_bands"), req)
+    _cmp("retained_bands", comp.get("retained_bands"), exp_retained)
+    _cmp("replaced_lateral_bands", comp.get("replaced_lateral_bands"), lat)
+    _cmp("component_content_hash keys", (comp.get("component_content_hash") or {}).keys(), req)
+
+    # candidate_keys: built FORWARD from band names, never by parsing keys
+    exp_keys = ({retained_key(b) for b in exp_retained}
+                | {candidate_band_key(b) for b in lat}
+                | {CANDIDATE_ACTIVE_TOTAL_KEY, CANDIDATE_SYST_KEY, CANDIDATE_TOTAL_KEY})
+    _cmp("candidate_keys", comp.get("candidate_keys"), exp_keys)
+
+    # COMPONENT IDENTITY -- the other half of the verdict. Set equality cannot see a manifest that
+    # names the right bands while the components behind them are not the support family's.
+    got_h = comp.get("component_content_hash") or {}
+    bad = sorted(b for b in req if got_h.get(b) != required_hashes.get(b))
+    require(not bad,
+            f"component identity mismatch against the support family for {len(bad)} band(s): "
+            f"{bad[:5]}{' ...' if len(bad) > 5 else ''}. The band set is correct but at least one "
+            f"recorded component hash is not the support family's component.")
+    return {"n_required_bands": len(req), "n_retained_expected": len(exp_retained),
+            "n_candidate_keys_expected": len(exp_keys)}
+
+
 NON_ADOPTABLE_KEY = "publication_gate_rejects_this"
 NON_ADOPTABLE_ENV = "P4_NON_ADOPTABLE"
 NON_ADOPTABLE_REASON = (

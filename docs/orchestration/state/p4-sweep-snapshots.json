@@ -91,6 +91,7 @@
       "adoption_requires",
       "all_syst_bands",
       "axis_edges",
+      "band_completeness",
       "binary_mtime",
       "binary_sha256",
       "binary_sha256_semantics",
@@ -148,10 +149,13 @@
       "ml_sha256",
       "nTruthOnlyMisses",
       "n_bins",
+      "n_candidate_keys_expected",
       "n_deviating_bins",
       "n_reported",
       "n_reported_bins_pooled",
+      "n_required_bands",
       "n_retained_components",
+      "n_retained_expected",
       "non_adoptable_reason",
       "p90_abs_rel",
       "p99_abs_rel",
@@ -189,6 +193,7 @@
     ],
     "gates": [
       "active_total_eq_sum5",
+      "band_set_completeness_vs_support_family",
       "c_syst_recomputed_from_components",
       "candidate_self_declares_non_adoptable",
       "check_component_sum()",
@@ -205,6 +210,7 @@
       "merged_inseparability",
       "prove_identity()",
       "require_adoptable()",
+      "require_band_set_completeness()",
       "require_candidate_path()",
       "require_complete_unfold_set()",
       "require_exact_bands()",
@@ -214,8 +220,8 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 105,
-    "n_gates": 25,
+    "n_fields": 109,
+    "n_gates": 27,
     "tool": "tools_p4_sweep_recorded_fields"
   }
 }

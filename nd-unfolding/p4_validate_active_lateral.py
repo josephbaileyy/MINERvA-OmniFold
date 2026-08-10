@@ -30,6 +30,26 @@ def _th2(path, key):
     C = np.ascontiguousarray(arr[1:n + 1, 1:n + 1]); f.Close(); return C
 
 
+def _support_band_keys(path):
+    """Every per-band component in the support family, EXCLUDING the total. Forward-only: returns
+    band names by stripping the known `hCov_universe5d_` prefix from keys that carry it, which is
+    safe here because the prefix is fixed and the comparison downstream is set-based."""
+    import ROOT
+    f = ROOT.TFile.Open(path)
+    if not f or f.IsZombie():
+        raise P.P4GateError(f"cannot open support family {path}")
+    ks = [k.GetName() for k in f.GetListOfKeys()]
+    f.Close()
+    pre = "hCov_universe5d_"
+    return sorted(k[len(pre):] for k in ks
+                  if k.startswith(pre) and k != f"{pre}total")
+
+
+def _chash(C):
+    import numpy as _np
+    return P.hashlib.sha256(_np.ascontiguousarray(C, dtype=_np.float64).tobytes()).hexdigest()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--candidate", required=True, help="p4_build_components output ROOT")
@@ -199,6 +219,20 @@ def main():
             P.prove_identity(Csyst, retained_sum + active_total_blk, 1e-9,
                              "C_syst == sum(retained) + active_total"))
         out["n_retained_components"] = len(retained_keys)
+        # B1 / verifier defect #6 (2026-08-10). Everything above verifies the manifest against
+        # ITSELF or against the candidate -- both downstream of the same build. A build that
+        # enumerated the wrong band set produces a manifest whose stored C_syst equals the sum of
+        # the bands it lists, so every identity reconstructs PERFECTLY while the systematic budget
+        # is silently short. The referee has to be the SUPPORT FAMILY: it is upstream of the
+        # build, p4_build_components.py enumerates from it, and the manifest pins its sha256.
+        #
+        # `_total` is excluded deliberately -- adversarial fixture B1_F is a build whose
+        # enumeration failed to exclude it, which then reads as a valid 45th band.
+        _sup_keys = _support_band_keys(a.support)
+        _sup_hashes = {b: _chash(_th2(a.support, f"hCov_universe5d_{b}")) for b in _sup_keys}
+        out["band_completeness"] = P.require_band_set_completeness(
+            comp, _sup_keys, _sup_hashes, P.BANDS, P.sha256_file(a.support))
+        out["gates"].append("band_set_completeness_vs_support_family")
         out["gates"].append("c_syst_recomputed_from_components")
         support_bands = {b: _th2(a.support, f"hCov_universe5d_{b}") for b in P.BANDS}
         P.require(all(support_bands[b] is not None for b in P.BANDS), "support family lateral block incomplete")

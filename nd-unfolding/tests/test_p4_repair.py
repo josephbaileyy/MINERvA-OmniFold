@@ -1238,5 +1238,75 @@ class TmpdirGuardItself(unittest.TestCase):
         self.assertEqual(len(items[0].marks), 0)
 
 
+class PacketB1BandSetCompleteness(unittest.TestCase):
+    """PACKET B1 / verifier defect #6 — acceptance record.
+
+    The eleven adversarial manifests were authored by the OVERSIGHT session, blind, independently
+    of this check (Packet B constraint 3; BEN-040 and repair-7's self-guard are why). Their key was
+    withheld until after the run. Batch 2 is deliberately MIXED — B1_K is an over-rejection control
+    that must be ACCEPTED, and was not identified in advance.
+
+    Pre-fix code accepts every must-reject variant: the only band-related gates were "every key the
+    manifest lists exists in the candidate ROOT" and a C_syst identity summing exactly the keys the
+    manifest lists, both of which a short BUILD satisfies by construction."""
+
+    FIX = Path(__file__).resolve().parent / "fixtures" / "packet_b1_adversarial"
+    MUST_REJECT = ["B1_A", "B1_B", "B1_C", "B1_D", "B1_E", "B1_F",
+                   "B1_G", "B1_H", "B1_I", "B1_J"]
+    MUST_ACCEPT = ["B1_K"]
+
+    def _real(self):
+        import json
+        p = self.FIX / "REFERENCE_real_manifest.json"
+        if not p.exists():
+            self.skipTest("reference manifest not present")
+        return json.load(open(p))
+
+    def _run(self, comp, real):
+        return P.require_band_set_completeness(
+            comp, real["all_syst_bands"], real["component_content_hash"],
+            P.BANDS, real["support_family_sha256"])
+
+    def _load(self, tag):
+        import json
+        return json.load(open(self.FIX / f"std_component_manifest.{tag}.json"))
+
+    def test_real_manifest_is_accepted(self):
+        real = self._real()
+        st = self._run(real, real)
+        self.assertEqual(st["n_required_bands"], 45)
+        self.assertEqual(st["n_retained_expected"], 40)
+        self.assertEqual(st["n_candidate_keys_expected"], 48)
+
+    def test_every_adversarial_variant_is_rejected(self):
+        real = self._real()
+        for tag in self.MUST_REJECT:
+            with self.subTest(tag):
+                with self.assertRaises(P4GateError, msg=f"{tag} was ACCEPTED"):
+                    self._run(self._load(tag), real)
+
+    def test_the_over_rejection_control_is_accepted(self):
+        """B1_K is clean. A check that rejects the whole batch has failed it, not passed it --
+        `code_rev == HEAD` and `verifier_crosscheck` were both correct about their defect and both
+        blocked correct data (KNOWN_ISSUES #24)."""
+        real = self._real()
+        for tag in self.MUST_ACCEPT:
+            with self.subTest(tag):
+                self._run(self._load(tag), real)
+
+    def test_identity_comparison_is_not_prefix_based(self):
+        """B1_H's perturbed hash matches the real one in its first 12 characters. This repo prints
+        sha[:12] almost everywhere, so a prefix comparison is a natural thing to write."""
+        real = self._real()
+        h = self._load("B1_H")
+        band = next(b for b in real["all_syst_bands"]
+                    if h["component_content_hash"].get(b) != real["component_content_hash"].get(b))
+        self.assertEqual(h["component_content_hash"][band][:12],
+                         real["component_content_hash"][band][:12],
+                         "fixture no longer exercises the truncated-comparison trap")
+        self.assertNotEqual(h["component_content_hash"][band],
+                            real["component_content_hash"][band])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
