@@ -77,6 +77,12 @@ def install_annealed_multifold():
             self._ann_iteration = 0
             self._ann_stepn = 0
             self._inside_fit_compile = False
+            # NOTE (mine, 2026-08-10): this works because `inspect.signature` follows `__wrapped__` by
+            # default, which is what the driver relies on. It would NOT survive a consumer calling
+            # `inspect.signature(..., follow_wrapped=False)`. Not overriding __init__ at all would be
+            # immune to that; keeping this form because it landed first and the launcher now asserts the
+            # property directly. If a second consumer ever introspects with follow_wrapped=False, drop
+            # the override rather than widening the wrapper.
 
         def CompileModel(self, model, num_steps, fixed=False):
             effective_fixed = bool(fixed)
@@ -106,6 +112,16 @@ def install_annealed_multifold():
             finally:
                 self._inside_fit_compile = False
 
+    # Fail closed if the subclass ever stops exposing the signature its consumers introspect. Cheap,
+    # and it converts a 2-hour-queue-then-81-second death into an immediate, named error.
+    import inspect as _inspect
+    _params = _inspect.signature(AnnealedMultiFold.__init__).parameters
+    for _needed in ("early_stop",):
+        if _needed not in _params:
+            raise SystemExit(
+                f"[annealed] AnnealedMultiFold.__init__ no longer exposes {_needed!r} "
+                f"(sees: {sorted(_params)}). closure_powered_truth_reweight.py reads that default off the "
+                f"signature, so the subclass MUST NOT override __init__ with (*a, **kw). See job 56547490.")
     return AnnealedMultiFold, fit_lr_records
 
 
