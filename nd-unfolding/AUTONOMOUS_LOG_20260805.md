@@ -4005,3 +4005,46 @@ emits nothing while the job is PENDING.
 
 `56586368` submitted, PENDING (Priority). No promotion, no threshold touched, niter 3, Branch C closed,
 baseline asserted before and after.
+
+### 23:25Z — Design A RUNNING and its preflight proved the trap was real; five decisions relayed; mail format adopted WITH its provenance flagged
+
+**`56586368` RUNNING, 10:12 elapsed, and every assertion fired:**
+
+    [dA] all 8 original pins HOLD -- the staged code is 56534117's code byte for byte
+    [dA] HEAD driver 5fda80df43dfe334 != staged 66aa1f8f62087e6e  (the delta under test)
+    [dA] baseline preserved-check, before: 58f664cdef266d09
+    [dA] resolved driver: /pscratch/sd/j/josephrb/bisect_designA/train_fullevent_nominal.py
+    [dA] resolved sha256: 66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd
+    [dA] running the 56534117 harness 2026-08-10T23:17:44Z
+
+**The `resolved sha256` line is the one that mattered.** It confirms the import actually picked up the staged
+driver rather than HEAD's — the `sys.path[0]`-outranks-`PYTHONPATH` trap was real, and without that preflight
+this run would have spent three hours measuring HEAD against itself while every other line of the log looked
+healthy. That is the failure a verdict-only receipt cannot catch, and the reason it is checked rather than
+argued.
+
+**Oversight lane relayed five decisions from Joseph.** Its last two asks — predeclare the third outcome, tell
+the GBDT lane before staging — were already done before its message arrived; it had been writing while I was
+launching. Of the rest: no promotion until the bisect resolves (matches my own hold), re-state k=3's
+justification *after* the bisect as citation repair rather than re-opening (queued, and its sequencing
+argument is the one I made), two items not touching this lane, and `CLAUDE.md` gaining the id-prefix rule at
+`0ff8604` — which I read but did not write, since project instructions are not mine to amend and it is the
+other lane's to land.
+
+**The mail-format change needs its provenance stated, because the risk runs the opposite way to my instinct.**
+Relayed: mail Joseph durable artifacts only — verdict, receipt path, commit sha, one line of what it
+establishes — and leave narrative to the relay. **I checked my own inbox: he has sent me nothing about this.**
+It is relay-only.
+
+My first instinct was that adopting a *narrower* mail is the safe direction. It is not. If the relay is
+accurate, adopting it is right; if it is not, I have quietly reduced the one record that does not pass
+through the relay — which is precisely the omission failure BEN-082 (5) says is bounded only by his
+independent access. **The narrower reading is the risky one here, not the cautious one.**
+
+So: **adopt the format, keep the completeness, and flag the provenance in the mail itself.** One line saying
+I changed format on a relayed instruction costs nothing and lets him correct it in a sentence if it is wrong.
+That converts an unverifiable relay into something checkable, which is the cheapest available fix and better
+than either blind adoption or ignoring it.
+
+No mail this cycle: Design A has not landed, so no trigger has fired. The next mail is its verdict, in the
+new format.
