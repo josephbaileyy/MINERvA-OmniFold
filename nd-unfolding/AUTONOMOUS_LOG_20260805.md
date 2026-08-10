@@ -2991,3 +2991,48 @@ itself, never a sibling.
 
 Bindings ALL INTACT. No mail: `56547490` has not reported. Holding.
 
+### 04:55Z — `56547490` FAILED at 81 s on MY bug; the other lane had already fixed it; I reverted my edit to keep their pin intact
+
+**The failure was mine and the irony is instructive.** `closure_powered_truth_reweight.py:236` reads
+`early_stop`'s default off the engine's own signature —
+`inspect.signature(MultiFold.__init__).parameters["early_stop"].default` — which is the closure doing the
+**right** thing: its own comment says *"Two copies of a default is one of them going stale."* My
+`AnnealedMultiFold` declared `__init__(self, *a, **kw)`, which **erases that signature**, and the closure
+died with `KeyError: 'early_stop'` after 81 seconds. **Good practice on the consumer's part is exactly what
+my substitution broke.**
+
+Proved the mechanism locally without TF: a `(*a, **kw)` override hides `early_stop` from
+`inspect.signature`; leaving `__init__` alone, or wrapping it, does not.
+
+**The other lane had already diagnosed and fixed it before I looked** — `1ddc3f4` / `70d0f02`, with a
+`diagnosis.class` of `ISOLATED_SUBCLASS_SIGNATURE_PRETRAINING` and a root cause naming the exact mechanism.
+Their fix is `@functools.wraps(BaseMultiFold.__init__)` on the override, which sets `__wrapped__` so
+`inspect.signature` follows through. Valid. They also **hardened the launcher preflight** to assert the
+property directly, and more strictly than I would have: not just that `early_stop` is visible but that its
+**default equals the base's**.
+
+**Then I made it worse and had to undo it.** I resolved the rebase by taking their fix plus a six-line
+comment noting that `functools.wraps` would not survive a consumer calling
+`inspect.signature(..., follow_wrapped=False)` (verified: it does not) — plus my own in-process guard. That
+comment changed the wrapper's sha from `ce9f11f4` to `ec3d250d`, and **their error receipt
+`annealed-shape-error-56547490.json` pins `changed_repair.wrapper_sha256 = ce9f11f4`** as a forward
+assertion that the repair is ready at that sha. Bindings went BROKEN.
+
+Updating their pin to match my edit would have been **hand-editing a hash to clear a mismatch**, which is
+prohibited outright. So I reverted the wrapper to their exact bytes from `70d0f02` — sha confirmed back to
+`ce9f11f4872dd611`, bindings ALL INTACT, suite back to the documented 7. **My edit added zero function:**
+the caveat was a comment, and my in-process guard is redundant against their launcher preflight, which is
+the stricter check. Nothing of value was given up to restore their pin.
+
+**Recording the caveat here instead of in the code, which is where it belongs anyway:** their
+`functools.wraps` fix depends on `inspect.signature` following `__wrapped__` by default. It is correct for
+this consumer. If a second consumer ever introspects with `follow_wrapped=False`, the fix should become
+"don't override `__init__` at all" rather than a wider wrapper.
+
+**The transferable lesson, and it is not the one I expected:** a subclass substituted for a class whose
+signature a consumer introspects is not a drop-in — the *interface* includes the signature, not just the
+behaviour. And separately: when two lanes fix the same bug, the one whose receipt already pins the fix wins,
+because a comment is never worth breaking a pin over.
+
+No mail: `56552326` (their watched retry, same launcher) is still `PENDING`, so nothing has reported.
+
