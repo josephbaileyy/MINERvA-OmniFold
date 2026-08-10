@@ -128,6 +128,64 @@ against a claimed digest, prints all shapes and independently derived counts, an
 deliberately redundant quantities that must agree. It is being executed and its raw output returned
 for the delegate's judgement.
 
+## 2c. PRODUCT AUDIT RESULT — 5D leg: **CORRECT** (2026-08-10)
+
+The delegate authored the audit script, I executed it verbatim, the delegate judged the raw output.
+Receipt: `runs/standard-p4-verifier/20260810T0600Z-product-audit-5d-verdict.json`; the executed
+script, the raw output and the judgement transcript are all committed beside it.
+
+**It checked the output's integrity BEFORE the physics**, which was the point of the ingredients
+requirement — `output_trustworthy: true`, on six grounds: exactly one BEGIN and one END with END the
+final record at `status=COMPLETE`; 209/209 records parse with no timestamp inversion; every declared
+input `claim_holds=true` with `size_begin = size_end = bytes_read`; the derived grid
+`14·16·7·7·6 = 65856` matching the central array and `10694` reported bins recomputed rather than
+accepted; and its own redundant quantities agreeing with each other.
+
+**Verdict: CORRECT.** Twelve checks pass. The reconstruction results are the load-bearing ones:
+
+| check | computed |
+|---|---|
+| inventory | exactly 48 cycle-1 TH2D keys: 40 retained + 5 active + 3 totals |
+| active-systematic reconstruction | stored active total = sum of five active components **bit-for-bit** |
+| full systematic reconstruction | 40 retained + 5 active reproduce `C_syst`, max_abs `3.8e-93`-scale |
+| **full total reconstruction** | **`C_total = C_syst + C_stat + C_ML`, max_abs `6.76e-93`** |
+| symmetry / finiteness | 114 361 636 / 114 361 636 finite; symmetry at round-off |
+| PSD | λ_min `-4.23e-91` vs λ_max `1.21e-75` — round-off |
+| **Cauchy–Schwarz** | **0 of 114 361 636 entries violate the inequality** |
+| scale sanity | central total `3.070e-38`, consistent |
+
+### Two informational findings, and the first one matters downstream
+
+**(a) The combined covariance is numerically rank-deficient:** effective positive rank **263** out
+of 10 694, with 10 431 numerical nulls (the 4D leg saw the same thing — numerical condition number
+infinite). This is not a defect in the object; it is what a covariance built from ~45 two-endpoint
+MAT bands plus stat and ML *is*. But it is a property any consumer must know: **this matrix cannot
+be inverted**, and any χ² or likelihood built on it needs a pseudo-inverse or an explicit
+regularisation whose choice is a physics decision, not a numerical detail. Recorded here because a
+future reader who inverts it naively will get nonsense with no warning.
+
+**(b) Exact covariance-row to physical-bin binding is not encoded in the product** — the same gap the
+4D leg reported. Row order is inferred from the reported-support ordering rather than carried as an
+explicit index vector. Both audits tested alignment indirectly (support dimension, covariance-to-
+central scale correlation) and both said so.
+
+## 2d. WHAT THE TWO LEGS TOGETHER DO NOT ESTABLISH
+
+Verbatim from the delegate:
+
+> Together, the 4D and 5D legs establish that the fixed 5D candidate and fixed projected 4D
+> covariance are each numerically correct and internally and centrally consistent, and that the 5D
+> recorded blocks reconstruct, but they do not establish the cross-object identity
+> `C4_projected = M C5 Mᵀ`, exact row-to-bin labels, uncertainty-model completeness, or pipeline
+> provenance.
+
+**The cross-object identity is the largest remaining gap and it is cheaply closable.** Each object
+was audited alone: the 4D leg had no access to `C5`, and the 5D leg was not asked to project. The
+pipeline records `projection_identity_relerr = 9.39e-17` for exactly this identity, but that is the
+pipeline's own claim and both audits correctly declined to credit it. Closing it needs one
+recomputation of `M C5 Mᵀ` on the cluster compared against the stored `C4`, judged by the delegate.
+**Not done under the current freeze; flagged as the first thing worth doing if the freeze lifts.**
+
 ## 3. What it does NOT establish — the debt
 
 ### 3a. Open verifier defects, carried deliberately
