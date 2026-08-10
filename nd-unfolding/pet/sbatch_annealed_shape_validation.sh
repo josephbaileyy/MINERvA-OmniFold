@@ -55,6 +55,8 @@ done
 echo "[ann] job=${JOB} host=$(hostname)"
 echo "[ann] THIS PRODUCT IS NOT QUOTABLE. Shape validation of a candidate repair, not a result."
 echo "[ann] engine sha256 (READ-ONLY, not edited): $(sha256sum "$ENGINE" | cut -d' ' -f1)"
+echo "[ann] wrapper sha256: $(sha256sum "$WRAPPER" | cut -d' ' -f1)"
+echo "[ann] driver sha256: $(sha256sum "$DRIVER" | cut -d' ' -f1)"
 
 gs="$(sha256sum "$INPUTS" | cut -d' ' -f1)"
 [[ "$gs" == "$EXPECTED_INPUTS_SHA" ]] || die "inputs sha mismatch: $gs != $EXPECTED_INPUTS_SHA" 3
@@ -68,9 +70,9 @@ cd "$PET"
 
 # BEN-075 rule (1): probe EVERY stage's imports up front. Two seconds, and it fails here rather than
 # after a two-hour closure. This job needs TF + the engine; it does NOT need ROOT (no xsec stage).
-python3 -c "import tensorflow, omnifold; from omnifold import MultiFold; import numpy" \
+python3 -c "import inspect, tensorflow, omnifold; from omnifold import MultiFold; import numpy; from closure_powered_annealed_lr import install_annealed_multifold; A,_ = install_annealed_multifold(); assert 'early_stop' in inspect.signature(A.__init__).parameters; assert inspect.signature(A.__init__).parameters['early_stop'].default == inspect.signature(MultiFold.__init__).parameters['early_stop'].default" \
   || die "import preflight failed with PYTHONPATH=${PYTHONPATH}" 4
-echo "[ann] import preflight OK"
+echo "[ann] import/signature preflight OK"
 
 # The predeclared protocol gate, same as the graded run's route, receipt in the quarantine namespace.
 set +e

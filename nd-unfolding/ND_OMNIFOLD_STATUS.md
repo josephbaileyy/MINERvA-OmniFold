@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-09. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-10. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -81,7 +81,22 @@ replacement is implied for 4D/FPS or dependent significances. See
   (29.39x better than baseline), because it was already 0.24% low after iteration 1; the increment
   criterion degenerates near target. This is a genuine disposition conflict, not a result mismatch:
   normalization repair does not establish shape. Both readings were mailed to Joseph. Branch C and
-  every threshold remain unchanged; no retry, engine edit, or promotion is authorized.
+  every threshold remain unchanged. Joseph authorized the isolated powered-closure shape validation,
+  but first attempt `56547490` failed before training: protocol and import preflights passed, then the
+  diagnostic subclass hid the base constructor's `early_stop` signature and the driver raised
+  `KeyError`. No recovery or LR proof exists, so neither predeclared shape reading was evaluated. The
+  changed isolated-wrapper repair preserves the inherited signature and adds a fail-closed signature
+  preflight; focused and live compute tests pass. The shared engine remains byte-identical and no
+  promotion is authorized. Changed A100 batch attempt `56552326` completed training and persisted all
+  six fits, report, and row/weight artifact, but exited `3:0` because the driver propagated its retired
+  recovery>=0.80 self-check before manifest creation. Recomputed recovery is **0.512603276**: the
+  PRIMARY adopted 0.494582400 criterion passes by 0.018020876, while the SECONDARY
+  0.546853+/-0.02 band says TRADE-OFF/REJECT. The disagreement is the predeclared finding. A CPU-only,
+  no-training finalizer job `56562169` completed `0:0`: all 31 authoritative powered-closure checks
+  and all 47 total checks pass, with maximum spectrum re-derivation difference `5.898e-12` versus
+  `1e-9`. Exact hashes, disjoint split, Gate-2 identity, source provenance, six fit-time LR records,
+  and both quarantine rejection conditions pass. Branch C, shared engine, thresholds, and promotion
+  status remain unchanged. The next gate is Joseph's explicit promotion/remediation disposition.
 
 - The three 2026-08-04 full-event blockers now have one canonical decision record:
   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. It fixes the estimator contract

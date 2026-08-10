@@ -4342,3 +4342,73 @@ scoring the next decrement as wrong-sign no longer distinguishes a poor end stat
 validate unfolded shape, and the arm's proposer declared a conflict of interest. No predeclaration
 was overridden. A clarification mail with both readings was accepted locally (`rc=0`), and the choice
 is escalated to Joseph with Branch C still closed.
+
+## 2026-08-10 — Annealed powered-closure shape validation attempt 1 failed before training
+
+Joseph selected the isolated annealed shape-validation option. The predeclaration and its two ranked
+readings remain unchanged: the adopted `recovery >= 0.494582` criterion is primary and the assumed
+`0.546853 +/- 0.02` comparison band is secondary. Job `56547490` reached `FAILED 1:0` after 81 seconds.
+The frozen input hash, TensorFlow/OmniFold import, and training-independent protocol preflight all
+passed; the latter emitted `PASS` with gap `0.2342704` and floor/gap `0.0458755`.
+
+Training never started. The isolated `AnnealedMultiFold.__init__(*a, **kw)` wrapper masked the base
+`MultiFold.__init__` signature, so the shared closure driver's fail-closed default lookup raised
+`KeyError: 'early_stop'`. The recovery JSON, push artifact, quarantine manifest, weights, and anneal
+LR proof are absent. Therefore this attempt supplies **no scientific verdict** and is neither evidence
+for nor against the annealed arm. Joseph was mailed that number-free disposition (`rc=0`).
+
+The changed repair is confined to the isolated wrapper and launcher: `functools.wraps` exposes the
+base constructor contract, and the import preflight now asserts the inherited `early_stop=10` before
+entering `srun`. Three login-safe regression tests, shell syntax, and a live TensorFlow/OmniFold
+signature probe on interactive holder `56548506` pass. The shared engine and closure logic were not
+edited; Branch C remains closed and neither threshold nor promotion status changed. Receipt:
+`../docs/orchestration/state/annealed-shape-error-56547490.json`.
+
+The repair commit `1ddc3f4` was pushed before scheduler mutation. Changed attempt `56552326` was then
+submitted as one full-input A100 batch job with an eight-hour wall; the measured full-input reference
+is approximately six hours, while the only live interactive holder is CPU-only and had less than
+thirty minutes remaining. The job was initially `PENDING (Priority)` and its job-keyed report,
+artifact, and manifest paths were all absent. Terminal and one-hour queue-latency watches are armed.
+Receipt: `../docs/orchestration/state/annealed-shape-r2-submit-56552326.json`.
+
+At the one-hour queue wake, the event's job, threshold, verified-prestart flag, and 3904-second wait
+matched the armed watch. One expanded scheduler and ownership snapshot found `56552326` still
+`PENDING (Priority)` at zero runtime. Its report, artifact, preflight receipt, quarantine manifest,
+three logs, and weights namespace were all absent. No interactive allocation or detached A100
+controller exists. Since the measured full-input reference is approximately 6h00m44s—longer than
+the four-hour interactive ceiling—there is no proven alternative to receive ownership. Batch remains
+the sole writer; it was not cancelled or duplicated, and its terminal watch remains the continuation
+path. Receipt:
+`../docs/orchestration/state/annealed-shape-r2-queue-56552326-reconciliation.json`.
+
+Changed attempt `56552326` then completed all six fits and persisted its report, row/weight artifact,
+preflight, histories, and fit-time LR proof, but Slurm recorded `FAILED 3:0`. The error is post-training
+control flow: the shared closure driver still returns 3 against its explicitly retired absolute
+`recovery >= 0.80` self-check, and the launcher's `set -e` stopped before its quarantine-manifest step.
+No unchanged A100 retry is warranted.
+
+Independent arithmetic on the four persisted 285-cell spectra gives gap `0.234270363`, floor/gap
+`0.045875515`, residual `0.114182607`, and recovery **`0.512603276`**. The PRIMARY adopted criterion
+passes (`>=0.494582400`, margin `+0.018020876`). The SECONDARY assumed baseline band rejects the arm:
+recovery is `-0.034249724` below `0.546853`, outside `+/-0.02`. Per Amendment 1, PRIMARY decides and
+the disagreement itself is the finding. The LR proof is exact: two iteration-0 fits at `1e-4`, then
+four iteration-1/2 fits at `1e-5`. Joseph's verdict mail was accepted locally (`rc=0`).
+
+This diagnostic does not authorize an engine edit, threshold change, promotion, or Branch C reopening.
+A hash-pinned CPU-only finalizer will reuse the existing artifact to run the authoritative full-dump
+re-derivation and create the missing dual-rejection quarantine manifest; it does not retrain. Receipt:
+`../docs/orchestration/state/annealed-shape-r2-terminal-56552326.json`.
+
+CPU finalizer `56562169` completed `0:0` in 41 seconds with empty stderr. It reused the committed
+source report, artifact, preflight, and quarantine manifest without retraining or overwriting. The
+authoritative Gate-4 powered-closure evaluator independently rebuilt all four spectra from the frozen
+dump and persisted row/weight artifact: the largest difference from the reported spectra is
+`5.898e-12` against the `1e-9` tolerance. Its 31 powered-closure checks and 47 total checks have zero
+failures; all 14 exact hashes, the disjoint `2M+2M` split, Gate-2 identity, source digest, producer
+receipt, and six fit-time LR records pass.
+
+The final scientific reading is therefore fixed: PRIMARY PASS at recovery `0.512603276`, SECONDARY
+TRADE-OFF/ARM-REJECTED at `-0.034249724` versus baseline, with criterion disagreement as the finding.
+The dual quarantine rejection was recomputed and remains true. The isolated diagnostic still does not
+authorize a shared-engine edit, threshold change, promotion, or Branch C reopening. Receipt:
+`../docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.

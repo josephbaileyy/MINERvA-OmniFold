@@ -1,0 +1,377 @@
+{
+  "authoritative_gate4_powered_closure": {
+    "n_checks": 31,
+    "n_failed": 0,
+    "ok": true,
+    "validator": "validate_pet_nominal_gate4.check_powered_closure",
+    "validator_sha256": "024e718d97efb3fc80d23d333a5126a789b9e5f48411907e823b9ec2149a20f9"
+  },
+  "branch_c_opened": false,
+  "checks": [
+    {
+      "detail": "f7f764594f384ea5dcb0f68809d6e1e185bb405992faaf87a013928daee9c015 == f7f764594f384ea5dcb0f68809d6e1e185bb405992faaf87a013928daee9c015",
+      "name": "hash:report",
+      "ok": true
+    },
+    {
+      "detail": "1c5a8fef4683b2114a27272b6d7652129c9d3d22aed7dae68d54c0ddaa780202 == 1c5a8fef4683b2114a27272b6d7652129c9d3d22aed7dae68d54c0ddaa780202",
+      "name": "hash:artifact",
+      "ok": true
+    },
+    {
+      "detail": "8411c2bddbe8c6de286c43cf39e6d936a5ba69da978f0d97f5937175d068bc01 == 8411c2bddbe8c6de286c43cf39e6d936a5ba69da978f0d97f5937175d068bc01",
+      "name": "hash:preflight",
+      "ok": true
+    },
+    {
+      "detail": "d21b87ba308b88d8b3f6994db7e8da79aeb5503e0708c9df8f69544faed5b4d7 == d21b87ba308b88d8b3f6994db7e8da79aeb5503e0708c9df8f69544faed5b4d7",
+      "name": "hash:manifest",
+      "ok": true
+    },
+    {
+      "detail": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625 == fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "name": "hash:inputs",
+      "ok": true
+    },
+    {
+      "detail": "336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f == 336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f",
+      "name": "hash:gate2-receipt",
+      "ok": true
+    },
+    {
+      "detail": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084 == 58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084",
+      "name": "hash:nominal-weights",
+      "ok": true
+    },
+    {
+      "detail": "aa9533ce623736de2335577d48fa48a9d8bfe5b9db0984a57946b064ef7718e6 == aa9533ce623736de2335577d48fa48a9d8bfe5b9db0984a57946b064ef7718e6",
+      "name": "hash:finalizer",
+      "ok": true
+    },
+    {
+      "detail": "024e718d97efb3fc80d23d333a5126a789b9e5f48411907e823b9ec2149a20f9 == 024e718d97efb3fc80d23d333a5126a789b9e5f48411907e823b9ec2149a20f9",
+      "name": "hash:validator",
+      "ok": true
+    },
+    {
+      "detail": "62cec59b3072c10a276e0ab85d76b95bdfa0c96ae2e35d545cb066d4e5e4a641 == 62cec59b3072c10a276e0ab85d76b95bdfa0c96ae2e35d545cb066d4e5e4a641",
+      "name": "hash:quarantine",
+      "ok": true
+    },
+    {
+      "detail": "ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911 == ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911",
+      "name": "hash:source-wrapper",
+      "ok": true
+    },
+    {
+      "detail": "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48 == a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48",
+      "name": "hash:source-driver",
+      "ok": true
+    },
+    {
+      "detail": "fb6b3219f3ff2dbc682ff2987b3f71b56a2a59a53c34779c26e986b2f7fe071f == fb6b3219f3ff2dbc682ff2987b3f71b56a2a59a53c34779c26e986b2f7fe071f",
+      "name": "hash:source-launcher",
+      "ok": true
+    },
+    {
+      "detail": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa == 3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "name": "hash:source-engine",
+      "ok": true
+    },
+    {
+      "detail": "powered-truth-reweight-closure-v2",
+      "name": "powered:report_schema",
+      "ok": true
+    },
+    {
+      "detail": "h_prior: 285 cells, finite, non-negative, unit sum (len=285, sum=1.0)",
+      "name": "powered:vector_h_prior",
+      "ok": true
+    },
+    {
+      "detail": "h_target: 285 cells, finite, non-negative, unit sum (len=285, sum=0.9999999999999998)",
+      "name": "powered:vector_h_target",
+      "ok": true
+    },
+    {
+      "detail": "h_unfolded: 285 cells, finite, non-negative, unit sum (len=285, sum=1.0)",
+      "name": "powered:vector_h_unfolded",
+      "ok": true
+    },
+    {
+      "detail": "h_untilted: 285 cells, finite, non-negative, unit sum (len=285, sum=1.0)",
+      "name": "powered:vector_h_untilted",
+      "ok": true
+    },
+    {
+      "detail": "powered closure histogrammed on the canonical extended-FPS grid",
+      "name": "powered:grid_is_frozen",
+      "ok": true
+    },
+    {
+      "detail": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
+      "name": "powered:bin_order",
+      "ok": true
+    },
+    {
+      "detail": "amplitude=0.35 (predeclared 0.35)",
+      "name": "powered:injection_amplitude",
+      "ok": true
+    },
+    {
+      "detail": "clip_z=3.0 (predeclared 3.0)",
+      "name": "powered:injection_clip_z",
+      "ok": true
+    },
+    {
+      "detail": "applied_on='pass_truth rows only' -- a truth-level reweighting is only defined where a truth record exists",
+      "name": "powered:injection_on_truth_rows_only",
+      "ok": true
+    },
+    {
+      "detail": "'pass_reco & pass_truth on both sides' vs predeclared 'pass_reco & pass_truth on both sides'",
+      "name": "powered:step1_population",
+      "ok": true
+    },
+    {
+      "detail": "rate_preserving=True -- a rate change would let a pure normalization fix look like shape recovery",
+      "name": "powered:injection_rate_preserving",
+      "ok": true
+    },
+    {
+      "detail": "disjoint=True, half_size=2000000, split_seed=7 (predeclared 2000000/2000000, seed 7) -- an overlapping split restores the identity shortcut and the power goes to zero",
+      "name": "powered:samples_disjoint_as_declared",
+      "ok": true
+    },
+    {
+      "detail": "{'niter': 3, 'epochs': 8, 'estimator_seed': 42, 'subsample_seed': 0, 'batch_size': 512} vs frozen {'niter': 3, 'epochs': 8, 'estimator_seed': 42, 'subsample_seed': 0, 'batch_size': 512} -- batch_size changes the optimizer trajectory, so it is part of the config",
+      "name": "powered:nominal_configuration",
+      "ok": true
+    },
+    {
+      "detail": "fingerprint='pet-fullevent-fps-v1'; a closure on another schema is evidence about another estimator (J01)",
+      "name": "powered:estimator_and_schema",
+      "ok": true
+    },
+    {
+      "detail": "reco_leg_weight_used='w_reco' (D1)",
+      "name": "powered:reco_leg_is_w_reco",
+      "ok": true
+    },
+    {
+      "detail": "the inventory identity hashes the run consumed, so the closure is bound to a dump rather than floating free",
+      "name": "powered:input_identity_recorded",
+      "ok": true
+    },
+    {
+      "detail": "artifact hash matches, halves are 2000000+2000000 with 0 overlapping rows, push aligned to half B",
+      "name": "powered:artifact_and_split_verified",
+      "ok": true
+    },
+    {
+      "detail": "max|reported-rederived| = 4.730e-12 <= 1e-09",
+      "name": "powered:spectrum_matches_rederivation_h_prior",
+      "ok": true
+    },
+    {
+      "detail": "max|reported-rederived| = 4.788e-12 <= 1e-09",
+      "name": "powered:spectrum_matches_rederivation_h_unfolded",
+      "ok": true
+    },
+    {
+      "detail": "max|reported-rederived| = 4.552e-12 <= 1e-09",
+      "name": "powered:spectrum_matches_rederivation_h_target",
+      "ok": true
+    },
+    {
+      "detail": "max|reported-rederived| = 5.898e-12 <= 1e-09",
+      "name": "powered:spectrum_matches_rederivation_h_untilted",
+      "ok": true
+    },
+    {
+      "detail": "compared ['sig']: sig:ok",
+      "name": "powered:identity_values_match_gate2",
+      "ok": true
+    },
+    {
+      "detail": "report inputs_sha256=fa6b346316024216 vs this gate's own read of --inputs",
+      "name": "powered:source_dump_digest_matches",
+      "ok": true
+    },
+    {
+      "detail": "producer_receipt_sha256=d466a0c18deaafa2",
+      "name": "powered:producer_receipt_bound",
+      "ok": true
+    },
+    {
+      "detail": "recomputed gap=0.234270 >= 0.15 -- below this there is no injected signal to recover and a pass would be vacuous",
+      "name": "powered:gap_is_large_enough",
+      "ok": true
+    },
+    {
+      "detail": "recomputed floor/gap=0.045876 <= 0.1 -- bounds how much of `gap` is sample-split noise between the two disjoint halves rather than injection",
+      "name": "powered:floor_small_against_gap",
+      "ok": true
+    },
+    {
+      "detail": "1 - f*ceiling = 1 - 0.8*0.618228 = 0.505417600 vs frozen residual_over_gap_max=0.505417600",
+      "name": "powered:criterion_derivation_consistent",
+      "ok": true
+    },
+    {
+      "detail": "ABSOLUTE recovery 0.512603 against ceiling 0.618228 at k=3 (0.8291 of it); relative bar 0.494582. REPORTED TOGETHER because a relative margin cannot adjudicate a choice of k: a lower k lowers BOTH the ceiling and the bar, so a lower-k pass can show a better margin at a worse absolute recovery. The ceiling is a REFERENCE curve, not a proven cap (CLM-012 (i): a smooth learner can beat it; BEN-038 measured a band at E_w[r]=1.0333).",
+      "name": "powered:absolute_recovery_reported_with_ceiling",
+      "ok": true
+    },
+    {
+      "detail": "recovery 0.512603 >= f*ceiling = 0.8*0.618228 = 0.494582 [margin 0.018021; ceiling is per-event, injection-pinned, +/-2.0 pp sensitive -> threshold moves +/-0.0160, flips only if the ceiling reaches 0.683566] (residual/gap=0.487397 <= 0.505418)",
+      "name": "powered:recovery_meets_criterion",
+      "ok": true
+    },
+    {
+      "detail": "report claims gap=0.23427036251295683 floor=0.010747273613151719 residual=0.11418260718355933; recomputed 0.234270362/0.010747274/0.114182607",
+      "name": "powered:reported_metrics_match_recomputation",
+      "ok": true
+    },
+    {
+      "detail": {
+        "expected": [
+          {
+            "iteration": 0,
+            "learning_rate": 0.0001,
+            "step": 1
+          },
+          {
+            "iteration": 0,
+            "learning_rate": 0.0001,
+            "step": 2
+          },
+          {
+            "iteration": 1,
+            "learning_rate": 1e-05,
+            "step": 1
+          },
+          {
+            "iteration": 1,
+            "learning_rate": 1e-05,
+            "step": 2
+          },
+          {
+            "iteration": 2,
+            "learning_rate": 1e-05,
+            "step": 1
+          },
+          {
+            "iteration": 2,
+            "learning_rate": 1e-05,
+            "step": 2
+          }
+        ],
+        "records": [
+          {
+            "effective_fixed": false,
+            "iteration": 0,
+            "learning_rate": 9.999999747378752e-05,
+            "requested_fixed": false,
+            "step": 1
+          },
+          {
+            "effective_fixed": false,
+            "iteration": 0,
+            "learning_rate": 9.999999747378752e-05,
+            "requested_fixed": false,
+            "step": 2
+          },
+          {
+            "effective_fixed": true,
+            "iteration": 1,
+            "learning_rate": 9.999999747378752e-06,
+            "requested_fixed": false,
+            "step": 1
+          },
+          {
+            "effective_fixed": true,
+            "iteration": 1,
+            "learning_rate": 9.999999747378752e-06,
+            "requested_fixed": false,
+            "step": 2
+          },
+          {
+            "effective_fixed": true,
+            "iteration": 2,
+            "learning_rate": 9.999999747378752e-06,
+            "requested_fixed": false,
+            "step": 1
+          },
+          {
+            "effective_fixed": true,
+            "iteration": 2,
+            "learning_rate": 9.999999747378752e-06,
+            "requested_fixed": false,
+            "step": 2
+          }
+        ]
+      },
+      "name": "anneal:fit_time_lr_proof",
+      "ok": true
+    },
+    {
+      "detail": {
+        "as_written": true,
+        "fold_values_match": true,
+        "hashes_match": true,
+        "physics_alone": true,
+        "recomputed_deviation": 0.3445786271570904,
+        "recomputed_rejection_reason": "fold-forward deviation 0.344579 exceeds 0.05 (from validate_pet_nominal_gate4.FROZEN) by 6.9x: reco-weighted mean of push = 0.736746 against R = 1.124080. The cross section built from these weights is low by ~34.5%. NOT QUOTABLE on the physics alone, independent of how this manifest is labelled.",
+        "recomputed_tolerance": 0.05,
+        "tolerance_source": "validate_pet_nominal_gate4.FROZEN"
+      },
+      "name": "quarantine:dual_publication_rejection",
+      "ok": true
+    }
+  ],
+  "engine_edited": false,
+  "exit_code": 0,
+  "finalizer_job_id": "56562169",
+  "finished_at_utc": "2026-08-10T10:59:20+00:00",
+  "promotion_authorized": false,
+  "quarantine_manifest": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json",
+    "publication_gate_rejects_this": true,
+    "publication_gate_rejects_this_on_physics_alone": true,
+    "reused_committed_manifest_without_overwrite": true,
+    "sha256": "d21b87ba308b88d8b3f6994db7e8da79aeb5503e0708c9df8f69544faed5b4d7"
+  },
+  "retrained": false,
+  "schema": "annealed-shape-independent-finalization-v1",
+  "scientific_reading": {
+    "combined": "PRIMARY_PASS_SECONDARY_TRADE_OFF_CRITERION_DISAGREEMENT",
+    "metrics": {
+      "derivation": "arithmetic on report vectors only after the authoritative validator required each vector to match its independent dump/artifact re-derivation",
+      "floor": 0.010747273613151719,
+      "floor_over_gap": 0.04587551535699407,
+      "gap": 0.23427036251295683,
+      "recovery": 0.5126032761517403,
+      "residual": 0.11418260718355933,
+      "residual_over_gap": 0.48739672384825977
+    },
+    "primary": {
+      "criterion": "recovery >= f * acceptance_limited_ceiling",
+      "margin": 0.01802087615174025,
+      "pass": true,
+      "rank": "PRIMARY_DECIDES",
+      "threshold": 0.49458240000000003
+    },
+    "secondary": {
+      "band": 0.02,
+      "baseline": 0.546853,
+      "difference": -0.03424972384825975,
+      "rank": "SECONDARY_ASSUMPTION",
+      "verdict": "TRADE_OFF_CONFIRMED_ARM_REJECTED"
+    }
+  },
+  "source_job_id": "56552326",
+  "started_at_utc": "2026-08-10T10:58:50+00:00",
+  "status": "PASS_DIAGNOSTIC_PRIMARY_PASS_SECONDARY_TRADE_OFF_NONQUOTABLE",
+  "threshold_changed": false
+}

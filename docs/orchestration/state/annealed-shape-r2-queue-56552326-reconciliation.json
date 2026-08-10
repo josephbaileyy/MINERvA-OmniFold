@@ -1,0 +1,72 @@
+{
+  "schema": "queue-latency-reconciliation-v1",
+  "run_id": "DIAG-ANNEALED-SHAPE-A2-QH1",
+  "recorded_at_utc": "2026-08-10T05:51:22Z",
+  "event": {
+    "event_id": "evt-annealed-shape-r2-queue-56552326",
+    "event_type": "queue-latency",
+    "watch_id": "annealed-shape-r2-queue-56552326",
+    "observed_at_utc": "2026-08-10T05:50:33+00:00",
+    "head_at_event": "70d0f02476d5e58289d853084796e3053da083be",
+    "sha256": "9538fe994c8ef5f624e803716a6001ad86f341c514056a5c5d416fc2763dfdde",
+    "threshold_seconds": 3600,
+    "waited_seconds": 3904,
+    "prestart_verified": true,
+    "read_count": 1,
+    "validation": "PASS_REAL_UNRECONCILED_QUEUE_LATENCY_EVENT"
+  },
+  "scheduler_snapshot": {
+    "observed_at_utc": "2026-08-10T05:51:22Z",
+    "job_id": "56552326",
+    "job_name": "ann_shape",
+    "state": "PENDING",
+    "reason": "Priority",
+    "exit_code": "0:0",
+    "elapsed": "00:00:00",
+    "start": "Unknown",
+    "qos": "gpu_shared",
+    "constraint": "gpu&a100",
+    "requested_gpus": 1,
+    "cpus_per_task": 32,
+    "time_limit": "08:00:00",
+    "node": "None assigned"
+  },
+  "output_ownership": {
+    "report": "ABSENT",
+    "artifact": "ABSENT",
+    "preflight_receipt": "ABSENT",
+    "manifest": "ABSENT",
+    "stdout": "ABSENT",
+    "stderr": "ABSENT",
+    "launcher_log": "ABSENT",
+    "weights_namespace": "ABSENT",
+    "output_written": false,
+    "duplicate_writer": false
+  },
+  "alternative_route": {
+    "interactive_allocation": "NONE",
+    "detached_a100_controller": "NONE",
+    "measured_full_input_reference_runtime": "approximately 06:00:44",
+    "maximum_interactive_wall": "04:00:00",
+    "collision_safe_route_allocated_and_proven": false
+  },
+  "decision": {
+    "selected_route": "RETAIN_BATCH_AS_SOLE_WRITER",
+    "batch_cancelled": false,
+    "interactive_job_requested": false,
+    "duplicate_writer_started": false,
+    "rationale": "The job remains wholly prestart-pending with no output, but no A100 alternative exists and the measured full-input runtime exceeds the interactive wall. Ownership cannot be transferred safely.",
+    "terminal_watch": "annealed-shape-r2-56552326",
+    "terminal_watch_required_state": "ARMED"
+  },
+  "scope": {
+    "publication_candidate": false,
+    "branch_c_unchanged": true,
+    "threshold_change": false,
+    "shared_engine_edited": false,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "BATCH_RETAINED_TERMINAL_WATCH_REQUIRED"
+}

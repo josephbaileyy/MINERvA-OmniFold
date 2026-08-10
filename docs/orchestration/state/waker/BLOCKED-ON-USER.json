@@ -1,32 +1,37 @@
 {
   "schema": "campaign-blocked-on-user-v1",
-  "recorded_at_utc": "2026-08-09T22:20:07Z",
+  "recorded_at_utc": "2026-08-10T11:07:29Z",
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_gate": "Branch C formal-increment-gate versus end-state-normalization disposition",
-  "decision_required": "Choose whether the next branch follows the formal predeclared increment-gate verdict, investigates the annealed-LR end state that is inside the separate 5% fold-forward tolerance, or stops the PET publication path.",
-  "why_user_decision_is_required": "Every control fails the predeclared increment gate, formally routing to intrinsic feedback / representation-tail contraction. Independently, the annealed arm improves the end-state fold-forward deviation from 34.46% to 1.17% and is inside the frozen 5% normalization tolerance; the increment criterion degenerates because the arm is already 0.24% from target after iteration 1. Normalization repair is not shape validation, and overriding a predeclaration or expanding to a new validation branch requires Joseph's scientific disposition.",
+  "current_gate": "Annealed-LR publication-estimator promotion disposition",
+  "decision_required": "Choose whether the publication PET estimator adopts the fit-time LR anneal, rejects that arm and opens another normalization-remediation branch, or stops the PET publication path.",
+  "why_user_decision_is_required": "The independently re-derived powered closure has the predeclared disagreement: recovery 0.512603276 passes the adopted PRIMARY 0.494582400 criterion by 0.018020876, but is 0.034249724 below the full-LR baseline and therefore triggers the SECONDARY TRADE-OFF/ARM-REJECTED reading. The anneal repairs fold-forward normalization from a 34.46% deficit to 1.17%, but a clean isolated diagnostic explicitly did not authorize changing the shared engine or promoting the arm. That scientific trade-off and the resulting estimator change are Joseph's decision.",
   "options": [
     {
-      "id": "authorize_tail_diagnostic",
-      "description": "Uphold the formal increment-gate route and authorize a no-publication, hash-bound diagnostic that decomposes the iteration-2 correction by push-weight and representation-tail strata before proposing any engine change."
+      "id": "authorize_anneal_promotion",
+      "description": "Authorize promotion of the proven fit-time anneal into the publication estimator, accepting the quantified shape trade-off because the adopted primary criterion still passes; require a scoped engine/launcher change, complete hash-gate re-issue, and explicit nominal-launch authorization before PET production."
     },
     {
-      "id": "authorize_annealed_shape_validation",
-      "description": "Treat the annealed end-state normalization as a candidate repair and authorize independent shape/fold-forward validation in an isolated non-publication namespace before any engine edit or promotion."
+      "id": "reject_anneal_continue_remediation",
+      "description": "Reject the annealed arm because of the secondary shape trade-off and authorize a new, predeclared normalization-remediation branch; keep the current shared engine and Branch C unchanged meanwhile."
     },
     {
       "id": "stop_pet_path",
-      "description": "Keep Branch C closed and stop further PET publication remediation."
+      "description": "Keep Branch C closed and stop further publication PET remediation."
     }
   ],
   "prohibited_without_decision": [
     "editing the shared OmniFold engine",
-    "changing the 0.90 repair threshold",
-    "silently replacing the increment gate with the end-state gate",
-    "running an unchanged retry",
-    "promoting any diagnostic arm",
-    "starting a publication PET cross section"
+    "promoting the annealed diagnostic arm",
+    "re-issuing Gate 4 around an unapproved estimator",
+    "launching a publication PET nominal",
+    "changing either predeclared criterion or its rank",
+    "running another unchanged powered closure"
   ],
+  "evidence": {
+    "completion_receipt": "docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json",
+    "independent_validation_receipt": "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.INDEPENDENT_VALIDATION.slurm-56562169.json",
+    "predeclaration": "docs/orchestration/PREDECLARATION-20260810-annealed-shape-validation.md"
+  },
   "continuity": {
     "all_worker_uuids_preserved": true,
     "reset_credits_consumed": 0,

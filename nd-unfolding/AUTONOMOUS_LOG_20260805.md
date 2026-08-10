@@ -2991,3 +2991,129 @@ itself, never a sibling.
 
 Bindings ALL INTACT. No mail: `56547490` has not reported. Holding.
 
+### 04:55Z — `56547490` FAILED at 81 s on MY bug; the other lane had already fixed it; I reverted my edit to keep their pin intact
+
+**The failure was mine and the irony is instructive.** `closure_powered_truth_reweight.py:236` reads
+`early_stop`'s default off the engine's own signature —
+`inspect.signature(MultiFold.__init__).parameters["early_stop"].default` — which is the closure doing the
+**right** thing: its own comment says *"Two copies of a default is one of them going stale."* My
+`AnnealedMultiFold` declared `__init__(self, *a, **kw)`, which **erases that signature**, and the closure
+died with `KeyError: 'early_stop'` after 81 seconds. **Good practice on the consumer's part is exactly what
+my substitution broke.**
+
+Proved the mechanism locally without TF: a `(*a, **kw)` override hides `early_stop` from
+`inspect.signature`; leaving `__init__` alone, or wrapping it, does not.
+
+**The other lane had already diagnosed and fixed it before I looked** — `1ddc3f4` / `70d0f02`, with a
+`diagnosis.class` of `ISOLATED_SUBCLASS_SIGNATURE_PRETRAINING` and a root cause naming the exact mechanism.
+Their fix is `@functools.wraps(BaseMultiFold.__init__)` on the override, which sets `__wrapped__` so
+`inspect.signature` follows through. Valid. They also **hardened the launcher preflight** to assert the
+property directly, and more strictly than I would have: not just that `early_stop` is visible but that its
+**default equals the base's**.
+
+**Then I made it worse and had to undo it.** I resolved the rebase by taking their fix plus a six-line
+comment noting that `functools.wraps` would not survive a consumer calling
+`inspect.signature(..., follow_wrapped=False)` (verified: it does not) — plus my own in-process guard. That
+comment changed the wrapper's sha from `ce9f11f4` to `ec3d250d`, and **their error receipt
+`annealed-shape-error-56547490.json` pins `changed_repair.wrapper_sha256 = ce9f11f4`** as a forward
+assertion that the repair is ready at that sha. Bindings went BROKEN.
+
+Updating their pin to match my edit would have been **hand-editing a hash to clear a mismatch**, which is
+prohibited outright. So I reverted the wrapper to their exact bytes from `70d0f02` — sha confirmed back to
+`ce9f11f4872dd611`, bindings ALL INTACT, suite back to the documented 7. **My edit added zero function:**
+the caveat was a comment, and my in-process guard is redundant against their launcher preflight, which is
+the stricter check. Nothing of value was given up to restore their pin.
+
+**Recording the caveat here instead of in the code, which is where it belongs anyway:** their
+`functools.wraps` fix depends on `inspect.signature` following `__wrapped__` by default. It is correct for
+this consumer. If a second consumer ever introspects with `follow_wrapped=False`, the fix should become
+"don't override `__init__` at all" rather than a wider wrapper.
+
+**The transferable lesson, and it is not the one I expected:** a subclass substituted for a class whose
+signature a consumer introspects is not a drop-in — the *interface* includes the signature, not just the
+behaviour. And separately: when two lanes fix the same bug, the one whose receipt already pins the fix wins,
+because a comment is never worth breaking a pin over.
+
+No mail: `56552326` (their watched retry, same launcher) is still `PENDING`, so nothing has reported.
+
+### 05:40Z — `56552326` REPORTED. The two readings DISAGREE, which is exactly the predeclared finding
+
+The anneal **fixes normalization and costs shape**. Both predeclared readings fired, and they point
+opposite ways — which Joseph predeclared as the outcome he wanted before any promotion talk.
+
+    recovery (annealed)   0.5126032761517403
+    baseline (full-LR)    0.546853
+    adopted threshold     0.494582
+
+    PRIMARY   (adopted CLM-012 criterion)   0.512603 >= 0.494582   PASSES, margin +0.018021
+    SECONDARY (band +/-0.02 vs baseline)    -0.034250, band exceeded 1.71x
+                                            -> predeclared row: TRADE-OFF CONFIRMED, ARM REJECTED
+
+**The trade-off, finally measured in both currencies rather than one:**
+
+    normalization GAINED   |dev| 34.46% -> 1.17%          = 33.29 points
+    shape LOST             recovery 0.546853 -> 0.512603  =  3.42 points
+    fraction of ceiling    0.88455 -> 0.82915             =  5.54 pts of ceiling
+    exchange rate          9.72 points of normalization per point of shape
+
+So the mechanism Joseph named at the outset — *the anneal buys normalization by under-updating and
+therefore under-recovers shape* — **is real and is now quantified.** It is not fatal: the arm still clears
+the adopted absolute criterion with margin +0.018, i.e. it reaches 82.9% of the acceptance ceiling against
+the baseline's 88.5%.
+
+**The anneal provably took effect**, so the measurement is valid: `2` fits at `1e-4` (iteration 0) and `4`
+at `1e-5`, exactly the intended pattern, read back off the optimizer. Protocol identical to the graded run
+— `gap 0.234270`, `floor/gap 0.045876` against the preflight's `0.2343 / 0.0459`.
+
+**And the stale bar bit in a way my labelling fix did not cover.** The closure's own
+`recovery_criteria_met` (against the retired 0.80) was correctly relabelled
+`..._AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT = False` — the field fix worked. But that same retired
+criterion also drove the **process exit code to 3**, and under `set -eo pipefail` that aborted the
+launcher's remaining steps: the quarantine manifest and the printed predeclared reading never ran. **I
+labelled the output and forgot the exit status.** Built the manifest post-hoc (non-quotability re-proven,
+including the laundered-copy test) and applied the reading by hand. Products preserved locally and copied
+into the CFS backup's `receipts/` (now 9).
+
+Worth stating plainly: exit 3 here means *"the closure's own retired criteria decided against the run"*,
+**not** that the run failed. A reader seeing `FAILED 3:0` in `sacct` would draw the wrong conclusion, which
+is the same misreading risk as the field, one layer out.
+
+Mailing the verdict — a job finished and a predeclared reading resolved, so this clears the bar.
+
+### 11:15Z — Independently confirmed to the last digit, and my exit-3 inference is now a measured fact
+
+The other lane ran a finalizer (`56562169`) that re-derived the reading independently. **Every number
+matches mine bit-for-bit:**
+
+    recovery        0.5126032761517403     identical
+    threshold       0.49458240000000003    identical
+    primary margin  0.01802087615174025    identical
+    secondary diff  -0.03424972384825975   identical
+    combined        PRIMARY_PASS_SECONDARY_TRADE_OFF_CRITERION_DISAGREEMENT
+
+**And it adds the one thing I had only reasoned to.** I argued that exit 3 was purely the driver's stale
+internal `0.80` bar and that `check_powered_closure` — which reads the adopted threshold from FROZEN and
+re-derives the spectra — was authoritative and would pass. They **ran** it:
+`31 checks, 0 failed, ok=True`. So the closure passes the authoritative Gate-4 powered-closure validator,
+and "exit 3 was not a failure" is now demonstrated rather than argued. That is exactly the kind of claim I
+should not have been left holding on inference, and it is the second time this week the other lane's
+independent pass converted one of my inferences into evidence.
+
+Their hygiene is also worth noting: `reused_committed_manifest_without_overwrite: True` with the sha
+matching the manifest I built post-hoc — they verified mine rather than regenerating a competing one, which
+is what keeps two lanes from producing two receipts for one measurement.
+
+End state, all four flags where they should be: `promotion_authorized=False`, `branch_c_opened=False`,
+`threshold_changed=False`, `engine_edited=False`. They have filed `BLOCKED-ON-USER.json` naming the decision
+in the correct terms — adopt the fit-time LR anneal, reject the arm and open another
+normalization-remediation branch, or stop the PET publication path — with the options and the prohibited
+actions enumerated.
+
+**No mail from me.** I sent the verdict last cycle with the full trade-off; their blocker record carries the
+same evidence through their own channel, and a second mail would be the same decision arriving twice. The
+`31/0` confirmation strengthens what he already has rather than changing it.
+
+State: queue is the wakerctl cron alone, **0 armed watches** — correct here, because nothing is running and
+the outstanding item is a human decision, not a job. Trees synced at `6b20122`. My lane has nothing running,
+nothing queued, and no decision of mine outstanding.
+
