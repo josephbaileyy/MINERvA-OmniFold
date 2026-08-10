@@ -25,9 +25,25 @@ def main():
     prov = json.load(open(a.component_manifest))
     val = json.load(open(a.validation))
     P.require(val.get("result") == "PASS", "candidate validator did not PASS")
+    # FIX 2 of 2 (2026-08-10). Bind the component manifest to the validation receipt BEFORE
+    # reading anything out of it. Previously `prov` came from a path on this command line and was
+    # never tied to the receipt, so every gate below that consults it -- including the
+    # non-adoptable refusal -- could be defeated by passing a hand-edited copy.
+    _cm_sha = val.get("component_manifest_sha256")
+    P.require(_cm_sha is not None,
+              "the validation receipt records no component_manifest_sha256 -- it predates the "
+              "2026-08-10 binding fix and cannot tie this manifest to what was validated; re-run "
+              "p4_validate_active_lateral.py")
+    P.require(P.sha256_file(a.component_manifest) == _cm_sha,
+              "component manifest is not the one this receipt validated (sha256 mismatch) -- "
+              "refusing, because every gate below reads from it")
     # Refuse a self-declared non-adoptable candidate before anything else. The whole point of
     # the marker is that it cannot be missed by a reader who does not know how the file was made.
     P.require_adoptable(prov)
+    # ...and independently of the manifest, honour the marker the RECEIPT carries, so stripping the
+    # key from both files is not enough either.
+    P.require(not val.get(P.NON_ADOPTABLE_KEY),
+              f"the validation receipt records {P.NON_ADOPTABLE_KEY}=true for this candidate")
     # identities: the expected vertical/unified inputs are present and hash-matched
     for key, path in (("support_family_sha256", prov["support_family"]),
                       ("stat_sha256", prov["stat_cov"].split(":")[0]),

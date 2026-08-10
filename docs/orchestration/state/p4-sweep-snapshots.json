@@ -76,7 +76,7 @@
     },
     "live_instances": 0,
     "n_candidates": 23,
-    "n_shell_files": 332,
+    "n_shell_files": 333,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
@@ -104,7 +104,6 @@
       "candidate_total_key",
       "code_rev",
       "component_content_hash",
-      "component_manifest",
       "component_manifest_sha256",
       "conc_new",
       "conc_reference",
@@ -135,6 +134,9 @@
       "log_bkg_mode_reason",
       "log_sha256",
       "manifest_endpoint_hash",
+      "mask4d_neffective",
+      "mask4d_unreachable_global_indices",
+      "mask4d_unreachable_n",
       "max_abs_rel",
       "max_eig",
       "max_rel_bin",
@@ -156,6 +158,7 @@
       "per_bin",
       "pooled_mean",
       "pooled_sd",
+      "projected_support",
       "projection_identity_relerr",
       "recovered",
       "rel_asymmetry",
@@ -208,7 +211,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 99,
+    "n_fields": 102,
     "n_gates": 25,
     "tool": "tools_p4_sweep_recorded_fields"
   }

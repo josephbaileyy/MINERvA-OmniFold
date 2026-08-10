@@ -85,7 +85,20 @@ def main():
     h4 = P.cmask_order_hash_4d(m4)
     P.require(h4 == man["mask4d_hash"], "4D mask/order hash drift")
 
-    M = P.build_projection_M(edges, W_AXIS, m5, m4)               # deterministic
+    # FIX 1 of 2 (2026-08-10). The projection's low support is DERIVED, not asserted: it is the
+    # part of the 4D reported mask that the reported 5D support actually reaches. Five 4D bins are
+    # unreachable on the real products, which previously made stage 6 unable to execute at all.
+    # The mask/count/hash gates above still bind the FULL 4D reported mask -- the effective support
+    # is an additional recorded fact, not a replacement for the frozen binding.
+    m4_reach = P.reachable_low_mask(edges, W_AXIS, m5)
+    m4_eff = m4 & m4_reach
+    dropped = np.nonzero(m4 & ~m4_reach)[0]
+    P.require(int(m4_eff.sum()) > 0, "no 4D reported bin is reachable from the 5D support")
+    if dropped.size:
+        print(f"[proj] {dropped.size} of {int(m4.sum())} reported 4D bins are UNREACHABLE from the "
+              f"5D support and are excluded from the projected product; global indices "
+              f"{[int(i) for i in dropped[:10]]}{' ...' if dropped.size > 10 else ''}")
+    M = P.build_projection_M(edges, W_AXIS, m5, m4_eff)           # deterministic
     m_hash = P.matrix_content_hash(M)                             # pins M's CONTENTS, not its shape
     cpath, ckey = a.c5.rsplit(":", 1)
     C5 = _th2(cpath, ckey)
@@ -97,7 +110,7 @@ def main():
     # does not assert is removed, not widened; the measurement below is unchanged and reported in
     # full. Measured values: FINDING-20260809-stage6-central-gate-cannot-pass.md.
     C4, stats = P.check_projection_validity(C5, M)
-    xcheck = P.crosscheck_marginal_vs_independent(M, x5[m5], x4[m4])
+    xcheck = P.crosscheck_marginal_vs_independent(M, x5[m5], x4[m4_eff])
     print(f"[xcheck] marginal vs INDEPENDENT 4D (no pass/fail, cross-check only): "
           f"n={xcheck['n_bins']} median={xcheck['median_abs_rel']:.4f} "
           f"p90={xcheck['p90_abs_rel']:.4f} max={xcheck['max_abs_rel']:.4f} "
@@ -116,6 +129,12 @@ def main():
                "projection_identity_relerr": stats["projection_identity_relerr"],
                "crosscheck_marginal_vs_independent_4d": xcheck,
                "M_shape": list(M.shape), "M_content_sha256": m_hash,
+               "mask4d_nreported": int(m4.sum()),
+               "mask4d_neffective": int(m4_eff.sum()),
+               "mask4d_unreachable_n": int(dropped.size),
+               "mask4d_unreachable_global_indices": [int(i) for i in dropped],
+               "projected_support": "reported 4D bins REACHABLE from the reported 5D support; "
+                                    "see mask4d_unreachable_* for what was excluded and why",
                "candidate_c5": os.path.abspath(cpath), "candidate_c5_key": ckey,
                "candidate_c5_sha256": P.sha256_file(cpath),
                "psd": stats},

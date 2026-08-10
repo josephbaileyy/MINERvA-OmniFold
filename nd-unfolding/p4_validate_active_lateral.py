@@ -128,6 +128,12 @@ def main():
             out[P.NON_ADOPTABLE_KEY] = True
             out["non_adoptable_reason"] = comp.get("non_adoptable_reason")
             out["gates"].append("candidate_self_declares_non_adoptable")
+        # FIX 2 of 2 (2026-08-10). Recording the PATH bound nothing: the adopter re-reads a
+        # component manifest supplied on its own command line, so a caller could hand it a
+        # marker-stripped copy and the self-declared rejection would simply vanish. The receipt
+        # now records the manifest's DIGEST, and the adopter requires the file it was given to be
+        # that exact file. A safety property that the caller can edit away is not one.
+        out["component_manifest_sha256"] = P.sha256_file(comp_path)
         out["component_manifest"] = comp_path
         out["component_manifest_sha256"] = P.sha256_file(comp_path)
         out["gates"].append("component_manifest_bound")

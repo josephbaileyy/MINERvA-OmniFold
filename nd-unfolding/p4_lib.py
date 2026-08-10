@@ -919,6 +919,37 @@ def check_support_comparison(active_cov, support_cov):
 
 
 # ---------------------------------------------------------------- deterministic projection map
+def reachable_low_mask(edges, drop_axis, mask_high):
+    """The low-dimensional bins the reported HIGH support actually reaches.
+
+    FIX 1 of 2, 2026-08-10. Stage 6 could not execute on the real products: 5 of the 4830 reported
+    4D bins receive no contribution from any reported 5D bin, so `build_projection_M` fail-closed
+    (correctly -- those rows would be all-zero and would surface downstream as `rel = 1.0`).
+
+    The resolution is a CONTRACT correction, not a relaxed guard. The projection's low support is
+    not "the 4D reported mask"; it is "the part of the 4D reported mask the 5D support reaches".
+    That set is DERIVED here and the bidirectional check in `build_projection_M` is left exactly as
+    it is -- it becomes a genuine invariant that must never fire in production rather than a thing
+    the caller argues with. The dropped bins are recorded by the caller, never silently discarded.
+
+    On the real products the 5 dropped bins hold 3.00e-46 .. 2.09e-44, i.e. 0.0000% of the 4D
+    total; that is a fact about these products, not a licence, and the caller records the indices
+    and the count so a future set with a material drop is visible rather than absorbed."""
+    nb = [np.asarray(e).size - 1 for e in edges]
+    require(len(nb) == 5, "expected 5 axes")
+    mh = np.asarray(mask_high).astype(bool)
+    require(mh.size == int(np.prod(nb)), "mask_high size != high grid")
+    nb_low = [n for i, n in enumerate(nb) if i != drop_axis]
+    strides_h = np.array([int(np.prod(nb[i + 1:])) for i in range(5)])
+    strides_l = np.array([int(np.prod(nb_low[i + 1:])) for i in range(4)])
+    out = np.zeros(int(np.prod(nb_low)), dtype=bool)
+    for g in np.nonzero(mh)[0]:
+        midx = [(g // strides_h[i]) % nb[i] for i in range(5)]
+        low_multi = [midx[i] for i in range(5) if i != drop_axis]
+        out[int(np.dot(low_multi, strides_l))] = True
+    return out
+
+
 def build_projection_M(edges, drop_axis, mask_high, mask_low):
     """Deterministic 5D->4D map by WIDTH-WEIGHTED marginalization of one axis.
     edges: ordered per-axis edge arrays (pt,pz,eavail,q3,W). drop_axis: axis index to

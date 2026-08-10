@@ -1030,30 +1030,58 @@ class NonAdoptableMarker(unittest.TestCase):
                              P.stamp_non_adoptable({}, env={"P4_NON_ADOPTABLE": v}),
                              f"value {v!r} should not stamp; only the exact string '1' does")
 
+    def _run_adopt(self, d, manifest_obj, receipt_extra=None, manifest_on_disk=None):
+        """Invoke the real adopter CLI. `manifest_on_disk` lets a caller hand the adopter a
+        DIFFERENT manifest from the one the receipt was built against -- the bypass path."""
+        import json, subprocess
+        mf = Path(d) / "std_component_manifest.json"
+        mf.write_text(json.dumps(manifest_obj))
+        val_obj = {"result": "PASS", "component_manifest_sha256": P.sha256_file(str(mf))}
+        val_obj.update(receipt_extra or {})
+        if manifest_on_disk is not None:            # swap the file AFTER the receipt was digested
+            mf.write_text(json.dumps(manifest_on_disk))
+        val = Path(d) / "val.json"
+        val.write_text(json.dumps(val_obj))
+        cand = Path(d) / "cand.root"
+        cand.write_bytes(b"x")
+        r = subprocess.run([sys.executable, str(ND / "p4_adopt_standard.py"),
+                            "--candidate", str(cand), "--component-manifest", str(mf),
+                            "--validation", str(val), "--out", str(Path(d) / "o.root"),
+                            "--i-understand-adoption"],
+                           capture_output=True, text=True, cwd=str(ND))
+        return r.stdout + r.stderr
+
     def test_marked_manifest_is_refused_and_unmarked_is_not(self):
-        import json, subprocess, tempfile
-        outs = {}
-        for marked in (True, False):
-            with tempfile.TemporaryDirectory() as d:
-                mf = Path(d) / "std_component_manifest.json"
-                mf.write_text(json.dumps(self._prov(marked)))
-                val = Path(d) / "val.json"
-                val.write_text(json.dumps({"result": "PASS"}))
-                cand = Path(d) / "cand.root"; cand.write_bytes(b"x")
-                r = subprocess.run([sys.executable, str(ND / "p4_adopt_standard.py"),
-                                    "--candidate", str(cand), "--component-manifest", str(mf),
-                                    "--validation", str(val), "--out", str(Path(d) / "o.root"),
-                                    "--i-understand-adoption"],
-                                   capture_output=True, text=True, cwd=str(ND))
-                outs[marked] = r.stdout + r.stderr
-        self.assertIn(P.NON_ADOPTABLE_KEY, outs[True],
+        """Extended 2026-08-10 for the binding fix. The adopter used to read the marker out of a
+        manifest supplied on its own command line with nothing tying that file to the receipt, so
+        the refusal could be deleted by editing a copy. Three cases now: marked is refused; a
+        marker-STRIPPED substitute is refused on the binding; unmarked-and-genuine is not refused
+        on either ground."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            out_marked = self._run_adopt(d, self._prov(True))
+        with tempfile.TemporaryDirectory() as d:
+            out_unmarked = self._run_adopt(d, self._prov(False))
+        with tempfile.TemporaryDirectory() as d:
+            # THE BYPASS: receipt digested the marked manifest, adopter is handed a stripped one
+            out_swapped = self._run_adopt(d, self._prov(True),
+                                          manifest_on_disk=self._prov(False))
+
+        self.assertIn(P.NON_ADOPTABLE_KEY, out_marked,
                       "the adopter did not cite the non-adoptable marker when refusing")
-        self.assertIn("not adoptable", outs[True])
-        # the unmarked one still fails (its inputs are fake) -- but it must NOT fail HERE, or
-        # the refusal is unconditional and proves nothing about the marker
-        self.assertNotIn("not adoptable", outs[False],
+        self.assertIn("not adoptable", out_marked)
+
+        self.assertIn("sha256 mismatch", out_swapped,
+                      "a marker-stripped substitute manifest was NOT caught by the receipt "
+                      "binding -- the self-declared rejection is editable away")
+
+        # the genuine unmarked one still fails (its inputs are fake) -- but it must NOT fail on
+        # either the marker or the binding, or those gates fire unconditionally and prove nothing
+        self.assertNotIn("not adoptable", out_unmarked,
                          "an UNMARKED manifest was refused as non-adoptable; the gate fires "
                          "unconditionally and would refuse a real candidate too")
+        self.assertNotIn("sha256 mismatch", out_unmarked,
+                         "the binding rejected a manifest that IS the validated one")
 
     def test_removing_the_marker_from_a_manifest_makes_the_gate_pass(self):
         """Self-guard: if someone deletes the stamp from the builder, this is what the adopter

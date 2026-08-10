@@ -10,7 +10,7 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **99 fields** written into a product with no same-line comparison, and **25 named
+drivers. **102 fields** written into a product with no same-line comparison, and **25 named
 gates**.
 
 > **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
@@ -44,7 +44,7 @@ gates**.
 > than closed silently, because "done" and "done in the only form the repo supports" are different
 > claims and the second is the true one.
 >
-> Current snapshot: **99 fields / 25 gates**; pipeline **23 candidates across 332 shell
+> Current snapshot: **102 fields / 25 gates**; pipeline **23 candidates across 333 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
