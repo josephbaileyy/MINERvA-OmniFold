@@ -3889,7 +3889,7 @@ current grounds, not that it needs reversing. I flagged an hour ago that the tem
 citation is to re-open the result; this is the adjacent trap and the same discipline applies.
 
 **Sequencing, stated as a judgement rather than a decision: re-stating `k` should follow the code-path
-bisect.** With a 188x-scatter disagreement between the driver and diagnostic paths unexplained, a `k=4` result
+bisect.** With a 188x-production-scatter disagreement between the driver and diagnostic paths unexplained, a `k=4` result
 could not be attributed to `k` rather than to whatever makes those paths differ. Confounding two open
 questions to save one job is how you get an answer to neither. It goes to Joseph as a fourth item explicitly
 behind the bisect.

@@ -99,7 +99,7 @@ That is the discriminator built on 2026-08-10 doing the job it was built for, on
 **The scatter measurement — the point of running both arms — is decisive.**
 
     MEASURED annealed scatter |dev_nominal - dev_floor| = 0.000126775
-    gap to expectation                                  = 0.023884650   = 188.4x the scatter
+    gap to expectation                                  = 0.023884650   = 188.4x the PRODUCTION scatter (diagnostic scatter is n=1, unmeasured)
     predeclared band 0.010                              = 79x WIDER than the real spread
     annealed scatter vs the 08-08 non-annealed pair     = 26.7x TIGHTER
 
