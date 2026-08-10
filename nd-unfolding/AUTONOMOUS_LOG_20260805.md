@@ -3560,3 +3560,51 @@ move that needs Joseph. Noted here so the question is on the record rather than 
 
 No mail: no job finished, no PASS/FAIL, no blocking decision — and the 21:05Z mail already carries the three
 open items. Queue still holds only the held cron.
+
+### 22:05Z — DURABLE NOTIFICATION RESTORED, proven by a real tick. And the recovery path has a fail-open trap.
+
+The oversight session answered the one question I said I would act on — whether `install-cron` replaces or
+duplicates a held scrontab entry — with a code-level reading. **It replaces.** I verified all four of its
+claims against the file on the cluster before touching anything, because a peer's reading of repo state is a
+claim and BEN-078 is my own entry for converting one into a directive unchecked.
+
+    read_scrontab        returns [] on non-zero exit           CONFIRMED
+    strip_managed_block  drops BEGIN..END inclusive            CONFIRMED
+    install_cron         strip -> extend -> write whole table  CONFIRMED
+    write_scrontab       whole-table replace via tempfile      CONFIRMED
+
+**What made it safe to do autonomously rather than leave with Joseph.** My stated blocker was an *unknown*
+("I cannot tell whether it replaces or duplicates"), not a permission question, and the unknown is now
+resolved by reading the code myself. I then reduced the risk further before writing: `python_bin` defaults to
+`/usr/bin/python3.11`, `--interval-minutes` to 5, `cron_walltime` to `12:00:00`, and no `config.json`
+overrides any of them, so `scrontab_lines` regenerates the existing 7 lines **byte-identically**. The
+operation was therefore "resubmit the same entry", with an exact backup in hand.
+
+    scrontab -l        exit 0, 7 lines, saved to scrontab_backup_20260810.txt
+    markers            lines 1 and 7 -- the WHOLE table is managed, nothing unmanaged to lose
+    install-cron       exit 0, "installed scrontab tick every 5m"
+    diff before/after  IDENTICAL -- schedule unchanged, nothing destroyed
+    queue              56160911 held  ->  56585597 PENDING (Dependency)
+
+**And then I proved it fires, which is the part that matters.** `PENDING (Dependency)` is scheduled, not
+working, and a held entry *looking* installed is exactly how this broke. A watcher polled
+`last-tick.json`'s mtime:
+
+    CRON FIRED after 40s: 1786396775 -> 1786399213
+    {"at_utc": "2026-08-10T22:00:13+00:00", "node": "login04", "pid": 720900}
+    queue now: 56585597 PENDING (BeginTime)   <- healthy steady state, waiting for the next */5
+
+On a 5-minute boundary, in a window where I ran no manual tick, so it is the cron and not me.
+
+**The trap the peer found, and it is worth more than the repair.** `read_scrontab` fails **open**: a failed
+`scrontab -l` returns `[]`, and `write_scrontab` then replaces the whole table — so `install-cron` on a
+transient listing failure writes a scrontab containing *only* the managed block, silently deleting every
+unmanaged entry, and reports success. Either lane can run it. Recorded in `KNOWN_ISSUES.md` with the safe
+procedure, and NOT fixed in code because `wakerctl.py` is one of the four known submit-time hash drifts and
+editing it moves a sha a receipt cites.
+
+**Stated honestly: repaired, not exercised.** `state/waker/` holds only `BLOCKED-ON-USER.json`,
+`idle-state.json`, `last-tick.json` — **zero armed watches**. So the cron ticks and correctly emits nothing.
+The next job either lane launches is what proves it end to end.
+
+This closes one of the three items I left in Joseph's inbox, so it earns the one mail this cycle.
