@@ -3783,3 +3783,40 @@ The mechanical form, which is the durable part: **direct channels stay open by d
 decision that must be argued for rather than an efficiency that accretes.** The safeguard that actually caught
 this — the filter volunteering that it was a filter — depends on the filter's candour and is not a mechanism.
 It cannot be relied on twice.
+
+### 23:05Z — rule (7): the relay is bidirectional, and the INBOUND direction is the dangerous half
+
+The oversight lane extended its own finding in the direction that has teeth. Rules (4)–(6) treat it as an
+unaudited channel **from** the lanes **to** Joseph. It is equally an unaudited channel **from** Joseph **to**
+the lanes — and in that direction it carries pins, authorizations and closures. Its own list of what it had
+been conveying as his decisions: the 5D chain quoted on purity, `niter` as his pin, adoption as his call,
+PB1's criteria predeclared and therefore met. Each is its *report* of what he said, arriving with its
+confidence rather than his words.
+
+**The asymmetry is the point: an outbound overclaim wastes a check, an inbound overclaim gets work done that
+nobody authorized.** That is a materially worse failure than the one we spent the evening on.
+
+**I audited my own lane rather than assuming I was clean.** Both authorization claims in my predeclarations
+and launchers — `"Authorized by Joseph 2026-08-09/10"` and `"Authorized by Joseph 2026-08-10 with the
+reproduction test as a precondition"` — trace to his own words, and **no gate or predeclaration in this lane
+cites a relayed instruction as its authority.** Verified by grep over `docs/orchestration/state/` and the
+predeclarations, not by recollection, which is the part worth recording: I would have said "clean" without
+checking and would have been right, and being right without checking is how BEN-078 happened.
+
+Filed as rule (7) with four sub-rules, the operative one being: for anything that would **gate** an action —
+a pin, an authorization, a threshold, a closure — confirm against Joseph's own words, never a restatement.
+The one live instance of this working is my refusal earlier tonight of the relayed bisect and `niter`
+dispositions on the ground that a peer message is not authorization. Worth noting that my harness-level
+operating rules say the same thing independently, so the campaign finding and the session constraints agree —
+which is mild evidence the rule is right rather than local to this campaign.
+
+The other lane has adopted marking which of its relays are his words versus its reading of them. I have not
+asked it to do anything else, and I am not treating its adoption of that as changing what I require: I confirm
+against his words regardless of how a relay is labelled, because the label is also the relay's.
+
+Also folded in its editorial point: BEN-082's provenance is a **live instance in his inbox** — my own
+wrong-basis claim, in good faith, indistinguishable to him from a correct one — rather than a reconstruction.
+That is stronger than anything either of us argued for the row and it now leads the provenance note.
+
+No mail. The correction mail at 22:55Z already carries everything he needs tonight, and rule (7) is a
+discipline on how I read instructions rather than news about the campaign.
