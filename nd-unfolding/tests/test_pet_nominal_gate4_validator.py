@@ -855,6 +855,34 @@ class PoweredClosureIsRecomputed(unittest.TestCase):
         # Equality iff uniform: a degenerate one-cell map must close the gap exactly.
         self.assertAlmostEqual(phi(abar), phi(abar), places=12)
 
+    def test_bar_is_self_adjusting_in_k_and_only_one_way(self):
+        """CLM-012 (vii): raising niter cannot buy a pass; LOWERING it can, and that needs its own guard.
+
+        `ceiling(k)` is monotone increasing because `phi(a) = 1-(1-a)^k` rises with k on (0,1). So the bar
+        `f*ceiling(k)` rises with niter and an estimator must capture MORE than f of each iteration's new
+        headroom just to hold its margin. The asymmetry is the point: the same monotonicity means a LOWER
+        k gives a LOWER bar, and fewer iterations is what the 2026-08-09 trajectory favours on
+        normalization -- so a lower-k configuration passing a lower bar is not evidence of a better
+        estimator. Asserted so nobody re-reads the k-dependence as protection in both directions.
+        """
+        P = g4.FROZEN["powered_closure"]
+        f, k0 = P["recovery_fraction_of_ceiling"], P["ceiling_scope_k"]
+        a = np.linspace(1e-6, 1 - 1e-6, 5001)
+
+        def ceiling_shape(k):
+            # displacement-weighted mean of per-cell dilution, on a fixed synthetic acceptance spread;
+            # only its MONOTONICITY in k is asserted, which is what the argument rests on.
+            return float(np.mean(1.0 - (1.0 - a) ** k))
+
+        vals = [ceiling_shape(k) for k in range(1, 7)]
+        self.assertTrue(all(y > x for x, y in zip(vals, vals[1:])),
+                        f"ceiling(k) must be monotone increasing in k; got {vals}")
+        bars = [f * v for v in vals]
+        self.assertTrue(all(y > x for x, y in zip(bars, bars[1:])),
+                        "the bar must rise with k, else adding iterations could buy a pass")
+        # ...and the one-directional caveat is recorded where a reader will meet the criterion.
+        self.assertGreater(k0, 1, "the frozen k must leave room to be lowered for the caveat to matter")
+
     def test_scope_is_ranked_above_weighting(self):
         """The ranking is the substance. Scope moves the ceiling 8x further than weighting, and the
         pre-2026-08-09 text had it the other way round -- weighting labelled 'load-bearing', scope
