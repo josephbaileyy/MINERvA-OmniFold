@@ -1,7 +1,22 @@
 # Packet B1 — adversarial manifest fixtures (blind)
 
-Six `std_component_manifest.json` variants, `B1_A` … `B1_F`. **Every one of them must be REJECTED by
-the B1 band-set completeness check.** A run that accepts any variant has not closed defect #6.
+Two batches of `std_component_manifest.json` variants.
+
+**Batch 1 — `B1_A` … `B1_F`, band-SET cases.** Every one must be **REJECTED**. All six were rejected
+on the first blind run, with the pre-fix code accepting all six (demonstrated, not asserted).
+
+**Batch 2 — `B1_G` … `B1_K`, COMPONENT-IDENTITY and REFEREE cases.** Batch 1 turned out to perturb no
+component hash at all — the fix author diffed them and found `hash-differs on 0 bands` for all six, so
+the identity half of defect #6 was live code with no adversarial case behind it. Batch 2 reaches that
+gate. **This batch is deliberately NOT uniformly must-reject**; one variant is an over-rejection
+control, and which one is withheld along with everything else. A check that rejects the whole batch has
+failed it.
+
+Why the split exists at all: the batch-1 commission asked for an omission case, and the verdict's
+wording is "band-set equality **or** component identity." The oversight session asserted that batch 1's
+substitution variant covered identity. It did not — a substituted set member is still set equality.
+That error is why batch 2 exists, and it is recorded here because it is the same conflation the fix
+could make.
 
 ## What they are
 
