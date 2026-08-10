@@ -69,6 +69,11 @@ These are not style preferences. Each one is here because it was broken and cost
   (BEN-023)
 - **Deletions and top-level reorgs are frozen** behind `docs/POST_PUBLICATION_REORG_PLAN.md`'s freeze
   tag. `nd-unfolding/`'s root is at capacity — put new work in the subdirectory that owns it.
+- **Every derived quantity in a receipt ships its ingredients** — enough that the reported numbers can
+  contradict each other. A verdict-only receipt is unfalsifiable, and this is the only heuristic that has
+  caught a defect with nobody suspecting one: a first-leg-vs-end-to-end metric mismatch was found purely by
+  failing to derive a published ratio from published operands. `docs/orchestration/CONVENTION-receipt-ingredients.md`
+  (BEN-077).
 - **Do not rename or delete a tracked script cited in a RUN_LOG, ledger, or receipt JSON.** 115
   `sbatch_*.sh` names are load-bearing provenance.
 

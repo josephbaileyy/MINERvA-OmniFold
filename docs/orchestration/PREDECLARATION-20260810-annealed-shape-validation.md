@@ -84,3 +84,58 @@ Also unchanged by any outcome: **Branch C stays closed** — no product is quote
   `validate_pet_nominal_gate4.FROZEN["powered_closure"]`
 - annealed fold-forward `−1.17%` (push `1.1109012166615733` vs `R = 1.1240802949941018`) — job `56534117`
 - baseline fold-forward `−34.46%` (push `0.7367462501305516`) — job `56445883`
+
+---
+
+# AMENDMENT 1 — 2026-08-10, made while `56547490` is still `PENDING` (no result exists)
+
+**Timing matters and is verifiable:** `sacct -j 56547490` reports `PENDING 00:00:00` at the time of writing.
+This amendment reorders a reading before any number exists, which is the only condition under which
+reordering is legitimate.
+
+## (a) Joseph's correction: the ADOPTED D2 criterion is PRIMARY; the ±0.02 band is SECONDARY
+
+He asked for the D2 powered closure specifically because it is already predeclared, adopted at threshold
+`0.494582`, and independently re-derived — and observed that adjudicating this arm with a *fresh* criterion
+resting on an *assumed* band would be the setup for instance five of BEN-077's own pattern. That is right,
+and it is the sharper version of my own finding turned back on me.
+
+**Clarification of fact, verified rather than asserted:** `56547490` **already runs the D2 powered
+closure** — `closure_powered_annealed_lr.py` calls `closure_powered_truth_reweight.main()` directly. No
+second job is required. The launcher as submitted also already evaluates the adopted threshold *before* the
+band. What was mis-prioritised was **this document**, which led with the band. Corrected:
+
+| Rank | Criterion | Source |
+|---|---|---|
+| **PRIMARY** | `recovery >= 0.494582` (`= f × ceiling`, `f = 0.80`, ceiling `0.618228`) | CLM-012 as adopted; `FROZEN["powered_closure"]` |
+| SECONDARY | `recovery` vs baseline `0.546853`, band ±0.02 | this document's assumption, scaled from BEN-043's ~1.3% GPU floor |
+
+**Both are reported. The PRIMARY decides.** If the two agree, the conclusion is robust to the choice of
+criterion. **If they disagree, that disagreement is the finding** and it is reported as such, before any
+promotion discussion — Joseph's instruction, and the right one.
+
+`56547490` is **not** cancelled; it is the run.
+
+## (b) A defect found while checking this — the closure carries its OWN copy of the RETIRED bar
+
+`closure_powered_truth_reweight.py:105` hardcodes `RESIDUAL_OVER_GAP_MAX = 0.20`, i.e. `recovery >= 0.80`
+— **the bar CLM-012 retired.** So the report's own `recovery_criteria_met` will read **FALSE** even when
+the adopted criterion says PASS: the baseline's measured `0.546853` fails `0.80` and passes `0.494582`.
+
+**Disposition — the closure is NOT edited.**
+
+- Changing a threshold in a closure to make a check pass is the prohibited act, whatever the justification.
+- It is also unnecessary: the **authoritative** evaluation is `validate_pet_nominal_gate4.check_powered_closure`,
+  which reads `P["residual_over_gap_max"]` from `FROZEN` — the adopted value. The closure's flag is a
+  self-report, not the gate.
+- So the adopted criterion is evaluated **from the closure's raw `metrics.recovery`**, which is what the
+  launcher does.
+
+**The risk is misreading, and it is now recorded:** `recovery_criteria_met` in any powered-closure report
+is computed against the retired 0.80 and **must not be read as the verdict**. Logged in `KNOWN_ISSUES`.
+
+The irony is instructive and worth keeping: the same file states the principle it violates —
+*"Two copies of a default is one of them going stale"* (line 230, about `early_stop`, which it correctly
+reads off the engine's signature) — while hardcoding the recovery bar three lines from the top of its
+constants block. Knowing a rule is not applying it, which is BEN-075's lesson in a different costume.
+
