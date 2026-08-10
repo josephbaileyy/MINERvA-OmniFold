@@ -598,7 +598,17 @@ class REPAIR7_EndpointContentReproduction(unittest.TestCase):
         self.assertIn("ENDPOINT_REFERENCE_DIR", code)
         self.assertIn("check_reproducibility", code)
         # and a failed manifest is not written under the consumable name
-        self.assertIn("p4_standard_manifest.FAILED.json", code)
+        # PB3 (2026-08-10): the redirect no longer spells the .FAILED name literally -- products
+        # are written to .PENDING and renamed by _publish_evidence() AFTER every blocker has run,
+        # so the final name is composed. Assert the MECHANISM, not the spelling: this guard was
+        # textual, which is verifier defect #7's "detached/textual guards" and is why editing the
+        # implementation broke a test whose subject had not changed.
+        self.assertIn(".PENDING", code)
+        self.assertIn("_publish_evidence", code)
+        self.assertIn('".FAILED"', code)
+        # and the publish must come AFTER the crosscheck enforcement, which is the whole point
+        self.assertLess(code.index("need(_v,"), code.index("_publish_evidence()\n\nprint"),
+                        "evidence is published before the verifier_crosscheck blockers run")
 
 
 class REPAIR7_ExecutionDerivedSurface(unittest.TestCase):

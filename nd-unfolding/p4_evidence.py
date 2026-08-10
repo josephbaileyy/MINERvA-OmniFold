@@ -397,22 +397,52 @@ man["verifier_crosscheck"] = {
     "central4d": man["central4d_sha256"] == OBS["central4d"],
     "mask4d": man["mask4d_hash"] == OBS["mask4d"]}
 
-# REPAIR-7: a manifest that FAILED its own checks must not be written where a consumer will
-# read it as authoritative. On failure it goes to a .FAILED name -- diagnosable, not consumable.
-_man_path = (f"{EVID}/p4_standard_manifest.json" if not blockers
-             else f"{EVID}/p4_standard_manifest.FAILED.json")
-json.dump(man, open(_man_path, "w"), indent=2)
-if blockers:
-    print(f"[evidence] BLOCKED -- manifest written to {os.path.basename(_man_path)}, "
-          f"NOT to the consumable name")
-# The two sibling receipts follow the same rule as the manifest. The first version of this
-# redirect covered only p4_standard_manifest.json, so a BLOCKED run still published these two
-# under their consumable names -- an incomplete fix of my own, caught because a blocked run left
-# p4_endpoint_evidence.json modified in the cluster tree. Either all three are publishable or
-# none are.
-_sfx = "" if not blockers else ".FAILED"
-json.dump({"endpoints": ep_ev}, open(f"{EVID}/p4_endpoint_evidence{_sfx}.json", "w"), indent=2)
-json.dump({"merged": maudit}, open(f"{EVID}/p4_merged_audit{_sfx}.json", "w"), indent=2)
+# PB3 (2026-08-10). WRITE-TO-PENDING now; PUBLISH only after every blocker has run.
+#
+# The defect this replaces was a strict ordering bug, not a missing redirect. The `.FAILED`
+# redirect (repair-7) worked and covered all three products -- but it read `blockers` HERE, while
+# the `verifier_crosscheck` enforcement runs BELOW, at the loop near the end of this file. Those
+# five are the recomputed-vs-observed bindings the evidence stage exists to confirm; repair-6
+# upgraded them from printed-and-ignored to enforced, and that fix landed *below* the write. So a
+# run with `central5d` DIFF wrote all three under CONSUMABLE names and only then blocked. The
+# stage's headline check could not influence where its own evidence landed.
+#
+# Why .PENDING + rename rather than moving the write below the crosscheck loop. Reordering was my
+# first preference, on the grounds that a second mechanism beside `.FAILED` is surface for its own
+# sake. Two things overturned it. (a) The oversight session's crash case: reordering leaves the
+# write last and still NON-ATOMIC, so dying during it leaves partial consumable files, whereas
+# rename-on-complete leaves a self-describing artifact at every instant. (b) The stronger reason,
+# which neither of us gave first: this needs NO REORDERING AT ALL. The write stays where it is,
+# every blocker stays where it is, and only the publish moves. My enumeration found exactly one
+# need() after the write block, so reordering was probably safe -- and "probably safe" is worth
+# nothing beside a change that cannot drop a blocker because it moves none.
+#
+# .PENDING is also not a new mechanism here: write-to-temp + rename-on-complete is the resume
+# protocol (BEN-023) and how run_p4_unfold_std.sh publishes ROOTs. My surface argument cut the
+# other way -- reordering would have left this stage the odd one out.
+_PRODUCTS = (("p4_standard_manifest.json", man),
+             ("p4_endpoint_evidence.json", {"endpoints": ep_ev}),
+             ("p4_merged_audit.json", {"merged": maudit}))
+for _name, _payload in _PRODUCTS:
+    json.dump(_payload, open(f"{EVID}/{_name}.PENDING", "w"), indent=2)
+
+
+def _publish_evidence():
+    """Rename every .PENDING to its final name, chosen by the FULL blocker set. Also removes the
+    opposite variant, so a stale .FAILED from an earlier blocked run cannot sit beside a valid
+    consumable set and be read as current (PB3 case 5): a directory must describe one run."""
+    final_suffix = "" if not blockers else ".FAILED"
+    for _name, _ in _PRODUCTS:
+        _stem = _name[:-len(".json")]
+        _src = f"{EVID}/{_name}.PENDING"
+        _dst = f"{EVID}/{_stem}{final_suffix}.json"
+        _other = f"{EVID}/{_stem}{'.FAILED' if not blockers else ''}.json"
+        if os.path.exists(_other) and os.path.abspath(_other) != os.path.abspath(_dst):
+            os.remove(_other)
+        os.replace(_src, _dst)
+    if blockers:
+        print(f"[evidence] BLOCKED -- {len(_PRODUCTS)} products published to .FAILED names, "
+              f"NOT to consumable names")
 
 # REPAIR-6: these five were computed, PRINTED as MATCH/DIFF, and never enforced -- a grep for
 # need(/require( on verifier_crosscheck returned zero. All five could read DIFF and this stage
@@ -423,6 +453,8 @@ for _k, _v in man["verifier_crosscheck"].items():
     need(_v, f"verifier cross-check {_k} is DIFF: recomputed binding disagrees with the "
              f"independently observed value. This is the check the evidence stage exists to "
              f"perform; it may not be reported and passed over.")
+
+_publish_evidence()
 
 print("=== recomputed vs observed ===")
 for k, v in man["verifier_crosscheck"].items():
