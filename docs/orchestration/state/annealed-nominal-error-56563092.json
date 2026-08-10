@@ -1,0 +1,87 @@
+{
+  "schema": "slurm-job-error-reconciliation-v1",
+  "run_id": "P5A-ANNEALED-NOMINAL-A1-ERROR",
+  "recorded_at_utc": "2026-08-10T13:55:21Z",
+  "event": {
+    "event_id": "evt-annealed-nominal-56563092",
+    "event_type": "slurm-job-error",
+    "observed_at_utc": "2026-08-10T13:50:10+00:00",
+    "head_at_event": "6b20122946f1eca07db995b0943a1dac4317791a",
+    "sha256": "f3d4fb0b3df2f7f92899e2934addb9e65f878a9c9671bed6d51cbca99b77cd68",
+    "read_count": 1,
+    "validation": "PASS_REAL_UNRECONCILED_JOB_ERROR_EVENT"
+  },
+  "accounting": {
+    "job_id": "56563092",
+    "job_name": "fe_pet_nom",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:12",
+    "start_displayed_by_sacct": "2026-08-10T06:46:28",
+    "end_displayed_by_sacct": "2026-08-10T06:47:40",
+    "node": "nid001645",
+    "cpus": 32,
+    "memory": "57472M"
+  },
+  "runtime_evidence": {
+    "stdout": "nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_56563092.out",
+    "stdout_sha256": "181922ed3db0dc2c27d788b6d3d1dd31e77e4e5b1341b845a688f72ea913bfef",
+    "stderr": "nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_56563092.err",
+    "stderr_sha256": "2727d2bdb12a2a610d2c0f0ea56b56ff1ef11f4a0ae55399465a43e436343173",
+    "config_gate": "PASS",
+    "target_provenance_gate": "PASS",
+    "target_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+    "source_npz_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "declared_lr_policy_present": true,
+    "training_started": false,
+    "fits_completed": 0,
+    "lr_policy_realized": "ABSENT_BECAUSE_TRAINING_DID_NOT_START",
+    "fold_forward_deviation": "NOT_PRODUCED",
+    "recovery": "OUT_OF_SCOPE_NOT_PRODUCED",
+    "new_artifact": "ABSENT"
+  },
+  "runtime_code": {
+    "launcher_sha256": "71d76eee429ce5b41a68cd0331acbdfd7bef57a9a64165e771641ccd667166c9",
+    "driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+    "engine_sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+    "predeclaration_sha256": "b6023231795437964aeb567e390f63fd74c68467bb4d61ccdef1b2216485a4f1"
+  },
+  "diagnosis": {
+    "class": "CANONICAL_NO_CLOBBER_PRETRAINING",
+    "root_cause": "The canonical pre-anneal nominal artifact already exists and is marked complete. The driver's publication guard correctly refused to overwrite it before allocating loaders or starting any fit.",
+    "terminal_message": "pet_fullevent_nominal_weights.npz already exists AND is marked complete; refusing to overwrite",
+    "scientific_verdict": "NONE_REPRODUCTION_NOT_EVALUATED",
+    "anneal_failure_inferred": false,
+    "reason_anneal_failure_not_inferred": "No fit ran, so no realized optimizer rates or fold-forward result exist. The declared policy alone is not a measurement.",
+    "unchanged_retry_prohibited": true
+  },
+  "changed_repair": {
+    "strategy": "Run the nominal and its matched GPU-floor repeat in a separate annealed directory, retain the canonical artifact byte-for-byte, and apply the fixed predeclared fold-forward test before any downstream action. The second arm measures scatter as allowed by the predeclaration; it is not powered-closure recovery.",
+    "launcher": "nd-unfolding/pet/sbatch_pet_fullevent_nominal_annealed.sh",
+    "launcher_commit": "6e34ca6d963b4104a1324d48e1b35eeb28368aa9",
+    "launcher_sha256": "1ac38875c62660477b7f030f1c97ea833b1be7b0d5c348318a1ae532ac5df29e",
+    "evaluator": "nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py",
+    "evaluator_sha256": "077e43620fcfb1c12401b41e60f32e184ab0290b67a89bc55def0bfed2735149",
+    "focused_test": "nd-unfolding/tests/test_annealed_nominal_reproduction.py",
+    "focused_test_sha256": "bd229ec13e4019055d0bde9a2a46e8200527fa78a3f0f2c239678b72673ad33b",
+    "focused_tests": "3/3 PASS",
+    "bash_syntax": "PASS",
+    "allow_overwrite": false,
+    "matched_floor_repeat": true,
+    "matched_floor_purpose": "Measure annealed run-to-run scatter; report both values without changing the predeclared band.",
+    "powered_closure_recovery": false,
+    "extraction": false,
+    "cross_section": false,
+    "promotion": false,
+    "submitted_job_id": "56563761",
+    "status": "COMMITTED_AND_SUBMITTED_BY_CONCURRENT_CAMPAIGN_LANE"
+  },
+  "scope": {
+    "canonical_artifact_preserved": true,
+    "branch_c_unchanged": true,
+    "all_worker_uuids_preserved": true,
+    "provider_dispatches": 0,
+    "reset_credits_consumed": 0
+  },
+  "status": "ERROR_RECONCILED_CHANGED_REPAIR_READY"
+}

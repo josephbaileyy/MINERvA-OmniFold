@@ -4412,3 +4412,23 @@ TRADE-OFF/ARM-REJECTED at `-0.034249724` versus baseline, with criterion disagre
 The dual quarantine rejection was recomputed and remains true. The isolated diagnostic still does not
 authorize a shared-engine edit, threshold change, promotion, or Branch C reopening. Receipt:
 `../docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.
+
+## 2026-08-10 — Annealed production nominal attempt 1 stopped at the canonical no-clobber guard
+
+Job `56563092` exited `1:0` after 72 seconds. Its configuration and Gate-2 target-provenance gates
+passed, including the adopted `seed_policy.lr_policy`, but the driver then found the completed
+pre-anneal artifact at the canonical path and correctly refused to overwrite it. Training never
+started: zero fits ran, `lr_policy_realized` and the fold-forward deviation do not exist, and the
+predeclared reproduction test was not evaluated. This is operationally a failed launch and
+scientifically null; it is not evidence that the anneal failed to take effect.
+
+Before this reconciliation completed, a concurrent campaign lane committed the separate-directory
+launcher and submitted changed job `56563761`. It is the sole writer to
+`fullevent_nominal_annealed/`; every output and log was absent while it remained `PENDING (Priority)`
+at 13:59Z. It does not use `--allow-overwrite`. It trains the nominal and a matched GPU-floor repeat,
+which the predeclaration permits only as a scatter measurement with both values reported; it is not
+powered-closure recovery. Recovery, extraction, cross section, and promotion remain out of scope.
+The measured multi-hour A100 path does not fit the interactive wall, so the 12-hour batch route is
+retained. Its terminal watch is armed. Receipts:
+`../docs/orchestration/state/annealed-nominal-error-56563092.json` and
+`../docs/orchestration/state/annealed-nominal-submit-56563761.json`.
