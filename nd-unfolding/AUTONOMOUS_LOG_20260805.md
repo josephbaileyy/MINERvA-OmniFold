@@ -3526,3 +3526,37 @@ needs redoing against the k-dependent ceiling — which may bear on its conclusi
 **The one thing I asked it for, because it is shared-infrastructure repair rather than a lane decision:**
 whether `wakerctl install-cron` replaces or duplicates a HELD scrontab entry. That cron carries both lanes'
 notifications and is the reason durable notification is currently dead. If it knows, I act immediately.
+
+### 21:55Z — "B1 closed" is the OTHER lane's B1. Brief re-confirmed stale; nothing unblocked. BEN-080.
+
+Push was rejected — the GBDT lane had pushed four commits including `df3bdb0 "Record B1 closed"`. Fetched,
+checked their diff against mine (they touched `KNOWN_ISSUES.md`, live state, `RUNS.tsv`,
+`ND_OMNIFOLD_{RUN_LOG,STATUS}.md`; my unpushed commit touched only this log), rebased cleanly, pushed
+`66c4722`. They have also written `state/annealed-nominal-complete-56563761.json` and *"Reconcile annealed
+nominal reproduction finding"* — my finding is reconciled into live state on their side.
+
+**`"Record B1 closed"` is NOT the B1 my brief is blocked on, and taking it at face value would have produced
+a false "Gate-4 unblocked" claim.** Theirs is **Packet B1, `C_syst` band-set completeness (verifier defect
+#6)** — closed with the `B1_E`/`B1_H` fixtures, which is the adversarial case I built for them on request.
+Mine is the **B1 rate-injection closure**, a 240k-event synthetic fold-forward rate measurement. One
+`git show --stat` settled it, because their commit body names its own scope. Filed **BEN-080**: a short id
+like `B1`, `item 3`, `D2` is a lane-local coordinate and the collision cost is paid by whoever reads it from
+outside; a cross-lane signal is not actionable on the subject line alone.
+
+**And my own B1 is long closed anyway — the brief is stale in every specific, which this log already recorded
+at line 2352 on 08-07.** Verified again just now rather than trusted: the PET B1 jobs
+`56358196 / 56358288 / 56358954 / 56360955 / 56363377` all COMPLETED on 08-05, and CLM-010 carries the
+measurement as **VERIFIED-NUMERIC** (bias 3.8008% → 2.1876% at k=2→3, 48-seed sd 0.8153% → 0.8444%, ratio
+1.036), frozen in `state/p3f-pet-gate4-launch-code-gate-20260806.json` `seed_policy_change.measurement`, with
+the Gate-4 re-issue including item 3 done on 08-07. So **none of the brief's items 1–5 is live**: `56355818`
+is long gone, B1 is measured and frozen with his say-so, Gate-4 was re-issued.
+
+**One thing I did NOT do.** The B1 deviation was measured on 08-05 under the dead-anneal configuration, and
+the anneal adopted 08-10 moves fold-forward from −34% to −3.6%. That raises a real question about whether the
+frozen B1 number still describes the current estimator. I am not re-opening it: it is a *scalar rate closure
+on a 240k synthetic*, a different setup from the full-event nominal (log line 2696 already records that these
+two point opposite ways and why), and re-deriving a frozen gate input on my own initiative is exactly the
+move that needs Joseph. Noted here so the question is on the record rather than silently dropped.
+
+No mail: no job finished, no PASS/FAIL, no blocking decision — and the 21:05Z mail already carries the three
+open items. Queue still holds only the held cron.
