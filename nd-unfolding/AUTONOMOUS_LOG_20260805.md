@@ -3721,3 +3721,34 @@ fired. That is the check that would have caught this in either seat.
 
 No mail. Nothing on the three triggers, Joseph has the cron closure and the peer's correction inbound, and
 adding a third mail tonight about a ledger row would be the spam the brief forbids.
+
+### 22:45Z — BEN-082 restructured: the diagnostic leads, and selective omission added as rule (5)
+
+Two amendments folded in, both from the oversight session, which asked me to make them rather than edit
+`FINDINGS.md` concurrently — the right call, since two sessions editing that file at once is what produced the
+08-08 merge conflict.
+
+**1. The diagnostic now leads the row instead of trailing it.** *"What would be false if this were wrong?"*
+fires from either seat, where "carry the evidence" only helps in the relay's. And it is the general form of the
+three checks that have actually worked here: the sign-balance check that killed a scatter argument, the
+121%-of-own-ceiling reframing of the `niter` decision, and the five candidate estimator definitions I tested
+before reporting a code-path disagreement. Each asked what the observation would look like **under the
+negation**. Naming it makes it reusable; we had all three ad hoc.
+
+**2. Selective omission added as rule (5), and it is the sharper of the two failure modes.** Rule (4) named
+confidence inflation as the unaudited failure of a summarising architecture. There is a second one in the same
+seat: a relay chooses not only how strongly to state what it passes on but **what arrives at all**. The
+asymmetry is what makes it worse — an inflated claim can in principle be caught by comparing relay against
+source, whereas **an omission leaves no artifact to audit**: the source does not know what was dropped and the
+reader does not know there was more.
+
+So the mitigations differ. Inflation is fixed by format. **Omission is bounded only by the reader having
+independent access to the source** — which means Joseph reading each lane's mail directly, and each lane
+filing to `FINDINGS.md`/`KNOWN_ISSUES.md` rather than reporting solely through a summariser, are load-bearing
+rather than redundant. Recorded with the consequence stated plainly: any move that consolidates reporting
+through one session, however much cleaner it reads, removes the only check on omission that exists.
+
+Contributed by the other lane about its own position, which is the only seat it is visible from. Credited in
+the row for that reason — it is not a failure I could have observed from here.
+
+No mail. Nothing on the three triggers; this is ledger work on a converged thread.
