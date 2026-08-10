@@ -84,6 +84,57 @@ Point 2 is the serious one and it is why this is not adopted: the same `n_W` gra
 the W-mixing mechanism also complicates this framing. Both cannot be waved past. **Recorded so the
 idea is not lost and so its obstacle is recorded with it.**
 
+## 3b. MEASURED 2026-08-10: it is AXIS-dependence, not dimension-independence
+
+The §3 interpretation was tested by measuring a second marginalisation rung from products that
+already existed. **No new production was run, and none should be:** a third rung costs a run and
+changes no adopted result.
+
+| rung | axis dropped | median \|rel\| | integral ratio |
+|---|---|---|---|
+| 5D → 4D | **W** | **4.4282 %** | 1.005578 |
+| 4D → 3D | **q3** | **2.2972 %** | 1.000258 |
+| 3D → 2D | eavail | ~4.4 % *(quoted at `sec_3d.tex:81`; a "per-bin scatter", **not** recomputed as this statistic)* | — |
+
+Generator: `runs/standard-p4-verifier/20260810T0700Z-marginalisation-ladder.py`, reading
+`products/5d/`, `products/4d/` and `3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root`.
+
+### What this retires
+
+**A "ladder" — a roughly dimension-independent constant — is NOT supported and that framing is
+withdrawn.** Two rungs measured with the *same* statistic differ by a factor of **1.9** (4.43 % vs
+2.30 %), and their integral ratios differ by ~20× (0.56 % vs 0.026 %). Three points would not have
+rescued it: the third is a different statistic from a different document and could only be made
+comparable by a run we are not doing.
+
+### What this supports
+
+**The magnitude tracks WHICH axis is marginalised, not how many dimensions remain.** Dropping W
+costs 4.43 %; dropping q3 from one dimension lower costs 2.30 %. If the effect were a property of
+dimensional reduction as such, the two would be comparable; they are not. So the quantity to
+attribute it to is the *axis*, not the *step*.
+
+**And the refutation of W-specificity stands, independently.** The 3D → 2D rung drops `eavail`, has
+nothing to do with W, and still shows a few-percent effect. So:
+
+- *"peculiar to the fifth axis"* — **refuted** (an effect appears when dropping `eavail` too);
+- *"a dimension-independent property of marginalising an unfolded distribution"* — **not supported**
+  (1.9× between the two comparable rungs);
+- *"axis-dependent, at the few-percent level"* — **what the two measured rungs support**, and the
+  honest statement.
+
+### What it does to §3's interpretation
+
+It weakens it without killing it. "The 4.4 % measures the independent content of W" is still not
+adopted, and now has a second obstacle beside the `n_W` gradient: if the difference measured an
+axis's independent content, dropping `q3` — which the redundancy table in §1 shows is *strongly*
+constraining of W and therefore highly non-redundant itself — would not obviously cost half as much
+as dropping W. The interpretation would need to predict the ordering, and it has not been asked to.
+
+**Referee-facing consequence:** the estimator dependence should be reported per-axis with the
+measured numbers, not as a single global figure and not as a claimed regularity. Two rungs is
+enough to say "it depends on the axis" and not enough to say what the dependence is.
+
 ## 4. Rules
 
 1. **Measure what your extra dimension buys before a referee asks.** The answer here took one pass
