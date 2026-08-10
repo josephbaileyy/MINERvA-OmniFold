@@ -44,7 +44,7 @@ gates**.
 > than closed silently, because "done" and "done in the only form the repo supports" are different
 > claims and the second is the true one.
 >
-> Current snapshot: **105 fields / 25 gates**; pipeline **23 candidates across 333 shell
+> Current snapshot: **105 fields / 25 gates**; pipeline **23 candidates across 334 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
