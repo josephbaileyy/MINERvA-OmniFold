@@ -515,9 +515,17 @@ two identical production arms (`0.9083` vs `0.9636`; diagnostic `0.8572`) — st
 noisy while its contribution to `push` is not. So the loss trace has no resolving power on this gap.
 
 **Candidate mechanisms, none asserted.** The diagnostic subclass also overrode `cache`, `RunStep1` and
-`RunStep2`, and its harness builds loaders through its own path. The diagnostic's push trajectory
+`RunStep2`. Its push trajectory
 (`1.0 → 1.01068768 → 1.12139314 → 1.11090122`) sits above production's throughout, so the difference
 accumulates across iterations rather than appearing at one step.
+
+**Post-terminal provenance correction.** The diagnostic did **not** build loaders through an independent
+path: it calls `train_fullevent_nominal.main`, which builds the same loader. It did run against driver SHA
+`66aa1f8f...`, while production used `5fda80df...`; their 105-line diff is limited to relocating the same
+fit-time anneal into the production driver plus policy/readback telemetry and artifact persistence. The
+engine SHA is identical. This narrows the discrepancy to the instrumented diagnostic subclass versus the
+internal production subclass (including possible instrumentation/timing effects), but does not isolate a
+cause. Do not describe loader divergence as measured evidence.
 
 **Consequence for anything quoting the anneal.** Production `|dev| = 0.0356` still **passes** FROZEN's
 `fold_forward_ratio_dev_max = 0.05`, but with margin `0.0144` where `0.0383` was expected — a real loss of

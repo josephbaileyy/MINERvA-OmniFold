@@ -4432,3 +4432,26 @@ The measured multi-hour A100 path does not fit the interactive wall, so the 12-h
 retained. Its terminal watch is armed. Receipts:
 `../docs/orchestration/state/annealed-nominal-error-56563092.json` and
 `../docs/orchestration/state/annealed-nominal-submit-56563761.json`.
+
+Job `56563761` then completed `0:0` in 6h00m36s. Both atomically published artifacts and their
+size/mtime-bound completion markers validate, and the canonical 2026-08-08 baseline remains at SHA-256
+`58f664cdef266d09...`. Independent artifact arithmetic reproduces nominal deviation
+`-0.035608971` and matched-floor deviation `-0.035482196`, both outside the frozen
+`[-0.021724,-0.001724]` window. Their absolute scatter is only `0.000126775`; the nominal gap to
+the expected `-0.011724` is `0.023884971`, or 188.4 times the measured same-path scatter.
+
+Both artifacts independently record and verify two iteration-0 fits at `1e-4` and four later fits at
+`1e-5`, with equal seed policies and realized-LR lists. The anneal therefore ran: the predeclared
+verdict is **FINDING — code paths disagree**, not policy failure. No averaging, repeat, or band change
+was made.
+
+A bounded static postmortem found one important provenance distinction: diagnostic `56534117` used
+driver SHA `66aa1f8f...`, while production used `5fda80df...`. The 105-line diff is confined to moving
+the anneal into the production driver plus declared/realized LR telemetry and persistence; the shared
+engine is byte-identical. The diagnostic wrapper calls `nominal.main`, so its loader is not an
+independent implementation; its extra `cache`, `RunStep1`, and `RunStep2` methods wrap `super` for
+telemetry. The production path is internally reproducible, but current evidence does not isolate
+wrapper instrumentation/timing from another TensorFlow path effect. A new paired ablation would be a
+new experiment and requires Joseph's choice. No recovery, extraction, cross section, promotion,
+threshold change, or Branch C opening occurred. Receipt:
+`../docs/orchestration/state/annealed-nominal-complete-56563761.json`.

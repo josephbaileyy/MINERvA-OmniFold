@@ -134,10 +134,12 @@ replacement is implied for 4D/FPS or dependent significances. See
   missing per-universe background columns.
 - Annealed production nominal attempt `56563092` was scientifically null: the
   completed pre-anneal canonical artifact triggered the correct no-clobber
-  guard before any fit. The fixed reproduction test remains unevaluated.
-  Changed job `56563761` is the sole writer in a separate directory and is
-  pending under terminal watch; it must report the nominal and matched-floor
-  deviations before any downstream action. Recovery remains out of scope.
+  guard before any fit. Changed job `56563761` completed `0:0`; nominal/floor
+  deviations are `-0.035608971` / `-0.035482196`, outside the predeclared
+  reproduction window with only `0.000126775` scatter. Optimizer readback proves
+  the anneal ran, so the frozen verdict is a systematic code-path disagreement.
+  Baseline remains unchanged; no downstream action or promotion occurred. The
+  exact next experiment/disposition is blocked on Joseph.
 
 ## Presentation rule
 

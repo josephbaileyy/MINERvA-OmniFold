@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Annealed production nominal reproduction gate",
-  "state": "Attempt 56563092 was scientifically null: the completed canonical pre-anneal artifact triggered the correct no-clobber guard before training. Changed batch job 56563761 is the sole writer to the separate annealed directory and is PENDING under terminal watch. Its nominal fold-forward deviation and matched-floor scatter must be reported against the fixed predeclaration before any downstream action.",
+  "current_dag_node": "Annealed production nominal reproduction finding disposition",
+  "state": "Job 56563761 completed 0:0. Nominal/floor deviations are -0.035608971/-0.035482196, both outside the fixed reproduction window, with measured scatter 0.000126775. Both artifacts prove the anneal ran, so this is the predeclared code-path-disagreement finding. The baseline is unchanged and no downstream action occurred. A static postmortem bounded but did not isolate the cause.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -21,23 +21,17 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56563761",
-      "tasks": "0",
-      "single_job": true,
-      "receipt": "docs/orchestration/state/annealed-nominal-submit-56563761.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
     "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
     "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
     "The annealed powered closure has a predeclared criterion disagreement: its PRIMARY adopted absolute criterion passes while its SECONDARY baseline-comparison band calls a shape trade-off and rejects the arm.",
     "The source job's retired internal recovery>=0.80 check caused rc=3 after training and before its manifest step; that stale return code is not the adopted verdict and no A100 retry is allowed.",
     "The independently finalized result remains diagnostic-only and cannot itself authorize an engine edit, threshold change, promotion, or Branch C publication.",
-    "Job 56563761 must reproduce the predeclared fold-forward deviation with optimizer-readback LR proof before any extraction, cross section, or artifact promotion; powered-closure recovery is not produced by this nominal run."
+    "The production anneal is internally reproducible but fails to reproduce the historical diagnostic path by 188.4 times its measured same-path scatter; the production value remains inside the separate absolute 0.05 normalization tolerance.",
+    "Current evidence does not isolate the code-path cause. Any paired GPU ablation, acceptance/promotion of the production estimator, or rejection of the annealed path is a new user decision."
   ],
-  "next_authorized_action": "Wait without LLM polling for the armed terminal event from job 56563761. On wake, validate the canonical-baseline hash, both completed artifacts, seed_policy.lr_policy, lr_policy_realized, and the fixed fold-forward reproduction window; report that result before any downstream action. Do not extract, calculate a cross section, promote an artifact, change thresholds, or evaluate recovery in this nominal run.",
+  "next_authorized_action": "BLOCKED ON USER: choose authorize_scoped_implementation_ablation, accept_production_path_then_decide_promotion, or reject_or_stop_annealed_path as defined in docs/orchestration/state/waker/BLOCKED-ON-USER.json. Until then do not average, widen the band, rerun, edit the engine, promote, extract, calculate a cross section, or open Branch C.",
   "canonical_science": [
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
@@ -56,6 +50,7 @@
     "superseded followup prompts"
   ],
   "wake": {
-    "waker": true
+    "waker": true,
+    "blocked_on_user": "docs/orchestration/state/waker/BLOCKED-ON-USER.json"
   }
 }

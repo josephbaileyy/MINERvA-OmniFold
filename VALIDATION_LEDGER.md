@@ -1039,6 +1039,30 @@ reopening is authorized. Receipts:
 `docs/orchestration/state/annealed-shape-r2-terminal-56552326.json` and
 `docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.
 
+## 2026-08-10 Annealed production nominal reproduction — VERIFIED FINDING
+
+Job `56563761` completed `0:0` and atomically published both the production nominal and matched-floor
+artifacts. The canonical 2026-08-08 baseline SHA-256 remains `58f664cdef266d09...` before and after.
+
+| arm | fold-forward ratio | deviation from R | frozen reproduction window |
+|---|---:|---:|---|
+| production nominal | 1.0840529523 | **-0.035608971** | OUTSIDE |
+| production matched floor | 1.0841954573 | **-0.035482196** | OUTSIDE |
+| diagnostic expectation (`56534117`) | 1.1109012167 | -0.011724321 | expected |
+
+Here `R = 1.1240802949941018`; the predeclared window is
+`[-0.021724,-0.001724]`. The production-pair scatter is **0.000126775**, while the nominal gap to
+the expected `-0.011724` is **0.023884971 = 188.4x the measured scatter**. Both artifacts prove from
+optimizer readback that the anneal ran: two fits at `1e-4`, followed by four at `1e-5`; their seed
+policies and realized LR records agree exactly. The frozen verdict is therefore **FINDING — code paths
+disagree**, not anneal failure.
+
+This verifies the reproduction finding, not an estimator promotion or physics result. Recovery was not
+evaluated, no band was changed, and no extraction or cross section was run. The production value still
+passes the separate absolute 0.05 normalization tolerance, but the diagnostic `-1.17%` value must not be
+quoted as production. Canonical receipt:
+`docs/orchestration/state/annealed-nominal-complete-56563761.json`.
+
 ## 2026-08-09 J36 global-POT-scale mixture error — SHAPE effect BOUNDED, VERIFIED-NUMERIC
 
 **Claim.** The J36 defect (one global `sum(D_p)/sum(M_p)` POT scale in place of per-playlist
