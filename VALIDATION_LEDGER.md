@@ -1039,7 +1039,32 @@ reopening is authorized. Receipts:
 `docs/orchestration/state/annealed-shape-r2-terminal-56552326.json` and
 `docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.
 
-## 2026-08-10 Annealed production nominal reproduction — VERIFIED FINDING
+## 2026-08-10 Annealed production nominal reproduction — ~~VERIFIED FINDING~~ **RETRACTED 2026-08-11**
+
+> ### ⚠ RETRACTED — DO NOT QUOTE THE VERDICT OR THE `188.4x` FROM THIS SECTION
+>
+> **The verdict below ("FINDING — code paths disagree") is REFUTED, and the `188.4x` is computed against the wrong
+> population.** Retracted at `535668d`; detail in `KNOWN_ISSUES.md` (struck-through entry) and
+> `docs/orchestration/PREDECLARATION-20260810-designA-diagnostic-reproduction.md` §RESULT.
+>
+> A third run of the **diagnostic** configuration (`56611394`) gave three points on byte-identical code at identical seeds:
+> `-0.011724321` / `-0.007386682` / `-0.052174875`, i.e. **mean `-0.023761959`, sd `0.024701703`, range `0.044788193`**.
+> The **production value `-0.035546` sits INSIDE that range**, `0.48` diagnostic sd from the diagnostic mean. The gap by
+> denominator: `188.4x` (production scatter — the wrong population) → `6.0x` (a two-point difference) → **`0.48x`
+> (three-point sd, the first honest denominator).** **There is no established code-path difference.**
+>
+> **What in this section STILL STANDS, quotable:** the production numbers themselves — `1.0840529523` / `-0.035608971`
+> and `1.0841954573` / `-0.035482196`, the pair scatter `0.000126775`, the baseline SHA `58f664cdef266d09` unchanged
+> before and after, and the optimizer readback proving the anneal ran (two fits at `1e-4`, four at `1e-5`).
+> Production is reproducible to `1.3e-4` and is unaffected by the retraction.
+>
+> **What is DEAD:** the verdict; the `188.4x`; and the row labelled *"diagnostic expectation"* — `-0.011724321` was
+> **one draw**, never an expectation, and the standing constraint is that no one-shot measurement through that wrapper
+> family may be quoted as a point value.
+>
+> Left in place rather than deleted, per this repo's retraction convention: a reader who follows a citation here must
+> find the correction, not an absence.
+
 
 Job `56563761` completed `0:0` and atomically published both the production nominal and matched-floor
 artifacts. The canonical 2026-08-08 baseline SHA-256 remains `58f664cdef266d09...` before and after.

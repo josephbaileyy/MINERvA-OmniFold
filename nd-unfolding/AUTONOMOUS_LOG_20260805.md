@@ -4639,3 +4639,44 @@ Nothing re-run, no pin touched, no threshold moved, `niter` remains 3.
 **The queue is empty.** Every item from last night is closed or retracted: the code-path finding refuted, the
 closure's stability measured at n=3, the D2 pass established on three independent draws, k=3 re-justified on
 current grounds. Nothing is running but the cron.
+
+### 12:05Z — built the retracted-values index, and found the worst instance while building it
+
+Oversight lane's request, and the right use of an idle queue: the knowledge of which numbers are dead lives in
+this session's context, and context is the thing that does not survive a restart. Built as
+`docs/orchestration/INDEX-retracted-and-superseded-values.md`, **sourced by `git grep` rather than recall** —
+which was the instruction and also the only way it could be trustworthy.
+
+**The most serious entry was found by building it, not by remembering it.** `VALIDATION_LEDGER.md` — which
+`CLAUDE.md` names as the canonical home for *"verified numbers (anything technote-quoted)"* — carried a section
+titled **"2026-08-10 Annealed production nominal reproduction — VERIFIED FINDING"**, stating *"The frozen
+verdict is therefore FINDING — code paths disagree"* and quoting **`188.4x the measured scatter`**, with a table
+row labelled *"diagnostic expectation"*. All three are retracted. **A technote writer reads that file.** It also
+appears in `RUNS.tsv:267` and the finalizer JSON.
+
+Bannered rather than deleted, per the retraction convention: the section now opens with a struck-through title
+and a *"DO NOT QUOTE THE VERDICT OR THE 188.4x"* block, separating what **still stands** (the production numbers
+`-0.035608971`/`-0.035482196`, the pair scatter `0.000126775`, the baseline SHA, the optimizer readback proving
+the anneal ran) from what is **dead** (the verdict, the `188.4x`, and `-0.011724321` as an "expectation"). A
+reader following a citation must find the correction, not an absence.
+
+**Ten indexed rows**, each with its grep-sourced locations: the verdict; `188.4x`/`188x`; `6.0x`; `-0.011724321`
+as an expectation; `142 scatters` — including the instance **hardcoded in my own launcher at
+`sbatch_powered_closure_stability_repeat.sh:138`, which printed at full confidence hours after retraction**;
+`14.7`; `recovery_criteria_met`; `RESIDUAL_OVER_GAP_MAX = 0.20` (live code, deliberately unfixed); the retired
+`recovery >= 0.80`; and `0.5126033` flagged **ALIVE-AS-CITED-ARTIFACT-ONLY** rather than dead, because it is a
+validated artifact value that merely must not be used as the best estimate.
+
+**Two properties I took from their brief and would defend independently.** The *"where it still appears"* column
+is load-bearing: every correction here already existed at the time, so what a fresh reader lacks is not the
+correction but **the map to the stale copies**. And the DEAD versus ALIVE-AS-CITED-ARTIFACT-ONLY split is the
+same distinction as `PROCESSED.txt`'s grandfathered-vs-verified — two claims that look identical on the page.
+
+**What I did NOT index, stated in the file:** the 2026-07-12 quarantine. It was named as a candidate and **I
+did not source it**, so it is recorded as an open item rather than listed from a description. An index built
+from memory has precisely the defect it exists to fix. Also stated: commit messages are immutable and are
+indexed rather than repaired, and predeclaration bodies are deliberately left as written because editing them
+to match outcomes would destroy the only property that makes them worth anything.
+
+Pointer added at the top of `FINDINGS.md`, which is item 1 in `CLAUDE.md`'s read order, so the index sits where
+the read-order actually reaches rather than where it would be tidy.
