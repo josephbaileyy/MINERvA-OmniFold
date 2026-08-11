@@ -758,7 +758,10 @@ still written — a fix without that test is unpowered, and the historical crash
 **NOT FIXED, and the reason is the same one that blocks the `read_scrontab` fail-open above:** `wakerctl.py` is
 hash-pinned into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json` and is one of the four known
 submit-time hash drifts, so editing it moves a sha a receipt cites. That belongs to whoever owns that re-issue,
-in one commit with the test. **Currently low blast radius** — only two armed watches, both `provider-reset`
+in one commit with the test.
+**↑ THAT REASON IS VOID — see the CORRECTION under the `read_scrontab` section above (measured 2026-08-11).**
+The pin stopped matching on **2026-07-20**, two commits after the receipt's own commit `8c8775f`, so editing
+`wakerctl.py` today moves no live sha. The blocker on this fix is ownership and the test, not the pin. **Currently low blast radius** — only two armed watches, both `provider-reset`
 dated 2026-08-18 — so this is a real single point of failure rather than an active fire. It belongs in the
 "gates that cannot fail" family: **a scan that cannot complete is a gate that cannot fire.**
 
