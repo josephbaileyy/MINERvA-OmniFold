@@ -4455,3 +4455,28 @@ wrapper instrumentation/timing from another TensorFlow path effect. A new paired
 new experiment and requires Joseph's choice. No recovery, extraction, cross section, promotion,
 threshold change, or Branch C opening occurred. Receipt:
 `../docs/orchestration/state/annealed-nominal-complete-56563761.json`.
+
+## 2026-08-11 — Scalar-5D P4 Packet B channel test passed; real-cluster close remains pending
+
+The unique timestamped artifact event `evt-p4-packetb-channel-test-20260811T1211Z` was consumed
+once and validated against event HEAD `683bdcc`. It establishes a working BEN-067-safe delivery
+path and durable implementations plus adversarial acceptance demonstrations for PB1 through PB5.
+It does **not** establish a real-cluster PASS, a scoped verifier PASS, or adoption. PB5's exact
+disposition is bounded-and-documented at the Phase-16 IBU verdict, not fixed.
+
+A current-tree independent check ran 17 focused standard-library `unittest` cases: PB1's ten
+required rejections plus accept-control, PB2's six-module producing-closure binding and legacy
+grandfathering, the non-adoptable marker directions, endpoint reproduction discriminators, and
+PB3's publish-after-blockers mechanism/order all pass. This corroborates the code/fixture layer;
+the cluster layer remains separate.
+
+Real-cluster execution is allocation `56636802`, step `56636802.0`, with one 128-CPU interactive
+node. Its evidence stage reached `EVIDENCE-COMPLETE`: four central/mask bindings match and all ten
+endpoints reproduce within the declared `1e-9` per-bin / `1e-11` integral tolerances. At
+reconciliation, `STAGE56_START` was present while `STAGE56_END` was absent; the step was actively
+reading the support family. It is the sole writer. The command sets `P4_NON_ADOPTABLE=1`, forbids a
+nonempty `P4_VERIFIER_PASS`, and performs no adoption. Content-sentinel and allocation-terminal
+watches cover completion. Only after independent terminal validation will the preserved
+`standard-p4-verifier` UUID `019f74cb-b85d-7ba0-96c5-dfbd09e59159` receive a scoped follow-up via
+`agentctl.py send`. Receipt:
+`../docs/orchestration/state/p4-packetb-channel-test-20260811T1211Z.json`.

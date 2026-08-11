@@ -1,5 +1,16 @@
 # P4 standard-lateral — Agent-A-owned status receipt (2026-07-18)
 
+**Current continuation (2026-08-11): Packet B channel PASS; real-cluster terminal verdict
+pending.** PB1–PB5 implementations and adversarial acceptance evidence are committed at
+`0055826`, `32489a6`, `c308a9c`, `ea89701`, and `64916ee`; PB5 is bounded/documented rather than
+fixed. A 17-test current-tree focused check passes. Interactive allocation `56636802`, step
+`56636802.0`, is the sole real-cluster writer: evidence is complete and stage 5/6 was still active
+at reconciliation. The run is explicitly non-adoptable (`P4_NON_ADOPTABLE=1`, verifier token
+unset). Watches cover the `STAGE56_END` log record and allocation terminal state. Packet B is not
+cluster-closed until those artifacts are independently validated and the preserved
+`standard-p4-verifier` UUID returns its scoped verdict. No adoption is authorized. Canonical
+receipt: `../../../docs/orchestration/state/p4-packetb-channel-test-20260811T1211Z.json`.
+
 Co-located Agent-A status (the canonical `ND_OMNIFOLD_STATUS.md` carries a concurrent
 session's uncommitted edit and is NOT absorbed, per the commit-gate ownership rule — PG0).
 
