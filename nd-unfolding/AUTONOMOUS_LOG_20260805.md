@@ -4378,3 +4378,62 @@ unarmed watch leaves **nothing** — no event, no unread entry, a clean marker. 
 artifact, visible only to a job-side check.
 
 Both jobs PENDING, both watches verified from the command. Standing down to monitor.
+
+### 08:25Z — POWERED-CLOSURE STABILITY: **UNRESOLVED**, and it REFUTES my override-set attribution
+
+`56611837` COMPLETED `01:57:54`, exit `0:0`. Found by the oversight lane's 08:19Z check, 23 min after it
+landed — the mechanism working as designed, and the first time `PROCESSED.txt`'s step-1 `comm` has been
+non-empty for a real reason.
+
+**All three of the launcher's in-run assertions held:**
+
+    pins HOLD -- engine/wrapper/driver/inputs identical to 56552326's recorded shas
+    resolved closure_powered_annealed_lr    ce9f11f4872dd611
+    resolved closure_powered_truth_reweight a45fae7c3f978c34
+    annealed override set: ['CompileModel', 'RunModel', '__init__']   <- exactly the production set
+    closure exited 3 = the RETIRED-bar self-report, expected and declared; products intact
+
+So the exit-3 handling worked: last time `set -e` killed the script on that exit and the verdict never
+printed; this time it was tolerated, the reading block ran, and the verdict is on the record.
+
+**THE VERDICT — UNRESOLVED, for the second time tonight.**
+
+    reference (56552326)  recovery 0.5126032761517403
+    this run  (56611837)  recovery 0.5113772818506951
+    delta 0.001225994     STABLE <= 0.0003803 (3.2x over)   DIAGNOSTIC >= 0.0014459 (85% of it, below)
+
+**And it refutes the inference it was built to test — which is the outcome that justifies having run it.** I
+read the code at `8b8f238`, found the powered closure carries *exactly* the production override set, and
+inferred it therefore inherits the production scatter of `1.27e-4`. **Measured: `1.226e-3`, which is 9.7×
+production.** So **override-set identity does not transfer stability.** The conclusion I drew survives for a
+different reason than the one I gave, and the causal claim is wrong. The oversight lane's reason 3 — that the
+attribution was confounded across two variables — was exactly right, and measuring **refuted** it rather than
+confirming it.
+
+**The load-bearing number, re-derived honestly:**
+
+    margin over the adopted bar  +0.0180209
+      = 142  production scatters       <- what I inferred, and it was wrong
+      = 14.7 OWN-configuration spreads <- what is measured
+      =  4.2 diagnostic spreads        <- the feared case
+
+**So the D2 pass stands comfortably — 14.7 spreads of its own configuration — and the feared case is
+excluded.** `0.5113772818506951` also passes the adopted criterion on its own (`>= 0.4945824`). What does not
+survive is my "142 scatters" framing, which overstated the margin's security by ~10×. Ingredients agree too:
+`gap` and `floor` reproduce exactly, `residual` moves `0.114182 -> 0.114470`, `residual_over_gap`
+`0.487397 -> 0.488623`.
+
+**Per the predeclaration the next step is a THIRD powered-closure run, not a re-reading of these two**, and I
+am launching it rather than reasoning my way out. The temptation is real and worth naming: the *decision* that
+mattered — does the D2 pass survive — is now answerable at 14.7 spreads without a third run, and it would be
+easy to call that sufficient. But the predeclared branch says third run, and using new information to skip a
+predeclared next step is precisely what predeclaration prevents. Both things go on the record: the margin
+question is answered, the *classification* is not.
+
+**A defect in my own contract, found trying to honour it.** `PROCESSED.txt` sits in
+`docs/orchestration/state/waker/`, which is **gitignored** — it is runtime state. So "append in the same commit
+that files the verdict" is **unimplementable as written**, and I did not check that when I wrote it. Third time
+in six hours I have authored a rule I could not hold. Fixed to something implementable *and* checkable:
+**append immediately after the verdict commit, with the verdict's sha in a preceding comment line**, so the
+entry carries evidence of the claim it makes. Comment lines are already filtered by the documented check, so
+no lane's tooling changes.
