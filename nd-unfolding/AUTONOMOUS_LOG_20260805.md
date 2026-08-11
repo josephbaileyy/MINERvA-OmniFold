@@ -4351,3 +4351,30 @@ and written here so the deferral is checkable.
 
 Both jobs still PENDING, both watches verified from `watch-list`. Nothing else unblocked; the k=3 restatement
 stays queued behind them, and no promotion, no threshold change, niter 3, Branch C closed.
+
+### 06:20Z — the deferred correction made structural, not remembered
+
+Oversight lane confirmed the deferral, and attached the condition that is the actual risk: **carry the
+correction even if the verdict is boring.** When a run comes back clean the temptation is to mail the result
+and drop the correction as no longer interesting — which is exactly how a correction becomes something only
+the relay ever told him.
+
+So I did not undertake to remember it. **`/pscratch/sd/j/josephrb/PENDING_MAIL_CORRECTIONS.txt` now holds the
+correction text**, to be prepended to the next `[MNV-AUTO]` mail and then cleared. It is an artifact because
+"I will include it" is *true of an intention and not yet of the world* — the class filed as BEN-084 tonight,
+and the one I have already committed twice in six hours. A file survives a session restart; an undertaking
+does not. Checking it belongs to the entry/exit rule already filed rather than being a new habit.
+
+Also filed the **heuristic-inversion test**, which the oversight lane rated above its own version and which
+neither of us had stated an hour ago: **the same mechanism gets opposite verdicts because the cost of a false
+positive differs.** Commit-derivation was *rejected* for `PROCESSED.txt` and *adopted* for its monitor, and
+both are right — the marker asserts "this was handled" on a fail-open field, so a wrong entry silently
+reopens the gap, while the monitor outputs "go ask", so a wrong entry costs one question. Identical accuracy,
+opposite verdicts, decided by what a false positive buys.
+
+Recorded its point about the two transitions being asymmetric rather than symmetric, which it had as
+symmetric and I had understated: a restart leaves a fired event something can find; a stand-down with an
+unarmed watch leaves **nothing** — no event, no unread entry, a clean marker. Invisible to the durable
+artifact, visible only to a job-side check.
+
+Both jobs PENDING, both watches verified from the command. Standing down to monitor.
