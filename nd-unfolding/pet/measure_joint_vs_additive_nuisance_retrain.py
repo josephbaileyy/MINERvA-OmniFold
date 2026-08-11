@@ -196,16 +196,48 @@ def main(argv=None):
         rec["integral_retrain_rel"] = float(xr.sum() / cv.sum() - 1.0)
         per[tag] = rec
 
-    # ---- aggregate over the universes where BOTH operands exist ---------------------------------
+    # ---- aggregates, GROUPED, because one pooled number would be wrong twice --------------------
     # trace(outer(v,v)) == ||v||^2, so sqrt-trace of a sum of rank-1 blocks is the quadrature sum.
-    tags = sorted(per)
-    ss = sum(per[t]["norm_s_frozen_shift"] ** 2 for t in tags)
-    dd_ = sum(per[t]["norm_delta_retrain_increment"] ** 2 for t in tags)
-    jj = sum(per[t]["norm_joint_shift"] ** 2 for t in tags)
-    additive = float(np.sqrt(ss + dd_))
-    joint = float(np.sqrt(jj))
+    #
+    # (1) `null` is the identity retrain -- a training-noise control with s == 0. It is not a band, it
+    #     is not in C_retrain's contributing set, and pooling it into a "construction" aggregate
+    #     describes a construction nobody built. Excluded, and named so the exclusion is auditable.
+    # (2) flux is NOT summed the way the knob bands are. C_syst's flux block is built over 100 PPFX
+    #     universes, so a SINGLE flux universe's ||s|| is not a term in it -- and measurably so:
+    #     flux:55 alone has ||s|| larger than the whole flux block's published sqrt-trace
+    #     (1.0604e-38, pet_csyst_prelim summary). Pooling it with the knob bands would silently
+    #     assert a rule the published assembly does not use, so it gets its own group.
+    # The KNOB group is therefore the like-for-like number, and it is reported first.
+    all_tags = sorted(per)
+    noise_tags = [t for t in all_tags if t == "null"]
+    flux_tags = [t for t in all_tags if t.startswith("flux")]
+    knob_tags = [t for t in all_tags if t not in noise_tags and t not in flux_tags]
+
+    def agg(tags_):
+        ss_ = sum(per[t]["norm_s_frozen_shift"] ** 2 for t in tags_)
+        dd2 = sum(per[t]["norm_delta_retrain_increment"] ** 2 for t in tags_)
+        jj_ = sum(per[t]["norm_joint_shift"] ** 2 for t in tags_)
+        a_ = float(np.sqrt(ss_ + dd2))
+        j_ = float(np.sqrt(jj_))
+        return {"universes": tags_, "n": len(tags_),
+                "sum_sq_norm_s": ss_, "sum_sq_norm_delta_increment": dd2, "sum_sq_norm_joint": jj_,
+                "additive_sqrt_trace": a_, "joint_sqrt_trace": j_,
+                "additive_over_joint": (a_ / j_) if j_ > 0 else float("nan")}
+
+    groups = {
+        "knob_bands_LIKE_FOR_LIKE": agg(knob_tags),
+        "flux_single_universe_NOT_COMPARABLE_TO_CSYST_FLUX_BLOCK": agg(flux_tags),
+        "training_noise_control_EXCLUDED_FROM_CONSTRUCTION": agg(noise_tags),
+        "all_pooled_DO_NOT_QUOTE": agg(all_tags),
+    }
+    tags = knob_tags
+    ss = groups["knob_bands_LIKE_FOR_LIKE"]["sum_sq_norm_s"]
+    dd_ = groups["knob_bands_LIKE_FOR_LIKE"]["sum_sq_norm_delta_increment"]
+    jj = groups["knob_bands_LIKE_FOR_LIKE"]["sum_sq_norm_joint"]
+    additive = groups["knob_bands_LIKE_FOR_LIKE"]["additive_sqrt_trace"]
+    joint = groups["knob_bands_LIKE_FOR_LIKE"]["joint_sqrt_trace"]
     ratios = [per[t]["additive_over_joint"] for t in tags]
-    idmax = max(per[t]["identity_norm_residual_rel"] for t in tags)
+    idmax = max(per[t]["identity_norm_residual_rel"] for t in all_tags)
 
     payload = {
         "schema": "pet-joint-vs-additive-nuisance-retrain-v1",
@@ -219,8 +251,16 @@ def main(argv=None):
         "band_coverage_caveat": ("only the Phase-7 material endpoint-universes store both operands. "
                                  "C_syst sums 13 bands over both endpoints, so the aggregate here is "
                                  "NOT a restatement of the published C_total."),
-        "n_universes": len(tags),
-        "universes": tags,
+        "n_universes_measured": len(all_tags),
+        "universes_measured": all_tags,
+        "headline_group": "knob_bands_LIKE_FOR_LIKE",
+        "grouping_rationale": (
+            "null is the identity-retrain training-noise control (s == 0) and is not a band in "
+            "C_retrain's contributing set. flux is built over 100 PPFX universes in C_syst, so one "
+            "flux universe's ||s|| is not a term in that block -- flux:55's ||s|| alone exceeds the "
+            "published whole-flux sqrt-trace 1.0604e-38. Pooling either into one number would assert "
+            "a construction rule the published assembly does not use."),
+        "aggregates_by_group": groups,
         "skipped": skipped,
         "identity_check": {
             "claim": "||delta||^2 == ||s||^2 + ||Delta||^2 + 2 s.Delta, exactly",
@@ -228,7 +268,7 @@ def main(argv=None):
             "tolerance": a.identity_tol,
             "pass": bool(idmax <= a.identity_tol),
         },
-        "aggregate_over_these_universes": {
+        "headline_knob_aggregate": {
             "sum_sq_norm_s": ss,
             "sum_sq_norm_delta_increment": dd_,
             "sum_sq_norm_joint": jj,
@@ -257,11 +297,13 @@ def main(argv=None):
               f"{r['additive_block_norm_sqrt_ss_plus_dd']:12.5e} "
               f"{r['additive_over_joint']:10.4f} {r['cosine_similarity_s_delta']:+7.3f} "
               f"{r['pearson_corr_s_delta']:+8.3f}")
-    agg = payload["aggregate_over_these_universes"]
-    print(f"\n[joint] AGGREGATE over these {len(tags)} universes:")
-    print(f"  additive sqrt-trace {agg['additive_sqrt_trace']:.6e}")
-    print(f"  joint    sqrt-trace {agg['joint_sqrt_trace']:.6e}")
-    print(f"  additive/joint      {agg['additive_over_joint']:.6f}")
+    print("\n[joint] AGGREGATES BY GROUP -- the knob group is the like-for-like one:")
+    for gname, g in payload["aggregates_by_group"].items():
+        if not g["n"]:
+            continue
+        print(f"  {gname}")
+        print(f"    n={g['n']}  additive {g['additive_sqrt_trace']:.6e}  "
+              f"joint {g['joint_sqrt_trace']:.6e}  additive/joint {g['additive_over_joint']:.6f}")
     print("  >1 means the additive construction OVERSTATES the joint covariance.")
 
     if not payload["identity_check"]["pass"]:
