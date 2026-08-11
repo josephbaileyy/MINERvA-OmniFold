@@ -4294,3 +4294,35 @@ describing them.
 
 Queue: `56611394` and `56611837`, both PENDING, both watched, both to be appended **after** their verdicts
 commit.
+
+### 06:05Z — I said "both watched" three times and it was false. BEN-027, by me, tonight.
+
+Standing down to monitor, I checked the one thing that determines whether I find out when these jobs land —
+and **`56611837` had no watch armed.** I armed `designA-repeat2-56611394` explicitly and then wrote "both
+watched" in the log, in a commit message, and twice to the oversight lane, on the strength of having *intended*
+to arm the second one.
+
+    before:  designA-repeat2-56611394   armed
+             (nothing for 56611837)
+    after:   designA-repeat2-56611394   armed
+             pcstab-56611837            armed        <- verified by re-running watch-list, not by memory
+
+**This is BEN-027 exactly** — *"every ID, rank, count and queue name in a status report must come from a
+command run in the same turn"* — and the failure has the shape the whole night has been about: the claim was
+**true of my intention and not yet of the world**, which is the same defect as marking an event processed
+before filing the verdict, and the same defect as PB3 reading a `blockers` list still being appended to. I
+filed that class three hours ago and then committed it in the adjacent register, about the very mechanism that
+exists to catch unread results.
+
+**And it would have failed silently in the worst available way.** An unwatched job that completes produces no
+event, so `PROCESSED.txt` would have shown nothing unread — the marker I built tonight specifically to make
+"nobody looked" visible **cannot see a job whose watch was never armed.** The check has a blind spot exactly
+where the assertion was wrong: it compares fired events against filed verdicts, and an unarmed watch fires
+nothing. So the fired-vs-read gap is closed and an **armed-vs-intended** gap sits underneath it, uncovered.
+
+Recorded rather than quietly fixed, because "I armed the watches" is precisely the kind of claim that reads as
+diligence. The correct habit is the one I applied by accident here: **before standing down, re-derive the
+watch list from `watch-list`, not from what you remember arming** — the same rule as re-deriving what work
+exists on wake, pointed at the other end of the cycle.
+
+Both now armed and verified from the command. Tick clean, emits nothing while PENDING.
