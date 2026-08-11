@@ -4999,3 +4999,45 @@ Recorded for the record: the oversight lane had a mechanism retracted by the GBD
 `wakerctl emit` mails Joseph, and emit has no mail path. Its own framing, which I am adopting for how I read it:
 **its observations are better sourced than its explanations.** That is why every claim it has relayed today was
 re-verified here before being written down, and why two of them turned out to need correcting.
+
+### 14:40Z — measured the build claim. **The counts are a single-pass artifact and the checklist line is TRUE.**
+
+The oversight lane's calibration was right: I had asserted *"three builds clean"* in this log and in
+`BLOCKED-ON-USER.json` **without measuring it.** It asked me to strike
+`INTEGRATION_CHECKLIST.md:17-19` as decayed, on the strength of **93 / 6 / 1** undefined references.
+
+**I failed the measurement twice before getting it, and both failures looked like success.**
+`-halt-on-error=false` is not a valid latexmk option, so all three runs died at *"Bad options specified"* and
+nothing built; my grep pattern then matched nothing and printed a clean `0`. I then read `main_note.log`
+anyway — **dated Aug 2, nine days stale, not from my run** — whose 30 "undefined" hits are all
+`LaTeX Font Warning: Font shape ... undefined`. **Either `0` would have gone out as a measurement.** That is
+BEN-083, filed by me, violated by me, in the register where the check felt unnecessary because the command
+"obviously" ran.
+
+**Then the real measurement, and it inverts the conclusion:**
+
+    one pdflatex pass, cleaned tree:  6 undefined -- fig:pasc, fig:pdis, fig:pfps, fig:pgen, fig:ppet, fig:pxsec
+                                      EXACTLY the six they named, no more, no fewer
+    after latexmk converges (4 pdflatex + biber):  0
+    all six labels defined in paper_body.tex; all six present as \newlabel in main_paper.aux
+    fig:primergen correctly absent from the paper .aux -- it belongs to the primer build
+
+`\ref` resolves from the `.aux` written by the **previous** pass, so **on pass 1 every forward reference is
+undefined by construction.** A pass-1 warning list is approximately the document's forward-reference list,
+which is exactly why it looks so plausible as a defect list.
+
+**So `INTEGRATION_CHECKLIST.md:17-19` is TRUE — and its own wording says so: *"…missing files, converged"*.
+I was one commit from striking a correct claim, in a file I had already corrected twice today, and the
+correction would have introduced the error.** Filed as **BEN-088**, whose third rule is the one I want to
+carry: **when a spot-check contradicts a standing "clean" claim, suspect the instrument before the claim.**
+
+**And the corollary that cost most, recorded as rule (iv):** my unmeasured *"three builds clean"* turned out to
+be **right**. Being right without evidence and wrong with evidence are failures of the same discipline, and only
+the first feels acceptable. The claim in `BLOCKED-ON-USER.json` is therefore accurate and **I am deliberately
+not rewriting that file to say so** — it re-pages on any mtime change (BEN-085), the content is not wrong, and a
+page that adds "and I have now checked this" is exactly the noise that trains a reader to discount the channel.
+Recorded here instead.
+
+**Not filed as a fault of theirs.** Their calibration was correct and prompted the measurement; the counts were
+a single measurement taken once, which is weaker evidence than a claim that survived review — which is rule
+(iii) pointed back at me as much as at them.
