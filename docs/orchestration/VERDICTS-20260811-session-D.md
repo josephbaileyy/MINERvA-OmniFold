@@ -167,7 +167,44 @@ was not the population. But neither §3 nor the docstring names which five, and 
 unreproducible as written for want of its population** — BEN-079's shape one level up. Its conclusion is
 unaffected and independently confirmed. This is UNRESOLVED; do not round it to either side.
 
-## V9 — the sweep itself → **NOT RUN. UNRESOLVED, and its silence means nothing**
+## V10 — S3 (null-as-absent) executed → **PASS: zero new defects, over a scope narrower than I sized**
+
+Run after V9 was written; V9's "not run" now applies to S1, S2 and S4b only.
+
+Controls asserted **before** the sweep, and it would have withheld itself had either failed: positive
+(pre-fix PB2) fired 2, negative (post-fix `1440b58`) fired 0, corpus floor 340 tracked `.py` ≥ 300.
+
+**34 sites, 9 flagged as permissive-`None`-branch, 0 defects after triage.** Every dismissal named, per
+the corpus doc's abort condition 4:
+
+| site | why dismissed |
+|---|---|
+| `p4_check_verifier_token.py:107` | `raise P4GateError` — restrictive |
+| `pet/step1_increment_trajectory.py:201` | `raise SystemExit` — restrictive |
+| `pet/gate2_target_runtime.py:108` | returns an explicit *"fail closed"* refusal — restrictive |
+| `pet/validate_pet_nominal_gate4.py:1225` | appends a **failing** check (`_ck(..., False, "NOT SUPPLIED…")`) — restrictive |
+| `lib/enumerate_backfill_families.py:77` | appends to `unresolved` — restrictive |
+| `pet/validate_p3f_pet_fullevent.py:181` | `continue`, with the comment *"truth/miss checks carry no out_of_domain field"* — scoped by design |
+| `pet/fullevent_fps_dataloader.py:296` | `blocks.get(key)` → `continue`. The docstring says *"fail closed"* while an absent-or-null block is **skipped** — but the function scopes itself to *"the supplied muon/vertex blocks"*, so skipping an unsupplied one is the stated contract. **Refuted**, per default-to-refuted. Noted only because the docstring's "fail closed" is broader than the behaviour |
+| `usagectl.py:345`, `:448` | `continue` on an absent config window, with a type check immediately below; usage accounting, not a gate. Also a detector artifact — one `.get` at `:344` reported against two `if` lines |
+
+**The classifier over-reports and I am naming the mechanism rather than the rate:** it substring-matches
+permissive tokens, and `"ok"` is inside `"token"` and `"blocked"`. Three of the nine were tagged that way.
+Harmless here — over-reporting sends work to triage, which is the safe direction — but it is why the
+9 is not a count of anything.
+
+**THE SCOPE GAP, stated because my own two numbers disagree.** The corpus doc sized S3 at **69** sites;
+the executed sweep visited **34**. They are not the same detector: sizing counted a `None`-comparison or
+truthiness read of a `.get`-bound variable **anywhere** — inside `while`, ternaries, boolean operands,
+`assert` — while the executed version only visits a bare `if` test. **So roughly 35 sized sites were not
+swept**, and S3's clean result covers the `if`-statement form only. Reconciling these two numbers, rather
+than reporting the smaller one, is the entire point of having sized it first.
+
+**Reading, per the corpus doc §3:** BEN-070's two readings stay open. Zero new instances in the swept
+scope is consistent both with the class being concentrated in recently-written code and with the detector
+being too narrow, and one sweep does not choose between them.
+
+## V9 — the rest of the sweep → **NOT RUN. UNRESOLVED, and its silence means nothing**
 
 Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
 four detectors carry live controls, S4a dropped on A's endorsement. **The sweep has not been executed and
