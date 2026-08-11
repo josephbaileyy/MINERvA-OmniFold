@@ -1,6 +1,14 @@
 # PROCEDURE — updating the four `\gbdtFive*` macros when the J28 re-roll is adopted
 
-**Written cold, 2026-08-11, before the adoption and before the edit.** **STATUS CHANGED the same day:** Packet B closed on an independent PASS (`1440b58`), so the pipeline-debt standard is met and the adoption gate is actionable rather than blocked behind verification. **This is now a procedure about to be used, not a contingency** — re-read §3 and §5 before editing, and note that two of the six rows (PSD, and the "neither is adopted" sentence) cannot be discharged by arithmetic at all. BEN-087 says attributions must be
+**Written cold, 2026-08-11, before the adoption and before the edit.**
+
+> **STATUS, CORRECTED 2026-08-11 — read §4a FIRST.** An earlier revision of this header said Packet B's
+> closure made the adoption gate "actionable rather than blocked". **That was my error and it is withdrawn.**
+> Packet B (`1440b58`) verified the pipeline and J28 fixed the flux defect; the binding gate is the
+> 2026-07-12 quarantine, of whose **seven** construction causes exactly **one** is discharged. This is a
+> contingency again, not a procedure about to be used. Nothing below authorizes an edit.
+
+Re-read §3 and §5 before editing, and note that two of the six rows (PSD, and the "neither is adopted" sentence) cannot be discharged by arithmetic at all. BEN-087 says attributions must be
 re-verified alongside numbers; it does not say *which* sentences. This enumerates them, sourced by `git grep`
 rather than recall, so the check exists when the pressure is to just change the number.
 
@@ -50,18 +58,66 @@ macro, exactly the structural hole recorded for `\petRatio`'s operands.
 
 ## 4. The directional trap, and why no uniform factor works
 
-Reported to this lane by the oversight session: **`\gbdtFiveMeanShift` moves UP ~13.6% while the other three
-move DOWN ~9%.** Consequences, computed here:
+**CORRECTED 2026-08-11 by the oversight session, against its own numbers.** This section previously carried
+*estimates* I had relayed to this lane (*"adopt ~5.29 cv ~5.68 meanshift ~1.87"*, derived from "~9% down /
+~13.6% up"). **The exact values already exist in `VALIDATION_LEDGER.md` and should be read from there, never
+from this table** — an estimate standing where an authoritative value exists is how a near-right number gets
+written into a paper. The ledger states the mapping explicitly: *"the corrected totals are ~9% SMALLER than
+the values currently in `values.tex`."*
 
-    if the directions hold:  adopt ~5.29   cv ~5.68   meanshift ~1.87
-    ordering CVTrace > AdoptTrace           PRESERVED
-    meanshift / adopt   28.4%  ->  35.5%    a 25% RELATIVE change in that ratio
+| macro | current `values.tex` | corrected (ledger, full-160) | change |
+|---|---|---|---|
+| `\gbdtFiveAdoptTrace` | 5.81e-38 | **5.2600e-38** (mean-centered combined) | −9.47% |
+| `\gbdtFiveCVTrace` | 6.24e-38 | **5.6609e-38** (CV-centered combined) | −9.28% |
+| `\gbdtFiveMeanShift` | 1.65e-38 | **1.878696733368378e-38** (`joint_mean_shift_norm`) | **+13.56%** |
+| `\gbdtFiveBlockMedian` | 13.36 | **not established as the same quantity** — the ledger reports combined median frac/bin `13.43% → 13.61%` (mean-centered), which is *not* obviously the "syst+stat+ML block sum" this macro names. **Do not assume these are the same number.** BEN-087 is exactly this shape | — |
 
-So: **anyone applying a single scale factor to all four gets the mean shift backwards.** And although every
-*worded* claim above survives the rescaling, the mean shift grows from ~28% to ~36% of the covariance it is
-*"reported separately rather than folded into"* — a material change in the qualitative picture that the
-unchanged sentence will not convey. Whether that warrants a wording change is the writer's call; it should be
-a *decision*, not an oversight.
+Recomputed from the exact values rather than the estimates:
+
+    ordering CVTrace > AdoptTrace     5.6609 > 5.2600     PRESERVED
+    meanshift / adopt      28.47%  ->  35.72%             a 25% RELATIVE change in that ratio
+
+So: **anyone applying a single scale factor to all four gets the mean shift backwards** — it is the only one
+that rises. And although every *worded* claim in §3 survives the rescaling, the mean shift grows from ~28% to
+~36% of the covariance it is *"reported separately rather than folded into"* — a material change in the
+qualitative picture that the unchanged sentence will not convey. Whether that warrants a wording change is the
+writer's call; it should be a *decision*, not an oversight.
+
+**§3's PSD row is already discharged in the ledger, so do not re-derive it as if open:** the J28 section states
+*"both are PSD"* for the two conventions, and the five-band lateral entry records p4 validation `RESULT PASS`
+with `PSD (min/max eig −3.87e-16)` on 266×266. That does **not** remove the §3 obligation — those are the
+*current* products, and PSD must be re-established for whatever is finally adopted — but the check has been run
+once and the owner should start from that result, not from zero.
+
+## 4a. THE BINDING GATE IS NOT J28 AND NOT PACKET B — corrected 2026-08-11
+
+I told Joseph that Packet B closing (`1440b58`) made this adoption *actionable*. **That was wrong, and it is
+the correction that matters most in this document.** Packet B verified the *pipeline*; J28 fixed the *flux
+defect*. Neither is what gates these four macros.
+
+The gate is the **2026-07-12 uncertainty-remediation quarantine** (`VALIDATION_LEDGER.md:60-88`), which names
+**seven** construction causes:
+
+    1. one-sided endpoint interpolation          OPEN
+    2. CV centering                              OPEN
+    3. varying estimator seeds                   OPEN
+    4. scalar jitter subtraction                 OPEN
+    5. frozen PET weights                        OPEN
+    6. incomplete statistical projection         OPEN
+    7. CV-support-limited lateral selection      DISCHARGED 2026-08-07 (five-band FPS active lateral,
+                                                 job 56431823, gate chain PASSED)
+
+**One of seven.** And the ledger forecloses the inference I made, in its own words: the lateral replacement
+*"discharges the specific precondition this paragraph named … it does **not** by itself lift this quarantine,
+whose other listed causes and whose PET / 4D-FPS / significance scope are untouched, and **no scale in this
+section becomes quotable on the strength of it**."* The lateral entry's own Scope repeats it: *"The 2026-07-12
+quarantine above is not lifted by this entry."*
+
+**Consequence for anyone reaching this document expecting to adopt:** you cannot, and no verification pass
+changes that. A PSD re-check, a seed ensemble, or an independent re-roll would all pass and none of them
+touches causes 1–6. The distance to adoption is six remediations, not a job submission. **This procedure stays
+valid and stays unused until they are closed** — which is the right state for it to be in, and better than
+discovering the gate after the macros were edited.
 
 ## 5. The order to do it in
 
