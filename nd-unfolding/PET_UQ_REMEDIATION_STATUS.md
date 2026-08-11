@@ -11,6 +11,21 @@ schema and joint-UQ definition are in
 `pet/FULL_EVENT_FEATURE_CONTRACT.md`; the packet/commit contract is in
 `../docs/PUBLICATION_COMPLETION_RUNBOOK.md`.
 
+## STATUS 2026-08-11 — cause 5's binding half is the JOINT CONSTRUCTION, not the samples
+
+The 120 selection-shifted **full-event** lateral endpoint ROOTs exist, are `g2-fullevent-v1`, and were
+promoted `GATE3_PROMOTED_PASS` on **2026-07-20** (120/120 receipts `PASS`, 1.1 TB, now being archived to
+HPSS by job `56692312` with server-side digest verification). So the *selection-complete detector
+samples* half of quarantine cause 5 is satisfied and the **joint nuisance/retraining construction is the
+binding half** — it does not exist in any form, and the construction that does exist is the additive
+`C_syst + C_retrain` that cause 5 names as the defect, measured this session to **overstate** the joint
+covariance by `1.786`× on the knob bands with a negative cross term in every universe. Cause 5 remains
+**OPEN**; a written discharge criterion for it now exists (there was none anywhere):
+`../docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md`.
+
+Do not read `KNOWN_ISSUES.md` #19 as "no full-event anything exists". No full-event **product** exists;
+the full-event **inputs** do.
+
 ## Legacy boundary
 
 The completed recoil-only PET nominal, floor, ensembles, and covariance are a

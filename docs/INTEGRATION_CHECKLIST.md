@@ -85,14 +85,46 @@ Last updated 2026-07-16.
   code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`). The GiBUU corner ratio
   is separately UNCOMPUTED — recover by re-running `make_figures.sh:55` (it already passes
   `--gen GiBUU`) and reading the `hiE-hiW corner … data/gen=` stdout line.
-- **Full-event PET** any result (#14): gated on KNOWN_ISSUES #19 (no products exist).
+- **Full-event PET** any result (#14): gated on KNOWN_ISSUES #19 — **verdict stands, and the reason is
+  sharpened 2026-08-11 by the PET lane because "no products exist" has been read one level too broadly.**
+  No full-event PET *product* exists (weights that are canonical, cross section, covariance) and that is
+  what gates the claims. The full-event **inputs** are a different matter and they DO exist: the 120
+  selection-shifted full-event lateral endpoint ROOTs (`nd-unfolding/p3f_pet_fullevent/final/`, 5 band ×
+  2 endpoint × 12 playlist, 1.1 TB) are `g2-fullevent-v1` schema and were promoted
+  **`GATE3_PROMOTED_PASS` on 2026-07-20**, all 120 receipts `PASS`
+  (`state/p3f-pet-gate3-promotion-56169838.json`). Inputs and products are different objects, and
+  conflating them mis-sizes the remaining work by a 120-endpoint C++ event-loop dump.
+  See `docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md`.
 - **FPS covariance-dependent** claims: gated — **verdict stands, stated reason corrected 2026-08-11.**
   The old reason, *"corrected FPS UQ pending"*, has decayed: the selection-complete five-band FPS
   lateral **exists and passed its full gate chain** (job `56431823`, `VALIDATION_LEDGER.md:90-118`).
   What still gates these claims is the binding row above — the ledger's own scope note says *"The
   2026-07-12 quarantine above is **not** lifted by this entry"* and that the `+10.96%` **must not be
   applied as a uniform scale** (per-bin σ ratio 0.79 → 1.44).
-- **PET 100-replica C_stat**: 20 replicas only; recoil-only cross-check.
+- **PET 100-replica C_stat**: 20 replicas only; recoil-only cross-check. **Verdict stands as a gate on
+  the PRODUCT; the row's implied claim-defect does not exist — corrected 2026-08-11 by the PET lane,
+  which owns it.** This row has been read as *"the note quotes C_stat as if it had 100 replicas."*
+  Checked, both halves:
+  - The note quotes **no PET `C_stat` magnitude at all** — `7.439e-39` appears in **zero** `.tex` files
+    under `docs/analysis-note/`, and `values.tex` defines no PET statistical macro.
+  - The note's only statement about it is already self-disclosing (`sec_pet.tex:110-112`): *"The
+    `C_stat` estimate is based on **20** coherent replicas, so its finite-ensemble precision is more
+    limited than the 100-replica **target**."* 100 is named as a target, 20 is stated as the fact, and
+    the next sentence scopes the whole paragraph to the recoil-only estimator.
+
+  So there is no sentence to repair. **The disposition is therefore "change the claim", and the claim
+  that needed changing was this row** — not the note. *Producing* the 100 is the wrong spend, and
+  deliberately so rather than for cost alone: each replica is a full PET retrain (`sec_pet.tex:99-101`,
+  one GPU job per replica, `sbatch_pet_bootstrap_replica.sh` requests 6 h), so 80 more replicas is an
+  80-job GPU campaign — spent to sharpen a number that (i) is **not quoted anywhere**, (ii) is a
+  component of the quarantined recoil `C_total` (`values.tex:70` `\petTotalTrace` is marked
+  *"QUARANTINED"* at its own point of definition), and (iii) belongs to a **superseded estimator**: per
+  the 2026-08-01 full-event landing every pre-08-01 PET number is a *different estimator*, not a stale
+  value. The 100-replica ensemble is a **full-event deliverable**, which the note already requires
+  independently — cause 5's replacement *"receives a fresh statistical and ML ensemble"*
+  (`sec_pet.tex:133-134`) — so topping up the recoil ensemble would buy a sharper number for an
+  estimator the note does not quote and then throw it away. **Not scheduled, and this is the record of
+  why** (never silently dropped).
 - ~~**χ²/ndf 1.699 (appendix)** (#4): reconcile vs ledger 1.481 — needs recompute.~~
   **STALE — struck 2026-08-11. This row was the genuinely dead one.** The recompute landed **2026-07-16**
   and this same file records it twice: issue **#4 is marked DONE** in the table above, and the

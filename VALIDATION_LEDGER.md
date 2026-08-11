@@ -1,5 +1,56 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 cause 5's construction defect sized — VERIFIED DIAGNOSTIC, recoil, NOT QUOTABLE
+
+Cause 5 of the 2026-07-12 quarantine (below, `:65-88`) requires a **joint** nuisance/retraining
+construction: `δ_u = x_u^{varied+retrained} − x_CV` as one object. The historical recoil-PET
+assembly instead sums `C_syst` (from `s_u = x_frozen − CV`) and `C_retrain` (from
+`Δ_u = x_retrain − x_frozen`), which keeps `outer(s,s) + outer(Δ,Δ)` and **drops the two cross
+terms**. Every operand is stored per bin, so the omission is measurable.
+
+Measured by `nd-unfolding/pet/measure_joint_vs_additive_nuisance_retrain.py` on the six committed
+Phase-7 response arrays; receipt `nd-unfolding/products/pet/bkgsub/pet_joint_vs_additive_retrain.json`.
+No training, no re-unfold — inference-free arithmetic on frozen arrays.
+
+| universe | ‖s‖ | ‖Δ‖ | ‖joint δ‖ | additive √(‖s‖²+‖Δ‖²) | additive/joint | cos(s,Δ) |
+|---|---|---|---|---|---:|---:|
+| `2p2h:1` | 7.73741e-39 | 5.11033e-39 | 8.53834e-39 | 9.27270e-39 | **1.0860** | −0.165 |
+| `CCQEPauliSupViaKF:1` | 7.59828e-39 | 6.16815e-39 | 4.09545e-39 | 9.78672e-39 | **2.3897** | −0.843 |
+| `LowQ2:1` | 8.69552e-39 | 8.25841e-39 | 4.09574e-39 | 1.19922e-38 | **2.9280** | −0.885 |
+| `MaCCQE:1` | 1.02987e-38 | 1.28115e-38 | 9.48537e-39 | 1.64377e-38 | **1.7330** | −0.683 |
+| `MaRES:1` | 1.36324e-38 | 1.32354e-38 | 1.01691e-38 | 1.90005e-38 | **1.8685** | −0.714 |
+
+**Knob-band aggregate: additive √tr `3.093207e-38` vs joint √tr `1.731571e-38` → the additive
+construction OVERSTATES the joint covariance by `1.786`×.** The cross term is negative in **every**
+universe, so cause 5's defect is not sign-neutral: the quarantined budget is inflated by its own
+construction. Realized per-universe range **1.086–2.928** — a realized range over 5 universes, not a
+fitted interval (BEN-025).
+
+**Ingredients, so the numbers can contradict each other.** `δ` is recomputed from `x_retrain − cv`,
+never from `s + Δ`; the identity `‖δ‖² = ‖s‖² + ‖Δ‖² + 2 s·Δ` holds to max relative residual
+**5.144e-15** and the tool fails closed if it does not. Independent corroborations: the measurement
+returns cos **−0.714** / Pearson **−0.711** for MaRES:+1 against Phase 7's separately recorded
+`corr(Δ,s) = −0.71`; and the integral-level record (frozen `+1.83%` → retrained `+0.89%`, retraining
+reabsorbing about half the frozen shift) independently implies a joint shift *smaller* than the frozen
+one, which is what a negative cross term predicts. Tool power-tested both directions on synthetic
+operands: orthogonal → 1.000000, cos −0.71 → 1.856953, cos +0.71 → 0.764719, exact cancellation →
+`nan` rather than a silent pass.
+
+**Non-comparability named here rather than in a footnote.** `flux:55` and `null` are excluded from the
+aggregate. `C_syst`'s flux block is built over 100 PPFX universes, so one flux universe's `‖s‖` is not a
+term in it — measurably: `flux:55`'s `‖s‖` = 2.80e-38 alone **exceeds** the published whole-flux block
+√tr of 1.0604e-38. `null` is the identity-retrain training-noise control (`s ≡ 0`). The pooled value is
+kept in the receipt under `all_pooled_DO_NOT_QUOTE`.
+
+**Scope — nothing here is quotable and nothing is discharged.** These are **recoil**-representation
+products, and per the 2026-08-01 full-event landing every pre-08-01 PET number is a **different
+estimator**, so no magnitude transfers to the full-event budget; what transfers is the sign and rough
+size of the omitted cross term, as a design input. Only the 5 knob endpoint-universes that stored both
+operands are covered, against `C_syst`'s 13 bands over both endpoints, so this is **not** a restatement
+of the published `C_total`. Cause 5 remains **OPEN**. Full determination, including a written discharge
+criterion for cause 5 (there was none recorded anywhere):
+`docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md`.
+
 ## 2026-08-11 2D vs GENIE MINERvA Tune v1 chi2/ndf — VERIFIED-NUMERIC, both note values reproduce
 
 `sec_results.tex:167` quoted "data vs tune 33.0, ours vs tune 26.5". The 33.0 was sourced

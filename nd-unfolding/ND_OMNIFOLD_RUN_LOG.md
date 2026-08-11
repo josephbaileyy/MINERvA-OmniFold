@@ -4631,3 +4631,64 @@ because of a buffer one lane left and another filled upward into — **fourth in
 outcome is not a working process.**
 
 Nothing adopted, no ROOT written, `values.tex` untouched.
+
+## 2026-08-11 — cause 5's binding half determined; construction defect sized; two jobs launched (Session C, PET)
+
+**Determination.** `VALIDATION_LEDGER.md:83-84` quarantines the recoil-PET budget pending *a joint
+nuisance--retraining construction* AND *selection-complete detector samples*. Asked which is binding.
+**Answer: the joint construction. The samples already exist and have since 2026-07-20.**
+
+Measured this session, all from commands rather than from status text:
+`nd-unfolding/p3f_pet_fullevent/final/` holds **120 ROOT + 120 receipt, 1.1 TB**, all **120 receipts
+`PASS`** (every file parsed, not sampled), inventory 5 band x 2 endpoint x 12 playlist exactly matched,
+schema `g2-fullevent-v1` (binary sha `61d7dfbf` from `486e53e`, `MNV101_DUMP_POINTCLOUD=1` +
+`MNV101_FULL_PHASE_SPACE=1`, i.e. full-event and not recoil), promoted **`GATE3_PROMOTED_PASS`
+2026-07-20T23:58:00Z** with `expected_tasks 120 / reconciled_tasks 120 / errors []`.
+
+**The trap this sat on.** `KNOWN_ISSUES.md` #19's true *"no full-event FPS RESULT exists"* has been read
+downstream as *"no full-event anything exists"*. Inputs and products are different objects, and the
+conflation mis-sizes the remaining work by a 120-endpoint C++ event-loop dump.
+
+**Construction defect sized (new).** The joint object does not exist and what does exist is the defect:
+`C_syst` + `C_retrain` keeps `outer(s,s) + outer(Delta,Delta)` and drops both cross terms.
+Measured on the six committed Phase-7 response arrays by
+`pet/measure_joint_vs_additive_nuisance_retrain.py`, receipt
+`products/pet/bkgsub/pet_joint_vs_additive_retrain.json`: the cross term is **negative in every
+universe**, and on the five knob endpoint-universes the additive construction gives sqrt-trace
+`3.093207e-38` against the joint `1.731571e-38` -- **overstating by 1.786x**, realized per-universe
+range 1.086-2.928. Identity `||delta||^2 == ||s||^2+||Delta||^2+2 s.Delta` verified to 5.144e-15;
+reproduces Phase 7's separately recorded `corr = -0.71` as cos -0.714 / Pearson -0.711; tool
+power-tested in all four directions. RECOIL products, so no magnitude is quotable and none transfers --
+what transfers is the sign and size of the omitted term.
+
+**Jobs launched.**
+- **56691812** `fe_traj_ann` (`pet/sbatch_step1_trajectory_annealed.sh`, qos=shared, 1 GPU, -t 4:00:00)
+  -- does the Branch C iteration-dynamics defect survive the LR anneal? Two arms: ARM 1 is a positive
+  control re-running the pre-anneal trajectory against the **committed** `56445883` decomposition
+  receipt, and if it does not reproduce, ARM 2 is not read at all; ARM 2 is the full three-stage chain on
+  the annealed nominal `56563761`. No training -- saved per-iteration checkpoints only. Predeclared
+  three-branch at `831043d`, `docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md`,
+  with UNRESOLVED flagged as the **most likely** single outcome because the annealed arm sits near
+  `push ~ R` where `|required-1| < 0.02` makes the sign criterion return no information.
+  Watch `branchC-traj-annealed-56691812` armed.
+- **56692312** `hpss_p3f_fe` (`pet/sbatch_hpss_protect_p3f_fullevent.sh`, qos=xfer, -t 12:00:00) --
+  `hsi ls` returned only `~/backups`, so 1.1 TB of Gate-3-promoted input was the SOLE copy on purgeable
+  scratch, the same exposure that already cost nine throw slabs (`docs/OPEN_ITEMS.md` item (g)).
+  Verification is by **digest**: local md5 against an md5 computed SERVER-SIDE by `hsi hashcreate`, so
+  content is checked without reading 1.1 TB back. Completion condition
+  `n_archived_digest_verified == 240` (120 ROOT + 120 receipt), not 120. Resume guard is digest-based per
+  BEN-023. Watch `hpss-protect-p3f-56692312` armed.
+
+**`INTEGRATION_CHECKLIST.md` -- two PET rows corrected.** The full-event row's verdict stands with its
+reason sharpened (product vs input). The **PET 100-replica `C_stat`** row had been readable as *"the note
+quotes `C_stat` as if it had 100 replicas"*; checked and it does not -- `7.439e-39` appears in **zero**
+`.tex` files, and `sec_pet.tex:110-112` already states *"based on 20 coherent replicas ... more limited
+than the 100-replica target"*. So the claim needing change was the checklist row, not the note, and
+producing the 100 is recorded as **not scheduled** with its reason rather than silently dropped: 80 more
+full-PET-retrain GPU jobs to sharpen a number that is unquoted, inside the quarantined recoil `C_total`,
+and belonging to a superseded estimator -- while the note independently requires a **fresh** statistical
+ensemble for the full-event replacement.
+
+**Nothing discharged.** Cause 5 remains OPEN; six of seven quarantine causes remain open; no PET
+magnitude became quotable; Branch C not lifted; the annealed nominal NOT promoted (held pending Joseph's
+sequencing answer, `docs/orchestration/AUTHORIZATION-20260811-annealed-promotion-and-hpss.md`).
