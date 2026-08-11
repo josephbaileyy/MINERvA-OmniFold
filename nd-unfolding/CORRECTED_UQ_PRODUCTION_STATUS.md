@@ -1,5 +1,28 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
+> **DO NOT CITE THIS FILE BY LINE NUMBER. It is prepend-ordered** — each campaign one-liner is added at
+> the top — so every line-number citation into it decays monotonically and silently, and was correct on
+> the day it was written. Cite a unique quoted string instead. Measured 2026-08-11: the F7 predeclared
+> criterion moved `66 → 73 → 84 → 98 → 108 → 112` across six commits while four documents kept citing
+> `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
+> Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
+
+**2026-08-11 one-liner — per-cause DISCHARGE CRITERIA now exist for quarantine causes 1, 2, 3, 4, 6, and
+nothing is discharged by writing them.** `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`.
+Discharge is defined per **(cause × artifact)** pair with four legs — code, provenance, magnitude, test —
+because the quarantine names causes for a *class* of products and a class has no construction. Honest
+state for the 5D GBDT covariance: **all five OPEN**; cause 2 is nearest (its magnitude leg is MET by the
+predeclared F7 rule, 4.69× → 4.83× the sampling floor) and cause 6 is furthest (no product rebuilt at
+all). Six findings came out of writing them, two of which bear on numbers proposed for the paper:
+(i) the J28 replacement pair `5.2600e-38`/`5.6609e-38` is footed on the **non**-background-aware sweep
+(`4.3455e-38`, median `13.432%`) while the values it would replace, `5.81e-38`/`6.24e-38`, are
+**background-aware** (`4.3578e-38`, median `13.359%` = `\gbdtFiveBlockMedian` `13.36`) — because
+`sbatch_j28_adopt_5d.sh` never passes `--combined` and `adopt_unified_5d.py:76-77` defaults to the
+non-bkgaware product, so the two pairs differ in **two** inputs, not one; and (ii) no committed artifact
+can prove the construction contract for that covariance at all — the seed, null norm and centering
+convention live only in the `.gitignore`d ROOT, so the provenance leg of four causes is currently
+unsatisfiable from the repository. **Nothing adopted, nothing re-run, `values.tex` untouched.**
+
 **2026-08-07 one-liner — five-band active laterals: DONE, gate chain PASSED end to end.** The gate was
 **footing, not coverage** (BEN-036): coverage was already 120/120 P3F + 120/120 P3S with all ten
 74.8 GB merged omnifiles, and the real blocker was that the ten FPS endpoint unfolds ran
@@ -43,8 +66,9 @@ subsample and not drop-in replacements. Exact replacement needs slabs 31–39 re
 
 **F7 (item 1 below) is SETTLED BY ITS OWN PREDECLARED RULE, not open.** `||mean_shift||` is **4.69×**
 the sampling floor `sqrt_tr/√160` on the adopted ensemble (37.1% of `sqrt_tr` vs a 7.9% floor — the same
-37% line 325 flagged as NON-negligible on 07-13), and the correction pushes it to 4.83×. Per the rule at
-lines 73-78 that is `>> floor`, so **mean-centered-only is disqualified**: the CV-centered variant must be
+37% the `02:20 PDT 07-13 HEADLINE LANDED+VALIDATED` entry flagged as NON-negligible), and the correction
+pushes it to 4.83×. Per the rule in item 1 of *"Pending decisions / gates"* below that is `>> floor`, so
+**mean-centered-only is disqualified**: the CV-centered variant must be
 produced and the shift reported either way. The operative `g` change is therefore CV-centered **+0.62%**,
 not mean-centered −2.55%. Only *presentation* remains open. Both variants agree `g_max` falls ~23%.
 **The ledger scales remain QUARANTINED**: this is a measurement, and `rescale_flux_universes.py` adopts

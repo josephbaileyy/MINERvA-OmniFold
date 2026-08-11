@@ -116,7 +116,10 @@ with no interval (rule 3). Per rule 1 the estimate is superseded, not corroborat
 cited again.
 
 **F7 turned out NOT to be an open decision, and I was wrong to escalate it as one.**
-`CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` predeclared the criterion: `~floor` → mean-centered OK,
+`CORRECTED_UQ_PRODUCTION_STATUS.md`, item 1 of *"Pending decisions / gates"* (*"mean_shift convention
+(Fable F7)"*) — cited by content because that file is prepend-ordered and this citation read `:73-78`
+until 2026-08-11, when `:73-78` had drifted to unrelated text
+(`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4) — predeclared the criterion: `~floor` → mean-centered OK,
 `>> floor` → also produce CV-centered and report the shift either way. On the adopted ensemble
 `||mean_shift||` is **4.69×** the sampling floor `sqrt_tr/√160` (37.1% of `sqrt_tr` vs 7.9%; `:325`
 already flagged that same 37% as NON-negligible on 07-13), rising to **4.83×** after the correction. So

@@ -204,6 +204,35 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > | mean-centered | 4.3455e-38 | **5.2600e-38** | ×1.210 | 13.43% → 13.61% | 2805 (26.2%), median g 1.000 |
 > | CV-centered | 4.3455e-38 | **5.6609e-38** | ×1.303 | 13.43% → 14.09% | 6526 (61.0%), median g 1.047 |
 >
+> **⚠ FOOTING MISMATCH, measured 2026-08-11 — these two numbers are NOT drop-in replacements for the two
+> in `values.tex`, and the difference is not only J28.** The pair differs in **two** inputs, one of them
+> silent:
+>
+> | | launcher | `--uthrow` | `--combined` | block-sum √Tr, median/bin |
+> |---|---|---|---|---|
+> | `5.81e-38` / `6.24e-38` (`values.tex:58-59`) | `sbatch_finalize_5d_bkgaware_gpu.sh:31-40` | pre-J28 `unified_throw_cov_5d.root` | **passed** = bkgaware | **4.3578e-38**, **13.359%** |
+> | `5.2600e-38` / `5.6609e-38` (this table) | `sbatch_j28_adopt_5d.sh:109,111` | J28-corrected ✓ | **NOT passed** → default = **non**-bkgaware (`adopt_unified_5d.py:76-77`) | **4.3455e-38**, **13.432%** |
+>
+> Verified: `grep -n -- '--combined' nd-unfolding/sbatch_j28_adopt_5d.sh` returns nothing; both summary
+> files are committed under `nd-unfolding/uq_5d/universe_stage2_5d{,_bkgaware}/uq_universe_5d_summary.txt`.
+> Consequences: (a) the footing-matched J28 change is `5.2600/5.80 − 1 = −9.31%`, not the `−9.47%` computed
+> against the bkgaware `5.81e-38`; (b) `\gbdtFiveBlockMedian` `13.36` **is** the bkgaware median `13.359%`
+> and its non-bkgaware counterpart is `13.43`, so it is not a fourth macro that can be left alone;
+> (c) `sec_systematics.tex:162` says *"the **background-aware** block sum"* and `:170-173` quotes the
+> `0.30%` bkgaware refinement — writing non-bkgaware values under either sentence is BEN-087's trap with a
+> **sample-and-footing** attribution rather than a file one. **Found by failing to derive `13.36` from
+> `13.43`** — BEN-077's receipt-ingredients heuristic, working as designed. Resolution is UNRESOLVED
+> between re-adopting with `--combined` on the bkgaware product (a job well under 12 h) and adopting
+> non-bkgaware with rewritten prose; that choice is not a bookkeeping one. Neither is done here and
+> `values.tex` is untouched. Full chain:
+> [`docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md) §4.3.
+>
+> **Separately (§4.5): `sbatch_j28_adopt_5d.sh:109,111` pipe both adoptions through `| tail -25`**, so the
+> only log of these two numbers was truncated at write time — BEN-026, in the launcher that produced the
+> proposed replacements. The launcher is deliberately left byte-unchanged so it stays faithful to the run
+> it documents; re-run step 4 alone from the existing corrected ROOT with the stream redirected whole
+> before adopting.
+>
 > **The corrected totals are ~9% SMALLER than the values currently in `values.tex`** (`\gbdtFiveAdoptTrace`
 > 5.81e-38 → 5.26e-38; `\gbdtFiveCVTrace` 6.24e-38 → 5.66e-38). That is not in tension with the Flux block
 > having grown 4.2×; it **is** the mechanism. Correcting the flux raised the block-sum toward a nearly
@@ -300,7 +329,11 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 > subsample of the adopted one. Lift it by adopting, in a commit that replaces the numbers — not by
 > deleting the notice.
 >
-> **F7 is settled by its own predeclared rule, not open.** `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78`
+> **F7 is settled by its own predeclared rule, not open.** `CORRECTED_UQ_PRODUCTION_STATUS.md`, item 1
+> of *"Pending decisions / gates"* — the paragraph beginning *"mean_shift convention (Fable F7)"* — cited
+> by content because that file is prepend-ordered and every line-number citation into it decays; this one
+> read `:73-78`, correct when written and pointing at unrelated text by 2026-08-11 (see
+> `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4). It
 > fixed the criterion before the data: `~floor` → mean-centered OK; `>> floor` → also produce the
 > CV-centered variant and report the shift either way, never silently drop it. On the adopted ensemble
 > `||mean_shift||` is **4.69×** the sampling floor `sqrt_tr/√160` (37.1% of `sqrt_tr` against a 7.9%

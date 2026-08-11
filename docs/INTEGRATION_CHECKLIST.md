@@ -45,15 +45,64 @@ Last updated 2026-07-16.
 | 14 | Legacy / corrected recoil / full-event PET | **DONE (registry) / mostly ok prose** | Registry keeps `pet-recoil-legacy` / `pet-recoil-bkgsub` / `pet-fullevent-fps-v1` distinct. Note already separates recoil-only (current) from full-event (future). Optional: make legacy-vs-corrected *recoil* explicit in sec_pet (currently only app_codebase:31). |
 
 ## Claims GATED on unfinished computation (placeholder only — do NOT quote)
+
+> **Every row re-verified 2026-08-11 by the uncertainty-construction lane. One row was stale and is
+> struck below; one row's stated *reason* had decayed while its verdict stood; the binding publication
+> gate was **missing from this list entirely** and is now the first row.** Rows are annotated with the
+> artifact they gate, because two of them were previously readable as gating a product they do not.
+> A gate list that names satisfied gates trains its reader to skip the list — and so does one that
+> omits the gate that actually binds.
+
+- **THE BINDING GATE, and it was absent from this list until 2026-08-11: the 2026-07-12
+  uncertainty-remediation quarantine** (`VALIDATION_LEDGER.md:65-88`), seven construction causes, of
+  which **zero are discharged for the 5D GBDT covariance** — see the next row. It gates the four
+  `\gbdtFive*` macros (`values.tex:57-60`, consumed only at `sec_systematics.tex:162-173`) and every
+  covariance-dependent claim in the note. Per-cause written discharge criteria, the artifact that
+  satisfies each, and the honest per-leg state:
+  [`orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md).
+  **No verification pass opens it** (`orchestration/PROMPTS-20260811-four-session-closeout.md` §3, and
+  the withdrawal at `a0285c4`); adoption is withdrawn as unactionable, and
+  `orchestration/PROCEDURE-gbdtFive-macro-update.md` is correct and deliberately unused.
+- **5D GBDT lateral: STILL LIVE — do not strike this on the strength of the 2026-08-07 five-band
+  entry.** Support-limited until `KNOWN_ISSUES` #16 five-band coverage (publication gate); #16's own
+  status is **OPEN**. **Checked 2026-08-11 because this row was reported to be stale, and it is not.**
+  The five-band active lateral discharged at `VALIDATION_LEDGER.md:90-118` is adopted into the **FPS**
+  covariance (`uq_fps/corrected/universe_stage2_fps/…_activelat.root`, **266** reported bins). This row
+  gates the **5D GBDT** covariance — a different object on a different grid, **10,694 of `GRID_NBINS =
+  65856`** (`nd-unfolding/p4_lib.py:22`) — whose **P4-5D lateral has not been built**
+  (`docs/OPEN_ITEMS.md:92-101`), and whose lateral endpoint inputs are purity-footed, unreceipted, and
+  from a retired launcher (`KNOWN_ISSUES` #20). `ESTIMATOR_REGISTRY.md:29` carries the identical #16
+  caveat on `omnifold-5d-lgbm`, which is this product. 266 ≠ 10,694 is the whole check.
 - **4D adopted covariance + error bars** (#8): gated on Agent A committed standard
   lateral block + unified-throw inflation. Registry `omnifold-4d-lgbm` = CANDIDATE.
+  Also gated on the binding row above, and separately blocked upstream — the 4D unified throw wants a
+  3D universe omnifile that is missing (`nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, "Pending
+  decisions / gates" item 3).
 - **(E_avail,W) generator significances** (#6, #8): reported at central-value level
   only in the note (already gated in prose); numeric ratios need recompute.
+  Two distinct preconditions, both open: **no `(E_avail,W)` covariance has been rebuilt** since either
+  fix landed (`KNOWN_ISSUES.md:357`), and the sixth J28 flux site lives in this same script,
+  code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`). The GiBUU corner ratio
+  is separately UNCOMPUTED — recover by re-running `make_figures.sh:55` (it already passes
+  `--gen GiBUU`) and reading the `hiE-hiW corner … data/gen=` stdout line.
 - **Full-event PET** any result (#14): gated on KNOWN_ISSUES #19 (no products exist).
-- **FPS covariance-dependent** claims: gated (corrected FPS UQ pending).
-- **5D lateral**: support-limited until #16 five-band coverage (publication gate).
+- **FPS covariance-dependent** claims: gated — **verdict stands, stated reason corrected 2026-08-11.**
+  The old reason, *"corrected FPS UQ pending"*, has decayed: the selection-complete five-band FPS
+  lateral **exists and passed its full gate chain** (job `56431823`, `VALIDATION_LEDGER.md:90-118`).
+  What still gates these claims is the binding row above — the ledger's own scope note says *"The
+  2026-07-12 quarantine above is **not** lifted by this entry"* and that the `+10.96%` **must not be
+  applied as a uniform scale** (per-bin σ ratio 0.79 → 1.44).
 - **PET 100-replica C_stat**: 20 replicas only; recoil-only cross-check.
-- **χ²/ndf 1.699 (appendix)** (#4): reconcile vs ledger 1.481 — needs recompute.
+- ~~**χ²/ndf 1.699 (appendix)** (#4): reconcile vs ledger 1.481 — needs recompute.~~
+  **STALE — struck 2026-08-11. This row was the genuinely dead one.** The recompute landed **2026-07-16**
+  and this same file records it twice: issue **#4 is marked DONE** in the table above, and the
+  Deliverables list says *"#4 χ² reconcile (recomputed + macro-sourced) … DONE 2026-07-16"*. Verified in
+  the note rather than inferred from the checklist: `values.tex:35-37` defines
+  `\chiCombined` `1.481` / `\chiCombinedLog` `1.468` / `\chiCombinedSubStat` `11.56`, consumed at
+  `app_statmethods.tex:674,675,679,694,930,935,959,1337,1351` and `sec_results.tex:59`; and
+  `grep -rn '1\.699' docs/analysis-note/*.tex` returns **one** hit, the `values.tex:39` comment saying
+  the pre-flux-fix `1.699/1.688/23.96` are superseded. So there is no `1.699` left in any build to
+  reconcile. Struck rather than deleted, per this repo's convention of keeping the record readable.
 
 ## Verified / quotable (ledger) — safe to keep
 - 2D σ_total 3.073e-38, Phase-18.2 paper reproduction (`omnifold-2d-sklearn`).

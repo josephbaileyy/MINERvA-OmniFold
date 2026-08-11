@@ -105,8 +105,11 @@ two must not be mixed across a single budget.
 > ### F7 IS NOT ACTUALLY OPEN — the rule was predeclared and the data answers it
 >
 > This was escalated to Joseph as an open choice. It should not have been:
-> `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` states the criterion **in advance of the data**, which is
-> the standard this campaign holds itself to:
+> `CORRECTED_UQ_PRODUCTION_STATUS.md`, item 1 of *"Pending decisions / gates"* (the paragraph beginning
+> *"mean_shift convention (Fable F7)"*), states the criterion **in advance of the data**, which is
+> the standard this campaign holds itself to — cited by content, not by line number, because that file is
+> prepend-ordered and this citation read `:73-78` until 2026-08-11, by which point `:73-78` was unrelated
+> text (`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4):
 >
 > > "measure `||mean_shift||` vs sampling floor `sigma/sqrt(160)`. If ~floor → mean-centered OK.
 > > If >> floor → **also produce CV-centered variant** (`C_unified + outer(mean_shift)`); report shift

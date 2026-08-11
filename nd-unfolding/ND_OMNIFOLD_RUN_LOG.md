@@ -4535,3 +4535,57 @@ focused regression binds both fields to the production launcher; the guarded sna
 P4 guard battery passed **172 tests + 31 subtests**. This changes only audit coverage: the receipt
 gate, ROOT products, physics, thresholds, and non-adoptable state are unchanged. Receipt:
 `../docs/orchestration/state/p4-packetb-sweep-extractor-fix-20260811.json`.
+
+## 2026-08-11 — discharge criteria for quarantine causes 1, 2, 3, 4, 6 (Session B, uncertainty construction)
+
+No compute. Criteria written before remediation, per instruction, and nothing is discharged by writing
+them. `../docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`.
+
+**The framing, which is why no criterion existed.** The 2026-07-12 quarantine says the old products
+*"used one or more of"* seven causes — a statement about a **class**, and a class has no construction, so
+there was no subject a criterion could be about. Discharge is therefore defined per **(cause × artifact)**
+pair, with four legs, all required: **C**ode (defect-free path at a pinned revision), **P**rovenance (the
+artifact is provably that path's output, not merely contemporaneous — BEN-083), **M**agnitude (the
+defective-vs-corrected difference measured on the artifact's *own* inputs), **T**est (power-tested both
+directions; presence as well as absence). M is the leg that makes discharge falsifiable: without it,
+*"fixed and it did not matter"* and *"fixed and never run"* are indistinguishable in every document.
+
+**Honest state for the artifact the four `\gbdtFive*` macros quote** — the adopted 5D GBDT covariance,
+10,694 reported bins of `GRID_NBINS = 65856`:
+
+| cause | C | P | M | T | verdict |
+|---|---|---|---|---|---|
+| 1 one-sided endpoint interpolation | OPEN | OPEN | OPEN | OPEN | OPEN |
+| 2 CV centering | MET | OPEN | **MET** (F7 predeclared; 4.69× → 4.83× the sampling floor) | OPEN | OPEN, nearest |
+| 3 varying estimator seeds | MET | OPEN | UNRESOLVED | OPEN | OPEN |
+| 4 scalar jitter subtraction | MET | OPEN | UNRESOLVED | OPEN | OPEN |
+| 6 incomplete statistical projection | OPEN | OPEN | OPEN | OPEN | OPEN, furthest |
+
+Recommended remediation order, cheapest first: **2 → 4 → 3 → 1 → 6**. Cause 6 is on the critical path for
+two deliverables at once, since its `(E_avail,W)` leg also gates the generator ratios.
+
+**Six findings, `BEN-100`–`BEN-105`.** Two bear on numbers proposed for the paper. (a) The J28 replacement
+pair `5.2600e-38`/`5.6609e-38` is footed on the **non**-background-aware sweep (`4.3455e-38`, median
+`13.432%`), while the values it would replace, `5.81e-38`/`6.24e-38`, are **background-aware**
+(`4.3578e-38`, median `13.359%` = `\gbdtFiveBlockMedian` `13.36`): `sbatch_j28_adopt_5d.sh` never passes
+`--combined` and `adopt_unified_5d.py:76-77` defaults to the non-bkgaware product, so the two pairs differ
+in **two** inputs, not one. Found by failing to derive `13.36` from `13.43` — BEN-077's heuristic. Footing
+choice left **UNRESOLVED**; `values.tex` untouched. (b) No committed artifact can prove the construction
+contract for that covariance at all: the seed, null norm and centering convention live only in the
+`.gitignore`d ROOT, so the provenance leg of four causes is unsatisfiable from the repository. **The
+highest-leverage single item found is a receipt, not a re-run.**
+
+**Repairs landed in this commit, all documentation.** Five citations of the F7 predeclared criterion
+retargeted from line numbers to quoted content (`CORRECTED_UQ_PRODUCTION_STATUS.md` is prepend-ordered;
+the rule drifted `66 → 73 → 84 → 98 → 108 → 112` while four documents kept citing `:73-78`, and a second
+citation had drifted `325 → 364`), plus a header on that file saying why. `INTEGRATION_CHECKLIST.md`'s
+GATED list re-verified row by row: the binding gate was **absent from it entirely** and is now its first
+row; the genuinely stale row (`χ²/ndf 1.699` reconcile, done 2026-07-16) is struck with its evidence; the
+FPS row's decayed *reason* is corrected while its verdict stands; and **the row this session was told to
+strike as stale is live and was strengthened instead** — `#16` is OPEN and `ESTIMATOR_REGISTRY.md:29`
+attaches it to `omnifold-5d-lgbm`, so striking it would have deleted the live publication gate on the very
+product this lane is unblocking (BEN-100). `sbatch_j28_adopt_5d.sh` deliberately left byte-unchanged
+despite a BEN-026 `| tail -25` at `:109,111`, so it stays faithful to the run it documents (BEN-104).
+
+Nothing adopted, nothing re-run, no ROOT written, `values.tex` untouched. Routed to Session A for review
+before remediation begins.
