@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Publication disposition after Packet B closure",
-  "state": "Packet B PB1-PB5 and its real-cluster gate are independently PASS on the preserved verifier UUID; the production PB2 repair and explicit-null fail-closure are pushed. Allocation 56636802 is gone and no compute remains. The candidate and projection still self-declare publication_gate_rejects_this under P4_NON_ADOPTABLE=1, so Packet B closure is not adoption. The remaining ready actions are publication decisions reserved to the user.",
+  "current_dag_node": "Branch C annealed step-1 trajectory control/treatment",
+  "state": "Interactive twin 56693776 failed before producing ARM 1 because a bare srun inherited four tasks; no scientific branch is evaluated. Committed one-task batch 56691812 is the sole valid route and is covered by its terminal watch. ARM 2 may be read only after ARM 1 reproduces the committed 56445883 anchors.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -31,15 +31,22 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "Packet B is closed, but its candidate and projection remain publication rejects under P4_NON_ADOPTABLE=1; no adoption is authorized.",
-    "The annealed production nominal is not canonical. Promotion, retaining the 2026-08-08 baseline, or deferral is a publication decision reserved to the user.",
-    "The annealed nominal uses 71.2% of the frozen absolute normalization tolerance; the powered-closure shape criterion passes on three independent draws. Neither fact by itself authorizes promotion.",
-    "The reviewed analysis-note dead-number repair branch is parked pending a user decision on whether the strike-through macro may render in outward-facing builds or must be scoped/omitted there.",
-    "There are no in-flight jobs and no dependency-ready compute action that is authorized ahead of those decisions."
+  "jobs": [
+    {
+      "job_id": "56691812",
+      "tasks": "0",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/branchc-traj-annealed-batch-active-56691812.json"
+    }
   ],
-  "next_authorized_action": "BLOCKED ON USER: (1) choose promote, retain-baseline, or defer for the annealed production nominal; and (2) choose whether the analysis-note strike-through macro may render in outward-facing builds or must be scoped/omitted there. Until then do not adopt the Packet B candidate, promote or extract the annealed nominal, open Branch C, or merge the parked note branch.",
+  "blockers": [
+    "The interactive twin produced no result: ARM 1 is not established and ARM 2 is unread.",
+    "Batch 56691812 must finish and reproduce all three committed ARM-1 anchors within 2% before ARM 2 can be interpreted.",
+    "Read only end_to_end_achieved_over_required and end_to_end_sign_is_wrong; the first-leg-only ratio is not like-for-like.",
+    "Any iteration with |r1_required_mean-1| < 0.02 forces the predeclared UNRESOLVED branch.",
+    "The trajectory is diagnostic only: it cannot lift Branch C, authorize extraction or a cross section, or discharge a quarantine cause."
+  ],
+  "next_authorized_action": "Wait without LLM polling for the terminal event from batch 56691812. On wake, consume its accounting/log/products once, validate ARM 1 against the committed anchors before reading ARM 2, and apply the predeclared REPAIRED/PERSISTS/UNRESOLVED branch exactly. Do not retry the interactive route or infer a verdict from its partial log.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",

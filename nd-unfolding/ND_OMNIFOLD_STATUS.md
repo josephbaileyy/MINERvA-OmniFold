@@ -39,6 +39,13 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- Branch C annealed checkpoint trajectory: the four-GPU interactive twin `56693776` failed before
+  producing any control or treatment receipt because a bare `srun` inherited four tasks; three ranks
+  failed Horovod GPU selection and the remaining rank was terminated after entering ARM 1. This is
+  **NO SCIENTIFIC VERDICT**. The committed one-task batch twin `56691812` is RUNNING as the sole valid
+  route with terminal coverage. ARM 2 remains unread unless ARM 1 reproduces the committed anchors;
+  the verdict uses only `end_to_end_achieved_over_required`, and any `|required-1| < 0.02` is
+  predeclared UNRESOLVED. The launcher now refuses multi-rank steps before TensorFlow or output setup.
 - Full-event diagnostic extraction job 56525297 is reconciled FAILED after its complete, validated
   GPU push: the combined launcher crossed into the ROOT-only stage while still in the TensorFlow
   environment. The preserved push is the sole input to a tested CPU/root_6_28 continuation; no GPU

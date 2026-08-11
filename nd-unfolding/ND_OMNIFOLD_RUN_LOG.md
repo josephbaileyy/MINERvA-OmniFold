@@ -4792,3 +4792,23 @@ two deficits two sentences apart in two normalizations, each rendered as a bare 
 **34.9–37.8%** data-relative (or high-W is **29.8–33.6%** generator-relative), so `54–61` against `23–26`
 reads as a ~2.4× contrast where the consistent answer is ~1.5×. The convention is an authorial choice about
 a physics claim, so it is recorded in the `.tex` comment block and routed rather than resolved here.
+
+## 2026-08-11 — Branch C annealed trajectory interactive twin failed before its control; batch retained
+
+The external event for interactive allocation `56693776` was consumed once. Accounting records
+`FAILED 0:15` after 35 seconds on four A100s/128 CPUs. Its sole run log contains the banner and Python
+executable four times: a bare `srun` inherited four tasks. Three ranks raised `IndexError` while mapping
+`hvd.local_rank()` to their visible GPU list; one rank completed the import/hash preflight and printed
+the start of ARM 1 before the step received SIGTERM. No control trajectory, Gate-A/B, decomposition, or
+annealed trajectory JSON with the `56693776` suffix exists.
+
+Therefore **no scientific branch is read**: ARM 1 did not produce its committed-anchor reproduction,
+so ARM 2 is not read regardless of partial log text. The separately submitted one-task batch twin
+`56691812` had started on one A100 and is the sole valid route in a collision-isolated job namespace;
+its terminal watch remains armed. There is no interactive retry. The launcher now fails with exit 64
+before TensorFlow import or output setup when `SLURM_STEP_NUM_TASKS`/`SLURM_NTASKS` is not one, with two
+focused tests. The running batch was launched from the exact pre-repair launcher committed with the
+predeclaration at `831043d`; the repair changes only future route fail-closure.
+
+Receipts: `../docs/orchestration/state/branchc-traj-annealed-srun-error-56693776.json` and
+`../docs/orchestration/state/branchc-traj-annealed-batch-active-56691812.json`.

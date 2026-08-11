@@ -39,6 +39,19 @@
 # self-consistency check, which is strictly weaker -- arm 1 is what licenses believing it.
 set -eo pipefail
 
+# This launcher is intentionally single-rank.  A bare srun inside a multi-GPU
+# allocation inherits the allocation's task count; the first interactive hedge
+# consequently started four copies, three of which failed in Horovod GPU
+# selection while one entered ARM 1.  Refuse that shape before importing
+# TensorFlow or opening any output so a routing mistake cannot create a partial
+# control/treatment namespace.
+STEP_TASKS="${SLURM_STEP_NUM_TASKS:-${SLURM_NTASKS:-1}}"
+STEP_PROCID="${SLURM_PROCID:-0}"
+if [[ "$STEP_TASKS" != "1" || "$STEP_PROCID" != "0" ]]; then
+  echo "[traj-ann] FATAL: single-rank launcher received tasks=${STEP_TASKS} procid=${STEP_PROCID}; use srun --ntasks=1 --gpus-per-task=1" >&2
+  exit 64
+fi
+
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 PET="${REPO}/nd-unfolding/pet"
 JOB="${SLURM_JOB_ID:-nojob}"

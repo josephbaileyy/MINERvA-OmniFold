@@ -1,0 +1,56 @@
+{
+  "schema": "branchc-annealed-trajectory-interactive-error-v1",
+  "event": {
+    "event_id": "evt-branchC-traj-annealed-srun-56693776",
+    "event_type": "slurm-job-error",
+    "event_sha256": "b008aeb03bd9722a1c54e24e0faddbf5072e281f0c2b32a2302d578da6d1ef58",
+    "observed_at_utc": "2026-08-11T23:00:27+00:00",
+    "head_at_event": "683bdccad5a94d13ef231bf0729758085634a178"
+  },
+  "job_id": "56693776",
+  "slurm": {
+    "state": "FAILED",
+    "exit_code": "0:15",
+    "elapsed": "00:00:35",
+    "qos": "gpu_interactive",
+    "partition": "urgent_gpu_ss11",
+    "node": "nid001392",
+    "cpus": 128,
+    "gpus_a100": 4,
+    "memory_mb": 229902
+  },
+  "evidence": {
+    "log": "nd-unfolding/pet/fullevent_nominal_annealed/logs/step1_traj_ann_56693776.log",
+    "log_sha256": "a904b0a14cd46698ad36967e238771de6a520482cd3c21cc591b1f325ff6dbe9",
+    "log_bytes": 9417,
+    "duplicate_banner_count": 4,
+    "horovod_gpu_index_failures": 3,
+    "successful_import_preflight_count": 1,
+    "arm1_start_count": 1,
+    "final_json_outputs": 0
+  },
+  "diagnosis": "A bare interactive srun inherited four tasks. Four launcher copies entered preflight; three failed omnifold import while indexing the visible GPU list by hvd.local_rank(), while one passed preflight and entered ARM 1 before SIGTERM.",
+  "scientific_verdict": "NOT_EVALUATED",
+  "predeclared_reading": {
+    "arm1_control": "NOT_PRODUCED; committed-anchor reproduction not established",
+    "arm2_treatment": "NOT_READ",
+    "branch": "NO_SCIENTIFIC_VERDICT",
+    "end_to_end_achieved_over_required_read": false
+  },
+  "committed_inputs": {
+    "predeclaration_commit": "831043d",
+    "predeclaration_sha256": "a4be41c58d25ef4060b345bef1c63a0e27b4ebbbc81e4e5981cac44caf3ab319",
+    "launcher_sha256_at_run": "f5ba93d0ab9d4eee7371553f915e6664a41e429f8437fe963b71406aac090d50"
+  },
+  "changed_repair": {
+    "description": "The launcher refuses any step whose task count is not exactly one before TensorFlow import or output setup.",
+    "launcher_sha256": "f977d65af67015a4a127ef6b3105fd93d651ef2925006f4ad4cca7bc3753f8b0",
+    "test_sha256": "35126cd77728a8ddea5584966196e0e3fc676fba326ddc5ca8b75e957e62ff99",
+    "tests": "2 passed; bash -n passed"
+  },
+  "disposition": "NO RETRY. Batch twin 56691812 is the sole valid route in its own job-suffixed namespace.",
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "persistent_worker_uuids_preserved": true,
+  "commit": "this-commit"
+}
