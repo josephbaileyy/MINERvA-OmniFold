@@ -4743,3 +4743,52 @@ storage. **BEN-104's harm is refuted while its mechanism stands:** read whole, t
 contain every ingredient, with ~7 lines of margin out of 25, nine of which are `RooUnfold` warnings.
 
 Causes 3 and 4 now need only their test legs; cause 2 only its guard. **Zero of seven discharged.**
+
+## 2026-08-11 — (E_avail,W) GiBUU corner ratio recovered; all four recomputed together (Session B)
+
+Seconds of login-node compute, read-only inputs. Log (whole stream, no `tail`)
+`../3d-unfolding/genie/eavailW_band_20260811_allfour.log`, 2,498 bytes; outputs written to **dated**
+names so the note's current `eavailW_band.{png,root}` are untouched. Predeclared at
+`../docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md`; **branch G1** — and I had
+pre-registered **G2** as most likely, so the prediction was wrong in the reassuring direction.
+
+**Not gated by the quarantine, and structurally so:** `data/gen` here is a ratio of two central-value
+corner integrals over 3×3 = 9 cells (`overlay_eavailW_band.py:88-108`) with **no covariance in it**. The
+covariance-dependent **significances** stay gated. The checklist row bundled the two in one line; it is
+now split, because the easy error runs both ways — treating the ratio as blocked, or reading the ratio's
+closure as unblocking the significance.
+
+    generator    corner integral   data/gen   note had   integrated sigma
+    GENIE-CV       8.7918e-39       1.535       1.54        2.4446e-38
+    GENIE+MEC      8.5484e-39       1.579       1.58        2.4829e-38
+    NuWro          8.6369e-39       1.563       1.56        2.3444e-38
+    GiBUU          8.3893e-39       1.609    UNCOMPUTED     2.2227e-38
+    data           1.3497e-38         --         --         3.0699e-38
+
+**GiBUU lands outside 1.54–1.58**, so per that paragraph's own predeclared rule (*"widen the span only if
+it lands outside"*) `sec_eavailw.tex` moves to **54–61%** / band **1.54–1.61**, and its `W∈[2.2,3.0)`
+sentence extends from three generators at 23–25% to four at **23–26%** (GiBUU 25.81% below data).
+
+**Why it was uncomputed, measured:** `gibuu_cv_xsec_eavailW.root` is dated **2026-06-09**, one day *after*
+the 2026-06-08 three-generator run — the input did not exist yet — and `overlay_eavailW_band.py:97-98`
+**fails open** on a missing `--gen` (`print MISSING`, `continue`), so the script could always emit a
+complete-looking three-generator table with the fourth reduced to one line.
+
+**The three reproduce at the note's printed precision; identity is NOT established.** The only surviving
+record of the 2026-06-08 values is `ND_OMNIFOLD_RUN_LOG.md:988-990` at three significant figures, and the
+data file `products/5d/excess_eavail_W.root` (**2026-07-14**) postdates them by five weeks, so a
+third-decimal shift is masked by rounding (BEN-086). That is why all four were recomputed **together**
+rather than GiBUU being appended to three older numbers — the same defect as the `\gbdtFive*` footing
+mismatch, avoided by predeclaring it.
+
+**Controls reproducing exactly**, which is what makes the set trustworthy: GiBUU integrated `2.2227e-38`
+and data `3.0699e-38` against the paragraph's own `2.22`/`3.07` and `values.tex \sigData`; and
+`sec_3d.tex:151`'s ordering GiBUU < NuWro < GENIE CV at `2.2227e-38 < 2.3444e-38 < 2.4446e-38`.
+
+**A normalization inconsistency found while closing this, ROUTED not changed.** `sec_eavailw.tex` gives
+two deficits two sentences apart in two normalizations, each rendered as a bare percentage: *"underpredict
+… by 54–61%"* is **generator**-relative (`data/gen − 1`); *"sit 23–26% below the data"* is **data**-relative
+(`1 − gen/data`). Each is right by its own arithmetic. In a common normalization the corner deficit is
+**34.9–37.8%** data-relative (or high-W is **29.8–33.6%** generator-relative), so `54–61` against `23–26`
+reads as a ~2.4× contrast where the consistent answer is ~1.5×. The convention is an authorial choice about
+a physics claim, so it is recorded in the `.tex` comment block and routed rather than resolved here.

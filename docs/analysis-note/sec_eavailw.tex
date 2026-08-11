@@ -86,21 +86,51 @@ predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 %     a different sub-block that adds the 0.4-0.8 Eavail row.
 % Until recomputed, 54-58% is a THREE-generator span. When the GiBUU ratio arrives
 % this is a one-line upgrade: add it, and widen the span only if it lands outside.
+%
+% CLOSED 2026-08-11. All FOUR ratios recomputed TOGETHER on one data file, so the set
+% is internally consistent rather than a fourth number appended to three older ones.
+% Log (whole stream, no tail): 3d-unfolding/genie/eavailW_band_20260811_allfour.log
+% Ledger: "2026-08-11 (E_avail,W) four-generator corner ratios". Predeclared at
+% docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md, branch G1.
+%   GENIE-CV  corner 8.7918e-39  data/gen 1.535    (note had 1.54)
+%   GENIE+MEC corner 8.5484e-39  data/gen 1.579    (note had 1.58)
+%   NuWro     corner 8.6369e-39  data/gen 1.563    (note had 1.56)
+%   GiBUU     corner 8.3893e-39  data/gen 1.609    <- NEW; lands OUTSIDE 1.54-1.58,
+%   data      corner 1.3497e-38                       so the span widens 54-58 -> 54-61
+% The three reproduce AT THE PRECISION THIS NOTE QUOTES. Identity is NOT established:
+% the only surviving record of the 2026-06-08 values is RUN_LOG:988-990 at three
+% significant figures, and the data file (excess_eavail_W.root, 2026-07-14) POSTDATES
+% them by five weeks -- so a shift in the third decimal is masked by rounding. Per
+% BEN-086, agreement at printed precision is not identity; do not re-quote these at
+% more digits from the 2026-06-08 lineage.
+% Controls that reproduce EXACTLY and are why the set is trustworthy: GiBUU integrated
+% 2.2227e-38 and data 3.0699e-38 (this paragraph's own 2.22 / 3.07), and sec_3d:151's
+% ordering GiBUU 2.2227e-38 < NuWro 2.3444e-38 < GENIE CV 2.4446e-38.
+%
+% NORMALIZATION INCONSISTENCY, FOUND WHILE CLOSING THIS AND DELIBERATELY LEFT ALONE.
+% This paragraph states two deficits, two sentences apart, in TWO DIFFERENT
+% NORMALIZATIONS, both rendered as a bare percentage with no marker:
+%   "underpredict ... by 54-61%"  is generator-relative, (data-gen)/gen = data/gen - 1
+%   "sit 23-26% below the data"   is data-relative,      (data-gen)/data
+% Both are internally correct and each matches its own arithmetic. But in a COMMON
+% normalization the corner deficit is 34.9-37.8% data-relative (or the high-W deficit
+% is 29.8-33.6% generator-relative), so a reader comparing "54-61%" against "23-26%"
+% infers a contrast of ~2.4x where the consistent answer is ~1.5x. Choosing the
+% convention is an authorial decision about a physics claim, so it is ROUTED rather
+% than silently changed here; the ratios above are unaffected either way.
 % --------------------------------------------------------------------------------
-GENIE~CV, GENIE$+$MEC, and NuWro underpredict the
-high-$\Eavail\times$high-$W$ corner by \SIrange{54}{58}{\percent}
-(data/generator $=1.54$, $1.58$, and $1.56$ respectively). Crucially,
+GENIE~CV, GENIE$+$MEC, NuWro, and GiBUU all underpredict the
+high-$\Eavail\times$high-$W$ corner by \SIrange{54}{61}{\percent}
+(data/generator $=1.54$, $1.58$, $1.56$, and $1.61$ respectively). Crucially,
 enabling Valencia 2p2h does \emph{not} close the corner --- it slightly
 worsens it ($1.54\to1.58$), since 2p2h populates low $W$ --- and the
-independent NuWro generator misses it by the same margin. GiBUU's corner
-ratio has not been computed: it was excluded from the band run that produced
-these three numbers, and although it was subsequently added to the
-comparison the corner reduction was never rerun. GiBUU is the most deficient
-generator overall (integrated $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against
-the data's \SI{3.07e-38}{}), but that is an integrated statement and does not
-fix its position relative to the \numrange{1.54}{1.58} corner band. At
-$W\in[2.2,3.0)\,\si{GeV}$ the same three generators sit
-\SIrange{23}{25}{\percent} below the data.
+independent NuWro and GiBUU generators miss it by the same margin or more.
+GiBUU is the most deficient generator both overall (integrated
+$\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against the data's \SI{3.07e-38}{}) and
+in the corner, where it sets the upper end of the band; no generator
+considered here reaches the corner. At
+$W\in[2.2,3.0)\,\si{GeV}$ the same four generators sit
+\SIrange{23}{26}{\percent} below the data.
 
 \begin{figure}[H]
   \centering

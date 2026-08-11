@@ -1,5 +1,57 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 (E_avail,W) four-generator corner ratios — VERIFIED-NUMERIC, GiBUU recovered
+
+The one uncomputed generator ratio in `docs/INTEGRATION_CHECKLIST.md` #6 is recovered.
+`3d-unfolding/genie/overlay_eavailW_band.py` re-run with all four `--gen` inputs on **one** data file;
+whole stream at `3d-unfolding/genie/eavailW_band_20260811_allfour.log` (2,498 bytes, never piped through
+`tail`). Predeclared at `docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md`; **branch G1**.
+
+**Not gated by the 2026-07-12 quarantine, and the reason is structural rather than a judgement.** The
+corner ratio is `sum_corner(data·dEa·dW) / sum_corner(gen·dEa·dW)` — a ratio of two **central-value**
+integrals over 3×3 = 9 cells (`overlay_eavailW_band.py:88-108`). **No covariance enters it.** The
+quarantine's own scope preserves central cross sections, and the checklist gates the `(E_avail,W)`
+**significances**, which are covariance-dependent, separately. **The significances remain gated.**
+
+| generator | corner integral | data corner | **data/gen** | note had | integrated σ |
+|---|---|---|---:|---:|---|
+| GENIE-CV | 8.7918e-39 | 1.3497e-38 | **1.535** | 1.54 | 2.4446e-38 |
+| GENIE+MEC | 8.5484e-39 | 1.3497e-38 | **1.579** | 1.58 | 2.4829e-38 |
+| NuWro | 8.6369e-39 | 1.3497e-38 | **1.563** | 1.56 | 2.3444e-38 |
+| **GiBUU** | 8.3893e-39 | 1.3497e-38 | **1.609** | **UNCOMPUTED** | 2.2227e-38 |
+| data | — | 1.3497e-38 | — | — | 3.0699e-38 |
+
+**GiBUU lands OUTSIDE the note's 1.54–1.58 band**, so per that paragraph's own predeclared rule
+(*"widen the span only if it lands outside"*) the corner span becomes **54–61%** and the band
+**1.54–1.61**. `sec_eavailw.tex` updated in this commit; the `W∈[2.2,3.0)` claim extends from three
+generators at 23–25% to four at **23–26%** (GiBUU 25.81% below data).
+
+**Why it was uncomputed, measured not guessed:** `gibuu_cv_xsec_eavailW.root` is dated **2026-06-09**,
+**one day after** the 2026-06-08 three-generator run — its input did not exist yet — and
+`overlay_eavailW_band.py:97-98` **fails open** on a missing `--gen` file (`print MISSING` then
+`continue`), so the script has always been able to emit a complete-looking three-generator table.
+
+**The three reproduce AT THE PRECISION THE NOTE QUOTES; identity is NOT established.** The only surviving
+record of the 2026-06-08 values is `ND_OMNIFOLD_RUN_LOG.md:988-990` at three significant figures, and the
+data file (`excess_eavail_W.root`, **2026-07-14**) postdates them by five weeks — so a third-decimal shift
+is masked by rounding. Per BEN-086, agreement at printed precision is not identity: **do not re-quote
+these at more digits against the 2026-06-08 lineage.** This is why all four were recomputed *together*
+rather than GiBUU alone being appended to three older numbers.
+
+**Controls that reproduce exactly**, which is what makes the set trustworthy rather than merely printed:
+GiBUU integrated `2.2227e-38` and data `3.0699e-38` against the note's own `2.22` / `3.07` and
+`values.tex \sigData`; and `sec_3d.tex:151`'s ordering GiBUU `2.2227e-38` < NuWro `2.3444e-38` <
+GENIE CV `2.4446e-38`.
+
+**A normalization inconsistency was found while closing this and is deliberately NOT changed here.**
+`sec_eavailw.tex` states two deficits two sentences apart in two different normalizations, both as a bare
+percentage: *"underpredict … by 54–61%"* is **generator**-relative (`data/gen − 1`) while *"sit 23–26%
+below the data"* is **data**-relative (`1 − gen/data`). Each matches its own arithmetic. But in a common
+normalization the corner deficit is **34.9–37.8%** data-relative (or the high-W deficit is **29.8–33.6%**
+generator-relative), so a reader comparing `54–61%` against `23–26%` infers a contrast of ~2.4× where the
+consistent answer is ~1.5×. Choosing the convention is an authorial decision about a physics claim, so it
+is routed rather than silently resolved. The ratios above are unaffected either way.
+
 ## 2026-08-11 construction-contract receipt for the 5D GBDT covariance — VERIFIED-CODE + VERIFIED-NUMERIC
 
 Read-only stamp read, no compute, nothing adopted, `values.tex` untouched. Receipt
