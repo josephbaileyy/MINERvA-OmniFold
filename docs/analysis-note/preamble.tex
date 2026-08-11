@@ -19,6 +19,14 @@
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
+% Retraction marking. Repo convention is to STRIKE THROUGH rather than erase, so a
+% reader who remembers a superseded number finds it struck rather than vanished
+% (docs/orchestration/INDEX-retracted-and-superseded-values.md).
+\usepackage[normalem]{ulem}
+% Works in BOTH text and math mode: \mbox gives \sout an LR box to strike, and
+% \ensuremath restores math for the (usual) numeric argument. Needed because most
+% call sites are numbers already inside $...$, where \sout alone fails.
+\newcommand{\dead}[1]{\mbox{\textcolor{gray}{\sout{\ensuremath{#1}}}}}
 % biblatex + biber: clickable arXiv/doi links, "et al." rendering.
 \usepackage[backend=biber, style=numeric-comp, sorting=none, giveninits=true,
             maxbibnames=3, minbibnames=1, doi=true, eprint=true, isbn=false, url=false]{biblatex}

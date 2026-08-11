@@ -227,6 +227,28 @@ the larger backgrounds of the extended-fiducial analysis, establishes
 negative-weight injection as a fully validated unbinned replacement for the
 binned purity correction. The binned purity is retained as the default for the
 reproduction measurement of this note, with negative-weight injection carried as
-the validated unbinned cross-check and as the baseline subtraction for the
-extended-fiducial analysis (\S\ref{sec:fps}), where its binning-independence and
-continuous floor are essential.
+the validated unbinned cross-check and as the \emph{designated} baseline
+subtraction for the extended-fiducial analysis (\S\ref{sec:fps}), where its
+binning-independence and continuous floor are essential.
+
+\paragraph{What the quoted extended-fiducial number actually used.}
+\textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
+\S\ref{sec:fps} was not produced with negative-weight injection}, and an earlier
+version of this appendix implied that it was. The product is dated: it comes from
+the FPS MEFHC battery of \textbf{2026-06-10}, job \texttt{54244120}
+(\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''), whereas the
+negative-weight driver code did not land until \textbf{2026-07-11}
+(\texttt{cf8a4a6}) and the \texttt{-{}-bkg-mode negweight-refined} launcher flag
+not until 2026-07-20. Both FPS unfold launchers omitted \texttt{-{}-bkg-mode}
+entirely, so the ten endpoint unfolds ran on the driver default
+\texttt{-{}-bkg-mode=purity}; they are recorded as \textbf{purity controls, not
+publication inputs}
+(\texttt{nd-unfolding/uq\_fps/corrected/FPS\_UQ\_CORRECTED\_STATE.md}). The
+negweight-refined FPS production has not been run.
+
+The \emph{value} is unaffected --- \SI{\fpsSigma}{cm^2/nucleon} remains the
+ledger-verified central number from that gated battery, and this correction does
+not change it. What is withdrawn is the \emph{footing}: negative-weight injection
+is the intended baseline for the extended-fiducial analysis, not the one behind
+the number quoted here. (Audit finding J22,
+\texttt{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier A.)

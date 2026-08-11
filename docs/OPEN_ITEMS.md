@@ -953,6 +953,28 @@ largest nominal truth-space volume.
     adopted 13.69%/bin rather than the block-sum 13.43%/bin, per item 11);
     the PET 5D verdict (WORSE vs GBDT, indicative/2M-train-anchored, per
     item 13's caveat).
+15. **Point-cloud macros flagged as unsourceable — RESOLVED 2026-08-11, one
+    residual.** `\pcEavailMean` (−6.4), `\pcCloudFull` (0.5) and `\pcWoffset`
+    (0.96) in `docs/analysis-note/values.tex` were carried as having no
+    committed source, with the added worry that `\pcWoffset` had been measured
+    on the pre-fix 72.6 % has-cloud population and printed beside post-fix
+    companions. **All three are sourceable** to the committed post-fix artifact
+    `nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json`.
+    Derivations, so this does not have to be re-run:
+    - `\pcEavailMean`: `eavail_validation.mean = -0.006422885338877497` GeV
+      = −6.423 MeV → −6.4.
+    - `\pcCloudFull`: max over the 7 `projection_eavail` bins of
+      \|`pet_cloud_hascloud`/`pet_stored_full` − 1\| = **0.4555 %**, so the
+      note's "≲0.5 % in every bin" holds with the bins as its ingredients.
+    - `\pcWoffset`: `W_validation.median = 0.9579842725967493` GeV → 0.96.
+    **Residual (real, and the reason the original flag was not baseless):** the
+    prose in `nd-unfolding/pet/POINTCLOUD_PROJECTION.md:82` quotes the W offset
+    as "+0.96 GeV" from the **pre-fix** summary (0.9603795705901552 GeV on the
+    72.6 % subset). Pre- and post-fix agree only because both round to 0.96 at
+    the printed precision — the agreement is a coincidence of rounding, not a
+    stability result. Anyone re-quoting this at more digits must take the
+    fullcloud artifact, not that narrative. The macro comments in `values.tex`
+    now carry the artifact path for the whole `pc*` block.
 
 ## Methodology stance (for the eventual response-to-referees)
 

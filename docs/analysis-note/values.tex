@@ -63,9 +63,15 @@
 \newcommand{\gbdtAiEstFrac}{87.5}          % estimator-only / split-varied sqrt-trace ratio (%)
 
 % --- PET point-cloud track ---
-\newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio
+% NOT QUOTABLE as current values -- niter=2 legacy. \petRatio is the quotient of two
+% INLINE \SI{} literals in sec_pet.tex (2.796e-38 / 3.066e-38) that are not macros, so
+% marking here cannot reach them; they are struck at the point of use instead. Both are
+% struck wherever printed. Grounds: niter=2 vs the pinned niter=3 (CLM-010/CLM-012),
+% the 2026-08-01 full-event estimator change, and J21 (no background subtraction).
+% See docs/orchestration/INDEX-retracted-and-superseded-values.md.
+\newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio; niter=2 LEGACY, struck at use
 \newcommand{\petClosure}{1}           % closure unbiased to ~this (%)
-\newcommand{\petGbdtGap}{9}
+\newcommand{\petGbdtGap}{9}           % PET-vs-GBDT data-side gap (%); niter=2 LEGACY, struck at use
 \newcommand{\petTotalMedian}{15.10}   % historical recoil-PET candidate; QUARANTINED
 \newcommand{\petTotalTrace}{3.878e-38}% historical recoil-PET candidate; QUARANTINED
 \newcommand{\petFourMedian}{12.37}    % historical recoil-PET 4D marginal; QUARANTINED
@@ -76,12 +82,22 @@
 \newcommand{\pcHasCloudBefore}{72.6}     % percent carrying a cloud before the fix (reco-loop-only fill)
 \newcommand{\pcEmptyCloud}{174}          % residual empty clouds out of 32.8M after the fix
 \newcommand{\pcMiss}{37.9}               % percent truth-only misses (acceptance gap, now cloud-filled)
-\newcommand{\pcCloudFull}{0.5}           % per-bin agreement of cloud dsigma/dEavail with the full unfold (percent)
-\newcommand{\pcEavailWithin}{98.78}      % percent of cloud events with |Eavail resid|<10 MeV
-\newcommand{\pcEavailMean}{-6.4}         % mean cloud-vs-stored Eavail residual (MeV)
-\newcommand{\pcSaturated}{2.31}          % percent of cloud events saturating num_part=12
-\newcommand{\pcSatDeficit}{-35}          % median Eavail deficit in the saturated tail (MeV)
-\newcommand{\pcWoffset}{0.96}            % median W_had - leptonic MC_W (GeV), definitional
+% Provenance for the whole pc* block (added 2026-08-11): every value below is read
+% from the POST-FIX committed artifact
+%   nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json
+% NOT from the pre-fix nd-unfolding/products/pet/pointcloud_projection_summary.json,
+% whose has_cloud population is the 72.6% subset. The three marked "derived" below had
+% no provenance recorded and were flagged as possibly unsourceable; they are sourced,
+% and the derivations are written out so the flag does not have to be re-raised.
+\newcommand{\pcCloudFull}{0.5}           % derived: max |pet_cloud_hascloud/pet_stored_full - 1| over the 7 projection_eavail bins = 0.4555% -> "<~0.5% in every bin"
+\newcommand{\pcEavailWithin}{98.78}      % eavail_validation.frac_within = 0.9878386902659749
+\newcommand{\pcEavailMean}{-6.4}         % derived: eavail_validation.mean = -0.006422885338877497 GeV = -6.423 MeV
+\newcommand{\pcSaturated}{2.31}          % frac_saturated = 0.023074359593276236
+\newcommand{\pcSatDeficit}{-35}          % eavail_bias_vs_nhad["12 (sat)"].median = -0.035492860794067216 GeV
+\newcommand{\pcWoffset}{0.96}            % derived: W_validation.median = 0.9579842725967493 GeV. NB the prose in
+                                         % nd-unfolding/pet/POINTCLOUD_PROJECTION.md quotes the PRE-fix +0.9604 GeV;
+                                         % both round to 0.96 at the printed precision, so the printed value stands,
+                                         % but cite the fullcloud artifact and not that narrative.
 
 % --- extended fiducial phase space (historical fps* macro names retained for compatibility) ---
 \newcommand{\fpsSigma}{4.502e-38}     % extended-fiducial total, cm^2/nucleon

@@ -373,18 +373,25 @@ Band & Per-bin median rel.\ $\sigma$ \\
 Muon\_Energy\_MINOS & $2.305\%$ \\
 Muon\_Energy\_MINERvA & $1.285\%$ \\
 MinosEfficiency & $1.472\%$ \\
-Flux (PPFX, $N_{u}=100$) & $1.008\%$ \\
+Flux (PPFX, $N_{u}=100$) & $\dead{1.008\%}$ $\to$ $4.993\%$ \\
 MaRES & $0.548\%$ \\
 MvRES & $0.377\%$ \\
 MaCCQE & $0.357\%$ \\
 \midrule
-Systematic total (44 bands $+$ norm) & $\boxed{4.783\%}$ (median); $\sqrt{\Tr\mathbf{C}}=2.463\times10^{-39}$ \\
+Systematic total (44 bands $+$ norm) & $\dead{4.783\%} \to \boxed{6.830\%}$ (median); $\sqrt{\Tr\mathbf{C}}=\dead{2.463\times10^{-39}} \to 3.214\times10^{-39}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+\textbf{Struck entries are the pre-flux-fix rollup} (output path above,
+\texttt{...\_full\_matcorr/}); the live values to their right are the flux-fixed
+rollup \texttt{...\_full\_matcorr\_fluxfix/uq\_universe\_summary.txt}, which is the
+product this note quotes (\S\ref{sec:systematics}). Of the individual systematic
+bands only \texttt{Flux} moved; the grouped \emph{Statistical} category also moved
+($0.563\% \to 0.549\%$) for the separate reason given in the provenance note in
+\S\ref{sec:combine}.
 Grouped by category the medians are: Muon reconstruction $3.366\%$,
-Models $2.034\%$, Flux $1.008\%$, Hadronic response $0.758\%$,
-Statistical $0.563\%$, Normalization $0.081\%$. Muon energy scale
+Models $2.034\%$, Flux $\dead{1.008\%} \to 4.993\%$, Hadronic response $0.758\%$,
+Statistical $\dead{0.563\%} \to 0.549\%$, Normalization $0.081\%$. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
 (\S\ref{sec:rank}).
@@ -508,28 +515,40 @@ Component traces and per-bin median relative spreads:
 Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
 \midrule
 ML noise (lgbm seedscan, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
-Statistical (Poisson bootstrap, $N=300$) & $1.828\times10^{-40}$ & $0.564\%$ \\
-Systematic (matcorr sweep $+$ norm) & $2.463\times10^{-39}$ & $4.783\%$ \\
+Statistical (Poisson bootstrap, $N=300$) & $1.817\times10^{-40}$ & $0.549\%$ \\
+Systematic (fluxfix sweep $+$ norm) & $3.214\times10^{-39}$ & $6.830\%$ \\
 \midrule
-\textbf{Combined (block sum)} & $2.470\times10^{-39}$ & $\boxed{4.822\%}$ \\
+\textbf{Combined (block sum)} & $3.220\times10^{-39}$ & $\boxed{6.865\%}$ \\
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-The combined OmniFold envelope is $\approx 70\%$ of the paper's per-bin
-median uncertainty, dominated by the systematic block. (The combined
-$\sqrt{\Tr}$ is the quadrature sum of the three independent component
-traces; the per-bin median $4.822\%$ is taken directly from the
-matcorr rollup summary.)
+The combined OmniFold envelope essentially \emph{matches} the paper's per-bin
+median uncertainty ($6.865\%$ against $6.86\%$), dominated by the systematic
+block. (The combined $\sqrt{\Tr}$ is the quadrature sum of the three
+independent component traces; the per-bin median $6.865\%$ is taken directly
+from the flux-fixed matcorr rollup summary. Universe $+$ bootstrap alone,
+before the ML block, is $6.845\%$.)
 
 \begin{quote}
-\textbf{Provenance note (2026-07-31).} The figures above are the \emph{pre-flux-fix}
-rollup --- systematic $2.463\times10^{-39}$ / $4.783\%$, combined
-$2.470\times10^{-39}$ / $4.822\%$ --- and the inference drawn from them, that the
-OmniFold envelope is $\approx\!70\%$ of the paper's, is an artefact of that
-superseded product. The current budget is the one tabulated in
-\S\ref{sec:systematics}, where the envelope essentially \emph{matches} the paper
-($6.865\%$ against $6.86\%$).
+\textbf{Provenance note (2026-07-31; table corrected 2026-08-11).} The table above
+now carries the \emph{flux-fixed} rollup. What it previously printed, and what a
+reader may remember from an earlier draft, was the \emph{pre-flux-fix} product ---
+systematic $\dead{2.463\times10^{-39}}$ / $\dead{4.783\%}$, combined
+$\dead{2.470\times10^{-39}}$ / $\dead{4.822\%}$ --- together with the inference drawn
+from them, that the OmniFold envelope is $\dead{\approx\!70\%}$ of the paper's. Those
+four figures and that inference are \textbf{retracted}: they are artefacts of a
+superseded covariance, not of the measurement. The current budget agrees with the one
+tabulated in \S\ref{sec:systematics}, where the envelope essentially \emph{matches}
+the paper ($6.865\%$ against $6.86\%$).
+
+One further cell of the table moved for an unrelated and earlier reason: the
+statistical block is quoted from the pure-Poisson $N=300$ bootstrap
+($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$ $1.817\times10^{-40}$ /
+$0.549\%$), which superseded a seed-varying set that leaked ML stochasticity into
+the statistical block (\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md},
+2026-05-29). This is recorded here so that the combined row can be re-derived from
+the component rows printed beside it rather than taken on trust.
 
 The two rollups differ in \emph{exactly one band}. Comparing
 \texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
@@ -539,8 +558,9 @@ $1.008\% \rightarrow 4.993\%$ once each PPFX universe is divided by its own flux
 integral $\Phi_u$ instead of by $\Phi_{\rm CV}$. That single correction carries the
 universe total $4.783\% \rightarrow 6.830\%$ and the combined figure to
 $6.845\%$ before the ML block, which is the whole of the discrepancy. The pull
-widths quoted later in this appendix ($0.069/0.466$) were computed on the same
-superseded covariance; the flux-fixed values are $0.051/0.409$
+widths later in this appendix (\S\ref{sec:pull}) were affected identically:
+$\dead{0.069}/\dead{0.466}$ were computed on the same superseded covariance, and
+the flux-fixed values now printed there are $0.051/0.409$
 (\texttt{VALIDATION\_LEDGER.md}).
 
 The same defect, uncorrected, is still present in the N-D and 5-D kernels; see
@@ -637,7 +657,7 @@ removes the paper's stat block to avoid double-counting the bootstrap
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
-Per-bin median relative $\sigma$ & $6.86\%$ & $4.822\%$ \\
+Per-bin median relative $\sigma$ & $6.86\%$ & $\dead{4.822\%} \to 6.865\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
@@ -700,12 +720,15 @@ Summary diagnostics: pull mean, RMS, the $14\times16$ pull heatmap,
 and a pull histogram (in \texttt{compare\_to\_paper\_fullcov.py}).
 
 \paragraph{Worked example (headline numbers).}
-With the combined covariance (paper TotalCov $+$ matcorr universe $+$
+With the combined covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$
 bootstrap-300 $+$ ML):
 \begin{itemize}[nosep]
-  \item Pull mean: $\boxed{0.069}$ (centered on zero; no global offset).
-  \item Pull RMS: $\boxed{0.466}$.
+  \item Pull mean: $\dead{0.069} \to \boxed{0.051}$ (centered on zero; no global offset).
+  \item Pull RMS: $\dead{0.466} \to \boxed{0.409}$.
 \end{itemize}
+The struck values were computed on the pre-flux-fix combined covariance and are
+\textbf{retracted}; the live pair is the flux-fixed one recorded in
+\texttt{VALIDATION\_LEDGER.md} (\S\ref{sec:combine} provenance note).
 Pull RMS $< 1$ means the combined error band is \emph{conservative}
 relative to the actual disagreement --- the band is wider than it
 needs to be to absorb the observed scatter. No bins have
@@ -1298,7 +1321,7 @@ flux universes.
 The combined result, in one sentence:
 \emph{across $205$ paper-reported bins, the
 combined OmniFold $+$ paper error budget gives $\chi^{2}/\mathrm{ndf} =
-\chiCombined$ and pull mean/RMS $0.069/0.466$. Because the paper and OmniFold
+\chiCombined$ and pull mean/RMS $0.051/0.409$. Because the paper and OmniFold
 results share data and their cross-covariance is unavailable, this is an
 indicative distance rather than a calibrated goodness-of-fit. The
 same-ensemble toy pulls are approximately Gaussian, and the $0.166\%$
@@ -1320,9 +1343,9 @@ $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
-Pull RMS $= 0.466$ & \S\ref{sec:pull} &
+Pull RMS $= 0.409$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
-Combined median rel.\ $= 4.822\%$ & \S\ref{sec:combine} &
+Combined median rel.\ $= 6.865\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
 Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
   Pull diagnostic, $N_{\text{toy}}=200$ \\

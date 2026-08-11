@@ -58,7 +58,28 @@ Last updated 2026-07-16.
 ## Verified / quotable (ledger) — safe to keep
 - 2D σ_total 3.073e-38, Phase-18.2 paper reproduction (`omnifold-2d-sklearn`).
 - 3D covariance √tr 5.724e-39; 4D central 3.0665e-38.
-- Corrected 5D GBDT adopted covariance 5.8077e-38 (mean) / 6.2367e-38 (cv).
+- ~~Corrected 5D GBDT adopted covariance 5.8077e-38 (mean) / 6.2367e-38 (cv).~~
+  **NOT QUOTABLE — this entry was filed under "safe to keep" in error.** Both scales are
+  quarantined, on two independent grounds:
+  1. The **2026-07-12 uncertainty-remediation quarantine** (`VALIDATION_LEDGER.md:20-30`) makes
+     the 4D/5D/FPS unified-throw adoptions "SUPERSEDED AND UNQUOTABLE". The ledger lines that
+     these two numbers are copied from already say so at the point of use
+     (`VALIDATION_LEDGER.md:294,297`, each annotated *"(quarantined)"*), so this checklist
+     contradicted its own cited source.
+  2. **J28** (`docs/orchestration/AUDIT-FINDINGS-20260731.md:478-530`, tier A) — PPFX flux
+     universes divided by the CV flux integral at five ND/5D sites plus a fail-open. It is "the
+     only finding that reaches an already-adopted product", and its explicit recommendation is
+     to "quarantine the adopted 5D covariance scales now (`5.8077e-38`, `6.2367e-38`)". Code
+     fixed in `081ae4a`; **the numbers have not been re-rolled.**
+  **No replacement magnitude is written here on purpose.** The J28 re-roll measurement
+  (`VALIDATION_LEDGER.md:345-360`) is a measurement and not an adoption, and the ledger states
+  the quarantine "STAYS IN FORCE ... Lift it by adopting, in a commit that replaces the numbers".
+  A candidate scale quoted here before that adoption would recreate exactly the defect this line
+  is being corrected for. What survives unaffected: the **central** 5D results, which this
+  quarantine never invalidated.
+  See also `docs/analysis-note/values.tex` `\gbdtFiveAdoptTrace` / `\gbdtFiveCVTrace`, which quote
+  these scales into the note and inherit the quarantine; they are owned by the GBDT close-out lane
+  and are deliberately **not** edited here.
 - Corrected recoil PET C_total 3.8777e-38 (recoil-only cross-check).
 
 ## Provenance index (result → estimator → committed input)

@@ -37,16 +37,48 @@ flux/POT/nucleon constants). Three gates validate the absolute path:
         internally consistent. Because pseudo-data and prior come from the
         same simulation, this test cannot expose omitted muon dependence at
         fixed recoil;
-  \item \textbf{Cross-check vs GBDT}: on data, the PET absolute total is
-        $\SI{2.796e-38}{cm^2/nucleon}$ versus the GBDT
-        $\SI{3.066e-38}{}$, ratio $\petRatio$, with per-axis median differences
-        of \SIrange{6.5}{9.9}{\percent} (Fig.~\ref{fig:petabs}).
+  \item \textbf{Cross-check vs GBDT} (\textbf{\texttt{niter}${}={}$2 legacy --- not
+        a current number}; see the scope note below): on data, the PET absolute total was
+        $\dead{\SI{2.796e-38}{cm^2/nucleon}}$ versus the GBDT
+        $\dead{\SI{3.066e-38}{}}$, ratio $\dead{\petRatio}$, with per-axis median
+        differences of \dead{\SIrange{6.5}{9.9}{\percent}} (Fig.~\ref{fig:petabs}).
 \end{enumerate}
-The $\sim\SI{\petGbdtGap}{\percent}$ data-side gap is not a normalization bug,
-but ordinary closure alone cannot assign it uniquely to training
-configuration. The PET run used a 2M-event, two-iteration training rather than
-the full-statistics five-iteration GBDT, and a higher-epoch retrain moved the
-total by $-1.6\%$ (ratio $0.897$), demonstrating training sensitivity. The
+
+\paragraph{Scope of the GBDT cross-check: \texttt{niter}${}={}$2 legacy, withdrawn
+as a current comparison.}
+Every struck figure in item~3 above, and every quantity derived from them, is
+retained here only as a record of what the two-iteration run gave. They are
+\textbf{not} the current PET/GBDT comparison, for reasons that are mechanical
+rather than matters of judgement:
+\begin{itemize}[nosep]
+  \item \textbf{Iteration count.} The PET run used a 2M-event, \emph{two}-iteration
+        training. The campaign's pinned policy is \texttt{niter}${}={}$3 (CLM-010,
+        CLM-012, \textsc{frozen}), and full-event PET moved to it. The comparison
+        has not been re-extracted at \texttt{niter}${}={}$3.
+  \item \textbf{Estimator definition.} The full-event schema landed 2026-08-01 and
+        the loader now reads the whole event, so a pre-08-01 PET total is a
+        different estimator, not a differently-trained one.
+  \item \textbf{Background subtraction.} The quoted 4D ratio was taken with unit
+        measured weights and \emph{no} background subtraction (audit finding J21).
+        At this analysis's ${\sim}\SI{3}{\percent}$ background scale, leaving
+        background in biases PET high, so the underlying gap is \emph{larger} than
+        the struck value, by an amount that is a first-order estimate and
+        deliberately not quoted.
+\end{itemize}
+Note that the struck ratio is \emph{arithmetically correct} --- it is exactly the
+quotient of the two struck operands. It is withdrawn because its operands describe
+a training configuration that no longer exists, which is a failure a consistency
+check cannot detect. Both operands are inline literals rather than managed macros,
+so they are marked here at the point of use; the macro itself is flagged in
+\texttt{values.tex}. See
+\texttt{docs/orchestration/INDEX-retracted-and-superseded-values.md}.
+
+What survives independently of the withdrawn comparison: the
+$\dead{\sim\SI{\petGbdtGap}{\percent}}$ data-side gap is not
+a normalization bug, but ordinary closure alone cannot assign it uniquely to
+training configuration. A higher-epoch retrain moved the PET total by
+$\dead{-1.6\%}$ (ratio $\dead{0.897}$) --- struck on the same grounds, being the
+same legacy run --- which demonstrated training sensitivity qualitatively. The
 recoil-only feature contract is an additional structural difference: at fixed
 recoil, the conditional muon distribution remains inherited from the prior.
 
@@ -56,7 +88,8 @@ recoil, the conditional muon distribution remains inherited from the prior.
   \caption{Recoil-only PET representation cross-check: absolutely-normalized
   4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
   production scalar GBDT result, projected on each axis. The PET/GBDT total
-  ratio is $\petRatio$; ordinary closure validates the extraction machinery to
+  ratio is $\dead{\petRatio}$ --- \textbf{struck: \texttt{niter}${}={}$2 legacy, see
+  the scope note in the text}; ordinary closure validates the extraction machinery to
   $\sim\SI{\petClosure}{\percent}$ but does not test omitted muon dependence.}
   \label{fig:petabs}
 \end{figure}
