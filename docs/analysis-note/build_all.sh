@@ -17,6 +17,18 @@ for t in "${targets[@]}"; do
 done
 
 echo
+echo "=== struck-value containment (retracted values must reach the NOTE build only) ==="
+# Runs AFTER the builds so the PDF stage has PDFs to read. Non-fatal on a missing interpreter,
+# fatal on a real violation: a paper-bound PDF carrying a struck retracted number is a
+# publication defect, not a style nit. See check_dead_containment.py for why this is a test
+# rather than an \ifPAPER build flag.
+if command -v python3 >/dev/null 2>&1; then
+  python3 check_dead_containment.py
+else
+  echo "  SKIP python3 not found -- containment UNVERIFIED for this build"
+fi
+
+echo
 echo "=== page counts ==="
 for t in "${targets[@]}"; do
   if command -v pdfinfo >/dev/null 2>&1; then
