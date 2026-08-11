@@ -158,6 +158,39 @@ extraction, the vertical bands, and the fresh statistical and ML ensembles the n
 (`sec_pet.tex:133-134`). Consistent with `docs/OPEN_ITEMS.md`'s *"≥100 GPU-h"* for the whole build; the
 "170-250" figure there remains unverified and is not adopted here.
 
+### 4.1 The samples are satisfied AS SAMPLES; the step from them to an estimator input is UNBUILT
+
+**Added 2026-08-11 after checking rather than assuming, and it sharpens §2 rather than contradicting it.**
+"The samples exist" is only useful if something can feed them to the estimator. Measured:
+
+- **Nothing that produces a PET input references `p3f_pet_fullevent`.** `grep -rl` over every tracked
+  `.py`/`.sh` returns exactly six files: the validator, the event-loop launcher that produced the ROOTs,
+  two tests, `conftest.py`, an audit helper, and the HPSS protection script added today. **No consumer.**
+- **The converter is nevertheless generic**, which is the good news and bounds the work:
+  `dump_pointcloud_inputs.py` takes `--omnifile` and `--out` as required arguments (`:484`, `:494`), so
+  producing a per-endpoint npz needs **no new estimator code**.
+- **But the chain has a merge step in front of it, and the P3F ROOTs are per-playlist.**
+  `sbatch_dump_g2_mefhc.sh:62` runs the converter on **one already-merged** ROOT, and the merge is
+  `merge_g2_gate1_mefhc.sh` — a custom TFileMerger pass that hand-handles `TParameter` fields
+  (`mcPOTUsed`/`dataPOTUsed` and the five census counters) because ROOT's default merge sums them, which
+  is right for extensives and wrong otherwise. That script is written against the g2-gate1 tree, not
+  parameterised over an arbitrary band/endpoint.
+
+So the unbuilt piece is **orchestration plus a merge, per endpoint**: 10 × (merge 12 playlists → one
+ROOT → one npz). Two consequences that belong in the cost, and neither was in the ≥24 GPU-h figure above:
+
+1. **~1.1 TB of additional intermediate storage** (10 merged ROOTs at ≈113 GB each, from 12 × 9.4 GB),
+   on the same purgeable filesystem that has already lost nine throw slabs and where the 120 source ROOTs
+   are being archived today *because* they are the only copy.
+2. **The merge inherits the `TParameter` extensive/intensive hazard** (`FINDING-20260809-tparameter-merge-semantics.md`,
+   and the derived-from-merged-extensives class where a global POT ratio is recomputed per consumer).
+   A per-endpoint merge written by analogy rather than by reading that finding is a defect waiting to
+   happen, in a quantity that scales every weight.
+
+**Stated as measured limits:** I have not run the converter or a merge on a P3F ROOT, so "no new estimator
+code" is an inference from the argument signatures, not a demonstration. What is measured is the absence of
+any consumer and the presence of the merge step.
+
 ## 5. Acted on while determining: the satisfied half was one purge from unsatisfied
 
 `hsi ls` returned only `~/backups` — **HPSS held no copy**, so 1.1 TB of Gate-3-promoted input was the
