@@ -4080,3 +4080,172 @@ narrowed their mail on its word, that he sent neither of us anything, and that o
 `56586368` RUNNING at 12:19, iteration 1 of 3. Verdict against the three predeclared branches when it lands,
 and I will report the watch firing alongside it — that will be the first proof either lane has that a watch
 actually fires, as opposed to the cron merely ticking.
+
+### 04:50Z — DESIGN A: **UNRESOLVED**, the branch that was nearly not predeclared. And the watch FIRED.
+
+`56586368` COMPLETED 02:16:46Z, `02:59:30`, exit `0:0`. I did not process it for ~2.5 h — this session
+restarted and the thread did not carry; the oversight lane caught it from `sacct`. **The watch fired
+correctly and I was the broken link, not the machinery.**
+
+**Preflight assertions in the run that actually executed** (not at submission):
+
+    all 8 original pins HOLD -- the staged code is 56534117's code byte for byte
+    HEAD driver 5fda80df43dfe334 != staged 66aa1f8f62087e6e  (the delta under test)
+    resolved driver: /pscratch/sd/j/josephrb/bisect_designA/train_fullevent_nominal.py
+    resolved sha256: 66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd
+    baseline preserved-check: 58f664cdef266d09 before AND after, UNCHANGED
+
+So BEN-083's assert held in-process: the code that ran **was** `56534117`'s code.
+
+**THE VERDICT — UNRESOLVED.**
+
+    push 1.1157770714   R 1.1240802949941018   dev -0.007386682
+    REPRODUCED window [-0.0121046, -0.0113440]   -- outside
+    DISSOLVED  window [-0.0359893, -0.0352286]   -- outside
+    distance from the REPRODUCED edge: 0.003957, i.e. 11.4 tolerances
+
+**This is precisely the value that would have been rationalised.** It sits far nearer the diagnostic
+expectation than the production one, and with a two-branch reading I would have written "closer to −0.0117,
+therefore reproduced" and moved to Design B. The oversight lane's insistence on a third branch is the only
+reason that did not happen. **Recording that plainly: the correction came from outside this lane and it
+changed the conclusion, not merely the wording.**
+
+**What it actually establishes — the diagnostic configuration is 34× noisier than production.**
+
+    56534117   dev -0.011724321   in-loop trajectory [1.0107, 1.1214, 1.1109]
+    56586368   dev -0.007386682   in-loop trajectory [1.4555, 1.2322, 1.1158]
+    difference       0.004337639  = 34.2x the production scatter (0.000126775)
+
+Byte-identical code, identical seeds, identical engine, identical inputs — and **the trajectories are not
+merely offset, they are qualitatively different**: the first rises from 1.0107, the second falls from 1.4555.
+Same endpoint region, completely different path.
+
+**So the "188×" framing is dead, and it was mine.** Re-scaled honestly against the diagnostic's own spread:
+
+    diagnostic mean (n=2)  -0.009555502
+    production mean (n=2)  -0.035545584
+    gap                     0.025990082   =  6.0x the diagnostic spread   (was quoted 188x)
+
+**The code-path difference SURVIVES but at 6× rather than 188×** — still a real gap, no longer an
+overwhelming one, and now resting on n=2 spreads on both sides. I generalised production's scatter to a
+configuration where it was never measured; that assumption was wrong by a factor of 34, and Design A existed
+precisely to test it. It was the weakest link and it broke.
+
+**Per the predeclaration the next step is a SECOND REPEAT OF DESIGN A, not Design B.** With the diagnostic
+spread this large, isolating a subclass override would measure noise. Launching the repeat.
+
+**And the watch fired — first end-to-end proof for either lane.** `designA-56586368 slurm-job fired`, with
+`evt-designA-56586368.log` written 02:20:09Z, ~3.4 min after the job ended. Cron ticking was proven at 22:00Z;
+a watch actually **dispatching** was not, and now is. The repaired-not-exercised gap is closed. Worth being
+exact about what that means given tonight: the notification machinery worked and the session receiving it did
+not, which is the failure mode `wakerctl` exists to survive and is why the artifact-first mail format matters.
+
+### 05:00Z — which family did `56552326` run in? **The STABLE one.** The D2 pass stands, on an inference stated as one.
+
+The oversight lane was right that my closing flag was the next question rather than a marker: if `0.5126033`
+came through an unstable wrapper family, then CLM-012's `+0.0180209` margin, the D2 PASS, and the `−0.03424972`
+trade-off figure all rest on single draws. It framed it as a binary — monkeypatch family (unstable) or
+production-driver family (stable). **Read the code: it is neither, and the discriminating detail is not the
+one either of us named.**
+
+`closure_powered_annealed_lr.py` **does** monkeypatch (`of_pkg.MultiFold = Annealed` at :160, then
+`cpt.main()` at :172, restored after). So by *delivery mechanism* it matches the diagnostic. But the
+mechanism is only how the class gets in. **The override sets are what differ, and they are decisive:**
+
+    shape-validation 56552326   __init__  CompileModel  RunModel                     -> 3
+    production       STABLE     __init__  CompileModel  RunModel                     -> 3   (1.27e-4)
+    diagnostic       UNSTABLE   __init__  CompileModel  RunModel  cache  RunStep1/2  -> 6   (4.34e-3)
+
+**`56552326` carries EXACTLY the production override set.** It differs from the unstable arm in precisely the
+three extra instrumentation overrides — which is the delta Design B was built to isolate. So the powered
+closure sits with the stable family on the axis that distinguishes them.
+
+**And my own added worry was wrong, which is why I checked it rather than passing it on.** I raised the A/B
+split as a possible extra source of run-to-run variance. It is not: `deterministic_halves()` builds both
+halves from `np.random.default_rng(7).permutation(n_rows)` sliced twice — **seeded and deterministic by
+construction**, documented at `closure_powered_truth_reweight.py:14` as *"two DISJOINT deterministic halves,
+2,000,000 each, split seed 7"*. No extra stochasticity. Had I relayed that concern without reading it, I would
+have manufactured a scare in the other lane's ledger.
+
+**Disposition, with the inference labelled.** The best available evidence says `0.5126033` is in the stable
+family, so the D2 pass stands as recorded and the expensive branch is **not** triggered. But this is an
+**inference from override-set identity, not a measurement**: the two measured families differ in *both*
+override set and driver version, so attributing the stability to the override set rests on n=2 configurations.
+The margin is `+0.0180209` — 142 production scatters if stable, 4.2 diagnostic spreads if not. That is a wide
+enough gap that the inference should not be load-bearing for a *re-derivation*.
+
+So: **not launching a powered-closure repeat on my own initiative right now** — `56611394` is already running
+the predeclared second repeat of A, the k=3 restatement is queued behind the bisect and cannot consume
+`0.5126033` before then, and there is no deadline pressure to spend GPU on confirming an inference that
+currently holds. Recorded as the condition to clear **before** the restatement re-derives from that number,
+which is the sequencing the oversight lane argued for and I agree with.
+
+### 05:20Z — powered-closure stability repeat LAUNCHED (56611837); the fired-vs-read gap closed (BEN-084)
+
+**Launched `56611837`** — the powered-closure stability repeat, predeclared at `dcaddfd` before submission,
+three branches. The oversight lane called it and I agree on its first three reasons: queue waits here run
+3–28 h so "now" and "at the gate" are different wall-clocks; the asymmetry is a cheap premium against an
+expensive outcome; and **my inference is a two-variable attribution** — the measured families differ in both
+override set and driver version, which is the confounded shape we have spent the night catching in other
+people's arguments. Its fourth reason is about its own credibility with Joseph, which it flagged as its own
+rather than physics; I weigh that as reporting hygiene and it does not change the answer, because the first
+three already carry it.
+
+The launcher declares the **expected exit 3** in advance — the closure's retired hardcoded bar — and tolerates
+that code **and only that code**, then asserts a numeric recovery. Last time `set -e` killed the script on
+that exit and the reading block never ran, which is how a completed run came to read `FAILED` with its verdict
+unprinted. Stated explicitly in both the predeclaration and the launcher that this is **not** a tolerance
+being raised: no threshold is altered and the retired bar is not consulted for the verdict. It also carries
+BEN-083's assert — hashes the resolved `__file__` of both modules and asserts the override set is exactly
+`{__init__, CompileModel, RunModel}`, so if the thing I read at `8b8f238` is not the thing that loads, the run
+dies in two seconds instead of measuring the wrong wrapper for two hours.
+
+**BEN-084 — the real lesson from the 2.5 h gap, and it is not "more scheduling."** The watch fired *correctly*
+at 02:20:09Z, 3.4 min after the job ended. The notifier was flawless. What failed is that **a fired watch
+records that a job finished, and nothing records that nobody has looked** — from outside the session,
+fired-and-handled and fired-and-ignored are identical.
+
+Two fixes, both near-zero surface:
+
+- **The habit:** on wake, re-derive what work exists from artifacts — `evt-*.log` and `sacct` — before
+  trusting what context remembers being in flight. This is **BEN-027 applied one level up**: that rule
+  governs *what a number is*, this governs *what work exists*, and nobody had applied it at the second level.
+- **The marker:** `state/waker/PROCESSED.txt`, one event basename per line, appended when a verdict is filed.
+  Seeded with the 49 already-handled events so it starts truthful rather than alarming. The whole check is
+  `comm -23 <(ls evt-*.log | basename | sort) <(sort -u PROCESSED.txt)`; non-empty means fired-but-unread, and
+  **any lane can run it from outside my session**, which is the property that was missing.
+
+Deliberately a text file rather than an event-lifecycle feature in `wakerctl.py`: that file is hash-pinned
+into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, so a state machine there would move a sha a
+receipt cites, and an append plus a `comm` add no code path that can fail.
+
+Queue: `56611394` (Design A repeat 2) and `56611837` (powered-closure stability), both PENDING, both watched.
+
+### 05:35Z — the marker had an ordering defect, and my own seed had already committed it
+
+The oversight lane caught `PROCESSED.txt`'s asymmetry before it bit. Forgetting to append costs a duplicate
+look — harmless. **Appending before the verdict is filed marks an event handled that nobody handled**, and the
+2.5 h gap reopens silently, now with an artifact asserting it was dealt with. Contract fixed in the file
+header: **append only after the verdict is filed and committed, ideally in the same commit** so the two cannot
+diverge.
+
+**Then I checked my own seed against the rule and it fails it.** I appended all 49 events in one sweep and
+called them "already-handled" — on the basis of their age and the campaign log, **not** on a per-event check
+that a verdict was filed for each, which is exactly the check this file exists to make. So the seeding
+commits the error the contract forbids, at lower stakes. It is now stated in the header rather than hidden:
+grandfathered entries mean *pre-convention*, entries appended after mean *verdict-filed-and-committed*, and
+the two must not be read as the same claim. Same discipline as the `lr_policy` grandfathering on 08-10 — the
+justification goes in the artifact, not just the decision.
+
+Worth recording why this is a finding and not a slip: **two lanes independently built the same ordering bug in
+different files on the same night.** Theirs is PB3's `p4_evidence.py:402-404`, which picks its consumable
+write path from a `blockers` list that `:421-424` is still appending to, so the stage's own headline check
+cannot influence where its evidence lands. Mine was going to be "marked processed before the thing that makes
+it processed happened." **The natural writing order is to record the intention next to the thing that forms
+it; the correct order is to record it after the thing completes.** That is a default, not a lapse, which is
+why it needs to be caught at authoring time rather than by care.
+
+BEN-084 amended with the ordering rule, the cross-lane observation, and the seed's own violation.
+
+Queue: `56611394` and `56611837`, both PENDING, both watched. Nothing else changed — no promotion, baseline
+canonical, niter 3, Branch C closed.
