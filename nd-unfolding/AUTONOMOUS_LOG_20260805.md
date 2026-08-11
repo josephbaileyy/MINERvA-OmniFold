@@ -4080,3 +4080,62 @@ narrowed their mail on its word, that he sent neither of us anything, and that o
 `56586368` RUNNING at 12:19, iteration 1 of 3. Verdict against the three predeclared branches when it lands,
 and I will report the watch firing alongside it — that will be the first proof either lane has that a watch
 actually fires, as opposed to the cron merely ticking.
+
+### 04:50Z — DESIGN A: **UNRESOLVED**, the branch that was nearly not predeclared. And the watch FIRED.
+
+`56586368` COMPLETED 02:16:46Z, `02:59:30`, exit `0:0`. I did not process it for ~2.5 h — this session
+restarted and the thread did not carry; the oversight lane caught it from `sacct`. **The watch fired
+correctly and I was the broken link, not the machinery.**
+
+**Preflight assertions in the run that actually executed** (not at submission):
+
+    all 8 original pins HOLD -- the staged code is 56534117's code byte for byte
+    HEAD driver 5fda80df43dfe334 != staged 66aa1f8f62087e6e  (the delta under test)
+    resolved driver: /pscratch/sd/j/josephrb/bisect_designA/train_fullevent_nominal.py
+    resolved sha256: 66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd
+    baseline preserved-check: 58f664cdef266d09 before AND after, UNCHANGED
+
+So BEN-083's assert held in-process: the code that ran **was** `56534117`'s code.
+
+**THE VERDICT — UNRESOLVED.**
+
+    push 1.1157770714   R 1.1240802949941018   dev -0.007386682
+    REPRODUCED window [-0.0121046, -0.0113440]   -- outside
+    DISSOLVED  window [-0.0359893, -0.0352286]   -- outside
+    distance from the REPRODUCED edge: 0.003957, i.e. 11.4 tolerances
+
+**This is precisely the value that would have been rationalised.** It sits far nearer the diagnostic
+expectation than the production one, and with a two-branch reading I would have written "closer to −0.0117,
+therefore reproduced" and moved to Design B. The oversight lane's insistence on a third branch is the only
+reason that did not happen. **Recording that plainly: the correction came from outside this lane and it
+changed the conclusion, not merely the wording.**
+
+**What it actually establishes — the diagnostic configuration is 34× noisier than production.**
+
+    56534117   dev -0.011724321   in-loop trajectory [1.0107, 1.1214, 1.1109]
+    56586368   dev -0.007386682   in-loop trajectory [1.4555, 1.2322, 1.1158]
+    difference       0.004337639  = 34.2x the production scatter (0.000126775)
+
+Byte-identical code, identical seeds, identical engine, identical inputs — and **the trajectories are not
+merely offset, they are qualitatively different**: the first rises from 1.0107, the second falls from 1.4555.
+Same endpoint region, completely different path.
+
+**So the "188×" framing is dead, and it was mine.** Re-scaled honestly against the diagnostic's own spread:
+
+    diagnostic mean (n=2)  -0.009555502
+    production mean (n=2)  -0.035545584
+    gap                     0.025990082   =  6.0x the diagnostic spread   (was quoted 188x)
+
+**The code-path difference SURVIVES but at 6× rather than 188×** — still a real gap, no longer an
+overwhelming one, and now resting on n=2 spreads on both sides. I generalised production's scatter to a
+configuration where it was never measured; that assumption was wrong by a factor of 34, and Design A existed
+precisely to test it. It was the weakest link and it broke.
+
+**Per the predeclaration the next step is a SECOND REPEAT OF DESIGN A, not Design B.** With the diagnostic
+spread this large, isolating a subclass override would measure noise. Launching the repeat.
+
+**And the watch fired — first end-to-end proof for either lane.** `designA-56586368 slurm-job fired`, with
+`evt-designA-56586368.log` written 02:20:09Z, ~3.4 min after the job ended. Cron ticking was proven at 22:00Z;
+a watch actually **dispatching** was not, and now is. The repaired-not-exercised gap is closed. Worth being
+exact about what that means given tonight: the notification machinery worked and the session receiving it did
+not, which is the failure mode `wakerctl` exists to survive and is why the artifact-first mail format matters.
