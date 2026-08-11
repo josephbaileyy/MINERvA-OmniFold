@@ -4953,3 +4953,49 @@ an agent's to take. Recorded my position — *I would merge the repairs; I would
 paper-bound build without his call* — and the cheap option, build-conditional rendering, as offered rather than
 implemented. Batched deliberately: that file re-pages on any mtime change (BEN-085), and two pages for two items
 read as noise. He now has two named gates and a `correction_history` showing what moved and why.
+
+### 14:05Z — closed `INTEGRATION_CHECKLIST:62`; wrote the `\gbdtFive*` update procedure cold
+
+**Answering the direct question: nothing is blocked on anything that is not Joseph's.** Two gates sit with him
+(promotion; `\dead{}` build-scoping, which parks a reviewed branch). No job is running. Nothing is waiting on a
+decision I failed to surface — and I checked that by re-reading the gates rather than asserting it.
+
+**`INTEGRATION_CHECKLIST.md:62` closed** at `4bffe9e`. Struck rather than deleted. The reason it is worse than
+`:61` is that **it contradicts the note's own macro file**: `values.tex:70` carries the same value as
+`\petTotalTrace` with the inline comment *"historical recoil-PET candidate; QUARANTINED"*. So no inference about
+quarantine scope was needed — unlike `\petRatio`, whose coverage I could not source, **this one is marked
+quarantined at its own point of definition** while a checklist heading advertised it as safe to keep. No
+replacement written, same reasoning as `:61`.
+
+**And I checked the parked branch still merges before pushing — it does not.** One hunk, `UU
+docs/INTEGRATION_CHECKLIST.md`, because their `:61` block and my `:62` block are adjacent list items in the same
+region. Both sides are purely additive strikethroughs of *different* entries, so the resolution is *take both*.
+I pushed anyway rather than leaving a known-bad "safe to keep" line advertised for however long the `\dead{}`
+decision takes — but the branch owner learns it from me now instead of at merge time, which was the point of
+testing.
+
+**Wrote `PROCEDURE-gbdtFive-macro-update.md`**, enumerated by grep rather than recall. Three things the
+enumeration found that the finding alone would not have:
+
+1. **All four macros are consumed in ONE continuous prose block** (`sec_systematics.tex:162-170`), not four
+   independent sites. So the risk is a per-macro search-and-replace leaving the chain internally inconsistent.
+2. **BEN-087 applies in a MODIFIED and worse form.** Its trap needs a sentence that *names* a source; checked
+   `:158-172` for attribution language and **there is none.** Good news: no source claim can be silently
+   re-pointed. Bad news, and it is the reason: **the numbers have no attribution at all**, so a reader cannot
+   check them and an updater has nothing to re-verify against. The fix at update time is to **add** provenance,
+   not preserve it.
+3. **Six relational claims a number-only edit breaks**, tabulated — including *"the larger"* (an ordering
+   assertion, `CVTrace > AdoptTrace`), *"both are positive semidefinite"* (a property that does **not** survive
+   by inheritance), *"neither is adopted for publication until…"* (which **contradicts the edit** if the edit
+   *is* the adoption), and **`0.30%` at `:171-172` — an inline literal, not a macro, so a macro sweep misses it
+   entirely.** Same structural hole as `\petRatio`'s operands.
+
+Also computed the directional consequence rather than restating it: under the reported directions the ordering
+survives, but **the mean shift goes from 28.4% to 35.5% of the covariance it is "reported separately rather than
+folded into" — a 25% relative change** that every worded claim survives and no reader would notice. Flagged as a
+decision for the writer rather than an oversight.
+
+Recorded for the record: the oversight lane had a mechanism retracted by the GBDT lane today — it stated
+`wakerctl emit` mails Joseph, and emit has no mail path. Its own framing, which I am adopting for how I read it:
+**its observations are better sourced than its explanations.** That is why every claim it has relayed today was
+re-verified here before being written down, and why two of them turned out to need correcting.
