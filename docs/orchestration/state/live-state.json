@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Branch C trajectory reconciled; external dependency watches",
-  "state": "Branch C annealed trajectory job 56691812 completed 0:0. ARM 1 reproduced all committed 56445883 anchors bit-exactly; the predeclared ARM-2 branch is REPAIRED and is committed at 5e942a6. This wake found that science commit already present, recorded only the missing orchestration reconciliation, and did not duplicate the result. Concurrent footing science also landed independently at 4f07b6d; its armed event watch retains orchestration ownership. HPSS job 56692312 is running.",
+  "current_dag_node": "Footing re-adoption provenance completion",
+  "state": "Footing job 56693207 completed 0:0. Controls C1/C2 reproduce exactly, excluding B3; A1 misses the preregistered no-interaction prediction and the B2 interaction result is already committed at 4f07b6d. The external event is reconciled without duplicating science. Nothing is adopted. Read-only batch job 56695130 now completes the per-input/product SHA-256 receipt required by the predeclaration; HPSS job 56692312 remains independently watched.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -31,13 +31,20 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "The REPAIRED trajectory is diagnostic only: it does not lift Branch C, authorize extraction/cross section, promote an artifact, or discharge a quarantine cause.",
-    "HPSS job 56692312 remains an external running dependency with terminal watch coverage.",
-    "Footing job 56693207 science is committed at 4f07b6d, but its armed real-event wake owns any missing orchestration reconciliation; this Branch C wake must not process it opportunistically."
+  "jobs": [
+    {
+      "job_id": "56695130",
+      "tasks": "0",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/readopt-footing-hashes-active-56695130.json"
+    }
   ],
-  "next_authorized_action": "Do not duplicate job 56691812 or its committed result. End this turn without polling. The armed footing, HPSS, and provider-reset watches will resume this thread only on their own real events; reconcile the first such event exactly once and recognize any already-present science commit.",
+  "blockers": [
+    "The footing result adopts nothing: values.tex is untouched and zero quarantine causes are discharged for this candidate.",
+    "Predeclared per-input/product hashes are pending read-only batch verifier 56695130; do not manufacture or infer them before its stable-read receipt exists.",
+    "HPSS job 56692312 remains an external running dependency with terminal watch coverage."
+  ],
+  "next_authorized_action": "End without polling. On the real terminal event for hash verifier 56695130, read its accounting/log/receipt once, require the committed launcher hash and all eight stable file hashes, then commit the final predeclared provenance receipt without rerunning or adopting anything. HPSS and provider-reset watches remain independent continuation coverage.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
