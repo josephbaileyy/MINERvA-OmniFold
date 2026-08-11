@@ -11,6 +11,22 @@ schema and joint-UQ definition are in
 `pet/FULL_EVENT_FEATURE_CONTRACT.md`; the packet/commit contract is in
 `../docs/PUBLICATION_COMPLETION_RUNBOOK.md`.
 
+## STATUS 2026-08-11 — the Branch C iteration-dynamics defect does NOT survive the LR anneal
+
+Job `56691812` (predeclared `831043d`, no training, 21:45): the annealed nominal `56563761` is
+**correct-signed at all three iterations**, end-to-end `ach/req` **1.1101 / 1.0329 / 0.9644**, against the
+pre-anneal control's **0.9721 / 0.8608 / 0.6554** with iterations 1-2 wrong-signed — reproduced
+bit-exactly from the committed anchors in the same job. `push dev` goes from a monotonic divergence
+(−2.79% → −13.92% → −34.46%) to a damped oscillation (+11.01% → +3.29% → −3.56%). **Predeclared branch
+REPAIRED**, and the domain-of-validity guard the predeclaration called the most likely outcome did **not**
+fire (`|required − 1|` = 0.1241 / 0.0992 / 0.0319, all discriminating). So the defect belongs to the
+**retired full-LR policy**, not to iterating. Numbers: `../VALIDATION_LEDGER.md` §2026-08-11.
+
+This does **not** lift Branch C (a quotability state, not a number), discharges no cause, and is not a
+promotion. Unexplained and new: the annealed arm's **+11.01%** overshoot at iteration 0. The emitted
+verdict *label* on that arm is direction-blind and must not be quoted
+(`../docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`).
+
 ## STATUS 2026-08-11 — cause 5's binding half is the JOINT CONSTRUCTION, not the samples
 
 The 120 selection-shifted **full-event** lateral endpoint ROOTs exist, are `g2-fullevent-v1`, and were

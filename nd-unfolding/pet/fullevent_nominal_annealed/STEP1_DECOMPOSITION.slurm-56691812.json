@@ -1,0 +1,38 @@
+{
+ "gate_receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/GATE_AB_PUSH_PROVENANCE.slurm-56691812.json",
+ "gate_verdict": "GATE_AB_PASSED",
+ "batch_size_step1": 1000,
+ "batch_size_step2": 512,
+ "gate_Bi_pass": true,
+ "gate_Bi_max_rel_dev": 0.0,
+ "reconstruction_is_checkpoint_based": false,
+ "quantities": {
+  "pull_final": {
+   "mean_w_reco_over_pass_reco": 0.9676806416024684,
+   "mean_w_truth_over_pass_gen": 1.0562907728918458,
+   "dev_vs_R_reco": -0.1391356596927572
+  },
+  "push_final": {
+   "mean_w_reco_over_pass_reco": 1.0840529523260116,
+   "mean_w_truth_over_pass_gen": 1.067310388536994,
+   "dev_vs_R_reco": -0.03560897103734051
+  },
+  "push_prev": {
+   "mean_w_reco_over_pass_reco": 1.1610719077796074,
+   "mean_w_truth_over_pass_gen": 1.138088228028039,
+   "dev_vs_R_reco": 0.03290833666441939
+  },
+  "increment1": {
+   "mean_w_reco_over_pass_reco": 0.8391059338951816,
+   "mean_w_truth_over_pass_gen": 0.9319284102393584,
+   "dev_vs_R_reco": -0.2535177979437986
+  },
+  "push_stored": {
+   "mean_w_reco_over_pass_reco": 1.0840529523260116,
+   "mean_w_truth_over_pass_gen": 1.067310388536994,
+   "dev_vs_R_reco": -0.03560897103734051
+  }
+ },
+ "R": 1.1240802949941018,
+ "verdict": "INDETERMINATE"
+}

@@ -1,5 +1,99 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 the Branch C iteration-dynamics defect does NOT survive the LR anneal — VERIFIED DIAGNOSTIC, predeclared branch REPAIRED
+
+Job `56691812` COMPLETED `0:0` in 21:45. Predeclared three-branch **before submission** at `831043d`
+(`docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md`), launcher
+`nd-unfolding/pet/sbatch_step1_trajectory_annealed.sh`. **No training** — both arms load saved
+per-iteration checkpoints and evaluate them.
+
+**The question:** job `56525829` localized the defect to iteration dynamics on the artifact trained
+2026-08-08, which predates the fit-time LR anneal adopted 2026-08-10. `KNOWN_ISSUES.md:407-443` names
+that dead anneal a candidate mechanism. Nobody had run the trajectory on the annealed artifact.
+
+### ARM 1 — CONTROL (pre-anneal `56445883`), gated on the COMMITTED `56445883` decomposition receipt
+
+Reproduction gate **bit-exact**: `increment1` 0.648331, `push_prev` 0.967659, `push_final` 0.736746, all
+`rel_dev = 0.000e+00`. So the instrument is established against a committed anchor, not against itself.
+
+| it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
+|---:|---:|---:|---:|---:|---|---:|---:|---:|
+| 0 | 1.000000 | 1.092736 | 1.124080 | **0.9721** | ok | 1.092736 | −0.0279 | 1.0974 |
+| 1 | 1.092736 | 0.885537 | 1.028684 | **0.8608** | **WRONG** | 0.967659 | −0.1392 | 0.8896 |
+| 2 | 0.967659 | 0.761370 | 1.161650 | **0.6554** | **WRONG** | 0.736746 | −0.3446 | 0.5581 |
+
+Verdict `RIGHT_SIGN_AT_ITER0_INVERTS_LATER`. **This supplies the end-to-end numbers the 2026-08-09 row
+never had, and the wrong-sign claim at iterations 1 and 2 now holds END-TO-END, not only on the first-leg
+field.** It also shows the first-leg field's bias is **not one-directional**: at iteration 0 it reports an
+*overshoot* (1.0974) where end-to-end is an *undershoot* (0.9721) — it inverts the sign of the deviation
+— while at iteration 2 it overstates the shortfall (0.5581 vs 0.6554) and at iteration 1 understates it
+(0.8896 vs 0.8608).
+
+### ARM 2 — TREATMENT (annealed `56563761`)
+
+Gate A/B **`GATE_AB_PASSED`**: `A1_mc_indices_bit_exact` true (0 differing rows), `A2_truth_norm_bit_exact`
+true, `B(ii)` 72/72, and **`B(i) max rel dev = 0.000000e+00`** — the saved checkpoints reproduce the
+stored `weights_push` exactly, so these are the run's own weights, not a checkpoint reconstruction. (The
+pre-anneal artifact's B(i) failed at 0.866 when BEN-043 was written.) Fold-forward agrees three ways:
+telemetry 1.084053, recomputed from stored push 1.084053, recomputed from checkpoint 1.084053.
+Trajectory gate bit-exact against its own decomposition (`0.839106 / 1.161072 / 1.084053`, all
+`rel 0.000e+00`) — a **same-session self-consistency check**, weaker than ARM 1's, as predeclared.
+
+| it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
+|---:|---:|---:|---:|---:|---|---:|---:|---:|
+| 0 | 1.000000 | 1.247812 | 1.124080 | **1.1101** | ok | 1.247812 | **+0.1101** | 1.1318 |
+| 1 | 1.247812 | 0.930486 | 0.900841 | **1.0329** | ok | 1.161072 | **+0.0329** | 1.1811 |
+| 2 | 1.161072 | 0.933666 | 0.968140 | **0.9644** | ok | 1.084053 | **−0.0356** | 0.8667 |
+
+### The predeclared branch: REPAIRED, and the guard that would have voided it did not fire
+
+Evaluated mechanically against the predeclaration's own criteria:
+
+| predeclared test | annealed arm |
+|---|---|
+| iterations 1 **and** 2 sign-correct **and** `|e2e/req − 1| ≤ 0.10` | **True** (0.0329, 0.0356) |
+| any of iterations 1, 2 wrong-signed | **False** |
+| any iteration in the NO-INFORMATION band `|required − 1| < 0.02` | **False** — 0.1241 / 0.0992 / 0.0319, all discriminating |
+
+**The predeclaration named UNRESOLVED-via-the-domain-of-validity-guard as the MOST LIKELY single
+outcome**, because the annealed arm sits near `push ≈ R`. It did not fire: the tightest iteration is
+`|required − 1| = 0.0319`, above the 0.02 floor. So REPAIRED is a measured branch, not the nearer of two.
+
+**The decisive contrast is the shape of the trajectory, not one number.** Pre-anneal `push dev` runs
+**−2.79% → −13.92% → −34.46%**, monotonically diverging. Annealed runs **+11.01% → +3.29% → −3.56%**, a
+damped oscillation converging to within 3.6% of R. Cap saturation is **0.0 at all six iterations across
+both arms**, so nothing here is a clipping artifact.
+
+**Reading.** The defect job `56525829` localized to iteration dynamics is a property of the **retired
+full-LR policy**, not of iterating as such. This is the first measurement that discriminates those two,
+and it is exactly what `KNOWN_ISSUES.md:430-439` proposed as the missing fourth arm.
+
+### Scope — what this does NOT do
+
+Not a cross section, not an uncertainty, and it **does not by itself lift Branch C**, which is a
+quotability governance state rather than a number. It discharges **no** quarantine cause; cause 5 is
+untouched. It is **not** a promotion and does not authorize one. What is new at iteration 0 is a **+11.01%
+overshoot** in the annealed arm, larger than the pre-anneal arm's −2.79% there — the anneal converts a
+monotonic divergence into a damped oscillation rather than removing all deviation, and that overshoot is
+unexplained. The ~1.3% best-vs-final checkpoint caveat (BEN-043) applies to iterations 0 and 1 in both
+arms; only iteration 2 carries `final` weights. ARM 2's gate is self-consistency, so ARM 1 is what
+licenses believing the instrument.
+
+Receipts (all committed, digests verified equal to the cluster copies):
+`STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json` `d560fec7…`,
+`STEP1_TRAJECTORY.slurm-56691812.json` `30b9ea3c…`,
+`STEP1_DECOMPOSITION.slurm-56691812.json` `c84717e5…`,
+`GATE_AB_PUSH_PROVENANCE.slurm-56691812.json` `cdffe6a1…`, under
+`nd-unfolding/pet/fullevent_nominal_annealed/`.
+
+**One harness defect found by running it on a configuration that fails the other way**: ARM 2's emitted
+label is `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN` with reading *"step 1 under-achieves at iteration 0"*, while
+iteration 0's `e2e ach/req` is **1.1101** — it **over**-achieves by 11%. The label's third branch
+(`step1_increment_trajectory.py:296-300`) keys on `|dev| > 0.10` and is **direction-blind**, so it prints
+"under-achieves" for an overshoot. The trajectory numbers are unaffected; the *label* on this arm should
+not be quoted. Filed as
+`docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`.
+
 ## 2026-08-11 F7 mean-shift ratio on the ADOPTED ensemble — VERIFIED-NUMERIC, corrects "4.83×" to 5.35×
 
 Recomputed from the committed receipt's operands (`uq_5d/receipt_construction_contract_5d.json`) while

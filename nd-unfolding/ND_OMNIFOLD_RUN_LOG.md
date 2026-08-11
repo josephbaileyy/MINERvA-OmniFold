@@ -4957,3 +4957,53 @@ reconstructs the pre-fix source and requires the static assertions to fail on it
 **Mutations, files restored byte-exact (md5 verified):** P1 remove the guard block → 2 fail. **P2 change
 `Mew.any(axis=1)` to `axis=0`** — i.e. check *source* coverage instead of *destination*, which is the
 original one-directional bug — → caught. P2 is the one that matters: it is the mutation that looks right.
+
+## 2026-08-11 — Branch C: the iteration-dynamics defect does NOT survive the LR anneal (Session C, PET)
+
+Job **56691812** COMPLETED `0:0` in **21:45**, one A100, no training. Predeclared three-branch at
+**831043d** BEFORE submission
+(`docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md`); launcher
+`pet/sbatch_step1_trajectory_annealed.sh`. Full numbers in `VALIDATION_LEDGER.md` §2026-08-11.
+
+**ARM 1 (CONTROL, pre-anneal 56445883)** reproduced the COMMITTED 56445883 decomposition anchors
+**bit-exactly** (`increment1` 0.648331, `push_prev` 0.967659, `push_final` 0.736746, all
+`rel_dev = 0.000e+00`), so the instrument was established against a committed anchor before the treatment
+arm was read. End-to-end `ach/req` **0.9721 / 0.8608 / 0.6554**, iterations 1-2 WRONG-signed.
+
+**ARM 2 (TREATMENT, annealed 56563761)** `GATE_AB_PASSED` with **`B(i) max rel dev = 0.0`** — the saved
+checkpoints reproduce the stored `weights_push` exactly, so these are the run's own weights and not a
+reconstruction (the pre-anneal artifact's B(i) failed at 0.866 when BEN-043 was written). End-to-end
+`ach/req` **1.1101 / 1.0329 / 0.9644**, **all three correct-signed**.
+
+**PREDECLARED BRANCH: REPAIRED.** Iterations 1 and 2 are both sign-correct and within 10%
+(0.0329, 0.0356). **And the guard that would have voided it did not fire:** the predeclaration named
+UNRESOLVED-via-domain-of-validity as the MOST LIKELY outcome, since the annealed arm sits near
+`push ~ R`; measured, `|required - 1|` is 0.1241 / 0.0992 / 0.0319, all above the 0.02 no-information
+floor. So REPAIRED is a measured branch rather than the nearer of two.
+
+**The decisive contrast is the SHAPE.** `push dev` pre-anneal runs **-2.79% -> -13.92% -> -34.46%**
+(monotonic divergence); annealed runs **+11.01% -> +3.29% -> -3.56%** (damped oscillation converging to
+within 3.6% of R). Cap saturation 0.0 at all six iterations across both arms, so no clipping artifact.
+The defect 56525829 localized to "iteration dynamics" is a property of the **retired full-LR policy**,
+not of iterating -- the discrimination `KNOWN_ISSUES.md:430-439` asked for.
+
+**Two by-products.**
+1. ARM 1 supplies the end-to-end numbers the 2026-08-09 ledger row never had, so the wrong-sign claim at
+   iterations 1-2 now holds END-TO-END and not only on the first-leg field. It also shows the first-leg
+   field's bias is **not one-directional**: at iteration 0 it reports an overshoot (1.0974) where
+   end-to-end is an undershoot (0.9721).
+2. **Harness defect found by running it on a configuration that fails the other way:** ARM 2's emitted
+   label reads `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN` for a measured **+11.01% OVERSHOOT. The third branch
+   keys on `|dev| > 0.10` and is direction-blind. No number affected; NOT patched, because the run's four
+   receipts bind the harness at sha `1acb1869c57f9772`. Filed and indexed:
+   `FINDING-20260811-trajectory-label-is-direction-blind.md`.
+
+**Scope.** Not a cross section, not an uncertainty, discharges no quarantine cause, does not by itself
+lift Branch C, and is NOT a promotion. New and unexplained: the annealed arm's +11.01% overshoot at
+iteration 0, larger than the pre-anneal arm's -2.79% there.
+
+**Also this turn:** an earlier interactive hedge of this same measurement (`56693776`) failed -- a bare
+`srun` inherited **NTasks=4** and ran four copies of a single-rank script, three dying in Horovod GPU
+selection while rank 0 entered ARM 1 and looked healthy. Reconciled at `cdf5927` with a single-rank guard
+and a launcher test. The batch twin was the sole valid route. `sacct -o NTasks` is the check; a growing
+log and a passing preflight were not.

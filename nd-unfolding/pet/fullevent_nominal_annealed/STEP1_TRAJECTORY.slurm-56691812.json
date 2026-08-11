@@ -1,0 +1,145 @@
+{
+  "schema": "pet-fullevent-step1-trajectory-v1",
+  "verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN",
+  "verdict_label_history": {
+    "CORRECT_AT_ITER0_DEGRADES_LATER": "RETIRED 2026-08-10 -- 'CORRECT' overstated a correction that end-to-end UNDERSHOOTS by ~2.8% at iteration 0; the load-bearing claim was always the SIGN. Renamed RIGHT_SIGN_AT_ITER0_INVERTS_LATER. Same meaning, honest name."
+  },
+  "reading": "step 1 under-achieves at iteration 0 but with the CORRECT sign, so the sign inversion is an iteration effect layered on a step-1 capacity/convergence shortfall present from the start.",
+  "R": 1.1240802949941018,
+  "niter": 3,
+  "logit_cap": 30.0,
+  "reproduction_gate": {
+    "increment1": {
+      "receipt": 0.8391059338951816,
+      "reproduced": 0.8391059338951816,
+      "rel_dev": 0.0,
+      "ok": true
+    },
+    "push_prev": {
+      "receipt": 1.1610719077796074,
+      "reproduced": 1.1610719077796074,
+      "rel_dev": 0.0,
+      "ok": true
+    },
+    "push_final": {
+      "receipt": 1.0840529523260116,
+      "reproduced": 1.0840529523260116,
+      "rel_dev": 0.0,
+      "ok": true
+    }
+  },
+  "trajectory": [
+    {
+      "iteration": 0,
+      "push_prev_mean_w_reco": 1.0,
+      "r1_mean_w_reco": 1.2722809399604016,
+      "r1_required_mean": 1.1240802949941018,
+      "end_to_end_achieved": 1.2478123121854545,
+      "end_to_end_achieved_over_required": 1.1100740024910782,
+      "end_to_end_sign_is_wrong": false,
+      "r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE": 1.1318416892692504,
+      "r1_is_below_one": false,
+      "correction_sign_is_wrong": false,
+      "pull_mean_w_reco": 1.2722809399604016,
+      "push_mean_w_reco": 1.2478123121854545,
+      "push_dev_vs_R": 0.11007400249107824,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.00823240950703621,
+        "5": 0.012999708764255047,
+        "25": 0.04347294196486473,
+        "50": 0.24539032578468323,
+        "75": 0.8095355927944183,
+        "95": 5.153844594955444,
+        "99": 14.683006763458309
+      },
+      "r1_weight_mass_below_one": 0.830088331320607,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "best-epoch"
+    },
+    {
+      "iteration": 1,
+      "push_prev_mean_w_reco": 1.2478123121854545,
+      "r1_mean_w_reco": 1.06398657191608,
+      "r1_required_mean": 0.9008408428230325,
+      "end_to_end_achieved": 0.9304860165597121,
+      "end_to_end_achieved_over_required": 1.0329083366644194,
+      "end_to_end_sign_is_wrong": false,
+      "r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE": 1.1811038324836445,
+      "r1_is_below_one": false,
+      "correction_sign_is_wrong": true,
+      "pull_mean_w_reco": 1.3011441277299185,
+      "push_mean_w_reco": 1.1610719077796074,
+      "push_dev_vs_R": 0.03290833666441939,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.004158663703128696,
+        "5": 0.007441680179908872,
+        "25": 0.024609974585473537,
+        "50": 0.12698298692703247,
+        "75": 0.6590165793895721,
+        "95": 3.1504465341567993,
+        "99": 12.685530090332081
+      },
+      "r1_weight_mass_below_one": 0.8995358503147007,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "best-epoch"
+    },
+    {
+      "iteration": 2,
+      "push_prev_mean_w_reco": 1.1610719077796074,
+      "r1_mean_w_reco": 0.8391059338951816,
+      "r1_required_mean": 0.9681401190248009,
+      "end_to_end_achieved": 0.9336656455663593,
+      "end_to_end_achieved_over_required": 0.9643910289626595,
+      "end_to_end_sign_is_wrong": false,
+      "r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE": 0.8667195144649162,
+      "r1_is_below_one": true,
+      "correction_sign_is_wrong": false,
+      "pull_mean_w_reco": 0.9676806416024684,
+      "push_mean_w_reco": 1.0840529523260116,
+      "push_dev_vs_R": -0.03560897103734051,
+      "r1_percentiles_w_unweighted": {
+        "1": 0.0034166197758167985,
+        "5": 0.006437093485146761,
+        "25": 0.021152290515601635,
+        "50": 0.1137533038854599,
+        "75": 0.6095033288002014,
+        "95": 2.2386770248413086,
+        "99": 9.924538326263434
+      },
+      "r1_weight_mass_below_one": 0.9114042079488984,
+      "r1_cap_saturated_frac": 0.0,
+      "checkpoint_tier_step1": "final(BEN-043)"
+    }
+  ],
+  "checkpoints": {
+    "step1_iter2": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+      "provenance_tier": "final(BEN-043)"
+    },
+    "step2_iter1": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step2_iter2": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5",
+      "provenance_tier": "final(BEN-043)"
+    },
+    "step1_iter0": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step2_iter0": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+      "provenance_tier": "best-epoch"
+    },
+    "step1_iter1": {
+      "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+      "provenance_tier": "best-epoch"
+    }
+  },
+  "weights": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+  "decomposition_receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/STEP1_DECOMPOSITION.slurm-56691812.json",
+  "batch_size_step1": 1000,
+  "batch_size_step2": 512,
+  "caveat": "iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} has the BEN-043 _final weights. The ~1.3% best-vs-final gap cannot blur the 1.124-vs-0.65 discrimination this script turns on."
+}
