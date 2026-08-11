@@ -617,6 +617,11 @@ If step 1 fails, do **not** run `install-cron`; the listing failure is the thing
 receipt cites. The fix when someone owns that re-issue: distinguish "empty table" from "listing failed" —
 raise `WakerError` on non-zero rather than returning `[]`.
 
+> **CORRECTION 2026-08-11 — the stated reason above is void. The pin LAPSED on 2026-07-20.** Editing
+> `wakerctl.py` today moves no live sha, so the pin is not what blocks this fix; ownership and a test are.
+> Canonical account, including the three fixes declined on this false premise:
+> **"The `wakerctl.py` pin in the Gate-3 queue-latency receipt LAPSED on 2026-07-20"**, below in this file.
+
 **Related, and the reason this was found:** a HELD scrontab entry cannot be recovered with
 `scontrol release` — Slurm refuses with *"Cannot modify scrontab jobs through scontrol."* The recovery **is**
 `install-cron`, because it replaces the table rather than releasing a job. Verified 2026-08-10: held
@@ -728,7 +733,10 @@ still written — a fix without that test is unpowered, and the historical crash
 **NOT FIXED, and the reason is the same one that blocks the `read_scrontab` fail-open above:** `wakerctl.py` is
 hash-pinned into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json` and is one of the four known
 submit-time hash drifts, so editing it moves a sha a receipt cites. That belongs to whoever owns that re-issue,
-in one commit with the test. **Currently low blast radius** — only two armed watches, both `provider-reset`
+in one commit with the test.
+**↑ THAT REASON IS VOID.** The pin lapsed on **2026-07-20**, so editing `wakerctl.py` today moves no live
+sha; the blocker here is ownership and the test, not the pin. This is decline #3 in the section
+**"The `wakerctl.py` pin in the Gate-3 queue-latency receipt LAPSED on 2026-07-20"** below — read it there. **Currently low blast radius** — only two armed watches, both `provider-reset`
 dated 2026-08-18 — so this is a real single point of failure rather than an active fire. It belongs in the
 "gates that cannot fail" family: **a scan that cannot complete is a gate that cannot fire.**
 
@@ -765,6 +773,34 @@ hand-edit the hash** — that is the prohibited act regardless of justification.
 face of it, since the pinned "control plane repair" is three weeks stale and the file has moved on, but
 retiring a pin is the gate owner's call and is not a unilateral edit. **Recorded now so the state is honest;
 the disposition is open.**
+
+### Addendum (GBDT/P4 lane, same day): the pin RESOLVES, which makes option (b) cheap
+
+The above establishes the lapse from commit *dates* — file `7e69926`, receipt `8c8775f`, same day. Hashing
+**every** revision of the file closes the remaining gap, which is whether the pinned sha corresponds to any
+real content or to nothing at all:
+
+| revision | sha256 | bytes |
+|---|---|---|
+| **receipt pin** | `d7c6a215…09bd99c` | 50283 |
+| **`8c8775f`** "Reconcile P3F PET queue latency wake" — **the receipt's own commit** | `d7c6a215…09bd99c` | **50283** |
+| `442aee3` "Send a 6-hour status digest email" | `bf459853…f7ed90b` | 53113 |
+| `7e69926` "Cut over to interim Claude root" = HEAD | `04d2e957…9eea8c76` | 54600 |
+
+**The pin reproduces `8c8775f` byte-for-byte, so the receipt was truthful when written and the exact code the
+gate ran against is still in git.** The lapse is therefore *stale pin*, not *dangling pin*: the receipt remains
+fully auditable by anyone who checks out `8c8775f`. Two consequences for the open disposition:
+
+- **No re-run is implied.** Option (b) can be as cheap as recording that the pin names a historical revision
+  and citing `8c8775f` beside it — the provenance the pin exists to provide is intact, just not at HEAD.
+- **The prohibition on hand-editing the hash is now stronger, not weaker.** The pinned value is the one thing
+  still carrying information: it identifies the code actually run. Overwriting it with HEAD's sha would
+  destroy that and leave a receipt pointing at code its gate never saw.
+
+*Instrument note (BEN-088(vi)):* Session A and this lane both first measured with `shasum` against git, which
+is determinism rather than corroboration. Re-measured here with a varied instrument — `openssl dgst -sha256`
+read straight off the filesystem, and the receipt value re-extracted with a JSON parser rather than `grep`.
+Both agree with the values above.
 
 **Cross-check discipline note:** two sessions independently ran `shasum` against git and agreed. Per
 BEN-088(vi) that agreement is determinism, not corroboration — the third confirmation above is the *cluster*
