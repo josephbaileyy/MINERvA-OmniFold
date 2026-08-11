@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "receipt_type": "external-event-reconciliation",
+  "recorded_at_utc": "2026-08-11T23:29:51Z",
+  "event": {
+    "event_id": "evt-branchC-traj-annealed-56691812",
+    "event_sha256": "aff77af928ab6c9c9dd3902ddbc2c9c898bef40a675b1cbd7cadff88d7696ec4",
+    "watch_id": "branchC-traj-annealed-56691812",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-11T23:25:17+00:00",
+    "validation": "PASS"
+  },
+  "scheduler": {
+    "job_id": "56691812",
+    "job_name": "fe_traj_ann",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:21:45",
+    "start": "2026-08-11T16:01:00",
+    "end": "2026-08-11T16:22:45",
+    "allocation": "one node, one A100, 32 CPU, 57472M"
+  },
+  "one_pass_evidence": {
+    "batch_script_sha256": "f5ba93d0ab9d4eee7371553f915e6664a41e429f8437fe963b71406aac090d50",
+    "batch_script_matches_commit": "831043d",
+    "runlog_sha256": "6f7f96a3fecb4e8b3853953699e5a340c66ed19eb02545443173b29ba38bb2e4",
+    "stdout_sha256": "d03ff723f98164c368bd9abc6ce0f73f09c6a34c6bbcb16fa92c083018e8dc07",
+    "stderr_sha256": "9776134633aa9e338b02037e12295a4922b6ef017ee5d3350e87efcd696de663",
+    "products": {
+      "control_trajectory": "d560fec76b0b7b45f66150b984d4e3818174c07fd5d29d43218d1d9699aab931",
+      "annealed_gate_ab": "cdffe6a175b27c2df5b97e05d67474e79bf443dd77c528863908313805c6e7ff",
+      "annealed_decomposition": "c84717e5f21b19d4470a68ed9a69a7b3898ab7eb0af2a835a1cf872d6447ec00",
+      "annealed_trajectory": "30b9ea3ca5ba7479e35f72874fd045fd925a6c76bef7a52d7f6c3601ce9e73a3"
+    },
+    "imported_module_hashes_match_commit_831043d": true,
+    "preflight_pass": true
+  },
+  "control_gate": {
+    "committed_anchor_receipt_sha256": "429cf9e8124248d1f0c513fd650a3cb80cc259fa18423426af126213380e122b",
+    "increment1": {
+      "reproduced": 0.6483314255077571,
+      "receipt": 0.6483314255077571,
+      "relative_deviation": 0.0,
+      "pass": true
+    },
+    "push_prev": {
+      "reproduced": 0.9676586519823509,
+      "receipt": 0.9676586519823509,
+      "relative_deviation": 0.0,
+      "pass": true
+    },
+    "push_final": {
+      "reproduced": 0.7367462501305516,
+      "receipt": 0.7367462501305516,
+      "relative_deviation": 0.0,
+      "pass": true
+    },
+    "verdict": "PASS; ARM 2 licensed"
+  },
+  "treatment_gate": {
+    "gate_ab": "GATE_AB_PASSED",
+    "gate_b_i_max_relative_deviation": 0.0,
+    "stored_off_shell_exactly_one": true
+  },
+  "predeclared_operands": [
+    {
+      "iteration": 1,
+      "r1_required_mean": 0.9008408428230325,
+      "absolute_required_minus_one": 0.09915915717696755,
+      "domain_valid": true,
+      "end_to_end_achieved_over_required": 1.0329083366644194,
+      "end_to_end_sign_is_wrong": false,
+      "within_ten_percent": true
+    },
+    {
+      "iteration": 2,
+      "r1_required_mean": 0.9681401190248009,
+      "absolute_required_minus_one": 0.031859880975199095,
+      "domain_valid": true,
+      "end_to_end_achieved_over_required": 0.9643910289626595,
+      "end_to_end_sign_is_wrong": false,
+      "within_ten_percent": true
+    }
+  ],
+  "predeclared_verdict": "REPAIRED",
+  "science_commit_already_present": {
+    "commit": "5e942a64278522a234b0a91db47059da4b59c177",
+    "pushed_to": "github/main",
+    "action": "No duplicate science receipt, product commit, provider dispatch, or rerun created"
+  },
+  "scope": "Diagnostic only. Does not lift Branch C, promote an artifact, authorize extraction/cross section, or discharge a quarantine cause.",
+  "usage_before_dispatch": {
+    "observed_at_utc": "2026-08-11T23:26:52+00:00",
+    "gate_ok": true,
+    "codex_personal_weekly_remaining_percent": 61.0,
+    "codex_personal_reset_at_utc": "2026-08-18T04:45:06+00:00",
+    "codex_school_weekly_remaining_percent": 90.0,
+    "codex_school_reset_at_utc": "2026-08-18T12:41:31+00:00",
+    "full_reset_credits_available": 0,
+    "provider_dispatches": 0
+  },
+  "continuation": {
+    "armed_watches_confirmed": [
+      "hpss-protect-p3f-56692312",
+      "readopt-footing-56693207",
+      "codex-personal-reset-20260818",
+      "codex-school-reset-20260818"
+    ],
+    "persistent_worker_uuids_preserved": true,
+    "reset_credit_consumed": false,
+    "polling_performed": false
+  }
+}
