@@ -217,15 +217,18 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 
 | cause | C | P | M | T | verdict |
 |---|---|---|---|---|---|
-| 1 one-sided endpoint interpolation | OPEN — two sweep-found sites unfixed, path not enumerated | PARTIAL — MAT mean-centered `1/N` printed by the combine and the ± bank inventory passed, but no committed per-band endpoint census | **OPEN — no number exists** | OPEN | **OPEN** |
-| 2 CV centering | MET | **MET at the throw ROOT** — `hJointMeanShift` present as a separate `TH1D[10694]`, `joint_mean_shift_norm` = `1.878696733368378e-38`; **absent from the adopted product** (§4.7) | **MET** — F7, 4.69× → 4.83× floor | **OPEN — no guard** | **OPEN, and nearest to discharge** |
-| 3 varying estimator seeds | MET | **MET at the throw ROOT** — one seed, `1000`, across all 40 throw slabs and 36 block slabs; 160-throw union contiguous; `n_throws = 160` read back | **MET** — the null is now read off **both** products, not the wrong one: `1.9706e-50` pre-J28 and `5.8223e-50` J28-corrected, tol `1e-12` | OPEN | **OPEN — test leg only** |
-| 4 scalar jitter subtraction | MET | **MET at the throw ROOT** — `fixed_seed_null_norm` **present** on both throw ROOTs (not absent-and-assumed-fine); **absent from the adopted product** (§4.7) | UNRESOLVED — `1.539` is a different ensemble | OPEN | **OPEN** |
-| 6 incomplete statistical projection | OPEN — one-directional coverage guard live | **OPEN — no product rebuilt at all** | OPEN | OPEN | **OPEN, and furthest from discharge** |
+| 1 one-sided endpoint interpolation | OPEN — two sweep-found sites unfixed, path not enumerated | PARTIAL — MAT mean-centered `1/N` printed by the combine and the ± bank inventory passed, but no committed per-band endpoint census | **OPEN for the adopted product**; the pair-level defect is now quantified in the test (one-sided overstates on an asymmetric pair) | **MET** — power-tested, mutations N1/N2 | **OPEN — C and M** |
+| 2 CV centering | MET | **MET at the throw ROOT** — `hJointMeanShift` a separate `TH1D[10694]`, `joint_mean_shift_norm` `1.878696733368378e-38`; **absent from the adopted product** (§4.7, BEN-106) | **MET, on a CORRECTED number** — **5.3478×** the floor, not the recorded `4.83×`, which is the 122-throw subsample (BEN-109) | **MET** — `f7_cv_centered_required`, threshold pinned by name; N3/N4 | **OPEN — provenance only** |
+| 3 varying estimator seeds | MET | **MET at the throw ROOT** — one seed `1000` across all 40 throw and 36 block slabs; 160-throw union contiguous; `n_throws = 160` read back | **MET** — null read off **both** products: `1.9706e-50` pre-J28, `5.8223e-50` J28-corrected, tol `1e-12` | **MET** — both directions in one case (one seed accepted, mixed rejected); N5 | **OPEN — provenance only** |
+| 4 scalar jitter subtraction | MET | **MET at the throw ROOT**; **absent from the adopted product** (BEN-106) | UNRESOLVED — `1.539` is a different ensemble | **MET** — `fixed_seed_null_checked` written unconditionally; N6 caught it and nothing else did | **OPEN — M and provenance** |
+| 6 incomplete statistical projection | **PARTIAL** — the `(E_avail,W)` projector's unguarded all-zero rows are now detected and reported (BEN-110); the ensemble leg and the corrected upstream input are untouched | **OPEN — no product rebuilt at all** | OPEN | **MET** for the coverage guard — numeric + static + pre-fix control; P1/P2 | **OPEN, and still furthest** |
 
-**So the remaining distance is shorter than it was and no cause is discharged.** Causes 3 and 4 now need
-only their test legs plus, for 4, one measurement; cause 2 needs only its guard. Causes 1 and 6 are
-unchanged. **Nothing here makes adoption nearer** — `values.tex` is untouched and the quarantine stands.
+**Every T leg is now MET and mutation-verified; no cause is discharged.** What remains is concentrated:
+causes 2, 3 and 4 need only **provenance in the adopted product**, which is one edit — BEN-106's stamp
+propagation — closing the same leg for all three at once. Cause 4 additionally needs its magnitude. Cause 1
+needs a static audit of X's path plus one measurement. Cause 6 needs a cluster rebuild it has never had.
+**Nothing here makes adoption nearer** — `values.tex` is untouched and the quarantine stands at **zero of
+seven** for this artifact.
 
 **Cost order, cheapest first — recommended remediation sequence:** 2 → 4 → 3 → 1 → 6. Cause 2 needs one
 artifact read and one test. Causes 3 and 4 need the same artifact read plus power-tested guards. Cause 1

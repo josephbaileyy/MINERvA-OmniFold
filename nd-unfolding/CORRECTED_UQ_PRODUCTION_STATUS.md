@@ -7,6 +7,25 @@
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-11 one-liner — the footing-matched candidate EXISTS, both controls reproduce exactly, and the
+two corrections turn out NOT to be independent.** Job `56693207` (`sbatch_readopt_5d_bkgaware_footing.sh`,
+COMPLETED, ~14 min, four arms from one unchanged throw ROOT). **Nothing adopted; `values.tex` untouched;
+zero of seven causes discharged.** Controls `C1`/`C2` return **5.2600e-38** and **5.6609e-38** digit for
+digit against job `56429334` — including the `x1.210`/`x1.303`, the medians and the PSD minima — so branch
+**B3 is excluded** and the footing diagnosis is safe. Footing-matched candidates: **A1 = 5.2696e-38**
+(mean-centered) and **A2 = 5.6743e-38** (CV-centered), both PSD. The run printed **both** block-sum
+medians itself — `old=13.36%` on the bkgaware arms, `old=13.43%` on the controls — independently
+confirming that `\gbdtFiveBlockMedian` is the background-aware value. **THE RESULT: the footing effect on
+the adopted covariance DOUBLES after the flux correction, +0.0914% -> +0.1831% (x2.004)**, against a
+pre-registered no-interaction prediction of `5.264776e-38`. Mechanism: correcting the flux drove `g`
+toward 1 (`x1.335 -> x1.210`), so `C_comb` carries more of the total and a change to it transmits more
+directly — measured transmission of the `+0.2839%` block-sum change rose from **32% to 65%**. **So a
+footing-matched replacement cannot be obtained by scaling**, and the two corrections must be applied
+together. Verdict **B2**, escalated. Separately: cause 6's `(E_avail,W)` projector had BEN-064's
+unguarded all-zero-row construction and now reports it (BEN-110); every T leg for causes 1,2,3,4,6 is MET
+and mutation-verified; and F7's recorded `4.83x` is a 122-throw number, the adopted value being **5.3478x**
+(BEN-109).
+
 **2026-08-11 one-liner — the construction contract is now PROVABLE FROM THE REPO for the throw ROOT, and
 the footing mismatch is proven FROM THE PRODUCTS.** Receipt `uq_5d/receipt_construction_contract_5d.json`
 (read-only, nothing adopted, `values.tex` untouched), predeclared verdict **B1**. Both throw ROOTs carry

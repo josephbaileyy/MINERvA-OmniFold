@@ -5007,3 +5007,50 @@ iteration 0, larger than the pre-anneal arm's -2.79% there.
 selection while rank 0 entered ARM 1 and looked healthy. Reconciled at `cdf5927` with a single-rank guard
 and a launcher test. The batch twin was the sole valid route. `sacct -o NTasks` is the check; a growing
 log and a passing preflight were not.
+
+## 2026-08-11 — four-arm bkgaware footing re-adoption: controls reproduce, the effect DOUBLES (Session B)
+
+Job `56693207`, `COMPLETED`, ~14 min, `--qos=shared`. Four arms from **one unchanged** throw ROOT —
+nothing re-thrown, nothing re-combined. Whole stream at `uq_5d/readopt_footing_56693207.out`, no
+`tail`/`head`. Watch `readopt-footing-56693207` armed and fired. Predeclared with a pre-registered value
+at `../docs/orchestration/PREDECLARE-20260811-bkgaware-footing-readopt.md`. **Nothing adopted;
+`values.tex` untouched; zero of seven causes discharged.**
+
+    arm                  --combined      sqrt_tr_old    sqrt_tr_new    x       median frac/bin   PSD
+    A1 bkgaware   MC     bkgaware        4.3578e-38     5.2696e-38     1.209   13.36% -> 13.57%  -3.19e-16
+    A2 bkgaware   CV     bkgaware        4.3578e-38     5.6743e-38     1.302   13.36% -> 14.02%  -3.23e-16
+    C1 control    MC     non-bkgaware    4.3455e-38     5.2600e-38     1.210   13.43% -> 13.61%  -4.87e-16
+    C2 control    CV     non-bkgaware    4.3455e-38     5.6609e-38     1.303   13.43% -> 14.09%  -3.92e-16
+
+**Both controls reproduce job `56429334` digit for digit** — values, ratios, medians and PSD minima —
+so **branch B3 is excluded** and the footing diagnosis holds. The `g` census is identical across footings
+(it comes from the throw ROOT, not from `--combined`), which is the internal check that had to hold. And
+the run printed **both** block-sum medians itself, `13.36%` bkgaware and `13.43%` non-, independently
+confirming `\gbdtFiveBlockMedian`.
+
+**THE RESULT IS AN INTERACTION.** The 2 × 2 completes to: footing effect **+0.0914%** pre-J28 and
+**+0.1831%** post-J28, a factor **2.004**; J28 effect **−9.3486%** non-bkgaware and **−9.2655%**
+bkgaware. Pre-registered no-interaction prediction **5.264776e-38**, measured **5.2696e-38**, high by
+**+0.0916%** — which is the pre-J28 footing effect over again, so the deviation *is* the doubling.
+Mechanism: the flux correction drove `g` toward 1 (`×1.335 → ×1.210`), so `C_comb` carries more of the
+adopted total and a change to it transmits more directly; measured transmission of the `+0.2839%`
+block-sum change rose **32% → 65%**. **A footing-matched replacement therefore cannot be obtained by
+scaling** — applying the pre-J28 `+0.0914%` gives `5.2648e-38` and is wrong by half the effect.
+
+**Predeclaration honesty, and it is a finding against me (BEN-111).** Branches B1/B2 were phrased against
+*"the +0.30% bkgaware refinement"* — the **block-sum** figure — while the predicted quantity is the
+**adopted** one, where the same change is `+0.0914%`. Against that prose the answer reads B1 (moved
+`+0.183%`, under `0.30%`); against the pre-registered **number** it is **B2**. **The prose would have
+recorded "no interaction" for a measured factor of two.** That is the identical block-sum-vs-adopted
+conflation I had found in `sec_systematics.tex:170-173` and routed, committed one document later. The
+prose thresholds are **withdrawn as decision criteria**; the verdict rests on the pre-registered value.
+A predeclared branch expressed as a number forces you to name a quantity and a basis; one expressed in
+words does not.
+
+**Suite state:** `pytest nd-unfolding/tests` = **1021 collected**, enumerated failures **9**, the same
+named set as before this session's work — 7 known off-Perlmutter, plus the two routed to PET
+(`test_p4_sweep_snapshots` count drift and the `test_resume_guard` false positive on a comment). One
+earlier run reported **10** without enumeration and I did not capture which line; two further runs both
+returned **9** with the enumerated set above, so the count is stable at 9 and the single 10 stands
+unexplained rather than diagnosed. **BEN-088 rule (v) is exactly why it could not be chased** — I read a
+count without the matched lines, so there is nothing to go back to. `1011 + 9 + 1 = 1021`, consistent.
