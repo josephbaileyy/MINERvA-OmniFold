@@ -16,6 +16,17 @@ string-match.** `188.4×` was caught because it *is* the retracted number. `0.03
 committing any number, ask what it was computed *from* and whether that operand is on this list — not whether
 the number itself is.
 
+**AND THE SECOND WRITE-TIME RULE, distinct from the first: CHANGING A NUMBER RE-POINTS ANY SOURCE CLAIM IN THE SAME
+SENTENCE.** The derived-quantity rule above is about a *number* downstream of a retraction. This is about a *citation*
+downstream of a value swap: a sentence reading *"the median `4.822%` is taken directly from the matcorr rollup
+summary"* was **true**, and became **false** when the value was correctly updated to `6.865%` — which is not in that
+summary at all (it reports `6.830%` and `6.845%`; `6.865%` is the block sum, in `2D_OMNIFOLD_STUDY_STATUS.md:101`).
+**Nothing about the edit looked wrong; the attribution was collateral.** So: after changing a number in prose, `grep`
+the new value against the file the sentence names. And be suspicious wherever two quantities have historically agreed
+at the printed precision — pre-fix the block sum and universe+bootstrap printed identically, which is what let one
+sentence describe two things. **This applies to the `\gbdtFive*` update still ahead:** `sec_systematics.tex:163-168`
+is prose-with-sources of exactly this shape. (BEN-087.)
+
 **Also read it before quoting any number from `VALIDATION_LEDGER.md`, a `PREDECLARATION-*`, a `*_RUN_LOG.md`, a
 receipt JSON, `docs/INTEGRATION_CHECKLIST.md`, or a commit message.**
 
