@@ -90,7 +90,41 @@ site:
 2. **interpreter** — login-node `python3` is 3.6.15, too old for wakerctl's
    `from __future__ import annotations`;
 3. **silent dedupe** — a reused id is suppressed with no ledger entry (BEN-067);
-4. **dispatched-without-notify** for `--type artifact`, which is this run's new one.
+4. ~~**dispatched-without-notify** for `--type artifact`~~ — **WRONG DIAGNOSIS, corrected below.**
 
-The `.sent` marker is the only proof of delivery. Until (4) is understood, **the push channel is
-unproven and the repository is the durable record.**
+### CORRECTION (same day): there is no mail path from `emit` at all
+
+Item 4 above was my error and is retracted. There is no `--type artifact` bug, and the type is
+irrelevant. **`wakerctl emit` cannot mail and never could.** Verified independently rather than
+accepted on report: `notify()` has exactly four call sites —
+
+```
+:860  schedule_retry      only when retries are EXHAUSTED
+:952  notify_guard        <- every blocked-on-user-*.sent marker comes from here
+:965  notify_guard
+:1097 status_report_guard
+```
+
+— and `dispatch_one` contains **zero** of them. A successful dispatch *resumes a session*; that is
+what `outcome: resumed` in the `.done` file meant. So the emit behaved exactly as designed:
+claimed, invoked, done, no mail. Nothing was broken.
+
+**How the wrong conclusion was reached, because that is the reusable part.** The oversight session
+read `notify_command` configured at `waker-config.json:18`, observed live `.sent` markers, and
+inferred that `emit` would reach the user through the cron. Both observations were true; the
+conclusion did not follow, because the markers come from the *guard* paths, not the dispatch path.
+I then spent three attempts making a channel work that had no mail path at its end. The
+wrong-queue-host and interpreter failures found along the way were real, and incidental.
+
+Same shape as `code_rev == HEAD`: a mechanism inferred from a partial read and handed on as a spec.
+The check that would have caught it is one `grep` for the call sites of the function the mechanism
+depends on — which is what settled it in the end, after the fact.
+
+**Standing conclusion, recorded as the answer and not as an interim state: there is no
+arbitrary-content push channel from this lane. The repository IS the durable record** — artifacts
+are committed and pullable without any relay. What is missing is *push*, not the record. The honest
+options are a mail tool in the session (Joseph's to enable) or accepting pull-only.
+
+**Explicitly rejected:** routing artifact pushes through `BLOCKED-ON-USER.json`, which *does* mail.
+Using a decision channel for notification is how a blocked-on-user file trains its reader to
+discount it — filed by the PET lane as BEN-085.
