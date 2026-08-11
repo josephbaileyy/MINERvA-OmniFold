@@ -5041,3 +5041,47 @@ Recorded here instead.
 **Not filed as a fault of theirs.** Their calibration was correct and prompted the measurement; the counts were
 a single measurement taken once, which is weaker evidence than a claim that survived review — which is rule
 (iii) pointed back at me as much as at them.
+
+### 14:55Z — independent convergence, and the checklist line verifies on EVERY clause
+
+The oversight lane retracted `93/6/1` in a message that arrived while I was pushing **BEN-088**, which had
+already recorded the same conclusion from the other direction. **Its instrument and my direct test agree
+exactly:** it pooled all four passes of a `latexmk` log (*"a time series, not a snapshot"*); I ran one
+`pdflatex` pass on a cleaned tree and got **precisely the six it named**, then `0` after convergence. **Two
+independent routes to the same diagnosis, which is the only kind of agreement worth anything here.**
+
+**I never pushed a build-state fix.** Its "stop" arrived after the measurement had already stopped it.
+
+**Closed the gap it left.** It vouched only for undefined-refs and convergence, but the line asserts three
+things. Measured on all three converged builds:
+
+    undefined refs 0 | duplicate labels 0 | missing files 0 | converged yes | citations 0 | overfull 0
+
+So `INTEGRATION_CHECKLIST.md:17-19` is true on **every** clause, and there was never a third decayed safety
+claim in that file — only the two I fixed.
+
+**My instrument over-matched a third time on the way.** A `missing files` grep returned `2` per build; the
+matches are `Package biblatex Info: ... file 'numeric-comp.dbx' not found` and `... 'biblatex-dm.cfg' not
+found` — **biblatex Info lines about optional configuration files.** Three instrument errors in one task
+(invalid option, nine-day-stale foreign log, over-matching pattern), each caught by **inspecting the matched
+lines rather than trusting the count.** Added as BEN-088 rule (v): **print the matched lines, not only the
+count — a count cannot show you it matched the wrong thing.**
+
+**One correction I am not accepting in my own favour.** It framed my two failures as *"harmless outcome, broken
+process"* because both returned `0` and agreed with a claim that was already true. The harmlessness was **luck**:
+the underlying claim happened to be right, which I had no way of knowing at the time. Its framing that a wrongly
+*measured* claim is worse than an unmeasured one is correct as far as authority goes — a number with label names
+attached gets believed — but I will not let *"mine was harmless"* stand as the lesson. Mine would have produced
+**false agreement**, which is the outcome that removes the last chance to catch the error.
+
+**Its virgin-tree point is the sharpest thing in the exchange and is genuinely its own to file:** it rebuilt in a
+freshly extracted tree with no `.aux`, got the identical set, and read that as corroboration. It is not — **a
+virgin tree runs the same passes and reproduces the same transient. Two runs of a broken instrument agreeing is
+not corroboration**, which is `CLAUDE.md`'s *"worker agreement is not verification"* turned against one's own
+instrument. I told it that belongs in its row rather than mine, since BEN-088 covers the artifact and that covers
+the corroboration.
+
+**`BLOCKED-ON-USER.json`'s "three builds clean" is now true AND measured** — but it was written on relay, so the
+provenance is what needs fixing, not the value. **Folded into that file's next write rather than re-paged**, per
+BEN-085 and its own advice: a page for a claim that turned out correct is the noise that trains the reader to
+discount the channel.
