@@ -4508,3 +4508,30 @@ committed patch; the candidate and projection remain non-adoptable and publicati
 
 Receipts: `../docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json` and
 `../docs/orchestration/runs/agent-A-standard/20260811T125432Z-packetB-pb2-repair.md`.
+
+The committed `f67352f` re-review confirmed the production wiring but found one last presence bug:
+`dict.get()` made explicit JSON null indistinguishable from an absent schema/record key. Three null
+shapes inherited grandfathering and null schema beside a valid map passed outright. The same Agent-A
+UUID changed the rule to key membership: only a receipt containing neither field is grandfathered;
+every present null is malformed. Four real-CLI null negatives plus an absent-vs-null helper pair
+were added. Root reproduced **274 passed + 29 subtests** and clean syntax/diff checks. This remains a
+code-only repair pending the same verifier UUID. A separate open tool gap is recorded in OPEN_ITEMS:
+the recorded-fields sweep misses unquoted shell JSON substitutions even though the two affected
+fields are genuinely gated. Receipt:
+`../docs/orchestration/state/p4-packetb-pb2-null-repair-20260811.json`.
+
+The same verifier UUID then returned **PASS** on exact pushed commit `1440b58`. PB2 and overall
+Packet B are closed. This is an implementation/real-state promotion gate only: the 5D candidate and
+its projected product remain self-declared publication rejects under `P4_NON_ADOPTABLE=1`, and no
+adoption is authorized or performed. The recorded-fields sweep extractor false negative remains a
+separate owner-neutral tooling item. Final receipt:
+`../docs/orchestration/state/p4-packetb-final-pass-20260811.json`.
+
+The owner-neutral sweep defect was then closed without another provider dispatch. Shell JSON-key
+harvesting now accepts any value representation after the colon, so the unquoted `%s` values used
+for `receipt_schema` and `surface_blobs` can no longer disappear from the mechanical inventory. A
+focused regression binds both fields to the production launcher; the guarded snapshot moves from
+113 to 115 recorded-but-not-same-line-compared fields and retains 28 named gates. The proportional
+P4 guard battery passed **172 tests + 31 subtests**. This changes only audit coverage: the receipt
+gate, ROOT products, physics, thresholds, and non-adoptable state are unchanged. Receipt:
+`../docs/orchestration/state/p4-packetb-sweep-extractor-fix-20260811.json`.

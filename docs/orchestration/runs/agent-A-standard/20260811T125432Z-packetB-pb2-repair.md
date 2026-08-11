@@ -14,12 +14,21 @@ Real CLI/launcher tests cover direct `omnifold.py` drift, transitive `omnifold_n
 omitted `xsec_nd.py`, a non-producing `p4_project_4d.py` change, bounded legacy behavior, malformed
 current receipts, degenerate closures, and skip-path reachability.
 
-Independent root rerun:
+Independent root rerun after the initial production-wiring repair:
 
 ```
 269 passed, 25 subtests passed in 30.48s
 ```
 
+The same verifier then found that `dict.get()` still conflated absent keys with explicit JSON null.
+Agent A's same UUID corrected presence handling so grandfathering is reached iff both fields are
+absent, and added real-CLI negatives for null schema, null surface, both null, and null schema with
+an intact map. Independent root rerun after that correction gives:
+
+```
+274 passed, 29 subtests passed in 29.13s
+```
+
 `bash -n nd-unfolding/run_p4_*.sh`, `py_compile` for the changed Python gate/helper, and
-`git diff --check` also pass. This commit is still subject to the same verifier UUID; PB2 is not
+`git diff --check` also pass. This patch is still subject to the same verifier UUID; PB2 is not
 closed until that verdict lands.

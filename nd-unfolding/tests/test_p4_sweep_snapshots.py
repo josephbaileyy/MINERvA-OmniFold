@@ -74,6 +74,26 @@ class SweepSnapshots(unittest.TestCase):
         self.assertEqual(cur - snap, set(), f"NEW recorded-but-unchecked field(s): {cur - snap}")
         self.assertEqual(snap - cur, set(), f"field(s) no longer detected: {snap - cur}")
 
+    def test_shell_json_inventory_includes_unquoted_printf_values(self):
+        """PB2 receipts emit JSON objects/scalars through unquoted ``%s`` slots.
+
+        The inventory used to require a quote immediately after the colon, so it
+        silently omitted both fields even though the production launcher wrote
+        them.  Test the extraction set rather than the unchecked-field report:
+        later data-flow-aware classification may correctly remove these fields
+        from the latter without making the writer inventory incomplete again.
+        """
+        import contextlib
+        import importlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()):
+            import tools_p4_sweep_recorded_fields as rec
+            importlib.reload(rec)
+        for field in ("receipt_schema", "surface_blobs"):
+            with self.subTest(field=field):
+                self.assertIn(field, rec.written)
+                self.assertIn("run_p4_unfold_std.sh", rec.written[field])
+
     def test_the_inventory_document_quotes_the_snapshot_numbers(self):
         """The document is prose, but its headline counts must agree with the snapshot."""
         doc = (ND.parent / "docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md").read_text()

@@ -4953,3 +4953,91 @@ an agent's to take. Recorded my position — *I would merge the repairs; I would
 paper-bound build without his call* — and the cheap option, build-conditional rendering, as offered rather than
 implemented. Batched deliberately: that file re-pages on any mtime change (BEN-085), and two pages for two items
 read as noise. He now has two named gates and a `correction_history` showing what moved and why.
+
+### 14:05Z — closed `INTEGRATION_CHECKLIST:62`; wrote the `\gbdtFive*` update procedure cold
+
+**Answering the direct question: nothing is blocked on anything that is not Joseph's.** Two gates sit with him
+(promotion; `\dead{}` build-scoping, which parks a reviewed branch). No job is running. Nothing is waiting on a
+decision I failed to surface — and I checked that by re-reading the gates rather than asserting it.
+
+**`INTEGRATION_CHECKLIST.md:62` closed** at `4bffe9e`. Struck rather than deleted. The reason it is worse than
+`:61` is that **it contradicts the note's own macro file**: `values.tex:70` carries the same value as
+`\petTotalTrace` with the inline comment *"historical recoil-PET candidate; QUARANTINED"*. So no inference about
+quarantine scope was needed — unlike `\petRatio`, whose coverage I could not source, **this one is marked
+quarantined at its own point of definition** while a checklist heading advertised it as safe to keep. No
+replacement written, same reasoning as `:61`.
+
+**And I checked the parked branch still merges before pushing — it does not.** One hunk, `UU
+docs/INTEGRATION_CHECKLIST.md`, because their `:61` block and my `:62` block are adjacent list items in the same
+region. Both sides are purely additive strikethroughs of *different* entries, so the resolution is *take both*.
+I pushed anyway rather than leaving a known-bad "safe to keep" line advertised for however long the `\dead{}`
+decision takes — but the branch owner learns it from me now instead of at merge time, which was the point of
+testing.
+
+**Wrote `PROCEDURE-gbdtFive-macro-update.md`**, enumerated by grep rather than recall. Three things the
+enumeration found that the finding alone would not have:
+
+1. **All four macros are consumed in ONE continuous prose block** (`sec_systematics.tex:162-170`), not four
+   independent sites. So the risk is a per-macro search-and-replace leaving the chain internally inconsistent.
+2. **BEN-087 applies in a MODIFIED and worse form.** Its trap needs a sentence that *names* a source; checked
+   `:158-172` for attribution language and **there is none.** Good news: no source claim can be silently
+   re-pointed. Bad news, and it is the reason: **the numbers have no attribution at all**, so a reader cannot
+   check them and an updater has nothing to re-verify against. The fix at update time is to **add** provenance,
+   not preserve it.
+3. **Six relational claims a number-only edit breaks**, tabulated — including *"the larger"* (an ordering
+   assertion, `CVTrace > AdoptTrace`), *"both are positive semidefinite"* (a property that does **not** survive
+   by inheritance), *"neither is adopted for publication until…"* (which **contradicts the edit** if the edit
+   *is* the adoption), and **`0.30%` at `:171-172` — an inline literal, not a macro, so a macro sweep misses it
+   entirely.** Same structural hole as `\petRatio`'s operands.
+
+Also computed the directional consequence rather than restating it: under the reported directions the ordering
+survives, but **the mean shift goes from 28.4% to 35.5% of the covariance it is "reported separately rather than
+folded into" — a 25% relative change** that every worded claim survives and no reader would notice. Flagged as a
+decision for the writer rather than an oversight.
+
+Recorded for the record: the oversight lane had a mechanism retracted by the GBDT lane today — it stated
+`wakerctl emit` mails Joseph, and emit has no mail path. Its own framing, which I am adopting for how I read it:
+**its observations are better sourced than its explanations.** That is why every claim it has relayed today was
+re-verified here before being written down, and why two of them turned out to need correcting.
+
+### 14:40Z — measured the build claim. **The counts are a single-pass artifact and the checklist line is TRUE.**
+
+The oversight lane's calibration was right: I had asserted *"three builds clean"* in this log and in
+`BLOCKED-ON-USER.json` **without measuring it.** It asked me to strike
+`INTEGRATION_CHECKLIST.md:17-19` as decayed, on the strength of **93 / 6 / 1** undefined references.
+
+**I failed the measurement twice before getting it, and both failures looked like success.**
+`-halt-on-error=false` is not a valid latexmk option, so all three runs died at *"Bad options specified"* and
+nothing built; my grep pattern then matched nothing and printed a clean `0`. I then read `main_note.log`
+anyway — **dated Aug 2, nine days stale, not from my run** — whose 30 "undefined" hits are all
+`LaTeX Font Warning: Font shape ... undefined`. **Either `0` would have gone out as a measurement.** That is
+BEN-083, filed by me, violated by me, in the register where the check felt unnecessary because the command
+"obviously" ran.
+
+**Then the real measurement, and it inverts the conclusion:**
+
+    one pdflatex pass, cleaned tree:  6 undefined -- fig:pasc, fig:pdis, fig:pfps, fig:pgen, fig:ppet, fig:pxsec
+                                      EXACTLY the six they named, no more, no fewer
+    after latexmk converges (4 pdflatex + biber):  0
+    all six labels defined in paper_body.tex; all six present as \newlabel in main_paper.aux
+    fig:primergen correctly absent from the paper .aux -- it belongs to the primer build
+
+`\ref` resolves from the `.aux` written by the **previous** pass, so **on pass 1 every forward reference is
+undefined by construction.** A pass-1 warning list is approximately the document's forward-reference list,
+which is exactly why it looks so plausible as a defect list.
+
+**So `INTEGRATION_CHECKLIST.md:17-19` is TRUE — and its own wording says so: *"…missing files, converged"*.
+I was one commit from striking a correct claim, in a file I had already corrected twice today, and the
+correction would have introduced the error.** Filed as **BEN-088**, whose third rule is the one I want to
+carry: **when a spot-check contradicts a standing "clean" claim, suspect the instrument before the claim.**
+
+**And the corollary that cost most, recorded as rule (iv):** my unmeasured *"three builds clean"* turned out to
+be **right**. Being right without evidence and wrong with evidence are failures of the same discipline, and only
+the first feels acceptable. The claim in `BLOCKED-ON-USER.json` is therefore accurate and **I am deliberately
+not rewriting that file to say so** — it re-pages on any mtime change (BEN-085), the content is not wrong, and a
+page that adds "and I have now checked this" is exactly the noise that trains a reader to discount the channel.
+Recorded here instead.
+
+**Not filed as a fault of theirs.** Their calibration was correct and prompted the measurement; the counts were
+a single measurement taken once, which is weaker evidence than a claim that survived review — which is rule
+(iii) pointed back at me as much as at them.

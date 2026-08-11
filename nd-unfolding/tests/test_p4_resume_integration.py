@@ -312,6 +312,66 @@ class PB2ProducingClosureResume(ReceiptGateIntegration):
                 self.assertEqual(rc, 1, out)
                 self.assertNotIn("GRANDFATHERED", out)
 
+    # ---------- explicit JSON null is MALFORMED, never absent ----------
+    # The gate read both fields with `.get()`, which cannot tell "absent" from "present and
+    # null", so each of these four shapes inherited grandfathering (or, for the last, skipped
+    # schema validation and was accepted outright) while the committed claim said only a
+    # receipt carrying NEITHER field is legacy. Driven through the real CLI, since that is
+    # where the conflation actually decided a SKIP.
+
+    def test_null_schema_is_rejected_not_grandfathered(self):
+        rec = self._good(); rec.pop(P.RESUME_BLOB_FIELD)
+        rec[P.RECEIPT_SCHEMA_FIELD] = None
+        rc, out = self._run_gate(self._write(rec))
+        self.assertEqual(rc, 1, out)
+        self.assertIn("explicitly null", out)
+        self.assertNotIn("GRANDFATHERED", out)
+
+    def test_null_surface_record_is_rejected_not_grandfathered(self):
+        rec = self._good(); rec.pop(P.RECEIPT_SCHEMA_FIELD)
+        rec[P.RESUME_BLOB_FIELD] = None
+        rc, out = self._run_gate(self._write(rec))
+        self.assertEqual(rc, 1, out)
+        self.assertIn("explicitly null", out)
+        self.assertNotIn("GRANDFATHERED", out)
+
+    def test_both_fields_null_is_rejected_not_grandfathered(self):
+        """The shape closest to a legacy receipt in `.get()` terms and furthest from one in
+        fact: the writer named both fields and filled in neither."""
+        rec = self._good()
+        rec[P.RECEIPT_SCHEMA_FIELD] = None; rec[P.RESUME_BLOB_FIELD] = None
+        rc, out = self._run_gate(self._write(rec))
+        self.assertEqual(rc, 1, out)
+        self.assertIn("explicitly null", out)
+        self.assertNotIn("GRANDFATHERED", out)
+
+    def test_null_schema_with_a_valid_map_is_rejected(self):
+        """The one that did not merely grandfather -- it was ACCEPTED. A null schema skipped
+        every schema check, and the intact blob map then matched HEAD, so the gate authorised a
+        SKIP on a receipt that does not say what wrote it."""
+        rec = self._good(); rec[P.RECEIPT_SCHEMA_FIELD] = None
+        self.assertEqual(set(rec[P.RESUME_BLOB_FIELD]), set(launcher_surface_json()),
+                         "the map must be intact, or this proves the wrong rejection")
+        rc, out = self._run_gate(self._write(rec))
+        self.assertEqual(rc, 1, out)
+        self.assertIn("explicitly null", out)
+        self.assertNotIn("RECEIPT-OK", out)
+
+    def test_null_is_distinguished_from_absent_at_the_helper(self):
+        """The two shapes that `.get()` collapsed, asserted as a pair so a future refactor back
+        to `.get()` fails here with the difference named rather than somewhere downstream."""
+        closure, head = P.producing_closure_blobs(str(ND.parent), P.UNFOLD_DRIVER_REL)
+        absent_ok, absent_why = P.check_resume_surface({"tag": "BeamAngleX_0"}, closure, head)
+        self.assertTrue(absent_ok); self.assertIn("GRANDFATHERED", absent_why)
+        for shape in ({P.RECEIPT_SCHEMA_FIELD: None},
+                      {P.RESUME_BLOB_FIELD: None},
+                      {P.RECEIPT_SCHEMA_FIELD: None, P.RESUME_BLOB_FIELD: None},
+                      {P.RECEIPT_SCHEMA_FIELD: None, P.RESUME_BLOB_FIELD: dict(head)}):
+            with self.subTest(sorted(shape)):
+                ok, why = P.check_resume_surface(dict(shape), closure, head)
+                self.assertFalse(ok, f"{shape} was accepted")
+                self.assertNotIn("GRANDFATHERED", why)
+
 
 class LauncherWiring(unittest.TestCase):
     """The launcher must USE the gate, and must not be able to report success without a

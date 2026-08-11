@@ -10,7 +10,7 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **113 fields** written into a product with no same-line comparison, and **28 named
+drivers. **115 fields** written into a product with no same-line comparison, and **28 named
 gates**.
 
 > **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
@@ -44,7 +44,7 @@ gates**.
 > than closed silently, because "done" and "done in the only form the repo supports" are different
 > claims and the second is the true one.
 >
-> Current snapshot: **113 fields / 25 gates**; pipeline **23 candidates across 337 shell
+> Current snapshot: **115 fields / 28 gates**; pipeline **23 candidates across 337 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)
@@ -154,18 +154,13 @@ they become FIX items the moment anything reads the projection receipt.
 
 ---
 
-## E. The 22 named gates
+## E. The 28 named gates
 
-Twelve are library functions whose names match their bodies (`check_symmetric_psd`,
-`prove_identity`, `check_component_sum`, `require_exact_bands`, `require_exact_endpoint_tags`,
-`require_complete_unfold_set`, `require_standard_footing`, `require_candidate_path`,
-`check_projection_nonmutation`, `check_full_total_identity`, `check_declared_migration_policy`,
-`check_merged_metadata`).
-
-Ten are PASS labels recorded in the validator receipt. Nine are accurate. **One is not:**
-`complete_support_comparison` — see section A. `full_total_identity_recomputed` is accurate as
-of repair-5 and was **not** before, which is why the label is in this inventory rather than
-assumed correct.
+Sixteen are library functions selected mechanically by their `check_`, `require_`, or `prove_`
+names. Twelve are PASS labels appended to product receipts. This count is an inventory, not a
+claim that a strong-sounding name proves a strong body; sections A and E-bis are the required
+semantic review. The guarded snapshot now carries the exact names, so later additions or removals
+cannot be hidden by updating this prose alone.
 
 ---
 

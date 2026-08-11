@@ -587,13 +587,36 @@ def check_resume_surface(receipt, closure, head_blobs):
 
     PB2 REPAIR, 2026-08-11 -- the grandfather clause is now BOUNDED BY A DECLARED SCHEMA. It was
     keyed on the field being absent, which stopped being a statement about age as soon as the
-    launcher began writing the field. See RECEIPT_SCHEMA_SURFACE."""
-    got = receipt.get(RESUME_BLOB_FIELD)
-    declared = receipt.get(RECEIPT_SCHEMA_FIELD)
+    launcher began writing the field. See RECEIPT_SCHEMA_SURFACE.
 
-    # A declared schema is a claim about the writer, so it is checked before anything else and
-    # a malformed one never falls through to the legacy branch.
-    if declared is not None:
+    THE RULE, exactly: a receipt is legacy iff it contains NEITHER `receipt_schema` NOR
+    `surface_blobs` as keys. If either key is present its value is validated, and an explicit
+    JSON null is MALFORMED -- including a null schema alongside a perfectly good blob map."""
+    # PRESENCE IS MEMBERSHIP, NOT TRUTHINESS (2026-08-11, verifier's remaining PB2 defect).
+    # This block read both fields with `.get()`, which returns None for "absent" AND for
+    # "present and explicitly null" -- so a null schema, a null record, both null, and a null
+    # schema alongside a VALID map all took the legacy branch or skipped schema validation
+    # entirely. (The last was not merely grandfathered, it was accepted outright.) That
+    # contradicted the claim the commit made: only a receipt carrying NEITHER field is legacy.
+    # A JSON null is something a writer wrote, so it is evidence the writer knew about the field
+    # and left it empty -- the opposite of a receipt written before the field existed.
+    has_schema = RECEIPT_SCHEMA_FIELD in receipt
+    has_record = RESUME_BLOB_FIELD in receipt
+
+    if not has_schema and not has_record:
+        # the closed legacy class: written before either field existed
+        return True, f"GRANDFATHERED: {RESUME_GRANDFATHER_REASON}"
+
+    # From here at least one field is present, so every value is VALIDATED and no path returns
+    # to the legacy branch.
+    declared = receipt[RECEIPT_SCHEMA_FIELD] if has_schema else None
+    got = receipt[RESUME_BLOB_FIELD] if has_record else None
+
+    if has_schema:
+        if declared is None:
+            return False, (f"{RECEIPT_SCHEMA_FIELD} is present but explicitly null: a receipt that "
+                           f"names its own schema and leaves it empty is MALFORMED. Null is not "
+                           f"absence -- a legacy receipt carries no such key at all")
         if isinstance(declared, bool) or not isinstance(declared, int):
             return False, (f"{RECEIPT_SCHEMA_FIELD} {declared!r} is not an integer version -- a "
                            f"receipt that misstates its own schema is malformed, not legacy")
@@ -602,15 +625,16 @@ def check_resume_surface(receipt, closure, head_blobs):
                            f"{RECEIPT_SCHEMA_SURFACE}..{RECEIPT_SCHEMA_CURRENT}; no legacy "
                            f"receipt declared a schema, so an invented pre-binding version is "
                            f"malformed rather than grandfathered")
-        if declared >= RECEIPT_SCHEMA_SURFACE and got is None:
+        if declared >= RECEIPT_SCHEMA_SURFACE and not has_record:
             return False, (f"receipt declares schema {declared} (>= {RECEIPT_SCHEMA_SURFACE}, which "
                            f"binds the producing closure) but carries no {RESUME_BLOB_FIELD}: a "
                            f"current receipt missing the record is MALFORMED, and the grandfather "
                            f"clause covers receipts written before the binding existed, not this")
 
-    if got is None:
-        # closed class: declares no schema and records no blobs, i.e. written before the binding
-        return True, f"GRANDFATHERED: {RESUME_GRANDFATHER_REASON}"
+    if has_record and got is None:
+        return False, (f"{RESUME_BLOB_FIELD} is present but explicitly null: a receipt that names "
+                       f"the closure record and leaves it empty is MALFORMED. Null is not absence "
+                       f"-- a legacy receipt carries no such key at all")
     if not isinstance(got, dict):
         return False, f"{RESUME_BLOB_FIELD} is not a path->blob mapping"
     missing = [q for q in closure if q not in got]

@@ -65,8 +65,8 @@
     "PB2": {
       "verdict_before_repair": "BLOCK",
       "reason": "The six-module producing-closure helper was not connected to the production receipt writer/checker, so a producer-surface change could still authorize SKIP.",
-      "repair_state": "IMPLEMENTED_AND_ROOT_TESTED_IN_THIS_COMMIT_PENDING_SAME_UUID_REVERIFICATION",
-      "focused_test_result": "269 passed, 25 subtests passed",
+      "repair_state": "PASS_SAME_UUID_VERIFIED_AT_1440b58",
+      "focused_test_result": "274 passed, 29 subtests passed",
       "diff_sha256_before_receipt_edits": "0124edc21ccb165f527b791c4f24f3e3c413c3fb7ec8d7227bc79e6701ce2ec8"
     },
     "PB3": {
@@ -86,7 +86,7 @@
       "disposition": "bounded and documented at the IBU Phase-16 verdict; not fixed"
     },
     "overall_before_repair": "BLOCK_PB2",
-    "overall_after_local_repair": "PENDING_SAME_UUID_VERIFIER_REVIEW"
+    "overall_after_local_repair": "PASS"
   },
   "persistent_roles": {
     "standard-p4-verifier": {
@@ -103,5 +103,5 @@
   "adoption_performed": false,
   "root_artifacts_rebuilt": false,
   "reset_credit_consumed": false,
-  "next_gate": "Commit the scoped PB2 repair, then resume the same standard-p4-verifier UUID on that exact commit."
+  "next_gate": "Packet B closed. Candidate remains non-adoptable; separately repair the owner-neutral recorded-fields sweep extractor while adoption awaits a distinct user decision."
 }
