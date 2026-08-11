@@ -4601,3 +4601,41 @@ generalising: **verdict text should state the comparison, not a derived number t
 
 **The k=3 restatement is now unblocked** — the bisect's question is answered and retracted, and the closure's
 stability is measured. That queue is empty of blockers.
+
+### 11:45Z — k=3 RESTATED on current grounds. The queue is empty.
+
+Filed as CLM-010 caveat **(vi)**. Caveat (v) had recorded that the override's justification cited a bar retired
+on 08-09; this re-derives it. **Citation repair, not a re-opening — the answer is still k=3 and the reason is
+new.**
+
+**The deciding statement uses no central estimate, no spread and no denominator**, which is the oversight
+lane's sharpening and it is strictly better than the headroom arithmetic I would have written:
+
+    bar(k=3) = 0.80 x 0.618228 = 0.4945824      bar(k=4) = 0.80 x 0.6441 = 0.5152800
+    56552326  0.5126033   k=3 PASS +0.0180209   k=4 FAIL -0.0026767
+    56611837  0.5113773   k=3 PASS +0.0167949   k=4 FAIL -0.0039027
+    56626305  0.5129340   k=3 PASS +0.0183516   k=4 FAIL -0.0023460
+    -> 3/3 clear the k=3 bar; 0/3 clear the k=4 bar
+
+The worst draw clears k=3 by `+0.0167949` (`20.5` sd above it); the **best** draw misses k=4 by `-0.0023460`.
+**Moving to k=4 converts a pass into a fail at current performance.** Why that form matters: a margin ratio
+invites *"your sd has two degrees of freedom"*; **"all three draws cleared" invites nothing**, and it does not
+move if a fourth draw lands — that draw would have to fall *below* the bar, not merely shift a mean.
+
+**The trade stated rather than buried:** CLM-010's k=4 arm is genuinely *better* on normalization —
+fold-forward mean deviation `0.014256` vs `0.021876`, paired `-0.007620` on all 48 shared seeds. k=4 is not
+without merit; it is outvoted because shape is the physics and D2 is where shape is scored. The pin-cascade
+cost from the original reasoning survives unchanged.
+
+**Provenance discipline, and my instinct was right but under-specified until the oversight lane sharpened it:**
+`0.5126032761517403` stays the **cited artifact value** — the gate, the receipts and finalizer `56562169`
+(31/31) all cite it, and swapping a validated value for a better estimate breaks a provenance chain to buy
+precision no decision needs. The three-run mean `0.5123048` and `sd 0.000820128` are recorded **alongside as
+the stability measurement.** The improvement on my version: make the load-bearing sentence **neither** number,
+so nobody can reopen the pass by disputing which value to cite.
+
+Nothing re-run, no pin touched, no threshold moved, `niter` remains 3.
+
+**The queue is empty.** Every item from last night is closed or retracted: the code-path finding refuted, the
+closure's stability measured at n=3, the D2 pass established on three independent draws, k=3 re-justified on
+current grounds. Nothing is running but the cron.
