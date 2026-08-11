@@ -4179,3 +4179,44 @@ the predeclared second repeat of A, the k=3 restatement is queued behind the bis
 `0.5126033` before then, and there is no deadline pressure to spend GPU on confirming an inference that
 currently holds. Recorded as the condition to clear **before** the restatement re-derives from that number,
 which is the sequencing the oversight lane argued for and I agree with.
+
+### 05:20Z — powered-closure stability repeat LAUNCHED (56611837); the fired-vs-read gap closed (BEN-084)
+
+**Launched `56611837`** — the powered-closure stability repeat, predeclared at `dcaddfd` before submission,
+three branches. The oversight lane called it and I agree on its first three reasons: queue waits here run
+3–28 h so "now" and "at the gate" are different wall-clocks; the asymmetry is a cheap premium against an
+expensive outcome; and **my inference is a two-variable attribution** — the measured families differ in both
+override set and driver version, which is the confounded shape we have spent the night catching in other
+people's arguments. Its fourth reason is about its own credibility with Joseph, which it flagged as its own
+rather than physics; I weigh that as reporting hygiene and it does not change the answer, because the first
+three already carry it.
+
+The launcher declares the **expected exit 3** in advance — the closure's retired hardcoded bar — and tolerates
+that code **and only that code**, then asserts a numeric recovery. Last time `set -e` killed the script on
+that exit and the reading block never ran, which is how a completed run came to read `FAILED` with its verdict
+unprinted. Stated explicitly in both the predeclaration and the launcher that this is **not** a tolerance
+being raised: no threshold is altered and the retired bar is not consulted for the verdict. It also carries
+BEN-083's assert — hashes the resolved `__file__` of both modules and asserts the override set is exactly
+`{__init__, CompileModel, RunModel}`, so if the thing I read at `8b8f238` is not the thing that loads, the run
+dies in two seconds instead of measuring the wrong wrapper for two hours.
+
+**BEN-084 — the real lesson from the 2.5 h gap, and it is not "more scheduling."** The watch fired *correctly*
+at 02:20:09Z, 3.4 min after the job ended. The notifier was flawless. What failed is that **a fired watch
+records that a job finished, and nothing records that nobody has looked** — from outside the session,
+fired-and-handled and fired-and-ignored are identical.
+
+Two fixes, both near-zero surface:
+
+- **The habit:** on wake, re-derive what work exists from artifacts — `evt-*.log` and `sacct` — before
+  trusting what context remembers being in flight. This is **BEN-027 applied one level up**: that rule
+  governs *what a number is*, this governs *what work exists*, and nobody had applied it at the second level.
+- **The marker:** `state/waker/PROCESSED.txt`, one event basename per line, appended when a verdict is filed.
+  Seeded with the 49 already-handled events so it starts truthful rather than alarming. The whole check is
+  `comm -23 <(ls evt-*.log | basename | sort) <(sort -u PROCESSED.txt)`; non-empty means fired-but-unread, and
+  **any lane can run it from outside my session**, which is the property that was missing.
+
+Deliberately a text file rather than an event-lifecycle feature in `wakerctl.py`: that file is hash-pinned
+into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, so a state machine there would move a sha a
+receipt cites, and an append plus a `comm` add no code path that can fail.
+
+Queue: `56611394` (Design A repeat 2) and `56611837` (powered-closure stability), both PENDING, both watched.
