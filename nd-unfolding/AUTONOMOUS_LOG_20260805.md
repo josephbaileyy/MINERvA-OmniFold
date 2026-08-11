@@ -4220,3 +4220,32 @@ into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, so a state mach
 receipt cites, and an append plus a `comm` add no code path that can fail.
 
 Queue: `56611394` (Design A repeat 2) and `56611837` (powered-closure stability), both PENDING, both watched.
+
+### 05:35Z — the marker had an ordering defect, and my own seed had already committed it
+
+The oversight lane caught `PROCESSED.txt`'s asymmetry before it bit. Forgetting to append costs a duplicate
+look — harmless. **Appending before the verdict is filed marks an event handled that nobody handled**, and the
+2.5 h gap reopens silently, now with an artifact asserting it was dealt with. Contract fixed in the file
+header: **append only after the verdict is filed and committed, ideally in the same commit** so the two cannot
+diverge.
+
+**Then I checked my own seed against the rule and it fails it.** I appended all 49 events in one sweep and
+called them "already-handled" — on the basis of their age and the campaign log, **not** on a per-event check
+that a verdict was filed for each, which is exactly the check this file exists to make. So the seeding
+commits the error the contract forbids, at lower stakes. It is now stated in the header rather than hidden:
+grandfathered entries mean *pre-convention*, entries appended after mean *verdict-filed-and-committed*, and
+the two must not be read as the same claim. Same discipline as the `lr_policy` grandfathering on 08-10 — the
+justification goes in the artifact, not just the decision.
+
+Worth recording why this is a finding and not a slip: **two lanes independently built the same ordering bug in
+different files on the same night.** Theirs is PB3's `p4_evidence.py:402-404`, which picks its consumable
+write path from a `blockers` list that `:421-424` is still appending to, so the stage's own headline check
+cannot influence where its evidence lands. Mine was going to be "marked processed before the thing that makes
+it processed happened." **The natural writing order is to record the intention next to the thing that forms
+it; the correct order is to record it after the thing completes.** That is a default, not a lapse, which is
+why it needs to be caught at authoring time rather than by care.
+
+BEN-084 amended with the ordering rule, the cross-lane observation, and the seed's own violation.
+
+Queue: `56611394` and `56611837`, both PENDING, both watched. Nothing else changed — no promotion, baseline
+canonical, niter 3, Branch C closed.
