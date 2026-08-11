@@ -4558,3 +4558,46 @@ it, and endorsing the predeclaration whose band was borrowed from production. Bo
 there being no code-path difference to explain. It now waits only on `56626305`, since the restatement
 re-derives recovery arithmetic and run 3 settles `0.5126033`'s classification. **The queue is one item deep,
 not two.**
+
+### 11:25Z — POWERED CLOSURE n=3: D2 pass established on three independent draws. Branch says STABLE; I am not leaning on it.
+
+`56626305` COMPLETED `01:57:26`, exit `0:0`. All asserts held — pins, resolved module hashes
+`ce9f11f4`/`a45fae7c`, override set printed as exactly `['CompileModel', 'RunModel', '__init__']`, and the
+expected exit 3 tolerated so the reading block ran.
+
+**Branch verdict as predeclared: STABLE CONFIRMED** (`recovery 0.5129339605215806`, `delta 0.000330684 <=
+0.0003803`). **And I am not taking it at face value, because n=3 exposes the criterion as pairwise against a
+privileged point:**
+
+    |56611837 - ref|      = 0.001225994   -> not STABLE  (this was the 09:19Z UNRESOLVED)
+    |56626305 - ref|      = 0.000330684   -> STABLE
+    |56611837 - 56626305| = 0.001556679   <- the two REPEATS differ MORE than either differs from ref
+
+The reference is not special; it happens to sit between the repeats. Same criterion, opposite verdicts
+depending on which repeat you compare — so reading run 3's STABLE as settling it is cherry-picking **by
+construction**. This is a *subtler* defect than Design A's band: that had the right estimator with a
+wrong-population tolerance, this has the **wrong estimator** — a pairwise delta where a spread was needed.
+Recorded rather than resolved in my favour, which is the only reason predeclaring is worth anything.
+
+**THE AGGREGATE, and the strongest statement is not a ratio:**
+
+    56552326  0.5126032761517   margin +0.0180209   passes
+    56611837  0.5113772818507   margin +0.0167949   passes
+    56626305  0.5129339605216   margin +0.0183516   passes
+    mean 0.5123048395080   sd 0.000820128   range 0.001556679
+    closure sd = 6.5x production's scatter, and 0.033x the diagnostic sd (30x MORE stable)
+
+**All three recoveries pass the adopted criterion individually.** The D2 pass rests on **three independent
+draws**, which no spread estimate strengthens and no n=3 objection weakens. Margin by denominator: `142`
+(retracted) → `14.7` (two-point) → **`22.0` (three-run sd, first honest)**.
+
+**So the conclusion holds by a better route** — the same shape as CLM-012 (ix). The closure is stable enough to
+re-derive from; the honest point estimate is now the three-run mean `0.5123048` with `sd 0.000820`.
+
+**A defect found by reading my own launcher's output: its STABLE branch prints "margin ~142 scatters" — a
+figure I retracted at `98d502d`, hours before the run.** A launcher that hardcodes a derived claim in its
+verdict text prints a stale one the moment the record moves, and prints it with full confidence. Worth
+generalising: **verdict text should state the comparison, not a derived number that lives somewhere else.**
+
+**The k=3 restatement is now unblocked** — the bisect's question is answered and retracted, and the closure's
+stability is measured. That queue is empty of blockers.

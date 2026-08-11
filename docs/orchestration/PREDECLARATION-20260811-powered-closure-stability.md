@@ -81,3 +81,54 @@ changing `niter`; touching FROZEN.
 - `0.004337639` — diagnostic pair, jobs `56534117` and `56586368`, n=2, byte-identical code and seeds
 - override sets — read from `closure_powered_annealed_lr.py`, `train_fullevent_nominal.py`,
   `diagnose_step1_annealed_lr.py` at `8b8f238`
+
+---
+
+## RESULT — n=3, and the branch criterion turns out to be mis-specified in a subtler way than Design A's
+
+**Branch verdict for run 3, as predeclared: STABLE CONFIRMED.** `56626305` recovery `0.5129339605215806`,
+`delta = 0.000330684 <= 0.0003803`.
+
+**I am not taking that verdict at face value, because the criterion is PAIRWISE AGAINST A PRIVILEGED POINT and
+n=3 exposes it.** The predeclared condition is `|recovery_repeat − reference|` with `56552326` as the
+reference. At n=3:
+
+    |56611837 - ref|        = 0.001225994   -> not STABLE   (this was UNRESOLVED at 09:19Z)
+    |56626305 - ref|        = 0.000330684   -> STABLE
+    |56611837 - 56626305|   = 0.001556679   <- the two REPEATS differ MORE than either differs from ref
+
+**The reference is not special; it simply happens to sit between the two repeats.** So the same predeclared
+criterion returns UNRESOLVED or STABLE depending on which repeat is compared, and reading run 3's STABLE as
+settling the question would be cherry-picking *by construction*. This is a **different and subtler defect than
+Design A's band**: that one had the right estimator with a wrong-population tolerance; this one has a wrong
+**estimator** — a pairwise delta against a privileged point where a spread was needed. Recorded rather than
+resolved in my favour.
+
+**THE HONEST AGGREGATE — the closure configuration's own three-run spread:**
+
+    56552326  0.5126032761517   margin +0.0180209   passes 0.4945824
+    56611837  0.5113772818507   margin +0.0167949   passes 0.4945824
+    56626305  0.5129339605216   margin +0.0183516   passes 0.4945824
+    mean 0.5123048395080   sd 0.000820128   range 0.001556679
+
+    closure sd / production scatter   = 6.5x
+    closure sd / diagnostic sd        = 0.033x   (i.e. 30x MORE stable than the diagnostic family)
+
+**The load-bearing number, third denominator:** margin `+0.0180209` is `142` production scatters (retracted),
+`14.7` two-point differences (previous), and **`22.0` three-run sd — the first honest one.**
+
+**The strongest available statement is not a ratio at all: ALL THREE recoveries pass the adopted criterion
+individually.** `0.5126033`, `0.5113773`, `0.5129340`, each `>= 0.4945824`. The D2 pass rests on three
+independent draws rather than on a margin argument, which no spread estimate can strengthen and no n=3 sd
+objection can weaken.
+
+**So the conclusion holds and the route to it changed** — the same pattern as CLM-012 (ix). The closure is
+stable enough to re-derive from: `22.0` own-sd margin, `6.5×` production's scatter, and `30×` more stable than
+the diagnostic family whose instability refuted the code-path finding. **The k=3 restatement may re-derive from
+`0.5126033`**, with the caveat that the honest point estimate is now the three-run mean `0.5123048` and the
+honest uncertainty is `sd 0.000820`.
+
+**A defect in this launcher, found by reading its own output.** The STABLE branch's canned text prints
+*"margin ~142 scatters"* — a figure **retracted at `98d502d`**, hours before this run. A launcher that hardcodes
+a derived claim in its verdict text will print a stale one the moment the record moves, and it printed with
+full confidence. The number in the log is wrong; the numbers above supersede it.
