@@ -204,6 +204,66 @@ than reporting the smaller one, is the entire point of having sized it first.
 scope is consistent both with the class being concentrated in recently-written code and with the detector
 being too narrow, and one sweep does not choose between them.
 
+## V11 — S4b (stale-pin census) executed → **BLOCK on 3 pins; and the alarming reading REFUTES**
+
+Filed as **BEN-091**. Corpus C3, all 113 receipts under `docs/orchestration/state/`. Method: pair a
+path-valued key with a sha256-valued key sharing its stem in the same object, restrict to paths in
+`git ls-files`, recompute with `hashlib` off the filesystem, and for each mismatch walk the path's
+history to ask *was this pin ever valid?* — the I3 instrument from V3, applied to the whole population.
+
+**338 path+sha pairs · 238 hold · 71 broken · 29 paths not tracked (unswept).**
+
+**The headline number is not the finding, and reporting it alone would have been alarmism.**
+
+- **The live Gate-4 receipt is CLEAN.** `p3f-pet-gate4-launch-code-gate-20260810c.json` —
+  `verdict PASS_CODE_ONLY`, `nominal_pet_training_allowed: True`, identified as live by
+  `KNOWN_ISSUES.md:25` and `INDEX-retracted-and-superseded-values.md:85`, not by its filename sorting
+  last — carries **23 pins and all 23 hold.** My sweep never flagged it; I checked it directly rather
+  than inferring that from its absence. **No live gate in this population is compromised.**
+- **68 of the 71 are superseded dated receipts** — the `20260721 … 20260810b` Gate-4 chain and the
+  July G2 receipts. Each is a snapshot that a later re-issue replaced, so staleness is the design, and
+  **every one of those 68 pins resolves to a real commit** (`5a22e1c`, `ada72b0`, `5410ab0`, `dfef335`,
+  `2b2e5f1`, `feb446d`, `8f2bcb0`, `37b9355`, `3fc1f3a`, `01fcb72`, `25d8360`, `8c8775f`). Stale, fully
+  auditable, no action. Same disposition the GBDT lane reached for the wakerctl pin.
+
+**THE ACTUAL FINDING — 3 pins are DANGLING, not stale, and that is a different class:**
+
+| receipt | pinned path | pin | revisions searched |
+|---|---|---|---|
+| `g2-dump-submit-20260719.json` | `nd-unfolding/pet/sbatch_dump_g2_mefhc.sh` | `324a4081…` | **1** |
+| `p3f-pet-gate4-launch-code-gate-20260801.json` | `nd-unfolding/pet/train_fullevent_nominal.py` | `42194360…` | **12** |
+| `sessions.json` `/sessions/agent-E-g2-source/account_migrations[0]` | `state/agent-E-account-migration-20260719.json` | `87833e8c…` | **2** |
+
+**Refutation attempted and failed.** The first pass searched only `origin/main`, which would have missed
+an unmerged branch or a rename. Re-run across **all refs with `--follow`**: **no revision of any of the
+three ever had the pinned content.** So unlike the wakerctl pin, the code these three receipts attest to
+**cannot be produced from git at all** — the receipt asserts an integrity binding to content that does
+not exist anywhere in history. That is exactly the fourth seeded shape: *an artifact asserting a state it
+cannot have.* `sbatch_dump_g2_mefhc.sh` is the sharpest: the file has **exactly one** revision ever, so
+its pin has never matched.
+
+**The most likely mechanism, and it is not carelessness.** The pin was computed against a file the
+committed tree never held — either an uncommitted working-tree edit hashed before the commit that
+followed, or a hash taken on the **cluster checkout**, which is forked from local by construction. The
+second is the more probable and the more instructive: *a content pin taken on one tree is meaningless in
+another*, and this campaign's own cluster/local fork rule already says the two trees are not comparable.
+It does not rescue the pins — unrecoverable is unrecoverable — but it changes the disposition from
+*someone erred* to *the pin was taken against a tree git cannot see*, which is a process fix rather than
+a correction.
+
+**Disposition is NOT mine, and no hash should be hand-edited** — the same argument the GBDT lane made
+for the wakerctl pin applies with more force here: for a stale pin the value still identifies real code,
+and for a dangling one the value is the only remaining evidence that the attested content ever differed.
+Overwriting either destroys the only information left. Routed to Session A for owner assignment; the two
+PET receipts are Session C's by path, `sessions.json` is control-plane.
+
+**Two limits on this result, stated because the number invites over-reading.** (i) **29 pinned paths are
+not tracked** — scratch ROOTs and cluster paths — and were not checked at all; the census is silent on
+them, not clean. (ii) The pairing heuristic requires a path key and a sha key sharing a stem in the same
+JSON object, so **a pin recorded without an adjacent path was never examined.** 338 pairs out of the 884
+hash-valued fields counted in the corpus doc: this covers **38%** of the pinned values, and the other 62%
+are unswept.
+
 ## V9 — the rest of the sweep → **NOT RUN. UNRESOLVED, and its silence means nothing**
 
 Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
