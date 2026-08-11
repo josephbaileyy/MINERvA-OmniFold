@@ -4760,3 +4760,39 @@ produced ten rows and found nothing, because every correction was already filed 
 without locations is a record rather than a tool.**
 
 Queue still empty. Nothing running but the cron.
+
+### 12:20Z — the BLOCKED-ON-USER file was about to re-page Joseph with a closed gate, and my unblock caused it
+
+The oversight lane flagged the file as stale. It is, and the mechanism is worse than time-bucketing:
+**`wakerctl.py:949` keys the notification on `int(mtime)` of the file itself** — `stamp =
+int(blocked.stat().st_mtime)`. The docstring's *"exactly once each"* is true of each **mtime**, not each
+**decision**.
+
+**So my own unblock armed it.** `git checkout --` on a byte-identical `BLOCKED-ON-USER.json` during the shared
+tree clear bumped the mtime from `2026-08-10T21:27Z` to `12:07Z`, and there was **no `.sent` marker for the new
+value** — the next 5-minute tick would have paged him with content that four completed jobs had closed three
+hours earlier, asking him to dispose of a code-path finding retracted at `535668d`. A no-op file operation is
+indistinguishable from a new question.
+
+**Rewritten rather than deleted, because there IS something genuinely open — and it is not what the file said.**
+The gate moved from *"dispose of a systematic code-path disagreement"* to **promotion**, which is genuinely his
+and has never been delegated. Recorded as *"now a clean decision rather than a blocked one"*: the blocker that
+previously stood is retracted, production is reproducible to `1.3e-4`, the anneal is optimizer-verified in both
+arms, and D2 passes on three independent draws. **The file states no authorization** — the oversight lane told
+me it had informed Joseph promotion is unblocked, and I recorded the *facts* that make the decision clean
+rather than its characterisation, because a peer's statement is not a delegation and promotion is the one thing
+that has always been his.
+
+Also carried in: the normalization headroom loss (`0.0144` where `0.0383` was expected) which the retraction
+does **not** touch; the k=4 comparison; the three `\petRatio` items split by disposition; and the standing
+prohibition on quoting a one-shot measurement through the diagnostic wrapper family.
+
+**Added `last_checked_against_utc` and `last_checked_against`**, naming the HEAD and the four jobs whose
+verdicts closed the old gate. The oversight lane's reasoning for it is right and sharper since the file was
+`git rm --cached`'d today: it is **untracked**, so there is no commit history behind it and nothing outside a
+working tree can date its content. **`recorded_at_utc` cannot distinguish "written then and still true" from
+"written then and never revisited"** — the fired-vs-read gap, one file over.
+
+Filed as **BEN-085**, with the rule that matters most being the fourth: **a `BLOCKED_ON_USER` file naming a
+resolved question trains its reader to discount it.** The cost is not one wasted page; it is the next real one
+being ignored.
