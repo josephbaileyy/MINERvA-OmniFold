@@ -39,6 +39,41 @@ have no attribution at all**, which means (a) a reader cannot check them, and (b
 re-verify against. **The fix at update time is therefore to ADD provenance, not merely to preserve it** — write
 the artifact path beside each macro in `values.tex`, as the `pc*` block had done for it on 2026-08-11.
 
+> ### ⚠ THE PARAGRAPH ABOVE IS WRONG, corrected 2026-08-11 by the uncertainty-construction lane
+>
+> *"No source claim can be silently re-pointed"* is false for this block, and the search that produced it
+> is why. The keyword list — `from`, `summary`, `rollup`, `artifact`, `ledger`, `taken`, `\ref` — is a list
+> of ways to cite **a file**, and it was run correctly and found none. But `sec_systematics.tex:162` reads:
+>
+> > *"the **background-aware** block sum has median per-bin uncertainty `\gbdtFiveBlockMedian`"*
+>
+> **That is an attribution — to a SAMPLE AND A FOOTING rather than to a file.** So is `:170-173`'s
+> *"Repeating all 188 universe unfolds with per-universe background subtraction changes the combined block
+> sqrt-trace by only `0.30%`"*. Both name the population the number came from, and **no filename-shaped
+> search can see either.**
+>
+> This is live, not theoretical. The J28 replacement pair `5.2600e-38` / `5.6609e-38` is footed on the
+> **non**-background-aware sweep (block sum `4.3455e-38`, median `13.432%`), while the values it would
+> replace, `5.81e-38` / `6.24e-38`, are **background-aware** (`4.3578e-38`, median `13.359%`) — because
+> `sbatch_j28_adopt_5d.sh` never passes `--combined` and `adopt_unified_5d.py:76-77` defaults to the
+> non-bkgaware product (`grep -n -- '--combined' nd-unfolding/sbatch_j28_adopt_5d.sh` returns nothing).
+> **Writing the J28 pair under the sentence at `:162` would make that sentence false**, which is exactly
+> BEN-087's trap, in exactly the block BEN-087(iii) named as the forward-looking instance — reached by a
+> carrier §2 was not looking for. BEN-102.
+>
+> **Consequence for §4's table, and it inverts this document's advice on the fourth macro:**
+> `\gbdtFiveBlockMedian` `13.36` **is** the background-aware median `13.359%` (committed at
+> `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_summary.txt`, and `VALIDATION_LEDGER.md:333`);
+> its non-bkgaware counterpart is `13.43`. So the four macros are **not** "three that change and one that
+> holds" — that is the reading to guard against. Either the three are re-derived on the bkgaware footing, or
+> the fourth changes too. See the footing note beside the J28 table in `VALIDATION_LEDGER.md`.
+>
+> **The rule this yields, which is the part worth carrying past this document:** an attribution search must
+> cover **populations, footings and samples**, not only filenames, citations and `\ref`s. Grepping for
+> citation *verbs* finds attributions to artifacts; attributions to **which data** are made with ordinary
+> adjectives — *background-aware*, *selection-complete*, *full-event*, *recoil-only*, *five-band* — and are
+> invisible to that search while being every bit as falsifiable by a value swap.
+
 ## 3. The RELATIONAL claims — the part a number-only edit breaks
 
 The prose does not merely print four values; it asserts relations between them. Each must be re-checked
@@ -70,7 +105,7 @@ the values currently in `values.tex`."*
 | `\gbdtFiveAdoptTrace` | 5.81e-38 | **5.2600e-38** (mean-centered combined) | −9.47% |
 | `\gbdtFiveCVTrace` | 6.24e-38 | **5.6609e-38** (CV-centered combined) | −9.28% |
 | `\gbdtFiveMeanShift` | 1.65e-38 | **1.878696733368378e-38** (`joint_mean_shift_norm`) | **+13.56%** |
-| `\gbdtFiveBlockMedian` | 13.36 | **not established as the same quantity** — the ledger reports combined median frac/bin `13.43% → 13.61%` (mean-centered), which is *not* obviously the "syst+stat+ML block sum" this macro names. **Do not assume these are the same number.** BEN-087 is exactly this shape | — |
+| `\gbdtFiveBlockMedian` | 13.36 | **ESTABLISHED AS A DIFFERENT QUANTITY, 2026-08-11 — this row previously read "not established as the same quantity", which was too weak.** `13.36` **is** the **background-aware** syst+stat+ML block-sum median `13.359%`, committed at `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_summary.txt` and at `VALIDATION_LEDGER.md:333`; the note's own prose at `sec_systematics.tex:162` says *"the background-aware block sum"*. The ledger's `13.43%` is **the same quantity on the NON-bkgaware sweep** (`…/universe_stage2_5d/uq_universe_5d_summary.txt`, `median rel=13.432%`). **So this macro is not one that can be left alone while the other three change** — the three replacements are non-bkgaware and this value is bkgaware. See the §2 correction box and BEN-102 | **depends on the footing decision, not on J28** |
 
 Recomputed from the exact values rather than the estimates:
 

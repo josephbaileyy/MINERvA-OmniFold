@@ -87,6 +87,29 @@ quarantined. Central cross
 sections, closure tests, dimensional anchors, and the finalized Phase-18.2 2D
 result were never invalidated by this quarantine.
 
+### The seven causes, WITH THE ARTIFACT EACH IS DISCHARGED FOR — added 2026-08-11
+
+**Read this table instead of the "one or more of" sentence above, which is a statement about a CLASS of
+products.** A class has no construction, so a cause cannot be discharged for one: **discharge is a
+property of a (cause × artifact) pair**, and the same cause can be discharged for one product and open
+for another. The column was added because the flat list read as *"one down, six to go"* on whatever
+product the reader had in mind, and that reading came one edit from deleting a live publication gate
+(BEN-100). Criteria, four legs each, and the honest per-leg state:
+[`docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md).
+
+| # | cause | state, **and for which artifact** | owner |
+|---|---|---|---|
+| 1 | one-sided endpoint interpolation | **OPEN** for the adopted 5D GBDT covariance (10,694 reported bins of `GRID_NBINS = 65856`) | uncertainty construction |
+| 2 | CV centering | **OPEN** for the same artifact — nearest to discharge: its magnitude leg is MET by the predeclared F7 rule (‖mean_shift‖ 4.69× → 4.83× the sampling floor); the test leg is absent | uncertainty construction |
+| 3 | varying estimator seeds | **OPEN** for the same artifact | uncertainty construction |
+| 4 | scalar jitter subtraction | **OPEN** for the same artifact | uncertainty construction |
+| 5 | frozen PET weights | **OPEN** for the recoil-PET budget | PET |
+| 6 | incomplete statistical projection | **OPEN**, and furthest — no `(E_avail,W)` product has been rebuilt at all, and the 5D→4D coverage guard is still one-directional (BEN-064) | uncertainty construction |
+| 7 | CV-support-limited lateral selection | **DISCHARGED 2026-08-07 — for the FPS covariance ONLY**: `uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root`, **266** reported bins, job `56431823`, gate chain PASSED (entry below). **NOT discharged for the 5D GBDT covariance**, which is a different object on a different grid — 266 ≠ 10,694 — and whose **P4-5D lateral has not been built** (`docs/OPEN_ITEMS.md:92-101`) | FPS / P4 |
+
+**So for the artifact the four `\gbdtFive*` macros quote, the count is ZERO of seven, not one of seven.**
+Nothing in this table changes any status; it names the subject each status was always about.
+
 ## 2026-08-07 selection-complete five-band FPS active lateral — VERIFIED-NUMERIC, gate chain PASSED
 
 Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=0, on the ten

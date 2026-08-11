@@ -4589,3 +4589,45 @@ despite a BEN-026 `| tail -25` at `:109,111`, so it stays faithful to the run it
 
 Nothing adopted, nothing re-run, no ROOT written, `values.tex` untouched. Routed to Session A for review
 before remediation begins.
+
+## 2026-08-11 — criteria APPROVED; per-artifact column on the seven causes; two corrections (Session B)
+
+No compute. Follow-up to `a8ab03e` after the orchestrator approved the four-leg criteria unmodified and
+accepted the remediation order 2 → 4 → 3 → 1 → 6.
+
+**The seven-cause list at `VALIDATION_LEDGER.md:65-88` now carries the artifact per row**, and the
+DISCHARGED row names the FPS product (266 reported bins) in the row itself. Assigned after this lane
+declined an instruction to strike `INTEGRATION_CHECKLIST.md`'s 5D-lateral row as stale: that row is live,
+`#16` is OPEN, and `ESTIMATOR_REGISTRY.md:29` attaches it to `omnifold-5d-lgbm` — the 5D GBDT covariance,
+10,694 of 65,856 bins, whose P4-5D lateral has not been built. The discriminator is a number neither
+description contains: **266 ≠ 10694**. No status changed; the table names the subject each status was
+always about, and records that for the artifact the four `\gbdtFive*` macros quote the count is **zero of
+seven, not one of seven** (BEN-100). The GBDT lane having exited, the ledger row came here rather than
+being routed.
+
+**`PROCEDURE-gbdtFive-macro-update.md` §2 corrected — its conclusion was wrong and its search was right.**
+§2 searched `sec_systematics.tex:158-172` for `from / summary / rollup / artifact / ledger / taken / \ref`,
+correctly found none, and concluded *"no source claim can be silently re-pointed."* But `:162` reads *"the
+**background-aware** block sum has median per-bin uncertainty `\gbdtFiveBlockMedian`"* — an attribution to a
+**sample and a footing** rather than to a file, invisible to any filename-shaped search and every bit as
+falsifiable by a value swap. Writing the non-bkgaware J28 pair under it would make the sentence false:
+BEN-087's trap reached by a carrier §2 was not looking for. §4's `\gbdtFiveBlockMedian` row is upgraded from
+*"not established as the same quantity"* to **established as a different one** — `13.36` is the bkgaware
+median `13.359%`, `13.43%` is the same quantity non-bkgaware — so it is **not** a fourth macro that holds
+while three change. The rule: an attribution sweep must cover populations, footings and samples, because
+those are written with ordinary adjectives (*background-aware*, *selection-complete*, *full-event*,
+*recoil-only*, *five-band*) rather than with citation verbs. BEN-102.
+
+**BEN-105's attribution corrected before the row was two hours old, and the correction belongs in the
+record.** It first said the orchestrator filed `BEN-089`, on no evidence beyond it being the only other
+session known to be writing findings — an unsourced attribution in the row complaining about carelessness,
+which is BEN-082's shape. Measured instead:
+`git log origin/main -S'BEN-089' --format='%H %s' -- docs/orchestration/FINDINGS.md` returns **`2b50c3f`**,
+the PET-scoped session on an older standing brief, since exited — so the correction routes to **C - PET**,
+and as first written the row would have sent the next reader to a session that cannot act. Also recorded:
+the verifier was assigned `090-099` from the bottom while this lane opened `100+` with `089-099` as a
+buffer, both within ten minutes and from the same enumeration. Nothing collided, and it did not collide
+because of a buffer one lane left and another filled upward into — **fourth instance, and luck with a good
+outcome is not a working process.**
+
+Nothing adopted, no ROOT written, `values.tex` untouched.
