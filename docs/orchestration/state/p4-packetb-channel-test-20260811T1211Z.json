@@ -2,6 +2,11 @@
   "schema": "artifact-event-reconciliation-v1",
   "run_id": "P4-PACKETB-CHANNEL-TEST-20260811T1211Z",
   "recorded_at_utc": "2026-08-11T12:17:33Z",
+  "job_id": "56636802",
+  "cpus_per_task": 128,
+  "memory_per_task": "487802M",
+  "time_limit": "03:00:00",
+  "qos": "interactive",
   "event": {
     "event_id": "evt-p4-packetb-channel-test-20260811T1211Z",
     "watch_id": "p4-packetb-channel-test-20260811T1211Z",
