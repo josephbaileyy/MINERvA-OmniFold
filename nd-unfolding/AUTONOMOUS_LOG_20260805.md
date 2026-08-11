@@ -4724,3 +4724,39 @@ Also recorded as still-unindexed: the `(E_avail,W)` covariance rows, the 4D/5D/F
 
 Its independent note-audit session may surface `\petRatio` too; it was told not to trust the relay's
 characterisations, so if it does, that is confirmation from a reader without this framing rather than an echo.
+
+### 12:40Z — split the three reasons by disposition, and promoted the failure mode a check EXONERATES
+
+Two structural improvements to the index, both the oversight lane's and both right.
+
+**The three reasons on `\petRatio` are now split by disposition, because bundled they make the factual one wait
+on two judgement calls:**
+
+    niter mismatch        FACTUAL, no adjudication   -> re-run at niter=3 OR label as niter=2 legacy
+                                                        blocked on NOBODY; it is already true
+    J21 background sub    needs a DECISION           -> blocked on what the PET central value is
+    quarantine coverage   needs an OWNER'S RULING    -> blocked on whoever owns the 07-12 class
+
+That matters practically: *"three reasons to doubt 0.912"* is one item with the latency of its slowest
+component, and the first row can be actioned today.
+
+**And I promoted reason 1 out of a caveat into a named class, which is the subtlest thing in the file:**
+**a correctly derived value whose OPERANDS went stale.** Every other row in the index *fails* a check. This one
+**passes** one — `2.796/3.066 = 0.91194` → `0.912` reproduces exactly, so a reader told "0.912 is suspect" finds
+no error and **concludes it is fine.** The consistency check does not merely miss it; it **actively exonerates**
+it. The only thing that catches the class is asking where each operand came from and whether that source is
+current — a `MATCHES / SUPERSEDED / UNSOURCEABLE` question, not an arithmetic one.
+
+With the structural corollary attached: **any derived macro whose operands are inline `\SI{}` literals looks
+managed while its inputs sit outside the marking convention entirely.** Marking the macro cannot reach them even
+in principle. Their running note audit keys on *"every quoted value's canonical source"*, so that class should
+fall out as UNSOURCEABLE by construction rather than needing a second instrument — and if it does not, that is a
+gap in their audit prompt, which they said they would rather learn that way.
+
+**One thing worth recording about how the earlier find happened, since they called it the sharpest correction in
+my message:** the `VALIDATION_LEDGER` section was not found by the index existing. It was found by the
+**location column** — *"say where the corpses are"* walks the tree, while *"list the retractions"* would have
+produced ten rows and found nothing, because every correction was already filed at the time. **A retraction
+without locations is a record rather than a tool.**
+
+Queue still empty. Nothing running but the cron.

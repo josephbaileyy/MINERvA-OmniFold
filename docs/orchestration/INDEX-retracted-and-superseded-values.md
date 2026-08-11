@@ -13,6 +13,26 @@ at `2026-08-11`. Where I could not source a location, the row says so rather tha
 index built from memory has exactly the defect it exists to fix. *Requested by the oversight session; the
 `VALIDATION_LEDGER` exposure was found while building it and is the most serious entry here.*
 
+## A failure mode this index found that a consistency check CANNOT catch — it EXONERATES it
+
+Most rows here fail a check: a wrong denominator, a stale threshold, a retracted verdict. **One row passes
+one.** `\petRatio = 0.912` is *correctly computed* from the operands quoted beside it —
+`2.796\text{e-}38 / 3.066\text{e-}38 = 0.91194` → `0.912`. So a reader told *"0.912 is suspect"* reproduces the
+arithmetic, finds no error, and **concludes it is fine.** The consistency check does not merely fail to catch it;
+it actively exonerates it.
+
+**Name for the class: a correctly derived value whose OPERANDS went stale.** The derivation is sound, every
+internal check agrees, and the inputs describe a configuration that no longer exists. The only thing that
+catches it is asking *where each operand came from and whether that source is still current* — which is the
+`MATCHES / SUPERSEDED / UNSOURCEABLE` question, not an arithmetic one.
+
+**And the structural version, which generalises past this row:** `2.796e-38` and `3.066e-38` are **inline
+`\SI{}` literals** in `sec_pet.tex:41-42`, not entries in `values.tex`. **Any derived macro whose operands are
+inline literals looks managed while its inputs sit outside the marking convention entirely** — marking the macro
+cannot reach them, even in principle. That is a hole in the mechanism rather than an oversight in one entry, and
+it is why an audit keyed on *"every quoted value's canonical source"* will land such operands as UNSOURCEABLE by
+construction, which is the right outcome.
+
 ## The two kinds of entry, which a reader will otherwise conflate
 
 - **DEAD** — replaced, and must not be quoted in any form.
@@ -61,7 +81,19 @@ every significance derived from those objects are **SUPERSEDED AND UNQUOTABLE**"
 **Protection is applied to the harmless cases and absent from the live ones.** The marker was the failure here,
 not the number — the same shape as the `VALIDATION_LEDGER` section above, one level apart.
 
-### `\petRatio` = 0.912 — THREE independent sourced reasons it is stale, none of which needs the quarantine
+### `\petRatio` = 0.912 — three independent reasons, SPLIT BY DISPOSITION
+
+**Do not action these as one item.** They have different dispositions, and bundled as *"three reasons to doubt
+0.912"* the factual one inherits the latency of the two judgement calls. *Split at the oversight session's
+request, which is correct.*
+
+| reason | kind | disposition | blocked on |
+|---|---|---|---|
+| **`niter` mismatch** | **FACTUAL — no adjudication** | Re-run at `niter=3`, **or** label the quoted values explicitly as `niter=2` legacy | **nobody.** It is already true |
+| **J21** background subtraction / unit measured weights | needs a **decision** | Qualify as a non-background-subtracted historical diagnostic, or re-extract on the `bkgsub` input | whoever decides what the PET central value is |
+| **quarantine coverage** | needs an **owner's ruling** | In or out of the 2026-07-12 class | whoever owns the quarantine |
+
+The factual row can be actioned today and does not depend on the other two resolving.
 
 1. **J21** (`AUDIT-FINDINGS-20260731.md:800-804`): *"The quoted 4D ratio has unit measured weights and no
    background subtraction"*, and the prescription is *"either qualify the 0.912 as a non-background-subtracted
