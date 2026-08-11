@@ -128,3 +128,48 @@ options are a mail tool in the session (Joseph's to enable) or accepting pull-on
 **Explicitly rejected:** routing artifact pushes through `BLOCKED-ON-USER.json`, which *does* mail.
 Using a decision channel for notification is how a blocked-on-user file trains its reader to
 discount it — filed by the PET lane as BEN-085.
+
+---
+
+## Allocation cost of Packet B, measured before release (2026-08-11)
+
+Nothing recorded what the packet cost in compute. From `sacct -j 56636802` taken immediately
+before `scancel`:
+
+| | |
+|---|---|
+| holder elapsed | **01:27:25** on 256 CPUs |
+| **CPUTime** | **15-12:58:40** |
+| step `.0` — evidence + stages 5/6 | 00:17:43 on 128 CPUs (= 1-13:47:44) |
+| step `.1` | 00:05:06 (= 10:52:48) |
+
+**~23 minutes of useful work inside an 87-minute holder** — the allocation idled about two-thirds
+of its life. That is the honest input for sizing the next packet, and it argues for shorter holds
+rather than the 3-hour `alloc_run` default. Recorded because an unmeasured cost gets re-guessed.
+
+## Two errors of mine in the release, recorded because they are the same class this packet closed
+
+**1. Cancelled before disarming.** The instruction was to disarm the watch and cancel in one turn,
+so a watch does not fire on a deliberate kill — a watch firing on an intentional cancel is noise
+that trains its reader to discount the channel. I used the wrong subcommand (`disarm`; it is
+`watch-disarm`), and because the commands were `;`-separated rather than `&&`, the `scancel` ran
+anyway. The job died with the watch still armed; it was disarmed immediately after and is now
+`disarmed`, but there was a window.
+
+That is **BEN-068's shape in my own hands**: a dependent action sequenced before the thing that
+should gate it. The structural fix is the same one PB3 took — make the ordering impossible to get
+wrong rather than remembered. `scancel` should be reachable only through a wrapper that disarms
+first, exactly as evidence publication is reachable only through `_publish_evidence()`.
+
+**2. A stale verifier pass, commissioned and discarded.** I sent PB2 for an independent re-verdict
+reading the tree at `f67352f`. While it ran, another session found and fixed the explicit-`null`
+grandfathering shapes (`1440b58`) and closed the packet (`fa1e49a`). My pass was therefore auditing
+superseded code and would have returned a verdict correct about that code and contradictory in the
+record. **Discarded, not filed.** Worth noting the near-miss: I had asked that verifier for a
+receipt-class census with counts, which points at the shape that was actually wrong — but I did not
+find it, another session did.
+
+*Note on the requested-session substitution:* the oversight asked that the re-verdict go to verifier
+UUID `019f74cb-b85d-7ba0-96c5-dfbd09e59159`. That rollout is not resumable from this codex home, so
+the pass would have been a fresh independent verdict rather than that session revising itself. That
+difference was recorded in the prompt at the time; it is moot now that the pass is discarded.
