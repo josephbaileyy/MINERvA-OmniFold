@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Footing re-adoption provenance completion",
-  "state": "Footing job 56693207 completed 0:0. Controls C1/C2 reproduce exactly, excluding B3; A1 misses the preregistered no-interaction prediction and the B2 interaction result is already committed at 4f07b6d. The external event is reconciled without duplicating science. Nothing is adopted. Read-only batch job 56695130 now completes the per-input/product SHA-256 receipt required by the predeclaration; HPSS job 56692312 remains independently watched.",
+  "current_dag_node": "BEN-106 adopted-product construction-contract verification",
+  "state": "Footing hash verifier 56695130 passed and its exact eight-file receipt is committed at daa99b4; the B2 interaction result is unchanged and nothing is adopted. Session B propagated construction-contract stamps into adopt_unified_5d.py, caught and quarantined a false-success ROOT write, repaired it, and submitted collision-isolated test job 56695424. That job is the sole active BEN-106 writer and has terminal watch coverage; HPSS job 56692312 remains independently watched.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,18 +33,19 @@
   ],
   "jobs": [
     {
-      "job_id": "56695130",
+      "job_id": "56695424",
       "tasks": "0",
       "single_job": true,
-      "receipt": "docs/orchestration/state/readopt-footing-hashes-active-56695130.json"
+      "receipt": "docs/orchestration/state/ben106-stamp-verify-active-56695424.json"
     }
   ],
   "blockers": [
     "The footing result adopts nothing: values.tex is untouched and zero quarantine causes are discharged for this candidate.",
-    "Predeclared per-input/product hashes are pending read-only batch verifier 56695130; do not manufacture or infer them before its stable-read receipt exists.",
+    "BEN-106 remains OPEN until job 56695424 finishes successfully and the required stamps are independently read back from its test product; a success print or exit code alone is insufficient after BEN-112.",
+    "STAMPTEST2 is validation-only: it does not authorize adoption, values.tex edits, or a quarantine discharge beyond the provenance legs explicitly verified.",
     "HPSS job 56692312 remains an external running dependency with terminal watch coverage."
   ],
-  "next_authorized_action": "End without polling. On the real terminal event for hash verifier 56695130, read its accounting/log/receipt once, require the committed launcher hash and all eight stable file hashes, then commit the final predeclared provenance receipt without rerunning or adopting anything. HPSS and provider-reset watches remain independent continuation coverage.",
+  "next_authorized_action": "End without polling. On the real terminal event for stamp verifier 56695424, read its accounting, complete log and test ROOT once; bind the launcher and implementation hashes, independently require all checked/value/source/convention stamps, and only then close the BEN-106 provenance legs for causes 2/3/4. Do not adopt the test product. HPSS and provider-reset watches remain independent continuation coverage.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",

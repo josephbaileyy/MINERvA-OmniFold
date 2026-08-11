@@ -7,6 +7,14 @@
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-11 BEN-106 verification one-liner — repaired stamp propagation is committed, but its
+provenance legs remain OPEN pending artifact read-back.** The first test product silently received no
+stamps despite an exit-0 success print (BEN-112) and is quarantined. Repair commit `5856eeb` captures
+upstream values before output creation, calls `fo.cd()`, and fails closed on six read-backs. Dedicated
+CPU batch job `56695424` is the sole writer to collision-isolated `STAMPTEST2`; terminal watch
+`stamp-verify-56695424` is armed. This is validation-only: nothing is adopted and `values.tex` is
+untouched.
+
 **2026-08-11 provenance one-liner — the footing candidate's predeclared eight-file SHA-256 receipt is
 complete.** Read-only verifier `56695130` passed in 1:37 and bound the throw ROOT, both combined-footing
 inputs, four arm products, and whole-stream `56693207` log to committed launcher `cc77d8ca…`; receipt

@@ -5118,3 +5118,17 @@ gives **−0.0709%**. So the retired subtraction's effect on this product is **b
 sqrt-trace** — two orders below the footing effect and three below J28's. The measured fixed-seed null on
 the same product is `5.8223e-50`, `1.31e-12` of the sqrt-trace: at the fixed seed there is nothing left to
 subtract.
+
+## 2026-08-11 — BEN-106 cluster read-back job durably covered
+
+The repaired implementation and its launcher are committed at `5856eeb` and `034871c`. Shared-CPU job
+**56695424** was submitted at 16:48:01Z with 32 requested CPUs, 180 GB and one hour, writing only
+`uq_5d/readopt_20260811_footing/STAMPTEST2_bkgaware_meancentered.root`. At reconciliation it remained
+prestart-pending on Priority and was the sole writer. Implementation SHA-256 is
+`e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35`; launcher SHA-256 is
+`589bc4a16fc2780fd9c90936ebd6ceb4c9a1f467d50fc64650555240bdc27221`.
+
+Terminal watch `stamp-verify-56695424` is armed. A terminal `0:0` is necessary but not sufficient:
+reconciliation must read the test ROOT back and require the three `*_checked` stamps plus centering,
+throw-source and combined-source stamps. Until then BEN-106's provenance legs remain **OPEN**. The test
+product adopts nothing and authorizes no `values.tex` or threshold change.
