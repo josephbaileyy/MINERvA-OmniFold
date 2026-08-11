@@ -617,6 +617,36 @@ If step 1 fails, do **not** run `install-cron`; the listing failure is the thing
 receipt cites. The fix when someone owns that re-issue: distinguish "empty table" from "listing failed" —
 raise `WakerError` on non-zero rather than returning `[]`.
 
+> **CORRECTION 2026-08-11 — the stated reason above is wrong, and the fix is less blocked than it looks.**
+> The premise "editing it moves a sha that a receipt cites" assumes the pin currently holds. It does not,
+> and has not since **2026-07-20**. Measured this turn with two independent instruments (`shasum` via git,
+> and `openssl dgst` read straight off the filesystem — the receipt value re-extracted with a JSON parser,
+> not grep):
+>
+> | | sha256 | bytes |
+> |---|---|---|
+> | receipt pin | `d7c6a215…09bd99c` | 50283 |
+> | **`8c8775f`** "Reconcile P3F PET queue latency wake" — **the receipt's own commit** | `d7c6a215…09bd99c` | 50283 |
+> | `442aee3` "Send a 6-hour status digest email" | `bf459853…f7ed90b` | 53113 |
+> | `7e69926` "Cut over to interim Claude root" = **HEAD, unchanged since 2026-07-20** | `04d2e957…9eea8c76` | 54600 |
+>
+> **The receipt was truthful when written** — its pin reproduces `8c8775f` byte-for-byte. Two ordinary
+> commits *later the same day* moved past it. So:
+>
+> - **The pin is stale, not dangling.** The exact code the gate ran against is still in git at `8c8775f`,
+>   so the receipt remains fully auditable. This is much weaker than "cites a hash nothing matches," and
+>   it means **no gate re-run is implied** — the disposition can be as cheap as recording that the pin
+>   names a historical revision.
+> - **Editing `wakerctl.py` today cannot break a pin that already broke three weeks ago.** Whoever fixes
+>   the fail-open `read_scrontab` is not moving a live sha. That is now the only reason this section
+>   deferred the fix, and the reason is void.
+> - **Do not hand-edit the receipt's hash to match HEAD.** That would destroy the one property still
+>   intact — that the pin identifies the code actually run.
+>
+> The general defect is the *pattern*: a receipt pinned a shared, actively-developed control-plane file
+> by content hash, which freezes a moment rather than an artifact. Nobody violated anything; the pin
+> aged out on the second commit. Disposition belongs to the owner of `p3f-pet-gate3`.
+
 **Related, and the reason this was found:** a HELD scrontab entry cannot be recovered with
 `scontrol release` — Slurm refuses with *"Cannot modify scrontab jobs through scontrol."* The recovery **is**
 `install-cron`, because it replaces the table rather than releasing a job. Verified 2026-08-10: held
