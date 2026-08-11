@@ -136,12 +136,18 @@ universes — a realized range, not a fitted interval (BEN-025).
    regenerating the selected cloud for every lateral endpoint."* Those regenerated samples are the 120
    P3F ROOTs. **They exist**, so this dependency is satisfied.
 2. Nothing in the repo builds the joint object. `phase7_retrain_universe.py` retrains per universe, but
-   it produces the **increment** `Δ_u` relative to the frozen map, and its own docstring says
-   *"extraction uses the nominal cloud"* — i.e. it is both the additive decomposition and
-   CV-support-limited. It also *excludes* laterals by design: *"Laterals/detector universes are
-   **excluded from this set** — they need selection-complete shifted point clouds (KNOWN_ISSUES #16),
-   which do not exist."* **That exclusion's stated reason expired on 2026-07-20** and no code has been
-   revisited since.
+   it produces the **increment** `Δ_u` relative to the frozen map, and **its own docstring**
+   (`phase7_retrain_universe.py:21`) says *"extraction uses the nominal cloud"* — i.e. it is both the
+   additive decomposition and CV-support-limited.
+   Laterals are also *excluded* from the Phase-7 set by design. That exclusion is stated in the
+   **campaign record, not in the driver** — `PET_UQ_PRODUCTION_STATUS.md:138-141`: *"Laterals/detector
+   universes are **excluded from this set** — they need selection-complete shifted point clouds
+   (KNOWN_ISSUES #16), which do not exist; their retraining-response is a separate deferred gate, not
+   this one."* (Attribution corrected here after checking: an earlier draft of this sentence let that
+   quote read as the driver's docstring. `grep` puts it in the status file and only the *"nominal
+   cloud"* phrase in the driver — the BEN-087 shape, in the document policing it.)
+   **That exclusion's stated reason expired on 2026-07-20** — the selection-complete shifted clouds now
+   exist, per §2 — and no code has been revisited since.
 3. So the ordering is: samples (done) → joint construction (not started) → covariance assembly →
    budget. The binding half is the construction.
 
