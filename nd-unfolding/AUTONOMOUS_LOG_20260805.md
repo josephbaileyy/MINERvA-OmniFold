@@ -5110,3 +5110,35 @@ That is what "one home" should mean — the id does not duplicate, the content d
 the note-repair branch at `322da16`. Packet B closed at `1440b58`. `INTEGRATION_CHECKLIST.md:17-19` verified true
 on every clause. No mail this cycle — no job finished, no new verdict, and both blocking decisions are already
 in his file rather than needing a fresh page.
+
+### 15:20Z — I said "ticking on schedule" in the stand-down mail. Measured it. It is not.
+
+Caught by comparing the cron's `last-tick` against cluster time while verifying final state — **after** the mail
+had gone.
+
+    cluster 13:44:35Z   last tick 12:30:10Z   -> 74-MINUTE GAP on a */5 schedule (~14 missed ticks)
+    manual tick 0s      -> the tick is not slow
+    scontrol: Reason=BeginTime StartTime=Unknown
+    cron QOS heavily shared: 21 pending from one user, 11 from another, 60+ total
+
+Watch-fire latencies from `wakerctl status`: **3.4 min** (designA-56586368), **~19 min**
+(annealed-nominal-56563761, job ended 21:00:24Z, fired 21:19:35Z), **62 min** armed-to-fired
+(annealed-nominal-56563092).
+
+**So the cron is installed and does fire; it is not ticking on schedule. Durable notification works with
+latency up to roughly an hour, not five minutes.** That matters: *"the watch will tell me"* is true but not
+prompt — adequate as a safety net across session death, which is what it is for, and **not** adequate as the
+only signal for anything time-critical. It also means BEN-084's fired-but-unread window can open an hour before
+the marker records a fire at all.
+
+**One arithmetic correction of my own inside this one:** my first reaction was a four-hour gap, from comparing
+my local build timestamps against cluster UTC. Wrong — my machine is not on UTC. The authoritative comparison is
+cluster-side only, and it is 74 minutes. Caught before it reached the mail.
+
+Amended **BEN-085** with the measured numbers rather than opening a new id — that row is the wakerctl
+notification-path finding and latency is its subject.
+
+**Sent a correction mail.** The line went out unmeasured, which is the defect whatever the value — **third
+unmeasured status claim today**, and the other two turned out true, which is exactly the version that feels
+acceptable and is not (BEN-088 rule (iv), now with three instances behind it). The rest of the stand-down mail
+stands.
