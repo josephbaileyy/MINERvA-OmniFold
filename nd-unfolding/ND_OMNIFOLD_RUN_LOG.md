@@ -4812,3 +4812,54 @@ predeclaration at `831043d`; the repair changes only future route fail-closure.
 
 Receipts: `../docs/orchestration/state/branchc-traj-annealed-srun-error-56693776.json` and
 `../docs/orchestration/state/branchc-traj-annealed-batch-active-56691812.json`.
+## 2026-08-11 — wakerctl.scan() per-watch guard, power-tested in four directions (Session B)
+
+No compute. Closes the `scan()` single point of failure filed in `../KNOWN_ISSUES.md` and assigned by the
+orchestrator. **Diagnosis confirmed rather than inherited:** `evaluate()` at `:606` unguarded,
+`_write_tick_receipt` at `:616` after the loop, `tick()` calling `scan()` at `:1101` unguarded — and
+`evaluate()` **ends with an explicit `raise WakerError(f"unknown watch kind: {kind}")`**, so the likeliest
+malformation from a schema change aborts the loop by design, not by accident.
+
+**One refinement that changed the test.** `load_watches()` already wraps `read_json` in
+`contextlib.suppress(OSError, json.JSONDecodeError)`, so a **corrupt** watch file is skipped and harms
+nothing — a fixture writing garbage bytes would have **passed against the unfixed code**. The dangerous
+watch is valid JSON with bad content. That is what the test arms.
+
+**Fix.** Per-watch `try/except` around `evaluate` + `emit_event` + `save_watch`; ledger
+`watch-evaluate-error`; bump the existing `unreliable` counter; both writes individually guarded so nothing
+in the per-watch path can abort the tick, including the code recording that it failed. `last-tick.json`
+gains `watch_errors`, **written unconditionally** so `0` differs from written-by-an-older-version, plus
+`watch_error_detail` when non-empty. Existing readers unaffected — `wakerctl.py:1182` and the liveness rule
+both read `at_utc`.
+
+**Two things I did NOT do, both deliberate and one against instruction.** The watch is **not disarmed**: an
+exception here need not be permanent, and retiring a watch on one bad tick is the same fail-open-into-silence
+the guard exists to end. And `tick()`'s call to `scan()` is left **unguarded** — wrapping it would let the
+tick receipt survive a *total* `scan()` failure, and since `last-tick.json` is the liveness signal a broken
+waker would then read as HEALTHY, manufacturing BEN-084's *"artifact asserting a state it cannot have"* while
+fixing another defect. Stated to the orchestrator with the reasoning rather than done quietly.
+
+**POWER-TESTED IN FOUR DIRECTIONS.** `ScanPerWatchIsolationTests`, 7 tests, all pass. The suite carries the
+**pre-fix `scan()` body inline as a live positive control**, asserting the scenario raises *and* skips the
+receipt *and* never reaches the valid watch. Ids are `aaa-broken` / `zzz-valid` because `load_watches()`
+iterates `sorted(glob)` and with the order reversed every assertion would pass against the unguarded source.
+Mutations: **M1** remove the guard → 5 of 7 fail; **M2** drop `watch_errors` → 3 fail; **M3** write
+`watch_errors` only when non-zero (the null-as-absent shape) → **exactly one test fails, the presence
+assertion, and nothing else notices.** M3 is the one that matters: it is the refactor a reasonable
+maintainer makes next month, and one line is holding it. BEN-108.
+
+**No regression.** `test_wakerctl.py` 17 failed / 37 passed against 17 / 30 before — same 17 pre-existing
+failures, +7 passes. Whole `docs/orchestration` 20 / 86 against the 20 / 79 recorded 2026-08-02: identical
+failure set.
+
+**⚠ The new test is NOT collected by the project test command, and I am not silently fixing that.** The
+command is `pytest nd-unfolding/tests`; there is no `pytest.ini` / `setup.cfg` / `testpaths`, so
+`docs/orchestration`'s **106** tests are in no baseline and **20 have been red since at least 2026-07-20**
+(`../docs/orchestration/FINDING-20260802-orchestration-tests-never-run.md`, re-measured today). Widening
+collection changes the announced baseline for every lane and imports 20 red tests into it, so it is a shared
+decision and is **routed, not taken.** Counts in BEN-079 form: `pytest nd-unfolding/tests` = **1008**,
+`pytest docs/orchestration` = **106**, both on the **local Mac checkout** @ `8c99e36` — not comparable with
+cluster counts.
+
+Unrelated to and not touching `p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, which is Session
+C's to dispose of; the pin's lapse is C's finding and I relied on my own reading of the code, not on it.

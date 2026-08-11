@@ -839,3 +839,176 @@ class StatusAndCronTests(WakerTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ScanPerWatchIsolationTests(WakerTestCase):
+    """One malformed watch must not silence the waker (KNOWN_ISSUES: `scan()` has no per-watch guard).
+
+    THE ITERATION ORDER IS LOAD-BEARING AND IS WHY THE IDS ARE NAMED AS THEY ARE. `load_watches()`
+    iterates `sorted(watches_dir.glob("*.json"))`, so the filenames fix the order. The broken watch is
+    `aaa-broken` and the valid one `zzz-valid` precisely so the broken one is evaluated FIRST -- with
+    the order reversed, the pre-fix code would fire the valid watch before reaching the broken one and
+    every assertion below would pass against the unguarded source, i.e. the test would be unpowered
+    while looking identical.
+
+    THE MALFORMATION IS SEMANTIC, NOT SYNTACTIC, AND THAT ALSO MATTERS. `load_watches()` already wraps
+    `read_json` in `contextlib.suppress(OSError, json.JSONDecodeError)`, so a corrupt file is skipped
+    and breaks nothing -- a test that wrote garbage bytes would pass on the unfixed code too. What
+    actually raises is valid JSON with an unknown `kind`, which `evaluate()` ends by raising
+    `WakerError` on, deliberately. That is the realistic shape: a watch armed under an older schema.
+
+    The watch is written straight to disk rather than through `add_watch()`, because `add_watch()`
+    calls `validate_watch()` and would reject it -- correctly. The file arrives by schema drift or a
+    hand edit in this text-file state tree, not through the CLI.
+    """
+
+    def _write_broken_watch(self, ctx, watch_id="aaa-broken", kind="a-kind-that-does-not-exist"):
+        path = wakerctl.watch_path(ctx, watch_id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({
+            "watch_id": watch_id,
+            "kind": kind,                      # valid JSON, unknown kind -> evaluate() raises
+            "params": {},
+            "state": "armed",
+            "armed_at_utc": "2027-01-01T00:00:00+00:00",
+            "unreliable": 0,
+        }))
+        return path
+
+    @staticmethod
+    def _prefix_scan(ctx):
+        """The scan() body EXACTLY as it stood before the per-watch guard, as a positive control.
+
+        Reproduced here rather than described so the test can prove its own power: the assertions
+        below are only meaningful if this scenario genuinely breaks the old code, and the way to
+        establish that is to run the old code. Same technique as
+        `test_flux_universe_fix.test_the_prefix_source_would_fail`.
+        """
+        emitted = []
+        for watch in wakerctl.load_watches(ctx):
+            if watch.get("state") != "armed":
+                continue
+            fired = wakerctl.evaluate(ctx, watch)          # <- unguarded: this is the defect
+            if fired is None:
+                continue
+            event_type, payload = fired
+            event_id = f"evt-{watch['watch_id']}"
+            wakerctl.emit_event(ctx, event_id, watch["watch_id"], event_type, payload)
+            watch["state"] = "fired"
+            watch["fired_at_utc"] = ctx.now_iso()
+            wakerctl.save_watch(ctx, watch)
+            emitted.append(event_id)
+        wakerctl._write_tick_receipt(ctx)
+        return emitted
+
+    # ---- the positive control: prove the scenario breaks the PRE-FIX code -----------------------
+    def test_prefix_scan_aborts_and_skips_the_receipt(self):
+        """POWER TEST. Without this, everything below could be vacuously true."""
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+        self._write_broken_watch(ctx)
+
+        with self.assertRaises(wakerctl.WakerError):
+            self._prefix_scan(ctx)
+
+        # The two consequences that make the defect silent rather than loud:
+        self.assertFalse(
+            (ctx.state_dir / "last-tick.json").exists(),
+            "pre-fix scan should skip the tick receipt, which is what makes liveness go stale",
+        )
+        self.assertFalse(
+            wakerctl.event_paths(ctx, "evt-zzz-valid")["event"].exists(),
+            "pre-fix scan should never reach the valid watch",
+        )
+
+    # ---- the fix ------------------------------------------------------------------------------
+    def test_malformed_watch_does_not_stop_a_valid_one(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+        self._write_broken_watch(ctx)
+
+        emitted = wakerctl.scan(ctx)
+
+        self.assertEqual(emitted, ["evt-zzz-valid"])
+        self.assertTrue(wakerctl.event_paths(ctx, "evt-zzz-valid")["event"].exists())
+
+    def test_tick_receipt_is_written_and_names_the_failing_watch(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+        self._write_broken_watch(ctx)
+
+        wakerctl.scan(ctx)
+
+        receipt = json.loads((ctx.state_dir / "last-tick.json").read_text())
+        self.assertEqual(receipt["watch_errors"], 1)
+        self.assertEqual([e["watch_id"] for e in receipt["watch_error_detail"]], ["aaa-broken"])
+        self.assertIn("WakerError", receipt["watch_error_detail"][0]["error"])
+
+    def test_clean_pass_records_zero_errors_AND_the_key_is_PRESENT(self):
+        """PRESENCE, not merely absence.
+
+        A test asserting only "no errors were reported" passes on a receipt that has no such key at
+        all -- so it would also pass if the field were removed, which is the null-as-absent shape.
+        Assert the key exists and equals 0, so a reader can distinguish "clean" from "never looked".
+        """
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+
+        wakerctl.scan(ctx)
+
+        receipt = json.loads((ctx.state_dir / "last-tick.json").read_text())
+        self.assertIn("watch_errors", receipt)          # <- the presence half
+        self.assertEqual(receipt["watch_errors"], 0)
+        self.assertNotIn("watch_error_detail", receipt)
+
+    def test_failing_watch_is_marked_unreliable_and_not_disarmed(self):
+        """The counter makes a persistently-broken watch visible in `watch-list`.
+
+        It is deliberately NOT disarmed: an exception here is not necessarily permanent, and retiring
+        a watch on one bad tick would be the same fail-open-into-silence the guard exists to end.
+        """
+        ctx = self.ctx()
+        self._write_broken_watch(ctx)
+
+        wakerctl.scan(ctx)
+        after_one = wakerctl.read_json(wakerctl.watch_path(ctx, "aaa-broken"))
+        self.assertEqual(after_one["unreliable"], 1)
+        self.assertEqual(after_one["state"], "armed", "must stay armed, not be retired on one error")
+
+        wakerctl.scan(ctx)
+        self.assertEqual(wakerctl.read_json(wakerctl.watch_path(ctx, "aaa-broken"))["unreliable"], 2)
+
+    def test_every_valid_watch_after_several_broken_ones_still_fires(self):
+        """The defect was order-dependent, so check more than one broken watch ahead of the good one."""
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+        for i in range(3):
+            self._write_broken_watch(ctx, watch_id=f"aaa-broken-{i}")
+
+        emitted = wakerctl.scan(ctx)
+
+        self.assertEqual(emitted, ["evt-zzz-valid"])
+        receipt = json.loads((ctx.state_dir / "last-tick.json").read_text())
+        self.assertEqual(receipt["watch_errors"], 3)
+
+    def test_tick_still_reaches_its_guards_when_a_watch_is_malformed(self):
+        """The blast radius was never just scan(): tick() calls it first, unguarded.
+
+        `dispatch()` and the three guards all run AFTER `scan()`, so an escaping exception skipped
+        every one of them. `tick()` returning a result dict at all is the assertion.
+        """
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, watch_id="zzz-valid")
+        sentinel.write_text("done")
+        self._write_broken_watch(ctx)
+
+        result = wakerctl.tick(ctx)
+
+        self.assertIn("emitted", result)
+        self.assertIn("dispatch", result)
+        self.assertEqual(result["emitted"], ["evt-zzz-valid"])

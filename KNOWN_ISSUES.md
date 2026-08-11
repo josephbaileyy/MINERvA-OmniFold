@@ -740,6 +740,65 @@ sha; the blocker here is ownership and the test, not the pin. This is decline #3
 dated 2026-08-18 — so this is a real single point of failure rather than an active fire. It belongs in the
 "gates that cannot fail" family: **a scan that cannot complete is a gate that cannot fire.**
 
+### ✅ FIXED 2026-08-11 by the uncertainty-construction lane, with a self-powering test
+
+Per-watch `try/except Exception` around `evaluate` + `emit_event` + `save_watch`; the failing watch is
+ledgered (`watch-evaluate-error`) and its existing `unreliable` counter bumped, both writes individually
+guarded so nothing in the per-watch path can abort the tick **including the code that records that the
+per-watch path failed**. Degradation is surfaced rather than swallowed: `last-tick.json` now carries
+`watch_errors`, **written unconditionally** so `0` is distinguishable from *written-by-an-older-version*,
+plus `watch_error_detail` when non-empty. Existing readers are unaffected (`wakerctl.py:1182` and the
+liveness rule both read `at_utc`).
+
+**Three deliberate scoping decisions, because each cuts against an obvious alternative.**
+
+1. **The watch is NOT disarmed**, though the spec above offered that. An exception here is not necessarily
+   permanent — a subprocess or filesystem hiccup raises too — and retiring a watch on one bad tick is the
+   same fail-open-into-silence the guard exists to end. The counter makes a persistent failure visible in
+   `watch-list` instead.
+2. **`tick()`'s call to `scan()` is left UNGUARDED, deliberately, and this is the one place I did not do
+   what was asked.** Wrapping it would let `_write_tick_receipt` survive a *total* `scan()` failure — and
+   `last-tick.json` is the liveness signal, so a broken waker would then read as **HEALTHY**. That
+   manufactures BEN-084's *"artifact asserting a state it cannot have"* while fixing another defect. The
+   per-watch guard already removes the failure mode that was actually reported; a catastrophic `scan()`
+   failure *should* leave the receipt stale, because that is what the file pair is for.
+3. **The malformation that matters is SEMANTIC, not syntactic**, which changes what the test must arm.
+   `load_watches()` already wraps `read_json` in `contextlib.suppress(OSError, json.JSONDecodeError)`, so
+   a corrupt file is skipped and harms nothing — **a test writing garbage bytes would have passed against
+   the unfixed code and proved nothing.** What raises is valid JSON with an unknown `kind`, which
+   `evaluate()` ends by `raise WakerError`-ing on by design: i.e. a watch armed under an older schema.
+
+**POWER-TESTED IN FOUR DIRECTIONS, and the fourth is the one that justifies a design choice.**
+`ScanPerWatchIsolationTests` in `docs/orchestration/test_wakerctl.py`, 7 tests, all passing.
+- It carries the **pre-fix `scan()` body inline as a live positive control** (`_prefix_scan`), asserting
+  that this exact scenario raises *and* skips the receipt *and* never reaches the valid watch — so the
+  other assertions cannot be vacuously true. Same technique as
+  `test_flux_universe_fix.test_the_prefix_source_would_fail`.
+- **Iteration order is load-bearing and is why the ids are `aaa-broken` / `zzz-valid`:**
+  `load_watches()` iterates `sorted(glob("*.json"))`, so with the names reversed the pre-fix code would
+  fire the valid watch *before* reaching the broken one and every assertion would pass against the
+  unguarded source — an unpowered test that looks identical.
+- Mutation **M1** (remove the guard) → **5 of 7 fail**. Mutation **M2** (drop `watch_errors`) → **3 fail**.
+- Mutation **M3**, writing `watch_errors` **only when non-zero** — the null-as-absent shape — → **exactly
+  one test fails, the presence assertion, and nothing else catches it.** That is the measurement that
+  shows `assertIn("watch_errors", receipt)` is load-bearing rather than decoration: without it, *"write
+  only when there is something to report"* ships silently and a reader checking "no errors" passes on a
+  receipt that never looked.
+
+**No regression:** `test_wakerctl.py` 17 failed / 37 passed, against 17 / 30 before — the same 17
+pre-existing failures, +7 new passes. Whole `docs/orchestration` 20 failed / 86 passed against the
+20 / 79 recorded on 2026-08-02: **identical failure set.**
+
+**⚠ THE NEW TEST IS NOT COLLECTED BY THE PROJECT TEST COMMAND, and I am not silently fixing that.**
+`FINDING-20260802-orchestration-tests-never-run.md` still holds, re-measured today: the command is
+`pytest nd-unfolding/tests`, there is no `pytest.ini` / `setup.cfg` / `testpaths` anywhere, and
+`docs/orchestration` collects **106** tests that no baseline includes — of which **20 are red and have
+been since at least 2026-07-20.** So this fix is guarded by a test that runs only when someone names the
+path. Widening collection changes the announced baseline for every lane (BEN-079) and would import 20 red
+tests into it, so it is a shared decision and is **routed, not taken.** Counts in the BEN-079 form:
+`pytest nd-unfolding/tests` = **1008** and `pytest docs/orchestration` = **106**, both on the **local Mac
+checkout** @ `8c99e36` — not comparable with cluster counts.
+
 
 ## The `wakerctl.py` pin in the Gate-3 queue-latency receipt LAPSED on 2026-07-20 — and three fixes were declined today on the belief it was live (found 2026-08-11)
 

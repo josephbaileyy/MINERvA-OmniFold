@@ -598,30 +598,77 @@ def emit_event(
 
 
 def scan(ctx: Ctx) -> list[str]:
-    """One poll pass; emits events for fired watches. Returns emitted event ids."""
+    """One poll pass; emits events for fired watches. Returns emitted event ids.
+
+    EACH WATCH IS ISOLATED. Before 2026-08-11 `evaluate()` was called unguarded, so a single
+    malformed watch aborted this loop, skipped the `_write_tick_receipt()` below it, and propagated
+    out through `tick()` -- which meant dispatch, idle_guard, notify_guard and status_report_guard
+    were all skipped as well. The whole waker then did nothing on that tick and on every tick after,
+    and its only growing signal was `logs/cron-tick.log`, the one file the liveness rule tells you
+    NOT to read for health. So the failure was silent in the direction that matters.
+
+    The realistic malformation is NOT a corrupt file: `load_watches()` already suppresses
+    `OSError`/`json.JSONDecodeError`, so unparseable JSON is skipped and harms nothing. It is a watch
+    that is valid JSON with bad CONTENT -- an unknown `kind` (which `evaluate()` ends by raising on,
+    deliberately), a missing `kind`, or missing `params` -- i.e. a watch armed under an older schema,
+    or hand-edited in this text-file state tree.
+
+    Errors are counted and surfaced rather than swallowed: the count goes into `last-tick.json` as
+    `watch_errors`, ALWAYS present so that zero is distinguishable from written-by-an-older-version.
+    A guard that hides its own firing is the defect one level along.
+    """
     emitted: list[str] = []
+    errors: list[dict] = []
     for watch in load_watches(ctx):
         if watch.get("state") != "armed":
             continue
-        fired = evaluate(ctx, watch)
-        if fired is None:
-            continue
-        event_type, payload = fired
-        event_id = f"evt-{watch['watch_id']}"
-        emit_event(ctx, event_id, watch["watch_id"], event_type, payload)
-        watch["state"] = "fired"
-        watch["fired_at_utc"] = ctx.now_iso()
-        save_watch(ctx, watch)
-        emitted.append(event_id)
-    _write_tick_receipt(ctx)
+        wid = watch.get("watch_id") or "<no-watch_id>"
+        try:
+            fired = evaluate(ctx, watch)
+            if fired is None:
+                continue
+            event_type, payload = fired
+            event_id = f"evt-{wid}"
+            emit_event(ctx, event_id, wid, event_type, payload)
+            watch["state"] = "fired"
+            watch["fired_at_utc"] = ctx.now_iso()
+            save_watch(ctx, watch)
+            emitted.append(event_id)
+        except Exception as exc:  # noqa: BLE001 -- one bad watch must not silence every other one
+            errors.append({"watch_id": wid, "error": f"{type(exc).__name__}: {exc}"})
+            # Both writes below are individually guarded: nothing in the per-watch path may abort the
+            # tick, INCLUDING the code that records that the per-watch path failed.
+            with contextlib.suppress(Exception):
+                ctx.ledger(f"evt-{wid}", "watch-evaluate-error", f"{type(exc).__name__}: {exc}")
+            # Bump the existing `unreliable` counter so a repeatedly-failing watch is visible in
+            # `watch-list` state and not only in the ledger. It is NOT disarmed: an exception here is
+            # not necessarily permanent (a subprocess or filesystem hiccup raises too), and disarming
+            # on one bad tick would silently retire a watch somebody is depending on -- the same
+            # fail-open-into-silence this guard exists to end.
+            with contextlib.suppress(Exception):
+                watch["unreliable"] = int(watch.get("unreliable", 0)) + 1
+                save_watch(ctx, watch)
+    _write_tick_receipt(ctx, errors)
     return emitted
 
 
-def _write_tick_receipt(ctx: Ctx) -> None:
-    agentctl.atomic_write_json(
-        ctx.state_dir / "last-tick.json",
-        {"at_utc": ctx.now_iso(), "node": socket.gethostname(), "pid": os.getpid()},
-    )
+def _write_tick_receipt(ctx: Ctx, errors: list[dict] | None = None) -> None:
+    """Record that a tick completed, and how cleanly.
+
+    `watch_errors` is written UNCONDITIONALLY -- 0 when the pass was clean. An absent key would be
+    indistinguishable from a receipt written before this field existed, which is the null-as-absent
+    shape: a reader checking "no errors" would pass on a file that never looked.
+    """
+    errors = errors or []
+    receipt = {
+        "at_utc": ctx.now_iso(),
+        "node": socket.gethostname(),
+        "pid": os.getpid(),
+        "watch_errors": len(errors),
+    }
+    if errors:
+        receipt["watch_error_detail"] = errors
+    agentctl.atomic_write_json(ctx.state_dir / "last-tick.json", receipt)
 
 
 # ---------------------------------------------------------------------------
