@@ -640,9 +640,35 @@ provider call"* and `:1297` prints *"quiet ticks silent"*.
 not the last run.** A three-week-stale `cron-tick.log` means *no crash in three weeks*. **The staleness is the
 healthy state and the name says the opposite.**
 
-**Judge cron liveness from `state/waker/last-tick.json` (or `LEDGER.tsv`) mtime, with `TZ=UTC` pinned** — never
-from `cron-tick.log`. Pinning the timezone matters: comparing a local-clock timestamp against cluster UTC
-produced a spurious four-hour gap here on 2026-08-11 before it was caught.
+**Judge cron liveness from `state/waker/last-tick.json` (or `LEDGER.tsv`) mtime, with `TZ=UTC` pinned.** Pinning
+the timezone matters: comparing a local-clock timestamp against cluster UTC produced a spurious four-hour gap
+here on 2026-08-11 before it was caught.
+
+**AMENDED the same day — "never use `cron-tick.log`" was WRONG, and the correction matters because it forecloses
+the only discriminator for one real failure mode.** `scan()` calls `evaluate(ctx, watch)` inside its watch loop
+**with no per-watch guard**, and `_write_tick_receipt()` is **after** the loop; `tick()` calls `scan(ctx)` as its
+first statement, also unguarded, before `dispatch()` / `idle_guard()` / `notify_guard()` /
+`status_report_guard()`. Verified in the file. **So one exception from one watch skips the receipt** — and
+`last-tick.json` freezes while the cron process keeps running perfectly every five minutes. Under that failure
+the instrument this entry designated authoritative reports "dead cron", which is the wrong conclusion in the
+wrong direction. **The pair is the instrument, not either file:**
+
+| `cron-tick.log` | `last-tick.json` | meaning |
+|---|---|---|
+| stale | fresh | **healthy** — the steady state |
+| stale | stale | **cron not running** — queue, scrontab, or walltime |
+| **growing** | **stale** | **`scan()` crashing every tick — process alive, waker DEAD** |
+| growing | fresh | a non-fatal write; read it |
+
+So: **`last-tick.json` is authoritative for liveness only while `cron-tick.log` is not growing.** Rows 2 and 3
+demand opposite responses — *restart the cron* versus *fix a watch* — and only the growth of the "never use it"
+file separates them. *Caught by the oversight session reading the third finding out of the same 2026-08-06 log
+entry that produced this row.*
+
+**The general rule underneath, now with two files proving it needs to be general:** `cron-tick.log` and
+`last-tick.json` are both quiet-means-what? artifacts and **quiet means opposite things in each**. BEN-028 says a
+quiet log does not mean a dead job; the rule underneath is that **quiet has no fixed meaning until you know the
+write condition.**
 
 **The traceback the file does contain is from a superseded revision.** Its frames are `evaluate` at `:432`,
 `main` at `:1253`, module at `:1275`; `wakerctl.py` is now 1420 lines and those numbers land on unrelated code.
@@ -670,3 +696,38 @@ skipped: the same ground re-covered twice, wrongly, five days later.
 It also inverts **BEN-028** in a way worth holding beside it: there, *a quiet log does not mean a dead job*.
 Here, **a quiet log means a healthy job** — and the quiet was read as the symptom. Before reading any artifact as
 evidence, **establish its write condition**: a file written only on failure cannot report success.
+
+
+## `scan()` has no per-watch exception guard, so one bad watch silences the entire waker — permanently (found 2026-08-06, specified 2026-08-11, NOT FIXED)
+
+`wakerctl.py`: `scan()` iterates `load_watches(ctx)` and calls `evaluate(ctx, watch)` **with no `try/except`**,
+then calls `_write_tick_receipt()` **after** the loop. `tick()` calls `scan(ctx)` as its **first statement**,
+unguarded, before `dispatch()`, `idle_guard()`, `notify_guard()` and `status_report_guard()`.
+
+**One exception from one watch therefore does four things, not one:**
+
+1. **aborts the loop** — every armed watch later in iteration order is never evaluated, this tick or any tick;
+2. **skips the tick receipt**, so `last-tick.json` goes stale (see the entry above — this is why liveness needs
+   the file *pair*);
+3. **propagates out of `tick()` before all four guards** — nothing dispatches, nobody is notified, no status
+   report, no idle detection. **The waker does nothing, permanently, while the cron keeps firing on schedule;**
+4. writes its traceback to `cron-tick.log`, which is the only outward sign.
+
+**This is the single point of failure in the durable-notification path both lanes depend on across session
+death, and its signature is indistinguishable from "the cron is late"** — which is exactly the reading two
+sessions reached on 2026-08-11 before measuring. It was first noted on 2026-08-06 as *"that exception aborted
+the whole scan, so one bad watch can silently stop every other one"*, in the chronology log only; the blast
+radius is broader than that sentence claims, because the guards run after `scan()` rather than beside it.
+
+**The fix, specified:** wrap the per-watch `evaluate` in `try/except Exception`; mark that watch `unreliable`
+(the field already exists) or disarm it with a stored reason; ledger it; `continue`. **The test that proves it:**
+arm a deliberately malformed watch beside a valid one and assert the valid one still fires and the receipt is
+still written — a fix without that test is unpowered, and the historical crash (`parse_utc` on a multi-row
+`squeue` response) is the natural fixture.
+
+**NOT FIXED, and the reason is the same one that blocks the `read_scrontab` fail-open above:** `wakerctl.py` is
+hash-pinned into `p3f-pet-gate3-queue-latency-reconciliation-56169838.json` and is one of the four known
+submit-time hash drifts, so editing it moves a sha a receipt cites. That belongs to whoever owns that re-issue,
+in one commit with the test. **Currently low blast radius** — only two armed watches, both `provider-reset`
+dated 2026-08-18 — so this is a real single point of failure rather than an active fire. It belongs in the
+"gates that cannot fail" family: **a scan that cannot complete is a gate that cannot fire.**
