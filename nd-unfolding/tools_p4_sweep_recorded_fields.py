@@ -31,9 +31,11 @@ for f, s in src.items():
     # dict literals assigned into those products
     for m in re.finditer(r'"([A-Za-z][a-zA-Z0-9_]{2,})"\s*:', s):
         written.setdefault(m.group(1), set()).add(f)
-# shell: printf JSON keys
+# shell: printf JSON keys.  The value may be a quoted string or an unquoted
+# JSON scalar/object substituted through printf (for example %s).  Inventory
+# the key independently of the value representation.
 for f, s in sh.items():
-    for m in re.finditer(r'"([a-z][a-zA-Z0-9_]{2,})":"', s):
+    for m in re.finditer(r'"([a-z][a-zA-Z0-9_]{2,})"\s*:', s):
         written.setdefault(m.group(1), set()).add(f)
 
 # ---------- is the field ever COMPARED? ----------

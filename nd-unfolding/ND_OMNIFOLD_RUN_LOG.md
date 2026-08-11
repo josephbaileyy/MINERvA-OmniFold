@@ -4526,3 +4526,12 @@ its projected product remain self-declared publication rejects under `P4_NON_ADO
 adoption is authorized or performed. The recorded-fields sweep extractor false negative remains a
 separate owner-neutral tooling item. Final receipt:
 `../docs/orchestration/state/p4-packetb-final-pass-20260811.json`.
+
+The owner-neutral sweep defect was then closed without another provider dispatch. Shell JSON-key
+harvesting now accepts any value representation after the colon, so the unquoted `%s` values used
+for `receipt_schema` and `surface_blobs` can no longer disappear from the mechanical inventory. A
+focused regression binds both fields to the production launcher; the guarded snapshot moves from
+113 to 115 recorded-but-not-same-line-compared fields and retains 28 named gates. The proportional
+P4 guard battery passed **172 tests + 31 subtests**. This changes only audit coverage: the receipt
+gate, ROOT products, physics, thresholds, and non-adoptable state are unchanged. Receipt:
+`../docs/orchestration/state/p4-packetb-sweep-extractor-fix-20260811.json`.

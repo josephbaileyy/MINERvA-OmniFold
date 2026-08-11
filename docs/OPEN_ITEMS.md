@@ -216,11 +216,15 @@ not close the literal full-event PET gate below.
       **CLOSED by the same `standard-p4-verifier` UUID at `1440b58` (2026-08-11).** The verifier
       required a second repair so explicit JSON null could not inherit grandfathering; the final
       real-CLI/helper battery is 274 pass + 29 subtests. This closes PB2, not adoption.
-      A separate mechanical-auditor gap was exposed while closing the null cases:
+      A separate mechanical-auditor gap was exposed while closing the null cases and **closed
+      2026-08-11**:
       `tools_p4_sweep_recorded_fields.py` only harvests shell JSON keys whose values are quoted,
       so it does not inventory `receipt_schema` or `surface_blobs`, which are emitted through
       unquoted `%s` substitutions. Both fields are genuinely gated and integration-tested; the
-      open item is the sweep's false-negative extraction, not the production receipt gate.
+      defect was the sweep's false-negative extraction, not the production receipt gate. The
+      shell-key extractor now treats key syntax independently of value representation, a focused
+      regression asserts both production fields are harvested, and the guarded snapshot records
+      them explicitly.
   - **The single largest structural gap: there is no CI in this repository.** Every guard binds an
     author who runs `pytest`; none binds a commit.
   - **Anyone quoting a number derived from this covariance must cite that document alongside it.**

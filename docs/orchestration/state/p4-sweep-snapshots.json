@@ -169,6 +169,7 @@
       "projected_support",
       "projected_support_basis",
       "projection_identity_relerr",
+      "receipt_schema",
       "rel_asymmetry",
       "rel_integral",
       "replaced_lateral_bands",
@@ -190,6 +191,7 @@
       "support_family",
       "support_family_sha256",
       "support_ratio_is_diagnostic_not_bounded",
+      "surface_blobs",
       "use_weights",
       "verifier_crosscheck",
       "worst_rel_bin",
@@ -225,7 +227,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 113,
+    "n_fields": 115,
     "n_gates": 28,
     "tool": "tools_p4_sweep_recorded_fields"
   }
