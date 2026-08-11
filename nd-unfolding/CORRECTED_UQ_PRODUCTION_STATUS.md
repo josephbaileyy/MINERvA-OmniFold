@@ -7,6 +7,12 @@
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-11 BEN-106 code one-liner — construction-contract propagation is implemented and power-tested,
+but no artifact has been rebuilt.** `adopt_unified_5d.py` now requires and propagates
+`fixed_seed_null_norm`, `joint_mean_shift_norm`, `n_throws`, and `hJointMeanShift`; absence or a mean-shift
+dimension mismatch aborts. Three ROOT-free tests pass. The existing footing candidate is byte-untouched,
+so causes 2/3/4 remain OPEN on adopted-product provenance, nothing is adopted, and zero causes discharge.
+
 **2026-08-11 provenance one-liner — the footing candidate's predeclared eight-file SHA-256 receipt is
 complete.** Read-only verifier `56695130` passed in 1:37 and bound the throw ROOT, both combined-footing
 inputs, four arm products, and whole-stream `56693207` log to committed launcher `cc77d8ca…`; receipt

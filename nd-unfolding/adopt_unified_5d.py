@@ -41,6 +41,44 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
 VERT_BANDS = ["2p2h", "CCQEPauliSupViaKF", "FrAbs_pi", "FrElas_N", "HighQ2", "LowQ2",
               "MaCCQE", "MaRES", "MFP_N", "MvRES", "Rvn2pi", "Rvp2pi", "Flux"]
 
+# BEN-106: these are construction-contract evidence, not optional diagnostics.
+# The adopted covariance is the publication-facing artifact, so it must carry
+# the upstream throw contract with it instead of requiring a consumer to find a
+# purgeable, gitignored ROOT one hop upstream.
+CONTRACT_PARAMETERS = {
+    "fixed_seed_null_norm": "double",
+    "joint_mean_shift_norm": "double",
+    "n_throws": "int",
+}
+
+
+def _read_construction_contract(source, expected_bins):
+    """Read and detach the required throw contract, failing closed on absence."""
+    values = {}
+    for name in CONTRACT_PARAMETERS:
+        obj = source.Get(name)
+        if not obj:
+            raise ValueError(f"throw input lacks required construction stamp {name}")
+        values[name] = obj.GetVal()
+
+    upstream = source.Get("hJointMeanShift")
+    if not upstream:
+        raise ValueError("throw input lacks required construction object hJointMeanShift")
+    if upstream.GetNbinsX() != expected_bins:
+        raise ValueError(
+            f"hJointMeanShift bins {upstream.GetNbinsX()} != covariance bins {expected_bins}"
+        )
+    detached = upstream.Clone("hJointMeanShift")
+    detached.SetDirectory(0)
+    return values, detached
+
+
+def _write_construction_contract(root, values, mean_shift):
+    """Write the inherited contract into the currently open output ROOT."""
+    for name, kind in CONTRACT_PARAMETERS.items():
+        root.TParameter(kind)(name, values[name]).Write()
+    mean_shift.Write("hJointMeanShift")
+
 
 def _th2(h):
     nx, ny = h.GetNbinsX(), h.GetNbinsY()
@@ -87,10 +125,14 @@ def main():
     fu = ROOT.TFile.Open(args.uthrow)
     vu = np.clip(_diag(fu.Get("C_unified")), 0, None)   # unified per-bin variance (mean-centered)
     vb = np.clip(_diag(fu.Get("C_blocksum")), 0, None)  # bank block-sum per-bin variance (comparator)
+    try:
+        contract_values, contract_mean_shift = _read_construction_contract(fu, vu.size)
+    except ValueError as exc:
+        raise SystemExit(f"[FAIL] {exc}") from exc
     if args.cv_centered:
         # F7: CV-centered variance = mean-centered variance + shift^2 (do NOT silently drop the shift)
-        hms = fu.Get("hJointMeanShift")
-        ms = np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
+        ms = np.array([contract_mean_shift.GetBinContent(i + 1)
+                       for i in range(contract_mean_shift.GetNbinsX())])
         assert ms.size == vu.size, f"mean_shift dim {ms.size} != unified dim {vu.size}"
         vu = vu + ms ** 2
     fu.Close()
@@ -165,6 +207,7 @@ def main():
     hg.Write()
     ROOT.TParameter("double")("sqrt_tr_old", sqrt_tr_comb).Write()
     ROOT.TParameter("double")("sqrt_tr_new", sqrt_tr_new).Write()
+    _write_construction_contract(ROOT, contract_values, contract_mean_shift)
     fo.Close()
     print(f"[adopt5d] wrote {args.out}")
 

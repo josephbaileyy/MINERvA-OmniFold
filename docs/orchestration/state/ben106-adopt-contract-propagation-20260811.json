@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "receipt_type": "code-remediation",
+  "recorded_at_utc": "2026-08-11T23:51:46Z",
+  "finding": "BEN-106",
+  "scope": "future 5D unified-throw adopted covariance products",
+  "files": {
+    "production": {
+      "path": "nd-unfolding/adopt_unified_5d.py",
+      "before_sha256": "59ee28e8be86f9034852640c3c5ebd8ea0efa43390824134b22089de31c7467f",
+      "after_sha256": "6ea0e04bce7bfe7b906464043c137a6cfcc0c1b634706be25c0bc9613deeb4aa"
+    },
+    "test": {
+      "path": "nd-unfolding/tests/test_adopt_unified_5d_contract.py",
+      "sha256": "6b602294ae097729a367b3f82c40ce0bca2107db734834320737d32bbc47a099"
+    }
+  },
+  "behavior": {
+    "required_upstream_parameters": [
+      "fixed_seed_null_norm",
+      "joint_mean_shift_norm",
+      "n_throws"
+    ],
+    "required_upstream_object": "hJointMeanShift",
+    "fail_closed_on_missing_parameter": true,
+    "fail_closed_on_missing_object": true,
+    "fail_closed_on_mean_shift_dimension_mismatch": true,
+    "histogram_detached_before_source_close": true,
+    "all_four_items_written_to_output": true
+  },
+  "tests": {
+    "new_root_free_contract_tests": {
+      "command": "python3 nd-unfolding/tests/test_adopt_unified_5d_contract.py",
+      "result": "3 passed",
+      "coverage": "each missing item, dimension mismatch, detached round-trip with exact parameter types"
+    },
+    "existing_uq_remediation_tests": {
+      "command": "python3 nd-unfolding/tests/test_uq_remediation.py",
+      "result": "19 passed, 1 environment error",
+      "environment_error": "ModuleNotFoundError: sklearn in test_pet_toy_measured_bootstrap_retrains",
+      "scientific_assertion_failures": 0
+    },
+    "syntax": {
+      "command": "python3 -m py_compile nd-unfolding/adopt_unified_5d.py nd-unfolding/tests/test_adopt_unified_5d_contract.py",
+      "result": "PASS"
+    }
+  },
+  "current_artifact_effect": {
+    "root_product_rebuilt": false,
+    "candidate_adopted": false,
+    "values_tex_changed": false,
+    "quarantine_provenance_leg_closed": false,
+    "quarantine_causes_discharged": 0
+  },
+  "next_gate": "Independent committed-code review, then a separately authorized non-adopting artifact run must prove the four stamps in its output before any provenance leg can move to MET.",
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "persistent_worker_uuids_preserved": true
+}

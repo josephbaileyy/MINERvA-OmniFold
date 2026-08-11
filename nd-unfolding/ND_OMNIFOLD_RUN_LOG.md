@@ -5070,3 +5070,21 @@ Committed receipt:
 `../docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`. This closes only the
 predeclared provenance receipt. It changes no B2 number, adopts nothing, edits no `values.tex`, and
 discharges zero quarantine causes.
+
+## 2026-08-11 — BEN-106 stamp propagation implemented, artifact gate still open
+
+The next dependency-ready action after the footing hash receipt was the criteria table's cheapest shared
+gap for causes 2/3/4. `adopt_unified_5d.py` now treats the throw construction contract as required input:
+`fixed_seed_null_norm`, `joint_mean_shift_norm`, `n_throws`, and a dimension-matched
+`hJointMeanShift`. Missing evidence aborts before output; the histogram is cloned/detached before the
+throw ROOT closes; all four items are written beside the adopted covariance and existing trace stamps.
+
+ROOT-free power tests: **3/3 PASS** — every individual missing item, mean-shift dimension mismatch, and
+the detached exact write set (`double`, `double`, `int`, `TH1`) are exercised. Syntax PASS. Broader
+`test_uq_remediation.py`: **19 pass, one environment-only error** because the login Python lacks
+`sklearn` for `test_pet_toy_measured_bootstrap_retrains`; no scientific assertion failed.
+
+This is code readiness, not artifact provenance. No ROOT was rebuilt, no candidate adopted, `values.tex`
+untouched, and the table's adopted-product P legs remain OPEN until an independently reviewed,
+non-adopting run proves the stamps in its own output. Receipt:
+`../docs/orchestration/state/ben106-adopt-contract-propagation-20260811.json`.

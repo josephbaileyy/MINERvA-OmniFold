@@ -230,6 +230,14 @@ needs a static audit of X's path plus one measurement. Cause 6 needs a cluster r
 **Nothing here makes adoption nearer** — `values.tex` is untouched and the quarantine stands at **zero of
 seven** for this artifact.
 
+**IMPLEMENTED IN CODE 2026-08-11; NOT YET ESTABLISHED ON AN ARTIFACT.** `adopt_unified_5d.py` now fails
+closed unless the throw input carries `fixed_seed_null_norm`, `joint_mean_shift_norm`, `n_throws`, and a
+dimension-matched `hJointMeanShift`; it detaches and writes all four into every future adopted output.
+Three ROOT-free power tests cover every missing item, dimension mismatch, and the exact write set. This
+advances the remediation path but does **not** change the table above: no product has been rebuilt, so the
+adopted-product P legs remain OPEN and zero causes are discharged. Receipt:
+`state/ben106-adopt-contract-propagation-20260811.json`.
+
 **Cost order, cheapest first — recommended remediation sequence:** 2 → 4 → 3 → 1 → 6. Cause 2 needs one
 artifact read and one test. Causes 3 and 4 need the same artifact read plus power-tested guards. Cause 1
 needs a static audit and one measurement. Cause 6 needs a cluster run, a corrected upstream input, and a
