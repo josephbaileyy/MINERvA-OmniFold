@@ -7,6 +7,12 @@
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-11 provenance one-liner — the footing candidate's predeclared eight-file SHA-256 receipt is
+complete.** Read-only verifier `56695130` passed in 1:37 and bound the throw ROOT, both combined-footing
+inputs, four arm products, and whole-stream `56693207` log to committed launcher `cc77d8ca…`; receipt
+`../docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`. No recomputation, numerical
+change, adoption, `values.tex` edit, or quarantine discharge.
+
 **2026-08-11 one-liner — the footing-matched candidate EXISTS, both controls reproduce exactly, and the
 two corrections turn out NOT to be independent.** Job `56693207` (`sbatch_readopt_5d_bkgaware_footing.sh`,
 COMPLETED, ~14 min, four arms from one unchanged throw ROOT). **Nothing adopted; `values.tex` untouched;

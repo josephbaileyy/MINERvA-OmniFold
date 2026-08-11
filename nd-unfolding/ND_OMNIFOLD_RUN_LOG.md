@@ -5054,3 +5054,19 @@ earlier run reported **10** without enumeration and I did not capture which line
 returned **9** with the enumerated set above, so the count is stable at 9 and the single 10 stands
 unexplained rather than diagnosed. **BEN-088 rule (v) is exactly why it could not be chased** — I read a
 count without the matched lines, so there is nothing to go back to. `1011 + 9 + 1 = 1021`, consistent.
+
+## 2026-08-11 — footing re-adoption eight-file hash receipt complete
+
+Read-only batch job **56695130** (`readopt5d_hash`) completed `0:0` in **1:37**. It stable-read ~89 GB
+without ROOT writes: corrected throw input, background-aware and non-background-aware combined inputs,
+all four `56693207` arm products, and the untruncated source log. The receipt has exactly eight unique
+records with path, byte size, mtime and SHA-256; source job `56693207`; committed launcher SHA-256
+`cc77d8caf9df4562200172ae27aa22613184f2a49f38221b5ce789ddfe52e5cc`; source-log SHA-256
+`6fd6db410ca162bef98feac1ca5db991a4045de051c7174810e75b5fbcb5b4bf`; and flags
+`read_only=true`, `adopts_nothing=true`, `verdict=HASHES_COMPLETE`. Independent reconciliation checked
+all required fields and the A1/A2/C1/C2 input map: **PASS**.
+
+Committed receipt:
+`../docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`. This closes only the
+predeclared provenance receipt. It changes no B2 number, adopts nothing, edits no `values.tex`, and
+discharges zero quarantine causes.

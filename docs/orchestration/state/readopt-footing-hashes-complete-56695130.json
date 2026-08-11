@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "receipt_type": "external-event-reconciliation",
+  "recorded_at_utc": "2026-08-11T23:46:43Z",
+  "event": {
+    "event_id": "evt-readopt-footing-hashes-56695130",
+    "event_sha256": "1e1d74e8cea441d80af79531573a3b776fb4bccb531517201b9158036784f07a",
+    "watch_id": "readopt-footing-hashes-56695130",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-11T23:45:15+00:00",
+    "validation": "PASS"
+  },
+  "scheduler": {
+    "job_id": "56695130",
+    "job_name": "readopt5d_hash",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:01:37",
+    "start": "2026-08-11T16:43:11",
+    "end": "2026-08-11T16:44:48",
+    "allocation": "one CPU node, 4 billed CPUs, 4G"
+  },
+  "one_pass_artifacts": {
+    "stdout_sha256": "7af777048d9e14c40b6b15ca5f417911fe37c59c7ba9d3be87468cd576e5bd40",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cluster_receipt_sha256": "b6cecc62ec97fc5db2d97b5ed7027fed3a9ebf190f0f1b16cb81f6b23703dd3d",
+    "committed_receipt": "docs/orchestration/state/readopt-footing-hash-receipt-56695130.json"
+  },
+  "required_checks": {
+    "launcher_sha256_matches_committed": true,
+    "source_job_id_is_56693207": true,
+    "job_id_is_56695130": true,
+    "exactly_eight_named_file_records": true,
+    "all_records_have_path_size_mtime_sha256": true,
+    "all_paths_unique": true,
+    "whole_stream_log_sha256_matches": true,
+    "arm_map_matches_predeclaration": true,
+    "read_only": true,
+    "adopts_nothing": true,
+    "verdict_hashes_complete": true
+  },
+  "independent_verdict": "PASS",
+  "science_scope": {
+    "source_science_commit": "4f07b6d2d8334359cf5ba111b4762f60542536cc",
+    "numeric_verdict_unchanged": "B2_INTERACTION",
+    "adopts_nothing": true,
+    "values_tex_untouched": true,
+    "quarantine_causes_discharged": 0,
+    "rerun_performed": false
+  },
+  "usage_before_dispatch": {
+    "observed_at_utc": "2026-08-11T23:45:41+00:00",
+    "gate_ok": true,
+    "codex_personal_weekly_remaining_percent": 57.0,
+    "codex_personal_reset_at_utc": "2026-08-18T04:45:06+00:00",
+    "codex_school_weekly_remaining_percent": 90.0,
+    "codex_school_reset_at_utc": "2026-08-18T12:41:31+00:00",
+    "full_reset_credits_available": 0,
+    "provider_dispatches": 0
+  },
+  "persistent_worker_uuids_preserved": true,
+  "reset_credit_consumed": false,
+  "polling_performed": false
+}

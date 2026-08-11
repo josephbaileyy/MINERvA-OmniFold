@@ -1,0 +1,82 @@
+{
+  "adopts_nothing": true,
+  "arms": {
+    "A1": [
+      "uthrow",
+      "combined_bkgaware",
+      "A1_bkgaware_meancentered"
+    ],
+    "A2": [
+      "uthrow",
+      "combined_bkgaware",
+      "A2_bkgaware_cvcentered"
+    ],
+    "C1": [
+      "uthrow",
+      "combined_nonbkgaware",
+      "C1_control_nonbkg_meancentered"
+    ],
+    "C2": [
+      "uthrow",
+      "combined_nonbkgaware",
+      "C2_control_nonbkg_cvcentered"
+    ]
+  },
+  "created_at_utc": "2026-08-11T23:44:48+00:00",
+  "files": {
+    "A1_bkgaware_meancentered": {
+      "mtime_ns": 1786490305000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/adopted_bkgaware_meancentered_20260811_footing.root",
+      "sha256": "bf941c61d140555bd141f455800aa19de4f247860f8c9d68da673f6ab751cc71",
+      "size_bytes": 892169000
+    },
+    "A2_bkgaware_cvcentered": {
+      "mtime_ns": 1786490449000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/adopted_bkgaware_cvcentered_20260811_footing.root",
+      "sha256": "89d024bf5409c513c8d7c2b2f83583b8bf2ee475d05d8295ae0652b31c5ddb03",
+      "size_bytes": 892230323
+    },
+    "C1_control_nonbkg_meancentered": {
+      "mtime_ns": 1786490594000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/control_nonbkg_meancentered_20260811_footing.root",
+      "sha256": "e73dfff9c47b668b74a90ae75d615f55ac6e18f50f33c2a61b5b8c9c5a6d2b05",
+      "size_bytes": 892196903
+    },
+    "C2_control_nonbkg_cvcentered": {
+      "mtime_ns": 1786490736000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/control_nonbkg_cvcentered_20260811_footing.root",
+      "sha256": "00f0e3e6d73a3c9a0d2bf0e503ba3360e994ae690c9e0decc72cf74463d400bc",
+      "size_bytes": 892266600
+    },
+    "combined_bkgaware": {
+      "mtime_ns": 1784062757000000000,
+      "path": "nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+      "size_bytes": 41436632945
+    },
+    "combined_nonbkgaware": {
+      "mtime_ns": 1783994108000000000,
+      "path": "nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined.root",
+      "sha256": "8fc9ca6640a962a36b15bec40fe82d08c0fb328109a79685dfd093db0c5eae12",
+      "size_bytes": 40420225948
+    },
+    "uthrow": {
+      "mtime_ns": 1786063126000000000,
+      "path": "nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "sha256": "4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281",
+      "size_bytes": 2668021041
+    },
+    "whole_stream_log": {
+      "mtime_ns": 1786490737000000000,
+      "path": "nd-unfolding/uq_5d/readopt_footing_56693207.out",
+      "sha256": "6fd6db410ca162bef98feac1ca5db991a4045de051c7174810e75b5fbcb5b4bf",
+      "size_bytes": 4374
+    }
+  },
+  "job_id": "56695130",
+  "launcher_sha256": "cc77d8caf9df4562200172ae27aa22613184f2a49f38221b5ce789ddfe52e5cc",
+  "read_only": true,
+  "schema": "readopt-footing-hash-receipt-v1",
+  "source_job_id": "56693207",
+  "verdict": "HASHES_COMPLETE"
+}

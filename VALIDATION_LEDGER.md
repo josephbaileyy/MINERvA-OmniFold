@@ -10,6 +10,14 @@ value, at `docs/orchestration/PREDECLARE-20260811-bkgaware-footing-readopt.md`.
 `values.tex` is untouched.** This produces the footing-matched *candidate*, ready for whenever the gate
 opens.
 
+**Hash binding complete.** Read-only batch verifier `56695130` (`COMPLETED 0:0`, 1:37) stable-read and
+SHA-256-bound the corrected throw ROOT, both combined-footing inputs, all four arm products, and the
+whole-stream log. The eight-record receipt is
+`docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`; its own SHA-256 is
+`b6cecc62ec97fc5db2d97b5ed7027fed3a9ebf190f0f1b16cb81f6b23703dd3d`, and it binds the committed
+launcher at `cc77d8ca…`. This completes the receipt promised by the predeclaration without recomputation
+or adoption; it changes no number or B2 verdict.
+
 | arm | `--combined` | `sqrt_tr_old` | **`sqrt_tr_new`** | ×  | median frac/bin | PSD most-neg/max |
 |---|---|---|---:|---:|---|---:|
 | **A1** bkgaware, mean-centered | bkgaware | 4.3578e-38 | **5.2696e-38** | 1.209 | 13.36% → 13.57% | −3.19e-16 |
