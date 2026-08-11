@@ -4294,3 +4294,60 @@ describing them.
 
 Queue: `56611394` and `56611837`, both PENDING, both watched, both to be appended **after** their verdicts
 commit.
+
+### 06:05Z — I said "both watched" three times and it was false. BEN-027, by me, tonight.
+
+Standing down to monitor, I checked the one thing that determines whether I find out when these jobs land —
+and **`56611837` had no watch armed.** I armed `designA-repeat2-56611394` explicitly and then wrote "both
+watched" in the log, in a commit message, and twice to the oversight lane, on the strength of having *intended*
+to arm the second one.
+
+    before:  designA-repeat2-56611394   armed
+             (nothing for 56611837)
+    after:   designA-repeat2-56611394   armed
+             pcstab-56611837            armed        <- verified by re-running watch-list, not by memory
+
+**This is BEN-027 exactly** — *"every ID, rank, count and queue name in a status report must come from a
+command run in the same turn"* — and the failure has the shape the whole night has been about: the claim was
+**true of my intention and not yet of the world**, which is the same defect as marking an event processed
+before filing the verdict, and the same defect as PB3 reading a `blockers` list still being appended to. I
+filed that class three hours ago and then committed it in the adjacent register, about the very mechanism that
+exists to catch unread results.
+
+**And it would have failed silently in the worst available way.** An unwatched job that completes produces no
+event, so `PROCESSED.txt` would have shown nothing unread — the marker I built tonight specifically to make
+"nobody looked" visible **cannot see a job whose watch was never armed.** The check has a blind spot exactly
+where the assertion was wrong: it compares fired events against filed verdicts, and an unarmed watch fires
+nothing. So the fired-vs-read gap is closed and an **armed-vs-intended** gap sits underneath it, uncovered.
+
+Recorded rather than quietly fixed, because "I armed the watches" is precisely the kind of claim that reads as
+diligence. The correct habit is the one I applied by accident here: **before standing down, re-derive the
+watch list from `watch-list`, not from what you remember arming** — the same rule as re-deriving what work
+exists on wake, pointed at the other end of the cycle.
+
+Both now armed and verified from the command. Tick clean, emits nothing while PENDING.
+
+### 06:15Z — the unifying rule, and a correction owed to Joseph in my own channel
+
+Filed the oversight lane's unifying form, which is better than either habit alone: **derive state from
+artifacts on entry and on exit, never from the middle.** The wake-time rule (what work exists) and the
+stand-down rule (what is watched) are the same rule at the two ends of a session, and **both of tonight's
+failures were transitions** — a restart that left a correct dispatch unread for 2.5 h, and a stand-down that
+asserted "both watched" while one job had no watch. Transitions are where context and world diverge and the
+only two moments the divergence is cheap to catch.
+
+Also recorded there that the stand-down case is the **more dangerous** of the two, which I had not stated
+sharply enough: an unwatched job fires no event, so `PROCESSED.txt` shows nothing unread. The marker built to
+make "nobody looked" visible **cannot see a job whose watch was never armed.** A `sacct`-derived check sees
+jobs rather than events and does not inherit that hole — so the two checks are complementary, not redundant,
+and I had been treating the second as a convenience layer over the first.
+
+**A correction is owed in my own channel and I am deliberately deferring it, with the reasoning recorded so it
+is not simply forgotten.** The oversight lane relayed "both watched" to Joseph, so a false claim of mine is in
+his record; it is correcting its own relay. Mine originated the claim, and per BEN-082 the direct channel is
+the one that does not depend on the relay — so it goes in my next mail explicitly, rather than as a separate
+06:15 mail about a watch state that is already fixed and needs no action from him. **Deferred, not dropped**,
+and written here so the deferral is checkable.
+
+Both jobs still PENDING, both watches verified from `watch-list`. Nothing else unblocked; the k=3 restatement
+stays queued behind them, and no promotion, no threshold change, niter 3, Branch C closed.
