@@ -4437,3 +4437,39 @@ in six hours I have authored a rule I could not hold. Fixed to something impleme
 **append immediately after the verdict commit, with the verdict's sha in a preceding comment line**, so the
 entry carries evidence of the claim it makes. Comment lines are already filtered by the documented check, so
 no lane's tooling changes.
+
+### 08:40Z — recorded what the measurement actually bought, and a reading guard written before the data
+
+Three points from the oversight lane, all filed on CLM-012 as (ix)–(xi) since that is where the D2 pass and
+its margin live.
+
+**(ix) The precise statement of the result, because the wrong reading is available and attractive.** The
+*answer* did not change — the D2 pass stood before and stands now. What changed is its **stated security**, by
+an order of magnitude: `142` production scatters was wrong, `14.7` own-configuration spreads is measured.
+Someone will read this as *"the run was unnecessary, the conclusion held."* It was not: a load-bearing margin
+was on its way into the record at 10× its actual confidence. **Correcting the confidence is the result**, and
+this is the cleanest instance of the night's theme — **not a wrong conclusion, a right conclusion held at the
+wrong strength**, which is the only kind of error re-reading cannot find.
+
+**(x) The causal claim is dead and I recorded the mechanism as OPEN rather than quietly leaving the old
+answer.** Override-set identity does not transfer stability: identical sets, `1.226e-3` vs `1.27e-4`, 9.7×
+apart. So the stable/unstable split is **unattributed again**. We have measured that the families differ and
+no longer have a reason why. That is worse-looking than before and more accurate than before.
+
+**(xi) A reading guard, written before the third run lands so the softer phrasing is not available later.**
+The delta sits `3.2×` **above** the STABLE bound and at `85%` of the DIAGNOSTIC bound — much nearer diagnostic.
+*"Not diagnostic"* is the weaker of the two exclusions. It does not touch the decision, which rests on
+`14.7` own-spread units and excludes the feared `4.2` by measurement rather than classification. But **if
+`56626305` lands near `56611837`, the honest description is "closer to diagnostic than to production", not
+"in between".** Committing that now, before the data, is the only time it costs nothing.
+
+**And the score on structure is now a measurement rather than an argument.** Three rules authored and broken
+in six hours — the seed, the ordering, the gitignored same-commit contract — and all three caught
+structurally: by testing the seed against its own contract, by a peer's warning, and by *trying to implement*
+the third. None by care. At three-for-three, "prefer structure over discipline" stops being a preference.
+
+Also noted honestly: the deferred correction went out on the **easy** case. The verdict was non-boring so
+carrying it cost nothing. The hard case — a dull verdict where the correction is the only reason to mention a
+resolved problem — is **exercised but not stressed**.
+
+Queue: `56611394` RUNNING (~2:30), `56626305` PENDING. All three watches verified from the command.
