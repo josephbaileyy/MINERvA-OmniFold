@@ -162,13 +162,49 @@ published covariance, which is the note's claim, not a goodness-of-fit endorseme
 
 Job `56525829` completed `0:0` in 7m55s. The hash-bound trajectory artifact
 (`032f548f1b7b85fe...`) passed an independent schema/arithmetic audit and reproduced the three
-committed decomposition anchors bit-exactly. Verdict: **`CORRECT_AT_ITER0_DEGRADES_LATER`**.
+committed decomposition anchors bit-exactly.
 
-| iteration | prior push | achieved Step-1 ratio | required ratio | achieved/required | sign |
+> **CORRECTED 2026-08-11 (PET lane, own row). The verdict label below is RETIRED and the
+> `achieved/required` column was mislabelled — it is a FIRST-LEG-ONLY quantity that the harness itself
+> marks NOT comparable to `required`.** Both corrections come from the committed
+> `nd-unfolding/pet/step1_increment_trajectory.py` on `origin/main`, not from a re-run:
+>
+> - **`CORRECT_AT_ITER0_DEGRADES_LATER` was retired 2026-08-10** and renamed
+>   **`RIGHT_SIGN_AT_ITER0_INVERTS_LATER`**. The script carries the retirement in its own
+>   `verdict_label_history` (`:304-308`): *"'CORRECT' overstated a correction that end-to-end
+>   UNDERSHOOTS by ~2.8% at iteration 0; the load-bearing claim was always the SIGN. Same meaning,
+>   honest name."* This receipt predates the rename, carries the old string, and **means exactly the new
+>   one** — it is not re-run and not rewritten.
+> - **The column values 1.09735 / 0.88965 / 0.55811 are the field `r1_achieved_over_required`, which the
+>   current harness renames `r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE` (`:249`).** It
+>   divides a first-leg average `mean_w(r1)` by an END-TO-END requirement, omitting a covariance term and
+>   step 2's re-estimation (measured at +4.22% and +5.85% on the annealed arm). That is BEN-077's class
+>   and it **inflates the apparent shortfall**. The like-for-like field is
+>   `end_to_end_achieved_over_required`, and at iteration 0 it is **0.9721** — so **step 1 does NOT
+>   overshoot at iteration 0; it undershoots by ~2.8% with the correct sign.** Anyone reading 1.09735 as
+>   an overshoot is reading the wrong quantity.
+> - **The end-to-end values for iterations 1 and 2 are absent from this receipt**, because the schema
+>   that emitted it had no such field. They are being measured by job **56691812** (predeclared
+>   `docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md`), whose ARM 1 re-runs this
+>   exact artifact against this exact committed decomposition receipt under the current harness. Until
+>   that lands, **the wrong-sign claim at iterations 1 and 2 rests on the first-leg field** — which is
+>   the field this correction says is not like-for-like. The SIGN is the surviving claim; the magnitudes
+>   1.09735 / 0.88965 / 0.55811 are not to be quoted as achieved/required ratios.
+>
+> The scope sentence below is unaffected: this localizes a training defect to iteration dynamics after
+> initial feedback, and it is not a cross section. Also unaffected: the four **operand** columns (prior
+> push, achieved Step-1 ratio, required ratio) are raw measurements and stand as written — only the
+> derived ratio and the label were wrong. Indexed at
+> `docs/orchestration/INDEX-retracted-and-superseded-values.md`.
+
+Verdict as originally written: **`CORRECT_AT_ITER0_DEGRADES_LATER`** — read as
+`RIGHT_SIGN_AT_ITER0_INVERTS_LATER` per the correction above.
+
+| iteration | prior push | achieved Step-1 ratio | required ratio | ~~achieved/required~~ **first-leg only, NOT like-for-like** | sign |
 |---:|---:|---:|---:|---:|---|
-| 0 | 1.000000 | **1.233512** | **1.124080** | **1.09735** | correct |
-| 1 | 1.092736 | **0.915166** | **1.028684** | **0.88965** | wrong |
-| 2 | 0.967659 | **0.648331** | **1.161650** | **0.55811** | wrong |
+| 0 | 1.000000 | **1.233512** | **1.124080** | ~~1.09735~~ (end-to-end **0.9721**) | correct |
+| 1 | 1.092736 | **0.915166** | **1.028684** | ~~0.88965~~ (end-to-end pending 56691812) | wrong |
+| 2 | 0.967659 | **0.648331** | **1.161650** | ~~0.55811~~ (end-to-end pending 56691812) | wrong |
 
 Cap-saturated weight fraction is zero at all three iterations. Iterations 0 and 1 use checkpoint files
 labelled best-epoch, but their history minima are epoch 8/8, so those are also the actual last-epoch
