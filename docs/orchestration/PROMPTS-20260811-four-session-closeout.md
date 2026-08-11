@@ -35,6 +35,30 @@ D route anything needing Joseph to A, and A decides whether it is genuinely his.
 choice between defensible alternatives where the sessions reached no consensus. Not for status. He replies
 with a `[MNV-AUTO]` message on the same thread.
 
+## 0.1 Launch configuration — effort level and model per session
+
+| session | effort | model | why this level |
+|---|---|---|---|
+| **A — orchestrator** | **medium** | Sonnet sufficient | fixed four-step checklist plus routing; ticks on a schedule, so effort multiplies across many wakeups for little return. **See the warning below — do not raise this.** |
+| **B — uncertainty construction** | **high**, **xhigh** for the criteria-definition phase | Opus | defining what "discharged" means for five causes that have none recorded is novel design work, and getting it wrong invalidates everything built on it. Remediation afterward is high. |
+| **C — PET** | **high**, **xhigh** for Branch C | Opus | Branch C alone justifies it: `achieved/required` 1.097 → 0.890 → 0.558 with zero cap saturation on a last-epoch-faithful trajectory is an open diagnostic problem with no known fix. The 100-replica `C_stat` and the GiBUU rerun are mechanical and will simply cost less. |
+| **D — verifier** | **high**, **max** for the sweep's corpus definition | Opus | a verifier that misses a defect costs more than a worker that is slow, so effort pays most per token here. |
+
+**Do not give the orchestrator high effort, and this is deliberate rather than a cost saving.** High effort
+did not prevent the 2026-08-11 orchestrator's failures and plausibly worsened them: `188×`, `93/6/1`, the
+`wakerctl emit` mail path, `cron-tick.log` liveness, and *"Packet B unblocked adoption"* were every one an
+**elaborate, internally coherent chain built on a premise that was never checked.** Cheaper reasoning
+produces less convincing wrong claims, and a less convincing wrong claim is caught sooner — two of those
+five were caught by a worker lane only because it re-verified rather than agreed. The fix for A is the
+verification rules already in its prompt (source before asserting; grep the call sites before stating a
+mechanism; verify state before directing a change to a frozen artifact), not the effort dial.
+
+**Why D's corpus step specifically gets `max`.** The two best catches of 2026-08-11 were not insight, they
+were careful enumeration — establishing structurally, via `\newlabel` in the `.aux`, that a reference count
+was a single-pass artifact; and finding null-as-absent by enumerating all four null shapes instead of
+checking the direction the orchestrator suggested. Enumeration is the effort-sensitive skill, and a sweep
+whose corpus nobody checked is exactly the failure that step exists to avoid.
+
 ## 1. The communication method — use this, not a re-derivation
 
 All four sessions talk to each other with the cross-session peer channel:
