@@ -4827,3 +4827,47 @@ this is the first instance where the index would have caught me if I had consult
 have caught the near-miss exactly, since the content was byte-identical. That makes it a cheap fix rather than
 an inherent limit — but `wakerctl.py` is one of the four known submit-time hash drifts, so changing it moves a
 sha a receipt cites. Recorded in BEN-085 as the fix to make when someone owns that re-issue, not taken now.
+
+### 12:50Z — index reframed as a WRITE-time checklist; two rows added; its self-contradiction fixed
+
+Three changes, all the oversight lane's prompting and all sourced by grep.
+
+**1. The header now says read this at write time, not only at quote time.** Its point is the operational half of
+my own lesson: an index consulted when you *find* a suspicious number catches **quotation** errors; consulted
+*before you commit* a number it catches **derivation** errors — and only the second would have caught `0.0383`,
+which I wrote into a decision file eight hours after retracting its parent. The file read as a reader's lookup
+table and now reads as a writer's checklist.
+
+With the mechanism stated at the top, because it is the sharpest form of the lesson and it is theirs:
+**a retraction propagates by STRING MATCH, and derived quantities do not string-match.** `188.4×` was caught
+because it *is* the retracted number; `0.0383` was missed because it is `0.05 −` it. **Grepping a retracted value
+does not find its descendants** — so the question to ask before committing a number is what it was computed
+*from*, not whether the number itself is listed.
+
+**2. Two rows added, and grep corrected the relay on both.**
+
+- **The four `\gbdtFive*` macros** (`values.tex:57-60`, all unmarked) — dead on two independent grounds, the
+  07-12 quarantine *and* the J28 flux correction. I was told three print as prose; **all four do**:
+  `sec_systematics.tex:163`, `:165`, `:166`, `:168`. Carried the trap that matters: `\gbdtFiveMeanShift` moves
+  **up** 13.6% while the other three move **down** ~9%, so **no uniform scale factor patches them** and anyone
+  assuming one gets the mean shift backwards.
+- **`INTEGRATION_CHECKLIST.md:61-62`**, under the heading *"## Verified / quotable (ledger) — safe to keep"*.
+  Line 61 is the `\gbdtFive*` covariance at full precision. **Line 62 was not reported to me and is worse:**
+  *"Corrected recoil PET C_total 3.8777e-38"* is the same value `values.tex:70` marks **`QUARANTINED`** as
+  `\petTotalTrace` (3.878e-38). **So the checklist lists as "safe to keep" a number the note's own macro file
+  marks dead.** Found while sourcing the row above — the location column earning its keep a third time.
+
+**3. Fixed the file's self-contradiction, which is the kind of defect this file least affords.** Its honesty
+column still said the 07-12 quarantine *"is therefore not indexed"* after `6dff2fa` had indexed part of it.
+Understating coverage is the safe direction, but **a file whose entire value is a trustworthy self-description
+cannot be wrong about itself.** Now states precisely what is indexed (PET macro class, `\gbdtFive*` class) and
+what is not (`(E_avail,W)` covariance, the 4D/5D/FPS unified-throw adoptions, and every significance derived
+from them), with the same reason as before for the omissions.
+
+**Recorded from their side too:** their note audit's SUPERSEDED column is complete for *values* and empty by
+construction for *derivations* — it looks for values whose own canonical entry moved, so a `0.0383`-shaped item
+appears nowhere in any retraction. They have told Joseph that is a gap rather than let the report read as
+exhaustive, which is the same discipline as this file's honesty column.
+
+Ready to review the note repairs. The axis I will check hardest is **operand currency**, not derivation
+correctness — `\petRatio` reproduces perfectly from operands that are both stale.

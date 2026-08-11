@@ -5,8 +5,19 @@ corpus, presented with the same confidence as a live one, and **nothing at the p
 A fresh session writing the analysis-note update reads artifacts, not this session's context — so a value that
 is only known-dead inside one agent's head is, operationally, alive.
 
-**Read this before quoting any number from `VALIDATION_LEDGER.md`, a `PREDECLARATION-*`, a `*_RUN_LOG.md`, a
-receipt JSON, or a commit message.**
+**READ THIS AT WRITE TIME, NOT ONLY AT QUOTE TIME.** Consulted when you find a suspicious number, this file
+catches **quotation** errors. Consulted **before you commit a number**, it catches **derivation** errors — and only
+the second would have caught the `0.0383` row below, which was written into a decision file by the same session
+that had retracted its parent value eight hours earlier. Treat it as a checklist for writers.
+
+**THE RULE THAT MAKES THAT NECESSARY: a retraction propagates by STRING MATCH, and derived quantities do not
+string-match.** `188.4×` was caught because it *is* the retracted number. `0.0383` was missed because it is
+`0.05 −` the retracted number. **So grepping the retracted value does not find its descendants.** Before
+committing any number, ask what it was computed *from* and whether that operand is on this list — not whether
+the number itself is.
+
+**Also read it before quoting any number from `VALIDATION_LEDGER.md`, a `PREDECLARATION-*`, a `*_RUN_LOG.md`, a
+receipt JSON, `docs/INTEGRATION_CHECKLIST.md`, or a commit message.**
 
 **Sourced from `git grep`, not from recall.** Every "where it still appears" entry below was located by search
 at `2026-08-11`. Where I could not source a location, the row says so rather than listing it from memory — an
@@ -53,6 +64,8 @@ claims that look identical on the page.
 | **`142 scatters` / `142 production scatters`** (D2 margin) | `nd-unfolding/pet/sbatch_powered_closure_stability_repeat.sh:138` — **hardcoded in the launcher's STABLE verdict text, and it printed at full confidence in `56626305`'s log hours after retraction**; `PREDECLARATION-20260811-powered-closure-stability.md:22,43`; `CLAIMS.md` CLM-012 (ix); `AUTONOMOUS_LOG_20260805.md:4174,4422,4489` | **`22.0`** — margin ÷ the three-run closure sd (`0.000820128`). And preferably **no ratio at all**: all 3/3 draws clear the bar individually | Same wrong-population error. Retracted at `98d502d`. **The launcher instance is the dangerous one** — verdict text should emit the *comparison*, not a derived number that lives elsewhere, or it prints stale claims automatically |
 | **`14.7`** (margin ÷ two-point closure difference) | `CLAIMS.md` CLM-012 (ix); `AUTONOMOUS_LOG_20260805.md` 08:25Z entry; commit `98d502d` message | **`22.0`** as above | Two-point difference used as a spread, again |
 | **`0.0383` expected fold-forward headroom**, and any phrasing calling production's `0.0144` a *"loss of headroom"* | `KNOWN_ISSUES.md:551` (**fixed**); `AUTONOMOUS_LOG_20260805.md:3323,3433,3882,4786`; and — worst — an earlier version of `state/waker/BLOCKED-ON-USER.json`, the file used to decide promotion (**fixed 2026-08-11T12:35Z**, with a `correction_history` entry) | **Production `|dev| = 0.035609` consumes 71.2% of FROZEN's `0.05` tolerance, `0.014391` remaining.** Tight, worth seeing, **not a regression** | `0.0383 = 0.05 − 0.011724` — headroom implied by the diagnostic arm's **retracted single draw**. There was never a validated `0.0383` expectation, so nothing was lost. **The dangerous part is where it sat:** in a decision file, it biased a promotion decision against promotion on a retracted basis. Raised by the oversight session retracting its own original phrasing |
+| **the four `\gbdtFive*` macros** — `\gbdtFiveBlockMedian` 13.36, `\gbdtFiveAdoptTrace` 5.81e-38, `\gbdtFiveCVTrace` 6.24e-38, `\gbdtFiveMeanShift` 1.65e-38 | `docs/analysis-note/values.tex:57-60`, **all four unmarked**; and **all four print as prose** — `sec_systematics.tex:163` (block median), `:165` (adopt trace), `:166` (mean shift), `:168` (CV trace) | pending adoption of the corrected products; **not this lane's to supply** | dead on **two independent grounds** — the 2026-07-12 quarantine class *and* the J28 flux correction. **`\gbdtFiveMeanShift` moves UP 13.6% while the other three move DOWN ~9%, so no uniform scale factor patches them** and anyone assuming one gets the mean shift backwards. Raised by the oversight session; located here by grep, which found **four** consumed in prose rather than the three reported |
+| **`5.8077e-38` / `6.2367e-38`** (5D GBDT adopted covariance) **and `3.8777e-38`** (recoil PET C_total) | `docs/INTEGRATION_CHECKLIST.md:61` and `:62`, both under the heading **"## Verified / quotable (ledger) — safe to keep"** | the corrected post-J28 products, pending adoption | Same shape as the `VALIDATION_LEDGER` row: dead values under a heading that is **an explicit safety claim**. The first pair is the `\gbdtFive*` covariance at full precision. **The second is worse and was not previously reported: `3.8777e-38` is the value `values.tex:70` marks `QUARANTINED` as `\petTotalTrace` (3.878e-38) — so the checklist lists as "safe to keep" a number the note's own macro file marks dead.** Found here while sourcing the row above |
 | **`recovery_criteria_met`** (report field) | Every `POWERED_CLOSURE_*.json`: `slurm-56552326`, `slurm-56611837`, `slurm-56626305`, and the graded closure's; documented at `KNOWN_ISSUES.md:447-467` | The **validator** `validate_pet_nominal_gate4.check_powered_closure`, which reads the adopted `residual_over_gap_max` | Computed against the **retired** `recovery >= 0.80` bar, so it reads `false` for results the campaign has adopted as passing. **A self-report, never the gate** |
 | **`RESIDUAL_OVER_GAP_MAX = 0.20`** (the retired bar, still executing) | `nd-unfolding/pet/closure_powered_truth_reweight.py:105` — **live code, deliberately not fixed** | Adopted criterion `recovery >= f × ceiling(k)`; at k=3, `0.4945824` | CLM-012 retired the absolute `0.80` bar on 2026-08-09. Not patched because editing a threshold inside a closure is the prohibited act and the validator already governs — it also causes the **expected exit 3** that makes completed runs read `FAILED` |
 | **`0.5126032761517403`** used as *the* D2 recovery | `CLAIMS.md` CLM-010 (vi) and CLM-012; both powered-closure predeclarations | **ALIVE-AS-CITED-ARTIFACT-ONLY.** Keep citing it as job `56552326`'s validated value (finalizer `56562169`, 31/31). Best estimate is the three-run mean **`0.5123048`, sd `0.000820128`** | Not wrong — one of three draws, and the only one with a finalizer behind it. Quoting it as *the* recovery overstates precision; replacing it in the gate would break a validated provenance chain |
@@ -136,10 +149,13 @@ than a search. Open, and explicitly so.
 
 ## Not included, and why — the honesty column
 
-- **The 2026-07-12 quarantine** was named to me as a candidate. **I have not sourced it** and it is therefore
-  **not indexed**: I could not point at which values from it are still readable as live without a search I did
-  not run. Listing it from a description would be exactly the defect this file exists to fix. **Open item for
-  whoever holds that context.**
+- **The 2026-07-12 quarantine is now PARTIALLY indexed** — corrected 2026-08-11, because an earlier version of
+  this column said it was *"not indexed"* after `6dff2fa` had already indexed part of it. **A file whose value
+  is a trustworthy self-description cannot be wrong about itself**, even in the safe direction of understating
+  coverage. **Indexed:** the PET macro class (`\petRatio`, `\petGbdtGap`, and the marking inversion) and the
+  `\gbdtFive*` class. **Still NOT indexed:** the `(E_avail,W)` covariance rows, the 4D/5D/FPS unified-throw
+  adoptions, and *"every significance derived from those objects"* — I have not sourced those and will not list
+  them from a description.
 - **Commit messages are immutable and are not fixable.** `7b2198a`, `b1414df` and `98d502d` carry retracted
   figures in their bodies and will forever. They are indexed above so a reader following `git log` finds the
   correction; they are not errors to be repaired.
