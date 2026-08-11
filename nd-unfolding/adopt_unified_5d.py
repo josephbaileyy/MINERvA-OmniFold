@@ -27,6 +27,7 @@ C_new is built into C_comb row-by-row (1-D temporaries), so peak ~2 matrices + e
 """
 import argparse
 import gc
+import os
 import sys
 
 import numpy as np
@@ -93,6 +94,16 @@ def main():
         ms = np.array([hms.GetBinContent(i + 1) for i in range(hms.GetNbinsX())])
         assert ms.size == vu.size, f"mean_shift dim {ms.size} != unified dim {vu.size}"
         vu = vu + ms ** 2
+    # Capture the upstream construction contract HERE, while the throw file is already open, and
+    # carry it in plain Python to the write block (BEN-106). Do NOT re-open the throw ROOT later:
+    # `TFile.Open` re-points ROOT's global current directory, so `.Write()` calls after a second
+    # open land in THAT file -- and it is opened READ, so every write fails with
+    # "Directory ... is not writable" while the surrounding Python carries on. This was written the
+    # wrong way round first and caught only by reading the stamps back out of the product.
+    upstream = {}
+    for _key in ("fixed_seed_null_norm", "joint_mean_shift_norm", "n_throws"):
+        _src = fu.Get(_key)
+        upstream[_key] = _src.GetVal() if _src else None
     fu.Close()
     s_adopt = np.sqrt(np.maximum(vu, vb))               # conservative: never below block baseline
     sb = np.sqrt(vb)
@@ -165,6 +176,52 @@ def main():
     hg.Write()
     ROOT.TParameter("double")("sqrt_tr_old", sqrt_tr_comb).Write()
     ROOT.TParameter("double")("sqrt_tr_new", sqrt_tr_new).Write()
+
+    # --- PROVENANCE CARRIED FORWARD FROM THE THROW ROOT (BEN-106, quarantine causes 2/3/4) --------
+    #
+    # Before 2026-08-11 this file wrote only the two sqrt-traces above, so EVERY adopted product --
+    # the artifact that would actually be published -- carried no record of how it was constructed.
+    # `fixed_seed_null_norm`, `joint_mean_shift_norm` and `n_throws` were all absent from all six
+    # adopted ROOTs (measured: uq_5d/receipt_construction_contract_5d.json). A consumer holding the
+    # adopted covariance could not verify fixed-seed construction, mean-centering, or the absence of
+    # jitter subtraction FROM IT at all; they had to know to walk one hop upstream to a .gitignore'd
+    # 2.7 GB throw ROOT whose name appears in no receipt and which purgeable scratch may not retain.
+    #
+    # So the stamps travel with the matrix. This is not a substitute for the receipt -- a receipt is a
+    # snapshot a reader must find, a stamp is inside the file -- and it is cheap: five TParameters.
+    #
+    # `*_checked` flags are written UNCONDITIONALLY, including when the upstream value is missing.
+    # An absent key cannot distinguish "the throw ROOT did not carry it" from "this adopt predates the
+    # propagation", and a downstream criterion phrased "the null norm is not large" passes vacuously
+    # on either. Absence must be a readable state, not an inference.
+    fo.cd()   # be explicit about the write target; ROOT's current directory is global state
+    for key, kind in (("fixed_seed_null_norm", "double"),
+                      ("joint_mean_shift_norm", "double"),
+                      ("n_throws", "int")):
+        val = upstream[key]
+        ROOT.TParameter("int")(f"{key}_checked", 0 if val is None else 1).Write()
+        if val is not None:
+            ROOT.TParameter(kind)(f"upstream_{key}", val).Write()
+    # The centering convention is a property of THIS product and cannot be inferred from the throw
+    # ROOT, which carries both variants' inputs. Record which one was built.
+    centering = "cv-centered" if args.cv_centered else "mean-centered"
+    ROOT.TNamed("centering_convention", centering).Write()
+    ROOT.TNamed("uthrow_source", os.path.basename(args.uthrow)).Write()
+    ROOT.TNamed("combined_source", os.path.basename(args.combined)).Write()
+
+    # VERIFY THE WRITES LANDED, rather than printing that they did. The first version of this block
+    # printed "provenance stamped" while all nine writes had silently failed into a read-only file,
+    # and only reading the product back caught it. A print is not evidence; fail closed instead.
+    _missing = [k for k in ("fixed_seed_null_norm_checked", "joint_mean_shift_norm_checked",
+                            "n_throws_checked", "centering_convention", "uthrow_source",
+                            "combined_source") if not fo.Get(k)]
+    if _missing:
+        raise SystemExit(f"[FAIL] provenance stamps did not land in {args.out}: {_missing}")
+    print(f"[adopt5d] provenance stamped AND read back: centering={centering}  "
+          f"uthrow={os.path.basename(args.uthrow)}  "
+          f"combined={os.path.basename(args.combined)}  "
+          f"upstream={ {k: v for k, v in upstream.items()} }")
+
     fo.Close()
     print(f"[adopt5d] wrote {args.out}")
 

@@ -5070,3 +5070,51 @@ Committed receipt:
 `../docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`. This closes only the
 predeclared provenance receipt. It changes no B2 number, adopts nothing, edits no `values.tex`, and
 discharges zero quarantine causes.
+## 2026-08-11 — BEN-106 stamp propagation: written, BROKEN, fixed, verification in flight (Session B)
+
+`adopt_unified_5d.py` now carries the upstream construction contract into every adopted product —
+`fixed_seed_null_norm`, `joint_mean_shift_norm`, `n_throws` as `upstream_*` plus an unconditional
+`*_checked` flag each, and `centering_convention` / `uthrow_source` / `combined_source` as `TNamed`s.
+This closes the **provenance leg for causes 2, 3 and 4 at once** — the artifact that would be published
+becomes able to prove its own construction instead of requiring a reader to know to walk one hop upstream
+to a `.gitignore`d 2.7 GB throw ROOT. **NOT claimed closed until job `56695424` reads the stamps back out
+of a ROOT the new code wrote.**
+
+**The first version was broken and printed that it had worked.** `ROOT.TFile.Open(args.uthrow, "READ")`
+re-opened the throw file partway through the output-writing block, and **`TFile.Open` re-points ROOT's
+global current directory** — so all six `TParameter.Write()` calls targeted the read-only *input*
+(`Directory ... is not writable`, six times) and, after `Close()`, the three `TNamed`s had no file at all
+(`The current directory (PyROOT) is not associated with a file`). **Python carried on, exit 0, and printed
+`[adopt5d] provenance stamped: centering=mean-centered …`.** An 892 MB product with a correct covariance
+and zero stamps.
+
+Caught by reading the stamps back out of the product — the one check I could have waved through as
+ceremony on a change already compiled, linted and reasoned about. Filed as **BEN-112**, whose sharp edge is
+that **the defect landed inside the fix for a defect of the same shape**: BEN-106 is *"the product cannot
+prove its own provenance"*, and the first fix produced a product that **asserted** it had been stamped and
+had not — converting "no evidence" into "false evidence", which BEN-084 already records as the worse
+failure. Two smaller instances in the same block: `print("provenance stamped")` is a verdict-only line
+with nothing behind it (BEN-077 applied to a log message), and `py_compile` passed while `os` was
+unimported because a `NameError` is not a `SyntaxError` — `pyflakes` caught that.
+
+**Repair:** capture the upstream values in plain Python while the throw file is *already* open at the top
+of `main()`, never re-open it; `fo.cd()` explicitly before writing; and **assert the six stamps read back
+from `fo` before printing anything**, raising `SystemExit` if they do not. The print can no longer outlive
+the fact.
+
+The broken 892 MB test product is renamed `BROKEN_UNSTAMPED_do_not_use_STAMPTEST_v1.root` rather than
+deleted — it is the evidence — so it cannot be mistaken for a valid stamped product.
+
+**Also:** the first attempt ran on a **login node at load 37 with 31 users** and took >13 minutes against
+~4 on a dedicated node, with an empty log throughout because I omitted `PYTHONUNBUFFERED` from the ad-hoc
+wrapper. Liveness was judged by `pgrep`, per BEN-028, not by the quiet log. The re-run is a batch job.
+
+**Cause 4's Magnitude leg is now BOUNDED rather than measured**, and labelled as such in the criteria: the
+retired procedure's scalar is not defined by any surviving specification, so constructing one and calling
+the difference a measurement would be the invented-criterion failure this work exists to prevent. Bound:
+the largest estimator-noise quantity in the budget is `\gbdtAiEstTrace` `1.306e-39`, which removed in
+quadrature from the adopted `5.2696e-38` is **−0.0307%**; the over-generous estimator⊕ML bound `1.9836e-39`
+gives **−0.0709%**. So the retired subtraction's effect on this product is **below 0.1% of the
+sqrt-trace** — two orders below the footing effect and three below J28's. The measured fixed-seed null on
+the same product is `5.8223e-50`, `1.31e-12` of the sqrt-trace: at the fixed seed there is nothing left to
+subtract.

@@ -166,7 +166,24 @@ non-zero fixed-seed null instead of failing on it.
 - **M.** How much the old jitter subtraction was removing. A historical number exists — the 2026-07-01/02
   5D GBDT jitter-matched study gave a **jitter-corrected trace ratio 1.539** vs 4D's 2.01 and FPS's 1.295,
   with per-bin median σ ratio 0.830 (`docs/OPEN_ITEMS.md`, item 11) — but it is a *different* ensemble from
-  X and cannot be transferred. Needs the same-inputs comparison. **UNRESOLVED.**
+  X and cannot be transferred. **UNRESOLVED, and it is likely to stay that way for a stated reason: the
+  counterfactual is not defined by any surviving specification.** The retired procedure subtracted *a
+  scalar*, and no committed document records which scalar or how it was estimated. Constructing one now
+  and calling the difference a measurement would be precisely the *"success condition invented after the
+  fact"* this document exists to prevent.
+
+  **BOUNDED INSTEAD, 2026-08-11, which is weaker than a measurement and is labelled as such.** Any such
+  scalar can only have been an estimator-noise term, and the largest estimator-noise quantity anywhere in
+  this budget is `\gbdtAiEstTrace` `1.306e-39`, the 12-seed fixed-data estimator scan (`values.tex:62`).
+  Removed in quadrature from the adopted `A1 = 5.2696e-38` that is **−0.0307%** of the sqrt-trace; from
+  the unified throw's `4.443674e-38`, **−0.0432%**. Taking the deliberately over-generous bound of
+  estimator **and** ML-split (`\gbdtMlSplitTrace` `1.493e-39`) together, `1.9836e-39` in quadrature, gives
+  **−0.0709%**. So whatever the retired subtraction did, **its effect on X is bounded below 0.1% of the
+  sqrt-trace** — three orders below the J28 correction's `−9.35%` and two below the footing effect.
+  Independently, the **measured** fixed-seed null on this product is `5.8223e-50`, i.e. `1.31e-12` of the
+  sqrt-trace: at the fixed seed there is no jitter left to subtract, which is the corrected contract
+  working as designed. **A bound is not the M leg**; it is the statement that closing M exactly would
+  change nothing at the precision the note quotes, offered so the remaining gap can be priced.
 - **T.** Absent in the required form. A test asserting the string `jitter` does not appear in the source
   passes if the file is deleted. Required: (i) a synthetic combine whose fixed-seed null is non-zero must
   ABORT; (ii) removing the `--null` requirement must FAIL the test; (iii) an artifact **missing**
