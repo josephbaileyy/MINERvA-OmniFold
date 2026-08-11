@@ -525,10 +525,17 @@ Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
 \end{center}
 The combined OmniFold envelope essentially \emph{matches} the paper's per-bin
 median uncertainty ($6.865\%$ against $6.86\%$), dominated by the systematic
-block. (The combined $\sqrt{\Tr}$ is the quadrature sum of the three
-independent component traces; the per-bin median $6.865\%$ is taken directly
-from the flux-fixed matcorr rollup summary. Universe $+$ bootstrap alone,
-before the ML block, is $6.845\%$.)
+block. (The combined $\sqrt{\Tr}$ \emph{is} the quadrature sum of the three
+independent component traces. The per-bin median column is \textbf{not}: a median
+of a sum is not the quadrature sum of the medians, so $6.865\%$ does not --- and
+should not --- reproduce by combining the three rows above it. Both combined
+entries are read from the block-sum table in
+\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope''.
+The flux-fixed rollup summary itself reports the universe $+$ bootstrap
+combination, before the ML block, as $6.845\%$
+[\texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt}, line
+``\texttt{Combined (universe + bootstrap) median rel}''] --- also a read value,
+not one derived from the entries printed here.)
 
 \begin{quote}
 \textbf{Provenance note (2026-07-31; table corrected 2026-08-11).} The table above
@@ -542,13 +549,19 @@ superseded covariance, not of the measurement. The current budget agrees with th
 tabulated in \S\ref{sec:systematics}, where the envelope essentially \emph{matches}
 the paper ($6.865\%$ against $6.86\%$).
 
-One further cell of the table moved for an unrelated and earlier reason: the
-statistical block is quoted from the pure-Poisson $N=300$ bootstrap
-($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$ $1.817\times10^{-40}$ /
-$0.549\%$), which superseded a seed-varying set that leaked ML stochasticity into
-the statistical block (\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md},
-2026-05-29). This is recorded here so that the combined row can be re-derived from
-the component rows printed beside it rather than taken on trust.
+One further cell of the table moved for an unrelated and earlier reason, recorded
+here because it is a correction in its own right and \emph{not} because it changed
+the headline: the statistical block is quoted from the pure-Poisson $N=300$
+bootstrap ($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$
+$1.817\times10^{-40}$ / $0.549\%$), which superseded a seed-varying set that leaked
+ML stochasticity into the statistical block
+(\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29).
+\textbf{It is not what moved the combined row.} The block sum rounds to
+$3.220\times10^{-39}$ with either statistical cell --- the change sits about two
+orders of magnitude below the printed precision --- and essentially the whole
+movement of the combined entry comes from the systematic cell, i.e.\ from the flux
+fix. Stated explicitly so that a later check does not reverse a correct edit on
+finding that the headline is insensitive to it.
 
 The two rollups differ in \emph{exactly one band}. Comparing
 \texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
