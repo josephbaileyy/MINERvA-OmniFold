@@ -4639,3 +4639,124 @@ Nothing re-run, no pin touched, no threshold moved, `niter` remains 3.
 **The queue is empty.** Every item from last night is closed or retracted: the code-path finding refuted, the
 closure's stability measured at n=3, the D2 pass established on three independent draws, k=3 re-justified on
 current grounds. Nothing is running but the cron.
+
+### 12:05Z — built the retracted-values index, and found the worst instance while building it
+
+Oversight lane's request, and the right use of an idle queue: the knowledge of which numbers are dead lives in
+this session's context, and context is the thing that does not survive a restart. Built as
+`docs/orchestration/INDEX-retracted-and-superseded-values.md`, **sourced by `git grep` rather than recall** —
+which was the instruction and also the only way it could be trustworthy.
+
+**The most serious entry was found by building it, not by remembering it.** `VALIDATION_LEDGER.md` — which
+`CLAUDE.md` names as the canonical home for *"verified numbers (anything technote-quoted)"* — carried a section
+titled **"2026-08-10 Annealed production nominal reproduction — VERIFIED FINDING"**, stating *"The frozen
+verdict is therefore FINDING — code paths disagree"* and quoting **`188.4x the measured scatter`**, with a table
+row labelled *"diagnostic expectation"*. All three are retracted. **A technote writer reads that file.** It also
+appears in `RUNS.tsv:267` and the finalizer JSON.
+
+Bannered rather than deleted, per the retraction convention: the section now opens with a struck-through title
+and a *"DO NOT QUOTE THE VERDICT OR THE 188.4x"* block, separating what **still stands** (the production numbers
+`-0.035608971`/`-0.035482196`, the pair scatter `0.000126775`, the baseline SHA, the optimizer readback proving
+the anneal ran) from what is **dead** (the verdict, the `188.4x`, and `-0.011724321` as an "expectation"). A
+reader following a citation must find the correction, not an absence.
+
+**Ten indexed rows**, each with its grep-sourced locations: the verdict; `188.4x`/`188x`; `6.0x`; `-0.011724321`
+as an expectation; `142 scatters` — including the instance **hardcoded in my own launcher at
+`sbatch_powered_closure_stability_repeat.sh:138`, which printed at full confidence hours after retraction**;
+`14.7`; `recovery_criteria_met`; `RESIDUAL_OVER_GAP_MAX = 0.20` (live code, deliberately unfixed); the retired
+`recovery >= 0.80`; and `0.5126033` flagged **ALIVE-AS-CITED-ARTIFACT-ONLY** rather than dead, because it is a
+validated artifact value that merely must not be used as the best estimate.
+
+**Two properties I took from their brief and would defend independently.** The *"where it still appears"* column
+is load-bearing: every correction here already existed at the time, so what a fresh reader lacks is not the
+correction but **the map to the stale copies**. And the DEAD versus ALIVE-AS-CITED-ARTIFACT-ONLY split is the
+same distinction as `PROCESSED.txt`'s grandfathered-vs-verified — two claims that look identical on the page.
+
+**What I did NOT index, stated in the file:** the 2026-07-12 quarantine. It was named as a candidate and **I
+did not source it**, so it is recorded as an open item rather than listed from a description. An index built
+from memory has precisely the defect it exists to fix. Also stated: commit messages are immutable and are
+indexed rather than repaired, and predeclaration bodies are deliberately left as written because editing them
+to match outcomes would destroy the only property that makes them worth anything.
+
+Pointer added at the top of `FINDINGS.md`, which is item 1 in `CLAUDE.md`'s read order, so the index sits where
+the read-order actually reaches rather than where it would be tidy.
+
+### 12:25Z — quarantine row written, verified rather than transcribed, and it has a LIVE number with three reasons
+
+The oversight lane supplied the quarantine content. **I re-verified every location and value by `git grep`
+before writing it** — a relayed claim carries the relay's confidence, not its evidence (BEN-082 (7)), and this
+one would have gone into an index whose entire value is being sourced. **Its grep reproduced exactly**, including
+the inversion it flagged.
+
+**The inversion is real:** `\petTotalMedian` (15.10), `\petTotalTrace` (3.878e-38) and `\petFourMedian` (12.37)
+all carry `QUARANTINED` and **none is consumed in prose**; `\petGbdtGap` (9) and `\petRatio` (**0.912**) carry
+**no marker** and **both are consumed** — `\petRatio` twice, at `sec_pet.tex:42` and `:59`. Protection applied to
+the harmless cases and absent from the live ones. **The marker was the failure, not the number** — the same
+shape as the `VALIDATION_LEDGER` find an hour ago, one level apart.
+
+**Three things I could add that the relay did not have:**
+
+**(1) `0.912` is internally consistent, and that is worth stating so nobody hunts the wrong defect.** Applying
+the receipt-ingredients heuristic: `sec_pet.tex:41-42` quotes PET `2.796e-38` against GBDT `3.066e-38`, and
+`2.796/3.066 = 0.91194` → `0.912`. **Not a mislabel, not an arithmetic slip — a correctly computed ratio whose
+operands went stale.** That is a different failure mode from every other row in the index and the one a
+consistency check cannot catch.
+
+**(2) A third, mechanical reason it is stale, stronger than the quarantine question.** `sec_pet.tex:47` discloses
+*"The PET run used a 2M-event, two-iteration training."* The pinned policy is `niter = 3`, and
+`STEP2-20260806-niter3-budget-classification.md:89` already flagged that *"if full-event PET moves to niter=3,
+`\petRatio` … and `\petClosure` change."* **It moved.** That needs no judgement — unlike J21's
+background-subtraction argument, which needs a decision about what the PET central value is.
+
+**(3) The operands are not macros at all.** `2.796e-38` and `3.096e-38` — sorry, `3.066e-38` — appear **only as
+inline `\SI{}` literals** and are not in `values.tex`. So the ratio has a macro and therefore *looks* managed,
+while **its inputs sit outside the marking convention entirely and cannot be quarantined even in principle.**
+Marking `\petRatio` would not reach them. That is a structural hole in the convention, not an oversight in one
+row.
+
+**What I did not claim**, and the oversight lane was right to hedge it: that the quarantine *formally* covers
+`\petRatio`. It is a PET precision comparison by description, but I did not source a statement saying so, and
+inferring coverage from a class description is not sourcing. Whoever owns the quarantine adjudicates — and the
+three sourced reasons make the decision necessary regardless, **before the note freezes.**
+
+Also recorded as still-unindexed: the `(E_avail,W)` covariance rows, the 4D/5D/FPS unified-throw adoptions, and
+*"every significance derived from those objects"*. Same reason — that would be listing from a description.
+
+Its independent note-audit session may surface `\petRatio` too; it was told not to trust the relay's
+characterisations, so if it does, that is confirmation from a reader without this framing rather than an echo.
+
+### 12:40Z — split the three reasons by disposition, and promoted the failure mode a check EXONERATES
+
+Two structural improvements to the index, both the oversight lane's and both right.
+
+**The three reasons on `\petRatio` are now split by disposition, because bundled they make the factual one wait
+on two judgement calls:**
+
+    niter mismatch        FACTUAL, no adjudication   -> re-run at niter=3 OR label as niter=2 legacy
+                                                        blocked on NOBODY; it is already true
+    J21 background sub    needs a DECISION           -> blocked on what the PET central value is
+    quarantine coverage   needs an OWNER'S RULING    -> blocked on whoever owns the 07-12 class
+
+That matters practically: *"three reasons to doubt 0.912"* is one item with the latency of its slowest
+component, and the first row can be actioned today.
+
+**And I promoted reason 1 out of a caveat into a named class, which is the subtlest thing in the file:**
+**a correctly derived value whose OPERANDS went stale.** Every other row in the index *fails* a check. This one
+**passes** one — `2.796/3.066 = 0.91194` → `0.912` reproduces exactly, so a reader told "0.912 is suspect" finds
+no error and **concludes it is fine.** The consistency check does not merely miss it; it **actively exonerates**
+it. The only thing that catches the class is asking where each operand came from and whether that source is
+current — a `MATCHES / SUPERSEDED / UNSOURCEABLE` question, not an arithmetic one.
+
+With the structural corollary attached: **any derived macro whose operands are inline `\SI{}` literals looks
+managed while its inputs sit outside the marking convention entirely.** Marking the macro cannot reach them even
+in principle. Their running note audit keys on *"every quoted value's canonical source"*, so that class should
+fall out as UNSOURCEABLE by construction rather than needing a second instrument — and if it does not, that is a
+gap in their audit prompt, which they said they would rather learn that way.
+
+**One thing worth recording about how the earlier find happened, since they called it the sharpest correction in
+my message:** the `VALIDATION_LEDGER` section was not found by the index existing. It was found by the
+**location column** — *"say where the corpses are"* walks the tree, while *"list the retractions"* would have
+produced ten rows and found nothing, because every correction was already filed at the time. **A retraction
+without locations is a record rather than a tool.**
+
+Queue still empty. Nothing running but the cron.

@@ -25,6 +25,12 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 > moment of allocation is when to re-read it, because `max(existing)+1` is what a tired agent
 > computes by default.
 
+> **BEFORE QUOTING ANY NUMBER: `INDEX-retracted-and-superseded-values.md`** (added 2026-08-11). Retracted values stay
+> readable and are presented with the same confidence as live ones — the `188.4x` and the *"code paths disagree"* verdict
+> sat in `VALIDATION_LEDGER.md`, the canonical home for technote-quoted numbers, until they were bannered. The index's
+> load-bearing column is **where each dead value still appears**, because the corrections already existed; the map to the
+> stale copies did not.
+
 ## Long-form findings index
 
 Every `FINDING-*.md` in this directory must appear here. A finding that is not indexed is a finding nobody
