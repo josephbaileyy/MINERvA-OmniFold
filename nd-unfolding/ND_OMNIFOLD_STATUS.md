@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-10. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-11. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -21,7 +21,7 @@ instructions, not evidence that a run has occurred.
 | `(E_avail,W)` shape localization | Positive data-minus-generator excess is concentrated at high E_avail and high W; exact significance withheld | `products/5d/` |
 | PET central-value milestone | Closure 0.9884; PET/GBDT central-total ratio 0.9117 is a training-configuration diagnostic, not a precision claim | `products/pet/` |
 | Corrected PET 5D budget | five-component PSD sum: median 15.103%, sqrt-trace 3.8777e-38; 4D marginal median 12.365%; present campaign COMPLETE | `products/pet/bkgsub/pet_ctotal_bkgsub_5d_final.summary.json` |
-| Standard 5D endpoint set | Ten lateral endpoints re-unfolded and published (job `56495756`); reproduce the 07-18 reference 10/10 (worst per-bin 1.83e-11, worst integral 2.87e-12). The covariance candidate built on them **self-declares non-adoptable** — no verifier PASS | `active_universe_5d/standard/unfolds/`, `.../evidence/` |
+| Standard 5D endpoint set | Ten lateral endpoints re-unfolded and published (job `56495756`); reproduce the 07-18 reference 10/10 (worst per-bin 1.83e-11, worst integral 2.87e-12). Packet B PB1/PB3/PB4 passed real state, but the verifier blocked PB2's disconnected resume binding. The code-only PB2 repair is committed here pending same-UUID re-review. The candidate still **self-declares non-adoptable** | `active_universe_5d/standard/unfolds/`, `.../evidence/`, `../docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json` |
 | NN cross-check | keras-MLP/GBDT total ratio 1.0078 | `omnifold_nn_core.py` |
 | Unbinned GoF | Prior z=33 to unfolded z=1.4, p=0.17, PASS | `unbinned_gof.py` |
 | Reco/migration controls | Data/MC 1.12 uniform; diagonal purity about 0.6 per axis | `products/5d/control_plots.png`, `migration_resolution.png` |

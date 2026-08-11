@@ -4871,3 +4871,131 @@ exhaustive, which is the same discipline as this file's honesty column.
 
 Ready to review the note repairs. The axis I will check hardest is **operand currency**, not derivation
 correctness — `\petRatio` reproduces perfectly from operands that are both stale.
+
+### 13:15Z — reviewed the note repair: sound, merge it, two derivability claims corrected. BEN-086 filed.
+
+Reviewed `930fb91` on `note-dead-number-repair`. **The repair is sound and I would merge it.** This is the
+writer/reviewer split working — a session that did not produce these numbers wrote the repair, and my only
+unique contribution is knowing which authoritative-looking values are dead.
+
+**Verified independently rather than accepting the claims:**
+
+- **Forbidden regions clean.** `sec_systematics.tex` and `sec_results.tex`: 0 files touched. The `\gbdtFive*`
+  macros and the 26.5 line untouched.
+- **All six `pc*` derivations exact** against `products/pet/fullcloud/pointcloud_projection_summary.json`,
+  including `\pcCloudFull` as `max |pet_cloud_hascloud/pet_stored_full − 1|` over the 7 `projection_eavail`
+  bins `= 0.4555%`. Exact.
+- **The W-offset residual is real:** artifact `0.9579842726` vs the `POINTCLOUD_PROJECTION.md:82` pre-fix
+  `0.9604` differ by **2.4 MeV** and agree only at 2 dp.
+
+**Two corrections, both to claims about derivability rather than to any value.**
+
+**(1) The stat-cell repair was not needed for the block sum to derive.** I was asked to re-verify and it does:
+`√(5.061e-41² + 1.817e-40² + 3.214e-39²) = 3.219530e-39 → 3.220e-39`. **But the old cell gives
+`3.219592e-39`, which rounds to the same thing.** The combined row moved because the *systematic* cell moved
+(`2.463e-39 → 3.214e-39`, the flux fix); the stat cell contributes below the printed precision. The repair is
+still correct — a pure-Poisson bootstrap superseded a seed-varying set — but *"left alone the combined row would
+not have been derivable"* is overstated, and a later reader verifying the repair by that route would find it
+does not hold.
+
+**(2) Two per-cent figures read as derivations and are not.** `√(0.166² + 0.549² + 6.830²) = 6.8540%` against a
+printed `6.865%`, and the parenthetical *"universe + bootstrap alone is 6.845%"* computes to `6.8520%`. The
+`6.865%` is fine — the text says it is read from the rollup, not derived. **`6.845%` is not**: it sits in a
+parenthetical that reads as arithmetic on the numbers beside it. Source it or drop it. Same shape as my own
+`195×`/`353×` mislabel — the ingredients heuristic catching a *label*, not a value.
+
+**On the `\dead{}` macro I gave a view and referred the decision up.** Strike-not-erase is right for ledgers and
+the implementation is careful — the `\mbox`/`\ensuremath` wrapping is the correct fix for math-mode call sites.
+But `docs/analysis-note/` has **three builds**, and struck text is a working-document device that must not
+survive into an outward-facing one. As written it renders in all three. Cheap fix if wanted: make `\dead{}`
+build-conditional — struck internally, value omitted entirely outward. **Not mine to merge into a paper-bound
+build**, so it goes to Joseph.
+
+**Filed BEN-086** from the instance the writer correctly declined to number: **an `UNSOURCEABLE` verdict is a
+statement about the search, not about the value.** All three flagged macros were in a committed artifact; what
+was missing was a recorded pointer, with two candidate files whose populations differ. The rule that matters
+most is the third: **the genuine residual hides under the false alarm and is easy to lose in the relief** — the
+`0.9604` narrative is stale and only a rounding coincidence conceals it. **A rounding coincidence is not
+stability**, and it is precisely the failure that survives a spot check at the printed precision.
+
+### 13:40Z — BEN-087, a genuinely new class; and the `\dead{}` decision added to Joseph's file in one write
+
+**Verified the oversight lane's claim before filing it, and it holds exactly:**
+
+    matcorr/uq_universe_summary.txt:64          Combined (universe + bootstrap) median rel = 4.822%
+    matcorr_fluxfix/uq_universe_summary.txt:64  Combined (universe + bootstrap) median rel = 6.845%
+    6.865% appears in 2D_OMNIFOLD_STUDY_STATUS.md:101 as "Combined (block sum)" -- NOT in either summary
+
+So the pre-fix sentence *"the per-bin median `4.822%` is taken directly from the matcorr rollup summary"* was
+**literally true**, and the flux-fix repair made it false by swapping the number and keeping the attribution.
+
+**Filed as BEN-087, and it is a class neither of us had:** **updating a value inside a sentence that names its
+source silently re-points the source claim.** Distinct from my derived-quantity rule — there the *number* was
+downstream of a retraction; here the *citation* is downstream of a value swap. Grepping the old value finds the
+sentence; grepping the new value does not find the file it claims. **Nothing about the edit looks wrong; the
+attribution is collateral.**
+
+Why it was invisible: **pre-fix the block sum and the universe+bootstrap combination printed identically**,
+because the ML block was small enough to vanish at that precision — so one sentence correctly described two
+different quantities, and a repair is exactly the moment they separate. **Second rounding-coincidence instance
+in one day** (BEN-086's `0.9604`/`0.96`), which is why I wrote *"do these two numbers agree only after
+rounding?"* into the row as a standing check rather than a lucky catch.
+
+The forward-looking half is the reason it is worth filing now rather than after: **when the four `\gbdtFive*`
+macros are updated, `sec_systematics.tex:163-168` is prose-with-sources of exactly this shape**, so every citing
+sentence needs its **attribution** re-verified and not only its value. Added to the index as its second
+write-time rule.
+
+**Added the `\dead{}` build-scoping decision to `BLOCKED-ON-USER.json`, in ONE write with nothing else changed.**
+It blocks a reviewed, compiling branch (`49ad441`, both reviewer conditions met, forbidden regions verified
+untouched, three builds clean) and it is a presentation decision about an outward-facing artifact, so it is not
+an agent's to take. Recorded my position — *I would merge the repairs; I would not merge the macro into a
+paper-bound build without his call* — and the cheap option, build-conditional rendering, as offered rather than
+implemented. Batched deliberately: that file re-pages on any mtime change (BEN-085), and two pages for two items
+read as noise. He now has two named gates and a `correction_history` showing what moved and why.
+
+### 14:05Z — closed `INTEGRATION_CHECKLIST:62`; wrote the `\gbdtFive*` update procedure cold
+
+**Answering the direct question: nothing is blocked on anything that is not Joseph's.** Two gates sit with him
+(promotion; `\dead{}` build-scoping, which parks a reviewed branch). No job is running. Nothing is waiting on a
+decision I failed to surface — and I checked that by re-reading the gates rather than asserting it.
+
+**`INTEGRATION_CHECKLIST.md:62` closed** at `4bffe9e`. Struck rather than deleted. The reason it is worse than
+`:61` is that **it contradicts the note's own macro file**: `values.tex:70` carries the same value as
+`\petTotalTrace` with the inline comment *"historical recoil-PET candidate; QUARANTINED"*. So no inference about
+quarantine scope was needed — unlike `\petRatio`, whose coverage I could not source, **this one is marked
+quarantined at its own point of definition** while a checklist heading advertised it as safe to keep. No
+replacement written, same reasoning as `:61`.
+
+**And I checked the parked branch still merges before pushing — it does not.** One hunk, `UU
+docs/INTEGRATION_CHECKLIST.md`, because their `:61` block and my `:62` block are adjacent list items in the same
+region. Both sides are purely additive strikethroughs of *different* entries, so the resolution is *take both*.
+I pushed anyway rather than leaving a known-bad "safe to keep" line advertised for however long the `\dead{}`
+decision takes — but the branch owner learns it from me now instead of at merge time, which was the point of
+testing.
+
+**Wrote `PROCEDURE-gbdtFive-macro-update.md`**, enumerated by grep rather than recall. Three things the
+enumeration found that the finding alone would not have:
+
+1. **All four macros are consumed in ONE continuous prose block** (`sec_systematics.tex:162-170`), not four
+   independent sites. So the risk is a per-macro search-and-replace leaving the chain internally inconsistent.
+2. **BEN-087 applies in a MODIFIED and worse form.** Its trap needs a sentence that *names* a source; checked
+   `:158-172` for attribution language and **there is none.** Good news: no source claim can be silently
+   re-pointed. Bad news, and it is the reason: **the numbers have no attribution at all**, so a reader cannot
+   check them and an updater has nothing to re-verify against. The fix at update time is to **add** provenance,
+   not preserve it.
+3. **Six relational claims a number-only edit breaks**, tabulated — including *"the larger"* (an ordering
+   assertion, `CVTrace > AdoptTrace`), *"both are positive semidefinite"* (a property that does **not** survive
+   by inheritance), *"neither is adopted for publication until…"* (which **contradicts the edit** if the edit
+   *is* the adoption), and **`0.30%` at `:171-172` — an inline literal, not a macro, so a macro sweep misses it
+   entirely.** Same structural hole as `\petRatio`'s operands.
+
+Also computed the directional consequence rather than restating it: under the reported directions the ordering
+survives, but **the mean shift goes from 28.4% to 35.5% of the covariance it is "reported separately rather than
+folded into" — a 25% relative change** that every worded claim survives and no reader would notice. Flagged as a
+decision for the writer rather than an oversight.
+
+Recorded for the record: the oversight lane had a mechanism retracted by the GBDT lane today — it stated
+`wakerctl emit` mails Joseph, and emit has no mail path. Its own framing, which I am adopting for how I read it:
+**its observations are better sourced than its explanations.** That is why every claim it has relayed today was
+re-verified here before being written down, and why two of them turned out to need correcting.

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-11T13:27:00Z",
+  "parent_repair_commit": "f67352f",
+  "verifier": {
+    "role": "standard-p4-verifier",
+    "uuid": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
+    "turn_started_utc": "2026-08-11T13:14:00Z",
+    "turn_ended_utc": "2026-08-11T13:17:27Z",
+    "verdict": "BLOCK",
+    "sole_defect": "dict.get() conflated absent schema/surface keys with explicit JSON null, allowing malformed receipts to inherit grandfathering or skip schema validation"
+  },
+  "owner_repair": {
+    "role": "agent-A-standard",
+    "uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
+    "turn_started_utc": "2026-08-11T13:18:00Z",
+    "turn_ended_utc": "2026-08-11T13:25:07Z",
+    "changed_files": [
+      "nd-unfolding/p4_lib.py",
+      "nd-unfolding/tests/test_p4_resume_integration.py"
+    ],
+    "grandfather_rule": "only receipts containing neither receipt_schema nor surface_blobs",
+    "explicit_null_rejects": [
+      "null schema",
+      "null surface record",
+      "both fields null",
+      "null schema with a valid surface map"
+    ]
+  },
+  "root_verification": {
+    "pytest": "274 passed, 29 subtests passed in 29.13s",
+    "shell_syntax": "PASS",
+    "python_compile": "PASS",
+    "diff_check": "PASS"
+  },
+  "separate_open_audit_tool_gap": "tools_p4_sweep_recorded_fields.py does not inventory shell JSON fields whose values are unquoted format substitutions; receipt_schema and surface_blobs are genuinely gated but absent from that mechanical inventory",
+  "root_artifacts_changed": false,
+  "physics_changed": false,
+  "thresholds_changed": false,
+  "scheduler_changed": false,
+  "adoption_performed": false,
+  "publication_gate_rejects_this": true,
+  "P4_NON_ADOPTABLE": 1,
+  "reset_credit_consumed": false,
+  "next_gate": "Commit and push this null-presence repair, then resume the same standard-p4-verifier UUID on the exact commit."
+}

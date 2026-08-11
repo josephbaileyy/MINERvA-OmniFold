@@ -207,23 +207,45 @@ not close the literal full-event PET gate below.
     open (#2 resume binds only the unfold blob, #5 token accepts symbolic revs and skips the
     working tree, #6 `C_syst` trusts the manifest's key set, #7 mutation harness incomplete), four
     more are partial, and four unfixed new ones are itemised.
+    - **#2 is no longer one of them, as of 2026-08-11 (Packet B PB2 repair).** The launcher now
+      stamps the whole six-module producing closure into every receipt, `p4_check_receipt.py`
+      re-derives that closure itself and will not authorise a SKIP until every member's blob
+      matches, and the grandfather clause is bounded by a declared `receipt_schema` so a
+      current receipt that omits the record rejects instead of inheriting it. The other three
+      stay open and the dated debt document is left as the record of what was true on 08-10.
+      **Not yet verifier-reviewed** — the same `standard-p4-verifier` UUID has to PASS the
+      committed patch before this counts as closed, and nothing downstream may assume it has.
+      A separate mechanical-auditor gap was exposed while closing the null cases:
+      `tools_p4_sweep_recorded_fields.py` only harvests shell JSON keys whose values are quoted,
+      so it does not inventory `receipt_schema` or `surface_blobs`, which are emitted through
+      unquoted `%s` substitutions. Both fields are genuinely gated and integration-tested; the
+      open item is the sweep's false-negative extraction, not the production receipt gate.
   - **The single largest structural gap: there is no CI in this repository.** Every guard binds an
     author who runs `pytest`; none binds a commit.
   - **Anyone quoting a number derived from this covariance must cite that document alongside it.**
     If the reduced standard is not acceptable for publication, the response is to close the open
     items — not to restate the product's status more favourably.
-- **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 8 (2026-08-09).**
+- **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 9 (2026-08-09).**
   The question "should we fix the global Data/MC POT scale in `unfold_2d_omnifold_unbinned.py`?"
   was the wrong unit. The same computation — one `hadd`-summed extensive divided by another —
-  occurs at **8 live sites**, three of them production unfolders and two in the ND lane, which did
-  not know it was affected. Full per-site table and semantics:
+  occurs at **9 live sites: 8 Python + 1 C++**, three of them production unfolders and two in the
+  ND lane, which did not know it was affected. Full per-site table and semantics:
   `docs/orchestration/FINDING-20260809-derived-from-merged-extensives.md`; regenerate with
   `audit_derived_from_merged_extensives.py --power`.
   - **Deliberately NOT repaired.** The instruction was to size the class first, then decide scope.
   - **What the count changes about the repair:** the ratio is recomputed from scratch in every
     consumer, so there is no single place to fix and a corrected `get_pot_scales` in one file
     leaves seven copies. Any repair has to be a single vetted producer that the other seven call.
-  - **The 8 is a floor.** Taint is intraprocedural, and C++ consumers are unswept.
+  - **C++ IS SWEPT, and that is where the 9th came from (2026-08-09).** The `git ls-files` C++
+    corpus was passed over: exactly one file reads a merged extensive at all, giving **1 C++
+    defect site** — `ExtractCrossSection.cpp:225` (`-dataPOT/mcPOT`), with `:224` printing the
+    same value. Every other C++ occurrence is a `TParameter` *write*. It is in a live path,
+    determined rather than left open: `build_1d_ibu_inputs.py` reads hadd-summed POT from the
+    merged MEFHC omnifile and rewrites it as `POTUsed` into the projected inputs that
+    `sbatch_ibu_1d_projection.sh` hands to `ExtractCrossSection`. Chain and per-link evidence in
+    the finding document.
+  - **The 9 is still a floor** — taint is intraprocedural — but no longer because a whole
+    language is unexamined.
   - Total normalisation is still not biased, so no published number is withdrawn on this account.
 - **HANDED OVER to the FPS lane (Agent C) — BEN-070's second site,
   `p4_validate_active_lateral_fps.py:70`.** `require(np.all(d >= -1e-30), "negative diagonal")`

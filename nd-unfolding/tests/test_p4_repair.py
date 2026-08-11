@@ -910,9 +910,15 @@ class Repair4ReceiptSchema(unittest.TestCase):
         self.assertIsNotNone(m, "could not extract the launcher's receipt format")
         fmt = m.group(1)
         vals = dict(self.GOOD); vals.update(over)
-        # positional order matches the launcher's own argument order
-        args = [vals["tag"], vals["root_sha256"], vals["merged_sha256"], vals["central5d_sha256"],
-                vals["config_hash"], vals["bkg_mode"], vals["code_rev"], vals["unfold_blob"],
+        # positional order matches the launcher's own argument order. PB2 added two: the declared
+        # receipt schema and the producing-closure blob map, the latter derived from the same
+        # helper the launcher calls rather than restated here.
+        surface = json.dumps(
+            P.producing_closure_blobs(str(self.ND.parent), P.UNFOLD_DRIVER_REL)[1],
+            sort_keys=True, separators=(",", ":"))
+        args = [vals["tag"], str(P.RECEIPT_SCHEMA_CURRENT), vals["root_sha256"],
+                vals["merged_sha256"], vals["central5d_sha256"], vals["config_hash"],
+                vals["bkg_mode"], vals["code_rev"], vals["unfold_blob"], surface,
                 "2026-08-07T00:00:00Z"]
         if mode == "legacy-attested":
             fmt = fmt.replace('"mode":"produced"', '"mode":"legacy-attested"')
@@ -1330,6 +1336,14 @@ class PacketPB2ResumeSurface(unittest.TestCase):
     same sole transitive-only member at depth 2 (`omnifold_nn_core.py`). That is a stronger
     provenance claim than either derivation alone, and it is what makes case P a decision rather
     than a possible miss.
+
+    SCOPE OF THIS CLASS, CORRECTED 2026-08-11. What follows proves the HELPERS, and the verifier
+    was right that on its own that proved nothing about resume: when these cases were written the
+    launcher wrote no blob record and `p4_check_receipt.py` never called `check_resume_surface`,
+    so the production skip path could not fail any of them. The end-to-end half now lives in
+    `tests/test_p4_resume_integration.py::PB2ProducingClosureResume`, which drives the real
+    checker CLI against receipts rendered by the launcher's own format string and its own closure
+    command. Keep both: these cases isolate the logic, those bind it to the path that runs.
     """
 
     REPO = str(Path(__file__).resolve().parents[2])
@@ -1373,7 +1387,13 @@ class PacketPB2ResumeSurface(unittest.TestCase):
 
     def test_a_legacy_receipt_is_grandfathered_not_blocked(self):
         """KNOWN_ISSUES #24. The ten receipts on scratch carry no such field. A check that demands
-        one blocks demonstrably correct data, which this lane has shipped twice."""
+        one blocks demonstrably correct data, which this lane has shipped twice.
+
+        BOUNDED 2026-08-11: this holds only for a receipt that ALSO declares no `receipt_schema`.
+        Once the launcher began writing the record, absence stopped being evidence of age, so a
+        receipt declaring the current schema without one is malformed and rejects -- see
+        `PB2ProducingClosureResume.test_current_schema_receipt_without_the_record_is_rejected...`.
+        """
         c = self._closure()
         ok, why = P.check_resume_surface({"tag": "BeamAngleX_0", "mode": "produced"}, c, {})
         self.assertTrue(ok)

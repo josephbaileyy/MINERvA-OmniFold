@@ -80,7 +80,22 @@ Last updated 2026-07-16.
   See also `docs/analysis-note/values.tex` `\gbdtFiveAdoptTrace` / `\gbdtFiveCVTrace`, which quote
   these scales into the note and inherit the quarantine; they are owned by the GBDT close-out lane
   and are deliberately **not** edited here.
-- Corrected recoil PET C_total 3.8777e-38 (recoil-only cross-check).
+- ~~Corrected recoil PET C_total 3.8777e-38 (recoil-only cross-check).~~
+  **NOT QUOTABLE — and this one contradicts the note's own macro file, which is why it is worse
+  than the entry above.** `docs/analysis-note/values.tex:70` carries this same value as
+  `\newcommand{\petTotalTrace}{3.878e-38}` with the inline comment
+  *"historical recoil-PET candidate; QUARANTINED"*. So the note already marks it dead, while this
+  checklist listed it under a heading that is an explicit safety claim. **No inference about
+  quarantine scope is needed here** — unlike `\petRatio`, whose coverage I could not source, this
+  value is marked quarantined at its own point of definition.
+  It also falls inside the 2026-07-12 class by description: *"PET statistical/total budgets and
+  precision comparisons"* (`VALIDATION_LEDGER.md:20-30`).
+  **No replacement is written here on purpose.** Same reason as the entry above: a candidate
+  magnitude quoted under "safe to keep" before an adoption recreates the defect being corrected.
+  What survives: nothing from this line — it is a *recoil-only* cross-check, and per the
+  2026-08-01 full-event landing, pre-08-01 PET numbers are a different estimator besides.
+  Indexed at `docs/orchestration/INDEX-retracted-and-superseded-values.md`; found while sourcing
+  the `:61` row rather than reported, so the neighbouring line is the reason it surfaced at all.
 
 ## Provenance index (result → estimator → committed input)
 See `docs/ESTIMATOR_REGISTRY.md` for the full estimator→product→covariance→commit map.
