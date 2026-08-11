@@ -1,5 +1,40 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 F7 mean-shift ratio on the ADOPTED ensemble — VERIFIED-NUMERIC, corrects "4.83×" to 5.35×
+
+Recomputed from the committed receipt's operands (`uq_5d/receipt_construction_contract_5d.json`) while
+giving quarantine cause 2 its test leg. **The conclusion is unchanged and strengthened; the reported
+number was wrong.**
+
+| basis | ‖mean_shift‖ | √Tr | N | **ratio to the floor** |
+|---|---|---|---:|---:|
+| full-160, **pre**-J28 | 1.654393237996853e-38 | 4.4607819710748654e-38 | 160 | **4.6912×** |
+| full-160, **post**-J28 — the adopted ensemble | 1.878696733368378e-38 | 4.443673650575504e-38 | 160 | **5.3478×** |
+| 122-throw morning re-roll, post | 1.885299e-38 | 4.312442e-38 | **122** | **4.8288×** |
+
+**`4.6912×` reproduces the campaign's `4.69×` exactly** — an independent confirmation of the F7
+measurement from the receipt operands. **`4.83×` does not come from the adopted ensemble: it is the
+122-throw morning re-roll** (`4.8288×`, matching to three significant figures). So the recorded
+*"4.69× → 4.83×"* pairs a **160**-throw "before" with a **122**-throw "after". The like-for-like
+post-J28 value on the adopted ensemble is **5.3478×**.
+
+**This is the ledger's own warning going unapplied to a number that inherited it.** Lines just below
+already say the 122-throw re-roll's *"corrected **absolute** values are a 76.2% subsample and are **not**
+drop-in replacements for the adopted covariance"*, and that only the **relative** changes are controlled.
+The F7 ratio is an absolute quantity and was carried across anyway.
+
+**No verdict moves.** `5.3478 > 4.8288 > 2.0`, so the predeclared F7 rule still disqualifies a
+mean-centered-only budget — more strongly than reported, not less. Supporting operands so this can be
+contradicted: sampling floor `√Tr/√N = 3.513032e-39`; `‖mean_shift‖/√Tr = 42.28%` against a floor of
+`100/√160 = 7.91%` (the campaign's "37.1% vs 7.9%" is the pre-J28 pair, `1.6544/4.4608 = 37.09%`, which
+also reproduces).
+
+Codified as `uq_math.mean_shift_over_floor` / `f7_cv_centered_required` with the threshold
+`F7_FLOOR_MULTIPLE = 2.0`. **That threshold is a codification, not a repo decision** — the predeclared
+rule is qualitative (*"~floor"* vs *"≫floor"*) and no number was ever recorded. `2.0` is placed so a shift
+*at* the floor is unambiguously below it and the measured ratios unambiguously above, and deliberately
+not tuned to sit just under the measured value. Routed for confirmation.
+
 ## 2026-08-11 (E_avail,W) four-generator corner ratios — VERIFIED-NUMERIC, GiBUU recovered
 
 The one uncomputed generator ratio in `docs/INTEGRATION_CHECKLIST.md` #6 is recovered.

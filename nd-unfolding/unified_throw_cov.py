@@ -479,6 +479,14 @@ def do_combine(args):
         ROOT.TParameter("double")("sqrt_tr_unified", st_uni).Write()
         ROOT.TParameter("double")("sqrt_tr_block", st_block).Write()
         ROOT.TParameter("double")("joint_mean_shift_norm", float(np.linalg.norm(mean_shift))).Write()
+        # NULL-AS-ABSENT, closed 2026-08-11 (quarantine cause 4). `fixed_seed_null_norm` is still
+        # written only when the check ran -- a number nobody measured must not be invented -- but
+        # `fixed_seed_null_checked` is now written UNCONDITIONALLY beside it. Without that flag, a
+        # product built without `--null` carries no null key at all, and a downstream criterion phrased
+        # as "the null norm is not large" PASSES ON IT VACUOUSLY: absence is indistinguishable from
+        # zero. The flag makes "nobody checked" a readable state rather than an inference from a
+        # missing key, so a consumer can fail closed on `checked == 0`.
+        ROOT.TParameter("int")("fixed_seed_null_checked", 1 if null_norm is not None else 0).Write()
         if null_norm is not None:
             ROOT.TParameter("double")("fixed_seed_null_norm", null_norm).Write()
         ROOT.TParameter("int")("n_throws", T).Write()
@@ -496,6 +504,9 @@ def do_combine(args):
         "x_cv_reported": base,
         "throw_ids": np.asarray(throw_ids, dtype=int),
         "fixed_seed_null_norm": null_norm,
+        # Same reason as the ROOT stamp above: a consumer of this dict must be able to distinguish
+        # "checked and zero" from "not checked", and `None` alone invites `or 0.0`.
+        "fixed_seed_null_checked": null_norm is not None,
     }
 
 

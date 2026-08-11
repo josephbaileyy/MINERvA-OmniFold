@@ -116,6 +116,55 @@ def joint_throw_covariance(throws, cv):
     return mat_covariance(X), mean - cv
 
 
+# --- F7 / quarantine cause 2 (CV centering): the mean-shift rule, as a testable predicate -----------
+#
+# The rule was PREDECLARED before the data in `CORRECTED_UQ_PRODUCTION_STATUS.md`, item 1 of "Pending
+# decisions / gates" (the paragraph beginning "mean_shift convention (Fable F7)"): measure
+# ||mean_shift|| against the sampling floor sqrt(Tr C)/sqrt(N); `~floor` -> mean-centered alone is
+# acceptable; `>> floor` -> the CV-centered variant must ALSO be produced and the shift reported either
+# way, never silently dropped. Measured on the adopted ensemble: 4.69x the floor, 4.83x after the flux
+# correction. Cited by content, not by line number -- that file is prepend-ordered and every
+# line-number citation into it decays (BEN-103).
+#
+# THE THRESHOLD BELOW IS A CODIFICATION, NOT A REPO DECISION, AND IS FLAGGED AS SUCH. The predeclared
+# rule is qualitative ("~floor" vs ">> floor") and no number was ever recorded for it. `2.0` is chosen
+# so that a shift AT the sampling floor (1.0x, i.e. consistent with being a finite-N fluctuation) is
+# unambiguously below it, and the measured 4.69x is unambiguously above it. It is deliberately not
+# tuned to sit just under 4.69x -- a threshold placed to make today's answer come out right is not a
+# criterion. Anyone changing it should change it here, where one test pins the boundary explicitly.
+F7_FLOOR_MULTIPLE = 2.0
+
+
+def mean_shift_sampling_floor(sqrt_trace, n_throws):
+    """The finite-N floor a mean shift must beat to mean anything: sqrt(Tr C) / sqrt(N)."""
+    sqrt_trace = float(sqrt_trace)
+    n_throws = int(n_throws)
+    if not np.isfinite(sqrt_trace) or sqrt_trace <= 0:
+        raise ValueError(f"sqrt_trace must be finite and positive, got {sqrt_trace!r}")
+    if n_throws < 2:
+        raise ValueError(f"need at least two throws, got {n_throws!r}")
+    return sqrt_trace / np.sqrt(n_throws)
+
+
+def mean_shift_over_floor(mean_shift_norm, sqrt_trace, n_throws):
+    """||mean_shift|| in units of the sampling floor. This is the number F7 is a rule about."""
+    mean_shift_norm = float(mean_shift_norm)
+    if not np.isfinite(mean_shift_norm) or mean_shift_norm < 0:
+        raise ValueError(f"mean_shift_norm must be finite and non-negative, got {mean_shift_norm!r}")
+    return mean_shift_norm / mean_shift_sampling_floor(sqrt_trace, n_throws)
+
+
+def f7_cv_centered_required(mean_shift_norm, sqrt_trace, n_throws, floor_multiple=None):
+    """True when the mean shift is large enough that a mean-centered-only budget is disqualified.
+
+    Returns a bool. The caller must not treat False as "the shift may be dropped" -- F7 requires the
+    shift to be reported *either way*; False only means the CV-centered variant is not additionally
+    mandatory. That distinction is the whole content of the rule and is asserted in the tests.
+    """
+    k = F7_FLOOR_MULTIPLE if floor_multiple is None else float(floor_multiple)
+    return bool(mean_shift_over_floor(mean_shift_norm, sqrt_trace, n_throws) > k)
+
+
 def project_covariance(covariance, projection):
     C = np.asarray(covariance, dtype=float)
     M = np.asarray(projection, dtype=float)

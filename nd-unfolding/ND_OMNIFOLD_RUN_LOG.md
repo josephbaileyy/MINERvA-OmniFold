@@ -4863,3 +4863,63 @@ cluster counts.
 
 Unrelated to and not touching `p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, which is Session
 C's to dispose of; the pin's lapse is C's finding and I relied on my own reading of the code, not on it.
+
+## 2026-08-11 — TEST legs for quarantine causes 1, 2, 3, 4; and the F7 ratio corrected (Session B)
+
+No compute. Remediation in the orchestrator-approved order 2 → 4 → 3 → 1. Ten tests in
+`tests/test_uq_remediation.py::QuarantineCauseGuardTests`, **28/28 pass** in that file. Two small code
+additions, both additive and neither touching an existing caller.
+
+**Cause 4's null-as-absent gap, closed at the source.** `unified_throw_cov.py` wrote
+`fixed_seed_null_norm` **only** when `--null` was passed, so a product built without it carries no null
+key at all and a criterion phrased *"the null norm is not large"* passes on it **vacuously**. Now
+`fixed_seed_null_checked` is written **unconditionally** beside it, in both the ROOT and the returned
+dict. The norm itself is still written only when measured — **a number nobody measured must not be
+invented as `0.0`** — so "checked and zero" and "not checked" are now distinct readable states.
+
+**Cause 2's F7 rule, codified as a predicate.** `uq_math.mean_shift_sampling_floor`,
+`mean_shift_over_floor`, `f7_cv_centered_required`, with `F7_FLOOR_MULTIPLE = 2.0`. The threshold is a
+**codification, not a repo decision** — the predeclared rule is qualitative and no number was recorded —
+placed so a shift *at* the floor is unambiguously below and the measured ratios unambiguously above, and
+deliberately not tuned to sit just under the measured value. One test pins the boundary explicitly so
+changing it fails a test that names it.
+
+**AND THE F7 NUMBER ITSELF IS WRONG — found while writing its test.** See the ledger entry
+"2026-08-11 F7 mean-shift ratio on the ADOPTED ensemble". `4.6912×` reproduces the recorded `4.69×`
+exactly; `4.83×` turns out to be the **122-throw** morning re-roll (`4.8288×`), not the adopted 160. The
+like-for-like post-J28 value is **`5.3478×`**. The ledger's own subsample warning sat twelve lines away
+and was never applied to this ratio. **No verdict moves** — `5.35 > 4.83 > 2.0`, mean-centered-only stays
+disqualified, more strongly — which is precisely why it survived: a wrong number pointing the same way as
+the right one is invisible to anyone checking the conclusion. Third instance of the class this session,
+now named: **BEN-109**.
+
+**POWER-TESTED, SIX MUTATIONS, files restored byte-exact (md5 verified before and after).**
+
+    N1  mat_covariance CV-centers instead of mean-centering   -> 1 fail (cause 1)
+    N2  mat_covariance renamed away                           -> 6 fail, incl. the PRESENCE test
+    N3  f7_cv_centered_required always False                  -> 2 fail (cause 2)
+    N4  F7_FLOOR_MULTIPLE moved to 10.0, above the measured   -> 2 fail, incl. the boundary pin
+    N5  mixed-seed rejection made unreachable                 -> 1 fail (cause 3)
+    N6  fixed_seed_null_checked reverted to conditional       -> 1 fail, the PRESENCE assertion ONLY
+
+**N6 repeats the wakerctl result exactly: the null-as-absent revert is caught by one test and nothing
+else.** Two independent instances in one session where a presence assertion is the sole guard against
+*"only write it when there's something to report"* — the refactor a reasonable maintainer makes next
+month. BEN-108.
+
+Cause 3's test asserts **both** directions in one case — one seed ACCEPTED, mixed seeds REJECTED —
+because rejection alone would also pass for a guard that rejects everything.
+
+**Suite state, and two red tests that are NOT mine.** `pytest nd-unfolding/tests` = **1018 collected**,
+9 failed / 1008 passed / 1 skipped on the **local Mac checkout**; 7 are the known off-Perlmutter
+ImportError/`/pscratch` failures. The other two are accounted for exactly and belong elsewhere:
+- `test_p4_sweep_snapshots` **340 != 337** — three `.sh` files added since the snapshot commit
+  (`76a62f8`), enumerated by `git diff --diff-filter=A`: `pet/sbatch_hpss_protect_p3f_fullevent.sh`,
+  `pet/sbatch_step1_trajectory_annealed.sh` (both PET) and `sbatch_readopt_5d_bkgaware_footing.sh`
+  (mine). `337 + 3 = 340`, no unexplained file. **Not updated here** — the snapshot is a P4-lane artifact
+  and two of the three additions are another lane's to confirm; blessing them because I ran the suite
+  last is the "who authorized this" problem. Routed.
+- `test_resume_guard::test_no_shell_file_reintroduces_a_size_only_resume_guard` — a **false positive on a
+  COMMENT**: it matches `pet/sbatch_hpss_protect_p3f_fullevent.sh:35`, whose text is
+  *"`[[ -s $OUT ]] && skip` is precisely the shape"* — prose **documenting** the anti-pattern trips the
+  guard against it. Another lane's file and another lane's guard; routed, not edited.

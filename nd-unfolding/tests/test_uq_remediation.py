@@ -305,3 +305,250 @@ class PETAndNNTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class QuarantineCauseGuardTests(unittest.TestCase):
+    """The TEST leg of quarantine causes 1, 2, 3 and 4 (VALIDATION_LEDGER.md's 2026-07-12 list).
+
+    Criteria and the four legs each cause must clear:
+    `docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`.
+
+    Every guard here is checked in BOTH directions -- the defect must fail, and the guarded object
+    disappearing must ALSO fail. A test asserting only the absence of a bad construction passes
+    vacuously once the thing under test is renamed or deleted, which is the null-as-absent shape.
+    Mutation counts are recorded in the commit rather than asserted here, because a test cannot
+    measure its own power.
+    """
+
+    # ---- cause 1: one-sided endpoint interpolation ------------------------------------------------
+    def test_cause1_one_sided_cv_centered_pair_overstates_and_mat_form_does_not(self):
+        """The defect, quantified on a pair rather than merely named.
+
+        For a +/-1sigma pair the corrected form is mean-centered `mat_covariance([x-, x+])`, which is
+        rank 1 in `(x+ - x-)/2`. The defective form was a CV-centered outer product of ONE endpoint,
+        `outer(x+ - CV)`, which for an ASYMMETRIC pair keeps the symmetric component that mean-
+        centering is supposed to kill -- so it does not merely differ, it overstates
+        (`app_statmethods.tex:300-306, 1462`).
+
+        This is the T leg. It is NOT the Magnitude leg for the adopted covariance, which requires the
+        same comparison on that product's own bank and does not exist yet.
+        """
+        from uq_math import mat_covariance
+
+        cv = np.array([10.0, 20.0])
+        minus = np.array([8.0, 22.0])
+        plus = np.array([14.0, 18.0])          # deliberately asymmetric about CV
+
+        corrected = mat_covariance(np.stack([minus, plus]))
+        half_range = (plus - minus) / 2.0
+        np.testing.assert_allclose(corrected, np.outer(half_range, half_range))
+
+        one_sided = np.outer(plus - cv, plus - cv)
+
+        # Both are rank 1, so rank alone does not discriminate -- the direction and the size do.
+        self.assertEqual(np.linalg.matrix_rank(corrected), 1)
+        self.assertEqual(np.linalg.matrix_rank(one_sided), 1)
+        self.assertGreater(
+            np.trace(one_sided), np.trace(corrected),
+            "on this asymmetric pair the one-sided CV-centered form must OVERSTATE the variance; "
+            "if it ever does not, the fixture has drifted and the test has stopped discriminating",
+        )
+        # Pin the size so a future reader sees a magnitude and not just an inequality:
+        # trace 4*4+2*2=20 corrected vs 16+4=20 ... asserted numerically rather than reasoned.
+        self.assertAlmostEqual(float(np.trace(corrected)), 9.0 + 4.0, places=12)
+        self.assertAlmostEqual(float(np.trace(one_sided)), 16.0 + 4.0, places=12)
+
+    def test_cause1_the_corrected_primitives_are_PRESENT_and_not_merely_unbroken(self):
+        """Presence half. Every cause-1 assertion above routes through these two names.
+
+        If either is renamed or deleted, the tests above stop testing the convention and start
+        testing an ImportError -- which reads as a tooling problem, not as the guard firing. Assert
+        they exist and are callable so that failure mode is explicit.
+        """
+        import uq_math
+
+        for name in ("mat_covariance", "interpolate_asymmetric_ratio"):
+            self.assertTrue(hasattr(uq_math, name), f"uq_math.{name} has disappeared")
+            self.assertTrue(callable(getattr(uq_math, name)))
+
+    # ---- cause 2: CV centering (the F7 rule) ------------------------------------------------------
+    def test_cause2_f7_requires_cv_centered_at_the_measured_ratio_and_not_at_the_floor(self):
+        """The predeclared F7 rule, with the campaign's own measured numbers as the fixture.
+
+        Measured on the adopted ensemble: ||mean_shift|| is 4.69x the sampling floor (37.1% of
+        sqrt(Tr C) against a 7.9% floor), rising to 4.83x after the flux correction. Both must land
+        on the "CV-centered variant is mandatory" side. A shift AT the floor must not.
+        """
+        from uq_math import f7_cv_centered_required, mean_shift_over_floor
+
+        sqrt_tr, n = 4.443673650575504e-38, 160          # the J28-corrected throw ROOT, read from it
+        floor = sqrt_tr / np.sqrt(n)
+
+        self.assertAlmostEqual(mean_shift_over_floor(4.69 * floor, sqrt_tr, n), 4.69, places=9)
+        self.assertTrue(f7_cv_centered_required(4.69 * floor, sqrt_tr, n))
+        self.assertTrue(f7_cv_centered_required(4.83 * floor, sqrt_tr, n))
+        self.assertFalse(f7_cv_centered_required(1.00 * floor, sqrt_tr, n))
+
+        # The real adopted mean shift, from the ROOT: 1.878696733368378e-38 against sqrt_tr above.
+        # 1.8787e-38 / (4.4437e-38/sqrt(160)) = 5.35 -- comfortably required. Pinned so the rule is
+        # exercised on the actual product and not only on synthetic multiples of the floor.
+        self.assertTrue(f7_cv_centered_required(1.878696733368378e-38, sqrt_tr, n))
+        self.assertGreater(mean_shift_over_floor(1.878696733368378e-38, sqrt_tr, n), 5.0)
+
+    def test_cause2_the_threshold_boundary_is_pinned_explicitly(self):
+        """The codified threshold is 2.0 and that is a choice, so it is asserted rather than implied.
+
+        The predeclared rule is qualitative ("~floor" vs ">> floor"); no number was ever recorded.
+        Pinning the boundary here means a future change to F7_FLOOR_MULTIPLE fails a test that names
+        it, instead of silently moving a publication gate.
+        """
+        from uq_math import F7_FLOOR_MULTIPLE, f7_cv_centered_required
+
+        self.assertEqual(F7_FLOOR_MULTIPLE, 2.0)
+        sqrt_tr, n = 1.0, 100
+        floor = sqrt_tr / np.sqrt(n)
+        self.assertFalse(f7_cv_centered_required(2.0 * floor, sqrt_tr, n), "strictly greater-than")
+        self.assertTrue(f7_cv_centered_required(2.000001 * floor, sqrt_tr, n))
+
+    def test_cause2_the_shift_is_returned_SEPARATELY_and_folding_it_in_changes_the_answer(self):
+        """Cause 2 is about *where the shift goes*, so prove the two conventions are not the same.
+
+        `joint_throw_covariance` returns (covariance, shift) as two objects. A CV-centered
+        construction adds shift**2 to the per-bin variance. If that addition were zero the whole
+        distinction would be empty, so assert it is not -- otherwise this guard could pass on a
+        degenerate fixture forever.
+        """
+        from uq_math import joint_throw_covariance
+
+        cv = np.array([1.0, 2.0])
+        throws = np.array([[1.5, 2.5], [1.7, 2.1], [1.9, 2.9]])
+        C, shift = joint_throw_covariance(throws, cv)
+
+        self.assertEqual(np.asarray(C).ndim, 2)
+        self.assertEqual(np.asarray(shift).ndim, 1)
+        self.assertGreater(float(np.linalg.norm(shift)), 0.0, "degenerate fixture: shift is zero")
+
+        mean_centered_var = np.diag(C)
+        cv_centered_var = mean_centered_var + shift ** 2
+        self.assertTrue(np.all(cv_centered_var > mean_centered_var),
+                        "CV-centering must strictly inflate; if not, the fixture has drifted")
+
+    # ---- cause 3: varying estimator seeds --------------------------------------------------------
+    def test_cause3_mixed_seed_slabs_are_rejected_and_a_single_seed_is_accepted(self):
+        """Both directions in one test, because only the pair is evidence.
+
+        Rejection alone does not show the guard discriminates -- a guard that rejects everything
+        would pass it. The accept case is what makes the reject case mean something.
+        """
+        import unified_throw_cov as utc
+
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
+
+            def write(seed_a, seed_b):
+                np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
+                         seed=np.int64(seed_a), flux_normalized=np.int64(1))
+                np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
+                         seed=np.int64(seed_b), flux_normalized=np.int64(1))
+                np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
+                         labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
+                         seed=np.int64(seed_a),
+                         kinds=np.array(["knob", "knob"], dtype=object),
+                         flux_normalized=np.int64(1))
+
+            d = {"edges": [np.array([0.0, 1.0, 2.0])],
+                 "w_truth": np.ones(1), "w_reco": np.ones(1), "td_w": np.ones(1)}
+            old_load, old_kernel = utc._load_bank, utc._xsec_for_weights
+            utc._load_bank = lambda bank: (d, ["MaCCQE"], 0)
+            utc._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
+            try:
+                args = SimpleNamespace(bank=td, iters=1, seed=42,
+                                       combine=str(p / "throws_*.npz"),
+                                       block_slabs=str(p / "blocks.npz"),
+                                       expected_throws="0-2", null=True, out_root=None)
+                write(42, 42)
+                self.assertIsNotNone(utc.do_combine(args), "one seed must be ACCEPTED")
+                write(42, 999)
+                with self.assertRaises(SystemExit):
+                    utc.do_combine(args)
+            finally:
+                utc._load_bank, utc._xsec_for_weights = old_load, old_kernel
+
+    # ---- cause 4: scalar jitter subtraction ------------------------------------------------------
+    def test_cause4_null_is_CHECKED_flag_is_present_in_both_directions(self):
+        """The null-as-absent trap, in cause 4's own evidence.
+
+        `--null` is optional, so a product built without it carries no `fixed_seed_null_norm` at all,
+        and a criterion phrased "the null norm is not large" PASSES ON IT VACUOUSLY. The remedy is a
+        flag that is always present: `fixed_seed_null_checked`. Assert it in BOTH states -- present
+        and true when the check ran, present and FALSE when it did not. Asserting only the true case
+        would leave "the flag is missing entirely" indistinguishable from "not checked".
+        """
+        import unified_throw_cov as utc
+
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
+            np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
+                     seed=np.int64(42), flux_normalized=np.int64(1))
+            np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
+                     seed=np.int64(42), flux_normalized=np.int64(1))
+            np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
+                     labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
+                     seed=np.int64(42),
+                     kinds=np.array(["knob", "knob"], dtype=object),
+                     flux_normalized=np.int64(1))
+
+            d = {"edges": [np.array([0.0, 1.0, 2.0])],
+                 "w_truth": np.ones(1), "w_reco": np.ones(1), "td_w": np.ones(1)}
+            old_load, old_kernel = utc._load_bank, utc._xsec_for_weights
+            utc._load_bank = lambda bank: (d, ["MaCCQE"], 0)
+            utc._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
+            try:
+                args = SimpleNamespace(bank=td, iters=1, seed=42,
+                                       combine=str(p / "throws_*.npz"),
+                                       block_slabs=str(p / "blocks.npz"),
+                                       expected_throws="0-2", null=True, out_root=None)
+                checked = utc.do_combine(args)
+                self.assertIn("fixed_seed_null_checked", checked)
+                self.assertTrue(checked["fixed_seed_null_checked"])
+                self.assertEqual(checked["fixed_seed_null_norm"], 0.0)
+
+                args.null = False
+                unchecked = utc.do_combine(args)
+                self.assertIn("fixed_seed_null_checked", unchecked,
+                              "the flag must be PRESENT even when the check did not run")
+                self.assertFalse(unchecked["fixed_seed_null_checked"])
+                self.assertIsNone(unchecked["fixed_seed_null_norm"],
+                                  "a number nobody measured must not be invented as 0.0")
+            finally:
+                utc._load_bank, utc._xsec_for_weights = old_load, old_kernel
+
+    def test_cause4_no_jitter_subtraction_survives_on_the_combine_path(self):
+        """Absence AND presence.
+
+        A grep-style assertion that the token `jitter` does not appear in a subtraction would pass if
+        `unified_throw_cov.py` were deleted, so it is paired with a presence assertion on the thing
+        that REPLACED the subtraction: the `--null` requirement itself. Structural (AST/attribute)
+        rather than textual, so a comment mentioning jitter cannot fail it -- the file's own header
+        legitimately says "no jitter subtraction".
+        """
+        import unified_throw_cov as utc
+
+        # presence: the replacement mechanism exists and is reachable
+        source = Path(utc.__file__).read_text()
+        tree = ast.parse(source)
+        names = {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
+        self.assertIn("null_norm", names,
+                      "the fixed-seed null is what replaced the jitter subtraction; if this name is "
+                      "gone the guard below is testing nothing")
+
+        # absence: no assignment anywhere subtracts a scalar jitter term from a covariance/trace
+        offenders = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub):
+                seg = ast.get_source_segment(source, node) or ""
+                if "jitter" in seg.lower():
+                    offenders.append(seg)
+        self.assertEqual(offenders, [], f"scalar jitter subtraction reintroduced: {offenders}")
