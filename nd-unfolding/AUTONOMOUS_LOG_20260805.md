@@ -4249,3 +4249,48 @@ BEN-084 amended with the ordering rule, the cross-lane observation, and the seed
 
 Queue: `56611394` and `56611837`, both PENDING, both watched. Nothing else changed — no promotion, baseline
 canonical, niter 3, Branch C closed.
+
+### 05:55Z — `.done` already existed and was the thing hiding the gap; and the marker's contract is weaker than PB3's fix
+
+**Checked whether `PROCESSED.txt` duplicates state that already exists — it does not, and the check produced
+the best evidence in the row.** `wakerctl` writes `.claim`, `.invoked`, `.json`, `.done` per event. For
+`evt-designA-56586368`:
+
+    .done  {"at_utc": "2026-08-11T02:20:09Z", "outcome": "resumed", "rc": 0}   <- dispatch time
+    verdict filed                                                  e2e2b67, ~04:50Z, 2.5 h later
+
+So a state file asserting `outcome: resumed, rc: 0` had existed for two and a half hours while nobody had
+looked at the result. **It is not wrong — the dispatch did succeed — but it is dispatcher-side, and it was
+precisely the artifact making fired-and-ignored look like fired-and-handled.** Nothing in the tree recorded
+the reader side before `PROCESSED.txt`. Good reason to have checked rather than asserting non-redundancy:
+had `.done` meant what it looks like it means, the marker would have been pure surface.
+
+**The GBDT lane's objection to my contract is right, and the evidence for it is mine.** Its PB3 fix is
+`.PENDING` + rename, chosen because it **requires no reordering at all** — the write stays, every blocker
+stays, only the publish moves, so it cannot drop a blocker because it moves none. Turned on my marker: *append
+only after filing* is the same fix in a weaker form, because it relies on every author remembering. The
+append should be a **side effect of the filing operation**, not a step beside it.
+
+I am not building that now, and the reasoning is on the record rather than just the decision: a git hook is
+shared-repo surface affecting the other lane and not one session's to add unilaterally; a filing wrapper is
+new surface; and a third option — **derive** the marker (an event is processed iff a commit mentioning its
+job id postdates it) — has nothing to forget but trades exactness for a heuristic. Recorded as an open choice
+rather than resolved at 06:00 with two jobs in flight.
+
+**What I did record is the strongest argument against my own contract: I wrote it and violated it within
+minutes.** If the rule's author cannot hold it for one commit, "every future author reads the header" is not
+a strong assumption. That belongs in the row more than any defence of the design does.
+
+Also folded in the GBDT lane's class statement, which is sharper than mine on one axis: **both defects fail
+asymmetrically in the same direction** — the safe error is loud and self-correcting, the unsafe error is
+silent **and leaves an artifact asserting the opposite**. An artifact that asserts the wrong thing is worse
+than no artifact, and that is why neither is caught by re-reading.
+
+Independently verified the shared check while in there: 49 logs, 49 entries, empty output. Clean. The
+oversight lane's monitor had been pointing at `events/` rather than `logs/` — 201 files across five suffixes —
+so it would have reported every event as unfiled four or five times over. It fixed it by using the documented
+command verbatim instead of re-deriving it, which is the argument for documenting commands rather than
+describing them.
+
+Queue: `56611394` and `56611837`, both PENDING, both watched, both to be appended **after** their verdicts
+commit.
