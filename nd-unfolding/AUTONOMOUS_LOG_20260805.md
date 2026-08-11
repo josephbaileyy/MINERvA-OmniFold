@@ -4326,3 +4326,28 @@ watch list from `watch-list`, not from what you remember arming** — the same r
 exists on wake, pointed at the other end of the cycle.
 
 Both now armed and verified from the command. Tick clean, emits nothing while PENDING.
+
+### 06:15Z — the unifying rule, and a correction owed to Joseph in my own channel
+
+Filed the oversight lane's unifying form, which is better than either habit alone: **derive state from
+artifacts on entry and on exit, never from the middle.** The wake-time rule (what work exists) and the
+stand-down rule (what is watched) are the same rule at the two ends of a session, and **both of tonight's
+failures were transitions** — a restart that left a correct dispatch unread for 2.5 h, and a stand-down that
+asserted "both watched" while one job had no watch. Transitions are where context and world diverge and the
+only two moments the divergence is cheap to catch.
+
+Also recorded there that the stand-down case is the **more dangerous** of the two, which I had not stated
+sharply enough: an unwatched job fires no event, so `PROCESSED.txt` shows nothing unread. The marker built to
+make "nobody looked" visible **cannot see a job whose watch was never armed.** A `sacct`-derived check sees
+jobs rather than events and does not inherit that hole — so the two checks are complementary, not redundant,
+and I had been treating the second as a convenience layer over the first.
+
+**A correction is owed in my own channel and I am deliberately deferring it, with the reasoning recorded so it
+is not simply forgotten.** The oversight lane relayed "both watched" to Joseph, so a false claim of mine is in
+his record; it is correcting its own relay. Mine originated the claim, and per BEN-082 the direct channel is
+the one that does not depend on the relay — so it goes in my next mail explicitly, rather than as a separate
+06:15 mail about a watch state that is already fixed and needs no action from him. **Deferred, not dropped**,
+and written here so the deferral is checkable.
+
+Both jobs still PENDING, both watches verified from `watch-list`. Nothing else unblocked; the k=3 restatement
+stays queued behind them, and no promotion, no threshold change, niter 3, Branch C closed.
