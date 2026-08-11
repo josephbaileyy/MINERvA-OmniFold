@@ -1,0 +1,198 @@
+# Session D (verifier) — verdicts, 2026-08-11
+
+Three branches, always: **PASS / BLOCK / UNRESOLVED**. UNRESOLVED is a real outcome and must never be
+re-read as the nearer of the other two. Where I tried to refute a claim and failed, I say so; where I was
+right without evidence, I say that too.
+
+**Tree state.** Measurements are stamped with the commit they were taken at. The working tree moved three
+times during this session (`78296de` → `a0d8eb7` → `ceb2037`) because other lanes are committing into it.
+`docs/analysis-note/` is byte-identical across all three (`git diff --stat 78296de ceb2037 --
+docs/analysis-note/` empty), so the `\dead{}` measurements are unaffected. Corpus counts are stamped
+`78296de`.
+
+**Footprint.** Read-only outside `docs/orchestration/`. Every mutation ran on a copy: the note tests
+against a `cp -R` of `docs/analysis-note/` under the job tmp, the p4 tests against a
+`git clone --local --no-hardlinks` of the repo. `git status` shows no modification by me to any tracked
+file; my only additions are the three documents in `docs/orchestration/`.
+
+---
+
+## V1 — `check_dead_containment.py` power test → **BLOCK**
+
+Detail: `FINDING-20260811-dead-containment-evadable.md`. Ten mutations; nine behave.
+
+`\dead {9.87654}` — one space, valid LaTeX, renders identically — is invisible to
+`DEAD_RE = r"\\dead\{"`. Demonstrated end to end: checker `RESULT :: PASS` exit 0, `latexmk` exit 0,
+`pdftotext` finds `9.87654` at line 1013 of the built `main_paper.pdf`. Both stages are blinded by the one
+regex, because `struck_values` is derived through the same matcher, so the two-direction design does not
+catch it.
+
+Second, weaker exposure: with a real violation present, removing `pdftotext` from `PATH` yields `PASS`
+exit 0. Documented behaviour, but `exit 0` cannot distinguish *the PDF stage passed* from *the PDF stage
+did not run*.
+
+Zero spaced instances exist in the tree today, so the containment currently holds. Not fixed — the note
+lane owns the file.
+
+## V2 — Session A's claim (a): *"the `\dead{}` build-scoping decision is CLOSED"* → **PASS, with two named exposures**
+
+A's stated basis was that the branch landed and the test exists, and A correctly flagged that as the
+BEN-088 shape. Checked properly:
+
+- The test **passes** on the current tree, and it **did open the PDFs**: `pdftotext` present, all three
+  PDFs present, positive control firing at 17/17 in `main_note.pdf` and 0/17 in each of paper and primer.
+  So the stronger of A's two readings is the true one.
+- The test **can be made to fail** in both directions it argues for (PT1/PT2 containment, PT3 positive
+  control), plus closure resolution (PT4) and the PDF stage itself (PT5). It is genuine evidence.
+- **The decision is closed.** Do not restate it as *"the containment is enforced"* without V1's two
+  exposures: enforcement is evadable by an ordinary LaTeX idiom, and degrades silently to source-only
+  where `pdftotext` is missing.
+
+I attempted one further refutation and it failed: I suspected the paper's 4-file include closure was an
+under-resolution hiding inputs. It is not — `paper_body.tex`'s seven `\include`-prefixed lines are all
+`\includegraphics`, which `INPUT_RE` correctly does not match, and the paper's closure genuinely is
+`main_paper → preamble, values, paper_body`. Recorded because a refutation that fails is evidence.
+
+## V3 — Session A's claim (b): the `wakerctl` hash pin → **BLOCK (confirmed), and already filed by another lane**
+
+A and the GBDT lane both ran `shasum` against the git object store — one instrument, twice. I ran two
+others: `hashlib.sha256` on the working-tree file (`04d2e957…`, agrees), and sha256 of **every historical
+blob** of the path along `origin/main`, which answers a different question — *was the pin ever valid?*
+
+    04d2e957  2026-07-20  7e69926d  Cut over to interim Claude root        <- current
+    bf459853  2026-07-20  442aee35  Send a 6-hour status digest email
+    d7c6a215  2026-07-20  8c8775f8  Reconcile P3F PET queue latency wake   <- THE PIN
+    6c5e97e6  2026-07-19  f54848dc  Notify the user by email
+    c4ad82be  2026-07-19  32f62aad  Harden waker
+    0b4c463c  2026-07-19  be4cd789  Replace hand-cloned wake watchers
+
+The pin was correct when written — `d7c6a215` is `wakerctl.py` at `8c8775f8`, the receipt's own commit,
+and `git log --all` on the receipt returns that one commit and no other. It broke twice on 2026-07-20,
+the same day. Stale, not dangling.
+
+**Verified as already filed, and therefore NOT re-filed by me.** `f27a302` carries the canonical
+correction in `KNOWN_ISSUES.md` with the same history table plus byte counts (50283 / 53113 / 54600),
+reached independently by the GBDT lane. My I3 adds nothing to it. The correct verifier outcome here is
+corroboration and silence, not a second account.
+
+## V4 — the BEN-084 attribution → **already corrected at `acb5555`; my reading and theirs agree**
+
+BEN-084 justified `PROCESSED.txt` being a text file rather than a feature on the premise that editing
+`wakerctl.py` would move a pinned sha. That premise was void by three weeks when it was written.
+Verified `acb5555` inserts exactly that correction inline, flagged *"re-examine, do not inherit"* rather
+than reversed, leaving BEN-084's other ground (new surface generates defects faster than it closes them)
+untouched. Verified the correction's pointer resolves: `KNOWN_ISSUES.md:589`, the `wakerctl install-cron`
+fail-open section. Nothing for me to add.
+
+## V5 — Session A's claim: *"BEN-089 carries BOTH the peer-starvation mechanism AND the pin lapse"* → **BLOCK, in the specific form stated**
+
+The conclusion A drew from it (do not re-file the pin) is right. The stated evidence is not.
+
+- `2b50c3f` touched two files: `KNOWN_ISSUES.md` **+38** lines (the pin) and `FINDINGS.md` **+1** (the
+  BEN-089 row).
+- The BEN-089 row is **2629 characters about channel starvation and nothing else.** Searched for
+  `8c8775f`, `50283`, `d7c6a215`, `04d2e957`, `442aee35`, `7e69926d`, `byte-for-byte`, `byte-identical`:
+  **zero hits.** The pin lives in `KNOWN_ISSUES.md`, which is its canonical home and the right place
+  for it.
+
+A read the commit **subject** (*"BEN-089: … And the wakerctl pin lapsed 07-20"*) and attributed both
+halves to the row. That is BEN-080 rule (1) verbatim: *a cross-lane status signal is not actionable until
+you have read the commit body or diff, never the subject alone.* Low cost here — A's instruction to me
+was correct anyway — but it is the second time in one session that A reached a right conclusion from
+evidence that does not support it (see V6), and that pattern is the thing worth naming.
+
+## V6 — Session A's BEN-range evidence → **BLOCK on the evidence; the assignment itself stands**
+
+A wrote: *"`git show origin/main:…FINDINGS.md | grep -oE 'BEN-[0-9]{3}'` → 001-046, 060-089 present; max
+089; **repo-wide grep returns the same set**."*
+
+The first half reproduces exactly. **The second half is false.** Repo-wide returns the same set **plus
+`BEN-100` and `BEN-105`**, both in `docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`,
+which was untracked when A measured and is now committed. Session B has taken **100–105** and states in
+that file that it is *"leaving 089–099 as a deliberate unused buffer."*
+
+- **090–099 is genuinely free**: `grep -rn "BEN-09[0-9]" .` returns nothing. So A's assignment is safe and
+  I am using **BEN-090** for V1.
+- **But A assigned me the block B had declared a buffer**, and B's own new row `BEN-105` says *"the BEN
+  namespace is exhausted inside its own documented ranges, and the next allocation by either rule is a
+  collision."* Two lanes now hold different beliefs about what 090–099 is for. **No collision has
+  occurred**; this is the BEN-080 shape caught by mechanism rather than attention, which is the outcome
+  BEN-080 said the namespace was *not* protected by. A and B should reconcile it in one place.
+- The repo-wide grep is the check the range rule depends on, and it was the half that was wrong. Stated
+  plainly: A was right about 090–099 for a reason A did not measure.
+
+## V7 — `test_p4_resume_integration.py` power test → **PASS**
+
+Baseline 50 passed in 27 s, reproduced in a clean clone. Five mutations of the **code under test**, each
+from a hard reset:
+
+| mutation | result |
+|---|---|
+| M1 revert the PB2 explicit-null repair (`git checkout 1440b58^ -- p4_lib.py`) | **5 failed** — and exactly the right five: `test_null_schema_is_rejected_not_grandfathered`, `test_null_surface_record_…`, `test_both_fields_null_…`, `test_null_schema_with_a_valid_map_is_rejected`, `test_null_is_distinguished_from_absent_at_the_helper` |
+| M2 widen `producing_closure` to the whole surface | **3 failed** — the over-rejection control fires |
+| M3 invert the launcher's degenerate-closure guard | **1 failed** — exactly `test_launcher_aborts_on_a_degenerate_closure` |
+| M4 launcher stops stamping `receipt_schema` | **5 failed** |
+| **M5 NEGATIVE CONTROL** — comment appended to `p4_project_4d.py`, a non-producing module | **50 passed** — a change that must not stale an endpoint does not |
+
+Every assertion I targeted can be made to fail, for its own reason, and the suite does not fire on a
+change it is contractually required to ignore. **This test is evidence.** Two of its choices deserve
+naming as good practice rather than being taken for granted: `test_launcher_aborts_on_a_degenerate_closure`
+**executes** the extracted shell guard against four values instead of substring-matching it (its docstring
+says why: *"a guard asserted by `assertIn` passes just as happily when its condition is inverted"*), and
+`test_no_skip_is_reachable_without_the_gate` is stated as a reachability claim over every `return 0`
+rather than as a substring check.
+
+### V7a — my own instrument was broken first, and the negative control is what caught it
+
+The first pass of this battery used `git checkout -q -- .` to reset between mutations. That restores the
+worktree **from the index**, and M1's `git checkout <commit> -- <path>` had written the reverted
+`p4_lib.py` into the index — so M1's revert persisted through M2, M3, M4 and M5. The first run reported
+M5 (the negative control) as **5 failed**, which read as a real defect: a comment on a non-producing
+module appearing to stale an endpoint. It was M1's residue.
+
+I would have reported a defect that does not exist. What stopped it was that the run I had designed to
+prove nothing was the only one whose expected answer I knew exactly. **A negative control is the cheapest
+thing in a battery and the only part that audits the harness.** Re-run with `git reset --hard` it is clean.
+Recorded here rather than quietly fixed, because the failure was mine and it is the same class I am
+auditing others for.
+
+## V8 — `PROMPTS-20260811 §3`'s *"struck magnitudes appear 8× in `main_note.pdf`"* → **UNRESOLVED**
+
+Direction confirmed independently and more strongly than stated: 0 of 17 derived literals in
+`main_paper.pdf`, 0 of 17 in `main_primer.pdf`. **The `8×` itself does not reproduce and cannot be
+refuted either.** At `4f75e50` — the commit carrying the sentence — the note's two using files already
+held **25** `\dead{}` uses giving **17** distinct literals appearing **51** times, so "five magnitudes"
+was not the population. But neither §3 nor the docstring names which five, and several of my 17
+(`1.6`, `6.5`, `9.9`) are collision-prone, so 51 certainly over-counts struck renderings. **The claim is
+unreproducible as written for want of its population** — BEN-079's shape one level up. Its conclusion is
+unaffected and independently confirmed. This is UNRESOLVED; do not round it to either side.
+
+## V9 — the sweep itself → **NOT RUN. UNRESOLVED, and its silence means nothing**
+
+Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
+four detectors carry live controls, S4a dropped on A's endorsement. **The sweep has not been executed and
+no triage has been done.** Sizing only, at `78296de`: S1 84 sites / 27 files; S3 69 sites / 26 files; S2a
+223 write-only keys out of 2293 (a floor, and noisy — most are report fields nobody was ever going to
+read programmatically, which is the under/over-report asymmetry §2 predicted); S4b unsized.
+
+**S2's positive control against PB4 failed and S2 ships relabelled** as the strictly weaker
+produced-and-consumed-by-nothing class. PB4's obligation lives in the specification, not the code, so its
+shape is not statically detectable in general.
+
+Nobody should read this section as *"the sweep found little."* It found nothing because it has not run.
+
+---
+
+## Filing status — one row is owed and I am deliberately not writing it
+
+**BEN-090 (V1) needs a row in `FINDINGS.md` and an index line for
+`FINDING-20260811-dead-containment-evadable.md`. I have not added either**, and the reason is a live
+hazard rather than an omission: throughout this session `docs/orchestration/FINDINGS.md` has carried
+another lane's **staged, uncommitted** edits (Session B's BEN-100…105 block). Editing and committing that
+file would sweep B's in-progress work into my commit. The repo convention that a result does not exist
+until its commit lands is real, and so is the rule against entangling another lane's work.
+
+Routed to Session A: the row lands the moment `FINDINGS.md` is clean, either by me or by whoever holds it
+then. Until it lands, this finding is not filed and should be treated as such.
+
+I have not edited `FINDINGS.md`, `KNOWN_ISSUES.md`, BEN-084, or any other lane's row.
