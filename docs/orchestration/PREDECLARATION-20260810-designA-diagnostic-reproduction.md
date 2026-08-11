@@ -82,3 +82,43 @@ section, or `niter` change.** `niter` stays 3. Branch C stays closed. The 2026-0
 - `−0.035608971` / `−0.035482196` — job `56563761` nominal and floor arms
 - `0.000126775` — the `56563761` matched pair, production configuration, n=2
 - `R = 1.1240802949941018` — `target.step1_class_ratio`, each artifact's own
+
+---
+
+## RESULT — three runs, and the answer is NOT the band's
+
+**Band verdict, as predeclared and not adjusted: UNRESOLVED** (`56611394`, `dev = -0.052174875`, outside both
+windows). Reported first and unmodified, because a tolerance changed after seeing the number is fitting
+whatever the justification.
+
+**The band was MIS-SPECIFIED, and this is a separate finding from the verdict.** Its tolerance was
+`3 × 1.27e-4`, **borrowed from the production configuration** — §"Why ±0.010" said so at the time and flagged
+it as provisional. `56611837` later showed that borrowing a scatter across configurations is wrong by ~10×,
+and the diagnostic configuration's own sd is now measured at `0.0247`, so the band was **65× too narrow.**
+Almost any result would have returned UNRESOLVED. **Do not read this UNRESOLVED as physics ambiguity — it is a
+tolerance drawn from the wrong population**, the same defect as the `188×` framing and the `142 production
+scatters` claim, this time sitting inside a predeclaration rather than a report. *Raised by the oversight
+session before the number was read, which is the only time it could be raised honestly.*
+
+**THE MEASUREMENT, which answers the question the band could not:**
+
+    56534117  -0.011724321   in-loop [1.0107, 1.1214, 1.1109]
+    56586368  -0.007386682   in-loop [1.4555, 1.2322, 1.1158]
+    56611394  -0.052174875   in-loop [1.0240, 1.0820, 1.0654]
+    mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+
+**The question this document asked — is `-0.011724` a property of the configuration? — is answered NO,
+definitively.** The configuration has no stable point value. Three runs of byte-identical code at identical
+seeds span `0.0448` in deviation with qualitatively different trajectories.
+
+**And it REFUTES the finding this whole line of work was chasing.** The production value `-0.035546` sits
+**inside** the diagnostic range, `0.48` diagnostic sd from its mean. The code-path gap by denominator:
+`188×` (production scatter, wrong population) → `6.0×` (two-point difference) → **`0.48×` (three-point sd)**.
+There is no established code-path difference. Retracted in `KNOWN_ISSUES.md`.
+
+**No fourth run.** The predeclared next step on UNRESOLVED was *a second repeat of Design A*, which this was;
+n=3 now gives a spread, and the spread answers the question definitively rather than ambiguously. A fourth run
+would refine `sd 0.0247` without changing any decision.
+
+**In-run assertions held:** 8 pins, `resolved sha256 66aa1f8f…` (the staged 08-09 driver, not HEAD's),
+baseline `58f664cdef266d09` unchanged before and after.

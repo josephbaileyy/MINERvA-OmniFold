@@ -4473,3 +4473,53 @@ carrying it cost nothing. The hard case — a dull verdict where the correction 
 resolved problem — is **exercised but not stressed**.
 
 Queue: `56611394` RUNNING (~2:30), `56626305` PENDING. All three watches verified from the command.
+
+### 09:25Z — DESIGN A repeat 2: the code-path FINDING IS REFUTED. Production sits inside the diagnostic's own noise.
+
+`56611394` COMPLETED `03:00:06`, exit `0:0`. Asserts held: 8 pins, `resolved sha256 66aa1f8f…` (the staged
+08-09 driver, not HEAD's), baseline `58f664cdef266d09` unchanged before and after.
+
+**Band verdict, unadjusted: UNRESOLVED** — `dev = -0.052174875`, outside both windows. Reported first and
+unmodified, because a tolerance changed after seeing the number is fitting whatever the justification.
+
+**The oversight lane flagged the band as mis-specified BEFORE I read the number, which is the only time that
+can be said honestly.** Its tolerance was `3 × 1.27e-4`, borrowed from the *production* configuration, and the
+diagnostic configuration's own sd is now `0.0247` — the band was **65× too narrow**, so almost any result
+would have returned UNRESOLVED. That is a tolerance drawn from the wrong population, **not** physics ambiguity:
+the same defect as the `188×` framing and the `142 production scatters` claim, this time sitting inside a
+predeclaration.
+
+**THE MEASUREMENT — and it refutes the finding this entire line of work was chasing.**
+
+    56534117  -0.011724321   in-loop [1.0107, 1.1214, 1.1109]
+    56586368  -0.007386682   in-loop [1.4555, 1.2322, 1.1158]
+    56611394  -0.052174875   in-loop [1.0240, 1.0820, 1.0654]
+    mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+
+**The production value `-0.035546` sits INSIDE that range, `0.48` diagnostic sd from the diagnostic mean.**
+The code-path gap by denominator: `188×` (production scatter — wrong population) → `6.0×` (two-point
+difference) → **`0.48×` (three-point sd, the first honest denominator).** **There is no established difference
+between the two code paths.** Retracted in `KNOWN_ISSUES.md` with the entry title struck through, because a
+retraction that leaves the original headline readable is not a retraction.
+
+**What the whole thing actually was:** a stable production configuration's point value compared against a
+single draw from a wildly unstable one. Everything downstream of that comparison — the FINDING, the `188×`, the
+`6.0×`, the bisect design, the two Design A repeats — traces to treating `-0.011724` as a property when
+`56534117` had run **once**.
+
+**What survives, and it is not nothing.** Production is reproducible to `1.3e-4` and its `dev = -0.0356`
+stands, unaffected. The contrast between the two configurations — `1.27e-4` versus `sd 0.0247`, a factor of
+195 — is a real and useful measurement, and **the instability itself is now the interesting defect**:
+byte-identical code at identical seeds spanning `0.0448` is worth understanding, and CLM-012 (x) already
+records that the override set does not explain it.
+
+**What must stop being quoted:** the diagnostic arm's `-1.17%`. It was never a property of anything. It should
+not appear as an expectation, a comparison point, or a target.
+
+**No fourth run.** The predeclared next step on UNRESOLVED was *a second repeat of Design A* — this was it. At
+n=3 the spread answers the question **definitively** rather than ambiguously, and a fourth run would refine
+`sd 0.0247` without changing a decision.
+
+Nothing downstream was ever taken on the refuted finding: no promotion, no threshold change, no extraction, no
+cross section, `niter` 3, Branch C closed, baseline canonical. **The hold that looked over-cautious for a day
+is the reason this retraction costs nothing.**

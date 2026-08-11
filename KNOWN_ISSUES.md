@@ -472,7 +472,23 @@ stale"* — about `early_stop`, which it correctly reads off the engine's own si
 three lines into its constants block as a literal. Knowing the rule is not applying it.
 
 
-## Two code paths implementing the same LR anneal produce different estimators — CONFIRMED systematic, cause unknown (found 2026-08-10)
+## ~~Two code paths implementing the same LR anneal produce different estimators~~ — **RETRACTED 2026-08-11. The gap was one draw from an unstable configuration, not a code-path difference** (found 2026-08-10, retracted 2026-08-11)
+
+> **RETRACTION, and it invalidates this entry's original claim.** A third run of the *diagnostic* configuration (`56611394`, predeclared at `f1901e5`) returned `dev = -0.052174875`, giving three points on byte-identical code at identical seeds:
+>
+> ```
+> 56534117  -0.011724321      in-loop [1.0107, 1.1214, 1.1109]
+> 56586368  -0.007386682      in-loop [1.4555, 1.2322, 1.1158]
+> 56611394  -0.052174875      in-loop [1.0240, 1.0820, 1.0654]
+> mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+> ```
+>
+> **The production value `-0.035546` sits INSIDE that range, 0.48 diagnostic sd from the diagnostic mean.** The code-path gap therefore has no significance: `188x` on production's scatter (wrong population), `6.0x` on a two-point difference, and **`0.48x` on the three-point diagnostic sd — the first honest denominator.** There is no established difference between the two code paths. What exists is a **stable production configuration (`1.27e-4`) and a wildly unstable diagnostic one (`sd 0.0247`)**, and the original 'finding' was a stable point value compared against a single draw from an unstable distribution.
+>
+> **What survives:** production's `dev = -0.0356` is reproducible to `1.3e-4` and is unaffected. **What does not:** the diagnostic arm's `-1.17%` was never a property of anything — it was one draw — and must not be quoted, compared against, or used as an expectation. The 2026-08-10 predeclaration that produced the original FINDING was built on that single-draw expectation, which is the root error.
+>
+> **The mechanism of the instability is OPEN and is now the real question.** Byte-identical code and seeds producing `sd 0.0247` is itself a defect worth understanding; it is not explained by the override set (see CLM-012 (x)).
+
 
 The LR anneal adopted 2026-08-10 exists in two implementations, both `MultiFold` subclasses overriding
 `CompileModel` at fit time, both leaving `omnifold.py` untouched:
