@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
   "current_dag_node": "Branch C trajectory reconciled; external dependency watches",
-  "state": "Branch C annealed trajectory job 56691812 completed 0:0. ARM 1 reproduced all committed 56445883 anchors bit-exactly; the predeclared ARM-2 branch is REPAIRED and is committed at 5e942a6. This wake found that science commit already present, recorded only the missing orchestration reconciliation, and did not duplicate the result. HPSS job 56692312 is running; readopt job 56693207 is terminal and remains owned by its armed external-event watch.",
+  "state": "Branch C annealed trajectory job 56691812 completed 0:0. ARM 1 reproduced all committed 56445883 anchors bit-exactly; the predeclared ARM-2 branch is REPAIRED and is committed at 5e942a6. This wake found that science commit already present, recorded only the missing orchestration reconciliation, and did not duplicate the result. Concurrent footing science also landed independently at 4f07b6d; its armed event watch retains orchestration ownership. HPSS job 56692312 is running.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -35,9 +35,9 @@
   "blockers": [
     "The REPAIRED trajectory is diagnostic only: it does not lift Branch C, authorize extraction/cross section, promote an artifact, or discharge a quarantine cause.",
     "HPSS job 56692312 remains an external running dependency with terminal watch coverage.",
-    "Readopt job 56693207 has terminal scheduler accounting, but its armed real-event wake owns reconciliation; this Branch C wake must not process it opportunistically."
+    "Footing job 56693207 science is committed at 4f07b6d, but its armed real-event wake owns any missing orchestration reconciliation; this Branch C wake must not process it opportunistically."
   ],
-  "next_authorized_action": "Do not duplicate job 56691812 or its committed result. End this turn without polling. The armed readopt, HPSS, and provider-reset watches will resume this thread only on their own real events; reconcile the first such event exactly once.",
+  "next_authorized_action": "Do not duplicate job 56691812 or its committed result. End this turn without polling. The armed footing, HPSS, and provider-reset watches will resume this thread only on their own real events; reconcile the first such event exactly once and recognize any already-present science commit.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
