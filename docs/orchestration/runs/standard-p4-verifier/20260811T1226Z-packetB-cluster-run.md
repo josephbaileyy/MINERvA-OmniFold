@@ -173,3 +173,33 @@ find it, another session did.
 UUID `019f74cb-b85d-7ba0-96c5-dfbd09e59159`. That rollout is not resumable from this codex home, so
 the pass would have been a fresh independent verdict rather than that session revising itself. That
 difference was recorded in the prompt at the time; it is moot now that the pass is discarded.
+
+### Addendum: the discarded pass independently corroborated the null defect
+
+The stale PB2 pass described above completed after the packet closed. It is still NOT filed as a
+verdict -- it audited `f67352f`, before `1440b58` -- but its content corroborates rather than
+contradicts, and that is worth recording.
+
+It returned **BLOCK**, on exactly the defect the other session found and fixed:
+
+> [BLOCKER] `dict.get` conflates absent keys with explicit JSON null. Malformed null schema or
+> surface records can inherit grandfathering.
+
+**Two verifiers, in different sessions, reading the same pre-fix code, independently found the same
+null-as-absent shape.** That raises the fix from "a defect someone spotted" to one two independent
+audits converge on.
+
+It also measures the direction the oversight warned about and I was asked to settle by enumeration:
+
+| receipt class | count |
+|---|---|
+| grandfathered (neither `receipt_schema` nor `surface_blobs`) | 10 |
+| schema-bearing without `surface_blobs` | 0 |
+| surface-bearing | 0 |
+| **valid receipts that would now be rejected** | **0** |
+
+So the over-rejection hazard -- the `code_rev == HEAD` shape, which would have cost ten valid
+receipts -- is **measured at zero**, and the two PASS lines confirm production writes
+`receipt_schema 2` with the six-entry surface map and that an invented `receipt_schema: 1` is
+rejected rather than falling through to grandfathering.
+
