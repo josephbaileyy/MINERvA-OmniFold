@@ -14,6 +14,33 @@
 > The slide-5 flux-CV hypothesis was independently ruled out in
 > Phase 15.
 
+> **Error budget for the POT scale used here (PB5, 2026-08-10).** This chain inherits
+> `KNOWN_ISSUES` J36: `build_1d_ibu_inputs.py` reads `hadd`-summed `dataPOTUsed`/`mcPOTUsed` from
+> the merged MEFHC omnifile, rewrites them as a single `POTUsed`, and
+> `ExtractCrossSection.cpp:225` forms `-dataPOT/mcPOT` from them — a global ratio where the
+> per-playlist ratios span **0.1707–0.2371** (`max/min − 1 = 38.90 %`, POT-weighted mean absolute
+> mixture error 9.4 %). **The numbers above are quoted with that defect present.**
+>
+> **Measured, not argued:** comparing `R_glob·Σ_p MC_p` against `Σ_p R_p·MC_p` over the twelve
+> per-playlist event-loop outputs, on the analysis' own edges, the reco **shape** changes by at
+> most **0.073 % in pT and 0.143 % in p∥** (0.032 % across the low-pT ridge), with the residual
+> **+0.119 %** appearing as normalisation rather than shape. The twelve playlists are nearly
+> shape-identical in reco pT, so a large reweighting of them is almost pure normalisation.
+> Derivation and per-bin table: `VALIDATION_LEDGER.md` (2026-08-09, VERIFIED-NUMERIC).
+>
+> **Consequence for the integrals above:** the quoted headline is *integrals*, which this defect
+> does not bias — J36 is a mixture error and leaves the total unchanged — and the OmniFold-vs-IBU
+> agreement carries the *same* global scale on both arms, so it cancels there as well. The
+> ≤ 0.15 % bound is therefore an upper limit on a quantity that is already twice-suppressed for
+> these particular numbers. It is stated anyway so the claim carries its own error budget rather
+> than resting on a reader knowing J36.
+>
+> **This is bounded, not fixed.** The correct treatment is per-playlist scaling; that repair is one
+> of nine sites in the class (`FINDING-20260809-derived-from-merged-extensives.md`) and is not
+> scheduled pre-publication. Note also that this bound is a **deterministic recomputation on
+> frozen inputs**, not a single draw from a distribution — no unfold is re-run in producing it — so
+> it is not exposed to the single-draw failure mode recorded elsewhere in this campaign.
+
 ## Purpose
 
 Run MINERvA's D'Agostini IBU on a 1D projection of the **same 2D OmniFold
