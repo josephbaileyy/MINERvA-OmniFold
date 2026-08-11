@@ -328,6 +328,32 @@ def main():
     Mew = np.zeros((n, report5.size))
     ewrow = i5e * n_w + i5w
     Mew[ewrow, np.arange(report5.size)] = dpt[i5p] * dpz[i5z] * dq3[i5q]
+    # BOTH DIRECTIONS (added 2026-08-11, quarantine cause 6). The scatter-assign above guarantees
+    # every reported 5D bin lands in some (Eavail,W) cell -- `ewrow` is total by construction -- and
+    # says NOTHING about (Eavail,W) cells that no 5D bin reaches. Those rows of Mew are all-zero, and
+    # `M C M^T` then gives that bin an exactly zero row and column: a reported bin with **zero
+    # statistical uncertainty**, i.e. one that reads as infinitely precise. Downstream that is worse
+    # than a crash, because a zero variance does not look like missing data -- it looks like a very
+    # good measurement, and any chi2 or significance built on it divides by it.
+    #
+    # This is the same hazard `p4_lib.build_projection_M` fails closed on for BEN-064 ("those rows of
+    # M are all-zero, so they survive to the central check"). That repair landed 2026-08-09 in the P4
+    # projector; THIS projector was not in its scope and carried the identical construction unguarded.
+    #
+    # NOT fail-closed, deliberately, and this is the one place the two projectors should differ. The
+    # (Eavail,W) plane is kinematically constrained -- W^2 = M^2 + 2*M*Eavail - Q^2 -- so some cells
+    # are physically unreachable and an empty row here can be correct, where in a 5D->4D marginal it
+    # cannot be. Aborting would make a legitimate geometry unrunnable. So: count it, name it, and put
+    # it in the output, because the failure this prevents is not "the code ran" but "nobody could tell
+    # the bin had no support".
+    _ew_empty = np.nonzero(~Mew.any(axis=1))[0]
+    print(f"[stat] (Eavail,W) cells receiving NO reported 5D bin: {_ew_empty.size} of {n}"
+          + (f"  -> flat indices {[int(i) for i in _ew_empty[:12]]}"
+             f"{' ...' if _ew_empty.size > 12 else ''}" if _ew_empty.size else ""))
+    if _ew_empty.size:
+        print("[stat] WARNING: those bins get an exactly-zero variance from the projection. They are "
+              "NOT measured-and-precise; they are unsupported. Exclude them from any chi2, "
+              "significance or per-bin ratio built on this covariance.")
     fs = ROOT.TFile.Open(args.stat5d)
     hs = fs.Get(args.stat5d_hist)
     if not hs:

@@ -4923,3 +4923,37 @@ ImportError/`/pscratch` failures. The other two are accounted for exactly and be
   COMMENT**: it matches `pet/sbatch_hpss_protect_p3f_fullevent.sh:35`, whose text is
   *"`[[ -s $OUT ]] && skip` is precisely the shape"* — prose **documenting** the anti-pattern trips the
   guard against it. Another lane's file and another lane's guard; routed, not edited.
+
+## 2026-08-11 — cause 6's C leg: the (E_avail,W) projector had BEN-064's unguarded construction (Session B)
+
+No compute. `eavailW_covariance.py:328-330` builds `Mew` by scatter-assign into a zero matrix, so any
+`(E_avail,W)` cell no reported 5D bin reaches leaves an **all-zero row**, and `M C M^T` gives that bin an
+exactly zero row and column — a reported bin with **zero statistical uncertainty**, which downstream reads
+as an infinitely precise measurement rather than as missing data.
+
+**This is BEN-064's defect in a second file.** The 2026-08-09 repair landed in
+`p4_lib.build_projection_M`, whose own comment states the mechanism — *"those rows of M are all-zero, so
+they survive to the central check"* — and `require`s zero orphan rows. That repair was scoped to the
+finding's **artifact** (the 5D→4D marginal) rather than to its **shape** (a scatter-assigned projection
+with unchecked destination coverage), and this projector was not in scope. It is the projector quarantine
+cause 6 is about. BEN-110.
+
+**Fixed differently on purpose, and the difference is the point.** `p4_lib` fails closed, because in a
+5D→4D marginal a reported low bin with no high support is definitionally an error. `eavailW` **reports and
+warns** rather than aborting, because the `(E_avail,W)` plane is kinematically constrained by
+`W² = M² + 2·M·E_avail − Q²`, so an empty cell can be physically correct and failing closed would make a
+legitimate geometry unrunnable. Same defect, opposite correct handling, decided by whether the empty state
+is reachable in the domain — the same test BEN-084 used to allow a heuristic in one slot and refuse it in
+another.
+
+**Tested in two halves plus a positive control**, `Cause6ProjectionCoverageTests`, 31/31 in the file.
+*Numeric*: a 2×2 with one orphan row projects to a covariance that is finite, symmetric, **PSD**, and has
+`C[1,1] == 0.0` exactly — so **PSD is not the check that catches this**, which matters because PSD is the
+check this campaign reaches for. *Static*: the module now computes and names the orphan set (this module
+imports ROOT and reads a 142 GB omnifile, so it cannot be executed here — same constraint and convention
+as `test_flux_universe_fix.EavailWFluxBlockIsPerUniverse`). *Control*: `test_the_prefix_source_would_fail`
+reconstructs the pre-fix source and requires the static assertions to fail on it.
+
+**Mutations, files restored byte-exact (md5 verified):** P1 remove the guard block → 2 fail. **P2 change
+`Mew.any(axis=1)` to `axis=0`** — i.e. check *source* coverage instead of *destination*, which is the
+original one-directional bug — → caught. P2 is the one that matters: it is the mutation that looks right.

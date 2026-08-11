@@ -552,3 +552,75 @@ class QuarantineCauseGuardTests(unittest.TestCase):
                 if "jitter" in seg.lower():
                     offenders.append(seg)
         self.assertEqual(offenders, [], f"scalar jitter subtraction reintroduced: {offenders}")
+
+
+class Cause6ProjectionCoverageTests(unittest.TestCase):
+    """Quarantine cause 6 (incomplete statistical projection), the `(E_avail,W)` route.
+
+    Two halves, because a static check alone would only prove a string is present:
+      * NUMERIC -- prove the hazard is real, that an all-zero row of M yields an exactly zero
+        variance rather than an error. No ROOT needed; `project_covariance` is pure numpy.
+      * STATIC  -- prove `eavailW_covariance.py` now detects it. That module imports ROOT and reads
+        a 142 GB omnifile, so it cannot be executed here; same constraint and same convention as
+        `test_flux_universe_fix.EavailWFluxBlockIsPerUniverse`, including a pre-fix positive control.
+    """
+
+    FNAME = "eavailW_covariance.py"
+
+    def test_an_all_zero_projection_row_yields_a_silently_ZERO_variance(self):
+        """The hazard, demonstrated rather than asserted.
+
+        A destination bin no source bin reaches gets variance exactly 0. That does not look like
+        missing data downstream -- it looks like an infinitely precise measurement, and any chi2 or
+        significance built on it divides by it. This is why the guard reports rather than shrugs.
+        """
+        from uq_math import project_covariance
+
+        C_src = np.array([[4.0, 1.0], [1.0, 9.0]])
+        # dst bin 0 gets both source bins; dst bin 1 is an ORPHAN -- an all-zero row.
+        M = np.array([[1.0, 1.0], [0.0, 0.0]])
+        C_dst = project_covariance(C_src, M)
+
+        self.assertEqual(C_dst.shape, (2, 2))
+        self.assertEqual(float(C_dst[1, 1]), 0.0, "the orphan bin's variance is exactly zero")
+        self.assertGreater(float(C_dst[0, 0]), 0.0, "the supported bin is unaffected")
+        # And nothing in the projection itself complains -- that is the whole point.
+        self.assertTrue(np.all(np.isfinite(C_dst)))
+        # A PSD check passes too, so PSD cannot be the thing that catches this.
+        self.assertGreaterEqual(float(np.linalg.eigvalsh(C_dst)[0]), -1e-12)
+
+    def test_eavailW_detects_orphan_rows(self):
+        """STATIC: the module computes the empty-row set and says something about it."""
+        src = (ND / self.FNAME).read_text()
+        tree = ast.parse(src)
+
+        calls_any_axis1 = [
+            n for n in ast.walk(tree)
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "nonzero"
+        ]
+        self.assertTrue(calls_any_axis1, "no np.nonzero(...) -- the orphan-row set is not computed")
+        self.assertIn("Mew.any(axis=1)", src,
+                      "the empty-row test must be over Mew's rows (the destination direction)")
+        self.assertIn("_ew_empty", src, "the orphan-row count must be bound to a name and reported")
+
+    def test_the_prefix_source_would_fail(self):
+        """POWER: reconstruct the pre-fix module and require the assertions above to fail on it.
+
+        Without this the static test is a spelling check. Same technique as
+        `test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_the_prefix_source_would_fail`.
+        """
+        src = (ND / self.FNAME).read_text()
+        marker = "    # BOTH DIRECTIONS (added 2026-08-11, quarantine cause 6)."
+        self.assertIn(marker, src, "guard block marker missing; this test can no longer locate it")
+        head, _, tail = src.partition(marker)
+        # drop the whole guard block: everything from the marker to the next top-level-ish statement
+        rest = tail.split("\n    fs = ROOT.TFile.Open(args.stat5d)", 1)
+        self.assertEqual(len(rest), 2, "guard block no longer ends where this test expects")
+        prefix_src = head + "    fs = ROOT.TFile.Open(args.stat5d)" + rest[1]
+
+        self.assertNotIn("_ew_empty", prefix_src)
+        self.assertNotIn("Mew.any(axis=1)", prefix_src)
+        # and it must still be valid Python, i.e. the reconstruction is a real pre-fix source and
+        # not a mangling that would fail the assertions for the wrong reason
+        ast.parse(prefix_src)
