@@ -4,7 +4,8 @@
 # Per endpoint: unique temp path -> content/config validation -> ATOMIC rename of the
 # ROOT -> write the receipt LAST (so a receipt implies a fully-published ROOT). Nominal
 # unfold (NO --universe), FIXED --seed 42 (MAT +/- cancels CV). Resume rules:
-#   * .done receipt present + ROOT valid + receipt CONTENT-validated -> skip
+#   * .done receipt present + ROOT valid + receipt CONTENT-validated (identities AND the whole
+#     producing closure, via p4_check_receipt.py)                    -> skip
 #   * otherwise                                                      -> (re)run transactionally
 # Never a key-only/size-only skip. Aggregates every worker exit; requires the EXACT
 # 10-tag inventory, rejecting extras as well as omissions; fail-closed.
@@ -40,7 +41,23 @@ CODE_REV=$(git rev-parse HEAD 2>/dev/null)
 # gate can COMPARE source identity instead of merely observing that code_rev is non-empty.
 UNFOLD_BLOB=$(git rev-parse "HEAD:nd-unfolding/unfold_nd_omnifold_unbinned.py" 2>/dev/null)
 [[ -n "${CODE_REV}" && -n "${UNFOLD_BLOB}" ]] || { echo "[p4-unfold] ABORT cannot resolve code_rev/unfold blob"; exit 2; }
-echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH} bkg_mode=${BKG_MODE}"
+# PB2 (2026-08-11): stamp the WHOLE PRODUCING CLOSURE, not just the driver. `unfold_blob` binds
+# one of the six modules that can execute while an endpoint ROOT is produced; a change to any of
+# the other five (omnifold.py, omnifold_nn_core.py, xsec_nd.py, ...) used to leave the endpoint
+# resumable. The map is DERIVED from p4_lib.producing_closure_blobs -- deliberately not a path
+# list written out here, because a second copy of the closure is a second thing to keep in sync,
+# and p4_check_receipt.py re-derives it from the same helper to compare against.
+SURFACE_JSON=$(python3 -c "
+import json, p4_lib as P
+_c, b = P.producing_closure_blobs(P.REPO_ROOT, P.UNFOLD_DRIVER_REL)
+print(json.dumps(b, sort_keys=True, separators=(',', ':')))") \
+  || { echo "[p4-unfold] ABORT cannot derive the producing-closure blob map"; exit 2; }
+RECEIPT_SCHEMA=$(python3 -c "import p4_lib; print(p4_lib.RECEIPT_SCHEMA_CURRENT)") \
+  || { echo "[p4-unfold] ABORT cannot resolve receipt schema version"; exit 2; }
+N_SURFACE=$(python3 -c "import json,sys; print(len(json.loads(sys.argv[1])))" "${SURFACE_JSON}" 2>/dev/null)
+[[ -n "${SURFACE_JSON}" && "${SURFACE_JSON}" != "{}" && "${N_SURFACE:-0}" -ge 2 ]] \
+  || { echo "[p4-unfold] ABORT producing-closure map is empty/degenerate (${N_SURFACE:-0} paths)"; exit 2; }
+echo "[p4-unfold] start $(date -u +%T) CONC=${CONC} config_hash=${CFG_HASH} bkg_mode=${BKG_MODE} closure=${N_SURFACE} schema=${RECEIPT_SCHEMA}"
 
 valid_root(){ python3 -c "import ROOT,sys; f=ROOT.TFile.Open('$1'); sys.exit(0 if (f and not f.IsZombie() and not f.TestBit(ROOT.TFile.kRecovered) and f.Get('hXSecND_flat') and f.Get('hXSecND_flat').GetNbinsX()==65856) else 1)" >/dev/null 2>&1; }
 sha(){ python3 -c "import p4_lib;print(p4_lib.sha256_file('$1'))" 2>/dev/null; }
@@ -51,8 +68,9 @@ unfold_one(){
   local OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${tag}.root"
   local REC="${OUT}.done"
   # D2a: the skip is now CONTENT-validating. A ROOT plus any nonempty .done used to be enough;
-  # p4_check_receipt.py re-derives root/central/config/bkg_mode identities live and compares the
-  # merged sha against the orchestrator receipt. A reject falls through and re-runs the endpoint.
+  # the gate below re-derives root/central/config/bkg_mode identities live, compares the merged
+  # sha against the orchestrator receipt, and (PB2) re-derives the producing closure and compares
+  # every member's blob. A reject falls through and re-runs the endpoint.
   if [[ -s "${OUT}" && -s "${REC}" ]] && valid_root "${OUT}"; then
     if RCHK=$(python3 p4_check_receipt.py --receipt "${REC}" --tag "${tag}" \
                 --root "${OUT}" --merged "${MERGED}" 2>&1); then
@@ -95,8 +113,8 @@ unfold_one(){
     # D2c: this used to be an unchecked `printf … && mv`, so a failed receipt write still fell
     # through to `echo DONE` and returned 0 -- a published ROOT with no receipt, reported as
     # success. The write is now the function's success condition.
-    if ! { printf '{"tag":"%s","mode":"produced","root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","unfold_blob":"%s","t":"%s"}\n' \
-      "${tag}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "${UNFOLD_BLOB}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
+    if ! { printf '{"tag":"%s","mode":"produced","receipt_schema":%s,"root_sha256":"%s","merged_sha256":"%s","central5d_sha256":"%s","config_hash":"%s","bkg_mode":"%s","bkg_mode_basis":"passed explicitly to the driver by this launcher","code_rev":"%s","unfold_blob":"%s","surface_blobs":%s,"t":"%s"}\n' \
+      "${tag}" "${RECEIPT_SCHEMA}" "${RH}" "${MH}" "${CH}" "${CFG_HASH}" "${BKG_MODE}" "${CODE_REV}" "${UNFOLD_BLOB}" "${SURFACE_JSON}" "$(date -u +%FT%TZ)" > "${REC}.tmp" && mv -f "${REC}.tmp" "${REC}"; }; then
       echo "[unfold] FAIL ${tag} receipt publication failed after ROOT publish"; rm -f "${REC}.tmp"; return 8
     fi
     echo "[unfold] DONE ${tag}"

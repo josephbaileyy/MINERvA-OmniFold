@@ -446,6 +446,64 @@ RESUME_BLOB_FIELD = "surface_blobs"
 RESUME_GRANDFATHER_REASON = (
     "receipt predates the 2026-08-10 B2 surface binding and carries no per-path blob record")
 
+# The producing driver, named ONCE. Both the launcher (which stamps the closure into a receipt)
+# and p4_check_receipt.py (which independently re-derives it) read this, so the two cannot come
+# to disagree about what "the producing closure" is rooted at -- which was half of PB2: the
+# closure helper was correct and simply nothing in production called it.
+UNFOLD_DRIVER_REL = "nd-unfolding/unfold_nd_omnifold_unbinned.py"
+
+# ---- receipt schema versioning (PB2 repair, 2026-08-11) ----------------------------------
+# PB2's legacy rule -- "no surface_blobs field means grandfathered" -- was correct for the
+# receipts that existed when it was written, and became unsafe the moment the launcher started
+# emitting the field: from then on, absence is no longer evidence of age. A receipt written by
+# TODAY's launcher that somehow lacks the field is malformed, and silently reading it as legacy
+# would hand the grandfather clause to exactly the receipts it was never meant to cover.
+#
+# So age is now DECLARED rather than inferred. A receipt carrying `receipt_schema` >=
+# RECEIPT_SCHEMA_SURFACE asserts it was written by a launcher that binds the closure, and is held
+# to that: missing or changed members reject. Only a receipt that declares no schema AND carries
+# no blob record is grandfathered, and that class is closed -- nothing writes it any more.
+RECEIPT_SCHEMA_FIELD = "receipt_schema"
+RECEIPT_SCHEMA_SURFACE = 2          # first schema whose receipts MUST carry surface_blobs
+RECEIPT_SCHEMA_CURRENT = 2          # what the launcher stamps today
+
+
+def resolve_head_blobs(paths, repo_root=None):
+    """path -> committed blob at HEAD, for every path given.
+
+    Fails CLOSED: a path git cannot resolve raises rather than mapping to None, because a None
+    on both sides compares equal and would read as "unchanged". The closure is derived from
+    `git ls-files`, so the reachable way to land here is a path staged but never committed --
+    an identity that genuinely cannot be checked, which is not the same as one that matches."""
+    root = repo_root or REPO_ROOT
+    out, unresolved = {}, []
+    for rel in paths:
+        try:
+            out[rel] = subprocess.check_output(["git", "rev-parse", f"HEAD:{rel}"], cwd=root,
+                                               text=True, stderr=subprocess.DEVNULL).strip()
+        except Exception:
+            unresolved.append(rel)
+    require(not unresolved,
+            f"cannot resolve the committed blob of {len(unresolved)} producing-closure path(s): "
+            f"{unresolved[:4]} -- refusing to accept a receipt whose producing source cannot be "
+            f"checked")
+    return out
+
+
+def producing_closure_blobs(repo_root=None, driver_rel=None):
+    """(closure, head_blobs) from the ONE derivation both producer and consumer use.
+
+    PB2's defect was not a wrong closure -- `producing_closure` was right and its unit fixtures
+    passed. It was that the launcher wrote no blob record and the checker never called the
+    helper, so the property was proven about a function nothing in production invoked. This is
+    the seam that makes the two sides share a derivation instead of each carrying a path list."""
+    root = repo_root or REPO_ROOT
+    closure = producing_closure(root, driver_rel or UNFOLD_DRIVER_REL)
+    require(closure, "producing closure derived empty -- refusing to bind a receipt to nothing")
+    require((driver_rel or UNFOLD_DRIVER_REL) in closure,
+            "producing closure does not contain its own driver; derivation is broken")
+    return closure, resolve_head_blobs(closure, root)
+
 
 def producing_closure(repo_root, driver_rel):
     """The modules that can actually execute while an endpoint ROOT is produced: the unfold driver
@@ -525,9 +583,33 @@ def check_resume_surface(receipt, closure, head_blobs):
     considered -- the blobs at that commit are resolvable -- but it would materialise a DERIVED
     value into a field whose other instances are OBSERVED, making a derived blob indistinguishable
     from a recorded one. That is precisely the proxy-binding pattern this lane spent four rounds
-    removing. A grandfathered receipt is honest about knowing less; a backfilled one is not."""
+    removing. A grandfathered receipt is honest about knowing less; a backfilled one is not.
+
+    PB2 REPAIR, 2026-08-11 -- the grandfather clause is now BOUNDED BY A DECLARED SCHEMA. It was
+    keyed on the field being absent, which stopped being a statement about age as soon as the
+    launcher began writing the field. See RECEIPT_SCHEMA_SURFACE."""
     got = receipt.get(RESUME_BLOB_FIELD)
+    declared = receipt.get(RECEIPT_SCHEMA_FIELD)
+
+    # A declared schema is a claim about the writer, so it is checked before anything else and
+    # a malformed one never falls through to the legacy branch.
+    if declared is not None:
+        if isinstance(declared, bool) or not isinstance(declared, int):
+            return False, (f"{RECEIPT_SCHEMA_FIELD} {declared!r} is not an integer version -- a "
+                           f"receipt that misstates its own schema is malformed, not legacy")
+        if declared < RECEIPT_SCHEMA_SURFACE or declared > RECEIPT_SCHEMA_CURRENT:
+            return False, (f"{RECEIPT_SCHEMA_FIELD} {declared} is outside the supported range "
+                           f"{RECEIPT_SCHEMA_SURFACE}..{RECEIPT_SCHEMA_CURRENT}; no legacy "
+                           f"receipt declared a schema, so an invented pre-binding version is "
+                           f"malformed rather than grandfathered")
+        if declared >= RECEIPT_SCHEMA_SURFACE and got is None:
+            return False, (f"receipt declares schema {declared} (>= {RECEIPT_SCHEMA_SURFACE}, which "
+                           f"binds the producing closure) but carries no {RESUME_BLOB_FIELD}: a "
+                           f"current receipt missing the record is MALFORMED, and the grandfather "
+                           f"clause covers receipts written before the binding existed, not this")
+
     if got is None:
+        # closed class: declares no schema and records no blobs, i.e. written before the binding
         return True, f"GRANDFATHERED: {RESUME_GRANDFATHER_REASON}"
     if not isinstance(got, dict):
         return False, f"{RESUME_BLOB_FIELD} is not a path->blob mapping"

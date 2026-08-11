@@ -4480,3 +4480,31 @@ watches cover completion. Only after independent terminal validation will the pr
 `standard-p4-verifier` UUID `019f74cb-b85d-7ba0-96c5-dfbd09e59159` receive a scoped follow-up via
 `agentctl.py send`. Receipt:
 `../docs/orchestration/state/p4-packetb-channel-test-20260811T1211Z.json`.
+
+## 2026-08-11 — Packet B real-state run passed PB1/PB3/PB4; verifier blocked PB2 and repair landed
+
+The completed file-sentinel event and `packetB_run.out` were each consumed once. Slurm step
+`56636802.0` completed `0:0` in 17m43s (128 CPUs, max RSS 36,577,160 KB). The driver measured stages
+5+6 at 17m00s; the invalid harness epoch stamps were discarded. The candidate, support family, and
+projected ROOT independently match their bound hashes. PB1 closed 45 support bands as 40 retained +
+5 active/replaced with 48 covariance keys. PB3 published exactly three consumable evidence files
+with no pending/failed residue. PB4 binds component-manifest hash `a76904e3...` and carries
+`publication_gate_rejects_this` inside the projected ROOT. No artifact was adopted.
+
+The preserved standard verifier returned **BLOCK on PB2 only**: the six-module producing-closure
+helper was correct but production never used it, so the endpoint writer recorded one blob and the
+resume checker validated one blob. The exact Agent-A UUID was migrated from the expired legacy
+school home to the corrected school home by a no-clobber, hash-verified session-store copy and an
+atomic registry switch; its content-free heartbeat returned `AVAILABLE`.
+
+Agent A then wired PB2 into production. Schema-2 endpoint receipts contain the derived six-path
+committed-blob map; `p4_check_receipt.py` independently derives and requires the same map before
+`SKIP`; and only the closed class with neither schema nor map is grandfathered. Real CLI/launcher
+tests cover direct, transitive, omitted, unrelated, malformed-schema, legacy, and skip-reachability
+directions. Root review tightened declared schema 1 to reject and reproduced **269 passed + 25
+subtests**, plus clean shell/Python syntax and diff checks. The repair changes no ROOT, covariance,
+physics, threshold, or scheduler state. Packet B remains pending the same verifier UUID on this
+committed patch; the candidate and projection remain non-adoptable and publication-rejected.
+
+Receipts: `../docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json` and
+`../docs/orchestration/runs/agent-A-standard/20260811T125432Z-packetB-pb2-repair.md`.

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Endpoint-receipt gate for run_p4_unfold_std.sh's resume path (repair-4, verifier defect 2).
 
-Exit 0 iff the receipt is complete and every recorded identity matches the live/committed one;
-otherwise print `RECEIPT-REJECT :: <reason>` and exit 1, which makes the launcher re-run the
-endpoint transactionally instead of skipping it.
+Exit 0 iff the receipt is complete, every recorded identity matches the live/committed one, AND
+the receipt's record of the producing closure agrees with the closure this gate derives for
+itself; otherwise print `RECEIPT-REJECT :: <reason>` and exit 1, which makes the launcher re-run
+the endpoint transactionally instead of skipping it.
 
 Deliberately a separate CLI rather than inline `python3 -c` in the launcher: the previous skip
 logic was an unreadable one-liner, and a gate that cannot be unit-tested is the defect this
@@ -22,7 +23,18 @@ REPO = P.REPO_ROOT
 ND = P.ND_ROOT
 CEN5 = f"{ND}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 RECDIR = f"{REPO}/docs/orchestration/state/merged-input-hashes/p4-merged-20260718"
-UNFOLD_SRC = "nd-unfolding/unfold_nd_omnifold_unbinned.py"
+UNFOLD_SRC = P.UNFOLD_DRIVER_REL
+
+
+def resume_surface():
+    """Independently derive the producing closure and its committed blobs (PB2 repair).
+
+    The verifier's PB2 finding was that this gate checked ONE path -- the unfold driver's own
+    blob -- while `p4_lib.producing_closure()` knew about six, so a change to any of the other
+    five (`omnifold.py`, `omnifold_nn_core.py`, `xsec_nd.py`, ...) left a stale endpoint
+    resumable. The gate now re-derives the closure itself rather than trusting the record's own
+    key set, so a receipt cannot narrow the check by simply listing fewer paths."""
+    return P.producing_closure_blobs(REPO, UNFOLD_SRC)
 
 
 def committed_unfold_blob():
@@ -99,11 +111,18 @@ def main():
             bkg_mode=cfg.bkg_mode,
             code_rev=rev,
             unfold_blob=blob)
+        # PB2: the resume decision is not made until the whole producing closure has been
+        # compared, so SKIP cannot be authorized on the driver's blob alone.
+        closure, head_blobs = resume_surface()
+        may_skip, why = P.check_resume_surface(rec, closure, head_blobs)
+        if not may_skip:
+            raise P.P4GateError(why)
+        surface_note = why
     except P.P4GateError as e:
         print(f"RECEIPT-REJECT :: {e}"); sys.exit(1)
     except Exception as e:                      # never let an unexpected error read as PASS
         print(f"RECEIPT-REJECT :: unexpected {type(e).__name__}: {e}"); sys.exit(1)
-    print(f"RECEIPT-OK :: {a.tag}")
+    print(f"RECEIPT-OK :: {a.tag} :: {surface_note}")
     sys.exit(0)
 
 
