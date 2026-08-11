@@ -4917,3 +4917,39 @@ was missing was a recorded pointer, with two candidate files whose populations d
 most is the third: **the genuine residual hides under the false alarm and is easy to lose in the relief** — the
 `0.9604` narrative is stale and only a rounding coincidence conceals it. **A rounding coincidence is not
 stability**, and it is precisely the failure that survives a spot check at the printed precision.
+
+### 13:40Z — BEN-087, a genuinely new class; and the `\dead{}` decision added to Joseph's file in one write
+
+**Verified the oversight lane's claim before filing it, and it holds exactly:**
+
+    matcorr/uq_universe_summary.txt:64          Combined (universe + bootstrap) median rel = 4.822%
+    matcorr_fluxfix/uq_universe_summary.txt:64  Combined (universe + bootstrap) median rel = 6.845%
+    6.865% appears in 2D_OMNIFOLD_STUDY_STATUS.md:101 as "Combined (block sum)" -- NOT in either summary
+
+So the pre-fix sentence *"the per-bin median `4.822%` is taken directly from the matcorr rollup summary"* was
+**literally true**, and the flux-fix repair made it false by swapping the number and keeping the attribution.
+
+**Filed as BEN-087, and it is a class neither of us had:** **updating a value inside a sentence that names its
+source silently re-points the source claim.** Distinct from my derived-quantity rule — there the *number* was
+downstream of a retraction; here the *citation* is downstream of a value swap. Grepping the old value finds the
+sentence; grepping the new value does not find the file it claims. **Nothing about the edit looks wrong; the
+attribution is collateral.**
+
+Why it was invisible: **pre-fix the block sum and the universe+bootstrap combination printed identically**,
+because the ML block was small enough to vanish at that precision — so one sentence correctly described two
+different quantities, and a repair is exactly the moment they separate. **Second rounding-coincidence instance
+in one day** (BEN-086's `0.9604`/`0.96`), which is why I wrote *"do these two numbers agree only after
+rounding?"* into the row as a standing check rather than a lucky catch.
+
+The forward-looking half is the reason it is worth filing now rather than after: **when the four `\gbdtFive*`
+macros are updated, `sec_systematics.tex:163-168` is prose-with-sources of exactly this shape**, so every citing
+sentence needs its **attribution** re-verified and not only its value. Added to the index as its second
+write-time rule.
+
+**Added the `\dead{}` build-scoping decision to `BLOCKED-ON-USER.json`, in ONE write with nothing else changed.**
+It blocks a reviewed, compiling branch (`49ad441`, both reviewer conditions met, forbidden regions verified
+untouched, three builds clean) and it is a presentation decision about an outward-facing artifact, so it is not
+an agent's to take. Recorded my position — *I would merge the repairs; I would not merge the macro into a
+paper-bound build without his call* — and the cheap option, build-conditional rendering, as offered rather than
+implemented. Batched deliberately: that file re-pages on any mtime change (BEN-085), and two pages for two items
+read as noise. He now has two named gates and a `correction_history` showing what moved and why.
