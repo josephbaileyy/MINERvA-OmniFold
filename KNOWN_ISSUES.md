@@ -622,3 +622,51 @@ raise `WakerError` on non-zero rather than returning `[]`.
 `install-cron`, because it replaces the table rather than releasing a job. Verified 2026-08-10: held
 `56160911` → fresh `56585597`, and a real tick at `2026-08-10T22:00:13Z`. Identified by the oversight session
 reading the code; verified here against the file before running.
+
+
+## `cron-tick.log` is a CRASH log, not a tick log — its staleness indicates HEALTH (found 2026-08-06, re-derived wrongly 2026-08-11, filed here 2026-08-11)
+
+The scrontab block that runs the waker's tick is:
+
+    #SCRON -o .../state/waker/logs/cron-tick.log
+    #SCRON --open-mode=append
+    */5 * * * * /usr/bin/python3.11 .../wakerctl.py tick --quiet
+
+`-o` with **no `-e`**, so it is combined stdout+stderr, opened in **append** mode. And `tick --quiet` is silent
+on success — the repo asserts this rather than assuming it: `wakerctl.py:1273` requires *"quiet tick must make no
+provider call"* and `:1297` prints *"quiet ticks silent"*.
+
+**Therefore the file receives bytes only when something fails, and its mtime is the time of the last FAILURE,
+not the last run.** A three-week-stale `cron-tick.log` means *no crash in three weeks*. **The staleness is the
+healthy state and the name says the opposite.**
+
+**Judge cron liveness from `state/waker/last-tick.json` (or `LEDGER.tsv`) mtime, with `TZ=UTC` pinned** — never
+from `cron-tick.log`. Pinning the timezone matters: comparing a local-clock timestamp against cluster UTC
+produced a spurious four-hour gap here on 2026-08-11 before it was caught.
+
+**The traceback the file does contain is from a superseded revision.** Its frames are `evaluate` at `:432`,
+`main` at `:1253`, module at `:1275`; `wakerctl.py` is now 1420 lines and those numbers land on unrelated code.
+The current equivalent site is `:484` and is guarded twice —
+`float(submitted) if submitted.isdigit() else parse_utc(submitted)` inside
+`except (TypeError, ValueError): return unreliable_step()` — so the
+`'1784527278\nRUNNING|1784527278'` multi-row-`squeue` path that crashed is **not reachable**. Nothing to fix in
+the writer, and that parse bug is closed.
+
+**NOT FIXED, deliberately.** The residual defect is entirely the **name**. Renaming means touching
+`install_cron`, which strips and rewrites the whole scrontab table and reads fail-open (`read_scrontab` returns
+`[]` on a failed listing — see the entry above), so a naming problem is not worth that blast radius on shared
+infrastructure. **Document it; do not touch the table.**
+
+**Why this is filed late, and that is the transferable part.** This mechanism was established correctly on
+**2026-08-06** and written only into the chronology log
+(`nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md:2953`: *"a stale mtime is the expected steady state"*). It was
+**never written to its canonical home**, which per `CLAUDE.md` is this file. On 2026-08-11 **two sessions
+re-derived it wrongly within an hour** — reading the staleness as *"a file that lies about liveness, worse than
+no file"* — and one routed a confident, wrong diagnosis (*"the writer is broken, investigate the parse bug"*) to
+another lane, which agreed with it. **A fact in the chronology is not retrievable; only its canonical home is.**
+That is `CLAUDE.md`'s own *write a fact in its home, index it everywhere else*, and this is what it costs when
+skipped: the same ground re-covered twice, wrongly, five days later.
+
+It also inverts **BEN-028** in a way worth holding beside it: there, *a quiet log does not mean a dead job*.
+Here, **a quiet log means a healthy job** — and the quiet was read as the symptom. Before reading any artifact as
+evidence, **establish its write condition**: a file written only on failure cannot report success.
