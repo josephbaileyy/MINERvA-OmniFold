@@ -4508,3 +4508,14 @@ committed patch; the candidate and projection remain non-adoptable and publicati
 
 Receipts: `../docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json` and
 `../docs/orchestration/runs/agent-A-standard/20260811T125432Z-packetB-pb2-repair.md`.
+
+The committed `f67352f` re-review confirmed the production wiring but found one last presence bug:
+`dict.get()` made explicit JSON null indistinguishable from an absent schema/record key. Three null
+shapes inherited grandfathering and null schema beside a valid map passed outright. The same Agent-A
+UUID changed the rule to key membership: only a receipt containing neither field is grandfathered;
+every present null is malformed. Four real-CLI null negatives plus an absent-vs-null helper pair
+were added. Root reproduced **274 passed + 29 subtests** and clean syntax/diff checks. This remains a
+code-only repair pending the same verifier UUID. A separate open tool gap is recorded in OPEN_ITEMS:
+the recorded-fields sweep misses unquoted shell JSON substitutions even though the two affected
+fields are genuinely gated. Receipt:
+`../docs/orchestration/state/p4-packetb-pb2-null-repair-20260811.json`.

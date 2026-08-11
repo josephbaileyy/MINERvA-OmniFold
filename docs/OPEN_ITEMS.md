@@ -215,6 +215,11 @@ not close the literal full-event PET gate below.
       stay open and the dated debt document is left as the record of what was true on 08-10.
       **Not yet verifier-reviewed** — the same `standard-p4-verifier` UUID has to PASS the
       committed patch before this counts as closed, and nothing downstream may assume it has.
+      A separate mechanical-auditor gap was exposed while closing the null cases:
+      `tools_p4_sweep_recorded_fields.py` only harvests shell JSON keys whose values are quoted,
+      so it does not inventory `receipt_schema` or `surface_blobs`, which are emitted through
+      unquoted `%s` substitutions. Both fields are genuinely gated and integration-tested; the
+      open item is the sweep's false-negative extraction, not the production receipt gate.
   - **The single largest structural gap: there is no CI in this repository.** Every guard binds an
     author who runs `pytest`; none binds a commit.
   - **Anyone quoting a number derived from this covariance must cite that document alongside it.**
