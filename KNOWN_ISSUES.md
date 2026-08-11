@@ -731,3 +731,41 @@ submit-time hash drifts, so editing it moves a sha a receipt cites. That belongs
 in one commit with the test. **Currently low blast radius** — only two armed watches, both `provider-reset`
 dated 2026-08-18 — so this is a real single point of failure rather than an active fire. It belongs in the
 "gates that cannot fail" family: **a scan that cannot complete is a gate that cannot fire.**
+
+
+## The `wakerctl.py` pin in the Gate-3 queue-latency receipt LAPSED on 2026-07-20 — and three fixes were declined today on the belief it was live (found 2026-08-11)
+
+`docs/orchestration/state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json` records
+`control_plane_repair.wakerctl_sha256 = d7c6a215f4a93b6b…`. The actual file is
+`04d2e957013b23c2742d50acb9747f0a5a7e8f440c9d8ce8bde953e19eea8c76` — **identical in the local tree,
+`origin/main`, and the cluster checkout**, so this is a lapsed *pin*, not a drifted *file*.
+
+**It has been lapsed for three weeks.** `wakerctl.py` last changed at `7e69926` (2026-07-20) and the receipt
+last changed at `8c8775f` (2026-07-20) — the same day. The file was edited after the pin was written and the
+owning gate was never re-issued.
+
+**Why this matters beyond the mismatch: it was load-bearing in the wrong direction.** On 2026-08-11 this lane
+declined **three** separate fixes to `wakerctl.py`, each time reasoning *"editing it moves a sha a receipt
+cites"*:
+
+1. content-hashing the `BLOCKED-ON-USER.json` notification key instead of `stat`-ing its mtime (BEN-085);
+2. failing closed in `read_scrontab` instead of returning `[]` on a non-zero `scrontab -l` (the entry above);
+3. per-watch `try/except` around `evaluate()` in `scan()` — the single point of failure in the durable
+   notification path (the entry above).
+
+**All three declines rested on a premise nobody had checked.** The pin they were protecting has not matched
+since 2026-07-20, so no receipt's integrity was being preserved by leaving the file alone. The declines were
+not thereby *wrong* — a lapsed pin is a reason to fix the pin, not a licence to edit freely — but **the stated
+reason was false, and it suppressed three real fixes to shared safety infrastructure for a day.** Third
+instance in one day of an unverified premise converted into a decision.
+
+**Disposition, and it is deliberately not taken here.** The two legitimate options are (a) re-run and re-issue
+the owning gate so the pin matches, or (b) record the pin as deliberately retired with the reason. **Never
+hand-edit the hash** — that is the prohibited act regardless of justification. Option (b) looks right on the
+face of it, since the pinned "control plane repair" is three weeks stale and the file has moved on, but
+retiring a pin is the gate owner's call and is not a unilateral edit. **Recorded now so the state is honest;
+the disposition is open.**
+
+**Cross-check discipline note:** two sessions independently ran `shasum` against git and agreed. Per
+BEN-088(vi) that agreement is determinism, not corroboration — the third confirmation above is the *cluster*
+checkout, which is a different tree rather than a second run of the same instrument.
