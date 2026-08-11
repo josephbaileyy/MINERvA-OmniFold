@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Scalar 5D P4 Packet B real-cluster validation",
-  "state": "The unique Packet B channel event is reconciled PASS for delivery, committed implementations, and adversarial acceptance evidence. Interactive allocation 56636802 step 56636802.0 is the sole real-cluster writer. Evidence completed and stages 5-6 were still running under P4_NON_ADOPTABLE=1 with the verifier token unset. Packet B is not cluster-closed and no adoption is authorized.",
+  "current_dag_node": "Publication disposition after Packet B closure",
+  "state": "Packet B PB1-PB5 and its real-cluster gate are independently PASS on the preserved verifier UUID; the production PB2 repair and explicit-null fail-closure are pushed. Allocation 56636802 is gone and no compute remains. The candidate and projection still self-declare publication_gate_rejects_this under P4_NON_ADOPTABLE=1, so Packet B closure is not adoption. The remaining ready actions are publication decisions reserved to the user.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
       "role": "standard-p4-verifier",
       "uuid": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
-      "purpose": "Independent scalar-5D P4 verifier; resume the same UUID only after terminal cluster validation"
+      "purpose": "Independent scalar-5D P4 verifier; Packet B final PASS owner, UUID retained for continuity"
     },
     {
       "role": "agent-A-standard",
       "uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
-      "purpose": "Legacy standard-P4 continuity owner; preserved, not replaced"
+      "purpose": "Standard-P4 continuity owner; UUID preserved through the school-account migration"
     },
     {
       "role": "agent-C-fps",
@@ -31,21 +31,15 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56636802",
-      "tasks": "0",
-      "single_job": true,
-      "receipt": "docs/orchestration/state/p4-packetb-channel-test-20260811T1211Z.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
-    "Packet B PB1-PB5 are code/acceptance complete but have no terminal real-cluster verdict yet; PB5 is bounded-and-documented, not fixed.",
-    "The candidate must retain publication_gate_rejects_this through projection and remains non-adoptable; an unset verifier token is intentional and no adoption is authorized.",
-    "The preserved standard-p4-verifier UUID must independently judge the terminal Packet B artifacts before the packet can close.",
-    "PET promotion remains a separate unresolved user decision and is not advanced by this scalar-P4 run."
+    "Packet B is closed, but its candidate and projection remain publication rejects under P4_NON_ADOPTABLE=1; no adoption is authorized.",
+    "The annealed production nominal is not canonical. Promotion, retaining the 2026-08-08 baseline, or deferral is a publication decision reserved to the user.",
+    "The annealed nominal uses 71.2% of the frozen absolute normalization tolerance; the powered-closure shape criterion passes on three independent draws. Neither fact by itself authorizes promotion.",
+    "The reviewed analysis-note dead-number repair branch is parked pending a user decision on whether the strike-through macro may render in outward-facing builds or must be scoped/omitted there.",
+    "There are no in-flight jobs and no dependency-ready compute action that is authorized ahead of those decisions."
   ],
-  "next_authorized_action": "Wait without LLM polling for p4-packetb-stage56-56636802 or allocation-terminal coverage. On the first real event, read the terminal log and artifacts once, validate PB1/PB3 real-state behavior and PB4 rejection inheritance, take a complete usage snapshot, then resume standard-p4-verifier UUID 019f74cb-b85d-7ba0-96c5-dfbd09e59159 through agentctl.py send. Do not adopt.",
+  "next_authorized_action": "BLOCKED ON USER: (1) choose promote, retain-baseline, or defer for the annealed production nominal; and (2) choose whether the analysis-note strike-through macro may render in outward-facing builds or must be scoped/omitted there. Until then do not adopt the Packet B candidate, promote or extract the annealed nominal, open Branch C, or merge the parked note branch.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
