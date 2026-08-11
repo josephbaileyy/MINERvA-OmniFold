@@ -37,6 +37,70 @@ claims that look identical on the page.
 | **`0.5126032761517403`** used as *the* D2 recovery | `CLAIMS.md` CLM-010 (vi) and CLM-012; both powered-closure predeclarations | **ALIVE-AS-CITED-ARTIFACT-ONLY.** Keep citing it as job `56552326`'s validated value (finalizer `56562169`, 31/31). Best estimate is the three-run mean **`0.5123048`, sd `0.000820128`** | Not wrong — one of three draws, and the only one with a finalizer behind it. Quoting it as *the* recovery overstates precision; replacing it in the gate would break a validated provenance chain |
 | **`recovery >= 0.80`** as Gate-4's D2 criterion | Widely, in pre-08-09 text; `CLM-012`'s own status line records the retirement | `recovery >= f × ceiling`, `f = 0.80`, `ceiling = 0.618228` (per-cell) → `0.4945824` | Retired as a **bug**, not a re-specification: `φ(E[a]) = 0.808415` rounds to `0.80`, i.e. a ceiling computed in the wrong scope. See CLM-012 |
 
+## The 2026-07-12 quarantine — PET class, and one LIVE number
+
+Content supplied by the oversight session; **every location and value below re-verified here by `git grep`
+before writing**, per the rule that a relayed claim carries the relay's confidence and not its evidence. Its
+grep reproduced exactly. The quarantine names **object classes**, not values — *"the old 4D/5D/FPS
+unified-throw adoptions, PET statistical/total budgets and precision comparisons, `(E_avail,W)` covariance, and
+every significance derived from those objects are **SUPERSEDED AND UNQUOTABLE**"* (`VALIDATION_LEDGER.md:20-30`)
+— so its rows have to be derived per class rather than looked up.
+
+### The marking is inverted: the three macros nobody uses are marked; the two consumed in prose are not
+
+| macro (`docs/analysis-note/values.tex`) | value | marked `QUARANTINED`? | consumed in note prose? |
+|---|---|---|---|
+| `\petTotalMedian` :69 | 15.10 | **yes** | no |
+| `\petTotalTrace` :70 | 3.878e-38 | **yes** | no |
+| `\petFourMedian` :71 | 12.37 | **yes** | no |
+| `\petRetrainMedian` :72 | 4.18 | no | no |
+| `\petLateralMedian` :73 | 2.11 | no | no |
+| `\petGbdtGap` :68 | 9 | **no** | **yes — `sec_pet.tex:45`** |
+| `\petRatio` :66 | **0.912** | **no** | **yes — `sec_pet.tex:42` and `:59`** |
+
+**Protection is applied to the harmless cases and absent from the live ones.** The marker was the failure here,
+not the number — the same shape as the `VALIDATION_LEDGER` section above, one level apart.
+
+### `\petRatio` = 0.912 — THREE independent sourced reasons it is stale, none of which needs the quarantine
+
+1. **J21** (`AUDIT-FINDINGS-20260731.md:800-804`): *"The quoted 4D ratio has unit measured weights and no
+   background subtraction"*, and the prescription is *"either qualify the 0.912 as a non-background-subtracted
+   historical diagnostic, or re-extract on the `bkgsub` input."* Same file at `:366-370` adds the **direction**:
+   at the note's ~3% background scale, leaving background in biases PET **high**, so the gap behind the ratio is
+   *larger* than 8.8%, and explicitly *"not a quotable number."*
+2. **`niter`.** `sec_pet.tex:47` discloses that *"The PET run used a 2M-event, two-iteration training."* The
+   campaign's pinned policy is `niter = 3` (CLM-010, CLM-012, FROZEN). `STEP2-20260806-niter3-budget-classification.md:89`
+   flags exactly this: *"If full-event PET moves to `niter=3`, `\petRatio` (0.912, used at `sec_pet.tex:42,59`)
+   and `\petClosure` change."* **It moved.** This is the strongest of the three because it is mechanical rather
+   than judgemental.
+3. **Estimator change.** J21 notes the interaction: *"pre-08-01 PET numbers are a different estimator"* — the
+   full-event schema landed 2026-08-01 and the loader now reads the whole event, so a pre-08-01 PET total is not
+   the same quantity.
+
+**It is internally consistent, which is worth stating so nobody looks for the wrong defect.** Applying the
+receipt-ingredients heuristic: `sec_pet.tex:41-42` quotes PET `2.796e-38` against GBDT `3.066e-38`, and
+`2.796/3.066 = 0.91194`, which rounds to the quoted `0.912`. **So this is not a mislabel or an arithmetic slip —
+it is a correctly computed ratio of operands that have since gone stale.** A different failure mode from every
+other row in this index, and the one a consistency check cannot catch.
+
+**A separate defect found while checking that: the operands are not macros.** `2.796e-38` and `3.066e-38` appear
+**only as inline `\SI{}` literals** at `sec_pet.tex:41-42` — they are not in `values.tex`. So the ratio has a
+macro and therefore *looks* managed, while **its inputs sit outside the marking convention entirely and cannot
+be quarantined even in principle.** Marking `\petRatio` would not reach them.
+
+**What I am NOT claiming, and the oversight session was right to hedge it:** that the quarantine *formally*
+covers `\petRatio`. It is a PET precision comparison by description, and `sec_pet.tex:42` compares against a
+GBDT total, so the PET side plausibly derives from a quarantined budget — but I did not source a statement
+saying so, and inferring coverage from a class description is not sourcing. **Whoever owns the quarantine
+adjudicates.** The three reasons above are independent of that question, so the decision is needed regardless,
+**before the note freezes.**
+
+### Still not indexed from this quarantine
+
+The `(E_avail,W)` covariance rows, the 4D/5D/FPS unified-throw adoptions, and *"every significance derived from
+those objects"* are **not indexed** — same reason as before, that would be listing from a description rather
+than a search. Open, and explicitly so.
+
 ## Not included, and why — the honesty column
 
 - **The 2026-07-12 quarantine** was named to me as a candidate. **I have not sourced it** and it is therefore

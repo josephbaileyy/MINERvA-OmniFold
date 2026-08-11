@@ -4680,3 +4680,47 @@ to match outcomes would destroy the only property that makes them worth anything
 
 Pointer added at the top of `FINDINGS.md`, which is item 1 in `CLAUDE.md`'s read order, so the index sits where
 the read-order actually reaches rather than where it would be tidy.
+
+### 12:25Z — quarantine row written, verified rather than transcribed, and it has a LIVE number with three reasons
+
+The oversight lane supplied the quarantine content. **I re-verified every location and value by `git grep`
+before writing it** — a relayed claim carries the relay's confidence, not its evidence (BEN-082 (7)), and this
+one would have gone into an index whose entire value is being sourced. **Its grep reproduced exactly**, including
+the inversion it flagged.
+
+**The inversion is real:** `\petTotalMedian` (15.10), `\petTotalTrace` (3.878e-38) and `\petFourMedian` (12.37)
+all carry `QUARANTINED` and **none is consumed in prose**; `\petGbdtGap` (9) and `\petRatio` (**0.912**) carry
+**no marker** and **both are consumed** — `\petRatio` twice, at `sec_pet.tex:42` and `:59`. Protection applied to
+the harmless cases and absent from the live ones. **The marker was the failure, not the number** — the same
+shape as the `VALIDATION_LEDGER` find an hour ago, one level apart.
+
+**Three things I could add that the relay did not have:**
+
+**(1) `0.912` is internally consistent, and that is worth stating so nobody hunts the wrong defect.** Applying
+the receipt-ingredients heuristic: `sec_pet.tex:41-42` quotes PET `2.796e-38` against GBDT `3.066e-38`, and
+`2.796/3.066 = 0.91194` → `0.912`. **Not a mislabel, not an arithmetic slip — a correctly computed ratio whose
+operands went stale.** That is a different failure mode from every other row in the index and the one a
+consistency check cannot catch.
+
+**(2) A third, mechanical reason it is stale, stronger than the quarantine question.** `sec_pet.tex:47` discloses
+*"The PET run used a 2M-event, two-iteration training."* The pinned policy is `niter = 3`, and
+`STEP2-20260806-niter3-budget-classification.md:89` already flagged that *"if full-event PET moves to niter=3,
+`\petRatio` … and `\petClosure` change."* **It moved.** That needs no judgement — unlike J21's
+background-subtraction argument, which needs a decision about what the PET central value is.
+
+**(3) The operands are not macros at all.** `2.796e-38` and `3.096e-38` — sorry, `3.066e-38` — appear **only as
+inline `\SI{}` literals** and are not in `values.tex`. So the ratio has a macro and therefore *looks* managed,
+while **its inputs sit outside the marking convention entirely and cannot be quarantined even in principle.**
+Marking `\petRatio` would not reach them. That is a structural hole in the convention, not an oversight in one
+row.
+
+**What I did not claim**, and the oversight lane was right to hedge it: that the quarantine *formally* covers
+`\petRatio`. It is a PET precision comparison by description, but I did not source a statement saying so, and
+inferring coverage from a class description is not sourcing. Whoever owns the quarantine adjudicates — and the
+three sourced reasons make the decision necessary regardless, **before the note freezes.**
+
+Also recorded as still-unindexed: the `(E_avail,W)` covariance rows, the 4D/5D/FPS unified-throw adoptions, and
+*"every significance derived from those objects"*. Same reason — that would be listing from a description.
+
+Its independent note-audit session may surface `\petRatio` too; it was told not to trust the relay's
+characterisations, so if it does, that is confirmation from a reader without this framing rather than an echo.
