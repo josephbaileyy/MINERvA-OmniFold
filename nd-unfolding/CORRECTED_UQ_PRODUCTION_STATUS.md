@@ -7,6 +7,24 @@
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-11 one-liner — the construction contract is now PROVABLE FROM THE REPO for the throw ROOT, and
+the footing mismatch is proven FROM THE PRODUCTS.** Receipt `uq_5d/receipt_construction_contract_5d.json`
+(read-only, nothing adopted, `values.tex` untouched), predeclared verdict **B1**. Both throw ROOTs carry
+`fixed_seed_null_norm` **present** — `1.9706e-50` pre-J28 and `5.8223e-50` J28-corrected against tol
+`1e-12` — plus `n_throws=160`, `joint_mean_shift_norm` matching the ledger digit for digit, and
+`hJointMeanShift` as a **separate** `TH1D[10694]`; the slab census is one estimator seed **1000** over 40
+throw and 36 block slabs with a contiguous 160-throw union. **`adopt_unified_5d.py:166` stamps
+`sqrt_tr_old`, so each adopted product records its own `--combined` footing**: the two published values
+carry `4.357790406860002e-38` (bkgaware) and the two proposed replacements carry `4.345454363683128e-38`
+(non-bkgaware). Three of four cells of a 2x2 in (footing x J28) therefore already exist, and the effects
+separate: block-sum footing **+0.2839%**, **adopted** footing **+0.0914%**, footing-matched J28
+**-9.3486%** (vs -9.4313% computed across footings). **`sec_systematics.tex:170-173`'s `0.30%` is the
+BLOCK SUM; the adopted effect is three times smaller** — two different quantities. Empty cell being filled
+by job `56693207` (four arms, controls read first, pre-registered A1 = `5.264776e-38`). **Two gaps found:
+every contract stamp is ABSENT from every adopted product** (BEN-106 — the artifact that would be published
+cannot prove its own contract), and **my branch set could not express "present upstream, absent
+downstream"** (BEN-107). Causes 3 and 4 now need only their test legs; **zero of seven discharged.**
+
 **2026-08-11 one-liner — per-cause DISCHARGE CRITERIA now exist for quarantine causes 1, 2, 3, 4, 6, and
 nothing is discharged by writing them.** `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`.
 Discharge is defined per **(cause × artifact)** pair with four legs — code, provenance, magnitude, test —

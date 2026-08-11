@@ -1,0 +1,3038 @@
+{
+  "adopted_roots": {
+    "bkgaware_adopted_cvcentered": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "feeds": "\\gbdtFiveCVTrace 6.24e-38",
+      "mtime_utc": "2026-07-14T21:04:46Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 6.236702327843976e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root",
+      "read": true,
+      "sha256": "b4edc66588f1b9c78bc9a30793419746dc2b95ae220950f17e7329c128fe3a55",
+      "size_bytes": 892241032
+    },
+    "bkgaware_adopted_meancentered": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "feeds": "\\gbdtFiveAdoptTrace 5.81e-38",
+      "mtime_utc": "2026-07-14T21:02:04Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.807716496958672e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root",
+      "read": true,
+      "sha256": "8feb8ba468411a66899e9edd0006b398a2e0c41c56c5b53e64cfebc6b1a0d72d",
+      "size_bytes": 892195314
+    },
+    "bkgaware_blocksum": {
+      "all_keys": [
+        "hCov_combined5d_total",
+        "hCov_universe5d_2p2h",
+        "hCov_universe5d_AGKYxF1pi",
+        "hCov_universe5d_AhtBY",
+        "hCov_universe5d_BeamAngleX",
+        "hCov_universe5d_BeamAngleY",
+        "hCov_universe5d_BhtBY",
+        "hCov_universe5d_CCQEPauliSupViaKF",
+        "hCov_universe5d_CV1uBY",
+        "hCov_universe5d_CV2uBY",
+        "hCov_universe5d_EtaNCEL",
+        "hCov_universe5d_Flux",
+        "hCov_universe5d_FrAbs_N",
+        "hCov_universe5d_FrAbs_pi",
+        "hCov_universe5d_FrCEx_N",
+        "hCov_universe5d_FrCEx_pi",
+        "hCov_universe5d_FrElas_N",
+        "hCov_universe5d_FrElas_pi",
+        "hCov_universe5d_FrInel_N",
+        "hCov_universe5d_FrPiProd_N",
+        "hCov_universe5d_FrPiProd_pi",
+        "hCov_universe5d_GEANT_Neutron",
+        "hCov_universe5d_GEANT_Pion",
+        "hCov_universe5d_GEANT_Proton",
+        "hCov_universe5d_HighQ2",
+        "hCov_universe5d_LowQ2",
+        "hCov_universe5d_MFP_N",
+        "hCov_universe5d_MFP_pi",
+        "hCov_universe5d_MaCCQE",
+        "hCov_universe5d_MaNCEL",
+        "hCov_universe5d_MaRES",
+        "hCov_universe5d_MinosEfficiency",
+        "hCov_universe5d_MuonResolution",
+        "hCov_universe5d_Muon_Energy_MINERvA",
+        "hCov_universe5d_Muon_Energy_MINOS",
+        "hCov_universe5d_MvRES",
+        "hCov_universe5d_NormDISCC",
+        "hCov_universe5d_NormNCRES",
+        "hCov_universe5d_RDecBR1gamma",
+        "hCov_universe5d_Rvn1pi",
+        "hCov_universe5d_Rvn2pi",
+        "hCov_universe5d_Rvp1pi",
+        "hCov_universe5d_Rvp2pi",
+        "hCov_universe5d_Theta_Delta2Npi",
+        "hCov_universe5d_VecFFCCQEshape",
+        "hCov_universe5d___Normalization_flat",
+        "hCov_universe5d_total"
+      ],
+      "exists": true,
+      "feeds": "\\gbdtFiveBlockMedian 13.36 (= median rel 13.359%)",
+      "hash_skipped_reason": "size 41436632945 > 4294967296 byte cut; hashing adds no contract evidence and costs minutes of Lustre read. Stated cut, not a silent omission.",
+      "mtime_utc": "2026-07-14T20:59:17Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": false
+        },
+        "sqrt_tr_old": {
+          "present": false
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "read": true,
+      "sha256": null,
+      "size_bytes": 41436632945
+    },
+    "j28_adopted_cvcentered": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "feeds": "the proposed replacement 5.6609e-38",
+      "mtime_utc": "2026-08-07T00:43:35Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.660863966183672e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.345454363683128e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/rescaled_20260806_full160/adopted_cvcentered_20260806_full160.root",
+      "read": true,
+      "sha256": "61c8ee054a5bf3f1e79c9597d8248a4209ad77b115be3ffacb7525f150e22a73",
+      "size_bytes": 892266576
+    },
+    "j28_adopted_meancentered": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "feeds": "the proposed replacement 5.2600e-38",
+      "mtime_utc": "2026-08-07T00:41:18Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.25997091000714e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.345454363683128e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/rescaled_20260806_full160/adopted_meancentered_20260806_full160.root",
+      "read": true,
+      "sha256": "7d55a9da09fd91d17c29ebd7b60b85e9d14d8520b868ad8ab8289592e6c5648f",
+      "size_bytes": 892196879
+    },
+    "july_nonbkgaware_adopted": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "feeds": "the superseded 5.80e-38 (pre-bkgaware); read as the footing control",
+      "mtime_utc": "2026-07-14T01:58:09Z",
+      "objects": {},
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.802415620046235e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.345454363683128e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+      "read": true,
+      "sha256": "98ac294f3f2c3aec58b15b965c266cbcf030eb011560b1cbeaf8794ba2a125e3",
+      "size_bytes": 892224371
+    }
+  },
+  "criteria": "docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md",
+  "git": {
+    "dirty": true,
+    "head": "683bdccad5a94d13ef231bf0729758085634a178"
+  },
+  "keys_looked_for": {
+    "adopted_root_parameters": [
+      "sqrt_tr_old",
+      "sqrt_tr_new"
+    ],
+    "note": "Every key above is reported present-with-value or {'present': false}. Absence is never omitted -- that distinction is the receipt's whole function.",
+    "throw_root_objects": [
+      "C_unified",
+      "C_blocksum",
+      "C_cross",
+      "hJointMeanShift"
+    ],
+    "throw_root_parameters": [
+      "sqrt_tr_unified",
+      "sqrt_tr_block",
+      "joint_mean_shift_norm",
+      "fixed_seed_null_norm",
+      "n_throws"
+    ]
+  },
+  "predeclaration": "docs/orchestration/PREDECLARE-20260811-construction-contract-receipt.md",
+  "purpose": "Provenance leg of quarantine causes 1-4 for the 5D GBDT covariance. Reads existing stamps; adopts nothing, recomputes nothing, makes no value quotable.",
+  "schema": "construction-contract-receipt/1",
+  "slab_census": {
+    "block_slabs_sb": {
+      "flux_normalized_stamped_slabs": [],
+      "flux_normalized_unstamped_slabs": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "n_files": 36,
+      "n_throws_union": 0,
+      "pattern": "uq_5d/block_slabs_5d_sb/block5d_*.npz",
+      "per_slab": [
+        {
+          "file": "block5d_flux_0.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 0,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_1.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 1,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_10.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 10,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_11.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 11,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_12.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 12,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_13.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 13,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_14.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 14,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_15.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 15,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_16.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 16,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_17.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 17,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_18.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 18,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_2.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 2,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_3.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 3,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_4.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 4,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_5.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 5,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_6.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 6,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_7.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 7,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_8.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 8,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_9.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 9,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_u95.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_u96.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_u97.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_u98.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_flux_u99.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_2p2h.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_CCQEPauliSupViaKF.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_FrAbs_pi.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_FrElas_N.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_HighQ2.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_LowQ2.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_MFP_N.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_MaCCQE.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_MaRES.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_MvRES.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_Rvn2pi.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        },
+        {
+          "file": "block5d_knob_Rvp2pi.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "kinds",
+            "labels",
+            "seed",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": null,
+          "throws": null
+        }
+      ],
+      "seed_histogram": {
+        "1000": 36
+      },
+      "seed_value": 1000,
+      "single_seed": true,
+      "throws_contiguous_from_zero": false,
+      "throws_max": null,
+      "throws_min": null,
+      "unreadable_files": []
+    },
+    "j28_union_rescaled_half": {
+      "flux_normalized_stamped_slabs": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "flux_normalized_unstamped_slabs": [],
+      "n_files": 30,
+      "n_throws_union": 120,
+      "pattern": "uq_5d/rescaled_20260806_full160/uthrow5d_slab_*.npz",
+      "per_slab": [
+        {
+          "file": "uthrow5d_slab_0.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 0,
+          "throws": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_1.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 1,
+          "throws": [
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_10.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 10,
+          "throws": [
+            40,
+            41,
+            42,
+            43
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_11.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 11,
+          "throws": [
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_12.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 12,
+          "throws": [
+            48,
+            49,
+            50,
+            51
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_13.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 13,
+          "throws": [
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_14.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 14,
+          "throws": [
+            56,
+            57,
+            58,
+            59
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_15.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 15,
+          "throws": [
+            60,
+            61,
+            62,
+            63
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_16.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 16,
+          "throws": [
+            64,
+            65,
+            66,
+            67
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_17.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 17,
+          "throws": [
+            68,
+            69,
+            70,
+            71
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_18.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 18,
+          "throws": [
+            72,
+            73,
+            74,
+            75
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_19.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 19,
+          "throws": [
+            76,
+            77,
+            78,
+            79
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_2.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 2,
+          "throws": [
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_20.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 20,
+          "throws": [
+            80,
+            81,
+            82,
+            83
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_21.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 21,
+          "throws": [
+            84,
+            85,
+            86,
+            87
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_22.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 22,
+          "throws": [
+            88,
+            89,
+            90,
+            91
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_23.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 23,
+          "throws": [
+            92,
+            93,
+            94,
+            95
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_24.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 24,
+          "throws": [
+            96,
+            97,
+            98,
+            99
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_25.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 25,
+          "throws": [
+            100,
+            101,
+            102,
+            103
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_26.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 26,
+          "throws": [
+            104,
+            105,
+            106,
+            107
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_27.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 27,
+          "throws": [
+            108,
+            109,
+            110,
+            111
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_28.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 28,
+          "throws": [
+            112,
+            113,
+            114,
+            115
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_29.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 29,
+          "throws": [
+            116,
+            117,
+            118,
+            119
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_3.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 3,
+          "throws": [
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_4.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 4,
+          "throws": [
+            16,
+            17,
+            18,
+            19
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_5.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 5,
+          "throws": [
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_6.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 6,
+          "throws": [
+            24,
+            25,
+            26,
+            27
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_7.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 7,
+          "throws": [
+            28,
+            29,
+            30,
+            31
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_8.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 8,
+          "throws": [
+            32,
+            33,
+            34,
+            35
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_9.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_rescaled_from",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 9,
+          "throws": [
+            36,
+            37,
+            38,
+            39
+          ]
+        }
+      ],
+      "seed_histogram": {
+        "1000": 30
+      },
+      "seed_value": 1000,
+      "single_seed": true,
+      "throws_contiguous_from_zero": true,
+      "throws_max": 119,
+      "throws_min": 0,
+      "unreadable_files": []
+    },
+    "throw_slabs_sb": {
+      "flux_normalized_stamped_slabs": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "flux_normalized_unstamped_slabs": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "n_files": 40,
+      "n_throws_union": 160,
+      "pattern": "uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_*.npz",
+      "per_slab": [
+        {
+          "file": "uthrow5d_slab_0.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 0,
+          "throws": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_1.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 1,
+          "throws": [
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_10.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 10,
+          "throws": [
+            40,
+            41,
+            42,
+            43
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_11.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 11,
+          "throws": [
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_12.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 12,
+          "throws": [
+            48,
+            49,
+            50,
+            51
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_13.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 13,
+          "throws": [
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_14.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 14,
+          "throws": [
+            56,
+            57,
+            58,
+            59
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_15.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 15,
+          "throws": [
+            60,
+            61,
+            62,
+            63
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_16.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 16,
+          "throws": [
+            64,
+            65,
+            66,
+            67
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_17.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 17,
+          "throws": [
+            68,
+            69,
+            70,
+            71
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_18.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 18,
+          "throws": [
+            72,
+            73,
+            74,
+            75
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_19.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 19,
+          "throws": [
+            76,
+            77,
+            78,
+            79
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_2.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 2,
+          "throws": [
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_20.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 20,
+          "throws": [
+            80,
+            81,
+            82,
+            83
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_21.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 21,
+          "throws": [
+            84,
+            85,
+            86,
+            87
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_22.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 22,
+          "throws": [
+            88,
+            89,
+            90,
+            91
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_23.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 23,
+          "throws": [
+            92,
+            93,
+            94,
+            95
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_24.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 24,
+          "throws": [
+            96,
+            97,
+            98,
+            99
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_25.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 25,
+          "throws": [
+            100,
+            101,
+            102,
+            103
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_26.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 26,
+          "throws": [
+            104,
+            105,
+            106,
+            107
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_27.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 27,
+          "throws": [
+            108,
+            109,
+            110,
+            111
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_28.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 28,
+          "throws": [
+            112,
+            113,
+            114,
+            115
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_29.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 29,
+          "throws": [
+            116,
+            117,
+            118,
+            119
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_3.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 3,
+          "throws": [
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_30.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 30,
+          "throws": [
+            120,
+            121,
+            122,
+            123
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_31.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 31,
+          "throws": [
+            124,
+            125,
+            126,
+            127
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_32.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 32,
+          "throws": [
+            128,
+            129,
+            130,
+            131
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_33.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 33,
+          "throws": [
+            132,
+            133,
+            134,
+            135
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_34.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 34,
+          "throws": [
+            136,
+            137,
+            138,
+            139
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_35.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 35,
+          "throws": [
+            140,
+            141,
+            142,
+            143
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_36.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 36,
+          "throws": [
+            144,
+            145,
+            146,
+            147
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_37.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 37,
+          "throws": [
+            148,
+            149,
+            150,
+            151
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_38.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 38,
+          "throws": [
+            152,
+            153,
+            154,
+            155
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_39.npz",
+          "flux_normalized": {
+            "present": true,
+            "value": 1
+          },
+          "npz_keys": [
+            "bands",
+            "flux_normalized",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 39,
+          "throws": [
+            156,
+            157,
+            158,
+            159
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_4.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 4,
+          "throws": [
+            16,
+            17,
+            18,
+            19
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_5.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 5,
+          "throws": [
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_6.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 6,
+          "throws": [
+            24,
+            25,
+            26,
+            27
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_7.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 7,
+          "throws": [
+            28,
+            29,
+            30,
+            31
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_8.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 8,
+          "throws": [
+            32,
+            33,
+            34,
+            35
+          ]
+        },
+        {
+          "file": "uthrow5d_slab_9.npz",
+          "flux_normalized": {
+            "present": false
+          },
+          "npz_keys": [
+            "bands",
+            "flux_u",
+            "seed",
+            "throws",
+            "xs"
+          ],
+          "seed": {
+            "present": true,
+            "value": 1000
+          },
+          "slab_index": 9,
+          "throws": [
+            36,
+            37,
+            38,
+            39
+          ]
+        }
+      ],
+      "seed_histogram": {
+        "1000": 40
+      },
+      "seed_value": 1000,
+      "single_seed": true,
+      "throws_contiguous_from_zero": true,
+      "throws_max": 159,
+      "throws_min": 0,
+      "unreadable_files": []
+    }
+  },
+  "throw_roots": {
+    "j28_corrected_throw": {
+      "all_keys": [
+        "C_blocksum",
+        "C_cross",
+        "C_unified",
+        "fixed_seed_null_norm",
+        "hJointMeanShift",
+        "joint_mean_shift_norm",
+        "n_throws",
+        "sqrt_tr_block",
+        "sqrt_tr_unified"
+      ],
+      "exists": true,
+      "feeds": "the proposed replacements 5.2600e-38 / 5.6609e-38",
+      "mtime_utc": "2026-08-07T00:38:46Z",
+      "objects": {
+        "C_blocksum": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "C_cross": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "C_unified": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "hJointMeanShift": {
+          "class": "TH1D",
+          "nbinsx": 10694,
+          "present": true
+        }
+      },
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": true,
+          "value": 5.8223488501140625e-50
+        },
+        "joint_mean_shift_norm": {
+          "present": true,
+          "value": 1.878696733368378e-38
+        },
+        "n_throws": {
+          "present": true,
+          "value": 160
+        },
+        "sqrt_tr_block": {
+          "present": true,
+          "value": 3.750054526403914e-38
+        },
+        "sqrt_tr_unified": {
+          "present": true,
+          "value": 4.443673650575504e-38
+        }
+      },
+      "path": "uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "read": true,
+      "sha256": "4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281",
+      "size_bytes": 2668021041
+    },
+    "pre_j28_throw": {
+      "all_keys": [
+        "C_blocksum",
+        "C_cross",
+        "C_unified",
+        "fixed_seed_null_norm",
+        "hJointMeanShift",
+        "joint_mean_shift_norm",
+        "n_throws",
+        "sqrt_tr_block",
+        "sqrt_tr_unified"
+      ],
+      "exists": true,
+      "feeds": "values.tex \\gbdtFiveAdoptTrace 5.81e-38 / \\gbdtFiveCVTrace 6.24e-38 (via the bkgaware adopt)",
+      "mtime_utc": "2026-07-13T09:15:41Z",
+      "objects": {
+        "C_blocksum": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "C_cross": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "C_unified": {
+          "class": "TH2D",
+          "nbinsx": 10694,
+          "present": true
+        },
+        "hJointMeanShift": {
+          "class": "TH1D",
+          "nbinsx": 10694,
+          "present": true
+        }
+      },
+      "parameters": {
+        "fixed_seed_null_norm": {
+          "present": true,
+          "value": 1.9706093906025077e-50
+        },
+        "joint_mean_shift_norm": {
+          "present": true,
+          "value": 1.654393237996853e-38
+        },
+        "n_throws": {
+          "present": true,
+          "value": 160
+        },
+        "sqrt_tr_block": {
+          "present": true,
+          "value": 3.4032639007214586e-38
+        },
+        "sqrt_tr_unified": {
+          "present": true,
+          "value": 4.4607819710748654e-38
+        }
+      },
+      "path": "uq_5d/unified_throw_cov_5d.root",
+      "read": true,
+      "sha256": "038c613208f08d1873cc92c82d7d2f2d458ed9b2319992478c76430aa4bc01ac",
+      "size_bytes": 2677168123
+    }
+  },
+  "written_at_utc": "2026-08-11T22:46:44Z"
+}

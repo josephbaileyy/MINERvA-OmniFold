@@ -4692,3 +4692,54 @@ ensemble for the full-event replacement.
 **Nothing discharged.** Cause 5 remains OPEN; six of seven quarantine causes remain open; no PET
 magnitude became quotable; Branch C not lifted; the annealed nominal NOT promoted (held pending Joseph's
 sequencing answer, `docs/orchestration/AUTHORIZATION-20260811-annealed-promotion-and-hpss.md`).
+
+## 2026-08-11 — construction-contract receipt; the footing mismatch proven from the products (Session B)
+
+Read-only cluster read, no compute, nothing adopted, `values.tex` untouched. Script
+`receipt_construction_contract_5d.py`, receipt `uq_5d/receipt_construction_contract_5d.json` (67 KB), log
+`uq_5d/receipt_construction_contract_5d.log` (whole stream, no `tail`). Predeclared at
+`../docs/orchestration/PREDECLARE-20260811-construction-contract-receipt.md`; **verdict B1** on the
+artifacts the branch set named.
+
+**Stamps, both throw ROOTs.** `fixed_seed_null_norm` **present** — `1.9706093906025077e-50` pre-J28,
+`5.8223488501140625e-50` J28-corrected, tol `1e-12`; `n_throws` `160` both; `joint_mean_shift_norm`
+`1.654393237996853e-38` and `1.878696733368378e-38`, the latter matching the ledger digit for digit;
+`hJointMeanShift` a **separate** `TH1D[10694]` on both. Slab census: **one estimator seed, `1000`**, over 40
+throw and 36 block slabs, 160-throw union contiguous. Present-not-absent is the criterion, because
+`unified_throw_cov.py:482-483` writes the null key only under `--null`.
+
+**The footing mismatch is proven FROM THE PRODUCTS.** `adopt_unified_5d.py:166` stamps `sqrt_tr_old` = the
+√Tr of the `--combined` it was given, so each adopted product records its own footing: `\gbdtFiveAdoptTrace`
+and `\gbdtFiveCVTrace` carry **`4.357790406860002e-38` (bkgaware)**; the proposed `5.2600e-38` / `5.6609e-38`
+and the July `5.802415620046235e-38` all carry **`4.345454363683128e-38` (non-bkgaware)**. No launcher
+reading required. Three of four cells of a 2 × 2 in (footing × J28) already existed, so the effects separate:
+
+    block-sum footing effect                                              +0.2839%
+    ADOPTED mean-centered footing effect, pre-J28 (5.802416 -> 5.807716)  +0.0914%
+    J28 effect, FOOTING-MATCHED (both non-bkgaware)                       -9.3486%
+    J28 effect computed across footings, as PROCEDURE §4 had it           -9.4313%
+
+**`sec_systematics.tex:170-173`'s `0.30%` is the BLOCK-SUM figure (exactly `+0.2839%`); the effect on the
+ADOPTED covariance is `+0.0914%`** — the per-bin `max()` inflation transfer damps it ~3×. Applying the
+note's `0.30%` to an adopted scale overstates the footing effect threefold.
+
+**Job `56693207`** (`sbatch_readopt_5d_bkgaware_footing.sh`, `--qos=shared`, 6 h wall, submitted
+2026-08-11T22:50Z, PENDING/Priority at submission, watch `readopt-footing-56693207` armed and confirmed)
+fills the empty cell: four arms from one unchanged throw ROOT, **controls first** — C1/C2 must reproduce
+`5.2600e-38`/`5.6609e-38` or branch **B3** says the diagnosis is unsafe — and A1 tested against the
+**pre-registered** no-interaction value **`5.264776e-38`**. Predeclaration:
+`../docs/orchestration/PREDECLARE-20260811-bkgaware-footing-readopt.md`. Fail-closed input gate checks all
+13 `VERT_BANDS` on **both** footings before doing work, so B4 is excluded up front. Nothing is re-thrown or
+re-combined; no `tail`/`head` anywhere; `--out` explicit on all four arms.
+
+**Two findings, and both are against my own work.** BEN-106: every contract stamp is **absent from every
+adopted product** — `adopt_unified_5d.py:166-167` writes only the two traces — so the artifact that would be
+*published* cannot prove its own contract, and causes 2/3/4 are provable for the throw ROOT and not for the
+covariance the note quotes. BEN-107: my branch set was quantified over **one** artifact where the chain has
+two hops, so *"present upstream, absent downstream"* was expressible by none of its four branches;
+separately, two predeclared paths were wrong because I hand-expanded `TAG` and dropped a suffix, which made
+the first probe report the products ABSENT — the UNRESOLVED branch that a typo impersonates on purgeable
+storage. **BEN-104's harm is refuted while its mechanism stands:** read whole, the truncated adopt log did
+contain every ingredient, with ~7 lines of margin out of 25, nine of which are `RooUnfold` warnings.
+
+Causes 3 and 4 now need only their test legs; cause 2 only its guard. **Zero of seven discharged.**

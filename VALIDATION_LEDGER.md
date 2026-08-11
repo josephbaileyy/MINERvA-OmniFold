@@ -1,5 +1,68 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 construction-contract receipt for the 5D GBDT covariance — VERIFIED-CODE + VERIFIED-NUMERIC
+
+Read-only stamp read, no compute, nothing adopted, `values.tex` untouched. Receipt
+`nd-unfolding/uq_5d/receipt_construction_contract_5d.json` (67 KB, every key reported
+present-with-value **or explicitly absent** — never omitted). Script
+`nd-unfolding/receipt_construction_contract_5d.py`. Predeclared at
+`docs/orchestration/PREDECLARE-20260811-construction-contract-receipt.md`; **verdict B1** on the
+artifacts the branch set named.
+
+**Why it exists.** The stamps proving the 2026-07-12 corrected contract were written by the production
+code but live only in `.gitignore`d ROOTs, so *"built under the corrected contract"* was unfalsifiable
+from the repository. This commits them. Provenance leg of quarantine causes 2, 3 and 4 — see
+`docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §3, §4.7.
+
+| stamp | pre-J28 throw ROOT | J28-corrected throw ROOT |
+|---|---|---|
+| `fixed_seed_null_norm` | **present** `1.9706093906025077e-50` | **present** `5.8223488501140625e-50` |
+| `n_throws` | `160` | `160` |
+| `joint_mean_shift_norm` | `1.654393237996853e-38` | `1.878696733368378e-38` |
+| `hJointMeanShift` | `TH1D[10694]`, separate object | `TH1D[10694]`, separate object |
+| `sqrt_tr_unified` / `sqrt_tr_block` | `4.4607819710748654e-38` / `3.4032639007214586e-38` | `4.443673650575504e-38` / `3.750054526403914e-38` |
+| estimator seed | one seed **`1000`** over 40 throw + 36 block slabs; 160-throw union contiguous | same slabs |
+
+Both null norms **present** (not absent-and-assumed-fine, which is cause 4's live trap) and 38 orders
+below the `1e-12` tolerance. `1.878696733368378e-38` reads back matching this ledger digit for digit.
+
+**THE FOOTING MISMATCH IS NOW PROVEN FROM THE PRODUCTS, not from a launcher.**
+`adopt_unified_5d.py:166` stamps `sqrt_tr_old` = the √Tr of the `--combined` input it was actually given,
+so each adopted product records its own background footing:
+
+| adopted product | `sqrt_tr_old` → footing | `sqrt_tr_new` |
+|---|---|---|
+| `…_bkgaware_uthrow.root` → `\gbdtFiveAdoptTrace` | **4.357790406860002e-38 → bkgaware** | **5.807716496958672e-38** |
+| `…_bkgaware_uthrow_cvcentered.root` → `\gbdtFiveCVTrace` | **4.357790406860002e-38 → bkgaware** | **6.236702327843976e-38** |
+| `adopted_meancentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.25997091000714e-38** |
+| `adopted_cvcentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.660863966183672e-38** |
+| `universe_stage2_5d/…_uthrow.root` (July, superseded) | **4.345454363683128e-38 → NON-bkgaware** | **5.802415620046235e-38** |
+
+Three of the four cells of a 2 × 2 in (footing × J28) therefore already exist, and the two effects
+separate exactly:
+
+    block-sum footing effect        4.345454e-38 -> 4.357790e-38        +0.2839%
+    ADOPTED mean-centered footing effect, pre-J28 (5.802416 -> 5.807716) +0.0914%
+    J28 effect, FOOTING-MATCHED (both non-bkgaware, 5.802416 -> 5.259971) -9.3486%
+    J28 effect as PROCEDURE §4 computed it (mixed footings)               -9.4313%
+
+**Two consequences for anything quoting these.** (i) The correct footing-matched J28 change is
+**−9.3486%**, not −9.4313%. (ii) `sec_systematics.tex:170-173`'s **`0.30%`** is the **block-sum** figure
+(exactly `+0.2839%`) and the effect on the **adopted** covariance is **`+0.0914%`** — the adoption's
+per-bin `max()` inflation transfer damps it about threefold. Applying the note's `0.30%` to an adopted
+scale overstates the footing effect by ~3×; they are two different quantities.
+
+**Not discharged, and not a candidate.** The empty cell (bkgaware × J28) is being filled by job
+`56693207` (`sbatch_readopt_5d_bkgaware_footing.sh`, four arms, controls first), predeclared with a
+pre-registered value at `docs/orchestration/PREDECLARE-20260811-bkgaware-footing-readopt.md`. No scale
+here is quotable; the 2026-07-12 quarantine stands with **zero** of seven causes discharged for this
+artifact.
+
+**Gap the receipt found in itself.** Every construction stamp is **ABSENT from every adopted product**
+(`fixed_seed_null_norm`, `joint_mean_shift_norm`, `n_throws` all `{"present": false}` on all six), because
+`adopt_unified_5d.py:166-167` writes only the two traces. So the contract is provable for the throw ROOT
+and **not** for the covariance the note would publish. BEN-106.
+
 ## 2026-08-11 cause 5's construction defect sized — VERIFIED DIAGNOSTIC, recoil, NOT QUOTABLE
 
 Cause 5 of the 2026-07-12 quarantine (below, `:65-88`) requires a **joint** nuisance/retraining

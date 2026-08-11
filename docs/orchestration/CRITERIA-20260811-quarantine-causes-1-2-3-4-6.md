@@ -211,13 +211,21 @@ rebuilding `(E_avail,W)` significances."* So:
 
 Legs are graded **MET / OPEN / UNRESOLVED**. A cause is discharged only with four METs.
 
+**UPDATED 2026-08-11 after the construction-contract receipt** — `nd-unfolding/uq_5d/receipt_construction_contract_5d.json`, verdict **B1** against
+[`PREDECLARE-20260811-construction-contract-receipt.md`](PREDECLARE-20260811-construction-contract-receipt.md).
+The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain** — see §4.7.
+
 | cause | C | P | M | T | verdict |
 |---|---|---|---|---|---|
-| 1 one-sided endpoint interpolation | OPEN — two sweep-found sites unfixed, path not enumerated | OPEN — see §4.2 | **OPEN — no number exists** | OPEN | **OPEN** |
-| 2 CV centering | MET | OPEN — see §4.2 (readable, never read) | **MET** — F7, 4.69× → 4.83× floor | **OPEN — no guard** | **OPEN, and nearest to discharge** |
-| 3 varying estimator seeds | MET | OPEN — see §4.2 | UNRESOLVED — null on the wrong product; seed-scan admissibility undecided | OPEN | **OPEN** |
-| 4 scalar jitter subtraction | MET | OPEN — see §4.2, and the key is conditionally written | UNRESOLVED — 1.539 is a different ensemble | OPEN | **OPEN** |
+| 1 one-sided endpoint interpolation | OPEN — two sweep-found sites unfixed, path not enumerated | PARTIAL — MAT mean-centered `1/N` printed by the combine and the ± bank inventory passed, but no committed per-band endpoint census | **OPEN — no number exists** | OPEN | **OPEN** |
+| 2 CV centering | MET | **MET at the throw ROOT** — `hJointMeanShift` present as a separate `TH1D[10694]`, `joint_mean_shift_norm` = `1.878696733368378e-38`; **absent from the adopted product** (§4.7) | **MET** — F7, 4.69× → 4.83× floor | **OPEN — no guard** | **OPEN, and nearest to discharge** |
+| 3 varying estimator seeds | MET | **MET at the throw ROOT** — one seed, `1000`, across all 40 throw slabs and 36 block slabs; 160-throw union contiguous; `n_throws = 160` read back | **MET** — the null is now read off **both** products, not the wrong one: `1.9706e-50` pre-J28 and `5.8223e-50` J28-corrected, tol `1e-12` | OPEN | **OPEN — test leg only** |
+| 4 scalar jitter subtraction | MET | **MET at the throw ROOT** — `fixed_seed_null_norm` **present** on both throw ROOTs (not absent-and-assumed-fine); **absent from the adopted product** (§4.7) | UNRESOLVED — `1.539` is a different ensemble | OPEN | **OPEN** |
 | 6 incomplete statistical projection | OPEN — one-directional coverage guard live | **OPEN — no product rebuilt at all** | OPEN | OPEN | **OPEN, and furthest from discharge** |
+
+**So the remaining distance is shorter than it was and no cause is discharged.** Causes 3 and 4 now need
+only their test legs plus, for 4, one measurement; cause 2 needs only its guard. Causes 1 and 6 are
+unchanged. **Nothing here makes adoption nearer** — `values.tex` is untouched and the quarantine stands.
 
 **Cost order, cheapest first — recommended remediation sequence:** 2 → 4 → 3 → 1 → 6. Cause 2 needs one
 artifact read and one test. Causes 3 and 4 need the same artifact read plus power-tested guards. Cause 1
@@ -432,6 +440,65 @@ verification that worked was not re-reading the row. It was **resolving the row'
 (`#16`) and then checking the bin counts of the two candidate products.** A row that names a gate by a
 short id cannot be judged stale without following the id; and when two products' gates are described in
 the same words, the discriminator has to be a number neither description contains.
+
+### 4.7 The receipt's result, and the leg my own branch set could not see
+
+Ran 2026-08-11 against
+[`PREDECLARE-20260811-construction-contract-receipt.md`](PREDECLARE-20260811-construction-contract-receipt.md).
+Receipt: `nd-unfolding/uq_5d/receipt_construction_contract_5d.json`.
+**Verdict: B1 — stamps present and consistent** — on the artifacts the branch set actually named.
+
+| stamp | pre-J28 throw ROOT | J28-corrected throw ROOT |
+|---|---|---|
+| `fixed_seed_null_norm` | **present**, `1.9706093906025077e-50` | **present**, `5.8223488501140625e-50` |
+| `n_throws` | present, `160` | present, `160` |
+| `joint_mean_shift_norm` | present, `1.654393237996853e-38` | present, `1.878696733368378e-38` |
+| `hJointMeanShift` | present, `TH1D[10694]` — **separate object, not folded in** | present, `TH1D[10694]` |
+| `sqrt_tr_unified` / `sqrt_tr_block` | `4.4607819710748654e-38` / `3.4032639007214586e-38` | `4.443673650575504e-38` / `3.750054526403914e-38` |
+| slab seed census | one seed, **`1000`**, 40 throw + 36 block slabs, 160-throw union contiguous | same slabs (union of rescaled + native halves) |
+
+Both null norms are **present** and 38 orders below the `1e-12` tolerance, on **both** products — so the
+B2 trap did not fire, and cause 4's criterion (*key present AND ≤ tol*) is satisfied at this level rather
+than passing vacuously. `1.878696733368378e-38` read back from the ROOT matches the ledger digit for digit.
+
+**THE LEG MY BRANCH SET COULD NOT SEE, and it is the more useful half.** Every construction stamp is
+**ABSENT from every adopted product** — `fixed_seed_null_norm`, `joint_mean_shift_norm` and `n_throws` are
+all `{"present": false}` on all six adopted ROOTs, because `adopt_unified_5d.py:166-167` writes only
+`sqrt_tr_old` and `sqrt_tr_new`. **The contract is provable for the throw ROOT and not for the covariance
+the note would publish.** A consumer holding the adopted product — which *is* the publication artifact —
+cannot verify causes 2, 3 or 4 from it at all; they must know to walk one hop upstream to a file whose name
+appears in no receipt. That is why the table in §3 says *"MET at the throw ROOT"* rather than MET.
+
+**My branch set was incomplete and the shape of the gap is worth stating.** B1–B4 were written over *"does
+the artifact carry the stamp"*, which silently assumed **one** artifact. The chain has two hops, and the
+stamps stop at the first. A branch set that enumerates outcomes for a single object cannot express *"present
+upstream, absent downstream"* — so this outcome was not one of my four, and I recorded it as a finding rather
+than forcing it into B1. **Predeclaring outcomes does not protect you from predeclaring them over the wrong
+object**, which is the same failure as `FINDING-20260810-criteria-that-answer-a-different-question.md` one
+level out: there a criterion was applied to the wrong quantity; here a branch set was scoped to the wrong
+number of them. The fix is cheap and belongs to the adopt step: propagate the upstream stamps into the
+adopted product, so the publication artifact carries its own contract. BEN-106.
+
+**Two corrections to my own earlier claims, both against me.**
+
+1. **§4.5's data-loss claim is REFUTED as a consequence, though the mechanism stands.** I said the
+   `| tail -25` truncation may have destroyed the ingredients of `5.2600e-38` / `5.6609e-38`. Read whole,
+   `uq_5d/j28_adopt_56429334.out` (10,000 bytes, 138 lines) **contains the entire adopt block for both
+   conventions** — `bins = 10694`, the `g` census (`bins>1 2805 (26.2%) median=1.000 max=17.47` and
+   `6526 (61.0%) median=1.047 max=17.65`), both `sqrt-trace old/new`, both `median frac/bin`, and both PSD
+   checks (`min eig -9.351e-91`, `most-neg/max -4.87e-16` and `-3.92e-16`). Nothing needed was lost. The
+   25-line window covered it **with about seven lines of margin**, which is luck rather than design — nine
+   `RooUnfold` rootmap warnings alone consume nine of the twenty-five. So: **BEN-026 mechanism real, harm
+   not realized, margin thin.** I was right to flag it and wrong about the outcome, and the correct
+   disposition is unchanged — reproduce the stage with the stream whole rather than edit the launcher.
+2. **Two of my predeclared paths were wrong, and the existence check is why that surfaced as a typo rather
+   than as a purge.** I wrote `uq_5d/rescaled_20260806/adopted_*_20260806_full160.root`; the launcher sets
+   `TAG="20260806_full160"` and `RESCALED="uq_5d/rescaled_${TAG}"`, so the real directory is
+   `rescaled_20260806_full160`. I hand-expanded a shell variable and dropped the suffix. The first probe
+   reported both files **ABSENT**, which on purgeable scratch is exactly branch B4 — *"the evidence has been
+   destroyed by retention policy"* — and I was one report away from filing that. **A predeclared path
+   obtained by expanding shell variables by eye is a guess, and B4 is the branch a wrong guess lands in.**
+   Predeclare the `ls` as well as the path.
 
 ---
 
