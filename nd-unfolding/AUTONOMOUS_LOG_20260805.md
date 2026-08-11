@@ -4139,3 +4139,43 @@ spread this large, isolating a subclass override would measure noise. Launching 
 a watch actually **dispatching** was not, and now is. The repaired-not-exercised gap is closed. Worth being
 exact about what that means given tonight: the notification machinery worked and the session receiving it did
 not, which is the failure mode `wakerctl` exists to survive and is why the artifact-first mail format matters.
+
+### 05:00Z — which family did `56552326` run in? **The STABLE one.** The D2 pass stands, on an inference stated as one.
+
+The oversight lane was right that my closing flag was the next question rather than a marker: if `0.5126033`
+came through an unstable wrapper family, then CLM-012's `+0.0180209` margin, the D2 PASS, and the `−0.03424972`
+trade-off figure all rest on single draws. It framed it as a binary — monkeypatch family (unstable) or
+production-driver family (stable). **Read the code: it is neither, and the discriminating detail is not the
+one either of us named.**
+
+`closure_powered_annealed_lr.py` **does** monkeypatch (`of_pkg.MultiFold = Annealed` at :160, then
+`cpt.main()` at :172, restored after). So by *delivery mechanism* it matches the diagnostic. But the
+mechanism is only how the class gets in. **The override sets are what differ, and they are decisive:**
+
+    shape-validation 56552326   __init__  CompileModel  RunModel                     -> 3
+    production       STABLE     __init__  CompileModel  RunModel                     -> 3   (1.27e-4)
+    diagnostic       UNSTABLE   __init__  CompileModel  RunModel  cache  RunStep1/2  -> 6   (4.34e-3)
+
+**`56552326` carries EXACTLY the production override set.** It differs from the unstable arm in precisely the
+three extra instrumentation overrides — which is the delta Design B was built to isolate. So the powered
+closure sits with the stable family on the axis that distinguishes them.
+
+**And my own added worry was wrong, which is why I checked it rather than passing it on.** I raised the A/B
+split as a possible extra source of run-to-run variance. It is not: `deterministic_halves()` builds both
+halves from `np.random.default_rng(7).permutation(n_rows)` sliced twice — **seeded and deterministic by
+construction**, documented at `closure_powered_truth_reweight.py:14` as *"two DISJOINT deterministic halves,
+2,000,000 each, split seed 7"*. No extra stochasticity. Had I relayed that concern without reading it, I would
+have manufactured a scare in the other lane's ledger.
+
+**Disposition, with the inference labelled.** The best available evidence says `0.5126033` is in the stable
+family, so the D2 pass stands as recorded and the expensive branch is **not** triggered. But this is an
+**inference from override-set identity, not a measurement**: the two measured families differ in *both*
+override set and driver version, so attributing the stability to the override set rests on n=2 configurations.
+The margin is `+0.0180209` — 142 production scatters if stable, 4.2 diagnostic spreads if not. That is a wide
+enough gap that the inference should not be load-bearing for a *re-derivation*.
+
+So: **not launching a powered-closure repeat on my own initiative right now** — `56611394` is already running
+the predeclared second repeat of A, the k=3 restatement is queued behind the bisect and cannot consume
+`0.5126033` before then, and there is no deadline pressure to spend GPU on confirming an inference that
+currently holds. Recorded as the condition to clear **before** the restatement re-derives from that number,
+which is the sequencing the oversight lane argued for and I agree with.
