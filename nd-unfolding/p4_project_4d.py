@@ -77,6 +77,43 @@ def main():
     P.require(ebv["edge_hash"] == man["edge_hash"], "edge-array hash drift vs manifest")
     P.require(ebv["bin_volume_hash"] == man["bin_volume_hash"], "bin-volume hash drift vs manifest")
 
+    # ---- PB4: inherit the parent's self-declared rejection ------------------------------------
+    # The verdict said "the projection manifest does not propagate publication_gate_rejects_this",
+    # which reads as a lost copy. It is not: grepping this file for `component_manifest`,
+    # `publication_gate_rejects_this` and `NON_ADOPTABLE` returned NOTHING. The projector never
+    # read the parent's manifest at all, so the marker was never fetched. Those imply different
+    # fixes -- a lost copy is a plumbing patch; a missing input requires deciding where the
+    # authority comes from and binding it.
+    #
+    # Located by CONVENTION (beside the candidate), reusing the validator's rule, deliberately NOT
+    # a CLI argument: an argument makes it POSSIBLE to point the projector at a different parent's
+    # manifest, which is the failure this binding exists to prevent. Convention removes the
+    # capability instead of guarding it -- the same move as .PENDING removing the reorder.
+    _cand_path = a.c5.rsplit(":", 1)[0]
+    _comp_path = os.path.join(os.path.dirname(os.path.abspath(_cand_path)),
+                              "std_component_manifest.json")
+    P.require(os.path.exists(_comp_path),
+              f"component manifest not found beside the candidate ({_comp_path}); refusing to "
+              f"project. Projecting unmarked would be worse than refusing: an artifact with no "
+              f"marker is indistinguishable from one whose parent was clean, which recreates the "
+              f"ambiguity this check exists to remove.")
+    _comp = json.load(open(_comp_path))
+    P.require(_comp.get("candidate_sha256") == P.sha256_file(_cand_path),
+              "the component manifest beside this candidate does not describe it (sha256 "
+              "mismatch); refusing. An authority that is not pinned is not an authority.")
+    _pb4 = {"marker": bool(_comp.get(P.NON_ADOPTABLE_KEY)),
+            "reason": _comp.get("non_adoptable_reason"),
+            "component_manifest": _comp_path,
+            "component_manifest_sha256": P.sha256_file(_comp_path),
+            # LEGACY RULE, decided in this same commit (KNOWN_ISSUES #24). An ABSENT key is not a
+            # refusal: every pre-2026-08-09 manifest lacks it, and treating absence as refusal
+            # would block correct data -- the failure this lane has shipped twice. So absence
+            # projects. But the absence is RECORDED as observed, so a reader can distinguish
+            # "parent carried no marker" from "nobody looked", which is the whole point of PB4.
+            "marker_key_present": P.NON_ADOPTABLE_KEY in _comp}
+    if _pb4["marker"]:
+        print(f"[proj] parent declares {P.NON_ADOPTABLE_KEY}; the projected product inherits it")
+
     x5 = _flat(CEN5); x4 = _flat(CEN4); m5 = x5 > 0; m4 = x4 > 0
     P.require(int(m5.sum()) == man["mask5d_nreported"], "5D reported count drift")
     P.require(int(m4.sum()) == man["mask4d_nreported"], "4D reported count drift")
@@ -138,6 +175,12 @@ def main():
     for _i, _g in enumerate(rows4d):
         hidx.SetBinContent(_i + 1, float(_g))
     hidx.Write()
+    # PB4: the marker travels IN the product, not only in the sidecar. Same argument as
+    # hRowIndex4D -- a projected ROOT that reads as adoptable while its parent refuses is the
+    # failure mode, and a sidecar is exactly what a reader may fail to copy.
+    if _pb4["marker"]:
+        _hm = ROOT.TNamed(P.NON_ADOPTABLE_KEY, str(_pb4["reason"])[:2000])
+        _hm.Write()
     fo.Close()
     json.dump({"edge_hash": ebv["edge_hash"], "bin_volume_hash": ebv["bin_volume_hash"],
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
@@ -149,6 +192,11 @@ def main():
                "mask4d_neffective": int(m4_eff.sum()),
                "mask4d_unreachable_n": int(dropped.size),
                "mask4d_unreachable_global_indices": [int(i) for i in dropped],
+               P.NON_ADOPTABLE_KEY: _pb4["marker"],
+               "non_adoptable_reason": _pb4["reason"],
+               "non_adoptable_inherited_from": _pb4["component_manifest"],
+               "non_adoptable_parent_manifest_sha256": _pb4["component_manifest_sha256"],
+               "non_adoptable_marker_key_present_in_parent": _pb4["marker_key_present"],
                "row_index_key": "hRowIndex4D",
                "row_index_sha256": P.hashlib.sha256(
                    np.ascontiguousarray(np.nonzero(m4_eff)[0].astype(np.int64)).tobytes()).hexdigest(),

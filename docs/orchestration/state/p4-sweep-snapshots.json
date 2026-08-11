@@ -76,7 +76,7 @@
     },
     "live_instances": 0,
     "n_candidates": 23,
-    "n_shell_files": 336,
+    "n_shell_files": 337,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
@@ -134,6 +134,8 @@
       "log_bkg_mode_reason",
       "log_sha256",
       "manifest_endpoint_hash",
+      "marker",
+      "marker_key_present",
       "mask4d_neffective",
       "mask4d_unreachable_global_indices",
       "mask4d_unreachable_n",
@@ -155,6 +157,9 @@
       "n_required_bands",
       "n_retained_components",
       "n_retained_expected",
+      "non_adoptable_inherited_from",
+      "non_adoptable_marker_key_present_in_parent",
+      "non_adoptable_parent_manifest_sha256",
       "non_adoptable_reason",
       "p90_abs_rel",
       "p99_abs_rel",
@@ -220,7 +225,7 @@
       "symmetric_psd",
       "traces_pos_finite"
     ],
-    "n_fields": 108,
+    "n_fields": 113,
     "n_gates": 28,
     "tool": "tools_p4_sweep_recorded_fields"
   }
