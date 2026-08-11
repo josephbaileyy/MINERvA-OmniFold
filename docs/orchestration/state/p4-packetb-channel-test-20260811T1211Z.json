@@ -1,0 +1,115 @@
+{
+  "schema": "artifact-event-reconciliation-v1",
+  "run_id": "P4-PACKETB-CHANNEL-TEST-20260811T1211Z",
+  "recorded_at_utc": "2026-08-11T12:17:33Z",
+  "job_id": "56636802",
+  "cpus_per_task": 128,
+  "memory_per_task": "487802M",
+  "time_limit": "03:00:00",
+  "qos": "interactive",
+  "event": {
+    "event_id": "evt-p4-packetb-channel-test-20260811T1211Z",
+    "watch_id": "p4-packetb-channel-test-20260811T1211Z",
+    "event_type": "artifact",
+    "observed_at_utc": "2026-08-11T12:09:29+00:00",
+    "head_at_event": "683bdccad5a94d13ef231bf0729758085634a178",
+    "bytes": 1356,
+    "sha256": "177e032a367a6b7ce1a3691bb3970811477c8d467413264c22296a7e1654fa4f",
+    "validation": "PASS: schema/version/id/type/source are present, the timestamped notification id is unique, head_at_event matched the campaign checkout at consumption, and no prior RUNS or reconciliation receipt existed"
+  },
+  "channel_test": {
+    "verdict": "PASS_CODE_AND_ADVERSARIAL_EVIDENCE_ONLY",
+    "scope": "This establishes delivery plus committed implementations and acceptance demonstrations. It does not establish real-cluster PASS, a scoped verifier PASS, candidate adoption, or a publication result.",
+    "items": {
+      "PB1": {
+        "commit": "00558266111d9b77f62dbc2e4f4f53a997629b38",
+        "claim": "support-family-refereed band-set completeness plus component identity",
+        "acceptance": "11 blind variants: 10 required rejections and one required accept-control; all correct; pre-fix accepted all 10 bad variants",
+        "real_cluster_state": "RUNNING at reconciliation"
+      },
+      "PB2": {
+        "commit": "32489a6556c7823d64d8910c9d733c0403ac5f04",
+        "claim": "resume binds the six-module producing closure; legacy receipts are explicitly grandfathered",
+        "acceptance": "five generated cases, including every closure member, omitted-member rejection, legacy acceptance, and non-producing-surface acceptance"
+      },
+      "PB3": {
+        "commit": "c308a9c299baa904face4f21231a73a3f5a4a948",
+        "claim": "write evidence to .PENDING and publish only after every blocker",
+        "acceptance": "independent adversarial state checker plus mechanism/order self-guard; real-cluster publish state pending"
+      },
+      "PB4": {
+        "commit": "ea89701dad1f12a4993826ba81e5b0b5509c0d37",
+        "claim": "projected rejection inheritance with parent candidate SHA-256 binding and ROOT-side marker",
+        "acceptance": "six blind variants judged correctly; real projected output pending"
+      },
+      "PB5": {
+        "commit": "64916ee384b1cd3968564c6c724a647f362e662a",
+        "claim": "J36 C++ site is deterministically bounded and documented beside the Phase-16 IBU verdict",
+        "disposition": "BOUNDED_AND_DOCUMENTED_NOT_FIXED"
+      }
+    }
+  },
+  "independent_current_tree_check": {
+    "command": "source setup_salloc_env.sh; cd nd-unfolding; python -m unittest -v tests.test_p4_repair.PacketB1BandSetCompleteness tests.test_p4_repair.PacketPB2ResumeSurface tests.test_p4_repair.NonAdoptableMarker tests.test_p4_guard_mutations.REPAIR7_EndpointContentReproduction",
+    "result": "17/17 PASS in 0.883 s",
+    "notes": [
+      "No pytest installation was available in either /usr/bin/python3.11 or root_6_28; the same unittest classes were run with the standard-library runner.",
+      "ResourceWarning messages identify unclosed fixture readers in the test implementation; they did not change any verdict and are not a cluster-science result."
+    ]
+  },
+  "real_cluster_execution": {
+    "allocation_job_id": "56636802",
+    "allocation_name": "gbdt-hold",
+    "allocation_qos": "interactive",
+    "step_id": "56636802.0",
+    "step_name": "bash",
+    "state_at_reconciliation": "RUNNING",
+    "started_at_cluster_display": "2026-08-11T05:08:31",
+    "resources": "1 node, 128 CPU, 487802M",
+    "output_log": "/pscratch/sd/j/josephrb/packetB_run.out",
+    "observed_prefix": {
+      "evidence": "EVIDENCE-COMPLETE; central5d/mask5d/central4d/mask4d MATCH; 10/10 endpoints reproduce within 1e-9 per-bin and 1e-11 integral",
+      "stage56": "STAGE56_START present; STAGE56_END absent at reconciliation"
+    },
+    "ownership": "sole live writer to the three standard evidence JSONs and candidate validation/projection paths; no duplicate writer launched",
+    "authorization_state": {
+      "P4_NON_ADOPTABLE": "1",
+      "P4_VERIFIER_PASS": "unset and prohibited by the launcher",
+      "adoption": false
+    },
+    "terminal_verdict": "NOT_YET_AVAILABLE"
+  },
+  "persistent_workers": {
+    "agent-A-standard": {
+      "uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
+      "profile": "claude-school-legacy",
+      "dispatched": false
+    },
+    "standard-p4-verifier": {
+      "uuid": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
+      "profile": "codex-school",
+      "dispatched": false,
+      "next_use": "resume via agentctl.py send only after terminal real-cluster validation"
+    }
+  },
+  "usage_snapshot": {
+    "observed_at_utc": "2026-08-11T12:16:25+00:00",
+    "gate_ok": true,
+    "codex_personal_weekly_remaining_percent": 89.0,
+    "codex_personal_seven_day_reset_utc": "2026-08-18T04:45:06+00:00",
+    "codex_school_weekly_remaining_percent": 100.0,
+    "codex_school_seven_day_reset_utc": "2026-08-18T12:16:27+00:00",
+    "short_windows": "unknown",
+    "claude_capacity": "stale/unknown",
+    "agy_capacity": "unknown; no percentage API",
+    "full_reset_credits_available": 0,
+    "reset_credits_consumed": 0
+  },
+  "continuation": {
+    "file_sentinel_watch": "p4-packetb-stage56-56636802",
+    "file_sentinel": "/pscratch/sd/j/josephrb/packetB_run.out must contain STAGE56_END",
+    "allocation_terminal_watch": "p4-packetb-holder-56636802",
+    "next_action": "On the first real terminal event, validate the log and cluster artifacts, measure PB1/PB3 real-state behavior, then resume the preserved standard-p4-verifier UUID for the scoped Packet B verdict. Do not adopt."
+  },
+  "status": "CHANNEL_PASS_REAL_CLUSTER_RUNNING_WATCHED"
+}

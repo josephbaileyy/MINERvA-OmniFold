@@ -1,5 +1,49 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 2D vs GENIE MINERvA Tune v1 chi2/ndf — VERIFIED-NUMERIC, both note values reproduce
+
+`sec_results.tex:167` quoted "data vs tune 33.0, ours vs tune 26.5". The 33.0 was sourced
+(`3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:112`); **26.5 appeared nowhere else in the repo**.
+Both now recomputed on frozen inputs — no unfold re-run — by
+`2d-unfolding/receipt_model_chi2_2d.py`; full ingredient receipt with input SHA-256s in
+`2d-unfolding/receipt_model_chi2_2d.json`.
+
+| comparison | chi2 | ndf | **chi2/ndf** | quoted | reproduces |
+|---|---:|---:|---:|---:|---|
+| ours vs data (control) | 750.49 | 205 | **3.661** | 3.661 | yes |
+| data vs tune (control) | 6773.05 | 205 | **33.039** | 33.0 | yes |
+| ours vs tune (target) | 5430.64 | 205 | **26.491** | 26.5 | yes |
+
+Method is unchanged from `compare_to_paper_fullcov.py:chi2_with_cov`: published
+`TotalCovariance`, reported-bin mask from a positive `StatOnlyCovariance` diagonal
+(205/224), `np.linalg.pinv`, ndf = n_reported = 205.
+
+**Provenance of the gap.** 26.5 was always computed by the committed
+`2d-unfolding/compare_to_models.py`, but its chi2 rows were printed by the imported
+`chi2_with_cov`'s bare `print()` rather than the script's own `emit()` closure, so they never
+reached `model_comp_report.txt` — which is why that committed report ends at its
+"--- chi^2 in paper TotalCov ---" header with no rows. Fixed in this commit; the regenerated
+report carries all three rows and independently gives 26.491.
+
+**ndf checked, not assumed** (it is dimension-conditional in this repo). The rank-truncation
+scan reproduces `2D_OMNIFOLD_RUN_LOG.md:37` exactly for ours-vs-data
+(r=50 → 0.69, 73 → 1.42, 100 → 2.35, 139 → 2.79, 180 → 3.30, 205 → 3.66) and rises smoothly
+with no cliff for all three comparisons. The smallest eigen-direction carries ≤0.06 % of chi2
+and the smallest 10 carry 2.6–3.6 % (matching `diagnose_tension.py`'s "~3 %"), so effective
+rank is **not** far below n_reported and ndf = 205 holds here.
+
+Supporting operands (so the numbers can contradict each other): sigma_tot ours/data
+`1.0115` and tune/data `0.9124`, both matching `model_comp_report.txt`, and 0.9124 matching
+the shipped-ancillary normalisation the 3D tune script was validated against; pull mean/RMS
+`0.089/0.598` (ours-vs-data) matching the STATUS headline; eigen-decomposition chi2 agrees
+with the pinv value to ≤3.5e-9. Note `pinv`'s default rcond drops **zero** of 205 singular
+values (cond 1.47e12), so the run log's "rank 204/205" is a `matrix_rank`-tolerance statement,
+not what the chi2 inverse actually used.
+
+Scope: recomputation only. This does not revalidate the unfold, and says nothing about the
+covariance's adequacy — chi2/ndf ≈ 26–33 means the tune is strongly disfavored by the
+published covariance, which is the note's claim, not a goodness-of-fit endorsement.
+
 ## 2026-08-09 full-event Step-1 increment trajectory — VERIFIED DIAGNOSTIC
 
 Job `56525829` completed `0:0` in 7m55s. The hash-bound trajectory artifact
@@ -658,6 +702,10 @@ artifacts on the login node. All PASS; no rerun required.
 - Covariance-file contract: `hCov_combined` already includes the bootstrap
   covariance. Adding `uq_covariance_boot300.root:hCov2D_reported` separately
   double-counts bootstrap and changes the combined chi2/ndf to `1.341`.
+- Comparison to GENIE MINERvA Tune v1 (paper `TotalCovariance`, 205 bins):
+  data vs tune `33.039`, ours vs tune `26.491`. Both **VERIFIED-NUMERIC**
+  2026-08-11 — see the dated entry at the top of this file and the ingredient
+  receipt `2d-unfolding/receipt_model_chi2_2d.json`.
 
 ## Active 3D And 4D Results — central anchors valid; covariance products gated
 

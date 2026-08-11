@@ -1,10 +1,20 @@
 {
   "schema_version": 1,
-  "campaign": "Publication PET full-event diagnosis and UQ remediation",
-  "current_dag_node": "Annealed production nominal reproduction finding disposition",
-  "state": "Job 56563761 completed 0:0. Nominal/floor deviations are -0.035608971/-0.035482196, both outside the fixed reproduction window, with measured scatter 0.000126775. Both artifacts prove the anneal ran, so this is the predeclared code-path-disagreement finding. The baseline is unchanged and no downstream action occurred. A static postmortem bounded but did not isolate the cause.",
+  "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
+  "current_dag_node": "Scalar 5D P4 Packet B real-cluster validation",
+  "state": "The unique Packet B channel event is reconciled PASS for delivery, committed implementations, and adversarial acceptance evidence. Interactive allocation 56636802 step 56636802.0 is the sole real-cluster writer. Evidence completed and stages 5-6 were still running under P4_NON_ADOPTABLE=1 with the verifier token unset. Packet B is not cluster-closed and no adoption is authorized.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
+    {
+      "role": "standard-p4-verifier",
+      "uuid": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
+      "purpose": "Independent scalar-5D P4 verifier; resume the same UUID only after terminal cluster validation"
+    },
+    {
+      "role": "agent-A-standard",
+      "uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
+      "purpose": "Legacy standard-P4 continuity owner; preserved, not replaced"
+    },
     {
       "role": "agent-C-fps",
       "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
@@ -21,18 +31,24 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "The completed diagnostic is permanently non-quotable: both publication rejection flags are true and the physics-only rejection was independently recomputed. Its numerical cross section must not be quoted.",
-    "The publication nominal remains under Branch C because the measured fold-forward deficit is unrepaired; Gate-4 disposition is not a quotability verdict.",
-    "The annealed powered closure has a predeclared criterion disagreement: its PRIMARY adopted absolute criterion passes while its SECONDARY baseline-comparison band calls a shape trade-off and rejects the arm.",
-    "The source job's retired internal recovery>=0.80 check caused rc=3 after training and before its manifest step; that stale return code is not the adopted verdict and no A100 retry is allowed.",
-    "The independently finalized result remains diagnostic-only and cannot itself authorize an engine edit, threshold change, promotion, or Branch C publication.",
-    "The production anneal is internally reproducible but fails to reproduce the historical diagnostic path by 188.4 times its measured same-path scatter; the production value remains inside the separate absolute 0.05 normalization tolerance.",
-    "Current evidence does not isolate the code-path cause. Any paired GPU ablation, acceptance/promotion of the production estimator, or rejection of the annealed path is a new user decision."
+  "jobs": [
+    {
+      "job_id": "56636802",
+      "tasks": "0",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/p4-packetb-channel-test-20260811T1211Z.json"
+    }
   ],
-  "next_authorized_action": "BLOCKED ON USER: choose authorize_scoped_implementation_ablation, accept_production_path_then_decide_promotion, or reject_or_stop_annealed_path as defined in docs/orchestration/state/waker/BLOCKED-ON-USER.json. Until then do not average, widen the band, rerun, edit the engine, promote, extract, calculate a cross section, or open Branch C.",
+  "blockers": [
+    "Packet B PB1-PB5 are code/acceptance complete but have no terminal real-cluster verdict yet; PB5 is bounded-and-documented, not fixed.",
+    "The candidate must retain publication_gate_rejects_this through projection and remains non-adoptable; an unset verifier token is intentional and no adoption is authorized.",
+    "The preserved standard-p4-verifier UUID must independently judge the terminal Packet B artifacts before the packet can close.",
+    "PET promotion remains a separate unresolved user decision and is not advanced by this scalar-P4 run."
+  ],
+  "next_authorized_action": "Wait without LLM polling for p4-packetb-stage56-56636802 or allocation-terminal coverage. On the first real event, read the terminal log and artifacts once, validate PB1/PB3 real-state behavior and PB4 rejection inheritance, take a complete usage snapshot, then resume standard-p4-verifier UUID 019f74cb-b85d-7ba0-96c5-dfbd09e59159 through agentctl.py send. Do not adopt.",
   "canonical_science": [
+    "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
+    "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
@@ -50,7 +66,6 @@
     "superseded followup prompts"
   ],
   "wake": {
-    "waker": true,
-    "blocked_on_user": "docs/orchestration/state/waker/BLOCKED-ON-USER.json"
+    "waker": true
   }
 }

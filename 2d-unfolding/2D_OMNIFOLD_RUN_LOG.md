@@ -567,3 +567,46 @@ Files touched: `uq/ensemble_mean_cv.py`, `uq/bottom_line_test.py`,
 `docs/technote/{sec_openquestions,sec_validation,sec_3d}.tex`,
 `docs/technote/technote.bib`, `docs/technote/app_statmethods.tex`,
 `2D_OMNIFOLD_STUDY_STATUS.md`. Frozen `.root` products untouched.
+
+## 2026-08-11 — Tune v1 χ²/ndf re-derived: 26.5 sourced, and why it wasn't
+
+`sec_results.tex:167` quoted "data vs tune 33.0, ours vs tune 26.5". Only
+33.0 was sourced (`../3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:112`); 26.5 existed
+nowhere in the repo. Recomputed both on frozen inputs — **no unfold re-run** —
+with `receipt_model_chi2_2d.py` (new), on login32 under
+`setup_salloc_env.sh` (ROOT 6.28/12, numpy 1.26.4).
+
+| comparison | χ² | χ²/205 | quoted | reproduces |
+|---|---:|---:|---:|---|
+| ours vs data (control) | 750.49 | **3.661** | 3.661 | yes |
+| data vs tune (control) | 6773.05 | **33.039** | 33.0 | yes |
+| ours vs tune (target) | 5430.64 | **26.491** | 26.5 | yes |
+
+Inputs: `2d_crossSection_omnifold_MEFHC_5iter.root:hXSec2D` (the finalised
+Phase-18.2 product, explicitly exempted by the 2026-07-12 quarantine
+paragraph); `minerva_paper_anc/model_ptpl_..._MINERvA_Tune_v1.txt`; paper
+`TotalCovariance`. **No 2D analogue of `model_tune_xsec3d.py` was written and
+none should be** — unlike 3D, the ancillary ships the 2D Tune v1 prediction
+directly, and that shipped file is the very reference the 3D script was
+validated against to 0.01 %. Deriving a 2D tune from MC would replace a
+published number with an unnecessary reimplementation.
+
+**Root cause of the missing provenance.** `compare_to_models.py` did compute
+26.5, but the imported `chi2_with_cov` prints via a bare `print()` that
+bypasses the script's `emit()` closure, so the χ² rows never reached
+`model_comp_report.txt` — the committed report stops at its own
+"--- chi^2 in paper TotalCov (ndf = 205) ---" header. Fixed; report
+regenerated with all three rows. `KNOWN_ISSUES.md` row added.
+
+**ndf verified, not assumed.** Rank-truncation scan reproduces line 37 of this
+log exactly (0.69/1.42/2.35/2.79/3.30/3.66 at r=50/73/100/139/180/205) and is
+smooth with no cliff for all three comparisons; smallest eigen-mode carries
+≤0.06 % of χ², smallest ten 2.6–3.6 %. Effective rank is not far below
+n_reported, so ndf = 205 is the right convention here. Full ingredient receipt
+(input SHA-256s, mask rule, inverse, rcond, scan, falsifiers):
+`receipt_model_chi2_2d.json`.
+
+One discrepancy worth recording: `pinv`'s default rcond drops **zero** of the
+205 singular values (cond 1.47e12), so the "rank 204/205" in the 2026-05-29
+entry above is a `matrix_rank`-tolerance statement and not a description of the
+inverse the χ² actually uses. Both are correct; they answer different questions.

@@ -6,3 +6,6 @@ sigma_tot: ours/data = 1.0115
 model MINERvA_Tune_v1: sigma_tot/data = 0.9124
 
 --- chi^2 in paper TotalCov (ndf = 205) ---
+  ours vs data (sanity ~3.66)     chi2 =       750.49   ndf = 205   chi2/ndf =   3.661
+  data vs MINERvA_Tune_v1         chi2 =      6773.05   ndf = 205   chi2/ndf =  33.039
+  ours vs MINERvA_Tune_v1         chi2 =      5430.64   ndf = 205   chi2/ndf =  26.491

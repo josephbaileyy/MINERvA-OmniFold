@@ -4760,3 +4760,114 @@ produced ten rows and found nothing, because every correction was already filed 
 without locations is a record rather than a tool.**
 
 Queue still empty. Nothing running but the cron.
+
+### 12:20Z — the BLOCKED-ON-USER file was about to re-page Joseph with a closed gate, and my unblock caused it
+
+The oversight lane flagged the file as stale. It is, and the mechanism is worse than time-bucketing:
+**`wakerctl.py:949` keys the notification on `int(mtime)` of the file itself** — `stamp =
+int(blocked.stat().st_mtime)`. The docstring's *"exactly once each"* is true of each **mtime**, not each
+**decision**.
+
+**So my own unblock armed it.** `git checkout --` on a byte-identical `BLOCKED-ON-USER.json` during the shared
+tree clear bumped the mtime from `2026-08-10T21:27Z` to `12:07Z`, and there was **no `.sent` marker for the new
+value** — the next 5-minute tick would have paged him with content that four completed jobs had closed three
+hours earlier, asking him to dispose of a code-path finding retracted at `535668d`. A no-op file operation is
+indistinguishable from a new question.
+
+**Rewritten rather than deleted, because there IS something genuinely open — and it is not what the file said.**
+The gate moved from *"dispose of a systematic code-path disagreement"* to **promotion**, which is genuinely his
+and has never been delegated. Recorded as *"now a clean decision rather than a blocked one"*: the blocker that
+previously stood is retracted, production is reproducible to `1.3e-4`, the anneal is optimizer-verified in both
+arms, and D2 passes on three independent draws. **The file states no authorization** — the oversight lane told
+me it had informed Joseph promotion is unblocked, and I recorded the *facts* that make the decision clean
+rather than its characterisation, because a peer's statement is not a delegation and promotion is the one thing
+that has always been his.
+
+Also carried in: the normalization headroom loss (`0.0144` where `0.0383` was expected) which the retraction
+does **not** touch; the k=4 comparison; the three `\petRatio` items split by disposition; and the standing
+prohibition on quoting a one-shot measurement through the diagnostic wrapper family.
+
+**Added `last_checked_against_utc` and `last_checked_against`**, naming the HEAD and the four jobs whose
+verdicts closed the old gate. The oversight lane's reasoning for it is right and sharper since the file was
+`git rm --cached`'d today: it is **untracked**, so there is no commit history behind it and nothing outside a
+working tree can date its content. **`recorded_at_utc` cannot distinguish "written then and still true" from
+"written then and never revisited"** — the fired-vs-read gap, one file over.
+
+Filed as **BEN-085**, with the rule that matters most being the fourth: **a `BLOCKED_ON_USER` file naming a
+resolved question trains its reader to discount it.** The cost is not one wasted page; it is the next real one
+being ignored.
+
+### 12:35Z — the `0.0383` "expected headroom" is itself retracted, and I put it in the decision file
+
+The oversight lane caught it and retracted its own original phrasing. **`0.0383 = 0.05 − 0.011724`** — it is the
+headroom implied by the diagnostic arm's `−1.17%`, i.e. **the single draw the retraction killed.** So there was
+never a validated `0.0383` expectation, and calling production's `0.0144` a *"loss of headroom"* implies a
+baseline the campaign never had.
+
+**The dangerous part is where I put it.** Not the phrasing — the location. It went into
+`state/waker/BLOCKED-ON-USER.json` fifteen minutes ago as a fact *"a decision should use"*, in the file Joseph
+reads when deciding promotion. **A retracted-derived number framed as a regression, in a promotion decision
+file, biases that decision against promotion on a basis that no longer exists.** That is worse than the
+`VALIDATION_LEDGER` instance, because that one misinformed a reader while this one would have tilted a choice.
+
+**The honest form, which is still worth him seeing:** production `|dev| = 0.035609` against FROZEN's `0.05`
+**consumes 71.2% of the tolerance, `0.014391` remaining.** Tight — and not a regression from anything real.
+
+Fixed in one write so it pages once rather than twice, with a `correction_history` entry in the file itself
+stating what was removed and why. Also fixed `KNOWN_ISSUES.md:551` and added an index row, whose *"where it
+still appears"* column names the log lines that keep the retracted framing readable.
+
+**Worth recording as its own lesson:** I inherited that phrasing from the oversight lane and carried it into a
+decision artifact **eight hours after retracting the number it derives from.** The retraction was mine, filed at
+`535668d`, and I did not notice that `0.0383` was downstream of it. **A retraction does not automatically
+propagate to the quantities derived from the retracted value** — which is exactly what the index exists for, and
+this is the first instance where the index would have caught me if I had consulted it before writing.
+
+**On the notifier fix the oversight lane suggested:** content-hashing the file instead of `stat`-ing it would
+have caught the near-miss exactly, since the content was byte-identical. That makes it a cheap fix rather than
+an inherent limit — but `wakerctl.py` is one of the four known submit-time hash drifts, so changing it moves a
+sha a receipt cites. Recorded in BEN-085 as the fix to make when someone owns that re-issue, not taken now.
+
+### 12:50Z — index reframed as a WRITE-time checklist; two rows added; its self-contradiction fixed
+
+Three changes, all the oversight lane's prompting and all sourced by grep.
+
+**1. The header now says read this at write time, not only at quote time.** Its point is the operational half of
+my own lesson: an index consulted when you *find* a suspicious number catches **quotation** errors; consulted
+*before you commit* a number it catches **derivation** errors — and only the second would have caught `0.0383`,
+which I wrote into a decision file eight hours after retracting its parent. The file read as a reader's lookup
+table and now reads as a writer's checklist.
+
+With the mechanism stated at the top, because it is the sharpest form of the lesson and it is theirs:
+**a retraction propagates by STRING MATCH, and derived quantities do not string-match.** `188.4×` was caught
+because it *is* the retracted number; `0.0383` was missed because it is `0.05 −` it. **Grepping a retracted value
+does not find its descendants** — so the question to ask before committing a number is what it was computed
+*from*, not whether the number itself is listed.
+
+**2. Two rows added, and grep corrected the relay on both.**
+
+- **The four `\gbdtFive*` macros** (`values.tex:57-60`, all unmarked) — dead on two independent grounds, the
+  07-12 quarantine *and* the J28 flux correction. I was told three print as prose; **all four do**:
+  `sec_systematics.tex:163`, `:165`, `:166`, `:168`. Carried the trap that matters: `\gbdtFiveMeanShift` moves
+  **up** 13.6% while the other three move **down** ~9%, so **no uniform scale factor patches them** and anyone
+  assuming one gets the mean shift backwards.
+- **`INTEGRATION_CHECKLIST.md:61-62`**, under the heading *"## Verified / quotable (ledger) — safe to keep"*.
+  Line 61 is the `\gbdtFive*` covariance at full precision. **Line 62 was not reported to me and is worse:**
+  *"Corrected recoil PET C_total 3.8777e-38"* is the same value `values.tex:70` marks **`QUARANTINED`** as
+  `\petTotalTrace` (3.878e-38). **So the checklist lists as "safe to keep" a number the note's own macro file
+  marks dead.** Found while sourcing the row above — the location column earning its keep a third time.
+
+**3. Fixed the file's self-contradiction, which is the kind of defect this file least affords.** Its honesty
+column still said the 07-12 quarantine *"is therefore not indexed"* after `6dff2fa` had indexed part of it.
+Understating coverage is the safe direction, but **a file whose entire value is a trustworthy self-description
+cannot be wrong about itself.** Now states precisely what is indexed (PET macro class, `\gbdtFive*` class) and
+what is not (`(E_avail,W)` covariance, the 4D/5D/FPS unified-throw adoptions, and every significance derived
+from them), with the same reason as before for the omissions.
+
+**Recorded from their side too:** their note audit's SUPERSEDED column is complete for *values* and empty by
+construction for *derivations* — it looks for values whose own canonical entry moved, so a `0.0383`-shaped item
+appears nowhere in any retraction. They have told Joseph that is a gap rather than let the report read as
+exhaustive, which is the same discipline as this file's honesty column.
+
+Ready to review the note repairs. The axis I will check hardest is **operand currency**, not derivation
+correctness — `\petRatio` reproduces perfectly from operands that are both stale.
