@@ -4871,3 +4871,49 @@ exhaustive, which is the same discipline as this file's honesty column.
 
 Ready to review the note repairs. The axis I will check hardest is **operand currency**, not derivation
 correctness — `\petRatio` reproduces perfectly from operands that are both stale.
+
+### 13:15Z — reviewed the note repair: sound, merge it, two derivability claims corrected. BEN-086 filed.
+
+Reviewed `930fb91` on `note-dead-number-repair`. **The repair is sound and I would merge it.** This is the
+writer/reviewer split working — a session that did not produce these numbers wrote the repair, and my only
+unique contribution is knowing which authoritative-looking values are dead.
+
+**Verified independently rather than accepting the claims:**
+
+- **Forbidden regions clean.** `sec_systematics.tex` and `sec_results.tex`: 0 files touched. The `\gbdtFive*`
+  macros and the 26.5 line untouched.
+- **All six `pc*` derivations exact** against `products/pet/fullcloud/pointcloud_projection_summary.json`,
+  including `\pcCloudFull` as `max |pet_cloud_hascloud/pet_stored_full − 1|` over the 7 `projection_eavail`
+  bins `= 0.4555%`. Exact.
+- **The W-offset residual is real:** artifact `0.9579842726` vs the `POINTCLOUD_PROJECTION.md:82` pre-fix
+  `0.9604` differ by **2.4 MeV** and agree only at 2 dp.
+
+**Two corrections, both to claims about derivability rather than to any value.**
+
+**(1) The stat-cell repair was not needed for the block sum to derive.** I was asked to re-verify and it does:
+`√(5.061e-41² + 1.817e-40² + 3.214e-39²) = 3.219530e-39 → 3.220e-39`. **But the old cell gives
+`3.219592e-39`, which rounds to the same thing.** The combined row moved because the *systematic* cell moved
+(`2.463e-39 → 3.214e-39`, the flux fix); the stat cell contributes below the printed precision. The repair is
+still correct — a pure-Poisson bootstrap superseded a seed-varying set — but *"left alone the combined row would
+not have been derivable"* is overstated, and a later reader verifying the repair by that route would find it
+does not hold.
+
+**(2) Two per-cent figures read as derivations and are not.** `√(0.166² + 0.549² + 6.830²) = 6.8540%` against a
+printed `6.865%`, and the parenthetical *"universe + bootstrap alone is 6.845%"* computes to `6.8520%`. The
+`6.865%` is fine — the text says it is read from the rollup, not derived. **`6.845%` is not**: it sits in a
+parenthetical that reads as arithmetic on the numbers beside it. Source it or drop it. Same shape as my own
+`195×`/`353×` mislabel — the ingredients heuristic catching a *label*, not a value.
+
+**On the `\dead{}` macro I gave a view and referred the decision up.** Strike-not-erase is right for ledgers and
+the implementation is careful — the `\mbox`/`\ensuremath` wrapping is the correct fix for math-mode call sites.
+But `docs/analysis-note/` has **three builds**, and struck text is a working-document device that must not
+survive into an outward-facing one. As written it renders in all three. Cheap fix if wanted: make `\dead{}`
+build-conditional — struck internally, value omitted entirely outward. **Not mine to merge into a paper-bound
+build**, so it goes to Joseph.
+
+**Filed BEN-086** from the instance the writer correctly declined to number: **an `UNSOURCEABLE` verdict is a
+statement about the search, not about the value.** All three flagged macros were in a committed artifact; what
+was missing was a recorded pointer, with two candidate files whose populations differ. The rule that matters
+most is the third: **the genuine residual hides under the false alarm and is easy to lose in the relief** — the
+`0.9604` narrative is stale and only a rounding coincidence conceals it. **A rounding coincidence is not
+stability**, and it is precisely the failure that survives a spot check at the printed precision.
