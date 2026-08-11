@@ -58,6 +58,12 @@ OmniFold in place of D'Agostini IBU.
 | Pull mean / RMS (paper cov only) | 0.089 / 0.598 |
 | Shape-only χ²/ndf (205 bins, paper cov, unit-area Jacobian) | 3.596 |
 | Global OmniFold completeness c | 1.000000 (exact by construction) |
+| χ²/ndf vs GENIE MINERvA Tune v1, paper cov (data / ours) | **33.039 / 26.491** |
+
+2026-08-11: both Tune v1 numbers re-derived on frozen inputs and
+**VERIFIED-NUMERIC** — receipt `receipt_model_chi2_2d.json`, run-log entry
+2026-08-11, ledger entry of the same date. The note's `26.5` previously had no
+in-repo source; it does now.
 
 Paper total: 3.039e-38 cm²/nucleon. The 205-bin set is `xs > 0` in
 `data_result_ptpl_2D_minerva_inclusive_6GeV.txt` (19 unreported cells

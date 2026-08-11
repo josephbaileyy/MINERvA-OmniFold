@@ -116,10 +116,26 @@ def main():
     # ---- chi^2 of each measurement / model against each other (paper cov) --
     emit("")
     emit("--- chi^2 in paper TotalCov (ndf = 205) ---")
-    chi2_with_cov(ours_v - data_v, cov_total, "ours vs data (sanity ~3.66)")
+
+    def emit_chi2(diff, tag):
+        """chi^2 line that lands in the REPORT FILE, not just on the console.
+
+        `chi2_with_cov` prints via its own bare `print()`, which bypasses this
+        script's `emit()` closure -- so every chi^2 row was written to stdout
+        and silently dropped from `model_comp_report.txt`, leaving the committed
+        report ending at the header above with no rows. That is how the
+        "ours vs tune 26.5" quoted in `docs/analysis-note/sec_results.tex`
+        ended up with no in-repo provenance. Pass report=False and emit here.
+        """
+        chi2, ndf, _ = chi2_with_cov(diff, cov_total, tag, report=False)
+        emit(f"  {tag:30s}  chi2 = {chi2:12.2f}   ndf = {ndf:3d}   "
+             f"chi2/ndf = {chi2/ndf:7.3f}")
+        return chi2, ndf
+
+    emit_chi2(ours_v - data_v, "ours vs data (sanity ~3.66)")
     for name, mv in model_vs.items():
-        chi2_with_cov(data_v - mv, cov_total, f"data vs {name}")
-        chi2_with_cov(ours_v - mv, cov_total, f"ours vs {name}")
+        emit_chi2(data_v - mv, f"data vs {name}")
+        emit_chi2(ours_v - mv, f"ours vs {name}")
 
     # ---- 1D projections overlay --------------------------------------------
     fig, axs = plt.subplots(1, 2, figsize=(13, 5))
