@@ -548,8 +548,7 @@ internal production subclass (including possible instrumentation/timing effects)
 cause. Do not describe loader divergence as measured evidence.
 
 **Consequence for anything quoting the anneal.** Production `|dev| = 0.0356` still **passes** FROZEN's
-`fold_forward_ratio_dev_max = 0.05`, but with margin `0.0144` where `0.0383` was expected — a real loss of
-headroom. **The diagnostic's `−1.17%` must not be quoted as the production anneal's value.** Any number
+`fold_forward_ratio_dev_max = 0.05`, consuming **71.2%** of the tolerance with `0.014391` remaining. **Corrected 2026-08-11:** an earlier version called that a *loss of headroom* against an expected `0.0383` — but `0.0383 = 0.05 − 0.0117` is the headroom implied by the diagnostic's retracted single draw, so there was never a validated expectation to lose. Tight, not a regression. **The diagnostic's `−1.17%` must not be quoted as the production anneal's value.** Any number
 measured under `56534117` describes the diagnostic path only until this is explained.
 
 **Secondary result, and it is useful.** The anneal cuts run-to-run scatter by **26.7×** (`0.003380`

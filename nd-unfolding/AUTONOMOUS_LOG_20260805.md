@@ -4796,3 +4796,34 @@ working tree can date its content. **`recorded_at_utc` cannot distinguish "writt
 Filed as **BEN-085**, with the rule that matters most being the fourth: **a `BLOCKED_ON_USER` file naming a
 resolved question trains its reader to discount it.** The cost is not one wasted page; it is the next real one
 being ignored.
+
+### 12:35Z — the `0.0383` "expected headroom" is itself retracted, and I put it in the decision file
+
+The oversight lane caught it and retracted its own original phrasing. **`0.0383 = 0.05 − 0.011724`** — it is the
+headroom implied by the diagnostic arm's `−1.17%`, i.e. **the single draw the retraction killed.** So there was
+never a validated `0.0383` expectation, and calling production's `0.0144` a *"loss of headroom"* implies a
+baseline the campaign never had.
+
+**The dangerous part is where I put it.** Not the phrasing — the location. It went into
+`state/waker/BLOCKED-ON-USER.json` fifteen minutes ago as a fact *"a decision should use"*, in the file Joseph
+reads when deciding promotion. **A retracted-derived number framed as a regression, in a promotion decision
+file, biases that decision against promotion on a basis that no longer exists.** That is worse than the
+`VALIDATION_LEDGER` instance, because that one misinformed a reader while this one would have tilted a choice.
+
+**The honest form, which is still worth him seeing:** production `|dev| = 0.035609` against FROZEN's `0.05`
+**consumes 71.2% of the tolerance, `0.014391` remaining.** Tight — and not a regression from anything real.
+
+Fixed in one write so it pages once rather than twice, with a `correction_history` entry in the file itself
+stating what was removed and why. Also fixed `KNOWN_ISSUES.md:551` and added an index row, whose *"where it
+still appears"* column names the log lines that keep the retracted framing readable.
+
+**Worth recording as its own lesson:** I inherited that phrasing from the oversight lane and carried it into a
+decision artifact **eight hours after retracting the number it derives from.** The retraction was mine, filed at
+`535668d`, and I did not notice that `0.0383` was downstream of it. **A retraction does not automatically
+propagate to the quantities derived from the retracted value** — which is exactly what the index exists for, and
+this is the first instance where the index would have caught me if I had consulted it before writing.
+
+**On the notifier fix the oversight lane suggested:** content-hashing the file instead of `stat`-ing it would
+have caught the near-miss exactly, since the content was byte-identical. That makes it a cheap fix rather than
+an inherent limit — but `wakerctl.py` is one of the four known submit-time hash drifts, so changing it moves a
+sha a receipt cites. Recorded in BEN-085 as the fix to make when someone owns that re-issue, not taken now.
