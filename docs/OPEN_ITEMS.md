@@ -213,8 +213,9 @@ not close the literal full-event PET gate below.
       matches, and the grandfather clause is bounded by a declared `receipt_schema` so a
       current receipt that omits the record rejects instead of inheriting it. The other three
       stay open and the dated debt document is left as the record of what was true on 08-10.
-      **Not yet verifier-reviewed** — the same `standard-p4-verifier` UUID has to PASS the
-      committed patch before this counts as closed, and nothing downstream may assume it has.
+      **CLOSED by the same `standard-p4-verifier` UUID at `1440b58` (2026-08-11).** The verifier
+      required a second repair so explicit JSON null could not inherit grandfathering; the final
+      real-CLI/helper battery is 274 pass + 29 subtests. This closes PB2, not adoption.
       A separate mechanical-auditor gap was exposed while closing the null cases:
       `tools_p4_sweep_recorded_fields.py` only harvests shell JSON keys whose values are quoted,
       so it does not inventory `receipt_schema` or `surface_blobs`, which are emitted through

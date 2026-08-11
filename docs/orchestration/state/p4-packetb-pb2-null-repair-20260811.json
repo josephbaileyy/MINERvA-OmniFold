@@ -42,5 +42,7 @@
   "publication_gate_rejects_this": true,
   "P4_NON_ADOPTABLE": 1,
   "reset_credit_consumed": false,
-  "next_gate": "Commit and push this null-presence repair, then resume the same standard-p4-verifier UUID on the exact commit."
+  "final_verifier_commit": "1440b58ae5eb26a7e9d2766111318d37d6eee77d",
+  "final_verifier_verdict": "PASS",
+  "next_gate": "PB2 closed; repair the separately recorded sweep-extractor false negative."
 }

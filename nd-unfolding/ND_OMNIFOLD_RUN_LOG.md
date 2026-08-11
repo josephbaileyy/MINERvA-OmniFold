@@ -4519,3 +4519,10 @@ code-only repair pending the same verifier UUID. A separate open tool gap is rec
 the recorded-fields sweep misses unquoted shell JSON substitutions even though the two affected
 fields are genuinely gated. Receipt:
 `../docs/orchestration/state/p4-packetb-pb2-null-repair-20260811.json`.
+
+The same verifier UUID then returned **PASS** on exact pushed commit `1440b58`. PB2 and overall
+Packet B are closed. This is an implementation/real-state promotion gate only: the 5D candidate and
+its projected product remain self-declared publication rejects under `P4_NON_ADOPTABLE=1`, and no
+adoption is authorized or performed. The recorded-fields sweep extractor false negative remains a
+separate owner-neutral tooling item. Final receipt:
+`../docs/orchestration/state/p4-packetb-final-pass-20260811.json`.
