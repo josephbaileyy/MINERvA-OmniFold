@@ -5041,3 +5041,104 @@ Recorded here instead.
 **Not filed as a fault of theirs.** Their calibration was correct and prompted the measurement; the counts were
 a single measurement taken once, which is weaker evidence than a claim that survived review — which is rule
 (iii) pointed back at me as much as at them.
+
+### 14:55Z — independent convergence, and the checklist line verifies on EVERY clause
+
+The oversight lane retracted `93/6/1` in a message that arrived while I was pushing **BEN-088**, which had
+already recorded the same conclusion from the other direction. **Its instrument and my direct test agree
+exactly:** it pooled all four passes of a `latexmk` log (*"a time series, not a snapshot"*); I ran one
+`pdflatex` pass on a cleaned tree and got **precisely the six it named**, then `0` after convergence. **Two
+independent routes to the same diagnosis, which is the only kind of agreement worth anything here.**
+
+**I never pushed a build-state fix.** Its "stop" arrived after the measurement had already stopped it.
+
+**Closed the gap it left.** It vouched only for undefined-refs and convergence, but the line asserts three
+things. Measured on all three converged builds:
+
+    undefined refs 0 | duplicate labels 0 | missing files 0 | converged yes | citations 0 | overfull 0
+
+So `INTEGRATION_CHECKLIST.md:17-19` is true on **every** clause, and there was never a third decayed safety
+claim in that file — only the two I fixed.
+
+**My instrument over-matched a third time on the way.** A `missing files` grep returned `2` per build; the
+matches are `Package biblatex Info: ... file 'numeric-comp.dbx' not found` and `... 'biblatex-dm.cfg' not
+found` — **biblatex Info lines about optional configuration files.** Three instrument errors in one task
+(invalid option, nine-day-stale foreign log, over-matching pattern), each caught by **inspecting the matched
+lines rather than trusting the count.** Added as BEN-088 rule (v): **print the matched lines, not only the
+count — a count cannot show you it matched the wrong thing.**
+
+**One correction I am not accepting in my own favour.** It framed my two failures as *"harmless outcome, broken
+process"* because both returned `0` and agreed with a claim that was already true. The harmlessness was **luck**:
+the underlying claim happened to be right, which I had no way of knowing at the time. Its framing that a wrongly
+*measured* claim is worse than an unmeasured one is correct as far as authority goes — a number with label names
+attached gets believed — but I will not let *"mine was harmless"* stand as the lesson. Mine would have produced
+**false agreement**, which is the outcome that removes the last chance to catch the error.
+
+**Its virgin-tree point is the sharpest thing in the exchange and is genuinely its own to file:** it rebuilt in a
+freshly extracted tree with no `.aux`, got the identical set, and read that as corroboration. It is not — **a
+virgin tree runs the same passes and reproduces the same transient. Two runs of a broken instrument agreeing is
+not corroboration**, which is `CLAUDE.md`'s *"worker agreement is not verification"* turned against one's own
+instrument. I told it that belongs in its row rather than mine, since BEN-088 covers the artifact and that covers
+the corroboration.
+
+**`BLOCKED-ON-USER.json`'s "three builds clean" is now true AND measured** — but it was written on relay, so the
+provenance is what needs fixing, not the value. **Folded into that file's next write rather than re-paged**, per
+BEN-085 and its own advice: a page for a claim that turned out correct is the noise that trains the reader to
+discount the channel.
+
+### 15:05Z — folded the oversight lane's virgin-tree rule into BEN-088 rather than let it drop
+
+It withdrew its planned `BEN-089` to avoid two ids for one mechanism, which is right per `CLAUDE.md`. But its
+**virgin-tree insight is genuinely its own and BEN-088 did not cover it**, so a clean withdrawal would have lost
+it. Folded in as **rule (vi)**, attributed:
+
+**A virgin tree is not a cross-check of an instrument.** It rebuilt `origin/main` in a freshly extracted tree
+with no `.aux`, got the identical reference set, and read that as robustness. It is not — **a virgin tree runs
+the same passes and reproduces the same transient.** Two runs of a broken instrument agreeing is the instrument
+being deterministic, not corroboration. That is `CLAUDE.md`'s *"worker agreement is not verification"* pointed
+at one's own tooling, and it is **the more dangerous direction, because a reproducibility check is exactly what
+you reach for to gain confidence.**
+
+With the operational half attached: **to cross-check an instrument you must vary the INSTRUMENT, not the input.**
+One `pdflatex` pass versus a converged `latexmk` run, and a count versus a structural check of the `.aux`, both
+disagreed with the pooled-log count. A second identical run never could.
+
+That is what "one home" should mean — the id does not duplicate, the content does not drop.
+
+**Session state.** Queue empty; nothing running but the `wakerctl` cron. Two gates with Joseph in
+`BLOCKED-ON-USER.json`: promotion of the annealed production nominal, and `\dead{}` build-scoping, which parks
+the note-repair branch at `322da16`. Packet B closed at `1440b58`. `INTEGRATION_CHECKLIST.md:17-19` verified true
+on every clause. No mail this cycle — no job finished, no new verdict, and both blocking decisions are already
+in his file rather than needing a fresh page.
+
+### 15:20Z — I said "ticking on schedule" in the stand-down mail. Measured it. It is not.
+
+Caught by comparing the cron's `last-tick` against cluster time while verifying final state — **after** the mail
+had gone.
+
+    cluster 13:44:35Z   last tick 12:30:10Z   -> 74-MINUTE GAP on a */5 schedule (~14 missed ticks)
+    manual tick 0s      -> the tick is not slow
+    scontrol: Reason=BeginTime StartTime=Unknown
+    cron QOS heavily shared: 21 pending from one user, 11 from another, 60+ total
+
+Watch-fire latencies from `wakerctl status`: **3.4 min** (designA-56586368), **~19 min**
+(annealed-nominal-56563761, job ended 21:00:24Z, fired 21:19:35Z), **62 min** armed-to-fired
+(annealed-nominal-56563092).
+
+**So the cron is installed and does fire; it is not ticking on schedule. Durable notification works with
+latency up to roughly an hour, not five minutes.** That matters: *"the watch will tell me"* is true but not
+prompt — adequate as a safety net across session death, which is what it is for, and **not** adequate as the
+only signal for anything time-critical. It also means BEN-084's fired-but-unread window can open an hour before
+the marker records a fire at all.
+
+**One arithmetic correction of my own inside this one:** my first reaction was a four-hour gap, from comparing
+my local build timestamps against cluster UTC. Wrong — my machine is not on UTC. The authoritative comparison is
+cluster-side only, and it is 74 minutes. Caught before it reached the mail.
+
+Amended **BEN-085** with the measured numbers rather than opening a new id — that row is the wakerctl
+notification-path finding and latency is its subject.
+
+**Sent a correction mail.** The line went out unmeasured, which is the defect whatever the value — **third
+unmeasured status claim today**, and the other two turned out true, which is exactly the version that feels
+acceptable and is not (BEN-088 rule (iv), now with three instances behind it). The rest of the stand-down mail
+stands.
