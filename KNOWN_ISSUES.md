@@ -480,13 +480,17 @@ three lines into its constants block as a literal. Knowing the rule is not apply
 > 56534117  -0.011724321      in-loop [1.0107, 1.1214, 1.1109]
 > 56586368  -0.007386682      in-loop [1.4555, 1.2322, 1.1158]
 > 56611394  -0.052174875      in-loop [1.0240, 1.0820, 1.0654]
-> mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+> mean -0.023761959   sd 0.024701703   range 0.044788193   |   sd/prod = 195x, range/prod = 353x (labels corrected 2026-08-11)
 > ```
 >
 > **The production value `-0.035546` sits INSIDE that range, 0.48 diagnostic sd from the diagnostic mean.** The code-path gap therefore has no significance: `188x` on production's scatter (wrong population), `6.0x` on a two-point difference, and **`0.48x` on the three-point diagnostic sd — the first honest denominator.** There is no established difference between the two code paths. What exists is a **stable production configuration (`1.27e-4`) and a wildly unstable diagnostic one (`sd 0.0247`)**, and the original 'finding' was a stable point value compared against a single draw from an unstable distribution.
 >
 > **What survives:** production's `dev = -0.0356` is reproducible to `1.3e-4` and is unaffected. **What does not:** the diagnostic arm's `-1.17%` was never a property of anything — it was one draw — and must not be quoted, compared against, or used as an expectation. The 2026-08-10 predeclaration that produced the original FINDING was built on that single-draw expectation, which is the root error.
 >
+>
+> **THE REFUTATION IS ROBUST TO THE n=3 sd, checked because "0.48 sd" quoted bare invites the objection that an sd from three points is unreliable.** It is — 2 degrees of freedom — so the question is whether the conclusion survives a badly underestimated sd. `|production mean − diagnostic mean| = 0.011783625`. The true sd would have to be **5× smaller** than measured (`0.004940` instead of `0.024702`) before production read as even a 2σ outlier, and a `0.004940` sd is implausible against an **observed range of `0.0448`** — the range alone would be `9.1` sd wide. So the refutation does not rest on a fragile point estimate. *Robustness check contributed by the oversight session.*
+>
+> **STANDING CONSTRAINT, not a note: any diagnostic run through this wrapper family is ONE DRAW from an sd≈0.025 distribution, so no one-shot measurement through it may be quoted as a point value.** That covers `diagnose_step1_annealed_lr.py` and anything else monkeypatching `omnifold.MultiFold` with the six-override instrumentation subclass. A single number from that family is an anecdote; only a repeated one is a measurement. This is the generalisation of the whole episode and it applies going forward, not just retrospectively.
 > **The mechanism of the instability is OPEN and is now the real question.** Byte-identical code and seeds producing `sd 0.0247` is itself a defect worth understanding; it is not explained by the override set (see CLM-012 (x)).
 
 

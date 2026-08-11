@@ -4494,7 +4494,7 @@ predeclaration.
     56534117  -0.011724321   in-loop [1.0107, 1.1214, 1.1109]
     56586368  -0.007386682   in-loop [1.4555, 1.2322, 1.1158]
     56611394  -0.052174875   in-loop [1.0240, 1.0820, 1.0654]
-    mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+    mean -0.023761959   sd 0.024701703   range 0.044788193   |   sd/prod = 195x, range/prod = 353x (labels corrected 2026-08-11)
 
 **The production value `-0.035546` sits INSIDE that range, `0.48` diagnostic sd from the diagnostic mean.**
 The code-path gap by denominator: `188×` (production scatter — wrong population) → `6.0×` (two-point
@@ -4523,3 +4523,38 @@ n=3 the spread answers the question **definitively** rather than ambiguously, an
 Nothing downstream was ever taken on the refuted finding: no promotion, no threshold change, no extraction, no
 cross section, `niter` 3, Branch C closed, baseline canonical. **The hold that looked over-cautious for a day
 is the reason this retraction costs nothing.**
+
+### 09:45Z — a mislabel in the retraction, the refutation stress-tested, and a standing constraint
+
+**Mislabel, caught by the oversight lane and it is the ingredients convention working.** I wrote
+`range 0.044788193 = 195x the production scatter`. The `195` is the **sd** ratio (`0.024702/1.26775e-4 = 194.8`);
+the **range** ratio is `353.3`. Both numbers right, label on the wrong one. Fixed in `KNOWN_ISSUES.md`, the
+predeclaration RESULT and this log — and it went to Joseph in the 09:25Z mail, so the pending-corrections
+artifact is **re-armed** rather than my undertaking to remember. This is precisely what
+`CONVENTION-receipt-ingredients.md` exists to catch: a reader dividing `0.0448/1.27e-4` gets `353` and cannot
+reconcile it with my `195`. **A wrong label on right operands, found by the numbers failing to derive each
+other** — the third time that heuristic has caught something nobody suspected.
+
+**The refutation stress-tested, because "0.48 sd" quoted bare invites a fair objection.** An sd from n=3 has 2
+degrees of freedom and is unreliable, so the question is whether the conclusion survives a badly
+underestimated one. `|production mean − diagnostic mean| = 0.011783625`, and the true sd would have to be **5×
+smaller** than measured (`0.004940` vs `0.024702`) before production read as even a 2σ outlier — while a
+`0.004940` sd is implausible against an **observed range of `0.0448`**, which would then be `9.1` sd wide. So
+the refutation does not rest on a fragile point estimate. Their check, recorded with the arithmetic so it can
+be re-derived.
+
+**Standing constraint, promoted out of "what survives" because it governs future work:** **any diagnostic run
+through this wrapper family is one draw from an sd≈0.025 distribution, so no one-shot measurement through it
+may be quoted as a point value.** That covers `diagnose_step1_annealed_lr.py` and anything else monkeypatching
+`omnifold.MultiFold` with the six-override instrumentation subclass. A single number from that family is an
+anecdote; only a repeated one is a measurement. That is the generalisation of the whole episode and it applies
+forward, not just retrospectively.
+
+**Root error and amplification recorded as different contributions**, at their request and correctly: mine was
+treating a single draw as a property; theirs was carrying `188×` to Joseph as settled, building arguments on
+it, and endorsing the predeclaration whose band was borrowed from production. Both belong in the record.
+
+**State change: the k=3 restatement is no longer blocked by the bisect** — the bisect's question is answered,
+there being no code-path difference to explain. It now waits only on `56626305`, since the restatement
+re-derives recovery arithmetic and run 3 settles `0.5126033`'s classification. **The queue is one item deep,
+not two.**

@@ -105,7 +105,7 @@ session before the number was read, which is the only time it could be raised ho
     56534117  -0.011724321   in-loop [1.0107, 1.1214, 1.1109]
     56586368  -0.007386682   in-loop [1.4555, 1.2322, 1.1158]
     56611394  -0.052174875   in-loop [1.0240, 1.0820, 1.0654]
-    mean -0.023761959   sd 0.024701703   range 0.044788193   = 195x the production scatter
+    mean -0.023761959   sd 0.024701703   range 0.044788193   |   sd/prod = 195x, range/prod = 353x (labels corrected 2026-08-11)
 
 **The question this document asked — is `-0.011724` a property of the configuration? — is answered NO,
 definitively.** The configuration has no stable point value. Three runs of byte-identical code at identical
