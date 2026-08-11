@@ -5085,3 +5085,28 @@ the corroboration.
 provenance is what needs fixing, not the value. **Folded into that file's next write rather than re-paged**, per
 BEN-085 and its own advice: a page for a claim that turned out correct is the noise that trains the reader to
 discount the channel.
+
+### 15:05Z — folded the oversight lane's virgin-tree rule into BEN-088 rather than let it drop
+
+It withdrew its planned `BEN-089` to avoid two ids for one mechanism, which is right per `CLAUDE.md`. But its
+**virgin-tree insight is genuinely its own and BEN-088 did not cover it**, so a clean withdrawal would have lost
+it. Folded in as **rule (vi)**, attributed:
+
+**A virgin tree is not a cross-check of an instrument.** It rebuilt `origin/main` in a freshly extracted tree
+with no `.aux`, got the identical reference set, and read that as robustness. It is not — **a virgin tree runs
+the same passes and reproduces the same transient.** Two runs of a broken instrument agreeing is the instrument
+being deterministic, not corroboration. That is `CLAUDE.md`'s *"worker agreement is not verification"* pointed
+at one's own tooling, and it is **the more dangerous direction, because a reproducibility check is exactly what
+you reach for to gain confidence.**
+
+With the operational half attached: **to cross-check an instrument you must vary the INSTRUMENT, not the input.**
+One `pdflatex` pass versus a converged `latexmk` run, and a count versus a structural check of the `.aux`, both
+disagreed with the pooled-log count. A second identical run never could.
+
+That is what "one home" should mean — the id does not duplicate, the content does not drop.
+
+**Session state.** Queue empty; nothing running but the `wakerctl` cron. Two gates with Joseph in
+`BLOCKED-ON-USER.json`: promotion of the annealed production nominal, and `\dead{}` build-scoping, which parks
+the note-repair branch at `322da16`. Packet B closed at `1440b58`. `INTEGRATION_CHECKLIST.md:17-19` verified true
+on every clause. No mail this cycle — no job finished, no new verdict, and both blocking decisions are already
+in his file rather than needing a fresh page.
