@@ -2,17 +2,33 @@
 """Split FINDINGS.md into a compact ACTIVE ledger + a byte-verbatim ARCHIVE.
 
 Losslessness contract: every row line of the input appears byte-identical in the
-archive, in the original order. The active file is regenerated, never edited in
-place, so a re-run is idempotent.
+archive, in the original order.
+
+THIS SCRIPT IS NOT IDEMPOTENT AND MUST NOT BE RE-RUN ON ITS OWN OUTPUT. It is a
+one-shot migration: it takes a full FINDINGS.md and splits it. Run a second time
+on the already-split file, it would rewrite the archive from the *one-line* rows
+and destroy the full text (measured: 330,018 B -> 26,465 B). The original commit
+message claimed idempotence; that was wrong, and wrong in the destructive
+direction, so the two guards below now fail closed. (BEN-200.)
 """
 import re, sys, os
 
 SRC = sys.argv[1]
 ARCHIVE_NAME = "FINDINGS-ARCHIVE-2026-08.md"
 CAP = 240
+SENTINEL = "This is the ACTIVE ledger"
 
 raw = open(SRC, encoding="utf-8").read()
 lines = raw.split("\n")
+
+# GUARD 1: refuse to run on an already-split source.
+if SENTINEL in raw:
+    sys.exit(
+        f"REFUSING: {SRC} is already split (found the ACTIVE-ledger banner).\n"
+        f"Re-running would rebuild {ARCHIVE_NAME} from the one-line rows and destroy\n"
+        f"the full text. To re-do the migration, restore a pre-split FINDINGS.md first:\n"
+        f"    git show <pre-split-sha>:docs/orchestration/FINDINGS.md > FINDINGS.md"
+    )
 
 row_idx = [i for i, l in enumerate(lines) if l.lstrip().startswith("| BEN-")]
 assert row_idx, "no BEN rows found"
@@ -92,8 +108,22 @@ Do not append new findings here — new rows go to `FINDINGS.md`, and their long
 out_archive = archive_hdr + lines[hdr_i] + "\n" + lines[sep_i] + "\n" + "\n".join(archive_rows) + "\n"
 
 dest = os.path.dirname(SRC)
+archive_path = os.path.join(dest, ARCHIVE_NAME)
+
+# GUARD 2: never shrink an existing archive. Guard 1 catches the ordinary re-run;
+# this catches every other route to the same loss (renamed sentinel, hand-edited
+# banner, a truncated source), because the archive only ever grows.
+if os.path.exists(archive_path):
+    existing = os.path.getsize(archive_path)
+    if len(out_archive.encode("utf-8")) < existing:
+        sys.exit(
+            f"REFUSING: would shrink {ARCHIVE_NAME} from {existing:,} B to "
+            f"{len(out_archive.encode('utf-8')):,} B.\nThe archive is append-only; "
+            f"a smaller rewrite means the source was already split or truncated."
+        )
+
 open(SRC, "w", encoding="utf-8").write(out_active)
-open(os.path.join(dest, ARCHIVE_NAME), "w", encoding="utf-8").write(out_archive)
+open(archive_path, "w", encoding="utf-8").write(out_archive)
 
 print(f"rows processed: {len(rows)}")
 print(f"active  : {len(out_active):>8,} B (~{len(out_active)//4:,} tok)")

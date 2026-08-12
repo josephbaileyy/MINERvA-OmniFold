@@ -14,6 +14,12 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 > not the maximum. Committed verifier receipts that cite a pre-renumber id are left as written —
 > rewriting a receipt to match a later renumber would falsify it.
 >
+> **NEW BLOCK 2026-08-12: 200+ is reserved for repo-infrastructure findings** — the ledgers, the read
+> path, the dispatch machinery, anything that is not a physics lane. BEN-105 recorded that the namespace
+> is exhausted *inside its documented ranges*, and 160/161 were then allocated above them anyway. Opening
+> a block rather than incrementing a shared maximum is the only allocation that cannot collide with a
+> lane's sequence, because no lane draws from it. First occupant: BEN-200.
+>
 > **RENUMBERED 2026-08-09: BEN-077→061, 078→062, 079→063, 080→064.** I allocated four ids from the
 > shared maximum instead of my lane's range, landing them inside the PET block — the exact mistake
 > the paragraph above warns about, made while reading the paragraph above. Caught on a merge that
@@ -108,6 +114,7 @@ will read.
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|
+| BEN-200 | A ledger too expensive to read is not read: the prescribed read path measured ~146k tokens — 73% of a 200k window — before any work, and FINDINGS.md was cited in 0 of 83 dispatch prompts, so its findings kept recurring. | — | EP-2026-08-12-ledger-read-cost |
 | BEN-116 | I filed "a print is not a check" at 21:00 and then made the same claim in prose three times before dawn — because BEN-112's rule was scoped to the MEDIUM of its first instance, and the medium changed. | — | EP-2026-08-11-closeout |
 | BEN-115 | The git INDEX is shared mutable state, so `git diff --cached --stat` is a TOCTOU read and not a guard — three lanes scrambled three commits inside one four-minute window while all three were correctly applying the published remedy. | — | EP-2026-08-11-closeout |
 | BEN-114 | "The suite is green except the 7 known failures" was a claim about a SUBTREE, and I made it four times without ever naming the subtree. | — | EP-2026-08-11-closeout |
