@@ -5251,3 +5251,33 @@ Session C's isolated-index remedy failed silently on first use (`12ef478`). `git
 reported `sec_experiment.tex: needs update` — a file I had never opened — which is what exposed this.
 **Two lanes, two different staging mechanisms, the same outcome the same night: a commit containing more
 than its author knew.** That is the shared checkout being a concurrency hazard rather than two slips.
+
+## 2026-08-11 — "the suite is green except the 7 known" was a claim about a subtree (BEN-114)
+
+Answering the orchestrator's state request, I re-derived the suite count instead of quoting my own
+earlier report, and the earlier report does not survive that. **Both scopes, measured in one turn:**
+
+| invocation | result |
+|---|---|
+| `pytest nd-unfolding/tests` | **7 failed / 1017 passed / 1 skipped** |
+| `pytest nd-unfolding/tests docs/orchestration` | **27 failed / 1103 passed / 1 skipped** |
+
+The 7 are the known off-Perlmutter `/pscratch` set (6 `test_fullevent_gate2.py`, 1
+`test_gate2_target_runtime.py`), so **every suite claim I made this session was true of what it
+measured** and none of them named what that was. The **20-failure delta belongs to no known set**: 17
+`test_wakerctl.py`, 2 `test_watch_slurm_array_resume.py`, 1 `test_usagectl.py`.
+
+**Environmental, and not a regression.** `wakerctl.py:1` and `:195` pin `/usr/bin/python3.11`, absent
+here (`python3` is 3.12.2); the dispatch cases return `('evt-*', 'blocked')` against an expected
+`'resumed'`, which is the missing-binary path, and `test_usagectl.py:630` asserts the interpreter's
+existence directly. `git log -S'/usr/bin/python3.11'` puts the pin at `be4cd78`, long before my
+`4ff5d47` scan() guard — so my change did not cause these and no code repair is indicated.
+
+**UNVERIFIED and recorded as such: whether these 20 pass on Perlmutter is unknown.** `/usr/bin/python3.11`
+may well exist there, which would make this purely a local-checkout artifact — but I have not run it, and
+the comfortable inference is exactly the thing this entry exists to stop.
+
+Routed to the orchestrator as a correction to a number it was carrying. The transferable rule is in
+BEN-114: **quote the invocation with the count**, because a subtree count laundered into a repo-wide
+claim is an artifact asserting a state it cannot have, and on a shared checkout the scope you omit is
+systematically the other lanes'.
