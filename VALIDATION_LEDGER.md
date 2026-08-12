@@ -625,7 +625,7 @@ product the reader had in mind, and that reading came one edit from deleting a l
 | # | cause | state, **and for which artifact** | owner |
 |---|---|---|---|
 | 1 | one-sided endpoint interpolation | **OPEN** for the adopted 5D GBDT covariance (10,694 reported bins of `GRID_NBINS = 65856`) | uncertainty construction |
-| 2 | CV centering | **OPEN** for the same artifact — nearest to discharge: its magnitude leg is MET by the predeclared F7 rule (‖mean_shift‖ 4.69× → 4.83× the sampling floor); the test leg is absent | uncertainty construction |
+| 2 | CV centering | **DISCHARGED 2026-08-12 for the footing-matched, stamp-verified candidate ONLY** (`stamped_bkgaware_meancentered_20260812.root`, sha256 `4f168e83…`; CV variant `dbcd5359…`; job `56720356`) — **still OPEN for the adopted 5D GBDT covariance that `values.tex` quotes**, which carries none of the stamps. Joseph's decision, item 1 of five; F7's presentation half settled in the same decision: mean-centered headline, CV-centered conservative variant. Counts: **1 of 7 for the candidate, 0 of 7 for the quoted artifact.** | uncertainty construction |
 | 3 | varying estimator seeds | **OPEN** for the same artifact | uncertainty construction |
 | 4 | scalar jitter subtraction | **OPEN** for the same artifact | uncertainty construction |
 | 5 | frozen PET weights | **OPEN** for the recoil-PET budget | PET |
@@ -720,9 +720,18 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 - The full background-aware re-quote contains 169 vertical universes, 18
   detector/lateral universes, and one matched CV. Relative to the
   background-frozen build, `C_syst` changes by **+0.14%** in sqrt-trace and the
-  combined systematic+statistical+ML covariance by **+0.30%**. This closes
+  combined systematic+statistical+ML covariance by **+0.2839%** (`+0.30%` as
+  originally written here). This closes
   KNOWN_ISSUES #13 as a numerically negligible refinement, not a central-value
   change.
+  **AMENDED 2026-08-12 per Joseph (→ Session A → Session B, item 3, BEN-082(v)):
+  `+0.2839%` is the BLOCK-SUM effect and must not be read as the adopted-value
+  effect, which is `+0.0914%` pre-J28 and `+0.1831%` post-J28** — the adoption's
+  per-bin `max()` inflation transfer damps the block-sum change about threefold
+  before J28, about 1.5-fold after. The rounded `+0.30%` is what
+  `sec_systematics.tex` quoted and what BEN-111 anchored a predeclared branch set
+  to, deciding a factor-of-two interaction as "no interaction"; it is spelled to
+  four figures here so the two quantities cannot be silently interchanged again.
 > ## ✅ J28 RESOLVED 2026-08-07 — the flux defect is corrected on the full 160-throw ensemble
 >
 > **The quarantine notice below is retained deliberately, not deleted** — it records why these scales were

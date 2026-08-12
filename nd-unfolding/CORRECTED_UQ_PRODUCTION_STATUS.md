@@ -1,5 +1,14 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
+**2026-08-12 STATUS ONE-LINER — CAUSE 2 IS DISCHARGED FOR THE CANDIDATE AND THE QUARANTINE STANDS.**
+Joseph's decision (→ Session A → Session B, item 1 of five, BEN-082(v)): cause 2 discharged **only** for
+the footing-matched, stamp-verified candidate `stamped_bkgaware_meancentered_20260812.root`
+(sha256 `4f168e83…`; CV variant `dbcd5359…`), job `56720356`, both arms reproducing their predeclared
+`5.2696e-38` / `5.6743e-38` exactly. **1 of 7 for that candidate, 0 of 7 for the July product
+`values.tex` quotes.** `values.tex` untouched; the four `\gbdtFive*` macros remain gated. F7's
+presentation half is settled in the same decision — **mean-centered headline, CV-centered conservative
+variant** — which was reason (ii) for the earlier refusal to declare.
+
 > **DO NOT CITE THIS FILE BY LINE NUMBER. It is prepend-ordered** — each campaign one-liner is added at
 > the top — so every line-number citation into it decays monotonically and silently, and was correct on
 > the day it was written. Cite a unique quoted string instead. Measured 2026-08-11: the F7 predeclared

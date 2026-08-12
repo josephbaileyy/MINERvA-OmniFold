@@ -1,0 +1,42 @@
+{
+  "adopts_nothing": true,
+  "authorization": "Joseph -> Session A -> Session B, 2026-08-12, item 1 of five",
+  "created_at_utc": "2026-08-12T05:46:19+00:00",
+  "files": {
+    "A1_stamped_meancentered": {
+      "mtime_ns": 1786513414000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "size_bytes": 892170881
+    },
+    "A2_stamped_cvcentered": {
+      "mtime_ns": 1786513538000000000,
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_cvcentered_20260812.root",
+      "sha256": "dbcd5359c76e5c12b97ec8819980cb11c492f051f054a50d9b0bca2bd02fb9dd",
+      "size_bytes": 892232198
+    },
+    "combined_bkgaware": {
+      "mtime_ns": 1784062757000000000,
+      "path": "nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+      "size_bytes": 41436632945
+    },
+    "uthrow": {
+      "mtime_ns": 1786063126000000000,
+      "path": "nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "sha256": "4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281",
+      "size_bytes": 2668021041
+    }
+  },
+  "job_id": "56720356",
+  "launcher_sha256": "18c7e4ce5a537132aded0954239800f9174184b973abbec2ebd11271479eaaab",
+  "predeclaration": "docs/orchestration/PREDECLARE-20260812-stamped-footing-adoption-candidate.md",
+  "predicted": {
+    "A1_sqrt_tr_new": "5.2696e-38",
+    "A2_sqrt_tr_new": "5.6743e-38"
+  },
+  "schema": "stamped-footing-candidate-receipt-v1",
+  "source_job_id": "56693207",
+  "values_tex_untouched": true,
+  "verdict": "HASHES_COMPLETE_READ_STDOUT_FOR_ARM_VALUES"
+}

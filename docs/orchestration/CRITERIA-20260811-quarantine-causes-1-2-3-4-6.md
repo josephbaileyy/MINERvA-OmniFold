@@ -249,6 +249,57 @@ the stamping existed and **carries none of them**, confirmed in the same read: a
 OPEN for X as it stands.* That is §0's own (cause × artifact) rule applied to my own result, and
 it is the second time today the rule has caught a claim of mine rather than someone else's.
 
+> ## ✅ CAUSE 2 DISCHARGED 2026-08-12 — for the candidate only, by Joseph's decision
+>
+> Authorization: Joseph → Session A → Session B, item 1 of five (BEN-082(v)). His words:
+> *"Declare Cause 2 discharged only for the footing-matched, stamp-verified J28 candidate, identified
+> by exact artifact path/hash. It remains open for the currently quoted July product. Use the
+> mean-centered result as headline and the CV-centered result as a conservative variant. This does not
+> lift the overall quarantine."*
+>
+> **The artifact, by exact path and hash** — job `56720356`, COMPLETED `00:05:20`, exit `0:0`, receipt
+> `nd-unfolding/uq_5d/readopt_20260811_footing/STAMPED_HASH_RECEIPT.slurm-56720356.json`:
+>
+> | role | path | sha256 |
+> |---|---|---|
+> | **headline**, mean-centered | `nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root` | `4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2` |
+> | **conservative variant**, CV-centered | `nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_cvcentered_20260812.root` | `dbcd5359c76e5c12b97ec8819980cb11c492f051f054a50d9b0bca2bd02fb9dd` |
+> | input, unified throw | `nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root` | `4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281` |
+> | input, bkgaware combined | `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root` | `9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a` |
+>
+> Launcher `nd-unfolding/sbatch_adopt_stamped_footing.sh`, executed sha256
+> `18c7e4ce5a537132aded0954239800f9174184b973abbec2ebd11271479eaaab`, **verified equal to the committed
+> blob before submission** because the cluster tree is 114 commits behind.
+>
+> **Why these artifacts had to be made rather than named.** At the moment of the instruction *no file
+> satisfied it*: `adopted_*_20260811_footing.root` (A1/A2) were footing-matched and hashed but predate
+> BEN-106's stamp propagation, and `STAMPTEST2` was stamped but unhashed, mean-centered only, and
+> test-named. Declaring on A1/A2 while citing stamps verified on a different file is the
+> invented-after-the-fact closure this document exists to prevent, so the arms were regenerated with
+> stamps under adoption names. **No value moved:** predeclared `5.2696e-38` / `5.6743e-38`, measured
+> `5.2696e-38` (×1.209) / `5.6743e-38` (×1.302) — branch **S1** of
+> [the predeclaration](PREDECLARE-20260812-stamped-footing-adoption-candidate.md), which also allowed
+> S2 (reproduction failure → discharge does **not** proceed) and S3 (UNRESOLVED). Both products stamp
+> and **read back** `n_throws=160`, `joint_mean_shift_norm=1.878696733368378e-38`,
+> `fixed_seed_null_norm=5.8223488501140625e-50`.
+>
+> **BOTH COUNTS, because one of them is the one that gets misread.**
+>
+> | artifact | causes discharged |
+> |---|---|
+> | this footing-matched, stamp-verified candidate | **1 of 7** |
+> | the July product `values.tex` actually quotes | **0 of 7** |
+>
+> **The overall quarantine is NOT lifted, `values.tex` is untouched, and the four `\gbdtFive*` macros
+> remain gated.** This is the first discharge of the 2026-07-12 quarantine and it is scoped to an
+> artifact the note does not yet cite. *"One down, six to go"* is a misreading of the left-hand row.
+>
+> **Reason (i) for my earlier refusal is honoured, not overruled** — the P leg holds for the candidate
+> and not for the quoted product, which is exactly the scope above. **Reason (ii) is settled by Joseph
+> in the same decision:** mean-centered is the headline, CV-centered the conservative variant, which
+> closes F7's presentation half. The row below is superseded for cause 2 and left as written for the
+> record.
+
 **NO CAUSE IS DISCHARGED, and cause 2 is the one to interrogate rather than celebrate.** On the
 row above it reads four METs, which by §0 is the discharge condition. I am **not** declaring it
 discharged, for two reasons that are mine to state and not mine to resolve: (i) the P leg holds
@@ -324,6 +375,36 @@ existing `TParameter`s and slab seed stamps from X into a committed JSON. That s
 leg of four causes at once and is the highest-leverage item in this document.
 
 ### 4.3 The proposed J28 replacement values are footed on a different background sweep than the values they would replace
+
+> **DECIDED 2026-08-12 by Joseph** (→ Session A → Session B, item 3; authorization path recorded per
+> BEN-082(v)). **Retain background-aware.** *"When the adoption gate opens, use the footing-matched
+> candidates, approximately `5.2696e-38` mean-centered and `5.6743e-38` CV-centered, subject to their
+> exact receipt values. Do not rewrite the prose around a non-background-aware product."*
+>
+> **The §4.3 correction he specified: distinguish the block-sum effect from the adopted-value effect.**
+> All three verified against `VALIDATION_LEDGER.md` in the same turn as this edit, not transcribed from
+> the routing message:
+>
+> | quantity | effect | source |
+> |---|---|---|
+> | **block-sum** √Tr, non-bkgaware → bkgaware | **+0.2839%** (`4.345454e-38 → 4.357790e-38`) | ledger `:409` |
+> | **adopted** mean-centered, **pre-J28** | **+0.0914%** (`5.802416e-38 → 5.807716e-38`) | ledger `:108`, `:410` |
+> | **adopted** mean-centered, **post-J28** | **+0.1831%** (`5.259971e-38 → 5.2696e-38`) | ledger `:109` |
+>
+> The adoption's per-bin `max()` inflation transfer damps the block-sum change ~3× before J28 and ~1.5×
+> after; equivalently the transmission rose from 32% to 65% (ledger `:118`). **Conflating these is not
+> hypothetical — it is BEN-111**, where my own predeclared branch set was anchored on the `+0.30%`
+> block-sum figure while predicting the adopted quantity, and would have recorded "no interaction" for a
+> measured factor-of-two interaction. `sec_systematics.tex` and `VALIDATION_LEDGER.md:723` are corrected
+> in the same commit as this note; the rounded `0.30%` is retired in favour of `0.2839%` at both sites
+> **and both now carry the adopted-value numbers beside the block-sum one**, so a reader cannot pick up
+> one and apply it to the other.
+>
+> **`subject to their exact receipt values` is his phrase and is load-bearing.** The `5.2696e-38` /
+> `5.6743e-38` above are the values *printed* by job `56693207`; the artifacts that will carry them into
+> the note are being regenerated with provenance stamps as job `56720356`
+> ([predeclaration](PREDECLARE-20260812-stamped-footing-adoption-candidate.md)), and the adoption must
+> quote that job's receipt rather than this paragraph.
 
 Measured from committed artifacts, and it is arithmetic on operands rather than a judgement:
 

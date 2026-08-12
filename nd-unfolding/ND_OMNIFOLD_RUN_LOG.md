@@ -5398,3 +5398,107 @@ applying the then-current published remedy, and the last by the session that had
 Detected post-hoc by `git show HEAD -- <path> | grep -cE '^[+-]\| BEN-[0-9]+'` returning 3 where 0 was
 expected, seconds after the commit. This entry was written with the same procedure and checked the
 same way.
+
+## 2026-08-12 — Joseph's five decisions: Cause 2 discharged for the candidate, job 56720356
+
+Authorization for everything in this entry: **Joseph → Session A (orchestrator, typed directly) →
+Session B**, 2026-08-12, recorded per BEN-082(v). Five items were routed; four landed, one cannot be
+executed from this session and is returned.
+
+### Item 1 — CAUSE 2 DISCHARGED, candidate only. The first discharge of the 2026-07-12 quarantine.
+
+*"Declare Cause 2 discharged only for the footing-matched, stamp-verified J28 candidate, identified by
+exact artifact path/hash."* **The artifact did not exist when the instruction arrived** — measured, not
+assumed: A1/A2 (16:18–16:20 on 08-11) are footing-matched and hashed but predate BEN-106's stamp
+propagation; `STAMPTEST2` is stamped but unhashed, mean-centered only and test-named; no stamped
+CV-centered twin existed at all. Declaring on A1/A2 while citing stamps verified on a *different* file
+is the invented-after-the-fact closure the criteria document exists to prevent, so the arms were
+regenerated **with** stamps under adoption names.
+
+Job **`56720356`**, `sbatch_adopt_stamped_footing.sh`, COMPLETED `00:05:20`, exit `0:0`. Launcher and
+predeclaration were committed at `46b1257` **before** submission; the executed file's sha256
+`18c7e4ce…` was verified equal to the committed blob, because the cluster tree is `683bdcc`, 114
+commits behind, and pulling 114 commits into a tree three other lanes are using is the larger risk.
+
+**Branch S1 of [the predeclaration](../docs/orchestration/PREDECLARE-20260812-stamped-footing-adoption-candidate.md).**
+Predeclared `5.2696e-38` / `5.6743e-38`; measured `5.2696e-38` (×1.209) and `5.6743e-38` (×1.302).
+**No value moved** — Joseph's *"do not change the value"* holds. S2 (reproduction failure → discharge
+does **not** proceed) and S3 (UNRESOLVED) were live outcomes and are not what happened.
+
+| role | path | sha256 |
+|---|---|---|
+| headline, mean-centered | `nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root` | `4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2` |
+| conservative variant, CV-centered | `nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_cvcentered_20260812.root` | `dbcd5359c76e5c12b97ec8819980cb11c492f051f054a50d9b0bca2bd02fb9dd` |
+| input, unified throw | `nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root` | `4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281` |
+| input, bkgaware combined | `.../universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root` | `9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a` |
+
+Both products stamp **and read back** `n_throws=160`, `joint_mean_shift_norm=1.878696733368378e-38`,
+`fixed_seed_null_norm=5.8223488501140625e-50` — the read-back is an assertion that raises, not a print
+(BEN-112). Receipt and whole stream copied off purgeable scratch into
+`nd-unfolding/uq_5d/readopt_20260811_footing/`; the log was copied entire, never through `tail`
+(BEN-026). **The `.out` is matched by `.gitignore` and is therefore NOT tracked** — it sits at
+`nd-unfolding/uq_5d/readopt_20260811_footing/adopt_stamped_56720356.out`, sha256 `da61b47ca7742d1f24f9fbc84ba19a83757b86cbc3d55b21b2ab2d9eabb792f9`,
+893 bytes, 27 lines, on both scratch and this checkout. Recorded rather than force-added: the
+ignore rule is deliberate, and every number the log carries is transcribed into this entry and
+into the committed `STAMPED_HASH_RECEIPT.slurm-56720356.json`, so the hash is what makes the
+untracked copy falsifiable.
+
+**BOTH COUNTS: 1 of 7 for this candidate, 0 of 7 for the July product `values.tex` quotes.**
+`values.tex` is untouched, the four `\gbdtFive*` macros remain gated, and the overall quarantine stands.
+Joseph asked for both numbers explicitly so this cannot be read as *"one down, six to go"* — the
+discharge attaches to an artifact the note does not yet cite.
+
+### Item 3 — footing: retain background-aware, and split the two effects
+
+`+0.2839%` is the **block-sum** effect; the **adopted-value** effect is `+0.0914%` pre-J28 and
+`+0.1831%` post-J28. All three re-derived from `VALIDATION_LEDGER.md:108/109/409` in the same turn as
+the edit rather than transcribed from the routing message. `sec_systematics.tex` and
+`VALIDATION_LEDGER.md:723` now carry all three, so a reader cannot pick up one and apply it to the
+other — which is not hypothetical, it is **BEN-111**, where my own predeclared branch set was anchored
+on the rounded `0.30%` block-sum figure while predicting the adopted quantity.
+
+### Item 5 — the 1.17 E_avail scale: unresolved UPSTREAM, not merely uncited here
+
+Joseph read the public MAT source and reports the header carries the bare constant with no explanatory
+comment. That **replaces** this repo's standing *"the upstream comment has not been read"*, which
+pointed the next agent at a document that does not contain the answer. Publication-freeze requirement
+recorded in both homes: do not change the value or rerun; before freeze require **either** an
+authoritative calibration rationale / collaboration confirmation **plus** identification of the
+systematic that covers it, **or** an explicit assumption **plus** a quantified sensitivity. Lineage
+alone is insufficient. Status: **ASSUMED and UNRESOLVED**.
+
+### PROSE — one normalization throughout in `sec_eavailw.tex`
+
+Both comparisons now state data/generator: corner `1.54/1.58/1.56/1.61`, W∈[2.2,3.0) `1.30/1.33/1.31/1.35`.
+The W-band ratios were **computed from the source cross-sections** in
+`3d-unfolding/genie/eavailW_band_20260811_allfour.log:22-23`, not converted from the rounded `23–26%`,
+because converting rounded endpoints manufactures precision the source lacks (BEN-086). Falsifiable
+cross-check per BEN-077: the same operands reproduce the previous wording exactly — 22.95 / 24.85 /
+23.61 / 25.81 %, i.e. *"23–26% below the data"*. **The convention changed; no number moved.** The
+spurious contrast a reader used to infer was ~2.4×; consistently normalized it is ~1.2×.
+
+### Item 11 — per-lane git identity, per-invocation only
+
+`git -c user.name=... -c user.email=...` per commit; **no shared git config written**. Effective
+identity for these commits is `Lane B (uncertainty construction) <josephrb+laneb@stanford.edu>`,
+recorded here as the lane receipt Joseph asked for. D's measured nuance holds: `-c user.email` sets
+**both** author and committer, whereas `GIT_AUTHOR_EMAIL` would set only the author — verified on the
+first commit that used it (`9925ba8`).
+
+### Item 6 — NOT DONE, and it cannot be done from this session
+
+Gregor's correction is **not sent**. Verified three independent ways rather than assumed, because A's
+constraint was explicitly *confirm the channel delivers before reporting it sent*:
+
+1. **There is no send tool.** The connected Gmail surface exposes read, label, trash, spam and *draft*
+   operations only. No send.
+2. **The connected mailbox is Joseph's personal account** (`jrbailey555@gmail.com`), not a
+   collaboration channel — 201 threads in 30 days, all personal.
+3. **There is no correspondence with Gregor in it at all**, and his address appears nowhere in the repo,
+   so there is no thread to reply into and no recipient to address.
+
+This confirms the standing note that this channel accepts drafts and delivers nothing. **Joseph's
+verbatim text is returned to Session A for him to send**, unparaphrased and unedited. The source-side
+half was already correct before this decision arrived (`efd4c6b` fixed the `\jrb{}` reply in
+`sec_experiment.tex`); what remains is the record correction to the person, which is the half that
+matters and the half I cannot perform.
