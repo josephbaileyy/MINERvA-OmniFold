@@ -1,0 +1,526 @@
+{
+  "schema": "quoted-products-digest-receipt-v1",
+  "authorization": "AUTHORIZATION-20260812-ignored-set-scope.md step 2 (B). The xfer vehicle was Session A's call under Joseph's standing grant (any single job under 12 h pre-approved, PROMPTS-20260811-four-session-closeout.md:16); it never needed to reach him.",
+  "recorded_by": "Session C (PET)",
+  "git_identity": "Lane C (PET) <lane-c@minerva-omnifold.local>",
+  "job": {
+    "id": "56760314",
+    "queue": "xfer",
+    "name": "digest_quoted",
+    "state": "COMPLETED",
+    "elapsed": "00:24:05",
+    "ended_utc": "2026-08-12T13:46:00Z",
+    "launcher": "nd-unfolding/uq_5d/sbatch_digest_quoted_products.sh",
+    "launcher_sha256": "d1f7a6089b770a87dd053e68a4a418701b4f3b01ec1ec8cd6b1d54fe15485380",
+    "input_list_sha256": "f382415657ce1eb1937a7eb06339d011b2b07c05c0692885a6390166a080c87c",
+    "launcher_sha_verified": "the local file and the submitted copy hash identically; the launcher is committed in the same commit as this receipt, per the rule that a launcher's commit carries its products summary"
+  },
+  "NOTHING_WRITTEN_TO_THE_REPO_TREE": "Every job output went to /pscratch/sd/j/josephrb/mnv-digest-work, OUTSIDE /pscratch/sd/j/josephrb/MINERvA-OmniFold. The tree is the object of the 2026-08-12 inventory and is under an eight-verb no-touch list; a receipt written inside it would perturb the enumeration it documents. This receipt is assembled and committed on the local side.",
+  "totals": {
+    "files_requested": 36,
+    "files_digested": 36,
+    "missing": 0,
+    "bytes": 322306102132,
+    "TB": 0.3223
+  },
+  "ACHIEVED_RATE_IS_THE_DURABLE_OPERAND": {
+    "wall_seconds_total": 1439,
+    "achieved_MB_per_s": 223.97,
+    "prior_estimate_MB_per_s": 170,
+    "prior_estimate_basis": "one 2.68 GB read during the OI-17 probe",
+    "estimate_error": "the 170 MB/s figure was 24% LOW; the true sustained rate over 322 GB is 224 MB/s. My ~32 min projection came in at 24 min. Anything that quotes a Lustre read rate for this tree should cite 224 MB/s over 322,306,102,132 B and not the 2.68 GB figure -- a rate measured on one small file is not a rate.",
+    "slowest_single_read": "769.79 s for 169,974,191,800 B (210.6 MiB/s)"
+  },
+  "size_cross_check": {
+    "method": "each digested size compared against the size the 13:12Z metadata walk recorded",
+    "mismatches": 0,
+    "mismatch_detail": [],
+    "meaning": "zero mismatches means no quoted product changed size between the 13:12Z walk and the 13:22-13:46Z digest pass. It does NOT establish that none changed content -- there was no prior digest to compare against, which is the whole gap this receipt closes."
+  },
+  "overlap_with_existing_hpss_archive": {
+    "condition": "3 of AUTHORIZATION-20260812 copy authorization -- measure the incremental figure after overlap",
+    "instruction": "Joseph via the mediator: do not assume the overlap is zero or total.",
+    "method": "Both sides enumerated. HPSS side: `hsi -q 'ls -1'` over every directory under ~/ (backups, mnv-p3f-pet-fullevent-final, mnv-p3f-smoketest), 241 objects. Quoted side: the 36 derived entries. Intersected by basename.",
+    "quoted_files": 36,
+    "quoted_bytes": 322306102132,
+    "already_on_hpss_files": 0,
+    "already_on_hpss_bytes": 0,
+    "incremental_files": 36,
+    "incremental_bytes": 322306102132,
+    "overlap_is_zero": true,
+    "reason": "The only bulk HPSS archive is mnv-p3f-pet-fullevent-final: 240 objects of nd-unfolding/p3f_pet_fullevent/final/, job 56692312, 1,134,998,230,283 B. No quoted product lives there -- the quoted set is uq_5d/, uq_4d/, uq_fps/, products/, g2_fullevent/, 2d-unfolding/uq/ and the repo root. The 0.874 TB already protected and the 0.322 TB quoted set are DISJOINT. Zero by enumeration, not by assumption.",
+    "corollary": "The 0.874-TB-already-protected figure therefore does NOT reduce this copy. It reduces the coverage gap over the whole 5.977 TB ignored set, which is a different denominator. Those two facts were adjacent in the escalation and are not the same fact."
+  },
+  "COPY_STATUS": "AUTHORIZED (AUTHORIZATION-20260812-hpss-copy-and-delegation.md, Joseph verbatim 'yes, authorize it' answering the STOP as framed: 36 files, 0.322 TB, HPSS). NOT YET PERFORMED as of this receipt. These digests are the local-side operands the copy's verification will compare against.",
+  "entries": [
+    {
+      "path": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root",
+      "bytes": 169974191800,
+      "sha256": "afaaedaf745145acc29f792fcfc158e572ae27f87bfd74044c8c12a5b219c608",
+      "mtime": "2026-06-30 03:18:39.000000000 -0700",
+      "read_seconds": 769.79100755,
+      "MiB_per_s": 210.58,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 169974191800,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/runEventLoopOmniFold_PC_MEFHC.root",
+      "bytes": 49215205065,
+      "sha256": "b51cda1176696309f63eb8c19fa2d38c9a184d34f2fd1df535d18b9a5295e3eb",
+      "mtime": "2026-06-05 19:26:49.000000000 -0700",
+      "read_seconds": 212.170762331,
+      "MiB_per_s": 221.21,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 49215205065,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "bytes": 41436632945,
+      "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+      "mtime": "2026-07-14 13:59:17.000000000 -0700",
+      "read_seconds": 184.987714858,
+      "MiB_per_s": 213.62,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 41436632945,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "bytes": 9897374636,
+      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "mtime": "2026-07-19 03:10:48.000000000 -0700",
+      "read_seconds": 42.789323722,
+      "MiB_per_s": 220.59,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 9897374636,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root",
+      "bytes": 9419026130,
+      "sha256": "51e46fddd061cae37704c64604f73df8bb3d739cd5420bfd21cb0d2c89db320f",
+      "mtime": "2026-07-18 15:20:51.000000000 -0700",
+      "read_seconds": 42.236087545,
+      "MiB_per_s": 212.68,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 9419026130,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "bytes": 8355187459,
+      "sha256": "5e9d0f0d8682f779311b021cf24f40f60e19fc2fdfa1dddfed3e30c539c219f5",
+      "mtime": "2026-06-06 11:59:31.000000000 -0700",
+      "read_seconds": 35.969915176,
+      "MiB_per_s": 221.52,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 8355187459,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "bytes": 8355185775,
+      "sha256": "9f5c6a9d3ba46423e634263a82d58bbc02df0b5228cfeb53668e58fdebe187e2",
+      "mtime": "2026-07-16 01:06:25.000000000 -0700",
+      "read_seconds": 35.727215602,
+      "MiB_per_s": 223.03,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 8355185775,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/of_inputs_pc.npz",
+      "bytes": 5880556108,
+      "sha256": "0a1fe0a36206a517c87b09f2b2a60ed332ffa724aa58d7f9a0cbd5e64cafab28",
+      "mtime": "2026-06-05 19:59:12.000000000 -0700",
+      "read_seconds": 25.202911096,
+      "MiB_per_s": 222.52,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 5880556108,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+      "bytes": 4825716683,
+      "sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a",
+      "mtime": "2026-06-06 22:33:10.000000000 -0700",
+      "read_seconds": 20.682556726,
+      "MiB_per_s": 222.51,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 4825716683,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/unified_throw_cov_5d.root",
+      "bytes": 2677168123,
+      "sha256": "038c613208f08d1873cc92c82d7d2f2d458ed9b2319992478c76430aa4bc01ac",
+      "mtime": "2026-07-13 02:15:41.000000000 -0700",
+      "read_seconds": 11.568046723,
+      "MiB_per_s": 220.71,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 2677168123,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "bytes": 2668021041,
+      "sha256": "4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281",
+      "mtime": "2026-08-06 17:38:46.000000000 -0700",
+      "read_seconds": 11.638613067,
+      "MiB_per_s": 218.62,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 2668021041,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/pet/pet_4d_covariance_combined_wlat.root",
+      "bytes": 1715893301,
+      "sha256": "2324c19d759af20beb9af15d3380e896e411bba76b7b6cdd807352204f505ea4",
+      "mtime": "2026-06-10 17:33:55.000000000 -0700",
+      "read_seconds": 7.646329672,
+      "MiB_per_s": 214.01,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 1715893301,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/pet/pet_4d_covariance_combined.root",
+      "bytes": 1071515651,
+      "sha256": "36c4501a55f1d8046cf0c7865530a8ffc73b414c24d4791c74fabdb708b7493f",
+      "mtime": "2026-06-08 20:32:22.000000000 -0700",
+      "read_seconds": 6.664134863,
+      "MiB_per_s": 153.34,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 1071515651,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_cvcentered_20260806_full160.root",
+      "bytes": 892266576,
+      "sha256": "61c8ee054a5bf3f1e79c9597d8248a4209ad77b115be3ffacb7525f150e22a73",
+      "mtime": "2026-08-06 17:43:35.000000000 -0700",
+      "read_seconds": 4.10160373,
+      "MiB_per_s": 207.46,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 892266576,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+      "bytes": 892233209,
+      "sha256": "7e8338f9fe3a628e2258e5b0535a431445a12baef0e9af2c2d22d45e386e43a9",
+      "mtime": "2026-07-02 00:59:08.000000000 -0700",
+      "read_seconds": 3.88504346,
+      "MiB_per_s": 219.02,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 892233209,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+      "bytes": 892224371,
+      "sha256": "98ac294f3f2c3aec58b15b965c266cbcf030eb011560b1cbeaf8794ba2a125e3",
+      "mtime": "2026-07-13 18:58:09.000000000 -0700",
+      "read_seconds": 4.062018718,
+      "MiB_per_s": 209.48,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 892224371,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_meancentered_20260806_full160.root",
+      "bytes": 892196879,
+      "sha256": "7d55a9da09fd91d17c29ebd7b60b85e9d14d8520b868ad8ab8289592e6c5648f",
+      "mtime": "2026-08-06 17:41:18.000000000 -0700",
+      "read_seconds": 3.885271716,
+      "MiB_per_s": 219.0,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 892196879,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "bytes": 892170881,
+      "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "mtime": "2026-08-11 22:43:34.000000000 -0700",
+      "read_seconds": 3.895788277,
+      "MiB_per_s": 218.4,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 892170881,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/pet/pet_4d_covariance_combined_rebank.root",
+      "bytes": 714104917,
+      "sha256": "2456135c8b304bc5ecc4edc3c63b69a4cc830e67bddcefa6e224ae3cefabf403",
+      "mtime": "2026-06-12 04:17:17.000000000 -0700",
+      "read_seconds": 3.175177056,
+      "MiB_per_s": 214.48,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 714104917,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+      "bytes": 545400036,
+      "sha256": "2207b8ae18819fe1e1bc258a8d58a7dd38a76be5ccad6c7a4880b508bd85fd13",
+      "mtime": "2026-07-17 07:56:20.000000000 -0700",
+      "read_seconds": 2.40331828,
+      "MiB_per_s": 216.42,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 545400036,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+      "bytes": 545263178,
+      "sha256": "2940ce086f6b99bc1f6244cf4225dffc225e187bed351d1e8893e99b826cc1ff",
+      "mtime": "2026-06-09 04:39:35.000000000 -0700",
+      "read_seconds": 2.355989302,
+      "MiB_per_s": 220.72,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 545263178,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "bytes": 181811405,
+      "sha256": "720ee20caa70f573fbd339f46115ef3fd1a279630b13edbf055500d3870d0467",
+      "mtime": "2026-06-09 10:53:41.000000000 -0700",
+      "read_seconds": 0.914360505,
+      "MiB_per_s": 189.63,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 181811405,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "bytes": 181794146,
+      "sha256": "3a90a91157d096ab0c2e27fa810d4d4b5b6e31f59ee3dd790cb44a54b1295a85",
+      "mtime": "2026-07-17 08:05:59.000000000 -0700",
+      "read_seconds": 0.765515003,
+      "MiB_per_s": 226.48,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 181794146,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/pet/pet_weights_full.npz",
+      "bytes": 141455862,
+      "sha256": "325bbb5e52915c634c24613c9fb29863ec4e4edf661df5ae29dd198ded98b71d",
+      "mtime": "2026-06-06 16:05:27.000000000 -0700",
+      "read_seconds": 0.650595585,
+      "MiB_per_s": 207.35,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 141455862,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root",
+      "bytes": 25092215,
+      "sha256": "3039183cf81d8d8f2cafa23f5ee836a20f1eb504e51566815a41710fb1026e56",
+      "mtime": "2026-08-06 20:01:40.000000000 -0700",
+      "read_seconds": 0.301898284,
+      "MiB_per_s": 79.26,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 25092215,
+      "size_matches_walk": true
+    },
+    {
+      "path": "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+      "bytes": 14106315,
+      "sha256": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9",
+      "mtime": "2026-05-29 19:15:37.000000000 -0700",
+      "read_seconds": 0.177095015,
+      "MiB_per_s": 75.96,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 14106315,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+      "bytes": 1609132,
+      "sha256": "ecfc9f7ecb36b253f21ea7f0ae72dd67a0ad8615c0af6dd5994c0e40f1a178bf",
+      "mtime": "2026-07-16 20:44:39.000000000 -0700",
+      "read_seconds": 0.024873915,
+      "MiB_per_s": 61.69,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 1609132,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+      "bytes": 1607692,
+      "sha256": "977c236209f05ad934f03540b76c7a6a57562ae16aacfaf7bf78d16509db309c",
+      "mtime": "2026-06-12 05:00:17.000000000 -0700",
+      "read_seconds": 0.02522421,
+      "MiB_per_s": 60.78,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 1607692,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/4d/xsec_4d_MEFHC_ascencio_fine.root",
+      "bytes": 338837,
+      "sha256": "d1d04c5e90a917a26496a4bb3038ae6786250b1f08becdbafbc5db8157e1d63d",
+      "mtime": "2026-06-12 10:45:48.000000000 -0700",
+      "read_seconds": 0.011655455,
+      "MiB_per_s": 27.72,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 338837,
+      "size_matches_walk": true
+    },
+    {
+      "path": "2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+      "bytes": 320371,
+      "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+      "mtime": "2026-05-27 10:41:37.000000000 -0700",
+      "read_seconds": 0.011705088,
+      "MiB_per_s": 26.1,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 320371,
+      "size_matches_walk": true
+    },
+    {
+      "path": "2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+      "bytes": 319885,
+      "sha256": "f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270",
+      "mtime": "2026-05-29 18:08:55.000000000 -0700",
+      "read_seconds": 0.010690855,
+      "MiB_per_s": 28.54,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 319885,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/5d/eavailW_covariance.root",
+      "bytes": 34865,
+      "sha256": "659b4917d24d8b218da78bd3af1ee63f582511cbae471a03144b72b7322156ee",
+      "mtime": "2026-07-13 20:48:44.000000000 -0700",
+      "read_seconds": 0.00707528,
+      "MiB_per_s": 4.7,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 34865,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/5d/eavailW_covariance_wlat.root",
+      "bytes": 34145,
+      "sha256": "01d0bbc20d5a668d2c96e1a51fa20a1ccec8e7fd53399da14069293ab78f3ef8",
+      "mtime": "2026-06-12 23:48:43.000000000 -0700",
+      "read_seconds": 0.007221171,
+      "MiB_per_s": 4.51,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 34145,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/5d/closure_2d_FPS_hidden_eavail_MEFHC.root",
+      "bytes": 30701,
+      "sha256": "d5af4db77882af80fa4325c47b24b8da8de8d50654038037316e40c7dd65e680",
+      "mtime": "2026-06-11 19:09:12.000000000 -0700",
+      "read_seconds": 0.007144318,
+      "MiB_per_s": 4.1,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 30701,
+      "size_matches_walk": true
+    },
+    {
+      "path": "nd-unfolding/products/5d/excess_eavail_W.root",
+      "bytes": 6166,
+      "sha256": "751bb859766adf684eb05f483800505cb5ee8160f31c8e93a4eec277d37f3058",
+      "mtime": "2026-07-13 21:22:19.000000000 -0700",
+      "read_seconds": 0.006888171,
+      "MiB_per_s": 0.85,
+      "named_by": [
+        "VALIDATION_LEDGER.md",
+        "sec_eavailw.tex"
+      ],
+      "walk_bytes": 6166,
+      "size_matches_walk": true
+    },
+    {
+      "path": "3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+      "bytes": 5631,
+      "sha256": "2461bdfdd522d207d9b73804a98cd07b263324bbce07b655c02e0a3088522856",
+      "mtime": "2026-06-09 10:47:49.000000000 -0700",
+      "read_seconds": 0.006867703,
+      "MiB_per_s": 0.78,
+      "named_by": [
+        "VALIDATION_LEDGER.md"
+      ],
+      "walk_bytes": 5631,
+      "size_matches_walk": true
+    }
+  ]
+}
