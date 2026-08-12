@@ -102,7 +102,14 @@ NS = re.compile(r'(?<!train_)(?<!sbatch_pet_)(?<!test_pet_)'
 #   STAYS-REF     the annealed validation's REFERENCE nominal; retargeting makes it self-comparing
 #   STAYS-PROD    producer / output namespace / log dir -- a write, not a read of the artifact
 #   STAYS-NAME    asserts the directory NAME, does not consume the artifact
-#   RECORD        committed receipt or docstring; historical, never rewritten
+#   RECORD-APPEND files designed to ACCRUE (run logs, FINDINGS, OPEN_ITEMS, INDEX-*, FINDING-*).
+#                 Count UNENFORCED; presence still enforced.
+#   RECORD-FROZEN per-job artifacts written once. Count ENFORCED: a frozen receipt cannot cry wolf,
+#                 so enforcement costs nothing and catches a committed receipt's content changing --
+#                 BEN-091's dangling-pin class and BEN-133's repoint class, both live in this
+#                 namespace. STEP1_DECOMPOSITION.slurm-56445883.json is json.load'ed at
+#                 step1_increment_trajectory.py:120 as a gated run's reproduction anchor.
+#   RECORD        (retired label; split into the two above 2026-08-12 on D's finding)
 INVENTORY = {
 
     "nd-unfolding/pet/inversion_screen.py":                        ("STAYS-DIAG08", 1),
@@ -127,8 +134,6 @@ INVENTORY = {
 
     "nd-unfolding/pet/pet_diagnostic_quarantine.py":               ("STAYS-NAME", 1),
 
-    "nd-unfolding/pet/step1_increment_trajectory.py":              ("RECORD", 3),
-
     # --- surfaced only after the two blanket exclusions were removed -----------------------------
     # The producer, whose own FILENAME matches class 4 and which the old file-level skip therefore
     # discarded wholesale. :12,:13 are #SBATCH log paths, :46 is OUTDIR, :96 is the `|| die` namespace
@@ -146,6 +151,48 @@ INVENTORY = {
     # with its code so the two cannot diverge on it; gets the same comment.
     "nd-unfolding/tests/test_pet_diagnostic_quarantine.py":        ("STAYS-NAME", 1),
 
+    # --- RECORD-APPEND: files DESIGNED TO ACCRUE. Count unenforced (None) because an enforced
+    # count fires on every unrelated append and a check that cries wolf is ignored (BEN-084).
+    "docs/OPEN_ITEMS.md":                                              ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md": ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "docs/orchestration/FINDING-20260807-step1-under-achieves.md":     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md": ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "docs/orchestration/FINDINGS.md":                                  ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "docs/orchestration/INDEX-retracted-and-superseded-values.md":     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "nd-unfolding/AUTONOMOUS_LOG_20260805.md":                         ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md":                             ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md":                     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+
+    # --- RECORD-FROZEN: per-job artifacts, written once, nothing appends. Counts ENFORCED --
+    # a frozen receipt CANNOT cry wolf, so enforcement is free and it buys a check on the one
+    # event that must never happen silently: a committed receipt's content changing.
+    "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-transcript.txt": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/annealed-nominal-complete-56563761.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/annealed-nominal-error-56563092.json":   ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260807.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/step1-dynamics-submit-56531057.json":    ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/step1-ihedge-launch-56525829.json":      ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/step1-trajectory-complete-56525829.json": ("RECORD-FROZEN", 4),  # NS-EXEMPT: inventory key
+    "docs/orchestration/state/step1-trajectory-submit-56525829.json":  ("RECORD-FROZEN", 4),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56527676.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.summary.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.floor-56445883.json": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json": ("RECORD-FROZEN", 3),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.json": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.json":     ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json": ("RECORD-FROZEN", 8),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md":  ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json": ("RECORD-FROZEN", 8),  # NS-EXEMPT: inventory key
+    "nd-unfolding/pet/step1_increment_trajectory.py":                  ("RECORD-FROZEN", 3),  # NS-EXEMPT: inventory key
+
     # --- RECORD: historical artifacts, docs and logs -------------------------------------------
     # Surfaced 2026-08-12 by widening the corpus from *.py/*.sh to ALL tracked files. Every one is a
     # committed receipt, a finding, a run log or a status doc -- a record of what WAS, never rewritten.
@@ -153,40 +200,6 @@ INVENTORY = {
     # fire on every unrelated append and a check that cries wolf is one people learn to ignore (BEN-084).
     # PRESENCE still is: a NEW unclassified file trips UNACCOUNTED, which is the point of widening --
     # it will catch the next promotion that rewrites a receipt.
-    "docs/OPEN_ITEMS.md":                                                ("RECORD", None),
-    "docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md": ("RECORD", None),
-    "docs/orchestration/FINDING-20260807-step1-under-achieves.md":       ("RECORD", None),
-    "docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md": ("RECORD", None),
-    "docs/orchestration/FINDINGS.md":                                    ("RECORD", None),
-    "docs/orchestration/INDEX-retracted-and-superseded-values.md":       ("RECORD", None),
-    "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md": ("RECORD", None),
-    "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-transcript.txt": ("RECORD", None),
-    "docs/orchestration/state/annealed-nominal-complete-56563761.json":  ("RECORD", None),
-    "docs/orchestration/state/annealed-nominal-error-56563092.json":     ("RECORD", None),
-    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json": ("RECORD", None),
-    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json": ("RECORD", None),
-    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json": ("RECORD", None),
-    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260807.json": ("RECORD", None),
-    "docs/orchestration/state/step1-dynamics-submit-56531057.json":      ("RECORD", None),
-    "docs/orchestration/state/step1-ihedge-launch-56525829.json":        ("RECORD", None),
-    "docs/orchestration/state/step1-trajectory-complete-56525829.json":  ("RECORD", None),
-    "docs/orchestration/state/step1-trajectory-submit-56525829.json":    ("RECORD", None),
-    "nd-unfolding/AUTONOMOUS_LOG_20260805.md":                           ("RECORD", None),
-    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md":                               ("RECORD", None),
-    "nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md":                       ("RECORD", None),
-    "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json": ("RECORD", None),
-    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56527676.json": ("RECORD", None),
-    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.summary.json": ("RECORD", None),
-    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.floor-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json":   ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.json":       ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md":    ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
-    "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json": ("RECORD", None),
 }
 
 
@@ -240,6 +253,14 @@ def audit(found):
                             f":{hits[0][0]} -- give it a disposition in INVENTORY")
             continue
         disp, n = INVENTORY[rel]
+        # D's finding: key the exemption on the PROPERTY that justifies it, not on the label that
+        # usually accompanies it. My rationale was append-only-ness; my key was "RECORD". Those are
+        # different sets, and 23 frozen per-job receipts were silently exempted by a label.
+        if n is None and disp != "RECORD-APPEND":
+            problems.append(f"EXEMPTION MISKEYED {rel} [{disp}]: only RECORD-APPEND may waive its "
+                            f"count -- a frozen artifact cannot cry wolf, so exempting it is free "
+                            f"protection given away")
+            continue
         if n is not None and len(hits) != n:
             problems.append(f"COUNT DRIFT {rel} [{disp}]: expected {n}, found {len(hits)} "
                             f"(lines {[h[0] for h in hits]}) -- a NEW reference appeared in an "
@@ -301,6 +322,25 @@ def self_test():
                   f"{'PASS' if drift else 'FAIL'}")
             if not drift:
                 fails.append("count drift not reported")
+            # MISKEYED EXEMPTION: a non-RECORD-APPEND entry waiving its count must be reported.
+            # D's finding was that nothing structurally confined the exemption to the property that
+            # justified it; this is the assertion that now does, so it gets a control.
+            INVENTORY["sub/x.sh"] = ("STAYS-PROD", None)
+            got = audit(scan(repo=d, files=["sub/x.sh"]))
+            mis = any("EXEMPTION MISKEYED" in g for g in got)
+            print(f"  [self-test] {'a non-APPEND entry waiving its count':<52} "
+                  f"{'PASS' if mis else 'FAIL'}")
+            if not mis:
+                fails.append("miskeyed exemption not reported")
+            INVENTORY["sub/x.sh"] = ("RECORD-APPEND", None)
+            got = audit(scan(repo=d, files=["sub/x.sh"]))
+            okd = not any("EXEMPTION MISKEYED" in g for g in got)
+            print(f"  [self-test] {'a RECORD-APPEND entry waiving its count':<52} "
+                  f"{'PASS' if okd else 'FAIL'}")
+            if not okd:
+                fails.append("RECORD-APPEND wrongly reported as miskeyed")
+            INVENTORY["sub/x.sh"] = ("STAYS-PROD", 1)
+
             # stale entry
             got = audit(scan(repo=d, files=[]))
             stale = any("STALE INVENTORY ENTRY" in g for g in got)
