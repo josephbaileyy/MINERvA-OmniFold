@@ -67,6 +67,20 @@ Two reasons, in order of weight:
    exist at that digest — the exact condition that made `wakerctl_sha256` unverifiable for three weeks.
    The fix belongs in a commit that also re-runs or explicitly re-pins, not squeezed in beside the
    result.
+
+   > **CORRECTED 2026-08-12 — "receipts bind" IS FALSE, and it is my own claim.** Measured:
+   > `grep -l 1acb1869 fullevent_nominal_annealed/*.json` returns **nothing**, and a scan for any
+   > 32–64-hex token across all four receipts returns **NO HEX DIGESTS** in any of them. The four
+   > receipts carry **no digest of anything** — not the harness, not the artifact. The sha was
+   > printed by the preflight to the **job log**, which lives on purgeable scratch on a tree now
+   > measured 114 commits behind `main`. **So the reason given above was the right reason attached to
+   > the wrong carrier.** What actually binds is weaker and worth stating precisely: the prose in this
+   > file, `FINDINGS.md` and the RUN_LOG records the printed value, and the local file still hashes to
+   > `1acb1869c57f9772` — so the binding is *verifiable today* but is **not self-contained in the
+   > artifacts**, and a re-verification a year from now would depend on a log rather than on a receipt.
+   > **The disposition does not change** — do not patch beside the result — but it now rests on reason 2
+   > plus a recoverable-by-prose binding, not on a receipt binding that does not exist.
+   > Filed as **BEN-138**; the persistence gap is the finding, this correction is its first instance.
 2. **The label is not a gate.** Nothing consumes it; the campaign's branch determinations are made from
    `end_to_end_achieved_over_required` and `end_to_end_sign_is_wrong`. So the cost of leaving it one more
    commit is a misleading string in one receipt, which this file now annotates, against the cost of

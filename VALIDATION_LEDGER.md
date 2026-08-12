@@ -208,6 +208,61 @@ unexplained. The ~1.3% best-vs-final checkpoint caveat (BEN-043) applies to iter
 arms; only iteration 2 carries `final` weights. ARM 2's gate is self-consistency, so ARM 1 is what
 licenses believing the instrument.
 
+#### AMENDED 2026-08-12 — the iteration-0 overshoot is no longer "unexplained", and it is a caveat ON this verdict
+
+Raised by the orchestrator against the text above; the answer changed the reading, so it is amended
+rather than left. **The word "unexplained" is withdrawn.** Three things, in order of consequence.
+
+**(1) `|1.1101 − 1| = 0.1101` exceeds the `≤ 0.10` window the REPAIRED branch itself uses.** The
+predeclaration scopes that window to iterations 1 and 2, so iteration 0 was never tested against it and
+the branch fired lawfully. But the margin is 1.01 percentage points on the branch's *own* threshold, so
+had iteration 0 been in scope the verdict would have been UNRESOLVED via the predeclaration's clause 2,
+not REPAIRED. **The exclusion is principled for the question asked and incidental to the question read.**
+`56525829` localized the defect to *"iteration dynamics after initial feedback"*, and iteration 0 was the
+correct-signed reference against which iterations 1-2 were the symptom — so a branch set built to ask
+*does the defect persist* had no reason to test it. That is not the same as a branch set built to ask
+*is the annealed trajectory healthy*, which is how REPAIRED invites being read.
+
+**(2) The anneal DOES NOT ENGAGE at iteration 0, so it cannot be the cause.**
+`train_fullevent_nominal.py:63-65` declares `schedule = "fit-time-anneal-after-iteration-0"`,
+`applies_from_iteration = 1`; `_AnnealedMultiFold.CompileModel` (`:429-431`) forces the fit-time compile
+to `fixed=True` **only** when `self._ann_iter > self.start`; and the run's own optimizer readback printed
+`[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05`
+(`nd-unfolding/AUTONOMOUS_LOG_20260805.md:3312`) — 6 fits over 3 iterations × 2 steps, so the 2 base-rate
+fits are **iteration 0's step 1 and step 2**. Iteration 0 of the treatment artifact was therefore trained
+in the *pre-anneal* configuration, at the same `1e-4`, on the same seed 42 / subsample 0 / `inputs_sha256
+fa6b3463…` / 8 epochs / 2e6 events / batch 512 as the control. Sourced from the printed gate line rather
+than from this lane's own predeclaration prose (BEN-087).
+
+**(3) So iteration 0 is a DE FACTO NULL CONTROL for the treatment, and it did not reproduce.**
+`push` reads **1.092736** (control) vs **1.247812** (annealed) — a gap of **0.155** at a position where
+the two runs differ in *no* declared policy dimension. That is not an anneal effect; it is run-to-run
+variation between two separately-trained artifacts, or an uncontrolled difference the predeclaration's
+comparability table did not capture. **Nobody designated iteration 0 as a control, which is why a failed
+control read as a result.**
+
+**How big is that variation? There is no production-side answer, and this is the honest limit.** The only
+committed scatter at this position is the *diagnostic* family's three byte-identical-code, identical-seed
+runs, whose iteration-0 `push_mean_w_reco` are **1.0107 / 1.4555 / 1.0240** (`KNOWN_ISSUES.md:503-522`,
+range 0.4448). Both arms sit inside that range and their gap is about a third of it — **suggestive, and
+not an error bar for this comparison**, because the same retraction distinguishes a *"wildly unstable
+diagnostic"* configuration from a *"stable production"* one and forbids quoting the diagnostic family as
+a point value. And production's *"reproducible to 1.3e-4"* was established on the **endpoint** fold-forward
+`dev`, not on an intermediate iteration. **No production-side reproducibility estimate exists at
+iteration 0.** That gap is the reason this is a caveat and not a correction; the mechanism of the
+underlying instability is recorded as OPEN in the same entry.
+
+**What this does and does not do to REPAIRED.** Iterations 1 and 2 are computed *downstream* of iteration
+0, so the same unreplicated draw is inside them. **The sign result survives and is what the verdict rests
+on**: two wrong signs with monotone divergence (−2.79 → −13.92 → −34.46%) against three correct signs with
+damped oscillation (+11.01 → +3.29 → −3.56%) is a qualitative difference in trajectory shape, far larger
+than any draw the bracket above admits. **The MAGNITUDE of the repair does not survive as a measurement**:
+it is n = 1 training run per arm, with an unmeasured between-run term of at least 0.155 in `push` at the
+one position where it can be seen. So REPAIRED stands **on the signs, not on the numbers**, and no figure
+in this entry may be quoted as the size of the improvement. Separating the two needs replicate trainings
+at fixed policy — not run, not scheduled, and out of proportion to what the verdict is being used for.
+Filed as **BEN-137**.
+
 Receipts (all committed, digests verified equal to the cluster copies):
 `STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json` `d560fec7…`,
 `STEP1_TRAJECTORY.slurm-56691812.json` `30b9ea3c…`,

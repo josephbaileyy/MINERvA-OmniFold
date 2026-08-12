@@ -159,6 +159,14 @@ INVENTORY = {
     "docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md": ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "docs/orchestration/FINDINGS.md":                                  ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "docs/orchestration/INDEX-retracted-and-superseded-values.md":     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    # ANOTHER LANE'S FILE, dispositioned 2026-08-12 by the PET lane because leaving the audit RED
+    # blocks every lane. The occurrence (`:450`, a mutation-test plan step naming
+    # fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json) is a citation of the PRE-ANNEAL  # NS-EXEMPT: prose naming the anchor
+    # control anchor and is CORRECT as written -- it must not be retargeted. Keyed RECORD-APPEND on
+    # the PROPERTY, not the filename: it is a dated per-session verdicts log in the same accruing
+    # family as FINDING-*, and it accrued a line in the hour before this entry. Session D owns the
+    # file and may re-key it; this entry is a disposition, not a claim on the document.
+    "docs/orchestration/VERDICTS-20260811-session-D.md":               ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "nd-unfolding/AUTONOMOUS_LOG_20260805.md":                         ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md":                             ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md":                     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
