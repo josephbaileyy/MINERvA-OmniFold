@@ -1,0 +1,498 @@
+{
+  "schema": "cluster-ignored-set-metadata-walk-v1",
+  "authorization": "AUTHORIZATION-20260812-ignored-set-scope.md (b528f3e). Joseph's approval is BY REFERENCE -- four words endorsing the mediator's prose. Step 1 of the execution order.",
+  "conduct": "METADATA ONLY. Name, size, mtime-date. NO hashing and NO file reads in this walk. `find -printf` and `stat` are metadata calls. The cluster tree remains under the eight-verb no-touch list; nothing was written to it.",
+  "recorded_by": "Session C (PET)",
+  "git_identity": "Lane C (PET) <lane-c@minerva-omnifold.local>",
+  "walk_start_utc": "2026-08-12T13:12:41Z",
+  "walk_end_utc": "2026-08-12T13:14:06Z",
+  "cluster_head_at_walk": "683bdccad5a94d13ef231bf0729758085634a178",
+  "enumeration_method": "git status --porcelain --untracked-files=all --ignored=matching, then `find -type f -printf` over each ignored entry. `-uall` alone demonstrably CANNOT see this set -- reproduced independently by three parties.",
+  "totals": {
+    "status_lines": 16655,
+    "ignored_entries": 14179,
+    "files": 19537,
+    "bytes": 5976676070290,
+    "duplicate_paths_in_walk": 0
+  },
+  "TWO_WALKS_DISAGREE_AND_BOTH_ARE_RECORDED": {
+    "walk_1": {
+      "at_utc": "~2026-08-12T12:5xZ",
+      "method": "python os.walk over ignored entries",
+      "files": 19570,
+      "bytes": 6001191458767
+    },
+    "walk_2": {
+      "at_utc": "2026-08-12T13:12:41Z-13:14:06Z",
+      "method": "find -type f -printf",
+      "files": 19537,
+      "bytes": 5976676070290
+    },
+    "delta": {
+      "files": 33,
+      "bytes": 24515388477
+    },
+    "note": "Recorded rather than reconciled to one number. The tree is LIVE -- a cron waker writes to it and jobs have written all week -- and the two walks are an hour apart by different instruments. Neither figure is a fact without its observation time and method, which is the same rule that applied to the 114-vs-153 divergence count. Walk 2 is the one tabulated below because it is the one whose per-file list exists; walk 2 has zero duplicate paths, verified."
+  },
+  "by_top_level_dir": {
+    "nd-unfolding": {
+      "files": 10327,
+      "bytes": 5610764224752
+    },
+    "2d-unfolding": {
+      "files": 3925,
+      "bytes": 346890580518
+    },
+    "MINERvA101": {
+      "files": 3294,
+      "bytes": 83139441
+    },
+    "3d-unfolding": {
+      "files": 897,
+      "bytes": 18786445666
+    },
+    "docs": {
+      "files": 765,
+      "bytes": 94723307
+    },
+    "unbinned_unfolding": {
+      "files": 276,
+      "bytes": 51755187
+    },
+    "omnifold_nn": {
+      "files": 10,
+      "bytes": 90952
+    },
+    ".pytest_cache": {
+      "files": 6,
+      "bytes": 83402
+    },
+    ".claude": {
+      "files": 4,
+      "bytes": 33373
+    },
+    "__pycache__": {
+      "files": 3,
+      "bytes": 47745
+    },
+    "scratch": {
+      "files": 2,
+      "bytes": 9514
+    },
+    ".alloc_hold.log": {
+      "files": 1,
+      "bytes": 175
+    }
+  },
+  "by_extension": {
+    "root": {
+      "files": 3814,
+      "bytes": 5646682880803
+    },
+    "out": {
+      "files": 2488,
+      "bytes": 1321803215
+    },
+    "err": {
+      "files": 2478,
+      "bytes": 9043024
+    },
+    "npy": {
+      "files": 2226,
+      "bytes": 217918533480
+    },
+    "npz": {
+      "files": 2060,
+      "bytes": 108144561237
+    },
+    "log": {
+      "files": 1102,
+      "bytes": 139652819
+    },
+    "cmake": {
+      "files": 621,
+      "bytes": 1150844
+    },
+    "make": {
+      "files": 615,
+      "bytes": 10903766
+    },
+    "pyc": {
+      "files": 424,
+      "bytes": 8538161
+    },
+    "h": {
+      "files": 401,
+      "bytes": 1965979
+    },
+    "(noext)": {
+      "files": 277,
+      "bytes": 6779382
+    },
+    "o": {
+      "files": 267,
+      "bytes": 49141592
+    },
+    "d": {
+      "files": 267,
+      "bytes": 9358042
+    },
+    "cxx": {
+      "files": 260,
+      "bytes": 5847846
+    },
+    "dat": {
+      "files": 252,
+      "bytes": 2117486058
+    },
+    "txt": {
+      "files": 230,
+      "bytes": 995667
+    }
+  },
+  "by_size_band": {
+    "0 B": {
+      "files": 856,
+      "bytes": 0
+    },
+    "1 B - 1 KiB": {
+      "files": 3942,
+      "bytes": 858949
+    },
+    "1 KiB - 1 MiB": {
+      "files": 11841,
+      "bytes": 766717264
+    },
+    "1 MiB - 1 GiB": {
+      "files": 2424,
+      "bytes": 257456448275
+    },
+    "1 - 10 GiB": {
+      "files": 344,
+      "bytes": 1762220104930
+    },
+    ">= 10 GiB": {
+      "files": 130,
+      "bytes": 3956231940872
+    }
+  },
+  "SHAPE_OF_THE_SET": "3,814 .root files are 5.647 TB of the 5.977 TB (94.5%), and 130 objects >= 10 GiB are 3.956 TB (66%). 16,639 files -- 85% by count -- are under 1 MiB and total about 1 GB. So this is a small number of very large event-loop ROOTs plus a long tail of build artifacts, logs and job output. The bulk is NOT diffuse.",
+  "eyeball_notes_for_review": [
+    "MINERvA101/ is 3,294 files at ~0 TB: a CMake/make build tree (.cmake .make .o .d .cxx .h .pyc). Regenerable by rebuild.",
+    "FOUR NESTED GIT REPOS are inside the ignored set: MINERvA101/{MAT,MAT-MINERvA,UnfoldUtils}/.git/objects/pack/*.pack. Their own history is in there and is not this repo's.",
+    "docs/analysis-note/ LaTeX build products are ignored (.aux .bbl .bcf .fls .fdb_latexmk). Regenerable from tracked source.",
+    "nd-unfolding/reference_le/**: 30 .tex, 2 .bib, several .eps -- EXTERNAL reference papers, i.e. INPUTS not outputs, ~0.6 MB. Not regenerable by us, though retrievable from their sources.",
+    "3d-unfolding/genie/buuinput_local/: .bz2/.acc/.tgz GENIE-BUU external inputs, ~33 MB. Same class as above.",
+    "pet-fps.json, 3,251,601 B at the REPO ROOT, mtime 2026-07-10 -- the only sizeable ignored JSON at top level. Flagged for eyeball, not classified.",
+    "docs/jul-16-presentation/claude-design-package.zip, 5.87 MB.",
+    "60 of the >=10 GiB objects (0.874 TB) are in nd-unfolding/p3f_pet_fullevent/final -- ALREADY HPSS-PROTECTED at 240/240 digest-verified by job 56692312. Cross-check: part of the bulk is already covered."
+  ],
+  "STEP_2_QUOTED_SET_ENUMERATED_NOT_ACTED_ON": {
+    "derivation_method": "BY NAME from the two authorities the authorization names -- VALIDATION_LEDGER.md and docs/analysis-note/*.tex (24 files read) -- via a path-token regex, then intersected with the ignored-set walk. NOT assembled from judgement or memory: that is BEN-193's rule, since an audit over a list built from memory tests the tree against the memory rather than the reverse.",
+    "authorities_read": 24,
+    "distinct_product_tokens_found_in_authorities": 41,
+    "candidates_present_in_ignored_set": 36,
+    "total_bytes": 322306102132,
+    "total_TB": 0.3223,
+    "COPY_BOUND_VERDICT": "DOES NOT FIT. The set is 322306102132 bytes (0.322 TB) against a ~40 GB home. Per the authorization this is a STOP: 'If the set does not fit, STOP and come back through me to the mediator. That is a storage decision he has not made.' NO COPY ATTEMPTED. Destination, if authorized, is HPSS via this lane's existing digest-verified path (job 56692312 pattern, 240/240).",
+    "ONE_AUTHORITY_DOES_ALMOST_ALL_THE_WORK": "35 of the 36 candidates are named ONLY by VALIDATION_LEDGER.md. Exactly one -- nd-unfolding/products/5d/excess_eavail_W.root -- is also named by a .tex (sec_eavailw.tex). So the analysis note barely names data products by path, and 'the set the publication depends on' is almost entirely a LEDGER-derived set. That matters: VALIDATION_LEDGER.md is the file with no per-row id scheme, which merge_guard.sh refuses as unattributable, and the second-most absorptions. The authority this enumeration rests on is the least protected file in the repo.",
+    "regex_artifacts_not_real_paths": "8 tokens went unmatched and all 8 are leading-underscore fragments (_uthrow.root, _cross.root, ...) produced by the token pattern splitting compound filenames. They are artifacts of my regex, not missing products, and are reported rather than silently dropped.",
+    "entries": [
+      {
+        "path": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root",
+        "bytes": 169974191800,
+        "mtime_date": "2026-06-30",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/runEventLoopOmniFold_PC_MEFHC.root",
+        "bytes": 49215205065,
+        "mtime_date": "2026-06-06",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+        "bytes": 41436632945,
+        "mtime_date": "2026-07-14",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+        "bytes": 9897374636,
+        "mtime_date": "2026-07-19",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root",
+        "bytes": 9419026130,
+        "mtime_date": "2026-07-18",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+        "bytes": 8355187459,
+        "mtime_date": "2026-06-06",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+        "bytes": 8355185775,
+        "mtime_date": "2026-07-16",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/of_inputs_pc.npz",
+        "bytes": 5880556108,
+        "mtime_date": "2026-06-06",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+        "bytes": 4825716683,
+        "mtime_date": "2026-06-07",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/unified_throw_cov_5d.root",
+        "bytes": 2677168123,
+        "mtime_date": "2026-07-13",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+        "bytes": 2668021041,
+        "mtime_date": "2026-08-07",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/pet/pet_4d_covariance_combined_wlat.root",
+        "bytes": 1715893301,
+        "mtime_date": "2026-06-11",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/pet/pet_4d_covariance_combined.root",
+        "bytes": 1071515651,
+        "mtime_date": "2026-06-09",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_cvcentered_20260806_full160.root",
+        "bytes": 892266576,
+        "mtime_date": "2026-08-07",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+        "bytes": 892233209,
+        "mtime_date": "2026-07-02",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+        "bytes": 892224371,
+        "mtime_date": "2026-07-14",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_meancentered_20260806_full160.root",
+        "bytes": 892196879,
+        "mtime_date": "2026-08-07",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+        "bytes": 892170881,
+        "mtime_date": "2026-08-12",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/pet/pet_4d_covariance_combined_rebank.root",
+        "bytes": 714104917,
+        "mtime_date": "2026-06-12",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+        "bytes": 545400036,
+        "mtime_date": "2026-07-17",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+        "bytes": 545263178,
+        "mtime_date": "2026-06-09",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+        "bytes": 181811405,
+        "mtime_date": "2026-06-09",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+        "bytes": 181794146,
+        "mtime_date": "2026-07-17",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/pet/pet_weights_full.npz",
+        "bytes": 141455862,
+        "mtime_date": "2026-06-06",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root",
+        "bytes": 25092215,
+        "mtime_date": "2026-08-07",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+        "bytes": 14106315,
+        "mtime_date": "2026-05-30",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+        "bytes": 1609132,
+        "mtime_date": "2026-07-17",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+        "bytes": 1607692,
+        "mtime_date": "2026-06-12",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/4d/xsec_4d_MEFHC_ascencio_fine.root",
+        "bytes": 338837,
+        "mtime_date": "2026-06-12",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+        "bytes": 320371,
+        "mtime_date": "2026-05-27",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+        "bytes": 319885,
+        "mtime_date": "2026-05-30",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/5d/eavailW_covariance.root",
+        "bytes": 34865,
+        "mtime_date": "2026-07-14",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/5d/eavailW_covariance_wlat.root",
+        "bytes": 34145,
+        "mtime_date": "2026-06-13",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/5d/closure_2d_FPS_hidden_eavail_MEFHC.root",
+        "bytes": 30701,
+        "mtime_date": "2026-06-12",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      },
+      {
+        "path": "nd-unfolding/products/5d/excess_eavail_W.root",
+        "bytes": 6166,
+        "mtime_date": "2026-07-14",
+        "named_by": [
+          "VALIDATION_LEDGER.md",
+          "sec_eavailw.tex"
+        ]
+      },
+      {
+        "path": "3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+        "bytes": 5631,
+        "mtime_date": "2026-06-09",
+        "named_by": [
+          "VALIDATION_LEDGER.md"
+        ]
+      }
+    ]
+  },
+  "not_done": [
+    "NO hashing in this walk, by instruction.",
+    "NO copies. See the copy bound: the quoted set does not fit in home and this is reported rather than worked around.",
+    "STEP 3 (the C disposition) is deliberately NOT written: the authorization sequences it AFTER the walk is reviewed.",
+    "The 856 zero-byte and 3,942 sub-KiB ignored files are counted, not individually classified."
+  ]
+}
