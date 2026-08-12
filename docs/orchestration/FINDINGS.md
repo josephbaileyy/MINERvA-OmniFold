@@ -7,55 +7,31 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 > that does not exist. An agent following that pointer hit a dead end, which is one reason findings written
 > here were not reaching the agents that needed them.
 
-> **BEN id allocation — take ids from your lane's RANGE, not from the shared maximum (set 2026-08-07).**
-> Two collisions in one day (041, then 044): concurrent lanes each fetch, each see the same highest id,
-> and each increment. Sequential allocation from a shared maximum does not work here. Ranges as Joseph
-> assigned them: **the GBDT/P4 lane takes 060+; the PET/nd-unfolding lane takes 070+.** Read the range,
-> not the maximum. Committed verifier receipts that cite a pre-renumber id are left as written —
-> rewriting a receipt to match a later renumber would falsify it.
+> **BEN id allocation — take the next id from YOUR LANE'S BLOCK. Never `max(existing)+1`.**
 >
-> **NEW BLOCK 2026-08-12: 200+ is reserved for repo-infrastructure findings** — the ledgers, the read
-> path, the dispatch machinery, anything that is not a physics lane. BEN-105 recorded that the namespace
-> is exhausted *inside its documented ranges*, and 160/161 were then allocated above them anyway. Opening
-> a block rather than incrementing a shared maximum is the only allocation that cannot collide with a
-> lane's sequence, because no lane draws from it. First occupant: BEN-200.
+> | lane | block |
+> |---|---|
+> | D — verifier | `090-099` (exhausted) |
+> | B — uncertainty construction | `100-129` |
+> | C — PET | `130-159` |
+> | D — verifier, successor | `160-189` |
+> | A — orchestrator | `190-199` |
+> | repo infrastructure (ledgers, read path, dispatch machinery) | `200+` |
 >
-> **RENUMBERED 2026-08-09: BEN-077→061, 078→062, 079→063, 080→064.** I allocated four ids from the
-> shared maximum instead of my lane's range, landing them inside the PET block — the exact mistake
-> the paragraph above warns about, made while reading the paragraph above. Caught on a merge that
-> brought in PET's BEN-081; no collision had occurred, but the ranges would have stopped meaning
-> anything. **Four already-pushed commit messages (`aa220b4`, `34068d0`, `2fdf384`, and the
-> stage-6/mechanism commit) cite the OLD ids and are left as written** — same convention as the
-> verifier receipts above. Use this mapping when following a commit message into the ledger.
-> The lesson generalises the header: reading the range rule is not the same as applying it, and the
-> moment of allocation is when to re-read it, because `max(existing)+1` is what a tired agent
-> computes by default.
+> The highest id allocated per block is **derived, not narrated** — the table that used to state it
+> here was wrong in three of five rows within a day of being written. Recompute before allocating:
 >
-> **BLOCKS AS THEY STAND 2026-08-12, set by the orchestrator and superseding the two open-ended
-> ranges above for the close-out campaign.** Read this table, not the `060+`/`070+` sentence.
+> ```
+> grep -oE '^\| BEN-[0-9]+' FINDINGS.md | grep -oE '[0-9]+' | sort -n | tail -1
+> ```
 >
-> | lane | block | state |
-> |---|---|---|
-> | D — verifier | `090-099` | **EXHAUSTED** at BEN-099 |
-> | B — uncertainty construction | `100-129` | in use through BEN-115 |
-> | C — PET | `130-159` | in use through BEN-138 |
-> | **D — verifier, successor** | **`160-189`** | **opened 2026-08-12, empty** |
-> | **A — orchestrator** | **`190-199`** | **opened 2026-08-12, empty** |
+> **Enforced by attentiveness, not by an allocator — and attentiveness has failed four times, twice
+> while the failing agent was reading this rule.** BEN-080 records the exposure as *"known and
+> accepted, not fixed"*; BEN-105 counts the instances. Re-read your block *at the moment of
+> allocation*, which is exactly when `max(existing)+1` feels right.
 >
-> **Two things this fixes, both of which had already cost something.** D's block ran out on the last
-> night of the close-out with no successor defined, which is BEN-105's *"a range exhausted with no
-> successor rule"* recurring — a successor is now named in advance rather than at the moment of need,
-> which is the moment BEN-105 identifies as the worst time to allocate. And **the orchestrator held no
-> block at all**, so two orchestrator-origin findings were routed into D's block for want of anywhere
-> else (BEN-097, BEN-098) and D's own `160-189` was consumed faster as a result; BEN-092 flagged that
-> gap and it is closed here.
->
-> **What this does NOT fix, stated so it is not read as closed.** The ranges are still enforced by
-> attentiveness and not by an allocator. BEN-105 counts four instances of attentiveness failing, twice
-> while the failing agent was reading the rule; BEN-080 records the exposure as *"known and accepted,
-> not fixed"*. Adding two blocks makes the next allocation defined; it does not make a wrong one
-> detectable. A fifth instance is the evidence that the choice was wrong, per BEN-105's own terms, and
-> it should be read that way rather than as a fifth instance.
+> Old commit messages cite pre-renumber ids (BEN-077→061, 078→062, 079→063, 080→064). That mapping
+> and the full policy history: [`FINDINGS-POLICY-HISTORY.md`](FINDINGS-POLICY-HISTORY.md).
 
 > **BEFORE QUOTING ANY NUMBER: `INDEX-retracted-and-superseded-values.md`** (added 2026-08-11). Retracted values stay
 > readable and are presented with the same confidence as live ones — the `188.4x` and the *"code paths disagree"* verdict
@@ -115,6 +91,7 @@ will read.
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|
+| BEN-203 | `git status` is not an attribution instrument: **six live `claude` processes share this one checkout**, so the tree shows the union of everyone's work. The standing rule "always `git status` after a delegate finishes, and preserve the diff before reverting" silently assumes the tree is yours — acting on it, I nearly reverted a peer session's legitimate BEN-090 fix to `check_dead_containment.py` as delegate overreach. Only both delegates volunteering that they had *not* touched it settled attribution. Consequences: stage and commit with **explicit pathspecs** (`git add <paths>` then `git commit -- <paths>`), never a bare commit of an index you did not stage (a peer had staged work in it mid-session); and treat "revert the delegate's changes" as destructive until attribution is positively established, not assumed. | — | EP-2026-08-12-readpath-audit |
 | BEN-202 | The cheapest orientation in the repo was reachable only by agents who already knew about it: `LIVE-STATE.md` is regenerated every turn and self-describes as "the normal-turn control-plane entrypoint", and 19 files cited it — but **neither `CLAUDE.md` nor `AGENTS.md`**, the two entry points a fresh session is guaranteed to read. Inbound-reference count is not reachability; what matters is whether a *guaranteed-read* file names it. | — | EP-2026-08-12-readpath-audit |
 | BEN-201 | A retraction that lands in the index but not at the point of use is not a retraction. `recovery >= 0.80` was retired as a bug on 2026-08-09 and correctly indexed, yet on 08-12 `docs/OPEN_ITEMS.md` — a mandated read-path file — still stated it as the live Gate-4 blocker ("Gate-4 cannot PASS"), never mentioned the adopted `0.4945824`, and carried its derived descendant `residual <= 0.0469` (`0.20 x gap`), which grepping the retracted string can never find. Meanwhile `VALIDATION_LEDGER.md` used the corrected bar: **two read-path files disagreed on a gate criterion, and the stale one was phrased as the blocker.** Found by audit, not by the sessions reading it. | CLM-012 | EP-2026-08-12-readpath-audit |
 | BEN-200 | A ledger too expensive to read is not read: the prescribed read path measured ~146k tokens — 73% of a 200k window — before any work, and FINDINGS.md was cited in 0 of 83 dispatch prompts, so its findings kept recurring. | — | EP-2026-08-12-ledger-read-cost |
