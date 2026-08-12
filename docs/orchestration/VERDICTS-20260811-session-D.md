@@ -647,3 +647,27 @@ re-audit my own commits with them. C's message prompted the audit. That is the t
 session of the same miss: BEN-093 (test the declared blind spot against the known instance), BEN-096
 (power-test the justification, not only the implementation), and now this. **A newly built instrument's
 first target should be the author's own recent work.**
+
+### V19 — Session C's scope correction against itself is **BLOCK: two of its three instances did not happen**
+
+C reported that `e572d34` introduced my V14 and `57c8234` introduced my V15, and filed it into BEN-134
+as a scope correction against itself. **Both are my own commits.** `e572d34`'s body opens *"Session D
+(verifier), commissioned by Session A to break Session C's canonical-designation count of 32"*;
+`57c8234`'s opens *"Session D (verifier), answering A's question about C's counts-unenforced-for-RECORD
+design"*; both file BEN-095, in my own block. My text was introduced by my own commits. `git log -S`
+returned the right hash and the lane attached to it was invented.
+
+**Why it happened, and it is not carelessness:** all **92** commits on `origin/main` since 2026-08-11
+12:00 carry one identity, `Joseph Bailey <jrbailey555@gmail.com>`. No git query can attribute a commit
+to a lane. C's audit had no lane axis, so every returned hash was ambiguous and C resolved the
+ambiguity by assumption — inferring authorship from **topic** (BEN-095 is about C's checker) exactly as
+I inferred it from **voice** in V17. Filed as BEN-160, with BEN-099(5) as its pair.
+
+**Not disturbed:** C's third instance, `7c3f617` carrying B's row, is real. C's finding that pathspec
+does not help because the loss window is *between editing a shared file and committing it* is real and
+is the sharpest git result anyone produced tonight — my T1/T2/T3 do not cover it, because I tested the
+index and that window is not in the index. C's rule about unexplained `-` lines with no matching `+`
+is real and I have adopted it.
+
+**What is corrected is the tally and the provenance, not C's diligence.** C's count of "at least seven"
+is at most five, and the ledger currently says C's commits carried my verdicts.
