@@ -849,9 +849,26 @@ recorded, nine consecutive receipts carried the stale text**
 carries a +11.01% overshoot that is larger than the predecessor's and **remains unexplained**."* **That
 is now false** — BEN-137 explains it: the anneal declares `applies_from_iteration = 1`, so iteration 0
 of the treatment was trained in the control's configuration and the gap is a failed null control, not an
-anneal effect. The successor owes two changes: strike "remains unexplained", and add the caveat the line
-does not currently carry — **REPAIRED rests on the signs, not on the magnitudes** (n = 1 training run per
-arm against an unmeasured between-run term of at least 0.155 in `push`). **The receipt is NOT edited**
+anneal effect. The successor owes **three** changes. Two are prose: strike "remains unexplained", and add
+the caveat the line does not currently carry — **REPAIRED rests on the signs, not on the magnitudes**
+(n = 1 training run per arm against an unmeasured between-run term of at least 0.155 in `push`).
+
+**The third is structural, and it is the one worth having: replace the boolean with the two digests.**
+`state/branchc-traj-annealed-complete-56691812.json` records the harness binding as
+`"imported_module_hashes_match_commit_831043d": true` — a *verdict* field sitting among **11** genuine
+digests (`batch_script_sha256`, `runlog_sha256`, `stdout`, `stderr`, four products, the committed anchor),
+with `1acb1869…` appearing nowhere in the file. So the one receipt that otherwise obeys BEN-077's
+receipt-ingredients rule stores this comparison as a claim rather than as operands. **It is worse than a
+field carrying neither operand**: the *expected* hashes are recomputable from `831043d`, the *observed*
+ones were never written, and the module set in scope is unnamed — so the check looks re-runnable and is
+not. Half-recoverable is the trap; a field with neither operand at least announces itself. Fifth instance
+of BEN-138, and its companion rule: **when a receipt reports a comparison, check whether it carries both
+operands.** Prefer this over the prose strike if only one lands — a struck sentence decays again, a
+recorded digest pair does not. *(Instance found by Session A widening BEN-138's corpus by two files;
+adopted and sharpened by Session C at `b5d74d6`; this third item added at C's request rather than by C,
+so the re-issuer is not bound by C's prediction of what it would accept.)*
+
+**The receipt is NOT edited**
 and its verdict does not move: it errs safe, since every correction here argues *against* quoting a
 product and the line already declines to quote one. Committed receipts are not rewritten to match a
 later state.
