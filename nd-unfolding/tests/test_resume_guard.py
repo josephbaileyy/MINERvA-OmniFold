@@ -205,6 +205,21 @@ def test_no_shell_file_reintroduces_a_size_only_resume_guard():
             continue
         lines = open(os.path.join(_REPO, rel)).read().splitlines()
         for i, line in enumerate(lines):
+            # A FULL-LINE COMMENT is documentation, not a resume guard. Skipping it is a
+            # PRECISION fix, not a relaxation: a comment cannot execute, so nothing that could
+            # actually skip work stops being detected. Trailing comments on executable lines are
+            # deliberately still scanned -- only a line whose first non-space char is `#` is exempt.
+            #
+            # WHY THIS IS HERE (BEN-132/BEN-135): the guard fired on
+            # sbatch_hpss_protect_p3f_fullevent.sh, where the forbidden shape appeared ONLY inside a
+            # comment saying the launcher does the opposite. The first repair reworded the LAUNCHER,
+            # which broke the sha256 pin that hpss-protect-p3f-complete-56692312.json holds on it --
+            # a receipt covering 1.135 TB of digest-verified sole-copy archive. The launcher bytes
+            # were restored and the fix moved here, to the side that is not pinned. A test-driven fix
+            # applied to the wrong side of a test can break a hash binding; check which side is
+            # pinned FIRST.
+            if line.lstrip().startswith("#"):
+                continue
             if "cmp -s" in line or re.search(r'!\s+-s', line):
                 continue
             if not _BAD_RESUME.search(line):

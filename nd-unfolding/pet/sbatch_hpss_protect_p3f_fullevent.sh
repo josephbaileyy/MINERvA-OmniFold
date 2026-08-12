@@ -32,14 +32,8 @@
 #
 # RESUME GUARD VALIDATES COMPLETENESS, NOT EXISTENCE (BEN-023). A per-file marker is written ONLY after
 # the digest match, via write-to-temp + rename so a marker is never half-written. A file is re-put
-# unless its marker records a verified DIGEST match. A bare non-empty-size test used as completion
-# proof is precisely the shape that let 7 partial slabs permanently block their own repair.
-#
-# (That sentence deliberately DESCRIBES the anti-pattern instead of quoting it. Spelling the token
-# sequence out here -- even in a comment saying not to do it -- trips
-# test_resume_guard.py::test_no_shell_file_reintroduces_a_size_only_resume_guard, which scans every
-# line including comments. The guard is right and must not be weakened to accommodate prose; the
-# comment-blindness is filed separately.)
+# unless its marker records a verified DIGEST match. `[[ -s $OUT ]] && skip` is precisely the shape
+# that let 7 partial slabs permanently block their own repair.
 #
 # THE READBACK PARSE IS POWER-TESTED, both directions, on the live system before this was submitted:
 #   positive  existing file            -> parses 12334, matches local            PASS
