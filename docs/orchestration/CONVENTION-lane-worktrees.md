@@ -109,3 +109,30 @@ the comment-form `\dead` evasion, the false confession, the dangling archive poi
 regex. Isolated lanes see less of each other. **Worktrees isolate WRITES, not ATTENTION**: the
 peer-messaging protocol is unchanged and cross-lane review remains the mechanism that actually found
 things.
+
+## OI-47 — the isolation is CONVENTION, not ENFORCEMENT, and the premise needs establishing first
+
+Raised by the personal-account mediator session and **deferred by Joseph 2026-08-12**: *"note to do the
+durable fix later"* (`AUTHORIZATION-20260812-worktree-confirm-and-oi17-probe.md`). The point stands and is
+worth stating plainly: **nothing above stops a lane from writing the main checkout.** Entering a worktree
+is something each lane does because it was asked to, and `worktree.bgIsolation: "worktree"` would make it
+a block rather than a courtesy.
+
+**The mediator's premise is imprecise and I measured it rather than recording it.** It reported
+`bgIsolation` as *"currently `none` for all four lanes"*. Measured: it is **unset** — in
+`~/.claude-school/settings.json`, `~/.claude-personal/settings.json`, `~/.claude/settings.json`, in no
+project `.claude/settings*.json` (neither exists), and in no launch flag (`respawnFlags` is
+`--permission-mode bypassPermissions --name --model` only). **Unset is not `none`**, and the documented
+default for the key is `"worktree"` — which would *block* background sessions from the main checkout.
+
+Yet all four background lanes have written the main checkout freely all day. **So one of two things is
+true and I did not establish which:** the effective default in this deployment differs from the documented
+one, or isolation is configured somewhere I did not find. **Establish that before flipping anything** —
+setting a key to its apparent current value is how a no-op change gets recorded as a fix, and this session
+has already done exactly that once today with a settings edit to the wrong config directory (BEN-190).
+
+**Why not now, and this part is not deferral-by-inertia:** four lanes are mid-write, and enforcement would
+stop all of them at once. The mediator recommended against flipping it today for that reason and Joseph
+agreed. Its supporting measurement, which argues the same way: at `12:31:48Z` all four branches were
+byte-identical at `fa45fc1`, i.e. **zero divergence on every lane**, while `main` moved `07059a2` →
+`fa45fc1` in nine minutes. **The reason to fix this is the write pressure, not any current divergence.**
