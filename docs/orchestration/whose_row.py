@@ -289,16 +289,38 @@ def main() -> int:
 
     blocks = ben_blocks(REPO / "docs/orchestration/FINDINGS.md")
     files = [Path(f) for f in args.files]
+    discovered = False
     if not files:
+        discovered = True
         try:
             out = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "--diff-filter=U"],
                                  capture_output=True, text=True, check=True).stdout
             files = [REPO / p for p in out.split()]
-        except (subprocess.CalledProcessError, OSError):
-            files = []
-        if not files:
-            print("no unmerged files; nothing to attribute")
-            return 0
+        except (subprocess.CalledProcessError, OSError) as exc:
+            # A gate that cannot run must not report that it ran. Distinguishing "git failed" from
+            # "no conflicts" matters: the first is an inability, the second is a state.
+            print(f"CANNOT CHECK :: could not enumerate unmerged files ({exc}).")
+            return 2
+
+    # VACUOUS PASS, closed. This previously printed "nothing to attribute" and returned 0, so
+    # `whose_row.py --conflicts --lane C && git commit` passed when the tool had examined NOTHING.
+    # That is the same shape as check_dead_containment.py's `pdf_text` returning "" -- Session D found
+    # that one two commits earlier -- and as this repo's whole gates-that-cannot-fail class: a stage
+    # that did not run reporting as a stage that passed.
+    # The asymmetry is deliberate and matches --source-only's: the PERMISSIVE reading has to be asked
+    # for. With --lane you are using this as a GATE, and a gate over zero files is not a pass; without
+    # --lane you are using it as a QUERY, and an empty answer is a fine answer.
+    if not files:
+        if args.lane:
+            print("CANNOT CHECK :: no unmerged files, so there is nothing to attribute and NOTHING "
+                  "WAS CHECKED.")
+            print("  If you are gating a merge, you are gating an empty set -- resolve the conflict "
+                  "first, or name the files explicitly.")
+            print("  If you only wanted to ask who owns what, omit --lane; a query may legitimately "
+                  "return nothing, a gate may not.")
+            return 2
+        print("no unmerged files; nothing to attribute  (query mode: 0 files, 0 rows)")
+        return 0
 
     foreign, unattributable = [], []
     for path in files:
