@@ -991,6 +991,39 @@ largest nominal truth-space volume.
    - Blocked on: Gregor (which construction `minerva-ml` intends), and on reading
      arXiv:2312.16631 Eq. 4 for the reference definition. Neither needs NERSC access.
 
+3. **The `1.17` available-energy scale has provenance but no recorded justification** — split out
+   of item 2, because "where did this number come from" and "why is it this number" are different
+   questions and only the first is answered anywhere in this repo.
+
+   `NewEavail()` multiplies the fuzz-subtracted tracker + ECAL sum by
+   `Eavailable_scale = 1.17` (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:185-193`).
+   Its **origin** is recorded in three places, all saying the same thing — copied verbatim from
+   MAT `LowRecoilPionFunctions.h:41` (`3d-unfolding/README.md:29`, the only cite that pins the
+   source line; also `2d-unfolding/2D_OMNIFOLD_REFERENCE.md:346` and
+   `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:18-19`). **No file in this repo says why the value is
+   1.17.** The MAT headers are not in this or any sibling checkout, so the upstream comment has
+   not been read either.
+
+   **Why it is worth an item rather than a shrug:** the constant multiplies *every* reconstructed
+   available energy, so it enters the E_avail axis of the 3D/4D/5D results directly — it is not a
+   diagnostic-only quantity. A scale factor that moves a published axis and whose justification
+   exists nowhere in the repo is exactly the shape this campaign strikes rather than erases
+   elsewhere. By `CLAIMS.md`'s own vocabulary its status is **ASSUMED**, not `CITED` — the cites
+   establish lineage, not correctness, and inheriting a number verbatim is not the same as
+   verifying it.
+
+   - **Not blocked.** MAT-MINERvA is public and already cited from item 1 of this section, so the
+     first step is simply reading `LowRecoilPionFunctions.h:41` and its surrounding comment
+     upstream. If MAT does not justify it either, the trail continues into the low-recoil lineage
+     the code already names (Rodrigues 2016 / Ascencio 2022, arXiv:1511.05944 / 2110.13372).
+   - **Expected resolution:** a one-line justification recorded next to the constant, and a
+     `CLAIMS.md` row moving it from ASSUMED to CITED or VERIFIED-CODE. If it turns out to be a
+     calorimetric sampling/passive-material correction, say so and cite it; if it is tuned, say
+     what it was tuned against.
+   - **Do not** silently re-derive or "correct" the value. It is matched to truth for closure
+     (`3d-unfolding/README.md:29`), so changing it invalidates the closure tests that currently
+     pass.
+
 ## Deferred analysis refinements
 
 2. **Ascencio fine-binned comparison** — the maximal-common-grid full-cov
