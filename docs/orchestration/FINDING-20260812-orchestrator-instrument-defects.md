@@ -70,3 +70,50 @@ actioned** — four lanes are mid-write and this is the read path.
 
 *Structural point raised by the personal-account mediator session, which leaned (b). The objection to (b),
 the split, and BEN-190 are Session A's.*
+
+## BEN-192 — three status sources disagree about the same sessions at the same instant, and the two that call themselves *status* are the two that disagree most
+
+Raised by the personal-account mediator session, which found the `ListAgents` status column for two
+sessions was **last written 14.4 hours ago** — a stale field presented as current state. Re-measured here
+and it is broader than that: **there are three independent signals and no two of them agree.**
+
+Measured in one turn at `12:46:33Z`:
+
+| session | `ListAgents` column | job registry `state.json` `status` | transcript mtime |
+|---|---|---|---|
+| A — orchestrator (me) | *(self, not listed)* | **`blocked`** | `12:46:12` — actively writing this |
+| B — uncertainty construction | **`idle`** | **`done`** | — |
+| C — PET | **`busy`** | **`blocked`** | — |
+| D — verifier | **`idle`** | **`working`** | — |
+| `minerva-omnifold-07` | **`busy`, started 14h ago** | — | `12:40:45`, 27 922 B — alive 6 min earlier |
+| `minerva-omnifold-6e` | **`busy`, started 14h ago** | — | `12:19:12`, 20 192 B |
+
+**Three of the four lanes disagree between the two status sources, and the registry calls the session
+writing the measurement `blocked`.** So neither field is a measurement of activity. Only transcript mtime
+is an artifact, and it is the one neither tool reports.
+
+**This invalidates every lane-state claim Session A made from `ListAgents` today**, including
+*"all three lanes idle"* — which the mediator had already caught as a snapshot presented as a state. The
+mechanism is worse than the one I conceded to: it was not merely that my snapshot aged, it is that
+**the field was never current.** Both readings of the same error, and I had the shallower one.
+
+**BEN-028 INVERTED, and that is the reusable form.** BEN-028: *a quiet log does not mean a dead job —
+judge by `sstat` CPU and produced artifacts, never by log growth.* Here: **a stale status does not mean a
+dead session, and a `busy` status does not mean a live one — judge by artifacts either way.** Same
+underlying error, opposite direction. The mediator's observation is the sharp one: **the tool the
+four-lane protocol uses to enumerate its own peers has exactly the defect the four of us keep finding in
+each other's reports.**
+
+**Rules.** (i) Never report a peer's activity from `ListAgents`'s status column or from
+`state.json`'s `status`; both are transition-written, not sampled. (ii) If you need to know whether a peer
+is alive, read its transcript mtime, or ask it and wait — asking is the only signal that is also a
+measurement. (iii) A peer's *existence* and *name* from `ListAgents` are reliable; its *state* is not, and
+the listing does not distinguish the two.
+
+**One residual, not chased:** `minerva-omnifold-07`'s transcript is 27 922 bytes after fourteen hours.
+Whatever it is doing it is producing almost nothing, which is a separate oddity from whether it writes to
+this repo — and it has now received a delivered, unanswered question about exactly that.
+
+*Stale-field defect found by the personal-account mediator, which also disclosed that its first
+explanation — two sessions wedged mid-turn — was wrong, and that it caught this by requiring a second
+independent signal before reporting. The three-way disagreement and the BEN-028 inversion are Session A's.*
