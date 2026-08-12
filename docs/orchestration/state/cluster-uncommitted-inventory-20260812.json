@@ -1,0 +1,398 @@
+{
+  "schema": "cluster-tree-uncommitted-inventory-v1",
+  "supersedes_instruction": "Joseph 2026-08-12 superseded his own item 10: there is no fork to range-diff. This artifact is the inventory he specified in its place. It is READ-ONLY WORK: nothing on the cluster tree was pulled, merged, rebased, checked out, cleaned, deleted, relocated or bulk-added.",
+  "recorded_by": "Session C (PET)",
+  "git_identity_used": "Lane C (PET) <lane-c@minerva-omnifold.local>",
+  "observed_utc": "2026-08-12T12:03:33Z",
+  "heads_and_ancestry": {
+    "cluster": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "head": "683bdccad5a94d13ef231bf0729758085634a178",
+      "branch": "main",
+      "subject": "Index: split petRatio's three reasons by disposition; name the class a check EXONERATES",
+      "committed_at": "2026-08-11T08:01:25-04:00"
+    },
+    "canonical_origin_main_at_observation": "517e240247eba59dd07f6d4e5b19d773b51e48e3",
+    "merge_base": "683bdccad5a94d13ef231bf0729758085634a178",
+    "rev_list_left_right_count": "153\t0  (left=origin/main-only commits, right=cluster-only commits)",
+    "rev_list_note": "`git rev-list --left-right --count origin/main...683bdcc` = 153<TAB>0 at 12:03:33Z. The RIGHT side is ZERO: the cluster head is a strict ancestor and there are NO cluster-only commits. The LEFT number is not a fact without its revision -- it read 114 earlier the same night and moved five times for corpus reasons. Do not quote it bare.",
+    "not_a_fork": "There is nothing to range-diff. The entire divergence is uncommitted working-tree state."
+  },
+  "path_counts": {
+    "default_untracked_reporting": {
+      "total": 727,
+      "untracked_entries": 715,
+      "tracked": 12,
+      "why_wrong": "the default collapses directories, which is how 715 became a number rather than a list"
+    },
+    "uncollapsed_untracked_files_all": {
+      "total": 2476,
+      "untracked_files": 2464,
+      "tracked": 12
+    },
+    "untracked_total_bytes": 2774216317
+  },
+  "tracked_modifications": [
+    {
+      "status": "M",
+      "path": "2d-unfolding/compare_to_models.py",
+      "base_blob": "86408f0b7b5580c8d63b463110513f8773b4c4f6",
+      "current_blob": "19b8ffd588fbc13dce0101086a40d5d6a57810c3",
+      "numstat": "19/3",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "M",
+      "path": "2d-unfolding/model_comp_report.txt",
+      "base_blob": "c9fbdc5343279cb855af1ec41741c2c726372ad5",
+      "current_blob": "b2c08536eee194a4f18d2a6ea55be59f2a6acbdf",
+      "numstat": "3/0",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "A",
+      "path": "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md",
+      "base_blob": null,
+      "current_blob": "9e47a2e652fa6ba6fbd4aa8ac8aabee23851b9c1",
+      "numstat": "133/0",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "M",
+      "path": "docs/orchestration/state/sessions.json",
+      "base_blob": "3df14c2cd4d911e822d3468fa863d0d6e12ef69f",
+      "current_blob": "0f9b29dd8597b685245fcd1eeb490d79950e582d",
+      "numstat": "45/3",
+      "verdict": "DIFFERS-AND-BLOB-UNIQUE-TO-CLUSTER",
+      "salvage": "REVIEW -- control-plane state, likely superseded by later local writes"
+    },
+    {
+      "status": "M",
+      "path": "docs/orchestration/state/waker/BLOCKED-ON-USER.json",
+      "base_blob": "90f1e5d8a0ec8139126f2eb6f5d831ce566b9fd4",
+      "current_blob": "b13b51d018c78b0099b298e4b551ccbe1a53a350",
+      "numstat": "62/26",
+      "verdict": "DIFFERS-AND-BLOB-UNIQUE-TO-CLUSTER",
+      "salvage": "REVIEW -- waker state written by the cron job on the frozen tree"
+    },
+    {
+      "status": "M",
+      "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_endpoint_evidence.json",
+      "base_blob": "7aca6ddeeb80cd32c43d8449d97a4186687e8e84",
+      "current_blob": "1317a88d393fc99df51125fe9927fbd1dfb394ac",
+      "numstat": "60/30",
+      "verdict": "DIFFERS-AND-BLOB-UNIQUE-TO-CLUSTER",
+      "salvage": "REVIEW -- standard-P4 evidence, and P4 is HELD (decision 7)"
+    },
+    {
+      "status": "M",
+      "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_merged_audit.json",
+      "base_blob": "6e066053b8913d5dab47064509ec201586b1d9fa",
+      "current_blob": "e0960212ad66bed1263b9bf849527690bddb186d",
+      "numstat": "20/10",
+      "verdict": "DIFFERS-AND-BLOB-UNIQUE-TO-CLUSTER",
+      "salvage": "REVIEW -- standard-P4 evidence, and P4 is HELD (decision 7)"
+    },
+    {
+      "status": "M",
+      "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_standard_manifest.json",
+      "base_blob": "81ba0aeed49997120c0bedda056713cfe61f6fee",
+      "current_blob": "979329e73a83c4ebe9e22d85acded001fa77ea6e",
+      "numstat": "133/25",
+      "verdict": "DIFFERS-AND-BLOB-UNIQUE-TO-CLUSTER",
+      "salvage": "REVIEW -- standard-P4 evidence, and P4 is HELD (decision 7)"
+    },
+    {
+      "status": "M",
+      "path": "nd-unfolding/adopt_unified_5d.py",
+      "base_blob": "b76bab228a801160737383385d5ec884cad1f853",
+      "current_blob": "f11b0c6da934b88c247dd2ef4f400f34a375b6eb",
+      "numstat": "57/0",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "A",
+      "path": "nd-unfolding/pet/measure_joint_vs_additive_nuisance_retrain.py",
+      "base_blob": null,
+      "current_blob": "8a1296a21f410454ad98f649d8f3e8b194626a8c",
+      "numstat": "321/0",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "A",
+      "path": "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh",
+      "base_blob": null,
+      "current_blob": "46e43302fc500861e44c9291daeac4f77bd38948",
+      "numstat": "157/0",
+      "verdict": "IDENTICAL-TO-CANONICAL",
+      "salvage": "none"
+    },
+    {
+      "status": "A",
+      "path": "nd-unfolding/pet/sbatch_step1_trajectory_annealed.sh",
+      "base_blob": null,
+      "current_blob": "5192451fdaf9db2da380bc0a26829dfd8a36bdfd",
+      "numstat": "129/0",
+      "verdict": "DIFFERS-FROM-CANONICAL-BUT-IS-A-COMMITTED-HISTORICAL-BLOB",
+      "salvage": "NONE NEEDED, and do not 'fix' it -- blob 5192451f was introduced by commit 831043d and is the version that RAN job 56691812; it is exactly what the reconciliation receipt's batch_script_sha256 (f5ba93d0...) binds. Canonical has moved on to cdf5927's single-rank hardening. Recoverable from git, unlike BEN-138's harness case."
+    }
+  ],
+  "tracked_summary": {
+    "total": 12,
+    "identical_to_canonical": 6,
+    "unique_to_cluster": 5,
+    "historical_committed_blob": 1
+  },
+  "untracked_by_category": {
+    "receipt/manifest/provenance": {
+      "files": 2159,
+      "bytes": 16987810
+    },
+    "human-authored source/config/doc": {
+      "files": 31,
+      "bytes": 147558
+    },
+    "reproducible generated product/log/cache": {
+      "files": 272,
+      "bytes": 79741676
+    },
+    "unknown pending inspection": {
+      "files": 2,
+      "bytes": 2677339273
+    }
+  },
+  "untracked_by_lane": {
+    "unassigned": {
+      "files": 46,
+      "bytes": 125759,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 9,
+          "bytes": 14811
+        },
+        "human-authored source/config/doc": {
+          "files": 19,
+          "bytes": 97050
+        },
+        "unknown pending inspection": {
+          "files": 1,
+          "bytes": 0
+        },
+        "reproducible generated product/log/cache": {
+          "files": 17,
+          "bytes": 13898
+        }
+      }
+    },
+    "2D UQ": {
+      "files": 527,
+      "bytes": 142853,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 525,
+          "bytes": 136576
+        },
+        "reproducible generated product/log/cache": {
+          "files": 2,
+          "bytes": 6277
+        }
+      }
+    },
+    "3D": {
+      "files": 10,
+      "bytes": 2611,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 10,
+          "bytes": 2611
+        }
+      }
+    },
+    "orchestration": {
+      "files": 48,
+      "bytes": 2978653,
+      "by_category": {
+        "reproducible generated product/log/cache": {
+          "files": 25,
+          "bytes": 20831
+        },
+        "receipt/manifest/provenance": {
+          "files": 23,
+          "bytes": 2957822
+        }
+      }
+    },
+    "standard P4": {
+      "files": 18,
+      "bytes": 366793,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 18,
+          "bytes": 366793
+        }
+      }
+    },
+    "5D UQ (B)": {
+      "files": 143,
+      "bytes": 2677457411,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 141,
+          "bytes": 113973
+        },
+        "unknown pending inspection": {
+          "files": 1,
+          "bytes": 2677339273
+        },
+        "human-authored source/config/doc": {
+          "files": 1,
+          "bytes": 4165
+        }
+      }
+    },
+    "FPS UQ": {
+      "files": 540,
+      "bytes": 104106,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 540,
+          "bytes": 104106
+        }
+      }
+    },
+    "PET (C)": {
+      "files": 907,
+      "bytes": 92800768,
+      "by_category": {
+        "reproducible generated product/log/cache": {
+          "files": 226,
+          "bytes": 79700000
+        },
+        "receipt/manifest/provenance": {
+          "files": 675,
+          "bytes": 13070732
+        },
+        "human-authored source/config/doc": {
+          "files": 6,
+          "bytes": 30036
+        }
+      }
+    },
+    "products": {
+      "files": 30,
+      "bytes": 182141,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 28,
+          "bytes": 181471
+        },
+        "reproducible generated product/log/cache": {
+          "files": 2,
+          "bytes": 670
+        }
+      }
+    },
+    "tests": {
+      "files": 2,
+      "bytes": 5175,
+      "by_category": {
+        "human-authored source/config/doc": {
+          "files": 2,
+          "bytes": 5175
+        }
+      }
+    },
+    "4D UQ": {
+      "files": 190,
+      "bytes": 38915,
+      "by_category": {
+        "receipt/manifest/provenance": {
+          "files": 190,
+          "bytes": 38915
+        }
+      }
+    },
+    "scratch": {
+      "files": 3,
+      "bytes": 11132,
+      "by_category": {
+        "human-authored source/config/doc": {
+          "files": 3,
+          "bytes": 11132
+        }
+      }
+    }
+  },
+  "already_byte_identical_in_canonical": {
+    "files": 25,
+    "bytes": 529289,
+    "meaning": "a byte-identical blob is reachable from origin/main; nothing to salvage, zero risk"
+  },
+  "unresolved_largest_object": {
+    "path": "nd-unfolding/uq_5d/_archive_prehm_20260711/unified_throw_cov_5d.root.prehm",
+    "bytes": 2677339273,
+    "share_of_untracked_bytes": "96.5%",
+    "mtime_utc": "2026-08-06T16:50:59Z",
+    "mime": "application/octet-stream",
+    "gitignored": false,
+    "category": "unknown pending inspection",
+    "owner_assigned": "5D UQ lane (B) -- by directory, not filename",
+    "existing_digest_reuse_attempted": true,
+    "findings": [
+      "NO digest anywhere in the repo. products/slab_manifest_20260806.json carries sha256 for 548 .npz slabs (8,495,812,502 bytes) including 41 under _archive_prehm_20260711/, and ZERO ROOT files.",
+      "NO off-scratch copy. The manifest's verified copy is /global/cfs/cdirs/m3246/josephrb/slab-protect-20260806; a find there for *.root.prehm and unified_throw_cov_5d.root* returns nothing.",
+      "NOT covered by the archive's own recorded provenance. CORRECTED_UQ_PRODUCTION_STATUS.md:193-195 describes the prehm archive as 'stale pre-remediation replicas/slabs' and names uq_5d/_archive_prehm_20260711/{uthrow,block}_slabs_5d -- the SLAB directories. It does not mention a .root.prehm.",
+      "So it is unaccounted three ways -- no digest, no off-scratch copy, no mention in its own archive's note -- and it sits on purgeable scratch."
+    ],
+    "why_it_may_matter": "BEN-033: the adopted unified_throw_cov_5d.root records n_throws=160 while the re-roll processed 122, because slabs 31-39 were lost off this filesystem, making the adopted covariance a 76.2% subsample (OI-17 is Joseph's open decision on exactly that). A 2026-07-11 pre-remediation unified covariance MIGHT predate that loss. THIS IS A HYPOTHESIS AND IS NOT MEASURED -- deciding it needs the file opened.",
+    "inspection_that_would_resolve_it": "one read-only `TFile.Open(path,'READ')` + `Get('n_throws')` in the ROOT env. NOT DONE: uproot is absent on the cluster (checked), so it needs a module load, and this lane chose to report rather than act past the review gate.",
+    "io_cost_of_hashing_it": "ONE sequential 2.68 GB Lustre read. For calibration, this inventory hashed 2,324 files / 96,877,044 bytes in 2.7 s wall. There is exactly ONE multi-GB untracked file, so 'full-tree hashing campaign' overstates it -- but it is reported and NOT run, per instruction.",
+    "recommendation": "Resolve the classification before anything else in this inventory. It is 96.5% of the bytes and the only candidate for 'irreplaceable'."
+  },
+  "citation_check": {
+    "method": "git grep -l -F <basename> origin/main, over the 25 untracked code files whose blob is NOT in canonical",
+    "cited": 20,
+    "not_cited": 5,
+    "meaning": "20 untracked code files -- including 8 sbatch_*.sh launchers -- are NAMED by committed records on origin/main while existing nowhere in git. CLAUDE.md: '115 sbatch_*.sh names are load-bearing provenance.' This is the same class as the 2026-08-06 stamp-verification launcher that ran on the cluster and existed nowhere in git.",
+    "highest_value": "nd-unfolding/tests/test_cstat_100rep.py -- 15 citations, see stale_blocker_found"
+  },
+  "stale_blocker_found": {
+    "issue": "docs/known-issues/ISSUE-34-tests-on-purgeable-scratch.md",
+    "its_claim": "test_cstat_100rep.py (5 tests) is 'still untracked, because it imports combine_cstat_bkgsub_100rep, and that module is untracked too. Committing the test alone would guarantee a collection error.'",
+    "measured_2026_08_12": "nd-unfolding/pet/combine_cstat_bkgsub_100rep.py IS NOW TRACKED on origin/main at blob f0e7254dc4b1f54a42ccda761c033b78d37265ea, and the cluster copy is BYTE-IDENTICAL to it. The test does sys.path.insert(0, ND/'pet') then imports the module, so the import now resolves.",
+    "conclusion": "ISSUE-34's stated blocker has EXPIRED. The test can be committed without a collection error. 5 tests enforcing 100-replica C_stat invariants are still one purge from vanishing.",
+    "why_this_lane_cares": "Joseph's decision 4 predeclares and gates a 100-replica full-event C_stat. Its test machinery is untracked on purgeable scratch, and PREDECLARATION-20260812-fullevent-cstat-100-replicas.md does not mention either file. That is an unrecorded dependency of a gated deliverable, in this lane.",
+    "action": "GATED on Joseph's review like everything else here. Not committed."
+  },
+  "zero_byte_files_resolved": {
+    "total": 138,
+    "breakdown": {
+      ".p3fpet.lock": 120,
+      ".g2fe.lock": 12,
+      "gate4-build.capture.txt": 1,
+      ".gate2-final-writer.lock": 1,
+      ".g2_merge.lock": 1,
+      ".g2_dump.lock": 1,
+      "DONE": 1,
+      "20260720T223201Z-send-dea6f2ad.txt": 1
+    },
+    "conclusion": "135 of 138 are transient runtime LOCKS, one per work directory. Inspected rather than assumed: the first guess from a directory listing was the BEN-023 truncated-output shape, and it was wrong. None is irreplaceable, none is human-authored."
+  },
+  "not_done": [
+    "The 2.68 GB object is NOT classified beyond 'unknown' -- see unresolved_largest_object.",
+    "NO salvage of any kind. Salvage is gated on Joseph's review of this inventory (his instruction).",
+    "The 2,159 receipt/manifest/provenance files are classified by CONTENT SHAPE (JSON-parseable) and by lane, and are HASHED, but their individual semantic value is not adjudicated -- 2,159 files is beyond one pass.",
+    "No cluster ROOT/TF environment was loaded and no cluster job was submitted."
+  ],
+  "method_notes": [
+    "Classification is by CONTENT (libmagic mime type + JSON-parseability + git blob identity), never by filename -- three attributions went wrong by filename last night (BEN-160).",
+    "Lane assignment IS by directory, which is location rather than filename, and is stated as such.",
+    "All 2,324 untracked files under 5 MB were sha256'd AND git-blob-hashed; the blob hashes are what establish canonical equivalence, since sha256 cannot be compared against git objects."
+  ],
+  "per_file_records": "docs/orchestration/state/cluster-uncommitted-inventory-20260812.tsv (2464 rows; kept out of this JSON so the summary stays readable)"
+}
