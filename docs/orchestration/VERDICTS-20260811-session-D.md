@@ -402,3 +402,100 @@ Routed to Session A: the row lands the moment `FINDINGS.md` is clean, either by 
 then. Until it lands, this finding is not filed and should be treated as such.
 
 I have not edited `FINDINGS.md`, `KNOWN_ISSUES.md`, BEN-084, or any other lane's row.
+
+---
+
+*(The "one row is owed" section immediately above is SUPERSEDED: BEN-090 landed in `FINDINGS.md`
+row 87 with its long-form doc indexed, in commit `4e0bb74`. Left in place per this repo's convention
+of leaving written history written.)*
+
+---
+
+## V16 — close-out re-verification, 2026-08-11 21:2x, at `35464a4`
+
+Session A asked what in tonight's summary to Joseph would be an overclaim. Three answers, in
+descending order of how wrong the summary would be.
+
+### V16.a — `check_dead_containment.py` is STILL EVADABLE. **BLOCK, unchanged.**
+
+    $ grep -n DEAD_RE docs/analysis-note/check_dead_containment.py
+      50:DEAD_RE = re.compile(r"\\dead\{")
+    $ git log --oneline 4e0bb74..HEAD -- docs/analysis-note/check_dead_containment.py
+      (empty)
+
+**Zero commits have touched the file since BEN-090 was filed.** The one-character repair
+(`r"\\dead\s*\{"`) has not been made. Distinguish two statements that are easy to merge and that
+differ in what they license:
+
+- **The containment HOLDS.** `grep -rn '\dead[ ]\+{' docs/analysis-note/` still returns nothing;
+  no spaced instance exists in the tree.
+- **The GATE does not enforce it.** A `\dead {x}` written tomorrow passes the checker, builds, and
+  renders in `main_paper.pdf` — demonstrated end to end in
+  `FINDING-20260811-dead-containment-evadable.md` §1.
+
+Any summary sentence of the form *"struck-value containment is enforced as a test"* is an overclaim
+tonight. The supportable sentence is *"containment is true today and the test that is supposed to
+keep it true has a known hole that is one character to close."*
+
+### V16.b — MY OWN justification, now embedded in `0b6af48`'s commit body, OVERSTATES what the fix buys. **BLOCK, against myself.**
+
+Session C adopted my RECORD re-key recommendation (`0b6af48`) and quoted my reason verbatim: enforcing
+a frozen receipt's count *"buys a check on the one event that must never happen silently: a committed
+receipt's content changing."*
+
+**That is false as written, and I wrote it.** The enforced count counts `fullevent_nominal` *namespace
+occurrences*, not content. Demonstrated in an isolated clone at `35464a4`, on the exact file my
+justification named as the reproduction anchor:
+
+    MK4  edit a numeric field in fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json
+         (0.0 -> 9.87654321), leaving its single namespace occurrence untouched
+         -> check_canonical_designation.py exit=0, PASS
+
+The true statement is narrower: **it catches a content change that alters the namespace-occurrence
+count, and nothing else.** For `STEP1_DECOMPOSITION.slurm-56445883.json` that count is **1**, in a
+`gate_receipt` path — so essentially every physics-bearing edit to that receipt is invisible to it.
+The fix is still correct and still worth having; it is a *drift detector for new references*, which is
+what the `COUNT DRIFT` message itself says. It is not a content pin, and the sha256 pins in the Gate-4
+receipts are what actually serve that role.
+
+**C's fix itself is REAL — power-tested here with C's own script and four mutations, in a clone:**
+
+| # | mutation | expected | got |
+|---|---|---|---|
+| MK0 | none | PASS | **PASS**, exit 0 |
+| MK1 | a `RECORD-FROZEN` entry waives its count (`None`) | report | **`EXEMPTION MISKEYED …`, exit 1** |
+| MK3 | a `RECORD-FROZEN` count set wrong (8 → 7) | report | **`COUNT DRIFT … expected 7, found 8`, exit 1** |
+| MK2 | the same entry **relabelled** `RECORD-APPEND` and waived | — | **PASS, exit 0** |
+
+MK2 is the residual, and it is weak rather than a defect: the keying is now structural against
+*accidental* drift, but nothing verifies that a file labelled `RECORD-APPEND` is actually append-only,
+so a wrong label is still a silent exemption. Honest naming — the label now names the property — and
+worth one sentence in the docstring, not a repair. Counts reconcile: 9 `RECORD-APPEND` / 26
+`RECORD-FROZEN`, exactly as `0b6af48`'s body states. C's 9/26 against my 10/23 is C's classification
+by file kind beating my commit-count proxy, whose boundary I had named; C is right.
+
+### V16.c — my BEN-091 Gate-4 certification is STALE. **UNRESOLVED, and it is a coverage hole, not a defect.**
+
+BEN-091 records *"the live Gate-4 `20260810c` is clean at 23/23."* Measured this turn:
+
+- `20260810c` was **rewritten** after my sweep — `git diff --stat 8b7c1c5 HEAD` on it shows
+  **74 insertions / 70 deletions**. Its 23-entry `files` map is gone; it is now a superseded stub with
+  `superseded_by: …-20260812.json`, `superseded_on: 2026-08-12`, and **5** `files_at_issue` pins.
+  All 5 match the tree. **My "23/23" describes a version of the file that no longer exists.**
+- The live receipt is now `p3f-pet-gate4-launch-code-gate-20260812.json`, `verdict:
+  PASS_CODE_ONLY`. **Independently re-verified here: 22 pins, 22 match the working tree, 0 mismatch,
+  0 missing.** Clean, but clean *because I just checked it*, not because BEN-091 covered it.
+- **14 receipt files under `state/` were added or modified after my sweep commit `8b7c1c5`** (10 added,
+  4 modified). None was in the corpus BEN-091 measured. BEN-091's stated coverage (338 of 884 pin
+  fields, 38%) is a snapshot of a tree that has since moved.
+
+**Instrument caveat, stated because it would otherwise read as drift:** a quick re-count this turn
+returned 360 hash-valued fields over 124 files against BEN-091's 884, but that is a *different
+definition* (bare 7–40-hex string values only, versus BEN-091's field-name-driven enumeration), not a
+change in the tree. Two numbers from two instruments are not a delta. BEN-079's shape — treat 884 as
+scoped to the script that produced it.
+
+Also corrected in the same breath: an intermediate pass this turn reported **8 DANGLING** hashes in
+`20260810c`. They are 12-character prefixes of sha256 digests, never git objects. My matcher was
+wrong, not the receipt. Caught by looking at the matched strings rather than the count — BEN-088 (v),
+again, and this is the second time this session that rule has caught my own instrument.
