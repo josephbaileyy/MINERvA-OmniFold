@@ -61,6 +61,10 @@
         "hits": 1,
         "pipefail": true
       },
+      "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
       "nd-unfolding/pet/sbatch_step1_trajectory.sh": {
         "hits": 1,
         "pipefail": true
@@ -75,8 +79,8 @@
       }
     },
     "live_instances": 0,
-    "n_candidates": 23,
-    "n_shell_files": 337,
+    "n_candidates": 24,
+    "n_shell_files": 342,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
