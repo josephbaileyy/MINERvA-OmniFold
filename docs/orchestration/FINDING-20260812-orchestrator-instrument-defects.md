@@ -220,3 +220,31 @@ forward"* is not an attribution — it names the transport and hides the origin.
 
 *Sixth instance disclosed by the personal-account mediator against its own recommendation; seventh
 self-reported by Session A after the mediator corrected the attribution.*
+
+## BEN-194 — a path-verification refusal that reads as a permissions problem
+
+Session C, working inside `.claude/worktrees/lane-c`, had three commands refused with *"too complex to
+verify it stays inside the worktree"* — including a plain `scp` out of `$CLAUDE_JOB_DIR`. Literal absolute
+paths worked.
+
+**The refusal is about the guard being unable to PROVE containment; it is not about the lane lacking
+rights.** The wording does not distinguish those, and the two have opposite remedies: an unprovable path
+is fixed by making the path literal, a missing right is fixed by asking for it. **A lane that reads the
+first as the second will escalate for access it already has** — or, worse, conclude the worktree is
+obstructing it and route around the isolation the campaign just adopted.
+
+Same family as this session's other instrument defects: **a message whose content is narrower than its
+reading.** `CANNOT CHECK` versus `PASS` exists in `merge_guard.sh` for exactly this reason — a gate that
+cannot evaluate must not be mistaken for one that evaluated and approved. Here the inverse: a guard that
+cannot evaluate must not be mistaken for one that evaluated and *refused*.
+
+Not ours to reword — the message belongs to the harness. **The row is the mitigation**, and it is here so
+that the next lane greps rather than escalates.
+
+**Postscript, recorded because it is the eighth instance and it happened inside the fix.** The first
+version of BEN-194's row was **808 characters** — written in the same commit that compressed two other
+rows for exceeding 600, by the author who had asked B and D to compress theirs. Caught by re-measuring
+before committing rather than after. **B wrote a 3283-character row an hour after the convention was
+established, having read the compressed rows above it; I wrote an over-length row inside the act of
+enforcing the limit.** BEN-105's shape, and the interval between knowing a rule and breaking it is now
+measured in seconds rather than hours. The compressed row is 486 characters.
