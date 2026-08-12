@@ -538,3 +538,71 @@ SEVERITY over a right finding. Both survive a check aimed at the finding itself.
 absent failures, `build_all.sh:25-29` branches only on `python3` existing. `pdftotext` is present on
 this machine so the stage does run — which makes the check **silently machine-dependent**, the worst
 version of that shape rather than the mildest.
+
+---
+
+## V17 — Session A's TOCTOU claim: **PASS on the diagnosis, BLOCK on the conclusion, and one clause of BEN-115 is wrong**
+
+A asked me to refute, before Joseph reads it, the claim that *"no per-session discipline closes the
+index race"* — naming the risk that A was overgeneralising from one incident toward a per-lane
+worktree decision A already favours. Refuted. Three controlled tests in an isolated clone at
+`3292345`, none in the shared checkout.
+
+**First, the thing A should hear before any of it: A's committed row already refutes A's question.**
+`BEN-115` states *"the structural fix is one flag … `git commit -- <pathspec>`"* and, explicitly,
+*"it argues for [the worktree] more weakly than it appears to … the worktree decision should be made
+on its merits rather than under the pressure of this incident."* That is the correct answer and it is
+already in the ledger. **The message asking me to refute it is behind the row that refutes it** — a
+small instance of the shape this session keeps finding, a claim travelling in a channel that its own
+artifact has already superseded.
+
+### The measurements
+
+| test | setup | result |
+|---|---|---|
+| **T1** | peer stages `KNOWN_ISSUES.md`; I `git commit -- docs/OPEN_ITEMS.md` | commit contains **only my path**; peer's staged work **survived**, still staged |
+| **T2** | peer has **staged** content in `docs/OPEN_ITEMS.md`; I edit it too and `git commit -- docs/OPEN_ITEMS.md` | committed blob contains **both** the peer's staged line **and** mine |
+| **T3b** | two concurrent `git commit -- <path>` on disjoint paths, ×3 | loser fails **loudly**: `fatal: Unable to create .git/index.lock`, `rc=128`, work left in the tree. 3/3 |
+
+### What that settles
+
+**The diagnosis is right: `git diff --cached --stat` is a TOCTOU read, not a guard.** It is a read of
+process-external state with a window before the write. Nothing per-session closes *that*.
+
+**The conclusion does not follow, and T1 is why.** The discipline that survives concurrency is not a
+better *check* on staging — it is **not staging at all**. `git commit -- <pathspec>` builds a
+temporary index and never writes the shared one, so there is no read-modify-write cycle to race. The
+whole incident began with `git add`; had the two paths been passed to `git commit` directly, there
+would have been nothing staged for B to absorb and nothing to unstage. **That rule is already in the
+ledger as BEN-094(i), filed by this lane earlier tonight, and the incident is what happens when it is
+bypassed rather than evidence that it fails.**
+
+**T3b is better news than anyone has stated:** the residual concurrency failure is *loud*. `index.lock`
+contention returns `rc=128` with a fatal message and leaves the work in the tree. A commit discipline
+whose failure mode is a visible non-zero exit is in a different class from one whose failure mode is a
+commit containing someone else's work.
+
+### **BLOCK — one clause of BEN-115 is measurably false, and it is the load-bearing one**
+
+BEN-115 says `git commit -- <pathspec>` *"cannot absorb another lane's staged content."* **T2 shows it
+can.** Partial commit takes the **working tree** version of every path you name. If a peer has staged
+— or merely edited — a file **you name**, their uncommitted work is committed under your message, and
+their staged version is silently consumed.
+
+This is not a corner case. The file it applies to is **`FINDINGS.md`**, which three lanes wrote to
+tonight, and it is the exact file the original incident was about. The correct statement is:
+
+> `git commit -- <pathspec>` cannot absorb a peer's work in files **you do not name**. In files you
+> **do** name it behaves exactly as `git add` did, because it reads the working tree. **The protection
+> is the pathspec, and it is only as good as your ownership of those paths.**
+
+So the surviving rule has two halves, and only the first is in the ledger: **(a)** never write the
+shared index; **(b)** name only paths you own — and for a shared file like `FINDINGS.md`, "own" means
+*you are the only lane with uncommitted changes to it right now*, which is itself a TOCTOU read. **The
+race is not eliminated for shared files; it is narrowed from every staged path to the paths you
+name.** That is a large reduction and it is not zero, and BEN-115 currently reads as zero.
+
+**Not edited — routed to Session A, who owns BEN-115.** For the worktree question this cuts the same
+way A already wrote: the residual is real but small and bounded by discipline over a handful of shared
+documents, so it strengthens the worktree case slightly and still does not decide it. Decide it on its
+merits.
