@@ -426,6 +426,32 @@ Implementation gate, in order:
    `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`.
    **STATUS 2026-08-05: D1/D2/D3 implemented; GATE 2 RE-ISSUED AND PASSED** (job
    56344268). What remains, in order:
+   > **THRESHOLD RETIREMENT — added 2026-08-12. Read before any number in (a).**
+   > The triple `recovery >= 0.80` / `residual/gap <= 0.20` / `residual <= 0.0469` was **retired as a
+   > BUG on 2026-08-09**, on Joseph's decision — see `CLAIMS.md` CLM-012's status line and the
+   > `recovery >= 0.80` row of [`INDEX-retracted-and-superseded-values.md`](orchestration/INDEX-retracted-and-superseded-values.md).
+   > The retired `0.80` is what a ceiling computed in the **wrong scope** rounds to
+   > (`phi(E[a]) = 1-(1-0.42351622)^3 = 0.808415`). The adopted criterion is
+   > `recovery >= f * ceiling`, `f = 0.80`, `ceiling = 0.618228` (per-cell scope, per-event
+   > weighting, injection-pinned) → **`0.4945824`**.
+   >
+   > **Everything below is preserved as written and is scored against the RETIRED bar.** Two
+   > consequences a fresh session must not miss:
+   > - `residual <= 0.0469` is a **derived descendant** of the retired bar (`0.20 x gap 0.234270 =
+   >   0.046854`). It does not string-match the retraction, so grepping `0.80` never finds it. It is
+   >   **not a live budget** and needs re-derivation against `0.4945824`; this note deliberately does
+   >   not compute a replacement, per the write-time rule in the retraction index.
+   > - Job 56381674 measured `recovery = 0.5469` (`1 - residual/gap = 1 - 0.4531`), which **exceeds
+   >   the adopted `0.4945824`**. Its `verdict=FAIL` is therefore a verdict against a retired
+   >   criterion. `VALIDATION_LEDGER.md` already scores the comparable annealed run **PASS** at
+   >   `recovery 0.512603276 >= 0.494582400`. **This does not by itself re-issue Gate-4**: the
+   >   validator still self-reports `recovery_criteria_met=false` against the retired bar, and the
+   >   index is explicit that this field is *"a self-report, never the gate"*. Re-issuing is a
+   >   separate decision with its own receipt.
+   >
+   > Accordingly the sentence below — *"Until it passes, `powered_closure` is red BY DESIGN and
+   > Gate-4 cannot PASS"* — is **superseded by this note**. (BEN-201.)
+
    (a) **run the D2 powered recovery closure** --- `pet/closure_powered_truth_reweight.py`
        exists and its Gate-4 component re-derives every metric from the dump. The 08-04 GPU
        smoke (job 56347531) exercised the whole path and **returned FAIL, exit 3** --- not a
