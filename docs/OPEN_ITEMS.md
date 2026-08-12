@@ -942,6 +942,31 @@ largest nominal truth-space volume.
      1431-bin covariance or its rank-deficient GoF, which is what App. A item 5
      actually gates.
 
+2. **`E_avail` definitional reconciliation with `minerva-ml`** — raised by Gregor in the
+   2026-08-11 review round, as a comment on the signal-definition paragraph asking whether the
+   quoted criteria are what gives `E_recoil_CCinc` a positive value. The literal question is
+   **answered** in `docs/analysis-note/sec_experiment.tex` (no: those are truth-level signal and
+   phase-space definitions, and no cut in this analysis tests any recoil quantity). Tracing the
+   name is what surfaced the open item:
+   - `E_recoil_CCinc` is the `minerva-ml` alias for the ntuple branch
+     `MasterAnaDev_hadron_recoil_CCInc` (`src/scripts/extract_baselines.py:285-288`), where a
+     negative entry is that code's **invalid sentinel** — `np.where(x >= 0, x, -1)` followed by
+     `invalid_E_recoil_CCinc = E_recoil_CCinc == -1`. "Positive" there means "validly filled",
+     not a physics selection.
+   - `minerva-ml` uses that branch **directly as reconstructed available energy**:
+     `reco_E_avail = master_ana_dev["MasterAnaDev_hadron_recoil_CCInc"]`
+     (`notebooks/archive/data_exploration_3_Enu.ipynb`).
+   - This analysis never reads that branch. Our reco `E_avail` is `NewEavail()` —
+     `blob_recoil_E_tracker` + `blob_recoil_E_ecal`, each less its per-plane muon fuzz, scaled by
+     1.17 (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:185-193`).
+   - **OPEN, and unmeasured:** whether the two constructions agree numerically. Settling it needs
+     one production `MasterAnaDev` MC/data pair with both branch families read side by side; it
+     cannot be answered from either checkout alone, because neither stores the other's variable.
+     Until it is settled, **do not treat a `minerva-ml` `E_avail` distribution as directly
+     comparable to this analysis's** — two different quantities currently share the name.
+   - Blocked on: Gregor (which construction `minerva-ml` intends as `E_avail`, and whether the
+     1.17 tracker+ECAL scaling is meant to be in it) and NERSC tuple access for the numeric check.
+
 ## Deferred analysis refinements
 
 2. **Ascencio fine-binned comparison** — the maximal-common-grid full-cov
