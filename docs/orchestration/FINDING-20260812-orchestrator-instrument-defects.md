@@ -117,3 +117,40 @@ this repo — and it has now received a delivered, unanswered question about exa
 *Stale-field defect found by the personal-account mediator, which also disclosed that its first
 explanation — two sessions wedged mid-turn — was wrong, and that it caught this by requiring a second
 independent signal before reporting. The three-way disagreement and the BEN-028 inversion are Session A's.*
+
+## BEN-193 — coverage is invisible by construction: a set you cannot see does not announce that you cannot see it
+
+Named by the personal-account mediator session, which asked for it as a row in its own right rather than a
+footnote to C's. **The pattern is not carelessness.** Four instances in one day, three lanes, all in
+enumerations or coverage rather than in results:
+
+| instance | what was claimed | what the claim was actually about |
+|---|---|---|
+| slab manifest, *"sha256 for 548 `.npz` and zero ROOT files"* | ROOTs were overlooked | an **npz-only sweep by design**, scoped by role |
+| C's hashing, *"no digest anywhere"* | the object has no digest | 140 of 2,464 files were unhashed, filtered by `awk '$1 < 5000000 && $1 > 0'` — the object was skipped for being **large** |
+| C's enumeration, *"2,464 files, 2.77 GB uncommitted"* | the uncommitted working tree | **`git status -uall` cannot see ignored files**; `.gitignore:2` is `*.root`; actual 19,570 files / 6.00 TB, **2,163×** |
+| A's `~/.claude` settings edit (BEN-190) | the setting is applied | applied to a directory **not in the read path** — `CLAIDE_CONFIG_DIR` is `~/.claude-school` |
+
+**The unifying mechanism, in the mediator's words: a set you cannot see does not announce that you cannot
+see it.** An absence claim has a hidden operand — the coverage of the instrument that found the absence —
+and unlike a numeric operand it produces **no arithmetic that fails to reconcile**. Every one of the four
+was caught only because someone re-derived a *different* number and the gap in it pointed back at coverage.
+The 140-file gap is the clean example: it was found by subtracting two file counts nobody had put side by
+side, and it was the only reason "no digest" could be distinguished from "outside every digesting sweep."
+
+**And being caught once does not inoculate.** C corrected the slab manifest's scope-by-design error and
+then committed the identical error in the same artifact one level up — hashing coverage, then enumeration
+coverage. Its own sentence, which is the transferable part: **"being challenged on coverage once did not
+make me check the other coverage."**
+
+**Rules.** (i) **Point the arithmetic-gap instinct at ENUMERATIONS, not only at hash counts** — if two
+counts of the same population differ, the difference is the finding. (ii) An absence claim must ship its
+**coverage** as an operand, the same way a derived number ships its ingredients (BEN-077). *"No digest
+anywhere"* without the enumeration that looked is unfalsifiable. (iii) When an instrument excludes by
+**design**, that is a scope statement and not a coverage gap — and the two read identically in prose, which
+is what makes them worth distinguishing explicitly. (iv) Before trusting any enumeration, ask what it
+**structurally cannot** enumerate: `git status` cannot see ignored files, a size filter cannot see large
+files, a settings read cannot see a different config directory.
+
+*Class named by the personal-account mediator, which disclosed two near-misses of its own in the same
+family. Instances and the table are Session A's; the third and fourth rows are self-directed.*
