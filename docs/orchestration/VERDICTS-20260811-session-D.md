@@ -347,6 +347,32 @@ snapshot, which is C's stated position, now corroborated rather than asserted.
 
 Nothing edited; `nd-unfolding/pet/` is C's.
 
+## V15 — is RECORD-counts-unenforced too weak? → **not too weak as a class; wider than its justification**
+
+Asked by A after C widened the corpus to 105/51. Detail amended into BEN-095.
+
+**My suspicion refuted first.** `audit()` tests `if n is not None`, not `if disp != "RECORD"`, so the
+exemption could have leaked to any entry. Measured: **0 non-RECORD entries carry `None`**, and one
+RECORD entry keeps an enforced count. It is exactly where C says it is.
+
+**My own instrument over-matched and I caught it by inspecting matches** (BEN-088 v): a first pass said
+*"34/34 RECORD files are referenced by code"* — true and meaningless, since the checker names every
+inventory key in its own source.
+
+**The real answer: the exemption is keyed on the DISPOSITION, not on the property that justifies it.**
+C's cry-wolf rationale is about *append-only-ness*. Splitting the 33 unenforced entries by commits ever
+touching them: **10 are genuinely append-only** (`ND_OMNIFOLD_RUN_LOG.md` 145, `AUTONOMOUS_LOG` 131,
+`FINDINGS.md` 118, `OPEN_ITEMS.md` 54, +6) and **23 are frozen, one commit each** — every
+`GATE_AB_PUSH_PROVENANCE.*`, `STEP1_DECOMPOSITION.*`, `STEP1_TRAJECTORY.*`, the per-job `state/*.json`.
+A frozen receipt cannot cry wolf, so enforcing its count costs nothing and catches the one event that
+should never happen silently: a committed receipt's content changing — the BEN-091 and BEN-133 classes,
+both live in this namespace. `STEP1_DECOMPOSITION.slurm-56445883.json` is `json.load`ed at
+`step1_increment_trajectory.py:120` as a gated run's reproduction anchor.
+
+**Recommendation: keep `None` for the 10, give the 23 their counts.** C's argument survives intact.
+Heuristic boundary stated: commit-count proxies append-only-ness and misclassifies
+`p3f-pet-gate4-launch-code-gate-20260731.json` (3 commits = revised, not appended).
+
 ## V9 — the rest of the sweep → **NOT RUN. UNRESOLVED, and its silence means nothing**
 
 Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
