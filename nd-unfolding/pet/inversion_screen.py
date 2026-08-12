@@ -38,12 +38,12 @@ R = 1.1240802949941018
 # --- CLASS-5 RUNTIME IDENTITY GUARD (added 2026-08-12) -------------------------------------------
 # This diagnostic is ABOUT the 2026-08-08 artifact and was deliberately NOT retargeted when job
 # 56563761 was promoted by designation. `canonical` no longer means "whatever is at
-# fullevent_nominal/", so a path alone no longer proves which estimator this is reading.
+# fullevent_nominal/", so a path alone no longer proves which estimator this is reading.  # NS-EXEMPT: prose
 #
 # No source-text checker can catch the way this breaks: the artifact's own inference_contract carries
 # ABSOLUTE checkpoint paths written at training time and read back at inference time, so a relocated
 # or swapped artifact resolves silently to a different network (BEN-133; live instance in
-# fullevent_nominal/superseded-20260806/NOTE.md). The mitigation is to assert the artifact's IDENTITY
+# fullevent_nominal/superseded-20260806/NOTE.md). The mitigation is to assert the artifact's IDENTITY  # NS-EXEMPT: prose
 # from its own contents before use, which is cheap and fails LOUDLY.
 #
 # Fold-forward fingerprints, all measured 2026-08-11/12:
