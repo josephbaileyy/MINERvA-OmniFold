@@ -66,6 +66,14 @@ else's work lands is therefore expected and means *regenerate*, not *something i
 
 ## Scope
 
-This convention governs `docs/orchestration/`. `runs/` and `state/` are `MACHINE` without exception
+This convention governs `docs/orchestration/`, and the generator inventories only that directory.
+**Do not add override rows for paths outside it** — they are inert, and they make every run print
+`unused_overrides=N`, which is how a warning becomes background noise. Detail files that live
+elsewhere are routed by their own parent index instead: `docs/known-issues/ISSUE-*.md` by
+`KNOWN_ISSUES.md`, `CLAIM-CLM-*.md` by `CLAIMS.md`. If a directory outside `docs/orchestration/`
+ever needs manifest classification, widen the generator's inventory deliberately rather than
+adding rows it will not read.
+
+`runs/` and `state/` are `MACHINE` without exception
 and are never context-loaded wholesale — open one exact receipt when a live document names it.
 Sibling conventions: [`CONVENTION-receipt-ingredients.md`](CONVENTION-receipt-ingredients.md).
