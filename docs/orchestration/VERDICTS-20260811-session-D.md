@@ -264,6 +264,53 @@ JSON object, so **a pin recorded without an adjacent path was never examined.** 
 hash-valued fields counted in the corpus doc: this covers **38%** of the pinned values, and the other 62%
 are unswept.
 
+## V12 — S1 (read-before-registered) executed → **PASS: 0 new instances. Two detector bugs found first**
+
+Filed as **BEN-093**. Controls against the **real** artifact, not synthetic snippets: pre-fix
+`p4_evidence.py` at `c308a9c^`, post-fix at `c308a9c`.
+
+**v1 was silent on the known instance and withheld itself.** The reason was a sentence I had written
+into the routed corpus definition and A had accepted: *"intraprocedural only… an accumulator mutated
+inside a callee invoked after the caller read it is invisible."* The real PB3 mutation is exactly that —
+`need(cond, msg)`, a module-level helper that appends to the global `blockers`. **The known instance
+was the declared blind spot.** With a synthetic control, or none, S1 would have swept 84 sites, found
+nothing, and reported clean from a detector that could not have found a single instance of its target.
+
+**v2 resolves one level** (a function mutating a module-global accumulator is an alias for mutating it;
+a call to it is a mutation at the call site). Positive control then fires on exactly the three reads
+BEN-084 names — `:402`, `:405`, `:413`, each against the `need()` at `:423`.
+
+**The negative control then failed, and caught a second, unrelated detector bug:** scope partitioning
+skipped descending when the *child* was a `FunctionDef` rather than when the *popped node* was, so a
+top-level `def` was popped and its body absorbed into module scope — pairing a read inside
+`_publish_evidence()` with a module-level `need()` and firing on the committed repair.
+
+**Result with both controls passing, corpus floor 341 ≥ 300: 52 sites across 21 files, 0
+verdict-accumulator sites.** No new PB3-shape instance. Read as *the swept scope is clean*, not *the
+class is absent*.
+
+## V13 — Session A's Step-2 defect, and its proposed fix → **defect CONFIRMED; fix REFUTED**
+
+Filed as **BEN-092**. Verified independently, every number from a command run this turn on `origin/main`.
+
+**The defect is real.** `56692312` 0 message hits / 9 tracked files; `56695130` 0 / 9; `56693776` 0 / 6 —
+all three properly filed in `RUNS.tsv`, `VALIDATION_LEDGER.md` and terminal per-job receipts, by commits
+whose message never repeats the id. Controls `56691812` 8/15, `56693207` 3/11, `56563761` 7/21.
+
+**The proposed cheap fix — `git grep -l <jobid>` anywhere ⇒ filed — is unsafe, and the counterexample
+is live rather than hypothetical.** `56695424` is **PENDING**, so no verdict can exist, yet it matches
+6 tracked files including `state/ben106-stamp-verify-**active**-56695424.json`. Predeclaring and arming
+a watch puts an id across the tree before any verdict exists. A asked to be told if this was real: it is.
+
+**A sharper rule exists in the tree's own convention**, so this needs no new mechanism. `RUNS.tsv`
+carries `slurm_job`, `end_utc`, `exit` and a **`verdict`** column; `state/` receipts carry a lifecycle
+token — measured `-submit` 16, `-complete` 11, `-error` 4, `-active` 3, where **`-complete`/`-error` are
+terminal and `-submit`/`-active` are not.** Either discriminator separates all seven test ids correctly
+and marks `56695424` unfiled. Recommended rule, with its own limit stated: *filed iff `RUNS.tsv` has a
+row whose `slurm_job` contains the id and whose `verdict`/`end_utc` is non-empty* — which assumes
+`RUNS.tsv` is written for every job, so a ledger-only verdict would under-report. That is the safe
+direction and the same direction the step errs in today, but it should be checked, not assumed.
+
 ## V9 — the rest of the sweep → **NOT RUN. UNRESOLVED, and its silence means nothing**
 
 Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
