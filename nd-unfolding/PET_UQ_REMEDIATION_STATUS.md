@@ -31,13 +31,18 @@ verdict *label* on that arm is direction-blind and must not be quoted
 
 The 120 selection-shifted **full-event** lateral endpoint ROOTs exist, are `g2-fullevent-v1`, and were
 promoted `GATE3_PROMOTED_PASS` on **2026-07-20** (120/120 receipts `PASS`, 1.1 TB, now being archived to
-HPSS by job `56692312` with server-side digest verification). So the *selection-complete detector
-samples* half of quarantine cause 5 is satisfied and the **joint nuisance/retraining construction is the
+HPSS by job `56692312`: **240/240** objects (120 ROOTs plus 120 Gate-3 receipts) have matching local and
+server-side HPSS MD5 plus size readback, with zero missing entries). So the *selection-complete detector
+samples* half of quarantine cause 5 is satisfied **and protected off purgeable scratch**, while the **joint nuisance/retraining construction is the
 binding half** — it does not exist in any form, and the construction that does exist is the additive
 `C_syst + C_retrain` that cause 5 names as the defect, measured this session to **overstate** the joint
 covariance by `1.786`× on the knob bands with a negative cross term in every universe. Cause 5 remains
 **OPEN**; a written discharge criterion for it now exists (there was none anywhere):
 `../docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md`.
+
+Archive terminal receipt:
+`../docs/orchestration/state/hpss-protect-p3f-complete-56692312.json`. The digest-based resume guard
+found no unverified object, so no archive retry is authorized or needed.
 
 Do not read `KNOWN_ISSUES.md` #19 as "no full-event anything exists". No full-event **product** exists;
 the full-event **inputs** do.

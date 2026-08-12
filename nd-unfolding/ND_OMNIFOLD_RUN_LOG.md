@@ -5132,3 +5132,20 @@ Terminal watch `stamp-verify-56695424` is armed. A terminal `0:0` is necessary b
 reconciliation must read the test ROOT back and require the three `*_checked` stamps plus centering,
 throw-source and combined-source stamps. Until then BEN-106's provenance legs remain **OPEN**. The test
 product adopts nothing and authorizes no `values.tex` or threshold change.
+
+## 2026-08-12 — P3F-PET full-event source archive complete and digest-verified
+
+Transfer job **56692312** (`hpss_p3f_fe`) completed `0:0` in **1:26:34**. The committed launcher
+`6dc863b` wrote to HPSS directory `mnv-p3f-pet-fullevent-final` and verified each object by comparing a
+local MD5 with `hsi hashcreate`'s server-side MD5 plus an HPSS size readback. The final manifest contains
+**240 unique objects: 120 selection-complete full-event endpoint ROOTs and their 120 Gate-3 receipts**.
+All 240 carry matching 32-hex digests and positive matching sizes; `n_archived_digest_verified=240`,
+`n_not_archived=0`, `not_archived=[]`, `complete=true`. The whole-stream log has 240 `[ok]`, zero skip,
+zero failure lines; stderr is empty.
+
+Independent terminal receipt:
+`../docs/orchestration/state/hpss-protect-p3f-complete-56692312.json`. The resume guard is digest-based,
+but no retry is required because there is no unverified object. This protects the already-satisfied
+selection-complete detector-sample half of quarantine cause 5 off purgeable scratch. The binding joint
+nuisance/retraining construction half remains **OPEN**; no covariance is adopted and no scientific
+threshold changes.
