@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "BEN-106 adopted-product construction-contract verification",
-  "state": "Footing hash verifier 56695130 passed and its exact eight-file receipt is committed at daa99b4; the B2 interaction result is unchanged and nothing is adopted. P3F-PET HPSS job 56692312 completed: all 120 endpoint ROOTs and 120 Gate-3 receipts are server-side digest-verified with zero missing objects, protecting cause 5's already-satisfied detector-sample half. Session B's collision-isolated BEN-106 test job 56695424 remains the sole active provenance writer with terminal watch coverage.",
+  "current_dag_node": "Post-BEN-106 duplicate-event reconciliation",
+  "state": "BEN-106 stamp verifier 56695424 completed 0:0 in 2m54s. An independent ROOT reader verified all checked/value/source/convention stamps, and the authoritative science result was already committed at 8d0034f. The provenance legs for causes 2/3/4 are MET for the footing-matched candidate but remain OPEN for the currently quoted July product; no cause is discharged and STAMPTEST2 is not adopted. P3F-PET HPSS protection remains complete at 240/240 digest-verified files.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -31,21 +31,15 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56695424",
-      "tasks": "0",
-      "single_job": true,
-      "receipt": "docs/orchestration/state/ben106-stamp-verify-active-56695424.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
-    "The footing result adopts nothing: values.tex is untouched and zero quarantine causes are discharged for this candidate.",
-    "BEN-106 remains OPEN until job 56695424 finishes successfully and the required stamps are independently read back from its test product; a success print or exit code alone is insufficient after BEN-112.",
-    "STAMPTEST2 is validation-only: it does not authorize adoption, values.tex edits, or a quarantine discharge beyond the provenance legs explicitly verified.",
-    "Cause 5 remains OPEN on the joint nuisance/retraining construction even though its selection-complete detector inputs are now digest-protected in HPSS."
+    "The footing-matched candidate is not adopted: values.tex is untouched, its verified provenance stamps do not transfer to the currently quoted July product, and zero quarantine causes are discharged.",
+    "Cause 1 has a MET code-path audit but its per-band provenance census and adopted-product magnitude remain open.",
+    "Cause 4 retains an unresolved magnitude leg even for the stamped candidate.",
+    "Cause 5 remains OPEN on the joint nuisance/retraining construction even though its selection-complete detector inputs are digest-protected in HPSS.",
+    "Cause 6 remains open pending its corrected upstream input and cluster rebuild."
   ],
-  "next_authorized_action": "End without polling. On the real terminal event for stamp verifier 56695424, read its accounting, complete log and test ROOT once; bind the launcher and implementation hashes, independently require all checked/value/source/convention stamps, and only then close the BEN-106 provenance legs for causes 2/3/4. Do not adopt the test product. Provider-reset watches remain independent continuation coverage.",
+  "next_authorized_action": "This duplicate event is reconciled and dispatch stops under the event rule. On a new continuation, advance the next dependency-ready quarantine leg without adopting STAMPTEST2; the lowest-cost open work is cause 1's per-band provenance/magnitude evidence or an explicit campaign decision on cause 2's F7 presentation/adoption routing. Provider-reset watches remain independent continuation coverage.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",

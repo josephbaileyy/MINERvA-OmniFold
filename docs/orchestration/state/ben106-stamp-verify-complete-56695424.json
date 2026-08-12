@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "receipt_type": "slurm-terminal-reconciliation",
+  "recorded_at_utc": "2026-08-12T00:43:07Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-stamp-verify-56695424.json",
+    "event_id": "evt-stamp-verify-56695424",
+    "watch_id": "stamp-verify-56695424",
+    "type": "slurm-job-complete",
+    "observed_at": "2026-08-12T00:35:08+00:00",
+    "sha256": "d63d16974ebd1e8dfe570a04c88d601e16d473492af56dc5b2a28f12985be09b",
+    "read_exactly_once": true,
+    "validated": true
+  },
+  "job": {
+    "job_id": "56695424",
+    "job_name": "stamp_verify",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:54",
+    "start": "2026-08-11T17:29:00",
+    "end": "2026-08-11T17:31:54",
+    "allocation": "billing=98,cpu=98,energy=67551,mem=180G,node=1"
+  },
+  "code_binding": {
+    "launcher": "nd-unfolding/sbatch_stamp_verify.sh",
+    "launcher_commit": "034871cb986fcb0d91fa648268ecdcdf54a35e39",
+    "launcher_sha256": "589bc4a16fc2780fd9c90936ebd6ceb4c9a1f467d50fc64650555240bdc27221",
+    "implementation": "nd-unfolding/adopt_unified_5d.py",
+    "implementation_commit": "5856eeb1c6b77983f8d067eed6127eac0eac9557",
+    "implementation_sha256": "e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35"
+  },
+  "logs": {
+    "stdout": {
+      "path": "nd-unfolding/uq_5d/stamp_verify_56695424.out",
+      "size_bytes": 829,
+      "sha256": "487d75ba68707aeda37d3a68f23f56e41322ea72172c58ba5427dbe52ca91b1f",
+      "required_line_count": 1,
+      "required_line": "provenance stamped AND read back"
+    },
+    "stderr": {
+      "path": "nd-unfolding/uq_5d/stamp_verify_56695424.err",
+      "size_bytes": 1164,
+      "sha256": "c0b89ac88c4dea667785089e08266eecf07a0040aa7f8e80ebfb85caba2c12c7",
+      "classification": "nine known duplicate-class TInterpreter::ReadRootmapFile warnings; no gate failure"
+    }
+  },
+  "artifact": {
+    "path": "nd-unfolding/uq_5d/readopt_20260811_footing/STAMPTEST2_bkgaware_meancentered.root",
+    "size_bytes": 892170857,
+    "mtime_ns": 1786494714000000000,
+    "zombie": false,
+    "covariance_shape": [10694, 10694],
+    "inflation_bins": 10694,
+    "sqrt_tr_old": 4.357790406860002e-38,
+    "sqrt_tr_new": 5.269625166386846e-38,
+    "fixed_seed_null_norm_checked": 1,
+    "upstream_fixed_seed_null_norm": 5.8223488501140625e-50,
+    "joint_mean_shift_norm_checked": 1,
+    "upstream_joint_mean_shift_norm": 1.878696733368378e-38,
+    "n_throws_checked": 1,
+    "upstream_n_throws": 160,
+    "centering_convention": "mean-centered",
+    "uthrow_source": "unified_throw_cov_5d_fluxfix_20260806_full160.root",
+    "combined_source": "uq_universe_5d_covariance_combined_bkgaware.root",
+    "independent_readback_pass": true
+  },
+  "verdict": "ALREADY_RECONCILED_PASS",
+  "authoritative_science_commit": "8d0034f160b3553fca3e71407d2e0142a6da8104",
+  "scope": {
+    "ben106_stamp_propagation": "verified for the footing-matched candidate",
+    "cause_2_3_4_provenance_legs": "MET for the footing-matched candidate; OPEN for the currently quoted July product",
+    "cause_discharged": false,
+    "test_product_adopted": false,
+    "values_tex_changed": false
+  },
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "persistent_worker_uuids_preserved": true
+}
