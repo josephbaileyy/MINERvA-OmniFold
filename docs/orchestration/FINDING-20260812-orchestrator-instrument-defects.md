@@ -154,3 +154,39 @@ files, a settings read cannot see a different config directory.
 
 *Class named by the personal-account mediator, which disclosed two near-misses of its own in the same
 family. Instances and the table are Session A's; the third and fourth rows are self-directed.*
+
+### BEN-193, fifth instance — and this one is a DENOMINATOR, not a coverage gap
+
+Measured by Session C on 2026-08-12: the quoted set's overlap with the existing HPSS archive is **zero
+files, zero bytes**, both sides enumerated (`hsi -q 'ls -1'` over every directory under `~/`, 241 objects,
+intersected by basename against the 36). **So the incremental ask is the full 0.322 TB.**
+
+**The error was Session A's, and C over-attributed it to itself.** C's original message said the 0.874 TB
+meant *"part of the bulk is covered"* — correct and scoped. **A then wrote to the mediator and to Joseph
+that it *"materially reduces what any copy decision has to cover"***, which is a different and false claim:
+the 0.874 TB reduces the coverage gap over the **5.977 TB ignored set**, while the copy decision is over the
+**0.322 TB quoted set**. **Two disjoint sets, two different denominators, and A converted C's adjacency into
+a causal relationship the enumeration says does not exist.**
+
+**Why it belongs in this family rather than being ordinary sloppiness:** the hidden operand was **which
+denominator the claim was standing in**, and like every other instance it produced **no arithmetic that
+failed to reconcile** — 0.874 and 0.322 are both real numbers about real byte sets, and nothing about
+writing them next to each other is inconsistent. It was caught only when someone enumerated the
+intersection, which nobody had asked for until Joseph's condition required it.
+
+**And the direction matters: the error made the ask look smaller than it is.** An error that shrinks a
+storage request is the one a decision-maker is least likely to challenge.
+
+**Rule (v), added:** when two byte figures appear in the same paragraph, **state each one's denominator
+explicitly**. Adjacency implies relationship, and a reader — including the author — will supply the
+relationship if the text does not deny it.
+
+**Joseph's condition is what caught it.** *"Report the incremental figure after overlap; do not assume the
+overlap is zero or total."* C notes it would have guessed zero from the paths and been right by luck: *"a
+guess is not the same object as an enumeration."* The instruction was not defensive bookkeeping — it was
+the only step that could have exposed A's framing error, and it exposed it.
+
+**Where the bytes actually are, since it changes what any future storage decision is about:** 0.2299 TB of
+0.3223 — **71%** — is **four files** in `nd-unfolding/` root (the `runEventLoopOmniFold_5D_MEFHC_universes_full.root`
+family plus `runEventLoopOmniFold_PC_MEFHC.root`). The other 32 files are 0.092 TB. **If storage ever binds
+again, the decision is about four objects, not thirty-six.**
