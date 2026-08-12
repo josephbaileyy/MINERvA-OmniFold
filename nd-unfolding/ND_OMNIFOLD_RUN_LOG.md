@@ -5198,8 +5198,22 @@ Suite: `pytest nd-unfolding/tests` = **1025 collected**, 35/35 in `test_uq_remed
 ## 2026-08-11 — SCOPE CORRECTION to commit 8d0034f: it contains nine files it does not mention (Session B)
 
 `8d0034f` is titled *"BEN-106 VERIFIED by an independent reader; cause 1's path audited"* and its body
-describes only that work. **Its diff also contains nine files authored by other lanes**, swept in by my
-use of `git add -A` on a checkout four sessions share:
+describes only that work. **Its diff also contains nine files I did not author**, swept in by my use of
+`git add -A` on a checkout four sessions share.
+
+> **ATTRIBUTION CORRECTED 2026-08-11, and this is the half that was actively wrong rather than merely
+> incomplete.** This entry first said all nine were *"authored by other lanes"*. **Eight of them are
+> JOSEPH'S OWN uncommitted editing session** — verified in the raw diff rather than inherited: the added
+> lines carry `\gk{...}` advisor queries from Gregor paired with **`\jrb{Fixed!}` replies from Joseph**
+> (3 such lines, 6 `\gk{}` lines), plus a terminology sweep (`seedscan` → training-seed variation,
+> `\sqrt{\mathrm{Tr}}` → `\sqrt{\mathrm{Tr}\,C}`). Only `check_canonical_designation.py` is a peer
+> lane's (Session C's). **So this did not commit an agent's draft; it committed the USER'S in-progress
+> reply to his advisor, under a message about provenance stamps** — a materially more sensitive thing,
+> and the apology is owed to him rather than to C. Raised by the orchestrator; verified here before
+> being written, because the same message reported that its own confirming grep had returned zero from
+> over-escaping and the strings were plainly present.
+
+The nine, with correct ownership:
 
     docs/analysis-note/app_statmethods.tex          (28 lines)
     docs/analysis-note/main_note.tex
@@ -5210,6 +5224,8 @@ use of `git add -A` on a checkout four sessions share:
     docs/analysis-note/sec_results.tex
     docs/analysis-note/sec_systematics.tex
     nd-unfolding/pet/check_canonical_designation.py (261 lines — Session C's)
+
+The eight `.tex` files are **Joseph's**; the one `.py` is **Session C's**.
 
 **Mine in that commit are only:** `VALIDATION_LEDGER.md`, `docs/orchestration/CRITERIA-…-1-2-3-4-6.md`,
 `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` and
@@ -5222,8 +5238,9 @@ work to correct a record — the wrong trade, and this repo's convention is to l
 and index the correction. This entry is that index.
 
 **The cost is attribution, not content:** `git log --follow` on eight manuscript files and one PET script
-now answers *"why did this change?"* with a message about provenance stamps. And it committed another
-lane's in-progress manuscript prose on their behalf, at a moment they did not choose. BEN-113.
+now answers *"why did this change?"* with a message about provenance stamps. **And it committed the
+user's own in-progress replies to his advisor, at a moment he did not choose** — which is not a
+filing error. BEN-113.
 
 **The check that would have caught it is not `git status` but `git diff --cached --stat`** — what the
 commit will *contain*, rather than what the tree *has*. Those differ exactly when someone else is working,
