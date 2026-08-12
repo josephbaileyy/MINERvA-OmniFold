@@ -311,6 +311,42 @@ row whose `slurm_job` contains the id and whose `verdict`/`end_utc` is non-empty
 `RUNS.tsv` is written for every job, so a ledger-only verdict would under-report. That is the safe
 direction and the same direction the step errs in today, but it should be checked, not assumed.
 
+## V14 — Session C's canonical-designation count (32) → **PASS on the count, BLOCK on the corpus, UNRESOLVED on the class**
+
+Filed as **BEN-095**. Commissioned by A. Five instruments, none of them C's script.
+
+**(1) No site 33 in the declared corpus — PASS.** Instruments: strict matcher run *outside* `.py`/`.sh`;
+an inverse pass enumerating everything the matcher structurally cannot see (93 lookahead misses, 3
+lookbehind rejections); a composed-name search; a filesystem check under `nd-unfolding/pet/`; and
+`git log -S --diff-filter=D` for renamed-away sites. All 96 unseen occurrences triage correctly as
+class-4 module names, backticked prose, or the directory-independent basename
+`pet_fullevent_nominal_weights.npz`. **The dangerous class-3 form does not occur** — there is no
+unquoted end-of-line `X=${PET}/fullevent_nominal`; all four directory compositions end in a quote and
+the matcher sees them. **32 is right for its corpus.**
+
+**(2) The corpus is narrower than the claim — BLOCK.** `_tracked()` is `git ls-files "*.py" "*.sh"`,
+while the docstring asserts *"every occurrence in the tree must appear in the inventory"* and rests the
+designation's safety on completeness. The **same matcher** finds **74 occurrences in 33 tracked files**
+outside that corpus. Almost all are genuinely `RECORD`, so the dispositions are cheap — the defect is
+the unstated scope. A file whose subject is that implicit exclusions hide real sites carries one in its
+own corpus definition. Same shape as BEN-090 and BEN-092: the range was argued over, the corpus was not.
+
+**(3) A fifth spelling class — UNRESOLVED, and unresolvable statically.** The namespace arrives from a
+**data file at run time**: `train_fullevent_nominal.py:529,534` stamps `weights_folder` and
+`step2_checkpoint` as absolute paths into the artifact's own `inference_contract`, and
+`extract_fullevent_fps.py:243` does `ckpt = contract["step2_checkpoint"]` → `model.load_weights(ckpt)`.
+Verified path-key reads: `gate_ab_push_provenance.py` 3, `extract_fullevent_fps.py` 2,
+`step1_increment_trajectory.py` 1, `step1_pull_push_decomposition.py` 1. No source-text matcher over any
+corpus can see these. **Not hypothetical — BEN-133 already proved it**, and it does not raise an error
+because the path it names exists.
+
+**This cuts in C's favour on the decision and against the number.** Designation-without-moving is safe
+precisely because a consumer resolves the contract of whichever artifact it is handed — BEN-133's own
+argument, independently corroborated here. But it means the checker is the deliverable and 32 is a
+snapshot, which is C's stated position, now corroborated rather than asserted.
+
+Nothing edited; `nd-unfolding/pet/` is C's.
+
 ## V9 — the rest of the sweep → **NOT RUN. UNRESOLVED, and its silence means nothing**
 
 Corpus defined and routed (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reviewed by A, three of
