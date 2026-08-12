@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "receipt_type": "terminal-reconciliation",
+  "recorded_at_utc": "2026-08-12T00:12:42Z",
+  "event": {
+    "event_id": "evt-hpss-protect-p3f-56692312",
+    "event_sha256": "e9bef8b4e165575ab4579c682196580bf91b5bc156e209fe279366528518db87",
+    "watch_id": "hpss-protect-p3f-56692312",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-12T00:10:12+00:00",
+    "read_exactly_once": true,
+    "validated": true,
+    "schema_note": "The emitted schema names the discriminator event_type rather than kind; watch, job, state, and exit-code bindings are valid."
+  },
+  "slurm": {
+    "job_id": "56692312",
+    "job_name": "hpss_p3f_fe",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "01:26:34",
+    "start": "2026-08-11T15:39:14",
+    "end": "2026-08-11T17:05:48",
+    "qos": "xfer",
+    "allocated_tres": "billing=2,cpu=2,mem=4G,node=1"
+  },
+  "launcher": {
+    "path": "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh",
+    "commit": "6dc863b329fe138d210aa65fb1d35ced0ccf3e4a",
+    "sha256": "f1e8fda5a81b7ed7b51bc4fc5ce1852ee8fd529ef218e8f132c8762e037e9ce2"
+  },
+  "artifacts": {
+    "manifest": {
+      "path": "nd-unfolding/p3f_pet_fullevent/HPSS_ARCHIVE_MANIFEST.slurm-56692312.json",
+      "size_bytes": 72139,
+      "sha256": "c9e1902e426eaf2191ea9a357fb3bbf07acc413a30aae1794affb88b94f16ebe"
+    },
+    "stdout": {
+      "path": "nd-unfolding/p3f_pet_fullevent/logs/hpss_protect_56692312.out",
+      "size_bytes": 460,
+      "sha256": "2af824c0f72a37103648566764fbc0dc75cd93ae059078ae780ad5586cb8237a"
+    },
+    "stderr": {
+      "path": "nd-unfolding/p3f_pet_fullevent/logs/hpss_protect_56692312.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole_stream_log": {
+      "path": "nd-unfolding/p3f_pet_fullevent/logs/hpss_protect_56692312.log",
+      "size_bytes": 124502,
+      "sha256": "825e92823870e6b36ef15ba9ef2e3916ed2584af13174f7a850bc7b11d6355b8"
+    }
+  },
+  "archive": {
+    "schema": "p3f-pet-fullevent-hpss-archive-v2-digest",
+    "hpss_dir": "mnv-p3f-pet-fullevent-final",
+    "source": "nd-unfolding/p3f_pet_fullevent/final",
+    "n_root_files": 120,
+    "n_gate3_receipt_jsons": 120,
+    "n_files": 240,
+    "n_unique_names": 240,
+    "n_archived_digest_verified": 240,
+    "n_not_archived": 0,
+    "not_archived": [],
+    "complete": true,
+    "all_local_and_hpss_sizes_match_and_are_positive": true,
+    "all_local_and_server_side_hpss_md5_values_match": true,
+    "all_entries_archived_digest_verified": true,
+    "marker_errors": 0,
+    "runlog_ok_lines": 240,
+    "runlog_skip_lines": 0,
+    "runlog_fail_lines": 0,
+    "resume_required": false
+  },
+  "verdict": "HPSS_DIGEST_ARCHIVE_COMPLETE",
+  "scientific_scope": "The selection-complete detector-sample half of quarantine cause 5 is now protected off purgeable scratch. Cause 5 remains OPEN on its joint nuisance/retraining construction half.",
+  "adopts_nothing": true,
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "persistent_worker_uuids_preserved": true
+}

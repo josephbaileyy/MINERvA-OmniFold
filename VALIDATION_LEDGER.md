@@ -311,6 +311,16 @@ and **not** for the covariance the note would publish. BEN-106.
 
 ## 2026-08-11 cause 5's construction defect sized — VERIFIED DIAGNOSTIC, recoil, NOT QUOTABLE
 
+**Preservation gate — VERIFIED, no scientific promotion.** HPSS transfer job `56692312` archived all
+**120 selection-complete full-event detector endpoint ROOTs and their 120 Gate-3 receipts**. Manifest
+`HPSS_ARCHIVE_MANIFEST.slurm-56692312.json` reports `complete=true`, **240/240** server-side HPSS MD5
+matches plus size readbacks, and an empty `not_archived` list; independent reconciliation also required
+240 unique names, 120 `.root` plus 120 `.json`, positive matching sizes, matching 32-hex digests, and
+zero marker/log failures. Receipt:
+`docs/orchestration/state/hpss-protect-p3f-complete-56692312.json`. This protects the already-satisfied
+detector-sample half of cause 5 from scratch purge. It does **not** repair or discharge the still-open
+joint nuisance/retraining construction half and adopts no covariance.
+
 Cause 5 of the 2026-07-12 quarantine (below, `:65-88`) requires a **joint** nuisance/retraining
 construction: `δ_u = x_u^{varied+retrained} − x_CV` as one object. The historical recoil-PET
 assembly instead sums `C_syst` (from `s_u = x_frozen − CV`) and `C_retrain` (from
