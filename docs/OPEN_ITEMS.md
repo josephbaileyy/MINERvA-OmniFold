@@ -827,10 +827,34 @@ spare hour:**
 - **Existing artifacts are not migrated by a code change.** Every npz already written keeps its absolute
   path, so the fix must either tolerate both forms or come with a documented migration — and rewriting
   the contract inside an existing npz **changes its digest** and invalidates every receipt binding it,
-  including the four from job `56691812`.
+  ~~including the four from job `56691812`~~.
+
+  > **CORRECTED 2026-08-12 (BEN-138), and the correction INVERTS the reason.** The four `56691812`
+  > receipts do **not** bind that npz by digest — they carry **no digest of anything** (a scan for any
+  > 32–64-hex token returns none in all four). Three reference the artifact by **absolute path only**
+  > (`GATE_AB_PUSH_PROVENANCE`'s `artifact`, both trajectories' `weights`) and the fourth does not
+  > mention it. So a rewrite would **not** invalidate them — **it would leave all four silently pointing
+  > at changed content**, which is BEN-133's repoint class one level in. The stated risk was
+  > *invalidation*, which is loud and self-announcing; the real risk is *silent drift*, and the receipts
+  > offer **no protection against it**. That is a stronger reason not to rewrite in place, arrived at
+  > from the opposite direction — so the conclusion stands and the argument for it was backwards.
 - The safe sequencing is therefore: read-time resolution that **prefers a relative/derived location and
   falls back to the stored absolute one**, so old artifacts keep working and new ones stop being
   relocatable-into-wrongness.
+
+**OWED BY THE NEXT GATE-4 RE-ISSUE — recorded here because the last time a re-issue debt was not
+recorded, nine consecutive receipts carried the stale text**
+(`FINDING-20260811-gate4-prerequisite-points-at-a-deleted-blocker.md`). The live receipt
+`state/p3f-pet-gate4-launch-code-gate-20260812.json` has `gate_state.quotability` ending: *"iteration 0
+carries a +11.01% overshoot that is larger than the predecessor's and **remains unexplained**."* **That
+is now false** — BEN-137 explains it: the anneal declares `applies_from_iteration = 1`, so iteration 0
+of the treatment was trained in the control's configuration and the gap is a failed null control, not an
+anneal effect. The successor owes two changes: strike "remains unexplained", and add the caveat the line
+does not currently carry — **REPAIRED rests on the signs, not on the magnitudes** (n = 1 training run per
+arm against an unmeasured between-run term of at least 0.155 in `push`). **The receipt is NOT edited**
+and its verdict does not move: it errs safe, since every correction here argues *against* quoting a
+product and the line already declines to quote one. Committed receipts are not rewritten to match a
+later state.
 
 **Interim mitigation, already in place and cheap** — a runtime identity guard rather than a path fix.
 `inversion_screen.py`, `leg_mismatch.py` and `push_vs_acceptance.py` assert fold-forward
