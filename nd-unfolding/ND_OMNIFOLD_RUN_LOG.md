@@ -5359,3 +5359,42 @@ nothing. Filed by B as BEN-115 at `3292345`.
 
 This entry itself was written to the working tree and committed with `git commit -F <file> --
 <pathspec>`, with no `git add`.
+
+## 2026-08-12 — scope correction: `f7ccdd8` carries B's BEN-116, and the precondition is also TOCTOU
+
+Filed by Session A against its own commit. **Not amended, not reverted** — it is pushed, and B's
+BEN-116 content is intact inside it. Only the attribution is wrong.
+
+`git show f7ccdd8 -- docs/orchestration/FINDINGS.md | grep -E '^[+-]\| BEN-[0-9]+'` returns three
+lines: `+| BEN-116` and a `-`/`+` pair on `BEN-134`. Both are B's. The commit message describes an
+id-block table and nothing else.
+
+**Why this is a finding and not a repeat.** The precondition B had just written into BEN-115 — verify
+the shared file is clean in the working tree immediately before naming it — was applied exactly:
+`git status --porcelain -- docs/orchestration/FINDINGS.md` returned empty, then
+`git commit -F <file> -- <pathspec>` with no `git add`. B edited the file inside that window and the
+pathspec form took the working-tree lines. **So the precondition is itself a read of shared state with
+a window before the write** — the same sentence that was written about `git diff --cached --stat` two
+hours earlier, now true of its own replacement.
+
+Third layer of one defect. `git add -A` → stage by path → split by hunk → staged-diff read →
+clean-tree precondition: every step narrowed *what you name* and none removed the window.
+
+**Surviving rule, superseding the pre-commit forms:**
+
+1. Nothing done **before** the commit closes the window on a contended file. Not `add -A`, not
+   path-granular staging, not hunk splitting, not `git diff --cached --stat`, not the clean-tree check.
+2. `git commit -- <pathspec>` still helps substantially, but only for files you **do not name**. For a
+   named file it takes the working tree, staged or not (B's T2, D's T2, reproduced by A).
+3. **Read the committed contents afterwards, every time, and file a scope correction when it fires.**
+   A detector, not a preventer — and the only technique that has caught an absorption at the moment it
+   happened rather than hours later. It has now done so twice, including here.
+
+**Five absorption events across four lanes in one night:** `8fd1e08` (B's subject, A's files),
+`7b26803` (D's subject, C's BEN-137 row), `7c3f617` (C's subject, B's BEN-114 amendment), one of D's
+ten found by D's own T2 audit, and `f7ccdd8` (A's subject, B's BEN-116). Every one by a session
+applying the then-current published remedy, and the last by the session that had just relayed it.
+
+Detected post-hoc by `git show HEAD -- <path> | grep -cE '^[+-]\| BEN-[0-9]+'` returning 3 where 0 was
+expected, seconds after the commit. This entry was written with the same procedure and checked the
+same way.
