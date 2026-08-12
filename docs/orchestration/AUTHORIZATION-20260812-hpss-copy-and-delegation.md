@@ -22,7 +22,24 @@ not a licence: the escalation bar has not moved, but the cost of clearing it has
 lane's existing path — the `56692312` pattern, server-side `hashcreate` against a local md5, marker written
 only on a verified digest match.
 
-**Conditions carried forward, unchanged and still binding:**
+**ATTRIBUTION OF THE CONDITIONS BELOW — CORRECTED 2026-08-12, and the correction is against Session A.**
+Joseph's words on the copy are four: *"yes, authorize it."* **He did not author any of the conditions in
+this list and did not see their wording.** They are `[MEDIATOR]`-class text the mediator appended in
+`e892c6e9`, carried forward by it and adopted by A. Two of them originate with Session C (local receipt,
+HPSS path).
+
+**A stated the overlap condition as *"Joseph's words via the mediator"* in a message to Session C, and told
+Joseph *"your condition is what exposed it."* Both are false.** This is the mirror of the error A refused
+from the mediator earlier — *"Joseph confirms you have bypass permissions"* — running the other way, and it
+is **equally corrosive**: crediting him for a mediator-authored instruction teaches a future session that he
+specified something he never saw, and teaches it to weight the next unbacked line accordingly.
+
+**Distinguish from the `n_throws` bar, which WAS his:** the mediator proposed it and he approved it
+explicitly — *"authorize it with that condition"*. That carried his authority. This did not. So the correct
+statement is **not** *"the second time one of his pre-committed conditions earned its keep"* — it is the
+**first time one of the mediator's did.**
+
+**Conditions carried forward, unchanged and still binding — `[MEDIATOR]`/Session C authored, A adopted:**
 - **Home is NOT a destination** (~40 GB, and the set is 8.05× that).
 - **The receipt is written LOCALLY** (Session C's amendment), so the copy does not perturb the inventory
   just taken. The cluster tree stays read-only.
