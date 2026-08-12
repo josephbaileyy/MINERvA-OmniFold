@@ -5194,3 +5194,43 @@ recorded open in this file. Declaring the first discharge of the 2026-07-12 quar
 consequences and is not a session's call to make at the end of its own work.
 
 Suite: `pytest nd-unfolding/tests` = **1025 collected**, 35/35 in `test_uq_remediation.py`.
+
+## 2026-08-11 — SCOPE CORRECTION to commit 8d0034f: it contains nine files it does not mention (Session B)
+
+`8d0034f` is titled *"BEN-106 VERIFIED by an independent reader; cause 1's path audited"* and its body
+describes only that work. **Its diff also contains nine files authored by other lanes**, swept in by my
+use of `git add -A` on a checkout four sessions share:
+
+    docs/analysis-note/app_statmethods.tex          (28 lines)
+    docs/analysis-note/main_note.tex
+    docs/analysis-note/paper_body.tex
+    docs/analysis-note/sec_3d.tex
+    docs/analysis-note/sec_experiment.tex           (an in-progress \jrb{} reply to an advisor query)
+    docs/analysis-note/sec_method.tex
+    docs/analysis-note/sec_results.tex
+    docs/analysis-note/sec_systematics.tex
+    nd-unfolding/pet/check_canonical_designation.py (261 lines — Session C's)
+
+**Mine in that commit are only:** `VALIDATION_LEDGER.md`, `docs/orchestration/CRITERIA-…-1-2-3-4-6.md`,
+`nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` and
+`nd-unfolding/tests/test_uq_remediation.py`.
+
+**NOT REVERTED, deliberately.** All nine are legitimate work that landed correctly; three commits from two
+lanes now sit on top (`461ba00`, `a8e1d70`, `19ff8b6`), and C has since referenced
+`check_canonical_designation.py` in two further commits. Reverting to fix an attribution would break live
+work to correct a record — the wrong trade, and this repo's convention is to leave written history written
+and index the correction. This entry is that index.
+
+**The cost is attribution, not content:** `git log --follow` on eight manuscript files and one PET script
+now answers *"why did this change?"* with a message about provenance stamps. And it committed another
+lane's in-progress manuscript prose on their behalf, at a moment they did not choose. BEN-113.
+
+**The check that would have caught it is not `git status` but `git diff --cached --stat`** — what the
+commit will *contain*, rather than what the tree *has*. Those differ exactly when someone else is working,
+which on this checkout is always.
+
+Found by acting on the orchestrator's instruction to verify the shared index before committing, after
+Session C's isolated-index remedy failed silently on first use (`12ef478`). `git update-index --refresh`
+reported `sec_experiment.tex: needs update` — a file I had never opened — which is what exposed this.
+**Two lanes, two different staging mechanisms, the same outcome the same night: a commit containing more
+than its author knew.** That is the shared checkout being a concurrency hazard rather than two slips.
