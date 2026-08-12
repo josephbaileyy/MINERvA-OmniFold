@@ -423,5 +423,75 @@
     "the_manifest_s_OWN_selection_verbatim": "\"npz whose FILENAME contains 'slab' OR whose immediate DIRECTORY name does, plus every bank flux_univ_ratio.npy, plus any --extra. ... Deliberately EXCLUDED: the banks' per-universe sig_*/td_* arrays (26-37 GB each), which are re-THROW inputs, not inputs to this post-hoc rescale.\"",
     "correction": "'Zero ROOT files' is a property of the manifest's SELECTION, not a coverage gap. It is an npz-only sweep BY DESIGN, scoped to 'the throw slabs the J28 re-roll and the niter=3 budget recompute both consume', and it bounds itself by ROLE -- it also excludes 26-37 GB bank arrays on the same reasoning. The manifest did not miss ROOTs; it was never asked about them.",
     "WHY_THIS_STRENGTHENS_RATHER_THAN_WEAKENS_THE_FINDING": "The exposure is larger than 'one file a sweep missed'. The 2.68 GB unified covariance ROOT is outside EVERY protection scope that exists: no digest, no off-scratch copy, no mention in its own archive's provenance note, and no sweep whose selection was ever supposed to include it. A missed file implies a sweep that would catch it next time. This has none."
+  },
+  "CRITICAL_AMENDMENT_2026-08-12_THE_ENUMERATION_ITSELF_WAS_SCOPED": {
+    "headline": "This artifact reported 2,774,216,317 uncommitted bytes. The real figure is 6,001,191,458,767 -- 6.0 TB across 19,570 files. THE INVENTORY UNDERSTATED THE EXPOSURE BY ~2,163x.",
+    "mechanism": "`git status --porcelain --untracked-files=all` DOES NOT REPORT IGNORED FILES, and `.gitignore:2` is `*.root`. Measured with `--ignored=matching`: 14,179 ignored status entries expanding to 19,570 files and 6,001,191,458,767 bytes. Every ROOT product in the tree was invisible to the enumeration.",
+    "the_object_I_called_96_5_percent": "`unified_throw_cov_5d.root.prehm` is 96.5% of the bytes `git status` could see and 0.045% of the bytes that are actually uncommitted. The share was true of the instrument, not of the tree.",
+    "and_the_LIVE_ADOPTED_COVARIANCE_WAS_INVISIBLE": "`nd-unfolding/uq_5d/unified_throw_cov_5d.root` -- the covariance that IS quoted -- is ignored by `.gitignore:2:*.root`, is not tracked, and does not appear in `git status` at all. It never appeared in this inventory, and it had no digest either. It does now: sha256 038c613208f08d1873cc92c82d7d2f2d458ed9b2319992478c76430aa4bc01ac, 2,677,168,123 bytes, mtime 2026-07-13T09:15:41Z, read in 15.22 s.",
+    "largest_ignored_objects_bytes": {
+      "nd-unfolding/runEventLoopOmniFold_5D_FPS_MEFHC_universes_full.root": 192868793175,
+      "nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root": 171117093365,
+      "2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": 171117087867,
+      "nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root": 169974191800,
+      "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root": 113496440965
+    },
+    "THIS_IS_THE_SAME_DEFECT_I_CORRECTED_IN_SOMEONE_ELSES_WORK_AN_HOUR_EARLIER": "`manifest_scope_correction` above records that slab_manifest_20260806.json's 'zero ROOT files' was SCOPE BY DESIGN rather than oversight, and I corrected this artifact for having presented it as a gap. My own enumeration excluded ROOT files by scope-by-design too -- `.gitignore:2:*.root` -- and I presented its output as 'the uncommitted working tree'. I filed that correction and committed the identical error in the same artifact, one level up: there on the HASHING coverage, here on the ENUMERATION coverage. BEN-077's rule reaches the enumerator as well as the hasher.",
+    "what_survives_unchanged": [
+      "The 12 tracked modifications and their base/current blob hashes: unaffected, git tracks them regardless of .gitignore.",
+      "The 2,464 non-ignored untracked files and their classification: correct AS A CLASSIFICATION OF THAT SET.",
+      "The 20-cited-untracked-code-files finding: unaffected -- .py and .sh are not ignored.",
+      "The expired ISSUE-34 blocker: unaffected.",
+      "Every by-category and by-lane byte figure: correct for the non-ignored set, WRONG as a statement about the tree. Read them as scoped."
+    ],
+    "what_must_be_redone": "A byte-level inventory of the 6.0 TB ignored set, by lane and by protection status. NOT attempted here: it is a different job from this one, its I/O cost is not the 2.7 s of this pass, and salvage remains gated. Reported as owed rather than silently folded in."
+  },
+  "oi17_probe_result": {
+    "authorization": "AUTHORIZATION-20260812-worktree-confirm-and-oi17-probe.md (eb3b142), Joseph verbatim, condition attached",
+    "conduct": "READ-ONLY. Size and mtime identical before and after on both files; no cluster write of any kind.",
+    "ingredients_as_required": {
+      "command_root": "$ROOT628_PREFIX/bin/python3 running ROOT.TFile.Open(path,'READ') (script /tmp/oi17_read.py)",
+      "module_load": "conda env /global/homes/j/josephrb/.conda/envs/root_6_28 via setup_salloc_env.sh; uproot absent (measured), so PyROOT was required",
+      "host": "login32",
+      "probe_start_utc": "2026-08-12T12:41:12Z",
+      "probe_end_utc": "2026-08-12T12:41:39Z",
+      "size_at_probe": 2677339273,
+      "mtime_at_probe": "2026-08-06T16:50:59Z",
+      "sha256": "2601f3b445b6e0e41f668a9ad5d6beb4a2d67de9f62a2f7b1bce21effa220791",
+      "root_wall_seconds": 8.268103552,
+      "sha_wall_seconds": 15.766789467
+    },
+    "io_cost_actual_vs_bound": "The ~75 s upper bound was beaten by ~4.8x: 15.77 s for 2.68 GB = ~170 MB/s. AND the premise that both legs are full reads is WRONG -- ROOT's read is LAZY (header + 6 keys, 8.27 s including interpreter startup and rootmap warnings), so the pair cost ~24 s rather than two full reads. The one-pass economy was real but smaller than argued.",
+    "n_throws": 160,
+    "WHY_160_ANSWERS_NOTHING": "BEN-033's entire subject is that this exact field lies: the ADOPTED unified_throw_cov_5d.root also reports n_throws = 160 and was built from 122, because slabs 31-39 were lost. Confirmed in this probe -- both files report 160. The pre-committed no-adoption bar earned its keep immediately, because the convenient answer is precisely the field already proven to be a false witness.",
+    "discriminators_that_DO_work": {
+      "sqrt_tr_unified_prehm": 4.120896152789111e-38,
+      "sqrt_tr_unified_adopted": 4.4607819710748654e-38,
+      "prehm_vs_adopted_percent": -7.62,
+      "BEN_033_recorded_before_vs_adopted_percent": -2.62,
+      "numeric_reading": "-7.62% is not -2.62%, so the prehm is not the 122-throw 'before' BEN-033 describes.",
+      "keys_prehm": [
+        "C_unified",
+        "C_blocksum",
+        "C_cross",
+        "sqrt_tr_unified",
+        "sqrt_tr_block",
+        "n_throws"
+      ],
+      "keys_adopted": [
+        "C_unified",
+        "C_blocksum",
+        "C_cross",
+        "sqrt_tr_unified",
+        "sqrt_tr_block",
+        "n_throws",
+        "fixed_seed_null_norm",
+        "hJointMeanShift",
+        "joint_mean_shift_norm"
+      ],
+      "structural_reading": "The prehm LACKS fixed_seed_null_norm, hJointMeanShift and joint_mean_shift_norm -- the remediation's own additions (throw-mean centering plus a separate mean-shift diagnostic, CORRECTED_UQ_PRODUCTION_STATUS.md:185-195). So the prehm is PRE-REMEDIATION: an older CONSTRUCTION, not a fuller ENSEMBLE."
+    },
+    "VERDICT": "CANDIDATE FAILS ON THE MERITS, not merely on the bar. It does not answer OI-17. n_throws=160 is uninformative by BEN-033; its sqrt_tr offset does not match the missing 'before'; and it lacks three keys the adopted file has, placing it before the remediation that defines the current construction. Nothing would be computed from it. Joseph's 'revisit if new information comes up' clause is noted, and the new information points AWAY from adoption.",
+    "condition_status": "The four-part bar -- sha256, off-scratch copy, manifest entry, provenance note -- is MOOT for adoption since the candidate failed. One part is satisfied anyway: it now has a digest. No off-scratch copy was made; that is a write and was not authorized."
   }
 }
