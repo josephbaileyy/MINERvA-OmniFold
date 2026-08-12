@@ -132,6 +132,9 @@ def joint_throw_covariance(throws, cv):
 # unambiguously below it, and the measured 4.69x is unambiguously above it. It is deliberately not
 # tuned to sit just under 4.69x -- a threshold placed to make today's answer come out right is not a
 # criterion. Anyone changing it should change it here, where one test pins the boundary explicitly.
+# CONFIRMED 2026-08-11 as the campaign's number, and still recorded as SET by this lane rather than
+# inherited: the predeclared rule never carried a value, so this is a codification with an owner and
+# a date, not a fact recovered from the record.
 F7_FLOOR_MULTIPLE = 2.0
 
 

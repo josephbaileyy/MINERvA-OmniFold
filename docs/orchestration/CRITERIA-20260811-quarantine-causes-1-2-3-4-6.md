@@ -551,7 +551,9 @@ to take.** The two ranges have also already overlapped, which is why 070+ is occ
 Taking `089` is `max(existing)+1`, which is precisely the allocation the header forbids and which has
 already produced one renumber (`BEN-077→061 …`) and one near-collision. So:
 
-**This session allocates from `BEN-100+`, leaving 089–099 as a deliberate unused buffer so the block
+**RESOLVED 2026-08-11: the orchestrator bounded the blocks — `D = 090-099`, `B = 100-129`, `C = 130-159`.** The buffer this section proposed at 089–099 became D's block and is in use; nothing collided, which BEN-105 records as luck with a good outcome rather than a working process.
+
+**This session allocated from `BEN-100+`, leaving 089–099 as a deliberate unused buffer so the block
 boundary is visible rather than inferred.** Stated here rather than done silently, and routed to A for
 confirmation. The six findings in §4 will take `BEN-100`–`BEN-105` once A confirms; they are written up
 here in full so that nothing is lost if the block is reassigned.
