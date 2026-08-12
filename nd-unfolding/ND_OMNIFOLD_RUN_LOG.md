@@ -5281,3 +5281,43 @@ Routed to the orchestrator as a correction to a number it was carrying. The tran
 BEN-114: **quote the invocation with the count**, because a subtree count laundered into a repo-wide
 claim is an artifact asserting a state it cannot have, and on a shared checkout the scope you omit is
 systematically the other lanes'.
+
+### Amendment — the cluster verification confirmed the headline and reproduced the finding (BEN-114)
+
+The orchestrator had cluster reachability and ran it rather than routing it:
+
+    /usr/bin/python3.11 -m unittest discover -p "test_*.py"   [cluster docs/orchestration]
+    -> Ran 99 tests in 1.494s / OK / exit 0
+
+**The 20 pass on Perlmutter.** `/usr/bin/python3.11` exists there, the dispatch path resolves, and all 20
+were confirmed inside that corpus by the 17/2/1 file split rather than assumed. **Environmental
+diagnosis: CONFIRMED. My UNVERIFIED above is discharged.**
+
+The run also disclosed **99 cluster vs 106 local**, attributed to module-level `def test_` functions that
+`unittest discover` cannot collect. **That attribution does not survive checking, and the real cause is
+the one this campaign already knows about:**
+
+| check (local, this turn) | result |
+|---|---|
+| `pytest docs/orchestration --collect-only` | 106 |
+| node ids matching `::Class::method` | **106** |
+| node ids matching `^file.py::function$` | **0** |
+
+Every test in that tree is a `TestCase` method, so `discover` can see all 106. The 7 are **`4ff5d47`'s
+`ScanPerWatchIsolationTests`** — 7 methods, in the wakerctl scan() guard commit **deliberately not
+deployed to the cluster**. Local per-file: 54 + 31 + 8 + 8 + 3 + 2 = 106; a cluster tree predating that
+commit holds 47 in `test_wakerctl.py` and totals 99. Discriminator routed to the orchestrator:
+`grep -c "def test_"` on the cluster file, or its `git log --oneline -1`. **Stated as hypothesis pending
+that one command, not as established.**
+
+**Two consequences.** (1) The verification of BEN-114 was scoped by an unnamed argument, same as the
+finding it verified — but the argument was the **tree**. On the known local/cluster fork the working tree
+is part of the invocation exactly as a path is, and it is the part nobody quotes. Rule (iv): quote the
+revision with the invocation. (2) The sharper one — **the 7 tests missing from the cluster run are the
+guard tests for the fix missing from the cluster.** Not "7 tests were outside the invocation" but "the
+cluster runs the unguarded wakerctl, and the tests that would prove the guard works are absent because
+the guard is." That is the sentence to carry, and it strengthens rather than weakens the case for
+deploying `4ff5d47`.
+
+The peer's headline survived and its explanation did not. Re-deriving the operands locally is what
+separated them; agreement would not have.
