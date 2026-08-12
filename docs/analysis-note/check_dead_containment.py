@@ -162,7 +162,20 @@ def pdf_text(pdf: Path, tmp: Path) -> str | None:
         subprocess.run(["pdftotext", "-q", str(pdf), str(dest)], check=True)
     except (subprocess.CalledProcessError, OSError):
         return None
-    return dest.read_text(encoding="utf-8", errors="replace") if dest.exists() else None
+    if not dest.exists():
+        return None
+    # AN EMPTY EXTRACTION IS NOT A SEARCH. pdftotext can SUCCEED and produce nothing -- an
+    # image-only or outlined PDF. Returning "" made `v in txt` false for every struck literal, so
+    # an outward build reported "0 of 17 struck literals": literally true, completely uninformative,
+    # and indistinguishable in the output from a real clean result. The note side was protected by
+    # its positive control; the outward builds, which are the ones this check exists to protect,
+    # were not. Found by Session D on 98b926a with a fake pdftotext that succeeded empty for
+    # main_paper.pdf only, so the note control still passed and the run still exited 0.
+    # LATENT, NOT OCCUPIED: D could not produce it from latexmk with a real PDF, only by simulating
+    # pdftotext. Same distinction as spaced (emitted by the build today) vs comment (not).
+    # Returning None routes it into the existing strict-fatal path with no new mechanism.
+    text = dest.read_text(encoding="utf-8", errors="replace")
+    return text if text.strip() else None
 
 
 _OLD_DEAD_RE = re.compile(r"\\dead\{")  # the pre-2026-08-12 pattern, kept ONLY as a power control
@@ -248,11 +261,14 @@ def main() -> int:
     ap.add_argument("--self-test", action="store_true",
                     help="run the DEAD_RE power test and exit; checks no documents")
     ap.add_argument("--source-only", action="store_true",
-                    help="DIAGNOSTIC MODE. Downgrade a missing/unreadable PDF stage from FAIL to a "
-                         "note. build_all.sh MUST NEVER pass this: under the 2026-08-12 contract "
-                         "exit 0 means BOTH the source and PDF stages ran and passed, and this "
-                         "flag exists so that a human debugging without a TeX install has a way "
-                         "to run the source half -- not so that CI can look green without PDFs.")
+                    help="DIAGNOSTIC MODE. Downgrade a missing/unreadable/empty PDF stage from FAIL "
+                         "to a note. build_all.sh MUST NEVER pass this. Contract, worded to "
+                         "match the code rather than wider than it: exit 0 means the source "
+                         "stage passed AND the PDF stage RAN over every literal it can cover. "
+                         "It does not mean every struck body was PDF-checked -- bodies with no "
+                         "decimal literal are uncoverable by construction and are reported as a "
+                         "named coverage gap, not silently. This flag is for a human debugging "
+                         "without a TeX install, not so CI can look green without PDFs.")
     args = ap.parse_args()
     if args.self_test:
         return self_test()
@@ -264,6 +280,21 @@ def main() -> int:
     macros = macro_table(note_dir)
     failures: list[str] = []
     notes: list[str] = []
+
+    # BUILDS is hardcoded, so a fourth outward-facing driver added later would be silently
+    # unchecked -- BEN-095's corpus shape, where the instrument's scope is narrower than its claim
+    # and nothing says so. Assert the dict against the tree rather than deriving it: derivation
+    # would make a new driver checked-but-unnamed, and an outward build should not become
+    # load-bearing here without someone writing down what audience it is for. (Session D's scope
+    # note on 98b926a; complete at the time, which is exactly when to pin it.)
+    on_disk = {p.stem for p in sorted(note_dir.glob("*.tex"))
+               if "\\documentclass" in p.read_text(encoding="utf-8", errors="replace")}
+    if on_disk != set(BUILDS):
+        failures.append(
+            f"BUILDS is stale: drivers on disk {sorted(on_disk)} != BUILDS {sorted(BUILDS)}. "
+            f"Unlisted={sorted(on_disk - set(BUILDS))}, listed-but-absent="
+            f"{sorted(set(BUILDS) - on_disk)}. An unlisted driver is an UNCHECKED build; add it to "
+            f"BUILDS with its audience label rather than deleting this assert.")
 
     # ---- source-level: exact, and the hard invariant ---------------------------------------
     struck_values: set[str] = set()
@@ -330,7 +361,8 @@ def main() -> int:
     else:
         note_txt = pdf_text(note_dir / "main_note.pdf", tmp)
         if note_txt is None:
-            _skipped("main_note.pdf absent or pdftotext unavailable -- PDF stage skipped")
+            _skipped("main_note.pdf absent, pdftotext unavailable, or the PDF extracted EMPTY -- "
+                      "PDF stage did not run")
         else:
             seen_in_note = sorted(v for v in struck_values if v in note_txt)
             if not seen_in_note:
@@ -345,8 +377,9 @@ def main() -> int:
                         continue
                     txt = pdf_text(note_dir / f"{driver}.pdf", tmp)
                     if txt is None:
-                        _skipped(f"{driver}.pdf absent -- {label} build NOT PDF-checked, and this "
-                                 f"is the outward-facing build the whole check exists to protect")
+                        _skipped(f"{driver}.pdf absent, unreadable, or extracted EMPTY -- {label} build "
+                                 f"NOT PDF-checked, and this is an outward-facing build the "
+                                 f"whole check exists to protect")
                         continue
                     hits = sorted(v for v in seen_in_note if v in txt)
                     if hits:
