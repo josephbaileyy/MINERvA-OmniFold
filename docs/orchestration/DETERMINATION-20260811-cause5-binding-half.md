@@ -264,12 +264,19 @@ conservatism documented**. That recommendation is **withdrawn**, and the reason 
 budget."* Joseph cited that sentence back as his reason for not waiting on a further answer. So the lane
 that wrote the scope limit proposed publishing against it, seventeen hours later, in the same lane.
 
-**And the retraction did not propagate where it mattered.** When the orchestrator asked directly which
-act (c) was, this lane answered correctly — *"(c) as worded would quote a recoil-only number; barred; not
-three-way with (a) and (b)"* — but **continued to offer (c) as a recommended option in its reports to
-Joseph**. The correction reached the peer and not the decision-maker. That is exactly the shape this
-lane filed against `ND_OMNIFOLD_STATUS.md` the same night: a retraction that propagates into one channel
-and not the one that acts on it. Filed as **BEN-139**.
+**And the withdrawal was never made to anyone.** When the orchestrator asked directly which act (c) was,
+this lane *worked out* the correct answer — *"(c) as worded would quote a recoil-only number; barred; not
+three-way with (a) and (b)"* — and **never sent it**, having been interrupted by two further messages
+which it answered instead. It then **continued to offer (c) as a recommended option in its reports to
+Joseph**, four times.
+
+> **CORRECTED 2026-08-12.** This paragraph first said *"the correction reached the peer and not the
+> decision-maker."* **It reached neither.** The orchestrator challenged the claim and measurement from
+> the sending side settled it: **of 26 messages this session sent to peers, exactly one mentions option
+> (c) — the one asserting the withdrawal had occurred.** The corrected mechanism is BEN-112's class, *a
+> print is not a check*, with reasoning in place of the print: working something out produces the whole
+> subjective experience of having settled it and is not an act in the world. Filed as **BEN-139**, whose
+> own first mechanism was this same flattering error.
 
 ### What is now true of cause 5
 
