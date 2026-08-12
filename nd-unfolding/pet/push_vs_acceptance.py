@@ -36,9 +36,43 @@ DUMP = os.path.join(ND, "g2_fullevent/input/G2_FPS_MEFHC_P12.npz")
 AMAP = os.path.join(ND, "products/pet/fullevent_fps/acceptance_map_fullevent_fps.json")
 R = 1.1240802949941018
 
+# --- CLASS-5 RUNTIME IDENTITY GUARD (added 2026-08-12) -------------------------------------------
+# This diagnostic is ABOUT the 2026-08-08 artifact and was deliberately NOT retargeted when job
+# 56563761 was promoted by designation. `canonical` no longer means "whatever is at
+# fullevent_nominal/", so a path alone no longer proves which estimator this is reading.
+#
+# No source-text checker can catch the way this breaks: the artifact's own inference_contract carries
+# ABSOLUTE checkpoint paths written at training time and read back at inference time, so a relocated
+# or swapped artifact resolves silently to a different network (BEN-133; live instance in
+# fullevent_nominal/superseded-20260806/NOTE.md). The mitigation is to assert the artifact's IDENTITY
+# from its own contents before use, which is cheap and fails LOUDLY.
+#
+# Fold-forward fingerprints, all measured 2026-08-11/12:
+#   0.7367462501305516  2026-08-08 canonical-at-the-time  <- what this diagnostic requires
+#   0.7464834064182863  2026-08-06 superseded
+#   1.0840529829474115  2026-08-10 annealed (now canonical by designation)
+EXPECTED_FOLD_FORWARD = 0.7367462501305516
+
+
+def _assert_artifact_identity(d, tol=1e-9):
+    """Fail loudly if this is not the 08-08 artifact. A wrong number is worse than an exception."""
+    got = float(d["fold_forward_sum_w_push_reco"]) / float(d["fold_forward_sum_w_reco"])
+    if abs(got - EXPECTED_FOLD_FORWARD) > tol:
+        raise SystemExit(
+            f"[identity] REFUSING TO RUN: this diagnostic is about the 2026-08-08 artifact "
+            f"(fold-forward {EXPECTED_FOLD_FORWARD!r}) but the loaded artifact has {got!r}.\n"
+            f"           artifact: {ART}\n"
+            f"           0.746483 = 08-06 superseded; 1.084053 = 08-10 annealed (canonical by "
+            f"designation since 2026-08-12).\n"
+            f"           If retargeting this diagnostic is intended, that is a decision with a "
+            f"disposition in check_canonical_designation.py, not an edit.")
+    return got
+
+
 
 def main():
     with np.load(ART, allow_pickle=True) as d:
+        _assert_artifact_identity(d)
         push = np.asarray(d["weights_push"], float)
         imc = np.asarray(d["mc_indices"])
     with np.load(DUMP, allow_pickle=True) as d:

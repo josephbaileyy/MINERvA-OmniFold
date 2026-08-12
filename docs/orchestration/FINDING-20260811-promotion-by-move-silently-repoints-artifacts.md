@@ -88,7 +88,23 @@ Design-A reproduction, the leg-mismatch and inversion screens), and silently rep
 annealed artifact would reproduce this very defect one level up — a diagnostic whose target changed
 under it while its name stayed the same.
 
-## 5. Status: the promotion is NOT performed, and this is a surfaced blocker rather than a substitute
+## 5. Status: PROMOTION PERFORMED 2026-08-12 by designation — this section is kept as the record of the pause
+
+> **UPDATED 2026-08-12. The promotion has now LANDED**, by designation, at `461ba00`: two defaults
+> retargeted, 105 occurrences across 51 files each carrying an explicit disposition, enforced by
+> `nd-unfolding/pet/check_canonical_designation.py`. The text below is the state *before* that, and is
+> kept rather than rewritten because the pause is the part worth reading — a section reading "NOT
+> performed" after it was performed is the stale-status defect this campaign keeps paying for, so it is
+> banner-corrected here rather than silently edited.
+>
+> What released it: the mechanism concern was **corroborated by a session trying to refute it** — a
+> consumer handed an artifact resolves *that artifact's* own contract, so designation-without-moving is
+> safe and never rested on the reference count being complete. And a class-5 **runtime identity guard**
+> now backs it where no checker can reach: the three 08-08 diagnostics assert fold-forward
+> `0.7367462501305516` from the artifact's own contents before use, power-tested to refuse both the
+> annealed (`1.084053`) and the 08-06 superseded (`0.746483`) artifacts.
+
+## 5(historical). Status at filing: the promotion is NOT performed, and this is a surfaced blocker rather than a substitute
 
 The promotion is authorized (`AUTHORIZATION-20260811-annealed-promotion-and-hpss.md`, verbatim
 *"promote it and launch the HPSS archive"*, first-hand, informed). The orchestrator's instruction with
