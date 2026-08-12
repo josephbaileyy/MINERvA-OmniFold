@@ -166,6 +166,7 @@ INVENTORY = {
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json": ("RECORD", None),
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json": ("RECORD", None),
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json": ("RECORD", None),
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260807.json": ("RECORD", None),
     "docs/orchestration/state/step1-dynamics-submit-56531057.json":      ("RECORD", None),
     "docs/orchestration/state/step1-ihedge-launch-56525829.json":        ("RECORD", None),
