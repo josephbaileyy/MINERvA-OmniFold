@@ -344,14 +344,14 @@
     "owner_assigned": "5D UQ lane (B) -- by directory, not filename",
     "existing_digest_reuse_attempted": true,
     "findings": [
-      "NO digest anywhere in the repo. products/slab_manifest_20260806.json carries sha256 for 548 .npz slabs (8,495,812,502 bytes) including 41 under _archive_prehm_20260711/, and ZERO ROOT files.",
+      "NO digest anywhere -- and the reason is SCOPE, not oversight. products/slab_manifest_20260806.json is an npz-only sweep by its own explicit selection (see manifest_scope_correction); it covers 548 .npz slabs (8,495,812,502 bytes) including 41 under this same _archive_prehm_20260711/, and was never asked about ROOTs.",
       "NO off-scratch copy. The manifest's verified copy is /global/cfs/cdirs/m3246/josephrb/slab-protect-20260806; a find there for *.root.prehm and unified_throw_cov_5d.root* returns nothing.",
       "NOT covered by the archive's own recorded provenance. CORRECTED_UQ_PRODUCTION_STATUS.md:193-195 describes the prehm archive as 'stale pre-remediation replicas/slabs' and names uq_5d/_archive_prehm_20260711/{uthrow,block}_slabs_5d -- the SLAB directories. It does not mention a .root.prehm.",
       "So it is unaccounted three ways -- no digest, no off-scratch copy, no mention in its own archive's note -- and it sits on purgeable scratch."
     ],
     "why_it_may_matter": "BEN-033: the adopted unified_throw_cov_5d.root records n_throws=160 while the re-roll processed 122, because slabs 31-39 were lost off this filesystem, making the adopted covariance a 76.2% subsample (OI-17 is Joseph's open decision on exactly that). A 2026-07-11 pre-remediation unified covariance MIGHT predate that loss. THIS IS A HYPOTHESIS AND IS NOT MEASURED -- deciding it needs the file opened.",
     "inspection_that_would_resolve_it": "one read-only `TFile.Open(path,'READ')` + `Get('n_throws')` in the ROOT env. NOT DONE: uproot is absent on the cluster (checked), so it needs a module load, and this lane chose to report rather than act past the review gate.",
-    "io_cost_of_hashing_it": "ONE sequential 2.68 GB Lustre read. For calibration, this inventory hashed 2,324 files / 96,877,044 bytes in 2.7 s wall. There is exactly ONE multi-GB untracked file, so 'full-tree hashing campaign' overstates it -- but it is reported and NOT run, per instruction.",
+    "io_cost_of_hashing_it": "ONE sequential 2.68 GB Lustre read. UPPER BOUND ~75 s, and quote it only as a bound: it is derived by scaling this inventory's many-small-file rate (2,324 files / 96,877,044 bytes in 2.7 s wall = 35.9 MB/s), which is a POOR predictor of one large sequential read -- small-file hashing is metadata-bound and a sequential Lustre read is not. The true figure is likely well under the bound. Correction contributed by the orchestrator, objection raised by the verifier. NOT RUN.",
     "recommendation": "Resolve the classification before anything else in this inventory. It is 96.5% of the bytes and the only candidate for 'irreplaceable'."
   },
   "citation_check": {
@@ -394,5 +394,34 @@
     "Lane assignment IS by directory, which is location rather than filename, and is stated as such.",
     "All 2,324 untracked files under 5 MB were sha256'd AND git-blob-hashed; the blob hashes are what establish canonical equivalence, since sha256 cannot be compared against git objects."
   ],
-  "per_file_records": "docs/orchestration/state/cluster-uncommitted-inventory-20260812.tsv (2464 rows; kept out of this JSON so the summary stays readable)"
+  "per_file_records": "docs/orchestration/state/cluster-uncommitted-inventory-20260812.tsv (2464 rows; kept out of this JSON so the summary stays readable)",
+  "hashing_coverage": {
+    "AMENDED_2026-08-12_ON_A_VERIFIER_CHALLENGE": "The first version of this artifact asserted 'NO digest anywhere' without shipping the coverage that claim rests on. BEN-077 applied to this inventory: a derived claim ships the operands that let a reader contradict it, and the operand of an ABSENCE claim is the coverage.",
+    "files_hashed": 2324,
+    "bytes_hashed": 96877044,
+    "files_total": 2464,
+    "files_excluded": 140,
+    "exclusion_rule_verbatim": "awk '$1 < 5000000 && $1 > 0'  -- a SIZE band only. No pattern, no name matching, no type matching.",
+    "the_140_accounted_exactly": {
+      "zero_byte": 139,
+      "zero_byte_mime": {
+        "inode/x-empty": 138,
+        "other": 1
+      },
+      "at_or_over_5MB": 1,
+      "at_or_over_5MB_paths": [
+        "nd-unfolding/uq_5d/_archive_prehm_20260711/unified_throw_cov_5d.root.prehm"
+      ],
+      "sum": "139 + 1 = 140"
+    },
+    "was_the_ROOT_class_excluded_by_my_method": "NO. Measured: 668 untracked paths contain '.root', and by final suffix they are 547 `.root.done` MARKER files (205-607 bytes), 120 `.root...json` receipts, and 1 `.root.prehm`. Only ONE is a non-text binary. All 547 markers and all 120 receipts WERE hashed. So there is exactly one ROOT binary in the untracked set and the size filter caught it -- not because it is a ROOT, but because it is the only file over 5 MB.",
+    "BUT_THE_CHALLENGE_LANDS_ON_THE_OTHER_HALF": "The verifier's hypothesis was that my hashing and the manifest skipped the same class for the same reason. It does not fire on my side. IT DOES FIRE ON THE MANIFEST'S, and my original wording was wrong about it -- see manifest_scope_correction.",
+    "self_criticism": "I asserted 'no digest anywhere' about the one object I also did not digest. Both statements are true and they are different statements; the artifact conflated them. There is still no digest for it -- including from me."
+  },
+  "manifest_scope_correction": {
+    "what_this_artifact_first_said": "slab_manifest_20260806.json carries sha256 for 548 .npz slabs and ZERO ROOT files -- reported as if ROOTs had been overlooked.",
+    "the_manifest_s_OWN_selection_verbatim": "\"npz whose FILENAME contains 'slab' OR whose immediate DIRECTORY name does, plus every bank flux_univ_ratio.npy, plus any --extra. ... Deliberately EXCLUDED: the banks' per-universe sig_*/td_* arrays (26-37 GB each), which are re-THROW inputs, not inputs to this post-hoc rescale.\"",
+    "correction": "'Zero ROOT files' is a property of the manifest's SELECTION, not a coverage gap. It is an npz-only sweep BY DESIGN, scoped to 'the throw slabs the J28 re-roll and the niter=3 budget recompute both consume', and it bounds itself by ROLE -- it also excludes 26-37 GB bank arrays on the same reasoning. The manifest did not miss ROOTs; it was never asked about them.",
+    "WHY_THIS_STRENGTHENS_RATHER_THAN_WEAKENS_THE_FINDING": "The exposure is larger than 'one file a sweep missed'. The 2.68 GB unified covariance ROOT is outside EVERY protection scope that exists: no digest, no off-scratch copy, no mention in its own archive's provenance note, and no sweep whose selection was ever supposed to include it. A missed file implies a sweep that would catch it next time. This has none."
+  }
 }
