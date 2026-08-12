@@ -136,3 +136,25 @@ stop all of them at once. The mediator recommended against flipping it today for
 agreed. Its supporting measurement, which argues the same way: at `12:31:48Z` all four branches were
 byte-identical at `fa45fc1`, i.e. **zero divergence on every lane**, while `main` moved `07059a2` →
 `fa45fc1` in nine minutes. **The reason to fix this is the write pressure, not any current divergence.**
+
+### OI-47's precondition is RESOLVED, and the answer changes what the fix is
+
+Established 2026-08-12 by the mediator session reading job state, then re-measured here across all four
+lanes. **The two readings were of different objects and both were true:**
+
+    settings   worktree.bgIsolation = <unset>   in all three config dirs; no project settings file exists
+    job state  ~/.claude-school/jobs/<id>/state.json  ->  "bgIsolation": "none"   for ALL FOUR lanes
+               (7731b75e D, a973d86c A, d9b3c3b6 C, f00bb3d3 B; in no respawnFlags either)
+
+So the dichotomy above resolves to its **first** branch: the effective value is **not read from settings at
+write time — it is recorded per job at spawn**, and every lane carries `none`. The documented `"worktree"`
+default is not what these jobs got.
+
+**The consequence is not cosmetic: setting `worktree.bgIsolation: "worktree"` in a settings file would very
+likely be a NO-OP for the four running lanes**, because they already hold a spawned value and are not
+consulting that key. It would apply to the *next* spawn. So the remedy is a **respawn-time** change, and
+verifying it means **re-reading `state.json` for the new jobs, not diffing the settings file.**
+
+**This is exactly the trap BEN-190 was filed against**, one object over: verifying a config file's contents
+rather than whether that file is in the read path. OI-47 as originally framed — *flip the key at a quiet
+point* — was set up to walk into it a second time, and would have recorded a no-op as a fix.
