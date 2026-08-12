@@ -1027,8 +1027,27 @@ largest nominal truth-space volume.
    MAT `LowRecoilPionFunctions.h:41` (`3d-unfolding/README.md:29`, the only cite that pins the
    source line; also `2d-unfolding/2D_OMNIFOLD_REFERENCE.md:346` and
    `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:18-19`). **No file in this repo says why the value is
-   1.17.** The MAT headers are not in this or any sibling checkout, so the upstream comment has
-   not been read either.
+   1.17.**
+
+   **RESOLVED-AS-UNRESOLVABLE-UPSTREAM, 2026-08-12.** Joseph read the public MAT source:
+   [`LowRecoilPionFunctions.h#L41-L49`](https://github.com/MinervaExpt/MAT-MINERvA/blob/main/calculators/LowRecoilPionFunctions.h#L41-L49)
+   **carries the bare `1.17` constant with no explanatory comment.** This supersedes the previous
+   wording, *"the upstream comment has not been read"* — the justification is **unresolved
+   upstream**, not merely uncited here. The distinction is operational rather than semantic: the
+   old phrasing pointed the next agent at a document to go and read, and that document does not
+   contain the answer, so the search it implies cannot succeed. This item is no longer blocked on
+   reading anything.
+
+   **Publication-freeze requirement, Joseph's decision 2026-08-12, verbatim in substance.** *Do not
+   change the value or launch a rerun yet.* Before publication freeze this requires **either**
+   (a) an authoritative calibration rationale or collaboration confirmation, **together with**
+   identification of the systematic that covers it; **or** (b) an explicit stated assumption plus a
+   **quantified sensitivity**. **Lineage alone is insufficient** — which is the same judgement
+   `CLAIMS.md` encodes by separating `CITED` from `ASSUMED`, now applied to a number that enters
+   every reconstructed available energy on the 3D/4D/5D `E_avail` axis. Status for publication:
+   **ASSUMED and UNRESOLVED.**
+
+   Authorization path for this entry: Joseph → Session A → Session B, 2026-08-12 (BEN-082(v)).
 
    **Why it is worth an item rather than a shrug:** the constant multiplies *every* reconstructed
    available energy, so it enters the E_avail axis of the 3D/4D/5D results directly — it is not a
