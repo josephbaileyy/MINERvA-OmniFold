@@ -1,0 +1,620 @@
+{
+  "schema": "quoted-products-hpss-protection-receipt-v1",
+  "authorization": "AUTHORIZATION-20260812-hpss-copy-and-delegation.md. Joseph verbatim 'yes, authorize it', answering the STOP as framed: 36 files, 0.322 TB, HPSS. Home refused as a destination (~40 GB, 8.05x over). The four attached conditions are [MEDIATOR]/Session-C authored and adopted by Session A -- NOT his wording; that attribution was corrected against A at 5beaed4 and the conditions still bind.",
+  "recorded_by": "Session C (PET)",
+  "git_identity": "Lane C (PET) <lane-c@minerva-omnifold.local>",
+  "job": {
+    "id": "56762440",
+    "queue": "xfer",
+    "name": "hpss_quoted",
+    "state": "COMPLETED",
+    "elapsed": "00:33:24",
+    "wall_seconds_total": 2000,
+    "launcher": "nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh",
+    "launcher_sha256": "2e5c220a68bb9c7f21166eb1a4a30e6f097e2d75c08880cc84824f32e8cfa916",
+    "launcher_sha_note": "the local file and the submitted copy hash identically; syntax-checked with `bash -n` before submission"
+  },
+  "totals": {
+    "seen": 36,
+    "verified": 36,
+    "failed": 0,
+    "skipped": 0,
+    "bytes": 322306102132,
+    "TB": 0.3223,
+    "complete": true,
+    "not_archived": []
+  },
+  "hpss_destination": {
+    "dir": "mnv-quoted-products-20260812",
+    "layout": "MIRRORS the source relative path under the repo root",
+    "distinct_hpss_paths": 36,
+    "distinct_local_md5": 36
+  },
+  "THE_COLLISION_THAT_WOULD_HAVE_DESTROYED_CONTENT": {
+    "found": "Measured BEFORE the copy ran: the 36 derived paths carry FIVE basename collisions across TEN files, and every pair is `X/` against `X/corrected/` -- the corrected and uncorrected versions of the same product, differing by about 2 KB.",
+    "why_flat_naming_fails_badly": "A flat destination would have silently overwritten five of them. It fails in the worst direction available: the survivor's size is plausible, the manifest would have claimed 36 objects while HPSS held 31, and a campaign whose entire quarantine story is which products are corrected would have archived one on top of the other. Same class as BEN-136 (names that are prefixes of one another) and BEN-133 (a silent re-point that returns a number instead of an error).",
+    "guard": "The launcher carries a FAIL-CLOSED precondition, not a comment: if a future edit reintroduces flat naming the job refuses to start.",
+    "PROVED_ON_REAL_DATA_RATHER_THAN_ARGUED": "Each colliding pair archived to a distinct mirrored path with a DISTINCT md5, so the pairs are genuinely different files and the overwrite would have destroyed content, not a duplicate. Verified independently on the HPSS side: `hsi ls -l` on the unified_throw_cov_4d.root pair returns 545,263,178 and 545,400,036 as two separate stored objects.",
+    "pairs": {
+      "uq_universe_4d_covariance_combined.root": {
+        "n": 2,
+        "distinct_md5": 2,
+        "distinct_bytes": 2,
+        "members": [
+          {
+            "source": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+            "bytes": 8355187459,
+            "md5": "854d2e3772bada6a031c2944483eee1c"
+          },
+          {
+            "source": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+            "bytes": 8355185775,
+            "md5": "6675b324a6b12be29c4faebc0ecdb925"
+          }
+        ]
+      },
+      "uq_universe_4d_covariance_combined_uthrow.root": {
+        "n": 2,
+        "distinct_md5": 2,
+        "distinct_bytes": 2,
+        "members": [
+          {
+            "source": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+            "bytes": 181811405,
+            "md5": "37d106b1cfbe650341e4b27357727480"
+          },
+          {
+            "source": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+            "bytes": 181794146,
+            "md5": "eac2b68f9c875d94330a3235fb4bed3b"
+          }
+        ]
+      },
+      "uq_universe_5d_covariance_combined_uthrow.root": {
+        "n": 2,
+        "distinct_md5": 2,
+        "distinct_bytes": 2,
+        "members": [
+          {
+            "source": "nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+            "bytes": 892233209,
+            "md5": "92093b5b3a11cb6842c112950e19a6ca"
+          },
+          {
+            "source": "nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+            "bytes": 892224371,
+            "md5": "bbf43ac459d44b0fdc6d2bd89f484980"
+          }
+        ]
+      },
+      "unified_throw_cov_4d.root": {
+        "n": 2,
+        "distinct_md5": 2,
+        "distinct_bytes": 2,
+        "members": [
+          {
+            "source": "nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+            "bytes": 545400036,
+            "md5": "e517f1eee3a7ba13ad46691eb11af4dd"
+          },
+          {
+            "source": "nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+            "bytes": 545263178,
+            "md5": "290c0ef5256228715c109dc6c64af075"
+          }
+        ]
+      },
+      "unified_throw_cov_fps.root": {
+        "n": 2,
+        "distinct_md5": 2,
+        "distinct_bytes": 2,
+        "members": [
+          {
+            "source": "nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+            "bytes": 1609132,
+            "md5": "898779265443ae0adc9adfbfd1b4166e"
+          },
+          {
+            "source": "nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+            "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+            "bytes": 1607692,
+            "md5": "b7d82a231b0c28ea1c4626dc9006dd34"
+          }
+        ]
+      }
+    }
+  },
+  "verification_method": "Per file: local md5 -> `hsi put` at the mirrored path -> md5 computed SERVER-SIDE by `hsi hashcreate` (no bytes transferred back) -> compare BOTH md5s AND the size read back from HPSS. A marker is written only on a digest match, write-to-temp + rename, so the resume guard validates COMPLETENESS not EXISTENCE (BEN-023). The manifest is built from the MARKERS, never from the loop's counters, so a crashed loop cannot claim more than was verified.",
+  "TWO_INDEPENDENT_DIGEST_FAMILIES_AGREE": "md5 here (36/36 local == server-side) and sha256 from job 56760314 (36/36), computed in separate jobs by separate tools. Every size agrees across both passes and against the 13:12Z metadata walk. Agreement across two algorithms is stronger evidence than one algorithm repeated.",
+  "rates": {
+    "copy_MB_per_s": 161.15,
+    "digest_only_MB_per_s": 223.97,
+    "note": "161 MB/s for read+transfer+server-side hash against 224 MB/s for read-only. The gap is the write side and is expected; quote whichever matches the operation being estimated. The earlier 170 MB/s figure came from a single 2.68 GB read and should not be cited for either."
+  },
+  "NOTHING_WRITTEN_TO_THE_REPO_TREE": "Launcher, path list, markers, log and manifest all live in /pscratch/sd/j/josephrb/mnv-digest-work, OUTSIDE /pscratch/sd/j/josephrb/MINERvA-OmniFold. That tree is the object of today's inventory and is under the eight-verb no-touch list; this receipt is assembled and committed on the local side.",
+  "overlap_with_prior_archive": "ZERO by enumeration. The only other bulk HPSS archive is mnv-p3f-pet-fullevent-final (240 objects, the p3f_pet_fullevent/final tree, job 56692312, 1,134,998,230,283 B) and no quoted product lives in it. So the 0.874 TB already protected did NOT reduce this ask -- it reduces the coverage gap over the whole 5.977 TB ignored set, which is a different denominator. Those two facts were adjacent in the escalation and are not the same fact.",
+  "NOT_VERIFIED": [
+    "That HPSS still returns these bytes after a tape migration. `hsi hashverify` against the stored hash answers that and needs no local copy. Owner: the PET lane, triggered by a dated OPEN_ITEMS entry rather than a wakerctl watch, because the waker runs on the frozen cluster tree.",
+    "That the 36 are the RIGHT set. They are what VALIDATION_LEDGER.md and docs/analysis-note/*.tex name by path, and 35 of the 36 are named ONLY by the ledger -- the file with no per-row id scheme, which merge_guard.sh refuses as unattributable. The derivation is reproducible; its authority is thin.",
+    "Anything about the remaining 5.65 TB of the ignored set. Step 3's disposition is still unwritten and is sequenced after review."
+  ],
+  "entries": [
+    {
+      "source": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root",
+      "bytes_local": 169974191800,
+      "bytes_hpss": 169974191800,
+      "size_agrees": true,
+      "md5_local": "60c168b9eb3ebc36ead4a63ff97b0abd",
+      "md5_hpss_server_side": "60c168b9eb3ebc36ead4a63ff97b0abd",
+      "md5_agrees": true,
+      "sha256_from_56760314": "afaaedaf745145acc29f792fcfc158e572ae27f87bfd74044c8c12a5b219c608",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/runEventLoopOmniFold_PC_MEFHC.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/runEventLoopOmniFold_PC_MEFHC.root",
+      "bytes_local": 49215205065,
+      "bytes_hpss": 49215205065,
+      "size_agrees": true,
+      "md5_local": "ea8306c3d5aabb0b1d8756939363c3f3",
+      "md5_hpss_server_side": "ea8306c3d5aabb0b1d8756939363c3f3",
+      "md5_agrees": true,
+      "sha256_from_56760314": "b51cda1176696309f63eb8c19fa2d38c9a184d34f2fd1df535d18b9a5295e3eb",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "bytes_local": 41436632945,
+      "bytes_hpss": 41436632945,
+      "size_agrees": true,
+      "md5_local": "12ccb510e362ba9d19bcaaf9b24f10f1",
+      "md5_hpss_server_side": "12ccb510e362ba9d19bcaaf9b24f10f1",
+      "md5_agrees": true,
+      "sha256_from_56760314": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "bytes_local": 9897374636,
+      "bytes_hpss": 9897374636,
+      "size_agrees": true,
+      "md5_local": "c681eeb06a0a8728f0d2384db8bd6129",
+      "md5_hpss_server_side": "c681eeb06a0a8728f0d2384db8bd6129",
+      "md5_agrees": true,
+      "sha256_from_56760314": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/pet/g2_smoke/runEventLoopOmniFold_G2_FPS_1A.root",
+      "bytes_local": 9419026130,
+      "bytes_hpss": 9419026130,
+      "size_agrees": true,
+      "md5_local": "96050f71d86ee59ef72458e4c5cc202f",
+      "md5_hpss_server_side": "96050f71d86ee59ef72458e4c5cc202f",
+      "md5_agrees": true,
+      "sha256_from_56760314": "51e46fddd061cae37704c64604f73df8bb3d739cd5420bfd21cb0d2c89db320f",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "bytes_local": 8355187459,
+      "bytes_hpss": 8355187459,
+      "size_agrees": true,
+      "md5_local": "854d2e3772bada6a031c2944483eee1c",
+      "md5_hpss_server_side": "854d2e3772bada6a031c2944483eee1c",
+      "md5_agrees": true,
+      "sha256_from_56760314": "5e9d0f0d8682f779311b021cf24f40f60e19fc2fdfa1dddfed3e30c539c219f5",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined.root",
+      "bytes_local": 8355185775,
+      "bytes_hpss": 8355185775,
+      "size_agrees": true,
+      "md5_local": "6675b324a6b12be29c4faebc0ecdb925",
+      "md5_hpss_server_side": "6675b324a6b12be29c4faebc0ecdb925",
+      "md5_agrees": true,
+      "sha256_from_56760314": "9f5c6a9d3ba46423e634263a82d58bbc02df0b5228cfeb53668e58fdebe187e2",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/of_inputs_pc.npz",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/of_inputs_pc.npz",
+      "bytes_local": 5880556108,
+      "bytes_hpss": 5880556108,
+      "size_agrees": true,
+      "md5_local": "4a9e9f43f6ecee6be4f53c0d66a21045",
+      "md5_hpss_server_side": "4a9e9f43f6ecee6be4f53c0d66a21045",
+      "md5_agrees": true,
+      "sha256_from_56760314": "0a1fe0a36206a517c87b09f2b2a60ed332ffa724aa58d7f9a0cbd5e64cafab28",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+      "bytes_local": 4825716683,
+      "bytes_hpss": 4825716683,
+      "size_agrees": true,
+      "md5_local": "e32fabd05256faaf7048b1aad6bc6059",
+      "md5_hpss_server_side": "e32fabd05256faaf7048b1aad6bc6059",
+      "md5_agrees": true,
+      "sha256_from_56760314": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/unified_throw_cov_5d.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/unified_throw_cov_5d.root",
+      "bytes_local": 2677168123,
+      "bytes_hpss": 2677168123,
+      "size_agrees": true,
+      "md5_local": "d9ee299243acdd49cc985a1eb419ea64",
+      "md5_hpss_server_side": "d9ee299243acdd49cc985a1eb419ea64",
+      "md5_agrees": true,
+      "sha256_from_56760314": "038c613208f08d1873cc92c82d7d2f2d458ed9b2319992478c76430aa4bc01ac",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "bytes_local": 2668021041,
+      "bytes_hpss": 2668021041,
+      "size_agrees": true,
+      "md5_local": "e4b01b2ad6c580516617bc76681848e5",
+      "md5_hpss_server_side": "e4b01b2ad6c580516617bc76681848e5",
+      "md5_agrees": true,
+      "sha256_from_56760314": "4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/pet/pet_4d_covariance_combined_wlat.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/pet/pet_4d_covariance_combined_wlat.root",
+      "bytes_local": 1715893301,
+      "bytes_hpss": 1715893301,
+      "size_agrees": true,
+      "md5_local": "b49954a54ef338d59e0df0e2977dee58",
+      "md5_hpss_server_side": "b49954a54ef338d59e0df0e2977dee58",
+      "md5_agrees": true,
+      "sha256_from_56760314": "2324c19d759af20beb9af15d3380e896e411bba76b7b6cdd807352204f505ea4",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/pet/pet_4d_covariance_combined.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/pet/pet_4d_covariance_combined.root",
+      "bytes_local": 1071515651,
+      "bytes_hpss": 1071515651,
+      "size_agrees": true,
+      "md5_local": "04742b8cfa05417813069342915da46d",
+      "md5_hpss_server_side": "04742b8cfa05417813069342915da46d",
+      "md5_agrees": true,
+      "sha256_from_56760314": "36c4501a55f1d8046cf0c7865530a8ffc73b414c24d4791c74fabdb708b7493f",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_cvcentered_20260806_full160.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_cvcentered_20260806_full160.root",
+      "bytes_local": 892266576,
+      "bytes_hpss": 892266576,
+      "size_agrees": true,
+      "md5_local": "87e473c174bca637e118c8dd82426059",
+      "md5_hpss_server_side": "87e473c174bca637e118c8dd82426059",
+      "md5_agrees": true,
+      "sha256_from_56760314": "61c8ee054a5bf3f1e79c9597d8248a4209ad77b115be3ffacb7525f150e22a73",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/_archive_prehm_20260713/uq_universe_5d_covariance_combined_uthrow.root",
+      "bytes_local": 892233209,
+      "bytes_hpss": 892233209,
+      "size_agrees": true,
+      "md5_local": "92093b5b3a11cb6842c112950e19a6ca",
+      "md5_hpss_server_side": "92093b5b3a11cb6842c112950e19a6ca",
+      "md5_agrees": true,
+      "sha256_from_56760314": "7e8338f9fe3a628e2258e5b0535a431445a12baef0e9af2c2d22d45e386e43a9",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root",
+      "bytes_local": 892224371,
+      "bytes_hpss": 892224371,
+      "size_agrees": true,
+      "md5_local": "bbf43ac459d44b0fdc6d2bd89f484980",
+      "md5_hpss_server_side": "bbf43ac459d44b0fdc6d2bd89f484980",
+      "md5_agrees": true,
+      "sha256_from_56760314": "98ac294f3f2c3aec58b15b965c266cbcf030eb011560b1cbeaf8794ba2a125e3",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_meancentered_20260806_full160.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/rescaled_20260806_full160/adopted_meancentered_20260806_full160.root",
+      "bytes_local": 892196879,
+      "bytes_hpss": 892196879,
+      "size_agrees": true,
+      "md5_local": "b9948697273c91fb3f99958bd54f4806",
+      "md5_hpss_server_side": "b9948697273c91fb3f99958bd54f4806",
+      "md5_agrees": true,
+      "sha256_from_56760314": "7d55a9da09fd91d17c29ebd7b60b85e9d14d8520b868ad8ab8289592e6c5648f",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "bytes_local": 892170881,
+      "bytes_hpss": 892170881,
+      "size_agrees": true,
+      "md5_local": "557b91313168799363cf366f582bd003",
+      "md5_hpss_server_side": "557b91313168799363cf366f582bd003",
+      "md5_agrees": true,
+      "sha256_from_56760314": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/pet/pet_4d_covariance_combined_rebank.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/pet/pet_4d_covariance_combined_rebank.root",
+      "bytes_local": 714104917,
+      "bytes_hpss": 714104917,
+      "size_agrees": true,
+      "md5_local": "7d2c41ae3be110d2efb431b0ba60e6d6",
+      "md5_hpss_server_side": "7d2c41ae3be110d2efb431b0ba60e6d6",
+      "md5_agrees": true,
+      "sha256_from_56760314": "2456135c8b304bc5ecc4edc3c63b69a4cc830e67bddcefa6e224ae3cefabf403",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/unified_throw_cov_4d.root",
+      "bytes_local": 545400036,
+      "bytes_hpss": 545400036,
+      "size_agrees": true,
+      "md5_local": "e517f1eee3a7ba13ad46691eb11af4dd",
+      "md5_hpss_server_side": "e517f1eee3a7ba13ad46691eb11af4dd",
+      "md5_agrees": true,
+      "sha256_from_56760314": "2207b8ae18819fe1e1bc258a8d58a7dd38a76be5ccad6c7a4880b508bd85fd13",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/unified_throw_cov_4d.root",
+      "bytes_local": 545263178,
+      "bytes_hpss": 545263178,
+      "size_agrees": true,
+      "md5_local": "290c0ef5256228715c109dc6c64af075",
+      "md5_hpss_server_side": "290c0ef5256228715c109dc6c64af075",
+      "md5_agrees": true,
+      "sha256_from_56760314": "2940ce086f6b99bc1f6244cf4225dffc225e187bed351d1e8893e99b826cc1ff",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "bytes_local": 181811405,
+      "bytes_hpss": 181811405,
+      "size_agrees": true,
+      "md5_local": "37d106b1cfbe650341e4b27357727480",
+      "md5_hpss_server_side": "37d106b1cfbe650341e4b27357727480",
+      "md5_agrees": true,
+      "sha256_from_56760314": "720ee20caa70f573fbd339f46115ef3fd1a279630b13edbf055500d3870d0467",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d/uq_universe_4d_covariance_combined_uthrow.root",
+      "bytes_local": 181794146,
+      "bytes_hpss": 181794146,
+      "size_agrees": true,
+      "md5_local": "eac2b68f9c875d94330a3235fb4bed3b",
+      "md5_hpss_server_side": "eac2b68f9c875d94330a3235fb4bed3b",
+      "md5_agrees": true,
+      "sha256_from_56760314": "3a90a91157d096ab0c2e27fa810d4d4b5b6e31f59ee3dd790cb44a54b1295a85",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/pet/pet_weights_full.npz",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/pet/pet_weights_full.npz",
+      "bytes_local": 141455862,
+      "bytes_hpss": 141455862,
+      "size_agrees": true,
+      "md5_local": "2968d8de3d12831077b9783ec32bcac1",
+      "md5_hpss_server_side": "2968d8de3d12831077b9783ec32bcac1",
+      "md5_agrees": true,
+      "sha256_from_56760314": "325bbb5e52915c634c24613c9fb29863ec4e4edf661df5ae29dd198ded98b71d",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root",
+      "bytes_local": 25092215,
+      "bytes_hpss": 25092215,
+      "size_agrees": true,
+      "md5_local": "9fef7f5ca1e3974c2c977ce1acfa153f",
+      "md5_hpss_server_side": "9fef7f5ca1e3974c2c977ce1acfa153f",
+      "md5_agrees": true,
+      "sha256_from_56760314": "3039183cf81d8d8f2cafa23f5ee836a20f1eb504e51566815a41710fb1026e56",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+      "hpss_path": "mnv-quoted-products-20260812/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+      "bytes_local": 14106315,
+      "bytes_hpss": 14106315,
+      "size_agrees": true,
+      "md5_local": "96c912c71c459fc88507ff27766c4c22",
+      "md5_hpss_server_side": "96c912c71c459fc88507ff27766c4c22",
+      "md5_agrees": true,
+      "sha256_from_56760314": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root",
+      "bytes_local": 1609132,
+      "bytes_hpss": 1609132,
+      "size_agrees": true,
+      "md5_local": "898779265443ae0adc9adfbfd1b4166e",
+      "md5_hpss_server_side": "898779265443ae0adc9adfbfd1b4166e",
+      "md5_agrees": true,
+      "sha256_from_56760314": "ecfc9f7ecb36b253f21ea7f0ae72dd67a0ad8615c0af6dd5994c0e40f1a178bf",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/uq_fps/unified_throw_cov_fps.root",
+      "bytes_local": 1607692,
+      "bytes_hpss": 1607692,
+      "size_agrees": true,
+      "md5_local": "b7d82a231b0c28ea1c4626dc9006dd34",
+      "md5_hpss_server_side": "b7d82a231b0c28ea1c4626dc9006dd34",
+      "md5_agrees": true,
+      "sha256_from_56760314": "977c236209f05ad934f03540b76c7a6a57562ae16aacfaf7bf78d16509db309c",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/4d/xsec_4d_MEFHC_ascencio_fine.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/4d/xsec_4d_MEFHC_ascencio_fine.root",
+      "bytes_local": 338837,
+      "bytes_hpss": 338837,
+      "size_agrees": true,
+      "md5_local": "377d8ed99ab270851ddcac3c3c727dca",
+      "md5_hpss_server_side": "377d8ed99ab270851ddcac3c3c727dca",
+      "md5_agrees": true,
+      "sha256_from_56760314": "d1d04c5e90a917a26496a4bb3038ae6786250b1f08becdbafbc5db8157e1d63d",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+      "hpss_path": "mnv-quoted-products-20260812/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+      "bytes_local": 320371,
+      "bytes_hpss": 320371,
+      "size_agrees": true,
+      "md5_local": "61be4fb4eefa587c9c6d4fe7c82244b6",
+      "md5_hpss_server_side": "61be4fb4eefa587c9c6d4fe7c82244b6",
+      "md5_agrees": true,
+      "sha256_from_56760314": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+      "hpss_path": "mnv-quoted-products-20260812/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+      "bytes_local": 319885,
+      "bytes_hpss": 319885,
+      "size_agrees": true,
+      "md5_local": "19ae75b25fb69d12720603994d4c602b",
+      "md5_hpss_server_side": "19ae75b25fb69d12720603994d4c602b",
+      "md5_agrees": true,
+      "sha256_from_56760314": "f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/5d/eavailW_covariance.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/5d/eavailW_covariance.root",
+      "bytes_local": 34865,
+      "bytes_hpss": 34865,
+      "size_agrees": true,
+      "md5_local": "3dc21d496b5f18a44f84f6b47470176e",
+      "md5_hpss_server_side": "3dc21d496b5f18a44f84f6b47470176e",
+      "md5_agrees": true,
+      "sha256_from_56760314": "659b4917d24d8b218da78bd3af1ee63f582511cbae471a03144b72b7322156ee",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/5d/eavailW_covariance_wlat.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/5d/eavailW_covariance_wlat.root",
+      "bytes_local": 34145,
+      "bytes_hpss": 34145,
+      "size_agrees": true,
+      "md5_local": "d86941974fb5148181e0d77bc7e85e42",
+      "md5_hpss_server_side": "d86941974fb5148181e0d77bc7e85e42",
+      "md5_agrees": true,
+      "sha256_from_56760314": "01d0bbc20d5a668d2c96e1a51fa20a1ccec8e7fd53399da14069293ab78f3ef8",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/5d/closure_2d_FPS_hidden_eavail_MEFHC.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/5d/closure_2d_FPS_hidden_eavail_MEFHC.root",
+      "bytes_local": 30701,
+      "bytes_hpss": 30701,
+      "size_agrees": true,
+      "md5_local": "4b07133dc58d6c48b429049040b029b0",
+      "md5_hpss_server_side": "4b07133dc58d6c48b429049040b029b0",
+      "md5_agrees": true,
+      "sha256_from_56760314": "d5af4db77882af80fa4325c47b24b8da8de8d50654038037316e40c7dd65e680",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "nd-unfolding/products/5d/excess_eavail_W.root",
+      "hpss_path": "mnv-quoted-products-20260812/nd-unfolding/products/5d/excess_eavail_W.root",
+      "bytes_local": 6166,
+      "bytes_hpss": 6166,
+      "size_agrees": true,
+      "md5_local": "0bad08ded0a7d08865228cdfc1f09f23",
+      "md5_hpss_server_side": "0bad08ded0a7d08865228cdfc1f09f23",
+      "md5_agrees": true,
+      "sha256_from_56760314": "751bb859766adf684eb05f483800505cb5ee8160f31c8e93a4eec277d37f3058",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    },
+    {
+      "source": "3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+      "hpss_path": "mnv-quoted-products-20260812/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+      "bytes_local": 5631,
+      "bytes_hpss": 5631,
+      "size_agrees": true,
+      "md5_local": "c3aa17d6714abed95f38fd73ef6d0a03",
+      "md5_hpss_server_side": "c3aa17d6714abed95f38fd73ef6d0a03",
+      "md5_agrees": true,
+      "sha256_from_56760314": "2461bdfdd522d207d9b73804a98cd07b263324bbce07b655c02e0a3088522856",
+      "sha256_size_agrees": true,
+      "digest_verified": true
+    }
+  ]
+}
