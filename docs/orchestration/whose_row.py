@@ -38,8 +38,11 @@ LIMITS, stated because an attributor that overstates its reach is the defect it 
     the example and DOES NOT DEMONSTRATE IT -- 89 is below every block, so the tool reports UNOWNED
     and refuses, which is the safe case. No current row demonstrates the real failure mode. Right
     claim, wrong evidence, in the paragraph written to prevent overstatement (BEN-096's shape).
-  * VALIDATION_LEDGER.md has no per-row id scheme, so it CANNOT be attributed by this tool. It is the
-    file with the second-most absorptions. Named here rather than silently unhandled.
+  * VALIDATION_LEDGER.md rows CARRY `VL<n>` ids as of 2026-08-12 and are therefore nameable, but they
+    are still UNOWNED: ownership is not derivable from a VL number, because ledger rows are written by
+    whichever lane measured the number, in arrival order. A block table over VL could only be fiction.
+    Until an owner side table keyed on the id exists, ledger conflicts report UNOWNED and are refused --
+    which is the safe direction. It is the file with the second-most absorptions.
   * It sees rows, not prose. A conflict in a header paragraph is unattributable and reported as such.
 """
 from __future__ import annotations
@@ -61,6 +64,14 @@ BLOCK_ROW = re.compile(r"^>?\s*\|\s*([^|]+?)\s*\|\s*`(\d+)(?:-(\d+)|\+)`[^|]*\|"
 OPEN_BLOCK_HI = 10 ** 9   # sentinel upper bound for an open-ended `NNN+` block
 BEN_ROW = re.compile(r"^\|\s*BEN-(\d+)\s*\|")
 CLM_ROW = re.compile(r"^\|\s*(CLM-\d+)\s*\|")
+# VL ids added 2026-08-12 for ADDRESSABILITY, not ownership. A LEADING cell, deliberately: it is the
+# only form matchable by one anchored pattern across VALIDATION_LEDGER.md's SEVEN distinct table
+# widths (3,4,5,6,7,8,10 pipes). A trailing cell would need a per-width matcher, wrong for the eighth
+# width someone adds. Ownership is NOT derivable from a VL number -- ledger rows are written by
+# whichever lane measured the number, in arrival order, so a block table over VL could only be
+# fiction. Owners come from a side table keyed on the id; until it exists these rows report UNOWNED
+# and the gate refuses, which is the safe direction.
+VL_ROW = re.compile(r"^\|\s*(VL\d+)\s*\|")
 OI_ROW = re.compile(r"^\|\s*(OI-\d+)\s*\|\s*[^|]*\|\s*([^|]+?)\s*\|")
 CONFLICT_START = re.compile(r"^<{7}")
 CONFLICT_END = re.compile(r"^>{7}")
@@ -147,6 +158,10 @@ def rows_in(path: Path, only_conflicts: bool, blocks) -> list[tuple[int, str, st
             out.append((i, m.group(1), m.group(2).strip() or None))
             continue
         m = CLM_ROW.match(line)
+        if m:
+            out.append((i, m.group(1), None))
+            continue
+        m = VL_ROW.match(line)
         if m:
             out.append((i, m.group(1), None))
     return out
@@ -309,13 +324,75 @@ def self_test() -> int:
     return 0 if not failures else 1
 
 
+LEDGER_SEP = re.compile(r"^\s*\|[\s:|-]+\|?\s*$")
+
+
+def ledger_partition(lines):
+    r"""(separators, headers, data rows) by STRUCTURE, never by keyword.
+
+    header = the line immediately above a separator. This replaced a KEYWORD LIST
+    (`ID|claim|item|quantity|arm|#`) that matched 7 of 22 real headers and yielded a data-row count of
+    123 where the truth is 108 -- and two independent derivations AGREED because they SHARED THAT WRONG
+    OPERAND, which is BEN-086's shape. Same family as `\btol\b` matching inside `psd_tol`, the `\dead{`
+    regex disagreeing with TeX's parser, and `lane.lower() in owner.lower()`: WHEN THE ARTIFACT HAS A
+    GRAMMAR, MATCH THE GRAMMAR, NOT WHAT ITS INSTANCES TEND TO SAY.
+
+    The grammar is AMBIGUOUS rather than exact: a data row whose cells were literally dashes would match
+    the separator pattern and would promote the row above it to header. Zero instances today -- latent,
+    not occupied -- and the count assertion below is what would catch it.
+    """
+    sep = [i for i, l in enumerate(lines, 1) if LEDGER_SEP.match(l)]
+    hdr = [i - 1 for i in sep if i - 2 >= 0 and lines[i - 2].lstrip().startswith("|")]
+    tab = [i for i, l in enumerate(lines, 1) if l.lstrip().startswith("|")]
+    s, h = set(sep), set(hdr)
+    return sep, hdr, [i for i in tab if i not in s and i not in h]
+
+
+def check_ledger_ids(ledger):
+    """TWO-SIDED completeness on the VL ids. 0 ok / 1 violated / 2 cannot check.
+
+    One-sided cannot distinguish a half-finished re-id from rows having been deleted; two sides fail with
+    OPPOSITE SIGNS, so the message names which. Per BEN-162 this covers the FORM SET rather than one
+    variant: half-finished, deleted, duplicated, gapped, renumbered-from-2.
+    """
+    if not ledger.exists():
+        print("CANNOT CHECK :: VALIDATION_LEDGER.md absent")
+        return 2
+    lines = ledger.read_text(encoding="utf-8", errors="replace").splitlines()
+    sep, hdr, data = ledger_partition(lines)
+    ids = [VL_ROW.match(lines[i - 1]).group(1) for i in data if VL_ROW.match(lines[i - 1])]
+    nums = [int(v[2:]) for v in ids]
+    print(f"  [{len(sep)} separators, {len(hdr)} headers, {len(data)} data rows, {len(ids)} VL ids]")
+    fail = []
+    if len(ids) != len(data):
+        which = "HALF-FINISHED re-id" if len(ids) < len(data) else "ROWS DELETED after id assignment"
+        fail.append(f"{which}: {len(ids)} ids against {len(data)} data rows")
+    if len(set(nums)) != len(nums):
+        fail.append(f"DUPLICATED ids: {sorted({n for n in nums if nums.count(n) > 1})[:5]}")
+    if nums and sorted(nums) != list(range(1, len(nums) + 1)):
+        if min(nums) != 1:
+            fail.append(f"RENUMBERED-FROM-{min(nums)}: ids must be dense from 1")
+        else:
+            fail.append(f"GAPS: {sorted(set(range(1, max(nums) + 1)) - set(nums))[:5]}")
+    for f in fail:
+        print(f"  FAIL {f}")
+    print("LEDGER-IDS :: " + ("PASS" if not fail else "FAIL"))
+    return 0 if not fail else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*", help="ledger files to attribute (default: the conflicted set)")
     ap.add_argument("--lane", help='your lane, e.g. "C" or "C - PET". Exit 1 if a row is not yours.')
     ap.add_argument("--conflicts", action="store_true", help="only rows inside conflict markers")
+    ap.add_argument("--check-ledger-ids", action="store_true",
+                    help="two-sided completeness on VALIDATION_LEDGER.md's VL ids; 0 ok / 1 "
+                         "violated / 2 cannot check. A half-finished re-id and deleted rows fail "
+                         "with opposite signs, so the message names which.")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
+    if args.check_ledger_ids:
+        return check_ledger_ids(REPO / "VALIDATION_LEDGER.md")
     if args.self_test:
         return self_test()
 
@@ -385,7 +462,8 @@ def main() -> int:
         rel = path.relative_to(REPO) if REPO in path.parents else path
         if not rows:
             print(f"  {rel}: NO ATTRIBUTABLE ROWS -- resolve by hand and route to the author. "
-                  f"(VALIDATION_LEDGER.md has no per-row id scheme; a prose conflict has no row.)")
+                  f"(a prose conflict has no row; VALIDATION_LEDGER.md rows carry VL ids but are "
+                  f"UNOWNED until the owner side table exists.)")
             unattributable.append(str(rel))
             continue
         for lineno, rid, owner in rows:
