@@ -18,15 +18,26 @@ done
 
 echo
 echo "=== struck-value containment (retracted values must reach the NOTE build only) ==="
-# Runs AFTER the builds so the PDF stage has PDFs to read. Non-fatal on a missing interpreter,
-# fatal on a real violation: a paper-bound PDF carrying a struck retracted number is a
-# publication defect, not a style nit. See check_dead_containment.py for why this is a test
-# rather than an \ifPAPER build flag.
-if command -v python3 >/dev/null 2>&1; then
-  python3 check_dead_containment.py
-else
-  echo "  SKIP python3 not found -- containment UNVERIFIED for this build"
+# Runs AFTER the builds so the PDF stage has PDFs to read. A paper-bound PDF carrying a struck
+# retracted number is a publication defect, not a style nit. See check_dead_containment.py for why
+# this is a test rather than an \ifPAPER build flag.
+#
+# CONTRACT, changed 2026-08-12 on Joseph's decision: exit 0 from this stage means BOTH the source
+# and PDF halves ran and passed. Every skip is fatal here. Previously a missing python3 printed
+# "containment UNVERIFIED" and the build went on to exit 0, and a missing pdftotext skipped the PDF
+# half inside the checker with the same result -- so the check was silently machine-dependent,
+# whole on one box and half on another, with no difference in the build's status.
+#
+# --source-only exists in the checker and MUST NEVER be passed from here. It is for a human
+# debugging without a TeX install. Adding it to this line would restore exactly the defect the
+# contract change removed, and would look like a fix while doing it.
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "  FAIL python3 not found -- containment cannot run, and an unverified build must not"
+  echo "       report success. Install python3 or run the builds somewhere that has it."
+  exit 1
 fi
+python3 check_dead_containment.py --self-test   # the regex's power test, before trusting its verdict
+python3 check_dead_containment.py
 
 echo
 echo "=== page counts ==="

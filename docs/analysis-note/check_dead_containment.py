@@ -47,7 +47,50 @@ BUILDS = {"main_note": "note", "main_paper": "paper", "main_primer": "primer"}
 STRUCK_ALLOWED_IN = "main_note"
 
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
-DEAD_RE = re.compile(r"\\dead\{")
+# `\s*` is load-bearing and BEN-090 is the reason. This read `r"\\dead\{"` from 4f75e50 until
+# 2026-08-12: enforcement landed and was evadable by one character, because `\dead {x}` renders
+# identically and did not match. The evasion form is NOT hypothetical and not an imagined careless
+# author -- LaTeX EMITS it. `sec_pet.tex:91` is `$\dead{\petRatio}$`, unspaced, and `\newlabel`
+# serialises it into `main_note.aux:345` as `\dead {\petRatio }`. So the string this regex could not
+# match is the string LaTeX writes when it round-trips its own input. Consequence worth keeping:
+# the natural "robust" way to build an include closure is to read the build's own .aux or .fls
+# instead of regex-parsing \input, and any check that does so reads precisely the form the old
+# pattern was blind to -- the better instrument walks straight into the hole.
+# `match_braced(text, m.end() - 1)` still holds: the match ends at `{` whatever precedes it.
+#
+# AND `\s*` ALONE IS STILL NOT ENOUGH. Session D demonstrated the residual end to end on a copy:
+#
+#     \noindent CommentEvade: $\dead%c
+#     {9.87654}$ here.
+#
+# checker PASS exit 0, `latexmk -pdf main_paper` exit 0, and `pdftotext main_paper.pdf` line 1013
+# reads "CommentEvade: 9.87654 here." TeX skips a comment AND its terminating newline while scanning
+# for an undelimited argument, so `\dead%<comment>\n{x}` is the same token stream as `\dead{x}` --
+# and `%` is not whitespace, so `\s*` does not reach it. Comments are therefore stripped BEFORE
+# matching, and the negative lookbehind is load-bearing: without it `\dead{50\%}` would be corrupted
+# by the strip and the check would stop finding a body that exists.
+#
+# Occupied vs latent, because they are not the same risk: the SPACED form is emitted by the build
+# today (`\newlabel` serialises `\dead{\petRatio}` into `main_note.aux:345` as `\dead {\petRatio }`).
+# Nothing emits the COMMENT form today. Both are covered; only one is currently occupied.
+COMMENT_RE = re.compile(r"(?<!\\)%[^\n]*")  # `[^\n]*`, not `.*?\n`, so line positions are preserved
+DEAD_RE = re.compile(r"\\dead\s*\{")
+
+
+def strip_comments(text: str) -> str:
+    """Remove TeX comments, honouring an escaped `\\%`. Newlines are preserved."""
+    return COMMENT_RE.sub("", text)
+
+
+def dead_spans(text: str) -> list[str]:
+    """Bodies of every `\\dead{...}` in `text`, across whitespace and comment separation."""
+    scanned = strip_comments(text)
+    out = []
+    for m in DEAD_RE.finditer(scanned):
+        body = match_braced(scanned, m.end() - 1)
+        if body is not None:
+            out.append(body)
+    return out
 NEWCMD_RE = re.compile(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}")
 # a decimal literal with at least one digit after the point -- bare integers are far too
 # collision-prone to search for in a rendered PDF
@@ -83,13 +126,7 @@ def match_braced(text: str, open_idx: int) -> str | None:
 
 
 def dead_bodies(path: Path) -> list[str]:
-    text = path.read_text(encoding="utf-8", errors="replace")
-    bodies = []
-    for m in DEAD_RE.finditer(text):
-        body = match_braced(text, m.end() - 1)
-        if body is not None:
-            bodies.append(body)
-    return bodies
+    return dead_spans(path.read_text(encoding="utf-8", errors="replace"))
 
 
 def macro_table(note_dir: Path) -> dict[str, str]:
@@ -128,11 +165,98 @@ def pdf_text(pdf: Path, tmp: Path) -> str | None:
     return dest.read_text(encoding="utf-8", errors="replace") if dest.exists() else None
 
 
+_OLD_DEAD_RE = re.compile(r"\\dead\{")  # the pre-2026-08-12 pattern, kept ONLY as a power control
+
+
+def self_test() -> int:
+    """Power test for DEAD_RE. Every positive case must FAIL against the old pattern.
+
+    A test that passes against both patterns is not a power test -- it would have shipped green
+    beside the defect it exists to catch, which is the shape of the gate this repairs.
+    """
+    # THE BATTERY IS THE FORM SET, NOT ONE VARIANT (Session D). The first version of this suite
+    # covered whitespace only: it passed against `\s*` and failed against the old pattern, so it
+    # looked like a real power test while `\dead%c\n{` was still live and rendering. Every
+    # separator TeX accepts between an undelimited control sequence and its argument belongs here.
+    # (label, text, must_match)
+    cases = [
+        ("unspaced, the form already in the tree", r"$\dead{\petRatio}$", True),
+        ("one space -- the BEN-090 evasion", r"$\dead {\petRatio}$", True),
+        ("LaTeX \\newlabel serialisation, verbatim from main_note.aux:345",
+         r"The PET/GBDT total ratio is $\dead {\petRatio }$", True),
+        ("multiple spaces", r"\dead   {0.912}", True),
+        ("tab", "\\dead\t{0.912}", True),
+        ("newline", "\\dead\n{0.912}", True),
+        ("newline + indent", "\\dead\n    {0.912}", True),
+        ("comment -- D's demonstrated evasion, renders in main_paper.pdf",
+         "\\dead%c\n{9.87654}", True),
+        ("comment after a space", "\\dead %c\n{9.87654}", True),
+        ("two consecutive comment lines", "\\dead%a\n%b\n{9.87654}", True),
+        ("ESCAPED PERCENT must still be FOUND -- a naive comment strip breaks this",
+         r"\dead{50\%}", True),
+        ("negative control: a longer command name must NOT match", r"\deadline{2026}", False),
+        ("negative control: prose mentioning the macro", r"the \\dead marker", False),
+        ("negative control: no brace", r"\dead", False),
+        ("negative control: the whole use is inside a comment", "% \\dead{0.912}\n", False),
+    ]
+    failures, powerless = [], []
+    for label, text, must_match in cases:
+        got = bool(dead_spans(text))
+        if got != must_match:
+            failures.append(f"{label}: expected match={must_match}, got {got}")
+        # A positive case is only a POWER case if the old pattern misses it.
+        if must_match and bool(_OLD_DEAD_RE.search(text)):
+            powerless.append(label)
+
+    # Matching is not enough: the BODY must survive comment-stripping intact, or the PDF stage
+    # searches for the wrong literal and reports a clean paper because it looked for nothing.
+    body_cases = [
+        (r"\dead{50\%}", r"50\%"),
+        ("\\dead%c\n{9.87654}", "9.87654"),
+        (r"$\dead {\petRatio }$", r"\petRatio "),
+    ]
+    for text, want in body_cases:
+        got_bodies = dead_spans(text)
+        if got_bodies != [want]:
+            failures.append(f"body extraction: {text!r} -> {got_bodies!r}, expected [{want!r}]")
+
+    # Both directions: the negative controls must also be negative under the old pattern, or they
+    # are not telling us anything about the change.
+    if len(powerless) == len([c for c in cases if c[2]]):
+        failures.append("NO positive case discriminates: every one also matches the old pattern, "
+                        "so this suite would have passed before the fix and proves nothing")
+    # And the fix must not have been achieved by matching everything.
+    if not any(not c[2] for c in cases):
+        failures.append("no negative controls present")
+
+    for label, text, must_match in cases:
+        mark = "power" if (must_match and label not in powerless) else "     "
+        print(f"  {mark}  {'match ' if must_match else 'reject'}  {label}")
+    n_power = len([c for c in cases if c[2]]) - len(powerless)
+    print(f"  {n_power} of {len([c for c in cases if c[2]])} positive cases discriminate against "
+          f"the pre-2026-08-12 pattern")
+    for f in failures:
+        print(f"  FAIL {f}")
+    print("SELF-TEST :: " + ("PASS" if not failures else "FAIL"))
+    return 0 if not failures else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=str(Path(__file__).resolve().parent))
     ap.add_argument("--tmp", default="/tmp")
+    ap.add_argument("--self-test", action="store_true",
+                    help="run the DEAD_RE power test and exit; checks no documents")
+    ap.add_argument("--source-only", action="store_true",
+                    help="DIAGNOSTIC MODE. Downgrade a missing/unreadable PDF stage from FAIL to a "
+                         "note. build_all.sh MUST NEVER pass this: under the 2026-08-12 contract "
+                         "exit 0 means BOTH the source and PDF stages ran and passed, and this "
+                         "flag exists so that a human debugging without a TeX install has a way "
+                         "to run the source half -- not so that CI can look green without PDFs.")
     args = ap.parse_args()
+    if args.self_test:
+        return self_test()
+    strict = not args.source_only
     note_dir = Path(args.dir).resolve()
     tmp = Path(args.tmp)
     tmp.mkdir(parents=True, exist_ok=True)
@@ -187,14 +311,26 @@ def main() -> int:
                      f"literal to search for, so only the source check guards these: "
                      + "; ".join(uncovered))
 
-    # ---- PDF-level: secondary, and only meaningful if the PDFs are built ------------------
+    # ---- PDF-level ------------------------------------------------------------------------
+    # CONTRACT CHANGED 2026-08-12 on Joseph's decision: "exit 0 must mean both the source and PDF
+    # stages ran and passed. Missing PDFs or pdftotext must be nonzero in build_all.sh." Previously
+    # every skip below was a `note` and the run still returned 0, so on a machine without
+    # `pdftotext` the check was silently HALF a check -- and worst of all it was machine-dependent,
+    # passing here and skipping there with no difference in output status. A skip is now a FAILURE
+    # unless --source-only is passed explicitly.
+    _skip = notes.append if not strict else failures.append
+
+    def _skipped(msg: str) -> None:
+        _skip(msg + ("" if not strict else "  [PDF stage did not run; exit 0 would misreport it. "
+                                           "Build the PDFs, install pdftotext, or pass "
+                                           "--source-only to accept a source-only check]"))
+
     if not struck_values:
-        notes.append("no struck literals derived -- PDF stage skipped")
+        _skipped("no struck literals derived -- PDF stage cannot run")
     else:
         note_txt = pdf_text(note_dir / "main_note.pdf", tmp)
         if note_txt is None:
-            notes.append("main_note.pdf absent or pdftotext unavailable -- PDF stage skipped "
-                         "(source stage above is the authoritative check)")
+            _skipped("main_note.pdf absent or pdftotext unavailable -- PDF stage skipped")
         else:
             seen_in_note = sorted(v for v in struck_values if v in note_txt)
             if not seen_in_note:
@@ -209,7 +345,8 @@ def main() -> int:
                         continue
                     txt = pdf_text(note_dir / f"{driver}.pdf", tmp)
                     if txt is None:
-                        notes.append(f"{driver}.pdf absent -- not PDF-checked")
+                        _skipped(f"{driver}.pdf absent -- {label} build NOT PDF-checked, and this "
+                                 f"is the outward-facing build the whole check exists to protect")
                         continue
                     hits = sorted(v for v in seen_in_note if v in txt)
                     if hits:
