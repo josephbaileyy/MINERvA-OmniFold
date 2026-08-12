@@ -136,10 +136,17 @@ defensible alternatives where the sessions reached no consensus. Never for statu
 RUN THIS CHECK ON A SCHEDULE. It is MEMORY-FREE by design: it must work identically if you restarted
 a minute ago, because context loss is the failure it exists to catch.
 
-STEP 1 - fired-but-unread. Verbatim; do not re-derive it (re-deriving produced events/ instead of
-logs/ and made every event report four times):
-  ssh perlmutter.nersc.gov "cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/waker && comm -23 <(ls -1 logs/evt-*.log | xargs -n1 basename | sort) <(grep -v '^#' PROCESSED.txt | sort -u)"
+STEP 1 - fired-but-unread. RUN THE COMMITTED SCRIPT, do not retype this:
+  bash docs/orchestration/waker_fired_but_unread.sh
   Empty = every fired watch has a filed verdict.
+
+  The literal command is preserved below as the DEFINITION of the check, not as the thing to run.
+  This instruction used to say "verbatim; do not re-derive it (re-deriving produced events/ instead
+  of logs/)" and the orchestrator re-derived it anyway, three ways in one night (events/ for logs/,
+  the bare `perlmutter` alias for the FQDN, `logs/*.log` for `logs/evt-*.log`). BEN-097: a remedy
+  that requires the reader to prefer the written command over the one they can derive is not
+  structural. Citing a path is; citing a command is not.
+  ssh perlmutter.nersc.gov "cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/waker && comm -23 <(ls -1 logs/evt-*.log | xargs -n1 basename | sort) <(grep -v '^#' PROCESSED.txt | sort -u)"
 
 STEP 2 - completed-but-unfiled. STEP 1 is blind to this: a job whose watch was never armed fires no
 event, so nothing looks unread while the job completes and sits.
