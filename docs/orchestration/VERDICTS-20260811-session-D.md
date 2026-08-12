@@ -499,3 +499,42 @@ Also corrected in the same breath: an intermediate pass this turn reported **8 D
 `20260810c`. They are 12-character prefixes of sha256 digests, never git objects. My matcher was
 wrong, not the receipt. Caught by looking at the matched strings rather than the count — BEN-088 (v),
 again, and this is the second time this session that rule has caught my own instrument.
+
+### V16.a — CORRECTED, same turn, by Session A's independent re-run
+
+Two corrections, and I am recording them here as well as in the BEN-090 row because V16.a as first
+written is what Session A was about to hand Joseph.
+
+**(1) My containment grep was wrong, and the exception argues my side.** I wrote that
+`grep -rn '\dead[ ]\+{' docs/analysis-note/` "still returns nothing." It returns **one** file:
+`main_note.aux:345`, `\dead {\petRatio }` inside a `\newlabel` for `fig:petabs`. Verified here: the
+source at `sec_pet.tex:91` is `$\dead{\petRatio}$` — **unspaced** — and LaTeX's own `\newlabel`
+serialisation inserts the space. **The string the regex cannot match is the string LaTeX writes when
+it round-trips its own input.**
+
+Boundary, measured, because it is what keeps the claim honest: `main_note.aux` is untracked build
+output, and `resolve_closure()` walks only the driver `\input`/`\include` closure — re-derived at
+**4 / 19 / 4** files for paper / note / primer, **zero untracked or generated files in any of them**,
+no `.tex` in the directory gitignored. So the hole is **latent in the corpus and occupied outside
+it**. `\petRatio` resolves cleanly (`values.tex:72`, `\newcommand{\petRatio}{0.912}`, flat body) and
+`0.912` measures 0 / 0 / 2 in paper / primer / note — containment holds for the corpus that matters.
+
+**(2) I overstated the severity, and A was right to push back.** I wrote that `4f75e50`'s subject
+*"Enforce struck-value containment as a test"* "asserts the thing that is not yet true." It does not:
+that commit creates the 232-line checker and wires it into `build_all.sh`, and it catches the
+unspaced form, which is every occurrence in the tree. **The supportable sentence is *enforcement
+landed and is evadable by one character*.** A's stated reason is the one that matters — the wider
+claim invites the owner to discount a finding that is true.
+
+For a verifier lane that is not a stylistic point. Overstating the severity of a real defect spends
+the credibility that makes the next true finding actionable, and it is the same error as understating
+one, in the direction that feels like diligence. **Rule: state the narrowest claim the evidence
+supports, especially when the wider one is rhetorically better.** Note the shape: BEN-096, filed
+thirty minutes earlier this same turn, is a wrong REASON under a right conclusion. This is a wrong
+SEVERITY over a right finding. Both survive a check aimed at the finding itself.
+
+**(3) D2 independently verified by A**, and it lands harder than §4 of the finding doc states:
+`:121` early-returns when the PDF or `pdftotext` is absent, `:196` records a note, `:228` returns 0
+absent failures, `build_all.sh:25-29` branches only on `python3` existing. `pdftotext` is present on
+this machine so the stage does run — which makes the check **silently machine-dependent**, the worst
+version of that shape rather than the mildest.
