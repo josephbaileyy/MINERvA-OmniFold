@@ -47,8 +47,25 @@ So the rule ships with a **mechanism**, because this campaign has a measured rec
 remedies failing: BEN-105 counts four failures of BEN id attentiveness, twice while the failing agent was
 reading the rule.
 
-    python3 docs/orchestration/whose_row.py --conflicts --lane C     # exit 1 if a contested row is not yours
-    python3 docs/orchestration/whose_row.py --self-test              # 42 checks, both directions
+    bash docs/orchestration/merge_guard.sh C      # <- RUN THIS. It runs the self-test, then the gate.
+
+**The path is the contract; this document deliberately no longer quotes the command.** BEN-163: the gate
+grew from one exit code to three across seven return sites, and this snippet went on saying
+*"exit 1 if a contested row is not yours"* and *"42 checks"* against a suite that now runs a different
+number. This is the only place an operator learns the contract — and BEN-117's own text notes that the
+empty-`--lane` case *"is how any wrapper or hook will invoke this"*, so **the reader most likely to write
+that wrapper was reading the line that omitted exit 2.** A wrapper written faithfully from the old
+snippet tests `[ $? -eq 1 ]`, and exit 2 — added precisely because a misconfigured caller had been told
+it passed — would read as success. The hole was not closed; it moved from the script into the prose
+describing the script, which is worse, because the script has a self-test and the prose has none.
+`merge_guard.sh` cannot drift from the exit codes because it *is* their only interpreter, and it prints
+no check count of its own — the suite reports its own total, and a second copy in prose can only drift.
+Same remedy and same reason as `waker_fired_but_unread.sh` (BEN-097).
+
+    exit 0  PASS          every contested row is yours; you may resolve
+    exit 1  REFUSED       a row belongs to another lane — route it, do not resolve
+    exit 2  CANNOT CHECK  nothing was examined, so nothing was verified. NOT a pass
+    exit 3  BLOCKED       no lane given, or the gate's own self-test failed
 
 Run it on every conflict before resolving. It attributes each row to its owning lane by **deriving** the
 BEN block table out of `FINDINGS.md`'s own header, and it refuses to fall back to a hardcoded copy — a

@@ -8,6 +8,7 @@ import datetime as dt
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -116,6 +117,17 @@ def render(
         f"- Current DAG node: **{config['current_dag_node']}**",
         f"- Declared state: **{config['state']}**",
         f"- Git: `{git_state['head']}`; worktree entries: {git_state['dirty_count']} (uncommitted science is never live evidence)",
+        "- FRESHNESS TEST, and read it before comparing anything: this snapshot is **born one "
+        "commit stale by construction** -- the generator reads `HEAD`, then the commit that "
+        "carries the output moves `HEAD`. So `Git:` is normally its own commit's PARENT. "
+        "**FRESH iff `HEAD` equals `Git:` or `Git:` is `HEAD`'s parent; anything further back "
+        "is STALE.** Run `python3 docs/orchestration/generate_live_state.py --check-freshness` "
+        "rather than eyeballing it. A rule of \"`Git:` must equal `HEAD`\" has NO passing "
+        "state and a check that always fires is a check nobody reads (BEN-164).",
+        "- AND FRESHNESS IS NOT TRUTH: `Declared state` below is AUTHORED PROSE the generator "
+        "carries forward verbatim. Regenerating updates the timestamp and the sha; it does NOT "
+        "revalidate that text. On 2026-08-12 this field still read \"no cause is discharged\" "
+        "after cause 2 was discharged at `d75833a`, through two regenerations.",
         "",
         "## Owners",
         "",
@@ -220,12 +232,56 @@ def atomic_write(path: pathlib.Path, content: str) -> None:
             os.unlink(temporary)
 
 
+def check_freshness(repo_root) -> int:
+    """Exit 0 if LIVE-STATE.md is fresh, 1 if stale, 2 if it cannot be read.
+
+    FRESH means: HEAD == the recorded `Git:` sha, OR the recorded sha is HEAD's parent. The second
+    disjunct is not slack -- it is the normal state, because the commit that carries the snapshot moves
+    HEAD after the generator read it. BEN-164: the orchestrator prescribed `Git:` vs `HEAD` as "the only
+    freshness test" and it has NO passing state, so it fired on a maximally fresh file and could not
+    separate born-stale-by-one from dangerously-stale-by-five, which was the condition it existed to
+    detect. Found by the personal-account verifier session re-deriving the rule against the file.
+    """
+    import subprocess
+    live = pathlib.Path(repo_root) / "docs/orchestration/LIVE-STATE.md"
+    if not live.exists():
+        print("CANNOT CHECK :: LIVE-STATE.md absent")
+        return 2
+    m = re.search(r"^- Git: `([0-9a-f]+)`", live.read_text(encoding="utf-8"), re.M)
+    if not m:
+        print("CANNOT CHECK :: no `- Git:` line in LIVE-STATE.md")
+        return 2
+    recorded = m.group(1)
+    def rev(spec):
+        r = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "--short", spec],
+                           capture_output=True, text=True)
+        return r.stdout.strip() if r.returncode == 0 else None
+    head, parent = rev("HEAD"), rev("HEAD^")
+    if recorded == head:
+        print(f"FRESH :: Git: {recorded} == HEAD")
+        return 0
+    if parent and recorded == parent:
+        print(f"FRESH :: Git: {recorded} is HEAD's parent ({head}) -- the normal born-stale-by-one state")
+        return 0
+    print(f"STALE :: Git: {recorded}, HEAD {head}, HEAD^ {parent}. Regenerate before quoting any field.")
+    print("  NOTE: regeneration fixes the sha and timestamp; it does NOT revalidate `Declared state`,")
+    print("        which is authored prose the generator carries forward.")
+    return 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=pathlib.Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output", type=pathlib.Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--stdout", action="store_true")
+    parser.add_argument("--check-freshness", action="store_true",
+                        help="Exit 0 fresh / 1 stale / 2 cannot-check; writes nothing. BEN-164: the "
+                             "rule is HEAD == Git: OR Git: is HEAD's parent, because the commit "
+                             "carrying this file moves HEAD after the generator read it.")
     args = parser.parse_args()
+
+    if args.check_freshness:
+        return check_freshness(HERE.parent.parent)
 
     config = load_json(args.config)
     sessions = load_json(HERE / "state" / "sessions.json")
