@@ -33,6 +33,25 @@ The pattern therefore matches the namespace as a PATH SEGMENT -- `fullevent_nomi
 `"` or `'` -- with `_annealed` excluded and the three filenames excluded by name rather than by a
 blanket rule.
 
+CORPUS, STATED because the postcondition is only as broad as what it reads. `_tracked()` is
+`git ls-files` over ALL tracked files (widened 2026-08-12 from `*.py`/`*.sh`). Untracked files, and
+anything outside the git index, are NOT scanned. D's objection is the reason this line exists and it
+was fair: a file whose entire subject is that implicit exclusions hide real sites was carrying an
+implicit exclusion in its own corpus definition, while claiming "every occurrence in the tree".
+
+CLASS 5 -- WHAT NO SOURCE-TEXT MATCHER OVER ANY CORPUS CAN SEE, and it is not hypothetical.
+The namespace also arrives from a DATA FILE at run time. `train_fullevent_nominal.py:529,534` stamps
+`weights_folder` and `step2_checkpoint` as ABSOLUTE paths into the artifact's own
+`inference_contract`, and `extract_fullevent_fps.py:243` reads `contract["step2_checkpoint"]` and
+`:253` calls `model.load_weights(ckpt)`. The literal is WRITTEN at training time and READ BACK at
+inference time, so it exists in no source file and this tool is blind to it by construction -- not by
+an exclusion that could be removed. That is exactly the defect filed as **BEN-133**, where a moved
+artifact's contract silently resolved to a DIFFERENT estimator's checkpoints; see also
+`nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md`, which documents a live instance.  # NS-EXEMPT: pattern literal, not a reference
+Note the consumer above is the EXTRACTION path -- the operation prohibited without authorization.
+A green run here says nothing about class 5. The mitigation for class 5 is a runtime identity guard
+(assert the artifact's own fold-forward before use), not a grep.
+
 Usage:
   python3 check_canonical_designation.py            # audit; exit 1 on any unaccounted occurrence
   python3 check_canonical_designation.py --self-test
@@ -85,8 +104,6 @@ NS = re.compile(r'(?<!train_)(?<!sbatch_pet_)(?<!test_pet_)'
 #   STAYS-NAME    asserts the directory NAME, does not consume the artifact
 #   RECORD        committed receipt or docstring; historical, never rewritten
 INVENTORY = {
-    "nd-unfolding/pet/gate_ab_push_provenance.py":                 ("RETARGET", 1),
-    "nd-unfolding/pet/step1_pull_push_decomposition.py":           ("RETARGET", 1),
 
     "nd-unfolding/pet/inversion_screen.py":                        ("STAYS-DIAG08", 1),
     "nd-unfolding/pet/push_vs_acceptance.py":                      ("STAYS-DIAG08", 1),
@@ -128,6 +145,47 @@ INVENTORY = {
     # The TEST for pet_diagnostic_quarantine.py:229, encoding the same assumption. Treated together
     # with its code so the two cannot diverge on it; gets the same comment.
     "nd-unfolding/tests/test_pet_diagnostic_quarantine.py":        ("STAYS-NAME", 1),
+
+    # --- RECORD: historical artifacts, docs and logs -------------------------------------------
+    # Surfaced 2026-08-12 by widening the corpus from *.py/*.sh to ALL tracked files. Every one is a
+    # committed receipt, a finding, a run log or a status doc -- a record of what WAS, never rewritten.
+    # COUNT IS NOT ENFORCED for these (`None`): run logs and findings are append-only, so a count would
+    # fire on every unrelated append and a check that cries wolf is one people learn to ignore (BEN-084).
+    # PRESENCE still is: a NEW unclassified file trips UNACCOUNTED, which is the point of widening --
+    # it will catch the next promotion that rewrites a receipt.
+    "docs/OPEN_ITEMS.md":                                                ("RECORD", None),
+    "docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md": ("RECORD", None),
+    "docs/orchestration/FINDING-20260807-step1-under-achieves.md":       ("RECORD", None),
+    "docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md": ("RECORD", None),
+    "docs/orchestration/FINDINGS.md":                                    ("RECORD", None),
+    "docs/orchestration/INDEX-retracted-and-superseded-values.md":       ("RECORD", None),
+    "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md": ("RECORD", None),
+    "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-transcript.txt": ("RECORD", None),
+    "docs/orchestration/state/annealed-nominal-complete-56563761.json":  ("RECORD", None),
+    "docs/orchestration/state/annealed-nominal-error-56563092.json":     ("RECORD", None),
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json": ("RECORD", None),
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json": ("RECORD", None),
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801.json": ("RECORD", None),
+    "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260807.json": ("RECORD", None),
+    "docs/orchestration/state/step1-dynamics-submit-56531057.json":      ("RECORD", None),
+    "docs/orchestration/state/step1-ihedge-launch-56525829.json":        ("RECORD", None),
+    "docs/orchestration/state/step1-trajectory-complete-56525829.json":  ("RECORD", None),
+    "docs/orchestration/state/step1-trajectory-submit-56525829.json":    ("RECORD", None),
+    "nd-unfolding/AUTONOMOUS_LOG_20260805.md":                           ("RECORD", None),
+    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md":                               ("RECORD", None),
+    "nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md":                       ("RECORD", None),
+    "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json": ("RECORD", None),
+    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56527676.json": ("RECORD", None),
+    "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.summary.json": ("RECORD", None),
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.floor-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json":   ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.json":       ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json": ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md":    ("RECORD", None),  # NS-EXEMPT: inventory key, not a reference
+    "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json": ("RECORD", None),
 }
 
 
@@ -135,7 +193,11 @@ EXEMPTIONS = {}
 
 
 def _tracked():
-    out = subprocess.run(["git", "-C", _REPO, "ls-files", "*.py", "*.sh"],
+    # ALL tracked files, not just *.py/*.sh. Widened 2026-08-12: there are two ways to fix a claim
+    # broader than its check -- narrow the claim or widen the check -- and the postcondition's whole
+    # value is that it is broad. A checker that covers receipts will catch the next promotion that
+    # rewrites one.
+    out = subprocess.run(["git", "-C", _REPO, "ls-files"],
                          capture_output=True, text=True, check=True).stdout
     return [p for p in out.splitlines() if p]
 
@@ -177,7 +239,7 @@ def audit(found):
                             f":{hits[0][0]} -- give it a disposition in INVENTORY")
             continue
         disp, n = INVENTORY[rel]
-        if len(hits) != n:
+        if n is not None and len(hits) != n:
             problems.append(f"COUNT DRIFT {rel} [{disp}]: expected {n}, found {len(hits)} "
                             f"(lines {[h[0] for h in hits]}) -- a NEW reference appeared in an "
                             f"already-listed file; give it its own disposition and update the count")

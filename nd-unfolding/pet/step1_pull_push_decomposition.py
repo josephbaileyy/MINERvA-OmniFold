@@ -67,7 +67,10 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-DEFAULT_ART = os.path.join(HERE, "fullevent_nominal", "pet_fullevent_nominal_weights.npz")
+# CANONICAL as of the 2026-08-12 designation promotion of job 56563761 (the annealed nominal).
+# By DESIGNATION, not by moving bytes -- see BEN-133. Overridable with --artifact.
+DEFAULT_ART = os.path.join(HERE, "fullevent_nominal_annealed",
+                           "pet_fullevent_nominal_weights.npz")
 
 
 def jsonable(o):

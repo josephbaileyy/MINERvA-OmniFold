@@ -66,9 +66,21 @@ consumers' defaults. Properties, none of which the move has:
 - it does not require editing the contract *inside* an npz, which would change the artifact's digest and
   invalidate the receipts that bind it (the only other way to make a move coherent).
 
+**§4 CORRECTED 2026-08-12 — this list was wrong twice and the document contradicted itself.**
+As first written it named "six hardcoded references" and **omitted the two class-2
+`os.path.join` sites** — `gate_ab_push_provenance.py` and `step1_pull_push_decomposition.py` — which
+**§1 above lists by name as consumers that resolve checkpoints from the embedded `weights_folder`**.
+So the section that made the recommendation falsifiable dropped two of the sites the section above it
+had already identified, and it dropped exactly the two that a literal-path grep cannot see. The count
+was then wrong a second time in the other direction: a full enumeration over ALL tracked files (not
+just `*.py`/`*.sh`) finds **51 files / 105 occurrences**, of which only **two were retargets**. The
+rest are diagnostics of the 08-08 artifact, producer/output paths, or historical records — see
+`nd-unfolding/pet/check_canonical_designation.py`, which now enforces that every one carries an
+explicit disposition.
+
 Cost, stated so the recommendation is falsifiable: `canonical` stops being "whatever is at
-`fullevent_nominal/`" and becomes a named pointer, so **six hardcoded references must be retargeted
-deliberately** — `leg_mismatch.py:30`, `inversion_screen.py:33`, `push_vs_acceptance.py:34`,
+`fullevent_nominal/`" and becomes a named pointer, so **two defaults were retargeted and every other
+reference was deliberately left** — `leg_mismatch.py:30`, `inversion_screen.py:33`, `push_vs_acceptance.py:34`,
 `sbatch_fullevent_diagnostic_extract.sh:42`, `sbatch_fullevent_diagnostic_xsec_resume.sh:27`,
 `sbatch_designA_diagnostic_reproduction.sh:51` (plus `sbatch_step1_trajectory.sh:42`). **And they must
 not be retargeted uniformly:** several are diagnostics *of the 08-08 artifact specifically* (the

@@ -84,7 +84,14 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-DEFAULT_ART = os.path.join(HERE, "fullevent_nominal", "pet_fullevent_nominal_weights.npz")
+# CANONICAL as of the 2026-08-12 designation promotion of job 56563761 (the annealed nominal).
+# Promotion here is by DESIGNATION, not by moving bytes: artifacts embed an ABSOLUTE
+# inference_contract["weights_folder"], so relocating one silently re-points it at whatever now
+# occupies its old path (BEN-133, with a live instance in
+# fullevent_nominal/superseded-20260806/NOTE.md). Overridable with --artifact; the pre-anneal  # NS-EXEMPT: prose, not a reference
+# artifact remains at fullevent_nominal/ and its diagnostics still name it explicitly.  # NS-EXEMPT: prose, not a reference
+DEFAULT_ART = os.path.join(HERE, "fullevent_nominal_annealed",
+                           "pet_fullevent_nominal_weights.npz")
 
 
 def jsonable(o):
