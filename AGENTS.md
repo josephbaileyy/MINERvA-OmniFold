@@ -65,6 +65,9 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
   doc that answers *"what is happening right now"*; everything below answers "what is true in
   general". Regenerate with `generate_live_state.py`; never hand-edit. Verify its `Observed:`/`Git:`
   fields against `HEAD` before trusting it.
+- `docs/orchestration/CATALOG.md` — pointer-only router for `docs/orchestration/` (498 files, ~14%
+  live). Route by task rather than reading the directory; `MANIFEST.tsv` is the classification
+  authority, `CONVENTION-document-retention.md` the rule for keeping it true.
 - `docs/orchestration/FINDINGS.md` — the `BEN-*` process-failure ledger. **Read FIRST among the
   standing docs, before KNOWN_ISSUES.** `KNOWN_ISSUES.md` records how the *code* fails; `FINDINGS.md` records how *agents
   working on this campaign* fail, which is the class of error that has actually repeated here. If you

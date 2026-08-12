@@ -19,6 +19,10 @@ re-narrated** — so where this file points somewhere, go there rather than trus
    general". Read it first because it is the cheapest orientation in the repo. Do not hand-edit;
    regenerate via `docs/orchestration/generate_live_state.py`. **Check its `Observed:` timestamp and
    `Git:` sha against `HEAD` before trusting it** — a stale snapshot is worse than none.
+0b. **`docs/orchestration/CATALOG.md`** — pointer-only router for `docs/orchestration/`'s 498 files,
+   of which ~14% are live. Routes by task; `MANIFEST.tsv` is the authority on what is LIVE vs
+   ARCHIVAL vs MACHINE vs DEAD. Use it instead of reading the directory. Retention rules:
+   `CONVENTION-document-retention.md`.
 1. **`docs/orchestration/FINDINGS.md`** — the `BEN-*` ledger of how *agents on this campaign* fail.
    This is the highest-value file in the repo for a new session and the most frequently skipped.
    Long-form detail is in sibling `FINDING-<date>-<slug>.md` files, indexed at the top of `FINDINGS.md`.
