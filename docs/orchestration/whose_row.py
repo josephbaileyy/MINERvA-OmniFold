@@ -50,8 +50,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent          # derived from __file__, never hardcoded (the p4_evidence.py lesson)
 
-# `| D — verifier | `160-189` |`  /  `| A — orchestrator | `190-199` |`
-BLOCK_ROW = re.compile(r"^>?\s*\|\s*([^|]+?)\s*\|\s*`(\d+)-(\d+)`[^|]*\|", re.M)
+# `| D — verifier | `160-189` |`  /  `| A — orchestrator | `190-199` |`  /  `| repo infra | `200+` |`
+# The `NNN+` alternative is REQUIRED, not decorative: the header's repo-infrastructure block is written
+# `200+` and the closed-range-only pattern dropped it silently, so BEN-200/201/202 -- rows that already
+# exist -- attributed as <unowned> and the gate told the operator to "route to its author: <unowned>".
+BLOCK_ROW = re.compile(r"^>?\s*\|\s*([^|]+?)\s*\|\s*`(\d+)(?:-(\d+)|\+)`[^|]*\|", re.M)
+OPEN_BLOCK_HI = 10 ** 9   # sentinel upper bound for an open-ended `NNN+` block
 BEN_ROW = re.compile(r"^\|\s*BEN-(\d+)\s*\|")
 CLM_ROW = re.compile(r"^\|\s*(CLM-\d+)\s*\|")
 OI_ROW = re.compile(r"^\|\s*(OI-\d+)\s*\|\s*[^|]*\|\s*([^|]+?)\s*\|")
@@ -70,7 +74,7 @@ def ben_blocks(findings: Path) -> list[tuple[int, int, str]]:
         lane = lane.strip().strip("*")
         if lane.lower().startswith(("lane", "---")) or not lane:
             continue
-        out.append((int(lo), int(hi), lane))
+        out.append((int(lo), int(hi) if hi else OPEN_BLOCK_HI, lane))
     if not out:
         raise SystemExit(
             "FATAL: no BEN block table found in FINDINGS.md's header. This script REFUSES to fall back "
@@ -170,7 +174,28 @@ def self_test() -> int:
     # NEGATIVE CONTROLS, both directions -- an attributor that answers everything is useless.
     lo0 = min(b[0] for b in blocks)
     case("below every block is UNOWNED", owner_of_ben(lo0 - 1, blocks), None)
-    case("absurdly high id is UNOWNED", owner_of_ben(999999, blocks), None)
+    # The control that used to live here was `owner_of_ben(999999) is None`, and FIXING THE `200+`
+    # PARSE MADE IT FALSE: an open-ended block owns every id above its floor, by design. Retaining it
+    # would have been a test asserting a property the system deliberately does not have -- so it is
+    # replaced rather than deleted, because "there exists an unowned id" is still the real invariant
+    # and dropping the case entirely would leave the attributor free to answer everything again.
+    open_blocks = [b for b in blocks if b[1] == OPEN_BLOCK_HI]
+    if open_blocks:
+        case("an open-ended block OWNS an arbitrarily high id (not unowned)",
+             owner_of_ben(999999, blocks), open_blocks[0][2])
+        case("...and the id below the lowest block is STILL unowned",
+             owner_of_ben(lo0 - 1, blocks), None)
+    else:
+        case("absurdly high id is UNOWNED", owner_of_ben(999999, blocks), None)
+    # PRESENCE, not just absence: the repo-infrastructure `200+` row must actually parse. Its absence
+    # was invisible for exactly this reason -- every check here asked whether ids resolve, none asked
+    # whether every documented block made it into the table.
+    header_rows = (REPO / "docs/orchestration/FINDINGS.md").read_text(
+        encoding="utf-8", errors="replace")
+    header_rows = header_rows[: header_rows.find("## Long-form findings index")]
+    documented = len([m for m in re.finditer(r"^>?\s*\|\s*[^|]+?\s*\|\s*`\d+(?:-\d+|\+)`", header_rows,
+                                             re.M)])
+    case("every documented block row is parsed (none silently dropped)", len(blocks), documented)
     # Blocks must not overlap, or an id has two owners and the rule cannot be enforced at all.
     spans = sorted((lo, hi) for lo, hi, _ in blocks)
     overlaps = [(a, b) for a, b in zip(spans, spans[1:]) if a[1] >= b[0]]
@@ -205,6 +230,28 @@ def self_test() -> int:
     case("unowned row is never matchable", lane_matches(None, "C"), False)
     case("empty lane never matches", lane_matches("C — PET", ""), False)
 
+    # END-TO-END EXIT CODES, run as a subprocess against a real conflicted file. `lane_matches` already
+    # returned False for an empty lane above -- and the gate still exited 0, because the falsy `--lane`
+    # short-circuited the accumulator before that answer was ever consulted. A unit check on the
+    # predicate cannot see that; only the process's exit code can. This is A's own lesson from the
+    # substring bug -- caught by an end-to-end merge, missed by the unit self-test -- applied here.
+    probe = REPO / "docs/orchestration/.whose_row_exit_probe.tmp.md"
+    try:
+        probe.write_text("<<<<<<< HEAD\n| BEN-131 | a lane C row |\n=======\n>>>>>>> other\n")
+
+        def run(*extra) -> int:
+            return subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                                   "--conflicts", *extra, str(probe)],
+                                  capture_output=True, text=True).returncode
+
+        case("EXIT: lane B on a lane C row REFUSES (1)", run("--lane", "B"), 1)
+        case("EXIT: lane C on its own row passes (0)", run("--lane", "C"), 0)
+        case("EXIT: --lane '' is FATAL (2), was a silent 0", run("--lane", ""), 2)
+        case("EXIT: --lane '   ' is FATAL (2)", run("--lane", "   "), 2)
+        case("EXIT: --lane omitted is attribution-only (0)", run(), 0)
+    finally:
+        probe.unlink(missing_ok=True)
+
     for label, ok, got, _ in checks:
         print(f"  {'ok  ' if ok else 'FAIL'} {label}" + ("" if ok else f"  (got {got!r})"))
     print(f"  {len(blocks)} blocks parsed from FINDINGS.md's header, {len(checks)} checks")
@@ -223,6 +270,22 @@ def main() -> int:
     args = ap.parse_args()
     if args.self_test:
         return self_test()
+
+    # A GATE THAT CANNOT FAIL, found 2026-08-12 by Lane B probing this script rather than using it.
+    # `--lane ""` -- what `--lane "$LANE"` expands to when LANE is unset, which is how any wrapper or
+    # hook will invoke this -- printed `OTHER` for every foreign row and then exited 0. The falsy
+    # `args.lane` short-circuited BOTH the `if args.lane and not mine` accumulator and the final
+    # `if args.lane and (foreign or unattributable)` check, so the tool identified the rows as somebody
+    # else's and passed them anyway. Same direction and same class as the `lane.lower() in owner.lower()`
+    # substring bug this file's own docstring records: a false pass inside the check written to prevent
+    # false passes. Omitting `--lane` entirely stays legal -- that is the documented attribution-only
+    # mode and it reports rather than gates -- but PRESENT-AND-EMPTY is now fatal, because the caller
+    # asked to be gated and would have been told it passed.
+    if args.lane is not None and not args.lane.strip():
+        print("FATAL: --lane was given but is empty (an unset shell variable?). Refusing to run: an "
+              "empty lane silently passed every foreign row before 2026-08-12. Pass your lane, or omit "
+              "--lane entirely for attribution-only output.", file=sys.stderr)
+        return 2
 
     blocks = ben_blocks(REPO / "docs/orchestration/FINDINGS.md")
     files = [Path(f) for f in args.files]
