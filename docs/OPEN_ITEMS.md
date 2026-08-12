@@ -55,7 +55,14 @@ not close the literal full-event PET gate below.
   actual minus/plus re-unfolds. Do not reuse the old jitter-subtracted adopted
   covariances.
 - **PET before publication:** do not promote or extend the current recoil-only
-  covariance as though it belonged to a full-event estimator. Preserve its
+  covariance as though it belonged to a full-event estimator.
+  **UPHELD 2026-08-12 against a live proposal to do exactly that.** Session C recommended quoting
+  the additive nuisance budget with its measured `1.786`x conservatism documented; Joseph refused
+  it under this line, choosing **option (b), cause 5 stays quarantined**, verbatim: *"the 1.786x
+  result is recoil-only; it may remain an internal diagnostic but must not be quoted as a
+  full-event covariance or transferred to that estimator. Publication requires the joint
+  full-event construction in (a)."* **This line has now been tested once and held.** See
+  `DETERMINATION-20260811-cause5-binding-half.md` and `BEN-139`. Preserve its
   completed products and replicas as cross-checks. A new nominal and UQ campaign
   begins only after the full-event representation and stress-closure gate below
   pass.
@@ -868,6 +875,12 @@ spare hour:**
   falls back to the stored absolute one**, so old artifacts keep working and new ones stop being
   relocatable-into-wrongness.
 
+**DECIDED 2026-08-12 (Joseph): BEN-133's read-time repair is DEFERRED UNTIL THE NEXT
+OTHERWISE-REQUIRED GATE-4 RE-ISSUE. Do not force a re-issue for it.** So the blast radius above is
+no longer a reason to schedule work — it is the reason the repair rides along with the next re-issue
+that some other cause makes necessary. The interim runtime identity guard stays in place and is what
+carries the risk until then.
+
 **OWED BY THE NEXT GATE-4 RE-ISSUE — recorded here because the last time a re-issue debt was not
 recorded, nine consecutive receipts carried the stale text**
 (`FINDING-20260811-gate4-prerequisite-points-at-a-deleted-blocker.md`). The live receipt
@@ -1233,3 +1246,75 @@ largest nominal truth-space volume.
   estimator seed 42. Pure estimator-seed sensitivity is not added separately;
   disclose this deliberate scope with any replacement budget.
 - GoF reported both binned (truncated-spectral χ²) and unbinned (C2ST).
+
+## Decisions of 2026-08-12 landing in the PET lane — freeze, hold, and one named owner
+
+Recorded by Session C. Joseph's decisions relayed via Session A; each is quoted where it constrains work.
+
+### (i) Cluster/local fork — FROZEN AND RECORDED, not merged
+
+> *"Do not reconcile or merge the 114-commit cluster fork during closeout. Freeze and record both heads
+> plus the 22-pin comparison and the harness hash. Stop further divergence and use a clean
+> canonical-based worktree for new cluster work after item 7. Inventory unique patches with range-diff
+> after the publication freeze; no wholesale merge."*
+
+**Delivered:** `docs/orchestration/state/cluster-local-fork-freeze-20260812.json`. Both heads, ancestry,
+the pin comparison against **both** trees, the harness hash measured on **both**, and the cluster
+working-tree inventory. **Two things in it change what the follow-up should be, and are reported rather
+than quietly worked around:**
+
+- **The divergence is 153 commits, not 114.** Both numbers are correct at the head they were taken at;
+  `origin/main` advanced between the orchestrator's measurement and this one. A bare divergence count
+  needs its revision.
+- **`git range-diff` — the instrument the decision names — will return NOTHING.** The cluster head
+  `683bdcc` is a **strict ancestor** of `origin/main`, so there are **zero unique cluster commits**. The
+  entire divergence is **uncommitted working-tree state**: 727 dirty paths, of which 715 are untracked
+  and 12 are tracked. range-diff compares commit ranges and structurally cannot see any of it. The
+  inventory in the artifact is the substitute, and **the 715 untracked paths are counted but not
+  classified** — that is the real remaining gap, since any of them could be an unpublished product.
+
+**Reassuring, and measured rather than assumed:** all 22 Gate-4 pin entries (over 21 distinct paths —
+the count *"22 pins"* this lane previously reported was entries, not paths) match on **both** trees, and
+`step1_increment_trajectory.py` is **byte-identical** on both at `1acb1869c57f9772…`. So nothing in the
+PET evidence chain is wrong because of the fork. **One tracked file differs and it touches a result:**
+`sbatch_step1_trajectory_annealed.sh` is `f5ba93d0…` on the cluster and `f977d65a…` on `origin/main` —
+benign and resolved, because `f5ba93d0` is commit `831043d`, the version that actually ran job
+`56691812` and exactly what the reconciliation receipt's `batch_script_sha256` binds, while `f977d65a`
+is the later single-rank hardening at `cdf5927`. **Unlike BEN-138's harness case, this binding is
+recoverable from git.**
+
+### (ii) Cluster P4 lane — HELD
+
+> *"Hold the cluster P4 lane until `p4_evidence.py` no longer hardcodes REPO and the replacement is
+> power-tested. Do not use a cluster worktree as a workaround meanwhile."*
+
+Local worktrees proceed; the cluster P4 lane does not. **The acceptance bar is `power-tested`, which is
+Joseph's word and is stricter than it looks: deriving `REPO` from `__file__` is NOT sufficient on its
+own — it needs a test that FAILS against the hardcoded form.** A fix whose test passes both before and
+after has not been tested. Not this lane's file; recorded here because this lane's finding produced the
+split and the bar would otherwise be read as "make it relative".
+
+### (iii) Post-migration `hsi hashverify` — OWNER NAMED
+
+Joseph approved the item without naming an owner and asked for one. **Owner: the PET lane**, as the lane
+that created the archive (job `56692312`, 240/240 digest-verified, 1,134,998,230,283 bytes) and wrote the
+`verification_scope` that names this as its own unclosed limit.
+
+**Trigger: a dated item here, deliberately NOT a `wakerctl` watch.** A session-local Monitor dies with
+the session, and the cluster waker is on the frozen tree at `683bdcc` running the **unguarded** `scan()`
+— so the durable-notification mechanism is itself inside the freeze. **Naming a watch as the trigger
+would be naming a mechanism this same decision froze.** The check needs no local copy and no data
+transfer: `hsi hashverify` against the stored per-file hashes under `mnv-p3f-pet-fullevent-final`, 240
+files, compared to `HPSS_ARCHIVE_MANIFEST.slurm-56692312.json`. **Run it after any HPSS tape migration,
+and once before publication regardless.**
+
+### (iv) Per-lane git identity — adopted, per-invocation only
+
+> *"Do not write shared git config. Record the effective author/committer identity in the lane receipt
+> where practical."*
+
+`git -c user.email=… -c user.name="Lane C (PET)" commit …`, verified in a throwaway clone to leave
+`.git/config` untouched. Note D's measurement of the nuance: **`-c user.email` sets author AND
+committer; `GIT_AUTHOR_EMAIL` sets only the author.** The receipt half of the instruction is the one that
+matters for this lane, given that **26 of its 32 commits last night carried no lane line at all** — the
+identity is now on the commits, and the fork-freeze artifact above records `recorded_by`.

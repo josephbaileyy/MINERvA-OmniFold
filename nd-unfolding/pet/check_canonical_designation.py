@@ -158,6 +158,13 @@ INVENTORY = {
     "docs/orchestration/FINDING-20260807-step1-under-achieves.md":     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md": ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "docs/orchestration/FINDINGS.md":                                  ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
+    # Created 2026-08-12 by the ledger split (0623619): FINDINGS.md became a one-line index and the full
+    # rows moved here BYTE-VERBATIM. Its four occurrences are the archived long forms of BEN-095/096/091
+    # and the 136/137/138 block -- historical citations, none live, none to be retargeted. Keyed
+    # RECORD-APPEND on the PROPERTY: the file's own header forbids appending NEW findings, but it accrues
+    # every time a row is retired out of the active ledger, which is the same accruing shape. Owned by
+    # whoever owns the split; this entry unblocks the audit and may be re-keyed by them.
+    "docs/orchestration/FINDINGS-ARCHIVE-2026-08.md":                  ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     "docs/orchestration/INDEX-retracted-and-superseded-values.md":     ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
     # ANOTHER LANE'S FILE, dispositioned 2026-08-12 by the PET lane because leaving the audit RED
     # blocks every lane. The occurrence (`:450`, a mutation-test plan step naming

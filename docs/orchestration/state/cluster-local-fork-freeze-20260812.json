@@ -1,0 +1,307 @@
+{
+  "schema": "cluster-local-fork-freeze-v1",
+  "purpose": "FREEZE AND RECORD, DO NOT MERGE. Joseph's decision 2026-08-12 item 10: record both heads plus the pin comparison and the harness hash; stop further divergence; use a clean canonical-based worktree for new cluster work after item 7; inventory unique patches with `git range-diff` after the publication freeze; no wholesale merge.",
+  "recorded_by": "Session C (PET)",
+  "recorded_at_utc": "2026-08-12T05:38:24Z",
+  "heads": {
+    "local_origin_main": {
+      "sha": "34b32b65f04d7d8006ac4bbaca1a66fd8d65dd82",
+      "subject": "BEN-201/202: the retired recovery>=0.80 bar was still the live Gate-4 blocker in OPEN_ITEMS",
+      "committed_at": "2026-08-12T01:23:14-04:00"
+    },
+    "cluster_pscratch": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "sha": "683bdccad5a94d13ef231bf0729758085634a178",
+      "subject": "Index: split petRatio's three reasons by disposition; name the class a check EXONERATES",
+      "committed_at": "2026-08-11T08:01:25-04:00"
+    }
+  },
+  "ancestry": {
+    "merge_base": "683bdccad5a94d13ef231bf0729758085634a178",
+    "cluster_head_is_strict_ancestor_of_origin_main": true,
+    "commits_origin_main_ahead_of_cluster": 153,
+    "commits_cluster_ahead_of_origin_main": 0,
+    "COUNT_SUPERSEDES": "The orchestrator measured 114 earlier tonight; it is now 153 because origin/main advanced. A bare divergence count needs the revision it was taken at -- both are correct at their own head. See BEN-134 on counts without predicates.",
+    "CONSEQUENCE_FOR_THE_RANGE_DIFF_INSTRUCTION": "THERE ARE ZERO UNIQUE CLUSTER COMMITS. The cluster head is a strict ancestor, so `git range-diff` -- the instrument named in the decision -- will find NOTHING to inventory. The entire divergence is UNCOMMITTED working-tree state, which range-diff structurally cannot see. The correct instrument is the dirty-path inventory recorded below. Reported rather than silently substituted."
+  },
+  "harness_hash": {
+    "path": "nd-unfolding/pet/step1_increment_trajectory.py",
+    "sha256_local": "1acb1869c57f97729fe13ba7b888c4ea90fc46afc5cb19b5d8354666fe81fb6c",
+    "sha256_cluster": "1acb1869c57f97729fe13ba7b888c4ea90fc46afc5cb19b5d8354666fe81fb6c",
+    "identical": true,
+    "why_this_is_the_one_that_mattered": "Job 56691812's four receipts carry NO digest of anything (BEN-138); the harness sha was printed to a job log on purgeable scratch. This measurement closes that on the CLUSTER side rather than by prose: the bytes that ran are byte-identical to origin/main's. Had they differed, no artifact could have said so."
+  },
+  "gate4_pin_comparison": {
+    "receipt": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json",
+    "pin_entries": 22,
+    "distinct_paths": 21,
+    "COUNT_CORRECTION": "Previously reported by this lane as '22 pins'. There are 22 (path, sha256) ENTRIES over 21 DISTINCT paths -- closure_fullevent_fps.json is pinned twice. The verdict is unchanged; the operand was wrong.",
+    "local_matches": 21,
+    "cluster_matches": 21,
+    "all_match_on_both_trees": true,
+    "entries": [
+      {
+        "path": "nd-unfolding/pet/atomic_write.py",
+        "pinned_sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+        "local_sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+        "cluster_sha256": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/closure_b1_rate_injection.py",
+        "pinned_sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24",
+        "local_sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24",
+        "cluster_sha256": "7b470ca22560c9c668c1dce34bce73603047538b6602f1166826dfb487c7fa24",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/closure_fullevent_fps.py",
+        "pinned_sha256": "861b02cbbb6d5bf1d94145b387f2def56a31ef3c99b82fdd6e70bbdec80a794f",
+        "local_sha256": "861b02cbbb6d5bf1d94145b387f2def56a31ef3c99b82fdd6e70bbdec80a794f",
+        "cluster_sha256": "861b02cbbb6d5bf1d94145b387f2def56a31ef3c99b82fdd6e70bbdec80a794f",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/extract_fullevent_fps.py",
+        "pinned_sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+        "local_sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+        "cluster_sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+        "pinned_sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f",
+        "local_sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f",
+        "cluster_sha256": "3801dd9e07d2b946dc13a68cf3c61eb35a8bfdc2bf64e48a3558a901bdada03f",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+        "pinned_sha256": "71d76eee429ce5b41a68cd0331acbdfd7bef57a9a64165e771641ccd667166c9",
+        "local_sha256": "71d76eee429ce5b41a68cd0331acbdfd7bef57a9a64165e771641ccd667166c9",
+        "cluster_sha256": "71d76eee429ce5b41a68cd0331acbdfd7bef57a9a64165e771641ccd667166c9",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/stress_closure_muon.py",
+        "pinned_sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+        "local_sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+        "cluster_sha256": "7fb43e63887fb539e2255bfdd2f0a1c7c8a4927114c994035116ab1bf141058b",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/train_fullevent_nominal.py",
+        "pinned_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+        "local_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+        "cluster_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+        "pinned_sha256": "6d04a3666ac99a5e73fda56fccae1ca9d1d763cefdcebedb78025b516f4e595b",
+        "local_sha256": "6d04a3666ac99a5e73fda56fccae1ca9d1d763cefdcebedb78025b516f4e595b",
+        "cluster_sha256": "6d04a3666ac99a5e73fda56fccae1ca9d1d763cefdcebedb78025b516f4e595b",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan16_measured_N240k.json",
+        "pinned_sha256": "75c6842413e0a1ad0c58d2e8f796004ec10568cfbc8fdc7dd7819dfede3af429",
+        "local_sha256": "75c6842413e0a1ad0c58d2e8f796004ec10568cfbc8fdc7dd7819dfede3af429",
+        "cluster_sha256": "75c6842413e0a1ad0c58d2e8f796004ec10568cfbc8fdc7dd7819dfede3af429",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan16_measured_N240k_niter3.json",
+        "pinned_sha256": "0c3f99ac2a5b2044bdaab44be9cb9b9a49c1c964b4b3e015f9dc9cebb600824f",
+        "local_sha256": "0c3f99ac2a5b2044bdaab44be9cb9b9a49c1c964b4b3e015f9dc9cebb600824f",
+        "cluster_sha256": "0c3f99ac2a5b2044bdaab44be9cb9b9a49c1c964b4b3e015f9dc9cebb600824f",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan32_measured_N240k_niter3_seeds23plus.json",
+        "pinned_sha256": "72b4e9f4d10b2c18e0af4ff43456004cf39b6b5bf500997e668888ae9ebca985",
+        "local_sha256": "72b4e9f4d10b2c18e0af4ff43456004cf39b6b5bf500997e668888ae9ebca985",
+        "cluster_sha256": "72b4e9f4d10b2c18e0af4ff43456004cf39b6b5bf500997e668888ae9ebca985",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/products/pet/b1_closure/closure_b1_rate_injection_scan32_measured_N240k_seeds23plus.json",
+        "pinned_sha256": "984eb1471867d3aa78cb07a72d5e5efe425e9b26ee8e8151ac281a7c23ad6bab",
+        "local_sha256": "984eb1471867d3aa78cb07a72d5e5efe425e9b26ee8e8151ac281a7c23ad6bab",
+        "cluster_sha256": "984eb1471867d3aa78cb07a72d5e5efe425e9b26ee8e8151ac281a7c23ad6bab",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json",
+        "pinned_sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4",
+        "local_sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4",
+        "cluster_sha256": "6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/tests/test_b1_normalization_fix.py",
+        "pinned_sha256": "b4a3ceee23f9460ee7f8474044537e5a4126aae757f5dfe5faffeb4c66ffaf0e",
+        "local_sha256": "b4a3ceee23f9460ee7f8474044537e5a4126aae757f5dfe5faffeb4c66ffaf0e",
+        "cluster_sha256": "b4a3ceee23f9460ee7f8474044537e5a4126aae757f5dfe5faffeb4c66ffaf0e",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/tests/test_fullevent_extract.py",
+        "pinned_sha256": "04709e48ec4d0ed5c4eaa71d057d29ce4430508cf038b155a75b5094b65bb993",
+        "local_sha256": "04709e48ec4d0ed5c4eaa71d057d29ce4430508cf038b155a75b5094b65bb993",
+        "cluster_sha256": "04709e48ec4d0ed5c4eaa71d057d29ce4430508cf038b155a75b5094b65bb993",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/tests/test_fullevent_schema.py",
+        "pinned_sha256": "28793b83c266839f188e68dd651f5e9a389c723abc30b080c9bb68ae308353ec",
+        "local_sha256": "28793b83c266839f188e68dd651f5e9a389c723abc30b080c9bb68ae308353ec",
+        "cluster_sha256": "28793b83c266839f188e68dd651f5e9a389c723abc30b080c9bb68ae308353ec",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+        "pinned_sha256": "f3d47176db89940035a32da652f5ccf3fc4774764e3f856d5a9a5fbd63ccf3f5",
+        "local_sha256": "f3d47176db89940035a32da652f5ccf3fc4774764e3f856d5a9a5fbd63ccf3f5",
+        "cluster_sha256": "f3d47176db89940035a32da652f5ccf3fc4774764e3f856d5a9a5fbd63ccf3f5",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+        "pinned_sha256": "5aaabf3b66811b0ce56b7a021920ae6b640801bb898b34d2d83d2ae015b41f70",
+        "local_sha256": "5aaabf3b66811b0ce56b7a021920ae6b640801bb898b34d2d83d2ae015b41f70",
+        "cluster_sha256": "5aaabf3b66811b0ce56b7a021920ae6b640801bb898b34d2d83d2ae015b41f70",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "omnifold_nn/omnifold/net.py",
+        "pinned_sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+        "local_sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+        "cluster_sha256": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      },
+      {
+        "path": "omnifold_nn/omnifold/omnifold.py",
+        "pinned_sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+        "local_sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+        "cluster_sha256": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+        "local_matches_pin": true,
+        "cluster_matches_pin": true
+      }
+    ]
+  },
+  "cluster_working_tree": {
+    "total_dirty_paths": 727,
+    "untracked": 715,
+    "tracked_modified_or_added": 12,
+    "tracked": [
+      {
+        "path": "2d-unfolding/compare_to_models.py",
+        "cluster_sha256": "2b342f9eeb8a33aae2b3dd11f090873c25e22c1bf3a933d3cdc69689e41b5f78",
+        "origin_main_sha256": "2b342f9eeb8a33aae2b3dd11f090873c25e22c1bf3a933d3cdc69689e41b5f78",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "2d-unfolding/model_comp_report.txt",
+        "cluster_sha256": "8e3a0bc3fbd58e5ae4aa4990278daf96acec3ffb3c43af12f52d579c767d0afc",
+        "origin_main_sha256": "8e3a0bc3fbd58e5ae4aa4990278daf96acec3ffb3c43af12f52d579c767d0afc",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md",
+        "cluster_sha256": "a4be41c58d25ef4060b345bef1c63a0e27b4ebbbc81e4e5981cac44caf3ab319",
+        "origin_main_sha256": "a4be41c58d25ef4060b345bef1c63a0e27b4ebbbc81e4e5981cac44caf3ab319",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "docs/orchestration/state/sessions.json",
+        "cluster_sha256": "e320643804eeddc1d50b93731faa6dd3c12b1640b560d17a785de588018fe75a",
+        "origin_main_sha256": "ea672a6b2c41ddc1735abe459bd39f7052c4cb1f362f8a9ec4b7b5a9003819ec",
+        "state": "DIFFERS"
+      },
+      {
+        "path": "docs/orchestration/state/waker/BLOCKED-ON-USER.json",
+        "cluster_sha256": "f1b419053a9e63d7552fadd0f0bb5c52a9be54af2f5b325b4551530458bcd70d",
+        "origin_main_sha256": null,
+        "state": "ABSENT_ON_ORIGIN_MAIN"
+      },
+      {
+        "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_endpoint_evidence.json",
+        "cluster_sha256": "1317d0d33276f7657746dda85b9f7271616b9ef7352b8095d40483255b0dad2f",
+        "origin_main_sha256": "cd092d23559d7e1ee87d7972d3389a1eaa97b1dd99a0a7e2c702ea9bf25fe40f",
+        "state": "DIFFERS"
+      },
+      {
+        "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_merged_audit.json",
+        "cluster_sha256": "2e3fac26b29c7d29dd19cc82ce65983f45ef677f6c36064dd41bb97c0a12bf9e",
+        "origin_main_sha256": "98e8454cf5c3a80705cffa486f7fe17ef012433826f0c2a90cfb19571416d902",
+        "state": "DIFFERS"
+      },
+      {
+        "path": "nd-unfolding/active_universe_5d/standard/evidence/p4_standard_manifest.json",
+        "cluster_sha256": "67eb2177314ed04501b75151842cbc3d5c4add3cff9ba8678bf071036136cf99",
+        "origin_main_sha256": "8ca55e4616e56f9bfa371356fa9fafe60bb204d3673416739c0ad94f0297f896",
+        "state": "DIFFERS"
+      },
+      {
+        "path": "nd-unfolding/adopt_unified_5d.py",
+        "cluster_sha256": "e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35",
+        "origin_main_sha256": "e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "nd-unfolding/pet/measure_joint_vs_additive_nuisance_retrain.py",
+        "cluster_sha256": "0d654077cf55c296894e9130c70149a9848b83231e9b44f33bc551bad62f46f3",
+        "origin_main_sha256": "0d654077cf55c296894e9130c70149a9848b83231e9b44f33bc551bad62f46f3",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh",
+        "cluster_sha256": "f1e8fda5a81b7ed7b51bc4fc5ce1852ee8fd529ef218e8f132c8762e037e9ce2",
+        "origin_main_sha256": "f1e8fda5a81b7ed7b51bc4fc5ce1852ee8fd529ef218e8f132c8762e037e9ce2",
+        "state": "IDENTICAL"
+      },
+      {
+        "path": "nd-unfolding/pet/sbatch_step1_trajectory_annealed.sh",
+        "cluster_sha256": "f5ba93d0ab9d4eee7371553f915e6664a41e429f8437fe963b71406aac090d50",
+        "origin_main_sha256": "f977d65af67015a4a127ef6b3105fd93d651ef2925006f4ad4cca7bc3753f8b0",
+        "state": "DIFFERS"
+      }
+    ],
+    "identical_to_origin_main": 6,
+    "differs": 5,
+    "absent_on_origin_main": 1,
+    "THE_ONE_THAT_TOUCHES_A_RESULT": "nd-unfolding/pet/sbatch_step1_trajectory_annealed.sh differs: cluster f5ba93d0ab9d4eee, origin/main f977d65af67015a4. RESOLVED and benign: f5ba93d0 is commit 831043d (the predeclaration), which is the version that RAN job 56691812 and is exactly what the reconciliation receipt's batch_script_sha256 binds; f977d65a is cdf5927, a later single-rank hardening that postdates the run. So the cluster copy is the ORIGINAL and origin/main has moved past it. UNLIKE the harness case, this binding IS recoverable from git -- the receipt names a digest that a committed object still has."
+  },
+  "wakerctl": {
+    "cluster_scan_guard_present": false,
+    "grep_c_watch_errors": 0,
+    "guard_commit_on_origin_main_only": "4ff5d47",
+    "note": "Exactly 1 of the 153 commits in the range touches wakerctl.py. Deploy is Joseph's, per item 7/10; not performed."
+  },
+  "not_done_deliberately": [
+    "No merge, no rebase, no pull on the cluster tree -- explicitly refused by the decision.",
+    "No `git range-diff` -- it would return empty (see ancestry.CONSEQUENCE...) and is deferred to after the publication freeze regardless.",
+    "The 715 untracked cluster paths are COUNTED, not enumerated or classified. That is a real gap: any of them could be an unpublished product. Sizing it is the natural next step and is not this artifact's scope."
+  ]
+}

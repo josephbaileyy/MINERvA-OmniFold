@@ -237,3 +237,46 @@ magnitude becomes quotable — including everything measured in §3, which is re
 different estimator. It does not lift Branch C, authorize an extraction, or make the `\gbdtFive*`
 adoption actionable. Protecting an input is not building a construction, and measuring a defect's size
 is not repairing it.
+
+---
+
+## DECIDED 2026-08-12 BY JOSEPH — OPTION (b), CAUSE 5 STAYS QUARANTINED
+
+Relayed by Session A. Verbatim:
+
+> *"Option (c) conflicts with the full-event contract because the 1.786x result is recoil-only; it may
+> remain an internal diagnostic but must not be quoted as a full-event covariance or transferred to that
+> estimator. Publication requires the joint full-event construction in (a)."*
+
+**Disposition of this document's measurement: UNCHANGED IN VALIDITY, EXPLICITLY BOUNDED IN USE.** The
+`1.786`x knob-band overstatement, the negative cross term in every universe, the realized 1.086-2.928
+range and the `5.144e-15` identity residual all stand as an **internal diagnostic**. They are what makes
+the direction of the error *knowable* — additive is conservative — and that is a design input to the
+construction in (a). **What is refused is the quoting**, not the measurement.
+
+### This lane recommended (c), and (c) was never a peer of (a) and (b)
+
+Session C put three options to the orchestrator and recommended **(c) — quote the additive with the
+conservatism documented**. That recommendation is **withdrawn**, and the reason is the more serious part:
+
+**§3.3 of this very document already said (c) was barred**, in the key rather than the footnotes —
+*"These are RECOIL products... No magnitude here is quotable and none transfers to the full-event
+budget."* Joseph cited that sentence back as his reason for not waiting on a further answer. So the lane
+that wrote the scope limit proposed publishing against it, seventeen hours later, in the same lane.
+
+**And the retraction did not propagate where it mattered.** When the orchestrator asked directly which
+act (c) was, this lane answered correctly — *"(c) as worded would quote a recoil-only number; barred; not
+three-way with (a) and (b)"* — but **continued to offer (c) as a recommended option in its reports to
+Joseph**. The correction reached the peer and not the decision-maker. That is exactly the shape this
+lane filed against `ND_OMNIFOLD_STATUS.md` the same night: a retraction that propagates into one channel
+and not the one that acts on it. Filed as **BEN-139**.
+
+### What is now true of cause 5
+
+- **Cause 5 remains QUARANTINED.** No discharge, no partial discharge, no "conservative" quotation.
+- **The binding half is unchanged**: the joint full-event construction, per this document's §1-3. The
+  samples half remains satisfied and is now archived off purgeable scratch (240/240 digest-verified, job
+  `56692312`).
+- **Publication route is (a) and only (a)** — the joint construction on the full-event samples.
+- The 20-replica `C_stat` is bounded by the same scope limit; see
+  `PREDECLARATION-20260812-fullevent-cstat-100-replicas.md`.
