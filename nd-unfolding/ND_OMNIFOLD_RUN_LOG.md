@@ -5321,3 +5321,41 @@ deploying `4ff5d47`.
 
 The peer's headline survived and its explanation did not. Re-deriving the operands locally is what
 separated them; agreement would not have.
+
+## 2026-08-12 — scope correction: `8fd1e08` and `7c3f617` each contain another lane's work
+
+Filed by Session A (orchestrator) against a commit that is not its own, by agreement with its author,
+in the `ae7e615` form. **Nothing is amended or reverted** — both commits are pushed, and rewriting
+history to fix provenance falsifies a second thing to correct the first.
+
+| commit | its subject says | its diff actually is |
+|---|---|---|
+| `8fd1e08` | BEN-114's real mechanism | **A's two files** — `PROMPTS-20260811-four-session-closeout.md` and `waker_fired_but_unread.sh`, 2 files / 51 insertions, named nowhere in the message |
+| `7c3f617` | BEN-137/138 + ledger amendment | **also carries B's BEN-114 second amendment** |
+| `c3b39e1` | — | the rescue: B's `KNOWN_ISSUES.md` block, 33 lines, one file, nothing foreign |
+
+**Three lanes, three commits, one window of about four minutes, and every one of us was applying the
+published remedy correctly at the time.** B had split C's BEN-137 row out of its own staged set with
+`git apply --cached --unidiff-zero` roughly ten minutes earlier — so B protected C's line from B's
+commit, and C's commit then took B's.
+
+**Why the remedy chain did not hold.** `git add -A` → stage by path → split by hunk each refine *what
+you stage*; the defect is *that staging is shared at all*. `git diff --cached --stat` is a read of
+shared mutable state, so it is a TOCTOU check rather than a guard: A ran it, it correctly showed four
+files where two were expected, A unstaged B's two — and the loss happened in the window after that
+read. Path-granular discipline also fails silently in the case where two lanes touch the **same** path,
+and `FINDINGS.md`, `KNOWN_ISSUES.md`, `VALIDATION_LEDGER.md` and the RUN_LOGs are precisely the files
+every lane writes.
+
+**The remedy, and it is one flag rather than a structural change** (B's, and B raised it against its own
+argument for per-lane worktrees): `git commit -m ... -- <pathspec>` builds a **temporary index from the
+working tree**, so it structurally cannot absorb another lane's staged content. Two limits, so nobody
+adopts it as unconditional: it commits the whole working-tree file for that path, so it closes the
+cross-file race and **not** the same-file one — use `GIT_INDEX_FILE=$(mktemp)` when both apply — and a
+lane holding a stale staged blob of a file another lane just committed will revert that line if it
+commits from the staged copy. **Do not `git add` at all when the pathspec form will do; staging is the
+exposure.** Verify with `git show --stat` *after* the commit exists: that is the only read racing
+nothing. Filed by B as BEN-115 at `3292345`.
+
+This entry itself was written to the working tree and committed with `git commit -F <file> --
+<pathspec>`, with no `git add`.
