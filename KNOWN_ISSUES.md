@@ -789,6 +789,39 @@ liveness rule both read `at_utc`).
 pre-existing failures, +7 new passes. Whole `docs/orchestration` 20 failed / 86 passed against the
 20 / 79 recorded on 2026-08-02: **identical failure set.**
 
+**⚠ THE GUARD CHANGES WHAT THE LIVENESS FILE PAIR MEANS, and the rule must be amended in the same breath
+as the deploy.** Raised by the orchestrator reading the two `scan()` bodies side by side, 2026-08-11;
+verified here against the code rather than the docstring. `_write_tick_receipt(ctx, errors)` at `:651` is
+the **last statement in `scan()`** and has exactly one caller, so pre-guard a raising `evaluate()`
+propagated out and skipped it — `last-tick.json` went stale and the file pair read **DEAD**. Post-guard
+`scan()` completes, the receipt is written, and the same broken watch reads **HEALTHY**.
+
+| watch state | pre-guard file pair | post-guard file pair | post-guard discriminator |
+|---|---|---|---|
+| all watches fine | fresh receipt = HEALTHY | fresh receipt = HEALTHY | `watch_errors == 0` |
+| one watch malformed | stale receipt = DEAD | fresh receipt = HEALTHY | **`watch_errors > 0`** |
+| `scan()` itself dies | stale receipt = DEAD | stale receipt = DEAD | unchanged — `tick()` is still unguarded |
+
+**This is NOT trading a loud failure for a quiet one, and the distinction decides whether the guard is
+right.** Pre-guard, one bad watch skipped `dispatch`, `idle_guard`, `notify_guard` and
+`status_report_guard` as well, so DEAD was *accurate*: the waker really was doing nothing. Post-guard
+those all run and only the one watch is degraded, so HEALTHY is *also* accurate. What changed is not the
+signal's honesty but the severity it reports at — a total outage became a partial degradation, correctly.
+**The old signal was in fact the ambiguous one:** it reported process death while the process was alive
+and cron was ticking, which sends a reader hunting a crashed job they will not find. Row 3 above is why
+`tick()→scan()` was deliberately left unguarded (scoping decision 2): the whole-process mode keeps its
+loud signal.
+
+**The operational consequence stands and is the orchestrator's to place:** the file pair alone stops
+being sufficient, and `watch_errors` becomes load-bearing rather than diagnostic. Any liveness check that
+reads only `at_utc` will pass a persistently-broken watch forever — which is precisely why the key is
+written unconditionally and why mutation M3 was worth measuring. The campaign's liveness table
+(`docs/orchestration/PROMPTS-20260811-four-session-closeout.md:170-176`) needs a fourth row,
+`fresh receipt + watch_errors > 0 = degraded, one watch dead, waker otherwise fine`. **NOT YET TRUE OF
+THE CLUSTER:** its tree is `683bdcc`, 114 commits behind, `4ff5d47` is not an ancestor, its `scan()` is
+the bare `fired = evaluate(ctx, watch)` form, and its current receipt holds `{at_utc, node, pid}` with no
+`watch_errors` — which is also the discriminator for whether a deploy actually took.
+
 **⚠ THE NEW TEST IS NOT COLLECTED BY THE PROJECT TEST COMMAND, and I am not silently fixing that.**
 `FINDING-20260802-orchestration-tests-never-run.md` still holds, re-measured today: the command is
 `pytest nd-unfolding/tests`, there is no `pytest.ini` / `setup.cfg` / `testpaths` anywhere, and
