@@ -14,11 +14,11 @@ THE MATCHING IS THE HARD PART, AND A NAIVE GREP IS WRONG THREE WAYS. Measured 20
 string `fullevent_nominal` returns 78 hits in tracked .py/.sh, of which only 27 are the artifact
 namespace.
 
-  CLASS 1  literal slash-joined path      "fullevent_nominal/pet_fullevent_nominal_weights.npz"
-  CLASS 2  segmented os.path.join         os.path.join(HERE, "fullevent_nominal", "pet_...npz")
+  CLASS 1  literal slash-joined path      "fullevent_nominal/pet_fullevent_nominal_weights.npz"  # NS-EXEMPT: pattern literal, not a reference
+  CLASS 2  segmented os.path.join         os.path.join(HERE, "fullevent_nominal", "pet_...npz")  # NS-EXEMPT: pattern literal, not a reference
            -- invisible to a class-1 grep, and it is where the two sites the first inventory
               DROPPED were hiding
-  CLASS 3  shell composition across LINES OUT=".../fullevent_nominal" then NOM="${OUT}/pet_...npz"
+  CLASS 3  shell composition across LINES OUT=".../fullevent_nominal" then NOM="${OUT}/pet_...npz"  # NS-EXEMPT: pattern literal, not a reference
            -- invisible to both of the above
   CLASS 4  FALSE POSITIVES, and the reason a broad exclusion is dangerous: `train_fullevent_nominal.py`,
            `sbatch_pet_fullevent_nominal.sh` and `test_pet_fullevent_nominal_launcher.py` all CONTAIN
@@ -62,12 +62,15 @@ _REPO = os.path.dirname(os.path.dirname(_HERE))
 NS = re.compile(r'(?<!train_)(?<!sbatch_pet_)(?<!test_pet_)'
                 r'fullevent_nominal(?!_annealed)(?=["\'/])')
 
-# Files whose NAME contains the namespace string but which are not the namespace (class 4).
-FILENAME_FALSE_POSITIVES = (
-    "train_fullevent_nominal",
-    "sbatch_pet_fullevent_nominal",
-    "test_pet_fullevent_nominal",
-)
+# NO FILE-LEVEL EXCLUSIONS. There were two and both were the implicit-exclusion defect this tool
+# exists to object to:
+#   * a FILENAME_FALSE_POSITIVES skip, which discarded `sbatch_pet_fullevent_nominal.sh` WHOLESALE --
+#     and that file holds FOUR genuine namespace sites (:12, :13 log paths; :46 OUTDIR; :96 the guard).
+#     Its own name matching class 4 is no reason to stop reading it.
+#   * a blanket `nd-unfolding/tests/` skip, which hid `test_pet_diagnostic_quarantine.py:56` -- the TEST
+#     for the one site flagged for decision, encoding the same assumption as its code.
+# Class 4 is handled per-OCCURRENCE by the lookbehinds in NS, which is where it belongs. The only
+# exclusions left are line-level NS-EXEMPT markers, and those are counted and REPORTED.
 
 # --- THE INVENTORY -------------------------------------------------------------------------------
 # path -> (disposition, expected_occurrences). Dispositions are decisions and are written down as
@@ -108,7 +111,27 @@ INVENTORY = {
     "nd-unfolding/pet/pet_diagnostic_quarantine.py":               ("STAYS-NAME", 1),
 
     "nd-unfolding/pet/step1_increment_trajectory.py":              ("RECORD", 3),
+
+    # --- surfaced only after the two blanket exclusions were removed -----------------------------
+    # The producer, whose own FILENAME matches class 4 and which the old file-level skip therefore
+    # discarded wholesale. :12,:13 are #SBATCH log paths, :46 is OUTDIR, :96 is the `|| die` namespace
+    # guard. Producer output location and canonical designation are DECOUPLED and recorded in the
+    # registry rather than retargeted -- the no-clobber guard and :96 are what stopped job 56563092
+    # from destroying a baseline.
+    "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh":            ("STAYS-PROD", 4),
+
+    # Swallowed by the SAME prefix skip, because `sbatch_pet_fullevent_nominal` is a prefix of
+    # `sbatch_pet_fullevent_nominal_annealed.sh`. :48 BASELINE is the 08-08 artifact the annealed run
+    # is compared against; :21 is prose about the no-clobber guard. Both must keep naming 08-08.
+    "nd-unfolding/pet/sbatch_pet_fullevent_nominal_annealed.sh":   ("STAYS-DIAG08", 2),
+
+    # The TEST for pet_diagnostic_quarantine.py:229, encoding the same assumption. Treated together
+    # with its code so the two cannot diverge on it; gets the same comment.
+    "nd-unfolding/tests/test_pet_diagnostic_quarantine.py":        ("STAYS-NAME", 1),
 }
+
+
+EXEMPTIONS = {}
 
 
 def _tracked():
@@ -118,19 +141,29 @@ def _tracked():
 
 
 def scan(repo=_REPO, files=None):
-    """path -> list of (lineno, text). Class 4 filenames excluded by NAME, not by a blanket rule."""
+    """path -> list of (lineno, text). No file is excluded; class 4 is handled per-occurrence."""
     found = {}
     for rel in (files if files is not None else _tracked()):
-        base = os.path.basename(rel)
-        if any(base.startswith(fp) for fp in FILENAME_FALSE_POSITIVES):
-            continue
-        if rel.startswith("nd-unfolding/tests/"):
-            continue
         try:
             lines = open(os.path.join(repo, rel), encoding="utf-8").read().splitlines()
         except (OSError, UnicodeDecodeError):
             continue
-        hits = [(i + 1, l.strip()[:120]) for i, l in enumerate(lines) if NS.search(l)]
+        hits, exempt = [], 0
+        for i, l in enumerate(lines):
+            if not NS.search(l):
+                continue
+            # LINE-level exemption, never file-level. Joseph's rule, and it is the same objection the
+            # class-4 case at :179 records: a file-wide skip is an IMPLICIT exclusion, and an implicit
+            # exclusion is how a real site hides. This file matches its own pattern 8 times -- three
+            # docstring class examples and five self-test literals -- and must STAY inside its own
+            # sweep, so only those specific lines are marked and the tally is REPORTED below rather
+            # than swallowed. A new, real reference added to this file trips UNACCOUNTED like any other.
+            if "NS-EXEMPT" in l:
+                exempt += 1
+                continue
+            hits.append((i + 1, l.strip()[:120]))
+        if exempt:
+            EXEMPTIONS[rel] = exempt
         if hits:
             found[rel] = hits
     return found
@@ -170,9 +203,9 @@ def self_test():
             fails.append(name)
 
     print("[self-test] the matcher, both directions:")
-    case("class 1 literal path", 'ART = "pet/fullevent_nominal/pet_x.npz"', True)
-    case("class 2 os.path.join segment", 'os.path.join(H, "fullevent_nominal", "p.npz")', True)
-    case("class 3 shell dir assignment", 'OUT="${REPO}/nd-unfolding/pet/fullevent_nominal"', True)
+    case("class 1 literal path", 'ART = "pet/fullevent_nominal/pet_x.npz"', True)  # NS-EXEMPT: pattern literal, not a reference
+    case("class 2 os.path.join segment", 'os.path.join(H, "fullevent_nominal", "p.npz")', True)  # NS-EXEMPT: pattern literal, not a reference
+    case("class 3 shell dir assignment", 'OUT="${REPO}/nd-unfolding/pet/fullevent_nominal"', True)  # NS-EXEMPT: pattern literal, not a reference
     case("class 4 driver FILENAME must not match", 'DRIVER="${PET}/train_fullevent_nominal.py"', False)
     # the case that made the first version fail on itself: a module NAME as a string, inside a file
     # whose own name is innocent. Per-file exclusion could never have caught this.
@@ -186,7 +219,7 @@ def self_test():
     with tempfile.TemporaryDirectory() as d:
         os.makedirs(os.path.join(d, "sub"), exist_ok=True)
         p = os.path.join(d, "sub", "x.sh")
-        open(p, "w").write('A="${P}/fullevent_nominal/a.npz"\n')
+        open(p, "w").write('A="${P}/fullevent_nominal/a.npz"\n')  # NS-EXEMPT: pattern literal, not a reference
         found = scan(repo=d, files=["sub/x.sh"])
         got = audit(found)
         unaccounted = any("UNACCOUNTED FILE" in g for g in got)
@@ -195,7 +228,7 @@ def self_test():
             fails.append("unlisted file not reported")
 
         # count drift must fire even though the file IS listed
-        open(p, "w").write('A="${P}/fullevent_nominal/a.npz"\nB="${P}/fullevent_nominal/b.npz"\n')
+        open(p, "w").write('A="${P}/fullevent_nominal/a.npz"\nB="${P}/fullevent_nominal/b.npz"\n')  # NS-EXEMPT: pattern literal, not a reference
         saved = INVENTORY.get("sub/x.sh")
         INVENTORY["sub/x.sh"] = ("STAYS-PROD", 1)
         try:
@@ -248,6 +281,9 @@ def main(argv=None):
     problems = audit(found)
     print(f"[designation] {len(found)} files, {total} namespace occurrences, "
           f"{len(INVENTORY)} inventory entries")
+    for rel, n in sorted(EXEMPTIONS.items()):
+        print(f"[designation] {n} line-level NS-EXEMPT literal(s) in {rel} "
+              f"(exempted lines are reported, never silent)")
     if problems:
         print("[designation] FAIL -- the designation's safety depends on this being empty:")
         for p in problems:
