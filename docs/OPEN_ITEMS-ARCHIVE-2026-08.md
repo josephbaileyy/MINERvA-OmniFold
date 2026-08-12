@@ -1,0 +1,1327 @@
+# OPEN_ITEMS archive — 2026-08 pre-restructure record
+
+> Historical record only. The verbatim payload below preserves every byte of the former
+> `docs/OPEN_ITEMS.md`; it is not a live status source. Use `docs/OPEN_ITEMS.md` for current actions.
+>
+> VERBATIM-PAYLOAD-START
+
+# Open items — the single live list
+
+Everything not yet done, in one place. Consolidates and **supersedes**
+`docs/PREPUB_READINESS.md` and `docs/FUTURE_DIRECTIONS.md` (now tombstones;
+their full text is in git history, their DONE banners in the RUN_LOGs and
+`VALIDATION_LEDGER.md`). Bugs/code debt live in `KNOWN_ISSUES.md` (repo root).
+
+Execution references (instructions, not run receipts):
+[the dependency/rerun map](RESULT_DEPENDENCY_AND_RERUN_MAP.md) defines
+invalidation frontiers, [the publication runbook](PUBLICATION_COMPLETION_RUNBOOK.md)
+assigns the remaining packets, and
+[the post-publication reorganization plan](POST_PUBLICATION_REORG_PLAN.md) gates
+cleanup behind the publication-results freeze tag.
+**Per-lane close-out runbooks** (executable step lists for one lane, scoped so a fresh session does not
+straddle two): [GBDT/scalar close-out](orchestration/RUNBOOK-20260807-gbdt-closeout.md) — P3S,
+P3F-scalar, P4-5D/4D/FPS and their note update (`KNOWN_ISSUES.md` #20, BEN-041). **Both of its blocking
+decisions were made 2026-08-07** and are recorded in its §2: the standard 5D chain is quoted on
+**`purity`** (revisit before submission; backed by SYST covariance ratio 0.9863 / STAT 0.982 at full 2D
+statistics on the adopted lgbm estimator, plus the ρ1 = D − B_u identity), and 4D is the **exact 5D→4D
+marginal** with the independent 4D labeled a cross-check. That lane is therefore executable now and
+needs no GPU. **The PET lane has no equivalent runbook**; it is blocked on the decisions below rather
+than on a step list.
+
+**Provenance-debt standard — DECIDED 2026-08-10.** Joseph chose standard **B**: no debt that can affect
+a quoted number. Scoped as five items (band-set completeness, resume blob binding, evidence-before-
+blockers, projected-artifact marker, J36's C++ site) in
+[PACKET-20260810-B](orchestration/PACKET-20260810-B-no-quoted-number-debt.md); the residual stays
+declared in [the provenance-debt document](orchestration/PROVENANCE-DEBT-20260810-standard-p4.md).
+**Standard C (no pipeline debt at all) is deferred post-publication** — measured across four repair
+rounds the lane closed 9 defects while outstanding went 6 → 14, i.e. introduction ran ~1.9× closure,
+so C is not schedulable as a pre-publication gate. CI is its precondition (debt document §0).
+
+> **Starting a fresh session? Read the latest handoff first:**
+> [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
+> flight, what was settled 2026-08-06 (D2 powered closure FAILED; `niter` stays at 3; J28 re-roll
+> exact but 122/160), the decisions that are Joseph's, and what to do first.
+> **Handoffs must be indexed here.** The previous one
+> (`nd-unfolding/pet/HANDOFF-20260805-2300Z.md`) was referenced by nothing in the repo, which is the
+> same orphaning failure that left nine findings unread until 2026-08-06. Add a line, replace the one
+> above, and keep only the current handoff linked.
+
+## Active remediation gate (5D GBDT closed; PET full-event gate reopened)
+
+**Presentation deadline 2026-07-16 --- PASSED; the talk workstream is closed.** This section is now framed by the 2026-08-03 Perlmutter restore, not the talk. Central values, closure tests,
+dimensional anchors, and the finalized 2D reproduction remain current. Old
+4D/FPS unified/adopted covariances, `(E_avail,W)` covariance-dependent
+generator significances, and their historical products remain unquotable. The
+corrected 5D GBDT covariance is the ledger-verified replacement. The completed
+PET campaign is retained as a recoil-only representation cross-check and does
+not close the literal full-event PET gate below.
+
+- Regenerate 4D/FPS joint throws with asymmetric $\pm1\sigma$ endpoint
+  interpolation, one fixed estimator seed, throw-mean centering, and a separate
+  mean-shift diagnostic; rebuild the matched MAT $1/N$ block comparator from
+  actual minus/plus re-unfolds. Do not reuse the old jitter-subtracted adopted
+  covariances.
+- **PET before publication:** do not promote or extend the current recoil-only
+  covariance as though it belonged to a full-event estimator.
+  **UPHELD 2026-08-12 against a live proposal to do exactly that.** Session C recommended quoting
+  the additive nuisance budget with its measured `1.786`x conservatism documented; Joseph refused
+  it under this line, choosing **option (b), cause 5 stays quarantined**, verbatim: *"the 1.786x
+  result is recoil-only; it may remain an internal diagnostic but must not be quoted as a
+  full-event covariance or transferred to that estimator. Publication requires the joint
+  full-event construction in (a)."* **This line has now been tested once and held.** See
+  `DETERMINATION-20260811-cause5-binding-half.md` and `BEN-139`. Preserve its
+  completed products and replicas as cross-checks. A new nominal and UQ campaign
+  begins only after the full-event representation and stress-closure gate below
+  pass.
+- Rerun the five-axis statistical replicas and project the full covariance as
+  $M C_{5D}M^\top$ before rebuilding $(E_{\rm avail},W)$ significances.
+- Quantify lateral support migration with selection-complete
+  `MNV101_ACTIVE_UNIVERSE=BAND:IDX` per playlist. Five bands are genuinely
+  kinematic (`BeamAngleX/Y`, `MuonResolution`, `Muon_Energy_MINERvA/MINOS`);
+  MinosEfficiency and GEANT are weight-only. The unrun three-band presentation
+  bound is retired with the completed talk workstream.
+  **Corrected 2026-08-07 (BEN-036): five-band *coverage* is COMPLETE and is no
+  longer the gate.** Verified on disk: 120/120 P3F and 120/120 P3S per-playlist
+  event loops, all ten 74.8 GB merged FPS endpoint omnifiles present, and the
+  merged-input receipt (`run_id 56090877`, 748 GB) re-verifying 10/10 unchanged.
+  What remains is the **estimator footing**, not coverage: the ten FPS endpoint
+  unfolds in `active_universe_5d/fps/unfolds/` ran the driver default
+  `--bkg-mode=purity` and are purity *controls* that
+  `fps_provenance.require_publication_manifest` rejects by construction
+  (`fps_control_manifest.json` self-declares `publication_gate_rejects_this:
+  true`). Publication footing is `negweight-refined`. The gate is therefore the
+  four-step chain `fps_build_publication_manifest.py` →
+  `build_active_lateral_fps.py` → `p4_validate_active_lateral_fps.py` →
+  `adopt_active_lateral_fps.py`. P3S products under `standard/` are
+  regression controls and can never be relabeled as FPS endpoints.
+  **DONE 2026-08-07.** `56430128` produced the ten negweight-refined unfolds and
+  `56431823` ran all four chain steps rc=0. Selection-complete lateral
+  `8.10399e-39` vs support-limited `7.30356e-39` = **+10.96%**; combined FPS
+  budget `8.040779e-39 → 8.774217e-39` = **+9.1215%**; per-bin σ ratio
+  0.7897/1.0071/1.4402 so it is a redistribution, **not** a uniform scale. p4
+  PASS, zero fails, pure-sum vs subtraction 3.45e-16. Numbers and receipt chain
+  in `VALIDATION_LEDGER.md` ("2026-08-07 selection-complete five-band FPS active
+  lateral"). This discharges the lateral precondition only — **the 2026-07-12
+  quarantine stands and these scales are not yet quotable.**
+  **What this did NOT do, clarified 2026-08-07 (BEN-041):** the adopted product is the *FPS*
+  covariance (`uq_fps/.../uq_universe_fps_covariance_combined_activelat.root`, 266 reported bins) and
+  it is the **only** `*activelat*` product on scratch. The **5D GBDT covariance is a different object**
+  on a different grid (`p4_lib.GRID_NBINS = 65856`) and remains **CANDIDATE — "final lateral
+  replacement pending"** per its own ledger heading; its P4-5D lateral has not been built. So
+  `standard/` products are regression controls *for the FPS lane* — the sentence above — but they are
+  simultaneously the **intended P4-5D lateral inputs**, and reading them as controls full stop is what
+  hid this. Their state: ten ROOTs dated 2026-07-18, **purity-footed, zero `.done` receipts, produced
+  by the retired `run_active_lateral_unfolds_interactive.sh`** (`KNOWN_ISSUES.md` #20). The canonical
+  six-stage chain `run_p4_standard.sh` exists and is gated on a `P4_VERIFIER_PASS` token. Ordered
+  steps, cost, and the footing scope decision that sizes them:
+  [`orchestration/RUNBOOK-20260807-gbdt-closeout.md`](orchestration/RUNBOOK-20260807-gbdt-closeout.md).
+- **DEFERRED, not closed — the standard 5D chain's background footing (G-0 of the GBDT
+  close-out runbook).** By decision of **2026-08-07**, the standard (non-FPS) 5D GBDT chain is
+  **quoted on `purity`**, and that choice is to be **revisited before submission**. This is a
+  recorded choice rather than a silent default: the ten lateral endpoint unfolds, the central, the
+  169 vertical and the 18 detector unfolds are *all* purity-footed, so the lane is uniformly footed
+  rather than mixed, and the alternative reading — re-running the whole chain on
+  `negweight-refined` — would invalidate the just-adopted J28-corrected covariance
+  (`RUNBOOK-20260807-gbdt-closeout.md` §2, readings (A) vs (B)). The FPS lane remains on
+  `negweight-refined`, so the published pair is two consistent footings, not one mixed product.
+  - **What stands in for a 5D measurement today** (§2.1 of the runbook): at full 2D MEFHC
+    statistics with the adopted `lgbm` estimator the two modes agree to ~1–2% on the covariance —
+    SYST (187 universes) `sqrt(tr)` ratio negweight/purity **0.9863**, STAT (matched first-50
+    bootstrap seeds) **0.982**, real-data totals to **−0.13%** with 1.4% RMS per bin; plus the
+    structural ρ1 = D − B_u identity, under which each universe shifts by the same ~0.1% in both
+    modes so the *spread across* universes is insensitive by construction.
+  - **What would actually close it:** a full **5D 187-universe both-mode comparison at the
+    publication 5-iter `lgbm` config**. That does not exist. The 5D leg of the present evidence is a
+    **two-universe spot check at 1 iter / `hist`** (`2p2h:0` exact, `MaCCQE:0` −0.03%).
+  - **Do not write "footing proven irrelevant in 5D"** anywhere in the note or the ledger — the
+    evidence supports "quote purity and say so", and does not reach that claim.
+  - The choice is now machine-readable rather than prose-only: `P4Config.bkg_mode` is recorded in
+    `p4_standard_manifest.json` under a `footing` block and checked fail-closed
+    (`p4_lib.require_standard_footing`), so a downstream consumer can prove the footing instead of
+    inferring it from a silent driver branch. See `KNOWN_ISSUES.md` #20(a).
+  - Note the estimator caveat that does *not* bite here: raw `negweight` breaks the `exact`
+    GradientBoosting backend (~5×10⁴ blow-up on the `iy=1` row). The standard 5D chain runs `lgbm`,
+    the clean backend, so neither footing risks that pathology in this lane.
+- **UPDATED 2026-08-07T13:46Z — repair-4 landed and the verifier closed 2 of 6; FOUR remain, so
+  the BLOCK stands.** Independent read-only `codex-school` pass at `39c2cf4`, receipt at
+  `orchestration/runs/standard-p4-verifier/20260807T134623Z-repair4-verdict.json`. **Closed:**
+  defect 1 (driver/CLI/key) and defect 5 (projection geometry). **Repair-5 is scoped to exactly
+  these four, all accepted as correct:** (2) the receipt gate checks `code_rev` for
+  non-emptiness only and records no source blob — the *same* anti-pattern as `KNOWN_ISSUES.md`
+  #21, inside the gate meant to end it; (3) the dirty-source guard is fail-OPEN on deletion; (4)
+  candidate containment matches the path components *anywhere* so an out-of-repo path passes,
+  and the "full-total identity" is only a PSD check on the residual, never a comparison to the
+  bound stat+ML blocks; (6) still no shell-driver or builder→validator happy-path execution, and
+  a test name blesses the weaker PSD check as the stronger claim. **`P4_VERIFIER_PASS` remains
+  unset and stages 4–6 unauthorized.** Tests: the delegate reported 82/99, a local re-run is
+  **99/99** — the 17 shortfalls are the read-only sandbox having no writable temp dir, which the
+  delegate diagnosed itself; do not "fix" them.
+- **BLOCKING for P4-5D covariance construction — the standard-p4-verifier's standing verdict is
+  BLOCK (originally six never-repaired defects, now four; BEN-046).** Found 2026-08-07 while executing the
+  close-out runbook's G-4. `standard-p4-verifier` (UUID `019f74cb-…`) blocked repair-3 `74fa362`
+  citing six ranked defects; `docs/orchestration/followup-agent-A-standard-05.md` is the repair-4
+  brief; **no repair-4 commit exists**. `git log 74fa362..HEAD` over `nd-unfolding/p4_*`,
+  `nd-unfolding/run_p4_*` and `tests/test_p4_repair.py` returns only `d5bd5da` (an unrelated
+  note-overclaims commit that incidentally touched three of the same files), the FPS lane's own
+  repairs, and the 2026-08-07 close-out commits. The BLOCK is recorded in
+  `MIGRATION-TAKEOVER-STATUS.md` rows T2 and PG3S; the close-out runbook's §1 state table has no
+  row for it, which is how it read as a formality. **What this changes:** G-4 is an unstarted
+  repair round scoped by six enumerated items, not a checkpoint to walk through — size it from
+  `followup-agent-A-standard-05.md`, and note `P4_STANDARD_STATUS.md`'s "REPAIR round 3 complete"
+  describes the attempt, not the verdict.
+- **Waiting on Joseph — how the G-1 footing patch reaches the cluster checkout.** It is committed
+  and pushed on branch `worktree-gbdt-closeout` (`5a4009f`, `e6e28c9`) but not on
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold`, whose `main` a **concurrent lane is actively
+  committing and pushing to** (it moved from `28d43aa` to `0028b49` mid-session). Switching that
+  tree's branch would pull code out from under a live session. A cluster-side `git worktree` is
+  not a workaround: `p4_evidence.py` hardcodes `REPO` and takes `source_blobs` with `cwd=REPO`, so
+  it would record the canonical tree's blobs while a different file actually ran. Until this
+  lands, **stage 3 must not run** — the launcher skips any endpoint that already has a receipt, so
+  attesting on pre-G-1 code would stamp ten `.done` files with no `bkg_mode` and freeze them that
+  way, and deletions are behind the reorg freeze tag.
+- **OWED — the native-miss and merged-audit checks are now verifiable only on the cluster
+  (repair-7 item 3 follow-up).** `p4_lib.check_merged_metadata` was deleted 2026-08-09 because it
+  had no production caller, and its checks — tree completeness, POT positivity, census counters,
+  the native-miss flag/count comparison, the two-sided migration-policy check — live only in
+  `p4_evidence.py`'s inline path. That path imports ROOT, so **none of them can be unit-tested
+  off-cluster**, and eight tests were deleted with the function. Declaring the loss was the
+  honest step; leaving it there is not, because "verifiable only in the least-exercised
+  environment" is how a check drifts back into being effectively dead — which is exactly how the
+  deleted function got that way.
+  - **The named fix, already identified:** extract those checks into a ROOT-free helper that
+    takes extracted metadata (the shape the deleted function had) **and wire `p4_evidence.py` to
+    call it in the SAME change**. Introducing a helper with its caller is the rule that would
+    have prevented the original dead gate; introducing one without a caller recreates it.
+  - **Do not** re-add the helper alone to restore a green test count. That is the failure this
+    entry exists to prevent.
+- **OWED (writer side) — `hasTruthOnlyMisses` is a per-playlist 0/1 flag written with `hadd`'s
+  default summing merge mode, so every merged endpoint reports `12`.** Found 2026-08-09 when
+  `p4_evidence.py` required it to be in `(0, 1)` and fail-closed on all ten endpoints, which were
+  fine. The reader is fixed (it now records `native_miss_playlists_with_misses`, requires
+  `0 < v <= 12`, and requires agreement in direction with `nTruthOnlyMisses`), so nothing is
+  blocked — but the artifact is still misleading to anyone who has not read
+  `FINDING-20260809-tparameter-merge-semantics.md`.
+  - **The named fix:** in `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:2002`,
+    either pass the `'f'` merge mode (as lines 1900-1901 already do for `hasFullEventSchema` and
+    `fullPhaseSpace`) **or**, better, rename it `nPlaylistsWithTruthOnlyMisses` and keep `'+'`, so
+    the merged value's meaning is in its name and the reader cannot misread it. The rename is
+    preferred: it makes the summed value correct-by-construction rather than suppressed.
+  - **Why it is not done here:** it is an event-loop change, and re-running the 12-playlist
+    production to regenerate the merged endpoints is a multi-hour step owned by another lane.
+    Batch it with the next event-loop change rather than running production for a metadata label.
+  - **Do not** "fix" this by loosening the reader further. The reader is already correct; the
+    writer is what is misnamed.
+- **THE STANDARD-P4 PROVENANCE DEBT IS NOW A DOCUMENT, and it is a deliverable:**
+  `docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md`. After five verifier passes went
+  6 → 4 → 6 → 9 → 14 outstanding — with three of the last round's six new defects sitting in guards
+  written that same round to close other defects — the audit target changed from the PIPELINE to
+  the PRODUCT (Joseph, 2026-08-10). The covariance is validated as a fixed object; the machinery
+  that produced it is not claimed to be verified.
+  - **The price is written down in advance, completely.** Four verifier defects stay deliberately
+    open (#2 resume binds only the unfold blob, #5 token accepts symbolic revs and skips the
+    working tree, #6 `C_syst` trusts the manifest's key set, #7 mutation harness incomplete), four
+    more are partial, and four unfixed new ones are itemised.
+    - **#2 is no longer one of them, as of 2026-08-11 (Packet B PB2 repair).** The launcher now
+      stamps the whole six-module producing closure into every receipt, `p4_check_receipt.py`
+      re-derives that closure itself and will not authorise a SKIP until every member's blob
+      matches, and the grandfather clause is bounded by a declared `receipt_schema` so a
+      current receipt that omits the record rejects instead of inheriting it. The other three
+      stay open and the dated debt document is left as the record of what was true on 08-10.
+      **CLOSED by the same `standard-p4-verifier` UUID at `1440b58` (2026-08-11).** The verifier
+      required a second repair so explicit JSON null could not inherit grandfathering; the final
+      real-CLI/helper battery is 274 pass + 29 subtests. This closes PB2, not adoption.
+      A separate mechanical-auditor gap was exposed while closing the null cases and **closed
+      2026-08-11**:
+      `tools_p4_sweep_recorded_fields.py` only harvests shell JSON keys whose values are quoted,
+      so it does not inventory `receipt_schema` or `surface_blobs`, which are emitted through
+      unquoted `%s` substitutions. Both fields are genuinely gated and integration-tested; the
+      defect was the sweep's false-negative extraction, not the production receipt gate. The
+      shell-key extractor now treats key syntax independently of value representation, a focused
+      regression asserts both production fields are harvested, and the guarded snapshot records
+      them explicitly.
+  - **The single largest structural gap: there is no CI in this repository.** Every guard binds an
+    author who runs `pytest`; none binds a commit.
+  - **Anyone quoting a number derived from this covariance must cite that document alongside it.**
+    If the reduced standard is not acceptable for publication, the response is to close the open
+    items — not to restate the product's status more favourably.
+- **J36 IS NO LONGER A SEPARATE SCOPING ITEM — it is one member of a class of 9 (2026-08-09).**
+  The question "should we fix the global Data/MC POT scale in `unfold_2d_omnifold_unbinned.py`?"
+  was the wrong unit. The same computation — one `hadd`-summed extensive divided by another —
+  occurs at **9 live sites: 8 Python + 1 C++**, three of them production unfolders and two in the
+  ND lane, which did not know it was affected. Full per-site table and semantics:
+  `docs/orchestration/FINDING-20260809-derived-from-merged-extensives.md`; regenerate with
+  `audit_derived_from_merged_extensives.py --power`.
+  - **Deliberately NOT repaired.** The instruction was to size the class first, then decide scope.
+  - **What the count changes about the repair:** the ratio is recomputed from scratch in every
+    consumer, so there is no single place to fix and a corrected `get_pot_scales` in one file
+    leaves seven copies. Any repair has to be a single vetted producer that the other seven call.
+  - **C++ IS SWEPT, and that is where the 9th came from (2026-08-09).** The `git ls-files` C++
+    corpus was passed over: exactly one file reads a merged extensive at all, giving **1 C++
+    defect site** — `ExtractCrossSection.cpp:225` (`-dataPOT/mcPOT`), with `:224` printing the
+    same value. Every other C++ occurrence is a `TParameter` *write*. It is in a live path,
+    determined rather than left open: `build_1d_ibu_inputs.py` reads hadd-summed POT from the
+    merged MEFHC omnifile and rewrites it as `POTUsed` into the projected inputs that
+    `sbatch_ibu_1d_projection.sh` hands to `ExtractCrossSection`. Chain and per-link evidence in
+    the finding document.
+  - **The 9 is still a floor** — taint is intraprocedural — but no longer because a whole
+    language is unexamined.
+  - Total normalisation is still not biased, so no published number is withdrawn on this account.
+- **HANDED OVER to the FPS lane (Agent C) — BEN-070's second site,
+  `p4_validate_active_lateral_fps.py:70`.** `require(np.all(d >= -1e-30), "negative diagonal")`
+  sits in `mat_gates` beside a relative symmetry check (L66) and a relative PSD check (L68), on a
+  covariance whose diagonal median is `3.867e-86`. Same defect as the `p4_lib.py` twin, which the
+  GBDT lane fixed in its own file.
+  - **LATENT, not reachable.** L68's effective PSD threshold is ~1e-89 against L70's 1e-30, so PSD
+    subsumes the diagonal check by ~59 orders and no FPS adoption is compromised. This is a
+    correctness-of-form item, not a live risk — which is why it was handed over rather than
+    reached across for.
+  - **The named fix:** make L70 relative to `abs(ev[-1])` exactly as L68 already is (the
+    eigenvalues are computed on L65 and are in scope), and land it **with a mutation test at the
+    real ~1e-86 scale** — a test at O(1) would pass against the broken form and prove nothing,
+    which is the whole content of BEN-071's false-positive refinement.
+  - **Why the GBDT lane is not doing it:** it is a logic change in another lane's file. That
+    boundary was tested the hard way the same week — a five-line *guard* in a PET-lane test file
+    silently voided a gate-3 sha256 binding (BEN-061). This file is not hash-pinned (checked
+    2026-08-09), so that specific hazard does not apply here; the handover stands on ownership of
+    the physics, not on the hash.
+  - **This entry exists because the handover was previously recorded only in a commit message**,
+    which is BEN-073's failure mode: a decision nobody will find when they need it.
+- The 12-playlist background-aware dump, 169 vertical unfolds, 18 detector
+  unfolds, and matched CV are complete; KNOWN_ISSUES #13 is closed with a
+  sub-0.3% effect. Keep production banked sweeps fail-closed when per-universe
+  background columns are missing.
+
+### PET full-event + FPS measurement-domain gate (KNOWN_ISSUES #19)
+
+> **STATE 2026-08-07 — one line each, pointers only (this file is the to-do, not the analysis).**
+>
+> - **Full-event extraction is BLOCKED and the nominal is being RE-TRAINED.** The saved step-2 checkpoint
+>   was not the model that produced `weights_push`, so `check_subsample_agreement` (tol 1e-3) fails closed
+>   at max rel dev 0.866. Joseph chose option (1) on 2026-08-07; the driver now persists the final-epoch
+>   weights, Gate-4 code gate re-issued as `...-20260807.json` with `nominal_pet_training_allowed: true`,
+>   and the re-train is queued as **`56445883`** (watch `nominal-rerun-56445883`). The 2026-08-06 products
+>   are archived under `pet/fullevent_nominal/superseded-20260806/`, digests verified across the move.
+>   → `docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md`, BEN-043.
+> - **Step 1 is correct at iteration 0 and degrades later**: terminal trajectory job `56525829`
+>   measured 1.233512 against exact R=1.124080 at push=1 (correct sign, within the predeclared 10%),
+>   then 0.915166 vs 1.028684 required at iteration 1 and 0.648331 vs 1.161650 at iteration 2, both
+>   wrong-signed. The three decomposition anchors reproduce bit-exactly; cap saturation is zero; the
+>   lower step-1 best checkpoints are epoch 8/8 and therefore last-epoch faithful. Stale cached
+>   labels/weights are excluded by code (they are rebuilt each call); fixed split/order and warm-started
+>   model state remain separable iteration-dynamics candidates. → `FINDING-20260807-step1-under-achieves.md`.
+> - **The D2 "97.8% scatter" reading is against the wrong reference.** Against the 0.80 bar's own
+>   reference the miss is 81.4% a coherent under-application of the injected tilt (the estimator applies
+>   63.1% of it); each term alone exceeds the entire residual headroom, so no single-axis remedy passes and
+>   seed-ensembling caps at 0.6313 for any N. → `FINDING-20260807-d2-response-reference-point.md`, BEN-042.
+> - Gate-4 still cannot PASS, and this item is not closed by any of the above.
+>
+> **STATE 2026-08-08 — two changes to the list itself, per Joseph.**
+>
+> - **OPEN ITEM (d) — STILL OPEN AFTER THE 2026-08-09 ADOPTION, which is the point of it.**
+>   The D2 re-specification was ADOPTED on 2026-08-09 (`recovery >= f*ceiling`, f=0.80,
+>   ceiling=0.618228 per-event, injection-pinned) and Gate-4's D2 leg is consequently GREEN. That does
+>   **not** close this item, and the criterion code now says so in the same place it states the bar:
+>   `FROZEN["powered_closure"]["unexplained_shortfall_vs_ceiling"] = 0.0714` with status `OPEN`, plus
+>   `test_unexplained_shortfall_stays_visible`. Joseph's condition was that re-specifying the bar must
+>   not make the shortfall invisible; pinning it adjacent to the bar in the frozen contract is how.
+>   **The shortfall is UNEXPLAINED and must not be absorbed by the D2
+>   re-specification.** Of the `0.2531` gap between the `0.80` bar and the measured `0.546853`, `0.1818`
+>   (71.8%) is specification and **`0.0714` (28.2%) is the estimator's own deficiency** — it reaches
+>   **88.45%** of the acceptance-limited ceiling. **CORRECTED 2026-08-08 by independent re-derivation: that
+>   deficiency is ~98% per-cell DISPERSION charged by the L1, not response quality** — the scatter penalty is
+>   `0.084433` of the `0.086355` ceiling-to-measured gap (97.8%) and the signed response deficit is only
+>   `0.001922` (2.2%), i.e. the signed response is essentially AT ceiling. What is unexplained is why the
+>   dispersion is that large; it is not reducible by iteration count (no `k <= 6` helps), training budget (the
+>   8/16/32 ladder makes the coherent term monotonically worse) or seed (ensembling caps at 0.6313 for any N),
+>   and sampling is excluded (the statistical oracle is 0.9542). Do not describe it as "estimator response
+>   quality". → CLM-012,
+>   `FINDING-20260807-d2-acceptance-limited-oracle.md`.
+>   *Working hypothesis, NOT a finding and not attributable to anyone as a claim:* it may be the same
+>   coherent under-application as the fold-forward deficit (`mean_w_reco(push|pass_reco) = 0.746483` vs
+>   `R = 1.124080`) and the ~19% leg mismatch (truth-leg `0.888234` vs reco-leg `0.746483`) — three
+>   symptoms, possibly one cause. Nothing has tested that.
+> - **REMOVED: `values.tex` is not a PET-lane decision and not a decision at all.** It is a queued task
+>   specified as **G-8** in `RUNBOOK-20260807-gbdt-closeout.md`, unblocking when **G-5** adopts. Dropped
+>   from this lane's open list. The PET macros stay untouched inside the **2026-07-12 quarantine**
+>   regardless of what G-5 does, so no PET action is pending on it in any branch.
+
+
+The present PET step-1/step-2 classifiers see only the reconstructed recoil
+cloud and truth-hadron cloud. Muon/scalar arrays are phase-space and extraction
+metadata, not classifier features. Binning a recoil-derived event weight in
+muon coordinates does not unfold the full joint distribution: at fixed recoil,
+the conditional muon distribution remains the generator prior. Therefore use
+**full-event** for the input representation and **extended phase space** for the
+relaxed acceptance; do not use “full phase space” as a synonym for a recoil
+point cloud. The publication deliverable requires both changes. A full-event
+classifier trained on the standard restricted phase space does not close this
+item.
+
+Mandatory measurement-domain contract:
+
+- source only FPS CV event loops produced with
+  `MNV101_FULL_PHASE_SPACE=1`, which remove the four truth muon kinematic cuts
+  while retaining the tracker fiducial definition and unchanged reconstructed
+  selection;
+- preserve the FPS truth denominator, newly admitted native misses, signal,
+  background, data, and event alignment through every cloud dump, scalar/W
+  source, train, extraction, systematic endpoint, projection, and closure;
+- pass `--full-phase-space` wherever code reconstructs the truth gate. A path
+  that consumes finalized inputs without that option must instead verify
+  embedded FPS provenance and reject incompatible metadata;
+- use the canonical extended FPS `(p_T,p_parallel)` edges, including the low-
+  and high-`p_parallel` and high-`p_T` catch bins. Record and compare the exact
+  arrays and reported-bin ordering; fail closed on the standard paper grid;
+- use P3F products under `active_universe_5d/fps/` for selection-complete
+  laterals. P3S products under `active_universe_5d/standard/` are regression
+  controls only and cannot be relabeled or reused as FPS endpoints;
+- report acceptance-supported and prior-dominated extrapolation regions
+  separately, and repeat the FPS anchor, extension closure, coverage, and
+  prior-swap/envelope controls for the new estimator.
+
+Artifact guard: `of_inputs_pc_fps.npz` applies the standard truth gate, and
+`of_inputs_pc_fps_xps.npz` lifts the angular cut but retains the standard
+`p_T/p_parallel` bounds. Neither is an FPS publication input. The `xps2`
+gate-and-edge convention is the semantic starting point, but its current
+recoil-only tensors are not the final full-event representation.
+
+Define three explicit event-feature schemas rather than manufacturing
+counterparts that do not exist:
+
+- `event_reco` and `event_data` use the same observable schema: a distinguished
+  reconstructed muon with full direction and momentum
+  (`p_x,p_y,p_z` or `p_T,p_parallel,phi`), energy and charge/type, plus MINOS
+  range/curvature and match-quality context only where its identical data/MC
+  definition is validated;
+- `event_truth` uses a distinct truth schema with the truth-muon four-vector and
+  truth event quantities. Never create truth MINOS/range/match counterparts or
+  fill detector-only features with sentinels;
+- the recoil set with energy and unambiguous geometry: view ID plus position and
+  `z`, preferably coordinates relative to the interaction vertex, with timing
+  and cluster/prong/type information when available;
+- truth-particle four-vectors plus a categorical PDG/type encoding (the PDG is
+  already dumped but the current loader discards it);
+- reconstructed vertex quantities may enter `event_reco/event_data`; truth
+  vertices may enter `event_truth`. A step-1 MC or data classifier must never
+  receive the MC truth vertex. Include explicit summaries for information
+  outside the retained cloud, including constituent count,
+  discarded/unclustered energy and detector-region energy totals, or use a
+  validated variable-length scheme that removes the fixed top-12 loss;
+- masks/type embeddings that distinguish muon, recoil constituents, padding,
+  detector views, and any residual-summary token.
+
+Do not feed generator interaction mode, generator-only process labels, or other
+unobservable truth labels into the publication classifier. Incoming-neutrino
+energy and similar truth-only latents require a separate prior-dependence case;
+they are not part of the default full-event claim. Run/playlist may be used only
+as validated detector-period conditioning, never as an unchecked data/MC label
+shortcut.
+
+Implementation gate, in order:
+
+1. Prove the source ROOT has the FPS configuration and reproduce the committed,
+   matched-CV FPS-versus-standard denominator/miss census within its declared
+   tolerance. Verify the extended edges/order, unchanged reco selection, and
+   event alignment before training.
+2. Repair and test independently paired `(point_cloud, event_features)` inputs
+   for `event_reco`, `event_data`, and `event_truth` through PET, DataLoader,
+   both `MultiFold.cache()` steps, reweight-all inference, bootstrap
+   persistence, and extraction. Permit different step-1/step-2 feature counts
+   and normalization contracts. **Updated 2026-08-01:** the `num_evt` branch is
+   no longer the blocker — `dfef335` landed the 13-feature reco schema with
+   `n_evt_reco`/`n_evt_truth` carried separately, so the two legs may now differ
+   in width, and `pet/extract_fullevent_fps.py` supplies the missing
+   reweight-all + extraction path. **Decision recorded 2026-08-04:** Step 1 uses
+   `w_reco`, Step 2/truth yields use `w_truth`; the nominal must consume the
+   hash-bound precomputed Gate-2 target; and closure gets an MC-only TF path.
+   Implement the dual-leg loader/engine boundary, mandatory target consumer,
+   row/hash/provenance gates, and MC-only construction as one receipt-bound
+   patch set, then re-issue Gate 2 and Gate 4. Canonical requirements:
+   `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`.
+   **STATUS 2026-08-05: D1/D2/D3 implemented; GATE 2 RE-ISSUED AND PASSED** (job
+   56344268). What remains, in order:
+   > **THRESHOLD RETIREMENT — added 2026-08-12. Read before any number in (a).**
+   > The triple `recovery >= 0.80` / `residual/gap <= 0.20` / `residual <= 0.0469` was **retired as a
+   > BUG on 2026-08-09**, on Joseph's decision — see `CLAIMS.md` CLM-012's status line and the
+   > `recovery >= 0.80` row of [`INDEX-retracted-and-superseded-values.md`](orchestration/INDEX-retracted-and-superseded-values.md).
+   > The retired `0.80` is what a ceiling computed in the **wrong scope** rounds to
+   > (`phi(E[a]) = 1-(1-0.42351622)^3 = 0.808415`). The adopted criterion is
+   > `recovery >= f * ceiling`, `f = 0.80`, `ceiling = 0.618228` (per-cell scope, per-event
+   > weighting, injection-pinned) → **`0.4945824`**.
+   >
+   > **Everything below is preserved as written and is scored against the RETIRED bar.** Two
+   > consequences a fresh session must not miss:
+   > - `residual <= 0.0469` is a **derived descendant** of the retired bar (`0.20 x gap 0.234270 =
+   >   0.046854`). It does not string-match the retraction, so grepping `0.80` never finds it. It is
+   >   **not a live budget** and needs re-derivation against `0.4945824`; this note deliberately does
+   >   not compute a replacement, per the write-time rule in the retraction index.
+   > - Job 56381674 measured `recovery = 0.5469` (`1 - residual/gap = 1 - 0.4531`), which **exceeds
+   >   the adopted `0.4945824`**. Its `verdict=FAIL` is therefore a verdict against a retired
+   >   criterion. `VALIDATION_LEDGER.md` already scores the comparable annealed run **PASS** at
+   >   `recovery 0.512603276 >= 0.494582400`. **This does not by itself re-issue Gate-4**: the
+   >   validator still self-reports `recovery_criteria_met=false` against the retired bar, and the
+   >   index is explicit that this field is *"a self-report, never the gate"*. Re-issuing is a
+   >   separate decision with its own receipt.
+   >
+   > Accordingly the sentence below — *"Until it passes, `powered_closure` is red BY DESIGN and
+   > Gate-4 cannot PASS"* — is **superseded by this note**. (BEN-201.)
+
+   (a) **run the D2 powered recovery closure** --- `pet/closure_powered_truth_reweight.py`
+       exists and its Gate-4 component re-derives every metric from the dump. The 08-04 GPU
+       smoke (job 56347531) exercised the whole path and **returned FAIL, exit 3** --- not a
+       crash: it ran the complete protocol and wrote a verdict. That FAIL was an artifact of
+       the smoke's 20,000-row half-size, and it is now PROVABLE rather than inferred: the
+       submission-side gate scores `floor/gap = 0.4040` at 20k (acceptance budget 0.50x the
+       sampling floor --- unpassable however well the estimator performed) against
+       `floor/gap = 0.0459` at the predeclared 2M. The smoke's report and artifact were
+       deleted, which is why this had to be reconstructed; `--json` is mandatory on the gate
+       now so a FAIL can never again leave no evidence.
+       The predeclared run (clipped-exponential truth-pT tilt at amplitude 0.35, clip
+       |z|<=3, disjoint deterministic 2M/2M at split seed 7, nominal policy incl. batch 512,
+       accept at gap>=0.15, floor/gap<=0.10, residual/gap<=0.20) has NOT completed. Sized at
+       12.84 GiB peak host memory. The two training-independent criteria are already measured
+       and pass with margin (gap 0.2343 = 1.56x, floor/gap 0.0459 = 2.2x), so the only open
+       number is `residual <= 0.0469` (recovery >= 0.80). Until it passes, `powered_closure`
+       is red BY DESIGN and Gate-4 cannot PASS.
+       **Job 56355818 was CANCELLED 2026-08-06 at 00:57Z, 5:18 into its 12 h run**, on the
+       user's instruction and for a mechanical reason: it was executing `niter=2`, and the
+       seed policy moved to `niter=3` in the same window. Its report would have recorded
+       `niter: 2` and been rejected by `powered:nominal_configuration`
+       (`validate_pet_nominal_gate4.py:790-795`) and `freeze:seed_policy` (`:937`). **It must
+       be RE-RUN at niter=3**, which is now the only thing standing between Gate-4 and a
+       runtime verdict. Cancelling cost ~5 min of GPU because it was caught minutes after
+       dispatch rather than hours; see
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md).
+
+       **RE-RUN COMPLETED AND IT FAILED. Job 56381674, 2026-08-06, `niter=3` confirmed in
+       `configuration`, elapsed 01:58:19, rc=3, `verdict=FAIL`.** The two training-independent
+       criteria passed exactly as predicted (`gap = 0.234270` >= 0.15; `floor/gap = 0.045876`
+       <= 0.10, preflight cross-check AGREE). **The open number missed, and not marginally:
+       `residual = 0.106159` against the `<= 0.0469` budget, `residual/gap = 0.4531` against
+       `<= 0.20`, so recovery is `0.5469` against the predeclared `>= 0.80`.** Evidence:
+       `pet/powered_closure/{POWERED_CLOSURE_REPORT,POWERED_PREFLIGHT}.slurm-56381674.json`,
+       `DONE.slurm-56381674.txt`, artifact `...ARTIFACT.slurm-56381674.npz`
+       (report sha256 `d5a01f3f4ffd…`). **Do not touch the thresholds** --- diagnose.
+
+       **First-pass diagnosis from the report's own per-bin arrays (285 bins = 15 pT x 19
+       pparallel, `BIN_ORDER` pt-major).** The failure is **not** a normalization bug and
+       **not** localized pathology:
+       - Normalization closes *exactly*: `sum(h_prior) = sum(h_target) = sum(h_unfolded) = 1.0`
+         and `sum(h_unfolded - h_target) = 0.000000`. This is consistent with the B1 rate
+         closure passing at `k=3` and means the two closures are not in contradiction --- they
+         measure different things.
+       - The unfold moves in the right direction but **not far enough, globally**:
+         `L1(unfolded - prior) / L1(target - prior) = 0.6549`, per-bin median recovery `0.8233`,
+         with 128 of 262 bins under 0.8 and **29 bins moving the wrong way** (recovery < 0).
+       - The residual is **broadly distributed**, not a few bad cells: the top 10 bins carry
+         26.5% of the L1 residual, top 20 carry 44.8%, top 50 carry 75.1%.
+       - ~~**The miss is asymmetric in the TILT DIRECTION**~~ --- **REFUTED 2026-08-06 15:10Z. The
+         cited bins were CONFOUNDED with `p_parallel`, and the first reading ("worst cells cluster at
+         the `i_pparallel = 0` edge") was closer to right than the correction that replaced it.**
+         Decoded (`cell = i_pt * 19 + i_pp`, verified against the report's own edges): the four
+         "down-tilted" bins 38/57/76/95 are **all four at `i_pp = 0`**, i.e. `p_parallel` 0.0--0.75
+         GeV where `a_b = 0.003`; the three "up-tilted" bins 242/243/244 are at `i_pp = 14/15/16`,
+         `p_parallel` 10--40 GeV where `a_b ~ 0.64-0.71`. The 0.17--0.24 vs 0.72--0.91 contrast is
+         **the `p_parallel` acceptance gradient read off at two different `p_parallel` values**, not a
+         measurement of tilt direction at all.
+         Marginalizing over all 19 `p_parallel` cells --- the only way to isolate a pT-only tilt ---
+         **there is no down-tilt deficit, and the sign is if anything OPPOSITE**: down-tilted pT bins
+         0--6 recover 0.65--0.75 against an ideal of 0.61--0.65 (slightly *exceeding* it), while the
+         up-tilted extremes fall short (pT 12: 0.575 vs ideal 0.737; pT 13: 0.712 vs 0.854). The
+         pT-8 outlier is the tilt pivot (ratio 0.977), a ratio of two near-zero numbers.
+
+       **So the over-regularization framing is dead, and so are BOTH of its hypotheses.**
+       (i) more iterations: `k=3 -> 4` buys 0.023, saturating by `k=8` --- no `k` fixes this.
+       (ii) `epochs=8` optimization-limited: **measured false.** The six surviving training histories
+       in `powered_closure/weights.slurm-56381674/` show step-2 train loss moving **3.2e-5** across 8
+       epochs in iteration 2 and 3.0e-5 in iteration 3, with iteration 2's `val_loss` getting
+       *worse* (0.829560 -> 0.829612, best at epoch 1). That is a fit with no remaining gradient
+       signal, not one starved of steps. Where information exists the fit already matches the
+       pointwise ideal.
+
+       **Why the wrong hypothesis was attractive --- a real telemetry bug, now the lead item in
+       `KNOWN_ISSUES`:** `omnifold.py:303` logs `hist.history['val_loss'][0]` under the label
+       **"Last val loss"**. It prints **epoch 1**, not the last epoch. Anyone judging convergence from
+       the log is reading the first epoch, which is plausibly how "optimization-limited" got proposed
+       without the history pickles ever being opened. Related: `ModelCheckpoint(save_best_only=True)`
+       (`omnifold.py:272-275`) writes best-val weights while `reweight` uses the **last-epoch
+       in-memory** model, so on-disk checkpoints are **not** bit-identical to what a run used.
+
+       **What is actually unexplained** is per-bin **scatter**, rms 0.212 about the ideal curve. It
+       costs 0.084 of the aggregate through the absolute value: overshoot bins (`r > 1`) contribute
+       9.3% of `residual/gap`, and `E_w[r] = 0.631` against an aggregate of 0.547 --- the signed mean
+       hides it. That is a **variance** question, so it needs a **seed ensemble**, not a longer run.
+       **CORRECTED --- this session first wrote "no niter=2 comparison exists, so the failure cannot
+       be attributed to the niter switch either way." That was too weak.** The concurrent session
+       supplied the structural argument: with acceptance `a = n_step1_a/n_truth_a = 837494/1999920 =
+       0.418764` (the report's own `samples` block), `RunStep2` pins the other 58.1% of truth rows to
+       exactly 1, so B1's bound gives a **ceiling on recovery** of `1-(1-a)^k` --- reproduced
+       independently here: `k=1` 0.41876, **`k=2` 0.66216**, `k=3` 0.80364, `k=4` 0.88587. So
+       **`56355818` at `niter=2` could never have passed a 0.80 bar; it was doomed by construction**,
+       and the 2->3 switch was not merely better for B1 but *necessary for this criterion to be
+       satisfiable at all*. **Caveat, theirs and important:** `1-(1-a)^k` is B1's bound for the
+       fold-forward **RATE** ratio, applied here by analogy to a **spectral L1**. Same mechanism, and
+       the numbers line up, but the transfer is **NOT proven** --- verify before quoting. Measured
+       0.546853 is 68% of the k=3 ceiling, sitting between the k=1 and k=2 ceilings.
+
+       **RETRACTED 2026-08-06 15:10Z --- the two paragraphs that stood here were WRONG, and wrong in
+       the direction that flattered the result.** A fresh-context claude-school session (READ-ONLY,
+       `/pscratch/sd/j/josephrb/q_fresh.claude.txt`) derived the bound properly and measured what the
+       analogy had only assumed. Both of my/our errors are recorded rather than quietly patched:
+
+       1. **`1-(1-a)^k` is not a CEILING, it is an EQUALITY in the ideal-classifier limit.** From
+          `omnifold.py:198-200,218-220`: `nu_k(x) = a(x) C_k t(x) + (1-a(x)) nu_{k-1}(x)`, so for
+          x-independent `a`, `nu_k - t = (1-a)^k (1-t)` pointwise and the spectral L1 follows
+          exactly. So the transfer to L1 **does** hold --- but framing it as a ceiling let 0.547 read
+          as "68% of the way to a structural limit" when the ideal limit *predicts* 0.804 and the
+          estimator **missed it by 0.257**. The correct reading makes the result look **worse**, not
+          partially excused.
+       2. **The number was wrong, because `a(x)` is wildly non-constant.** Measured per-bin from the
+          dump: `a_b` runs **0.003 to 0.81**, driven by the **MINOS match threshold** --- at
+          `p_parallel < 0.75 GeV` the muon never reaches MINOS. **35 bins with `a_b < 1%` carry 23.2%
+          of the injected displacement mass.** Under heterogeneity the aggregate is
+          `1 - E_w[(1-a_b)^k]`, and by Jensen the global-`a` form is only an upper bound. Exact
+          per-bin recursion: `k=1` 0.426, `k=2` 0.572, **`k=3` 0.635**, `k=4` 0.657, `k=8` 0.686.
+          Model confirmed rather than fitted: over the 121 bins carrying the top 90% of displacement
+          mass, measured vs predicted per-bin recovery gives **Pearson 0.862 / Spearman 0.879**, and
+          the displacement-weighted signed means agree to 0.3% (0.63129 vs 0.63296).
+
+       **Consequence (i) SURVIVES and strengthens:** `niter=2`'s ideal is **0.572**, not 0.66216 ---
+       further below the 0.80 bar. `56355818` could not have passed. Keep that conclusion.
+
+       **Consequence (ii) is RETRACTED AND REVERSED.** The bar does **not** sit 0.36 pp *under* a
+       0.80364 ceiling. It sits **16.5 pp ABOVE the achievable 0.6347.** Reaching 0.80 on this domain
+       needs `k` of order **100** (0.780 at k=50, 0.815 at k=100). The bar was not tight --- it was
+       **unreachable at any practical k**. Same species as the inert-tolerance defect, **opposite
+       sign**. Still not a proposal to lower it; see (e) for what replaces it.
+
+       Note `residual/gap` and `recovery` are **one criterion stated twice**, not two independent
+       failures: `recovery == 1 - residual/gap` holds exactly (verified bit-for-bit).
+
+       **And the "more iterations" reading is dead.** `k=3 -> 4` buys **0.023** and the curve saturates
+       by `k=8`. **No `k` fixes this.** The k=4 B1 arms (`56400517`, `56400519`) are therefore **not
+       load-bearing** --- they still close (e)'s scalar question, so let them run, but they will not
+       rescue the differential test.
+
+       **UPDATE 2026-08-07 --- the scatter reading above is now quantified, and it is the WHOLE
+       shortfall.** Splitting the criterion into a signed response and a scatter term, with
+       `r_b = (u_b-p_b)/(t_b-p_b)` and weights `w_b = |t_b-p_b|`: signed mean `E_w[r] = 0.63129`
+       against the dilution ideal `0.63321` (**bias -0.0019**), while
+       `scatter penalty = E_w[|1-r|] - |1-E_w[r]| = 0.08443` --- **97.8% of the 0.086354 gap between
+       the measured 0.546853 and the achievable ceiling**, with **87 of 262** occupied bins
+       *overshooting*. So the estimator has essentially **no bias left to remove** and the powered
+       closure, as defined, is measuring **per-cell variance**. This is the strongest available
+       argument that the criterion needs redesign rather than the estimator, and it strengthens (e).
+       Two traps this exposed, both filed: the per-band L1 column reads like undershoot where the
+       signed bias is ~0 (`a_b>=0.50`: L1 0.7943 vs ceiling 0.9704, but bias only **-0.0116**), and
+       the low-acceptance cells **beat** their own ceiling 19x (signed +0.1525 vs 0.0082), so 0.6332
+       is a reference curve, **not a bound** (BEN-038). Saturation and global shrinkage are also
+       excluded: max implied logit **1.041** against a cap of 30, and the push weights span
+       [0.562, 2.832] against an injected tilt range of [0.549, 2.654].
+
+       **Budget ladder submitted 2026-08-07** to convert the "(ii) measured false" *inference* (a loss
+       plateau) into a direct measurement: `56431649` ctl8 (epochs=8, the control and an independent
+       reproduction of 0.546853), `56431650` ep16, `56431651` ep32, reading predeclared in
+       `pet/analyze_powered_closure_budget_probe.py:PREDECLARED` on the **scatter** axis, so an
+       aggregate move that is really a bias shift returns a distinct verdict instead of a false
+       confirmation. `recovery_min = 0.80` untouched and not evaluated. **The higher-value follow-up
+       is the seed ensemble this item already called for** --- it needs an `--estimator-seed`
+       override the driver still lacks, deliberately not added while the three arms hold a
+       submission-time pin on the driver's sha. Detail:
+       [`FINDING-20260807-d2-underfitting-probe.md`](orchestration/FINDING-20260807-d2-underfitting-probe.md).
+   (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
+       PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
+       `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,
+       `refinement_invoked = False`. Receipt
+       `nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json`, sha256
+       `6c9520c7f42ecae89c0f7eb4b68cd14d5dc55518ba42a8c31fe6ee56f8e284c4`, **now committed and
+       hash-bound** --- it had been an untracked, cluster-only file, so earlier statements that
+       item 4 was "done" were true about the digest and false about the repository. Verified by
+       execution that the gate can consume it: `check_closure_provenance` returns True, 11/11,
+       and still does with the policy at `niter=3` (it does not reference `niter`, and Step 3
+       legitimately runs at its own `--niter 2 --epochs 6`).
+       Not blocked by the ROOT/TF interpreter split: D2 made `closure_fullevent_fps.py` default
+       to `--bkg-mode mc-only`, which needs TF alone (`closure_fullevent_fps.py:14-16`).
+   (a3) ~~**item 3, the measured `fold_forward_ratio_dev_max`**~~ --- **RESOLVED 2026-08-06,
+       and NOT as a new number.** The tolerance stays at **0.05**; the **seed policy** moved
+       `niter` 2 -> 3, which lowers the structural floor `(1-a)^k (R-1)/R` from 3.7318% to
+       2.1698%. Measured on 48 seeds per arm (identical seeds 7-54, N=240,000, epochs 8, at
+       R=1.1240802949941018 / a=0.4185618199216587): `niter=2` gave **6/48** exceedances of
+       0.05, `niter=3` gave **0/48** (Fisher exact p ~ 0.026). Status string moved
+       `PROVISIONAL_PENDING_CLOSURE_MEASUREMENT` -> `MEASURED_20260806_B1_48SEEDS_NITER3`. The
+       four B1 receipts are committed as evidence. **No tolerance was raised.**
+   (b) ~~**re-issue the Gate-4 launch-code gate (Step 2b)**~~ --- **DONE 2026-08-06** as
+       `state/p3f-pet-gate4-launch-code-gate-20260806.json`, with all four owed items in ONE
+       commit and `20260801b` retired under the D3 at-issue convention. 10 binding moves;
+       verifier goes **10 mismatches -> 0** and both `test_hash_bindings.py` guards go green.
+   (c) then, and only then, Step 4 --- now gated only on the powered closure re-run at
+       `niter=3` (a1).
+   (d) **NEW 2026-08-06, opened by the niter 2 -> 3 switch itself: the uncertainty budget must be
+       RECOMPUTED at niter=3.** Any covariance component derived at `niter=2` is now inconsistent
+       with the central value the campaign will publish, because `niter` changes the estimator, not
+       a threshold. This is a consequence of `2b2e5f1` that the re-issue did **not** record and that
+       nothing else in the repo stated --- surfaced by an out-of-band audit, not by me.
+       It **couples directly to the pending flux covariance sizing** (see the J28 item), so the two
+       should be planned together rather than sequentially: recomputing the budget at `niter=2` and
+       then again at `niter=3` is double work against a moving target.
+       Consequence for sequencing: **resolve `test_uq_remediation.py`'s J28 fixture AFTER this**, not
+       before --- deciding fixture-stale vs guard-over-strict now risks doing it twice.
+       **The joint plan is written up at
+       [`PLAN-20260806-niter3-budget-and-J28-reroll.md`](orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md)**
+       (2026-08-06), including predeclared decision rules. Note what it establishes at §2: the J28
+       re-roll is **no longer blocked on the Perlmutter restore** the ledger still cites as its
+       blocker --- the ~~365~~ **542** throw/block slabs (the original count missed every block slab;
+       BEN-032), the three banks and `rescale_flux_universes.py` are all present, so the pass is
+       schedulable now. Scratch is purgeable and those slabs are the largest schedule risk, which is
+       why the plan's Step 0 is protecting them.
+       **STEPS 0-2 ARE DONE (2026-08-06).** Step 0: 548 files / 8.1 GiB protected off-scratch with a
+       digest+readability manifest (`nd-unfolding/products/slab_manifest_20260806.json`). Step 1: the
+       exact re-roll, job `56417324` --- the Flux block was **understated ~4.2x**, `sqrt_tr_blocksum`
+       **+10.19%**, `sqrt_tr_unified` **-0.72%**; the old "+3-4% upward" first-order estimate is
+       superseded and was **not** confirmed, and the `g` direction is **convention-dependent**
+       (mean-centered -2.55%, CV-centered +0.62%), so **adoption is blocked on the F7 decision**
+       (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`). Step 2:
+       [`STEP2-20260806-niter3-budget-classification.md`](orchestration/STEP2-20260806-niter3-budget-classification.md)
+       --- **this item's own framing is wrong for the PET lane**: there is no full-event PET covariance
+       to *recompute*, so it is a BUILD (which item 6 already required), and the 5D GBDT lane transfers
+       on a positive closed-input argument.
+       **BOTH escalated decisions are now resolved (2026-08-06).** (i) **F7 was never open** --- its
+       criterion was predeclared at `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78` and the data answers it:
+       `||mean_shift||` is **4.69x** the sampling floor `sqrt_tr/sqrt(160)` (37.1% of `sqrt_tr` vs a 7.9%
+       floor), so mean-centered-only is disqualified and the CV-centered variant is required. **It is
+       also already satisfied in the note**, which quotes `\gbdtFiveAdoptTrace` 5.81e-38 (mean-centered)
+       **and** `\gbdtFiveCVTrace` 6.24e-38 (CV-centered) **and** `\gbdtFiveMeanShift` 1.65e-38 separately
+       --- exactly "report the shift either way, do not silently drop". (ii) **The full-event PET budget
+       is WANTED for publication** --- Joseph, mail 20:29Z: *"Ideally, the [full] event PET uncertainty
+       budget is ready for the publication."* So the **>=100 GPU-h** build (the "170-250" figure is
+       unverified) is planned work, not discretionary; and since the PET vertical block consumes
+       `bank_uthrow_5d`, the J28 re-roll must be **adopted** before that budget is assembled on it.
+   (g) **NEW 2026-08-06 --- nine throw slabs of the adopted 5D ensemble are LOST, so the corrected
+       covariance is a 76.2% subsample.** The adopted `uq_5d/unified_throw_cov_5d.root` records
+       `n_throws = 160` (read from the ROOT) and `sqrt_tr_unified = 4.4607819710748654e-38`, but
+       `uq_5d/uthrow_slabs_5d_sb/` now holds only slabs **0-30**; slabs **31-39 (~38 throws) are gone**
+       from purgeable scratch. The J28 re-roll therefore ran on **122** throws, and its "before" sits
+       **-2.62%** below the adopted `sqrt_tr_unified`. The before/after *relative* changes are controlled
+       (same slabs both sides) and stand, but the corrected **absolute** numbers are **not** drop-in
+       replacements for the adopted covariance. **To replace it exactly, slabs 31-39 must be re-thrown**
+       --- otherwise the replacement is a 122-throw product and must be labelled as one. Note Step 0's
+       protection could only ever cover the survivors, so it does not mitigate this. See BEN-033 for the
+       generalisable trap (read ensemble size from the product, not the launcher).
+   (f) **NEW 2026-08-06 --- J28 has a SIXTH site that the fix never touched:
+       `nd-unfolding/eavailW_covariance.py`.** Not among `081ae4a`'s twelve files, not scoped by
+       `AUDIT-FINDINGS-20260731.md`. It loads `flux_bins` once from the CV histogram (`:104`) and passes
+       it to `extract_cross_section_nd` on every call (`:232`) with no per-universe override, while
+       running all 100 PPFX universes through `_y_band` (`:259`, `:274-276`) into `C_flux` --- so
+       `C_flux` is **understated** exactly as the five known sites were. Mechanism confirmed; **code
+       read, not run**, so no magnitude is quoted. Nothing published is wrong today (`values.tex:53-54`
+       records the (E_avail,W) significances as removed; `sec_eavailw.tex:136-138` declines compatibility
+       "without the corrected projected covariance") --- but that corrected covariance is a stated
+       deliverable and could not be built from this script as it stood. Detail in `KNOWN_ISSUES.md`.
+       **CODE FIXED 2026-08-06 (no number produced)** --- `xsec_ew`/`_y_band` take a `flux` override and
+       the flux loop resolves a per-universe table through the `flux_universe` helper 081ae4a already
+       shipped; fail-closed (no silent CV fallback; the old behaviour needs an explicit
+       `--allow-cv-flux-universes`), guarded by
+       `tests/test_flux_universe_fix.py::EavailWFluxBlockIsPerUniverse`, whose three guards are proved to
+       fire against the reconstructed pre-fix source. This is the same footing 081ae4a had for the first
+       five sites: code fixed and mutation-tested, **numbers not re-rolled**. The script is bound by no
+       receipt, so no gate re-issue was needed. **What remains:** rebuild the `(E_avail,W)` covariance
+       with the fix, as part of the `M C_5D M^T` projection this file already requires --- that needs the
+       cluster.
+   (e) **The niter=3 choice still owes a REGULARIZATION justification --- but a narrower one than
+       this item claimed when it was opened.** `niter` is a regularization parameter: more iterations
+       = less regularization = more variance, less bias. As opened, this item read everything in
+       `2b2e5f1` and in
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md)
+       as arguing the choice from **gate behaviour** --- realized exceedance 0/48 vs 6/48, window width
+       to the parameter-free ceiling, false-reject rate --- which establishes the choice is *sound*,
+       not that it is *right*. A B1 closure passing is not a bias-variance argument.
+
+       **Reassessed 2026-08-06: both halves of a bias--variance argument were already receipted in
+       `state/p3f-pet-gate4-launch-code-gate-20260806.json`; they had simply never been assembled into
+       one.** From `seed_policy_change.measurement`, at the measured operating point
+       (`R = 1.1240802949941018`, `a = 0.4185618199216587`, `N = 240000`, `epochs = 8`, seeds 7--54 in
+       both arms): at `k=2` the closed-form bias is `0.037318` against a measured mean deviation of
+       `0.038008` with `sd = 0.008153`; at `k=3` the closed form is `0.021698` against a measured mean
+       of `0.021876` with `sd = 0.008444`. So the **bias falls by a factor 1.72 and tracks the
+       `B1-NORMALIZATION-FIX-DESIGN.md:329` closed form `(1-a)^k (R-1)/R` to under 0.1 pp in both
+       arms**, while the **variance is flat** (sd ratio 1.036). Bias down at fixed variance *is* the
+       regularization statement; the 6/48 vs 0/48 exceedance is its observable consequence, not an
+       independent argument.
+
+       Two further points the original wording missed. The fold-forward deviation compares the
+       unfold's pushed reco-level normalization against the measured data/MC ratio `R` --- a
+       **reco-space, data-computable** quantity of the folding-back / bottom-line family --- so it does
+       **not** fall to the objection the note itself raises against Huang *et al.*'s truth-level
+       chi-square criterion (`docs/analysis-note/sec_method.tex:89-98`). And the scan is an MC closure
+       with an injected rate defect, not a fit to data, so it is not the tuning-on-result loop that
+       `sec_method.tex:155-167` disclaims.
+
+       **What is still genuinely owed:**
+       1. **The argument is bias--variance on ONE SCALAR** --- the reco-level rate closure --- not on
+          the differential cross section. The publication-grade version needs the per-bin closure
+          residual and the per-bin unfolded spread as functions of `k`. The per-bin half comes free:
+          `pet/closure_powered_truth_reweight.py:302-303` already persists `h_prior`, `h_target`,
+          `h_unfolded` and `h_untilted` as full per-bin arrays, so job **56381674** --- the a1 re-run,
+          confirmed 2026-08-06 to be running at `niter=3` because the driver reads
+          `NOMINAL_SEED_POLICY` (`closure_powered_truth_reweight.py:265`,
+          `train_fullevent_nominal.py:51`) --- yields it on completion with **no code change and no
+          Gate-4 re-issue**. **RESOLVED 2026-08-06, and the answer is bad:** 56381674 completed
+          `verdict=FAIL` with recovery 0.5469 against a predeclared 0.80, and its per-bin arrays show
+          globally-short, normalization-exact, broadly-distributed under-recovery (`L1` ratio 0.6549,
+          29 bins moving the wrong way). Full diagnosis under item 2(a) above. **The scalar-scope
+          caveat on CLM-010 was load-bearing: the differential test does NOT inherit the scalar
+          result.** If the cause is too-few iterations for shape, this argues `k > 3`, which is the
+          opposite of a stopping-point argument. Do not edit that driver to add per-bin output ---
+          the data is already there,
+          and `sbatch_powered_closure.sh` pins the driver's digest in `EXPECTED_DRIVER_SHA` and fails
+          closed, so an edit would silently break the next submission until that constant is updated
+          too. (The driver itself is *not* among the 22 live hash pins in the receipt --- the pinned
+          closure scripts are `closure_b1_rate_injection.py`, `closure_fullevent_fps.py` and
+          `stress_closure_muon.py` --- so the constraint here is the launcher's own pin, not the gate's.)
+       2. **Nothing measured bounds `k` from above.** `(1-a)^k -> 0`, so the same argument gives
+          `0.012617` at `k=4` and keeps improving; with variance flat over 2->3 it argues `k >= 3`, not
+          `k = 3`. Job **56397442** (`pet/sbatch_b1_niter4_scan48.sh`, 48 seeds, same operating point
+          read back out of the k=3 arm's own receipt entry) measures the k=4 point. **If its spread is
+          also flat, the record must say plainly that the stopping point is set by cost and by the
+          literature default of 3 --- not chosen by this measurement.** Writing it the other way round
+          would be the same overclaim BEN-025 exists to prevent.
+       3. **A note edit is queued but not yet owed.** `sec_pet.tex:24,47` describes the *recoil-only*
+          PET cross-check, which genuinely ran at two iterations --- that text is correct and must not
+          be "fixed". What will be needed once the full-event lane enters the note is one sentence
+          reconciling scalar production at `n=5` (`sec_method.tex:147`) with the full-event lane at
+          `n=3`, because a referee will ask; `LITERATURE_NOTES.md:65` (OmniFold default 3, <=5 typical)
+          is the citation for the latter. `sec_fps.tex` carries no iteration count today, so there is
+          nothing to correct in the note yet.
+
+       Launching the nominal (which pins whatever `niter` the contract carries) should still wait on
+       item 1; `nominal_pet_training_allowed: false` is doing its job. The switch was made on Joseph's
+       explicit instruction and is defensible.
+   The end-to-end nominal is still unproven: nothing has yet trained on this target.
+3. Define the neighborhood metric explicitly. The vendored local PET assumes
+   its first two token coordinates are an angular/geometric pair, while the
+   current tensors begin with energy and one position/momentum component. Use
+   validated view-aware detector geometry at reco and direction/angle geometry
+   at truth, rather than letting raw column order define nearest neighbors.
+4. Prove row alignment and reco/data schema parity; document every input, mask,
+   normalization, truncation, and unavailable counterpart. Add an explicit
+   leakage test proving that step 1 contains no truth-only feature.
+5. ~~Add an omitted-variable stress closure that changes muon kinematics at
+   fixed recoil. It must expose the recoil-only estimator and close with the
+   full-event estimator.~~ **DONE 2026-08-01** — `pet/stress_closure_muon.py`,
+   Delta slurm 20758087, commit `0e19f66`. Recoil-only sits at the prior
+   (0.5811 vs 0.5820, blind if above 0.5x prior — 2.0x margin); full-event
+   closes to 0.0428, 7.4% of the recoil-only residual (recovers if below 0.5 —
+   6.8x margin). Evidence in
+   `docs/orchestration/runs/b6-stress-closure-muon/`. Note the earlier PASS at
+   `df7397e` (07-30) was against the pre-`--json` script; this one is against
+   the hash the live Gate-4 receipt binds and is machine-readable, which
+   Gate-4's now-required `--stress-report` needs.
+   **The rest of this item is still open:** the present identity closure is now
+   classified as an MC self-consistency smoke, not evidence for the
+   `negweight-refined` target. Add and run a nontrivial injected truth-reweight
+   recovery closure at the nominal estimator configuration, enforce central
+   normalization and lower-dimensional marginal gates, and retain
+   full-event-versus-recoil comparisons in the FPS extension and dead-cell
+   tiers. Passing either the stress closure or the MC smoke alone does not
+   satisfy the FPS controls. See decision D2 in the canonical record above.
+6. Freeze the full-event FPS feature and measurement contracts before
+   production, then rerun the PET nominal, GPU floor, coherent statistical
+   ensemble, PET-specific ML ensemble, vertical/retraining response,
+   P3F-based selection-complete laterals, covariance assembly, projections and
+   comparisons. Recompute the FPS prior envelope: additional features may
+   change extrapolation behavior but cannot create detector information in
+   zero-efficiency cells. No current recoil-PET covariance component is
+   automatically transferable to the new estimator.
+
+### OPEN — PET artifacts embed ABSOLUTE checkpoint paths; move to READ-TIME resolution (BEN-133)
+
+**Filed 2026-08-12 by Session C (PET). Not urgent, genuinely open, and the analysis is attached so the
+next person inherits it rather than redoing it.**
+
+**The defect.** `train_fullevent_nominal.py:529,534` stamps `weights_folder` and `step2_checkpoint`
+into each artifact's `inference_contract` as **absolute paths**. Consumers resolve checkpoints from
+them — `step1_increment_trajectory.py`, `gate_ab_push_provenance.py`,
+`step1_pull_push_decomposition.py`, and `extract_fullevent_fps.py:243,253`, which is the **extraction**
+path. An absolute path inside a data artifact is a claim about the world that relocation falsifies.
+
+**Why it matters more than tidiness.** It fails **silently, and only when a same-named sibling exists**
+— which is exactly the situation a promotion creates. Live instance: the `superseded-20260806` artifact
+still names `fullevent_nominal/w_nominal`, that folder exists, its checkpoints exist, and they belong to
+the **2026-08-08** artifact — so following that artifact's own contract pairs 08-06 push weights with a
+different network and returns a number. A dangling path would have raised `FileNotFoundError`. Documented
+at `nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md`.
+
+**The fix: resolve at READ time, not write time.** Store the checkpoint location *relative to the
+artifact's own directory* (or resolve `weights_folder` as `dirname(artifact)/w_<tag>` at load), so an
+artifact that moves takes its checkpoints' identity with it.
+
+**BLAST RADIUS, which is why this was NOT done on 2026-08-11/12 and needs scheduling rather than a
+spare hour:**
+
+- `train_fullevent_nominal.py` is **pinned as `driver`** in the live Gate-4 launch-code receipt
+  (`p3f-pet-gate4-launch-code-gate-20260812.json`). Changing it moves that pin and **forces another
+  Gate-4 re-issue** — the thing that must land in the same commit as its predecessor's retirement,
+  per `_LAUNCH_CODE_FLOOR = 2`.
+- `extract_fullevent_fps.py` is likewise pinned (`fullevent_extractor`), and it is the **prohibited**
+  extraction path, so touching it has an authorization dimension as well as a technical one.
+- **Existing artifacts are not migrated by a code change.** Every npz already written keeps its absolute
+  path, so the fix must either tolerate both forms or come with a documented migration — and rewriting
+  the contract inside an existing npz **changes its digest** and invalidates every receipt binding it,
+  ~~including the four from job `56691812`~~.
+
+  > **CORRECTED 2026-08-12 (BEN-138), and the correction INVERTS the reason.** The four `56691812`
+  > receipts do **not** bind that npz by digest — they carry **no digest of anything** (a scan for any
+  > 32–64-hex token returns none in all four). Three reference the artifact by **absolute path only**
+  > (`GATE_AB_PUSH_PROVENANCE`'s `artifact`, both trajectories' `weights`) and the fourth does not
+  > mention it. So a rewrite would **not** invalidate them — **it would leave all four silently pointing
+  > at changed content**, which is BEN-133's repoint class one level in. The stated risk was
+  > *invalidation*, which is loud and self-announcing; the real risk is *silent drift*, and the receipts
+  > offer **no protection against it**. That is a stronger reason not to rewrite in place, arrived at
+  > from the opposite direction — so the conclusion stands and the argument for it was backwards.
+- The safe sequencing is therefore: read-time resolution that **prefers a relative/derived location and
+  falls back to the stored absolute one**, so old artifacts keep working and new ones stop being
+  relocatable-into-wrongness.
+
+**DECIDED 2026-08-12 (Joseph): BEN-133's read-time repair is DEFERRED UNTIL THE NEXT
+OTHERWISE-REQUIRED GATE-4 RE-ISSUE. Do not force a re-issue for it.** So the blast radius above is
+no longer a reason to schedule work — it is the reason the repair rides along with the next re-issue
+that some other cause makes necessary. The interim runtime identity guard stays in place and is what
+carries the risk until then.
+
+**OWED BY THE NEXT GATE-4 RE-ISSUE — recorded here because the last time a re-issue debt was not
+recorded, nine consecutive receipts carried the stale text**
+(`FINDING-20260811-gate4-prerequisite-points-at-a-deleted-blocker.md`). The live receipt
+`state/p3f-pet-gate4-launch-code-gate-20260812.json` has `gate_state.quotability` ending: *"iteration 0
+carries a +11.01% overshoot that is larger than the predecessor's and **remains unexplained**."* **That
+is now false** — BEN-137 explains it: the anneal declares `applies_from_iteration = 1`, so iteration 0
+of the treatment was trained in the control's configuration and the gap is a failed null control, not an
+anneal effect. The successor owes **three** changes. Two are prose: strike "remains unexplained", and add
+the caveat the line does not currently carry — **REPAIRED rests on the signs, not on the magnitudes**
+(n = 1 training run per arm against an unmeasured between-run term of at least 0.155 in `push`).
+
+**The third is structural, and it is the one worth having: replace the boolean with the two digests.**
+`state/branchc-traj-annealed-complete-56691812.json` records the harness binding as
+`"imported_module_hashes_match_commit_831043d": true` — a *verdict* field sitting among **11** genuine
+digests (`batch_script_sha256`, `runlog_sha256`, `stdout`, `stderr`, four products, the committed anchor),
+with `1acb1869…` appearing nowhere in the file. So the one receipt that otherwise obeys BEN-077's
+receipt-ingredients rule stores this comparison as a claim rather than as operands. **It is worse than a
+field carrying neither operand**: the *expected* hashes are recomputable from `831043d`, the *observed*
+ones were never written, and the module set in scope is unnamed — so the check looks re-runnable and is
+not. Half-recoverable is the trap; a field with neither operand at least announces itself. Fifth instance
+of BEN-138, and its companion rule: **when a receipt reports a comparison, check whether it carries both
+operands.** Prefer this over the prose strike if only one lands — a struck sentence decays again, a
+recorded digest pair does not. *(Instance found by Session A widening BEN-138's corpus by two files;
+adopted and sharpened by Session C at `b5d74d6`; this third item added at C's request rather than by C,
+so the re-issuer is not bound by C's prediction of what it would accept.)*
+
+**The receipt is NOT edited**
+and its verdict does not move: it errs safe, since every correction here argues *against* quoting a
+product and the line already declines to quote one. Committed receipts are not rewritten to match a
+later state.
+
+**Interim mitigation, already in place and cheap** — a runtime identity guard rather than a path fix.
+`inversion_screen.py`, `leg_mismatch.py` and `push_vs_acceptance.py` assert fold-forward
+`0.7367462501305516` from the artifact's own contents before use and refuse otherwise; power-tested to
+reject both the annealed (`1.0840529829474115`) and the 08-06 superseded (`0.7464834064182863`)
+artifacts. **This is a mitigation, not the fix:** it covers the three diagnostics that were deliberately
+left pointing at the 08-08 artifact, and covers nothing else.
+
+**Note the class is invisible to source-text checking by construction.** The literal is written at
+training time and read back at inference time, so it exists in no source file;
+`nd-unfolding/pet/check_canonical_designation.py` documents this as "class 5" and states that a green
+audit says nothing about it.
+
+### Potential next step after the full-event FPS gate: broaden reconstructed acceptance
+
+Do not enlarge the truth denominator beyond the declared FPS fiducial domain
+merely because a more expressive estimator is available. After P5A/P5B, use
+the response/efficiency map, prior envelope, stress and ordinary closure, and
+coverage results to define the strongest data-supported reporting boundary.
+Promote stable cells to the primary acceptance-supported measurement and keep
+near-zero-efficiency cells in a separately labeled, model-dependent
+extrapolation tier.
+
+If important regions remain unconstrained, study a genuinely broader
+**reconstructed** selection rather than another truth-only expansion. Candidate
+categories include MINERvA-contained or otherwise non-MINOS-matched muons and
+additional angular/low-momentum acceptance. Such a campaign requires its own
+reconstruction categories, charge-sign/background treatment, efficiency and
+migration model, detector systematics, closure/coverage tests, and publication
+decision gate. Retain a tracker interaction fiducial volume so the target
+nucleon normalization and cross-section definition remain reproducible. The
+objective is maximum observed information and supported phase space, not the
+largest nominal truth-space volume.
+
+## Blocked on external input
+
+1. **Collaborator confirmations** (technote App. A): whether the historical
+   FrInel_pi exclusion is still endorsed; precedent for the ours-only
+   truncated-spectral χ²; collaboration endorsement for publishing the
+   first MINERvA 3D+ unfolded covariance and its rank-deficient GoF treatment
+   (there is no prior MINERvA 3D+ unfolding precedent). The historical code
+   fact is sourced: public MAT-MINERvA
+   `GenieSystematics.cxx` comments out the knob in both standard-registry
+   builders ([vector lines 36–38](https://github.com/MinervaExpt/MAT-MINERvA/blob/c20ad220e95f55b4ef2e9426c56dd2a3800f7533/universes/GenieSystematics.cxx#L36-L38);
+   [map lines 90–92](https://github.com/MinervaExpt/MAT-MINERvA/blob/c20ad220e95f55b4ef2e9426c56dd2a3800f7533/universes/GenieSystematics.cxx#L90-L92)),
+   unchanged since the 2021-07-07 initial public
+   [commit](https://github.com/MinervaExpt/MAT-MINERvA/commit/69e841ef53e336090dee7db25b70b8562bae76dc).
+   **ASKED AND PARTIALLY ANSWERED 2026-08-02** (in person at the presentation;
+   verbal, no citable thread — see the ANSWERS section of
+   `docs/COLLABORATOR_QUESTIONS.md`):
+   - **FrInel_pi — CLOSED.** Still current practice, but the reason is a
+     *degeneracy*: a set of dials overlap / are circularly dependent and any one
+     of them must be commented out. So the choice of `FrInel_pi` is conventional,
+     not a statement that the knob is individually suspect — which is what the
+     MAT source comment reads like. Cite the practice and the degeneracy, not
+     the comment's implication.
+   - **Ours-only truncated-spectral chi^2 — CLOSED.** The collaboration uses the
+     same truncated-spectral pseudo-inverse. Confirmed as practice, not as a
+     citation; a reference is a separate ask if the note needs one.
+   - **First 3D+ unfolded covariance — PREMISE CORRECTED; endorsement still
+     owed.** Clarified 2026-08-02: MINERvA does have a 3D unfolding publication,
+     already found and cited, and nothing beyond that. The question's premise
+     ("no prior MINERvA 3D+ unfolding result") was therefore wrong, but the
+     note never made that claim — it says prior multi-differential results were
+     *binned* and the distinction here is the unbinned, simultaneously-unfolded
+     formulation plus the full 3D+ covariance. No note edit needed. **What is
+     still owed is the endorsement itself**: no view was given on publishing the
+     1431-bin covariance or its rank-deficient GoF, which is what App. A item 5
+     actually gates.
+
+2. **`E_avail` definitional mismatch with `minerva-ml`** — raised indirectly by Gregor in the
+   2026-08-11 review round. His literal question (do the quoted criteria give `E_recoil_CCinc` a
+   positive value?) is **answered** in `docs/analysis-note/sec_experiment.tex`: no — those are
+   truth-level signal and phase-space definitions, and no cut in this analysis tests any recoil
+   quantity. `E_recoil_CCinc` is the `minerva-ml` alias for the branch
+   `MasterAnaDev_hadron_recoil_CCInc` (`src/scripts/extract_baselines.py:285-288`), where a
+   negative entry is that code's **invalid sentinel**, so "positive" meant "validly filled".
+   Chasing the name is what surfaced the actual item, which is **not** about that branch:
+
+   **The two repos compute truth `E_avail` differently, in production code on both sides.**
+   Ours is `GetEAvailableTrue()` (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:361-374`);
+   theirs is `get_E_available_true()` (`src/dataset/preprocessing.py:767-787`) over the PDG sets in
+   `src/constants/physics.py:25-31`. They disagree on four points:
+
+   | Species | Ours | `minerva-ml` |
+   |---|---|---|
+   | p | kinetic | kinetic |
+   | pbar, e+-, K+- | **excluded** | included, total E |
+   | gamma, pi0 | total E | total E |
+   | **pi+-** | **kinetic (E - 135)** | **total E** |
+   | mu+- | excluded | excluded |
+   | negative result | not clamped | clamped to 0 |
+
+   The charged-pion row is the material one: **~140 MeV per charged pion**, not a rounding
+   difference. Separately, our charged-pion mass constant is `135` — the *pi0* mass; charged pi is
+   139.57 — worth ~4.6 MeV per charged pion. Both look inherited verbatim from MAT
+   (`CCQE3DFitFunctions.h` / arXiv:2312.16631 Eq. 4, which our code cites); **that citation has not
+   been read against the code**, so which side matches the published convention is not established
+   here.
+
+   **Superseded framing, recorded so it is not re-derived:** an earlier version of this item framed
+   the mismatch on the *reco* side, citing
+   `reco_E_avail = master_ana_dev["MasterAnaDev_hadron_recoil_CCInc"]`. That line is real but lives
+   in `notebooks/archive/data_exploration_3_Enu.ipynb` — an archived, 92-cell, zero-markdown scratch
+   notebook. In `minerva-ml` production `src/`, that branch is used **only** to build an `E_nu`
+   baseline (`E_mu + E_recoil_CCinc`), never as `E_avail`. The reco-side claim was therefore weaker
+   than stated; the truth-side one above replaces it and is checkable from committed code in both
+   repos with no tuple access.
+
+   - **OPEN:** (i) reconcile the two truth definitions and decide which is the intended
+     `E_avail`; (ii) confirm the `135` vs `139.57` pion mass against arXiv:2312.16631 Eq. 4;
+     (iii) our reco `E_avail` is `NewEavail()` (`CVUniverse.h:185-193`), whose `1.17` tracker+ECAL
+     scale has provenance recorded but **no recorded justification** anywhere in this repo — see
+     the separate item on that constant.
+   - Until (i) is settled, **do not treat a `minerva-ml` `E_avail` distribution as directly
+     comparable to this analysis's.**
+   - Blocked on: Gregor (which construction `minerva-ml` intends), and on reading
+     arXiv:2312.16631 Eq. 4 for the reference definition. Neither needs NERSC access.
+
+3. **The `1.17` available-energy scale has provenance but no recorded justification** — split out
+   of item 2, because "where did this number come from" and "why is it this number" are different
+   questions and only the first is answered anywhere in this repo.
+
+   `NewEavail()` multiplies the fuzz-subtracted tracker + ECAL sum by
+   `Eavailable_scale = 1.17` (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:185-193`).
+   Its **origin** is recorded in three places, all saying the same thing — copied verbatim from
+   MAT `LowRecoilPionFunctions.h:41` (`3d-unfolding/README.md:29`, the only cite that pins the
+   source line; also `2d-unfolding/2D_OMNIFOLD_REFERENCE.md:346` and
+   `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:18-19`). **No file in this repo says why the value is
+   1.17.**
+
+   **RESOLVED-AS-UNRESOLVABLE-UPSTREAM, 2026-08-12.** Joseph read the public MAT source:
+   [`LowRecoilPionFunctions.h#L41-L49`](https://github.com/MinervaExpt/MAT-MINERvA/blob/main/calculators/LowRecoilPionFunctions.h#L41-L49)
+   **carries the bare `1.17` constant with no explanatory comment.** This supersedes the previous
+   wording, *"the upstream comment has not been read"* — the justification is **unresolved
+   upstream**, not merely uncited here. The distinction is operational rather than semantic: the
+   old phrasing pointed the next agent at a document to go and read, and that document does not
+   contain the answer, so the search it implies cannot succeed. This item is no longer blocked on
+   reading anything.
+
+   **Publication-freeze requirement, Joseph's decision 2026-08-12, verbatim in substance.** *Do not
+   change the value or launch a rerun yet.* Before publication freeze this requires **either**
+   (a) an authoritative calibration rationale or collaboration confirmation, **together with**
+   identification of the systematic that covers it; **or** (b) an explicit stated assumption plus a
+   **quantified sensitivity**. **Lineage alone is insufficient** — which is the same judgement
+   `CLAIMS.md` encodes by separating `CITED` from `ASSUMED`, now applied to a number that enters
+   every reconstructed available energy on the 3D/4D/5D `E_avail` axis. Status for publication:
+   **ASSUMED and UNRESOLVED.**
+
+   Authorization path for this entry: Joseph → Session A → Session B, 2026-08-12 (BEN-082(v)).
+
+   **Why it is worth an item rather than a shrug:** the constant multiplies *every* reconstructed
+   available energy, so it enters the E_avail axis of the 3D/4D/5D results directly — it is not a
+   diagnostic-only quantity. A scale factor that moves a published axis and whose justification
+   exists nowhere in the repo is exactly the shape this campaign strikes rather than erases
+   elsewhere. By `CLAIMS.md`'s own vocabulary its status is **ASSUMED**, not `CITED` — the cites
+   establish lineage, not correctness, and inheriting a number verbatim is not the same as
+   verifying it.
+
+   - **Not blocked.** MAT-MINERvA is public and already cited from item 1 of this section, so the
+     first step is simply reading `LowRecoilPionFunctions.h:41` and its surrounding comment
+     upstream. If MAT does not justify it either, the trail continues into the low-recoil lineage
+     the code already names (Rodrigues 2016 / Ascencio 2022, arXiv:1511.05944 / 2110.13372).
+   - **Expected resolution:** a one-line justification recorded next to the constant, and a
+     `CLAIMS.md` row moving it from ASSUMED to CITED or VERIFIED-CODE. If it turns out to be a
+     calorimetric sampling/passive-material correction, say so and cite it; if it is tuned, say
+     what it was tuned against.
+   - **Do not** silently re-derive or "correct" the value. It is matched to truth for closure
+     (`3d-unfolding/README.md:29`), so changing it invalidates the closure tests that currently
+     pass.
+
+## Deferred analysis refinements
+
+2. **Ascencio fine-binned comparison** — the maximal-common-grid full-cov
+   cross-check is DONE 2026-06-10 (χ²/ndf = 1.68/2, p = 0.43, consistent;
+   `nd-unfolding/compare_ascencio_fullcov.py`, data from the public arXiv
+   tarball). Stage 1 DONE 2026-06-12 (job 54351853 +
+   `compare_ascencio_fine.py`): all 44 cells, ours/theirs median 1.077,
+   5/44 cells beyond 2σ of their errors — agreement at the super-grid level;
+   numbers in the ledger. Stage 2 (187-universe sweep on the fine binning,
+   needed before any fine-grid full-cov χ² can be quoted) is a separate
+   compute decision once the FPS arrays drain.
+3. **PET per-lateral re-inference** — DONE 2026-06-10 (job 54284039):
+   PET-native lateral band via the event-aligned 5D join, no C++ re-dump,
+   no GPU. Native median 1.74% vs transferred 4.03% (total budget 22.5% vs
+   23.0%) — the published GBDT transfer validated as the conservative side;
+   `KNOWN_ISSUES.md` #3 RESOLVED. Residual (deferred indefinitely): full
+   per-universe PET re-TRAINING would capture the retraining response the
+   frozen-push scheme misses; bounded between 1.74% and 4.03% by these two
+   estimates.
+4. **W-resolved laterals / dedicated W systematic campaign** — DONE
+   2026-06-13 (interactive job 54391533). The 18 detector universes (6
+   muon/beam laterals with shifted pt/pz/q3/W + 3 GEANT weight bands) +
+   matched CV were re-inferred on the 5D axes and `eavailW_covariance.py
+   --lateral-sweep-*` rebuilt the (E_avail,W) covariance with the W-resolved
+   block. The W-resolved lateral (median 2.36%/bin) is LARGER than the
+   transferred approximation (1.80%) and was adopted; corner significances
+   GENIE 9.0→8.9, +MEC 9.2→9.2, NuWro 10.5→15.6, GiBUU 18.2→22.4σ — the
+   deficit deepens for the worst-fitting generators. `KNOWN_ISSUES.md` #4
+   CLOSED; technote table + exec summary + open-questions updated;
+   `products/5d/eavailW_covariance_wlat.root`.
+5. **True multi-band (lateral) event-loop unified throw** — the weight-composed
+   unified throw covers reweight bands only; a C++ event-loop multi-band throw
+   would additionally capture lateral (kinematic-shift) cross-terms.
+6. **NEUT as fifth generator** — still gated (re-checked 2026-06-12: no
+   public source release exists; github `neut-devel/neut` is 404 — NEUT is
+   distributed via T2K's internal git on request to the maintainers, so the
+   path is an access request to Hayato et al., citing the NEUT EPJ ST paper
+   2106.15809).
+7. **Coverage 200-toy regeneration** — DONE 2026-06-11 (arrays
+   54273493/54273495): `uq/coverage_toys.py` reproduces every documented
+   number exactly (mean 68.71%, PASS); `KNOWN_ISSUES.md` #2 RESOLVED,
+   ledger flag lifted.
+8. **Driver no-weights normalization fix** — DONE 2026-06-10. Fix applied
+   and verified (job 54271042: battery + envelope reproduce without the
+   1/pot_scale correction); `KNOWN_ISSUES.md` #1 RESOLVED, ledger entry
+   added.
+9. **LE-beam evolution comparisons** — DONE 2026-06-11 (qualitative, shapes
+   only): `nd-unfolding/compare_le_evolution.py` overlays Filkins 2002.12496
+   (CC-incl dσ/dpT, dσ/dp∥; data from the arXiv tarball, now in
+   `nd-unfolding/reference_le/`) and Rodrigues 1511.05944 ((E_avail,q3)
+   Tables III+IV rebinned onto our coarse grid — edges nest exactly; strict
+   LE-coverage masking) against the ME 4D-product marginals →
+   `products/4d/le_evolution_compare.png`; numbers in the ledger. Residual
+   (unchanged): a quantitative LE↔ME translation needs per-event true Eν
+   dumped (one event-loop branch, piggyback on a future re-run) and is
+   prior-dependent.
+
+## Active campaign — full phase space (FPS)
+
+10. **FPS UQ stage** (decision memo `nd-unfolding/FPS_PILOT.md`, GO with
+    two-tier reporting; CV chain + MEFHC battery + 3-prior envelope DONE
+    2026-06-10, anchor gate PASS). **Everything staged/in flight
+    2026-06-11** (job IDs in `nd-unfolding/.fps_uq_chain_jobs.txt`,
+    narrative in the RUN_LOG): 187-universe sweep → block-sum cov;
+    bootstrap + split-seedscan → combines → full budget → unified-throw
+    adoption (block-sum vs unified-throw decision, as in 4D); **mandatory**
+    unified throw via the validated 2D FPS bank (#12 miss-row pinning);
+    extension-region validation launched (hidden-variable E_avail closure +
+    200 coverage toys, region split via
+    `nd-unfolding/fps_extension_validation.py`). Remaining: report verdicts
+    when the chain drains.
+
+    - **UNSIZED (flagged 2026-08-10): the mandatory unified throw has NO TIMING
+      EVIDENCE.** `FPS_PILOT.md` calls it "mandatory, not optional" (line 81) and
+      contains zero occurrences of hour / walltime / node-h / GPU-h / runtime;
+      this item says only "report verdicts when the chain drains". So the last
+      required step before FPS final adoption has no cost estimate attached to
+      it anywhere. Every other outstanding step in the lane is either done or
+      sized. **This should be sized before the FPS adoption is scheduled, not
+      during it** — a mandatory step of unknown cost is the one that turns an
+      adoption window into an open-ended wait. Sizing it needs either a
+      recorded walltime from the 2026-06-11 chain (`.fps_uq_chain_jobs.txt` job
+      IDs, via `sacct`) or a short scaling run; the first is free and should be
+      tried before the second.
+
+## Active campaign — PET capstone (kickoff 2026-06-19)
+
+11. **5D unified-throw adoption decision** — DONE 2026-07-01/02. The 5D
+    GBDT jitter-matched unified-throw study (dump 55286192, block/run
+    55286273/55286275, combine 55286276, all COMPLETED) gave a
+    jitter-corrected trace ratio **1.539** (far milder than 4D's 2.01, near
+    FPS's 1.295), with a non-uniform per-bin picture (median per-bin sigma
+    ratio 0.830, inflation concentrated in a minority of high-variance
+    bins). Adopted (same conservative per-bin max() transfer as 4D/FPS):
+    `nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`,
+    adopted median 13.69%/bin (up from block-sum 13.33-13.43%). Scripts
+    `unified_throw_cov_5d.py` / `adopt_unified_5d.py` (both untracked,
+    pending commit).
+12. **PET FPS capstone remaining steps** — Step 2 of the PET capstone
+    (raw-data FPS unfold beyond the published phase space). Cloud-fixed
+    FPS point-cloud re-dump chain (evloop 55288326, hadd 55288356, npz
+    55288408) is DONE 2026-06-29/30. **Full-stats PET FPS train (job
+    55288409, horovod, train=40,000,000, ranks=4, niter=5, epochs=8) is
+    RUNNING** (started 2026-07-01 after a ~2-day queue wait). Remaining,
+    in order: (a) train drains; (b) mandatory 3-prior envelope — MnvTune
+    and bare-GENIE priors exist from the 2D/5D pilots, the 5D NuWro leg
+    (`build_fps_prior_nuwro_5d.py`) is drafted but has not been run; (c)
+    Tier-2 retraining-response analysis at 8-10M events (the full-stats
+    29 A100-hr/train cost was previously judged too expensive to repeat
+    per-universe, so this is a convergence-curve check, not a full
+    per-universe retrain); (d) per-event-weight covariance so any
+    observable inherits the band.
+13. **Understand the PET 5D unified/block ratio (5.711)** — PET's own
+    unified-throw check (frozen 2M-train reweighter,
+    `pet_5d_covariance_combined_unified_wlat_summary.json`) gives a
+    trace-ratio inflation of **5.711x**, much larger than the GBDT-side 5D
+    ratio (1.539, item 11) or the qualitative 4D picture. Flagged, NOT
+    adopted into any published PET uncertainty. A same-day comparison using
+    this un-vetted ratio anyway
+    (`products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`,
+    PET 16.7% vs GBDT 13.7%, ratio 1.346) should be treated as exploratory
+    until this is understood — is it a frozen-reweighter artifact, a
+    genuinely larger PET nonlinearity, or a bank/binning mismatch?
+14. **Note-update items (pending)** — none of the following are yet
+    reflected in the analysis note: the full-stats PET numbers (once
+    item 12 drains); the 5D GBDT uncertainty statement (now
+    Models/2p2h-dominant rather than Flux-dominant, and the unified-throw-
+    adopted 13.69%/bin rather than the block-sum 13.43%/bin, per item 11);
+    the PET 5D verdict (WORSE vs GBDT, indicative/2M-train-anchored, per
+    item 13's caveat).
+15. **Point-cloud macros flagged as unsourceable — RESOLVED 2026-08-11, one
+    residual.** `\pcEavailMean` (−6.4), `\pcCloudFull` (0.5) and `\pcWoffset`
+    (0.96) in `docs/analysis-note/values.tex` were carried as having no
+    committed source, with the added worry that `\pcWoffset` had been measured
+    on the pre-fix 72.6 % has-cloud population and printed beside post-fix
+    companions. **All three are sourceable** to the committed post-fix artifact
+    `nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json`.
+    Derivations, so this does not have to be re-run:
+    - `\pcEavailMean`: `eavail_validation.mean = -0.006422885338877497` GeV
+      = −6.423 MeV → −6.4.
+    - `\pcCloudFull`: max over the 7 `projection_eavail` bins of
+      \|`pet_cloud_hascloud`/`pet_stored_full` − 1\| = **0.4555 %**, so the
+      note's "≲0.5 % in every bin" holds with the bins as its ingredients.
+    - `\pcWoffset`: `W_validation.median = 0.9579842725967493` GeV → 0.96.
+    **Residual (real, and the reason the original flag was not baseless):** the
+    prose in `nd-unfolding/pet/POINTCLOUD_PROJECTION.md:82` quotes the W offset
+    as "+0.96 GeV" from the **pre-fix** summary (0.9603795705901552 GeV on the
+    72.6 % subset). Pre- and post-fix agree only because both round to 0.96 at
+    the printed precision — the agreement is a coincidence of rounding, not a
+    stability result. Anyone re-quoting this at more digits must take the
+    fullcloud artifact, not that narrative. The macro comments in `values.tex`
+    now carry the artifact path for the whole `pc*` block.
+
+## Methodology stance (for the eventual response-to-referees)
+
+- Covariance is block-summed (C_syst+C_stat+C_ML); the unified-throw study
+  tests the linearity assumption directly and, in 4D, found it broken
+  (block-sum underestimates ~2×) — the published 4D systematic adopts the
+  unified-throw magnitude.
+- Central value: single-run CV; ensemble-mean CV agrees at 0.28%.
+- The corrected 4D/5D ML band isolates train/test-split response at fixed
+  estimator seed 42. Pure estimator-seed sensitivity is not added separately;
+  disclose this deliberate scope with any replacement budget.
+- GoF reported both binned (truncated-spectral χ²) and unbinned (C2ST).
+
+## Decisions of 2026-08-12 landing in the PET lane — freeze, hold, and one named owner
+
+Recorded by Session C. Joseph's decisions relayed via Session A; each is quoted where it constrains work.
+
+### (i) Cluster/local fork — FROZEN AND RECORDED, not merged
+
+> *"Do not reconcile or merge the 114-commit cluster fork during closeout. Freeze and record both heads
+> plus the 22-pin comparison and the harness hash. Stop further divergence and use a clean
+> canonical-based worktree for new cluster work after item 7. Inventory unique patches with range-diff
+> after the publication freeze; no wholesale merge."*
+
+**Delivered:** `docs/orchestration/state/cluster-local-fork-freeze-20260812.json`. Both heads, ancestry,
+the pin comparison against **both** trees, the harness hash measured on **both**, and the cluster
+working-tree inventory. **Two things in it change what the follow-up should be, and are reported rather
+than quietly worked around:**
+
+- **The divergence is 153 commits, not 114.** Both numbers are correct at the head they were taken at;
+  `origin/main` advanced between the orchestrator's measurement and this one. A bare divergence count
+  needs its revision.
+- **`git range-diff` — the instrument the decision names — will return NOTHING.** The cluster head
+  `683bdcc` is a **strict ancestor** of `origin/main`, so there are **zero unique cluster commits**. The
+  entire divergence is **uncommitted working-tree state**: 727 dirty paths, of which 715 are untracked
+  and 12 are tracked. range-diff compares commit ranges and structurally cannot see any of it. The
+  inventory in the artifact is the substitute, and **the 715 untracked paths are counted but not
+  classified** — that is the real remaining gap, since any of them could be an unpublished product.
+
+**Reassuring, and measured rather than assumed:** all 22 Gate-4 pin entries (over 21 distinct paths —
+the count *"22 pins"* this lane previously reported was entries, not paths) match on **both** trees, and
+`step1_increment_trajectory.py` is **byte-identical** on both at `1acb1869c57f9772…`. So nothing in the
+PET evidence chain is wrong because of the fork. **One tracked file differs and it touches a result:**
+`sbatch_step1_trajectory_annealed.sh` is `f5ba93d0…` on the cluster and `f977d65a…` on `origin/main` —
+benign and resolved, because `f5ba93d0` is commit `831043d`, the version that actually ran job
+`56691812` and exactly what the reconciliation receipt's `batch_script_sha256` binds, while `f977d65a`
+is the later single-rank hardening at `cdf5927`. **Unlike BEN-138's harness case, this binding is
+recoverable from git.**
+
+### (ii) Cluster P4 lane — HELD
+
+> *"Hold the cluster P4 lane until `p4_evidence.py` no longer hardcodes REPO and the replacement is
+> power-tested. Do not use a cluster worktree as a workaround meanwhile."*
+
+Local worktrees proceed; the cluster P4 lane does not. **The acceptance bar is `power-tested`, which is
+Joseph's word and is stricter than it looks: deriving `REPO` from `__file__` is NOT sufficient on its
+own — it needs a test that FAILS against the hardcoded form.** A fix whose test passes both before and
+after has not been tested. Not this lane's file; recorded here because this lane's finding produced the
+split and the bar would otherwise be read as "make it relative".
+
+### (iii) Post-migration `hsi hashverify` — OWNER NAMED
+
+Joseph approved the item without naming an owner and asked for one. **Owner: the PET lane**, as the lane
+that created the archive (job `56692312`, 240/240 digest-verified, 1,134,998,230,283 bytes) and wrote the
+`verification_scope` that names this as its own unclosed limit.
+
+**Trigger: a dated item here, deliberately NOT a `wakerctl` watch.** A session-local Monitor dies with
+the session, and the cluster waker is on the frozen tree at `683bdcc` running the **unguarded** `scan()`
+— so the durable-notification mechanism is itself inside the freeze. **Naming a watch as the trigger
+would be naming a mechanism this same decision froze.** The check needs no local copy and no data
+transfer: `hsi hashverify` against the stored per-file hashes under `mnv-p3f-pet-fullevent-final`, 240
+files, compared to `HPSS_ARCHIVE_MANIFEST.slurm-56692312.json`. **Run it after any HPSS tape migration,
+and once before publication regardless.**
+
+### (iv) Per-lane git identity — adopted, per-invocation only
+
+> *"Do not write shared git config. Record the effective author/committer identity in the lane receipt
+> where practical."*
+
+`git -c user.email=… -c user.name="Lane C (PET)" commit …`, verified in a throwaway clone to leave
+`.git/config` untouched. Note D's measurement of the nuance: **`-c user.email` sets author AND
+committer; `GIT_AUTHOR_EMAIL` sets only the author.** The receipt half of the instruction is the one that
+matters for this lane, given that **26 of its 32 commits last night carried no lane line at all** — the
+identity is now on the commits, and the fork-freeze artifact above records `recorded_by`.
