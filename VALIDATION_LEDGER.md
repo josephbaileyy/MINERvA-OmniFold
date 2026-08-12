@@ -1,5 +1,69 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-11 adopted products now carry their construction contract — VERIFIED by an independent reader
+
+Job `56695424` (`sbatch_stamp_verify.sh`), `COMPLETED` 2:54. `adopt_unified_5d.py` propagates the
+upstream contract into every adopted product and **asserts the six stamps read back from the output
+before printing anything**, so a COMPLETED job is itself the verification. Read again afterwards by a
+**separate process** — the in-process assertion and an external read are different instruments
+(BEN-088 rule vi):
+
+| key | new product | the same arm built by the pre-fix code |
+|---|---|---|
+| `sqrt_tr_old` | `4.357790406860002e-38` | `4.357790406860002e-38` |
+| `sqrt_tr_new` | `5.269625166386846e-38` | `5.269625166386846e-38` |
+| `fixed_seed_null_norm_checked` | `1` | **ABSENT** |
+| `upstream_fixed_seed_null_norm` | `5.8223488501140625e-50` | **ABSENT** |
+| `joint_mean_shift_norm_checked` | `1` | **ABSENT** |
+| `upstream_joint_mean_shift_norm` | `1.878696733368378e-38` | **ABSENT** |
+| `n_throws_checked` | `1` | **ABSENT** |
+| `upstream_n_throws` | `160` | **ABSENT** |
+| `centering_convention` | `mean-centered` | **ABSENT** |
+| `uthrow_source` | `unified_throw_cov_5d_fluxfix_20260806_full160.root` | **ABSENT** |
+| `combined_source` | `uq_universe_5d_covariance_combined_bkgaware.root` | **ABSENT** |
+
+**The two sqrt-traces are bit-identical across the pair, so the change is numerically inert** — it adds
+provenance and moves no number. The nine `ABSENT`s are the before/after control that makes the eleven
+`present`s mean something.
+
+**Scope, and it is the whole of what this does and does not establish.** The provenance leg of causes
+2, 3 and 4 is MET **for the footing-matched candidate** — a product written by the new code. The
+currently-quoted X, the July `…_bkgaware_uthrow.root` behind `\gbdtFiveAdoptTrace` `5.81e-38`, predates
+the stamping and **carries none of them**, which the same read confirms. So: MET for the artifact that
+would replace X, OPEN for X as it stands. **No cause is discharged**, and cause 2 — which now reads four
+METs — is routed rather than declared, because declaring the first discharge of the 2026-07-12
+quarantine has publication consequences and because the F7 *presentation* half is still recorded open in
+`CORRECTED_UQ_PRODUCTION_STATUS.md`.
+
+## 2026-08-11 cause 1's code leg: X's build path enumerated and audited — VERIFIED-CODE
+
+The criterion asked for *"a static audit naming every module X's build invokes, with the call site and
+the convention for each — not a claim that the sweep covered it"*. Done, and committed as **executable
+tests** (`Cause1PathAuditTests`) so it re-runs rather than decaying.
+
+Transitive import closure from the four production entry points (`sweep_bank_5d`,
+`analyze_universes_5d`, `unified_throw_cov_5d`, `adopt_unified_5d`) is **11 modules**. Four construct a
+covariance:
+
+| site | construction | convention |
+|---|---|---|
+| `uq_math.py:96-104` | `mat_covariance` | universe-mean centered, MAT biased `1/N` ✓ |
+| `unified_throw_cov.py:355,400,407` | `joint_throw_covariance`; `mat_covariance` over the knob ± pair and the 100 flux universes | mean-centered, shift stored separately ✓ |
+| `analyze_universes_5d.py:97-98` | `Z = D - D.mean(axis=0, keepdims=True)`; `(Z.T @ Z) / D.shape[0]` | **the same convention, inlined rather than calling `uq_math`** ✓ |
+| `analyze_universes_5d.py:107-109` | `np.outer(v, v)`, `v = 0.014 · x_CV` | the documented rank-1 target-nucleon norm add-on (`app_statmethods` eq:normband) ✓ — a legitimate outer product, not a one-sided band |
+
+**Both one-sided sites the 2026-07-12 sweep found and did not fix are provably OFF this path**:
+`pet_unified_throw_5d.py:108-111` and `pet_lateral_correction.py:118` are `pet_*` modules and **no
+`pet_*` module is reachable**. They belong to the PET budget, i.e. cause 5. **`unified_throw.py:391` is
+also off-path** — it uses an unbiased `1/(N−1)` rather than the MAT `1/N`, but it is a 3D legacy path
+(`hXSec3D`) that nothing on X's build imports.
+
+**So cause 1's C leg is MET for X. The audit's real yield is a hole it found in this session's own
+cause-1 TEST:** that test pins `uq_math.mat_covariance`, and `analyze_universes_5d` does not call it —
+it reimplements it — so the guard would have stayed green while the convention on the site that
+actually built X's sweep `C_syst` changed. Now pinned directly, and mutation-verified: CV-centering that
+inlined site fails the new test.
+
 ## 2026-08-11 background-aware footing re-adoption — VERIFIED-NUMERIC; both controls reproduce exactly
 
 Job `56693207` (`sbatch_readopt_5d_bkgaware_footing.sh`), `COMPLETED`, ~14 min, four arms from **one

@@ -21,6 +21,23 @@ inputs, four arm products, and whole-stream `56693207` log to committed launcher
 `../docs/orchestration/state/readopt-footing-hash-receipt-56695130.json`. No recomputation, numerical
 change, adoption, `values.tex` edit, or quarantine discharge.
 
+**2026-08-11 one-liner — adopted products now carry their own construction contract, and cause 1's code
+leg is audited closed.** Job `56695424` COMPLETED: `adopt_unified_5d.py` propagates
+`upstream_{fixed_seed_null_norm,joint_mean_shift_norm,n_throws}` plus `*_checked` flags,
+`centering_convention`, `uthrow_source` and `combined_source`, **and asserts all six read back before
+printing**, so COMPLETED is itself the verification. Re-read afterwards by a separate process: eleven keys
+present in the new product, **all nine new ones ABSENT in the same arm built by the pre-fix code**, and the
+two sqrt-traces bit-identical (`4.357790406860002e-38` / `5.269625166386846e-38`) so the change moves no
+number. **Scope: the provenance leg is MET for the FOOTING-MATCHED CANDIDATE, not for the July product the
+note quotes, which carries none of the stamps.** Cause 1's code leg is MET too — X's build path is 11
+modules, four construct a covariance, all four use universe-mean centering with the MAT biased `1/N` (one
+inlined in `analyze_universes_5d` rather than calling `uq_math`), the single `np.outer` is the documented
+rank-1 norm band, and **both unfixed one-sided sites are provably off the path** (`pet_*`, i.e. cause 5),
+as is `unified_throw.py:391`'s `1/(N-1)` (3D legacy). The audit's real yield was a hole in this session's
+own cause-1 test, now pinned. **NO CAUSE IS DISCHARGED.** Cause 2 reads four METs and is **routed, not
+declared** — the P leg holds for the candidate rather than the quoted product, and F7's presentation half
+is still open below.
+
 **2026-08-11 one-liner — the footing-matched candidate EXISTS, both controls reproduce exactly, and the
 two corrections turn out NOT to be independent.** Job `56693207` (`sbatch_readopt_5d_bkgaware_footing.sh`,
 COMPLETED, ~14 min, four arms from one unchanged throw ROOT). **Nothing adopted; `values.tex` untouched;

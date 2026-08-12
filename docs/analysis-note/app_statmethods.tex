@@ -3,7 +3,7 @@
 \label{app:methods}
 
 This appendix is the complete uncertainty-quantification methodology of the
-measurement --- the seedscan, bootstrap and universe-covariance procedures,
+measurement --- the training-seed variation, bootstrap and universe-covariance procedures,
 the MAT-conformant covariance construction, the $1/\Phi$ flux normalization,
 the comparison conventions ($\chi^{2}$, pulls, shape-only), the
 ill-conditioning/rank analysis, the tension anatomy, the coverage toys, and
@@ -11,7 +11,7 @@ the closure tests. Each procedure gives the recipe, the math, the
 implementation pointer, and a worked example using a reported number. We
 document only the analysis-specific numerical conventions, not a general
 statistics primer; the $\chi^{2}$ convention referenced throughout is
-Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
+Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}. \gk{Is 'seedscan' standard terminology for this? Googling it, I don't really find it used elsewhere.} \jrb{Fixed! Renamed throughout to ``training-seed variation''. Script, figure and artifact names keep \texttt{seedscan} as provenance.}
 
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
@@ -78,7 +78,7 @@ Each subsection below follows the same template:
 \emph{What it estimates $\cdot$ Procedure $\cdot$ Math $\cdot$ Code
 pointer $\cdot$ Worked example}.
 
-\subsubsection{ML stochasticity: the seedscan}
+\subsubsection{ML stochasticity: training-seed variation}
 \label{sec:seedscan}
 
 \paragraph{What it estimates.}
@@ -100,7 +100,7 @@ seeds per trial via \texttt{-{}-seed N}:
 (N,\,N+1,\,N+2),
 \qquad N \in \{1,\dots,10\}.
 \end{equation}
-The canonical seedscan uses the \texttt{lgbm} (LightGBM) backend, so
+The canonical training-seed variation uses the \texttt{lgbm} (LightGBM) backend, so
 it is backend-matched to the production unfold.
 
 \paragraph{Math.}
@@ -134,7 +134,7 @@ The paper's per-bin total-uncertainty median is $6.86\%$; the ML
 noise is therefore $\approx 2.4\%$ of the paper's quoted uncertainty
 and far subdominant to data-stat and systematics. Going from $n=4$ to
 $n=10$ trials moved the headline numbers within rounding, so the
-seedscan envelope is converged.
+training-seed variation envelope is converged.
 
 \subsubsection{Statistical uncertainty: the Poisson bootstrap}
 \label{sec:bootstrap}
@@ -227,7 +227,7 @@ The per-bin median is stable from $N=50$ to $N=300$ ($0.53\%\to
 0.56\%$); the $N=300$ block is the one used in the headline because it
 is full rank ($N>205$), whereas $N=50$ was rank-deficient and its
 Cholesky needed jitter $1.6\times 10^{-94}$. The bootstrap median is
-$\approx 3.4\times$ the seedscan median ($0.166\%$), as expected for a
+$\approx 3.4\times$ the training-seed variation median ($0.166\%$), as expected for a
 sample of $\mathcal{O}(10^{6})$ data events. Across datasets the
 per-bin median scales as $\sqrt{N_{\text{events}}}$: playlist $1A$
 ($\approx N/12$ of MEFHC) gives $1.46\%$, consistent with
@@ -452,7 +452,7 @@ We verified our rollup against MAT byte-for-byte: populating a
 and comparing \texttt{MnvH1D::GetTotalErrorMatrix} against our
 \texttt{-{}-add-norm 0} rollup gives a max element-wise relative
 difference of $5.5\times10^{-17}$ (machine $\varepsilon$), with
-$\sqrt{\Tr}$ matching to seven digits
+$\sqrt{\Tr\mathbf{C}}$ matching to seven digits
 (\texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}).
 
 \paragraph{Total covariance: \texttt{MnvH1D::GetTotalErrorMatrix}.}
@@ -491,7 +491,7 @@ independent components above.
 \paragraph{Independence assumption.}
 The bootstrap samples \emph{events} (with two distinct sub-RNGs for
 data and MC). The universes vary \emph{model weights}, with the GBDT
-seed pinned. The seedscan varies the \emph{GBDT seed}, with all
+seed pinned. The training-seed variation scans the \emph{GBDT seed}, with all
 weights fixed. The three Monte Carlos are independent by
 construction:
 \begin{equation}
@@ -514,7 +514,7 @@ Component traces and per-bin median relative spreads:
 \toprule
 Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
 \midrule
-ML noise (lgbm seedscan, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
+ML noise (lgbm training-seed variation, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
 Statistical (Poisson bootstrap, $N=300$) & $1.817\times10^{-40}$ & $0.549\%$ \\
 Systematic (fluxfix sweep $+$ norm) & $3.214\times10^{-39}$ & $6.830\%$ \\
 \midrule
@@ -525,7 +525,7 @@ Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
 \end{center}
 The combined OmniFold envelope essentially \emph{matches} the paper's per-bin
 median uncertainty ($6.865\%$ against $6.86\%$), dominated by the systematic
-block. (The combined $\sqrt{\Tr}$ \emph{is} the quadrature sum of the three
+block. (The combined $\sqrt{\Tr\mathbf{C}}$ \emph{is} the quadrature sum of the three
 independent component traces. The per-bin median column is \textbf{not}: a median
 of a sum is not the quadrature sum of the medians, so $6.865\%$ does not --- and
 should not --- reproduce by combining the three rows above it. Both combined
@@ -852,7 +852,7 @@ Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
 reach --- but for a \emph{statistical-precision} reason, not a missing-band
 one. Our OmniFold bootstrap stat block is $2.5\times$ smaller by trace than
 the paper's stat block ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.8\times10^{-40}$ vs
-$\sqrt{\Tr}\,\texttt{StatOnlyCov}=4.6\times10^{-40}$), so it regularizes the
+$\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.6\times10^{-40}$), so it regularizes the
 small systematic modes $2.5\times$ less. The naive pseudo-inverse then gives
 $\chi^{2}/\mathrm{ndf}=252$ for $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$,
 dominated by poorly-determined directions, against the paper's $3.66$ with
@@ -877,7 +877,7 @@ Three findings settle the question. (i) \emph{Closure holds:}
 $\sqrt{\Tr(\mathbf{C}_{\mathrm{data}}+\mathbf{C}_{\mathrm{mc}})}/
 \sqrt{\Tr\mathbf{C}^{\boot}}=1.07$, with the variance split $77\%$ data /
 $23\%$ MC. (ii) The \emph{data stream alone} gives
-$\sqrt{\Tr\mathbf{C}_{\mathrm{data}}}/\sqrt{\Tr}\,\texttt{StatOnly}=0.356$
+$\sqrt{\Tr\mathbf{C}_{\mathrm{data}}}/\sqrt{\Tr\,\texttt{StatOnly}}=0.356$
 ($\mathbf{C}^{\boot}/\texttt{StatOnly}=0.392=1/2.55$): the $2.5\times$ deficit is
 present in the data-only stat error, so it is \emph{not} an MC-statistics
 omission --- it reflects genuinely higher unbinned-OmniFold statistical
@@ -1354,7 +1354,7 @@ $\mathbf{C}^{\syst}$ & \S\ref{sec:universes} &
   $187$ universes, MAT-conformant Eq.~\eqref{eq:matcov} $+$ norm \\
 $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
-$\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm seedscan, $n=10$ trials \\
+$\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm training-seed variation, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
 Pull RMS $= 0.409$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
@@ -1377,7 +1377,7 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
         Eq.~\eqref{eq:blocksum} requires no cross-correlations between
         ML, statistical, and systematic. The bootstrap pins the GBDT
         seed (so ML noise cancels at first order); universes pin the
-        seed too; the seedscan pins the bootstrap. Cross-terms are
+        seed too; the training-seed variation pins the bootstrap. Cross-terms are
         higher-order. (The available $N=300$ bootstrap block carries a
         small residual ML leak, \S\ref{sec:bootstrap}.)
   \item \textbf{Bootstrap diagnostic.} \S\ref{sec:coverage}'s

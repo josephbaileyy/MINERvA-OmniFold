@@ -5149,3 +5149,48 @@ but no retry is required because there is no unverified object. This protects th
 selection-complete detector-sample half of quarantine cause 5 off purgeable scratch. The binding joint
 nuisance/retraining construction half remains **OPEN**; no covariance is adopted and no scientific
 threshold changes.
+
+## 2026-08-11 — BEN-106 VERIFIED; cause 1's path audited; no cause discharged (Session B)
+
+**Job `56695424` COMPLETED 2:54.** `adopt_unified_5d.py` now asserts its six provenance stamps read back
+from the output before printing, so COMPLETED is itself the verification. Re-read afterwards by a
+**separate process**, because the in-process assertion and an external read are different instruments
+(BEN-088 rule vi): eleven keys present in the new product, **all nine new ones ABSENT in the same arm
+built by the pre-fix code**, and `sqrt_tr_old`/`sqrt_tr_new` bit-identical at
+`4.357790406860002e-38` / `5.269625166386846e-38` — the change adds provenance and moves no number.
+
+**Scope stated because it is the whole of what this establishes.** The provenance leg of causes 2, 3 and
+4 is MET **for the footing-matched candidate**. The currently-quoted X — July `…_bkgaware_uthrow.root`
+behind `\gbdtFiveAdoptTrace` `5.81e-38` — predates the stamping and carries none of them. MET for the
+artifact that would replace X; OPEN for X as it stands.
+
+**Cause 1's C leg, audited and committed as executable tests** (`Cause1PathAuditTests`) rather than prose,
+so it re-runs instead of decaying. Transitive closure from the four production entry points is 11 modules;
+four construct a covariance and all four are correct — `uq_math.mat_covariance`; `unified_throw_cov`'s
+`joint_throw_covariance` and its knob-pair and flux `mat_covariance`; `analyze_universes_5d:97-98`'s
+**inlined** mean-centered biased `1/N`; and `analyze_universes_5d:107-109`'s `np.outer`, which is the
+documented rank-1 target-nucleon norm band and not a one-sided construction. **Both one-sided sites the
+2026-07-12 sweep found and left unfixed are provably off the path** — they are `pet_*`, no `pet_*` module
+is reachable, and they belong to cause 5. `unified_throw.py:391`'s unbiased `1/(N−1)` is off-path too
+(3D legacy, `hXSec3D`, imported by nothing on this path).
+
+**The audit's real yield was a hole in this session's OWN cause-1 test.** That test pins
+`uq_math.mat_covariance` — and `analyze_universes_5d` does not call it, it reimplements it. So the guard
+would have stayed green while the convention on the site that actually built X's sweep `C_syst` changed.
+Now pinned directly. Four mutations, files restored byte-exact: making a `pet_*` module reachable, making
+`unified_throw` reachable, CV-centering the inlined site, and adding a new one-sided `np.outer` are each
+caught. **A correct audit that leaves the guard pointing at the wrong site is not a closed leg**, and the
+only reason this surfaced is that the criterion demanded the path be enumerated rather than asserted.
+
+**Also recorded from the audit's first draft:** `unified_throw` appeared in my initial reachability list
+only because I had **seeded it as an entry point**. Its presence was a property of my seeding, not a
+measurement — caught by the next step of the same audit. The committed test seeds only the four real
+production entry points and pins `unified_throw`'s absence explicitly.
+
+**NO CAUSE IS DISCHARGED.** Cause 2 now reads four METs, which by the criteria's own §0 is the discharge
+condition, and I am **routing rather than declaring** it: the P leg holds for the candidate and not the
+quoted product, and F7's *presentation* half (CV-centered as sole headline vs both side by side) is still
+recorded open in this file. Declaring the first discharge of the 2026-07-12 quarantine has publication
+consequences and is not a session's call to make at the end of its own work.
+
+Suite: `pytest nd-unfolding/tests` = **1025 collected**, 35/35 in `test_uq_remediation.py`.

@@ -234,13 +234,33 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 
 | cause | C | P | M | T | verdict |
 |---|---|---|---|---|---|
-| 1 one-sided endpoint interpolation | OPEN — two sweep-found sites unfixed, path not enumerated | PARTIAL — MAT mean-centered `1/N` printed by the combine and the ± bank inventory passed, but no committed per-band endpoint census | **OPEN for the adopted product**; the pair-level defect is now quantified in the test (one-sided overstates on an asymmetric pair) | **MET** — power-tested, mutations N1/N2 | **OPEN — C and M** |
-| 2 CV centering | MET | **MET at the throw ROOT** — `hJointMeanShift` a separate `TH1D[10694]`, `joint_mean_shift_norm` `1.878696733368378e-38`; **absent from the adopted product** (§4.7, BEN-106) | **MET, on a CORRECTED number** — **5.3478×** the floor, not the recorded `4.83×`, which is the 122-throw subsample (BEN-109) | **MET** — `f7_cv_centered_required`, threshold pinned by name; N3/N4 | **OPEN — provenance only** |
-| 3 varying estimator seeds | MET | **MET at the throw ROOT** — one seed `1000` across all 40 throw and 36 block slabs; 160-throw union contiguous; `n_throws = 160` read back | **MET** — null read off **both** products: `1.9706e-50` pre-J28, `5.8223e-50` J28-corrected, tol `1e-12` | **MET** — both directions in one case (one seed accepted, mixed rejected); N5 | **OPEN — provenance only** |
-| 4 scalar jitter subtraction | MET | **MET at the throw ROOT**; **absent from the adopted product** (BEN-106) | UNRESOLVED — `1.539` is a different ensemble | **MET** — `fixed_seed_null_checked` written unconditionally; N6 caught it and nothing else did | **OPEN — M and provenance** |
+| 1 one-sided endpoint interpolation | **MET** — path enumerated and audited: 11 modules, **no `pet_*` and no `unified_throw` on it**, so both unfixed one-sided sites are provably OFF X's path (§4.8) | PARTIAL — MAT mean-centered `1/N` printed by the combine and the ± bank inventory passed, but no committed per-band endpoint census | **OPEN for the adopted product**; the pair-level defect is now quantified in the test (one-sided overstates on an asymmetric pair) | **MET** — power-tested, mutations N1/N2 | **OPEN — C and M** |
+| 2 CV centering | MET | **MET** — verified 2026-08-11 in the **adopted product** by an independent reader: `centering_convention='mean-centered'`, `upstream_joint_mean_shift_norm=1.878696733368378e-38` (job `56695424`) | **MET, on a CORRECTED number** — **5.3478×** the floor, not the recorded `4.83×`, which is the 122-throw subsample (BEN-109) | **MET** — `f7_cv_centered_required`, threshold pinned by name; N3/N4 | **OPEN — provenance only** |
+| 3 varying estimator seeds | MET | **MET** — one seed `1000` across 40 throw + 36 block slabs, and `upstream_n_throws=160` now read back **from the adopted product** (job `56695424`) | **MET** — null read off **both** products: `1.9706e-50` pre-J28, `5.8223e-50` J28-corrected, tol `1e-12` | **MET** — both directions in one case (one seed accepted, mixed rejected); N5 | **OPEN — provenance only** |
+| 4 scalar jitter subtraction | MET | **MET** — `fixed_seed_null_norm_checked=1` and `upstream_fixed_seed_null_norm=5.8223488501140625e-50` read back **from the adopted product** (job `56695424`) | UNRESOLVED — `1.539` is a different ensemble | **MET** — `fixed_seed_null_checked` written unconditionally; N6 caught it and nothing else did | **OPEN — M and provenance** |
 | 6 incomplete statistical projection | **PARTIAL** — the `(E_avail,W)` projector's unguarded all-zero rows are now detected and reported (BEN-110); the ensemble leg and the corrected upstream input are untouched | **OPEN — no product rebuilt at all** | OPEN | **MET** for the coverage guard — numeric + static + pre-fix control; P1/P2 | **OPEN, and still furthest** |
 
-**Every T leg is now MET and mutation-verified; no cause is discharged.** What remains is concentrated:
+**UPDATED 2026-08-11 after job `56695424`. READ THE PRODUCT COLUMN BEFORE READING THE VERDICTS —
+the P legs above are MET for the FOOTING-MATCHED CANDIDATE, not for the product the note quotes.**
+The stamps were verified in a ROOT written by the new `adopt_unified_5d.py`. The currently-quoted
+X — the July `…_bkgaware_uthrow.root` behind `\gbdtFiveAdoptTrace` `5.81e-38` — was built before
+the stamping existed and **carries none of them**, confirmed in the same read: all nine keys
+`ABSENT`. So the honest statement is *the P leg is MET for the artifact that would replace X, and
+OPEN for X as it stands.* That is §0's own (cause × artifact) rule applied to my own result, and
+it is the second time today the rule has caught a claim of mine rather than someone else's.
+
+**NO CAUSE IS DISCHARGED, and cause 2 is the one to interrogate rather than celebrate.** On the
+row above it reads four METs, which by §0 is the discharge condition. I am **not** declaring it
+discharged, for two reasons that are mine to state and not mine to resolve: (i) the P leg holds
+for the candidate and not for the quoted product, per the paragraph above; (ii) the F7 rule's
+*presentation* half — CV-centered as sole headline versus both side by side — is recorded as
+**still open** in `CORRECTED_UQ_PRODUCTION_STATUS.md`, and while my criterion did not make it a
+leg, discharging a quarantine cause while the campaign's own status file says a piece of that
+cause is open would be exactly the invented-after-the-fact closure this document exists to
+prevent. **Declaring the first discharge of the 2026-07-12 quarantine is a decision with
+publication consequences and is routed, not taken.**
+
+**Every T leg is MET and mutation-verified.** What remains is concentrated:
 causes 2, 3 and 4 need only **provenance in the adopted product**, which is one edit — BEN-106's stamp
 propagation — closing the same leg for all three at once. Cause 4 additionally needs its magnitude. Cause 1
 needs a static audit of X's path plus one measurement. Cause 6 needs a cluster rebuild it has never had.

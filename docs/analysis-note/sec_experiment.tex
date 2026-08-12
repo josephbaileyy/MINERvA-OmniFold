@@ -43,6 +43,7 @@ with vertex in the central-tracker fiducial volume, with muon phase space
 The fiducial volume is the tracker region $5980 < z < \SI{8422}{mm}$ within an
 \SI{850}{mm} apothem, containing $3.2353\times10^{30}$ nucleons (the fixed
 tracker-geometry constant).
+\gk{Are these the selection criteria for events that have \texttt{E\_recoil\_CCinc} set to a positive value?}
 
 Reconstructed events are selected by requiring: a reconstructed vertex in the
 same tracker fiducial volume and apothem; a muon track with
@@ -98,6 +99,9 @@ more-than-\SI{100}{GB} universe dumps). The flux histogram
 (\texttt{pTmu\_reweightedflux\_integrated}) comes from the corresponding
 baseline histogram event loop and is POT-weighted across playlists;
 playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.
+
+\gk{I'm not sure how analysis note is supposed to look like, but to me it's a bit unusual that we are mixing description of more generic methods (OmniFold, uncertainty quantification...) with Minerva dataset-specific plots. To me, sections 2,3,4 read somewhat like how one would start approaching a problem like this, but reading a typical paper feels a little more organized to me, something like Introduction - Methods - Data - Results or similar, where generic methods that are either original or taken from somewhere else (like OmniFold) that could be in principle used on non-Minerva data are very clearly separated from the Minerva-specific plots and results.}
+
 
 \subsection{Reco-level control distributions}
 \label{sec:controlplots}

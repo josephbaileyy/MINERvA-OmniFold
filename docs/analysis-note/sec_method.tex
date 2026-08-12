@@ -101,7 +101,7 @@ empirically: doubling to $n=10$ moves the total cross section by
 an independently published binned measurement of the same data
 (\S\ref{sec:results}). Second, an ensemble of reweighting trials with
 different train/test splits controls the ML stochastic component --- which we
-budget explicitly via the seedscan band (\S\ref{sec:systematics}). The
+budget explicitly via the training-seed variation band (\S\ref{sec:systematics}). The
 present work differs in unfolding \emph{real} MINERvA data to an absolutely
 normalized cross section with a complete finalized 2D uncertainty budget, in using GBDT
 learners suited to a low-dimensional tabular feature set, and in validating
@@ -149,7 +149,7 @@ $n=5$; doubling to $10$ moves the total cross section by
 \SI{0.026}{\percent} (\S\ref{sec:validation}). The central value is a
 single-run unfold with pinned seeds; an ensemble-mean central value (averaging
 independent reweighting trials) agrees with it to \SI{0.28}{\percent}, and ML
-stochasticity is budgeted explicitly via the seedscan band
+stochasticity is budgeted explicitly via the training-seed variation band
 (\S\ref{sec:systematics}).
 
 \paragraph{Hyperparameter choice.}
@@ -164,7 +164,7 @@ loop. The configuration is instead validated after the fact: closure and
 classifier-calibration tests (\S\ref{sec:validation}), insensitivity to
 doubling the iteration count (quoted above), backend agreement in the
 method-dependence studies (\S\ref{sec:results-tension}), and an explicit
-seedscan band for residual ML stochasticity (\S\ref{sec:systematics}).
+training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
 
 
 \subsection{MINERvA driver and pipeline conventions}

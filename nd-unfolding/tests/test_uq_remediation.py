@@ -624,3 +624,110 @@ class Cause6ProjectionCoverageTests(unittest.TestCase):
         # and it must still be valid Python, i.e. the reconstruction is a real pre-fix source and
         # not a mangling that would fail the assertions for the wrong reason
         ast.parse(prefix_src)
+
+
+class Cause1PathAuditTests(unittest.TestCase):
+    """Quarantine cause 1's CODE leg for the adopted 5D GBDT covariance (X).
+
+    The criterion asks for *"a committed static audit naming every module X's build invokes, with the
+    call site and the convention for each — not a claim that the sweep covered it"*. This is that
+    audit, executable, so it re-runs instead of decaying.
+
+    THE AUDIT FOUND A HOLE IN THIS FILE'S OWN CAUSE-1 GUARD, which is why it exists.
+    `QuarantineCauseGuardTests` pins `uq_math.mat_covariance` — but `analyze_universes_5d` does NOT
+    call it. It reimplements the same arithmetic inline (`Z = D - D.mean(axis=0, keepdims=True)`,
+    `(Z.T @ Z) / D.shape[0]`), and that inlined site is what built X's sweep `C_syst`. So the
+    existing guard would stay green while the convention on X's actual path changed. Pinned here.
+    """
+
+    # The four production entry points, per sbatch_finalize_5d_bkgaware_gpu.sh and
+    # sbatch_readopt_5d_bkgaware_footing.sh: sweep -> block sum -> throw -> adopt.
+    ENTRY = ["sweep_bank_5d", "analyze_universes_5d", "unified_throw_cov_5d", "adopt_unified_5d"]
+
+    @classmethod
+    def _local_modules(cls):
+        return {p.stem for p in ND.glob("*.py")}
+
+    @classmethod
+    def _imports_of(cls, mod, local):
+        f = ND / f"{mod}.py"
+        if not f.exists():
+            return set()
+        out = set()
+        for n in ast.walk(ast.parse(f.read_text())):
+            if isinstance(n, ast.Import):
+                out |= {a.name.split(".")[0] for a in n.names if a.name.split(".")[0] in local}
+            elif isinstance(n, ast.ImportFrom) and n.module:
+                if n.module.split(".")[0] in local:
+                    out.add(n.module.split(".")[0])
+        return out
+
+    @classmethod
+    def _reachable(cls):
+        local = cls._local_modules()
+        seen, stack = set(), list(cls.ENTRY)
+        while stack:
+            m = stack.pop()
+            if m in seen:
+                continue
+            seen.add(m)
+            stack.extend(cls._imports_of(m, local) - seen)
+        return seen
+
+    def test_no_pet_module_is_on_X_build_path(self):
+        """The two one-sided sites the 2026-07-12 sweep found and did NOT fix are both `pet_*`.
+
+        `pet_unified_throw_5d.py:108-111` and `pet_lateral_correction.py:118`. Cause 1's criterion
+        requires them PROVEN off X's path rather than assumed, because if either were on it the C leg
+        would be open and no amount of correct convention elsewhere would close it. They belong to the
+        PET budget, i.e. cause 5.
+        """
+        seen = self._reachable()
+        self.assertEqual(sorted(m for m in seen if m.startswith("pet")), [],
+                         "a pet_* module became reachable from X's build; cause 1's C leg reopens")
+        self.assertNotIn("pet_unified_throw_5d", seen)
+        self.assertNotIn("pet_lateral_correction", seen)
+
+    def test_unified_throw_is_not_on_X_build_path(self):
+        """`unified_throw.do_combine:391` uses an UNBIASED 1/(N-1), not the MAT biased 1/N.
+
+        It is a 3D legacy path (it reads `hXSec3D`) and nothing on X's build imports it -- the module
+        appeared in a first draft of this audit only because I had SEEDED it as an entry point, which
+        is a property of my seeding and not a measurement. Pinned so that if anything on X's path ever
+        does import it, the differing normalization is caught rather than inherited.
+        """
+        seen = self._reachable()
+        self.assertNotIn("unified_throw", seen)
+
+    def test_analyze_universes_5d_band_covariance_is_mean_centered_and_biased(self):
+        """The inlined `mat_covariance` that built X's sweep C_syst. NOT covered by the uq_math guard.
+
+        Asserts the two properties that distinguish the corrected convention from cause 1's defect:
+        centering on the universe MEAN (not the CV), and the MAT biased `1/N` (not `1/(N-1)`).
+        """
+        src = (ND / "analyze_universes_5d.py").read_text()
+        self.assertIn("Z = D - D.mean(axis=0, keepdims=True)", src,
+                      "band covariance must be UNIVERSE-MEAN centered; CV-centering is cause 1")
+        self.assertIn("(Z.T @ Z) / D.shape[0]", src,
+                      "MAT convention is the biased 1/N; 1/(N-1) is a different estimator")
+        self.assertNotIn("(Z.T @ Z) / (D.shape[0] - 1)", src)
+
+    def test_the_only_outer_product_on_X_path_is_the_documented_norm_band(self):
+        """`np.outer` is cause 1's signature, so every occurrence on X's path must be accounted for.
+
+        There is exactly one, and it is the target-nucleon normalization rank-1 add-on --
+        `C^norm = (sigma_N X^CV)(sigma_N X^CV)^T` with sigma_N = 0.014, `app_statmethods.tex`
+        eq:normband, applied via `--add-norm`. That is a legitimate rank-1 term, NOT a one-sided band.
+        Any NEW outer product on this path is a cause-1 candidate and should fail here.
+        """
+        seen = self._reachable()
+        found = []
+        for mod in sorted(seen):
+            f = ND / f"{mod}.py"
+            if not f.exists():
+                continue
+            for i, line in enumerate(f.read_text().splitlines(), 1):
+                if "np.outer(" in line:
+                    found.append(f"{mod}.py:{i}")
+        self.assertEqual(found, ["analyze_universes_5d.py:109"],
+                         "unaccounted outer product on X's build path -- a cause-1 candidate")
