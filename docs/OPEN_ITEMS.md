@@ -942,30 +942,54 @@ largest nominal truth-space volume.
      1431-bin covariance or its rank-deficient GoF, which is what App. A item 5
      actually gates.
 
-2. **`E_avail` definitional reconciliation with `minerva-ml`** — raised by Gregor in the
-   2026-08-11 review round, as a comment on the signal-definition paragraph asking whether the
-   quoted criteria are what gives `E_recoil_CCinc` a positive value. The literal question is
-   **answered** in `docs/analysis-note/sec_experiment.tex` (no: those are truth-level signal and
-   phase-space definitions, and no cut in this analysis tests any recoil quantity). Tracing the
-   name is what surfaced the open item:
-   - `E_recoil_CCinc` is the `minerva-ml` alias for the ntuple branch
-     `MasterAnaDev_hadron_recoil_CCInc` (`src/scripts/extract_baselines.py:285-288`), where a
-     negative entry is that code's **invalid sentinel** — `np.where(x >= 0, x, -1)` followed by
-     `invalid_E_recoil_CCinc = E_recoil_CCinc == -1`. "Positive" there means "validly filled",
-     not a physics selection.
-   - `minerva-ml` uses that branch **directly as reconstructed available energy**:
-     `reco_E_avail = master_ana_dev["MasterAnaDev_hadron_recoil_CCInc"]`
-     (`notebooks/archive/data_exploration_3_Enu.ipynb`).
-   - This analysis never reads that branch. Our reco `E_avail` is `NewEavail()` —
-     `blob_recoil_E_tracker` + `blob_recoil_E_ecal`, each less its per-plane muon fuzz, scaled by
-     1.17 (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:185-193`).
-   - **OPEN, and unmeasured:** whether the two constructions agree numerically. Settling it needs
-     one production `MasterAnaDev` MC/data pair with both branch families read side by side; it
-     cannot be answered from either checkout alone, because neither stores the other's variable.
-     Until it is settled, **do not treat a `minerva-ml` `E_avail` distribution as directly
-     comparable to this analysis's** — two different quantities currently share the name.
-   - Blocked on: Gregor (which construction `minerva-ml` intends as `E_avail`, and whether the
-     1.17 tracker+ECAL scaling is meant to be in it) and NERSC tuple access for the numeric check.
+2. **`E_avail` definitional mismatch with `minerva-ml`** — raised indirectly by Gregor in the
+   2026-08-11 review round. His literal question (do the quoted criteria give `E_recoil_CCinc` a
+   positive value?) is **answered** in `docs/analysis-note/sec_experiment.tex`: no — those are
+   truth-level signal and phase-space definitions, and no cut in this analysis tests any recoil
+   quantity. `E_recoil_CCinc` is the `minerva-ml` alias for the branch
+   `MasterAnaDev_hadron_recoil_CCInc` (`src/scripts/extract_baselines.py:285-288`), where a
+   negative entry is that code's **invalid sentinel**, so "positive" meant "validly filled".
+   Chasing the name is what surfaced the actual item, which is **not** about that branch:
+
+   **The two repos compute truth `E_avail` differently, in production code on both sides.**
+   Ours is `GetEAvailableTrue()` (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:361-374`);
+   theirs is `get_E_available_true()` (`src/dataset/preprocessing.py:767-787`) over the PDG sets in
+   `src/constants/physics.py:25-31`. They disagree on four points:
+
+   | Species | Ours | `minerva-ml` |
+   |---|---|---|
+   | p | kinetic | kinetic |
+   | pbar, e+-, K+- | **excluded** | included, total E |
+   | gamma, pi0 | total E | total E |
+   | **pi+-** | **kinetic (E - 135)** | **total E** |
+   | mu+- | excluded | excluded |
+   | negative result | not clamped | clamped to 0 |
+
+   The charged-pion row is the material one: **~140 MeV per charged pion**, not a rounding
+   difference. Separately, our charged-pion mass constant is `135` — the *pi0* mass; charged pi is
+   139.57 — worth ~4.6 MeV per charged pion. Both look inherited verbatim from MAT
+   (`CCQE3DFitFunctions.h` / arXiv:2312.16631 Eq. 4, which our code cites); **that citation has not
+   been read against the code**, so which side matches the published convention is not established
+   here.
+
+   **Superseded framing, recorded so it is not re-derived:** an earlier version of this item framed
+   the mismatch on the *reco* side, citing
+   `reco_E_avail = master_ana_dev["MasterAnaDev_hadron_recoil_CCInc"]`. That line is real but lives
+   in `notebooks/archive/data_exploration_3_Enu.ipynb` — an archived, 92-cell, zero-markdown scratch
+   notebook. In `minerva-ml` production `src/`, that branch is used **only** to build an `E_nu`
+   baseline (`E_mu + E_recoil_CCinc`), never as `E_avail`. The reco-side claim was therefore weaker
+   than stated; the truth-side one above replaces it and is checkable from committed code in both
+   repos with no tuple access.
+
+   - **OPEN:** (i) reconcile the two truth definitions and decide which is the intended
+     `E_avail`; (ii) confirm the `135` vs `139.57` pion mass against arXiv:2312.16631 Eq. 4;
+     (iii) our reco `E_avail` is `NewEavail()` (`CVUniverse.h:185-193`), whose `1.17` tracker+ECAL
+     scale has provenance recorded but **no recorded justification** anywhere in this repo — see
+     the separate item on that constant.
+   - Until (i) is settled, **do not treat a `minerva-ml` `E_avail` distribution as directly
+     comparable to this analysis's.**
+   - Blocked on: Gregor (which construction `minerva-ml` intends), and on reading
+     arXiv:2312.16631 Eq. 4 for the reference definition. Neither needs NERSC access.
 
 ## Deferred analysis refinements
 
