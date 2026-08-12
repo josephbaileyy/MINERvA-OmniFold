@@ -793,6 +793,57 @@ Implementation gate, in order:
    zero-efficiency cells. No current recoil-PET covariance component is
    automatically transferable to the new estimator.
 
+### OPEN — PET artifacts embed ABSOLUTE checkpoint paths; move to READ-TIME resolution (BEN-133)
+
+**Filed 2026-08-12 by Session C (PET). Not urgent, genuinely open, and the analysis is attached so the
+next person inherits it rather than redoing it.**
+
+**The defect.** `train_fullevent_nominal.py:529,534` stamps `weights_folder` and `step2_checkpoint`
+into each artifact's `inference_contract` as **absolute paths**. Consumers resolve checkpoints from
+them — `step1_increment_trajectory.py`, `gate_ab_push_provenance.py`,
+`step1_pull_push_decomposition.py`, and `extract_fullevent_fps.py:243,253`, which is the **extraction**
+path. An absolute path inside a data artifact is a claim about the world that relocation falsifies.
+
+**Why it matters more than tidiness.** It fails **silently, and only when a same-named sibling exists**
+— which is exactly the situation a promotion creates. Live instance: the `superseded-20260806` artifact
+still names `fullevent_nominal/w_nominal`, that folder exists, its checkpoints exist, and they belong to
+the **2026-08-08** artifact — so following that artifact's own contract pairs 08-06 push weights with a
+different network and returns a number. A dangling path would have raised `FileNotFoundError`. Documented
+at `nd-unfolding/pet/fullevent_nominal/superseded-20260806/NOTE.md`.
+
+**The fix: resolve at READ time, not write time.** Store the checkpoint location *relative to the
+artifact's own directory* (or resolve `weights_folder` as `dirname(artifact)/w_<tag>` at load), so an
+artifact that moves takes its checkpoints' identity with it.
+
+**BLAST RADIUS, which is why this was NOT done on 2026-08-11/12 and needs scheduling rather than a
+spare hour:**
+
+- `train_fullevent_nominal.py` is **pinned as `driver`** in the live Gate-4 launch-code receipt
+  (`p3f-pet-gate4-launch-code-gate-20260812.json`). Changing it moves that pin and **forces another
+  Gate-4 re-issue** — the thing that must land in the same commit as its predecessor's retirement,
+  per `_LAUNCH_CODE_FLOOR = 2`.
+- `extract_fullevent_fps.py` is likewise pinned (`fullevent_extractor`), and it is the **prohibited**
+  extraction path, so touching it has an authorization dimension as well as a technical one.
+- **Existing artifacts are not migrated by a code change.** Every npz already written keeps its absolute
+  path, so the fix must either tolerate both forms or come with a documented migration — and rewriting
+  the contract inside an existing npz **changes its digest** and invalidates every receipt binding it,
+  including the four from job `56691812`.
+- The safe sequencing is therefore: read-time resolution that **prefers a relative/derived location and
+  falls back to the stored absolute one**, so old artifacts keep working and new ones stop being
+  relocatable-into-wrongness.
+
+**Interim mitigation, already in place and cheap** — a runtime identity guard rather than a path fix.
+`inversion_screen.py`, `leg_mismatch.py` and `push_vs_acceptance.py` assert fold-forward
+`0.7367462501305516` from the artifact's own contents before use and refuse otherwise; power-tested to
+reject both the annealed (`1.0840529829474115`) and the 08-06 superseded (`0.7464834064182863`)
+artifacts. **This is a mitigation, not the fix:** it covers the three diagnostics that were deliberately
+left pointing at the 08-08 artifact, and covers nothing else.
+
+**Note the class is invisible to source-text checking by construction.** The literal is written at
+training time and read back at inference time, so it exists in no source file;
+`nd-unfolding/pet/check_canonical_designation.py` documents this as "class 5" and states that a green
+audit says nothing about it.
+
 ### Potential next step after the full-event FPS gate: broaden reconstructed acceptance
 
 Do not enlarge the truth denominator beyond the declared FPS fiducial domain
