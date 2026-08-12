@@ -13,6 +13,12 @@ re-narrated** — so where this file points somewhere, go there rather than trus
 
 ## Read in this order
 
+0. **`docs/orchestration/LIVE-STATE.md`** — GENERATED control-plane snapshot: current campaign, DAG
+   node, declared state, owners, live Slurm jobs, armed `wakerctl` watches. ~70 lines, and the only
+   file here that answers *"what is happening right now"* — every file below answers "what is true in
+   general". Read it first because it is the cheapest orientation in the repo. Do not hand-edit;
+   regenerate via `docs/orchestration/generate_live_state.py`. **Check its `Observed:` timestamp and
+   `Git:` sha against `HEAD` before trusting it** — a stale snapshot is worse than none.
 1. **`docs/orchestration/FINDINGS.md`** — the `BEN-*` ledger of how *agents on this campaign* fail.
    This is the highest-value file in the repo for a new session and the most frequently skipped.
    Long-form detail is in sibling `FINDING-<date>-<slug>.md` files, indexed at the top of `FINDINGS.md`.
@@ -35,6 +41,7 @@ Mirrors the table in `AGENTS.md`. Write a fact in its home; index it everywhere 
 | **How agents/campaigns fail** | `docs/orchestration/FINDINGS.md` (`BEN-*`) |
 | **Physics claims + verification status** | `docs/orchestration/CLAIMS.md` (`CLM-*`) |
 | Current state per workstream | `*_STATUS.md` |
+| **What is happening right now** (campaign, DAG node, owners, live jobs, watches) | `docs/orchestration/LIVE-STATE.md` (generated) |
 | Chronology | `*_RUN_LOG.md` (append-only) |
 | Durable invariants & gotchas | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` |
 | Deliverables | `docs/analysis-note/` (Overleaf subtree, three builds) |

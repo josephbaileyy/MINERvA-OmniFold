@@ -60,8 +60,13 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
 (`2D_OMNIFOLD_*`, `3D_OMNIFOLD_*`, `ND_OMNIFOLD_*`).
 
 **Authoritative docs (read these before touching the pipeline):**
-- `docs/orchestration/FINDINGS.md` — the `BEN-*` process-failure ledger. **Read FIRST, before
-  KNOWN_ISSUES.** `KNOWN_ISSUES.md` records how the *code* fails; `FINDINGS.md` records how *agents
+- `docs/orchestration/LIVE-STATE.md` — **read BEFORE FINDINGS.** GENERATED control-plane snapshot
+  (campaign, DAG node, declared state, owners, live jobs, armed watches). ~70 lines. It is the only
+  doc that answers *"what is happening right now"*; everything below answers "what is true in
+  general". Regenerate with `generate_live_state.py`; never hand-edit. Verify its `Observed:`/`Git:`
+  fields against `HEAD` before trusting it.
+- `docs/orchestration/FINDINGS.md` — the `BEN-*` process-failure ledger. **Read FIRST among the
+  standing docs, before KNOWN_ISSUES.** `KNOWN_ISSUES.md` records how the *code* fails; `FINDINGS.md` records how *agents
   working on this campaign* fail, which is the class of error that has actually repeated here. If you
   are about to report a status, pick an operating point, judge a spread, or trust a delegate's
   self-validation, the relevant entry already exists (see BEN-023 … BEN-028).
