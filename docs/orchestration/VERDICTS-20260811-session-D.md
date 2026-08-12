@@ -606,3 +606,44 @@ name.** That is a large reduction and it is not zero, and BEN-115 currently read
 way A already wrote: the residual is real but small and bounded by discipline over a handful of shared
 documents, so it strengthens the worktree case slightly and still does not decide it. Decide it on its
 merits.
+
+### V17 — CORRECTED. **I got the attribution wrong, and it is instance (5) of the class I then filed.**
+
+V17 above says the correction is *"routed to Session A, who owns BEN-115."* **BEN-115 is Session B's
+row**, filed at `3292345` inside B's 100-129 block; A's involvement is one credited framing inside it.
+Session A caught it. I read a row containing A's sentence and inferred authorship — and the cost is
+concrete rather than cosmetic: routed as written, the correction would have gone to a lane with no
+standing to act on it. Filed as BEN-099(5), against myself.
+
+**And B already knew the limit I "refuted".** `3292345`'s commit body reads: *"Caveat recorded in the
+row: it takes the whole working-tree file, so it fixes the cross-file race and not the same-file one;
+GIT_INDEX_FILE is the tool when both apply."* Measured: the row contains **zero** occurrences of that
+caveat and states the opposite flatly. **So my BLOCK on the row stands unchanged — the row is wrong as
+written and the row is what gets read — but my characterisation of B does not.** B did not miss it. B
+wrote it in the body and asserted it was in the row. That is a different and more interesting defect,
+and it is BEN-099(2).
+
+Session B had also already argued, in the relay A forwarded, that rule (i) *"is not sufficient on a
+shared checkout, because two lanes can touch the same path… `FINDINGS.md`, `VALIDATION_LEDGER.md` and
+the RUN_LOGs are exactly the files every lane writes to."* **B reached the correct position first and
+against its own row's interest.** My measurement corroborates B; it does not originate the point, and
+I had it as originating.
+
+### V18 — **BLOCK against myself: my commit `7b26803` contains Session C's BEN-137 row.**
+
+`git log -S'| BEN-137 |' -- docs/orchestration/FINDINGS.md` returns `7b26803` and nothing earlier. Its
+message describes BEN-097/098 and a BEN-091 amendment and is silent about BEN-137. **I used
+`git commit -- <path>`, my own BEN-094 rule (i), and it absorbed C's row anyway** — the exact T2
+mechanism I measured hours later and published.
+
+**Audited all ten of my commits tonight against T2, which is what I should have done the moment T2
+existed:** `4e0bb74`, `7386a9b`, `8b7c1c5`, `5b13501`, `e572d34`, `57c8234`, `2ae151b`, `e6b0aa9`,
+`f013c68` are **clean** — own rows, own files only. `7b26803` is the **one** absorption. Scope
+correction filed into BEN-094 in the `ae7e615` form; not reverted, per the pushed-history convention.
+
+**The failure worth carrying is not the absorption — it is that I built the instrument and did not
+aim it at myself.** T1/T2/T3 were run, published, and turned into a corrected rule, and I did not
+re-audit my own commits with them. C's message prompted the audit. That is the third instance this
+session of the same miss: BEN-093 (test the declared blind spot against the known instance), BEN-096
+(power-test the justification, not only the implementation), and now this. **A newly built instrument's
+first target should be the author's own recent work.**
