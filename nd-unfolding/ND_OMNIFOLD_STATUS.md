@@ -42,10 +42,23 @@ replacement is implied for 4D/FPS or dependent significances. See
 - Branch C annealed checkpoint trajectory: the four-GPU interactive twin `56693776` failed before
   producing any control or treatment receipt because a bare `srun` inherited four tasks; three ranks
   failed Horovod GPU selection and the remaining rank was terminated after entering ARM 1. This is
-  **NO SCIENTIFIC VERDICT**. The committed one-task batch twin `56691812` is RUNNING as the sole valid
+  **NO SCIENTIFIC VERDICT**. The committed one-task batch twin `56691812` was the sole valid
   route with terminal coverage. ARM 2 remains unread unless ARM 1 reproduces the committed anchors;
   the verdict uses only `end_to_end_achieved_over_required`, and any `|required-1| < 0.02` is
   predeclared UNRESOLVED. The launcher now refuses multi-rank steps before TensorFlow or output setup.
+  **LANDED 2026-08-11 — this bullet is no longer in flight, and is banner-corrected rather than
+  rewritten so the "is RUNNING" claim above is visible as the stale one it became.** `56691812`
+  COMPLETED `0:0` in 21:45. ARM 1 reproduced the committed `56445883` anchors bit-exact
+  (`rel_dev = 0.000e+00`), so ARM 2 was read. Both predeclared release conditions held: the verdict was
+  taken from `end_to_end_achieved_over_required` only, and `|required-1|` was 0.1241 / 0.0992 / 0.0319,
+  all above the 0.02 floor, so the UNRESOLVED guard did **not** fire. Control e2e ach/req
+  0.9721 / 0.8608 / 0.6554 with iterations 1-2 wrong-signed; annealed 1.1101 / 1.0329 / 0.9644, all
+  correct-signed. **Predeclared branch REPAIRED**: the defect does not survive the fit-time LR anneal.
+  Numbers are the receipts' own (`STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json`,
+  `STEP1_TRAJECTORY.slurm-56691812.json`), not the arms' stored verdict strings — ARM 2's label reads
+  `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN`, which is direction-blind and must not be quoted
+  (`docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`). Full entry:
+  `VALIDATION_LEDGER.md` §2026-08-11. This does **not** lift Branch C and promotes no cross section.
 - Full-event diagnostic extraction job 56525297 is reconciled FAILED after its complete, validated
   GPU push: the combined launcher crossed into the ROOT-only stage while still in the TensorFlow
   environment. The preserved push is the sole input to a tested CPU/root_6_28 continuation; no GPU
@@ -59,7 +72,14 @@ replacement is implied for 4D/FPS or dependent significances. See
   PENDING on Priority, owned no output then, and remained the sole writer. It later completed `0:0`.
   Independent validation gives `CORRECT_AT_ITER0_DEGRADES_LATER`: iteration 0 is correct-sign and
   within 9.74% of exact R, while iterations 1 and 2 are wrong-signed. The failure is post-feedback
-  iteration dynamics. Three full-input controls are ready in isolated namespaces: warm/fresh split,
+  iteration dynamics. **LABEL AND MAGNITUDE RETIRED 2026-08-10/11, kept here as the record.** That
+  label was retired in `step1_increment_trajectory.py`'s own `verdict_label_history` and the "within
+  9.74%" reading is the first-leg field now named
+  `r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE`. End-to-end, iteration 0 **undershoots**
+  by 2.8% (0.9721), so `CORRECT` overstated it and the first-leg field inverted the sign of the
+  deviation. **The wrong-sign claim at iterations 1-2 survives end-to-end; the magnitudes do not.**
+  Corrected label `RIGHT_SIGN_AT_ITER0_INVERTS_LATER`, measured by `56691812` above; see
+  `docs/orchestration/INDEX-retracted-and-superseded-values.md`. Three full-input controls are ready in isolated namespaces: warm/fresh split,
   cold/fixed split, and cold/fresh split; together with the completed warm/fixed baseline they form a
   predeclared factorial over split reuse and Step-1 warm-start. Branch C remains and no publication
   cross section is promoted. The three arms are submitted as batch array `56531057` (`0-2%3`), each
