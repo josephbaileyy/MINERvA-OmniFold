@@ -1,0 +1,78 @@
+{
+  "artifact": "gate6-member-code-identity-split-56834281.json",
+  "lane": "C (PET)",
+  "written_utc": "2026-08-13",
+  "subject": "Gate 6 ML-ensemble array 56834281_[1-5]",
+  "verdict": "THE FIVE MEMBERS ARE NOT ONE CODE IDENTITY. Members 1-4 ran driver sha256 5fda80df..., member 5 ran 91144bee.... Gate 6's receipt must state two, not one.",
+  "severity": "PROVENANCE defect, not a physics one -- and the second half of that sentence is measured below rather than assumed.",
+  "authorship": "Session C (PET). The extraction that split them is MINE, which is why this note is mine to write.",
+
+  "THE_SPLIT_AS_MEASURED": {
+    "all_times_UTC": true,
+    "timezone_caveat": "sacct and `ls` were read through an ssh session with TZ=America/Los_Angeles, so their raw output is PDT. Converted here. NOTE the trap: `ls --time-style=+%Y-%m-%dT%H:%M:%SZ` appends a LITERAL 'Z' without converting, so its output looks like UTC and is not. Every figure below is +7h from the raw reading.",
+    "members": [
+      {"task": "56834281_1", "start_utc": "2026-08-13T04:36:12Z", "node": "nid001677", "driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f"},
+      {"task": "56834281_2", "start_utc": "2026-08-13T04:36:12Z", "node": "nid008209", "driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f"},
+      {"task": "56834281_3", "start_utc": "2026-08-13T04:43:48Z", "node": "nid003268", "driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f"},
+      {"task": "56834281_4", "start_utc": "2026-08-13T04:46:03Z", "node": "nid008625", "driver_sha256": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f"},
+      {"task": "56834281_5", "start_utc": "2026-08-13T05:06:03Z", "node": "nid008556", "driver_sha256": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc"}
+    ],
+    "the_landing": {
+      "annealed_estimator.py_arrived_on_cluster": "2026-08-13T04:52:08Z",
+      "train_fullevent_nominal.py_rewritten_on_cluster": "2026-08-13T04:52:10Z",
+      "falls_between": "member 4 start 04:46:03Z and member 5 start 05:06:03Z",
+      "cluster_driver_sha256_now": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "commit": "ce03f2c 'Option C: extract the annealed estimator to a FACTORY, and re-issue Gate 4 in the same commit', 2026-08-13T04:54:44Z"
+    },
+    "shas_straddle_the_commit_verified_locally": {
+      "ce03f2c^_driver": "5fda80df43dfe334a88a0ff06fac06bb8cef935cf42cab42074570518107980f",
+      "ce03f2c_driver": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "reading": "The two shas observed on the members are exactly the before and after of the extraction commit. Not an inference from timing alone."
+    },
+    "sacct_and_squeue_agreed": "both reported the same elapsed times for all five tasks this turn. They disagreed twice on 2026-08-12, so agreement is recorded rather than assumed."
+  },
+
+  "WHY_IT_WAS_POSSIBLE_AT_ALL": {
+    "mechanism": "The cluster checkout is at 683bdcc, 309 commits behind local main, and is NOT git-synced. Code reaches it by FILE COPY, so a driver can change under a running array with no git event on that machine and no commit visible from there.",
+    "consequence": "The launcher's LOGGED sha is the only record that the change happened. There is no ref, no reflog entry, and no mtime on a .git directory to notice.",
+    "so": "This is not a case of someone committing during a run. It is a case of the run's code being replaceable by `cp`."
+  },
+
+  "IS_IT_BENIGN_FOR_GATE_6_MEASURED_NOT_ASSUMED": {
+    "claim": "YES for Gate 6, and the reason is narrow enough to state exactly.",
+    "diff_performed_here": "The OLD nested `class _AnnealedMultiFold` from train_fullevent_nominal.py at ce03f2c^ against the NEW module's class body in annealed_estimator.py at ce03f2c, dedented so a nested class compares to a module-level one.",
+    "old_non_blank_lines": 24,
+    "new_non_blank_lines": 24,
+    "lines_differing": 2,
+    "the_only_difference": "`_fit_lr_records.append(` became `records.append(` -- the accumulator's NAME. In OLD it is a closure over main()'s local; in NEW it is an explicit parameter.",
+    "independently_corroborated": "Session A reached the same result by the same comparison. Two lanes, same conclusion, and I ran mine because the extraction is mine and a self-serving 'it's fine' is worth nothing.",
+    "THE_LIMIT_OF_THIS_CLAIM_AND_IT_MATTERS_LATER": "Behaviour-preserving for a SINGLE call with a fresh list, which is all Gate 6 makes. It says nothing about the multi-call case, where a shared or defaulted accumulator would make a run anneal correctly and report the anneal falsely. That is precisely the hazard the factory exists to prevent and precisely what Gate 6 does not exercise -- so 'benign here' must NOT be carried into the N=50 replica campaign, which calls the factory fifty times.",
+    "what_is_still_not_claimed": "That the two members' NUMERICAL outputs are identical. They were not compared; the argument is that the code paths are the same, not that the results were checked equal."
+  },
+
+  "THE_GENERALIZABLE_DEFECT_AND_IT_IS_BIGGER_THAN_GATE_6": {
+    "statement": "The launcher LOGS the driver sha and FAIL-CLOSES ONLY ON THE TARGET SHA. So the ensemble's own 'members must be one thing' guard covers the DATA and not the CODE.",
+    "consequence": "This split was DETECTABLE after the fact and not PREVENTABLE at submit. The logged sha is evidence for a post-mortem; it is not a gate.",
+    "why_that_asymmetry_is_the_wrong_way_round_for_an_ensemble": "An ensemble's entire claim is that its members differ ONLY in the thing being varied -- here the estimator seed. A guard that pins the input and leaves the executable free permits the one difference the ensemble is not allowed to have, while refusing a difference it would never make.",
+    "proposed_fix_for_the_NEXT_launcher_not_this_one": [
+      "Fail closed on the driver sha, and on annealed_estimator.py's sha, exactly as it already does on the target sha -- an array member whose code differs from task 1's must refuse to start rather than log a difference.",
+      "Better, because it removes the race instead of detecting it: SNAPSHOT the driver and estimator into a per-array directory at submit and have every member exec from the snapshot. Then a mid-flight `cp` cannot reach a running array at all.",
+      "Record the sha of every file the member actually imported, not only the driver -- the extraction moved the estimator into a SECOND file, so a one-file pin would now miss the class itself."
+    ],
+    "not_applied_to_56834281": "Four members are ~1.5 h into a ~6 h run. Cancelling to gain a guard on a split that has already happened would cost the run and buy nothing."
+  },
+
+  "WHAT_GATE_6_S_RECEIPT_MUST_SAY": [
+    "TWO code identities across five members, with the per-member sha table above, not one.",
+    "That the difference is the annealed-estimator extraction and that it is behaviour-preserving for a single call, with the 24-line diff as the evidence and the single-call limit stated.",
+    "That the member spread was therefore measured across a code boundary, even if a benign one -- a referee should be told, not have to find it.",
+    "That the criterion is unchanged: PASS requires the member-to-member spread to EXCEED 1.26775e-4; at or below, the branch is UNRESOLVED and reported as below the reproducibility floor, NOT as a small component.",
+    "That the realized seed_policy each member persisted off argv is the authority, not the launch command."
+  ],
+
+  "one_correction_to_the_framing_this_note_supersedes": {
+    "earlier_claim": "that Gate 6 was launched 'in violation' of its predeclaration's input-integrity hold",
+    "correction": "The hold was discharged by evidence before launch: this lane's ROOT probe log is stamped 2026-08-13T03:29Z and the launch commit ebf1fb8 is 03:33:49Z -- four minutes later. What was missing was the ARTIFACT, not the evidence; the receipt is now at docs/orchestration/state/opendata-input-integrity-20260813.json.",
+    "why_it_matters": "From the tree alone, 'launched past its hold' and 'launched on an answer that was never written down' are indistinguishable, and they are very different failures. The defect belongs to the record, not to the launch. Session A raised the first framing and retracted it on the timestamps."
+  }
+}
