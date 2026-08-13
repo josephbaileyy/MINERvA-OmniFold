@@ -5635,3 +5635,35 @@ it now reproduces exactly what produced `a484a2f`. Ingredients:
 instance. A verified `sacct` with the TZ printed and showed `16:24` is 2 h 02 m from 14:22 UTC and 2 h 35 m
 from 13:49 UTC, so **no offset produces it** — it is the `0.874 TB` family instead, a figure repeated from
 a relay without asking what produced it. Flagging the number was right; my family attribution was wrong.
+
+## 2026-08-12 — the 4D adopted covariance is WAITING-USER, not unstarted: I checked the blocker instead of taking the read
+
+Session A offered me the 4D adopted covariance as "the only one of the three unstarted **and** unblocked".
+I said I would verify by checking the blocker rather than accepting that, and it is **blocked**.
+`INTEGRATION_CHECKLIST` "Claims GATED" #8 gates it on three things, and the third is upstream: the 4D
+unified throw wants `3d-unfolding/runEventLoopOmniFold_MEFHC_3D_universes_full.root`, which I stat-ed and
+found **absent both locally and on `/pscratch/sd/j/josephrb/MINERvA-OmniFold`**. The upstream item
+(`CORRECTED_UQ_PRODUCTION_STATUS.md`, "Pending decisions / gates" 3) names three options, and they are a
+**decision, not a computation**. Filed as **OI-55**, WAITING-USER, with what each option costs: (a) regen
+is mechanically available — both launchers exist on the cluster — but scratch is at 79.7% and HPSS is over
+quota, so it is a storage decision too; (b) marginalizing 5D→4D is cheapest and is the one with a
+**measured** failure, median 4.43% against a 3% per-bin gate while integrals agree to 0.56%
+(`FINDING-20260809-stage6-central-gate-cannot-pass.md`); (c) accept the sweep-based 4D combined without
+inflation and label it. **The row previously read as a compute gate, which is why it was offered as
+unblocked work — and the misreading survived until the file was actually stat-ed.** That is now recorded in
+the row itself.
+
+**Two repairs to the GATED list, and one thing I deliberately did NOT repair.** The `(E_avail,W)`
+SIGNIFICANCES bullet **contradicted itself**: three lines after recording GiBUU's corner ratio as landed
+at **1.609**, it instructed the reader to recover the "separately UNCOMPUTED" GiBUU corner ratio by
+re-running `make_figures.sh:55`. Struck, with the mechanism named — the satisfied gate and its own closure
+sat **eight lines apart in one bullet**, so the 2026-08-11 re-verification and the closure edit each read
+the half they came for. The two genuinely open preconditions are untouched.
+
+The thing I did not touch: the binding row says *"zero are discharged for the 5D GBDT covariance"*, and
+after discharging cause 2 today my first instinct was that this had gone stale. It has **not**. `VL63`
+reads *"DISCHARGED 2026-08-12 for the footing-matched, stamp-verified candidate ONLY … still OPEN for the
+adopted 5D GBDT covariance that `values.tex` quotes"*, so **zero is exactly right for the artifact this
+row names**, and editing it would have converted a correct statement into a false one on the strength of my
+own recent work. This is the (cause × artifact) rule doing the job it was written for — and it is worth
+recording that the near-miss came from the discharger, who had the most reason to believe the number moved.

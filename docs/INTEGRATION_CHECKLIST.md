@@ -78,6 +78,28 @@ Last updated 2026-07-16.
   Also gated on the binding row above, and separately blocked upstream — the 4D unified throw wants a
   3D universe omnifile that is missing (`nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, "Pending
   decisions / gates" item 3).
+  **THE "blocked upstream" CLAUSE ABOVE IS STALE — struck 2026-08-12, and the unified throw is DONE.**
+  The missing 3D omnifile stopped being the blocker on **2026-07-15**, by a fourth route none of the three
+  options listed: `nd-unfolding/assemble_bank_4d_from5d.py` rebuilt the 4D throw bank from the surviving
+  `bank_uthrow_5d` (event-aligned, `w_truth`/`w_reco` byte-identical, the 372 universe-ratio weight arrays
+  binning-independent and symlinked) — **no event loop needed**
+  (`nd-unfolding/uq_4d/corrected/P6_4D_CORRECTED_STATUS.md`, "Inventory / reuse decisions"). The corrected
+  chain then ran to completion. Verified on `/pscratch` 2026-08-12:
+  `uq_4d/corrected/unified_throw_cov_4d.root` (Jul 17 07:56), and both adopt variants in
+  `uq_4d/corrected/universe_stage2_4d/` — `..._combined_uthrow.root` (Jul 17 08:05) and
+  `..._combined_uthrow_cvcentered.root` (Jul 17 08:06). The ledger independently records **4D
+  unified-throw adoption: PASS** for the June arm (160 throws, unified/block sqrt-tr ratio **2.012**;
+  adopted combined 4830 reported bins, exactly symmetric, PSD).
+  **So this row has ONE live gate, not three: Agent A's committed standard lateral block.** Laterals are
+  support-limited and step 5's final swap is gated on it; the binding quarantine row above still gates
+  *quoting*. `CORRECTED_UQ_PRODUCTION_STATUS.md`'s "Pending decisions / gates" item 3 is stale where it
+  offers the user three options — do not route that decision, it was superseded three weeks before it was
+  read.
+  *How the stale clause survived, recorded because it cost a wrong escalation:* on 2026-08-12 this lane
+  stat-ed the 3D omnifile, found it genuinely absent, and reported the row blocked — **verifying the
+  stated ingredient instead of the claim it was offered as evidence for.** The file being missing was
+  true and had stopped implying anything. Same shape as BEN-118's dedup error and BEN-119's untested
+  verdict-checks: the check ran, was correct, and did not bear on the conclusion.
 - **(E_avail,W) generator SIGNIFICANCES** (#6, #8) — still gated; **the RATIOS are now closed and
   the two must not be conflated.** The corner `data/gen` ratios are ratios of central-value
   integrals with no covariance in them, and all four landed 2026-08-11 (1.535 / 1.579 / 1.563 /
@@ -85,9 +107,15 @@ Last updated 2026-07-16.
   **significances** are covariance-dependent and remain gated on the binding row above.
   Two distinct preconditions, both open: **no `(E_avail,W)` covariance has been rebuilt** since either
   fix landed (`KNOWN_ISSUES.md:357`), and the sixth J28 flux site lives in this same script,
-  code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`). The GiBUU corner ratio
-  is separately UNCOMPUTED — recover by re-running `make_figures.sh:55` (it already passes
-  `--gen GiBUU`) and reading the `hiE-hiW corner … data/gen=` stdout line.
+  code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`).
+  ~~The GiBUU corner ratio is separately UNCOMPUTED — recover by re-running `make_figures.sh:55`.~~
+  **STRUCK 2026-08-12 — this bullet contradicted itself.** Three lines above, the same bullet records
+  GiBUU's corner ratio as **landed at 1.609** on 2026-08-11, so the recovery instruction told the reader
+  to recompute a number the bullet already carries. Exactly the shape this section's own header warns
+  about — *a gate list that names satisfied gates trains its reader to skip the list* — and here the
+  satisfied gate and its own closure sat **eight lines apart inside one bullet**, which is why neither
+  the 2026-08-11 re-verification nor the closure edit caught it: both read the half they came for.
+  **The two preconditions above are untouched and remain the reason the SIGNIFICANCES are gated.**
 - **Full-event PET** any result (#14): gated on KNOWN_ISSUES #19 — **verdict stands, and the reason is
   sharpened 2026-08-11 by the PET lane because "no products exist" has been read one level too broadly.**
   No full-event PET *product* exists (weights that are canonical, cross section, covariance) and that is
