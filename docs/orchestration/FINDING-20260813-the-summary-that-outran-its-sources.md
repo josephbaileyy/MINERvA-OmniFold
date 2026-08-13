@@ -178,6 +178,40 @@ shelf life measured in hours, and four documents carry the stale one.
 > endpoints. The two-point sample is especially tempting when both points agree, because agreement
 > feels like corroboration and is only two observations.
 
+## 6. The correction that stopped at the section boundary (BEN-179)
+
+Added on a second pass against `c3771f7`, after the document was rewritten twice mid-audit.
+
+Both rewrites targeted §1's claim that we implement Rodrigues 2016. Round 2 states the corrected
+position plainly: *"the coincidence with a published convention is what makes the position defensible;
+the inheritance is what makes 'deliberate' false."*
+
+**The corrected phrase still stands in two other places.**
+
+`§2`, a table row — the form a reader scans rather than reads:
+
+> | what we do | **implement this** [Rodrigues 2016] | do not implement |
+
+`§5`, items 2 and 6, four lines apart, contradicting each other:
+
+> 2. … It is a **declared convention choice**, not a negligible one.
+> 6. … The exclusion is **inherited** … **not established as a choice**.
+
+*"Declared convention choice"* is the exact framing round 2 refuted, and it sits in the section whose own
+item 6 calls it *"the list a reader trusts as complete."*
+
+> **Check:** after correcting a claim, grep the **claim**, not the paragraph. A defect found in §1 gets
+> fixed in §1; the same sentence in a table, a summary list, an abstract or a commit message is a
+> different string in a different place and no one goes looking for it. Two independent correction
+> rounds made the same choice here, which is what makes it a mechanism rather than an oversight — the
+> second round read the first round's output and still did not find the residue, because it was reading
+> the paragraph that had been fixed.
+
+**Not a disagreement with the corrections.** Round 2 is right, improves on round 1, and its one
+locally-checkable claim reproduces exactly: our `GetEAvailableTrue()` body is **424 chars, sha256
+`5296998043add43c`** with comments and whitespace stripped — first normalisation tried, of five. The MAT
+side is unreachable from here and is not confirmed.
+
 ## What this pass did not establish
 
 - **Neither paper was re-fetched.** The closed/open readings are taken from advisory §1. BEN-174 does

@@ -1903,6 +1903,80 @@ inverts its own purpose.
 - **`docs/EAVAIL_DEFINITION.md` is the only artifact audited here.** Gate 5's throughput anomaly and
   Gate 6's floor are untouched by this pass — see the note below.
 
+---
+
+# V41–V43 — second pass, against `c3771f7` (the text as it now stands)
+
+The document was rewritten twice while this audit ran (`4788598`, then `c3771f7`). Re-read in full at
+`c3771f7` before reporting. **`BEN-175`, `BEN-177` and `BEN-178` all survive both rewrites unchanged.**
+
+## V41 — PASS, and it is the newest claim in the document: the MAT token-identity reproduces
+
+`c3771f7`'s §1 asserts our `GetEAvailableTrue()` body is *"token-identical to MAT-MINERvA's
+`calculators/CCQE3DFitFunctions.h` — both **424 chars**, sha256 `5296998043add43c`."* I cannot reach
+MAT-MINERvA, so I checked the operand I can: `CVUniverse.h:361-374`, comments stripped, all whitespace
+removed.
+
+**424 characters. sha256 prefix `5296998043add43c`. Exact match, on the first normalisation tried** —
+five were tried and only that one lands, so *"comments and whitespace stripped"* is an adequate recipe
+and I withdraw the concern I had queued about it being unreproducible. One operand of a two-operand
+identity claim is now independently confirmed; the MAT side is not, and the document should not be read
+as though it were.
+
+**One label:** `5296998043add43c` is 16 of sha256's 64 hex characters. Truncation is fine and standard;
+saying so costs four words and stops a reader concluding the algorithm is something else.
+
+## V42 — BLOCK: both spine corrections stopped at the §1 boundary, and the corrected phrase still stands twice
+
+This is the second pass's finding and it is a direct consequence of how the first two were applied.
+
+**Round 2's whole point** is that *"we implement Rodrigues"* is the wrong framing — we implement MAT's
+list, which *coincides* with Rodrigues minus e±, and §1 now says so in terms: *"the inheritance is what
+makes 'deliberate' false."*
+
+**§2's table, twelve lines later, still says the corrected-away thing, unqualified:**
+
+> | what we do | **implement this** [Rodrigues 2016] | do not implement [Ascencio 2022] |
+
+A table row is scanned, not read. This is the version of the claim most likely to be extracted.
+
+**§5 item 2 still says it too, and it now contradicts §5 item 6 four lines below:**
+
+> 2. … It is a **declared convention choice**, not a negligible one.
+> 6. … The exclusion is **inherited** from a νe-analysis charged-lepton branch, **not established as a
+>    choice**.
+
+*Declared convention choice* is the exact framing round 2 refuted. **§5 is the section the document
+itself designates as the one a reader trusts as complete** — item 6 says so in its own text: *"§5 is the
+list a reader trusts as complete."* A reader who reads only §5, which is what §5 is for, gets the
+pre-correction position and an internal contradiction inside one numbered list.
+
+**I do not disagree with lane A on §1.** Round 2 is right, is an improvement on round 1, and its one
+locally-checkable claim reproduces (V41). **The finding is that a correction was applied where the
+defect was found rather than everywhere the claim appears** — and that both rounds made the same choice,
+which is why the second round did not catch the first round's residue.
+
+## V43 — the parts nobody had audited: PASS, with one hardening
+
+Checked because the commissioning message was right that two spine corrections in one afternoon argue
+for looking harder at the rest, not less.
+
+- **§4 (the Ascencio caveat) — PASS.** `p = 0.432` on 2 dof, `1.68/2`, `ours/theirs = 1.092` and `1.063`,
+  both maximal common super-cells low-E_avail: all match `VALIDATION_LEDGER.md:1314-1320`. *"Shipped
+  three caveats"* is exact — `nd-unfolding/compare_ascencio_fullcov.py:21-26` enumerates three. The
+  heading's tense (*"a caveat it did not **previously** carry"*) is correct: the ledger now carries it at
+  `:1326`.
+- **§5 items 1, 3, 4, 5 — PASS.** Item 4 is at full advisory strength and was the one I was asked to
+  check for softening; it is not softened.
+- **The `P7` / `OI-40` status claims — PASS.** `OI-40` is `BLOCKED` with exactly the stated condition;
+  `PUBLICATION_COMPLETION_RUNBOOK.md:257` §P7 covers note updates and externally-tracked `OPEN_ITEMS`
+  questions, so *"the analysis note absorbs this at Packet P7"* is supported.
+- **Scope creep after both rewrites — still PASS.** Nothing adopted, nothing unfrozen.
+- **One hardening, low severity.** §4: *"`p = 0.432` on 2 dof **separates nothing**."* Advisory §6 says
+  it *"cannot distinguish a **~10%** definitional offset from noise either way."* Dropping the scope
+  turns a bounded statement into an absolute — `p = 0.432` on 2 dof would separate a 100% offset
+  perfectly well. The document's conclusion does not depend on the stronger form.
+
 ## Gate 5 and Gate 6 — deliberately not reported
 
 The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*
