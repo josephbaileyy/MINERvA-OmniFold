@@ -117,6 +117,51 @@ historical false passes pinned by name. **The battery is the form set, not one v
 > instrument disagrees between the machine you draft on and the machine you run it on yields two honest
 > lanes with two different answers about one row.
 >
+### ROW LENGTH — MEASUREMENT ONLY. There is no byte target, and this section deliberately sets none.
+
+**Why this is measurement and not a rule.** On 2026-08-13 a *"`300 B` cap on `FINDINGS.md` rows, already
+in `CLAUDE.md`"* was asserted and acted on. **No such rule existed** — grepped `CLAUDE.md`, every
+`CONVENTION-*.md`, `FINDINGS.md` and the archive. A hypothetical had been quoted back as a convention.
+Session D's formulation is the one to keep: **a norm that lives only in chat is not a weaker rule than a
+written one; it is a rule-shaped object that cannot be checked.**
+
+**But the fix is NOT to write the norm down here, for two reasons.** A written descriptive statistic
+invites the contortion D correctly refused — rewriting an author's protected opening clause to buy ~18
+bytes — because codifying an observed number makes *missing* it a violation rather than an observation.
+And a document costs tokens in every future session forever while a check costs zero and cannot be
+skipped, so codifying a norm is the documented form of the very rule we should prefer the executable form
+of.
+
+**THE REAL INVARIANT IS ALREADY WRITTEN AND IS NOT A BYTE COUNT.** `CLAUDE.md:28`: *"Long-form detail is
+in sibling `FINDING-<date>-<slug>.md` files, indexed at the top of `FINDINGS.md`."* **That is checkable,
+and it is now checked** — `findings_row_lint.py` flags a long `BEN-*` row that carries **no** `[full]` or
+`FINDING-*` pointer. A long row that points at its long-form file passes; a long row that swallowed its
+own detail fails. **No length becomes a standard, and the thing that actually degrades the entry path gets
+caught.**
+
+**Structural measurement, recorded because it is fact rather than a target** (Session D's operand split, and
+the two lanes differ — so these calibrate, they do not bound):
+
+```
+one-liner  =  head  +  tail
+head   the row's own verbatim opening bold clause    NOT compressible by rule
+tail   remaining prose + [full] pointer + columns    uniform within a lane
+```
+
+| | head | tail | pointer share |
+|---|---|---|---|
+| lane A's ten (`d224380`) | 63–137 B | 161–232 B | 36 B |
+| lane D's ten (`8c298b6`) | 79–160 B | 221–252 B | ~57 B |
+
+**The archived set's `231 B` median is an artifact of earlier rows having shorter heads — not a bar those
+rows met and later ones missed.** Whether a row can reach it is decided by its head, which is protected.
+**And if bytes are ever wanted, the lever is the pointer format, not anyone's prose.**
+
+**What IS invariant and verifiable:** the archive holds every row's full text **byte-for-byte** (check with
+`git show HEAD:` before and after — the archive header *claims* it, so verify rather than assert), the
+`FINDINGS.md` line keeps the author's **own** opening clause rather than a paraphrase, and **nothing is
+deleted** — the reduction is a move.
+
 > (`BEN-166`, found by Session D in Session A's file. **`BEN-170`, also D's: this banner's FIRST version
 > prescribed the `awk` form — naming the defective instrument as the repair**, and the awk-vs-Python
 > disagreement of 4740 vs 4701 is what surfaced the original defect. The Linux and locale rows were
