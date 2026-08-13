@@ -246,6 +246,53 @@ and the mediator, and both observed instances are that pair.
 **This is a practice, not enforcement** — same standing as everything else in this file, and it stops being
 needed the moment `OI-47` is settled.
 
+### LANE A IS NOW ISOLATED, and the enforcement question above is PARTLY ANSWERED
+
+**2026-08-13. Authorized by Joseph** — *"Yes let A work in the a worktree"*, receipt at
+`AUTHORIZATION-20260813-lane-a-worktree-and-ben-self-allocation.md`, written and committed (`a2bf857`)
+**before** the move, per `BEN-082(v)`. The mediator pressed this change twice with a sound argument and lane
+A declined both times on the grounds that a peer is not the user, then routed it; it came back granted in
+under an hour.
+
+**Worktree:** `.claude/worktrees/lane-a`, branch **`worktree-lane-a`** — note the name, which does **not**
+match B/C/D's `lane-b`/`lane-c`/`lane-d`, so a reader grepping for `lane-a` as a branch will not find it.
+
+**Isolation VERIFIED, not assumed** — the receipt committed to doing this, on the grounds that a claim of
+isolation is not isolation:
+
+| check | result |
+|---|---|
+| `.git` is a gitdir **pointer file** | **82 bytes**, `gitdir: …/.git/worktrees/lane-a` — byte-size identical to B/C/D |
+| separate index | `…/.git/worktrees/lane-a/index`, a different path from `…/.git/index` |
+| **behavioral:** stage a probe here, then re-read the MAIN index | mtime **and** `sha256` **unchanged** (`b46d14bb…`) |
+| **positive control** for that null result | **lane A's own index sha DID change** (`425927a0…`) — so the write happened and landed elsewhere |
+| probe present in the main working tree? | **absent** (plain `ls`, no git) |
+
+**The positive control is the part that makes this a test rather than an assertion.** A null result on the
+main index is equally consistent with isolation and with the staging silently failing; only lane A's own
+index changing distinguishes them. (`BEN-213` — a control arm is what separates a real check from a
+pre-registered one.)
+
+**AND A REFINEMENT TO THIS SECTION'S OPEN QUESTION, found by accident.** `OI-47` records that *"nothing
+above stops a lane from writing the main checkout"* and that it was not established whether isolation is
+enforced anywhere. Measured: **from a worktree-isolated session the harness REFUSES a `git -C <main
+checkout>` redirect outright**, with *"a worktree-isolated session's git operations must target its own
+worktree."* So:
+
+- **containment AFTER entry is ENFORCED by the harness**, independent of `worktree.bgIsolation`;
+- **entry itself remains voluntary** — lane A wrote the main checkout freely all day before entering, which
+  is the same observation `OI-47` already records for all four lanes.
+
+**That relocates the missing enforcement from the WRITE to the ENTRY**, and it makes the fix smaller than
+`OI-47` assumes: asking each lane to enter a worktree is *sufficient* once done, so the only gap is that
+nothing makes them do it. **It does not settle `OI-47`** — it does not establish `bgIsolation`'s effective
+value, and the *"setting a key to its apparent current value"* trap in this section still applies. Recorded
+as a narrowing, not a discharge.
+
+**What this changes for the cadence table above:** commit-per-edit-with-a-status-check **stops applying to
+lane A** and **stays live in the main checkout**, which now has one occupant (the mediator). Lane A batches
+from here, like B, C and D.
+
 ### OI-47's precondition is RESOLVED, and the answer changes what the fix is
 
 Established 2026-08-12 by the mediator session reading job state, then re-measured here across all four
