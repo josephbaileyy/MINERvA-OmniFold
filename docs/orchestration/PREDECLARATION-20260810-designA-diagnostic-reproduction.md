@@ -113,7 +113,14 @@ seeds span `0.0448` in deviation with qualitatively different trajectories.
 
 **And it REFUTES the finding this whole line of work was chasing.** The production value `-0.035546` sits
 **inside** the diagnostic range, `0.48` diagnostic sd from its mean. The code-path gap by denominator:
-`188×` (production scatter, wrong population) → `6.0×` (two-point difference) → **`0.48×` (three-point sd)**.
+`188×` (production scatter, wrong population) → `6.0×` (two-point difference) → **`0.97×` (gap ÷ the
+three-point sd `0.024701703`)**. **LABEL CORRECTED 2026-08-13:** this line previously ended `0.48× (three-point
+sd)`, which attached the *distance-from-mean* value to the *gap-over-sd* derivation — `0.023884971 / 0.024701703
+= 0.96694`, not `0.48`. Both quantities are real and both are under one sd; only the stated relationship was
+wrong. Line 115 above had it right (`0.48` sd **from its mean**), so this file was internally inconsistent.
+**The two figures that need no n=3 sd at all are the better ones to quote: the `2.239×` range-to-window ratio
+and the `1 of 3` realized containment.** Found by Session D in the retraction index, fixed there by Session C,
+traced to this line — the origin — by Session A.
 There is no established code-path difference. Retracted in `KNOWN_ISSUES.md`.
 
 **No fourth run.** The predeclared next step on UNRESOLVED was *a second repeat of Design A*, which this was;

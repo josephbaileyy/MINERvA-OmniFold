@@ -387,8 +387,11 @@ mean -0.023761959   sd 0.024701703   range 0.044788193
 **Production sits 0.48 diagnostic sd from that mean** — recomputed both ways: two-arm mean `−0.0355456`
 → **0.477 sd**; nominal alone `−0.0356090` → **0.480 sd**. (The index's `−0.035546` is the mean of the
 nominal and floor arms; A's `−0.0356090` is the nominal alone. Same conclusion either way.) **The
-gap-by-denominator history is `188×` → `6.0×` → `0.48×`, and only the last uses a population the anchor
-belongs to.**
+gap-by-denominator history is `188×` → `6.0×` → **`0.97×`** (gap ÷ the three-point diagnostic sd), and only
+the last uses a population the anchor belongs to. **CORRECTED 2026-08-13: this read `0.48×`, which is the
+*distance from the diagnostic mean* in sd, not a gap-over-denominator figure — `0.023884971 / 0.024701703 =
+0.96694`.** Session A repeated the mislabel from `PREDECLARATION-20260810-designA…:116`, whose own line 115
+used `0.48` correctly. Both values are real and both are under one sd, so no conclusion moves.**
 
 **MY `79× TOO WIDE` IS THE SAME WRONG-POPULATION ERROR AS THE RETRACTED `188×`.** I divided the ±0.010 band
 by the *production* same-path scatter (`1.26775e-4`). But that band guards a comparison against the
