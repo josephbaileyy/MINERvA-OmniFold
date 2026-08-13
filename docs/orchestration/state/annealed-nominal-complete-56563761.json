@@ -226,7 +226,18 @@
    "fullevent_nominal/ IS NOT TOUCHED. The 2026-08-08 baseline pet_fullevent_nominal_weights.npz (10,127,331 B) is the reference the predeclaration, CLM-012 and the shape-validation chain are measured against. The annealed artifact is a DIFFERENT file in a DIFFERENT directory (10,001,677 B). Promoting by copying over the baseline would destroy it.",
    "PROMOTED IS NOT PROCEED. Gates 5-9, extraction, cross-section, recovery runs and engine edits are all UNAUTHORIZED and need a fresh authorization from Joseph. Branch C stays closed.",
    "recovery_evaluated is deliberately LEFT False: this job did not evaluate recovery. The recovery measurement lives in the powered closure 56552326 (VL100 = 0.512603276)."
-  ]
+  ],
+  "cluster_twin_is_exactly_one_supersession_behind": {
+   "measured_utc": "2026-08-13",
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/annealed-nominal-complete-56563761.json",
+   "cluster_sha256": "81849396611856a11992479130ee901d8119e005654470b2ca28a0c0ad91b5d8",
+   "this_files_before_sha256": "81849396611856a11992479130ee901d8119e005654470b2ca28a0c0ad91b5d8",
+   "identical": "the cluster copy IS the pre-supersession state, byte-for-byte -- NOT a third variant with independent edits",
+   "cluster_reads": "status COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM, artifact_promoted False, supersession block absent",
+   "why_it_matters": "A session reading the CLUSTER copy sees the retracted verdict presented as live, and a stale record reads identically to a current one (BEN-098). The git repository is authoritative.",
+   "consequence_if_reconciled": "a straight copy-forward, no merge, because the divergence is exactly this one supersession",
+   "not_done_deliberately": "the cluster tree is under the eight-verb no-touch list and this lane did not write to it"
+  }
  },
  "status_superseded_20260813": "COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM"
 }
