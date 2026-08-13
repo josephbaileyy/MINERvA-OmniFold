@@ -1004,3 +1004,30 @@ different columns from it. So a shared input constrains the schema only in the s
 *could* be selected. NEARLY CLOSED is the correct state and C's named finish — record the fingerprint and
 feature lists in the closure receipt — is the right one.
 
+#### V23 addendum 2 — the feature-schema residual is CLOSED, by pins and by a guard neither of us cited
+
+C discharged it (`9322003`) via the route I proposed — derive the selection from the code that does the
+selecting, since a shared NPZ bounds what *could* be selected without pinning what *was*. Verified here
+rather than accepted, all four claims:
+
+    closure driver  a45fae7c  MATCH      loader defaults 13 == receipt configuration.features       True
+    nominal driver  5fda80df  MATCH      loader defaults  2 == receipt configuration.truth_features True
+    engine          3a2022b0  MATCH      neither driver passes feature_names/truth_feature_names
+    loader          57f33f87  MATCH      (all such hits are READS of meta for reporting, not overrides)
+
+Element-for-element equality, not length agreement.
+
+**A second, independent mechanism neither of us cited, and it is stronger than the derivation.**
+`train_fullevent_nominal.py:393` is not a behaviour switch — it is a **fail-closed guard**: if the loader
+built `REDUCED_EVT_FEATURES` (the 2-column `{pT, p‖}` schema), the nominal **refuses**, because that
+schema is marked *"CROSS-CHECK ONLY — never a publication lateral/central source"* and stamping the
+publication fingerprint over it is audit finding J01. So the exact failure the residual described —
+a run selecting a different feature set while claiming the publication estimator — is refused at runtime,
+not merely improbable.
+
+**Derivation from pins and a runtime refusal are different instruments**, which is the property that made
+this worth closing properly rather than inferring from the input digest.
+
+**Still open and correctly so:** full OI-23 discharge hangs on `56563761` remaining the final nominal,
+which is Joseph's promotion call, not a verification result.
+
