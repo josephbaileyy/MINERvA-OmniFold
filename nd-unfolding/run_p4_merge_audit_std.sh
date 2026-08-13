@@ -4,7 +4,10 @@
 # whole node is ours, so bare-background hadds are fine). skip-if-exists.
 set -o pipefail
 export HOME=/global/homes/j/josephrb
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
+# DE-ROOTED 2026-08-12 (OI-43, increment 2) -- see run_p4_standard.sh for the idiom and why
+# BASH_SOURCE is safe for these three drivers but would not be for an sbatch-submitted script.
+ND="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "${ND}/.." && pwd)"
+[[ -f "${ND}/p4_lib.py" ]] || { echo "[p4-merge-audit] ABORT: derived ND=${ND} contains no p4_lib.py; refusing to run against an unresolved root"; exit 3; }
 PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 MERGEDIR="${ND}/active_universe_5d/standard/merged"; mkdir -p "${MERGEDIR}"

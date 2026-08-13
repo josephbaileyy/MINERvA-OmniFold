@@ -23,7 +23,10 @@
 # rule that depended on the false assumption is deleted; see the comment in unfold_one().
 set -o pipefail
 export HOME=/global/homes/j/josephrb
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
+# DE-ROOTED 2026-08-12 (OI-43, increment 2) -- see run_p4_standard.sh for the idiom and why
+# BASH_SOURCE is safe for these three drivers but would not be for an sbatch-submitted script.
+ND="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "${ND}/.." && pwd)"
+[[ -f "${ND}/p4_lib.py" ]] || { echo "[p4-unfold] ABORT: derived ND=${ND} contains no p4_lib.py; refusing to run against an unresolved root"; exit 3; }
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 MERGEDIR="${ND}/active_universe_5d/standard/merged"
 OUTDIR="${ND}/active_universe_5d/standard/unfolds"; mkdir -p "${OUTDIR}"

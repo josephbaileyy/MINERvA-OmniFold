@@ -179,3 +179,44 @@ Both are in the same receipt, one line from the correct fields. **The predeclara
 `end_to_end_*` as load-bearing two days before the data existed, and named the first-leg field as the trap
 because the `56525829` ledger row quotes it under a like-for-like heading (`BEN-077`).** Without that, the
 most natural field to read gives the opposite answer.
+
+## DOMAIN-OF-VALIDITY GUARD, MEASURED FROM THE FIELD — REPAIRED stands, and the proxy inverted the comparison
+
+Session D challenged the verdict (`V22`, `e41e760`), correctly identifying that the check separating
+REPAIRED from UNRESOLVED is **not** the iteration indexing but **UNRESOLVED condition 1** — any iteration
+with `|r1_required_mean − 1| < 0.02` returns *no information*. D could not read the field (receipts are on
+`/pscratch`) and said so, using `R/push` as an explicit proxy. **Measured from the field, per iteration:**
+
+| arm | iter0 | iter1 | iter2 | tightest | clears 0.02 by |
+|---|---|---|---|---|---|
+| control (pre-anneal) | 0.1240803 | **0.0286840** | 0.1616496 | iter1 | **1.434×** |
+| annealed (treatment) | 0.1240803 | 0.0991592 | **0.0318599** | iter2 | **1.593×** |
+
+**All six iterations clear the threshold. UNRESOLVED condition 1 does not fire, and `REPAIRED` stands on
+its own predeclared terms.** The margin D asked to have published beside it: **1.593×** on the deciding
+iteration (`iter2`), and `4.958×` at `iter1`.
+
+**And the comparison inverts.** D's reading was that *"the anneal moved this measurement an order of
+magnitude closer to the point where its own criterion stops discriminating"* — 1.85× on the promoted arm
+against 26.3× on the retired one. **From the field it is the opposite: the annealed arm's tightest
+iteration is FARTHER from the no-information point (0.0318599) than the control's tightest (0.0286840).**
+The arm being retired was the tighter one.
+
+**Why the proxy failed, and it is `BEN-077`'s shape applied to D's own instrument.** `R/push` is an
+aggregate over the whole trajectory; `r1_required_mean` is per iteration. The two diverge, and **they
+diverge by different amounts on each arm** — the proxy overstates the control's clearance by **18.3×**
+(26.287 against 1.434) and the annealed arm's by only **1.16×** (1.846 against 1.593). A proxy that is
+wrong by unequal factors on the two things being compared does not merely add noise: **it reverses the
+ordering.** D flagged it as a proxy rather than the field, which is the only reason this was catchable.
+
+**One correction against Session A, which D found:** A cited *line 41* for the `iter0` exclusion. Line 41
+is a checkpoint-**inventory** row in the two-artifact comparison table and carries no scope claim. **The
+exclusion is at line 70** — *"Branch REPAIRED — for both iterations 1 and 2"* — with its rationale at
+lines 8–9 (`56525829` localized the defect to iteration dynamics *after initial feedback*). D also
+established the predeclaration predates the result by **26 hours** in a single never-edited commit
+(`831043d` 2026-08-11 18:31:53 −0400 against submission `02dfb68` 2026-08-12 20:39:52 −0400). **So the
+exclusion is a predeclared scope boundary, not an interpretation** — better supported than A claimed, from
+a different line than A cited.
+
+**Unchanged: annealed `iter0` at 0.1101 is a real trade and outside the predeclared scope.** Both remain
+true.
