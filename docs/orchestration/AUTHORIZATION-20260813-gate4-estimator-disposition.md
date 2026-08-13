@@ -421,3 +421,77 @@ consider the retraction insufficient — only unrecorded.**
 across different code paths on the same checkpoints. That is genuinely new tonight and it strengthens the
 retraction from a direction the three-run spread does not cover — it shows the production family is stable
 to machine precision, so whatever instability exists is entirely on the diagnostic side.
+
+## VL101 — "ARM REJECTED" is on the ledger for the arm this record adopts, and this record omitted it
+
+**Session D's `V23` (`acc4d53`) blocked on the record, not the physics, and it is right.**
+`VALIDATION_LEDGER.md:1660` reads, live and unqualified:
+
+```
+| VL101 | recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
+```
+
+**This record adopted the annealed arm and mentioned VL101 zero times, `ARM REJECTED` zero times, and
+`SECONDARY` zero times** — measured. It cites `0.546853` once, as full-LR's clearance, **while omitting that
+the same comparison is on record as rejecting the arm being adopted.** `VALIDATION_LEDGER.md` is this repo's
+canonical home for technote-quoted numbers, so as the record stood, anyone quoting the ledger for the
+annealed arm quotes `ARM REJECTED` for it. D's framing: **`BEN-201` run backwards** — there a retraction
+reached the index but not the point of use; here a decision reached the point of use but not the ledger, and
+this direction is worse because the ledger is what the technote quotes.
+
+**What overrode the SECONDARY reading, stated so the two stop standing silently side by side:** the
+PRIMARY/SECONDARY split *was* the predeclared disagreement — `VL100` passes the adopted D2 criterion by
+`0.018020876`, `VL101` rejects against the full-LR baseline — and **Joseph resolved it on physics grounds by
+selecting the annealed arm.** So `VL101`'s arithmetic stands and its *adjudication has happened*. Neither
+the measurement nor the arm is being called wrong.
+
+**And one dependency that is NOT closed, per D:** `VL101` rejects against `0.546853`, the same operand
+`56818470` probed. That job returned `REPAIRED`, establishing the sign inversion is a property of the
+retired LR policy — **it does not establish that `0.546853` is uninflated.** Different claim, still open.
+Not a reason to doubt the number; a reason not to call the SECONDARY comparison settled.
+
+**Ownership note, because it is now structurally unresolvable.** `git blame` on `VL101` returns `1ec042e` —
+**Session A's own VL re-id**, which added the leading `| VL101 |` cell to all 108 rows. **So the re-id made
+Session A the last toucher of every ledger row and destroyed blame-based ownership for the file.** The
+content author, found with `git log -S`, is `3dcb031` (2026-08-10) under the **shared pre-`BEN-160` git
+identity** — so no lane can be resolved from history either. That is why this annotation is written by A
+rather than routed: the inconsistency is between the ledger and *this* record, ownership is unresolvable in
+both directions, and leaving a live `ARM REJECTED` on the adopted arm in the file the technote quotes is the
+worse outcome. **Disclosed rather than done quietly.**
+
+## OI-23 — configuration equivalence is ESTABLISHED; the obstacle is elsewhere and larger
+
+D and C both left this UNRESOLVED for want of the cluster receipt: does `56552326`'s configuration match the
+adopted nominal in **every** dimension, or only in the LR policy? D warned *"a reviewer checking only the LR
+policy finds a match and stops."* Measured field-by-field, `56552326` against `56563761`:
+
+| field | closure `56552326` | nominal `56563761` | |
+|---|---|---|---|
+| `batch_size` | 512 | 512 | match |
+| `epochs` | 8 | 8 | match |
+| `niter` | 3 | 3 | match |
+| `estimator_seed` | 42 | 42 | match |
+| `subsample_seed` | 0 | 0 | match |
+| `estimator_fingerprint` | `pet-fullevent-fps-v1` | `pet-fullevent-fps-v1` | match |
+
+**The LR policy matches too, across differently-named fields and a float32 boundary:** closure `base_lr`
+`9.999999747378752e-05` = `float32(1e-4)` and nominal `iteration_0` *"two fits at 9.999999747378752e-05"*;
+closure `annealed_lr` `1e-05` (float64 literal) against nominal `iterations_1_2` `9.999999747378752e-06` =
+`float32(1e-5)` — **the same learning rate, one written as the literal and one as its realized float32.**
+Fit counts agree: closure `2 + 4 = 6`, nominal two-plus-four with `records_per_arm: 6`.
+
+**Fields present in only one are structural, not mismatches:** `split_seed: 7` and
+`n_injected_rows: 1999920` exist only in the closure **because a closure has an A/B split and an injected
+truth tilt and a nominal has neither.** Both carry `engine_edited: False`.
+
+**So D's and C's configuration question resolves in favour of equivalence — and the real obstacle is one
+neither of them could see without the cluster: the closure declares itself non-quotable.** Every
+`56552326` artifact is prefixed **`NONQUOTABLE-DIAGNOSTIC.`**, and its receipt carries `quotable: False`
+with the note: *"SHAPE VALIDATION of the annealed configuration. Threshold NOT modified. A clean result does
+NOT authorize editing `omnifold.py` — that promotion is separate and Joseph's."*
+
+**Stated carefully, because this is where over-reach would be easy:** that note scopes the non-quotability
+to *not authorizing engine edits or promotion*. **Whether `VL100`'s recovery may itself be technote-quoted
+is a question the receipt raises and does not answer** — and it is the PET lane's to answer, not Session
+A's. What is now established is that **`OI-23` is not blocked on configuration mismatch**, which is what
+both lanes suspected; it is blocked on the quotability status of the artifact that produced the number.
