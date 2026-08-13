@@ -1977,6 +1977,155 @@ for looking harder at the rest, not less.
   turns a bounded statement into an absolute — `p = 0.432` on 2 dof would separate a 100% offset
   perfectly well. The document's conclusion does not depend on the stronger form.
 
+---
+
+# V44–V49 — independent pass on Gate 6 Leg F floor replication (`2fecce7`)
+
+Second assignment, kept separate from the E_avail pass. Artifacts: `nd-unfolding/pet/gate6_floor_statistics.py`,
+`PREDECLARATION-20260813-gate6-floor-replication.md`, `state/gate6-floor-replication-partial-56863958.json`,
+`VL116–VL120`. Read-only; the only write is my own mutation harness under `state/`.
+
+**Headline: this is the most defensible artifact I have audited on this campaign.** Five of the six
+things I was asked to attack hold, and two of them hold by a stronger route than the one proposed.
+**One real hole**, and it is in the test battery rather than the code. **One promotion of the
+iteration-0 observation did occur — not in B's artifacts, but in the message that asked me to watch
+for it.**
+
+## V44 — thresholds tuned to the data? PASS, and the timestamp question is not the one that settles it
+
+The brief said to check B's authoring claim *"against commit timestamps and job states, not against
+B's account."* **Timestamps would have been the weak check, and they are unnecessary.**
+
+`git log` on the predeclaration returns **exactly one commit** — `2beead8`, 08-13 09:21, *"committed
+BEFORE submission"* — and **`git diff 2beead8 HEAD` is empty**. All three frozen numbers are inside
+that blob: `0.05` and `0.10` at `:93-94`, `0.1740029887300910` at `:97`. **So the thresholds were fixed
+at 09:21, before any draw existed, whatever time the statistics script was authored.** That is a content
+check on an immutable object; it does not depend on trusting a timestamp, a job state, or B's account,
+and it is strictly stronger than all three. **V49 answers item 5 with the same evidence.**
+
+The derivation also traces: `0.1740029887300910 = 0.5 × S_range[2]`, `S_range[2] = 1.1014828481277632 −
+0.7534768706675813`, and those two operands are `VL117`'s and `VL120`'s iteration-2 values — the
+committed five-member spread, which predates the floor entirely. Re-derived: the subtraction is exact
+in IEEE double.
+
+**One note, immaterial to the verdict.** `0.5 × 0.3480059774601819` is `0.17400298873009096`; the
+predeclaration writes `= 0.1740029887300910`, which is that value rounded to 16 significant figures.
+The gap is 4e-17 and no physically-derived `F_range` will land inside it. **The code handles this
+correctly and deliberately** — `_verify_frozen_threshold_against_member_receipts` checks
+`S_RANGE_2_MAX`/`S_RANGE_2_MIN` with exact equality, i.e. the **operands**, never `0.5*S == THRESHOLD`,
+which would fail closed on its own predeclared constant. Worth one word in the predeclaration: that `=`
+is `≈ to 16 s.f.`
+
+## V45 — branch 1's unreachability: a theorem, PASS, and it rests on a second rule
+
+`F_range[2] = 0.0523993868023519 > 0.05` on draws 1–3. For any superset `S' ⊇ S`, `max(S') ≥ max(S)`
+and `min(S') ≤ min(S)`, so `range(S') ≥ range(S)`. Branch 1 requires `F_range[2] ≤ 0.05`. **Unreachable
+for any completion of the set.** Sound. It moves no threshold, selects no subset, and the receipt
+carries `still_a_verdict: False`.
+
+**The interlock is worth naming because it is load-bearing and undocumented.** The theorem holds only
+while draws 1–3 stay in the final set. A rule that allowed dropping an invalid draw and verdicting on
+the survivors could *shrink* the range and resurrect branch 1 — so the deduction's validity depends on
+the `do_not_select_passing_subset` clause, and that clause's value here is not just anti-cherry-picking.
+**Two rules holding each other up, which neither document says.**
+
+## V46 — the refusal test binds. Demonstrated by mutation, not by reading
+
+Item 3 asked whether the refusal test binds or passes vacuously — this campaign's signature defect, and
+not answerable by running a suite that passes. So I broke the code and checked the battery noticed:
+[`state/probe-gate6-floor-mutation-20260813.py`](state/probe-gate6-floor-mutation-20260813.py), which
+copies module and tests to a scratch dir and mutates the **copy**. Predeclared: every mutation removes a
+property the battery claims to test, so every one must produce a failure.
+
+| mutation | result |
+|---|---|
+| M1 refusal removed (`if False:`) | **2 failed** — caught |
+| M2 refusal kept, but stops naming `do_not_select_passing_subset` | **1 failed** — caught |
+| M3 process threshold `>=` → `>` | **1 failed** — caught |
+| M4 seed threshold `<=` → `<` | **1 failed** — caught |
+| M5 band condition dropped from branch 1 | **2 failed** — caught |
+| M6 frozen `THRESH_PROCESS_RANGE` silently retuned to `0.05` | **8 failed** — caught |
+| M7 sd `n-1` → `n` | **2 failed** — caught |
+| M8 `F_range` sign flipped | **7 failed** — caught |
+| **M9 `abs()` dropped from `d_by_draw`** | **52 passed — SURVIVED** |
+
+**M2 is the direct answer to item 3: the assertion on the prohibition's name binds.** Keeping the
+refusal but renaming the message still fails the test. Not vacuous.
+
+## V47 — BLOCK-worthy as a coverage finding: the band check's below-1 side is untested
+
+**M9 survives all 52 tests.** `d_by_draw[j] = abs(v[j,k] − 1.0)`; drop the `abs` and **every draw below
+1 is unconditionally in-band, however far below.** The band check would then only ever catch draws
+*above* 1.
+
+All four band tests exercise the above-1 side only:
+
+- `test_small_range_but_a_draw_outside_the_band_is_intermediate_not_seed_determined` — values `1.20, 1.21`
+- `test_band_boundary_is_inclusive`, `test_band_one_float_step_outside_is_not_inclusive`,
+  `test_a_single_draw_outside_the_band_is_enough_to_fail_branch1` — all via `stats_at`, which
+  **hand-builds the stats dict and never calls `floor_statistics`**, so the `abs` is not on their path
+  at all.
+
+`stats_at`'s docstring is candid that it bypasses values (*"`<=` vs `<` at the boundary … is only
+testable at the predicate"*) and says *"the value-driven tests below cover the wiring."* **They cover it
+on one side.**
+
+**Why this side and not the other matters here.** Members 4 and 5 sit at `0.819792` and `0.753477` at
+iteration 2 — below 1. Draw 3's iteration-0 value is `0.8400`. **The below-1 half of the band is exactly
+where this campaign's data lives**, and it is the half the battery cannot defend. `d = −0.16` reads as
+in-band without the `abs`.
+
+**The code is correct.** This is a hole in the instrument protecting a frozen rule from, in B's own
+words, *"a future edit under schedule pressure."* Same shape as `BEN-173`: a control present for one
+sibling and absent for its mirror. `BEN-180`.
+
+### My own mutation was void first, and reported a hole that was not there
+
+M7's first form replaced the string `ddof=1` — which occurs **only in a docstring (`:198`) and a key
+name (`:219`)**; the sd is computed by hand. The regex mutated prose, changed no behaviour, and my
+harness printed **SURVIVED**. I nearly reported a hole in B's battery that was a hole in my harness —
+and `test_sd_is_ddof1_not_population` is a perfectly good binding test, as the corrected M7 shows.
+**A mutation harness that can silently mutate a comment manufactures false holes**, and "the mutation
+applied" is not the same check as "the mutation applied to executable code." Kept in the committed
+harness as `M7void` rather than deleted. `BEN-181`.
+
+## V48 — the iteration-0 discipline: B's artifacts PASS; the framing that reached me did not
+
+**B declined the promotion, explicitly.** The receipt's `why_provisional` reads *"the VERDICT is defined
+at iteration 2 only and requires all five draws present and valid. **Do not quote any number here as
+'the across-process floor'.**"* The `HEADLINE` carries no iteration-0 claim. Item 4 passes on the
+artifacts.
+
+**It does not pass on the message that assigned me item 4.** That message's lead is: *"draw 3 … its
+`v[0] = 0.8400` sits between members 4 (`0.8748`) and 5 (`0.7614`) … If that holds, some of what Gate 6
+recorded as a seed effect is process noise."*
+
+**All three of those numbers are iteration-0 values.** `0.8748` and `0.7614` are the *first* entries of
+`VL119` and `VL120`; those members' **iteration-2** values are `0.819792` and `0.753477`. And at
+iteration 2 — the only iteration where the verdict is defined — draw 3 reads `0.9431`, which does not
+sit between them but well above both, and `F_range[2]` is **15.1%** of the member spread rather than
+**89.6%**.
+
+**So the conclusion is supported at iteration 0 and unsupported at iteration 2.** Recorded without any
+suggestion of bad faith: the iteration-0 number is the arresting one, which is precisely why the
+discipline was predeclared, and B holding the line while the relay did not is the ordinary way a
+predeclaration earns its keep. **Flagged because that framing is one hop from Joseph.**
+
+## V49 — the predeclaration is genuinely unedited: PASS
+
+One commit in its history (`2beead8`), `git diff 2beead8 HEAD` empty. B corrected the now-false claim in
+the RUN_LOG rather than editing the frozen document, exactly as reported.
+
+## What this pass did not establish
+
+- **No Slurm reach**, so *"3 of 5 draws, tasks 2 and 3 COMPLETED"* is B's measurement, not mine. I
+  verified the *rule* and the *battery*, not the job states or that the receipt's `v` values were read
+  off the artifacts they claim.
+- **I did not verify the eight validity clauses against real draw artifacts** — only that each has an
+  independent test that fails on a single degradation, which the battery does provide.
+- **`52 passed` is not coverage.** Nine mutations is a sample of the mutation space; M9 was found
+  because I went looking at the `abs`, and there may be other survivors I did not construct.
+
 ## Gate 5 and Gate 6 — deliberately not reported
 
 The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*
