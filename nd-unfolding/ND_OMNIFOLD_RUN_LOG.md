@@ -5704,3 +5704,40 @@ Remaining: defects 1–6 of `followup-agent-A-standard-05.md`, unworked since 20
 preconditions carried forward for whoever runs the chain: **stage 3 must not run on pre-G-1 code** (it
 writes ten receipts with no `bkg_mode`, the launcher skips endpoints that already have one, deletions
 are frozen → unfixable provenance regression) and **G-1 is code-only, not on the cluster checkout**.
+
+## 2026-08-12 — repair-4 increment 2 (`a517826`): the callee was de-rooted and the callers were not
+
+Increment 1 was necessary and **not sufficient**, and the way it fell short is the class I had cited
+in its own commit message an hour earlier. All three shell drivers — `run_p4_standard.sh`,
+`run_p4_merge_audit_std.sh`, `run_p4_unfold_std.sh` — carried the identical
+`REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"`, and two of them `cd "${ND}"` **before** invoking
+the de-rooted `p4_evidence.py`. So the chain stayed pinned to one checkout *through the caller*:
+I fixed the callee and left the callers, which is BEN-162/163 verbatim.
+
+Each driver now derives `ND` from `${BASH_SOURCE[0]}` and `REPO` from its parent, and **fails closed
+with exit 3** when no `p4_lib.py` sits beside it. The idiom is safe for exactly these three and the
+code says why: no `#SBATCH` header, invoked as `bash run_p4_*.sh` under an existing allocation, so
+`BASH_SOURCE` is the real path — an sbatch-submitted script is spooled by Slurm and would resolve to
+the spool copy. All three `bash -n` clean.
+
+**The three new tests execute the drivers** — the first behavioural tests in a suite whose other 115
+assert on source text. 115 → **118**. Power-tested by reverting all three: each failed on its own
+assertion, and the load-bearing one is **`expected exit 3, got 1`**. The un-de-rooted driver *does*
+fail in a foreign tree — late, for the wrong reason, with a generic abort. **A test asserting merely
+"nonzero" would have been green on the defect**, which is what defect 6 means by *"assert the specific
+intended failure, not a generic argparse nonzero"*, now demonstrated rather than asserted. Restored
+and re-verified by sha256 (`38721b9a…`, `dcae976a…`, `412086a3…`) plus a full green run.
+
+Two defects of my own, both caught by running things rather than reading them:
+
+- **A test bug that would have passed on the cluster and failed only locally.** I compared bash's
+  resolved `cd && pwd` output against an unresolved temp path; on macOS `/var` is a symlink to
+  `/private/var`. For a test whose entire subject is path resolution, "green on the cluster, red on
+  the laptop" is the worst available outcome. Both sides now `resolve()`.
+- **`a517826`'s commit body has a hole**: `-m` with a backticked `bash run_p4_*.sh` was globbed by
+  zsh, so the body reads *"invoked as  under an existing allocation"*. **This is BEN-164's shape**,
+  and BEN-164 also records that the *amend* which fixed it orphaned the sha — so this is recorded
+  here and the sha is left intact rather than rewritten. The clause survives verbatim in the
+  committed `P4_STANDARD_STATUS.md`, so no information is lost, only the commit body is degraded.
+  Operational rule for this lane: **use `git commit -F <file>` for any body containing backticks**,
+  which is what the earlier commits today did without incident.
