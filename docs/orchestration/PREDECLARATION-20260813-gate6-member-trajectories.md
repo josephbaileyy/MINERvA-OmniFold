@@ -53,6 +53,39 @@ does not move the promoted nominal central.  Gate 4's estimator-arm disposition
 remains an independent user decision and blocks construction regardless of this
 control's outcome.
 
+**SOURCED 2026-08-13 by Session A, at the mediator's request — this sentence is a
+DEMONSTRATED property of this repo's established practice, not a framing assertion.**
+It was unsourced, and a predeclaration is precisely the document a later reader treats as
+fixed and authoritative, so a true-but-unsourced claim inside one inherits that authority
+for free. The evidence:
+
+- **`docs/ESTIMATOR_REGISTRY.md:29`** carries the central and the covariance in *separate*
+  columns for the adopted `omnifold-5d-lgbm`: central `products/5d/xsec_5d_MEFHC_5iter_lgbm.root`,
+  and **two centering variants of the same covariance coexisting against that one unchanged
+  central** — adopted mean-centered `√tr 5.8077e-38` and CV-centered variant `6.2367e-38`.
+- **The centering shift is carried as its OWN term, not applied**: the registry records
+  `(mean shift 1.654e-38 separate)`, and the note quotes `\gbdtFiveAdoptTrace`,
+  `\gbdtFiveCVTrace` and `\gbdtFiveMeanShift` as three separate macros —
+  *"exactly 'report the shift either way, do not silently drop'"*
+  (`docs/OPEN_ITEMS-ARCHIVE-2026-08.md:691-693`).
+- **`VL63`** settles centering as a *presentation* question — "mean-centered headline,
+  CV-centered conservative variant" — under uncertainty construction, not as a change of
+  central value.
+
+**The load-bearing part is the third bullet's mechanism:** if centering could move the
+central, the shift would be *applied* to it rather than reported beside two covariance
+variants of one unchanged product. Recording it separately is the demonstration.
+
+**WHAT THIS DOES AND DOES NOT SETTLE, because Session A's earlier framing overstated it.**
+Session A wrote that the nominal sitting low against an ensemble mean of ~0.118 meant
+"whether the adopted central should move follows from" the centred-on-the-ensemble-mean
+sentence, and that framing is what put a central-value question on Joseph's list. **It was
+wrong on the mechanism: centering the component does not move the central, and that half of
+the escalation is withdrawn.** What survives is a different and narrower observation —
+the adopted estimator is *atypical among its own seed-siblings* (dev 0.0356 against a member
+range of 0.019–0.247) — which is a question about the nominal's representativeness, not
+about centering, and it still depends on the convergence call.
+
 ## Execution
 
 Run the three existing no-training stages (Gate A/B, pull/push decomposition,
