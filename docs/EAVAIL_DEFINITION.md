@@ -1,0 +1,164 @@
+# Which E_avail definition this analysis uses, and why
+
+**Purpose.** One place that answers *"which available-energy definition do you use?"* — a question this
+repo could previously answer only by assembling `OI-30`, `OI-56` and `OI-59`. Written 2026-08-13 at
+Joseph's instruction after the question was raised with Gregor Kafka.
+
+**Status: reference, not a decision.** Nothing here adopts, changes, or unfreezes anything. `OI-56`
+remains **FROZEN** — its freeze rests on the reco-underflow repair choice being Joseph's, and is
+untouched by anything in this document. The analysis note absorbs this at **Packet P7**; per `OI-40`
+the note is not edited before the full-event PET and adopted UQ products are quotable.
+
+---
+
+## 1. The position, in one paragraph
+
+**We implement the Rodrigues 2016 convention** (arXiv:1511.05944), deliberately and uniformly:
+available energy is the summed kinetic energy of protons and charged pions plus the summed total
+energy of neutral pions, over a **closed** five-species list. We do not claim to implement "the
+published definition of E_avail," because **there is no single published definition** — Rodrigues 2016
+and Ascencio 2022 (arXiv:2110.13372) differ from each other, and the difference is measurable in our
+sample. Any statement that this analysis "matches the published E_avail definition" without naming a
+paper is a claim we cannot support and should not be made.
+
+The charged-pion half of the convention is **settled and matches the νe reference**: arXiv:2312.16631
+Eq. 4 reads `E_avail = Σ_p T_p + Σ_π± T_π± + Σ_π0 E_π0` — kinetic for protons and charged pions, total
+for π⁰. Ours agrees. (`minerva-ml` uses total energy for charged pions, which adds ~140 MeV/pion; that
+is a defect in that code, not in ours.)
+
+---
+
+## 2. Where the two published conventions differ
+
+| | Rodrigues 2016 (`1511.05944`) | Ascencio 2022 (`2110.13372`) |
+|---|---|---|
+| species list | **CLOSED** — five species | **OPEN** — "any other final state particles except neutrons" |
+| `strange`, `kaon` in text | appear **zero times** | covered by the open clause |
+| what we do | **implement this** | do not implement |
+
+Four species carry the disagreement, all of which we exclude and the open convention includes:
+
+- **K±** — included at total energy
+- **p̄** — `E + m_p` (for antibaryons the nucleon mass is **added**, not subtracted)
+- **strange baryons Λ, Σ** — `E − m_p`
+- **neutral kaons K⁰, K⁰_L, K⁰_S and η** — included at total energy
+
+**Measured effect of moving to the open convention, on our sample:**
+
+| quantity | value |
+|---|---|
+| mean shift | **+212.18 MeV/event** |
+| events changing truth bin | **4.837%** |
+| migration out of truth bin 1 | **−10.99%** |
+| offline reproduction fidelity | 0.1286% of weight misplaced vs. the exact C++ `MC_eavail` |
+
+The fidelity figure is **37.6× smaller than the effect it measures** (`4.837 / 0.1286`), which is what
+makes the comparison sound. (`OI-56` rounds this to "37×"; both are the same operands.) It is computed from `part_gen[:,:,4]` of `G2_FPS_MEFHC_P12.npz` (49,152,885 rows) — raw PDG
+codes, no ROOT and no event-loop rerun.
+
+**One clause is inert on this sample rather than unresolved.** Eq. 4's "strange, *or heavier quark*"
+extension: η (221), η′ (331) and K⁰_S (310) are **zero across all 49.15M rows** — GENIE emits 311/130 —
+and there are no charm baryons. So the extension has nothing to act on here.
+
+**The e± case cuts against us and is stated for that reason.** Rodrigues includes electron total
+energy. We exclude it. On this one species `minerva-ml` matches the νμ paper and **we do not**.
+
+---
+
+## 3. The `135` vs `139.57` MeV charged-pion mass
+
+A separate and much smaller issue, and **documentation-grade rather than physics-grade**.
+
+`CVUniverse.h:364` uses `mass_pion = 135` MeV — the **π⁰** mass — where the charged-pion mass 139.57
+MeV is meant. The difference is **4.57 MeV per charged pion**.
+
+| quantity | value |
+|---|---|
+| charged pions per signal event | 1.0563 |
+| mean shift | **4.827 MeV/event** |
+| events changing truth bin | **439 / 65,911 = 0.666%** |
+| worst single bin | **+1.049%**, in bin 1 |
+
+**Materiality against the adopted covariance** (13.69% median per-bin, `VALIDATION_LEDGER.md:1043`) is
+**bracketed `[7.7%, 297%]`**. Both ends re-derive from the same two operands: `1.049 / 13.69 = 7.66%`,
+and `7.66% × √1507 = 297%` for the ~1507 5D bins per E_avail slice. **The upper end IS the lower times
+√1507** — it is one assumption varied, not two independently asserted endpoints. That is a bracket, not
+a result:
+
+> **The `7.7%` end assumes the ~1507 5D bins per E_avail slice are perfectly correlated. It is the most
+> favourable reading available, not the answer.** The honest label is **consistent with immaterial; not
+> proven immaterial.**
+
+The single step that would close it is projecting the adopted covariance onto the E_avail marginal
+**retaining off-diagonals**, and comparing +1.049% against that. It has not been done. It requires no
+rerun.
+
+**`135` is NOT a compatibility constraint with either comparator.** Neither Rodrigues 2016 nor
+Ascencio 2022 states any numeric mass, and `kEAvail` did not exist until a month after Ascencio v1. The
+`135` traces to a 2021-07-28 import "from the MINERvA 101 tutorial" — **the same ancestor as our own
+line**. It is one inherited copy in two places, not two independent choices.
+
+**Correcting it is a five-site change or nothing:** `CVUniverse.h:364` plus four generator converters
+that bind to our value by comment. They must move in one commit, or the four-generator comparison
+silently compares two different observables. Not applied; nothing quoted moves.
+
+---
+
+## 4. The Ascencio cross-check carries a caveat it did not previously carry (`OI-59`)
+
+The bin-identical cross-check against Ascencio **passed** (`p = 0.432` on 2 dof) and shipped three
+caveats. It did not ship the definitional one: **the two sides' E_avail truth axes differ**, by exactly
+the amount in §2.
+
+Both maximal common super-cells are the low-E_avail ones. `OI-56` measures **−10.99% out of truth bin
+1**. Ours/theirs is above one in exactly those cells — **1.092 and 1.063**. **Sign and location match.**
+
+**This is an unexcluded alternative explanation, not a refutation**, and the symmetry matters in both
+directions:
+
+- the migration is a *truth-population* effect, and their cells span our bins 1+2+3 whose aggregate is
+  measured nowhere;
+- `p = 0.432` on 2 dof **separates nothing** — so the cross-check neither refutes us **nor validates us
+  as strongly as its PASS implies**.
+
+Computing this further is `OI-56`'s arithmetic pointed at a published PASS, and `OI-56` is frozen. That
+is Joseph's decision, not a lane's.
+
+---
+
+## 5. What this analysis does NOT claim
+
+Stated explicitly, because this is the section the rest of the document exists to support.
+
+1. **Not** that our E_avail matches "the published definition." There is no single published
+   definition.
+2. **Not** that the Rodrigues/Ascencio difference is immaterial. It is `+212.18 MeV/event` and `4.837%`
+   of events change truth bin. It is a **declared convention choice**, not a negligible one.
+3. **Not** that the `135` constant is proven immaterial. `[7.7%, 297%]`, most-favourable end quoted
+   first, projection not done.
+4. **Not** that we match a neutral "reference implementation." `GENIEXSecExtract`'s `kEAvail`
+   kaon/strange-baryon/antibaryon branches were added 2022-03-07 in a commit titled *"adding NuE low
+   recoil"*, by an author of arXiv:2312.16631 — **the same paper `CVUniverse.h:163` cites as our
+   authority.** Our cited authority and our putative independent reference are one analysis.
+5. **Not** that the Ascencio cross-check independently validates our E_avail axis. See §4.
+
+---
+
+## Provenance of the statements here
+
+**Measured in this repo and re-derivable:** every number in §2 and §3, the `OI-59` ratios, and the
+zero-η/K⁰_S census. Operands are in `OI-30`, `OI-56`, `OI-59` and
+`ADVISORY-20260813-eavail-published-conventions.md`.
+
+**Relayed from lane A and NOT independently verified by the author of this document:** the
+`GENIEXSecExtract` commit archaeology — the 8-commit history of `src/XSec.cxx`, the 3m07s gap between
+`0e6740cec071` and `564e2788051f`, and the finding that the latter lands in `case kPZRecoil:` rather
+than `kEAvail`. Two commands check it against a public repo and no credentials beyond `gh`:
+
+```
+gh api "repos/MinervaExpt/GENIEXSecExtract/commits?path=src/XSec.cxx"
+gh api repos/MinervaExpt/GENIEXSecExtract/commits/564e2788051f
+```
+
+**Index:** `OI-30` (the `135` constant), `OI-56` (the convention difference, FROZEN), `OI-59` (the
+cross-check caveat), `OI-63` (advisor items, deferred), `docs/PUBLICATION_COMPLETION_RUNBOOK.md` §P7.
