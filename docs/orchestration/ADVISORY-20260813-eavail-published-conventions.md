@@ -286,6 +286,27 @@ Recorded because it was invisible and I nearly reported it as a definitional off
    inherited, and its id/date were independently confirmed by Codex per that file). Ascencio v2's actual
    E_avail code path. Whether the Ascencio supplemental table's own axis was regenerated between v1 and v2.
 
+   > **`MAT-MINERvA` IS NOT PRIVATE, AND THIS ENTRY IS SUPERSEDED — 2026-08-13, lane A, `BEN-221`.**
+   > `gh api repos/MinervaExpt/MAT-MINERvA --jq '.private, .visibility'` → **`false`, `public`**. The one
+   > source this advisory declared unreachable was one call away — **in the section that exists to bound what
+   > was not checked, written by the session that had just filed `BEN-215` (*"the repo was PUBLIC and nobody
+   > had opened it"*) about the other repository in the same paragraph.**
+   >
+   > Opened, and all three inherited claims hold with one stronger than claimed: **exactly one commit ever**
+   > (`f790cc79473202ebb7f8ccfb011d36c0f4cce329`, 2021-07-07T18:15:28Z, Ben Messerly, *"calculators/ initial
+   > commit."*), it **still reads `double mass_pion = 135;`** at line 38, and our `GetEAvailableTrue()` is
+   > not merely "line-for-line" ours but **token-identical**: stripping comments and whitespace from both
+   > function bodies gives 424 characters and sha256 `5296998043add43c…` on **both** sides.
+   >
+   > **Two consequences.** `OI-30(b)`'s MAT-compatibility conflict — the reason the `135` decision is framed
+   > as a choice between two defensible goods — is **promoted from inherited to measured**. And §4's reading
+   > of our list as *"Rodrigues 2016's closed list minus e±"* is **provenance-inverted**: the list is
+   > **MAT's, copied whole**, from one unreviewed 2021 commit, and it *coincides* with Rodrigues minus e±.
+   > The coincidence is what makes it defensible; the inheritance is what makes any claim of deliberateness
+   > false. See `FINDING-20260813-the-second-repo-was-public-too.md`.
+   >
+   > Ascencio v2's code path and the supplemental-table axis question remain genuinely unchecked.
+
 ---
 
 ## Recommended disposition (lane A) — none of this is adopted
