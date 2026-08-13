@@ -208,7 +208,19 @@ evidence supports is its own defect.
 
 **The 206.5% reading is STALE, and the staleness is legible rather than assumed:** 1.03 TiB ≈ 1054.72 GiB
 sits within 2.33 GiB of the P3F-PET archive alone (1057.05 GiB), and the quoted-products set (300.17 GiB,
-copied 16:24) is absent from it. So HPSS accounting has not yet absorbed today's copy.
+copied **13:49:24 → 14:22:48 UTC**, job `56762440`) is absent from it. So HPSS accounting has not yet
+absorbed today's copy.
+
+> **CORRECTION, found by Session B.** This sentence originally read *"copied 16:24"*. Measured with
+> `sacct -j 56762440` and the cluster TZ printed rather than assumed (`PDT-0700`): the job ran
+> **06:49:24 → 07:22:48 PDT = 13:49:24 → 14:22:48 UTC**. **`16:24` matches neither.** B suggested this
+> might be a fourth `BEN-069` timezone instance; **it is not, and that is decidable** — 16:24 differs from
+> 14:22 by 2 h 02 m and from 13:49 by 2 h 35 m, and no timezone offset is either. So no conversion
+> produces it. It is the **`0.874 TB` family instead: a figure I repeated from the mediator's message
+> without ever asking what produced it.** Notably `16:24` *does* appear in my own raw audit output — as the
+> `ls -l` mtime of `runEventLoopOmniFold_P3F_PET_FE_Muon_Energy_MINERvA_1_1F.root`, an **Aug 11 P3F**
+> object, i.e. a different archive on a different day. Whatever its origin, I published it without a
+> source, in a receipt whose own convention is that every derived quantity ships its ingredients.
 
 ## THE CONCLUSION OF §7 INVERTS: this is a MOVE question, not a delete question
 
