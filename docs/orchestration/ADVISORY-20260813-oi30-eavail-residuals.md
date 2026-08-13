@@ -172,6 +172,41 @@ attaches, so #3 **should not land without the underflow choice in hand.**
 determined** — most likely a marginally different underflow predicate or a different copy of the file.
 Note this file **does not exist in the local tree**, so the fork could not be cross-checked.
 
+## 5b. THE DENOMINATOR — challenged as a possible 2.8x error, MEASURED, and it is correct
+
+**Session A, independent re-implementation, 2026-08-13.** Lane `dc` observed that this file's
+`4.827 MeV/event` matches its **per-pion-carrying-event** figure (4.830) to 0.06% and not its
+per-signal-event figure (1.738), and raised that the mean might have been taken over pion-carrying
+events while labelled per-signal-event — **a factor-2.8 error in the number Joseph publicly promised
+Gregor he would quantify.** Measured rather than argued, on the same file, with both denominators
+reported:
+
+| quantity | Session A (independent) | the lane | `dc` |
+|---|---|---|---|
+| N signal events | 63,779 | 65,911 | — |
+| pion-carrying fraction | **63.47%** | 64.10% | **35.99%** |
+| pi±/signal event | **1.0402** | 1.0563 | 0.3803 |
+| pi±/pion-carrying event | 1.6390 | (1.648 implied) | 1.0569 |
+| shift per SIGNAL event | **4.754 MeV** | 4.827 | 1.738 |
+| shift per CARRYING event | **7.490 MeV** | — | 4.830 |
+
+**VERDICT: the denominator is SIGNAL EVENTS and the label is correct.** An independent
+re-implementation returns 4.754 MeV/signal event, agreeing with 4.827 to 1.5% and disagreeing with
+the per-carrying value (7.490) by 57%. **`dc`'s 0.06% agreement is a numerical coincidence, not a
+match** — its per-carrying multiplicity (1.0569) happens to sit near this selection's per-signal
+multiplicity (1.0402-1.0563). Two different quantities that are numerically close.
+
+**The real difference is the SAMPLE, and it is a finding about the selections rather than about the
+arithmetic:** this selection is **~1.76x more pion-rich** (63.47% carrying vs `dc`'s 35.99%). `dc`
+measured on `G2_FPS_MEFHC_P12.npz`; this is the `Truth` tree under a re-implementation of
+`runEventLoopOmniFold.cpp:1710-1741`. Different populations, both internally consistent.
+
+**Honest bound on the headline.** Two independent re-implementations of the same production cut give
+multiplicities of 1.0402 and 1.0563 — a 1.5% spread that bounds the selection-implementation
+uncertainty. **Neither is the production cut object.** So the defensible statement is
+**4.75-4.83 MeV per signal event**, not 4.827 to four digits. The 0.251%-of-mean figure inherits the
+same spread.
+
 ## 6b. DOES THE CONSTANT MOVE A QUOTED NUMBER? — still NO, but the reassuring ratio is a lower bound
 
 **Added 2026-08-13 by Session A after the adopted-uncertainty artifact was supplied.** This was §7's
@@ -253,6 +288,61 @@ lines 627/975/1043/1049 rather than accepted.
 
 **Kept rather than deleted, because I am the second reader to trip on it** — which makes it a fact about
 the ledger's readability, not about my attention. The resolution now lives at the point of confusion.
+
+### THE PROJECTION IS DONE — 22.7%, and the naive figure was a 3x underestimate
+
+**Executed 2026-08-13 by Session A on explicit assignment.** Not a reimplementation: it imports
+`build_projection` from the tracked `nd-unfolding/project_cov_nd.py` (byte-identical to local HEAD)
+and `project_covariance` from `uq_math`, substituting **only** the I/O — that tool reads via ROOT,
+whose cling crashes on the login node, so uproot reads the same objects. Nothing tracked was modified.
+
+**Artifact, by full path and size so a reader can tell which of the three siblings was used:**
+`nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`,
+**892,224,371 B**, hist `hCov_combined5d_total_uthrow`, **10,694 x 10,694** — so the stored matrix is
+on the **full 10,694 GBDT set**, not the 10,550 PET-common subset. CV `products/5d/xsec_5d_MEFHC_5iter_lgbm.root`,
+mask `CV > 0` -> 10,694 of 65,856.
+
+| E_avail bin (GeV) | integrated xsec | sigma | **frac %** | unit-weight % (WRONG) |
+|---|---|---|---|---|
+| 1 `[0,0.1)` | 2.098788e-38 | 9.705308e-40 | **4.6242** | 12.3756 |
+| 2 `[0.1,0.2)` | 2.014483e-38 | 6.957299e-40 | 3.4536 | 7.6008 |
+| 3 `[0.2,0.4)` | 1.862478e-38 | 5.028929e-40 | 2.7001 | 5.8641 |
+| 4 `[0.4,0.8)` | 1.249243e-38 | 3.277006e-40 | 2.6232 | 3.6609 |
+| 5 `[0.8,1.5)` | 7.621795e-39 | 1.987471e-40 | 2.6076 | 3.7743 |
+| 6 `[1.5,3.0)` | 4.137631e-39 | 1.099044e-40 | 2.6562 | 6.6624 |
+| 7 `[3.0,100)` | 6.517917e-41 | 1.828042e-42 | 2.8046 | 3.2978 |
+
+**THE ANSWER: bin 1's marginal fractional uncertainty is 4.6242%, and the shift/uncertainty ratio is
+22.7%** — against the 7.7% the naive 5D per-bin denominator gives. **A 3x underestimate**, and it sits
+inside the [7.7%, 297%] bracket predicted before the measurement.
+
+**MY ORIGINAL PRESCRIPTION IN THIS FILE WAS WRONG AND THE TOOL SAYS SO.** I wrote "sum the sub-blocks
+over the other four axes." The stored cross section is a **differential density per unit bin-volume**,
+so marginalizing is a **WIDTH-WEIGHTED** sum; `project_cov_nd.py`'s docstring states plainly that
+*"unit-weight M would be WRONG for this convention."* The unit-weight column above is that error
+priced: bin 1 would read 12.38% and the ratio 8.5% — a 2.7x underestimate that looks entirely
+plausible next to the ledger's 13.69%.
+
+**Aggregation behaves as predicted and quantifies the correlation.** Marginal median 2.70% against the
+5D per-bin 13.69% is a reduction of 5.07x, versus sqrt(1507) = 38.8 if the bins were independent. So
+the systematics are substantially correlated but far from perfectly — which is exactly why neither
+bracket endpoint was the answer.
+
+**VERDICT: the pion-mass correction does NOT move a quoted number** — 22.7% of the marginal
+uncertainty in the worst bin, comfortably inside it, with ~4.4x margin rather than the ~13x the naive
+figure implied.
+
+**CHECKS RUN.** Projected 7x7 symmetric to 4.77e-17 relative (source covariance exactly symmetric);
+all eigenvalues > 0; zero source cells dropped; `M` row sums reproduce independently-computed
+width sums; `diag(C_low)` reproduces per-row `M C M^T`. **An earlier symmetry check of mine reported
+False and was my own error** — `np.allclose(..., rtol=0, atol=0)` is exact bitwise equality and cannot
+pass on a floating-point product.
+
+**WHAT THIS RESULT DOES NOT YET CARRY, flagged by D and not resolved here:** the bin-volume weighting
+and the row->cell mapping are built from the **same C-order ravel**, so a mapping error and a volume
+error would share a cause and corroborate each other — `BEN-086`'s shape. This projection therefore
+needs an independent check that does not inherit the mapping's. **Not built. The number above should
+not be promoted until it is.**
 
 ## 7. Explicitly could-not-determine — carried forward, not dropped
 
