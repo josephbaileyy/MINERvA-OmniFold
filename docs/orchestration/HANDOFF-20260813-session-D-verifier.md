@@ -41,8 +41,11 @@ and `origin/main` at the same commit.
   `git -c user.email="lane-d-verifier@mnv.local" -c user.name="Lane D (verifier)"`.
 - **`-F <file>`, never `-m`**, for any message with backticks or newlines, and read it back with
   `git log -1 --format=%B`. Re-resolve every sha after an amend. `BEN-164`, both halves.
-- **Post-hoc contents read after every commit**, and `git log --oneline -S'<text>'` for the other
-  direction. It is the only technique that ever caught an absorption at the moment it happened.
+- **Declare the row set you intend to touch, then refuse the commit if any other row differs.** C's
+  guard, adopted here after it caught a real one (BEN-171). This supersedes the convention's claim that
+  the post-hoc read is the only technique — that one is one-directional and after the fact.
+- **Post-hoc contents read after every commit** anyway, and `git log --oneline -S'<text>'` for the
+  other direction. Cheap, and it is the check that has actually caught things on this campaign.
 - **Read-only tooling is the lane's constraint, not a suggestion.** Reproduce in a temp dir; write only
   to `docs/orchestration/`. Every result in the three long-form files above was established without
   modifying a tracked file.
