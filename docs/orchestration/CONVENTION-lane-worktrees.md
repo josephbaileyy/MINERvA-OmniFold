@@ -213,6 +213,39 @@ agreed. Its supporting measurement, which argues the same way: at `12:31:48Z` al
 byte-identical at `fa45fc1`, i.e. **zero divergence on every lane**, while `main` moved `07059a2` →
 `fa45fc1` in nine minutes. **The reason to fix this is the write pressure, not any current divergence.**
 
+### COMMIT CADENCE IN THE MAIN CHECKOUT — the mitigation while OI-47 stays deferred
+
+**Added 2026-08-13 by lane A, recording an amendment the mediator made to its own standing rule.** It lived
+only in a cross-session message, which is `BEN-201`'s shape — a rule nobody can read is not a rule — and it
+belongs here because this is the section that establishes the hazard it mitigates.
+
+**The rule as first given to lane A was:** *"Accumulate BEN rows and corrections locally and land them in
+one commit at task end — do not message on discovery."* That was written to stop message-traffic interrupts
+and it does that. **In the shared main checkout it also opens the window in which content gets swept between
+lanes**, and it did, twice in one hour, in both directions (`BEN-218`).
+
+**Amended, scoped to where the hazard is:**
+
+| where you are | cadence |
+|---|---|
+| an isolated worktree (`.claude/worktrees/<lane>/`) | **batch** — land findings in one commit at task end. B, C and D keep this |
+| **the main checkout** | **commit per edit**, and run `git status` for foreign edits *first* |
+
+**Why the `git status` is not optional, and why pathspecs are not a substitute.** `git help commit`:
+a pathspec commit will *"ignore changes staged in the index, and instead record the current contents of the
+named files."* So `git commit -- <explicit paths>` sweeps in **another lane's uncommitted edits to those
+same files**, whatever the index says. `BEN-203`'s remedy — *"stage and commit with explicit pathspecs"* —
+protects you from committing other *files*, and does nothing here. It is necessary and **not sufficient**,
+and this is the residual.
+
+**Who this applies to, measured — it is narrower than it sounds.** Each `.claude/worktrees/<lane>/.git` is
+an **82-byte gitdir pointer**, so B, C and D have their own working trees *and* their own index files and
+cannot collide this way at all. **The exposure is the main checkout alone**, currently occupied by lane A
+and the mediator, and both observed instances are that pair.
+
+**This is a practice, not enforcement** — same standing as everything else in this file, and it stops being
+needed the moment `OI-47` is settled.
+
 ### OI-47's precondition is RESOLVED, and the answer changes what the fix is
 
 Established 2026-08-12 by the mediator session reading job state, then re-measured here across all four
