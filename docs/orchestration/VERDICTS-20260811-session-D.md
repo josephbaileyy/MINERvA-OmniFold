@@ -1622,3 +1622,517 @@ have contradicted itself and does not.** The row also states plainly that the na
 favourable reading rather than the answer, and that the denominator's own `VL62/63/64/65` are OPEN. No
 finding.
 
+---
+
+# V34–V40 — sole-auditor pass on `docs/EAVAIL_DEFINITION.md` (`bcdb388`)
+
+> **STATUS AFTER `4788598`, added 2026-08-13 before pushing.** Lane A source-checked the same document
+> in parallel and **independently found V35, V37, V38 and V40(a)**, landing repairs at `4788598` while
+> this pass was still running. Two auditors approaching from different directions converged on the same
+> spine sentence, which is worth more than either finding alone. **Current state of each verdict below:**
+>
+> | | verdict | now |
+> |---|---|---|
+> | V35 | five-species claim | **CLOSED** — `4788598` rewrites §1 to *"MINUS e±… we implement four of them"* and deletes *"deliberately"*. Lane A's `BEN-220`, filed with better detail than mine; my `BEN-174` is reduced to a pointer. |
+> | V36 | `kEAvail` relabelled as "the open convention" | **LIVE** — §2 unchanged. Not found by lane A. |
+> | V37 | who gets which verb | **SUBSTANTIALLY CLOSED** — the e± mirror is now adjacent to the defect sentence in §1. The verb itself stands; the reader can no longer meet it alone. |
+> | V38 | §5 had one self-cutting item | **CLOSED** — `4788598` adds §5 item 6, for the reason I gave. |
+> | V39 | five-site list over six sites | **LIVE** — unchanged, and the omitted site is in the live PET path. |
+> | V40(a) | the `:1043` citation | **SUPERSEDED by `BEN-219`, and my version was wrong** — see the correction inline. |
+> | V40(b) | provenance sorted by effort | **LIVE** — provenance section unchanged. |
+>
+> **Nothing was re-litigated to preserve authorship.** Where lane A got there first or got it more right,
+> that is recorded as such.
+
+**Commissioned by `personal-orchestrator`, who wrote the document and correctly declined to check it.**
+It is the only artifact in this campaign written to go in front of an external collaborator: Joseph
+intends to paste it to Gregor Kafka and defend it line by line. Audited at `bcdb388`, which is
+`origin/main`'s tip; lane-d fast-forwarded to it. Read-only throughout — no code, launcher, ledger row,
+`values.tex` or gated artifact touched; the only writes are this file, the `FINDINGS.md` rows, and one
+probe under a path this lane owns.
+
+**Verdict on the document as a whole: BLOCK — do not send as-is.** Four defects reach the
+collaborator-facing text and **three of the four run in the flattering direction**. None of them is an
+arithmetic error; the arithmetic is clean, which is the point. Repairs are small and are the author's to
+make.
+
+## V34 — the two questions asked directly, answered first
+
+**(a) "Check I did not introduce a third rounding error." — PASS. No third error.** Re-derived every
+number from its source row's own operands:
+
+| claim | re-derivation | source |
+|---|---|---|
+| fidelity ratio `37.6x` | `4.837 / 0.1286 = 37.61` | `OI-56` (which rounds to `37x` off `4.84`; same operands) |
+| `4.827` MeV/event | `1.0563 x 4.57 = 4.8273` | `OI-30(c)` |
+| `439 / 65,911 = 0.666%` | `0.0066605` | `OI-30(c)` |
+| bracket lower `7.7%` | `1.049 / 13.69 = 7.6625%` | `OI-30(d)` |
+| bracket upper `297%` | `7.6625% x sqrt(1507) = 297.4%` | derived in the document, not in `OI-30` |
+
+The upper end **only works from the unrounded `7.66`** — `7.7 x sqrt(1507) = 299`, not `297`. The
+document states `7.66%` explicitly and is therefore self-consistent. The correction the author made
+before committing is sound and I could not break it.
+
+**(b) "Scope creep — it must adopt nothing, unfreeze nothing." — PASS, cleanly.** `OI-56` is named
+**FROZEN** at :8; §4 closes *"Computing this further is `OI-56`'s arithmetic pointed at a published PASS,
+and `OI-56` is frozen. That is Joseph's decision, not a lane's"*; §3 closes *"Not applied; nothing quoted
+moves"*; `OI-40` is respected at :9-10. No sentence in the document reads as a decision. This is the one
+thing the author was most at risk of getting wrong under time pressure and it is right.
+
+## V35 — BLOCK: the headline paragraph claims a five-species list the code and the ledger both call four
+
+`docs/EAVAIL_DEFINITION.md:16-18`, the paragraph explicitly framed as *"The position, in one paragraph"*
+and therefore built to be extracted and pasted standalone:
+
+> **We implement the Rodrigues 2016 convention** (arXiv:1511.05944), deliberately and uniformly:
+> available energy is the summed kinetic energy of protons and charged pions plus the summed total
+> energy of neutral pions, over a **closed** five-species list.
+
+Three counts appear in one sentence and no two agree.
+
+- **It enumerates three species** (p, π±, π⁰) — dropping γ, which we do include.
+- **It labels the list five.**
+- **The code implements four.** `CVUniverse.h:361-374`, fourteen unambiguous lines: γ total E (`:368`),
+  π± `E − 135` (`:369`), π⁰ total E (`:370`), p `E − 938.27` (`:371`). No e± branch.
+- **`VALIDATION_LEDGER.md:1331` — written by lane A in this same thread on 2026-08-13 — says so:**
+  *"we unfold to `GetEAvailableTrue()`'s **closed four-species list** with `mass_pion = 135`."*
+- **`OI-56` states the qualifier in exactly the words the document drops:** *"ours is the 2016 convention
+  **minus e±**."*
+
+Rodrigues' list is five because it includes electron total energy. Ours is four because it does not. The
+document upgrades a qualified source claim to an unqualified one **and deletes the qualifier that both
+the ledger and the row spell out**. The correction does exist in the document — at `:63-64`, forty-seven
+lines below the claim, in the last paragraph of §2 — and it is **not** in §5.
+
+**"deliberately and uniformly" is the part that should not survive contact with Gregor.** The advisory's
+own §5 concludes the opposite: *"our exclusion follows the νe-era code and not the νμ paper."* The e±
+exclusion is inherited from `kEAvail`'s `abs(pdg)==11||13` charged-lepton skip, which exists because in a
+νe analysis the primary electron *is* the lepton. And `135` is likewise inherited — advisory §2: *"one
+inherited copy, not two choices,"* from the 2021-07-28 MINERvA 101 tutorial import. **A word asserting
+intent, placed where the repo's own evidence records inheritance.** That is the failure mode this lane
+was told to watch for, in the first sentence of the document.
+
+## V36 — BLOCK: the measured numbers are the `kEAvail` comparison, relabelled as "the open convention"
+
+§2 is headed *"Where the two published conventions differ"* and its table columns are Rodrigues 2016 and
+Ascencio 2022. Inside it:
+
+> Four species carry the disagreement, all of which we exclude and **the open convention** includes …
+> **Measured effect of moving to the open convention, on our sample:** `+212.18` MeV/event, `4.837%`,
+> `−10.99%`.
+
+**Every source attributes those numbers to a different comparator.** `OI-56`: the mismatch is against
+*"MINERvA's own reference implementation (`GENIEXSecExtract/src/XSec.cxx` `case kEAvail:`)"*. `OI-59`:
+*"`OI-56` measures **the reference rule** as −10.99% out of truth bin 1."* Advisory §6: *"`OI-56` measures
+adopting **the reference rule**."* `VALIDATION_LEDGER.md:1334`: *"`OI-56` measures **the reference rule**."*
+Four independent statements, one comparator, and it is the code — not the paper.
+
+**The two are not interchangeable, and the advisory devotes its entire §3 to saying so** — *"'The MINERvA
+reference implementation' IS A νe ARTIFACT, AND IT POST-DATES ASCENCIO v1 … `kEAvail` cannot have produced
+Ascencio v1's numbers — it did not exist."* Per the advisory's own §4 table they differ on at least two
+rows: **e±** (`kEAvail` excluded, Ascencio open list total E) and **the clamp** (`kEAvail` `max(0,·)`,
+Ascencio unstated).
+
+**The document contradicts itself on this and the contradiction is the proof.** "Four species carry the
+disagreement" is true against `kEAvail`. Against the open list it is **five**, because the open list
+includes e± — which the document itself asserts twenty lines later at `:63-64`. A count of four and an
+e± exclusion cannot both be true of the same comparator. This is `BEN-150`'s shape one level up: not two
+JSON keys sharing a name, but a measurement and a convention sharing one.
+
+Direction: including e± would make the shift **larger** (advisory §5 puts e± at `1.462` MeV/signal event).
+So the relabelled number understates the quantity it is relabelled as. Small — ~0.7% of `212.18` — and in
+the favourable direction.
+
+## V37 — BLOCK, and this one is about the reader: the framing is asymmetric toward the recipient
+
+`minerva-ml` is **`gregorkrz/minerva-ml`** (`docs/GREGOR_FOUNDATION_MODEL_REFERENCE.md:5`) — the
+repository of the person this document is written to be handed to. The opening paragraph, `:26-27`:
+
+> (`minerva-ml` uses total energy for charged pions, which adds ~140 MeV/pion; **that is a defect in that
+> code, not in ours**.)
+
+`OI-30`, the source, says only: *"Ours matches; minerva-ml's total-energy charged pion adds ~140
+MeV/pion."* **The document adds the defect verdict.** On substance the verdict is defensible — Rodrigues,
+Ascencio Eq. 1, `kEAvail` and 2312.16631 Eq. 4 all specify charged-pion *kinetic* energy, so `minerva-ml`
+is out of line with all four. That is not the finding.
+
+**The finding is that the mirror-image case is not framed the same way.** On e±, `minerva-ml` matches
+Rodrigues and we do not — the same class of disagreement, the same kind of evidence, the recipient right
+and us wrong. It appears at `:63-64`, forty lines later, under a heading that partly editorialises
+(*"cuts against us and is stated for that reason"*), and §5 item 2 characterises our own divergence as
+*"a **declared convention choice**, not a negligible one."*
+
+**So: their divergence is a defect in their code; ours is a declared convention choice.** Both readings
+may be defensible in isolation. Presented together, in the opening paragraph and forty lines apart
+respectively, to the author of the code called defective, the asymmetry is the first thing an advisor
+notices — and it is the kind of thing that costs a reader's trust in the numbers, which here are sound.
+
+## V38 — BLOCK: §5 has one self-cutting item, not the two its author believes
+
+The commissioning message asked me to check that **two** §5 items *"deliberately cut against us"* were not
+softened — *"the e± case where `minerva-ml` matches the νμ paper and we do not, and the 'reference
+implementation' that is not independent."*
+
+**Item 4 is not softened.** *"Our cited authority and our putative independent reference are one
+analysis"* is the advisory §3 conclusion at full strength, and it survives the check.
+
+**The e± item is not in §5.** §5's five items are: no single published definition; the difference is not
+immaterial; `135` not proven immaterial; not a neutral reference implementation; the Ascencio check does
+not independently validate us. The e± concession is in §2 and nowhere else.
+
+Recorded not as a gotcha but because of what it implies: **the author's model of their own document
+places the concession in the section a sceptical reader turns to first, and it is not there.** That is
+precisely why one reviewer per artifact has to be someone other than the author, and it is the strongest
+argument in this pass for the orchestrator's decision to commission it.
+
+## V39 — BLOCK: "a five-site change or nothing" is a five-site list over six sites, and the omitted one is the live one
+
+`:101-103`: *"**Correcting it is a five-site change or nothing:** `CVUniverse.h:364` plus four generator
+converters that bind to our value by comment. They must move in one commit, or the four-generator
+comparison silently compares two different observables."*
+
+Executed rather than argued — `state/probe-eavail-pion-mass-sites-20260813.py`, committed and rerunnable,
+five arms with expectations predeclared before the run:
+
+| arm | expected | observed | |
+|---|---|---|---|
+| P1 sites named by path | 1 | **1** | the list names one of its five; the other four must be re-derived |
+| P2 code sites binding `135` as an E_avail π± mass | > 5 | **6** | the count is short by one |
+| P3 of the 4 converters, how many bind BY COMMENT | 2 | **2** | the document says all four do |
+| P4 CONTROL: `139.57` in an E_avail π± term | 0 | **1** ✗ | **fired — see below** |
+| P5 each `135` declaration has a re-read use line | 6 | **6** | all six genuinely subtracted |
+
+**The omitted site is `nd-unfolding/pet/pointcloud_projection.py:51` (`M_PION_EAVAIL = 135.0`, consumed at
+`:107`)** — the PET truth-cloud projector, i.e. the path the live Gate-5 campaign runs. **The document's
+own source names it**: `ADVISORY-…-oi30-eavail-residuals.md:95` calls it one of *"the two mirrors
+deliberately kept in lockstep"* and warns it *"will **silently desync** if only one is changed."* A
+repairer executing "a five-site change or nothing" produces exactly the partial change the phrase
+"or nothing" exists to forbid, in the live path.
+
+**"bind to our value by comment" is true of two of the four converters**, not four:
+`genie_to_xsec3d.py:42` (*"matches CVUniverse mass_pion=135 MeV"*) and `nuwro_to_flat.C:31`
+(*"(match CVUniverse)"*). `gibuu_to_xsec3d.py:53` and `gibuu_to_xsec_eavailW.py:38` are bare
+`MASS_PI … = 0.135` with no reference. **A repairer who trusts the comment-binding and greps for
+`CVUniverse` finds half the set.** Both errors run the same direction: the repair looks smaller and more
+discoverable than it is.
+
+**Compounding, and not the document's fault but on its execution path:** `pointcloud_projection.py:50` and
+`POINTCLOUD_PROJECTION.md:28` both cite *"`GetEAvailableTrue()` … (CVUniverse.h:330-343)"*. Line 330-343
+is `GetRecoClusters`, the full-event cluster-dump overload. `GetEAvailableTrue()` is at `:361-374`. A
+repairer opening the PET mirror's own comment to confirm it is the same quantity lands on an unrelated
+function — the shape already filed as `FINDING-20260813-line-range-on-a-file-that-never-existed.md`.
+
+**The four-generator comparison is a real object** (GENIE 2.12, MnvTune v1, NuWro 21.09, GiBUU 2019 —
+`docs/slides_3D+_outline.md:58`), so that clause stands. Checked because it read like an invented
+consequence and it is not.
+
+### The control fired, and I am reporting it rather than relaxing it
+
+**P4 expected zero and observed one.** The ±8-line context window cannot separate two constants declared
+four lines apart in the same file — `M_PION_EAVAIL = 135.0` at `:51` and `M_PI = 139.57` at `:55`. Kept at
+its predeclared expectation instead of moved to 1, because adjusting an expectation after seeing output
+is how a probe stops being able to fail.
+
+**And it surfaced a hazard I had not looked for.** `pointcloud_projection.py` holds *both* constants,
+deliberately, four lines apart: `M_PION_EAVAIL` for the E_avail convention and `M_PI` for the
+charged-pion multiplicity KE threshold at `:116`. Correcting the convention constant to `139.57` there
+makes the two numerically identical and the deliberate separation invisible to the next reader. The
+one-line instruction "five-site change" does not mention it.
+
+**A second arm fired first and I want it on the record.** P5b, the arm built to refute me, reported only
+2 of 6 declarations reaching an accumulation line — which would have meant four of my six sites were dead
+code and the finding inflated. **I read all six use lines by hand before touching the regex**, in that
+order, and all six are genuine. The pattern had simply never covered `econ[m] = E[m] - MASS_PI` or
+`np.copyto(contrib, E - …)`. I then did **not** write a cleverer regex: separating "subtracted into an
+E_avail sum" from "subtracted to test a KE threshold" is semantics, and a wrong automated oracle is worse
+than none, so P5 is now a recorded table of six use lines re-read from disk and checked verbatim. Its
+first run caught two of *my* transcriptions as fragments rather than whole lines.
+
+## V40 — a citation that lands on text reading as the opposite, and a provenance split sorted the wrong way
+
+**Neither is filed as a lane-D `BEN-*`: the first is inherited from `OI-30(d)`, the second is the
+author's to reshape. Both are routed, not fixed.**
+
+> **CORRECTED 2026-08-13, and the correction is against me.** The paragraph below claimed *"It was
+> never right."* **That is false.** `13.69%` sat at **`:1043`** at `668a965` (08-12 22:37 EDT =
+> 02:37Z) — I checked two revisions of `VALIDATION_LEDGER.md`, found `:1011` and `:1116`, and
+> generalised a two-point sample into a universal. **A universal claim from a two-point sample is the
+> same error class this whole pass is about**, committed in the paragraph auditing someone else for it.
+> Lane A got it right and better: the citation was **exact when written at 02:34Z** and rotted within
+> 15 h because Gate 5 appended 73 lines above it. Filed by lane A as **`BEN-219`**
+> (`FINDING-20260813-citation-correct-at-write-time.md`), which supersedes this item and states a
+> sharper rule than mine — a `file:line` into an append-heavy ledger has a shelf life of hours, and four
+> documents carry the stale one. The observation below about *where* `:1043` now lands still holds and
+> lane A independently made it. Everything else in (a) is withdrawn.
+
+**(a) `VALIDATION_LEDGER.md:1043` does not contain `13.69%`.** §3:82 cites *"13.69% median per-bin,
+`VALIDATION_LEDGER.md:1043`"*. The figure is at **`:1116`**, under *"5D GBDT systematic covariance
+campaign (completed 2026-06-29): **PASS**"* — correct, adopted, and the right number. Line 1043 reads
+*"auxiliary robustness check and **is not part of this candidate budget**"*, under the `:823` header
+*"2026-07-14 corrected 5D GBDT covariance — **CANDIDATE**"*. So a reader who follows the pointer lands on
+a sentence that reads as an exclusion of the quantity cited, in a section marked candidate rather than
+adopted. It was never right: `13.69%` sat at `:1011` before the 2026-08-12 VL re-id and at `:1116` after.
+Inherited verbatim from `OI-30(d)` — but this is the document whose pointers a collaborator will actually
+follow.
+
+**(b) The provenance section's two buckets are sorted by author effort, not by checkability, and the
+sort is inverted.** `:153-161` labels the `GENIEXSecExtract` archaeology *"Relayed from lane A and NOT
+independently verified by the author"* and supplies two `gh` commands needing no credentials. Honest, and
+the strongest paragraph in the document. But the *other* bucket — *"Measured in this repo and
+re-derivable: every number in §2 and §3"* — silently absorbs the **two-paper reading**: the CLOSED/OPEN
+table, the *"`strange` and `kaon` appear zero times"* count, the Rodrigues and Ascencio quotations. Those
+are external `ar5iv` fetches, not repo measurements, and **advisory §7.1 records them as the one piece of
+lane A's evidence that produced disagreeing results** — a summarising `WebFetch` and a verbatim `WebFetch`
+contradicted each other about Ascencio Eq. (1)'s surroundings until a third instrument settled it, with
+the note *"the disagreement is the only warning you get."*
+
+So the claim labelled unverified is two commands away from confirmation, while the claim §1's entire
+position rests on is bucketed as repo-measured, is not, and is the one the source flags as
+instrument-fragile. **No instrument is named for it anywhere in the document.** An honesty section that
+sorts by "how much of this did I personally do" rather than "how hard is this for the reader to check"
+inverts its own purpose.
+
+## What this pass did not establish
+
+- **I did not re-fetch either paper.** Rodrigues' closed five-species list and Ascencio's open list are
+  taken from advisory §1's verbatim quotations. V35 does not depend on them — it rests on
+  `CVUniverse.h:361-374`, `VALIDATION_LEDGER.md:1331` and `OI-56`, all in-tree — but V36 does.
+- **I did not run the `gh` commands** in the provenance section. Untested, not endorsed.
+- **P2's six is a lower bound.** A regex over declarations can prove a list incomplete; it cannot prove
+  a count total. "At least six," never "exactly six."
+- **`docs/EAVAIL_DEFINITION.md` is the only artifact audited here.** Gate 5's throughput anomaly and
+  Gate 6's floor are untouched by this pass — see the note below.
+
+---
+
+# V41–V43 — second pass, against `c3771f7` (the text as it now stands)
+
+The document was rewritten twice while this audit ran (`4788598`, then `c3771f7`). Re-read in full at
+`c3771f7` before reporting. **`BEN-175`, `BEN-177` and `BEN-178` all survive both rewrites unchanged.**
+
+## V41 — PASS, and it is the newest claim in the document: the MAT token-identity reproduces
+
+`c3771f7`'s §1 asserts our `GetEAvailableTrue()` body is *"token-identical to MAT-MINERvA's
+`calculators/CCQE3DFitFunctions.h` — both **424 chars**, sha256 `5296998043add43c`."* I cannot reach
+MAT-MINERvA, so I checked the operand I can: `CVUniverse.h:361-374`, comments stripped, all whitespace
+removed.
+
+**424 characters. sha256 prefix `5296998043add43c`. Exact match, on the first normalisation tried** —
+five were tried and only that one lands, so *"comments and whitespace stripped"* is an adequate recipe
+and I withdraw the concern I had queued about it being unreproducible. One operand of a two-operand
+identity claim is now independently confirmed; the MAT side is not, and the document should not be read
+as though it were.
+
+**One label:** `5296998043add43c` is 16 of sha256's 64 hex characters. Truncation is fine and standard;
+saying so costs four words and stops a reader concluding the algorithm is something else.
+
+## V42 — BLOCK: both spine corrections stopped at the §1 boundary, and the corrected phrase still stands twice
+
+This is the second pass's finding and it is a direct consequence of how the first two were applied.
+
+**Round 2's whole point** is that *"we implement Rodrigues"* is the wrong framing — we implement MAT's
+list, which *coincides* with Rodrigues minus e±, and §1 now says so in terms: *"the inheritance is what
+makes 'deliberate' false."*
+
+**§2's table, twelve lines later, still says the corrected-away thing, unqualified:**
+
+> | what we do | **implement this** [Rodrigues 2016] | do not implement [Ascencio 2022] |
+
+A table row is scanned, not read. This is the version of the claim most likely to be extracted.
+
+**§5 item 2 still says it too, and it now contradicts §5 item 6 four lines below:**
+
+> 2. … It is a **declared convention choice**, not a negligible one.
+> 6. … The exclusion is **inherited** from a νe-analysis charged-lepton branch, **not established as a
+>    choice**.
+
+*Declared convention choice* is the exact framing round 2 refuted. **§5 is the section the document
+itself designates as the one a reader trusts as complete** — item 6 says so in its own text: *"§5 is the
+list a reader trusts as complete."* A reader who reads only §5, which is what §5 is for, gets the
+pre-correction position and an internal contradiction inside one numbered list.
+
+**I do not disagree with lane A on §1.** Round 2 is right, is an improvement on round 1, and its one
+locally-checkable claim reproduces (V41). **The finding is that a correction was applied where the
+defect was found rather than everywhere the claim appears** — and that both rounds made the same choice,
+which is why the second round did not catch the first round's residue.
+
+## V43 — the parts nobody had audited: PASS, with one hardening
+
+Checked because the commissioning message was right that two spine corrections in one afternoon argue
+for looking harder at the rest, not less.
+
+- **§4 (the Ascencio caveat) — PASS.** `p = 0.432` on 2 dof, `1.68/2`, `ours/theirs = 1.092` and `1.063`,
+  both maximal common super-cells low-E_avail: all match `VALIDATION_LEDGER.md:1314-1320`. *"Shipped
+  three caveats"* is exact — `nd-unfolding/compare_ascencio_fullcov.py:21-26` enumerates three. The
+  heading's tense (*"a caveat it did not **previously** carry"*) is correct: the ledger now carries it at
+  `:1326`.
+- **§5 items 1, 3, 4, 5 — PASS.** Item 4 is at full advisory strength and was the one I was asked to
+  check for softening; it is not softened.
+- **The `P7` / `OI-40` status claims — PASS.** `OI-40` is `BLOCKED` with exactly the stated condition;
+  `PUBLICATION_COMPLETION_RUNBOOK.md:257` §P7 covers note updates and externally-tracked `OPEN_ITEMS`
+  questions, so *"the analysis note absorbs this at Packet P7"* is supported.
+- **Scope creep after both rewrites — still PASS.** Nothing adopted, nothing unfrozen.
+- **One hardening, low severity.** §4: *"`p = 0.432` on 2 dof **separates nothing**."* Advisory §6 says
+  it *"cannot distinguish a **~10%** definitional offset from noise either way."* Dropping the scope
+  turns a bounded statement into an absolute — `p = 0.432` on 2 dof would separate a 100% offset
+  perfectly well. The document's conclusion does not depend on the stronger form.
+
+---
+
+# V44–V49 — independent pass on Gate 6 Leg F floor replication (`2fecce7`)
+
+Second assignment, kept separate from the E_avail pass. Artifacts: `nd-unfolding/pet/gate6_floor_statistics.py`,
+`PREDECLARATION-20260813-gate6-floor-replication.md`, `state/gate6-floor-replication-partial-56863958.json`,
+`VL116–VL120`. Read-only; the only write is my own mutation harness under `state/`.
+
+**Headline: this is the most defensible artifact I have audited on this campaign.** Five of the six
+things I was asked to attack hold, and two of them hold by a stronger route than the one proposed.
+**One real hole**, and it is in the test battery rather than the code. **One promotion of the
+iteration-0 observation did occur — not in B's artifacts, but in the message that asked me to watch
+for it.**
+
+## V44 — thresholds tuned to the data? PASS, and the timestamp question is not the one that settles it
+
+The brief said to check B's authoring claim *"against commit timestamps and job states, not against
+B's account."* **Timestamps would have been the weak check, and they are unnecessary.**
+
+`git log` on the predeclaration returns **exactly one commit** — `2beead8`, 08-13 09:21, *"committed
+BEFORE submission"* — and **`git diff 2beead8 HEAD` is empty**. All three frozen numbers are inside
+that blob: `0.05` and `0.10` at `:93-94`, `0.1740029887300910` at `:97`. **So the thresholds were fixed
+at 09:21, before any draw existed, whatever time the statistics script was authored.** That is a content
+check on an immutable object; it does not depend on trusting a timestamp, a job state, or B's account,
+and it is strictly stronger than all three. **V49 answers item 5 with the same evidence.**
+
+The derivation also traces: `0.1740029887300910 = 0.5 × S_range[2]`, `S_range[2] = 1.1014828481277632 −
+0.7534768706675813`, and those two operands are `VL117`'s and `VL120`'s iteration-2 values — the
+committed five-member spread, which predates the floor entirely. Re-derived: the subtraction is exact
+in IEEE double.
+
+**One note, immaterial to the verdict.** `0.5 × 0.3480059774601819` is `0.17400298873009096`; the
+predeclaration writes `= 0.1740029887300910`, which is that value rounded to 16 significant figures.
+The gap is 4e-17 and no physically-derived `F_range` will land inside it. **The code handles this
+correctly and deliberately** — `_verify_frozen_threshold_against_member_receipts` checks
+`S_RANGE_2_MAX`/`S_RANGE_2_MIN` with exact equality, i.e. the **operands**, never `0.5*S == THRESHOLD`,
+which would fail closed on its own predeclared constant. Worth one word in the predeclaration: that `=`
+is `≈ to 16 s.f.`
+
+## V45 — branch 1's unreachability: a theorem, PASS, and it rests on a second rule
+
+`F_range[2] = 0.0523993868023519 > 0.05` on draws 1–3. For any superset `S' ⊇ S`, `max(S') ≥ max(S)`
+and `min(S') ≤ min(S)`, so `range(S') ≥ range(S)`. Branch 1 requires `F_range[2] ≤ 0.05`. **Unreachable
+for any completion of the set.** Sound. It moves no threshold, selects no subset, and the receipt
+carries `still_a_verdict: False`.
+
+**The interlock is worth naming because it is load-bearing and undocumented.** The theorem holds only
+while draws 1–3 stay in the final set. A rule that allowed dropping an invalid draw and verdicting on
+the survivors could *shrink* the range and resurrect branch 1 — so the deduction's validity depends on
+the `do_not_select_passing_subset` clause, and that clause's value here is not just anti-cherry-picking.
+**Two rules holding each other up, which neither document says.**
+
+## V46 — the refusal test binds. Demonstrated by mutation, not by reading
+
+Item 3 asked whether the refusal test binds or passes vacuously — this campaign's signature defect, and
+not answerable by running a suite that passes. So I broke the code and checked the battery noticed:
+[`state/probe-gate6-floor-mutation-20260813.py`](state/probe-gate6-floor-mutation-20260813.py), which
+copies module and tests to a scratch dir and mutates the **copy**. Predeclared: every mutation removes a
+property the battery claims to test, so every one must produce a failure.
+
+| mutation | result |
+|---|---|
+| M1 refusal removed (`if False:`) | **2 failed** — caught |
+| M2 refusal kept, but stops naming `do_not_select_passing_subset` | **1 failed** — caught |
+| M3 process threshold `>=` → `>` | **1 failed** — caught |
+| M4 seed threshold `<=` → `<` | **1 failed** — caught |
+| M5 band condition dropped from branch 1 | **2 failed** — caught |
+| M6 frozen `THRESH_PROCESS_RANGE` silently retuned to `0.05` | **8 failed** — caught |
+| M7 sd `n-1` → `n` | **2 failed** — caught |
+| M8 `F_range` sign flipped | **7 failed** — caught |
+| **M9 `abs()` dropped from `d_by_draw`** | **52 passed — SURVIVED** |
+
+**M2 is the direct answer to item 3: the assertion on the prohibition's name binds.** Keeping the
+refusal but renaming the message still fails the test. Not vacuous.
+
+## V47 — BLOCK-worthy as a coverage finding: the band check's below-1 side is untested
+
+**M9 survives all 52 tests.** `d_by_draw[j] = abs(v[j,k] − 1.0)`; drop the `abs` and **every draw below
+1 is unconditionally in-band, however far below.** The band check would then only ever catch draws
+*above* 1.
+
+All four band tests exercise the above-1 side only:
+
+- `test_small_range_but_a_draw_outside_the_band_is_intermediate_not_seed_determined` — values `1.20, 1.21`
+- `test_band_boundary_is_inclusive`, `test_band_one_float_step_outside_is_not_inclusive`,
+  `test_a_single_draw_outside_the_band_is_enough_to_fail_branch1` — all via `stats_at`, which
+  **hand-builds the stats dict and never calls `floor_statistics`**, so the `abs` is not on their path
+  at all.
+
+`stats_at`'s docstring is candid that it bypasses values (*"`<=` vs `<` at the boundary … is only
+testable at the predicate"*) and says *"the value-driven tests below cover the wiring."* **They cover it
+on one side.**
+
+**Why this side and not the other matters here.** Members 4 and 5 sit at `0.819792` and `0.753477` at
+iteration 2 — below 1. Draw 3's iteration-0 value is `0.8400`. **The below-1 half of the band is exactly
+where this campaign's data lives**, and it is the half the battery cannot defend. `d = −0.16` reads as
+in-band without the `abs`.
+
+**The code is correct.** This is a hole in the instrument protecting a frozen rule from, in B's own
+words, *"a future edit under schedule pressure."* Same shape as `BEN-173`: a control present for one
+sibling and absent for its mirror. `BEN-180`.
+
+### My own mutation was void first, and reported a hole that was not there
+
+M7's first form replaced the string `ddof=1` — which occurs **only in a docstring (`:198`) and a key
+name (`:219`)**; the sd is computed by hand. The regex mutated prose, changed no behaviour, and my
+harness printed **SURVIVED**. I nearly reported a hole in B's battery that was a hole in my harness —
+and `test_sd_is_ddof1_not_population` is a perfectly good binding test, as the corrected M7 shows.
+**A mutation harness that can silently mutate a comment manufactures false holes**, and "the mutation
+applied" is not the same check as "the mutation applied to executable code." Kept in the committed
+harness as `M7void` rather than deleted. `BEN-181`.
+
+## V48 — the iteration-0 discipline: B's artifacts PASS; the framing that reached me did not
+
+**B declined the promotion, explicitly.** The receipt's `why_provisional` reads *"the VERDICT is defined
+at iteration 2 only and requires all five draws present and valid. **Do not quote any number here as
+'the across-process floor'.**"* The `HEADLINE` carries no iteration-0 claim. Item 4 passes on the
+artifacts.
+
+**It does not pass on the message that assigned me item 4.** That message's lead is: *"draw 3 … its
+`v[0] = 0.8400` sits between members 4 (`0.8748`) and 5 (`0.7614`) … If that holds, some of what Gate 6
+recorded as a seed effect is process noise."*
+
+**All three of those numbers are iteration-0 values.** `0.8748` and `0.7614` are the *first* entries of
+`VL119` and `VL120`; those members' **iteration-2** values are `0.819792` and `0.753477`. And at
+iteration 2 — the only iteration where the verdict is defined — draw 3 reads `0.9431`, which does not
+sit between them but well above both, and `F_range[2]` is **15.1%** of the member spread rather than
+**89.6%**.
+
+**So the conclusion is supported at iteration 0 and unsupported at iteration 2.** Recorded without any
+suggestion of bad faith: the iteration-0 number is the arresting one, which is precisely why the
+discipline was predeclared, and B holding the line while the relay did not is the ordinary way a
+predeclaration earns its keep. **Flagged because that framing is one hop from Joseph.**
+
+## V49 — the predeclaration is genuinely unedited: PASS
+
+One commit in its history (`2beead8`), `git diff 2beead8 HEAD` empty. B corrected the now-false claim in
+the RUN_LOG rather than editing the frozen document, exactly as reported.
+
+## What this pass did not establish
+
+- **No Slurm reach**, so *"3 of 5 draws, tasks 2 and 3 COMPLETED"* is B's measurement, not mine. I
+  verified the *rule* and the *battery*, not the job states or that the receipt's `v` values were read
+  off the artifacts they claim.
+- **I did not verify the eight validity clauses against real draw artifacts** — only that each has an
+  independent test that fails on a single degradation, which the battery does provide.
+- **`52 passed` is not coverage.** Nine mutations is a sample of the mutation space; M9 was found
+  because I went looking at the `abs`, and there may be other survivors I did not construct.
+
+## Gate 5 and Gate 6 — deliberately not reported
+
+The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*
+**I cannot: this session has no Slurm reach.** So I report nothing. What I verified from the tree alone:
+Gate 6's block at `19585b7` is intact, and lane B's `PLAN-20260813-gate6-cml-retry-design.md` and
+`PREDECLARATION-20260813-gate6-floor-replication.md` landed on `origin/main` as **design and
+predeclaration documents**, which is what B is authorised for. **No evidence of movement toward
+constructing `C_ML`.** That is "no committed movement," not "B is not executing" — this session still
+cannot read another worktree's uncommitted state, the same limit recorded in V32.
+
