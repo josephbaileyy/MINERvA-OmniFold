@@ -245,3 +245,76 @@ what made this catchable."* D corrected that against its own credit: it could no
 UNRESOLVED was the only honest verdict available — the label was not evidence of care. **The generalisable
 form is: a proxy stated as a proxy costs one command to refute; a proxy stated as a measurement costs a
 retraction.** D got the cheap failure because the expensive one was not available to it.
+
+---
+
+# LAUNCH AUTHORIZATION RECEIVED, AND NOT ACTED ON — the premise does not hold (2026-08-13)
+
+Joseph, verbatim via the mediator: **"Launch it"**. Same transcription chain and same
+approval-by-reference status as the disposition above; the summary it answers is the mediator's,
+`[CLAUDE]`-class, and the mediator has stated that an error in that summary is its own and routes back
+through it to him.
+
+**Nothing was submitted. No flag was flipped. No artifact was touched.** Reasons, each measured:
+
+## 1. There is nothing to launch — the annealed production nominal already exists
+
+| evidence | value |
+|---|---|
+| `pet_fullevent_nominal_weights.npz` | 10,001,677 B, `.done` marked `2026-08-10T18:00:43Z`, job `56563761` |
+| `pet_fullevent_floor_weights.npz` | 9,928,916 B, `.done` marked |
+| completion receipt | `state/annealed-nominal-complete-56563761.json`, `.accounting.job_id 56563761` |
+| arm | `.seed_policy.lr_schedule = fit-time-anneal-after-iteration-0` — **this is the annealed arm** |
+
+## 2. Both launchers would be refused, and the named one was the wrong one
+
+The instruction named `sbatch_pet_fullevent_nominal.sh`, which writes to `fullevent_nominal/`. **Job
+`56563092` used exactly that launcher and was correctly refused** — the 2026-08-08 artifact there is
+complete, and the driver will not overwrite a finished publication artifact. Its own header:
+*"that guard was right and the refusal cost 1:12 instead of destroying the baseline that the
+predeclaration, CLM-012's measured values, and the entire shape-validation chain are measured against."*
+
+The annealed arm's launcher is `sbatch_pet_fullevent_nominal_annealed.sh`, and **it would be refused on the
+same guard** — `.done` markers present, and it deliberately omits `--allow-overwrite`. **The only way to
+force either through is `--allow-overwrite`, which destroys a completed publication artifact. Declined.**
+
+Also, `lr_policy` **has no flag by design** (`sbatch_pet_fullevent_nominal_annealed.sh:52`); the arm comes
+from the driver's declared `NOMINAL_SEED_POLICY`. So *"submit on the annealed arm"* was not an available
+operation on the launcher named.
+
+## 3. The decisive one — the selected artifact failed its predeclared reproduction test
+
+```
+.predeclared_reproduction.nominal.verdict        FINDING_CODE_PATHS_DISAGREE
+.predeclared_reproduction.matched_floor.verdict  FINDING_CODE_PATHS_DISAGREE
+.scope.artifact_promoted                         False
+.scope.recovery_evaluated                        False
+.status  COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM
+```
+
+With the predeclaration's own formula `dev = (sum_w_push_reco/sum_w_reco)/R − 1`: **`dev = −0.0356090`**
+against the predeclared PASS window **`[−0.021724, −0.001724]`** — missing the low edge by **0.0138850**,
+where **−0.011724** was expected. Cross-checked against a second instrument: this equals the trajectory
+receipt's annealed `iter2` end-to-end figure `0.9643910289626595` exactly.
+
+**Correction against Session A, made before it left the session:** A first computed this as `+0.084053`
+by taking `ratio − 1` instead of the predeclared `(push/R) − 1`, which overstates the miss by ~6×. The
+error was caught by reading the predeclaration's formula rather than assuming the field was already a
+deviation — the same defect class as reading `FIRST_LEG_ONLY` for `end_to_end`, one artifact over.
+
+## So the operation Gate 4 needs is a PROMOTION, not a launch
+
+The annealed launcher states it: *"Whether it ever becomes the canonical nominal is a PROMOTION decision
+and Joseph's — he authorized the run, not a promotion."* **And that promotion would make canonical an
+artifact carrying an unresolved predeclared finding** — materially different from the summary he answered,
+which described training a nominal at *"low and reversible risk."* Training already happened; the exposure
+is not a failed job but a canonical nominal with a FINDING on it. **Routed back to him through the
+mediator as one question: promote as-is, or resolve `FINDING_CODE_PATHS_DISAGREE` first?** Neither needs a
+GPU.
+
+## `nominal_pet_training_allowed` needed no flip and never did
+
+**`True` in all four Gate-4 code-gate receipts** — `20260810`, `20260810b`, `20260810c`, and the newest
+`20260812` — since 2026-08-10. `KNOWN_ISSUES-ARCHIVE-2026-08.md` recorded that correction on 2026-08-11.
+The `false` claims survive only in prose, **including a `PET_UQ_REMEDIATION_STATUS.md` line Session A
+wrote earlier tonight from the status file instead of the gate.** Corrected there, in place, attributed.
