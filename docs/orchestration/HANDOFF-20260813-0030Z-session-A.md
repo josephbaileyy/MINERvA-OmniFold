@@ -191,3 +191,37 @@ The full measurement happens to agree (2,307 of 2,307 present), so the conclusio
 Ask Joseph one question, and it is genuinely his: **raise the allocation, or move to CFS?** Both are
 approved-in-spirit and only one is reversible. If the answer is move, execute all four steps as written —
 the instruction is sound. **Until then: nothing moved, nothing deleted, nothing newly archived.**
+
+---
+
+## STAND-DOWN — JOSEPH DECIDED. THE MOVE IS OFF. (2026-08-13)
+
+**Do not resurrect the transfer from the instruction recorded above.** It is superseded. Joseph, verbatim
+via the mediator, answering the one question Session A escalated:
+
+> No that sounds good, can you make a ledger for things to do once I get back to my computer. It should be
+> find for now as long as it doesn't take up more than my fair share
+
+**`"No that sounds good"` chose the Ben route over the CFS move, and upheld the refusal of step 3.** So:
+**nothing moves, nothing is deleted, nothing new is archived.** The four-step ordering above remains
+correct *if* the decision ever reverses — it is kept for that reason and for no other.
+
+**The honest reading of his last clause, recorded instead of the comfortable one.** *"as long as it doesn't
+take up more than my fair share"* — he is at **~2.6x his allocation right now**, which is more than his
+share by definition, and is why his PI received a notice at all. **Nothing is at risk and nothing is
+urgent, but the current state is tolerated, not neutral.** A successor should not read "it should be fine
+for now" as "there is no problem"; it means the problem is not urgent, and `OI-49` is how it stops.
+
+**His ledger is `OI-49` … `OI-52` in `docs/OPEN_ITEMS.md`, as `WAITING-USER` rows — not a new file.** He
+warned in the same breath that stored artifacts contaminate future sessions, so answering that message
+with a parallel to-do document would have been the wrong shape. 15 `WAITING-USER` rows already existed;
+this uses the established status and id scheme.
+
+**The mediator's proposed fifth ledger item is WITHDRAWN, not deferred.** It read: *"the 1 missing upstream
+file — 1 of 2,308 manifest paths absent from scratch… load-bearing: the keep-the-240-on-tape decision rests
+on that chain being intact."* **There is no missing file.** `test_Data.txt` and `test_MC.txt` lack trailing
+newlines, so `cat *.txt` fuses the last line of one with the first line of the next and manufactures a
+2,308th "path" that was never a path. Proven: the fabricated string is exactly that concatenation, it does
+not exist on disk, and nothing was lost (`per-file set minus cat set = 0`, because both real lines recur in
+the `1A_*` manifests). **The chain is 2,307 of 2,307 present, 0 missing.** `BEN-198`, and the unreconciled
+2308-vs-2307 in my own two walks is what let it propagate.
