@@ -1126,3 +1126,77 @@ the reco half of this verdict is closed over the covered set. `unfold_3d_omnifol
 this tree at all**, so any 3D-specific claim is outside what I checked. The quoted hashes were truncated
 to 8 hex characters, which I did not re-verify.
 
+---
+
+### V25 — independent derivation of the 5D reported-bin mapping, and a discriminating test
+
+Derived from artifacts without reading Session A's mapping or code. **Read-only, local tree at
+`origin/main`. I opened no ROOT file: `CEN5`, `CEN4` and the covariance are cluster paths and this lane
+has no cluster access**, so this is the mapping plus a test someone with access must run — not a
+completed check.
+
+## The mapping
+
+    p4_lib.py:22    GRID_NBINS = 65856   # 14*16*7*7*6 full 5D grid (pt,pz,eavail,q3,W)
+    p4_lib.py:1106  require(m.ndim == 1, "mask must be 1-D (C-order ravel over the 5D grid)")
+    p4_lib.py:750   vol = _np.multiply.outer(vol, w).ravel()   # C-order product of bin widths
+    p4_evidence.py:112  man = {"grid_nbins": P.GRID_NBINS, "corder": "C", ...}
+
+    flat = ((((i_pt*16 + i_pz)*7 + i_eavail)*7 + i_q3)*6 + i_W)
+    C-order strides   pt 4704 · pz 294 · eavail 42 · q3 6 · W 1
+
+Row `r` of `hCov_combined5d_total_uthrow` is the `r`-th `True` of that 1-D ravel in ascending flat index.
+
+**Corroborated from a second, independent file.** The axis lengths are not taken from `p4_lib.py`'s
+comment alone — `unfold_nd_omnifold_unbinned.py`'s edge table gives `eavail` 8 edges = **7** bins (`:76`),
+`q3` 8 edges = **7** (`:81`), `W` 7 edges = **6** (`:93`), matching `14*16*7*7*6` in the stated order.
+Two files, one written for the covariance path and one for the unfolder, agree on the factorization.
+
+## THE HAZARD THIS TASK EXISTS FOR, MADE EXPLICIT
+
+**`eavail` and `q3` both have length 7.** A swap of those two axes is **dimensionally silent** — the
+reshape succeeds, no error is raised, every downstream shape check passes, and the projection is
+plausible. Their *edges differ* (`eavail` `[0,.1,.2,.4,.8,1.5,3,100]` vs `q3` `[0,.2,.4,.6,.8,1.2,2,100]`),
+so the result is wrong physics with correct arithmetic. **This is the one transposition a convention
+string cannot exclude and a shape assertion cannot catch**, and it is between the two axes most easily
+confused. `corder: "C"` in the manifest is a *declaration*; it is not evidence that the producer honoured
+it.
+
+## The discriminating test — uses a SEPARATE artifact, not this mapping's assumptions
+
+Marginalise the 5D mask over `W` and compare it to the independently stored **4D** mask.
+
+    m5 = mask5d.reshape(14,16,7,7,6, order="C")
+    m4_from5 = m5.any(axis=4)              # -> (14,16,7,7)
+    compare against CEN4's own mask, reshaped (14,16,7,7);  14*16*7*7 = 10976 = 65856/6
+
+**Why it discriminates.** Under an `eavail`↔`q3` swap the `(eavail,q3)` plane of `m4_from5` is the
+**transpose** of the 4D mask, and the two edge vectors differ, so the masks are not symmetric and the
+comparison fails. Under F-order every axis is wrong and it fails harder. `p4_lib.py:990`
+`cmask_order_hash_4d` exists for exactly this object and its docstring at `:1009` states the property the
+test needs — *"a transposed/reshaped M cannot collide with the original."* So the comparison can be run as
+a hash equality rather than an array diff.
+
+**Discriminating power, stated rather than assumed:** the test fails under `eavail`↔`q3` transposition,
+under F-order, and under any axis permutation that moves `W`. It does **not** discriminate a `pt`↔`pz`
+swap (14 vs 16 — but that one is *not* silent: the reshape raises). It cannot detect an error present
+identically in both the 4D and 5D masks.
+
+## What I could not verify
+
+- **I opened no ROOT file.** The adopted covariance
+  (`.../universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`, 892,224,371 B), `CEN5` and
+  `CEN4` are all cluster paths. I state the path and size **as relayed**, not as read — the artifact
+  caution about the `_cvcentered` sibling and the `_archive_prehm_20260713` variant is exactly why I will
+  not assert which file I used when I used none.
+- **The 10,694 dimension is unread.** I did not confirm the matrix is 10,694-square, and I specifically
+  did not reconstruct it from file size: A's 890-vs-915 MB argument was arithmetically tight and false
+  because ROOT compresses, and the same trap is available to me.
+- **The 4D-mask test rests on one assumption I could not check**: that the 4D and 5D reported-bin
+  criteria are the same selection. `FINDING-20260809-stage6-central-gate-cannot-pass.md` records that
+  5D→4D marginal and independent 4D disagree at median 4.43% *in values*; whether their *masks* coincide
+  is a different question and I have not established it. **If they do not, the test needs a different
+  second artifact** — and that, not the mapping, is where I would look next.
+- 10,550 + 144 = 10,694 reproduces, so the PET-COMMON subset and the full GBDT reported set are distinct
+  as stated. I did not verify which set the stored matrix uses.
+
