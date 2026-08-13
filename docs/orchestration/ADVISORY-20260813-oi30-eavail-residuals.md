@@ -208,6 +208,28 @@ marginal** — sum the sub-blocks over the other four axes, retaining off-diagon
 `+1.049%` against *that*. Until then the honest claim is "consistent with immaterial, bracketed
 [7.7%, 297%] of the adopted uncertainty depending on correlation structure."
 
+**SCOUTED 2026-08-13 so the next reader does not repeat it — the projection is FEASIBLE, and the
+blocker is not the matrix.** Read-only, via `omnifold_py310`'s uproot on the cluster:
+
+- `nd-unfolding/uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`, 892,224,371 B.
+- Contents: `hCov_combined5d_total_uthrow` — a **TH2D of 10,694 × 10,694**, plus `hInflation_g`
+  (10,694 bins) and `TParameter`s `sqrt_tr_old` / `sqrt_tr_new`.
+- **So the stored matrix is on the FULL 10,694-bin GBDT set**, and the adopted `13.69%` is quoted over
+  the **10,550-bin PET-common subset** of it. Both numbers are right; they index different things,
+  which is the same distinction §6b's retraction records.
+- **The real blocker is the ORDERING, not the covariance:** projecting needs the map from each of the
+  10,694 rows to its `(pt,pz,eavail,q3,W)` cell in the `GRID_NBINS = 65856` grid — i.e. the reported-bin
+  mask and its C-order convention (`p4_lib.py` carries `mask_order_hash`, and `p4_evidence.py:112`
+  records `corder: "C"`). Get that right and the projection is a sum over sub-blocks; get it wrong and
+  it silently produces a plausible number.
+- Also present and relevant to `VL63`: a `_cvcentered` sibling (892,267,882 B), and a
+  `_archive_prehm_20260713/` copy — the `.prehm` construction, **not** the adopted one.
+
+**A caution from doing the scout.** I first inferred the matrix was 10,550² because a dense
+10,550²×8 B is 890 MB against the file's 892 MB, while 10,694² would be 915 MB — *larger than the
+file*. That reasoning is wrong: **ROOT compresses**, so a size argument cannot bound the dimension.
+Measured, it is 10,694². Recorded because the inference was clean, arithmetically tight, and false.
+
 **Two further caveats that the ratio hides, and neither is pedantry.**
 
 1. **The denominator has four live open items.** `VL62` (one-sided endpoint interpolation), `VL63` (CV
@@ -220,10 +242,17 @@ marginal** — sum the sub-blocks over the other four axes, retaining off-diagon
    comparison is an order-of-magnitude sanity check, not a derivation of the effect on a published
    value.
 
-**Ledger discrepancy noticed in passing, not chased:** line 1043 says **10,550** reported bins for the
-adopted 5D artifact; `VL62` at line 627 says **10,694** of `GRID_NBINS = 65856`. Both describe the
-adopted 5D covariance. A 144-bin difference changes the √n above by <1% and none of the conclusions,
-but two ledger lines disagreeing about the same artifact's bin count is worth someone's attention.
+**~~Ledger discrepancy noticed in passing~~ — RETRACTED 2026-08-13, THERE IS NO DISCREPANCY.** I flagged
+line 1043's **10,550** against `VL62`'s **10,694** as two numbers for one artifact. **They are two
+different SETS and the ledger already says so**, at line 1049: *"on the **10550** common 5D bins (GBDT
+reports **144** extra)"* — and `10,550 + 144 = 10,694` exactly. So `10,694` is the GBDT covariance's full
+reported-bin set and `10,550` is the subset **common to PET**; line 1043's own phrasing carries the
+qualifier, *"the 10550 bins PET also reports."* Line 975 likewise says *"10,550-bin reported mask."*
+**Nothing is owed and no row needs opening.** Raised by `personal-orchestrator`, verified here against
+lines 627/975/1043/1049 rather than accepted.
+
+**Kept rather than deleted, because I am the second reader to trip on it** — which makes it a fact about
+the ledger's readability, not about my attention. The resolution now lives at the point of confusion.
 
 ## 7. Explicitly could-not-determine — carried forward, not dropped
 
