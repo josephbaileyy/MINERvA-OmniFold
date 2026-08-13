@@ -34,6 +34,20 @@ def _load():
 
 R5 = _load()
 
+
+def _load_atomic_write():
+    spec = importlib.util.spec_from_file_location(
+        "atomic_write", os.path.join(HERE, "..", "pet", "atomic_write.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# The REAL marker producer. Fixtures used to hand-write {output, size, marked_at} with NO mtime,
+# which is why nothing here ever exercised is_complete's mtime axis: the primitive rejected every
+# fixture marker for a reason unrelated to whatever the test was probing.
+AW = _load_atomic_write()
+
 # Small inventories: the real ones are 4.1M/49M/565k rows, and the point of these tests is the
 # reconciliation logic, not the draw size. The factor STREAMS are still the production ones.
 N_DATA, N_SIG, N_BKG = 1000, 4000, 200
@@ -174,10 +188,37 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
     with open(rec, "w") as fh:
         json.dump(receipt, fh, indent=2, sort_keys=True)
     for subject in (npy, rec):
-        with open(subject + ".done", "w") as fh:
-            json.dump({"output": subject, "size": os.path.getsize(subject),
-                       "marked_at": "2026-08-13T00:00:00Z"}, fh)
+        AW.mark_complete(subject)
     return receipt, npy, rec
+
+
+def _code_block(tmp_root):
+    """The three code digests the producer records, backed by REAL files on disk.
+
+    They need to exist because `code_<role>_matches_disk` re-hashes each recorded path; with paths
+    absent the check silently skips, and a check that skips on every fixture is a check no test
+    covers. The loader digest is the pinned EXPECTED_LOADER_SHA, so its stub is written to hash to
+    exactly that -- the content is irrelevant, the digest is the contract.
+    """
+    d = os.path.join(tmp_root, "_code")
+    os.makedirs(d, exist_ok=True)
+    out = {}
+    for role, body in (
+        ("replica_driver", b"# replica driver stub\n"),
+        ("nominal_driver_unmodified", b"# nominal driver stub\n"),
+    ):
+        f = os.path.join(d, f"{role}.py")
+        if not os.path.exists(f):
+            with open(f, "wb") as fh:
+                fh.write(body)
+        out[role] = {"path": f, "sha256": R5.sha256_file(f)}
+    # The LOADER is the one role with a PINNED digest, and no stub can satisfy both the pin and a
+    # real on-disk file -- that would need a sha256 preimage. Real receipts satisfy both because the
+    # real loader genuinely hashes to the pin. So the fixture points it at an absent path: the
+    # per-member disk re-hash skips for this role, and `loader_sha256` covers it against the pin.
+    # Monkeypatching EXPECTED_LOADER_SHA instead would hide the pin rather than honour it.
+    out["loader"] = {"path": "/fake/loader.py", "sha256": R5.EXPECTED_LOADER_SHA}
+    return out
 
 
 def _build_train_receipt(idx, tmp_root, target_sha):
@@ -199,14 +240,16 @@ def _build_train_receipt(idx, tmp_root, target_sha):
                      "size_bytes": os.path.getsize(art), "completion_marker_valid": True},
         "target": {"path": "/fake/t.npy", "sha256": target_sha,
                    "receipt_path": "/fake/tr.json", "receipt_sha256": "trsha"},
-        "code": {"loader": {"sha256": R5.EXPECTED_LOADER_SHA},
-                 "replica_driver": {"sha256": "rdsha"},
-                 "nominal_driver_unmodified": {"sha256": "ndsha"}},
+        "code": _code_block(tmp_root),
         "evidence": {"rows": 1200, "n_data_full": N_DATA},
         "timing": {"total_seconds": 10000.0},
     }
     with open(rec, "w") as fh:
         json.dump(receipt, fh, indent=2, sort_keys=True)
+    # The training stage's own markers. The fixture created NONE before R2, which is exactly why
+    # BEN-157 item 2 -- "training PRESENT is receipt-only, no .done required" -- was invisible here.
+    for subject in (art, rec):
+        AW.mark_complete(subject)
     return rec
 
 
@@ -414,7 +457,7 @@ def test_done_sentinel_catches_a_post_completion_size_change(tmp_path):
     with open(npy, "ab") as fh:
         fh.write(b"extra")
     row = R5.reconcile_target(0, root, True, {})
-    assert "done_npy_records_current_size" in _failed_checks(row)
+    assert "npy_marker_is_complete" in _failed_checks(row)
 
 
 def test_missing_pieces_report_absent_not_pass(tmp_path):
@@ -892,3 +935,171 @@ def test_n_is_rejected_BEFORE_any_artifact_is_read(tmp_path):
     finally:
         sys.argv = old
     assert rc == R5.EXIT_USAGE
+
+
+# ---------------------------------------------------------------------------
+# R2 (BEN-157 items 2-5): derive from the filesystem and pinned constants, never from the receipt's
+# account of itself.
+#
+# The 90 tests above are the POSITIVE half -- every R2 check passes on a clean fixture, which is what
+# makes them checks rather than alarms. These are the other direction. Each one is an attack that
+# produced an EXACT PASS before R2, and the first is codex's own reproduction.
+# ---------------------------------------------------------------------------
+
+
+def test_a_receipt_AGREEING_with_a_wrongly_named_artifact_now_fails(tmp_path):
+    """CODEX'S ATTACK, verbatim. Before R2 this returned an exact FAMILY_COMPLETE_PASS with
+    trainings_name_mismatch=0 and the canonical filename absent from disk.
+
+    The NAME_MISMATCH guard could not catch it and still cannot: its stray scan is reachable only
+    when the receipt is ABSENT, so a receipt at the correct name never enters that branch. The guard
+    catches a file that disagrees with the launcher; only the canonical-path anchor catches a receipt
+    that AGREES with a wrong file.
+    """
+    root = str(tmp_path)
+    shas = _family(root, 1)
+    d = os.path.join(root, "replicas", "replica_00", "training")
+    canonical = os.path.join(d, R5.TRAIN_ARTIFACT_NAME)
+    moved = os.path.join(d, "UNEXPECTED_WEIGHTS.npz")
+    os.rename(canonical, moved)
+    AW.mark_complete(moved)
+    _mutate(os.path.join(d, R5.TRAIN_RECEIPT_NAME),
+            lambda o: o["artifact"].__setitem__("path", moved))
+
+    t = R5.reconcile_target(0, root, False, {})
+    row = R5.reconcile_training(0, root, t)
+    assert row["state"] == "PRESENT", "the receipt is present and correctly named; not a MISMATCH"
+    assert row["verdict"] == "FAIL"
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "artifact_path_is_canonical" in failed
+    assert not os.path.exists(canonical), "fixture must actually leave the canonical name absent"
+
+
+def test_the_canonical_path_check_PASSES_on_an_honest_receipt(tmp_path):
+    """Power test for the check above: it must be capable of passing."""
+    root = str(tmp_path)
+    _family(root, 1)
+    t = R5.reconcile_target(0, root, False, {})
+    row = R5.reconcile_training(0, root, t)
+    assert row["verdict"] == "PASS"
+    assert "artifact_path_is_canonical" not in {f["check"] for f in row["checks"]["failures"]}
+
+
+def test_weights_marker_catches_a_post_completion_change(tmp_path):
+    root = str(tmp_path)
+    _family(root, 1)
+    art = os.path.join(root, "replicas", "replica_00", "training", R5.TRAIN_ARTIFACT_NAME)
+    marker = json.load(open(AW.completion_marker_path(art)))
+    with open(art, "ab") as fh:
+        fh.write(b"tampered")
+    t = R5.reconcile_target(0, root, False, {})
+    row = R5.reconcile_training(0, root, t)
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "weights_marker_is_complete" in failed
+    assert marker["size"] != os.path.getsize(art)
+
+
+def test_a_missing_training_marker_is_caught(tmp_path):
+    """BEN-157 item 2: the training stage read NO markers at all before R2."""
+    root = str(tmp_path)
+    _family(root, 1)
+    d = os.path.join(root, "replicas", "replica_00", "training")
+    os.remove(AW.completion_marker_path(os.path.join(d, R5.TRAIN_ARTIFACT_NAME)))
+    t = R5.reconcile_target(0, root, False, {})
+    row = R5.reconcile_training(0, root, t)
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "weights_marker_present" in failed
+
+
+def test_marker_check_catches_an_MTIME_only_change_which_the_old_hand_rolled_one_could_not(tmp_path):
+    """THE proof that the primitive is CALLED rather than re-implemented (BEN-157 item 4).
+
+    Size is untouched, so the old size-only comparison passed. `atomic_write.is_complete` compares
+    size AND mtime, and the mtime is moved a full 100 s -- comfortably past its whole-second
+    resolution. If this test ever passes-as-clean, the delegation has been undone.
+    """
+    root = str(tmp_path)
+    _family(root, 1)
+    npy = os.path.join(root, "replicas", "replica_00", "target", "GATE5_REPLICA_TARGET.npy")
+    marker = json.load(open(AW.completion_marker_path(npy)))
+    size_before = os.path.getsize(npy)
+    os.utime(npy, (marker["mtime"] + 100, marker["mtime"] + 100))
+    assert os.path.getsize(npy) == size_before, "this probe must not change size"
+    row = R5.reconcile_target(0, root, False, {})
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "npy_marker_is_complete" in failed, (
+        "an mtime-only change was accepted; the tool is no longer delegating to is_complete")
+    assert AW.is_complete(npy) is False
+
+
+def test_a_marker_copied_from_another_replica_is_caught(tmp_path):
+    """The one thing is_complete does NOT do, which is why that check stays hand-rolled: it derives
+    the marker path from the subject, so a marker naming a DIFFERENT file satisfies it."""
+    root = str(tmp_path)
+    _family(root, 2)
+    npy0 = os.path.join(root, "replicas", "replica_00", "target", "GATE5_REPLICA_TARGET.npy")
+    npy1 = os.path.join(root, "replicas", "replica_01", "target", "GATE5_REPLICA_TARGET.npy")
+    m1 = AW.completion_marker_path(npy1)
+    payload = json.load(open(m1))
+    payload["output"] = npy0          # points at another replica's file
+    with open(m1, "w") as fh:
+        json.dump(payload, fh)
+    os.utime(npy1, (payload["mtime"], payload["mtime"]))
+    row = R5.reconcile_target(1, root, False, {})
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "npy_marker_names_current_subject" in failed
+
+
+def test_a_tampered_driver_file_is_caught_by_the_disk_rehash(tmp_path):
+    """BEN-157 item 5. The driver digests FLOAT by design, so no pinned constant can catch this;
+    re-hashing the recorded path can."""
+    root = str(tmp_path)
+    _family(root, 1)
+    stub = os.path.join(root, "_code", "replica_driver.py")
+    assert os.path.isfile(stub), "fixture must back the digest with a real file or nothing is checked"
+    with open(stub, "ab") as fh:
+        fh.write(b"# silently edited\n")
+    t = R5.reconcile_target(0, root, False, {})
+    row = R5.reconcile_training(0, root, t)
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "code_replica_driver_matches_disk" in failed
+
+
+def test_a_driver_that_changed_MID_FAMILY_is_caught(tmp_path):
+    """What neither a pinned constant nor a per-member re-hash can catch on its own: every member is
+    internally consistent, and they disagree with EACH OTHER."""
+    root = str(tmp_path)
+    _family(root, N)
+    rec = os.path.join(root, "replicas", "replica_07", "training", R5.TRAIN_RECEIPT_NAME)
+    _mutate(rec, lambda o: o["code"]["replica_driver"].__setitem__("sha256", "f" * 64))
+    AW.mark_complete(rec)
+    rc, rep = _run_main(root)
+    assert rc != R5.EXIT_COMPLETE
+    fired = {f["check"] for f in rep["family_checks"]["failures"]}
+    assert "invariant_constant_across_family[training.code.replica_driver]" in fired
+    # And the violation NAMES its members rather than reporting a boolean.
+    groups = rep["family_invariants"]["training.code.replica_driver"]
+    assert isinstance(groups, dict) and any(7 in v for v in groups.values())
+
+
+def test_the_three_code_digests_are_all_READ_not_just_the_loader(tmp_path):
+    """Item 5's positive half: a digest the tool never reads is a digest nobody checks."""
+    root = str(tmp_path)
+    _family(root, 1)
+    for role in ("replica_driver", "nominal_driver_unmodified", "loader"):
+        rec = os.path.join(root, "replicas", "replica_00", "training", R5.TRAIN_RECEIPT_NAME)
+        _mutate(rec, lambda o, r=role: o["code"][r].__setitem__("sha256", None))
+        AW.mark_complete(rec)
+        t = R5.reconcile_target(0, root, False, {})
+        row = R5.reconcile_training(0, root, t)
+        failed = {f["check"] for f in row["checks"]["failures"]}
+        assert f"code_{role}_digest_recorded" in failed, f"{role} digest is not read at all"
+        _mutate(rec, lambda o, r=role: o["code"][r].__setitem__(
+            "sha256", R5.EXPECTED_LOADER_SHA if r == "loader" else "0" * 64))
+        AW.mark_complete(rec)
+
+
+def test_the_tool_imports_the_real_completion_primitive(tmp_path):
+    """If this module ever stops being the canonical one, the marker checks silently change meaning."""
+    assert R5._aw.__name__ == "atomic_write"
+    assert os.path.realpath(R5._aw.__file__) == os.path.realpath(AW.__file__)

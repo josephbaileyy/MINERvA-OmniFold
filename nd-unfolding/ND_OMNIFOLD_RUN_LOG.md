@@ -6579,3 +6579,73 @@ sibling `NOTE.md`, and a successor's commit message are all neighbourhood.
 
 Campaign untouched by any of this: 25 of 50 training receipts, `PARTIAL`, `C_stat` null, R2/R3/R4
 unapplied and promotion still blocked.
+
+### 2026-08-13 ~17:20 PDT — BEN-157 R2: derive from the filesystem, never from the receipt's account of itself (lane C)
+
+One treatment for audit items 2–5 rather than four patches, which is the mediator's point that seven
+patches would leave an eighth. **R3 and R4 remain unapplied; promotion remains BLOCKED.**
+
+**Item 3.** The training stage hashed `art['path']` straight from the receipt, compared against
+nothing. It now hashes the canonical `GATE5_REPLICA_WEIGHTS.npz` and adds `artifact_path_is_canonical`,
+testing the receipt's path claim against the launcher's name. Codex's attack — rename the weights,
+update the receipt to match — produced an **exact pass** before and **fails** now. The asymmetry was
+inside one file I wrote: the target stage already had this anchor at `:324`.
+
+**Item 2.** The target stage read two `.done` sentinels; the training stage read none. It now checks
+the weights marker and the receipt's own.
+
+**Item 4.** The hand-rolled `done_*` size comparison is replaced by a **call** to
+`atomic_write.is_complete`, which compares size *and* mtime — so divergence becomes impossible rather
+than merely fixed once. One hand-rolled check is retained because it adds what the primitive cannot do:
+`is_complete` derives the marker path from the subject, so **a marker copied from another replica with
+matching size and mtime would satisfy it.** The import is **fail-loud**: this file deploys to scratch as
+a single script, and the tempting *"if atomic_write is missing, do the size-only check"* fallback **is**
+the defect, so it exits 3 naming the file to copy.
+
+**Item 5.** The tool read `head_at_runtime` — itself a *claim* in the receipt, not a measurement — plus
+one loader sha, while the producer records **three** digests and the launcher checks all three. Now all
+three are required present, re-hashed from their recorded paths where those resolve, and required
+**constant across the family**. Constancy rather than a pin because the driver digests **float by
+design** (OI-57/OI-58): a pin matches every member equally and so cannot catch a driver that changed
+*mid-flight*, which is the actual exposure. Named `code_<role>_matches_disk`, deliberately not
+`..._is_the_right_driver` — it proves the file at a recorded path matches its record, nothing more.
+
+**One check I drafted and deleted before running anything.** Codex reported that a receipt declaring
+itself invalid passes. True, but the sharper form is that **no receipt from this producer can declare
+itself invalid** — `train_fullevent_replica.py:358` writes the Python literal `True`. Requiring it would
+be a check that cannot fail, which is the class this whole repair is about. `weights_marker_is_complete`
+is the measurement it gestures at. Filed as `OI-66`.
+
+**And a check of mine that could not fail, caught by its own power test.** I put the training code
+digests at the row's top level; `constant_across_family` reads `row['invariants']`, so **every member
+resolved to `None`, producing one group — indistinguishable from unanimous agreement.** The invariant
+certified the family while measuring nothing. `test_a_driver_that_changed_MID_FAMILY_is_caught` failed
+because only the per-member check fired. Had I written the positive half alone this would have shipped
+green. The wider fix: `constant_across_family` now reports whether the path **resolved**, and both loops
+assert it — a latent trap that covered the twelve pre-existing target invariants too, not just mine.
+
+**Verified against the live family before landing, because fixtures prove logic and not
+deployability.** If any new assumption disagreed with production, R2 would fail all 50 members and block
+the campaign it exists to certify. Read-only: real `artifact.path` **is** canonical; both training
+markers **do** exist in production (the producer always wrote them — item 2 was a verifier gap, not a
+producer gap); all three code paths resolve inside `CODE_ROOT`, so the disk re-hash runs for all three
+including the loader; and **`is_complete` is false for 0 of 150 real subjects**, so delegating to the
+primitive does not reject the live family. Had any of those been false the right move was to hold R2,
+not weaken it.
+
+**Fixtures had three defects that hid these items**, repaired in the same commit: markers hand-written
+with no `mtime` (so the mtime axis was never exercised and the primitive rejected fixture markers for
+unrelated reasons), **no training `.done` at all** — codex's part-7 observation — and `code` digests with
+no `path`, so the disk re-hash would have silently skipped on every fixture.
+
+**90 → 100 tests.** Full suite 1297 passed / 4 failed, down from 7: all three hash-binding tests are
+green after lane A's Gate-4 retirement and this lane's Gate-2 one. The remaining four are pre-existing
+and outside my diff (shell-file count 354→357, a tensorflow config-gate leak, an absent `/pscratch`
+path, a temp-path assertion).
+
+**New deployment constraint created by R2:** `atomic_write.py` must be copied beside the reconciler.
+That belongs in the re-deployment step rather than being discovered during it (`OI-64`).
+
+Campaign this turn: `squeue -r` 17 PENDING / **8 RUNNING** — concurrency recovered from 2 as the
+partition freed up, which is external and keeps the ETA bounds rather than a time. 25 receipts of 50,
+`PARTIAL`, `C_stat` null. Nothing deployed, `CODE_ROOT` untouched, campaign not re-run.

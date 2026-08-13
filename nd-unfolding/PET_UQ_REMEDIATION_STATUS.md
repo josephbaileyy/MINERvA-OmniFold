@@ -419,6 +419,25 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 ~17:20 PDT — BEN-157 R2 landed; R3/R4 open, promotion still BLOCKED.**
+One treatment for audit items 2–5, not four patches. The training stage now hashes the **canonical**
+artifact path and tests the receipt's path claim against it (`artifact_path_is_canonical`), so codex's
+rename-plus-matching-receipt attack — an **exact pass** before — now fails; it reads its own `.done`
+markers, where it previously read none; `atomic_write.is_complete` is **called** rather than
+re-implemented, with one hand-rolled check retained for the thing the primitive cannot do (a marker
+naming another replica's file); and **all three** code digests are read, re-hashed from disk where the
+path resolves, and required constant across the family — constancy rather than a pin, because the driver
+digests float by design and a pin matches every member equally. **Verified against the live family
+before landing: 150 real markers, `is_complete` false for 0**; real `artifact.path` canonical; all three
+code paths resolving. `completion_marker_valid` is deliberately **not** required — the producer writes
+the literal `True`, so it would be a check that cannot fail (`OI-66`); I drafted that check and removed
+it. **One invariant of mine could not fail and its own power test caught it** (values at the row's top
+level, so every member resolved to `None` and one group read as unanimous); `constant_across_family` now
+reports whether the path resolved, which also covers the twelve pre-existing target invariants. 90 → 100
+tests; full suite 1297/4, down from 7 failures. **New deployment constraint: `atomic_write.py` must be
+copied beside the reconciler**, and the import is fail-loud rather than degrading. Receipt
+[`state/gate5-reconciler-r2-repair-20260813.json`](../docs/orchestration/state/gate5-reconciler-r2-repair-20260813.json).
+
 **Update 2026-08-13 ~16:10 PDT — BEN-157 R1 landed; promotion still BLOCKED pending R2/R3/R4.**
 `DECLARED_INVENTORY = 50` is pinned in the tool and bound by import-time assertion to `SEED_POLICY`,
 which already named it. `--n` is an **assertion only**, checked before any artifact is read, and a
