@@ -6385,3 +6385,90 @@ invisible to a digest check, which is the argument for using one.
 *across-process* floor exists to expose. Lane B recorded that as an honest caveat; the sharper statement
 is that the first wave could not have been the answer even at `n=5`. Task 4 is running on `nid008332` and
 is filling it rather than having it assumed.
+### 2026-08-13 ~15:50 PDT — codex's audit of the Gate-5 reconciler: seven items, all confirmed (lane C, BEN-157, OI-65)
+
+**Promotion is BLOCKED and I accept the block.** Codex's independent read-only audit of
+`reconcile_gate5_family.py` — a tool this lane wrote — reports seven defects. **Every one confirmed;
+none refuted.** Five reproduced by running the tool on synthetic families built from its own fixtures,
+two by reading code whose behaviour is not in doubt. Three carry qualifications and every qualification
+makes the finding **sharper**, not weaker. Nothing repaired: part 7 is pending, and a fix aimed at a
+milestone risks the wrong line.
+
+**The tool whose only job is to refuse a partial family passes on zero members.** `:528` is
+`--n type=int` with no floor and every completeness comparison is against it: `--n 0` on an empty
+directory returns **rc=0 and the exact `FAMILY_COMPLETE_PASS`**, and a real 3-member family passes at
+`--n 3` while being `PARTIAL` at `--n 50` — **the artifacts unchanged, only the caller's claim about
+how many there should be.** The file's own `:7` states the principle its parser does not enforce.
+
+**And my tests do not merely miss it; they are written in its idiom.** The complete-family test uses
+`n=3`, the clean-name test `n=2`, and `test_partial_family_is_PARTIAL_and_never_PASS` builds 2 and runs
+`n=3` — proving 2/3 ≠ 3/3, never 49/50 ≠ a *fixed* 50. **No test anywhere asserts `n` must be 50.**
+
+**The single sharpest line in the audit: `completion_marker_valid` is never read.** Grep returns two
+hits in the whole tree — the producer writing it at `train_fullevent_replica.py:358`, and **my own
+fixture copying it** at `test_reconcile_gate5_family.py:194`. Zero in the reconciler. The receipt
+asserts its own marker validity and nothing checks the assertion, so **a receipt declaring itself
+invalid passes.**
+
+**Yesterday's `NAME_MISMATCH` guard is routed around structurally.** The stray scan is reachable only
+inside `if not os.path.exists(rec)`, so a receipt at the *correct* name never enters it: rename the
+weights, update the receipt, and you get an exact pass with `name_mismatch=0` and the canonical
+filename absent from disk. **The guard catches a file that disagrees with the launcher; it cannot catch
+a receipt that agrees with a wrong file.** The guard itself is still sound — clean names stay silent,
+no false positive found — it is aimed one branch too narrowly. The asymmetry is inside one file I
+wrote: the target stage has the anchor at `:324`, the training stage has none.
+
+**The verifier checks a claim where the launcher checks content.** The producer records **three**
+digests (`:367-374`), the launcher checks all three plus HEAD (`:41-44`), and the reconciler checks
+`head_at_runtime` — **itself a claim in the receipt, not a measurement** — plus one loader sha. "The
+launcher checks them" is not a defence: `BEN-156`, filed this morning in this same tool, established
+that the executing copy can differ from the committed one, which is precisely the class an independent
+verifier exists for.
+
+**Required inputs are optional and their checks evaporate.** Null `R` and its operands, with the
+marker re-stamped so nothing else fires: `rc=0`, exact pass, **43 passed / 0 failed**,
+`r_derivation: {"R_recorded": null}`. Four checks vanished and nothing reported their absence — while
+`--skip-replay`, fifteen lines away, already implements the correct behaviour by downgrading the
+verdict to a named suffix. **I built the right mechanism for one optional check and applied it to none
+of the others.**
+
+**And the name-pin test never opens the launcher.** `test_expected_names_match_the_launcher` asserts
+the constants against **string literals duplicated in the test file**, under a docstring promising it
+pins them to the Slurm-captured batch script. **I described these to a peer as "constants pinned by a
+test to the launcher." That was false and is withdrawn here** — the test pins the constants to a copy
+of themselves, `BEN-149` exactly, inside the test written to prevent the filename defect I fixed at
+`69c577b`.
+
+**One invariant, not seven patches:** the reconciler derives every quantity it checks from the
+filesystem at canonical paths and from constants pinned in the tool, **never from the receipt's account
+of itself** — with the corollary that a required input which is absent **fails closed or downgrades the
+verdict**, and never silently removes its own check. Lane B reached the same sentence from provenance:
+both launchers **bind content, not HEAD**. B's HEAD-blob measurement also confirmed this morning's
+four-state classifier **from the direction it was not built for** — `git status` saying "modified" on a
+file byte-identical to `origin/main`, where mine says `STALE_BUT_COMMITTED` on one `git status` calls
+clean.
+
+**What is not invalidated:** 50 target receipts and 24 training receipts are real and passed their
+checks, and every campaign run used the default `n=50` and correctly reported `PARTIAL`. **What is
+blocked:** using this tool to *declare* promotability, because at a genuine 50/50 its exact pass is
+indistinguishable **in the artifact** from one emitted at a caller-chosen `n`, or on receipt-only
+trainings, or with the R checks never run. Not a wrong answer — **an unfalsifiable one**, the condition
+this tool exists to prevent elsewhere. **I will not run a promotion pass on the current tool even at
+50/50.**
+
+**Four of my own probes failed first, and the fourth is the one to keep.** The fixture writes markers
+with no `mtime`; my first `mtime` attempt landed in the same second as `mark_complete`; without `--out`
+the tool prints a condensed summary with no per-replica rows, so my probe printed `check failures:
+NONE` — **true of an empty dict, not of the run**; and my first null-R probe changed the receipt's byte
+size, so a marker check fired and returned `BLOCK`, **which would have read as refuting item 6**. I
+caught that, re-stamped, re-ran, and confirmed. Codex flagged the same confound independently and we
+agree — the coherent run was already done. Had I sent the confounded result it would have been
+`BEN-207` aimed at my own refutation.
+
+**The uncomfortable part, stated plainly: I could not have found this by auditing myself, because my
+tests share the tool's blind spot** — same idiom, same fixtures, same reasoning. That is a stronger
+argument for an independent lane than any process document.
+
+Campaign measured this turn: `squeue -r` 25 PENDING / 1 RUNNING, **24 training receipts** of 50, 50/50
+targets. `PARTIAL`, `C_stat` null. Nothing re-run against the campaign, nothing re-deployed, no code or
+test modified, `GATE5_CODE_ROOT` untouched.

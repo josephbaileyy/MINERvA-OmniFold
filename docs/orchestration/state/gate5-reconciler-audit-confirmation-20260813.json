@@ -1,0 +1,115 @@
+{
+  "artifact": "gate5-reconciler-audit-confirmation-20260813.json",
+  "lane": "C (PET), owner of reconcile_gate5_family.py",
+  "observed_pdt": "2026-08-13 ~15:50 PDT",
+  "purpose": "Independently confirm or refute the SEVEN defects codex's read-only audit reports in reconcile_gate5_family.py, and PROPOSE a repair without applying one. Nothing re-run against the campaign, nothing re-deployed, no code or test modified.",
+  "tool_under_audit_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
+  "audited_at_commit": "6bec32252614fd30f58fa4f651f74d79d313ef1d",
+  "audited_tree_equals_origin_main": true,
+
+  "VERDICT": "ALL SEVEN CONFIRMED. Not one refuted. Five reproduced by running the tool on synthetic families built from its own test fixtures; two confirmed by reading code whose behaviour is not in doubt (grep returning nothing, and a test that never opens the file it names). Three carry qualifications, and every qualification makes the finding SHARPER, not weaker. I accept the BLOCK on using this tool to declare promotability.",
+
+  "1_n_is_arbitrary": {
+    "state": "CONFIRMED",
+    "code": ":528 --n type=int, no floor, no bind to the predeclaration; :563/:567/:624-625 compare against args.n; rc0 on COMPLETE.",
+    "measured": {
+      "empty_dir_n0": "rc=0, exact FAMILY_COMPLETE_PASS, targets_present=0, trainings_present=0",
+      "real_3_member_family_n3": "rc=0, FAMILY_COMPLETE_PASS_REPLAY_SKIPPED, targets=3, trainings=3",
+      "SAME_family_n50": "rc=2, PARTIAL -- the artifacts did not change, only the caller's claim about how many there should be"
+    },
+    "codex_is_right_that_MY_TESTS_ENCODE_IT_and_this_is_the_worse_half": "test_complete_family_passes uses n=3, the clean-NAME test n=2, and test_partial_family_is_PARTIAL_and_never_PASS builds 2 members and runs n=3 -- proving 2/3 != 3/3, never 49/50 != a FIXED 50. No test anywhere asserts n must be 50. The suite does not merely miss the defect; it is written in the defect's own idiom, which is why 73 tests could not have found it.",
+    "blast_radius": "The only automated caller, sbatch_gate5_target_family_reconcile.sh:54, already passes --n 50, so binding n needs no launcher change."
+  },
+
+  "2_training_PRESENT_is_receipt_only": {
+    "state": "CONFIRMED, and the `completion_marker_valid` half is the sharpest single line in the audit",
+    "code": ":448-475 and :487-494. No canonical weights file required; no .done required at the training stage (the target stage reads two); artifact hashed at whatever path the receipt names.",
+    "completion_marker_valid_is_NEVER_READ": "VERIFIED by grep. It occurs exactly twice in the tree -- train_fullevent_replica.py:358 where the PRODUCER writes it, and test_reconcile_gate5_family.py:194 where MY OWN FIXTURE copies it. Zero occurrences in the reconciler. So the receipt asserts its own marker validity and nothing anywhere checks the assertion: a receipt declaring itself invalid passes."
+  },
+
+  "3_NAME_MISMATCH_only_scans_when_the_receipt_is_ABSENT": {
+    "state": "CONFIRMED",
+    "measured": "Renamed the weights to UNEXPECTED_WEIGHTS.npz and updated the receipt's artifact.path to match: rc=0, exact pass, trainings_passing=1, trainings_name_mismatch=0, canonical filename absent from disk.",
+    "why_structural_not_incidental": "The stray scan at :451-467 is reachable ONLY inside `if not os.path.exists(rec)`. A receipt at the CORRECT name never enters that branch. The guard catches a file that disagrees with the launcher; it cannot catch a receipt that AGREES with a wrong file.",
+    "the_asymmetry_is_inside_one_file_I_wrote": "The TARGET stage already has the missing anchor -- :324 step1_feed_path_is_this_replica_target compares realpath against the canonical npy. The training stage has no equivalent.",
+    "and_the_guard_itself_is_still_sound": "Codex confirms clean names stay silent and found no false positive. The power test holds. The guard is a check, not an alarm; it is just aimed one branch too narrowly."
+  },
+
+  "4_target_marker_validates_path_and_size_but_not_mtime": {
+    "state": "CONFIRMED, with two qualifications that change the repair",
+    "measured_with_a_REAL_mark_complete_marker": "Receipt rewritten and stamped 100 s later: atomic_write.is_complete=False while the row passes 47/0 and the family returns the exact pass, rc=0. Identical outcome for a same-size change to execution.host, which no check reads.",
+    "QUALIFICATION_A_where_it_actually_bites": "For the .npy the gap is largely closed by a check the audit did not credit -- :251 re-hashes the target from disk against the receipt -- so a same-size .npy mutation IS caught unless the receipt is updated too. But sha256_file is called on the npy, the training artifact and the source npz, and NEVER on a receipt. The sharp form is therefore not 'accepts same-size mutations' but: the receipt is the one file whose only integrity evidence is its marker, and the marker is checked on one of its two axes.",
+    "QUALIFICATION_B_the_primitive_is_itself_coarse": "is_complete compares int(st_mtime) -- WHOLE SECONDS. A same-size rewrite inside the same second is invisible to is_complete too. Found because a probe of mine landed in the same second and BOTH sides reported no change. So 'mirror is_complete' is a FLOOR, and a repair claiming to close this axis must name the residual it leaves."
+  },
+
+  "5_driver_hash_pins_are_the_launcher_s_job_and_not_the_reconciler_s": {
+    "state": "CONFIRMED",
+    "measured_by_reading_all_three_files": {
+      "producer_records_THREE_shas": "train_fullevent_replica.py:367-374 -- code.replica_driver, code.nominal_driver_unmodified, code.loader",
+      "launcher_checks_all_three_plus_HEAD": "sbatch_gate5_replica_train_array.sh:41-44 -- HEAD, DRIVER, NOMINAL, LOADER",
+      "reconciler_checks": ":483-485 -- head_at_runtime and loader_sha256 ONLY. One of the three driver shas the producer recorded is never compared."
+    },
+    "and_a_point_codex_did_not_make": "head_at_runtime is itself a CLAIM in the receipt, not a measurement. So the reconciler's entire provenance check is two self-reported strings, one of which stands in for two hashes that were actually recorded beside it.",
+    "why_the_launcher_checking_them_is_not_sufficient": "The launcher checks at submit time in whatever tree it runs from. BEN-156 established THIS MORNING, in this same tool, that the executing copy can differ from the committed one. An independent verifier whose provenance rests on the producer's own HEAD string cannot detect that class, which is the class it exists for. This is OI-57/OI-64's shape inside my own tool."
+  },
+
+  "6_required_inputs_are_optional_and_their_checks_evaporate": {
+    "state": "CONFIRMED",
+    "code": ":529-535 --source-npz and --nominal-target-sha default None; their checks are conditional at :571-584 and :598-601. Every R check at :350-395 is wrapped in isinstance() guards.",
+    "measured_null_R": "With step1_class_ratio and its operands nulled and the .done marker re-stamped so no other check fires: rc=0, verdict FAMILY_COMPLETE_PASS_REPLAY_SKIPPED, row PASS, n_passed=43 n_failed=0, failures NONE, r_derivation = {\"R_recorded\": null}. FOUR checks silently disappeared (47 -> 43) and nothing reported their absence.",
+    "THE_FIX_SHAPE_IS_ALREADY_IN_THE_FILE_and_that_is_the_finding": "--skip-replay does this CORRECTLY: the verdict downgrades to FAMILY_COMPLETE_PASS_REPLAY_SKIPPED, so a weaker run cannot claim what a stronger one claims, and there is a test pinning it. I built exactly the right mechanism for ONE optional check and applied it to none of the others. The repair for item 6 is not new machinery; it is applying a pattern that is fifteen lines away.",
+    "a_confound_I_hit_and_am_recording": "My first null-R probe changed the receipt's byte size, so done_receipt_records_current_size fired and I got BLOCK -- which would have read as a refutation of this claim. It was my probe's artefact, not the tool's virtue. Re-marked and re-run before believing either result."
+  },
+
+  "7_the_name_pin_test_never_opens_the_launcher": {
+    "state": "CONFIRMED, and I asserted the false version of this to the mediator in my own words",
+    "the_test": "test_expected_names_match_the_launcher asserts R5.TRAIN_RECEIPT_NAME == \"GATE5_REPLICA_TRAINING_RECEIPT.json\" and R5.TRAIN_ARTIFACT_NAME == \"GATE5_REPLICA_WEIGHTS.npz\" -- string literals DUPLICATED IN THE TEST FILE. Its docstring says 'Pin the names to what the Slurm-captured batch script actually sets. If the launcher changes, this is the test that should fail.' It does not open the launcher, so if the launcher changed the test would still pass.",
+    "MY_OWN_FALSE_STATEMENT": "I told the mediator these were 'constants pinned by a test to the launcher.' That is not true and I should not have said it. The test pins the constants to a copy of themselves, which is the exact defect -- BEN-149, a name that claims verification and thereby suppresses the check -- inside the test written to prevent the filename defect I fixed at 69c577b. Withdrawn here rather than quietly corrected.",
+    "repair": "The test must read sbatch_gate5_replica_train_array.sh and extract the names the launcher actually sets, and fail if either is absent from it. Power-test both directions: a launcher whose names match passes; a launcher text with either name changed fails."
+  },
+
+  "THE_CLASS_AND_WHY_SEVEN_PATCHES_WOULD_LEAVE_AN_EIGHTH": {
+    "the_mediator_s_diagnosis_which_I_accept_without_qualification": "Every one of the seven is the reconciler trusting a CLAIM instead of measuring the world: the caller's claim about inventory size, the receipt's claim that training happened, the receipt's claim about where its artifact is, a completeness claim that skips the canonical primitive, a HEAD claim standing in for two recorded hashes, checks that evaporate when their input is unrequested, and a test named for reading the launcher that reads a copy of its own string.",
+    "the_uncomfortable_part_stated_plainly": "I filed BEN-149 -- 'a name that claims verification suppresses the check' -- this morning, and wrote the gate in that class throughout. I could not have found this by auditing myself, because MY TESTS SHARE THE TOOL'S BLIND SPOT: they are written in the same idiom, with the same fixtures, by the same reasoning. That is the argument for an independent lane, and it is stronger evidence for it than any process document.",
+    "SINGLE_INVARIANT_for_the_repair": "The reconciler derives every quantity it checks from (a) the filesystem at canonical paths and (b) constants pinned in the tool, and NEVER from the receipt's account of itself. Corollary, of equal weight: a required input that is absent FAILS CLOSED or DOWNGRADES THE VERDICT -- it never silently removes its own check."
+  },
+
+  "PROPOSED_REPAIR_not_applied": {
+    "R1_bind_n": "DECLARED_INVENTORY = 50 beside SEED_POLICY (which already reads gate5-cstat-n50-v1, so the number is declared in the file and merely unenforced). --n becomes an assertion: mismatch exits 2, n<=0 rejected unconditionally. Exit 2 not 3, because a caller asking the wrong question is a usage error, not a family defect. Independent of the others and it is the one that gates promotion, so it can land first and alone.",
+    "R2_one_treatment_for_2_3_4_5": "Derive canonical paths in the tool and use the receipt only as a claim tested against them: hash os.path.join(d, TRAIN_ARTIFACT_NAME) rather than art['path']; add artifact_path_is_canonical mirroring :324; require and check .done at the training stage; replace the hand-rolled marker comparison with a CALL to atomic_write.is_complete so the tool cannot drift more permissive by construction, keeping the extra output-realpath check it adds; compare all THREE driver shas the producer records, not one; and read completion_marker_valid rather than letting the receipt assert it unchecked.",
+    "R3_fail_closed_for_optional_inputs": "Apply the --skip-replay pattern that already works to source-npz, nominal-target-sha and the R derivation: either require them, or downgrade the verdict with a named suffix so a weaker run cannot emit a stronger claim. A null R must produce a FAILURE or a downgraded verdict, never 43-of-43 clean.",
+    "R4_the_name_pin_test_reads_the_launcher": "Open sbatch_gate5_replica_train_array.sh, extract the names, assert against the file. Power-test both directions.",
+    "RESIDUALS_TO_RECORD_RATHER_THAN_CLAIM_CLOSED": "is_complete's mtime is second-resolution, so a same-size same-second rewrite stays undetected by either implementation. And no receipt is hashed against anything, which R2 does not fix; if that matters, receipts need a producer-side hash chain, which is a separate change and a separate decision.",
+    "SEQUENCING": "R1 alone unblocks the promotion question. R2+R3+R4 land together with power-tested coverage, and the n-parameterisation of the existing tests must land in the same commit or the suite keeps certifying the old idiom. NOTHING is applied before codex's part 7."
+  },
+
+  "WHAT_IS_AND_IS_NOT_INVALIDATED": {
+    "not_invalidated": "50 target receipts and 24 training receipts are real and passed their checks; every campaign run used the default n=50 and correctly reported PARTIAL, which is the conservative direction. The 29 per-member target checks and 11 per-member training checks that passed did pass.",
+    "blocked": "Use of this tool to DECLARE the family promotable. At a genuine 50/50 the exact FAMILY_COMPLETE_PASS it emits is indistinguishable IN THE ARTIFACT from one emitted at a caller-chosen n, from a family whose trainings are receipt-only, or from one whose R checks never ran. Not a wrong answer -- an unfalsifiable one, which is the condition this tool was written to prevent elsewhere.",
+    "my_position": "I accept the BLOCK. Gate 5 does not advance to extraction or centering until the verifier can tell a complete family from an empty one, and I will not run a promotion pass on the current tool even at 50/50."
+  },
+
+  "MY_OWN_PROBES_FAILED_FOUR_TIMES": [
+    "The test fixture writes .done markers with NO mtime, so is_complete failed for a reason unrelated to my mutation, while the mutation tripped a different check. The BLOCK I got was not evidence about markers at all.",
+    "My first mtime attempt landed in the SAME SECOND as mark_complete, so both sides saw nothing. That failure became qualification B on item 4.",
+    "Without --out the tool prints a CONDENSED summary with no per-replica rows. My probe parsed stdout, found none, and printed 'check failures: NONE' -- true of an empty dict, not of the run. A vacuous check reporting a clean result, inside a probe auditing vacuous checks. Fixed by reading --out and asserting the row count BEFORE reading rows.",
+    "My first null-R probe changed the receipt's size, so a marker check fired and produced BLOCK -- which would have read as refuting item 6. Re-marked and re-ran before believing it.",
+    "All four are the standing rule: establish a thing's write condition before reading it as evidence, including when the thing is your own probe's output."
+  ],
+
+  "WHAT_I_DID_NOT_DO": [
+    "Did NOT modify reconcile_gate5_family.py or any test. Repairs proposed only, per the instruction to wait for part 7.",
+    "Did NOT re-run the reconciler against the campaign and did NOT re-deploy any scratch copy.",
+    "Did NOT construct, centre or summarise C_stat, and will not at 50/50 on the current tool.",
+    "Did NOT touch GATE5_CODE_ROOT.",
+    "Did NOT accept any claim on report: five were reproduced by execution, two by direct reading, and three were qualified on the evidence."
+  ],
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "training_56857233_squeue_r": "25 PENDING, 1 RUNNING",
+    "training_receipts_on_disk": 24,
+    "targets": "50 of 50 COMPLETED",
+    "verdict": "PARTIAL",
+    "C_stat": null
+  }
+}
