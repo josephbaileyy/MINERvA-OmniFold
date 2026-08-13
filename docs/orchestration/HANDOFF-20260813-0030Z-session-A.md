@@ -251,3 +251,54 @@ newlines, so `cat *.txt` fuses the last line of one with the first line of the n
 not exist on disk, and nothing was lost (`per-file set minus cat set = 0`, because both real lines recur in
 the `1A_*` manifests). **The chain is 2,307 of 2,307 present, 0 missing.** `BEN-198`, and the unreconciled
 2308-vs-2307 in my own two walks is what let it propagate.
+
+---
+
+## STANDING GRANT — 2026-08-13: the default is now PROCEED, not ask
+
+Joseph, verbatim: *"Everything that requires a simple authorization should automatically get all go aheads.
+If there is a decision that needs to be made, it should be presented to me in a concise and simple manner"*.
+
+**Proceed without asking** when the evidence determines the answer and only a go remains — submitting a job
+the gates permit, writing a receipt a gate requires, superseding a stale record whose retraction already
+landed, running a read-only measurement, fixing a defect you found. **If you are composing a message whose
+content is "may I do what the evidence says" — do it and report it.**
+
+**Surface only four things:** a genuine choice turning on his priorities or physics judgment rather than
+gatherable evidence; an irreversible act whose evidence is **incomplete** (irreversibility raises the bar
+for "simple" — it is not exempt from the grant, but the evidence must be complete rather than merely
+convincing); anything foreclosing an option he might want while a cheaper reversible alternative is
+unanswered; anything outside publication scope.
+
+**The grant removes the asking, not the telling.** Completion, irreversible action taken, and
+idle-with-work-outstanding all still trigger a report.
+
+**And the principle behind it, which should change what we write:** a convention document costs tokens in
+every future session forever; a check costs zero and cannot be skipped. **Prefer the executable form of
+every rule.** This section is deliberately short for that reason.
+
+### Gate 5 and Gate 6 measured against the grant — one is NOT execution
+
+**`Gate 5` (F7 coherent statistical replicas) is NOT executable and is not a "go" item.** There is **no
+full-event replica implementation.** Measured: the only replica launcher is
+`sbatch_pet_bootstrap_replica.sh`, which runs `--mode pointcloud --model pet --smoke` against
+`of_inputs_pc_fullcloud.npz` — the recoil-representation cross-check path, which `KNOWN_ISSUES` entry 19
+records as unable to support a full-event result. And the full-event driver **fails closed on replicas by
+design**: `train_fullevent_nominal.py:252` raises *"receipt's target is bootstrap replica …, not the
+nominal (fail closed)"*. So Gate 5 is implementation work — coherent Poisson factors per inventory member,
+a persisted replayable seed policy, per-replica Stay-Positive refinement, and full factor/index hashing.
+
+**`Gate 6` (PET-specific ML ensemble) is one decision away from being execution.** The driver already
+supports what it needs — `--estimator-seed`, `--subsample-seed`, `--niter`, `--epochs`, `--max-events`,
+`--batch-size`, and it persists the **realized** `seed_policy` read off argv rather than the default
+(`train_fullevent_nominal.py:602`), which is exactly Gate 6's "persist all seeds". **What is missing is
+that the crossing is not predeclared** — no Gate-6 predeclaration exists — so member count and seed set are
+a choice, and per the boundary above that is Joseph's. Once chosen it is execution.
+
+**`OI-15` is VALID, not stale** — checked because it reads like the stale-status pattern. It says *"the
+driver lacks an estimator-seed override"*, and that is true of the **closure** drivers
+(`closure_powered_truth_reweight.py`, `closure_fullevent_fps.py`: zero occurrences), not of the nominal
+driver (one). Different driver, distinct from Gate 6's ensemble.
+
+**`OI-4`'s first prerequisite is discharged** by the nominal promotion at `6b68d12`; its second, the
+coherent ensemble, is Gate 5 and therefore still blocked on implementation.
