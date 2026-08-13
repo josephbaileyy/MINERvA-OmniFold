@@ -264,12 +264,29 @@ def _family(tmp_root, n, with_training=True):
     return shas
 
 
-def _mutate(path, mutate):
+def _mutate(path, mutate, remark=True):
+    """Rewrite a receipt, then RE-STAMP its completion marker by default.
+
+    Re-stamping models a real producer: anything that legitimately rewrites a completed file marks it
+    complete again. Without it, every `_mutate` call left the marker describing the PREVIOUS bytes, so
+    `..._marker_is_complete` failed for a reason unrelated to whatever the test was probing.
+
+    That made the suite intermittently red once R2 started delegating to `atomic_write.is_complete`,
+    and the flake was subtle in a way worth recording: most mutations here swap one 64-char hex for
+    another, so SIZE is unchanged, and `is_complete` compares `int(st_mtime)` at WHOLE-SECOND
+    resolution. A rewrite in the same second was therefore invisible and the test passed; a 50-member
+    loop that straddled a second boundary failed. Six consecutive clean runs, then one failure.
+
+    Pass `remark=False` when the test's whole point is a post-completion mutation -- there the stale
+    marker IS the thing under test.
+    """
     with open(path) as fh:
         obj = json.load(fh)
     mutate(obj)
     with open(path, "w") as fh:
         json.dump(obj, fh, indent=2, sort_keys=True)
+    if remark and os.path.exists(AW.completion_marker_path(path)):
+        AW.mark_complete(path)
 
 
 # ---------------------------------------------------------------------------
