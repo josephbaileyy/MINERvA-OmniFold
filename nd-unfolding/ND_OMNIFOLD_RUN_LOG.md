@@ -6211,3 +6211,52 @@ step. No subset selected, no central moved, no `C_ML` constructed, no reset cred
 `gate6-floor-replication-56863958` stays armed and carries the full rule, both thresholds, all eight
 validity clauses, the four non-establishments and all five prohibitions, so a successor that reads only
 the event still cannot over-conclude.
+### 2026-08-13 15:12 PDT — deployment parity: "committed" is not "running" (lane C, BEN-156, OI-64)
+
+Second instance of one class in a single day. A peer extended `reconcile_gate5_family.py` at `ac540d5`;
+the copy actually executing, at `/pscratch/sd/j/josephrb/gate5-reconcile-lanec/`, still held `69c577b`'s
+logic. `OI-57`'s `GATE5_CODE_ROOT` was the first instance, and **both were caught by attention rather
+than by mechanism.** A run against the stale reconciler would not have crashed: it would have written a
+correctly-schema'd family artifact — right field names, `tool_sha256` faithfully recording the stale
+hash — computed from superseded checks, with nothing in the output saying so.
+
+**The reflexive defence is itself the defect.** *"Is the running file's content in the repo?"* returns
+**true** on the stale copy, because the stale copy was committed. So the check committed here reports
+`STALE_BUT_COMMITTED` as a state of its own, kept apart from `UNCOMMITTED` because the two have
+different repairs (re-deploy vs find who hand-edited scratch), and from `IN_ODB_UNREACHABLE`, because
+`git cat-file -e` succeeds on a blob that `git add` created and no commit ever contained. Exit 2 means
+*could not look*; exit 3 means *looked and found drift* — separated so a mistyped path cannot read as a
+clean bill of health.
+
+New: `nd-unfolding/pet/verify_executing_copy_is_committed.py` with 20 tests, every check exercised in
+**both** directions. Power-tested on the real artifact rather than only on fixtures: fed
+`git show 69c577b:...`, whose sha256 `e536540d` is the exact `tool_sha256` recorded in
+`state/gate5-throughput-collapse-20260813.json`, i.e. **the file that was executing at 14:55 today** →
+`STALE_BUT_COMMITTED`, exit 3. The other direction, against every copy that exists on scratch → **3 of
+3 `CURRENT`, exit 0.** The copies were located by `find`, not from memory, and there are **three**, two
+of them peers' — a report naming only mine would have been incomplete in the direction that matters.
+
+Two corrections inside this same pass, both recorded rather than quietly absorbed. (1) The helper was
+first named `commits_containing_blob` claiming *"commits whose tree contains this blob"*; the live
+negative control listed `ac540d5`, which **removed** that content, because `--find-object` searches
+diffs, not trees. Renamed `commits_whose_diff_touches_blob` — `BEN-149`'s shape inside a tool written
+to catch that class, caught by reading output against a name. (2) Two zeros that were about my search:
+an **inferred** receipt path returned 0 (real root read out of the previous run's own artifact, where
+there are 23) and two guessed reconciler paths returned ABSENT (an unbounded `find` located three).
+Neither zero was reported as anything.
+
+Campaign state, measured this turn: targets `56857232` 50/50 COMPLETED; training `56857233` at 25
+PENDING / 2 RUNNING via `squeue -r`; 23 training receipts and 23 weights `.npz` on disk against 50
+target receipts; a basename census returns those three names and nothing else, so the `NAME_MISMATCH`
+surface is empty by measurement. Verdict **`PARTIAL`**, unchanged from 14:55, `C_stat` null. The
+reconciler was deliberately **not** re-run: the receipt count has not moved, so a re-run reproduces the
+15:02 artifact at the cost of ~23 × 49M-variate replays. Tasks 23 and 24 started 12:34:53 and land
+~15:35 PDT at the measured `3:00:30`.
+
+Lane B's array was **not** held. The mediator's arithmetic settles it: Gate 5 leads by ~9,760 priority
+points while accrual runs at ~2 points/minute, so closing that gap takes on the order of three days and
+freeing the accrual slots buys Gate 5 nothing measurable. Nothing on scratch was modified, re-deployed
+or cleaned; all three copies were already `CURRENT`.
+
+**The check has no caller yet — `OI-64`, stated rather than implied.** An unwired check is a check
+nobody runs, which is how this class got two instances in one day.

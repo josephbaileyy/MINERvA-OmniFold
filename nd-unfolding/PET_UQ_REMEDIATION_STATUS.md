@@ -419,6 +419,19 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 15:12 PDT — deployment parity checked and clean; still `PARTIAL` at 23 of 50.**
+Family state unchanged (50/50 targets, 23 training receipts, 23 weights `.npz`, `C_stat` null), so the
+reconciler was deliberately **not** re-run — the count has not moved, and a re-run costs ~23 × 49M-variate
+replays to reproduce the 15:02 artifact. What was checked instead is the thing no receipt covers:
+**whether the file that executes is the file that was committed.** A peer's `ac540d5` extension of
+`reconcile_gate5_family.py` had not reached the scratch copy running it, the second instance today of
+`OI-57`'s class. All three deployed copies (located by `find`, two of them peers') are now `CURRENT`
+against HEAD `4e88a13`. The fix is executable — `nd-unfolding/pet/verify_executing_copy_is_committed.py`,
+20 tests both directions, `STALE_BUT_COMMITTED` as a distinct state because the naive *"is it in the
+repo?"* check passes on exactly the stale file it must reject. Power-tested on `e536540d`, the file that
+was actually executing at 14:55. **It has no caller yet: `OI-64`.** `BEN-156`; receipt
+[`state/gate5-deployment-parity-20260813.json`](../docs/orchestration/state/gate5-deployment-parity-20260813.json).
+
 **Update 2026-08-13 14:55 PDT — target leg COMPLETE, training leg throttled by the cluster.**
 **Targets `56857232`: 50 of 50 COMPLETED and all 50 pass all 29 reconciliation checks** — all 50 target
 digests and all three factor-hash families distinct, none equal to the Gate-2 nominal, and all 50 `R`

@@ -1,0 +1,93 @@
+{
+  "artifact": "gate5-deployment-parity-20260813.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 15:12 PDT",
+  "observed_utc": "2026-08-13T22:12Z",
+  "purpose": "Close the request to record the scratch-reconciler drift trap, in EXECUTABLE form rather than as a written rule (CLAUDE.md: 'Prefer the executable form of any rule you are tempted to write down'). Read-only against the cluster; no job or scratch file modified.",
+
+  "THE_TRAP": "A commit lands in the repo and everyone believes the executing copy changed. It did not, because nothing copied it. Two instances today, same signature: OI-57's GATE5_CODE_ROOT (an unrepaired driver nearly shipped) and reconcile_gate5_family.py, extended on main while /pscratch/sd/j/josephrb/gate5-reconcile-lanec/ still held the previous logic. A git sha in a receipt is evidence about the REPO, not about what RAN.",
+
+  "WHY_THE_OBVIOUS_CHECK_IS_THE_WRONG_ONE": "The naive test is 'is this file's content in the repo?' and it passes on precisely the file you are trying to catch. The stale reconciler WAS committed, IS in history, and hashes to a real blob. A boolean check returns true. So the tool reports STALE_BUT_COMMITTED as a state of its own and never collapses it into either PASS or UNCOMMITTED -- the two failures have different repairs (re-deploy vs find out who hand-edited scratch).",
+
+  "TOOL": {
+    "path": "nd-unfolding/pet/verify_executing_copy_is_committed.py",
+    "tests": "nd-unfolding/tests/test_verify_executing_copy_is_committed.py",
+    "n_tests": 20,
+    "states": ["CURRENT", "STALE_BUT_COMMITTED", "UNCOMMITTED", "IN_ODB_UNREACHABLE", "MISSING"],
+    "exit_codes": {"0": "every pair CURRENT", "2": "usage or non-repo -- the tool COULD NOT LOOK", "3": "the tool looked and found drift"},
+    "why_2_and_3_are_distinct": "So 'could not look' can never be read as 'looked and found nothing', which is the write-condition rule applied to an exit status.",
+    "IN_ODB_UNREACHABLE_is_not_pedantry": "`git cat-file -e` succeeds on a blob that `git add` put in the object database and no commit ever contained. A tool testing object EXISTENCE would report that as committed provenance. Tested."
+  },
+
+  "LIVE_MEASUREMENT_all_deployed_copies_2026_08_13": {
+    "repo_head": "4e88a1353bbd2f5b67c9dc7da2b93ea7c32e68bd",
+    "repo_blob_at_HEAD": "590affaf0e61beaeb8bf5374c69301ae03a8b25f",
+    "expected_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
+    "copies_found_by_exhaustive_search": [
+      "/pscratch/sd/j/josephrb/gate5-reconcile-lanec/reconcile_gate5_family.py",
+      "/pscratch/sd/j/josephrb/gate5-target-recon.IQaLcx/nd-unfolding/pet/reconcile_gate5_family.py",
+      "/pscratch/sd/j/josephrb/gate5-target-validator-frozen-70be58a/nd-unfolding/pet/reconcile_gate5_family.py"
+    ],
+    "search_method": "find /pscratch/sd/j/josephrb -maxdepth 6 -name reconcile_gate5_family.py -- so the copy list is measured, not remembered. Three copies exist; a report naming only the one I deployed would have been incomplete.",
+    "verdict": "3 of 3 CURRENT, exit 0. Deployment parity is clean as of this observation.",
+    "note_on_the_two_peer_copies": "gate5-target-recon.IQaLcx and gate5-target-validator-frozen-70be58a are not this lane's deployments. They are at HEAD too, but they are a second surface for the same trap and nobody owns re-deploying them."
+  },
+
+  "POWER_TEST_ON_THE_REAL_ARTIFACT_not_only_on_fixtures": {
+    "why": "20 fixture tests prove the logic. They do not prove the tool would have caught TODAY'S drift. So the actual drifted file was reconstructed from history and fed in.",
+    "negative_control_input": "git show 69c577b:nd-unfolding/pet/reconcile_gate5_family.py",
+    "its_sha256": "e536540df5dce1f4c8947f7ccb57193be935c5b5d701296c3ef1440d4de90467",
+    "why_that_is_the_right_negative_control": "e536540d is the exact value recorded as `tool_sha256` in gate5-throughput-collapse-20260813.json's RECONCILIATION_STATUS block. It is not a synthetic old version -- it is the file that was actually executing at 14:55 PDT today.",
+    "result": {
+      "state": "STALE_BUT_COMMITTED",
+      "exit": 3,
+      "head_blob": "590affaf0e61beaeb8bf5374c69301ae03a8b25f",
+      "executing_blob": "40b50547a8b0bf5909cf7d889f83d8a93efc8ee8",
+      "commits_whose_diff_touches_it": ["ac540d5 (replaced it)", "69c577b (introduced it)"]
+    },
+    "BOTH_DIRECTIONS_CONFIRMED_ON_LIVE_DATA": "The current deployment returns CURRENT/exit 0 and the file that actually drifted returns STALE_BUT_COMMITTED/exit 3. A check that only ever passed would have shown the first result and nothing else."
+  },
+
+  "A_NAME_I_HAD_TO_FIX_IN_MY_OWN_TOOL": {
+    "what": "The helper was first written as `commits_containing_blob` with a docstring claiming 'commits whose TREE contains this blob'.",
+    "how_it_was_caught": "The live negative control listed `ac540d5` -- the commit that REMOVED that content. `git log --find-object` searches DIFFS, not trees, so it names both the commit that added the content and the commit that replaced it. The output contradicted the name.",
+    "fix": "Renamed to `commits_whose_diff_touches_blob`, and the output key to `commits_whose_diff_touches_executing_content`. The reachability conclusion is unchanged and still sound (a diff touching the blob implies some tree held it); only the claim in the name was too strong.",
+    "note": "This is BEN-149's shape appearing inside a tool written to catch that class, found by reading the output against the name rather than by review. Recorded rather than quietly renamed."
+  },
+
+  "A_SEARCH_ERROR_I_CAUGHT_IN_THE_SAME_PASS_and_why_it_belongs_in_this_receipt": {
+    "what": "Looking for the training receipts I first ran `find /pscratch/sd/j/josephrb/gate5_replicas/...` -- a path I INFERRED -- and got 0. I also queried two plausible reconciler paths and got ABSENT for both.",
+    "why_it_matters": "That is the same shape as the inferred-filename defect fixed at 69c577b, which would have reported `trainings_present: 0` forever. Both zeros here were about my SEARCH, not about the tree.",
+    "how_resolved": "Read the root out of the last run's own artifact (`family-20260813d.json` records `root`), then re-searched. Real root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50. Real copies found by unbounded find, not by guessing.",
+    "the_rule_this_supports": "An absent-verdict must name the path it searched, or it is unfalsifiable. Neither zero above was reported as a finding."
+  },
+
+  "A_THIRD_INSTANCE_FOUND_WHILE_FILING_THIS_ONE": {
+    "what": "Registering the two new files meant running docs/orchestration/generate_manifest.py. It indexes what it can SEE, including gitignored and untracked files, so run from this worktree it DELETED 39 rows for __pycache__/, .pytest_cache/, runs/*.log and state/locks/*.lock that exist in the main checkout and not here.",
+    "verified_before_acting": "All 39 confirmed gitignored (`check-ignore -v` names .gitignore:32 and :38) or untracked (`ls-files --error-unmatch` fails on them), and none present in this worktree.",
+    "why_it_is_the_same_class": "A generated index whose content depends on WHICH TREE generated it. 'Just regenerate it' is a silent deletion in every other tree, and whoever regenerates last wins. Same mechanism as deployment drift, one level up.",
+    "what_I_did_instead_of_letting_my_tree_win": "Committed a SUPERSET -- regenerated rows plus every HEAD row the regeneration dropped, sorted by path, with an assertion that no path is lost. Net +48/-24; the 24 deletions are metadata-only line/byte updates for files edited today.",
+    "side_benefit": "24 tracked files newly registered, including NINE FINDING-20260813-*.md (eight of them other lanes') that the manifest had never listed. 5 of the 14 findings dated today were registered before this pass; 14 of 14 are now.",
+    "not_filed_as_its_own_BEN": "It is BEN-156's mechanism applied to a generated file rather than a separate defect, so it lives in that finding rather than beside it in the ledger."
+  },
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "targets_56857232": "50 of 50 COMPLETED (unchanged).",
+    "training_56857233_squeue_r": "25 PENDING, 2 RUNNING",
+    "training_receipts_on_disk": 23,
+    "weights_npz_on_disk": 23,
+    "target_receipts_on_disk": 50,
+    "stray_filenames_in_the_tree": "none -- basename census returns exactly 50 GATE5_REPLICA_TARGET_RECEIPT.json, 23 GATE5_REPLICA_TRAINING_RECEIPT.json, 23 GATE5_REPLICA_WEIGHTS.npz and nothing else, so the NAME_MISMATCH surface is empty by measurement.",
+    "verdict": "PARTIAL, unchanged from the 14:55 observation. 23 of 50.",
+    "C_stat": null,
+    "why_the_reconciler_was_NOT_re-run_this_turn": "Receipt count is unchanged at 23, so a re-run would reproduce the 15:02 artifact at the cost of ~23 x 49M-variate replays. The cheap census is the right check until the count moves. Stated so this is a decision with a reason rather than an omission.",
+    "next_expected_change": "Tasks 23 and 24 started 12:34:53 PDT; at the measured 3:00:30 mean they land ~15:35 PDT."
+  },
+
+  "WHAT_I_DID_NOT_DO": [
+    "Did NOT modify, re-deploy or clean any scratch copy -- all three were already CURRENT, and gate6traj-reconcile-56847059 remains untouched with 25 members still to exec from it.",
+    "Did NOT hold or cancel lane B's g6_floor array. The mediator's arithmetic settles it: Gate 5 leads by ~9,760 priority points and accrual runs at ~2 points/minute, so closing that gap takes on the order of three days. Freeing the accrual slots buys Gate 5 nothing measurable.",
+    "Did NOT construct, centre or summarise C_stat. 23 of 50 is not a 23-replica ensemble.",
+    "Did NOT wire this tool into any launcher. It is a check with no caller yet, which is a real gap and is filed as OI-64 rather than left implied."
+  ]
+}
