@@ -118,8 +118,28 @@ RUN_LOG, and STATUS evidence. Present `xps2` recoil tensors remain scaffolding.
 
 ## Gate 2 — literal `negweight-refined` target
 
-**Current (2026-08-13): RE-ISSUED AND PASSED under D1/D2. Runtime PASS; independent review is the
-only open promotion requirement.**
+**Current (2026-08-13): RE-ISSUED, PASSED, AND FULLY PROMOTED under D1/D2. Both promotion
+requirements are closed.**
+
+- **Requirement 2** (ledger + RUN_LOG + STATUS) — closed by **Session C**, the paragraph below.
+- **Requirement 1** (independent receipt review) — **PASS**, **Session D**, `V21` in
+  `docs/orchestration/VERDICTS-20260811-session-D.md`, committed `dfc716f`. Hashes re-verified in D's
+  own tree rather than taken from C; every published binned number re-derived from the receipt's own
+  operands; `b4_gated` power-tested seven ways rather than read as prose.
+- **The one link D could not close, closed by Session A** — the target `.npy` digest lives on
+  `/pscratch` and D has no cluster access, so it rested on the lane that promoted the gate, which is
+  what requirement 1 exists to prevent. Measured by Session A (not C), 2026-08-13:
+  `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` = `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9`,
+  **18,723,004 B** — matching the receipt's own `.step1_feed.weights.sha256` and `.size_bytes`
+  exactly. **So no link in the promotion chain rests on the promoting lane.**
+- Corroboration from a second instrument, D's: `(18,723,004 − 128) / 4 = 4,680,719` exactly, so the
+  file is float32 with a 128-byte npy header — the size confirms the dtype independently of any
+  header read.
+
+**Still NOT authorized by this promotion:** nominal training. Gate 4 needs Joseph's nominal-launch
+authorization, which is separate from the estimator disposition he has now given (the **annealed**
+arm — `docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md`).
+`nominal_pet_training_allowed` stays **false** and Branch C stays closed.
 
 **This paragraph replaced a line dated 2026-08-04 that read "RE-ISSUE REQUIRED; no current Gate-2
 PASS" and stayed there for eight days after the run that passed.** It was the receipt's own
