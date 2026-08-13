@@ -21,7 +21,10 @@ pions plus the summed total energy of neutral pions. **Rodrigues' closed list is
 **The provenance and the defence are two different things, and conflating them is the error this
 paragraph previously made.** Our list is **inherited, not chosen**: comments and whitespace stripped,
 our function body is **token-identical to MAT-MINERvA's `calculators/CCQE3DFitFunctions.h`** — both 424
-chars, sha256 `5296998043add43c` — which has **exactly one commit in its history**
+chars, sha256 prefix `5296998043add43c` (**16 of 64 hex — a prefix, not a full digest**; our side
+independently reproduced by session D on its first normalisation attempt, the MAT side **not** verified
+by anyone with access, so this is one operand of a two-operand identity) — from a file that has
+**exactly one commit in its history**
 (`f790cc794732`, 2021-07-07, Ben Messerly, *"calculators/ initial commit."*), never edited since. The
 e± exclusion likewise follows `kEAvail`'s `abs(pdg)==11||13` "don't count the charged lepton" branch,
 written for a νe analysis in which the primary electron **is** the charged lepton.
@@ -49,9 +52,12 @@ neither is read alone.)
 |---|---|---|
 | species list | **CLOSED** — five species | **OPEN** — "any other final state particles except neutrons" |
 | `strange`, `kaon` in text | appear **zero times** | covered by the open clause |
-| what we do | **implement this** | do not implement |
+| what we do | **coincide with it on 4 of its 5 species** (inherited from MAT, not selected — §1) | do not implement |
 
-Four species carry the disagreement, all of which we exclude and the open convention includes:
+**FIVE species separate us from the open convention.** Four of them are the ones below. **The fifth is
+e±**, which the open list also includes and which we also exclude — so any count of "four" here is a
+count against *Rodrigues*, not against Ascencio. The measured figures immediately following are the
+`kEAvail` comparison, and `kEAvail` includes e±:
 
 - **K±** — included at total energy
 - **p̄** — `E + m_p` (for antibaryons the nucleon mass is **added**, not subtracted)
@@ -126,9 +132,18 @@ pion mass I think."* That is the whole of the affirmative case: **single author,
 reviewed.** It is real evidence and it is weak evidence, and it should be quoted with the hedge intact
 rather than paraphrased into confidence.
 
-**Correcting it is a five-site change or nothing:** `CVUniverse.h:364` plus four generator converters
-that bind to our value by comment. They must move in one commit, or the four-generator comparison
-silently compares two different observables. Not applied; nothing quoted moves.
+**Correcting it is a SIX-site change or nothing:** `CVUniverse.h:364`, four generator converters, **and
+`nd-unfolding/pet/pointcloud_projection.py:51`** (`M_PION_EAVAIL = 135.0`) — the sixth is in the **live
+PET path** and was missing from every earlier statement of this list, including two rewrites of this
+document (session D, `BEN-177`). They must move in one commit, or the four-generator comparison silently
+compares two different observables. **Two of the four converters bind by comment; the other two carry a
+bare `0.135` with no reference to `CVUniverse` at all** — the weaker coupling, hence the likelier silent
+desync (session A). Not applied; nothing quoted moves.
+
+**A hazard in the sixth site specifically, which repairing it creates:** `pointcloud_projection.py`
+holds `M_PION_EAVAIL = 135.0` and `M_PI = 139.57` four lines apart, deliberately separated. **Setting
+the convention constant to `139.57` makes them identical and the separation invisible**, so a later
+reader cannot tell the two were ever distinct quantities. Rename or comment at the same time.
 
 ---
 
@@ -146,7 +161,8 @@ directions:
 
 - the migration is a *truth-population* effect, and their cells span our bins 1+2+3 whose aggregate is
   measured nowhere;
-- `p = 0.432` on 2 dof **separates nothing** — so the cross-check neither refutes us **nor validates us
+- `p = 0.432` on 2 dof **separates nothing at the ~10% scale in play here** (the advisory's scope, which
+  earlier drafts of this line dropped) — so the cross-check neither refutes us **nor validates us
   as strongly as its PASS implies**.
 
 Computing this further is `OI-56`'s arithmetic pointed at a published PASS, and `OI-56` is frozen. That
@@ -161,7 +177,9 @@ Stated explicitly, because this is the section the rest of the document exists t
 1. **Not** that our E_avail matches "the published definition." There is no single published
    definition.
 2. **Not** that the Rodrigues/Ascencio difference is immaterial. It is `+212.18 MeV/event` and `4.837%`
-   of events change truth bin. It is a **declared convention choice**, not a negligible one.
+   of events change truth bin. **Nor that it was chosen** — see item 6. It is a position we can now
+   *declare and defend*, arrived at by inheritance; "declared" describes what this document does with
+   it, never how it came about.
 3. **Not** that the `135` constant is proven immaterial. `[7.7%, 297%]`, most-favourable end quoted
    first, projection not done.
 4. **Not** that we match a neutral "reference implementation." `GENIEXSecExtract`'s `kEAvail`
