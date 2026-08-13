@@ -1,0 +1,125 @@
+{
+  "artifact": "gate6-soundness-before-gate2-archive-20260813.json",
+  "lane": "C (PET)",
+  "purpose": "Gate 5 step 1 archives G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy and G2_GATE2_TARGET_RUNTIME_RECEIPT.json. Those are the DEFAULT paths train_fullevent_nominal.py:188/191 resolve, so after step 1 a Gate-6 RE-RUN would consume the re-run's target instead of the one these members used. This establishes Gate 6 needs no re-run, which is the precondition for archiving.",
+  "verdict": "GATE 6 IS SOUND ON BOTH OF ITS OWN DECLARED BLOCK CONDITIONS. Archiving is safe to proceed.",
+  "why_this_check_came_FIRST": "The mediator raised the archive coupling as a caution to accept rather than waive, and asked me to satisfy myself Gate 6's products are sound before archiving. The seed-collision check is the soundness test with the highest chance of finding a real problem -- if the realized policies had collided, Gate 6 would need re-running and the archive would have to wait. So it ran before step 1 rather than after, which reverses the order the second task was given in.",
+  "BLOCK_CONDITION_1_realized_seeds_must_match_argv": {
+    "predeclared": "PREDECLARATION-20260813-gate6-ml-ensemble.md:23-31 -- five members varying BOTH seed axes together, member 1 being the promoted nominal's own policy",
+    "read_from": "each member's own .out, i.e. the REALIZED seed_policy persisted off argv, not the launch command",
+    "members": [
+      {
+        "member": 1,
+        "declared_estimator_seed": 42,
+        "declared_subsample_seed": 0,
+        "realized_estimator_seed": 42,
+        "realized_subsample_seed": 0
+      },
+      {
+        "member": 2,
+        "declared_estimator_seed": 43,
+        "declared_subsample_seed": 1,
+        "realized_estimator_seed": 43,
+        "realized_subsample_seed": 1
+      },
+      {
+        "member": 3,
+        "declared_estimator_seed": 44,
+        "declared_subsample_seed": 2,
+        "realized_estimator_seed": 44,
+        "realized_subsample_seed": 2
+      },
+      {
+        "member": 4,
+        "declared_estimator_seed": 45,
+        "declared_subsample_seed": 3,
+        "realized_estimator_seed": 45,
+        "realized_subsample_seed": 3
+      },
+      {
+        "member": 5,
+        "declared_estimator_seed": 46,
+        "declared_subsample_seed": 4,
+        "realized_estimator_seed": 46,
+        "realized_subsample_seed": 4
+      }
+    ],
+    "all_five_distinct": true,
+    "declared_equals_realized": true,
+    "WHY_DISTINCTNESS_IS_THE_LOAD_BEARING_PART": "If the realized policies had collided, the 'ensemble spread' would measure nothing and would read as a reassuringly SMALL number -- passing the eye test while failing the floor test for the wrong reason. That is the five-identical-sstat-rows shape one layer up: uniformity where independent things should differ, and the wrong answer more persuasive than the right one. The check is a grep and nobody had run it.",
+    "note_on_varying_two_axes": "Members vary estimator AND subsample seed together. That is DECLARED, not incidental (predeclaration line 23, and line 36: 'five independent members varying initialization and subsample TOGETHER, not a factorial scan'). So the spread is over both axes by design and must not later be described as an initialization-only spread."
+  },
+  "BLOCK_CONDITION_2_every_member_must_consume_the_promoted_target": {
+    "promoted_target_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+    "members_1_through_5_all_consumed": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+    "all_five_match": true,
+    "so": "no member consumed a target other than the promoted Gate-2 target, which is the second of the two BLOCK conditions the predeclaration names",
+    "TWO_DIGESTS_ARE_IN_PLAY_AND_THEY_ARE_DIFFERENT_ARTIFACTS": {
+      "why_this_needed_disambiguating": "A relay stated all five members \"consumed the promoted target fa6b3463\". Both digests below appear in every member log and both check out, but fa6b3463 is NOT the promoted Gate-2 target -- it is the INPUT npz. The BLOCK condition turns on the other one.",
+      "input_npz": {
+        "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+        "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+        "guarded_by": "sbatch_pet_fullevent_ml_ensemble.sh:49 EXPECTED_TARGET_SHA",
+        "all_five_members_matched": true
+      },
+      "promoted_gate2_target": {
+        "path": "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+        "sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+        "consumed_via": "the driver default --target-npy (train_fullevent_nominal.py:188)",
+        "all_five_members_matched": true
+      },
+      "ROOT_CAUSE_OF_THE_CONFUSION": "sbatch_pet_fullevent_ml_ensemble.sh:48 names the INPUT npz `TARGET_NPZ` and its guard `EXPECTED_TARGET_SHA`. In this codebase \"the target\" is a specific certified artifact -- the negweight-refined .npy Gate 2 produces -- so a variable called TARGET holding the INPUT invites exactly this substitution. Both artifacts were in fact verified; only the sentence was wrong."
+    }
+  },
+  "TERMINAL_STATE": {
+    "array": "56834281_[1-5]",
+    "all_COMPLETED_ExitCode_0_0": true,
+    "elapsed": {
+      "1": "03:02:38",
+      "2": "03:05:15",
+      "3": "02:59:03",
+      "4": "03:00:38",
+      "5": "02:59:23"
+    },
+    "jobidraw_pairing": {
+      "1": 56834282,
+      "2": 56834283,
+      "3": 56835083,
+      "4": 56835084,
+      "5": 56834281
+    },
+    "no_requeue": "start times byte-identical across the 02:02, 02:40, 02:45 and 04:06 readings; squeue empty of the array",
+    "the_3h_vs_6h_estimate": "NOT a truncation. A job finishing in half its estimate is the shape of a silent early exit, so the products were enumerated rather than the elapsed time trusted: all five carry iter0/iter1/iter2 x step1/step2 weights, both _final files, a ~10 MB member weights npz and a .done sentinel, and member 1's .out ends with an explicit COMPLETE line at 2026-08-13T07:38:50Z. Measured by the mediator; the seed and target checks above are mine."
+  },
+  "CLUSTER_BASELINES_UNCHANGED_THROUGHOUT": {
+    "head": "683bdcc",
+    "loader_sha256_prefix": "57f33f87b07e0c6b",
+    "target_npy_sha256_prefix": "544b2f6a2451480a",
+    "reading": "The loader edit e1402370 never reached /pscratch, so every member imported the original loader. Verified at 02:45 and again at ~03:35 and 04:07."
+  },
+  "WHAT_THIS_DOES_NOT_ESTABLISH": [
+    "That the five members' numerical outputs are correct, or that the ensemble spread will pass its floor test. This is a soundness check on the declared BLOCK conditions, not a physics result.",
+    "That members 1-4 and member 5 are numerically equivalent. They ran two driver code identities (5fda80df vs 91144bee) and equality was never established -- see gate6-member-code-identity-split-56834281.json. The spread must therefore be reported for members 1-4 AND all 5 separately.",
+    "Anything about Gate 6's PASS/UNRESOLVED verdict, which needs the spread against the 1.26775e-4 floor."
+  ],
+  "consequence": "Gate 6 needs no re-run on either declared BLOCK condition, so Gate 5 step 1 may archive the Gate-2 finals. Proceeding to steps 1-4 with bit-identity as the hard gate.",
+  "GATE_5_BUDGET_IS_2x_HIGH_REDERIVED_FROM_MY_OWN_MEASUREMENTS": {
+    "the_error": "The Gate-5 predeclaration takes \"one member is one full-event training: 6:00:36\" from job 56563761. That job ran TWO sequential arms in one process -- the nominal and the matched floor -- so 6:00:36 is the cost of TWO trainings, not one.",
+    "independent_confirmation_from_the_members": "Gate 6 members are ONE training each: elapsed 03:02:38 / 03:05:15 / 02:59:03 / 03:00:38 / 02:59:23, mean 3.023 h, max 3.087 h. So one training is ~3 h and the predeclared figure is 1.99x high -- essentially exactly 2x, which is what a two-arm job divided by one would give.",
+    "per_replica": {
+      "gpu_node_hours_predeclared": 6.01,
+      "gpu_node_hours_measured_mean": 3.023,
+      "gpu_node_hours_measured_max": 3.087,
+      "cpu_node_hours_target_build_unchanged": 0.926
+    },
+    "at_N_50": {
+      "gpu_node_hours_predeclared": 300.5,
+      "gpu_node_hours_measured_mean": 151.2,
+      "gpu_node_hours_measured_max_shape": 154.4,
+      "cpu_node_hours": 46.3
+    },
+    "WHICH_FIGURE_TO_REQUEST_AGAINST": "154.4, the max-shape figure. Sizing an allocation on the MEAN is the max-shape error BEN-064 forbids -- a mean is not a bound, and five members is a small sample to take a maximum from either. Quote 154.4 and say it rests on n=5.",
+    "does_not_change_the_architecture": "Two jobs per replica is forced by ROOT-vs-TF interpreter exclusivity, not by cost, so halving the GPU estimate does not merge the legs. It does change what is worth requesting and possibly which queue.",
+    "does_not_delay_anything": "The bit-identity re-run is unaffected by the estimate."
+  }
+}
