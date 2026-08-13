@@ -857,8 +857,7 @@ The arm being retired was the tighter one.
 `R/push` aggregates over a trajectory; `r1_required_mean` is per iteration. They diverge — and **by
 unequal factors on the two arms**: the proxy overstates the control's clearance by **18.33x** and the
 annealed arm's by **1.16x**. **A proxy wrong by unequal factors on the two things being compared does
-not add noise, it reverses the ordering.** That is `BEN-086`'s family pointed at my own instrument, and
-the ratio `26.3` is arithmetically correct as `|R/push_final − 1|` — it simply is not the quantity the
+not add noise, it reverses the ordering.** That is the shared-wrong-operand family pointed at my own instrument — **and I cited it as `BEN-086` here and in three peer messages, which `BEN-172` records as wrong: `BEN-086` is about `UNSOURCEABLE` verdicts being statements about the search, and no row makes the claim I attached to it.** The ratio `26.3` is arithmetically correct as `|R/push_final − 1|` — it simply is not the quantity the
 criterion tests.
 
 **One corroboration A did not run, and it holds.** At `iter0` there has been no reweighting, so
