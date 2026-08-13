@@ -172,6 +172,59 @@ attaches, so #3 **should not land without the underflow choice in hand.**
 determined** — most likely a marginally different underflow predicate or a different copy of the file.
 Note this file **does not exist in the local tree**, so the fork could not be cross-checked.
 
+## 6b. DOES THE CONSTANT MOVE A QUOTED NUMBER? — still NO, but the reassuring ratio is a lower bound
+
+**Added 2026-08-13 by Session A after the adopted-uncertainty artifact was supplied.** This was §7's
+top could-not-determine. It is now **partly** closed, and the honest answer is less comfortable than
+the arithmetic first suggests.
+
+**The denominator, read directly** (`VALIDATION_LEDGER.md:1043-1045`): adopted covariance
+`uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`, **adopted median per-bin
+fraction 13.69%** over the **10,550** bins PET also reports. Deliberately NOT the neighbouring 14.8%
+(PET) or 13.3% (GBDT) from `pet_vs_gbdt_uncertainty_5d_summary.json`, which are marked *INDICATIVE,
+2M-train anchor* and *FLAGGED, NOT ADOPTED*; nor the 4D comparator's 11.8%/13.4% over 4,796 bins.
+
+**THE DIMENSIONAL MISMATCH IS REAL AND IT RUNS IN THE FLATTERING DIRECTION.** `13.69%` is the
+fractional uncertainty of a single **5D** bin. My `+1.049%` is a count shift on the **1D truth E_avail
+marginal**. From `p4_lib.py:22`, `GRID_NBINS = 65856 = 14*16*7*7*6 (pt,pz,eavail,q3,W)` — **E_avail is a
+7-bin axis**, so one E_avail slice aggregates roughly `10,550 / 7 = 1,507` reported 5D bins. Aggregation
+reduces fractional uncertainty unless the bins are perfectly correlated, so **the marginal's uncertainty
+is smaller than 13.69%, and the true ratio is therefore LARGER than the naive one:**
+
+| assumption about the 5D bins in one E_avail slice | marginal σ | shift / σ |
+|---|---|---|
+| **perfectly correlated** (no reduction) | 13.69% | **7.7%** |
+| **independent** (`13.69/√1507`) | 0.353% | **297%** |
+
+**A factor of 39 between the bounds, so `7.7%` is the most favourable reading available and is NOT the
+answer.** It is what you get by assuming the systematics are 100% correlated across every bin of an
+E_avail slice. Reality sits between — systematics dominate here so it is nearer the correlated end —
+but "nearer" is not a number, and at the independent end the shift would *exceed* the uncertainty
+threefold.
+
+**VERDICT: the constant almost certainly does not move a quoted number, and this derivation does not
+prove it.** What closes it is one specific thing: **project the adopted covariance onto the E_avail
+marginal** — sum the sub-blocks over the other four axes, retaining off-diagonals — and compare
+`+1.049%` against *that*. Until then the honest claim is "consistent with immaterial, bracketed
+[7.7%, 297%] of the adopted uncertainty depending on correlation structure."
+
+**Two further caveats that the ratio hides, and neither is pedantry.**
+
+1. **The denominator has four live open items.** `VL62` (one-sided endpoint interpolation), `VL63` (CV
+   centering), `VL64` (varying estimator seeds), `VL65` (scalar jitter subtraction) are all **OPEN for
+   the adopted 5D GBDT covariance that `values.tex` actually quotes** — `VL63` records it as **0 of 7
+   for the quoted artifact**, discharged only for the footing-matched stamped candidate, "which carries
+   none of the stamps." So this is a ratio against a denominator under active repair.
+2. **The numerator is not the same kind of object as the denominator.** `+1.049%` is a change in the
+   *truth-axis population*, propagating to a quoted cross-section only through the unfolding. The
+   comparison is an order-of-magnitude sanity check, not a derivation of the effect on a published
+   value.
+
+**Ledger discrepancy noticed in passing, not chased:** line 1043 says **10,550** reported bins for the
+adopted 5D artifact; `VL62` at line 627 says **10,694** of `GRID_NBINS = 65856`. Both describe the
+adopted 5D covariance. A 144-bin difference changes the √n above by <1% and none of the conclusions,
+but two ledger lines disagreeing about the same artifact's bin count is worth someone's attention.
+
 ## 7. Explicitly could-not-determine — carried forward, not dropped
 
 - **Whether the pion-mass fix moves a QUOTED number.** The shift is known (+1.05% in bin 1); the
