@@ -1,0 +1,64 @@
+{
+  "schema": "ledger-id-uniqueness-scan-v1",
+  "recorded_by": "Session B (uncertainty construction)",
+  "git_identity": "Lane B (uncertainty construction) <josephrb+laneb@stanford.edu>",
+  "recorded_at_utc": "2026-08-13T00:55Z",
+  "read_only": true,
+  "adopts_nothing": true,
+  "supports": "BEN-120. Filed with ingredients so the owner of docs/orchestration/whose_row.py can act without re-measuring.",
+
+  "occasion": "Session C's BEN-142: three lanes allocated OI-48 for the same topic inside one hour. C's observation is the load-bearing one -- BEN-080's PREFIXING rule was fully satisfied, so the collision was in ALLOCATION, not namespace, and it surfaced as a git conflict ONLY because all three rows happened to land at the end of the table. At different table positions git applies both additions cleanly and the duplicate id is silent.",
+
+  "THE_GAP": {
+    "claim": "A duplicate-id check exists, is correct, runs against the real file, and covers ONE of the four id-bearing ledgers -- the one where the LAST incident happened.",
+    "where_the_check_lives": "docs/orchestration/whose_row.py:436 check_ledger_ids(), reached from :551 as `check_ledger_ids(REPO / 'VALIDATION_LEDGER.md')`, and invoked by docs/orchestration/merge_guard.sh via `--check-ledger-ids`.",
+    "what_it_catches": "half-finished re-id, rows deleted after id assignment, DUPLICATED ids, renumbered-from-N, gaps. Two-sided, and the two directions fail with opposite signs.",
+    "why_it_did_not_fire_on_OI-48": "It is only ever called with VALIDATION_LEDGER.md. Its id parsing is VL-specific too, not merely its call site: `nums = [int(v[2:]) for v in ids]` strips two characters, which yields -48 for `OI-48` and raises for `BEN-118`.",
+    "the_patterns_already_exist_beside_it": "whose_row.py:65 BEN_ROW, :66 CLM_ROW, :74 VL_ROW, :75 OI_ROW. All four id shapes are already parsed in this file for attribution. Only VL is passed to the uniqueness check.",
+    "class": "The same shape D and C filed tonight -- a remedy bounded to the exact object that failed. `lane_matches` rebuilt and `conflicted_line_numbers` not (BEN-162); predicate tested and call path not (BEN-117); code fixed and published contract not (BEN-163); and now uniqueness enforced on the ledger that had the re-id incident, not on the ledger class. The VL re-id was the occasion for writing it, and the occasion set the scope."
+  },
+
+  "MEASURED_NOW -- no duplicates exist yet, which is why this is still cheap to fix": {
+    "instrument": "leading-cell id scan, `^\\|\\s*\\**<ID>\\**\\s*\\|`, over each ledger's real contents",
+    "results": [
+      {"file": "docs/OPEN_ITEMS.md", "pattern": "OI-\\d+", "ids": 50, "duplicates": 0, "range": "1-50", "gaps": 0},
+      {"file": "docs/orchestration/FINDINGS.md", "pattern": "BEN-\\d+", "ids": 140, "duplicates": 0, "range": "1-204", "gaps": 64},
+      {"file": "docs/orchestration/CLAIMS.md", "pattern": "CLM-\\d+", "ids": 12, "duplicates": 0, "range": "1-12", "gaps": 0},
+      {"file": "VALIDATION_LEDGER.md", "pattern": "VL\\d+", "ids": 108, "duplicates": 0, "range": "1-108", "gaps": 0}
+    ],
+    "so_the_finding_is_a_NEAR_MISS_not_a_defect_in_the_data": "Every one of today's three OI-48 allocations was caught by hand, and my own byte-identical BEN-116 pair (a484a2f, removed by another lane at 577f068) was also caught by hand. Four catches, four by attentiveness. BEN-105 counts four failures of exactly that mechanism.",
+    "A_FIFTH_INSTANCE_LANDED_WHILE_THIS_WAS_BEING_WRITTEN": "Session A reports allocating OI-49..OI-52 against its own checkout while C had already landed OI-49 and OI-50. So the count is now FOUR writers colliding on the OI namespace within about two hours, on two different ids. That one was caught by `merge_guard.sh A`, which refused and named C -- the gate working, on the conflict path rather than the uniqueness path. It does not close this finding: the gate caught a CONFLICTED row, which requires the rows to overlap textually. The silent case is two same-id rows at different table positions, which never conflict. A's own conclusion is that `OI-*` wants block partitioning like `BEN-*`, and A notes correctly that a convention change is not one lane's to make.",
+    "KNOWN_BLIND_SPOT_REPORTED_NOT_HIDDEN": "KNOWN_ISSUES.md matched ZERO rows for `KI-\\d+` and is therefore UNSCANNED, not clean. Its items are numbered in prose ('item 26'), not id-prefixed, so it has no per-row id scheme to check -- the same property that makes VALIDATION_LEDGER.md's rows unattributable before the VL re-id. Reported as a cannot-check rather than counted as a pass."
+  },
+
+  "THE_DESIGN_CONSTRAINT -- DO NOT JUST WIDEN THE EXISTING CALL": {
+    "warning": "check_ledger_ids bundles THREE invariants and only one of them generalises. Calling it unchanged on FINDINGS.md would fail on 64 gaps and on min(nums)=1 density.",
+    "universal": "NO DUPLICATE IDS. True of every id-bearing ledger, and the only one the OI-48 incident needed.",
+    "VL_only": "dense from 1, no gaps. Correct for VALIDATION_LEDGER.md because its ids were assigned in one pass over every row; WRONG for FINDINGS.md, whose 64 gaps are legitimate -- rows moved to FINDINGS-ARCHIVE-2026-08.md -- and wrong for any ledger with per-lane blocks, where gaps are the blocks.",
+    "why_this_matters_more_than_it_looks": "A widened check would fire 64 false failures on the first run, through merge_guard.sh, which exits 3 and BLOCKS THE MERGE. That is BEN-118's own second half: a check that refuses for the wrong reason teaches operators to override it, and an override habit is how the next true failure gets waved through. The gate is load-bearing on every lane's merge, so a false-positive there is more expensive than the hole it closes."
+  },
+
+  "SUGGESTED_INTEGRATION -- routed, not applied": {
+    "why_not_applied_by_this_lane": "whose_row.py is in active edit by Session D this hour (BEN-169, a code-vs-message disagreement in the same file). Editing it now reproduces the exact failure that produced a484a2f: my patch built against one HEAD, a peer's commit landing between build and apply, and --unidiff-zero suppressing the context check that would have caught the duplicate. Per-lane row ownership is in force, and the gate is D's.",
+    "sketch": "split the universal invariant out of check_ledger_ids -- e.g. `for rel, pat in ((VL, VL_ROW), (FINDINGS, BEN_ROW), (OPEN_ITEMS, OI_ROW), (CLAIMS, CLM_ROW)): report duplicates`, and keep the dense-from-1 and gap assertions on the VL leg only. Return 2, not 0, when a ledger yields zero ids -- a scan over no rows is the vacuous pass this file has already been bitten by (b710b48).",
+    "the_contract_change_this_implies": "BEN-163's rule applies to the fix: `--check-ledger-ids`'s help text at whose_row.py:539 says 'VALIDATION_LEDGER.md's VL ids', and merge_guard.sh's BLOCKED message says \"VALIDATION_LEDGER.md's VL ids are not complete and dense\". Both become wrong the moment the check covers four files, and merge_guard.sh's whole reason for existing is that a contract stated beside a tool drifts from it. Update both in the same commit as the code."
+  },
+
+  "POWER_TEST": {
+    "what_was_tested": "the SCANNER used to produce the MEASURED_NOW table -- not the gate, which was not modified.",
+    "baseline": "4 ledgers scanned, 0 duplicates, 1 cannot-check (KNOWN_ISSUES.md), exit 0",
+    "mutations": [
+      {"id": "INJECT docs/OPEN_ITEMS.md:OI-48", "result": "FAIL docs/OPEN_ITEMS.md: 50 ids, 1 DUPLICATED -- exit 1"},
+      {"id": "INJECT FINDINGS.md:BEN-118", "result": "FAIL docs/orchestration/FINDINGS.md: 140 ids, 1 DUPLICATED -- exit 1"}
+    ],
+    "both_directions": "The absence result is falsifiable in the two files that matter -- the one where today's collision happened and the one where mine did. A zero that cannot be made non-zero is not a measurement.",
+    "axis_declared_per_BEN-119": "This battery covers the DETECTION axis (can a planted duplicate be seen) and NOT the merge axis. C's actual claim -- that two same-id rows at different table positions auto-merge without a conflict -- is reasoned from how git applies non-adjacent hunks and is NOT reproduced here. Unverified, and named as such rather than assumed because it is the premise of the whole finding.",
+    "scanner_sha256": "session-local, not committed; every input is a tracked ledger and the pattern is stated above, so the table is reproducible without it."
+  },
+
+  "NOT_VERIFIED": [
+    "That two same-id rows at different table positions actually merge without conflict. Reasoned, not reproduced. It is the premise of BEN-142 and of this finding, and it is C's claim, not a measurement of mine.",
+    "That no OTHER document in the repo carries per-row ids outside the four scanned. The four were chosen from CLAUDE.md's canonical-home table plus VALIDATION_LEDGER.md; nothing here establishes the enumeration is complete, and that is the same partial-scope error BEN-118's dedup correction records.",
+    "Anything about KNOWN_ISSUES.md, which has no id scheme to check."
+  ]
+}
