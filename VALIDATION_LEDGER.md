@@ -8,19 +8,19 @@ before printing anything**, so a COMPLETED job is itself the verification. Read 
 **separate process** — the in-process assertion and an external read are different instruments
 (BEN-088 rule vi):
 
-| key | new product | the same arm built by the pre-fix code |
-|---|---|---|
-| `sqrt_tr_old` | `4.357790406860002e-38` | `4.357790406860002e-38` |
-| `sqrt_tr_new` | `5.269625166386846e-38` | `5.269625166386846e-38` |
-| `fixed_seed_null_norm_checked` | `1` | **ABSENT** |
-| `upstream_fixed_seed_null_norm` | `5.8223488501140625e-50` | **ABSENT** |
-| `joint_mean_shift_norm_checked` | `1` | **ABSENT** |
-| `upstream_joint_mean_shift_norm` | `1.878696733368378e-38` | **ABSENT** |
-| `n_throws_checked` | `1` | **ABSENT** |
-| `upstream_n_throws` | `160` | **ABSENT** |
-| `centering_convention` | `mean-centered` | **ABSENT** |
-| `uthrow_source` | `unified_throw_cov_5d_fluxfix_20260806_full160.root` | **ABSENT** |
-| `combined_source` | `uq_universe_5d_covariance_combined_bkgaware.root` | **ABSENT** |
+| id | key | new product | the same arm built by the pre-fix code |
+| --- |---|---|---|
+| VL1 | `sqrt_tr_old` | `4.357790406860002e-38` | `4.357790406860002e-38` |
+| VL2 | `sqrt_tr_new` | `5.269625166386846e-38` | `5.269625166386846e-38` |
+| VL3 | `fixed_seed_null_norm_checked` | `1` | **ABSENT** |
+| VL4 | `upstream_fixed_seed_null_norm` | `5.8223488501140625e-50` | **ABSENT** |
+| VL5 | `joint_mean_shift_norm_checked` | `1` | **ABSENT** |
+| VL6 | `upstream_joint_mean_shift_norm` | `1.878696733368378e-38` | **ABSENT** |
+| VL7 | `n_throws_checked` | `1` | **ABSENT** |
+| VL8 | `upstream_n_throws` | `160` | **ABSENT** |
+| VL9 | `centering_convention` | `mean-centered` | **ABSENT** |
+| VL10 | `uthrow_source` | `unified_throw_cov_5d_fluxfix_20260806_full160.root` | **ABSENT** |
+| VL11 | `combined_source` | `uq_universe_5d_covariance_combined_bkgaware.root` | **ABSENT** |
 
 **The two sqrt-traces are bit-identical across the pair, so the change is numerically inert** — it adds
 provenance and moves no number. The nine `ABSENT`s are the before/after control that makes the eleven
@@ -45,12 +45,12 @@ Transitive import closure from the four production entry points (`sweep_bank_5d`
 `analyze_universes_5d`, `unified_throw_cov_5d`, `adopt_unified_5d`) is **11 modules**. Four construct a
 covariance:
 
-| site | construction | convention |
-|---|---|---|
-| `uq_math.py:96-104` | `mat_covariance` | universe-mean centered, MAT biased `1/N` ✓ |
-| `unified_throw_cov.py:355,400,407` | `joint_throw_covariance`; `mat_covariance` over the knob ± pair and the 100 flux universes | mean-centered, shift stored separately ✓ |
-| `analyze_universes_5d.py:97-98` | `Z = D - D.mean(axis=0, keepdims=True)`; `(Z.T @ Z) / D.shape[0]` | **the same convention, inlined rather than calling `uq_math`** ✓ |
-| `analyze_universes_5d.py:107-109` | `np.outer(v, v)`, `v = 0.014 · x_CV` | the documented rank-1 target-nucleon norm add-on (`app_statmethods` eq:normband) ✓ — a legitimate outer product, not a one-sided band |
+| id | site | construction | convention |
+| --- |---|---|---|
+| VL12 | `uq_math.py:96-104` | `mat_covariance` | universe-mean centered, MAT biased `1/N` ✓ |
+| VL13 | `unified_throw_cov.py:355,400,407` | `joint_throw_covariance`; `mat_covariance` over the knob ± pair and the 100 flux universes | mean-centered, shift stored separately ✓ |
+| VL14 | `analyze_universes_5d.py:97-98` | `Z = D - D.mean(axis=0, keepdims=True)`; `(Z.T @ Z) / D.shape[0]` | **the same convention, inlined rather than calling `uq_math`** ✓ |
+| VL15 | `analyze_universes_5d.py:107-109` | `np.outer(v, v)`, `v = 0.014 · x_CV` | the documented rank-1 target-nucleon norm add-on (`app_statmethods` eq:normband) ✓ — a legitimate outer product, not a one-sided band |
 
 **Both one-sided sites the 2026-07-12 sweep found and did not fix are provably OFF this path**:
 `pet_unified_throw_5d.py:108-111` and `pet_lateral_correction.py:118` are `pet_*` modules and **no
@@ -82,12 +82,12 @@ whole-stream log. The eight-record receipt is
 launcher at `cc77d8ca…`. This completes the receipt promised by the predeclaration without recomputation
 or adoption; it changes no number or B2 verdict.
 
-| arm | `--combined` | `sqrt_tr_old` | **`sqrt_tr_new`** | ×  | median frac/bin | PSD most-neg/max |
-|---|---|---|---:|---:|---|---:|
-| **A1** bkgaware, mean-centered | bkgaware | 4.3578e-38 | **5.2696e-38** | 1.209 | 13.36% → 13.57% | −3.19e-16 |
-| **A2** bkgaware, CV-centered | bkgaware | 4.3578e-38 | **5.6743e-38** | 1.302 | 13.36% → 14.02% | −3.23e-16 |
-| **C1** control, mean-centered | non-bkgaware | 4.3455e-38 | **5.2600e-38** | 1.210 | 13.43% → 13.61% | −4.87e-16 |
-| **C2** control, CV-centered | non-bkgaware | 4.3455e-38 | **5.6609e-38** | 1.303 | 13.43% → 14.09% | −3.92e-16 |
+| id | arm | `--combined` | `sqrt_tr_old` | **`sqrt_tr_new`** | ×  | median frac/bin | PSD most-neg/max |
+| --- |---|---|---|---:|---:|---|---:|
+| VL16 | **A1** bkgaware, mean-centered | bkgaware | 4.3578e-38 | **5.2696e-38** | 1.209 | 13.36% → 13.57% | −3.19e-16 |
+| VL17 | **A2** bkgaware, CV-centered | bkgaware | 4.3578e-38 | **5.6743e-38** | 1.302 | 13.36% → 14.02% | −3.23e-16 |
+| VL18 | **C1** control, mean-centered | non-bkgaware | 4.3455e-38 | **5.2600e-38** | 1.210 | 13.43% → 13.61% | −4.87e-16 |
+| VL19 | **C2** control, CV-centered | non-bkgaware | 4.3455e-38 | **5.6609e-38** | 1.303 | 13.43% → 14.09% | −3.92e-16 |
 
 **BOTH CONTROLS REPRODUCE THE ORIGINAL RUN DIGIT FOR DIGIT** — `5.2600e-38` / `5.6609e-38`, their
 `×1.210` / `×1.303`, their medians `13.43% → 13.61%` / `→ 14.09%`, and their PSD minima
@@ -103,11 +103,11 @@ value, exactly as `sec_systematics.tex:162` says.
 
 **The 2 × 2 completed, mean-centered, and the interaction is the result:**
 
-| | non-background-aware | background-aware | **footing effect** |
-|---|---|---|---:|
-| **pre-J28 throws** | 5.802416e-38 | 5.807716e-38 | **+0.0914%** |
-| **J28 throws** | 5.259971e-38 | **5.2696e-38** | **+0.1831%** |
-| **J28 effect** | **−9.3486%** | **−9.2655%** | |
+| id | | non-background-aware | background-aware | **footing effect** |
+| --- |---|---|---|---:|
+| VL20 | **pre-J28 throws** | 5.802416e-38 | 5.807716e-38 | **+0.0914%** |
+| VL21 | **J28 throws** | 5.259971e-38 | **5.2696e-38** | **+0.1831%** |
+| VL22 | **J28 effect** | **−9.3486%** | **−9.2655%** | |
 
 **The footing effect on the adopted value DOUBLES after the flux correction — ×2.004.** The
 pre-registered no-interaction prediction was **5.264776e-38**; measured **5.2696e-38**, high by
@@ -145,11 +145,11 @@ that dead anneal a candidate mechanism. Nobody had run the trajectory on the ann
 Reproduction gate **bit-exact**: `increment1` 0.648331, `push_prev` 0.967659, `push_final` 0.736746, all
 `rel_dev = 0.000e+00`. So the instrument is established against a committed anchor, not against itself.
 
-| it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
-|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 0 | 1.000000 | 1.092736 | 1.124080 | **0.9721** | ok | 1.092736 | −0.0279 | 1.0974 |
-| 1 | 1.092736 | 0.885537 | 1.028684 | **0.8608** | **WRONG** | 0.967659 | −0.1392 | 0.8896 |
-| 2 | 0.967659 | 0.761370 | 1.161650 | **0.6554** | **WRONG** | 0.736746 | −0.3446 | 0.5581 |
+| id | it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
+| --- |---:|---:|---:|---:|---:|---|---:|---:|---:|
+| VL23 | 0 | 1.000000 | 1.092736 | 1.124080 | **0.9721** | ok | 1.092736 | −0.0279 | 1.0974 |
+| VL24 | 1 | 1.092736 | 0.885537 | 1.028684 | **0.8608** | **WRONG** | 0.967659 | −0.1392 | 0.8896 |
+| VL25 | 2 | 0.967659 | 0.761370 | 1.161650 | **0.6554** | **WRONG** | 0.736746 | −0.3446 | 0.5581 |
 
 Verdict `RIGHT_SIGN_AT_ITER0_INVERTS_LATER`. **This supplies the end-to-end numbers the 2026-08-09 row
 never had, and the wrong-sign claim at iterations 1 and 2 now holds END-TO-END, not only on the first-leg
@@ -168,21 +168,21 @@ telemetry 1.084053, recomputed from stored push 1.084053, recomputed from checkp
 Trajectory gate bit-exact against its own decomposition (`0.839106 / 1.161072 / 1.084053`, all
 `rel 0.000e+00`) — a **same-session self-consistency check**, weaker than ARM 1's, as predeclared.
 
-| it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
-|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 0 | 1.000000 | 1.247812 | 1.124080 | **1.1101** | ok | 1.247812 | **+0.1101** | 1.1318 |
-| 1 | 1.247812 | 0.930486 | 0.900841 | **1.0329** | ok | 1.161072 | **+0.0329** | 1.1811 |
-| 2 | 1.161072 | 0.933666 | 0.968140 | **0.9644** | ok | 1.084053 | **−0.0356** | 0.8667 |
+| id | it | push_prev | **e2e achieved** | required | **e2e ach/req** | sign | push | push dev | first-leg (not like-for-like) |
+| --- |---:|---:|---:|---:|---:|---|---:|---:|---:|
+| VL26 | 0 | 1.000000 | 1.247812 | 1.124080 | **1.1101** | ok | 1.247812 | **+0.1101** | 1.1318 |
+| VL27 | 1 | 1.247812 | 0.930486 | 0.900841 | **1.0329** | ok | 1.161072 | **+0.0329** | 1.1811 |
+| VL28 | 2 | 1.161072 | 0.933666 | 0.968140 | **0.9644** | ok | 1.084053 | **−0.0356** | 0.8667 |
 
 ### The predeclared branch: REPAIRED, and the guard that would have voided it did not fire
 
 Evaluated mechanically against the predeclaration's own criteria:
 
-| predeclared test | annealed arm |
-|---|---|
-| iterations 1 **and** 2 sign-correct **and** `|e2e/req − 1| ≤ 0.10` | **True** (0.0329, 0.0356) |
-| any of iterations 1, 2 wrong-signed | **False** |
-| any iteration in the NO-INFORMATION band `|required − 1| < 0.02` | **False** — 0.1241 / 0.0992 / 0.0319, all discriminating |
+| id | predeclared test | annealed arm |
+| --- |---|---|
+| VL29 | iterations 1 **and** 2 sign-correct **and** `|e2e/req − 1| ≤ 0.10` | **True** (0.0329, 0.0356) |
+| VL30 | any of iterations 1, 2 wrong-signed | **False** |
+| VL31 | any iteration in the NO-INFORMATION band `|required − 1| < 0.02` | **False** — 0.1241 / 0.0992 / 0.0319, all discriminating |
 
 **The predeclaration named UNRESOLVED-via-the-domain-of-validity-guard as the MOST LIKELY single
 outcome**, because the annealed arm sits near `push ≈ R`. It did not fire: the tightest iteration is
@@ -284,11 +284,11 @@ Recomputed from the committed receipt's operands (`uq_5d/receipt_construction_co
 giving quarantine cause 2 its test leg. **The conclusion is unchanged and strengthened; the reported
 number was wrong.**
 
-| basis | ‖mean_shift‖ | √Tr | N | **ratio to the floor** |
-|---|---|---|---:|---:|
-| full-160, **pre**-J28 | 1.654393237996853e-38 | 4.4607819710748654e-38 | 160 | **4.6912×** |
-| full-160, **post**-J28 — the adopted ensemble | 1.878696733368378e-38 | 4.443673650575504e-38 | 160 | **5.3478×** |
-| 122-throw morning re-roll, post | 1.885299e-38 | 4.312442e-38 | **122** | **4.8288×** |
+| id | basis | ‖mean_shift‖ | √Tr | N | **ratio to the floor** |
+| --- |---|---|---|---:|---:|
+| VL32 | full-160, **pre**-J28 | 1.654393237996853e-38 | 4.4607819710748654e-38 | 160 | **4.6912×** |
+| VL33 | full-160, **post**-J28 — the adopted ensemble | 1.878696733368378e-38 | 4.443673650575504e-38 | 160 | **5.3478×** |
+| VL34 | 122-throw morning re-roll, post | 1.885299e-38 | 4.312442e-38 | **122** | **4.8288×** |
 
 **`4.6912×` reproduces the campaign's `4.69×` exactly** — an independent confirmation of the F7
 measurement from the receipt operands. **`4.83×` does not come from the adopted ensemble: it is the
@@ -326,13 +326,13 @@ integrals over 3×3 = 9 cells (`overlay_eavailW_band.py:88-108`). **No covarianc
 quarantine's own scope preserves central cross sections, and the checklist gates the `(E_avail,W)`
 **significances**, which are covariance-dependent, separately. **The significances remain gated.**
 
-| generator | corner integral | data corner | **data/gen** | note had | integrated σ |
-|---|---|---|---:|---:|---|
-| GENIE-CV | 8.7918e-39 | 1.3497e-38 | **1.535** | 1.54 | 2.4446e-38 |
-| GENIE+MEC | 8.5484e-39 | 1.3497e-38 | **1.579** | 1.58 | 2.4829e-38 |
-| NuWro | 8.6369e-39 | 1.3497e-38 | **1.563** | 1.56 | 2.3444e-38 |
-| **GiBUU** | 8.3893e-39 | 1.3497e-38 | **1.609** | **UNCOMPUTED** | 2.2227e-38 |
-| data | — | 1.3497e-38 | — | — | 3.0699e-38 |
+| id | generator | corner integral | data corner | **data/gen** | note had | integrated σ |
+| --- |---|---|---|---:|---:|---|
+| VL35 | GENIE-CV | 8.7918e-39 | 1.3497e-38 | **1.535** | 1.54 | 2.4446e-38 |
+| VL36 | GENIE+MEC | 8.5484e-39 | 1.3497e-38 | **1.579** | 1.58 | 2.4829e-38 |
+| VL37 | NuWro | 8.6369e-39 | 1.3497e-38 | **1.563** | 1.56 | 2.3444e-38 |
+| VL38 | **GiBUU** | 8.3893e-39 | 1.3497e-38 | **1.609** | **UNCOMPUTED** | 2.2227e-38 |
+| VL39 | data | — | 1.3497e-38 | — | — | 3.0699e-38 |
 
 **GiBUU lands OUTSIDE the note's 1.54–1.58 band**, so per that paragraph's own predeclared rule
 (*"widen the span only if it lands outside"*) the corner span becomes **54–61%** and the band
@@ -379,14 +379,14 @@ code but live only in `.gitignore`d ROOTs, so *"built under the corrected contra
 from the repository. This commits them. Provenance leg of quarantine causes 2, 3 and 4 — see
 `docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §3, §4.7.
 
-| stamp | pre-J28 throw ROOT | J28-corrected throw ROOT |
-|---|---|---|
-| `fixed_seed_null_norm` | **present** `1.9706093906025077e-50` | **present** `5.8223488501140625e-50` |
-| `n_throws` | `160` | `160` |
-| `joint_mean_shift_norm` | `1.654393237996853e-38` | `1.878696733368378e-38` |
-| `hJointMeanShift` | `TH1D[10694]`, separate object | `TH1D[10694]`, separate object |
-| `sqrt_tr_unified` / `sqrt_tr_block` | `4.4607819710748654e-38` / `3.4032639007214586e-38` | `4.443673650575504e-38` / `3.750054526403914e-38` |
-| estimator seed | one seed **`1000`** over 40 throw + 36 block slabs; 160-throw union contiguous | same slabs |
+| id | stamp | pre-J28 throw ROOT | J28-corrected throw ROOT |
+| --- |---|---|---|
+| VL40 | `fixed_seed_null_norm` | **present** `1.9706093906025077e-50` | **present** `5.8223488501140625e-50` |
+| VL41 | `n_throws` | `160` | `160` |
+| VL42 | `joint_mean_shift_norm` | `1.654393237996853e-38` | `1.878696733368378e-38` |
+| VL43 | `hJointMeanShift` | `TH1D[10694]`, separate object | `TH1D[10694]`, separate object |
+| VL44 | `sqrt_tr_unified` / `sqrt_tr_block` | `4.4607819710748654e-38` / `3.4032639007214586e-38` | `4.443673650575504e-38` / `3.750054526403914e-38` |
+| VL45 | estimator seed | one seed **`1000`** over 40 throw + 36 block slabs; 160-throw union contiguous | same slabs |
 
 Both null norms **present** (not absent-and-assumed-fine, which is cause 4's live trap) and 38 orders
 below the `1e-12` tolerance. `1.878696733368378e-38` reads back matching this ledger digit for digit.
@@ -395,13 +395,13 @@ below the `1e-12` tolerance. `1.878696733368378e-38` reads back matching this le
 `adopt_unified_5d.py:166` stamps `sqrt_tr_old` = the √Tr of the `--combined` input it was actually given,
 so each adopted product records its own background footing:
 
-| adopted product | `sqrt_tr_old` → footing | `sqrt_tr_new` |
-|---|---|---|
-| `…_bkgaware_uthrow.root` → `\gbdtFiveAdoptTrace` | **4.357790406860002e-38 → bkgaware** | **5.807716496958672e-38** |
-| `…_bkgaware_uthrow_cvcentered.root` → `\gbdtFiveCVTrace` | **4.357790406860002e-38 → bkgaware** | **6.236702327843976e-38** |
-| `adopted_meancentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.25997091000714e-38** |
-| `adopted_cvcentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.660863966183672e-38** |
-| `universe_stage2_5d/…_uthrow.root` (July, superseded) | **4.345454363683128e-38 → NON-bkgaware** | **5.802415620046235e-38** |
+| id | adopted product | `sqrt_tr_old` → footing | `sqrt_tr_new` |
+| --- |---|---|---|
+| VL46 | `…_bkgaware_uthrow.root` → `\gbdtFiveAdoptTrace` | **4.357790406860002e-38 → bkgaware** | **5.807716496958672e-38** |
+| VL47 | `…_bkgaware_uthrow_cvcentered.root` → `\gbdtFiveCVTrace` | **4.357790406860002e-38 → bkgaware** | **6.236702327843976e-38** |
+| VL48 | `adopted_meancentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.25997091000714e-38** |
+| VL49 | `adopted_cvcentered_20260806_full160.root` → proposed | **4.345454363683128e-38 → NON-bkgaware** | **5.660863966183672e-38** |
+| VL50 | `universe_stage2_5d/…_uthrow.root` (July, superseded) | **4.345454363683128e-38 → NON-bkgaware** | **5.802415620046235e-38** |
 
 Three of the four cells of a 2 × 2 in (footing × J28) therefore already exist, and the two effects
 separate exactly:
@@ -450,13 +450,13 @@ Measured by `nd-unfolding/pet/measure_joint_vs_additive_nuisance_retrain.py` on 
 Phase-7 response arrays; receipt `nd-unfolding/products/pet/bkgsub/pet_joint_vs_additive_retrain.json`.
 No training, no re-unfold — inference-free arithmetic on frozen arrays.
 
-| universe | ‖s‖ | ‖Δ‖ | ‖joint δ‖ | additive √(‖s‖²+‖Δ‖²) | additive/joint | cos(s,Δ) |
-|---|---|---|---|---|---:|---:|
-| `2p2h:1` | 7.73741e-39 | 5.11033e-39 | 8.53834e-39 | 9.27270e-39 | **1.0860** | −0.165 |
-| `CCQEPauliSupViaKF:1` | 7.59828e-39 | 6.16815e-39 | 4.09545e-39 | 9.78672e-39 | **2.3897** | −0.843 |
-| `LowQ2:1` | 8.69552e-39 | 8.25841e-39 | 4.09574e-39 | 1.19922e-38 | **2.9280** | −0.885 |
-| `MaCCQE:1` | 1.02987e-38 | 1.28115e-38 | 9.48537e-39 | 1.64377e-38 | **1.7330** | −0.683 |
-| `MaRES:1` | 1.36324e-38 | 1.32354e-38 | 1.01691e-38 | 1.90005e-38 | **1.8685** | −0.714 |
+| id | universe | ‖s‖ | ‖Δ‖ | ‖joint δ‖ | additive √(‖s‖²+‖Δ‖²) | additive/joint | cos(s,Δ) |
+| --- |---|---|---|---|---|---:|---:|
+| VL51 | `2p2h:1` | 7.73741e-39 | 5.11033e-39 | 8.53834e-39 | 9.27270e-39 | **1.0860** | −0.165 |
+| VL52 | `CCQEPauliSupViaKF:1` | 7.59828e-39 | 6.16815e-39 | 4.09545e-39 | 9.78672e-39 | **2.3897** | −0.843 |
+| VL53 | `LowQ2:1` | 8.69552e-39 | 8.25841e-39 | 4.09574e-39 | 1.19922e-38 | **2.9280** | −0.885 |
+| VL54 | `MaCCQE:1` | 1.02987e-38 | 1.28115e-38 | 9.48537e-39 | 1.64377e-38 | **1.7330** | −0.683 |
+| VL55 | `MaRES:1` | 1.36324e-38 | 1.32354e-38 | 1.01691e-38 | 1.90005e-38 | **1.8685** | −0.714 |
 
 **Knob-band aggregate: additive √tr `3.093207e-38` vs joint √tr `1.731571e-38` → the additive
 construction OVERSTATES the joint covariance by `1.786`×.** The cross term is negative in **every**
@@ -497,11 +497,11 @@ Both now recomputed on frozen inputs — no unfold re-run — by
 `2d-unfolding/receipt_model_chi2_2d.py`; full ingredient receipt with input SHA-256s in
 `2d-unfolding/receipt_model_chi2_2d.json`.
 
-| comparison | chi2 | ndf | **chi2/ndf** | quoted | reproduces |
-|---|---:|---:|---:|---:|---|
-| ours vs data (control) | 750.49 | 205 | **3.661** | 3.661 | yes |
-| data vs tune (control) | 6773.05 | 205 | **33.039** | 33.0 | yes |
-| ours vs tune (target) | 5430.64 | 205 | **26.491** | 26.5 | yes |
+| id | comparison | chi2 | ndf | **chi2/ndf** | quoted | reproduces |
+| --- |---|---:|---:|---:|---:|---|
+| VL56 | ours vs data (control) | 750.49 | 205 | **3.661** | 3.661 | yes |
+| VL57 | data vs tune (control) | 6773.05 | 205 | **33.039** | 33.0 | yes |
+| VL58 | ours vs tune (target) | 5430.64 | 205 | **26.491** | 26.5 | yes |
 
 Method is unchanged from `compare_to_paper_fullcov.py:chi2_with_cov`: published
 `TotalCovariance`, reported-bin mask from a positive `StatOnlyCovariance` diagonal
@@ -575,11 +575,11 @@ committed decomposition anchors bit-exactly.
 Verdict as originally written: **`CORRECT_AT_ITER0_DEGRADES_LATER`** — read as
 `RIGHT_SIGN_AT_ITER0_INVERTS_LATER` per the correction above.
 
-| iteration | prior push | achieved Step-1 ratio | required ratio | ~~achieved/required~~ **first-leg only, NOT like-for-like** | sign |
-|---:|---:|---:|---:|---:|---|
-| 0 | 1.000000 | **1.233512** | **1.124080** | ~~1.09735~~ (end-to-end **0.9721**) | correct |
-| 1 | 1.092736 | **0.915166** | **1.028684** | ~~0.88965~~ (end-to-end pending 56691812) | wrong |
-| 2 | 0.967659 | **0.648331** | **1.161650** | ~~0.55811~~ (end-to-end pending 56691812) | wrong |
+| id | iteration | prior push | achieved Step-1 ratio | required ratio | ~~achieved/required~~ **first-leg only, NOT like-for-like** | sign |
+| --- |---:|---:|---:|---:|---:|---|
+| VL59 | 0 | 1.000000 | **1.233512** | **1.124080** | ~~1.09735~~ (end-to-end **0.9721**) | correct |
+| VL60 | 1 | 1.092736 | **0.915166** | **1.028684** | ~~0.88965~~ (end-to-end pending 56691812) | wrong |
+| VL61 | 2 | 0.967659 | **0.648331** | **1.161650** | ~~0.55811~~ (end-to-end pending 56691812) | wrong |
 
 Cap-saturated weight fraction is zero at all three iterations. Iterations 0 and 1 use checkpoint files
 labelled best-epoch, but their history minima are epoch 8/8, so those are also the actual last-epoch
@@ -622,15 +622,15 @@ product the reader had in mind, and that reading came one edit from deleting a l
 (BEN-100). Criteria, four legs each, and the honest per-leg state:
 [`docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md).
 
-| # | cause | state, **and for which artifact** | owner |
-|---|---|---|---|
-| 1 | one-sided endpoint interpolation | **OPEN** for the adopted 5D GBDT covariance (10,694 reported bins of `GRID_NBINS = 65856`) | uncertainty construction |
-| 2 | CV centering | **DISCHARGED 2026-08-12 for the footing-matched, stamp-verified candidate ONLY** (`stamped_bkgaware_meancentered_20260812.root`, sha256 `4f168e83…`; CV variant `dbcd5359…`; job `56720356`) — **still OPEN for the adopted 5D GBDT covariance that `values.tex` quotes**, which carries none of the stamps. Joseph's decision, item 1 of five; F7's presentation half settled in the same decision: mean-centered headline, CV-centered conservative variant. Counts: **1 of 7 for the candidate, 0 of 7 for the quoted artifact.** | uncertainty construction |
-| 3 | varying estimator seeds | **OPEN** for the same artifact | uncertainty construction |
-| 4 | scalar jitter subtraction | **OPEN** for the same artifact | uncertainty construction |
-| 5 | frozen PET weights | **OPEN** for the recoil-PET budget | PET |
-| 6 | incomplete statistical projection | **OPEN**, and furthest — no `(E_avail,W)` product has been rebuilt at all, and the 5D→4D coverage guard is still one-directional (BEN-064) | uncertainty construction |
-| 7 | CV-support-limited lateral selection | **DISCHARGED 2026-08-07 — for the FPS covariance ONLY**: `uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root`, **266** reported bins, job `56431823`, gate chain PASSED (entry below). **NOT discharged for the 5D GBDT covariance**, which is a different object on a different grid — 266 ≠ 10,694 — and whose **P4-5D lateral has not been built** (`docs/OPEN_ITEMS.md:92-101`) | FPS / P4 |
+| id | # | cause | state, **and for which artifact** | owner |
+| --- |---|---|---|---|
+| VL62 | 1 | one-sided endpoint interpolation | **OPEN** for the adopted 5D GBDT covariance (10,694 reported bins of `GRID_NBINS = 65856`) | uncertainty construction |
+| VL63 | 2 | CV centering | **DISCHARGED 2026-08-12 for the footing-matched, stamp-verified candidate ONLY** (`stamped_bkgaware_meancentered_20260812.root`, sha256 `4f168e83…`; CV variant `dbcd5359…`; job `56720356`) — **still OPEN for the adopted 5D GBDT covariance that `values.tex` quotes**, which carries none of the stamps. Joseph's decision, item 1 of five; F7's presentation half settled in the same decision: mean-centered headline, CV-centered conservative variant. Counts: **1 of 7 for the candidate, 0 of 7 for the quoted artifact.** | uncertainty construction |
+| VL64 | 3 | varying estimator seeds | **OPEN** for the same artifact | uncertainty construction |
+| VL65 | 4 | scalar jitter subtraction | **OPEN** for the same artifact | uncertainty construction |
+| VL66 | 5 | frozen PET weights | **OPEN** for the recoil-PET budget | PET |
+| VL67 | 6 | incomplete statistical projection | **OPEN**, and furthest — no `(E_avail,W)` product has been rebuilt at all, and the 5D→4D coverage guard is still one-directional (BEN-064) | uncertainty construction |
+| VL68 | 7 | CV-support-limited lateral selection | **DISCHARGED 2026-08-07 — for the FPS covariance ONLY**: `uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_activelat.root`, **266** reported bins, job `56431823`, gate chain PASSED (entry below). **NOT discharged for the 5D GBDT covariance**, which is a different object on a different grid — 266 ≠ 10,694 — and whose **P4-5D lateral has not been built** (`docs/OPEN_ITEMS.md:92-101`) | FPS / P4 |
 
 **So for the artifact the four `\gbdtFive*` macros quote, the count is ZERO of seven, not one of seven.**
 Nothing in this table changes any status; it names the subject each status was always about.
@@ -643,15 +643,15 @@ Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=
 kinematic ones; `MinosEfficiency` and `GEANT_*` are weight-only and were correctly left as ordinary
 universe bands).
 
-| quantity | value |
-|---|---|
-| active lateral total, sqrt-trace | **8.10399e-39** |
-| support-limited block it replaces | 7.30356e-39 |
-| **ratio** | **1.10960 (+10.96%)** |
-| combined FPS budget before | 8.040779e-39 |
-| combined FPS budget after | **8.774217e-39 (+9.1215%)** |
-| per-bin σ ratio, 266 reported bins | min 0.7897, median 1.0071, max 1.4402 |
-| pure-sum vs subtraction residual | 3.45e-16 (tol 1e-9) |
+| id | quantity | value |
+| --- |---|---|
+| VL69 | active lateral total, sqrt-trace | **8.10399e-39** |
+| VL70 | support-limited block it replaces | 7.30356e-39 |
+| VL71 | **ratio** | **1.10960 (+10.96%)** |
+| VL72 | combined FPS budget before | 8.040779e-39 |
+| VL73 | combined FPS budget after | **8.774217e-39 (+9.1215%)** |
+| VL74 | per-bin σ ratio, 266 reported bins | min 0.7897, median 1.0071, max 1.4402 |
+| VL75 | pure-sum vs subtraction residual | 3.45e-16 (tol 1e-9) |
 
 Per band: `Muon_Energy_MINERvA` 7.8043e-39 dominates, then `Muon_Energy_MINOS` 2.1341e-39,
 `MuonResolution` 4.3796e-40, `BeamAngleX` 1.1493e-40, `BeamAngleY` 9.3351e-41; total == sum of the
@@ -678,23 +678,23 @@ a uniform scale — the per-bin spread above (0.79 to 1.44) is the reason. The
 Job 56344268, 55:32 on `nid004178`, `status: PASS`,
 verdict `GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`.
 
-| quantity | value |
-|---|---|
-| `R` (step-1 class ratio) | **1.1240802949941018** |
-| R denominator | `pot_scale * sum(w_reco[pass_reco])` — the RECO leg (D1) |
-| `R_if_reco_leg_used_w_truth` (pre-D1 value) | 1.103260884167167 |
-| `R_shift_factor_vs_legacy_w_truth` | 1.018870795770713 |
-| `sum(w_reco[pass_reco])` | 16,780,549.17866151 |
-| `sum(w_truth[pass_reco])` | 17,097,211.49513244 |
-| `pass_reco` rows | 20,573,521 |
-| B-4 | RESOLVED; the legs differ on **all** 20,573,521 rows, which is expected |
-| measured target normalization | 1e6 * R = 1,124,080.5876521247 |
-| `occupied_cells` | **231** of 285 (15 pT x 18 p‖) |
-| `negative_signed_cells` | 0 |
-| refined target sha256 | `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` |
-| refined target rows / bytes | 4,680,719 / 18,723,004 |
-| receipt sha256 | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` |
-| refiner | `u2d.refine_stay_positive`, `refinement_is_learned_production: true` |
+| id | quantity | value |
+| --- |---|---|
+| VL76 | `R` (step-1 class ratio) | **1.1240802949941018** |
+| VL77 | R denominator | `pot_scale * sum(w_reco[pass_reco])` — the RECO leg (D1) |
+| VL78 | `R_if_reco_leg_used_w_truth` (pre-D1 value) | 1.103260884167167 |
+| VL79 | `R_shift_factor_vs_legacy_w_truth` | 1.018870795770713 |
+| VL80 | `sum(w_reco[pass_reco])` | 16,780,549.17866151 |
+| VL81 | `sum(w_truth[pass_reco])` | 17,097,211.49513244 |
+| VL82 | `pass_reco` rows | 20,573,521 |
+| VL83 | B-4 | RESOLVED; the legs differ on **all** 20,573,521 rows, which is expected |
+| VL84 | measured target normalization | 1e6 * R = 1,124,080.5876521247 |
+| VL85 | `occupied_cells` | **231** of 285 (15 pT x 18 p‖) |
+| VL86 | `negative_signed_cells` | 0 |
+| VL87 | refined target sha256 | `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` |
+| VL88 | refined target rows / bytes | 4,680,719 / 18,723,004 |
+| VL89 | receipt sha256 | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` |
+| VL90 | refiner | `u2d.refine_stay_positive`, `refinement_is_learned_production: true` |
 
 **Two corroborations worth recording, because each closes a way this could have been wrong.**
 
@@ -1587,11 +1587,11 @@ receipt:
 
 **Numbers** (evidence job `56532439`, code_rev `7053f68`, 10 694 reported 5D bins per endpoint):
 
-| quantity | value | tolerance | margin |
-|---|---|---|---|
-| worst per-bin relative difference | **1.831e-11** | 1e-9 | 54.6x |
-| worst integral relative difference | **2.874e-12** | 1e-11 | 3.48x |
-| endpoints within tolerance | **10 / 10** | — | — |
+| id | quantity | value | tolerance | margin |
+| --- |---|---|---|---|
+| VL91 | worst per-bin relative difference | **1.831e-11** | 1e-9 | 54.6x |
+| VL92 | worst integral relative difference | **2.874e-12** | 1e-11 | 3.48x |
+| VL93 | endpoints within tolerance | **10 / 10** | — | — |
 
 Per-endpoint values are in `active_universe_5d/standard/evidence/p4_standard_manifest.json` under
 `endpoint_reproduction`. The worst of each is `BeamAngleY_1`.
@@ -1623,12 +1623,12 @@ target and receipt, and Gate-3 manifest all pass their frozen hashes. Each resul
 diagnostic-only, collision-isolated, and independently checked against the predeclared iteration-2
 repair rule: **correct sign and achieved/required >= 0.90**.
 
-| control | iteration-2 sign | achieved/required | frozen gate |
-|---|---:|---:|---|
-| warm model / fresh split | wrong | 0.6636878 | FAIL |
-| cold model / fixed split | correct | 0.7883825 | FAIL (<0.90) |
-| cold model / fresh split | wrong | 25.0654103 | FAIL |
-| warm/fixed with effective post-iteration `1e-5` LR | wrong | 0.8958691 | FAIL |
+| id | control | iteration-2 sign | achieved/required | frozen gate |
+| --- |---|---:|---:|---|
+| VL94 | warm model / fresh split | wrong | 0.6636878 | FAIL |
+| VL95 | cold model / fixed split | correct | 0.7883825 | FAIL (<0.90) |
+| VL96 | cold model / fresh split | wrong | 25.0654103 | FAIL |
+| VL97 | warm/fixed with effective post-iteration `1e-5` LR | wrong | 0.8958691 | FAIL |
 
 **Formal predeclared verdict:** no factorial arm repairs, and the annealed arm does not repair the
 iteration-2 increment gate. That formal route leaves intrinsic push feedback / representation-tail
@@ -1652,12 +1652,12 @@ quotable. Receipts:
 Changed job `56552326` completed its three-iteration/six-fit powered closure. Independent arithmetic
 on the persisted 285-cell spectra gives:
 
-| quantity | value | criterion / comparison | reading |
-|---|---:|---:|---|
-| injected gap | 0.234270363 | >= 0.15 | PASS |
-| floor/gap | 0.045875515 | <= 0.10 | PASS |
-| recovery | **0.512603276** | PRIMARY >= 0.494582400 | **PASS by 0.018020876** |
-| recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
+| id | quantity | value | criterion / comparison | reading |
+| --- |---|---:|---:|---|
+| VL98 | injected gap | 0.234270363 | >= 0.15 | PASS |
+| VL99 | floor/gap | 0.045875515 | <= 0.10 | PASS |
+| VL100 | recovery | **0.512603276** | PRIMARY >= 0.494582400 | **PASS by 0.018020876** |
+| VL101 | recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
 
 The fit-time anneal is proven by six records: two iteration-0 fits at `1e-4`, followed by four fits
 at `1e-5`. The Slurm `3:0` status is a post-training launcher artifact: the driver still returns 3
@@ -1707,11 +1707,11 @@ reopening is authorized. Receipts:
 Job `56563761` completed `0:0` and atomically published both the production nominal and matched-floor
 artifacts. The canonical 2026-08-08 baseline SHA-256 remains `58f664cdef266d09...` before and after.
 
-| arm | fold-forward ratio | deviation from R | frozen reproduction window |
-|---|---:|---:|---|
-| production nominal | 1.0840529523 | **-0.035608971** | OUTSIDE |
-| production matched floor | 1.0841954573 | **-0.035482196** | OUTSIDE |
-| diagnostic expectation (`56534117`) | 1.1109012167 | -0.011724321 | expected |
+| id | arm | fold-forward ratio | deviation from R | frozen reproduction window |
+| --- |---|---:|---:|---|
+| VL102 | production nominal | 1.0840529523 | **-0.035608971** | OUTSIDE |
+| VL103 | production matched floor | 1.0841954573 | **-0.035482196** | OUTSIDE |
+| VL104 | diagnostic expectation (`56534117`) | 1.1109012167 | -0.011724321 | expected |
 
 Here `R = 1.1240802949941018`; the predeclared window is
 `[-0.021724,-0.001724]`. The production-pair scatter is **0.000126775**, while the nominal gap to
@@ -1736,12 +1736,12 @@ low-pT peak ridge where the paper-comparison tension is localised.
 comparing `R_glob * Σ_p MC_p` against `Σ_p R_p MC_p`, shape taken after renormalising to unit
 yield-weighted mean:
 
-| | pT | p∥ |
-|---|---|---|
-| normalisation shift | +0.119 % | +0.118 % |
-| **shape max abs** | **0.073 %** | **0.143 %** |
-| shape rms | 0.035 % | 0.087 % |
-| shape peak-to-peak | 0.105 % | 0.281 % |
+| id | | pT | p∥ |
+| --- |---|---|---|
+| VL105 | normalisation shift | +0.119 % | +0.118 % |
+| VL106 | **shape max abs** | **0.073 %** | **0.143 %** |
+| VL107 | shape rms | 0.035 % | 0.087 % |
+| VL108 | shape peak-to-peak | 0.105 % | 0.281 % |
 
 pT bins 2 / 7 / 10 (16 / 11 / 12 % of the χ²): **+0.010 % / +0.017 % / −0.033 %**.
 Low-pT ridge (pT ≤ 0.4 GeV/c): max **0.032 %**.

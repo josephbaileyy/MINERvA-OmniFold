@@ -111,19 +111,46 @@
   },
 
   "QUESTION_5_allocation_denominator": {
-    "verdict": "UNSOURCEABLE from the login node. This is a statement about my SEARCH, and the search is enumerated so it can be extended.",
-    "usage_side_known": 1457304348109,
-    "allocation_side_known": null,
-    "overage_magnitude": "UNKNOWN -- cannot be computed without the allocation figure.",
-    "tools_tried": [
-      {"tool": "myquota", "result": "reports home (22.47/40.00 GiB) and pscratch (15.93/20.00 TiB) ONLY -- no HPSS row"},
+    "verdict": "RESOLVED. My original UNSOURCEABLE verdict was WRONG and is retracted below.",
+    "RETRACTION": {
+      "what_I_wrote": "'UNSOURCEABLE from the login node ... remaining route is the Iris web UI, which needs a browser or Joseph.'",
+      "why_it_was_wrong": "The figure is on the login node, in a binary called `hpssquota`.",
+      "found_by": "Session A (243af2f), originally surfaced by the mediator. Verified independently here by running the binary myself rather than accepting the relayed number.",
+      "measured_here": "hpssquota prints a third row absent from every other quota tool: 'josephrb usage on HPSS charged to m3246 | 1.03TiB | 512.00GiB | 206.5%'.",
+      "THE_SHARP_PART_AND_IT_IS_SHARPER_THAN_THE_RELAY": "`myquota`, `showquota` and `hpssquota` are three sibling binaries in ONE directory, /global/common/software/nersc/bin/. I RAN `myquota`. Measured today: myquota and showquota emit home and pscratch ONLY -- no HPSS row -- while hpssquota emits home, pscratch AND the HPSS row. So I did not fail to look on the login node; I looked with the sibling that omits the answer, and its output looked complete because it was a well-formed two-row table with no indication a third row existed elsewhere.",
+      "the_error_class": "I searched the TOOL SPACE by asking 'does hsi have a quota verb' and 'does iris expose storage', and never asked 'is there a differently-named sibling of the tool I already ran'. A negative result from one member of a naming family is not a negative result for the family -- the same shape as BEN-140 in this very receipt, where an empty hashlist result was a property of my invocation. Two instances, one turn, one document.",
+      "cost_of_the_error": "Writing 'the figure has to come from Iris' put a false floor under the cost of obtaining it and would have routed a 10-second command to Joseph."
+    },
+    "quota_GiB": 512.0,
+    "residency_bytes": 1457304348109,
+    "residency_GiB": 1357.2204,
+    "percent_of_quota": 265.1,
+    "overage_GiB": 845.2204,
+    "MY_MEASUREMENT_IS_AN_INDEPENDENT_CONFIRMATION": {
+      "claim": "A's 1357.22 GiB / 265.1% / 845.22 GiB overage all reproduce EXACTLY from the byte total this receipt measured by a different route (hsi du per directory).",
+      "arithmetic": "1457304348109 / 1024^3 = 1357.2204 GiB; /512 = 265.1%; -512 = 845.2204 GiB",
+      "why_it_matters": "The quota came from A, the residency came from me, and neither figure was derived from the other."
+    },
+    "the_charged_reading_predates_the_copy_AND_THIS_IS_NOT_A_ROUNDING_ARTEFACT": {
+      "concern": "hpssquota's '1.03TiB' is displayed to two decimals, so agreeing with any GiB figure at printed precision would prove nothing.",
+      "test_used_instead": "Treat 1.03 TiB as the DISPLAY INTERVAL [1.025, 1.035) TiB = [1049.60, 1059.84) GiB and ask which candidate residencies fall inside it.",
+      "p3f_archive_alone_GiB": 1057.0495,
+      "p3f_alone_inside_interval": true,
+      "p3f_plus_quoted_GiB": 1357.2204,
+      "p3f_plus_quoted_inside_interval": false,
+      "quoted_alone_GiB": 300.1709,
+      "quoted_alone_inside_interval": false,
+      "conclusion": "The charged figure is consistent with the P3F archive ALONE and inconsistent with P3F+quoted, so it predates the 36-file copy and HPSS accounting lags. This is an interval containment result, not an agreement at printed precision."
+    },
+    "superseded_tool_search_kept_for_the_record": [
+      {"tool": "hpssquota", "result": "HAS THE ANSWER -- quota 512.00 GiB, charged 1.03 TiB, 206.5%"},
+      {"tool": "myquota", "result": "home + pscratch only, NO HPSS row"},
+      {"tool": "showquota", "result": "home + pscratch only, NO HPSS row -- same omission as myquota"},
       {"tool": "iris user --json", "result": "compute hours only: m3246 1613.2/10000.0 user, 15943.5/20000.0 project"},
       {"tool": "iris project -p m3246", "result": "rejected: 'unrecognized arguments: -p'"},
       {"tool": "iris graphql (schema introspection)", "result": "CLI crash: KeyError 'systemInfo' in nersc_iris/cli.py:122"},
-      {"tool": "hsi quota", "result": "'unrecognized command: quota'"}
-    ],
-    "the_relayed_email_carries_no_figures_either": "The notice as relayed states the fact of overage with no usage or allocation numbers. So the magnitude is unknown to everyone currently in this loop, not just to me.",
-    "remaining_route": "iris.nersc.gov web UI, or asking NERSC/Ben directly. Both need a browser or Joseph -- neither is available to this lane, so this routes through Session A."
+      {"tool": "hsi quota", "result": "'unrecognized command: quota' -- correct, it is not an hsi verb"}
+    ]
   },
 
   "OPEN_RECONCILIATION": {
@@ -164,11 +191,26 @@
   },
 
   "WHAT_THIS_MEANS_FOR_THE_DECISION": {
+    "THE_DISPOSITION_IS_NOT_HERE_AND_MUST_NOT_BE_COPIED_HERE": {
+      "canonical_home": "OI-48 in docs/OPEN_ITEMS.md, detail in docs/orchestration/RECEIPT-20260812-hpss-space-audit.md. Session A owns it.",
+      "why_a_pointer_instead_of_a_summary": "I first wrote A's conclusion into this receipt as a restatement, and it went stale within the hour: at 243af2f the disposition was 'move the 240 to CFS, HPSS drops to 58.6%'; by 6f43678 A had retired their own move option, because the 240 objects' regeneration chain measures 10.48 TiB -- 10.2x the products it remakes -- so the compact tape copy is the point and CFS is not an archive. A restated conclusion is a second copy that can only go stale (D's BEN-163 rule iii, and this receipt's own CONVENTION-receipt-ingredients discipline). So this file states only what IT measured and points at the owner for the decision.",
+      "what_is_retired_from_my_own_earlier_text": "The inference 'so the answer is the allocation increase.' It was reasoned from a true premise (no trim available in my lane) but it is not my call and it is not the live disposition. The MEASUREMENTS below all stand.",
+      "one_number_of_A's_that_derives_from_this_receipt": "Removing the 240 P3F objects would leave 1457304348109 - 1134998230283 = 322306102132 B = 300.1709 GiB = 58.6% of the 512 GiB quota -- i.e. exactly the quoted set. Recorded because it is derivable from operands here, not to restate the option it was attached to."
+    },
+    "JOSEPHS_PRECONDITION_OUTRANKS_ALL_OPTIONS": "Verbatim, via A: 'make sure you actually need to store these files.' Moves are approved; deletions are NOT. Nothing in this receipt authorizes a move, a deletion, or a new archive.",
+    "MY_CONTRIBUTION_TO_THAT_NECESSITY_AUDIT": {
+      "note": "A's necessity evidence is that all 240 objects are STILL ON SCRATCH byte-exact, so HPSS is currently a second copy rather than a purge rescue. This receipt adds a DIFFERENT axis, and the two do not overlap.",
+      "axis_A_measured": "Is HPSS the only copy? No -- scratch still holds all 240, byte-exact, 1,134,998,230,283 B, which equals the figure measured here by hsi du.",
+      "axis_measured_here": "Is any of it redundant WITHIN HPSS? No -- 12,334 B of dedup and zero superseded generations, because the 12 suffix classes are the 12 MINERvA playlists and AGENTS.md:145 says conflating them corrupts 11/12 of the dataset SILENTLY.",
+      "joint_reading": "The set is irreducible as a set AND currently duplicated on scratch. Those pull in opposite directions and both are true: nothing can be dropped from the 240, and the 240 are not presently the only copy. The decision is therefore about DURABILITY (scratch is purgeable, 79.7% full) rather than about redundancy.",
+      "what_would_change_the_answer": "If the 240 are still needed at all. That is a retention question about the P3F full-event campaign, not a storage question, and it is not settled here.",
+      "SETTLED_ELSEWHERE_2026-08-13": "A's 6f43678 answers it and the answer is YES, on a third axis neither of the two above: the 240 objects are bit-reproducible, but their regeneration chain is 2,307 upstream files totalling 11,523,492,855,151 B = 10.48 TiB, 10.2x the products it remakes and 65.8% of all pscratch. The chain cannot itself be protected, so the 240 are the compact durable representation of a 10.5 TB dependency. My two axes measured whether the set is REDUNDANT; that one measures what it would COST to not have it, which is the axis that actually settles necessity. Recorded here because it retires the 'is the 1.135 TB still needed' question this receipt left open -- not restated further; see OI-48."
+    },
     "for_joseph_via_session_A": [
-      "The overage predates today's copy; the copy is not what tripped it.",
+      "The overage predates today's copy; the copy is not what tripped it. The charged reading is consistent with the P3F archive alone and inconsistent with P3F+quoted.",
       "My lane's 1.457 TB has essentially no slack: 12,334 bytes of dedup and ZERO superseded generations. The 1.135 TB is 10 systematic universes x 12 required playlists.",
-      "So 'trim my HPSS footprint' is not an available answer without destroying physics inputs, and Ben has already offered an increase.",
-      "Sizing that ask needs the allocation figure, which is in the Iris web UI and not reachable from the login node."
+      "So a TRIM is not available without destroying physics inputs -- but per A, a MOVE to CFS is, and it needs no coverage decision.",
+      "The denominator is 512.00 GiB and it came from `hpssquota` on the login node, not from Iris. My earlier 'needs a browser or Joseph' was wrong and is retracted above."
     ],
     "not_claimed": [
       "That other users' or other lanes' HPSS content has no slack -- this receipt covers ONLY /home/j/josephrb on HPSS.",
