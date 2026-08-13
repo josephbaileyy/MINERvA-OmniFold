@@ -701,3 +701,74 @@ latent. Zero instances today, and it is a property of the matcher, not of this e
 and whether the ledger freeze window is closed. The freeze is A's to close with the lanes and had not
 been closed at `9ba19fa`.
 
+---
+
+### V21 — Gate 2 promotion requirement 1, independent receipt review: **PASS**
+
+`G2_GATE2_TARGET_RUNTIME_RECEIPT.json`, job `56344268`, `status: PASS`,
+`verdict: GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`. Reviewed by Session D because
+Session C promoted the gate and cannot review it. Requirement 1 is *"independent receipt review of
+hashes, exact configuration, and binned telemetry"*; all three are addressed below.
+
+**HASHES — verified against my own tree, not taken from C.** All four pinned sources are
+byte-identical at `HEAD`: `2d-unfolding/unfold_2d_omnifold_unbinned.py`,
+`nd-unfolding/pet/fullevent_fps_dataloader.py`, `omnifold_nn/omnifold/dataloader.py`,
+`nd-unfolding/pet/gate2_target_runtime.py`. `execution.head_at_runtime` `beb40c9` **is an ancestor of
+`origin/main`** (2026-08-05, "Fix the powered closure's weight dtype"). The product is bound to
+today's tree.
+
+**CONFIGURATION.** `target_mode negweight-refined`, `estimator exact`, `master_seed 42`,
+`refinement_random_state 45`, `mc_normalization 1e6`, measured `1e6*R`, `dataloader_import_mode`
+target-only with TensorFlow *not imported*, `pet_training_started: false`. Coherent with a
+target-only gate; nothing claims a training run that did not occur.
+
+**BINNED TELEMETRY — every published number re-derived from the receipt's own operands.**
+
+    ps*sum(w_bkg)      109599.39938418806      == published        (exact)
+    numerator          4006528.600615812       == published        (exact)
+    R  (reco leg)      1.1240802949941018      == published        relative error 0.0
+    R  (truth leg)     1.103260884167167       == published        (exact)
+    shift factor       1.018870795770713       == published, and   == sum_w_truth/sum_w_reco
+    1e6 * R            1124080.2949941019      == normalization_target, bit-for-bit
+    data - bkg         4006528.600615812       vs raw_signed_sum 4006528.6006158125  (last ulp)
+    n_data + n_bkg     4680719                 == n_measured_rows  (exact)
+    n_negative_rows    564591                  == n_bkg_rows       (exact)
+    rows*4 + 128       18723004                == published file size -> float32, from a SECOND instrument
+
+The last line matters: the byte count confirms the declared `dtype: float32` independently of the
+declaration.
+
+**`b4_gated: true` IS EARNED, NOT DECORATION — the claim C flagged as its own weakest, refuted in the
+gate's favour.** `die()` raises `RuntimeError`; the gate runs at `:587` in straight-line code, before
+the receipt dict is built at `:624` and written at `:735`; **there is no `try`/`except` anywhere between
+`:585` and `:740`**, so no write-always path exists. Power-tested the predicate directly over its
+failure space — it BLOCKS on all seven of: absent telemetry block, `{}`, `None`, `present_in_dump`
+false, leg `w_truth`, leg key absent, leg `None`; and passes only the correct configuration. It is also
+numerically corroborated rather than merely flagged: `R_if_reco_leg_used_w_reco` equals the reported `R`
+exactly, while the `w_truth` alternative is `1.1033` — the legs differ by 1.9% on this data, so "which
+leg" is a distinguishable question here and the answer is the reco leg.
+
+**C's open question on `normalized_sum` — ANSWERED, and the tolerance is not vacuous.**
+`step1_target_sum_matches` = `np.isclose(rtol=3e-6, atol=2.0)`, budget **5.372** absolute; the observed
+gap is **0.2927**, i.e. **5.4%** of budget. Power-tested: it blocks 1 part in 1e5, the missing-`R`
+factor, and a bare `1e6`. The residual `2.6e-7` is **consistent with** the target being float32
+(`2.2 x` float32 eps) — stated as consistency, not proof.
+
+**One residual I closed rather than leave:** `max_mc_events: 200000` is the bounded MC *validation*
+cloud only. `R`'s denominator sums `n_signal_rows: 49,152,885` with `n_signal_pass_reco: 20,573,521`
+— the full population, not the subsample.
+
+### What this verdict does NOT cover
+
+- **I did not re-run the gate.** I reviewed the receipt, the code that writes it, and re-derived its
+  arithmetic.
+- **The target `.npy` digest `544b2f6a…` is UNVERIFIED BY ME** — the file is on `/pscratch`.
+  C re-verified it this turn. **That is the one link in the chain resting on the lane that promoted the
+  gate**, which is the exact thing requirement 1 exists to prevent, and it should be confirmed by
+  someone with cluster access who is not C. It is a one-command ask and I am not treating it as
+  blocking, because every number the digest would corroborate reconciles here from independent operands.
+- The 166-test on-cluster green is the personal-orchestrator's measurement, not mine. I verified the
+  off-cluster subset (165 across five files, plus 12 dual-leg mutation tests).
+- **D2's MC-only closure path was read, not executed** (C's own limit): no runtime confirmation that
+  ROOT is not imported.
+
