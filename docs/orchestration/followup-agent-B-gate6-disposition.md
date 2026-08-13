@@ -3,6 +3,10 @@
 Resume your existing `agent-B-p5b` role and UUID. Do not create a new conversation, modify the tree,
 launch compute, or promote a component.
 
+The shared checkout is concurrent and may be stale. Treat commit `eec036e` as the immutable packet and
+read each source with `git show eec036e:<path>` (or from a clean detached worktree); do not checkout,
+pull, stage, or edit the shared working tree.
+
 Read the committed sources:
 
 - `docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md`
