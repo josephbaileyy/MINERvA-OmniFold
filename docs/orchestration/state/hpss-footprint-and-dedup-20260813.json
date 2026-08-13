@@ -1,0 +1,242 @@
+{
+  "artifact": "hpss-footprint-and-dedup-20260813.json",
+  "lane": "C (PET)",
+  "written_utc": "2026-08-13T00:12:16Z",
+  "trigger": {
+    "kind": "relayed NERSC allocation notice",
+    "relayed_by": "CODEX-RELAY via Session A, quoting an Outlook message from Benjamin Philip Nachman received 2026-08-12T22:15:50Z",
+    "notice_text": "In project m3246, user josephrb has used more HPSS space than the user's allocation.",
+    "notice_generated": "2026-08-12 06:50:13 PDT (= 2026-08-12T13:50:13Z)",
+    "ben_offer": "'I'm happy to increase as you need, just let me know.' -- an allocation increase is a real alternative to trimming.",
+    "authorization_status": "This notice authorizes NOTHING destructive. No deletion, overwrite, or trim was performed or is proposed here. Any HPSS deletion remains per-item and needs Joseph's explicit authorization."
+  },
+
+  "QUESTION_1_did_my_copy_cause_this": {
+    "verdict": "NO -- the overage is PRE-EXISTING. At least 97.5% of my copy postdates the notice.",
+    "ingredients": {
+      "job": 56762440,
+      "start": "2026-08-12T06:49:24 PDT",
+      "end": "2026-08-12T07:22:48 PDT",
+      "elapsed": "00:33:24",
+      "notice_generated": "2026-08-12T06:50:13 PDT",
+      "overlap_seconds": 49,
+      "measured_throughput_MB_per_s": 161.15,
+      "worst_case_bytes_landed_by_notice_instant": 7896350000,
+      "worst_case_fraction_of_copy": 0.0245,
+      "copy_total_bytes": 322306102132
+    },
+    "reasoning": "The notice instant falls 49 s after the job's start. Even under the least favourable assumption -- that the notice measured HPSS state at exactly 06:50:13 rather than from an earlier accounting sweep -- at most 7.9 GB of the 322 GB could have been included. Realistically the figure is 0: at t=49 s the job was still computing the first file's LOCAL md5 and had transferred nothing.",
+    "timezone_note": "sacct times are the ssh client's TZ, America/Los_Angeles, verified in the same session by running `date` (PDT) and `date -u` (UTC) against the sacct call's environment. The 49 s figure depends on that; it is stated rather than assumed silently.",
+    "but": "The full 0.322 TB IS now resident and WILL appear in the next accounting. This finding says my copy did not create the overage, not that it is free."
+  },
+
+  "QUESTION_2_footprint": {
+    "method": "hsi du -s per top-level directory. Metadata only; zero bytes moved.",
+    "total_bytes": 1457304348109,
+    "total_TB_decimal": 1.457,
+    "total_files": 279,
+    "directories": [
+      {
+        "path": "mnv-p3f-pet-fullevent-final",
+        "bytes": 1134998230283,
+        "files": 240,
+        "share_of_footprint": 0.779,
+        "created": "2026-08-11",
+        "owner_lane": "C (PET) -- this is my lane's archive"
+      },
+      {
+        "path": "mnv-quoted-products-20260812",
+        "bytes": 322306102132,
+        "files": 36,
+        "share_of_footprint": 0.221,
+        "created": "2026-08-12",
+        "owner_lane": "C (PET) -- job 56762440"
+      },
+      {"path": "mnv-p3f-smoketest", "bytes": 12334, "files": 1, "created": "2026-08-11"},
+      {"path": "backups/scratch_backup", "bytes": 3360, "files": 2, "created": "2026-02-20"}
+    ],
+    "sum_check": "1134998230283 + 322306102132 + 12334 + 3360 = 1457304348109 -- derivable from the operands above, per CONVENTION-receipt-ingredients.",
+    "ENUMERATION_PROVED_COMPLETE_BY_AN_OUTSIDE_WITNESS": "This inventory came from hsi du over four directories I chose by reading the top-level listing, and nothing in it established that no fifth directory held charged bytes. Lane B's derivation (4016159) supplies that witness from HPSS's own accounting: charged 1134998245977 B = this inventory MINUS the quoted set, remainder exactly 0. A completeness check on an enumeration, from the billing system rather than from re-walking the tree -- and a different instrument than the one that produced the numerator, which is the property D's rule asks for.",
+    "internal_reconciliation_of_the_large_archive": {
+      "root_files_bytes": 1134996735477,
+      "root_files_count": 120,
+      "receipt_json_bytes": 1494806,
+      "receipt_json_count": 120,
+      "sum": 1134998230283,
+      "matches_du": true,
+      "why_this_matters": "The per-suffix grouping and the du total were measured by different commands and agree exactly, so the structural claim below is not an eyeballed pattern."
+    }
+  },
+
+  "QUESTION_3_dedup_by_content_digest": {
+    "method": "hsi hashlist on every object, then group by stored md5. Metadata only; zero bytes moved.",
+    "objects_with_stored_digests": 277,
+    "distinct_digests": 276,
+    "duplicate_content_groups": 1,
+    "duplicate_detail": [
+      {
+        "md5": "5e89461934bf030f0c4881f8dd0a2779",
+        "bytes": 12334,
+        "members": [
+          "mnv-p3f-pet-fullevent-final/P3F_PET_receipt_BeamAngleX_0_1A.json",
+          "mnv-p3f-smoketest/smoketest.json"
+        ],
+        "note": "The 'smoketest' object is a byte-identical copy of a real per-universe receipt."
+      }
+    ],
+    "reclaimable_by_dedup_bytes": 12334,
+    "reclaimable_by_dedup_fraction_of_footprint": 8.5e-09,
+    "cross_archive_digest_overlap": 0,
+    "cross_archive_note": "ZERO shared digests between the prior archive and the quoted-product set. This confirms BY DIGEST what was previously asserted by path enumeration -- a stronger instrument reaching the same answer.",
+    "verdict": "There is no dedup slack. 12,334 bytes out of 1.457 TB."
+  },
+
+  "QUESTION_4_supersession": {
+    "verdict": "NONE AVAILABLE. The 1.135 TB contains no superseded generations.",
+    "structure": "120 .root files = 10 systematic universes x 12 suffix classes {1A,1B,1C,1D,1E,1F,1G,1L,1M,1N,1O,1P}, each class exactly 10 files.",
+    "the_question_that_had_to_be_settled": "Are those 12 classes successive GENERATIONS of the same product (so only the newest is needed) or 12 distinct PLAYLISTS (so all are needed)?",
+    "answer": "PLAYLISTS -- distinct MINERvA data-taking periods, not versions.",
+    "evidence": [
+      "AGENTS.md:331 -- 'Manifests: 2d-unfolding/playlist_manifests/1{A..P}_{MC,Data}.txt'",
+      "AGENTS.md:25 -- 'full 12-playlist MEFHC production complete'",
+      "AGENTS.md:148 -- per-playlist event loops over '1B-1P'",
+      "AGENTS.md:142-145 -- runEventLoopOmniFold.cpp picks ONE global playlist flux/calibration; running one playlist's flux across all events 'silently applies the first playlist's flux to all events and corrupts 11/12 of the dataset'"
+    ],
+    "consequence": "Playlists are not interchangeable and none is redundant. Deleting one playlist destroys 1/12 of every systematic universe it belongs to, and per AGENTS.md:145 the failure mode of conflating them is SILENT corruption rather than an error.",
+    "byte_breakdown_per_playlist": {
+      "1M": 200063950386, "1F": 162994575774, "1D": 141501749666, "1G": 137172613002,
+      "1E": 116518084742, "1N": 115441413202, "1A": 94189623076, "1C": 48074299753,
+      "1P": 46315784917, "1O": 34588325755, "1B": 24836511488, "1L": 13299803716
+    },
+    "size_variation_note": "Playlist sizes vary 15x (1L 13.3 GB to 1M 200.1 GB) because playlists differ in exposure, NOT because larger ones supersede smaller ones. The size spread is what makes the generation hypothesis superficially plausible; the AGENTS.md evidence is what settles it."
+  },
+
+  "QUESTION_5_allocation_denominator": {
+    "verdict": "RESOLVED. My original UNSOURCEABLE verdict was WRONG and is retracted below.",
+    "RETRACTION": {
+      "what_I_wrote": "'UNSOURCEABLE from the login node ... remaining route is the Iris web UI, which needs a browser or Joseph.'",
+      "why_it_was_wrong": "The figure is on the login node, in a binary called `hpssquota`.",
+      "found_by": "Session A (243af2f), originally surfaced by the mediator. Verified independently here by running the binary myself rather than accepting the relayed number.",
+      "measured_here": "hpssquota prints a third row absent from every other quota tool: 'josephrb usage on HPSS charged to m3246 | 1.03TiB | 512.00GiB | 206.5%'.",
+      "THE_SHARP_PART_AND_IT_IS_SHARPER_THAN_THE_RELAY": "`myquota`, `showquota` and `hpssquota` are three sibling binaries in ONE directory, /global/common/software/nersc/bin/. I RAN `myquota`. Measured today: myquota and showquota emit home and pscratch ONLY -- no HPSS row -- while hpssquota emits home, pscratch AND the HPSS row. So I did not fail to look on the login node; I looked with the sibling that omits the answer, and its output looked complete because it was a well-formed two-row table with no indication a third row existed elsewhere.",
+      "the_error_class": "I searched the TOOL SPACE by asking 'does hsi have a quota verb' and 'does iris expose storage', and never asked 'is there a differently-named sibling of the tool I already ran'. A negative result from one member of a naming family is not a negative result for the family -- the same shape as BEN-140 in this very receipt, where an empty hashlist result was a property of my invocation. Two instances, one turn, one document.",
+      "cost_of_the_error": "Writing 'the figure has to come from Iris' put a false floor under the cost of obtaining it and would have routed a 10-second command to Joseph."
+    },
+    "quota_GiB": 512.0,
+    "residency_bytes": 1457304348109,
+    "residency_GiB": 1357.2204,
+    "percent_of_quota": 265.1,
+    "overage_GiB": 845.2204,
+    "MY_MEASUREMENT_IS_AN_INDEPENDENT_CONFIRMATION": {
+      "claim": "A's 1357.22 GiB / 265.1% / 845.22 GiB overage all reproduce EXACTLY from the byte total this receipt measured by a different route (hsi du per directory).",
+      "arithmetic": "1457304348109 / 1024^3 = 1357.2204 GiB; /512 = 265.1%; -512 = 845.2204 GiB",
+      "why_it_matters": "The quota came from A, the residency came from me, and neither figure was derived from the other."
+    },
+    "the_charged_reading_predates_the_copy_AND_THIS_IS_NOT_A_ROUNDING_ARTEFACT": {
+      "concern": "hpssquota's '1.03TiB' is displayed to two decimals, so agreeing with any GiB figure at printed precision would prove nothing.",
+      "test_used_instead": "Treat 1.03 TiB as the DISPLAY INTERVAL [1.025, 1.035) TiB = [1049.60, 1059.84) GiB and ask which candidate residencies fall inside it.",
+      "p3f_archive_alone_GiB": 1057.0495,
+      "p3f_alone_inside_interval": true,
+      "p3f_plus_quoted_GiB": 1357.2204,
+      "p3f_plus_quoted_inside_interval": false,
+      "quoted_alone_GiB": 300.1709,
+      "quoted_alone_inside_interval": false,
+      "conclusion": "The charged figure is consistent with the P3F archive ALONE and inconsistent with P3F+quoted, so it predates the 36-file copy and HPSS accounting lags. This is an interval containment result, not an agreement at printed precision.",
+      "SUPERSEDED_BY_A_SHARPER_INSTRUMENT_FROM_LANE_B": {
+        "credit": "Session B, 4016159. My interval test bounds what the charged reading CANNOT be; B derived what it IS, to the byte, and reproduces BOTH printed fields rather than one.",
+        "derivation": "charged = P3F 1134998230283 + smoketest 12334 + backups 3360 = 1134998245977 B = 1057.0495 GiB",
+        "reproduces_field_1": "1057.0495 GiB = 1.0323 TiB, which displays as '1.03TiB'",
+        "reproduces_field_2": "1057.0495 / 512 = 206.455%, which displays as '206.5%' -- my interval test could not check this second field at all",
+        "residency_minus_charged": 322306102132,
+        "quoted_archive_bytes": 322306102132,
+        "remainder": 0,
+        "WHAT_THE_ZERO_REMAINDER_BUYS_AND_I_HAD_NOT_CLAIMED_IT": "It is an independent witness that THIS RECEIPT'S ENUMERATION IS COMPLETE. My 279-object inventory came from hsi du over four directories I chose by listing the top level; nothing in it proved I had not missed a directory. HPSS's own accounting figure equals my inventory minus the quoted set with ZERO bytes unaccounted, so there is no fifth location holding charged bytes. A completeness check on an enumeration, supplied by the billing system rather than by re-walking the tree.",
+        "full_residency_would_display": "1.33TiB / 265.1%, which is not what hpssquota shows -- so the lag is confirmed from the display side too",
+        "operational_gap": "The live reading implies freeing 545.05 GiB; the committed state needs 845.22 GiB; the 300.17 GiB difference IS the quoted archive. All three verified here from the operands above.",
+        "why_both_are_kept": "The interval test is retained unedited rather than replaced. It was correct and it was reached independently, and a superseded-but-sound inference is evidence about method (B's own phrasing about their allocation bound, and it applies symmetrically)."
+      }
+    },
+    "superseded_tool_search_kept_for_the_record": [
+      {"tool": "hpssquota", "result": "HAS THE ANSWER -- quota 512.00 GiB, charged 1.03 TiB, 206.5%"},
+      {"tool": "myquota", "result": "home + pscratch only, NO HPSS row"},
+      {"tool": "showquota", "result": "home + pscratch only, NO HPSS row -- same omission as myquota"},
+      {"tool": "iris user --json", "result": "compute hours only: m3246 1613.2/10000.0 user, 15943.5/20000.0 project"},
+      {"tool": "iris project -p m3246", "result": "rejected: 'unrecognized arguments: -p'"},
+      {"tool": "iris graphql (schema introspection)", "result": "CLI crash: KeyError 'systemInfo' in nersc_iris/cli.py:122"},
+      {"tool": "hsi quota", "result": "'unrecognized command: quota' -- correct, it is not an hsi verb"}
+    ]
+  },
+
+  "OPEN_RECONCILIATION": {
+    "issue": "Two different numbers have been used for 'how much was already protected on HPSS' and they are not equal.",
+    "operand_a": {"value_TB": 0.874, "provenance": "cited in the HPSS-copy escalation as the already-protected quantity, framed as reducing the coverage gap over the 5.977 TB ignored set"},
+    "operand_b": {"value_TB": 1.135, "value_bytes": 1134998230283, "provenance": "measured today by hsi du on mnv-p3f-pet-fullevent-final"},
+    "difference_bytes": 260998230283,
+    "status": "NOT RECONCILED. Both operands are stated so the discrepancy is visible rather than averaged away.",
+    "plausible_but_unverified_explanation": "0.874 TB may be the subset of the prior archive whose source files are still present in the ignored-set walk, with the remaining 0.261 TB being archive-only content (source deleted from scratch, or outside the walk root). This is a HYPOTHESIS. It has not been checked and neither figure should be substituted for the other until it is.",
+    "how_to_settle_it": "Intersect the 240 archived basenames against cluster-ignored-set-walk-20260812.tsv and sum the matched bytes."
+  },
+
+  "BONUS_REVERIFICATION": {
+    "claim": "All 36 md5s recorded in quoted-products-hpss-protection-56762440.json match the digests HPSS itself has stored, re-read a day later.",
+    "receipt_md5_count": 36,
+    "agree": 36,
+    "disagree": 0,
+    "why_this_is_not_circular": "The comparison source is HPSS's own stored metadata via hashlist, read in a separate session from the copy job, NOT the job's log or counters. It is a third check on top of the copy-time md5 comparison and the separate sha256 pass in job 56760314."
+  },
+
+  "INSTRUMENT_CORRECTIONS": {
+    "hashlist_on_a_directory_returns_nothing_silently": {
+      "wrong": "hsi -q 'hashlist <directory>' -> empty, exit 1, no error explaining why",
+      "right": "hsi -q 'hashlist <concrete file path>' or 'hashlist <dir>/*.root'",
+      "second_independent_reason_a_naive_count_reads_zero": "hashlist prints '<hash> md5 <path>', whereas hashcreate prints '<hash> (md5) <path>'. A grep written against the hashcreate format matches zero hashlist lines even when output is present.",
+      "what_this_nearly_cost": "I first read the empty result as 'the prior 1.135 TB archive carries no stored digests and cannot be verified without re-reading bytes'. That is FALSE -- all 120 .root files and all 120 receipts have stored md5s. The error was caught only by power-testing the instrument against a directory I KNEW had digests, where it also returned zero.",
+      "generalization": "Two independent faults produced the same empty result, so fixing either one alone would still have read as zero."
+    },
+    "hsi_segfaults_on_many_path_arguments": {
+      "observed": "36 paths in one hashlist call -> 'Segmentation fault'",
+      "workaround": "chunk at 6 paths per invocation"
+    },
+    "ssh_in_a_while_read_loop_eats_the_list": {
+      "observed": "'chunks sent: 1' when 6 were queued -- ssh consumed the remaining chunk lines from stdin",
+      "workaround": "ssh -n",
+      "how_it_was_caught": "the digest count (6, expected 36) contradicted the chunk count, which is why the loop reports both"
+    }
+  },
+
+  "WHAT_THIS_MEANS_FOR_THE_DECISION": {
+    "THE_DISPOSITION_IS_NOT_HERE_AND_MUST_NOT_BE_COPIED_HERE": {
+      "canonical_home": "OI-48 in docs/OPEN_ITEMS.md, detail in docs/orchestration/RECEIPT-20260812-hpss-space-audit.md. Session A owns it.",
+      "why_a_pointer_instead_of_a_summary": "I first wrote A's conclusion into this receipt as a restatement, and it went stale within the hour: at 243af2f the disposition was 'move the 240 to CFS, HPSS drops to 58.6%'; by 6f43678 A had retired their own move option, because the 240 objects' regeneration chain measures 10.48 TiB -- 10.2x the products it remakes -- so the compact tape copy is the point and CFS is not an archive. A restated conclusion is a second copy that can only go stale (D's BEN-163 rule iii, and this receipt's own CONVENTION-receipt-ingredients discipline). So this file states only what IT measured and points at the owner for the decision.",
+      "what_is_retired_from_my_own_earlier_text": "The inference 'so the answer is the allocation increase.' It was reasoned from a true premise (no trim available in my lane) but it is not my call and it is not the live disposition. The MEASUREMENTS below all stand.",
+      "one_number_of_A's_that_derives_from_this_receipt": "Removing the 240 P3F objects would leave 1457304348109 - 1134998230283 = 322306102132 B = 300.1709 GiB = 58.6% of the 512 GiB quota -- i.e. exactly the quoted set. Recorded because it is derivable from operands here, not to restate the option it was attached to."
+    },
+    "JOSEPHS_PRECONDITION_OUTRANKS_ALL_OPTIONS": "Verbatim, via A: 'make sure you actually need to store these files.' Moves are approved; deletions are NOT. Nothing in this receipt authorizes a move, a deletion, or a new archive.",
+    "MY_CONTRIBUTION_TO_THAT_NECESSITY_AUDIT": {
+      "note": "A's necessity evidence is that all 240 objects are STILL ON SCRATCH byte-exact, so HPSS is currently a second copy rather than a purge rescue. This receipt adds a DIFFERENT axis, and the two do not overlap.",
+      "axis_A_measured": "Is HPSS the only copy? No -- scratch still holds all 240, byte-exact, 1,134,998,230,283 B, which equals the figure measured here by hsi du.",
+      "axis_measured_here": "Is any of it redundant WITHIN HPSS? No -- 12,334 B of dedup and zero superseded generations, because the 12 suffix classes are the 12 MINERvA playlists and AGENTS.md:145 says conflating them corrupts 11/12 of the dataset SILENTLY.",
+      "joint_reading": "The set is irreducible as a set AND currently duplicated on scratch. Those pull in opposite directions and both are true: nothing can be dropped from the 240, and the 240 are not presently the only copy. The decision is therefore about DURABILITY (scratch is purgeable, 79.7% full) rather than about redundancy.",
+      "what_would_change_the_answer": "If the 240 are still needed at all. That is a retention question about the P3F full-event campaign, not a storage question, and it is not settled here.",
+      "SETTLED_ELSEWHERE_2026-08-13": "A's 6f43678 answers it and the answer is YES, on a third axis neither of the two above: the 240 objects are bit-reproducible, but their regeneration chain is 2,307 upstream files totalling 11,523,492,855,151 B = 10.48 TiB, 10.2x the products it remakes and 65.8% of all pscratch. The chain cannot itself be protected, so the 240 are the compact durable representation of a 10.5 TB dependency. My two axes measured whether the set is REDUNDANT; that one measures what it would COST to not have it, which is the axis that actually settles necessity. Recorded here because it retires the 'is the 1.135 TB still needed' question this receipt left open -- not restated further; see OI-48."
+    },
+    "for_joseph_via_session_A": [
+      "The overage predates today's copy; the copy is not what tripped it. The charged reading is consistent with the P3F archive alone and inconsistent with P3F+quoted.",
+      "My lane's 1.457 TB has essentially no slack: 12,334 bytes of dedup and ZERO superseded generations. The 1.135 TB is 10 systematic universes x 12 required playlists.",
+      "So a TRIM is not available without destroying physics inputs -- but per A, a MOVE to CFS is, and it needs no coverage decision.",
+      "The denominator is 512.00 GiB and it came from `hpssquota` on the login node, not from Iris. My earlier 'needs a browser or Joseph' was wrong and is retracted above."
+    ],
+    "not_claimed": [
+      "That other users' or other lanes' HPSS content has no slack -- this receipt covers ONLY /home/j/josephrb on HPSS.",
+      "That the 1.135 TB archive is still NEEDED. It is not superseded and not duplicated, which is a different question from whether the campaign still requires it. That is a retention decision, not a measurement.",
+      "Any figure for the overage magnitude."
+    ]
+  },
+
+  "commands_are_reproducible": [
+    "hsi -q 'du -s <dir>'",
+    "hsi -q 'hashlist <dir>/*.root'",
+    "myquota; iris user --json",
+    "sacct -j 56762440 -X -o JobID,State,Submit,Start,End,Elapsed"
+  ]
+}
