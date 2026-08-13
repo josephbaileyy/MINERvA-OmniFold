@@ -382,3 +382,24 @@ built; a test count printed before the tests ran. In all three, the numerator an
 from one instrument, so the instrument's failure was invisible to both. `du`'s 279, the distinct-path
 assertion, and "the count did not move" are each an outside witness, and each of those is what actually
 caught it.
+
+### BEN-193, eighth instance — an irreversible instruction resting on 0.87% coverage, and the conclusion happened to hold
+
+The mediator's instruction to remove 1.06 TiB from tape rested on the regeneration chain being intact. Its
+evidence: *"first 20 upstream MC files all present, 0 missing"* — 20 of 41 entries in `1A_MC.txt`, which is
+**1 of 28 manifests**. Against the real denominator that is **20 of 2,307 distinct paths = 0.87%**, and the
+0.87% was not stated because the 2,307 was never computed.
+
+**The full measurement agrees: 2,307 of 2,307 present, 0 missing.** So this is not a wrong conclusion —
+it is a *correct* conclusion whose stated support covered under 1% of its subject, in the paragraph
+authorising an irreversible act. Recording it precisely because it came out right: an instance that
+survives verification is the one that teaches nothing unless the coverage gap is named anyway, and
+"it turned out fine" is how a sampling habit becomes invisible.
+
+**And the full measurement changed the decision even though it confirmed the fact.** The chain is
+**11,523,492,855,151 B = 10.48 TiB across 2,307 files — 10.2× the 1.06 TiB of products it regenerates, and
+65.8% of all pscratch usage.** That number cannot be reached from a 20-file sample, and it inverts the
+recommendation it was gathered to support: because the chain is far too large to protect and sits on the
+same purgeable scratch, the 240 products are the compact durable stand-in for a 10.5 TB dependency —
+an argument for keeping the *most* durable copy, not for vacating tape for disk. **The sample was
+sufficient for the claim and insufficient for the decision**, and only the denominator distinguishes those.
