@@ -4,7 +4,6 @@
   "purpose": "Discharge the hold in PREDECLARATION-20260813-gate5-coherent-replicas-n50.md:117 -- 'No replica is submitted until Session C reports on input integrity.' Gate 6's predeclaration carries the same clause.",
   "verdict": "BRANCH (B): VALID OLDER PRODUCTION. The scratch copies are COMPLETE and were closed properly. They are NOT truncated.",
   "consequence": "No re-download. Gates 1-4 consumed sound inputs. The Gate-5 and Gate-6 holds are discharged on this evidence.",
-
   "WHY_THIS_FILE_EXISTS_LATE": {
     "measured_utc": "2026-08-13T~06:20Z",
     "committed_utc": "2026-08-13T~10:40Z",
@@ -12,14 +11,12 @@
     "class": "BEN-139, which is this lane's own finding: a result that reached a peer and not the record. A determination that exists only in chat is not discharged, because the next reader greps the tree.",
     "rule": "The artifact is the deliverable. Reporting a measurement to a peer is not recording it."
   },
-
   "THE_QUESTION": {
     "observed": "The scratch copies are ~24% SMALLER than the current open-data files of the same name, three of three checked, ratio 1.243-1.244.",
     "why_it_mattered": "2d-unfolding/download_playlist.sh:26-27 pulls straight from the same path with a plain xrdcp and no skim step, so the copies were meant to be byte-identical. Exactly one of two things had to be true.",
     "branch_A": "The downloads are INCOMPLETE -- upstream of Gate 1, Gate 3, the 240 products and everything built on them. Then the answer is to stop everything and re-download.",
     "branch_B": "MINERvA reprocessed or re-released the open data. Then the analysis is sound, but re-downloading does not reproduce the chain."
   },
-
   "MEASUREMENT": {
     "tool": "ROOT 6.28/12 via the root_6_28 conda env, activated BY FULL PREFIX through the conda-24.10.0 base that created it (activating by NAME fails since 2026-07-02; a bare unactivated python segfaults in cling)",
     "read_only": true,
@@ -34,32 +31,95 @@
     },
     "directory": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A",
     "files": [
-      {"run": "00110000", "physical_size": 17318473069, "get_end_logical": 17318473069,
-       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.6564011573791504,
-       "trees": {"MasterAnaDev": {"entries": 186439, "branches": 4102, "get_entry_last_rc": 77756},
-                 "Truth": {"entries": 544343, "branches": 515, "get_entry_last_rc": 36192},
-                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}},
-       "full_basket_scan": {"tree": "MasterAnaDev", "branch": "eventID", "entries_read": 186439,
-                            "entries_total": 186439, "read_failures": 0}},
-      {"run": "00110001", "physical_size": 17319286427, "get_end_logical": 17319286427,
-       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.654052495956421,
-       "trees": {"MasterAnaDev": {"entries": 186557, "branches": 4102, "get_entry_last_rc": 96188},
-                 "Truth": {"entries": 544499, "branches": 515, "get_entry_last_rc": 15632},
-                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}}},
-      {"run": "00110002", "physical_size": 17325481336, "get_end_logical": 17325481336,
-       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.651597023010254,
-       "trees": {"MasterAnaDev": {"entries": 186366, "branches": 4102, "get_entry_last_rc": 83688},
-                 "Truth": {"entries": 544097, "branches": 515, "get_entry_last_rc": 14332},
-                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}}}
+      {
+        "run": "00110000",
+        "physical_size": 17318473069,
+        "get_end_logical": 17318473069,
+        "end_equals_size": true,
+        "k_recovered": false,
+        "compression_factor": 2.6564011573791504,
+        "trees": {
+          "MasterAnaDev": {
+            "entries": 186439,
+            "branches": 4102,
+            "get_entry_last_rc": 77756
+          },
+          "Truth": {
+            "entries": 544343,
+            "branches": 515,
+            "get_entry_last_rc": 36192
+          },
+          "Meta": {
+            "entries": 1,
+            "branches": 4,
+            "get_entry_last_rc": 32
+          }
+        },
+        "full_basket_scan": {
+          "tree": "MasterAnaDev",
+          "branch": "eventID",
+          "entries_read": 186439,
+          "entries_total": 186439,
+          "read_failures": 0
+        }
+      },
+      {
+        "run": "00110001",
+        "physical_size": 17319286427,
+        "get_end_logical": 17319286427,
+        "end_equals_size": true,
+        "k_recovered": false,
+        "compression_factor": 2.654052495956421,
+        "trees": {
+          "MasterAnaDev": {
+            "entries": 186557,
+            "branches": 4102,
+            "get_entry_last_rc": 96188
+          },
+          "Truth": {
+            "entries": 544499,
+            "branches": 515,
+            "get_entry_last_rc": 15632
+          },
+          "Meta": {
+            "entries": 1,
+            "branches": 4,
+            "get_entry_last_rc": 32
+          }
+        }
+      },
+      {
+        "run": "00110002",
+        "physical_size": 17325481336,
+        "get_end_logical": 17325481336,
+        "end_equals_size": true,
+        "k_recovered": false,
+        "compression_factor": 2.651597023010254,
+        "trees": {
+          "MasterAnaDev": {
+            "entries": 186366,
+            "branches": 4102,
+            "get_entry_last_rc": 83688
+          },
+          "Truth": {
+            "entries": 544097,
+            "branches": 515,
+            "get_entry_last_rc": 14332
+          },
+          "Meta": {
+            "entries": 1,
+            "branches": 4,
+            "get_entry_last_rc": 32
+          }
+        }
+      }
     ]
   },
-
   "WHY_THIS_EXCLUDES_A_THREE_INDEPENDENT_WAYS": {
     "1_header_consistency_and_it_needs_no_scan": "ROOT writes the LOGICAL end-of-file into the file header. A truncated copy carries the ORIGINAL's header, so GetEND exceeds the bytes present, ROOT reports 'probably not closed, trying to recover' and sets kRecovered. Measured: GetEND == physical size EXACTLY on all three, kRecovered False on all three. The header's own end-of-file record lands on the last byte we have, so the file we have is the file its writer finished.",
     "2_the_read_completes": "Every tree's last entry reads on all three, and a FULL basket scan of run00110000's MasterAnaDev read 186,439 of 186,439 entries with zero failures. A truncated ROOT file does not read its TTree to the end.",
     "3_a_constant_ratio_is_impossible_under_truncation": "Three separate xrdcp invocations interrupted at three arbitrary points would give three arbitrary ratios. The measured ratios are 1.243 / 1.244 / 1.243 -- constant to four significant figures across independently transferred files. That is a SCHEMA-level difference, which is what a reprocessing that adds branches or columns looks like."
   },
-
   "THE_MARKER_QUESTION_WHICH_IS_WHY_A_LOOKED_PLAUSIBLE": {
     "markers_found": 0,
     "evidence": "ls -a on the Playlist1A MC directory returns only '.' and '..'. No .done markers of any kind.",
@@ -67,18 +127,48 @@
     "reading": "These predate the BEN-023 marker rule, so they were fetched under the OLD resume rule -- 'exists and has non-zero size' -- which is precisely the condition that would accept a partial download and then skip it forever. The suspicion was well founded.",
     "resolution": "The artifact refutes it. ABSENCE OF A MARKER IS A STATEMENT ABOUT THE RESUME RULE, NOT ABOUT THE BYTES. This is the same shape as an UNSOURCEABLE verdict being a statement about the search."
   },
-
   "WHAT_IS_NOT_CLAIMED": [
     "That the remote open-data files are what changed rather than ours. Nobody has read the remote headers; Perlmutter 401s and it needs the DTN. The local files being complete does not by itself identify WHAT the 24% is.",
     "A positive identification of the reprocessing. That needs remote entry counts: if they MATCH these while the remote files are larger, the reprocessing added BRANCHES not events; if they differ, it added events too. Reading a root:// URL for GetEntries fetches only headers and a few baskets, so it is cheap -- it just needs DTN access.",
-    "Anything about playlists other than 1A, or about Data as opposed to MC. Three MC files of one playlist were checked."
+    "CLOSED 2026-08-13 by the full-coverage sweep: \"anything about playlists other than 1A, or about Data as opposed to MC\". All twelve Data playlists and the MC tree are now covered, 2365/2365. The first two items above STAND -- nobody has read the remote headers, and the reprocessing is still identified by the constant ratio rather than positively."
   ],
-
   "SECOND_ORDER_CONSEQUENCE_FOR_HPSS": "Re-downloading does NOT reproduce the chain, so the 240 P3F products are not recoverable from current open data and the HPSS tape copy is the only path back to them. This independently supports the 10.48 TiB regeneration-chain argument for keeping them on tape -- the chain's INPUTS no longer exist upstream in the form that produced these products.",
-
   "instrument_notes": [
     "A task notification reported the launching ssh as 'failed with exit code 1' while the probe ran fine -- a wc -l racing the log's creation. The launcher's exit code said nothing about the job's state.",
     "The probe's log sat at 2 lines for minutes while it was healthy: Python block-buffers redirected stdout on this filesystem (BEN-028). Liveness was judged by CPU time -- 2:23 CPU in 2:27 elapsed -- not by log growth.",
     "My own waiter polled with `pgrep -f root_probe2`, which MATCHES ITS OWN COMMAND LINE, so it reported RUNNING forever and would never have fired. Caught because the matched process showed 00:01 elapsed with zero CPU where the real probe had been at 2:23. pgrep -f self-matching is the process-space version of a grep that finds itself."
-  ]
+  ],
+  "SUPERSEDING_COVERAGE_20260813": {
+    "what": "Session A extended this from n=3 to the WHOLE minerva_large_files tree. A header read costs microseconds, so sampling was never justified once the instrument existed.",
+    "receipt": "docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json",
+    "instrument": "docs/orchestration/fend_probe.py -- reads fEND out of the 100-byte ROOT header in pure Python, NO ROOT import, so it is a different reader from this receipt's ROOT 6.28/12 probe",
+    "result": "2365 of 2365 structurally complete: OK 2365, TRUNCATED 0, SHORT-fEND 0, NOT-A-ROOT-FILE 0, OSERROR 0",
+    "coverage_ingredients": {
+      "Data": 1818,
+      "MC": 489,
+      "MATFluxAndReweightFiles": 54,
+      "MParamFiles": 4,
+      "sum": 2365,
+      "reported_independently_by_the_tool_as_FILES_EXAMINED": 2365,
+      "data_playlists": "1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P -- all twelve"
+    },
+    "why_it_is_stronger_than_agreement_with_my_n_3": "Two independent readers of the same quantity: ROOT's own TFile::GetEND here, and a hand-parsed fEND there. A reproduced this receipt's three GetEND values to eleven digits.",
+    "the_negative_control_is_the_part_my_n_3_could_not_supply": "A 1 MiB dd prefix of run00110000 probed as TRUNCATED with fEND 17318473069 against size 1048576. My three-file pass showed the check PASSING three times and could not show it FAILING, so it could not establish that the check can fail at all.",
+    "the_tool_committed_is_the_tool_that_produced_the_number": "A draft produced the first sweep; adding --self-test changed the file, so the committed version was re-run from scratch and its log is byte-identical to the draft's (sha256 e570ccfb...). That is evidence the self-test changed no output, rather than an assurance that it did not.",
+    "self_test": "7/7 on BOTH interpreters (local python3 and login11 /usr/bin/python3.11), including that one path must flip OK -> SHORT-fEND when bytes are appended, so the verdict is contingent on the file rather than on the code path"
+  },
+  "THE_SWEPT_SET_IS_THE_REGENERATION_CHAIN": {
+    "claim": "The 2,307 Data+MC files swept above ARE the 2,307-file regeneration chain behind the 240 P3F products. Not a coincidence of two equal counts -- checked.",
+    "why_it_needed_checking": "Data 1818 + MC 489 = 2307, and the chain was independently measured at 2,307 distinct upstream files. Two sets of the same size need not be the same set, and this campaign has been burned by exactly that inference.",
+    "measured_this_turn": {
+      "manifest_files": 28,
+      "total_lines_across_manifests": 4616,
+      "distinct_paths": 2307,
+      "distinct_paths_under_minerva_large_files_Data_or_MC": 2307,
+      "command_note": "counted with `awk 1` rather than `cat` deliberately: two manifests lack trailing newlines, and `cat` fuses one file's last line to the next file's first, which is the artifact that produced the spurious 2308 in BEN-198."
+    },
+    "conclusion": "Every distinct path in the chain lies under the trees that were swept, and the sweep of those trees found exactly that many files. So the two sets coincide.",
+    "WHAT_THIS_BUYS": "PRESENCE and INTEGRITY are different claims and both now hold over the identical set. Session A had measured the chain 2307/2307 PRESENT, 0 missing. The sweep adds 2307/2307 STRUCTURALLY COMPLETE. So the keep-on-tape argument no longer rests on the chain merely existing: every upstream file the 240 products depend on is present AND its ROOT header agrees with its bytes.",
+    "still_not_claimed": "That the chain is SUFFICIENT to regenerate the products, or that any file is semantically correct. Structural completeness is not correctness."
+  }
 }
