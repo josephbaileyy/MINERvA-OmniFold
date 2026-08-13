@@ -104,3 +104,78 @@ Launching nominal training. Any Gate-4 promotion. Any engine edit. Any cluster P
 stands and `p4_evidence.py:25` still reads `REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"`, measured
 this turn. Any move, deletion or new archiving on HPSS — that decision is closed in favour of the
 allocation increase.
+
+---
+
+# RESULT — job `56818470` returned **Branch REPAIRED**, and it corroborates the disposition (2026-08-13)
+
+`COMPLETED`, exit `0:0`, elapsed `00:21:05`, `nid008264`. The reading below applies the branch set
+predeclared above, in its prescribed order, **before** looking at the arm's own verdict string.
+
+## Gates first, because they license reading anything else
+
+| gate | result |
+|---|---|
+| **Arm 1** reproduction (`increment1`, `push_prev`, `push_final`) | **PASS — `rel_dev = 0.0` on all three**, bit-exact against the committed `56525829` receipt |
+| **Arm 2** reproduction | **PASS — `rel_dev = 0.0` on all three** |
+| **Gate A** | `A1_mc_indices_bit_exact: true` (0 differing rows), `A2_truth_norm_bit_exact: true` |
+| **Gate B** | `Bi_pass: true`, `rel_dev` 0.0 at max/median/p90/p99; `Bii_off_shell_exactly_one: true`, 72 off-shell of 1,999,928 |
+| overall | `verdict: GATE_AB_PASSED` |
+
+So UNRESOLVED cases 4 and 5 do not fire, and Arm 2 may be read.
+
+## The predeclared fields, both arms
+
+| arm / iteration | `e2e/required` | abs dev | `end_to_end_sign_is_wrong` | abs(`r1_required_mean` − 1) |
+|---|---|---|---|---|
+| **control** iter0 | 0.9721159 | 0.0279 | False | 0.1241 |
+| **control** iter1 | 0.8608448 | 0.1392 | **True** | 0.0287 |
+| **control** iter2 | 0.6554214 | 0.3446 | **True** | 0.1616 |
+| **annealed** iter0 | 1.1100740 | 0.1101 | False | 0.1241 |
+| **annealed** iter1 | 1.0329083 | 0.0329 | False | 0.0992 |
+| **annealed** iter2 | 0.9643910 | 0.0356 | False | 0.0319 |
+
+**Domain of validity holds everywhere** — no iteration in either arm has `|r1_required_mean − 1| < 0.02`
+(closest is control iter1 at 0.0287). **So the predeclared most-likely outcome did NOT occur**, and the
+criterion carries information at every point read.
+
+**Iteration indexing resolved from the predeclaration rather than assumed:** line 41 names the checkpoint
+inventory `iter0/1/2`, so *"both iterations 1 and 2"* means **iter1 and iter2**. `iter0` is excluded by
+design — the defect was localized to *"iteration dynamics after initial feedback."*
+
+## Verdict: **Branch REPAIRED**
+
+`end_to_end_sign_is_wrong == False` at iter1 **and** iter2, with absolute deviation of **0.0329** and
+**0.0356**, both inside the 0.10 tolerance and both above the 0.02 materiality floor.
+
+**The control earns the contrast rather than assuming it:** the pre-anneal arm inverts at iter1 and iter2
+and degrades monotonically (0.972 → 0.861 → 0.655). The annealed arm never inverts and stays within 3.6%
+(1.110 → 1.033 → 0.964). Predeclared reading: *the dead LR anneal was the dominant mechanism of the Branch
+C defect, and the defect is a property of the retired LR policy rather than of iteration dynamics as such.*
+
+**This CORROBORATES the annealed disposition.** It was predeclared as informational, not decisive, and it
+did not contradict — so it escalates as a note, not as a finding.
+
+## THE HONEST TRADE, which a REPAIRED headline would hide
+
+**The anneal fixed the inversion and made `iter0` worse.** Control iter0 deviates by **0.0279**; annealed
+iter0 by **0.1101** — **3.95×** worse, and outside the 0.10 tolerance the later iterations clear. That is
+the arm's own verdict, `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN`: *"step 1 under-achieves at iteration 0 but with
+the CORRECT sign, so the sign inversion is an iteration effect layered on a step-1 capacity/convergence
+shortfall present from the start."* Both readings are true and neither supersedes the other: **the sign
+inversion does not survive the anneal; a step-1 capacity shortfall at iter0 does, and is larger.**
+
+Had `iter0` been inside the REPAIRED criterion, this run would have returned UNRESOLVED case 2.
+
+## THE PREDECLARATION EARNED ITS KEEP, and this is the measurable part
+
+Reading the **forbidden** field flips the verdict on the same data:
+
+- `r1_achieved_over_required_FIRST_LEG_ONLY_NOT_LIKE_FOR_LIKE` at annealed **iter1 = 1.1811038** →
+  absolute deviation `0.1811 > 0.10` → **UNRESOLVED case 2.**
+- `correction_sign_is_wrong` at annealed **iter1 = True** → reads as **PERSISTS.**
+
+Both are in the same receipt, one line from the correct fields. **The predeclaration named
+`end_to_end_*` as load-bearing two days before the data existed, and named the first-leg field as the trap
+because the `56525829` ledger row quotes it under a like-for-like heading (`BEN-077`).** Without that, the
+most natural field to read gives the opposite answer.
