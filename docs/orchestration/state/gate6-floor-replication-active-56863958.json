@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "campaign_node": "Gate 6 Leg F across-process floor at the fixed member-1 policy (42,0)",
+  "job_id": "56863958",
+  "array_tasks": "2-5",
+  "concurrency_self_cap": 2,
+  "nice": 10000,
+  "observed_at_utc": "2026-08-13T13:23:40Z",
+  "submit_utc": "2026-08-13T06:22:10 (cluster-local as reported by sacct Submit)",
+  "state_at_receipt": "PENDING",
+  "priority_at_receipt": 57679,
+  "authorization": {
+    "who": "Joseph, relayed verbatim by personal-orchestrator",
+    "words": "Yes let B do it",
+    "what": "invert the 'If all five pass' precondition in PREDECLARATION-20260813-gate6-member-trajectories.md so the across-process floor runs on the FAILING branch",
+    "scope_excluded_at_this_time": "Leg X, the {42,46}x{0,4} 2x2, was authorized separately later and is deliberately NOT part of this array; it is sequenced after this floor because a 2x2 has one degree of freedom per main effect and no replication, so it has no internal error scale until this floor exists"
+  },
+  "predeclaration": {
+    "path": "docs/orchestration/PREDECLARATION-20260813-gate6-floor-replication.md",
+    "fixed_before_any_draw_existed": true,
+    "verdict_thresholds": {
+      "seed_determined_if": "F_range[2] <= 0.05 AND every draw d[j,2] <= 0.10",
+      "process_determined_if": "F_range[2] >= 0.1740029887300910",
+      "otherwise": "FLOOR_INTERMEDIATE, attribute nothing"
+    },
+    "threshold_provenance": {
+      "0.05": "the Gate-4 nominal fold-forward deviation bar -- a pre-existing scale in this problem, not invented for this test",
+      "0.1740029887300910": "0.5 x the committed member range in v form, 1.1014828481277632 - 0.7534768706675813 = 0.3480059774601819; recomputed in test_floor_replicate_launcher.py rather than trusted from the prose"
+    }
+  },
+  "launcher": {
+    "path": "nd-unfolding/pet/sbatch_pet_fullevent_floor_replicate_array.sh",
+    "sha256": "b0308f245d0373215e21a7247fbf8e226adbefb03e6fdf1b5081a7ccd8363061",
+    "byte_identical_local_and_cluster": true,
+    "committed_and_pushed_before_submission": "ef020b9"
+  },
+  "inventory": {
+    "draw_1": {
+      "source": "EXISTING nd-unfolding/pet/fullevent_ml_ensemble/member_1 artifact, reused unmodified, NOT retrained",
+      "v_at_iteration_2": 0.9806897311812962,
+      "d_at_iteration_2": 0.019310268818703790
+    },
+    "draws_2_to_5": "four new trainings, identical policy, varying only process/node/GPU"
+  },
+  "policy_read_off_member_1_this_turn_not_from_a_constant": {
+    "estimator_seed": 42,
+    "subsample_seed": 0,
+    "niter": 3,
+    "epochs": 8,
+    "train_events": 2000000,
+    "batch_size": 512
+  },
+  "RECONCILIATION_BEFORE_SUBMISSION": {
+    "why": "a floor measured under different conditions is not a floor",
+    "inputs_npz": {
+      "path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "size_bytes": 9897374636,
+      "unchanged_since_the_members": true
+    },
+    "target_npy": {
+      "canonical_path_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "archived_copy_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "byte_identical": true,
+      "meaning": "the bit-identity gate NOTE.md says the Gate-5-driven Gate-2 re-run had to pass, passed. No --target-npy override is needed and none is used.",
+      "correction_to_an_earlier_receipt": "gate6-trajectory-preflight-20260813.json records canonical_path_absent=true and canonical_path_will_not_be_recreated_or_repointed=true. That was TRUE at 08:32Z and FALSE by 02:38 PDT, one hour later, when another lane rebuilt the path byte-identically. Filed as BEN-123. The earlier receipt is not wrong; it is stale, and nothing in it says a recorded absence can go stale."
+    },
+    "gate2_receipts": {
+      "canonical_sha256": "8b858622e0ce127f51844694b99ff36b47937d40a2ceee606fd8436e319d3b36",
+      "archived_sha256": "336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f",
+      "differ": true,
+      "every_field_the_driver_binds_is_identical": true,
+      "fields_compared": {
+        "status": "PASS",
+        "weights.sha256": "544b2f6a...",
+        "weights.size_bytes": 18723004,
+        "step1_feed.rows": 4680719,
+        "step1_feed.normalized_sum": 1124080.587652125,
+        "runtime_target.estimator_fingerprint": "pet-fullevent-fps-v1",
+        "runtime_target.target_mode": "negweight-refined",
+        "runtime_target.refinement_is_learned_production": true,
+        "runtime_target.bootstrap_seed": null,
+        "runtime_target.step1_class_ratio": 1.1240802949941018,
+        "input_preflight.sha256": "fa6b3463...",
+        "input_preflight.size_bytes": 9897374636
+      },
+      "resolution": "assert_target_provenance binds by CONTENT, not receipt identity, so the newer canonical receipt is used and both digests are recorded"
+    },
+    "training_code_byte_identical_to_what_the_members_ran": {
+      "train_fullevent_nominal.py": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "fullevent_fps_dataloader.py": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+      "omnifold_nn/omnifold/omnifold.py": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "authority": "the pin table sbatch_gate6_member_trajectory_array.sh verified at array 56847059"
+    },
+    "gate5_loader_edit_is_measurably_inert_on_this_path": {
+      "claim": "the loader was edited for Gate 5 after the members trained",
+      "evidence": "step1_increment_trajectory.py:144-145 rebuilds each member's subsample with the CURRENT loader and fails closed unless it equals the artifact's stored mc_indices; all five members passed that gate at 56847059, after the edit",
+      "not_taken_on_trust": true
+    },
+    "diagnostic_code_repo": {
+      "path": "/pscratch/sd/j/josephrb/gate6-reconcile-56834281",
+      "access": "READ ONLY, never written",
+      "all_seven_pins_plus_engine_match": true
+    }
+  },
+  "GATE_5_PRIORITY_PRESERVED": {
+    "constraint": "Gate 5 slipping to accommodate a Gate-6 diagnostic is not an authorized trade",
+    "why_no_contention_structurally": "Gate 5's pending tasks are held by JobArrayTaskLimit and aftercorr -- its own array cap and dependency, not resource scarcity -- so its throughput is bounded at ten concurrent regardless of this submission",
+    "measured_after_submission": {
+      "g5train_running": 10,
+      "g5targ_running": 10,
+      "unchanged": true
+    },
+    "belt_and_braces": {
+      "self_cap": "%2, so at most two of my GPUs run at once",
+      "nice": 10000,
+      "measured_priority_gap": "Gate 5 pending 67679 vs this array 57679 -- exactly 10000 lower, so Gate 5 outranks it at every scheduling decision",
+      "cost_of_the_self_cap": "two waves instead of one, ~7 h instead of ~3.5 h, landing well before Gate 5's ~19:20-20:10 PDT family"
+    }
+  },
+  "GATE5_CODE_ROOT_untouched": "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 is not referenced by the launcher, and test_floor_replicate_launcher.py asserts it never becomes referenced",
+  "cluster_repo_not_synced": "the launcher was scp'd as a single file. The cluster's fullevent_fps_dataloader.py is modified-but-uncommitted and load-bearing for the live Gate-5 array, so a git pull or checkout there could clobber it. No repo sync was performed.",
+  "watch": {
+    "id": "gate6-floor-replication-56863958",
+    "kind": "slurm-array",
+    "state": "armed",
+    "action": "root-resume",
+    "carries_the_full_predeclared_rule_and_all_five_prohibitions": true
+  },
+  "tests": {
+    "path": "nd-unfolding/tests/test_floor_replicate_launcher.py",
+    "passing": 33,
+    "mutations_caught": "8/8",
+    "mutations": ["admit draw 1 (would retrain member_1)", "vary the estimator seed", "corrupt the target digest", "syntax error in the embedded validity block", "drop the subsample-equality check", "drop --nice", "point at GATE5_CODE_ROOT", "add --allow-overwrite"],
+    "launcher_restored_byte_identical_after_mutation": true,
+    "stated_gaps": "named at the foot of the test file: digests are asserted present in text not matched against files (unreachable off-cluster; the launcher is the executable check), the four-stage pipeline is never executed off-cluster (Mac TF 2.16/Keras 3 cannot load the vendored Keras-2 PET net), the member_1 read-only test is a text scan, and no floor-statistic code exists yet to test"
+  },
+  "prohibitions_still_live": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+  ],
+  "is_a_retry": false,
+  "why_not_a_retry": "every draw uses the IDENTICAL seed pair (42,0); only the process, node and GPU vary. It measures a different quantity (reproducibility at fixed policy) on a policy whose member passed.",
+  "gate6_unblocked_by_any_outcome": false,
+  "c_ml_construction_allowed": false,
+  "gate4_user_disposition_remains_independent": true,
+  "reset_credits_consumed": 0,
+  "worker_uuids_replaced": 0
+}
