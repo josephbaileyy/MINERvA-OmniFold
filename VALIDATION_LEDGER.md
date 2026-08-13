@@ -707,8 +707,40 @@ verdict `GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`.
    membership and both grids start at 0.0, and the metrics scaled both histograms identically.
 
 **Not quotable as a cross section.** This certifies the CONSTRUCTION of the measured target only.
-Gate-4 must separately prove the nominal consumes this exact array (audit J04), and Gate-4 cannot
-PASS until the D2 powered recovery closure exists — see `docs/OPEN_ITEMS.md`.
+Gate-4 must separately prove the nominal consumes this exact array (audit J04).
+
+**CORRECTED 2026-08-13.** This paragraph previously read *"Gate-4 cannot PASS until the D2 powered
+recovery closure exists."* **That is false: the closure exists.** Job `56552326` produced it —
+VL98 injected gap `0.234270363` (≥ 0.15), VL99 floor/gap `0.045875515` (≤ 0.10), VL100 recovery
+`0.512603276` against PRIMARY `≥ 0.494582400`, PASS by `0.018020876` — and CPU finalizer `56562169`
+re-derived it at 47/47 checks with a largest reported-versus-rederived spectrum difference of
+`5.898e-12` against `1e-9`. See §2026-08-10 in this file.
+
+**What is actually open is a CONFIGURATION question, not an existence one.** `OI-23` requires the
+injected truth-reweight recovery closure *"at the final nominal configuration"*, and `56552326` was
+the annealed-LR **shape validation** — a changed job. Whether that configuration is equivalent to
+the final nominal configuration is **UNESTABLISHED**; it is asserted in neither direction here,
+because the question is settled by comparing configurations, not by reading prose. A row saying
+"exists" was stale; this one is meant to be actionable.
+
+**VL101 is a recorded measurement whose adjudication has already happened, not a live blocker.** Its
+SECONDARY reading rejected the annealed arm against baseline `0.546853 ± 0.02`. Joseph resolved that
+disagreement on physics grounds by selecting the annealed arm
+(`docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md`). Nothing here says the
+measurement was wrong. Context worth carrying, measured by the orchestrator lane in job `56818470`:
+the configuration that produced the `0.546853` baseline is now **shown** to carry a sign-inverting
+iteration defect — the pre-anneal control inverts at iterations 1 and 2 and degrades `0.972 → 0.861
+→ 0.655`, while the annealed arm never inverts (`|dev|` `0.0329`, `0.0356`). **That does NOT establish
+that `0.546853` is inflated:** `56818470` measured fold-forward SIGN behaviour, not recovery, and
+"tail collapse inflates recovery" remains a mechanism argument rather than a measurement. The
+defensible statement is the weaker one — a defective configuration's number is a poor reference
+standard.
+
+**Naming trap, and it has already misrouted work twice.** The `D2` in "D2 powered recovery closure"
+is decision D2 §2 of `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md` (target ownership /
+the injected recovery test). The `D2` in the powered-closure criteria is a *different* thing — the
+shape criterion, as in commit `f2c5b7d` *"Powered closure n=3: D2 pass"*. Confirming one while citing
+the other looks like a complete check. Open items: `docs/OPEN_ITEMS.md` `OI-23`.
 
 **The r1 run is bit-identical.** Job 56342333 produced the SAME target digest `544b2f6a...`, and was
 superseded only because its receipt pinned a loader hash the audit repairs then moved. That is direct
