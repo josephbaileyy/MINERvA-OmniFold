@@ -1031,3 +1031,98 @@ this worth closing properly rather than inferring from the input digest.
 **Still open and correctly so:** full OI-23 discharge hangs on `56563761` remaining the final nominal,
 which is Joseph's promotion call, not a verification result.
 
+---
+
+### V24 — `E_avail` audit: **Finding 1 is OI-30, live and blocked. Finding 2's code half is OVERSTATED.**
+
+Read-only, **local tree at `origin/main`** (the fork caveat is answered below). No cluster access from this
+lane, so every population number below is the codex census as relayed, not mine; everything about *code*
+is measured here.
+
+## Q3 — Finding 1 is not a new finding. It is `OI-30`, **LIVE and BLOCKED**, and its stated action is this exact check
+
+`docs/OPEN_ITEMS.md:45` — *"`OI-30` | BLOCKED | Eavail definition / Gregor | … Reconcile the truth Eavail
+definitions and **verify the charged-pion convention against arXiv:2312.16631 Equation 4**."* The long
+form is `OPEN_ITEMS-ARCHIVE-2026-08.md:1005-1035`, and it already contains the whole finding: *"our
+charged-pion mass constant is `135` — the pi0 mass; charged pi is 139.57 — worth ~4.6 MeV per charged
+pion."*
+
+**So the drafted Slack reply asserting Finding 1 is a bug would assert a resolution this repo records as
+unsettled.** The archived item says in terms: *"Both look inherited verbatim from MAT
+(`CCQE3DFitFunctions.h` / arXiv:2312.16631 Eq. 4, which our code cites); **that citation has not been read
+against the code**, so which side matches the published convention is not established here."* The code
+agrees — `CVUniverse.h:160-164` says *"Copied verbatim from MAT"* and names the same header and equation.
+**Neither cited header is vendored in this tree**, so the verbatim claim cannot be checked from here. That
+is the one action that closes it, and it is unchanged since 2026-08-12.
+
+**AND THE 4.57 MeV IS THE SMALLER OF TWO DISCREPANCIES ON THE SAME TABLE ROW.** The archived comparison
+against `minerva-ml` records: ours `pi+-` = **kinetic (E − 135)**, theirs = **total E**. The item's own
+words: *"The charged-pion row is the material one: **~140 MeV per charged pion**, not a rounding
+difference."* That is **30x** the constant error, it is definitional rather than numeric, and it is the
+actual open question with Gregor. **A reply that leads with 4.57 MeV leads with the small half of a row
+whose large half is unresolved.**
+
+**On regeneration: I agree with the mediator and for a stronger reason.** *"No event-loop regeneration
+needed"* cannot stand while a truth-value question is open — a census showing zero negatives and max
+91.77 GeV is equally consistent with a uniformly shifted distribution, so it establishes non-negativity,
+not correctness. But the regeneration question is dominated by the ~140 MeV definitional issue, not by
+the 4.57 MeV constant, and settling `OI-30(i)` decides both at once.
+
+## Q1 — **Contract/diagnostic gap, NOT a correctness defect. I am downgrading Finding 2's code half, with the code.**
+
+The relayed claim is that a negative reco value *"is either dropped or lands in the highest `E_avail` bin
+depending on which path touches it."* **Measured, the second half does not happen.**
+
+    :105  histogramdd                     -> silently drops out-of-range              (confirmed)
+    :533  np.digitize(c, edges) - 1       -> yields -1 for any negative               (confirmed)
+    :538  `if not all(0 <= coord[a] < shape[a])`  -> **-1 fails this and gets weight 0, counted in n_zero**
+
+`build_measured_training_nd` **bounds-checks before it dereferences**, so the `-1`-indexes-the-last-bin
+hazard is real in the NumPy idiom and **unreachable at this call site**. Every other `digitize` in the
+driver is `np.clip(..., 0, n-1)` (`:789`, `:790`). `:828` is a comment and documents the behaviour:
+*"weight 0 via `build_measured_training_nd`'s digitize."*
+
+**So the two paths do not disagree about where a negative goes — both exclude it.** One drops silently,
+one assigns weight zero and counts it in `n_zero`, which is printed under `verbose`. The defect is that
+the exclusion is not surfaced at analysis level, and that a reader of the idiom cannot tell the guard is
+there. **That is a contract and reporting gap.** The latent hazard is worth recording: above the last
+edge, `digitize - 1` returns `7` for a 7-bin axis, which the same guard also catches — unoccupied, since
+truth max is 91.77 against a 100 GeV top edge.
+
+**Deferrable?** Yes, for the code half — there is nothing to fix that changes a number. **A matched
+current-vs-parity rerun is still the only thing that demonstrates the numerical null**, it needs no ROOT
+rebuild, and at ~1e-5 of support the null is plausible and undemonstrated. **Plausible-and-undemonstrated
+is exactly what a receipt must not report as verified.**
+
+## Q2 — **(b)**, and the deciding argument is definitional, not the 2.3 sigma
+
+**I addressed the tension rather than noting it:**
+
+    predicted 53.39   data 73   diff 19.61
+      data-only                       2.30 sigma   (the relay figure)
+      + MC stat on 218/91 rows (3.04) 2.16 sigma
+      + 15% background normalisation  2.08 sigma
+
+**It narrows and does not close.** Caveat: my MC term uses mean-weight x sqrt(N) because I do not have
+`sum(w^2)`; the exact figure needs it.
+
+**But I would not decide (a) vs (b) on this.** A ~2 sigma excess in a 73-event region at 1e-5 of support
+is an ordinary fluctuation, and choosing a repair on it is fitting the noise. **The decisive argument is
+categorical: truth in-range with reco failed IS a miss.** That is what a miss *means* in a response
+matrix, the codex split shows all 218 are truth-selected, and truth `E_avail` for them spans 0 to 21.11
+GeV — large mis-reconstructions, exactly the population the miss category exists for. **(b) puts them in
+the category the response matrix already has for their condition, and matches the data side, which
+`_fid_mask` and `build_measured_training_*` already zero.** (a) invents a region, and would need a
+matching data-side change to stay symmetric.
+
+Clamping stays refused, and the mediator's measured argument is the right one: clamping would pile events
+carrying up to 21 GeV of true available energy into the lowest reco bin.
+
+## Fork caveat — closed for the reco path, and I checked closure rather than assuming it
+
+SHA-256 identity local-vs-cluster was reported for three files. **The `pass_reco` / `_fid_mask` /
+`build_measured_training_nd` definitions I relied on are all inside `unfold_nd_omnifold_unbinned.py`**, so
+the reco half of this verdict is closed over the covered set. `unfold_3d_omnifold_unbinned.py` **is not in
+this tree at all**, so any 3D-specific claim is outside what I checked. The quoted hashes were truncated
+to 8 hex characters, which I did not re-verify.
+
