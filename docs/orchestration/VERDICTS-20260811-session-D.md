@@ -864,8 +864,15 @@ criterion tests.
 **One corroboration A did not run, and it holds.** At `iter0` there has been no reweighting, so
 `push = 1` and `required` should equal `R` analytically — i.e. `r1_required_mean = |R − 1|` exactly, and
 identically in both arms. Measured: both arms report `0.1240802949941018`; `R − 1` computes to
-`0.12408029499410178`, differing by **1 ulp**, and that ulp is float64 cancellation in *my* subtraction,
-not a field mismatch. The two arms agreeing bit-for-bit at the one iteration where they must is an
+`0.12408029499410178`, differing by **1 ulp**.
+
+**I gave the wrong mechanism for that ulp and A's follow-up (`c94d6f2`) exposes it.** I said it was
+float64 cancellation in my subtraction. It is not: for `R` in `[1,2)`, `R − 1` is **exact** — verified,
+`(R−1)+1 == R` — so there is no cancellation loss to attribute. A measured `r1_required_mean[iter0] == R`
+**bit-for-bit in both arms**, hence `abs(field − 1)` equals `R − 1` at **0 ulps**. The 1-ulp gap is
+between `R − 1` and the *printed* table entry, which carries 16 significant figures where the value needs
+17. **The table rounded; nothing measured differently.** That makes the corroboration stronger than I
+stated it: the true deviation at `iter0` is exactly `abs(R − 1)` in both arms, not merely close to it. The two arms agreeing bit-for-bit at the one iteration where they must is an
 independent check that these are real per-iteration field values.
 
 **What kept this from becoming a false finding was the label, not the reasoning.** The proxy was
