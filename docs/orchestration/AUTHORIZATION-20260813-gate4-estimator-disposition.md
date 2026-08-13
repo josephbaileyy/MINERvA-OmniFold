@@ -365,3 +365,59 @@ computation over the **production** checkpoints. Reproducing `1.0840529…` show
 of `56534117`'s own configuration and the band should be re-anchored; reproducing `1.1109…` shows a genuine
 two-path discrepancy and promotion would canonicalize one side of it. **Not run — it writes into the
 artifact's directory, and that needs authorization.**
+
+### CORRECTION TO THE SECTION ABOVE — the finding was RETRACTED 2026-08-11, and my recommendation is withdrawn
+
+**Session A wrote the adjudication above without opening `INDEX-retracted-and-superseded-values.md`, which
+exists for exactly this.** The finding it adjudicates was already refuted on evidence two days earlier:
+`535668d` (2026-08-11 05:22, *"RETRACTED: the code-path finding. Production sits inside the diagnostic's own
+noise"*), `KNOWN_ISSUES.md:52` entry **41 | TRAP | RETRACTED**, and
+`PREDECLARATION-20260810-designA-diagnostic-reproduction.md` §RESULT.
+
+**The evidence, verified here rather than accepted.** Three runs of byte-identical code at identical seeds
+through the diagnostic wrapper:
+
+```
+56534117  -0.011724321      <- the "anchor"
+56586368  -0.007386682
+56611394  -0.052174875
+mean -0.023761959   sd 0.024701703   range 0.044788193
+```
+
+**Production sits 0.48 diagnostic sd from that mean** — recomputed both ways: two-arm mean `−0.0355456`
+→ **0.477 sd**; nominal alone `−0.0356090` → **0.480 sd**. (The index's `−0.035546` is the mean of the
+nominal and floor arms; A's `−0.0356090` is the nominal alone. Same conclusion either way.) **The
+gap-by-denominator history is `188×` → `6.0×` → `0.48×`, and only the last uses a population the anchor
+belongs to.**
+
+**MY `79× TOO WIDE` IS THE SAME WRONG-POPULATION ERROR AS THE RETRACTED `188×`.** I divided the ±0.010 band
+by the *production* same-path scatter (`1.26775e-4`). But that band guards a comparison against the
+**diagnostic** configuration, whose own sd is `0.0247` — so the correct statement is that it was **~2.5×
+too narrow**, not 79× too wide. I reproduced the retracted defect one row below the row that names it.
+(Separately: the index's *"65× too narrow"* refers to a **different band** — Design A's `3 × 1.27e-4` — so
+it never contradicted my figure; I had to read it to know that.)
+
+**AND MY FRAMING WAS WRONG IN A WAY THAT MATTERS.** I called the anchor *"the outlier."* It is not an
+outlier — **the configuration has no stable point value at all**, so there is nothing to be an outlier
+from. Three identical-seed runs span `0.0448`. `−0.011724321` was one draw from an `sd ≈ 0.025`
+distribution and was never a property of anything.
+
+**RECOMMENDATION WITHDRAWN AND REPLACED.** *"Resolve first"* is satisfied — the resolution landed
+2026-08-11. **What has not happened is the receipt catching up:**
+`state/annealed-nominal-complete-56563761.json` still reads `FINDING_CODE_PATHS_DISAGREE` and
+`status: COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM`, with zero mention of the
+retraction. **So the credibility argument points at bookkeeping, not at a new measurement:** make the
+record say *the check was refuted on evidence and we promoted*, citing `535668d`, the `KNOWN_ISSUES`
+entry, the three-run distribution, and A's `1.48e-11` two-path agreement as a complementary line. **That
+is applying a documented refutation, not moving a tolerance after seeing a number** — the distinction A
+drew, one level up.
+
+**THE WRAPPER RECOMPUTATION A PROPOSED IS DECLINED, and the predeclaration itself declines it:** *"No
+fourth run… A fourth run would refine `sd 0.0247` without changing any decision."* Adding a fourth
+measurement to a settled question is the audit reflex the redirect was against. **Session A does not
+consider the retraction insufficient — only unrecorded.**
+
+**What survives from the section above:** production and the trajectory harness agreeing to `1.48e-11`
+across different code paths on the same checkpoints. That is genuinely new tonight and it strengthens the
+retraction from a direction the three-run spread does not cover — it shows the production family is stable
+to machine precision, so whatever instability exists is entirely on the diagnostic side.
