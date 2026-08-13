@@ -6,6 +6,8 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 - Classification and exact-path lookup: [`MANIFEST.tsv`](MANIFEST.tsv)
 - Current control-plane snapshot: [`LIVE-STATE.md`](LIVE-STATE.md)
+- Multi-session operating policy: [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md)
+- Joseph-only choice register: [`USER-DECISIONS.md`](USER-DECISIONS.md)
 - Agent-process failure index: [`FINDINGS.md`](FINDINGS.md)
 - Physics-claim index: [`CLAIMS.md`](CLAIMS.md)
 - Retracted and superseded value index: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md)
@@ -14,7 +16,9 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 | Task | Read |
 |---|---|
-| Create or dispatch a bounded worker task | [`TASK.template.md`](TASK.template.md), [`FINDINGS.md`](FINDINGS.md) |
+| Create or dispatch a bounded worker task | [`TASK-HANDOFF.template.md`](TASK-HANDOFF.template.md), [`TASK.template.md`](TASK.template.md), [`FINDINGS.md`](FINDINGS.md) |
+| Operate or rotate Claude/Codex sessions | [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md), [`USER-DECISIONS.md`](USER-DECISIONS.md) |
+| Record a Joseph-only choice | [`USER-DECISIONS.md`](USER-DECISIONS.md) |
 | Inspect current jobs, owners, blockers, or next action | [`LIVE-STATE.md`](LIVE-STATE.md) |
 | Check provider capacity or dispatch policy | [`LIVE-USAGE.md`](LIVE-USAGE.md), [`SCHEDULING-STRATEGY.md`](SCHEDULING-STRATEGY.md) |
 | Configure event-driven continuation | [`WAKER.md`](WAKER.md) |

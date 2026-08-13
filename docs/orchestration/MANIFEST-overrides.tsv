@@ -37,7 +37,10 @@ docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RUNS.template.tsv	DEAD	superseded	docs/orchestration/RUNS.tsv
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open	
+docs/orchestration/SESSION-WORKFLOW.md	LIVE	open	""
+docs/orchestration/TASK-HANDOFF.template.md	LIVE	open	""
 docs/orchestration/TASK.template.md	LIVE	open	
+docs/orchestration/USER-DECISIONS.md	LIVE	open	""
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/fable-prompt-brevity.md	DEAD	superseded	
 docs/orchestration/followup-agent-E-g2-source-06.md	DEAD	superseded	nd-unfolding/ND_OMNIFOLD_STATUS.md
