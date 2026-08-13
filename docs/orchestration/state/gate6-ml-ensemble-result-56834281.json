@@ -4,7 +4,7 @@
   "gate": "Gate 6 \u2014 PET-specific ML ensemble, N=5",
   "array": "56834281_[1-5]",
   "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md",
-  "status": "MEASURED AND REPORTED. NOTHING PROMOTED. The branch passes; the margin is CONDITIONAL on the routed convergence question and must not be quoted as 13.9x.",
+  "status": "MEASURED AND REPORTED. NOTHING PROMOTED. The branch passes BY THE LETTER against the predeclared floor; whether Gate 6 resolved estimator variation AT ALL is gated on the convergence question with Joseph, not merely the size of the margin. Quote no margin.",
   "COMPLETION": {
     "all_five": "COMPLETED, ExitCode 0:0",
     "elapsed": {
@@ -39,7 +39,7 @@
     "member_spread_max_minus_min": 0.2272129,
     "member_spread_sd": 0.09497124,
     "predeclared_floor": 0.000126775,
-    "BRANCH": "PASS by the letter of the predeclaration \u2014 all five complete, all realized seeds persisted and confirmed, and the member-to-member spread (2.272e-1) exceeds the floor (1.268e-4) by 1792x."
+    "BRANCH": "PASS BY THE LETTER of the predeclaration, AND THAT IS THE WHOLE OF WHAT IS ESTABLISHED. All five complete, all realized seeds persisted and confirmed, and the member-to-member spread (2.272e-1) exceeds the predeclared floor (1.268e-4) by 1792x. BUT THE PREDECLARED FLOOR IS THE WRONG FLOOR -- it is a within-process scatter and the members are separate jobs on separate nodes (see FINDING_1). Against the across-process floor the ensemble itself measures, the margin is 13.9x; and against that floor using only the two members that satisfy the nominal's own acceptance bar, it is 1.4x. SO THE BRANCH MUST NOT BE READ AS 'Gate 6 resolved estimator variation'. Whether it resolved anything turns on the convergence question routed to Joseph, because 90% of the spread is contributed by the three members whose convergence is in question. A PASS against a floor that does not bound the right quantity is a statement about the predeclaration, not about the physics."
   },
   "FINDING_1_THE_FLOOR_IS_WITHIN_PROCESS_AND_THE_MEMBERS_ARE_NOT": {
     "what": "Member 1 carries the promoted nominal's OWN seeds (42,0) by design, so it is a same-seed repeat of the nominal. Every confound was checked and eliminated: same driver (5fda80df \u2014 the driver at commit 54a8797, in force when the nominal ran on 2026-08-10, hashes byte-identically to what members 1-4 ran), same inputs_sha256, and a realized seed_policy with ZERO differences from the nominal's (niter 3, epochs 8, train_events 2000000, batch_size 512, identical lr_policy). It differs only in job, node and process.",
