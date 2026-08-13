@@ -1,0 +1,50 @@
+{
+  "artifact": "gate5-source-npz-verified-20260813.json",
+  "lane": "C (PET)",
+  "written_utc": "2026-08-13 (~08:05 EDT)",
+  "purpose": "Supply by MEASUREMENT the source-NPZ verification that train_fullevent_replica.py:112 only claims. Read-only; no job interrupted, modified or requeued.",
+  "verdict": "MATCH. The source dump is the expected artifact. No escalation, no action required.",
+
+  "THE_DEFECT_THIS_COMPENSATES_FOR": {
+    "site": "nd-unfolding/pet/train_fullevent_replica.py:105-112",
+    "what_it_does": "Validates the source NPZ by PATH and SIZE, confirms the receipt CARRIES a sha256, then assigns receipt['_verified_input_sha256'] = source['sha256'] -- copying the receipt's own claim into a field named `_verified_`. The file is never hashed.",
+    "the_contrast_is_INSIDE_THE_SAME_FUNCTION_two_lines_earlier": "At :99 the TARGET is genuinely hashed -- `target_sha = sha256_file(target_npy)` -- then compared to its receipt and its size checked. So the same function hashes one artifact and not the other, and writes both into `_verified_*` fields. `sha256_file` is defined at :36 and already called at :99, so the tool was in hand.",
+    "the_asymmetry_is_the_tell": "`_verified_target_sha256 = target_sha` (COMPUTED) sits directly beside `_verified_input_sha256 = source['sha256']` (COPIED). Identical prefix, opposite epistemic status.",
+    "why_the_NAME_is_worse_than_the_omission": "A missing check is a gap a reader can look for. A field called `_verified_input_sha256` holding an unverified value actively answers the question a reader would ask -- it is a relayed claim wearing the name of a measurement. Contrast train_fullevent_nominal.py:277, which DOES hash and whose comment names the same-size-substitution case explicitly.",
+    "found_by": "the mediator lane; verified here by reading the source rather than accepting the report",
+    "severity_in_practice": "The size check at :109 would catch truncation or a differently-sized substitution. What it cannot catch is a same-size different-content file, which is precisely the case nominal.py:277's comment calls out."
+  },
+
+  "THE_MEASUREMENT": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "path_source": "read from replica_00's own GATE5_REPLICA_TARGET_RECEIPT.json input_preflight.path, not assumed",
+    "expected_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "COMPUTED_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "match": true,
+    "size_bytes_on_disk": 9897374636,
+    "size_bytes_claimed_by_receipt": 9897374636,
+    "size_match": true,
+    "tool": "sha256sum on the cluster",
+    "wall_seconds": 42.6,
+    "note": "42.6 s to hash 9.9 GB. The check the code omits costs well under a minute against a ~3 h per-replica training, which is worth stating because 'too expensive to hash' is the usual reason such a check is skipped and it does not apply here."
+  },
+
+  "PRIVATE_CODE_ROOT_IDENTITY_recorded_as_requested": {
+    "GATE5_CODE_ROOT": "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059",
+    "is_the_repo_tree": false,
+    "GATE5_DATA_ROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "code_root_loader_sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+    "matches_GATE5_EXPECTED_LOADER_SHA": true,
+    "why_it_belongs_in_this_receipt": "The verification above is only meaningful for the code that actually ran, and that code is not the repo tree. Six digests are locked in the Slurm job environment at submit (HEAD, INPUT, TARGET_DRIVER, TRAIN_DRIVER, NOMINAL_DRIVER, LOADER), recoverable via `scontrol show job`, so the record of what ran lives outside the directory being verified.",
+    "residual_unchanged": "CODE_ROOT is named for a DIFFERENT job's reconcile work (gate6traj-reconcile-56847059) whose array is COMPLETE, so its owner may reasonably treat it as disposable while a ~35 h campaign depends on it. Coordination item, not a permissions one -- a chmod was proposed and WITHDRAWN because members are actively writing pycache there."
+  },
+
+  "WHAT_THIS_DOES_AND_DOES_NOT_SETTLE": [
+    "SETTLES: the source dump consumed by this campaign is the expected artifact, by measurement rather than by its receipt's claim.",
+    "DOES NOT settle that the code defect is harmless in general -- it is harmless HERE because the file happens to be right. A same-size substitution would still pass :105-112 unnoticed.",
+    "DOES NOT fix the code. train_fullevent_replica.py is unmodified; the campaign is running and nothing was interrupted, per the go-ahead's constraints.",
+    "DOES NOT verify the source for every replica individually. One source NPZ is shared by all 50, and its digest is a property of the file rather than of a replica."
+  ],
+
+  "recommended_repair_not_applied": "Replace :112 with `computed = sha256_file(inputs_npz)` plus a comparison against `source['sha256']`, mirroring :99-101 exactly. One line and one branch, in the same style already present two lines above. Deliberately NOT done while the campaign runs: editing the driver would break GATE5_EXPECTED_TRAIN_DRIVER_SHA for every member still to start."
+}
