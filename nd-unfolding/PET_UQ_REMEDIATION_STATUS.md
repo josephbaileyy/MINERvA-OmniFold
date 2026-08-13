@@ -118,16 +118,59 @@ RUN_LOG, and STATUS evidence. Present `xps2` recoil tensors remain scaffolding.
 
 ## Gate 2 — literal `negweight-refined` target
 
-**Current (2026-08-04): RE-ISSUE REQUIRED; no current Gate-2 PASS.** The 2026-07-19
-target and receipts remain historical evidence, but the first restored run proved B-4 active and
-the current gate correctly stopped. Decision D1 now requires `w_reco` in Step 1, `w_truth` in
-Step 2/truth yields, and a leg-specific loader/engine interface; decision D2 requires the nominal
-to consume the re-issued target rather than silently rebuilding it. Implementation, tests, and a
-real Gate-2 run remain pending. Canonical decision:
-`docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. Historical evidence:
-`nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
-`docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
-and `docs/orchestration/state/g2-gate2-verifier-20260719.json`.
+**Current (2026-08-13): RE-ISSUED AND PASSED under D1/D2. Runtime PASS; independent review is the
+only open promotion requirement.**
+
+**This paragraph replaced a line dated 2026-08-04 that read "RE-ISSUE REQUIRED; no current Gate-2
+PASS" and stayed there for eight days after the run that passed.** It was the receipt's own
+promotion requirement 2 (ledger + RUN_LOG + STATUS) left unmet, and on 2026-08-12 it caused a lane
+to be assigned a week of D1/D2 implementation work that had already landed. A status field is
+transition-written, not sampled, so a stale one reads exactly like a true one (BEN-098). **Read the
+receipt, not this line, if they ever disagree again.**
+
+- **Run:** job `56344268` (`g2reissue2`), COMPLETED `00:55:32` on `nid004178`, ended
+  `2026-08-05T05:16:22Z`. `status: PASS`,
+  `verdict: GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`,
+  `pet_training_started: false`.
+- **Product:** `nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy`,
+  4,680,719 rows / 18,723,004 B, sha256
+  `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` — re-verified on the cluster
+  2026-08-13 against the receipt.
+- **D1 is GATED, not merely implemented.** `b4_gated: true`,
+  `b4_resolution: D1-2026-08-04-reco-leg-uses-w-reco`, `R = 1.1240802949941018` with denominator
+  `pot_scale * sum(w_reco[pass_reco])`. A reco leg fed anything but `w_reco`, an absent `w_reco`, or
+  a missing telemetry block all `die()` before the receipt is written, so a PASS *asserts* the
+  denominator is the reco leg. Implementation landed at `ed4ca72`.
+- **D2:** the nominal consumes the target via `assert_target_provenance` in
+  `pet/train_fullevent_nominal.py` — receipt-owned, verdict must be PASS, sha256 and size must
+  match, with an explicit no-fallback branch naming audit finding J04. The MC-only closure path is
+  `bkg_mode='mc-only'` in the loader (`data=None`, no measured target, no ROOT import, rejected by
+  `assert_publication_config` for publication runs).
+- **The r1 run is bit-identical.** Job `56342333` produced the same target digest and was superseded
+  only because its receipt pinned a loader hash later moved by audit repairs — direct evidence that
+  edit was semantically inert here.
+- **All four sources the receipt pins are byte-identical to HEAD** as of 2026-08-13: loader
+  `57f33f87…`, `omnifold_nn/omnifold/dataloader.py` `bed9e0b3…`, validator `13fa4853…`, canonical
+  u2d `8ebe0277…`. The product is therefore still bound to the code in the tree.
+
+**Open, and the only things open:** promotion requirement 1, independent receipt review of hashes,
+configuration and binned telemetry — routed to the verifier lane, because a lane cannot review the
+gate it is promoting (`CLAUDE.md`: worker agreement is not verification). Two evidence limits worth
+stating rather than discovering later: `tests/test_fullevent_gate2.py` and
+`tests/test_gate2_target_runtime.py` (7 tests) cannot run off-cluster — hardcoded `/pscratch` paths
+and an `omnifold.dataloader` import — and those are precisely the end-to-end loader-boundary tests,
+so off-cluster green does not cover the boundary.
+
+**What this does NOT certify.** Construction of the measured target only. Not quotable as a cross
+section. Gate 4 must separately prove the nominal consumes this exact array (J04) and cannot PASS
+until the powered recovery closure exists.
+
+Canonical decision: `docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md`. Numbers:
+`VALIDATION_LEDGER.md` VL76–VL90 (2026-08-05 entry). Chronology:
+`nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` 2026-08-05. Live receipt:
+`nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`. Superseded 07-19
+evidence: `docs/orchestration/state/g2-gate2-runtime-independent-validation-20260719.json`,
+`docs/orchestration/state/g2-gate2-verifier-20260719.json`.
 
 Build the measured-side training inventory from:
 
