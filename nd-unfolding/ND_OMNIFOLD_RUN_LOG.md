@@ -6046,3 +6046,56 @@ construct `C_stat`: at the same-turn snapshot training `56857233` has 10 complet
 `gate5-training-56857233`. No subset, Gate-6/C_ML action, reset credit, provider dispatch, or UUID
 change occurred. Canonical receipt:
 `docs/orchestration/state/gate5-target-family-promotion-56873858.json`.
+## 2026-08-13 14:55 PDT — Gate 5: target leg complete, throughput collapse diagnosed, lane C
+
+**Target leg is DONE: 50 of 50 COMPLETED and all 50 pass all 29 reconciliation checks.** All 50 target
+digests distinct, all three factor-hash families distinct across the family, none equal to the Gate-2
+nominal, and 50 distinct `R` values straddling the nominal `1.1240802949941018` — which is independent
+quantitative evidence the measured-side Poisson draw is live across the whole family, since a collapsed
+draw would show identical values.
+
+**The training leg met the reconciler for the first time and passed: 23 receipts, 23 passing all 11
+checks**, including the binding that matters — each member's recorded target digest equals the digest
+this tool re-hashed from disk for that same replica, so no member trained against another's target. And
+the `NAME_MISMATCH` guard added at `69c577b` stayed **silent** on 23 correctly-named receipts, which is
+the half that proves it is a check rather than an alarm.
+
+**Per-member training time is now measured and the projection is retired.** Mean `3:00:30`, min
+`2:58:21`, max `3:04:48`, n=23, from the receipts' own timers and consistent with `sacct` elapsed. The
+per-step extrapolation made before any member finished gave `3:01:39` — 0.6% high, inside the measured
+range. Quote `3:00:30`; the earlier 2.94 h and 3.03 h figures are superseded.
+
+**Throughput collapsed from 10 concurrent to 2 at 12:34 PDT, and the campaign is not the cause.**
+`shared_gpu_ss11` has essentially zero idle capacity — 1631 nodes `alloc` at `208768/0/0/208768`, with
+the only idle CPUs on nodes that are draining, reserved, completing, or *planned* for jobs the scheduler
+has already committed them to. Concurrency of 10 was achievable this morning and is not achievable now.
+
+Three things were eliminated before landing there, and two of the eliminations are findings in their own
+right. The array throttle is **not** binding — `Reason=JobArrayTaskLimit` on all 25 pending tasks while
+2 run against `ArrayTaskThrottle=10`, a reason string naming a limit demonstrably not being reached,
+which cost two lanes their first hypothesis (`BEN-153`). The QOS has no per-user running or TRES cap —
+established only after two parties made two *different* off-by-one column misreads of the same
+headerless `sacctmgr -nP` line within minutes, both landing on plausible-but-wrong causes (`BEN-154`).
+The dependency is fully satisfied, all 50 targets being complete.
+
+A latent second constraint is recorded but explicitly **not** claimed as the cause: QOS
+`MaxJobsAccruePU=2` allows two priority-accrual slots per **user**, and `sprio` shows both held by lane
+B's `g6_floor` array (`AGE=138`, `AGE=231`) while the Gate-5 array sits at `AGE=0`. Gate 5 still holds
+the highest total priority of the three, so this is not what is costing it a start — but it cannot
+improve its position with time while a competitor can. Per-*user*, so lane separation does not separate
+it, and neither lane could have predicted contending here.
+
+**The ETA is now reported as bounds rather than a time**, and the earlier `~19:49 vs ~20:40 PDT`
+disagreement is moot: both figures assumed five clean waves of ten, and wave 3 only ever started five
+members. (For the record, the 51-minute gap between them was real and explicable — `19:49` was when the
+*first* member of wave 5 would finish and `20:40` the *last*, each slot staying ~49 min behind the first.)
+Remaining 25 members at the measured `3:00:30` are **~7.5 h at 10 concurrent and ~37.6 h at 2**. Per-member
+time is stable to ±3%; the unknown is entirely external cluster occupancy, which this lane cannot predict
+and will not pretend to. Walltime is not at risk — 8 h requested against ~3 h used, and queue delay does
+not consume it.
+
+Nothing was resubmitted, requeued, held, cancelled or modified; `GATE5_CODE_ROOT` untouched with 25
+members still to exec from it; no `C_stat` constructed, because 23 of 50 is not a 23-replica ensemble.
+Holding lane B's array would free both accrual slots and is **routed to its owner as a recommendation,
+not taken** — it is B's job, and it would not fix partition saturation, which is the present blocker and
+is nobody's here to fix.
