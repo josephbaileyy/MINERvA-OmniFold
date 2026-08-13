@@ -56,13 +56,39 @@ arithmetic on the array id is wrong on this array.
 
 ## The fix
 
-**Resolve the raw id first and query that.** `sacct -X` is the authority for the mapping:
+**Resolve the raw id first and query that.** `sacct -X` is the authority for the mapping — and it must
+be read as a **PAIR**, `JobID` alongside `JobIDRaw`:
 
 ```
-for raw in $(sacct -X -n -P -j <ARRAYID> --format=JobIDRaw); do
-  printf "raw %s: " "$raw"; sstat -j "${raw}.batch" --format=AveCPU,MaxRSS -P -n
+sacct -X -n -P -j <ARRAYID> --format=JobID,JobIDRaw | while IFS='|' read -r task raw; do
+  printf "%-14s raw=%-10s " "$task" "$raw"
+  sstat -j "${raw}.batch" --format=AveCPU,MaxRSS -P -n 2>/dev/null | head -1
 done
 ```
+
+**CORRECTED 2026-08-13, and the first version of this fix was itself defective.** It read
+`--format=JobIDRaw` alone and looped over the bare ids. That returns five *distinct* readings — so it
+looks fixed, and the uniformity tell that exposed the original bug is gone — but it **cannot say which
+member each reading belongs to**, and attribution is the entire purpose. Per-member seed_policy
+verification and any per-member liveness claim need the pairing. Caught by Session C re-arming its own
+watch against this finding and noticing the recipe it inherited could not answer the question it was
+armed to ask.
+
+**That is worth more than the original finding.** A fix that removes the *symptom* the bug was detected
+by, while leaving the underlying question unanswerable, is harder to catch than the bug — the second
+reading is plausible, non-uniform, and wrong in a way nothing tells you about.
+
+**Ship the distinctness assertion with it,** since a per-entity sweep that silently collapses is the
+failure mode:
+
+```
+n=$(sacct -X -n -P -j <ARRAYID> --format=JobIDRaw | while read -r r; do
+      sstat -j "${r}.batch" --format=AveCPU -P -n 2>/dev/null | head -1; done | sort -u | wc -l)
+[ "$n" -gt 1 ] || die "per-task query returned identical rows -- suspect id aliasing"
+```
+
+Measured on this array: 5 distinct values, and CPU advances between samples (member 1: `02:05:47` ->
+`02:12:03` six minutes later), which is the liveness reading itself rather than a proxy for it.
 
 Re-measured that way the five members are distinct and physically sensible — CPU/elapsed ratios of
 1.17, 1.20, 1.17, 1.16, 1.15, monotonic with elapsed time, all consistent with a 32-CPU threaded
