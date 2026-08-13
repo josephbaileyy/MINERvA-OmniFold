@@ -164,10 +164,10 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
 def _build_train_receipt(idx, tmp_root, target_sha):
     d = os.path.join(tmp_root, "replicas", f"replica_{idx:02d}", "training")
     os.makedirs(os.path.join(d, "w_nominal"), exist_ok=True)
-    art = os.path.join(d, "weights.npz")
+    art = os.path.join(d, R5.TRAIN_ARTIFACT_NAME)
     with open(art, "wb") as fh:
         fh.write(b"replica-%d-weights" % idx)
-    rec = os.path.join(d, "GATE5_REPLICA_TRAIN_RECEIPT.json")
+    rec = os.path.join(d, R5.TRAIN_RECEIPT_NAME)
     receipt = {
         "schema_version": 1,
         "status": "PASS",
@@ -401,7 +401,7 @@ def test_training_bound_to_the_wrong_target_fails(tmp_path):
     assert R5.reconcile_training(0, root, rows[0])["verdict"] == "PASS"
     # Point replica 0's training at replica 1's target.
     rec = os.path.join(root, "replicas", "replica_00", "training",
-                       "GATE5_REPLICA_TRAIN_RECEIPT.json")
+                       R5.TRAIN_RECEIPT_NAME)
     _mutate(rec, lambda o: o["target"].__setitem__("sha256", shas[1]))
     bad = R5.reconcile_training(0, root, rows[0])
     assert bad["verdict"] == "FAIL"
@@ -412,7 +412,7 @@ def test_training_artifact_rehashed_from_disk(tmp_path):
     root = str(tmp_path)
     shas = _family(root, 1)
     rows = [R5.reconcile_target(0, root, True, {})]
-    art = os.path.join(root, "replicas", "replica_00", "training", "weights.npz")
+    art = os.path.join(root, "replicas", "replica_00", "training", R5.TRAIN_ARTIFACT_NAME)
     with open(art, "ab") as fh:
         fh.write(b"tamper")
     bad = R5.reconcile_training(0, root, rows[0])
@@ -575,3 +575,87 @@ def test_empty_root_is_PARTIAL_with_zero_counts(tmp_path):
     assert rep["verdict"] == "PARTIAL"
     assert rep["counts"]["targets_present"] == 0
     assert rep["C_stat"] is None
+
+
+# ---------------------------------------------------------------------------
+# The name-mismatch guard.
+#
+# This exists because the first version of the reconciler looked for
+# GATE5_REPLICA_TRAIN_RECEIPT.json while the launcher writes
+# GATE5_REPLICA_TRAINING_RECEIPT.json. A missing file at an inferred path is
+# indistinguishable from a stage that has not run, so it would have reported
+# trainings_present: 0 and PARTIAL *forever* -- including at 50/50 -- and the family
+# could never have been promoted. It reported the right count at the time only
+# because no training had finished: the verdict was accidentally right while the
+# instrument was broken.
+# ---------------------------------------------------------------------------
+
+def test_expected_names_match_the_launcher():
+    """Pin the names to what the Slurm-captured batch script actually sets. If the launcher
+    changes, this is the test that should fail, rather than the family silently reading empty."""
+    assert R5.TRAIN_RECEIPT_NAME == "GATE5_REPLICA_TRAINING_RECEIPT.json"
+    assert R5.TRAIN_ARTIFACT_NAME == "GATE5_REPLICA_WEIGHTS.npz"
+
+
+def test_receipt_under_an_unexpected_name_is_NAME_MISMATCH_not_absent(tmp_path):
+    root = str(tmp_path)
+    t = R5.reconcile_target(0, root, False, {})
+    d = os.path.join(root, "replicas", "replica_00", "training")
+    os.makedirs(d)
+    # The exact historical mistake: "TRAIN" where the producer writes "TRAINING".
+    with open(os.path.join(d, "GATE5_REPLICA_TRAIN_RECEIPT.json"), "w") as fh:
+        json.dump({"status": "PASS"}, fh)
+    row = R5.reconcile_training(0, root, t)
+    assert row["state"] == "NAME_MISMATCH", row
+    assert "GATE5_REPLICA_TRAIN_RECEIPT.json" in row["unexpected_files"]
+    assert row["expected_receipt"] == R5.TRAIN_RECEIPT_NAME
+
+
+def test_weights_under_an_unexpected_name_is_also_NAME_MISMATCH(tmp_path):
+    root = str(tmp_path)
+    t = R5.reconcile_target(0, root, False, {})
+    d = os.path.join(root, "replicas", "replica_00", "training")
+    os.makedirs(d)
+    with open(os.path.join(d, "weights.npz"), "wb") as fh:
+        fh.write(b"x")
+    assert R5.reconcile_training(0, root, t)["state"] == "NAME_MISMATCH"
+
+
+def test_NAME_MISMATCH_blocks_the_family_even_with_nothing_else_present(tmp_path):
+    """It must BLOCK, not be absorbed into a completeness gap: if the search is unreliable, every
+    other count in the report is a statement about the search rather than about the campaign."""
+    root = str(tmp_path)
+    _family(root, 2, with_training=False)
+    d = os.path.join(root, "replicas", "replica_00", "training")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "GATE5_REPLICA_TRAIN_RECEIPT.json"), "w") as fh:
+        json.dump({"status": "PASS"}, fh)
+    rc, rep = _run_main(root, 2)
+    assert rc != 0
+    assert rep["verdict"] == "BLOCK", rep["verdict"]
+    assert rep["counts"]["trainings_name_mismatch"] == 1
+    fired = {f["check"] for f in rep["family_checks"]["failures"]}
+    assert "no_training_artifact_name_mismatches" in fired
+    assert rep["C_stat"] is None
+
+
+def test_correctly_named_files_do_NOT_trigger_the_guard(tmp_path):
+    """POWER TEST: the guard must be capable of staying silent, or it would block every clean run
+    and be switched off within a day."""
+    root = str(tmp_path)
+    _family(root, 2)
+    rc, rep = _run_main(root, 2)
+    assert rc == 0
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
+    assert rep["counts"]["trainings_name_mismatch"] == 0
+
+
+def test_an_empty_training_dir_is_still_plain_absence(tmp_path):
+    """The guard must not fire on genuine absence -- otherwise a campaign that has simply not
+    reached its training stage would read as broken tooling."""
+    root = str(tmp_path)
+    t = R5.reconcile_target(0, root, False, {})
+    os.makedirs(os.path.join(root, "replicas", "replica_00", "training"))
+    assert R5.reconcile_training(0, root, t)["state"] == "NOT_STARTED"
+    os.makedirs(os.path.join(root, "replicas", "replica_00", "training", "w_nominal"))
+    assert R5.reconcile_training(0, root, t)["state"] == "IN_PROGRESS"

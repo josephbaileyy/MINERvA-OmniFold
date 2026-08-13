@@ -61,6 +61,7 @@ thing.
 from __future__ import annotations
 
 import argparse
+import glob
 import hashlib
 import json
 import os
@@ -88,6 +89,25 @@ EXPECTED_LOADER_SHA = "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f
 
 TARGET_VERDICT = "GATE5_REPLICA_TARGET_PASS_TRAINING_PENDING"
 TRAIN_VERDICT = "GATE5_REPLICA_TRAINING_PASS_EXTRACTION_PENDING"
+
+# Artifact names, TAKEN FROM THE LAUNCHER rather than guessed. Read from the Slurm-captured batch
+# script of a live task (`scontrol write batch_script 56857233_0 -`), lines 36-37:
+#     OUTPUT=${OUTDIR}/GATE5_REPLICA_WEIGHTS.npz
+#     TRAIN_RECEIPT=${OUTDIR}/GATE5_REPLICA_TRAINING_RECEIPT.json
+#
+# THIS WAS WRONG IN THE FIRST VERSION OF THIS FILE and the way it was wrong is the point. It said
+# GATE5_REPLICA_TRAIN_RECEIPT.json -- "TRAIN", not "TRAINING" -- an inferred name that never existed.
+# A missing file at an inferred path is indistinguishable from a stage that has not run, so the
+# reconciler would have reported `trainings_present: 0` and verdict PARTIAL *forever*, including at
+# 50/50, and the family would never have been promotable. It happened to report the right count only
+# because no training had finished yet: the verdict was accidentally right while the instrument was
+# broken. Hence TRAINING_RECEIPT_GLOBS below -- a name mismatch must STOP the tool, not read as absence.
+TRAIN_RECEIPT_NAME = "GATE5_REPLICA_TRAINING_RECEIPT.json"
+TRAIN_ARTIFACT_NAME = "GATE5_REPLICA_WEIGHTS.npz"
+# Anything matching these but NOT named above means this tool's expectations have drifted from the
+# producer's. That is a fail-loud condition, never an "absent" one.
+TRAINING_RECEIPT_GLOBS = ("*RECEIPT*.json", "*receipt*.json")
+TRAINING_ARTIFACT_GLOBS = ("*.npz",)
 
 # Tolerance for re-deriving a float64 quantity from its published float64 operands.
 # Not a physics tolerance: it is the round-trip error of decimal JSON serialisation.
@@ -377,9 +397,26 @@ def reconcile_target(idx, root, replay, cache):
 
 def reconcile_training(idx, root, target_row):
     d = os.path.join(root, "replicas", f"replica_{idx:02d}", "training")
-    rec = os.path.join(d, "GATE5_REPLICA_TRAIN_RECEIPT.json")
+    rec = os.path.join(d, TRAIN_RECEIPT_NAME)
     if not os.path.exists(rec):
-        # Distinguish "not started" from "started and unfinished": a receipt is written last.
+        # BEFORE calling this "absent", check that absence is not just this tool looking in the
+        # wrong place. An inferred filename that never existed reads exactly like a stage that
+        # never ran, and it reads that way permanently.
+        strays = []
+        for pattern in TRAINING_RECEIPT_GLOBS + TRAINING_ARTIFACT_GLOBS:
+            for hit in glob.glob(os.path.join(d, pattern)):
+                if os.path.basename(hit) not in (TRAIN_RECEIPT_NAME, TRAIN_ARTIFACT_NAME):
+                    strays.append(os.path.basename(hit))
+        if strays:
+            return {"stage": "training", "replica_index": idx, "state": "NAME_MISMATCH",
+                    "unexpected_files": sorted(set(strays)),
+                    "expected_receipt": TRAIN_RECEIPT_NAME,
+                    "note": "receipt-like or artifact-like files exist under names this tool does "
+                            "not expect. This is a FAIL-LOUD condition, not absence: the producer's "
+                            "naming and this tool's expectations have drifted, and treating it as "
+                            "'not started' would report a permanent PARTIAL at full confidence."}
+        # Genuine absence. Distinguish "not started" from "started and unfinished": the receipt is
+        # written last, so its absence means incomplete and never failed.
         started = os.path.isdir(os.path.join(d, "w_nominal"))
         return {"stage": "training", "replica_index": idx,
                 "state": "IN_PROGRESS" if started else "NOT_STARTED",
@@ -460,6 +497,14 @@ def main():
     # --- Family-level checks that no single replica can make. ---
     family = Checks()
 
+    # NAME_MISMATCH first: it means this tool's expectations have drifted from the producer's, so
+    # every other count below is suspect. It must BLOCK, never be absorbed into a completeness gap.
+    mismatched = sorted(r["replica_index"] for r in trainings if r["state"] == "NAME_MISMATCH")
+    family.eq("no_training_artifact_name_mismatches", mismatched, [],
+              note="unexpected receipt/artifact filenames mean the reconciler is looking in the "
+                   "wrong place; a count of 0 present would then be a statement about the SEARCH, "
+                   "not about the campaign")
+
     family.eq("targets_present", len(present_t), args.n)
     family.eq("trainings_present", len(present_r), args.n)
     family.eq("target_replicas_failing_own_checks",
@@ -508,10 +553,14 @@ def main():
     complete = (len(present_t) == args.n and len(present_r) == args.n and not family.failed)
     if complete:
         verdict = "FAMILY_COMPLETE_PASS" if replay else "FAMILY_COMPLETE_PASS_REPLAY_SKIPPED"
+    elif mismatched:
+        # Blocks even with nothing else present: the search itself is unreliable.
+        verdict = "BLOCK"
     elif family.failed and (len(present_t) or len(present_r)):
         verdict = "BLOCK" if any(
             f["check"].startswith(("target_replicas_failing", "training_replicas_failing"))
             or "distinct" in f["check"] or "invariant" in f["check"]
+            or "name_mismatch" in f["check"]
             for f in family.failed) else "PARTIAL"
     else:
         verdict = "PARTIAL"
@@ -539,6 +588,7 @@ def main():
             "trainings_passing": sum(1 for r in present_r if r["verdict"] == "PASS"),
             "trainings_in_progress": sum(1 for r in trainings if r["state"] == "IN_PROGRESS"),
             "trainings_not_started": sum(1 for r in trainings if r["state"] == "NOT_STARTED"),
+            "trainings_name_mismatch": len(mismatched),
             "targets_absent": sum(1 for t in targets if t["state"] != "PRESENT"),
         },
         "family_checks": family.summary(),

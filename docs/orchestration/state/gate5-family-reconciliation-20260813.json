@@ -8,10 +8,22 @@
 
   "VERDICT": "PARTIAL -- and PARTIAL is the whole point. 16 of 50 target receipts present and ALL 16 pass every check; 0 of 50 training receipts. No C_stat is constructed, centred or summarised, because Gate 5's own rule is that a missing replica invalidates the declared ensemble manifest.",
 
+  "CORRECTION_20260813_the_tool_was_looking_for_a_filename_that_never_existed": {
+    "the_defect": "The first version of reconcile_gate5_family.py looked for GATE5_REPLICA_TRAIN_RECEIPT.json. The launcher writes GATE5_REPLICA_TRAINING_RECEIPT.json -- 'TRAINING', not 'TRAIN'. The name was INFERRED from the driver's --train-receipt argument rather than read from the launcher.",
+    "measured_ground_truth": "sbatch_gate5_replica_train_array.sh lines 36-37, read from the Slurm-CAPTURED batch script of a live task (`scontrol write batch_script 56857233_0 -`, so it is the text that is actually executing, not a possibly-edited file on disk): OUTPUT=${OUTDIR}/GATE5_REPLICA_WEIGHTS.npz and TRAIN_RECEIPT=${OUTDIR}/GATE5_REPLICA_TRAINING_RECEIPT.json.",
+    "WHY_THIS_WAS_SERIOUS_rather_than_a_typo": "A missing file at an inferred path is INDISTINGUISHABLE from a stage that has not run. The reconciler would have reported trainings_present: 0 and verdict PARTIAL *permanently* -- including at a genuine 50/50 -- so the family could never have been promoted, and the failure mode is a confident-looking correct-format report rather than an error.",
+    "the_verdict_was_ACCIDENTALLY_RIGHT": "At the time of the first run the reported '0 of 50 training receipts' was CORRECT, because no training had finished and the training directories contained no files at all. So the number was right while the instrument was broken -- which is exactly why it was not caught by the result looking wrong.",
+    "how_it_was_caught": "Not by a failure. By deliberately checking a path I had INFERRED rather than measured, on the standing rule that an absence verdict is a statement about the SEARCH before it is a statement about the world (BEN-086). The check was one `grep` against the launcher.",
+    "the_fix_is_a_guard_not_just_a_rename": "Both names are now module constants pinned by a test to the launcher's values, and if a receipt-like or artifact-like file exists under an UNEXPECTED name the reconciler returns state NAME_MISMATCH and the family verdict is BLOCK -- never 'absent'. A search whose reliability is in question must stop the tool, because every other count in the report is then a statement about the search.",
+    "tests": "56 tests now (was 50). The six new ones cover: the names matching the launcher; an unexpected receipt name; an unexpected artifact name; NAME_MISMATCH blocking the family even with nothing else present; the guard staying SILENT on correctly-named files (power test -- a guard that fires on clean runs gets switched off); and genuine absence still reading as NOT_STARTED/IN_PROGRESS.",
+    "re_run_after_the_fix": "25 of 50 targets present, all 25 passing; trainings_name_mismatch: 0; verdict PARTIAL. The guard is silent on clean data, which is the half that proves it is a check rather than an alarm."
+  },
+
   "THE_TOOL": {
     "path": "nd-unfolding/pet/reconcile_gate5_family.py",
-    "sha256": "c27691ce37de9b35ab45fee6ac9d0723f24d634a063777346054647a37a7d461",
-    "tests": "nd-unfolding/tests/test_reconcile_gate5_family.py -- 50 tests, all passing, every check power-tested in BOTH directions",
+    "sha256": "e536540df5dce1f4c8947f7ccb57193be935c5b5d701296c3ef1440d4de90467",
+    "sha256_superseded_first_version": "c27691ce37de9b35ab45fee6ac9d0723f24d634a063777346054647a37a7d461",
+    "tests": "nd-unfolding/tests/test_reconcile_gate5_family.py -- 56 tests, all passing, every check power-tested in BOTH directions",
     "run_from": "/pscratch/sd/j/josephrb/gate5-reconcile-lanec (scratch, OUTSIDE any git tree)",
     "why_not_run_from_the_repo": "The cluster code checkout must stay clean and fixed at b82ac63 while either array is active; every task fails closed on HEAD drift. Adding a file to that tree to audit it would be the audit breaking its own subject.",
     "interpreter": "module load python -> Python 3.13.11 / numpy 2.3.5 (login-node python3 is 3.6.15 and cannot parse the file)",
@@ -137,12 +149,31 @@
       "step_count_ratio_cross_check": "The log reports 13048 reco steps and 7812 gen steps per epoch; 7812/13048 = 0.599, against a measured step2/step1 ratio of 22:07/35:38 = 0.621. Consistent, so the two legs' durations track their batch counts."
     },
     "loop_structure_is_PINNED_not_assumed": "validate_artifact requires realized (n_fits_base_lr, n_fits_annealed) == (2, 4) exactly, and fails closed otherwise. That is 6 fits = 3 iterations x 2 steps, so the iteration count is enforced by the driver rather than inferred from niter=3.",
-    "per_member_projection": {
+    "per_member_projection_SUPERSEDED_see_REVISED_below": {
       "one_iteration": "0:57:45",
       "three_iterations": "2:53:16",
       "plus_measured_startup_2_55": "2:56:11 = 2.94 h",
-      "label": "LOWER BOUND -- excludes final extraction, artifact write and receipt. Expect ~3.0-3.1 h.",
-      "walltime_headroom": "The array requests 08:00:00 per member, so ~3 h is comfortable and no member is at risk of a walltime kill."
+      "label": "LOWER BOUND -- excludes final extraction, artifact write and receipt.",
+      "why_superseded": "This extrapolated iteration 0 (base LR) across the two ANNEALED iterations without having measured one. The annealed boundary has since been measured; see REVISED_per_member_projection."
+    },
+
+    "REVISED_per_member_projection_20260813_0620_PDT": {
+      "what_changed_and_why_it_needed_checking": "The 2.94 h figure multiplied a BASE-LR iteration by three. Iterations 1 and 2 run at the annealed LR (1e-5 vs 1e-4), and nothing had established they take the same wall time. Since the number was being relayed outside this repo, the assumption was measured rather than left standing.",
+      "measured_step_boundaries_replica_00": {
+        "iter0_step1": {"lr_recorded": 1e-04, "duration": "35:48"},
+        "iter0_step2": {"lr_recorded": 1e-04, "duration": "22:15"},
+        "iter1_step1_ANNEALED": {"lr_recorded": 1e-05, "duration": "37:13", "boundary_utc_pdt": "06:18:52 PDT"}
+      },
+      "annealed_over_base_step1_ratio": 1.0396,
+      "interpretation": "The annealed step is ~4.0% slower. This is NOT an LR effect -- learning rate does not change the compute per batch -- and the epoch count is identical (see below). These are gpu_shared allocations, so the A100 is shared and ~4% wall variance between otherwise-identical steps is the expected signature.",
+      "THE_STRUCTURAL_FACT_THAT_MAKES_THE_EXTRAPOLATION_SOUND": "Read from the per-step history pickles: EVERY step runs exactly 8 epochs. loss/val_loss/lr are all length 8 in every dump inspected across replicas 00/01/02. No early stopping shortens any step, so step durations are expected to be near-identical across iterations and the x3 structure is not an assumption.",
+      "THE_ANNEAL_INDEPENDENTLY_VERIFIED_FROM_THE_OPTIMIZER_HISTORY": "The .pkl dumps record the realized `lr` per epoch: iter0 step1 and step2 both at float32(1e-4), iter1 step1 at float32(1e-5). That confirms `applies_from_iteration: 1` with base 1e-4 annealing to 1e-5, hence 2 fits at base and 4 annealed -- the exact (2,4) that validate_artifact requires. This is the policy confirmed from the OPTIMIZER'S OWN RECORDED VALUES, independent of the receipt field `lr_policy_realized.verified_from_optimizer`, which is the artifact claiming about itself.",
+      "revised_per_member": "3:01:39 = 3.03 h, built as measured startup 2:55 + measured iter0 (35:48 + 22:15) + 2 x annealed iteration (37:13 + inferred 23:07)",
+      "still_a_LOWER_BOUND": "Excludes final extraction, artifact write and receipt. The only inferred term is the annealed step2, scaled from base step2 by the measured 1.0396.",
+      "delta_from_the_superseded_figure": "+3.1% (2.94 h -> 3.03 h)",
+      "revised_family_completion": "~20:40 PDT 2026-08-13 (~03:40 UTC 08-14), from 5 waves x 3.03 h off the 04:40:42 PDT first start plus the ~49 min first-wave stagger. Previously ~19:20-20:10 PDT.",
+      "walltime_headroom": "The array requests 08:00:00 per member, so ~3 h remains comfortable and no member is at risk of a walltime kill.",
+      "A_NEAR_MISS_WORTH_RECORDING": "At 06:17:18 the annealed step stood at 35:39 against iteration 0's 35:47 and I briefly read it as 'the annealed steps are longer' -- on an 8-second shortfall, checking 94 seconds too early. That is BEN-206's shape (the interesting finding outrunning the boring check) and it was caught only by comparing against the base figure to the second instead of to the minute."
     },
     "family_projection": {
       "model": "10 concurrent, 50 members, 5 waves, first training started 04:40:42 PDT",
