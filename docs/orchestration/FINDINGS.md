@@ -83,6 +83,7 @@ will read.
 | `FINDING-20260812-session-health-metric-counts-its-own-subject.md` | **The session-health metric counted the word `compact`, not compactions** — all four lanes have exactly 2, and three were about to be retired on a 2.8x spread in a quantity that is identical (BEN-165) |
 | `FINDING-20260812-exit-contract-drifted-into-prose.md` | **The gate learned exit 2 and its published contract did not** — the code was fixed and the only document an operator reads was not, so CANNOT CHECK reads as success at the caller (BEN-163) |
 | `FINDING-20260812-power-test-axis-selection.md` | **A power test covered the inputs and not the evidence class the conclusion rested on**: 20 checks green, 5 mutations caught, and every one left the verdict's own checks green. Third axis after BEN-162 and BEN-117; none implies the others (BEN-119) |
+| `FINDING-20260813-sstat-array-task-aliasing.md` | **`sstat -j <array>_<task>.batch` returned ONE task five times** — the array id equals one task's raw id, so five byte-identical rows read as five healthy ensemble members. Resolve `JobIDRaw` via `sacct -X` first; assert per-entity rows DIFFER. Also: `wakerctl` re-asserted DEAD by two agents while its nine-day-old correction sat indexed in this directory. **NO BEN ROW — lane A's block 190-199 is exhausted** |
 
 | `CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` | Discharge criteria for quarantine causes 1/2/3/4/6 — what each cause requires before it can be closed |
 
