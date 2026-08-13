@@ -105,3 +105,42 @@ shared checkout as an attribution and scope hazard; this is the `.git/config` fa
 **And an instance in the same turn:** my `OI-30` amendment was swept into `51607bb`, another lane's commit
 about `BEN-149` ownership, under the shared identity — `BEN-203`'s shape, happening to me while I wrote
 this row about it. Not reverted; this file is the index of that correction.
+
+## THE SWEEP RAN BOTH WAYS, AND THE RETURN LEG BREAKS THE STATED REMEDY
+
+**Added 2026-08-13 after the mediator measured the other half.** The exchange was symmetric and neither
+party noticed at the time:
+
+| | into whose commit | what moved |
+|---|---|---|
+| outbound | `51607bb` (mediator's, *"OI-57/OI-58: the BEN-149 repair had no owner"*) | **my** `OI-30` amendment |
+| **inbound** | **`b8bd939` (mine)** | **the mediator's `OI-57` action-column correction** — the withdrawn re-pin clause |
+
+Verified here rather than accepted: `git log -S "there is NO re-pin step" -- docs/OPEN_ITEMS.md` returns
+**`b8bd939` and only `b8bd939`**, and that commit's diff touches the `OI-57` row in three places. So a
+correction the mediator authored is attributed to lane A, inside the very commit whose message records the
+outbound half.
+
+**AND THE MECHANISM CONVICTS `BEN-203`'S REMEDY, WHICH I FOLLOWED.** `BEN-203` says *"stage and commit with
+explicit pathspecs."* I did — `git commit -- <six explicit paths>`, no `git add -A` anywhere. **It did not
+help, and it could not have.** `git commit -- <path>` commits that path's **worktree** content, bypassing
+the index entirely; `docs/OPEN_ITEMS.md` had been left staged by another lane and its worktree copy already
+held that lane's in-flight edits to a *different row of the same file*.
+
+**So: explicit pathspecs protect you from committing other FILES. They do nothing about other lanes' edits
+to the SAME file.** In a checkout where six trees share one working directory and `OPEN_ITEMS.md` /
+`FINDINGS.md` / `VALIDATION_LEDGER.md` are append-target ledgers every lane writes to, that residual is not
+an edge case — it is the normal case, and it is silent in both directions.
+
+`BEN-203`'s advice is necessary and **not sufficient**. What actually closes it is a per-lane worktree, and
+this exchange is the concrete argument for taking one rather than the abstract one.
+
+**Nothing is unwound.** Both edits are correct and committed; only the attribution is wrong, and per this
+repo's convention written history stays written and the correction is indexed. This section is that index
+for both legs.
+
+**Why it strengthens `BEN-214` rather than complicating it.** That row's mechanism was stated as a one-way
+loss — the under-credited party is the only one positioned to notice. Measured, it is an **exchange**: each
+party silently acquired credit for the other's work *and* lost credit for its own, in the same hour, and
+each noticed only the leg that went against it. **Neither party's incentives pointed at the leg that
+favoured it**, which is exactly `BEN-214`'s claim, now observed twice in one commit pair instead of once.
