@@ -419,6 +419,22 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 ~16:10 PDT — BEN-157 R1 landed; promotion still BLOCKED pending R2/R3/R4.**
+`DECLARED_INVENTORY = 50` is pinned in the tool and bound by import-time assertion to `SEED_POLICY`,
+which already named it. `--n` is an **assertion only**, checked before any artifact is read, and a
+disagreeing value writes **no report at all**. Measured both ways: `--n 0` on an empty root went from
+**rc=0 with the exact `FAMILY_COMPLETE_PASS`** to **rc=3 with no report**, while the honest run still
+returns rc=2 `PARTIAL` with `targets_present 0 want 50`. Usage is exit **3** rather than 2 — correcting
+my own proposal, since 2 already meant *incomplete* here and reusing it would have collapsed "could not
+look" into "looked and found it short". **The suite was de-idiomed in the same commit** (73 → 90 tests;
+`_run_main` no longer takes a size; complete-family tests build `DECLARED_INVENTORY`; three unit-level
+fixtures deliberately left small). The report now carries `declared_inventory_is_pinned_in_tool`, so a
+pass at 50/50 is distinguishable **in the artifact** from one at a caller-chosen size — which is what
+made the old pass unfalsifiable rather than wrong. **R1 closes the headline, not the class:** items 2–7
+are untouched and `OI-65` holds them. New tool sha `85ca74f3…`; all three deployed copies are now
+deliberately stale and re-deployment is a separate verified step (`OI-64`, `BEN-156`). Receipt
+[`state/gate5-reconciler-r1-repair-20260813.json`](../docs/orchestration/state/gate5-reconciler-r1-repair-20260813.json).
+
 **Update 2026-08-13 ~15:50 PDT — PROMOTION BLOCKED: codex's audit found seven defects in the reconciler and all seven are confirmed.**
 The verifier this lane wrote cannot currently tell a complete family from an empty one. `--n` is
 caller-supplied with no floor, so **`--n 0` on an empty directory returns rc=0 and the exact

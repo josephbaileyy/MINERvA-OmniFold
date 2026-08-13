@@ -6472,3 +6472,69 @@ argument for an independent lane than any process document.
 Campaign measured this turn: `squeue -r` 25 PENDING / 1 RUNNING, **24 training receipts** of 50, 50/50
 targets. `PARTIAL`, `C_stat` null. Nothing re-run against the campaign, nothing re-deployed, no code or
 test modified, `GATE5_CODE_ROOT` untouched.
+
+### 2026-08-13 ~16:10 PDT — BEN-157 R1 landed: the declared inventory is pinned, not passed (lane C)
+
+Codex's part 7 closed the audit against commit `6d3660f` rather than against a message, and the repair
+was authorized. **R1 only.** R2/R3/R4 remain unapplied and **promotion remains BLOCKED**.
+
+`DECLARED_INVENTORY = 50` is now pinned in the tool. The number was **already** declared in the file —
+`SEED_POLICY` reads `gate5-cstat-n50-v1` — and simply unenforced, so an import-time assertion **binds
+the two** rather than introducing a second source of truth: change one without the other and it is a
+hard error, not a silently different gate. `--n` survives as an **assertion only**, checked before any
+artifact is read, and a disagreeing value writes **no report at all** — a caller who asked the wrong
+question must not receive a well-formed artifact measured against their own premise, because that
+artifact is what a promotion decision would later rest on.
+
+Measured both directions on the real tool. **Before:** `--n 0` on an empty root → rc=0 and the exact
+`FAMILY_COMPLETE_PASS`. **After:** rc=**3**, stderr naming the pinned value and the policy string, no
+report. And the honest run still reports honestly — no `--n`, empty root → rc=**2**, `PARTIAL`,
+`targets_present 0 want 50`. A check that rejected every `--n` would also have "rejected" the wrong
+ones, so both the pinned value and the omitted flag were confirmed to still work.
+
+**Usage is exit 3, not 2, and this corrected my own proposal.** I had proposed 2, copying the sibling
+`verify_executing_copy_is_committed.py`. That would have been wrong here: `2` already meant *the family
+is not complete*, so reusing it would have collapsed **"could not look"** into **"looked and found it
+short"** — the exact distinction I insisted on when writing the sibling. The two tools now use opposite
+assignments, documented at both sites, because preserving this tool's contract with its launcher
+outranks cosmetic consistency between tools.
+
+**The test half is the load-bearing part and it landed in the same commit.** The suite did not merely
+miss the defect — it was written in the defect's idiom: complete-family at `n=3`, clean-name at `n=2`,
+and `test_partial_family_is_PARTIAL_and_never_PASS` building 2 and running `--n 3`, which proves
+2/3 ≠ 3/3 and says nothing about 49/50 against a **fixed** 50. `_run_main` no longer takes a size; it
+runs as production does, with no `--n`. Every test meaning "complete" builds `DECLARED_INVENTORY`, every
+test meaning "short" builds fewer, **and there is no `--n` left to move.** Three small fixtures were
+deliberately left small — they call `reconcile_target`/`reconcile_training` directly and never reach
+`main()`, so they are unit-level rather than the idiom. **73 → 90 tests in this file, 110 across both
+suites.** New coverage includes the defect in its *general* form (`test_a_short_family_has_NO_n_that_
+makes_it_pass` over sizes 0/1/49, not merely `--n 0`), that a bad `--n` against a **nonexistent** root
+is still usage rather than `PARTIAL`, and that usage and incomplete carry different exit codes.
+
+**Two defects I introduced and caught, both recorded rather than quietly fixed.** A mechanical
+`args.n` → `DECLARED_INVENTORY` rewrite also hit **`args.nominal_target_sha`**, because `args.n` is its
+prefix — `BEN-032`'s shape, a substring filter over a set that is not defined by substrings; caught by
+grepping the result instead of trusting the replace count. And `_run_main` returned the report by
+opening a fixed path, so `rep is None` meant *"no file there"* rather than *"this run wrote none"* — in
+a test that runs twice, the second run, **the one asserted to write nothing**, read the first run's
+report. Four tests failed and were right to. Fixed by deleting the output path *before* running, so the
+file's presence afterwards is evidence about this run: the write-condition rule, inside the helper
+written to check for it.
+
+**R1 deliberately creates deployment drift, and the receipt records it as a falsifiable prediction.**
+All three deployed copies read `CURRENT` before this commit, because HEAD's blob was still the
+pre-repair version; after it lands they must read `STALE_BUT_COMMITTED` with exit 3, and if they read
+`CURRENT` the parity tool is broken. Nothing was deployed — that is a separate, verified step, two of
+the three copies are unowned (`OI-64`), and a re-deploy must also update
+`GATE5_RECON_EXPECTED_VALIDATOR_SHA`, which pins the validator by content and will therefore refuse a
+stale-or-unannounced copy. New tool sha `85ca74f3…`, superseding `11e4f440…`.
+
+**Not fixed by R1:** receipt-supplied artifact paths with no canonical anchor, no training-stage
+`.done`, `completion_marker_valid` never read, marker `mtime` omitted, one of three driver digests
+compared, checks that evaporate when their input is absent, and the name-pin test asserting against a
+copy of its own string. R1 closes the **headline** — the tool can now tell a complete family from an
+empty one — **not the class.**
+
+Campaign measured this turn: `squeue -r` 24 PENDING / 1 RUNNING, **25 training receipts** of 50 — half
+the family has landed. `PARTIAL`, `C_stat` null. Nothing run against the campaign, nothing deployed,
+`GATE5_CODE_ROOT` untouched.

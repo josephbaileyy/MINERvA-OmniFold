@@ -56,6 +56,24 @@ Run it from anywhere with numpy; it only reads the campaign tree.
 Add `--skip-replay` to drop check 2 (the signal draw is ~49M variates per replica); the family
 verdict then downgrades to reflect the weaker evidence rather than silently claiming the same
 thing.
+
+THE INVENTORY SIZE IS NOT AN ARGUMENT (BEN-157, R1)
+---------------------------------------------------
+`DECLARED_INVENTORY` is pinned in this file and bound by assertion to `SEED_POLICY`, which already
+names it (`gate5-cstat-n50-v1`). `--n` survives only as an *assertion*: passing a value that
+disagrees is a usage error and no report is written at all.
+
+Until this repair `--n` was an unconstrained int and every completeness comparison was against it,
+so `--n 0` on an empty directory returned rc=0 and the exact `FAMILY_COMPLETE_PASS`. The verdict was
+not wrong so much as UNFALSIFIABLE: a pass at 50/50 and a pass at a caller-chosen size produced
+reports that looked alike. `declared_inventory_is_pinned_in_tool` in the report exists so a reader
+can tell those apart.
+
+Exit codes:  0 complete  |  2 measured and NOT complete  |  3 usage / bad declaration.
+`2` and `3` are distinct on purpose -- "looked and found it short" must never be confusable with
+"could not look". The remaining items of the BEN-157 audit (receipt-supplied artifact paths, marker
+`mtime`, driver digests, checks that vanish when their input is absent) are tracked in `OI-65` and
+are NOT yet repaired.
 """
 
 from __future__ import annotations
@@ -77,6 +95,34 @@ import numpy as np
 # build_fullevent_replica_target.py:35
 SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
 SEED_BASE = 50000
+
+# THE DECLARED INVENTORY SIZE, PINNED HERE AND NOT SUPPLIED BY THE CALLER.
+#
+# Until BEN-157 this was `--n`, an unconstrained int defaulting to 50, and every completeness
+# comparison was against it. `--n 0` on an empty directory therefore returned rc=0 and the exact
+# FAMILY_COMPLETE_PASS, and a real 3-member family passed at `--n 3` while being PARTIAL at `--n 50`
+# with the artifacts unchanged. The file's own docstring states the principle its parser did not
+# enforce: 49 of 50 is not a 49-replica ensemble.
+#
+# The number was already declared in this file -- SEED_POLICY reads `n50` -- and simply unenforced,
+# so the assertion below binds the two rather than introducing a second source of truth. If the
+# campaign's declared size ever changes, BOTH must change, and the mismatch is a hard error at
+# import rather than a silently different gate.
+DECLARED_INVENTORY = 50
+assert f"n{DECLARED_INVENTORY}" in SEED_POLICY, (
+    f"DECLARED_INVENTORY={DECLARED_INVENTORY} disagrees with SEED_POLICY={SEED_POLICY!r}; "
+    "the inventory size is declared in two places and they have drifted"
+)
+
+# Exit codes. `2` already meant "the family is not complete" before BEN-157 and is left alone, so
+# EXIT_USAGE is a THIRD code rather than a reuse of it: a caller asking the wrong question must
+# never be confusable with a family that was measured and found short. (The sibling tool
+# verify_executing_copy_is_committed.py uses 2 for usage and 3 for its bad finding -- the opposite
+# assignment. Deliberate: preserving this tool's existing contract with its launcher outranks
+# cosmetic consistency between tools, and both are documented where they are used.)
+EXIT_COMPLETE = 0
+EXIT_NOT_COMPLETE = 2
+EXIT_USAGE = 3
 
 # The nominal target this family is centred ON, and must never equal. Deliberately NOT hardcoded:
 # it is supplied via --nominal-target-sha, measured from the Gate-2 promoted receipt at call time.
@@ -525,7 +571,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", required=True, help="campaign dir containing replicas/")
-    ap.add_argument("--n", type=int, default=50, help="declared inventory size (predeclared)")
+    ap.add_argument("--n", type=int, default=DECLARED_INVENTORY,
+                    help=f"ASSERTION ONLY: must equal the pinned DECLARED_INVENTORY "
+                         f"({DECLARED_INVENTORY}). It cannot change the gate; it exists so a "
+                         f"caller who believes the inventory is some other size finds out here "
+                         f"instead of getting a pass measured against their own belief (BEN-157).")
     ap.add_argument("--nominal-target-sha", default=None,
                     help="sha256 of the promoted nominal target; every replica must differ from it")
     ap.add_argument("--out", default=None, help="write the full JSON report here")
@@ -537,10 +587,25 @@ def main():
                     help="skip the three-stream factor re-draw (weakens the verdict, and says so)")
     args = ap.parse_args()
 
+    # BEN-157 R1: the declaration is pinned, and --n may only agree with it. Checked BEFORE any
+    # artifact is read, so a caller who asked the wrong question gets no report at all rather than
+    # a well-formed one measured against their own premise.
+    if args.n != DECLARED_INVENTORY:
+        print(
+            f"reconcile: --n {args.n} does not match the pinned declared inventory "
+            f"{DECLARED_INVENTORY} ({SEED_POLICY}).\n"
+            f"           --n is an assertion, not a parameter: completeness is measured against "
+            f"the predeclaration, never against the caller.\n"
+            f"           If the campaign's declared size really changed, change "
+            f"DECLARED_INVENTORY and SEED_POLICY together and re-run the tests.",
+            file=sys.stderr,
+        )
+        return EXIT_USAGE
+
     replay = not args.skip_replay
     cache = {}
     targets, trainings = [], []
-    for idx in range(args.n):
+    for idx in range(DECLARED_INVENTORY):
         t = reconcile_target(idx, args.root, replay, cache)
         targets.append(t)
         trainings.append(reconcile_training(idx, args.root, t))
@@ -560,11 +625,11 @@ def main():
                        "the wrong place; a count of 0 present would then be a statement about the "
                        "SEARCH, not about the campaign")
 
-    family.eq("targets_present", len(present_t), args.n)
+    family.eq("targets_present", len(present_t), DECLARED_INVENTORY)
     family.eq("target_replicas_failing_own_checks",
               sorted(t["replica_index"] for t in present_t if t["verdict"] != "PASS"), [])
     if args.stage == "family":
-        family.eq("trainings_present", len(present_r), args.n)
+        family.eq("trainings_present", len(present_r), DECLARED_INVENTORY)
         family.eq("training_replicas_failing_own_checks",
                   sorted(r["replica_index"] for r in present_r if r["verdict"] != "PASS"), [])
 
@@ -621,8 +686,8 @@ def main():
               seeds, [SEED_BASE + t["replica_index"] for t in
                       sorted(present_t, key=lambda x: x["replica_index"])])
 
-    target_complete = len(present_t) == args.n and not family.failed
-    family_complete = target_complete and len(present_r) == args.n
+    target_complete = len(present_t) == DECLARED_INVENTORY and not family.failed
+    family_complete = target_complete and len(present_r) == DECLARED_INVENTORY
     if args.stage == "target" and target_complete:
         verdict = "TARGETS_COMPLETE_PASS" if replay else "TARGETS_COMPLETE_PASS_REPLAY_SKIPPED"
     elif args.stage == "family" and family_complete:
@@ -640,14 +705,20 @@ def main():
         verdict = "PARTIAL"
     # A completeness shortfall alone is PARTIAL, never BLOCK; a coherence failure is BLOCK even
     # when the family is still filling, because more replicas cannot repair it.
-    if verdict == "PARTIAL" and (len(present_t) < args.n or len(present_r) < args.n):
+    if verdict == "PARTIAL" and (len(present_t) < DECLARED_INVENTORY or len(present_r) < DECLARED_INVENTORY):
         pass
 
     report = {
         "tool": "reconcile_gate5_family.py",
         "root": os.path.abspath(args.root),
         "stage": args.stage,
-        "declared_inventory": args.n,
+        "declared_inventory": DECLARED_INVENTORY,
+        # The artifact must record WHERE the declaration came from, not just its value. Before
+        # BEN-157 a pass at 50/50 and a pass at a caller-chosen n produced byte-identical-looking
+        # reports, so the artifact could not contradict a wrong verdict -- which made the verdict
+        # unfalsifiable rather than wrong. These two fields are what let a reader check that.
+        "declared_inventory_is_pinned_in_tool": True,
+        "declared_inventory_policy_string": SEED_POLICY,
         "replay_performed": replay,
         "source_input_measurement": source_measurement,
         "verdict": verdict,
@@ -683,7 +754,9 @@ def main():
         "family_failures": family.failed,
         "C_stat": None,
     }, indent=2, sort_keys=True, default=str))
-    return 0 if verdict.startswith(("FAMILY_COMPLETE", "TARGETS_COMPLETE")) else 2
+    if verdict.startswith(("FAMILY_COMPLETE", "TARGETS_COMPLETE")):
+        return EXIT_COMPLETE
+    return EXIT_NOT_COMPLETE
 
 
 if __name__ == "__main__":

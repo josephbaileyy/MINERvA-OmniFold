@@ -1,57 +1,121 @@
 {
-  "artifact": "gate5-family-reconciliation-20260813.json",
-  "lane": "C (PET)",
-  "owner_of_record": "Session C owns Gate 5 (P5B.1, C_stat) end to end as of this handoff",
-  "observed_pdt": "2026-08-13 05:50:56 PDT",
-  "observed_utc": "2026-08-13T12:50:56Z",
-  "purpose": "First full reconciliation pass over the Gate-5 C_stat replica family, plus the per-member training duration that was UNMEASURED at handoff. Read-only: no job interrupted, modified or requeued; no file written into the cluster code tree.",
-
-  "VERDICT": "PARTIAL -- and PARTIAL is the whole point. 16 of 50 target receipts present and ALL 16 pass every check; 0 of 50 training receipts. No C_stat is constructed, centred or summarised, because Gate 5's own rule is that a missing replica invalidates the declared ensemble manifest.",
-
+  "CONSTRAINTS_HONOURED": [
+    "train_fullevent_replica.py:112 NOT repaired -- and the reason I originally recorded for that was WRONG, so it is corrected here rather than quietly replaced. I wrote that editing the driver would break GATE5_EXPECTED_TRAIN_DRIVER_SHA for the members not yet started. It would not: sbatch_gate5_replica_train_array.sh:41-44 checks `git -C \"$CODE_ROOT\" rev-parse HEAD` and sha_of \"$DRIVER\" where DRIVER lives UNDER $CODE_ROOT, i.e. the cluster checkout at /pscratch/.../gate6traj-reconcile-56847059 -- never this repo. Three commits landed on main during the live campaign (b8159ad, 0198c7e, 39b0021) and tripped nothing, which is the decisive evidence: a reason equally true of every commit made in the window cannot be why this one is withheld. I had read those launcher lines myself earlier in this same pass and still repeated the inherited justification -- BEN-148's shape in my own hand again. THE ACTUAL REASONS, both intact: the repair must be paired with a re-pin so it rides the next launch as one atomic change (OI-57/OI-58 at 51607bb), and nothing may be pulled into $CODE_ROOT while the array is live -- policy, not technology.",
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 (GATE5_CODE_ROOT) NOT touched and must not be cleaned until 56857233_[0-49] completes. It is named for a DIFFERENT job whose array is already COMPLETE, so it looks disposable and is not.",
+    "No C_stat constructed, centred or summarised. Partial completion reported as partial.",
+    "Nothing written into the cluster code tree; the reconciler ran from scratch, outside any git tree.",
+    "No job interrupted, modified or requeued."
+  ],
   "CORRECTION_20260813_the_tool_was_looking_for_a_filename_that_never_existed": {
-    "the_defect": "The first version of reconcile_gate5_family.py looked for GATE5_REPLICA_TRAIN_RECEIPT.json. The launcher writes GATE5_REPLICA_TRAINING_RECEIPT.json -- 'TRAINING', not 'TRAIN'. The name was INFERRED from the driver's --train-receipt argument rather than read from the launcher.",
-    "measured_ground_truth": "sbatch_gate5_replica_train_array.sh lines 36-37, read from the Slurm-CAPTURED batch script of a live task (`scontrol write batch_script 56857233_0 -`, so it is the text that is actually executing, not a possibly-edited file on disk): OUTPUT=${OUTDIR}/GATE5_REPLICA_WEIGHTS.npz and TRAIN_RECEIPT=${OUTDIR}/GATE5_REPLICA_TRAINING_RECEIPT.json.",
     "WHY_THIS_WAS_SERIOUS_rather_than_a_typo": "A missing file at an inferred path is INDISTINGUISHABLE from a stage that has not run. The reconciler would have reported trainings_present: 0 and verdict PARTIAL *permanently* -- including at a genuine 50/50 -- so the family could never have been promoted, and the failure mode is a confident-looking correct-format report rather than an error.",
-    "the_verdict_was_ACCIDENTALLY_RIGHT": "At the time of the first run the reported '0 of 50 training receipts' was CORRECT, because no training had finished and the training directories contained no files at all. So the number was right while the instrument was broken -- which is exactly why it was not caught by the result looking wrong.",
     "how_it_was_caught": "Not by a failure. By deliberately checking a path I had INFERRED rather than measured, on the standing rule that an absence verdict is a statement about the SEARCH before it is a statement about the world (BEN-086). The check was one `grep` against the launcher.",
-    "the_fix_is_a_guard_not_just_a_rename": "Both names are now module constants pinned by a test to the launcher's values, and if a receipt-like or artifact-like file exists under an UNEXPECTED name the reconciler returns state NAME_MISMATCH and the family verdict is BLOCK -- never 'absent'. A search whose reliability is in question must stop the tool, because every other count in the report is then a statement about the search.",
+    "measured_ground_truth": "sbatch_gate5_replica_train_array.sh lines 36-37, read from the Slurm-CAPTURED batch script of a live task (`scontrol write batch_script 56857233_0 -`, so it is the text that is actually executing, not a possibly-edited file on disk): OUTPUT=${OUTDIR}/GATE5_REPLICA_WEIGHTS.npz and TRAIN_RECEIPT=${OUTDIR}/GATE5_REPLICA_TRAINING_RECEIPT.json.",
+    "re_run_after_the_fix": "25 of 50 targets present, all 25 passing; trainings_name_mismatch: 0; verdict PARTIAL. The guard is silent on clean data, which is the half that proves it is a check rather than an alarm.",
     "tests": "56 tests now (was 50). The six new ones cover: the names matching the launcher; an unexpected receipt name; an unexpected artifact name; NAME_MISMATCH blocking the family even with nothing else present; the guard staying SILENT on correctly-named files (power test -- a guard that fires on clean runs gets switched off); and genuine absence still reading as NOT_STARTED/IN_PROGRESS.",
-    "re_run_after_the_fix": "25 of 50 targets present, all 25 passing; trainings_name_mismatch: 0; verdict PARTIAL. The guard is silent on clean data, which is the half that proves it is a check rather than an alarm."
+    "the_defect": "The first version of reconcile_gate5_family.py looked for GATE5_REPLICA_TRAIN_RECEIPT.json. The launcher writes GATE5_REPLICA_TRAINING_RECEIPT.json -- 'TRAINING', not 'TRAIN'. The name was INFERRED from the driver's --train-receipt argument rather than read from the launcher.",
+    "the_fix_is_a_guard_not_just_a_rename": "Both names are now module constants pinned by a test to the launcher's values, and if a receipt-like or artifact-like file exists under an UNEXPECTED name the reconciler returns state NAME_MISMATCH and the family verdict is BLOCK -- never 'absent'. A search whose reliability is in question must stop the tool, because every other count in the report is then a statement about the search.",
+    "the_verdict_was_ACCIDENTALLY_RIGHT": "At the time of the first run the reported '0 of 50 training receipts' was CORRECT, because no training had finished and the training directories contained no files at all. So the number was right while the instrument was broken -- which is exactly why it was not caught by the result looking wrong."
   },
-
-  "THE_TOOL": {
-    "path": "nd-unfolding/pet/reconcile_gate5_family.py",
-    "sha256": "e536540df5dce1f4c8947f7ccb57193be935c5b5d701296c3ef1440d4de90467",
-    "sha256_superseded_first_version": "c27691ce37de9b35ab45fee6ac9d0723f24d634a063777346054647a37a7d461",
-    "tests": "nd-unfolding/tests/test_reconcile_gate5_family.py -- 56 tests, all passing, every check power-tested in BOTH directions",
-    "run_from": "/pscratch/sd/j/josephrb/gate5-reconcile-lanec (scratch, OUTSIDE any git tree)",
-    "why_not_run_from_the_repo": "The cluster code checkout must stay clean and fixed at b82ac63 while either array is active; every task fails closed on HEAD drift. Adding a file to that tree to audit it would be the audit breaking its own subject.",
-    "interpreter": "module load python -> Python 3.13.11 / numpy 2.3.5 (login-node python3 is 3.6.15 and cannot parse the file)",
-    "it_has_no_covariance_code_in_it": "Deliberate. A reconciler that CANNOT compute C_stat cannot be talked into computing one from a partial family.",
-    "checks_per_replica": 29,
-    "wall_seconds_for_16_replicas": 28.3
+  "FINDINGS_FILED_THIS_PASS": {
+    "BEN-150": "A field name reused at two nesting levels with DIFFERENT values -- sum_w_reco_pass_reco_raw, where the OUTER '_raw' carries the replica-SCALED sum. Re-deriving R from the nested one gives 1.124623 against the recorded 1.1253111: 6.1e-4 relative, too small to look like a bug and too large to be rounding.",
+    "BEN-151": "The one inventory stream verified nowhere was the one carrying the physics. Comment claims three streams replayed; code checks two, because the third is not exposed.",
+    "BEN-152": "A cost estimate built from a wall time that covered two units of work, propagated into a predeclaration's compute budget. Predecessor-found, measurement-confirmed here at ratio 2.05."
   },
-
-  "WHAT_PASSED_THAT_WAS_NOT_PREVIOUSLY_CHECKED": {
-    "headline": "All THREE coherent Poisson factor streams re-drawn from the declared seed and declared full inventory sizes, hashed under the receipts' own stated contract, and compared. 16/16 MATCH on all three.",
-    "why_this_is_new_evidence": {
-      "signal_and_background_were_already_covered": "build_fullevent_replica_target.py:219-222 array-compares the loader's signal (restricted to mc_indices) and background factors against a canonical replay and raises SystemExit on mismatch; train_fullevent_replica.py validate_artifact independently re-hashes the persisted full signal factor, asserts its length equals n_sig_full, asserts the subset is a true restriction of the full factor, and re-hashes the background factor. Both stages fail closed.",
-      "the_DATA_stream_was_covered_NOWHERE": "The loader's bootstrap telemetry dict (fullevent_fps_dataloader.py:1328-1330) exposes mc_indices, sig_bootstrap_factor and bkg_bootstrap_factor and NO data equivalent. So the target stage cannot array-compare data factors (it is not omission by choice -- the value is not exposed), and the training stage cannot re-hash them (they are not persisted). The receipt's data_factor_sha256 is the BUILDER'S OWN recomputation, not a record of what the loader used.",
-      "why_that_stream_is_the_one_that_matters": "The data factors are what generate the measured-side Poisson variance that C_stat exists to quantify. The single unverified stream was the physically dominant one.",
-      "and_the_streams_are_INDEPENDENT_so_the_others_do_not_vouch_for_it": "coherent_bootstrap_factors draws data at rng(seed), signal at rng(seed+10_000_000), background at rng(seed+20_000_000). A passing signal check proves (seed, n_sig); a passing background check proves (seed, n_bkg). Neither constrains n_data. That is the actual gap, and it is narrow, not zero."
+  "NEXT_ACTIONS": [
+    "Re-run the reconciler when the first training receipts land, to replace the projected per-member duration with a COMPLETED wall time and to exercise the training-stage checks against a real receipt for the first time.",
+    "At 50/50, run it once more for the family verdict; only FAMILY_COMPLETE_PASS advances to extraction and centering on the replica mean.",
+    "Next launch (not this one): persist the data-factor hash loader-side; repair train_fullevent_replica.py:112; drop --tag nominal from the replica path."
+  ],
+  "NOTED_NOT_FILED": {
+    "w_nominal_naming_inside_a_replica_directory": "The replica driver invokes the pinned nominal driver with --tag nominal (train_fullevent_replica.py:239), so every replica's intermediate weights land at replicas/replica_NN/training/w_nominal/OmniFold_fe_nominal_nominal_iterK_stepJ.*. A reader pulling that path would reasonably read it as the NOMINAL's weights. Same family as BEN-149 (a name answering a question falsely), but the stakes are low and bounded: the directories are per-replica so nothing collides, the consumed target is verified distinct per replica, and the extraction artifact path is set explicitly by the launcher rather than by the tag. Recorded here rather than as its own row; the fix belongs to the next launch alongside the :112 repair."
+  },
+  "SOURCE_IDENTITY_PROVENANCE_the_family_has_exactly_ONE_independent_check": {
+    "THEREFORE": "docs/orchestration/state/gate5-source-npz-verified-20260813.json is NOT belt-and-braces. It is the ONLY independent source-identity check the 50-member family has, and this receipt cites it so the family's source identity rests on a recoverable measured operand rather than a relayed one.",
+    "THE_CITED_MEASUREMENT": {
+      "and_this_pass_binds_all_16_receipts_to_it": "Every reconciled receipt's input_preflight.sha256 was checked equal to fa6b3463... (the GATE5_EXPECTED_INPUT_SHA pin), so the measured digest and the family's declared source are the same value in 16 of 16 cases.",
+      "artifact": "docs/orchestration/state/gate5-source-npz-verified-20260813.json",
+      "committed_at": "c249f78",
+      "computed_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "expected_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "match": true,
+      "path_measured": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+      "size_bytes": 9897374636,
+      "tool": "sha256sum on the cluster",
+      "wall_seconds": 42.6
     },
-    "how_this_run_closes_it": [
-      "The re-drawn data-factor hash equals the recorded data_factor_sha256 for all 16 replicas -- so the recorded hash IS the canonical draw for the declared (seed, n_data).",
-      "n_data is pinned independently: the builder's bootstrap.n_data_full == the loader's own runtime_target.n_data_rows in every receipt (4,116,128), and the loader hard-raises at fullevent_fps_dataloader.py:950 if data_factor.shape != (n_data_rows,).",
-      "RESIDUAL, stated rather than dissolved: this proves the recorded hash is canonical, NOT that the loader used it. Only loader-side persistence of the data factor could prove that. The cheap fix for the next launch is one key in the telemetry dict."
-    ],
-    "MY_OWN_TOOL_HAD_A_CONTROL_AND_IT_PASSED": "numpy 2.3.5 here vs the TF-2.15 module's numpy on the compute nodes. If the PCG64/poisson stream differed between them, ALL THREE redraws would mismatch. Signal and background are independently verified upstream, so their agreement proves my interpreter reproduces the campaign's stream -- which is what makes the data-factor comparison meaningful instead of a coin flip. Had only the data stream mismatched, that would have been a campaign finding; had all three mismatched, it would have been a finding about MY interpreter and nothing else."
+    "WHAT_IS_AND_IS_NOT_BLOCKED": "Gate 5 execution is NOT blocked: the source file is genuinely correct, by measurement. What is blocked is quoting inputs_sha256 out of a replica artifact as verified provenance -- that field must be sourced to the measurement above instead.",
+    "leg_1_the_copied_value_is_republished_under_a_comment_asserting_it_was_verified": {
+      "code": "inputs_sha256=np.asarray(target_receipt[\"_verified_input_sha256\"])",
+      "comment_at_639_641": "'Already computed and CHECKED against the receipt by assert_target_provenance; reused rather than recomputed, so the artifact records the digest that was actually verified.'",
+      "consequence": "Every replica artifact carries an inputs_sha256 that is a relayed claim, wearing a comment that says it was measured. BEN-149 exactly, one layer further out: the earlier instance mislabelled a FIELD, this one mislabels the PROVENANCE OF A PUBLISHED VALUE.",
+      "site": "train_fullevent_nominal.py:642",
+      "why_the_comment_is_true_on_one_path_and_false_on_the_other": "On the nominal path assert_target_provenance really did compute and check it. On the replica path the adapter MONKEYPATCHES assert_target_provenance (train_fullevent_replica.py swaps it and restores it in a finally block), so the premise the comment rests on does not hold -- and the comment travels with the line into the replica artifact."
+    },
+    "leg_2_the_independent_re_check_cannot_reach_a_replica": {
+      "code": "if int(strap) != -1: raise SystemExit('[extract] weights npz declares bootstrap_seed=... this path extracts the NOMINAL (fail closed)')",
+      "consequence": "The extraction path that carries the Gate-4 validator's independent hash check fails closed on ANY bootstrap_seed != -1. It is correct to fail closed -- a replica's extraction rides the replica manifest -- but it means the independent check structurally never runs on a replica.",
+      "site": "extract_fullevent_fps.py:175-181"
+    },
+    "why_this_section_exists": "Lane D established, and I verified each leg myself on the code that is actually running rather than relaying it, that the copied sha at train_fullevent_replica.py:112 is not merely stored -- it is PUBLISHED into the training artifact, and the one path that would independently re-check it cannot reach a replica."
   },
-
   "TARGET_STAGE_RESULT": {
-    "present": 16,
-    "passing": 16,
-    "failing": 0,
+    "DISTINCTNESS_the_reassuring_failure_did_not_happen": {
+      "background_factor_sha_all_distinct": true,
+      "data_factor_sha_all_distinct": true,
+      "no_replica_equals_the_nominal_target": "checked against the Gate-2 promoted 544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9; zero clashes",
+      "signal_factor_sha_all_distinct": true,
+      "target_sha_all_distinct": true,
+      "why_this_check_leads": "Identical targets would collapse the measured-side variance and report as a SMALL statistical component rather than as a broken draw. The wrong answer here is the one everybody expects to see."
+    },
+    "R_SPREAD_a_draw_diagnostic_and_NOT_a_component": {
+      "DOES_BEN_150_TOUCH_THE_ADOPTED_R": {
+        "1.124623_is": "only ever a deliberate wrong-operand derivation for replica_00, produced by this reconciliation to demonstrate the trap. It is published nowhere and is not any artifact's value.",
+        "1.1253110723074478_is": "replica_00's OWN R -- a different quantity from the nominal, being one replica's measured draw. Not the nominal carrying a defect.",
+        "ANSWER": "NO. The adopted R is untouched, and BEN-150 is a re-derivation trap with no consequence for any quoted number.",
+        "MEASURED_the_nominal_receipt_has_NO_collision": {
+          "all_three_identical": true,
+          "all_three_rederive_R_exactly": 1.1240802949941018,
+          "is_bootstrap_replica": false,
+          "nested_sum_w_reco_pass_reco_raw": 16780549.17866151,
+          "nested_sum_w_reco_pass_reco_replica_scaled": 16780549.17866151,
+          "outer_sum_w_reco_pass_reco_raw": 16780549.17866151,
+          "receipt": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+          "why": "On the nominal path there is no replica scaling, so `_raw` and `_replica_scaled` ARE the same quantity. No choice of operand could have produced a wrong nominal R, so Gate 4's 17-digit reproduction does not depend on resolving the collision."
+        },
+        "THE_DEFECT_IS_DORMANT_ON_THE_NOMINAL_AND_ACTIVATES_ON_THE_REPLICA_PATH": "This is the part worth keeping. The field names were harmless for as long as nothing was scaled; the replica path introduced a scaled variant and activated a LATENT naming defect. The collision did not exist when the names were chosen, so no review of the nominal path could have caught it -- and a latent name collision is invisible until a second variant of the quantity appears.",
+        "THE_READING_WAS_TESTED_AS_A_FALSIFIABLE_PREDICTION_not_asserted": {
+          "any_replica_R_equals_nominal_R": false,
+          "measured_over": "20 replica target receipts",
+          "nested_raw_distinct_values": 1,
+          "nested_raw_equals_nominal_exactly": true,
+          "nested_raw_value": 16780549.17866151,
+          "nominal_strictly_inside_replica_range": true,
+          "outer_distinct_values": 20,
+          "outer_range": [
+            16771436.760178,
+            16787860.591568
+          ],
+          "prediction": "If the outer field is the replica-SCALED sum and the nested `_raw` is genuinely unscaled, the nested `_raw` must be CONSTANT across every replica and EQUAL to the nominal's value, while the outer must vary per replica.",
+          "replica_R_distinct": 20,
+          "replica_R_range": [
+            1.1229782491625557,
+            1.1253110723074478
+          ],
+          "verdict": "All three predictions confirmed. The nested `_raw` is a property of the MC -- sum(w_reco[pass_reco]) before any replica scaling -- so it is identical across replicas and identical to the nominal. Confirmed, not assumed."
+        },
+        "question_as_asked": "Three numbers were in circulation -- 1.1240802949941018 (Gate-2/Gate-4 adopted, reproduced to 17 digits), 1.1253110723074478 (quoted in the BEN-150 write-up), 1.124623 (the wrong-operand re-derivation) -- and it was not clear which was which or whether the duplicated-key defect reached a promoted result."
+      },
+      "max": 1.1253110723074478,
+      "min": 1.1229782491625557,
+      "n_distinct_R": 16,
+      "nominal_R": 1.1240802949941018,
+      "reading": "The replica class ratios STRADDLE the nominal (1.12298 < 1.12408 < 1.12531), which is direct evidence the measured-side draw is live and centred near the nominal. Recorded as a diagnostic of the draw. It is NOT C_stat, which is a covariance over unfolded bins and requires 50/50.",
+      "target_build_wall_seconds": {
+        "max": 2439.2,
+        "mean": 2348.3,
+        "min": 2296.0
+      }
+    },
     "absent_or_partial": 34,
     "checks_that_passed_for_every_replica": [
       "seed == 50000 + replica_index, and seed_policy string matches gate5-cstat-n50-v1",
@@ -69,179 +133,139 @@
       "float32 target sum agrees with float64 telemetry to 2.14e-08 relative -- NOT exactly, which is correct",
       "all three factor-stream hashes reproduced by independent redraw"
     ],
+    "failing": 0,
     "family_invariants_constant_across_all_16": {
-      "n_data_full": 4116128,
-      "n_sig_full": 49152885,
-      "n_bkg_full": 564591,
-      "n_measured_rows": 4680719,
-      "pot_scale": 0.21240500334472884,
-      "inventory_hashes": "d620bef65e78db0375dd29c0d588c38be720806e270573cfcf92cb1ff373d6c5",
-      "gate3_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+      "code.canonical_u2d": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
       "code.loader": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
-      "code.target_builder": "e3cd94d4f3983a628e34de4d852ce7ca93940be63c1cdfe28844a5a57f558234",
       "code.numpy_dataloader": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
-      "code.canonical_u2d": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
+      "code.target_builder": "e3cd94d4f3983a628e34de4d852ce7ca93940be63c1cdfe28844a5a57f558234",
+      "gate3_manifest_sha256": "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f",
+      "inventory_hashes": "d620bef65e78db0375dd29c0d588c38be720806e270573cfcf92cb1ff373d6c5",
+      "n_bkg_full": 564591,
+      "n_data_full": 4116128,
+      "n_measured_rows": 4680719,
+      "n_sig_full": 49152885,
+      "pot_scale": 0.21240500334472884
     },
-    "DISTINCTNESS_the_reassuring_failure_did_not_happen": {
-      "target_sha_all_distinct": true,
-      "data_factor_sha_all_distinct": true,
-      "signal_factor_sha_all_distinct": true,
-      "background_factor_sha_all_distinct": true,
-      "no_replica_equals_the_nominal_target": "checked against the Gate-2 promoted 544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9; zero clashes",
-      "why_this_check_leads": "Identical targets would collapse the measured-side variance and report as a SMALL statistical component rather than as a broken draw. The wrong answer here is the one everybody expects to see."
-    },
-    "R_SPREAD_a_draw_diagnostic_and_NOT_a_component": {
-      "n_distinct_R": 16,
-      "min": 1.1229782491625557,
-      "max": 1.1253110723074478,
-      "nominal_R": 1.1240802949941018,
-      "reading": "The replica class ratios STRADDLE the nominal (1.12298 < 1.12408 < 1.12531), which is direct evidence the measured-side draw is live and centred near the nominal. Recorded as a diagnostic of the draw. It is NOT C_stat, which is a covariance over unfolded bins and requires 50/50.",
-      "DOES_BEN_150_TOUCH_THE_ADOPTED_R": {
-        "question_as_asked": "Three numbers were in circulation -- 1.1240802949941018 (Gate-2/Gate-4 adopted, reproduced to 17 digits), 1.1253110723074478 (quoted in the BEN-150 write-up), 1.124623 (the wrong-operand re-derivation) -- and it was not clear which was which or whether the duplicated-key defect reached a promoted result.",
-        "ANSWER": "NO. The adopted R is untouched, and BEN-150 is a re-derivation trap with no consequence for any quoted number.",
-        "1.1253110723074478_is": "replica_00's OWN R -- a different quantity from the nominal, being one replica's measured draw. Not the nominal carrying a defect.",
-        "1.124623_is": "only ever a deliberate wrong-operand derivation for replica_00, produced by this reconciliation to demonstrate the trap. It is published nowhere and is not any artifact's value.",
-        "MEASURED_the_nominal_receipt_has_NO_collision": {
-          "receipt": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
-          "outer_sum_w_reco_pass_reco_raw": 16780549.17866151,
-          "nested_sum_w_reco_pass_reco_raw": 16780549.17866151,
-          "nested_sum_w_reco_pass_reco_replica_scaled": 16780549.17866151,
-          "all_three_identical": true,
-          "all_three_rederive_R_exactly": 1.1240802949941018,
-          "is_bootstrap_replica": false,
-          "why": "On the nominal path there is no replica scaling, so `_raw` and `_replica_scaled` ARE the same quantity. No choice of operand could have produced a wrong nominal R, so Gate 4's 17-digit reproduction does not depend on resolving the collision."
+    "passing": 16,
+    "present": 16
+  },
+  "THE_NUMBER_THAT_WAS_UNMEASURED_AT_HANDOFF": {
+    "REVISED_per_member_projection_20260813_0620_PDT": {
+      "A_NEAR_MISS_WORTH_RECORDING": "At 06:17:18 the annealed step stood at 35:39 against iteration 0's 35:47 and I briefly read it as 'the annealed steps are longer' -- on an 8-second shortfall, checking 94 seconds too early. That is BEN-206's shape (the interesting finding outrunning the boring check) and it was caught only by comparing against the base figure to the second instead of to the minute.",
+      "THE_ANNEAL_INDEPENDENTLY_VERIFIED_FROM_THE_OPTIMIZER_HISTORY": "The .pkl dumps record the realized `lr` per epoch: iter0 step1 and step2 both at float32(1e-4), iter1 step1 at float32(1e-5). That confirms `applies_from_iteration: 1` with base 1e-4 annealing to 1e-5, hence 2 fits at base and 4 annealed -- the exact (2,4) that validate_artifact requires. This is the policy confirmed from the OPTIMIZER'S OWN RECORDED VALUES, independent of the receipt field `lr_policy_realized.verified_from_optimizer`, which is the artifact claiming about itself.",
+      "THE_STRUCTURAL_FACT_THAT_MAKES_THE_EXTRAPOLATION_SOUND": "Read from the per-step history pickles: EVERY step runs exactly 8 epochs. loss/val_loss/lr are all length 8 in every dump inspected across replicas 00/01/02. No early stopping shortens any step, so step durations are expected to be near-identical across iterations and the x3 structure is not an assumption.",
+      "annealed_over_base_step1_ratio": 1.0396,
+      "delta_from_the_superseded_figure": "+3.1% (2.94 h -> 3.03 h)",
+      "interpretation": "The annealed step is ~4.0% slower. This is NOT an LR effect -- learning rate does not change the compute per batch -- and the epoch count is identical (see below). These are gpu_shared allocations, so the A100 is shared and ~4% wall variance between otherwise-identical steps is the expected signature.",
+      "measured_step_boundaries_replica_00": {
+        "iter0_step1": {
+          "duration": "35:48",
+          "lr_recorded": 0.0001
         },
-        "THE_DEFECT_IS_DORMANT_ON_THE_NOMINAL_AND_ACTIVATES_ON_THE_REPLICA_PATH": "This is the part worth keeping. The field names were harmless for as long as nothing was scaled; the replica path introduced a scaled variant and activated a LATENT naming defect. The collision did not exist when the names were chosen, so no review of the nominal path could have caught it -- and a latent name collision is invisible until a second variant of the quantity appears.",
-        "THE_READING_WAS_TESTED_AS_A_FALSIFIABLE_PREDICTION_not_asserted": {
-          "prediction": "If the outer field is the replica-SCALED sum and the nested `_raw` is genuinely unscaled, the nested `_raw` must be CONSTANT across every replica and EQUAL to the nominal's value, while the outer must vary per replica.",
-          "measured_over": "20 replica target receipts",
-          "nested_raw_distinct_values": 1,
-          "nested_raw_value": 16780549.17866151,
-          "nested_raw_equals_nominal_exactly": true,
-          "outer_distinct_values": 20,
-          "outer_range": [16771436.760178, 16787860.591568],
-          "replica_R_distinct": 20,
-          "replica_R_range": [1.1229782491625557, 1.1253110723074478],
-          "nominal_strictly_inside_replica_range": true,
-          "any_replica_R_equals_nominal_R": false,
-          "verdict": "All three predictions confirmed. The nested `_raw` is a property of the MC -- sum(w_reco[pass_reco]) before any replica scaling -- so it is identical across replicas and identical to the nominal. Confirmed, not assumed."
+        "iter0_step2": {
+          "duration": "22:15",
+          "lr_recorded": 0.0001
+        },
+        "iter1_step1_ANNEALED": {
+          "boundary_utc_pdt": "06:18:52 PDT",
+          "duration": "37:13",
+          "lr_recorded": 1e-05
         }
       },
-      "target_build_wall_seconds": {"min": 2296.0, "max": 2439.2, "mean": 2348.3}
-    }
-  },
-
-  "TRAINING_STAGE_RESULT": {
-    "receipts_present": 0,
-    "in_progress": 10,
-    "not_started": 40,
-    "note": "The training receipt is written LAST (train_fullevent_replica.py:377, after validate_artifact). So its absence means INCOMPLETE and never FAILED, and the reconciler reports IN_PROGRESS vs NOT_STARTED by the existence of the per-step weights directory rather than collapsing both into 'missing'.",
-    "no_failures_in_either_array": "targets 17 COMPLETED / 9 RUNNING / 24 PENDING; training 10 RUNNING / 40 PENDING; zero non-zero exit states"
-  },
-
-  "THE_NUMBER_THAT_WAS_UNMEASURED_AT_HANDOFF": {
-    "question": "Per-member training duration -- the only number gating 'when does the family land'.",
-    "status": "STILL NOT A COMPLETED-MEMBER MEASUREMENT (0 of 50 have finished). What follows is a per-STEP measurement plus the loop structure, which is strictly better than the ~3 h comparable it replaces and strictly weaker than a COMPLETED wall time.",
+      "revised_family_completion": "~20:40 PDT 2026-08-13 (~03:40 UTC 08-14), from 5 waves x 3.03 h off the 04:40:42 PDT first start plus the ~49 min first-wave stagger. Previously ~19:20-20:10 PDT.",
+      "revised_per_member": "3:01:39 = 3.03 h, built as measured startup 2:55 + measured iter0 (35:48 + 22:15) + 2 x annealed iteration (37:13 + inferred 23:07)",
+      "still_a_LOWER_BOUND": "Excludes final extraction, artifact write and receipt. The only inferred term is the annealed step2, scaled from base step2 by the measured 1.0396.",
+      "walltime_headroom": "The array requests 08:00:00 per member, so ~3 h remains comfortable and no member is at risk of a walltime kill.",
+      "what_changed_and_why_it_needed_checking": "The 2.94 h figure multiplied a BASE-LR iteration by three. Iterations 1 and 2 run at the annealed LR (1e-5 vs 1e-4), and nothing had established they take the same wall time. Since the number was being relayed outside this repo, the assumption was measured rather than left standing."
+    },
+    "THIS_CORRECTS_A_COMMITTED_NUMBER": {
+      "NOT_corrected_in_the_predeclaration_text_here_and_why": "A predeclaration's value is that it is fixed before the result. Editing its cost table now would damage the document whose whole purpose is to be unedited. The correction belongs in this receipt and on Joseph's list; the branch criteria (PASS/BLOCK/UNRESOLVED) are untouched by it, because none of them reference cost.",
+      "interpretation": "The ratio being 2.05 independently corroborates the predecessor session's finding that 6:00:36 covered TWO trainings, not one. Two independent routes now agree the predeclaration's GPU budget is ~2x high.",
+      "measured_here": "2.94 h per member (lower bound) -> ~14.7 h family wall.",
+      "predeclaration_says": "PREDECLARATION-20260813-gate5-coherent-replicas-n50.md cost table: full-event training job 56563761 wall 06:00:36, giving 6.01 GPU node-hours per replica, 300.5 GPU node-hours at N=50, and '~35 h wall-clock at 10 concurrent'.",
+      "ratio": 2.05,
+      "scientific_impact": "None on the C_stat value. It is a scheduling and allocation number only."
+    },
+    "family_projection": {
+      "family_lands": "~19:20-20:10 PDT 2026-08-13 (~02:20-03:10 UTC 2026-08-14); the range is the first wave's ~49 min launch stagger propagating",
+      "model": "10 concurrent, 50 members, 5 waves, first training started 04:40:42 PDT",
+      "targets_are_not_the_constraint": "33 targets remain at ~39 min and 10 concurrent -> last target ~08:00 PDT, long before member 49's training slot frees at ~17:00.",
+      "wave_last_finishes_pdt": [
+        "07:36",
+        "10:33",
+        "13:29",
+        "16:25",
+        "19:21"
+      ]
+    },
+    "loop_structure_is_PINNED_not_assumed": "validate_artifact requires realized (n_fits_base_lr, n_fits_annealed) == (2, 4) exactly, and fails closed otherwise. That is 6 fits = 3 iterations x 2 steps, so the iteration count is enforced by the driver rather than inferred from niter=3.",
     "measured_step_durations_pkl_to_pkl": {
-      "iter0_step1": {"replica_00": "35:47", "replica_01": "35:18", "replica_02": "35:50", "mean": "35:38"},
-      "iter0_step2": {"replica_00": "22:15", "replica_01": "21:52", "replica_02": "22:14", "mean": "22:07"},
+      "iter0_step1": {
+        "mean": "35:38",
+        "replica_00": "35:47",
+        "replica_01": "35:18",
+        "replica_02": "35:50"
+      },
+      "iter0_step2": {
+        "mean": "22:07",
+        "replica_00": "22:15",
+        "replica_01": "21:52",
+        "replica_02": "22:14"
+      },
       "method": "The per-step .pkl history dump is written at END of step; the .weights.h5 is the best-epoch checkpoint and lands EARLIER, so the .pkl is the correct step boundary and the .h5 is not.",
       "step_count_ratio_cross_check": "The log reports 13048 reco steps and 7812 gen steps per epoch; 7812/13048 = 0.599, against a measured step2/step1 ratio of 22:07/35:38 = 0.621. Consistent, so the two legs' durations track their batch counts."
     },
-    "loop_structure_is_PINNED_not_assumed": "validate_artifact requires realized (n_fits_base_lr, n_fits_annealed) == (2, 4) exactly, and fails closed otherwise. That is 6 fits = 3 iterations x 2 steps, so the iteration count is enforced by the driver rather than inferred from niter=3.",
     "per_member_projection_SUPERSEDED_see_REVISED_below": {
-      "one_iteration": "0:57:45",
-      "three_iterations": "2:53:16",
-      "plus_measured_startup_2_55": "2:56:11 = 2.94 h",
       "label": "LOWER BOUND -- excludes final extraction, artifact write and receipt.",
+      "one_iteration": "0:57:45",
+      "plus_measured_startup_2_55": "2:56:11 = 2.94 h",
+      "three_iterations": "2:53:16",
       "why_superseded": "This extrapolated iteration 0 (base LR) across the two ANNEALED iterations without having measured one. The annealed boundary has since been measured; see REVISED_per_member_projection."
     },
-
-    "REVISED_per_member_projection_20260813_0620_PDT": {
-      "what_changed_and_why_it_needed_checking": "The 2.94 h figure multiplied a BASE-LR iteration by three. Iterations 1 and 2 run at the annealed LR (1e-5 vs 1e-4), and nothing had established they take the same wall time. Since the number was being relayed outside this repo, the assumption was measured rather than left standing.",
-      "measured_step_boundaries_replica_00": {
-        "iter0_step1": {"lr_recorded": 1e-04, "duration": "35:48"},
-        "iter0_step2": {"lr_recorded": 1e-04, "duration": "22:15"},
-        "iter1_step1_ANNEALED": {"lr_recorded": 1e-05, "duration": "37:13", "boundary_utc_pdt": "06:18:52 PDT"}
-      },
-      "annealed_over_base_step1_ratio": 1.0396,
-      "interpretation": "The annealed step is ~4.0% slower. This is NOT an LR effect -- learning rate does not change the compute per batch -- and the epoch count is identical (see below). These are gpu_shared allocations, so the A100 is shared and ~4% wall variance between otherwise-identical steps is the expected signature.",
-      "THE_STRUCTURAL_FACT_THAT_MAKES_THE_EXTRAPOLATION_SOUND": "Read from the per-step history pickles: EVERY step runs exactly 8 epochs. loss/val_loss/lr are all length 8 in every dump inspected across replicas 00/01/02. No early stopping shortens any step, so step durations are expected to be near-identical across iterations and the x3 structure is not an assumption.",
-      "THE_ANNEAL_INDEPENDENTLY_VERIFIED_FROM_THE_OPTIMIZER_HISTORY": "The .pkl dumps record the realized `lr` per epoch: iter0 step1 and step2 both at float32(1e-4), iter1 step1 at float32(1e-5). That confirms `applies_from_iteration: 1` with base 1e-4 annealing to 1e-5, hence 2 fits at base and 4 annealed -- the exact (2,4) that validate_artifact requires. This is the policy confirmed from the OPTIMIZER'S OWN RECORDED VALUES, independent of the receipt field `lr_policy_realized.verified_from_optimizer`, which is the artifact claiming about itself.",
-      "revised_per_member": "3:01:39 = 3.03 h, built as measured startup 2:55 + measured iter0 (35:48 + 22:15) + 2 x annealed iteration (37:13 + inferred 23:07)",
-      "still_a_LOWER_BOUND": "Excludes final extraction, artifact write and receipt. The only inferred term is the annealed step2, scaled from base step2 by the measured 1.0396.",
-      "delta_from_the_superseded_figure": "+3.1% (2.94 h -> 3.03 h)",
-      "revised_family_completion": "~20:40 PDT 2026-08-13 (~03:40 UTC 08-14), from 5 waves x 3.03 h off the 04:40:42 PDT first start plus the ~49 min first-wave stagger. Previously ~19:20-20:10 PDT.",
-      "walltime_headroom": "The array requests 08:00:00 per member, so ~3 h remains comfortable and no member is at risk of a walltime kill.",
-      "A_NEAR_MISS_WORTH_RECORDING": "At 06:17:18 the annealed step stood at 35:39 against iteration 0's 35:47 and I briefly read it as 'the annealed steps are longer' -- on an 8-second shortfall, checking 94 seconds too early. That is BEN-206's shape (the interesting finding outrunning the boring check) and it was caught only by comparing against the base figure to the second instead of to the minute."
-    },
-    "family_projection": {
-      "model": "10 concurrent, 50 members, 5 waves, first training started 04:40:42 PDT",
-      "wave_last_finishes_pdt": ["07:36", "10:33", "13:29", "16:25", "19:21"],
-      "family_lands": "~19:20-20:10 PDT 2026-08-13 (~02:20-03:10 UTC 2026-08-14); the range is the first wave's ~49 min launch stagger propagating",
-      "targets_are_not_the_constraint": "33 targets remain at ~39 min and 10 concurrent -> last target ~08:00 PDT, long before member 49's training slot frees at ~17:00."
-    },
-    "THIS_CORRECTS_A_COMMITTED_NUMBER": {
-      "predeclaration_says": "PREDECLARATION-20260813-gate5-coherent-replicas-n50.md cost table: full-event training job 56563761 wall 06:00:36, giving 6.01 GPU node-hours per replica, 300.5 GPU node-hours at N=50, and '~35 h wall-clock at 10 concurrent'.",
-      "measured_here": "2.94 h per member (lower bound) -> ~14.7 h family wall.",
-      "ratio": 2.05,
-      "interpretation": "The ratio being 2.05 independently corroborates the predecessor session's finding that 6:00:36 covered TWO trainings, not one. Two independent routes now agree the predeclaration's GPU budget is ~2x high.",
-      "NOT_corrected_in_the_predeclaration_text_here_and_why": "A predeclaration's value is that it is fixed before the result. Editing its cost table now would damage the document whose whole purpose is to be unedited. The correction belongs in this receipt and on Joseph's list; the branch criteria (PASS/BLOCK/UNRESOLVED) are untouched by it, because none of them reference cost.",
-      "scientific_impact": "None on the C_stat value. It is a scheduling and allocation number only."
+    "question": "Per-member training duration -- the only number gating 'when does the family land'.",
+    "status": "STILL NOT A COMPLETED-MEMBER MEASUREMENT (0 of 50 have finished). What follows is a per-STEP measurement plus the loop structure, which is strictly better than the ~3 h comparable it replaces and strictly weaker than a COMPLETED wall time."
+  },
+  "THE_TOOL": {
+    "checks_per_replica": 29,
+    "interpreter": "module load python -> Python 3.13.11 / numpy 2.3.5 (login-node python3 is 3.6.15 and cannot parse the file)",
+    "it_has_no_covariance_code_in_it": "Deliberate. A reconciler that CANNOT compute C_stat cannot be talked into computing one from a partial family.",
+    "path": "nd-unfolding/pet/reconcile_gate5_family.py",
+    "run_from": "/pscratch/sd/j/josephrb/gate5-reconcile-lanec (scratch, OUTSIDE any git tree)",
+    "sha256_at_issue": "e536540df5dce1f4c8947f7ccb57193be935c5b5d701296c3ef1440d4de90467",
+    "sha256_superseded_first_version": "c27691ce37de9b35ab45fee6ac9d0723f24d634a063777346054647a37a7d461",
+    "tests": "nd-unfolding/tests/test_reconcile_gate5_family.py -- 56 tests, all passing, every check power-tested in BOTH directions",
+    "wall_seconds_for_16_replicas": 28.3,
+    "why_at_issue": "Retired from live hash-binding collection on 2026-08-13 when BEN-157 R1 repaired reconcile_gate5_family.py (11e4f440... -> 85ca74f3...). The digest is preserved VERBATIM and records what actually ran; it is not a freeze of current code, and no hash was updated. Convention: docs/orchestration/verify_hash_bindings.py collect() + tests/test_hash_bindings.py::test_superseded_receipts_hold_no_live_bindings. NOTE ON ATTRIBUTION: this binding was ALREADY BROKEN before R1 -- it pins e536540d while HEAD's file hashed to 11e4f440, because a peer's ac540d5 extended the tool earlier the same day. It went unnoticed because the pre-commit hook does not run the hash-binding gate; only the full test suite does. Recorded so this is not later read as R1's breakage.",
+    "why_not_run_from_the_repo": "The cluster code checkout must stay clean and fixed at b82ac63 while either array is active; every task fails closed on HEAD drift. Adding a file to that tree to audit it would be the audit breaking its own subject."
+  },
+  "TRAINING_STAGE_RESULT": {
+    "in_progress": 10,
+    "no_failures_in_either_array": "targets 17 COMPLETED / 9 RUNNING / 24 PENDING; training 10 RUNNING / 40 PENDING; zero non-zero exit states",
+    "not_started": 40,
+    "note": "The training receipt is written LAST (train_fullevent_replica.py:377, after validate_artifact). So its absence means INCOMPLETE and never FAILED, and the reconciler reports IN_PROGRESS vs NOT_STARTED by the existence of the per-step weights directory rather than collapsing both into 'missing'.",
+    "receipts_present": 0
+  },
+  "VERDICT": "PARTIAL -- and PARTIAL is the whole point. 16 of 50 target receipts present and ALL 16 pass every check; 0 of 50 training receipts. No C_stat is constructed, centred or summarised, because Gate 5's own rule is that a missing replica invalidates the declared ensemble manifest.",
+  "WHAT_PASSED_THAT_WAS_NOT_PREVIOUSLY_CHECKED": {
+    "MY_OWN_TOOL_HAD_A_CONTROL_AND_IT_PASSED": "numpy 2.3.5 here vs the TF-2.15 module's numpy on the compute nodes. If the PCG64/poisson stream differed between them, ALL THREE redraws would mismatch. Signal and background are independently verified upstream, so their agreement proves my interpreter reproduces the campaign's stream -- which is what makes the data-factor comparison meaningful instead of a coin flip. Had only the data stream mismatched, that would have been a campaign finding; had all three mismatched, it would have been a finding about MY interpreter and nothing else.",
+    "headline": "All THREE coherent Poisson factor streams re-drawn from the declared seed and declared full inventory sizes, hashed under the receipts' own stated contract, and compared. 16/16 MATCH on all three.",
+    "how_this_run_closes_it": [
+      "The re-drawn data-factor hash equals the recorded data_factor_sha256 for all 16 replicas -- so the recorded hash IS the canonical draw for the declared (seed, n_data).",
+      "n_data is pinned independently: the builder's bootstrap.n_data_full == the loader's own runtime_target.n_data_rows in every receipt (4,116,128), and the loader hard-raises at fullevent_fps_dataloader.py:950 if data_factor.shape != (n_data_rows,).",
+      "RESIDUAL, stated rather than dissolved: this proves the recorded hash is canonical, NOT that the loader used it. Only loader-side persistence of the data factor could prove that. The cheap fix for the next launch is one key in the telemetry dict."
+    ],
+    "why_this_is_new_evidence": {
+      "and_the_streams_are_INDEPENDENT_so_the_others_do_not_vouch_for_it": "coherent_bootstrap_factors draws data at rng(seed), signal at rng(seed+10_000_000), background at rng(seed+20_000_000). A passing signal check proves (seed, n_sig); a passing background check proves (seed, n_bkg). Neither constrains n_data. That is the actual gap, and it is narrow, not zero.",
+      "signal_and_background_were_already_covered": "build_fullevent_replica_target.py:219-222 array-compares the loader's signal (restricted to mc_indices) and background factors against a canonical replay and raises SystemExit on mismatch; train_fullevent_replica.py validate_artifact independently re-hashes the persisted full signal factor, asserts its length equals n_sig_full, asserts the subset is a true restriction of the full factor, and re-hashes the background factor. Both stages fail closed.",
+      "the_DATA_stream_was_covered_NOWHERE": "The loader's bootstrap telemetry dict (fullevent_fps_dataloader.py:1328-1330) exposes mc_indices, sig_bootstrap_factor and bkg_bootstrap_factor and NO data equivalent. So the target stage cannot array-compare data factors (it is not omission by choice -- the value is not exposed), and the training stage cannot re-hash them (they are not persisted). The receipt's data_factor_sha256 is the BUILDER'S OWN recomputation, not a record of what the loader used.",
+      "why_that_stream_is_the_one_that_matters": "The data factors are what generate the measured-side Poisson variance that C_stat exists to quantify. The single unverified stream was the physically dominant one."
     }
   },
-
-  "FINDINGS_FILED_THIS_PASS": {
-    "BEN-150": "A field name reused at two nesting levels with DIFFERENT values -- sum_w_reco_pass_reco_raw, where the OUTER '_raw' carries the replica-SCALED sum. Re-deriving R from the nested one gives 1.124623 against the recorded 1.1253111: 6.1e-4 relative, too small to look like a bug and too large to be rounding.",
-    "BEN-151": "The one inventory stream verified nowhere was the one carrying the physics. Comment claims three streams replayed; code checks two, because the third is not exposed.",
-    "BEN-152": "A cost estimate built from a wall time that covered two units of work, propagated into a predeclaration's compute budget. Predecessor-found, measurement-confirmed here at ratio 2.05."
-  },
-
-  "NOTED_NOT_FILED": {
-    "w_nominal_naming_inside_a_replica_directory": "The replica driver invokes the pinned nominal driver with --tag nominal (train_fullevent_replica.py:239), so every replica's intermediate weights land at replicas/replica_NN/training/w_nominal/OmniFold_fe_nominal_nominal_iterK_stepJ.*. A reader pulling that path would reasonably read it as the NOMINAL's weights. Same family as BEN-149 (a name answering a question falsely), but the stakes are low and bounded: the directories are per-replica so nothing collides, the consumed target is verified distinct per replica, and the extraction artifact path is set explicitly by the launcher rather than by the tag. Recorded here rather than as its own row; the fix belongs to the next launch alongside the :112 repair."
-  },
-
-  "SOURCE_IDENTITY_PROVENANCE_the_family_has_exactly_ONE_independent_check": {
-    "why_this_section_exists": "Lane D established, and I verified each leg myself on the code that is actually running rather than relaying it, that the copied sha at train_fullevent_replica.py:112 is not merely stored -- it is PUBLISHED into the training artifact, and the one path that would independently re-check it cannot reach a replica.",
-    "leg_1_the_copied_value_is_republished_under_a_comment_asserting_it_was_verified": {
-      "site": "train_fullevent_nominal.py:642",
-      "code": "inputs_sha256=np.asarray(target_receipt[\"_verified_input_sha256\"])",
-      "comment_at_639_641": "'Already computed and CHECKED against the receipt by assert_target_provenance; reused rather than recomputed, so the artifact records the digest that was actually verified.'",
-      "why_the_comment_is_true_on_one_path_and_false_on_the_other": "On the nominal path assert_target_provenance really did compute and check it. On the replica path the adapter MONKEYPATCHES assert_target_provenance (train_fullevent_replica.py swaps it and restores it in a finally block), so the premise the comment rests on does not hold -- and the comment travels with the line into the replica artifact.",
-      "consequence": "Every replica artifact carries an inputs_sha256 that is a relayed claim, wearing a comment that says it was measured. BEN-149 exactly, one layer further out: the earlier instance mislabelled a FIELD, this one mislabels the PROVENANCE OF A PUBLISHED VALUE."
-    },
-    "leg_2_the_independent_re_check_cannot_reach_a_replica": {
-      "site": "extract_fullevent_fps.py:175-181",
-      "code": "if int(strap) != -1: raise SystemExit('[extract] weights npz declares bootstrap_seed=... this path extracts the NOMINAL (fail closed)')",
-      "consequence": "The extraction path that carries the Gate-4 validator's independent hash check fails closed on ANY bootstrap_seed != -1. It is correct to fail closed -- a replica's extraction rides the replica manifest -- but it means the independent check structurally never runs on a replica."
-    },
-    "THEREFORE": "docs/orchestration/state/gate5-source-npz-verified-20260813.json is NOT belt-and-braces. It is the ONLY independent source-identity check the 50-member family has, and this receipt cites it so the family's source identity rests on a recoverable measured operand rather than a relayed one.",
-    "THE_CITED_MEASUREMENT": {
-      "artifact": "docs/orchestration/state/gate5-source-npz-verified-20260813.json",
-      "committed_at": "c249f78",
-      "path_measured": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
-      "computed_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
-      "expected_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
-      "match": true,
-      "size_bytes": 9897374636,
-      "wall_seconds": 42.6,
-      "tool": "sha256sum on the cluster",
-      "and_this_pass_binds_all_16_receipts_to_it": "Every reconciled receipt's input_preflight.sha256 was checked equal to fa6b3463... (the GATE5_EXPECTED_INPUT_SHA pin), so the measured digest and the family's declared source are the same value in 16 of 16 cases."
-    },
-    "WHAT_IS_AND_IS_NOT_BLOCKED": "Gate 5 execution is NOT blocked: the source file is genuinely correct, by measurement. What is blocked is quoting inputs_sha256 out of a replica artifact as verified provenance -- that field must be sourced to the measurement above instead."
-  },
-
-  "CONSTRAINTS_HONOURED": [
-    "train_fullevent_replica.py:112 NOT repaired -- and the reason I originally recorded for that was WRONG, so it is corrected here rather than quietly replaced. I wrote that editing the driver would break GATE5_EXPECTED_TRAIN_DRIVER_SHA for the members not yet started. It would not: sbatch_gate5_replica_train_array.sh:41-44 checks `git -C \"$CODE_ROOT\" rev-parse HEAD` and sha_of \"$DRIVER\" where DRIVER lives UNDER $CODE_ROOT, i.e. the cluster checkout at /pscratch/.../gate6traj-reconcile-56847059 -- never this repo. Three commits landed on main during the live campaign (b8159ad, 0198c7e, 39b0021) and tripped nothing, which is the decisive evidence: a reason equally true of every commit made in the window cannot be why this one is withheld. I had read those launcher lines myself earlier in this same pass and still repeated the inherited justification -- BEN-148's shape in my own hand again. THE ACTUAL REASONS, both intact: the repair must be paired with a re-pin so it rides the next launch as one atomic change (OI-57/OI-58 at 51607bb), and nothing may be pulled into $CODE_ROOT while the array is live -- policy, not technology.",
-    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 (GATE5_CODE_ROOT) NOT touched and must not be cleaned until 56857233_[0-49] completes. It is named for a DIFFERENT job whose array is already COMPLETE, so it looks disposable and is not.",
-    "No C_stat constructed, centred or summarised. Partial completion reported as partial.",
-    "Nothing written into the cluster code tree; the reconciler ran from scratch, outside any git tree.",
-    "No job interrupted, modified or requeued."
-  ],
-
-  "NEXT_ACTIONS": [
-    "Re-run the reconciler when the first training receipts land, to replace the projected per-member duration with a COMPLETED wall time and to exercise the training-stage checks against a real receipt for the first time.",
-    "At 50/50, run it once more for the family verdict; only FAMILY_COMPLETE_PASS advances to extraction and centering on the replica mean.",
-    "Next launch (not this one): persist the data-factor hash loader-side; repair train_fullevent_replica.py:112; drop --tag nominal from the replica path."
-  ]
+  "artifact": "gate5-family-reconciliation-20260813.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 05:50:56 PDT",
+  "observed_utc": "2026-08-13T12:50:56Z",
+  "owner_of_record": "Session C owns Gate 5 (P5B.1, C_stat) end to end as of this handoff",
+  "purpose": "First full reconciliation pass over the Gate-5 C_stat replica family, plus the per-member training duration that was UNMEASURED at handoff. Read-only: no job interrupted, modified or requeued; no file written into the cluster code tree."
 }

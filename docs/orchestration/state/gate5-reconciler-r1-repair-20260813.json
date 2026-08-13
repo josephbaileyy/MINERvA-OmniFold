@@ -1,0 +1,99 @@
+{
+  "artifact": "gate5-reconciler-r1-repair-20260813.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 ~16:10 PDT",
+  "purpose": "R1 of the BEN-157 repair: bind the declared inventory size to the tool instead of the caller, and remove the caller-sized-family idiom from the test suite in the same commit. R2/R3/R4 remain unapplied.",
+  "authorization": "Repair authorized by the mediator after codex's part 7 closed the audit, under Joseph's standing grant. Three conditions accepted and honoured: the n-parameterisation lands in this same commit; NOTHING is deployed to scratch; CODE_ROOT untouched.",
+
+  "THE_DEFECT_R1_CLOSES": "--n was an unconstrained int defaulting to 50 and every completeness comparison was against it, so `--n 0` on an empty directory returned rc=0 and the exact FAMILY_COMPLETE_PASS, and a real 3-member family passed at `--n 3` while being PARTIAL at `--n 50` with the artifacts unchanged. The verdict was not so much WRONG as UNFALSIFIABLE: a pass at 50/50 and a pass at a caller-chosen size produced reports that looked alike.",
+
+  "WHAT_CHANGED": {
+    "DECLARED_INVENTORY": "New constant, 50, pinned in the tool beside SEED_POLICY.",
+    "bound_not_duplicated": "The number was ALREADY declared in the file -- SEED_POLICY reads `gate5-cstat-n50-v1` -- and simply unenforced. An import-time assertion binds the two rather than introducing a second source of truth, so a future change to one without the other is a hard error, not a silently different gate.",
+    "--n_demoted_to_an_assertion": "Still accepted, but a disagreeing value is a usage error and NO REPORT IS WRITTEN. Checked BEFORE any artifact is read, so a caller who asked the wrong question gets no artifact at all rather than a well-formed one measured against their own premise.",
+    "every_completeness_comparison": "Now against DECLARED_INVENTORY. `args.n` survives at exactly one site: the assertion itself.",
+    "report_gained_two_fields": "declared_inventory_is_pinned_in_tool and declared_inventory_policy_string. Without these the artifact cannot contradict a wrong verdict, which is what made the old pass unfalsifiable (CONVENTION-receipt-ingredients, BEN-077).",
+    "exit_codes_named": "EXIT_COMPLETE=0, EXIT_NOT_COMPLETE=2, EXIT_USAGE=3."
+  },
+
+  "WHY_USAGE_IS_3_AND_NOT_2": "My proposal said exit 2 for usage, copying the sibling tool verify_executing_copy_is_committed.py. That would have been wrong here: `2` ALREADY meant 'the family is not complete' in this tool, so reusing it would have collapsed 'could not look' into 'looked and found it short' -- the exact distinction I insisted on when writing the sibling. The two tools therefore use OPPOSITE assignments (sibling: 2 usage, 3 finding; here: 2 finding, 3 usage). Deliberate, documented at both sites, and preserving this tool's existing contract with its launcher outranks cosmetic consistency. Recorded because a reader comparing the two would otherwise reasonably assume one is a bug.",
+
+  "MEASURED_BOTH_DIRECTIONS_ON_THE_REAL_TOOL": {
+    "the_headline_defect_before": "--n 0 on an empty root -> rc=0, exact FAMILY_COMPLETE_PASS, targets_present=0",
+    "the_headline_defect_after": "--n 0 on an empty root -> rc=3, stderr names the pinned value and the policy string, NO report written",
+    "and_the_honest_run_still_reports_honestly": "no --n, empty root -> rc=2, verdict PARTIAL, targets_present 0 want 50, trainings_not_started 50",
+    "reading": "A check that rejected every --n would also have 'rejected' the wrong ones. The pinned value and the omitted flag both still work, so this is a gate that can pass."
+  },
+
+  "THE_TEST_HALF_which_is_the_load_bearing_part": {
+    "why": "The suite did not merely miss the defect -- it was written in the defect's idiom. The complete-family test used n=3, the clean-name test n=2, and test_partial_family_is_PARTIAL_and_never_PASS built 2 members and ran --n 3, proving 2/3 != 3/3 and saying nothing about 49/50 against a FIXED 50. A suite left in that shape would re-admit the defect at the next edit.",
+    "what_changed": "_run_main no longer takes a size; it runs the tool as production does, with no --n at all. Every test meaning 'complete' now builds DECLARED_INVENTORY members and every test meaning 'short' builds fewer, so there is no --n left to move. Three small fixtures were deliberately LEFT small -- they call reconcile_target/reconcile_training directly and never reach main(), so they are unit-level, not the idiom.",
+    "test_count": "73 -> 90 in this file; 110 across both reconciler and parity suites.",
+    "new_tests": [
+      "test_an_n_that_disagrees_with_the_declaration_is_REJECTED, parameterised over 0/1/2/3/49/51/100/-1, asserting rc==EXIT_USAGE AND that no report was written",
+      "test_the_declared_n_is_ACCEPTED_and_still_passes -- the other direction",
+      "test_omitting_n_entirely_is_the_production_path_and_works",
+      "test_a_short_family_has_NO_n_that_makes_it_pass, over sizes 0/1/49 -- the defect in its GENERAL form, not just at --n 0",
+      "test_usage_failure_and_an_incomplete_family_have_DIFFERENT_exit_codes",
+      "test_the_report_records_that_the_declaration_WAS_pinned",
+      "test_n_is_rejected_BEFORE_any_artifact_is_read -- bad --n against a nonexistent root is still usage, not PARTIAL",
+      "test_declared_inventory_agrees_with_the_seed_policy_string"
+    ]
+  },
+
+  "TWO_DEFECTS_I_INTRODUCED_AND_CAUGHT_WHILE_DOING_THIS": {
+    "1_substring_replace_clobbered_a_longer_attribute": "A mechanical `args.n` -> `DECLARED_INVENTORY` rewrite also hit `args.nominal_target_sha`, because `args.n` is its PREFIX, producing `DECLARED_INVENTORYominal_target_sha` at two sites. Caught immediately by grepping the result rather than trusting the replace count. This is BEN-032's shape -- a substring filter over a set defined by something other than substrings.",
+    "2_the_test_helper_read_a_STALE_report": "_run_main returned the report by opening a fixed path, so `rep is None` meant 'no file there' rather than 'this run wrote none'. In a test that runs twice, the second run -- the one asserted to write nothing -- read the FIRST run's report. Four tests failed and the failure was correct. Fixed by removing the output path BEFORE running, so the file's presence afterwards is evidence about this run. The write-condition rule, inside the helper written to check for it."
+  },
+
+  "R1_DELIBERATELY_CREATES_DEPLOYMENT_DRIFT_and_here_is_the_falsifiable_prediction": {
+    "state_before_this_commit": "All three deployed copies read CURRENT against HEAD 6d3660f, because R1 was uncommitted and HEAD's blob was still the pre-repair version. Measured: 3 of 3 CURRENT, exit 0.",
+    "PREDICTION": "Immediately after this commit lands, the same three copies must read STALE_BUT_COMMITTED with exit 3, because the repaired blob will be HEAD's and none of them has it. If they read CURRENT instead, the parity tool is broken and this prediction is how anyone would find out.",
+    "new_tool_sha256": "85ca74f34bc1163a0c26fda6930839b6b066b64105682585b473c90c4ad3765b",
+    "superseded_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
+    "and_this_is_correct_not_a_problem": "Deployment is a SEPARATE step with its own verification, per the mediator's condition and BEN-156's whole lesson. Two of the three copies are unowned (OI-64). A re-deploy also has to update GATE5_RECON_EXPECTED_VALIDATOR_SHA in sbatch_gate5_target_family_reconcile.sh, which pins the validator by content -- so the launcher will refuse a stale-or-unannounced copy, which is the behaviour we want."
+  },
+
+  "WHAT_R1_DOES_NOT_FIX": "Items 2-7 of the audit are untouched and OI-65 still holds them: receipt-supplied artifact paths with no canonical anchor, no training-stage .done, completion_marker_valid never read, marker mtime omitted, only one of three driver digests compared, checks that evaporate when their input is absent, and the name-pin test asserting against a copy of its own string. PROMOTION REMAINS BLOCKED. R1 closes the headline -- the tool can now tell a complete family from an empty one -- but not the class.",
+
+  "THE_FULL_SUITE_IS_NOT_GREEN_AND_SAYING_SO_IS_THE_POINT": {
+    "reconciler_and_parity_suites": "110 passed, 0 failed (90 + 20).",
+    "whole_nd_unfolding_suite": "1284 passed, 7 failed, 1 skipped. NONE of the 7 is attributable to R1, and that was established by measurement rather than assumed.",
+    "how_attribution_was_established": "The gate prints `want <receipt sha> got <file sha>`. HEAD's tool hashed to 11e4f440 (verified via `git show HEAD:... | sha256sum`). A receipt wanting 11e4f440 was therefore GREEN at HEAD and is broken by R1; a receipt wanting anything else was already broken. No guessing, and no need to revert the tree to find out.",
+    "the_seven": [
+      "test_hash_bindings::test_no_new_broken_hash_bindings -- now only train_fullevent_nominal.py <- p3f-pet-gate4-launch-code-gate-20260812.json. NOT MINE, and that file is on this lane's explicit no-touch list.",
+      "test_hash_bindings::test_gate3_and_gate4_launch_code_freezes_specifically -- same file, same cause.",
+      "test_hash_bindings::test_archived_gate2_receipts_hold_no_live_bindings -- a receipt in gate2/final/superseded-20260813-pre-gate5-rerun/ still says status PASS instead of SUPERSEDED. Another lane's archive, created today.",
+      "test_p4_sweep_snapshots -- shell-file count drifted 354 -> 357. I added no shell files.",
+      "test_pet_fullevent_nominal_launcher -- tensorflow leaking into a config-gate namespace.",
+      "test_gate2_target_runtime -- requires a /pscratch path absent from this local checkout.",
+      "test_diagnostic_target_override -- an absolute temp path assertion."
+    ],
+    "NOT_FIXED_HERE_ON_PURPOSE": "Two of the seven are the Gate-4 driver's bindings and one is another lane's Gate-2 archive. 'Fixing' a Gate-4 hash binding would be precisely the `do not just update the hash` antipattern the gate warns against, and train_fullevent_nominal.py is on this lane's no-touch list. Routed, not touched."
+  },
+
+  "TWO_RECEIPT_BINDINGS_RETIRED_WITHOUT_UPDATING_A_HASH": {
+    "why_this_came_up": "reconcile_gate5_family.py's sha is recorded in issued receipts, so repairing the tool broke their bindings. The gate's own message is explicit: `If the edit was intended, the owning gate must be deliberately re-run and its receipt re-issued -- do not just update the hash.`",
+    "what_was_done_instead": "The documented convention, pinned by tests/test_hash_bindings.py::test_superseded_receipts_hold_no_live_bindings: rename the key so verify_hash_bindings.collect() no longer reads it as a LIVE pin, preserving every digest VERBATIM. `collect()` harvests `path`+`sha256` dicts and `<base>_sha256` keys, so appending `_at_issue` removes a key from both shapes. NO HASH WAS UPDATED and no record was deleted.",
+    "gate5-target-validator-active-56872614.json": "code_binding.validator_sha256 -> validator_sha256_at_issue. Status is FAILED_PREVALIDATION_MUTABLE_CODE_ROOT_HEAD_DRIFT: the run failed prevalidation and validated nothing, so it never owned the current file. This binding WAS green at HEAD and IS broken by R1 -- the one failure of the seven attributable to me, now closed.",
+    "gate5-family-reconciliation-20260813.json": "THE_TOOL.sha256 -> sha256_at_issue. My own 05:50 receipt, recording the tool that actually ran. IT WAS ALREADY BROKEN BEFORE R1: it pins e536540d while HEAD's file hashed to 11e4f440, because a peer's ac540d5 extended the tool earlier the same day.",
+    "AND_THAT_IS_A_FINDING_ABOUT_THE_HOOK_NOT_THE_PEER": "A Gate-5 receipt binding sat broken for hours and nobody saw it, because the pre-commit hook runs 4 checks and the hash-binding gate is not among them -- only the full suite reaches it. Two commits of mine landed clean in between. Same shape as BEN-156 one level further out: a check that exists, passes on demand, and is not on the path anything actually takes."
+  },
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "training_56857233_squeue_r": "24 PENDING, 1 RUNNING",
+    "training_receipts_on_disk": 25,
+    "targets": "50 of 50 COMPLETED",
+    "verdict": "PARTIAL",
+    "C_stat": null,
+    "note": "Half the family has landed. Nothing was run against the campaign as part of this repair."
+  },
+
+  "WHAT_I_DID_NOT_DO": [
+    "Did NOT deploy to scratch. All three copies are now deliberately stale; re-deployment is a separate, verified step.",
+    "Did NOT touch GATE5_CODE_ROOT.",
+    "Did NOT run the repaired tool against the campaign tree -- that would require deploying it.",
+    "Did NOT apply R2, R3 or R4.",
+    "Did NOT construct, centre or summarise C_stat."
+  ]
+}
