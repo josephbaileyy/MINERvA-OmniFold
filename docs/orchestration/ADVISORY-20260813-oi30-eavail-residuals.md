@@ -42,11 +42,37 @@ the evidence Codex relayed.
 
   with the patch `-double mass_pion = 135;` / `+double mass_pion = 139.57;`.
 
-**So the author labelled `135` a neutral-pion-mass mistake in his own commit message.** MAT-MINERvA
-never received the fix (single commit, four months earlier) and we copied the unfixed branch. The
-π⁰-reuse hypothesis is the survivor; `XSec.cxx` defines `Mpi0=0.135` and `Mpip=0.13957` two lines apart.
-**Confidence: high.** The OI-30 row's "possibly inherited from MAT" is confirmed and sharpened from
-*inherited* to *inherited-after-being-fixed-upstream*.
+**CORRECTED BY SESSION A 2026-08-13 — the first version of this section overstated the attribution, and
+the overstatement was headed for an outside collaborator.** It read *"the author labelled `135` a
+neutral-pion-mass mistake in his own commit message."* **That is wrong: they are two different people
+in two different repositories.** Verified directly:
+
+| | MAT-MINERvA `CCQE3DFitFunctions.h` (our source) | `GENIEXSecExtract/src/XSec.cxx` |
+|---|---|---|
+| author | **Ben Messerly** | **abbeywaldron** |
+| commit | `f790cc794732`, 2021-07-07 — **the only commit ever** to that file | `564e2788051f`, 2021-11-26 |
+| value **today** | **`135`, still standing** (line 38) | `139.57` |
+
+So the defensible statement is: **a different MINERvA developer, in a different MINERvA repository
+implementing the same quantity, called `135` a neutral-pion-mass mistake and fixed it four months
+later — and MAT-MINERvA's copy was never fixed and still reads `135` today.** That is strong evidence
+and it is *not* an admission by the person who wrote our line. The π⁰-reuse hypothesis remains the
+survivor — `XSec.cxx` defines `Mpi0=0.135` and `Mpip=0.13957` two lines apart — but "I think" in that
+commit message is hedged, and it should be quoted with the hedge intact.
+
+**Confidence: high that `135` is a π⁰-mass error; NOT established that our copy's author intended it as
+an approximation, because he never commented on it and never revisited the file.**
+
+The OI-30 row's "possibly inherited from MAT" is confirmed and sharpened from *inherited* to
+*inherited from a copy that was never fixed, while a sibling implementation was*.
+
+**AND THIS IS THE LOAD-BEARING INPUT TO THE MAT-COMPATIBILITY QUESTION** (Joseph's second public
+commitment, being answered by lane `dc` — recorded here as evidence, **not** as the verdict, which is
+not mine to issue). Because MAT still reads `135` today, **"exact MAT compatibility" and "physically
+correct charged-pion mass" are in direct conflict; they are not reconcilable.** Matching MAT bit-for-bit
+means matching a value that another MINERvA repo labelled a bug and corrected. Whichever way that
+resolves, it is a choice between two defensible goods and should be presented to Gregor as such rather
+than as a bug being fixed.
 
 **Recommended minimal correction (a recommendation, NOT an action):** `CVUniverse.h:364` `135` →
 `139.57`, plus the two mirrors deliberately kept in lockstep — `nd-unfolding/pet/pointcloud_projection.py:51`
