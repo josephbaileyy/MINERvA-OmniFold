@@ -1350,3 +1350,53 @@ and the producer chain is shared with the central values. Blocking a materiality
 an unevidenced permutation would be the mirror of promoting on 1330x, and I declined that one for the same
 reason: neither a favourable number nor an unfavourable imagination is evidence.
 
+### V28 — residual 2 **CLOSED**. The per-bin **verification** gate lifts; the per-bin **granularity** question is not mine and must not be folded into it
+
+**Residual 2 is closed.** `S1` Spearman `+0.9947` real against `-0.0106` control is a gap of `1.0053` on a
+bounded statistic; `S3` is `363x`. The predeclaration is genuine and was checked rather than taken —
+`3de5143` committed `03:16:41`, result `cbce0ad` at `03:18:16`, 95 s later, and `3de5143` is an ancestor of
+`cbce0ad`. A applied the ordering discipline unasked, after I had insisted on it once.
+
+**All three residuals are now closed by three different instruments** — axis assignment by the 4D mask,
+volume weighting by the 4D chain's different width products, row order by the central values. On
+correctness that is as independent as this artifact admits.
+
+**S2 IS THE FINDING AND IT IS A's AGAINST ITSELF.** Control median frac `14.746%` against real `13.761%` —
+one of the three statistics **would have passed a permuted matrix**, because a median of a ratio is robust
+to permutation when the two distributions have similar medians. **The adjudication survives because the
+predeclaration set per-statistic thresholds rather than requiring the battery to collapse as a whole.**
+That is foresight in how the table was written, not margin in the result, and it is the generalisable
+half: **predeclare each statistic's threshold separately, because a battery scored as a unit hides the
+member that has no power.**
+
+### The ruling, in two parts that must stay separate
+
+**1. The per-bin VERIFICATION gate LIFTS.** Nothing remaining in the verification blocks per-bin use. The
+scope condition I attached in `V27` is discharged.
+
+**2. Whether per-bin is the right GRANULARITY is NOT a verification question and I am not deciding it.**
+Per-bin fractional uncertainty spans `3.47%` to `213.8%`; above 100% the central value is roughly
+consistent with zero, and quoting such a bin invites a reader to treat it as measured. That is a physics
+call — Joseph's or the analysis's — and **folding it into a verification PASS would decide it invisibly**,
+which is the failure mode this lane exists to prevent. Verification PASSES; granularity is ROUTED. They
+must not be merged into one word.
+
+**One requirement that IS mine, and the codebase already agrees with it.** A per-bin number must not
+travel without its own fractional uncertainty, and the artifact must record **the COUNT of bins over
+100%**, not only the `3.47–213.8%` span. A span says extremes exist; a count says how much of the
+deliverable they are, and nobody has produced it. This is not a new rule:
+`crosscheck_marginal_vs_independent` (`p4_lib.py:1343`) already *"returns the full distribution rather
+than a max, because on the real products the max is owned by a handful of near-empty bins and is actively
+misleading about the body of the comparison (`BEN-064`)."* The near-empty-bin problem is known, recorded,
+and already shaped that function's interface. The per-bin lift should inherit that, not re-derive it.
+
+**Fourth instance of cite-without-opening**, and `:1343` is stronger than it was relayed to me: it is
+`REPORT ONLY -- no pass/fail, by specification`, it is exactly the 5D-vs-independent-4D comparison A
+performed by hand, and its docstring says so plainly. Like `:1318`, it is honest in its own text and
+dangerous only to a reader who cites it without opening it. That is now `BEN-172`'s mechanism four times
+in one night, three of them in this file's neighbours.
+
+**A's third float-equality slip, filed against itself as one pattern rather than three incidents, is the
+right aggregation** — and the invariant it replaced the bad check with (`sorted(diag)` identical) is the
+one that actually demonstrates why the trace cannot see a permutation, which is the claim `V27` rested on.
+
