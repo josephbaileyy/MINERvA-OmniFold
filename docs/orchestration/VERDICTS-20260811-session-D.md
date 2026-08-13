@@ -1200,3 +1200,35 @@ identically in both the 4D and 5D masks.
 - 10,550 + 144 = 10,694 reproduces, so the PET-COMMON subset and the full GBDT reported set are distinct
   as stated. I did not verify which set the stored matrix uses.
 
+#### V25 PREDECLARATION — what each outcome licenses, written BEFORE the run
+
+I designed the test and I have been named its adjudicator. That is the configuration in which a result
+gets read favourably after the fact, so the reading is fixed here first.
+
+**A POSITIVE CONTROL IS REQUIRED, NOT OPTIONAL.** As specified, the test has never been made to fail.
+Run it twice:
+
+    PASS ARM     m4_from5 = mask5d.reshape(14,16,7,7,6, order="C").any(axis=4)
+    CONTROL ARM  m4_swap  = mask5d.reshape(14,16,7,7,6, order="C").swapaxes(2,3).any(axis=4)
+
+**The control arm MUST disagree with the 4D mask.** If both arms agree with it, the `(eavail,q3)` plane
+is symmetric on this data and **the test is not discriminating here** — that outcome is VOID, not a pass,
+and it is the one I would otherwise be most tempted to accept. This is my own "a gate that examines zero
+items must never print a pass," pointed at a gate I wrote.
+
+| outcome | adjudication |
+|---|---|
+| control FAILS, pass arm AGREES | **mapping CONFIRMED** for C-order and the stated axis assignment |
+| control FAILS, pass arm DISAGREES | **mapping REFUTED.** Then try `swapaxes(2,3)` against the 4D mask — if *that* agrees, the producer transposed `eavail`/`q3` |
+| control AGREES (either arm) | **VOID.** Test not discriminating on this data; needs a different second artifact. Not a pass |
+| 4D/5D selection criteria differ | **VOID before running.** A failure cannot be attributed between wrong mapping and different selection. Settle this first |
+
+**And the order matters:** the selection-criteria question must be settled *before* the run, not used to
+explain a failure afterwards. An explanation available only after seeing the result is not a control.
+
+**What a PASS does not license.** It confirms the mapping of reported rows to grid cells. It says nothing
+about the covariance's dimension (10,694 unread by me), which set it is on (full GBDT vs the 10,550
+PET-COMMON subset), or whether the projection onto the `E_avail` marginal is correctly weighted by bin
+volume — `p4_lib.py:750` builds that volume vector by the same C-order ravel, so a mapping error and a
+volume error would share a cause and **agree with each other**.
+
