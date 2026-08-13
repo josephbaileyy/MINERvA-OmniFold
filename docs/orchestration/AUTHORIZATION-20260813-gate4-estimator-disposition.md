@@ -318,3 +318,50 @@ GPU.
 `20260812` — since 2026-08-10. `KNOWN_ISSUES-ARCHIVE-2026-08.md` recorded that correction on 2026-08-11.
 The `false` claims survive only in prose, **including a `PET_UQ_REMEDIATION_STATUS.md` line Session A
 wrote earlier tonight from the status file instead of the gate.** Corrected there, in place, attributed.
+
+## ADJUDICATING `FINDING_CODE_PATHS_DISAGREE` — the anchor is the outlier, and no rerun is needed
+
+The promotion question is *promote `56563761` as-is, or resolve the finding first?* Evidence, all measured:
+
+**There are THREE measurements of `push` on the annealed arm, not two.** The finding was written when only
+two existed; the third came from job `56818470`, run 2026-08-12.
+
+| source | `push` | `dev = (push/R) − 1` |
+|---|---|---|
+| anchor — `fe_s1lr2` `56534117`, **diagnostic wrapper** | 1.1109012166615733 | **−0.0117243** |
+| production — `56563761`, **production driver** | 1.0840529523112135 | **−0.0356090** |
+| trajectory — `56818470`, **step-1 decomposition harness** | 1.0840529523260116 | **−0.0356090** |
+
+**Production and the trajectory harness agree to `1.48e-11`** — different code, same checkpoints, which is
+exactly the comparison the finding names. **The anchor sits `0.026848` away, 1.8 × 10⁹ times that
+agreement.** Two mutually-consistent production-path computations against one diagnostic-wrapper
+measurement: **the outlier is the anchor, not production.**
+
+**The band's anchor is annealed, so "the band is pre-anneal" is refuted.** `PREDECLARATION-20260810…:34`
+names it: *"expected −0.011724 (**annealed arm 56534117**…)"*. What the predeclaration *does* distinguish,
+at `:23`, is that the figure comes from a **different job** — the diagnostic wrapper, explicitly contrasted
+with *"the production driver"*. The band was anchored on one path and applied to another, knowingly.
+
+**And the band WIDTH is calibrated on pre-anneal scatter.** Its justification (`:39–42`) takes the only
+available run-to-run scatter — the 2026-08-08 matched pair, push `0.7367462501305516` vs `0.740546`,
+`0.003380` in deviation — and sets `±0.010` at ~3×. **But `push = 0.7367…` is the pre-anneal control
+value**, confirmed as the control arm's `push_final` in `56818470`. Measured *annealed* same-path scatter is
+`1.26775e-4`, so the band is **79× too wide** for the quantity it now guards, while its anchor is on the
+wrong path. The observed gap is **188×** the annealed same-path scatter — systematic, not noise.
+
+**So the finding is probably mislabelled.** Not *"the production path disagrees with itself"* but *"a
+frozen band's single-measurement anchor disagrees with two mutually-consistent production-path
+measurements."* Different remedies: the first needs a code fix, the second needs the anchor re-derived on
+the production path — a predeclaration amendment, not an artifact change.
+
+**Session A's recommendation: RESOLVE FIRST, and do not promote as-is** — not because production is likely
+wrong (it is likely right) but because the record would then say *a predeclared check failed and we
+promoted anyway*, and this campaign's credibility rests on that never being true. **Re-anchoring a band on
+stated evidence is defensible; promoting past a red check is not, even when the check is the thing that is
+wrong.**
+
+**What closes it definitively, read-only and with no training:** run the diagnostic wrapper's fold-forward
+computation over the **production** checkpoints. Reproducing `1.0840529…` shows the anchor is an artifact
+of `56534117`'s own configuration and the band should be re-anchored; reproducing `1.1109…` shows a genuine
+two-path discrepancy and promotion would canonicalize one side of it. **Not run — it writes into the
+artifact's directory, and that needs authorization.**
