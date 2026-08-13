@@ -27,6 +27,16 @@ no `C_ML`:** `../docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`. Th
 failures are robust — member 3's sole failing margin is `+0.001098` at the one trajectory step that
 compares a best-epoch checkpoint against a `_final` one (VL122–VL126), so **the family still blocks**.
 
+**Leg F, the across-process floor at the fixed `(42,0)` policy, is RUNNING and has NO verdict.** Array
+`56863958_[2-5]%2`: tasks 2 and 3 `COMPLETED 0:0` and pass all eight predeclared validity clauses,
+tasks 4 and 5 are priority-starved on a contended partition. At `n=3` of 5 the branch
+`FLOOR_SMALL_TRAJECTORY_IS_SEED_DETERMINED` is already unreachable, by monotonicity of `max−min` alone;
+the other two branches are live. **Gate 6 is not unblocked by this leg and the five prohibitions at
+`19585b7` are untouched** — it is a measurement at one fixed seed pair, which is why it proceeds under
+`do_not_retry_unchanged`, and `C_ML` needs a separate decision from Joseph that he has not made. The
+`{42,46}×{0,4}` 2×2 (Leg X) is authorized and deliberately **not** submitted until the floor completes.
+Numbers VL127–VL129; receipt `../docs/orchestration/state/gate6-floor-replication-partial-56863958.json`.
+
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
 [the publication runbook](../docs/PUBLICATION_COMPLETION_RUNBOOK.md).

@@ -1,5 +1,28 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-13 Gate 6 Leg F — across-process floor at the fixed `(42,0)` policy, FIRST WAVE (3 of 5)
+
+Array `56863958` tasks 2–5, `%2` self-capped; tasks 2 and 3 `COMPLETED 0:0`, tasks 4 and 5 still
+queued. Draw 1 is the existing `member_1` artifact, reused and **not** retrained. Numbers produced by
+`nd-unfolding/pet/gate6_floor_statistics.py` (`637ee33d…`, 52 tests, 16/16 mutations caught), which
+applies `PREDECLARATION-20260813-gate6-floor-replication.md` and was **written and mutation-tested
+while draws 4 and 5 were still queued**, so the frozen thresholds could not be tuned to the data.
+
+**No verdict is reached and none of these rows unblocks Gate 6.** All five prohibitions at `19585b7`
+remain live, no member is re-verdicted, no subset is selected, and `C_ML` still needs a separate
+decision from Joseph. Receipt: `docs/orchestration/state/gate6-floor-replication-partial-56863958.json`.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL127 | five-member spread `S_range[k]` in `v` form, from the five committed `56847059` trajectory receipts | **`0.7580408493406813` / `0.38136901675657797` / `0.3480059774601819`** at `k=0/1/2` | the frozen Leg F threshold is `0.5 × S_range[2] = 0.1740029887300910`. **The analogous halves at `k=0,1` are NOT thresholds** — the predeclared verdict is defined at `k=2` only. `S_range` shrinks with iteration, which is what the iterations are supposed to do. |
+| VL128 | **PROVISIONAL** across-process `F_range[k]` at fixed `(42,0)`, `n=3` of 5 | **`0.6794325534395745` / `0.1883387264806543` / `0.0523993868023519`** = **`89.6%` / `49.4%` / `15.1%`** of VL127 | **`n=3`, NOT the across-process floor, and not quotable as one.** All eight predeclared validity clauses PASS on both new draws (`R` exactly `1.1240802949941018`, `mc_indices` array-equal to member 1's over 2,000,000 rows, `GATE_AB_PASSED`, reproduction `rel_dev` `0.0`, 8 `.weights.h5` each, execution identity persisted). Branch 1 (`FLOOR_SMALL_…SEED_DETERMINED`) is **already unreachable**: `max−min` cannot shrink as draws are added and `0.05240 > 0.05`. Branch 2 needs a further `0.1216` of spread. |
+| VL129 | reproducibility of the categorical trajectory LABEL at one fixed seed pair | **not reproducible** | member 1 and draw 2 are `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN` (`v[0]` `1.5194819600196279`, `1.3772732412607531`); **draw 3, same `(42,0)`, is `BROKEN_AT_ITER0` with `end_to_end_sign_is_wrong=true`** (`v[0]` `0.8400494065800533`) — between members 4 (`0.8747948243043495`) and 5 (`0.7614411106789466`), whose identical label was read as seed sensitivity. **This is iteration 0 and the predeclaration fixed no rule for the label, so it is an observation and NOT the verdict.** |
+
+Method note: VL127 is a recomputation from committed receipts. VL128 is **provisional** and is entered
+here only so it has one canonical home carrying its own warning rather than floating in prose; it is
+replaced, not amended, when `n=5`. VL129 reads committed member receipts against new draws at the same
+seed; it is deliberately not promoted to a claim, because `CLM-*` promotion needs the complete leg.
+
 ## 2026-08-13 Gate 6 blocking metric — what it measures, and the scales the verdicts sit against
 
 Recomputed from the committed receipt `state/gate6-member-trajectories-result-56847059.json` and read
