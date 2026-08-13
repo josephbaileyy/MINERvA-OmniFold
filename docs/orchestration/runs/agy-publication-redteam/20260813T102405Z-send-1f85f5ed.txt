@@ -1,0 +1,19 @@
+VERDICT: BLOCK
+
+**Defect 1: Truncated signal factor collapses full extraction variance / forces shape crash.**
+- **File:** `nd-unfolding/pet/train_fullevent_replica.py` lines 178-180 and 255-257.
+- **Why it fails:** The dataloader explicitly truncates the signal factor to the subset (`sig_factor[imc]`) before placing it in `bootstrap["sig_bootstrap_factor"]`. By saving this `bootstrap.get("sig_bootstrap_factor")` directly, the replica artifact only stores the shortened factor. The PREDECLARATION explicitly forbids this ("Select the training subset without redrawing, shortening or reindexing the full factors"). When Gate 6 extracts over the full 32M phase space, this truncated factor will either crash via shape mismatch or silently broadcast incorrectly. (This bug also forced the author to omit the `signal_factor_sha256` validation check at line 257, as the truncated hash would naturally reject against the target receipt's full hash).
+- **Minimal repair:**
+  1. In `replica_atomic` (~line 170), explicitly redraw the full arrays to recover the un-shortened signal factor:
+     ```python
+     n_data = int(bootstrap.get("n_data_full", -1))
+     n_sig = int(bootstrap.get("n_sig_full", -1))
+     _, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(n_data, n_sig, n_bkg, int(args.bootstrap_seed))
+     ```
+  2. Save `"sig_bootstrap_factor": sig_factor` instead of reading it from `bootstrap`.
+  3. In `validate_artifact` (~line 257), restore the missing integrity check:
+     ```python
+     sig_factor = np.asarray(store["sig_bootstrap_factor"])
+     if hash_array(sig_factor) != factor_meta["signal_factor_sha256"]:
+         raise SystemExit("[gate5-train] persisted signal factor hash mismatch")
+     ```

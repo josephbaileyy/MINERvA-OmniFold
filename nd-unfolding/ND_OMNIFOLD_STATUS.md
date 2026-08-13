@@ -4,6 +4,15 @@
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
+**Gate 5 coherent statistical replicas are now in flight under the predeclared N=50 design.** The
+dedicated two-stage path was committed at `670e62d`, repaired at `56d35af` after the preserved agy
+verifier caught missing full-inventory signal-factor persistence, and made scheduler-valid at
+`b82ac63`. CPU target array `56857232_[0-49]` feeds A100 training array `56857233_[0-49]` through
+task-correlated `aftercorr`; both are capped at ten concurrent tasks and use isolated replica
+namespaces. Terminal watches are armed. No `C_stat` may be built from fewer than 50 valid replicas.
+Exact launch receipts: `../docs/orchestration/state/gate5-target-array-active-56857232.json` and
+`../docs/orchestration/state/gate5-training-array-active-56857233.json`.
+
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
 `56847059_[1-5]` completed `0:0` in all five members with Gate A/B, reproduction, code pins, and the
 archived target hash all verified. Applying only numeric `end_to_end_achieved_over_required`, member 1

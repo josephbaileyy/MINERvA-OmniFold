@@ -406,6 +406,11 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Active 2026-08-13:** the dedicated two-stage N=50 implementation is committed at `b82ac63` after
+independent BLOCK/repair/PASS review. Target array `56857232_[0-49]` and task-correlated training
+array `56857233_[0-49]` are the sole writers in collision-isolated namespaces, with terminal watches
+armed. The declared ensemble remains invalid until all 50 target and training receipts pass.
+
 For every replica, in this exact order:
 
 1. Enumerate complete, ordered data, signal-MC, and background-MC inventories

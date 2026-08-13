@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-13T10:44:00Z",
+  "purpose": "Gate 5 N=50 coherent-replica GPU training",
+  "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md",
+  "wake_event_id": "gate5-implementation-continue-20260813t1005z",
+  "implementation_commits": [
+    "670e62df0c6617aeb67b1b7abef3d11ab1840db2",
+    "56d35afbe472b7099de6ae0df45867f13497072d",
+    "b82ac63f9c5685c9cc05df059d2bbb4ae42d3258"
+  ],
+  "code_checkout": "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059",
+  "code_head": "b82ac63f9c5685c9cc05df059d2bbb4ae42d3258",
+  "job_id": "56857233",
+  "array_job_id": "56857233",
+  "tasks": "0-49",
+  "max_concurrent": 10,
+  "cpus_per_task": 32,
+  "memory_per_task": "scheduler default (57472M observed)",
+  "gpus_per_task": 1,
+  "time_limit": "08:00:00",
+  "qos": "gpu_shared (mapped from supported qos=shared request)",
+  "partition": "shared_gpu_ss11",
+  "submitted_at_utc": "2026-08-13T10:37:25Z",
+  "dependency": "aftercorr:56857232",
+  "state_at_receipt": {
+    "PENDING": 50,
+    "reason": "Dependency",
+    "runtime": "00:00:00"
+  },
+  "launcher": {
+    "path": "nd-unfolding/pet/sbatch_gate5_replica_train_array.sh",
+    "sha256": "d0671a99889c34eb7bc7409e3da43a7879d59e788d366b4bf03f071e7657642c",
+    "replica_driver_sha256": "4fb2902eeb2e8f08ad78a7542bcf82d2c509e0af392b3410bedafac229502f4c",
+    "pinned_nominal_driver_sha256": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+    "loader_sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+  },
+  "target_array": {
+    "job_id": "56857232",
+    "receipt": "docs/orchestration/state/gate5-target-array-active-56857232.json",
+    "task_correlation": "training task N becomes eligible only after target task N succeeds"
+  },
+  "output_ownership": {
+    "namespace": "nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_<00-49>/training/",
+    "logs": "nd-unfolding/pet/fullevent_cstat_n50/logs/train_56857233_<task>.{out,err}",
+    "collision_protection": "per-replica no-clobber checks plus atomic weights/receipt done markers",
+    "duplicate_writer": false
+  },
+  "acceptance": {
+    "focused_pytest": "25 passed, 4 skipped",
+    "scheduler_test_only": "PASS",
+    "preserved_verifier_role": "agy-publication-redteam",
+    "preserved_verifier_uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+    "final_verdict_receipt": "docs/orchestration/runs/agy-publication-redteam/20260813T102846Z-send-5f4a995d.txt",
+    "final_verdict": "PASS after full signal-factor persistence repair"
+  },
+  "watches": [
+    "gate5-targets-56857232",
+    "gate5-training-56857233"
+  ],
+  "partial_member_promotion_allowed": false,
+  "c_stat_construction_allowed_before_50_of_50": false,
+  "gate6_leg2_allowed": false,
+  "reset_credit_consumed": false,
+  "worker_uuid_replaced": false
+}

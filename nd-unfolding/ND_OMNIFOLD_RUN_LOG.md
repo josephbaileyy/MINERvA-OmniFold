@@ -5813,3 +5813,37 @@ over iterations 0/1/2 are member 1 `0.519482/0.124001/0.019310` (PASS), member 2
 push deviations are recorded in the canonical receipt and ledger. Because the criterion requires all
 five members, the family is BLOCKED. No subset, `C_ML`, central move, Leg 2, or unchanged retry follows.
 Gate 4's user disposition is independent.
+
+## 2026-08-13 — Gate 5 dedicated coherent-replica path reviewed and N=50 submitted
+
+The Gate-5 continuation wake was valid and had not already been reconciled. Gate 6 remained durably
+blocked at `19585b7`, while the bit-identical Gate-2 re-issue left Gate 5 dependency-ready. No other
+lane had landed the predeclared two-stage replica implementation and no Gate-5 writer existed.
+
+The new path leaves the hash-pinned nominal driver byte-identical. A CPU/ROOT stage enumerates each
+complete ordered data, signal, and background inventory, draws coherent Poisson factors from seeds
+50000–50049, and learns a fresh Stay-Positive target. A dedicated GPU adapter then reuses the exact
+nominal annealed-training transaction while persisting both the training-subset and complete signal
+factor streams. Artifacts and receipts are atomic and collision-protected; each training task depends
+on the same-index target task through Slurm `aftercorr`.
+
+Focused acceptance produced 25 passes and 4 environment skips; the direct P4 snapshot test passed
+7/7, syntax/compile checks passed, and scheduler `--test-only` accepted the final request. The broad
+repository suite was not represented as green: it had seven pre-existing environment/archive-binding
+failures among 1075 passes, and its one stale snapshot was subsequently regenerated and passed
+directly. The same preserved `agy-publication-redteam` UUID first returned BLOCK because the initial
+adapter retained only subset signal factors. Commit `56d35af` added complete-factor persistence and
+hash verification, after which the same verifier returned PASS.
+
+Scheduler preflight exposed two site-policy details: direct `gpu_shared` is not an accepted request,
+and requesting 64G with one GPU increases the billed CPU count beyond that queue's supported policy.
+The final launcher requests `shared` plus one GPU and scheduler-default memory, which Slurm maps to
+`gpu_shared` on `shared_gpu_ss11`. Failed target attempt `56857167` was cancelled before start when
+its paired GPU submission was rejected; it ran for zero seconds and wrote no output.
+
+The accepted launch uses frozen code checkout `b82ac63`. Target array `56857232_[0-49]` uses shared
+CPU nodes, 16 requested CPUs, 64G, three hours, and at most ten concurrent tasks. Training array
+`56857233_[0-49]` uses one A100, 32 CPUs, scheduler-default memory, eight hours, at most ten concurrent
+tasks, and dependency `aftercorr:56857232`. Both were pending at the launch receipt. Terminal watches
+`gate5-targets-56857232` and `gate5-training-56857233` are armed, so progress is now scheduler-driven
+without LLM polling. No partial subset may be promoted and `C_stat` remains prohibited before 50/50.
