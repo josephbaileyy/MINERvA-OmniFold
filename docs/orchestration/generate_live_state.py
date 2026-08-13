@@ -123,7 +123,7 @@ def render(
         "**FRESH iff `HEAD` equals `Git:` or `Git:` is `HEAD`'s parent; anything further back "
         "is STALE.** Run `python3 docs/orchestration/generate_live_state.py --check-freshness` "
         "rather than eyeballing it. A rule of \"`Git:` must equal `HEAD`\" has NO passing "
-        "state and a check that always fires is a check nobody reads (BEN-164).",
+        "state and a check that always fires is a check nobody reads (BEN-199).",
         "- AND FRESHNESS IS NOT TRUTH: `Declared state` below is AUTHORED PROSE the generator "
         "carries forward verbatim. Regenerating updates the timestamp and the sha; it does NOT "
         "revalidate that text. On 2026-08-12 this field still read \"no cause is discharged\" "
@@ -237,7 +237,7 @@ def check_freshness(repo_root) -> int:
 
     FRESH means: HEAD == the recorded `Git:` sha, OR the recorded sha is HEAD's parent. The second
     disjunct is not slack -- it is the normal state, because the commit that carries the snapshot moves
-    HEAD after the generator read it. BEN-164: the orchestrator prescribed `Git:` vs `HEAD` as "the only
+    HEAD after the generator read it. BEN-199: the orchestrator prescribed `Git:` vs `HEAD` as "the only
     freshness test" and it has NO passing state, so it fired on a maximally fresh file and could not
     separate born-stale-by-one from dangerously-stale-by-five, which was the condition it existed to
     detect. Found by the personal-account verifier session re-deriving the rule against the file.
@@ -275,7 +275,7 @@ def main() -> int:
     parser.add_argument("--output", type=pathlib.Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--stdout", action="store_true")
     parser.add_argument("--check-freshness", action="store_true",
-                        help="Exit 0 fresh / 1 stale / 2 cannot-check; writes nothing. BEN-164: the "
+                        help="Exit 0 fresh / 1 stale / 2 cannot-check; writes nothing. BEN-199: the "
                              "rule is HEAD == Git: OR Git: is HEAD's parent, because the commit "
                              "carrying this file moves HEAD after the generator read it.")
     args = parser.parse_args()

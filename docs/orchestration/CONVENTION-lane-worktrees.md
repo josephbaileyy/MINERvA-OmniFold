@@ -92,11 +92,21 @@ historical false passes pinned by name. **The battery is the form set, not one v
 
 ## Merging to main
 
+> **UNIT: CHARACTERS, not bytes — stated here because this file got it wrong.** Every length in this
+> document is a **character** count. The figures above originally read *1032* and *1529*, which are the
+> **byte** counts of those lines (1028 and 1509 characters); em-dashes are three bytes each and these rows
+> are dense with them. The one figure that happened to agree — `KNOWN_ISSUES.md`'s 254 — agrees only
+> because that line is pure ASCII, so **the single example a reader would spot-check is the one where the
+> discrepancy cannot appear.** Harmless so far, because the over-600 set is identical under both units,
+> but that is luck about where rows fall relative to the threshold: **a 598-character row can be 604
+> bytes.** Measure with `len(line.rstrip())` in Python or `awk '{print length($0)}'`, not `wc -c`.
+> (`BEN-166`, found by Session D in Session A's file.)
+
 Each lane merges its own branch to `main` and pushes. Before resolving any conflict, run the attributor.
 Ledger rows are **append-only in practice**: add your line, never reflow or rewrite another lane's, since
 git merges added lines cleanly and cannot merge two rewrites of the same 1000-character row. That is why
 the index restructures matter — `KNOWN_ISSUES.md` is now 53 lines with a 254-character maximum and will
-merge; `FINDINGS.md` still has a 1032-character line and `CLAIMS.md` a 1529-character one, and those
+merge; `FINDINGS.md` still has a 1028-character line and `CLAIMS.md` a 1509-character one, and those
 will not. Finishing that shortening is what makes conflicts resolvable rather than merely visible.
 
 **Still true inside a worktree, because it was never about the index:** the post-hoc contents read.
