@@ -15,8 +15,20 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 > | B — uncertainty construction | `100-129` |
 > | C — PET | `130-159` |
 > | D — verifier, successor | `160-189` |
-> | A — orchestrator | `190-199` |
-> | repo infrastructure (ledgers, read path, dispatch machinery) | `200+` |
+> | A — orchestrator | `190-199` **(EXHAUSTED — all ten filed)**, continued at `210-219` |
+> | repo infrastructure (ledgers, read path, dispatch machinery) | `200-209` **(was `200+`; see below)** |
+> | *(unallocated)* | `220+` — lane A takes `220-229` next if `210-219` fills |
+>
+> **`200+` WAS CLOSED-ENDED AND HAD TO BE, 2026-08-13.** Lane A's `190-199` filled, and A was allocated
+> `210-219` (by `personal-orchestrator` under Joseph's standing grant, `205-209` deliberately left as a
+> buffer against anyone mid-flight in `200-204`). **But an open-ended `200+` still nominally contains
+> `210-219`, so an infrastructure writer computing `max(existing)+1` would land inside lane A's new
+> block and the allocation would have created the exact collision it was meant to prevent.** Bounding
+> infrastructure at `200-209` is what makes the grant safe. This is `BEN-080`'s shape caught before it
+> fired rather than after: the collision is in **allocation**, and only a closed range prevents it.
+> **`CLAUDE.md` records that allocating an A range routes to Joseph** — this was granted by a peer
+> holding his delegated go-ahead, is reversible in one commit, and is recorded here rather than living
+> in a peer message so he can see and override it.
 >
 > The highest id allocated per block is **derived, not narrated** — the table that used to state it
 > here was wrong in three of five rows within a day of being written. Recompute before allocating:
@@ -102,6 +114,9 @@ will read.
 | BEN-119 | **20 checks green, 5 mutations caught, and none touched the conclusion.** A check carrying the verdict reads as a restatement and goes untested. Name the AXIS a battery covers. [Detail](FINDING-20260812-power-test-axis-selection.md) | — | EP-2026-08-12-closeout |
 | BEN-118 | **An overage notice fired 49 s into a 322 GB copy that did not cause it**: an archive 14 h older held 77.9%. Dedup frees 12 kB of 1.46 TB — a digest-verified archive has no slack. [Receipt](state/hpss-residency-inventory-20260812.json) | — | EP-2026-08-12-closeout |
 | BEN-204 | **A format rule given to a delegate became a licence to delete another session's committed content.** Told "pipe tables only" for `OPEN_ITEMS.md`, it deleted a peer's nine-line handoff blockquote committed minutes earlier. Scope rules must name what may be **edited** — a path allow-list — not only what the output must look like. [full](FINDINGS-ARCHIVE-2026-08.md) | — | EP-2026-08-12-readpath-audit |
+| BEN-210 | **`sstat -j <array>_<task>.batch` returned ONE task five times, and five byte-identical rows read as five healthy ensemble members.** The array id equals one task's raw id (`56834281_5` IS `56834281`), and raws are non-contiguous so `base+t-1` is also wrong. Resolve the PAIR via `sacct -X --format=JobID,JobIDRaw`. **The wrong answer was the more persuasive one** — uniformity is what five same-configuration trainings should look like, and it was the only tell. Third instance after `28,672 B x 240` and a path check that stat'd one directory 240 times. [Detail](FINDING-20260813-sstat-array-task-aliasing.md) | — | EP-2026-08-13-closeout |
+| BEN-211 | **My published fix for BEN-210 was defective in a harder-to-catch way than the bug: it removed the SYMPTOM the bug was detected by.** Looping over `JobIDRaw` alone returns five *distinct* readings — so the uniformity tell is gone — but they cannot be attributed to members, and attribution was the whole purpose. First reading: uniform, obviously wrong. Second: non-uniform, plausible, still wrong, and nothing announces it. **Check that a fix restores the ANSWER, not merely the appearance of variation.** Caught by lane C re-arming a watch against the finding. [Detail](FINDING-20260813-sstat-array-task-aliasing.md) | — | EP-2026-08-13-closeout |
+| BEN-212 | **A STATUS FIELD IS NOT AN ARTIFACT, and I read two in one hour.** Asserted "no fresh worker is assigned to OI-30" from lane NAMES in a `ListAgents` listing and spawned a duplicate of a lane already running it — after a relay had explicitly said to check. Same hour, same class: reading member liveness off five identical `sstat` rows (BEN-210). **Names, states and listings are the cheapest things in reach and the least load-bearing; an assignment claim needs the delegate's brief, not its name.** Two instances make it a class rather than a slip. | — | EP-2026-08-13-closeout |
 | BEN-203 | `git status` is not an attribution instrument: **six live `claude` processes share this one checkout**, so the tree shows the union of everyone's work. Acting on the standing rule, I nearly reverted a peer's legitimate fix as delegate overreach. Stage and commit with explicit pathspecs. [full](FINDINGS-ARCHIVE-2026-08.md) | — | EP-2026-08-12-readpath-audit |
 | BEN-202 | The cheapest orientation in the repo was reachable only by agents who already knew about it: `LIVE-STATE.md` is regenerated every turn and self-describes as "the normal-turn control-plane entrypoint", and 19 files cited it — but **neither `CLAUDE.md` nor `AGENTS.md`**, the two entry points a fresh session is guaranteed to read. Inbound-reference count is not reachability; what matters is whether a *guaranteed-read* file names it. | — | EP-2026-08-12-readpath-audit |
 | BEN-201 | A retraction that lands in the index but not at the point of use is not a retraction. `recovery >= 0.80` was retired 2026-08-09 and correctly indexed, yet on 08-12 `docs/OPEN_ITEMS.md` still stated it as the live Gate-4 blocker: **two read-path files disagreed on a gate criterion, and the stale one was phrased as the blocker.** [full](FINDINGS-ARCHIVE-2026-08.md) | CLM-012 | EP-2026-08-12-readpath-audit |

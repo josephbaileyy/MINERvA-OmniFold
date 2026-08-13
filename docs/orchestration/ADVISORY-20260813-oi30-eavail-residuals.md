@@ -220,10 +220,17 @@ marginal** — sum the sub-blocks over the other four axes, retaining off-diagon
    comparison is an order-of-magnitude sanity check, not a derivation of the effect on a published
    value.
 
-**Ledger discrepancy noticed in passing, not chased:** line 1043 says **10,550** reported bins for the
-adopted 5D artifact; `VL62` at line 627 says **10,694** of `GRID_NBINS = 65856`. Both describe the
-adopted 5D covariance. A 144-bin difference changes the √n above by <1% and none of the conclusions,
-but two ledger lines disagreeing about the same artifact's bin count is worth someone's attention.
+**~~Ledger discrepancy noticed in passing~~ — RETRACTED 2026-08-13, THERE IS NO DISCREPANCY.** I flagged
+line 1043's **10,550** against `VL62`'s **10,694** as two numbers for one artifact. **They are two
+different SETS and the ledger already says so**, at line 1049: *"on the **10550** common 5D bins (GBDT
+reports **144** extra)"* — and `10,550 + 144 = 10,694` exactly. So `10,694` is the GBDT covariance's full
+reported-bin set and `10,550` is the subset **common to PET**; line 1043's own phrasing carries the
+qualifier, *"the 10550 bins PET also reports."* Line 975 likewise says *"10,550-bin reported mask."*
+**Nothing is owed and no row needs opening.** Raised by `personal-orchestrator`, verified here against
+lines 627/975/1043/1049 rather than accepted.
+
+**Kept rather than deleted, because I am the second reader to trip on it** — which makes it a fact about
+the ledger's readability, not about my attention. The resolution now lives at the point of confusion.
 
 ## 7. Explicitly could-not-determine — carried forward, not dropped
 
