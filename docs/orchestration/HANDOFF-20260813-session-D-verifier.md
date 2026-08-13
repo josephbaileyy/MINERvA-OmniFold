@@ -14,9 +14,9 @@ and `origin/main` at the same commit.
 
 ## What this lane owns
 
-- **BEN block `160-189`.** Allocated: 160–165. Next is 166. Recompute before allocating; the header
+- **BEN block `160-189`.** Allocated: 160–172. Next is 173. Recompute before allocating; the header
   says why.
-- `docs/orchestration/VERDICTS-20260811-session-D.md` — V1…V20. **Three-branch verdicts always:
+- `docs/orchestration/VERDICTS-20260811-session-D.md` — V1…V27. **Three-branch verdicts always:
   PASS / BLOCK / UNRESOLVED, and UNRESOLVED is never re-read as the nearer of the other two.**
 - Long-form: `FINDING-20260812-nested-conflict-markers-false-pass.md` (BEN-162),
   `FINDING-20260812-exit-contract-drifted-into-prose.md` (BEN-163),
@@ -71,3 +71,38 @@ Misattributed `BEN-115` to A when it is B's. Absorbed C's `BEN-137` row into `7b
 self-applied instrument closed a gap tonight" when six of my own rows refute it, and a peer adopted it
 over its own hedged version. **Every one of these was caught by a peer, not by me** — which is the
 argument for keeping the cross-lane review protocol whatever happens to the sessions.
+
+---
+
+## AMENDED 2026-08-13 ~03:20Z — what changed after this file was first written
+
+This handoff was written before Gate 2 was promoted and before the `E_avail` and covariance work. Left
+unamended it would be false in its most load-bearing places, which is `BEN-098` and I filed it.
+
+**Closed since, all in `VERDICTS-20260811-session-D.md`:**
+
+| | |
+|---|---|
+| **V20** | `VALIDATION_LEDGER.md` VL re-id PASSES the structural post-condition I attached to the GO |
+| **V21** | **Gate 2 promotion requirement 1: PASS.** Gate 2 is now fully promoted; no link rests on the promoting lane |
+| **V22** | `56818470` Branch REPAIRED stands on its predeclared criterion. **My `R/push` proxy was refuted and INVERTED** — corrected in place, original left standing with a pointer |
+| **V23** | `VL101` said ARM REJECTED for the arm the campaign adopted; annotated at the point of use by A. `OI-23`'s configuration question closed |
+| **V24** | `E_avail` audit: Finding 1 is **`OI-30`, live and blocked**; Finding 2's code half **downgraded** to a contract gap |
+| **V25** | 5D mapping derived independently; **amended two-arm test PASSES**, mapping CONFIRMED |
+| **V27** | Projection **promoted, scoped to the materiality use**, with two residuals recorded |
+
+**Still open and owned elsewhere:**
+
+- **`OI-30`** — the charged-pion convention against arXiv:2312.16631 Eq. 4, unread against the code. The
+  **~140 MeV** kinetic-vs-total definitional gap is the material half, not the 4.57 MeV constant.
+- **Residual 2 on the projection** — the covariance's row order is unverified against the mask;
+  `p4_lib.py:1300` is a shape check and cannot see a permutation. **Per-bin use is gated** behind the
+  diagonal-vs-central correlation check, tasked to A.
+- **Residual 1** — both mapping checks reference the 4D chain.
+- The five routed shapes and `BEN-091`'s stale sweep, unchanged from above.
+
+**Carry forward, and it is the campaign's finding rather than mine:** *the interesting finding arrives
+before the boring check and outruns it* (`BEN-206`). And its operational form, which is checkable rather
+than cautionary — **a magnitude argument can only shield against errors that change magnitude, so name
+the error class the margin can see, then ask whether the residual is in it.**
+
