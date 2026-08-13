@@ -212,14 +212,21 @@ halves re-measured here:
 
 Had they differed, the on-cluster green would have validated the fork and said nothing about `main`.
 
-**Open, and the only thing open:** promotion requirement 1 — independent receipt review of hashes,
-configuration and binned telemetry. Routed to the verifier lane and deliberately not self-performed:
-a lane cannot review the gate it is promoting (`CLAUDE.md`: worker agreement is not verification).
-Three items for that review, being the places this evidence is thinnest: (i) `b4_gated: true` is the
-load-bearing field, and the claim that every `die()` path precedes the receipt write is read from the
-receipt's own prose, not verified in `gate2_target_runtime.py`; (ii) `normalized_sum`
-1,124,080.5876521247 against target 1,124,080.2949941019 agree to 2.6e-7, which is agreement, not
-identity, and no governing tolerance was located; and (iii) — **CLOSED 2026-08-13, against myself.**
+**Promotion requirement 1 is CLOSED** — independent receipt review, Session D, `V21`. It was
+deliberately not self-performed: a lane cannot review the gate it is promoting (`CLAUDE.md`: worker
+agreement is not verification).
+
+**I published three places where my own evidence was thinnest, and all three are now closed by
+measurement rather than by argument. Recording them closed, with who closed them, because a caveat
+that quietly disappears is worse than one that was never raised.**
+
+(i) `b4_gated: true` — I flagged that the claim *"every `die()` path precedes the receipt write"* was
+read from the receipt's own prose, not verified in `gate2_target_runtime.py`. **Closed by Session D in
+`V21`**, by reading the control flow and power-testing the predicate seven ways rather than trusting
+the prose. (ii) `normalized_sum` 1,124,080.5876521247 against target 1,124,080.2949941019 agree to
+2.6e-7 — agreement, not identity, and I could not find the governing tolerance. **Closed by Session D
+in `V21`**: the tolerance governs at 5.4% of budget and the residual is consistent with float32.
+(iii) — **closed against myself, below.**
 
 I wrote that the `mc-only` path was read statically and never executed. **It was executed.** The
 powered closure driver `pet/closure_powered_truth_reweight.py` (pinned `a45fae7c…` in job `56552326`'s
@@ -239,6 +246,17 @@ in both receipts, and the loader supplying the defaults is pinned `57f33f87…`.
 `configuration.features` and `configuration.truth_features`. So the target construction, the closure
 and the nominal all select the same 13/2 columns. This matters because feature selection is a choice
 made *over* an input: a shared NPZ digest bounds what could be selected and does not pin what was.
+
+**A SECOND, STRONGER MECHANISM on the nominal side — found by Session D, verified here.** Derivation
+from pins says the wrong feature set was not selected; a runtime refusal says it *cannot* be. The
+nominal driver carries two fail-closed guards, and neither is a branch: `train_fullevent_nominal.py:388`
+refuses if the loader's `meta` widths disagree with the blocks actually built, and **`:393` raises
+`SystemExit` if the loader built `REDUCED_EVT_FEATURES`** — the 2-column {pT, p‖} schema that
+`pet/FULL_EVENT_FEATURE_CONTRACT.md` marks *"CROSS-CHECK ONLY — never a publication lateral/central
+source"* — because stamping the publication fingerprint over it is AUDIT-FINDINGS-20260731 J01. So the
+exact failure the residual described, a run selecting a different feature set while claiming the
+publication estimator, is **refused at runtime, not merely made improbable.** Derivation from pins and
+a runtime refusal are different instruments; the guard covers the nominal, the pins cover the closure.
 
 **Naming trap for any reviewer:** `D1`/`D2` in this file and in
 `DECISION-20260804-B4-STEP3-RECEIPTS.md` are the B-4 weight repair and the RESTORE Step-3 target
