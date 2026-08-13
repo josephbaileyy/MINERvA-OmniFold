@@ -338,11 +338,43 @@ width sums; `diag(C_low)` reproduces per-row `M C M^T`. **An earlier symmetry ch
 False and was my own error** — `np.allclose(..., rtol=0, atol=0)` is exact bitwise equality and cannot
 pass on a floating-point product.
 
-**WHAT THIS RESULT DOES NOT YET CARRY, flagged by D and not resolved here:** the bin-volume weighting
-and the row->cell mapping are built from the **same C-order ravel**, so a mapping error and a volume
-error would share a cause and corroborate each other — `BEN-086`'s shape. This projection therefore
-needs an independent check that does not inherit the mapping's. **Not built. The number above should
-not be promoted until it is.**
+**THE INDEPENDENT CHECK D REQUIRED — BUILT AND PASSED, 2026-08-13.** D flagged that the bin-volume
+weighting and the row->cell mapping are built from the **same C-order ravel**, so a mapping error and a
+volume error would share a cause and corroborate each other (`BEN-086`'s shape). Cross-checked via the
+**4D** artifact chain:
+
+| bin | y (5D route) | y (4D route) | y4/y5 | frac 5D | frac 4D-corrected | frac 4D-stage2 |
+|---|---|---|---|---|---|---|
+| 1 `[0,0.1)` | 2.09879e-38 | 2.14843e-38 | 1.0237 | **4.6242%** | **4.7928%** | 6.6324% |
+| 2 | 2.01448e-38 | 2.03751e-38 | 1.0114 | 3.4536% | 3.5240% | 4.1975% |
+| 3 | 1.86248e-38 | 1.85141e-38 | 0.9941 | 2.7001% | 2.9957% | 3.2243% |
+| 4 | 1.24924e-38 | 1.22825e-38 | 0.9832 | 2.6232% | 3.3939% | 3.4510% |
+| 5 | 7.62180e-39 | 7.63146e-39 | 1.0013 | 2.6076% | 2.9631% | 2.9981% |
+| 6 | 4.13763e-39 | 4.10048e-39 | 0.9910 | 2.6562% | 3.2124% | 3.3212% |
+| 7 | 6.51792e-41 | 6.56710e-41 | 1.0075 | 2.8046% | 3.1724% | 3.7318% |
+
+**Central values agree to a median of 0.898%**, against the 4.43% that
+`FINDING-20260809-stage6-central-gate-cannot-pass.md` records for 5D->4D vs independent 4D *in the full
+4D binning* — marginalizing to 7 bins averages most of that away, as expected.
+
+**shift/sigma in bin 1: 22.7% (5D) vs 21.9% (4D-corrected).** The conclusion is robust to the entire
+artifact chain.
+
+**WHY THIS IS A REAL CHECK ON THE VOLUME WEIGHTING and not a restatement.** The 4D route drops
+`{pt,pz,q3}`; the 5D route drops `{pt,pz,q3,W}` — **a different product of bin widths**. A botched
+weighting cannot agree between them by construction. It also independently rejects the unit-weight
+error: that gave bin 1 = 12.38%, against the 4D route's 4.79%. Different CV file, different covariance
+(4830-square vs 10694-square), different mask, different dropped-axis set, and M built inline per
+`eavail_generator_significance.py:83-89` rather than via `build_projection`.
+
+**WHAT IT IS STILL NOT INDEPENDENT OF, stated rather than glossed:** both routes place `eavail` at axis
+index 2 under a C-order ravel, so a **global** axis-assignment error would move both together and this
+check could not see it. Axis identity rests on the separate 4D/5D mask test, which is **D's to
+adjudicate** — see the ordering caveat there. So: **the volume weighting and the projection machinery
+are corroborated; the axis assignment is not, by this.**
+
+**`4D stage2` differs (6.63% in bin 1) and that is expected, not a discrepancy** — it is the older,
+uncorrected 4D covariance; `corrected` is the one that tracks.
 
 ## 7. Explicitly could-not-determine — carried forward, not dropped
 
