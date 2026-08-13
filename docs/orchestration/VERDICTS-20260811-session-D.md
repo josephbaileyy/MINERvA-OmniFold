@@ -884,3 +884,59 @@ out as a verdict, the record would now assert that the anneal degraded a criteri
 every iteration; annealed `iter0` at `0.1101` is a real trade outside the predeclared scope; and
 `1.593x` is not a comfortable margin even though it clears.
 
+---
+
+### V23 — the ledger rejects the arm the disposition adopts, and nothing reconciles them: **BLOCK on the record, not on the physics**
+
+Routed by Session C, which flagged that `VL101` and the estimator disposition rest on the same number.
+Measured here.
+
+**`VALIDATION_LEDGER.md:1660`, live and unqualified:**
+
+    | VL101 | recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
+
+**`AUTHORIZATION-20260813-gate4-estimator-disposition.md` adopts the annealed arm and never mentions
+`VL101`, `ARM REJECTED`, or the SECONDARY criterion.** It cites `0.546853` once, as *"full-LR recovery —
+clears by 0.052271"* — i.e. it quotes the baseline while omitting that the same comparison is recorded
+elsewhere as a rejection of the arm being adopted.
+
+**`VL101` is referenced in exactly one place in the repository — its own ledger row.** It is not in
+`INDEX-retracted-and-superseded-values.md`, not superseded, not qualified. `VALIDATION_LEDGER.md` is this
+repo's canonical home for technote-quoted numbers, so **as the record stands, anyone quoting the ledger
+for the annealed arm quotes `ARM REJECTED` for the arm the campaign adopted.**
+
+This is `BEN-201`'s shape run backwards: there, a retraction reached the index but not the point of use;
+here, a decision reached the point of use but not the ledger. Same defect, opposite direction, and the
+ledger is the harder one to leave stale because it is the file the technote quotes.
+
+**BLOCK is on the record, not the physics.** I am not saying the annealed arm is wrong or that VL101's
+arithmetic is wrong. Both may stand. What cannot stand is the two of them standing *silently side by
+side*. The fix is a ledger annotation naming the disposition and what overrode the SECONDARY reading —
+`VL101`'s row is B's or A's to touch, not mine.
+
+**And the baseline the rejection rests on is the open question.** `VL101` rejects against
+`0.546853 ± 0.02`, the full-LR figure. Job `56818470` was launched precisely because that arm runs the
+configuration `KNOWN_ISSUES.md` names as a tail-collapse candidate — *"if the collapse inflates recovery,
+full-LR's advantage is the defect."* `56818470` returned REPAIRED, which establishes that the
+sign-inversion defect is a property of the retired LR policy. **It does not establish that `0.546853` is
+uninflated, and that is a different claim.** So `VL101` currently rejects the adopted arm against a
+baseline whose validity is an open item — stated as an unresolved dependency, not as a reason to doubt
+the number.
+
+### OI-23 — C's caution is right, and the disposition has INVERTED which half is at risk
+
+`OI-23` requires *"a nontrivial injected truth-reweight recovery closure **at the final nominal
+configuration**."* C declined to call it discharged because job `56552326` was the annealed-LR shape
+validation — a changed job — and existence is not configuration. Correct as of when C wrote it.
+
+**But Joseph then adopted the annealed arm.** The estimator moved toward the closure rather than the
+closure toward the estimator, so the question is no longer *"the closure ran a different configuration
+than the nominal"*. It is now **"does `56552326`'s configuration match the adopted nominal in every
+dimension, or only in the LR policy?"** — schema, seeds, epochs, `niter`, subsample, batch. A reviewer
+who checks only the LR policy would find a match and stop.
+
+**UNRESOLVED from this lane**: the configuration comparison needs `56552326`'s receipt, which is on
+`/pscratch`. What closes it is a field-by-field diff of that receipt's `seed_policy` and configuration
+block against the adopted nominal's, published rather than asserted — **not** a statement that both are
+"the annealed configuration."
+
