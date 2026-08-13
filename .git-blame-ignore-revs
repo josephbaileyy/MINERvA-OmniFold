@@ -1,0 +1,20 @@
+# Revisions to skip in `git blame` — bulk mechanical edits that touch many lines
+# without changing their meaning, so blame reports the last SUBSTANTIVE author.
+#
+# ENABLE IT (per-clone, and the file alone does nothing without this):
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# WHY THIS EXISTS. The 2026-08-12 VL re-id added a leading `| VL<n> |` id cell to all
+# 108 VALIDATION_LEDGER.md data rows. It was line-count preserving and content-keyed, but
+# it made one commit the last toucher of every ledger row, so `git blame` attributed the
+# whole file to it. Session D established the damage is MASKING rather than loss:
+# `git blame --ignore-rev 1ec042e` restores the underlying owners.
+#
+# LIMIT, stated because it is the part that bites: `blame.ignoreRevsFile` is per-clone
+# config, so this file is INERT for anyone who has not run the command above. And
+# unmasking does not always yield a lane — rows written before the per-lane git identities
+# resolve to the shared "Joseph Bailey" author regardless (BEN-160). Two independent
+# causes; this file addresses only the first.
+
+# VL re-id: 108 ledger rows become addressable, line-count preserving (2026-08-12)
+1ec042e992b6e6ae43eace7f28b730fe3e8a85ac

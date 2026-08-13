@@ -940,3 +940,67 @@ who checks only the LR policy would find a match and stop.
 block against the adopted nominal's, published rather than asserted — **not** a statement that both are
 "the annealed configuration."
 
+#### V23 NARROWED — the ledger is not silent, it is PRE-DISPOSITION, and one thing I nearly raised is already handled
+
+Two corrections against myself after reading the whole `VL98–VL101` section rather than the rows.
+
+**1. My "standing silently side by side" overstates it.** The section says, two lines under the table:
+*"Per the predeclaration amendment, the adopted PRIMARY criterion decides and the PRIMARY/SECONDARY
+disagreement is itself the finding."* So the ledger does record that PRIMARY governs. What it does not
+record is that the escalation was **answered** — Joseph selected the annealed arm on 2026-08-13. The row
+is a true statement of the pre-disposition state that reads as current. **That is `BEN-098`, not a
+contradiction**: a section's stale parts are exactly the ones that were true when written, and nothing
+in the text can expire on its own. The block stands and the required fix is smaller than I implied —
+one clause on the row pointing at the disposition, not a rewrite.
+
+**2. Something I nearly raised and should not have.** I went to check whether the ledger — the canonical
+home for *technote-quoted* numbers — carries `VL100` from an artifact declaring itself
+`quotable: False`. It does, **and it says so on its face**: *"This remains diagnostic and non-quotable.
+No engine edit, threshold change, promotion, or Branch C reopening is authorized."* The ledger and the
+receipt agree. Nothing to route. Recording the non-finding because the near-miss is the same shape as
+routing a defect that existed only in a chat summary, two turns ago: **I checked the artifact instead of
+reasoning from the category, and the category was wrong both times.**
+
+#### The VL re-id destroyed blame ownership — I approved that re-id and did not check for it
+
+`git blame` attributes **all 108 VL rows to `1ec042e`**, the re-id, reproduced here. A reported this as
+unresolvable in both directions.
+
+**It is recoverable, and A's mechanism is only half the cause.** `git blame --ignore-rev 1ec042e`
+restores **18 distinct owning commits**. So blame was *masked*, not destroyed, and the standard remedy
+applies: a `.git-blame-ignore-revs` file naming `1ec042e`, with `git config blame.ignoreRevsFile`.
+**Limit worth stating: that config is per-clone**, so the file alone does not help anyone who has not
+set it — it is a remedy for the repo's maintainers, not an automatic property of the history.
+
+**But unmasking does not yield a lane for `VL101`.** It resolves to `c56fc5f`,
+`Joseph Bailey <jrbailey555@gmail.com>` — the shared pre-`BEN-160` identity. So **there were two
+independent causes and A conflated them**: the re-id masks ownership for all 108 rows, and underneath
+the mask this particular row was already lane-unattributable for the reason `BEN-160` records. Removing
+one does not remove the other, and A's conclusion is right for a cause A did not name.
+
+**My part in this, which is the part worth carrying.** `V20` gave the GO on that re-id. I checked
+freshness, consumers anchored on `^|`, the leading-vs-trailing decision, the 22/22/108 structural
+post-condition, and the literal-dashes hazard. **I never asked what the edit does to provenance.** I
+enumerated what could break *programmatically* and never asked what could break *evidentially* — the
+coverage-invisible-by-construction shape applied to my own review checklist, on the one file whose whole
+purpose is being citable.
+
+#### V23 addendum — OI-23's configuration question is CLOSED; C's residual is real and I can size it
+
+C published the field-by-field diff (`316475e`): `56552326` against `56563761`, 12 of 12 recorded
+dimensions identical, including `estimator_seed 42`, `subsample_seed 0`, the input NPZ digest, and
+2,000,000 rows per arm on both. **That answers my UNRESOLVED**: identical estimator seed *and* subsample
+seed *and* input digest *and* row count means the same subsample, not merely the same schedule — which
+is the dimension a reviewer stopping at the LR policy would have skipped, and the reason the warning was
+worth issuing.
+
+**C's residual is not pedantic, and the Gate-2 receipt I reviewed for `V21` sizes it.** `features`,
+`truth_features` and `bkg_mode` are recorded by neither closure receipt, so schema equivalence is
+*inferred* from the shared NPZ. That inference is weaker than it looks: `G2_GATE2_TARGET_RUNTIME_RECEIPT`
+carries **`configuration.features` (13 entries) and `configuration.truth_features` (2)** as fields
+*separate from* `input_preflight.sha256`. **The feature selection is therefore a configuration choice
+made over the input, not a property of it** — two runs can share an NPZ digest byte-for-byte and select
+different columns from it. So a shared input constrains the schema only in the sense that it bounds what
+*could* be selected. NEARLY CLOSED is the correct state and C's named finish — record the fingerprint and
+feature lists in the closure receipt — is the right one.
+
