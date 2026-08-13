@@ -6099,3 +6099,115 @@ members still to exec from it; no `C_stat` constructed, because 23 of 50 is not 
 Holding lane B's array would free both accrual slots and is **routed to its owner as a recommendation,
 not taken** — it is B's job, and it would not fix partition saturation, which is the present blocker and
 is nobody's here to fix.
+
+## 2026-08-13 — Gate 6 Leg F first wave: 2 of 4 new draws in, branch 1 already excluded, NO verdict
+
+Submission provenance for array `56863958` landed late and out of order because the session that
+submitted it died mid-campaign; the launch receipt was recovered from its worktree and committed
+unmodified at `847034a`. This entry closes the chronology gap and then reports the first wave. The
+predeclaration, launcher and tests landed at `ef020b9` **before** submission, which is the part that
+matters — the rule was fixed before any draw existed.
+
+**What ran.** `sbatch --array=2-5%2 sbatch_pet_fullevent_floor_replicate_array.sh` → `56863958`,
+submitted 06:22 PDT at `--nice=10000`. Joseph authorized inverting the precondition (*"Yes let B do
+it"*), so the control the member-trajectory predeclaration already named verbatim — *"five total
+across-process draws of the fixed member-1 policy `(42,0)`, including four new runs with persisted
+execution-environment identity"* — runs on the **failing** branch instead of the passing one. Draw 1
+is the existing `member_1` artifact, reused and **not** retrained (`v[2] = 0.9806897311812962`); the
+launcher refuses draw 1 by name with the reason in the message.
+
+**This is a measurement, not a retry, and Gate 6 is not unblocked by any outcome.** Every draw uses
+the identical seed pair `(42,0)`; only process, node and GPU vary, which is why it proceeds under
+`do_not_retry_unchanged`. All five prohibitions at `19585b7` remain live, and the launcher writes them
+into every draw's sidecar with `c_ml_construction_allowed: false` and `is_a_retry: false`, so the
+commit record cannot later be read as the block having softened. `C_ML` needs a separate decision from
+Joseph, and Gate 4's estimator-arm disposition blocks construction independently regardless.
+
+**Tasks 2 and 3 `COMPLETED 0:0`** in `03:15:09` and `03:15:26`, both on `nid008264`. Tasks 4 and 5 are
+still queued. **All eight predeclared validity clauses PASS on both new draws** — `R` exactly
+`1.1240802949941018`, `mc_indices` array-equal to member 1's across all 2,000,000 rows, realized
+policy `(42,0)/niter 3/epochs 8/2e6 rows/batch 512` read off the artifact rather than off the launch
+command, `GATE_AB_PASSED` with bit-exact MC-index and truth-normalization identity, reproduction gate
+`rel_dev` exactly `0.0` on all three quantities, 8 `.weights.h5` in each draw's own `w_nominal`, and
+execution identity persisted (host, GPU uuid, both HEADs, all bound digests).
+
+**The rule was applied by code, not by hand.** `nd-unfolding/pet/gate6_floor_statistics.py`
+(`637ee33d…`) is the executable form of the predeclaration: 52 tests, 16/16 mutations caught, module
+restored byte-identical afterwards, and **written and mutation-tested while draws 4 and 5 were still
+queued** so the thresholds could not be tuned to the data. It exits `3` (INCOMPLETE) here rather than
+emitting a verdict, and refuses to verdict on fewer than five valid draws — a test asserts that
+refusal names `do_not_select_passing_subset`, because that property is the one most likely to be
+quietly relaxed later under schedule pressure. Numbers at VL127–VL129; receipt at
+`docs/orchestration/state/gate6-floor-replication-partial-56863958.json`.
+
+**Branch 1 is already unreachable, and that is a deduction from the frozen rule rather than a new
+one.** `max−min` is non-decreasing when draws are added and all three present draws are valid, so the
+partial `F_range[2] = 0.0523993868023519` is a lower bound on the final value and already exceeds the
+frozen `0.05`. This moves no threshold, selects no subset — it is valid precisely because nothing was
+excluded — and reaches no verdict. `FLOOR_LARGE_TRAJECTORY_IS_PROCESS_DETERMINED` needs a further
+`0.1216` of spread from draws 4 or 5; two of the five committed members would supply it and three
+would not, so `FLOOR_INTERMEDIATE` is live and would attribute nothing.
+
+**The finding the predeclaration fixed no rule for, reported because it bears on the question and on
+Leg X.** The categorical trajectory *label* is not reproducible at fixed seed. Member 1 and draw 2 are
+`UNDER_ACHIEVES_AT_ITER0_SAME_SIGN`; **draw 3, same `(42,0)`, is `BROKEN_AT_ITER0` with
+`end_to_end_sign_is_wrong=true`**, and its `v[0] = 0.8400494065800533` falls between members 4
+(`0.8747948243043495`) and 5 (`0.7614411106789466`) — the two members whose identical label was read
+as seed sensitivity. At iteration 0 the same-seed spread is already `89.6%` of the five-member spread
+from three draws. **This is iteration 0 and the verdict is defined at iteration 2 only**, so it is an
+observation and not the answer; letting it become the answer is exactly the after-the-fact rule change
+the predeclaration exists to prevent. It is recorded, not acted on.
+
+**Consequence for Leg X, reported before submission rather than after, which is what Joseph asked
+for.** The `{42,46}×{0,4}` 2×2 is authorized and is **not** submitted. Two of its four cells exist
+(`(42,0)` = member 1, `(46,4)` = member 5) so only `(42,4)` and `(46,0)` would run. With one run per
+cell there is no replication, so at iteration 0 its main effects would be indistinguishable from
+process noise at `89.6%` of the member spread. At iteration 2 the same-seed spread is `15.1%`, so a
+2×2 read **at iteration 2 only, with the floor quoted alongside** is still informative. Either the 2×2
+gets replication or its readout is restricted; which one, and whether to spend the GPU-hours, goes to
+Joseph rather than being assumed. The floor completes first — Lane B's sequencing, which Joseph
+explicitly declined to lift.
+
+**A claim in the predeclaration is now false, and the document is deliberately not edited.** It states
+Gate 5's pending tasks are held by their own array cap and dependency *"not by resource scarcity — so
+Gate 5's throughput is bounded at ten concurrent regardless of this submission."* That was measured
+true at submission (10 `g5train` + 10 `g5targ` running). At 14:53 PDT Gate 5 runs **2** of its 10-task
+cap with `56857232` fully `COMPLETED` and no dependency outstanding, so the cap is not binding.
+Measured: `shared_gpu_ss11` has 128 running and 127 pending across all users; **14 pending jobs outrank
+Gate 5** at priority `67679` and **94 outrank this leg** at `57910`, only one of which is ours. Both
+arrays are priority-starved on a contended partition, and `Reason=JobArrayTaskLimit` is displayed on
+both while the cap is not the operative constraint. A predeclaration that gets edited after the fact is
+worth nothing, so the correction lives here and in the receipt, not in the document.
+
+**Credit where it belongs on the reason string:** lane C got there first and independently, as BEN-153
+with a long-form finding, from `sinfo` (1631 nodes `alloc`, zero idle CPUs). My instance is a second
+array — Leg F at **0** running against a `%2` cap — refuted by a different measurement, queue position.
+Two arrays and two independent checks make it a class, which is the only thing my row (BEN-126) adds;
+the analysis is lane C's.
+
+**This leg has cost Gate 5 nothing and the starvation was reported rather than worked around.**
+`--nice=10000` keeps this array exactly 10,000 below Gate 5 at every scheduling decision (measured
+`57910` against `67689`/`67705`), and it has had zero tasks running since 14:16 PDT while Gate 5 has
+had two. The self-cap has not been raised, no task has been resubmitted, and `--nice` has not been
+lowered. `GATE5_CODE_ROOT` (`/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059`) was not read,
+written, synced or cleaned, and a test asserts the launcher never references it. The cluster repo was
+not synced either — `gate6_floor_statistics.py` was `scp`'d as a single file and verified byte-identical
+on both sides, because the cluster's `fullevent_fps_dataloader.py` is modified-but-uncommitted and
+load-bearing for the live Gate-5 array.
+
+**Two tooling traps, both filed.** `sacct -j 56863958` lists tasks 2, 3 and 5 but **not** task 4,
+whose pending element Slurm split under a new `JobIDRaw` (`56883015`) — a resume guard enumerating
+from `sacct` would treat it as nonexistent (BEN-125). And three boundary tests written to sit *exactly*
+on `0.05` and `0.10` all silently landed just outside: `1.05-1.0` is `0.050000000000000044` and
+`abs(1.10-1)` is `0.10000000000000009`, so `<=` versus `<` is only testable at the predicate, not
+through the data path (BEN-124). The same class of thing bit the frozen threshold: `0.1740029887300910`
+is the 16-decimal *rendering* of `0.5 × S_range[2]`, one float step above the exact half-range, so the
+transcription check compares at 16 decimals and reports the `5.55e-17` delta rather than demanding bit
+equality — which would have failed on a correctly transcribed number, and did, on the first run.
+
+**Not done, deliberately.** Leg 0 (checkpoint-tier calibration) is unauthorized. No Gate-6 member has
+been re-verdicted, including member 3, whose sole failing margin is `+0.001098` at the tier-crossing
+step. No subset selected, no central moved, no `C_ML` constructed, no reset credit consumed. Watch
+`gate6-floor-replication-56863958` stays armed and carries the full rule, both thresholds, all eight
+validity clauses, the four non-establishments and all five prohibitions, so a successor that reads only
+the event still cannot over-conclude.

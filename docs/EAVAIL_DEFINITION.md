@@ -13,13 +13,22 @@ the note is not edited before the full-event PET and adopted UQ products are quo
 
 ## 1. The position, in one paragraph
 
-**We implement the Rodrigues 2016 convention (arXiv:1511.05944) MINUS e±**, uniformly: available energy
-is the summed kinetic energy of protons and charged pions plus the summed total energy of neutral
-pions. **Rodrigues' closed list is five species — p, π±, π⁰, e, γ — and we implement four of them.**
-The e± exclusion is **inherited, not chosen**: it follows `kEAvail`'s `abs(pdg)==11||13`
-"don't count the charged lepton" branch, written for a νe analysis in which the primary electron **is**
-the charged lepton. Nothing in this repo establishes it as a deliberate decision, and this document does
-not claim it was one. We do not claim to implement "the
+**What we implement is MAT-MINERvA's species list, copied whole — and it COINCIDES with Rodrigues 2016
+(arXiv:1511.05944) minus e±.** Available energy is the summed kinetic energy of protons and charged
+pions plus the summed total energy of neutral pions. **Rodrigues' closed list is five species — p, π±,
+π⁰, e, γ — and we implement four of them.**
+
+**The provenance and the defence are two different things, and conflating them is the error this
+paragraph previously made.** Our list is **inherited, not chosen**: comments and whitespace stripped,
+our function body is **token-identical to MAT-MINERvA's `calculators/CCQE3DFitFunctions.h`** — both 424
+chars, sha256 `5296998043add43c` — which has **exactly one commit in its history**
+(`f790cc794732`, 2021-07-07, Ben Messerly, *"calculators/ initial commit."*), never edited since. The
+e± exclusion likewise follows `kEAvail`'s `abs(pdg)==11||13` "don't count the charged lepton" branch,
+written for a νe analysis in which the primary electron **is** the charged lepton.
+
+**So: the coincidence with a published convention is what makes the position defensible; the inheritance
+is what makes "deliberate" false.** This document claims the first and not the second. We do not claim
+to implement "the
 published definition of E_avail," because **there is no single published definition** — Rodrigues 2016
 and Ascencio 2022 (arXiv:2110.13372) differ from each other, and the difference is measurable in our
 sample. Any statement that this analysis "matches the published E_avail definition" without naming a
