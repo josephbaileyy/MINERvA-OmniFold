@@ -5796,3 +5796,20 @@ The predeclaration, target-override tests, and five-task launcher were committed
 tasks were `PENDING (Priority)` at the launch receipt. Terminal and one-hour queue-latency watches are
 armed. This launch performs inference only and does not authorize `C_ML`, Leg 2, a central move, or a
 Gate-4 disposition.
+## 2026-08-13 — Gate 6 member trajectories complete; one of five passes, family BLOCKED
+
+Array `56847059_[1-5]` completed all five no-training tasks `0:0`. Same-turn accounting resolves the
+logical/raw mapping as `1→56847061`, `2→56847062`, `3→56847971`, `4→56848031`, and `5→56847059`,
+with elapsed times from 13:44 to 14:00 on one A100 per member. All member logs finish cleanly. Every
+Gate A/B receipt passes exact MC-index and truth-normalization identity, Gate B(i) has zero relative
+deviation, Gate B(ii) has exactly one off-shell construction, and all three reproduction anchors are
+exact. The launcher is the predeclared `3c5c307` content (`13a598f…`) and every member uses the
+explicit archived target with SHA-256 `544b2f6a…`.
+
+The predeclared evidence is the numeric `end_to_end_achieved_over_required` only. Absolute deviations
+over iterations 0/1/2 are member 1 `0.519482/0.124001/0.019310` (PASS), member 2
+`0.141819/0.152498/0.101483` (FAIL), member 3 `0.056478/0.041552/0.042650` (FAIL), member 4
+`0.125205/0.174153/0.180208` (FAIL), and member 5 `0.238559/0.228871/0.246523` (FAIL). The signed
+push deviations are recorded in the canonical receipt and ledger. Because the criterion requires all
+five members, the family is BLOCKED. No subset, `C_ML`, central move, Leg 2, or unchanged retry follows.
+Gate 4's user disposition is independent.

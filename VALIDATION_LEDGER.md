@@ -1,5 +1,26 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-13 Gate 6 member trajectories — family BLOCKED by the predeclared numeric rule
+
+The no-training Leg-1 control completed all five members in array `56847059_[1-5]`; every Slurm task
+was `COMPLETED 0:0`, every member passed Gate A/B and exact reproduction, and every member consumed the
+hash-bound archived target `544b2f6a…`. The scientific criterion uses only numeric
+`end_to_end_achieved_over_required`, never the stored categorical labels. Only member 1 satisfies both
+non-increasing `|value-1|` through iterations 0→1→2 and final `<=0.10`. Members 2–5 fail at least one
+clause, so the complete family is blocked: no subset, `C_ML`, central move, Leg 2, or unchanged retry.
+
+| ID | member | e2e achieved/required at iter 0,1,2 | `|value-1|` at iter 0,1,2 | signed `push_dev_vs_R` | verdict |
+|---|---:|---|---|---|---|
+| VL116 | 1 | `1.519482, 1.124001, 0.980690` | `0.519482, 0.124001, 0.019310` | `+0.519482, +0.124001, -0.019310` | **PASS** |
+| VL117 | 2 | `1.141819, 1.152498, 1.101483` | `0.141819, 0.152498, 0.101483` | `+0.141819, +0.152498, +0.101483` | **FAIL**: non-monotonic and final >0.10 |
+| VL118 | 3 | `1.056478, 1.041552, 1.042650` | `0.056478, 0.041552, 0.042650` | `+0.056478, +0.041552, +0.042650` | **FAIL**: non-monotonic |
+| VL119 | 4 | `0.874795, 0.825847, 0.819792` | `0.125205, 0.174153, 0.180208` | `-0.125205, -0.174153, -0.180208` | **FAIL**: non-monotonic and final >0.10 |
+| VL120 | 5 | `0.761441, 0.771129, 0.753477` | `0.238559, 0.228871, 0.246523` | `-0.238559, -0.228871, -0.246523` | **FAIL**: non-monotonic and final >0.10 |
+| VL121 | family | **1 / 5 pass** | all five required | — | **BLOCK** |
+
+Canonical receipt: `docs/orchestration/state/gate6-member-trajectories-result-56847059.json`.
+Gate 4's estimator disposition remains an independent user decision.
+
 ## 2026-08-13 Gate 6 PET ML ensemble — COMPLETE 5/5; predeclared comparison PASS only, physics resolution OPEN
 
 The `N=5` inventory and realized seed pairs were fixed before submission in commit `6bd3707`:

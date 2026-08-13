@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "campaign_node": "Gate 6 PET ML ensemble Leg 1 member trajectories",
+  "job_id": "56847059",
+  "event": {
+    "event_id": "evt-gate6-member-trajectories-56847059",
+    "event_type": "slurm-array-complete",
+    "observed_at": "2026-08-13T09:35:34+00:00",
+    "sha256": "88e0d52d1eb612f3c6ea0b3e3535c703da506a18158f1d6b3320a9281db9c29b",
+    "validated": true
+  },
+  "predeclaration": {
+    "path": "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
+    "launcher_commit": "3c5c307317bd0dc50d03690ff5a98c7cf830f893",
+    "launcher_sha256": "13a598f285be4aff750b938882acba9ee87be566aaad6be95f25baa2d5dd86e8",
+    "target_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+    "rule": "For every member, abs(end_to_end_achieved_over_required-1) must be non-increasing over iterations 0,1,2 and the final value must be <=0.10; categorical labels are not evidence."
+  },
+  "accounting": [
+    {"member": 1, "logical_job_id": "56847059_1", "raw_job_id": "56847061", "state": "COMPLETED", "exit_code": "0:0", "elapsed": "00:13:53", "node": "nid008265"},
+    {"member": 2, "logical_job_id": "56847059_2", "raw_job_id": "56847062", "state": "COMPLETED", "exit_code": "0:0", "elapsed": "00:13:55", "node": "nid002676"},
+    {"member": 3, "logical_job_id": "56847059_3", "raw_job_id": "56847971", "state": "COMPLETED", "exit_code": "0:0", "elapsed": "00:13:50", "node": "nid008265"},
+    {"member": 4, "logical_job_id": "56847059_4", "raw_job_id": "56848031", "state": "COMPLETED", "exit_code": "0:0", "elapsed": "00:14:00", "node": "nid001293"},
+    {"member": 5, "logical_job_id": "56847059_5", "raw_job_id": "56847059", "state": "COMPLETED", "exit_code": "0:0", "elapsed": "00:13:44", "node": "nid008332"}
+  ],
+  "common_validation": {
+    "all_gate_ab_verdicts": "GATE_AB_PASSED",
+    "all_mc_indices_bit_exact": true,
+    "all_truth_normalization_bit_exact": true,
+    "all_gate_bi_max_relative_deviation": 0.0,
+    "all_gate_bii_exactly_one_off_shell": true,
+    "all_reproduction_quantities_exact": true,
+    "all_target_overrides_used": true,
+    "effective_target_path": "nd-unfolding/g2_fullevent/gate2/final/superseded-20260813-pre-gate5-rerun/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+    "effective_target_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
+  },
+  "members": [
+    {
+      "member": 1,
+      "end_to_end_achieved_over_required": [1.5194819600196279, 1.124000976719287, 0.9806897311812962],
+      "absolute_deviation_from_one": [0.5194819600196279, 0.12400097671928689, 0.01931026881870379],
+      "push_dev_vs_R": [0.5194819600196279, 0.12400097671928689, -0.01931026881870379],
+      "nonincreasing": true,
+      "final_at_most_0p10": true,
+      "verdict": "PASS",
+      "gate_sha256": "5270a713c2046fd3cad7a6dab3511516f7f8a4af88f51a92e481941621dc583f",
+      "decomposition_sha256": "e69128ff0783027cd9df50fcd67b3bc809f79c5a98d434d0bc6c1bf2ade6afe4",
+      "trajectory_sha256": "953406095b9e3ed9f895d931eaa3e108f8510230ebc8a1921e635b0f47d9a349",
+      "stdout_sha256": "ed6f31b20eefa4175befdf8f66694bc5d55471114aa3a0e63f70cb7247978f52",
+      "stderr_sha256": "cc57906ce96819ff1e3e8f871cf4adbd742f02c768a46ddf6186e3cb37216e6d"
+    },
+    {
+      "member": 2,
+      "end_to_end_achieved_over_required": [1.1418188042126045, 1.1524979616819537, 1.1014828481277632],
+      "absolute_deviation_from_one": [0.1418188042126045, 0.15249796168195373, 0.1014828481277632],
+      "push_dev_vs_R": [0.1418188042126045, 0.1524979616819535, 0.1014828481277632],
+      "nonincreasing": false,
+      "final_at_most_0p10": false,
+      "verdict": "FAIL",
+      "gate_sha256": "c989b4d6310f159d3c06e6d51229741e403b6c80da1e6b235455c037995ecb28",
+      "decomposition_sha256": "e71bb924ce6ee2f9805ad02b392b28edf52e2011e25d717cab3a884945fda859",
+      "trajectory_sha256": "b589f5eb424574daeb5a235e2c0514c82aa2904708ecbdeb3af7eb6c77905401",
+      "stdout_sha256": "5e20b80797ec8c3b86c82859915caa5791448711574ab97dda0eade5ab7ad5fc",
+      "stderr_sha256": "087a6dbb920fc314f529b3b956641f90ac1fd3aa6b915fdef85add055e303d24"
+    },
+    {
+      "member": 3,
+      "end_to_end_achieved_over_required": [1.0564784500672901, 1.0415519710875119, 1.0426498628518126],
+      "absolute_deviation_from_one": [0.05647845006729013, 0.04155197108751185, 0.0426498628518126],
+      "push_dev_vs_R": [0.05647845006729013, 0.04155197108751185, 0.0426498628518126],
+      "nonincreasing": false,
+      "final_at_most_0p10": true,
+      "verdict": "FAIL",
+      "gate_sha256": "83451b25799e6ffff6bec6457ecf99c1c97594cd07210f2615269b54462efc5a",
+      "decomposition_sha256": "d8415434c9eb12c0f2597679ea62902d8258a68ce39a08a9ec8f11196685df87",
+      "trajectory_sha256": "95ea55ae60c07bf9634d129b09caf0c592715ef191500c6781b03319136ab6c9",
+      "stdout_sha256": "60111391d2391a0987fa95719e32402181f637a02a2a04276c59b5fa7d1aa66a",
+      "stderr_sha256": "7dc075b7c29a79d2501cce8fef28136b11b6ab9923f037c10758f6bab2c3e4b5"
+    },
+    {
+      "member": 4,
+      "end_to_end_achieved_over_required": [0.8747948243043495, 0.8258472516196523, 0.8197920194833943],
+      "absolute_deviation_from_one": [0.12520517569565048, 0.17415274838034767, 0.1802079805166057],
+      "push_dev_vs_R": [-0.12520517569565048, -0.17415274838034767, -0.1802079805166058],
+      "nonincreasing": false,
+      "final_at_most_0p10": false,
+      "verdict": "FAIL",
+      "gate_sha256": "534889ae8f53677cc12ab71d56b2d1aada31168ecc61f6329b4b6241097047a1",
+      "decomposition_sha256": "f6d34c73b9e196cc0152679e2fe23f77c60de4cccfaf62ba2776a14877716e80",
+      "trajectory_sha256": "4270b35255517c6fdf4afb734284d48992586090bc70a4e2b1dcad26715ff6b8",
+      "stdout_sha256": "8387d7bc3bd4c707289f2e7f11bc980ea3b9c4a754e6044a8ed102b11bfdd143",
+      "stderr_sha256": "ad1536f995ef1d5f0f19e29a99ffeb4474b91dd2e42e6fdc617f97cae220cce6"
+    },
+    {
+      "member": 5,
+      "end_to_end_achieved_over_required": [0.7614411106789466, 0.7711289449253758, 0.7534768706675813],
+      "absolute_deviation_from_one": [0.2385588893210534, 0.22887105507462424, 0.2465231293324187],
+      "push_dev_vs_R": [-0.2385588893210534, -0.22887105507462424, -0.2465231293324187],
+      "nonincreasing": false,
+      "final_at_most_0p10": false,
+      "verdict": "FAIL",
+      "gate_sha256": "c5d5f69bcc8f21edbf96eeca5c560743d86793aed2857350789659de94487020",
+      "decomposition_sha256": "3c69e71bb641f068752fc0992599cebda91a5e756f7616f51989a238c26e0652",
+      "trajectory_sha256": "6f6ddfa72825e80799d94adcb3c8e3a5fed521e57f36f0c94b51b5f9dbf3669d",
+      "stdout_sha256": "3c001278f637cd493d6ddb32813d015f8faef590d26e6ebec8ba8081109cb1b4",
+      "stderr_sha256": "81d2200e0e4fcd278a222d14984f194bc1e8b1e0640f16d50b1ebeae3751279c"
+    }
+  ],
+  "family_verdict": "BLOCK_GATE6_ML_ENSEMBLE",
+  "passing_members": [1],
+  "failing_members": [2, 3, 4, 5],
+  "prohibitions_applied": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+  ],
+  "gate4_user_disposition_remains_independent": true,
+  "reset_credits_consumed": 0,
+  "worker_uuids_replaced": 0
+}

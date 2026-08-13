@@ -4,18 +4,15 @@
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
-**Gate 6 PET ML ensemble is measured, not promoted; the no-training convergence control is
-predeclared.** Array `56834281_[1-5]` completed `0:0` in all five predeclared members with all
-persisted realized seed pairs confirmed. The literal comparison passes, but does not establish that
-Gate 6 resolved estimator variation. The preserved PET owner returned
-`BLOCK_FOR_PREDECLARED_CONTROL`: keep the nominal central, construct no `C_ML`, and apply one uniform
-numeric iteration-trajectory rule to all five members. Every isolated three-iteration checkpoint
-inventory is complete; execution is defined in
-`../docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md`. Gate 4's estimator-arm
-disposition remains an independent user decision. Canonical numbers: `../VALIDATION_LEDGER.md`;
-exact result receipt: `../docs/orchestration/state/gate6-ml-ensemble-result-56834281.json`.
-Array `56847059_[1-5]` is the sole trajectory writer and is batch-queued with terminal and one-hour
-queue-latency watches; no interactive duplicate exists.
+**Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
+`56847059_[1-5]` completed `0:0` in all five members with Gate A/B, reproduction, code pins, and the
+archived target hash all verified. Applying only numeric `end_to_end_achieved_over_required`, member 1
+passes; members 2–5 fail the required non-increasing absolute-deviation trajectory, and members 2, 4,
+and 5 also end above `0.10`. The five-member family therefore fails as a unit. No passing subset is
+selected, no `C_ML` is constructed, the nominal central is unchanged, Leg 2 is not started, and no
+unchanged retry is allowed. Gate 4's estimator-arm disposition remains an independent user decision.
+Canonical numbers: `../VALIDATION_LEDGER.md`; exact receipt:
+`../docs/orchestration/state/gate6-member-trajectories-result-56847059.json`.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
