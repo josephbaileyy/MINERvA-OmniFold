@@ -13,9 +13,13 @@ the note is not edited before the full-event PET and adopted UQ products are quo
 
 ## 1. The position, in one paragraph
 
-**We implement the Rodrigues 2016 convention** (arXiv:1511.05944), deliberately and uniformly:
-available energy is the summed kinetic energy of protons and charged pions plus the summed total
-energy of neutral pions, over a **closed** five-species list. We do not claim to implement "the
+**We implement the Rodrigues 2016 convention (arXiv:1511.05944) MINUS e±**, uniformly: available energy
+is the summed kinetic energy of protons and charged pions plus the summed total energy of neutral
+pions. **Rodrigues' closed list is five species — p, π±, π⁰, e, γ — and we implement four of them.**
+The e± exclusion is **inherited, not chosen**: it follows `kEAvail`'s `abs(pdg)==11||13`
+"don't count the charged lepton" branch, written for a νe analysis in which the primary electron **is**
+the charged lepton. Nothing in this repo establishes it as a deliberate decision, and this document does
+not claim it was one. We do not claim to implement "the
 published definition of E_avail," because **there is no single published definition** — Rodrigues 2016
 and Ascencio 2022 (arXiv:2110.13372) differ from each other, and the difference is measurable in our
 sample. Any statement that this analysis "matches the published E_avail definition" without naming a
@@ -24,7 +28,9 @@ paper is a claim we cannot support and should not be made.
 The charged-pion half of the convention is **settled and matches the νe reference**: arXiv:2312.16631
 Eq. 4 reads `E_avail = Σ_p T_p + Σ_π± T_π± + Σ_π0 E_π0` — kinetic for protons and charged pions, total
 for π⁰. Ours agrees. (`minerva-ml` uses total energy for charged pions, which adds ~140 MeV/pion; that
-is a defect in that code, not in ours.)
+is a defect in that code, not in ours. **The same comparison runs the other way on e±, where
+`minerva-ml` matches the νμ paper and we do not** — see §2 and §5(6). Both halves are stated here so
+neither is read alone.)
 
 ---
 
@@ -79,7 +85,11 @@ MeV is meant. The difference is **4.57 MeV per charged pion**.
 | events changing truth bin | **439 / 65,911 = 0.666%** |
 | worst single bin | **+1.049%**, in bin 1 |
 
-**Materiality against the adopted covariance** (13.69% median per-bin, `VALIDATION_LEDGER.md:1043`) is
+**Materiality against the adopted covariance** (13.69% median per-bin, `VALIDATION_LEDGER.md` — **cite
+it by the string `adopted median per-bin fraction **13.69%**`, not by line number**: it was at `:1043`
+when first cited at 02:34Z and at `:1116` by 17:53Z the same day, because Gate 5 appended 73 lines above
+it, and `:1043` now lands inside a heading reading *"CANDIDATE; final lateral replacement pending"* —
+a citation labelled "adopted" resolving into a candidate entry, `BEN-219`) is
 **bracketed `[7.7%, 297%]`**. Both ends re-derive from the same two operands: `1.049 / 13.69 = 7.66%`,
 and `7.66% × √1507 = 297%` for the ~1507 5D bins per E_avail slice. **The upper end IS the lower times
 √1507** — it is one assumption varied, not two independently asserted endpoints. That is a bracket, not
@@ -96,7 +106,16 @@ rerun.
 **`135` is NOT a compatibility constraint with either comparator.** Neither Rodrigues 2016 nor
 Ascencio 2022 states any numeric mass, and `kEAvail` did not exist until a month after Ascencio v1. The
 `135` traces to a 2021-07-28 import "from the MINERvA 101 tutorial" — **the same ancestor as our own
-line**. It is one inherited copy in two places, not two independent choices.
+line**. It is one inherited copy in two places, not two independent choices. **Tense matters here:
+public `GENIEXSecExtract` holds no `135` today** — both `mass_pion` declarations read `139.57`, and the
+only `0.135` is a correctly-named `Mpi0`. Ours is the copy that still carries it.
+
+**The positive evidence that `135` is wrong, stated at its actual strength.** Writing a MINERvA
+low-recoil E_avail from scratch, `abbeywaldron` chose `139.57` unprompted and first try, then went back
+and labelled an inherited `135` elsewhere a bug — *"this should be the charged pion mass not the neutral
+pion mass I think."* That is the whole of the affirmative case: **single author, hedged, never
+reviewed.** It is real evidence and it is weak evidence, and it should be quoted with the hedge intact
+rather than paraphrased into confidence.
 
 **Correcting it is a five-site change or nothing:** `CVUniverse.h:364` plus four generator converters
 that bind to our value by comment. They must move in one commit, or the four-generator comparison
@@ -141,6 +160,12 @@ Stated explicitly, because this is the section the rest of the document exists t
    recoil"*, by an author of arXiv:2312.16631 — **the same paper `CVUniverse.h:163` cites as our
    authority.** Our cited authority and our putative independent reference are one analysis.
 5. **Not** that the Ascencio cross-check independently validates our E_avail axis. See §4.
+6. **Not** that we implement any published convention *completely*. **We exclude e±, and e± is the one
+   species on which we differ from BOTH published conventions** — Rodrigues' closed list includes
+   electrons, and Ascencio's open list covers them too. On this species `minerva-ml` matches the νμ
+   paper and **we do not**. The exclusion is **inherited** from a νe-analysis charged-lepton branch, not
+   established as a choice. This item exists because §5 is the list a reader trusts as *complete*: an
+   against-us finding present in §2 but absent here is worse than one stated nowhere.
 
 ---
 
