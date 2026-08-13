@@ -127,6 +127,24 @@ not reach the readers who needed it.** An indexed long-form finding is necessary
 sufficient. Worth weighing against the standing preference for the executable form of a rule: a check
 costs zero and cannot be skipped, whereas this document was skipped twice.
 
+**CLOSED END-TO-END 2026-08-13T08:10:08Z, and this is the strongest available refutation.** The earlier
+evidence showed `wakerctl` *ticks* and *scans*. The Gate 6 watch has now completed the full path on a
+real event: `watch-armed` 06:04:04Z (login11) -> `event-emitted` 08:10:08Z (login16), payload
+`overall: COMPLETE` with all five tasks `0:0` read from `sacct` -> `invoked`. Emitted from a **third**
+login node, two hours after arming, by the cron net alone. **A subsystem that arms, evaluates, fires,
+claims and dispatches is not dead in any sense of the word**, and the claim that it had been dead since
+2026-07-20 is now refuted by operation rather than by inspection.
+
+**AND THE FIRED EVENT EXPOSES A GAP IN MY OWN GUARD, which is worth more than the confirmation.** The
+event records `head_at_event: 683bdcc` — the **cluster** HEAD, 309 commits behind. The resume prompt I
+armed tells the resumed thread to *"look for a Gate 6 receipt/RUN_LOG entry landed after the array
+terminal time and do not duplicate it."* **That receipt (`92551a4`) is on `origin/main` and is NOT in
+the cluster checkout**, which is deliberately unsynced as policy rather than as a technical limit. So a
+resumed thread reading the cluster tree would look for the guard's evidence in the one tree that cannot
+contain it, conclude nothing had been done, and duplicate the reconciliation. **A guard that names an
+artifact must also name the tree the artifact lives in** — on a repo with a deliberate fork, "look for
+a commit" is underspecified, and the failure is silent in the direction of doing the work twice.
+
 **A real caveat on the live-and-well verdict, which is not a reprieve:** the cluster checkout is 309
 commits behind at `683bdcc`, so it runs the pre-2026-08-11 `wakerctl.py` whose `scan()` has no
 per-watch `try/except`. One malformed watch aborts the loop and skips dispatch silently, and

@@ -1400,3 +1400,65 @@ in one night, three of them in this file's neighbours.
 right aggregation** — and the invariant it replaced the bad check with (`sorted(diag)` identical) is the
 one that actually demonstrates why the trace cannot see a permutation, which is the claim `V27` rested on.
 
+### V29 — advisory on Gate 6: **13.9x is not quotable as a margin**, for two reasons, and the second is not about precision
+
+A's floor correction is right and the verdict is unchanged: the spread exceeds **both** floors, so the
+ensemble resolves estimator variation either way. Only the margin moves, `1792x` → `13.94x`. What follows
+is about whether that number can be quoted, not whether the branch passes.
+
+**REASON 1 — `n=1` is a factor-of-a-few estimate, and it is STRUCTURAL rather than a shortcut.**
+The across-process floor is a single `|difference|` draw. For `d = x₁ − x₂` with sd `s`, `|d|` has
+`E ≈ 1.13 s` and a spread of roughly `0.76 E`, so one draw locates the floor to within a factor of a few:
+
+    true floor = 1.5x the observed draw  ->  margin 9.3x
+                 2x                      ->  margin 7.0x
+                 3x                      ->  margin 4.6x
+
+All still exceed. **But `13.9` is a point estimate carrying no dispersion, and it should not be written as
+if it were a measurement.** And the reason `n=1` cannot be improved matters: **member 1 is the only member
+that replicates the nominal's seed policy**, so it is the only across-process control that exists in this
+ensemble. Members 2–5 confound seed variation with process variation. A did not take a shortcut; the
+design admits one pair. That makes the imprecision irreducible from existing artifacts and worth stating
+as such rather than apologising for.
+
+**REASON 2, AND IT IS THE ONE THAT DECIDES IT — the numerator is the population being routed to Joseph.**
+Member deviations are `0.101`, `0.180`, `0.247` against a nominal `0.0356`, and the spread is `0.2272`.
+`0.247 − 0.0356 = 0.2114` — **essentially the entire spread is set by the members that exceed
+`fold_forward_ratio_dev_max = 0.05`.** Those are exactly the members whose status — estimator variation or
+unconverged — A correctly declined to adjudicate and the mediator is routing to Joseph.
+
+**So `13.9x` is not merely imprecise, it is CONDITIONAL on an unresolved physics question.** If those
+members are unconverged, the numerator is inflated by the very population under question and the margin is
+overstated by an unknown amount. The margin and the routed question are not independent, and I do not
+think anyone had connected them.
+
+**Recommended output**, and it is not a hedge — it is the operand set: *"the member spread exceeds an
+across-process floor estimated from a single pair; the ratio is ~14x on that estimate, and both the floor's
+precision and the spread's composition are open."* Quote the two floors, the five member deviations, and
+the pair the floor came from. That is `BEN-077` — a reader who has the operands can see the conditionality;
+a reader given `13.9x` cannot.
+
+**This is my magnitude question in its own costume, and the answer is the reverse of last time.** At
+`1792x` nobody needed to name the error classes the margin could see, because none of them were that large.
+At `13.9x` two are: a single-draw floor fluctuation (bounded, survivable) and an inflated numerator
+(unbounded until the convergence question is answered). **A margin only shields against errors smaller
+than itself, and one of these is not yet sized.**
+
+### On member 1 as a control — what the driver hash does not cover
+
+The byte-identical driver hash between `54a8797` and `5fda80df` is a strong control **for code and seed
+policy**. It is not a control for the **execution environment**, and for an ML training that is precisely
+where across-process variation lives: GPU model, cuDNN algorithm selection, reduction order under atomics,
+thread counts, CUDA/TF library versions on the node. A code hash cannot see any of them.
+
+**This cuts both ways and that is why it should be stated rather than assumed.** If member 1 ran on
+different hardware from the nominal, the floor **absorbs** hardware variation and is inflated — making the
+margin conservative. If on identical hardware, the floor is cleaner but less representative of what the
+ensemble's spread actually samples. **The control's scope is unknown until someone says which.**
+
+**Cheap and checkable:** Gate 2's receipt schema already carries `execution.host`, `environment.platform`,
+`environment.tensorflow` and `environment.python`. Compare those four fields between the nominal's receipt
+and member 1's. If they match, the control is tight and should say so. If they differ, the floor is an
+across-*node* floor and should be labelled as one. If the member receipts do not record them, that is the
+finding.
+
