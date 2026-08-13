@@ -1,6 +1,6 @@
-# Two orchestrator instrument defects, 2026-08-12 — BEN-190 and BEN-191
+# Orchestrator instrument defects, 2026-08-12 — BEN-190 … BEN-196, plus a BEN-069 recurrence
 
-Long-form detail for two `BEN-19x` rows, split out because both exceeded 2 000 characters and a row that
+Long-form detail for the `BEN-19x` rows, split out because both exceeded 2 000 characters and a row that
 long **cannot merge**: git merges added lines cleanly and cannot merge two rewrites of one enormous line.
 `CONVENTION-lane-worktrees.md` says finishing that shortening is what makes conflicts resolvable rather
 than merely visible — and measured just now, **only 8 of 125 rows in `FINDINGS.md` exceed 600 characters,
@@ -248,3 +248,102 @@ before committing rather than after. **B wrote a 3283-character row an hour afte
 established, having read the compressed rows above it; I wrote an over-length row inside the act of
 enforcing the limit.** BEN-105's shape, and the interval between knowing a rule and breaking it is now
 measured in seconds rather than hours. The compressed row is 486 characters.
+
+## BEN-195 — a deferred item whose payload was never written, and why it is not the diagnosis it looks like
+
+`OI-47` read: *change `bgIsolation` at RESPAWN time, not by editing a settings key, and verify by
+re-reading the new jobs' `state.json`.* The fleet died to an unrelated binary-upgrade `EACCES`, the
+workers were respawned, and all four `state.json` files still carry `bgIsolation: none`.
+
+**The mediator's diagnosis was reasonable and is not what happened.** It read the outcome as *"a deferred
+item whose trigger is an event nobody owns is not deferred; it is dropped"* — a real failure shape, and
+the natural inference from "the restart happened and nothing changed." Measured instead:
+
+| observation | value |
+|---|---|
+| daemon died | `22:10:48.406Z`, `upgrade self-respawn failed to spawn: EACCES` |
+| old workers declared dead | `23:41:17.799Z` — `bg adopt: adopted=0 respawned=0 dead=4` |
+| fresh hosts spawned | `23:41:17.809Z` … `23:41:22.847Z`, five `bg spare spawned host` lines |
+| the three peer `state.json` rewritten | `23:41:18Z`, `23:41:20Z`, `23:41:23Z` — inside that window |
+| `bgIsolation` present in any settings file | **no** — `.claude-school/settings.json`, `.claude-school/remote-settings.json`, `.claude/settings.json` all lack it; the repo-level files do not exist |
+| where the string does appear | transcripts, `cache/changelog.md`, and this repo's own prose — never a settings file |
+
+**So the trigger fired, on time, and the spawn-time write executed correctly.** It wrote `none` because
+`none` is the default and no configured value existed anywhere for it to pick up. **Assigning an owner to
+the respawn event — the mediator's proposed remedy — would have changed nothing, because the owner would
+have had nothing to apply.**
+
+**The defect is one layer earlier and it is `BEN-190`'s residue.** BEN-190 recorded *"I edited the config
+directory this session does not read"* for `crossSessionInbound`, and the fix added that key to
+`.claude-school`. `bgIsolation` was **never written to either directory** — not to the wrong file, not to
+the right one. `OI-47` was then recorded as *deferred, pending a trigger*, when nothing was staged to
+change. **An item recorded as "waiting for a trigger" whose payload does not exist is indistinguishable
+from a trigger that never fired**, and the two have opposite remedies: one needs an owner, the other needs
+a value written. Diagnosing from the outcome picks between them by plausibility.
+
+**The receipt-ingredients reading of this (`BEN-077`):** the verdict *"the trigger was dropped"* shipped
+without the operand *"is the value actually configured?"* — an unfalsifiable verdict, and the operand was
+one `grep` away.
+
+**Re-scope, as `OI-47` now reads:** write the value first, verify it lands in the directory
+`CLAUDE_CONFIG_DIR` actually names, and only then defer on the trigger — with an owner.
+
+## BEN-196 — the denominator that certified the emptiness it was guarding
+
+`hpss_space_audit.sh` §4 prints digest coverage **specifically** so that an empty duplicate list cannot be
+read as "no duplicates" when the truth is "nothing was comparable." That safeguard is the campaign's
+standard answer to a vacuous negative, and it inverted.
+
+`hsi hashcreate` prints `<hex> (md5) /path`. `hsi hashlist` prints `<hex> md5 /path [hsi]` — **no
+parentheses.** The parser matched the parenthesised form, so against real output it emitted:
+
+```
+objects_with_stored_digest=0
+--- repeated digests (duplicate CANDIDATES -- flag only, never act)
+                                     <- empty
+```
+
+Read at face value: *HPSS stores no digests, so there is nothing to compare, so an empty duplicate list is
+expected.* The same output contained **277 stored md5s and one genuine duplicate pair**, recovered from
+the saved file in seconds once the parse was right.
+
+**The failure is not the regex — it is that the guard failed in the same direction as the thing it
+guarded.** A denominator printed alongside a result, and derived from the same parse as that result, is
+not an independent check; it is the result restated. Had coverage been derived from `du`'s file count
+(279) instead, `0 of 279` would have screamed. **A denominator only guards anything if it is computed
+independently of what it certifies.**
+
+**What made it recoverable without a second HPSS pass**, and both were deliberate:
+- every parse printed its **raw input** alongside its output, so the parse could be contradicted by the
+  evidence it came from — the one heuristic `BEN-077` credits with catching a defect nobody suspected;
+- a `--parse-file` mode now re-runs the parse over saved output with **zero** HPSS calls, which is
+  `BEN-026` applied to a parser rather than to a log: filter *reads* of the evidence, do not re-run the
+  thing that produced it.
+
+The corrected parse is under test — fixture carries **both** hsi formats, the literal lines that broke
+v1, a short-hex negative control, a label-lookalike, and a **regression check that fails if the parser
+ever matches only `(md5)` again**. 48/48 under macOS bash 3.2 and cluster bash 4.4.23, and the committed
+function reproduces the ad-hoc answer on the real file exactly.
+
+## BEN-069, third instance — recorded here rather than on its own row, which belongs to another lane
+
+`BEN-069` reads: *a timestamp is not a measurement unless the command that produced it was pinned to a
+timezone — two lanes made this error independently on the same day, and both were caught by luck rather
+than by process.*
+
+**Third instance, mine, today.** I read the four `state.json` mtimes with
+`stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%SZ'` and labelled the output `Z`. **`stat -f %Sm` prints LOCAL time**,
+and the `Z` was a literal in my own format string. The four timestamps came back `19:41`–`19:52` against a
+daemon log whose crash was `22:10:48Z`, which reads as *the state files predate the crash, so the respawn
+never rewrote them* — the exact opposite of the truth. Corrected with `TZ=UTC stat`: `23:41`–`23:52`,
+matching the spawn lines to the second.
+
+**Caught by attention, not by process — for the third time.** I noticed only because "state written before
+the crash" contradicted "the workers were adopted after it," and a contradiction I happened to be holding
+in mind is not a mechanism. The finding's own closing clause predicted this instance. Two things follow:
+the fix is to pin the timezone in the *command* rather than to remember to, and **an offset-naive
+formatter that accepts a literal `Z` is a footgun the shell will never flag** — `date -u` refuses to be
+wrong in this way; `stat -f %Sm` will silently agree with any suffix you type.
+
+Not filed as a new id: `BEN-069` is another lane's row and the author-merges-own-row rule holds. **Routed
+to its owner to append the third instance**, indexed here so it is not lost in the meantime.
