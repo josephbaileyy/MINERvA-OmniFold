@@ -1,0 +1,84 @@
+{
+  "artifact": "opendata-input-integrity-20260813.json",
+  "lane": "C (PET)",
+  "purpose": "Discharge the hold in PREDECLARATION-20260813-gate5-coherent-replicas-n50.md:117 -- 'No replica is submitted until Session C reports on input integrity.' Gate 6's predeclaration carries the same clause.",
+  "verdict": "BRANCH (B): VALID OLDER PRODUCTION. The scratch copies are COMPLETE and were closed properly. They are NOT truncated.",
+  "consequence": "No re-download. Gates 1-4 consumed sound inputs. The Gate-5 and Gate-6 holds are discharged on this evidence.",
+
+  "WHY_THIS_FILE_EXISTS_LATE": {
+    "measured_utc": "2026-08-13T~06:20Z",
+    "committed_utc": "2026-08-13T~10:40Z",
+    "the_error": "I measured this and delivered it in a cross-session MESSAGE, never to an artifact. A successor orchestrator then grepped the tree, correctly found no answer recorded anywhere, and was about to spend a second job re-deriving it. Stopped by message, then written here.",
+    "class": "BEN-139, which is this lane's own finding: a result that reached a peer and not the record. A determination that exists only in chat is not discharged, because the next reader greps the tree.",
+    "rule": "The artifact is the deliverable. Reporting a measurement to a peer is not recording it."
+  },
+
+  "THE_QUESTION": {
+    "observed": "The scratch copies are ~24% SMALLER than the current open-data files of the same name, three of three checked, ratio 1.243-1.244.",
+    "why_it_mattered": "2d-unfolding/download_playlist.sh:26-27 pulls straight from the same path with a plain xrdcp and no skim step, so the copies were meant to be byte-identical. Exactly one of two things had to be true.",
+    "branch_A": "The downloads are INCOMPLETE -- upstream of Gate 1, Gate 3, the 240 products and everything built on them. Then the answer is to stop everything and re-download.",
+    "branch_B": "MINERvA reprocessed or re-released the open data. Then the analysis is sound, but re-downloading does not reproduce the chain."
+  },
+
+  "MEASUREMENT": {
+    "tool": "ROOT 6.28/12 via the root_6_28 conda env, activated BY FULL PREFIX through the conda-24.10.0 base that created it (activating by NAME fails since 2026-07-02; a bare unactivated python segfaults in cling)",
+    "read_only": true,
+    "nothing_downloaded_deleted_or_written_into_the_repo_tree": true,
+    "script": {
+      "path": "/pscratch/sd/j/josephrb/mnv-digest-work/root_probe2.py",
+      "sha256": "0db394158d32be38a3068795680ab51926aa5d5aa461fe6447a5bbb0a368ca2b"
+    },
+    "log": {
+      "path": "/pscratch/sd/j/josephrb/mnv-digest-work/opendata_probe.log",
+      "sha256": "9f53f10fcc5a594e67c879a0d37ef57b69aea4018beddbb498dfec0ebbbf39ae"
+    },
+    "directory": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A",
+    "files": [
+      {"run": "00110000", "physical_size": 17318473069, "get_end_logical": 17318473069,
+       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.6564011573791504,
+       "trees": {"MasterAnaDev": {"entries": 186439, "branches": 4102, "get_entry_last_rc": 77756},
+                 "Truth": {"entries": 544343, "branches": 515, "get_entry_last_rc": 36192},
+                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}},
+       "full_basket_scan": {"tree": "MasterAnaDev", "branch": "eventID", "entries_read": 186439,
+                            "entries_total": 186439, "read_failures": 0}},
+      {"run": "00110001", "physical_size": 17319286427, "get_end_logical": 17319286427,
+       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.654052495956421,
+       "trees": {"MasterAnaDev": {"entries": 186557, "branches": 4102, "get_entry_last_rc": 96188},
+                 "Truth": {"entries": 544499, "branches": 515, "get_entry_last_rc": 15632},
+                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}}},
+      {"run": "00110002", "physical_size": 17325481336, "get_end_logical": 17325481336,
+       "end_equals_size": true, "k_recovered": false, "compression_factor": 2.651597023010254,
+       "trees": {"MasterAnaDev": {"entries": 186366, "branches": 4102, "get_entry_last_rc": 83688},
+                 "Truth": {"entries": 544097, "branches": 515, "get_entry_last_rc": 14332},
+                 "Meta": {"entries": 1, "branches": 4, "get_entry_last_rc": 32}}}
+    ]
+  },
+
+  "WHY_THIS_EXCLUDES_A_THREE_INDEPENDENT_WAYS": {
+    "1_header_consistency_and_it_needs_no_scan": "ROOT writes the LOGICAL end-of-file into the file header. A truncated copy carries the ORIGINAL's header, so GetEND exceeds the bytes present, ROOT reports 'probably not closed, trying to recover' and sets kRecovered. Measured: GetEND == physical size EXACTLY on all three, kRecovered False on all three. The header's own end-of-file record lands on the last byte we have, so the file we have is the file its writer finished.",
+    "2_the_read_completes": "Every tree's last entry reads on all three, and a FULL basket scan of run00110000's MasterAnaDev read 186,439 of 186,439 entries with zero failures. A truncated ROOT file does not read its TTree to the end.",
+    "3_a_constant_ratio_is_impossible_under_truncation": "Three separate xrdcp invocations interrupted at three arbitrary points would give three arbitrary ratios. The measured ratios are 1.243 / 1.244 / 1.243 -- constant to four significant figures across independently transferred files. That is a SCHEMA-level difference, which is what a reprocessing that adds branches or columns looks like."
+  },
+
+  "THE_MARKER_QUESTION_WHICH_IS_WHY_A_LOOKED_PLAUSIBLE": {
+    "markers_found": 0,
+    "evidence": "ls -a on the Playlist1A MC directory returns only '.' and '..'. No .done markers of any kind.",
+    "file_dates": "every .root is dated Dec 18 2025",
+    "reading": "These predate the BEN-023 marker rule, so they were fetched under the OLD resume rule -- 'exists and has non-zero size' -- which is precisely the condition that would accept a partial download and then skip it forever. The suspicion was well founded.",
+    "resolution": "The artifact refutes it. ABSENCE OF A MARKER IS A STATEMENT ABOUT THE RESUME RULE, NOT ABOUT THE BYTES. This is the same shape as an UNSOURCEABLE verdict being a statement about the search."
+  },
+
+  "WHAT_IS_NOT_CLAIMED": [
+    "That the remote open-data files are what changed rather than ours. Nobody has read the remote headers; Perlmutter 401s and it needs the DTN. The local files being complete does not by itself identify WHAT the 24% is.",
+    "A positive identification of the reprocessing. That needs remote entry counts: if they MATCH these while the remote files are larger, the reprocessing added BRANCHES not events; if they differ, it added events too. Reading a root:// URL for GetEntries fetches only headers and a few baskets, so it is cheap -- it just needs DTN access.",
+    "Anything about playlists other than 1A, or about Data as opposed to MC. Three MC files of one playlist were checked."
+  ],
+
+  "SECOND_ORDER_CONSEQUENCE_FOR_HPSS": "Re-downloading does NOT reproduce the chain, so the 240 P3F products are not recoverable from current open data and the HPSS tape copy is the only path back to them. This independently supports the 10.48 TiB regeneration-chain argument for keeping them on tape -- the chain's INPUTS no longer exist upstream in the form that produced these products.",
+
+  "instrument_notes": [
+    "A task notification reported the launching ssh as 'failed with exit code 1' while the probe ran fine -- a wc -l racing the log's creation. The launcher's exit code said nothing about the job's state.",
+    "The probe's log sat at 2 lines for minutes while it was healthy: Python block-buffers redirected stdout on this filesystem (BEN-028). Liveness was judged by CPU time -- 2:23 CPU in 2:27 elapsed -- not by log growth.",
+    "My own waiter polled with `pgrep -f root_probe2`, which MATCHES ITS OWN COMMAND LINE, so it reported RUNNING forever and would never have fired. Caught because the matched process showed 00:01 elapsed with zero CPU where the real probe had been at 2:23. pgrep -f self-matching is the process-space version of a grep that finds itself."
+  ]
+}
