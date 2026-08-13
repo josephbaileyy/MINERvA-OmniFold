@@ -22,12 +22,25 @@ import numpy as np
 import ROOT
 import p4_lib as P
 
-REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND = f"{REPO}/nd-unfolding"
+# DE-ROOTED 2026-08-12 (OI-43). This was `REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"`, a
+# hardcoded absolute path, and Joseph's standing hold on the cluster P4 lane names exactly this line
+# as its release condition. `p4_lib` already resolves the root from its OWN location -- repair-5
+# (D4a) did it there, with the comment "which also makes it testable off-cluster" -- and this
+# module already imports p4_lib. So the resolver is not new; it simply was never applied here.
+# One more instance of a remedy bounded to the file that failed (BEN-162/163): p4_lib was de-rooted
+# and its importer was not, so `p4_evidence` silently disagreed with the containment anchor that
+# every guard in p4_lib checks against.
+REPO = P.REPO_ROOT; ND = P.ND_ROOT
 CEN5 = f"{ND}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 CEN4 = f"{ND}/products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
 UDIR = f"{ND}/active_universe_5d/standard/unfolds"
 MDIR = f"{ND}/active_universe_5d/standard/merged"
-EVID = f"{ND}/active_universe_5d/standard/evidence"; os.makedirs(EVID, exist_ok=True)
+EVID = f"{ND}/active_universe_5d/standard/evidence"
+# The `os.makedirs(EVID, exist_ok=True)` that used to sit on this line ran at IMPORT time, in a
+# module whose own docstring says "Read-only: opens nothing for write". Importing this file created
+# a directory -- under the hardcoded /pscratch path, off-cluster that either failed outright or
+# wrote somewhere unintended, which is why the suite reads this file as TEXT instead of importing
+# it. Creation now happens at the write site, so the read-only claim is true of the import.
 # REPAIR-7 item 1. These four bind CENTRAL products, which this chain reads and never
 # re-produces, so a frozen hash is the right instrument for them: if xsec_5d/4d changes
 # underneath us that IS a defect and must block.
@@ -423,6 +436,7 @@ man["verifier_crosscheck"] = {
 _PRODUCTS = (("p4_standard_manifest.json", man),
              ("p4_endpoint_evidence.json", {"endpoints": ep_ev}),
              ("p4_merged_audit.json", {"merged": maudit}))
+os.makedirs(EVID, exist_ok=True)   # at the write site, not at import (see the EVID definition)
 for _name, _payload in _PRODUCTS:
     json.dump(_payload, open(f"{EVID}/{_name}.PENDING", "w"), indent=2)
 

@@ -580,6 +580,77 @@ class Repair4EvidenceBindings(unittest.TestCase):
         joined = "\n".join(code)
         self.assertNotIn('man["config"]["full_phase_space_reported_grid"]', joined)
 
+    # ---- OI-43 / the cluster-P4 hold release condition ---------------------------------------
+    # Joseph's hold on the cluster P4 lane names p4_evidence.py's hardcoded root as its release
+    # condition, and asks for "a test that fails against the old form". These three are that test.
+    # POWER-TESTED, both directions, by reconstructing the old form in a temp copy: see
+    # test_derooting_test_actually_fails_against_the_old_form below, which is the negative control.
+
+    @staticmethod
+    def _executable_source(path):
+        """Source with comment lines removed. Required, not cosmetic: the de-rooting commit
+        deliberately QUOTES the old hardcoded path in a comment so the next reader knows what
+        changed, and a raw substring check would fire on that comment forever."""
+        return "\n".join(l for l in path.read_text().splitlines()
+                         if not l.lstrip().startswith("#"))
+
+    def test_evidence_has_no_hardcoded_absolute_root(self):
+        code = self._executable_source(self.ND / "p4_evidence.py")
+        self.assertNotIn("/pscratch/sd/j/josephrb", code)
+        self.assertNotIn('REPO = "/', code)
+
+    def test_evidence_root_is_the_same_anchor_p4_lib_guards_against(self):
+        """The defect this closes is DISAGREEMENT, not merely a literal. Every containment guard
+        in p4_lib checks against p4_lib.REPO_ROOT; p4_evidence carried its own independent root,
+        so the two could differ and no guard could see it."""
+        code = self._executable_source(self.ND / "p4_evidence.py")
+        self.assertIn("P.REPO_ROOT", code)
+        # behavioural, not textual: the resolver must actually land on THIS checkout
+        self.assertTrue((Path(P.REPO_ROOT) / "nd-unfolding" / "p4_evidence.py").is_file())
+        self.assertEqual(Path(P.REPO_ROOT).resolve(), self.ND.parent.resolve())
+        self.assertEqual(Path(P.ND_ROOT).resolve(), self.ND.resolve())
+
+    def test_evidence_does_not_create_directories_at_import_time(self):
+        """The module docstring claims "Read-only: opens nothing for write", and an import-time
+        os.makedirs falsified it. That side effect is also why this suite reads the file as text
+        instead of importing it, so it is load-bearing for the integration matrix (defect 6)."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        head = src.split("_PRODUCTS = (")[0]
+        head_code = "\n".join(l for l in head.splitlines() if not l.lstrip().startswith("#"))
+        self.assertNotIn("os.makedirs", head_code)
+        # and it still happens before the writes, or the stage breaks on a fresh checkout
+        tail_code = "\n".join(l for l in src.split("_PRODUCTS = (")[1].splitlines()
+                              if not l.lstrip().startswith("#"))
+        self.assertIn("os.makedirs(EVID", tail_code)
+        self.assertLess(tail_code.index("os.makedirs(EVID"), tail_code.index(".PENDING"))
+
+    def test_derooting_test_actually_fails_against_the_old_form(self):
+        """NEGATIVE CONTROL for the three tests above. A de-rooting test that was never run
+        against the rooted form is an assertion nobody has seen fail -- BEN-119. This rebuilds
+        the pre-fix source in a temp file and asserts each check flips."""
+        import tempfile
+        real = (self.ND / "p4_evidence.py").read_text()
+        old = real.replace(
+            "REPO = P.REPO_ROOT; ND = P.ND_ROOT",
+            'REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND = f"{REPO}/nd-unfolding"')
+        self.assertNotEqual(old, real, "anchor line not found -- this control has gone stale")
+        old = old.replace('EVID = f"{ND}/active_universe_5d/standard/evidence"',
+                          'EVID = f"{ND}/active_universe_5d/standard/evidence"; '
+                          'os.makedirs(EVID, exist_ok=True)', 1)
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "p4_evidence.py"
+            p.write_text(old)
+            code = self._executable_source(p)
+            # 1. the literal is back
+            self.assertIn("/pscratch/sd/j/josephrb", code)
+            # 2. the shared anchor is gone
+            self.assertNotIn("P.REPO_ROOT", code)
+            # 3. the import-time side effect is back
+            head = old.split("_PRODUCTS = (")[0]
+            head_code = "\n".join(l for l in head.splitlines()
+                                  if not l.lstrip().startswith("#"))
+            self.assertIn("os.makedirs", head_code)
+
     def test_zero_sel_is_actually_enforced(self):
         """D3d: ZERO_SEL was declared and referenced by no check -- the bin-migration-only
         claim for the three muon bands was documentation, not a gate."""

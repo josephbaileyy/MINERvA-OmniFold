@@ -5667,3 +5667,40 @@ adopted 5D GBDT covariance that `values.tex` quotes"*, so **zero is exactly righ
 row names**, and editing it would have converted a correct statement into a false one on the strength of my
 own recent work. This is the (cause × artifact) rule doing the job it was written for — and it is worth
 recording that the near-miss came from the discharger, who had the most reason to believe the number moved.
+
+## 2026-08-12 — repair-4 increment 1: `p4_evidence.py` de-rooted, which is the cluster-P4 hold's release condition
+
+Repair-4 authorized to this lane by Session A (A is migrating). Code/tests/receipts only, **no cluster
+P4 run** — Joseph's hold stands and names `p4_evidence.py`'s hardcoded root as its release condition.
+
+**Baseline measured first: the suite was 111 green while the verifier's verdict was BLOCK.** The reason
+is visible in the test file — it reads `p4_evidence.py` with `.read_text()` and asserts on source
+strings; it never imports it. It *cannot*: the module is straight-line top-level code that imports
+`ROOT` and, until now, called `os.makedirs` at import under a hardcoded `/pscratch` path. **That is
+BEN-119's axis problem at repo scale** — 111 assertions covering source text, none covering behaviour,
+which is exactly why defect 6 of the brief demands an integration matrix that *executes* the drivers
+and asserts the specific intended failure rather than a generic nonzero.
+
+Fixed: `REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"` → `REPO = P.REPO_ROOT; ND = P.ND_ROOT`.
+The resolver is **not new** — repair-5 (D4a) put it in `p4_lib` with the comment *"which also makes it
+testable off-cluster"*, and `p4_evidence` has imported `p4_lib` the whole time. **One more remedy
+bounded to the file that failed** (BEN-162/163): `p4_lib` was de-rooted, its importer was not. And the
+real defect is **disagreement**, not the literal — every containment guard in `p4_lib` checks against
+`p4_lib.REPO_ROOT` while this module carried its own, so the two could differ with no guard able to see
+it. Also moved the import-time `os.makedirs` to the write site, ordered before the first `.PENDING`,
+so the docstring's read-only claim is true of the import.
+
+**Power-tested, both directions, and the negative control is committed rather than described.** Suite
+111 → **115**. Then the pre-fix form was reconstructed in the real file and the three de-rooting tests
+each failed on their own assertion — `/pscratch` present, `P.REPO_ROOT` absent, import-time `makedirs`
+back — after which the file was restored and re-verified by sha256 (`70604e73…`) and a full green run.
+A fourth test rebuilds the old form in a temp copy so the control runs on every future invocation, and
+it asserts its own anchor line still exists, so it fails loudly if it goes stale rather than passing
+vacuously. One subtlety the tests had to handle: the de-rooting commit deliberately **quotes** the old
+path in a comment, so the checks strip comment lines — a raw substring check would fire forever on the
+explanation of its own fix.
+
+Remaining: defects 1–6 of `followup-agent-A-standard-05.md`, unworked since 2026-08-07. Two
+preconditions carried forward for whoever runs the chain: **stage 3 must not run on pre-G-1 code** (it
+writes ten receipts with no `bkg_mode`, the launcher skips endpoints that already have one, deletions
+are frozen → unfixable provenance regression) and **G-1 is code-only, not on the cluster checkout**.
