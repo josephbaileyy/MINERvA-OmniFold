@@ -78,6 +78,22 @@ Last updated 2026-07-16.
   Also gated on the binding row above, and separately blocked upstream — the 4D unified throw wants a
   3D universe omnifile that is missing (`nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, "Pending
   decisions / gates" item 3).
+  **RE-VERIFIED 2026-08-12, and this row is WAITING-USER, not unstarted work.** The blocker was checked
+  rather than read: `3d-unfolding/runEventLoopOmniFold_MEFHC_3D_universes_full.root` is absent **both in
+  the local checkout and on `/pscratch/sd/j/josephrb/MINERvA-OmniFold`**. The upstream item names three
+  options and they are a **decision, not a computation** — (a) regen the 3D universe event loops, (b)
+  marginalize the 5D adopted product to 4D, (c) accept the sweep-based 4D combined without unified-throw
+  inflation. Recorded here because this row previously read as a compute gate, and an agent picking it up
+  as "unblocked" cannot make progress on it: **it was picked up that way on 2026-08-12 and the reading
+  survived until the file was actually stat-ed.**
+  Two things the decision needs that live elsewhere: **(a) is mechanically available** —
+  `3d-unfolding/sbatch_evloop_array_3d_universes_full.sh` and `sbatch_hadd_3d_universes_full.sh` both
+  exist on the cluster — but scratch is at **79.7% of 20 TiB** and HPSS is over quota (`OI-51`…`OI-54`),
+  so a full 3D universe regeneration is a storage decision as much as a compute one. **And (b) has a
+  measured problem**: 5D→4D marginal vs independent 4D disagree at **median 4.43%** against a 3% per-bin
+  gate, while integrals agree to 0.56%
+  ([`orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md`](orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md)).
+  Marginalizing is the cheap option and it is the one with a known failure against a stated bar.
 - **(E_avail,W) generator SIGNIFICANCES** (#6, #8) — still gated; **the RATIOS are now closed and
   the two must not be conflated.** The corner `data/gen` ratios are ratios of central-value
   integrals with no covariance in them, and all four landed 2026-08-11 (1.535 / 1.579 / 1.563 /
@@ -85,9 +101,15 @@ Last updated 2026-07-16.
   **significances** are covariance-dependent and remain gated on the binding row above.
   Two distinct preconditions, both open: **no `(E_avail,W)` covariance has been rebuilt** since either
   fix landed (`KNOWN_ISSUES.md:357`), and the sixth J28 flux site lives in this same script,
-  code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`). The GiBUU corner ratio
-  is separately UNCOMPUTED — recover by re-running `make_figures.sh:55` (it already passes
-  `--gen GiBUU`) and reading the `hiE-hiW corner … data/gen=` stdout line.
+  code-fixed 2026-08-06 with **no number produced** (`KNOWN_ISSUES.md:338-349`).
+  ~~The GiBUU corner ratio is separately UNCOMPUTED — recover by re-running `make_figures.sh:55`.~~
+  **STRUCK 2026-08-12 — this bullet contradicted itself.** Three lines above, the same bullet records
+  GiBUU's corner ratio as **landed at 1.609** on 2026-08-11, so the recovery instruction told the reader
+  to recompute a number the bullet already carries. Exactly the shape this section's own header warns
+  about — *a gate list that names satisfied gates trains its reader to skip the list* — and here the
+  satisfied gate and its own closure sat **eight lines apart inside one bullet**, which is why neither
+  the 2026-08-11 re-verification nor the closure edit caught it: both read the half they came for.
+  **The two preconditions above are untouched and remain the reason the SIGNIFICANCES are gated.**
 - **Full-event PET** any result (#14): gated on KNOWN_ISSUES #19 — **verdict stands, and the reason is
   sharpened 2026-08-11 by the PET lane because "no products exist" has been read one level too broadly.**
   No full-event PET *product* exists (weights that are canonical, cross section, covariance) and that is
