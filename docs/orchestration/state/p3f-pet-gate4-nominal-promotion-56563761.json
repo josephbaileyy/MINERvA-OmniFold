@@ -1,0 +1,98 @@
+{
+  "receipt_schema": "p3f-pet-gate4-nominal-promotion-v1",
+  "verdict": "PROMOTED",
+  "promoted_at_utc": "2026-08-13T02:52:32Z",
+  "actor": "Session A (orchestrator)",
+  "promoted_artifact": {
+    "job": "56563761",
+    "arm": "annealed (fit-time-anneal-after-iteration-0)",
+    "weights": "nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+    "size_bytes": 10001677,
+    "done_marker_utc": "2026-08-10T18:00:43Z",
+    "completion_receipt": "docs/orchestration/state/annealed-nominal-complete-56563761.json"
+  },
+  "authority": {
+    "go_issued_by": "personal-orchestrator (mediator), under Joseph's delegation of 2026-08-13",
+    "joseph_verbatim_delegating_the_go": "if all you need is a go command, feel free to authorize it yourself",
+    "DO_NOT_RECORD_AS": "Joseph authorized the promotion. He did NOT. He delegated the go, and separately made the PHYSICS decision (the annealed arm). Two acts, two parties.",
+    "physics_decision": "docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md",
+    "joseph_verbatim_physics_decision": "Okay do the annealed"
+  },
+  "ordering_precondition_satisfied": {
+    "rule": "The supersession of the predeclared-reproduction verdict had to land BEFORE this promotion, so that no interval exists in which the record reads 'promoted while a live FINDING_CODE_PATHS_DISAGREE stood'.",
+    "supersede_commit": "156d1d6",
+    "main_at_supersede": "c1cbcfc",
+    "this_receipt_written_against": "c1cbcfcb8c059d33852385ec4bb79c7203d95602",
+    "imposed_by": "Session A; not present in the authorizing instruction. Same shape as the HPSS copy-verify-then-remove ordering."
+  },
+  "evidence": {
+    "retraction": "535668d (2026-08-11 05:22:53 -0400) 'RETRACTED: the code-path finding. Production sits inside the diagnostic's own noise'",
+    "known_issues": "KNOWN_ISSUES.md:52 entry 41 | TRAP | RETRACTED",
+    "diagnostic_three_run_distribution": {
+      "runs": {
+        "56534117": -0.011724321,
+        "56586368": -0.007386682,
+        "56611394": -0.052174875
+      },
+      "mean": -0.023761959,
+      "sd": 0.024701703,
+      "range": 0.044788193,
+      "n": 3,
+      "source": "PREDECLARATION-20260810-designA-diagnostic-reproduction.md RESULT"
+    },
+    "window_arithmetic_session_C": {
+      "window": [
+        -0.021724,
+        -0.001724
+      ],
+      "width": 0.02,
+      "centre_is_the_56534117_draw": true,
+      "range_over_width": 2.239,
+      "realized_containment": "1 of the diagnostic's own 3 runs (56611394) falls OUTSIDE the window built from another",
+      "production_sd_from_diagnostic_mean": 0.4796,
+      "worst_diagnostic_run_sd": 1.1503,
+      "note": "Load-bearing because the range ratio and realized containment do not depend on the n=3 sd."
+    },
+    "two_path_agreement_session_A": {
+      "production_56563761_push": 1.0840529523112135,
+      "trajectory_56818470_push_final": 1.0840529523260116,
+      "abs_difference": 1.48e-11,
+      "note": "Different code paths, same checkpoints -- the comparison CODE_PATHS_DISAGREE names. Shows the production family is stable to machine precision, so the instability is entirely on the diagnostic side."
+    },
+    "trajectory_verdict": "56818470 returned Branch REPAIRED on its predeclared criterion; gates bit-exact; domain guard cleared at all six iterations."
+  },
+  "invariants_held": {
+    "promotion_is_documentary": "No promotion script exists and 'artifact_promoted' appears in ZERO Python or shell files -- verified. Nothing was moved, copied, or overwritten.",
+    "baseline_untouched": {
+      "path": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+      "size_bytes": 10127331,
+      "why": "This 2026-08-08 artifact is what the predeclaration, CLM-012's measured values and the whole shape-validation chain are measured against. Job 56563092 was correctly REFUSED for trying to overwrite it. The annealed artifact is a different file in a different directory."
+    }
+  },
+  "record_authority_and_a_known_divergence": {
+    "authoritative_copy": "the git repository",
+    "cluster_copy_is_STALE": "docs/orchestration/state/annealed-nominal-complete-56563761.json on /pscratch is the PRE-supersede file, sha256 81849396611856a1..., versus the git record fc4fcbe863963b22...",
+    "consequence": "None mechanical, because 'artifact_promoted' is read by no code. But a session reading that receipt ON THE CLUSTER sees the pre-promotion state. Stated so it is not discovered later."
+  },
+  "scope_PROMOTED_IS_NOT_PROCEED": {
+    "authorized_by_this": "Recording 56563761 as the canonical PET full-event nominal.",
+    "NOT_authorized": [
+      "anything in Gates 5-9",
+      "extraction",
+      "cross section",
+      "any recovery run",
+      "any engine edit",
+      "Branch C (stays closed)",
+      "any cluster P4 run",
+      "any rerun"
+    ],
+    "next_step_requires": "A FRESH authorization from Joseph. 'Promoted' is not 'proceed'."
+  },
+  "explicitly_not_claimed": [
+    "That 0.546853 is inflated. 56818470 measured fold-forward sign behaviour, not recovery.",
+    "That the 56534117 draw is an outlier -- the configuration has no stable point value, so there is nothing to be an outlier from.",
+    "That recovery has been evaluated at the promoted configuration: recovery_evaluated remains False.",
+    "That OI-23 is discharged. Configuration equivalence is established (12 shared dimensions plus LR policy across a float32 boundary); the closure artifact declares quotable: False, which is the PET lane's question.",
+    "That this promotes past a live check. The check was refuted on evidence 2026-08-11 and superseded in the record at 156d1d6 before this receipt was written."
+  ]
+}
