@@ -6211,3 +6211,76 @@ step. No subset selected, no central moved, no `C_ML` constructed, no reset cred
 `gate6-floor-replication-56863958` stays armed and carries the full rule, both thresholds, all eight
 validity clauses, the four non-establishments and all five prohibitions, so a successor that reads only
 the event still cannot over-conclude.
+
+## 2026-08-13 — Gate 6 Leg X: readout fixed at iteration 2 by Joseph, predeclared and NOT submitted
+
+Lane B put a design question to Joseph after Leg F's first wave and he answered it: *"Sure, do iteration
+2."* So Leg X — the `{42,46}×{0,4}` 2×2 — keeps **one run per cell, no replication, read at iteration 2
+only.** The predeclaration, launcher and tests are committed **before either new cell exists and before
+anything is submitted**, which is the same discipline Leg F used and the reason its numbers are usable.
+
+**Why the restriction exists, on the face of the record, because a reader in six months will otherwise
+see an unreplicated 2×2 and assume nobody noticed.** Leg F measured the across-process spread at one
+fixed seed pair. As a fraction of the five-member spread it is **89.6%** at iteration 0, 49.4% at
+iteration 1 and **15.1%** at iteration 2. At iteration 0 process variation alone accounts for ~90% of
+what the five members showed, so a 2×2 read there would report seed main effects indistinguishable from
+process noise — **and would report them with the same apparent precision as a real result**, which is
+the failure mode rather than the absence of one. Iteration 2 is also where the Gate-6 band applies and
+where Leg F's verdict is defined. **The restriction is what makes the design sound, not a limitation of
+it.** The honest half: nothing licenses an iteration-0 or -1 claim from Leg X, and the launcher
+deliberately does **not** filter those values out of the receipt, because suppressing them would hide
+the caveat instead of stating it.
+
+**The reference scale is the whole reason the floor runs first, and it is now arithmetic rather than
+assertion.** Every cell is one draw, so `Var(E) = ¼(4σ²) = σ²` — each main effect and the interaction
+has standard error **exactly** the across-process `σ`, which a 2×2 with one run per cell cannot supply
+from inside itself. `σ̂ = F_sd[2]` from the completed Leg F carries **4 degrees of freedom**, so the
+threshold is `t_{0.975,4} = 2.7764451051977987 × σ̂` — the multiplier is fixed now and `σ̂` is substituted
+later. A gaussian `1.96` would be optimistic here and a round `2` unmotivated; both are the kind of
+number that gets chosen after seeing the data. **One effect carries the verdict** (the estimator-seed
+main effect, named before any value exists because it is the axis Joseph's question names); the
+subsample main effect and the interaction are reported only. A null is reported as
+`ESTIMATOR_INIT_EFFECT_NOT_RESOLVED_AT_MDE` **with its MDE published**, never as "no effect" — BEN-213
+is exactly this trap, and pre-registration is not power.
+
+**Sequencing is enforced by code, not by memory.** The launcher refuses to start unless a Leg F result
+receipt reports `n=5`, zero invalid draws, a terminal `FLOOR_*` verdict and a positive `F_sd[2]` — before
+`mkdir`, before the writer lock, before the module load, before any GPU work. Six rejection cases are
+tested (absent, `n<5`, an invalid draw at `n=5`, non-terminal verdict, missing `σ`, zero `σ`) plus an
+acceptance case as the negative control, without which all six would pass on a gate that refuses
+everything. The obvious workaround is named in the failure message. *"Floor first"* is Joseph's standing
+instruction and Lane B's own argument, and `CLAUDE.md` is explicit that the executable form of a rule
+beats the written one.
+
+**Clause 5 had to change shape from Leg F's, and the change is a positive control.** Leg F could demand
+`mc_indices` equality with member 1 because every draw shared `subsample_seed=0`. Leg X cannot: half its
+cells sit at `subsample_seed=4`, so equality is required **by level** — a cell must match the existing
+member at its own level and must **differ** from the other. Measured this turn on the two existing
+cells: **`1,999,982` of `2,000,000` rows differ**, so the axis the design exists to separate genuinely
+moves. A 2×2 whose subsample axis does not move is not a 2×2, and now that is a check rather than a hope.
+
+**Two defects this work found in itself.** The first version of the launcher ran `mkdir -p` **before**
+the sequencing gate; its own battery caught that the gate then never executed off-cluster at all, and
+that a refused submission would still have created an empty cell directory. The ordering is now asserted
+as `gate < mkdir < lock < module < train`. And mutation testing found **two gaps in my own battery**: a
+mutation replacing only the *first* of the launcher's two `t(4)` occurrences — the one in the failure
+message, leaving the arithmetic correct — passed a test that asserted mere presence; and a mutation
+deleting the operator-facing ineligibility notice passed a test that asserted the word `INELIGIBLE`,
+which also appears in a sidecar key. **A half-substituted constant and a word that appears twice are the
+same defect class**: presence is not the property you meant to assert. Both tests now count occurrences
+and anchor on the specific line. Final: 32 tests, 18/18 mutations caught, launcher byte-identical after.
+
+**Gate 6 is not unblocked and this is not a step toward `C_ML`.** All five prohibitions at `19585b7`
+remain live. Leg X answers seed-versus-estimator — a question the executed diagonal table
+`(42,0)…(46,4)` makes *unanswerable*, because estimator init and subsample are perfectly confounded
+there. `C_ML` needs a separate decision from Joseph that he has not made, and Gate 4's estimator-arm
+disposition blocks construction independently. No member is retrained: cells `(42,0)` and `(46,4)` are
+`member_1` and `member_5`, read-only, and both a range guard and an independent anti-diagonal guard
+refuse to train them. **Nothing is submitted** — the floor is not closed, and `shared_gpu_ss11` is
+saturated, so queueing Leg X early to gain position would compete with Lane B's own floor and with
+Gate 5. Authorization receipt:
+`docs/orchestration/state/gate6-legx-readout-authorization-20260813.json`.
+
+Floor progress at 15:24 PDT: task 4 **started** on `nid008332` — a different node from tasks 2 and 3,
+which both ran on `nid008264`, so the across-node coverage the first wave lacked is now being filled.
+Task 5 remains queued.
