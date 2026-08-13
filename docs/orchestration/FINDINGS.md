@@ -17,7 +17,31 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 > | D — verifier, successor | `160-189` |
 > | A — orchestrator | `190-199` **(EXHAUSTED — all ten filed)**, continued at `210-219` — **`219` IS THE LAST ONE LEFT** (210-218 filed 2026-08-13) |
 > | repo infrastructure (ledgers, read path, dispatch machinery) | `200-209` **(was `200+`; see below)** |
-> | *(unallocated)* | `220+` — lane A takes `220-229` next if `210-219` fills |
+> | *(unallocated)* | `220-229`, then `230-239`, … — **closed ten-blocks only, NEVER `220+`** (see the self-allocation rule below) |
+>
+> **SELF-ALLOCATION IS NOW GRANTED, 2026-08-13 — this supersedes the "routes to Joseph" sentence below.**
+> Joseph's decision, verbatim: *"Let the lanes self allocated BEN ids"* (recorded in `OI-62`'s row and in
+> `AUTHORIZATION-20260813-lane-a-worktree-and-ben-self-allocation.md`; relayed by
+> `personal-orchestrator`, so the receipt exists because `BEN-082(v)` requires a relayed authorization to be
+> committed before it is acted on).
+>
+> **THE MECHANISM, which the mediator supplied because the decision was Joseph's and the collision surface
+> is not:**
+>
+> 1. **Recompute the highest allocated id** (the snippet below) — never trust a narrated table.
+> 2. **Take the next free CLOSED ten-block.** `220-229`, never `220+`. An open-ended range is what
+>    `BEN-080` fired on, and the paragraph below is the record of it nearly firing a second time.
+> 3. **Write the block into THIS table in the same commit as your first filing into it.** The table is the
+>    allocator; **an unrecorded claim is not a claim.**
+> 4. **If your intended block was taken between recompute and write, recompute and take the next.** That is
+>    the rule working, not failing — session C did exactly this on `OI-59`/`60`/`61` on 2026-08-13.
+>
+> **What is NOT settled and must not be assumed from this:** `OI-*` ids have **no** block table and **no**
+> addressing convention (three parties independently wrote a sibling reference as the dead link
+> `[OI-NN](#)`), and the shared git identity is untouched — `OI-62(b)` and `(c)`, both still
+> `WAITING-USER`. **`BEN-214`'s check — "read the row's `BEN-*` id against the block table" — therefore
+> cannot fire on an `OI-*` id**, and lane A misattributed an `OI-57`/`OI-58` commit on exactly that gap
+> (`BEN-218`).
 >
 > **`200+` WAS CLOSED-ENDED AND HAD TO BE, 2026-08-13.** Lane A's `190-199` filled, and A was allocated
 > `210-219` (by `personal-orchestrator` under Joseph's standing grant, `205-209` deliberately left as a
