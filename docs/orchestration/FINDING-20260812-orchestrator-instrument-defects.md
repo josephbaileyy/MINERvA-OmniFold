@@ -347,3 +347,38 @@ wrong in this way; `stat -f %Sm` will silently agree with any suffix you type.
 
 Not filed as a new id: `BEN-069` is another lane's row and the author-merges-own-row rule holds. **Routed
 to its owner to append the third instance**, indexed here so it is not lost in the meantime.
+
+### BEN-196, second and third instances — both mine, both within two hours, both passing the wrong way
+
+**Second instance — the 240-of-240 scratch check.** Asked whether the archived P3F objects still exist on
+scratch (necessity evidence: a second copy of live data is a weaker case than a rescue from purge). The
+manifest entry key is `file`; my reader tried `rel`/`relpath`/`path`/`name` and fell through to
+`os.path.join(source, "")` — **the source directory** — so it stat'd one directory 240 times and printed
+**"SCRATCH SOURCES STILL PRESENT: 240 of 240"**. A clean pass, in the direction I expected, having tested
+nothing. The tell was uniformity: 6,881,280 B / 240 = exactly 28,672 B each, which is a directory inode,
+not a 14–20 GB ROOT file.
+
+Fixed with two independent witnesses rather than a corrected key: an assertion that **distinct paths built
+== entry count** (fails loudly), and a printed **count of distinct file sizes** (169 for the real set — one
+repeated path would give 1). The corrected check: 240 of 240 present, 1,134,998,230,283 B, exactly equal to
+the manifest's `local_size` sum.
+
+**Third instance — the self-test that could not report.** I added twelve cases for the ROW-OWNERS side
+table to `whose_row.py` and placed them **after** the loop that prints results and the loop that prints
+failures. They ran; nothing they produced was visible; the check count still said 58. **A failure would
+have flipped `SELF-TEST :: PASS` to `FAIL` while naming no failing case**, because the only line that
+prints failures had already executed. Caught by noticing the count did not move after adding twelve
+checks — a denominator, again, doing the work no verdict did.
+
+**What the three share is not a regex, a key, or an ordering.** In each one a predicate returned the
+answer I expected without touching the thing it claimed to test, and the *result* was indistinguishable
+from a real pass. The mediator's generalisation of the first instance is the right statement of the
+family and is worth more than the three fixes:
+
+> **A check's denominator must come from a different instrument than its numerator, or it is not a check.**
+
+Digest coverage parsed by the matcher it certifies; path-existence counted from a list the same fallback
+built; a test count printed before the tests ran. In all three, the numerator and the denominator came
+from one instrument, so the instrument's failure was invisible to both. `du`'s 279, the distinct-path
+assertion, and "the count did not move" are each an outside witness, and each of those is what actually
+caught it.

@@ -1,0 +1,52 @@
+# ROW OWNERS — side table keyed on row id. MACHINE FILE, read by whose_row.py.
+#
+# WHY A SIDE TABLE AND NOT A COLUMN. `CLAIMS.md`'s twelve rows are up to ~1,800 characters
+# (CLM-006); adding an owner column means rewriting every one of them, and a rewritten long
+# line is the one thing git cannot merge. A side table is a pure addition: zero row edits,
+# no freeze window, and it works identically for VALIDATION_LEDGER.md's 108 VL ids when
+# someone is ready to fill those in.
+#
+# WHY OWNERS ARE NOT DERIVABLE FROM THE ID. BEN-* ids come in per-lane blocks, so a block
+# table attributes them. CLM ids are SUBJECT-ALLOCATED — CLM-001 through CLM-012 were
+# assigned in the order claims arose, by whichever lane was looking at that physics — so no
+# arithmetic on the number yields a lane. Same for VL, which is written in arrival order by
+# whichever lane measured the number. That is why this file exists and why it is hand-filled.
+#
+# ---------------------------------------------------------------------------------------
+# `UNASSIGNED` IS NOT PERMISSION, AND THE GATE ENFORCES THAT.
+#
+# An id listed here with owner UNASSIGNED means "nobody has decided who owns this yet". It
+# does NOT mean "any lane may edit it". `whose_row.py` exits 2 (CANNOT CHECK) on it, never 0.
+# This is the same asymmetry that fixed the vacuous-pass family: a gate that examined a row
+# and found no decision has NOT verified anything, and must not answer with the same exit
+# code it uses for "verified yours".
+#
+# The twelve CLM assignments are deliberately left UNASSIGNED by Session A. Session A is the
+# orchestrator; routing is its job and adjudicating physics ownership is not. Filling these
+# in by judgement is precisely the error A instructed Session C against on the quoted set —
+# derive the set from the artifacts, do not decide it. Each row below is routed to the lane
+# that authored or verified the claim, per the row's own `independent verifier` field, and
+# that lane fills its own line. See CONVENTION-lane-worktrees.md's author-merges-own-row rule.
+# ---------------------------------------------------------------------------------------
+#
+# COLUMNS (tab-separated):
+#   id        the row id exactly as it appears in the source file's leading cell
+#   owner     a lane key matching FINDINGS.md's block table ("A", "B", "C", "D"), or
+#             UNASSIGNED. Free text after the lane letter is allowed and ignored.
+#   source    the file the id lives in; checked, so a typo'd id cannot sit here unnoticed
+#   basis     WHY this lane, in a few words. A bare assignment with no basis is a guess
+#             that has stopped looking like one.
+#
+id	owner	source	basis
+CLM-001	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): omnifold_nn PET event-feature path; verified codex V1 + claude-school V2
+CLM-002	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): step-1 leakage assertion + negative test in test_fullevent_fps.py
+CLM-003	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): omitted-muon stress closure, fe5v seeds 0/1
+CLM-004	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): self-consistency closure on xps2 tensors
+CLM-005	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): FPS census on xps2; independent recompute by codex
+CLM-006	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): full-event end-to-end estimator, predeclared gates
+CLM-007	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): measured_scalars fallback defect in fullevent_fps_dataloader.py
+CLM-008	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): P5B engineering debt F2/F3/F7/F8/F9/F10
+CLM-009	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): sieve reduction / negweight purity equivalence, note App. B.2
+CLM-010	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): niter 2->3 as regularization; the B1 rate-injection closure
+CLM-011	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): extended-FPS cross section must not be divided by reco efficiency
+CLM-012	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to D (verifier): D2's recovery >= 0.80 bar vs reco-acceptance limit
