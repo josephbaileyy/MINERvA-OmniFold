@@ -82,11 +82,60 @@ published quantity, **try every plausible operand and report which one worked**,
 best-named and stopping. The check costs nothing extra and it converts a silent mis-pick into a
 recorded fact.
 
+## THE COLLISION IS DORMANT ON THE NOMINAL PATH — which is why nobody found it
+
+Asked directly whether this touches the **adopted** `R`, the answer is **no**, and it is worth recording
+how that was established, because "three numbers and I don't know which is which" is exactly the state
+this defect creates.
+
+The three numbers in play:
+
+| value | what it is |
+|---|---|
+| `1.1240802949941018` | **the adopted Gate-2 / Gate-4 nominal `R`**, reproduced to 17 digits |
+| `1.1253110723074478` | **`replica_00`'s own `R`** — a different quantity, one replica's measured draw |
+| `1.124623` | **only ever a deliberate wrong-operand derivation** for `replica_00`; published nowhere |
+
+**Measured in the Gate-2 promoted receipt** (`G2_GATE2_TARGET_RUNTIME_RECEIPT.json`):
+
+```
+outer  sum_w_reco_pass_reco_raw              = 16780549.17866151
+nested sum_w_reco_pass_reco_raw              = 16780549.17866151
+nested sum_w_reco_pass_reco_replica_scaled   = 16780549.17866151
+```
+
+**All three are the same number, and all three re-derive `1.1240802949941018` exactly.** On the nominal
+path there is no replica scaling, so `_raw` and `_replica_scaled` *are* the same quantity — no choice of
+operand could have produced a wrong nominal `R`. `is_bootstrap_replica` is `False` there and
+`bootstrap_seed` is absent.
+
+So the field names were harmless for as long as nothing was scaled. **The replica path introduced a
+scaled variant and activated a latent naming defect** — the collision did not exist when the names were
+chosen, which is why no earlier review could have caught it.
+
+### The reading was turned into a falsifiable prediction and tested
+
+If the outer field is the replica-scaled sum and the nested `_raw` is genuinely unscaled, then the
+nested `_raw` must be **constant across every replica and equal to the nominal's value**, while the outer
+must vary. Measured over 20 replica receipts:
+
+- nested `_raw`: **1 distinct value across 20**, `= 16780549.17866151`, **equal to the nominal exactly**
+- outer: **20 distinct values across 20**, range `16771436.760178 … 16787860.591568`
+- replica `R`: 20 distinct, `1.1229782491625557 … 1.1253110723074478`, with the nominal
+  `1.1240802949941018` **strictly inside** and **equal to no replica's `R`**
+
+The nested `_raw` is a property of the MC (`sum(w_reco[pass_reco])` before any replica scaling) and is
+therefore identical across replicas and identical to the nominal — confirmed, not assumed.
+
 ## Status and scope
 
-- **No scientific impact.** `R` itself is correct: the producing code used the scaled sum, and
-  `R = 1.1253110723074478` is reproduced exactly from the outer field. The defect is in the *receipt's
-  vocabulary*, which is a reproducibility defect, not a numerical one.
+- **The adopted `R` is untouched.** `1.1240802949941018` re-derives identically from all three candidate
+  fields in the nominal receipt, so Gate 4's reproduction does not depend on resolving the collision.
+  **This is a re-derivation trap with no consequence for any quoted number.**
+- **No scientific impact on the replicas either.** Each replica's `R` is correct: the producing code used
+  the scaled sum, and `R = 1.1253110723074478` is reproduced exactly from the outer field for
+  `replica_00`. The defect is in the *receipt's vocabulary* — a reproducibility defect, not a numerical
+  one.
 - Verified across all 16 reconciled replicas: the outer field reproduces `R` in 16/16, the nested
   `_raw` in 0/16.
 - **Not repaired in the producing code**, which is under a live campaign's hash pins. The fix is a

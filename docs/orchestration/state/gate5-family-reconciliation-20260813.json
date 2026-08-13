@@ -84,6 +84,37 @@
       "max": 1.1253110723074478,
       "nominal_R": 1.1240802949941018,
       "reading": "The replica class ratios STRADDLE the nominal (1.12298 < 1.12408 < 1.12531), which is direct evidence the measured-side draw is live and centred near the nominal. Recorded as a diagnostic of the draw. It is NOT C_stat, which is a covariance over unfolded bins and requires 50/50.",
+      "DOES_BEN_150_TOUCH_THE_ADOPTED_R": {
+        "question_as_asked": "Three numbers were in circulation -- 1.1240802949941018 (Gate-2/Gate-4 adopted, reproduced to 17 digits), 1.1253110723074478 (quoted in the BEN-150 write-up), 1.124623 (the wrong-operand re-derivation) -- and it was not clear which was which or whether the duplicated-key defect reached a promoted result.",
+        "ANSWER": "NO. The adopted R is untouched, and BEN-150 is a re-derivation trap with no consequence for any quoted number.",
+        "1.1253110723074478_is": "replica_00's OWN R -- a different quantity from the nominal, being one replica's measured draw. Not the nominal carrying a defect.",
+        "1.124623_is": "only ever a deliberate wrong-operand derivation for replica_00, produced by this reconciliation to demonstrate the trap. It is published nowhere and is not any artifact's value.",
+        "MEASURED_the_nominal_receipt_has_NO_collision": {
+          "receipt": "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json",
+          "outer_sum_w_reco_pass_reco_raw": 16780549.17866151,
+          "nested_sum_w_reco_pass_reco_raw": 16780549.17866151,
+          "nested_sum_w_reco_pass_reco_replica_scaled": 16780549.17866151,
+          "all_three_identical": true,
+          "all_three_rederive_R_exactly": 1.1240802949941018,
+          "is_bootstrap_replica": false,
+          "why": "On the nominal path there is no replica scaling, so `_raw` and `_replica_scaled` ARE the same quantity. No choice of operand could have produced a wrong nominal R, so Gate 4's 17-digit reproduction does not depend on resolving the collision."
+        },
+        "THE_DEFECT_IS_DORMANT_ON_THE_NOMINAL_AND_ACTIVATES_ON_THE_REPLICA_PATH": "This is the part worth keeping. The field names were harmless for as long as nothing was scaled; the replica path introduced a scaled variant and activated a LATENT naming defect. The collision did not exist when the names were chosen, so no review of the nominal path could have caught it -- and a latent name collision is invisible until a second variant of the quantity appears.",
+        "THE_READING_WAS_TESTED_AS_A_FALSIFIABLE_PREDICTION_not_asserted": {
+          "prediction": "If the outer field is the replica-SCALED sum and the nested `_raw` is genuinely unscaled, the nested `_raw` must be CONSTANT across every replica and EQUAL to the nominal's value, while the outer must vary per replica.",
+          "measured_over": "20 replica target receipts",
+          "nested_raw_distinct_values": 1,
+          "nested_raw_value": 16780549.17866151,
+          "nested_raw_equals_nominal_exactly": true,
+          "outer_distinct_values": 20,
+          "outer_range": [16771436.760178, 16787860.591568],
+          "replica_R_distinct": 20,
+          "replica_R_range": [1.1229782491625557, 1.1253110723074478],
+          "nominal_strictly_inside_replica_range": true,
+          "any_replica_R_equals_nominal_R": false,
+          "verdict": "All three predictions confirmed. The nested `_raw` is a property of the MC -- sum(w_reco[pass_reco]) before any replica scaling -- so it is identical across replicas and identical to the nominal. Confirmed, not assumed."
+        }
+      },
       "target_build_wall_seconds": {"min": 2296.0, "max": 2439.2, "mean": 2348.3}
     }
   },
