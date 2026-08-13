@@ -219,8 +219,26 @@ Three items for that review, being the places this evidence is thinnest: (i) `b4
 load-bearing field, and the claim that every `die()` path precedes the receipt write is read from the
 receipt's own prose, not verified in `gate2_target_runtime.py`; (ii) `normalized_sum`
 1,124,080.5876521247 against target 1,124,080.2949941019 agree to 2.6e-7, which is agreement, not
-identity, and no governing tolerance was located; (iii) the `mc-only` path was read statically and
-never executed, so "imports no ROOT" is a code reading rather than a runtime measurement.
+identity, and no governing tolerance was located; and (iii) — **CLOSED 2026-08-13, against myself.**
+
+I wrote that the `mc-only` path was read statically and never executed. **It was executed.** The
+powered closure driver `pet/closure_powered_truth_reweight.py` (pinned `a45fae7c…` in job `56552326`'s
+receipt, resolving to that file at HEAD) calls `build_fullevent_loaders(..., bkg_mode="mc-only")` at
+`:262` and raises `SystemExit("[powered] mc-only returned a measured loader; wrong build path")` at
+`:264`. So D2's MC-only construction ran with a fail-closed assertion rather than being a code reading.
+Its completion is also runtime evidence for the no-ROOT claim: the job ran under `tensorflow/2.15.0`,
+and no interpreter on Perlmutter carries both ROOT and TensorFlow
+(`FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md`), so an `mc-only` build that
+imported ROOT could not have completed there.
+
+**Feature-schema equivalence is likewise PINNED rather than inferred** (`docs/OPEN_ITEMS.md` OI-23).
+Neither the closure nor the nominal driver passes `feature_names`/`truth_feature_names`, both drivers
+are pinned by digest, the engine `3a2022b0…` = `omnifold_nn/omnifold/omnifold.py` is the *same object*
+in both receipts, and the loader supplying the defaults is pinned `57f33f87…`. Those defaults —
+`DEFAULT_EVT_FEATURES` (13) and `DEFAULT_TRUTH_EVT_FEATURES` (2) — compare **equal** to this receipt's
+`configuration.features` and `configuration.truth_features`. So the target construction, the closure
+and the nominal all select the same 13/2 columns. This matters because feature selection is a choice
+made *over* an input: a shared NPZ digest bounds what could be selected and does not pin what was.
 
 **Naming trap for any reviewer:** `D1`/`D2` in this file and in
 `DECISION-20260804-B4-STEP3-RECEIPTS.md` are the B-4 weight repair and the RESTORE Step-3 target
