@@ -1079,6 +1079,7 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
                             enforce_fps_edges=True, data_scalars_npz=None,
                             bkg_mode="negweight-refined", refine_fn=None, refine_kwargs=None,
                             precomputed_target=None,
+                            precomputed_target_replica_seed=None,
                             verify_identities=True,
                             truth_feature_names=DEFAULT_TRUTH_EVT_FEATURES):
     """Assemble paired full-event (cloud + continuous event feature) DataLoaders on the FPS
@@ -1458,12 +1459,38 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
         # validation -- target sha256, the owning runtime receipt, source-NPZ identity, fingerprint
         # -- belongs to the driver (train_fullevent_nominal.assert_target_provenance), because only
         # the driver knows which receipt is supposed to own this array.
+        # GATE 5 (2026-08-13). This guard used to refuse EVERY precomputed target under a bootstrap
+        # seed. That is right for the NOMINAL array and it made the adopted replica architecture
+        # impossible: Gate 5 requires a negweight-refined target built PER REPLICA (ROOT) and then
+        # consumed by that replica's training job (TF), because no Perlmutter interpreter carries
+        # both. Refusing every precomputed target left a replica no way to consume its own.
+        #
+        # The refusal now distinguishes the two cases instead of collapsing them, and it still fails
+        # closed BY DEFAULT: a caller that says nothing gets the original refusal verbatim. Permission
+        # requires naming the seed the target was built for, and the caller may only do that after
+        # binding the array to its owning receipt via `assert_refined_target_is_replica`. That split
+        # matches the division stated above -- STRUCTURE here, PROVENANCE in the driver, because only
+        # the driver knows which receipt is supposed to own this array.
+        #
+        # Semantically inert for the NOMINAL path by construction: with bootstrap_seed None this
+        # branch is not reached at all. That is an argument, not evidence, which is why the Gate-2
+        # re-run gates on the new weights being BIT-IDENTICAL to the archived ones rather than on
+        # this comment being persuasive.
         if bootstrap_seed is not None:
-            raise ValueError(
-                "[negweight-refined] a precomputed target is the NOMINAL target; a bootstrap "
-                "replica draws its own data/background factors, so consuming the nominal array "
-                "here would silently give every replica the nominal's measured weights and "
-                "collapse the measured-side variance (fail closed).")
+            if precomputed_target_replica_seed is None:
+                raise ValueError(
+                    "[negweight-refined] a precomputed target is the NOMINAL target; a bootstrap "
+                    "replica draws its own data/background factors, so consuming the nominal array "
+                    "here would silently give every replica the nominal's measured weights and "
+                    "collapse the measured-side variance (fail closed). If this IS the replica's "
+                    "own target, bind it to its receipt with assert_refined_target_is_replica and "
+                    "pass precomputed_target_replica_seed=<that seed>.")
+            if int(precomputed_target_replica_seed) != int(bootstrap_seed):
+                raise ValueError(
+                    f"[negweight-refined] precomputed target was built for replica seed "
+                    f"{int(precomputed_target_replica_seed)} but this loader is drawing replica "
+                    f"{int(bootstrap_seed)}. Consuming it would pair one replica's measured weights "
+                    f"with another's MC draw (fail closed).")
         w_refined = np.asarray(np.load(precomputed_target), dtype=np.float64).ravel()
         if w_refined.shape[0] != n_data + n_bkg:
             raise ValueError(
@@ -1490,6 +1517,12 @@ def build_fullevent_loaders(inputs_npz, max_events=None, seed=0, bootstrap_seed=
             "n_rows": int(w_refined.shape[0]),
             "sum_before_normalization": float(w_refined.sum()),
             "n_zero_weight_rows": int((w_refined == 0.0).sum()),
+            # WHICH target this actually was, so a receipt cannot be silent about it. None means the
+            # NOMINAL array under no bootstrap draw; an int means the caller bound a per-replica
+            # target to its receipt and named the seed.
+            "precomputed_target_replica_seed": (None if precomputed_target_replica_seed is None
+                                                else int(precomputed_target_replica_seed)),
+            "bootstrap_seed": (None if bootstrap_seed is None else int(bootstrap_seed)),
             "note": ("consumed the published Gate-2 target; NOT re-derived in process (audit J04). "
                      "The DataLoader renormalizes it to 1e6*R below, so its absolute scale here is "
                      "not load-bearing -- its length and row ORDER are."),

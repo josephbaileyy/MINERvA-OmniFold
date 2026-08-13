@@ -8,7 +8,10 @@ RUN_DIR=${REPO}/nd-unfolding/g2_fullevent/gate2/runtime/${RUN_ID}
 RUNNER=${REPO}/nd-unfolding/pet/run_gate2_target_validator.sh
 LOG=${RUN_DIR}/runtime.log
 SENTINEL=${RUN_DIR}/terminal.txt
-EXPECTED_RUNNER_SHA=d5b86c3639917ff82101f112df25d1ff51830223f834e1a689c8088a1156d062
+# ADVANCED 2026-08-13 for the Gate-2 bit-identity re-run, same reason as the sbatch launcher's
+# EXPECTED_RUNNER_SHA. Prior value d5b86c3639917ff82101f112df25d1ff51830223f834e1a689c8088a1156d062.
+# Chain: fullevent_fps_dataloader.py <- run_gate2_target_validator.sh <- this file.
+EXPECTED_RUNNER_SHA=42386ab5e3b81d9a5e656dffce73910820d137489ba7ca78bfe89cf14ce627b4
 
 fail() { echo "[gate2-r4-driver][FAIL] $*" >&2; exit 1; }
 [[ -x "$RUNNER" ]] || fail "runner missing/not executable"

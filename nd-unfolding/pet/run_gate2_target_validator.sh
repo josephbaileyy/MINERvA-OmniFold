@@ -34,7 +34,19 @@ LOCK=${REPO}/nd-unfolding/g2_fullevent/gate2/.gate2-final-writer.lock
 # gate is re-run. The r1 products are archived, not deleted.
 EXPECTED_INPUT_SHA=fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
 EXPECTED_VALIDATOR_SHA=13fa4853040d0afcb3c323e69b76f9b1ec20678124338c537801177a486510a0
-EXPECTED_LOADER_SHA=57f33f87b07e0c6b9bd27a8c56f8013acf9863c72f80f1c01de556ad09f97117
+# ADVANCED 2026-08-13 for the Gate-2 re-run under Joseph's decision. The prior value,
+# 57f33f87b07e0c6b9bd27a8c56f8013acf9863c72f80f1c01de556ad09f97117, pinned the loader as it stood at
+# the 2026-08-05 construction PASS. The loader now carries the Gate-5 replica-target split in
+# `build_fullevent_loaders` (precomputed_target_replica_seed), which is unreachable on the nominal
+# path because that branch requires bootstrap_seed to be set.
+#
+# THAT LAST SENTENCE IS AN ARGUMENT, NOT EVIDENCE, and this header's own precedent (2026-08-04 and
+# 2026-08-05) is that the repo RE-RAN rather than re-digested, the second time explicitly refusing to
+# "argue the change was semantically inert for the negweight-refined path -- which is exactly the
+# reasoning hash pins exist to reject." So this bump does not stand on the argument: the re-run's
+# weights must come out BIT-IDENTICAL to the archived ones, and a mismatch is a real defect that
+# stops the campaign rather than a number to be explained.
+EXPECTED_LOADER_SHA=e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1
 EXPECTED_U2D_SHA=8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e
 
 ROUTE=${GATE2_EXECUTION_ROUTE:-}
