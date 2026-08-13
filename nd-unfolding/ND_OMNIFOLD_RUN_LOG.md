@@ -6192,8 +6192,10 @@ had two. The self-cap has not been raised, no task has been resubmitted, and `--
 lowered. `GATE5_CODE_ROOT` (`/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059`) was not read,
 written, synced or cleaned, and a test asserts the launcher never references it. The cluster repo was
 not synced either — `gate6_floor_statistics.py` was `scp`'d as a single file and verified byte-identical
-on both sides, because the cluster's `fullevent_fps_dataloader.py` is modified-but-uncommitted and
-load-bearing for the live Gate-5 array.
+on both sides. **The reason first written here — *"the cluster's `fullevent_fps_dataloader.py` is
+modified-but-uncommitted and load-bearing for the live Gate-5 array"* — is FALSE and is corrected in the
+2026-08-13 16:0x entry below.** The `scp`-not-pull conclusion is unchanged; its actual binding reason is
+`OI-57`'s HEAD check.
 
 **Two tooling traps, both filed.** `sacct -j 56863958` lists tasks 2, 3 and 5 but **not** task 4,
 whose pending element Slurm split under a new `JobIDRaw` (`56883015`) — a resume guard enumerating
@@ -6333,3 +6335,53 @@ Gate 5. Authorization receipt:
 Floor progress at 15:24 PDT: task 4 **started** on `nid008332` — a different node from tasks 2 and 3,
 which both ran on `nid008264`, so the across-node coverage the first wave lacked is now being filled.
 Task 5 remains queued.
+
+## 2026-08-13 16:0x — correction: nothing on scratch is uncommitted. `git status` said "modified" on a file that is byte-current
+
+**Right conclusion, wrong reason, and the wrong reason is the dangerous half.** Twice today Lane B wrote
+that the cluster's `fullevent_fps_dataloader.py` is *"modified-but-uncommitted and load-bearing for the
+live Gate-5 array."* The mediator declined to relay that unverified and measured it; Lane B then measured
+it independently rather than take the correction on trust. **Both measurements agree and Lane B's original
+claim is false.** A future lane reading "uncommitted work on purgeable scratch" would go looking for work
+to rescue and find none — which is why this is corrected in place rather than left as a footnote.
+
+Measured across the three checkouts this leg touches, one command, this turn:
+
+| checkout | HEAD | `status --porcelain` | working file | **HEAD blob** |
+|---|---|---|---|---|
+| `gate6traj-reconcile-56847059` = `GATE5_CODE_ROOT` | `b82ac63` | 1 line, an untracked log | `e1402370…` | **`e1402370…`** |
+| `MINERvA-OmniFold` (the science repo) | `683bdcc` | 748 lines, `M` on the loader `+38/−5` | `e1402370…` | **`57f33f87…`** |
+| `gate6-reconcile-56834281` (diagnostics) | `4d96acf` | 1 line, an untracked json | `e1402370…` | **`e1402370…`** |
+
+**`GATE5_CODE_ROOT` is clean and Gate 5 is not training against uncommitted code.** The dirty tree is a
+different one, and the decisive measurement is its **HEAD blob**: `57f33f87…` is the *old* version while
+the working file is `e1402370…`, which `git show origin/main:` confirms is the **committed** current
+version, last touched at `6a4b903`. So `git status` reports `M` because that tree's HEAD predates the
+Gate-5 replica-architecture change, **not** because the file is uncommitted. The state is
+`STALE_BUT_COMMITTED`. Nothing is at risk on scratch and there is no lost work.
+
+**This is a live independent instance of lane C's BEN-156, arriving from the opposite direction, and it
+confirms C's design was not over-engineering.** C built a four-state model because *"is it committed?"*
+returns **true** on a stale executing file. This is the mirror: **`git status` returns "modified" on a
+file that is byte-identical to `origin/main`.** A two-state view misleads in both directions, and C's
+classifier gets this right where the reflexive check does not. Filed as BEN-127, pointing at C's long form.
+
+**The `scp`-not-`git pull` conclusion is unchanged; the binding reason is `OI-57`, verified in source this
+turn.** `sbatch_gate5_replica_train_array.sh` reads
+`[[ "$(git -C "$CODE_ROOT" rev-parse HEAD)" == "$EXPECTED_HEAD" ]] || die "code HEAD drift"`, so a pull in
+`CODE_ROOT` fails **every remaining Gate-5 task closed**. Three digest checks follow it — replica driver,
+pinned nominal driver, and `EXPECTED_LOADER_SHA` — so the guard is layered rather than single. **Scope
+honestly stated: only the loader was characterized.** The science repo's other 747 porcelain entries were
+not, so "do not pull there either" stands on precaution, not on measurement.
+
+**And the reason this never threatened Leg F or Leg X: both launchers bind CONTENT, not HEAD.** They
+`sha256sum` the loader against `e1402370…` and die on mismatch, which is exactly why a stale HEAD in the
+science repo they train from cannot affect them — the property Gate-2 provenance already relies on
+(`assert_target_provenance` binds by content, not receipt identity). The four-state confusion is
+invisible to a digest check, which is the argument for using one.
+
+**Floor progress, and the mediator is right that this is more than a caveat.** Tasks 2 and 3 both ran on
+`nid008264`, so **the first wave was not measuring across-node variance at all** — which is the thing an
+*across-process* floor exists to expose. Lane B recorded that as an honest caveat; the sharper statement
+is that the first wave could not have been the answer even at `n=5`. Task 4 is running on `nid008332` and
+is filling it rather than having it assumed.
