@@ -68,17 +68,20 @@
   },
 
   "DERIVED_ALLOCATION_BOUND": {
+    "SUPERSEDED_BY_MEASUREMENT": "The quota was measured within the hour: 512.00 GiB = 0.5498 TB. The bound below (< 1.135 TB) is CONSISTENT with it and was never contradicted -- it was correct and loose by 2.06x. Kept unedited because a superseded inference that turned out sound is evidence the method works; see CORRECTIONS.",
     "status": "INFERENCE from the notice's existence, not a measurement. Iris is the authority and was not read.",
     "bound": "user HPSS allocation < 1.135 TB",
     "derivation": "In every non-excluded snapshot case above, residency at the snapshot was <= 1.1430 TB and NERSC judged it over allocation; the tightest such case is (a) at 1.1350 TB.",
     "implied_overage_lower_bound_TB": 0.3223,
     "implied_overage_derivation": "1.4573 TB measured now - 1.135 TB upper bound on the allocation",
     "UNVERIFIED_GUESS_FLAGGED_AS_SUCH": "A 1 TB default user quota would make the overage 0.457 TB (146% of allocation). Consistent with the bound, but NOT established -- do not quote it.",
-    "how_to_close_it": "Read the HPSS allocation in Iris (iris.nersc.gov), or ask Ben, who offered. Neither is a command available to this session."
+    "how_to_close_it": "Read the HPSS allocation in Iris (iris.nersc.gov), or ask Ben, who offered. Neither is a command available to this session.",
+    "THAT_LAST_SENTENCE_IS_FALSE": "`hpssquota` is a login-node binary at /global/common/software/nersc/bin/hpssquota and answers it in one call. I probed `hsi quota`, `hsi lsquota`, `myquota` and `showquota`, got 'unrecognized command' and a table listing only home and pscratch, and concluded the instrument did not exist -- when what I had established was that FOUR instruments do not report it. The parallel lane made the identical error the same day and self-diagnosed it as scope ('I searched hsi's grammar and never questioned the instrument'). Two lanes, independently, same class: **an absence of the answer in the tools you thought of is not an absence of the tool.** That it happened twice makes it a class rather than an oversight."
   },
 
   "REDUCTION_LEVERS -- THREE OF FOUR ARE MEASURABLY ZERO": {
     "1_deduplicate_by_content_digest": {
+      "CORRECTED": "'ZERO' is wrong: 12,334 B. The one byte-identical pair on HPSS is mnv-p3f-smoketest's single file against a p3f object -- a CROSS-directory duplicate, which the measurement below could not see because it checked md5 uniqueness WITHIN each archive and took cross-archive non-overlap from job 56762440's receipt, whose enumeration covered the quoted set against p3f and never covered smoketest. Found by the parallel lane's audit (RECEIPT-20260812-hpss-space-audit.md). Direction of the error: I asserted an absolute total from two partial scopes.",
       "verdict": "ZERO bytes available",
       "p3f": "240 of 240 md5 distinct, 240 of 240 basenames distinct, 0 duplicate digests, 0 B reclaimable. Measured over the manifest whose sha256 c9e1902e426eaf2191ea9a357fb3bbf07acc413a30aae1794affb88b94f16ebe matches its receipt.",
       "quoted": "36 of 36 md5 distinct (36 distinct HPSS paths, 36 distinct local md5, from its own receipt).",
@@ -125,6 +128,23 @@
       "WHY_M4_AND_M5_EXIST": "M1-M3 all left the attribution checks green, because those rest on timestamps and not on bytes. So the load-bearing conclusion of this whole receipt was, at that point, asserted by checks that nothing had ever made fail. M4 and M5 were added for exactly that reason and break it in both available directions -- the notice outside the copy window, and p3f not dominant. This is BEN-117's lesson applied to a derivation instead of a gate: a check that cannot be made to fail has not been tested, and the checks most likely to go untested are the ones carrying the conclusion."
     },
     "what_is_NOT_power_tested": "M5 overwrites p3f_bytes after the byte checks have already run, so it exercises only the share/dominance claims. The exclusion argument's LOGIC (enumerating snapshot cases) is prose reasoning with one arithmetic leg checked; the enumeration itself is not machine-checked and rests on the claim that NERSC's snapshot cannot predate the residency it reports."
+  },
+
+  "CORRECTIONS AFTER MERGING THE PARALLEL LANE'S AUDIT": {
+    "context": "A parallel lane ran an independent HPSS audit the same day (docs/orchestration/RECEIPT-20260812-hpss-space-audit.md, landed at 8ec4e62/243af2f). It was merged into this lane before this receipt was pushed, so the corrections below are pre-publication, not retractions of a circulated claim.",
+    "AGREEMENT_IS_THREE_WAY_AND_EXACT": "Total 1,457,304,348,109 B / 279 files is now derived three independent ways with no shared operand: (i) `hsi du -s` per directory, four separate calls [both lanes]; (ii) `hsi du -s .` at HPSS home, one call [their lane]; (iii) the two digest-verified manifests summed, plus a 15,694 B residual [this lane]. Their direct measurement of that residual -- smoketest 12,334 B + backups 3,360 B = 15,694 B -- matches this lane's INFERRED residual exactly, and lands inside the per-directory ceilings this lane bounded from block counts (<=12,800 and <=3,584). The rounding-slack argument is confirmed rather than merely plausible.",
+    "THREE_CORRECTIONS_TO_THIS_RECEIPT": [
+      "Dedup is 12,334 B, not 0 B. Trivial in magnitude; the error was in scope, and it is bannered at the lever itself.",
+      "The quota IS readable from the CLI (`hpssquota`). My 'Iris only' claim was false and is bannered.",
+      "There are THREE options, not two: MOVE is the live answer. CFS m3246 has ~20,990 GB free and moving the 240 p3f objects takes HPSS to 58.6%. This receipt's 'SO_WHAT_REMAINS' offered only increase-or-delete because it never considered a second destination -- and the move is the one option that costs no science. Their audit also established the 240 p3f objects are still on scratch byte-exact, so HPSS is a SECOND copy there, not a purge rescue."
+    ],
+    "WHAT_THIS_LANE_ADDS -- MEASURED FIRST-HAND, hpssquota RUN IN THIS TURN": {
+      "reading": "quota 512.00 GiB | charged 1.03 TiB | 206.5% | exit 1 (nonzero because over quota)",
+      "the_206.5_PERCENT_IS_STALE_AND_ITS_COMPOSITION_IS_NOW_EXACT": "Their audit stated the reading predates the quoted-products copy. This lane identified WHAT it therefore contains, to the byte: charged = p3f 1,134,998,230,283 + smoketest 12,334 + backups 3,360 = 1,134,998,245,977 B = 1.0323 TiB, which displays as `1.03TiB` and 206.5% -- matching the instrument on BOTH printed fields. Residency minus that is 322,306,102,132 B, EQUAL TO THE QUOTED ARCHIVE WITH ZERO REMAINDER. The full residency would have displayed 1.33TiB / 265.1%, which is not what the instrument shows.",
+      "why_it_matters_operationally": "Sizing a reduction from the live reading targets 545.05 GiB; the committed state needs 845.22 GiB. The 300.17 GiB (322.3 GB) gap IS the quoted archive. Their addendum's 845.22 GiB is the correct eventual figure and their OI-48's 206.5% is the correct current one -- both true, different snapshots, and nothing in either document said which to act on.",
+      "it_independently_confirms_the_attribution_from_the_ACCOUNTING_side": "The copy that looked guilty is provably absent from the charged figure that declared the overage. The timestamp argument and the byte argument are independent and agree.",
+      "A_DISCREPANCY_TO_RECONCILE_WITH_THEM": "Their OI-48 called it 'the 16:24 copy'. Measured here from `sacct` in the same turn, with the cluster TZ confirmed as PDT-0700: job 56762440 ran 06:49:24 -> 07:22:48 PDT = 13:49:24 -> 14:22:48 UTC. 16:24 matches neither. Flagged to them rather than corrected in their row -- it is their document, and the BEN-069 timezone family already has three instances."
+    }
   },
 
   "NOT_VERIFIED": [

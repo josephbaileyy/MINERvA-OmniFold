@@ -5548,3 +5548,48 @@ So the remaining options are both Joseph's: accept Ben's offer to raise the allo
 per-item deletion. Tracked as **OI-48**, and the causing archive is quarantine cause 5 — Session C's, so it
 was measured and not touched. Receipt:
 `../docs/orchestration/state/hpss-residency-inventory-20260812.json`.
+
+## 2026-08-12 — the same audit ran in two lanes: three corrections to mine, and the stale 206.5% explained
+
+A parallel lane had already audited HPSS (`RECEIPT-20260812-hpss-space-audit.md`, `8ec4e62`/`243af2f`),
+which I found on fetching before pushing. **Three-way agreement, no shared operand:** their per-directory
+`hsi du`, their single `hsi du -s .` at HPSS home, and my two digest-verified manifests plus a 15,694 B
+residual all give **1,457,304,348,109 B / 279 files**. Their direct measurement of that residual
+(smoketest 12,334 + backups 3,360) equals my *inferred* residual exactly and sits inside the per-directory
+ceilings I had bounded from block counts, so the 512-byte rounding-slack argument is confirmed rather than
+merely plausible.
+
+**Three corrections to my receipt, all pre-push.** (1) Dedup frees **12,334 B, not 0 B** — the one
+byte-identical pair on HPSS is smoketest's single file against a p3f object, a *cross-directory* duplicate.
+I checked md5 uniqueness *within* each archive and took cross-archive non-overlap from job 56762440's
+receipt, whose enumeration covered the quoted set against p3f and never covered smoketest: **I asserted an
+absolute total from two partial scopes.** (2) The quota **is** readable from the CLI —
+`hpssquota` at `/global/common/software/nersc/bin/hpssquota`. I probed `hsi quota`, `hsi lsquota`,
+`myquota` and `showquota`, got `unrecognized command` and a table listing only home and pscratch, and
+concluded the instrument did not exist, when what I had established was that **four instruments do not
+report it**. The other lane made the identical error and self-diagnosed it as scope. Two lanes
+independently: *an absence of the answer in the tools you thought of is not an absence of the tool.*
+(3) There are **three** options, not two — **MOVE** is the live answer, and the one that costs no science:
+CFS `m3246` has ~20,990 GB free and moving the 240 p3f objects takes HPSS to 58.6%. My receipt offered
+only increase-or-delete because it never considered a second destination.
+
+**What this lane adds, `hpssquota` run first-hand:** quota **512.00 GiB**, charged **1.03 TiB**,
+**206.5%**, exit 1. Their audit said that reading predates the quoted copy; I identified what it therefore
+contains, to the byte — charged = p3f 1,134,998,230,283 + smoketest 12,334 + backups 3,360 =
+**1,134,998,245,977 B = 1.0323 TiB**, which displays as `1.03TiB` **and** 206.5%, matching the instrument
+on both printed fields, with residency-minus-that equal to the quoted archive at **zero remainder**. Full
+residency would display 1.33TiB / 265.1%. **Operationally:** sizing a reduction from the live reading
+targets 545.05 GiB, the committed state needs **845.22 GiB**, and the 300.17 GiB gap *is* the quoted
+archive. Their addendum's 845.22 GiB is right for the eventual state and their OI-48's 206.5% is right for
+now — both true of different snapshots, and neither document said which to act on. It also confirms the
+attribution from the **accounting** side, independently of timestamps: the copy that looked guilty is
+provably absent from the charged figure that declared the overage.
+
+**Resolution of the id collision.** Both lanes appended after OI-47, so we both wrote OI-48 — the exact
+shape BEN-080/082 warns about, where *"OI-48 closed"* is true of one and false of the other. Mine was
+**deleted, not renumbered**: theirs has the denominator, the move option and the scratch evidence, and a
+second storage row would only give the two somewhere to drift. I added one sentence to their row instead.
+**BEN-118 corrected** from "Dedup 0 B" to "12 kB of 1.46 TB". One discrepancy left for them: their row
+says *"the 16:24 copy"*, while `sacct` in the same turn with the TZ confirmed `PDT-0700` gives
+06:49:24 → 07:22:48 PDT = 13:49:24 → 14:22:48 UTC. 16:24 matches neither, and the BEN-069 timezone family
+already has three instances — flagged to them, not edited into their document.
