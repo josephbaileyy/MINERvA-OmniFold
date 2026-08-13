@@ -5739,5 +5739,29 @@ Two defects of my own, both caught by running things rather than reading them:
   and BEN-164 also records that the *amend* which fixed it orphaned the sha — so this is recorded
   here and the sha is left intact rather than rewritten. The clause survives verbatim in the
   committed `P4_STANDARD_STATUS.md`, so no information is lost, only the commit body is degraded.
-  Operational rule for this lane: **use `git commit -F <file>` for any body containing backticks**,
-  which is what the earlier commits today did without incident.
+Operational rule for this lane: **use `git commit -F <file>` for any body containing backticks**,
+which is what the earlier commits today did without incident.
+
+## 2026-08-13 — Gate 6 PET ML ensemble complete 5/5; existing Session-A result canonically closed
+
+Array `56834281_[1-5]` reached aggregate terminal state. Same-turn `sacct -X` resolved the logical/raw
+pairs rather than repeating member 5 under the array alias (BEN-210/211): `1→56834282`, `2→56834283`,
+`3→56835083`, `4→56835084`, `5→56834281`. Every task is `COMPLETED 0:0`; elapsed times are
+`03:02:38`, `03:05:15`, `02:59:03`, `03:00:38`, and `02:59:23`; five distinct `.done` artifacts exist.
+
+Session A had already completed the scientific reconciliation after the last task ended and committed it
+at `92551a4`, so this wake did not reread logs, seed policies, or member arrays. That receipt confirms the
+persisted realized policies `(42,0)…(46,4)`, the promoted Gate-2 target, the five per-member deviations,
+and the two source identities. Contrary to the wake's tentative context, the inventory **was predeclared
+before submission**: commit `6bd3707` fixed `N=5` and the exact seed table; `0f5fee2` later repaired the
+launch environment and resubmitted `56834281`.
+
+The literal predeclared comparison passes by the letter: spread `0.227213` exceeds the declared
+within-process floor `1.26775e-4`. **This does not establish that Gate 6 resolved estimator variation
+at all.** The result is not promoted. Members 2, 4, and 5 exceed the Gate-4 nominal dev bar and set
+90% of the spread. Against the one-pair across-node/process floor, the all-five and two-qualifying-member
+comparisons differ (`13.9x` versus `1.4x`), so **neither margin is quotable** while convergence is routed.
+The products do not persist the execution environment that the floor is intended to expose; host/GPU
+identity was recoverable only from sidecar markers and logs. Whether the spread is estimator variation or
+non-convergence is routed to the PET owner. No `C_ML`, central-value change, retry, provider reset, or UUID
+change occurred in this reconciliation.

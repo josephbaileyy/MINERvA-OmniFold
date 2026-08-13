@@ -1,5 +1,36 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-13 Gate 6 PET ML ensemble — COMPLETE 5/5; predeclared comparison PASS only, physics resolution OPEN
+
+The `N=5` inventory and realized seed pairs were fixed before submission in commit `6bd3707`:
+`(estimator,subsample) = (42,0), (43,1), (44,2), (45,3), (46,4)`. Array
+`56834281_[1-5]` completed `0:0` in all five members, all five completion artifacts exist, all five
+persisted policies match that table, and all five used the promoted Gate-2 target. Session A's exact
+artifact reconciliation first landed at `92551a4` and was sharpened through `7f22dc1`, with receipt
+`docs/orchestration/state/gate6-ml-ensemble-result-56834281.json`.
+
+| id | measurement | verified value | disposition |
+|---|---|---|---|
+| VL109 | complete members | **5 / 5** | completion gate PASS |
+| VL110 | member fold-forward deviations | `0.0193103, 0.101483, 0.0426499, 0.180208, 0.246523` | persisted five-member inventory |
+| VL111 | member spread, max-minus-min | **`0.227213`** | exceeds the predeclared floor |
+| VL112 | predeclared within-process floor | `1.26775e-4` | literal predeclared comparison only; `1792x` must not be quoted |
+| VL113 | same-seed across-node/process difference, one pair | `0.0162987` | structural `n=1`; product does not persist its execution environment |
+| VL114 | members beyond the Gate-4 nominal dev bar `0.05` | **3 / 5** (members 2, 4, 5) | physics disposition remains OPEN |
+| VL115 | spread of the two members within the nominal bar (1 and 3) | `0.0233396` | removing the questioned members removes 90% of the spread; neither `13.9x` nor `1.4x` is quotable |
+
+**Exact scope.** The Gate 6 run is **MEASURED** and its predeclared comparison passes by the letter.
+That does **not** establish that Gate 6 resolved estimator variation at all. No `C_ML` matrix was
+constructed, no member was post-hoc removed, and no component or central value was promoted. Members
+1–4 and member 5 ran two source identities separated by the estimator-factory extraction; the committed
+source review found that edit behavior-preserving for Gate 6's one fresh call, but explicitly forbids
+carrying that conclusion to Gate 5's multi-call replica driver. Whether the three members beyond the
+nominal acceptance bar represent estimator variation or non-convergence—and whether an ensemble-mean
+central would move—is a routed physics decision, not part of this completion verdict.
+The all-five spread divided by the one-pair across-process floor is conditional on the three questioned
+members; the two-member subset produces a qualitatively different margin. **No ratio of spread to floor
+is a publication result.**
+
 ## 2026-08-11 adopted products now carry their construction contract — VERIFIED by an independent reader
 
 Job `56695424` (`sbatch_stamp_verify.sh`), `COMPLETED` 2:54. `adopt_unified_5d.py` propagates the

@@ -1,8 +1,16 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-11. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-13. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
+
+**Gate 6 PET ML ensemble is measured, not promoted.** Array `56834281_[1-5]` completed `0:0` in
+all five predeclared members with all persisted realized seed pairs confirmed. The literal
+predeclared comparison is PASS, but this does not establish that Gate 6 resolved estimator variation,
+and no `C_ML` was constructed: three members exceed the Gate-4 nominal
+deviation bar, so member convergence/interpretation and the ensemble-mean central remain a routed
+physics disposition. Canonical numbers: `../VALIDATION_LEDGER.md`; exact receipt:
+`../docs/orchestration/state/gate6-ml-ensemble-result-56834281.json`.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and

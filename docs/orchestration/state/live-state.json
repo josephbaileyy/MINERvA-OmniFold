@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Post-BEN-106 duplicate-event reconciliation",
-  "state": "BEN-106 stamp verifier 56695424 completed 0:0 in 2m54s. An independent ROOT reader verified all checked/value/source/convention stamps, and the authoritative science result was already committed at 8d0034f. The provenance legs for causes 2/3/4 are MET for the footing-matched candidate but remain OPEN for the currently quoted July product; no cause is discharged and STAMPTEST2 is not adopted. P3F-PET HPSS protection remains complete at 240/240 digest-verified files.",
+  "current_dag_node": "Gate 6 PET ML ensemble complete; PET-owner disposition before C_ML construction",
+  "state": "Gate 6 array 56834281_[1-5] completed 5/5 at 0:0. The N=5 inventory and seed pairs were predeclared at 6bd3707, all five persisted realized policies match, and Session A committed the exact result beginning at 92551a4. The predeclared comparison passes by the letter, but this does not establish that Gate 6 resolved estimator variation at all and no C_ML or central value is promoted: three members exceed the Gate-4 nominal dev bar, and the execution-floor mismatch makes convergence/interpretation an explicit physics disposition.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,20 +33,22 @@
   ],
   "jobs": [],
   "blockers": [
-    "The footing-matched candidate is not adopted: values.tex is untouched, its verified provenance stamps do not transfer to the currently quoted July product, and zero quarantine causes are discharged.",
-    "Cause 1 has a MET code-path audit but its per-band provenance census and adopted-product magnitude remain open.",
-    "Cause 4 retains an unresolved magnitude leg even for the stamped candidate.",
-    "Cause 5 remains OPEN on the joint nuisance/retraining construction even though its selection-complete detector inputs are digest-protected in HPSS.",
-    "Cause 6 remains open pending its corrected upstream input and cluster rebuild."
+    "Gate 6 has no promoted C_ML: the PET owner must adjudicate whether members 2/4/5 exceeding the nominal dev bar are valid estimator variation or non-convergence; post-hoc member exclusion is not authorized.",
+    "The apparent all-five margin is driven by the three questioned members: removing them removes 90% of the spread. Neither the all-five nor two-member spread/floor ratio is quotable before the convergence disposition.",
+    "The one-pair across-node/process control is structurally n=1, and the products do not persist the execution environment that the floor is intended to expose.",
+    "Gate 5's multi-call replica path must not inherit Gate 6's single-call source-equivalence finding.",
+    "Gate 9 adoption remains prohibited until every covariance component shares the accepted central, mask, order and fingerprint."
   ],
-  "next_authorized_action": "This duplicate event is reconciled and dispatch stops under the event rule. On a new continuation, advance the next dependency-ready quarantine leg without adopting STAMPTEST2; the lowest-cost open work is cause 1's per-band provenance/magnitude evidence or an explicit campaign decision on cause 2's F7 presentation/adoption routing. Provider-reset watches remain independent continuation coverage.",
+  "next_authorized_action": "Resume the preserved Agent-B PET-owner UUID through agentctl.py send for the scoped Gate-6 disposition. If it authorizes all five as the declared estimator ensemble, construct and independently validate C_ML centred on the ensemble mean; otherwise predeclare the smallest convergence/control test before new compute. Do not post-hoc remove members or promote a central/component without that disposition.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
     "docs/PUBLICATION_COMPLETION_RUNBOOK.md",
     "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
-    "VALIDATION_LEDGER.md"
+    "VALIDATION_LEDGER.md",
+    "docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md",
+    "docs/orchestration/state/gate6-ml-ensemble-result-56834281.json"
   ],
   "append_only_history": [
     "docs/orchestration/RUNS.tsv",
