@@ -102,9 +102,26 @@ receipts record whether an identity came from config or from `-c`.
 
 `BEN-214` (whose fix this is, at the wrong resolution — same lane, same day). `BEN-203` / `BEN-204` (the
 shared checkout as an attribution and scope hazard; this is the `.git/config` face of it). `OI-45`.
-**And an instance in the same turn:** my `OI-30` amendment was swept into `51607bb`, another lane's commit
-about `BEN-149` ownership, under the shared identity — `BEN-203`'s shape, happening to me while I wrote
-this row about it. Not reverted; this file is the index of that correction.
+**And an instance in the same turn:** my `OI-30` amendment was swept into `51607bb`, a commit about
+`BEN-149` ownership, under the shared identity — `BEN-203`'s shape, happening to me while I wrote this row
+about it. Not reverted; this file is the index of that correction.
+
+> **AND I MISATTRIBUTED THAT COMMIT, WHICH IS BEN-214'S MECHANISM A THIRD TIME — COMMITTED BY ME, IN THE
+> ROW ABOUT MISATTRIBUTION.** This section and `4574ef5`'s commit message both called `51607bb` *"lane D's
+> commit."* **It is the mediator's.** Evidence, in the order it is worth: the mediator asserts authorship of
+> it twice unprompted (*"my `51607bb`"*) — an author claiming its own row is the best available evidence
+> here; `git branch --contains 51607bb` returns `main`, `lane-b`, `lane-c` and **not `lane-d`**; and it was
+> committed in the **main checkout**, which only lane A and the mediator occupy. **`git log` cannot settle
+> it** — author and committer are both `Joseph Bailey <josephrb@stanford.edu>`, which is `BEN-214`'s
+> enabling condition exactly.
+>
+> **How I got it wrong is the reusable part:** I inferred the author from the commit's *subject matter*
+> (`BEN-149`, an audit-flavoured topic) and from the `lane-d` merge commit sitting next to it in
+> `git log --oneline`. **Adjacency in a log is not authorship, and topic is not authorship** — under a
+> shared identity they are the only signals left, and both are wrong here. `BEN-214`'s own check says read
+> the `BEN-*` id against the block table; `51607bb` carries an `OI-*` id, for which there is no block table,
+> so **the check I wrote does not cover the case I then failed.** Recorded as a gap in that check, not as a
+> slip.
 
 ## THE SWEEP RAN BOTH WAYS, AND THE RETURN LEG BREAKS THE STATED REMEDY
 
@@ -127,10 +144,24 @@ help, and it could not have.** `git commit -- <path>` commits that path's **work
 the index entirely; `docs/OPEN_ITEMS.md` had been left staged by another lane and its worktree copy already
 held that lane's in-flight edits to a *different row of the same file*.
 
+**Confirmed independently from the documentation** rather than from the observation alone — `git help
+commit` states it outright: a pathspec commit will *"ignore changes staged in the index, and instead record
+the current contents of the named files."*
+
 **So: explicit pathspecs protect you from committing other FILES. They do nothing about other lanes' edits
-to the SAME file.** In a checkout where six trees share one working directory and `OPEN_ITEMS.md` /
-`FINDINGS.md` / `VALIDATION_LEDGER.md` are append-target ledgers every lane writes to, that residual is not
-an edge case — it is the normal case, and it is silent in both directions.
+to the SAME file.** Where `OPEN_ITEMS.md` / `FINDINGS.md` / `VALIDATION_LEDGER.md` are append-target
+ledgers every lane writes to, that residual is silent in both directions.
+
+> **SCOPED DOWN 2026-08-13 — I wrote "six trees share one working directory" and that overstates it in the
+> direction that sends a reader hunting a hazard that is not there.** Measured: `git worktree list` gives
+> six trees, but **B, C and D each have their OWN directory** under `.claude/worktrees/`, and each
+> `.claude/worktrees/<lane>/.git` is an 82-byte gitdir *pointer* — so they have separate working trees and
+> separate index files and **cannot collide this way at all.**
+>
+> **What the six trees genuinely share is `.git/config`, which is this row's OTHER leg** and is correctly
+> stated above. **The shared *working directory* is the main checkout alone, and only two parties occupy
+> it: lane A and the mediator.** Both observed instances are that one pair. **That is the whole exposure**
+> — smaller than my framing, and it makes the fix smaller too.
 
 `BEN-203`'s advice is necessary and **not sufficient**. What actually closes it is a per-lane worktree, and
 this exchange is the concrete argument for taking one rather than the abstract one.
