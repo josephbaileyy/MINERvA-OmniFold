@@ -419,6 +419,23 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 14:55 PDT — target leg COMPLETE, training leg throttled by the cluster.**
+**Targets `56857232`: 50 of 50 COMPLETED and all 50 pass all 29 reconciliation checks** — all 50 target
+digests and all three factor-hash families distinct, none equal to the Gate-2 nominal, and all 50 `R`
+values distinct and straddling the nominal `1.1240802949941018`. Training `56857233`: **23 COMPLETED,
+23 receipts, all 23 passing all 11 training-stage checks** — their first exercise against live data,
+including the binding that each member trained on its own replica's target — with the `NAME_MISMATCH`
+guard silent, which is the half that proves it is a check and not an alarm. **Per-member training time is
+now MEASURED: mean `3:00:30` (min `2:58:21`, max `3:04:48`, n=23), retiring the earlier 2.94 h and 3.03 h
+projections** — the pre-completion per-step method landed 0.6% high and inside the measured range.
+**Throughput collapsed from 10 concurrent to 2 at 12:34 PDT and the cause is external:**
+`shared_gpu_ss11` has essentially zero idle capacity (1631 nodes `alloc`, `208768/0/0/208768`). The
+reported `Reason=JobArrayTaskLimit` is misleading — 2 running against `ArrayTaskThrottle=10` (`BEN-153`).
+A latent second constraint: QOS `MaxJobsAccruePU=2`, both slots held by lane B's `g6_floor`, leaving
+Gate 5 at `AGE=0`. **Remaining 25 members are ~7.5 h at 10 concurrent and ~37.6 h at 2; the ETA is
+external and is reported as bounds, not a time.** Walltime is not at risk (8 h requested, ~3 h used).
+Receipt: [`state/gate5-throughput-collapse-20260813.json`](../docs/orchestration/state/gate5-throughput-collapse-20260813.json).
+
 **Reconciliation, 2026-08-13 05:50 PDT — verdict `PARTIAL`, owner lane C.** First full pass with
 `nd-unfolding/pet/reconcile_gate5_family.py` (50 tests, every check power-tested both directions;
 it contains no covariance code, so it cannot be talked into centring a partial family):

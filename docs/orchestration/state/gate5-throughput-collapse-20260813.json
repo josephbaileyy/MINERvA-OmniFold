@@ -1,0 +1,122 @@
+{
+  "artifact": "gate5-throughput-collapse-20260813.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 14:55 PDT",
+  "observed_utc": "2026-08-13T21:55Z",
+  "purpose": "Diagnose why Gate-5 training concurrency fell from 10 to 2, and replace the family ETA with something honest. Read-only: no job held, cancelled, resubmitted or modified.",
+
+  "HEADLINE": "The array throttle is NOT the constraint and `Reason=JobArrayTaskLimit` is a misleading string. The binding constraint is that `shared_gpu_ss11` has essentially zero idle capacity. A second, LATENT constraint is that the QOS allows only two priority-accrual slots per USER and both are held by lane B's `g6_floor` array, so Gate 5's AGE priority is pinned at 0 and cannot climb with time.",
+
+  "CAMPAIGN_STATE_MEASURED": {
+    "targets_56857232": "50 of 50 COMPLETED. That leg is DONE and fully reconciled -- all 50 pass all 29 checks.",
+    "training_56857233": "23 COMPLETED, 2 RUNNING (tasks 23, 24), 25 PENDING. No failures in either array.",
+    "concurrency_history": {
+      "wave_1_starts": "tasks 0-9, 04:40:42 - 05:29:12 PDT (10 concurrent)",
+      "wave_2_starts": "tasks 10-19, 07:51:49 - 09:23:27 PDT (10 concurrent)",
+      "wave_3_starts": "tasks 20-24, 11:18:51 - 12:34:53 PDT (only FIVE started)",
+      "since_12_34_53": "NOTHING has started. Over two hours with concurrency at 2."
+    }
+  },
+
+  "PER_MEMBER_TRAINING_TIME_NOW_MEASURED_not_projected": {
+    "source": "the 23 training receipts' own timing.total_seconds",
+    "mean_seconds": 10830.4,
+    "mean": "3:00:30",
+    "min": "2:58:21",
+    "max": "3:04:48",
+    "n": 23,
+    "cross_check_sacct_elapsed": "02:58:48 - 03:05:19, consistent",
+    "PRIOR_PROJECTION_VERDICT": "The per-step projection of 3:01:39 (3.03 h), made before any member had finished, lands 0.6% ABOVE the measured mean and INSIDE the measured range. The method is validated; the number is now superseded by measurement and 3:00:30 should be quoted instead.",
+    "note": "This retires the earlier 2.94 h and 3.03 h figures. Quote 3:00:30 measured."
+  },
+
+  "WHY_CONCURRENCY_COLLAPSED": {
+    "eliminated_1_the_array_throttle": {
+      "measured": "ArrayTaskThrottle=10, and only 2 tasks are RUNNING.",
+      "conclusion": "A throttle of 10 cannot be the reason 2 are running. `Reason=JobArrayTaskLimit` on all 25 pending tasks is therefore NOT literally the binding constraint. It is a stale or default reason string, and it is actively misleading -- it names a limit that is not being reached."
+    },
+    "eliminated_2_the_dependency": {
+      "measured": "Dependency=(null) on pending tasks, and all 50 targets are COMPLETED, so `aftercorr:56857232` is fully satisfied for every task.",
+      "conclusion": "Not a dependency stall."
+    },
+    "eliminated_3_QOS_per_user_caps_AND_A_FIELD_MISREAD_WORTH_RECORDING": {
+      "measured_with_each_field_queried_INDIVIDUALLY": {
+        "MaxJobsPU": "(empty)",
+        "MaxSubmitPU": 5000,
+        "MaxTRESPU": "(empty)",
+        "MaxTRESPerJob": "gres/gpu=2,node=1",
+        "MaxJobsAccruePU": 2,
+        "MaxWall": "2-00:00:00",
+        "Flags": "DenyOnLimit"
+      },
+      "conclusion": "The QOS has NO per-user running-job cap and NO per-user TRES cap. `gres/gpu=2` is MaxTRESPerJob -- a per-JOB ceiling, and each member requests 1 GPU, so it is not binding either.",
+      "THE_MISREAD": "A single-line `sacctmgr -nP ... format=A,B,C` read of this QOS is easy to mis-column. The mediator reported `MaxJobsPU=5000` (that value is MaxSubmitPU) and this lane first read `MaxTRESPU=gres/gpu=2` (that value is MaxTRESPerJob) -- two different parties, two different off-by-one column errors, on the same output, within minutes. Both errors pointed at a plausible-but-wrong cause. Querying ONE FIELD PER LINE with its own label costs one loop and cannot mis-align."
+    },
+    "THE_ACTUAL_BINDING_CONSTRAINT_partition_saturation": {
+      "sinfo_shared_gpu_ss11": [
+        "1631 nodes alloc  CPUS(A/I/O/T)=208768/0/0/208768   <-- ZERO idle",
+        "6 nodes drain$    0/0/768/768",
+        "20 nodes resv     0/2560/0/2560",
+        "5 nodes plnd      0/640/0/640   (planned: idle but reserved for an already-scheduled job)",
+        "1 node comp       0/128/0/128",
+        "1 node mix        96/32/0/128"
+      ],
+      "reading": "The partition is effectively full. The only nodes carrying idle CPUs are draining, reserved, completing, or PLANNED for a job the scheduler has already committed them to. There is no free GPU capacity for a new task to land on, which is a sufficient and complete explanation for nothing starting since 12:34:53.",
+      "why_10_ran_earlier_and_2_run_now": "Nothing about this campaign changed. Cluster occupancy did. Concurrency of 10 was achievable this morning and is not achievable now, and the campaign has no control over that."
+    },
+    "THE_LATENT_SECOND_CONSTRAINT_accrual_slots": {
+      "limit": "QOS gpu_shared MaxJobsAccruePU = 2 -- only TWO jobs PER USER may accrue age-based priority at a time.",
+      "measured_sprio_u_josephrb": [
+        "56857233 (g5train, THIS campaign)  PRIORITY 67679  AGE 0",
+        "56863958 (g6_floor, lane B)        PRIORITY 57816  AGE 138",
+        "56883015 (g6_floor, lane B, split) PRIORITY 57910  AGE 231"
+      ],
+      "the_finding": "Both accrual slots are held by lane B's `g6_floor` array (submitted 06:22:10). Gate 5's AGE component is pinned at ZERO while B's climbs. Gate 5 therefore cannot improve its queue position with time; it is running purely on its QOS priority.",
+      "WHY_THIS_IS_LATENT_AND_NOT_THE_CURRENT_BLOCKER_and_stated_so_it_is_not_overclaimed": "Gate 5 currently has the HIGHEST total priority of the three (67679 vs 57910 and 57816), so it is not being outranked right now and the accrual limit is not what is costing it a start. Partition saturation is. But if the partition stays full, B's jobs accrue and Gate 5 does not, so the ordering can invert with time. It is a real exposure on a ~25-member remainder, not a present cause.",
+      "and_it_is_per_USER_not_per_lane": "Both arrays run as user josephrb, so lane separation does not separate this limit. Neither lane could have predicted contending here: B was told to sequence around Gate 5's arrays, and B's array IS throttled to 2 and IS pending -- it is contending through a per-user priority-accrual limit that is invisible unless you run `sprio` and notice one job's AGE is 0."
+    }
+  },
+
+  "THE_ETA_AND_WHY_IT_IS_A_RANGE_RATHER_THAN_A_TIME": {
+    "the_question_asked": "A peer could not derive ~20:40 PDT from the operands and correctly refused to relay it. The answer is that BOTH figures were wrong, because both assumed the 10-concurrent throughput that has since failed.",
+    "where_the_earlier_19_49_vs_20_40_gap_came_from": "19:49 was `member_0_start + 5 x per_member`, which is when the FIRST member of wave 5 finishes. 20:40 added the first wave's ~49 min launch stagger, which is when the LAST member finishes, because each of the ten slots stays ~49 min behind the first. Both were arithmetically defensible and both are now moot: they assumed five clean waves of ten, and wave 3 only ever started five members.",
+    "remaining_work": "25 members x 3:00:30 measured = 75.2 member-hours.",
+    "at_2_concurrent": "~37.6 h -> finishing around Saturday 2026-08-15.",
+    "at_10_concurrent": "~7.5 h -> finishing tonight.",
+    "HONEST_POSITION": "The ETA is not computable from campaign quantities. Per-member time is measured and stable to +-3%; the unknown is entirely external cluster occupancy, which this lane cannot predict and should not pretend to. Report the two bounds and the driver, not a point estimate.",
+    "walltime_is_NOT_at_risk": "Each member requests 08:00:00 and uses ~3:00:30, and the 25 pending tasks each still show TIME_LEFT 8:00:00. Queue delay does not consume a job's walltime, so a slow queue cannot cause a walltime kill."
+  },
+
+  "WHAT_I_DID_NOT_DO_AND_WHY": [
+    "Did NOT resubmit, requeue, hold, cancel or modify either array. A partial family cannot be centred, and a botched resubmit is worse than a slow queue. Nothing here is fixed by touching the array -- the constraint is external.",
+    "Did NOT hold or cancel lane B's g6_floor tasks to free the accrual slots. That is B's job and not this lane's to touch; it is routed to the mediator as a recommendation instead. Holding another lane's work to speed up mine is exactly the kind of unilateral action that needs an owner's consent, not a good reason.",
+    "Did NOT touch GATE5_CODE_ROOT (/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059). 25 members still have to exec from it.",
+    "Did NOT construct, centre or summarise C_stat. 23 of 50 is not a 23-replica ensemble."
+  ],
+
+  "RECOMMENDATION_routed_not_executed": "If Gate 5 is to keep GPU priority as declared, lane B's `g6_floor` array (56863958) should be held (`scontrol hold`) or cancelled by its owner until Gate 5 reaches 50/50. That frees both per-user priority-accrual slots for the Gate-5 array so its AGE priority can climb while the partition is full. This is a recommendation to the owner, not an action taken. It does NOT fix partition saturation, which is the present blocker and is not ours to fix.",
+
+  "RECONCILIATION_STATUS_AT_THIS_OBSERVATION": {
+    "tool_sha256": "e536540df5dce1f4c8947f7ccb57193be935c5b5d701296c3ef1440d4de90467",
+    "verdict": "PARTIAL",
+    "targets_present": 50,
+    "targets_passing": 50,
+    "trainings_present": 23,
+    "trainings_passing": 23,
+    "trainings_name_mismatch": 0,
+    "only_family_failure": "trainings_present 23 != 50",
+    "C_stat": null,
+    "FIRST_LIVE_EXERCISE_OF_THE_TRAINING_LEG": "These checks had never met a real receipt. 23 of 23 pass all 11 training-stage checks, including the binding that matters -- each training's recorded target sha equals the target digest this tool re-hashed from disk for that same replica, so no member trained against another's target. 23 distinct weights digests and 23 distinct bound target digests.",
+    "AND_THE_NAME_MISMATCH_GUARD_STAYED_SILENT": "trainings_name_mismatch = 0 against 23 correctly-named receipts. That is the half that proves the guard added at 69c577b is a check rather than an alarm -- a guard that fired on clean runs would be switched off within a day.",
+    "target_leg_complete": {
+      "all_50_target_digests_distinct": true,
+      "all_50_data_factor_hashes_distinct": true,
+      "all_50_signal_factor_hashes_distinct": true,
+      "all_50_background_factor_hashes_distinct": true,
+      "none_equals_the_gate2_nominal": true,
+      "R_over_all_50": {"distinct": 50, "min": 1.1225496079885524, "max": 1.1253110723074478,
+        "nominal": 1.1240802949941018, "nominal_strictly_inside": true,
+        "reading": "50 distinct class ratios straddling the nominal is independent quantitative evidence the measured-side Poisson draw is live across the whole family. A collapsed draw would show identical values. Diagnostic of the draw; NOT a component."}
+    }
+  }
+}
