@@ -1689,7 +1689,7 @@ on the persisted 285-cell spectra gives:
 | VL98 | injected gap | 0.234270363 | >= 0.15 | PASS |
 | VL99 | floor/gap | 0.045875515 | <= 0.10 | PASS |
 | VL100 | recovery | **0.512603276** | PRIMARY >= 0.494582400 | **PASS by 0.018020876** |
-| VL101 | recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** |
+| VL101 | recovery vs baseline | -0.034249724 | SECONDARY 0.546853 +/- 0.02 | **TRADE-OFF / ARM REJECTED** — **ADJUDICATED 2026-08-13: Joseph selected the ANNEALED arm, so this rejection is the pre-disposition state and is no longer live.** VL100's PRIMARY governs. Arithmetic unchanged; the baseline `0.546853` is itself not established as uninflated. See `docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md`. Annotation by Session A (ownership unresolvable: see that record). |
 
 The fit-time anneal is proven by six records: two iteration-0 fits at `1e-4`, followed by four fits
 at `1e-5`. The Slurm `3:0` status is a post-training launcher artifact: the driver still returns 3
