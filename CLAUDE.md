@@ -28,10 +28,27 @@ re-narrated** — so where this file points somewhere, go there rather than trus
    Long-form detail is in sibling `FINDING-<date>-<slug>.md` files, indexed at the top of `FINDINGS.md`.
 2. **`KNOWN_ISSUES.md`** — how the *code* fails. Different axis from FINDINGS; read both.
 3. **`docs/OPEN_ITEMS.md`** — the live to-do.
-4. **`AGENTS.md`** — domain detail for whatever you are actually touching.
-5. **`docs/orchestration/CLAIMS.md`** — `CLM-*` physics claims and their verification status. Allowed
+4. **`docs/orchestration/CLAIMS.md`** — `CLM-*` physics claims and their verification status. Allowed
    states are `PROVED / VERIFIED-NUMERIC / VERIFIED-CODE / CITED / ASSUMED / OPEN / REFUTED`.
    **Worker agreement is not verification**; promotion needs a recoverable artifact + an independent check.
+
+## Read ON DEMAND, not on entry
+
+**`AGENTS.md`** — the ~500-line domain reference: pipeline, contracts, bin edges, SLURM, and the
+`salloc` section. **Read it when you touch the domain it describes, not to orient.** It was item 4 of
+the list above until 2026-08-13; **measured, it is 7,663 of the entry path's 39,972 tokens — 19.2%, the
+single largest file after `FINDINGS.md`** — and almost none of it is needed to answer *"what should I do
+next."* Moved on Joseph's instruction: *"can you implement this HPSS change and this context strategy
+change?"*
+
+**Nothing was deleted and no fact moved.** This is a read-ordering change and it is reversible in one
+commit. The routing table below still names `AGENTS.md` as the canonical home for domain detail, so a
+lane that needs it is one line away — and `CLAUDE.md` remains, per its own header, the only file you are
+guaranteed to have read.
+
+**The principle, which should govern the next such change:** a document costs tokens in *every* future
+session forever; a check costs zero and cannot be skipped. **Prefer the executable form of any rule you
+are tempted to write down.**
 
 ## Canonical home per kind of fact
 
