@@ -52,7 +52,11 @@
     "why_partial": "the family-stage instrument also observed only 5 completed trainings at that instant; this is not a target failure"
   },
   "independent_terminal_validation": {
-    "status": "READY_TO_SUBMIT",
+    "status": "SUBMITTED_AND_WATCHED",
+    "job_id": "56872614",
+    "submitted_at": "2026-08-13T15:23:33Z",
+    "initial_state": "PENDING_PRIORITY",
+    "terminal_watch": "gate5-target-reconcile-56872614",
     "validator": "nd-unfolding/pet/reconcile_gate5_family.py",
     "launcher": "nd-unfolding/pet/sbatch_gate5_target_family_reconcile.sh",
     "tests": "73 passed",

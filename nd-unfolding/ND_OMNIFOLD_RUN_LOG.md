@@ -6010,3 +6010,5 @@ Training array `56857233` and its existing terminal watch remain unchanged. No s
 Gate-6 action, retry, provider dispatch, reset credit, or worker replacement occurred.
 
 Preflight receipt: `docs/orchestration/state/gate5-targets-terminal-preflight-56857232.json`.
+The committed validator was then submitted as shared-CPU job `56872614` (8 GB, 20 minutes), initially
+pending for priority, with job-scoped output and terminal watch `gate5-target-reconcile-56872614`.
