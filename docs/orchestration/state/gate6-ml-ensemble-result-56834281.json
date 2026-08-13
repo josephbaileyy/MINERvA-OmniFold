@@ -1,0 +1,70 @@
+{
+  "artifact": "gate6-ml-ensemble-result-56834281.json",
+  "lane": "A (orchestrator)",
+  "gate": "Gate 6 — PET-specific ML ensemble, N=5",
+  "array": "56834281_[1-5]",
+  "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md",
+  "status": "MEASURED AND REPORTED. NOTHING PROMOTED, NO COMPONENT COMPUTED. The branch is stated; two findings below bear on how it should be read and both are physics calls, not lane calls.",
+
+  "COMPLETION": {
+    "all_five": "COMPLETED, ExitCode 0:0",
+    "elapsed": {"m1": "03:02:38", "m2": "03:05:15", "m3": "02:59:03", "m4": "03:00:38", "m5": "02:59:23"},
+    "done_markers": "5 of 5",
+    "seed_policy_postcondition": "CONFIRMED in all five logs by the launcher's own read-back of the REALIZED policy persisted off argv — (42,0) (43,1) (44,2) (45,3) (46,4), matching the predeclared table exactly",
+    "target": "all five consumed inputs_sha256 fa6b3463…, the promoted Gate-2 target, fail-closed at submit"
+  },
+
+  "TWO_CODE_IDENTITIES": {
+    "members_1_to_4": "driver sha256 5fda80df43dfe334 (pre-ce03f2c, nested estimator class)",
+    "member_5": "driver sha256 91144bee2ff89ae6 (post-ce03f2c, extracted factory)",
+    "cause": "ce03f2c landed on the cluster working tree at 04:52:10Z, between member 4's start (04:47) and member 5's (05:07)",
+    "materiality": "behaviour-preserving for a SINGLE call with a fresh list, which is all Gate 6 makes — verified by diff, 24 lines identical but for the accumulator's parameter name, independently by lanes A and C",
+    "DO_NOT_CARRY": "that benign verdict must NOT travel to Gate 5's N=50, which calls the factory fifty times; the shared-accumulator hazard the factory exists to prevent is exactly what Gate 6 does not exercise",
+    "detail": "gate6-member-code-identity-split-56834281.json"
+  },
+
+  "THE_CRITERION": {
+    "units_correction": "The predeclared floor 1.26775e-4 is a scatter in dev = |ratio/R − 1|, NOT in the fold-forward ratio itself. Confirmed by reproducing it: nominal dev 3.5608971051e-2 − floor dev 3.5482196332e-2 = 1.267747e-4. Session A first computed the spread in ratio-space and corrected before adjudicating.",
+    "instrument": "the repo's own pet_diagnostic_quarantine.measured_fold_forward_dev, which recomputes from the artifact and takes R from each artifact's own target.step1_class_ratio",
+    "per_member_dev": {"m1": 1.9310268835e-2, "m2": 1.0148284813e-1, "m3": 4.2649862879e-2, "m4": 1.8020798052e-1, "m5": 2.4652312935e-1},
+    "member_spread_max_minus_min": 2.272129e-1,
+    "member_spread_sd": 9.497124e-2,
+    "predeclared_floor": 1.26775e-4,
+    "BRANCH": "PASS by the letter of the predeclaration — all five complete, all realized seeds persisted and confirmed, and the member-to-member spread (2.272e-1) exceeds the floor (1.268e-4) by 1792x."
+  },
+
+  "FINDING_1_THE_FLOOR_IS_WITHIN_PROCESS_AND_THE_MEMBERS_ARE_NOT": {
+    "what": "Member 1 carries the promoted nominal's OWN seeds (42,0) by design, so it is a same-seed repeat of the nominal. Every confound was checked and eliminated: same driver (5fda80df — the driver at commit 54a8797, in force when the nominal ran on 2026-08-10, hashes byte-identically to what members 1-4 ran), same inputs_sha256, and a realized seed_policy with ZERO differences from the nominal's (niter 3, epochs 8, train_events 2000000, batch_size 512, identical lr_policy). It differs only in job, node and process.",
+    "measured": "member 1 dev 1.9310e-2 against nominal dev 3.5609e-2 — a difference of 1.629870e-2, which is 129x the predeclared floor.",
+    "why_it_matters": "The nominal and floor artifacts were both produced by ONE job (56563761, 14:59:48Z–21:00:24Z), which wrote the nominal npz at 18:00:43Z and the floor npz at 21:00:17Z — two sequential trainings in one process. So 1.26775e-4 is a WITHIN-PROCESS repeat scatter. The five members are separate jobs on separate nodes. Comparing across-process spread against within-process scatter is not like-for-like, and it inflates the apparent margin.",
+    "the_honest_margin": "Against the across-process floor member 1 itself measures (1.630e-2), the member spread is 13.9x rather than 1792x. The ensemble still resolves estimator variation; the margin is ~129x smaller than the naive reading.",
+    "the_pleasing_part": "The predeclaration's design intent — 'member 1 is the promoted nominal's own policy so the adopted estimator sits INSIDE the ensemble rather than being a sixth neighbour of it' — accidentally supplied the across-process control the floor lacked. It was chosen for a different reason and it is the only reason this is measurable.",
+    "STATED_LIMIT": "n = 1 for BOTH floors — one nominal-vs-floor pair, one member1-vs-nominal pair. Neither is a distribution and neither carries an uncertainty. The 13.9x should not be read as more precise than a single difference of single differences."
+  },
+
+  "FINDING_2_THREE_OF_FIVE_MEMBERS_EXCEED_THE_GATE_4_NOMINAL_BAR": {
+    "what": "validate_pet_nominal_gate4.py sets fold_forward_ratio_dev_max = 0.05 (status MEASURED_20260806_B1_48SEEDS_NITER3). Members 2 (0.1015), 4 (0.1802) and 5 (0.2465) exceed it. The promoted nominal itself is 0.0356 and passes.",
+    "not_adjudicated": "That bar governs the NOMINAL, and no rule says an ensemble member must individually satisfy it. Whether a spread that carries three members past the nominal's own acceptance bar is 'estimator variation' or 'members that are not converged' is a physics judgement and is NOT made here.",
+    "related": "the nominal's dev (0.0356) sits in the LOWER part of the member range (0.019–0.247); the ensemble mean dev is ~0.118. The predeclaration's PASS branch says the component is 'computed centred on the ensemble mean', so whether the adopted central should move is a live consequence of that sentence, not a detail."
+  },
+
+  "COST_CORRECTION": {
+    "predeclared": "'One member is one full-event training: 6:00:36 wall (sacct on 56563761). Five members ≈ 30 GPU node-hours.'",
+    "measured": "each member took ~3:00, and the five totalled ~15:07 of wall across concurrent jobs, i.e. about half the predeclared budget.",
+    "why": "56563761's 6:00:36 covers TWO sequential trainings — the nominal (npz written 18:00:43Z, 3h01m in) and the matched same-seed repeat (npz written 21:00:17Z). The predeclaration took a two-training job's wall time as the cost of one training.",
+    "consequence": "harmless here (the run came in under budget) but it is the same figure Gate 5's ~300 GPU node-hour estimate is built from, so that estimate is likely 2x high as well."
+  },
+
+  "WHAT_IS_NOT_CLAIMED": [
+    "No ML covariance component is computed or reported here. The predeclaration's PASS branch calls for one centred on the ensemble mean; that is a promotion step and it is not taken.",
+    "No statement that the members are or are not converged. Finding 2 records the fact and refuses the interpretation.",
+    "No claim that 13.9x rather than 1792x is the 'correct' margin in any adopted sense — only that the two floors measure different things and the predeclared comparison is not like-for-like.",
+    "Member 5's numerical output was not compared against members 1-4 for the code-identity split; the equivalence argument is a source diff, not an output comparison."
+  ],
+
+  "provenance": {
+    "observed_utc": "2026-08-13T08:06Z",
+    "measured_by": "Session A, cluster login, omnifold_py310 + the repo's pet_diagnostic_quarantine",
+    "repo_head_at_write": "7d87b73"
+  }
+}
