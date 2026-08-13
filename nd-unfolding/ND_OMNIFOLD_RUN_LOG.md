@@ -6538,3 +6538,44 @@ empty one — **not the class.**
 Campaign measured this turn: `squeue -r` 24 PENDING / 1 RUNNING, **25 training receipts** of 50 — half
 the family has landed. `PARTIAL`, `C_stat` null. Nothing run against the campaign, nothing deployed,
 `GATE5_CODE_ROOT` untouched.
+
+### 2026-08-13 ~16:45 PDT — an archived Gate-2 receipt marked in its directory but not in itself (lane C, BEN-158)
+
+Routed from lane A. `gate2/final/superseded-20260813-pre-gate5-rerun/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`
+sat inside a `superseded-*` directory with **`status: PASS`**. The supersession was recorded in the
+directory name and in `NOTE.md` and **never in the file**, so anything reading the file rather than the
+path read it as live — and a reader grepping `PASS` is doing precisely that. A's Gate-4 defect was the
+**mirror image**: a successor that named its predecessor while the predecessor was never marked. Same
+failure, opposite half.
+
+A's template used verbatim rather than reinvented: `status: SUPERSEDED` + `superseded_by`/`_on`/`_why`,
+`code` → `code_at_issue`, digests preserved — and **asserted, not claimed**: the conversion refuses to
+write unless the digest multiset is byte-identical (13 values, unchanged). `verdict` deliberately left
+alone; it states what that run found, which is still true, while `status` is the live-vs-retired axis.
+`test_archived_gate2_receipts_hold_no_live_bindings` now passes, 6 of 6 in that file.
+
+**The half that was not on the ticket, and the reason this got a finding.** `VALIDATION_LEDGER.md`
+`VL89` certifies the receipt at `336e8e27`. Measured across every version that has existed: the
+archived copy hashed **`23935993` on its first commit** — the `sha256` → `sha256_at_issue` rename
+happened *as part of* the archiving, in the same commit that created the directory. **The archive was
+never byte-identical to the certified digest**, twelve hours before I touched it; my marking moved it
+again to `c959a3a8`. And `NOTE.md` publishes that digest in a table headed *"so the bit-identity claim
+can be checked against these rather than against a memory of them"* — inviting a reader to compare it
+against the neighbouring file, which would show a mismatch and read as corruption.
+
+**VL89 is not wrong.** It certifies the 08-05 re-issued receipt and those bytes remain recoverable at
+`8a9d22c` — verified rather than asserted, `git show … | sha256sum` reproduces `336e8e27` exactly. What
+was wrong is that nothing on disk said so. **No digit of any digest was changed:** VL89's *quantity*
+cell now names which receipt, which commit, and that no file on disk carries it; `NOTE.md` carries the
+caveat and the recovery command.
+
+**The durable tension, stated because it will recur: a retirement convention that annotates a file in
+place cannot coexist with a ledger digest that certifies that file's bytes** — and it must not be the
+digest that gives. A's template never hit this because `docs/orchestration/state/*.json` is not
+digest-certified; Gate-2 runtime receipts are. Re-digesting the ledger row was rejected outright as the
+antipattern every hash gate here exists to catch. The general form is the day's recurring lesson: **an
+archive's provenance has to travel in the artifact, not in its neighbourhood** — and a directory name, a
+sibling `NOTE.md`, and a successor's commit message are all neighbourhood.
+
+Campaign untouched by any of this: 25 of 50 training receipts, `PARTIAL`, `C_stat` null, R2/R3/R4
+unapplied and promotion still blocked.
