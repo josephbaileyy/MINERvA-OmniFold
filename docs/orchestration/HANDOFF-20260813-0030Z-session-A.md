@@ -118,6 +118,17 @@ lanes fill their own lines.
   but two sessions quoting "row length" against a shared threshold in different units is worth pinning.
 - **`hsi hashverify` after tape migration** — PET lane, unchanged.
 - **The ledger freeze window** was never formally closed with the lanes.
+- **LANE A's BEN ID BLOCK IS EXHAUSTED: `190`–`199` are all filed.** A successor A cannot file a finding
+  without a new range, and must not borrow from `200+` (repo-infrastructure) or another lane's block —
+  that is `BEN-080`/`BEN-082`'s exact shape. Allocating the next A range is a convention change, so it
+  routes to Joseph rather than being self-assigned. Until then, a new A finding goes in the long-form with
+  no row, **which is precisely the defect `BEN-167` records** (an id cited but never filed is invisible to
+  the allocator) — so the range needs deciding before the next A finding, not after.
+- **`OI-*` ids need partitioning the way `BEN-*` is partitioned.** Four writers collided on `OI-49`/`OI-50`
+  in one evening, each computing `max(existing)+1` against its own checkout. Prefixing (`BEN-080`) cannot
+  help because the collision is in **allocation**, not namespace. It surfaced as a git conflict only
+  because every row landed at the table's end; rows at different positions **auto-merge into a silent
+  duplicate id**, so the gate firing was luck about placement rather than coverage. Joseph's call.
 
 ## The thing I would tell my successor about how this session failed
 
