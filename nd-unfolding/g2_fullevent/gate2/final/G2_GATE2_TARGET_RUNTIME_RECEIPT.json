@@ -6,7 +6,7 @@
     },
     "loader": {
       "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_fps_dataloader.py",
-      "sha256": "57f33f87b07e0c6b9bd27a8c56f8013acf9863c72f80f1c01de556ad09f97117"
+      "sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
     },
     "numpy_dataloader": {
       "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/dataloader.py",
@@ -17,7 +17,7 @@
       "sha256": "13fa4853040d0afcb3c323e69b76f9b1ec20678124338c537801177a486510a0"
     }
   },
-  "completed_at_utc": "2026-08-05T05:16:22.157327+00:00",
+  "completed_at_utc": "2026-08-13T09:38:40.062961+00:00",
   "configuration": {
     "bootstrap_seed": null,
     "dataloader_import_mode": "target-only exact NumPy source; no TensorFlow/PET training",
@@ -52,7 +52,7 @@
   },
   "configuration_sha256": "0b59277b6ed5dba51f2eb5c43cdfabf9b9989e5016f1c5133e42400796f7c006",
   "environment": {
-    "max_rss_kib": 11655928,
+    "max_rss_kib": 11649936,
     "numpy": "1.26.4",
     "platform": "Linux-6.4.0-150600.23.103_15.0.27-cray_shasta_c-x86_64-with-glibc2.38",
     "python": "3.11.14",
@@ -61,11 +61,11 @@
   },
   "execution": {
     "command": "gate2_target_runtime.py validate (canonical exact target-only gate)",
-    "head_at_runtime": "beb40c9f7a85f058c0b1b8d99ee97d66283bb086",
-    "host": "nid004178",
-    "route": "interactive",
-    "run_id": "d1d2-reissue-r2-20260805",
-    "slurm_job_id": "56344268"
+    "head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+    "host": "nid004076",
+    "route": "batch",
+    "run_id": "slurm-56847028",
+    "slurm_job_id": "56847028"
   },
   "independent_binned_checks": {
     "closed_form_clipped_sum": 4006528.6006158125,
@@ -89,7 +89,7 @@
     "raw_signed_sum": 4006528.6006158125
   },
   "input_preflight": {
-    "elapsed_seconds": 6.752390558991465,
+    "elapsed_seconds": 8.052496279007755,
     "independent_receipt": {
       "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/g2-gate1b-npz-validation-20260719.json",
       "sha256": "194eff5a8bc79e782e0d96968bfd66b0582357cc1415983f4bc598c886adfe34"
@@ -197,7 +197,7 @@
     "target_mode": "negweight-refined"
   },
   "schema_version": 1,
-  "started_at_utc": "2026-08-05T04:21:45.947010+00:00",
+  "started_at_utc": "2026-08-13T08:38:41.728979+00:00",
   "status": "PASS",
   "step1_class_ratio": {
     "R": 1.1240802949941018,
@@ -280,13 +280,13 @@
       "published_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
       "sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
       "size_bytes": 18723004,
-      "staging_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/.gate2-weights.d1d2-reissue-r2-20260805.LVbPns.npy"
+      "staging_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/gate2/final/.gate2-weights.slurm-56847028.MsIAEe.npy"
     },
     "zero_rows": 1916
   },
   "timing": {
-    "loader_and_full_refinement_seconds": 3265.4844324350124,
-    "total_seconds": 3276.3435104379896
+    "loader_and_full_refinement_seconds": 3585.479662646074,
+    "total_seconds": 3598.3877035159385
   },
   "verdict": "GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING"
 }
