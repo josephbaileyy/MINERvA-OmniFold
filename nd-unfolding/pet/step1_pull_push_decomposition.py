@@ -65,6 +65,8 @@ import sys
 
 import numpy as np
 
+from diagnostic_target_override import resolve_precomputed_target
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 # CANONICAL as of the 2026-08-12 designation promotion of job 56563761 (the annealed nominal).
@@ -91,6 +93,11 @@ def main():
                     help="the JSON written by gate_ab_push_provenance.py. Required: without Gate A "
                          "this script cannot claim its rebuilt input space is the trained one.")
     ap.add_argument("--json", default=None)
+    ap.add_argument("--precomputed-target-override", default=None,
+                    help="read a moved target from this path without recreating the artifact's "
+                         "recorded canonical path")
+    ap.add_argument("--precomputed-target-sha256", default=None,
+                    help="required exact SHA-256 when --precomputed-target-override is used")
     # PER-STEP batch sizes, read off the engine's actual call sites rather than shared (BEN-072).
     # The engine does NOT use one batch size:
     #     omnifold.py:199  RunStep1: reweight(..., self.model1, batch_size=1000)   <- explicitly 1000
@@ -143,6 +150,12 @@ def main():
         sum_w_reco_art = float(d["fold_forward_sum_w_reco"])
     R = float(target_meta["step1_class_ratio"])
     niter = int(policy["niter"])
+    target_npy, target_resolution = resolve_precomputed_target(
+        target_meta.get("consumed_precomputed_target"),
+        a.precomputed_target_override,
+        a.precomputed_target_sha256,
+    )
+    rec["precomputed_target_resolution"] = target_resolution
     print(f"[step1] R = {R:.16f}   niter = {niter}   stored fold-forward ratio {ff_ratio:.6f}")
 
     import train_fullevent_nominal as T
@@ -153,7 +166,7 @@ def main():
     _data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
         inputs_path, max_events=int(policy["train_events"]),
         seed=int(policy["subsample_seed"]), bkg_mode=T.BKG_MODE,
-        precomputed_target=target_meta.get("consumed_precomputed_target"))
+        precomputed_target=target_npy)
     imc = np.asarray(imc)
     if not np.array_equal(imc, stored_imc):
         raise SystemExit("[step1] the rebuilt subsample no longer matches the artifact, even though "
