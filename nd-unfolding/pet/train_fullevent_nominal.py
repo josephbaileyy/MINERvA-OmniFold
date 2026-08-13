@@ -40,6 +40,7 @@ for _p in (_HERE, f"{_REPO}/nd-unfolding", f"{_REPO}/nd-unfolding/pet"):
 
 import fullevent_fps_dataloader as fe  # noqa: E402  (login-safe: TF imported lazily inside)
 from atomic_write import atomic_savez_compressed, is_complete  # noqa: E402  (login-safe)
+from annealed_estimator import make_annealed_multifold  # noqa: E402  (login-safe: no TF import)
 
 ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"
 BKG_MODE = "negweight-refined"
@@ -420,32 +421,14 @@ def main(argv=None):
     # kept substitutable for the one that does.
     _fit_lr_records = []
 
-    class _AnnealedMultiFold(MultiFold):
-        @functools.wraps(MultiFold.__init__)
-        def __init__(self, *a, **kw):
-            super().__init__(*a, **kw)
-            self._ann_iter = 0
-            self._inside_fit_compile = False
-
-        def CompileModel(self, model, num_steps, fixed=False):
-            eff = bool(fixed)
-            if self._inside_fit_compile and self._ann_iter > self.start:
-                eff = True
-            out = super().CompileModel(model, num_steps, fixed=eff)
-            if self._inside_fit_compile:
-                _fit_lr_records.append(
-                    {"iteration": int(self._ann_iter),
-                     "learning_rate": float(tf.keras.backend.get_value(
-                         model.optimizer.learning_rate))})
-            return out
-
-        def RunModel(self, labels, weights, iteration, model, stepn, NTRAIN=1000, cached=False):
-            self._ann_iter = int(iteration)
-            self._inside_fit_compile = True
-            try:
-                return super().RunModel(labels, weights, iteration, model, stepn, NTRAIN, cached)
-            finally:
-                self._inside_fit_compile = False
+    # EXTRACTED 2026-08-13 to nd-unfolding/pet/annealed_estimator.py so the replica driver
+    # (Gate 5) uses the SAME estimator by construction rather than by copy. It was a class
+    # nested here, closing over three main() locals -- MultiFold (its own base class), tf, and
+    # _fit_lr_records. The factory takes all three explicitly: the base class and tf stay lazy
+    # so the module imports without TensorFlow, and the records list is per-call so it cannot be
+    # shared across the 50 replicas Gate 5 will run. Equivalence: tests/test_annealed_estimator.py
+    # asserts the 2-base + 4-annealed record split and that two factory calls do not share a list.
+    _AnnealedMultiFold = make_annealed_multifold(MultiFold, tf, _fit_lr_records)
 
     of = _AnnealedMultiFold(mf_name, m1, m2, data, mc, niter=int(args.niter),
                             epochs=int(args.epochs), batch_size=int(args.batch_size),
