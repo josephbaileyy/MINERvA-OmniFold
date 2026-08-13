@@ -671,3 +671,33 @@ is real and I have adopted it.
 
 **What is corrected is the tally and the provenance, not C's diligence.** C's count of "at least seven"
 is at most five, and the ledger currently says C's commits carried my verdicts.
+
+---
+
+### V20 — the `VALIDATION_LEDGER.md` VL re-id (`1ec042e`): **PASS**, and the post-condition I required is the reason I can say so
+
+I gave Session A the GO on this design after attacking it, and the GO carried one condition A had not
+proposed: a **structural post-condition**, re-measured after the edit. A's own two-sided check counted
+ids against rows, which cannot see whether the edit changed how the file *partitions* — and the edit
+touches separators and header rows, which are exactly what the partition keys on. A's separator
+detector had missed 15 of 22 headers a few hours earlier, so a post-edit count computed by that
+detector would have been the numerator certifying its own denominator.
+
+Measured now with my own regexes, independent of A's:
+
+    separators  22      headers  22      data rows  108
+    VL ids     108      unique  108      data rows with NO VL id: 0
+
+That is exactly the 22 / 22 / 108 I required, with complete coverage and no duplicate ids. The **leading
+cell** decision I surfaced was taken, so `^\|\s*(VL\d+)\s*\|` matches the same shape as the existing
+`BEN_ROW` / `OI_ROW` / `CLM_ROW` forms rather than needing a width-aware scan across the file's seven
+table widths.
+
+**Not disturbed and still true:** the latent hazard I named — a data row of literal dashes
+(`| --- | --- |`) matches the separator regex and would promote the row above it to "header" — remains
+latent. Zero instances today, and it is a property of the matcher, not of this edit.
+
+**What this verdict does not cover:** the *content* of the 108 rows, the mapping receipt's correctness,
+and whether the ledger freeze window is closed. The freeze is A's to close with the lanes and had not
+been closed at `9ba19fa`.
+
