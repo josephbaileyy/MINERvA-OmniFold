@@ -283,10 +283,42 @@ every rule.** This section is deliberately short for that reason.
 full-event replica implementation.** Measured: the only replica launcher is
 `sbatch_pet_bootstrap_replica.sh`, which runs `--mode pointcloud --model pet --smoke` against
 `of_inputs_pc_fullcloud.npz` — the recoil-representation cross-check path, which `KNOWN_ISSUES` entry 19
-records as unable to support a full-event result. And the full-event driver **fails closed on replicas by
-design**: `train_fullevent_nominal.py:252` raises *"receipt's target is bootstrap replica …, not the
-nominal (fail closed)"*. So Gate 5 is implementation work — coherent Poisson factors per inventory member,
-a persisted replayable seed policy, per-replica Stay-Positive refinement, and full factor/index hashing.
+records as unable to support a full-event result.
+
+**CORRECTED 2026-08-13 by Session C — the conclusion holds, the evidence Session A cited was the wrong
+line, and the error was dangerous.** A had written that `train_fullevent_nominal.py:252` *"fails closed on
+replicas by design."* **It does not.** `rt` there is the **target receipt's** `runtime_target` block, so the
+check reads *"the precomputed Gate-2 target must be the nominal's, not a replica's"* — it fires in the
+**opposite** direction, keeping replica targets **out** of the nominal. **A session reading A's note and
+"fixing" `:252` to enable replicas would delete a guard that protects the nominal and still have no replica
+capability.**
+
+**The real reason is an ABSENCE, not a refusal, and it is stronger:** `train_fullevent_nominal.py` has **no
+`--bootstrap-seed` argument** and never passes `bootstrap_seed=` to `build_fullevent_loaders`. Its single
+`bootstrap_seed=` occurrence (`:652`) writes **`-1`** into the output dump so the validator can tell nominal
+from replica. So the driver **cannot draw a replica** — not implemented, not blocked.
+
+**WHAT ALREADY EXISTS, so nobody rebuilds it.** The loader side is largely done and tested: `bootstrap_seed`
+is in `build_fullevent_loaders`' signature (`:1077`), `validate_coherent_bootstrap` exists (`:750`), and
+**D1's coherent dual-leg draw is implemented with a real power test** — `test_d1_dual_leg_weights.py:178`
+asserts *"the draw must actually zero some rows"*, so it cannot pass by drawing nothing. That is D1
+requirement 3 satisfied.
+
+**WHAT MAKES IT EXPENSIVE, and this is the scoping fact.** `assert_refined_target_is_replica` (`:736`)
+fail-closes on reusing a nominal target for a replica — *"the refined target must be rebuilt PER REPLICA…;
+a nominal target can never stand in for one."* So a replica campaign needs **one negweight-refined target
+build per replica** — a Gate-2-class job, ~55 min, importing ROOT via `u2d.refine_stay_positive`. Since no
+Perlmutter interpreter carries both ROOT and TF, each replica is **two jobs**: target build in the ROOT env,
+then training in TF consuming it. **Gate 5 is therefore roughly N × Gate 2 plus driver plumbing, not a
+flag.**
+
+**AND A LATENT DEFECT WORTH HAVING (Session C): `assert_refined_target_is_replica` has ZERO production
+callers.** All five call sites are in `tests/test_fullevent_gate2.py`; the only other occurrence is its own
+definition. **So the per-replica-target rule is specified, implemented, tested — and enforced by nothing.**
+The hazard: whoever builds the replica path can omit the call and **the suite still passes, because the
+tests invoke the function directly rather than through the code that should use it.** Vacuous-coverage
+shape, latent only because the path it guards does not exist yet. **Wiring it in is one line; knowing to is
+the finding.**
 
 **`Gate 6` (PET-specific ML ensemble) is one decision away from being execution.** The driver already
 supports what it needs — `--estimator-seed`, `--subsample-seed`, `--niter`, `--epochs`, `--max-events`,
