@@ -54,6 +54,18 @@ if ! python3 "$GATE" --self-test; then
   exit 3
 fi
 
+# LEDGER ID COMPLETENESS, two-sided. Added 2026-08-12 with the VL re-id. It lives HERE, as code,
+# rather than in prose, because BEN-163 is exactly the defect of a contract documented beside a tool
+# instead of enforced by it -- and this file already exists for that reason. One-sided would not
+# distinguish a half-finished re-id from deleted rows; two sides fail with opposite signs.
+if ! python3 "$GATE" --check-ledger-ids; then
+  echo
+  echo "  BLOCKED :: VALIDATION_LEDGER.md's VL ids are not complete and dense. The ledger is the"
+  echo "             authority that names 35 of the 36 HPSS-verified quoted products, so a broken"
+  echo "             addressing scheme there is not cosmetic. Fix before merging."
+  exit 3
+fi
+
 echo
 python3 "$GATE" --conflicts --lane "$LANE"
 rc=$?
@@ -68,9 +80,10 @@ case "$rc" in
      echo "             Either there is no conflict to attribute -- in which case you are gating an"
      echo "             empty set and the merge auto-resolved, which is fine but unverified -- or the"
      echo "             lane argument was empty, or git could not enumerate unmerged files."
-     echo "             A conflict in VALIDATION_LEDGER.md also lands here: it has no per-row id"
-     echo "             scheme and CANNOT be attributed, and it is the file with the second-most"
-     echo "             absorptions. Route those by hand." ;;
+     echo "             VALIDATION_LEDGER.md rows now CARRY VL ids and are nameable -- but they are"
+     echo "             still UNOWNED, because ownership is not derivable from a VL number: rows are"
+     echo "             written by whichever lane measured the number, in arrival order. Until the"
+     echo "             owner side table exists, a ledger conflict lands here and is routed by hand." ;;
   *) echo "  BLOCKED :: unexpected exit $rc from the gate. Treat as a refusal." ;;
 esac
 
