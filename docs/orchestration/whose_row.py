@@ -140,8 +140,16 @@ def conflicted_line_numbers(text: str) -> set[int]:
     return out
 
 
-def rows_in(path: Path, only_conflicts: bool, blocks) -> list[tuple[int, str, str | None]]:
-    """[(lineno, row_id, owner_or_None)]"""
+def rows_in(path: Path, only_conflicts: bool, blocks, owners=None) -> list[tuple[int, str, str | None]]:
+    """[(lineno, row_id, owner_or_None)]
+
+    `owners` is the ROW-OWNERS.tsv mapping for id schemes that are not block-attributable
+    (CLM, VL). Defaults to loading it, so a caller that forgets does not silently lose
+    attribution -- the failure mode would be every CLM row reporting UNOWNED, which looks
+    exactly like the pre-side-table world and would not be noticed.
+    """
+    if owners is None:
+        owners = load_row_owners()
     text = path.read_text(encoding="utf-8", errors="replace")
     keep = conflicted_line_numbers(text) if only_conflicts else None
     out = []
@@ -157,14 +165,61 @@ def rows_in(path: Path, only_conflicts: bool, blocks) -> list[tuple[int, str, st
         if m:
             out.append((i, m.group(1), m.group(2).strip() or None))
             continue
+        # CLM and VL ids are SUBJECT-/ARRIVAL-allocated, so no arithmetic on the number yields
+        # a lane. They are joined against the ROW-OWNERS.tsv side table instead. An id absent
+        # from that table, or present with UNASSIGNED, resolves to None and the gate refuses.
         m = CLM_ROW.match(line)
         if m:
-            out.append((i, m.group(1), None))
+            out.append((i, m.group(1), owner_of_id(m.group(1), owners)))
             continue
         m = VL_ROW.match(line)
         if m:
-            out.append((i, m.group(1), None))
+            out.append((i, m.group(1), owner_of_id(m.group(1), owners)))
     return out
+
+
+OWNERS_TSV = HERE / "ROW-OWNERS.tsv"
+UNASSIGNED = "UNASSIGNED"
+
+
+def load_row_owners(path: Path = OWNERS_TSV) -> dict[str, str]:
+    """id -> owner, from the side table. Missing file is NOT an error: absent means every id
+    reports UNOWNED, which is the pre-existing safe behaviour.
+
+    `UNASSIGNED` is preserved as a VALUE rather than dropped, because the three states are
+    genuinely different and collapsing two of them is how a vacuous pass gets built:
+      * mapped to a lane  -> attributable; the gate can pass or refuse
+      * UNASSIGNED        -> the id EXISTS in the table and nobody has decided. Gate exits 2.
+      * absent            -> no mapping at all. Gate exits 2 as UNOWNED.
+    If UNASSIGNED were dropped here it would become indistinguishable from `absent`, and both
+    would read as "unowned" -- losing the fact that somebody deliberately listed the id and
+    left the decision open. Same reason the audit script distinguishes "no digests" from
+    "parser found none" (BEN-196).
+    """
+    owners: dict[str, str] = {}
+    if not path.exists():
+        return owners
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = raw.split("\t")
+        if len(parts) < 2:
+            continue
+        rid, owner = parts[0].strip(), parts[1].strip()
+        if not rid or rid.lower() == "id":      # skip the column header
+            continue
+        owners[rid] = owner
+    return owners
+
+
+def owner_of_id(rid: str, owners: dict[str, str]) -> str | None:
+    """None means unattributable -- either absent from the table or explicitly UNASSIGNED.
+    Callers must not treat None as permission; `lane_matches` already refuses on None."""
+    o = owners.get(rid)
+    if o is None or _lane_key(o) == UNASSIGNED:
+        return None
+    return o
 
 
 def _lane_key(s: str) -> str:
@@ -315,11 +370,41 @@ def self_test() -> int:
     finally:
         probe.unlink(missing_ok=True)
 
+    # ---- ROW-OWNERS side table. The three states must stay DISTINCT: collapsing UNASSIGNED
+    # into "absent" loses the fact that someone listed the id and left the decision open, and
+    # collapsing either into "owned" is a false pass on another lane's row.
+    import tempfile as _tf, os as _os
+    _fd, _tmp = _tf.mkstemp(suffix=".tsv"); _os.close(_fd)
+    Path(_tmp).write_text(
+        "# a comment line that must be ignored\n"
+        "id\towner\tsource\tbasis\n"
+        "CLM-900\tC\tdocs/orchestration/CLAIMS.md\tassigned to a real lane\n"
+        "CLM-901\tUNASSIGNED\tdocs/orchestration/CLAIMS.md\tdeliberately undecided\n"
+        "CLM-902\tB — uncertainty construction\tdocs/orchestration/CLAIMS.md\tfree text after the lane letter\n"
+        "\n", encoding="utf-8")
+    _own = load_row_owners(Path(_tmp))
+    case("side table skips comments and the column header", sorted(_own), ["CLM-900", "CLM-901", "CLM-902"])
+    case("an assigned id resolves to its lane", owner_of_id("CLM-900", _own), "C")
+    case("UNASSIGNED resolves to None, NOT to a lane", owner_of_id("CLM-901", _own), None)
+    case("an id absent from the table resolves to None", owner_of_id("CLM-999", _own), None)
+    case("free text after the lane letter still resolves",
+         _lane_key(owner_of_id("CLM-902", _own) or ""), "B")
+    # The whole point: UNASSIGNED must never pass a gate, for ANY lane.
+    for _ln in ("A", "B", "C", "D"):
+        case(f"UNASSIGNED never matches lane {_ln}", lane_matches(owner_of_id("CLM-901", _own), _ln), False)
+    case("an assigned row refuses a different lane", lane_matches(owner_of_id("CLM-900", _own), "B"), False)
+    case("an assigned row passes its own lane", lane_matches(owner_of_id("CLM-900", _own), "C"), True)
+    # A missing side table must degrade to "no mapping", not to an exception or a pass.
+    case("a missing side table yields an empty mapping",
+         load_row_owners(Path(_tmp + ".does-not-exist")), {})
+    _os.unlink(_tmp)
+
     for label, ok, got, _ in checks:
         print(f"  {'ok  ' if ok else 'FAIL'} {label}" + ("" if ok else f"  (got {got!r})"))
     print(f"  {len(blocks)} blocks parsed from FINDINGS.md's header, {len(checks)} checks")
     for f in failures:
         print(f"  FAIL {f}")
+
     print("SELF-TEST :: " + ("PASS" if not failures else "FAIL"))
     return 0 if not failures else 1
 
@@ -380,6 +465,71 @@ def check_ledger_ids(ledger):
     return 0 if not fail else 1
 
 
+def check_row_owners() -> int:
+    """Validate ROW-OWNERS.tsv against the files it claims to describe. 0 ok / 1 drift / 2 cannot-check.
+
+    TWO-SIDED, for the reason the ledger id check is: a one-sided check passes on an empty
+    table. Both directions are failures worth naming:
+      * an id in the table that does NOT exist in its source file -> a typo or a deleted row,
+        and it will silently never match anything;
+      * an id in a source file that is NOT in the table -> unattributable, which is safe but
+        must be COUNTED, because "0 unmapped" and "we never looked" print the same otherwise.
+    """
+    owners = load_row_owners()
+    if not owners:
+        print("ROW-OWNERS :: CANNOT CHECK -- side table is missing or empty, so nothing was validated.")
+        print("  Every CLM/VL row will report UNOWNED and the gate will refuse. That is safe, not verified.")
+        return 2
+
+    problems, assigned, unassigned = [], 0, 0
+    # Which source file each id claims to live in, from column 3 when present.
+    sources: dict[str, str] = {}
+    for raw in OWNERS_TSV.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        parts = raw.split("\t")
+        if len(parts) >= 3 and parts[0].strip() and parts[0].strip().lower() != "id":
+            sources[parts[0].strip()] = parts[2].strip()
+
+    for rid, owner in sorted(owners.items()):
+        if _lane_key(owner) == UNASSIGNED:
+            unassigned += 1
+        else:
+            assigned += 1
+        src = sources.get(rid)
+        if not src:
+            problems.append(f"{rid}: no source file column, so its existence cannot be checked")
+            continue
+        p = REPO / src
+        if not p.exists():
+            problems.append(f"{rid}: source file {src} does not exist")
+            continue
+        if not re.search(rf"^\|\s*{re.escape(rid)}\s*\|", p.read_text(encoding='utf-8', errors='replace'), re.M):
+            problems.append(f"{rid}: listed here but NO leading-cell row in {src}")
+
+    # Reverse direction: ids present in the sources but absent from the table.
+    unmapped: list[str] = []
+    for src in sorted(set(sources.values())):
+        p = REPO / src
+        if not p.exists():
+            continue
+        for m in re.finditer(r"^\|\s*((?:CLM-\d+|VL\d+))\s*\|", p.read_text(encoding='utf-8', errors='replace'), re.M):
+            if m.group(1) not in owners:
+                unmapped.append(f"{src}:{m.group(1)}")
+
+    print(f"ROW-OWNERS :: {len(owners)} ids -- {assigned} assigned, {unassigned} UNASSIGNED; "
+          f"{len(unmapped)} id(s) in the sources with no table entry")
+    if unassigned:
+        print(f"  {unassigned} UNASSIGNED means NOBODY HAS DECIDED, not 'anyone may edit'. The gate exits 2 on these.")
+    if unmapped:
+        print("  unmapped (report UNOWNED, gate refuses): " + ", ".join(unmapped[:12])
+              + (" ..." if len(unmapped) > 12 else ""))
+    for pr in problems:
+        print(f"  DRIFT {pr}")
+    print("ROW-OWNERS :: " + ("PASS" if not problems else "FAIL"))
+    return 1 if problems else 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*", help="ledger files to attribute (default: the conflicted set)")
@@ -389,8 +539,14 @@ def main() -> int:
                     help="two-sided completeness on VALIDATION_LEDGER.md's VL ids; 0 ok / 1 "
                          "violated / 2 cannot check. A half-finished re-id and deleted rows fail "
                          "with opposite signs, so the message names which.")
+    ap.add_argument("--check-owners", action="store_true",
+                    help="validate ROW-OWNERS.tsv against the files it describes; 0 ok / 1 drift "
+                         "/ 2 cannot check. Two-sided: a listed id missing from its source, and a "
+                         "source id missing from the table, are different failures and both print.")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
+    if args.check_owners:
+        return check_row_owners()
     if args.check_ledger_ids:
         return check_ledger_ids(REPO / "VALIDATION_LEDGER.md")
     if args.self_test:

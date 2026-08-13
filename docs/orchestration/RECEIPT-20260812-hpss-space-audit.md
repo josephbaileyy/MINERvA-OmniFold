@@ -7,8 +7,13 @@ allocation"*. This is the audit half. **Nothing was deleted and this script has 
 residency is **1,457,304,348,109 B (1.4573 TB) across 279 files**, and **99.9999989% of it is two campaign
 archives**. The entire non-campaign contents are **15,694 B — 0.0000011% of residency.** The only byte-identical duplicate pair in
 the whole archive is worth **12,334 B**. **Reducing HPSS space therefore means deleting campaign physics
-data — there is no housekeeping option.** That is a decision for Joseph, per item, and it needs a number
-nobody has yet: **the allocation itself.**
+data — there is no housekeeping option.**
+
+> **READ THE ADDENDUM BEFORE ACTING ON ANY OF THIS.** Two things below are superseded by measurements
+> taken later the same day: the quota **was** found (512.00 GiB; residency is **265.1%** of it, overage
+> **845.22 GiB**), and CFS has ~20,990 GB free — so the conclusion inverts from *delete* to **move**, and
+> then defers behind Joseph's necessity precondition. §1 and §7 are wrong as written and are kept
+> unedited, because a receipt that silently rewrites its own superseded sections cannot be audited.
 
 ## Provenance
 
@@ -21,7 +26,10 @@ nobody has yet: **the allocation itself.**
 | hsi calls | 5 in the audit run; **0 mutating, structurally impossible** — `assert_readonly()` gates the only wrapper that invokes `hsi` |
 | guard verified | `--self-test` 48/48 under macOS bash 3.2 **and** cluster bash 4.4.23. The guard was verified in the environment that actually gates HPSS, not only where it was written. |
 
-## 1. THE DENOMINATOR IS STILL MISSING, AND IT IS THE BLOCKER
+## 1. THE DENOMINATOR IS STILL MISSING, AND IT IS THE BLOCKER — ***SUPERSEDED, SEE ADDENDUM***
+
+**This section is WRONG.** `hpssquota` on the login node answers it. Kept verbatim because the error was
+one of scope — I searched `hsi`'s grammar and never questioned the instrument — and that is the finding.
 
 **No `hsi` command yields a quota.** `lsquota`, `quota`, `lsquota -h` all return
 `*** unrecognized command` with exit 64. Recorded as a **reported failure, not a blank**.
@@ -153,7 +161,10 @@ against was not measured.** Continuation of `BEN-193`'s denominator family rathe
   one would be making the decision.
 - **`hsi hashverify` after tape migration.** Still open, still the PET lane's, unchanged by this audit.
 
-## 7. THE DECISION THIS TEES UP FOR JOSEPH
+## 7. THE DECISION THIS TEES UP FOR JOSEPH — ***PARTIALLY SUPERSEDED, SEE ADDENDUM***
+
+**Item 1 is resolved and items 2–3 are moot:** CFS makes this a move rather than a reduction, and Joseph
+has since attached a necessity precondition that outranks both. Kept as written.
 
 1. **The allocation figure, from Iris.** Gates everything; nobody else can read it.
 2. **Then, if reduction is genuinely required, the only two pools are physics products:**
@@ -163,3 +174,124 @@ against was not measured.** Continuation of `BEN-193`'s denominator family rathe
      80.86% of it is three files. This is the last thing to delete, not the first.
 3. **The 12,334 B dedup is available and pointless**, and is mentioned only so it is not later discovered
    and mistaken for an overlooked lever.
+
+---
+
+# ADDENDUM — the denominator was found, and it changes the decision (2026-08-12, later)
+
+**§1 above is SUPERSEDED. The quota exists and I looked in the wrong place.** `hpssquota` and
+`showquota` are NERSC **login-node binaries** at `/global/common/software/nersc/bin/`, not `hsi`
+subcommands. Found by the mediator; verified independently here in the same turn:
+
+```
+| josephrb usage on HPSS charged to m3246 |  1.03TiB |  512.00GiB |  206.5% |
+|                                pscratch |  15.93TiB |  20.00TiB  |   79.7% |
+|                                    home |  22.47GiB |  40.00GiB  |   56.2% |
+```
+
+**My error was of SCOPE, not of method.** I asked *"does `hsi` have a quota verb?"* and answered it
+correctly. The question was *"what reports HPSS quota?"* — and I never questioned the instrument. This is
+`BEN-190`'s shape a third time: I verified the contents of the thing I was looking at and not whether I
+was looking in the right place. Writing *"the figure has to come from Iris"* gave a false floor on the
+cost of getting it — it was one login-node command away, and stating a blocker more firmly than the
+evidence supports is its own defect.
+
+## The arithmetic, with both unit conventions because they differ materially here
+
+| quantity | value |
+|---|---|
+| quota | 512.00 GiB |
+| charged **now** | 1.03 TiB = 1054.72 GiB = **206.5%** |
+| measured residency (§2) | 1,457,304,348,109 B = **1357.22 GiB** = 1.3254 TiB |
+| **true figure once accounting catches up** | **265.1%** |
+| overage at that point | **845.22 GiB** = 0.8254 TiB = 0.9075 TB |
+
+**The 206.5% reading is STALE, and the staleness is legible rather than assumed:** 1.03 TiB ≈ 1054.72 GiB
+sits within 2.33 GiB of the P3F-PET archive alone (1057.05 GiB), and the quoted-products set (300.17 GiB,
+copied 16:24) is absent from it. So HPSS accounting has not yet absorbed today's copy.
+
+## THE CONCLUSION OF §7 INVERTS: this is a MOVE question, not a delete question
+
+`/global/cfs/cdirs/m3246` is available and was not in evidence when §7 was written. Verified here:
+
+```
+m3246 (CFS)   81,410 GB used / 102,400 GB quota   79%   ->  ~20,990 GB free
+```
+
+**Moving `mnv-p3f-pet-fullevent-final` (1,134,998,230,283 B, 240 files) HPSS → CFS takes HPSS to
+300.17 GiB = 58.6% of quota**, with the quoted products staying on tape. CFS goes 79% → ~80.6%. **Nothing
+is deleted, no physics product is lost, and no coverage decision is required.**
+
+So §2's central finding stands and its conclusion reverses: **because there is no cruft, the answer is
+relocation rather than reduction.** The refusal to generate a deletion-candidate list was right and is now
+moot. One caveat that belongs with the option: **CFS is disk, not tape.** The P3F set's purpose was durable
+off-scratch protection; CFS is not purged (unlike scratch) but it is not an archive, and it draws on a
+shared project quota already at 79%.
+
+## A THIRD OPTION NEITHER LANE HAD: the PI offered to raise the allocation
+
+Relayed via the codex channel from Benjamin Nachman's forwarded NERSC notice (2026-08-12 22:15:50Z):
+*"I'm happy to increase as you need, just let me know."*
+
+That is a real alternative with **zero data movement and zero durability loss**, and it was absent from
+both the move analysis and the delete analysis. It needs ≥1357 GiB to cover current residency; asking for
+headroom above that is the obvious framing. **Not mine to request** — it is Joseph's relationship and
+Joseph's ask.
+
+## THE PRECONDITION THAT OUTRANKS ALL THREE — Joseph, verbatim via the mediator
+
+> Yes, I approve any moves you make, but make sure you actually need to store these files. It is important
+> to recognize how much increased file storage contamines LLM sessions. Feel free to tell other sessions
+> (or you yourself) to utilize agy as an auditor
+
+**Approval-by-reference again: his words carry his authority; any unpacking of them does not.** Moves are
+approved. **Deletions are not, and nothing here reads as authorizing one.** But the operative clause is
+*"make sure you actually need to store these files"* — which lands **before** the move, the ask, and the
+delete alike. All three accommodate 1.46 TB without asking whether it should exist.
+
+**His second sentence is the one worth keeping:** storage cost is not only bytes on tape, it is context
+every future session pays. `docs/orchestration/` already holds ~498 files at ~14% live, and `CATALOG.md`
+exists because that directory outgrew being readable. **This audit alone produced three artifacts.** That
+is a cost I imposed while measuring someone else's.
+
+## NECESSITY EVIDENCE — the cluster half, and it weakens the storage case
+
+The repo-side necessity audit (regenerability, supersession by `OI-24`, citations) is with `agy` in a
+detached worktree. The cluster-side question `agy` cannot reach:
+
+**Do the 240 archived objects still exist on scratch? YES — all 240, byte-exact.**
+
+| check | value |
+|---|---|
+| manifest | `nd-unfolding/p3f_pet_fullevent/HPSS_ARCHIVE_MANIFEST.slurm-56692312.json`, 72,139 B, 240 entries, `n_archived_digest_verified: 240` |
+| source | `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/p3f_pet_fullevent/final` |
+| distinct paths built | **240 of 240** — asserted, see the vacuous-pass note below |
+| present on scratch (`isfile`) | **240 of 240** |
+| bytes on scratch | 1,134,998,230,283 = 1057.05 GiB |
+| manifest `local_size` sum | 1,134,998,230,283 — **exact match** |
+| distinct sizes | 169 (so the per-file check is real, not one path repeated) |
+
+**So HPSS is presently a SECOND copy of live scratch data, not a rescue from purge.** That materially
+weakens the case for its current residency — though scratch is *purgeable* and at 79.7%, so "still there
+today" is not "safe." The two facts point opposite ways and both belong in the decision.
+
+**A vacuous pass I produced and caught, in the same family as `BEN-196`.** My first version of this check
+read the manifest entry key as `rel`/`relpath`/`path`/`name` — the actual key is `file` — so every path
+fell back to the source *directory*, and I stat'd one directory 240 times. It printed **"240 of 240
+present"**: a clean pass, in the right direction, meaning nothing. The tell was uniformity —
+6,881,280 / 240 = exactly 28,672 B each. The fix is the `DISTINCT paths built` assertion above, which
+fails loudly instead of passing quietly, plus the distinct-size count as a second witness. **Third time
+today a check passed without touching its subject.**
+
+## The smoketest/receipt digest collision is RESOLVED — benign, and the 240/240 claim is intact
+
+The §4 collision has an answer rather than an ambiguity, so the PET lane does not need to start cold.
+`P3F_PET_receipt_BeamAngleX_0_1A.json` is **genuine production output**: `produced_utc`
+`2026-07-20T06:41:42Z`, `slurm.jobid` `56169842`, `array_task_id` 0, node `nid004079`, `verdict: PASS`,
+and a `final_root` pointing at the real 20 GB ROOT with its own sha256. Its md5 on scratch is
+`5e89461934bf030f0c4881f8dd0a2779`, identical to the HPSS `smoketest.json` stored digest.
+
+**So the smoketest reused a real production receipt as its payload. None of the 240 is a test artifact,
+and `240/240 digest-verified` covers 240 production objects.** The alternative reading — that one of the
+240 was a smoketest file, which would have made the claim cover 239 — is **refuted**. Still worth the PET
+lane knowing the smoketest object is a copy rather than a distinct fixture.
