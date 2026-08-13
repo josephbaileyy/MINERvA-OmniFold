@@ -153,13 +153,48 @@ receipt, not this line, if they ever disagree again.**
   `57f33f87…`, `omnifold_nn/omnifold/dataloader.py` `bed9e0b3…`, validator `13fa4853…`, canonical
   u2d `8ebe0277…`. The product is therefore still bound to the code in the tree.
 
-**Open, and the only things open:** promotion requirement 1, independent receipt review of hashes,
-configuration and binned telemetry — routed to the verifier lane, because a lane cannot review the
-gate it is promoting (`CLAUDE.md`: worker agreement is not verification). Two evidence limits worth
-stating rather than discovering later: `tests/test_fullevent_gate2.py` and
-`tests/test_gate2_target_runtime.py` (7 tests) cannot run off-cluster — hardcoded `/pscratch` paths
-and an `omnifold.dataloader` import — and those are precisely the end-to-end loader-boundary tests,
-so off-cluster green does not cover the boundary.
+**Test evidence, and the loader boundary is now covered ON-CLUSTER.** Off-cluster: 92 passed
+(`test_d1_dual_leg_weights` + `test_b1_normalization_fix`), and separately 12 + 153 passed / 1
+skipped across the dual-leg mutation suite, nominal launcher, B4 gating, B1 normalization and
+full-event schema. The mutation tests are two-sided by construction — each perturbation asserts a
+movement *and* a non-movement, and a third control perturbs `w_reco` only outside `pass_reco` to
+prove `R` sums the mask.
+
+`tests/test_fullevent_gate2.py` and `tests/test_gate2_target_runtime.py` **cannot** run off-cluster
+(hardcoded `/pscratch` paths, an `omnifold.dataloader` import) and they are precisely the
+end-to-end loader-boundary tests — the surface D1 and D2 meet at — so off-cluster green never
+covered the thing most worth covering. **Run on Perlmutter under `tensorflow/2.15.0`: 32 passed in
+1.87 s.**
+
+That green means something only because the cluster tree is a fork (at `683bdcc`, with 728
+uncommitted files), so the four relevant files were checked byte-identical between local `main` and
+the cluster before the result was accepted — cluster halves measured by the orchestrator lane, local
+halves re-measured here:
+
+| file | sha256 (first 16) |
+|---|---|
+| `tests/test_fullevent_gate2.py` | `b1c3c29f1ed183f5` |
+| `tests/test_gate2_target_runtime.py` | `3782e096adb0047a` |
+| `pet/fullevent_fps_dataloader.py` | `57f33f87b07e0c6b` |
+| `pet/train_fullevent_nominal.py` | `5fda80df43dfe334` |
+
+Had they differed, the on-cluster green would have validated the fork and said nothing about `main`.
+
+**Open, and the only thing open:** promotion requirement 1 — independent receipt review of hashes,
+configuration and binned telemetry. Routed to the verifier lane and deliberately not self-performed:
+a lane cannot review the gate it is promoting (`CLAUDE.md`: worker agreement is not verification).
+Three items for that review, being the places this evidence is thinnest: (i) `b4_gated: true` is the
+load-bearing field, and the claim that every `die()` path precedes the receipt write is read from the
+receipt's own prose, not verified in `gate2_target_runtime.py`; (ii) `normalized_sum`
+1,124,080.5876521247 against target 1,124,080.2949941019 agree to 2.6e-7, which is agreement, not
+identity, and no governing tolerance was located; (iii) the `mc-only` path was read statically and
+never executed, so "imports no ROOT" is a code reading rather than a runtime measurement.
+
+**Naming trap for any reviewer:** `D1`/`D2` in this file and in
+`DECISION-20260804-B4-STEP3-RECEIPTS.md` are the B-4 weight repair and the RESTORE Step-3 target
+ownership decision. `D1`/`D2` in the powered-closure work are *different things* — commits such as
+`f2c5b7d "Powered closure n=3: D2 pass"` are the closure criterion. Confirming the wrong one looks
+like a complete review.
 
 **What this does NOT certify.** Construction of the measured target only. Not quotable as a cross
 section. Gate 4 must separately prove the nominal consumes this exact array (J04) and cannot PASS
