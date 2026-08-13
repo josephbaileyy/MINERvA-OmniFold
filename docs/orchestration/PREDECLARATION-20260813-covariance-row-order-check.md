@@ -88,3 +88,53 @@ This tests **row order only**. It does not revisit the axis assignment (closed b
 test) or the volume weighting (closed by the 4D cross-check). A pass here would license `22.7%` for
 **per-bin** use; without it, `22.7%` remains scoped to the aggregate order-of-magnitude materiality
 question it was computed for, per D's ruling `9a84b6d`.
+
+---
+
+# RESULT — run 2026-08-13 after the above was committed at `3de5143`
+
+**VERDICT: ROW ORDER CONFIRMED.** All three predeclared thresholds met on the real order; the positive
+control collapsed on both statistics required of it.
+
+| statistic | real order | control (`P C Pᵀ`, seed 20260813) | predeclared threshold |
+|---|---|---|---|
+| S1 Spearman `rho(sqrt(diag), \|central\|)` | **+0.9947** | **−0.0106** | >0.90 / \|rho\|<0.05 |
+| S2 median `frac` | **13.761%** | 14.746% | within 1 pp of 13.432% |
+| S3 `IQR/median` | **0.770** | **279.5** | <1 / >3 |
+
+`n = 10,694` both arms. S2's real value **13.761%** sits 0.33 pp from the `13.432%` written into
+`uq_universe_5d_summary.txt` by a different producer at a different time — the third-instrument anchor
+the check was built around.
+
+## THREE THINGS THE RUN EXPOSED THAT THE VERDICT DOES NOT CARRY
+
+**1. S2 HAS ALMOST NO DISCRIMINATING POWER AND MUST NOT BE REUSED AS A ROW-ORDER TEST.** The control's
+median `frac` came out at **14.746%** against the real **13.761%** — it barely moved. A median of a
+ratio is robust to permutation when both distributions have similar medians, so **S2 would have passed
+a permuted matrix.** The predeclaration did not require S2 to collapse (it says the permuted median
+"need not stay near it"), so the adjudication is unaffected — but that was foresight, not margin.
+**S1 and S3 carried this result alone.** Anyone reusing this check should keep S2 as an *anchor* to an
+independently recorded number and never as a discriminator.
+
+**2. My invariant check was malformed, for the third time tonight.** I compared
+`np.trace(C)` against `d_perm.sum()` with exact equality and it printed `False` — but the two sum in
+different orders, so bitwise equality is not expected and the comparison was meaningless. The
+meaningful invariant, `sorted(diag) identical`, returned **True**, which is the one that actually
+demonstrates why trace-based checks cannot see a permutation. **This is my third exact-equality-on-
+floats error in one session** (after the projected-covariance symmetry check, and the same construction
+again). Recording it as a personal pattern rather than three isolated slips: I reach for
+`rtol=0, atol=0` when I mean "should be identical," and for a float reduction that is almost never the
+right test.
+
+**3. The real-order fractional uncertainty spans 3.47% to 213.8%**, i.e. some reported bins carry a
+per-bin fractional uncertainty **above 100%**. Not investigated and not alarming on its face for the
+sparse corners of a 5D grid, but it is a fact about the adopted covariance that the median figure hides,
+and it is the kind of thing a per-bin use of this matrix would need to confront. **Flagged, not chased.**
+
+## What this licenses
+
+Row order is now checked by an instrument (**central values**, pinned at `p4_evidence.py:409`) distinct
+from both the mask and the 4D chain. Together with the amended mask test (axis assignment) and the 4D
+cross-check (volume weighting), the three residuals D and the mediator named are each closed by a
+different instrument. **Whether that jointly lifts `22.5%`'s aggregate-only scoping to per-bin use is
+D's ruling, not this file's.**
