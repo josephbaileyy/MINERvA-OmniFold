@@ -1,7 +1,8 @@
 # FINDING 2026-08-13 — The interesting finding arrives before the boring check and outruns it
 
 **`BEN-206`.** Infrastructure block (`200-209`). **Four instances, four independent parties, one
-session** — and a fifth added below, which occurred *while this file was being written*.
+session** — and two more added below, instances 5 and 6, which occurred *while this file was being
+written* and while the collision it describes was being resolved.
 
 **Authorship, CORRECTED 2026-08-13 — the row is the MEDIATOR's, not D's.** A first recorded it as D's,
 in a commit message, in this file, and in a message to the mediator. It was written by
@@ -82,13 +83,28 @@ command was run, the output was correct, and the batching made it decorative. **
 gate the action it guards is a check nobody reads, with extra steps** — and it happened during the
 filing of a finding about skipped checks, which is the propagation argument making itself.
 
+**6. Mediator — authorship identified by recognition, with an exact check available and unrun.**
+Resolving this very collision, the mediator grepped the ledger, saw a row phrased *"Filed on
+PROPAGATION, not truth"*, **recognised the criterion as D's** because D had supplied that formulation
+an hour earlier, and concluded on that alone that the surviving row was D's. It then reported a
+three-party sequence as fact, contradicting A's byte-count evidence. **The decisive check was exact,
+free, and sitting in its own transcript: diff the row against its own draft.** It was never run,
+because a plausible answer arrived first. Self-reported. The survivor is the mediator's own text,
+verbatim.
+
+**Instances 5 and 6 are the same shape one level in from the other four.** In 1-4 a check was skipped
+because the result was satisfying. In 5 the check *ran* and was placed where it could not act; in 6 the
+check was never *conceived*, because recognition felt like identification. **All six share the trigger:
+something arrives that resolves the question, and the resolving quality is what suppresses the next
+step.**
+
 ## Why it is worth a ledger row
 
 The ledger's cost is paid on **every future read**, so truth and generality alone do not justify a
 row — they have no upper bound and would justify everything. **Propagation does have an upper bound,
-and it is the scarce evidence.** Four independent instances, four parties, one session, none of whom
-were being careless, is the strongest propagation evidence this campaign has produced for any single
-pattern.
+and it is the scarce evidence.** Six instances across four parties in one session, none of whom were
+being careless — and two of them occurring *during the filing of this finding* — is the strongest
+propagation evidence this campaign has produced for any single pattern.
 
 ## The check
 
