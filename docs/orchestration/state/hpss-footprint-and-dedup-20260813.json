@@ -56,6 +56,7 @@
       {"path": "backups/scratch_backup", "bytes": 3360, "files": 2, "created": "2026-02-20"}
     ],
     "sum_check": "1134998230283 + 322306102132 + 12334 + 3360 = 1457304348109 -- derivable from the operands above, per CONVENTION-receipt-ingredients.",
+    "ENUMERATION_PROVED_COMPLETE_BY_AN_OUTSIDE_WITNESS": "This inventory came from hsi du over four directories I chose by reading the top-level listing, and nothing in it established that no fifth directory held charged bytes. Lane B's derivation (4016159) supplies that witness from HPSS's own accounting: charged 1134998245977 B = this inventory MINUS the quoted set, remainder exactly 0. A completeness check on an enumeration, from the billing system rather than from re-walking the tree -- and a different instrument than the one that produced the numerator, which is the property D's rule asks for.",
     "internal_reconciliation_of_the_large_archive": {
       "root_files_bytes": 1134996735477,
       "root_files_count": 120,
@@ -140,7 +141,20 @@
       "p3f_plus_quoted_inside_interval": false,
       "quoted_alone_GiB": 300.1709,
       "quoted_alone_inside_interval": false,
-      "conclusion": "The charged figure is consistent with the P3F archive ALONE and inconsistent with P3F+quoted, so it predates the 36-file copy and HPSS accounting lags. This is an interval containment result, not an agreement at printed precision."
+      "conclusion": "The charged figure is consistent with the P3F archive ALONE and inconsistent with P3F+quoted, so it predates the 36-file copy and HPSS accounting lags. This is an interval containment result, not an agreement at printed precision.",
+      "SUPERSEDED_BY_A_SHARPER_INSTRUMENT_FROM_LANE_B": {
+        "credit": "Session B, 4016159. My interval test bounds what the charged reading CANNOT be; B derived what it IS, to the byte, and reproduces BOTH printed fields rather than one.",
+        "derivation": "charged = P3F 1134998230283 + smoketest 12334 + backups 3360 = 1134998245977 B = 1057.0495 GiB",
+        "reproduces_field_1": "1057.0495 GiB = 1.0323 TiB, which displays as '1.03TiB'",
+        "reproduces_field_2": "1057.0495 / 512 = 206.455%, which displays as '206.5%' -- my interval test could not check this second field at all",
+        "residency_minus_charged": 322306102132,
+        "quoted_archive_bytes": 322306102132,
+        "remainder": 0,
+        "WHAT_THE_ZERO_REMAINDER_BUYS_AND_I_HAD_NOT_CLAIMED_IT": "It is an independent witness that THIS RECEIPT'S ENUMERATION IS COMPLETE. My 279-object inventory came from hsi du over four directories I chose by listing the top level; nothing in it proved I had not missed a directory. HPSS's own accounting figure equals my inventory minus the quoted set with ZERO bytes unaccounted, so there is no fifth location holding charged bytes. A completeness check on an enumeration, supplied by the billing system rather than by re-walking the tree.",
+        "full_residency_would_display": "1.33TiB / 265.1%, which is not what hpssquota shows -- so the lag is confirmed from the display side too",
+        "operational_gap": "The live reading implies freeing 545.05 GiB; the committed state needs 845.22 GiB; the 300.17 GiB difference IS the quoted archive. All three verified here from the operands above.",
+        "why_both_are_kept": "The interval test is retained unedited rather than replaced. It was correct and it was reached independently, and a superseded-but-sound inference is evidence about method (B's own phrasing about their allocation bound, and it applies symmetrically)."
+      }
     },
     "superseded_tool_search_kept_for_the_record": [
       {"tool": "hpssquota", "result": "HAS THE ANSWER -- quota 512.00 GiB, charged 1.03 TiB, 206.5%"},

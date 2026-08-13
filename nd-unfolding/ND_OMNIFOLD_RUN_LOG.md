@@ -5502,3 +5502,94 @@ verbatim text is returned to Session A for him to send**, unparaphrased and uned
 half was already correct before this decision arrived (`efd4c6b` fixed the `\jrb{}` reply in
 `sec_experiment.tex`); what remains is the record correction to the person, which is the half that
 matters and the half I cannot perform.
+
+## 2026-08-12 — HPSS over-allocation notice: residency inventoried at 1.4573 TB, and the copy it looked like was not the cause
+
+A NERSC notice that user `josephrb` is over the HPSS allocation reached this session by relay (Codex via a
+peer session, quoting a forwarded mail from Ben). **Nothing in it is Joseph verbatim and it authorizes no
+deletion**; both facts are recorded in the receipt, and the decision it implies is routed to Session A.
+
+**Measured, all read-only:** `hsi du -s` over all four top-level HPSS entries gives
+**1,457,304,348,109 B (1.4573 TB) in 279 files**. That agrees with the two digest-verified manifests
+(1,457,304,332,415 B, 276 files) to **15,694 B in 3 files** — `backups/` (2 files, pre-campaign, dated
+2026-02-20) plus `mnv-p3f-smoketest` (1 file). Their block-rounded ceiling is 16,384 B, over the residual
+by 690 B, inside the 1,533 B of 512-byte slack available across 3 files. File counts reconcile exactly
+(240 + 36 + 1 + 2 = 279), and each archive directory's HPSS mtime equals its Slurm `End` to the minute.
+**Pre-campaign residency is 1.1e-8 of the total: this campaign's two archives *are* the residency**, so
+there is no legacy archive to reclaim or blame.
+
+**The attribution, which is the part that would have cost something.** The notice is stamped
+2026-08-12 06:50:13 PDT. Job **56762440** (quoted products, 0.322 TB) ran 06:49:24 → 07:22:48 PDT, so the
+notice fired **49 s into a 2004 s copy — 2.4% elapsed, ~7.9 GB moved of 322 GB** at that job's own
+measured 161.15 MB/s. The overage was already set by job **56692312** (p3f full-event, 1.135 TB,
+**77.9%** of residency), which finished 13.7 h earlier. Slurm and the notice were confirmed to share one
+clock (`date +%Z%z` → `PDT-0700`) rather than assumed. The snapshot time NERSC used is unstated, so it was
+enumerated instead of guessed: a snapshot before 2026-08-11 15:39 would put residency at 15,694 B, which
+cannot exceed an allocation, so that case is **excluded by the notice existing** — and every surviving
+case puts p3f alone over the line. **The conclusion does not depend on the unknown.** It also yields a
+bound: the user HPSS allocation is **< 1.135 TB**, so the overage is **> 0.3223 TB**. A 1 TB default would
+fit that bound but is a guess and is flagged as one — Iris is the authority and was not read.
+
+This matters because the running copy was the obvious suspect *and* the one archive whose 36 files back
+technote-quoted numbers, 35 of them named only by `VALIDATION_LEDGER.md`. The plausible culprit and the
+costliest set to lose were the same set. Filed as **BEN-118**.
+
+**Three of the four reduction levers are measurably empty.** Deduplication frees **0 B**: the p3f
+manifest (sha256 `c9e1902e…`, verified against its receipt before use) has **240/240 distinct md5 and
+240/240 distinct basenames**, the quoted set 36/36 distinct, and cross-archive overlap is zero by
+enumeration. Supersession is worth **~9.98 GB, 0.68%**, and only by deleting the uncorrected member of the
+five `X/` vs `X/corrected/` pairs — proven-distinct content whose whole point is which products are
+corrected. The one genuine supersession, `mnv-p3f-smoketest`, is ≤ 12.8 kB. **The discipline that made
+these archives trustworthy — collision guard, digest verification, enumerated non-overlap — is exactly
+what leaves them no slack.** Only the prospective lever is live: difference future protection asks against
+these 279 catalogued objects first.
+
+So the remaining options are both Joseph's: accept Ben's offer to raise the allocation, or authorize
+per-item deletion. Tracked as **OI-48**, and the causing archive is quarantine cause 5 — Session C's, so it
+was measured and not touched. Receipt:
+`../docs/orchestration/state/hpss-residency-inventory-20260812.json`.
+
+## 2026-08-12 — the same audit ran in two lanes: three corrections to mine, and the stale 206.5% explained
+
+A parallel lane had already audited HPSS (`RECEIPT-20260812-hpss-space-audit.md`, `8ec4e62`/`243af2f`),
+which I found on fetching before pushing. **Three-way agreement, no shared operand:** their per-directory
+`hsi du`, their single `hsi du -s .` at HPSS home, and my two digest-verified manifests plus a 15,694 B
+residual all give **1,457,304,348,109 B / 279 files**. Their direct measurement of that residual
+(smoketest 12,334 + backups 3,360) equals my *inferred* residual exactly and sits inside the per-directory
+ceilings I had bounded from block counts, so the 512-byte rounding-slack argument is confirmed rather than
+merely plausible.
+
+**Three corrections to my receipt, all pre-push.** (1) Dedup frees **12,334 B, not 0 B** — the one
+byte-identical pair on HPSS is smoketest's single file against a p3f object, a *cross-directory* duplicate.
+I checked md5 uniqueness *within* each archive and took cross-archive non-overlap from job 56762440's
+receipt, whose enumeration covered the quoted set against p3f and never covered smoketest: **I asserted an
+absolute total from two partial scopes.** (2) The quota **is** readable from the CLI —
+`hpssquota` at `/global/common/software/nersc/bin/hpssquota`. I probed `hsi quota`, `hsi lsquota`,
+`myquota` and `showquota`, got `unrecognized command` and a table listing only home and pscratch, and
+concluded the instrument did not exist, when what I had established was that **four instruments do not
+report it**. The other lane made the identical error and self-diagnosed it as scope. Two lanes
+independently: *an absence of the answer in the tools you thought of is not an absence of the tool.*
+(3) There are **three** options, not two — **MOVE** is the live answer, and the one that costs no science:
+CFS `m3246` has ~20,990 GB free and moving the 240 p3f objects takes HPSS to 58.6%. My receipt offered
+only increase-or-delete because it never considered a second destination.
+
+**What this lane adds, `hpssquota` run first-hand:** quota **512.00 GiB**, charged **1.03 TiB**,
+**206.5%**, exit 1. Their audit said that reading predates the quoted copy; I identified what it therefore
+contains, to the byte — charged = p3f 1,134,998,230,283 + smoketest 12,334 + backups 3,360 =
+**1,134,998,245,977 B = 1.0323 TiB**, which displays as `1.03TiB` **and** 206.5%, matching the instrument
+on both printed fields, with residency-minus-that equal to the quoted archive at **zero remainder**. Full
+residency would display 1.33TiB / 265.1%. **Operationally:** sizing a reduction from the live reading
+targets 545.05 GiB, the committed state needs **845.22 GiB**, and the 300.17 GiB gap *is* the quoted
+archive. Their addendum's 845.22 GiB is right for the eventual state and their OI-48's 206.5% is right for
+now — both true of different snapshots, and neither document said which to act on. It also confirms the
+attribution from the **accounting** side, independently of timestamps: the copy that looked guilty is
+provably absent from the charged figure that declared the overage.
+
+**Resolution of the id collision.** Both lanes appended after OI-47, so we both wrote OI-48 — the exact
+shape BEN-080/082 warns about, where *"OI-48 closed"* is true of one and false of the other. Mine was
+**deleted, not renumbered**: theirs has the denominator, the move option and the scratch evidence, and a
+second storage row would only give the two somewhere to drift. I added one sentence to their row instead.
+**BEN-118 corrected** from "Dedup 0 B" to "12 kB of 1.46 TB". One discrepancy left for them: their row
+says *"the 16:24 copy"*, while `sacct` in the same turn with the TZ confirmed `PDT-0700` gives
+06:49:24 → 07:22:48 PDT = 13:49:24 → 14:22:48 UTC. 16:24 matches neither, and the BEN-069 timezone family
+already has three instances — flagged to them, not edited into their document.
