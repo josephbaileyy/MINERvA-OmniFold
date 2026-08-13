@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "artifact": "gate5-target-family-promotion-56873858.json",
+  "observed_at": "2026-08-13T16:03:11Z",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-gate5-target-reconcile-r2-56873858.json",
+    "read_exactly_once": true,
+    "sha256": "e6f144f3079636fe0a3df0e59b315b7600b79ece91adc77cedb36e9c46950c61",
+    "valid": true,
+    "event_id": "evt-gate5-target-reconcile-r2-56873858",
+    "watch_id": "gate5-target-reconcile-r2-56873858",
+    "event_type": "slurm-job-complete",
+    "payload": {"job_id": "56873858", "state": "COMPLETED", "exit_code": "0:0"}
+  },
+  "accounting": {
+    "job_id": "56873858",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:01:47",
+    "start": "2026-08-13T15:57:49Z",
+    "end": "2026-08-13T15:59:36Z",
+    "node": "nid004122",
+    "allocated_cpus": 6,
+    "requested_memory": "8G"
+  },
+  "immutable_execution": {
+    "code_root": "/pscratch/sd/j/josephrb/gate5-target-validator-frozen-70be58a",
+    "head": "70be58a9825c4a59bd2ca11c7d05aa65c3a33000",
+    "clean_after_execution": true,
+    "validator_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
+    "launcher_sha256": "f031f17cc118f0eea5f99cffdd095eb7a61aa7659cc135f4db66ef362cca2314",
+    "test_sha256": "50caa1cda471d0e2be5b246ff8f7a71fafbe0c5104fbeeca8cd9f3a93a3371",
+    "power_tests": "73 passed"
+  },
+  "artifacts": {
+    "stdout": {
+      "path": "nd-unfolding/pet/fullevent_cstat_n50/logs/target_reconcile_56873858.out",
+      "size_bytes": 807,
+      "sha256": "41dd3d0888ab773ed36c8881d8b52c5d725f59bc103517d1082fb2508f23a919"
+    },
+    "stderr": {
+      "path": "nd-unfolding/pet/fullevent_cstat_n50/logs/target_reconcile_56873858.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "report": {
+      "path": "nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json",
+      "size_bytes": 168512,
+      "sha256": "388f5447249b398297a77f63699bb1a445daa9e24799d0b5d50232253e063329"
+    },
+    "marker": {
+      "path": "nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json.done",
+      "size_bytes": 370,
+      "sha256": "4d7bce7eb5989c88c61f71cb69fb069ab77ff3736df6f9da0a51c484dc2c6815",
+      "report_sha256_bound": "388f5447249b398297a77f63699bb1a445daa9e24799d0b5d50232253e063329",
+      "report_size_bound": 168512,
+      "verdict_bound": "TARGETS_COMPLETE_PASS"
+    }
+  },
+  "report": {
+    "stage": "target",
+    "verdict": "TARGETS_COMPLETE_PASS",
+    "C_stat": null,
+    "replay_performed": true,
+    "family_failures": [],
+    "family_checks": {"passed": 21, "failed": 0},
+    "targets_present": 50,
+    "targets_passing": 50,
+    "targets_absent": 0,
+    "target_check_counts": {"minimum_passed": 50, "maximum_passed": 50, "failed_total": 0},
+    "replica_seed_range": [50000, 50049],
+    "replica_seed_policy_exact": true,
+    "distinct_target_hashes": 50,
+    "distinct_data_factor_hashes": 50,
+    "distinct_signal_factor_hashes": 50,
+    "distinct_background_factor_hashes": 50,
+    "full_three_stream_replays_performed": 50,
+    "source_input": {
+      "size_bytes_recomputed": 9897374636,
+      "sha256_recomputed": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "expected_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "match": true
+    }
+  },
+  "independent_evaluation": {
+    "result": "PASS",
+    "report_and_marker_read_exactly_once": true,
+    "stdout_and_stderr_read_exactly_once": true,
+    "marker_path_size_sha_and_verdict_match_report": true,
+    "all_target_failure_lists_empty": true,
+    "all_replay_performed_flags_true": true,
+    "all_source_target_and_factor_hash_families_complete_and_distinct": true,
+    "check_execution_binding": "each target records 50 passed and zero failed; pinned validator source has 48 target-check call sites, of which the two marker sites each execute for npy and receipt, yielding exactly 50 executions",
+    "required_contracts_covered": [
+      "exact source/input/Gate-3/code identities",
+      "target and both completion-marker bindings",
+      "learned-production exact CPU Stay-Positive refinement with random_state 45",
+      "runtime bootstrap seed and is_bootstrap_replica telemetry",
+      "pinned-builder assert_refined_target_is_replica evidence",
+      "full data/signal/background coherent Poisson redraws",
+      "R and normalization re-derivation",
+      "family completeness, invariants, distinctness, and no nominal-target collision"
+    ]
+  },
+  "promotion": {
+    "target_stage": "PROMOTED_PASS",
+    "declared_50_member_target_manifest_valid": true,
+    "full_gate5_family": "NOT_YET_PROMOTED",
+    "why": "training array 56857233 is still active; all 50 target and training receipts are required before extraction or centering",
+    "C_stat": null
+  },
+  "training_snapshot": {
+    "observed_at": "2026-08-13T16:03:11Z",
+    "job_id": "56857233",
+    "completed": 10,
+    "running": 9,
+    "pending": 31,
+    "terminal_errors": 0,
+    "training_receipts": 10,
+    "training_artifacts": 10,
+    "sole_writer_preserved": true,
+    "terminal_watch": "gate5-training-56857233"
+  },
+  "prohibitions": {
+    "subset_selection": true,
+    "C_stat_before_complete_training_family": true,
+    "Gate6_or_C_ML_action": true,
+    "training_interference": true,
+    "reset_credit": true,
+    "worker_replacement": true
+  },
+  "persistent_worker_uuids_preserved": true,
+  "provider_dispatches": 0,
+  "reset_credit_consumed": false
+}

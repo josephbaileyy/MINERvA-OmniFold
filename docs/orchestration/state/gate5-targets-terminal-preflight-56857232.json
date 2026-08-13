@@ -52,7 +52,7 @@
     "why_partial": "the family-stage instrument also observed only 5 completed trainings at that instant; this is not a target failure"
   },
   "independent_terminal_validation": {
-    "status": "ATTEMPT_1_PREVALIDATION_FAILURE_CHANGED_ROUTE_ATTEMPT_2_WATCHED",
+    "status": "ATTEMPT_1_PREVALIDATION_FAILURE_CHANGED_ROUTE_ATTEMPT_2_PASS",
     "job_id": "56872614",
     "submitted_at": "2026-08-13T15:23:33Z",
     "initial_state": "PENDING_PRIORITY",
@@ -71,7 +71,11 @@
       "head": "70be58a9825c4a59bd2ca11c7d05aa65c3a33000",
       "validator_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
       "launcher_sha256": "f031f17cc118f0eea5f99cffdd095eb7a61aa7659cc135f4db66ef362cca2314",
-      "terminal_watch": "gate5-target-reconcile-r2-56873858"
+      "terminal_watch": "gate5-target-reconcile-r2-56873858",
+      "terminal_state": "COMPLETED",
+      "exit_code": "0:0",
+      "verdict": "TARGETS_COMPLETE_PASS",
+      "promotion_receipt": "docs/orchestration/state/gate5-target-family-promotion-56873858.json"
     },
     "validator": "nd-unfolding/pet/reconcile_gate5_family.py",
     "launcher": "nd-unfolding/pet/sbatch_gate5_target_family_reconcile.sh",

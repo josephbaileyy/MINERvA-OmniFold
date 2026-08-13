@@ -410,11 +410,14 @@ different central/mask/order/fingerprint.
 collision-isolated target/receipt/marker quartets are present and a same-turn structural pass reports
 50/50 target checks passing. Read-only validator `56872614` failed before validation when its mutable
 receipt-writing worktree advanced across the pending interval; no report was produced. Changed job
-`56873858` uses an immutable detached worktree at `70be58a` for full source hashing and all-three-factor
-replay, with a terminal watch. Task-correlated training array
+`56873858` ran from immutable detached HEAD `70be58a` and returned `TARGETS_COMPLETE_PASS`: exact
+9.9 GB source hash, 50 targets, and all 150 data/signal/background factor redraws match, with zero
+target or family failures. **The target stage is promoted PASS.** Task-correlated training array
 `56857233_[0-49]` remains the sole training
 writer with its terminal watch armed. The declared ensemble remains invalid until the independent
-target verdict and all 50 training receipts pass; no subset or `C_stat` is permitted.
+target verdict and all 50 training receipts pass; the target verdict is now satisfied, while the
+training condition is not. No subset or `C_stat` is permitted. Promotion
+receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
 **Reconciliation, 2026-08-13 05:50 PDT — verdict `PARTIAL`, owner lane C.** First full pass with
 `nd-unfolding/pet/reconcile_gate5_family.py` (50 tests, every check power-tested both directions;

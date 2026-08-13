@@ -6027,3 +6027,22 @@ writer remains in the separate reconciliation worktree, so documentation commits
 root beneath the queued job. Its terminal watch is `gate5-target-reconcile-r2-56873858`; training
 `56857233` and its existing watch remain untouched. No target science verdict, subset, `C_stat`,
 Gate-6 action, reset credit, provider turn, or UUID change follows from the failed instrument.
+
+### Gate 5 target stage promoted PASS at changed attempt 56873858
+
+The changed validator completed `0:0` in `00:01:47` from clean immutable HEAD `70be58a`. Its empty
+stderr, stdout, report, and completion marker were each read once. The marker binds the 168,512-byte
+report at sha256 `388f5447…`; both say `TARGETS_COMPLETE_PASS`. The report independently re-hashed the
+9,897,374,636-byte source as `fa6b3463…`, re-hashed all 50 targets, and re-drew all 150 coherent
+data/signal/background factor streams. All 50 target hashes and each 50-member factor-hash family are
+distinct; seeds are exactly 50000–50049; every target records 50 checks passed and zero failed; all 21
+family checks pass. The exact pinned validator source has 48 target-check call sites, with its two
+marker sites each executing twice, which accounts for the recorded 50 checks without an unnamed gap.
+The 73 power tests pass against the same source hash.
+
+The target stage is therefore **PROMOTED PASS**. This does not promote the full Gate-5 family or
+construct `C_stat`: at the same-turn snapshot training `56857233` has 10 complete receipts/artifacts,
+9 running tasks, 31 pending tasks, and no terminal errors. It remains the sole writer under watch
+`gate5-training-56857233`. No subset, Gate-6/C_ML action, reset credit, provider dispatch, or UUID
+change occurred. Canonical receipt:
+`docs/orchestration/state/gate5-target-family-promotion-56873858.json`.

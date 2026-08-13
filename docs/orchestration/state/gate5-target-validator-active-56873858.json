@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "artifact": "gate5-target-validator-active-56873858.json",
-  "observed_at": "2026-08-13T15:42:34Z",
+  "observed_at": "2026-08-13T16:00:39Z",
   "job_id": "56873858",
   "single_job": true,
   "tasks": "0",
@@ -12,8 +12,8 @@
   "job": {
     "job_id": "56873858",
     "name": "g5t-recon",
-    "state_at_receipt": "PENDING",
-    "reason_at_receipt": "Priority",
+    "state_at_receipt": "COMPLETED",
+    "reason_at_receipt": null,
     "constraint": "cpu",
     "partition": "shared_milan_ss11",
     "nodes": 1,
@@ -42,9 +42,22 @@
     "collision_guard": true,
     "replica_and_training_namespaces_read_only": true
   },
-  "watch": {"id": "gate5-target-reconcile-r2-56873858", "kind": "slurm-job", "state": "armed"},
+  "terminal": {
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:01:47",
+    "start": "2026-08-13T15:57:49Z",
+    "end": "2026-08-13T15:59:36Z",
+    "node": "nid004122",
+    "stdout_sha256": "41dd3d0888ab773ed36c8881d8b52c5d725f59bc103517d1082fb2508f23a919",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "report_sha256": "388f5447249b398297a77f63699bb1a445daa9e24799d0b5d50232253e063329",
+    "marker_sha256": "4d7bce7eb5989c88c61f71cb69fb069ab77ff3736df6f9da0a51c484dc2c6815",
+    "verdict": "TARGETS_COMPLETE_PASS"
+  },
+  "watch": {"id": "gate5-target-reconcile-r2-56873858", "kind": "slurm-job", "state": "fired"},
   "training_array": {"job_id": "56857233", "state": "ACTIVE_AND_UNCHANGED", "terminal_watch": "gate5-training-56857233", "sole_writer_preserved": true},
-  "status": "PENDING_WATCHED_CHANGED_ROUTE_READ_ONLY_VALIDATION",
+  "status": "COMPLETE_TARGETS_COMPLETE_PASS",
   "C_stat": null,
   "reset_credit_consumed": false,
   "persistent_worker_uuids_preserved": true
