@@ -1,0 +1,27 @@
+#!/bin/bash
+# Pre-commit DISPATCHER. It runs checks; it implements none. Keep it that way.
+#
+# ENABLE PER CLONE (the hook is inert without this, exactly like .git-blame-ignore-revs):
+#     git config core.hooksPath .githooks
+#
+# WHY: findings_row_lint.py, whose_row.py and merge_guard.sh all existed and none ran unless a lane
+# remembered to run it -- the convention-that-requires-remembering problem one level down.
+#
+# NOT RUN HERE, deliberately: generate_live_state.py --check-freshness, which returns 1 whenever
+# LIVE-STATE.md's sha is not HEAD's -- a condition it CANNOT ESCAPE (BEN-191/BEN-199). A check that
+# always fires is a check nobody reads, and putting it in a hook would train every lane to --no-verify.
+# merge_guard.sh is also absent: it needs a lane argument and belongs at merge time, not commit time.
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 2
+
+fail=0
+run() { local n="$1"; shift; "$@" >/tmp/.hook.$$ 2>&1 || { echo "PRE-COMMIT FAIL: $n"; cat /tmp/.hook.$$; fail=1; }; }
+
+run "findings long-form pointers" python3 docs/orchestration/findings_row_lint.py --longform
+run "ledger VL ids"               python3 docs/orchestration/whose_row.py --check-ledger-ids
+run "row-owner side table"        python3 docs/orchestration/whose_row.py --check-owners
+run "whose_row self-test"         python3 docs/orchestration/whose_row.py --self-test
+
+rm -f /tmp/.hook.$$
+[ "$fail" -eq 0 ] && echo "pre-commit: 4 checks passed"
+exit "$fail"
