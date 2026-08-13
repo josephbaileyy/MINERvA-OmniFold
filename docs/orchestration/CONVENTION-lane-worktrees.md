@@ -99,8 +99,29 @@ historical false passes pinned by name. **The battery is the form set, not one v
 > because that line is pure ASCII, so **the single example a reader would spot-check is the one where the
 > discrepancy cannot appear.** Harmless so far, because the over-600 set is identical under both units,
 > but that is luck about where rows fall relative to the threshold: **a 598-character row can be 604
-> bytes.** Measure with `len(line.rstrip())` in Python or `awk '{print length($0)}'`, not `wc -c`.
-> (`BEN-166`, found by Session D in Session A's file.)
+> bytes.**
+>
+> **Measure with Python: `len(line.rstrip())`. Nothing else, and the reason is measured, not asserted.**
+>
+> | instrument | `a—b` (3 chars, 5 bytes) | note |
+> |---|---|---|
+> | `python3` `len(s.rstrip())` | **3** on both platforms | correct and portable |
+> | `awk '{print length($0)}'` — macOS BSD awk 20200816 | **5** | counts BYTES, and `LC_ALL=en_US.UTF-8` does **not** change it |
+> | `awk '{print length($0)}'` — Perlmutter GNU Awk 4.2.1 | **3** | counts characters… |
+> | the same gawk under `LC_ALL=C` | **5** | …but flips to bytes under a locale many scripts set deliberately |
+> | `wc -m` | **4** | characters **plus the trailing newline** — not a drop-in |
+> | `wc -c` | **6** | bytes plus the newline |
+>
+> **So `awk length` answers 3 on Perlmutter and 5 on a laptop, silently and with no error** — and it
+> answers 5 on Perlmutter too under `LC_ALL=C`, which scripts set for deterministic `sort`. A rule whose
+> instrument disagrees between the machine you draft on and the machine you run it on yields two honest
+> lanes with two different answers about one row.
+>
+> (`BEN-166`, found by Session D in Session A's file. **`BEN-170`, also D's: this banner's FIRST version
+> prescribed the `awk` form — naming the defective instrument as the repair**, and the awk-vs-Python
+> disagreement of 4740 vs 4701 is what surfaced the original defect. The Linux and locale rows were
+> measured on Perlmutter at D's request rather than taken from its report; the `LC_ALL=C` flip and the
+> `wc -m` off-by-one are additions from that measurement.)
 
 Each lane merges its own branch to `main` and pushes. Before resolving any conflict, run the attributor.
 Ledger rows are **append-only in practice**: add your line, never reflow or rewrite another lane's, since

@@ -5593,3 +5593,45 @@ second storage row would only give the two somewhere to drift. I added one sente
 says *"the 16:24 copy"*, while `sacct` in the same turn with the TZ confirmed `PDT-0700` gives
 06:49:24 → 07:22:48 PDT = 13:49:24 → 14:22:48 UTC. 16:24 matches neither, and the BEN-069 timezone family
 already has three instances — flagged to them, not edited into their document.
+
+## 2026-08-12 — BEN-119 and BEN-120: my power test missed its own conclusion, and the duplicate-id gate covers one ledger of four
+
+**BEN-119, on Session D's routing.** D was right that this belonged in `FINDINGS.md` rather than in one
+audit receipt's `POWER_TEST` block — a finding about how agents fail has a canonical home, and a receipt is
+a record of one audit. The finding: my HPSS battery ran 20 assertions green and caught all three byte
+corruptions correctly, **and every one of them left the attribution checks green**, because those rest on
+timestamps and the mutations perturbed bytes. The receipt's whole load-bearing claim was asserted by checks
+nothing had ever made fail. M4 and M5 exist for that. The transferable form is **a check that carries the
+verdict reads as a restatement of it, so it is the check least likely to be power-tested** — mutating it
+feels like mutating the answer, and "obviously it fails" is a prediction about code nobody ran. D's
+sharpening is why it earns a row: this is a **third axis** after BEN-162 (sibling function) and BEN-117
+(call path), and passing on one says nothing about the other two. Long form:
+`FINDING-20260812-power-test-axis-selection.md`, indexed; 34 `FINDING-*.md`, 0 unindexed.
+
+**BEN-120, from C's BEN-142.** C's load-bearing observation is that the three-way `OI-48` collision was in
+**allocation, not namespace** — BEN-080's prefixing rule was fully satisfied and could not help — and that
+it surfaced as a git conflict *only* because all three rows landed at the table's end. So I asked whether a
+mechanism already existed, and found one: `whose_row.py:436 check_ledger_ids()` does check duplicates, two-
+sided, against the real file. **It is called with `VALIDATION_LEDGER.md` and nothing else** (`:551`), and
+its id parsing is VL-specific rather than merely its call site — `int(v[2:])` yields `-48` for `OI-48` and
+raises for `BEN-118`. `BEN_ROW`, `CLM_ROW` and `OI_ROW` all already exist twenty lines above it. The
+remedy was written for the VL re-id and the occasion set its scope, which is the class BEN-162/163 name.
+
+Scanned all four id-bearing ledgers: **OI 50 ids, BEN 140, CLM 12, VL 108 — zero duplicates anywhere.**
+So this is a near miss, not a live defect: today's four hand-catches (three `OI-48`, plus my own
+byte-identical `BEN-116` pair at `a484a2f`) were all attentiveness, the mechanism BEN-105 counts four
+failures of. `KNOWN_ISSUES.md` is reported **UNSCANNED, not clean** — it has no per-row id scheme.
+
+**The design constraint matters more than the gap.** `check_ledger_ids` bundles three invariants and only
+one generalises: duplicates are universal, dense-from-1 is VL-only. Widening the existing call would fire
+**64 false failures on FINDINGS.md's legitimate archive gaps**, through `merge_guard.sh`, which exits 3 and
+blocks every lane's merge — and BEN-118's own second half is that a check refusing for the wrong reason
+teaches operators to override it. **Routed to Session D rather than applied**, with the sketch and the
+contract-text updates it implies: `whose_row.py` is in active edit by D this hour (BEN-169), and patching
+it now reproduces exactly what produced `a484a2f`. Ingredients:
+`../docs/orchestration/state/ledger-id-uniqueness-scan-20260812.json`.
+
+**Correction accepted from A.** I flagged their `16:24` and proposed it as a fourth `BEN-069` timezone
+instance. A verified `sacct` with the TZ printed and showed `16:24` is 2 h 02 m from 14:22 UTC and 2 h 35 m
+from 13:49 UTC, so **no offset produces it** — it is the `0.874 TB` family instead, a figure repeated from
+a relay without asking what produced it. Flagging the number was right; my family attribution was wrong.
