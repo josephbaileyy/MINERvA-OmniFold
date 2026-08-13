@@ -220,3 +220,28 @@ a different line than A cited.
 
 **Unchanged: annealed `iter0` at 0.1101 is a real trade and outside the predeclared scope.** Both remain
 true.
+
+### Structural corroboration of the table above — Session D's check, verified exactly
+
+D supplied an analytic check neither of us had run, and it matters because the table is now load-bearing
+for the disposition. **At `iter0` there has been no reweighting, so `push = 1` and `r1_required_mean` must
+equal `R` exactly — and identically in both arms.** Measured:
+
+| check | result |
+|---|---|
+| `r1_required_mean[iter0] == R`, control | **True**, bit-for-bit |
+| `r1_required_mean[iter0] == R`, annealed | **True**, bit-for-bit |
+| `R` identical across arms | **True** |
+| `iter0` field identical across arms | **True** |
+| `R − 1` vs `abs(field − 1)` | equal bit-for-bit, **0 ulps apart** |
+
+D estimated 1 ulp from float64 cancellation in its own subtraction; measured, it is **0** — the values are
+exactly equal. **Two arms agreeing bit-for-bit at the one iteration where they analytically must is an
+independent witness that these are per-iteration field values rather than a summary broadcast across
+iterations** — which is precisely the failure the proxy above suffered from.
+
+**D's reframing of the lesson, adopted because it is better than Session A's.** A had it as *"the label is
+what made this catchable."* D corrected that against its own credit: it could not reach `/pscratch`, so
+UNRESOLVED was the only honest verdict available — the label was not evidence of care. **The generalisable
+form is: a proxy stated as a proxy costs one command to refute; a proxy stated as a measurement costs a
+retraction.** D got the cheap failure because the expensive one was not available to it.
