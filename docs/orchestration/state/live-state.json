@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Gate 6 PET ML ensemble complete; PET-owner disposition before C_ML construction",
-  "state": "Gate 6 array 56834281_[1-5] completed 5/5 at 0:0. The N=5 inventory and seed pairs were predeclared at 6bd3707, all five persisted realized policies match, and Session A committed the exact result beginning at 92551a4. The predeclared comparison passes by the letter, but this does not establish that Gate 6 resolved estimator variation at all and no C_ML or central value is promoted: three members exceed the Gate-4 nominal dev bar, and the execution-floor mismatch makes convergence/interpretation an explicit physics disposition.",
+  "current_dag_node": "Gate 6 Leg 1 five-member no-training trajectory array active",
+  "state": "Gate 6 array 56834281_[1-5] completed 5/5, but its literal comparison does not establish estimator variation. Preserved Agent B returned BLOCK_FOR_PREDECLARED_CONTROL after a same-UUID migration to the authenticated school home. The uniform numeric trajectory rule is committed at 3c5c307; array 56847059_[1-5] is the sole writer, with no C_ML, Leg 2, member exclusion, or central move authorized. A separate Gate-5 target rerun, job 56847028, is running under another campaign lane and shares no trajectory output.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -23,7 +23,7 @@
     {
       "role": "agent-B-p5b",
       "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
-      "purpose": "Publication PET full-event schema and consumer-contract owner"
+      "purpose": "Publication PET owner; same UUID migrated to flat Claude School and Gate-6 disposition returned"
     },
     {
       "role": "agy-publication-redteam",
@@ -31,15 +31,22 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [],
-  "blockers": [
-    "Gate 6 has no promoted C_ML: the PET owner must adjudicate whether members 2/4/5 exceeding the nominal dev bar are valid estimator variation or non-convergence; post-hoc member exclusion is not authorized.",
-    "The apparent all-five margin is driven by the three questioned members: removing them removes 90% of the spread. Neither the all-five nor two-member spread/floor ratio is quotable before the convergence disposition.",
-    "The one-pair across-node/process control is structurally n=1, and the products do not persist the execution environment that the floor is intended to expose.",
-    "Gate 5's multi-call replica path must not inherit Gate 6's single-call source-equivalence finding.",
-    "Gate 9 adoption remains prohibited until every covariance component shares the accepted central, mask, order and fingerprint."
+  "jobs": [
+    {
+      "job_id": "56847059",
+      "tasks": "1-5",
+      "single_job": false,
+      "receipt": "docs/orchestration/state/gate6-trajectory-array-active-56847059.json"
+    }
   ],
-  "next_authorized_action": "Resume the preserved Agent-B PET-owner UUID through agentctl.py send for the scoped Gate-6 disposition. If it authorizes all five as the declared estimator ensemble, construct and independently validate C_ML centred on the ensemble mean; otherwise predeclare the smallest convergence/control test before new compute. Do not post-hoc remove members or promote a central/component without that disposition.",
+  "blockers": [
+    "Gate 6 has no promoted C_ML: all five members must pass the predeclared numeric convergence rule; post-hoc member exclusion is prohibited.",
+    "The apparent all-five margin is driven by members 2/4/5. Neither the all-five nor two-member spread/floor ratio is quotable before the trajectory verdict.",
+    "If all five converge, the across-process floor remains structurally n=1 and needs the separately predeclared four-repeat Leg 2 with persisted environment identity.",
+    "Gate 5's multi-call replica path must not inherit Gate 6's single-call source-equivalence finding.",
+    "Gate 4's estimator-arm disposition remains an independent user decision; Gate 9 adoption remains prohibited."
+  ],
+  "next_authorized_action": "On a real terminal event for array 56847059, reconcile all five task gates and trajectories once, apply PREDECLARATION-20260813-gate6-member-trajectories.md numerically, and commit the verdict. Do not construct C_ML, launch Leg 2, select members, move the central, or poll before that event.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
@@ -48,7 +55,9 @@
     "nd-unfolding/active_universe_5d/INTERFACE_VALIDATION.md",
     "VALIDATION_LEDGER.md",
     "docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md",
-    "docs/orchestration/state/gate6-ml-ensemble-result-56834281.json"
+    "docs/orchestration/state/gate6-ml-ensemble-result-56834281.json",
+    "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
+    "docs/orchestration/state/gate6-trajectory-array-active-56847059.json"
   ],
   "append_only_history": [
     "docs/orchestration/RUNS.tsv",

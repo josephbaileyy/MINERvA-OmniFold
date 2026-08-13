@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-13T08:41:27Z",
+  "purpose": "Gate 6 Leg 1 five-member no-training checkpoint trajectories",
+  "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
+  "predeclaration_and_launcher_commit": "3c5c307317bd0dc50d03690ff5a98c7cf830f893",
+  "job_id": "56847059",
+  "array_job_id": "56847059",
+  "tasks": "1-5",
+  "cpus_per_task": 32,
+  "memory_per_task": "scheduler default",
+  "time_limit": "04:00:00",
+  "qos": "gpu_shared",
+  "state_at_receipt": {
+    "PENDING": 5,
+    "reason": "Priority",
+    "time_limit": "04:00:00"
+  },
+  "launcher": {
+    "path": "nd-unfolding/pet/sbatch_gate6_member_trajectory_array.sh",
+    "sha256": "13a598f285be4aff750b938882acba9ee87be566aaad6be95f25baa2d5dd86e8",
+    "code_checkout": "/pscratch/sd/j/josephrb/gate6-reconcile-56834281",
+    "workdir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+  },
+  "output_ownership": {
+    "namespace": "nd-unfolding/pet/fullevent_ml_ensemble/member_<task>/trajectory/*.slurm-56847059_<task>.json",
+    "collision_protection": "one flock writer lock and overwrite refusal per member/job/task",
+    "duplicate_writer": false
+  },
+  "placement": {
+    "route": "gpu_shared batch array",
+    "interactive_allocation_at_preflight": null,
+    "reason": "five independent full-input inference arms, one GPU each, can run in parallel; each requires up to the four-hour wall"
+  },
+  "watches": [
+    "gate6-member-trajectories-56847059",
+    "gate6-member-trajectories-queue-56847059"
+  ],
+  "archived_target_sha256": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+  "training_performed": false,
+  "c_ml_construction_allowed": false,
+  "leg2_allowed_before_terminal_verdict": false,
+  "central_value_change_allowed": false,
+  "reset_credit_consumed": false
+}

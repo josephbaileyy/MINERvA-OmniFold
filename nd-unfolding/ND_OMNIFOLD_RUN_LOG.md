@@ -5790,3 +5790,9 @@ rather than recreating or repointing the canonical path. The fixed all-member ru
 promoted. The categorical harness label is excluded because it is direction-blind; signed
 `push_dev_vs_R` is retained. A five-task collision-isolated GPU array is the selected route because
 all arms can run in parallel and no interactive allocation existed at preflight.
+
+The predeclaration, target-override tests, and five-task launcher were committed and pushed at
+`3c5c307` before submission. Array `56847059_[1-5]` was then submitted as the sole writer; all five
+tasks were `PENDING (Priority)` at the launch receipt. Terminal and one-hour queue-latency watches are
+armed. This launch performs inference only and does not authorize `C_ML`, Leg 2, a central move, or a
+Gate-4 disposition.

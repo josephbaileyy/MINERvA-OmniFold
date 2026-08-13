@@ -14,6 +14,8 @@ inventory is complete; execution is defined in
 `../docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md`. Gate 4's estimator-arm
 disposition remains an independent user decision. Canonical numbers: `../VALIDATION_LEDGER.md`;
 exact result receipt: `../docs/orchestration/state/gate6-ml-ensemble-result-56834281.json`.
+Array `56847059_[1-5]` is the sole trajectory writer and is batch-queued with terminal and one-hour
+queue-latency watches; no interactive duplicate exists.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
