@@ -152,15 +152,84 @@ again). Recording it as a personal pattern rather than three isolated slips: I r
 `rtol=0, atol=0` when I mean "should be identical," and for a float reduction that is almost never the
 right test.
 
-**3. The real-order fractional uncertainty spans 3.47% to 213.8%**, i.e. some reported bins carry a
-per-bin fractional uncertainty **above 100%**. Not investigated and not alarming on its face for the
-sparse corners of a 5D grid, but it is a fact about the adopted covariance that the median figure hides,
-and it is the kind of thing a per-bin use of this matrix would need to confront. **Flagged, not chased.**
+**3. ~~The real-order fractional uncertainty spans 3.47% to 213.8%~~ — SUPERSEDED 2026-08-13, and the
+span was the wrong shape of answer.** A span is a **max-shaped summary**: it says extremes exist and
+nothing about how much of the deliverable they are. `crosscheck_marginal_vs_independent`
+(`p4_lib.py:1350-1351`) already refuses exactly this, verbatim — *"returns the full distribution rather
+than a max, because on the real products the max is owned by a handful of near-empty bins and is
+actively misleading about the body of the comparison (BEN-064)"* — and `BEN-064` reads *"a `max`-shaped
+guard lets its worst bin choose the headline, and five numerically irrelevant bins hid a 62% failure."*
+**The codebase had already solved this and I re-derived a worse answer.** Replaced below with the
+distribution, per that convention.
+
+### Per-bin fractional uncertainty — the distribution
+
+| percentile | frac |
+|---|---|
+| p1 | 4.757% |
+| p5 | 6.417% |
+| p10 | 7.620% |
+| p25 | 10.125% |
+| **p50** | **13.761%** |
+| p75 | 20.726% |
+| p90 | 34.992% |
+| p95 | 53.637% |
+| p99 | 88.125% |
+| p99.9 | 140.422% |
+
+**Count share vs WEIGHT share — the distinction a granularity decision actually turns on.** Weight is
+`central × cell-volume`, i.e. the bin's contribution to the integrated cross section (the stored
+central is a density), total `3.069928e-38`:
+
+| frac threshold | n bins | % of bins | **% of integrated xsec** |
+|---|---|---|---|
+| >25% | 1,959 | 18.319% | **2.018%** |
+| >50% | 634 | 5.929% | **0.510%** |
+| >75% | 185 | 1.730% | **0.068%** |
+| **>100%** | **56** | **0.524%** | **0.0486%** |
+| >150% | 8 | 0.075% | 0.00051% |
+| >200% | 2 | 0.019% | 0.00009% |
+
+**The >100% set is 56 bins of 10,694 carrying 0.0486% of the deliverable.** Their central values run
+`1.335e-48` to `6.475e-39`, and their median central is **0.59×** the median over all reported bins —
+so they are genuinely the near-empty tail `BEN-064` describes, not a broad problem. **18.3% of bins
+exceed 25% fractional uncertainty while carrying 2.0% of the cross section**, which is the same lesson
+one threshold down: numerous in count, negligible in weight.
+
+**WHERE THEY LIVE, and this one is worth Joseph's attention rather than mine.** The >100% bins are not
+uniform across the `E_avail` axis:
+
+| E_avail bin | n>100% | n reported | % of slice's bins | **% of slice's xsec** |
+|---|---|---|---|---|
+| 1 `[0,0.1)` | **28** | 2,023 | 1.384% | **0.707%** |
+| 2 | 7 | 2,003 | 0.349% | 0.00047% |
+| 3 | 14 | 1,993 | 0.702% | 0.00147% |
+| 4 | 5 | 1,822 | 0.274% | 0.00008% |
+| 5 | 2 | 1,377 | 0.145% | 0.00003% |
+| 6 | 0 | 961 | 0% | 0% |
+| 7 | 0 | 515 | 0% | 0% |
+
+**Half of them (28 of 56) sit in `E_avail` bin 1, and they carry 0.707% of that slice's cross section —
+15× the global 0.0486%.** Bin 1 is also where the pion-mass shift is largest (`+1.049%`). Flagged
+because it is the one place the two questions touch; **not adjudicated — that is the granularity call
+routed to Joseph.**
+
+**D's standing requirement, which holds whichever way that call goes: a per-bin number must not travel
+without its own fractional uncertainty.**
 
 ## What this licenses
 
 Row order is now checked by an instrument (**central values**, pinned at `p4_evidence.py:409`) distinct
 from both the mask and the 4D chain. Together with the amended mask test (axis assignment) and the 4D
 cross-check (volume weighting), the three residuals D and the mediator named are each closed by a
-different instrument. **Whether that jointly lifts `22.5%`'s aggregate-only scoping to per-bin use is
-D's ruling, not this file's.**
+different instrument. **D HAS RULED (`19b68c4`), IN TWO PARTS THAT MUST NOT BE MERGED INTO ONE WORD:**
+
+1. **The per-bin VERIFICATION gate LIFTS.** Residual 2 is closed; nothing in the verification blocks
+   per-bin use. All three residuals are closed by three different instruments, and on correctness this
+   is as independent as the artifact admits.
+2. **Whether per-bin is the right GRANULARITY is not a verification question and D is not deciding
+   it.** Above 100% the central is roughly consistent with zero, and quoting such a bin invites a
+   reader to treat it as measured. That is a physics call, routed to Joseph, **not decided tonight.**
+
+**So: verification PASSES, granularity is ROUTED. "Per-bin is cleared" is NOT the ruling.** Folding
+part 2 into part 1 would decide a physics question invisibly inside a verification pass.
