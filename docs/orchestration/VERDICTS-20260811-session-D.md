@@ -1231,3 +1231,61 @@ PET-COMMON subset), or whether the projection onto the `E_avail` marginal is cor
 volume — `p4_lib.py:750` builds that volume vector by the same C-order ravel, so a mapping error and a
 volume error would share a cause and **agree with each other**.
 
+### V25 RULING — the two-arm run is **VOID**, and re-running it in the correct order is **also void**
+
+**Two branches of my predeclared table fired at once**, which is the case the table was written for.
+
+    control FAILS, pass arm DISAGREES        -> mapping REFUTED
+    4D/5D selection criteria differ          -> VOID BEFORE RUNNING
+
+**The precondition branch takes precedence, and not as a tie-break.** A precondition *gates* a test; it
+does not compete with the test's outcome. A run whose precondition is false does not return REFUTED — it
+returns nothing. `p4_lib.py:1217` establishes the criteria differ: *"5 of the 4830 reported 4D bins
+receive no contribution from any reported 5D bin"*, committed `a1c9d10` 2026-08-09, four days early, a
+different author, a different purpose, and matching on **both** numbers. So the VOID branch is triggered
+literally, and its trigger has nothing to do with how small the difference is.
+
+**I am not letting 1330x do the work.** Control 6,651 against pass-arm 5 is three orders of magnitude and
+reads as decisive, which is exactly the condition under which a favourable reading is easiest and the
+reason I fixed the table before the data existed. Renegotiating it now because the number came out well
+is the failure the predeclaration was written to prevent.
+
+**But "redo it in the correct order" buys nothing, so do not task it.** The precondition is now *known*
+false. Running the same test in the right order fires the same VOID branch before any data. The ordering
+error cost the status of this answer; it did not cost information, and the information is not recoverable
+by repeating the procedure. **The repair is an amended test, not a re-run.**
+
+### The amended test — a precondition that can actually hold
+
+    EXCLUDE the 5 documented 4D bins (p4_lib.py:1217) from the comparison set.
+    PASS ARM     m4_from5 vs the 4D mask over the remaining 4,825  -> require EXACTLY 0 mismatches
+    DIRECTION    require 0 in the 5D-reported-with-no-4D-bin direction, unconditionally
+    CONTROL ARM  swapaxes(2,3), same exclusion                     -> must still FAIL
+
+The exclusion is legitimate *only because it is documented independently and in advance*; it is a
+precondition, not a carve-out fitted to the residual. If the control arm's 6,651 does not survive the
+exclusion, the exclusion is too large and the test is void again — that check is not optional.
+
+### The evidence that makes me expect it to pass, labelled as what it is
+
+**The direction is the discriminator, and nobody drew it.** All 5 mismatches are 4D-reported-with-no-5D-cell;
+**0** are the reverse. **A mapping error scatters cells and populates BOTH directions** — a transposition
+sends 5D cells to wrong 4D coordinates, producing orphans on both sides. **A pure selection difference
+populates exactly one.** Observed: one, and the documented mechanism predicts that one.
+
+That is a strong argument and it is **mine, produced after seeing the result**. It is a reason to expect
+the amended test to pass. **It is not a substitute for running it**, and I will not promote it into a
+verdict — which is the same discipline I applied to `R/push` and got right for a bad reason, and am now
+applying with a good one.
+
+### Not covered, and still owed
+
+The projection remains unpromoted and should. `p4_lib.py:750` builds the bin-volume vector by the **same
+C-order ravel** as the mask, so a mapping error and a volume error share a cause and would agree; the
+projection needs its own check and cannot inherit this one. A was right to hold it.
+
+**A's conduct is the part to reinforce:** it disclosed the ordering error unprompted, refused to
+self-resolve a test it had run, caught its own width-weighting prescription (`8.47%` against `13.69%` —
+a 2.7x underestimate that would have looked plausible), and avoided shipping it only by reusing the
+tracked tool instead of writing its own `M`. Three of those are the same reflex.
+
