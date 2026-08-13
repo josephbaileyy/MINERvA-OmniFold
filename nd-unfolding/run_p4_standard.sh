@@ -40,7 +40,15 @@
 # Covariance stages (4-6) run ONLY with a P4_VERIFIER_PASS token bound to a verifier receipt.
 set -o pipefail
 export HOME=/global/homes/j/josephrb
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
+# DE-ROOTED 2026-08-12 (OI-43, increment 2). Was a hardcoded
+# REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold". Derived from this script's own location, the same
+# way p4_lib.py resolves REPO_ROOT. De-rooting p4_evidence.py alone was NOT sufficient: this driver
+# `cd`s into its own ND before invoking it, so the chain stayed pinned to one checkout through the
+# caller. Safe idiom here because these drivers carry no #SBATCH header and are invoked as
+# `bash run_p4_*.sh` under an existing allocation -- an sbatch-submitted script is spooled by Slurm
+# and BASH_SOURCE would resolve to the spool copy.
+ND="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "${ND}/.." && pwd)"
+[[ -f "${ND}/p4_lib.py" ]] || { echo "[p4-std] ABORT: derived ND=${ND} contains no p4_lib.py; refusing to run against an unresolved root"; exit 3; }
 source "${REPO}/setup_salloc_env.sh" >/dev/null 2>&1
 cd "${ND}"
 STOP_AFTER="${STOP_AFTER:-audit}"

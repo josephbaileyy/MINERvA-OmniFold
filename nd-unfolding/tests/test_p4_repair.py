@@ -651,6 +651,73 @@ class Repair4EvidenceBindings(unittest.TestCase):
                                   if not l.lstrip().startswith("#"))
             self.assertIn("os.makedirs", head_code)
 
+    # ---- OI-43 increment 2: the three shell drivers ------------------------------------------
+    # De-rooting p4_evidence.py alone was NOT sufficient. run_p4_standard.sh `cd`s into its own
+    # hardcoded ND before invoking it, so the chain stayed pinned to one checkout through the
+    # CALLER. Fixing the callee and not the caller is BEN-162/163's shape, which is the class I had
+    # just cited in the increment-1 commit -- so these tests cover all three drivers, not the one
+    # that OI-43 names.
+    #
+    # These are EXECUTION tests, not source-text tests: they run `bash <driver>` in a fake checkout
+    # and assert the specific documented exit code. That is what defect 6 of the repair brief asks
+    # for ("Assert the specific intended failure, not a generic argparse nonzero"), and it is the
+    # axis the 111-test baseline did not cover at all.
+
+    P4_DRIVERS = ("run_p4_standard.sh", "run_p4_merge_audit_std.sh", "run_p4_unfold_std.sh")
+
+    def test_drivers_have_no_hardcoded_absolute_root(self):
+        for name in self.P4_DRIVERS:
+            code = self._executable_source(self.ND / name)
+            with self.subTest(driver=name):
+                self.assertNotIn("/pscratch/sd/j/josephrb", code)
+                self.assertIn("BASH_SOURCE", code)
+
+    def test_drivers_refuse_an_unresolved_root_with_exit_3(self):
+        """BEHAVIOURAL. Copy each driver into a tree with no p4_lib.py beside it and run it. It
+        must abort with exit 3 before doing anything -- not 0, and not a generic 1."""
+        import subprocess, tempfile
+        for name in self.P4_DRIVERS:
+            with self.subTest(driver=name), tempfile.TemporaryDirectory() as d:
+                nd = Path(d) / "nd-unfolding"
+                nd.mkdir()
+                dst = nd / name
+                dst.write_text((self.ND / name).read_text())
+                r = subprocess.run(["bash", str(dst)], capture_output=True, text=True, timeout=60)
+                self.assertEqual(r.returncode, 3,
+                                 f"{name}: expected exit 3, got {r.returncode}\n"
+                                 f"stdout={r.stdout[-400:]}\nstderr={r.stderr[-400:]}")
+                self.assertIn("no p4_lib.py", r.stdout + r.stderr)
+
+    def test_driver_root_derivation_lands_on_its_own_checkout(self):
+        """BEHAVIOURAL, positive side. Runs only the derivation header (everything up to and
+        including the guard) plus an echo, in a fake checkout. Truncating is deliberate and is
+        stated: the happy path of the real driver would launch the chain, which this suite must
+        never do. What is under test is the derivation, and it is executed, not read."""
+        import subprocess, tempfile
+        for name in self.P4_DRIVERS:
+            src = (self.ND / name).read_text().splitlines()
+            end = [i for i, l in enumerate(src) if "no p4_lib.py" in l]
+            self.assertEqual(len(end), 1, f"{name}: expected exactly one guard line")
+            header = "\n".join(src[:end[0] + 1])
+            with self.subTest(driver=name), tempfile.TemporaryDirectory() as d:
+                nd = Path(d) / "nd-unfolding"
+                nd.mkdir()
+                (nd / "p4_lib.py").write_text("# stub\n")
+                probe = nd / name
+                probe.write_text(header + '\necho "ND=${ND}"\necho "REPO=${REPO}"\nexit 0\n')
+                r = subprocess.run(["bash", str(probe)], capture_output=True, text=True, timeout=60)
+                self.assertEqual(r.returncode, 0, f"{name}: {r.stdout}\n{r.stderr}")
+                # resolve() BOTH sides, never compare the raw strings: on macOS the temp dir is
+                # /var/... while bash's `cd && pwd` reports /private/var/..., because /var is a
+                # symlink. A raw compare fails on macOS and passes on the cluster, which is the
+                # worst available outcome for a test whose whole subject is path resolution.
+                self.assertEqual(
+                    Path([l[3:] for l in r.stdout.splitlines()
+                          if l.startswith("ND=")][0]).resolve(), nd.resolve())
+                self.assertEqual(
+                    Path([l[5:] for l in r.stdout.splitlines()
+                          if l.startswith("REPO=")][0]).resolve(), Path(d).resolve())
+
     def test_zero_sel_is_actually_enforced(self):
         """D3d: ZERO_SEL was declared and referenced by no check -- the bin-migration-only
         claim for the three muon bands was documentation, not a gate."""
