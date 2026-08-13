@@ -1289,3 +1289,64 @@ self-resolve a test it had run, caught its own width-weighting prescription (`8.
 a 2.7x underestimate that would have looked plausible), and avoided shipping it only by reusing the
 tracked tool instead of writing its own `M`. Three of those are the same reflex.
 
+### V27 — amended mapping test **PASSES**. Projection: **PROMOTE FOR THE MATERIALITY USE ONLY**, two residuals, one of them new
+
+**The amended test passes all four conditions and the non-optional one is met to the unit.** Control was
+6,651 before the exclusion and 6,646 after; `6,651 − 5 = 6,646 = 3,323 × 2` exactly. The exclusion removed
+precisely the 5 documented cells and is demonstrably not what produces the pass. **The construction choice
+is what makes it non-vacuous**: A applied the exclusion as a **fixed set of 5 cells**, not as *"bins the 5D
+support fails to reach"* — the computed form would have absorbed a mapping error's mismatches by
+construction. A chose the version that can still fail.
+
+**Mapping: CONFIRMED.** My one-directional-orphan prediction held and I am not citing it as corroboration —
+it was produced post-hoc and A was right not to lean on the positional pattern either.
+
+### A SECOND RESIDUAL, WHICH NEITHER A NOR THE MEDIATOR NAMED
+
+**Everything verified so far concerns the MASK. Nothing verifies that the covariance matrix's ROW ORDER
+matches the mask's enumeration.** The only binding is `p4_lib.py:1300`:
+
+    require(M.shape[1] == C_high.shape[0], f"M cols ... != C dim ...")
+
+That is a **shape** check, and a shape check cannot see a **permutation**. Under a consistent row+column
+reordering of `C`:
+
+    trace / sqrt_tr_old / sqrt_tr_new     PRESERVED EXACTLY  -> the receipt's scalar summary is blind
+    multiset of diagonal entries          PRESERVED          -> per-bin sigma still looks normal
+    M.shape[1] == C.shape[0]              PASSES
+    per-bin assignment                    DESTROYED          <- the only casualty, and nothing checks it
+
+`p4_evidence.py:409` pins `mask5d_hash` against a hardcoded `OBS` constant, which fixes the *mask*. The
+covariance is produced by a separate stage-2 universe job; I found nothing binding its row emission order
+to that mask.
+
+**This changes the promotion calculus, and it is why I am not simply adopting the mediator's reading.**
+Promote-on-materiality works against a *small* shared convention error: a 4.4x margin absorbs it. **It does
+not work against a permutation**, because a permutation preserves the scale of the projected uncertainty
+while destroying its per-bin meaning — the marginal would land plausibly inside 4.4x and be wrong anyway.
+Materiality is the wrong shield for this residual.
+
+### RULING
+
+**PROMOTE, scoped: the number may be used for the order-of-magnitude materiality check it was computed
+for, with both residuals recorded on the artifact.**
+
+    RESIDUAL 1 (A / mediator)  both checks reference the 4D chain, so a global axis-convention error
+                               shared by the 4D and 5D producers survives both. Mitigated only by the
+                               `unfold_nd_omnifold_unbinned.py:76/:81` edge table, which is outside that
+                               family, and by the one-directional orphan result.
+    RESIDUAL 2 (this verdict)  the covariance's ROW ORDER is unverified against the mask; the existing
+                               guard is a shape check and the receipt's summary is trace-based, so both
+                               are blind to a permutation.
+
+**Required before this number is used for anything PER-BIN rather than in aggregate:** correlate the
+covariance diagonal against the central values bin-by-bin. Under the correct order they track; under a
+permutation the correlation collapses while every existing check still passes. **That uses the central
+values as the instrument — a different one from both the mask and the 4D chain**, which is the property
+neither existing check has. It is cheap and it needs no rebuild.
+
+**Why not BLOCK.** Residual 2 is unverified, not suspected — a wholesale permutation would be an odd bug
+and the producer chain is shared with the central values. Blocking a materiality check with 4.4x margin on
+an unevidenced permutation would be the mirror of promoting on 1330x, and I declined that one for the same
+reason: neither a favourable number nor an unfavourable imagination is evidence.
+
