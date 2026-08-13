@@ -818,7 +818,9 @@ So it plausibly clears the guard — **by 1.85x, where the arm it replaced clear
 moved this measurement an order of magnitude closer to the point where its own criterion stops
 discriminating.
 
-**VERDICT: UNRESOLVED from this lane.** Not because I think REPAIRED is wrong, but because the one
+**VERDICT: UNRESOLVED from this lane** — *resolved 2026-08-13 by `cb41436`; see the correction at the end of this entry. The domain guard clears at every iteration, REPAIRED stands, and my proxy comparison below is REFUTED and INVERTED.*
+
+**[original verdict as written:]** Not because I think REPAIRED is wrong, but because the one
 number that separates REPAIRED from UNRESOLVED — `r1_required_mean` at iterations 1 and 2, against
 `0.02` — is in receipts on `/pscratch` that I cannot read. `R/push` is my proxy, not the field.
 
@@ -832,4 +834,46 @@ is a fact a reader needs in order to weigh it.
 **Not verified by me:** every number attributed to the run itself — `iter0` `0.0279`/`0.1101`, the sign
 inversions, Arm 1's reproduction gate, Arm 2's Gate A. `push`, `R` and the guard threshold are from
 committed documents; the arithmetic above is mine.
+
+#### V22 CORRECTION — the guard clears, and my proxy reversed the ordering it was used to establish
+
+Session A ran the field values (`cb41436`). I re-derived every figure below from them rather than
+accepting the summary.
+
+    r1_required_mean        iter0                iter1                iter2           tightest  clears 0.02 by
+    control          0.1240802949941018   0.0286839584480088   0.1616496092824724     iter1        1.434x
+    annealed         0.1240802949941018   0.0991591571769675   0.0318598809751991     iter2        1.593x
+
+**No iteration in either arm is under `0.02`. UNRESOLVED condition 1 does not fire and REPAIRED stands
+on its predeclared terms.** My call to publish the margin is satisfied: `1.593x` at the deciding
+iteration, `4.958x` at iter1.
+
+**MY PROXY WAS WRONG IN THE DIRECTION THAT MATTERS.** I wrote that the anneal moved this measurement
+*"an order of magnitude closer to the point where its own criterion stops discriminating"* — `1.85x`
+promoted against `26.3x` retired. **From the field it is the reverse:** the annealed arm's tightest
+iteration (`0.0318599`) sits *farther* from the no-information point than the control's (`0.0286840`).
+The arm being retired was the tighter one.
+
+`R/push` aggregates over a trajectory; `r1_required_mean` is per iteration. They diverge — and **by
+unequal factors on the two arms**: the proxy overstates the control's clearance by **18.33x** and the
+annealed arm's by **1.16x**. **A proxy wrong by unequal factors on the two things being compared does
+not add noise, it reverses the ordering.** That is `BEN-086`'s family pointed at my own instrument, and
+the ratio `26.3` is arithmetically correct as `|R/push_final − 1|` — it simply is not the quantity the
+criterion tests.
+
+**One corroboration A did not run, and it holds.** At `iter0` there has been no reweighting, so
+`push = 1` and `required` should equal `R` analytically — i.e. `r1_required_mean = |R − 1|` exactly, and
+identically in both arms. Measured: both arms report `0.1240802949941018`; `R − 1` computes to
+`0.12408029499410178`, differing by **1 ulp**, and that ulp is float64 cancellation in *my* subtraction,
+not a field mismatch. The two arms agreeing bit-for-bit at the one iteration where they must is an
+independent check that these are real per-iteration field values.
+
+**What kept this from becoming a false finding was the label, not the reasoning.** The proxy was
+labelled *"my proxy, not the field"* and the entry issued **UNRESOLVED**, not a measurement. Had it gone
+out as a verdict, the record would now assert that the anneal degraded a criterion it slightly improved
+— inside a verifier's verdict, which is the hardest place to dislodge a wrong number from.
+
+**Standing, both caveats attached:** REPAIRED on the predeclared criterion, domain guard clearing at
+every iteration; annealed `iter0` at `0.1101` is a real trade outside the predeclared scope; and
+`1.593x` is not a comfortable margin even though it clears.
 
