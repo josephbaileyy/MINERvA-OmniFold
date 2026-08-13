@@ -17,15 +17,41 @@ require(M.shape[1] == C_high.shape[0], f"M cols {M.shape[1]} != C dim {C_high.sh
 `trace`, `sqrt_tr_old`, `sqrt_tr_new` and the multiset of diagonal entries are all preserved
 **exactly**, the shape check passes, and per-bin assignment is destroyed with nothing looking at it.
 
-**Two things that must NOT be cited as covering it:**
+**Two things that must NOT be cited as covering it — BOTH CORRECTED 2026-08-13 after D read the
+source and Session A verified it. My first version was wrong about both, and in each case the accurate
+version is the more useful defect.**
 
-1. The docstring on that same function says *"(preserves density/order)"*. **That is a prose assertion
-   one line above a check that verifies only shape** — the same declaration-vs-evidence gap as
-   `corder: "C"` in the manifest.
-2. **`check_projection_validity` (`p4_lib.py:1318`) does NOT help.** It asserts `C_low` is symmetric
-   and PSD, and **a consistent permutation `P C Pᵀ` of a symmetric PSD matrix is still symmetric and
-   still PSD.** Every one of its assertions survives this failure mode. Recorded so a future reader
-   who finds `:1318` does not conclude the order is gated.
+**1. The `:1298` docstring — a says-vs-read gap, NOT a false assertion.** I called
+*"(preserves density/order)"* a prose claim the code does not verify. **D's correction: the sentence is
+arguably TRUE.** Read in full — *"5D->4D (or any) projection C_low = M C_high M^T (preserves
+density/order)"* — it is a true statement about **the operation**: `M C Mᵀ` does preserve the ordering
+of the output relative to `M`'s rows. **A reader takes it as a claim about the INPUT.** That is a
+different and harder defect than a wrong assertion, because **auditing it for truth returns "true."**
+It also changes the fix: framed my way, someone reworks a sentence that is not wrong; framed
+accurately, **order-of-input is simply nowhere claimed and nowhere checked, and a docstring is not
+where that belongs.**
+
+**2. `check_projection_validity` (`:1318`) DECLARES ITS OWN BLINDNESS, so nothing in it needs
+changing.** I implied it can be mistaken for coverage. Its first line, verbatim:
+
+> *"GATE: the projection itself is valid. Recomputation identities only -- nothing here compares
+> against an independently-produced product."*
+
+It states precisely, in advance, that it is not the thing someone would cite it as. **The real risk is
+that someone cites it WITHOUT OPENING IT** — `BEN-172`'s mechanism, a citation resolving to a real,
+true, plausible thing that stops the reader. Third appearance tonight. The saving property: **such a
+citation is refutable by reading the function**, because its own docstring disqualifies it.
+
+**And it carries a second assertion I originally omitted (`:1330-1338`)**, which a reader will find and
+must not mistake for coverage either: it recomputes `M C Mᵀ` by **independent row-block accumulation**
+and requires agreement to `1e-9`. That is a genuine check, not a restatement — its docstring explains
+that a bug in `project()` would still yield a symmetric PSD matrix. **It is nonetheless blind to THIS
+failure**, because both routes consume the same `C` and the same `M`, so a permuted `C` produces the
+same wrong answer twice and the identity holds exactly.
+
+**Noted while reading: `crosscheck_marginal_vs_independent` (`:1343`) is `REPORT ONLY -- no pass/fail,
+by specification`.** It is the 5D-vs-independent-4D comparison this session performed by hand as the
+volume-weighting check. Worth knowing it exists and that it gates nothing.
 
 **Why materiality does not cover it, which is where D declined the mediator's reading:**
 promote-on-margin absorbs a small shared convention error — 4.4× is ample. It does **not** absorb a
