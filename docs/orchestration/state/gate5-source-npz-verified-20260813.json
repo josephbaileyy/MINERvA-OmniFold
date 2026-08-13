@@ -46,5 +46,19 @@
     "DOES NOT verify the source for every replica individually. One source NPZ is shared by all 50, and its digest is a property of the file rather than of a replica."
   ],
 
-  "recommended_repair_not_applied": "Replace :112 with `computed = sha256_file(inputs_npz)` plus a comparison against `source['sha256']`, mirroring :99-101 exactly. One line and one branch, in the same style already present two lines above. Deliberately NOT done while the campaign runs: editing the driver would break GATE5_EXPECTED_TRAIN_DRIVER_SHA for every member still to start."
+  "recommended_repair_not_applied": "Replace :112 with `computed = sha256_file(inputs_npz)` plus a comparison against `source['sha256']`, mirroring :99-101 exactly. One line and one branch, in the same style already present two lines above. *** THE DEFERRAL REASON THIS FIELD ORIGINALLY GAVE IS WITHDRAWN -- see CORRECTION_20260813_deferral_reason_withdrawn below. The RECOMMENDATION itself stands unchanged. ***",
+
+  "CORRECTION_20260813_deferral_reason_withdrawn": {
+    "what_this_field_used_to_say": "'Deliberately NOT done while the campaign runs: editing the driver would break GATE5_EXPECTED_TRAIN_DRIVER_SHA for every member still to start.'",
+    "why_it_is_wrong": "sbatch_gate5_replica_train_array.sh:41-44 checks `git -C \"$CODE_ROOT\" rev-parse HEAD` and `sha_of \"$DRIVER\"` where DRIVER lives UNDER $CODE_ROOT -- the private cluster checkout at /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059, never this repo. And submit_gate5_replica_n50.sh:50 computes GATE5_EXPECTED_TRAIN_DRIVER_SHA=$(sha_of \"$TRAIN_DRIVER\") at submit time, so that pin FLOATS by design; only EXPECTED_INPUT_SHA is hardcoded. There is no re-pin step and nothing to sequence against.",
+    "the_decisive_evidence": "Commits b8159ad, 0198c7e and 39b0021 all landed on main DURING the live campaign and tripped nothing. A reason equally true of every commit made in the window cannot be why this particular one is withheld.",
+    "found_by": "Lane D; verified by the mediator at 954bd1c; verified again here by reading launcher :41-44 on the running code rather than relaying it",
+    "corrected_by": "Lane C (PET) -- this lane wrote the wrong reason and corrects it. Recorded as a banner rather than an edit-in-place because a retraction that replaces its own text leaves nothing for a reader who already quoted it (BEN-201's shape).",
+    "THE_ACTUAL_CONSTRAINTS_BOTH_INTACT": [
+      "The repair must ride the next launch as one atomic change -- OI-57 and OI-58 now give it an owner and a trigger, which it previously had in neither OPEN_ITEMS.md nor KNOWN_ISSUES.md.",
+      "Nothing may be pulled into $CODE_ROOT while either array is live. This is policy, not technology, and it is now the whole of the reason.",
+      "AND THE REAL TRAP, per OI-57: submit:10 reads TRAIN_DRIVER from $CODE_ROOT, so the repair reaches production only when CODE_ROOT is synced or recreated from the repo. A commit on main plus a launch from an unsynced CODE_ROOT ships the UNREPAIRED driver while everyone believes it is fixed."
+    ],
+    "unaffected_by_this_correction": "The MEASUREMENT in this receipt. The computed sha256 fa6b3463...a29625 matched, and that verdict never depended on the deferral rationale."
+  }
 }

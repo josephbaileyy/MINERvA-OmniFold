@@ -5934,3 +5934,59 @@ key. This lane set it, the key was gone within the hour, and the first commit wa
 touches no shared state at all: `git commit --author='Lane B (Gate 6) <josephrb@stanford.edu>'`
 per commit, matching lane C's existing convention. Separates `git log --author` without configuring
 anything (BEN-214).
+
+## 2026-08-13 — Gate 5 (C_stat) first family reconciliation, lane C
+
+Ownership of Gate 5 (P5B.1) moved to lane C this turn. First reconciliation pass over the live N=50
+campaign, read-only: no job interrupted, modified or requeued, and nothing written into the cluster
+code tree, which must stay clean at `b82ac63` while either array is live. The reconciler therefore ran
+from `/pscratch/sd/j/josephrb/gate5-reconcile-lanec`, outside any git tree — an audit that had to
+modify its own subject to run would not be one.
+
+**Verdict `PARTIAL`, and `PARTIAL` is the deliverable.** 16 of 50 target receipts present, all 16
+passing all 29 checks; 0 of 50 training receipts; no failures in either array. Nothing centred, nothing
+summarised: Gate 5's own rule is that a missing replica invalidates the declared ensemble manifest, so
+16 of 50 is not a 16-replica ensemble. `nd-unfolding/pet/reconcile_gate5_family.py` contains no
+covariance code at all — deliberately, so it cannot be talked into producing a number from a partial
+family — and two of its 50 tests assert that it *refuses*: identical targets must return `BLOCK`, and
+2-of-3 must return `PARTIAL`.
+
+**The finding that mattered was a selection effect, not an oversight.** Of the three coherent Poisson
+streams, signal and background are replay-compared at the target stage and independently re-hashed at
+the training stage, both fail-closed — good work. The **data** factors are persisted nowhere and
+compared nowhere, because the loader's telemetry dict exposes no data equivalent, so nothing downstream
+ever consumed them as an array and nothing had a reason to persist them. Verification coverage followed
+the *data flow*; the data factors are what generate the measured-side variance `C_stat` exists to
+quantify. The two orderings were opposite. Closed for this family by re-drawing all three streams
+(16/16 match, data included); the structural fix is one key in a dict and is `OI-60`. `BEN-151`.
+
+**The per-member training time was the number gating "when does the family land," and it was
+unmeasured.** Still not a completed-member wall time (0 of 50 finished), so it was measured per *step*
+against a loop structure that is enforced rather than assumed — `validate_artifact` fails closed unless
+realized fits are exactly (2 base-LR, 4 annealed). Step 1 35:38, step 2 22:07, iteration 57:45, three
+iterations plus measured 2:55 startup = **2:56:11 ≈ 2.94 h**, cross-checked against the log's own
+reco/gen step counts (0.599 expected vs 0.621 measured). Family lands **~19:20–20:10 PDT**. Against
+the predeclaration's `06:00:36`-per-training basis the ratio is **2.05**, confirming from the opposite
+direction that that wall time covered two trainings — `BEN-152`. The predeclaration text is
+deliberately not edited: its value is being fixed before the result, and no branch criterion references
+cost.
+
+**`BEN-150`**, found by mechanically re-deriving `R` from its published operands rather than by
+suspicion: `sum_w_reco_pass_reco_raw` exists at two nesting levels holding different numbers, with the
+outer `_raw` carrying the *scaled* value. Re-derive from the nested one and you get `1.124623` against
+`1.1253110723074478` — 6.1e-4, which reads as precision noise. Second defect `BEN-077`'s
+ingredients heuristic has caught with nobody suspecting one.
+
+**A correction of this lane's own, bannered rather than replaced.** The deferral reason recorded at
+`c249f78` for the `:112` repair — that editing the driver would break
+`GATE5_EXPECTED_TRAIN_DRIVER_SHA` — is withdrawn. The launcher checks `git -C "$CODE_ROOT"` and hashes
+a `$DRIVER` under `$CODE_ROOT`, never this repo, and three commits landed on `main` during the live
+campaign and tripped nothing: a reason equally true of every commit in the window cannot be why this
+one is withheld. Found by lane D, verified by the mediator, and verified here on the running code —
+having already read those launcher lines earlier in the same pass and repeated the inherited
+justification anyway, which is `BEN-148`'s shape in this lane's own hand. The actual constraints are
+intact: the repair rides the next launch paired with a `CODE_ROOT` sync (`OI-57`), and nothing may be
+pulled into `CODE_ROOT` while the array is live.
+
+Artifacts: `docs/orchestration/state/gate5-family-reconciliation-20260813.json`; `BEN-150`/`151`/`152`
+with long-form detail; `OI-60`/`OI-61` for the next launch.

@@ -411,6 +411,22 @@ independent BLOCK/repair/PASS review. Target array `56857232_[0-49]` and task-co
 array `56857233_[0-49]` are the sole writers in collision-isolated namespaces, with terminal watches
 armed. The declared ensemble remains invalid until all 50 target and training receipts pass.
 
+**Reconciliation, 2026-08-13 05:50 PDT — verdict `PARTIAL`, owner lane C.** First full pass with
+`nd-unfolding/pet/reconcile_gate5_family.py` (50 tests, every check power-tested both directions;
+it contains no covariance code, so it cannot be talked into centring a partial family):
+**16 of 50 target receipts present and all 16 pass all 29 checks; 0 of 50 training receipts.** No
+failures in either array. Target digests, and all three factor-hash families, are **distinct across
+the family and none equals the Gate-2 nominal** — the reassuring failure (identical targets reading
+as a *small* `C_stat` rather than a broken draw) did not occur. All shared invariants are constant
+across the 16, and **all three coherent Poisson streams were re-drawn independently and match 16/16**,
+which closes the data-factor stream that no stage verifies (`BEN-151`, `OI-60`). Per-member training
+duration, previously unmeasured, is **~2.94 h** from measured per-step cadence against a predeclared
+budget of 6:00:36 — ratio 2.05, `BEN-152` — putting the family at **~19:20–20:10 PDT 2026-08-13**.
+Receipt: [`state/gate5-family-reconciliation-20260813.json`](../docs/orchestration/state/gate5-family-reconciliation-20260813.json).
+**Source identity rests on one independent check only** (`OI-58`): quoting `inputs_sha256` out of a
+replica artifact as verified provenance is blocked; cite
+[`state/gate5-source-npz-verified-20260813.json`](../docs/orchestration/state/gate5-source-npz-verified-20260813.json).
+
 For every replica, in this exact order:
 
 1. Enumerate complete, ordered data, signal-MC, and background-MC inventories
