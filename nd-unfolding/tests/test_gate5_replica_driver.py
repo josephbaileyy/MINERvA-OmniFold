@@ -27,6 +27,7 @@ def target_receipt(tmp_path, seed=50000, index=0):
         np.save(stream, np.asarray([1.0, 2.0], dtype=np.float32), allow_pickle=False)
     mark_complete(str(target), note="test")
     receipt_path = tmp_path / "target-receipt.json"
+    data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(3, 5, 2, seed)
     payload = {
         "status": "PASS",
         "replica_index": index,
@@ -51,7 +52,12 @@ def target_receipt(tmp_path, seed=50000, index=0):
             "size_bytes": source.stat().st_size,
         },
         "bootstrap": {
-            "background_factor_sha256": replica.hash_array(np.asarray([0, 2], np.uint8))
+            "n_data_full": 3,
+            "n_sig_full": 5,
+            "n_bkg_full": 2,
+            "data_factor_sha256": replica.hash_array(data_factor),
+            "signal_factor_sha256": replica.hash_array(sig_factor),
+            "background_factor_sha256": replica.hash_array(bkg_factor),
         },
     }
     receipt_path.write_text(json.dumps(payload))
@@ -81,6 +87,8 @@ def test_adapter_injects_replica_seed_and_augments_nominal_atomic_write(tmp_path
     rec["_verified_input_sha256"] = rec["input_preflight"]["sha256"]
     rec["_verified_target_sha256"] = rec["step1_feed"]["weights"]["sha256"]
     seen = {}
+    data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(3, 5, 2, 50000)
+    imc = np.asarray([0, 4])
     meta = {
         "target": {"bootstrap_seed": 50000},
         "bootstrap": {
@@ -88,8 +96,9 @@ def test_adapter_injects_replica_seed_and_augments_nominal_atomic_write(tmp_path
             "n_data_full": 3,
             "n_sig_full": 5,
             "n_bkg_full": 2,
-            "sig_bootstrap_factor": np.asarray([1, 0], dtype=np.uint8),
-            "bkg_bootstrap_factor": np.asarray([0, 2], dtype=np.uint8),
+            "mc_indices": imc,
+            "sig_bootstrap_factor": sig_factor[imc],
+            "bkg_bootstrap_factor": bkg_factor,
             "inventory_hashes": "signal-order",
         },
         "input_identity_hashes": {"sig": "s", "data": "d", "bkg": "b"},
@@ -97,7 +106,7 @@ def test_adapter_injects_replica_seed_and_augments_nominal_atomic_write(tmp_path
 
     def fake_build(*args, **kwargs):
         seen["build_kwargs"] = dict(kwargs)
-        return (object(), object(), np.asarray([0, 4]), [], [], meta)
+        return (object(), object(), imc, [], [], meta)
 
     def fake_atomic(path, arrays, **kwargs):
         seen["arrays"] = dict(arrays)
@@ -130,8 +139,9 @@ def test_adapter_injects_replica_seed_and_augments_nominal_atomic_write(tmp_path
     assert seen["build_kwargs"]["bootstrap_seed"] == 50000
     assert seen["build_kwargs"]["precomputed_target_replica_seed"] == 50000
     assert seen["arrays"]["campaign_role"].item() == "gate5-cstat-coherent-replica"
-    assert np.array_equal(seen["arrays"]["sig_bootstrap_factor"], [1, 0])
-    assert np.array_equal(seen["arrays"]["bkg_bootstrap_factor"], [0, 2])
+    assert np.array_equal(seen["arrays"]["sig_bootstrap_factor"], sig_factor[imc])
+    assert np.array_equal(seen["arrays"]["sig_bootstrap_factor_full"], sig_factor)
+    assert np.array_equal(seen["arrays"]["bkg_bootstrap_factor"], bkg_factor)
     assert seen["arrays"]["replica_target_sha256"].item() == rec["_verified_target_sha256"]
     # The adapter must not leave any canonical module seam mutated after the call.
     assert nominal.fe.build_fullevent_loaders is fake_build

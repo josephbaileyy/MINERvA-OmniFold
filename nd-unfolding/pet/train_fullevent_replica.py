@@ -166,22 +166,51 @@ def run_nominal_adapter(args, target_receipt):
         bootstrap = dict(meta.get("bootstrap") or {})
         if int(bootstrap.get("bootstrap_seed", -1)) != int(args.bootstrap_seed):
             raise SystemExit("[gate5-train] loader bootstrap evidence carries the wrong seed")
+        n_data = int(bootstrap.get("n_data_full", -1))
+        n_sig = int(bootstrap.get("n_sig_full", -1))
         n_bkg = int(bootstrap.get("n_bkg_full", -1))
-        bkg_factor = np.asarray(bootstrap.get("bkg_bootstrap_factor"), dtype=np.uint8)
-        if bkg_factor.shape != (n_bkg,):
+        data_factor, sig_factor_full, bkg_factor_full = fe.coherent_bootstrap_factors(
+            n_data, n_sig, n_bkg, int(args.bootstrap_seed)
+        )
+        bkg_factor_loader = np.asarray(
+            bootstrap.get("bkg_bootstrap_factor"), dtype=np.uint8
+        )
+        if bkg_factor_loader.shape != (n_bkg,):
             raise SystemExit("[gate5-train] full background factor was not retained")
+        if not np.array_equal(bkg_factor_loader, bkg_factor_full):
+            raise SystemExit("[gate5-train] loader background factor differs from canonical replay")
+        imc = np.asarray(bootstrap.get("mc_indices"), dtype=np.int64)
+        sig_factor_subset = np.asarray(
+            bootstrap.get("sig_bootstrap_factor"), dtype=np.uint8
+        )
+        if imc.shape != sig_factor_subset.shape or not np.array_equal(
+            sig_factor_subset, sig_factor_full[imc]
+        ):
+            raise SystemExit("[gate5-train] loader signal subset differs from full canonical replay")
+        factor_meta = dict(target_receipt.get("bootstrap") or {})
+        for label, factor, key in (
+            ("data", data_factor, "data_factor_sha256"),
+            ("signal", sig_factor_full, "signal_factor_sha256"),
+            ("background", bkg_factor_full, "background_factor_sha256"),
+        ):
+            if hash_array(factor) != factor_meta.get(key):
+                raise SystemExit(
+                    f"[gate5-train] canonical {label} factor differs from target-stage receipt"
+                )
         augmented = dict(arrays)
         augmented.update({
             "campaign_role": np.asarray("gate5-cstat-coherent-replica"),
             "replica_index": np.asarray(int(args.replica_index)),
             "bootstrap_seed": np.asarray(int(args.bootstrap_seed)),
-            "sig_bootstrap_factor": np.asarray(
-                bootstrap.get("sig_bootstrap_factor"), dtype=np.uint8
-            ),
+            # The existing extraction validator consumes the subset factor paired to mc_indices;
+            # full-inventory extraction consumes the separately named full factor.  Keeping both
+            # prevents either contract from silently treating one cardinality as the other.
+            "sig_bootstrap_factor": sig_factor_subset,
+            "sig_bootstrap_factor_full": sig_factor_full,
             "bkg_indices": np.arange(n_bkg, dtype=np.int64),
-            "bkg_bootstrap_factor": bkg_factor,
-            "n_data_full": np.asarray(int(bootstrap.get("n_data_full", -1))),
-            "n_sig_full": np.asarray(int(bootstrap.get("n_sig_full", -1))),
+            "bkg_bootstrap_factor": bkg_factor_full,
+            "n_data_full": np.asarray(n_data),
+            "n_sig_full": np.asarray(n_sig),
             "n_bkg_full": np.asarray(n_bkg),
             "inventory_hashes": np.asarray(str(bootstrap.get("inventory_hashes"))),
             "bkg_inventory_hash": np.asarray(
@@ -253,6 +282,16 @@ def validate_artifact(path, bootstrap_seed, replica_index, target_receipt):
             raise SystemExit("[gate5-train] realized anneal is not the required 2 base + 4 annealed fits")
         factor_meta = np.asarray(store["bootstrap_factor_sha256"], dtype=object).item()
         bkg_factor = np.asarray(store["bkg_bootstrap_factor"])
+        sig_factor_full = np.asarray(store["sig_bootstrap_factor_full"])
+        if sig_factor_full.shape != (n_sig,):
+            raise SystemExit("[gate5-train] full signal factor has the wrong inventory length")
+        if hash_array(sig_factor_full) != factor_meta["signal_factor_sha256"]:
+            raise SystemExit("[gate5-train] persisted full signal factor hash mismatch")
+        imc = np.asarray(store["mc_indices"], dtype=np.int64)
+        if not np.array_equal(
+            sig_factor_full[imc], np.asarray(store["sig_bootstrap_factor"])
+        ):
+            raise SystemExit("[gate5-train] subset signal factor is not a restriction of full factor")
         if hash_array(bkg_factor) != factor_meta["background_factor_sha256"]:
             raise SystemExit("[gate5-train] persisted background factor hash mismatch")
         return {
