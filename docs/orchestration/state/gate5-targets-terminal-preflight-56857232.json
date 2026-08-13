@@ -52,11 +52,27 @@
     "why_partial": "the family-stage instrument also observed only 5 completed trainings at that instant; this is not a target failure"
   },
   "independent_terminal_validation": {
-    "status": "SUBMITTED_AND_WATCHED",
+    "status": "ATTEMPT_1_PREVALIDATION_FAILURE_CHANGED_ROUTE_ATTEMPT_2_WATCHED",
     "job_id": "56872614",
     "submitted_at": "2026-08-13T15:23:33Z",
     "initial_state": "PENDING_PRIORITY",
     "terminal_watch": "gate5-target-reconcile-56872614",
+    "attempt_1_terminal": {
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed": "00:00:06",
+      "cause": "mutable receipt-writing code worktree advanced from pinned ac540d5 to 70be58a before Slurm start",
+      "validator_started": false,
+      "report_present": false
+    },
+    "changed_attempt_2": {
+      "job_id": "56873858",
+      "code_root": "/pscratch/sd/j/josephrb/gate5-target-validator-frozen-70be58a",
+      "head": "70be58a9825c4a59bd2ca11c7d05aa65c3a33000",
+      "validator_sha256": "11e4f440731a518c768d2048f74ebd272eba50723f5b0594b2ec7f21fbb30006",
+      "launcher_sha256": "f031f17cc118f0eea5f99cffdd095eb7a61aa7659cc135f4db66ef362cca2314",
+      "terminal_watch": "gate5-target-reconcile-r2-56873858"
+    },
     "validator": "nd-unfolding/pet/reconcile_gate5_family.py",
     "launcher": "nd-unfolding/pet/sbatch_gate5_target_family_reconcile.sh",
     "tests": "73 passed",

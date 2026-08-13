@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
   "current_dag_node": "Gate 5 coherent statistical replicas — N=50 two-stage execution",
-  "state": "Target array 56857232_[0-49] is terminal 50/50 COMPLETED/0:0 with 50/50 structural target checks passing. Read-only independent source-and-three-factor replay job 56872614 and the task-correlated A100 training array 56857233_[0-49] are both covered by terminal watches; training remains the sole artifact writer.",
+  "state": "Target array 56857232_[0-49] is terminal 50/50 COMPLETED/0:0 with 50/50 structural checks passing. Validator 56872614 failed before validation because its mutable code root advanced; changed attempt 56873858 uses immutable detached HEAD 70be58a. It and sole-writer training 56857233_[0-49] have terminal watches.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,10 +33,10 @@
   ],
   "jobs": [
     {
-      "job_id": "56872614",
+      "job_id": "56873858",
       "tasks": "0",
       "single_job": true,
-      "receipt": "docs/orchestration/state/gate5-target-validator-active-56872614.json"
+      "receipt": "docs/orchestration/state/gate5-target-validator-active-56873858.json"
     },
     {
       "job_id": "56857233",
@@ -45,12 +45,12 @@
     }
   ],
   "blockers": [
-    "Gate 5 target promotion awaits independent source hashing and all-three-factor replay job 56872614; full family promotion also requires all 50 training receipts. A partial family cannot be centred or promoted as C_stat.",
+    "Gate 5 target promotion awaits changed-route source hashing and all-three-factor replay job 56873858; full family promotion also requires all 50 training receipts. A partial family cannot be centred or promoted as C_stat.",
     "Gate 6 Leg 1 is durably BLOCKED at 19585b7: no retry, passing-subset selection, C_ML construction, central move, or Leg 2.",
     "The producer code checkout must remain fixed at b82ac63 while training array 56857233 is active; every task fails closed on HEAD and content-hash drift.",
     "Gate 4's estimator-arm disposition remains an independent user decision and is not changed by Gate 5 execution."
   ],
-  "next_authorized_action": "Let Slurm execute read-only target validator 56872614 and sole-writer training array 56857233. Reconcile each real terminal event once. Promote the target stage only after TARGETS_COMPLETE_PASS; promote the family only after all 50 target and training receipts pass, without selecting a subset or constructing C_stat early.",
+  "next_authorized_action": "Let Slurm execute immutable-root read-only target validator 56873858 and sole-writer training array 56857233. Reconcile each real terminal event once. Promote the target stage only after TARGETS_COMPLETE_PASS; promote the family only after all 50 target and training receipts pass, without selecting a subset or constructing C_stat early.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",

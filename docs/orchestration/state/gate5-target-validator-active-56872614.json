@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "artifact": "gate5-target-validator-active-56872614.json",
-  "observed_at": "2026-08-13T15:24:00Z",
+  "observed_at": "2026-08-13T15:40:17Z",
   "job_id": "56872614",
   "single_job": true,
   "tasks": "0",
@@ -12,8 +12,8 @@
   "job": {
     "job_id": "56872614",
     "name": "g5t-recon",
-    "state_at_receipt": "PENDING",
-    "reason_at_receipt": "Priority",
+    "state_at_receipt": "FAILED",
+    "reason_at_receipt": "code HEAD drift before validator start",
     "qos": "shared",
     "constraint": "cpu",
     "nodes": 1,
@@ -47,7 +47,7 @@
   "watch": {
     "id": "gate5-target-reconcile-56872614",
     "kind": "slurm-job",
-    "state": "armed"
+    "state": "fired"
   },
   "training_array": {
     "job_id": "56857233",
@@ -55,7 +55,21 @@
     "terminal_watch": "gate5-training-56857233",
     "sole_writer_preserved": true
   },
-  "status": "PENDING_WATCHED_READ_ONLY_VALIDATION",
+  "terminal": {
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:06",
+    "start": "2026-08-13T15:38:53Z",
+    "end": "2026-08-13T15:38:59Z",
+    "node": "nid004086",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "0c3a773450ac27c9eebf0e6fd54776ec04eacd3391271924d6b638481ed6b80d",
+    "stderr": "[gate5-target-reconcile][FAIL] code HEAD drift",
+    "report_present": false,
+    "marker_present": false,
+    "validator_started": false
+  },
+  "status": "FAILED_PREVALIDATION_MUTABLE_CODE_ROOT_HEAD_DRIFT",
   "C_stat": null,
   "prohibitions": [
     "no subset selection",

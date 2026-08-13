@@ -408,8 +408,10 @@ different central/mask/order/fingerprint.
 
 **Active 2026-08-13:** target array `56857232_[0-49]` is terminal at 50/50 `COMPLETED/0:0`; all 50
 collision-isolated target/receipt/marker quartets are present and a same-turn structural pass reports
-50/50 target checks passing. Independent full source hashing plus all-three-factor replay is submitted
-as read-only CPU job `56872614`, with a terminal watch. Task-correlated training array
+50/50 target checks passing. Read-only validator `56872614` failed before validation when its mutable
+receipt-writing worktree advanced across the pending interval; no report was produced. Changed job
+`56873858` uses an immutable detached worktree at `70be58a` for full source hashing and all-three-factor
+replay, with a terminal watch. Task-correlated training array
 `56857233_[0-49]` remains the sole training
 writer with its terminal watch armed. The declared ensemble remains invalid until the independent
 target verdict and all 50 training receipts pass; no subset or `C_stat` is permitted.

@@ -6012,3 +6012,18 @@ Gate-6 action, retry, provider dispatch, reset credit, or worker replacement occ
 Preflight receipt: `docs/orchestration/state/gate5-targets-terminal-preflight-56857232.json`.
 The committed validator was then submitted as shared-CPU job `56872614` (8 GB, 20 minutes), initially
 pending for priority, with job-scoped output and terminal watch `gate5-target-reconcile-56872614`.
+
+### Validator attempt 1 failed before validation; immutable-root attempt 2 submitted
+
+Job `56872614` started after its pending interval and failed in six seconds with `1:0`. Stdout was
+empty; stderr contained only `[gate5-target-reconcile][FAIL] code HEAD drift`; neither report nor
+marker exists. The validator did not read any campaign product. The defect was in orchestration: the
+job pinned `ac540d5`, then the same worktree was necessarily advanced to `70be58a` by the receipt and
+LIVE-STATE commits before Slurm scheduled it.
+
+This is not retried unchanged. Job `56873858` uses new job-scoped outputs and a dedicated immutable
+detached worktree at exact HEAD `70be58a` (validator `11e4f440…`, launcher `f031f17c…`). The receipt
+writer remains in the separate reconciliation worktree, so documentation commits cannot move the code
+root beneath the queued job. Its terminal watch is `gate5-target-reconcile-r2-56873858`; training
+`56857233` and its existing watch remain untouched. No target science verdict, subset, `C_stat`,
+Gate-6 action, reset credit, provider turn, or UUID change follows from the failed instrument.
