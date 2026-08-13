@@ -84,6 +84,21 @@ gs="$(sha256sum "$TARGET_NPZ" | cut -d' ' -f1)"
 echo "[fe_pet_ml] target sha256 verified: ${gs:0:16}"
 echo "[fe_pet_ml] driver sha256: $(sha256sum "$DRIVER" | cut -d' ' -f1 | cut -c1-16)"
 
+# ENVIRONMENT. Omitting these is what killed members 1 and 2 of array 56832077 at 51s with
+# ModuleNotFoundError: No module named 'tensorflow'. The canonical and annealed launchers both do
+# exactly this and I modelled the rest of the file on them while dropping the two lines that make
+# python3 the right python3. CLAUDE.md's compute quick reference states it: module load
+# tensorflow/2.15.0.
+source "${REPO}/setup_salloc_env.sh"
+module load tensorflow/2.15.0
+
+# PREFLIGHT, so the NEXT environment failure costs seconds and names itself rather than surfacing as
+# a traceback from inside the driver after the provenance gates have already passed. Members 1 and 2
+# printed target_provenance PASS and the correct promoted-target sha256 before dying on an import --
+# every guard I wrote worked and the one I did not write is what failed.
+python3 -c "import tensorflow as tf; print('[fe_pet_ml] tensorflow', tf.__version__)" \
+  || die "tensorflow not importable after module load -- environment is wrong, not the physics" 5
+
 # REFUSE TO CLOBBER. The driver already refuses to overwrite a finished artifact; this is the
 # earlier, cheaper refusal so a resubmit does not burn six GPU-hours to discover it.
 if [[ -s "${MEMBER_OUT}.done" ]]; then
