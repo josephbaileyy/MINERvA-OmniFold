@@ -1323,6 +1323,25 @@ artifacts on the login node. All PASS; no rerun required.
   Ascencio muon gate. Caveats recorded in the script header (shared MINERvA
   systematics treated as independent; pμ≈pz at the 20 GeV edge).
   `products/4d/ascencio_fullcov_compare.png`.
+  **A FOURTH CAVEAT ADDED 2026-08-13 (lane A), and it is the one that lines up with the
+  residual — see `OI-59`. The two sides' E_avail TRUTH AXES ARE DEFINED DIFFERENTLY.**
+  Unfolding targets a truth definition: Ascencio unfolds to arXiv:2110.13372 Eq. 1's
+  **open** list (*"total energy of any other final state particles except neutrons"*,
+  minus a nucleon mass for strange baryons); we unfold to `GetEAvailableTrue()`'s
+  **closed** four-species list with `mass_pion = 135`. Data-to-data, so no simulation
+  enters — but the two published cross sections are differential in **two different
+  observables that share a name**. Sign and location match: both common super-cells are
+  the low-E_avail ones, `OI-56` measures the reference rule as **−10.99% out of truth
+  bin 1** (our definition holds ~12% more low-E_avail population), and ours/theirs is
+  above one in exactly those cells. **This does NOT retract the PASS** — the migration
+  is a truth-population effect, their cells span our bins 1+2+3 whose aggregate is
+  measured nowhere, and p=0.432 on 2 dof cannot separate a ~10% offset from noise.
+  **It is an unexcluded alternative explanation for a residual currently read as
+  statistical agreement, and the closing computation is specified in `OI-59`.**
+  Related, and NOT an offset on this comparison: Ascencio's adopted **MnvTune-v3**
+  deducts 25 MeV removal energy from resonance events with ≥1 proton, on both truth and
+  reco — a property of their simulation, hence a residual model dependence in their
+  published values. `MnvTune-v3` appears nowhere in this repo.
 - **Driver no-weights normalization fix verification (2026-06-10, job
   54271042)**: **PASS — KNOWN_ISSUES #1 closed.** Driver now always passes
   the POT-scaled weights to OmniFold (no-`--use-weights` mode previously fed

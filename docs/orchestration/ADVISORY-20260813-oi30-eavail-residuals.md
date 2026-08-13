@@ -42,6 +42,23 @@ the evidence Codex relayed.
 
   with the patch `-double mass_pion = 135;` / `+double mass_pion = 139.57;`.
 
+  > **THAT BULLET IS WRONG IN THREE PLACES AND IS SUPERSEDED, 2026-08-13 by lane A.**
+  > `MinervaExpt/GENIEXSecExtract` **is public on GitHub** and nobody had opened it — the id, date and
+  > message were verified as *strings* while the claim built on them never met the diff. Measured with
+  > `gh api`: **(1)** the fix is **three minutes and seven seconds** after the same author's previous
+  > commit (`10:14:03Z` → `10:17:10Z`), not "four months later" — that interval came from differencing
+  > against MAT's commit in a *different* repo, which is not what `564e2788051f` changed; **(2)** it is
+  > **+1/−1 in `case kPZRecoil:`**, a (recoil, pt, pz) hyperdim bin-number lookup, **not** an
+  > implementation of E_avail — `case kEAvail:` was created by that same author three minutes earlier
+  > **already reading `139.57`** and never held `135` for one second; **(3)** so there is **no
+  > independence**: one person wrote the correct value in a new function, noticed the pre-existing site
+  > next door disagreed, and changed it, hedged and unreviewed.
+  >
+  > **The conclusion survives on a better basis** — she chose `139.57` unprompted, first try, then
+  > labelled the inherited `135` a bug. **The "two independent implementations" framing must go before
+  > this reaches Gregor.** Full timeline, all 8 commits that ever touched the file, and what it does to
+  > `OI-56`: `ADVISORY-20260813-eavail-published-conventions.md` §2–§3.
+
 **CORRECTED BY SESSION A 2026-08-13 — the first version of this section overstated the attribution, and
 the overstatement was headed for an outside collaborator.** It read *"the author labelled `135` a
 neutral-pion-mass mistake in his own commit message."* **That is wrong: they are two different people
@@ -119,6 +136,25 @@ Per signal event, ancestry traced through `mc_er_ID`/`mc_er_mother`:
 **On the three species asked about: K± — minerva-ml right, we wrong. e± — we right, minerva-ml wrong.
 p̄ — both wrong, in opposite directions.** And the sweep found rows *neither* repo handles: Λ/Σ
 (48.89 MeV/evt) and neutral kaons (59.28 MeV/evt).
+
+> **THE e± VERDICT IS INVERTED FOR A νμ ANALYSIS, 2026-08-13 by lane A — and the table above is missing
+> its comparator.** Every column here is measured against `kEAvail`, and against `kEAvail` "we right,
+> minerva-ml wrong" is correct. **Against Rodrigues 2016 — the paper that introduced the observable — it
+> is backwards.** Fetched verbatim from arXiv:1511.05944: E_avail is *"the sum of proton and charged pion
+> kinetic energy, plus neutral pion, **electron**, and photon total energy."* Electrons **in**, at total
+> energy. So on e± **`minerva-ml` matches the νμ paper and we do not.**
+>
+> **Mechanism:** `kEAvail`'s `abs(pdg)==11 || abs(pdg)==13` skip was added 2022-03-07/08 in the same
+> three commits as `apps/runCCIncForNuEMEC.cpp` — **in a νe analysis the primary electron IS the charged
+> lepton.** Temporal association measured; motive inferred. Size is small (1.462 MeV/signal evt from this
+> file's own census); it is the *direction of correctness* that flipped.
+>
+> **Two further corrections to this table**, same source: the `strange baryons` and `K⁰/η` rows label
+> `kEAvail` as "MINERvA's own reference implementation", but its species list was written on
+> **2022-03-07, four months AFTER Ascencio v1 was submitted**, by an author of the very paper
+> `CVUniverse.h:163` cites. And a **fifth** mismatch is missing from the row set entirely: the reference
+> returns `max(0.0, ·)`, `minerva-ml` clamps, **we do not.**
+> See `ADVISORY-20260813-eavail-published-conventions.md` §3–§5.
 
 ## 4. The ancestry-fallback question DISSOLVES, and this is the load-bearing result
 
