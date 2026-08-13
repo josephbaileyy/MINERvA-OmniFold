@@ -17,6 +17,12 @@ Measured against `whose_row.py` as shipped:
     gate mode over zero rows                CANNOT CHECK                      rc=2   (query mode stays 0)
     self-test                               58 checks, PASS                   rc=0
 
+**Revision anchor, per BEN-091, and it demonstrates the finding.** The `58` above is a measurement of
+`whose_row.py` as of `6046180` on 2026-08-12, not a property of the suite. Re-measured a few hours
+later in the same session it was **70**. That is the drift this finding is about, arriving inside the
+finding — which is why the convention now cites the script by path and states no count, and why this
+number is dated rather than asserted.
+
 **The denominator is honest in both directions I could test it.** An absent file reports
 `examined 0 file(s), 0 attributable row(s)` rather than counting the attempt, and `--conflicts` over a
 21-row file reports the **scoped** `1 attributable row`, not the total.
