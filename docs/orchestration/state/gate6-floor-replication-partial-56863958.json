@@ -5,18 +5,37 @@
  "array_tasks": "2-5",
  "observed_at_pdt": "2026-08-13T14:53 -- 15:1x",
  "supersedes_nothing": "companion to gate6-floor-replication-active-56863958.json (committed 847034a), which carries the authorization, the launcher digest and the thresholds fixed BEFORE any draw existed",
-
  "HEADLINE": "3 of 5 draws present and valid. NO VERDICT. Branch 1 (FLOOR_SMALL_TRAJECTORY_IS_SEED_DETERMINED) is already unreachable, by monotonicity of max-min and nothing else. Gate 6 is NOT unblocked, all five prohibitions at 19585b7 remain live, and C_ML still needs a separate decision from Joseph that he has not made.",
-
  "slurm_state_measured_this_turn": {
   "authority": "sacct -j 56863958 -X --parsable2 and squeue -u josephrb, both run in the turn this file was written (BEN-027)",
-  "task_2": {"state": "COMPLETED", "exit": "0:0", "elapsed": "03:15:09", "node": "nid008264", "jobidraw": "56863959"},
-  "task_3": {"state": "COMPLETED", "exit": "0:0", "elapsed": "03:15:26", "node": "nid008264", "jobidraw": "56863960"},
-  "task_4": {"state": "PENDING", "jobidraw": "56883015", "reason_string_shown": "JobArrayTaskLimit", "priority": 57910},
-  "task_5": {"state": "PENDING", "jobidraw": "56863958", "reason_string_shown": "JobArrayTaskLimit", "priority": 57816},
+  "task_2": {
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": "03:15:09",
+   "node": "nid008264",
+   "jobidraw": "56863959"
+  },
+  "task_3": {
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": "03:15:26",
+   "node": "nid008264",
+   "jobidraw": "56863960"
+  },
+  "task_4": {
+   "state": "PENDING",
+   "jobidraw": "56883015",
+   "reason_string_shown": "JobArrayTaskLimit",
+   "priority": 57910
+  },
+  "task_5": {
+   "state": "PENDING",
+   "jobidraw": "56863958",
+   "reason_string_shown": "JobArrayTaskLimit",
+   "priority": 57816
+  },
   "caveat_on_sacct": "sacct -j 56863958 lists tasks 2, 3 and 5 but NOT task 4, whose pending element Slurm split off under JobIDRaw 56883015. Pending array elements are not reliably enumerable from sacct; squeue is the authority for pending, sacct for terminal. Filed as BEN-125."
  },
-
  "code_that_applied_the_rule": {
   "path": "nd-unfolding/pet/gate6_floor_statistics.py",
   "sha256": "637ee33d2c36270ae084e17ebb8696f081f77bd7f9f6712738764a989904b7cc",
@@ -27,11 +46,11 @@
   "exit_code": 3,
   "exit_code_meaning": "3 = INCOMPLETE. Statistics are provisional and no verdict is reached."
  },
-
  "frozen_thresholds_NOT_adjusted": {
   "seed_determined_range_max": 0.05,
   "band": 0.10,
   "process_determined_range_min": 0.1740029887300910,
+  "_note_on_these_literals": "written in the PREDECLARED rendering. A json round-trip normalizes them to 0.1 and 0.174002988730091 -- the same doubles, but the frozen literal is the thing under discussion here, so it is preserved by hand. If a later edit reserializes this file, that is why the digits change.",
   "transcription_check": {
    "recomputed_from_the_five_committed_member_receipts": 0.17400298873009096,
    "delta_frozen_minus_recomputed": 5.551115123125783e-17,
@@ -40,75 +59,153 @@
    "reading": "the predeclared literal is the 16-decimal rendering of 0.5*(max-min), one float step above the exact half-range. The literal governs, so the process branch is 5.55e-17 stricter than the exact half. It cannot change any verdict, and it is recorded rather than silently rounded away."
   }
  },
-
  "validity_all_eight_clauses_pass_on_both_new_draws": {
-  "draw_2": {"1_completed": true, "2_target_provenance": true, "3_realized_policy": true,
-             "4_class_ratio": true, "5_mc_indices": true, "6_gates": true,
-             "7_checkpoints": true, "8_execution_environment": true},
-  "draw_3": {"1_completed": true, "2_target_provenance": true, "3_realized_policy": true,
-             "4_class_ratio": true, "5_mc_indices": true, "6_gates": true,
-             "7_checkpoints": true, "8_execution_environment": true},
+  "draw_2": {
+   "1_completed": true,
+   "2_target_provenance": true,
+   "3_realized_policy": true,
+   "4_class_ratio": true,
+   "5_mc_indices": true,
+   "6_gates": true,
+   "7_checkpoints": true,
+   "8_execution_environment": true
+  },
+  "draw_3": {
+   "1_completed": true,
+   "2_target_provenance": true,
+   "3_realized_policy": true,
+   "4_class_ratio": true,
+   "5_mc_indices": true,
+   "6_gates": true,
+   "7_checkpoints": true,
+   "8_execution_environment": true
+  },
   "ingredients_that_could_have_contradicted_this": {
    "R_on_both_draws": 1.1240802949941018,
    "R_required_exactly": 1.1240802949941018,
    "mc_indices_array_equal_to_member_1": true,
    "n_rows": 2000000,
-   "realized_seed_policy_read_off_the_artifact": {"estimator_seed": 42, "subsample_seed": 0, "niter": 3, "epochs": 8, "train_events": 2000000, "batch_size": 512},
+   "realized_seed_policy_read_off_the_artifact": {
+    "estimator_seed": 42,
+    "subsample_seed": 0,
+    "niter": 3,
+    "epochs": 8,
+    "train_events": 2000000,
+    "batch_size": 512
+   },
    "gate_verdict": "GATE_AB_PASSED",
-   "reproduction_gate_rel_dev": {"increment1": 0.0, "push_prev": 0.0, "push_final": 0.0},
+   "reproduction_gate_rel_dev": {
+    "increment1": 0.0,
+    "push_prev": 0.0,
+    "push_final": 0.0
+   },
    "weights_h5_per_draw": 8,
    "target_sha256_bound_at_runtime": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
   },
   "note_on_a_field_that_is_NOT_a_validity_clause": "both draws' STEP1_DECOMPOSITION receipts carry \"verdict\": \"INDETERMINATE\". That is the decomposition's own reading of the physics, not a validity signal; a clause keyed on it would have invalidated every draw including the ones that are fine. A test asserts the distinction."
  },
-
  "execution_environment_persisted_per_draw": {
-  "draw_2": {"host": "nid008264", "gpu_uuid": "GPU-515c021e-5b42-e610-3aef-fccc28486e73", "started_utc": "2026-08-13T17:54:26Z", "slurm_job_id": "56863959"},
-  "draw_3": {"host": "nid008264", "gpu_uuid": "GPU-e4d3ed21-e163-085f-bb7d-45915dd39f08", "started_utc": "2026-08-13T18:02:15Z", "slurm_job_id": "56863960"},
+  "draw_2": {
+   "host": "nid008264",
+   "gpu_uuid": "GPU-515c021e-5b42-e610-3aef-fccc28486e73",
+   "started_utc": "2026-08-13T17:54:26Z",
+   "slurm_job_id": "56863959"
+  },
+  "draw_3": {
+   "host": "nid008264",
+   "gpu_uuid": "GPU-e4d3ed21-e163-085f-bb7d-45915dd39f08",
+   "started_utc": "2026-08-13T18:02:15Z",
+   "slurm_job_id": "56863960"
+  },
   "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
   "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
   "HONEST_CAVEAT_ON_WHAT_VARIED": "draws 2 and 3 ran CONCURRENTLY ON THE SAME NODE on two different A100s. So the first wave varies process and GPU but NOT node. Draw 1 (member_1) trained on a different node in array 56847059, so the 3-draw set does span nodes -- but the node contrast rests on one pair, and 'across-process' here is not yet 'across-node' at n>1. Draws 4 and 5 have not been placed."
  },
-
  "PROVISIONAL_statistics_n_equals_3_NOT_A_VERDICT": {
   "values_v_by_draw": {
-   "1": [1.5194819600196279, 1.124000976719287, 0.9806897311812962],
-   "2": [1.3772732412607531, 1.1103230946149727, 0.9955198662084275],
-   "3": [0.8400494065800533, 0.9356622502386326, 0.9431204794060756]
+   "1": [
+    1.5194819600196279,
+    1.124000976719287,
+    0.9806897311812962
+   ],
+   "2": [
+    1.3772732412607531,
+    1.1103230946149727,
+    0.9955198662084275
+   ],
+   "3": [
+    0.8400494065800533,
+    0.9356622502386326,
+    0.9431204794060756
+   ]
   },
-  "iteration_0": {"F_range": 0.6794325534395745, "F_sd_ddof1": 0.3583437276585841,
-                  "member_S_range": 0.7580408493406813, "fraction_of_member_spread": 0.8963},
-  "iteration_1": {"F_range": 0.1883387264806543, "F_sd_ddof1": 0.10501188100200086,
-                  "member_S_range": 0.38136901675657797, "fraction_of_member_spread": 0.4938},
-  "iteration_2": {"F_range": 0.0523993868023519, "F_sd_ddof1": 0.027009496234766995,
-                  "member_S_range": 0.3480059774601819, "fraction_of_member_spread": 0.1506,
-                  "d_by_draw": {"1": 0.01931026881870379, "2": 0.004480133791572527, "3": 0.056879520593924426}},
+  "iteration_0": {
+   "F_range": 0.6794325534395745,
+   "F_sd_ddof1": 0.3583437276585841,
+   "member_S_range": 0.7580408493406813,
+   "fraction_of_member_spread": 0.8963
+  },
+  "iteration_1": {
+   "F_range": 0.1883387264806543,
+   "F_sd_ddof1": 0.10501188100200086,
+   "member_S_range": 0.38136901675657797,
+   "fraction_of_member_spread": 0.4938
+  },
+  "iteration_2": {
+   "F_range": 0.0523993868023519,
+   "F_sd_ddof1": 0.027009496234766995,
+   "member_S_range": 0.3480059774601819,
+   "fraction_of_member_spread": 0.1506,
+   "d_by_draw": {
+    "1": 0.01931026881870379,
+    "2": 0.004480133791572527,
+    "3": 0.056879520593924426
+   }
+  },
   "why_provisional": "n=3 of 5. Reporting F_range and F_sd at all three iterations is what the predeclaration requires; the VERDICT is defined at iteration 2 only and requires all five draws present and valid. Do not quote any number here as 'the across-process floor'."
  },
-
  "DEDUCTION_from_the_frozen_rule_not_a_new_rule": {
   "claim": "FLOOR_SMALL_TRAJECTORY_IS_SEED_DETERMINED is already unreachable",
   "argument": "max-min is non-decreasing when draws are added, and all three draws present are VALID, so all three are in the final five. The partial F_range[2] = 0.0523993868023519 is therefore a lower bound on the final F_range[2], and it already exceeds the frozen 0.05.",
   "moves_no_threshold": true,
   "reaches_no_verdict": true,
   "selects_no_subset": "the deduction uses ALL present draws, and is valid only because none was excluded",
-  "branches_still_live": ["FLOOR_LARGE_TRAJECTORY_IS_PROCESS_DETERMINED", "FLOOR_INTERMEDIATE"],
+  "branches_still_live": [
+   "FLOOR_LARGE_TRAJECTORY_IS_PROCESS_DETERMINED",
+   "FLOOR_INTERMEDIATE"
+  ],
   "distance_to_branch_2": "the partial F_range[2] is 0.0524 against the 0.1740 process threshold, so branch 2 needs draws 4 or 5 to land at least 0.1216 outside the current [0.9431, 0.9955] span at iteration 2. Two of the five committed members would do that; three would not."
  },
-
  "OBSERVATION_THE_PREDECLARATION_FIXED_NO_RULE_FOR": {
   "what": "the categorical trajectory LABEL is not reproducible at fixed seed",
-  "member_1_at_(42,0)": {"verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN", "v_iter0": 1.5194819600196279, "end_to_end_sign_is_wrong": false},
-  "draw_2_at_(42,0)": {"verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN", "v_iter0": 1.3772732412607531, "end_to_end_sign_is_wrong": false},
-  "draw_3_at_(42,0)": {"verdict": "BROKEN_AT_ITER0", "v_iter0": 0.8400494065800533, "end_to_end_sign_is_wrong": true},
+  "member_1_at_(42,0)": {
+   "verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN",
+   "v_iter0": 1.5194819600196279,
+   "end_to_end_sign_is_wrong": false
+  },
+  "draw_2_at_(42,0)": {
+   "verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN",
+   "v_iter0": 1.3772732412607531,
+   "end_to_end_sign_is_wrong": false
+  },
+  "draw_3_at_(42,0)": {
+   "verdict": "BROKEN_AT_ITER0",
+   "v_iter0": 0.8400494065800533,
+   "end_to_end_sign_is_wrong": true
+  },
   "the_members_whose_label_was_read_as_seed_sensitivity": {
-   "member_4": {"verdict": "BROKEN_AT_ITER0", "v_iter0": 0.8747948243043495},
-   "member_5": {"verdict": "BROKEN_AT_ITER0", "v_iter0": 0.7614411106789466}
+   "member_4": {
+    "verdict": "BROKEN_AT_ITER0",
+    "v_iter0": 0.8747948243043495
+   },
+   "member_5": {
+    "verdict": "BROKEN_AT_ITER0",
+    "v_iter0": 0.7614411106789466
+   }
   },
   "reading": "draw 3 reproduces members 4 and 5's categorical failure -- including the wrong iteration-0 sign -- at member 1's OWN seed pair, and its v_iter0 falls between theirs. This is a fact about iteration 0. It is NOT the verdict: the predeclaration fixes the verdict at iteration 2 only and fixed no rule for the label, so treating this as the floor's answer would be exactly the after-the-fact rule change the predeclaration exists to prevent.",
   "why_it_is_reported_anyway": "it bears directly on the question the leg was authorized to answer, and it changes what Leg X can measure -- which Joseph asked to be told BEFORE the 2x2 is submitted, not after."
  },
-
  "CONSEQUENCE_FOR_LEG_X_REPORTED_BEFORE_SUBMISSION": {
   "leg_x": "the {42,46}x{0,4} 2x2, two new trainings ((42,4) and (46,0)); (42,0)=member 1 and (46,4)=member 5 already exist",
   "authorized": "yes -- Joseph, 'Yes yes to the other B decision'",
@@ -117,7 +214,6 @@
   "what_the_partial_floor_already_says_about_it": "at iteration 0 the same-seed spread is 0.679, 89.6% of the five-member spread, from 3 draws. A 2x2 with one run per cell has no replication, so at iteration 0 its main effects would be indistinguishable from process noise. At iteration 2 the same-seed spread is 0.0524, 15.1% of the member spread, so a 2x2 readout AT ITERATION 2 is still informative. Either the 2x2 gets replication, or its readout is restricted to iteration 2 with the floor quoted alongside.",
   "not_decided_here": "which of those two, and whether to spend the extra GPU-hours, is Joseph's call and is being put to him rather than assumed"
  },
-
  "GATE_5_CORRECTION_MEASURED_THIS_TURN": {
   "what_the_predeclaration_says": "PREDECLARATION-20260813-gate6-floor-replication.md states Gate 5's pending tasks are held by JobArrayTaskLimit and aftercorr -- 'their own array cap and dependency, not by resource scarcity -- so Gate 5's throughput is bounded at ten concurrent regardless of this submission'.",
   "true_at_submission": "yes -- 10 g5train and 10 g5targ were measured RUNNING at 06:22 PDT",
@@ -128,15 +224,13 @@
    "pending_outranking_gate5_priority_67679": 14,
    "pending_outranking_this_leg_priority_57910": 94,
    "of_those_94_belonging_to_josephrb": 1,
-   "reading": "both arrays are priority-starved on a contended partition, and the Reason string JobArrayTaskLimit is stale on both -- it is displayed while the cap is not the operative constraint. Judge contention by counting higher-priority pending work, never by the reason string. Filed as BEN-126."
+   "reading": "both arrays are priority-starved on a contended partition, and the Reason string JobArrayTaskLimit is stale on both -- it is displayed while the cap is not the operative constraint. Judge contention by counting higher-priority pending work, never by the reason string. CREDIT: lane C found this first and independently as BEN-153, with a long-form finding, from sinfo (1631 nodes alloc, zero idle CPUs) on the Gate-5 array at 2-of-10. My instance is a SECOND array (Leg F at 0 running against a %2 cap) refuted by a DIFFERENT measurement (queue position), which is the only thing my row BEN-126 adds -- two arrays and two independent checks make it a class. The analysis is lane C's."
   },
   "the_predeclaration_is_deliberately_NOT_edited": "it was true when written and a predeclaration that gets edited after the fact is worth nothing. The correction lives here and in the RUN_LOG.",
   "did_this_leg_cost_gate_5_anything": "no. --nice=10000 puts this array 10,000 below Gate 5 at every scheduling decision (measured 57910 vs 67689/67705), and this leg has had zero tasks running since 14:16 PDT while Gate 5 has had two.",
   "starvation_reported_not_worked_around": "the peer's instruction was to report starvation rather than compete. Reported. The self-cap has NOT been raised, no task has been resubmitted, and --nice has not been lowered."
  },
-
  "GATE5_CODE_ROOT_untouched": "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 was not read, written, synced or cleaned. A test asserts the launcher never references it.",
-
  "prohibitions_still_live": [
   "do_not_select_passing_subset",
   "do_not_construct_C_ML",
