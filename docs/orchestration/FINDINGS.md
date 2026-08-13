@@ -113,6 +113,7 @@ will read.
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|
+| BEN-173 | **A positive control on one artifact and none on its sibling, in the same function, is the detector.** The Gate-5 receipt reader hashes the target (`:99`) but copies the source's claimed digest into `_verified_input_sha256` (`:112`); its test tampers the target and never the source. Executed: a same-size source swap PASSES, with the `_verified_` field holding a digest the file does not have. Ask which mutation class each `_verified_*` field survives. *Session D.* [Probe](state/probe-gate5-verified-input-sha-20260813.py) | — | EP-2026-08-13-gate5 |
 | BEN-120 | **The duplicate-id gate covers 1 of the 4 id-bearing ledgers — and today's collision was in another.** `--check-ledger-ids` runs on VALIDATION_LEDGER.md alone; OI-48 was allocated 3x in an hour. Density is VL-only, duplicates are universal. | — | EP-2026-08-12-closeout |
 | BEN-119 | **20 checks green, 5 mutations caught, and none touched the conclusion.** A check carrying the verdict reads as a restatement and goes untested. Name the AXIS a battery covers. [Detail](FINDING-20260812-power-test-axis-selection.md) | — | EP-2026-08-12-closeout |
 | BEN-118 | **An overage notice fired 49 s into a 322 GB copy that did not cause it**: an archive 14 h older held 77.9%. Dedup frees 12 kB of 1.46 TB — a digest-verified archive has no slack. [Receipt](state/hpss-residency-inventory-20260812.json) | — | EP-2026-08-12-closeout |

@@ -1462,3 +1462,163 @@ and member 1's. If they match, the control is tight and should say so. If they d
 across-*node* floor and should be labelled as one. If the member receipts do not record them, that is the
 finding.
 
+---
+
+# Round 2 — sole-auditor pass over C (Gate 5), B (Gate 6), A (E_avail), 2026-08-13
+
+Fresh process (started `12:26:14Z`). Nothing below resumes a prior adjudication; every claim was
+re-derived. Read-only throughout: no tracked file outside `docs/orchestration/` was modified, no job
+touched, no cluster write. Repo measured at `origin/main` = `39b0021`; this worktree at `c249f78`, three
+commits behind, and I confirmed by `--stat` that all three are documentation-only.
+
+## V30 — Gate 5 / lane C: `train_fullevent_replica.py:112` — **BLOCK, scoped to provenance.** The defect is now EXECUTED rather than argued, and it reaches further than any of its three writeups say
+
+**What was already known and is correct.** `BEN-149`, `c249f78`'s body, and
+`state/gate5-source-npz-verified-20260813.json` all describe :112 accurately: the source NPZ is checked
+by path and size, the receipt is checked for *carrying* a sha256, and then the receipt's own claim is
+copied into a field named `_verified_input_sha256`. The file is never hashed. C measured the real file
+out of band (`fa6b3463…`, 9,897,374,636 B, 42.6 s) and it matches. I re-read the code and confirm every
+one of those statements.
+
+**What was asserted but not demonstrated, and now is.** All three writeups say a same-size substitution
+"would still pass unnoticed." I rebuilt the committed acceptance test's own fixture
+(`test_gate5_replica_driver.py::target_receipt`, reproduced byte-for-byte) and ran four arms against the
+real `read_replica_target_receipt`. Artifact:
+`docs/orchestration/state/probe-gate5-verified-input-sha-20260813.py`.
+
+```
+[A0 baseline, nothing touched]              expected PASSED         observed PASSED
+    _verified_input_sha256=cea2990714915956   actual file sha=cea2990714915956   equal=True
+[A1 SOURCE substituted, SAME size 24 B]     expected FAILED-CLOSED  observed PASSED   *** ***
+    _verified_input_sha256=cea2990714915956   actual file sha=81cd0be5ef193b7c   equal=False
+[A2 SOURCE substituted, size changes]       expected FAILED-CLOSED  observed FAILED-CLOSED
+    "[gate5-train] source dump size differs from target receipt"
+[A3 TARGET one bit flipped, SAME size]      expected FAILED-CLOSED  observed FAILED-CLOSED
+    "[gate5-train] target SHA-256 differs from its receipt"
+```
+
+**A1 and A3 are the whole finding: the identical mutation class, two lines apart in one function, caught
+on the target and not on the source.** A2 is the control proving the probe reaches its subject — without
+it, A1's pass is indistinguishable from a probe that never ran. A0 is the part that matters to a reader:
+**when nothing is wrong the field is right**, so no amount of spot-checking published values finds this.
+
+**My probe's first run was itself a vacuous pass, and A0 is the only reason I caught it.** All four arms
+died at `target path differs from the path owned by its receipt` — on macOS `tempfile` yields `/var/…`
+while `Path.resolve()` yields `/private/var/…`, and the fixture stores the resolved form. Three of the
+four arms reported "as expected" because failing closed was what I expected of them. Without the baseline
+arm I would have reported a confirmed finding from a probe that never reached the code. Recorded because
+it is the same shape as the defect being audited.
+
+**RESIDUAL 1, NEW — the committed test cannot fail on this.** `test_gate5_replica_driver.py:67-82` is the
+test *of this function*. It asserts `_verified_target_sha256 == sha256_file(target)` (`:72`) and **tampers
+the target** (`:77`) to prove that check bites. There is no assertion on `_verified_input_sha256` and **no
+tamper of `source` at all**. The positive control exists for the computed field and is absent for the
+copied one. Separately, `:87` in the next test performs the copy itself —
+`rec["_verified_input_sha256"] = rec["input_preflight"]["sha256"]` — so the fixture reproduces the code's
+rule and cannot exhibit disagreement with it.
+
+**RESIDUAL 2, NEW AND THE ONE WITH GATE CONSEQUENCES — the copied value is not inert; it is published.**
+`train_fullevent_nominal.py:359` binds `target_receipt = assert_target_provenance(...)`, and `:642` stamps
+`inputs_sha256=np.asarray(target_receipt["_verified_input_sha256"])` into the training artifact. The
+adapter's `replica_atomic` (`train_fullevent_replica.py:196-230`) augments the array dict and does **not**
+overwrite that key, so it ships. The comment at `:639-641` reads *"Already computed and CHECKED against
+the receipt by assert_target_provenance; reused rather than recomputed, so the artifact records the digest
+that was actually verified."* **That comment is TRUE on the nominal path** — `:277`
+`got_in_sha = sha256_file(inputs_npz)`, compared at `:278`. **It is FALSE on the replica path**, because
+`run_nominal_adapter` replaces `assert_target_provenance` with `replica_provenance`
+(`train_fullevent_replica.py:140-147`), which returns the receipt from `:112`. Same consumer line, same
+comment, opposite epistemic status — `BEN-149`'s own shape one level up, in a comment instead of a field
+name.
+
+**And nothing downstream re-checks it for replicas.** `validate_pet_nominal_gate4.py:1029-1030` *does*
+hash independently (`src["inputs_sha256"] == _sha256_file(inputs_npz)`) — but that is the nominal Gate-4
+validator, and `extract_fullevent_fps.py:178-181` **refuses** any artifact with `bootstrap_seed != -1`
+("this path extracts the NOMINAL, fail closed"). The replica path rides `combine_cstat_bkgsub*.py` /
+`replica_manifest`, and `inputs_sha256` appears in neither. **So the copied value will be the only
+in-artifact record of source identity across all 50 Gate-5 replicas.**
+
+**VERDICT.** Gate 5 execution: **not blocked** — the source file is in fact correct, by C's measurement,
+so no member is training on the wrong dump. **Quoting `inputs_sha256` from any Gate-5 replica artifact as
+verified provenance: BLOCKED.** It is a relayed claim in all 50.
+
+**The consequence for `c249f78` that belongs where the gate can see it:** C's out-of-band measurement is
+not belt-and-braces. It is the *only* independent check of source identity that exists for the Gate-5
+replica family, and it is currently reachable only from a `state/` receipt and a commit body. It needs to
+be cited from Gate 5's own receipt, or the family ships with its provenance resting on a document nobody
+downstream reads.
+
+## V31 — the deferral reason for the :112 repair is **REFUTED as non-discriminating.** The conclusion is right; the reason given is not the reason
+
+`state/gate5-source-npz-verified-20260813.json:49` and `c249f78`'s body both say the one-line repair is
+*"Deliberately NOT done while the campaign runs: editing the driver would break
+`GATE5_EXPECTED_TRAIN_DRIVER_SHA` for every member still to start."*
+
+**Mechanism, verified.** `submit_gate5_replica_n50.sh:50` computes the pin once at submit from
+`${CODE_ROOT}/nd-unfolding/pet/train_fullevent_replica.py` and exports it;
+`sbatch_gate5_replica_train_array.sh:20,24,42` re-reads `${GATE5_CODE_ROOT}`'s copy at task start and
+compares. `GATE5_CODE_ROOT=/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059` — **not this repo.**
+
+**Three measurements against the stated reason.**
+
+1. C's *own* earlier receipt, 50 minutes before, `state/gate5-n50-progress-56857232-20260813.json:46`:
+   *"Editing the repo tree cannot reach these members."* The two receipts contradict each other.
+2. `:41` of the train launcher checks `git -C "$CODE_ROOT" rev-parse HEAD == $EXPECTED_HEAD`, which fires
+   on **any** commit pulled into CODE_ROOT — driver or not. This guard cannot distinguish the :112 repair
+   from any other commit.
+3. **Already realized empirically.** Three commits landed on `origin/main` during the campaign —
+   `b8159ad` 08:10:32, `0198c7e` 08:28:22, `39b0021` 08:36:16 EDT — and the 08:37:33 reading has targets
+   at 13 COMPLETED / 10 RUNNING and training at 10 RUNNING. Repo commits demonstrably did not trip the
+   pin. **The :112 repair carries exactly the marginal risk those three carried: zero.**
+
+**I tried to refute this and found the strongest counter-argument, which does not save the reason.**
+`88785a1` records C correcting itself: the cluster checkout *is* a git repo with a GitHub remote, 309
+commits behind "because nobody has pulled, not because it is disconnected" — *"the isolation is a POLICY
+barrier … and not a technical one."* True, and it applies to CODE_ROOT as well (the submit script runs
+`git -C "$CODE_ROOT"` at `:19-20`, so CODE_ROOT is a checkout and can pull). **But that hazard is already
+fully present from the three commits above.** A reason equally true of every commit made during the
+window cannot be the reason *this* commit is withheld.
+
+**VERDICT: the conclusion "do not touch CODE_ROOT" is CORRECT. The reason as written is REFUTED.** The
+cost is not hypothetical: `docs/OPEN_ITEMS.md` and `KNOWN_ISSUES.md` grepped for
+`train_fullevent_replica` and `BEN-149` return **zero hits**. The repair is deferred behind a blocker that
+does not hold, with no owner and no trigger — so when the campaign ends, nothing fires. **Routed to C:
+either land the repair now (a repo commit cannot reach the running members), or give it an OI number.
+Not my call and not my edit.**
+
+## V32 — Gate 6 / lane B: **UNRESOLVED**, and that is the honest branch rather than the nearer of the other two
+
+Block confirmed intact at `19585b7` ("Block Gate 6 after member trajectory control", Joseph, 2026-08-13
+05:44 EDT). Searched all branches for Gate-6 commits after it: the only two are C's `d9b09b6` and
+`f69d6cf` (06:39, 06:42), both analysis. **Lane B has committed nothing since 2026-08-12 10:29**
+(`7b9afe8`, a `BEN-117` compression). No committed movement toward execution.
+
+**What I could not check, stated rather than rounded up to PASS.** This session is worktree-isolated and
+the harness refuses git operations targeting other worktrees, so I cannot read lane B's uncommitted state;
+and I cannot reach `/pscratch` or Slurm from this checkout, so **every job-state number in this pass came
+from the orchestrator's relay, not from a command I ran.** Per `CLAUDE.md`'s rule that IDs and counts must
+come from a command run in the same turn, the Gate-5 counts quoted in V31 corroborate a conclusion that
+the commit timestamps already establish without them. **"No committed movement" is what I verified; "B is
+not executing" is not.**
+
+## V33 — lane A / `OI-30`: **PASS**, and it passes the check that is usually unfalsifiable
+
+`OI-30` is now split (`OI-30` = the `135` constant; `OI-56` = the species rule, FROZEN). V24's Finding 1
+is closed: Eq. 4 was read directly at `arxiv.org/html/2312.16631v2`, and the ~140 MeV kinetic-vs-total gap
+I had flagged as the material half resolves in our favour.
+
+**I re-derived every quoted number from the row's own operands — `BEN-077`, and it is the only heuristic
+here that has caught a defect with nobody suspecting one:**
+
+```
+1.0563 pi+-/evt x 4.57 MeV/pion  = 4.8273 MeV/evt      row says 4.827     OK
+439 / 65,911                     = 0.66605 %           row says 0.666%    OK
+1.049 / 13.69                    = 7.66 %              row says 7.7%      OK
+7.66% x sqrt(1507)               = 297.5 %             row says 297%      OK
+```
+
+The bracket `[7.7%, 297%]` is not two independently asserted endpoints — the upper is the lower times
+`sqrt(1507)`, exactly the perfect-correlation-to-perfect-independence span the row says it is. **It could
+have contradicted itself and does not.** The row also states plainly that the naive end is the most
+favourable reading rather than the answer, and that the denominator's own `VL62/63/64/65` are OPEN. No
+finding.
+
