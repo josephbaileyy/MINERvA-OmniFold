@@ -114,6 +114,8 @@ will read.
 
 | id | finding | cross_stream | episode |
 |----|---------|--------------|---------|
+| BEN-122 | **A predeclaration named two fields as complementary evidence and they are one number.** `end_to_end_achieved_over_required == 1 + push_dev_vs_R` to `2.2e-16`: `base` cancels in `(m_push/base)/(R/base)`. The signed field was required so drift could be told from scatter; it cannot. | — | EP-2026-08-13-gate6 |
+| BEN-121 | **A zero-tolerance monotonicity clause applied across a checkpoint-tier boundary turned a ~1.3% systematic into a scientific FAIL.** One of four Gate-6 failures is `+0.0011` at the only step comparing best-epoch against `_final`. It also penalises stationarity — which is what convergence looks like. [Detail](PLAN-20260813-gate6-cml-retry-design.md) | — | EP-2026-08-13-gate6 |
 | BEN-120 | **The duplicate-id gate covers 1 of the 4 id-bearing ledgers — and today's collision was in another.** `--check-ledger-ids` runs on VALIDATION_LEDGER.md alone; OI-48 was allocated 3x in an hour. Density is VL-only, duplicates are universal. | — | EP-2026-08-12-closeout |
 | BEN-119 | **20 checks green, 5 mutations caught, and none touched the conclusion.** A check carrying the verdict reads as a restatement and goes untested. Name the AXIS a battery covers. [Detail](FINDING-20260812-power-test-axis-selection.md) | — | EP-2026-08-12-closeout |
 | BEN-118 | **An overage notice fired 49 s into a 322 GB copy that did not cause it**: an archive 14 h older held 77.9%. Dedup frees 12 kB of 1.46 TB — a digest-verified archive has no slack. [Receipt](state/hpss-residency-inventory-20260812.json) | — | EP-2026-08-12-closeout |

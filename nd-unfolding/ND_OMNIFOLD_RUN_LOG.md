@@ -5847,3 +5847,90 @@ CPU nodes, 16 requested CPUs, 64G, three hours, and at most ten concurrent tasks
 tasks, and dependency `aftercorr:56857232`. Both were pending at the launch receipt. Terminal watches
 `gate5-targets-56857232` and `gate5-training-56857233` are armed, so progress is now scheduler-driven
 without LLM polling. No partial subset may be promoted and `C_stat` remains prohibited before 50/50.
+
+## 2026-08-13 — Gate 6 retry design written; three of four member failures are robust, family still blocks
+
+Lane B took Gate 6 (P5B.2, `C_ML`) and delivered a written design only:
+`docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`. **Nothing was executed, no member was
+selected or excluded, no `C_ML` was constructed, the central did not move, Leg 2 did not start, and no
+retired margin is quoted.** All five prohibitions in the blocking receipt are honoured by every leg.
+
+Two properties of the measurement were settled first, because both are cheaper than a training and
+both change the fault description a retry has to explain.
+
+The metric is not two quantities but one. `end_to_end_achieved_over_required` equals
+`1 + push_dev_vs_R` to a worst deviation of `2.220e-16` over all 15 committed values, because `base`
+cancels identically in `(m_push/base)/(R/base)` at `step1_increment_trajectory.py:236-257`. So the
+metric is `mean_w_reco(push_k)/R`, and the predeclaration's requirement to record the signed field
+"so a monotone one-sided drift can be distinguished from two-sided scatter" is satisfied trivially and
+adds no witness (VL122, BEN-122). `R` is common to all five members — `step1_class_ratio` is built
+from the full inventory and is subsample-invariant — so the five finals are directly comparable and
+disagree about the pushed-weight normalization by `1.461867` (VL123).
+
+The trajectory reads iterations 0 and 1 from best-epoch checkpoints and iteration 2 from `_final`,
+because `ckpt()` prefers `_final` and only iteration 2 has one in the launcher's asserted 8-file
+inventory. The monotonicity clause's second comparison therefore crosses a tier boundary whose gap the
+harness's own docstring puts at ~1.3% (BEN-043) while warning it "would NOT survive it if the question
+were a few-percent one". **Member 3's sole failing margin is `+0.001098` at exactly that step** — 12x
+below the systematic in its own comparison — and it passes the `0.10` band by `0.057350`. Members 2
+and 4 rise at the tier-clean step (`+0.010679`, `+0.048948`) and member 5's band excess is `+0.146523`,
+so **three failures survive and the family verdict `BLOCK` at VL121 is unchanged** (VL124–VL125,
+BEN-121). Two further clause defects are recorded rather than acted on: the zero-tolerance
+monotonicity test penalises stationarity, which is what convergence looks like, and the `0.10` band's
+provenance is a verdict-label cut on iteration 0 at `step1_increment_trajectory.py:299`, not a
+tolerance derived for iteration 2.
+
+The Gate-6 comparison used the declared within-process floor `1.26775e-04` for members trained in five
+separate tasks on five nodes; the across-process floor is `1.62987e-02`, `128.6x` larger and known from
+one pair (VL126). Member 3's total deviation is `2.617x` that floor and member 1's final is `1.185x`
+it, so the interpretation currently rests on an `n=1` scale.
+
+**OI-15's premise is false and was corrected in place.** `train_fullevent_nominal.py:335-336` already
+declares `--estimator-seed` and `--subsample-seed` as independent flags,
+`sbatch_pet_fullevent_ml_ensemble.sh:111` passes both, and its lines 114-128 re-read the realized
+`seed_policy` off the persisted artifact and fail closed on a mismatch. No code gate has to be
+re-issued to vary seeds, which removes the sequencing dependency the assignment flagged. The residual
+is narrower: products do not persist host/GPU/process identity — the thing an across-process floor
+exists to expose — and since the driver is `/files/driver/path` in the live Gate-4 code gate (19
+pinned paths), the fix belongs in a new launcher's sidecar receipt copying
+`train_fullevent_replica.py:347-353`, not in the pinned driver.
+
+The design proposes three ordered legs: a zero-training tier calibration on the existing five members
+(no gate re-issue — `step1_increment_trajectory.py` is not in the Gate-4 pin list, verified against
+the receipt); four across-process draws of the fixed `(42,0)` policy to turn the `n=1` floor into
+`n=5`; and a 2x2 crossed sub-factorial on `{42,46}x{0,4}` needing two new trainings, which is what
+separates estimator initialization from training subsample. The executed design is diagonal, so those
+two factors are perfectly confounded today and no analysis of these five members can attribute the
+variance. Six new trainings, ~18 GPU-h, three waves each a single job under 12 h.
+
+**One item needs Joseph's explicit sign-off and is called out as such:** the `(42,0)` floor
+replication is the control the predeclaration already names verbatim, but gated behind "If all five
+pass". The design asks to invert that precondition, on the grounds that the floor is the scale that
+makes the numbers interpretable and the failure is when it is needed. That whether member 1 is both
+the only converged member and the carrier of the adopted nominal's policy means anything is `n=1` — a
+hypothesis this leg tests, not a finding.
+
+Gate 4's estimator-arm disposition remains an independent user decision and blocks `C_ML` construction
+regardless of how any leg comes out.
+
+**`MANIFEST.tsv` is deliberately NOT updated here, and the reason is a trap worth naming.** It was
+already out of date at `39b0021` before this change, so regenerating it looked like tidying. But
+`generate_manifest.py` inventories the filesystem, and regenerating it from a `git worktree` **removed
+37 rows** — `.DS_Store`, `__pycache__/*.pyc`, `.pytest_cache/`, `state/locks/*.lock`, `runs/*.log` —
+untracked litter that exists in the main checkout and not in a fresh worktree. Committing that would
+have deleted rows describing files that do exist, and the next lane regenerating from the main checkout
+would flip them straight back. **The generated authority on what is LIVE is worktree-dependent through
+untracked files; regenerate it only from the main checkout.** The new design file is therefore
+unregistered, and is reachable instead from the five pointers added in this commit (this log, the
+ledger block, `ND_OMNIFOLD_STATUS.md`, `OI-15`, and `BEN-121`).
+
+**Lane attribution, and the instrument that does NOT work for it.** `git config --local` is the obvious
+way to give a lane its own identity and it is wrong here: from a linked worktree `--local` resolves to
+`$GIT_COMMON_DIR/config`, i.e. the **shared** `.git/config` of the main checkout, so it retargets the
+identity for every worktree and the main checkout at once and four lanes doing it would fight over one
+key. This lane set it, the key was gone within the hour, and the first commit was still authored
+"Joseph Bailey". `git config --worktree` is the per-worktree instrument, but it requires
+`extensions.worktreeConfig=true`, which is itself a repo-wide change. What this lane uses instead
+touches no shared state at all: `git commit --author='Lane B (Gate 6) <josephrb@stanford.edu>'`
+per commit, matching lane C's existing convention. Separates `git log --author` without configuring
+anything (BEN-214).

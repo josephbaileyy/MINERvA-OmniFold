@@ -1,5 +1,26 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-08-13 Gate 6 blocking metric — what it measures, and the scales the verdicts sit against
+
+Recomputed from the committed receipt `state/gate6-member-trajectories-result-56847059.json` and read
+out of the committed code, for the retry design in
+`docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`. **No member is selected or excluded, no
+`C_ML` is constructed, and the family verdict `BLOCK` at VL121 is unchanged by any row here** — these
+rows change how many of the four failures are robust, not whether the family blocks.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL122 | `end_to_end_achieved_over_required` vs `1 + push_dev_vs_R`, worst over all 15 committed values | **`2.220e-16`** | the two fields are ONE number: `base` cancels identically in `(m_push/base)/(R/base)`, so the metric is `mean_w_reco(push_k)/R` and the signed field is `metric-1`. The predeclaration's second witness is not independent evidence. |
+| VL123 | `R` across the five members | **common, `1.1240802949941018`** | `step1_class_ratio` is built from the FULL inventory and is subsample-invariant (`fullevent_fps_dataloader.py`, `STEP1_MC_NORMALIZATION` comment); one shared target, no bootstrap seed. The five finals are therefore directly comparable: `max/min = 1.461867` on the pushed-weight normalization. |
+| VL124 | checkpoint provenance tier per iteration, from `ckpt()` plus the launcher's asserted 8-file inventory | **best-epoch, best-epoch, `final`** | the monotonicity clause's second comparison (`d[1] >= d[2]`) crosses a tier boundary whose gap the harness's own docstring puts at ~1.3% (BEN-043), measured on the fold-forward ratio and NOT on this metric. |
+| VL125 | member 3's sole failing margin, at that tier-crossing step | **`+0.001098`** | 12x below the tier systematic in its own comparison; member 3 passes the `0.10` band by `0.057350`. Its FAIL is not robust. Members 2 and 4 rise at the tier-clean step (`+0.010679`, `+0.048948`) and member 5's band excess is `+0.146523`, so **three failures survive and the family still blocks.** |
+| VL126 | declared within-process floor vs the across-process floor | `1.26775e-04` vs `1.62987e-02` = **`128.6x`** | the Gate-6 comparison used the WITHIN-process floor for members trained in five separate tasks on five nodes. The across-process floor is `n=1` (VL113), which carries ~76% relative uncertainty on its own scale; member 3's total deviation is `2.617x` it and member 1's final is `1.185x` it. |
+
+Method note: VL122 and VL123 are recomputed identities, not new measurements — VL122 from the
+committed 15 values, VL123 from the code path that derives `R`. VL124–VL126 are readings of committed
+artifacts and code against each other. **No ratio of spread to floor is quoted here, and none is a
+publication result** (VL111–VL115 stand as written).
+
 ## 2026-08-13 Gate 6 member trajectories — family BLOCKED by the predeclared numeric rule
 
 The no-training Leg-1 control completed all five members in array `56847059_[1-5]`; every Slurm task

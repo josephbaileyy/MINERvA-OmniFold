@@ -22,6 +22,10 @@ selected, no `C_ML` is constructed, the nominal central is unchanged, Leg 2 is n
 unchanged retry is allowed. Gate 4's estimator-arm disposition remains an independent user decision.
 Canonical numbers: `../VALIDATION_LEDGER.md`; exact receipt:
 `../docs/orchestration/state/gate6-member-trajectories-result-56847059.json`.
+**A retry design is written and awaits Joseph's decision; nothing in it is executed and it constructs
+no `C_ML`:** `../docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`. Three of the four member
+failures are robust — member 3's sole failing margin is `+0.001098` at the one trajectory step that
+compares a best-epoch checkpoint against a `_final` one (VL122–VL126), so **the family still blocks**.
 
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
