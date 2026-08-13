@@ -78,22 +78,28 @@ Last updated 2026-07-16.
   Also gated on the binding row above, and separately blocked upstream — the 4D unified throw wants a
   3D universe omnifile that is missing (`nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, "Pending
   decisions / gates" item 3).
-  **RE-VERIFIED 2026-08-12, and this row is WAITING-USER, not unstarted work.** The blocker was checked
-  rather than read: `3d-unfolding/runEventLoopOmniFold_MEFHC_3D_universes_full.root` is absent **both in
-  the local checkout and on `/pscratch/sd/j/josephrb/MINERvA-OmniFold`**. The upstream item names three
-  options and they are a **decision, not a computation** — (a) regen the 3D universe event loops, (b)
-  marginalize the 5D adopted product to 4D, (c) accept the sweep-based 4D combined without unified-throw
-  inflation. Recorded here because this row previously read as a compute gate, and an agent picking it up
-  as "unblocked" cannot make progress on it: **it was picked up that way on 2026-08-12 and the reading
-  survived until the file was actually stat-ed.**
-  Two things the decision needs that live elsewhere: **(a) is mechanically available** —
-  `3d-unfolding/sbatch_evloop_array_3d_universes_full.sh` and `sbatch_hadd_3d_universes_full.sh` both
-  exist on the cluster — but scratch is at **79.7% of 20 TiB** and HPSS is over quota (`OI-51`…`OI-54`),
-  so a full 3D universe regeneration is a storage decision as much as a compute one. **And (b) has a
-  measured problem**: 5D→4D marginal vs independent 4D disagree at **median 4.43%** against a 3% per-bin
-  gate, while integrals agree to 0.56%
-  ([`orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md`](orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md)).
-  Marginalizing is the cheap option and it is the one with a known failure against a stated bar.
+  **THE "blocked upstream" CLAUSE ABOVE IS STALE — struck 2026-08-12, and the unified throw is DONE.**
+  The missing 3D omnifile stopped being the blocker on **2026-07-15**, by a fourth route none of the three
+  options listed: `nd-unfolding/assemble_bank_4d_from5d.py` rebuilt the 4D throw bank from the surviving
+  `bank_uthrow_5d` (event-aligned, `w_truth`/`w_reco` byte-identical, the 372 universe-ratio weight arrays
+  binning-independent and symlinked) — **no event loop needed**
+  (`nd-unfolding/uq_4d/corrected/P6_4D_CORRECTED_STATUS.md`, "Inventory / reuse decisions"). The corrected
+  chain then ran to completion. Verified on `/pscratch` 2026-08-12:
+  `uq_4d/corrected/unified_throw_cov_4d.root` (Jul 17 07:56), and both adopt variants in
+  `uq_4d/corrected/universe_stage2_4d/` — `..._combined_uthrow.root` (Jul 17 08:05) and
+  `..._combined_uthrow_cvcentered.root` (Jul 17 08:06). The ledger independently records **4D
+  unified-throw adoption: PASS** for the June arm (160 throws, unified/block sqrt-tr ratio **2.012**;
+  adopted combined 4830 reported bins, exactly symmetric, PSD).
+  **So this row has ONE live gate, not three: Agent A's committed standard lateral block.** Laterals are
+  support-limited and step 5's final swap is gated on it; the binding quarantine row above still gates
+  *quoting*. `CORRECTED_UQ_PRODUCTION_STATUS.md`'s "Pending decisions / gates" item 3 is stale where it
+  offers the user three options — do not route that decision, it was superseded three weeks before it was
+  read.
+  *How the stale clause survived, recorded because it cost a wrong escalation:* on 2026-08-12 this lane
+  stat-ed the 3D omnifile, found it genuinely absent, and reported the row blocked — **verifying the
+  stated ingredient instead of the claim it was offered as evidence for.** The file being missing was
+  true and had stopped implying anything. Same shape as BEN-118's dedup error and BEN-119's untested
+  verdict-checks: the check ran, was correct, and did not bear on the conclusion.
 - **(E_avail,W) generator SIGNIFICANCES** (#6, #8) — still gated; **the RATIOS are now closed and
   the two must not be conflated.** The corner `data/gen` ratios are ratios of central-value
   integrals with no covariance in them, and all four landed 2026-08-11 (1.535 / 1.579 / 1.563 /
