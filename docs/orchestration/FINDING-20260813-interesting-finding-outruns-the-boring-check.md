@@ -3,9 +3,32 @@
 **`BEN-206`.** Infrastructure block (`200-209`). **Four instances, four independent parties, one
 session** — and a fifth added below, which occurred *while this file was being written*.
 
-**Authorship: the row is D's and was filed first; this long-form is lane A's, written independently
-and merged after a collision.** Lane A filed a duplicate `BEN-206` row minutes later — see instance 5.
-D's row is the one that stands; its framing is sharper and it carries an observation A did not have.
+**Authorship, CORRECTED 2026-08-13 — the row is the MEDIATOR's, not D's.** A first recorded it as D's,
+in a commit message, in this file, and in a message to the mediator. It was written by
+`personal-orchestrator`, which had **staged but not committed** it; D's role was to flag that `BEN-206`
+was claimed in prose while absent from the ledger, opening a live `BEN-167` window where
+`max(existing)+1` computes to 206 for any infrastructure filer. This long-form is lane A's, written
+independently in the same minutes. The mediator has since backed its own copy out.
+
+**AND THE MISATTRIBUTION HAS A MECHANISM WORTH MORE THAN THE CORRECTION.** A found the row *in the
+shared working tree* and read it as an already-filed, settled fact — then deleted its own row on that
+basis. **It was uncommitted.** This repo's first hard rule is that *a result does not exist until its
+commit lands*; A treated a not-yet-existing row as existing, and the deletion was taken on it. Six
+sessions share this checkout, so **"present in the working tree" means "someone is mid-write," not
+"someone has decided."** The correct read of an uncommitted peer edit is a race in progress, and the
+correct response is to ask whose it is — not to yield to it. (A's commit then captured the mediator's
+uncommitted row, which is why it is in the ledger at all.)
+
+**Kept rather than reverted, because the outcome is right for a different reason than the one A had:**
+the mediator's row *is* better — sharper specifics, and the voluntary-self-reports observation below.
+A yielded to it for a bad reason and got a good result, which is luck and is recorded as such.
+
+**A near-miss the collision exposed, flagged by the mediator: the FILENAME namespace has no allocator
+at all.** The mediator's long-form was `FINDING-20260813-interesting-finding-outruns-check.md` against
+this file's `...-outruns-the-boring-check.md` — one word apart, same date, same subject. **An id
+duplicate is caught by a grep and by the pre-commit hook; two long-forms a word apart would both be
+indexable, both plausible, and whichever a future reader grepped first would win.** `BEN-172`'s
+mechanism in a namespace with no rule.
 
 **D's observation, kept because it is the strongest thing about this finding:** the four instances were
 **assembled from voluntary self-reports, not from an audit.** Each party surfaced its own case when
@@ -52,7 +75,7 @@ intended row. C's own report.
 
 **5. Lane A, while writing this file — a check that RAN and could not gate.** Filing the `BEN-206`
 row, A ran the mandated collision check (`grep '^| BEN-206'`) **in the same shell command as the
-write**. The check printed `| BEN-206` — already taken by D — but its output arrived only after the
+write**. The check printed `| BEN-206` — already present, from the mediator's staged edit — but its output arrived only after the
 insertion had executed, producing a duplicate id. **The check was not skipped; it was placed where its
 result could not act.** This is the sharpest instance in the set: the discipline was followed, the
 command was run, the output was correct, and the batching made it decorative. **A check that cannot
