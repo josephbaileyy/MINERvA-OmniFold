@@ -29,6 +29,10 @@
         "hits": 3,
         "pipefail": true
       },
+      "docs/orchestration/hpss_space_audit.sh": {
+        "hits": 7,
+        "pipefail": true
+      },
       "docs/orchestration/make_handoff_bundle.sh": {
         "hits": 2,
         "pipefail": true
@@ -38,6 +42,10 @@
         "pipefail": true
       },
       "docs/orchestration/run_gate2_r4_detached.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "docs/orchestration/waker_fired_but_unread.sh": {
         "hits": 1,
         "pipefail": true
       },
@@ -61,6 +69,10 @@
         "hits": 1,
         "pipefail": true
       },
+      "nd-unfolding/pet/sbatch_gate6_member_trajectory_array.sh": {
+        "hits": 4,
+        "pipefail": true
+      },
       "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh": {
         "hits": 1,
         "pipefail": true
@@ -69,7 +81,15 @@
         "hits": 1,
         "pipefail": true
       },
+      "nd-unfolding/pet/submit_gate5_replica_n50.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
       "nd-unfolding/sbatch_eavailW_cov_wlat.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh": {
         "hits": 1,
         "pipefail": true
       },
@@ -79,8 +99,8 @@
       }
     },
     "live_instances": 0,
-    "n_candidates": 24,
-    "n_shell_files": 342,
+    "n_candidates": 38,
+    "n_shell_files": 354,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
