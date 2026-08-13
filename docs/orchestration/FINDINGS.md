@@ -11,6 +11,7 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 >
 > | lane | block |
 > |---|---|
+> | *(pre-block era)* | `001-089` — filed before the block system existed. **`047-059` IS UNFILED (13 ids) AND IS `DO NOT USE`** — see the annotation below; it is a hole, not a free block. |
 > | D — verifier | `090-099` (exhausted) |
 > | B — uncertainty construction | `100-129` |
 > | C — PET | `130-159` |
@@ -35,6 +36,18 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 >    allocator; **an unrecorded claim is not a claim.**
 > 4. **If your intended block was taken between recompute and write, recompute and take the next.** That is
 >    the rule working, not failing — session C did exactly this on `OI-59`/`60`/`61` on 2026-08-13.
+>
+> **`047-059` IS ANNOTATED BECAUSE SILENCE WAS UNUSABLE — session C's catch, 2026-08-13.** Under rule 3
+> above, *an unrecorded claim is not a claim* — so an unannotated gap means a lane can neither use it nor
+> say why not, and **a genuinely empty interior range is unusable through omission alone.** Measured: the
+> only gaps in the whole ledger are `047-059`, then `123-129`, `153-159`, `174-189`, `208-209` — and every
+> one of those four is a lane's own unfilled tail **inside an assigned block**, so `047-059` is the only
+> unowned hole. **Verdict: `DO NOT USE`, and the reason is not ownership.** Ids below `090` predate the
+> block system and are read chronologically; back-filling the hole would sort a finding filed today
+> between findings filed weeks ago, which silently breaks the one thing an id's ordering carries.
+> **Allocate forward from `220-229` instead — there is no shortage.** This resolves the status either way,
+> which is the point: the previous state was not "available", it was "undetermined", and undetermined is
+> the one state rule 3 cannot act on.
 >
 > **What is NOT settled and must not be assumed from this:** `OI-*` ids have **no** block table and **no**
 > addressing convention (three parties independently wrote a sibling reference as the dead link
