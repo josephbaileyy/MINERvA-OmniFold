@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Gate 6 Leg 1 five-member no-training trajectory array active",
-  "state": "Gate 6 array 56834281_[1-5] completed 5/5, but its literal comparison does not establish estimator variation. Preserved Agent B returned BLOCK_FOR_PREDECLARED_CONTROL after a same-UUID migration to the authenticated school home. The uniform numeric trajectory rule is committed at 3c5c307; array 56847059_[1-5] is the sole writer, with no C_ML, Leg 2, member exclusion, or central move authorized. A separate Gate-5 target rerun, job 56847028, is running under another campaign lane and shares no trajectory output.",
+  "current_dag_node": "Gate 5 coherent statistical replicas — dedicated two-stage implementation",
+  "state": "Gate 6 Leg 1 array 56847059_[1-5] completed 5/5, but only member 1 passes the predeclared numeric trajectory rule; members 2-5 fail and the family is BLOCKED with no subset, C_ML, central move, Leg 2, or unchanged retry. Independently, Gate-2 re-issue job 56847028 completed 0:0 and reproduced target SHA-256 544b2f6a bit-identically; the hash-chain re-issue landed at fb3a4f9 and an independent same-UUID agy verifier returned PASS_FOR_GATE2_REISSUE_PROMOTION. Gate 5 is unblocked for its separately predeclared N=50 implementation. Gate 4's user disposition remains independent.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -31,22 +31,14 @@
       "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
     }
   ],
-  "jobs": [
-    {
-      "job_id": "56847059",
-      "tasks": "1-5",
-      "single_job": false,
-      "receipt": "docs/orchestration/state/gate6-trajectory-array-active-56847059.json"
-    }
-  ],
+  "jobs": [],
   "blockers": [
-    "Gate 6 has no promoted C_ML: all five members must pass the predeclared numeric convergence rule; post-hoc member exclusion is prohibited.",
-    "The apparent all-five margin is driven by members 2/4/5. Neither the all-five nor two-member spread/floor ratio is quotable before the trajectory verdict.",
-    "If all five converge, the across-process floor remains structurally n=1 and needs the separately predeclared four-repeat Leg 2 with persisted environment identity.",
-    "Gate 5's multi-call replica path must not inherit Gate 6's single-call source-equivalence finding.",
+    "Gate 6 is blocked as a complete family: members 2-5 fail the predeclared numeric trajectory rule. Post-hoc member exclusion, C_ML construction, a central move, Leg 2, and unchanged retry are prohibited.",
+    "Gate 5's dedicated multi-call replica driver and two-stage launcher do not yet exist on the committed path. They must bind one fresh ROOT-built target to each coherent bootstrap seed, reuse the estimator factory with a fresh LR evidence list per replica, and leave the pinned nominal driver unchanged.",
+    "Gate 5 requires all 50 declared replicas; a missing unit invalidates its replica and a missing replica invalidates the ensemble manifest. Partial completion may be reported but not promoted.",
     "Gate 4's estimator-arm disposition remains an independent user decision; Gate 9 adoption remains prohibited."
   ],
-  "next_authorized_action": "On a real terminal event for array 56847059, reconcile all five task gates and trajectories once, apply PREDECLARATION-20260813-gate6-member-trajectories.md numerically, and commit the verdict. Do not construct C_ML, launch Leg 2, select members, move the central, or poll before that event.",
+  "next_authorized_action": "Implement and power-test the separate Gate-5 replica driver plus ROOT-target/GPU-training launch chain specified by PREDECLARATION-20260813-gate5-coherent-replicas-n50.md. Preserve the pinned nominal driver. Once the committed acceptance gates pass, submit the authorized N=50 collision-isolated two-stage campaign and arm one terminal watch per submitted array/job; do not use Gate-6 members or start Gate-6 Leg 2.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
@@ -57,7 +49,9 @@
     "docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md",
     "docs/orchestration/state/gate6-ml-ensemble-result-56834281.json",
     "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
-    "docs/orchestration/state/gate6-trajectory-array-active-56847059.json"
+    "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
+    "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md",
+    "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json"
   ],
   "append_only_history": [
     "docs/orchestration/RUNS.tsv",
