@@ -40,7 +40,7 @@ as what took effect here.
 ## BEN-191 — we fixed the staleness detector and the artifact is still always stale
 
 `LIVE-STATE.md` went stale three times in under an hour, **the third time during the exchange in which its
-freshness detector was repaired** (BEN-164). Measured by the mediator running the new check: `Git: fa45fc1`,
+freshness detector was repaired** (BEN-199). Measured by the mediator running the new check: `Git: fa45fc1`,
 `HEAD ae60dcf`, `HEAD^ e16da21` — stale by more than one, so beyond the born-stale-by-one state the new rule
 blesses.
 

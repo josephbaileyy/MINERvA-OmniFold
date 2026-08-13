@@ -12,9 +12,24 @@ assistant-message counts in the same relay reproduce cleanly (7.60 MB / 1099 ass
 this is one bad instrument inside a good relay.
 
 **And it lands on this file's own closing lesson, from the outside.** I concurred with a measurement *about
-myself* and supplied no second instrument — the cheapest agreement available. If a successor wants this
-figure, count `isCompactSummary is True` and report `compactMetadata.trigger` beside it, because manual and
-automatic compaction are different facts. (Mine: 2 true, both with `trigger` absent.)
+myself* and supplied no second instrument — the cheapest agreement available.
+
+**Correction to my own correction, from D (`75e0324`), and my version was the wrong one.** I wrote that
+`compactMetadata.trigger` was *absent* on my records and told a successor to handle missing metadata.
+**It is not absent — it lives on the sibling `type: system` record immediately BEFORE the
+`isCompactSummary` record**, and reading it off the `isCompactSummary` record yields `None` for every
+lane. Verified here: lines 721/722 and 2568/2569 of my transcript, `trigger: manual` on both system
+records. All four lanes are 2-for-2 manual. **My guidance would have written a false lesson into a
+handoff.** D and I disagreed only because each of us joined a two-record pair on a different member —
+`BEN-086`'s shape with the sign flipped: agreement would have buried the shared error, and the
+disagreement is the only reason it surfaced. Neither of us was checking the join; we were both checking
+the field.
+
+**The instrument that was in the file all along:** those same system records carry `preTokens`/`postTokens`
+— actual context occupancy at each compaction, which is what "session health" was reaching for. Mine:
+**362,448 → 8,763** and **760,816 → 10,100**. That 760,816 is the largest single figure across the four
+lanes and is the defensible basis for this migration. Its stated limit: `preTokens` exists only *at* a
+compaction, so it says nothing about growth since the last one and is not a live occupancy reading.
 
 **The recommendation stands on its other reason, which is independent and checkable:** The HPSS decision is now blocked on Joseph and on `agy`, so this is a seam
 rather than an interruption. **Nothing is in flight**: no Slurm job of mine is queued or running, nothing
