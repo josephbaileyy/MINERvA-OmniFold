@@ -61,6 +61,8 @@ import sys
 
 import numpy as np
 
+from diagnostic_target_override import resolve_precomputed_target
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 for _p in (_HERE, os.path.dirname(_HERE)):
     if _p not in sys.path:
@@ -87,6 +89,11 @@ def main(argv=None):
     ap.add_argument("--decomposition-receipt", required=True,
                     help="the committed STEP1_DECOMPOSITION receipt this run must reproduce first")
     ap.add_argument("--json", required=True)
+    ap.add_argument("--precomputed-target-override", default=None,
+                    help="read a moved target from this path without recreating the artifact's "
+                         "recorded canonical path")
+    ap.add_argument("--precomputed-target-sha256", default=None,
+                    help="required exact SHA-256 when --precomputed-target-override is used")
     # Per-step batch sizes, matching the engine: omnifold.py:199 RunStep1 passes an explicit 1000;
     # omnifold.py:219 RunStep2 passes nothing and falls through to MultiFold.BATCH_SIZE = 512.
     # A single shared value reproduces one step and silently mis-reproduces the other (BEN-072).
@@ -111,6 +118,11 @@ def main(argv=None):
         cap = float(np.asarray(item("reweight_logit_cap")).ravel()[0]) if "reweight_logit_cap" in d.files else None
     R = float(target_meta["step1_class_ratio"])
     niter = int(policy["niter"])
+    target_npy, target_resolution = resolve_precomputed_target(
+        target_meta.get("consumed_precomputed_target"),
+        a.precomputed_target_override,
+        a.precomputed_target_sha256,
+    )
     sem = str(contract.get("checkpoint_semantics", ""))
     if "BEN-043" not in sem:
         raise SystemExit(f"[traj] checkpoint_semantics={sem!r} lacks the BEN-043 marker: this "
@@ -127,7 +139,7 @@ def main(argv=None):
     _data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
         inputs_path, max_events=int(policy["train_events"]),
         seed=int(policy["subsample_seed"]), bkg_mode=T.BKG_MODE,
-        precomputed_target=target_meta.get("consumed_precomputed_target"))
+        precomputed_target=target_npy)
     imc = np.asarray(imc)
     if not np.array_equal(imc, stored_imc):
         raise SystemExit("[traj] rebuilt subsample != the artifact's mc_indices (fail closed)")
@@ -307,6 +319,7 @@ def main(argv=None):
                    "claim was always the SIGN. Renamed RIGHT_SIGN_AT_ITER0_INVERTS_LATER. Same meaning, "
                    "honest name."},
                "reading": reading, "R": R, "niter": niter, "logit_cap": cap,
+               "precomputed_target_resolution": target_resolution,
                "reproduction_gate": gate, "trajectory": rows, "checkpoints": prov,
                "weights": os.path.abspath(a.weights),
                "decomposition_receipt": os.path.abspath(a.decomposition_receipt),

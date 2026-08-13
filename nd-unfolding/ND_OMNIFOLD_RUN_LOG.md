@@ -5765,3 +5765,34 @@ The products do not persist the execution environment that the floor is intended
 identity was recoverable only from sidecar markers and logs. Whether the spread is estimator variation or
 non-convergence is routed to the PET owner. No `C_ML`, central-value change, retry, provider reset, or UUID
 change occurred in this reconciliation.
+
+## 2026-08-13 — Gate 6 owner disposition and five-member no-training trajectory preflight
+
+The legacy school OAuth home refused Agent B's next turn. Under the standing account-migration
+authorization, the root JSONL plus its five-file session subtree were copied no-clobber into the
+authenticated flat school home, hash-verified, and the registry switched under the role lock. The
+same UUID `46e4af3e-c3f2-4fa5-abc7-f0da72817282` then resumed successfully; no replacement role or
+reset credit was used.
+
+Agent B returned `BLOCK_FOR_PREDECLARED_CONTROL`. The five finished members are valid inventory, but
+their literal spread-vs-floor pass does not license `C_ML`: the declared floor is within-process,
+three members outside the nominal bar dominate the spread, and the predeclaration did not contain a
+branch for that shape. Ensemble-mean centering is a component convention only and does not move the
+promoted nominal central.
+
+The smallest discriminator trains nothing. A same-turn preflight found exactly eight expected
+checkpoint files in each isolated member directory. The artifacts' recorded normalized-target path
+is now absent because that exact target was archived before the Gate-5 rerun; the archived copy is
+bound by SHA-256 `544b2f6a…`, so the diagnostic tooling gained an explicit hash-required override
+rather than recreating or repointing the canonical path. The fixed all-member rule uses only numeric
+`end_to_end_achieved_over_required`: absolute deviations must be non-increasing over iterations
+0→1→2 and at most 0.10 at iteration 2. Any member failure blocks the family; no passing subset may be
+promoted. The categorical harness label is excluded because it is direction-blind; signed
+`push_dev_vs_R` is retained. A five-task collision-isolated GPU array is the selected route because
+all arms can run in parallel and no interactive allocation existed at preflight.
+
+The predeclaration, target-override tests, and five-task launcher were committed and pushed at
+`3c5c307` before submission. Array `56847059_[1-5]` was then submitted as the sole writer; all five
+tasks were `PENDING (Priority)` at the launch receipt. Terminal and one-hour queue-latency watches are
+armed. This launch performs inference only and does not authorize `C_ML`, Leg 2, a central move, or a
+Gate-4 disposition.

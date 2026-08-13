@@ -81,6 +81,8 @@ import sys
 
 import numpy as np
 
+from diagnostic_target_override import resolve_precomputed_target
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
@@ -111,6 +113,11 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--artifact", default=DEFAULT_ART)
     ap.add_argument("--json", default=None, help="write the gate receipt here")
+    ap.add_argument("--precomputed-target-override", default=None,
+                    help="read a moved target from this path without recreating the artifact's "
+                         "recorded canonical path")
+    ap.add_argument("--precomputed-target-sha256", default=None,
+                    help="required exact SHA-256 when --precomputed-target-override is used")
     ap.add_argument("--tol-onshell", type=float, default=1e-6,
                     help="Gate B(i) relative tolerance on pass_gen rows. NOT to be raised to make "
                          "the gate pass -- if it fails, report the failure.")
@@ -154,7 +161,12 @@ def main():
     import train_fullevent_nominal as T
     import fullevent_fps_dataloader as fe
 
-    target_npy = target_meta.get("consumed_precomputed_target")
+    target_npy, target_resolution = resolve_precomputed_target(
+        target_meta.get("consumed_precomputed_target"),
+        a.precomputed_target_override,
+        a.precomputed_target_sha256,
+    )
+    rec["precomputed_target_resolution"] = target_resolution
     print(f"[gate] rebuilding loaders: max_events={policy['train_events']} "
           f"seed={policy['subsample_seed']} bkg_mode={T.BKG_MODE} target={target_npy}")
     # EXACTLY train_fullevent_nominal.py:358-360. Any deviation here (mc-only, a different target,
