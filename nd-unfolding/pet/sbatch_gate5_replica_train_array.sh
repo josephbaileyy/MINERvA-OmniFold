@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=g5train
 #SBATCH --account=m3246
-#SBATCH --qos=gpu_shared
+#SBATCH --qos=shared
 #SBATCH --constraint=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=64G
 #SBATCH --time=08:00:00
 #SBATCH --array=0-49%10
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb

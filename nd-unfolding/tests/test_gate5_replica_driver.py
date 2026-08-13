@@ -171,6 +171,11 @@ def test_n50_launchers_are_two_stage_collision_isolated_and_task_correlated():
     assert "#SBATCH --array=0-49%10" in train
     assert "#SBATCH --constraint=cpu" in target and "#SBATCH --gpus" not in target
     assert "#SBATCH --constraint=gpu" in train and "#SBATCH --gpus=1" in train
+    # NERSC's job-submit plugin maps shared+gpu to gpu_shared; naming gpu_shared directly is
+    # rejected as "request does not match any supported policy" (measured 2026-08-13).
+    assert "#SBATCH --qos=shared" in train
+    assert "#SBATCH --qos=gpu_shared" not in train
+    assert "#SBATCH --mem=" not in train  # 64G adjusts to 38 cores/GPU and policy rejects it
     assert "SEED=$((50000 + INDEX))" in target
     assert "SEED=$((50000 + INDEX))" in train
     assert "--dependency=\"aftercorr:${TARGET_JOB}\"" in submit
