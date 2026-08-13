@@ -5990,3 +5990,23 @@ pulled into `CODE_ROOT` while the array is live.
 
 Artifacts: `docs/orchestration/state/gate5-family-reconciliation-20260813.json`; `BEN-150`/`151`/`152`
 with long-form detail; `OI-60`/`OI-61` for the next launch.
+
+## 2026-08-13 — Gate 5 target array terminal; independent 50-member replay prepared
+
+The `gate5-targets-56857232` event was read once and validated. Fresh accounting names every logical
+task `0-49`: all 50 are `COMPLETED/0:0`, with elapsed times `00:38:27-00:46:10`. All 50 stdout logs
+bind `index=i` to seed `50000+i`; all 50 target arrays, target receipts, and both completion-marker
+families are present. A same-turn structural reconciliation independently re-hashed the 50 targets and
+returned 50/50 target checks passing. Its overall verdict is correctly `PARTIAL`, solely because only
+five training receipts existed at that instant; that is not converted into a target PASS.
+
+The terminal target gate now has a dedicated target-only mode. It independently hashes the immutable
+9.9 GB source, re-draws and hashes every data/signal/background Poisson stream, binds each target and
+both markers, enforces seeds and family distinctness, and requires the exact Gate-3/code pins plus the
+learned-production Stay-Positive and `assert_refined_target_is_replica` evidence. Its 73 power tests
+pass, including corruption and missing-member controls. A short collision-isolated CPU launcher was
+added; it writes only a job-scoped validation report and cannot touch the live training namespaces.
+Training array `56857233` and its existing terminal watch remain unchanged. No subset, `C_stat`,
+Gate-6 action, retry, provider dispatch, reset credit, or worker replacement occurred.
+
+Preflight receipt: `docs/orchestration/state/gate5-targets-terminal-preflight-56857232.json`.

@@ -95,12 +95,12 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
             "size_bytes": 9897374636,
             "input_identity_hashes": {"data": "dd", "sig": "ss", "bkg": "bb"},
         },
-        "gate3_manifest": {"path": "/fake/g3.json", "sha256": "g3sha"},
+        "gate3_manifest": {"path": "/fake/g3.json", "sha256": R5.EXPECTED_GATE3_MANIFEST_SHA},
         "code": {
             "loader": {"path": "/fake/loader.py", "sha256": R5.EXPECTED_LOADER_SHA},
-            "target_builder": {"path": "/fake/tb.py", "sha256": "tbsha"},
-            "numpy_dataloader": {"path": "/fake/dl.py", "sha256": "dlsha"},
-            "canonical_u2d": {"path": "/fake/u2d.py", "sha256": "u2dsha"},
+            "target_builder": {"path": "/fake/tb.py", "sha256": R5.EXPECTED_TARGET_BUILDER_SHA},
+            "numpy_dataloader": {"path": "/fake/dl.py", "sha256": R5.EXPECTED_NUMPY_DATALOADER_SHA},
+            "canonical_u2d": {"path": "/fake/u2d.py", "sha256": R5.EXPECTED_CANONICAL_U2D_SHA},
         },
         "bootstrap": {
             "n_data_full": N_DATA,
@@ -115,8 +115,21 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
             "factor_hash_contract": "sha256(dtype || JSON(shape) || contiguous raw bytes)",
             "canonical_replay_verified": True,
         },
-        "configuration": {"full_measured_inventory": True, "max_mc_events": 100},
+        "configuration": {
+            "full_measured_inventory": True,
+            "max_mc_events": 100,
+            "refinement_device": "cpu",
+            "refinement_estimator": "exact",
+            "refinement_random_state": 45,
+            "target_mode": "negweight-refined",
+        },
         "runtime_target": {
+            "bootstrap_seed": seed,
+            "target_mode": "negweight-refined",
+            "refinement_is_learned_production": True,
+            "refinement_backend": "u2d.refine_stay_positive",
+            "refinement": "stay-positive (arXiv:2505.03724)",
+            "estimator_fingerprint": "pet-fullevent-fps-v1",
             "n_data_rows": N_DATA,
             "n_bkg_rows": N_BKG,
             "n_measured_rows": n_measured,
@@ -126,6 +139,7 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
             "step1_mc_normalization": mc_norm,
             "step1_measured_normalization": R * mc_norm,
             "step1_class_ratio_telemetry": {
+                "is_bootstrap_replica": True,
                 "pot_scale": POT,
                 "n_data_effective": n_data_effective,
                 "bkg_pot_scaled_sum": bkg_pot_scaled_sum,
@@ -296,7 +310,15 @@ def _failed_checks(row):
     (lambda o: o["execution"].__setitem__("head_at_runtime", "deadbeef"), "head_at_runtime"),
     (lambda o: o["execution"].__setitem__("slurm_array_task_id", "41"), "slurm_array_task_id"),
     (lambda o: o["input_preflight"].__setitem__("sha256", "0" * 64), "input_sha256"),
+    (lambda o: o["gate3_manifest"].__setitem__("sha256", "0" * 64),
+     "gate3_manifest_sha256"),
     (lambda o: o["code"]["loader"].__setitem__("sha256", "0" * 64), "loader_sha256"),
+    (lambda o: o["code"]["target_builder"].__setitem__("sha256", "0" * 64),
+     "target_builder_sha256"),
+    (lambda o: o["code"]["numpy_dataloader"].__setitem__("sha256", "0" * 64),
+     "numpy_dataloader_sha256"),
+    (lambda o: o["code"]["canonical_u2d"].__setitem__("sha256", "0" * 64),
+     "canonical_u2d_sha256"),
     (lambda o: o["bootstrap"].__setitem__("canonical_replay_verified", False),
      "canonical_replay_verified"),
     (lambda o: o["step1_feed"]["weights"].__setitem__("sha256", "0" * 64),
@@ -317,6 +339,25 @@ def _failed_checks(row):
      "n_measured_rows_equals_data_plus_bkg"),
     (lambda o: o["runtime_target"]["input_identity_hashes"].__setitem__("data", "zz"),
      "input_identity_hashes_agree_in_all_three_blocks"),
+    (lambda o: o["configuration"].__setitem__("target_mode", "raw"),
+     "configuration_target_mode"),
+    (lambda o: o["configuration"].__setitem__("refinement_estimator", "approx"),
+     "configuration_refinement_estimator"),
+    (lambda o: o["configuration"].__setitem__("refinement_device", "gpu"),
+     "configuration_refinement_device"),
+    (lambda o: o["configuration"].__setitem__("refinement_random_state", 44),
+     "configuration_refinement_random_state"),
+    (lambda o: o["configuration"].__setitem__("full_measured_inventory", False),
+     "configuration_full_measured_inventory"),
+    (lambda o: o["runtime_target"].__setitem__("target_mode", "raw"), "runtime_target_mode"),
+    (lambda o: o["runtime_target"].__setitem__("refinement_is_learned_production", False),
+     "runtime_refinement_is_learned_production"),
+    (lambda o: o["runtime_target"].__setitem__("refinement_backend", "other"),
+     "runtime_refinement_backend"),
+    (lambda o: o["runtime_target"].__setitem__("bootstrap_seed", 50001),
+     "runtime_bootstrap_seed_matches_receipt"),
+    (lambda o: o["runtime_target"]["step1_class_ratio_telemetry"].__setitem__(
+        "is_bootstrap_replica", False), "step1_telemetry_marks_bootstrap_replica"),
     (lambda o: o["runtime_target"]["step1_class_ratio_telemetry"].__setitem__(
         "numerator_signed_data", 1.0), "R_numerator_from_operands"),
     (lambda o: o["runtime_target"].__setitem__("step1_measured_normalization", 1.0),
@@ -444,6 +485,43 @@ def test_complete_family_passes_and_still_refuses_to_emit_C_stat(tmp_path):
     assert rc == 0
     assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
     assert rep["C_stat"] is None, "the reconciler must never construct a covariance"
+
+
+def test_target_stage_passes_without_training_and_still_refuses_C_stat(tmp_path):
+    root = str(tmp_path)
+    _family(root, 3, with_training=False)
+    rc, rep = _run_main(root, 3, extra=["--stage", "target"])
+    assert rc == 0
+    assert rep["verdict"] == "TARGETS_COMPLETE_PASS"
+    assert rep["counts"]["targets_passing"] == 3
+    assert rep["counts"]["trainings_present"] == 0
+    assert rep["C_stat"] is None
+
+
+def test_target_stage_rejects_a_missing_target(tmp_path):
+    root = str(tmp_path)
+    _family(root, 2, with_training=False)
+    rc, rep = _run_main(root, 3, extra=["--stage", "target"])
+    assert rc != 0
+    assert rep["verdict"] == "PARTIAL"
+    assert rep["counts"]["targets_absent"] == 1
+
+
+def test_source_npz_is_independently_hashed(tmp_path, monkeypatch):
+    root = str(tmp_path)
+    _family(root, 2, with_training=False)
+    source = os.path.join(root, "input.npz")
+    with open(source, "wb") as fh:
+        fh.write(b"immutable-source-fixture")
+    expected = R5.sha256_file(source)
+    monkeypatch.setattr(R5, "EXPECTED_INPUT_SHA", expected)
+    for idx in range(2):
+        rec = os.path.join(root, "replicas", f"replica_{idx:02d}", "target",
+                           "GATE5_REPLICA_TARGET_RECEIPT.json")
+        _mutate(rec, lambda o: o["input_preflight"].__setitem__("sha256", expected))
+    rc, rep = _run_main(root, 2, extra=["--stage", "target", "--source-npz", source])
+    assert rc == 0
+    assert rep["source_input_measurement"]["sha256_RECOMPUTED"] == expected
 
 
 def test_partial_family_is_PARTIAL_and_never_PASS(tmp_path):

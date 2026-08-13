@@ -406,10 +406,12 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
-**Active 2026-08-13:** the dedicated two-stage N=50 implementation is committed at `b82ac63` after
-independent BLOCK/repair/PASS review. Target array `56857232_[0-49]` and task-correlated training
-array `56857233_[0-49]` are the sole writers in collision-isolated namespaces, with terminal watches
-armed. The declared ensemble remains invalid until all 50 target and training receipts pass.
+**Active 2026-08-13:** target array `56857232_[0-49]` is terminal at 50/50 `COMPLETED/0:0`; all 50
+collision-isolated target/receipt/marker quartets are present and a same-turn structural pass reports
+50/50 target checks passing. Independent full source hashing plus all-three-factor replay is prepared
+as the target promotion gate. Task-correlated training array `56857233_[0-49]` remains the sole training
+writer with its terminal watch armed. The declared ensemble remains invalid until the independent
+target verdict and all 50 training receipts pass; no subset or `C_stat` is permitted.
 
 **Reconciliation, 2026-08-13 05:50 PDT — verdict `PARTIAL`, owner lane C.** First full pass with
 `nd-unfolding/pet/reconcile_gate5_family.py` (50 tests, every check power-tested both directions;

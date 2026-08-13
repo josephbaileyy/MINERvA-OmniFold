@@ -86,6 +86,10 @@ SEED_BASE = 50000
 EXPECTED_HEAD = "b82ac63f9c5685c9cc05df059d2bbb4ae42d3258"
 EXPECTED_INPUT_SHA = "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
 EXPECTED_LOADER_SHA = "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+EXPECTED_GATE3_MANIFEST_SHA = "306e54596802623693cab3657164851b3880563ef8fb59ce3d2627062480cd2f"
+EXPECTED_TARGET_BUILDER_SHA = "e3cd94d4f3983a628e34de4d852ce7ca93940be63c1cdfe28844a5a57f558234"
+EXPECTED_NUMPY_DATALOADER_SHA = "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a"
+EXPECTED_CANONICAL_U2D_SHA = "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
 
 TARGET_VERDICT = "GATE5_REPLICA_TARGET_PASS_TRAINING_PENDING"
 TRAIN_VERDICT = "GATE5_REPLICA_TRAINING_PASS_EXTRACTION_PENDING"
@@ -254,12 +258,25 @@ def reconcile_target(idx, root, replay, cache):
     for label, path, subject in (("npy", npy + ".done", npy), ("receipt", rec + ".done", rec)):
         dj = load_done(path)
         if dj is not None:
+            c.eq(f"done_{label}_names_current_subject", os.path.realpath(dj.get("output", "")),
+                 os.path.realpath(subject),
+                 note="binds the marker to this replica's file rather than presence alone")
             c.eq(f"done_{label}_records_current_size", dj.get("size"), os.path.getsize(subject),
                  note="a sentinel size differing from disk means the file changed after completion")
 
     # --- Pins and shared inputs. ---
     c.eq("input_sha256", r.get("input_preflight", {}).get("sha256"), EXPECTED_INPUT_SHA)
+    c.eq("gate3_manifest_sha256", r.get("gate3_manifest", {}).get("sha256"),
+         EXPECTED_GATE3_MANIFEST_SHA)
     c.eq("loader_sha256", r.get("code", {}).get("loader", {}).get("sha256"), EXPECTED_LOADER_SHA)
+    c.eq("target_builder_sha256", r.get("code", {}).get("target_builder", {}).get("sha256"),
+         EXPECTED_TARGET_BUILDER_SHA,
+         note="this exact producer contains the fail-closed assert_refined_target_is_replica call")
+    c.eq("numpy_dataloader_sha256",
+         r.get("code", {}).get("numpy_dataloader", {}).get("sha256"),
+         EXPECTED_NUMPY_DATALOADER_SHA)
+    c.eq("canonical_u2d_sha256", r.get("code", {}).get("canonical_u2d", {}).get("sha256"),
+         EXPECTED_CANONICAL_U2D_SHA)
     c.truth("canonical_replay_verified",
             bs.get("canonical_replay_verified") is True,
             note="literal True in the receipt, but reached only past the fail-closed replay at "
@@ -270,9 +287,42 @@ def reconcile_target(idx, root, replay, cache):
     ident_b = bs.get("input_identity_hashes")
     ident_p = r.get("input_preflight", {}).get("input_identity_hashes")
     ident_r = rt.get("input_identity_hashes")
+    c.eq("input_identity_hashes_have_all_source_families",
+         sorted(ident_b) if isinstance(ident_b, dict) else None, ["bkg", "data", "sig"])
     c.truth("input_identity_hashes_agree_in_all_three_blocks",
             ident_b == ident_p == ident_r,
             note="bootstrap / input_preflight / runtime_target")
+
+    # The pinned builder calls assert_refined_target_is_replica before publication. Validate the
+    # operands left by that call, plus the complete learned-production refinement contract.
+    config = r.get("configuration", {})
+    c.eq("configuration_target_mode", config.get("target_mode"), "negweight-refined")
+    c.eq("configuration_refinement_estimator", config.get("refinement_estimator"), "exact")
+    c.eq("configuration_refinement_device", config.get("refinement_device"), "cpu")
+    c.eq("configuration_refinement_random_state", config.get("refinement_random_state"), 45)
+    c.eq("configuration_full_measured_inventory", config.get("full_measured_inventory"), True)
+    c.eq("runtime_target_mode", rt.get("target_mode"), "negweight-refined")
+    c.eq("runtime_refinement_is_learned_production",
+         rt.get("refinement_is_learned_production"), True)
+    c.eq("runtime_refinement_backend", rt.get("refinement_backend"),
+         "u2d.refine_stay_positive")
+    c.eq("runtime_refinement_protocol", rt.get("refinement"),
+         "stay-positive (arXiv:2505.03724)")
+    c.eq("runtime_estimator_fingerprint", rt.get("estimator_fingerprint"),
+         "pet-fullevent-fps-v1")
+    c.eq("runtime_bootstrap_seed_matches_receipt", rt.get("bootstrap_seed"), seed)
+    c.eq("step1_telemetry_marks_bootstrap_replica",
+         rt.get("step1_class_ratio_telemetry", {}).get("is_bootstrap_replica"), True)
+    c.truth(
+        "assert_refined_target_is_replica_evidence",
+        r.get("code", {}).get("target_builder", {}).get("sha256") == EXPECTED_TARGET_BUILDER_SHA
+        and rt.get("bootstrap_seed") == seed
+        and rt.get("step1_class_ratio_telemetry", {}).get("is_bootstrap_replica") is True,
+        note=("the pinned builder contains the assertion; runtime seed and replica telemetry "
+              "independently bind the asserted operands"),
+    )
+    c.eq("step1_feed_path_is_this_replica_target", os.path.realpath(w.get("path", "")),
+         os.path.realpath(npy))
 
     n_data_full = bs.get("n_data_full")
     n_sig_full = bs.get("n_sig_full")
@@ -479,6 +529,10 @@ def main():
     ap.add_argument("--nominal-target-sha", default=None,
                     help="sha256 of the promoted nominal target; every replica must differ from it")
     ap.add_argument("--out", default=None, help="write the full JSON report here")
+    ap.add_argument("--stage", choices=("family", "target"), default="family",
+                    help="target validates the terminal target family without requiring training")
+    ap.add_argument("--source-npz", default=None,
+                    help="independently hash the immutable full-input NPZ once")
     ap.add_argument("--skip-replay", action="store_true",
                     help="skip the three-stream factor re-draw (weakens the verdict, and says so)")
     args = ap.parse_args()
@@ -500,17 +554,34 @@ def main():
     # NAME_MISMATCH first: it means this tool's expectations have drifted from the producer's, so
     # every other count below is suspect. It must BLOCK, never be absorbed into a completeness gap.
     mismatched = sorted(r["replica_index"] for r in trainings if r["state"] == "NAME_MISMATCH")
-    family.eq("no_training_artifact_name_mismatches", mismatched, [],
-              note="unexpected receipt/artifact filenames mean the reconciler is looking in the "
-                   "wrong place; a count of 0 present would then be a statement about the SEARCH, "
-                   "not about the campaign")
+    if args.stage == "family":
+        family.eq("no_training_artifact_name_mismatches", mismatched, [],
+                  note="unexpected receipt/artifact filenames mean the reconciler is looking in "
+                       "the wrong place; a count of 0 present would then be a statement about the "
+                       "SEARCH, not about the campaign")
 
     family.eq("targets_present", len(present_t), args.n)
-    family.eq("trainings_present", len(present_r), args.n)
     family.eq("target_replicas_failing_own_checks",
               sorted(t["replica_index"] for t in present_t if t["verdict"] != "PASS"), [])
-    family.eq("training_replicas_failing_own_checks",
-              sorted(r["replica_index"] for r in present_r if r["verdict"] != "PASS"), [])
+    if args.stage == "family":
+        family.eq("trainings_present", len(present_r), args.n)
+        family.eq("training_replicas_failing_own_checks",
+                  sorted(r["replica_index"] for r in present_r if r["verdict"] != "PASS"), [])
+
+    source_measurement = {"performed": False}
+    if args.source_npz:
+        source_path = os.path.realpath(args.source_npz)
+        source_measurement = {"performed": True, "path": source_path}
+        if os.path.isfile(source_path):
+            source_measurement.update({
+                "sha256_RECOMPUTED": sha256_file(source_path),
+                "size_bytes_RECOMPUTED": os.path.getsize(source_path),
+            })
+            family.eq("source_npz_sha256_RECOMPUTED",
+                      source_measurement["sha256_RECOMPUTED"], EXPECTED_INPUT_SHA,
+                      note="hashed from the immutable full-input file during this validation")
+        else:
+            family.truth("source_npz_present", False, note=source_path)
 
     # DISTINCTNESS is the check that catches the reassuring failure: identical targets would
     # collapse the measured-side variance and read as a SMALL C_stat, not as a broken draw.
@@ -550,10 +621,13 @@ def main():
               seeds, [SEED_BASE + t["replica_index"] for t in
                       sorted(present_t, key=lambda x: x["replica_index"])])
 
-    complete = (len(present_t) == args.n and len(present_r) == args.n and not family.failed)
-    if complete:
+    target_complete = len(present_t) == args.n and not family.failed
+    family_complete = target_complete and len(present_r) == args.n
+    if args.stage == "target" and target_complete:
+        verdict = "TARGETS_COMPLETE_PASS" if replay else "TARGETS_COMPLETE_PASS_REPLAY_SKIPPED"
+    elif args.stage == "family" and family_complete:
         verdict = "FAMILY_COMPLETE_PASS" if replay else "FAMILY_COMPLETE_PASS_REPLAY_SKIPPED"
-    elif mismatched:
+    elif args.stage == "family" and mismatched:
         # Blocks even with nothing else present: the search itself is unreliable.
         verdict = "BLOCK"
     elif family.failed and (len(present_t) or len(present_r)):
@@ -572,8 +646,10 @@ def main():
     report = {
         "tool": "reconcile_gate5_family.py",
         "root": os.path.abspath(args.root),
+        "stage": args.stage,
         "declared_inventory": args.n,
         "replay_performed": replay,
+        "source_input_measurement": source_measurement,
         "verdict": verdict,
         "C_stat": None,
         "why_C_stat_is_null": (
@@ -607,7 +683,7 @@ def main():
         "family_failures": family.failed,
         "C_stat": None,
     }, indent=2, sort_keys=True, default=str))
-    return 0 if verdict.startswith("FAMILY_COMPLETE") else 2
+    return 0 if verdict.startswith(("FAMILY_COMPLETE", "TARGETS_COMPLETE")) else 2
 
 
 if __name__ == "__main__":
