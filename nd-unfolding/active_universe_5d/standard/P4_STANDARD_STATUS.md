@@ -1,5 +1,42 @@
 # P4 standard-lateral — Agent-A-owned status receipt (2026-07-18)
 
+**REPAIR-4 STARTED 2026-08-12 by Lane B, authorized by Session A (ownership handed over; A is
+migrating).** Scope is code/tests/receipts only — **no cluster P4 run**, per Joseph's standing hold.
+Increment 1 of the six ranked defects: **`p4_evidence.py` is de-rooted (OI-43)**. Its
+`REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"` now reads `REPO = P.REPO_ROOT; ND = P.ND_ROOT`,
+reusing the resolver repair-5 (D4a) already put in `p4_lib` — which this module was importing all
+along. **The defect was disagreement, not just a literal:** every containment guard in `p4_lib`
+checks against `p4_lib.REPO_ROOT`, while `p4_evidence` carried an independent root, so the two could
+diverge and no guard could see it. Also removed an `os.makedirs` that ran at **import** time in a
+module whose docstring says *"Read-only: opens nothing for write"* — creation now happens at the
+write site, ordered before the first `.PENDING`. **This is the hold's named release condition.**
+Power-tested both directions: 4 new tests, suite **111 → 115 green**, and the pre-fix form
+reconstructed in a temp copy fails exactly the three de-rooting assertions
+(`/pscratch` present, `P.REPO_ROOT` absent, import-time `makedirs` back). The negative control is a
+committed test, not a note.
+
+**Increment 2 — the three shell drivers, because increment 1 was necessary and NOT sufficient.**
+`run_p4_standard.sh`, `run_p4_merge_audit_std.sh` and `run_p4_unfold_std.sh` all carried the same
+`REPO="/pscratch/…"`, and two of them `cd "${ND}"` **before** invoking the now-de-rooted
+`p4_evidence.py` — so the chain stayed pinned to one checkout *through the caller*. Fixing the callee
+and not the caller is the class I had just cited in increment 1's own commit message (BEN-162/163),
+which is why these tests cover all three drivers rather than the one file OI-43 names. Each now
+derives `ND` from `${BASH_SOURCE[0]}` and `REPO` from its parent, and **fails closed with exit 3** if
+no `p4_lib.py` sits beside it. `BASH_SOURCE` is safe for exactly these three — they carry no
+`#SBATCH` header and run as `bash run_p4_*.sh` under an existing allocation; an sbatch-submitted
+script is spooled by Slurm and would resolve to the spool copy. All three `bash -n` clean.
+
+**These three tests EXECUTE the drivers** — the first behavioural tests in this suite. Suite
+115 → **118**. Power-tested by reverting all three to the hardcoded form: each new test failed on its
+own assertion, and the load-bearing one is **`expected exit 3, got 1`**. The un-de-rooted driver
+*does* fail in a foreign tree — it fails late, for the wrong reason, with a generic abort code. **A
+test asserting merely "nonzero" would have been green on the defect**, which is precisely what
+defect 6 means by *"assert the specific intended failure, not a generic argparse nonzero"*. Restored
+and re-verified by sha256 (`38721b9a…`, `dcae976a…`, `412086a3…`) plus a full green run.
+
+Remaining: defects 1–6 of `followup-agent-A-standard-05.md`; **stage 3
+must still not run on pre-G-1 code** and **G-1 is not on the cluster checkout**.
+
 **Current continuation (2026-08-11): Packet B channel PASS; real-cluster terminal verdict
 pending.** PB1–PB5 implementations and adversarial acceptance evidence are committed at
 `0055826`, `32489a6`, `c308a9c`, `ea89701`, and `64916ee`; PB5 is bounded/documented rather than

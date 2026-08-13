@@ -118,8 +118,40 @@ RUN_LOG, and STATUS evidence. Present `xps2` recoil tensors remain scaffolding.
 
 ## Gate 2 — literal `negweight-refined` target
 
-**Current (2026-08-13): RE-ISSUED AND PASSED under D1/D2. Runtime PASS; independent review is the
-only open promotion requirement.**
+**Current (2026-08-13): RE-ISSUED, PASSED, AND FULLY PROMOTED under D1/D2. Both promotion
+requirements are closed.**
+
+- **Requirement 2** (ledger + RUN_LOG + STATUS) — closed by **Session C**, the paragraph below.
+- **Requirement 1** (independent receipt review) — **PASS**, **Session D**, `V21` in
+  `docs/orchestration/VERDICTS-20260811-session-D.md`, committed `dfc716f`. Hashes re-verified in D's
+  own tree rather than taken from C; every published binned number re-derived from the receipt's own
+  operands; `b4_gated` power-tested seven ways rather than read as prose.
+- **The one link D could not close, closed by Session A** — the target `.npy` digest lives on
+  `/pscratch` and D has no cluster access, so it rested on the lane that promoted the gate, which is
+  what requirement 1 exists to prevent. Measured by Session A (not C), 2026-08-13:
+  `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` = `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9`,
+  **18,723,004 B** — matching the receipt's own `.step1_feed.weights.sha256` and `.size_bytes`
+  exactly. **So no link in the promotion chain rests on the promoting lane.**
+- Corroboration from a second instrument, D's: `(18,723,004 − 128) / 4 = 4,680,719` exactly, so the
+  file is float32 with a 128-byte npy header — the size confirms the dtype independently of any
+  header read.
+
+**Still NOT authorized by this promotion:** promotion of any PET nominal to canonical. Gate 4's
+estimator disposition is answered (the **annealed** arm —
+`docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md`). Branch C stays closed.
+
+> **CORRECTION 2026-08-13, against Session A, which wrote the sentence this replaces.** The prior text
+> said *"`nominal_pet_training_allowed` stays **false**"*. **That is false and I propagated it from prose
+> rather than reading the gate.** Measured: `nominal_pet_training_allowed` is **`True` in all four
+> Gate-4 code-gate receipts** — `…-20260810.json`, `…-20260810b.json`, `…-20260810c.json`, and the newest
+> `…-20260812.json` — and has been since 2026-08-10. `KNOWN_ISSUES-ARCHIVE-2026-08.md` already recorded
+> this correction on 2026-08-11. **The flag was never the blocker.** What Gate 4 needs is a PROMOTION
+> decision, and the annealed production nominal (`56563761`, complete, `.done`-marked) carries
+> `.predeclared_reproduction.*.verdict = FINDING_CODE_PATHS_DISAGREE`, `artifact_promoted: False`,
+> `recovery_evaluated: False`, and `.status COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM`
+> — fold-forward `dev = -0.0356090` against the predeclared PASS window `[-0.021724, -0.001724]`,
+> computed with the predeclaration's own `(push/R) - 1`. **That is with Joseph.** Read the gate receipt,
+> not this file, if they ever disagree again.
 
 **This paragraph replaced a line dated 2026-08-04 that read "RE-ISSUE REQUIRED; no current Gate-2
 PASS" and stayed there for eight days after the run that passed.** It was the receipt's own

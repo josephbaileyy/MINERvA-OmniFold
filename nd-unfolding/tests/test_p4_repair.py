@@ -580,6 +580,144 @@ class Repair4EvidenceBindings(unittest.TestCase):
         joined = "\n".join(code)
         self.assertNotIn('man["config"]["full_phase_space_reported_grid"]', joined)
 
+    # ---- OI-43 / the cluster-P4 hold release condition ---------------------------------------
+    # Joseph's hold on the cluster P4 lane names p4_evidence.py's hardcoded root as its release
+    # condition, and asks for "a test that fails against the old form". These three are that test.
+    # POWER-TESTED, both directions, by reconstructing the old form in a temp copy: see
+    # test_derooting_test_actually_fails_against_the_old_form below, which is the negative control.
+
+    @staticmethod
+    def _executable_source(path):
+        """Source with comment lines removed. Required, not cosmetic: the de-rooting commit
+        deliberately QUOTES the old hardcoded path in a comment so the next reader knows what
+        changed, and a raw substring check would fire on that comment forever."""
+        return "\n".join(l for l in path.read_text().splitlines()
+                         if not l.lstrip().startswith("#"))
+
+    def test_evidence_has_no_hardcoded_absolute_root(self):
+        code = self._executable_source(self.ND / "p4_evidence.py")
+        self.assertNotIn("/pscratch/sd/j/josephrb", code)
+        self.assertNotIn('REPO = "/', code)
+
+    def test_evidence_root_is_the_same_anchor_p4_lib_guards_against(self):
+        """The defect this closes is DISAGREEMENT, not merely a literal. Every containment guard
+        in p4_lib checks against p4_lib.REPO_ROOT; p4_evidence carried its own independent root,
+        so the two could differ and no guard could see it."""
+        code = self._executable_source(self.ND / "p4_evidence.py")
+        self.assertIn("P.REPO_ROOT", code)
+        # behavioural, not textual: the resolver must actually land on THIS checkout
+        self.assertTrue((Path(P.REPO_ROOT) / "nd-unfolding" / "p4_evidence.py").is_file())
+        self.assertEqual(Path(P.REPO_ROOT).resolve(), self.ND.parent.resolve())
+        self.assertEqual(Path(P.ND_ROOT).resolve(), self.ND.resolve())
+
+    def test_evidence_does_not_create_directories_at_import_time(self):
+        """The module docstring claims "Read-only: opens nothing for write", and an import-time
+        os.makedirs falsified it. That side effect is also why this suite reads the file as text
+        instead of importing it, so it is load-bearing for the integration matrix (defect 6)."""
+        src = (self.ND / "p4_evidence.py").read_text()
+        head = src.split("_PRODUCTS = (")[0]
+        head_code = "\n".join(l for l in head.splitlines() if not l.lstrip().startswith("#"))
+        self.assertNotIn("os.makedirs", head_code)
+        # and it still happens before the writes, or the stage breaks on a fresh checkout
+        tail_code = "\n".join(l for l in src.split("_PRODUCTS = (")[1].splitlines()
+                              if not l.lstrip().startswith("#"))
+        self.assertIn("os.makedirs(EVID", tail_code)
+        self.assertLess(tail_code.index("os.makedirs(EVID"), tail_code.index(".PENDING"))
+
+    def test_derooting_test_actually_fails_against_the_old_form(self):
+        """NEGATIVE CONTROL for the three tests above. A de-rooting test that was never run
+        against the rooted form is an assertion nobody has seen fail -- BEN-119. This rebuilds
+        the pre-fix source in a temp file and asserts each check flips."""
+        import tempfile
+        real = (self.ND / "p4_evidence.py").read_text()
+        old = real.replace(
+            "REPO = P.REPO_ROOT; ND = P.ND_ROOT",
+            'REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND = f"{REPO}/nd-unfolding"')
+        self.assertNotEqual(old, real, "anchor line not found -- this control has gone stale")
+        old = old.replace('EVID = f"{ND}/active_universe_5d/standard/evidence"',
+                          'EVID = f"{ND}/active_universe_5d/standard/evidence"; '
+                          'os.makedirs(EVID, exist_ok=True)', 1)
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "p4_evidence.py"
+            p.write_text(old)
+            code = self._executable_source(p)
+            # 1. the literal is back
+            self.assertIn("/pscratch/sd/j/josephrb", code)
+            # 2. the shared anchor is gone
+            self.assertNotIn("P.REPO_ROOT", code)
+            # 3. the import-time side effect is back
+            head = old.split("_PRODUCTS = (")[0]
+            head_code = "\n".join(l for l in head.splitlines()
+                                  if not l.lstrip().startswith("#"))
+            self.assertIn("os.makedirs", head_code)
+
+    # ---- OI-43 increment 2: the three shell drivers ------------------------------------------
+    # De-rooting p4_evidence.py alone was NOT sufficient. run_p4_standard.sh `cd`s into its own
+    # hardcoded ND before invoking it, so the chain stayed pinned to one checkout through the
+    # CALLER. Fixing the callee and not the caller is BEN-162/163's shape, which is the class I had
+    # just cited in the increment-1 commit -- so these tests cover all three drivers, not the one
+    # that OI-43 names.
+    #
+    # These are EXECUTION tests, not source-text tests: they run `bash <driver>` in a fake checkout
+    # and assert the specific documented exit code. That is what defect 6 of the repair brief asks
+    # for ("Assert the specific intended failure, not a generic argparse nonzero"), and it is the
+    # axis the 111-test baseline did not cover at all.
+
+    P4_DRIVERS = ("run_p4_standard.sh", "run_p4_merge_audit_std.sh", "run_p4_unfold_std.sh")
+
+    def test_drivers_have_no_hardcoded_absolute_root(self):
+        for name in self.P4_DRIVERS:
+            code = self._executable_source(self.ND / name)
+            with self.subTest(driver=name):
+                self.assertNotIn("/pscratch/sd/j/josephrb", code)
+                self.assertIn("BASH_SOURCE", code)
+
+    def test_drivers_refuse_an_unresolved_root_with_exit_3(self):
+        """BEHAVIOURAL. Copy each driver into a tree with no p4_lib.py beside it and run it. It
+        must abort with exit 3 before doing anything -- not 0, and not a generic 1."""
+        import subprocess, tempfile
+        for name in self.P4_DRIVERS:
+            with self.subTest(driver=name), tempfile.TemporaryDirectory() as d:
+                nd = Path(d) / "nd-unfolding"
+                nd.mkdir()
+                dst = nd / name
+                dst.write_text((self.ND / name).read_text())
+                r = subprocess.run(["bash", str(dst)], capture_output=True, text=True, timeout=60)
+                self.assertEqual(r.returncode, 3,
+                                 f"{name}: expected exit 3, got {r.returncode}\n"
+                                 f"stdout={r.stdout[-400:]}\nstderr={r.stderr[-400:]}")
+                self.assertIn("no p4_lib.py", r.stdout + r.stderr)
+
+    def test_driver_root_derivation_lands_on_its_own_checkout(self):
+        """BEHAVIOURAL, positive side. Runs only the derivation header (everything up to and
+        including the guard) plus an echo, in a fake checkout. Truncating is deliberate and is
+        stated: the happy path of the real driver would launch the chain, which this suite must
+        never do. What is under test is the derivation, and it is executed, not read."""
+        import subprocess, tempfile
+        for name in self.P4_DRIVERS:
+            src = (self.ND / name).read_text().splitlines()
+            end = [i for i, l in enumerate(src) if "no p4_lib.py" in l]
+            self.assertEqual(len(end), 1, f"{name}: expected exactly one guard line")
+            header = "\n".join(src[:end[0] + 1])
+            with self.subTest(driver=name), tempfile.TemporaryDirectory() as d:
+                nd = Path(d) / "nd-unfolding"
+                nd.mkdir()
+                (nd / "p4_lib.py").write_text("# stub\n")
+                probe = nd / name
+                probe.write_text(header + '\necho "ND=${ND}"\necho "REPO=${REPO}"\nexit 0\n')
+                r = subprocess.run(["bash", str(probe)], capture_output=True, text=True, timeout=60)
+                self.assertEqual(r.returncode, 0, f"{name}: {r.stdout}\n{r.stderr}")
+                # resolve() BOTH sides, never compare the raw strings: on macOS the temp dir is
+                # /var/... while bash's `cd && pwd` reports /private/var/..., because /var is a
+                # symlink. A raw compare fails on macOS and passes on the cluster, which is the
+                # worst available outcome for a test whose whole subject is path resolution.
+                self.assertEqual(
+                    Path([l[3:] for l in r.stdout.splitlines()
+                          if l.startswith("ND=")][0]).resolve(), nd.resolve())
+                self.assertEqual(
+                    Path([l[5:] for l in r.stdout.splitlines()
+                          if l.startswith("REPO=")][0]).resolve(), Path(d).resolve())
+
     def test_zero_sel_is_actually_enforced(self):
         """D3d: ZERO_SEL was declared and referenced by no check -- the bin-migration-only
         claim for the three muon bands was documentation, not a gate."""

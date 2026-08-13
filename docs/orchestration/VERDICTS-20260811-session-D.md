@@ -701,3 +701,186 @@ latent. Zero instances today, and it is a property of the matcher, not of this e
 and whether the ledger freeze window is closed. The freeze is A's to close with the lanes and had not
 been closed at `9ba19fa`.
 
+---
+
+### V21 — Gate 2 promotion requirement 1, independent receipt review: **PASS**
+
+`G2_GATE2_TARGET_RUNTIME_RECEIPT.json`, job `56344268`, `status: PASS`,
+`verdict: GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`. Reviewed by Session D because
+Session C promoted the gate and cannot review it. Requirement 1 is *"independent receipt review of
+hashes, exact configuration, and binned telemetry"*; all three are addressed below.
+
+**HASHES — verified against my own tree, not taken from C.** All four pinned sources are
+byte-identical at `HEAD`: `2d-unfolding/unfold_2d_omnifold_unbinned.py`,
+`nd-unfolding/pet/fullevent_fps_dataloader.py`, `omnifold_nn/omnifold/dataloader.py`,
+`nd-unfolding/pet/gate2_target_runtime.py`. `execution.head_at_runtime` `beb40c9` **is an ancestor of
+`origin/main`** (2026-08-05, "Fix the powered closure's weight dtype"). The product is bound to
+today's tree.
+
+**CONFIGURATION.** `target_mode negweight-refined`, `estimator exact`, `master_seed 42`,
+`refinement_random_state 45`, `mc_normalization 1e6`, measured `1e6*R`, `dataloader_import_mode`
+target-only with TensorFlow *not imported*, `pet_training_started: false`. Coherent with a
+target-only gate; nothing claims a training run that did not occur.
+
+**BINNED TELEMETRY — every published number re-derived from the receipt's own operands.**
+
+    ps*sum(w_bkg)      109599.39938418806      == published        (exact)
+    numerator          4006528.600615812       == published        (exact)
+    R  (reco leg)      1.1240802949941018      == published        relative error 0.0
+    R  (truth leg)     1.103260884167167       == published        (exact)
+    shift factor       1.018870795770713       == published, and   == sum_w_truth/sum_w_reco
+    1e6 * R            1124080.2949941019      == normalization_target, bit-for-bit
+    data - bkg         4006528.600615812       vs raw_signed_sum 4006528.6006158125  (last ulp)
+    n_data + n_bkg     4680719                 == n_measured_rows  (exact)
+    n_negative_rows    564591                  == n_bkg_rows       (exact)
+    rows*4 + 128       18723004                == published file size -> float32, from a SECOND instrument
+
+The last line matters: the byte count confirms the declared `dtype: float32` independently of the
+declaration.
+
+**`b4_gated: true` IS EARNED, NOT DECORATION — the claim C flagged as its own weakest, refuted in the
+gate's favour.** `die()` raises `RuntimeError`; the gate runs at `:587` in straight-line code, before
+the receipt dict is built at `:624` and written at `:735`; **there is no `try`/`except` anywhere between
+`:585` and `:740`**, so no write-always path exists. Power-tested the predicate directly over its
+failure space — it BLOCKS on all seven of: absent telemetry block, `{}`, `None`, `present_in_dump`
+false, leg `w_truth`, leg key absent, leg `None`; and passes only the correct configuration. It is also
+numerically corroborated rather than merely flagged: `R_if_reco_leg_used_w_reco` equals the reported `R`
+exactly, while the `w_truth` alternative is `1.1033` — the legs differ by 1.9% on this data, so "which
+leg" is a distinguishable question here and the answer is the reco leg.
+
+**C's open question on `normalized_sum` — ANSWERED, and the tolerance is not vacuous.**
+`step1_target_sum_matches` = `np.isclose(rtol=3e-6, atol=2.0)`, budget **5.372** absolute; the observed
+gap is **0.2927**, i.e. **5.4%** of budget. Power-tested: it blocks 1 part in 1e5, the missing-`R`
+factor, and a bare `1e6`. The residual `2.6e-7` is **consistent with** the target being float32
+(`2.2 x` float32 eps) — stated as consistency, not proof.
+
+**One residual I closed rather than leave:** `max_mc_events: 200000` is the bounded MC *validation*
+cloud only. `R`'s denominator sums `n_signal_rows: 49,152,885` with `n_signal_pass_reco: 20,573,521`
+— the full population, not the subsample.
+
+### What this verdict does NOT cover
+
+- **I did not re-run the gate.** I reviewed the receipt, the code that writes it, and re-derived its
+  arithmetic.
+- **The target `.npy` digest `544b2f6a…` is UNVERIFIED BY ME** — the file is on `/pscratch`.
+  C re-verified it this turn. **That is the one link in the chain resting on the lane that promoted the
+  gate**, which is the exact thing requirement 1 exists to prevent, and it should be confirmed by
+  someone with cluster access who is not C. It is a one-command ask and I am not treating it as
+  blocking, because every number the digest would corroborate reconciles here from independent operands.
+- The 166-test on-cluster green is the personal-orchestrator's measurement, not mine. I verified the
+  off-cluster subset (165 across five files, plus 12 dual-leg mutation tests).
+- **D2's MC-only closure path was read, not executed** (C's own limit): no runtime confirmation that
+  ROOT is not imported.
+
+---
+
+### V22 — job `56818470`, Branch REPAIRED: the `iter0` exclusion **holds**, but the load-bearing check is a different one — **UNRESOLVED from this lane**
+
+Session A asked me to attack the indexing choice: *"`iter0` is excluded from Branch REPAIRED because the
+predeclaration's line 41 names the inventory `iter0/1/2` and localizes the defect to dynamics after
+initial feedback. If that reading is wrong, the verdict is UNRESOLVED, not REPAIRED."*
+
+**The reading is not wrong, and it is not a reading.** A's citation is off and its conclusion is better
+supported than A thought.
+
+- **Line 41 is a checkpoint-artifact inventory row** in the two-artifact comparison table
+  (`per-iteration checkpoints | iter0/1/2 step1+step2 | same inventory`). It carries no scope claim and
+  nothing should rest on it.
+- **The exclusion is PREDECLARED at line 70**, in the criterion itself: *"Branch REPAIRED — for **both**
+  iterations 1 and 2."* `iter0` is out of scope by the written criterion, not by interpretation.
+- **The rationale is at lines 8–9**, not 41: job `56525829` localized the defect to *"iteration dynamics
+  after initial feedback"*, so the pre-feedback iteration is not where the tested defect lives.
+- **It predates the result by 26 hours** and was never edited: predeclaration `831043d`
+  2026-08-11 18:31:53 -0400, single commit; job submitted `02dfb68` 2026-08-12 20:39:52 -0400.
+
+So `iter0` at `0.1101` is not a suppressed failure. It is outside the predeclared scope, and the
+annealed arm's `iter0` being worse than the control's is a real trade that belongs in the reporting —
+which the mediator already stated — but it does not touch the REPAIRED/PERSISTS/UNRESOLVED partition.
+
+### The check that actually decides this, and A did not name it
+
+The predeclaration's **UNRESOLVED condition 1** is a domain-of-validity guard: *any* iteration with
+`|r1_required_mean − 1| < 0.02` returns **no information**, and is predeclared UNRESOLVED rather than a
+pass. Its author then wrote, of the annealed arm specifically:
+
+> *"…much closer to the no-information point than the pre-anneal arm ever was. **This is the most likely
+> single outcome of this run and it is predeclared as UNRESOLVED, not as a pass.**"*
+
+**The predeclaration predicted UNRESOLVED-by-domain-failure as the single most likely result, and the
+reported verdict is REPAIRED.** That is the discrepancy worth an adversary, not `iter0`.
+
+From the published operands, the annealed arm sits at:
+
+    push 1.0840530   R 1.1240803   required ~ R/push = 1.036924   |required - 1| = 0.036924
+    guard threshold 0.02  ->  margin factor 1.85          (pre-anneal arm: 0.5257, margin factor 26.3)
+
+So it plausibly clears the guard — **by 1.85x, where the arm it replaced cleared by 26x.** The anneal
+moved this measurement an order of magnitude closer to the point where its own criterion stops
+discriminating.
+
+**VERDICT: UNRESOLVED from this lane** — *resolved 2026-08-13 by `cb41436`; see the correction at the end of this entry. The domain guard clears at every iteration, REPAIRED stands, and my proxy comparison below is REFUTED and INVERTED.*
+
+**[original verdict as written:]** Not because I think REPAIRED is wrong, but because the one
+number that separates REPAIRED from UNRESOLVED — `r1_required_mean` at iterations 1 and 2, against
+`0.02` — is in receipts on `/pscratch` that I cannot read. `R/push` is my proxy, not the field.
+
+**What closes it, in one command by anyone with cluster access:** print `r1_required_mean` for
+iterations 1 and 2 from `STEP1_TRAJECTORY.slurm-56818470.json` and state both against `0.02`. If either
+is under, the predeclared verdict is UNRESOLVED and REPAIRED must be withdrawn. If both clear, REPAIRED
+stands on its own predeclared terms and **the margin should be published beside it**, because a
+criterion clearing by 1.85x on the arm being promoted, having cleared by 26x on the arm being retired,
+is a fact a reader needs in order to weigh it.
+
+**Not verified by me:** every number attributed to the run itself — `iter0` `0.0279`/`0.1101`, the sign
+inversions, Arm 1's reproduction gate, Arm 2's Gate A. `push`, `R` and the guard threshold are from
+committed documents; the arithmetic above is mine.
+
+#### V22 CORRECTION — the guard clears, and my proxy reversed the ordering it was used to establish
+
+Session A ran the field values (`cb41436`). I re-derived every figure below from them rather than
+accepting the summary.
+
+    r1_required_mean        iter0                iter1                iter2           tightest  clears 0.02 by
+    control          0.1240802949941018   0.0286839584480088   0.1616496092824724     iter1        1.434x
+    annealed         0.1240802949941018   0.0991591571769675   0.0318598809751991     iter2        1.593x
+
+**No iteration in either arm is under `0.02`. UNRESOLVED condition 1 does not fire and REPAIRED stands
+on its predeclared terms.** My call to publish the margin is satisfied: `1.593x` at the deciding
+iteration, `4.958x` at iter1.
+
+**MY PROXY WAS WRONG IN THE DIRECTION THAT MATTERS.** I wrote that the anneal moved this measurement
+*"an order of magnitude closer to the point where its own criterion stops discriminating"* — `1.85x`
+promoted against `26.3x` retired. **From the field it is the reverse:** the annealed arm's tightest
+iteration (`0.0318599`) sits *farther* from the no-information point than the control's (`0.0286840`).
+The arm being retired was the tighter one.
+
+`R/push` aggregates over a trajectory; `r1_required_mean` is per iteration. They diverge — and **by
+unequal factors on the two arms**: the proxy overstates the control's clearance by **18.33x** and the
+annealed arm's by **1.16x**. **A proxy wrong by unequal factors on the two things being compared does
+not add noise, it reverses the ordering.** That is `BEN-086`'s family pointed at my own instrument, and
+the ratio `26.3` is arithmetically correct as `|R/push_final − 1|` — it simply is not the quantity the
+criterion tests.
+
+**One corroboration A did not run, and it holds.** At `iter0` there has been no reweighting, so
+`push = 1` and `required` should equal `R` analytically — i.e. `r1_required_mean = |R − 1|` exactly, and
+identically in both arms. Measured: both arms report `0.1240802949941018`; `R − 1` computes to
+`0.12408029499410178`, differing by **1 ulp**.
+
+**I gave the wrong mechanism for that ulp and A's follow-up (`c94d6f2`) exposes it.** I said it was
+float64 cancellation in my subtraction. It is not: for `R` in `[1,2)`, `R − 1` is **exact** — verified,
+`(R−1)+1 == R` — so there is no cancellation loss to attribute. A measured `r1_required_mean[iter0] == R`
+**bit-for-bit in both arms**, hence `abs(field − 1)` equals `R − 1` at **0 ulps**. The 1-ulp gap is
+between `R − 1` and the *printed* table entry, which carries 16 significant figures where the value needs
+17. **The table rounded; nothing measured differently.** That makes the corroboration stronger than I
+stated it: the true deviation at `iter0` is exactly `abs(R − 1)` in both arms, not merely close to it. The two arms agreeing bit-for-bit at the one iteration where they must is an
+independent check that these are real per-iteration field values.
+
+**What kept this from becoming a false finding was the label, not the reasoning.** The proxy was
+labelled *"my proxy, not the field"* and the entry issued **UNRESOLVED**, not a measurement. Had it gone
+out as a verdict, the record would now assert that the anneal degraded a criterion it slightly improved
+— inside a verifier's verdict, which is the hardest place to dislodge a wrong number from.
+
+**Standing, both caveats attached:** REPAIRED on the predeclared criterion, domain guard clearing at
+every iteration; annealed `iter0` at `0.1101` is a real trade outside the predeclared scope; and
+`1.593x` is not a comfortable margin even though it clears.
+
