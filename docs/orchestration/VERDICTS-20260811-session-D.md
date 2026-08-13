@@ -1624,7 +1624,25 @@ finding.
 
 ---
 
-# V34–V39 — sole-auditor pass on `docs/EAVAIL_DEFINITION.md` (`bcdb388`)
+# V34–V40 — sole-auditor pass on `docs/EAVAIL_DEFINITION.md` (`bcdb388`)
+
+> **STATUS AFTER `4788598`, added 2026-08-13 before pushing.** Lane A source-checked the same document
+> in parallel and **independently found V35, V37, V38 and V40(a)**, landing repairs at `4788598` while
+> this pass was still running. Two auditors approaching from different directions converged on the same
+> spine sentence, which is worth more than either finding alone. **Current state of each verdict below:**
+>
+> | | verdict | now |
+> |---|---|---|
+> | V35 | five-species claim | **CLOSED** — `4788598` rewrites §1 to *"MINUS e±… we implement four of them"* and deletes *"deliberately"*. Lane A's `BEN-220`, filed with better detail than mine; my `BEN-174` is reduced to a pointer. |
+> | V36 | `kEAvail` relabelled as "the open convention" | **LIVE** — §2 unchanged. Not found by lane A. |
+> | V37 | who gets which verb | **SUBSTANTIALLY CLOSED** — the e± mirror is now adjacent to the defect sentence in §1. The verb itself stands; the reader can no longer meet it alone. |
+> | V38 | §5 had one self-cutting item | **CLOSED** — `4788598` adds §5 item 6, for the reason I gave. |
+> | V39 | five-site list over six sites | **LIVE** — unchanged, and the omitted site is in the live PET path. |
+> | V40(a) | the `:1043` citation | **SUPERSEDED by `BEN-219`, and my version was wrong** — see the correction inline. |
+> | V40(b) | provenance sorted by effort | **LIVE** — provenance section unchanged. |
+>
+> **Nothing was re-litigated to preserve authorship.** Where lane A got there first or got it more right,
+> that is recorded as such.
 
 **Commissioned by `personal-orchestrator`, who wrote the document and correctly declined to check it.**
 It is the only artifact in this campaign written to go in front of an external collaborator: Joseph
@@ -1834,6 +1852,18 @@ first run caught two of *my* transcriptions as fragments rather than whole lines
 
 **Neither is filed as a lane-D `BEN-*`: the first is inherited from `OI-30(d)`, the second is the
 author's to reshape. Both are routed, not fixed.**
+
+> **CORRECTED 2026-08-13, and the correction is against me.** The paragraph below claimed *"It was
+> never right."* **That is false.** `13.69%` sat at **`:1043`** at `668a965` (08-12 22:37 EDT =
+> 02:37Z) — I checked two revisions of `VALIDATION_LEDGER.md`, found `:1011` and `:1116`, and
+> generalised a two-point sample into a universal. **A universal claim from a two-point sample is the
+> same error class this whole pass is about**, committed in the paragraph auditing someone else for it.
+> Lane A got it right and better: the citation was **exact when written at 02:34Z** and rotted within
+> 15 h because Gate 5 appended 73 lines above it. Filed by lane A as **`BEN-219`**
+> (`FINDING-20260813-citation-correct-at-write-time.md`), which supersedes this item and states a
+> sharper rule than mine — a `file:line` into an append-heavy ledger has a shelf life of hours, and four
+> documents carry the stale one. The observation below about *where* `:1043` now lands still holds and
+> lane A independently made it. Everything else in (a) is withdrawn.
 
 **(a) `VALIDATION_LEDGER.md:1043` does not contain `13.69%`.** §3:82 cites *"13.69% median per-bin,
 `VALIDATION_LEDGER.md:1043`"*. The figure is at **`:1116`**, under *"5D GBDT systematic covariance

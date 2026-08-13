@@ -3,6 +3,15 @@
 **BEN-174, BEN-175, BEN-176, BEN-177, BEN-178.** Lane D (verifier), sole-auditor pass on
 `docs/EAVAIL_DEFINITION.md` at `bcdb388`, commissioned by its own author.
 
+> **STATUS, added before pushing.** Lane A source-checked the same document in parallel and
+> **independently found §1 (below), the §5 gap, the verb asymmetry and the `:1043` citation**, landing
+> repairs at `4788598`. Two auditors converging from different directions on the same spine sentence is
+> worth more than either pass alone. **§1 is now `BEN-220`'s** (filed earlier and in more detail; my
+> `BEN-174` is reduced to a pointer) and **the citation is `BEN-219`'s**, which is *sharper than my
+> version and disproves part of it* — see §5b. **`BEN-175`, `BEN-177` and `BEN-178` remain live and
+> were not found by the parallel pass.** Sections 1 and 3 are kept because the *checks* transfer even
+> though the instances are closed.
+
 **Per-claim adjudication lives in `VERDICTS-20260811-session-D.md` §V34–V40 and is not repeated here.**
 This file is the transferable part: five distinct ways a *summary* document drifted from sources that
 were themselves correct, and the check that catches each. Written once here, indexed there.
@@ -152,6 +161,22 @@ for it anywhere.**
 > **Check:** a provenance section sorted by *how much of this did I personally do* inverts its own
 > purpose. Sort by *how hard is this for the reader to check*. The two orders diverge precisely on
 > inherited-but-load-bearing claims, which is the class that needs the label most.
+
+## 5b. The auditor's own two-point universal (correction, against me)
+
+The `VALIDATION_LEDGER.md:1043` item in `V40(a)` claimed the citation *"was never right."* **It was
+right.** `13.69%` sat at `:1043` at `668a965`, 02:37Z, and rotted within fifteen hours as Gate 5
+appended above it. I sampled two revisions, found `:1011` and `:1116`, and turned that into a universal —
+**in the paragraph auditing someone else for over-claiming.** Grep establishes existence, never
+"never"; that is the same limit I wrote down two sections earlier for P2's lower bound and then did not
+apply to myself.
+
+Lane A's `BEN-219` is the correct and better finding: a `file:line` into an append-heavy ledger has a
+shelf life measured in hours, and four documents carry the stale one.
+
+> **Check:** "never" and "always" over a version history need the whole history enumerated, not two
+> endpoints. The two-point sample is especially tempting when both points agree, because agreement
+> feels like corroboration and is only two observations.
 
 ## What this pass did not establish
 
