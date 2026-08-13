@@ -772,3 +772,64 @@ cloud only. `R`'s denominator sums `n_signal_rows: 49,152,885` with `n_signal_pa
 - **D2's MC-only closure path was read, not executed** (C's own limit): no runtime confirmation that
   ROOT is not imported.
 
+---
+
+### V22 — job `56818470`, Branch REPAIRED: the `iter0` exclusion **holds**, but the load-bearing check is a different one — **UNRESOLVED from this lane**
+
+Session A asked me to attack the indexing choice: *"`iter0` is excluded from Branch REPAIRED because the
+predeclaration's line 41 names the inventory `iter0/1/2` and localizes the defect to dynamics after
+initial feedback. If that reading is wrong, the verdict is UNRESOLVED, not REPAIRED."*
+
+**The reading is not wrong, and it is not a reading.** A's citation is off and its conclusion is better
+supported than A thought.
+
+- **Line 41 is a checkpoint-artifact inventory row** in the two-artifact comparison table
+  (`per-iteration checkpoints | iter0/1/2 step1+step2 | same inventory`). It carries no scope claim and
+  nothing should rest on it.
+- **The exclusion is PREDECLARED at line 70**, in the criterion itself: *"Branch REPAIRED — for **both**
+  iterations 1 and 2."* `iter0` is out of scope by the written criterion, not by interpretation.
+- **The rationale is at lines 8–9**, not 41: job `56525829` localized the defect to *"iteration dynamics
+  after initial feedback"*, so the pre-feedback iteration is not where the tested defect lives.
+- **It predates the result by 26 hours** and was never edited: predeclaration `831043d`
+  2026-08-11 18:31:53 -0400, single commit; job submitted `02dfb68` 2026-08-12 20:39:52 -0400.
+
+So `iter0` at `0.1101` is not a suppressed failure. It is outside the predeclared scope, and the
+annealed arm's `iter0` being worse than the control's is a real trade that belongs in the reporting —
+which the mediator already stated — but it does not touch the REPAIRED/PERSISTS/UNRESOLVED partition.
+
+### The check that actually decides this, and A did not name it
+
+The predeclaration's **UNRESOLVED condition 1** is a domain-of-validity guard: *any* iteration with
+`|r1_required_mean − 1| < 0.02` returns **no information**, and is predeclared UNRESOLVED rather than a
+pass. Its author then wrote, of the annealed arm specifically:
+
+> *"…much closer to the no-information point than the pre-anneal arm ever was. **This is the most likely
+> single outcome of this run and it is predeclared as UNRESOLVED, not as a pass.**"*
+
+**The predeclaration predicted UNRESOLVED-by-domain-failure as the single most likely result, and the
+reported verdict is REPAIRED.** That is the discrepancy worth an adversary, not `iter0`.
+
+From the published operands, the annealed arm sits at:
+
+    push 1.0840530   R 1.1240803   required ~ R/push = 1.036924   |required - 1| = 0.036924
+    guard threshold 0.02  ->  margin factor 1.85          (pre-anneal arm: 0.5257, margin factor 26.3)
+
+So it plausibly clears the guard — **by 1.85x, where the arm it replaced cleared by 26x.** The anneal
+moved this measurement an order of magnitude closer to the point where its own criterion stops
+discriminating.
+
+**VERDICT: UNRESOLVED from this lane.** Not because I think REPAIRED is wrong, but because the one
+number that separates REPAIRED from UNRESOLVED — `r1_required_mean` at iterations 1 and 2, against
+`0.02` — is in receipts on `/pscratch` that I cannot read. `R/push` is my proxy, not the field.
+
+**What closes it, in one command by anyone with cluster access:** print `r1_required_mean` for
+iterations 1 and 2 from `STEP1_TRAJECTORY.slurm-56818470.json` and state both against `0.02`. If either
+is under, the predeclared verdict is UNRESOLVED and REPAIRED must be withdrawn. If both clear, REPAIRED
+stands on its own predeclared terms and **the margin should be published beside it**, because a
+criterion clearing by 1.85x on the arm being promoted, having cleared by 26x on the arm being retired,
+is a fact a reader needs in order to weigh it.
+
+**Not verified by me:** every number attributed to the run itself — `iter0` `0.0279`/`0.1101`, the sign
+inversions, Arm 1's reproduction gate, Arm 2's Gate A. `push`, `R` and the guard threshold are from
+committed documents; the arithmetic above is mine.
+
