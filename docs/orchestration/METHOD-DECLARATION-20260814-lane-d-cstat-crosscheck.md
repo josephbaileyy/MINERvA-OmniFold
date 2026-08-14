@@ -1,5 +1,29 @@
 # Method declaration — lane D's `C_stat` cross-check, written before the build and before B's artifact exists
 
+> ## ⚠ THE PRE-COMMITMENT IS VOID AS OF 2026-08-14. I NEVER BUILT, AND `C_stat` LANDED FIRST.
+>
+> This document's own condition, stated below and quoted verbatim: *"If that stops being true
+> before I build, this file is void and I will say so rather than proceed as though it held."*
+>
+> **It stopped being true.** `docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz` was
+> committed at **`87046fe`** ("Preserve the C_stat matrix itself in the tree, not only its
+> receipt"). My two OI-120 jobs sat queued for ~7 h and the cross-check was sequenced behind
+> them, so the artifact existed on `origin/main` before I had built anything.
+>
+> **What is lost.** Not the ability to build a cross-check — the ability to claim it was built
+> blind. Any covariance I produce now is produced with the other artifact visible to me, which is
+> exactly the tuning-toward-agreement exposure the mechanism existed to exclude. **Agreement would
+> no longer be evidence of independence**, and the method below, which is otherwise unchanged and
+> still sound, cannot supply that property retroactively.
+>
+> **What is not lost.** The method is still fully specified in advance of any build, so a
+> cross-check run now would still be *pre-specified* even though it is no longer *pre-committed*.
+> Those are different claims and only the weaker one survives. Whether it is worth building on
+> those terms is Joseph's call, not mine to make quietly.
+>
+> **This banner exists because a message to one peer is not a record.** The condition triggered;
+> the document that set it has to be the document that says so.
+
 **STATUS: CONTINGENT. Nothing here is authorized yet.** `§4.F` of
 [`COMPARATOR-PREDECLARATION-20260814-cstat.md`](COMPARATOR-PREDECLARATION-20260814-cstat.md) is with
 Joseph. **If he declines, this file is a record of a build that did not happen and nothing else.** It
