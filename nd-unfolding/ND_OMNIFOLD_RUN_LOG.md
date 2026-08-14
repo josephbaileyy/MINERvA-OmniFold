@@ -7131,3 +7131,18 @@ extraction failure. The analogous full-input push used about 6.9 GiB MaxRSS, and
 Gate-5 training launcher uses the queue's memory default, so the correction removes the explicit memory
 request while retaining 32 CPUs, one A100 and the 2h wall. No output or job ID exists from this attempt;
 the retry must run from a new immutable commit.
+
+### 2026-08-14 09:20 UTC — Gate-5 extraction array and complete-family validator launched
+
+The changed launcher was committed/pushed at `7dc8c34` and frozen in an immutable clean worktree.
+Slurm accepted extraction array `56935552_[0-49]`: one A100 and 32 CPUs per task, queue-default
+57,472 MiB, 2h wall and at most ten concurrent. Every task owns only
+`fullevent_cstat_n50/replicas/replica_XX/extraction/`; all product and marker paths were absent before
+submission and every writer refuses collisions.
+
+CPU job `56935553` depends `afterany:56935552` so it writes a truthful family BLOCK report even if a
+member fails; only `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS` at 50/50 promotes. External terminal watches
+`gate5-extraction-56935552` and `gate5-extraction-manifest-56935553` are armed. Batch, rather than
+interactive, is the correct route for this 50-GPU-task family and lets Slurm plus the detached waker
+advance without LLM turns. `C_stat` remains null. Receipt:
+`../docs/orchestration/state/gate5-extraction-active-56935552.json`.

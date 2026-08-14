@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Gate 5 coherent statistical replicas — N=50 two-stage execution",
-  "state": "Gate-5 training array 56857233_[0-49] is terminal at 50/50 COMPLETED/0:0. Read-only CPU validator 56933831 is pending and watched; it combines full-strength three-stream family replay with independent NPZ/log/accounting checks. No family promotion, extraction, subset, or C_stat exists before both validators PASS.",
+  "current_dag_node": "Gate 5 coherent statistical replicas — full-input extraction and complete 50-member manifest",
+  "state": "Gate-5 training is promoted PASS at 50/50. Collision-isolated A100 extraction array 56935552_[0-49] is submitted from immutable HEAD 7dc8c34 with at most ten tasks concurrent; after-any CPU validator 56935553 must return GATE5_EXTRACTION_FAMILY_COMPLETE_PASS at exactly 50/50. C_stat remains null and no subset is permitted.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,9 +33,15 @@
   ],
   "jobs": [
     {
-      "job_id": "56933831",
+      "job_id": "56935552",
+      "tasks": "0-49",
+      "receipt": "docs/orchestration/state/gate5-extraction-active-56935552.json"
+    },
+    {
+      "job_id": "56935553",
       "tasks": "0",
-      "receipt": "docs/orchestration/state/gate5-family-validator-active-56933831.json"
+      "single_job": true,
+      "receipt": "docs/orchestration/state/gate5-extraction-manifest-active-56935553.json"
     },
     {
       "job_id": "56863958",
@@ -44,11 +50,11 @@
     }
   ],
   "blockers": [
-    "Gate 5 terminal accounting is complete, but family promotion requires validator 56933831 to return both FAMILY_COMPLETE_PASS at full strength and GATE5_TRAINING_ARTIFACTS_PASS.",
+    "Gate 5 training is promoted, but C_stat remains prohibited until all 50 full-input extractions and validator 56935553 return GATE5_EXTRACTION_FAMILY_COMPLETE_PASS at 50/50.",
     "Gate 6 Leg 1 is durably BLOCKED at 19585b7: no retry, passing-subset selection, C_ML construction, central move, or Leg 2.",
     "Gate 4's estimator-arm disposition remains an independent user decision and is not changed by Gate 5 execution."
   ],
-  "next_authorized_action": "Let read-only validator 56933831 execute under its terminal watch. On PASS, commit the two hash-bound reports and promotion marker, then launch only the predeclared collision-isolated full-input per-replica extraction and complete-manifest stage.",
+  "next_authorized_action": "Let Slurm array 56935552 and after-any validator 56935553 execute under their armed terminal watches. On exact 50/50 PASS, commit the extraction-family promotion receipt, then continue only the predeclared replica-mean centering/C_stat action; on any failure record the member-specific blocker without subset selection or unchanged retry.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
@@ -61,7 +67,8 @@
     "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
     "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
     "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md",
-    "docs/orchestration/state/gate5-training-terminal-preflight-56857233.json",
+    "docs/orchestration/state/gate5-training-family-promotion-56933831.json",
+    "docs/orchestration/state/gate5-extraction-active-56935552.json",
     "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json"
   ],
   "append_only_history": [

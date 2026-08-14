@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-13. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-14. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
@@ -13,7 +13,9 @@ per-replica extraction followed by a complete 50-member manifest. That dedicated
 now implemented and acceptance-tested (181/181 plus a real 49,152,885-row factor replay) without
 editing the Gate-4-pinned nominal extractor. The first submission created no job because 64 GiB made
 Slurm bill 38 cores against the 32-core/GPU queue cap; the changed launcher now uses the accepted queue
-default and will be resubmitted from a new immutable commit. Exact promotion receipt:
+default. Array `56935552_[0-49]` is now pending with at most ten A100 tasks concurrent; dependent
+after-any complete-family validator `56935553` is pending and both have armed external watches. Exact launch
+receipt: `../docs/orchestration/state/gate5-extraction-active-56935552.json`. Exact promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array

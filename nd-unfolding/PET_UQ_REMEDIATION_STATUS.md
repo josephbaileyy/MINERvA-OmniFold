@@ -418,6 +418,10 @@ The first submit call then created no job: explicit 64 GiB raised the request to
 the queue's 32-core/A100 cap. The changed retry removes that request and uses the same default-memory
 footing as accepted Gate-5 training; receipt:
 [`state/gate5-extraction-submit-prestart-refused-20260814.json`](../docs/orchestration/state/gate5-extraction-submit-prestart-refused-20260814.json).
+Changed submission is active: extraction array `56935552_[0-49]` (A100, `%10`, 2h) writes only
+member-scoped `extraction/` namespaces, and CPU job `56935553` runs the 50/50 terminal validator
+after any aggregate result. Both terminal watches are armed. `C_stat` remains null. Launch receipt:
+[`state/gate5-extraction-active-56935552.json`](../docs/orchestration/state/gate5-extraction-active-56935552.json).
 
 **Update 2026-08-14 08:57 UTC — TRAINING FAMILY PROMOTED PASS after the independent NPZ gate.**
 Read-only job `56933831` completed `0:0` with empty stderr. Its full-strength family replay is
