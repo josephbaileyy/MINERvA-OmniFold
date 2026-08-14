@@ -89,6 +89,43 @@ KNOWN_PREEXISTING = {
 SHELL_PIN_FLOOR = 15
 
 
+# Minimum RECEIPT bindings the json collector must still resolve. Added 2026-08-13
+# (lane A, on lane D's BEN-184) because until then `failed` consulted no receipt
+# count at all -- `failed = bool(new_bad) or blind or (strict and known_bad)`, where
+# `blind` covered only shell pins. Resolve ZERO receipt bindings and this file
+# printed ALL BINDINGS INTACT, which is the exact failure its own docstring says it
+# exists to catch, one layer in.
+#
+# WHY IT IS NOT THE EXACT COUNT, unlike SHELL_PIN_FLOOR. Shell pins only ever grow:
+# launchers add guards, so an exact floor fires only when a guard is deleted.
+# Receipt bindings also SHRINK, legitimately -- retiring a superseded receipt means
+# renaming `sha256` -> `sha256_at_issue`, which is precisely what drops it from
+# collect(). An exact floor would therefore go red on a lane doing the documented
+# right thing, whose only remedy would be lowering the floor: the one move forbidden
+# here. So this floor is set BELOW the current count on purpose.
+#
+# THE ARITHMETIC, so the margin is auditable rather than a vibe. 152 resolve today
+# and all 152 are git-tracked (measured against `git ls-files`; no scratch-only
+# artifact inflates it, so a fresh clone resolves 152 too -- the hazard
+# SHELL_PIN_FLOOR's note is about does not apply). Erosion per legitimate retirement
+# is ~1, not the ~17 pins a receipt carries, because the successor re-pins the same
+# files at the same hashes and receipts dedupe on (path, hash): retiring
+# ...gate4-...20260812.json removed exactly one binding, the driver's superseded
+# digest. 140 therefore leaves ~12 retirements of headroom, while a collector that
+# has gone blind resolves ~0 and trips this immediately.
+#
+# WHAT THIS FLOOR DOES NOT DO, stated because the gap is the reason it was asked for.
+# A floor catches COLLAPSE, not EROSION. Coverage sliding 152 -> 140 one correct
+# retirement at a time is invisible to it, and at 140 the pressure to lower returns.
+# Erosion needs a different instrument -- a per-commit coverage delta, or requiring a
+# retirement to state the bindings it removes. Tracked as OI-66; do not read a green
+# here as evidence that coverage held.
+#
+# Raise this when receipts add durable bindings. Lowering it needs the same
+# justification as deleting a receipt, because that is what it launders.
+RECEIPT_BINDING_FLOOR = 140
+
+
 def sha256(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -195,6 +232,7 @@ def main():
     pairs += shell_pairs
 
     seen, ok, new_bad, known_bad, unresolved = set(), 0, [], [], 0
+    receipt_resolved = 0
     for p, want, src in pairs:
         lp = localize(p, a.root)
         if lp is None:
@@ -212,6 +250,8 @@ def main():
         if key in seen:
             continue
         seen.add(key)
+        if not src.endswith(".sh"):
+            receipt_resolved += 1
         if sha256(lp) == want:
             ok += 1
         elif rel in KNOWN_PREEXISTING:
@@ -227,11 +267,28 @@ def main():
     shell_resolved = sum(1 for p, _, _ in shell_pairs if localize(p, a.root))
     blind = shell_resolved < SHELL_PIN_FLOOR
 
+    # Same device, for the receipt side, which had none until 2026-08-13.
+    # `receipt_resolved` is incremented inside the comparison loop above, so it counts
+    # comparisons ACTUALLY PERFORMED on receipt bindings, post-dedup. Deriving it as
+    # `total - shell_resolved` would be wrong: shell_resolved is counted pre-dedup off
+    # `shell_pairs`, and mixing the two agrees on this tree only by coincidence.
+    receipt_blind = receipt_resolved < RECEIPT_BINDING_FLOOR
+
     print(f"resolved {ok + len(new_bad) + len(known_bad)} bindings "
           f"({unresolved} unresolvable: data files, off-repo artifacts, binaries)")
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
+    print(f"  {receipt_resolved} of them from receipt bindings "
+          f"(floor {RECEIPT_BINDING_FLOOR})")
+    if receipt_blind:
+        print(f"\n*** RECEIPT BINDING COLLECTOR WENT BLIND ***\n"
+              f"  resolved {receipt_resolved}, expected at least "
+              f"{RECEIPT_BINDING_FLOOR}.\n"
+              f"  Either receipts were retired en masse or collect() no longer sees\n"
+              f"  their shape. Do NOT lower the floor to make this pass -- resolving\n"
+              f"  zero receipt bindings printed ALL BINDINGS INTACT until 2026-08-13,\n"
+              f"  which is this file's own failure mode one layer in (BEN-184).")
     if blind:
         print(f"\n*** SHELL PIN COLLECTOR WENT BLIND ***\n"
               f"  resolved {shell_resolved}, expected at least {SHELL_PIN_FLOOR}.\n"
@@ -245,7 +302,8 @@ def main():
     for rel, want, got, src in new_bad:
         print(f"\nMISMATCH {rel}\n  want {want}\n  got  {got}\n  from {src}")
 
-    failed = bool(new_bad) or blind or (a.strict and bool(known_bad))
+    failed = (bool(new_bad) or blind or receipt_blind
+              or (a.strict and bool(known_bad)))
     print("\n" + ("*** BINDINGS BROKEN ***" if failed else "ALL BINDINGS INTACT"))
     return 1 if failed else 0
 
