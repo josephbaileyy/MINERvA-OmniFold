@@ -7488,3 +7488,75 @@ before launch, with a stated criterion.
 **Action 2 was already done and correctly did not wait for him** — `CSTAT-R7` requires the receipt to state
 `N=50` → **10.1%** against the **7.1%** targeted at `N=100`. Retiring the document does not discharge that;
 it is what the downward revision was accepted under.
+
+
+## 2026-08-14 — lane B, documentary: Gate 4's disposition is CLOSED, and eleven live citations say otherwise (`BEN-244`)
+
+**Asked by the mediator, answered read-only; no job, no artifact, nothing on the cluster touched.**
+
+**BOTH GATE-4 ACTS HAPPENED ON 2026-08-13, each with its own committed record.** The arm was selected
+by Joseph, verbatim *"Okay do the annealed"*
+(`docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md:12`). `56563761` was
+promoted to canonical at commit `6b68d12`, `promoted_at_utc 2026-08-13T02:52:32Z`
+(`state/p3f-pet-gate4-nominal-promotion-56563761.json`, `verdict: PROMOTED`), with
+`scope.artifact_promoted` flipped 3 minutes earlier at `156d1d6`. **The promotion was authorized by
+the mediator under Joseph's delegated go** — *"if all you need is a go command, feel free to authorize
+it yourself"* — and **both receipts carry a `DO_NOT_RECORD_AS` field refusing to record it as
+Joseph's** (`p3f-…-promotion:17`, `annealed-nominal-complete:220`). Two acts, two parties, and the
+record can tell them apart.
+
+**TWELVE LIVE REFERENCES WRITTEN AFTER 02:53 UTC STILL CALL IT AN UNMADE USER DECISION.** Every one
+dated by `git blame`; not one is superseded or dated text. **Five are lane B's**, including
+`ND_OMNIFOLD_RUN_LOG.md:5913` and `:6124` — corrected here, by append, because this file is
+append-only. **Two are inside frozen `PREDECLARATION-*` documents of completed runs and cannot be
+edited at all**; they are recorded in the finding instead. The full inventory with owners is in
+`docs/orchestration/FINDING-20260814-a-decision-that-reached-its-own-record-and-nowhere-else.md`.
+
+**AND THE CLAIM STRENGTHENED IN TRANSIT.** The only machine-readable statement anywhere is
+`state/gate6-member-trajectories-result-56847059.json:119`,
+`gate4_user_disposition_remains_independent: true` — measured, the sole Gate-4 mention in that
+receipt. It asserts **scope independence**. Lane B rendered it as *"an independent user decision that
+**blocks** construction"* and named that receipt as the source. A stale fact is recoverable by
+re-reading the source; a fact that got *stronger* on the way to its citation is not, because
+re-reading the source stops looking like a contradiction.
+
+**WHAT ACTUALLY BLOCKS `C_ML`, worked forward from the contract rather than backward from the
+citation.** `RUNBOOK:223-224` names no user decision; `RUNBOOK:213-214`'s *"every component uses the
+P5A central"* is the real Gate-4 link and it is now **discharged**. Three live blockers remain, none
+of them a disposition: (1) `family_verdict BLOCK_GATE6_ML_ENSEMBLE`, `passing_members [1]`,
+`failing_members [2,3,4,5]`, five prohibitions applied — **a measurement failure**; (2)
+`combine_cml_bkgsub.py:75,81-82` reads its mask and reference from a nominal *extraction* product,
+and `annealed-nominal-complete:142` records `extraction_run: false` with extraction on the promotion
+receipt's `NOT_authorized` list; (3) `--expect 12` crossed members against Leg 1's five — and
+`combine_cml_bkgsub.py:84-86` makes that mismatch a **`WARN`, not a `FAIL`**, so **the code would
+build `C_ML` from the one passing member**. `do_not_select_passing_subset` is enforced on people, not
+by the builder.
+
+**THE DESIGNATION'S OWN FAIL-CLOSED GUARD HAS BEEN RED SINCE THE PROMOTION.**
+`nd-unfolding/pet/check_canonical_designation.py` exists so that *"the safety of that choice rests
+entirely on the reference inventory being COMPLETE"* (`:2-10`). **Run at `849b70f`: exit 1** — 8
+unaccounted files and a `COUNT DRIFT`, and **the two records of the promotion are themselves among
+the occurrences it cannot account for** (`p3f-…-promotion:67`, `AUTHORIZATION…:271`), with the drift
+at `annealed-nominal-complete:226`, the prose the supersession added. `VERDICTS-20260811-session-D.md:452`
+records the same script at `exit=0, PASS` on 08-11. **It is absent from `.githooks/pre-commit`'s check
+list and from its declined list** — the exact condition that dispatcher's own comment at `:25-27` was
+written about after `verify_hash_bindings.py`. Second instance, same gate's namespace. **And zero of
+its 54 entries are dispositioned `RETARGET`** (the token appears once, in the legend), so no consumer
+in the tree follows the canonical designation and the extraction launchers are written to stay pinned
+to the 08-08 artifact.
+
+**WHAT IS GENUINELY STILL OPEN, named narrowly, because "closed" is the answer most likely to be
+wrong in a convenient direction.** Not the disposition. (a) **The quotability of `VL100 =
+0.512603276`**, which is the recovery number the whole physics argument rests on and which comes from
+closure `56552326`, every artifact prefixed `NONQUOTABLE-DIAGNOSTIC.` with `quotable: False`; the
+promotion receipt declines to discharge it (`:95`) and **it is tracked under no `OI-*` id** — measured.
+(b) `recovery_evaluated: false` at the promoted configuration. (c) `VL101`'s baseline `0.546853` is
+not established as uninflated (`VALIDATION_LEDGER.md:1811`). Plus two bookkeeping defects that each
+read as a live block: `annealed-nominal-complete:152-156` still carries
+`next_dependency.state: BLOCKED_ON_USER`, eight lines below the `artifact_promoted: true` that
+superseded it, and its `declaration` pointer `state/waker/BLOCKED-ON-USER.json` **does not exist**
+(untracked at `a45f17b`).
+
+**Nothing was executed and nothing is unblocked by this entry.** Gate 6's five prohibitions at
+`19585b7` remain live, Leg X remains unsubmitted pending Joseph's answer, and correcting a stale
+blocker citation is not authorization to pass the blocker it was standing in front of.
