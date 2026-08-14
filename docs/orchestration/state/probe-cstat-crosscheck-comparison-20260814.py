@@ -1,5 +1,17 @@
 """Element-wise comparison: lane D's cross-check vs lane B's C_stat.
 
+KEY NAMES DIFFER BETWEEN THE TWO ARTIFACTS AND THE NAIVE MATCH THROWS. Lane D ships
+`C_stat` (285x285) and `C_stat_reduced` (262x262); lane B ships `C_full` (285x285) and
+`C` (262x262). So a comparison that pairs by key name compares D's `C` -- which does not
+exist -- or, worse, pairs a 262 against a 285 and raises on shape. The pairing below is
+explicit for that reason:
+
+    D["C_stat"]          <->  B["C_full"]       (285, 285)
+    D["C_stat_reduced"]  <->  B["C"]            (262, 262)
+
+The mediator hit this on an independent re-run before it was written down. It is here so
+the next person does not.
+
 Tolerance is the PREDECLARED one from COMPARATOR-PREDECLARATION-20260814-cstat.md sec 1:
 absolute 1e-12 on the CORRELATION matrix (not relative on the covariance -- an off-diagonal's
 relative error scales as n*eps/|rho| and diverges as a pair decorrelates), and 1e-12 relative on

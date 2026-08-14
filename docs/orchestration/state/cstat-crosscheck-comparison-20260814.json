@@ -1,10 +1,11 @@
 {
+ "A_WEAKER_CLAIM_I_WITHDREW": "An earlier version of this receipt added that 1.029e-15 exceeds the calibration's widest legitimate pair (np.cov vs sum-of-outer, 6.256e-16), implying the magnitude ALSO supports different code paths. WITHDRAWN as support. That is a factor of 1.6 on a two-point calibration -- consistent with the reading but not independent evidence for it, and leading with it would invite a scrutiny the exactly-zero-vs-not binary does not need. The mediator raised this; it is a correction to my framing, not to the numbers, and the verdict is unchanged.",
  "B_only_normalization": "1/(N-1)",
  "B_only_rank_treatment": "UNDECLARED \u2014 see CSTAT-O1",
  "B_only_reduction_is_exact": "True",
  "B_only_width_weighting_applied": "False",
  "EVIDENCE_CLASS": "METHOD- AND IMPLEMENTATION-PRE-COMMITTED, NOT BLIND",
- "NOT_BIT_IDENTICAL_IS_THE_INTERESTING_PART": "The two matrices differ at worst 1.029e-15 correlation-scaled -- three orders inside the predeclared 1e-12 tolerance, but NOT zero. Per BEN-188, two implementations that both reduce to the same BLAS kernel agree BIT-FOR-BIT (measured: Xc.T@Xc vs np.einsum = 0.000e+00 exactly). These do not. For scale, the calibration's widest legitimate pair was np.cov vs sum-of-outer at 6.256e-16, and this pair is larger still. So the two builds genuinely took different arithmetic paths, and the agreement is evidence about the construction rather than about BLAS determinism. That is the empirical answer to residual risk 4.C, and it is the single thing that makes this comparison worth more than nothing.",
+ "NOT_BIT_IDENTICAL_IS_THE_INTERESTING_PART": "The two matrices differ at worst 1.029e-15 correlation-scaled -- three orders inside the predeclared 1e-12 tolerance, but NOT zero. THAT BINARY IS THE WHOLE ARGUMENT: per BEN-188, two implementations that both reduce to the same BLAS kernel agree BIT-FOR-BIT (measured: Xc.T@Xc vs np.einsum = 0.000e+00 EXACTLY). These do not, so the two builds took different arithmetic paths, and the agreement is evidence about the construction rather than about float64 determinism. That is the empirical answer to residual risk 4.C.",
  "OPEN_ON_B_SIDE_NOT_MINE": "B's artifact records rank_treatment = 'UNDECLARED - see CSTAT-O1'. Noted, not adjudicated here; the null-space treatment is the OI-29 question and is outside this comparison.",
  "SCOPE_LIMITS": [
   "Agreement above the kernel only. Says nothing about the correctness of the 50 products.",
