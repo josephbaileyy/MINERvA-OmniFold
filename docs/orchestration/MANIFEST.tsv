@@ -112,7 +112,7 @@ docs/orchestration/FINDING-20260813-wall-time-covering-two-units-of-work.md	ARCH
 docs/orchestration/FINDING-20260814-a-check-fed-its-own-output-is-vacuous.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	2	71	4440
 docs/orchestration/FINDING-20260814-a-hook-check-has-no-advisory-channel.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	94	5273
 docs/orchestration/FINDING-20260814-a-merge-cannot-pass-a-check-that-diffs-against-head.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	105	5862
-docs/orchestration/FINDING-20260814-absence-of-an-objection-is-not-a-resolution.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	93	5675
+docs/orchestration/FINDING-20260814-absence-of-an-objection-is-not-a-resolution.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	119	7423
 docs/orchestration/FINDING-20260814-internal-consistency-is-not-power.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	105	5882
 docs/orchestration/FINDING-20260814-the-hook-file-and-the-hook-payload-come-from-different-trees.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	138	8689
 docs/orchestration/FINDING-20260814-the-only-path-to-the-real-object-was-a-skip.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	78	4442
@@ -132,7 +132,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	14903
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	47	2974
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	685	109236
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	685	109237
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
 docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	ARCHIVAL	document			terminal		exact-path-only		yes	30	157	20741
@@ -172,7 +172,7 @@ docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	ARCHIVAL	document	non-ca
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	9	201	13579
 docs/orchestration/REPAIR5-PATTERN-SWEEP-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only		yes	1	65	7072
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	405	29488
-docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	yes	4	756	52539
+docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	yes	4	759	52770
 docs/orchestration/RESTORE-2026-08-03.md	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	41	1428	90534
 docs/orchestration/REVIEW-20260808-clm012-independent-rederivation.md	ARCHIVAL	review		20260808	terminal		exact-path-only		yes	4	211	14377
 docs/orchestration/ROLLOUT-PLAN.md	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only		yes	13	124	8494
