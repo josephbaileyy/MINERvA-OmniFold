@@ -7003,3 +7003,26 @@ measurement.* Publishing operands lets a reader recompute a verdict; it does not
 Falsifiability needs an anchor the producer did not also compute. That is `BEN-077` one turn further on.
 
 Campaign: 36 receipts of 50, 4 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
+
+### 2026-08-14 08:44 UTC — Gate-5 training terminal preflight; independent artifact gate added
+
+Wake `evt-gate5-training-56857233` was valid and had no prior terminal-family receipt. Same-turn
+accounting independently found all 50 logical tasks `COMPLETED/0:0` (first end 2026-08-13 07:42 UTC,
+last end 2026-08-14 01:33 UTC), agreeing with the event. The runtime namespace contains all 50
+training receipts, weights NPZs, both marker families, and both task-log families. This is terminal
+inventory evidence, not yet family promotion and not a `C_stat` result.
+
+The already repaired/deployed family reconciler independently replays the three Poisson streams and
+checks receipt/file/marker/code continuity, but its training leg does not open the NPZ content.
+`validate_gate5_training_artifacts.py` closes that separate evidence layer: exact fixed policy and
+independently regenerated 2M-row subsample, 2 base plus 4 annealed optimizer fits, full canonical
+signal factor and exact subset restriction, full ordered background factor, source/target/identity
+bindings, all task logs/accounting, and collision-isolated namespaces. Six focused power/contract
+tests pass; the batch wrapper is syntax-clean and fail-closes on immutable HEAD and three code hashes.
+
+The route is intentionally a short CPU batch rather than a login-node run: it redraws 50 complete
+factor streams and reads 50 compressed training artifacts, while no interactive allocation exists.
+It writes job-scoped reports and a promotion marker only if both validators pass. It contains no
+extraction or covariance code. No subset, `C_stat`, Gate-6/C_ML action, provider dispatch, reset credit,
+or UUID change occurred. Exact preflight:
+`../docs/orchestration/state/gate5-training-terminal-preflight-56857233.json`.
