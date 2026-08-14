@@ -1,0 +1,85 @@
+{
+  "artifact": "p5a-extraction-pin-prereport-20260814.json",
+  "lane": "C (PET)",
+  "purpose": "PRE-RUN report for the authorized P5A nominal extraction on the annealed arm. Written BEFORE any submission, as instructed: the mediator asked to see the pin before the job goes in, not after. NOTHING HAS BEEN SUBMITTED.",
+  "observed_utc": "2026-08-14; every claim from a command run in the same turn",
+  "authorization_as_relayed": "Joseph authorized (a) fix the pin, then (b) run P5A extraction on the annealed arm. Sequenced by the mediator. This artifact discharges the reporting condition on (a) and does NOT perform (b).",
+
+  "HEADLINE": "(a) CANNOT BE EXECUTED AS SPECIFIED, AND THE REASON IS THE CONDITIONAL THE MEDIATOR ANTICIPATED: there is NO publication P5A nominal extraction launcher to fix. Every full-event extraction launcher in the tree is either a NONQUOTABLE diagnostic or the Gate-5 REPLICA array. Separately, the prescribed pin interface `--expected nominal-weights:<path>:<sha>` DOES NOT EXIST on the extraction path -- it is implemented only in finalize_annealed_shape_validation.py:115, and extract_fullevent_fps.py has no --expected argument at all. So (a) is not a one-line pin repair; it is authoring a launcher plus either adding pin machinery to the driver or gating in the launcher. Described below rather than written silently.",
+
+  "THE_DIGEST_THEY_ASKED_FOR_computed_fresh_never_copied": {
+    "artifact": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+    "sha256": "559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e",
+    "size_bytes": 10001677,
+    "instrument_1_command": "sha256sum /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+    "instrument_2_command": "python3 -c 'hashlib.sha256 over 1 MiB blocks of the same path' (module load python; independent of coreutils)",
+    "two_instruments_agree": true,
+    "why_two": "a digest is the one value in this task that must not be wrong, and I have already shipped a one-character hand-transcription error into a receipt whose subject was digest fidelity (BEN-149's shape). Two instruments, neither transcribed.",
+    "cross_check_NOT_a_source": "it agrees with /products/nominal/sha256 in state/annealed-nominal-complete-56563761.json. That is a CROSS-CHECK of an existing record, not where the value came from -- the instruction was to compute it, and it was computed.",
+    "the_pre_anneal_digest_for_contrast": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084 (10,127,331 B) -- different artifact, different arm."
+  },
+
+  "THE_TRAP_CONFIRMED": {
+    "warning_as_given": "sbatch_finalize_annealed_shape_validation.sh:69 is cited as the exemplar of the --expected pattern, and the sha it pins is the PRE-ANNEAL digest; copying that line propagates the wrong arm.",
+    "verified": "read at :69 -- `--expected nominal-weights:\"$NOMINAL_WEIGHTS\":58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084`. CONFIRMED: it pins the pre-anneal digest.",
+    "and_it_is_correct_to_do_so_there": "that script FINALIZES the annealed SHAPE VALIDATION, whose whole point is comparing the annealed candidate AGAINST the pre-anneal baseline. So :69 is not a bug in its own context -- which is exactly what makes it dangerous as an exemplar: a correct line in the wrong context, copied for its shape."
+  },
+
+  "THE_HAZARD_VERIFIED_all_three_instances": {
+    "1_sbatch_fullevent_diagnostic_extract.sh:42": "WEIGHTS=\"${PET}/fullevent_nominal/pet_fullevent_nominal_weights.npz\" -- the PRE-ANNEAL directory, hardcoded.",
+    "2_leg_mismatch.py:30": "ART = os.path.join(ND, \"pet/fullevent_nominal/pet_fullevent_nominal_weights.npz\") -- same path, hardcoded.",
+    "3_sbatch_finalize_annealed_shape_validation.sh:69": "pins the pre-anneal DIGEST (see above).",
+    "THE_ASYMMETRIC_GATING_measured": {
+      "line_56_57": "for f in \"$INPUTS\" \"$WEIGHTS\"; do [[ -s \"$f\" ]] || FATAL -- EXISTENCE only, applied to BOTH",
+      "line_41_and_65_66": "EXPECTED_INPUTS_SHA + `if [[ \"$GOT_SHA\" != \"$EXPECTED_INPUTS_SHA\" ]]` -> FATAL -- IDENTITY, applied to INPUTS ONLY",
+      "line_92": "[[ -s \"$CKPT\" ]] || FATAL -- the checkpoint named by the artifact's own contract is also EXISTENCE only",
+      "consequence": "an extraction against the retired arm is fully self-consistent and passes every gate. The identical filename in a sibling directory, both present on disk, is what makes it invisible."
+    },
+    "why_my_own_Q3_finding_completes_this_rather_than_contradicting_it": "I measured that inference_contract.step2_checkpoint is an absolute path into each artifact's OWN directory, and wrote that this 'makes which artifact is passed in the whole of the question, and it is why the digest-pin asymmetry is the informative measurement.' That was the point, not reassurance. What the assistant lane ADDED -- and it is the load-bearing half I did not have -- is the mechanism by which the wrong artifact gets passed in: a hardcoded sibling path plus an existence-only gate. Absolute self-resolution means a wrong-arm run is internally consistent end to end, so it produces no symptom. Credit for the mechanism to the assistant lane.",
+    "A_FOURTH_INSTANCE_IN_MY_OWN_CODE_disclosed": "extract_fullevent_replica.py computes weights_sha = sha256_file(args.weights) and BINDS it into the push store and receipt, then re-compares it at the xsec stage. That is SELF-CONSISTENCY, not an external pin: it proves the two stages used the same weights file, never that it was the intended one. Same class as the diagnostic launcher's gap, one level milder, and it is mine. It is not in scope for tonight's fix but it should not be cited as a counter-example of good practice."
+  },
+
+  "WHY_a_IS_NOT_A_PIN_REPAIR": {
+    "1_no_publication_extraction_launcher_exists": {
+      "full_event_extraction_launchers_in_the_tree": [
+        "sbatch_fullevent_diagnostic_extract.sh -- MARK=\"NONQUOTABLE-DIAGNOSTIC\"; its outputs are named NONQUOTABLE by construction",
+        "sbatch_fullevent_diagnostic_xsec_resume.sh -- diagnostic resume path",
+        "sbatch_gate5_replica_extract_array.sh -- Gate-5 REPLICA extraction, per-replica, not the nominal",
+        "sbatch_gate5_extraction_family_validate.sh -- family validator, not an extractor",
+        "sbatch_pet_xsec.sh -- LEGACY: PET_WEIGHTS defaults to products/pet/pet_weights_closure.npz, not a full-event nominal"
+      ],
+      "conclusion": "no launcher exists whose purpose is the PUBLICATION P5A nominal extraction. This is consistent with extraction_run = false and cross_section_run = false for both arms -- not an oversight but the absence of the step itself."
+    },
+    "2_the_prescribed_pin_interface_does_not_exist_on_this_path": {
+      "where_--expected_IS_implemented": "finalize_annealed_shape_validation.py:115 -- parser.add_argument(\"--expected\", action=\"append\", default=[])",
+      "extract_fullevent_fps.py": "grep for add_argument.*expected returns NOTHING. The extraction driver has no --expected argument.",
+      "extract_fullevent_replica.py": "has --expected-inputs-sha, a single-purpose INPUTS pin. No weights pin.",
+      "consequence": "'carry --expected nominal-weights:<path>:<sha>' cannot be added to an existing extraction call, because no extraction entry point parses it. The fix requires EITHER adding the pin machinery to extract_fullevent_fps.py OR gating in the launcher before the driver is invoked."
+    }
+  },
+
+  "WHAT_I_WOULD_WRITE_described_not_written": {
+    "file": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh -- a NEW launcher, not a copy",
+    "and_explicitly_NOT_by_copying_the_diagnostic_one": "the assistant lane flagged that a new extractor will most likely be created by copying the diagnostic one, which is exactly how :42 propagates. Authoring fresh is cheaper than auditing a copy for an inherited default.",
+    "contents": [
+      "WEIGHTS pointing at fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz -- the promoted arm",
+      "EXPECTED_WEIGHTS_SHA=559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e, gated the SAME way EXPECTED_INPUTS_SHA is at :65-66: compute sha256sum and hard-exit on mismatch. This converts weights from existence-gated to identity-gated and closes the asymmetry directly, without touching the driver.",
+      "EXPECTED_INPUTS_SHA=fa6b3463... retained as-is (unchanged, already correct)",
+      "an assertion that the artifact's own inference_contract.step2_checkpoint resolves UNDER fullevent_nominal_annealed/ -- a positive arm check rather than an existence check, which is the one guard that would have caught a wrong-arm run at :92",
+      "an assertion that seed_policy.lr_policy.schedule == 'fit-time-anneal-after-iteration-0' -- the SCHEMA discriminator, since the pre-anneal artifact has NO lr_policy key at all, so this fails loudly on the wrong arm",
+      "output MARK that is NOT 'NONQUOTABLE-DIAGNOSTIC', into a publication namespace distinct from fullevent_diagnostic_nonquotable/"
+    ],
+    "why_the_lr_policy_assertion_matters_most": "the sha pin protects against a wrong file at a known path. The lr_policy assertion protects against a wrong ARM whatever the path -- it is the check that does not need to be updated when a digest legitimately changes.",
+    "not_written_because": "the mediator's instruction was explicit: if the script does not exist, say so and describe rather than write silently. It also touches the publication extraction path, which is a larger surface than a pin repair, and authoring it should be an acknowledged decision rather than a side effect of a pin fix."
+  },
+
+  "WHAT_I_DID_NOT_DO": [
+    "(b) NOT RUN. No job submitted, no sbatch, no srun.",
+    "No file was created or edited on the extraction path -- the described launcher does not exist.",
+    "No scancel, no scontrol update, no resubmission.",
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 NOT touched.",
+    "The three hardcoded pre-anneal instances were READ, not edited. Two are other lanes' diagnostics and repointing them would change what those diagnostics measure."
+  ],
+
+  "OPEN_QUESTION_BACK_TO_THE_MEDIATOR": "Whether authoring a new publication extraction launcher is inside tonight's authorization or is a separate decision. Joseph authorized 'fix the pin, then extract'; the pin as described does not exist to be fixed, and the honest reading is that the authorization assumed a script that is not there. I would rather have that confirmed than infer it, because the surface is the publication extraction path and its output would be the first quotable full-event nominal cross-section in the campaign."
+}
