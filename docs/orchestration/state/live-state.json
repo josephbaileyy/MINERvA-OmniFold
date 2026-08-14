@@ -2,7 +2,7 @@
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
   "current_dag_node": "Gate 5 coherent statistical replicas — N=50 two-stage execution",
-  "state": "Gate-5 target stage is PROMOTED PASS: immutable validator 56873858 independently verified the exact source plus all three factor streams and all 50 learned targets. Sole-writer training array 56857233_[0-49] remains active and watched; the full family and C_stat remain prohibited until 50/50 training PASS.",
+  "state": "Gate-5 training array 56857233_[0-49] is terminal at 50/50 COMPLETED/0:0. Read-only CPU validator 56933831 is pending and watched; it combines full-strength three-stream family replay with independent NPZ/log/accounting checks. No family promotion, extraction, subset, or C_stat exists before both validators PASS.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,18 +33,22 @@
   ],
   "jobs": [
     {
-      "job_id": "56857233",
-      "tasks": "0-49",
-      "receipt": "docs/orchestration/state/gate5-training-array-active-56857233.json"
+      "job_id": "56933831",
+      "tasks": "0",
+      "receipt": "docs/orchestration/state/gate5-family-validator-active-56933831.json"
+    },
+    {
+      "job_id": "56863958",
+      "tasks": "2-5",
+      "receipt": "docs/orchestration/state/gate6-floor-replication-partial-56863958.json"
     }
   ],
   "blockers": [
-    "Gate 5 target stage is promoted, but full family promotion requires all 50 training receipts. A partial training family cannot be centred or promoted as C_stat.",
+    "Gate 5 terminal accounting is complete, but family promotion requires validator 56933831 to return both FAMILY_COMPLETE_PASS at full strength and GATE5_TRAINING_ARTIFACTS_PASS.",
     "Gate 6 Leg 1 is durably BLOCKED at 19585b7: no retry, passing-subset selection, C_ML construction, central move, or Leg 2.",
-    "The producer code checkout must remain fixed at b82ac63 while training array 56857233 is active; every task fails closed on HEAD and content-hash drift.",
     "Gate 4's estimator-arm disposition remains an independent user decision and is not changed by Gate 5 execution."
   ],
-  "next_authorized_action": "Let Slurm execute sole-writer training array 56857233 under its existing terminal watch. On its real terminal event, reconcile all 50 task receipts and target bindings; promote the family only after 50/50 PASS, without selecting a subset or constructing C_stat early.",
+  "next_authorized_action": "Let read-only validator 56933831 execute under its terminal watch. On PASS, commit the two hash-bound reports and promotion marker, then launch only the predeclared collision-isolated full-input per-replica extraction and complete-manifest stage.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
@@ -57,6 +61,7 @@
     "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
     "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
     "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md",
+    "docs/orchestration/state/gate5-training-terminal-preflight-56857233.json",
     "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json"
   ],
   "append_only_history": [

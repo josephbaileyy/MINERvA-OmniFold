@@ -7026,3 +7026,10 @@ It writes job-scoped reports and a promotion marker only if both validators pass
 extraction or covariance code. No subset, `C_stat`, Gate-6/C_ML action, provider dispatch, reset credit,
 or UUID change occurred. Exact preflight:
 `../docs/orchestration/state/gate5-training-terminal-preflight-56857233.json`.
+
+**Launch addendum, 08:46 UTC.** The validation route landed and pushed at `987a45c`; job `56933831`
+was submitted from that immutable detached worktree with exact HEAD and three code-hash guards. It is
+pending on CPU resources with a 30-minute wall, writes only job-scoped validation outputs, and has
+terminal watch `gate5-family-validate-56933831` armed. The absence of a live interactive allocation
+made this short durable batch the collision-free route; no duplicate validator or replica writer was
+created. Receipt: `../docs/orchestration/state/gate5-family-validator-active-56933831.json`.

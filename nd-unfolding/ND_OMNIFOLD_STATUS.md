@@ -9,8 +9,9 @@ and work remaining in `../docs/OPEN_ITEMS.md`.
 pairs present. A committed read-only CPU route now combines the current full-strength family
 reconciler with an independent NPZ-content validator for the fixed subsample, the 2+4 realized LR
 schedule, full/subset signal factors, full background factors, bindings, logs, and collision
-isolation. `C_stat` and extraction remain prohibited until both return PASS. Exact preflight:
-`../docs/orchestration/state/gate5-training-terminal-preflight-56857233.json`.
+isolation. Read-only CPU job `56933831` is pending under terminal watch
+`gate5-family-validate-56933831`; `C_stat` and extraction remain prohibited until both return PASS.
+Exact launch receipt: `../docs/orchestration/state/gate5-family-validator-active-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
 `56847059_[1-5]` completed `0:0` in all five members with Gate A/B, reproduction, code pins, and the
