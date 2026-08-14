@@ -1,0 +1,73 @@
+{
+  "artifact": "gate5-promotion-evidence-rescue-20260814.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 ~21:30 PDT (2026-08-14 UTC)",
+  "purpose": "Codex's advisory item 2, routed urgent: the Gate-5 target-promotion evidence existed only on PURGEABLE scratch. Copy it into the repo, verify the digests survive, classify it, and re-derive every claim PROMOTED_PASS rests on FROM the committed copy. Plus item 4, the internally-stale preflight receipt.",
+
+  "WHY_THIS_WAS_URGENT": "CLAUDE.md: scratch is large but PURGEABLE, and anything irreplaceable needs a copy off scratch. The 168,512-byte report carried the 50 per-target check lists, the 150 replay values, the distinct-hash counts and the empty failure lists that TARGETS_COMPLETE_PASS rests on. Its digest was bound in four places and the object was in none of them. A verdict whose operands cannot be re-read is the unfalsifiable-receipt shape (BEN-077) with a purge timer attached.",
+
+  "WHAT_WAS_RESCUED": {
+    "destination": "docs/orchestration/state/gate5-target-promotion-evidence-56873858/",
+    "original_names_preserved": "Yes -- 115 sbatch_* names are load-bearing provenance and the same reasoning applies to a report a receipt binds by name.",
+    "files": [
+      {"name": "GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json", "bytes": 168512,
+       "sha256": "388f5447249b398297a77f63699bb1a445daa9e24799d0b5d50232253e063329",
+       "note": "the primary report; this digest is the one bound in the promotion JSON at :49 and :55, the target-validator JSON at :54, ND_OMNIFOLD_RUN_LOG.md:6035, and quoted in RUNS.tsv:296"},
+      {"name": "GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json.done", "bytes": 370,
+       "sha256": "4d7bce7eb5989c88c61f71cb69fb069ab77ff3736df6f9da0a51c484dc2c6815"},
+      {"name": "target_reconcile_56873858.out", "bytes": 807,
+       "sha256": "41dd3d0888ab773ed36c8881d8b52c5d725f59bc103517d1082fb2508f23a919"}
+    ],
+    "DIGESTS_VERIFIED_AFTER_THE_COPY": "All three re-hashed in the repo and byte-identical to the values measured on scratch. The report's digest equals the bound value exactly. A copy that did not hash to 388f5447 would have been worthless, which is why this is stated as a measurement and not as a step that was performed."
+  },
+
+  "ALL_FOUR_PROMOTION_CLAIMS_RE_DERIVED_FROM_THE_COMMITTED_COPY": {
+    "method": "A script reading ONLY the committed file -- no cluster access, no other artifact.",
+    "claim_1_fifty_of_fifty_PASS": "DERIVED. 50 target rows, 50 state=PRESENT, 50 verdict=PASS, counts.targets_present 50, counts.targets_passing 50, verdict TARGETS_COMPLETE_PASS, declared_inventory 50.",
+    "claim_2_one_hundred_fifty_replay_values": "DERIVED, after I corrected my own extraction. The 150 are not booleans -- they are three REDRAWN factor hashes per member (data, signal, background) x 50 = 150, each compared to the recorded value. Measured: 150 present, 150 of 150 equal to the recorded hash, zero mismatches, replay.performed true for all 50. My first pass looked for boolean flags, found 50, and reported 'DERIVED 150: False' -- a wrong extraction, not a defect in the promotion, and it is recorded because the same shape has bitten me twice today.",
+    "claim_3_distinct_hash_counts": "DERIVED. data 50/50 distinct, signal 50/50, background 50/50, target digests 50/50.",
+    "claim_4_empty_failure_lists": "DERIVED. family_checks.n_failed 0, family_checks.failures [], and zero target rows carrying any failure.",
+    "INDEPENDENT_CROSS_CHECK": "The report's data_factor_sha256_REDRAWN for replica_00 (d151dd19...) equals the value I re-derived locally from (seed 50000, n_data 4116128) in this session's OI-60 work, off the cluster entirely. Two independent redraws, one contract."
+  },
+
+  "A_CAVEAT_I_FOUND_WHILE_RE_DERIVING_and_it_is_the_useful_part": {
+    "the_promotion_ran_on_the_PRE_REPAIR_validator": "The preflight records validator_sha256 11e4f440 -- before BEN-157's R1-R4. So the question is whether any of the seven defects could have made TARGETS_COMPLETE_PASS a false pass.",
+    "five_of_seven_cannot_reach_it": "--n was passed as 50 by the launcher and the report shows declared_inventory 50 over 50 real rows, so item 1 is moot; items 2, 3 and 5 are TRAINING-stage receipt-trust defects and this run is stage=target; item 7 is test-only.",
+    "two_could_in_principle": [
+      "Item 4: the marker check compared recorded size but not mtime, so a same-size post-marker mutation would have passed.",
+      "Item 6: `no_replica_target_equals_the_nominal_target` is ABSENT from the report's check names -- --nominal-target-sha was not supplied, so that check never ran. Under R3 this run would now be labelled TARGETS_COMPLETE_PASS_NOMINAL_UNCHECKED rather than the bare string. (--source-npz WAS supplied: the 9.9 GB source was independently re-hashed to fa6b3463..., matching EXPECTED_INPUT_SHA.)"
+    ],
+    "BOTH_GAPS_ARE_ALREADY_CLOSED_BY_MEASUREMENT_NOT_ARGUMENT": "The repaired tool (7ef50fd5) was run over the same 50 targets earlier this session WITH --nominal-target-sha supplied: all 50 passed, at 54 checks per row against the promotion run's 50, including the marker checks now delegated to atomic_write.is_complete (size AND mtime) and the nominal-collision check. Receipt: state/gate5-reconciler-deployment-20260813.json.",
+    "NET": "The target-leg promotion is NOT invalidated, and it now rests on stronger evidence than it originally did -- 54 checks per member instead of 50, with the nominal-collision check actually run. Stated this way rather than 'the promotion is fine' because the difference is exactly the operands."
+  },
+
+  "ITEM_4_THE_STALE_PREFLIGHT_RECEIPT_RECONCILED": {
+    "file": "docs/orchestration/state/gate5-targets-terminal-preflight-56857232.json",
+    "the_defect": "Top-level verdict read ..._INDEPENDENT_REPLAY_PENDING while the receipt's OWN independent_terminal_validation.changed_attempt_2 recorded job 56873858 COMPLETED, exit 0:0, verdict TARGETS_COMPLETE_PASS. The nested field advanced and the summary did not, so a reader trusting the summary concludes the replay is outstanding when it passed hours earlier.",
+    "same_class_as_BEN_158": "State recorded in one place and not the other -- today's Gate-2 archive was the directory-name-versus-status version of this.",
+    "fix": "verdict advanced to ..._INDEPENDENT_REPLAY_COMPLETE; the original string preserved VERBATIM in `verdict_at_issue` rather than overwritten, because a receipt that silently rewrites its own history is worse than one that is stale. The reconciliation names attempt 2's job id, its verdict, and the promotion receipt as authoritative. The advance is guarded by an assertion that attempt 2 is actually a completed pass -- it would refuse to advance the verdict otherwise."
+  },
+
+  "WHAT_I_DID_NOT_DO": [
+    "Did NOT touch /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 (GATE5_CODE_ROOT, still live for the array).",
+    "No scancel, no resubmit, no scontrol update. Copying OFF scratch INTO the repo is the authorized direction and is all that was done to the cluster -- three reads.",
+    "Did NOT delete or move the scratch originals; they remain in place.",
+    "Did NOT narrow RUNS.tsv:296 yet -- see below.",
+    "Did NOT run the OI-60 mutation test yet; it is next and there is a prediction recorded for it."
+  ],
+
+  "RUNS_TSV_296_ROUTED_NOT_EDITED": {
+    "the_row_says": "'all data/signal/background factors independently verified; zero failures'",
+    "my_reading_after_measuring": "For SIGNAL and BACKGROUND that is accurate -- they are replay-compared at the target stage and re-hashed at the training stage. For DATA it is accurate about the HASH (the recorded value is provably the canonical draw for the declared seed and inventory, 50/50) and OVERSTATED about the loader's USE, where the evidence is length and sum via n_data_effective, not array identity.",
+    "recommended_narrowing": "'data/signal/background factor hashes independently replayed and matched (150/150); data-factor APPLICATION evidenced by n_data_effective (length and sum), not by array identity'.",
+    "why_I_did_not_edit_it": "It is a durable cross-lane ledger row and the mediator offered to route the correction. Editing another lane's ledger row unilaterally is the overreach I declined on the OI-id collision, and the same reasoning applies."
+  },
+
+  "PREDICTION_FOR_THE_OI_60_MUTATION_TEST_recorded_before_running_it": {
+    "codex_asks": "Mutate the LOADER-RETURNED data factor, leaving seed, counts and the builder redraw unchanged. Target validation MUST fail, or the check is blind.",
+    "my_prediction": "It depends on whether the mutation conserves the SUM, and this is falsifiable. A sum-CHANGING mutation WILL be caught -- not by the factor-hash comparison, which is builder-vs-redraw and genuinely blind to loader use, but by n_data_effective and by R, which the loader computes from the array it actually received (:951, :971). A sum-CONSERVING mutation such as a permutation will NOT be caught by anything currently persisted.",
+    "so_the_answer_to_the_power_question_is_PARTIAL_not_none": "The check codex names is blind, and codex is right about it. But the run is not without power over the data factor -- the power lives in a telemetry field nobody was treating as a check. If the mutation test confirms this, 'independently verified' needs narrowing rather than retracting."
+  },
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {"training_receipts": 35, "squeue_r": "5 PENDING, 10 RUNNING", "targets": "50 of 50", "verdict": "PARTIAL", "C_stat": null}
+}
