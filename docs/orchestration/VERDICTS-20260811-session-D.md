@@ -2130,6 +2130,35 @@ the RUN_LOG rather than editing the frozen document, exactly as reported.
 
 # V50 — design review: putting `verify_hash_bindings.py` in the pre-commit hook
 
+> ## CORRECTED 2026-08-13 — the decisive evidence below was measured on the wrong tree
+>
+> **I measured lane-d's worktree, not `main`.** Re-run on `6637d63`: **`ALL BINDINGS INTACT`, exit 0,
+> 0.563 s.** Verified the mechanism myself rather than accepting the report:
+> `git merge-base --is-ancestor` returns **NO** for both `5ad5ac7` (A's Gate-4 retirement, 18:59) and
+> `466ab0d` (C's R2, 19:53) against `dd27cee`, the commit I measured at. I then merged `cfe3422` and
+> pushed — so the commit I *shipped* contains the repairs and the measurement I *reported* did not.
+>
+> **Withdrawn:** *"the tree is broken right now, twice"*; *"~19 h and counting"* (it was ~18 h and
+> closed at `5ad5ac7`); *"0-for-2 on the current state"*; and the sentence the verdict was framed on —
+> *"day one, the hook prints `5 checks passed` while the gate prints `*** BINDINGS BROKEN ***`."*
+> **That is false of `main`.** `test_hash_bindings.py` also passes 6/6, so A's reported third defect
+> (the `superseded-*` Gate-2 receipt) is closed too. Both instruments are green.
+>
+> **This is the class I spent the day auditing, aimed at my own report** — a measurement whose scope
+> went unstated and was presented as covering a broader domain. It is the same shape as the
+> `git log -1 -- <path>` slip I caught and disclosed in the same message, one level out: **the
+> repository I measured was not the repository I reported on.** `BEN-183`.
+>
+> **A second prediction of mine also failed on test, and it failed in A's favour.** I expected the two
+> retirements to instantiate `OI-65`'s divergence — A used `status: SUPERSEDED` **and** the field
+> rename, C used the field rename with no `status`. Measured: C's receipt has **no `files` key**, so
+> `"files" not in payload` classifies it retired under the status-side predicate too. **Both predicates
+> agree. A's measured-zero survives this instance**, and the `files` clause is carrying more of that
+> predicate than the `status` clause is.
+>
+> **THE VERDICT HOLDS, on Q2 and Q5 alone, and neither references the tree's state.** Details in the
+> re-statement at the foot of this section.
+
 Requested by `personal-orchestrator` after Joseph asked *"does D think it's a good idea too?"* — a
 review before anything is built. Lane A proposed; lane C found the mechanism; I am independent of both.
 Cited by claimant throughout, because two `OI-64` and two `OI-65` rows exist.
@@ -2286,6 +2315,70 @@ every statement about it is from its description, and I may be attacking a desig
 the day-one gap already closed. **If A's implementation intends to run whole-tree once at install and
 scope only thereafter, most of this review's force is spent** and the remaining points are the design
 rule (question 1), the receipt-introduced hole (question 2), and the population gap (question 4).
+
+## Re-statement on a clean tree — the verdict, without the withdrawn leg
+
+**It holds, and it rests on two points that never referenced the tree's state.**
+
+- **Q2 — file-side scoping has a structural blind spot.** A commit that adds or edits a receipt pinning
+  an *unmodified* file stages only the receipt; nothing pins receipts; the hook checks nothing.
+  Whole-tree catches it. All four `KNOWN_PREEXISTING` entries are exactly that shape — cluster-written
+  submit-time provenance — so the class is live in this repo, not exotic.
+- **Q5 — scoping buys nothing.** 0.563 s whole-tree, re-measured on `main`.
+
+**A design that is strictly weaker at equal cost is dominated.** That is the whole argument, and the
+broken tree was never part of it. Q1 (the rule is fitted to two exclusions that the dispatcher's header
+excludes for other reasons) and Q3 (a waiver is visible, a scope is silent) are analytical and stand;
+**Q3 is stronger now**, because it no longer needs a broken tree to be true.
+
+### What the correction changes, in the honest direction
+
+1. **The urgency is gone.** This was framed as "the proposal ships a false assurance." It does not.
+   It is a choice between a dominated option and a dominating one — a clear recommendation, not an
+   emergency, and it should be taken to Joseph as the former.
+2. **My step (1) is now a no-op, which simplifies my own recommendation.** The tree is clean, so
+   **whole-tree can be installed today with no new waivers.** "Fix or waive the two" was work the
+   correction deleted.
+3. **`OI-65`'s exposure is smaller than I argued.** The one-predicate-and-none point stands —
+   `verify_hash_bindings.py` has zero occurrences of `status`/`SUPERSEDED`/`live`, so the proposal's
+   *"live receipt"* is a concept to be authored, not reconciled. The population gap stands: A's zero is
+   over **15** `*launch-code-gate*.json` files, and `state/` holds **162** receipts. But my predicted
+   live divergence did not materialise when tested.
+
+### One new condition, and it is the most useful thing this round produced
+
+**`verify_hash_bindings` floors its shell-pin half and does not floor its receipt half.**
+
+```
+failed = bool(new_bad) or blind or (a.strict and bool(known_bad))
+blind  = shell_resolved < SHELL_PIN_FLOOR      # SHELL_PIN_FLOOR = 15
+```
+
+`blind` protects shell pins, with an explicit *"Do NOT lower the floor to make this pass — an unwalked
+pin is how the Gate-2 pair went stale."* **There is no equivalent for receipt bindings.** `ok` may fall
+to any value, including zero, and so long as `new_bad` is empty the gate prints `ALL BINDINGS INTACT`
+and exits 0.
+
+**The correct retirement convention is what erodes it.** Retiring a receipt means renaming `sha256` →
+`sha256_at_issue`, which is exactly what removes it from `collect()`'s harvest — properly, by design,
+with A's conversion asserting the digest multiset unchanged. **Each retirement is right and the coverage
+falls silently.** The repair path and the erosion path are the same path.
+
+Its sibling already solved this: `test_hash_bindings` carries `_LAUNCH_CODE_FLOOR` with the comment
+*"a discoverer that matches nothing reports success."* **Third sibling asymmetry today** — after
+`BEN-173` (one `_verified_` field controlled, its twin not) and `BEN-180` (a band tested above 1 and not
+below). `BEN-184`.
+
+**Condition on the recommendation: if this gate becomes the hook's guarantee, give the receipt half a
+floor before installing it.** A green that erodes one legitimate retirement at a time is the failure
+mode the hook is being added to prevent.
+
+### Unrelated tripwire, surfaced by A's own commit and worth knowing
+
+A recorded *"`_LAUNCH_CODE_FLOOR = 2` and live went 3 → 2. Holds exactly at the floor."* **Zero margin.**
+The next legitimate retirement of a launch-code-gate receipt takes it to 1 and fails
+`test_gate3_and_gate4_launch_code_freezes_specifically`. Independent of this review; A's, to act on or
+not.
 
 ## Gate 5 and Gate 6 — deliberately not reported
 
