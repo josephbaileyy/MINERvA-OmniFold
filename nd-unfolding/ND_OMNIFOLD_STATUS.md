@@ -4,14 +4,13 @@
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
-**Gate 5 coherent-replica training is terminal but not yet promoted.** Accounting for A100 array
-`56857233_[0-49]` is 50/50 `COMPLETED/0:0`, with 50 receipt/artifact/marker quartets and 50 task-log
-pairs present. A committed read-only CPU route now combines the current full-strength family
-reconciler with an independent NPZ-content validator for the fixed subsample, the 2+4 realized LR
-schedule, full/subset signal factors, full background factors, bindings, logs, and collision
-isolation. Read-only CPU job `56933831` is pending under terminal watch
-`gate5-family-validate-56933831`; `C_stat` and extraction remain prohibited until both return PASS.
-Exact launch receipt: `../docs/orchestration/state/gate5-family-validator-active-56933831.json`.
+**Gate 5 coherent-replica training family is PROMOTED PASS at 50/50.** Job `56933831` independently
+confirmed the bare full-strength `FAMILY_COMPLETE_PASS` and returned
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 NPZ members, exact fixed subsample, 2+4 realized LR fits,
+full/subset signal factors, full background factors, bindings, logs, accounting, and collision
+isolation all pass with zero failed checks. `C_stat` remains null; the next action is full-input
+per-replica extraction followed by a complete 50-member manifest. Exact promotion receipt:
+`../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
 `56847059_[1-5]` completed `0:0` in all five members with Gate A/B, reproduction, code pins, and the

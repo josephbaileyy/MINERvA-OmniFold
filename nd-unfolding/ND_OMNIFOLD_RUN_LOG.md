@@ -7085,3 +7085,23 @@ separate, reviewable action.** It does not close `OI-60`, and no run of this too
 carried forward explicitly in the receipt rather than allowed to drift into looking closed.
 
 `GATE5_CODE_ROOT` was never touched, across the whole campaign.
+
+### 2026-08-14 08:57 UTC — Gate-5 training family promoted after job-specific NPZ validation
+
+The one-shot event for read-only CPU job `56933831` was valid and the event had not already been
+reconciled. Lane C had independently committed the full-strength family replay at `bed45a3`, so that
+expensive work was not duplicated. The remaining job-specific evidence was reconciled: `COMPLETED/0:0`
+in 2m18s, empty stderr, immutable validator HEAD `987a45c`, and every promotion-marker hash binding
+re-derived.
+
+The family report is the bare `FAMILY_COMPLETE_PASS`, full strength, replay performed, 50/50 targets
+and 50/50 trainings, zero failures. The independent artifact report is
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 members and zero failed checks, covering the frozen subsample,
+2+4 optimizer schedule, complete signal/background factors, source/target/identity bindings, logs,
+accounting, and collision isolation. The scratch reports were hash-preserved into the repository; the
+family report is byte-identical to Lane C's committed `ca99effa…` copy.
+
+Promotion verdict: `GATE5_TRAINING_FAMILY_PROMOTION_PASS`. This is a training-family promotion only.
+`C_stat` is still null, no subset is selected, and Gate 6 remains unchanged. The next dependency-ready
+action is the predeclared 50-member full-input extraction and complete manifest. Receipt:
+`../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.

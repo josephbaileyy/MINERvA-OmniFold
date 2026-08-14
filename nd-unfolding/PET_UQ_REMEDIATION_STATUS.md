@@ -406,6 +406,15 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Update 2026-08-14 08:57 UTC — TRAINING FAMILY PROMOTED PASS after the independent NPZ gate.**
+Read-only job `56933831` completed `0:0` with empty stderr. Its full-strength family replay is
+byte-identical to the already committed `ca99effa…` report, and the distinct artifact validator returned
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50 members present, 50 passing, zero failed member checks, and 111/111
+family checks. Its hash-bound promotion marker re-derives the family, artifact, and 50-row accounting
+digests. This promotes the complete training family, **not `C_stat`**; full-input extraction and a complete
+50-member manifest precede centering on the replica mean. Receipt:
+[`state/gate5-training-family-promotion-56933831.json`](../docs/orchestration/state/gate5-training-family-promotion-56933831.json).
+
 **Active 2026-08-13:** target array `56857232_[0-49]` is terminal at 50/50 `COMPLETED/0:0`; all 50
 collision-isolated target/receipt/marker quartets are present and a same-turn structural pass reports
 50/50 target checks passing. Read-only validator `56872614` failed before validation when its mutable
