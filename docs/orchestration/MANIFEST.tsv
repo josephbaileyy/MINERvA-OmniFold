@@ -681,3 +681,4 @@ docs/orchestration/watch_g2_dump_resume.sh	MACHINE	shell-tool			generated		exact
 docs/orchestration/watch_g2_smoke_resume.sh	MACHINE	shell-tool			generated		exact-path-only		no	1	108	3560
 docs/orchestration/watch_slurm_array_resume.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_watch_slurm_array_resume.py	no	6	162	7177
 docs/orchestration/whose_row.py	MACHINE	script			generated		exact-path-only	docs/orchestration/merge_guard.sh	no	13	738	41692
+docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	LIVE	document			open		route-only	docs/orchestration/whose_row.py	no	4	86	5470
