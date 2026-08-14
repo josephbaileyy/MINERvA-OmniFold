@@ -616,6 +616,14 @@ def check_oi_ids(items) -> int:
         span = ", ".join(f"{lo}-{hi}" for _, lo, hi in owned) or "NONE"
         print(f"  [committer {who!r} -> block {span}; {len(added)} id(s) added vs HEAD: "
               f"{added or '-'}]")
+        # A MANUAL run reads the repo's default identity, while the hook reads the `git -c user.name=`
+        # override the lane commits with -- so pre-flighting this by hand can report a FAIL on an id that
+        # is correctly inside your own block. Said here because the failure text otherwise reads as "your
+        # id is wrong" when the real answer is "this process is not your commit".
+        if added and owned and owned[0][0] == OI_FALLBACK_LANE:
+            print(f"  NOTE :: {who!r} matched no lane block, so the fallback applies. If you are a lane "
+                  f"pre-flighting by hand, re-run as `git -c user.name=\"Lane X (...)\" ...` or just "
+                  f"commit -- the hook sees your per-commit identity, this process sees the repo default.")
         for n in added:
             if n <= OI_PRE_BLOCK_MAX:
                 fail.append(f"OI-{n} BACKFILLS the closed pre-block range 1-{OI_PRE_BLOCK_MAX} -- a new "

@@ -13,6 +13,18 @@ docstrings. **Nobody had been asking what each one could not detect.**
 > **A green count is a statement about what ran, not about what was checked.**
 > `pre-commit: 6 checks passed` and `39 passed, 1 skipped` fail the reader in exactly the same way.
 
+**And the companion, which governs the freshness of every measurement below** — placed here rather than inside
+the taxonomy on lane D's suggestion, because it is a premise for all five causes rather than a sixth one:
+
+> **A fact about a concurrently-written repository is a measurement with a timestamp, and publishing it without
+> one is the failure.**
+
+Measured at three timescales in three media, all on 2026-08-13/14: **15 hours** in a document (`BEN-219`, a
+ledger line exact when written and 73 lines off when read), **hours** in a message (`BEN-222`, *"the hook
+doesn't run the gate"* — true when written, silently false), **7 seconds** in a commit message (`BEN-225`, a
+grep verified pre-rebase and false in the commit that published it). Four lanes write this repository at once;
+none of those three was carelessness.
+
 ---
 
 ## THE PROBE: commit something only that check can reject
@@ -76,9 +88,18 @@ exists so the shared generalisation is written once and the probe is citable.
 **Read this before the section below it.** Lane D's caution, adopted: *a limits section is the first thing a
 future agent quotes to skip the probe.* So the exemptions are bounded by a rule that is not optional.
 
-**The probe is REQUIRED, not optional, whenever a check's green is going to be CITED as evidence** — in a gate
-verdict, a receipt, `VALIDATION_LEDGER.md`, `CLAIMS.md`, a commit message that another lane will act on, or
-anything sent to a collaborator or advisor.
+**THE PROPERTY, which is the rule:**
+
+> **The probe is REQUIRED whenever the green will be relied on by someone who will not re-run it.**
+
+Stated as a property rather than a list of destinations, on lane D's caution: **an enumeration goes stale
+silently the moment a seventh case appears** (`BEN-187`'s shape), and a rule that needs maintaining is one that
+will eventually be quoted around. The property needs no maintenance — ask who is going to trust this green
+without reproducing it, and if the answer is anyone, probe.
+
+**Non-exhaustive examples, as recognition aids and NOT as the definition:** a gate verdict, a receipt,
+`VALIDATION_LEDGER.md`, `CLAIMS.md`, a commit message another lane will act on, anything sent to a collaborator
+or advisor. If a case is not on this list, the property still decides it.
 
 The reasoning is `CONVENTION-receipt-ingredients.md`'s, one level up: **a verdict-only receipt is
 unfalsifiable, and an unprobed green is a verdict without ingredients.** Citing it converts "the check did not
