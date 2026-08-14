@@ -30,6 +30,9 @@ PREDECLARED ARMS. P0 is not optional -- without it, "hashes matched" is indistin
 "my perturbation never reached the loader".
 
   P0  CONTROL: perturb a RECO array          event_reco MUST CHANGE   (proves the probe has power)
+      NB: the expectation string must be "CHANGED", matching the verdict vocabulary below. The
+      first run had "CHANGE" and scored a correctly-firing control as a FAILURE -- a label bug,
+      but one that would have read as "the probe has no power" and voided every arm under it.
   P1  perturb truth_scalars (scale)          event_reco must be IDENTICAL
   P2  permute truth_scalars rows             event_reco must be IDENTICAL
   P3  perturb part_gen (truth cloud)         event_reco must be IDENTICAL
@@ -183,7 +186,7 @@ def permute_rows(a):
 
 ARMS = [
     ("P0", "CONTROL: reco_scalars scaled x1.01 -> event_reco MUST CHANGE",
-     {"reco_scalars": scale(1.01)}, "CHANGE"),
+     {"reco_scalars": scale(1.01)}, "CHANGED"),
     ("P1", "truth_scalars scaled x1.05", {"truth_scalars": scale(1.05)}, "IDENTICAL"),
     ("P2", "truth_scalars rows permuted", {"truth_scalars": permute_rows}, "IDENTICAL"),
     ("P3", "part_gen (truth cloud) scaled x1.05", {"part_gen": scale(1.05)}, "IDENTICAL"),
