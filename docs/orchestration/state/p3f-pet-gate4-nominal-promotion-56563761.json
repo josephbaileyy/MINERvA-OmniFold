@@ -71,7 +71,14 @@
   },
   "record_authority_and_a_known_divergence": {
     "authoritative_copy": "the git repository",
-    "cluster_copy_is_STALE": "docs/orchestration/state/annealed-nominal-complete-56563761.json on /pscratch is the PRE-supersede file, sha256 81849396611856a1..., versus the git record fc4fcbe863963b22...",
+    "cluster_copy_is_STALE": "docs/orchestration/state/annealed-nominal-complete-56563761.json on /pscratch is the PRE-supersede file, sha256 81849396611856a1... (recorded 2026-08-13, NOT re-measured since -- lane A has no cluster access in the dispatch that corrected this field), versus the git record. THE GIT-SIDE DIGEST IS DELIBERATELY NO LONGER QUOTED AS A POINT VALUE; see git_side_digest_is_a_moving_target.",
+    "git_side_digest_is_a_moving_target": {
+     "CORRECTION_20260814": "This field read 'versus the git record fc4fcbe863963b22...' and THAT VALUE WAS ALREADY WRONG BEFORE THE EDIT THAT FOUND IT. Measured 2026-08-14 by lane A: the file at the then-HEAD c29e3522 hashes to 67c487cd01907597742ff4c6fc8c572af6ab62837aa4e281e395d6ed1a44b4bf, not fc4fcbe8. The receipt was edited after this note was written and the note was not updated with it.",
+     "why_nothing_caught_it": "verify_hash_bindings.py resolved 175 bindings with ALL BINDINGS INTACT while this digest was wrong. A sha256 written into PROSE is not a binding -- it has no 'files'/'sha256' pair for the verifier to resolve -- so it is invisible to the one check that exists for exactly this failure. The receipt-binding floor (140) cannot see it either. This is the same shape as a green count that is a statement about what ran rather than what was checked (CONVENTION-verifying-a-check-is-deployed.md).",
+     "why_no_replacement_point_value_is_written": "Any digest of a mutable, concurrently-edited document is stale on its next edit, and this note has now been wrong at least once for that reason. Recording a fresh point value would restart the same clock. The executable form is preferred per CLAUDE.md: DERIVE IT -- 'git show <ref>:docs/orchestration/state/annealed-nominal-complete-56563761.json | shasum -a 256' -- and quote the ref alongside any digest.",
+     "observed_values_with_their_refs": "67c487cd0190... at c29e3522 (2026-08-14, pre-correction); 435be86816b1... in lane A's working tree after the next_dependency supersession of 2026-08-14. Both stated WITH their ref, which is the point.",
+     "the_cluster_side_claim_is_UNCHANGED_and_UNVERIFIED_HERE": "81849396611856a1 is left exactly as recorded on 2026-08-13. Nothing in the 2026-08-14 dispatch went near the cluster, so lane A neither confirmed nor refuted it and must not be read as having done so."
+    },
     "consequence": "None mechanical, because 'artifact_promoted' is read by no code. But a session reading that receipt ON THE CLUSTER sees the pre-promotion state. Stated so it is not discovered later."
   },
   "scope_PROMOTED_IS_NOT_PROCEED": {
