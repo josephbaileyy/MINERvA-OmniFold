@@ -1,73 +1,17 @@
 {
-  "artifact": "gate5-reconciler-deployment-20260813.json",
-  "lane": "C (PET)",
-  "observed_pdt": "2026-08-13 ~18:40 PDT",
-  "purpose": "Deploy the R1-R4-repaired reconciler and verify parity by MEASUREMENT in the same turn, then exercise it against the live family as a DIAGNOSTIC. Not a promotion pass: the family is at 25 of 50.",
-  "authorization": "Deployment authorized by the mediator with five conditions, all honoured. The standard applied is my own sentence, quoted back at me: a 50/50 pass from a copy whose parity has not been checked is not evidence.",
-
-  "PARITY_MEASURED_BOTH_DIRECTIONS_IN_ONE_TURN": {
-    "tool": "nd-unfolding/pet/verify_executing_copy_is_committed.py",
-    "repo_head": "905e50401962e897c1df45b16a6c4d7f5a7e5f43",
-    "BEFORE": {
-      "reconcile_gate5_family.py": "STALE_BUT_COMMITTED -- head blob 1d33a229, executing 590affaf",
-      "atomic_write.py": "MISSING -- not deployed at all",
-      "exit": 3,
-      "note": "Stated because a deployment whose prior state you cannot name is a deployment whose effect you cannot attribute."
-    },
-    "AFTER": {"both_files": "CURRENT", "exit": 0, "n_current": "2 of 2"},
-    "digests": {
-      "reconcile_gate5_family.py": "7ef50fd5cb2a78a52c4630a3c2270b90450d2be747aeda2ca82fe402814a3e18",
-      "atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
-      "cross_check": "sha256sum on the cluster and locally agree for both files, independently of the parity tool's blob-oid path."
-    }
-  },
-
-  "THE_FAIL_LOUD_IMPORT_WAS_TESTED ON THE REAL DEPLOYMENT, ON PURPOSE": {
-    "method": "The reconciler was deployed FIRST, with atomic_write.py deliberately absent, and run against the live campaign root.",
-    "result": "exit 3, no report written, stderr naming the missing module and the file to copy.",
-    "why_this_was_worth_doing": "R2 made atomic_write a hard dependency and refuses to fall back to the weaker size-only marker check. That refusal is the whole point of the guard, and until now it existed only as an unexercised branch and a comment. This is its negative control, run on the actual deployment rather than in a fixture.",
-    "then": "atomic_write.py was copied and the same command succeeded."
-  },
-
-  "DIAGNOSTIC_RUN_AGAINST_THE_LIVE_FAMILY_first_live_exercise_of_R1_R4": {
-    "command_shape": "--n 50 --nominal-target-sha 544b2f6a... --skip-replay",
-    "verdict": "PARTIAL",
-    "exit": 2,
-    "counts": {"targets_present": 50, "targets_passing": 50, "trainings_present": 25, "trainings_passing": 25,
-               "trainings_in_progress": 10, "trainings_not_started": 15, "trainings_name_mismatch": 0, "targets_absent": 0},
-    "only_family_failure": "trainings_present 25 != 50",
-    "weakened_axes": ["REPLAY_SKIPPED", "SOURCE_UNHASHED"],
-    "is_full_strength": false,
-    "declared_inventory": 50,
-    "declared_inventory_is_pinned_in_tool": true,
-    "EVERY_NEW_CHECK_RAN_rather_than_merely_not_failing": {
-      "why_this_is_the_question": "'Nothing failed' is compatible with 'nothing ran'. Today's own R2 draft shipped a family invariant that resolved to None for every member and therefore could not fail, so check COUNTS are the evidence, not the absence of failures.",
-      "target_rows": "50 PRESENT, 54 checks passed per row, uniform (was 47 before the repair -- R3's five R-field checks and R2's marker changes account for the increase)",
-      "training_rows": "25 PRESENT, 24 checks passed per row, uniform",
-      "training_invariants": "6 present (three code digests + three code paths), each resolving to a SINGLE group",
-      "invariant_path_resolves_failures": "NONE -- so the new invariants are measuring, not vacuously agreeing",
-      "the_three_driver_digests_agree_across_all_25": {
-        "loader": "e1402370cdb8...",
-        "nominal_driver_unmodified": "91144bee2ff8...",
-        "replica_driver": "4fb2902eeb2e..."
-      }
-    },
-    "reading": "Every R1-R4 check passes on real data and the ONLY family failure is the completeness shortfall. That is the strongest available evidence that the repair is correct AND deployable, and it is a diagnostic, not a promotion."
-  },
-
   "A_SCARE_I_CHECKED_AND_DROPPED": {
+    "recorded_because": "The near-miss is worth more than a clean bill of health here: it is the same shape as today's Gate-2 retirement (BEN-158) seen from the reader's side, and it is direct evidence that marking a predecessor pays off in a way no test measures.",
     "what_I_nearly_reported": "All 25 replicas record `nominal_driver_unmodified` = 91144bee, while `p3f-pet-gate4-launch-code-gate-20260812.json` pins the nominal driver at 5fda80df. Read alone, that says the Gate-5 family trained against a nominal driver Gate 4 never certified -- and the field is literally named `_unmodified`.",
-    "why_it_is_NOT_true": "The 20260812 gate has status SUPERSEDED. Its successor, p3f-pet-gate4-launch-code-gate-20260813.json, pins 91144bee -- exactly what the replicas ran. There is no mismatch and no finding.",
     "what_actually_prevented_the_false_report": "Lane A's retirement marking. The predecessor said SUPERSEDED, which is what made me look for a successor instead of treating its pin as live. The convention worked; I had simply read the file the digest named rather than following the supersession first.",
-    "recorded_because": "The near-miss is worth more than a clean bill of health here: it is the same shape as today's Gate-2 retirement (BEN-158) seen from the reader's side, and it is direct evidence that marking a predecessor pays off in a way no test measures."
+    "why_it_is_NOT_true": "The 20260812 gate has status SUPERSEDED. Its successor, p3f-pet-gate4-launch-code-gate-20260813.json, pins 91144bee -- exactly what the replicas ran. There is no mismatch and no finding."
   },
-
-  "NO_NEW_BEN_FILED_AND_NO_BLOCK_CLAIMED": {
-    "block_offered": "230-239",
-    "decision": "NOT claimed. FINDINGS.md's own rule is to write a block into the table in the same commit as the FIRST FILING INTO IT. This deployment produced no new failure to file -- the fail-loud import, the parity flip and the live check counts are all positive results. Claiming a ten-block to hold nothing would make the table describe an allocation that no finding justifies, which is the shape of the problem the block system exists to prevent.",
-    "when_I_will_take_it": "At my next actual finding, in the same commit, per the rule."
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "C_stat": null,
+    "failures_in_either_array": "none",
+    "targets": "50 of 50 COMPLETED, all 50 passing 54 checks each",
+    "training_56857233": "25 COMPLETED, 10 RUNNING, 15 PENDING (squeue -r)",
+    "verdict": "PARTIAL"
   },
-
   "CONDITIONS_HONOURED": [
     "1. Deployed to /pscratch/sd/j/josephrb/gate5-reconcile-lanec ONLY, with atomic_write.py beside it.",
     "2. Parity verified with my own tool, both directions, in this turn, with the BEFORE state stated rather than implied.",
@@ -75,19 +19,106 @@
     "4. NO promotion pass. The run was a diagnostic at 25/50 and returned PARTIAL with is_full_strength false. A promotion pass requires 50/50 AND full strength -- no weakened_axes, which means passing --source-npz and dropping --skip-replay.",
     "5. The two non-lane-C copies (gate5-target-recon.IQaLcx, gate5-target-validator-frozen-70be58a) NOT touched. Still unowned, still stale, and still their own item."
   ],
-
-  "WHAT_A_PROMOTION_PASS_WILL_REQUIRE": {
-    "family": "50 of 50 training receipts, not 25",
-    "verdict": "FAMILY_COMPLETE_PASS with weakened_axes == [] and is_full_strength == true",
-    "flags": "no --skip-replay (the three-stream factor re-draw must actually run) and --source-npz supplied so the source identity is independently hashed",
-    "and_parity_re_checked_at_that_moment": "Because the repo may move again between now and then, and a pass from a copy whose parity was checked hours earlier is the same defect one step removed."
-  },
-
-  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
-    "training_56857233": "25 COMPLETED, 10 RUNNING, 15 PENDING (squeue -r)",
-    "targets": "50 of 50 COMPLETED, all 50 passing 54 checks each",
-    "failures_in_either_array": "none",
+  "DIAGNOSTIC_RUN_AGAINST_THE_LIVE_FAMILY_first_live_exercise_of_R1_R4": {
+    "EVERY_NEW_CHECK_RAN_rather_than_merely_not_failing": {
+      "invariant_path_resolves_failures": "NONE -- so the new invariants are measuring, not vacuously agreeing",
+      "target_rows": "50 PRESENT, 54 checks passed per row, uniform (was 47 before the repair -- R3's five R-field checks and R2's marker changes account for the increase)",
+      "the_three_driver_digests_agree_across_all_25": {
+        "loader": "e1402370cdb8...",
+        "nominal_driver_unmodified": "91144bee2ff8...",
+        "replica_driver": "4fb2902eeb2e..."
+      },
+      "training_invariants": "6 present (three code digests + three code paths), each resolving to a SINGLE group",
+      "training_rows": "25 PRESENT, 24 checks passed per row, uniform",
+      "why_this_is_the_question": "'Nothing failed' is compatible with 'nothing ran'. Today's own R2 draft shipped a family invariant that resolved to None for every member and therefore could not fail, so check COUNTS are the evidence, not the absence of failures."
+    },
+    "command_shape": "--n 50 --nominal-target-sha 544b2f6a... --skip-replay",
+    "counts": {
+      "targets_absent": 0,
+      "targets_passing": 50,
+      "targets_present": 50,
+      "trainings_in_progress": 10,
+      "trainings_name_mismatch": 0,
+      "trainings_not_started": 15,
+      "trainings_passing": 25,
+      "trainings_present": 25
+    },
+    "declared_inventory": 50,
+    "declared_inventory_is_pinned_in_tool": true,
+    "exit": 2,
+    "is_full_strength": false,
+    "only_family_failure": "trainings_present 25 != 50",
+    "reading": "Every R1-R4 check passes on real data and the ONLY family failure is the completeness shortfall. That is the strongest available evidence that the repair is correct AND deployable, and it is a diagnostic, not a promotion.",
     "verdict": "PARTIAL",
-    "C_stat": null
-  }
+    "weakened_axes": [
+      "REPLAY_SKIPPED",
+      "SOURCE_UNHASHED"
+    ]
+  },
+  "NO_NEW_BEN_FILED_AND_NO_BLOCK_CLAIMED": {
+    "block_offered": "230-239",
+    "decision": "NOT claimed. FINDINGS.md's own rule is to write a block into the table in the same commit as the FIRST FILING INTO IT. This deployment produced no new failure to file -- the fail-loud import, the parity flip and the live check counts are all positive results. Claiming a ten-block to hold nothing would make the table describe an allocation that no finding justifies, which is the shape of the problem the block system exists to prevent.",
+    "when_I_will_take_it": "At my next actual finding, in the same commit, per the rule."
+  },
+  "PARITY_MEASURED_BOTH_DIRECTIONS_IN_ONE_TURN": {
+    "AFTER": {
+      "both_files": "CURRENT",
+      "exit": 0,
+      "n_current": "2 of 2"
+    },
+    "BEFORE": {
+      "atomic_write.py": "MISSING -- not deployed at all",
+      "exit": 3,
+      "note": "Stated because a deployment whose prior state you cannot name is a deployment whose effect you cannot attribute.",
+      "reconcile_gate5_family.py": "STALE_BUT_COMMITTED -- head blob 1d33a229, executing 590affaf"
+    },
+    "digests": {
+      "atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+      "cross_check": "sha256sum on the cluster and locally agree for both files, independently of the parity tool's blob-oid path.",
+      "reconcile_gate5_family.py": "7ef50fd5cb2a78a52c4630a3c2270b90450d2be747aeda2ca82fe402814a3e18"
+    },
+    "repo_head": "905e50401962e897c1df45b16a6c4d7f5a7e5f43",
+    "tool": "nd-unfolding/pet/verify_executing_copy_is_committed.py"
+  },
+  "RESYNC_20260814_after_BEN_230": {
+    "NO_DIAGNOSTIC_RUN_AND_WHY": "The new check lives INSIDE the replay block, so only a full-replay run exercises it -- ~49M variates per member. At 42 of 50 that costs the full price and returns PARTIAL. Its live outcome is already established by direct computation: sum(canonical draw) == recorded n_data_effective for all 50 target receipts, which is exactly the comparison the check performs. The 50/50 full-strength run will exercise it end-to-end. Recorded as a decision with a reason rather than left as an omission.",
+    "action": "re-scp of reconcile_gate5_family.py only. atomic_write.py was already CURRENT and was left alone rather than re-copied for appearance -- copying an unchanged file would have made the AFTER result less informative, not more.",
+    "campaign_at_resync": "42 COMPLETED, 8 RUNNING, ZERO PENDING -- all 50 accounted for, no failures.",
+    "digests_now_deployed": {
+      "atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+      "reconcile_gate5_family.py": "e0e8d39eed85b910f66a127f93b8eca84196fd312546ffff4559170ffe7013e5"
+    },
+    "parity_AFTER": {
+      "both": "CURRENT",
+      "exit": 0,
+      "n_current": "2 of 2"
+    },
+    "parity_BEFORE": {
+      "atomic_write.py": "CURRENT (unchanged since the first deployment)",
+      "exit": 3,
+      "n_current": "1 of 2",
+      "reconcile_gate5_family.py": "STALE_BUT_COMMITTED -- head blob a867311a, executing 1d33a229"
+    },
+    "repo_head_at_resync": "85ef3b585630c2e27990d3da9c21de438269eb0f",
+    "superseded_deployed_digest": "7ef50fd5cb2a78a52c4630a3c2270b90450d2be747aeda2ca82fe402814a3e18",
+    "transcription_error_corrected": "The atomic_write.py digest in this block was first written BY HAND as 71527c2af7a5c039d1ab103e000929f4b2ce793f9788e426369ef53c44c5395e where the file hashes 71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e -- a single-character error in a receipt whose entire purpose is digest fidelity. Caught only because the writing script re-hashed the file and compared rather than trusting what I typed. Both values are now MEASURED at write time, never transcribed. Typing a digest is the same act as copying a claim into a field named for a measurement, which is BEN-149; the durable fix is to never type one.",
+    "why": "BEN-230 added `n_data_effective_equals_sum_of_REDRAWN_data_factor`, so the copy deployed at 7ef50fd5 became STALE_BUT_COMMITTED. A promotion run from a stale copy is the defect BEN-156 is about. The family reached ZERO PENDING this turn, so the re-sync was done now rather than under time pressure at 50/50."
+  },
+  "THE_FAIL_LOUD_IMPORT_WAS_TESTED ON THE REAL DEPLOYMENT, ON PURPOSE": {
+    "method": "The reconciler was deployed FIRST, with atomic_write.py deliberately absent, and run against the live campaign root.",
+    "result": "exit 3, no report written, stderr naming the missing module and the file to copy.",
+    "then": "atomic_write.py was copied and the same command succeeded.",
+    "why_this_was_worth_doing": "R2 made atomic_write a hard dependency and refuses to fall back to the weaker size-only marker check. That refusal is the whole point of the guard, and until now it existed only as an unexercised branch and a comment. This is its negative control, run on the actual deployment rather than in a fixture."
+  },
+  "WHAT_A_PROMOTION_PASS_WILL_REQUIRE": {
+    "and_parity_re_checked_at_that_moment": "Because the repo may move again between now and then, and a pass from a copy whose parity was checked hours earlier is the same defect one step removed.",
+    "family": "50 of 50 training receipts, not 25",
+    "flags": "no --skip-replay (the three-stream factor re-draw must actually run) and --source-npz supplied so the source identity is independently hashed",
+    "verdict": "FAMILY_COMPLETE_PASS with weakened_axes == [] and is_full_strength == true"
+  },
+  "artifact": "gate5-reconciler-deployment-20260813.json",
+  "authorization": "Deployment authorized by the mediator with five conditions, all honoured. The standard applied is my own sentence, quoted back at me: a 50/50 pass from a copy whose parity has not been checked is not evidence.",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 ~18:40 PDT",
+  "purpose": "Deploy the R1-R4-repaired reconciler and verify parity by MEASUREMENT in the same turn, then exercise it against the live family as a DIAGNOSTIC. Not a promotion pass: the family is at 25 of 50."
 }
