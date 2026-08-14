@@ -485,6 +485,70 @@ OI_ID_WAIVERS = {
 }
 
 
+# The block table lives in docs/OPEN_ITEMS.md and is PARSED, not duplicated here. Hardcoding the ranges
+# would make the document and the check able to disagree, which is BEN-201's shape (a retraction that
+# landed in the index but not at the point of use). Requires the leading `>` so this cannot accidentally
+# match a row of the main OI table or any other backticked range in the file.
+OI_BLOCK_ROW = re.compile(r"^>\s*\|\s*([^|]+?)\s*\|\s*`(\d+)-(\d+)`", re.M)
+OI_PRE_BLOCK_MAX = 69          # `1-69` is the closed pre-block era; see the table's own note
+OI_FALLBACK_LANE = "Joseph / unattributed"
+
+
+def oi_blocks(items) -> list[tuple[str, int, int]]:
+    """[(lane, lo, hi)] from OPEN_ITEMS.md's own block table, in document order."""
+    text = items.read_text(encoding="utf-8", errors="replace")
+    return [(m.group(1), int(m.group(2)), int(m.group(3))) for m in OI_BLOCK_ROW.finditer(text)]
+
+
+def _committer() -> str | None:
+    """The identity this commit will carry. Reads `git config user.name`, which DOES see a
+    `git -c user.name=...` override -- measured 2026-08-14 with a throwaway repo and a probe hook,
+    because the whole check hangs off it and "config is inherited by hooks" was worth confirming
+    rather than assuming."""
+    try:
+        r = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, cwd=REPO)
+        return r.stdout.strip() or None
+    except OSError:
+        return None
+
+
+def _identity_token(who: str) -> str:
+    """Committer name -> the lane token the block table uses.
+
+    `_lane_key` alone is NOT enough and the power test is what showed it: the lanes commit as
+    `Lane A (Eavail)`, `Lane C (PET)`, and `_lane_key` yields `LANE A` for the first -- which matches no
+    row, so EVERY lane silently fell through to the `Joseph / unattributed` block and would have been
+    refused its own ids. Same family as the `lane.lower() in owner.lower()` bug this file's own
+    `lane_matches` docstring records, except this one failed CLOSED (wrong and loud) rather than open.
+    """
+    return _lane_key(re.sub(r"^\s*lane\s+", "", who, flags=re.I))
+
+
+def _block_for(who: str | None, blocks: list[tuple[str, int, int]]) -> list[tuple[str, int, int]]:
+    """The blocks `who` may allocate from; the declared fallback when nothing matches, never everything."""
+    if who:
+        tok = _identity_token(who)
+        owned = [b for b in blocks if tok and _lane_key(b[0]) == tok]
+        if owned:
+            return owned
+    return [b for b in blocks if b[0] == OI_FALLBACK_LANE]
+
+
+def _ids_at_head(rel: str) -> set[str] | None:
+    """OI ids in HEAD's copy of `rel`, or None if that cannot be read.
+
+    None is propagated as CANNOT-CHECK for the block arm rather than treated as "no ids", which would
+    make every existing id look newly added and fail the commit for the wrong reason.
+    """
+    try:
+        r = subprocess.run(["git", "show", f"HEAD:{rel}"], capture_output=True, text=True, cwd=REPO)
+        if r.returncode != 0:
+            return None
+    except OSError:
+        return None
+    return {m.group(1) for m in (OI_ROW.match(l) for l in r.stdout.splitlines()) if m}
+
+
 def check_oi_ids(items) -> int:
     """No duplicate `OI-*` id in OPEN_ITEMS.md. 0 ok / 1 violated / 2 cannot check.
 
@@ -533,6 +597,34 @@ def check_oi_ids(items) -> int:
         if i not in dupes:
             fail.append(f"STALE WAIVER {i} is waived but is no longer duplicated -- remove it, or it "
                         f"silently permits the next real collision on that id")
+
+    # BLOCK ARM (OI-62(b), added 2026-08-14). Applies ONLY to ids this commit adds: 65 ids predate the
+    # table and are grandfathered by the `1-69` pre-block row. Without the HEAD diff every existing id
+    # would look new and the check would fail every commit -- correct-looking and useless.
+    blocks = oi_blocks(items)
+    head_ids = _ids_at_head("docs/OPEN_ITEMS.md")
+    if not blocks:
+        print("  block arm CANNOT CHECK :: no block table found in OPEN_ITEMS.md -- allocation is "
+              "unenforced, which is the state OI-62(b) describes")
+    elif head_ids is None:
+        print("  block arm CANNOT CHECK :: HEAD:docs/OPEN_ITEMS.md unreadable, so 'newly added' is "
+              "undefined (every id would look new)")
+    else:
+        who = _committer()
+        owned = _block_for(who, blocks)
+        added = sorted(int(i[3:]) for i in set(ids) - head_ids)
+        span = ", ".join(f"{lo}-{hi}" for _, lo, hi in owned) or "NONE"
+        print(f"  [committer {who!r} -> block {span}; {len(added)} id(s) added vs HEAD: "
+              f"{added or '-'}]")
+        for n in added:
+            if n <= OI_PRE_BLOCK_MAX:
+                fail.append(f"OI-{n} BACKFILLS the closed pre-block range 1-{OI_PRE_BLOCK_MAX} -- a new "
+                            f"item must not sort among items filed weeks earlier. Take your lane's block")
+            elif not any(lo <= n <= hi for _, lo, hi in owned):
+                fail.append(f"OI-{n} IS OUTSIDE {who!r}'s block ({span}) -- this is the max(existing)+1 "
+                            f"habit that produced two collisions on 2026-08-13. Renumber it into your "
+                            f"block, or if the block is exhausted take the next free closed ten-block and "
+                            f"write it into OPEN_ITEMS.md's table in this same commit")
     for f in fail:
         print(f"  FAIL {f}")
     if dupes and not fail:
