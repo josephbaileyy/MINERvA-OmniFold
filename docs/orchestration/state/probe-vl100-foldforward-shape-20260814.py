@@ -166,7 +166,30 @@ def analyse(label, c):
             "rel_sd": float(r.std(ddof=1) / r.mean()),
             "noise_expected_sd": float(exp_sd),
             "observed_over_noise": float(excess),
-            "per_cell_ratio": [None if not np.isfinite(x) else float(x) for x in ratio]}
+            # BEN-077: publish the operands the SUMMARY was reduced from, not just the array.
+            # Shipping per_cell_ratio alone let the mediator recompute a different mean and max
+            # from it -- correctly, because the n_eff>=50 cut was not derivable from what was
+            # published. n_eff and the good mask close that.
+            "reduction": ("summary statistics are UNWEIGHTED over cells with den>0 AND "
+                          "n_eff>=50; n_eff is the Kish effective count sum(w)^2/sum(w^2) of "
+                          "w_reco within the cell"),
+            "n_eff_threshold": 50,
+            "n_eff_threshold_provenance": (
+                "present in the first version of this probe, before any run; the three "
+                "subsequent patches (global-scale control, a broadcast fix, a return-dict fix) "
+                "did not touch it. Intermediate versions were not committed, so this rests on "
+                "that account rather than on the commit graph."),
+            "naive_all_live_cells": {
+                "n": int(live.sum()),
+                "min": float(np.nanmin(ratio[live])), "max": float(np.nanmax(ratio[live])),
+                "mean": float(np.nanmean(ratio[live])),
+                "rel_sd": float(np.nanstd(ratio[live], ddof=1) / np.nanmean(ratio[live])),
+                "note": "the unweighted reduction over ALL live cells, published so both "
+                        "reductions are on the record and the verdict can be seen to survive "
+                        "either"},
+            "per_cell_ratio": [None if not np.isfinite(x) else float(x) for x in ratio],
+            "per_cell_n_eff": [float(x) for x in n_eff],
+            "per_cell_in_summary": [bool(x) for x in good]}
 
 
 out = {"recorded": {"sum_w_push_reco": rec_num, "sum_w_reco": rec_den,
