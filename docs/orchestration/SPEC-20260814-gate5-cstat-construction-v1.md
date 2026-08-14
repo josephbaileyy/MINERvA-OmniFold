@@ -360,6 +360,15 @@ domain wrong by three cells with every structural check passing. **A matching co
 set**, and the only safe operation is a set comparison. This is the third mask in a question already ruled
 on twice; named here so nobody rediscovers it a fourth time. `BEN-236`.
 
+**`CSTAT-D0f(i)` — SELECTING A MASK BY ITS COUNT IS FORBIDDEN.** A consumer MUST identify a reporting
+domain by **set identity** — `np.array_equal` against the named mask, or the `layout_fingerprint` of
+`CSTAT-R6` — and MUST NOT select, match, or validate one by `n_reported`, `sum(mask)`, `len(indices)`,
+or `sum(diag > 0)` (`CSTAT-D0e`). **This is the same class D measured on the covariance itself:
+agreement on a scalar summary proves nothing about the object it summarises.** Here the failure is
+concrete rather than hypothetical — two distinct masks in this campaign both have 259 cells, so a
+count-based match is wrong by three cells and every structural check still passes. A receipt that
+reports a mask MUST publish the mask or its fingerprint, never only its size.
+
 **`CSTAT-D0c`** The nesting result is retained and remains useful even though `266` is not adopted: D
 committed the containment check at `b9d0803` showing **PET's 262 is a strict subset of FPS's 266**, the four
 cells between them being flat `{228, 251, 252, 253}` = `(12,0), (13,4), (13,5), (13,6)`; B derived the same
