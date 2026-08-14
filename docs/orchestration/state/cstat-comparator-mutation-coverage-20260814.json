@@ -1,9 +1,6 @@
 {
  "all_as_predeclared": true,
  "comparator_built_no_covariance": true,
- "corrections_to_my_own_predeclaration": {
-  "M3_M10_tier2_only": "WRONG. Both also fire tier3 via per-bin sigma. Corrected claim: a permutation is blind to every SCALAR summary (trace 0.0, eigenvalues ~1e-15) and every STRUCTURAL property, and is caught ONLY by per-cell comparison."
- },
  "fixture": {
   "dead_cell_geometry_source": "measured from NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz",
   "dead_cells": 23,
@@ -18,7 +15,8 @@
  "harness_defects_found_by_this_run": [
   "M7 crashed tier1 with LinAlgError from eigvalsh instead of reporting a finiteness failure",
   "the same crash recurred in tier3_derived because the first site was fixed and its sibling was not (BEN-173 shape)",
-  "the tier-3 eigenvalue metric was RELATIVE and divided by numerically-zero eigenvalues (236 of 285), returning ~1.0 for a permutation that provably preserves the spectrum; corrected to absolute-scaled-by-lambda_max"
+  "the tier-3 eigenvalue metric was RELATIVE and divided by numerically-zero eigenvalues (236 of 285), returning ~1.0 for a permutation that provably preserves the spectrum; corrected to absolute-scaled-by-lambda_max",
+  "renaming cov -> C_stat silently disabled the BEN-181 void guard, whose b.get('cov') then returned None; now an assert rather than a soft get"
  ],
  "n_as_predeclared": 17,
  "n_mutations": 17,
@@ -64,7 +62,7 @@
   },
   "M11": {
    "as_predeclared": true,
-   "predeclared": "tier0 bin_order",
+   "predeclared": "tier0 ravel_order",
    "scalar_invariants": null,
    "tiers_fired": [
     "tier0(UNRESOLVED)"
@@ -82,7 +80,7 @@
   },
   "M13": {
    "as_predeclared": true,
-   "predeclared": "tier4 seeds distinct",
+   "predeclared": "tier4 ids distinct",
    "scalar_invariants": {
     "eigenvalue_spectrum_worst_rel": 0.0,
     "eigenvalues_blind": true,
@@ -253,6 +251,7 @@
    "verdict": "DISAGREE"
   }
  },
+ "status_2026_08_14": "the comparison path is DORMANT -- one builder, no second artifact. Re-verified after the key-name realignment to lane B's REQUIREMENTS so it is not left broken in the tree.",
  "tolerances": {
   "TOL_CORR_ABS": 1e-12,
   "TOL_DIAG_REL": 1e-12

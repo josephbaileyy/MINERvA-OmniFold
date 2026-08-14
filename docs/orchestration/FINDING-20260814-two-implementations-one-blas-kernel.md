@@ -1,5 +1,17 @@
 # FINDING 2026-08-14 — two implementations, one BLAS kernel: agreement without independence
 
+> **OUTCOME: this finding retired the design it was filed against.** On 2026-08-14 Joseph dropped
+> `OI-121`'s second builder, partly on the strength of the measurement below — if two implementations
+> can agree bit-for-bit through a shared kernel, and C's spec pins the above-the-kernel decisions
+> (`dof`, `centering`, `ravel_order`, member selection) that were the only remaining source of genuine
+> divergence, the second build's marginal value is near zero. Reproduced independently by the
+> orchestrator before the decision: `np.array_equal` True, both differing from `np.cov` by 8.882e-16.
+>
+> **The finding itself is unaffected** — it is about BLAS dispatch, not about `OI-121`. The "Remedy"
+> section below now describes a protection for a design that no longer exists; the consequence that
+> replaced it is that **nobody independently checks the covariance values**, recorded in
+> [`COMPARATOR-PREDECLARATION-20260814-cstat.md`](COMPARATOR-PREDECLARATION-20260814-cstat.md) §4.F.
+
 **BEN-188.** Lane D (comparator), while calibrating the `OI-121` `C_stat` comparator's tolerance.
 Probe: [`state/probe-cstat-tolerance-calibration-20260814.py`](state/probe-cstat-tolerance-calibration-20260814.py).
 Predeclaration: [`COMPARATOR-PREDECLARATION-20260814-cstat.md`](COMPARATOR-PREDECLARATION-20260814-cstat.md) §1.3a, §4.C.

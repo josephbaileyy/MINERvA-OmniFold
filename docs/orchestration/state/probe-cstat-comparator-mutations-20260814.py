@@ -51,11 +51,15 @@ def fixture():
 
 
 def artifact(cov, **over):
+    mask = np.ones(H.N_CELLS, bool)
+    mask[DEAD_CELLS] = False
     a = {"_path": "<synthetic>", "_sha256": "n/a", "_missing_required": [],
-         "cov": cov, "bin_order": H.FROZEN_BIN_ORDER,
+         "C_stat": cov, "ravel_order": H.EXPECTED_RAVEL_ORDER,
+         "reported_mask": mask, "layout_fingerprint": "f" * 64,
          "edges_pt": H.CANONICAL_PT_EDGES, "edges_pparallel": H.CANONICAL_PPARALLEL_EDGES,
-         "n_replicas": H.N_REPLICAS, "ddof": 1, "centring": "replica-mean",
-         "replica_seeds": np.arange(H.N_REPLICAS),
+         "n_replicas": H.N_REPLICAS, "dof": H.N_REPLICAS - 1,
+         "centering": H.EXPECTED_CENTERING,
+         "replica_ids": np.arange(H.N_REPLICAS),
          "member_sha256": np.array([f"{i:064x}" for i in range(H.N_REPLICAS)])}
     a.update(over)
     return a
@@ -144,7 +148,7 @@ def mutations():
 
     def m11():
         a = artifact(C.copy())
-        a["bin_order"] = "pparallel-major row-major: cell = i_pp * n_pt_bins + i_pt"
+        a["ravel_order"] = "F"
         return a
 
     def m12():
@@ -157,8 +161,8 @@ def mutations():
     def m13():
         a = artifact(C.copy())
         s = np.arange(H.N_REPLICAS)
-        s[17] = s[16]                           # a duplicated bootstrap seed
-        a["replica_seeds"] = s
+        s[17] = s[16]                           # a duplicated replica id
+        a["replica_ids"] = s
         return a
 
     def m14():
@@ -170,8 +174,8 @@ def mutations():
 
     def m15():
         a = artifact(C.copy())
-        del a["ddof"]
-        a["_missing_required"] = ["ddof"]
+        del a["dof"]
+        a["_missing_required"] = ["dof"]
         return a
 
     return [
@@ -188,11 +192,11 @@ def mutations():
         ("M8", "B += 1e-9 * I  (quiet regularisation)", "tier1 rank + tier2", m8),
         ("M9", "zero one structurally-NONZERO row/col", "tier2 exact-zero mismatch", m9),
         ("M10", "swap two live bins consistently (rows AND cols)", "tier2 ONLY", m10),
-        ("M11", "declare the wrong bin_order string", "tier0 bin_order", m11),
+        ("M11", "declare ravel_order = F", "tier0 ravel_order", m11),
         ("M12", "substitute the PAPER pT grid top edge", "tier0 edges", m12),
-        ("M13", "duplicate a bootstrap seed", "tier4 seeds distinct", m13),
+        ("M13", "duplicate a replica id", "tier4 ids distinct", m13),
         ("M14", "one member sha256 from a different family", "tier4 member lists", m14),
-        ("M15", "omit a REQUIRED key (ddof)", "tier0 -> UNRESOLVED, not AGREE", m15),
+        ("M15", "omit a REQUIRED key (dof)", "tier0 -> UNRESOLVED, not AGREE", m15),
     ]
 
 
@@ -271,8 +275,13 @@ def main():
     for mid, desc, predeclared, build in mutations():
         b = build()
         void = None
-        if isinstance(b.get("cov"), np.ndarray):
-            void = not _mutated_for_real(C, b["cov"])
+        # The key name here MUST track REQUIRED_KEYS. When "cov" was renamed to "C_stat" this
+        # line still said b.get("cov") -> None, so `void` stayed None and the BEN-181 guard
+        # silently stopped running: a rename disabled the very check that exists to catch
+        # mutations that do not mutate. Hence the assertion below rather than a soft get().
+        assert "C_stat" in b, "artifact key renamed; the void guard would silently no-op"
+        if isinstance(b.get("C_stat"), np.ndarray):
+            void = not _mutated_for_real(C, b["C_stat"])
         # metadata-only mutations legitimately leave cov untouched
         if void and mid not in ("M0", "M11", "M12", "M13", "M14", "M15"):
             print(f"[{mid}] *** VOID MUTATION -- the array did not change. NOT SCORED. ***")

@@ -1,5 +1,36 @@
 # Comparator predeclaration — `C_stat`, two blind implementations (OI-121)
 
+> ## ⚠ THE SECOND BUILDER WAS CANCELLED, 2026-08-14. THERE IS ONE BUILD, AND NO COMPARISON RAN.
+>
+> **Joseph's decision, taken partly on the strength of `BEN-188` in this very document** — if two
+> implementations can agree bit-for-bit through a shared BLAS kernel, the second builder's marginal
+> value is near zero, and C's spec pins `dof`, `centering`, `ravel_order` and member selection, which
+> were the only above-the-kernel decisions left to diverge on.
+>
+> **Read the rest of this file as a design record and a single-artifact validation plan, NOT as
+> evidence that a dual build happened.** Sections 1 (tolerance), 3 (mutation coverage) and 4
+> (residual risk) describe a two-artifact comparison whose second input does not exist. Concretely:
+>
+> | part | status under one builder |
+> |---|---|
+> | tier 0 identity, tier 1 structure, tier 3 derived, tier 4 inputs | **still live** — single-artifact checks, and now the load-bearing ones |
+> | **tier 2, the element-wise comparison** | **NEVER RAN. No second artifact.** |
+> | §1's tolerance | applies to nothing until something is compared |
+> | §4's residual-risk set | still true, and §4.C is now moot in the way that matters — see below |
+>
+> **The overclaim this banner exists to prevent:** `OI-121`, this file, and the mutation receipt
+> together describe *"one spec, two blind builders, a comparator, a judge."* That machinery is
+> authorized, documented, and **partly unexecuted**, and it is sitting in the git history looking
+> like it proved something. **It did not.** Anyone quoting this campaign's `C_stat` as
+> "dual-build verified" is wrong, and this notice is here because I would otherwise be the author of
+> the document that misled them.
+>
+> **What §4.C's finding means now.** `BEN-188` was filed as a risk *to* the dual-build design; it
+> became the argument that retired it. The finding is unaffected — it is about BLAS, not about
+> `OI-121` — but its remedy (`method_declaration` ruled on by a judge) no longer has a design to
+> protect. The judge seat is separately empty. **Nobody is checking the covariance numbers
+> themselves**; see the note at the end of §4.
+
 **Lane D (comparator).** Written **before either implementation exists** and committed before either
 is read, so that no threshold here can be back-fitted to an observed diff. That is the whole point of
 the file: *a tolerance chosen after seeing the disagreement is not a test.*
@@ -374,9 +405,49 @@ to the orchestrator as a design gap rather than acted on unilaterally.
 
 ### E. Downstream — outside this comparison entirely
 
-A perfectly verified `C_stat` says nothing about the treatment of its 236 null directions. **Nobody
-should read "the implementations agree" as "`C_stat` is usable."** That is section 0's rank question
-and it is Joseph's to declare.
+A perfectly verified `C_stat` says nothing about the treatment of its null directions. **Nobody
+should read "the implementations agree" as "`C_stat` is usable."** That is section 0's rank question,
+and per §0.2 it is already declared under `OI-29` rather than open.
+
+### F. Under one builder: nobody checks the covariance numbers — added 2026-08-14
+
+The banner at the top records that the second build was cancelled. This is the consequence, and it
+should be read before anyone treats the surviving checks as sufficient.
+
+**Sort the remaining checks by what they have power over.** Some compare the artifact to an
+**external** fact and can genuinely fail; the rest compare the artifact to **the builder's own
+declarations** and are self-consistency checks.
+
+| check | power over |
+|---|---|
+| `member_sha256` vs the files actually on disk | **external** — I recompute the digests myself |
+| `reported_mask` vs `C_syst`'s mask | **external** — the assembler's reference |
+| `edges_pt` / `edges_pparallel` vs the loader's canonical grid | **external** |
+| measured rank vs declared `rank_at_1em10_lambda_max` | **external** — I measure it |
+| reduced form vs its own full form restricted to the shipped mask | **external to the covariance** — arithmetic the builder did not get to declare |
+| `layout_fingerprint`, `dof`, `centering`, `ravel_order`, `units` | **the builder's own declarations** |
+| symmetry, PSD, finiteness | structure only — true of many wrong matrices |
+
+> **Nothing in that table has power over the covariance VALUES.** Every element could be off by a
+> factor, or computed from the wrong 50 vectors in the right files, and every check above still
+> passes. `BEN-186`'s lesson generalises: an artifact validated against its own declarations proves
+> the builder was self-consistent, which is a real property and is not the one anyone wants.
+
+Two honest consequences. First, the reduced-vs-full check is now **disproportionately valuable** —
+it is one of the few surviving checks that can fail on a genuine arithmetic mistake, which is why it
+is worth the one numpy line even though it looks trivial. Second, **the gap should be stated in the
+final receipt rather than left for a reader to notice**, because the two-builder machinery in the git
+history reads as though it closed exactly this gap, and it did not.
+
+**On whether I should close it myself.** My prohibition on constructing a covariance was reasoned:
+*"the moment you produce your own covariance you stop being able to referee the two that exist."*
+**There are no longer two to referee, so that rationale has lapsed** — which is an observation about
+the reason, not a licence. A D-built cross-check would be *weak* evidence about the kernel (`BEN-188`
+— I would likely reach the same BLAS) and *meaningful* evidence about the above-the-kernel
+decisions: member selection, centring, mask application, `ddof`. Those are the likely bugs, and
+"pinned in a spec" is not "implemented correctly." **Whether the prohibition is lifted is Joseph's
+call and not mine, and I have not acted on it.** Raised so the option is visible, since the
+alternative is that nobody checks the numbers and nobody says so.
 
 ---
 

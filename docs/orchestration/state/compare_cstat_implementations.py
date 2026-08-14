@@ -49,10 +49,25 @@ N_REPLICAS = 50
 
 # What each builder's artifact must carry. The comparator cannot compare what nobody emitted,
 # so this list is a SPEC REQUIREMENT, not a convenience -- it is routed to C as such.
-REQUIRED_KEYS = ("cov", "bin_order", "edges_pt", "edges_pparallel", "n_replicas",
-                 "ddof", "centring", "replica_seeds", "member_sha256")
-OPTIONAL_KEYS = ("reported_mask", "mean_vector", "nominal_vector", "n_replicas_reported",
-                 "method_declaration")
+# Names follow lane B's REQUIREMENTS-20260814-cstat-assembly-conventions.md, which is reasoned
+# from assemble_ctotal_bkgsub.py -- the code that actually consumes the object -- rather than from
+# the comparison. That is the right authority and it overrides the names I first guessed
+# (cov/ddof/centring/replica_seeds).
+REQUIRED_KEYS = ("C_stat", "reported_mask", "cv", "edges_pt", "edges_pparallel",
+                 "layout_fingerprint", "central_sha256", "n_replicas", "replica_ids", "dof",
+                 "rank_at_1em10_lambda_max", "ravel_order", "centering", "units",
+                 # both promoted to REQUIRED on lane D's argument, 2026-08-14:
+                 "member_sha256",                    # residual risk 4.B1 -- the shared output root
+                 "asymmetry_before_symmetrisation")  # else the symmetry check is vacuous
+OPTIONAL_KEYS = ("C_stat_reduced", "n_replicas_reported", "method_declaration",
+                 "mean_vector", "nominal_vector")
+
+# SHAPE IS DELIBERATELY NOT PINNED YET. C has not ruled on §3.1: full-grid (285,285)+mask, reduced
+# (n_reported,n_reported), or both. Rather than hold the realignment and then rewrite twice, the
+# shape is DERIVED from the shipped mask and either form is accepted and recorded. When C rules,
+# this tightens to one line instead of a rewrite.
+EXPECTED_CENTERING = "replica_mean"
+EXPECTED_RAVEL_ORDER = "C"
 
 
 def verify_constants_against_loader(repo_root=None):
@@ -147,20 +162,32 @@ def tier0_identity(a, b):
     if a["_missing_required"] or b["_missing_required"]:
         return {"checks": checks, "fails": fails, "comparable": False}
 
-    ca, cb = np.asarray(a["cov"]), np.asarray(b["cov"])
+    ca, cb = np.asarray(a["C_stat"]), np.asarray(b["C_stat"])
     chk("shape_equal", ca.shape == cb.shape, f"A={ca.shape} B={cb.shape}")
-    chk("shape_is_n_cells_square", ca.shape == (N_CELLS, N_CELLS),
-        f"A={ca.shape} expected=({N_CELLS},{N_CELLS})")
+    # Shape is NOT pinned to (285,285) pending C's REQUIREMENTS §3.1 ruling; it is required to be
+    # square and consistent with the shipped mask, which is true under either convention.
+    nrep = int(np.asarray(a["reported_mask"], bool).sum()) if "reported_mask" in a else None
+    chk("shape_square_and_mask_consistent",
+        ca.shape[0] == ca.shape[1] and ca.shape[0] in ({N_CELLS} | ({nrep} if nrep else set())),
+        f"A={ca.shape} allowed=(285,285) or ({nrep},{nrep})")
     chk("dtype_float64", ca.dtype == np.float64 and cb.dtype == np.float64,
         f"A={ca.dtype} B={cb.dtype}")
 
-    # bin_order is a declared string with three existing fail-closed consumers in-repo. Two
-    # implementations disagreeing on C- vs F-order produce covariances that are both symmetric,
-    # both PSD, and both wrong -- invisible to every structural check. Assert the STRING.
+    # ravel_order is the anti-silent-reshape declaration. Two implementations disagreeing on C-
+    # vs F-order produce covariances that are both symmetric, both PSD, and both wrong --
+    # invisible to every structural check (measured: mutations M3/M10). Assert the STRING, and
+    # separately assert the layout_fingerprint, which binds it to the edges.
     for art, tag in ((a, "A"), (b, "B")):
-        bo = art.get("bin_order")
-        bo = bo.decode() if isinstance(bo, bytes) else str(bo)
-        chk(f"{tag}_bin_order_frozen", bo == FROZEN_BIN_ORDER, f"got={bo!r}")
+        ro = art.get("ravel_order")
+        ro = ro.decode() if isinstance(ro, bytes) else str(ro)
+        chk(f"{tag}_ravel_order_C", ro == EXPECTED_RAVEL_ORDER, f"got={ro!r}")
+    chk("layout_fingerprint_equal",
+        str(a.get("layout_fingerprint")) == str(b.get("layout_fingerprint")),
+        f"A={str(a.get('layout_fingerprint'))[:16]} B={str(b.get('layout_fingerprint'))[:16]}")
+    chk("reported_mask_bit_identical",
+        np.array_equal(np.asarray(a["reported_mask"], bool),
+                       np.asarray(b["reported_mask"], bool)),
+        "assemble_ctotal_bkgsub.py:105-107 fails closed on exactly this")
 
     # The paper-grid substitution is survivable and silent; assert_extended_fps_edges exists
     # in the loader for exactly this reason. Re-assert it here on each builder's own edges.
@@ -173,10 +200,10 @@ def tier0_identity(a, b):
         chk(f"{tag}_n_replicas", int(art["n_replicas"]) == N_REPLICAS,
             f"got={art.get('n_replicas')}")
 
-    chk("ddof_declared_and_equal", int(a["ddof"]) == int(b["ddof"]),
-        f"A={a.get('ddof')} B={b.get('ddof')}")
-    cen = (str(a["centring"]), str(b["centring"]))
-    chk("centring_declared_and_equal", cen[0] == cen[1], f"A={cen[0]!r} B={cen[1]!r}")
+    chk("dof_declared_and_equal", int(a["dof"]) == int(b["dof"]),
+        f"A={a.get('dof')} B={b.get('dof')}")
+    cen = (str(a["centering"]), str(b["centering"]))
+    chk("centering_declared_and_equal", cen[0] == cen[1], f"A={cen[0]!r} B={cen[1]!r}")
 
     return {"checks": checks, "fails": fails, "comparable": not fails}
 
@@ -384,8 +411,8 @@ def tier4_inputs(a, b):
         return [x.decode() if isinstance(x, bytes) else str(x) for x in v]
 
     ma, mb = strs(a.get("member_sha256", [])), strs(b.get("member_sha256", []))
-    sa = np.asarray(a.get("replica_seeds", [])).ravel().tolist()
-    sb = np.asarray(b.get("replica_seeds", [])).ravel().tolist()
+    sa = np.asarray(a.get("replica_ids", [])).ravel().tolist()
+    sb = np.asarray(b.get("replica_ids", [])).ravel().tolist()
     out = {
         "n_members": {"A": len(ma), "B": len(mb)},
         "member_sha256_lists_identical": ma == mb,
@@ -404,6 +431,166 @@ def tier4_inputs(a, b):
     return out
 
 
+def validate_single_artifact(art, repo_root=None, replica_dir=None):
+    """SINGLE-ARTIFACT validation — the load-bearing path since the second builder was cancelled
+    on 2026-08-14 (predeclaration banner; §4.F).
+
+    Organised by the ONLY thing that matters once there is nothing to compare against: whether a
+    check has power over an EXTERNAL fact, or merely re-reads the builder's own declarations.
+    `BEN-186`'s lesson generalises — an artifact validated against its own metadata proves the
+    builder was self-consistent, which is real and is not what anyone wants.
+
+    Externally-powered checks recompute the declared value from an independent source. Everything
+    else is labelled `self_declared` so a reader cannot mistake it for verification.
+    """
+    import pathlib
+    root = pathlib.Path(repo_root) if repo_root else pathlib.Path(__file__).resolve().parents[3]
+    ext, dec, fails = {}, {}, []
+
+    def E(name, ok, detail=""):
+        ext[name] = {"pass": bool(ok), "detail": detail, "power": "external"}
+        if not ok:
+            fails.append(name)
+
+    def D(name, ok, detail=""):
+        dec[name] = {"pass": bool(ok), "detail": detail,
+                     "power": "self-declared -- proves consistency, not correctness"}
+        if not ok:
+            fails.append(name)
+
+    missing = [k for k in REQUIRED_KEYS if k not in art or art.get(k) is None]
+    if missing:
+        return {"verdict": "UNRESOLVED", "missing_required": missing,
+                "why": "required keys absent; this is NOT a pass"}
+
+    c = np.asarray(art["C_stat"], float)
+    mask = np.asarray(art["reported_mask"], bool).ravel()
+    n_rep = int(mask.sum())
+
+    # --- EXTERNAL: the frozen grid, re-asserted against the loader's own literals -------------
+    E("edges_pt_canonical",
+      np.array_equal(np.asarray(art["edges_pt"], float), CANONICAL_PT_EDGES))
+    E("edges_pparallel_canonical",
+      np.array_equal(np.asarray(art["edges_pparallel"], float), CANONICAL_PPARALLEL_EDGES))
+    E("harness_constants_match_loader", verify_constants_against_loader(root)["ok"])
+
+    # --- EXTERNAL: layout_fingerprint RECOMPUTED, not trusted -------------------------------
+    # This is the single cheapest conversion of a declaration into a check. Reuses the production
+    # function (fps_provenance.layout_fingerprint) rather than restating its payload, so a change
+    # to the construction cannot silently desynchronise this from the thing it validates.
+    try:
+        sys.path.insert(0, str(root / "nd-unfolding"))
+        import fps_provenance as FP
+        recomputed = FP.layout_fingerprint(np.asarray(art["edges_pt"], float),
+                                           np.asarray(art["edges_pparallel"], float))
+        E("layout_fingerprint_recomputed", str(art["layout_fingerprint"]) == recomputed,
+          f"declared={str(art['layout_fingerprint'])[:16]} recomputed={recomputed[:16]}")
+        ext["mask_fingerprint_recomputed"] = {
+            "value": FP.mask_fingerprint(mask), "power": "external",
+            "note": "reported for adoption checking; NOT required to equal the canonical FPS "
+                    "value -- require_reported_mask hard-codes 266 and would reject a correct "
+                    "262-cell PET mask (lane B's REQUIREMENTS §0.1)"}
+    except Exception as exc:                                   # noqa: BLE001
+        E("layout_fingerprint_recomputed", False, f"could not recompute: {exc}")
+
+    # --- EXTERNAL: which known mask is this? -------------------------------------------------
+    known = {262: "PET nominal reported set (state/pet-nominal-reported-cells-20260814.json)",
+             266: "canonical FPS lgbm mask (fps_reported_mask.json)"}
+    ext["mask_identity"] = {"n_reported": n_rep, "matches_known_count": known.get(n_rep),
+                            "power": "external",
+                            "note": "262 is a strict subset of 266, verified in "
+                                    "state/cstat-mask-nesting-262-in-266-20260814.json"}
+    E("mask_is_full_grid_length", mask.size == N_CELLS, f"got {mask.size}, expected {N_CELLS}")
+
+    # --- EXTERNAL: shape must follow the MASK, not a declaration ----------------------------
+    # Shape is not pinned pending C's §3.1 ruling; either accepted form is recorded, and the
+    # covariance is required to be consistent with the mask the builder itself shipped.
+    full, reduced = c.shape == (N_CELLS, N_CELLS), c.shape == (n_rep, n_rep)
+    E("shape_consistent_with_shipped_mask", full or reduced,
+      f"C_stat {c.shape}; mask implies (285,285) or ({n_rep},{n_rep})")
+    ext["shape_form"] = {"value": "full-grid" if full else ("reduced" if reduced else "neither"),
+                         "power": "external", "pending": "C's REQUIREMENTS §3.1 ruling"}
+
+    # --- EXTERNAL: the reduction, if both forms shipped -------------------------------------
+    # Closes the object gap of BEN-185: if the compared object is the full grid but the PUBLISHED
+    # object is the reduction, the reduction is verified by nobody. One numpy line, and under one
+    # builder it is one of the few checks that can fail on a genuine arithmetic mistake.
+    if "C_stat_reduced" in art and art["C_stat_reduced"] is not None and full:
+        red = np.asarray(art["C_stat_reduced"], float)
+        idx = np.flatnonzero(mask)
+        E("reduced_equals_full_restricted_to_mask",
+          red.shape == (n_rep, n_rep) and np.array_equal(red, c[np.ix_(idx, idx)]),
+          f"reduced {red.shape} vs expected ({n_rep},{n_rep})")
+    elif full:
+        ext["reduced_form_absent"] = {
+            "power": "n/a",
+            "note": "no C_stat_reduced shipped, so the reduction to the published object is "
+                    "OUTSIDE the verified scope (BEN-185 shape)"}
+
+    # --- EXTERNAL: rank, measured rather than read ------------------------------------------
+    t1 = tier1_structure(c, "artifact", n_replicas=int(art["n_replicas"]))
+    if t1.get("finite"):
+        ev = np.linalg.eigvalsh((c + c.T) / 2.0)
+        lmax = float(np.max(np.abs(ev)))
+        measured = int((np.abs(ev) >= 1e-10 * lmax).sum()) if lmax > 0 else 0
+        E("rank_matches_declared", measured == int(art["rank_at_1em10_lambda_max"]),
+          f"declared={art['rank_at_1em10_lambda_max']} measured={measured}")
+        E("rank_within_replica_ceiling", measured <= int(art["n_replicas"]),
+          f"measured={measured} n_replicas={art['n_replicas']}")
+    fails += [f for f in t1["fails"] if f not in fails]
+
+    # --- EXTERNAL: member digests recomputed from disk (the strongest check here) ------------
+    declared = [x.decode() if isinstance(x, bytes) else str(x)
+                for x in np.asarray(art["member_sha256"]).ravel()]
+    if replica_dir:
+        rd = pathlib.Path(replica_dir)
+        found = sorted(rd.rglob("GATE5_REPLICA_XSEC.npz"))
+        actual = [sha256_file(p) for p in found]
+        E("member_digests_match_disk", sorted(declared) == sorted(actual),
+          f"declared {len(declared)}, found {len(actual)} on disk")
+        E("member_count_is_n_replicas", len(actual) == int(art["n_replicas"]))
+    else:
+        ext["member_digests_not_recomputed"] = {
+            "power": "NONE", "note": "no --replica-dir given; the declared digests were NOT "
+                                     "checked against disk, which is the whole point of the field"}
+    E("member_digests_distinct", len(set(declared)) == len(declared),
+      f"{len(set(declared))} distinct of {len(declared)}")
+    ids = np.asarray(art["replica_ids"]).ravel().tolist()
+    E("replica_ids_distinct", len(set(ids)) == len(ids))
+
+    # --- EXTERNAL-ish: symmetry BEFORE symmetrisation ---------------------------------------
+    # Post-symmetrisation symmetry is vacuous: the spec instructs builders to symmetrise, so it
+    # holds by construction on every artifact forever. The informative number is the one that was
+    # symmetrised away, which is why it is a REQUIRED field.
+    asym = float(art["asymmetry_before_symmetrisation"])
+    E("presymmetrisation_asymmetry_is_roundoff", asym <= 1e-9,
+      f"{asym:.3e} -- existing gates demand <= 1e-9; a value far above is a real bug that "
+      f"symmetrising hides")
+    ext["presymmetrisation_asymmetry"] = {"value": asym, "power": "external"}
+
+    # --- SELF-DECLARED: consistency only ----------------------------------------------------
+    D("dof_equals_n_replicas_minus_1",
+      int(art["dof"]) == int(art["n_replicas"]) - 1, f"dof={art['dof']} n={art['n_replicas']}")
+    D("centering_as_specified", str(art["centering"]) == EXPECTED_CENTERING,
+      f"got {art['centering']!r}")
+    D("ravel_order_C", str(art["ravel_order"]) == EXPECTED_RAVEL_ORDER)
+    D("n_replicas_matches_ids", len(ids) == int(art["n_replicas"]))
+
+    return {
+        "verdict": "PASS" if not fails else "FAIL",
+        "fails": fails,
+        "externally_powered": ext,
+        "self_declared_only": dec,
+        "structure": t1,
+        "SCOPE": (
+            "NOTHING HERE HAS POWER OVER THE COVARIANCE VALUES. Every element could be wrong by a "
+            "factor, or computed from the wrong 50 vectors in the right files, and every check "
+            "above still passes. With one builder there is no independent recomputation; see "
+            "COMPARATOR-PREDECLARATION-20260814-cstat.md sec 4.F."),
+        "single_builder": True,
+    }
+
+
 def compare(a, b):
     """Three-branch verdict. UNRESOLVED is NOT agreement and must never be reported as one."""
     t0 = tier0_identity(a, b)
@@ -415,7 +602,7 @@ def compare(a, b):
         report["tier0_fails"] = t0["fails"]
         return report
 
-    ca, cb = np.asarray(a["cov"], float), np.asarray(b["cov"], float)
+    ca, cb = np.asarray(a["C_stat"], float), np.asarray(b["C_stat"], float)
     t1a, t1b = tier1_structure(ca, "A"), tier1_structure(cb, "B")
     t2 = tier2_elementwise(ca, cb)
     t3 = tier3_derived(ca, cb)
@@ -463,13 +650,15 @@ def _self_test():
     x = rng.normal(size=(N_REPLICAS, N_CELLS))
     c = np.cov(x, rowvar=False, ddof=1)
     art = {"_path": "<synthetic>", "_sha256": "n/a", "_missing_required": [],
-           "cov": c, "bin_order": FROZEN_BIN_ORDER, "edges_pt": CANONICAL_PT_EDGES,
+           "C_stat": c, "ravel_order": EXPECTED_RAVEL_ORDER,
+           "reported_mask": np.ones(N_CELLS, bool), "layout_fingerprint": "f" * 64,
+           "edges_pt": CANONICAL_PT_EDGES,
            "edges_pparallel": CANONICAL_PPARALLEL_EDGES, "n_replicas": N_REPLICAS,
-           "ddof": 1, "centring": "replica-mean",
-           "replica_seeds": np.arange(N_REPLICAS),
+           "dof": N_REPLICAS - 1, "centering": EXPECTED_CENTERING,
+           "replica_ids": np.arange(N_REPLICAS),
            "member_sha256": np.array([f"{i:064x}" for i in range(N_REPLICAS)])}
     b = dict(art)
-    b["cov"] = c.copy()
+    b["C_stat"] = c.copy()
     rep = compare(art, b)
     _print(rep)
     assert rep["verdict"] == "AGREE", "M0 negative control failed: harness rejects B == A"
