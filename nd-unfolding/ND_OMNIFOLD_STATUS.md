@@ -18,8 +18,11 @@ default. Array `56935552_[0-49]` then exposed a changed launcher defect: replica
 worktree. No xsec/summary/receipt was published. The array was canceled before the remaining identical
 failures; original after-any validator `56935553` and its watch are preserved to record the partial-family
 BLOCK. A changed continuation explicitly binds the canonical data-root flux and reuses only atomically
-complete pushes after validation; `C_stat` remains null. Exact failure receipt:
-`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact promotion receipt:
+complete pushes after validation. It is now submitted as array `56936015_[0-49]` from immutable HEAD
+`2f65a36`, with changed after-any manifest `56936016`; both terminal watches are armed. Replica 0 is the
+only pre-existing complete push. `C_stat` remains null. Exact active receipt:
+`../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`. Exact failure receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact training promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array

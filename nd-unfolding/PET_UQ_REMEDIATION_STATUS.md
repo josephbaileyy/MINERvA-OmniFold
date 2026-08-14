@@ -416,6 +416,12 @@ failure. Original after-any validator `56935553` and its watch remain intact and
 partial family. The changed path passes 184/184 tests, requires an explicit canonical data-root `--mcfile`,
 and reuses a push only after its completion marker revalidates. No subset is selected and `C_stat` is null.
 Receipt: [`state/gate5-extraction-failure-56935552.json`](../docs/orchestration/state/gate5-extraction-failure-56935552.json).
+The repaired code and evidence landed at `2f65a36`; changed array `56936015_[0-49]` now depends
+`afterany:56935552`, so no replacement can overlap the predecessor. Changed manifest `56936016` depends
+after-any on that array. Both new terminal watches are armed, while original manifest/watch `56935553`
+remain preserved. At submission only replica 0 had a reusable complete push; all final products remained
+absent. Active receipt:
+[`state/gate5-extraction-r2-active-56936015.json`](../docs/orchestration/state/gate5-extraction-r2-active-56936015.json).
 
 **Update 2026-08-14 09:14 UTC — FULL-INPUT EXTRACTION IMPLEMENTATION ACCEPTANCE PASS.** A dedicated
 replica adapter leaves the Gate-4-pinned nominal extractor byte-unchanged and calls its engine

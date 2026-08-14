@@ -7164,3 +7164,20 @@ all final collision guards, and waits for the predecessor to terminate before wr
 runtime battery passes 184/184. No subset, `C_stat`, Gate-6/`C_ML`, provider dispatch, reset credit, or
 worker replacement occurred. Receipt:
 `../docs/orchestration/state/gate5-extraction-failure-56935552.json`.
+
+### 2026-08-14 09:51 UTC — Changed Gate-5 extraction continuation launched
+
+The repair and failure evidence were committed and pushed at `2f65a36`, then checked out into immutable
+clean worktree `gate5-extraction-r2-frozen-2f65a36`. Submission preflight found exactly one published
+extraction artifact pair: replica 0's valid complete push and marker. No xsec, summary, task receipt, or
+other replica push existed. Changed array `56936015_[0-49]` depends `afterany:56935552`, retains the
+ten-A100 concurrency cap, and will reuse replica 0 only after the runtime marker/content gate passes.
+Every other member performs its full push once. Every xsec call receives the canonical data-root flux
+explicitly.
+
+Changed CPU manifest `56936016` depends `afterany:56936015` and still requires a bare 50/50 family PASS.
+Original manifest `56935553` was not canceled or repurposed: it remains independently watched and will
+record the first array's partial-family BLOCK. Watches `gate5-extraction-r2-56936015` and
+`gate5-extraction-r2-manifest-56936016` are armed. `C_stat` remains null; no subset, provider dispatch,
+reset credit, UUID change, Gate-6, or `C_ML` action occurred. Active receipt:
+`../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`.

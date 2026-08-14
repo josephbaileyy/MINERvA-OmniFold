@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:50:58Z",
+  "campaign": "Gate-5 N=50 coherent PET full-input extraction changed continuation",
+  "job_id": "56936015",
+  "cpus_per_task": 32,
+  "memory_per_task": "57472M queue default",
+  "time_limit": "02:00:00",
+  "qos": "gpu_shared",
+  "prerequisite": {
+    "training_promotion_receipt": "docs/orchestration/state/gate5-training-family-promotion-56933831.json",
+    "training_members_passing": 50,
+    "source_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "failed_predecessor_receipt": "docs/orchestration/state/gate5-extraction-failure-56935552.json",
+    "failed_predecessor_job_id": "56935552",
+    "dependency": "afterany:56935552"
+  },
+  "immutable_code": {
+    "head": "2f65a3622f2dfc88ecc3b4caa5fac2021693c39b",
+    "worktree": "/pscratch/sd/j/josephrb/gate5-extraction-r2-frozen-2f65a36",
+    "clean_at_submission": true,
+    "replica_extractor_sha256": "21df679d2eae4cef67ae060a106c32eeb9039c0fa7bf5435ef3c3ab6070e174c",
+    "array_launcher_sha256": "90759f87ea532c5e03c9ad081ff300ea5f512b44ef95f1bb530643f1d2b2f17e",
+    "submit_controller_sha256": "2496885b3dc51975fe4961ad88401bf3c270fefd3fc233401e5ad83ca5dce425",
+    "family_validator_sha256": "148c7a77aeea3195ce72a487f4b2364bebfbbd98c0f7b2b5b5f0a09477b77c8e",
+    "validator_launcher_sha256": "bd46d514be7a287379241bc1ec7867743ad38307178f0480fef36234827effd6",
+    "gate4_pinned_nominal_extractor_sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+    "loader_sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+  },
+  "changed_contract": {
+    "canonical_flux": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+    "explicit_mcfile_required": true,
+    "push_reuse_requires_valid_atomic_marker": true,
+    "final_products_remain_no_clobber": true,
+    "tests": "184 passed in 6.29s under tensorflow/2.15.0"
+  },
+  "reused_predecessor_work": {
+    "replicas_with_complete_push_at_submission": [0],
+    "replica_0_push_sha256": "4cb93ea0c4dd842e5de2a21b86b4e50e2ea010b977cac779320f476acd94b276",
+    "replica_0_marker_valid": true,
+    "other_replicas_with_published_extraction_products": 0
+  },
+  "array": {
+    "tasks": "0-49",
+    "concurrency_cap": 10,
+    "state_at_receipt": "PENDING_PRIORITY",
+    "resources_per_task": "1 A100, 32 CPUs, queue-default 57472M, 2h wall",
+    "output_namespace": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_XX/extraction",
+    "logs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/extract_56936015_<task>.{out,err}",
+    "sole_writer_after_predecessor_terminal": true
+  },
+  "changed_complete_manifest": {
+    "job_id": "56936016",
+    "dependency": "afterany:56936015",
+    "pass_requirement": "GATE5_EXTRACTION_FAMILY_COMPLETE_PASS and exactly 50/50"
+  },
+  "preserved_original_manifest": {
+    "job_id": "56935553",
+    "state_at_receipt": "PENDING_RESOURCES",
+    "watch_id": "gate5-extraction-manifest-56935553",
+    "role": "record original array 56935552 as a truthful partial-family BLOCK"
+  },
+  "watches": [
+    {
+      "watch_id": "gate5-extraction-r2-56936015",
+      "kind": "slurm-array",
+      "state": "armed"
+    },
+    {
+      "watch_id": "gate5-extraction-r2-manifest-56936016",
+      "kind": "slurm-job",
+      "state": "armed"
+    }
+  ],
+  "C_stat": null,
+  "subset_selected": false,
+  "gate6_or_C_ML_action": false,
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "worker_uuid_changed": false,
+  "next_authorized_action": "External Slurm execution and terminal changed-family validation under the armed watches; promote only after changed manifest 56936016 reports exactly 50/50 PASS."
+}
