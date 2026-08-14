@@ -1,8 +1,31 @@
 # REQUIREMENTS — what `C_stat` must look like to compose into the P5B assembly
 
-**Author:** Lane B (Gate 6), builder 1 under `OI-121`. **Date:** 2026-08-14.
-**Status:** INPUT TO LANE C'S SPEC. Written *before* any implementation, deliberately — `OI-121`'s
-dual-construction value dies if builder 1 codes first and the spec becomes a rubber stamp of it.
+**Author:** Lane B (Gate 6), **the sole builder** under `OI-121`. **Date:** 2026-08-14.
+**Status:** INPUT TO LANE C'S SPEC. Written *before* any implementation, deliberately.
+
+> **AMENDED 2026-08-14 — THE DUAL BUILD IS DROPPED. Joseph, verbatim: *"Okay yeah drop the second
+> builder"*.** This document was written as builder 1's input to a two-builder design. **There is now
+> one builder and there was never a second.** Four reasons, all measured: (1) lane D established that
+> `Xc.T @ Xc` and `np.einsum` are **bitwise identical** because NumPy routes both to the same BLAS
+> `dgemm` — reproduced independently by the mediator at `0.000e+00` (`BEN-188`); (2) C's spec pins
+> `dof`, `centering`, `ravel_order` and member selection, which were the only decisions two builders
+> could genuinely have diverged on; (3) both `codex` accounts are out of quota; and (4) **I had already
+> read and quoted the in-tree recipe** (`combine_cstat_bkgsub.py:57-58`) in §0.3 while auditing for
+> exactly this leak, so I cannot serve as an implementation independent of it.
+>
+> **WHAT THE RECEIPT MAY AND MAY NOT CLAIM — the part that outlives this decision.**
+> **MAY:** spec conformance; a regression comparison against the established in-tree recipe; and that
+> D's element-wise harness found no ordering or permutation defect — a real result, because D measured
+> that a permutation is invisible to trace, to the eigenvalue spectrum, and to every structural
+> property, and is caught **only** by per-cell comparison.
+> **MAY NOT:** independent construction, independent verification, or that two implementations agreed.
+> **They did not; there was one.** The two-builder machinery will remain in git history looking like it
+> proved something, so **an ambiguous receipt will be read as the stronger claim.** State it in plain
+> words.
+>
+> §0.3 below is retained unedited as the audit that produced reason (4). Its conclusion was right and
+> its consequence was larger than I drew — it did not merely weaken the dual build, it disqualified me
+> as its second arm.
 
 **What this document is not.** It contains no covariance code and no implementation. Every convention
 below is either (a) already fixed by a committed artifact or executable check, cited by file and line,
@@ -86,7 +109,14 @@ trap: `mask_hash` and `mask_fingerprint` (`:161`, `:168`) are two different func
 different strings for the same mask (`mask_hash` appends `:n266/285`). A builder that picks the wrong
 one gets a plausible hex string that binds nothing.
 
-### 0.2 The blocking sub-question bites — and it is neither new nor a reason to delay the builders
+### 0.2 The rank question — CLOSED. Read this section as the derivation of a settled answer, not an open item
+
+> **CLOSED 2026-08-14.** It was predeclared before launch
+> (`PREDECLARATION-20260813-gate5-coherent-replicas-n50.md`: *"Rank is not the criterion"*), the
+> treatment is field-normal for multisim covariances, and the number that settled it is the trace
+> fraction in point 3 below: **`C_stat` + `C_ML` + norm are 0.323% of the total variance trace.** Do not
+> re-open it. What follows is the derivation, kept because a settled answer with no recoverable
+> derivation is the thing this repo keeps having to rebuild.
 
 The peer flagged: 50 replicas ⇒ rank ≤ 49; if bins > 49 the matrix is singular. **It is singular, by a
 wide margin, and the repo already knows.**
@@ -396,6 +426,8 @@ Required, with the reason each one is required:
 | `ravel_order` | `"C"` | §1.1 |
 | `centering` | string, `"replica_mean"` | §5 |
 | `units` | string | §2 |
+| **`asymmetry_before_symmetrisation`** | float | **REQUIRED, promoted by C on D's catch.** "Symmetrise, then check symmetry" is **vacuous** — post-symmetrisation every artifact passes by construction. The *pre*-symmetrisation value is the only informative one: `~1e-16` is healthy, `1e-9` means a plumbing defect nothing downstream can see |
+| **`member_sha256`** | list of 50 hex digests | **REQUIRED, not optional.** The digest of each `GATE5_REPLICA_XSEC.npz` actually read. **`replica_ids` proves what you believe you used; digests prove what you read.** Live reason: the failed r1 array `56935552` and the live r2 array `56936015` **write to the same output root**. Nothing is contaminated (r1 died before writing any product; the directory holds 17 products, all in r2's window) — but a glob would have taken r1's output had it existed |
 
 **Symmetry.** `(Z.T @ Z)` is symmetric up to floating-point summation order only. The existing gates
 demand `rel_asymmetry <= 1e-9` (`p4_validate_active_lateral_fps.py:66,123`) and
@@ -408,7 +440,20 @@ TH2D (the FPS/GBDT convention, `combine_seedscan_split.py:99`, hist name suffix 
 chain is npz and pure-numpy login-node-runnable, which I'd prefer for a dual-build comparison because
 element-wise comparison by D is trivial on npz and needs ROOT on TH2D. **C's call.**
 
-### 3.1 A REAL DISAGREEMENT with lane D's comparator predeclaration — surface this before builders start
+### 3.1 A REAL DISAGREEMENT with lane D's comparator predeclaration — RESOLVED 2026-08-14
+
+> **RESOLVED IN FAVOUR OF `(n_reported, n_reported)`.** D has read this document and is realigning its
+> harness to C's names and C's `(n_reported, n_reported)` shape, *"having wrongly assumed `(285,285)`."*
+> So the reconciliation I proposed below — emit `(285,285)`, reduce once in assembly — **was not
+> adopted, and the simpler resolution won: one shape, the reported sub-space, everywhere.** Recorded
+> because surfacing the conflict was the point of the section and the outcome was the opposite of my
+> proposal; the section is kept unedited below so the disagreement and its resolution are both legible.
+> **The one requirement that survives regardless is D's, not mine:** the reduction must be expressed by
+> a **shipped boolean mask, never an index range** (`:50-51`), because the reported set is contiguous
+> only within rows. And **the `BEN-189` consequence still applies to any full-grid intermediate** a
+> builder forms internally.
+
+
 
 The table above says the component lives on the **reported sub-space**,
 `(n_reported, n_reported)`, because that is what every existing component is and what
