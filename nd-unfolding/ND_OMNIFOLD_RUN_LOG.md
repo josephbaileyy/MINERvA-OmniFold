@@ -7033,3 +7033,55 @@ pending on CPU resources with a 30-minute wall, writes only job-scoped validatio
 terminal watch `gate5-family-validate-56933831` armed. The absence of a live interactive allocation
 made this short durable batch the collision-free route; no duplicate validator or replica writer was
 created. Receipt: `../docs/orchestration/state/gate5-family-validator-active-56933831.json`.
+### 2026-08-14 ~01:45 PDT — GATE 5 FAMILY IS 50/50 AND THE VERDICT IS `FAMILY_COMPLETE_PASS` AT FULL STRENGTH (lane C)
+
+Both arrays terminal. `56857232` 50 COMPLETED, `56857233` 50 COMPLETED, **queue fully drained, zero
+failures at any point in either array.** 50 target receipts, 50 training receipts, 50 weights `.npz`,
+every artifact carrying its `.done` marker.
+
+**Parity verified in the SAME TURN as the run, before it, not hours earlier** — 2 of 2 `CURRENT`, exit 0,
+repo `d2bc94b`, and `git log HEAD..origin/main` empty over both deployed paths. *A 50/50 pass from a copy
+whose parity was not checked is not evidence* is my own sentence and it applies to my own output.
+
+**The run was full strength: no `--skip-replay`, `--source-npz` supplied.** The three-stream re-draw
+actually ran — ~49M signal variates per member across 50 members. Exit 0, stderr empty.
+
+```
+verdict            FAMILY_COMPLETE_PASS        <-- BARE, no suffix
+weakened_axes      []
+is_full_strength   True
+replay_performed   True
+targets            50 PRESENT / 50 PASS        58 checks per row
+trainings          50 PRESENT / 50 PASS        24 checks per row
+name mismatches    0
+family failures    NONE
+C_stat             null
+```
+
+`58` checks per target row is worth reading against history: **50** at the pre-repair promotion, **54**
+after R1–R4 with replay skipped, **58** with the replay performed. The gate the family passed tonight is
+materially stronger than the one it would have passed this morning.
+
+**Evidence rescued off scratch immediately**, because tonight's own lesson was a promotion report living
+only on purgeable scratch with its digest bound in four places. Doing that twice would be inexcusable.
+`state/gate5-family-promotion-evidence-20260814/`, report `ca99effa…` (277,601 B) **re-verified after the
+copy**, and **the verdict re-derived from the committed copy rather than from the scratch read**.
+
+**The draw is live across the whole family** — 50 of 50 distinct on target digests, all three factor-hash
+streams, and weights digests; 50 distinct `R` from `1.1225496…` to `1.1253110…` with the nominal
+`1.1240802949941018` **strictly inside**. A collapsed draw would show identical values. Diagnostic of the
+draw, **not** a component of `C_stat`.
+
+**`BEN-230`'s check ran on 50 of 50 members and agreed 50 of 50** — its first exercise on the full live
+family, hours after codex's mutation test showed 57 of 57 checks passing a 13.6% shift in `R`. Its limit
+is unchanged and stated: length and sum, **not identity**; `replica_03` and `replica_08` still share
+`n_data_effective = 4114512` with differing hashes, so the bound is real in this very family.
+
+**What tonight does NOT do, stated because a pass invites over-reading.** `C_stat` is still `null` and
+this lane did not construct it — the reconciler has no covariance code by design, and that design does
+not stop applying now that the family is complete. `FAMILY_COMPLETE_PASS` is the
+completeness-and-coherence gate; **extraction and centring on the replica mean are the next step and a
+separate, reviewable action.** It does not close `OI-60`, and no run of this tool can. Five residuals are
+carried forward explicitly in the receipt rather than allowed to drift into looking closed.
+
+`GATE5_CODE_ROOT` was never touched, across the whole campaign.

@@ -419,6 +419,21 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-14 ~01:45 PDT — GATE 5 FAMILY 50/50, `FAMILY_COMPLETE_PASS` AT FULL STRENGTH. `C_stat` still not constructed.**
+Both arrays terminal with **zero failures at any point**; queue drained. The run was full strength — no
+`--skip-replay`, `--source-npz` supplied, so the ~49M-variate three-stream re-draw actually ran — and
+parity was verified **in the same turn, before the run** (2 of 2 `CURRENT`, repo `d2bc94b`). Verdict is
+the **bare** `FAMILY_COMPLETE_PASS`: `weakened_axes []`, `is_full_strength true`, 50/50 targets and 50/50
+trainings passing, zero name mismatches, zero family failures, **58 checks per target row** (50 at the
+pre-repair promotion, 54 after R1–R4 with replay skipped). 50-of-50 distinct on target digests, all three
+factor streams and weights digests; 50 distinct `R` straddling the nominal. **`BEN-230`'s check ran and
+agreed on 50 of 50** — its first exercise on the full family — with its length-and-sum limit restated.
+Evidence rescued off scratch immediately and the verdict **re-derived from the committed copy**
+(`ca99effa…`, 277,601 B). **`C_stat` is null and was not constructed:** this is the
+completeness-and-coherence gate, and extraction plus centring on the replica mean is the next step and a
+separate reviewable action. `OI-60` is not closed. Receipt
+[`state/gate5-family-complete-pass-20260814.json`](../docs/orchestration/state/gate5-family-complete-pass-20260814.json).
+
 **Update 2026-08-13 ~18:40 PDT — the repaired reconciler is DEPLOYED and parity is MEASURED; still `PARTIAL` at 25 of 50.**
 Parity both directions in one turn: BEFORE `STALE_BUT_COMMITTED` + `atomic_write.py` **MISSING** (exit
 3), AFTER **2 of 2 CURRENT** (exit 0), with cluster and local `sha256sum` agreeing independently of the

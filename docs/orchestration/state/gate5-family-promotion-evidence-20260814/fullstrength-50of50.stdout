@@ -1,0 +1,15 @@
+{
+  "C_stat": null,
+  "counts": {
+    "targets_absent": 0,
+    "targets_passing": 50,
+    "targets_present": 50,
+    "trainings_in_progress": 0,
+    "trainings_name_mismatch": 0,
+    "trainings_not_started": 0,
+    "trainings_passing": 50,
+    "trainings_present": 50
+  },
+  "family_failures": [],
+  "verdict": "FAMILY_COMPLETE_PASS"
+}
