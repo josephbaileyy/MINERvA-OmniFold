@@ -25,6 +25,7 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 | Verify a physics claim | [`CLAIMS.md`](CLAIMS.md), [`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) |
 | Quote or replace a value | [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md), [`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) |
 | Apply receipt requirements | [`CONVENTION-receipt-ingredients.md`](CONVENTION-receipt-ingredients.md) |
+| Verify a check is deployed / added a gate or hook check | [`CONVENTION-verifying-a-check-is-deployed.md`](CONVENTION-verifying-a-check-is-deployed.md) |
 | Work on quarantine discharge | [`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md), [`DETERMINATION-20260811-cause5-binding-half.md`](DETERMINATION-20260811-cause5-binding-half.md) |
 | Work on standard-P4 provenance | [`PROVENANCE-DEBT-20260810-standard-p4.md`](PROVENANCE-DEBT-20260810-standard-p4.md), [`P4_STANDARD_STATUS.md`](../../nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md) |
 | Work on PET remediation | [`PET_UQ_REMEDIATION_STATUS.md`](../../nd-unfolding/PET_UQ_REMEDIATION_STATUS.md) |
