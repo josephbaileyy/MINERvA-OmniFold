@@ -1,0 +1,106 @@
+{
+  "schema": "gate5-cstat-claims-boundary-v1",
+  "component": "C_stat, PET full-event extended-FPS, Gate-5 50-replica family",
+  "builder": "Lane B (Gate 6), SOLE builder under OI-121",
+  "spec": "docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md",
+  "built_at_utc": "2026-08-14T14:37Z",
+  "artifact": "docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz",
+  "artifact_sha256": "6c3b4e00910397953269527964d2803966f73ee01548a6164f04cd78501623bc",
+  "artifact_sha256_verified_both_sides": true,
+  "builder_script": "nd-unfolding/pet/build_cstat_gate5_n50.py",
+  "builder_script_sha256": "ecc9abba35e768da401722603e50b58db73552af096d39f426cfa9aca480a3d3",
+
+  "WHAT_THIS_RECEIPT_CLAIMS": [
+    "SPEC CONFORMANCE. All 19 asserted clauses PASS, each recorded individually with its measured note in GATE5_CSTAT_N50_RECEIPT.json: CSTAT-R1a, R2, R2a, R2b, R3a, R3b, R3c, R3d, R3e, R3f, D0, D0a, D0e, D1, D2, D3a, D3d, R4a, and the re-derived precondition. Every one is an assertion in the builder that aborts on failure, not a post-hoc description.",
+    "REGRESSION COMPARISON against the established in-tree recipe. On the same rows and the same domain, my C is BIT-IDENTICAL to `Z = Xr - Xr.mean(0); C = (Z.T @ Z)/(n-1)` as written at combine_cstat_bkgsub.py:57-58 (and identically at combine_seedscan_split.py:65,68). max_abs_diff = 0.0.",
+    "THE REDUCTION IS EXACT. C == C_full[np.ix_(reported_mask, reported_mask)] compared by tobytes(), not by tolerance. This is the one check with power over a correct full matrix reduced through a wrong index set, and it is the check that still had teeth with one builder."
+  ],
+
+  "WHAT_THIS_RECEIPT_DOES_NOT_CLAIM": [
+    "NOT independent construction. There was ONE builder. The dual-build design was dropped by Joseph on 2026-08-14 ('Okay yeah drop the second builder').",
+    "NOT independent verification. No second implementation exists; nothing here is a two-implementation agreement.",
+    "NOT that two implementations agreed. They did not, because there was only one.",
+    "THE TWO-BUILDER MACHINERY REMAINS IN GIT HISTORY AND LOOKS LIKE IT PROVED SOMETHING. It did not. An ambiguous receipt would be read as the stronger claim, so this list is stated as plainly as the claims above."
+  ],
+
+  "THE_REGRESSION_COMPARISON_HAS_LIMITED_POWER_AND_HERE_IS_ITS_SCOPE": {
+    "has_power_over": "assembly, flattening order, and normalisation arithmetic",
+    "has_NO_power_over": "the DOMAIN choice (union of per-member reported cells vs the production chain's cv>0) and the CENTRING, both of which the spec fixed and neither of which the reference recipe would have contradicted",
+    "why_that_matters": "the reference is a two-line recipe, not an independent design. Reproducing it proves I did the same arithmetic, not that the arithmetic is the right one for this object."
+  },
+
+  "A_DATA_POINT_THAT_REFINES_BEN_188": {
+    "BEN_188_as_filed": "Xc.T @ Xc and np.einsum agreed to exactly 0.000e+00 because NumPy routed both to the same BLAS kernel, so perfect agreement between 'two implementations' is achievable with no independence at all.",
+    "measured_here": "on THIS matrix the two routes are NOT bit-identical: max_abs_diff = 3.3558256110433678e-93 between (Z.T @ Z) and np.einsum('ij,ik->jk', Z, Z), i.e. ~1e-17 relative.",
+    "so": "the bitwise agreement BEN-188 observed is not universal -- it depends on shape and kernel dispatch. BEN-188's LESSON is unaffected and stands ('establish that two COMPUTATIONS occurred, not two authors'), but its specific mechanism must not be relied on as a general fact. Recorded, not credited as independence."
+  },
+
+  "CSTAT_R7_REQUIRED_LIMITATION_THE_N50_PRECISION_SHORTFALL": {
+    "statement": "N = 50 gives a 10.10% fractional uncertainty on every estimated standard deviation. The retired N=100 predeclaration targeted 7.11%. That shortfall is stated here rather than implied.",
+    "arithmetic": "1/sqrt(2*(N-1)): N=50 -> 1/sqrt(98) = 0.10101525445522107; N=100 -> 1/sqrt(198) = 0.07106690545187015",
+    "provenance_of_the_two_targets": "N=50 was predeclared at PREDECLARATION-20260813-gate5-coherent-replicas-n50.md (6bd3707) on a stated precision criterion with Joseph's authorization, before any spread was observable. The N=100 figure is from PREDECLARATION-20260812-fullevent-cstat-100-replicas.md, whose supersession is UNRATIFIED and is OI-122.",
+    "OI_122_IS_STILL_OPEN_AND_THIS_COMPONENT_DOES_NOT_CLOSE_IT": "the 2026-08-12 predeclaration's verdict clause reads INSUFFICIENT for 'fewer than 100 complete manifests at assembly' (:73) and requires ' 100 complete' for PASS (:79). Read as committed, it labels this 50-member product INSUFFICIENT. The decision for 50 is defensible on every axis and this receipt does not dispute it -- what is missing is the supersession chain, and ratifying it is Joseph's, not a builder's."
+  },
+
+  "MEASURED_PROPERTIES_OF_THE_OBJECT": {
+    "n_members": 50,
+    "dof": 49,
+    "D_n_reported_DECLARED_from_mask": 262,
+    "n_reported_if_inferred_from_diag": 262,
+    "note_on_those_two_being_equal": "they agree here, so the inference trap did not bite. The field is published anyway because equality is a measurement, not a guarantee: a reported cell with zero replica variance would break it, and p4_validate_active_lateral_fps.py:72 does infer it that way (ISSUE-46 arm B).",
+    "union_domain": 262,
+    "intersection_domain": 257,
+    "flicker_cells_count": 5,
+    "flicker_cells_and_n_replicas_reported": [[209, 47], [254, 44], [255, 24], [256, 49], [281, 49]],
+    "WORST_FLICKER_CELL": "cell 255 is reported in only 24 of 50 draws -- close to a coin flip. In that cell roughly half the across-replica spread is the mask switching OFF, i.e. hard zeros, not cross-section fluctuation. CSTAT-D3c excludes the 5 flicker cells from any inversion or chi2; they are retained and flagged, not deleted.",
+    "quotable_cells_n_replicas_reported_eq_50": 257,
+    "never_reported_cells_count": 23,
+    "never_reported_cells": [228, 247, 248, 249, 250, 251, 252, 253, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280],
+    "never_reported_matches_independent_derivation": "this 23-cell set is EXACTLY the complement of lane D's published 262-cell index set (COMPARATOR-PREDECLARATION-20260814-cstat.md:50-51), derived here from 50 members by a different route than D derived it from the nominal. Independent agreement on the domain.",
+    "max_abs_asymmetry": 0.0,
+    "asymmetry_note": "exactly zero, and NOT symmetrised -- CSTAT-R4a forbids symmetrising because it would destroy the only evidence the two triangles ever agreed. 0.0 is the healthy value and it is a measurement, not a construction.",
+    "reduction_is_exact": true,
+    "trace": 2.2409360878365308e-76,
+    "sqrt_trace": 1.4969756470419052e-38,
+    "min_eig": -1.4855449849367267e-92,
+    "max_eig": 1.0135934487208105e-76,
+    "min_over_max_eig": -1.4656221257265772e-16,
+    "rank_at_1em10_lambda_max": 49,
+    "rank_note": "49 = N-1 exactly, as the Gram structure requires. CSTAT-O1 dispositioned this before launch; it is not a finding.",
+    "zero_variance_cells_count": 0,
+    "median_relative_sigma_over_the_262": 0.19207137023250503,
+    "median_relative_sigma_caveat": "this is the median over ALL 262 cells including the thin catch bins, which dominate an unweighted median on this grid (OI-120(a) measured frac-noise vs log-occupancy at -0.62). It is NOT the uncertainty on the bins carrying the spectrum and must not be quoted as one.",
+    "width_weighting_applied": false,
+    "width_weighting_note": "the array is a DENSITY (d2sigma/dpT dp_parallel), so this covariance has units cm^4/nucleon^2/(GeV/c)^4 and is NOT the covariance of the bin-integrated cross section. CSTAT-R1b: the two differ by diag(w) C diag(w) with w = outer(dpt, dpp) flattened, which is more than three orders of magnitude in places.",
+    "rank_treatment": "UNDECLARED — see CSTAT-O1",
+    "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+    "slurm_array_job_id": "56936015"
+  },
+
+  "CSTAT_O4_UPDATED_AT_THE_FULL_FAMILY": {
+    "family_relative_sd_of_total_at_N50": 0.05167310875083249,
+    "spec_quoted_value_measured_pre_completion": 0.04478,
+    "mean_total_sigma_cm2_per_nucleon": 1.8291664138474968e-37,
+    "process_non_determinism_floor_VL130": 0.019177893792105365,
+    "poisson_on_n_data_4116128": 0.000493,
+    "family_over_poisson": 104.8,
+    "floor_over_poisson": 38.9,
+    "floor_share_of_family_VARIANCE": 0.1377,
+    "quadrature_residual": 0.047982481779021056,
+    "residual_share_of_family_VARIANCE": 0.8623,
+    "WHAT_CHANGED": "the spec's CSTAT-O4 table quotes a 4.478% family spread measured before the family completed. At the full 50 it is 5.167%, so the floor's SHARE of the family variance falls from 18.35% to 13.77%. THE FLOOR ITSELF IS UNCHANGED -- only the denominator grew.",
+    "CAVEATS_THAT_TRAVEL_WITH_THIS": [
+      "the floor is measured on the 2M-subsample numerator from Leg F at n=4, not on the published full-inventory total",
+      "the quadrature split assumes independence of the two terms",
+      "the floor's n=4 carries 40.8% fractional uncertainty; draw 5 of 56863958 was still running when this was built"
+    ]
+  },
+
+  "WHAT_IS_STILL_OPEN_AND_THIS_BUILD_DOES_NOT_CLOSE": {
+    "OI_122": "the N=100 / N=50 supersession is unratified; Joseph's.",
+    "CSTAT_O1_rank_treatment": "the object is rank 49 of 262 by construction. The inversion convention is not this component's to declare.",
+    "CSTAT_O3_no_consumer": "assemble_ctotal_bkgsub.py is hard-coded 5D (SHAPE5 = (14,16,7,7,6), components at n_reported_bins = 10550) and cannot consume a 262x262 or 285x285 object. Emitting BOTH forms is what makes a future 2D assembler need no translation step, but that assembler does not exist.",
+    "CSTAT_O2a": "the with-draw non-determinism floor. Leg F now pins the NO-draw floor at 1.918%, so O2a needs one comparison rather than a baseline.",
+    "the_5_flicker_cells": "retained and flagged. Excluding them from inversion is CSTAT-D3c's rule; enforcing it is the consumer's job and no consumer exists yet."
+  }
+}
