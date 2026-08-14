@@ -60,9 +60,40 @@ session printed `pre-commit: 4 checks passed`, including the one whose whole pur
 This is `BEN-207`'s shape — *a PRESENT verdict is also a statement about the search* — applied to my own
 output: the disqualifying content was in the output I had already produced.
 
+## Two refinements from lane C, which observed this from the other side
+
+C hit the same mechanism as a *reader* and its evidence is better than mine, because C changed nothing and
+watched the behaviour change anyway. **C's commits went from `4 checks passed` to `5 checks passed` with no
+edit in its own worktree** — the transition happened when the main checkout's tree updated.
+
+**1. The arming is invisible, and it retroactively falsified a written statement.** C had recorded
+*"the pre-commit hook doesn't run the hash-binding gate."* That was **true when written and silently became
+false.** Nobody edited it; no signal marked the transition; and the sentence is exactly the kind a later
+session would rely on. **My finding said the gate was "not in force until the main checkout updates" and
+stopped there — the sharper point is that the update is unobservable from any worktree, so a correct
+statement about hook coverage has a shelf life set by someone else's `git pull`.** Same shape as `BEN-219`
+(right at write time, wrong at read time), in a different substrate.
+
+**2. A worktree can never test its own hook changes.** This is the part I got wrong in a way worth
+separating from carelessness. I wrote that I "chose the invocation instead of observing it," which implies the
+correct test was available and I skipped it. **It was not available.** From a worktree there is no way to make
+git run the worktree's hook, because `core.hooksPath` is absolute and shared; the only faithful test is to
+commit and read the count. **So `bash .githooks/pre-commit` was not a lazy substitute for the right check —
+it was the only local check that exists, and its limitation is structural.**
+
+That makes this `BEN-156` one level out — *the thing executing is not the thing you edited* — and the
+correct discipline is not "test harder locally" but **"treat the printed count as the only authority, and
+expect the arming to happen in someone else's commit."**
+
+**C declined to file these**, having exhausted block `130-159`, and declined an offered `230-239` on the
+grounds that **a deployment which produced no failure does not justify claiming a ten-block to hold
+nothing.** That reasoning independently reproduces this ledger's own rule 3 — *the block is claimed by the
+first filing into it, not reserved ahead of one* — and rule 3 has been sharpened with C's phrasing.
+
 ## The check
 
-**Verify a hook by reading what git ran, not by running what you wrote.**
+**Verify a hook by reading what git ran, not by running what you wrote** — and from a worktree, the only
+faithful reading is the count a real `git commit` prints.
 
 ```
 git config --get core.hooksPath      # absolute? then it is NOT your worktree's copy
