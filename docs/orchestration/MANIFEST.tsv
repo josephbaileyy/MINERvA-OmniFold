@@ -138,7 +138,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	35	74	7869
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	49	3218
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	737	118287
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	738	118495
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	2	102	6794
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
@@ -546,6 +546,7 @@ docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_bins.out
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_bins.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	47	2348
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_family.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	44	1710
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_family.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	82	4121
+docs/orchestration/state/gate5-cstat-spec-measurements-20260814/p5a_g1_guard_extracted_for_controls.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	0	36	1821
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/spread_and_nominal.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	64	3997
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/spread_and_nominal.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	53	2714
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/zero_cells.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	75	4028
