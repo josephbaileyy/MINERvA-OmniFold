@@ -2380,6 +2380,126 @@ The next legitimate retirement of a launch-code-gate receipt takes it to 1 and f
 `test_gate3_and_gate4_launch_code_freezes_specifically`. Independent of this review; A's, to act on or
 not.
 
+---
+
+# V51 — OI-22: do the passing tests cover what was asked, on the object that will be published?
+
+Taken as the verifier after codex reclassified `OI-22` from user decision to technical verification.
+**Measured at `866cec4`** (fast-forwarded from `464b903` before anything was run), in
+`.claude/worktrees/lane-d`, working tree clean — stated because this item is entirely a question about
+which object was measured, and `BEN-183` was mine.
+
+**ANSWER: NO, on both axes. It is an OBJECT gap, total — and a COVERAGE gap underneath it that would
+survive moving to the right object.** Per the acceptance criteria the object gap is where I stop; I did
+not attempt the proof.
+
+## The tests are real and they pass
+
+```
+$ python3 -m pytest nd-unfolding/tests/test_fullevent_fps.py \
+                    nd-unfolding/tests/test_fullevent_schema.py -q
+61 passed in 4.09s
+```
+
+## The object each runs against, by path
+
+**Synthetic fixtures in `tempfile` directories. Neither file opens a production artifact.**
+
+- `test_fullevent_schema.py:92` — `def synthetic(td, name="G2.npz", **over)`, docstring: *"A
+  contract-valid g2-fullevent-v1 fixture, written through the SAME gates a real dump is."*
+- `test_fullevent_fps.py` — sources built from `np.random.default_rng(seed)` and written with
+  `np.savez` into tempdirs (`pc.npz`, `ds.npz`, `bumped.npz`, `no_muon.npz`, …).
+
+## The final publication input, by path
+
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz`
+— read from `state/g2-gate1b-npz-validation-20260719.json` at key `/npz/path`.
+
+**It is ABSENT from this checkout.** `nd-unfolding/g2_fullevent/input/` contains exactly one file, the
+6,943-byte `G2_FPS_MEFHC_P12_RECEIPT.json`. No local test could read it.
+
+## They differ. That is the finding, and I checked both near-misses rather than asserting it
+
+Two places in the test tree name a production NPZ. **Neither reads one.**
+
+1. **`test_fullevent_fps.py:429`** puts `of_inputs_pc_fps_fullevent_g2.npz` in `_valid()` — a **string
+   value in a config dict** handed to `fe.assert_publication_config`. That function validates a
+   dictionary. The surrounding tests (`test_recoil_or_xps2_input_aborts` and friends) swap the string
+   for a wrong filename and assert `ValueError`. **Filename-string logic, never a file open.**
+2. **`test_pet_fullevent_nominal_launcher.py:409`** is the only test that would touch the real NPZ.
+   Measured:
+
+   ```
+   $ python3 -m pytest nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py -q -rs
+   SKIPPED [1] .../test_pet_fullevent_nominal_launcher.py:409: bound Gate-2 target NPZ not present
+   39 passed, 1 skipped in 0.72s
+   ```
+
+   And it would not close `OI-22` even unskipped: its own comment scopes it as *"config gate on the REAL
+   bound Gate-2 target (**marker read only**)"*.
+
+## The coverage gap, per property — this one would survive fixing the object
+
+Separated because the remedies differ and only one of the four is genuinely unproved.
+
+| property | on the fixture | note |
+|---|---|---|
+| schema parity | **proved** | dumper/loader column mirrors, `test_fullevent_schema.py:104-213` |
+| no-truth-leakage | **proved, with a working positive control** | `test_no_truth_leakage_invariant` (:207) plus `test_leakage_detector_catches_truth_injection` (:212), which makes the detector fire on injected truth |
+| order / read-through | **proved** | the extension blocks demonstrably reach the output |
+| **event-by-event alignment** | **NOT proved** | row-count only |
+
+**The alignment gap is self-declared by the best test that bears on it.**
+`test_the_extension_arrays_are_actually_read` (:161-179) permutes column 0 of `muon` and `vertex` and
+asserts `event_reco` changes. Its reasoning is careful and correct — the docstring explains why a
+permutation rather than an affine bump, *"the block is z-scored, so any affine change to a column leaves
+the output bit-identical."* **And it states its own ceiling in the next sentence:** *"the only thing it
+can detect is whether the per-row values reach the output at all."*
+
+**Sensitivity is not alignment.** A loader pairing `muon` row *i* with `cloud` row *j* also changes the
+output under permutation, so this test passes on a misaligned loader. That is the same shape as
+`OI-22`'s note that an independently permuted feature block evades all three
+`fullevent_dump_contract.py:99-112` identity checks — confirmed here from the test side.
+
+**The contract's admission is quoted accurately in the row.** `FULL_EVENT_FEATURE_CONTRACT.md:215`,
+verbatim: *"row-count alignment is enforced; a full event-by-event order proof (as
+`build_bkgsub_pointcloud_input.py` did against the ROOT) is a P5B hardening item."*
+
+## Scoping the remedy — the repo already contains the method, and the work splits in two
+
+`build_bkgsub_pointcloud_input.py` is a working precedent, and its docstring states the exact principle
+`OI-22` needs: *"a strict event-by-event alignment gate … **equal counts alone are NOT proof** (the two
+npz were built from different ROOTs by different loops)."* Its architecture is the one to copy — *"the
+numpy gate helpers below are import-safe (no ROOT) so the test suite can exercise them on synthetic
+fixtures; only `read_data_scalars_root` needs PyROOT and is imported lazily."* **Helpers fixture-tested,
+proof run against the real object.** That split is precisely what is missing here: the helpers exist,
+the against-the-real-object half was never run.
+
+**Two pieces, very different cost. They should not be bundled.**
+
+- **(a) No-truth-leakage + schema parity over the real NPZ.** Numpy only, no ROOT, one streaming pass
+  over 9.897 GB. `assert_no_truth_leakage` and the column-mirror checks already exist and take arrays —
+  this is a driver script plus a receipt, not new logic. **Cheap, and it closes two of the four
+  properties on the right object.**
+- **(b) Event-by-event alignment against the source ROOT.** Needs PyROOT plus
+  `merged/runEventLoopOmniFold_G2_FPS_MEFHC.root`, i.e. the cluster. This is the P5B hardening item the
+  contract already names. **Expensive, and the only one of the four that is unproved on any object.**
+
+Worth checking rather than assuming: the known Perlmutter ROOT/TF interpreter split should not bite
+here, since neither piece needs TensorFlow — but that is for whoever owns it to confirm, not a claim
+I measured.
+
+## What I did not do
+
+- **I did not attempt the proof**, per the acceptance criteria — the objects differ, so that is where
+  this stops.
+- **I did not read the NPZ or the ROOT.** Both are on scratch and absent here; every statement about
+  the publication input comes from `g2-gate1b-npz-validation-20260719.json`, not from the artifact.
+- **I did not touch** `/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059`, and ran nothing that
+  writes into a pinned tree — the two pytest invocations above are read-only and use tempdirs.
+- **61 passed / 39 passed+1 skipped are this checkout's results at `866cec4`.** On the cluster, where
+  the NPZ exists, the skipped test would run — and would still only check a marker.
+
 ## Gate 5 and Gate 6 — deliberately not reported
 
 The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*
