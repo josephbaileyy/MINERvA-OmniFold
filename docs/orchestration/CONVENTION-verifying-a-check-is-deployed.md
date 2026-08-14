@@ -51,6 +51,13 @@ $ git reset -q HEAD -- docs/OPEN_ITEMS.md && git checkout -- docs/OPEN_ITEMS.md
 
 **Why it beats the two cheaper things that look equivalent:**
 
+**AND THE SUCCESS LINE CANNOT BE IMPROVED IN PLACE, which closes the question rather than deferring it.**
+`run()` sends each check's output to a temp file and `cat`s it **only on non-zero exit**, so
+**`pre-commit: N checks passed` is not merely uninformative about what was checked — it is the ONLY thing a
+passing hook can ever say** (`BEN-226`, controlled). Do not propose making it more informative; propose a probe.
+The corollary for anyone extending a check: **advisory output added to a hook check is invisible to its author
+by construction**, because the author will test it by hand, where it prints.
+
 - **Reading the success count** verifies a hook *line* exists. It cannot see a stale *payload*, because the
   count is unchanged by a payload edit (`BEN-224`). It is the right check for the wrong half.
 - **Mutating the code on a copy and confirming the tests notice** catches a weak assertion but **not** a

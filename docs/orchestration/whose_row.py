@@ -587,6 +587,10 @@ def check_oi_ids(items) -> int:
       2. "ACCEPT BUT WARN" IS NOT IMPLEMENTABLE IN A HOOK. `.githooks/pre-commit`'s `run()` captures each
          check's output and `cat`s it ONLY on non-zero exit, so a passing check's output is discarded
          (BEN-226, measured with a control). The only available behaviours are fail or nothing.
+         A third branch -- RECORD, write the observation and have something else surface it -- was raised
+         and collapses: into the tree mid-commit it touches unstaged files and would corrupt this arm's own
+         HEAD-vs-staged diff; outside the tree it is a channel nobody watches; and to a destination that IS
+         watched it is simply the "put it in a test" remedy, not a third option.
       3. FAILING WOULD BLOCK A LEGITIMATE COMMITTER. Joseph filing in his own block is correct, and
          D's admitting rule -- a committer who did nothing wrong can always make it pass -- forbids it.
 

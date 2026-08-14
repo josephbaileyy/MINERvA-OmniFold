@@ -50,6 +50,24 @@ behaviours, fail or nothing, so the choice collapses to:
 2. **Nothing** — leaving the asymmetry, which is what was chosen, with the reason recorded in the check's
    docstring and a named unlock trigger rather than as an undocumented gap.
 
+**A third branch, raised by lane D with its own objection attached, recorded because *"we considered it and it
+collapses"* is more durable in a docstring than an absence** — the same reason `BEN-*` block `047-059` is
+annotated `DO NOT USE` rather than left silently empty:
+
+3. **Record** — the check writes an observation somewhere and something else surfaces it.
+
+**It does not collapse to "nothing"; it collapses in two directions, and only one of them is a trap.** D's
+objection covers the trap: **writing into the tree mid-commit touches unstaged files** — which here would also
+corrupt the block arm's own `HEAD`-versus-staged diff — and **writing outside the tree creates a channel nobody
+watches**, which is `BEN-156`'s shape (a check that exists and guards nothing) and `BEN-202`'s (reachable only
+by agents who already knew about it). Both are worse than nothing.
+
+**The other direction is not a trap and is already prescribed:** if the observation is recorded somewhere
+*already watched* — a test that reports, a surface someone reads — that is exactly the *"put advisories in a
+test"* remedy below. **So `record` is not a third option. It is the existing remedy when the destination is
+watched, and an unwatched channel when it is not**, and the only thing distinguishing them is a property of the
+destination rather than of the check.
+
 **What is actually lost is attribution, not collision-safety** — two parties both defaulting to the fallback
 and both running `max+1` collide, and the **duplicate** arm catches that. Attribution is `OI-62(c)` (three
 parties share one git identity), `WAITING-USER`.
