@@ -25,8 +25,9 @@ import numpy as np
 # --- predeclared thresholds. See section 1 of the predeclaration for the derivation. -------
 # Floor: 50 terms x eps = 1.1e-14 worst case, so 1e-12 is ~90x headroom above any legitimate
 # BLAS-vs-loop or pairwise-vs-naive summation difference.
-# Ceiling: ddof=0 vs ddof=1 is 49/50 -- a 2.04% difference on EVERY element. A physics
-# tolerance (~1e-3) would wave that through; 1e-12 catches it by ten orders of magnitude.
+# Ceiling: ddof=0 vs ddof=1 is exactly 49/50 = 0.98 -- every element 2.00% LOW relative to the
+# ddof=1 value (2.04% high the other way; state the denominator or omit the percentage). A
+# physics tolerance (~1e-3) would wave that through; 1e-12 catches it by ten orders of magnitude.
 TOL_DIAG_REL = 1e-12    # relative, on the variances
 TOL_CORR_ABS = 1e-12    # absolute, on the correlation matrix -- see below for why not relative
 

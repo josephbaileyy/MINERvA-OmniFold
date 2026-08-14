@@ -73,6 +73,16 @@ constraint:**
 
 `method_declaration` is in the artifact contract at predeclaration §6.
 
+**The judge seat is empty as of 2026-08-14** — both `codex` accounts are out of quota (personal
+until 2026-08-20, school out of workspace credits), verified by the orchestrator by dispatching and
+reading the errors rather than assuming. **The requirement stays in the contract anyway.** A
+declaration costs a builder one line and is worth capturing before anyone can rule on it; the
+alternative is asking for it later, after both builders have moved on, when any answer is
+reconstruction rather than record. **The ruling is not rehomed to the comparator** — adjudicating
+whether two computations occurred means reading both builds, which is exactly what this role must
+not do. So the remedy is currently **filed and unowned**, which is the honest state of it, and the
+empty seat is with Joseph.
+
 ## Family
 
 - `BEN-173` — a positive control on one artifact and none on its sibling.

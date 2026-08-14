@@ -61,9 +61,23 @@ the mask is drawn per replica (section 5), and the artifact is additionally a
 `NONQUOTABLE-DIAGNOSTIC`. The family's union and intersection over the 50 are the real bounds and
 they wait for the products.
 
-**213 directions are exactly null.** Every downstream inversion needs a *declared* treatment. That
-is Joseph's call, is outside this comparison, and is the reason nobody should read "the two
-implementations agree" as "`C_stat` is usable."
+### 0.2 The rank question was already settled — corrected 2026-08-14
+
+**I raised the rank deficiency as if it were open. It was not, and this section says so rather than
+leaving §0 reading as a live escalation.** It was predeclared before launch in
+`PREDECLARATION-20260813-gate5-coherent-replicas-n50.md` (committed `6bd3707`, 2026-08-12 23:29):
+*"Rank is not the criterion … the rank-deficient GoF treatment is already disclosed under `OI-29`"*,
+alongside Joseph's authorization of `N=50` on a stated precision criterion. It is also field-normal —
+multisim gives `rank <= N-1` by construction. **213 null directions is a true statement about the
+object and a closed question about the campaign.** The declared treatment lives in `OI-29`, not here.
+
+**What survives from this section, and it is the load-bearing part:** the reported-cell count of
+262, the staircase geometry, and the flat-index discontinuity — because they set the **artifact
+contract**, specifically that any reduction to "the reported cells" must be a shipped boolean mask
+and never an index range. That requirement does not depend on the rank question at all.
+
+Nobody should read "the two implementations agree" as "`C_stat` is usable" — but the gap there is
+the residual-risk set of section 4, not an undeclared inversion convention.
 
 ---
 
@@ -110,9 +124,15 @@ difference, produce a false alarm, and train everyone to ignore the check; that 
 **Ceiling, and this is the load-bearing argument.** The tolerance must be tight enough to catch a
 *different formula* masquerading as rounding. The concrete case:
 
-> **`ddof=0` versus `ddof=1` is a factor of `49/50` — a 2.04% difference on every single element.**
+> **`ddof=0` versus `ddof=1` is a factor of exactly `49/50 = 0.98` — every element is 2.00% LOW
+> relative to the `ddof=1` value** (equivalently 2.04% high in the other direction; `50/49 = 1.0204`).
 
-2.04% is comfortably inside any physics tolerance anyone would reach for (the campaign's uncertainty
+**State the denominator or do not state the percentage.** Both numbers are correct and they describe
+the same factor from opposite ends; the orchestrator caught `2.04%` sitting next to `49/50` in the
+first version of this line, which is the mismatched pair. Immaterial at a `1e-12` threshold, and
+recorded because an unqualified "2%" in a receipt is how a same-name-different-quantity defect starts.
+
+~2% is comfortably inside any physics tolerance anyone would reach for (the campaign's uncertainty
 budget cares at the ~1e-3 level). A physics tolerance would wave a genuinely different estimator
 straight through. **1e-12 catches it by ten orders of magnitude.** Same for a `1/N` versus `1/(N-1)`
 slip, a mean-versus-nominal centring difference, and a missing bin-width division.
@@ -214,7 +234,7 @@ exactly that (a mutation that matched only a docstring), and the guard is the fi
 | M1 | reshape `B` to `(15,19,15,19)` | tier 0 shape | |
 | M2 | cast `B` to `float32` | tier 0 dtype | |
 | M3 | **re-flatten `B` in F-order** | tier 2 **only** | *survives* tier 1 (still symmetric, still PSD, same eigenvalues) — this is the mutation that proves tier 1 alone is insufficient |
-| M4 | `B *= 49/50` (`ddof` slip) | tier 2 | the 2.04% of section 1.3; a physics tolerance would pass it |
+| M4 | `B *= 49/50` (`ddof` slip) | tier 2 | the 2.00%-low of section 1.3; a physics tolerance would pass it |
 | M5 | flip the sign of one off-diagonal pair | tier 2, with the correct index | |
 | M6a | perturb one element by `1.1 * TOL` | tier 2 | tolerance bites from above |
 | M6b | perturb one element by `0.9 * TOL` | **must PASS** | tolerance does not bite from below — both sides demonstrated, or the threshold is unfalsifiable |
