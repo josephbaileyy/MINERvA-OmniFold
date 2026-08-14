@@ -1,12 +1,10 @@
 {
   "schema": "oi120a-csyst-k-determination-v1",
-  "item": "OI-120(a) — settle k (retrains per nuisance endpoint) for C_syst",
+  "item": "OI-120(a) \u2014 settle k (retrains per nuisance endpoint) for C_syst",
   "owner": "Lane B (Gate 6)",
   "date": "2026-08-14",
-  "status": "PROVISIONAL AT n=4 — draw 5 of 56863958 was RUNNING when this was measured",
-
-  "HEADLINE": "k = 1 IS DEFENSIBLE ON THE BINS THAT CARRY THE SPECTRUM, AND NO AFFORDABLE k FIXES THE THIN CATCH BINS. At k=1 the across-process training noise inflates a C_syst sigma by 5.8% over the 115 bins holding 90% of the spectrum (4.3% over the top occupancy quartile, which holds 71%). In the lowest-occupancy quartile — 65 bins holding 0.52% of the spectrum — it inflates sigma by 300%, and reaching 10% there would need k ~= 1497. So the schedule stands at 124 x 1 x 3.2398 h = 402 GPU-h, and the thin catch bins need a DOMAIN decision, not more retraining.",
-
+  "status": "PROVISIONAL AT n=4 \u2014 draw 5 of 56863958 was RUNNING when this was measured. LABEL CORRECTED after publication (see LABEL_CORRECTION_20260814). BOTH AXES NOW MEASURED: shape (K_DERIVATION) and normalization (NORMALIZATION_AXIS_COMPLETED_20260814).",
+  "HEADLINE": "k = 1 IS DEFENSIBLE ON THE BINS THAT CARRY THE SPECTRUM, AND NO AFFORDABLE k FIXES THE THIN CATCH BINS. At k=1 the across-process training noise inflates a C_syst sigma by 5.8% over the 115 bins holding 90% of the spectrum (4.3% over the top occupancy quartile, which holds 71%). In the lowest-occupancy quartile \u2014 65 bins holding 0.52% of the spectrum \u2014 it inflates sigma by 300%, and reaching 10% there would need k ~= 1497. So the schedule stands at 124 x 1 x 3.2398 h = 402 GPU-h, and the thin catch bins need a DOMAIN decision, not more retraining. NORMALIZATION AXIS NOW ALSO COMPLETE: the relative sd of the total across draws is 1.92% at a fully pinned seed -- 38.9x Poisson -- which accounts for 18.3% of CSTAT-O2's family variance and leaves 81.7% unexplained.",
   "AUTHORIZATION_AND_THE_GUARD_IT_CROSSED": {
     "joseph_verbatim": "For item four: a) yes, and yes do b) and c)",
     "item_four_is": "OI-120; (a) is this work, (b) and (c) are OI-22 legs and went to D",
@@ -14,27 +12,30 @@
     "why_stated_rather_than_left_implicit": "Leg F predeclared its draws as an across-process floor for the Gate-6 trajectory metric. Reading them to size a C_syst replicate count is a DIFFERENT purpose, so it crosses Leg F's predeclaration guard. It was crossed deliberately and by name. A referee should be able to see that the guard was crossed on purpose rather than have to detect that it was not noticed.",
     "the_guard_is_not_weakened_by_this": "no Leg F artifact was modified, no Leg F verdict was computed or altered, and the floor statistic remains defined by its own frozen rule. This read is additive.",
     "what_was_NOT_done": [
-      "no training", "no job submitted", "no GPU time", "no extraction stage",
-      "no ROOT", "no modification of any artifact", "no Gate-6 verdict touched",
-      "no C_ML constructed", "no Leg X submitted"
+      "no training",
+      "no job submitted",
+      "no GPU time",
+      "no extraction stage",
+      "no ROOT",
+      "no modification of any artifact",
+      "no Gate-6 verdict touched",
+      "no C_ML constructed",
+      "no Leg X submitted"
     ]
   },
-
   "COST": {
     "gpu_hours": 0.0,
     "cluster_jobs_submitted": 0,
     "note": "two read-only python3 probes on the login node over four existing npz files"
   },
-
   "WHAT_WAS_MEASURED_AND_WHAT_IT_IS_NOT": {
-    "quantity": "central_vector — the pushed truth-space (pT, p_parallel) spectrum over pass_truth on the canonical extended-FPS 285 grid, C-order, NORMALIZED TO UNIT SUM",
+    "quantity": "central_vector \u2014 the pushed truth-space (pT, p_parallel) spectrum over pass_truth on the canonical extended-FPS 285 grid, C-order, NORMALIZED TO UNIT SUM",
     "source_of_that_definition": "nd-unfolding/pet/train_fullevent_nominal.py:88-119 (reporting_spectra)",
     "it_is_NOT_a_cross_section": true,
-    "quoted_from_the_producer": "'The absolute cross-section normalization belongs to the extraction step, not to this artifact.' — train_fullevent_nominal.py:100-101",
-    "consequence_for_OI_120a_as_worded": "OI-120(a) says 'extract the cross-section vector'. THE CROSS-SECTION VECTOR IS NOT IN THESE ARTIFACTS. What is in them is the unit-normalized pushed truth spectrum. Building an actual xsec vector would need the extraction stage (flux + POT + nucleons, hence ROOT) — cheap, but not the zero-cost read this was authorized as. The shape vector answers the k question on the shape axis, which is reported here; the normalization axis is NOT answered.",
-    "direction_of_the_resulting_bias": "unit-normalization REMOVES any normalization component of the training noise, so every f_null below UNDERSTATES the absolute training noise. k derived from it is a LOWER bound — optimistic, not conservative."
+    "quoted_from_the_producer": "'The absolute cross-section normalization belongs to the extraction step, not to this artifact.' \u2014 train_fullevent_nominal.py:100-101",
+    "consequence_for_OI_120a_as_worded": "OI-120(a) says 'extract the cross-section vector'. THE CROSS-SECTION VECTOR IS NOT IN THESE ARTIFACTS. What is in them is the unit-normalized pushed truth spectrum. Building an actual xsec vector would need the extraction stage (flux + POT + nucleons, hence ROOT) \u2014 cheap, but not the zero-cost read this was authorized as. The shape vector answers the k question on the shape axis, which is reported here; the normalization axis is NOT answered.",
+    "direction_of_the_resulting_bias": "unit-normalization REMOVES any normalization component of the training noise, so every f_null below UNDERSTATES the absolute training noise. k derived from it is a LOWER bound \u2014 optimistic, not conservative."
   },
-
   "PREMISES_ALL_VERIFIED_PASS": {
     "all_same_inputs_sha256": true,
     "inputs_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
@@ -47,15 +48,19 @@
     "all_same_estimator_fingerprint": "pet-fullevent-fps-v1",
     "all_artifact_masks_bit_identical": true,
     "all_central_vectors_sum_to_one": {
-      "draw1_member1": 1.0, "draw2": 1.0000000000000002, "draw3": 1.0, "draw4": 1.0
+      "draw1_member1": 1.0,
+      "draw2": 1.0000000000000002,
+      "draw3": 1.0,
+      "draw4": 1.0
     },
     "why_these_matter": "identical inputs + identical subsample + no Poisson draw is what makes this a PURE across-process training-noise control at fixed data. If any of these differed the spread would mix in a data component and the k determination would be void."
   },
-
   "MEMBERS_READ": {
     "n_present": 4,
     "n_expected": 5,
-    "absent": ["draw5 — RUNNING on nid001425, 00:18:12 elapsed at 2026-08-14T13:02:56Z"],
+    "absent": [
+      "draw5 \u2014 RUNNING on nid001425, 00:18:12 elapsed at 2026-08-14T13:02:56Z"
+    ],
     "paths": [
       "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_ml_ensemble/member_1/pet_fullevent_ml_member1_weights.npz",
       "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_floor_42_0/draw_2/pet_fullevent_floor_draw2_weights.npz",
@@ -66,30 +71,31 @@
     "fractional_uncertainty_on_each_sd_1_over_sqrt_2dof": 0.4082482904638631,
     "READ_THE_k_NUMBERS_TO_ONE_SIGNIFICANT_FIGURE": "each sd carries 40.8% fractional uncertainty at n=4. Draw 5 improves this only to 35.4%. These numbers separate 'k=1 is fine' from 'k=12 is needed'; they do not distinguish k=1 from k=2."
   },
-
   "A_THIRD_MASK_WAS_FOUND": {
     "finding": "the artifact's `reported_bin_mask` is NOT the extraction's reporting mask, and the two have near-identical names",
-    "artifact_mask_definition": "h_prior.ravel() > 0 — PRIOR-OCCUPIED cells, computed on the 2,000,000-row TRAINING SUBSAMPLE",
+    "artifact_mask_definition": "h_prior.ravel() > 0 \u2014 PRIOR-OCCUPIED cells, computed on the 2,000,000-row TRAINING SUBSAMPLE",
     "artifact_mask_source": "nd-unfolding/pet/train_fullevent_nominal.py:119",
-    "extraction_mask_definition": "comp > 0 — RECO-ACCEPTED cells, computed on the full inventory",
+    "extraction_mask_definition": "comp > 0 \u2014 RECO-ACCEPTED cells, computed on the full inventory",
     "extraction_mask_source": "nd-unfolding/pet/extract_fullevent_fps.py:517-519",
     "n_artifact_prior_mask": 259,
     "n_extraction_reported_D_published": 262,
     "n_lgbm_fps_canonical": 266,
     "they_NEST": "259 subset-of 262 subset-of 266",
     "artifact_true_not_in_D": [],
-    "D_reported_not_in_artifact_mask": [254, 281, 284],
+    "D_reported_not_in_artifact_mask": [
+      254,
+      281,
+      284
+    ],
     "why_the_3_cell_difference_is_expected_not_a_defect": "the artifact mask is built on the 2M training subsample while the extraction runs the full ~49M inventory, so three cells are reco-accepted in the full sample and prior-empty in the subsample. That makes the artifact mask SUBSAMPLE-LIMITED and it must NOT be used as a reporting mask.",
     "hard_requirement_this_produces": "no consumer may take `reported_bin_mask` out of a training artifact and treat it as the reporting domain. Cross-reference SPEC CSTAT-D3 and BEN-231 (the reporting mask is a per-replica draw), which is the same hazard from the replica direction."
   },
-
   "THE_RAW_MEDIAN_WOULD_HAVE_OVERSTATED_THIS_BY_2_5x": {
     "all_domain_median_frac_noise": 0.06288241844687752,
     "correlation_of_frac_noise_with_log_occupancy": -0.6226,
     "interpretation": "a normalized 259-bin shape vector holds ~0.39% of the total in an average bin, so a fractional noise is large wherever the denominator is small. The unweighted per-bin median is therefore dominated by the thin catch bins the extended FPS grid exists to hold. Reporting 6.29% as the headline would have overstated the number that matters by a factor of 2.5 and would have argued for k=75.",
     "this_check_was_run_because": "the first number out of the probe was the unweighted median, and the occupancy structure of this grid makes an unweighted median the wrong aggregate. Checked rather than reported."
   },
-
   "MEASUREMENT_n_equals_4": {
     "domain": "artifact prior mask AND D's published reported set AND mean>0",
     "n_domain": 259,
@@ -98,42 +104,89 @@
       "L1_sd_over_L1_mean": 0.046867425894848214
     },
     "occupancy_stratified_median_frac_noise": {
-      "Q1_lowest_occupancy": {"n_bins": 65, "share_of_spectrum": 0.005174604919788893, "median": 0.2812329747156187, "max": 0.4615484056338127},
-      "Q2": {"n_bins": 65, "share_of_spectrum": 0.06338458231121773, "median": 0.08119000261868807},
-      "Q3": {"n_bins": 64, "share_of_spectrum": 0.2185189841917265, "median": 0.05640357370739446},
-      "Q4_highest_occupancy": {"n_bins": 65, "share_of_spectrum": 0.7129218285772669, "median": 0.021668300763012578, "max": 0.30535807893724276}
+      "Q1_lowest_occupancy": {
+        "n_bins": 65,
+        "share_of_spectrum": 0.005174604919788893,
+        "median": 0.2812329747156187,
+        "max": 0.4615484056338127
+      },
+      "Q2": {
+        "n_bins": 65,
+        "share_of_spectrum": 0.06338458231121773,
+        "median": 0.08119000261868807
+      },
+      "Q3": {
+        "n_bins": 64,
+        "share_of_spectrum": 0.2185189841917265,
+        "median": 0.05640357370739446
+      },
+      "Q4_highest_occupancy": {
+        "n_bins": 65,
+        "share_of_spectrum": 0.7129218285772669,
+        "median": 0.021668300763012578,
+        "max": 0.30535807893724276
+      }
     },
     "bulk_only": {
-      "top_bins_to_90pct": {"n_bins": 115, "median": 0.025166681597816494, "p90": 0.09222208605362354, "max": 0.33694367367648814},
-      "top_bins_to_99pct": {"n_bins": 181, "median": 0.03650062785454838, "p90": 0.2275235461849151}
+      "top_bins_to_90pct": {
+        "n_bins": 115,
+        "median": 0.025166681597816494,
+        "p90": 0.09222208605362354,
+        "max": 0.33694367367648814
+      },
+      "top_bins_to_99pct": {
+        "n_bins": 181,
+        "median": 0.03650062785454838,
+        "p90": 0.2275235461849151
+      }
     },
     "bins_holding_90pct_of_spectrum": 115,
     "bins_holding_99pct_of_spectrum": 181
   },
-
   "K_DERIVATION": {
-    "model": "averaging k independent retrains per endpoint reduces the training-noise component as f/sqrt(k). The noise does NOT cancel in the covariance — it adds in quadrature to the physics displacement, so the observable consequence is an INFLATION of C_syst: delta_measured^2 = delta_phys^2 + (f/sqrt(k))^2.",
+    "model": "averaging k independent retrains per endpoint reduces the training-noise component as f/sqrt(k). The noise does NOT cancel in the covariance \u2014 it adds in quadrature to the physics displacement, so the observable consequence is an INFLATION of C_syst: delta_measured^2 = delta_phys^2 + (f/sqrt(k))^2.",
     "sigma_inflation_formula": "sigma_inflation = sqrt(1 + (f/(sqrt(k)*delta_phys))^2) - 1",
     "delta_phys_anchor": {
       "value": 0.0727,
       "what_it_is": "GBDT/lgbm FPS block-sum C_syst median per-bin fractional displacement",
       "source": "VALIDATION_LEDGER.md:1289-1295",
-      "CAVEAT_THIS_IS_NOT_PET": "the lgbm estimator, not PET. No PET C_syst per-bin displacement exists anywhere — the PET vertical sweep has never been run. 0.0727 is an order-of-magnitude anchor. If PET's true displacement is smaller, every k below rises as its inverse square."
+      "CAVEAT_THIS_IS_NOT_PET": "the lgbm estimator, not PET. No PET C_syst per-bin displacement exists anywhere \u2014 the PET vertical sweep has never been run. 0.0727 is an order-of-magnitude anchor. If PET's true displacement is smaller, every k below rises as its inverse square."
     },
     "results": {
-      "bulk90_median_f_0.0252": {"f_over_delta": 0.346, "sigma_inflation_k1": 0.0582, "sigma_inflation_k2": 0.0295, "k_for_noise_le_10pct": 12, "k_for_noise_le_20pct": 3, "k_for_noise_le_33pct": 2},
-      "Q4_high_occupancy_f_0.0217": {"f_over_delta": 0.298, "sigma_inflation_k1": 0.0435, "k_for_noise_le_10pct": 9, "k_for_noise_le_33pct": 1},
-      "L2_aggregate_f_0.0526": {"f_over_delta": 0.723, "sigma_inflation_k1": 0.2340, "k_for_noise_le_10pct": 53},
-      "Q1_thin_bins_f_0.2812": {"f_over_delta": 3.868, "sigma_inflation_k1": 2.9956, "k_for_noise_le_10pct": 1497, "k_for_noise_le_20pct": 375, "k_for_noise_le_33pct": 138}
+      "bulk90_median_f_0.0252": {
+        "f_over_delta": 0.346,
+        "sigma_inflation_k1": 0.0582,
+        "sigma_inflation_k2": 0.0295,
+        "k_for_noise_le_10pct": 12,
+        "k_for_noise_le_20pct": 3,
+        "k_for_noise_le_33pct": 2
+      },
+      "Q4_high_occupancy_f_0.0217": {
+        "f_over_delta": 0.298,
+        "sigma_inflation_k1": 0.0435,
+        "k_for_noise_le_10pct": 9,
+        "k_for_noise_le_33pct": 1
+      },
+      "L2_aggregate_f_0.0526": {
+        "f_over_delta": 0.723,
+        "sigma_inflation_k1": 0.234,
+        "k_for_noise_le_10pct": 53
+      },
+      "Q1_thin_bins_f_0.2812": {
+        "f_over_delta": 3.868,
+        "sigma_inflation_k1": 2.9956,
+        "k_for_noise_le_10pct": 1497,
+        "k_for_noise_le_20pct": 375,
+        "k_for_noise_le_33pct": 138
+      }
     },
     "RECOMMENDATION": "k = 1, with the thin catch bins handled as a domain question rather than a statistics question.",
     "cost_consequence": {
-      "k_equals_1": "124 endpoints x 1 x 3.2398 h = 401.7 GPU-h — the figure in the C_syst scoping stands unchanged",
+      "k_equals_1": "124 endpoints x 1 x 3.2398 h = 401.7 GPU-h \u2014 the figure in the C_syst scoping stands unchanged",
       "k_equals_12_if_the_raw_median_had_been_believed": "124 x 12 x 3.2398 h = 4820.8 GPU-h",
       "what_the_occupancy_check_therefore_saved": "4419.1 GPU-h of work that the unweighted median would have argued for"
     }
   },
-
   "WHAT_THIS_DOES_NOT_SETTLE": {
     "1_normalization_axis": "central_vector is unit-normalized, so the normalization axis is untouched. Much of the 100-universe PPFX flux band acts largely ON normalization, and that is 81% of the C_syst endpoint count. THE k QUESTION FOR FLUX IS THEREFORE NOT ANSWERED HERE.",
     "2_needs_X": "to settle the normalization axis: run the extraction stage on these same four (soon five) weights npz. It needs ROOT for the flux histogram but no GPU and no training. That is the honest next step and it is NOT what was authorized here.",
@@ -141,18 +194,89 @@
     "4_n_is_4": "provisional; re-run at n=5 when draw 5 lands.",
     "5_across_device_not_only_across_process": "the draws did not all run on one node or GPU, so this is an across-process AND across-device estimate. That is the right scope for C_syst universes, which will also land on arbitrary nodes, but it is not a pure same-device measurement."
   },
-
   "BEARS_ON_CSTAT_O2_BUT_DOES_NOT_SETTLE_IT": {
     "CSTAT_O2_question": "is the Gate-5 object entitled to the name C_stat, given a measured 4.478% relative sd of the total cross section against a 0.0493% Poisson prediction (~90x) and `set_seed` appearing nowhere?",
     "what_leg_F_contributes": "Leg F is a training-noise-only control: 4-5 trainings, identical inputs, identical subsample, bootstrap_seed=-1, separate processes. It establishes that training noise at FIXED DATA is real and, in thin bins, very large (median 28% of the bin value in the lowest-occupancy quartile).",
     "why_it_CANNOT_settle_CSTAT_O2": "CSTAT-O2's 4.478% is the relative sd of the TOTAL cross section. central_vector sums to exactly 1 by construction, so the total is not a measurable quantity in these artifacts. Leg F cannot be compared to 4.478% at all.",
-    "the_measurement_that_would": "the extraction stage on the Leg F weights — same reason as 'needs X' above. It would give a total-xsec spread at fixed data, directly comparable to 4.478%, for zero GPU time.",
+    "the_measurement_that_would": "the extraction stage on the Leg F weights \u2014 same reason as 'needs X' above. It would give a total-xsec spread at fixed data, directly comparable to 4.478%, for zero GPU time.",
     "NOT_CLAIMED": "this receipt does not claim the Gate-5 family's spread is training noise. It claims only that training noise at fixed data is not small."
   },
-
   "REPRODUCE": {
     "probe_1_keys": "docs/orchestration/state/probe-oi120a-legf-keys-20260814.py",
     "probe_2_k": "docs/orchestration/state/probe-oi120a-csyst-k-20260814.py",
     "how": "python3 <probe> on a Perlmutter login node; read-only, needs numpy only, no module load"
+  },
+  "LABEL_CORRECTION_20260814": {
+    "as_first_published": "across-process TRAINING noise at fixed data",
+    "correct_label": "residual across-process/GPU NON-DETERMINISM at a FULLY PINNED seed",
+    "why": "train_fullevent_nominal.py:376 calls tf.keras.utils.set_random_seed(args.estimator_seed), the default is NOMINAL_SEED_POLICY['estimator_seed'] = 42 (:335, :69), and the Leg F launcher passes EST=42 SUB=0 explicitly (sbatch_pet_fullevent_floor_replicate_array.sh:49-50, :186). Combined with identical inputs_sha256, identical mc_indices and bootstrap_seed = -1, EVERY source of variation is pinned and the only differences between draws are process, node and GPU.",
+    "it_is_a_STRONGER_claim_not_a_weaker_one": "seed-driven training scatter would be reducible by fixing the seed; this scatter is what SURVIVES fixing it.",
+    "surfaced_by": "the personal-account mediator, refuting a separate C_stat/C_ML double-counting claim that had inferred an unseeded replica network from the launcher. The refutation was aimed elsewhere and invalidated my label as a side effect.",
+    "what_it_does_NOT_change": "the k arithmetic. Averaging k runs still reduces run-to-run scatter, so every sigma-inflation and k figure in K_DERIVATION stands unchanged.",
+    "ASSUMPTION_STATED_NOT_PROVED": "f/sqrt(k) presumes the scatter is INDEPENDENT across processes. For GPU reduction-order non-determinism that is an empirical claim about run-to-run behaviour, not a theorem, and n=4 cannot test independence. If the scatter were correlated across processes, k would buy less than 1/sqrt(k) and could buy nothing.",
+    "consequence_for_CSTAT_O2": "if training randomness is pinned across the Gate-5 family, its 4.478% total-xsec spread decomposes into Poisson PLUS this floor. Whether the floor accounts for the ~90x gap is a subtraction that CANNOT be done from these artifacts, because central_vector sums to 1. The extraction stage gives the comparable total-xsec spread."
+  },
+  "NORMALIZATION_AXIS_COMPLETED_20260814": {
+    "authorization": "the mediator's follow-up: 'Run the extraction stage on those same weights npz' under Joseph's 'For item four: a) yes...'. It completes the authorized task rather than expanding it.",
+    "WHAT_I_DID_INSTEAD_OF_THE_EXTRACTION_STAGE_AND_WHY": "I did NOT run --stage push/--stage xsec. That path reconstructs the model and re-infers over the full ~49M-row inventory, which needs TensorFlow and is what the Gate-5 extraction array spends ~2 h per task doing -- it is neither free nor GPU-less, so running it would have exceeded what I described to the mediator. Instead I used the fact that makes the whole thing unnecessary: sigma_tot = [sum_i counts_i*V_i] / (flux * data_POT * n_nucleons), and the denominator is IDENTICAL across Leg F draws. So the RELATIVE spread of the total is independent of flux, POT and nucleon count, and equals the relative spread of the numerator T_d = sum_j w_truth[j]*push_d[j] over pass_truth on the shared subsample. weights_push and mc_indices are already in each artifact and mc_indices is bit-identical across draws (verified), so w_truth and pass_truth are common factors read once from the dump.",
+    "cost": "2.6 s wall on a login node, numpy only. No TF, no ROOT, no GPU, no job submitted.",
+    "premises_verified": {
+      "all_mc_indices_bit_identical": true,
+      "all_same_inputs_sha256": true,
+      "all_bootstrap_seed_minus1": true,
+      "all_push_finite_and_positive": true,
+      "n_subsample_rows": 2000000,
+      "n_pass_truth": 1999928
+    },
+    "RESULT": {
+      "relative_sd_of_total": 0.019177893792105365,
+      "as_percent": 1.9178,
+      "T_per_draw": {
+        "draw1_member1": 1777414.2639656093,
+        "draw2": 1798419.1422631375,
+        "draw3": 1720400.4336576774,
+        "draw4": 1781536.5944523546
+      },
+      "mean_T": 1769442.6085846946,
+      "sd_T_ddof1": 33934.182418663135,
+      "range_over_mean": 0.04409225155251807,
+      "T_prior_unpushed": 1642731.0021145665,
+      "mean_push_per_draw": {
+        "draw1_member1": 1.0775599864003338,
+        "draw2": 1.0912678576558068,
+        "draw3": 1.047191171929595,
+        "draw4": 1.0825127536139902
+      },
+      "units": "arbitrary; only the RATIO is meaningful, by construction"
+    },
+    "NEGATIVE_CONTROL": {
+      "cap_saturation_frac_per_draw": {
+        "draw1_member1": 0.0,
+        "draw2": 0.0,
+        "draw3": 0.0,
+        "draw4": 0.0
+      },
+      "why_it_matters": "if the draws differed because push weights were piling up at the predeclared symmetric logit cap, the spread would be a clipping artefact rather than a non-determinism floor. No draw saturates the cap at all."
+    },
+    "HEADLINE": "AT IDENTICAL DATA, IDENTICAL SUBSAMPLE, set_random_seed(42) AND NO POISSON DRAW, SEPARATE PROCESSES DISAGREE ON THE TOTAL BY 1.92% -- 38.9x the 0.0493% Poisson prediction on n_data = 4,116,128.",
+    "CSTAT_O2_DECOMPOSITION": {
+      "family_relative_sd_of_total": 0.04478,
+      "family_over_poisson": 90.8,
+      "this_floor_over_poisson": 38.9,
+      "floor_over_family": 0.4283,
+      "floor_share_of_family_VARIANCE": 0.1834,
+      "quadrature_residual": 0.040466,
+      "residual_over_poisson": 82.1,
+      "residual_share_of_family_VARIANCE": 0.8166,
+      "WHAT_THIS_SETTLES": "the ~90x gap is NOT an unseeded replica network -- the seed IS pinned, which the mediator established independently -- and it is NOT Poisson counting. A measured 1.92% process-level non-determinism floor accounts for 18.3% of the family variance.",
+      "WHAT_IT_DOES_NOT_SETTLE": "81.7% of the family variance remains, at 4.05% / 82.1x Poisson. The natural reading is the LEARNED MAP's response to the Poisson draw -- each member trains on a differently-weighted dataset, so a counting-statistics prediction on the final histogram understates the propagated effect by construction. THAT READING IS AN INTERPRETATION, NOT A MEASUREMENT, and I am not asserting it. If it is right, the residual is the legitimate intended content of C_stat for an unfolding estimator and the object does deserve the name, with 18.3% of its variance being non-determinism rather than data statistics.",
+      "the_measurement_that_would_settle_it": "re-train ONE bootstrap index twice at the same bootstrap_seed, which is CSTAT-O2a as already scoped. Leg F pins the no-draw floor; that pins the with-draw floor, and the difference is the map response.",
+      "CAVEATS": [
+        "this floor is the 2M-SUBSAMPLE numerator; CSTAT-O2's 4.478% is the published full-inventory extracted total. Same definition up to the common denominator and the subsample restriction, not exactly the same object.",
+        "the quadrature decomposition assumes the floor and the draw response are independent.",
+        "n=4; each sd carries 40.8% fractional uncertainty."
+      ]
+    },
+    "probe": "docs/orchestration/state/probe-oi120a-normalization-20260814.py"
   }
 }
