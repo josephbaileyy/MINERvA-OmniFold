@@ -135,7 +135,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	7869
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	48	3049
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	703	112397
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	706	112807
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only		yes	0	78	5188
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
@@ -598,6 +598,7 @@ docs/orchestration/state/merged-input-hashes/p4-merged-20260718/standard.paths	M
 docs/orchestration/state/merged-input-hashes/p4-merged-20260718/standard.sha256	MACHINE	state-artifact	merged-input-hashes		generated		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/p4_lib.py;nd-unfolding/tests/test_p4_repair.py	yes	12	10	1730
 docs/orchestration/state/merged-input-hashes/p4-merged-20260718/summary.tsv	MACHINE	state-artifact	merged-input-hashes		generated		exact-path-only	docs/orchestration/sbatch_hash_merged_inputs.sh;nd-unfolding/fps_verify_merged_receipt.py;nd-unfolding/p4_lib.py;nd-unfolding/tests/test_p4_repair.py	yes	13	6	193
 docs/orchestration/state/merged-input-hashes/p4-merged-20260718/validation.tsv	MACHINE	state-artifact	merged-input-hashes		generated		exact-path-only	nd-unfolding/fps_verify_merged_receipt.py;nd-unfolding/p4_lib.py;nd-unfolding/tests/test_p4_repair.py	yes	12	14	814
+docs/orchestration/state/oi120a-csyst-k-from-legf-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	158	13452
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	195	7986
 docs/orchestration/state/opendata-input-integrity-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only	docs/orchestration/fend_probe.py	yes	4	174	12766
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	69	5960
@@ -646,6 +647,8 @@ docs/orchestration/state/probe-cstat-tolerance-calibration-20260814.py	MACHINE	s
 docs/orchestration/state/probe-eavail-pion-mass-sites-20260813.py	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	3	185	9575
 docs/orchestration/state/probe-gate5-verified-input-sha-20260813.py	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	3	136	5562
 docs/orchestration/state/probe-gate6-floor-mutation-20260813.py	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	94	4736
+docs/orchestration/state/probe-oi120a-csyst-k-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	105	4242
+docs/orchestration/state/probe-oi120a-legf-keys-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	55	2353
 docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	119	5853
 docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	181	8291
 docs/orchestration/state/qp4-closure-20260718.json	MACHINE	state-artifact		20260718	generated		exact-path-only		yes	4	95	3915
