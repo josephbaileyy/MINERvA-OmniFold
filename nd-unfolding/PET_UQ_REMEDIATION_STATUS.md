@@ -406,6 +406,17 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Update 2026-08-14 10:02 UTC — ORIGINAL EXTRACTION MANIFEST BLOCKED 0/50.** Original after-any
+validator `56935553` completed its intended fail-closed path: accounting is `FAILED/1:0` because the
+marked report verdict is `GATE5_EXTRACTION_FAMILY_BLOCKED`, not because publication failed. The marker
+matches the 19,393-byte report exactly and stderr is empty. Members 1-49 lack all four original
+extraction products. Member 0 is also rejected: changed r2 task 0 had already published repaired products
+into the shared member namespace, and the original validator correctly detects its r2 job, HEAD and code
+bindings rather than misattributing them to `56935552`. The original family is terminal and unpromoted;
+no subset or unchanged retry is permitted, and `C_stat` remains null. Changed array `56936015` continues
+under its existing terminal watch. Receipt:
+[`state/gate5-extraction-manifest-block-56935553.json`](../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json).
+
 **Update 2026-08-14 09:47 UTC — FIRST EXTRACTION ARRAY BLOCKED; CHANGED CONTINUATION ACCEPTED.**
 The emitted error wake corrected its own aggregate-terminal claim: task 0 had failed, task 1 was still
 running, and tasks 2-49 were pending. Replica 0's full ordered 49,152,885-row push and atomic marker are

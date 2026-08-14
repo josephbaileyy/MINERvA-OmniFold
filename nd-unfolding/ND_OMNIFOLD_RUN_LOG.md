@@ -7181,3 +7181,24 @@ record the first array's partial-family BLOCK. Watches `gate5-extraction-r2-5693
 `gate5-extraction-r2-manifest-56936016` are armed. `C_stat` remains null; no subset, provider dispatch,
 reset credit, UUID change, Gate-6, or `C_ML` action occurred. Active receipt:
 `../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`.
+
+### 2026-08-14 10:02 UTC — Original Gate-5 complete-family manifest BLOCKED 0/50
+
+After-any validator `56935553` ran from the original immutable `7dc8c34` worktree for 43 seconds and
+exited `1:0`. This is the validator's intentional fail-closed return for its atomically written
+`GATE5_EXTRACTION_FAMILY_BLOCKED` report: stderr is empty, the stdout verdict is 0/50, and the completion
+marker matches the report path, size and mtime. All members 0-49 are listed explicitly as failures;
+`C_stat` is null and no subset is selected.
+
+Members 1-49 have no valid push, xsec, summary, or receipt from the original array. Member 0 needs the
+more precise reading: changed r2 task `56936015_0` completed `0:0` before the old validator started and
+published r2 final products into the shared member namespace. The old validator did not misattribute
+them: its runtime-HEAD, source-array-job and extractor-code pins all fail against those r2 products.
+Thus the original family remains terminally BLOCKED even though reusable scientific work is being
+continued under a separately pinned attempt.
+
+No original-family promotion, unchanged retry, subset, `C_stat`, Gate-6/`C_ML`, provider dispatch,
+reset credit, or worker replacement occurred. At the reconciliation snapshot, r2 task 0 was complete,
+r2 tasks 1-49 were pending Priority, and changed manifest `56936016` remained dependency-held. Their
+terminal watches remain the dependency-ready continuation. Receipt:
+`../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json`.

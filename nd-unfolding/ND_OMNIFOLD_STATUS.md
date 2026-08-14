@@ -17,12 +17,15 @@ default. Array `56935552_[0-49]` then exposed a changed launcher defect: replica
 49,152,885-row push but xsec lookup incorrectly rooted the off-repository flux file in the immutable code
 worktree. No xsec/summary/receipt was published. The array was canceled before the remaining identical
 failures; original after-any validator `56935553` and its watch are preserved to record the partial-family
-BLOCK. A changed continuation explicitly binds the canonical data-root flux and reuses only atomically
+BLOCK. That validator has now returned the expected atomically marked `GATE5_EXTRACTION_FAMILY_BLOCKED`
+at 0/50: member 0's r2-bound final products are correctly rejected by original-family job/HEAD/code pins,
+and members 1-49 have no original extraction products. A changed continuation explicitly binds the canonical data-root flux and reuses only atomically
 complete pushes after validation. It is now submitted as array `56936015_[0-49]` from immutable HEAD
 `2f65a36`, with changed after-any manifest `56936016`; both terminal watches are armed. Replica 0 is the
 only pre-existing complete push. `C_stat` remains null. Exact active receipt:
 `../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`. Exact failure receipt:
-`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact training promotion receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact original-manifest BLOCK:
+`../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json`. Exact training promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
