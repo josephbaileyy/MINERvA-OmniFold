@@ -61,6 +61,50 @@ chi^2), 5 (endorsement of the first 3D+ unfolded covariance); then
 
 ---
 
+## FOR THE LIVE GREGOR EXCHANGE ON E_avail — drafted 2026-08-14 (lane A, `OI-59`)
+
+**Why this is here and not only in a message.** Joseph is in live correspondence with Gregor Kafka on
+E_avail. The `OI-59` caveat is recorded where the number lives (`VALIDATION_LEDGER.md:1349-1367`), but the
+*sendable* form existed only in a cross-session message — which is `BEN-201`'s shape: it vanishes when the
+sessions holding it end.
+
+**Two sentences, to hand him as-is:**
+
+> Our bin-identical cross-check against Ascencio 2022 passes (full-covariance χ²/ndf = 1.68/2, p = 0.43;
+> ours/theirs = 1.092 and 1.063 in the two common low-E_avail cells), but the two sides unfold to
+> available-energy axes with different species content — their Eq. 1 admits every final-state particle except
+> neutrons, while ours counts only protons, charged pions, neutral pions and photons, and so omits kaons, η,
+> strange baryons, antibaryons **and e±** — and the offset that omission produces has the same sign and sits
+> in exactly those two cells.
+>
+> We are not claiming the check fails: at p = 0.43 on 2 degrees of freedom it cannot separate a ~10%
+> definitional offset from noise in either direction, which is precisely why we would rather put it in front
+> of you now than quote the agreement as physical.
+
+**A CARDINALITY TRAP WAS REMOVED FROM THE FIRST SENTENCE, and the reason is worth keeping.** The draft read
+*"their Eq. 1 uses an open species list, ours a closed four-species one."* That is true of our list and
+**wrong as a statement of the gap**: placed beside "open species list" in a sentence whose subject is the
+Ascencio comparison, "four" reads as the size of the difference, and **against Ascencio the difference is
+five species — the fifth being e±, which the open list includes and we exclude.** `docs/EAVAIL_DEFINITION.md`
+§2 carries an explicit caution against exactly that construction (*"any count of 'four' here is a count
+against Rodrigues, not against Ascencio"*). **The omitted species was the one that cuts against us**, which
+is the failure mode that document exists to prevent, so the count is dropped and the species are named.
+Caught by the mediator on review.
+
+**If he asks about e± specifically**, the honest answer is that it is the one species where we differ from
+**both** published conventions: Rodrigues 2016 explicitly includes *"neutral pion, electron, and photon total
+energy"*, Ascencio's open list covers it, and `minerva-ml` includes it — so on e± `minerva-ml` matches the νμ
+paper and we do not. Size is small (**1.462 MeV/signal event**, e⁻ 0.239 + e⁺ 1.223); it is the direction of
+correctness that flipped, not a large number. Our exclusion follows `GENIEXSecExtract`'s
+`abs(pdg)==11||abs(pdg)==13` *"don't count charged lepton"* branch, which was written for a νe analysis where
+the primary electron **is** the charged lepton.
+
+**What must NOT be said:** that the cross-check is retracted (it is not), or that the definitional offset is
+demonstrated to explain the residual (it is an unexcluded alternative). The closing computation is specified
+in `OI-59` and is **frozen** behind `OI-56` pending Joseph's reco-underflow repair decision.
+
+---
+
 ## ANSWERS RECEIVED — 2026-08-02 (asked in person at the presentation, a few weeks prior)
 
 Recorded as reported by Joseph. Not a written reply, so there is no citable
