@@ -2126,6 +2126,167 @@ the RUN_LOG rather than editing the frozen document, exactly as reported.
 - **`52 passed` is not coverage.** Nine mutations is a sample of the mutation space; M9 was found
   because I went looking at the `abs`, and there may be other survivors I did not construct.
 
+---
+
+# V50 — design review: putting `verify_hash_bindings.py` in the pre-commit hook
+
+Requested by `personal-orchestrator` after Joseph asked *"does D think it's a good idea too?"* — a
+review before anything is built. Lane A proposed; lane C found the mechanism; I am independent of both.
+Cited by claimant throughout, because two `OI-64` and two `OI-65` rows exist.
+
+**VERDICT: YES to the hook. NO to file-side staged-diff scoping. Ship it whole-tree, and then the
+`OI-65` dependency dissolves rather than needing resolution.**
+
+## The finding that decides it: the tree is broken right now, twice
+
+Ran the gate whole-tree this turn:
+
+```
+resolved 170 bindings (531 unresolvable) — 164 OK, 4 known pre-existing
+MISMATCH nd-unfolding/pet/reconcile_gate5_family.py      <- gate5-family-reconciliation-20260813.json
+MISMATCH nd-unfolding/pet/train_fullevent_nominal.py     <- p3f-pet-gate4-launch-code-gate-20260812.json
+*** BINDINGS BROKEN ***                                            0.555s
+```
+
+**The `ce03f2c` break is not fixed.** It is ~19 h old and still live. And a **second, independent**
+break has appeared since: `reconcile_gate5_family.py` was correct at `69c577b` (09:25, receipt and code
+committed together, hash `e536540d…` = the pin) and was broken by `eedcfc9` (18:52) and `466ab0d`
+(19:53), the BEN-157 R1/R2 edits. Tree now reads `11e4f440…`.
+
+**This settles question 2 without needing an exotic evasion.** Score the proposal honestly:
+
+| | catches? |
+|---|---|
+| break #1 **at the moment of introduction** (`ce03f2c` staged the pinned file) | **yes** |
+| break #2 **at the moment of introduction** (`eedcfc9`/`466ab0d` staged the pinned file) | **yes** |
+| break #1 **as it exists in the tree today** | **no** |
+| break #2 **as it exists in the tree today** | **no** |
+
+So file-side scoping is 2-for-2 on introduction and 0-for-2 on the current state — **and the current
+state is what ships.** On day one, the hook prints `pre-commit: 5 checks passed` while
+`verify_hash_bindings` prints `*** BINDINGS BROKEN ***`. That is not a hypothetical evasion; it is the
+design working as specified. **An absent check converted into a false assurance is worse than the
+absent check**, and the orchestrator named this as the campaign's signature defect before I looked.
+
+**I initially got break #2 backwards** and nearly reported the proposal as 0-for-2 on introduction too.
+`git log -1 -- <path>` returned `ac540d5`, and I read that as the receipt and code never landing
+together; `git show --name-only 69c577b` shows both staged. Re-derived by hashing the blob at each
+commit. **The proposal catches both introductions and that is a point in its favour.**
+
+## Question 1 — the design rule is fitted to two exclusions that do not exhibit the property it names
+
+> *A check belongs in the hook if and only if it can only fail on what THIS commit changed.*
+
+**Both cited exclusions are excluded for other reasons, stated in the dispatcher's own header.**
+
+- `--check-freshness`: *"returns 1 whenever `LIVE-STATE.md`'s sha is not HEAD's — a condition it
+  **CANNOT ESCAPE**… A check that always fires is a check nobody reads."* That is **inescapability**.
+  Its scope is irrelevant; a whole-tree check that can be satisfied would not have this problem.
+- `merge_guard.sh`: *"needs a lane argument and belongs at merge time, not commit time."* That is
+  **wrong phase and missing inputs**.
+
+Neither is about whole-tree-ness. **The rule explains its two data points by a property they happen to
+share rather than by the property that excluded them** — and it then forbids, by construction, the
+category the orchestrator correctly identified: a whole-tree invariant that *should* block everyone.
+
+**A rule that survives both exclusions and admits the hash gate:**
+
+> **A check belongs in the hook iff a committer who did nothing wrong can always make it pass.**
+
+`--check-freshness` — never passable, excluded. `merge_guard.sh` — not passable at commit time,
+excluded. `verify_hash_bindings` whole-tree — passable iff the tree is clean, and a clean tree is two
+waivers away. **Admitted.**
+
+It also has the right teeth: it *forbids* adding a whole-tree gate while the tree is dirty and unwaived.
+**Which is the actual precondition A's proposal routes around by scoping.** Read that way, the scoping
+is not a design improvement; it is a way to ship without confronting two unfixed breaks.
+
+## Question 2 — the remaining hole, beyond the day-one one
+
+**A receipt-introduced break is invisible to file-side scoping**, and this repo has the specific
+mechanism for it. A commit that adds or edits a receipt pinning an *unmodified* file with a
+non-matching hash stages only the receipt; no live receipt pins a receipt; the hook checks nothing.
+Whole-tree catches it.
+
+This is not exotic here. `KNOWN_PREEXISTING`'s four entries are all *"submit-time provenance"* —
+receipts written on Perlmutter against a checkout that forks from local. A cluster-written receipt
+pinning a locally-different file is the established failure mode in this repo, and it arrives **as a
+receipt**, with no code staged.
+
+**It is the exact mirror of the rejected alternative.** Pin-side misses code-introduced breaks; file-side
+misses receipt-introduced breaks. The rejection reasoning for pin-side is correct **and symmetric**. If
+scoping is wanted later it must be the **union**, never either alone.
+
+## Question 3 — today's evidence: the dichotomy is false, and the repo already solved it
+
+A argues a wholesale gate would have had three lanes blocked on each other. The counter-reading is that
+all three were real and a blocking gate forces them fixed. **Both are right, and the third option is
+already built into the module A is proposing to install.**
+
+`KNOWN_PREEXISTING` exists precisely for *"bindings known to have drifted … and deliberately not
+'fixed' … **Listed so real regressions stay visible above the noise.**"* That is the correct instrument:
+pre-existing breaks are **waived by name**, new ones block.
+
+**A waiver and a scope do the same job and differ in the only way that matters: a waiver is a visible,
+reviewable, four-line list in the source; a scope is silent.** Under scoping nobody learns the tree is
+broken. Under a waiver, the two current mismatches appear in a diff with an owner and a reason.
+
+So: neither "block everyone" nor "scope it away." **Waive the two, block everything new.** Zero lanes
+blocked on each other, zero silent passes.
+
+## Question 4 — `OI-65` (lane A's): a blocker for the scoped design, a non-issue for whole-tree
+
+The framing understates it in one direction and overstates it in another.
+
+**It is not two predicates. It is one predicate and none.** `verify_hash_bindings.py` contains **zero**
+occurrences of `status`, `SUPERSEDED`, `RETIRED` or `live` — grepped this turn. `collect()` harvests
+every `(path, sha256)` pair from every receipt and the only exclusion is a hardcoded four-entry
+allowlist. `test_hash_bindings._launch_code_receipts()` has a real predicate
+(`status == "SUPERSEDED" or "files" not in payload`). **There is nothing to reconcile; there is one to
+author**, and the proposal's *"any **live** receipt pins it"* is asking for a concept that does not
+exist in the tool it would live in.
+
+**The measured zero is over the wrong population.** The test globs `*launch-code-gate*.json` — **15
+files**. `verify_hash_bindings` walks **158** receipts in `state/` and resolves **170 bindings**. Zero
+divergence across 15 says nothing about the 158 the scoped gate would decide liveness over. A ~10×
+population gap, checkable in one `ls | wc -l`. **A's "measured zero rather than dressed as risk" is the
+right instinct and the measurement does not cover the domain.**
+
+**And the proposal changes the predicate's consequence from visible to silent.** Today a
+misclassification is a reporting discrepancy someone notices. Under the scoped hook, a receipt wrongly
+deemed retired means the gate checks nothing and prints green.
+
+**But whole-tree needs no liveness predicate at all** — `verify` already runs correctly without one.
+So the answer is neither "resolve first" nor "ride along": **ship whole-tree and `OI-65` stops being a
+dependency of this work.** It stays worth fixing on its own merits.
+
+## Question 5 — cost: confirmed irrelevant, and containment is the wrong goal here
+
+**0.555 s measured whole-tree**, matching the claimed 0.58 s. Scoping buys no speed.
+
+So the justification reduces entirely to blast-radius containment — and **for a freeze gate that is not
+a benefit.** A code freeze is global by definition; the evidence a gate passed against specific code is
+worth exactly as much as its weakest binding. Containing the blast radius of a broken freeze is a
+synonym for letting a broken freeze persist, which is what the ~19 h and the second break both are.
+
+## Recommendation, in the order it should be done
+
+1. **Fix or waive the two current mismatches.** `KNOWN_PREEXISTING` is the mechanism and it already has
+   the right comment; extend each new entry with owner, date, and the gate re-issue that would clear it.
+2. **Add `verify_hash_bindings.py` to `.githooks/pre-commit`, whole-tree, unscoped.** 0.555 s.
+3. **Update the dispatcher header's exclusion list either way.** Its documenting *exactly two*
+   deliberate exclusions is what made "never considered" indistinguishable from "considered and
+   rejected" — that is the actual root cause here, and it recurs unless the header is treated as the
+   record of the decision.
+4. **If scoping is ever wanted**, it must be file-side **∪** pin-side, and it needs `OI-65` (A's)
+   resolved over all 158 receipts, not 15.
+
+**What I did not check:** I did not run the proposed scoped implementation — it does not exist yet, so
+every statement about it is from its description, and I may be attacking a design that would ship with
+the day-one gap already closed. **If A's implementation intends to run whole-tree once at install and
+scope only thereafter, most of this review's force is spent** and the remaining points are the design
+rule (question 1), the receipt-introduced hole (question 2), and the population gap (question 4).
+
 ## Gate 5 and Gate 6 — deliberately not reported
 
 The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*
