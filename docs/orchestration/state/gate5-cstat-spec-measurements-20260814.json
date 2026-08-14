@@ -1,0 +1,338 @@
+{
+  "ARRAY_STATE_MEASURED_THIS_TURN_not_recalled": {
+    "ArrayTaskThrottle": 10,
+    "a_collapse_I_nearly_REPORTED_and_did_not": "sacct prints LOCAL time (UTC-0700) while I had asked for `date -u`. Comparing them made the last completion look 7 hours stale and I was one step from reporting a throughput collapse that never happened -- the gap was exactly 7 h, which is what exposed it. Task 13 ended 04:56:39 PDT, two minutes before the measurement. Verified with SLURM_TIME_FORMAT before use.",
+    "job": "56936015",
+    "manifest_job": "56936016 PENDING (Dependency)",
+    "sacct_X": "COMPLETED 14, PENDING 1, RUNNING 1 -- note sacct COMPRESSES the pending array range into ONE row and under-reports it as 1 where squeue -r shows 35",
+    "squeue_r_per_task": "1 RUNNING, 35 PENDING(Priority)",
+    "throttle_correction": "the throttle is 10, NOT 2. Two concurrent tasks was an OBSERVED occupancy under (Priority), not a configured cap, so raising the cap would buy nothing.",
+    "throughput": "14 tasks over 02:55:52 -> 04:56:39 PDT = 8.6 min/task wall-clock at ~2 concurrent; per-task elapsed ~14 min except task 0 at 2:05, which reused the predecessor's complete push."
+  },
+  "CENTRING_CONSEQUENCE_measured": {
+    "extra_rank_is_the_bias_direction": "centring off the sample mean raises the ceiling from N-1 to N (13 -> 14 measured); the extra direction is the offset.",
+    "offset_term": 9.269051e-76,
+    "offset_term_IS_the_whole_difference": "trace_nom - trace_mean == N/(N-1)*||mean-nominal||^2 to all printed digits, so the inflation is a BIAS and not a fluctuation.",
+    "ratio": 6.013,
+    "replica_mean_above_nominal_percent": 7.562,
+    "the_nominal_is_not_quotable": "the only 285-cell nominal artifact is fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz, schema pet-fullevent-fps-xsec-v1. Its own filename declares it non-quotable, so nominal-centring is not an option that was weighed and rejected -- it is UNAVAILABLE from quotable evidence.",
+    "trace_mean_centred": 1.84897e-76,
+    "trace_nominal_centred": 1.111802e-75
+  },
+  "CSTAT_O1_RANK_returns_to_joseph": {
+    "D_full_grid": 285,
+    "D_intersection": 259,
+    "D_union": 262,
+    "blocks": "publication, not build",
+    "ceiling_binds_tightly": "matrix_rank at N=14 returns exactly 13 = N-1, so the ceiling is not slack.",
+    "n_members": 50,
+    "rank_ceiling": 49,
+    "singular_against_every_candidate_domain": true,
+    "the_measurement_the_mediator_ASKED_for": "the deficit against the REPORTED dimension rather than 285, since that is the number that decides whether it is a problem. Measured: 262. It does NOT change the answer -- 262 >> 49, singular by 5.35x.",
+    "treatment": "UNDECLARED. Candidates named in the spec, none chosen. No builder may resolve it; a builder that silently returns an invertible matrix has decided a question reserved for Joseph."
+  },
+  "CSTAT_O2_IS_IT_C_stat_returns_to_joseph": {
+    "C_does_NOT_claim_which_dominates": "An alternative reading -- genuine amplification of the data fluctuation by the iterative unfolding -- is consistent with every number here and would itself be a significant result. Distinguishing them is one measurement, not an argument.",
+    "blocks": "publication under the name C_stat, not build",
+    "consequence": "each member differs in TWO ways at once. The matrix is C_stat + C_train + cross terms, and the two are NOT separable from this family: no two members share a draw and no member was repeated under a different init.",
+    "counting_expectation_percent_n_data_4116128": 0.0493,
+    "discriminating_test": "re-TRAIN one index twice at the SAME bootstrap_seed and extract both. Extraction is deterministic given weights, so repeating extraction alone measures nothing -- the repeat must be of TRAINING. 3-5 same-seed retrains at ~14 min/task bound C_train.",
+    "distribution_shape": "heavy-tailed, not uniformly wide: median abs dev 1.676% with replica_08 at +9.96% and replica_09 at -8.23%",
+    "found": "by C while writing this spec; in no one's dispatch; in C's judgement the more serious of the two open items.",
+    "measured_relative_sd_percent": 4.478,
+    "network_is_unseeded": "grep for set_seed across nd-unfolding/ and omnifold_nn/ returns NOTHING; no tf.random.set_seed, no np.random.seed, no TF_DETERMINISTIC_OPS in the trainer or extractor.",
+    "ratio": 90.8,
+    "what_bootstrap_seed_actually_governs": "the draw and its provenance validation (train_fullevent_replica.py:150-173, :315-321), NOT weight initialization, batch shuffling, or GPU reduction order."
+  },
+  "HEADLINE": "Spec committed. THREE measured results drive it. (1) The covaried object is 15x19 = 285 cells, NOT the 224-cell paper grid in AGENTS.md -- the source dump is extended-FPS. (2) The reporting mask IS replica-dependent and the flicker OCCURS: 3 cells in only 14 members, one reported in just 9 of 14. D found the mechanism; C measured the occurrence. (3) The across-replica spread is ~90x larger than counting statistics AND the network is unseeded, so the object is C_stat + C_train and the two are not separable from this family. ONE item returns to Joseph: CSTAT-O2 (the name). CSTAT-O1 (rank) was raised and then CLOSED BY REFERENCE the same day -- the N=50 predeclaration (6bd3707, 2026-08-12 23:29) already dispositioned rank before the replica code path existed, with Joseph's 'sounds good, get N=50 up and running'. It was the FOURTH re-opening of that question.",
+  "INTERNAL_CONSISTENCY_CHECKS": {
+    "checks": [
+      {
+        "check": "union_plus_never_equals_full_grid",
+        "lhs": 285,
+        "pass": true,
+        "rhs": 285,
+        "tol": 0.0
+      },
+      {
+        "check": "flicker_histogram_sums_to_full_grid",
+        "lhs": 285,
+        "pass": true,
+        "rhs": 285,
+        "tol": 0.0
+      },
+      {
+        "check": "intersection_equals_hist_all_bucket",
+        "lhs": 259,
+        "pass": true,
+        "rhs": 259,
+        "tol": 0.0
+      },
+      {
+        "check": "union_minus_intersection_equals_flicker_cells",
+        "lhs": 3,
+        "pass": true,
+        "rhs": 3,
+        "tol": 0.0
+      },
+      {
+        "check": "trace_ratio_equals_quotient",
+        "lhs": 6.013,
+        "pass": true,
+        "rhs": 6.013088368118466,
+        "tol": 0.001
+      },
+      {
+        "check": "offset_term_equals_trace_difference",
+        "lhs": 9.269051e-76,
+        "pass": true,
+        "rhs": 9.269050000000001e-76,
+        "tol": 1e-79
+      },
+      {
+        "check": "relative_sd_equals_sd_over_mean_percent",
+        "lhs": 4.478,
+        "pass": true,
+        "rhs": 4.478388488887525,
+        "tol": 0.01
+      },
+      {
+        "check": "rank_at_N14_equals_ceiling",
+        "lhs": 13,
+        "pass": true,
+        "rhs": 13,
+        "tol": 0.0
+      },
+      {
+        "check": "rank_ceiling_field_agrees",
+        "lhs": 13,
+        "pass": true,
+        "rhs": 13,
+        "tol": 0.0
+      },
+      {
+        "check": "O1_singular_factor_union",
+        "lhs": 5.35,
+        "pass": true,
+        "rhs": 5.346938775510204,
+        "tol": 0.01
+      },
+      {
+        "check": "O1_rank_ceiling_is_N_minus_1",
+        "lhs": 49,
+        "pass": true,
+        "rhs": 49,
+        "tol": 0.0
+      },
+      {
+        "check": "O1_D_full_grid_matches_binning",
+        "lhs": 285,
+        "pass": true,
+        "rhs": 285,
+        "tol": 0.0
+      },
+      {
+        "check": "binning_product",
+        "lhs": 285,
+        "pass": true,
+        "rhs": 285,
+        "tol": 0.0
+      },
+      {
+        "check": "edges_pt_count",
+        "lhs": 16,
+        "pass": true,
+        "rhs": 16,
+        "tol": 0.0
+      },
+      {
+        "check": "edges_pp_count",
+        "lhs": 20,
+        "pass": true,
+        "rhs": 20,
+        "tol": 0.0
+      },
+      {
+        "check": "O2_ratio_equals_quotient",
+        "lhs": 90.8,
+        "pass": true,
+        "rhs": 90.8316430020284,
+        "tol": 0.5
+      },
+      {
+        "check": "O2_sd_matches_measurements_block",
+        "lhs": 4.478,
+        "pass": true,
+        "rhs": 4.478,
+        "tol": 0.0
+      },
+      {
+        "check": "flicker_out_states_union_262",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "flicker_out_states_intersection_259",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "flicker_out_states_flicker_3",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "flicker_out_confirms_occurrence",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "centring_out_states_ratio_6013",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "spread_out_states_relative_sd",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "family_out_states_D_285",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      },
+      {
+        "check": "family_out_states_bin_order_C_order_verified",
+        "lhs": true,
+        "pass": true,
+        "rhs": true,
+        "tol": 0.0
+      }
+    ],
+    "failures": [],
+    "n_checks": 25,
+    "n_failed": 0,
+    "why": "BEN-077: a verdict-only receipt is unfalsifiable, so every derived number ships its operands. BEN-230: self-consistency is NOT power, so these checks compare the contract against the MEASURED .out files as well as against its own operands."
+  },
+  "MASK_FLICKER_confirmed_mechanism_AND_measured_occurrence": {
+    "cells_flickering": 3,
+    "credit": "D found the mechanism by reading extract_fullevent_replica.py:190-196 and extract_fullevent_fps.py:517-518, and was explicit it had NOT measured an occurrence. C measured it on the 14 published members.",
+    "n_replicas_reported_histogram": {
+      "0_never": 23,
+      "13": 2,
+      "14_all": 259,
+      "9": 1
+    },
+    "never_reported_matches_telemetry": "23 == n_cells_no_denominator == 23, exactly",
+    "telemetry_n_cells_populated_observed": [
+      260,
+      261,
+      262
+    ],
+    "why_it_defeats_the_comparison": "both builders, given identical member vectors, compute the identical wrong variance in a flickering cell and agree with each other perfectly. Element-wise agreement has NO power over this, which is why it is declared in the spec rather than left to code."
+  },
+  "MEASURED_ON": {
+    "ALL_NUMBERS_ARE_PROVISIONAL": "Marked [N=14] in the spec. They MUST be re-measured at 50/50 before publication. They are quoted because the DECISIONS they drive are stable under the remaining 36, and each decision states whether it is.",
+    "array": "56936015",
+    "array_state_measured_this_turn": "14 COMPLETED, 1 RUNNING, 35 PENDING (squeue -r)",
+    "n_members_published_at_measurement": 14,
+    "n_members_required": 50
+  },
+  "THE_DECISIONS_THE_SPEC_MAKES_so_no_builder_makes_them": {
+    "binning": "15 x 19 = 285, edges read from the member file, bit-identical across members",
+    "centring": "the replica MEAN -- decided, with a measured 6.0x trace consequence and because the only nominal alternative is explicitly NONQUOTABLE",
+    "consumer_predeclarations": "CSTAT-P1 Hartlap bias on any TRUNCATED inversion (bias makes chi2 too SMALL, so a truncation chosen for tractability errs in the flattering direction) and CSTAT-P2 Peelle's Pertinent Puzzle (the FPS chain carries + norm 1.4%, so the precondition is present). Both bind CONSUMERS, not builders; OI-93.",
+    "domain": "construct over the UNION; publish per-cell n_replicas_reported; quotable sub-block is n_replicas_reported == 50; flickering cells flagged not deleted; flicker count reported EVEN IF ZERO",
+    "flattening": "assert the declared STRING 'pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel' (== numpy C-order), never infer from shape",
+    "normalization": "1/(N-1), ddof=1",
+    "ordering": "by the replica_index scalar INSIDE each NPZ; sorted == range(50)",
+    "quantity": "the `xsec` key; d2sigma/dpT dp_parallel, a DENSITY, cm^2/nucleon/(GeV/c)^2",
+    "rank": "DISPOSITIONED BEFORE LAUNCH, not decided here -- the N=50 predeclaration settled it (rank is not the criterion; the rank-deficient GoF treatment is disclosed under OI-29). OI-91 raised it and CLOSED BY REFERENCE the same day; builders still release as calculated and must not invert (CSTAT-O1a).",
+    "the_name": "NOT DECIDED -- CSTAT-O2 / OI-92, returns to Joseph"
+  },
+  "WHAT_A_REVIEWER_SHOULD_CHECK_FIRST": "Re-run the five scripts in state/gate5-cstat-spec-measurements-20260814/ against the family and diff their stdout against the committed .out files. The two numbers that would matter most if this receipt were wrong are the flicker count (3 cells at N=14, which is D's hazard realized) and the 4.478% relative sd against a 0.0493% counting expectation, which is CSTAT-O2.",
+  "WHAT_THIS_ARTIFACT_DOES_NOT_DO": [
+    "It does NOT construct C_stat. C authored the spec and does not build; two independent builders (lane B and a cold codex session) implement it blind to each other.",
+    "It does NOT resolve CSTAT-O1 (rank) or CSTAT-O2 (the name). Both return to Joseph.",
+    "It does NOT construct anything from the partial family -- 14 of 50 at measurement time. The spec was written DURING the wait precisely so nobody is tempted to start early.",
+    "It does NOT touch GATE5_CODE_ROOT, and it issued no scancel/scontrol/resubmit.",
+    "It does NOT close OI-60 (data-factor array identity) or OI-66."
+  ],
+  "artifact": "gate5-cstat-spec-measurements-20260814.json",
+  "authorization": "OI-121; Joseph's 'go ahead' relayed by personal-orchestrator 2026-08-14. The authorization is for the SPEC. C does not write the covariance code.",
+  "code_and_document_identity": {
+    "SPEC (markdown)": {
+      "bytes": 64370,
+      "path": "docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md",
+      "sha256": "eb0c28f115363d5543f65d45c27213556babaf4f5782948953cbdb6639cdfc96"
+    },
+    "machine contract": {
+      "bytes": 38254,
+      "path": "nd-unfolding/pet/gate5_cstat_contract.json",
+      "sha256": "595a6c102026688d070c71424068dde4ee9b7345afee6ee7540b07c845d40109"
+    }
+  },
+  "evidence": {
+    "centring.out": {
+      "bytes": 797,
+      "sha256": "fb4dec3a1abd03bb33b256a645d2da7eba7c463f84c90109e2fd86a23c0ec6c3"
+    },
+    "centring.py": {
+      "bytes": 2698,
+      "sha256": "5d14c557ef87418e9e51768bd07712ca391a39c4c15910f738f4c7d39d27c6d8"
+    },
+    "flicker.out": {
+      "bytes": 1216,
+      "sha256": "d573af6a5962d730e7339a096cb7995f2280eeb8c332bbd44789f20dfd0fd814"
+    },
+    "flicker.py": {
+      "bytes": 3192,
+      "sha256": "995c21aacc8e1a49fe09ab724eef7bd3568e50fd7b0495823caafd68865267d2"
+    },
+    "measure_bins.out": {
+      "bytes": 3625,
+      "sha256": "2c20cefdf0bf5f8b09fe8d01f02eced642f7ad5c1f2ad5060410c8c6d9803c9a"
+    },
+    "measure_bins.py": {
+      "bytes": 2348,
+      "sha256": "09070c533247236496f40c5675f06d74aa609ede10cd6de61047451ff75733ef"
+    },
+    "measure_family.out": {
+      "bytes": 1710,
+      "sha256": "afc53b84f204b9136345354733a8689c101283bd91a2035f27e8c6ee5e7e712c"
+    },
+    "measure_family.py": {
+      "bytes": 4121,
+      "sha256": "a09bc1867a78f7bc651f4db1cedffba4eee906270e66128fa181d49a5a423b0c"
+    },
+    "spread_and_nominal.out": {
+      "bytes": 3997,
+      "sha256": "f82bc6154b07a325d278c2dfbd53831f50ce7b48cd867702adaa7c4cd0c2dc61"
+    },
+    "spread_and_nominal.py": {
+      "bytes": 2714,
+      "sha256": "24821bca501de4e885cd4043c3cab4638817d217737ee2ab73f6bd337f147e33"
+    },
+    "zero_cells.py": {
+      "bytes": 4028,
+      "sha256": "14bfb428de3a6ee08c067d9552a53586fd6e1f80225147bf0e4e1fef6c6a3090"
+    }
+  },
+  "lane": "C (PET), owner of Gate 5 / P5B.1 / C_stat -- SPEC AUTHOR, NOT A BUILDER",
+  "observed_pdt": "2026-08-14 ~05:00 PDT",
+  "purpose": "Evidence behind every number in SPEC-20260814-gate5-cstat-construction-v1.md and gate5_cstat_contract.json, plus the internal-consistency checks that make the contract falsifiable."
+}

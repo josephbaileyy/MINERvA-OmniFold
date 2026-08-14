@@ -1,0 +1,267 @@
+{
+  "artifact": "gate5-fullevent-fps-zero-cells-20260814.json",
+  "lane": "C (PET)",
+  "purpose": "zero-cell / reported-cell indices of the Gate-5 full-event FPS grid, for D's mask nesting test. Published with provenance because a containment test between two masks is meaningless if they index different grids.",
+  "WHICH_OBJECT_THIS_IS": {
+    "grid": "15 x 19 = 285 cells",
+    "xsec_schema": "pet-fullevent-fps-gate5-replica-xsec-v1",
+    "ravel_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
+    "edges_pt": [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5,
+      30.0
+    ],
+    "edges_pparallel": [
+      0.0,
+      0.75,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0,
+      15.0,
+      20.0,
+      40.0,
+      60.0,
+      120.0
+    ],
+    "source_family": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas",
+    "n_members_measured": 18,
+    "n_members_required": 50,
+    "PROVISIONAL": "measured on 18 of 50; the never-reported set can only SHRINK and the flicker set can only GROW as members arrive, so these are bounds, not final. This string is DERIVED from the member count, not typed -- an earlier draft hardcoded 14 and was already stale by the time it ran at 18."
+  },
+  "THE_19_VS_23_DISCREPANCY_read_this_before_using_the_indices": "D asked for 'the FPS mask's 19 zero indices'. This family measures 23 never-reported cells out of 285, matching its own telemetry n_cells_no_denominator = 23 exactly. 19 would correspond to 266 reported of 285, which is the count D has been using for the lgbm/GBDT mask. So either the 266-cell object is NOT this FPS grid, or one of the two counts is wrong. A set-containment test run before that is resolved would compare two different objects and return a confident answer to the wrong question.",
+  "counts": {
+    "n_cells": 285,
+    "never_reported": 23,
+    "reported_in_all_members": 259,
+    "flickering": 3,
+    "union_reported": 262
+  },
+  "telemetry_n_cells_masked_zero_acceptance_per_member": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "telemetry_n_cells_populated_per_member": [
+    260,
+    261,
+    262
+  ],
+  "telemetry_cross_check": {
+    "n_cells": 285,
+    "n_cells_populated": 262,
+    "n_cells_no_denominator": 23,
+    "n_cells_masked_zero_acceptance": 3,
+    "never_reported_equals_n_cells_no_denominator": true
+  },
+  "zero_cells_flat_indices": [
+    228,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    266,
+    267,
+    268,
+    269,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280
+  ],
+  "zero_cells_as_pt_pparallel": [
+    [
+      12,
+      0
+    ],
+    [
+      13,
+      0
+    ],
+    [
+      13,
+      1
+    ],
+    [
+      13,
+      2
+    ],
+    [
+      13,
+      3
+    ],
+    [
+      13,
+      4
+    ],
+    [
+      13,
+      5
+    ],
+    [
+      13,
+      6
+    ],
+    [
+      14,
+      0
+    ],
+    [
+      14,
+      1
+    ],
+    [
+      14,
+      2
+    ],
+    [
+      14,
+      3
+    ],
+    [
+      14,
+      4
+    ],
+    [
+      14,
+      5
+    ],
+    [
+      14,
+      6
+    ],
+    [
+      14,
+      7
+    ],
+    [
+      14,
+      8
+    ],
+    [
+      14,
+      9
+    ],
+    [
+      14,
+      10
+    ],
+    [
+      14,
+      11
+    ],
+    [
+      14,
+      12
+    ],
+    [
+      14,
+      13
+    ],
+    [
+      14,
+      14
+    ]
+  ],
+  "flickering_cells_flat_indices": [
+    209,
+    254,
+    255
+  ],
+  "flickering_cells_n_reported": {
+    "209": 17,
+    "254": 16,
+    "255": 12
+  },
+  "replica_indices_measured": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "INDEPENDENT_CHECK_OF_D_NESTING_RESULT": {
+    "D_claim": "PET's 262 is a strict subset of FPS's 266; the four cells between them are flat {228, 251, 252, 253} = (12,0),(13,4),(13,5),(13,6). Committed b9d0803; B derived the same four independently from the other direction.",
+    "checked_from_this_side": "Subtracting D's four from THIS family's 23 never-reported cells leaves 19 cells, which is exactly the number of zeros a 266-reported FPS mask must have on a 285-cell grid. The arithmetic closes from a third artifact that knew about neither.",
+    "implied_fps_zero_cells_flat_indices": [
+      247,
+      248,
+      249,
+      250,
+      266,
+      267,
+      268,
+      269,
+      270,
+      271,
+      272,
+      273,
+      274,
+      275,
+      276,
+      277,
+      278,
+      279,
+      280
+    ],
+    "n_implied": 19,
+    "consistent": true,
+    "the_19_vs_23_question_is_RESOLVED": "There was no discrepancy and no disagreement. 23 is this family's never-reported count on the 285-cell grid; 19 is the FPS mask's; they differ by exactly D's four. The earlier note in this artifact asking which object was meant is answered, and is retained rather than deleted because asking it was correct at the time."
+  },
+  "CORRECTION_the_agreement_is_NARROWER_than_claimed": {
+    "the_claim_as_put_to_me": "'Those four are exactly what PET telemetry reports as n_cells_masked_zero_acceptance = 4 -- truth mass, zero reco acceptance -- so the count and the mechanism agree from two artifacts that did not know about each other.'",
+    "measured_here": "n_cells_masked_zero_acceptance is NOT 4 across this family. Over the 18 published members it takes the values {2, 3, 4, 5, 6}.",
+    "why": "the completeness/acceptance mask is computed with the REPLICA's signal Poisson factor applied (extract_fullevent_replica.py:190-196), so this count is itself a per-replica DRAW. It is BEN-231's mechanism surfacing in a second telemetry field.",
+    "what_SURVIVES": "The NESTING conclusion stands, and is independently confirmed above from this side. Nothing about the subset relation depends on the count being 4.",
+    "what_does_NOT_survive": "Treating '4' as a property of the object C_stat is built from. It is a property of the NOMINAL extraction -- a single artifact. Against the replica family the matching quantity is a DISTRIBUTION (2..6), not a number.",
+    "why_it_matters": "'the count and the mechanism agree from two artifacts' reads as a family-level cross-check. It is a cross-check of the nominal. The nesting is safe to use; the phrase should not be carried into a technote as family-level agreement, because a reader who then measures the family will find 2..6 and conclude the record overstated it.",
+    "and_it_is_a_SECOND_flicker_channel": "never_reported (23) and union_reported (262) are STABLE from 14 to 18 members while this field ranges 2..6 -- so the per-member mask internals move even where the union/never structure does not. Consistent with BEN-231, measured independently of it."
+  }
+}

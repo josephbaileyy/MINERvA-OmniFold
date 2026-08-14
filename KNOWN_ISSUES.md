@@ -52,3 +52,33 @@ buried in run-log prose.
 | 37 | TRAP | FIXED | Persist final-epoch checkpoints and round-trip them against stored push weights before permitting downstream extraction. | [BEN-043 resolution](nd-unfolding/ND_OMNIFOLD_RUN_LOG.md) | 2026-08-08 |
 | 41 | TRAP | RETRACTED | Do not quote one-shot results from the unstable diagnostic wrapper family as estimator properties. | [retracted-value index](docs/orchestration/INDEX-retracted-and-superseded-values.md) | 2026-08-11 |
 | 44 | TRAP | FIXED | Per-watch failures must be isolated and surfaced through watch_errors without making whole-scan failures look healthy. | [archived resolution](KNOWN_ISSUES-ARCHIVE-2026-08.md) | 2026-08-11 |
+
+## `p4_validate_active_lateral_fps.py` — two gates that cannot fail on a rank-deficient covariance
+
+Found 2026-08-14 by lane C while writing the `C_stat` spec; **both lines read directly, not relayed.**
+Not repaired here — it is another lane's validator path and no current artifact is mis-certified by it —
+but recorded because a future reader will otherwise take its output as evidence it cannot supply.
+
+```
+:69   r["min_over_max_eig"] = float(ev[0] / max(1e-300, abs(ev[-1])))
+:70   r["psd"]              = bool(ev[0] >= -1e-12 * abs(ev[-1]))
+:72   r["n_reported"]       = int(np.sum(d > 0))
+```
+
+1. **`:70` is a negativity test, not a rank test.** An exact zero eigenvalue satisfies it, so a
+   **rank-49** matrix passes `psd=True` silently. Gate-5's `C_stat` is rank ≤ 49 against 266 cells by
+   construction (predeclared, `OI-91`), so this gate will pass it and say nothing. **The measurement needed
+   to catch it is already recorded one line above** — `min_over_max_eig` at `:69` — so what is missing is a
+   rank threshold, not data.
+2. **`:72` infers the reported-bin count from the diagonal, and that is not the same quantity.** A cell can
+   be **reported** (`comp > 0`) and still carry exactly zero replica variance, if every draw lands on the
+   same value — plausible in a low-occupancy catch bin, and the extended-FPS grid has catch bins precisely
+   where occupancy is thinnest. Its diagonal is `0.0` and the count silently **undercounts**. On Gate-5's
+   `C_stat` it is wrong by construction: the adopted 266-cell common mask deliberately contains **four
+   identically-zero cells** (PET truth mass, zero reco acceptance), so `sum(d > 0)` reads **262** where
+   `n_reported` is **266**.
+
+**Guarded on the C_stat side rather than fixed here:** `CSTAT-D0e` requires `n_reported` to be declared
+from `reported_mask.sum()` and forbids deriving it from `diag(C)`, and requires a zero on the reduced
+diagonal to be **reported by index rather than dropped** — dropping one would silently change the published
+dimension. See `SPEC-20260814-gate5-cstat-construction-v1.md` §3.1.
