@@ -473,6 +473,25 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-14 ~06:10 PDT — `BEN-232` REFUTED BY ME: THE NETWORK IS SEEDED, `C_stat` IS CORRECTLY NAMED.**
+The estimator seed is **pinned at 42 on all 50 members and enforced per member** (`:275` fail-closes);
+measured from all 50 weights artifacts, one `seed_policy`. My `grep set_seed` **could not match
+`set_random_seed`** — the search was structurally incapable of refuting the claim I drew from its silence
+(`BEN-235`, and worse than `BEN-234` because a null `grep` feels like a measurement). Refutation applied
+everywhere the claim was: `BEN-232` row, its long-form, `SPEC` §8, the contract, and **`OI-92` CLOSED — no
+Joseph turn needed.** What survives is `OI-94`, and it is now **DECOMPOSED**: family **4.478%** =
+**18.35%** measured process non-determinism (`VL130`, the floor surviving a full seed pin — relabelled by B)
++ **81.65%** unexplained residual (**4.046%**, 82.1× Poisson), shares summing to 100.00% and every figure
+re-derived independently. `cap_saturation_frac = 0.0` rules out logit clipping. The residual is plausibly
+the learned map's response to the draw — **the legitimate content of `C_stat`** — which neither B nor I
+assert. **~18% of the component's variance is non-determinism, not data statistics, and that belongs in the
+receipt.** Caveats: 2M-subsample numerator, independence assumed, `n=4` at 40.8% per sd. **`CSTAT-O2a`
+RELEASED** with a better shape — it now pins the **with-draw** floor against Leg F's no-draw baseline, so
+the difference *is* the map response — **sequenced after `56936015` drains, `nice`d.** **`CSTAT-D4`** writes the `C_stat`+`C_ML` disjointness proof that genuinely was
+missing. **`BEN-236`**: the training mask is not constant (`257/258/259`) and its 259 is a **different set**
+from the extraction intersection's 259 — a matching count is not a matching set. **`CSTAT-R7`** requires the
+`N=50` → **10.1%** precision disclosure in the receipt.
+
 **Update 2026-08-14 ~06:40 PDT — ONE BUILDER (Joseph), AND §3.1 RULED: BOTH FORMS WITH THE REDUCTION CHECKED.**
 Joseph: *"Okay yeah drop the second builder."* **The spec now makes no independence claim anywhere** — and the
 sharpest reason is self-indicting: the spec pins `dof`, `centring`, `ravel_order` and member selection, i.e.

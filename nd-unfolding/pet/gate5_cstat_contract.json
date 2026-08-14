@@ -159,7 +159,16 @@
         255
       ]
     },
-    "union_within_the_262_domain_not_intersection": "The union (reported in >= 1 member) is the rule, not the intersection: the intersection silently deletes cells and its deletion set depends on N, so the published dimension would drift with the member count. On the 266 mask, union-within-266 changes the dimension NOT AT ALL and changes only which cells carry a caveat -- the honest place for the difference to live."
+    "union_within_the_262_domain_not_intersection": "The union (reported in >= 1 member) is the rule, not the intersection: the intersection silently deletes cells and its deletion set depends on N, so the published dimension would drift with the member count. On the 266 mask, union-within-266 changes the dimension NOT AT ALL and changes only which cells carry a caveat -- the honest place for the difference to live.",
+    "CSTAT_D0f_THERE_IS_A_THIRD_MASK_AND_259_IS_A_SET_COLLISION": {
+      "hard_constraint_from_B": "NO consumer may take a training artifact's reported_bin_mask as the reporting domain. Adopted.",
+      "B_stated": "259 cells (h_prior > 0 on the 2M subsample), nesting 259 subset 262 subset 266, the difference a subsample effect and not physics",
+      "C_measured_two_corrections": {
+        "1_it_is_not_constant": "sizes across the 50 weights artifacts are {257: 3, 258: 21, 259: 26}; union 259, intersection 256, NOT identical across members. So '259' is its UNION (equivalently its modal value), not a constant -- a further per-member-varying mask alongside BEN-231's reporting mask and n_cells_masked_zero_acceptance.",
+        "2_the_two_259s_are_DIFFERENT_SETS": "the training-mask UNION is 259 and the extraction INTERSECTION is also 259, and they are not the same 259. training-union IS a subset of extraction-union, but the extraction union holds three cells the training union does not: flat {254, 281, 284} -- and 254 is one of the three flickering cells of CSTAT-D3."
+      },
+      "the_rule": "A MATCHING COUNT IS NOT A MATCHING SET. Compare sets, never counts. A consumer picking whichever mask is at hand because the count matches is wrong by three cells with every structural check passing. BEN-236."
+    }
   },
   "measurements_provisional_at_N14": {
     "WARNING": "measured on 14 of 50 members while array 56936015 was mid-flight; MUST be re-measured at 50/50 before publication. Quoted because the DECISIONS they drive are stable under the remaining 36.",
@@ -231,54 +240,52 @@
         "BEN": "BEN-234"
       }
     },
-    "CSTAT-O2_is_it_entitled_to_the_name_C_stat": {
-      "state": "OPEN -- found by C while writing this spec; in C's judgement the more serious of the two",
-      "measured_relative_sd_percent": 4.478,
-      "counting_expectation_percent": 0.0493,
-      "ratio": 90.8,
-      "network_is_unseeded": "grep for set_seed across nd-unfolding/ and omnifold_nn/ returns NOTHING -- no tf.random.set_seed, no np.random.seed, no TF_DETERMINISTIC_OPS",
-      "bootstrap_seed_governs": "the draw and its provenance validation, NOT weight initialization, batch shuffling, or GPU reduction order",
-      "consequence": "each member differs in TWO ways at once -- its Poisson draw AND free-running training stochasticity. The matrix is C_stat + C_train + cross terms, and the two are NOT separable from this family: no two members share a draw and no member was repeated under a different initialization.",
-      "C_is_not_claiming_which_dominates": true,
-      "alternative_reading": "genuine amplification of the data fluctuation by the iterative unfolding, which would be legitimately statistical and would itself be a significant result",
-      "discriminating_test_CSTAT-O2a": "re-TRAIN one replica index twice at the SAME bootstrap_seed, then extract both. Extraction is deterministic given weights, so repeating extraction alone measures nothing -- the repeat must be of TRAINING. 3-5 same-seed retrains bound C_train at ~14 min per task.",
-      "blocks": "publication under the name C_stat, not build",
-      "THE_STAKE_IS_A_DOUBLE_COUNT_NOT_A_LABEL": {
-        "C_ML_definition": "RUNBOOK:223-224 -- 'C_ML: no Poisson variation. Use a predeclared crossed seed design and compare with the P5A floor.' That is training/seed variance with the draw HELD FIXED.",
-        "the_overlap": "C_stat as built has the draw varying AND the network unseeded, so it CONTAINS the C_ML quantity. C_total = C_syst + C_stat + C_ml + C_retrain would count it TWICE.",
-        "why_this_is_damning_rather_than_unlucky": "the campaign has already done this analysis for a different pair and documented it: assemble_ctotal_bkgsub.py:10-20 carries an explicit no-double-counting PROOF for C_syst + C_retrain, built by defining C_retrain relative to the frozen map rather than nominal, and it even names the shape that WOULD have failed ('Had Delta_u been x_retrain - CV it WOULD double-count'). C_stat + C_ML is the one pair with no such proof, and the difference is that the other overlaps were avoided BY CONSTRUCTION whereas this one was created BY OMISSION -- a missing set_seed.",
-        "contingency": {
-          "if_training_dominated": "C_stat + C_ML double-counts, and the name is wrong",
-          "if_amplification_dominated": "neither is true, and the amplification factor is itself a result"
-        },
-        "one_measurement_settles_both": "CSTAT-O2a is not merely a test -- retraining one index twice at the same bootstrap_seed is a ONE-POINT MEASUREMENT OF THE C_ML QUANTITY ITSELF, so it produces a number C_ML needs regardless of how the naming question is answered."
-      },
-      "THE_THREE_CANDIDATE_NAMES": {
-        "1_keep_C_stat_undeclared": {
-          "cost": "zero churn",
-          "against": "asserts a decomposition the family cannot support, leaves the C_ML overlap unexamined, and puts a 'statistical' row ~90x counting into the technote where the first referee to divide by sqrt(n_data) finds it",
-          "recommended": false
-        },
-        "2_rename_to_C_replica_or_C_stat_plus_train": {
-          "for": "honest about content",
-          "against": "breaks a LOCKED estimator label -- RUNBOOK:210 calls it F7 C_stat, the N=50 predeclaration calls it C_stat, and assemble_ctotal_bkgsub.py keys the assembler slot on C_stat -- in order to describe a split NOBODY HAS MEASURED YET. Churn ahead of evidence.",
-          "recommended": false,
-          "note": "not 'never' -- this becomes the right answer if CSTAT-O2a shows training dominance"
-        },
-        "3_keep_the_slot_declare_the_composition_run_the_test": {
-          "recommended": true,
-          "what": "keep C_stat for the assembler slot; record in the receipt that the component is C_stat + C_train with the split UNMEASURED, and name the C_ML overlap as open rather than resolving it silently; then run CSTAT-O2a",
-          "cost": "~5 tasks at ~14.5 min -- the cheapest item on this gate",
-          "why": "the name stays where three documents already put it, nothing is asserted that is not measured, and the test decides BOTH the name and whether the total double-counts"
-        }
-      }
-    },
     "CSTAT-O3_which_assembler_and_what_ratifies_its_mask": {
       "state": "OPEN -- NOT lane C's to decide, and it does NOT block building C_stat",
       "problem": "RUNBOOK:213 requires the P5A central/mask/order, and P5A never extracted. The code has already picked a substitute SILENTLY: assemble_ctotal_bkgsub.py:104-107 uses ref_mask = masks['C_syst'] with a hard SystemExit, while the CENTRAL-VALUE mismatch at :113-115 only WARNS. So in code, whatever C_syst was built on IS the grid.",
       "shape": "OI-122's shape and worse -- there two documents disagree; here a document and the code disagree and the code wins silently",
       "resolution_required": "either run the P5A extraction or RATIFY A SUBSTITUTE AUTHORITY IN WRITING. That is a documented supersession, not a lane's default.",
       "why_it_does_not_block": "C_full is grid-complete, so the reduction can be re-derived whenever the authority is settled"
+    },
+    "CSTAT-O2_the_name_RESOLVED_premise_refuted": {
+      "state": "CLOSED 2026-08-14. C_stat IS CORRECTLY NAMED. No decision needed from Joseph.",
+      "what_I_claimed_and_it_was_FALSE": "that the per-replica network was unseeded, so members differed by the draw AND by training stochasticity, so the object was C_stat + C_train and inseparable -- and, in a later commit, that C_total DOUBLE-COUNTS C_ML.",
+      "the_refutation_verified_three_ways": {
+        "1_launcher": "sbatch_gate5_replica_train_array.sh:63-71 passes ONLY --bootstrap-seed and --replica-index",
+        "2_call_path": "train_fullevent_replica.py:236 calls nominal.main([...]) WITHOUT --estimator-seed, so train_fullevent_nominal.py:335 defaults from NOMINAL_SEED_POLICY (:69 = 42) and :376 runs tf.keras.utils.set_random_seed(42). The seeding IS on the replica path -- the replica driver monkey-patches three nominal functions then delegates to nominal's own main().",
+        "3_MEASURED_from_the_artifacts": "all 50 GATE5_REPLICA_WEIGHTS.npz carry exactly ONE seed_policy, with estimator_seed: 42; and train_fullevent_replica.py:275 FAIL-CLOSES on any drift from NOMINAL_SEED_POLICY, so agreement is ENFORCED PER MEMBER, not coincidental."
+      },
+      "how_the_error_happened": "I ran grep -rln 'set_seed' and got nothing. The API is set_random_seed, and 'set_random_seed' does NOT contain the substring 'set_seed'. My other patterns (tf.random, np.random.seed, TF_DETERMINISTIC, PYTHONHASHSEED) all miss tf.keras.utils.*. The search could not have refuted the claim I drew from its silence. BEN-235.",
+      "the_name": "C_stat, unchanged, in the slot assemble_ctotal_bkgsub.py / RUNBOOK:210 / the N=50 predeclaration all already use."
+    },
+    "CSTAT-D4_C_stat_and_C_ML_disjointness_proof": {
+      "why_it_exists": "the double-count claim was wrong, but the observation under it was not: C_stat + C_ML is the ONE component pair in this chain with no WRITTEN disjointness proof, while assemble_ctotal_bkgsub.py:10-20 carries an explicit one for C_syst + C_retrain including a statement of the construction that WOULD have failed. That standard existed and this pair had not met it.",
+      "proof": "C_stat varies the coherent data/signal/background POISSON DRAW across 50 members while the estimator seed is PINNED at 42 for every member -- defaulted at train_fullevent_nominal.py:335 from NOMINAL_SEED_POLICY (:69), applied at :376, and FAIL-CLOSED per member at train_fullevent_replica.py:275; measured 50/50. C_ML is defined complementarily by RUNBOOK:223-224 as 'no Poisson variation ... a predeclared crossed seed design', i.e. it varies the estimator seed with the draw held fixed. The two vary DISJOINT inputs, so their sum does not double-count.",
+      "enforced_not_lucky": ":275 would ABORT a member whose seed policy drifted, so a future edit that began varying the estimator seed per replica would FAIL THE FAMILY rather than silently corrupt the sum.",
+      "residual": "set_random_seed does NOT defeat GPU non-determinism (cuDNN atomics, non-deterministic reductions) unless determinism ops are enabled, and they are not. So some training variance leaks into C_stat despite the pin -- quantified by VL130, see CSTAT-O2a."
+    },
+    "CSTAT-O2a_HELD_not_launched": {
+      "state": "HELD. DO NOT LAUNCH. The number already exists on disk as VL130.",
+      "why": "Gate-6 Leg F already IS this measurement. sbatch_pet_fullevent_floor_replicate_array.sh:48-50 sets EST=42 and SUB=0 under 'THE POLICY. Identical for every draw', :185-186 passes exactly those two, and draws run at bootstrap_seed = -1 on identical inputs and identical 2,000,000-row mc_indices. So every source of variation is pinned except process, node and GPU -- making VL130 the residual GPU/process non-determinism floor surviving a full seed pin, NOT 'across-process training noise' as its ledger label said (B is correcting that).",
+      "VL130_numbers_n4": {
+        "top_occupancy_quartile_65_bins_71.3pct_of_spectrum": "2.17% median",
+        "bins_holding_90pct_115_bins": "2.52% median",
+        "lowest_occupancy_quartile_65_bins_0.52pct": "28.12% median",
+        "L2_aggregate_over_259": "5.26%",
+        "fractional_uncertainty_per_sd_at_n4": "40.8%, improving to 35.4% when draw 5 lands"
+      },
+      "why_HELD_rather_than_CANCELLED": "Leg F measures the floor ON THE NOMINAL. CSTAT-O2a would measure it on a BOOTSTRAP-PERTURBED dataset, which is the condition that actually obtains inside this family. If the floor is data-dependent, subtracting the nominal's floor from the family's spread is an APPROXIMATION, not an identity. Use VL130 now; run CSTAT-O2a only if the subtraction proves sensitive to that difference."
+    },
+    "OI-94_the_90x_gap_OPEN_and_NARROWING": {
+      "measurement": "4.478% relative sd of the total cross section vs 0.0493% Poisson on n_data = 4,116,128",
+      "status": "OPEN AND NARROWING -- do NOT quote ~90x as an amplification factor",
+      "why": "the gap is now decomposable: Poisson PLUS the VL130 floor, and that floor is NOT small -- 5.26% L2 is the same order as the 4.478% total spread, so it may account for much of the gap.",
+      "blocked_on": "the subtraction is not yet possible -- central_vector sums to 1 in the training artifacts and the total is not measurable there. B is running the extraction stage to enable it.",
+      "then": "only if a residual beyond Poisson-plus-floor survives does this bear on niter = 3, which OPEN_ITEMS items (d)/(e) already record as owing a bias-variance justification.",
+      "measured_relative_sd_percent": 4.478,
+      "counting_expectation_percent": 0.0493,
+      "ratio": 90.8,
+      "VL130_L2_floor_percent": 5.26
     }
   },
   "predeclarations_binding_CONSUMERS_not_builders": {
@@ -600,5 +607,10 @@
     "related_but_OUT_OF_SCOPE": "p4_validate_active_lateral_fps.py:70's PSD gate bool(ev[0] >= -1e-12*abs(ev[-1])) is a NEGATIVITY test that an exact zero satisfies, so a rank-49 matrix passes silently. min_over_max_eig is already recorded at :69, so a rank threshold is missing, not a measurement. Recorded so nobody reads psd=True there as evidence of full rank.",
     "line_numbers_corrected": "min_over_max_eig is :67 and psd is :68, NOT :69/:70 as an earlier draft of this contract said. n_reported is :72, which was right. Corrected because a wrong line number in a spec gets copied forward.",
     "mask_choice_does_not_save_you": "on the adopted 262 domain a flickering cell with vanishing sample variance makes sum(d>0) read 259; had 266 been adopted it would read 262. The trap survives either mask choice."
+  },
+  "REQUIRED_LIMITATION_CSTAT_R7": {
+    "the_receipt_MUST_state": "The statistical component is estimated from 50 coherent replicas, giving a fractional uncertainty on the estimated standard deviation of 1/sqrt(2(N-1)) = 10.1%, not the 7.1% that PREDECLARATION-20260812-fullevent-cstat-100-replicas.md targeted at N=100.",
+    "not_optional": "the earlier N=100 predeclaration demands it in exchange at :52-54. Stating the shortfall is the obligation the downward revision was accepted under; dropping it silently would leave the inventory reduced and the justifying disclosure absent, at which point the walk-back objection becomes correct.",
+    "independent_of_the_retirement": "whether the earlier predeclaration is formally marked SUPERSEDED is OI-122 and is assigned to Joseph, NOT to a lane. The disclosure does not wait on it: it is additive and true either way, and publishing the number WITHOUT it is the only ordering that would be wrong."
   }
 }
