@@ -465,6 +465,83 @@ def check_ledger_ids(ledger):
     return 0 if not fail else 1
 
 
+# Duplicate `OI-*` ids that are DELIBERATELY tolerated, each with its reason. Read
+# `FINDING-20260813-colliding-in-a-namespace-you-just-warned-about.md` before adding to this.
+#
+# WHY A WAIVER AND NOT A NARROWED CHECK: lane D's argument, adopted 2026-08-13 -- a waiver and a scope
+# do the same job, except a waiver is reviewable in the source. Narrowing the check to "ids above 65"
+# would hide the exception in a predicate; this names it.
+#
+# WHY THESE TWO ARE NOT RENUMBERED, which is the obvious alternative: lane A and lane C independently
+# allocated BOTH ids by `max(existing)+1` on 2026-08-13 (BEN-223), and both are already cited in pushed
+# commit messages and in sibling documents. Renumbering would silently break those references -- the
+# BEN-216 / BEN-219 defect -- so they were resolved by ANNOTATION: each row leads with
+# `⚠ ID COLLISION` naming the other's subject.
+OI_ID_WAIVERS = {
+    "OI-64": "A: verify_hash_bindings guarding nothing / C: deployment-parity check with no caller. "
+             "BEN-223; annotated not renumbered, both cited in pushed commits.",
+    "OI-65": "A: receipt-retirement liveness exposure / C: reconcile_gate5_family audit repair. "
+             "BEN-223; annotated not renumbered, both cited in pushed commits.",
+}
+
+
+def check_oi_ids(items) -> int:
+    """No duplicate `OI-*` id in OPEN_ITEMS.md. 0 ok / 1 violated / 2 cannot check.
+
+    Added 2026-08-13 on BEN-223: `OI-*` has no block table and no addressing convention (OI-62(b), still
+    Joseph's call), so `max(existing)+1` is the only available algorithm and TWO CONCURRENT LANES RUNNING
+    IT COLLIDE BY CONSTRUCTION. Lane A filed that warning in the morning and collided with lane C the
+    same day, on two ids, surfaced only by a rebase. Writing the rule down did not work; this is the
+    executable form, per CLAUDE.md's own preference for one.
+
+    IT DOES NOT PREVENT THE COLLISION -- nothing local can, since the other lane's row is not in your
+    tree until you pull. It makes it LOUD AT THE NEXT COMMIT rather than at a rebase days later, which is
+    the difference between a conflict you resolve and a cross-reference someone acts on.
+
+    THREE-SIDED, per BEN-162's form set, because a one-sided duplicate check passes on an empty file:
+      * ids fewer than data rows -> a half-finished re-id, or a row whose id cell was damaged;
+      * a duplicate that is not waived -> the collision this exists for;
+      * A WAIVER THAT IS NO LONGER NEEDED -> also a failure. A stale waiver silently authorizes the next
+        genuine collision on that same id forever, so a guard that outlives its reason becomes a hole.
+        This is the direction that gets left out, and it is the one that turns a fix into a trap.
+    """
+    if not items.exists():
+        print("CANNOT CHECK :: docs/OPEN_ITEMS.md absent")
+        return 2
+    lines = items.read_text(encoding="utf-8", errors="replace").splitlines()
+    sep, hdr, data = ledger_partition(lines)
+    ids = [OI_ROW.match(lines[i - 1]).group(1) for i in data if OI_ROW.match(lines[i - 1])]
+    # A discoverer that matches nothing reports success -- the failure mode verify_hash_bindings.py's
+    # SHELL_PIN_FLOOR and test_hash_bindings.py's launch-code floor both exist to catch. Zero is
+    # CANNOT CHECK, never PASS.
+    if not data or not ids:
+        print(f"CANNOT CHECK :: {len(data)} data rows, {len(ids)} OI ids -- the row grammar no longer "
+              f"matches, so this check would pass vacuously")
+        return 2
+    counts = {i: ids.count(i) for i in dict.fromkeys(ids)}
+    dupes = {i: n for i, n in counts.items() if n > 1}
+    print(f"  [{len(data)} data rows, {len(ids)} OI ids, {len(dupes)} duplicated, "
+          f"{len(OI_ID_WAIVERS)} waived]")
+    fail = []
+    if len(ids) != len(data):
+        fail.append(f"HALF-FINISHED re-id or damaged id cell: {len(ids)} ids against {len(data)} data rows")
+    for i, n in sorted(dupes.items()):
+        if i not in OI_ID_WAIVERS:
+            fail.append(f"DUPLICATE {i} x{n} -- two lanes allocated it. Do NOT renumber a row that is "
+                        f"already cited elsewhere; annotate both and add a waiver with the reason")
+    for i in sorted(OI_ID_WAIVERS):
+        if i not in dupes:
+            fail.append(f"STALE WAIVER {i} is waived but is no longer duplicated -- remove it, or it "
+                        f"silently permits the next real collision on that id")
+    for f in fail:
+        print(f"  FAIL {f}")
+    if dupes and not fail:
+        for i in sorted(dupes):
+            print(f"  waived {i} x{dupes[i]} :: {OI_ID_WAIVERS[i]}")
+    print("OI-IDS :: " + ("PASS" if not fail else "FAIL"))
+    return 0 if not fail else 1
+
+
 def check_row_owners() -> int:
     """Validate ROW-OWNERS.tsv against the files it claims to describe. 0 ok / 1 drift / 2 cannot-check.
 
@@ -543,8 +620,14 @@ def main() -> int:
                     help="validate ROW-OWNERS.tsv against the files it describes; 0 ok / 1 drift "
                          "/ 2 cannot check. Two-sided: a listed id missing from its source, and a "
                          "source id missing from the table, are different failures and both print.")
+    ap.add_argument("--check-oi-ids", action="store_true",
+                    help="no duplicate OI-* id in docs/OPEN_ITEMS.md; 0 ok / 1 violated / 2 cannot "
+                         "check. Three-sided: a half-finished re-id, an unwaived duplicate, and a "
+                         "WAIVER THAT IS NO LONGER NEEDED are three different failures and all print.")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
+    if args.check_oi_ids:
+        return check_oi_ids(REPO / "docs" / "OPEN_ITEMS.md")
     if args.check_owners:
         return check_row_owners()
     if args.check_ledger_ids:

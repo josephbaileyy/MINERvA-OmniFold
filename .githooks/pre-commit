@@ -36,6 +36,14 @@ run "findings long-form pointers" python3 docs/orchestration/findings_row_lint.p
 run "ledger VL ids"               python3 docs/orchestration/whose_row.py --check-ledger-ids
 run "row-owner side table"        python3 docs/orchestration/whose_row.py --check-owners
 run "whose_row self-test"         python3 docs/orchestration/whose_row.py --self-test
+# OI-* has no block table and no addressing convention (OI-62(b), Joseph's call), so max(existing)+1 is
+# the only available algorithm and two concurrent lanes collide BY CONSTRUCTION -- A and C both took
+# OI-64 AND OI-65 on 2026-08-13, hours after A filed the warning (BEN-223). Writing the rule down did
+# not work. This does not PREVENT a collision -- nothing local can, since the other lane's row is not in
+# your tree until you pull -- it makes it loud at your next commit instead of at a rebase days later.
+# Two existing duplicates are WAIVED IN THE SOURCE with reasons (whose_row.OI_ID_WAIVERS); they are
+# annotated rather than renumbered because both ids are cited in pushed commits.
+run "OPEN_ITEMS OI ids"           python3 docs/orchestration/whose_row.py --check-oi-ids
 # WHOLE-TREE AND UNSCOPED, on purpose. Added 2026-08-13 (OI-64; Joseph authorized, lane D reviewed,
 # receipt: AUTHORIZATION-20260813-hash-binding-gate-in-precommit.md). It guards every gate's code
 # freeze, it is the reason the 2026-07-28 de-rooting refactor's six broken bindings were findable, and
@@ -48,5 +56,5 @@ run "whose_row self-test"         python3 docs/orchestration/whose_row.py --self
 run "receipt+shell hash bindings"  python3 docs/orchestration/verify_hash_bindings.py
 
 rm -f /tmp/.hook.$$
-[ "$fail" -eq 0 ] && echo "pre-commit: 5 checks passed"
+[ "$fail" -eq 0 ] && echo "pre-commit: 6 checks passed"
 exit "$fail"
