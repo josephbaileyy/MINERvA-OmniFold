@@ -115,7 +115,7 @@ docs/orchestration/FINDING-20260814-a-merge-cannot-pass-a-check-that-diffs-again
 docs/orchestration/FINDING-20260814-absence-of-an-objection-is-not-a-resolution.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	119	7423
 docs/orchestration/FINDING-20260814-inferred-from-a-symptom-not-read-from-its-source.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	84	4779
 docs/orchestration/FINDING-20260814-internal-consistency-is-not-power.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	105	5882
-docs/orchestration/FINDING-20260814-ninety-times-counting-statistics.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	3	116	6941
+docs/orchestration/FINDING-20260814-ninety-times-counting-statistics.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	3	145	8909
 docs/orchestration/FINDING-20260814-the-hook-file-and-the-hook-payload-come-from-different-trees.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	138	8689
 docs/orchestration/FINDING-20260814-the-mask-is-part-of-the-draw.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	89	5056
 docs/orchestration/FINDING-20260814-the-only-path-to-the-real-object-was-a-skip.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	78	4442
@@ -188,7 +188,7 @@ docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	8
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
-docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only		no	10	863	61045
+docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only		no	10	908	64370
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	template			open		route-only		no	3	125	4731
 docs/orchestration/TASK.template.md	LIVE	template			open		route-only		no	4	34	1256

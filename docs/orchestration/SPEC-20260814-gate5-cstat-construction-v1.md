@@ -695,6 +695,51 @@ pair is `C_train` with the draw held fixed, measured directly and at the cost of
 14-minute tasks. A small pair (3–5 same-seed retrains) bounds `C_train` well enough to state what
 fraction of the published matrix is not statistical.
 
+### `CSTAT-O2` as a concrete decision — three candidate names, and the reason it is not a naming quibble
+
+**THE REASON IT MATTERS IS A POSSIBLE DOUBLE-COUNT, NOT A LABEL.** `RUNBOOK:223-224` defines the sibling
+component: **"`C_ML`: no Poisson variation. Use a predeclared crossed seed design and compare with the P5A
+floor."** That is training/seed variance **with the draw held fixed.** `C_stat` as built has the draw
+varying **and the network unseeded**. So **`C_stat` as built contains the `C_ML` quantity, and
+`C_total = C_syst + C_stat + C_ml + C_retrain` would count it twice.**
+
+This campaign already takes that hazard seriously for a different pair: `assemble_ctotal_bkgsub.py:10-20`
+carries an explicit no-double-counting **proof** for `C_syst + C_retrain`, built by defining `C_retrain`
+relative to the frozen map rather than to nominal, and it even names the shape that *would* have
+double-counted (*"Had `Delta_u` been `x_retrain − CV` it WOULD double-count"*). **`C_stat + C_ML` is the
+one pair with no such proof, and it is the pair where the overlap is not by construction but by
+omission — an unseeded network.**
+
+**The double-count is contingent on which reading of `CSTAT-O2` holds**, which is why one measurement
+settles both:
+
+| if the 4.478% spread is… | then `C_stat + C_ML` | and the right name is |
+|---|---|---|
+| **training-dominated** | **double-counts** the ML term | not `C_stat` alone |
+| **amplification-dominated** (the iterative unfolding genuinely amplifying the data fluctuation) | does **not** double-count | `C_stat`, and the amplification factor is itself a result |
+
+**The three candidate names:**
+
+1. **`C_stat`, unchanged and undeclared.** Zero churn. Asserts a decomposition the family cannot support,
+   leaves the `C_ML` overlap unexamined, and puts a "statistical" row ~90× counting into the technote where
+   the first referee to divide by `√n_data` finds it. **Not recommended.**
+2. **Rename to `C_replica` / `C_stat+train`.** Honest about content. But it breaks a **locked estimator
+   decision** — `RUNBOOK:210` calls it F7 `C_stat`, the N=50 predeclaration calls it `C_stat`, and
+   `assemble_ctotal_bkgsub.py` keys the assembler slot on `C_stat`. Renaming a locked label across the
+   runbook, the predeclarations and the assembler to describe a *split nobody has measured yet* is churn
+   ahead of evidence. **Not recommended, yet.**
+3. **Keep `C_stat` for the slot, declare the composition in the receipt, and run `CSTAT-O2a`.**
+   **RECOMMENDED.** The name stays where three documents already put it; the receipt records that the
+   component is `C_stat + C_train` with the split **unmeasured**, and names the `C_ML` overlap as an open
+   question rather than resolving it silently. Then ~5 same-seed retrains bound `C_train` and the name
+   becomes a measurement instead of a choice. **Cost: ~5 tasks at ~14.5 min. It is the cheapest item on
+   this gate and it decides both the name and whether the total double-counts.**
+
+**Note what `CSTAT-O2a` actually is:** retraining one index twice at the same `bootstrap_seed` is *exactly*
+a one-point measurement of the `C_ML` quantity. So the test does not merely settle a naming question — it
+produces a number the `C_ML` component needs anyway, which is why it is worth running whichever way the
+name goes.
+
 **This does not block writing the builders** — the construction is identical whatever the matrix turns
 out to be entitled to be called. **It blocks publishing the number under the name `C_stat`,** and it
 should be settled before the technote quotes it.

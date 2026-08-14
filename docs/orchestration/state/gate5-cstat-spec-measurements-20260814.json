@@ -276,14 +276,14 @@
   "authorization": "OI-121; Joseph's 'go ahead' relayed by personal-orchestrator 2026-08-14. The authorization is for the SPEC. C does not write the covariance code.",
   "code_and_document_identity": {
     "SPEC (markdown)": {
-      "bytes": 61045,
+      "bytes": 64370,
       "path": "docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md",
-      "sha256": "97682029dcad2db8d3a89120afaa5b8e8ffd08517fcd9d5b7786eeb7e1842e5c"
+      "sha256": "eb0c28f115363d5543f65d45c27213556babaf4f5782948953cbdb6639cdfc96"
     },
     "machine contract": {
-      "bytes": 35168,
+      "bytes": 38254,
       "path": "nd-unfolding/pet/gate5_cstat_contract.json",
-      "sha256": "9c6e039f149c883b393865e56c6c8f8c7c0a06d5728c4285d91b44cf8bcad803"
+      "sha256": "595a6c102026688d070c71424068dde4ee9b7345afee6ee7540b07c845d40109"
     }
   },
   "evidence": {

@@ -102,6 +102,35 @@ named for a measurement, one directory away in the same campaign. Same defect at
 label asserting a property of its contents that nothing established. The field there was
 `inputs_sha256_verified`. The label here is `C_stat`.
 
+## The stake is a double-count, and it was not obvious until the sibling component was read
+
+**Added after the first draft of this finding, which framed this as a naming problem. It is worse than
+that.** `RUNBOOK:223-224` defines the sibling component: **"`C_ML`: no Poisson variation. Use a
+predeclared crossed seed design and compare with the P5A floor."** That is training/seed variance **with
+the draw held fixed** — which is *precisely* the quantity the unseeded network is injecting into `C_stat`.
+
+So in `C_total = C_syst + C_stat + C_ml + C_retrain`, **`C_stat` as built already contains the `C_ML`
+quantity, and the sum counts it twice.**
+
+The reason this is damning rather than merely unlucky: **this campaign has already done exactly this
+analysis for a different pair, and documented it.** `assemble_ctotal_bkgsub.py:10-20` carries an explicit
+no-double-counting proof for `C_syst + C_retrain`, constructed by defining `C_retrain` relative to the
+frozen map rather than to nominal, and it even names the shape that *would* have failed: *"Had `Delta_u`
+been `x_retrain − CV` it WOULD double-count."* The rigour exists. **`C_stat + C_ML` is the one pair with
+no such proof — and the difference is that the other overlaps were avoided *by construction*, whereas
+this one was created *by omission*: a missing `set_seed`.**
+
+It is contingent on which reading of the 4.478% holds, which is why one measurement settles both:
+
+| if the spread is… | `C_stat + C_ML` | the name |
+|---|---|---|
+| training-dominated | **double-counts** | not `C_stat` alone |
+| amplification-dominated | does not | `C_stat`, and the amplification is itself a result |
+
+**And `CSTAT-O2a` is not merely a test — retraining one index twice at the same `bootstrap_seed` is a
+one-point measurement of the `C_ML` quantity itself.** So it produces a number the `C_ML` component needs
+regardless of how the naming question is answered, which is why it is worth running either way.
+
 ## Disposition
 
 - **`OI-92` / `CSTAT-O2`** — open, WAITING-USER, Joseph's call.

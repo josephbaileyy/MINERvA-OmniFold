@@ -242,7 +242,36 @@
       "C_is_not_claiming_which_dominates": true,
       "alternative_reading": "genuine amplification of the data fluctuation by the iterative unfolding, which would be legitimately statistical and would itself be a significant result",
       "discriminating_test_CSTAT-O2a": "re-TRAIN one replica index twice at the SAME bootstrap_seed, then extract both. Extraction is deterministic given weights, so repeating extraction alone measures nothing -- the repeat must be of TRAINING. 3-5 same-seed retrains bound C_train at ~14 min per task.",
-      "blocks": "publication under the name C_stat, not build"
+      "blocks": "publication under the name C_stat, not build",
+      "THE_STAKE_IS_A_DOUBLE_COUNT_NOT_A_LABEL": {
+        "C_ML_definition": "RUNBOOK:223-224 -- 'C_ML: no Poisson variation. Use a predeclared crossed seed design and compare with the P5A floor.' That is training/seed variance with the draw HELD FIXED.",
+        "the_overlap": "C_stat as built has the draw varying AND the network unseeded, so it CONTAINS the C_ML quantity. C_total = C_syst + C_stat + C_ml + C_retrain would count it TWICE.",
+        "why_this_is_damning_rather_than_unlucky": "the campaign has already done this analysis for a different pair and documented it: assemble_ctotal_bkgsub.py:10-20 carries an explicit no-double-counting PROOF for C_syst + C_retrain, built by defining C_retrain relative to the frozen map rather than nominal, and it even names the shape that WOULD have failed ('Had Delta_u been x_retrain - CV it WOULD double-count'). C_stat + C_ML is the one pair with no such proof, and the difference is that the other overlaps were avoided BY CONSTRUCTION whereas this one was created BY OMISSION -- a missing set_seed.",
+        "contingency": {
+          "if_training_dominated": "C_stat + C_ML double-counts, and the name is wrong",
+          "if_amplification_dominated": "neither is true, and the amplification factor is itself a result"
+        },
+        "one_measurement_settles_both": "CSTAT-O2a is not merely a test -- retraining one index twice at the same bootstrap_seed is a ONE-POINT MEASUREMENT OF THE C_ML QUANTITY ITSELF, so it produces a number C_ML needs regardless of how the naming question is answered."
+      },
+      "THE_THREE_CANDIDATE_NAMES": {
+        "1_keep_C_stat_undeclared": {
+          "cost": "zero churn",
+          "against": "asserts a decomposition the family cannot support, leaves the C_ML overlap unexamined, and puts a 'statistical' row ~90x counting into the technote where the first referee to divide by sqrt(n_data) finds it",
+          "recommended": false
+        },
+        "2_rename_to_C_replica_or_C_stat_plus_train": {
+          "for": "honest about content",
+          "against": "breaks a LOCKED estimator label -- RUNBOOK:210 calls it F7 C_stat, the N=50 predeclaration calls it C_stat, and assemble_ctotal_bkgsub.py keys the assembler slot on C_stat -- in order to describe a split NOBODY HAS MEASURED YET. Churn ahead of evidence.",
+          "recommended": false,
+          "note": "not 'never' -- this becomes the right answer if CSTAT-O2a shows training dominance"
+        },
+        "3_keep_the_slot_declare_the_composition_run_the_test": {
+          "recommended": true,
+          "what": "keep C_stat for the assembler slot; record in the receipt that the component is C_stat + C_train with the split UNMEASURED, and name the C_ML overlap as open rather than resolving it silently; then run CSTAT-O2a",
+          "cost": "~5 tasks at ~14.5 min -- the cheapest item on this gate",
+          "why": "the name stays where three documents already put it, nothing is asserted that is not measured, and the test decides BOTH the name and whether the total double-counts"
+        }
+      }
     },
     "CSTAT-O3_which_assembler_and_what_ratifies_its_mask": {
       "state": "OPEN -- NOT lane C's to decide, and it does NOT block building C_stat",
