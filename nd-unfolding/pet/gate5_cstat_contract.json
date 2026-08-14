@@ -6,35 +6,78 @@
   "lane": "C (PET), owner of Gate 5 / P5B.1 / C_stat -- spec author, NOT a builder",
   "authorized_by": "OI-121; Joseph's 'go ahead' relayed by personal-orchestrator 2026-08-14",
   "contains_no_implementation": true,
-
   "input": {
     "member_glob": "<root>/replicas/replica_*/extraction/GATE5_REPLICA_XSEC.npz",
     "root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50",
     "required_schema_string": "pet-fullevent-fps-gate5-replica-xsec-v1",
-    "reject_schema_strings": ["pet-fullevent-fps-xsec-v1"],
+    "reject_schema_strings": [
+      "pet-fullevent-fps-xsec-v1"
+    ],
     "reject_schema_reason": "the nominal-path schema; a differently-produced object that a loose glob will pick up",
     "covaried_key": "xsec",
     "covaried_dtype": "float64",
-    "covaried_shape": [15, 19],
+    "covaried_shape": [
+      15,
+      19
+    ],
     "quantity": "d2sigma/dpT dp_parallel -- a DENSITY, not a bin-integrated yield",
     "units": "cm^2 / nucleon / (GeV/c)^2",
     "forbidden_path": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz",
     "forbidden_path_reason": "CSTAT-D1a: the only 285-cell nominal-like artifact on disk, and its own filename declares it non-quotable. Named here so a builder that finds it by glob refuses it."
   },
-
   "binning": {
     "n_pt_bins": 15,
     "n_pparallel_bins": 19,
     "n_cells": 285,
-    "edges_pt": [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5, 30.0],
-    "edges_pparallel": [0.0, 0.75, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 120.0],
+    "edges_pt": [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5,
+      30.0
+    ],
+    "edges_pparallel": [
+      0.0,
+      0.75,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0,
+      15.0,
+      20.0,
+      40.0,
+      60.0,
+      120.0
+    ],
     "edges_must_be_bit_identical_across_members": true,
     "bin_order_string_TO_ASSERT": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
     "bin_order_equivalent_to": "numpy C-order ravel",
     "assert_the_string_not_the_convention": true,
     "existing_consumers_that_fail_closed_on_this_string": [
-      "validate_pet_nominal_gate4.py:102", "validate_pet_nominal_gate4.py:514",
-      "preflight_powered_closure.py:188", "acceptance_map_fullevent_fps.py:201",
+      "validate_pet_nominal_gate4.py:102",
+      "validate_pet_nominal_gate4.py:514",
+      "preflight_powered_closure.py:188",
+      "acceptance_map_fullevent_fps.py:201",
       "test_pet_nominal_gate4_validator.py:68"
     ],
     "NOT_the_paper_grid": {
@@ -43,7 +86,6 @@
       "consequence": "a builder trusting the documented paper grid produces a 224-cell object and every element of the comparison is misaligned"
     }
   },
-
   "members": {
     "n_members_required": 50,
     "seed_policy": "gate5-cstat-n50-v1: bootstrap_seed = 50000 + replica_index",
@@ -56,18 +98,19 @@
     "do_not_trust": {
       "field": "artifact.completion_marker_valid",
       "why": "a hardcoded producer literal (lane C OI-66); call is_complete yourself"
-    }
+    },
+    "assert_slurm_array_job_id_constant": true,
+    "why_member_digests_and_array_id_are_BOTH_required": "replica_ids prove which replicas the builder BELIEVES it used; digests prove which BYTES it read. The failed r1 array 56935552 and the live r2 array 56936015 write to the SAME output root /pscratch/.../pet/fullevent_cstat_n50. Measured: only r2 products are present, because r1 died at the data-root binding BEFORE writing any product -- so the contamination is NOT realised, but a glob would have taken r1's products had any existed, which is luck rather than design. Neither check subsumes the other: digests catch a stale byte-level duplicate within one array; the array id catches a clean product from the WRONG array."
   },
-
   "estimator": {
     "centring": "replica_mean",
     "centring_decided_not_deferred": true,
     "normalization": "1/(N-1)",
     "ddof": 1,
     "width_weighting_applied": false,
-    "width_weighting_note": "CSTAT-R1b: xsec is a density, so C has units cm^4/nucleon^2/(GeV/c)^4 and is NOT the covariance of the bin-integrated cross section; the two differ by diag(w) C diag(w) with w = outer(dpt, dpp) flattened"
+    "width_weighting_note": "CSTAT-R1b: xsec is a density, so C has units cm^4/nucleon^2/(GeV/c)^4 and is NOT the covariance of the bin-integrated cross section; the two differ by diag(w) C diag(w) with w = outer(dpt, dpp) flattened",
+    "centring_is_PREDECLARED_not_chosen": "RUNBOOK:213, Packet P5B item 1 (F7 C_stat), says verbatim: 'Center on the replica mean.' So centring was a locked estimator decision before this family existed. C reached the same answer independently from the 6.013x trace measurement and from combine_cstat_bkgsub.py:57-58, then found the instruction -- three authorities agreeing, none of which is a spec author's preference."
   },
-
   "domain": {
     "construct_over": "UNION -- cells reported in >= 1 member",
     "why_union_not_intersection": "the intersection silently deletes cells and its deletion set depends on N, so the published dimension would change with the member count",
@@ -81,12 +124,43 @@
       "found_by": "D",
       "measured_by": "C, on the 14 published members",
       "occurrence": "CONFIRMED, not hypothetical",
-      "n_replicas_reported_histogram_at_N14": {"14": 259, "13": 2, "9": 1, "0": 23},
-      "telemetry_n_cells_populated_observed": [260, 261, 262],
+      "n_replicas_reported_histogram_at_N14": {
+        "14": 259,
+        "13": 2,
+        "9": 1,
+        "0": 23
+      },
+      "telemetry_n_cells_populated_observed": [
+        260,
+        261,
+        262
+      ],
       "why_it_matters": "both builders given identical member vectors compute the identical wrong variance in a flickering cell and agree perfectly; element-wise agreement has NO power over this"
-    }
+    },
+    "THE_PUBLISHED_DOMAIN_CSTAT_D0b": {
+      "ruling": "C_full on the FULL 285-cell grid is the primary, CONSUMER-AGNOSTIC object; the reduced C ships on THIS FAMILY'S OWN 262-cell union. The FPS 266 mask is NOT adopted.",
+      "n_reported": 262,
+      "REVERSES_AN_EARLIER_DRAFT": "An earlier draft adopted 266 on the argument 'the authority is the consumer, not the measurement'. The argument was right; the CONSUMER was wrong.",
+      "why_266_is_not_adopted": {
+        "1_the_cited_assembler_cannot_consume_this_object": "assemble_ctotal_bkgsub.py is hard-coded 5D: SHAPE5 = (14,16,7,7,6) at :33, every shipped component at n_reported_bins = 10550, --cstat defaulting to pet_cstat_bkgsub_5d.npz, and a 5D->4D marginal. Its shape gate (nrep = 10550) would REJECT a 266x266 matrix. Its first two dims are the PAPER grid (14,16) where this object is (15,19) extended-FPS.",
+        "2_the_266_mask_belongs_to_a_different_estimator": "fps_reported_mask.json records central_cv = uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root -- an LGBM central. RUNBOOK:213 requires every P5B component to use the exact pet-fullevent-fps-v1 fingerprint. Its lineage also runs through the purity-control family, whose manifests carry publication_gate_rejects_this = true; fps_build_control_manifest.py:202-204 DIES if the publication gate fails to reject it, so that flag asserts the class rather than labelling it.",
+        "3_the_named_authority_was_never_produced": "state/annealed-nominal-complete-56563761.json records scope.extraction_run = false and scope.cross_section_run = false. P5A trained; P5A never extracted. A frozen central and reported-bin mask are PRODUCTS of extraction, so there is no P5A mask to conform to."
+      },
+      "why_this_costs_nothing": "the both-forms ruling makes it deferrable: any future assembler re-reduces C_full to whatever mask it ratifies, using reported_mask, with NO translation step -- which is what OI-121 exists to prevent.",
+      "census_the_builder_must_reproduce": {
+        "reported_in_every_member": 259,
+        "flickering": 3,
+        "total": 262,
+        "full_grid": "285 = 262 reported + 23 never-reported"
+      },
+      "flickering_cells_flat": [
+        209,
+        254,
+        255
+      ]
+    },
+    "union_within_the_262_domain_not_intersection": "The union (reported in >= 1 member) is the rule, not the intersection: the intersection silently deletes cells and its deletion set depends on N, so the published dimension would drift with the member count. On the 266 mask, union-within-266 changes the dimension NOT AT ALL and changes only which cells carry a caveat -- the honest place for the difference to live."
   },
-
   "measurements_provisional_at_N14": {
     "WARNING": "measured on 14 of 50 members while array 56936015 was mid-flight; MUST be re-measured at 50/50 before publication. Quoted because the DECISIONS they drive are stable under the remaining 36.",
     "observed_pdt": "2026-08-14 ~05:00 PDT",
@@ -95,7 +169,7 @@
     "intersection_cells": 259,
     "never_reported_cells": 23,
     "never_reported_matches_n_cells_no_denominator": true,
-    "trace_mean_centred": 1.848970e-76,
+    "trace_mean_centred": 1.84897e-76,
     "trace_nominal_centred": 1.111802e-75,
     "trace_ratio": 6.013,
     "offset_term_N_over_N_minus_1_times_sq_norm": 9.269051e-76,
@@ -111,10 +185,15 @@
     "per_cell_relative_sd_median": 0.1508,
     "per_cell_relative_sd_max": 0.7944
   },
-
-  "open_returns_to_joseph": {
+  "escalations_and_dispositions": {
     "CSTAT-O1_rank": {
-      "state": "OPEN -- no builder may resolve",
+      "state": "CLOSED -- DISPOSITIONED BEFORE LAUNCH. NOT an open item and NOT an escalation. This entry exists to stop it being re-opened a fifth time.",
+      "authority": "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md, committed 6bd3707 at 2026-08-12 23:29, before the replica code path existed",
+      "predeclared_verbatim": "Rank is not the criterion -- 1431 bins is unreachable at any affordable N, and the rank-deficient GoF treatment is already disclosed under OI-29. The criterion is precision on a subdominant component: 1/sqrt(2(N-1)), giving 10.1% at N=50 ... N=100 buys 7.1% for double the compute, on a term that is not driving the total.",
+      "joseph_verbatim": "sounds good, get N=50 up and running",
+      "criterion_was_never_rank": "it was precision on a component measured at 0.669%/bin against C_syst's 7.27%",
+      "how_many_times_reopened": "four. OI-122 records two agents on 2026-08-14; OI-91 was lane C's and is CLOSED BY REFERENCE. The deficit is arithmetically obvious from N=50 and any bin count, so every agent that computes it experiences it as a finding, while the predeclaration that settled it is not a file anyone reads on the way to a covariance.",
+      "IF_YOU_JUST_DERIVED_THIS": "read the predeclaration before writing anything.",
       "n_members": 50,
       "rank_ceiling": 49,
       "D_full_grid": 285,
@@ -126,7 +205,15 @@
       "NARROWED_by_OI_122": "OI-122 records that TWO agents have already re-opened the rank question and escalated it as novel, when 'rank is not the criterion ... the rank-deficient GoF treatment is already disclosed under OI-29'. This is NOT a third instance: OI-29 is a DIFFERENT object (the 1431-bin 3D-plus covariance, owner collaborators, awaiting endorsement of an EXISTING treatment). This object is the 285-cell / 262-reported full-event Gate-5 C_stat, whose dimension was unknown until measured 2026-08-14 and which has no declared treatment of its own.",
       "the_single_question_returning_to_joseph": "does OI-29's already-disclosed treatment extend to this 262-cell object, or does this object need its own declaration? If it extends, OI-91 closes by reference and nothing new is decided.",
       "builder_must_record": "rank_treatment: 'UNDECLARED -- see CSTAT-O1'",
-      "builder_must_not": ["invert", "pseudo-invert", "regularize", "shrink", "diagonal-load", "condition", "clip negative eigenvalues"],
+      "builder_must_not": [
+        "invert",
+        "pseudo-invert",
+        "regularize",
+        "shrink",
+        "diagonal-load",
+        "condition",
+        "clip negative eigenvalues"
+      ],
       "candidate_treatments_named_none_chosen": [
         "rebin to <= 49 cells",
         "shrinkage or diagonal loading with a declared, justified regularizer",
@@ -134,7 +221,15 @@
         "raise N",
         "use only the diagonal and declare correlations unmeasured"
       ],
-      "blocks": "publication, not build"
+      "blocks": "NOTHING -- dispositioned before launch. This field previously read 'publication, not build' and that was wrong once the predeclaration was found.",
+      "external_precedent_RETRACTED": {
+        "status": "RETRACTED -- DO NOT CITE FIELD NORMALITY. Verified NOT SUPPORTED on all three claims.",
+        "what_was_claimed": "that rank-deficient multisim covariances are normal unremarked practice, that MINERvA uses ~100 flux / ~50 detector universes, and that the convention is 'released as calculated, regularisation is the consumer's job'",
+        "why_it_failed": "arXiv:2103.08677 (MINERvA Analysis Toolkit, real and correctly identified) has ZERO occurrences of rank/singular/invert/regulari/degenerat/condition number -- the topic is ABSENT, and the research converted that absence into positive evidence of acceptance. SILENCE IS NOT ENDORSEMENT. No source states a release policy. MAT gives no universe count. And arXiv:1507.08560, offered as MINERvA flux PCA, is Ankowski et al. on energy reconstruction -- the wrong paper entirely.",
+        "what_survives": "only that MINERvA publishes 2D differential cross sections (1511.05944, 2110.13372, 2312.16631). None mentions covariance rank.",
+        "effect_on_this_spec": "NONE. Rank is closed on our own predeclaration and never depended on external precedent. What is removed is the reassurance that everyone else does this too, so this contract asserts no field-normality claim and a technote must not either.",
+        "BEN": "BEN-234"
+      }
     },
     "CSTAT-O2_is_it_entitled_to_the_name_C_stat": {
       "state": "OPEN -- found by C while writing this spec; in C's judgement the more serious of the two",
@@ -148,9 +243,34 @@
       "alternative_reading": "genuine amplification of the data fluctuation by the iterative unfolding, which would be legitimately statistical and would itself be a significant result",
       "discriminating_test_CSTAT-O2a": "re-TRAIN one replica index twice at the SAME bootstrap_seed, then extract both. Extraction is deterministic given weights, so repeating extraction alone measures nothing -- the repeat must be of TRAINING. 3-5 same-seed retrains bound C_train at ~14 min per task.",
       "blocks": "publication under the name C_stat, not build"
+    },
+    "CSTAT-O3_which_assembler_and_what_ratifies_its_mask": {
+      "state": "OPEN -- NOT lane C's to decide, and it does NOT block building C_stat",
+      "problem": "RUNBOOK:213 requires the P5A central/mask/order, and P5A never extracted. The code has already picked a substitute SILENTLY: assemble_ctotal_bkgsub.py:104-107 uses ref_mask = masks['C_syst'] with a hard SystemExit, while the CENTRAL-VALUE mismatch at :113-115 only WARNS. So in code, whatever C_syst was built on IS the grid.",
+      "shape": "OI-122's shape and worse -- there two documents disagree; here a document and the code disagree and the code wins silently",
+      "resolution_required": "either run the P5A extraction or RATIFY A SUBSTITUTE AUTHORITY IN WRITING. That is a documented supersession, not a lane's default.",
+      "why_it_does_not_block": "C_full is grid-complete, so the reduction can be re-derived whenever the authority is settled"
     }
   },
-
+  "predeclarations_binding_CONSUMERS_not_builders": {
+    "note": "Recorded here because the spec is where the object's properties are written down. NO BUILDER truncates, inverts, or corrects anything -- see out_of_scope.",
+    "CSTAT-P1_hartlap": {
+      "correction_factor": "(N - p - 2)/(N - 1)",
+      "citation": "Hartlap, Simon & Schneider 2007, A&A 464, 399 -- REAL and correctly referenced, unlike the retracted precedent in CSTAT-O1",
+      "at_N50_p262": "negative, i.e. the singularity restated: no inverse exists and no correction rescues one",
+      "the_part_this_campaign_did_not_have": "if any downstream step truncates to a subspace with p_effective < N to make inversion possible, the precision matrix THERE is still biased by finite N=50, and the bias makes chi2 too SMALL -- a truncation chosen for tractability introduces an error in the flattering direction",
+      "requirement": "any consumer that inverts a truncated C_stat MUST state p_effective, N, and whether a Hartlap-style correction was applied -- and if not, why not",
+      "WARNING_what_this_paper_IS_AND_IS_NOT": "Its abstract's final sentence gives 'an analytic proof for the fact that the estimated covariance matrix is singular if P>N'. HARTLAP IS THE CANONICAL CITATION FOR WHY YOU CANNOT INVERT A COVARIANCE WITH MORE BINS THAN REALIZATIONS -- IT IS NOT A LICENCE TO SHIP ONE. At our numbers (50-262-2)/(50-1) = -4.37: a NEGATIVE debiasing factor, so the formula does not degrade gracefully, it becomes MEANINGLESS. If Hartlap is cited in a technote as support for publishing a rank-deficient C_stat, a referee finds it immediately and it damages the section it was meant to defend. Cite it ONLY for the bias correction in a truncated subspace where p_effective < N, which is all CSTAT-P1a uses.",
+      "caveat": "the debiasing factor's algebraic form was read in secondary sources because the journal page returned 403; the singularity proof and the P<N condition are verbatim from the abstract"
+    },
+    "CSTAT-P2_peelles_pertinent_puzzle": {
+      "hazard": "highly correlated covariances carrying a NORMALISATION component make generalised-least-squares fits pathologically suppress normalisation toward unphysically low values",
+      "precondition_is_present_not_hypothetical": "the FPS chain carries + norm 1.4%",
+      "why_it_is_silent": "PPP produces a BETTER-looking chi2 alongside a wrong normalisation, so nothing in the fit output flags it",
+      "predeclared_position": "a GLS fit returning a low-pulled normalisation is a SUSPECTED PPP ARTIFACT to be diagnosed, not adopted; the diagnostic is to refit with the normalisation component removed from the covariance and compare"
+    },
+    "why_predeclared_now": "before any number exists, which is the only time these positions can be taken honestly"
+  },
   "output": {
     "npz_path": "<root>/cstat/BUILDER_<B1|B2>/GATE5_CSTAT.npz",
     "receipt_path": "<root>/cstat/BUILDER_<B1|B2>/GATE5_CSTAT_RECEIPT.json",
@@ -159,36 +279,179 @@
     "receipt_published_last": true,
     "schema_string": "pet-fullevent-fps-gate5-cstat-v1",
     "keys": {
-      "cstat_schema": {"dtype": "str", "shape": "scalar"},
-      "C": {"dtype": "float64", "shape": ["D", "D"]},
-      "mean": {"dtype": "float64", "shape": ["D"]},
-      "n_members": {"dtype": "int64", "shape": "scalar", "must_equal": 50},
-      "D": {"dtype": "int64", "shape": "scalar"},
-      "cell_index": {"dtype": "int64", "shape": ["D"]},
-      "n_replicas_reported": {"dtype": "int64", "shape": ["D"]},
-      "quotable_mask": {"dtype": "bool", "shape": ["D"]},
-      "replica_index": {"dtype": "int64", "shape": [50]},
-      "bootstrap_seed": {"dtype": "int64", "shape": [50]},
-      "edges_pt": {"dtype": "float64", "shape": [16]},
-      "edges_pparallel": {"dtype": "float64", "shape": [20]},
-      "bin_order": {"dtype": "str", "shape": "scalar"},
-      "member_xsec_sha256": {"dtype": "str", "shape": [50]},
-      "centring": {"dtype": "str", "shape": "scalar", "must_equal": "replica_mean"},
-      "normalization": {"dtype": "str", "shape": "scalar", "must_equal": "1/(N-1)"},
-      "width_weighting_applied": {"dtype": "bool", "shape": "scalar", "must_equal": false},
-      "rank_treatment": {"dtype": "str", "shape": "scalar", "must_equal": "UNDECLARED -- see CSTAT-O1"}
+      "cstat_schema": {
+        "dtype": "str",
+        "shape": "scalar"
+      },
+      "C": {
+        "dtype": "float64",
+        "shape": [
+          "n_reported",
+          "n_reported"
+        ],
+        "role": "THE DELIVERABLE"
+      },
+      "mean": {
+        "dtype": "float64",
+        "shape": [
+          "D"
+        ]
+      },
+      "n_members": {
+        "dtype": "int64",
+        "shape": "scalar",
+        "must_equal": 50
+      },
+      "D": {
+        "dtype": "int64",
+        "shape": "scalar"
+      },
+      "cell_index": {
+        "dtype": "int64",
+        "shape": [
+          "D"
+        ]
+      },
+      "n_replicas_reported": {
+        "dtype": "int64",
+        "shape": [
+          "D"
+        ]
+      },
+      "quotable_mask": {
+        "dtype": "bool",
+        "shape": [
+          "D"
+        ]
+      },
+      "replica_index": {
+        "dtype": "int64",
+        "shape": [
+          50
+        ]
+      },
+      "bootstrap_seed": {
+        "dtype": "int64",
+        "shape": [
+          50
+        ]
+      },
+      "edges_pt": {
+        "dtype": "float64",
+        "shape": [
+          16
+        ]
+      },
+      "edges_pparallel": {
+        "dtype": "float64",
+        "shape": [
+          20
+        ]
+      },
+      "bin_order": {
+        "dtype": "str",
+        "shape": "scalar"
+      },
+      "member_xsec_sha256": {
+        "dtype": "str",
+        "shape": [
+          50
+        ]
+      },
+      "centring": {
+        "dtype": "str",
+        "shape": "scalar",
+        "must_equal": "replica_mean"
+      },
+      "normalization": {
+        "dtype": "str",
+        "shape": "scalar",
+        "must_equal": "1/(N-1)"
+      },
+      "width_weighting_applied": {
+        "dtype": "bool",
+        "shape": "scalar",
+        "must_equal": false
+      },
+      "rank_treatment": {
+        "dtype": "str",
+        "shape": "scalar",
+        "must_equal": "UNDECLARED -- see CSTAT-O1"
+      },
+      "C_full": {
+        "dtype": "float64",
+        "shape": [
+          285,
+          285
+        ]
+      },
+      "reported_mask": {
+        "dtype": "bool",
+        "shape": [
+          285
+        ],
+        "note": "full-grid, C-order"
+      },
+      "n_reported": {
+        "dtype": "int64",
+        "shape": "scalar",
+        "must_equal": 262,
+        "note": "from the mask, NEVER from diag -- CSTAT-D0e"
+      },
+      "layout_fingerprint": {
+        "dtype": "str",
+        "shape": "scalar",
+        "note": "sha256 over edges, n_pt, n_pparallel, n_cells, ravel_order; fps_provenance.py:153-162"
+      },
+      "dof": {
+        "dtype": "int64",
+        "shape": "scalar",
+        "must_equal": 49
+      },
+      "centering": {
+        "dtype": "str",
+        "shape": "scalar",
+        "must_equal": "replica_mean"
+      },
+      "ravel_order": {
+        "dtype": "str",
+        "shape": "scalar",
+        "must_equal": "C"
+      },
+      "max_abs_asymmetry": {
+        "dtype": "float64",
+        "shape": "scalar",
+        "note": "REQUIRED; measured BEFORE any symmetrising, which is forbidden. 1e-9 is a real plumbing defect where 1e-16 is rounding, and after symmetrising both read exactly zero."
+      },
+      "reduction_is_exact": {
+        "dtype": "bool",
+        "shape": "scalar",
+        "note": "the CSTAT-D0a bit-identity result"
+      },
+      "zero_variance_cells": {
+        "dtype": "int64",
+        "shape": [
+          "k"
+        ],
+        "note": "reduced-diagonal zeros by index -- reported, not dropped"
+      },
+      "slurm_array_job_id": {
+        "dtype": "str",
+        "shape": "scalar",
+        "note": "constant across all 50 members"
+      }
     },
     "assertions": {
-      "symmetry": "C == C.T BITWISE, enforced by construction, NOT by symmetrizing a nearly-symmetric result",
+      "symmetry": "C symmetric BY CONSTRUCTION. The builder MUST NOT symmetrise: symmetrising destroys the only evidence the two triangles ever agreed, and a post-symmetrisation symmetry check passes by construction on every artifact forever.",
       "symmetry_reason": "a builder that symmetrizes hides whether its two triangles agreed",
       "report_max_abs_asymmetry": true,
       "all_finite": true,
       "diag_non_negative": true,
       "eigenvalues_reported_not_clipped": "the smallest will be zero or numerically negative and that is EXPECTED per CSTAT-O1",
-      "no_clobber": true
+      "no_clobber": true,
+      "reduction_bit_identical": "C == C_full[np.ix_(reported_mask, reported_mask)] exactly"
     }
   },
-
   "receipt_ingredients_required": [
     "all 50 member paths, their xsec sha256, replica_index, bootstrap_seed, and the is_complete result per member",
     "the centring vector mean, AND total_sigma per member separately, so mean and sd are recomputable independently of C",
@@ -201,15 +464,15 @@
     "the producing extraction's three code digests copied from the member receipts: replica_extractor_sha256, gate4_pinned_nominal_extractor_sha256, loader_sha256"
   ],
   "receipt_convention": "docs/orchestration/CONVENTION-receipt-ingredients.md (BEN-077): every derived quantity ships its ingredients, enough that the reported numbers can contradict each other",
-
   "source_identity": {
-    "cite": ["docs/orchestration/state/gate5-source-npz-verified-20260813.json",
-             "docs/orchestration/state/gate5-family-complete-pass-20260814.json"],
+    "cite": [
+      "docs/orchestration/state/gate5-source-npz-verified-20260813.json",
+      "docs/orchestration/state/gate5-family-complete-pass-20260814.json"
+    ],
     "recomputed_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
     "do_NOT_quote": "inputs_sha256 out of a replica artifact as verified provenance",
     "why": "train_fullevent_replica.py:112 copies a claim into a field named for a measurement (BEN-149, OI-57/OI-58); that line is DELIBERATELY unrepaired and rides the next launch with a CODE_ROOT sync"
   },
-
   "out_of_scope": [
     "any inversion, pseudo-inversion, regularization, shrinkage, diagonal loading, conditioning, or eigenvalue clipping",
     "chi2, GoF, p-value, or any fit",
@@ -220,16 +483,93 @@
     "any access to /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 (GATE5_CODE_ROOT: named for a different, already-complete job, so it looks disposable and is not)",
     "repairing train_fullevent_replica.py:112, and re-using the WITHDRAWN 'it would break GATE5_EXPECTED_TRAIN_DRIVER_SHA' reason -- the pin floats by design",
     "scancel, scontrol update, or resubmission of 56936015 / 56936016",
-    "constructing anything from a partial family -- exactly 50, each index once"
+    "constructing anything from a partial family -- exactly 50, each index once",
+    "symmetrising C, or truncating it to a subspace -- both destroy a REQUIRED measurement (max_abs_asymmetry, and the rank the receipt must state)"
   ],
-
   "preconditions": [
-    {"n": 1, "gate": "construction", "text": "extraction array 56936015 terminal at 50/50", "state_at_spec": "NOT MET -- 14 COMPLETED, 1 RUNNING, 35 PENDING"},
-    {"n": 2, "gate": "construction", "text": "validator 56936016 reports GATE5_EXTRACTION_FAMILY_COMPLETE_PASS, exactly 50/50", "state_at_spec": "NOT MET -- PENDING on afterany:56936015"},
-    {"n": 3, "gate": "construction", "text": "the N=14 numbers in this contract re-measured at 50/50", "state_at_spec": "NOT MET"},
-    {"n": 4, "gate": "publication", "text": "CSTAT-O1 rank treatment declared by Joseph", "state_at_spec": "OPEN"},
-    {"n": 5, "gate": "publication", "text": "CSTAT-O2 naming settled, or CSTAT-O2a run", "state_at_spec": "OPEN"}
+    {
+      "n": 1,
+      "gate": "construction",
+      "text": "extraction array 56936015 terminal at 50/50",
+      "state_at_spec": "NOT MET -- 14 COMPLETED, 1 RUNNING, 35 PENDING"
+    },
+    {
+      "n": 2,
+      "gate": "construction",
+      "text": "validator 56936016 reports GATE5_EXTRACTION_FAMILY_COMPLETE_PASS, exactly 50/50",
+      "state_at_spec": "NOT MET -- PENDING on afterany:56936015"
+    },
+    {
+      "n": 3,
+      "gate": "construction",
+      "text": "the N=14 numbers in this contract re-measured at 50/50",
+      "state_at_spec": "NOT MET"
+    },
+    {
+      "n": 4,
+      "gate": "publication",
+      "text": "CSTAT-O1 rank treatment declared by Joseph",
+      "state_at_spec": "OPEN"
+    },
+    {
+      "n": 5,
+      "gate": "publication",
+      "text": "CSTAT-O2 naming settled, or CSTAT-O2a run",
+      "state_at_spec": "OPEN"
+    }
   ],
   "builders_may": "be written and their harnesses tested against fixtures while preconditions 1-3 are outstanding",
-  "builders_may_not": "construct anything from the partial family"
+  "builders_may_not": "construct anything from the partial family",
+  "DESIGN": {
+    "builders": 1,
+    "builder": "lane B (owns the P5B assembly conventions)",
+    "comparator": "D",
+    "judge": "codex background",
+    "joseph_verbatim": "Okay yeah drop the second builder",
+    "NO_INDEPENDENCE_CLAIM_IS_AVAILABLE": "There is one builder. What the artifact gets is spec conformance, a regression comparison against the in-tree recipe combine_cstat_bkgsub.py, and D's element-wise harness catching ordering/permutation errors that structural checks are blind to. It does NOT get an independence claim, and nothing downstream may assert one.",
+    "why_two_builders_were_dropped": [
+      "D measured Xc.T @ Xc and np.einsum as BITWISE identical -- NumPy dispatches both to BLAS dgemm",
+      "this spec pins dof, centring, ravel_order and member selection, i.e. exactly the decisions above the kernel that would have been the only source of genuine divergence -- the better the spec, the less two builders could differ",
+      "both codex accounts are out of quota, so builder 2 had no home"
+    ],
+    "proportionality": "C_stat is measured at 0.669%/bin against C_syst's 7.27%",
+    "B_requirements_document": {
+      "path": "docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md",
+      "authored_by": "lane B -- the builder",
+      "status": "B's INPUT to this spec, dispatched by the mediator BEFORE this spec existed so that a convention conflict would surface before construction rather than at comparison time. IT IS NOT THE SPEC.",
+      "what_C_ratifies_from_it_in_C_own_voice": [
+        "layout_fingerprint",
+        "dof",
+        "centering",
+        "ravel_order",
+        "full-grid reported_mask",
+        "(n_reported, n_reported) as the deliverable"
+      ],
+      "where_C_extends_it": "B resolves the shape in favour of the reduced form ALONE; CSTAT-D0 requires BOTH forms plus the mask, with the reduction asserted bit-identical.",
+      "finding_credited_to_B_that_this_spec_relies_on": "receipt_model_chi2_2d.py justifies ndf = n_reported by a rank-truncation scan whose stated condition -- 'effective rank is not far below n_reported', measured 204/205 -- is FALSE at 49/262."
+    }
+  },
+  "SHAPE_RULING_CSTAT_D0": {
+    "ruling": "emit BOTH forms plus the full-grid boolean mask",
+    "decided_by": "lane C as spec author; B and D both explicitly deferred the call to C",
+    "keys": {
+      "C": "(n_reported, n_reported) -- THE DELIVERABLE, what assemble_ctotal_bkgsub.py consumes",
+      "C_full": "(285, 285) -- zero outside the mask",
+      "reported_mask": "(285,) bool, full-grid, C-order"
+    },
+    "REQUIRED_CHECK": "C == C_full[np.ix_(reported_mask, reported_mask)] BIT-IDENTICAL, not to a tolerance",
+    "why_bit_identical": "a pure gather with no arithmetic, so any difference is a defect not float noise; needs no reference artifact so it keeps power if the regression is unavailable; and it is the ONLY check that fires on a correct full matrix reduced through a WRONG index set. A tolerance would make the one exact check approximate.",
+    "why_not_reduced_only": "loses the fixed dimension that makes element-wise comparison well-defined",
+    "why_not_full_only": "the reduction -- the one step B and D independently flagged as error-prone, because the reported set is contiguous ONLY WITHIN ROWS (flat runs [0..227]+[229..246]+[254..265]+[281..284]) -- would be verified by NOBODY, so 'the comparison passed' becomes a true statement about an object that is not the deliverable. BEN-185's shape.",
+    "credit": "both-forms is D's proposal; the bit-identical formulation is B's. D disclosed that its harness was already built for (285,285) -- i.e. it was NOT neutral -- and then argued for the option costing it rework, saying the published object should be the verified object. An interest declared and then argued against is stronger evidence than no interest."
+  },
+  "n_reported_rule_CSTAT_D0e": {
+    "REQUIRED": "n_reported = reported_mask.sum(); MUST NOT be derived from diag(C)",
+    "the_trap_exists_in_tracked_code": "p4_validate_active_lateral_fps.py:72 does r['n_reported'] = int(np.sum(d > 0)) -- read directly, not relayed",
+    "why_it_is_wrong": "a cell can be REPORTED (comp > 0) and carry exactly zero replica variance if all 50 draws land on the same value, which is plausible in a low-occupancy catch bin. Its diagonal is 0.0 and the inferred count silently undercounts. On THIS object it is wrong by construction: the 266 mask deliberately contains four identically-zero cells, so sum(d > 0) reads 262 where n_reported is 266.",
+    "zero_diagonal_treatment": "a zero on the reduced diagonal is a fact to REPORT by index, NOT a cell to drop -- dropping one would silently change the published dimension",
+    "related_but_OUT_OF_SCOPE": "p4_validate_active_lateral_fps.py:70's PSD gate bool(ev[0] >= -1e-12*abs(ev[-1])) is a NEGATIVITY test that an exact zero satisfies, so a rank-49 matrix passes silently. min_over_max_eig is already recorded at :69, so a rank threshold is missing, not a measurement. Recorded so nobody reads psd=True there as evidence of full rank.",
+    "line_numbers_corrected": "min_over_max_eig is :67 and psd is :68, NOT :69/:70 as an earlier draft of this contract said. n_reported is :72, which was right. Corrected because a wrong line number in a spec gets copied forward.",
+    "mask_choice_does_not_save_you": "on the adopted 262 domain a flickering cell with vanishing sample variance makes sum(d>0) read 259; had 266 been adopted it would read 262. The trap survives either mask choice."
+  }
 }

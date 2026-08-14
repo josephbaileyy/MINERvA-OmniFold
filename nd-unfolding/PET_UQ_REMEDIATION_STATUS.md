@@ -473,6 +473,41 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-14 ~06:40 PDT — ONE BUILDER (Joseph), AND §3.1 RULED: BOTH FORMS WITH THE REDUCTION CHECKED.**
+Joseph: *"Okay yeah drop the second builder."* **The spec now makes no independence claim anywhere** — and the
+sharpest reason is self-indicting: the spec pins `dof`, `centring`, `ravel_order` and member selection, i.e.
+the only decisions two builders could have differed on. **§3.1 ruled as decider:** emit `C`
+`(n_reported, n_reported)` **and** `C_full` `(285,285)` **and** the `(285,)` `reported_mask`, with
+`C == C_full[np.ix_(mask, mask)]` asserted **bit-identically** — full-only leaves the error-prone reduction
+verified by nobody, reduced-only loses the fixed dimension. **The common mask is the FPS `266`, not this
+family's `262`**, because `assemble_ctotal_bkgsub.py:104-107` fails closed on a mask mismatch; nesting verified
+**three ways** (D `b9d0803`, B independently, and C from a third artifact leaving exactly the 19 implied
+zeros). Census on 266: 259 always + 3 flickering + 4 identically zero, the four declared by index.
+**Correction:** those four had been justified via `n_cells_masked_zero_acceptance = 4`; measured over 18
+members that field is **{2,3,4,5,6}** — a per-replica draw — so the nesting stands but the "two artifacts
+agree" phrasing does not. **`CSTAT-D0e`:** `n_reported` from the mask, never from `diag` — the trap is live at
+`p4_validate_active_lateral_fps.py:72`, whose neighbour `:70` is a negativity test that passes a rank-49
+matrix silently; both now in `KNOWN_ISSUES.md`. `max_abs_asymmetry` and `member_xsec_sha256` promoted to
+REQUIRED, plus `CSTAT-R3f` constant `slurm_array_job_id` — because the **failed** r1 array shares the live r2
+output root. `C_stat` still not constructed; `56936015` at 18/50.
+
+**Update 2026-08-14 ~06:00 PDT — `OI-91` (rank) CLOSED BY REFERENCE: IT WAS DISPOSITIONED BEFORE LAUNCH.**
+The `N=50` predeclaration (`6bd3707`, 2026-08-12 23:29) already settled rank — *"rank is not the criterion …
+the rank-deficient GoF treatment is already disclosed under `OI-29`"* — with Joseph's **"sounds good, get
+N=50 up and running."** Mine was the **fourth** approach to that closed question (`OI-122` records two more);
+`SPEC` §7 now cites the predeclaration first so the next agent hits the disposition in a document it must
+read anyway. The measurement is kept, the escalation withdrawn. **Best result this round: `CSTAT-D1`/`D2`
+turn out to be the ALREADY-ADOPTED convention** — `combine_cstat_bkgsub.py:57-58` is replica-mean-centred
+with `1/(N-1)` — so the builders' output composes with the existing chain **without a translation step**.
+That file also shows production masks on the **central value** (`rep = cv > 0`), which is replica-independent
+and immune to `BEN-231` by construction; **a quotable nominal full-event extraction would retire `BEN-231`
+outright.** Added `OI-93`: **Hartlap** (a truncation chosen for tractability still carries finite-`N` bias
+and it makes χ² too **small**) and **Peelle's Pertinent Puzzle** (`+ norm 1.4%` is present; PPP looks like a
+*good* fit), both predeclared before any number exists, all external citations labelled **UNVERIFIED**.
+`CSTAT-N1`: **there is no separate diagonal data-statistical term** in the PET chain — `C_total = C_syst +
+C_stat + C_ml + C_retrain` — so rank in the total is a **budget** from summed low-rank blocks, not a rescue.
+`C_stat` still not constructed; extraction `56936015` still short of 50/50.
+
 **Update 2026-08-14 ~05:00 PDT — `C_stat` SPEC COMMITTED (`OI-121`). TWO BLOCKERS RAISED. NOTHING CONSTRUCTED.**
 `OI-121` authorized as **two independent builders from one written spec**; **lane C is the spec author and
 not a builder.** `SPEC-20260814-gate5-cstat-construction-v1.md` + `pet/gate5_cstat_contract.json` pin the

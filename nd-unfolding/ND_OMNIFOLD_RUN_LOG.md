@@ -7253,3 +7253,122 @@ minutes before I looked. `BEN-233`.
 **Nothing was constructed.** 14 of 50 extractions published at spec time; the spec was written *during*
 the wait precisely so nobody starts early. `GATE5_CODE_ROOT` untouched, no `scancel`/`scontrol`/resubmit,
 `OI-60` and `OI-66` not closed.
+
+### 2026-08-14 ~06:00 PDT — THE RANK ESCALATION WAS WRONG TO RAISE: IT WAS SETTLED BEFORE LAUNCH (lane C)
+
+**`OI-91` is CLOSED BY REFERENCE the same day I raised it, and the closing document is one I should have
+read instead of escalating.** `PREDECLARATION-20260813-gate5-coherent-replicas-n50.md` (`6bd3707`,
+**2026-08-12 23:29**, before the replica code path existed) states verbatim: *"Rank is not the criterion —
+1431 bins is unreachable at any affordable `N`, and the rank-deficient GoF treatment is already disclosed
+under `OI-29`. The criterion is precision on a subdominant component: `1/√(2(N−1))`, giving 10.1% at
+`N=50`."* Joseph's decision in it, verbatim: **"sounds good, get N=50 up and running."**
+
+**Mine was the FOURTH approach to that closed question** — `OI-122` records two more on 2026-08-14. The
+pattern is worth naming because the cost is Joseph's attention: **rank ≤ 49 is arithmetically obvious from
+`N=50` and any bin count, so every agent that computes it experiences it as a finding**, while the
+predeclaration that settled it is not a file anyone reads on the way to a covariance. Mitigation is in the
+document the next agent must read anyway — `SPEC` §7 now opens with the citation and the line *if you have
+just derived that rank ≤ 49 is a problem, read the predeclaration before writing anything.*
+
+**What made this cheap to close was narrowing it before the answer arrived.** When `OI-122` landed I had
+already reduced `OI-91` from *"declare a rank treatment"* to *"does `OI-29`'s treatment extend to this
+262-cell object?"* — a yes/no with a citable answer rather than a decision to consume. It extends. The
+**measurement is kept** (285-cell grid, 262 reported, ceiling binding tightly at `N−1`) because it was not
+known before today; only the escalation is withdrawn.
+
+**The strongest thing found this round is that my two centring/normalization decisions were already the
+adopted convention.** `combine_cstat_bkgsub.py:57-58` — the Phase-4 builder for the 5D `C_stat` the
+analysis already uses — is `Z = Xr - Xr.mean(0)` then `C = (Z.T @ Z) / (N - 1)`. Replica-mean-centred,
+`1/(N-1)`. So `CSTAT-D1`/`D2` are **not new decisions**, and the builders' output composes with the
+existing chain **without a translation step**. Recorded as reason **zero**, ahead of my own 6.013× argument.
+
+**And that file also shows why this chain has `BEN-231` and the adopted one does not.** Production masks on
+the **central value** (`rep = cv > 0`, `:56`) — replica-**independent**, immune to flicker by construction.
+The equivalent here would mask on the nominal extraction, and the only 285-cell nominal is explicitly
+**non-quotable**. So one missing quotable nominal causes **both** the centring constraint and the flicker.
+**Producing a quotable nominal full-event extraction would retire `BEN-231` outright** rather than manage it.
+
+**Two consumer-side predeclarations added, `OI-93`, taken before any number exists because that is the only
+honest time.** (a) **Hartlap** — the new part is not the `N=50, p=262` singularity we knew about, but that
+**a truncation to `p_effective < N` chosen to make inversion possible still carries finite-`N` bias, and
+the bias makes χ² too SMALL** — it errs in the flattering direction. (b) **Peelle's Pertinent Puzzle** — the
+FPS chain carries `+ norm 1.4%`, so the precondition is present, and PPP yields a *better-looking* χ²
+beside a wrong normalisation, so nothing in the fit output flags it. **All external citations here are
+UNVERIFIED** (delegate research, Gemini 3.1 Pro, both `codex` accounts out of quota) and are labelled as
+such in every place they appear.
+
+**`CSTAT-N1`, answering the mediator's sharpest question: there is NO separate diagonal data-statistical
+term in the PET chain.** `assemble_ctotal_bkgsub.py:4` is `C_total = C_syst + C_stat + C_ml + C_retrain`,
+no diagonal addend, and `C_stat` is the replica object. So the reported field rescue — *add the full-rank
+diagonal data-stat term* — is **not** what this chain does, and our statistical term restores nothing.
+Rank in the total comes from **subadditivity over independent low-rank blocks**, which explains B's 222/266
+with no diagonal term needed, and means **the total's rank is a budget** that degrades if any component's
+universe count drops. Answered from the source, not by inference. **I started measuring the per-component
+ranks and killed it: 76 minutes of CPU in 5 minutes of wall on a shared login node was my error**, and the
+question is B's anyway — B's 222/266 is on the 266-cell lgbm mask, not this spec's 262.
+
+### 2026-08-14 ~06:40 PDT — ONE BUILDER, AND THE SHAPE RULING: BOTH FORMS, WITH THE REDUCTION CHECKED (lane C)
+
+**Joseph dropped the second builder** — *"Okay yeah drop the second builder."* The spec is rewritten so
+**no independence claim is available anywhere in it**, because none is. The reason that matters most is the
+one that indicts the original design: **this spec pins `dof`, `centring`, `ravel_order` and member
+selection — exactly the decisions above the kernel that would have been the only source of genuine
+divergence. The better the spec, the less two builders could differ.** D also measured `Xc.T @ Xc` and
+`np.einsum` as **bitwise identical** (both dispatch to BLAS `dgemm`), so the two builds were likely one
+computation. What the artifact now gets is spec conformance, a regression against `combine_cstat_bkgsub.py`,
+and D's element-wise harness — **proportionate for 0.669%/bin against `C_syst`'s 7.27%**, and claiming more
+would be the failure this campaign keeps filing.
+
+**§3.1 RULED, as decider: emit BOTH forms plus the full-grid mask.** `C` is `(n_reported, n_reported)` — the
+deliverable the assembler consumes — `C_full` is `(285,285)`, `reported_mask` is the `(285,)` map, and the
+builder MUST assert `C == C_full[np.ix_(mask, mask)]` **bit-identically.** Full-form-only leaves *the
+reduction verified by nobody*, and the reduction is the one step B and D independently flagged as
+error-prone because **the reported set is contiguous only within rows.** Reduced-only loses the fixed
+dimension. Both-forms is D's proposal, the bit-identical formulation is B's, and **D disclosed that its
+harness was already built for `(285,285)` and then argued for the option costing it rework** — an interest
+declared and argued against is stronger evidence than none.
+
+**The common mask is the FPS `266`, NOT this family's `262`, and the authority is the consumer.**
+`assemble_ctotal_bkgsub.py:104-107` **fails closed** on a mask mismatch against `C_syst`, so building on 262
+would have `C_stat` rejected *at assembly* — the translation step `OI-121` exists to eliminate. Safe because
+the nesting is now verified **three ways**: D's containment check (`b9d0803`), B independently from the other
+direction, and **C from a third artifact** — subtracting D's four cells `{228,251,252,253}` from this
+family's 23 never-reported leaves exactly **19**, the zero count a 266 mask must have. Census on 266:
+**259 always + 3 flickering + 4 identically zero**, and the four are declared by index because undeclared
+zero rows read as failure.
+
+**A correction I owed on those four.** They had been justified by PET telemetry's
+`n_cells_masked_zero_acceptance = 4`, described as count-and-mechanism agreeing across two artifacts.
+**Measured over 18 members that field takes the values {2,3,4,5,6}** — it is itself a per-replica draw, being
+computed with the replica's signal factor applied. The **nesting stands** and never depended on it; what does
+not stand is treating `4` as a property of the family rather than of the nominal. Not to be carried into a
+technote as family-level agreement.
+
+**`CSTAT-D0e`: `n_reported` is DECLARED from the mask, never inferred from the diagonal** — and the trap is
+live in tracked code, which I read rather than took on relay. `p4_validate_active_lateral_fps.py:72` does
+`int(np.sum(d > 0))`; a cell can be **reported and carry zero variance**, and on this object it is wrong by
+construction because the 266 mask deliberately holds four zero cells, so it would read 262. Its neighbour
+`:70`, `bool(ev[0] >= -1e-12*abs(ev[-1]))`, is a **negativity** test that an exact zero satisfies, so a
+rank-49 matrix passes `psd=True` silently — and `min_over_max_eig` at `:69` already records the evidence, so
+a threshold is missing, not a measurement. Both in `KNOWN_ISSUES.md`; guarded on the `C_stat` side, not
+repaired in another lane's path.
+
+**Adopted from B's requirements document, in my own voice and labelled as ratification** —
+`layout_fingerprint`, `dof`, `centering`, `ravel_order`, the full-grid `reported_mask`. **That document is
+B's INPUT, dispatched before this spec existed, and it is not the spec**; the header now says so, because D
+was right that a builder-authored spec-shaped document compromises the design if nobody states which it is.
+**B's finding that this spec relies on and did not produce:** `receipt_model_chi2_2d.py` justifies
+`ndf = n_reported` by a scan whose stated condition — *effective rank not far below `n_reported`*, measured
+204/205 — **is false at 49/262.**
+
+**`max_abs_asymmetry` promoted to a REQUIRED key, and a misattribution recorded rather than quietly
+absorbed.** The strengthening arrived as a correction to a rule reading *"symmetrise explicitly and record
+the asymmetry you symmetrised away"* — **this spec never contained that rule**; its first draft already
+forbade symmetrising. Adopted anyway, because *required and named* beats *reported*. Recorded because a spec
+that accepts edits to rules it does not contain has stopped being an authority.
+
+**`member_xsec_sha256` and a new `CSTAT-R3f` (constant `slurm_array_job_id`), both required, and the reason
+is measured:** the **failed** r1 array `56935552` and the live r2 `56936015` **write to the same output
+root.** r1 died before writing any product so nothing is contaminated — **but a glob would have taken its
+products had any existed, which is luck rather than design.** Digests catch a stale duplicate within one
+array; the array id catches a clean product from the wrong array.
