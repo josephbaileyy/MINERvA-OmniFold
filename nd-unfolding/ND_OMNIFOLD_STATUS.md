@@ -10,12 +10,16 @@ confirmed the bare full-strength `FAMILY_COMPLETE_PASS` and returned
 full/subset signal factors, full background factors, bindings, logs, accounting, and collision
 isolation all pass with zero failed checks. `C_stat` remains null; the next action is full-input
 per-replica extraction followed by a complete 50-member manifest. That dedicated extraction path is
-now implemented and acceptance-tested (181/181 plus a real 49,152,885-row factor replay) without
+now implemented and acceptance-tested (184/184 after the terminal repair, plus a real 49,152,885-row factor replay) without
 editing the Gate-4-pinned nominal extractor. The first submission created no job because 64 GiB made
 Slurm bill 38 cores against the 32-core/GPU queue cap; the changed launcher now uses the accepted queue
-default. Array `56935552_[0-49]` is now pending with at most ten A100 tasks concurrent; dependent
-after-any complete-family validator `56935553` is pending and both have armed external watches. Exact launch
-receipt: `../docs/orchestration/state/gate5-extraction-active-56935552.json`. Exact promotion receipt:
+default. Array `56935552_[0-49]` then exposed a changed launcher defect: replica 0 finished its complete
+49,152,885-row push but xsec lookup incorrectly rooted the off-repository flux file in the immutable code
+worktree. No xsec/summary/receipt was published. The array was canceled before the remaining identical
+failures; original after-any validator `56935553` and its watch are preserved to record the partial-family
+BLOCK. A changed continuation explicitly binds the canonical data-root flux and reuses only atomically
+complete pushes after validation; `C_stat` remains null. Exact failure receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array

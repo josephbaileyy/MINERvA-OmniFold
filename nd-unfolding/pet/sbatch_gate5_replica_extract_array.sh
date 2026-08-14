@@ -26,6 +26,7 @@ DRIVER=${CODE_ROOT}/nd-unfolding/pet/extract_fullevent_replica.py
 NOMINAL_EXTRACTOR=${CODE_ROOT}/nd-unfolding/pet/extract_fullevent_fps.py
 LOADER=${CODE_ROOT}/nd-unfolding/pet/fullevent_fps_dataloader.py
 INPUT=${DATA_ROOT}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz
+FLUX=${DATA_ROOT}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
 INDEX=${SLURM_ARRAY_TASK_ID:?array task ID missing}
 SEED=$((50000 + INDEX))
 REPLICA=$(printf 'replica_%02d' "$INDEX")
@@ -46,34 +47,44 @@ sha_of() { sha256sum "$1" | awk '{print $1}'; }
 [[ "$(sha_of "$NOMINAL_EXTRACTOR")" == "$EXPECTED_NOMINAL_EXTRACTOR_SHA" ]] \
   || die "Gate-4-pinned nominal extractor hash drift"
 [[ "$(sha_of "$LOADER")" == "$EXPECTED_LOADER_SHA" ]] || die "loader hash drift"
-for f in "$INPUT" "$WEIGHTS" "$WEIGHTS.done" "$TRAIN_RECEIPT" "$TRAIN_RECEIPT.done"; do
+for f in "$INPUT" "$FLUX" "$WEIGHTS" "$WEIGHTS.done" "$TRAIN_RECEIPT" "$TRAIN_RECEIPT.done"; do
   [[ -s "$f" && ! -L "$f" ]] || die "missing/empty/symlink prerequisite $f"
 done
-for f in "$PUSH" "$PUSH.done" "$XSEC" "$XSEC.done" \
-         "$SUMMARY" "$SUMMARY.done" "$RECEIPT" "$RECEIPT.done"; do
+for f in "$XSEC" "$XSEC.done" "$SUMMARY" "$SUMMARY.done" "$RECEIPT" "$RECEIPT.done"; do
   [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
 done
+if [[ -s "$PUSH" && -s "$PUSH.done" && ! -L "$PUSH" && ! -L "$PUSH.done" ]]; then
+  REUSE_PUSH=1
+elif [[ ! -e "$PUSH" && ! -L "$PUSH" && ! -e "$PUSH.done" && ! -L "$PUSH.done" ]]; then
+  REUSE_PUSH=0
+else
+  die "push payload/marker are partial, symlinked, or inconsistent: $PUSH"
+fi
 mkdir -p "$OUTDIR"
 
-source "${DATA_ROOT}/setup_salloc_env.sh"
-module load tensorflow/2.15.0
 export PYTHONPATH="${CODE_ROOT}/omnifold_nn:${CODE_ROOT}/2d-unfolding:${CODE_ROOT}/nd-unfolding:${CODE_ROOT}/nd-unfolding/pet:${PYTHONPATH:-}"
 export PYTHONUNBUFFERED=1
-TF_PY=$(command -v python3 || true)
-[[ -n "$TF_PY" && -x "$TF_PY" ]] || die "TensorFlow python3 is unavailable"
-"$TF_PY" -c 'import tensorflow as tf; import omnifold; print(tf.__version__)' \
-  || die "TensorFlow/PET import preflight failed"
-echo "[gate5-extract] PUSH index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX}"
-"$TF_PY" -u "$DRIVER" \
-  --stage push \
-  --replica-index "$INDEX" \
-  --bootstrap-seed "$SEED" \
-  --weights "$WEIGHTS" \
-  --inputs "$INPUT" \
-  --expected-inputs-sha "$EXPECTED_INPUT_SHA" \
-  --push-out "$PUSH"
+if [[ "$REUSE_PUSH" == 0 ]]; then
+  source "${DATA_ROOT}/setup_salloc_env.sh"
+  module load tensorflow/2.15.0
+  TF_PY=$(command -v python3 || true)
+  [[ -n "$TF_PY" && -x "$TF_PY" ]] || die "TensorFlow python3 is unavailable"
+  "$TF_PY" -c 'import tensorflow as tf; import omnifold; print(tf.__version__)' \
+    || die "TensorFlow/PET import preflight failed"
+  echo "[gate5-extract] PUSH index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX}"
+  "$TF_PY" -u "$DRIVER" \
+    --stage push \
+    --replica-index "$INDEX" \
+    --bootstrap-seed "$SEED" \
+    --weights "$WEIGHTS" \
+    --inputs "$INPUT" \
+    --expected-inputs-sha "$EXPECTED_INPUT_SHA" \
+    --push-out "$PUSH"
+  module unload tensorflow/2.15.0 >/dev/null 2>&1 || true
+else
+  echo "[gate5-extract] PUSH_REUSE index=$INDEX seed=$SEED path=$PUSH"
+fi
 
-module unload tensorflow/2.15.0 >/dev/null 2>&1 || true
 source "${DATA_ROOT}/setup_salloc_env.sh"
 ROOT628_PREFIX=${ROOT628_PREFIX:-/global/homes/j/josephrb/.conda/envs/root_6_28}
 ROOT_PY=${ROOT628_PREFIX}/bin/python3
@@ -90,5 +101,6 @@ echo "[gate5-extract] XSEC index=$INDEX seed=$SEED"
   --push-out "$PUSH" \
   --out "$XSEC" \
   --summary "$SUMMARY" \
-  --receipt "$RECEIPT"
+  --receipt "$RECEIPT" \
+  --mcfile "$FLUX"
 echo "[gate5-extract] DONE index=$INDEX seed=$SEED $(date -u +%Y-%m-%dT%H:%M:%SZ)"

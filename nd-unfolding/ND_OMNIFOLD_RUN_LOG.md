@@ -7146,3 +7146,21 @@ member fails; only `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS` at 50/50 promotes. Ex
 interactive, is the correct route for this 50-GPU-task family and lets Slurm plus the detached waker
 advance without LLM turns. `C_stat` remains null. Receipt:
 `../docs/orchestration/state/gate5-extraction-active-56935552.json`.
+
+### 2026-08-14 09:47 UTC — Gate-5 extraction array changed launcher/data-root failure
+
+The external error event was valid but early, not aggregate-terminal: task 0 was `FAILED/1:0`, task 1
+was running, and tasks 2-49 remained prestart-pending. Every extant task log and output namespace was
+inventoried once. Replica 0 completed and atomically published its full ordered 49,152,885-row push;
+its payload and marker revalidate. It then failed before any xsec write because the driver's default
+`mcfile` was derived from immutable code worktree `7dc8c34`, while the flux ROOT is off-repository under
+the canonical data root. There is no xsec, summary, task receipt, family promotion, or science verdict.
+
+Because every untouched member carried that same deterministic launcher defect, exact array `56935552`
+was canceled rather than allowed to consume 49 GPUs on unchanged failures. Its original after-any CPU
+validator `56935553` and watch are preserved to publish the truthful partial-family BLOCK. The changed
+continuation requires the flux path explicitly, reuses a push only after its atomic marker passes, keeps
+all final collision guards, and waits for the predecessor to terminate before writing. The repaired
+runtime battery passes 184/184. No subset, `C_stat`, Gate-6/`C_ML`, provider dispatch, reset credit, or
+worker replacement occurred. Receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`.

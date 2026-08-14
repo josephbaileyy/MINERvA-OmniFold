@@ -434,8 +434,9 @@ def main(argv=None):
     ap.add_argument("--chunk", type=int, default=nominal_extract.DEFAULT_CHUNK)
     ap.add_argument("--batch-size", type=int, default=4096)
     ap.add_argument("--subsample-agreement-tol", type=float, default=1e-3)
-    ap.add_argument("--mcfile", default=str(
-        REPO / "2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"))
+    ap.add_argument("--mcfile", default=None,
+                    help="explicit DATA-root flux ROOT; required for xsec so an immutable code "
+                         "worktree cannot be mistaken for the off-repo data root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--n-nucleons", type=float, default=None)
     args = ap.parse_args(argv)
@@ -446,8 +447,10 @@ def main(argv=None):
     if args.stage == "push":
         run_push(args)
     else:
-        if not all((args.out, args.summary, args.receipt)):
-            raise SystemExit("[gate5-extract] xsec stage requires --out/--summary/--receipt")
+        if not all((args.out, args.summary, args.receipt, args.mcfile)):
+            raise SystemExit(
+                "[gate5-extract] xsec stage requires --out/--summary/--receipt/--mcfile"
+            )
         run_xsec(args)
     return 0
 

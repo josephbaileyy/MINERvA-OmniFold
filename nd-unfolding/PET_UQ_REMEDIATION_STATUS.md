@@ -406,6 +406,17 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Update 2026-08-14 09:47 UTC — FIRST EXTRACTION ARRAY BLOCKED; CHANGED CONTINUATION ACCEPTED.**
+The emitted error wake corrected its own aggregate-terminal claim: task 0 had failed, task 1 was still
+running, and tasks 2-49 were pending. Replica 0's full ordered 49,152,885-row push and atomic marker are
+valid, but the xsec stage defaulted the flux path into immutable code worktree `7dc8c34`, where the
+off-repository ROOT does not exist. This is a launcher/data-root defect, not a factor, refinement, push,
+or science failure. The exact array was canceled so the remaining tasks could not repeat the unchanged
+failure. Original after-any validator `56935553` and its watch remain intact and must truthfully BLOCK the
+partial family. The changed path passes 184/184 tests, requires an explicit canonical data-root `--mcfile`,
+and reuses a push only after its completion marker revalidates. No subset is selected and `C_stat` is null.
+Receipt: [`state/gate5-extraction-failure-56935552.json`](../docs/orchestration/state/gate5-extraction-failure-56935552.json).
+
 **Update 2026-08-14 09:14 UTC — FULL-INPUT EXTRACTION IMPLEMENTATION ACCEPTANCE PASS.** A dedicated
 replica adapter leaves the Gate-4-pinned nominal extractor byte-unchanged and calls its engine
 reweight, coverage checks and xsec arithmetic. It independently replays the full signal/background

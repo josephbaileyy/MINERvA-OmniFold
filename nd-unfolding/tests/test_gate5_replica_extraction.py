@@ -4,6 +4,7 @@ import inspect
 import json
 import os
 import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -149,3 +150,35 @@ def test_promoted_inventory_requires_exactly_50(tmp_path):
     }))
     with pytest.raises(SystemExit, match="lacks 50"):
         family.load_promoted_training_inventory(report)
+
+
+def test_xsec_cli_requires_explicit_data_root_mcfile():
+    with pytest.raises(SystemExit, match=r"--mcfile"):
+        rex.main([
+            "--stage", "xsec",
+            "--replica-index", "0",
+            "--bootstrap-seed", "50000",
+            "--weights", "weights.npz",
+            "--inputs", "inputs.npz",
+            "--expected-inputs-sha", "a" * 64,
+            "--push-out", "push.npz",
+            "--out", "xsec.npz",
+            "--summary", "summary.json",
+            "--receipt", "receipt.json",
+        ])
+
+
+def test_array_launcher_binds_data_root_flux_and_reuses_only_complete_push():
+    launcher = (Path(PET) / "sbatch_gate5_replica_extract_array.sh").read_text()
+    assert "FLUX=${DATA_ROOT}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root" in launcher
+    assert '--mcfile "$FLUX"' in launcher
+    assert '[[ -s "$PUSH" && -s "$PUSH.done" && ! -L "$PUSH"' in launcher
+    assert 'echo "[gate5-extract] PUSH_REUSE' in launcher
+
+
+def test_changed_submitter_waits_for_failed_predecessor_without_duplicate_writers():
+    controller = (Path(PET) / "submit_gate5_extraction_r2_n50.sh").read_text()
+    assert "PREDECESSOR_JOB=56935552" in controller
+    assert '--dependency="afterany:${PREDECESSOR_JOB}"' in controller
+    assert 'push.exists() != mark.exists()' in controller
+    assert "collision/no-clobber guard" in controller
