@@ -15,6 +15,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -56,6 +57,10 @@ N_DATA, N_SIG, N_BKG = 1000, 4000, 200
 # "a complete family" builds exactly this many, and every test that means "short" builds fewer,
 # so the suite can no longer prove a small-n tautology in place of the real gate (BEN-157).
 N = R5.DECLARED_INVENTORY
+
+# The verdict suffix a run earns when it supplies neither optional input. Spelled out once so the
+# tests state WHICH evidence is missing rather than pattern-matching a string (BEN-157 R3).
+NO_INPUTS = "_SOURCE_UNHASHED_NOMINAL_UNCHECKED"
 POT = 0.25
 
 
@@ -565,7 +570,11 @@ def test_complete_family_passes_and_still_refuses_to_emit_C_stat(tmp_path):
     _family(root, N)
     rc, rep = _run_main(root)
     assert rc == R5.EXIT_COMPLETE
-    assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
+    # Honest verdict: this run supplies neither --source-npz nor --nominal-target-sha, so two
+    # checks did not run and the verdict says so. Before R3 it claimed full strength.
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS" + NO_INPUTS
+    assert rep["weakened_axes"] == ["SOURCE_UNHASHED", "NOMINAL_UNCHECKED"]
+    assert rep["is_full_strength"] is False
     assert rep["counts"]["targets_present"] == N == R5.DECLARED_INVENTORY
     assert rep["C_stat"] is None, "the reconciler must never construct a covariance"
 
@@ -575,7 +584,7 @@ def test_target_stage_passes_without_training_and_still_refuses_C_stat(tmp_path)
     _family(root, N, with_training=False)
     rc, rep = _run_main(root, extra=["--stage", "target"])
     assert rc == R5.EXIT_COMPLETE
-    assert rep["verdict"] == "TARGETS_COMPLETE_PASS"
+    assert rep["verdict"] == "TARGETS_COMPLETE_PASS" + NO_INPUTS
     assert rep["counts"]["targets_passing"] == N
     assert rep["counts"]["trainings_present"] == 0
     assert rep["C_stat"] is None
@@ -695,7 +704,9 @@ def test_nominal_sha_that_matches_nothing_does_not_fire(tmp_path):
     _family(root, N)
     rc, rep = _run_main(root, extra=["--nominal-target-sha", "f" * 64])
     assert rc == R5.EXIT_COMPLETE
-    assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
+    # The nominal sha WAS supplied here, so that axis is no longer weakened; source still is.
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS_SOURCE_UNHASHED"
+    assert rep["weakened_axes"] == ["SOURCE_UNHASHED"]
 
 
 def test_skip_replay_downgrades_the_verdict_rather_than_claiming_the_same_thing(tmp_path):
@@ -703,11 +714,13 @@ def test_skip_replay_downgrades_the_verdict_rather_than_claiming_the_same_thing(
     _family(root, N)
     rc, rep = _run_main(root, extra=["--skip-replay"])
     assert rc == R5.EXIT_COMPLETE
-    assert rep["verdict"] == "FAMILY_COMPLETE_PASS_REPLAY_SKIPPED"
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS_REPLAY_SKIPPED" + NO_INPUTS
     assert rep["replay_performed"] is False
+    assert "REPLAY_SKIPPED" in rep["weakened_axes"]
     # And with replay it is the stronger verdict, so the two are distinguishable.
     rc2, rep2 = _run_main(root)
-    assert rep2["verdict"] == "FAMILY_COMPLETE_PASS"
+    assert rep2["verdict"] == "FAMILY_COMPLETE_PASS" + NO_INPUTS
+    assert "REPLAY_SKIPPED" not in rep2["weakened_axes"]
 
 
 def test_skip_replay_does_not_hide_a_broken_data_factor(tmp_path):
@@ -759,11 +772,42 @@ def test_empty_root_is_PARTIAL_with_zero_counts(tmp_path):
 # instrument was broken.
 # ---------------------------------------------------------------------------
 
+LAUNCHER = os.path.join(HERE, "..", "pet", "sbatch_gate5_replica_train_array.sh")
+
+
 def test_expected_names_match_the_launcher():
-    """Pin the names to what the Slurm-captured batch script actually sets. If the launcher
-    changes, this is the test that should fail, rather than the family silently reading empty."""
-    assert R5.TRAIN_RECEIPT_NAME == "GATE5_REPLICA_TRAINING_RECEIPT.json"
-    assert R5.TRAIN_ARTIFACT_NAME == "GATE5_REPLICA_WEIGHTS.npz"
+    """READ THE LAUNCHER. This test used to assert the constants against string literals duplicated
+    a few lines up, under a docstring promising it pinned them to the batch script -- BEN-157 item 7.
+    It could not have failed if the launcher changed, which is the one thing it existed to catch, and
+    I described it to a peer as pinning them to the launcher. It now opens the file.
+
+    The parse is deliberately loose about shell syntax and strict about the NAME: any assignment whose
+    value ends in the basename counts, so reformatting the launcher does not break the test, while
+    renaming the artifact does.
+    """
+    with open(LAUNCHER) as fh:
+        text = fh.read()
+    for const, var in ((R5.TRAIN_ARTIFACT_NAME, "OUTPUT"), (R5.TRAIN_RECEIPT_NAME, "TRAIN_RECEIPT")):
+        assert re.search(rf"^{var}=\S*/{re.escape(const)}\s*$", text, re.M), (
+            f"{var} in {os.path.basename(LAUNCHER)} does not end in {const!r}; the reconciler's "
+            f"constant and the launcher have drifted, which is exactly the defect fixed at 69c577b")
+
+
+def test_the_launcher_pin_FAILS_when_the_launcher_disagrees(tmp_path, monkeypatch):
+    """Power test for the test above -- the half whose absence was the whole defect.
+
+    A launcher-reading check that cannot fail is no better than the literal it replaced, so this
+    rewrites a copy of the launcher with a changed name and asserts the same parse rejects it.
+    """
+    with open(LAUNCHER) as fh:
+        text = fh.read()
+    tampered = text.replace(R5.TRAIN_ARTIFACT_NAME, "SOMETHING_ELSE.npz")
+    assert tampered != text, "fixture must actually change the launcher text"
+    assert not re.search(
+        rf"^OUTPUT=\S*/{re.escape(R5.TRAIN_ARTIFACT_NAME)}\s*$", tampered, re.M), (
+        "the parse accepts a launcher that no longer sets this name; it is a literal in disguise")
+    # And the untampered text must still match, or the regex proves nothing either way.
+    assert re.search(rf"^OUTPUT=\S*/{re.escape(R5.TRAIN_ARTIFACT_NAME)}\s*$", text, re.M)
 
 
 def test_receipt_under_an_unexpected_name_is_NAME_MISMATCH_not_absent(tmp_path):
@@ -814,8 +858,8 @@ def test_correctly_named_files_do_NOT_trigger_the_guard(tmp_path):
     root = str(tmp_path)
     _family(root, N)
     rc, rep = _run_main(root)
-    assert rc == 0
-    assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
+    assert rc == R5.EXIT_COMPLETE
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS" + NO_INPUTS
     assert rep["counts"]["trainings_name_mismatch"] == 0
 
 
@@ -872,7 +916,7 @@ def test_the_declared_n_is_ACCEPTED_and_still_passes(tmp_path):
     _family(root, N)
     rc, rep = _run_main(root, n=R5.DECLARED_INVENTORY)
     assert rc == R5.EXIT_COMPLETE
-    assert rep["verdict"] == "FAMILY_COMPLETE_PASS"
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS" + NO_INPUTS
 
 
 def test_omitting_n_entirely_is_the_production_path_and_works(tmp_path):
@@ -1120,3 +1164,62 @@ def test_the_tool_imports_the_real_completion_primitive(tmp_path):
     """If this module ever stops being the canonical one, the marker checks silently change meaning."""
     assert R5._aw.__name__ == "atomic_write"
     assert os.path.realpath(R5._aw.__file__) == os.path.realpath(AW.__file__)
+
+
+def test_the_BARE_full_strength_verdict_is_REACHABLE(tmp_path, monkeypatch):
+    """R3's power test. Downgrading absent evidence is only correct if full strength is still
+    attainable -- otherwise the strongest verdict becomes unreachable, which is its own defect and
+    would train readers to ignore the suffix."""
+    root = str(tmp_path)
+    shas = _family(root, N)
+    source = os.path.join(root, "input.npz")
+    with open(source, "wb") as fh:
+        fh.write(b"immutable-source-fixture")
+    expected = R5.sha256_file(source)
+    monkeypatch.setattr(R5, "EXPECTED_INPUT_SHA", expected)
+    for idx in range(N):
+        rec = os.path.join(root, "replicas", f"replica_{idx:02d}", "target",
+                           "GATE5_REPLICA_TARGET_RECEIPT.json")
+        _mutate(rec, lambda o: o["input_preflight"].__setitem__("sha256", expected))
+    rc, rep = _run_main(root, extra=["--source-npz", source,
+                                     "--nominal-target-sha", "f" * 64])
+    assert rc == R5.EXIT_COMPLETE
+    assert rep["verdict"] == "FAMILY_COMPLETE_PASS", rep["weakened_axes"]
+    assert rep["weakened_axes"] == []
+    assert rep["is_full_strength"] is True
+
+
+def test_a_receipt_with_a_null_R_FAILS_instead_of_dropping_four_checks(tmp_path):
+    """BEN-157 item 6, fail-closed half. Measured before R3: 43 passed, 0 failed, R_recorded null.
+
+    R and its operands are REQUIRED receipt fields, so their absence is a defect in the artifact and
+    fails the member -- not a verdict downgrade, which would say the TOOL ran weakly when in fact the
+    RECEIPT is incomplete.
+    """
+    root = str(tmp_path)
+    _family(root, 1, with_training=False)
+    rec = os.path.join(root, "replicas", "replica_00", "target",
+                       "GATE5_REPLICA_TARGET_RECEIPT.json")
+
+    def kill_R(o):
+        o["runtime_target"]["step1_class_ratio"] = None
+        for f in ("pot_scale", "numerator_signed_data", "n_data_effective", "bkg_pot_scaled_sum"):
+            o["runtime_target"]["step1_class_ratio_telemetry"][f] = None
+
+    _mutate(rec, kill_R)
+    row = R5.reconcile_target(0, root, False, {})
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert row["verdict"] == "FAIL"
+    assert "R_published_by_receipt" in failed
+    for f in ("pot_scale", "numerator_signed_data", "n_data_effective", "bkg_pot_scaled_sum"):
+        assert f"R_operand_published[{f}]" in failed
+
+
+def test_the_R_published_checks_PASS_on_an_honest_receipt(tmp_path):
+    """Other direction: a check that fired on every receipt would be an alarm, not a check."""
+    root = str(tmp_path)
+    _family(root, 1, with_training=False)
+    row = R5.reconcile_target(0, root, False, {})
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert "R_published_by_receipt" not in failed
+    assert not any(f.startswith("R_operand_published[") for f in failed)

@@ -6649,3 +6649,56 @@ That belongs in the re-deployment step rather than being discovered during it (`
 Campaign this turn: `squeue -r` 17 PENDING / **8 RUNNING** — concurrency recovered from 2 as the
 partition freed up, which is external and keeps the ETA bounds rather than a time. 25 receipts of 50,
 `PARTIAL`, `C_stat` null. Nothing deployed, `CODE_ROOT` untouched, campaign not re-run.
+
+### 2026-08-13 ~18:05 PDT — BEN-157 R3 and R4: all seven audit items repaired (lane C)
+
+**R3 — a weaker run can no longer emit a stronger verdict.** `--skip-replay` already did this right,
+downgrading to a named suffix. `--source-npz` and `--nominal-target-sha` did not: absent, their checks
+simply never ran and the verdict was full strength. **Two treatments, because they are two different
+things.** A missing *tool input* is the caller's choice, so it downgrades and names itself
+(`SOURCE_UNHASHED`, `NOMINAL_UNCHECKED`). A missing *required receipt field* is a defect in the
+artifact, so it **fails the member** — `R_published_by_receipt` and `R_operand_published[...]` for the
+four operands. Conflating them would tell the reader the **tool** ran weakly when in fact the
+**receipt** is incomplete, pointing the next person at the wrong file. The axes are also reported as
+`weakened_axes` and `is_full_strength`, so nobody has to parse a verdict string to learn what is
+missing.
+
+**What R3 exposed in my own suite: six tests asserted the full-strength verdict while passing neither
+optional input.** The suite was certifying as full-strength exactly the runs whose evidence was
+incomplete. They now assert the honest string, and a new test proves the bare `FAMILY_COMPLETE_PASS`
+is still **reachable** — downgrading absent evidence is only correct if full strength remains
+attainable, otherwise the strongest verdict becomes unreachable and readers learn to ignore the suffix.
+
+**R4 — the name-pin test opens the launcher.** It had asserted the constants against string literals
+duplicated a few lines above, under a docstring promising it pinned them to the Slurm-captured batch
+script; it could not have failed if the launcher changed, which is the one thing it existed to catch,
+and I had described it to a peer as doing the opposite. It now reads
+`sbatch_gate5_replica_train_array.sh`, loose about shell syntax and strict about the name. **And it is
+power-tested**: a tampered copy of the launcher text must be rejected by the same parse, because a
+launcher-reading check that cannot fail is no better than the literal it replaced — the missing half
+was the entire original defect.
+
+**Verified against the live family before landing, because R3's fail-closed checks are the risky
+kind.** Had any of the five required R fields been absent or differently named in production, R3 would
+have failed all 50 target members and blocked the campaign it exists to certify. Measured read-only:
+**all 50 target receipts publish `step1_class_ratio` and all four operands; members missing any
+required field: NONE.**
+
+One consequence worth stating: the armed watch command passes `--nominal-target-sha` but **not**
+`--source-npz`, so a future live run will correctly report `FAMILY_COMPLETE_PASS_SOURCE_UNHASHED`
+rather than the bare string. That is intended. The source identity has exactly one independent check
+and it lives in `state/gate5-source-npz-verified-20260813.json`, not in the replica artifacts (OI-58).
+
+**All seven items are now closed in code, 73 → 104 tests.** Three residuals are **recorded, not
+closed**: `is_complete`'s whole-second `mtime` resolution (changing it means changing a primitive with
+other callers); no receipt is hashed against anything, so a receipt's only integrity evidence is its
+marker; and `artifact.completion_marker_valid` is a hardcoded literal, deliberately not read.
+
+**Promotion is still not authorised, and the reason is not the code.** The repaired tool has never run
+against the campaign, because that requires deploying it — a separate verified step that must now also
+copy `atomic_write.py`. Whoever advances Gate 5 needs a 50/50 `FAMILY_COMPLETE_PASS` from the
+**deployed** repaired tool with its `weakened_axes` recorded, and I would not accept my own PASS from a
+copy whose parity had not been checked.
+
+Campaign this turn: `squeue -r` 15 PENDING / **10 RUNNING** — concurrency back to the full array
+throttle. 25 receipts of 50, no failures in either array, `PARTIAL`, `C_stat` null.

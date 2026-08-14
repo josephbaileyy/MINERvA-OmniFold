@@ -1,0 +1,59 @@
+{
+  "artifact": "gate5-reconciler-r3-r4-repair-20260813.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 ~18:05 PDT",
+  "purpose": "R3 and R4 of the BEN-157 repair, completing all seven audit items. Nothing deployed to scratch, CODE_ROOT untouched, campaign not re-run, no C_stat.",
+
+  "R3_A_WEAKER_RUN_CANNOT_EMIT_A_STRONGER_VERDICT": {
+    "the_defect": "`--skip-replay` already did this correctly, downgrading to a NAMED suffix so the artifact says which evidence is missing. `--source-npz` and `--nominal-target-sha` did not: absent, their checks simply never ran and the verdict was the full-strength one. The R derivation was worse -- with a null R, four checks silently disappeared and the row reported 43 passed / 0 failed.",
+    "TWO_TREATMENTS_BECAUSE_THEY_ARE_TWO_DIFFERENT_THINGS": {
+      "missing_TOOL_INPUT": "The caller's choice, so it downgrades the verdict and names itself. New tokens SOURCE_UNHASHED and NOMINAL_UNCHECKED join REPLAY_SKIPPED, e.g. FAMILY_COMPLETE_PASS_SOURCE_UNHASHED_NOMINAL_UNCHECKED.",
+      "missing_RECEIPT_FIELD": "A defect in the artifact, so it FAILS the member. `R_published_by_receipt` plus `R_operand_published[<field>]` for pot_scale, numerator_signed_data, n_data_effective and bkg_pot_scaled_sum. Fail closed, not downgrade.",
+      "why_the_distinction_matters": "A verdict downgrade on a null R would tell the reader the TOOL ran weakly, when in fact the RECEIPT is incomplete. Same evidence gap, opposite owner, and conflating them would point the next reader at the wrong file."
+    },
+    "the_axes_are_also_DATA_not_only_a_string": "`weakened_axes` (a list) and `is_full_strength` (a bool) are in the report. A reader should not have to parse a verdict string to learn which evidence is missing, and neither should a downstream check.",
+    "WHAT_THIS_EXPOSED_IN_MY_OWN_SUITE": "SIX tests asserted the full-strength verdict while passing neither optional input. The suite was certifying as full-strength exactly the runs whose evidence was incomplete. They now assert the honest verdict, and a new test proves the bare FAMILY_COMPLETE_PASS is still REACHABLE -- downgrading absent evidence is only correct if full strength remains attainable, or the strongest verdict becomes unreachable and readers learn to ignore the suffix."
+  },
+
+  "R4_THE_NAME_PIN_TEST_NOW_OPENS_THE_LAUNCHER": {
+    "the_defect": "`test_expected_names_match_the_launcher` asserted the two constants against string literals DUPLICATED IN THE TEST FILE, under a docstring promising it pinned them to the Slurm-captured batch script. It could not have failed if the launcher changed, which is the one thing it existed to catch. I had also described it to the mediator as pinning them to the launcher, which was false and is withdrawn in BEN-157.",
+    "the_fix": "It reads nd-unfolding/pet/sbatch_gate5_replica_train_array.sh and requires OUTPUT and TRAIN_RECEIPT to end in the reconciler's constants. Deliberately loose about shell syntax and strict about the NAME, so reformatting the launcher does not break the test while renaming the artifact does.",
+    "and_it_is_power_tested": "test_the_launcher_pin_FAILS_when_the_launcher_disagrees rewrites a copy of the launcher text with a changed name and asserts the same parse REJECTS it, then confirms the untampered text still matches. A launcher-reading check that cannot fail would be no better than the literal it replaced -- and the missing half was the entire original defect."
+  },
+
+  "VERIFIED_AGAINST_THE_LIVE_FAMILY_BEFORE_LANDING": {
+    "why": "R3's fail-closed R checks are the risky kind: if any of the five required fields were absent or differently named in production, R3 would fail all 50 target members and block the campaign it exists to certify.",
+    "measured_read_only": "All 50 target receipts publish step1_class_ratio AND all four operands. Members missing any required R field: NONE.",
+    "replica_00_sample": {"R": 1.1253110723074478, "pot_scale": 0.21240500334472884, "numerator_signed_data": 4008737.3607000015, "n_data_effective": 4118323.0, "bkg_pot_scaled_sum": 109585.6392999987},
+    "consequence_for_the_watch_command": "The armed watch passes --nominal-target-sha but NOT --source-npz, so a future live run will correctly report FAMILY_COMPLETE_PASS_SOURCE_UNHASHED rather than the bare string. That is the intended behaviour, not a regression: the source identity has exactly one independent check and it lives in state/gate5-source-npz-verified-20260813.json, not in the replica artifacts (OI-58). Anyone wanting the bare verdict must pass --source-npz."
+  },
+
+  "ALL_SEVEN_AUDIT_ITEMS_NOW_CLOSED": {
+    "1_n_arbitrary": "R1 -- DECLARED_INVENTORY pinned, --n an assertion exiting 3.",
+    "2_training_PRESENT_receipt_only": "R2 -- training-stage .done checks added.",
+    "3_NAME_MISMATCH_blind_to_an_agreeing_receipt": "R2 -- artifact_path_is_canonical.",
+    "4_marker_omits_mtime": "R2 -- atomic_write.is_complete called, not re-implemented.",
+    "5_one_of_three_driver_digests": "R2 -- all three read, re-hashed from disk, and required constant across the family.",
+    "6_checks_that_evaporate": "R3 -- named verdict downgrade for absent tool inputs; fail-closed for absent receipt fields.",
+    "7_name_pin_test_reads_a_literal": "R4 -- it opens the launcher, and the parse is power-tested against a tampered copy.",
+    "test_count": "73 at the start of the repair, 104 now.",
+    "residuals_recorded_NOT_closed": [
+      "atomic_write.is_complete compares int(st_mtime), whole-second resolution: a same-size same-second rewrite is invisible to it and therefore to this tool. Closing it means changing the primitive, which has other callers (lib/resume_guard.sh mirrors it).",
+      "No receipt is hashed against anything, so a receipt's only integrity evidence is its marker. Fixing that needs a producer-side hash chain -- a separate change and a separate decision.",
+      "artifact.completion_marker_valid is a hardcoded literal in the producer and is deliberately not read as evidence (C's OI-66)."
+    ]
+  },
+
+  "PROMOTION_STATUS": "The seven code defects are repaired and every check is power-tested in both directions. PROMOTION IS STILL NOT AUTHORISED BY THIS ARTIFACT: the repaired tool has never been run against the campaign, because that requires deploying it, and deployment is a separate verified step (C's OI-64) that must now also copy atomic_write.py. The family is at 25 of 50 regardless. Whoever advances Gate 5 needs a 50/50 FAMILY_COMPLETE_PASS from the DEPLOYED repaired tool, with its weakened_axes recorded, and I would not accept my own PASS from a copy whose parity has not been checked.",
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "training_56857233_squeue_r": "15 PENDING, 10 RUNNING",
+    "sacct_cross_check": "25 COMPLETED, 10 RUNNING, 1 PENDING row (compressed)",
+    "training_receipts_on_disk": 25,
+    "targets": "50 of 50 COMPLETED",
+    "failures_in_either_array": "none",
+    "concurrency": "recovered to 10, the full array throttle; external and not predictable, so the ETA stays bounds",
+    "verdict": "PARTIAL",
+    "C_stat": null
+  }
+}

@@ -450,6 +450,19 @@ def reconcile_target(idx, root, replay, cache):
     R = rt.get("step1_class_ratio")
     num_parts = (tel.get("n_data_effective"), tel.get("bkg_pot_scaled_sum"))
     r_derivation = {"R_recorded": R}
+
+    # BEN-157 R3, fail-closed half. Every R check below is guarded by isinstance(), so a receipt with
+    # a null R silently dropped FOUR checks and the row still reported clean -- measured: 43 passed,
+    # 0 failed, r_derivation {"R_recorded": null}. R and its operands are REQUIRED receipt fields, not
+    # optional tool inputs, so their absence is a defect in the artifact and fails the member. A
+    # verdict downgrade would be the wrong instrument here: it would tell the reader the TOOL ran
+    # weakly, when in fact the RECEIPT is incomplete.
+    c.truth("R_published_by_receipt", isinstance(R, (int, float)),
+            note="step1_class_ratio is required; absent, the whole R re-derivation below silently "
+                 "does not run and its absence was previously invisible")
+    for field in ("pot_scale", "numerator_signed_data", "n_data_effective", "bkg_pot_scaled_sum"):
+        c.truth(f"R_operand_published[{field}]", isinstance(tel.get(field), (int, float)),
+                note="an operand the receipt must publish for R to be falsifiable at all (BEN-077)")
     if all(isinstance(v, (int, float)) for v in num_parts):
         num = float(num_parts[0]) - float(num_parts[1])
         r_derivation["numerator_derived"] = num
@@ -850,12 +863,32 @@ def main():
               seeds, [SEED_BASE + t["replica_index"] for t in
                       sorted(present_t, key=lambda x: x["replica_index"])])
 
+    # --- BEN-157 R3: a weaker run must not be able to emit a stronger verdict. ------------------
+    #
+    # `--skip-replay` already did this correctly, downgrading to a NAMED suffix so the artifact says
+    # which evidence is missing. `--source-npz` and `--nominal-target-sha` did not: absent, their
+    # checks simply never ran and the verdict was the full-strength one. The R derivation was worse
+    # still -- with a null `R` four checks silently disappeared and the row reported 43 of 43 clean.
+    #
+    # Two different treatments, because they are two different things:
+    #   * A missing TOOL INPUT is the caller's choice, so it downgrades the verdict and names itself.
+    #   * A missing RECEIPT FIELD is a defect in the artifact, so it FAILS the member (see
+    #     `R_published_by_receipt` in reconcile_target). Fail closed, not downgrade.
+    weakened = []
+    if not replay:
+        weakened.append("REPLAY_SKIPPED")
+    if not args.source_npz:
+        weakened.append("SOURCE_UNHASHED")
+    if not args.nominal_target_sha:
+        weakened.append("NOMINAL_UNCHECKED")
+    suffix = "".join("_" + w for w in weakened)
+
     target_complete = len(present_t) == DECLARED_INVENTORY and not family.failed
     family_complete = target_complete and len(present_r) == DECLARED_INVENTORY
     if args.stage == "target" and target_complete:
-        verdict = "TARGETS_COMPLETE_PASS" if replay else "TARGETS_COMPLETE_PASS_REPLAY_SKIPPED"
+        verdict = "TARGETS_COMPLETE_PASS" + suffix
     elif args.stage == "family" and family_complete:
-        verdict = "FAMILY_COMPLETE_PASS" if replay else "FAMILY_COMPLETE_PASS_REPLAY_SKIPPED"
+        verdict = "FAMILY_COMPLETE_PASS" + suffix
     elif args.stage == "family" and mismatched:
         # Blocks even with nothing else present: the search itself is unreliable.
         verdict = "BLOCK"
@@ -884,6 +917,11 @@ def main():
         "declared_inventory_is_pinned_in_tool": True,
         "declared_inventory_policy_string": SEED_POLICY,
         "replay_performed": replay,
+        # The axes are listed as data as well as encoded in the verdict suffix: a reader should not
+        # have to parse a string to learn which evidence is missing, and a downstream check should
+        # not have to either (CONVENTION-receipt-ingredients).
+        "weakened_axes": weakened,
+        "is_full_strength": not weakened,
         "source_input_measurement": source_measurement,
         "verdict": verdict,
         "C_stat": None,

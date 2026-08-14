@@ -419,6 +419,23 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 ~18:05 PDT — BEN-157 R3+R4 landed: ALL SEVEN audit items repaired in code. Promotion still unauthorised, and not because of the code.**
+**R3:** absent *tool inputs* downgrade the verdict with a named token (`SOURCE_UNHASHED`,
+`NOMINAL_UNCHECKED`, joining `REPLAY_SKIPPED`) and are reported as `weakened_axes` + `is_full_strength`
+so nobody parses a string; absent *required receipt fields* **fail the member** instead
+(`R_published_by_receipt`, `R_operand_published[...]`). Two treatments because a downgrade would blame
+the tool when the receipt is what is incomplete. This exposed **six of my own tests asserting full
+strength for runs that skipped two checks**; a new test proves the bare `FAMILY_COMPLETE_PASS` is still
+reachable. **R4:** the name-pin test now opens `sbatch_gate5_replica_train_array.sh` instead of
+comparing against a copy of its own string, and the parse is power-tested against a tampered launcher.
+**Verified live before landing: all 50 target receipts publish `step1_class_ratio` and all four
+operands**, so the fail-closed checks do not reject the family. **73 → 104 tests.** Three residuals
+recorded and not closed: `is_complete`'s whole-second `mtime`, no receipt hashed against anything, and
+`completion_marker_valid` being a producer literal (`OI-66`). **What still blocks promotion is that the
+repaired tool has never run against the campaign** — that needs a deployment (`OI-64`), which must now
+also copy `atomic_write.py`. A 50/50 pass from an unverified copy is not evidence. Receipt
+[`state/gate5-reconciler-r3-r4-repair-20260813.json`](../docs/orchestration/state/gate5-reconciler-r3-r4-repair-20260813.json).
+
 **Update 2026-08-13 ~17:20 PDT — BEN-157 R2 landed; R3/R4 open, promotion still BLOCKED.**
 One treatment for audit items 2–5, not four patches. The training stage now hashes the **canonical**
 artifact path and tests the receipt's path claim against it (`artifact_path_is_canonical`), so codex's
