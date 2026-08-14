@@ -568,6 +568,31 @@ def check_oi_ids(items) -> int:
       * A WAIVER THAT IS NO LONGER NEEDED -> also a failure. A stale waiver silently authorizes the next
         genuine collision on that same id forever, so a guard that outlives its reason becomes a hole.
         This is the direction that gets left out, and it is the one that turns a fix into a trap.
+
+    A KNOWN ASYMMETRY IN THE BLOCK ARM, raised by lane D 2026-08-14 and left OPEN deliberately, with the
+    reason, because an undocumented asymmetry is the BEN-173 / BEN-180 shape (a control on one side and
+    none on its mirror):
+
+        reject direction  -- a lane that forgets `git -c` and files OUTSIDE the fallback block fails
+                             LOUDLY, and now gets a NOTE naming the `git -c` form.
+        accept direction  -- a lane that forgets `git -c` and files INSIDE the fallback block
+                             (120-129) is ACCEPTED SILENTLY, attributed to the fallback, not to itself.
+
+    Why it is not closed here rather than being overlooked:
+
+      1. COLLISION SAFETY IS ALREADY COVERED. Two parties both defaulting to the fallback and both
+         running max+1 would collide, and the DUPLICATE arm catches that. What the accept case loses is
+         ATTRIBUTION, not collision-safety, and attribution is OI-62(c) -- three parties sharing one git
+         identity -- which is WAITING-USER.
+      2. "ACCEPT BUT WARN" IS NOT IMPLEMENTABLE IN A HOOK. `.githooks/pre-commit`'s `run()` captures each
+         check's output and `cat`s it ONLY on non-zero exit, so a passing check's output is discarded
+         (BEN-226, measured with a control). The only available behaviours are fail or nothing.
+      3. FAILING WOULD BLOCK A LEGITIMATE COMMITTER. Joseph filing in his own block is correct, and
+         D's admitting rule -- a committer who did nothing wrong can always make it pass -- forbids it.
+
+    THE TRIGGER THAT UNLOCKS THE FIX, so this is a conditional TODO and not a vague someday: if OI-62(c)
+    is resolved such that every committer carries a lane identity, then NOBODY legitimately files into the
+    fallback block, and an id arriving there becomes free to detect as an error. Revisit then, not before.
     """
     if not items.exists():
         print("CANNOT CHECK :: docs/OPEN_ITEMS.md absent")
