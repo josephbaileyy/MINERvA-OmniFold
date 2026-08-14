@@ -133,10 +133,10 @@ docs/orchestration/HANDOFF-20260813-0600Z-gate5-replica-driver.md	ARCHIVAL	docum
 docs/orchestration/HANDOFF-20260813-session-D-verifier.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	0	108	7612
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	21	184	24206
 docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-only		yes	2	42	4434
-docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	7869
+docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	7870
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	49	3218
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	733	117588
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	734	117732
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	2	102	6794
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
@@ -459,7 +459,7 @@ docs/orchestration/state/account-migration-authorization-20260719.json	MACHINE	s
 docs/orchestration/state/agent-A-standard-migration-20260811.json	MACHINE	state-artifact		20260811	generated		exact-path-only		yes	1	23	1193
 docs/orchestration/state/agent-B-p5b-migration-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	1	26	1369
 docs/orchestration/state/agent-E-account-migration-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	4	30	1338
-docs/orchestration/state/annealed-nominal-complete-56563761.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	11	243	15249
+docs/orchestration/state/annealed-nominal-complete-56563761.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	12	243	15249
 docs/orchestration/state/annealed-nominal-error-56563092.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	3	87	4505
 docs/orchestration/state/annealed-nominal-submit-56563761.json	MACHINE	state-artifact			generated		exact-path-only		yes	2	73	3133
 docs/orchestration/state/annealed-shape-error-56547490.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	86	4185
@@ -658,6 +658,7 @@ docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json	MACHINE
 docs/orchestration/state/p4-packetb-sweep-extractor-fix-20260811.json	MACHINE	state-artifact		20260811	generated		exact-path-only		yes	3	34	1747
 docs/orchestration/state/p4-standard-attestation/p4_standard_manifest-20260718-preserved.json	MACHINE	state-artifact	p4-standard-attestation	20260718	generated		exact-path-only		yes	7	142	5817
 docs/orchestration/state/p4-sweep-snapshots.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	258	7062
+docs/orchestration/state/p5a-extraction-pin-prereport-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	85	10779
 docs/orchestration/state/pet-nominal-reported-cells-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	yes	3	87	2251
 docs/orchestration/state/pre-shutdown-checklist-20260721.json	MACHINE	state-artifact		20260721	generated		exact-path-only		yes	2	69	4203
 docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py	yes	2	346	14819
