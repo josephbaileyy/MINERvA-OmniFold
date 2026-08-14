@@ -234,6 +234,32 @@ def scalar_invariants(rep):
 
 def main():
     print("=== C_stat comparator: mutation coverage ===")
+    vc = H.verify_constants_against_loader()
+    print(f"frozen-grid copy vs loader: ok={vc['ok']} "
+          f"(pt={vc.get('pt_matches')} pparallel={vc.get('pparallel_matches')})")
+    if not vc["ok"]:
+        print(f"*** {vc.get('why')} *** -- refusing to score mutations against a stale grid")
+        return 2
+    # Positive control for the guard itself: a stale-grid detector that has never detected a
+    # stale grid is not evidence. Point it at a synthesised loader with one edge moved.
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        d = pathlib.Path(td) / "nd-unfolding" / "pet"
+        d.mkdir(parents=True)
+        (d / "fullevent_fps_dataloader.py").write_text(
+            "import numpy as np\n"
+            "CANONICAL_PT_EDGES = np.array(\n"
+            "    [0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5,\n"
+            "     2.5, 4.5, 25.0], dtype=float)\n"          # 30.0 -> 25.0
+            "CANONICAL_PPARALLEL_EDGES = np.array(\n"
+            "    [0.0, 0.75, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,\n"
+            "     10.0, 15.0, 20.0, 40.0, 60.0, 120.0], dtype=float)\n")
+        ctl = H.verify_constants_against_loader(td)
+    print(f"  guard control (one pT edge moved 30.0 -> 25.0): detected={not ctl['ok']} "
+          f"{'as predeclared' if not ctl['ok'] else '*** DID NOT FIRE ***'}")
+    if ctl["ok"]:
+        print("*** the stale-grid guard cannot fail; it is not evidence. Refusing to score. ***")
+        return 2
     print(f"fixture: synthetic 50 x 285 gaussian, {len(DEAD_CELLS)} dead cells "
           f"(real nominal geometry), cov ddof=1")
     live = H.N_CELLS - len(DEAD_CELLS)

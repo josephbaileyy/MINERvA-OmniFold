@@ -274,6 +274,21 @@ campaign keeps filing (`BEN-173`). Each function now guards itself rather than t
 Three defects in the comparator, all found before it ever saw a builder's artifact, none of which
 would have been found by reading it.
 
+### 3.2 The copied constants are self-checking
+
+The harness carries its own copy of the canonical edges. **A copy nobody re-checks is a stale value
+waiting to happen** — if the frozen grid ever moved, this harness would go on validating builders
+against the old one and reporting tier-0 PASS. `verify_constants_against_loader()` parses the
+literals out of `fullevent_fps_dataloader.py` with `ast` (no import, so no TensorFlow) and the
+mutation probe refuses to score anything if they disagree. Per this repo's own principle: *prefer
+the executable form of any rule you are tempted to write down.*
+
+It has its own positive control — a synthesised loader with one pT edge moved `30.0 -> 25.0`, which
+must be detected — because a stale-grid detector that has never detected a stale grid is not
+evidence. The control fires. The first version of the check also had its repo-root path off by one
+and **failed closed**, refusing to score rather than passing silently, which is the direction that
+mistake should fail in.
+
 ---
 
 ## 4. What element-wise agreement would NOT catch

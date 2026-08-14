@@ -54,6 +54,47 @@ OPTIONAL_KEYS = ("reported_mask", "mean_vector", "nominal_vector", "n_replicas_r
                  "method_declaration")
 
 
+def verify_constants_against_loader(repo_root=None):
+    """The canonical edges above are a COPY of fullevent_fps_dataloader.py:64-69.
+
+    A copy that nobody re-checks is a stale value waiting to happen: if the frozen grid ever
+    moves, this harness would go on validating builders against the old one and reporting
+    tier-0 PASS. Importing the loader would cost a TensorFlow import, so the source literals
+    are parsed with `ast` instead -- no import, no TF, and the rule is executable rather than
+    a comment asking someone to remember. Returns a dict; `ok` False is a hard failure.
+    """
+    import ast
+    import pathlib
+    # this file lives at <root>/docs/orchestration/state/, so the root is parents[3]
+    root = pathlib.Path(repo_root) if repo_root else pathlib.Path(__file__).resolve().parents[3]
+    src = root / "nd-unfolding" / "pet" / "fullevent_fps_dataloader.py"
+    out = {"loader": str(src), "found": src.is_file()}
+    if not out["found"]:
+        out["ok"] = False
+        out["why"] = "loader not found; cannot verify the copied constants"
+        return out
+    tree = ast.parse(src.read_text())
+    lit = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign) and len(node.targets) == 1:
+            t = node.targets[0]
+            if isinstance(t, ast.Name) and t.id in ("CANONICAL_PT_EDGES",
+                                                    "CANONICAL_PPARALLEL_EDGES"):
+                for a in ast.walk(node.value):
+                    if isinstance(a, ast.List):
+                        lit[t.id] = [float(ast.literal_eval(e)) for e in a.elts]
+                        break
+    out["parsed"] = sorted(lit)
+    out["pt_matches"] = lit.get("CANONICAL_PT_EDGES") == CANONICAL_PT_EDGES.tolist()
+    out["pparallel_matches"] = (lit.get("CANONICAL_PPARALLEL_EDGES")
+                                == CANONICAL_PPARALLEL_EDGES.tolist())
+    out["ok"] = bool(out["pt_matches"] and out["pparallel_matches"])
+    if not out["ok"]:
+        out["why"] = ("the frozen grid in the loader no longer matches this harness's copy; "
+                      "N_CELLS and every tier-0 edge check are STALE")
+    return out
+
+
 def cell_ij(flat):
     """Flat pt-major index -> (i_pt, i_pparallel). Unreadable indices hide findings."""
     return int(flat) // N_PP, int(flat) % N_PP
