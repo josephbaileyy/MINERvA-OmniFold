@@ -167,7 +167,8 @@
         "1_it_is_not_constant": "sizes across the 50 weights artifacts are {257: 3, 258: 21, 259: 26}; union 259, intersection 256, NOT identical across members. So '259' is its UNION (equivalently its modal value), not a constant -- a further per-member-varying mask alongside BEN-231's reporting mask and n_cells_masked_zero_acceptance.",
         "2_the_two_259s_are_DIFFERENT_SETS": "the training-mask UNION is 259 and the extraction INTERSECTION is also 259, and they are not the same 259. training-union IS a subset of extraction-union, but the extraction union holds three cells the training union does not: flat {254, 281, 284} -- and 254 is one of the three flickering cells of CSTAT-D3."
       },
-      "the_rule": "A MATCHING COUNT IS NOT A MATCHING SET. Compare sets, never counts. A consumer picking whichever mask is at hand because the count matches is wrong by three cells with every structural check passing. BEN-236."
+      "the_rule": "A MATCHING COUNT IS NOT A MATCHING SET. Compare sets, never counts. A consumer picking whichever mask is at hand because the count matches is wrong by three cells with every structural check passing. BEN-236.",
+      "FORBIDDEN_selecting_a_mask_by_count": "A consumer MUST identify a reporting domain by SET IDENTITY -- np.array_equal against the named mask, or the layout_fingerprint of CSTAT-R6 -- and MUST NOT select, match, or validate one by n_reported, sum(mask), len(indices), or sum(diag > 0). Two distinct masks in this campaign both have 259 cells, so a count-based match is wrong by three cells with every structural check passing. A receipt reporting a mask MUST publish the mask or its fingerprint, never only its size."
     }
   },
   "measurements_provisional_at_N14": {
