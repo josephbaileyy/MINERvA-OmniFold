@@ -525,7 +525,40 @@ def reconcile_target(idx, root, replay, cache):
         }
         c.eq("data_factor_sha256_REDRAWN_vs_receipt", replay_result["data_factor_sha256_REDRAWN"],
              bs.get("data_factor_sha256"),
-             note="THE STREAM NOTHING ELSE CHECKS -- no stage persists or array-compares it")
+             note="THE STREAM NOTHING ELSE CHECKS -- no stage persists or array-compares it. NOTE "
+                  "what this does NOT do: it compares the BUILDER's recomputation to this tool's "
+                  "redraw, so it is blind to what the LOADER applied. The check below is the one "
+                  "with power over that.")
+
+        # THE ONLY CHECK ANYWHERE WITH POWER OVER THE LOADER'S APPLIED DATA FACTOR.
+        #
+        # Every other data-factor check is builder-vs-redraw -- two recomputations of the same
+        # canonical stream, agreeing by construction and blind to what the loader did. Measured: a
+        # mutation of the loader-applied factor, propagated exactly as the loader would propagate it
+        # (n_data_effective -> numerator -> R -> measured_normalization), passed 57 of 57 checks with a
+        # 13.6% shift in R. R and n_data_effective RE-DERIVE FROM EACH OTHER, and internal consistency
+        # is not power.
+        #
+        # `n_data_effective` breaks that circle because the LOADER computes it from the array it
+        # actually received -- `fullevent_fps_dataloader.py:951`, `n_data_eff = float(df.sum())`,
+        # shape-guarded to (n_data_rows,) at :949 -- and it is persisted. Comparing it to the sum of
+        # OUR redraw ties the applied array to the canonical one from outside the receipt's own
+        # arithmetic.
+        #
+        # WHAT IT PROVES: same length (via the loader's shape guard) and same SUM. NOT identity -- a
+        # permutation, or any change conserving the total, still passes. That bound is demonstrated
+        # rather than asserted: across the live family replica_03 and replica_08 share
+        # n_data_effective = 4114512 with DIFFERENT data_factor_sha256, so two real members are
+        # indistinguishable to this check and separable by the hash. Closing identity needs
+        # loader-side persistence of the factor or of a hash computed inside the loader (OI-60).
+        n_eff = tel.get("n_data_effective")
+        if isinstance(n_eff, (int, float)):
+            c.eq("n_data_effective_equals_sum_of_REDRAWN_data_factor", float(n_eff), float(df.sum()),
+                 note="the loader computed this from the array it APPLIED (dataloader:951), so this "
+                      "is the only tie between the applied factor and the canonical draw. Proves "
+                      "length and sum, not identity")
+            replay_result["sum_of_REDRAWN_data_factor"] = float(df.sum())
+            replay_result["n_data_effective_recorded"] = float(n_eff)
         c.eq("signal_factor_sha256_REDRAWN_vs_receipt",
              replay_result["signal_factor_sha256_REDRAWN"], bs.get("signal_factor_sha256"))
         c.eq("background_factor_sha256_REDRAWN_vs_receipt",

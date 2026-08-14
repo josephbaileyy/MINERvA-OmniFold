@@ -91,7 +91,14 @@ def _build_target_receipt(idx, tmp_root, *, weights=None):
     n_measured = N_DATA + N_BKG
 
     # Build R and its operands so the derivation check has something real to reproduce.
-    n_data_effective = 1010.0
+    #
+    # n_data_effective is DERIVED FROM THE FIXTURE'S OWN DATA FACTORS, as the loader derives it
+    # (fullevent_fps_dataloader.py:951, n_data_eff = float(df.sum())). It used to be a hardcoded
+    # 1010.0 against an N_DATA of 1000 -- internally consistent and unrelated to the fixture's actual
+    # draw, so no test here could ever have exercised the loader-side mutation class. The check that
+    # ties the applied factor to the canonical draw failed on every honest fixture until this was
+    # fixed, which is how the fixture defect surfaced.
+    n_data_effective = float(df.sum())
     bkg_pot_scaled_sum = 10.0
     numerator = n_data_effective - bkg_pot_scaled_sum
     sum_w_reco_scaled = 3200.0
@@ -1223,3 +1230,92 @@ def test_the_R_published_checks_PASS_on_an_honest_receipt(tmp_path):
     failed = {f["check"] for f in row["checks"]["failures"]}
     assert "R_published_by_receipt" not in failed
     assert not any(f.startswith("R_operand_published[") for f in failed)
+
+
+# ---------------------------------------------------------------------------
+# The only check with power over the LOADER's applied data factor (codex's mutation test).
+# ---------------------------------------------------------------------------
+
+
+def _apply_loader_side_mutation(receipt, delta):
+    """Mutate the factor the LOADER applied, propagated exactly as the loader would propagate it.
+
+    Deliberately leaves bootstrap.data_factor_sha256 alone: that is the BUILDER's own recomputation of
+    the canonical stream, and the mutation under test is of what the loader applied, not of what the
+    builder recomputed. Every downstream number is updated so the receipt stays INTERNALLY CONSISTENT --
+    which is the whole point, because internal consistency was mistaken for verification.
+    """
+    rt = receipt["runtime_target"]
+    tel = rt["step1_class_ratio_telemetry"]
+    tel["n_data_effective"] = float(tel["n_data_effective"]) + delta
+    tel["numerator_signed_data"] = tel["n_data_effective"] - tel["bkg_pot_scaled_sum"]
+    den = float(tel["pot_scale"]) * float(tel["sum_w_reco_pass_reco_raw"])
+    rt["step1_class_ratio"] = tel["numerator_signed_data"] / den
+    rt["step1_measured_normalization"] = rt["step1_class_ratio"] * rt["step1_mc_normalization"]
+    receipt["step1_feed"]["normalized_sum"] = rt["step1_measured_normalization"]
+
+
+def test_a_mutated_LOADER_APPLIED_data_factor_is_caught(tmp_path):
+    """CODEX'S MUTATION TEST. Before this check it passed 57 of 57 with a 13.6% shift in R.
+
+    Nothing else could catch it: the factor-hash comparison is builder-vs-redraw, and the R
+    re-derivation uses n_data_effective as an INPUT, so a mutated factor yields a mutated
+    n_data_effective and a mutated R that re-derive from each other perfectly.
+    """
+    root = str(tmp_path)
+    _family(root, 1, with_training=False)
+    rec = os.path.join(root, "replicas", "replica_00", "target",
+                       "GATE5_REPLICA_TARGET_RECEIPT.json")
+    before = json.load(open(rec))["bootstrap"]["data_factor_sha256"]
+    _mutate(rec, lambda o: _apply_loader_side_mutation(o, 137.0))
+    assert json.load(open(rec))["bootstrap"]["data_factor_sha256"] == before, (
+        "the builder's recomputed hash must be UNTOUCHED or this tests the wrong thing")
+
+    row = R5.reconcile_target(0, root, True, {})
+    failed = {f["check"] for f in row["checks"]["failures"]}
+    assert row["verdict"] == "FAIL"
+    assert "n_data_effective_equals_sum_of_REDRAWN_data_factor" in failed
+    # And the R derivation must NOT be what catches it -- it cannot, and claiming otherwise would
+    # misattribute the power.
+    assert not any(f.startswith("R_numerator") or f == "R_reproducible_from_published_operands"
+                   for f in failed), "R re-derivation has no power here; it re-derives self-consistently"
+
+
+def test_the_data_factor_sum_check_PASSES_on_an_honest_receipt(tmp_path):
+    """Power test: a check that fired on every receipt would block every clean run."""
+    root = str(tmp_path)
+    _family(root, 1, with_training=False)
+    row = R5.reconcile_target(0, root, True, {})
+    assert row["verdict"] == "PASS"
+    assert "n_data_effective_equals_sum_of_REDRAWN_data_factor" not in {
+        f["check"] for f in row["checks"]["failures"]}
+
+
+def test_the_sum_check_is_BLIND_to_a_permutation_and_that_bound_is_asserted(tmp_path):
+    """The limit, pinned as a test so nobody later reads the check as proving identity.
+
+    A permutation of the applied factor conserves the sum, so this check passes on it. The bound is
+    real in the live family too: replica_03 and replica_08 share n_data_effective with differing
+    data_factor_sha256.
+    """
+    root = str(tmp_path)
+    _family(root, 1, with_training=False)
+    rec = os.path.join(root, "replicas", "replica_00", "target",
+                       "GATE5_REPLICA_TARGET_RECEIPT.json")
+    # delta 0 == any sum-conserving change, permutation included
+    _mutate(rec, lambda o: _apply_loader_side_mutation(o, 0.0))
+    row = R5.reconcile_target(0, root, True, {})
+    assert "n_data_effective_equals_sum_of_REDRAWN_data_factor" not in {
+        f["check"] for f in row["checks"]["failures"]}, (
+        "if this ever fails, the check has become stronger than the sum and the docstring lies")
+
+
+def test_the_sum_check_vanishes_under_skip_replay_and_the_verdict_says_so(tmp_path):
+    """It is replay evidence, so --skip-replay must lose it -- and R3 must name the loss."""
+    root = str(tmp_path)
+    _family(root, N, with_training=False)
+    rc, rep = _run_main(root, extra=["--stage", "target", "--skip-replay"])
+    assert "REPLAY_SKIPPED" in rep["weakened_axes"]
+    assert rep["verdict"].startswith("TARGETS_COMPLETE_PASS_REPLAY_SKIPPED")
+    row = [t for t in rep["targets"] if t["replica_index"] == 0][0]
+    assert row["replay"]["performed"] is False

@@ -6954,3 +6954,52 @@ false alarm. Filed as BEN-129, which closes Lane B's block `100-129`.
 
 Also adopted this turn: lane A's OI-* block table at `e4db2e2`. **Lane B's OI block is `80-89`.** No OI id
 was allocated by this work — OI-3 is an existing row and was edited in place, not renumbered.
+
+### 2026-08-14 — codex's mutation test: my prediction was wrong, and the fix is the only check with power over the applied data factor (lane C, BEN-230)
+
+Codex asked whether any stage's validation has power over the data factor or is merely comparing the
+builder to itself. **Codex was right and I had committed the opposite prediction to a receipt
+beforehand**, which is the only reason the error is on the record rather than quietly absorbed.
+
+**What I predicted:** a sum-changing mutation *"WILL be caught by `n_data_effective` and by `R`"`.
+**Measured: it is not.** A `+137`-count mutation of the LOADER-applied factor, propagated exactly as the
+loader propagates it (`n_data_effective` → numerator → `R` → normalisation) with the builder's
+`data_factor_sha256` untouched, **passed 57 of 57 checks and shifted `R` by 13.6%.**
+
+**Why.** The loader computes `R` *from* `n_data_effective` (`dataloader:971`), so a mutated factor gives
+a mutated `n_data_effective` and a mutated `R` that re-derive from each other exactly. The R check
+confirms arithmetic the mutation already made self-consistent. `n_data_effective` existed in the tool
+only as an **operand** of that derivation, compared to nothing. **I reasoned from where a quantity comes
+from to whether it is checked — different questions, and the gap between them is where this class
+lives.**
+
+**The fix ties it outside the receipt's own arithmetic.** The loader computes `n_data_effective` at
+`:951` as `float(df.sum())` from the array it actually received, shape-guarded at `:949`, and it is
+persisted — so comparing it to the sum of *our* redraw is **the only check anywhere with power over the
+loader's applied data factor**. The same mutation now **FAILS, on that check alone**, and a test asserts
+the R checks still do not fire so the power is not misattributed.
+
+**Proves length and sum, not identity.** A permutation still passes — pinned as a **test** rather than
+left as a caveat, and demonstrated live: `replica_03` and `replica_08` share `n_data_effective =
+4114512` with differing `data_factor_sha256`. Closing identity is producer-side and stays with OI-60.
+
+**A third fixture defect exposed.** The new check failed on **every honest fixture**, 55 of 108 tests:
+`_build_target_receipt` hardcoded `n_data_effective = 1010.0` against `N_DATA = 1000` — internally
+consistent and unrelated to the fixture's own draw. **Every fixture already modelled the state the
+mutation creates, so the suite could not have caught this class.** Fixed by deriving it as the loader
+does. 108 tests pass.
+
+**Live impact: none, and that is measured, not assumed.** `sum(canonical draw) == n_data_effective` holds
+for all 50 target receipts (measured earlier tonight for OI-60), which is exactly what the new check
+compares — so it passes the live family. The deployed copy is now stale by this commit and must be
+re-synced before any promotion run, per the standing rule.
+
+**Block `230-239` taken** and written into the table in this same commit as `BEN-230`, its first filing;
+`130-159` is exhausted. Rule 2 and the allocate-forward paragraph were pointing at `230-239` and now
+point at `240-249`, updated by the lane that took the block, as rule 4 requires.
+
+**The generalisation:** *a receipt whose numbers all re-derive is evidence of arithmetic, not of
+measurement.* Publishing operands lets a reader recompute a verdict; it does not make it falsifiable.
+Falsifiability needs an anchor the producer did not also compute. That is `BEN-077` one turn further on.
+
+Campaign: 36 receipts of 50, 4 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
