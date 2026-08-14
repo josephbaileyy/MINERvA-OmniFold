@@ -59,8 +59,24 @@ from an **lgbm purity-control central** whose own manifest records
 `publication_gate_rejects_this = true` (`fps_control_manifest.json`). The PET diagnostic excludes 23
 cells, not 19. `285−266 = 19`, `285−262 = 23`, difference `4`, and the PET receipt independently
 reports `n_cells_masked_zero_acceptance = 4` — **consistent with** the PET mask being the FPS mask
-minus 4 more, but I have not verified nesting because the PET mask's indices are not recorded in any
-committed artifact. Do not assume it.
+minus 4 more, but I had not verified nesting because the PET mask's indices were not recorded in any
+committed artifact.
+
+**NESTING NOW VERIFIED — by lane D, not by me.**
+`COMPARATOR-PREDECLARATION-20260814-cstat.md:50-51` publishes the exact PET reported index set:
+`[0..227] + [229..246] + [254..265] + [281..284]`. Complementing it against `0..284`:
+
+```
+PET excluded (23) = {228} u {247..253} u {266..280}
+FPS excluded (19) =         {247..250} u {266..280}
+FPS_excluded is a strict SUBSET of PET_excluded; the 4 extra are {228, 251, 252, 253}
+```
+
+So the PET reported domain **is** the FPS reported domain minus exactly 4 cells, matching
+`n_cells_masked_zero_acceptance = 4` independently. My "do not assume it" is discharged. **The
+requirement it produced is unchanged and D reached it independently:** *"Any reduction to 'the reported
+cells' must be defined by a shipped boolean mask, never an index range"* (`:50-51`) — because the set is
+contiguous only *within* each row, so two builders slicing by range will silently differ.
 
 **Consequence, and this is a hard requirement:** `C_stat` must **NOT** call
 `fps_provenance.require_reported_mask` (`fps_provenance.py:177-194`). That function hard-codes
@@ -202,6 +218,15 @@ subsetting, background factors before per-replica Stay-Positive, exact applicabl
 in training *and* extraction, persisted replay evidence), the mask/central binding, and the embedding
 back to the full grid. Agreement on `(Z.T @ Z)/(n-1)` is worth almost nothing; agreement on *which
 rows go into `X` and on which mask* is worth a great deal.
+
+**And lane D has since measured the stronger version of this, which is worth more than my argument.**
+`BEN-188`: calibrating the comparator across four legitimate routes to one sample covariance, worst
+disagreement was `6.26e-16` — but **`Xc.T @ Xc` versus `np.einsum` was exactly `0.000e+00`, bit for
+bit, because both dispatch to the same BLAS kernel.** So perfect agreement between two implementations
+is achievable with **no independence at all**, while reading as the strongest evidence in the campaign.
+D's formulation is the one to adopt: **establish that two COMPUTATIONS occurred, not two authors.**
+This makes the reconciliation above not merely preferable but necessary — if the two builders agree on
+the covariance kernel to `0.000e+00`, that number is evidence about BLAS, not about the spec.
 
 ### 0.4 What actually consumes `C_stat` — enumerated, because the severity of §0.2 is conditional on it
 
@@ -383,6 +408,35 @@ TH2D (the FPS/GBDT convention, `combine_seedscan_split.py:99`, hist name suffix 
 chain is npz and pure-numpy login-node-runnable, which I'd prefer for a dual-build comparison because
 element-wise comparison by D is trivial on npz and needs ROOT on TH2D. **C's call.**
 
+### 3.1 A REAL DISAGREEMENT with lane D's comparator predeclaration — surface this before builders start
+
+The table above says the component lives on the **reported sub-space**,
+`(n_reported, n_reported)`, because that is what every existing component is and what
+`assemble_ctotal_bkgsub.py` consumes. **Lane D's `COMPARATOR-PREDECLARATION-20260814-cstat.md:168`
+requires the compared artifact to be shape `(285,285)`** — the full grid — with the reduction expressed
+by a shipped boolean mask, on the sound reasoning at `:184-185` that the extractor already writes hard
+`0.0` outside the mask (`extract_fullevent_fps.py:517-518`) so the full matrix carries an explicit zero
+block. **Both conventions are defensible and they are not the same artifact.** Left unresolved, the
+comparator and the assembler want different objects and one of them gets a reshape — which is exactly
+the translation step `OI-121` put me on this task to eliminate.
+
+**Proposed reconciliation, C's to accept or reject:** builders emit **`(285,285)` plus the full-grid
+boolean `reported_mask`** — D's convention wins at the comparison boundary because the comparator is
+the immediate consumer and a fixed dimension makes element-wise comparison well-defined — and the
+**reduction to `(n_reported, n_reported)` happens once, in the assembly step, not in either builder.**
+That keeps a single reduction site instead of two, and it is the one place the mask-equality gate
+(`assemble_ctotal_bkgsub.py:105-107`) can enforce agreement. **What must NOT happen is each builder
+reducing independently**, per D's own `:50-51` warning about slicing a set that is contiguous only
+within rows.
+
+**One consequence to declare explicitly if `(285,285)` is adopted:** the 23 all-zero rows/columns are
+structural, so a naive rank count returns ≤ 49 out of 285 and `min_over_max_eig` is exactly 0 — and
+`BEN-189` (lane D, same work) shows a *relative* eigenvalue metric then divides ~1e-18 by ~1e-18 and
+returns ~1.0 for **any** input, including a permutation that provably preserves the spectrum. **On this
+object, relative tolerances are noise; absolute-scaled-by `|λ_max|` is the correct form.** D measured
+236 numerically-zero eigenvalues of 285, which is `285 − 49` exactly and corroborates §0.2's arithmetic
+from the opposite direction.
+
 ---
 
 ## §4 — How components are summed, and what that requires of each one
@@ -525,9 +579,10 @@ Stated plainly, per the standing instruction that *"needs X" is a complete answe
 2. **The publication reported-bin count.** 262 is from a file whose own name is
    `NONQUOTABLE-DIAGNOSTIC`. It fixes the *shape and order* reliably; it does not fix the count.
    **Needs:** the same P5A receipt.
-3. **Whether the PET mask nests inside the FPS 266 mask.** The 4-bin difference is consistent with
-   nesting; no committed artifact records the PET mask's indices. **Needs:** the P5A mask array, or a
-   `reported_mask` field added to the extractor's npz.
+3. ~~**Whether the PET mask nests inside the FPS 266 mask.**~~ **RESOLVED by lane D** — it nests, the
+   4 extra exclusions are `{228, 251, 252, 253}`, derived in §0.1 from D's published index set
+   (`COMPARATOR-PREDECLARATION-20260814-cstat.md:50-51`). Struck rather than deleted so the sequence is
+   legible: I stated the limit of my evidence and another lane closed it within the hour.
 4. **Whether a 2D PET assembler is to be written.** Only 5D assemblers exist. **Needs:** C's or
    Joseph's decision.
 5. ~~**Whether 50 is the predeclared publication inventory or a pilot.**~~ **RESOLVED — it is
@@ -579,6 +634,9 @@ Per the peer's request that mismatches be found now rather than by D at comparis
    is built against a mask that a later `C_syst` could contradict. **`RUNBOOK:213-214` should win, and
    the spec should say so explicitly**, because the assembler's code currently says `C_syst`.
 3. **npz vs ROOT TH2D** (§3). Affects how expensive D's element-wise comparison is.
+3a. **`(285,285)` vs `(n_reported, n_reported)` — a live conflict with D's already-committed comparator
+   predeclaration, with a proposed reconciliation at §3.1.** This is the one item on this list that is
+   not a question awaiting an answer but two committed documents wanting different artifacts.
 4. **Whether the shared prior implementation counts as an independence leak** (§0.3), and if so what
    the two builders are actually being asked to independently derive.
 5. **My §4.4 rank arithmetic implies the P5B total is rank-deficient regardless of `C_stat`.** If that
